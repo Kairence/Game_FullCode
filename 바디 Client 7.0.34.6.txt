@@ -1,0 +1,466 @@
+1 Oger
+2 Ettin
+3 Zombie
+4 Gargoyle
+5 Eagle
+6 Bird
+7 Orc Captain
+8 Whipping Vine
+9 Demon
+10 Demon New
+11 Dread Spider
+12 Dragon Brown
+13 Air Elemental
+14 Earth Elemental
+15 Fire Elemental
+16 Water Elemental
+17 Orc
+18 Ettin w/Club
+19 Dread Spider
+20 Frost Spider
+21 Giant Snake
+22 Gazer
+23 Wolf Grey
+24 Lich
+25 Wolf Light Grey
+26 Wraith
+27 Wolf Dark Grey
+28 Giant Spider
+29 Gorilla
+30 Harpy
+31 Headless
+33 Lizardman
+34 Wolf Grey
+35 Lizardman W/Spear
+36 Lizardman w/mace
+37 Wolf Artic
+38 Blackgate Demon
+39 Mongbat
+40 Balron
+41 orc w/club
+42 Ratman
+43 Ice Fiend
+44 Ratman w/mace
+45 Ratman w/sword
+46 Ancient Wyrm
+47 Reaper
+48 Scorpoion
+49 White Wyrm
+50 Skeleton
+51 Slime
+52 Snake
+53 Troll W/axe
+54 Troll
+55 Troll artic w/axe
+56 Skeleton w/axe
+57 Skeletal Knight
+58 Wisp
+59 Dragon Red
+60 Drake Brown
+61 Drake Red
+62 Wyvern
+63 Panther Light
+64 Panther Dark
+65 Panther Dark
+66 Whipping Vine Hued Lime
+67 Stone Gargoyle
+68 Gazer
+69 Gazer
+70 Terathan Warrior
+71 Terathan Drone
+72 Terathan Matriarch
+73 Harpy Stone Hued
+74 Imp
+75 Cyclops
+76 Titan
+77 Kraken & Leviathin
+78 Lich Hued Grey
+79 Lich
+80 Giant Toad
+81 Giant Frog
+82 Lich
+83 Oger
+84 Oger
+85 Ophidian Justicar
+86 Ophidian avenger
+87 Ophidian Matriarch
+88 Goat
+89 Ice Serpent
+90 Lava Serpent
+91 Giant Serpent Grey
+92 Giant Serpent Grey
+93 Giant Serpent Light Grey
+94 Frost ooze
+95 Turkey
+96 Frost ooze
+97 Hell Hound
+98 Hell Hound Light
+99 Wolf Grey Dark
+100 Wolf Artic
+101 Centaur
+102 Demon Unknown Armored
+103 Serpentine Dragon
+104 Skeletal Dragon
+105 Dragon Dark Bluish Grey
+106 Earth Elemental Hued
+107 Earth Elemental Hued
+108 Earth Elemental Hued
+109 Earth Elemental Hued
+110 Earth Elemental Hued
+111 Earth Elemental Hued
+112 Earth Elemental Hued
+113 Earth Elemental Hued
+114 Nightmare 1
+116 Nightmare 2
+117 HolySteed
+118 Faction Horse Purple
+119 Faction Horse Light Blue
+120 Faction Horse Red
+121 Faction Horse Light Green
+122 Unicorn
+123 Lattice Seeker
+124 °Å´ë °ñ·½
+125 °Å´ë °ñ·½
+126 °Å´ë °ñ·½
+127 Hellcat
+128 Pixie
+129 Whipping Vine Hued Red
+130 Blazing Gargoyle
+131 Efreet
+132 kririn
+133 Aligator
+134 Lava Lizard
+135 Artic Oger
+136 Ophidian Zealot
+137 Ophidian Avenger
+138 Orc Captain
+139 Orc Captain
+140 Orc
+141 Human male Flesh
+142 Ratman Blue Vest w/sword
+143 Ratman Red Vest w/sword
+144 Seahorse
+145 Sea Serpent Dark Waterline
+146 Harrower & Shadowlords
+147 Skeletal Knight
+148 Skeletal Mage
+149 Succubus
+150 Sea Serpent Bright Waterline
+151 Dolphin
+152 Terathan Avenger
+153 Wraith
+154 Mummy
+155 Rotting Zombie
+156 Turkey
+157 Giant Black Widow
+158 Acid Elemental
+159 Blood Elemental Dark
+160 Blood Elemental Light
+161 Ice Elemental
+162 Poison Elemental
+163 Snow Elemental
+164 Energy Vortex
+165 Shadow Wisp
+166 Earth Elemental Hued
+167 Brown Bear
+169 Blue Beetle
+172 Richtor
+173 Mephitis
+174 Semidar
+175 Lord Oaks
+176 Silvani
+177 Nightmare 3
+178 Nightmare 4 Longhair
+179 Nightmare 5 Longhair
+180 White Wyrm
+181 Orc Scout
+182 Orc Bomber
+183 Human Male
+184 Human Female
+185 Human Male
+186 Human Female
+187 Ridgeback
+188 Tribal Ridgeback
+189 Orc Brute
+190 Fire Steed
+191 Kirin
+192 Unicorn
+193 Ridgeback
+194 Swamp Dragon
+195 Blue Beetle
+196 Kaze Komono
+197 Chaos Variant Dragon
+198 Order Variant Dragon
+199 Rai-Ju
+200 Horse Tan
+201 Cat
+202 Aligator
+203 Pig
+204 Horse Brown
+205 Rabbit
+206 lava Lizard
+207 Sheep
+208 Chicken
+209 Goat
+210 Desert Ostard
+211 Brown Bear
+212 Grizzly Bear
+213 Polar Bear
+214 Panther Light
+215 Giant Rat
+216 Cow Black & White
+217 Dog
+218 Frenzied Ostard Armored
+219 Freenzied Ostard No Armor
+220 Llama
+221 Walrus
+223 Sheep Shorn
+225 Wolf Brown
+226 Horse White
+228 Horse Tan
+231 Cow Brown & White
+232 Bull Light Brown
+233 Bull Dark Brown & White
+234 Stag
+237 Deer
+238 rat
+240 Kappa
+241 Oni
+242 Deathwatch Beetle
+243 Hiryu
+244 Rune Beetle
+245 Yomotsu Warrior
+246 Bake Kitsune
+247 Fan Dancer
+248 Gamman
+249 Serado the Awakened
+250 Tsuki WOlf
+251 Revenant Lion
+252 Lady of the Snow
+253 Yomotsu Priest
+254 Crane
+255 Yomotsu Elder
+256 Chief Paroxysmus
+257 Dread Horn
+258 Lady Melisande
+259 Monstrous Interred Grizzle
+260 Shimmering Effusion
+261 Shimmering Effusion 2
+262 Minatuar Female
+263 Minatuar Male
+264 Changeling
+265 Hydra
+266 Dryad
+267 Troglodyte
+270 Unknown Creature New
+271 Satyr
+272 Fetid Essence
+273 Fetid Essence
+275 Reptalon
+276 Cu Sidhe
+277 Squirrel
+279 Ferret
+280 Minatuar Armored
+281 Minatuard W/Hammer
+282 Parrot Perched
+283 Unknown Perched Bird
+284 Charge of the Fallen
+285 Reaper Form Spellweaving
+287 Bloodworm
+290 Pig
+291 Pack Horse
+292 pack Llama
+293 Vollum
+300 Crystal Elemental
+301 Tree Fellow
+302 Skittering Hopper
+303 Devourer of Souls
+304 Flesh Golem
+305 Gore Fiend
+306 Impaler
+307 Gibberling
+308 Done Demon
+309 Patchwork Skeleton
+310 Wailing Banshee
+311 Shadow Knight
+312 Abyssmal Horror
+313 Darknight Creeper
+314 Ravager
+315 Flesh Renderer
+316 Wanderer of the Void
+317 Vampire Bat
+318 Dark Father
+319 mound of Maggots
+334 Gray Goblin
+400 Human Male
+401 Human Female
+402 GM
+403 GM
+432 Ridable Boura
+573 Death Vortex
+574 Blade Spirits
+605 Elf Male
+606 Elf Female
+607 GM
+608 GM
+666 Gargoyle Male
+667 Gargoyle Female
+668 GM
+669 GM
+689 Timelord
+694 Gargoyle Male Death
+695 Gargoyle Female Death
+704 Shadowlords New
+705 Stone Form Mysticism
+713 Abyssal Infernal
+714 Iron Beetle
+715 Lowland Boura
+716 Chicken Lizard
+717 Clockwork Scorpion
+718 Fairy Dragon
+719 Unkown Wolf Creature New
+720 Lava Elemental
+721 Maddening Horror
+722 Putrid Undead Gargoyle
+723 Green Goblin
+724 Gremlin
+725 Homunculus
+726 Kepetch
+727 Kepetch Ambusher
+728 Medusa
+729 paralithode
+730 Raptor
+732 Rotworm
+733 Skree
+734 Toxic Slith
+735 Navrey Night-Eyes
+736 Wolf Spider
+737 Trapdoor Spider
+738 Fire Ant
+739 Leather Wolf
+740 Dream Wraith
+741 Slasher of Viels
+742 Charybdis
+743 Tentacles of Osiredon the Scalis Enforcer
+744 Bright White Human Male
+745 Birght White Human Female
+746 Horrific Beast Necromancy Form 1
+747 Wailing Banshee Necro Female Form
+748 Wraith Necro Male Form
+749 Lichform Necro
+750 Human Male
+751 Human Female
+752 Golem
+753 Enslaved Gargoyle
+754 Gargoyle Enforcer
+755 gargoyle Destroyer
+756 Exodus Overseer
+757 Exodus Minion
+758 Gargole Color Glitched In Directions
+763 Exodus Minion Huge
+764 Juka Warrior
+765 Juka Mage
+766 Juka Lord
+767 Betrayer
+767 Blackthorn Juggernaut
+770 Meer Mage
+771 Meer Warrior
+772 Meer Eternal
+773 Meer Captain
+774 Dawn
+775 Plague Beast
+776 Horde Minion Small
+777 Doppleganger
+778 Gazer Larva
+779 Bogling
+780 Bog Thing
+781 Red Solen Worker
+782 Red Solen Warrior
+783 Red Solen QUeen
+784 Arcane Demon
+785 Horrific Beast Moloch
+787 Ant Lion
+788 Sphinx
+789 Quagmire
+790 kaze komono
+791 Blue Beetle
+792 Chaos Demon
+793 Skeletal Steed
+794 Swamp Dragon Barded
+796 Horde Minion Large
+797 Richtor
+798 Ancient Wyrm
+799 Swamp Dragon Barded
+804 Red Solen Queen
+805 Red Solen Worker
+806 Red Solen Warrior
+807 Red Solen Queen
+808 red Solen Queen
+829 Rising Colossus
+830 Prime-Evil Lich
+831 Parrot (Tropical)
+832 Pheonix New
+970 Deathshroud
+987 GM
+990 Lord British
+991 Lord Blackthorn
+994 Dupri
+999 Multicolored Horde Demon
+1026 Uber Turkey
+1068 Oseridan The Scalis Enforcer
+1069 Ancient Hellhound
+1070 Werewolf
+1071 unknown Demon Lord
+1244 Charbydis New?
+1245 Glitchy Scalis Tentacles
+1246 Killer Pumpkin Demon Variant
+1247 Killer Pumpkin Japenese Demon Mask Variant
+1248 Exodus
+1249 Reward Robe Male
+1250 Reward Robe Female
+1251 Gargoyle Reward Robe Male
+1252 Gargoyle Reward Robe Female
+1253 King Blackthorn (Seems unfinished alignments are off for Up and down walking)
+1254 Tiger Light
+1255 Tiger Dark
+1285 Gargoyle Pet - Dimetrosaur
+1286 Reptile Bird - Gallusaurus
+1287 Fairy Dragon - Archaeosaurus
+1288 Dragon Turtle Boss
+1289 Najasaurus
+1290 Allosaurus
+1291 Saurosaurus
+1292 Anchisaur
+1293 Myrmidex
+1294 Baby Dragon Turtle
+
+1308 Gorilla_Giant
+1309 Baby_Tiger
+1400 Dino_Trex
+1401 Turanchula_Mount
+1402 Myrmidex_Drone
+1403 Myrmidex_Warrior
+1404 Myrmidex_Queen
+1405 DrSpector
+1406 Golem_Aztec
+1407 Horse_Unicorn_RB
+1408 Horse_Palomino
+1409 Dragon_Hildebrandt (MISSING ANIMATION)
+1410 Canine_Windrunner
+1415 Dino_Triceratops
+1416 Tiger_Sabertooth
+1417 Dragon_Small_Platinum
+1418 Dragon_Ele_Platinum
+1419 Dragon_Small_Crimson
+1420 Dragon_Ele_Crimson
+1421 Dragon_Small_Stygian
+1422 Dragon_Ele_Stygian
+1423 Fox_Small
+1424 Beetle_Rhino
+1425 Goat_Necromancer
+1426 Lion
+1427 Titan_Water_Tentacle
+1428 JackintheBox
+1431 Titan_Earth_Head
+1432 Titan_Air_Whirlwind
+1433 Titan_Fire_Demon

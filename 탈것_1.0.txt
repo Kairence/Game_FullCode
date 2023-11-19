@@ -1,0 +1,58 @@
+탈것 정리
+
+16016 = Chimera
+16017 = Cu Sidhe
+16018 = Charger of the Fallen
+16020 = Hiyrur
+16021 = beetle //사용 안함
+16023 = beetle //사용 안함
+16024 = swamp dragon
+16026 = Ridgback
+16027 = Uni
+16028 = Kiri
+16029 = Uni
+16030 = Fire steed
+16031 = Horse
+16032 = grey horse
+16033 = horse
+16034 = brown horse
+16035 = os
+16036 = zos
+16037 = zos
+16038 = llama
+16039 = nightmare
+16040 = Silver Steed (1,2)
+16041 = nightmare
+16042 = ethy horse
+16043 = ethy llama
+16044 = ethy os
+16045 = kirin
+16047 = Minax Warhorse (2)
+16048 = Shadow Lords Warhorse (2)
+16049 = COM Warhorse (2)
+16050 = True Brits Warhorse (2)
+16051 = seahorse
+16052 = uni
+16053 = nightmare
+16054 = nightmare
+16055 = darknightmare
+16056 = ridgbeack
+16058 = ridgeback
+16059 = undead horse
+16060 = beetle
+16061 = swamp dragon
+16062 = armored swamp dragon //용
+16069 = Polar Bear
+16070 : 보우라
+16071 : 호랑이
+16072 : 다크 호랑이
+16073 : 헬하운드
+16074 : 타란튤라
+16075 : 무지개 유니콘
+16076 : 쿠시데 업글
+16077 : 말
+16078 : 레드 동양용
+16079 : 공작
+16080 : 본 헬하운드
+16081 : 코코넛 크랩
+16082 : 전투멧돼지
