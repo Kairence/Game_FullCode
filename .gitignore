@@ -12,16 +12,14 @@
 /Honesty
 /Logs
 /Backups
-/Saves
-/Saves - 20221115
-/Saves - 20221207
-/Saves - 20231118
+/Saves*
 /Web
 /Docs
 /Reports
 /VitaNexCore
 /TheBox
 /.vs
+/Third Backup
 
 /staffHistory.xml
 /reportHistory.xml
