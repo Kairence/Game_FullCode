@@ -8,19 +8,19 @@ namespace Server.Items
 		public override bool IsArtifact { get { return true; } }
         public override int LabelNumber { get { return 1149961; } }
 
-        public override int InitMinHits { get { return 255; } }
-        public override int InitMaxHits { get { return 255; } }
-
         [Constructable]
         public RunedDriftwoodBow()
         {
 			//마법 치명 피해 50%, 마나 회복 0.5, 마법 치명 확률 3%
-            Hue = 2955;
-            WeaponAttributes.HitLightning = 40;
-            WeaponAttributes.HitLowerDefend = 40;
-            Attributes.WeaponSpeed = 30;
-            Attributes.WeaponDamage = 50;
-            Attributes.LowerAmmoCost = 15;
+			SuffixOption[0] = 3; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 45; //옵션 종류
+			SuffixOption[11] = 5000; //옵션 값
+			PrefixOption[12] = 21; //옵션 종류
+			SuffixOption[12] = 50; //옵션 값
+			PrefixOption[13] = 43; //옵션 종류
+			SuffixOption[13] = 300; //옵션 값
         }
 
         public RunedDriftwoodBow(Serial serial)

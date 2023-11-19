@@ -659,39 +659,39 @@ namespace Server
 		{
 			switch ( index )
 			{
-				case 0: return from.GetMaxResistance( ResistanceType.Physical ) / 100;
-				case 1: return from.GetMaxResistance( ResistanceType.Fire ) / 100;
-				case 2: return from.GetMaxResistance( ResistanceType.Cold ) / 100;
-				case 3: return from.GetMaxResistance( ResistanceType.Poison ) / 100;
-				case 4: return from.GetMaxResistance( ResistanceType.Energy ) / 100;
-                case 5: return Math.Min(999, AosAttributes.GetValue(from, AosAttribute.DefendChance) / 100);
+				case 0: return from.GetMaxResistance( ResistanceType.Physical );
+				case 1: return from.GetMaxResistance( ResistanceType.Fire );
+				case 2: return from.GetMaxResistance( ResistanceType.Cold );
+				case 3: return from.GetMaxResistance( ResistanceType.Poison );
+				case 4: return from.GetMaxResistance( ResistanceType.Energy );
+                case 5: return Math.Min(999, AosAttributes.GetValue(from, AosAttribute.DefendChance));
                 case 6: return 999;
-                case 7: return Math.Min(999, AosAttributes.GetValue(from, AosAttribute.AttackChance) / 100);
-                case 8: return Math.Min(999, AosAttributes.GetValue(from, AosAttribute.WeaponSpeed) / 100);
-                case 9: return Math.Min(1000, AosAttributes.GetValue(from, AosAttribute.WeaponDamage) / 100);
-                case 10: return Math.Min(100, AosAttributes.GetValue(from, AosAttribute.LowerRegCost) / 100);
-                case 11: return AosAttributes.GetValue(from, AosAttribute.SpellDamage) / 100;
-                case 12: return Math.Min(999, AosAttributes.GetValue(from, AosAttribute.CastRecovery) / 100);
-                case 13: return Math.Min(999, AosAttributes.GetValue(from, AosAttribute.CastSpeed) / 100);
-                case 14: return Math.Min(80, AosAttributes.GetValue(from, AosAttribute.LowerManaCost) / 100); // + BaseArmor.GetInherentLowerManaCost(from);
+                case 7: return Math.Min(999, AosAttributes.GetValue(from, AosAttribute.AttackChance));
+                case 8: return Math.Min(999, AosAttributes.GetValue(from, AosAttribute.WeaponSpeed));
+                case 9: return Math.Min(1000, AosAttributes.GetValue(from, AosAttribute.WeaponDamage));
+                case 10: return Math.Min(100, AosAttributes.GetValue(from, AosAttribute.LowerRegCost));
+                case 11: return AosAttributes.GetValue(from, AosAttribute.SpellDamage);
+                case 12: return Math.Min(999, AosAttributes.GetValue(from, AosAttribute.CastRecovery));
+                case 13: return Math.Min(999, AosAttributes.GetValue(from, AosAttribute.CastSpeed));
+                case 14: return Math.Min(80, AosAttributes.GetValue(from, AosAttribute.LowerManaCost) ); // + BaseArmor.GetInherentLowerManaCost(from);
                 
-                case 15: return (int)RegenRates.Mobile_HitsRegenRate(from) / 100; // HP   REGEN
-                case 16: return (int)RegenRates.Mobile_StamRegenRate(from) / 100; // Stam REGEN
-                case 17: return (int)RegenRates.Mobile_ManaRegenRate(from) / 100; // MANA REGEN
-                case 18: return Math.Min(1000, AosAttributes.GetValue(from, AosAttribute.ReflectPhysical) / 100); // reflect phys
-                case 19: return Math.Min(1000, AosAttributes.GetValue(from, AosAttribute.EnhancePotions) / 100); // enhance pots
+                case 15: return (int)RegenRates.Mobile_HitsRegenRate(from); // HP   REGEN
+                case 16: return (int)RegenRates.Mobile_StamRegenRate(from); // Stam REGEN
+                case 17: return (int)RegenRates.Mobile_ManaRegenRate(from); // MANA REGEN
+                case 18: return Math.Min(1000, AosAttributes.GetValue(from, AosAttribute.ReflectPhysical)); // reflect phys
+                case 19: return Math.Min(1000, AosAttributes.GetValue(from, AosAttribute.EnhancePotions)); // enhance pots
 
-                case 20: return AosAttributes.GetValue(from, AosAttribute.BonusStr) / 100 + from.GetStatOffset(StatType.Str) / 100; // str inc
-                case 21: return AosAttributes.GetValue(from, AosAttribute.BonusDex) / 100 + from.GetStatOffset(StatType.Dex) / 100; // dex inc
-                case 22: return AosAttributes.GetValue(from, AosAttribute.BonusInt) / 100 + from.GetStatOffset(StatType.Int) / 100; // int inc
+                case 20: return AosAttributes.GetValue(from, AosAttribute.BonusStr) + from.GetStatOffset(StatType.Str); // str inc
+                case 21: return AosAttributes.GetValue(from, AosAttribute.BonusDex) + from.GetStatOffset(StatType.Dex); // dex inc
+                case 22: return AosAttributes.GetValue(from, AosAttribute.BonusInt) + from.GetStatOffset(StatType.Int); // int inc
 
                 case 23: return 0; // hits neg
                 case 24: return 0; // stam neg
                 case 25: return 0; // mana neg
 
-                case 26: return AosAttributes.GetValue(from, AosAttribute.BonusHits) / 100; // hits inc
-                case 27: return AosAttributes.GetValue(from, AosAttribute.BonusStam) / 100; // stam inc
-                case 28: return AosAttributes.GetValue(from, AosAttribute.BonusMana) / 100; // mana inc
+                case 26: return AosAttributes.GetValue(from, AosAttribute.BonusHits); // hits inc
+                case 27: return AosAttributes.GetValue(from, AosAttribute.BonusStam); // stam inc
+                case 28: return AosAttributes.GetValue(from, AosAttribute.BonusMana); // mana inc
 				default: return 0;
 			}
         }

@@ -9,7 +9,14 @@ namespace Server.Items
         public RuneBladeOfKnowledge()
         {
 			//운 1, 명중률 40%
-            Attributes.SpellDamage = 5;
+			SuffixOption[0] = 2; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 3; //옵션 종류
+			SuffixOption[11] = 100; //옵션 값
+			PrefixOption[12] = 17; //옵션 종류
+			SuffixOption[12] = 4000; //옵션 값
+
         }
 
         public RuneBladeOfKnowledge(Serial serial)

@@ -9,7 +9,13 @@ namespace Server.Items
         public SingingAxe()
         {
 			//마법 치명 확률 10%, 체력 -300
-            SkillBonuses.SetValues(0, SkillName.Musicianship, 5);
+			SuffixOption[0] = 2; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 43; //옵션 종류
+			SuffixOption[11] = 1000; //옵션 값
+			PrefixOption[12] = 4; //옵션 종류
+			SuffixOption[12] = -30000; //옵션 값
         }
 
         public SingingAxe(Serial serial)

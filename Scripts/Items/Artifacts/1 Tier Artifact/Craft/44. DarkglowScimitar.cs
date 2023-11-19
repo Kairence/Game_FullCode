@@ -2,14 +2,20 @@ using System;
 
 namespace Server.Items
 {
-    public class DarkglowScimitar : RadiantScimitar
+    public class DarkglowScimitar : Scimitar
 	{
 		public override bool IsArtifact { get { return true; } }
         [Constructable]
         public DarkglowScimitar()
         {
 			//기력 증가 1000, 기력 회복 0.4
-            WeaponAttributes.HitDispel = 10;
+			SuffixOption[0] = 2; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 5; //옵션 종류
+			SuffixOption[11] = 100000; //옵션 값
+			PrefixOption[12] = 20; //옵션 종류
+			SuffixOption[12] = 40; //옵션 값
         }
 
         public DarkglowScimitar(Serial serial)

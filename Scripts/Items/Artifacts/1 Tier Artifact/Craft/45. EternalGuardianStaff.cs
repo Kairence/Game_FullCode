@@ -11,11 +11,23 @@ namespace Server.Items
         public EternalGuardianStaff()
         {		
 			//체 200, 방어율 100%, 모저 20%
-            Hue = 95;
-            SkillBonuses.SetValues(0, SkillName.Mysticism, 15.0);		
-            Attributes.SpellDamage = 10;
-            Attributes.LowerManaCost = 5;	
-            Attributes.SpellChanneling = 1;	
+			SuffixOption[0] = 7; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 4; //옵션 종류
+			SuffixOption[11] = 20000; //옵션 값
+			PrefixOption[12] = 18; //옵션 종류
+			SuffixOption[12] = 10000; //옵션 값
+			PrefixOption[13] = 12; //옵션 종류
+			SuffixOption[13] = 2000; //옵션 값
+			PrefixOption[14] = 13; //옵션 종류
+			SuffixOption[14] = 2000; //옵션 값
+			PrefixOption[15] = 14; //옵션 종류
+			SuffixOption[15] = 2000; //옵션 값
+			PrefixOption[16] = 15; //옵션 종류
+			SuffixOption[16] = 2000; //옵션 값	
+			PrefixOption[17] = 16; //옵션 종류
+			SuffixOption[17] = 2000; //옵션 값	
         }
 
         public EternalGuardianStaff(Serial serial)
@@ -23,20 +35,6 @@ namespace Server.Items
         {
         }
 
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);

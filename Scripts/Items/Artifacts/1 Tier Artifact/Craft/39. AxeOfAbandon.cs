@@ -12,14 +12,13 @@ namespace Server.Items
         public AxeOfAbandon() 
         {		
 		    //방어율 200%, 기력 400
-            Hue = 556;		
-            WeaponAttributes.HitLowerDefend = 40;
-            WeaponAttributes.BattleLust = 1;		
-            Attributes.AttackChance = 15;
-            Attributes.DefendChance = 10;	
-            Attributes.CastSpeed = 1;	
-            Attributes.WeaponSpeed = 30;
-            Attributes.WeaponDamage = 50;		
+			SuffixOption[0] = 6; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 18; //옵션 종류
+			SuffixOption[11] = 20000; //옵션 값
+			PrefixOption[12] = 5; //옵션 종류
+			SuffixOption[12] = 40000; //옵션 값
         }
 
         public AxeOfAbandon(Serial serial)
@@ -27,20 +26,6 @@ namespace Server.Items
         {
         }
 
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);

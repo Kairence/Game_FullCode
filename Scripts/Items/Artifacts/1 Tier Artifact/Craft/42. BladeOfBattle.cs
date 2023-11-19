@@ -11,13 +11,15 @@ namespace Server.Items
         public BladeOfBattle() 
         {
 			//치유량 60, 체 300, 마 300
-            Hue = 2045;		
-            WeaponAttributes.HitLowerDefend = 40;
-            WeaponAttributes.BattleLust = 1;
-            Attributes.AttackChance = 15;
-            Attributes.DefendChance = 10;
-            Attributes.WeaponSpeed = 25;
-            Attributes.WeaponDamage = 50;
+			SuffixOption[0] = 3; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 47; //옵션 종류
+			SuffixOption[11] = 6000; //옵션 값
+			PrefixOption[12] = 4; //옵션 종류
+			SuffixOption[12] = 30000; //옵션 값
+			PrefixOption[13] = 6; //옵션 종류
+			SuffixOption[13] = 30000; //옵션 값
         }
 
         public BladeOfBattle(Serial serial)
@@ -25,21 +27,6 @@ namespace Server.Items
         {
         }
 
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }    		
-        
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);

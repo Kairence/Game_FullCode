@@ -247,7 +247,7 @@ namespace Server.Items
         }
     }
 
-    public class DemonForks : Kryss //31번 악마사냥 크리스
+    public class DemonForks : Kryss //30번 악마사냥 크리스
     {
 		public override bool IsArtifact { get { return true; } }
         public override int ArtifactRarity
@@ -262,8 +262,13 @@ namespace Server.Items
             : base()
         {
 			//데몬슬 300%, 공속 20%
-			PrefixOption[80] = 1;
-			PrefixOption[81] = 61;
+			SuffixOption[0] = 2; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 61; //옵션 종류
+			SuffixOption[11] = 100000; //옵션 값
+			PrefixOption[12] = 40; //옵션 종류
+			SuffixOption[12] = 2000; //옵션 값
         }
 
         public DemonForks(Serial serial)
@@ -294,7 +299,7 @@ namespace Server.Items
         }
     }
 
-    public class DragonNunchaku : Club //용 조각 몽둥이
+    public class DragonNunchaku : Club //31. 용 조각 몽둥이
     {
 		public override bool IsArtifact { get { return true; } }
         public override int ArtifactRarity
@@ -309,8 +314,11 @@ namespace Server.Items
             : base()
         {
 			//물치확 8%
-			PrefixOption[80] = 1;
-			PrefixOption[81] = 54;
+			SuffixOption[0] = 1; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 42; //옵션 종류
+			SuffixOption[11] = 800; //옵션 값
         }
 
         public DragonNunchaku(Serial serial)
@@ -357,8 +365,15 @@ namespace Server.Items
             : base()
         {
 			//곤충 피해 200%, 무기 피해 60%, 공속 20%
-			PrefixOption[80] = 1;
-			PrefixOption[81] = 60;
+			SuffixOption[0] = 3; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 59; //옵션 종류
+			SuffixOption[11] = 20000; //옵션 값
+			PrefixOption[12] = 7; //옵션 종류
+			SuffixOption[12] = 6000; //옵션 값
+			PrefixOption[13] = 40; //옵션 종류
+			SuffixOption[13] = 2000; //옵션 값
         }
 
         public PeasantsBokuto(Serial serial)
@@ -389,7 +404,7 @@ namespace Server.Items
         }
     }
 
-    public class PilferedDancerFans : ExecutionersAxe //도난당한 사형집행인의 도끼
+    public class PilferedDancerFans : ExecutionersAxe //32. 도난당한 사형집행인의 도끼
     {
 		public override bool IsArtifact { get { return true; } }
         public override int ArtifactRarity
@@ -403,8 +418,14 @@ namespace Server.Items
         public PilferedDancerFans()
             : base()
         {
-			PrefixOption[80] = 1;
-			PrefixOption[81] = 3;
+			//물리치명피해 10%, 공속 20%
+			SuffixOption[0] = 2; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 44; //옵션 종류
+			SuffixOption[11] = 1000; //옵션 값
+			PrefixOption[12] = 40; //옵션 종류
+			SuffixOption[12] = 2000; //옵션 값
         }
 
         public PilferedDancerFans(Serial serial)
@@ -436,7 +457,7 @@ namespace Server.Items
     }
 
 
-    public class TomeOfEnlightenment : Magerybook //깨우침의 고서
+    public class TomeOfEnlightenment : Magerybook //33. 깨우침의 고서
     {
 		public override bool IsArtifact { get { return true; } }
         public override int ArtifactRarity
@@ -451,11 +472,15 @@ namespace Server.Items
             : base()
         {
             LootType = LootType.Regular;
-            Hue = 0x455;
 
 			//지능 1, 마나 200
-			PrefixOption[80] = 1;
-			PrefixOption[81] = 2;
+			SuffixOption[0] = 2; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 2; //옵션 종류
+			SuffixOption[11] = 100; //옵션 값
+			PrefixOption[12] = 6; //옵션 종류
+			SuffixOption[12] = 20000; //옵션 값
         }
 
         public TomeOfEnlightenment(Serial serial)
@@ -576,7 +601,7 @@ namespace Server.Items
     }
 	
 
-    public class TheDestroyer : Halberd  //파괴의 할버드
+    public class TheDestroyer : Halberd  //34. 파괴의 할버드
     {
 		public override bool IsArtifact { get { return true; } }
         [Constructable]
@@ -584,11 +609,13 @@ namespace Server.Items
             : base()
         {
 			//무피 300%, 체력 -300
-            WeaponAttributes.HitLeechStam = 40;
-
-            Attributes.BonusStr = 6;
-            Attributes.AttackChance = 10;
-            Attributes.WeaponDamage = 50;
+			SuffixOption[0] = 2; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 7; //옵션 종류
+			SuffixOption[11] = 30000; //옵션 값
+			PrefixOption[12] = 4; //옵션 종류
+			SuffixOption[12] = -30000; //옵션 값
         }
 
         public TheDestroyer(Serial serial)
@@ -713,7 +740,7 @@ namespace Server.Items
         }
     }
 
-    public class HanzosBow : Yumi //한조의 유미
+    public class HanzosBow : Yumi //35. 한조의 유미
     {
 		public override bool IsArtifact { get { return true; } }
         [Constructable]
@@ -721,12 +748,13 @@ namespace Server.Items
             : base()
         {
 			//파충류슬 300%, 공속 20%
-            WeaponAttributes.HitLeechHits = 40;
-            WeaponAttributes.SelfRepair = 3;
-
-            Attributes.WeaponDamage = 50;
-
-            SkillBonuses.SetValues(0, SkillName.Ninjitsu, 10);
+			SuffixOption[0] = 2; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 60; //옵션 종류
+			SuffixOption[11] = 100000; //옵션 값
+			PrefixOption[12] = 40; //옵션 종류
+			SuffixOption[12] = 2000; //옵션 값
         }
 
         public HanzosBow(Serial serial)
@@ -1089,7 +1117,7 @@ namespace Server.Items
                 Slayer = SlayerGroup.Groups[Utility.Random(SlayerGroup.Groups.Length - 1)].Super.Name;
         }
     }
-    public class Exiler : ElvenCompositeLongbow //은색의 엘프 합성 장궁
+    public class Exiler : ElvenCompositeLongbow //37. 은색의 엘프 합성 장궁
     {
 		public override bool IsArtifact { get { return true; } }
         public override int ArtifactRarity
@@ -1104,11 +1132,15 @@ namespace Server.Items
             : base()
         {
 			//악마슬 200%, 무피 60%, 공속 20%
-            WeaponAttributes.HitDispel = 33;
-            Slayer = SlayerName.Exorcism;
-
-            Attributes.WeaponDamage = 40;
-            Attributes.WeaponSpeed = 20;
+			SuffixOption[0] = 3; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 61; //옵션 종류
+			SuffixOption[11] = 20000; //옵션 값
+			PrefixOption[12] = 7; //옵션 종류
+			SuffixOption[12] = 6000; //옵션 값
+			PrefixOption[13] = 40; //옵션 종류
+			SuffixOption[13] = 2000; //옵션 값
         }
 
         public Exiler(Serial serial)

@@ -10,7 +10,7 @@ namespace Server.Items
         {
             get
             {
-                return 2;
+                return 1;
             }
         }
 
@@ -18,10 +18,13 @@ namespace Server.Items
         public OrcishBow()
         {
 			//요정슬 300%, 공속 20%
-            Hue = 1107;
-			PrefixOption[80] = 1;
-			PrefixOption[81] = 7;
-			PrefixOption[82] = 73;
+			SuffixOption[0] = 2; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 62; //옵션 종류
+			SuffixOption[11] = 100000; //옵션 값
+			PrefixOption[12] = 40; //옵션 종류
+			SuffixOption[12] = 2000; //옵션 값
         }
 
         public OrcishBow(Serial serial)

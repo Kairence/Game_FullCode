@@ -9,8 +9,22 @@ namespace Server.Items
         public TrueWarCleaver()
         {
 			//체력 1000, 모든 저항력 40%
-            Attributes.WeaponDamage = 4;
-            Attributes.RegenHits = 2;
+			SuffixOption[0] = 6; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 4; //옵션 종류
+			SuffixOption[11] = 100000; //옵션 값
+			PrefixOption[12] = 12; //옵션 종류
+			SuffixOption[12] = 4000; //옵션 값
+			PrefixOption[13] = 13; //옵션 종류
+			SuffixOption[13] = 4000; //옵션 값
+			PrefixOption[14] = 14; //옵션 종류
+			SuffixOption[14] = 4000; //옵션 값
+			PrefixOption[15] = 15; //옵션 종류
+			SuffixOption[15] = 4000; //옵션 값
+			PrefixOption[16] = 16; //옵션 종류
+			SuffixOption[16] = 4000; //옵션 값
+
         }
 
         public TrueWarCleaver(Serial serial)

@@ -11,17 +11,13 @@ namespace Server.Items
         public ResonantStaffofEnlightenment()
         {
 			//매저리 5, 마나 450
-            Hue = 2401;
-            WeaponAttributes.HitMagicArrow = 40;
-            WeaponAttributes.MageWeapon = 20;
-            Attributes.SpellChanneling = 1;
-            Attributes.DefendChance = 10;
-            Attributes.WeaponSpeed = 20;
-            Attributes.WeaponDamage = -40;
-            Attributes.LowerManaCost = 5;			
-            AbsorptionAttributes.ResonanceCold = 20;	
-            //AosElementDamages.Cold = 100;		
-			Attributes.BonusInt = 5;			
+			SuffixOption[0] = 2; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 75; //옵션 종류
+			SuffixOption[11] = 500; //옵션 값
+			PrefixOption[12] = 6; //옵션 종류
+			SuffixOption[12] = 45000; //옵션 값		
         }
 
         public ResonantStaffofEnlightenment(Serial serial)
@@ -29,20 +25,6 @@ namespace Server.Items
         {
         }
 
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);

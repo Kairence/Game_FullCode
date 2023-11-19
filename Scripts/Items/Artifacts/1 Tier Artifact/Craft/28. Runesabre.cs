@@ -9,8 +9,14 @@ namespace Server.Items
         public Runesabre()
         {
 			//거미슬 300%, 공속 20%
-            SkillBonuses.SetValues(0, SkillName.MagicResist, 5.0);
-            WeaponAttributes.MageWeapon = -29;
+			SuffixOption[0] = 2; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 59; //옵션 종류
+			SuffixOption[11] = 100000; //옵션 값
+			PrefixOption[12] = 40; //옵션 종류
+			SuffixOption[12] = 2000; //옵션 값
+
         }
 
         public Runesabre(Serial serial)

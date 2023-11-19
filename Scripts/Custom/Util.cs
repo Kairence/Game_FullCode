@@ -1224,6 +1224,7 @@ namespace Server.Misc
 			return rank;
 		}
 		
+
 		public static Type[] Monster_1Tier_Artifact =
 		{
 			typeof( TomeOfEnlightenment ), typeof( PilferedDancerFans ), typeof( PeasantsBokuto ), typeof( DragonNunchaku ), typeof( DemonForks ), 
@@ -1600,9 +1601,14 @@ namespace Server.Misc
 			tier = Math.Min( Math.Max(tier, 0 ), totalMaxTier );
 			return tier;
 		}
+
+
+		#region 유물 설정
+
+		#endregion
+		
 		
         //아이템 옵션 설정
-
 		#region 신규 옵션 코드
 			//1080578부터 시작
         public static readonly int[,,] NewEquipOption = new int[,,]
@@ -2393,56 +2399,53 @@ namespace Server.Misc
 				int equipLine = 0;
 				int skilluse = 0;
 				
-				if( rank <= 0 )
+				item.SuffixOption[2] = NewUpgradeOptionStock[rank];
+
+				if( !artifact && rank <= 0 )
 					return;
 
-				#region 유물 옵션 설정
-				if (artifact )
+				#region 장비 옵션 설정
+				if( artifact )
 				{
-					
-					
+					item.ItemPower = (ItemPower)Enum.ToObject(typeof(ItemPower), item.SuffixOption[1] + 3);
 				}
-				else
+				else if( item is BaseWeapon )
 				{
-					#region 장비 옵션 설정
-					if( item is BaseWeapon )
-					{
-						BaseWeapon newmake = item as BaseWeapon;
-						check = WeaponList(newmake);
-					}
-					
-					else if( item is BaseArmor )
-					{
-						BaseArmor newmake = item as BaseArmor;
-						check = ArmorList(newmake);
-						equipLine = 1;
-					}
-					else if( item is BaseClothing )
-					{
-						BaseClothing newmake = item as BaseClothing;
-						if( !(newmake.Layer == Layer.Neck || newmake.Layer == Layer.Gloves || newmake.Layer == Layer.Arms || newmake.Layer == Layer.Helm || newmake.Layer == Layer.Pants || newmake.Layer == Layer.InnerTorso ) )
-						{
-							return;
-						}
-
-						check = 11;
-						equipLine = 1;
-					}
-					else if( item is BaseJewel )
-					{
-						BaseJewel newmake = item as BaseJewel;
-						check = JewelList(newmake);					
-						equipLine = 2;
-					}
-					
-					else if( item is Spellbook )
-					{
-						check = 9;
-					}
-					#endregion				
+					BaseWeapon newmake = item as BaseWeapon;
+					check = WeaponList(newmake);
 				}
+				
+				else if( item is BaseArmor )
+				{
+					BaseArmor newmake = item as BaseArmor;
+					check = ArmorList(newmake);
+					equipLine = 1;
+				}
+				else if( item is BaseClothing )
+				{
+					BaseClothing newmake = item as BaseClothing;
+					if( !(newmake.Layer == Layer.Neck || newmake.Layer == Layer.Gloves || newmake.Layer == Layer.Arms || newmake.Layer == Layer.Helm || newmake.Layer == Layer.Pants || newmake.Layer == Layer.InnerTorso ) )
+					{
+						return;
+					}
 
-				if( artifact || ( check != -1 && equipLine != -1 ) )
+					check = 11;
+					equipLine = 1;
+				}
+				else if( item is BaseJewel )
+				{
+					BaseJewel newmake = item as BaseJewel;
+					check = JewelList(newmake);					
+					equipLine = 2;
+				}
+				
+				else if( item is Spellbook )
+				{
+					check = 9;
+				}
+				#endregion				
+
+				if( artifact || check != -1 )
 				{
 				
 					//신규 아이템 제작 코드
@@ -2454,7 +2457,7 @@ namespace Server.Misc
 					접두 0 : 신규 아이템 체크 유무. 기본 값 100
 					접미 0 : 옵션 갯수
 					접두 1 : 아이템 세부 내구도(10000 => 내구도 1 하락)
-					접미 1 : 유물 레벨
+					접미 1 : 유물 레벨 / 랭크 레벨
 					접두 2 : 옵션 최대값
 					접미 2 : 재련 값
 					
@@ -2479,10 +2482,10 @@ namespace Server.Misc
 							item.PrefixOption[11 + i] = -1;
 						}
 						item.PrefixOption[2] = NewRandomOptionStock[rank] / item.SuffixOption[0];
-						
-						Console.WriteLine("item.PrefixOption[2] : {0}, NewRandomOptionStock[rank] : {1}, item.SuffixOption[0] : {2}", item.PrefixOption[2], NewRandomOptionStock[rank], item.SuffixOption[0] );
 					}
 					
+					Console.WriteLine("item.SuffixOption[0] : {0}", item.SuffixOption[0]);
+
 					//접두 2, 접두 11 ~ 30, 접미 11 ~ 30 구현 코드
 					#region 옵션 설정 코드
 					if( item.SuffixOption[0] != 0 )
@@ -2494,585 +2497,582 @@ namespace Server.Misc
 						AosSkillBonuses skill = item.SkillBonuses;
 						AosArmorAttributes armor = item.ArmorAttributes;
 
-						if( item.PrefixOption[2] > 0 )
+						//옵션 지정 코드
+						
+						for( int i = 0; i < item.SuffixOption[0]; ++i)
 						{
-							//옵션 지정 코드
-							
-							for( int i = 0; i < item.SuffixOption[0]; ++i)
+							if( !artifact )
 							{
-								if( !artifact )
+								item.PrefixOption[i + 11] = EquipOptionType[check][Utility.RandomMinMax(0, EquipOptionType[check].GetLength(0) -1)];
+								
+								if( i != 0 )
 								{
-									item.PrefixOption[i + 11] = EquipOptionType[check][Utility.RandomMinMax(0, EquipOptionType[check].GetLength(0) -1)];
-									
-									if( i != 0 )
+									while(UniqueNumberCheck(item.PrefixOption[11], item.PrefixOption[12]))
 									{
-										while(UniqueNumberCheck(item.PrefixOption[11], item.PrefixOption[12]))
-										{
-											item.PrefixOption[12] = EquipOptionType[check][Utility.RandomMinMax(0, EquipOptionType[check].GetLength(0) -1)];
-										}
+										item.PrefixOption[12] = EquipOptionType[check][Utility.RandomMinMax(0, EquipOptionType[check].GetLength(0) -1)];
 									}
-
-									int score = NewEquipOption[item.PrefixOption[i + 11], equipLine, 1];
-									
-									if( score == 0 )
-									{
-										Console.WriteLine("Score Zero!!!. Count : {0}, item.PrefixOption[i + 11] : {1}", i + 1, item.PrefixOption[i + 11] );
-										return;
-									}
-									
-									int optionvalue = NewEquipOption[item.PrefixOption[i + 11],equipLine,  2];
-									
-									item.SuffixOption[i + 11] = ( item.PrefixOption[2] / score );
-									if( item.SuffixOption[i + 11] * score < item.PrefixOption[2] )
-									{
-										item.SuffixOption[i + 11]++;
-									}
-									item.SuffixOption[i + 11] *= optionvalue;
-									
-									Console.WriteLine("Item Number : {0}, Item Option : {1}, Item Value : {2}", i + 11, item.PrefixOption[i + 11], item.SuffixOption[i + 11] );									
 								}
-					
-								switch( item.PrefixOption[i + 11] )
+
+								int score = NewEquipOption[item.PrefixOption[i + 11], equipLine, 1];
+								
+								if( score == 0 )
 								{
-									case 0: //힘 증가
-									{
-										primary.BonusStr += item.SuffixOption[i + 11];
-										break;
-									}
-									case 1: //민첩 증가
-									{
-										primary.BonusDex += item.SuffixOption[i + 11];
-										break;
-									}
-									case 2: //지능 증가
-									{
-										primary.BonusInt += item.SuffixOption[i + 11];
-										break;
-									}
-									case 3: //운 증가
-									{
-										primary.Luck += item.SuffixOption[i + 11];
-										break;
-									}
-									case 4: //체력 증가
-									{
-										primary.BonusHits += item.SuffixOption[i + 11];
-										break;
-									}
-									case 5: //기력 증가
-									{
-										primary.BonusStam += item.SuffixOption[i + 11];
-										break;
-									}
-									case 6: //마나 증가
-									{
-										primary.BonusMana += item.SuffixOption[i + 11];
-										break;
-									}
-									case 7: //물리 피해 증가%
-									{
-										primary.WeaponDamage += item.SuffixOption[i + 11];
-										break;
-									}
-									case 8: //주문 피해 증가%
-									{
-										primary.SpellDamage += item.SuffixOption[i + 11];
-										break;
-									}
-									case 9: //관통 피해 증가%
-									{
-										absorp.ResonancePierce += item.SuffixOption[i + 11];
-										break;
-									}
-									case 10: //충격 피해 증가%
-									{
-										absorp.ResonanceKinetic += item.SuffixOption[i + 11];
-										break;
-									}
-									case 11: //출혈 피해 증가%
-									{
-										absorp.ResonanceBleed += item.SuffixOption[i + 11];
-										break;
-									}
-									case 12: //물리 저항%
-									{
-										weapon.ResistPhysicalBonus += item.SuffixOption[i + 11];
-										break;
-									}
-									case 13: //화염 저항%
-									{
-										weapon.ResistFireBonus += item.SuffixOption[i + 11];
-										break;
-									}
-									case 14: //냉기 저항%
-									{
-										weapon.ResistColdBonus += item.SuffixOption[i + 11];
-										break;
-									}
-									case 15: //독 저항%
-									{
-										weapon.ResistPoisonBonus += item.SuffixOption[i + 11];
-										break;
-									}
-									case 16: //에너지 저항%
-									{
-										weapon.ResistEnergyBonus += item.SuffixOption[i + 11];
-										break;
-									}
-									case 17: //명중률 증가%
-									{
-										primary.AttackChance += item.SuffixOption[i + 11];
-										break;
-									}
-									case 18: //방어율 증가%
-									{
-										primary.DefendChance += item.SuffixOption[i + 11];
-										break;
-									}
-									case 19: //체력 회복
-									{
-										primary.RegenHits += item.SuffixOption[i + 11];
-										break;
-									}
-									case 20: //기력 회복
-									{
-										primary.RegenStam += item.SuffixOption[i + 11];
-										break;
-									}
-									case 21: //마나 회복
-									{
-										primary.RegenMana += item.SuffixOption[i + 11];
-										break;
-									}
-									case 22: //물리 피해 증가%
-									{
-										primary.BalancedWeapon += item.SuffixOption[i + 11];
-										break;
-									}
-									case 23: //화염 피해 증가%
-									{
-										absorp.ResonanceFire += item.SuffixOption[i + 11];
-										break;
-									}
-									case 24: //냉기 피해 증가%
-									{
-										absorp.ResonanceCold += item.SuffixOption[i + 11];
-										break;
-									}
-									case 25: //독 피해 증가%
-									{
-										absorp.ResonancePoison += item.SuffixOption[i + 11];
-										break;
-									}
-									case 26: //에너지 피해 증가%
-									{
-										absorp.ResonanceEnergy += item.SuffixOption[i + 11];
-										break;
-									}
-									case 27: //광역 물리 피해 증가%
-									{
-										weapon.HitPhysicalArea += item.SuffixOption[i + 11];
-										break;
-									}
-									case 28: //광역 화염 피해 증가%
-									{
-										weapon.HitFireArea += item.SuffixOption[i + 11];
-										break;
-									}
-									case 29: //광역 냉기 피해 증가%
-									{
-										weapon.HitColdArea += item.SuffixOption[i + 11];
-										break;
-									}
-									case 30: //광역 독 피해 증가%
-									{
-										weapon.HitPoisonArea += item.SuffixOption[i + 11];
-										break;
-									}
-									case 31: //광역 에너지 피해 증가%
-									{
-										weapon.HitEnergyArea += item.SuffixOption[i + 11];
-										break;
-									}
-									case 32: //물리 피해 증가
-									{
-										absorp.EaterDamage += item.SuffixOption[i + 11];
-										break;
-									}
-									case 33: //화염 피해 증가
-									{
-										absorp.EaterFire += item.SuffixOption[i + 11];
-										break;
-									}
-									case 34: //냉기 피해 증가
-									{
-										absorp.EaterCold += item.SuffixOption[i + 11];
-										break;
-									}
-									case 35: //독 피해 증가
-									{
-										absorp.EaterPoison += item.SuffixOption[i + 11];
-										break;
-									}
-									case 36: //에너지 피해 증가
-									{
-										absorp.EaterEnergy += item.SuffixOption[i + 11];
-										break;
-									}
-									case 37: //체력 흡수
-									{
-										weapon.HitLeechHits += item.SuffixOption[i + 11];
-										break;
-									}
-									case 38: //기력 흡수
-									{
-										weapon.HitLeechStam += item.SuffixOption[i + 11];
-										break;
-									}
-									case 39: //마나 흡수
-									{
-										weapon.HitLeechMana += item.SuffixOption[i + 11];
-										break;
-									}
-									case 40: //공격 속도 증가
-									{
-										primary.WeaponSpeed += item.SuffixOption[i + 11];
-										break;
-									}
-									case 41: // 시전 속도 증가
-									{
-										primary.CastSpeed += item.SuffixOption[i + 11];
-										break;
-									}
-									case 42: //물리 치명타 확률 증가
-									{
-										primary.WeaponCritical += item.SuffixOption[i + 11];
-										break;
-									}
-									case 43: //마법 치명타 확률 증가
-									{
-										primary.CastRecovery += item.SuffixOption[i + 11];
-										break;
-									}
-									case 44: //물리 치명타 피해 증가
-									{
-										primary.Brittle += item.SuffixOption[i + 11];
-										break;
-									}
-									case 45: //마법 치명타 피해 증가
-									{
-										primary.SpellChanneling += item.SuffixOption[i + 11];
-										break;
-									}
-									case 46: //치유량 증가%
-									{
-										primary.EnhancePotions += item.SuffixOption[i + 11];
-										break;
-									}
-									case 47: //치유량 증가
-									{
-										primary.HealBonus += item.SuffixOption[i + 11];
-										break;
-									}
-									case 48: //관통 피해 증가
-									{
-										absorp.EaterPierce += item.SuffixOption[i + 11];
-										break;
-									}
-									case 49: //충격 피해 증가
-									{
-										absorp.EaterKinetic += item.SuffixOption[i + 11];
-										break;
-									}
-									case 50: //출혈 피해 증가
-									{
-										absorp.EaterBleed += item.SuffixOption[i + 11];
-										break;
-									}
-									case 51: //금화 획득 증가%
-									{
-										primary.NightSight += item.SuffixOption[i + 11];
-										break;
-									}
-									case 52: //화염 화살 공격%
-									{
-										weapon.HitMagicArrow += item.SuffixOption[i + 11];
-										break;
-									}
-									case 53: //체력 손상 공격%
-									{
-										weapon.HitHarm += item.SuffixOption[i + 11];
-										break;
-									}
-									case 54: //화염구 공격%
-									{
-										weapon.HitFireball += item.SuffixOption[i + 11];
-										break;
-									}
-									case 55: //번개 공격%
-									{
-										weapon.HitLightning += item.SuffixOption[i + 11];
-										break;
-									}
-									case 56: //영장류 피해 증가%
-									{
-										absorp.HumanoidDamage += item.SuffixOption[i + 11];
-										break;
-									}
-									case 57: //언데드 피해 증가%
-									{
-										absorp.UndeadDamage += item.SuffixOption[i + 11];
-										break;
-									}
-									case 58: //정령 피해 증가%
-									{
-										absorp.ElementalDamage += item.SuffixOption[i + 11];
-										break;
-									}
-									case 59: //곤충 피래 증가%
-									{
-										absorp.ArachnidDamage += item.SuffixOption[i + 11];
-										break;
-									}
-									case 60: //파충류 피해 증가%
-									{
-										absorp.ReptilianDamage += item.SuffixOption[i + 11];
-										break;
-									}
-									case 61: //악마 피해 증가%
-									{
-										absorp.AbyssDamage += item.SuffixOption[i + 11];
-										break;
-									}
-									case 62: //요정 피해 증가%
-									{
-										absorp.FeyDamage += item.SuffixOption[i + 11];
-										break;
-									}
-									case 63: //해부학 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Anatomy, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 64: //동물지식 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.AnimalLore, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 65: //방패술 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Parry, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 66: //평화연주 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Peacemaking, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 67: //은신감지 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.DetectHidden, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 68: //불협화음 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Discordance, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 69: //지능평가 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.EvalInt, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 70: //회복술 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Healing, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 71: //법의학 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Forensics, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 72: //목동술 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Herding, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 73: //은신 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Hiding, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 74: //도발연주 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Provocation, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 75: //마법학 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Magery, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 76: //마법저항 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.MagicResist, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 77: //전술 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Tactics, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 78: //훔쳐보기 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Snooping, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 79: //음악연주 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Musicianship, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 80: //포이즈닝 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Poisoning, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 81: //궁술 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Archery, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 82: //영혼대화 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.SpiritSpeak, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 83: //훔치기 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Stealing, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 84: //길들이기 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.AnimalTaming, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 85: //반사신경 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Tracking, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 86: //수의학 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Veterinary, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 87: //검술 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Swords, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 88: //둔기술 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Macing, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 89: //펜싱 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Fencing, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 90: //명상 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Meditation, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 91: //은신이동 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Stealth, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 92: //강령술 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Necromancy, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 93: //집중 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Focus, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 94: //기사도 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Chivalry, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 95: //무사도 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Bushido, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 96: //암술 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Ninjitsu, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 97: //주문조합 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Spellweaving, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 98: //신비술 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Mysticism, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-									case 99: //던지기 스킬 증가%
-									{
-										skill.SetValues(skilluse, SkillName.Throwing, (double)(item.SuffixOption[i + 11] * 0.01 ));
-										skilluse++;
-										break;
-									}
-								}		
+									Console.WriteLine("Score Zero!!!. Count : {0}, item.PrefixOption[i + 11] : {1}", i + 1, item.PrefixOption[i + 11] );
+									return;
+								}
+								
+								int optionvalue = NewEquipOption[item.PrefixOption[i + 11],equipLine,  2];
+								
+								item.SuffixOption[i + 11] = ( item.PrefixOption[2] / score );
+								if( item.SuffixOption[i + 11] * score < item.PrefixOption[2] )
+								{
+									item.SuffixOption[i + 11]++;
+								}
+								item.SuffixOption[i + 11] *= optionvalue;
+								
+								Console.WriteLine("Item Number : {0}, Item Option : {1}, Item Value : {2}", i + 11, item.PrefixOption[i + 11], item.SuffixOption[i + 11] );									
 							}
+							
+							switch( item.PrefixOption[i + 11] )
+							{
+								case 0: //힘 증가
+								{
+									primary.BonusStr += item.SuffixOption[i + 11];
+									break;
+								}
+								case 1: //민첩 증가
+								{
+									primary.BonusDex += item.SuffixOption[i + 11];
+									break;
+								}
+								case 2: //지능 증가
+								{
+									primary.BonusInt += item.SuffixOption[i + 11];
+									break;
+								}
+								case 3: //운 증가
+								{
+									primary.Luck += item.SuffixOption[i + 11];
+									break;
+								}
+								case 4: //체력 증가
+								{
+									primary.BonusHits += item.SuffixOption[i + 11];
+									break;
+								}
+								case 5: //기력 증가
+								{
+									primary.BonusStam += item.SuffixOption[i + 11];
+									break;
+								}
+								case 6: //마나 증가
+								{
+									primary.BonusMana += item.SuffixOption[i + 11];
+									break;
+								}
+								case 7: //물리 피해 증가%
+								{
+									primary.WeaponDamage += item.SuffixOption[i + 11];
+									break;
+								}
+								case 8: //주문 피해 증가%
+								{
+									primary.SpellDamage += item.SuffixOption[i + 11];
+									break;
+								}
+								case 9: //관통 피해 증가%
+								{
+									absorp.ResonancePierce += item.SuffixOption[i + 11];
+									break;
+								}
+								case 10: //충격 피해 증가%
+								{
+									absorp.ResonanceKinetic += item.SuffixOption[i + 11];
+									break;
+								}
+								case 11: //출혈 피해 증가%
+								{
+									absorp.ResonanceBleed += item.SuffixOption[i + 11];
+									break;
+								}
+								case 12: //물리 저항%
+								{
+									weapon.ResistPhysicalBonus += item.SuffixOption[i + 11];
+									break;
+								}
+								case 13: //화염 저항%
+								{
+									weapon.ResistFireBonus += item.SuffixOption[i + 11];
+									break;
+								}
+								case 14: //냉기 저항%
+								{
+									weapon.ResistColdBonus += item.SuffixOption[i + 11];
+									break;
+								}
+								case 15: //독 저항%
+								{
+									weapon.ResistPoisonBonus += item.SuffixOption[i + 11];
+									break;
+								}
+								case 16: //에너지 저항%
+								{
+									weapon.ResistEnergyBonus += item.SuffixOption[i + 11];
+									break;
+								}
+								case 17: //명중률 증가%
+								{
+									primary.AttackChance += item.SuffixOption[i + 11];
+									break;
+								}
+								case 18: //방어율 증가%
+								{
+									primary.DefendChance += item.SuffixOption[i + 11];
+									break;
+								}
+								case 19: //체력 회복
+								{
+									primary.RegenHits += item.SuffixOption[i + 11];
+									break;
+								}
+								case 20: //기력 회복
+								{
+									primary.RegenStam += item.SuffixOption[i + 11];
+									break;
+								}
+								case 21: //마나 회복
+								{
+									primary.RegenMana += item.SuffixOption[i + 11];
+									break;
+								}
+								case 22: //물리 피해 증가%
+								{
+									primary.BalancedWeapon += item.SuffixOption[i + 11];
+									break;
+								}
+								case 23: //화염 피해 증가%
+								{
+									absorp.ResonanceFire += item.SuffixOption[i + 11];
+									break;
+								}
+								case 24: //냉기 피해 증가%
+								{
+									absorp.ResonanceCold += item.SuffixOption[i + 11];
+									break;
+								}
+								case 25: //독 피해 증가%
+								{
+									absorp.ResonancePoison += item.SuffixOption[i + 11];
+									break;
+								}
+								case 26: //에너지 피해 증가%
+								{
+									absorp.ResonanceEnergy += item.SuffixOption[i + 11];
+									break;
+								}
+								case 27: //광역 물리 피해 증가%
+								{
+									weapon.HitPhysicalArea += item.SuffixOption[i + 11];
+									break;
+								}
+								case 28: //광역 화염 피해 증가%
+								{
+									weapon.HitFireArea += item.SuffixOption[i + 11];
+									break;
+								}
+								case 29: //광역 냉기 피해 증가%
+								{
+									weapon.HitColdArea += item.SuffixOption[i + 11];
+									break;
+								}
+								case 30: //광역 독 피해 증가%
+								{
+									weapon.HitPoisonArea += item.SuffixOption[i + 11];
+									break;
+								}
+								case 31: //광역 에너지 피해 증가%
+								{
+									weapon.HitEnergyArea += item.SuffixOption[i + 11];
+									break;
+								}
+								case 32: //물리 피해 증가
+								{
+									absorp.EaterDamage += item.SuffixOption[i + 11];
+									break;
+								}
+								case 33: //화염 피해 증가
+								{
+									absorp.EaterFire += item.SuffixOption[i + 11];
+									break;
+								}
+								case 34: //냉기 피해 증가
+								{
+									absorp.EaterCold += item.SuffixOption[i + 11];
+									break;
+								}
+								case 35: //독 피해 증가
+								{
+									absorp.EaterPoison += item.SuffixOption[i + 11];
+									break;
+								}
+								case 36: //에너지 피해 증가
+								{
+									absorp.EaterEnergy += item.SuffixOption[i + 11];
+									break;
+								}
+								case 37: //체력 흡수
+								{
+									weapon.HitLeechHits += item.SuffixOption[i + 11];
+									break;
+								}
+								case 38: //기력 흡수
+								{
+									weapon.HitLeechStam += item.SuffixOption[i + 11];
+									break;
+								}
+								case 39: //마나 흡수
+								{
+									weapon.HitLeechMana += item.SuffixOption[i + 11];
+									break;
+								}
+								case 40: //공격 속도 증가
+								{
+									primary.WeaponSpeed += item.SuffixOption[i + 11];
+									break;
+								}
+								case 41: // 시전 속도 증가
+								{
+									primary.CastSpeed += item.SuffixOption[i + 11];
+									break;
+								}
+								case 42: //물리 치명타 확률 증가
+								{
+									primary.WeaponCritical += item.SuffixOption[i + 11];
+									break;
+								}
+								case 43: //마법 치명타 확률 증가
+								{
+									primary.CastRecovery += item.SuffixOption[i + 11];
+									break;
+								}
+								case 44: //물리 치명타 피해 증가
+								{
+									primary.Brittle += item.SuffixOption[i + 11];
+									break;
+								}
+								case 45: //마법 치명타 피해 증가
+								{
+									primary.SpellChanneling += item.SuffixOption[i + 11];
+									break;
+								}
+								case 46: //치유량 증가%
+								{
+									primary.EnhancePotions += item.SuffixOption[i + 11];
+									break;
+								}
+								case 47: //치유량 증가
+								{
+									primary.HealBonus += item.SuffixOption[i + 11];
+									break;
+								}
+								case 48: //관통 피해 증가
+								{
+									absorp.EaterPierce += item.SuffixOption[i + 11];
+									break;
+								}
+								case 49: //충격 피해 증가
+								{
+									absorp.EaterKinetic += item.SuffixOption[i + 11];
+									break;
+								}
+								case 50: //출혈 피해 증가
+								{
+									absorp.EaterBleed += item.SuffixOption[i + 11];
+									break;
+								}
+								case 51: //금화 획득 증가%
+								{
+									primary.NightSight += item.SuffixOption[i + 11];
+									break;
+								}
+								case 52: //화염 화살 공격%
+								{
+									weapon.HitMagicArrow += item.SuffixOption[i + 11];
+									break;
+								}
+								case 53: //체력 손상 공격%
+								{
+									weapon.HitHarm += item.SuffixOption[i + 11];
+									break;
+								}
+								case 54: //화염구 공격%
+								{
+									weapon.HitFireball += item.SuffixOption[i + 11];
+									break;
+								}
+								case 55: //번개 공격%
+								{
+									weapon.HitLightning += item.SuffixOption[i + 11];
+									break;
+								}
+								case 56: //영장류 피해 증가%
+								{
+									absorp.HumanoidDamage += item.SuffixOption[i + 11];
+									break;
+								}
+								case 57: //언데드 피해 증가%
+								{
+									absorp.UndeadDamage += item.SuffixOption[i + 11];
+									break;
+								}
+								case 58: //정령 피해 증가%
+								{
+									absorp.ElementalDamage += item.SuffixOption[i + 11];
+									break;
+								}
+								case 59: //곤충 피래 증가%
+								{
+									absorp.ArachnidDamage += item.SuffixOption[i + 11];
+									break;
+								}
+								case 60: //파충류 피해 증가%
+								{
+									absorp.ReptilianDamage += item.SuffixOption[i + 11];
+									break;
+								}
+								case 61: //악마 피해 증가%
+								{
+									absorp.AbyssDamage += item.SuffixOption[i + 11];
+									break;
+								}
+								case 62: //요정 피해 증가%
+								{
+									absorp.FeyDamage += item.SuffixOption[i + 11];
+									break;
+								}
+								case 63: //해부학 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Anatomy, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 64: //동물지식 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.AnimalLore, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 65: //방패술 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Parry, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 66: //평화연주 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Peacemaking, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 67: //은신감지 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.DetectHidden, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 68: //불협화음 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Discordance, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 69: //지능평가 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.EvalInt, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 70: //회복술 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Healing, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 71: //법의학 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Forensics, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 72: //목동술 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Herding, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 73: //은신 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Hiding, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 74: //도발연주 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Provocation, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 75: //마법학 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Magery, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 76: //마법저항 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.MagicResist, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 77: //전술 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Tactics, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 78: //훔쳐보기 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Snooping, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 79: //음악연주 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Musicianship, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 80: //포이즈닝 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Poisoning, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 81: //궁술 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Archery, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 82: //영혼대화 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.SpiritSpeak, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 83: //훔치기 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Stealing, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 84: //길들이기 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.AnimalTaming, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 85: //반사신경 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Tracking, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 86: //수의학 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Veterinary, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 87: //검술 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Swords, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 88: //둔기술 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Macing, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 89: //펜싱 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Fencing, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 90: //명상 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Meditation, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 91: //은신이동 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Stealth, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 92: //강령술 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Necromancy, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 93: //집중 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Focus, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 94: //기사도 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Chivalry, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 95: //무사도 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Bushido, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 96: //암술 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Ninjitsu, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 97: //주문조합 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Spellweaving, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 98: //신비술 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Mysticism, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+								case 99: //던지기 스킬 증가%
+								{
+									skill.SetValues(skilluse, SkillName.Throwing, (double)(item.SuffixOption[i + 11] * 0.01 ));
+									skilluse++;
+									break;
+								}
+							}		
 						}
 					}
 
@@ -3097,9 +3097,142 @@ namespace Server.Misc
 			}
 		}
 		
-		public static void NewItemCreate( Item item, int rank, PlayerMobile pm = null, bool Enhance = false, bool artifact = false )
+		public static Item Artifact_Select(Item item, int rank )
+		{
+			//유물 체크
+			List <Type> artifactitemSelect = new List <Type>();
+			Item artifactitem = null;
+			switch(rank)
+			{
+				/*
+				case 5:
+				{
+					for( int i = 0; i < Artifact_5Tier.Length; ++i )
+					{
+						if( Artifact_Search( item.GetType().BaseType, Artifact_5Tier[i].GetType().BaseType.BaseType )
+						{
+							artifactitemSelect.Add( Artifact_5Tier[i] );
+						}
+					}
+					if( artifactitemSelect.Count > 0 )
+					{
+						artifactitem = (Item)Activator.CreateInstance(artifactitemSelect[Utility.Random(artifactitemSelect)]);
+						break;
+					}
+					else
+					{
+						goto case 4:
+					}
+				}
+				case 4:
+				{
+					for( int i = 0; i < Artifact_4Tier.Length; ++i )
+					{
+						if( Artifact_Search( item.GetType().BaseType, Artifact_4Tier[i].GetType().BaseType.BaseType )
+						{
+							artifactitemSelect.Add( Artifact_4Tier[i] );
+						}
+					}
+					if( artifactitemSelect.Count > 0 )
+					{
+						artifactitem = (Item)Activator.CreateInstance(artifactitemSelect[Utility.Random(artifactitemSelect)]);
+						break;
+					}
+					else
+					{
+						goto case 3:
+					}
+				}
+				case 3:
+				{
+					for( int i = 0; i < Artifact_3Tier.Length; ++i )
+					{
+						if( Artifact_Search( item.GetType().BaseType, Artifact_3Tier[i].GetType().BaseType.BaseType )
+						{
+							artifactitemSelect.Add( Artifact_3Tier[i] );
+						}
+					}
+					if( artifactitemSelect.Count > 0 )
+					{
+						artifactitem = (Item)Activator.CreateInstance(artifactitemSelect[Utility.Random(artifactitemSelect)]);
+						break;
+					}
+					else
+					{
+						goto case 2:
+					}
+				}
+				case 2:
+				{
+					for( int i = 0; i < Artifact_2Tier.Length; ++i )
+					{
+						if( Artifact_Search( item.GetType().BaseType, Artifact_2Tier[i].GetType().BaseType.BaseType )
+						{
+							artifactitemSelect.Add( Artifact_2Tier[i] );
+						}
+					}
+					if( artifactitemSelect.Count > 0 )
+					{
+						artifactitem = (Item)Activator.CreateInstance(artifactitemSelect[Utility.Random(artifactitemSelect)]);
+						break;
+					}
+					else
+					{
+						goto case 1:
+					}
+				}
+				*/
+
+				case 5:
+					goto case 4;
+				case 4:
+					goto case 3;
+				case 3:
+					goto case 2;
+				case 2:
+					goto case 1;
+				case 1:
+				{
+					for( int i = 0; i < Artifact_1Tier.Length; ++i )
+					{
+						if( item.GetType() == Artifact_1Tier[i].BaseType )
+						{
+							artifactitemSelect.Add( Artifact_1Tier[i] );
+						}
+					}
+					if( artifactitemSelect.Count > 0 )
+					{
+						artifactitem = (Item)Activator.CreateInstance(artifactitemSelect[Utility.Random(artifactitemSelect.Count)]);
+					}
+					break;
+				}
+				
+			}
+			return artifactitem;
+		}
+		
+		public static Type[] Artifact_1Tier = 
+		{
+			typeof( AdventurersMachete ), typeof( SilverEtchedMace )
+		};
+				
+		
+		public static void NewItemCreate( Item item, int rank, PlayerMobile pm = null, bool artifact = false, bool Enhance = false )
 		{
 			bool onlyone = false;
+			if( artifact )
+			{
+				Item artifactitem = Artifact_Select(item, rank);
+				if( artifactitem != null )
+				{
+					NewEquipOptionCreate( artifactitem, rank, onlyone, artifact );
+					artifactitem.Map = item.Map;
+					artifactitem.Location = item.Location;
+					NewItemDrop(item, artifactitem, pm);
+					item.Delete();
+					return;
+				}
+			}
 			#region 무기 설정
 			if( item is BaseWeapon )
 			{
@@ -3108,11 +3241,6 @@ namespace Server.Misc
 				if( make.Resource == CraftResource.Agapite || make.Resource == CraftResource.Heartwood || make.Resource == CraftResource.HornedLeather )
 				{
 					onlyone = true;
-				}
-				
-				if( make.Resource == CraftResource.Verite || make.Resource == CraftResource.Bloodwood || make.Resource == CraftResource.SpinedLeather )
-				{
-					artifact = true;
 				}
 				
 				if( Enhance && rank <= 5 )

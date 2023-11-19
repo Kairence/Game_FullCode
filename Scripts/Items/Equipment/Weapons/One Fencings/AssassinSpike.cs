@@ -11,7 +11,7 @@ namespace Server.Items
         public AssassinSpike()
             : base(0x2D21)
         {
-			SkillBonuses.SetValues(2, SkillName.Stelth, 5.0);			
+			SkillBonuses.SetValues(2, SkillName.Stealth, 5.0);			
             this.Weight = 4.0;
 		}
 

@@ -11,14 +11,25 @@ namespace Server.Items
         public AxesOfFury() 
         {	
 		////민첩 1, 공속 30%, 무피 50%, 모저 -20%
-            Hue = 33;			
-            WeaponAttributes.HitFireball = 45;
-            WeaponAttributes.HitLowerDefend = 40;			
-            Attributes.BonusDex = 5;			
-            Attributes.DefendChance = -15;			
-            Attributes.AttackChance = 20;	
-            Attributes.WeaponDamage = 45;
-            Attributes.WeaponSpeed = 30;	
+			SuffixOption[0] = 8; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 1; //옵션 종류
+			SuffixOption[11] = 100; //옵션 값
+			PrefixOption[12] = 40; //옵션 종류
+			SuffixOption[12] = 3000; //옵션 값
+			PrefixOption[13] = 7; //옵션 종류
+			SuffixOption[13] = 5000; //옵션 값
+			PrefixOption[14] = 12; //옵션 종류
+			SuffixOption[14] = -2000; //옵션 값
+			PrefixOption[15] = 13; //옵션 종류
+			SuffixOption[15] = -2000; //옵션 값
+			PrefixOption[16] = 14; //옵션 종류
+			SuffixOption[16] = -2000; //옵션 값	
+			PrefixOption[17] = 15; //옵션 종류
+			SuffixOption[17] = -2000; //옵션 값	
+			PrefixOption[18] = 16; //옵션 종류
+			SuffixOption[18] = -2000; //옵션 값	
         }
 
         public AxesOfFury(Serial serial)

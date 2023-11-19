@@ -9,8 +9,15 @@ namespace Server.Items
         public AssassinsShortbow()
         {
 			//물치확률 5%, 무피 50%, 명중 4%
-            Attributes.AttackChance = 3;
-            Attributes.WeaponDamage = 4;
+			SuffixOption[0] = 3; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 42; //옵션 종류
+			SuffixOption[11] = 500; //옵션 값
+			PrefixOption[12] = 7; //옵션 종류
+			SuffixOption[12] = 5000; //옵션 값
+			PrefixOption[13] = 17; //옵션 종류
+			SuffixOption[13] = 400; //옵션 값
         }
 
         public AssassinsShortbow(Serial serial)

@@ -8,7 +8,16 @@ namespace Server.Items
         public SerratedWarCleaver()
         {
 			//물리 피해 100, 무기 피해 100%, 명중률 20%
-            this.Attributes.WeaponDamage = 7;
+			SuffixOption[0] = 3; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 32; //옵션 종류
+			SuffixOption[11] = 10000; //옵션 값
+			PrefixOption[12] = 7; //옵션 종류
+			SuffixOption[12] = 10000; //옵션 값
+			PrefixOption[13] = 17; //옵션 종류
+			SuffixOption[13] = 2000; //옵션 값
+
         }
 
         public SerratedWarCleaver(Serial serial)

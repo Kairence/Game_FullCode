@@ -199,7 +199,7 @@ namespace Server.Items
 		}
 	}
 	
-	public class HailstormHuman : RepeatingCrossbow //난사의 연사 석궁
+	public class HailstormHuman : RepeatingCrossbow //36. 난사의 연사 석궁
 	{
 		public override bool IsArtifact { get { return true; } }
 		public override int LabelNumber { get { return 1153292; } } // Hailstorm
@@ -207,15 +207,12 @@ namespace Server.Items
         [Constructable]
 		public HailstormHuman()
 		{
-			Hue = 2714; 
+			//공속 80%
+			SuffixOption[0] = 1; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
 			
-			WeaponAttributes.HitLightning = 15;
-			WeaponAttributes.HitColdArea = 100;
-			WeaponAttributes.HitLeechMana = 30;
-			Attributes.AttackChance = 20;
-			Attributes.WeaponSpeed = 25;
-			Attributes.WeaponDamage = 50;
-			AosElementDamages.Cold = 100;
+			PrefixOption[11] = 40; //옵션 종류
+			SuffixOption[11] = 8000; //옵션 값
 		}
 		
 		public HailstormHuman(Serial serial) : base(serial)

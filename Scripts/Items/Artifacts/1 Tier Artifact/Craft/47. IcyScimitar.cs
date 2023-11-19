@@ -9,7 +9,11 @@ namespace Server.Items
         public IcyScimitar()
         {
 			//마법 치명 확률 8%
-            WeaponAttributes.HitHarm = 15;
+			SuffixOption[0] = 1; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 43; //옵션 종류
+			SuffixOption[11] = 800; //옵션 값
         }
 
         public IcyScimitar(Serial serial)

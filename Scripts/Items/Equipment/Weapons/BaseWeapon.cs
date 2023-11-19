@@ -6708,7 +6708,28 @@ namespace Server.Items
 					int tier = Util.ItemTierMaker( arms, rank, Misc.Util.ResourceNumberToNumber((int)Resource ), from );
 					PlayerMobile pm = from as PlayerMobile;
 					//Util.ItemCreate( this, rank, true, pm, tier );
-					Util.NewItemCreate(this, rank, pm );
+
+					bool artifact = false;
+					
+					if( Resource == CraftResource.Verite || Resource == CraftResource.Bloodwood || Resource == CraftResource.SpinedLeather )
+					{
+						if (tool is Item && ((Item)tool).Parent is Container)
+						{
+							Container cntnr = (Container)((Item)tool).Parent;
+
+							if (!cntnr.TryDropItem(from, this, false))
+							{
+								if(cntnr != from.Backpack)
+									from.AddToBackpack(this);
+								else
+									this.MoveToWorld(from.Location, from.Map);
+							}
+						}
+						artifact = true;
+					}
+				
+					
+					Util.NewItemCreate(this, rank, pm, artifact );
 				}
 			}
 

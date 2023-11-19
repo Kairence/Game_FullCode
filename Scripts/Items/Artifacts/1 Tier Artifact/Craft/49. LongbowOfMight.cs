@@ -9,7 +9,20 @@ namespace Server.Items
         public LongbowOfMight()
         {
 			//명중률 50%, 무기 피해 50%, 공속 30%, 체력 125, 기력 125
-            Attributes.WeaponDamage = 5;
+			SuffixOption[0] = 5; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 17; //옵션 종류
+			SuffixOption[11] = 5000; //옵션 값
+			PrefixOption[12] = 7; //옵션 종류
+			SuffixOption[12] = 5000; //옵션 값
+			PrefixOption[13] = 40; //옵션 종류
+			SuffixOption[13] = 3000; //옵션 값
+			PrefixOption[14] = 4; //옵션 종류
+			SuffixOption[14] = 12500; //옵션 값
+			PrefixOption[15] = 5; //옵션 종류
+			SuffixOption[15] = 12500; //옵션 값
+
         }
 
         public LongbowOfMight(Serial serial)

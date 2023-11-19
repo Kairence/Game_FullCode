@@ -9,7 +9,14 @@ namespace Server.Items
         public MagesRuneBlade()
         {
 			//마쟁 2 마나 200
-            Attributes.CastSpeed = 1;
+			SuffixOption[0] = 2; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 21; //옵션 종류
+			SuffixOption[11] = 200; //옵션 값
+			PrefixOption[12] = 6; //옵션 종류
+			SuffixOption[12] = 20000; //옵션 값
+
         }
 
         public MagesRuneBlade(Serial serial)

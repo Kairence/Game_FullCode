@@ -9,7 +9,15 @@ namespace Server.Items
         public RangersShortbow()
         {
 			//곤충슬 200%, 무피 60%, 공속 20%
-            Attributes.WeaponSpeed = 5;
+			SuffixOption[0] = 3; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 59; //옵션 종류
+			SuffixOption[11] = 20000; //옵션 값
+			PrefixOption[12] = 7; //옵션 종류
+			SuffixOption[12] = 6000; //옵션 값
+			PrefixOption[13] = 40; //옵션 종류
+			SuffixOption[13] = 2000; //옵션 값
         }
 
         public RangersShortbow(Serial serial)

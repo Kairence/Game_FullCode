@@ -9,13 +9,15 @@ namespace Server.Items
         public HolySword()
         {
 			//언데드슬 200%, 무피 60%, 공속 20%
-            Hue = 0x482;
-            LootType = LootType.Blessed;
-            Slayer = SlayerName.Silver;
-            Attributes.WeaponDamage = 40;
-            WeaponAttributes.SelfRepair = 10;
-            WeaponAttributes.LowerStatReq = 100;
-            WeaponAttributes.UseBestSkill = 1;
+			SuffixOption[0] = 2; //옵션 갯수
+			SuffixOption[1] = 1; //유물 레벨
+			
+			PrefixOption[11] = 57; //옵션 종류
+			SuffixOption[11] = 20000; //옵션 값
+			PrefixOption[12] = 7; //옵션 종류
+			SuffixOption[12] = 6000; //옵션 값
+			PrefixOption[13] = 40; //옵션 종류
+			SuffixOption[13] = 2000; //옵션 값
         }
 
         public HolySword(Serial serial)
@@ -30,20 +32,7 @@ namespace Server.Items
                 return 1062921;
             }
         }// The Holy Sword
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
+
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
