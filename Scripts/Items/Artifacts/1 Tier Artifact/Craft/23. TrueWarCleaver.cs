@@ -15,15 +15,15 @@ namespace Server.Items
 			PrefixOption[11] = 4; //옵션 종류
 			SuffixOption[11] = 100000; //옵션 값
 			PrefixOption[12] = 12; //옵션 종류
-			SuffixOption[12] = 4000; //옵션 값
+			SuffixOption[12] = 3500; //옵션 값
 			PrefixOption[13] = 13; //옵션 종류
-			SuffixOption[13] = 4000; //옵션 값
+			SuffixOption[13] = 6000; //옵션 값
 			PrefixOption[14] = 14; //옵션 종류
-			SuffixOption[14] = 4000; //옵션 값
+			SuffixOption[14] = 3500; //옵션 값
 			PrefixOption[15] = 15; //옵션 종류
-			SuffixOption[15] = 4000; //옵션 값
+			SuffixOption[15] = 3500; //옵션 값
 			PrefixOption[16] = 16; //옵션 종류
-			SuffixOption[16] = 4000; //옵션 값
+			SuffixOption[16] = 3500; //옵션 값
 
         }
 

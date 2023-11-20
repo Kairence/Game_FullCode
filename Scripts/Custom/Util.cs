@@ -3213,7 +3213,12 @@ namespace Server.Misc
 		
 		public static Type[] Artifact_1Tier = 
 		{
-			typeof( AdventurersMachete ), typeof( SilverEtchedMace )
+			typeof( AdventurersMachete ), typeof( SilverEtchedMace ), typeof( Luckblade ), typeof( RubyMace ), typeof( TrueSpellblade ), typeof( EmeraldMace ), typeof( ArcanistsWildStaff ), typeof( AncientWildStaff ), typeof( IcySpellblade ), 
+			typeof( FierySpellblade ), typeof( SpellbladeOfDefense ), typeof( TrueAssassinSpike ), typeof( ChargedAssassinSpike ), typeof( MagekillerAssassinSpike ), typeof( MagekillerLeafblade ), typeof( TrueLeafblade ), typeof( WoundingAssassinSpike ), typeof( LeafbladeOfEase ), typeof( ButchersWarCleaver ), 
+			typeof( KnightsWarCleaver ), typeof( OrcishMachete ), typeof( SerratedWarCleaver ), typeof( TrueWarCleaver ), typeof( DiseasedMachete ), typeof( MacheteOfDefense ), typeof( MagesRuneBlade ), typeof( RuneBladeOfKnowledge ), typeof( Runesabre ), typeof( OrcishBow ), 
+			typeof( DemonForks ), typeof( DragonNunchaku ), typeof( PeasantsBokuto ), typeof( PilferedDancerFans ), typeof( TomeOfEnlightenment ), typeof( TheDestroyer ), typeof( HanzosBow ), typeof( Exiler ), typeof( HailstormHuman ), typeof( AssassinsShortbow ), 
+			typeof( AxeOfAbandon ), typeof( AxesOfFury ), typeof( BarbedLongbow ), typeof( BladeOfBattle ), typeof( CorruptedRuneBlade ), typeof( DarkglowScimitar ), typeof( EternalGuardianStaff ), typeof( HolySword ), typeof( IcyScimitar ), typeof( JadeWarAxe ), 
+			typeof( LongbowOfMight ), typeof( MysticalShortbow ), typeof( PhantomStaff ), typeof( RangersShortbow ), typeof( SlayerLongbow ), typeof( ResonantStaffofEnlightenment ), typeof( RunedDriftwoodBow ), typeof( SingingAxe ), typeof( WindOfCorruption )
 		};
 				
 		

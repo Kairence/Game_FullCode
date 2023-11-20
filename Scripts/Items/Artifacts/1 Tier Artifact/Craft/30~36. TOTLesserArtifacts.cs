@@ -313,12 +313,18 @@ namespace Server.Items
         public DragonNunchaku()
             : base()
         {
-			//물치확 8%
-			SuffixOption[0] = 1; //옵션 갯수
+			//금화 획득 20%, 체력 100, 기력 100, 피해 증가 100%
+			SuffixOption[0] = 4; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
-			PrefixOption[11] = 42; //옵션 종류
-			SuffixOption[11] = 800; //옵션 값
+			PrefixOption[11] = 51; //옵션 종류
+			SuffixOption[11] = 2000; //옵션 값
+			PrefixOption[12] = 4; //옵션 종류
+			SuffixOption[12] = 10000; //옵션 값
+			PrefixOption[13] = 5; //옵션 종류
+			SuffixOption[13] = 10000; //옵션 값
+			PrefixOption[14] = 7; //옵션 종류
+			SuffixOption[14] = 10000; //옵션 값
         }
 
         public DragonNunchaku(Serial serial)
@@ -350,7 +356,7 @@ namespace Server.Items
     }
 
 
-    public class PeasantsBokuto : BlackStaff //농민의 검은 지팡이
+    public class PeasantsBokuto : BlackStaff //58. 농민의 검은 지팡이
     {
 		public override bool IsArtifact { get { return true; } }
         public override int ArtifactRarity
@@ -368,11 +374,11 @@ namespace Server.Items
 			SuffixOption[0] = 3; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
-			PrefixOption[11] = 59; //옵션 종류
-			SuffixOption[11] = 20000; //옵션 값
-			PrefixOption[12] = 7; //옵션 종류
+			PrefixOption[11] = 6; //옵션 종류
+			SuffixOption[11] = 60000; //옵션 값
+			PrefixOption[12] = 8; //옵션 종류
 			SuffixOption[12] = 6000; //옵션 값
-			PrefixOption[13] = 40; //옵션 종류
+			PrefixOption[13] = 41; //옵션 종류
 			SuffixOption[13] = 2000; //옵션 값
         }
 
@@ -571,20 +577,7 @@ namespace Server.Items
                 return 15;
             }
         }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
+
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
@@ -608,12 +601,12 @@ namespace Server.Items
         public TheDestroyer()
             : base()
         {
-			//무피 300%, 체력 -300
+			//물치확 10%, 체력 -300
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
-			PrefixOption[11] = 7; //옵션 종류
-			SuffixOption[11] = 30000; //옵션 값
+			PrefixOption[11] = 26; //옵션 종류
+			SuffixOption[11] = 1000; //옵션 값
 			PrefixOption[12] = 4; //옵션 종류
 			SuffixOption[12] = -30000; //옵션 값
         }
