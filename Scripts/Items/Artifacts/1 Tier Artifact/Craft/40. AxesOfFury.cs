@@ -10,7 +10,7 @@ namespace Server.Items
         [Constructable]
         public AxesOfFury() 
         {	
-		////민첩 1, 공속 30%, 무피 50%, 모저 -20%
+		////민첩 1, 공속 30%, 무피 25%, 모저 -20%
 			SuffixOption[0] = 8; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
@@ -19,7 +19,7 @@ namespace Server.Items
 			PrefixOption[12] = 40; //옵션 종류
 			SuffixOption[12] = 3000; //옵션 값
 			PrefixOption[13] = 7; //옵션 종류
-			SuffixOption[13] = 5000; //옵션 값
+			SuffixOption[13] = 2500; //옵션 값
 			PrefixOption[14] = 12; //옵션 종류
 			SuffixOption[14] = -2000; //옵션 값
 			PrefixOption[15] = 13; //옵션 종류

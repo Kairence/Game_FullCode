@@ -12,7 +12,7 @@ namespace Server.Items
         public Scythe()
             : base(0x26BA)
         {
-			SkillBonuses.SetValues(2, SkillName.Necromancy, 20.0);
+			SkillBonuses.SetValues(5, SkillName.Necromancy, 20.0);
             Weight = 25.0;
 		}
 

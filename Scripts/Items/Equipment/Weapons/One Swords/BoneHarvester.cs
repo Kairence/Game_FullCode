@@ -12,7 +12,7 @@ namespace Server.Items
             : base(0x26BB)
         {
             this.Weight = 3.0;
-			SkillBonuses.SetValues(2, SkillName.SpiritSpeak, 10.0);
+			SkillBonuses.SetValues(5, SkillName.SpiritSpeak, 10.0);
         }
 
         public BoneHarvester(Serial serial)

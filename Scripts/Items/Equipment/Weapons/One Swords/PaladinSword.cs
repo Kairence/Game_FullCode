@@ -9,8 +9,8 @@ namespace Server.Items
         public PaladinSword()
             : base(0x26CE)
         {
-			AbsorptionAttributes.UndeadDamage += 5000;
-			AbsorptionAttributes.AbyssDamage += 5000;
+			AbsorptionAttributes.UndeadDamage += 500;
+			AbsorptionAttributes.AbyssDamage += 500;
             this.Weight = 6.0;
        }
 

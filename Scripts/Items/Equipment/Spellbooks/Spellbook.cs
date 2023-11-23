@@ -398,35 +398,35 @@ namespace Server.Items
         {
             get
             {
-                return m_AosResistances.Physical + m_AosWeaponAttributes.ResistPhysicalBonus;
+                return m_AosResistances.Physical + m_AosWeaponAttributes.ResistPhysicalBonus / 100;
             }
         }
         public override int FireResistance
         {
             get
             {
-                return m_AosResistances.Fire + m_AosWeaponAttributes.ResistFireBonus;
+                return m_AosResistances.Fire + m_AosWeaponAttributes.ResistFireBonus / 100;
             }
         }
         public override int ColdResistance
         {
             get
             {
-                return m_AosResistances.Cold + m_AosWeaponAttributes.ResistColdBonus;
+                return m_AosResistances.Cold + m_AosWeaponAttributes.ResistColdBonus / 100;
             }
         }
         public override int PoisonResistance
         {
             get
             {
-                return m_AosResistances.Poison + m_AosWeaponAttributes.ResistPoisonBonus;
+                return m_AosResistances.Poison + m_AosWeaponAttributes.ResistPoisonBonus / 100;
             }
         }
         public override int EnergyResistance
         {
             get
             {
-                return m_AosResistances.Energy + m_AosWeaponAttributes.ResistEnergyBonus;
+                return m_AosResistances.Energy + m_AosWeaponAttributes.ResistEnergyBonus / 100;
             }
         }		
         public virtual bool CanFortify { get { return false; } }

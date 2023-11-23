@@ -8,14 +8,14 @@ namespace Server.Items
         [Constructable]
         public OrcishMachete()
         {
-			//요정 피해 200%, 무기 피해 60%, 공격 속도 20%
+			//요정 피해 20%, 무기 피해 30%, 공격 속도 20%
 			SuffixOption[0] = 3; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 62; //옵션 종류
-			SuffixOption[11] = 20000; //옵션 값
+			SuffixOption[11] = 2000; //옵션 값
 			PrefixOption[12] = 7; //옵션 종류
-			SuffixOption[12] = 6000; //옵션 값
+			SuffixOption[12] = 3000; //옵션 값
 			PrefixOption[13] = 40; //옵션 종류
 			SuffixOption[13] = 2000; //옵션 값
 

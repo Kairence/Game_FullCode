@@ -1331,7 +1331,7 @@ namespace Server.Items
         {
             get
             {
-                return BasePhysicalResistance + GetProtOffset() + m_PhysicalBonus + m_AosWeaponAttributes.ResistPhysicalBonus;
+                return BasePhysicalResistance + GetProtOffset() + m_PhysicalBonus + m_AosWeaponAttributes.ResistPhysicalBonus / 100;
             }
         }
 
@@ -1339,7 +1339,7 @@ namespace Server.Items
         {
             get
             {
-                return BaseFireResistance + GetProtOffset() + m_FireBonus + m_AosWeaponAttributes.ResistFireBonus;
+                return BaseFireResistance + GetProtOffset() + m_FireBonus + m_AosWeaponAttributes.ResistFireBonus / 100;
             }
         }
 
@@ -1347,7 +1347,7 @@ namespace Server.Items
         {
             get
             {
-                return BaseColdResistance + GetProtOffset() + m_ColdBonus + m_AosWeaponAttributes.ResistColdBonus;
+                return BaseColdResistance + GetProtOffset() + m_ColdBonus + m_AosWeaponAttributes.ResistColdBonus / 100;
             }
         }
 
@@ -1355,7 +1355,7 @@ namespace Server.Items
         {
             get
             {
-                return BasePoisonResistance + GetProtOffset() + m_PoisonBonus + m_AosWeaponAttributes.ResistPoisonBonus;
+                return BasePoisonResistance + GetProtOffset() + m_PoisonBonus + m_AosWeaponAttributes.ResistPoisonBonus / 100;
             }
         }
 
@@ -1363,7 +1363,7 @@ namespace Server.Items
         {
             get
             {
-                return BaseEnergyResistance + GetProtOffset() + m_EnergyBonus + m_AosWeaponAttributes.ResistEnergyBonus;
+                return BaseEnergyResistance + GetProtOffset() + m_EnergyBonus + m_AosWeaponAttributes.ResistEnergyBonus / 100;
             }
         }
 

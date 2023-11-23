@@ -12,9 +12,9 @@ namespace Server.Items
             : base(0x26C0)
         {
             this.Weight = 25.0;
-			SkillBonuses.SetValues(2, SkillName.Tactics, 20.0);
-			SkillBonuses.SetValues(3, SkillName.Fencing, 20.0);
-			SkillBonuses.SetValues(4, SkillName.Focus, 10.0);
+			SkillBonuses.SetValues(5, SkillName.Tactics, 20.0);
+			SkillBonuses.SetValues(6, SkillName.Fencing, 20.0);
+			SkillBonuses.SetValues(7, SkillName.Focus, 10.0);
 		}
 
         public Lance(Serial serial)

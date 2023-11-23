@@ -12,7 +12,7 @@ namespace Server.Items
             : base(0x13F8)
         {
             this.Weight = 3.0;
-			Attributes.SpellDamage += 7500;
+			Attributes.SpellDamage += 3750;
 		}
 
 

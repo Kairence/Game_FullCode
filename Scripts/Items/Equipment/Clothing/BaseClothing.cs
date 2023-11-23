@@ -481,35 +481,35 @@ namespace Server.Items
         {
             get
             {
-                return BasePhysicalResistance + m_AosResistances.Physical + m_AosWeaponAttributes.ResistPhysicalBonus;
+                return BasePhysicalResistance + m_AosResistances.Physical + m_AosWeaponAttributes.ResistPhysicalBonus / 100;
             }
         }
         public override int FireResistance
         {
             get
             {
-                return BaseFireResistance + m_AosResistances.Fire + m_AosWeaponAttributes.ResistFireBonus;
+                return BaseFireResistance + m_AosResistances.Fire + m_AosWeaponAttributes.ResistFireBonus / 100;
             }
         }
         public override int ColdResistance
         {
             get
             {
-                return BaseColdResistance + m_AosResistances.Cold + m_AosWeaponAttributes.ResistColdBonus;
+                return BaseColdResistance + m_AosResistances.Cold + m_AosWeaponAttributes.ResistColdBonus / 100;
             }
         }
         public override int PoisonResistance
         {
             get
             {
-                return BasePoisonResistance + m_AosResistances.Poison + m_AosWeaponAttributes.ResistPoisonBonus;
+                return BasePoisonResistance + m_AosResistances.Poison + m_AosWeaponAttributes.ResistPoisonBonus / 100;
             }
         }
         public override int EnergyResistance
         {
             get
             {
-                return BaseEnergyResistance + m_AosResistances.Energy + m_AosWeaponAttributes.ResistEnergyBonus;
+                return BaseEnergyResistance + m_AosResistances.Energy + m_AosWeaponAttributes.ResistEnergyBonus / 100;
             }
         }
         #endregion

@@ -11,8 +11,8 @@ namespace Server.Items
         public ExecutionersAxe()
             : base(0xF45)
         {
-			SkillBonuses.SetValues(2, SkillName.Anatomy, 20.0);
-			SkillBonuses.SetValues(3, SkillName.Swords, 20.0);
+			SkillBonuses.SetValues(5, SkillName.Anatomy, 20.0);
+			SkillBonuses.SetValues(6, SkillName.Swords, 20.0);
             this.Weight = 18.0;
         }
 

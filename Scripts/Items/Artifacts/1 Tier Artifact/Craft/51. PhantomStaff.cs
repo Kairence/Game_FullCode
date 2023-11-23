@@ -8,7 +8,7 @@ namespace Server.Items
         [Constructable]
         public PhantomStaff()
         {
-			//지능 0.5, 시전 속도 30%, 주피 30%, 물저 50%, 화저 -30%
+			//지능 0.5, 시전 속도 30%, 주피 15%, 물저 50%, 화저 -30%
 			SuffixOption[0] = 5; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
@@ -17,7 +17,7 @@ namespace Server.Items
 			PrefixOption[12] = 41; //옵션 종류
 			SuffixOption[12] = 3000; //옵션 값
 			PrefixOption[13] = 8; //옵션 종류
-			SuffixOption[13] = 3000; //옵션 값
+			SuffixOption[13] = 1500; //옵션 값
 			PrefixOption[14] = 12; //옵션 종류
 			SuffixOption[14] = 5000; //옵션 값
 			PrefixOption[15] = 13; //옵션 종류

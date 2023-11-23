@@ -11,7 +11,7 @@ namespace Server.Items
         {
             this.Weight = 7.0;
             this.Layer = Layer.TwoHanded;
-			SkillBonuses.SetValues(2, SkillName.Archery, 10.0);
+			SkillBonuses.SetValues(5, SkillName.Archery, 10.0);
 
 		}
 

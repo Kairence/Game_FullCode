@@ -324,11 +324,11 @@ namespace Server.Items
         public virtual bool CanRepair { get { return m_NegativeAttributes.NoRepair == 0; } }
 		public virtual bool CanAlter { get { return true; } }
 
-		public override int PhysicalResistance { get { return m_AosWeaponAttributes.ResistPhysicalBonus; } }
-		public override int FireResistance { get { return m_AosWeaponAttributes.ResistFireBonus; } }
-		public override int ColdResistance { get { return m_AosWeaponAttributes.ResistColdBonus; } }
-		public override int PoisonResistance { get { return m_AosWeaponAttributes.ResistPoisonBonus; } }
-		public override int EnergyResistance { get { return m_AosWeaponAttributes.ResistEnergyBonus; } }
+		public override int PhysicalResistance { get { return m_AosWeaponAttributes.ResistPhysicalBonus / 100; } }
+		public override int FireResistance { get { return m_AosWeaponAttributes.ResistFireBonus / 100; } }
+		public override int ColdResistance { get { return m_AosWeaponAttributes.ResistColdBonus / 100; } }
+		public override int PoisonResistance { get { return m_AosWeaponAttributes.ResistPoisonBonus / 100; } }
+		public override int EnergyResistance { get { return m_AosWeaponAttributes.ResistEnergyBonus / 100; } }
 
 		public virtual SkillName AccuracySkill { get { return SkillName.Tactics; } }
 
@@ -6383,6 +6383,14 @@ namespace Server.Items
 					}
 	
 				}
+				
+				//재료 옵션
+				if( PrefixOption[41] != 0 )
+				{
+					list.Add(1081001);
+					list.Add( PrefixOption[41] );
+				}
+				
 				if (HasSocket<Caddellite>())
 				{
 					list.Add(1158662); // Caddellite Infused

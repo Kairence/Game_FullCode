@@ -7,7 +7,7 @@ namespace Server.Items
         [Constructable]
         public AdventurersMachete()
         {
-			//금화 획득 20%, 체력 100, 기력 100, 피해 증가 100%
+			//금화 획득 20%, 체력 100, 기력 100, 피해 증가 50%
 			SuffixOption[0] = 4; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
@@ -18,7 +18,7 @@ namespace Server.Items
 			PrefixOption[13] = 5; //옵션 종류
 			SuffixOption[13] = 10000; //옵션 값
 			PrefixOption[14] = 7; //옵션 종류
-			SuffixOption[14] = 10000; //옵션 값
+			SuffixOption[14] = 5000; //옵션 값
 			
 			//PrefixOption[80] = 1;
 			//PrefixOption[81] = 51;

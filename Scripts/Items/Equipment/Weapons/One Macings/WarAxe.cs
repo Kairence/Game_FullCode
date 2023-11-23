@@ -12,8 +12,8 @@ namespace Server.Items
         public WarAxe()
             : base(0x13B0)
         {
-			SkillBonuses.SetValues(2, SkillName.Macing, 5.0);
-			SkillBonuses.SetValues(3, SkillName.Tactics, 5.0);
+			SkillBonuses.SetValues(5, SkillName.Macing, 5.0);
+			SkillBonuses.SetValues(6, SkillName.Tactics, 5.0);
 			this.Weight = 8.0;
         }
 

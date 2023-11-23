@@ -8,12 +8,12 @@ namespace Server.Items
         [Constructable]
         public Runesabre()
         {
-			//거미슬 300%, 공속 20%
+			//거미슬 30%, 공속 20%
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 59; //옵션 종류
-			SuffixOption[11] = 100000; //옵션 값
+			SuffixOption[11] = 3000; //옵션 값
 			PrefixOption[12] = 40; //옵션 종류
 			SuffixOption[12] = 2000; //옵션 값
 

@@ -11,7 +11,7 @@ namespace Server.Items
         [Constructable]
         public JadeWarAxe()
         {	
-			//힘 1, 체 100, 무기피해 20%
+			//힘 1, 체 100, 무기피해 10%
 			SuffixOption[0] = 3; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
@@ -20,7 +20,7 @@ namespace Server.Items
 			PrefixOption[12] = 4; //옵션 종류
 			SuffixOption[12] = 10000; //옵션 값
 			PrefixOption[13] = 7; //옵션 종류
-			SuffixOption[13] = 2000; //옵션 값
+			SuffixOption[13] = 1000; //옵션 값
         }
 
         public JadeWarAxe(Serial serial)

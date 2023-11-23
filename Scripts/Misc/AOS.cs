@@ -1729,6 +1729,7 @@ namespace Server
                     value += attrs[attribute];
             }
 
+			value /= 100;
             return value;
         }
 
@@ -2306,6 +2307,7 @@ namespace Server
                 }
             }
 
+			value /= 100;
             return value;
         }
 
@@ -2534,6 +2536,7 @@ namespace Server
                     value += attrs[attribute];
             }
 
+			value /= 100;
             return value;
         }
 
@@ -3330,6 +3333,7 @@ namespace Server
 
             value += SkillMasterySpell.GetAttributeBonus(m, attribute);
 
+			value /= 100;
             return value;
         }
 

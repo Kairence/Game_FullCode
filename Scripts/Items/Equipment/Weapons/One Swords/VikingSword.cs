@@ -11,7 +11,7 @@ namespace Server.Items
         public VikingSword()
             : base(0x13B9)
         {
-			SkillBonuses.SetValues(2, SkillName.Tactics, 15.0);
+			SkillBonuses.SetValues(5, SkillName.Tactics, 15.0);
             this.Weight = 6.0;
         }
 

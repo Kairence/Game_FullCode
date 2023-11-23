@@ -8,14 +8,14 @@ namespace Server.Items
         [Constructable]
         public HolySword()
         {
-			//언데드슬 200%, 무피 60%, 공속 20%
+			//언데드슬 20%, 무피 30%, 공속 20%
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 57; //옵션 종류
-			SuffixOption[11] = 20000; //옵션 값
+			SuffixOption[11] = 2000; //옵션 값
 			PrefixOption[12] = 7; //옵션 종류
-			SuffixOption[12] = 6000; //옵션 값
+			SuffixOption[12] = 3000; //옵션 값
 			PrefixOption[13] = 40; //옵션 종류
 			SuffixOption[13] = 2000; //옵션 값
         }

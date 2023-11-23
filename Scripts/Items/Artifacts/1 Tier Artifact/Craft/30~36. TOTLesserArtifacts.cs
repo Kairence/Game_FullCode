@@ -313,7 +313,7 @@ namespace Server.Items
         public DragonNunchaku()
             : base()
         {
-			//금화 획득 20%, 체력 100, 기력 100, 피해 증가 100%
+			//금화 획득 20%, 체력 100, 기력 100, 피해 증가 50%
 			SuffixOption[0] = 4; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
@@ -324,7 +324,7 @@ namespace Server.Items
 			PrefixOption[13] = 5; //옵션 종류
 			SuffixOption[13] = 10000; //옵션 값
 			PrefixOption[14] = 7; //옵션 종류
-			SuffixOption[14] = 10000; //옵션 값
+			SuffixOption[14] = 5000; //옵션 값
         }
 
         public DragonNunchaku(Serial serial)
@@ -370,14 +370,14 @@ namespace Server.Items
         public PeasantsBokuto()
             : base()
         {
-			//곤충 피해 200%, 무기 피해 60%, 공속 20%
+			//마나 600, 주문 피해 30%, 주문속도 20%
 			SuffixOption[0] = 3; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 6; //옵션 종류
 			SuffixOption[11] = 60000; //옵션 값
 			PrefixOption[12] = 8; //옵션 종류
-			SuffixOption[12] = 6000; //옵션 값
+			SuffixOption[12] = 3000; //옵션 값
 			PrefixOption[13] = 41; //옵션 종류
 			SuffixOption[13] = 2000; //옵션 값
         }
@@ -740,12 +740,12 @@ namespace Server.Items
         public HanzosBow()
             : base()
         {
-			//파충류슬 300%, 공속 20%
+			//파충류슬 30%, 공속 20%
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 60; //옵션 종류
-			SuffixOption[11] = 100000; //옵션 값
+			SuffixOption[11] = 3000; //옵션 값
 			PrefixOption[12] = 40; //옵션 종류
 			SuffixOption[12] = 2000; //옵션 값
         }
@@ -1124,14 +1124,14 @@ namespace Server.Items
         public Exiler()
             : base()
         {
-			//악마슬 200%, 무피 60%, 공속 20%
+			//악마슬 20%, 무피 30%, 공속 20%
 			SuffixOption[0] = 3; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 61; //옵션 종류
-			SuffixOption[11] = 20000; //옵션 값
+			SuffixOption[11] = 2000; //옵션 값
 			PrefixOption[12] = 7; //옵션 종류
-			SuffixOption[12] = 6000; //옵션 값
+			SuffixOption[12] = 3000; //옵션 값
 			PrefixOption[13] = 40; //옵션 종류
 			SuffixOption[13] = 2000; //옵션 값
         }

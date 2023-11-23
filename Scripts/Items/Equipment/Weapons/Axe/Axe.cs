@@ -11,8 +11,8 @@ namespace Server.Items
         public Axe()
             : base(0xF49)
         {
-			AbsorptionAttributes.HumanoidDamage += 5000;
-            this.Weight = 4.0;
+			AbsorptionAttributes.HumanoidDamage += 500;
+            this.Weight = 7.0;
         }
 
         public Axe(Serial serial)

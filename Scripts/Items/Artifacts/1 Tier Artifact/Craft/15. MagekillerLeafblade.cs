@@ -8,12 +8,12 @@ namespace Server.Items
         [Constructable]
         public MagekillerLeafblade()
         {
-			//정령 피해 증가 300%, 공격 속도 20%
+			//정령 피해 증가 30%, 공격 속도 20%
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 58; //옵션 종류
-			SuffixOption[11] = 30000; //옵션 값
+			SuffixOption[11] = 3000; //옵션 값
 			PrefixOption[12] = 40; //옵션 종류
 			SuffixOption[12] = 2000; //옵션 값
 

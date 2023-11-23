@@ -12,7 +12,7 @@ namespace Server.Items
             : base(0x26BC)
         {
             this.Weight = 8.0;
-			Attributes.EnhancePotions += 5000;
+			Attributes.EnhancePotions += 2500;
 		}
 
         public Scepter(Serial serial)

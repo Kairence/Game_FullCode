@@ -9,8 +9,8 @@ namespace Server.Items
         public ElvenCompositeLongbow()
             : base(0x2D1E)
         {
-			SkillBonuses.SetValues(2, SkillName.Archery, 20.0);
-			SkillBonuses.SetValues(3, SkillName.Focus, 10.0);			
+			SkillBonuses.SetValues(5, SkillName.Archery, 20.0);
+			SkillBonuses.SetValues(6, SkillName.Focus, 10.0);			
             this.Weight = 8.0;
 		}
 

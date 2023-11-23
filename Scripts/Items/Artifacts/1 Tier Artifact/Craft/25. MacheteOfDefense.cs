@@ -8,7 +8,7 @@ namespace Server.Items
         [Constructable]
         public MacheteOfDefense()
         {
-			//기력 1000, 공속 10%, 무피 10%
+			//기력 1000, 공속 10%, 무피 5%
 			SuffixOption[0] = 3; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
@@ -17,7 +17,7 @@ namespace Server.Items
 			PrefixOption[12] = 40; //옵션 종류
 			SuffixOption[12] = 1000; //옵션 값
 			PrefixOption[13] = 7; //옵션 종류
-			SuffixOption[13] = 1000; //옵션 값
+			SuffixOption[13] = 500; //옵션 값
         }
 
         public MacheteOfDefense(Serial serial)

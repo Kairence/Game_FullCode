@@ -12,14 +12,14 @@ namespace Server.Items
         [Constructable]
         public WindOfCorruption()
         {
-			//마법 치피 100%, 주피 100%, 체력 기력 마나 -100
+			//마법 치피 100%, 주피 50%, 체력 기력 마나 -100
 			SuffixOption[0] = 5; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 45; //옵션 종류
 			SuffixOption[11] = 10000; //옵션 값
 			PrefixOption[12] = 8; //옵션 종류
-			SuffixOption[12] = 10000; //옵션 값
+			SuffixOption[12] = 5000; //옵션 값
 			PrefixOption[13] = 4; //옵션 종류
 			SuffixOption[13] = -10000; //옵션 값
 			PrefixOption[14] = 5; //옵션 종류
