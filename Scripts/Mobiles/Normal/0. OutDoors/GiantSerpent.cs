@@ -18,36 +18,31 @@ namespace Server.Mobiles
             this.BaseSoundID = 219;
 
             this.SetStr(186, 215);
-            this.SetDex(56, 80);
+            this.SetDex(256, 280);
             this.SetInt(66, 85);
 
-            this.SetHits(112, 129);
-            SetStam(66, 132);
+            this.SetHits(1120, 1290);
+            SetStam(166, 232);
             SetMana(66, 132);
 			SetAttackSpeed(7.5);
 
 
-            this.SetDamage(7, 17);
+            this.SetDamage(37, 57);
 
-            this.SetDamageType(ResistanceType.Physical, 40);
-            this.SetDamageType(ResistanceType.Poison, 60);
+            this.SetDamageType(ResistanceType.Physical, 0);
+            this.SetDamageType(ResistanceType.Poison, 100);
 
             this.SetResistance(ResistanceType.Physical, 30, 35);
             this.SetResistance(ResistanceType.Fire, 5, 10);
             this.SetResistance(ResistanceType.Cold, 10, 20);
-            this.SetResistance(ResistanceType.Poison, 70, 90);
+            this.SetResistance(ResistanceType.Poison, 45, 50);
             this.SetResistance(ResistanceType.Energy, 10, 20);
-
-            this.SetSkill(SkillName.Poisoning, 20.1, 25.0);
-
 
             this.Fame = 2500;
             this.Karma = -2500;
 
-            this.VirtualArmor = 2;
-
             Tamable = true;
-            ControlSlots = 3;
+            ControlSlots = 2;
             MinTameSkill = 67.5;			
 			
             this.PackItem(new Bone());

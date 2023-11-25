@@ -17,17 +17,17 @@ namespace Server.Mobiles
         {
             BaseSoundID = 0x3F3;
 
-            SetStr(258, 300);
-            SetDex(56, 75);
-            SetInt(46, 60);
+            SetStr(4580, 5300);
+            SetDex(156, 175);
+            SetInt(1460, 2600);
 
-            SetHits(410, 540);
-            SetStam(120, 145);
+            SetHits(41000, 54000);
+            SetStam(1200, 1450);
             SetMana(10, 50);
 
 			SetAttackSpeed(10.0);
 
-            SetDamage(7, 19);
+            SetDamage(350, 777);
 
             SetDamageType(ResistanceType.Physical, 100);
 
@@ -37,12 +37,12 @@ namespace Server.Mobiles
             SetResistance(ResistanceType.Poison, 5, 10);
             SetResistance(ResistanceType.Energy, 5, 10);
 
-            Fame = 1500;
-            Karma = 0;
+            Fame = 15000;
+            Karma = 15000;
 
             Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 88.8;
+            ControlSlots = 3;
+            MinTameSkill = 188.8;
         }
 
         public Elephant(Serial serial)

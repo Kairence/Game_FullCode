@@ -15,17 +15,17 @@ namespace Server.Mobiles
             this.Hue = Utility.RandomAnimalHue();
             this.BaseSoundID = 0x69;
 
-            this.SetStr(11, 16);
-            this.SetDex(35, 45);
-            this.SetInt(12, 20);
+            this.SetStr(10, 15);
+            this.SetDex(125, 135);
+            this.SetInt(10, 15);
 
-            SetHits(32, 40);
-            SetStam(12, 15);
+            SetHits(250, 280);
+            SetStam(140, 150);
             SetMana(10, 11);
 			
-			SetAttackSpeed(2.0);
+			SetAttackSpeed(4.0);
 
-            this.SetDamage(2,5);
+            this.SetDamage(4, 8);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 

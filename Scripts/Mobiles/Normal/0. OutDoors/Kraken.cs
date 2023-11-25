@@ -17,20 +17,20 @@ namespace Server.Mobiles
             this.Body = 77;
             this.BaseSoundID = 353;
 
-            this.SetStr(456, 480);
-            this.SetDex(426, 445);
-            this.SetInt(426, 440);
+            this.SetStr(4560, 4800);
+            this.SetDex(4260, 4450);
+            this.SetInt(4260, 4400);
 
-            this.SetHits(21254, 21268);
-            SetStam(100, 120);
+            this.SetHits(212540, 212680);
+            SetStam(10000, 12000);
             SetMana(100, 120);
 			
 			SetAttackSpeed(10.0);
 
-            this.SetDamage(36, 40);
+            this.SetDamage(1360, 1640);
 
-            this.SetDamageType(ResistanceType.Physical, 70);
-            this.SetDamageType(ResistanceType.Cold, 30);
+            this.SetDamageType(ResistanceType.Physical, 0);
+            this.SetDamageType(ResistanceType.Cold, 100);
 
             this.SetResistance(ResistanceType.Physical, 65, 75);
             this.SetResistance(ResistanceType.Fire, 50, 60);
@@ -45,12 +45,8 @@ namespace Server.Mobiles
             this.Fame = 21000;
             this.Karma = -21000;
 
-            this.VirtualArmor = 250;
-
             this.CanSwim = true;
             this.CantWalk = true;
-			
-			AttackRange = 10;
 
             SetSpecialAbility(SpecialAbility.DragonBreath);
 

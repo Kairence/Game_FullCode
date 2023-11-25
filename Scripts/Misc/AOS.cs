@@ -2263,7 +2263,11 @@ namespace Server
         HitExplosion    = 0x00000080, //연소 데미지 증가
         Freezing		= 0x00000100, //동상 데미지 증가
 		InfectionBonus	= 0x00000200,  //인팩팅 데미지 증가
-		LightningBonus	= 0x00000400  //라이트닝(4써클, 7써클) 데미지 증가
+		LightningBonus	= 0x00000400,  //라이트닝(4써클, 7써클) 데미지 증가
+		ChaosDamage		= 0x00000800,  //혼돈 데미지% 증가
+		DirectDamage	= 0x00001000,  //신성 데미지% 증가
+		ChaosPlus		= 0x00002000,  //혼돈 데미지 증가
+		DirectPlus		= 0x00004000  //신성 데미지 증가
     }
 
     public sealed class ExtendedWeaponAttributes : BaseAttributes
@@ -2467,6 +2471,54 @@ namespace Server
                 this[ExtendedWeaponAttribute.InfectionBonus] = value;
             }
         }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int ChaosDamage
+        {
+            get
+            {
+                return this[ExtendedWeaponAttribute.ChaosDamage];
+            }
+            set
+            {
+                this[ExtendedWeaponAttribute.ChaosDamage] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int DirectDamage
+        {
+            get
+            {
+                return this[ExtendedWeaponAttribute.DirectDamage];
+            }
+            set
+            {
+                this[ExtendedWeaponAttribute.DirectDamage] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int ChaosPlus
+        {
+            get
+            {
+                return this[ExtendedWeaponAttribute.ChaosPlus];
+            }
+            set
+            {
+                this[ExtendedWeaponAttribute.ChaosPlus] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int DirectPlus
+        {
+            get
+            {
+                return this[ExtendedWeaponAttribute.DirectPlus];
+            }
+            set
+            {
+                this[ExtendedWeaponAttribute.DirectPlus] = value;
+            }
+        }
 	}
 
     [Flags]
@@ -2483,7 +2535,8 @@ namespace Server
 		ShockResist = 0x00000080, //충격 저항력
 		BleedResist = 0x00000100, //출혈 저항력
 		WeaponDefense = 0x00000200, //방어력
-		MagicDefense = 0x00000400 //마법 방어력
+		MagicDefense = 0x00000400, //마법 방어력
+		StunDefense = 0x00000800 //스턴 시간 감소
         #endregion
     }
 
@@ -2730,6 +2783,42 @@ namespace Server
             set
             {
                 this[AosArmorAttribute.BleedResist] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int WeaponDefense
+        {
+            get
+            {
+                return this[AosArmorAttribute.WeaponDefense];
+            }
+            set
+            {
+                this[AosArmorAttribute.WeaponDefense] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int MagicDefense
+        {
+            get
+            {
+                return this[AosArmorAttribute.MagicDefense];
+            }
+            set
+            {
+                this[AosArmorAttribute.MagicDefense] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int StunDefense
+        {
+            get
+            {
+                return this[AosArmorAttribute.StunDefense];
+            }
+            set
+            {
+                this[AosArmorAttribute.StunDefense] = value;
             }
         }
     }

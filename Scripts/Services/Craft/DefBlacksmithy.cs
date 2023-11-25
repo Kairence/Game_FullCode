@@ -440,6 +440,7 @@ namespace Server.Engines.Craft
 				//index = AddCraft(typeof(ElvenMachete), 1011081, 1031573, 70.0, 120.0, typeof(IronIngot), 1044036, 14, 1044037);
 
 				//3티어
+				/*
 				index = AddCraft(typeof(RuneCarvingKnife), 1011081, 1072915, 220.0, 170.0, typeof(IronIngot), 1044036, 9, 1044037);
 				AddRes(index, typeof(DreadHornMane), 1032682, 1, 1053098);
 				AddRes(index, typeof(Putrefaction), 1032678, 10, 1053098);
@@ -585,6 +586,7 @@ namespace Server.Engines.Craft
 				index = AddCraft(typeof(BoneMachete), 1011081, 1020526, 145.0, 195.0, typeof(IronIngot), 1044036, 20, 1044037);
 				AddRes(index, typeof(Bone), 1049064, 100, 1049063);
 				AddRecipe(index, (int)SmithRecipes.BoneMachete);
+				*/
 			}
 
 			/*
@@ -747,6 +749,7 @@ namespace Server.Engines.Craft
             {
                 //index = AddCraft(typeof(DiamondMace), 1011084, 1031568, 70.0, 120.0, typeof(IronIngot), 1044036, 20, 1044037);
 
+				/*
                 index = AddCraft(typeof(ShardThrasher), 1011084, 1072918, 70.0, 120.0, typeof(IronIngot), 1044036, 20, 1044037);
                 AddRes(index, typeof(EyeOfTheTravesty), 1073126, 1, 1042081);
                 AddRes(index, typeof(Muculent), 1072139, 10, 1042081);
@@ -769,6 +772,7 @@ namespace Server.Engines.Craft
                 index = AddCraft(typeof(SilverEtchedMace), 1011084, 1073532, 75.0, 125.0, typeof(IronIngot), 1044036, 20, 1044037);
                 AddRes(index, typeof(BlueDiamond), 1032696, 1, 1044240);
                 AddRecipe(index, (int)SmithRecipes.SilverEtchedMace);
+				*/
             }
             #endregion
 

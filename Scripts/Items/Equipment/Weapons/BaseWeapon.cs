@@ -6339,7 +6339,8 @@ namespace Server.Items
 							}
 							else
 							{
-								list.Add( Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0], (((double)SuffixOption[i + 11])*0.01).ToString());
+								int optionpercentcheck = 1081999 + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0]);
+								list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0], (((double)SuffixOption[i + 11])*0.01).ToString());
 							}
 						}
 					}
@@ -6391,6 +6392,35 @@ namespace Server.Items
 					list.Add( PrefixOption[41] );
 				}
 				
+				//재련 옵션
+				list.Add(1082001);
+				if( SuffixOption[2] > 0 )
+				{
+					list.Add(1082002, SuffixOption[2].ToString() );
+				}
+				for(int i = 0; i < 5; ++i )
+				{
+					if( PrefixOption[31 + i] == -1 )
+						break;
+
+					int optionpercentcheck = 1082003 + i + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 31], 0, 0], 5);
+					
+					list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 31], 0, 0], (((double)SuffixOption[i + 31])*0.01).ToString() );
+				}
+				
+				//강화 옵션
+				if( PrefixOption[3] + PrefixOption[4] + PrefixOption[5] + PrefixOption[6] + PrefixOption[7] != 0 )
+				{
+					list.Add(1083001);
+					
+					for(int i = 0; i < 7; ++i)
+					{
+						if( PrefixOption[3 + i] > 0 )
+						{
+							list.Add( 1083002 + i, "{0}\t{1}", PrefixOption[i + 3], (((double)SuffixOption[i + 3])*0.01).ToString() );
+						}
+					}
+				}
 				if (HasSocket<Caddellite>())
 				{
 					list.Add(1158662); // Caddellite Infused

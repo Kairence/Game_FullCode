@@ -17,32 +17,25 @@ namespace Server.Mobiles
         {
             BaseSoundID = 0x3F3;
 
-            SetStr(58, 100);
-            SetDex(56, 75);
-            SetInt(16, 30);
+            this.SetStr(194, 270);
+            this.SetDex(156, 175);
+            this.SetInt(16, 20);
 
-            SetHits(41, 54);
-            SetStam(10, 15);
-            SetMana(10, 15);
+            this.SetHits(271, 288);
+			this.SetStam(100, 120);
+            this.SetMana(1, 5);
 
-			SetAttackSpeed(30.0);
+            this.SetDamage(1, 4);
+			SetAttackSpeed(20.0);
 
-            SetDamage(3, 5);
+            this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetDamageType(ResistanceType.Physical, 100);
+            this.Fame = 450;
+            this.Karma = 0;
 
-            SetResistance(ResistanceType.Physical, 15, 20);
-            SetResistance(ResistanceType.Fire, 10, 15);
-            SetResistance(ResistanceType.Cold, 15, 20);
-            SetResistance(ResistanceType.Poison, 10, 15);
-            SetResistance(ResistanceType.Energy, 10, 15);
-
-            Fame = 300;
-            Karma = 0;
-
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 63.1;
+            this.Tamable = true;
+            this.ControlSlots = 1;
+            this.MinTameSkill = 29.1;
         }
 
         public SavageRidgeback(Serial serial)

@@ -16,16 +16,17 @@ namespace Server.Mobiles
 
             Hue = Utility.Random(0x8A0, 5);
 
-            SetStr(251, 425);
-            SetDex(87, 135);
-            SetInt(87, 155);
+            SetStr(2251, 2425);
+            SetDex(1087, 1135);
+            SetInt(1087, 1155);
 
-            SetHits(3701, 3705);
-            SetStam(100, 120);
+            SetHits(37000, 40000);
+            SetStam(1000, 1200);
             SetMana(100, 120);
+			
 			SetAttackSpeed(10.0);
 			
-            SetDamage(26, 39);
+            SetDamage(226, 390);
 
             SetDamageType(ResistanceType.Physical, 100);
 
@@ -35,9 +36,9 @@ namespace Server.Mobiles
             SetResistance(ResistanceType.Poison, 30, 40);
             SetResistance(ResistanceType.Energy, 15, 20);
 
-            SetSkill(SkillName.MagicResist, 60.1, 65.0);
-            SetSkill(SkillName.Tactics, 60.1, 65.0);
-            SetSkill(SkillName.Wrestling, 60.1, 65.0);
+            SetSkill(SkillName.MagicResist, 160.1, 180.0);
+            SetSkill(SkillName.Tactics, 160.1, 180.0);
+            SetSkill(SkillName.Wrestling, 160.1, 180.0);
 
             Fame = 13000;
             Karma = -13000;
@@ -50,9 +51,6 @@ namespace Server.Mobiles
                 PackItem(new SulfurousAsh(20));
             else
                 PackItem(new BlackPearl(20));
-
-			BaseWeapon weapon = this.Weapon as BaseWeapon;
-			weapon.MaxRange = 6;
 
             SetSpecialAbility(SpecialAbility.DragonBreath);
         }

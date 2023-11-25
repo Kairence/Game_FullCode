@@ -17,34 +17,35 @@ namespace Server.Mobiles
             Body = 0xDF;
             BaseSoundID = 0xD6;
 
-            SetStr(19,24);
-            SetDex(25,30);
-            SetInt(5,10);
+            this.SetStr(25, 30);
+            this.SetDex(25, 30);
+            this.SetInt(12, 18);
 
-            SetHits(12,18);
-            SetStam(1, 5);
-            SetMana(1, 5);
+            SetHits(230, 280);
+            SetStam(25, 30);
+            SetMana(5, 10);
+			
+			SetAttackSpeed(10.0);
 
-			SetAttackSpeed(30.0);
+            this.SetDamage(7, 11);
 
-            SetDamage(1, 2);
+            this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetDamageType(ResistanceType.Physical, 100);
+            this.SetResistance(ResistanceType.Physical, 10, 15);
+            this.SetResistance(ResistanceType.Fire, 5, 10);
+            this.SetResistance(ResistanceType.Poison, 5, 10);
 
-            SetResistance(ResistanceType.Physical, 5, 10);
+            this.Fame = 300;
+            this.Karma = 0;
 
-            SetSkill(SkillName.MagicResist, 5.0);
-            SetSkill(SkillName.Tactics, 6.0);
-            SetSkill(SkillName.Wrestling, 5.0);
+            this.VirtualArmor = 1;
 
-            Fame = 300;
-            Karma = 0;
+            this.Tamable = true;
+            this.ControlSlots = 1;
+            this.MinTameSkill = 29.1;
 
-            VirtualArmor = 0;
-
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 11.1;
+            if (Core.AOS && Utility.Random(1000) == 0) // 0.1% chance to have mad cows
+                FightMode = FightMode.Closest;
         }
 
         public Sheep(Serial serial)

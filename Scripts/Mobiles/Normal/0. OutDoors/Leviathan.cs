@@ -49,7 +49,7 @@ namespace Server.Mobiles
             : base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
         {
             m_Fisher = fisher;
-            m_NextWaterBall = DateTime.UtcNow;
+            m_NextWaterBall = DateTime.Now;
 
             // May not be OSI accurate; mostly copied from krakens
             Name = "a leviathan";
@@ -58,19 +58,19 @@ namespace Server.Mobiles
 
             Hue = 0x481;
 
-            SetStr(666, 777);
-            SetDex(501, 520);
-            SetInt(501, 515);
+            SetStr(6666, 7777);
+            SetDex(5010, 5200);
+            SetInt(5010, 5150);
 
-            SetHits(77150, 78222);
-            SetStam(100, 120);
+            SetHits(771500, 782222);
+            SetStam(100000, 120000);
             SetMana(100, 120);
 			SetAttackSpeed(5.0);
 			
-            SetDamage(55, 66);
+            SetDamage(1555, 2666);
 
-            SetDamageType(ResistanceType.Physical, 70);
-            SetDamageType(ResistanceType.Cold, 30);
+            SetDamageType(ResistanceType.Physical, 0);
+            SetDamageType(ResistanceType.Cold, 100);
 
             SetResistance(ResistanceType.Physical, 55, 65);
             SetResistance(ResistanceType.Fire, 45, 55);
@@ -78,17 +78,15 @@ namespace Server.Mobiles
             SetResistance(ResistanceType.Poison, 35, 45);
             SetResistance(ResistanceType.Energy, 25, 35);
 
-            SetSkill(SkillName.EvalInt, 117.6, 124.5);
-            SetSkill(SkillName.Magery, 117.6, 124.5);
-            SetSkill(SkillName.MagicResist, 117.6, 124.5);
-            SetSkill(SkillName.Meditation, 117.6, 124.5);
-            SetSkill(SkillName.Tactics, 117.6, 124.5);
-            SetSkill(SkillName.Wrestling, 117.6, 124.5);
+            SetSkill(SkillName.EvalInt, 317.6, 324.5);
+            SetSkill(SkillName.Magery, 317.6, 324.5);
+            SetSkill(SkillName.MagicResist, 317.6, 324.5);
+            SetSkill(SkillName.Meditation, 317.6, 324.5);
+            SetSkill(SkillName.Tactics, 317.6, 324.5);
+            SetSkill(SkillName.Wrestling, 317.6, 324.5);
 
             Fame = 25000;
             Karma = -25000;
-
-            VirtualArmor = 50;
 
             CanSwim = true;
             CantWalk = true;

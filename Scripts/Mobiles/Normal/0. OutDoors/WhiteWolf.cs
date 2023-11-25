@@ -14,34 +14,31 @@ namespace Server.Mobiles
             this.Body = Utility.RandomList(34, 37);
             this.BaseSoundID = 0xE5;
 
-            this.SetStr(56, 80);
-            this.SetDex(56, 75);
-            this.SetInt(31, 55);
+            SetStr(396, 520);
+            SetDex(281, 305);
+            SetInt(136, 160);
 
-            this.SetHits(34, 48);
-            SetStam(10, 15);
-            SetMana(10, 15);
+            SetHits(1236, 1260);
+            SetStam(200, 300);
+            SetMana(5, 10);
+			SetAttackSpeed(2.0);
 
-			SetAttackSpeed(15.0);
+            SetDamage(22, 37);
 
-            this.SetDamage(3, 7);
+            SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+            SetResistance(ResistanceType.Physical, 20, 25);
+            SetResistance(ResistanceType.Fire, 10, 20);
+            SetResistance(ResistanceType.Cold, 5, 10);
+            SetResistance(ResistanceType.Poison, 5, 10);
+            SetResistance(ResistanceType.Energy, 10, 15);
 
-            this.SetResistance(ResistanceType.Physical, 15, 20);
-            this.SetResistance(ResistanceType.Fire, 10, 15);
-            this.SetResistance(ResistanceType.Cold, 20, 25);
-            this.SetResistance(ResistanceType.Poison, 10, 15);
-            this.SetResistance(ResistanceType.Energy, 10, 15);
+            Fame = 2500;
+            Karma = -2500;
 
-            this.Fame = 450;
-            this.Karma = 0;
-
-            this.VirtualArmor = 1;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 65.1;
+            Tamable = true;
+            ControlSlots = 2;
+            MinTameSkill = 83.1;
         }
 
         public WhiteWolf(Serial serial)

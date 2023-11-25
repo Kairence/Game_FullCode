@@ -35,19 +35,17 @@ namespace Server.Mobiles
             this.Body = 6;
             this.BaseSoundID = 0x1B;
 
-            this.VirtualArmor = Utility.RandomMinMax(0, 1);
-
             this.SetStr(10, 15);
             this.SetDex(25, 35);
             this.SetInt(10, 15);
 
-            SetHits(21, 30);
-            SetStam(12, 15);
+            SetHits(150, 180);
+            SetStam(40, 50);
             SetMana(10, 11);
 			
-			SetAttackSpeed(15.0);
+			SetAttackSpeed(10.0);
 
-            SetDamage(1, 4);
+            SetDamage(5, 9);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 
@@ -122,13 +120,17 @@ namespace Server.Mobiles
             this.Body = 6;
             this.BaseSoundID = 0xBF;
 
-            this.VirtualArmor = Utility.RandomMinMax(0, 6);
-
-            this.SetStr(10);
+            this.SetStr(10, 15);
             this.SetDex(25, 35);
-            this.SetInt(10);
+            this.SetInt(10, 15);
 
-            this.SetDamage(0);
+            SetHits(150, 180);
+            SetStam(40, 50);
+            SetMana(10, 11);
+			
+			SetAttackSpeed(10.0);
+
+            SetDamage(5, 9);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 
@@ -142,6 +144,7 @@ namespace Server.Mobiles
             this.Tamable = true;
             this.ControlSlots = 1;
             this.MinTameSkill = -6.9;
+
         }
 
         public TropicalBird(Serial serial)

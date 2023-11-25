@@ -1655,9 +1655,68 @@ namespace Server.Mobiles
 		private static readonly int[,] m_StatUp = new int[,]
 		{
 			//	str	dex	int	luc	hit	stm	mana
-			{	0,	0,	0,	0,	8,	5,	2	},	//Alchemy
-			{	6,	4,	0,	0,	10,	0,	0	},	//Anatomy
-			{	0,	0,	0,	0,	8,	7,	2	},	//Animal Lore
+			{ 250, 550, 550, 0, 800, 800, 800 },  //Alchemy
+			{ 1200, 1100, 500, 0, 1000, 1000, 200 },  //Anatomy
+			{ 200, 700, 1500, 0, 600, 800, 1200 },  //Animal Lore
+			{ 600, 600, 600, 0, 1000, 700, 250 },  //Item Identification
+			{ 500, 500, 1250, 0, 100, 100, 1300 },  //Arms Lore
+			{ 650, 650, 100, 0, 2000, 300, 50 },  //Parrying
+			{ 600, 600, 800, 0, 700, 1000, 50 },  //Begging
+			{ 1000, 400, 200, 0, 900, 1200, 50 },  //Blacksmithy
+			{ 400, 1500, 100, 0, 700, 1000, 50 },  //Bowcraft/Fletching
+			{ 200, 800, 1300, 0, 800, 800, 1100 },  //Peacemaking
+			{ 800, 800, 300, 0, 1000, 800, 50 },  //Camping
+			{ 900, 1000, 500, 0, 1000, 300, 50 },  //Carpentry
+			{ 200, 600, 1800, 0, 500, 600, 50 },  //Cartography
+			{ 740, 740, 740, 0, 740, 740, 50 },  //Cooking
+			{ 250, 600, 1200, 0, 300, 700, 700 },  //Detecting Hidden
+			{ 100, 800, 1000, 0, 700, 1400, 1000 },  //Discordance
+			{ 50, 50, 2000, 0, 300, 300, 1050 },  //Evaluating Intelligence
+			{ 900, 1100, 800, 0, 1100, 700, 400 },  //Healing
+			{ 740, 740, 740, 0, 740, 740, 50 },  //Fishing
+			{ 800, 800, 1000, 0, 800, 800, 800 },  //Belief(Forensic Evaluation)
+			{ 600, 600, 800, 0, 900, 800, 50 },  //Farming(Herding)
+			{ 50, 2000, 50, 0, 600, 950, 100 },  //Hiding
+			{ 1200, 400, 1300, 0, 1200, 200, 700 },  //Provocation
+			{ 50, 500, 1000, 0, 300, 100, 1800 },  //Inscription
+			{ 500, 1100, 900, 0, 600, 600, 50 },  //Lockpicking
+			{ 200, 200, 1900, 0, 600, 200, 1900 },  //Magery
+			{ 50, 50, 1600, 0, 1200, 1200, 900 },  //Resisting Spells
+			{ 500, 500, 1400, 0, 1200, 1200, 200 },  //Tactics
+			{ 50, 1900, 500, 0, 600, 1900, 50 },  //Avoid(Snooping)
+			{ 100, 800, 1800, 0, 700, 600, 1000 },  //Musicianship
+			{ 100, 400, 1800, 0, 300, 1200, 1200 },  //Poisoning
+			{ 900, 1400, 500, 0, 700, 1400, 100 },  //Archery
+			{ 200, 200, 1000, 0, 1800, 100, 1700 },  //Spirit Speak
+			{ 200, 2000, 700, 0, 300, 500, 50 },  //Stealing
+			{ 300, 900, 1700, 0, 300, 500, 50 },  //Tailoring
+			{ 500, 900, 900, 0, 1500, 600, 600 },  //Animal Taming
+			{ 1200, 1000, 600, 0, 400, 500, 50 },  //Tanning(Taste Identification)
+			{ 500, 1100, 1200, 0, 200, 500, 250 },  //Tinkering
+			{ 300, 800, 300, 0, 300, 2000, 50 },  //Tracking
+			{ 1000, 800, 1200, 0, 400, 1000, 600 },  //Veterinary
+			{ 1100, 1100, 800, 0, 900, 900, 200 },  //Swordsmanship
+			{ 2000, 200, 400, 0, 800, 300, 50 },  //Mace Fighting
+			{ 200, 1000, 300, 0, 200, 2000, 50 },  //Fencing
+			{ 900, 700, 600, 0, 1300, 1300, 200 },  //Wrestling
+			{ 2000, 300, 100, 0, 900, 400, 50 },  //Lumberjacking
+			{ 800, 400, 100, 0, 2000, 400, 50 },  //Mining
+			{ 100, 100, 1000, 0, 500, 50, 2000 },  //Meditation
+			{ 300, 1800, 1700, 0, 400, 600, 200 },  //Stealth
+			{ 400, 600, 1800, 0, 500, 1500, 200 },  //Remove Trap
+			{ 600, 800, 1200, 0, 800, 700, 900 },  //Necromancy
+			{ 1400, 1400, 400, 0, 1300, 400, 100 },  //Smash(Focus)
+			{ 700, 700, 700, 0, 1500, 700, 700 },  //Chivalry
+			{ 1600, 1000, 200, 0, 1400, 700, 100 },  //Bushido
+			{ 300, 1900, 700, 0, 600, 1000, 500 },  //Ninjitsu
+			{ 200, 200, 1900, 0, 600, 200, 1900 },  //Spellweaving
+			{ 100, 100, 900, 0, 600, 50, 2000 },  //Mysticism
+			{ 100, 100, 1500, 0, 600, 50, 1400 },  //Imbuing
+			{ 900, 1400, 500, 0, 700, 1400, 100 }  //Throwing
+			/*
+			{	250,550,550,0,	800,800,800	},	//Alchemy
+			{	1200,1100,500,0,1000,1000,200},	//Anatomy
+			{	200,700,1500,0,	8,	7,	2	},	//Animal Lore
 			{	0,	0,	0,	0,	10,	5,	0	},	//Item Identification
 			{	0,	0,	0,	0,	7,	2,	8	},	//Arms Lore
 			{	8,	2,	0,	0,	10,	0,	0	},	//Parrying
@@ -1713,7 +1772,6 @@ namespace Server.Mobiles
 			{	0,	0,	10,	0,	6,	0,	0	},	//Mysticism
 			{	0,	0,	0,	0,	6,	0,	9	},	//Imbuing
 			{	0,	0,	0,	0,	11,	7,	0	}	//Throwing
-			/*
 			{ 	0,	0,	5,	10,	0,	1,	10	}, //alchemy
 			{ 	3,	9,	3,	0,	35,	0,	0	}, //anatomy
 			{ 	0,	0,	10,	20,	5,	10,	5	}, //animal lore
@@ -2117,7 +2175,7 @@ namespace Server.Mobiles
         }
 
 		//스킬에 의한 스텟 최대값
-		private readonly int StatUpMax = 100000;
+		private readonly int StatUpMax = 1000000;
 		private int m_SkillFollows;
         public int SkillFollows { get { return m_SkillFollows; } set { m_SkillFollows = value; InvalidateProperties(); } }
 		private int m_PetFollows;
@@ -2242,19 +2300,14 @@ namespace Server.Mobiles
 			//스킬을 스텟으로 변환
 			for( int i = 0; i < m_StatUp.GetLength(1); i++)
 			{
-				pm.SkillbyStat[i] = 0;
+				//pm.SkillbyStat[i] = 0;
 				for( int j = 0; j < m_StatUp.GetLength(0); j++)
 				{
-					if( pm.RawStatTotal > 15000 )
-						pm.SkillbyStat[i] += m_StatUp[j, i] * (int)( pm.Skills[j].Value * 5);
-					else
-						pm.SkillbyStat[i] += m_StatUp[j, i] * (int)( pm.Skills[j].Value * 10);
-					if( pm.SkillbyStat[i] >= pm.StatUpMax )
-					{
-						pm.SkillbyStat[i] = pm.StatUpMax;
-					}
+					if( pm.SkillbyStat[i] < m_StatUp[j, i] * (int)( pm.Skills[j].Value * 10 ) )
+						pm.SkillbyStat[i] = m_StatUp[j, i] * (int)( pm.Skills[j].Value * 10);
 				}
-			}	
+			}
+			/*
 			for( int i = 0; i < pm.SkillbyStat.Length; i++)
 			{
 				if( pm.SkillbyStat[i] < pm.StatUpMax )
@@ -2263,6 +2316,7 @@ namespace Server.Mobiles
 					break;
 				}
 			}
+			*/
 			if( !pm.GoldAndSilverPointReturntoSkill )
 			{
 				int returnPoint = 0;
@@ -2533,6 +2587,22 @@ namespace Server.Mobiles
 
 				pm.StatReset[10] = true;
 			}
+			
+			//스킬 스텟 신규 갱신
+			if( !pm.StatReset[11] )
+			{
+				for( int i = 0; i < m_StatUp.GetLength(1); i++)
+				{
+					pm.SkillbyStat[i] = 0;
+					for( int j = 0; j < m_StatUp.GetLength(0); j++)
+					{
+						if( pm.SkillbyStat[i] < m_StatUp[j, i] * (int)( pm.Skills[j].Value * 10 ) )
+							pm.SkillbyStat[i] = m_StatUp[j, i] * (int)( pm.Skills[j].Value * 10);
+					}
+				}
+				pm.StatReset[11] = true;
+			}
+			
 			
 			//펫 체크
 			if( pm.Region is Server.Regions.TownRegion )
@@ -3215,16 +3285,15 @@ namespace Server.Mobiles
 				*/
 				for( int i = 0; i < m_StatUp.GetLength(1); i++)
 				{
-					m_SkillbyStat[i] = 0;
 					for( int j = 0; j < m_StatUp.GetLength(0); j++)
 					{
-						m_SkillbyStat[i] += m_StatUp[j, i] * (int)( Skills[j].Value * 10);
-						if( m_SkillbyStat[i] >= StatUpMax )
+						if( m_SkillbyStat[i] < m_StatUp[j, i] * (int)( Skills[j].Value * 10) )
 						{
-							m_SkillbyStat[i] = StatUpMax;
+							m_SkillbyStat[i] = m_StatUp[j, i] * (int)( Skills[j].Value * 10);
 						}
 					}
 				}	
+				/*
 				for( int i = 0; i < m_SkillbyStat.Length; i++)
 				{
 					if( m_SkillbyStat[i] < StatUpMax )
@@ -3233,6 +3302,7 @@ namespace Server.Mobiles
 						break;
 					}
 				}
+				*/
 				Delta(MobileDelta.Stat);
 				ProcessDelta();
 				if( Hits > HitsMax )
@@ -3847,13 +3917,13 @@ namespace Server.Mobiles
 		//스텟 설정
 		#region [Stats]Max
 		[CommandProperty(AccessLevel.GameMaster)]
-		public override int HitsMax { get {	return Math.Min( Str * 2 + AosAttributes.GetValue(this, AosAttribute.BonusHits) + SilverPoint[21] * 50 + SkillbyStat[4] / 100 , 9999 ); } }
+		public override int HitsMax { get {	return Math.Min( AosAttributes.GetValue(this, AosAttribute.BonusHits) + SilverPoint[21] * 50 + SkillbyStat[4] / 1000 , 9999 ); } }
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public override int StamMax { get { return Math.Min( Dex + AosAttributes.GetValue(this, AosAttribute.BonusStam) + SilverPoint[22] * 20 + SkillbyStat[5] / 100, 9999 ); } }
+		public override int StamMax { get { return Math.Min( AosAttributes.GetValue(this, AosAttribute.BonusStam) + SilverPoint[22] * 20 + SkillbyStat[5] / 1000, 9999 ); } }
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public override int ManaMax { get { return Math.Min( Int + AosAttributes.GetValue(this, AosAttribute.BonusMana) + SilverPoint[23] * 20 + SkillbyStat[6] / 100, 9999 ); } }
+		public override int ManaMax { get { return Math.Min( AosAttributes.GetValue(this, AosAttribute.BonusMana) + SilverPoint[23] * 20 + SkillbyStat[6] / 1000, 9999 ); } }
 		#endregion
 		
 		#region Stat Getters/Setters
@@ -3864,7 +3934,7 @@ namespace Server.Mobiles
 			{
 				if (Core.ML && IsPlayer())
 				{
-					return Math.Min( 100 + SilverPoint[28] * 5 + AosAttributes.GetValue( this, AosAttribute.BonusStr) + SkillbyStat[0] / 100, 1500 );
+					return Math.Min( 100 + SilverPoint[28] * 5 + AosAttributes.GetValue( this, AosAttribute.BonusStr) + SkillbyStat[0] / 1000, 9999 );
 					//return Math.Min(base.Str, StrMaxCap);
 				}
 
@@ -3880,7 +3950,7 @@ namespace Server.Mobiles
 			{
 				if (Core.ML && IsPlayer())
 				{
-					return Math.Min( 100 + SilverPoint[29] * 5 + AosAttributes.GetValue( this, AosAttribute.BonusDex) + SkillbyStat[1] / 100, 1000 );
+					return Math.Min( 100 + SilverPoint[29] * 5 + AosAttributes.GetValue( this, AosAttribute.BonusDex) + SkillbyStat[1] / 1000, 9999 );
 					//return Math.Min(base.Dex, DexMaxCap);
 				}
 
@@ -3896,7 +3966,7 @@ namespace Server.Mobiles
 			{
 				if (Core.ML && IsPlayer())
 				{
-					return Math.Min( 100 + SilverPoint[30] * 5 + AosAttributes.GetValue( this, AosAttribute.BonusInt) + SkillbyStat[2] / 100, 1000 );
+					return Math.Min( 100 + SilverPoint[30] * 5 + AosAttributes.GetValue( this, AosAttribute.BonusInt) + SkillbyStat[2] / 1000, 9999 );
 					//return Math.Min(base.Int, IntMaxCap);
 				}
 
@@ -6314,7 +6384,7 @@ namespace Server.Mobiles
 
 		public List<Mobile> PermaFlags { get { return m_PermaFlags; } }
 
-        public override int Luck { get { return Math.Min( 100 + SilverPoint[31] * 5 + AosAttributes.GetValue(this, AosAttribute.Luck) + TenthAnniversarySculpture.GetLuckBonus(this) + SkillbyStat[0] / 100, 1000 ); } }
+        public override int Luck { get { return Math.Min( 100 + SilverPoint[31] * 5 + AosAttributes.GetValue(this, AosAttribute.Luck) + TenthAnniversarySculpture.GetLuckBonus(this) + SkillbyStat[3] / 1000, 9999 ); } }
 
         public int RealLuck
 		{ 

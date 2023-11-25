@@ -30,11 +30,17 @@ namespace Server.Items
 			list.Add( 1060661, "반지&팔찌\t{0}, 귀걸이&목걸이: 행운 증가, 마법책: 행운 증가", "행운 증가" );	// F +5, E +10, D +15, C +20, B +30, A +40, S +50
 		}
 		
+		*/
 		public override void OnDoubleClick( Mobile from )
 		{
 			if ( !IsChildOf( from.Backpack ) ) // Make sure its in their pack
 			{
 				 from.SendLocalizedMessage( 1042001 ); // That must be in your pack for you to use it.
+			}
+			else if( Amount < 100 )
+			{
+				from.SendMessage("호박이 부족합니다.");
+				return;
 			}
 			else
 			{
@@ -43,7 +49,6 @@ namespace Server.Items
 			}
 			
 		}
-		*/
 		public class GemTarget : Target
 		{
 			Amber m_Gem;
@@ -62,164 +67,24 @@ namespace Server.Items
 					{
 						from.SendMessage("장비를 백팩 안에 넣어서 사용하십시오.");
 						return;
-					} 
-					if( targeted is BaseWeapon )
-					{
-						BaseWeapon item = targeted as BaseWeapon;
-						if( !item.Identified )
-						{
-							from.SendMessage("아이템 감정이 되지 않았습니다!");
-							return;
-						}
-						else if( ((int)item.ItemPower - 3 ) * 4 > m_Gem.Amount )
-						{
-							from.SendMessage("호박이 부족합니다.");
-							return;
-						}
-						else if( (int)item.ItemPower < 1 )
-						{
-							from.SendMessage("일반 아이템은 사용할 수 없습니다.");
-							return;
-						}
-						else
-						{
-							if( from is PlayerMobile )
-							{
-								PlayerMobile pm = from as PlayerMobile;
-								Misc.Util.ItemCreate( item, 0, false, pm, 7 );
-								if( ((int)item.ItemPower - 3 ) * 4 == m_Gem.Amount )
-									m_Gem.Delete();
-								else
-									m_Gem.Amount -= ((int)item.ItemPower - 3 ) * 4;
-								
-							}
-						}
 					}
-					else if( targeted is BaseArmor )
+					else
 					{
-						BaseArmor item = targeted as BaseArmor;
-						if( !item.Identified )
+						if( check is IEquipOption )
 						{
-							from.SendMessage("아이템 감정이 되지 않았습니다!");
-							return;
-						}
-						else if( ((int)item.ItemPower - 3 ) * 4 > m_Gem.Amount )
-						{
-							from.SendMessage("호박이 부족합니다.");
-							return;
-						}
-						else if( (int)item.ItemPower < 1 )
-						{
-							from.SendMessage("일반 아이템은 사용할 수 없습니다.");
-							return;
-						}
-						else
-						{
-							if( from is PlayerMobile )
+							IEquipOption equip = check as IEquipOption;
+							if( equip.SuffixOption[2] <= 0 )
 							{
-								PlayerMobile pm = from as PlayerMobile;
-								Misc.Util.ItemCreate( item, 0, false, pm, 7 );
-								if( ((int)item.ItemPower - 3 ) * 4 == m_Gem.Amount )
-									m_Gem.Delete();
-								else
-									m_Gem.Amount -= ((int)item.ItemPower - 3 ) * 4;
-								
+								from.SendMessage("이 아이템은 더 이상 제련이 불가능합니다!");
 							}
-						}
-					}
-					else if( targeted is BaseClothing )
-					{
-						BaseClothing item = targeted as BaseClothing;
-						if( !item.Identified )
-						{
-							from.SendMessage("아이템 감정이 되지 않았습니다!");
-							return;
-						}
-						else if( ((int)item.ItemPower - 3 ) * 4 > m_Gem.Amount )
-						{
-							from.SendMessage("호박이 부족합니다.");
-							return;
-						}
-						else if( (int)item.ItemPower < 1 )
-						{
-							from.SendMessage("일반 아이템은 사용할 수 없습니다.");
-							return;
-						}
-						else
-						{
-							if( from is PlayerMobile )
+							else
 							{
-								PlayerMobile pm = from as PlayerMobile;
-								Misc.Util.ItemCreate( item, 0, false, pm, 7 );
-								if( ((int)item.ItemPower - 3 ) * 4 == m_Gem.Amount )
+								Misc.Util.NewUseGem(check, 7);
+								from.SendMessage("제련이 완료되었습니다!");
+								if( m_Gem.Amount == 100 )
 									m_Gem.Delete();
 								else
-									m_Gem.Amount -= ((int)item.ItemPower - 3 ) * 4;
-								
-							}
-						}
-					}
-					else if( targeted is BaseJewel )
-					{
-						BaseJewel item = targeted as BaseJewel;
-						if( !item.Identified )
-						{
-							from.SendMessage("아이템 감정이 되지 않았습니다!");
-							return;
-						}
-						else if( ((int)item.ItemPower - 3 ) * 4 > m_Gem.Amount )
-						{
-							from.SendMessage("호박이 부족합니다.");
-							return;
-						}
-						else if( (int)item.ItemPower < 1 )
-						{
-							from.SendMessage("일반 아이템은 사용할 수 없습니다.");
-							return;
-						}
-						else
-						{
-							if( from is PlayerMobile )
-							{
-								PlayerMobile pm = from as PlayerMobile;
-								Misc.Util.ItemCreate( item, 0, false, pm, 7 );
-								if( ((int)item.ItemPower - 3 ) * 4 == m_Gem.Amount )
-									m_Gem.Delete();
-								else
-									m_Gem.Amount -= ((int)item.ItemPower - 3 ) * 4;
-								
-							}
-						}
-					}
-					else if( targeted is Spellbook )
-					{
-						Spellbook item = targeted as Spellbook;
-						if( !item.Identified )
-						{
-							from.SendMessage("아이템 감정이 되지 않았습니다!");
-							return;
-						}
-						else if( ((int)item.ItemPower - 3 ) * 4 > m_Gem.Amount )
-						{
-							from.SendMessage("호박이 부족합니다.");
-							return;
-						}
-						else if( (int)item.ItemPower < 1 )
-						{
-							from.SendMessage("일반 아이템은 사용할 수 없습니다.");
-							return;
-						}
-						else
-						{
-							if( from is PlayerMobile )
-							{
-								PlayerMobile pm = from as PlayerMobile;
-								Misc.Util.ItemCreate( item, 0, false, pm, 7 );
-								if( ((int)item.ItemPower - 3 ) * 4 == m_Gem.Amount )
-									m_Gem.Delete();
-								else
-									m_Gem.Amount -= ((int)item.ItemPower - 3 ) * 4;
-								
+									m_Gem.Amount -= 100;
 							}
 						}
 					}

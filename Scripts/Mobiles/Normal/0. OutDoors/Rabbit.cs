@@ -15,34 +15,30 @@ namespace Server.Mobiles
             if (0.5 >= Utility.RandomDouble())
                 Hue = Utility.RandomAnimalHue();
 
-            SetStr(6, 10);
-            SetDex(26, 38);
-            SetInt(6, 14);
+            this.SetStr(10, 15);
+            this.SetDex(25, 35);
+            this.SetInt(10, 15);
 
-            SetHits(4, 6);
-            SetStam(1, 5);
-            SetMana(1, 5);
+            SetHits(150, 180);
+            SetStam(40, 50);
+            SetMana(10, 11);
+			
+			SetAttackSpeed(10.0);
 
-			SetAttackSpeed(20.0);
+            SetDamage(5, 9);
 
-            SetDamage(1);
+            this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetDamageType(ResistanceType.Physical, 100);
+            this.SetSkill(SkillName.Wrestling, 4.2, 6.4);
+            this.SetSkill(SkillName.Tactics, 4.0, 6.0);
+            this.SetSkill(SkillName.MagicResist, 4.0, 5.0);
 
-            SetResistance(ResistanceType.Physical, 5, 10);
+            this.Fame = 150;
+            this.Karma = 0;
 
-            SetSkill(SkillName.MagicResist, 5.0);
-            SetSkill(SkillName.Tactics, 5.0);
-            SetSkill(SkillName.Wrestling, 5.0);
-
-            Fame = 150;
-            Karma = 0;
-
-            VirtualArmor = 1;
-
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = -18.9;
+            this.Tamable = true;
+            this.ControlSlots = 1;
+            this.MinTameSkill = -6.9;
         }
 
         public Rabbit(Serial serial)

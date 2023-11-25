@@ -17,21 +17,18 @@ namespace Server.Mobiles
         {
             this.BaseSoundID = 0x270;
 
-            this.SetStr(94, 170);
-            this.SetDex(56, 75);
-            this.SetInt(6, 10);
+            this.SetStr(194, 270);
+            this.SetDex(156, 175);
+            this.SetInt(16, 20);
 
-            this.SetHits(71, 88);
-			this.SetStam(10,20);
+            this.SetHits(271, 288);
+			this.SetStam(100, 120);
             this.SetMana(1, 5);
 
             this.SetDamage(1, 4);
 			SetAttackSpeed(20.0);
 
             this.SetDamageType(ResistanceType.Physical, 100);
-
-            this.SetResistance(ResistanceType.Physical, 15, 20);
-            this.SetResistance(ResistanceType.Fire, 5, 15);
 
             this.Fame = 450;
             this.Karma = 0;

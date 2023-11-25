@@ -9,7 +9,7 @@ namespace Server.Mobiles
     {
 
         public override bool AutoDispel { get { return !Controlled; } }
-        public override int TreasureMapLevel { get { return 3; } }
+        //public override int TreasureMapLevel { get { return 3; } }
         public override int Meat { get { return 9; } }
         public override Poison HitPoison { get { return Poison.Greater; } }
         public override double HitPoisonChance { get { return 0.75; } }
@@ -17,22 +17,22 @@ namespace Server.Mobiles
 
         [Constructable]
         public FairyDragon()
-            : base(AIType.AI_Mystic, FightMode.Closest, 10, 1, 0.2, 0.4)
+            : base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
         {
             Name = "Fairy Dragon";
             Body = 718;
             BaseSoundID = 362;
 
-            SetStr(512, 558);
-            SetDex(95, 105);
-            SetInt(455, 501);
+            SetStr(2512, 2558);
+            SetDex(2095, 2105);
+            SetInt(4550, 5010);
 
-            SetHits(3980, 4030);
-            SetStam(10, 20);
-            SetMana(10, 20);
+            SetHits(39800, 40300);
+            SetStam(10000, 20000);
+            SetMana(10000, 20000);
 			SetAttackSpeed(3.5);
 
-            SetDamage(21, 45);
+            SetDamage(288, 455);
 
             SetDamageType(ResistanceType.Direct, 100);
 
@@ -42,15 +42,13 @@ namespace Server.Mobiles
             SetResistance(ResistanceType.Poison, 40, 49);
             SetResistance(ResistanceType.Energy, 45, 47);
 
-            SetSkill(SkillName.MagicResist, 99.1, 100.0);
-            SetSkill(SkillName.Tactics, 60.6, 68.2);
-            SetSkill(SkillName.Wrestling, 90.1, 92.5);
-            SetSkill(SkillName.Mysticism, 101.8, 108.3);
+            SetSkill(SkillName.MagicResist, 199.1, 200.0);
+            SetSkill(SkillName.Tactics, 260.6, 268.2);
+            SetSkill(SkillName.Wrestling, 290.1, 292.5);
+
 
             Fame = 15000;
             Karma = -15000;
-
-            VirtualArmor = 9;
         }
 
         public FairyDragon(Serial serial)

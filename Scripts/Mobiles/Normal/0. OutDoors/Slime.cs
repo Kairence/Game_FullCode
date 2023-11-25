@@ -15,26 +15,21 @@ namespace Server.Mobiles
 
             Hue = Utility.RandomSlimeHue();
 
-            SetStr(22, 34);
-            SetDex(16, 21);
+            SetStr(122, 134);
+            SetDex(116, 121);
             SetInt(16, 20);
 
-            SetHits(15, 19);
-            SetStam(1, 5);
-            SetMana(1, 5);
+            SetHits(650, 690);
+            SetStam(10, 15);
+            SetMana(10, 15);
 
 			SetAttackSpeed(20.0);
-            SetDamage(1, 5);
+            SetDamage(5, 12);
 
-            SetDamageType(ResistanceType.Physical, 100);
+            SetDamageType(ResistanceType.Poison, 100);
 
-            SetResistance(ResistanceType.Physical, 5, 10);
-            SetResistance(ResistanceType.Poison, 10, 20);
-
-            Fame = 300;
-            Karma = -300;
-
-            VirtualArmor = 4;
+            Fame = 1000;
+            Karma = -1000;
 
             Tamable = true;
             ControlSlots = 1;

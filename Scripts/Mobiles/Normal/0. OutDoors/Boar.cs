@@ -17,13 +17,13 @@ namespace Server.Mobiles
             this.SetDex(25, 30);
             this.SetInt(12, 18);
 
-            SetHits(38, 44);
+            SetHits(230, 280);
             SetStam(25, 30);
             SetMana(5, 10);
 			
 			SetAttackSpeed(10.0);
 
-            this.SetDamage(3, 6);
+            this.SetDamage(7, 11);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 
@@ -39,6 +39,9 @@ namespace Server.Mobiles
             this.Tamable = true;
             this.ControlSlots = 1;
             this.MinTameSkill = 29.1;
+			
+            if (Core.AOS && Utility.Random(1000) == 0) // 0.1% chance to have mad cows
+                FightMode = FightMode.Closest;			
         }
 
         public Boar(Serial serial)

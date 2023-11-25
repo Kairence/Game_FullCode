@@ -16,23 +16,27 @@ namespace Server.Mobiles
             if (0.5 >= Utility.RandomDouble())
                 this.Hue = 0x901;
 
-            this.SetStr(77, 111);
-            this.SetDex(56, 75);
-            this.SetInt(47, 75);
+            this.SetStr(277, 444);
+            this.SetDex(256, 275);
+            this.SetInt(147, 175);
 
-            SetHits(130, 150);
-            SetStam(40, 60);
+            SetHits(1333, 1888);
+            SetStam(240, 260);
             SetMana(40, 50);
 			
-			SetAttackSpeed(4.0);
+			SetAttackSpeed(5.0);
 			
-            this.SetDamage(2, 11);
+            this.SetDamage(13, 25);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 
             this.SetResistance(ResistanceType.Physical, 25, 30);
             this.SetResistance(ResistanceType.Cold, 10, 15);
 
+            this.SetSkill(SkillName.Wrestling, 66.2, 86.4);
+            this.SetSkill(SkillName.Tactics, 64.0, 66.0);
+            this.SetSkill(SkillName.MagicResist, 44.0, 45.0);			
+			
             this.Fame = 1000;
             this.Karma = 0;
 

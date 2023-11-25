@@ -13,33 +13,31 @@ namespace Server.Mobiles
             this.Body = 0x97;
             this.BaseSoundID = 0x8A;
 
-            this.SetStr(21, 49);
-            this.SetDex(66, 85);
-            this.SetInt(96, 110);
+            this.SetStr(10, 15);
+            this.SetDex(125, 135);
+            this.SetInt(10, 15);
 
-            this.SetHits(15, 27);
+            SetHits(250, 280);
+            SetStam(140, 150);
+            SetMana(10, 11);
+			
+			SetAttackSpeed(4.0);
 
-            SetStam(1, 5);
-            SetMana(1, 5);
-			SetAttackSpeed(10.0);
-            this.SetDamage(3, 6);
+            this.SetDamage(4, 8);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 15, 20);
-            this.SetResistance(ResistanceType.Fire, 70, 80);
-            this.SetResistance(ResistanceType.Cold, 25, 30);
-            this.SetResistance(ResistanceType.Poison, 10, 15);
-            this.SetResistance(ResistanceType.Energy, 10, 15);
+            this.SetResistance(ResistanceType.Physical, 5, 10);
 
-            this.SetSkill(SkillName.MagicResist, 15.1, 20.0);
-            this.SetSkill(SkillName.Tactics, 19.2, 29.0);
-            this.SetSkill(SkillName.Wrestling, 19.2, 29.0);
+            this.Fame = 600;
+            this.Karma = 600;
 
-            this.Fame = 500;
-            this.Karma = 2000;
+            this.VirtualArmor = 0;
 
-            this.VirtualArmor = 1;
+            this.Tamable = true;
+            this.ControlSlots = 1;
+            this.MinTameSkill = 9.9;
+
             this.CanSwim = true;
             this.CantWalk = true;
         }

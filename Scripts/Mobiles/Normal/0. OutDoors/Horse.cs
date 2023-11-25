@@ -29,31 +29,25 @@ namespace Server.Mobiles
             ItemID = m_IDs[random * 2 + 1];
             BaseSoundID = 0xA8;
 
-            SetStr(22, 98);
-            SetDex(56, 75);
-            SetInt(6, 10);
+            this.SetStr(194, 270);
+            this.SetDex(156, 175);
+            this.SetInt(16, 20);
 
-            SetHits(28, 45);
-            SetStam(12, 15);
-            SetMana(12, 15);
-			SetAttackSpeed(30.0);
+            this.SetHits(271, 288);
+			this.SetStam(100, 120);
+            this.SetMana(1, 5);
 
-            SetDamage(3, 4);
+            this.SetDamage(1, 4);
+			SetAttackSpeed(20.0);
 
-            SetDamageType(ResistanceType.Physical, 100);
+            this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 15, 20);
+            this.Fame = 450;
+            this.Karma = 0;
 
-            SetSkill(SkillName.MagicResist, 25.1, 30.0);
-            SetSkill(SkillName.Tactics, 29.3, 44.0);
-            SetSkill(SkillName.Wrestling, 29.3, 44.0);
-
-            Fame = 300;
-            Karma = 300;
-
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 4.1;
+            this.Tamable = true;
+            this.ControlSlots = 1;
+            this.MinTameSkill = 29.1;
         }
 
         public Horse(Serial serial)

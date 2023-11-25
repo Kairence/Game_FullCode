@@ -14,33 +14,25 @@ namespace Server.Mobiles
             this.Hue = Utility.RandomSnakeHue();
             this.BaseSoundID = 0xDB;
 
-            this.SetStr(22, 34);
-            this.SetDex(16, 25);
-            this.SetInt(6, 10);
+            SetStr(122, 134);
+            SetDex(116, 121);
+            SetInt(16, 20);
 
-            this.SetHits(15, 19);
-            SetStam(1, 5);
-            SetMana(1, 5);
+            SetHits(650, 690);
+            SetStam(10, 15);
+            SetMana(10, 15);
 
-			SetAttackSpeed(15.0);
+			SetAttackSpeed(20.0);
+            SetDamage(5, 12);
 
-            this.SetDamage(1, 4);
+            SetDamageType(ResistanceType.Poison, 100);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+            Fame = 1000;
+            Karma = -1000;
 
-            this.SetResistance(ResistanceType.Physical, 15, 20);
-            this.SetResistance(ResistanceType.Poison, 20, 30);
-
-            this.SetSkill(SkillName.Poisoning, 10.1, 15.0);
-
-            this.Fame = 300;
-            this.Karma = -300;
-
-            this.VirtualArmor = 1;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 29.1;
+            Tamable = true;
+            ControlSlots = 1;
+            MinTameSkill = 23.1;
         }
 
         public Snake(Serial serial)

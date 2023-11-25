@@ -19,31 +19,31 @@ namespace Server.Mobiles
 
             this.BaseSoundID = 0x275;
 
-            this.SetStr(94, 170);
-            this.SetDex(96, 115);
-            this.SetInt(6, 10);
+            SetStr(396, 520);
+            SetDex(281, 305);
+            SetInt(136, 160);
 
-            this.SetHits(71, 110);
-            SetStam(20, 30);
-            SetMana(10, 20);
+            SetHits(1236, 1260);
+            SetStam(200, 300);
+            SetMana(5, 10);
 			SetAttackSpeed(2.0);
 
-            this.SetDamage(1, 3);
+            SetDamage(22, 37);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+            SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 25, 30);
-            this.SetResistance(ResistanceType.Fire, 10, 15);
-            this.SetResistance(ResistanceType.Poison, 20, 25);
-            this.SetResistance(ResistanceType.Energy, 20, 25);
+            SetResistance(ResistanceType.Physical, 20, 25);
+            SetResistance(ResistanceType.Fire, 10, 20);
+            SetResistance(ResistanceType.Cold, 5, 10);
+            SetResistance(ResistanceType.Poison, 5, 10);
+            SetResistance(ResistanceType.Energy, 10, 15);
 
+            Fame = 2500;
+            Karma = -2500;
 
-            this.Fame = 1500;
-            this.Karma = -1500;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 77.1;
+            Tamable = true;
+            ControlSlots = 2;
+            MinTameSkill = 83.1;
         }
 
         public FrenziedOstard(Serial serial)

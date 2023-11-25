@@ -13,28 +13,23 @@ namespace Server.Mobiles
             this.Body = 88;
             this.BaseSoundID = 0x99;
 
-            this.SetStr(22, 64);
-            this.SetDex(56, 75);
-            this.SetInt(16, 30);
+            this.SetStr(25, 30);
+            this.SetDex(25, 30);
+            this.SetInt(12, 18);
 
-            this.SetHits(20, 33);
-            SetStam(12, 15);
-            SetMana(12, 15);
-			SetAttackSpeed(15.0);
+            SetHits(230, 280);
+            SetStam(25, 30);
+            SetMana(5, 10);
+			
+			SetAttackSpeed(10.0);
 
-            this.SetDamage(3, 7);
+            this.SetDamage(7, 11);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 10, 20);
+            this.SetResistance(ResistanceType.Physical, 10, 15);
             this.SetResistance(ResistanceType.Fire, 5, 10);
-            this.SetResistance(ResistanceType.Cold, 10, 20);
-            this.SetResistance(ResistanceType.Poison, 10, 15);
-            this.SetResistance(ResistanceType.Energy, 10, 15);
-
-            this.SetSkill(SkillName.MagicResist, 25.1, 30.0);
-            this.SetSkill(SkillName.Tactics, 29.3, 44.0);
-            this.SetSkill(SkillName.Wrestling, 29.3, 44.0);
+            this.SetResistance(ResistanceType.Poison, 5, 10);
 
             this.Fame = 300;
             this.Karma = 0;
@@ -43,7 +38,10 @@ namespace Server.Mobiles
 
             this.Tamable = true;
             this.ControlSlots = 1;
-            this.MinTameSkill = -0.9;
+            this.MinTameSkill = 29.1;
+
+            if (Core.AOS && Utility.Random(1000) == 0) // 0.1% chance to have mad cows
+                FightMode = FightMode.Closest;
         }
 
         public MountainGoat(Serial serial)

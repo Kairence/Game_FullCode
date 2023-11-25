@@ -20,33 +20,30 @@ namespace Server.Mobiles
             this.Name = "a ferret";
             this.Body = 0x117;
 
-            this.SetStr(41, 48);
-            this.SetDex(55);
-            this.SetInt(75);
+            this.SetStr(10, 15);
+            this.SetDex(25, 35);
+            this.SetInt(10, 15);
 
-            this.SetHits(45, 50);
-            SetStam(20, 30);
-            SetMana(10, 20);
-			SetAttackSpeed(12.5);
+            SetHits(150, 180);
+            SetStam(40, 50);
+            SetMana(10, 11);
+			
+			SetAttackSpeed(10.0);
 
-            this.SetDamage(7, 9);
+            SetDamage(5, 9);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 45, 50);
-            this.SetResistance(ResistanceType.Fire, 10, 14);
-            this.SetResistance(ResistanceType.Cold, 30, 40);
-            this.SetResistance(ResistanceType.Poison, 21, 25);
-            this.SetResistance(ResistanceType.Energy, 20, 25);
+            this.SetSkill(SkillName.Wrestling, 4.2, 6.4);
+            this.SetSkill(SkillName.Tactics, 4.0, 6.0);
+            this.SetSkill(SkillName.MagicResist, 4.0, 5.0);
 
-            this.SetSkill(SkillName.MagicResist, 4.0);
-            this.SetSkill(SkillName.Tactics, 4.0);
-            this.SetSkill(SkillName.Wrestling, 4.0);
+            this.Fame = 150;
+            this.Karma = 0;
 
             this.Tamable = true;
             this.ControlSlots = 1;
-            this.MinTameSkill = -21.3;
-
+            this.MinTameSkill = -6.9;
             this.m_CanTalk = true;
         }
 

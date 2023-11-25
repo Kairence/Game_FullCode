@@ -13,34 +13,35 @@ namespace Server.Mobiles
             this.Body = 0xDD;
             this.BaseSoundID = 0xE0;
 
-            this.SetStr(21, 29);
-            this.SetDex(46, 55);
-            this.SetInt(16, 20);
+            this.SetStr(25, 30);
+            this.SetDex(25, 30);
+            this.SetInt(12, 18);
 
-            this.SetHits(34, 57);
-            SetStam(100, 150);
-            SetMana(10, 15);
+            SetHits(230, 280);
+            SetStam(25, 30);
+            SetMana(5, 10);
+			
+			SetAttackSpeed(10.0);
 
-			SetAttackSpeed(5.0);
-
-            this.SetDamage(4, 10);
+            this.SetDamage(7, 11);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 20, 25);
+            this.SetResistance(ResistanceType.Physical, 10, 15);
             this.SetResistance(ResistanceType.Fire, 5, 10);
-            this.SetResistance(ResistanceType.Cold, 20, 25);
             this.SetResistance(ResistanceType.Poison, 5, 10);
-            this.SetResistance(ResistanceType.Energy, 5, 10);
 
-            this.Fame = 150;
+            this.Fame = 300;
             this.Karma = 0;
 
             this.VirtualArmor = 1;
 
             this.Tamable = true;
             this.ControlSlots = 1;
-            this.MinTameSkill = 35.1;
+            this.MinTameSkill = 29.1;
+
+            if (Core.AOS && Utility.Random(1000) == 0) // 0.1% chance to have mad cows
+                FightMode = FightMode.Closest;
         }
 
         public Walrus(Serial serial)

@@ -33,14 +33,12 @@ namespace Server.Mobiles
             this.SetResistance(ResistanceType.Poison, 15, 25);
             this.SetResistance(ResistanceType.Energy, 10, 15);
 
-            this.Fame = 1500;
+            this.Fame = 3500;
             this.Karma = 0;
-
-            this.VirtualArmor = 7;
 
             this.Tamable = true;
             this.ControlSlots = 2;
-            this.MinTameSkill = 35.1;
+            this.MinTameSkill = 85.1;
         }
 
         public PolarBear(Serial serial)

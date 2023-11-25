@@ -17,15 +17,15 @@ namespace Server.Mobiles
             else
                 this.Body = 183;
 
-            this.SetStr(36, 45);
-            this.SetDex(26, 35);
-            this.SetInt(21, 35);
-			SetHits(82, 100);
-            SetStam(32, 53);
-            SetMana(10, 15);
+            this.SetStr(136, 145);
+            this.SetDex(126, 135);
+            this.SetInt(121, 135);
+			SetHits(282, 300);
+            SetStam(126, 235);
+            SetMana(121, 135);
 
 			SetAttackSpeed(2.5);
-            this.SetDamage(7,12);
+            this.SetDamage(12,25);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 

@@ -12,30 +12,32 @@ namespace Server.Mobiles
             this.Name = "a hind";
             this.Body = 0xED;
 
-            this.SetStr(21, 51);
-            this.SetDex(47, 77);
-            this.SetInt(17, 47);
+            this.SetStr(25, 30);
+            this.SetDex(25, 30);
+            this.SetInt(12, 18);
 
-            this.SetHits(15, 29);
-            SetStam(12, 15);
-            SetMana(12, 15);
+            SetHits(230, 280);
+            SetStam(25, 30);
+            SetMana(5, 10);
+			
 			SetAttackSpeed(10.0);
 
-            this.SetDamage(4, 6);
+            this.SetDamage(7, 11);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 5, 15);
-            this.SetResistance(ResistanceType.Cold, 5);
+            this.SetResistance(ResistanceType.Physical, 10, 15);
+            this.SetResistance(ResistanceType.Fire, 5, 10);
+            this.SetResistance(ResistanceType.Poison, 5, 10);
 
             this.Fame = 300;
             this.Karma = 0;
 
-            this.VirtualArmor = 0;
+            this.VirtualArmor = 1;
 
             this.Tamable = true;
             this.ControlSlots = 1;
-            this.MinTameSkill = 23.1;
+            this.MinTameSkill = 29.1;
         }
 
         public Hind(Serial serial)

@@ -17,31 +17,31 @@ namespace Server.Mobiles
 
             Hue = Utility.Random(0x530, 9);
 
-            SetStr(168, 225);
-            SetDex(58, 85);
-            SetInt(53, 95);
+            SetStr(351, 825);
+            SetDex(487, 535);
+            SetInt(287, 355);
 
-            SetHits(1600, 1627);
+            SetHits(11600, 13000);
             SetStam(100, 150);
             SetMana(50, 100);
 
 			SetAttackSpeed(17.5);
-            SetDamage(17, 20);
+            SetDamage(66, 100);
 
             SetDamageType(ResistanceType.Physical, 100);
 
             SetResistance(ResistanceType.Physical, 25, 35);
-            SetResistance(ResistanceType.Fire, 50, 60);
-            SetResistance(ResistanceType.Cold, 30, 40);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 15, 20);
+            SetResistance(ResistanceType.Fire, 40, 45);
+            SetResistance(ResistanceType.Cold, 30, 35);
+            SetResistance(ResistanceType.Poison, 25, 30);
+            SetResistance(ResistanceType.Energy, 10, 15);
 
             SetSkill(SkillName.MagicResist, 30.1, 35.0);
             SetSkill(SkillName.Tactics, 30.1, 40.0);
             SetSkill(SkillName.Wrestling, 30.1, 40.0);
 
-            Fame = 8000;
-            Karma = -8000;
+            Fame = 6000;
+            Karma = -6000;
 
             VirtualArmor = 3;
             CanSwim = true;
@@ -53,9 +53,6 @@ namespace Server.Mobiles
                 PackItem(new BlackPearl(10));
 
             PackItem(new RawFishSteak());
-			
-			BaseWeapon weapon = this.Weapon as BaseWeapon;
-			weapon.MaxRange = 4;
 
             SetSpecialAbility(SpecialAbility.DragonBreath);
         }

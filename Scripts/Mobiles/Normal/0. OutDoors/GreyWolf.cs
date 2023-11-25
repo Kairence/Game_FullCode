@@ -14,33 +14,36 @@ namespace Server.Mobiles
             this.Body = Utility.RandomList(25, 27);
             this.BaseSoundID = 0xE5;
 
-            this.SetStr(56, 80);
-            this.SetDex(56, 75);
-            this.SetInt(31, 55);
+            this.SetStr(256, 280);
+            this.SetDex(366, 385);
+            this.SetInt(26, 50);
 
-            this.SetHits(34, 48);
-            SetStam(12, 15);
-            SetMana(12, 15);
-			SetAttackSpeed(4.0);
-
-            this.SetDamage(3, 7);
+            this.SetHits(434, 488);
+            SetStam(212, 215);
+            SetMana(10, 11);
+			
+			SetAttackSpeed(3.5);
+            this.SetDamage(8, 14);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 15, 20);
-            this.SetResistance(ResistanceType.Fire, 10, 15);
-            this.SetResistance(ResistanceType.Cold, 20, 25);
-            this.SetResistance(ResistanceType.Poison, 10, 15);
-            this.SetResistance(ResistanceType.Energy, 10, 15);
+            this.SetResistance(ResistanceType.Physical, 20, 25);
+            this.SetResistance(ResistanceType.Fire, 5, 10);
+            this.SetResistance(ResistanceType.Cold, 10, 15);
+            this.SetResistance(ResistanceType.Poison, 5, 10);
 
-            this.Fame = 450;
+            this.SetSkill(SkillName.MagicResist, 45.1, 50.0);
+            this.SetSkill(SkillName.Tactics, 75.1, 90.0);
+            this.SetSkill(SkillName.Wrestling, 75.1, 90.0);
+
+            this.Fame = 1150;
             this.Karma = 0;
 
             this.VirtualArmor = 1;
 
             this.Tamable = true;
             this.ControlSlots = 1;
-            this.MinTameSkill = 53.1;
+            this.MinTameSkill = 41.1;
         }
 
         public GreyWolf(Serial serial)

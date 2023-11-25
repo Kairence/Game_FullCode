@@ -30,11 +30,17 @@ namespace Server.Items
 			list.Add( 1060661, "반지&팔찌\t{0}, 귀걸이&목걸이: 지력 증가, 마법책: 지력 증가", "지력 증가" );	// F +5, E +10, D +15, C +20, B +30, A +40, S +50
 		}
 		
+		*/
 		public override void OnDoubleClick( Mobile from )
 		{
 			if ( !IsChildOf( from.Backpack ) ) // Make sure its in their pack
 			{
 				 from.SendLocalizedMessage( 1042001 ); // That must be in your pack for you to use it.
+			}
+			else if( Amount < 100 )
+			{
+				from.SendMessage("별무늬 사파이어가 부족합니다.");
+				return;
 			}
 			else
 			{
@@ -43,7 +49,6 @@ namespace Server.Items
 			}
 			
 		}
-		*/
 		public class GemTarget : Target
 		{
 			StarSapphire m_Gem;
@@ -62,7 +67,28 @@ namespace Server.Items
 					{
 						from.SendMessage("장비를 백팩 안에 넣어서 사용하십시오.");
 						return;
-					} 
+					}
+					else
+					{
+						if( check is IEquipOption )
+						{
+							IEquipOption equip = check as IEquipOption;
+							if( equip.SuffixOption[2] <= 0 )
+							{
+								from.SendMessage("이 아이템은 더 이상 제련이 불가능합니다!");
+							}
+							else
+							{
+								Misc.Util.NewUseGem(check, 0);
+								from.SendMessage("제련이 완료되었습니다!");
+								if( m_Gem.Amount == 100 )
+									m_Gem.Delete();
+								else
+									m_Gem.Amount -= 100;
+							}
+						}
+					}
+					/*
 					if( targeted is BaseWeapon )
 					{
 						BaseWeapon item = targeted as BaseWeapon;
@@ -71,10 +97,8 @@ namespace Server.Items
 							from.SendMessage("아이템 감정이 되지 않았습니다!");
 							return;
 						}
-						else if( ((int)item.ItemPower - 3 ) * 4 > m_Gem.Amount )
+						else if( 100 > m_Gem.Amount )
 						{
-							from.SendMessage("별무늬 사파이어가 부족합니다.");
-							return;
 						}
 						else if( (int)item.ItemPower < 1 )
 						{
@@ -223,6 +247,7 @@ namespace Server.Items
 							}
 						}
 					}
+					*/
 				}
 			}
 		}

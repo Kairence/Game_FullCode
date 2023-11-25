@@ -14,16 +14,16 @@ namespace Server.Mobiles
             Body = 23;
             BaseSoundID = 0xE5;
 
-            SetStr(96, 120);
-            SetDex(81, 105);
-            SetInt(36, 60);
+            SetStr(396, 520);
+            SetDex(281, 305);
+            SetInt(136, 160);
 
-            SetHits(236, 260);
-            SetStam(20, 30);
+            SetHits(1236, 1260);
+            SetStam(200, 300);
             SetMana(5, 10);
 			SetAttackSpeed(2.0);
 
-            SetDamage(11, 17);
+            SetDamage(22, 37);
 
             SetDamageType(ResistanceType.Physical, 100);
 
@@ -35,8 +35,6 @@ namespace Server.Mobiles
 
             Fame = 2500;
             Karma = -2500;
-
-            VirtualArmor = 2;
 
             Tamable = true;
             ControlSlots = 2;

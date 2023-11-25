@@ -13,31 +13,36 @@ namespace Server.Mobiles
             Name = "a great hart";
             Body = 0xEA;
 
-            SetStr(41, 71);
-            SetDex(47, 77);
-            SetInt(27, 57);
+            this.SetStr(256, 280);
+            this.SetDex(366, 385);
+            this.SetInt(26, 50);
 
-            SetHits(27, 41);
-            SetStam(12, 15);
-            SetMana(12, 15);
-			SetAttackSpeed(10.0);
+            this.SetHits(434, 488);
+            SetStam(212, 215);
+            SetMana(10, 11);
 			
+			SetAttackSpeed(3.5);
+            this.SetDamage(8, 14);
 
-            SetDamage(5, 9);
+            this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetDamageType(ResistanceType.Physical, 100);
+            this.SetResistance(ResistanceType.Physical, 20, 25);
+            this.SetResistance(ResistanceType.Fire, 5, 10);
+            this.SetResistance(ResistanceType.Cold, 10, 15);
+            this.SetResistance(ResistanceType.Poison, 5, 10);
 
-            SetResistance(ResistanceType.Physical, 20, 25);
-            SetResistance(ResistanceType.Cold, 5, 10);
+            this.SetSkill(SkillName.MagicResist, 45.1, 50.0);
+            this.SetSkill(SkillName.Tactics, 75.1, 90.0);
+            this.SetSkill(SkillName.Wrestling, 75.1, 90.0);
 
-            Fame = 300;
-            Karma = 0;
+            this.Fame = 1150;
+            this.Karma = 0;
 
-            VirtualArmor = 2;
+            this.VirtualArmor = 1;
 
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 59.1;
+            this.Tamable = true;
+            this.ControlSlots = 1;
+            this.MinTameSkill = 41.1;
         }
 
         public GreatHart(Serial serial)

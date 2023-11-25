@@ -20,20 +20,20 @@ namespace Server.Mobiles
 			Female = true;
 			Body = 186;
 
-			SetStr(26, 27);
-			SetDex(11, 20);
-			SetInt(41, 55);
-			SetHits(77, 88);
-            SetStam(10, 15);
-            SetMana(95, 150);
+			SetStr(126, 127);
+			SetDex(111, 120);
+			SetInt(341, 355);
+			SetHits(377, 388);
+            SetStam(100, 150);
+            SetMana(495, 550);
 
 			SetAttackSpeed(25.0);			
-			SetDamage(4, 10);
+			SetDamage(8, 16);
 
 			SetDamageType(ResistanceType.Physical, 100);
 
-			SetSkill(SkillName.EvalInt, 7.5, 10.0);
-			SetSkill(SkillName.Magery, 8.5, 15.0);
+			SetSkill(SkillName.EvalInt, 27.5, 30.0);
+			SetSkill(SkillName.Magery, 28.5, 35.0);
 
 			Fame = 2000;
 			Karma = -2000;

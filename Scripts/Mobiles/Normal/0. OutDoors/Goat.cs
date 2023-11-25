@@ -13,33 +13,32 @@ namespace Server.Mobiles
             this.Body = 0xD1;
             this.BaseSoundID = 0x99;
 
-            this.SetStr(19,29);
-            this.SetDex(15,25);
-            this.SetInt(5,10);
+            this.SetStr(25, 30);
+            this.SetDex(25, 30);
+            this.SetInt(12, 18);
 
-            this.SetHits(33,40);
-            this.SetStam(10,15);
-            this.SetMana(5,10);
-			SetAttackSpeed(10.0);
+            SetHits(230, 280);
+            SetStam(25, 30);
+            SetMana(5, 10);
 			
-            this.SetDamage(3, 4);
+			SetAttackSpeed(10.0);
+
+            this.SetDamage(7, 11);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 5, 15);
+            this.SetResistance(ResistanceType.Physical, 10, 15);
+            this.SetResistance(ResistanceType.Fire, 5, 10);
+            this.SetResistance(ResistanceType.Poison, 5, 10);
 
-            this.SetSkill(SkillName.MagicResist, 5.0);
-            this.SetSkill(SkillName.Tactics, 5.0);
-            this.SetSkill(SkillName.Wrestling, 5.0);
-
-            this.Fame = 150;
+            this.Fame = 300;
             this.Karma = 0;
 
             this.VirtualArmor = 1;
 
             this.Tamable = true;
             this.ControlSlots = 1;
-            this.MinTameSkill = 11.1;
+            this.MinTameSkill = 29.1;
         }
 
         public Goat(Serial serial)

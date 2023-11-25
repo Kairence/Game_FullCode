@@ -13,35 +13,30 @@ namespace Server.Mobiles
             this.Body = 238;
             this.BaseSoundID = 0xCC;
 
-            this.SetStr(9, 11);
-            this.SetDex(35, 40);
-            this.SetInt(5, 10);
+            this.SetStr(10, 15);
+            this.SetDex(25, 35);
+            this.SetInt(10, 15);
 
-            this.SetHits(6, 8);
-            SetStam(1, 5);
-            SetMana(1, 5);
+            SetHits(150, 180);
+            SetStam(40, 50);
+            SetMana(10, 11);
+			
+			SetAttackSpeed(10.0);
 
-			SetAttackSpeed(12.0);
-
-            this.SetDamage(1, 2);
+            SetDamage(5, 9);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 5, 10);
-            this.SetResistance(ResistanceType.Poison, 5, 10);
-
-            this.SetSkill(SkillName.MagicResist, 4.0);
-            this.SetSkill(SkillName.Tactics, 4.0);
-            this.SetSkill(SkillName.Wrestling, 4.0);
+            this.SetSkill(SkillName.Wrestling, 4.2, 6.4);
+            this.SetSkill(SkillName.Tactics, 4.0, 6.0);
+            this.SetSkill(SkillName.MagicResist, 4.0, 5.0);
 
             this.Fame = 150;
-            this.Karma = -150;
-
-            this.VirtualArmor = 1;
+            this.Karma = 0;
 
             this.Tamable = true;
             this.ControlSlots = 1;
-            this.MinTameSkill = -0.9;
+            this.MinTameSkill = -6.9;
         }
 
         public Rat(Serial serial)

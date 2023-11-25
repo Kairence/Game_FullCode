@@ -57,20 +57,17 @@ namespace Server.Mobiles
             SetDex(80, 100);
             SetInt(16, 20);
 
-            SetHits(318, 404);
-            SetStam(35, 50);
+            SetHits(1318, 1404);
+            SetStam(135, 150);
             SetMana(10, 15);
 
 			SetAttackSpeed(15.0);
 
-            SetDamage(20, 24);
-
-            SetDamageType(ResistanceType.Physical, 60);
-            SetDamageType(ResistanceType.Poison, 40);
+            SetDamage(45, 60);
 
             SetSkill(SkillName.MagicResist, 35.0);
-            SetSkill(SkillName.Tactics, 100.0);
-            SetSkill(SkillName.Wrestling, 100.0);
+            SetSkill(SkillName.Tactics, 200.0);
+            SetSkill(SkillName.Wrestling, 200.0);
 
             Fame = 3000;
             Karma = -3000;

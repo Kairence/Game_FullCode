@@ -14,30 +14,30 @@ namespace Server.Mobiles
             Hue = Utility.RandomAnimalHue();
             BaseSoundID = 0x85;
 
-            this.SetStr(11, 16);
-            this.SetDex(35, 45);
-            this.SetInt(12, 20);
+            this.SetStr(10, 15);
+            this.SetDex(125, 135);
+            this.SetInt(10, 15);
 
-            SetHits(32, 40);
-            SetStam(12, 15);
+            SetHits(250, 280);
+            SetStam(140, 150);
             SetMana(10, 11);
 			
-			SetAttackSpeed(2.0);
+			SetAttackSpeed(4.0);
 
-            this.SetDamage(2,5);
+            this.SetDamage(4, 8);
 
-            SetDamageType(ResistanceType.Physical, 100);
+            this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 10, 15);
+            this.SetResistance(ResistanceType.Physical, 5, 10);
 
-            Fame = 600;
-            Karma = 600;
+            this.Fame = 600;
+            this.Karma = 600;
 
-            VirtualArmor = 12;
+            this.VirtualArmor = 0;
 
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 9.9;
+            this.Tamable = true;
+            this.ControlSlots = 1;
+            this.MinTameSkill = 9.9;
         }
 
         public Dog(Serial serial)

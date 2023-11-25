@@ -1608,8 +1608,133 @@ namespace Server.Misc
 		#endregion
 		
 		
-        //아이템 옵션 설정
 		#region 신규 옵션 코드
+		//강화 성공 확률
+		public static readonly int[,,] NewItemPowerUpgrade = new int[,,]
+		{
+			//확률, 일반재료, 일반상승치, 희귀, 희귀, 영웅, 영웅, 서사, 서사, 전설, 전설, 신화, 신화
+			{{ 	9000, 3, 500, 7, 600, 12, 800, 20, 1000, 30, 1400, 45, 1900 }, //1강
+			{	9000, 3, 100, 7, 120, 12, 150, 20, 200, 30, 275, 45, 375	}},
+			{{ 	8500, 7, 600, 12, 700, 20, 900, 30, 1200, 45, 1700, 60, 2300 }, //2강
+			{	8500, 7, 110, 12, 132, 20, 165, 30, 220, 45, 303, 60, 413	}},
+			{{	8000, 12, 700, 20, 800, 30, 1100, 45, 1400, 60, 1900, 80, 2600 }, //3강
+			{	8000, 12, 120, 20, 144, 30, 180, 45, 240, 60, 330, 80, 450	}},
+			{{ 	7500, 20, 800, 30, 1000, 45, 1200, 60, 1600, 80, 2200, 100, 3000 }, //4강
+			{	7500, 20, 135, 30, 162, 45, 203, 60, 270, 80, 371, 100, 506	}},
+			{{ 	7000, 30, 900, 45, 1100, 60, 1400, 80, 1800, 100, 2500, 120, 3400 }, //5강
+			{	7000, 30, 150, 45, 180, 60, 225, 80, 300, 100, 413, 120, 563 }},
+			{{ 	6500, 45, 1100, 60, 1300, 80, 1700, 100, 2200, 120, 3000, 140, 4100 }, //6강
+			{	6500, 45, 170, 60, 204, 80, 255, 100, 340, 120, 468, 140, 638}},
+			{{ 	6000, 60, 1300, 80, 1600, 100, 2000, 120, 2600, 140, 3600, 160, 4900 }, //7강
+			{	6000, 60, 200, 80, 240, 100, 300, 120, 400, 140, 550, 160, 750	}},
+			{{ 	5500, 80, 1500, 100, 1900, 120, 2300, 140, 3000, 160, 4100, 180, 5600 }, //8강
+			{	5500, 80, 250, 100, 300, 120, 375, 140, 500, 160, 688, 180, 938	}},
+			{{ 	5000, 100, 1800, 120, 2200, 140, 2700, 160, 3600, 180, 5000, 200, 6800 }, //9강
+			{	5000, 100, 300, 120, 360, 140, 450, 160, 600, 180, 825, 200, 1125}},
+			{{ 	4000, 120, 2200, 140, 2600, 160, 3300, 180, 4400, 200, 6100, 225, 8300 }, //10강
+			{	4000, 120, 400, 140, 480, 160, 600, 180, 800, 200, 1100, 225, 1500	}},
+			{{ 	3000, 140, 2600, 160, 3100, 180, 3900, 200, 5200, 225, 7200, 250, 9800 }, //11강
+			{	3000, 140, 500, 160, 600, 180, 750, 200, 1000, 225, 1375, 250, 1875 }},
+			{{ 	2000, 160, 3000, 180, 3600, 200, 4500, 225, 6000, 250, 8300, 275, 11300 }, //12강
+			{	2000, 160, 650, 180, 780, 200, 975, 225, 1300, 250, 1788, 275, 2438	}},
+			{{ 	1500, 180, 3500, 200, 4200, 225, 5300, 250, 7000, 275, 9600, 300, 13100 }, //13강
+			{	1500, 180, 900, 200, 1080, 225, 1350, 250, 1800, 275, 2475, 300, 3375 }},
+			{{ 	1200, 200, 4000, 225, 4800, 250, 6000, 275, 8000, 300, 11000, 350, 15000 }, //14강
+			{	1200, 200, 1300, 225, 1560, 250, 1950, 275, 2600, 300, 3575, 350, 4875 }},
+			{{ 	1000, 225, 5000, 250, 6000, 275, 7500, 300, 10000, 350, 13800, 400, 18800 }, //15강
+			{	1000, 225, 2000, 250, 2400, 275, 3000, 300, 4000, 350, 5500, 400, 7500 }},
+			{{ 	800, 250, 6000, 275, 7200, 300, 9000, 350, 12000, 400, 16500, 500, 22500 }, //16강
+			{	800, 250, 3200, 275, 3840, 300, 4800, 350, 6400, 400, 8800, 500, 12000	}},
+			{{ 	600, 275, 7000, 300, 8400, 350, 10500, 400, 14000, 500, 19300, 600, 26300 }, //17강
+			{	600, 275, 5000, 300, 6000, 350, 7500, 400, 10000, 500, 13750, 600, 18750 }},
+			{{ 	4000, 300, 8000, 350, 9600, 400, 12000, 500, 16000, 600, 22000, 700, 30000 }, //18강
+			{	4000, 300, 7500, 350, 9000, 400, 11250, 500, 15000, 600, 20625, 700, 28125 }},
+			{{ 	200, 350, 9000, 400, 10800, 500, 13500, 600, 18000, 700, 24800, 800, 33800 }, //19강
+			{	200, 350, 12000, 400, 14400, 500, 18000, 600, 24000, 700, 33000, 800, 45000 }},
+			{{ 	100, 400, 10000, 500, 12000, 600, 15000, 700, 20000, 800, 27500, 1000, 37500 }, //20강
+			{	100, 400, 20000, 500, 24000, 600, 30000, 700, 40000, 800, 55000, 1000, 75000}}
+		};
+
+		public static int[] NewItemPowerOption = new int[]
+		{
+			//물리 데미지 증가, 화염 데미지 증가, 냉기 데미지 증가, 독 데미지 증가, 에너지 데미지 증가, 혼돈 데미지 증가(102), 신성 데미지 증가(103), 무기 뎀감(104), 마법 뎀감(105), 기절 시간 감소(106)
+			22, 23, 24, 25, 26, 102, 103, 104, 105, 106
+		};
+		
+		public void UpgradeMessage(Mobile from, bool success, int rank)
+		{
+			int failcheck = success ? 0 : 1;
+			int color = success ? 1165 : 1166;
+			if( rank < 9 + failcheck )
+			{
+				if( success )
+					from.SendMessage("{0}강화에 성공하였습니다!!!", rank );
+				else
+					from.SendMessage("{0}강화에 실패하였습니다...", rank );
+			}
+			else
+			{
+				string casting = from.Name + "님이 " + rank.ToString() + "강화에 ";
+				if( success )
+				{
+					casting += "성공하셨습니다!!!";
+				}
+				else
+				{
+					casting += "실패하셨습니다...";
+				}
+				World.Broadcast( color, true, casting );
+			}
+		}
+		
+		public static bool NewItemPowerChance(int upgrade)
+		{
+			int dice = Utility.RandomMinMax(1, 10000);
+			if( dice <= NewItemPowerUpgrade[upgrade + 1, 0, 0] )
+				return true;
+			else
+				return false;
+		}
+		
+		public static void NewItemPowerMake(Item equip, int scroll)
+		{
+			//접두 3 ~ 10 : 강화 종류
+			//접미 3 ~ 10 : 강화 레벨
+			if( equip is IEquipOption )
+			{
+				IEquipOption item = equip as IEquipOption;
+				int check = NewEquipNumber(equip);
+				int itemline = NewItemLine(check);
+				item.SuffixOption[3 + scroll] = NewItemPowerUpgrade[ item.PrefixOption[3 + scroll], itemline, (item.SuffixOption[1] + 1) * 2 ];
+				int optioncheck = NewItemPowerOption[itemline == 0 ? scroll : scroll + 7];
+				int itemvalue = item.SuffixOption[3 + scroll];
+				if( item.PrefixOption[3 + scroll] > 0 )
+				{
+					itemvalue = NewItemPowerUpgrade[ item.PrefixOption[3 + scroll] + 1, itemline, ( (scroll + 1) * 2) ] - item.SuffixOption[3 + scroll];
+				}
+				item.PrefixOption[3 + scroll]++;
+				NewEquipOptionList( equip, optioncheck, itemvalue, 0 );
+				//Console.WriteLine("강화 번호 : {0}, optioncheck : {1}, itemvalue : {2}, rank : {3}", 3 + scroll, optioncheck, itemvalue, item.SuffixOption[1] );
+			}
+		}
+		
+        //아이템 옵션 설정
+		public static int OPLPercentCheck(int number, int step = 1)
+		{
+			int check = 0;
+			if( number >= 1080585 && number <= 1080597 )
+				check = step;
+			else if( number >= 1080600 && number <= 1080609 )
+				check = step;
+			else if( number >= 1080615 && number <= 1080624 )
+				check = step;
+			else if( number >= 1080629 && number <= 1080640 )
+				check = step;
+			else if( number >= 1080651 && number <= 1080654 )
+				check = step;
+			return check;
+			
+		}
 			//1080578부터 시작
         public static readonly int[,,] NewEquipOption = new int[,,]
 		{
@@ -1916,7 +2041,31 @@ namespace Server.Misc
 			{	57,	 			15,		100,	2000}},
 			{{ 	1080651,		3,		100,	10000},	//100 무기 공격 반사%
 			{	1080651,		15,		100,	2000},
-			{	1080651,		30,		500,	5000}}
+			{	1080651,		30,		500,	5000}},
+			{{ 	1080652,		10,		10,		3000},	//101 전투 경험치%
+			{	1080652,	 	1,		1,		300	},
+			{	1080652,	 	30,		10,		1000}},
+			{{ 	1080653,		0,		10,		3000},	//102 혼돈 피해%
+			{	1080653,	 	0,		1,		300	},
+			{	1080653,	 	0,		10,		1000}},
+			{{ 	1080654,		0,		10,		3000},	//103 신성 경험치%
+			{	1080654,	 	0,		1,		300	},
+			{	1080654,	 	0,		10,		1000}},
+			{{ 	1080655,		0,		10,		3000},	//104 무기 데미지 감소
+			{	1080655,	 	0,		1,		300	},
+			{	1080655,	 	0,		10,		1000}},
+			{{ 	1080656,		0,		10,		3000},	//105 마법 데미지 감소
+			{	1080656,	 	0,		1,		300	},
+			{	1080656,	 	0,		10,		1000}},
+			{{ 	1080657,		0,		10,		3000},	//106 기절 시간 감소
+			{	1080657,	 	0,		1,		300	},
+			{	1080657,	 	0,		10,		1000}},
+			{{ 	1080658,		0,		10,		3000},	//107 혼돈 피해
+			{	1080658,	 	0,		1,		300	},
+			{	1080658,	 	0,		10,		1000}},
+			{{ 	1080659,		0,		10,		3000},	//108 신성 피해
+			{	1080659,	 	0,		1,		300	},
+			{	1080659,	 	30,		10,		1000}}
 		};
 		
 		public static int[,] NewSelectGemOption =
@@ -2019,14 +2168,13 @@ namespace Server.Misc
 					item.SuffixOption[2]--;
 					for( int i = 0; i < 10; ++i )
 					{
-						if( item.PrefixOption[31 + i] != -1 )
+						if( item.PrefixOption[31 + i] == -1 )
 						{
 							item.PrefixOption[31 + i] = NewSelectGemOption[gem, check];
 							if( itemline == 1 && item.PrefixOption[31 + i] >= 56 && item.PrefixOption[31 + i] <= 62 )
 								item.SuffixOption[31 + i] = 200;
 							else
 								item.SuffixOption[31 + i] = NewEquipOption[item.PrefixOption[i + 31],	itemline, 	3] / 6;
-							
 							skilluse = NewEquipOptionList( equip, item.PrefixOption[ i + 31], item.SuffixOption[ i + 31], skilluse);
 							break;
 						}
@@ -3183,6 +3331,46 @@ namespace Server.Misc
 					case 100: //무기 공격 반사%
 					{
 						primary.ReflectPhysical += itemvalue;
+						break;
+					}
+					case 101: //전투 경험치%
+					{
+						primary.LowerAmmoCost += itemvalue;
+						break;
+					}
+					case 102: //혼돈 피해%
+					{
+						exweapon.ChaosDamage += itemvalue;
+						break;
+					}
+					case 103: //신성 피해%
+					{
+						exweapon.DirectDamage += itemvalue;
+						break;
+					}
+					case 104: //무기 데미지 감소
+					{
+						armor.WeaponDefense += itemvalue;
+						break;
+					}
+					case 105: //마법 데미지 감소
+					{
+						armor.MagicDefense += itemvalue;
+						break;
+					}
+					case 106: //기절 시간 감소
+					{
+						armor.StunDefense += itemvalue;
+						break;
+					}
+					case 107: //혼돈 피해
+					{
+						exweapon.ChaosPlus += itemvalue;
+						break;
+					}
+					case 108: //신성 피해
+					{
+						exweapon.DirectPlus += itemvalue;
 						break;
 					}
 				}

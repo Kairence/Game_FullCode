@@ -14,19 +14,17 @@ namespace Server.Mobiles
 
             this.Body = 185;
 
-            this.SetStr(51, 70);
-            this.SetDex(32, 55);
-            this.SetInt(21, 25);
-			SetHits(377, 488);
+            this.SetStr(251, 270);
+            this.SetDex(232, 255);
+            this.SetInt(121, 125);
+			SetHits(777, 888);
             SetStam(200, 300);
-            SetMana(10, 15);
+            SetMana(100, 150);
 
 			SetAttackSpeed(2.0);
-            this.SetDamage(8, 15);
+            this.SetDamage(18, 35);
 
             this.SetDamageType(ResistanceType.Physical, 100);
-
-            this.SetSkill(SkillName.Healing, 10.3, 20.0);
 
             this.Fame = 3000;
             this.Karma = -3000;

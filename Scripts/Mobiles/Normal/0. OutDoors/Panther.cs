@@ -14,33 +14,36 @@ namespace Server.Mobiles
             Hue = 0x901;
             BaseSoundID = 0x462;
 
-            SetStr(61, 85);
-            SetDex(86, 105);
-            SetInt(26, 50);
+            this.SetStr(256, 280);
+            this.SetDex(366, 385);
+            this.SetInt(26, 50);
 
-            SetHits(37, 51);
-            SetStam(12, 15);
-            SetMana(12, 15);
+            this.SetHits(434, 488);
+            SetStam(212, 215);
+            SetMana(10, 11);
+			
+			SetAttackSpeed(3.5);
+            this.SetDamage(8, 14);
 
-			SetAttackSpeed(10.0);
+            this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetDamage(4, 12);
+            this.SetResistance(ResistanceType.Physical, 20, 25);
+            this.SetResistance(ResistanceType.Fire, 5, 10);
+            this.SetResistance(ResistanceType.Cold, 10, 15);
+            this.SetResistance(ResistanceType.Poison, 5, 10);
 
-            SetDamageType(ResistanceType.Physical, 100);
+            this.SetSkill(SkillName.MagicResist, 45.1, 50.0);
+            this.SetSkill(SkillName.Tactics, 75.1, 90.0);
+            this.SetSkill(SkillName.Wrestling, 75.1, 90.0);
 
-            SetResistance(ResistanceType.Physical, 20, 25);
-            SetResistance(ResistanceType.Fire, 5, 10);
-            SetResistance(ResistanceType.Cold, 10, 15);
-            SetResistance(ResistanceType.Poison, 5, 10);
+            this.Fame = 1150;
+            this.Karma = 0;
 
-            Fame = 450;
-            Karma = 0;
+            this.VirtualArmor = 1;
 
-            VirtualArmor = 1;
-
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 53.1;
+            this.Tamable = true;
+            this.ControlSlots = 1;
+            this.MinTameSkill = 41.1;
         }
 
         public Panther(Serial serial)

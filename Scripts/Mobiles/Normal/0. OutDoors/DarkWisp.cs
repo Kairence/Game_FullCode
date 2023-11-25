@@ -15,17 +15,17 @@ namespace Server.Mobiles
             Body = 165;
             BaseSoundID = 466;
 
-            SetStr(196, 225);
-            SetDex(196, 225);
-            SetInt(196, 225);
+            SetStr(996, 1225);
+            SetDex(996, 1225);
+            SetInt(996, 1225);
 
             SetHits(1180, 1350);
             SetStam(500, 750);
-            SetMana(50, 100);
+            SetMana(500, 1000);
 
 			SetAttackSpeed(1.5);
 			
-            SetDamage(16, 22);
+            SetDamage(52, 75);
 
             SetDamageType(ResistanceType.Physical, 0);
             SetDamageType(ResistanceType.Chaos, 100);
@@ -34,18 +34,18 @@ namespace Server.Mobiles
             SetResistance(ResistanceType.Fire, 20, 40);
             SetResistance(ResistanceType.Cold, 10, 30);
             SetResistance(ResistanceType.Poison, 5, 10);
-            SetResistance(ResistanceType.Energy, 50, 70);
+            SetResistance(ResistanceType.Energy, 45, 50);
 
-            SetSkill(SkillName.EvalInt, 80.0);
-            SetSkill(SkillName.Magery, 80.0);
-            SetSkill(SkillName.MagicResist, 80.0);
-            SetSkill(SkillName.Tactics, 80.0);
-            SetSkill(SkillName.Wrestling, 80.0);
-            SetSkill(SkillName.Necromancy, 80.0);
-            SetSkill(SkillName.SpiritSpeak, 80.0);
+            SetSkill(SkillName.EvalInt, 160.0);
+            SetSkill(SkillName.Magery, 160.0);
+            SetSkill(SkillName.MagicResist, 160.0);
+            SetSkill(SkillName.Tactics, 160.0);
+            SetSkill(SkillName.Wrestling, 160.0);
+            SetSkill(SkillName.Necromancy, 160.0);
+            SetSkill(SkillName.SpiritSpeak, 160.0);
 
-            Fame = 6500;
-            Karma = -6500;
+            Fame = 10500;
+            Karma = -10500;
 
             VirtualArmor = 10;
 

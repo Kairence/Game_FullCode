@@ -13,30 +13,30 @@ namespace Server.Mobiles
             Body = 0xD0;
             BaseSoundID = 0x6E;
 
-            this.VirtualArmor = Utility.RandomMinMax(0, 1);
-
             this.SetStr(10, 15);
             this.SetDex(25, 35);
             this.SetInt(10, 15);
 
-            SetHits(21, 30);
-            SetStam(12, 15);
+            SetHits(150, 180);
+            SetStam(40, 50);
             SetMana(10, 11);
 			
-			SetAttackSpeed(15.0);
+			SetAttackSpeed(10.0);
 
-            SetDamage(1, 4);
+            SetDamage(5, 9);
 
-            SetDamageType(ResistanceType.Physical, 100);
+            this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 1, 5);
+            this.SetSkill(SkillName.Wrestling, 4.2, 6.4);
+            this.SetSkill(SkillName.Tactics, 4.0, 6.0);
+            this.SetSkill(SkillName.MagicResist, 4.0, 5.0);
 
-            Fame = 150;
-            Karma = 0;
+            this.Fame = 150;
+            this.Karma = 0;
 
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = -6.9;
+            this.Tamable = true;
+            this.ControlSlots = 1;
+            this.MinTameSkill = -6.9;
         }
 
         public Chicken(Serial serial)
