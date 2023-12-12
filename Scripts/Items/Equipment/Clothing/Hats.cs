@@ -934,33 +934,36 @@ namespace Server.Items
     {
         public CraftSystem RepairSystem { get { return DefTailoring.CraftSystem; } }
 
+        public override int InitMinHits { get { return 100; } }
+        public override int InitMaxHits { get { return 100; } }
 
-        public override int InitMinHits
-        {
-            get
-            {
-                return 20;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 30;
-            }
-        }
+        public override int AosStrReq { get { return 400; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
+        public override int OldStrReq { get { return 15; } }
 
         [Constructable]
         public BearMask()
             : this(0)
         {
+			
         }
 
         [Constructable]
         public BearMask(int hue)
             : base(0x1545, hue)
         {
-        }
+			BaseArmorRating = 7;
+			PrefixOption[50] = 4;
+			PrefixOption[61] = 114;
+			SuffixOption[61] = 200;
+			PrefixOption[62] = 19;
+			SuffixOption[62] = 75;
+			PrefixOption[63] = 20;
+			SuffixOption[63] = 2500;
+			PrefixOption[64] = 21;
+			SuffixOption[64] = 25000;	
+		}
 
         public override bool Dye(Mobile from, DyeTub sender)
         {
@@ -992,32 +995,35 @@ namespace Server.Items
     {
         public CraftSystem RepairSystem { get { return DefTailoring.CraftSystem; } }
 
+        public override int InitMinHits { get { return 100; } }
+        public override int InitMaxHits { get { return 100; } }
 
-        public override int InitMinHits
-        {
-            get
-            {
-                return 20;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 30;
-            }
-        }
+        public override int AosStrReq { get { return 400; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
+        public override int OldStrReq { get { return 15; } }
 
         [Constructable]
         public DeerMask()
             : this(0)
         {
+		
         }
 
         [Constructable]
         public DeerMask(int hue)
             : base(0x1547, hue)
         {
+			BaseArmorRating = 7;
+			PrefixOption[50] = 4;
+			PrefixOption[61] = 114;
+			SuffixOption[61] = 200;
+			PrefixOption[62] = 40;
+			SuffixOption[62] = 250;
+			PrefixOption[63] = 7;
+			SuffixOption[63] = 1000;
+			PrefixOption[64] = 5;
+			SuffixOption[64] = 25000;				
         }
 
         public override bool Dye(Mobile from, DyeTub sender)

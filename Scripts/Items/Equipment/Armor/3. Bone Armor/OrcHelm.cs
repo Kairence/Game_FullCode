@@ -11,7 +11,11 @@ namespace Server.Items
         public OrcHelm()
             : base(0x1F0B)
         {
-  			AbsorptionAttributes.ResonancePoison += 110;
+			PrefixOption[50] = 7;
+			PrefixOption[61] = 7;
+			SuffixOption[61] = 150;
+			PrefixOption[62] = 12;
+			SuffixOption[62] = 1000;
         }
 
         public OrcHelm(Serial serial)
@@ -19,39 +23,15 @@ namespace Server.Items
         {
         }
 
-        public override int InitMinHits
-        {
-            get
-            {
-                return 30;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 50;
-            }
-        }
-        public override int AosStrReq
-        {
-            get
-            {
-                return 30;
-            }
-        }
-        public override int OldStrReq
-        {
-            get
-            {
-                return 10;
-            }
-        }
+		public override int AosStrReq { get { return 300; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
+        public override int OldStrReq { get { return 15; } }
         public override int ArmorBase
         {
             get
             {
-                return 10;
+                return 3;
             }
         }
         public override double DefaultWeight

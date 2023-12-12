@@ -13,8 +13,13 @@ namespace Server.Items
         {
             this.Weight = 14.0;
             this.Layer = Layer.TwoHanded;
-			SkillBonuses.SetValues(5, SkillName.Tactics, 10.0);
-			SkillBonuses.SetValues(6, SkillName.Swords, 10.0);
+			PrefixOption[61] = 77;
+			PrefixOption[62] = 87;
+			SuffixOption[61] = 1000;
+			SuffixOption[62] = 1000;
+			
+			//SkillBonuses.SetValues(5, SkillName.Tactics, 10.0);
+			//SkillBonuses.SetValues(6, SkillName.Swords, 10.0);
 		}
 
         public BattleAxe(Serial serial)

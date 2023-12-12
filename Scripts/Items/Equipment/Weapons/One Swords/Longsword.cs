@@ -11,12 +11,25 @@ namespace Server.Items
         public Longsword()
             : base(0xF61)
         {
-			WeaponAttributes.ResistPhysicalBonus += 1000;
-			WeaponAttributes.ResistFireBonus += 1000;
-			WeaponAttributes.ResistColdBonus += 1000;
-			WeaponAttributes.ResistPoisonBonus += 1000;
-			WeaponAttributes.ResistEnergyBonus += 1000;
-			ExtendedWeaponAttributes.AssassinHoned -= 2500;
+			PrefixOption[61] = 12;
+			PrefixOption[62] = 13;
+			PrefixOption[63] = 14;
+			PrefixOption[64] = 15;
+			PrefixOption[65] = 16;
+			PrefixOption[66] = 111;
+			SuffixOption[61] = 1000;
+			SuffixOption[62] = 1000;
+			SuffixOption[63] = 1000;
+			SuffixOption[64] = 1000;
+			SuffixOption[65] = 1000;
+			SuffixOption[66] = 2500;
+			
+			//WeaponAttributes.ResistPhysicalBonus += 1000;
+			//WeaponAttributes.ResistFireBonus += 1000;
+			//WeaponAttributes.ResistColdBonus += 1000;
+			//WeaponAttributes.ResistPoisonBonus += 1000;
+			//WeaponAttributes.ResistEnergyBonus += 1000;
+			//ExtendedWeaponAttributes.AssassinHoned -= 2500;
             this.Weight = 7.0;
         }
 

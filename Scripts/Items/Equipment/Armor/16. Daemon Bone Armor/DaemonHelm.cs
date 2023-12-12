@@ -5,14 +5,17 @@ namespace Server.Items
     [FlipableAttribute(0x1451, 0x1456)]
     public class DaemonHelm : BaseArmor
     {
-        public override bool IsArtifact { get { return true; } }
         [Constructable]
         public DaemonHelm()
             : base(0x1451)
         {
             this.Hue = 0x648;
             this.Weight = 3.0;
-
+			PrefixOption[50] = 14;
+			PrefixOption[61] = 44;
+			SuffixOption[61] = 1000;
+			PrefixOption[62] = 45;
+			SuffixOption[62] = 1000;
         }
 
         public DaemonHelm(Serial serial)
@@ -20,35 +23,10 @@ namespace Server.Items
         {
         }
 
-        public override int InitMinHits
-        {
-            get
-            {
-                return 66;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 66;
-            }
-        }
-
-        public override int AosStrReq
-        {
-            get
-            {
-                return 20;
-            }
-        }
-        public override int OldStrReq
-        {
-            get
-            {
-                return 40;
-            }
-        }
+		public override int AosStrReq { get { return 500; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
+        public override int OldStrReq { get { return 15; } }
         public override int ArmorBase
         {
             get

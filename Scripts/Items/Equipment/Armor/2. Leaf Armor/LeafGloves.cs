@@ -9,32 +9,37 @@ namespace Server.Items
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 40;
+                return 100;
             }
         }
-
         public override int AosStrReq
         {
             get
             {
-                return 10;
+                return 100;
             }
         }
-        public override int OldStrReq
+        public override int AosDexReq
         {
             get
             {
-                return 10;
+                return 100;
             }
         }
-
+        public override int AosIntReq
+        {
+            get
+            {
+                return 100;
+            }
+        }
         public override int ArmorBase
         {
             get
@@ -42,7 +47,6 @@ namespace Server.Items
                 return 2;
             }
         }
-
         public override ArmorMaterialType MaterialType
         {
             get
@@ -71,7 +75,13 @@ namespace Server.Items
             : base(0x2FC6)
         {
             Weight = 2.0;
-			Attributes.HealBonus += 7;		
+			PrefixOption[50] = 1;
+			PrefixOption[61] = 12;
+			SuffixOption[61] = 200;
+			PrefixOption[62] = 14;
+			SuffixOption[62] = 200;
+			PrefixOption[63] = 46;
+			SuffixOption[63] = 500;
         }
 
         public LeafGloves(Serial serial)
@@ -82,22 +92,13 @@ namespace Server.Items
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-            writer.WriteEncodedInt(1); // version
+            writer.WriteEncodedInt(0); // version
         }
 
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
             int version = reader.ReadEncodedInt();
-
-            if (version < 1)
-            {
-                if (reader.ReadBool())
-                {
-                    reader.ReadInt();
-                    reader.ReadInt();
-                }
-            }
         }
     }
 }

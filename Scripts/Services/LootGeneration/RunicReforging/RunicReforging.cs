@@ -2711,17 +2711,66 @@ namespace Server.Items
 
         public static AosArmorAttributes GetAosArmorAttributes(Item item)
         {
+            if (item is BaseWeapon)
+                return ((BaseWeapon)item).ArmorAttributes;
+
             if (item is BaseArmor)
                 return ((BaseArmor)item).ArmorAttributes;
 
             if (item is BaseClothing)
                 return ((BaseClothing)item).ArmorAttributes;
 
+            if (item is BaseJewel)
+                return ((BaseJewel)item).ArmorAttributes;
+
+            //if (item is BaseTalisman)
+            //    return ((BaseTalisman)item).ArmorAttributes;
+
+            //if (item is BaseQuiver)
+            //    return ((BaseQuiver)item).ArmorAttributes;
+
+            if (item is Spellbook)
+                return ((Spellbook)item).ArmorAttributes;
+
+            //if(item is FishingPole)
+             //   return ((FishingPole)item).ArmorAttributes;
+
+			//if (item is BaseArmor)
+            //    return ((BaseArmor)item).ArmorAttributes;
+
+            //if (item is BaseClothing)
+            //    return ((BaseClothing)item).ArmorAttributes;
+
             return null;
         }
 
         public static AosWeaponAttributes GetAosWeaponAttributes(Item item)
         {
+            if (item is BaseWeapon)
+                return ((BaseWeapon)item).WeaponAttributes;
+
+            if (item is BaseArmor)
+                return ((BaseArmor)item).WeaponAttributes;
+
+            if (item is BaseClothing)
+                return ((BaseClothing)item).WeaponAttributes;
+
+            if (item is BaseJewel)
+                return ((BaseJewel)item).WeaponAttributes;
+
+            //if (item is BaseTalisman)
+            //    return ((BaseTalisman)item).WeaponAttributes;
+
+            //if (item is BaseQuiver)
+            //    return ((BaseQuiver)item).WeaponAttributes;
+
+            if (item is Spellbook)
+                return ((Spellbook)item).WeaponAttributes;
+
+            //if (item is FishingPole)
+            //    return ((FishingPole)item).WeaponAttributes;
+
+			/*
             if (item is BaseWeapon)
                 return ((BaseWeapon)item).WeaponAttributes;
 
@@ -2736,7 +2785,7 @@ namespace Server.Items
 
             if (item is BaseArmor)
                 return ((BaseArmor)item).WeaponAttributes;
-
+			*/
             return null;
         }
 
@@ -2745,11 +2794,60 @@ namespace Server.Items
             if (item is BaseWeapon)
                 return ((BaseWeapon)item).ExtendedWeaponAttributes;
 
+            if (item is BaseArmor)
+                return ((BaseArmor)item).ExtendedWeaponAttributes;
+
+            if (item is BaseClothing)
+                return ((BaseClothing)item).ExtendedWeaponAttributes;
+
+            if (item is BaseJewel)
+                return ((BaseJewel)item).ExtendedWeaponAttributes;
+
+            //if (item is BaseTalisman)
+            //    return ((BaseTalisman)item).ExtendedWeaponAttributes;
+
+            //if (item is BaseQuiver)
+            //    return ((BaseQuiver)item).ExtendedWeaponAttributes;
+
+            if (item is Spellbook)
+                return ((Spellbook)item).ExtendedWeaponAttributes;
+
+            //if(item is FishingPole)
+            //    return ((FishingPole)item).ExtendedWeaponAttributes;
+			
+            //if (item is BaseWeapon)
+            //    return ((BaseWeapon)item).ExtendedWeaponAttributes;
+
             return null;
         }
 
         public static AosElementAttributes GetElementalAttributes(Item item)
         {
+            //if (item is BaseWeapon)
+            //    return ((BaseWeapon)item).Resistances;
+
+            //if (item is BaseArmor)
+            //    return ((BaseArmor)item).Resistances;
+
+            if (item is BaseClothing)
+                return ((BaseClothing)item).Resistances;
+
+            if (item is BaseJewel)
+                return ((BaseJewel)item).Resistances;
+
+            //if (item is BaseTalisman)
+            //    return ((BaseTalisman)item).Resistances;
+
+            //if (item is BaseQuiver)
+            //    return ((BaseQuiver)item).Resistances;
+
+            if (item is Spellbook)
+                return ((Spellbook)item).Resistances;
+
+            //if(item is FishingPole)
+             //   return ((FishingPole)item).Resistances;
+			
+			/*
             if (item is BaseClothing)
                 return ((BaseClothing)item).Resistances;
 
@@ -2761,12 +2859,37 @@ namespace Server.Items
 
             else if (item is BaseQuiver)
                 return ((BaseQuiver)item).Resistances;
-
+			*/
             return null;
         }
 
         public static SAAbsorptionAttributes GetSAAbsorptionAttributes(Item item)
         {
+            if (item is BaseWeapon)
+                return ((BaseWeapon)item).AbsorptionAttributes;
+
+            if (item is BaseArmor)
+                return ((BaseArmor)item).AbsorptionAttributes;
+
+            if (item is BaseClothing)
+                return ((BaseClothing)item).AbsorptionAttributes;
+
+            if (item is BaseJewel)
+                return ((BaseJewel)item).AbsorptionAttributes;
+
+            //if (item is BaseTalisman)
+            //    return ((BaseTalisman)item).AbsorptionAttributes;
+
+           //if (item is BaseQuiver)
+            //    return ((BaseQuiver)item).AbsorptionAttributes;
+
+            if (item is Spellbook)
+                return ((Spellbook)item).AbsorptionAttributes;
+
+            //if(item is FishingPole)
+            //    return ((FishingPole)item).AbsorptionAttributes;			
+			
+			/*
             if (item is BaseArmor)
                 return ((BaseArmor)item).AbsorptionAttributes;
 
@@ -2778,7 +2901,7 @@ namespace Server.Items
 
             else if (item is BaseClothing)
                 return ((BaseClothing)item).AbsorptionAttributes;
-
+			*/
             return null;
         }
 
@@ -2793,14 +2916,14 @@ namespace Server.Items
             else if (item is BaseArmor)
                 return ((BaseArmor)item).SkillBonuses;
 
-            else if (item is BaseTalisman)
-                return ((BaseTalisman)item).SkillBonuses;
+            //else if (item is BaseTalisman)
+            //    return ((BaseTalisman)item).SkillBonuses;
 
             else if (item is Spellbook)
                 return ((Spellbook)item).SkillBonuses;
 
-            else if (item is BaseQuiver)
-                return ((BaseQuiver)item).SkillBonuses;
+            //else if (item is BaseQuiver)
+            //    return ((BaseQuiver)item).SkillBonuses;
 
             else if (item is BaseClothing)
                 return ((BaseClothing)item).SkillBonuses;

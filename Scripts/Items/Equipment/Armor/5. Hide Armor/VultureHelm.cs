@@ -10,42 +10,26 @@ namespace Server.Items
             : base(0x2B72)
         {
             this.Weight = 5.0;
- 			Attributes.SpellDamage += 150;
+			PrefixOption[50] = 5;
+			PrefixOption[61] = 114;
+			SuffixOption[61] = 100;
+			PrefixOption[62] = 116;
+			SuffixOption[62] = 500;
+			PrefixOption[63] = 41;
+			SuffixOption[63] = 250;
         }
 
         public VultureHelm(Serial serial)
             : base(serial)
         {
         }
+        public override int InitMinHits { get { return 100; } }
+        public override int InitMaxHits { get { return 100; } }
 
-        public override int InitMinHits
-        {
-            get
-            {
-                return 50;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 65;
-            }
-        }
-        public override int AosStrReq
-        {
-            get
-            {
-                return 35;
-            }
-        }
-        public override int OldStrReq
-        {
-            get
-            {
-                return 25;
-            }
-        }
+        public override int AosStrReq { get { return 300; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
+        public override int OldStrReq { get { return 15; } }
         public override int ArmorBase
         {
             get

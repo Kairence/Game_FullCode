@@ -8,7 +8,7 @@ namespace Server.Items
         [Constructable]
         public RuneBladeOfKnowledge()
         {
-			//운 1, 명중률 40%
+			//운 100, 명중률 40%
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			

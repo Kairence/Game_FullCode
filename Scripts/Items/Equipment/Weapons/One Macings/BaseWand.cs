@@ -40,7 +40,10 @@ namespace Server.Items
             this.Weight = 1.0;
             this.Effect = effect;
             this.Charges = Utility.RandomMinMax(minCharges, maxCharges);
-			Attributes.CastSpeed += 500;
+			PrefixOption[61] = 41;
+			SuffixOption[61] = 500;
+			
+			//Attributes.CastSpeed += 500;
         }
 
         public BaseWand(Serial serial)

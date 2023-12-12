@@ -102,7 +102,7 @@ namespace Server.Engines.Quests
 				{
 					uniqueoption = 2;
 				}
-				Misc.Util.ItemCreate( item, rank, false, Owner, 0, uniqueoption );
+				Misc.Util.NewItemCreate( item, rank, Owner );
 				Owner.AddToBackpack( item );
 			}
 

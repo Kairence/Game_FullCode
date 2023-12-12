@@ -9,7 +9,10 @@ namespace Server.Items
         public MagicalShortbow()
             : base(0x2D2B)
         {
-			AbsorptionAttributes.ResonanceEnergy += 7500;
+			PrefixOption[61] = 36;
+			SuffixOption[61] = 7500;
+			
+			//AbsorptionAttributes.ResonanceEnergy += 7500;
             this.Weight = 6.0;
 		}
 

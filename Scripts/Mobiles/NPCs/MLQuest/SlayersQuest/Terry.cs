@@ -63,7 +63,7 @@ namespace Server.Engines.Quests
 			if( Utility.RandomDouble() <= 0.1 )
 			{
 				Item item = Loot.RandomArmor();
-				Misc.Util.ItemCreate( item, rank, false, Owner, Misc.Util.QuestTier(Owner, 1), 53 );
+				Misc.Util.NewItemCreate( item, rank, Owner );
 				Owner.AddToBackpack( item );
 				Misc.Util.ItemGet_Effect( Owner );
 			}
@@ -145,7 +145,7 @@ namespace Server.Engines.Quests
 			if( Utility.RandomDouble() <= 0.1 )
 			{
 				Item item = Loot.RandomWeapon();
-				Misc.Util.ItemCreate( item, rank, false, Owner, Misc.Util.QuestTier(Owner, 2), 46 );
+				Misc.Util.NewItemCreate( item, rank, Owner );
 				Owner.AddToBackpack( item );
 				Misc.Util.ItemGet_Effect( Owner );
 			}
@@ -227,7 +227,7 @@ namespace Server.Engines.Quests
 			if( Utility.RandomDouble() <= 0.1 )
 			{
 				Item item = new HidePauldrons();
-				Misc.Util.ItemCreate( item, rank, false, Owner, Misc.Util.QuestTier(Owner, 3), 56 );
+				Misc.Util.NewItemCreate( item, rank, Owner );
 				Owner.AddToBackpack( item );
 				Misc.Util.ItemGet_Effect( Owner );
 			}

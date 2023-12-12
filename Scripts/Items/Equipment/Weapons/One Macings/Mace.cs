@@ -11,7 +11,10 @@ namespace Server.Items
         public Mace()
             : base(0xF5C)
         {
-			Attributes.BonusStam += 25000;
+			PrefixOption[61] = 5;
+			SuffixOption[61] = 25000;
+			
+			//Attributes.BonusStam += 25000;
             this.Weight = 14.0;
         }
 

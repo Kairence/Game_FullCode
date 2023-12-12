@@ -847,8 +847,66 @@ namespace Server
             value += SkillMasterySpell.GetAttributeBonus(m, attribute);
             #endregion
 
-			/*
+			//세트 옵션
+			if( m is PlayerMobile )
+			{
+				PlayerMobile pm = m as PlayerMobile;
+				if( pm.ItemSetSaveValue[0] > 0 && attribute == AosAttribute.BonusStr )
+					value += pm.ItemSetSaveValue[0];
+				else if( pm.ItemSetSaveValue[1] > 0 && attribute == AosAttribute.BonusDex )
+					value += pm.ItemSetSaveValue[1];
+				else if( pm.ItemSetSaveValue[2] > 0 && attribute == AosAttribute.BonusInt )
+					value += pm.ItemSetSaveValue[2];
+				else if( pm.ItemSetSaveValue[3] > 0 && attribute == AosAttribute.Luck )
+					value += pm.ItemSetSaveValue[3];
+				else if( pm.ItemSetSaveValue[4] > 0 && attribute == AosAttribute.BonusHits )
+					value += pm.ItemSetSaveValue[4];
+				else if( pm.ItemSetSaveValue[5] > 0 && attribute == AosAttribute.BonusStam )
+					value += pm.ItemSetSaveValue[5];
+				else if( pm.ItemSetSaveValue[6] > 0 && attribute == AosAttribute.BonusMana )
+					value += pm.ItemSetSaveValue[6];
+				else if( pm.ItemSetSaveValue[7] > 0 && attribute == AosAttribute.WeaponDamage )
+					value += pm.ItemSetSaveValue[7];
+				else if( pm.ItemSetSaveValue[8] > 0 && attribute == AosAttribute.SpellDamage )
+					value += pm.ItemSetSaveValue[8];
+				else if( pm.ItemSetSaveValue[17] > 0 && attribute == AosAttribute.AttackChance )
+					value += pm.ItemSetSaveValue[17];
+				else if( pm.ItemSetSaveValue[18] > 0 && attribute == AosAttribute.DefendChance )
+					value += pm.ItemSetSaveValue[18];
+				else if( pm.ItemSetSaveValue[19] > 0 && attribute == AosAttribute.RegenHits )
+					value += pm.ItemSetSaveValue[19];
+				else if( pm.ItemSetSaveValue[20] > 0 && attribute == AosAttribute.RegenStam )
+					value += pm.ItemSetSaveValue[20];
+				else if( pm.ItemSetSaveValue[21] > 0 && attribute == AosAttribute.RegenMana )
+					value += pm.ItemSetSaveValue[21];
+				else if( pm.ItemSetSaveValue[22] > 0 && attribute == AosAttribute.BalancedWeapon )
+					value += pm.ItemSetSaveValue[22];
+				else if( pm.ItemSetSaveValue[40] > 0 && attribute == AosAttribute.WeaponSpeed )
+					value += pm.ItemSetSaveValue[40];
+				else if( pm.ItemSetSaveValue[41] > 0 && attribute == AosAttribute.CastSpeed )
+					value += pm.ItemSetSaveValue[41];
+				else if( pm.ItemSetSaveValue[42] > 0 && attribute == AosAttribute.WeaponCritical )
+					value += pm.ItemSetSaveValue[42];
+				else if( pm.ItemSetSaveValue[43] > 0 && attribute == AosAttribute.CastRecovery )
+					value += pm.ItemSetSaveValue[43];
+				else if( pm.ItemSetSaveValue[44] > 0 && attribute == AosAttribute.Brittle )
+					value += pm.ItemSetSaveValue[44];
+				else if( pm.ItemSetSaveValue[45] > 0 && attribute == AosAttribute.SpellChanneling )
+					value += pm.ItemSetSaveValue[45];
+				else if( pm.ItemSetSaveValue[46] > 0 && attribute == AosAttribute.EnhancePotions )
+					value += pm.ItemSetSaveValue[46];
+				else if( pm.ItemSetSaveValue[47] > 0 && attribute == AosAttribute.HealBonus )
+					value += pm.ItemSetSaveValue[47];
+				else if( pm.ItemSetSaveValue[51] > 0 && attribute == AosAttribute.NightSight )
+					value += pm.ItemSetSaveValue[51];
+				else if( pm.ItemSetSaveValue[100] > 0 && attribute == AosAttribute.ReflectPhysical )
+					value += pm.ItemSetSaveValue[100];
+				else if( pm.ItemSetSaveValue[101] > 0 && attribute == AosAttribute.LowerAmmoCost )
+					value += pm.ItemSetSaveValue[101];
+			}
+			
 			//전투 포인트
+			/*
 			if( m is PlayerMobile )
 			{
 				PlayerMobile pm = m as PlayerMobile;
@@ -1140,6 +1198,7 @@ namespace Server
                 //Virtue Artifacts
                 value += AnkhPendant.GetManaRegenModifier(m);
             }
+
             #endregion
 
 			value /= 100;
@@ -1664,8 +1723,8 @@ namespace Server
         ResistColdBonus = 0x00080000,
         ResistPoisonBonus = 0x00100000,
         ResistEnergyBonus = 0x00200000,
-        UseBestSkill = 0x00400000,			//%확률로 2배 데미지
-        MageWeapon = 0x00800000,			//네임드 몬스터 피해량 20% 증가
+        UseBestSkill = 0x00400000,			//모든 피해%
+        MageWeapon = 0x00800000,			//모든 속도%
         DurabilityBonus = 0x01000000,
         BloodDrinker = 0x02000000,			//충격 데미지 -> 출혈 데미지
         BattleLust = 0x04000000,			//무기 데미지 -> 출혈 데미지
@@ -1729,6 +1788,47 @@ namespace Server
                     value += attrs[attribute];
             }
 
+			//세트 옵션
+			if( m is PlayerMobile )
+			{
+				PlayerMobile pm = m as PlayerMobile;
+				if( attribute == AosWeaponAttribute.ResistPhysicalBonus )
+					value += pm.ItemSetSaveValue[12];
+				else if( attribute == AosWeaponAttribute.ResistFireBonus )
+					value += pm.ItemSetSaveValue[13];
+				else if( attribute == AosWeaponAttribute.ResistColdBonus )
+					value += pm.ItemSetSaveValue[14];
+				else if( attribute == AosWeaponAttribute.ResistPoisonBonus )
+					value += pm.ItemSetSaveValue[15];
+				else if( attribute == AosWeaponAttribute.ResistEnergyBonus )
+					value += pm.ItemSetSaveValue[15];
+				else if( attribute == AosWeaponAttribute.HitPhysicalArea )
+					value += pm.ItemSetSaveValue[27];
+				else if( attribute == AosWeaponAttribute.HitFireArea )
+					value += pm.ItemSetSaveValue[28];
+				else if( attribute == AosWeaponAttribute.HitColdArea )
+					value += pm.ItemSetSaveValue[29];
+				else if( attribute == AosWeaponAttribute.HitPoisonArea )
+					value += pm.ItemSetSaveValue[30];
+				else if( attribute == AosWeaponAttribute.HitEnergyArea )
+					value += pm.ItemSetSaveValue[31];
+				else if( attribute == AosWeaponAttribute.HitLeechHits )
+					value += pm.ItemSetSaveValue[37];
+				else if( attribute == AosWeaponAttribute.HitLeechStam )
+					value += pm.ItemSetSaveValue[38];
+				else if( attribute == AosWeaponAttribute.HitLeechMana )
+					value += pm.ItemSetSaveValue[39];
+				else if( attribute == AosWeaponAttribute.HitMagicArrow )
+					value += pm.ItemSetSaveValue[52];
+				else if( attribute == AosWeaponAttribute.HitHarm )
+					value += pm.ItemSetSaveValue[53];
+				else if( attribute == AosWeaponAttribute.HitFireball )
+					value += pm.ItemSetSaveValue[54];
+				else if( attribute == AosWeaponAttribute.HitLightning )
+					value += pm.ItemSetSaveValue[55];
+			}			
+			
+			
 			value /= 100;
             return value;
         }
@@ -2267,7 +2367,9 @@ namespace Server
 		ChaosDamage		= 0x00000800,  //혼돈 데미지% 증가
 		DirectDamage	= 0x00001000,  //신성 데미지% 증가
 		ChaosPlus		= 0x00002000,  //혼돈 데미지 증가
-		DirectPlus		= 0x00004000  //신성 데미지 증가
+		DirectPlus		= 0x00004000,  //신성 데미지 증가
+		AggroPoint		= 0x00008000,  //어그로
+		AggroPointBonus	= 0x00010000  //어그로%
     }
 
     public sealed class ExtendedWeaponAttributes : BaseAttributes
@@ -2309,8 +2411,31 @@ namespace Server
                     if (attrs != null)
                         value += attrs[attribute];
                 }
+				if( i == 0 )
+				{
+					//세트 옵션
+					if( m is PlayerMobile )
+					{
+						PlayerMobile pm = m as PlayerMobile;
+						if( attribute == ExtendedWeaponAttribute.ChaosDamage )
+							value += pm.ItemSetSaveValue[102];
+						else if( attribute == ExtendedWeaponAttribute.DirectDamage )
+							value += pm.ItemSetSaveValue[103];
+						else if( attribute == ExtendedWeaponAttribute.ChaosPlus )
+							value += pm.ItemSetSaveValue[107];
+						else if( attribute == ExtendedWeaponAttribute.DirectPlus )
+							value += pm.ItemSetSaveValue[108];
+						else if( attribute == ExtendedWeaponAttribute.AggroPointBonus )
+							value += pm.ItemSetSaveValue[111];
+						else if( attribute == ExtendedWeaponAttribute.AggroPoint )
+							value += pm.ItemSetSaveValue[112];
+					}						
+				}
             }
 
+		
+			
+			
 			value /= 100;
             return value;
         }
@@ -2519,6 +2644,30 @@ namespace Server
                 this[ExtendedWeaponAttribute.DirectPlus] = value;
             }
         }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int AggroPoint
+        {
+            get
+            {
+                return this[ExtendedWeaponAttribute.AggroPoint];
+            }
+            set
+            {
+                this[ExtendedWeaponAttribute.AggroPoint] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int AggroPointBonus
+        {
+            get
+            {
+                return this[ExtendedWeaponAttribute.AggroPointBonus];
+            }
+            set
+            {
+                this[ExtendedWeaponAttribute.AggroPointBonus] = value;
+            }
+        }
 	}
 
     [Flags]
@@ -2536,7 +2685,12 @@ namespace Server
 		BleedResist = 0x00000100, //출혈 저항력
 		WeaponDefense = 0x00000200, //방어력
 		MagicDefense = 0x00000400, //마법 방어력
-		StunDefense = 0x00000800 //스턴 시간 감소
+		StunDefense = 0x00000800, //스턴 시간 감소
+		ShieldRecovery = 0x00001000, //방패 회복 속도. 기본 1초
+		AllDefenseBonus = 0x00002000, //전체 피격 데미지 감소
+		ElementalResist = 0x00004000, //원소 저항력%
+		AllResist = 0x00008000, //모든 저항력%
+		DefenseStam = 0x00010000 //방어 시 기력 소모
         #endregion
     }
 
@@ -2589,6 +2743,28 @@ namespace Server
                     value += attrs[attribute];
             }
 
+			//세트 옵션
+			if( m is PlayerMobile )
+			{
+				PlayerMobile pm = m as PlayerMobile;
+				if( attribute == AosArmorAttribute.WeaponDefense )
+					value += pm.ItemSetSaveValue[104];
+				else if( attribute == AosArmorAttribute.MagicDefense )
+					value += pm.ItemSetSaveValue[105];
+				else if( attribute == AosArmorAttribute.StunDefense )
+					value += pm.ItemSetSaveValue[106];
+				else if( attribute == AosArmorAttribute.ShieldRecovery )
+					value += pm.ItemSetSaveValue[109];
+				else if( attribute == AosArmorAttribute.AllDefenseBonus )
+					value += pm.ItemSetSaveValue[110];
+				else if( attribute == AosArmorAttribute.ElementalResist )
+					value += pm.ItemSetSaveValue[113];
+				else if( attribute == AosArmorAttribute.AllResist )
+					value += pm.ItemSetSaveValue[114];
+				else if( attribute == AosArmorAttribute.DefenseStam )
+					value += pm.ItemSetSaveValue[115];
+
+			}			
 			value /= 100;
             return value;
         }
@@ -2659,7 +2835,7 @@ namespace Server
             {
                 value += xaos.GetValue(bitmask);
             }
-
+			
             return (value);
         }
 
@@ -2819,6 +2995,66 @@ namespace Server
             set
             {
                 this[AosArmorAttribute.StunDefense] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int ShieldRecovery
+        {
+            get
+            {
+                return this[AosArmorAttribute.ShieldRecovery];
+            }
+            set
+            {
+                this[AosArmorAttribute.ShieldRecovery] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int AllDefenseBonus
+        {
+            get
+            {
+                return this[AosArmorAttribute.AllDefenseBonus];
+            }
+            set
+            {
+                this[AosArmorAttribute.AllDefenseBonus] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int ElementalResist
+        {
+            get
+            {
+                return this[AosArmorAttribute.ElementalResist];
+            }
+            set
+            {
+                this[AosArmorAttribute.ElementalResist] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int AllResist
+        {
+            get
+            {
+                return this[AosArmorAttribute.AllResist];
+            }
+            set
+            {
+                this[AosArmorAttribute.AllResist] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int DefenseStam
+        {
+            get
+            {
+                return this[AosArmorAttribute.DefenseStam];
+            }
+            set
+            {
+                this[AosArmorAttribute.DefenseStam] = value;
             }
         }
     }
@@ -3358,7 +3594,7 @@ namespace Server
         SoulChargePoison = 0x00002000, //부식 저항력%
         SoulChargeEnergy = 0x00004000, //감전 저항력%
         SoulChargeKinetic = 0x00008000, //회복량 증가%
-        CastingFocus = 0x00010000, //피해의 %프로만큼 마나 회복
+        CastingFocus = 0x00010000, //시전 실패 확률 감소
 		EaterPierce = 0x00020000, //관통 피해 증가
         ResonancePierce = 0x00040000, //관통 피해 증가%
 		EaterBleed = 0x00080000, //출혈 피해 증가
@@ -3421,6 +3657,59 @@ namespace Server
             }
 
             value += SkillMasterySpell.GetAttributeBonus(m, attribute);
+
+			//세트 옵션
+			if( m is PlayerMobile )
+			{
+				PlayerMobile pm = m as PlayerMobile;
+				if( attribute == SAAbsorptionAttribute.ResonancePierce )
+					value += pm.ItemSetSaveValue[9];
+				else if( attribute == SAAbsorptionAttribute.ResonanceKinetic )
+					value += pm.ItemSetSaveValue[10];
+				else if( attribute == SAAbsorptionAttribute.ResonanceBleed )
+					value += pm.ItemSetSaveValue[11];
+				else if( attribute == SAAbsorptionAttribute.ResonanceFire )
+					value += pm.ItemSetSaveValue[23];
+				else if( attribute == SAAbsorptionAttribute.ResonanceCold )
+					value += pm.ItemSetSaveValue[24];
+				else if( attribute == SAAbsorptionAttribute.ResonancePoison )
+					value += pm.ItemSetSaveValue[25];
+				else if( attribute == SAAbsorptionAttribute.ResonanceEnergy )
+					value += pm.ItemSetSaveValue[26];
+				else if( attribute == SAAbsorptionAttribute.EaterDamage )
+					value += pm.ItemSetSaveValue[32];
+				else if( attribute == SAAbsorptionAttribute.EaterFire )
+					value += pm.ItemSetSaveValue[33];
+				else if( attribute == SAAbsorptionAttribute.EaterCold )
+					value += pm.ItemSetSaveValue[34];
+				else if( attribute == SAAbsorptionAttribute.EaterPoison )
+					value += pm.ItemSetSaveValue[35];
+				else if( attribute == SAAbsorptionAttribute.EaterEnergy )
+					value += pm.ItemSetSaveValue[36];
+				else if( attribute == SAAbsorptionAttribute.EaterPierce )
+					value += pm.ItemSetSaveValue[48];
+				else if( attribute == SAAbsorptionAttribute.EaterKinetic )
+					value += pm.ItemSetSaveValue[49];
+				else if( attribute == SAAbsorptionAttribute.EaterBleed )
+					value += pm.ItemSetSaveValue[50];
+				else if( attribute == SAAbsorptionAttribute.HumanoidDamage )
+					value += pm.ItemSetSaveValue[56];
+				else if( attribute == SAAbsorptionAttribute.UndeadDamage )
+					value += pm.ItemSetSaveValue[57];
+				else if( attribute == SAAbsorptionAttribute.ElementalDamage )
+					value += pm.ItemSetSaveValue[58];
+				else if( attribute == SAAbsorptionAttribute.ArachnidDamage )
+					value += pm.ItemSetSaveValue[59];
+				else if( attribute == SAAbsorptionAttribute.ReptilianDamage )
+					value += pm.ItemSetSaveValue[60];
+				else if( attribute == SAAbsorptionAttribute.AbyssDamage )
+					value += pm.ItemSetSaveValue[61];
+				else if( attribute == SAAbsorptionAttribute.FeyDamage )
+					value += pm.ItemSetSaveValue[62];
+				else if( attribute == SAAbsorptionAttribute.CastingFocus )
+					value += pm.ItemSetSaveValue[116];
+
+			}					
 
 			value /= 100;
             return value;

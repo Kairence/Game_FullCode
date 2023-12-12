@@ -10,7 +10,10 @@ namespace Server.Items
             : base(0x13B2)
         {
             Weight = 6.0;
-			Attributes.BonusStam += 37500;
+			PrefixOption[61] = 5;
+			SuffixOption[61] = 37500;
+			
+			//Attributes.BonusStam += 37500;
             Layer = Layer.TwoHanded;
 		}
 

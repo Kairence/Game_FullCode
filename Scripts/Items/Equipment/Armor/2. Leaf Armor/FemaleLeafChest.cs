@@ -12,40 +12,52 @@ namespace Server.Items
             : base(0x2FCB)
         {
             this.Weight = 2.0;
- 			Attributes.EnhancePotions += 140;
+			PrefixOption[50] = 1;
+			PrefixOption[61] = 12;
+			SuffixOption[61] = 200;
+			PrefixOption[62] = 14;
+			SuffixOption[62] = 200;
+			PrefixOption[63] = 46;
+			SuffixOption[63] = 500;
         }
 
         public FemaleLeafChest(Serial serial)
             : base(serial)
         {
         }
-
         public override int InitMinHits
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 40;
+                return 100;
             }
         }
         public override int AosStrReq
         {
             get
             {
-                return 20;
+                return 100;
             }
         }
-        public override int OldStrReq
+        public override int AosDexReq
         {
             get
             {
-                return 20;
+                return 100;
+            }
+        }
+        public override int AosIntReq
+        {
+            get
+            {
+                return 100;
             }
         }
         public override int ArmorBase

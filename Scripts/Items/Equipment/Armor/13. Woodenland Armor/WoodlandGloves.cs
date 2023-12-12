@@ -9,7 +9,13 @@ namespace Server.Items
         public WoodlandGloves()
             : base(0x2B6A)
         {
-  			AbsorptionAttributes.SoulChargeKinetic += 100;
+			PrefixOption[50] = 18;
+			PrefixOption[61] = 114;
+			SuffixOption[61] = 200;
+			PrefixOption[62] = 100;
+			SuffixOption[62] = 1000;			
+			PrefixOption[63] = 106;
+			SuffixOption[63] = 50;
             this.Weight = 2.0;
         }
 
@@ -17,35 +23,10 @@ namespace Server.Items
             : base(serial)
         {
         }
-
-        public override int InitMinHits
-        {
-            get
-            {
-                return 50;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 65;
-            }
-        }
-        public override int AosStrReq
-        {
-            get
-            {
-                return 65;
-            }
-        }
-        public override int OldStrReq
-        {
-            get
-            {
-                return 70;
-            }
-        }
+		public override int AosStrReq { get { return 1300; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 1300; } }
+        public override int OldStrReq { get { return 15; } }
         public override int ArmorBase
         {
             get

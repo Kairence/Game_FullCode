@@ -11,7 +11,13 @@ namespace Server.Items
         public RingmailGloves()
             : base(0x13EB)
         {
-			Attributes.WeaponCritical += 16;
+			PrefixOption[50] = 15;
+			PrefixOption[61] = 114;
+			SuffixOption[61] = 300;
+			PrefixOption[62] = 7;
+			SuffixOption[62] = 1000;
+			PrefixOption[63] = 40;
+			SuffixOption[63] = 500;
             Weight = 2.0;
         }
 
@@ -19,77 +25,10 @@ namespace Server.Items
             : base(serial)
         {
         }
-
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 40;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 50;
-            }
-        }
-        public override int AosStrReq
-        {
-            get
-            {
-                return 50;
-            }
-        }
-        public override int OldStrReq
-        {
-            get
-            {
-                return 20;
-            }
-        }
-        public override int OldDexBonus
-        {
-            get
-            {
-                return -1;
-            }
-        }
+		public override int AosStrReq { get { return 1600; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
+        public override int OldStrReq { get { return 15; } }
         public override int ArmorBase
         {
             get

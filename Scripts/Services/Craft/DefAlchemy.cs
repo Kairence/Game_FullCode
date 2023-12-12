@@ -128,173 +128,146 @@ namespace Server.Engines.Craft
             //체력 회복 물약
             //index = AddCraft(typeof(LesserHealPotion), 1116348, 1044543, -25.0, 25.0, typeof(Ginseng), 1044356, 1, 1044364);
             //AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-            index = AddCraft(typeof(MiniHealPotion), "체력 회복 물약", "최하급 체력 회복 물약", -25.0, 25.0, typeof(Bloodmoss), 1044354, 1, 1044361);
+            index = AddCraft(typeof(MiniHealPotion), 1130001, 1130006, -25.0, 25.0, typeof(Bloodmoss), 1044354, 1, 1044361);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+			//기력 회복 물약
+            index = AddCraft(typeof(MiniRefreshPotion), 1130001, 1130011, -25, 25.0, typeof(Ginseng), 1044356, 1, 1044361);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+			//마나 회복 물약
+            index = AddCraft(typeof(MiniAgilityPotion), 1130001, 1130016, -25.0, 25.0, typeof(MandrakeRoot), 1044357, 1, 1044361);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+			//해독 물약
+            index = AddCraft(typeof(MiniCurePotion), 1130001, 1130021, -20.0, 30.0, typeof(Garlic), 1044355, 1, 1044363);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            //독 물약
+            index = AddCraft(typeof(MiniPoisonPotion), 1130001, 1130026, -10.0, 40.0, typeof(Nightshade), 1044358, 1, 1044366);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            // 폭발 물약
+            index = AddCraft(typeof(MiniExplosionPotion), 1130001, 1130031, -15.0, 35.0, typeof(SulfurousAsh), 1044359, 1, 1044367);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+			//방어 물약
+            index = AddCraft(typeof(NightSightPotion), 1130001, 1130036, -5.0, 45.0, typeof(SpidersSilk), 1044360, 1, 1044368);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+			//파워 물약
+            index = AddCraft(typeof(MiniStrengthPotion), 1130001, 1130041, -5.0, 45.0, typeof(BlackPearl), 1044353, 1, 1044365);
             AddRes(index, typeof(Bottle), 1044529, 1, 500315);
 			SetUseAllRes(index, true);
 
-            index = AddCraft(typeof(LesserHealPotion), "체력 회복 물약", "하급 체력 회복 물약", 0.0, 50.0, typeof(Bloodmoss), 1044354, 2, 1044361);
+
+            index = AddCraft(typeof(LesserHealPotion), 1130002, 1130007, 0.0, 50.0, typeof(Bloodmoss), 1044354, 2, 1044361);
             AddRes(index, typeof(Bottle), 1044529, 1, 500315);
 			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(HealPotion), "체력 회복 물약", "체력 회복 물약", 25.0, 75.0, typeof(Bloodmoss), 1044354, 3, 1044361);
+            index = AddCraft(typeof(LesserRefreshPotion), 1130002, 1130012, 0.0, 50.0, typeof(Ginseng), 1044356, 2, 1044361);
             AddRes(index, typeof(Bottle), 1044529, 1, 500315);
 			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(GreaterHealPotion), "체력 회복 물약", "상급 체력 회복 물약", 50.0, 100.0, typeof(Bloodmoss), 1044354, 6, 1044361);
+            index = AddCraft(typeof(LesserAgilityPotion), 1130002, 1130017, 0.0, 50.0, typeof(MandrakeRoot), 1044357, 2, 1044361);
             AddRes(index, typeof(Bottle), 1044529, 1, 500315);
 			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(TotalHealPotion), "체력 회복 물약", "최상급 체력 회복 물약", 75.0, 125.0, typeof(Bloodmoss), 1044354, 10, 1044361);
+            index = AddCraft(typeof(LesserCurePotion), 1130002, 1130022, 5.0, 55.0, typeof(Garlic), 1044355, 2, 1044363);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(LesserPoisonPotion), 1130002, 1130027, 15.0, 65.0, typeof(Nightshade), 1044358, 2, 1044366);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(LesserExplosionPotion), 1130002, 1130032, 10.0, 65.0, typeof(SulfurousAsh), 1044359, 2, 1044367);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(NightSightPotion), 1130002, 1130037, 20.0, 70.0, typeof(SpidersSilk), 1044360, 2, 1044368);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(LesserStrengthPotion), 1130002, 1130042, 20.0, 70.0, typeof(BlackPearl), 1044353, 2, 1044365);
             AddRes(index, typeof(Bottle), 1044529, 1, 500315);
 			SetUseAllRes(index, true);
 			
-			//기력 회복 물약
-            index = AddCraft(typeof(MiniRefreshPotion), "기력 회복 물약", "최하급 기력 회복 물약", -25, 25.0, typeof(Ginseng), 1044356, 1, 1044361);
+            index = AddCraft(typeof(HealPotion), 1130003, 1130008, 25.0, 75.0, typeof(Bloodmoss), 1044354, 3, 1044361);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+			index = AddCraft(typeof(RefreshPotion), 1130003, 1130013, 25, 75.0, typeof(Ginseng), 1044356, 3, 1044361);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(AgilityPotion), 1130003, 1130018, 25.0, 75.0, typeof(MandrakeRoot), 1044357, 3, 1044361);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(CurePotion), 1130003, 1130023, 30.0, 80.0, typeof(Garlic), 1044355, 3, 1044363);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(PoisonPotion), 1130003, 1130028, 40.0, 90.0, typeof(Nightshade), 1044358, 3, 1044366);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(ExplosionPotion), 1130003, 1130033, 35.0, 85.0, typeof(SulfurousAsh), 1044359, 3, 1044367);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(NightSightPotion), 1130003, 1130038, 45.0, 95.0, typeof(SpidersSilk), 1044360, 3, 1044368);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(StrengthPotion), 1130003, 1130043, 45.0, 95.0, typeof(BlackPearl), 1044353, 3, 1044365);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+			
+            index = AddCraft(typeof(GreaterHealPotion), 1130004, 1130009, 50.0, 100.0, typeof(Bloodmoss), 1044354, 6, 1044361);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(GreaterRefreshPotion), 1130004, 1130014, 50.0, 100.0, typeof(Ginseng), 1044356, 6, 1044361);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(GreaterAgilityPotion), 1130004, 1130019, 50.0, 100.0, typeof(MandrakeRoot), 1044357, 6, 1044361);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(GreaterCurePotion), 1130004, 1130024, 55.0, 105.0, typeof(Garlic), 1044355, 6, 1044363);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(GreaterPoisonPotion), 1130004, 1130029, 65.0, 115.0, typeof(Nightshade), 1044358, 6, 1044366);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(GreaterExplosionPotion), 1130004, 1130034, 60.0, 110.0, typeof(SulfurousAsh), 1044359, 6, 1044367);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(NightSightPotion), 1130004, 1130039, 70.0, 120.0, typeof(SpidersSilk), 1044360, 6, 1044368);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(GreaterStrengthPotion), 1130004, 1130044, 70.0, 120.0, typeof(BlackPearl), 1044353, 6, 1044365);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+			
+			
+            index = AddCraft(typeof(TotalHealPotion), 1130005, 1130010, 75.0, 125.0, typeof(Bloodmoss), 1044354, 10, 1044361);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(TotalRefreshPotion), 1130005, 1130015, 75.0, 125.0, typeof(Ginseng), 1044356, 10, 1044361);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(TotalAgilityPotion), 1130005, 1130020, 75.0, 125.0, typeof(MandrakeRoot), 1044357, 10, 1044361);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(TotalCurePotion), 1130005, 1130025, 80.0, 130.0, typeof(Garlic), 1044355, 10, 1044363);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(DeadlyPoisonPotion), 1130005, 1130030, 90.0, 140.0, typeof(Nightshade), 1044358, 10, 1044366);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(TotalExplosionPotion), 1130005, 1130035, 85.0, 135.0, typeof(SulfurousAsh), 1044359, 10, 1044367);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(NightSightPotion), 1130005, 1130040, 95.0, 140.0, typeof(SpidersSilk), 1044360, 10, 1044368);
+            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
+			SetUseAllRes(index, true);
+            index = AddCraft(typeof(TotalStrengthPotion), 1130005, 1130045, 95.0, 140.0, typeof(BlackPearl), 1044353, 10, 1044365);
             AddRes(index, typeof(Bottle), 1044529, 1, 500315);
 			SetUseAllRes(index, true);
 
-            index = AddCraft(typeof(LesserRefreshPotion), "기력 회복 물약", "하급 기력 회복 물약", 0.0, 50.0, typeof(Ginseng), 1044356, 2, 1044361);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
 
-            index = AddCraft(typeof(RefreshPotion), "기력 회복 물약", "기력 회복 물약", 25, 75.0, typeof(Ginseng), 1044356, 3, 1044361);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
 
-            index = AddCraft(typeof(GreaterRefreshPotion), "기력 회복 물약", "상급 기력 회복 물약", 50.0, 100.0, typeof(Ginseng), 1044356, 6, 1044361);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
 
-            index = AddCraft(typeof(TotalRefreshPotion), "기력 회복 물약", "최상급 기력 회복 물약", 75.0, 125.0, typeof(Ginseng), 1044356, 10, 1044361);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
 
-			//마나 회복 물약
-            index = AddCraft(typeof(MiniAgilityPotion), "마나 회복 물약", "최하급 마나 회복 물약", -25.0, 25.0, typeof(MandrakeRoot), 1044357, 1, 1044361);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
 
-            index = AddCraft(typeof(LesserAgilityPotion), "마나 회복 물약", "하급 마나 회복 물약", 0.0, 50.0, typeof(MandrakeRoot), 1044357, 2, 1044361);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
 
-            index = AddCraft(typeof(AgilityPotion), "마나 회복 물약", "마나 회복 물약", 25.0, 75.0, typeof(MandrakeRoot), 1044357, 3, 1044361);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(GreaterAgilityPotion), "마나 회복 물약", "상급 마나 회복 물약", 50.0, 100.0, typeof(MandrakeRoot), 1044357, 6, 1044361);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(TotalAgilityPotion), "마나 회복 물약", "최상급 마나 회복 물약", 75.0, 125.0, typeof(MandrakeRoot), 1044357, 10, 1044361);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-			//해독 물약
-            index = AddCraft(typeof(MiniCurePotion), "해독 물약", "최하급 해독 물약", -20.0, 30.0, typeof(Garlic), 1044355, 1, 1044363);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(LesserCurePotion), "해독 물약", "하급 해독 물약", 5.0, 55.0, typeof(Garlic), 1044355, 2, 1044363);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(CurePotion), "해독 물약", "해독 물약", 30.0, 80.0, typeof(Garlic), 1044355, 3, 1044363);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(GreaterCurePotion), "해독 물약", "상급 해독 물약", 55.0, 105.0, typeof(Garlic), 1044355, 6, 1044363);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(TotalCurePotion), "해독 물약", "최상급 해독 물약", 80.0, 130.0, typeof(Garlic), 1044355, 10, 1044363);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            //독 물약
-            index = AddCraft(typeof(MiniPoisonPotion), "독 물약", "최하급 독 물약", -10.0, 40.0, typeof(Nightshade), 1044358, 1, 1044366);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(LesserPoisonPotion), "독 물약", "하급 독 물약", 15.0, 65.0, typeof(Nightshade), 1044358, 2, 1044366);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(PoisonPotion), "독 물약", "독 물약", 40.0, 90.0, typeof(Nightshade), 1044358, 3, 1044366);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(GreaterPoisonPotion), "독 물약", "상급 독 물약", 65.0, 115.0, typeof(Nightshade), 1044358, 6, 1044366);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(DeadlyPoisonPotion), "독 물약", "최상급 해독 물약", 90.0, 140.0, typeof(Nightshade), 1044358, 10, 1044366);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            // 폭발 물약
-            index = AddCraft(typeof(MiniExplosionPotion), "폭발 물약", "최하급 폭발 물약", -15.0, 35.0, typeof(SulfurousAsh), 1044359, 1, 1044367);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(LesserExplosionPotion), "폭발 물약", "하급 폭발 물약", 10.0, 65.0, typeof(SulfurousAsh), 1044359, 2, 1044367);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(ExplosionPotion), "폭발 물약", "폭발 물약", 35.0, 85.0, typeof(SulfurousAsh), 1044359, 3, 1044367);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(GreaterExplosionPotion), "폭발 물약", "상급 폭발 물약", 60.0, 110.0, typeof(SulfurousAsh), 1044359, 6, 1044367);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(TotalExplosionPotion), "폭발 물약", "최상급 폭발 물약", 85.0, 135.0, typeof(SulfurousAsh), 1044359, 10, 1044367);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            // Enhancement
-			//방어 물약
-            index = AddCraft(typeof(NightSightPotion), "방어 물약", "최하급 방어 물약", -5.0, 45.0, typeof(SpidersSilk), 1044360, 1, 1044368);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(NightSightPotion), "방어 물약", "하급 방어 물약", 20.0, 70.0, typeof(SpidersSilk), 1044360, 2, 1044368);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(NightSightPotion), "방어 물약", "방어 물약", 45.0, 95.0, typeof(SpidersSilk), 1044360, 3, 1044368);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(NightSightPotion), "방어 물약", "상급 방어 물약", 70.0, 120.0, typeof(SpidersSilk), 1044360, 6, 1044368);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(NightSightPotion), "방어 물약", "최상급 방어 물약", 95.0, 140.0, typeof(SpidersSilk), 1044360, 10, 1044368);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-			//파워 물약
-            index = AddCraft(typeof(MiniStrengthPotion), "파워 물약", "최하급 파워 물약", -5.0, 45.0, typeof(BlackPearl), 1044353, 1, 1044365);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(LesserStrengthPotion), "파워 물약", "하급 파워 물약", 20.0, 70.0, typeof(BlackPearl), 1044353, 2, 1044365);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(StrengthPotion), "파워 물약", "파워 물약", 45.0, 95.0, typeof(BlackPearl), 1044353, 3, 1044365);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(GreaterStrengthPotion), "파워 물약", "상급 파워 물약", 70.0, 120.0, typeof(BlackPearl), 1044353, 6, 1044365);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
-
-            index = AddCraft(typeof(TotalStrengthPotion), "파워 물약", "최상급 파워 물약", 95.0, 140.0, typeof(BlackPearl), 1044353, 10, 1044365);
-            AddRes(index, typeof(Bottle), 1044529, 1, 500315);
-			SetUseAllRes(index, true);
 
             index = AddCraft(typeof(Bottle), 1077435, 1096926, 0.0, 50.0, typeof(Sand), 1124449, 10, 1044627);
 			SetUseAllRes(index, true);

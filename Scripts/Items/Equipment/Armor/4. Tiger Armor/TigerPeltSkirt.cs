@@ -5,10 +5,12 @@ namespace Server.Items
 {
     public class TigerPeltSkirt : BaseArmor
     {
-        public override int InitMinHits { get { return 30; } }
-        public override int InitMaxHits { get { return 40; } }
+        public override int InitMinHits { get { return 100; } }
+        public override int InitMaxHits { get { return 100; } }
 
-        public override int AosStrReq { get { return 50; } }
+        public override int AosStrReq { get { return 500; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
         public override int OldStrReq { get { return 15; } }
 
         public override int ArmorBase { get { return 4; } }
@@ -27,7 +29,11 @@ namespace Server.Items
             : base(0x7827)
         {
             Weight = 1.0;
-			AbsorptionAttributes.ResonancePierce += 130;
+			PrefixOption[50] = 2;
+			PrefixOption[61] = 12;
+			SuffixOption[61] = 300;
+			PrefixOption[62] = 40;
+			SuffixOption[62] = 250;
         }
 
         public TigerPeltSkirt(Serial serial)

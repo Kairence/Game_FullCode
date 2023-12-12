@@ -12,7 +12,15 @@ namespace Server.Items
             : base(0x1C08)
         {
             Weight = 1.0;
-			ArmorAttributes.ShockResist += 14;
+			PrefixOption[50] = 4;
+			PrefixOption[61] = 114;
+			SuffixOption[61] = 200;
+			PrefixOption[62] = 19;
+			SuffixOption[62] = 25;
+			PrefixOption[63] = 20;
+			SuffixOption[63] = 25;
+			PrefixOption[64] = 21;
+			SuffixOption[64] = 25;
         }
 
         public LeatherSkirt(Serial serial)
@@ -20,35 +28,13 @@ namespace Server.Items
         {
         }
 
- 
-        public override int InitMinHits
-        {
-            get
-            {
-                return 30;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 40;
-            }
-        }
-        public override int AosStrReq
-        {
-            get
-            {
-                return 65;
-            }
-        }
-        public override int OldStrReq
-        {
-            get
-            {
-                return 10;
-            }
-        }
+        public override int InitMinHits { get { return 100; } }
+        public override int InitMaxHits { get { return 100; } }
+
+        public override int AosStrReq { get { return 600; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
+        public override int OldStrReq { get { return 15; } }
         public override int ArmorBase
         {
             get

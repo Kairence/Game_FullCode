@@ -140,7 +140,7 @@ namespace Server.Engines.Craft
                 AddRes(index, typeof(FaeryDust), 1113358, 1, 1044253);
             }
 
-            this.AddCraft(typeof(Kindling), 1044457, 1023553, 0.0, 00.0, typeof(Board), 1044041, 1, 1044351);
+            //this.AddCraft(typeof(Kindling), 1044457, 1023553, 0.0, 00.0, typeof(Board), 1044041, 1, 1044351);
 
             index = this.AddCraft(typeof(Shaft), 1044457, 1027124, 0.0, 50.0, typeof(Board), 1044041, 1, 1044351);
             this.SetUseAllRes(index, true);

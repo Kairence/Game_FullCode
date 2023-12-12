@@ -9,7 +9,9 @@ namespace Server.Items
         public Cutlass()
             : base(0x1441)
         {
-			SkillBonuses.SetValues(5, SkillName.Anatomy, 5.0);
+			//SkillBonuses.SetValues(5, SkillName.Anatomy, 5.0);
+			PrefixOption[61] = 63;
+			SuffixOption[61] = 500;
             this.Weight = 8.0;
         }
 

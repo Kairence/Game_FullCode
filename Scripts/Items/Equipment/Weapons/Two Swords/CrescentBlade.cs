@@ -12,7 +12,10 @@ namespace Server.Items
             : base(0x26C1)
         {
             this.Weight = 1.0;
-			WeaponAttributes.HitLightning += 2000;
+			PrefixOption[61] = 55;
+			SuffixOption[61] = 2000;
+			
+			//WeaponAttributes.HitLightning += 2000;
         }
 
         public CrescentBlade(Serial serial)

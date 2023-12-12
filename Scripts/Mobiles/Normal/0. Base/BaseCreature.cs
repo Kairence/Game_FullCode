@@ -7714,7 +7714,7 @@ namespace Server.Mobiles
 																}
 															}
 															
-															Util.ItemCreate( item, rank, false, pm, tier, specialitemnumber );
+															Util.NewItemCreate( item, rank, pm );
 															pm.SendLocalizedMessage( 1075069, Misc.Util.GetName(item) );
 															
 															Container pack = killers[j].Backpack;

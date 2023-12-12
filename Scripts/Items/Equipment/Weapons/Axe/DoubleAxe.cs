@@ -12,7 +12,10 @@ namespace Server.Items
             : base(0xF4B)
         {
             this.Weight = 8.0;
-			Attributes.BonusStam += 37500;			
+			PrefixOption[61] = 5;
+			SuffixOption[61] = 37500;
+			
+			//Attributes.BonusStam += 37500;			
         }
 
         public DoubleAxe(Serial serial)

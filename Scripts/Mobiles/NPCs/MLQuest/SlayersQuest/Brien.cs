@@ -63,7 +63,7 @@ namespace Server.Engines.Quests
 			if( Utility.RandomDouble() <= 0.1 )
 			{
 				Item item = Loot.RandomArmor();
-				Misc.Util.ItemCreate( item, rank, false, Owner, Misc.Util.QuestTier(Owner, 2), 18 );
+				Misc.Util.NewItemCreate( item, rank, Owner );
 				Owner.AddToBackpack( item );
 				Misc.Util.ItemGet_Effect( Owner );
 			}
@@ -145,7 +145,7 @@ namespace Server.Engines.Quests
 			if( Utility.RandomDouble() <= 0.1 )
 			{
 				Item item = Loot.RandomWeapon();
-				Misc.Util.ItemCreate( item, rank, false, Owner, Misc.Util.QuestTier(Owner, 3), 57 );
+				Misc.Util.NewItemCreate( item, rank, Owner );
 				Owner.AddToBackpack( item );
 				Misc.Util.ItemGet_Effect( Owner );
 			}
@@ -227,7 +227,7 @@ namespace Server.Engines.Quests
 			if( Utility.RandomDouble() <= 0.1 )
 			{
 				Item item = Loot.RandomArmor();
-				Misc.Util.ItemCreate( item, rank, false, Owner, Misc.Util.QuestTier(Owner, 2), 52 );
+				Misc.Util.NewItemCreate( item, rank, Owner );
 				Owner.AddToBackpack( item );
 				Misc.Util.ItemGet_Effect( Owner );
 			}

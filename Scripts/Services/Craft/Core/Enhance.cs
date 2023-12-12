@@ -69,143 +69,24 @@ namespace Server.Engines.Craft
 			{
 				PlayerMobile pm = from as PlayerMobile;
 				Account acc = pm.Account as Account;
-				if (item is BaseWeapon)
+				if( item is IEquipOption )
 				{
-					BaseWeapon enhanced_item = (BaseWeapon)item;
-
-					int tier = enhanced_item.PrefixOption[99];
-					int rank = (int)enhanced_item.ItemPower;
-					if( rank > 0 )
-						rank -= 3;
-					
-					if( rank == 0 )
-						rank = 1;
-					
-					if( rank > 5 )
-						return EnhanceResult.BadItem;
+					IEquipOption equip = item as IEquipOption;
+					if( equip.PrefixOption[0] != 100 )
+					{
+						return EnhanceResult.BadResource;
+					}
+					else if( acc.Point[860 + equip.SuffixOption[1]] < 10 )
+					{
+						return EnhanceResult.BadResource;
+					}
 					else
 					{
-						int usepoint = 1 + enhanced_item.PrefixOption[80] * enhanced_item.PrefixOption[80];
-						if( acc.Point[860 + rank] >= usepoint )
-						{
-							Misc.Util.ItemCreate( enhanced_item, rank, enhanced_item.PlayerConstructed, pm, enhanced_item.PrefixOption[99], enhanced_item.SuffixOption[99], true );
-							acc.Point[860 + rank] -= usepoint;
-							return EnhanceResult.Success;
-						}
-						else 
-							return EnhanceResult.BadResource;
+						acc.Point[860 + equip.SuffixOption[1]] -= 10;
+						Misc.Util.NewOptionCreate(item, from, true );
+						return EnhanceResult.BadResource;
 					}
 				}
-				else if (item is BaseArmor)
-				{
-					BaseArmor enhanced_item = (BaseArmor)item;
-
-					int tier = enhanced_item.PrefixOption[99];
-					int rank = (int)enhanced_item.ItemPower;
-					if( rank > 0 )
-						rank -= 3;
-					
-					if( rank == 0 )
-						rank = 1;
-
-					if( rank > 5 )
-						return EnhanceResult.BadItem;
-					else
-					{
-						int usepoint = 1 + enhanced_item.PrefixOption[80] * enhanced_item.PrefixOption[80];
-						if( acc.Point[860 + rank] >= usepoint )
-						{
-							Misc.Util.ItemCreate( enhanced_item, rank, enhanced_item.PlayerConstructed, pm, enhanced_item.PrefixOption[99], enhanced_item.SuffixOption[99], true );
-							acc.Point[860 + rank] -= usepoint;
-							return EnhanceResult.Success;
-						}
-						else 
-							return EnhanceResult.BadResource;
-					}
-				}
-				else if (item is BaseClothing)
-				{
-					BaseClothing enhanced_item = (BaseClothing)item;
-
-					int tier = enhanced_item.PrefixOption[99];
-					int rank = (int)enhanced_item.ItemPower;
-					if( rank > 0 )
-						rank -= 3;
-					
-					if( rank == 0 )
-						rank = 1;
-
-					if( rank > 5 )
-						return EnhanceResult.BadItem;
-					else
-					{
-						int usepoint = 1 + enhanced_item.PrefixOption[80] * enhanced_item.PrefixOption[80];
-						if( acc.Point[860 + rank] >= usepoint )
-						{
-							Misc.Util.ItemCreate( enhanced_item, rank, enhanced_item.PlayerConstructed, pm, enhanced_item.PrefixOption[99], enhanced_item.SuffixOption[99], true );
-							acc.Point[860 + rank] -= usepoint;
-							return EnhanceResult.Success;
-						}
-						else 
-							return EnhanceResult.BadResource;
-					}
-				}				
-				else if (item is BaseJewel)
-				{
-					BaseJewel enhanced_item = (BaseJewel)item;
-
-					int tier = enhanced_item.PrefixOption[99];
-					int rank = (int)enhanced_item.ItemPower;
-					if( rank > 0 )
-						rank -= 3;
-					
-					if( rank == 0 )
-						rank = 1;
-
-					if( rank > 5 )
-						return EnhanceResult.BadItem;
-					else
-					{
-						int usepoint = 1 + enhanced_item.PrefixOption[80] * enhanced_item.PrefixOption[80];
-						if( acc.Point[860 + rank] >= usepoint )
-						{
-							Misc.Util.ItemCreate( enhanced_item, rank, enhanced_item.PlayerConstructed, pm, enhanced_item.PrefixOption[99], enhanced_item.SuffixOption[99], true );
-							acc.Point[860 + rank] -= usepoint;
-							return EnhanceResult.Success;
-						}
-						else 
-							return EnhanceResult.BadResource;
-					}
-				}				
-				else if (item is Spellbook)
-				{
-					Spellbook enhanced_item = (Spellbook)item;
-
-					int tier = enhanced_item.PrefixOption[99];
-					int rank = (int)enhanced_item.ItemPower;
-					if( rank > 0 )
-						rank -= 3;
-					
-					if( rank == 0 )
-						rank = 1;
-
-					if( rank > 5 )
-						return EnhanceResult.BadItem;
-					else
-					{
-						int usepoint = 1 + enhanced_item.PrefixOption[80] * enhanced_item.PrefixOption[80];
-						if( acc.Point[860 + rank] >= usepoint )
-						{
-							Misc.Util.ItemCreate( enhanced_item, rank, enhanced_item.PlayerConstructed, pm, enhanced_item.PrefixOption[99], enhanced_item.SuffixOption[99], true );
-							acc.Point[860 + rank] -= usepoint;
-							return EnhanceResult.Success;
-						}
-						else 
-							return EnhanceResult.BadResource;
-					}
-				}
-				else
-					return EnhanceResult.BadItem;
 			}
 			return EnhanceResult.BadResource;
         }

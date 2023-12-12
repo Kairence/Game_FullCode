@@ -19,8 +19,8 @@ namespace Server.Mobiles
             SetDex(996, 1225);
             SetInt(996, 1225);
 
-            SetHits(1180, 1350);
-            SetStam(500, 750);
+            SetHits(11800, 13500);
+            SetStam(7500, 7750);
             SetMana(500, 1000);
 
 			SetAttackSpeed(1.5);

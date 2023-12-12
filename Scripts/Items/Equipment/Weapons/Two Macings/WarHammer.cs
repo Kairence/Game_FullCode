@@ -13,7 +13,6 @@ namespace Server.Items
         {
             this.Weight = 10.0;
             this.Layer = Layer.TwoHanded;
-			AbsorptionAttributes.ResonanceKinetic += 1000;
 		}
 
         public WarHammer(Serial serial)

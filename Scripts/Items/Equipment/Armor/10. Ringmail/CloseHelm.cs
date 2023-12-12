@@ -8,7 +8,11 @@ namespace Server.Items
         public CloseHelm()
             : base(0x1408)
         {
- 			Attributes.WeaponCritical += 17;
+			PrefixOption[50] = 15;
+			PrefixOption[61] = 7;
+			SuffixOption[61] = 2000;
+			PrefixOption[62] = 40;
+			SuffixOption[62] = 1000;
 			Weight = 5.0;
         }
 
@@ -16,35 +20,10 @@ namespace Server.Items
             : base(serial)
         {
         }
-
-        public override int InitMinHits
-        {
-            get
-            {
-                return 45;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 60;
-            }
-        }
-        public override int AosStrReq
-        {
-            get
-            {
-                return 70;
-            }
-        }
-        public override int OldStrReq
-        {
-            get
-            {
-                return 40;
-            }
-        }
+		public override int AosStrReq { get { return 1400; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
+        public override int OldStrReq { get { return 15; } }
         public override int ArmorBase
         {
             get

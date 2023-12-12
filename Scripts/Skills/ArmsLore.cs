@@ -54,7 +54,7 @@ namespace Server.SkillHandlers
 							if( item.RootParent == from || ( house != null && house.IsOwner(from)) )
 							{
 								int skillvalue = (int)from.Skills[SkillName.ArmsLore].Value * 10;
-								Misc.Util.TierUpgrade( from, item, skillvalue );
+								//Misc.Util.TierUpgrade( from, item, skillvalue );
 							}
 						}
 					}

@@ -9,7 +9,9 @@ namespace Server.Items
         public Club()
             : base(0x13B4)
         {
-			Attributes.BonusHits += 25000;
+			PrefixOption[61] = 4;
+			SuffixOption[61] = 25000;
+			//Attributes.BonusHits += 25000;
             this.Weight = 9.0;
         }
 

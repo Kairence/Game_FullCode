@@ -11,7 +11,9 @@ namespace Server.Items
         public Pike()
             : base(0x26BE)
         {
-			SkillBonuses.SetValues(5, SkillName.Tactics, 10.0);			
+			PrefixOption[61] = 77;
+			SuffixOption[61] = 1000;
+			//SkillBonuses.SetValues(5, SkillName.Tactics, 10.0);			
             this.Weight = 8.0;
 		}
 

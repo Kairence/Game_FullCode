@@ -72,7 +72,11 @@ namespace Server.Items
 						if( check is IEquipOption )
 						{
 							IEquipOption equip = check as IEquipOption;
-							if( equip.SuffixOption[2] <= 0 )
+							if( equip.PrefixOption[0] != 100 )
+							{
+								from.SendMessage("아티펙트 혹은 구 아이템은 제련이 불가능합니다!!");
+							}
+							else if( equip.SuffixOption[2] <= 0 )
 							{
 								from.SendMessage("이 아이템은 더 이상 제련이 불가능합니다!");
 							}

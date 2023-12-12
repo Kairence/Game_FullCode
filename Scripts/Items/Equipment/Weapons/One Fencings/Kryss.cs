@@ -11,7 +11,9 @@ namespace Server.Items
         public Kryss()
             : base(0x1401)
         {
-			AbsorptionAttributes.EaterPoison += 5000;
+			PrefixOption[61] = 35;
+			SuffixOption[61] = 5000;
+			//AbsorptionAttributes.EaterPoison += 5000;
             Weight = 6.0;
 		}
 

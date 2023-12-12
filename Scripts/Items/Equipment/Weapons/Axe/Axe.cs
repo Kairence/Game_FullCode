@@ -11,7 +11,9 @@ namespace Server.Items
         public Axe()
             : base(0xF49)
         {
-			AbsorptionAttributes.HumanoidDamage += 500;
+			PrefixOption[61] = 56;
+			SuffixOption[61] = 500;
+			//AbsorptionAttributes.HumanoidDamage += 500;
             this.Weight = 7.0;
         }
 

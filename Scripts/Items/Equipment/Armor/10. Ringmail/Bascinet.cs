@@ -4,11 +4,10 @@ namespace Server.Items
 {
     public class Bascinet : BaseArmor
     {
-
-        public override int InitMinHits { get { return 40; } }
-        public override int InitMaxHits { get { return 50; } }
-        public override int AosStrReq { get { return 60; } }
-        public override int OldStrReq { get { return 10; } }
+		public override int AosStrReq { get { return 1200; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
+        public override int OldStrReq { get { return 15; } }
         public override int ArmorBase { get { return 10; } }
         public override ArmorMaterialType MaterialType { get { return ArmorMaterialType.Ringmail; } }
 		
@@ -16,7 +15,13 @@ namespace Server.Items
         public Bascinet()
             : base(0x140C)
         {
-			Attributes.Brittle += 90;
+			PrefixOption[50] = 15;
+			PrefixOption[61] = 114;
+			SuffixOption[61] = 600;
+			PrefixOption[62] = 5;
+			SuffixOption[62] = 25000;
+			PrefixOption[63] = 44;
+			SuffixOption[63] = 2500;
             Weight = 5.0;
         }
 

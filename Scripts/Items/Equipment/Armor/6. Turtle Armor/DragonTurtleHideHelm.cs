@@ -5,11 +5,13 @@ namespace Server.Items
 {
     public class DragonTurtleHideHelm : BaseArmor
     {
-        public override int InitMinHits { get { return 20; } }
-        public override int InitMaxHits { get { return 35; } }
+        public override int InitMinHits { get { return 100; } }
+        public override int InitMaxHits { get { return 100; } }
 
-        public override int AosStrReq { get { return 40; } }
-        public override int OldStrReq { get { return 10; } }
+        public override int AosStrReq { get { return 400; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
+        public override int OldStrReq { get { return 15; } }
 
         public override int ArmorBase { get { return 6; } }
 
@@ -25,7 +27,11 @@ namespace Server.Items
             : base(0x782D)
         {
             Weight = 2.0;
-   			AbsorptionAttributes.ResonanceKinetic += 110;
+			PrefixOption[50] = 3;
+			PrefixOption[61] = 12;
+			SuffixOption[61] = 700;
+			PrefixOption[62] = 18;
+			SuffixOption[62] = 500;
         }
 
         public DragonTurtleHideHelm(Serial serial)

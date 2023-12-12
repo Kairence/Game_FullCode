@@ -84,7 +84,7 @@ namespace Server.Items
 			}
 			if (item != null)
 			{
-				Misc.Util.ItemCreate( item, 4, false, null, tier );
+				Misc.Util.NewItemCreate(item, 1);
 				DropItem( item );
 			}		
         }

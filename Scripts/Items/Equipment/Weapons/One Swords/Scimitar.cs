@@ -9,8 +9,13 @@ namespace Server.Items
         public Scimitar()
             : base(0x13B6)
         {
-			Attributes.RegenHits += 50;
-			Attributes.RegenStam += 50;
+			PrefixOption[61] = 19;
+			PrefixOption[62] = 20;
+			SuffixOption[61] = 50;
+			SuffixOption[62] = 50;
+
+			//Attributes.RegenHits += 50;
+			//Attributes.RegenStam += 50;
             this.Weight = 5.0;
 		}
 

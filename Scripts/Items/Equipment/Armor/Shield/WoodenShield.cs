@@ -11,6 +11,10 @@ namespace Server.Items
             : base(0x1B7A)
         {
             this.Weight = 5.0;
+			PrefixOption[61] = 109;
+			SuffixOption[61] = 50;
+			PrefixOption[62] = 110;
+			SuffixOption[62] = 3000;
         }
 
         public WoodenShield(Serial serial)
@@ -22,35 +26,42 @@ namespace Server.Items
         {
             get
             {
-                return 20;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 25;
+                return 100;
             }
         }
         public override int AosStrReq
         {
             get
             {
-                return 10;
+                return 100;
             }
         }
         public override int AosDexReq
         {
             get
             {
-                return 30;
+                return 100;
+            }
+        }
+        public override int AosIntReq
+        {
+            get
+            {
+                return 100;
             }
         }
         public override int ArmorBase
         {
             get
             {
-                return 17;
+                return 0;
             }
         }
         public override void Deserialize(GenericReader reader)

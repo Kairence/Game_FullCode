@@ -11,6 +11,13 @@ namespace Server.Items
         public PlateGloves()
             : base(0x1414)
         {
+			PrefixOption[50] = 17;
+			PrefixOption[61] = 114;
+			SuffixOption[61] = 800;
+			PrefixOption[62] = 4;
+			SuffixOption[62] = 25000;			
+			PrefixOption[63] = 5;
+			SuffixOption[63] = 25000;				
             Weight = 10.0;
         }
 
@@ -19,76 +26,10 @@ namespace Server.Items
         {
         }
 
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 6;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 50;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 65;
-            }
-        }
-        public override int AosStrReq
-        {
-            get
-            {
-                return 75;
-            }
-        }
-        public override int OldStrReq
-        {
-            get
-            {
-                return 30;
-            }
-        }
-        public override int OldDexBonus
-        {
-            get
-            {
-                return -2;
-            }
-        }
+		public override int AosStrReq { get { return 3000; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
+        public override int OldStrReq { get { return 15; } }
         public override int ArmorBase
         {
             get

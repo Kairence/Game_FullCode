@@ -11,17 +11,21 @@ namespace Server.Items
         public OrderShield()
             : base(0x1BC4)
         {
-            if (!Core.AOS)
-                LootType = LootType.Newbied;
-
-            Weight = 7.0;
+            Weight = 10.0;
+			PrefixOption[61] = 109;
+			SuffixOption[61] = 50;
+			PrefixOption[62] = 110;
+			SuffixOption[62] = 6500;
+			PrefixOption[63] = 110;
+			SuffixOption[63] = 400;				
+			PrefixOption[64] = 94;
+			SuffixOption[64] = 500;				
         }
 
         public OrderShield(Serial serial)
             : base(serial)
         {
         }
-
         public override int InitMinHits
         {
             get
@@ -33,21 +37,28 @@ namespace Server.Items
         {
             get
             {
-                return 125;
+                return 100;
             }
         }
         public override int AosStrReq
         {
             get
             {
-                return 100;
+                return 8000;
             }
         }
         public override int AosDexReq
         {
             get
             {
-                return 20;
+                return 2500;
+            }
+        }
+        public override int AosIntReq
+        {
+            get
+            {
+                return 100;
             }
         }
         public override int ArmorBase

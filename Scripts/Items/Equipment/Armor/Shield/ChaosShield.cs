@@ -11,10 +11,15 @@ namespace Server.Items
         public ChaosShield()
             : base(0x1BC3)
         {
-            if (!Core.AOS)
-                this.LootType = LootType.Newbied;
-
-            this.Weight = 5.0;
+            this.Weight = 10.0;
+			PrefixOption[61] = 109;
+			SuffixOption[61] = 50;
+			PrefixOption[62] = 110;
+			SuffixOption[62] = 3500;
+			PrefixOption[63] = 110;
+			SuffixOption[63] = 400;
+			PrefixOption[64] = 92;
+			SuffixOption[64] = 500;			
         }
 
         public ChaosShield(Serial serial)
@@ -33,21 +38,28 @@ namespace Server.Items
         {
             get
             {
-                return 125;
+                return 100;
             }
         }
         public override int AosStrReq
         {
             get
             {
-                return 20;
+                return 2500;
+            }
+        }
+        public override int AosDexReq
+        {
+            get
+            {
+                return 100;
             }
         }
         public override int AosIntReq
         {
             get
             {
-                return 100;
+                return 8000;
             }
         }
         public override int ArmorBase

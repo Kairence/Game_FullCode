@@ -11,7 +11,9 @@ namespace Server.Items
         public VikingSword()
             : base(0x13B9)
         {
-			SkillBonuses.SetValues(5, SkillName.Tactics, 15.0);
+			PrefixOption[61] = 77;
+			SuffixOption[61] = 500;
+			//SkillBonuses.SetValues(5, SkillName.Tactics, 15.0);
             this.Weight = 6.0;
         }
 

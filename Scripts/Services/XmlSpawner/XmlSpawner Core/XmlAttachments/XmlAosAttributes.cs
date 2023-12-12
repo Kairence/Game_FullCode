@@ -305,6 +305,102 @@ namespace Server.Engines.XmlSpawner2
                 this[AosAttribute.NightSight] = value;
             }
         }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int IncreasedKarmaLoss
+        {
+            get
+            {
+                return this[AosAttribute.IncreasedKarmaLoss];
+            }
+            set
+            {
+                this[AosAttribute.IncreasedKarmaLoss] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int Brittle
+        {
+            get
+            {
+                return this[AosAttribute.Brittle];
+            }
+            set
+            {
+                this[AosAttribute.Brittle] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int LowerAmmoCost
+        {
+            get
+            {
+                return this[AosAttribute.LowerAmmoCost];
+            }
+            set
+            {
+                this[AosAttribute.LowerAmmoCost] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BalancedWeapon
+        {
+            get
+            {
+                return this[AosAttribute.BalancedWeapon];
+            }
+            set
+            {
+                this[AosAttribute.BalancedWeapon] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int WeaponDamageBonus
+        {
+            get
+            {
+                return this[AosAttribute.WeaponDamageBonus];
+            }
+            set
+            {
+                this[AosAttribute.WeaponDamageBonus] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int SpellDamageBonus
+        {
+            get
+            {
+                return this[AosAttribute.SpellDamageBonus];
+            }
+            set
+            {
+                this[AosAttribute.SpellDamageBonus] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int HealBonus
+        {
+            get
+            {
+                return this[AosAttribute.HealBonus];
+            }
+            set
+            {
+                this[AosAttribute.HealBonus] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int WeaponCritical
+        {
+            get
+            {
+                return this[AosAttribute.WeaponCritical];
+            }
+            set
+            {
+                this[AosAttribute.WeaponCritical] = value;
+            }
+        }
         public int this[AosAttribute attribute]
         {
             get
@@ -656,6 +752,96 @@ namespace Server.Engines.XmlSpawner2
                 this[AosWeaponAttribute.DurabilityBonus] = value;
             }
         }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BloodDrinker
+        {
+            get
+            {
+                return this[AosWeaponAttribute.BloodDrinker];
+            }
+            set
+            {
+                this[AosWeaponAttribute.BloodDrinker] = value;
+            }
+        }
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BattleLust
+        {
+            get
+            {
+                return this[AosWeaponAttribute.BattleLust];
+            }
+            set
+            {
+                this[AosWeaponAttribute.BattleLust] = value;
+            }
+        }
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int HitCurse
+        {
+            get
+            {
+                return this[AosWeaponAttribute.HitCurse];
+            }
+            set
+            {
+                this[AosWeaponAttribute.HitCurse] = value;
+            }
+        }
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int HitFatigue
+        {
+            get
+            {
+                return this[AosWeaponAttribute.HitFatigue];
+            }
+            set
+            {
+                this[AosWeaponAttribute.HitFatigue] = value;
+            }
+        }
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int HitManaDrain
+        {
+            get
+            {
+                return this[AosWeaponAttribute.HitManaDrain];
+            }
+            set
+            {
+                this[AosWeaponAttribute.HitManaDrain] = value;
+            }
+        }
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int SplinteringWeapon
+        {
+            get
+            {
+                return this[AosWeaponAttribute.SplinteringWeapon];
+            }
+            set
+            {
+                this[AosWeaponAttribute.SplinteringWeapon] = value;
+            }
+        }
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int ReactiveParalyze
+        {
+            get
+            {
+                return this[AosWeaponAttribute.ReactiveParalyze];
+            }
+            set
+            {
+                this[AosWeaponAttribute.ReactiveParalyze] = value;
+            }
+        }		
         public int this[AosWeaponAttribute attribute]
         {
             get
@@ -755,6 +941,167 @@ namespace Server.Engines.XmlSpawner2
                 this[AosArmorAttribute.DurabilityBonus] = value;
             }
         }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int ReactiveParalyze
+        {
+            get
+            {
+                return this[AosArmorAttribute.ReactiveParalyze];
+            }
+            set
+            {
+                this[AosArmorAttribute.ReactiveParalyze] = value;
+            }
+        }
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int SoulCharge
+        {
+            get
+            {
+                return this[AosArmorAttribute.SoulCharge];
+            }
+            set
+            {
+                this[AosArmorAttribute.SoulCharge] = value;
+            }
+        }
+    
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int PierceResist
+        {
+            get
+            {
+                return this[AosArmorAttribute.PierceResist];
+            }
+            set
+            {
+                this[AosArmorAttribute.PierceResist] = value;
+            }
+        }
+    
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int ShockResist
+        {
+            get
+            {
+                return this[AosArmorAttribute.ShockResist];
+            }
+            set
+            {
+                this[AosArmorAttribute.ShockResist] = value;
+            }
+        }
+    
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BleedResist
+        {
+            get
+            {
+                return this[AosArmorAttribute.BleedResist];
+            }
+            set
+            {
+                this[AosArmorAttribute.BleedResist] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int WeaponDefense
+        {
+            get
+            {
+                return this[AosArmorAttribute.WeaponDefense];
+            }
+            set
+            {
+                this[AosArmorAttribute.WeaponDefense] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int MagicDefense
+        {
+            get
+            {
+                return this[AosArmorAttribute.MagicDefense];
+            }
+            set
+            {
+                this[AosArmorAttribute.MagicDefense] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int StunDefense
+        {
+            get
+            {
+                return this[AosArmorAttribute.StunDefense];
+            }
+            set
+            {
+                this[AosArmorAttribute.StunDefense] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int ShieldRecovery
+        {
+            get
+            {
+                return this[AosArmorAttribute.ShieldRecovery];
+            }
+            set
+            {
+                this[AosArmorAttribute.ShieldRecovery] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int AllDefenseBonus
+        {
+            get
+            {
+                return this[AosArmorAttribute.AllDefenseBonus];
+            }
+            set
+            {
+                this[AosArmorAttribute.AllDefenseBonus] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int ElementalResist
+        {
+            get
+            {
+                return this[AosArmorAttribute.ElementalResist];
+            }
+            set
+            {
+                this[AosArmorAttribute.ElementalResist] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int AllResist
+        {
+            get
+            {
+                return this[AosArmorAttribute.AllResist];
+            }
+            set
+            {
+                this[AosArmorAttribute.AllResist] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int DefenseStam
+        {
+            get
+            {
+                return this[AosArmorAttribute.DefenseStam];
+            }
+            set
+            {
+                this[AosArmorAttribute.DefenseStam] = value;
+            }
+        }		
         public int this[AosArmorAttribute attribute]
         {
             get

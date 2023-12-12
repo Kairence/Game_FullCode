@@ -12,7 +12,8 @@ namespace Server.Items
             : base(0x26BC)
         {
             this.Weight = 8.0;
-			Attributes.EnhancePotions += 2500;
+			PrefixOption[61] = 46;
+			SuffixOption[61] = 2500;
 		}
 
         public Scepter(Serial serial)

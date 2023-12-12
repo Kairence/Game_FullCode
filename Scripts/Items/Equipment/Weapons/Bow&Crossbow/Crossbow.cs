@@ -11,6 +11,9 @@ namespace Server.Items
         {
             this.Weight = 7.0;
             this.Layer = Layer.TwoHanded;
+			PrefixOption[61] = 81;
+			SuffixOption[61] = 1000;
+			
 			SkillBonuses.SetValues(5, SkillName.Archery, 10.0);
 
 		}

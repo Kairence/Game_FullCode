@@ -118,7 +118,7 @@ namespace Server.Engines.Quests
 			}
 			if (item != null)
 			{
-				Misc.Util.ItemCreate( item, tier, false, Owner, Misc.Util.QuestTier(Owner, 1), uniqueoption );
+				Misc.Util.NewItemCreate( item, 1, Owner );
 				Owner.AddToBackpack( item );
 			}			
 

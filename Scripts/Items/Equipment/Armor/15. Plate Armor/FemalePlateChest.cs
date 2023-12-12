@@ -11,6 +11,13 @@ namespace Server.Items
         public FemalePlateChest()
             : base(0x1C04)
         {
+			PrefixOption[50] = 17;
+			PrefixOption[61] = 114;
+			SuffixOption[61] = 800;
+			PrefixOption[62] = 4;
+			SuffixOption[62] = 25000;			
+			PrefixOption[63] = 5;
+			SuffixOption[63] = 25000;				
             Weight = 20.0;
         }
 
@@ -18,56 +25,10 @@ namespace Server.Items
             : base(serial)
         {
         }
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 11;
-            }
-        }
-
-        public override int InitMinHits
-        {
-            get
-            {
-                return 50;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 65;
-            }
-        }
-        public override int AosStrReq
-        {
-            get
-            {
-                return 115;
-            }
-        }
-        public override int OldStrReq
-        {
-            get
-            {
-                return 45;
-            }
-        }
-        public override int OldDexBonus
-        {
-            get
-            {
-                return -5;
-            }
-        }
-        public override bool AllowMaleWearer
-        {
-            get
-            {
-                return false;
-            }
-        }
+		public override int AosStrReq { get { return 5000; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
+        public override int OldStrReq { get { return 15; } }
         public override int ArmorBase
         {
             get

@@ -5,46 +5,10 @@ namespace Server.Items
     [FlipableAttribute(0x13bf, 0x13c4)]
     public class ChainChest : BaseArmor
     {
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override int InitMinHits { get { return 45; } }
-        public override int InitMaxHits { get { return 60; } }
-        public override int AosStrReq { get { return 110; } }
-        public override int OldStrReq { get { return 20; } }
-		public override int OldDexBonus { get { return -5; } }
+		public override int AosStrReq { get { return 2000; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
+        public override int OldStrReq { get { return 15; } }
         public override int ArmorBase { get { return 12; } }
         public override ArmorMaterialType MaterialType { get { return ArmorMaterialType.Chainmail; } }
 		
@@ -52,7 +16,13 @@ namespace Server.Items
         public ChainChest()
             : base(0x13BF)
         {
-			Attributes.Brittle += 110;
+			PrefixOption[50] = 16;
+			PrefixOption[61] = 117;
+			SuffixOption[61] = 700;
+			PrefixOption[62] = 42;
+			SuffixOption[62] = 500;
+			PrefixOption[63] = 44;
+			SuffixOption[63] = 2500;
             Weight = 7.0;
         }
 

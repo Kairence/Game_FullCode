@@ -8,7 +8,13 @@ namespace Server.Items
         public LeafGorget()
             : base(0x2FC7)
         {
-			Attributes.HealBonus += 8;
+			PrefixOption[50] = 1;
+			PrefixOption[61] = 12;
+			SuffixOption[61] = 200;
+			PrefixOption[62] = 14;
+			SuffixOption[62] = 200;
+			PrefixOption[63] = 46;
+			SuffixOption[63] = 500;
             this.Weight = 2.0;
         }
 
@@ -17,39 +23,39 @@ namespace Server.Items
         {
         }
 
-        public override Race RequiredRace
-        {
-            get
-            {
-                return Race.Elf;
-            }
-        }
         public override int InitMinHits
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 40;
+                return 100;
             }
         }
         public override int AosStrReq
         {
             get
             {
-                return 10;
+                return 100;
             }
         }
-        public override int OldStrReq
+        public override int AosDexReq
         {
             get
             {
-                return 10;
+                return 100;
+            }
+        }
+        public override int AosIntReq
+        {
+            get
+            {
+                return 100;
             }
         }
         public override int ArmorBase

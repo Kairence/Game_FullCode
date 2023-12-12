@@ -11,7 +11,10 @@ namespace Server.Items
         public ShortSpear()
             : base(0x1403)
         {
-			SkillBonuses.SetValues(5, SkillName.Fencing, 20.0);
+			PrefixOption[61] = 89;
+			SuffixOption[61] = 2000;
+			
+			//SkillBonuses.SetValues(5, SkillName.Fencing, 20.0);
             this.Weight = 14.0;
 		}
 

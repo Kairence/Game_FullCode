@@ -5,54 +5,13 @@ namespace Server.Items
     [FlipableAttribute(0x2B73, 0x316A)]
     public class WingedHelm : BaseArmor
     {
-        [Constructable]
-        public WingedHelm()
-            : base(0x2B73)
-        {
-            this.Weight = 5.0;
- 			Attributes.WeaponSpeed += 95;
-       }
+        public override int InitMinHits { get { return 100; } }
+        public override int InitMaxHits { get { return 100; } }
 
-        public WingedHelm(Serial serial)
-            : base(serial)
-        {
-        }
-
-        public override Race RequiredRace
-        {
-            get
-            {
-                return Race.Elf;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 45;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 55;
-            }
-        }
-        public override int AosStrReq
-        {
-            get
-            {
-                return 25;
-            }
-        }
-        public override int OldStrReq
-        {
-            get
-            {
-                return 25;
-            }
-        }
+        public override int AosStrReq { get { return 400; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
+        public override int OldStrReq { get { return 15; } }
         public override int ArmorBase
         {
             get
@@ -60,6 +19,27 @@ namespace Server.Items
                 return 7;
             }
         }
+
+        [Constructable]
+        public WingedHelm()
+            : base(0x2B73)
+        {
+			PrefixOption[50] = 4;
+			PrefixOption[61] = 114;
+			SuffixOption[61] = 200;
+			PrefixOption[62] = 41;
+			SuffixOption[62] = 250;
+			PrefixOption[63] = 8;
+			SuffixOption[63] = 1000;
+			PrefixOption[64] = 6;
+			SuffixOption[64] = 25000;
+       }
+
+        public WingedHelm(Serial serial)
+            : base(serial)
+        {
+        }
+		
         public override ArmorMaterialType MaterialType
         {
             get

@@ -403,7 +403,6 @@ namespace Server.Engines.Craft
             }
             #endregion
 
-            #endregion
 
             #region Misc
             AddCraft(typeof(BodySash), 1015283, 1025441, 4.1, 29.1, typeof(Cloth), 1044455, 4, 1044287);
@@ -561,7 +560,6 @@ namespace Server.Engines.Craft
                 AddCraft(typeof(LeatherTalons), 1015288, 1095728, 40.4, 65.4, typeof(Leather), 1044462, 6, 1044453);
             }
             #endregion
-			*/
             #region TOL
             if (Core.TOL)
             {
@@ -756,6 +754,8 @@ namespace Server.Engines.Craft
             }
             #endregion
 			*/
+			#endregion
+			
             #region Studded Armor
             AddCraft(typeof(StuddedGorget), 1015300, 1025078, 78.8, 103.8, typeof(Leather), 1044462, 7, 1044463);
             AddCraft(typeof(StuddedGloves), 1015300, 1025077, 82.9, 107.9, typeof(Leather), 1044462, 8, 1044463);

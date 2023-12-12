@@ -8,7 +8,13 @@ namespace Server.Items
         public NorseHelm()
             : base(0x140E)
         {
-			ArmorAttributes.PierceResist += 12;
+			PrefixOption[50] = 15;
+			PrefixOption[61] = 114;
+			SuffixOption[61] = 800;
+			PrefixOption[62] = 77;
+			SuffixOption[62] = 1000;
+			PrefixOption[63] = 18;
+			SuffixOption[63] = 500;
             Weight = 5.0;
         }
 
@@ -17,35 +23,10 @@ namespace Server.Items
         {
         }
 
- 
-        public override int InitMinHits
-        {
-            get
-            {
-                return 45;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 60;
-            }
-        }
-        public override int AosStrReq
-        {
-            get
-            {
-                return 65;
-            }
-        }
-        public override int OldStrReq
-        {
-            get
-            {
-                return 40;
-            }
-        }
+		public override int AosStrReq { get { return 1300; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
+        public override int OldStrReq { get { return 15; } }
         public override int ArmorBase
         {
             get

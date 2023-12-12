@@ -9,7 +9,9 @@ namespace Server.Items
         public BlackStaff()
             : base(0xDF0)
         {
-			Attributes.AttackChance += 1000;
+			PrefixOption[61] = 17;
+			SuffixOption[61] = 1000;
+			
             this.Weight = 6.0;
 		}
 

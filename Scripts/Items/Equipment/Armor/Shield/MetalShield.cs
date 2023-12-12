@@ -11,6 +11,12 @@ namespace Server.Items
             : base(0x1B7B)
         {
             this.Weight = 6.0;
+			PrefixOption[61] = 109;
+			SuffixOption[61] = 50;
+			PrefixOption[62] = 110;
+			SuffixOption[62] = 4000;
+			PrefixOption[63] = 110;
+			SuffixOption[63] = 200;
         }
 
         public MetalShield(Serial serial)
@@ -22,35 +28,42 @@ namespace Server.Items
         {
             get
             {
-                return 50;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 65;
+                return 100;
             }
         }
         public override int AosStrReq
         {
             get
             {
-                return 45;
+                return 1500;
             }
         }
         public override int AosDexReq
         {
             get
             {
-                return 25;
+                return 500;
+            }
+        }
+        public override int AosIntReq
+        {
+            get
+            {
+                return 100;
             }
         }
         public override int ArmorBase
         {
             get
             {
-                return 20;
+                return 0;
             }
         }
         public override void Deserialize(GenericReader reader)

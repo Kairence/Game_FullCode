@@ -5,11 +5,10 @@ namespace Server.Items
     [FlipableAttribute(0x1451, 0x1456)]
     public class BoneHelm : BaseArmor
     {
-        public override int InitMinHits { get { return 25; } }
-        public override int InitMaxHits { get { return 30; } }
-        public override int AosStrReq { get { return 25; } }
-        public override int OldStrReq { get { return 40; } }
-		public override int OldDexBonus { get { return -4; } }
+		public override int AosStrReq { get { return 200; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
+        public override int OldStrReq { get { return 15; } }
         public override int ArmorBase { get { return 3; } }
         public override ArmorMaterialType MaterialType { get { return ArmorMaterialType.Bone; } }
 		public override CraftResource DefaultResource { get { return CraftResource.RegularLeather; } }
@@ -18,7 +17,11 @@ namespace Server.Items
         public BoneHelm()
             : base(0x1451)
         {
-  			AbsorptionAttributes.EaterPoison += 7;
+			PrefixOption[50] = 7;
+			PrefixOption[61] = 117;
+			SuffixOption[61] = 500;
+			PrefixOption[62] = 35;
+			SuffixOption[62] = 1000;
             Weight = 3.0;
         }
 

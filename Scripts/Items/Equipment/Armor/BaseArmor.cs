@@ -1331,7 +1331,7 @@ namespace Server.Items
         {
             get
             {
-                return BasePhysicalResistance + GetProtOffset() + m_PhysicalBonus + m_AosWeaponAttributes.ResistPhysicalBonus / 100;
+                return BasePhysicalResistance + GetProtOffset() + m_PhysicalBonus; // + m_AosWeaponAttributes.ResistPhysicalBonus / 100 + m_AosArmorAttributes.AllResist / 100;
             }
         }
 
@@ -1339,7 +1339,7 @@ namespace Server.Items
         {
             get
             {
-                return BaseFireResistance + GetProtOffset() + m_FireBonus + m_AosWeaponAttributes.ResistFireBonus / 100;
+                return BaseFireResistance + GetProtOffset() + m_FireBonus; // + m_AosWeaponAttributes.ResistFireBonus / 100 + m_AosArmorAttributes.ElementalResist / 100 + m_AosArmorAttributes.AllResist / 100;
             }
         }
 
@@ -1347,7 +1347,7 @@ namespace Server.Items
         {
             get
             {
-                return BaseColdResistance + GetProtOffset() + m_ColdBonus + m_AosWeaponAttributes.ResistColdBonus / 100;
+                return BaseColdResistance + GetProtOffset() + m_ColdBonus; // + m_AosWeaponAttributes.ResistColdBonus / 100 + m_AosArmorAttributes.ElementalResist / 100 + m_AosArmorAttributes.AllResist / 100;
             }
         }
 
@@ -1355,7 +1355,7 @@ namespace Server.Items
         {
             get
             {
-                return BasePoisonResistance + GetProtOffset() + m_PoisonBonus + m_AosWeaponAttributes.ResistPoisonBonus / 100;
+                return BasePoisonResistance + GetProtOffset() + m_PoisonBonus; // + m_AosWeaponAttributes.ResistPoisonBonus / 100 + m_AosArmorAttributes.ElementalResist / 100 + m_AosArmorAttributes.AllResist / 100;
             }
         }
 
@@ -1363,7 +1363,7 @@ namespace Server.Items
         {
             get
             {
-                return BaseEnergyResistance + GetProtOffset() + m_EnergyBonus + m_AosWeaponAttributes.ResistEnergyBonus / 100;
+                return BaseEnergyResistance + GetProtOffset() + m_EnergyBonus; // + m_AosWeaponAttributes.ResistEnergyBonus / 100 + m_AosArmorAttributes.ElementalResist / 100 + m_AosArmorAttributes.AllResist / 100;
             }
         }
 
@@ -1618,31 +1618,6 @@ namespace Server.Items
 			}
 
 			return v;
-        }
-        public override void OnAdded(object parent)
-        {
-            if (parent is Mobile)
-            {
-                Mobile from = (Mobile)parent;
-
-                if (Core.AOS)
-                    m_AosSkillBonuses.AddTo(from);
-
-                #region Mondain's Legacy Sets
-                if (IsSetItem)
-                {
-                    m_SetEquipped = SetHelper.FullSetEquipped(from, SetID, Pieces);
-
-                    if (m_SetEquipped)
-                    {
-                        m_LastEquipped = true;
-                        SetHelper.AddSetBonus(from, SetID);
-                    }
-                }
-                #endregion
-
-                from.Delta(MobileDelta.Armor); // Tell them armor rating has changed
-            }
         }
 
         public virtual double ScaleArmorByDurability(double armor)
@@ -2574,25 +2549,6 @@ namespace Server.Items
 
                 bool morph = from.FindItemOnLayer(Layer.Earrings) is MorphEarrings;
 
-				/*
-                if (from.Race == Race.Gargoyle && !CanBeWornByGargoyles)
-                {
-                    from.LocalOverheadMessage(MessageType.Regular, 0x3B2, 1111708); // Gargoyles can't wear this.
-                    return false;
-                }
-                if (RequiredRace != null && from.Race != RequiredRace && !morph)
-                {
-                    if (RequiredRace == Race.Elf)
-                        from.SendLocalizedMessage(1072203); // Only Elves may use this.
-                    else if (RequiredRace == Race.Gargoyle)
-                        from.LocalOverheadMessage(MessageType.Regular, 0x3B2, 1111707); // Only gargoyles can wear this.
-                    else
-                        from.SendMessage("Only {0} may use this.", RequiredRace.PluralName);
-
-                    return false;
-                }
-				*/
-				
                 if (!AllowMaleWearer && !from.Female)
                 {
                     if (AllowFemaleWearer)
@@ -2715,8 +2671,43 @@ namespace Server.Items
 			}
 			
             Server.Engines.XmlSpawner2.XmlAttach.CheckOnEquip(this, from);
-
+			
             return base.OnEquip(from);
+        }
+        public override void OnAdded(object parent)
+        {
+            if (parent is Mobile)
+            {
+                Mobile from = (Mobile)parent;
+
+                if (Core.AOS)
+                    m_AosSkillBonuses.AddTo(from);
+
+                #region Mondain's Legacy Sets
+                if (IsSetItem)
+                {
+                    m_SetEquipped = SetHelper.FullSetEquipped(from, SetID, Pieces);
+
+                    if (m_SetEquipped)
+                    {
+                        m_LastEquipped = true;
+                        SetHelper.AddSetBonus(from, SetID);
+                    }
+                }
+				//세트 아이템 체크 코드
+				if( PrefixOption[50] > 0 )
+				{
+					if( from is PlayerMobile )
+					{
+						PlayerMobile pm = from as PlayerMobile;
+						pm.ItemSetValue[PrefixOption[50]]++;
+						Misc.Util.SetOption(pm, false);
+					}					
+				}
+
+                #endregion
+                from.Delta(MobileDelta.Armor); // Tell them armor rating has changed
+            }
         }
 
         public override void OnRemoved(object parent)
@@ -2740,9 +2731,22 @@ namespace Server.Items
                 if (IsSetItem && m_SetEquipped)
                     SetHelper.RemoveSetBonus(m, SetID, this);
                 #endregion
+				
+				//세트 아이템 해제 코드
+				if( PrefixOption[50] > 0 )
+				{
+					if( m is PlayerMobile )
+					{
+						PlayerMobile pm = m as PlayerMobile;
+						pm.ItemSetValue[PrefixOption[50]]--;
+						Misc.Util.SetOption(pm, false);
+
+					}					
+				}
             }
 
             Server.Engines.XmlSpawner2.XmlAttach.CheckOnRemoved(this, parent);
+			InvalidateProperties();
 
             base.OnRemoved(parent);
         }
@@ -2989,25 +2993,7 @@ namespace Server.Items
 			{
 				list.Add(1061078, ArtifactRarity.ToString()); // artifact rarity ~1_val~
 			}
-			if( PrefixOption[99] > 0 )
-			{
-				int levelcheck = 40;
-				if( RootParent != null && RootParent is PlayerMobile )
-				{
-					PlayerMobile pm = RootParent as PlayerMobile;
-					int equippercent = 1000 - WeaponAttributes.LowerStatReq;
-					
-					levelcheck *= equippercent;
-					levelcheck /= 1000;
-					
-					if( Misc.Util.Level(pm.SilverPoint[0]) < PrefixOption[99] * levelcheck )
-						list.Add( 1063525, ( PrefixOption[99] * levelcheck ).ToString() );
-					else
-						list.Add( 1063520, ( PrefixOption[99] * levelcheck ).ToString() );
-				}
-				else
-					list.Add( 1063520, ( PrefixOption[99] * levelcheck ).ToString() );
-			}
+
 			int armorratingcheck = 0;
 			int prop;
 			
@@ -3080,310 +3066,6 @@ namespace Server.Items
 			//방어력
 			if ( ( prop = ArmorBase ) > 0 )
 				list.Add( 1063577, prop.ToString());
-			//방패
-			if( this is WoodenShield )
-			{
-				list.Add( 1063578, "0.5" );
-				list.Add( 1063579, "30" );
-				list.Add( 1063580 );
-			}
-			else if( this is Buckler )
-			{
-				list.Add( 1063578, "1.0" );
-				list.Add( 1063579, "35" );
-				list.Add( 1063581 );
-			}
-			else if( this is BronzeShield  )
-			{
-				list.Add( 1063578, "2.5" );
-				list.Add( 1063579, "10" );
-				list.Add( 1063594, "10" );
-			}
-			else if( this is MetalShield  )
-			{
-				list.Add( 1063578, "1.5" );
-				list.Add( 1063579, "10" );
-				list.Add( 1063582 );
-			}
-			else if( this is WoodenKiteShield )
-			{
-				list.Add( 1063578, "3.5" );
-				list.Add( 1063579, "20" );
-				list.Add( 1063583 );
-			}
-			else if( this is MetalKiteShield )
-			{
-				list.Add( 1063578, "2.0" );
-				list.Add( 1063579, "40" );
-				list.Add( 1063584 );
-			}
-			else if( this is HeaterShield  )
-			{
-				list.Add( 1063578, "2.5" );
-				list.Add( 1063579, "50" );
-				list.Add( 1063585 );
-			}
-			else if( this is OrderShield || this is ChaosShield )
-			{
-				list.Add( 1063578, "5.5" );
-				list.Add( 1063579, "10" );
-			}
-			//나뭇잎 옷
-			else if( this is LeafGloves )
-			{
-				list.Add( 1063595, "7" );
-			}
-			else if( this is LeafGorget )
-			{
-				list.Add( 1063595, "8" );
-			}
-			else if( this is Circlet )
-			{
-				list.Add( 1063596, "11" );
-			}
-			else if( this is LeafArms )
-			{
-				list.Add( 1063596, "12" );
-			}
-			else if( this is LeafLegs || this is LeafTonlet )
-			{
-				list.Add( 1063596, "13" );
-			}
-			else if( this is LeafChest || this is FemaleLeafChest )
-			{
-				list.Add( 1063596, "14" );
-			}
-			// 호랑이 옷
-			else if( this is TigerPeltCollar )
-			{
-				list.Add( 1063597, "11" );
-			}
-			else if( this is TigerPeltHelm )
-			{
-				list.Add( 1063597, "12" );
-			}
-			else if( this is TigerPeltSkirt || this is TigerPeltLegs || this is TigerPeltShorts || this is TigerPeltLongSkirt )
-			{
-				list.Add( 1063597, "13" );
-			}
-			else if( this is TigerPeltBustier || this is TigerPeltChest )
-			{
-				list.Add( 1063597, "14" );
-			}
-			//용 거북 옷
-			else if( this is TigerPeltHelm )
-			{
-				list.Add( 1063598, "11" );
-			}
-			else if( this is DragonTurtleHideArms )
-			{
-				list.Add( 1063598, "12" );
-			}
-			else if( this is DragonTurtleHideLegs )
-			{
-				list.Add( 1063598, "13" );
-			}
-			else if( this is DragonTurtleHideChest || this is DragonTurtleHideBustier )
-			{
-				list.Add( 1063598, "14" );
-			}
-			//가죽 갑옷
-			else if( this is LeatherGloves )
-			{
-				list.Add( 1063587, "10" );
-			}
-			else if( this is LeatherGorget )
-			{
-				list.Add( 1063587, "11" );
-			}
-			else if( this is LeatherCap )
-			{
-				list.Add( 1063587, "12" );
-			}
-			else if( this is LeatherShorts )
-			{
-				list.Add( 1063599, "9.5" );
-			}
-			else if( this is LeatherArms || this is LeatherBustierArms )
-			{
-				list.Add( 1063587, "13" );
-			}
-			else if( this is LeatherShorts || this is LeatherLegs || this is LeatherSkirt )
-			{
-				list.Add( 1063587, "14" );
-			}
-			else if( this is LeatherChest || this is FemaleLeatherChest )
-			{
-				list.Add( 1063587, "15" );
-			}
-			//피혁 갑옷
-			else if( this is HideGloves )
-			{
-				list.Add( 1063600, "14" );
-			}
-			else if( this is HideGorget )
-			{
-				list.Add( 1063600, "15" );
-			}
-			else if( this is VultureHelm )
-			{
-				list.Add( 1063600, "16" );
-			}
-			else if( this is HidePauldrons )
-			{
-				list.Add( 1063601, "9" );
-			}
-			else if( this is HidePants )
-			{
-				list.Add( 1063601, "10" );
-			}
-			else if( this is HideChest || this is HideFemaleChest )
-			{
-				list.Add( 1063601, "11" );
-			}
-			// 징가죽 갑옷
-			else if( this is StuddedGloves )
-			{
-				list.Add( 1063588, "10" );
-			}
-			else if( this is StuddedGorget )
-			{
-				list.Add( 1063588, "11" );
-			}
-			else if( this is StuddedArms || this is StuddedBustierArms )
-			{
-				list.Add( 1063588, "13" );
-			}
-			else if( this is StuddedLegs )
-			{
-				list.Add( 1063588, "14" );
-			}
-			else if( this is FemaleStuddedChest || this is StuddedChest )
-			{
-				list.Add( 1063588, "15" );
-			}
-			//뼈 갑옷
-			else if( this is BoneGloves )
-			{
-				list.Add( 1063602, "7" );
-			}
-			else if( this is BoneHelm )
-			{
-				list.Add( 1063602, "8" );
-			}
-			else if( this is OrcHelm )
-			{
-				list.Add( 1063603, "11" );
-			}
-			else if( this is BoneArms )
-			{
-				list.Add( 1063603, "12" );
-			}
-			else if( this is BoneLegs )
-			{
-				list.Add( 1063603, "13" );
-			}
-			else if( this is BoneChest )
-			{
-				list.Add( 1063603, "14" );
-			}			
-			//링 갑옷
-			else if( this is RingmailGloves )
-			{
-				list.Add( 1063604, "1.6" );
-			}
-			else if( this is Helmet )
-			{
-				list.Add( 1063605, "9" );
-			}
-			else if( this is Bascinet )
-			{
-				list.Add( 1063606, "9" );
-			}
-			else if( this is NorseHelm )
-			{
-				list.Add( 1063588, "12" );
-			}
-			else if( this is CloseHelm )
-			{
-				list.Add( 1063604, "1.7" );
-			}
-			else if( this is RingmailArms )
-			{
-				list.Add( 1063604, "1.8" );
-			}			
-			else if( this is RingmailLegs )
-			{
-				list.Add( 1063604, "1.9" );
-			}			
-			else if( this is RingmailChest )
-			{
-				list.Add( 1063604, "2" );
-			}			
-			//사슬 갑옷
-			else if( this is ChainCoif )
-			{
-				list.Add( 1063606, "9" );
-			}
-			else if( this is ChainLegs )
-			{
-				list.Add( 1063606, "10" );
-			}
-			else if( this is ChainChest )
-			{
-				list.Add( 1063606, "11" );
-			}
-			//판금 갑옷
-			else if( this is PlateGloves )
-			{
-				list.Add( 1063607, "6" );
-			}
-			else if( this is PlateGorget )
-			{
-				list.Add( 1063607, "7" );
-			}
-			else if( this is PlateHelm )
-			{
-				list.Add( 1063607, "8" );
-			}
-			else if( this is PlateArms )
-			{
-				list.Add( 1063607, "9" );
-			}
-			else if( this is PlateLegs )
-			{
-				list.Add( 1063607, "10" );
-			}
-			else if( this is FemalePlateChest || this is PlateChest )
-			{
-				list.Add( 1063607, "11" );
-			}
-			// 나무 갑옷
-			else if( this is WoodlandGloves )
-			{
-				list.Add( 1063608, "10" );
-			}
-			else if( this is WoodlandGorget )
-			{
-				list.Add( 1063608, "11" );
-			}
-			else if( this is RavenHelm )
-			{
-				list.Add( 1063609, "0.5" );
-			}
-			else if( this is WoodlandArms )
-			{
-				list.Add( 1063608, "12" );
-			}
-			else if( this is WoodlandLegs )
-			{
-				list.Add( 1063608, "13" );
-			}
-			else if( this is FemaleElvenPlateChest || this is WoodlandChest )
-			{
-				list.Add( 1063608, "14" );
-			}
-			
 			
 			if (m_HitPoints >= 0 && m_MaxHitPoints > 0)
 				list.Add(1060639, "{0}\t{1}", m_HitPoints, m_MaxHitPoints); // durability ~1_val~ / ~2_val~
@@ -3395,16 +3077,42 @@ namespace Server.Items
 				list.Add(1072378); // <br>Only when full set is present:				
 				GetSetProperties(list);
 			}			
-			//아이템 등급 색
-			//list.Add(Util.ItemRank((int)ItemPower ));
 
-			//if( !Identified )
-			//	list.Add( 1060659, "<basefont color=#FF0000>아이템 감정\t안됨<basefont color=#FFFFFF>" );
-
+			if( PrefixOption[0] >= 100 )
+			{
+				//신규 옵션 정리
+				if( PrefixOption[61] + SuffixOption[61] != 0 )
+				{
+					bool skillcheck = false;
+					int skilluse = 5;
+					int skillname = 0;
+					
+					for( int i = 0; i < 10; ++i)
+					{
+						if( PrefixOption[i + 61] == 0 && SuffixOption[i + 61] == 0 )
+							break;
+						
+						if( Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0] < 60 ) //스킬
+						{
+							SkillName skill = (SkillName)Enum.ToObject(typeof(SkillName), Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0]);
+							skillname = m_AosSkillBonuses.GetSkillName(skill);
+							if ( skillname > 0 )
+							{
+								list.Add(1080641 + skilluse, "#{0}\t{1}", skillname, ((double)SuffixOption[i + 61] * 0.01).ToString());
+								skillcheck = true;
+							}
+							skilluse++;
+						}
+						else
+						{
+							int optionpercentcheck = 1081997 + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0]);
+							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0], (((double)SuffixOption[i + 61])*0.01).ToString());
+						}
+					}
+				}
+			}
 			if( Identified )
 			{
-				//list.Add( 1060659, "아이템 감정\t완료" );
-
 				if (m_GorgonLenseCharges > 0)
 					list.Add(1112590, m_GorgonLenseCharges.ToString()); //Gorgon Lens Charges: ~1_val~         
 
@@ -3446,210 +3154,109 @@ namespace Server.Items
 					list.Add(1116176 + ((int)((SurgeShield)this).Surge));
 				
 				//신규 옵션 정리
-				if( PrefixOption[0] > 0 )
+				if( PrefixOption[0] >= 100 )
 				{
 					list.Add(1063512); // [마법 옵션]
 					bool skillcheck = false;
 					int skilluse = 0;
 					int skillname = 0;
-					if( ReforgedPrefix == ReforgedPrefix.None && ReforgedSuffix == ReforgedSuffix.None )
+					for( int i = 0; i < SuffixOption[0]; ++i)
 					{
-						for( int i = 0; i < PrefixOption[0]; ++i)
+						if( Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0] < 60 ) //스킬
 						{
-							if( PrefixOption[i * 4 + 1] < 60 ) //스킬
+							SkillName skill = (SkillName)Enum.ToObject(typeof(SkillName), Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0]);
+							skillname = m_AosSkillBonuses.GetSkillName(skill);
+							if ( skillname > 0 )
 							{
-								SkillName skill = (SkillName)Enum.ToObject(typeof(SkillName),PrefixOption[i * 4 + 1]);
-								skillname = m_AosSkillBonuses.GetSkillName(skill);
-								if ( skillname > 0 )
-								{
-									list.Add(1080641 + skilluse, "#{0}\t{1}\t{2}\t{3}", skillname, (((double)PrefixOption[i * 4 + 4])*0.1).ToString(), (((double)PrefixOption[i * 4 + 2])*0.1).ToString(), (((double)PrefixOption[i * 4 + 3])*0.1).ToString());
-									skillcheck = true;
-								}
-								skilluse++;
+								list.Add(1080641 + skilluse, "#{0}\t{1}", skillname, ((double)SuffixOption[i + 11] * 0.01).ToString());
+								skillcheck = true;
 							}
-							else if( PrefixOption[i * 4 + 1] >= 1080578 && PrefixOption[i * 4 + 1] <= 1080650)
+							skilluse++;
+						}
+						else
+						{
+							int optionpercentcheck = 1081999 + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0]);
+							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0], (((double)SuffixOption[i + 11])*0.01).ToString());
+						}
+					}
+					//재료 옵션
+					if( PrefixOption[41] != 0 )
+					{
+						list.Add(1081001);
+						list.Add( PrefixOption[41] );
+					}
+					
+					//재련 옵션
+					if( PrefixOption[0] == 100 )
+					{
+						list.Add(1082001);
+						if( SuffixOption[2] > 0 )
+						{
+							list.Add(1082002, SuffixOption[2].ToString() );
+						}
+						for(int i = 0; i < 5; ++i )
+						{
+							if( PrefixOption[31 + i] == -1 )
+								break;
+
+							int optionpercentcheck = 1082003 + i + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 31], 0, 0], 5);
+							
+							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 31], 0, 0], (((double)SuffixOption[i + 31])*0.01).ToString() );
+						}
+					}
+					
+					//강화 옵션
+					if( PrefixOption[3] + PrefixOption[4] + PrefixOption[5] + PrefixOption[6] + PrefixOption[7] != 0 )
+					{
+						list.Add(1083001);
+						
+						for(int i = 0; i < 7; ++i)
+						{
+							if( PrefixOption[3 + i] > 0 )
 							{
-								if( Misc.Util.ItemOption_ToIntCheck( PrefixOption[i * 4 + 1] ) )
-									list.Add( PrefixOption[i * 4 + 1], "{0}\t{1}\t{2}", PrefixOption[i * 4 + 4], PrefixOption[i * 4 + 2], PrefixOption[i * 4 + 3]);
-								else
-									list.Add( PrefixOption[i * 4 + 1], "{0}\t{1}\t{2}", PrefixOption[i * 4 + 4]*0.1, PrefixOption[i * 4 + 2]*0.1, PrefixOption[i * 4 + 3]*0.1);
-							}
-							else
-							{
-								if( Misc.Util.ItemOption_ToIntCheck( PrefixOption[i * 4 + 1] ) )
-									list.Add( PrefixOption[i * 4 + 1], PrefixOption[i * 4 + 4].ToString());
-								else
-									list.Add( PrefixOption[i * 4 + 1], (((double)PrefixOption[i * 4 + 4])*0.1).ToString());
+								list.Add( 1083002 + i, "{0}\t{1}", PrefixOption[i + 3], (((double)SuffixOption[i + 3])*0.01).ToString() );
 							}
 						}
-						if (!skillcheck && m_AosSkillBonuses != null)
-						{
-							m_AosSkillBonuses.GetProperties(list);
-						}
+					}
+
+				}
+			}
+			//세트 옵션
+			if( PrefixOption[50] != 0 )
+			{
+				int setcount = 0;
+				if( RootParent != null && RootParent is Mobile )
+				{
+					Mobile from = RootParent as Mobile;
+					if( from is PlayerMobile )
+					{
+						PlayerMobile pm = from as PlayerMobile;
+						setcount = pm.ItemSetValue[PrefixOption[50]];
 					}
 				}
 
-			}
-			//다음 코드 1063586
-			//고유 옵션 설정
-			if( SuffixOption[98] == 1 )
-			{
-				list.Add( 1063513 );
-			
-				if( SuffixOption[99] != 0 )
+				list.Add(1084001);
+				int totalset = Misc.Util.SetItemList[PrefixOption[50]].GetLength(0) / 2;
+				for( int i = 0; i < totalset; ++i)
 				{
-					list.Add(1063699 + SuffixOption[99]);
-					/*
-					switch ( SuffixOption[99] )
-					{
-						case 1:
-						{
-							list.Add(1063621, "0.3"); //기력 재생
-							break;
-						}
-						case 2:
-						{
-							list.Add(1063622, "0.3"); //체력 재생
-							break;
-						}
-						case 3:
-						{
-							list.Add(1063676, "6"); //민첩 증가
-							break;
-						}
-						case 4:
-						{
-							list.Add(1063677, "10"); //지능 증가
-							break;
-						}
-					}
-					*/
-				}
-				if( PlayerConstructed )
-				{
-					switch ( Resource )
-					{
-						case CraftResource.Iron:
-						{
-							list.Add(1063586, "{0}", "2"); // 전투 경험치 증가 ~1_val~%
-							break;
-						}
-						case CraftResource.Copper:
-						{
-							list.Add(1060435, "{0}", "20"); // 요구치 감소 ~1_val~%
-							break;
-						}
-						case CraftResource.Bronze:
-						{
-							list.Add(1063616, ( PrefixOption[99] + 1 ).ToString()); // 무기 피해
-							break;					
-						}
-						case CraftResource.Gold:
-						{
-							list.Add(1063617, "10"); // 운		
-							break;					
-						}
-						case CraftResource.Agapite:
-						{
-							list.Add(1060404, ( 0.5 * ( PrefixOption[99] + 1 ) ).ToString()); // 화염 피해
-							break;					
-						}
-						case CraftResource.Verite:
-						{
-							list.Add(1063606, ( 2.5 * ( PrefixOption[99] + 1 ) ).ToString()); //물리 치명타 피해
-							break;					
-						}
-						case CraftResource.Valorite:
-						{
-							list.Add(1063619, ( 0.1 * ( PrefixOption[99] + 1 ) ).ToString()); //체력 흡수
-							break;					
-						}
-						case CraftResource.RegularWood:
-						{
-							list.Add(1063586, "2"); // 전투 경험치 증가 ~1_val~%
-							break;
-						}
-						case CraftResource.OakWood:
-						{
-							list.Add(1063620, ( 0.4 * ( PrefixOption[99] + 1 ) ).ToString()); //금화 증가
-							break;					
-						}
-						case CraftResource.AshWood:
-						{
-							list.Add(1060435, "20"); // 요구치 감소 ~1_val~%
-							break;
-						}
-						case CraftResource.YewWood:
-						{
-							list.Add(1063605, ( PrefixOption[99] + 1 ).ToString()); // 명중률
-							break;						
-						}
-						case CraftResource.Heartwood:
-						{
-							list.Add(1063621, ( 0.1 * ( PrefixOption[99] + 1 ) ).ToString()); //기력 재생
-							break;					
-						}
-						case CraftResource.Bloodwood:
-						{
-							list.Add(1063622, ( 0.1 * ( PrefixOption[99] + 1 ) ).ToString()); //체력 재생
-							break;					
-						}
-						case CraftResource.Frostwood:
-						{
-							list.Add(1063623, ( 0.5 * ( PrefixOption[99] + 1 ) ).ToString()); // 냉기 피해
-							break;					
-						}
-						case CraftResource.RegularLeather:
-						{
-							list.Add(1063586, "2"); // 전투 경험치 증가 ~1_val~%
-							break;
-						}
-						case CraftResource.DernedLeather:
-						{
-							list.Add(1063610, ( 4 * ( PrefixOption[99] + 1 ) ).ToString()); // 마나 증가
-							break;					
-						}
-						case CraftResource.RatnedLeather:
-						{
-							list.Add(1063611, ( PrefixOption[99] + 1 ).ToString()); // 마법 피해
-							break;					
-						}
-						case CraftResource.SernedLeather:
-						{
-							list.Add(1063612, ( PrefixOption[99] + 1 ).ToString()); // 치유량
-							break;					
-						}
-						case CraftResource.SpinedLeather:
-						{
-							list.Add(1063613, ( PrefixOption[99] + 1 ).ToString()); // 시전 속도
-							break;					
-						}
-						case CraftResource.HornedLeather:
-						{
-							list.Add(1063614, ( 2.5 * ( PrefixOption[99] + 1 ) ).ToString()); //마법 치명타
-							break;					
-						}
-						case CraftResource.BarbedLeather:
-						{
-							list.Add(1063615, ( 0.1 * ( PrefixOption[99] + 1 ) ).ToString()); //마나 흡수
-							break;					
-						}							
-					}
+					int equipoption = Misc.Util.SetItemList[PrefixOption[50]][i * 2];
+					int equipvalue = Misc.Util.SetItemList[PrefixOption[50]][i * 2 + 1];
+					int optionpercentcheck = 1084008 + i + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[equipoption, 0, 0], 5);
+
+					//Console.WriteLine("first optionpercentcheck : {0}", optionpercentcheck );
+					
+					if( i < setcount -1 )
+						optionpercentcheck += 10;
+
+					//Console.WriteLine("second optionpercentcheck : {0}", optionpercentcheck );
+					list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[equipoption, 0, 0], (((double)equipvalue )* 0.01).ToString() );
 				}
 			}
-        }
+		}
 
         public override void AddItemPowerProperties(ObjectPropertyList list)
         {
-			/*
-            if (m_ItemPower != ItemPower.None)
-            {
-                if (m_ItemPower <= ItemPower.LegendaryArtifact)
-                    list.Add(1151488 + ((int)m_ItemPower - 1));
-                else
-                    list.Add(1152281 + ((int)m_ItemPower - 9));
-            }
-			*/
+
         }
 
         public override void OnSingleClick(Mobile from)
@@ -3739,10 +3346,9 @@ namespace Server.Items
 					arms += 5000;
 				
 				int rank = Util.ItemRankMaker( from.Skills[craftSystem.MainSkill].Value * 4 );
-				int tier = Util.ItemTierMaker( arms, rank, Misc.Util.ResourceNumberToNumber((int)Resource ), from );
 				
 				PlayerMobile pm = from as PlayerMobile;
-				Util.ItemCreate( this, rank, true, pm, tier );
+				Util.NewItemCreate(this, rank, pm );
 			}
             return quality;
         }

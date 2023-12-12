@@ -12,7 +12,9 @@ namespace Server.Items
             : base(0x13F8)
         {
             this.Weight = 3.0;
-			Attributes.SpellDamage += 3750;
+			PrefixOption[61] = 8;
+			SuffixOption[61] = 3750;
+			//Attributes.SpellDamage += 3750;
 		}
 
 

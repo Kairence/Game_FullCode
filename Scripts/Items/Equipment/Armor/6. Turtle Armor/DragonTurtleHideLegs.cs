@@ -5,12 +5,13 @@ namespace Server.Items
 {
     public class DragonTurtleHideLegs : BaseArmor
     {
+        public override int InitMinHits { get { return 100; } }
+        public override int InitMaxHits { get { return 100; } }
 
-        public override int InitMinHits { get { return 35; } }
-        public override int InitMaxHits { get { return 45; } }
-
-        public override int AosStrReq { get { return 60; } }
-        public override int OldStrReq { get { return 25; } }
+        public override int AosStrReq { get { return 600; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
+        public override int OldStrReq { get { return 15; } }
 
         public override int ArmorBase { get { return 6; } }
 
@@ -26,7 +27,11 @@ namespace Server.Items
             : base(0x782C)
         {
             Weight = 5.0;
-   			AbsorptionAttributes.ResonanceKinetic += 130;
+			PrefixOption[50] = 3;
+			PrefixOption[61] = 12;
+			SuffixOption[61] = 700;
+			PrefixOption[62] = 18;
+			SuffixOption[62] = 500;
         }
 
         public DragonTurtleHideLegs(Serial serial)

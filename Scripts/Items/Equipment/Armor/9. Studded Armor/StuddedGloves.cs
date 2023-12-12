@@ -10,7 +10,13 @@ namespace Server.Items
             : base(0x13D5)
         {
             Weight = 1.0;
-			ArmorAttributes.PierceResist += 10;
+			PrefixOption[50] = 6;
+			PrefixOption[61] = 12;
+			SuffixOption[61] = 300;
+			PrefixOption[62] = 111;
+			SuffixOption[62] = 200;
+			PrefixOption[63] = 3;
+			SuffixOption[63] = 100;
         }
 
         public StuddedGloves(Serial serial)
@@ -18,34 +24,13 @@ namespace Server.Items
         {
         }
 
-        public override int InitMinHits
-        {
-            get
-            {
-                return 35;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 45;
-            }
-        }
-        public override int AosStrReq
-        {
-            get
-            {
-                return 45;
-            }
-        }
-        public override int OldStrReq
-        {
-            get
-            {
-                return 25;
-            }
-        }
+        public override int InitMinHits { get { return 100; } }
+        public override int InitMaxHits { get { return 100; } }
+
+        public override int AosStrReq { get { return 600; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
+        public override int OldStrReq { get { return 15; } }
         public override int ArmorBase
         {
             get

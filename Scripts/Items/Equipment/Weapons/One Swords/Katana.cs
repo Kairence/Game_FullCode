@@ -11,7 +11,10 @@ namespace Server.Items
         public Katana()
             : base(0x13FF)
         {
-			SkillBonuses.SetValues(5, SkillName.Bushido, 10.0);
+			PrefixOption[61] = 95;
+			SuffixOption[61] = 1000;
+			
+			//SkillBonuses.SetValues(5, SkillName.Bushido, 10.0);
             this.Weight = 6.0;
         }
 

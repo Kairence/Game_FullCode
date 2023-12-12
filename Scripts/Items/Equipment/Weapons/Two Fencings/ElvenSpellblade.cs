@@ -11,8 +11,13 @@ namespace Server.Items
         public ElvenSpellblade()
             : base(0x2D20)
         {
-			AbsorptionAttributes.ElementalDamage += 750;
-			AbsorptionAttributes.FeyDamage += 750;
+			PrefixOption[61] = 58;
+			PrefixOption[62] = 62;
+			SuffixOption[61] = 750;
+			SuffixOption[62] = 750;
+			
+			//AbsorptionAttributes.ElementalDamage += 750;
+			//AbsorptionAttributes.FeyDamage += 750;
             this.Weight = 5.0;
 		}
 

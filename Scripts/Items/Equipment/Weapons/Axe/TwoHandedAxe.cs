@@ -11,7 +11,9 @@ namespace Server.Items
         public TwoHandedAxe()
             : base(0x1443)
         {
-			Attributes.RegenStam += 75;
+			PrefixOption[61] = 20;
+			SuffixOption[61] = 75;
+			//Attributes.RegenStam += 75;
             this.Weight = 28.0;
         }
 

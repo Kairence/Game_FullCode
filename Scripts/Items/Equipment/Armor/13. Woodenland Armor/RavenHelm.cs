@@ -9,7 +9,13 @@ namespace Server.Items
         public RavenHelm()
             : base(0x2B71)
         {
-			Attributes.RegenHits += 5;
+			PrefixOption[50] = 18;
+			PrefixOption[61] = 114;
+			SuffixOption[61] = 200;
+			PrefixOption[62] = 100;
+			SuffixOption[62] = 1000;			
+			PrefixOption[63] = 106;
+			SuffixOption[63] = 50;
             this.Weight = 5.0;
         }
 
@@ -18,42 +24,10 @@ namespace Server.Items
         {
         }
 
-        public override Race RequiredRace
-        {
-            get
-            {
-                return Race.Elf;
-            }
-        }
-
-        public override int InitMinHits
-        {
-            get
-            {
-                return 50;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 65;
-            }
-        }
-        public override int AosStrReq
-        {
-            get
-            {
-                return 75;
-            }
-        }
-        public override int OldStrReq
-        {
-            get
-            {
-                return 25;
-            }
-        }
+		public override int AosStrReq { get { return 1500; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 1500; } }
+        public override int OldStrReq { get { return 15; } }
         public override int ArmorBase
         {
             get

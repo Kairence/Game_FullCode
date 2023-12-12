@@ -12,9 +12,16 @@ namespace Server.Items
             : base(0x26C0)
         {
             this.Weight = 25.0;
-			SkillBonuses.SetValues(5, SkillName.Tactics, 20.0);
-			SkillBonuses.SetValues(6, SkillName.Fencing, 20.0);
-			SkillBonuses.SetValues(7, SkillName.Focus, 10.0);
+			PrefixOption[61] = 77;
+			PrefixOption[62] = 89;
+			PrefixOption[63] = 93;
+			SuffixOption[61] = 2000;
+			SuffixOption[62] = 2000;
+			SuffixOption[63] = 1000;
+			
+			//SkillBonuses.SetValues(5, SkillName.Tactics, 20.0);
+			//SkillBonuses.SetValues(6, SkillName.Fencing, 20.0);
+			//SkillBonuses.SetValues(7, SkillName.Focus, 10.0);
 		}
 
         public Lance(Serial serial)

@@ -398,35 +398,35 @@ namespace Server.Items
         {
             get
             {
-                return m_AosResistances.Physical + m_AosWeaponAttributes.ResistPhysicalBonus / 100;
+                return m_AosResistances.Physical;// + m_AosWeaponAttributes.ResistPhysicalBonus / 100 + m_AosArmorAttributes.AllResist / 100;
             }
         }
         public override int FireResistance
         {
             get
             {
-                return m_AosResistances.Fire + m_AosWeaponAttributes.ResistFireBonus / 100;
+                return m_AosResistances.Fire;// + m_AosWeaponAttributes.ResistFireBonus / 100 + m_AosArmorAttributes.ElementalResist / 100 + m_AosArmorAttributes.AllResist / 100;
             }
         }
         public override int ColdResistance
         {
             get
             {
-                return m_AosResistances.Cold + m_AosWeaponAttributes.ResistColdBonus / 100;
+                return m_AosResistances.Cold;// + m_AosWeaponAttributes.ResistColdBonus / 100 + m_AosArmorAttributes.ElementalResist / 100 + m_AosArmorAttributes.AllResist / 100;
             }
         }
         public override int PoisonResistance
         {
             get
             {
-                return m_AosResistances.Poison + m_AosWeaponAttributes.ResistPoisonBonus / 100;
+                return m_AosResistances.Poison;// + m_AosWeaponAttributes.ResistPoisonBonus / 100 + m_AosArmorAttributes.ElementalResist / 100 + m_AosArmorAttributes.AllResist / 100;
             }
         }
         public override int EnergyResistance
         {
             get
             {
-                return m_AosResistances.Energy + m_AosWeaponAttributes.ResistEnergyBonus / 100;
+                return m_AosResistances.Energy;// + m_AosWeaponAttributes.ResistEnergyBonus / 100 + m_AosArmorAttributes.ElementalResist / 100 + m_AosArmorAttributes.AllResist / 100;
             }
         }		
         public virtual bool CanFortify { get { return false; } }
@@ -1359,6 +1359,41 @@ namespace Server.Items
 			//list.Add(Util.ItemRank((int)ItemPower ));
 			//if( !Identified )
 			//	list.Add( 1060659, "<basefont color=#FF0000>아이템 감정\t안됨<basefont color=#FFFFFF>" );
+
+			if( PrefixOption[0] >= 100 )
+			{
+				//신규 옵션 정리
+				if( PrefixOption[61] + SuffixOption[61] != 0 )
+				{
+					bool skillcheck = false;
+					int skilluse = 5;
+					int skillname = 0;
+					
+					for( int i = 0; i < 10; ++i)
+					{
+						if( PrefixOption[i + 61] == 0 && SuffixOption[i + 61] == 0 )
+							break;
+						
+						if( Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0] < 60 ) //스킬
+						{
+							SkillName skill = (SkillName)Enum.ToObject(typeof(SkillName), Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0]);
+							skillname = m_AosSkillBonuses.GetSkillName(skill);
+							if ( skillname > 0 )
+							{
+								list.Add(1080641 + skilluse, "#{0}\t{1}", skillname, ((double)SuffixOption[i + 61] * 0.01).ToString());
+								skillcheck = true;
+							}
+							skilluse++;
+						}
+						else
+						{
+							int optionpercentcheck = 1081997 + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0]);
+							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0], (((double)SuffixOption[i + 61])*0.01).ToString());
+						}
+					}
+				}
+			}
+
 			if( Identified )
 			{
 				if (IsVvVItem)
@@ -1377,98 +1412,74 @@ namespace Server.Items
 				}
 
 				//신규 옵션 정리
-				if( PrefixOption[0] > 0 )
+				if( PrefixOption[0] >= 100 )
 				{
-					list.Add(1063512); // [마법 옵션]
 					bool skillcheck = false;
 					int skilluse = 0;
 					int skillname = 0;
-					if( ReforgedPrefix == ReforgedPrefix.None && ReforgedSuffix == ReforgedSuffix.None )
+					list.Add(1063512); // [마법 옵션]
+					for( int i = 0; i < SuffixOption[0]; ++i)
 					{
-						for( int i = 0; i < PrefixOption[0]; ++i)
+						if( Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0] < 60 ) //스킬
 						{
-							if( PrefixOption[i * 4 + 1] < 60 ) //스킬
+							SkillName skill = (SkillName)Enum.ToObject(typeof(SkillName), Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0]);
+							skillname = m_AosSkillBonuses.GetSkillName(skill);
+							if ( skillname > 0 )
 							{
-								SkillName skill = (SkillName)Enum.ToObject(typeof(SkillName),PrefixOption[i * 4 + 1]);
-								skillname = m_AosSkillBonuses.GetSkillName(skill);
-								if ( skillname > 0 )
-								{
-									list.Add(1080641 + skilluse, "#{0}\t{1}\t{2}\t{3}", skillname, (((double)PrefixOption[i * 4 + 4])*0.1).ToString(), (((double)PrefixOption[i * 4 + 2])*0.1).ToString(), (((double)PrefixOption[i * 4 + 3])*0.1).ToString());
-									skillcheck = true;
-								}
-								skilluse++;
+								list.Add(1080641 + skilluse, "#{0}\t{1}", skillname, ((double)SuffixOption[i + 11] * 0.01).ToString());
+								skillcheck = true;
 							}
-							else if( PrefixOption[i * 4 + 1] >= 1080578 && PrefixOption[i * 4 + 1] <= 1080650)
-							{
-								if( Misc.Util.ItemOption_ToIntCheck( PrefixOption[i * 4 + 1] ) )
-									list.Add( PrefixOption[i * 4 + 1], "{0}\t{1}\t{2}", PrefixOption[i * 4 + 4], PrefixOption[i * 4 + 2], PrefixOption[i * 4 + 3]);
-								else
-									list.Add( PrefixOption[i * 4 + 1], "{0}\t{1}\t{2}", PrefixOption[i * 4 + 4]*0.1, PrefixOption[i * 4 + 2]*0.1, PrefixOption[i * 4 + 3]*0.1);
-							}
-							else
-							{
-								if( Misc.Util.ItemOption_ToIntCheck( PrefixOption[i * 4 + 1] ) )
-									list.Add( PrefixOption[i * 4 + 1], PrefixOption[i * 4 + 4].ToString());
-								else
-									list.Add( PrefixOption[i * 4 + 1], (((double)PrefixOption[i * 4 + 4])*0.1).ToString());
-							}
+							skilluse++;
 						}
-						if (!skillcheck && m_AosSkillBonuses != null)
+						else
 						{
-							m_AosSkillBonuses.GetProperties(list);
+							int optionpercentcheck = 1081999 + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0]);
+							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0], (((double)SuffixOption[i + 11])*0.01).ToString());
+						}
+					}
+					//재료 옵션
+					if( PrefixOption[41] != 0 )
+					{
+						list.Add(1081001);
+						list.Add( PrefixOption[41] );
+					}
+					
+					//재련 옵션
+					if( PrefixOption[0] == 100 )
+					{
+						list.Add(1082001);
+						if( SuffixOption[2] > 0 )
+						{
+							list.Add(1082002, SuffixOption[2].ToString() );
+						}
+						for(int i = 0; i < 5; ++i )
+						{
+							if( PrefixOption[31 + i] == -1 )
+								break;
+
+							int optionpercentcheck = 1082003 + i + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 31], 0, 0], 5);
+							
+							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 31], 0, 0], (((double)SuffixOption[i + 31])*0.01).ToString() );
+						}
+					}
+					
+					//강화 옵션
+					if( PrefixOption[3] + PrefixOption[4] + PrefixOption[5] + PrefixOption[6] + PrefixOption[7] != 0 )
+					{
+						list.Add(1083001);
+						
+						for(int i = 0; i < 7; ++i)
+						{
+							if( PrefixOption[3 + i] > 0 )
+							{
+								list.Add( 1083002 + i, "{0}\t{1}", PrefixOption[i + 3], (((double)SuffixOption[i + 3])*0.01).ToString() );
+							}
 						}
 					}
 				}
-			}
-			//고유 옵션 설정
-			if( SuffixOption[98] == 1 )
-			{
-				list.Add( 1063513 );
-			
-				if( SuffixOption[99] != 0 )
+				else
 				{
-					list.Add(1063699 + SuffixOption[99]);
-				}
-				if( PlayerConstructed )
-				{
-					switch ( Resource )
-					{
-						case CraftResource.RegularLeather:
-						{
-							list.Add(1063570, "{0}\t{1}\t{2}", "10", (5 * ( PrefixOption[99] + 1 )).ToString(), (20 * ( PrefixOption[99] + 1 )).ToString()); // 전투 경험치 증가 ~1_val~% 힘 증가 ~2_val~ 민첩 증가 ~3_val~						
-							break;
-						}
-						case CraftResource.DernedLeather:
-						{
-							list.Add(1063571, "{0}\t{1}\t{2}", "20", (50 * ( PrefixOption[99] + 1 )).ToString(), (20 * ( PrefixOption[99] + 1 )).ToString()); // 전투 경험치 증가 ~1_val~% 힘 증가 ~2_val~ 민첩 증가 ~3_val~						
-							break;
-						}
-						case CraftResource.RatnedLeather:
-						{
-							list.Add(1063572, "{0}\t{1}\t{2}", (5 * ( PrefixOption[99] + 1 )).ToString(), (5 * ( PrefixOption[99] + 1 )).ToString(), (5 * ( PrefixOption[99] + 1 )).ToString()); // 전투 경험치 증가 ~1_val~% 힘 증가 ~2_val~ 민첩 증가 ~3_val~						
-							break;
-						}
-						case CraftResource.SernedLeather:
-						{
-							list.Add(1063573, "{0}\t{1}\t{2}", "10", (5 * ( PrefixOption[99] + 1 )).ToString(), (0.5 * ( PrefixOption[99] + 1 )).ToString()); // 전투 경험치 증가 ~1_val~% 힘 증가 ~2_val~ 민첩 증가 ~3_val~						
-							break;
-						}
-						case CraftResource.SpinedLeather:
-						{
-							list.Add(1063574, "{0}\t{1}\t{2}", "40", (2 * ( PrefixOption[99] + 1 )).ToString(), (20 * ( PrefixOption[99] + 1 )).ToString()); // 전투 경험치 증가 ~1_val~% 힘 증가 ~2_val~ 민첩 증가 ~3_val~						
-							break;
-						}
-						case CraftResource.HornedLeather:
-						{
-							list.Add(1063575, "{0}", (12.5 * ( PrefixOption[99] + 1 )).ToString()); // 전투 경험치 증가 ~1_val~% 힘 증가 ~2_val~ 민첩 증가 ~3_val~						
-							break;
-						}
-						case CraftResource.BarbedLeather:
-						{
-							list.Add(1063576, "{0}\t{1}\t{2}", "20", (5 * ( PrefixOption[99] + 1 )).ToString(), (0.5 * ( PrefixOption[99] + 1 )).ToString()); // 전투 경험치 증가 ~1_val~% 힘 증가 ~2_val~ 민첩 증가 ~3_val~						
-							break;
-						}
-					}
+					
 				}
 			}
 		}
@@ -1873,10 +1884,9 @@ namespace Server.Items
 							arms += 5000;
 						
 						int rank = Util.ItemRankMaker( from.Skills[craftSystem.MainSkill].Value * 4 );
-						int tier = Util.ItemTierMaker( arms, rank, Misc.Util.ResourceNumberToNumber((int)Resource ), from );
 						
 						PlayerMobile pm = from as PlayerMobile;
-						Util.ItemCreate( this, rank, true, pm, tier );
+						Util.NewItemCreate(this, rank, pm );
 					}
 				}
 				if (craftItem != null && !craftItem.ForceNonExceptional)

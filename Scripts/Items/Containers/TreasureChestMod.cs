@@ -50,7 +50,7 @@ namespace Server.Items
 					if (item != null)
 					{
 						if( Utility.RandomDouble() < 0.1 )
-							Util.ItemCreate( item, 1, false );
+							Util.NewItemCreate( item, 1 );
 						
 						DropItem( item );
 					}
@@ -158,9 +158,9 @@ namespace Server.Items
 					{
 						double dice = Utility.RandomDouble();
 						if( dice < 0.1 )
-							Util.ItemCreate( item, Utility.RandomMinMax(2, 3), false );
+							Util.NewItemCreate( item, Utility.RandomMinMax(2, 3) );
 						else
-							Util.ItemCreate( item, Utility.RandomMinMax(0, 1), false );
+							Util.NewItemCreate( item, Utility.RandomMinMax(0, 1) );
 						
 					}
 					DropItem( item );
@@ -227,9 +227,9 @@ namespace Server.Items
 					{
 						double dice = Utility.RandomDouble();
 						if( dice < 0.1 )
-							Util.ItemCreate( item, Utility.RandomMinMax(3, 4), false );
+							Util.NewItemCreate( item, Utility.RandomMinMax(3, 4) );
 						else
-							Util.ItemCreate( item, Utility.RandomMinMax(0, 2), false );
+							Util.NewItemCreate( item, Utility.RandomMinMax(0, 2) );
 						
 					}
 					DropItem( item );
@@ -296,11 +296,11 @@ namespace Server.Items
 					if (item != null)
 					{
 						if( dice < 0.01 )
-							Util.ItemCreate( item, Utility.RandomMinMax(4, 5), false );
+							Util.NewItemCreate( item, Utility.RandomMinMax(4, 5) );
 						else if( dice < 0.11 )
-							Util.ItemCreate( item, Utility.RandomMinMax(1, 3), false );
+							Util.NewItemCreate( item, Utility.RandomMinMax(1, 3) );
 						else
-							Util.ItemCreate( item, Utility.RandomMinMax(0, 2), false );
+							Util.NewItemCreate( item, Utility.RandomMinMax(0, 2) );
 					}
 					DropItem( item );
 				}
@@ -364,11 +364,11 @@ namespace Server.Items
 					if (item != null)
 					{
 						if( dice < 0.01 )
-							Util.ItemCreate( item, Utility.RandomMinMax(5, 6), false );
+							Util.NewItemCreate( item, Utility.RandomMinMax(5, 6) );
 						else if( dice < 0.11 )
-							Util.ItemCreate( item, Utility.RandomMinMax(2, 4), false );
+							Util.NewItemCreate( item, Utility.RandomMinMax(2, 4) );
 						else
-							Util.ItemCreate( item, Utility.RandomMinMax(0, 3), false );
+							Util.NewItemCreate( item, Utility.RandomMinMax(0, 3) );
 					}
 					DropItem( item );
 				}

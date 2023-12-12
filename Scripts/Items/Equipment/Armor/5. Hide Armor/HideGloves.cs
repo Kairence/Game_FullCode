@@ -10,7 +10,13 @@ namespace Server.Items
             : base(0x2B75)
         {
             this.Weight = 2.0;
- 			Attributes.SpellDamage += 140;
+			PrefixOption[50] = 5;
+			PrefixOption[61] = 114;
+			SuffixOption[61] = 100;
+			PrefixOption[62] = 116;
+			SuffixOption[62] = 500;
+			PrefixOption[63] = 41;
+			SuffixOption[63] = 250;
         }
 
         public HideGloves(Serial serial)
@@ -18,34 +24,13 @@ namespace Server.Items
         {
         }
 
-        public override int InitMinHits
-        {
-            get
-            {
-                return 35;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 45;
-            }
-        }
-        public override int AosStrReq
-        {
-            get
-            {
-                return 25;
-            }
-        }
-        public override int OldStrReq
-        {
-            get
-            {
-                return 15;
-            }
-        }
+        public override int InitMinHits { get { return 100; } }
+        public override int InitMaxHits { get { return 100; } }
+
+        public override int AosStrReq { get { return 200; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
+        public override int OldStrReq { get { return 15; } }
         public override int ArmorBase
         {
             get

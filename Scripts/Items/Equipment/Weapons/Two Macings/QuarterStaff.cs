@@ -9,7 +9,10 @@ namespace Server.Items
         public QuarterStaff()
             : base(0xE89)
         {
-			WeaponAttributes.HitLightning += 2000;
+			PrefixOption[61] = 55;
+			SuffixOption[61] = 2000;
+			
+			//WeaponAttributes.HitLightning += 2000;
 			this.Weight = 8.0;
 		}
 

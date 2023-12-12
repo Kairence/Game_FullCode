@@ -51,7 +51,6 @@ using Server.Engines.Fellowship;
 
 namespace Server.Mobiles
 {
-
 	#region Enums
 	[Flags]
 	public enum PlayerFlag
@@ -1260,7 +1259,13 @@ namespace Server.Mobiles
             {
                 return 100;
             }
-			return 50;
+			int magicResist = (int)(Skills[SkillName.MagicResist].Value * 10);
+			if( magicResist >= 2000 )
+				magicResist = 4000;
+			else if( magicResist >= 1000 )
+				magicResist += 500;
+			
+			return 50 + magicResist / 100;
 			/*
             int max = base.GetMaxResistance(type);
             int refineBonus = BaseArmor.GetRefinedResist(this, type);
@@ -1372,12 +1377,12 @@ namespace Server.Mobiles
             {
                 Resistances[i] = 0;
             }
-
-            Resistances[0] += BasePhysicalResistance + SilverPoint[27];
-            Resistances[1] += BaseFireResistance + SilverPoint[27];
-            Resistances[2] += BaseColdResistance + SilverPoint[27];
-            Resistances[3] += BasePoisonResistance + SilverPoint[27];
-            Resistances[4] += BaseEnergyResistance + SilverPoint[27];
+		
+            Resistances[0] += BasePhysicalResistance + AosWeaponAttributes.GetValue(this, AosWeaponAttribute.ResistPhysicalBonus ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.AllResist ); // + SilverPoint[27];
+            Resistances[1] += BaseFireResistance + AosWeaponAttributes.GetValue(this, AosWeaponAttribute.ResistFireBonus ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.AllResist ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.ElementalResist ); // + SilverPoint[27];
+            Resistances[2] += BaseColdResistance + AosWeaponAttributes.GetValue(this, AosWeaponAttribute.ResistColdBonus ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.AllResist ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.ElementalResist ); // + SilverPoint[27];
+            Resistances[3] += BasePoisonResistance + AosWeaponAttributes.GetValue(this, AosWeaponAttribute.ResistPoisonBonus ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.AllResist ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.ElementalResist ); // + SilverPoint[27];
+            Resistances[4] += BaseEnergyResistance + AosWeaponAttributes.GetValue(this, AosWeaponAttribute.ResistEnergyBonus ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.AllResist ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.ElementalResist ); // + SilverPoint[27];
 			Resistances[5] += BaseChaosResistance;
 			Resistances[6] += BaseDirectResistance;
 			
@@ -2603,6 +2608,8 @@ namespace Server.Mobiles
 				pm.StatReset[11] = true;
 			}
 			
+			//세트 아이템 체크
+			Misc.Util.SetOption(pm);
 			
 			//펫 체크
 			if( pm.Region is Server.Regions.TownRegion )
@@ -3452,6 +3459,27 @@ namespace Server.Mobiles
 			set{ m_LastTarget = value;}
 		}
 
+		
+		private int[] m_ItemSetOption = new int[100];
+		public int[] ItemSetOption
+		{
+			get{ return m_ItemSetOption;}
+			set{ m_ItemSetOption = value; InvalidateProperties();}
+		}
+		private int[] m_ItemSetValue = new int[100];
+		public int[] ItemSetValue
+		{
+			get{ return m_ItemSetValue;}
+			set{ m_ItemSetValue = value; InvalidateProperties();}
+		}
+
+		private int[] m_ItemSetSaveValue = new int[500];
+		public int[] ItemSetSaveValue
+		{
+			get{ return m_ItemSetSaveValue;}
+			set{ m_ItemSetSaveValue = value; InvalidateProperties();}
+		}
+		
 		//전투 포인트 총합
 		private int m_SilverPointbyEquipCheck;
 		[CommandProperty( AccessLevel.GameMaster )]
@@ -6933,9 +6961,22 @@ namespace Server.Mobiles
 
 			switch (version)
 			{
+				case 60:
+				{
+					for (int i = 0; i < 100; i++)
+					{
+						m_ItemSetOption[i] = reader.ReadInt();
+						m_ItemSetValue[i] = reader.ReadInt();
+					}					
+					for (int i = 0; i < 500; i++)
+					{
+						m_ItemSetSaveValue[i] = reader.ReadInt();
+					}					
+					goto case 59;
+				}
 				case 59:
 				{
-					m_EquipMeltingOptionBag =  reader.ReadBool();
+					m_EquipMeltingOptionBag = reader.ReadBool();
 					goto case 58;
 				}
 				case 58:
@@ -7588,8 +7629,19 @@ namespace Server.Mobiles
 
 			base.Serialize(writer);
 
-			writer.Write(59); // version
+			writer.Write(60); // version
 
+			for (int i = 0; i < 100; i++)
+			{
+				writer.Write( (int) m_ItemSetOption[i] );
+				writer.Write( (int) m_ItemSetValue[i] );
+			}			
+			for (int i = 0; i < 500; i++)
+			{
+				writer.Write( (int) m_ItemSetSaveValue[i] );
+			}			
+
+			
 			writer.Write( (bool) m_EquipMeltingOptionBag );
 
 			for (int i = 0; i < 6; i++)

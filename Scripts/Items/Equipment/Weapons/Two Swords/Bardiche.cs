@@ -11,7 +11,10 @@ namespace Server.Items
         public Bardiche()
             : base(0xF4D)
         {
-			SkillBonuses.SetValues(5, SkillName.Swords, 10.0);
+			PrefixOption[61] = 87;
+			SuffixOption[61] = 1000;
+
+			//SkillBonuses.SetValues(5, SkillName.Swords, 10.0);
             this.Weight = 9.0;
         }
 

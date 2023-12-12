@@ -11,7 +11,10 @@ namespace Server.Items
         public Dagger()
             : base(0xF52)
         {
-			Attributes.BonusStam += 25000;
+			PrefixOption[61] = 4;
+			SuffixOption[61] = 25000;
+			
+			//Attributes.BonusStam += 25000;
             this.Weight = 4.0;
 		}
 
