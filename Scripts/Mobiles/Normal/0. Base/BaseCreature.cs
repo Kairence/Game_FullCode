@@ -7694,6 +7694,7 @@ namespace Server.Mobiles
 														if( item != null )
 														{
 															//유물 체크
+															/*
 															pm.ArtifactPoint[70] += Dungeon_MonsterTier_Score();
 															if( pm.ArtifactPoint[70] >= 10000 )
 															{
@@ -7713,7 +7714,7 @@ namespace Server.Mobiles
 																	pm.ArtifactPoint[70] = 0;
 																}
 															}
-															
+															*/
 															Util.NewItemCreate( item, rank, pm );
 															pm.SendLocalizedMessage( 1075069, Misc.Util.GetName(item) );
 															

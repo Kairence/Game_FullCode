@@ -404,7 +404,7 @@ namespace Server.Engines.Craft
 			#endregion
 
             #region Etc
-            AddCraft(typeof(MetalKeg), 1011173, 1150675, 85.0, 100.0, typeof(IronIngot), 1044036, 25, 1044253);
+            AddCraft(typeof(MetalKeg), 1131010, 1150675, 85.0, 100.0, typeof(IronIngot), 1044036, 25, 1044253);
 
 			AddCraft(typeof(DragonBardingDeed), 1131010, 1053012, 172.5, 222.5, typeof(IronIngot), 1044036, 750, 1044037);
 

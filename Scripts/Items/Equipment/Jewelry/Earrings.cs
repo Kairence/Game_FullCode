@@ -9,7 +9,7 @@ namespace Server.Items
         public BaseEarrings(int itemID)
             : base(itemID, Layer.Earrings)
         {
-			BaseJewelRating = 3;
+
         }
 
         public BaseEarrings(Serial serial)
@@ -36,30 +36,28 @@ namespace Server.Items
         public GoldEarrings()
             : base(0x1087)
         {
-			Attributes.RegenStam += 6;
-            Weight = 0.1;
+			PrefixOption[61] = 5;
+			SuffixOption[61] = 25000;
+			PrefixOption[62] = 20;
+			SuffixOption[62] = 50;
         }
         public override int InitMinHits
         {
             get
             {
-                return 25;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
-		public override int AosIntelligenceReq
-		{
-			get
-			{
-				return 60;
-			}
-		}
+		public override int AosDexterityReq { get { return 1; } }
+		public override int AosIntelligenceReq { get { return 0; } }
+        public override int LabelNumber { get { return 1138017; } }
         public GoldEarrings(Serial serial)
             : base(serial)
         {
@@ -84,30 +82,28 @@ namespace Server.Items
         public SilverEarrings()
             : base(0x1F07)
         {
-			Attributes.RegenMana += 6;
-            Weight = 0.1;
+			PrefixOption[61] = 6;
+			SuffixOption[61] = 25000;
+			PrefixOption[62] = 21;
+			SuffixOption[62] = 50;
         }
         public override int InitMinHits
         {
             get
             {
-                return 25;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
-		public override int AosIntelligenceReq
-		{
-			get
-			{
-				return 120;
-			}
-		}
+		public override int AosDexterityReq { get { return 0; } }
+		public override int AosIntelligenceReq { get { return 1; } }
+        public override int LabelNumber { get { return 1138018; } }
         public SilverEarrings(Serial serial)
             : base(serial)
         {

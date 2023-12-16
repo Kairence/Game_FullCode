@@ -529,14 +529,14 @@ namespace Server.Items
         {
             get
             {
-                return 20;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
 
@@ -550,6 +550,7 @@ namespace Server.Items
         public Kasa(int hue)
             : base(0x2798, hue)
         {
+			PrefixOption[50] = 23; //낙농 세트
         }
 
         public Kasa(Serial serial)
@@ -631,14 +632,14 @@ namespace Server.Items
         {
             get
             {
-                return 20;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
 
@@ -652,6 +653,7 @@ namespace Server.Items
         public FlowerGarland(int hue)
             : base(0x2306, hue)
         {
+			PrefixOption[50] = 26; //활 제작 세트
             
         }
 
@@ -703,7 +705,7 @@ namespace Server.Items
         public FloppyHat(int hue)
             : base(0x1713, hue)
         {
-            
+			PrefixOption[50] = 19; //채광 세트
         }
 
         public FloppyHat(Serial serial)
@@ -733,14 +735,14 @@ namespace Server.Items
         {
             get
             {
-                return 20;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
 
@@ -754,7 +756,7 @@ namespace Server.Items
         public WideBrimHat(int hue)
             : base(0x1714, hue)
         {
-            
+			PrefixOption[50] = 30; //기록술 세트
         }
 
         public WideBrimHat(Serial serial)
@@ -784,14 +786,14 @@ namespace Server.Items
         {
             get
             {
-                return 20;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
 
@@ -805,7 +807,8 @@ namespace Server.Items
         public Cap(int hue)
             : base(0x1715, hue)
         {
-            
+  			PrefixOption[50] = 31; //재봉술 세트
+          
         }
 
         public Cap(Serial serial)
@@ -835,14 +838,14 @@ namespace Server.Items
         {
             get
             {
-                return (Core.ML ? 14 : 7);
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return (Core.ML ? 28 : 12);
+                return 100;
             }
         }
 
@@ -856,7 +859,7 @@ namespace Server.Items
         public SkullCap(int hue)
             : base(0x1544, hue)
         {
-            
+  			PrefixOption[50] = 25; //대장장이 세트
         }
 
         public SkullCap(Serial serial)
@@ -886,14 +889,14 @@ namespace Server.Items
         {
             get
             {
-                return 20;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
 
@@ -907,6 +910,7 @@ namespace Server.Items
         public Bandana(int hue)
             : base(0x1540, hue)
         {
+  			PrefixOption[50] = 20; //무두 세트
             
         }
 
@@ -1176,14 +1180,14 @@ namespace Server.Items
         {
             get
             {
-                return 20;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
 
@@ -1197,7 +1201,8 @@ namespace Server.Items
         public TallStrawHat(int hue)
             : base(0x1716, hue)
         {
-            
+  			PrefixOption[50] = 23; //연금 세트
+          
         }
 
         public TallStrawHat(Serial serial)
@@ -1227,14 +1232,14 @@ namespace Server.Items
         {
             get
             {
-                return 20;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
 
@@ -1248,7 +1253,7 @@ namespace Server.Items
         public StrawHat(int hue)
             : base(0x1717, hue)
         {
-            
+  			PrefixOption[50] = 19; //벌목 세트
         }
 
         public StrawHat(Serial serial)
@@ -1496,14 +1501,14 @@ namespace Server.Items
         {
             get
             {
-                return 20;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
 
@@ -1517,6 +1522,7 @@ namespace Server.Items
         public WizardsHat(int hue)
             : base(0x1718, hue)
         {
+  			PrefixOption[50] = 33; //임뷰잉 세트
         }
 
         public WizardsHat(Serial serial)
@@ -1547,14 +1553,14 @@ namespace Server.Items
         {
             get
             {
-                return 20;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
 
@@ -1605,14 +1611,14 @@ namespace Server.Items
         {
             get
             {
-                return 20;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
 
@@ -1626,6 +1632,7 @@ namespace Server.Items
         public Bonnet(int hue)
             : base(0x1719, hue)
         {
+  			PrefixOption[50] = 32; //기계공학 세트
         }
 
         public Bonnet(Serial serial)
@@ -1655,14 +1662,14 @@ namespace Server.Items
         {
             get
             {
-                return 20;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 30;
+                return 10;
             }
         }
 
@@ -1676,7 +1683,8 @@ namespace Server.Items
         public FeatheredHat(int hue)
             : base(0x171A, hue)
         {
-        }
+   			PrefixOption[50] = 28; //지도제작 세트
+       }
 
         public FeatheredHat(Serial serial)
             : base(serial)
@@ -1705,14 +1713,14 @@ namespace Server.Items
         {
             get
             {
-                return 20;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
 
@@ -1726,6 +1734,7 @@ namespace Server.Items
         public TricorneHat(int hue)
             : base(0x171B, hue)
         {
+			PrefixOption[50] = 22; //낚시 세트
         }
 
         public TricorneHat(Serial serial)
@@ -1803,8 +1812,8 @@ namespace Server.Items
         public override int LabelNumber { get { return 1109618; } } // Chef's Toque
 
 
-        public override int InitMinHits { get { return 20; } }
-        public override int InitMaxHits { get { return 30; } }
+        public override int InitMinHits { get { return 100; } }
+        public override int InitMaxHits { get { return 100; } }
 
         [Constructable]
         public ChefsToque()
@@ -1821,6 +1830,7 @@ namespace Server.Items
         public ChefsToque(Serial serial)
             : base(serial)
         {
+  			PrefixOption[50] = 29; //요리 세트
         }
 
         public override void Serialize(GenericWriter writer)

@@ -8,14 +8,13 @@ namespace Server.Items
         public BaseBracelet(int itemID)
             : base(itemID, Layer.Bracelet)
         {
-			BaseJewelRating = 1;
+
         }
 
         public BaseBracelet(Serial serial)
             : base(serial)
         {
         }
-
         public override int BaseGemTypeNumber
         {
             get
@@ -54,29 +53,28 @@ namespace Server.Items
             : base(0x1086)
         {
             //Weight = 0.1;
-			Attributes.WeaponDamage += 250;
+			PrefixOption[61] = 7;
+			SuffixOption[61] = 1000;
+			PrefixOption[62] = 1;
+			SuffixOption[62] = 50;
         }
         public override int InitMinHits
         {
             get
             {
-                return 25;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
-		public override int AosIntelligenceReq
-		{
-			get
-			{
-				return 30;
-			}
-		}
+		public override int AosDexterityReq { get { return 1; } }
+		public override int AosIntelligenceReq { get { return 0; } }
+        public override int LabelNumber { get { return 1138011; } }
         public GoldBracelet(Serial serial)
             : base(serial)
         {
@@ -105,30 +103,28 @@ namespace Server.Items
         public SilverBracelet()
             : base(0x1F06)
         {
-			Attributes.SpellDamage += 250;
-            //Weight = 0.1;
+			PrefixOption[61] = 8;
+			SuffixOption[61] = 1000;
+			PrefixOption[62] = 2;
+			SuffixOption[62] = 50;
         }
         public override int InitMinHits
         {
             get
             {
-                return 25;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
-		public override int AosIntelligenceReq
-		{
-			get
-			{
-				return 60;
-			}
-		}
+		public override int AosDexterityReq { get { return 0; } }
+		public override int AosIntelligenceReq { get { return 1; } }
+        public override int LabelNumber { get { return 1138012; } }
         public SilverBracelet(Serial serial)
             : base(serial)
         {

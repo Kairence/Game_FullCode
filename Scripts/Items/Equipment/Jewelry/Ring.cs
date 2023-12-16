@@ -8,7 +8,7 @@ namespace Server.Items
         public BaseRing(int itemID)
             : base(itemID, Layer.Ring)
         {
-			BaseJewelRating = 1;
+
 		}
 
         public BaseRing(Serial serial)
@@ -52,35 +52,33 @@ namespace Server.Items
         public GoldRing()
             : base(0x108a)
         {
-			Attributes.WeaponSpeed += 250;
-            //Weight = 0.1;
+			PrefixOption[61] = 40;
+			SuffixOption[61] = 500;
+			PrefixOption[62] = 3;
+			SuffixOption[62] = 5000;
         }
         public override int InitMinHits
         {
             get
             {
-                return 25;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
-
+		public override int AosDexterityReq { get { return 1; } }
+		public override int AosIntelligenceReq { get { return 0; } }
+        public override int LabelNumber { get { return 1138013; } }
         public GoldRing(Serial serial)
             : base(serial)
         {
         }
-		public override int AosIntelligenceReq
-		{
-			get
-			{
-				return 40;
-			}
-		}
+
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
@@ -104,30 +102,28 @@ namespace Server.Items
         public SilverRing()
             : base(0x1F09)
         {
-			Attributes.CastSpeed += 250;
-            //Weight = 0.1;
+			PrefixOption[61] = 41;
+			SuffixOption[61] = 500;
+			PrefixOption[62] = 3;
+			SuffixOption[62] = 5000;
         }
         public override int InitMinHits
         {
             get
             {
-                return 25;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
-		public override int AosIntelligenceReq
-		{
-			get
-			{
-				return 80;
-			}
-		}
+		public override int AosDexterityReq { get { return 0; } }
+		public override int AosIntelligenceReq { get { return 1; } }
+        public override int LabelNumber { get { return 1138014; } }
         public SilverRing(Serial serial)
             : base(serial)
         {

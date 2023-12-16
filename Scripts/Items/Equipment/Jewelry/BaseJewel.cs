@@ -684,19 +684,19 @@ namespace Server.Items
 		[CommandProperty(AccessLevel.GameMaster)]
 		public int StrRequirement
 		{
-			get{ return ( m_StrReq == -1 ? AosStrengthReq * ( PrefixOption[99] + 1 ) : m_StrReq ); }
+			get{ return 100; }
 			set{ m_StrReq = value; InvalidateProperties(); }
 		}
 		[CommandProperty(AccessLevel.GameMaster)]
 		public int DexRequirement
 		{
-			get{ return ( m_DexReq == -1 ? AosDexterityReq * ( PrefixOption[99] + 1 ) : m_DexReq ); }
+			get{ return ( AosDexterityReq == 0 ? 100 : 100 * ( SuffixOption[1] + 1 ) * ( SuffixOption[1] + 1 ) ); }
 			set{ m_DexReq = value; InvalidateProperties(); }
 		}
 		[CommandProperty(AccessLevel.GameMaster)]
 		public int IntRequirement
 		{
-			get{ return ( m_IntReq == -1 ? AosIntelligenceReq * ( PrefixOption[99] + 1 ) : m_IntReq ); }
+			get{ return ( AosIntelligenceReq == 0 ? 100 : 100 * ( SuffixOption[1] + 1 ) * ( SuffixOption[1] + 1 ) ); }
 			set{ m_IntReq = value; InvalidateProperties(); }
 		}
 
@@ -1253,7 +1253,7 @@ namespace Server.Items
 						else
 						{
 							int optionpercentcheck = 1081997 + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0]);
-							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0], (((double)SuffixOption[i + 61])*0.01).ToString());
+							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0], (((double)SuffixOption[i + 61])*Misc.Util.PercentCalc(PrefixOption[i + 61])).ToString());
 						}
 					}
 				}
@@ -1307,7 +1307,7 @@ namespace Server.Items
 						else
 						{
 							int optionpercentcheck = 1081999 + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0]);
-							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0], (((double)SuffixOption[i + 11])*0.01).ToString());
+							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0], (((double)SuffixOption[i + 11])*Misc.Util.PercentCalc(PrefixOption[i + 11])).ToString());
 						}
 					}
 					//재료 옵션
@@ -1331,7 +1331,7 @@ namespace Server.Items
 
 							int optionpercentcheck = 1082003 + i + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 31], 0, 0], 5);
 							
-							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 31], 0, 0], (((double)SuffixOption[i + 31])*0.01).ToString() );
+							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 31], 0, 0], (((double)SuffixOption[i + 31])*Misc.Util.PercentCalc(PrefixOption[i + 31])).ToString() );
 						}
 					}
 				}

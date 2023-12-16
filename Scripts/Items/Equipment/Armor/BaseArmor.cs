@@ -3106,7 +3106,7 @@ namespace Server.Items
 						else
 						{
 							int optionpercentcheck = 1081997 + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0]);
-							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0], (((double)SuffixOption[i + 61])*0.01).ToString());
+							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0], (((double)SuffixOption[i + 61] ) * Misc.Util.PercentCalc(PrefixOption[i + 61])).ToString());
 						}
 					}
 				}
@@ -3176,7 +3176,7 @@ namespace Server.Items
 						else
 						{
 							int optionpercentcheck = 1081999 + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0]);
-							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0], (((double)SuffixOption[i + 11])*0.01).ToString());
+							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0], (((double)SuffixOption[i + 11])*Misc.Util.PercentCalc(PrefixOption[i + 11])).ToString());
 						}
 					}
 					//재료 옵션
@@ -3200,8 +3200,8 @@ namespace Server.Items
 								break;
 
 							int optionpercentcheck = 1082003 + i + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 31], 0, 0], 5);
-							
-							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 31], 0, 0], (((double)SuffixOption[i + 31])*0.01).ToString() );
+
+							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 31], 0, 0], (((double)SuffixOption[i + 31])*Misc.Util.PercentCalc(PrefixOption[i + 31])).ToString() );
 						}
 					}
 					
@@ -3249,7 +3249,7 @@ namespace Server.Items
 						optionpercentcheck += 10;
 
 					//Console.WriteLine("second optionpercentcheck : {0}", optionpercentcheck );
-					list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[equipoption, 0, 0], (((double)equipvalue )* 0.01).ToString() );
+					list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[equipoption, 0, 0], (((double)equipvalue )* Misc.Util.PercentCalc(equipvalue)).ToString() );
 				}
 			}
 		}

@@ -7,7 +7,7 @@ namespace Server.Items
         public BaseNecklace(int itemID)
             : base(itemID, Layer.Neck)
         {
-			BaseJewelRating = 2;
+
         }
 
         public BaseNecklace(Serial serial)
@@ -93,30 +93,29 @@ namespace Server.Items
         public GoldNecklace()
             : base(0x1088)
         {
-			Attributes.CastRecovery += 250;
-            this.Weight = 0.1;
+			PrefixOption[61] = 42;
+			SuffixOption[61] = 500;
+			PrefixOption[62] = 44;
+			SuffixOption[62] = 1000;
         }
         public override int InitMinHits
         {
             get
             {
-                return 25;
+                return 100;
             }
         }
         public override int InitMaxHits
         {
             get
             {
-                return 30;
+                return 100;
             }
         }
-		public override int AosIntelligenceReq
-		{
-			get
-			{
-				return 100;
-			}
-		}
+		public override int AosDexterityReq { get { return 1; } }
+		public override int AosIntelligenceReq { get { return 0; } }
+        public override int LabelNumber { get { return 1138015; } }
+		
         public GoldNecklace(Serial serial)
             : base(serial)
         {
@@ -178,9 +177,28 @@ namespace Server.Items
         public SilverNecklace()
             : base(0x1F08)
         {
-            this.Weight = 0.1;
+			PrefixOption[61] = 43;
+			SuffixOption[61] = 500;
+			PrefixOption[62] = 45;
+			SuffixOption[62] = 1000;
         }
-
+        public override int InitMinHits
+        {
+            get
+            {
+                return 100;
+            }
+        }
+        public override int InitMaxHits
+        {
+            get
+            {
+                return 100;
+            }
+        }
+		public override int AosDexterityReq { get { return 0; } }
+		public override int AosIntelligenceReq { get { return 1; } }
+        public override int LabelNumber { get { return 1138016; } }
         public SilverNecklace(Serial serial)
             : base(serial)
         {

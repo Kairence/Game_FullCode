@@ -225,14 +225,14 @@ namespace Server.Engines.Craft
             int index = -1;
 
             #region Jewelry
-            AddCraft(typeof(GoldRing), 1044049, "금 반지", 0.0, 50.0, typeof(IronIngot), 1044036, 7, 1044037);
-            AddCraft(typeof(SilverRing), 1044049, "은 반지", 0.0, 50.0, typeof(IronIngot), 1044036, 7, 1044037);
-            AddCraft(typeof(GoldBracelet), 1044049, "금 팔찌", 10.0, 60.0, typeof(IronIngot), 1044036, 7, 1044037);
-            AddCraft(typeof(SilverBracelet), 1044049, "은 팔찌", 10.0, 60.0, typeof(IronIngot), 1044036, 7, 1044037);
-            AddCraft(typeof(GoldNecklace), 1044049, "금 목걸이", 40.0, 90.0, typeof(IronIngot), 1044036, 7, 1044037);
-            AddCraft(typeof(SilverNecklace), 1044049, "은 목걸이", 40.0, 90.0, typeof(IronIngot), 1044036, 7, 1044037);
-            AddCraft(typeof(GoldEarrings), 1044049, "금 귀걸이", 40.0, 90.0, typeof(IronIngot), 1044036, 7, 1044037);
-            AddCraft(typeof(SilverEarrings), 1044049, "은 귀걸이", 40.0, 90.0, typeof(IronIngot), 1044036, 7, 1044037);
+            AddCraft(typeof(GoldBracelet), 1138001, 1138011, 0.0, 50.0, typeof(IronIngot), 1044036, 7, 1044037);
+            AddCraft(typeof(SilverBracelet), 1138001, 1138012, 0.0, 50.0, typeof(IronIngot), 1044036, 7, 1044037);
+            AddCraft(typeof(GoldRing), 1138001, 1138013, 25.0, 75.0, typeof(IronIngot), 1044036, 7, 1044037);
+            AddCraft(typeof(SilverRing), 1138001, 1138014, 25.0, 75.0, typeof(IronIngot), 1044036, 7, 1044037);
+            AddCraft(typeof(GoldNecklace), 1138001, 1138015, 50.0, 100.0, typeof(IronIngot), 1044036, 7, 1044037);
+            AddCraft(typeof(SilverNecklace), 1138001, 1138016, 50.0, 100.0, typeof(IronIngot), 1044036, 7, 1044037);
+            AddCraft(typeof(GoldEarrings), 1138001, 1138017, 75.0, 125.0, typeof(IronIngot), 1044036, 7, 1044037);
+            AddCraft(typeof(SilverEarrings), 1138001, 1138018, 75.0, 125.0, typeof(IronIngot), 1044036, 7, 1044037);
 
 			/*
             if (Core.SA)
@@ -245,7 +245,6 @@ namespace Server.Engines.Craft
 
                 index = AddCraft(typeof(GargishEarrings), 1044049, 1095787, 55.0, 105.0, typeof(IronIngot), 1044036, 7, 1044037);
             }
-			*/
             AddJewelrySet(GemType.StarSapphire, typeof(StarSapphire));
             AddJewelrySet(GemType.Emerald, typeof(Emerald));
             AddJewelrySet(GemType.Sapphire, typeof(Sapphire));
@@ -258,6 +257,7 @@ namespace Server.Engines.Craft
 
             index = AddCraft(typeof(KrampusMinionEarrings), 1044049, 1125645, 100.0, 500.0, typeof(IronIngot), 1044036, 7, 1044037);
             AddRecipe(index, (int)TinkerRecipes.KrampusMinionEarrings);
+			*/
 
             #endregion
 
@@ -736,6 +736,7 @@ namespace Server.Engines.Craft
             AddRes(index, typeof(IronIngot), 1044036, 10, 1044037);
             #endregion
 
+			/*
             #region Magic Jewlery
             if (Core.ML)
             {
@@ -815,7 +816,8 @@ namespace Server.Engines.Craft
                 ForceNonExceptional(index);
             }
             #endregion
-
+			*/
+			
             // Set the overridable material
             SetSubRes(typeof(IronIngot), 1044022);
 

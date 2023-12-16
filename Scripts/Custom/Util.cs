@@ -1724,6 +1724,15 @@ namespace Server.Misc
 		}
 		
         //아이템 옵션 설정
+		
+		public static double PercentCalc(int number )
+		{
+			if( number < 3 )
+				return 1;
+			return 0.01;
+			
+		}
+		
 		public static int OPLPercentCheck(int number, int step = 1)
 		{
 			//스텝일 시 퍼센트 처리
@@ -1778,7 +1787,7 @@ namespace Server.Misc
 				else if( item is BaseJewel )
 				{
 					BaseJewel newmake = item as BaseJewel;
-					check = JewelList(newmake, true);					
+					check = JewelList(newmake);					
 
 				}
 				else if( item is Spellbook )
@@ -2473,7 +2482,7 @@ namespace Server.Misc
 			{{ 	50,	 			30,		100,	1000},	//93 집중 스킬 증가%
 			{	50,	 			6,		10,		500	},
 			{	50,	 			15,		100,	2000}},	
-			{{ 	51,	 			30,		1000,	1000},	//94 기사도 스킬 증가%
+			{{ 	51,	 			30,		100,	1000},	//94 기사도 스킬 증가%
 			{	51,	 			6,		10,		500	},
 			{	51,	 			15,		100,	2000}},	
 			{{ 	52,	 			30,		100,	1000},	//95 무사도 스킬 증가%
@@ -2779,7 +2788,7 @@ namespace Server.Misc
 		}
 		
 		
-		public static int JewelList(BaseJewel newmake, bool gemcheck = false)
+		public static int JewelList(BaseJewel newmake)
 		{
 			/*
 			악세타입 19 : 팔찌 
@@ -2796,11 +2805,8 @@ namespace Server.Misc
 			else if( newmake.Layer == Layer.Earrings )
 				check = 22;
 			
-			if( !gemcheck )
-			{
-				if( newmake is SilverEarrings || newmake is SilverRing || newmake is SilverBracelet || newmake is SilverNecklace )
-					check += 4;
-			}
+			if( newmake is SilverEarrings || newmake is SilverRing || newmake is SilverBracelet || newmake is SilverNecklace )
+				check += 4;
 			
 			return check;
 			
@@ -3580,8 +3586,6 @@ namespace Server.Misc
 				else
 				{
 					//접두 2, 접두 11 ~ 30, 접미 11 ~ 30 구현 코드
-					item.SuffixOption[2] = NewUpgradeOptionStock[rank];
-					
 					check = NewEquipNumber(equip);
 					equipLine = NewItemLine(check);
 					
@@ -3593,6 +3597,7 @@ namespace Server.Misc
 					item.PrefixOption[2] = NewRandomOptionStock[rank] / item.SuffixOption[0];
 					item.SuffixOption[2] = NewUpgradeOptionStock[rank];
 					item.PrefixOption[0] = 100;
+					item.SuffixOption[1] = rank;
 				}
 				for( int i = 0; i < 10; ++i)
 				{
@@ -3605,7 +3610,7 @@ namespace Server.Misc
 				#region 재료 옵션
 				//접두 41 ~ 45, 접미 41 ~ 45 구현 코드
 				int resourceuse = UseResourceNumber((int)item.Resource);
-				
+				Console.WriteLine("check code : {0} ", check);
 				if( check >= 23 && check <= 26 )
 				{
 					resourceuse += 7;
@@ -3618,7 +3623,7 @@ namespace Server.Misc
 					item.SuffixOption[41 + i] = NewResourceOption[resourceuse, equipLine, i * 2];
 					if( item.PrefixOption[41 + i] != - 1 )
 					{
-						skilluse = NewEquipOptionList( equip, item.PrefixOption[ i + 41], item.SuffixOption[ i + 41], skilluse);
+						skilluse = NewEquipOptionList( equip, item.PrefixOption[i + 41], item.SuffixOption[ i + 41], skilluse);
 					}
 				}				
 				#endregion
@@ -3640,6 +3645,14 @@ namespace Server.Misc
 				skilluse = 5;
 				#region 기본 옵션
 				//접두 61 ~ 70, 접미 61 ~ 70 구현 코드
+				//악세사리는 여기에서 지정
+				//악세사리 19 ~ 26
+				if( check >= 19 && check <= 26 && item.SuffixOption[1] > 0 )
+				{
+					item.SuffixOption[61] = item.SuffixOption[61] * ( item.SuffixOption[1] + 1 );
+					item.SuffixOption[62] = item.SuffixOption[62] * ( item.SuffixOption[1] + 1 );
+				}
+				
 				for( int i = 0; i < 10; ++i )
 				{
 					if( item.SuffixOption[61 + i] == 0 )
@@ -3656,7 +3669,7 @@ namespace Server.Misc
 		public static int[][] SetItemList =
 		{
 			new int[]{ 0 },													//무옵션
-			new int[]{ 6, 50000, 21, 500, 46, 2000, 4, 25000, 114, 3000 }, 	//1천 옷
+			new int[]{ 41, 1000, 21, 500, 8, 2500, 43, 1500, 45, 5000 }, 	//1천 옷
 			new int[]{ 114, 1000, 40, 1500, 7, 2000}, 						//2호랑이 가죽
 			new int[]{ 110, 1000, 109, -25, 111, 5000},						//3용 거북 가죽
 			new int[]{ 20, 400, 21, 400, 118, 1000, 114, 1500, 117, 2500},	//4가죽 갑옷

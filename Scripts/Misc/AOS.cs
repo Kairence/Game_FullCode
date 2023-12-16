@@ -904,35 +904,7 @@ namespace Server
 				else if( pm.ItemSetSaveValue[101] > 0 && attribute == AosAttribute.LowerAmmoCost )
 					value += pm.ItemSetSaveValue[101];
 			}
-			
-			//전투 포인트
-			/*
-			if( m is PlayerMobile )
-			{
-				PlayerMobile pm = m as PlayerMobile;
 
-				if( attribute == AosAttribute.BonusStr )
-					value += pm.SilverPoint[1] + pm.ArtifactPoint[1] * 6;
-				else if( attribute == AosAttribute.BonusDex )
-					value += pm.SilverPoint[2] + pm.ArtifactPoint[2] * 6;
-				else if( attribute == AosAttribute.BonusInt )
-					value += pm.SilverPoint[3] + pm.ArtifactPoint[3] * 6;
-				else if( attribute == AosAttribute.Luck )
-					value += pm.SilverPoint[4] + pm.ArtifactPoint[4] * 6;
-				else if( attribute == AosAttribute.BonusHits )
-					value += pm.SilverPoint[5] + pm.ArtifactPoint[5] * 6;
-				else if( attribute == AosAttribute.BonusStam )
-					value += pm.SilverPoint[6] + pm.ArtifactPoint[6] * 6;
-				else if( attribute == AosAttribute.BonusMana )
-					value += pm.SilverPoint[7] + pm.ArtifactPoint[7] * 6;
-				else if( attribute == AosAttribute.RegenHits )
-					value += pm.SilverPoint[8];
-				else if( attribute == AosAttribute.RegenStam )
-					value += pm.SilverPoint[9];
-				else if( attribute == AosAttribute.RegenMana )
-					value += pm.SilverPoint[10];
-			}
-			*/
             if (attribute == AosAttribute.WeaponDamage)
             {
                 if (BaseMagicalFood.IsUnderInfluence(m, MagicalFood.GrapesOfWrath))
@@ -1201,7 +1173,8 @@ namespace Server
 
             #endregion
 
-			value /= 100;
+			if( !(attribute == AosAttribute.BonusStr || attribute == AosAttribute.BonusDex || attribute == AosAttribute.BonusInt )) 
+				value /= 100;
 			
             return value;
         }
@@ -2690,7 +2663,24 @@ namespace Server
 		AllDefenseBonus = 0x00002000, //전체 피격 데미지 감소
 		ElementalResist = 0x00004000, //원소 저항력%
 		AllResist = 0x00008000, //모든 저항력%
-		DefenseStam = 0x00010000 //방어 시 기력 소모
+		DefenseStam = 0x00010000 //방어시 기력 소모 감소
+		/*
+		BonusMining = 0x00020000, //광물 획득 증가 
+		BonusLumberjacking = 0x00040000, //나무 획득 증가
+		BonusTaning = 0x00080000, //가죽 획득 증가
+		BonusFishing = 0x00100000, //물고기 획득 증가
+		BonusFarming = 0x00200000, //낙농품 획득 증가
+		BonusAlchemy = 0x00400000, //연금술 성공율 증가%
+		BonusBlacksmith = 0x00800000, //대장장이 성공율 증가%
+		BonusBowcrafting = 0x01000000, //활제작 성공율 증가%
+		BonusCapentry = 0x02000000, //목수 성공율 증가%
+		BonusCatography = 0x04000000, //지도 제작 성공율 증가%
+		BonusCooking = 0x08000000, //요리 성공율 증가%
+		BonusInscript = 0x10000000, //기록술 성공율 증가%
+		BonusTailoring = 0x20000000, //재봉술 성공율 증가%
+		BonusTinkering = 0x40000000, //기계공학 성공율 증가%
+		BonusImbuing = 0x80000000 //임뷰잉 성공율 증가%
+		*/
         #endregion
     }
 
@@ -3057,6 +3047,188 @@ namespace Server
                 this[AosArmorAttribute.DefenseStam] = value;
             }
         }
+		/*
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BonusMining
+        {
+            get
+            {
+                return this[AosArmorAttribute.BonusMining];
+            }
+            set
+            {
+                this[AosArmorAttribute.BonusMining] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BonusLumberjacking
+        {
+            get
+            {
+                return this[AosArmorAttribute.BonusLumberjacking];
+            }
+            set
+            {
+                this[AosArmorAttribute.BonusLumberjacking] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BonusTaning
+        {
+            get
+            {
+                return this[AosArmorAttribute.BonusTaning];
+            }
+            set
+            {
+                this[AosArmorAttribute.BonusTaning] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BonusFishing
+        {
+            get
+            {
+                return this[AosArmorAttribute.BonusFishing];
+            }
+            set
+            {
+                this[AosArmorAttribute.BonusFishing] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BonusFarming
+        {
+            get
+            {
+                return this[AosArmorAttribute.BonusFarming];
+            }
+            set
+            {
+                this[AosArmorAttribute.BonusFarming] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BonusAlchemy
+        {
+            get
+            {
+                return this[AosArmorAttribute.BonusAlchemy];
+            }
+            set
+            {
+                this[AosArmorAttribute.BonusAlchemy] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BonusBlacksmith
+        {
+            get
+            {
+                return this[AosArmorAttribute.BonusBlacksmith];
+            }
+            set
+            {
+                this[AosArmorAttribute.BonusBlacksmith] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BonusBowcrafting
+        {
+            get
+            {
+                return this[AosArmorAttribute.BonusBowcrafting];
+            }
+            set
+            {
+                this[AosArmorAttribute.BonusBowcrafting] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BonusCapentry
+        {
+            get
+            {
+                return this[AosArmorAttribute.BonusCapentry];
+            }
+            set
+            {
+                this[AosArmorAttribute.BonusCapentry] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BonusCatography
+        {
+            get
+            {
+                return this[AosArmorAttribute.BonusCatography];
+            }
+            set
+            {
+                this[AosArmorAttribute.BonusCatography] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BonusCooking
+        {
+            get
+            {
+                return this[AosArmorAttribute.BonusCooking];
+            }
+            set
+            {
+                this[AosArmorAttribute.BonusCooking] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BonusInscript
+        {
+            get
+            {
+                return this[AosArmorAttribute.BonusInscript];
+            }
+            set
+            {
+                this[AosArmorAttribute.BonusInscript] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BonusTailoring
+        {
+            get
+            {
+                return this[AosArmorAttribute.BonusTailoring];
+            }
+            set
+            {
+                this[AosArmorAttribute.BonusTailoring] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BonusTinkering
+        {
+            get
+            {
+                return this[AosArmorAttribute.BonusTinkering];
+            }
+            set
+            {
+                this[AosArmorAttribute.BonusTinkering] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BonusImbuing
+        {
+            get
+            {
+                return this[AosArmorAttribute.BonusImbuing];
+            }
+            set
+            {
+                this[AosArmorAttribute.BonusImbuing] = value;
+            }
+        }
+		*/
     }
 
     public sealed class AosSkillBonuses : BaseAttributes

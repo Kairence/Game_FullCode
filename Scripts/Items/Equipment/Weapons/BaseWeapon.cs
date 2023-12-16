@@ -6317,7 +6317,7 @@ namespace Server.Items
 						else
 						{
 							int optionpercentcheck = 1081997 + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0]);
-							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0], (((double)SuffixOption[i + 61])*0.01).ToString());
+							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0], (((double)SuffixOption[i + 61])*Misc.Util.PercentCalc(PrefixOption[i + 61])).ToString());
 						}
 					}
 				}
@@ -6372,7 +6372,7 @@ namespace Server.Items
 						else
 						{
 							int optionpercentcheck = 1081999 + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0]);
-							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0], (((double)SuffixOption[i + 11])*0.01).ToString());
+							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0], (((double)SuffixOption[i + 11])*Misc.Util.PercentCalc(PrefixOption[i + 11])).ToString());
 						}
 					}
 					//재료 옵션
@@ -6397,7 +6397,7 @@ namespace Server.Items
 
 							int optionpercentcheck = 1082003 + i + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 31], 0, 0], 5);
 							
-							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 31], 0, 0], (((double)SuffixOption[i + 31])*0.01).ToString() );
+							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 31], 0, 0], (((double)SuffixOption[i + 31])*Misc.Util.PercentCalc(PrefixOption[i + 31])).ToString() );
 						}
 					}
 					
@@ -6410,7 +6410,7 @@ namespace Server.Items
 						{
 							if( PrefixOption[3 + i] > 0 )
 							{
-								list.Add( 1083002 + i, "{0}\t{1}", PrefixOption[i + 3], (((double)SuffixOption[i + 3])*0.01).ToString() );
+								list.Add( 1083002 + i, "{0}\t{1}", PrefixOption[i + 3], (((double)SuffixOption[i + 3])*Misc.Util.PercentCalc(PrefixOption[3 + i])).ToString() );
 							}
 						}
 					}

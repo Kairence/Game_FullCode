@@ -17,8 +17,8 @@ namespace Server.Items
 			SuffixOption[61] = 200;
 			PrefixOption[62] = 14;
 			SuffixOption[62] = 200;
-			PrefixOption[63] = 46;
-			SuffixOption[63] = 500;
+			PrefixOption[63] = 6;
+			SuffixOption[63] = 25000;
         }
 
         public FemaleLeafChest(Serial serial)
