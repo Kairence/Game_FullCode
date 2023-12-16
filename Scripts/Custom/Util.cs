@@ -3691,7 +3691,6 @@ namespace Server.Misc
 		
 		public static void SetOption(PlayerMobile pm, bool reroad = true )
 		{
-			bool allresist = false;
 			if( reroad )
 			{
 				for( int i = 0; i < 100; ++i )
