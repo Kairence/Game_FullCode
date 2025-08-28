@@ -10,21 +10,21 @@ namespace Server.Mobiles
         public Beholder()
             : base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
         {
-            this.Name = "a beholder";
+            this.Name = "Boss a beholder";
             this.Body = 53;
             this.BaseSoundID = 377;
 
 			Boss = true;
 				
-            this.SetStr(760, 1000);
-            this.SetDex(501, 705);
-            this.SetInt(2006, 3000);
+            this.SetStr(17600, 20000);
+            this.SetDex(15010, 17050);
+            this.SetInt(18006, 21000);
 
-            this.SetHits(200006, 210000);
-			SetStam(750, 800);
-			SetMana(750, 800);
+            this.SetHits(700060, 781000);
+			SetStam(750000, 780000);
+			SetMana(750000, 780000);
 
-            this.SetDamage(230, 300);
+            this.SetDamage(530, 1300);
 
 			SetAttackSpeed( 2.5 );
 			
@@ -42,10 +42,10 @@ namespace Server.Mobiles
             this.SetSkill(SkillName.Tactics, 370.0, 375);
             this.SetSkill(SkillName.Wrestling, 370.0, 375);
 
-            this.Fame = 32000;
-            this.Karma = -32000;
+            this.Fame = 31000;
+            this.Karma = -31000;
 
-            this.VirtualArmor = 1750;
+            this.VirtualArmor = 35;
 
         }
 

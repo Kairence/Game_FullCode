@@ -33,7 +33,7 @@ namespace Server.Mobiles
             SetMana(20, 30);
 
 			SetAttackSpeed(30.0);
-            SetDamage(3, 4);
+            SetDamage(3, 44);
 
             SetDamageType(ResistanceType.Physical, 75);
             SetDamageType(ResistanceType.Poison, 25);
@@ -51,7 +51,7 @@ namespace Server.Mobiles
 
             Tamable = true;
             ControlSlots = 2;
-            MinTameSkill = 93.9;
+            MinTameSkill = 123.9;
         }
 
         public ShadowDragon(Serial serial)

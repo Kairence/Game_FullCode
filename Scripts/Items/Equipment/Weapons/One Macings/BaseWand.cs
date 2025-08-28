@@ -41,7 +41,7 @@ namespace Server.Items
             this.Effect = effect;
             this.Charges = Utility.RandomMinMax(minCharges, maxCharges);
 			PrefixOption[61] = 41;
-			SuffixOption[61] = 500;
+			SuffixOption[61] = 1000000;
 			
 			//Attributes.CastSpeed += 500;
         }
@@ -69,14 +69,14 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
         public override int AosIntelligenceReq
@@ -90,14 +90,14 @@ namespace Server.Items
         {
             get
             {
-                return 11;
+                return 1;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 13;
+                return 5;
             }
         }
         public override int AosSpeed

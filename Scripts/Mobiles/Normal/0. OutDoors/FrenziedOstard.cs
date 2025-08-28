@@ -19,7 +19,7 @@ namespace Server.Mobiles
 
             this.BaseSoundID = 0x275;
 
-            SetStr(396, 520);
+            SetStr(596, 1020);
             SetDex(281, 305);
             SetInt(136, 160);
 
@@ -38,8 +38,8 @@ namespace Server.Mobiles
             SetResistance(ResistanceType.Poison, 5, 10);
             SetResistance(ResistanceType.Energy, 10, 15);
 
-            Fame = 2500;
-            Karma = -2500;
+            Fame = 3500;
+            Karma = -3500;
 
             Tamable = true;
             ControlSlots = 2;

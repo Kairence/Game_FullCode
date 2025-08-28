@@ -8,16 +8,16 @@ namespace Server.Items
         [Constructable]
         public BarbedLongbow()
         {
-			//포이즈닝 +5, 독피해 40, 독저 50%
+			//독 속성 25%, 독 피해 140, 독저 18%
 			SuffixOption[0] = 3; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
-			PrefixOption[11] = 80; //옵션 종류
-			SuffixOption[11] = 500; //옵션 값
-			PrefixOption[12] = 35; //옵션 종류
-			SuffixOption[12] = 4000; //옵션 값
-			PrefixOption[13] = 15; //옵션 종류
-			SuffixOption[13] = 5000; //옵션 값
+			PrefixOption[11] = 35; //옵션 종류
+			SuffixOption[11] = 1400000; //옵션 값
+			PrefixOption[12] = 15; //옵션 종류
+			SuffixOption[12] = 180000; //옵션 값
+			PrefixOption[13] = 155; //옵션 종류
+			SuffixOption[13] = 250000; //옵션 값
         }
 
         public BarbedLongbow(Serial serial)

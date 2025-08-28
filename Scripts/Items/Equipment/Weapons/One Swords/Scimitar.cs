@@ -11,8 +11,8 @@ namespace Server.Items
         {
 			PrefixOption[61] = 19;
 			PrefixOption[62] = 20;
-			SuffixOption[61] = 50;
-			SuffixOption[62] = 50;
+			SuffixOption[61] = 500000;
+			SuffixOption[62] = 500000;
 
 			//Attributes.RegenHits += 50;
 			//Attributes.RegenStam += 50;
@@ -42,14 +42,14 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
         public override int AosIntelligenceReq
@@ -63,14 +63,14 @@ namespace Server.Items
         {
             get
             {
-                return 10;
+                return 1;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 14;
+                return 5;
             }
         }
         public override int AosSpeed

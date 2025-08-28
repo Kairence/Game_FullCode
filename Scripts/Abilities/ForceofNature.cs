@@ -12,11 +12,24 @@ namespace Server.Items
 
         public override int BaseMana { get { return 35; } }
 
-        public override void OnHit(Mobile attacker, Mobile defender, int damage)
+        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics )
         {
-            if (!Validate(attacker) || !CheckMana(attacker, true))
+            if (!this.Validate(attacker) )
                 return;
+			
+			if ( defender == null )
+				return;
+			
+			bool bonus = attacker.Skills.Tactics.Value >= 100 ? true : false;
+			bool levelRandomBonus = false; //level >= 5 ? true : false;
+			
+			if ( !this.CalculateStam(attacker, Misc.Util.SPMStam[15,0], Misc.Util.SPMStam[15,1], level, bonus ) )
+				return;
 
+			//double bonusDamage = tactics * 0.005 + level;
+			
+			//계산
+			damage = (int)( damage * ( 1 + level * 0.01 ) + tactics );
             ClearCurrentAbility(attacker);
 
             attacker.SendLocalizedMessage(1074374); // You attack your enemy with the force of nature!
@@ -25,14 +38,50 @@ namespace Server.Items
             defender.PlaySound(0x22F);
             defender.FixedParticles(0x36CB, 1, 9, 9911, 67, 5, EffectLayer.Head);
             defender.FixedParticles(0x374A, 1, 17, 9502, 1108, 4, (EffectLayer)255);
+			AOS.Damage(defender, attacker, damage, false, 0, 25, 25, 25, 25, 0, 0, false, false, false);
+			if( levelRandomBonus )
+			{
+				int random = Utility.RandomMinMax(0, 3);
+				switch(random)
+				{
+					case 3:
+					{
+						defender.BoltEffect(0);
+						attacker.PlaySound(0x5CE);
+						AOS.Damage(defender, attacker, damage, false, 0, 0, 0, 0, 100, 0, 0, false, false, false);
+						break;
+					}
+					case 2:
+					{
+						Effects.SendLocationParticles(EffectItem.Create(defender.Location, defender.Map, EffectItem.DefaultDuration), 0x36B0, 1, 14, 63, 7, 9915, 0);
+						Effects.PlaySound(defender.Location, defender.Map, 0x229);
+						defender.FixedParticles(0x374A, 1, 15, 9502, 97, 3, (EffectLayer)255);
+						AOS.Damage(defender, attacker, damage, false, 0, 0, 0, 100, 0, 0, 0, false, false, false);
+						break;
+					}
+					case 1:
+					{
+						Effects.PlaySound(attacker.Location, attacker.Map, 0x1FB);
+						Effects.PlaySound(attacker.Location, attacker.Map, 0x10B);
+						AOS.Damage(defender, attacker, damage, false, 0, 0, 100, 0, 0, 0, 0, false, false, false);
+						break;
+					}
+					case 0:
+					{
+						attacker.PlaySound(0x175);
 
-            if (m_Table.ContainsKey(attacker))
-                Remove(attacker);
+						attacker.FixedParticles(0x375A, 1, 17, 9919, 33, 7, EffectLayer.Waist);
+						attacker.FixedParticles(0x3728, 1, 13, 9502, 33, 7, (EffectLayer)255);
 
-            ForceOfNatureTimer t = new ForceOfNatureTimer(attacker, defender);
-            t.Start();
-
-            m_Table[attacker] = t;
+						defender.FixedParticles(0x375A, 1, 17, 9919, 33, 7, EffectLayer.Waist);
+						defender.FixedParticles(0x3728, 1, 13, 9502, 33, 7, (EffectLayer)255);
+						AOS.Damage(defender, attacker, damage, false, 0, 100, 0, 0, 0, 0, 0, false, false, false);
+						break;
+					}
+					
+				}
+				
+			}
         }
 
         private static Dictionary<Mobile, ForceOfNatureTimer> m_Table = new Dictionary<Mobile, ForceOfNatureTimer>();

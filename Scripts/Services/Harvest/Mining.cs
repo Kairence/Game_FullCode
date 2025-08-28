@@ -229,7 +229,7 @@ namespace Server.Engines.Harvest
             bool boat = Server.Multis.BaseBoat.FindBoatAt(from, from.Map) != null;
             bool dungeon = IsDungeonRegion(from);
 			
-            if (def == this.m_Sand && !(from is PlayerMobile && from.Skills[SkillName.Mining].Base >= 100.0 && ((PlayerMobile)from).SandMining))
+            if (def == this.m_Sand && !(from is PlayerMobile && from.Skills[SkillName.Mining].Base >= 100.0 ) ) // && ((PlayerMobile)from).SandMining))
             {
                 this.OnBadHarvestTarget(from, tool, toHarvest);
                 return false;

@@ -11,10 +11,10 @@ namespace Server.Items
         public Katana()
             : base(0x13FF)
         {
-			PrefixOption[61] = 95;
+			PrefixOption[61] = 96;
 			SuffixOption[61] = 1000;
 			
-			//SkillBonuses.SetValues(5, SkillName.Bushido, 10.0);
+			//SkillBonuses.SetValues(5, SkillName.Ninjitsu, 10.0);
             this.Weight = 6.0;
         }
 
@@ -41,14 +41,14 @@ namespace Server.Items
         {
             get
             {
-                return 200;
+                return 2000;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 200;
+                return 3000;
             }
         }
         public override int AosIntelligenceReq
@@ -62,14 +62,14 @@ namespace Server.Items
         {
             get
             {
-                return 5;
+                return 3;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 10;
+                return 7;
             }
         }
         public override int AosSpeed
@@ -83,7 +83,7 @@ namespace Server.Items
         {
             get
             {
-                return 1.50f;
+                return 2.00f;
             }
         }
         public override int OldStrengthReq

@@ -14,17 +14,17 @@ namespace Server.Mobiles
             this.Body = 212;
             this.BaseSoundID = 0xA3;
 
-            this.SetStr(126, 155);
-            this.SetDex(81, 105);
-            this.SetInt(16, 40);
+            this.SetStr(1626, 2155);
+            this.SetDex(1810, 2050);
+            this.SetInt(160, 240);
 
-            this.SetHits(76, 93);
-            this.SetStam(76, 93);
+            this.SetHits(2760, 2930);
+            this.SetStam(2760, 2930);
             this.SetMana(0);
 
 			SetAttackSpeed( 10.0 );
 
-            this.SetDamage(8, 13);
+            this.SetDamage(180, 260);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 
@@ -33,14 +33,14 @@ namespace Server.Mobiles
             this.SetResistance(ResistanceType.Poison, 5, 10);
             this.SetResistance(ResistanceType.Energy, 5, 10);
 
-            this.Fame = 1000;
+            this.Fame = 7500;
             this.Karma = 0;
 
             this.VirtualArmor = 2;
 
             this.Tamable = true;
             this.ControlSlots = 1;
-            this.MinTameSkill = 59.1;
+            this.MinTameSkill = 69.1;
         }
 
         public GrizzlyBear(Serial serial)

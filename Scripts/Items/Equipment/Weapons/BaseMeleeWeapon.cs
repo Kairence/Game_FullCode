@@ -15,6 +15,7 @@ namespace Server.Items
         {
         }
 
+		/*
         public override int AbsorbDamage(Mobile attacker, Mobile defender, int damage)
         {
             damage = base.AbsorbDamage(attacker, defender, damage);
@@ -22,7 +23,6 @@ namespace Server.Items
             if (Core.AOS)
                 return damage;
 			
-			/*
             int absorb = defender.MeleeDamageAbsorb;
 
             if (absorb > 0)
@@ -49,9 +49,9 @@ namespace Server.Items
                     DefensiveSpell.Nullify(defender);
                 }
             }
-			*/
             return damage;
         }
+		*/
 
         public override void Serialize(GenericWriter writer)
         {

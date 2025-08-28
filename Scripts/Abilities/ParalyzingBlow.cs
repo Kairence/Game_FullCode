@@ -79,6 +79,85 @@ namespace Server.Items
                 return 10;
             }
         }
+        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics )
+        {
+            if (!this.Validate(attacker) )
+                return;
+			
+			if ( defender == null )
+				return;
+			
+			bool bonus = attacker.Skills.Tactics.Value >= 100 ? true : false;
+			//bool levelStunBonus = level >= 5 ? true : false;
+			
+			if ( !this.CalculateStam(attacker, Misc.Util.SPMStam[10,0], Misc.Util.SPMStam[10,1], level, bonus ) )
+				return;
+
+			double bonusDamage = 2.0 + level * 0.025;	
+			if( defender.Frozen || defender.Paralyzed )
+				bonusDamage += tactics + level * 0.025;
+			
+			//계산
+			damage = (int)( damage * ( 1 + bonusDamage ) );
+
+			double stopTime = 20.0;
+			if( defender is BaseCreature )
+			{
+				BaseCreature bc = defender as BaseCreature;
+				stopTime *= Misc.Util.MonsterTierCrowdControlRecovery(bc);
+			}
+			
+			if (IsImmune(defender))	//Intentionally going after Mana consumption
+			{
+				attacker.SendLocalizedMessage(1070804); // Your target resists paralysis.
+				defender.SendLocalizedMessage(1070813); // You resist paralysis.
+				return;
+			}
+			defender.FixedEffect(0x376A, 9, 32);
+			defender.PlaySound(0x204);
+
+			attacker.SendLocalizedMessage(1060163); // You deliver a paralyzing blow!
+			defender.SendLocalizedMessage(1060164); // The attack has temporarily paralyzed you!
+			
+			if( attacker is Beholder )
+				damage *= 5;
+
+			defender.Paralyze(TimeSpan.FromSeconds(stopTime));
+			/*
+			if( levelStunBonus )
+			{
+				stopTime /= 2;
+				defender.Freeze(TimeSpan.FromSeconds(stopTime));
+				attacker.SendLocalizedMessage(1060911); // You deliver a paralyzing blow!
+				defender.SendLocalizedMessage(1060912); // The attack has temporarily paralyzed you!
+				defender.FixedParticles(0x37B9, 1, 5, 0x251D, 0x651, 0, EffectLayer.Waist);	
+				defender.PlaySound(0x204);
+			}
+			else
+			{
+				if (IsImmune(defender))	//Intentionally going after Mana consumption
+				{
+					attacker.SendLocalizedMessage(1070804); // Your target resists paralysis.
+					defender.SendLocalizedMessage(1070813); // You resist paralysis.
+					return;
+				}
+				defender.FixedEffect(0x376A, 9, 32);
+				defender.PlaySound(0x204);
+
+				attacker.SendLocalizedMessage(1060163); // You deliver a paralyzing blow!
+				defender.SendLocalizedMessage(1060164); // The attack has temporarily paralyzed you!
+				
+				if( attacker is Beholder )
+					damage *= 5;
+
+				defender.Paralyze(TimeSpan.FromSeconds(stopTime));
+			}
+			*/
+			AOS.Damage(defender, attacker, damage, false, 100, 0, 0, 0, 0, 0, 0, false, false, false);
+            ClearCurrentAbility(attacker);
+		}			
+
+		/*
         public override void BeforeAttack(Mobile attacker, Mobile defender, int damage)
         {
 			BaseWeapon weapon = attacker.Weapon as BaseWeapon;
@@ -132,7 +211,7 @@ namespace Server.Items
 
             //BeginImmunity(defender, duration + FreezeDelayDuration);
         }
-
+		*/
         private class InternalTimer : Timer
         {
             private readonly Mobile m_Mobile;

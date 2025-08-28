@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Server.Engines.Craft;
 using Server.Network;
+using Server.Mobiles;
 
 namespace Server.Items
 {
@@ -486,60 +487,73 @@ namespace Server.Items
 
         public override int OnCraft(int quality, bool makersMark, Mobile from, CraftSystem craftSystem, Type typeRes, ITool tool, CraftItem craftItem, int resHue)
         {
-            Quality = (ItemQuality)quality;
+           Quality = (ItemQuality)quality;
 
-			double armslore = from.Skills.ArmsLore.Value;
-			
-			if( armslore > 20 )
+            if (makersMark)
+                Crafter = from;
+
+            PlayerConstructed = true;
+
+			if (typeRes == null)
 			{
-				double crafting = from.Skills.Tailoring.Value;
+				typeRes = craftItem.Resources.GetAt(0).ItemType;
+			}
 
-				int attributeCount = (int)( crafting / 50 );
-				if( crafting >= 100 )
-					crafting += 5;
-				if( crafting - ( 50 * attributeCount ) > Utility.Random(50) )
-					attributeCount++;
-				
-				int max = (int)armslore - 40;
-				int min = max / 2;
-				
+			Resource = CraftResources.GetFromType(typeRes);
+
+			if( from is PlayerMobile )
+			{
+				double maxValue = 0.8;
+				double bonus = 1;
 				if (Quality == ItemQuality.Exceptional)
-					max += 20;
-
-				if( from.Skills.ArmsLore.Value >= 100 )
-					min += 10;
+				{
+					maxValue = 0.9;
+					bonus = 2;
+				}
 				
-				if( min < 0 )
-					min = 0;
-				if( max < 0 )
-					max = 0;
+				if( from.Skills.ArmsLore.Value >= 150 )
+				{
+					maxValue = 1;
+					bonus += 1;
+				}
+				if( from.Skills.ArmsLore.Value >= 200 )
+				{
+					bonus += 2;
+					this.MaxHitPoints = 120;
+					this.HitPoints = 120;
+					if(Quality == ItemQuality.Exceptional)
+					{
+						this.MaxHitPoints = 140;
+						this.HitPoints = 140;
+					}
+				}
 				
-				BaseRunicTool.ApplyAttributesTo(this, true, 0, attributeCount, min, max);
-			}			
-			
-            return base.OnCraft(quality, makersMark, from, craftSystem, typeRes, tool, craftItem, resHue);
+				//int rank = Util.ItemRankMaker( from.Skills[craftSystem.MainSkill].Value );
+				int rank = Misc.Util.ItemRankMaker( from.Skills.ArmsLore.Value, maxValue, bonus );				
+				
+				//int tier = Util.ItemTierMaker( arms, rank, Misc.Util.ResourceNumberToNumber((int)Resource ), from );
+				PlayerMobile pm = from as PlayerMobile;
+				Misc.Util.NewItemCreate(this, rank, pm );
+				//암즈로어 스킬 상승 보너스
+				pm.CheckSkill(SkillName.ArmsLore, 500 + rank * 250);						
+			}				
+            return quality;			
         }
     }
 
     [Flipable(0x2798, 0x27E3)]
-    public class Kasa : BaseHat
+    public class Kasa : BaseHat, IRepairable
     {
+        public CraftSystem RepairSystem { get { return DefTailoring.CraftSystem; } }
 
-        public override int InitMinHits
-        {
-            get
-            {
-                return 100;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 100;
-            }
-        }
+        public override int InitMinHits { get { return 100; } }
+        public override int InitMaxHits { get { return 100; } }
 
+        public override int AosStrReq { get { return 1350; } }
+        public override int AosDexReq { get { return 100; } }
+        public override int AosIntReq { get { return 100; } }
+        public override int OldStrReq { get { return 15; } }
+		
         [Constructable]
         public Kasa()
             : this(0)
@@ -550,7 +564,16 @@ namespace Server.Items
         public Kasa(int hue)
             : base(0x2798, hue)
         {
-			PrefixOption[50] = 23; //낙농 세트
+			BaseArmorRating = 11;
+            Weight = 15.0;
+			PrefixOption[50] = 6;
+			PrefixOption[61] = 12;
+			SuffixOption[61] = 40000;
+			PrefixOption[62] = 3;
+			SuffixOption[62] = 500000;
+			PrefixOption[63] = 5;
+			SuffixOption[63] = 2500000;
+
         }
 
         public Kasa(Serial serial)
@@ -653,7 +676,7 @@ namespace Server.Items
         public FlowerGarland(int hue)
             : base(0x2306, hue)
         {
-			PrefixOption[50] = 26; //활 제작 세트
+			//PrefixOption[50] = 26; //활 제작 세트
             
         }
 
@@ -705,7 +728,7 @@ namespace Server.Items
         public FloppyHat(int hue)
             : base(0x1713, hue)
         {
-			PrefixOption[50] = 19; //채광 세트
+			//PrefixOption[50] = 19; //채광 세트
         }
 
         public FloppyHat(Serial serial)
@@ -756,7 +779,7 @@ namespace Server.Items
         public WideBrimHat(int hue)
             : base(0x1714, hue)
         {
-			PrefixOption[50] = 30; //기록술 세트
+			//PrefixOption[50] = 30; //기록술 세트
         }
 
         public WideBrimHat(Serial serial)
@@ -807,7 +830,7 @@ namespace Server.Items
         public Cap(int hue)
             : base(0x1715, hue)
         {
-  			PrefixOption[50] = 31; //재봉술 세트
+  			//PrefixOption[50] = 31; //재봉술 세트
           
         }
 
@@ -859,7 +882,7 @@ namespace Server.Items
         public SkullCap(int hue)
             : base(0x1544, hue)
         {
-  			PrefixOption[50] = 25; //대장장이 세트
+  			//PrefixOption[50] = 25; //대장장이 세트
         }
 
         public SkullCap(Serial serial)
@@ -910,7 +933,7 @@ namespace Server.Items
         public Bandana(int hue)
             : base(0x1540, hue)
         {
-  			PrefixOption[50] = 20; //무두 세트
+  			//PrefixOption[50] = 20; //무두 세트
             
         }
 
@@ -941,7 +964,7 @@ namespace Server.Items
         public override int InitMinHits { get { return 100; } }
         public override int InitMaxHits { get { return 100; } }
 
-        public override int AosStrReq { get { return 400; } }
+        public override int AosStrReq { get { return 1200; } }
         public override int AosDexReq { get { return 100; } }
         public override int AosIntReq { get { return 100; } }
         public override int OldStrReq { get { return 15; } }
@@ -957,16 +980,12 @@ namespace Server.Items
         public BearMask(int hue)
             : base(0x1545, hue)
         {
-			BaseArmorRating = 7;
+			BaseArmorRating = 9;
 			PrefixOption[50] = 4;
 			PrefixOption[61] = 114;
-			SuffixOption[61] = 200;
-			PrefixOption[62] = 19;
-			SuffixOption[62] = 75;
-			PrefixOption[63] = 20;
-			SuffixOption[63] = 2500;
-			PrefixOption[64] = 21;
-			SuffixOption[64] = 25000;	
+			SuffixOption[61] = 50000;
+			PrefixOption[62] = 4;
+			SuffixOption[62] = 2000000;
 		}
 
         public override bool Dye(Mobile from, DyeTub sender)
@@ -1002,7 +1021,7 @@ namespace Server.Items
         public override int InitMinHits { get { return 100; } }
         public override int InitMaxHits { get { return 100; } }
 
-        public override int AosStrReq { get { return 400; } }
+        public override int AosStrReq { get { return 900; } }
         public override int AosDexReq { get { return 100; } }
         public override int AosIntReq { get { return 100; } }
         public override int OldStrReq { get { return 15; } }
@@ -1018,16 +1037,16 @@ namespace Server.Items
         public DeerMask(int hue)
             : base(0x1547, hue)
         {
-			BaseArmorRating = 7;
+			BaseArmorRating = 9;
 			PrefixOption[50] = 4;
 			PrefixOption[61] = 114;
-			SuffixOption[61] = 200;
+			SuffixOption[61] = 20000;
 			PrefixOption[62] = 40;
-			SuffixOption[62] = 250;
+			SuffixOption[62] = 100000;
 			PrefixOption[63] = 7;
-			SuffixOption[63] = 1000;
+			SuffixOption[63] = 100000;
 			PrefixOption[64] = 5;
-			SuffixOption[64] = 25000;				
+			SuffixOption[64] = 1000000;				
         }
 
         public override bool Dye(Mobile from, DyeTub sender)
@@ -1201,7 +1220,7 @@ namespace Server.Items
         public TallStrawHat(int hue)
             : base(0x1716, hue)
         {
-  			PrefixOption[50] = 23; //연금 세트
+  			//PrefixOption[50] = 23; //연금 세트
           
         }
 
@@ -1253,7 +1272,7 @@ namespace Server.Items
         public StrawHat(int hue)
             : base(0x1717, hue)
         {
-  			PrefixOption[50] = 19; //벌목 세트
+  			//PrefixOption[50] = 19; //벌목 세트
         }
 
         public StrawHat(Serial serial)
@@ -1522,7 +1541,7 @@ namespace Server.Items
         public WizardsHat(int hue)
             : base(0x1718, hue)
         {
-  			PrefixOption[50] = 33; //임뷰잉 세트
+  			//PrefixOption[50] = 33; //임뷰잉 세트
         }
 
         public WizardsHat(Serial serial)
@@ -1606,7 +1625,6 @@ namespace Server.Items
 
     public class Bonnet : BaseHat
     {
- 
         public override int InitMinHits
         {
             get
@@ -1632,7 +1650,7 @@ namespace Server.Items
         public Bonnet(int hue)
             : base(0x1719, hue)
         {
-  			PrefixOption[50] = 32; //기계공학 세트
+  			//PrefixOption[50] = 32; //기계공학 세트
         }
 
         public Bonnet(Serial serial)
@@ -1683,7 +1701,7 @@ namespace Server.Items
         public FeatheredHat(int hue)
             : base(0x171A, hue)
         {
-   			PrefixOption[50] = 28; //지도제작 세트
+   			//PrefixOption[50] = 28; //지도제작 세트
        }
 
         public FeatheredHat(Serial serial)
@@ -1734,7 +1752,7 @@ namespace Server.Items
         public TricorneHat(int hue)
             : base(0x171B, hue)
         {
-			PrefixOption[50] = 22; //낚시 세트
+			//PrefixOption[50] = 22; //낚시 세트
         }
 
         public TricorneHat(Serial serial)
@@ -1830,7 +1848,7 @@ namespace Server.Items
         public ChefsToque(Serial serial)
             : base(serial)
         {
-  			PrefixOption[50] = 29; //요리 세트
+  			//PrefixOption[50] = 29; //요리 세트
         }
 
         public override void Serialize(GenericWriter writer)

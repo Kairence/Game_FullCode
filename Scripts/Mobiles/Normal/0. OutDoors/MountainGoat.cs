@@ -13,7 +13,7 @@ namespace Server.Mobiles
             this.Body = 88;
             this.BaseSoundID = 0x99;
 
-            this.SetStr(25, 30);
+            this.SetStr(250, 300);
             this.SetDex(25, 30);
             this.SetInt(12, 18);
 

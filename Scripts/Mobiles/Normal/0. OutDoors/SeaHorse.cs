@@ -17,7 +17,7 @@ namespace Server.Mobiles
             : base(name, 0xD2, 0x3EB3, AIType.AI_Animal, FightMode.Aggressor, 10, 1, 0.2, 0.4)
             //: base(name, 0x90, 0x3EB3, AIType.AI_Animal, FightMode.Aggressor, 10, 1, 0.2, 0.4)
         {
-            this.SetStr(194, 270);
+            this.SetStr(200, 270);
             this.SetDex(156, 175);
             this.SetInt(16, 20);
 

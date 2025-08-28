@@ -21,36 +21,29 @@ namespace Server.Items
             return true;
         }
 
-		public override void OnHit(Mobile attacker, Mobile defender, int damage)
-		{
-			if (!Validate(attacker) )
-			{
-				return;
-			}
-
-			ClearCurrentAbility(attacker);
-
-			BaseWeapon weapon = attacker.Weapon as BaseWeapon;
-
-			if (weapon == null)
-			{
-				return;
-			}
-
-            // If no combatant, wrong map, one of us is a ghost, or cannot see, or deleted, then stop combat
-            if (defender.Deleted || attacker.Deleted || defender.Map != attacker.Map || !defender.Alive ||
-                !attacker.Alive || !attacker.CanSee(defender))
-            {
-                weapon.InDoubleStrike = false;
-                attacker.Combatant = null;
+        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics )
+        {
+            if (!this.Validate(attacker) )
                 return;
-            }
-
-			if (!attacker.InRange(defender, weapon.MaxRange))
-			{
-                weapon.InDoubleStrike = false;
+			
+			if ( defender == null )
 				return;
-			}
+			
+			bool bonus = attacker.Skills.Tactics.Value >= 100 ? true : false;
+			//int levelCountBonus = level >= 5 ? 1 : 0;
+			//double levelDamageBonus = level >= 5 ? 0.3 : 0;
+			
+			if ( !this.CalculateStam(attacker, Misc.Util.SPMStam[6,0], Misc.Util.SPMStam[6,1], level, bonus ) )
+				return;
+			
+			int count = 1;// + levelCountBonus + (int)(tactics / 100 );
+			//double chance = tactics - (int)(tactics / 100 );
+			//chance *= 0.01;
+			//if( chance > Utility.RandomDouble() )
+			//	count++;
+			
+			//계산
+			damage = (int)( damage * ( 1 + level * 0.01 )  + tactics);
 
             attacker.SendLocalizedMessage(1060084); // You attack with lightning speed!
             defender.SendLocalizedMessage(1060085); // Your attacker strikes with lightning speed!
@@ -58,25 +51,10 @@ namespace Server.Items
             defender.PlaySound(0x3BB);
             defender.FixedEffect(0x37B9, 244, 25);
 
-			int count = 1;
-			
-			/*
-			if( attacker is PlayerMobile )
-			{
-				PlayerMobile pm = attacker as PlayerMobile;
-				if( pm.SilverPoint[7] >= 5 )
-					count += pm.SilverPoint[7] / 5;
-			}
-			*/
 			for( int i = 0; i < count; i++ )
 			{
-				if (attacker.InLOS(defender))
-				{
-					attacker.RevealingAction();
-					attacker.NextCombatTime = Core.TickCount + (int)weapon.OnSwing(attacker, defender).TotalMilliseconds;
-				}
+				AOS.Damage(defender, attacker, damage, false, 100, 0, 0, 0, 0, 0, 0, false, false, false);
 			}
-            weapon.InDoubleStrike = false;
 		}
 	}
 }

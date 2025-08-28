@@ -8,14 +8,14 @@ namespace Server.Items
         [Constructable]
         public RuneBladeOfKnowledge()
         {
-			//운 100, 명중률 40%
+			//운 1000, 명중률 40%
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 3; //옵션 종류
-			SuffixOption[11] = 100; //옵션 값
+			SuffixOption[11] = 100000; //옵션 값
 			PrefixOption[12] = 17; //옵션 종류
-			SuffixOption[12] = 4000; //옵션 값
+			SuffixOption[12] = 400000; //옵션 값
 
         }
 

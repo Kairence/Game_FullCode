@@ -14,16 +14,16 @@ namespace Server.Mobiles
             this.Body = 0x9D;
             this.BaseSoundID = 0x388; // TODO: validate
 
-            this.SetStr(120, 180);
-            this.SetDex(250, 350);
-            this.SetInt(10, 50);
+            this.SetStr(1220, 1580);
+            this.SetDex(1250, 1350);
+            this.SetInt(100, 500);
 
-            this.SetHits(525, 550);
-			SetStam(250,300);
-			SetMana(10, 50);
+            this.SetHits(1425, 1650);
+			SetStam(1250, 1300);
+			SetMana(100, 500);
 
-            this.SetDamage(8, 10);
-			SetAttackSpeed( 2.0 );
+            this.SetDamage(18, 20);
+			SetAttackSpeed( 1.0 );
 
             this.SetDamageType(ResistanceType.Poison, 100);
             this.SetResistance(ResistanceType.Physical, 20, 30);

@@ -14,7 +14,7 @@ namespace Server.Mobiles
             Body = 165;
             BaseSoundID = 466;
 
-            SetStr(16, 40);
+            SetStr(316, 540);
             SetDex(16, 45);
             SetInt(11, 25);
 

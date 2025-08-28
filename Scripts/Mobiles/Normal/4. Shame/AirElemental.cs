@@ -15,16 +15,16 @@ namespace Server.Mobiles
             Hue = 0x4001;
             BaseSoundID = 655;
 
-            this.SetStr(136, 145);
-            this.SetDex(136, 145);
-            this.SetInt(321, 345);
+            this.SetStr(1236, 1345);
+            this.SetDex(2136, 2145);
+            this.SetInt(1321, 1345);
 
-            this.SetHits(1307, 1413);
-			SetStam(300, 400);
-			SetMana(100);
+            this.SetHits(1807, 2413);
+			SetStam(1300, 1400);
+			SetMana(1000);
 
 			SetAttackSpeed( 2.5 );
-            SetDamage(1, 11);
+            SetDamage(11, 111);
 
             SetDamageType(ResistanceType.Physical, 20);
             SetDamageType(ResistanceType.Cold, 40);
@@ -40,8 +40,8 @@ namespace Server.Mobiles
             SetSkill(SkillName.Magery, 90.1, 95.0);
             SetSkill(SkillName.MagicResist, 190.1, 195.0);
 
-            Fame = 10000;
-            Karma = -10000;
+            Fame = 8500;
+            Karma = -8500;
 
             this.VirtualArmor = 100;
 

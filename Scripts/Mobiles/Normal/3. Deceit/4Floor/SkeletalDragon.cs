@@ -13,15 +13,15 @@ namespace Server.Mobiles
             Body = 104;
             BaseSoundID = 0x488;
 
-            SetStr(2898, 3030);
-            SetDex(1068, 1200);
-            SetInt(6488, 6620);
+            SetStr(16980, 18300);
+            SetDex(10680, 12000);
+            SetInt(16488, 16620);
 
-            SetHits(155800, 165990);
-			SetStam(900, 999);
-			SetMana(1000, 1500);
+            SetHits(355800, 365990);
+			SetStam(359000, 359999);
+			SetMana(301000, 301500);
 
-            SetDamage(322, 450);
+            SetDamage(1111, 2222);
 
 			Boss = true;
 			
@@ -44,8 +44,8 @@ namespace Server.Mobiles
             SetSkill(SkillName.Necromancy, 340.1, 360.0);
             SetSkill(SkillName.SpiritSpeak, 340.1, 360.0);
 
-            Fame = 31000;
-            Karma = -31000;
+            Fame = 29000;
+            Karma = -29000;
 
             VirtualArmor = 130;
 

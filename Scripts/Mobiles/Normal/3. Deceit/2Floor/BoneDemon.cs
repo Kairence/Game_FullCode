@@ -20,17 +20,17 @@ namespace Server.Mobiles
             Body = 308;
             BaseSoundID = 0x48D;
 
-            SetStr(1000, 1500);
-            SetDex(251, 375);
+            SetStr(10000, 15000);
+            SetDex(10251, 10375);
             SetInt(1001, 1020);
 
-            SetHits(73100, 75200);
-			SetStam(750, 1000);
+            SetHits(183100, 195200);
+			SetStam(175000, 200000);
 			SetMana(1000, 2500);
 			
 			Boss = true;
 			
-            SetDamage(52, 120);
+            SetDamage(420, 1100);
 
 			SetAttackSpeed( 2.5 );
 
@@ -51,8 +51,8 @@ namespace Server.Mobiles
             SetSkill(SkillName.EvalInt, 270.6, 275.5);
             SetSkill(SkillName.Meditation, 270.0, 275.0);
 
-            Fame = 22000;
-            Karma = -22000;
+            Fame = 25500;
+            Karma = -25500;
 
             VirtualArmor = 24;
         }

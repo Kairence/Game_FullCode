@@ -16,6 +16,12 @@ namespace Server.Items
         {
             this.Layer = (Core.ML ? Layer.OneHanded : Layer.Invalid);
 			Weight = 3.0;
+
+			PrefixOption[61] = 41;
+			SuffixOption[61] = 1000000;
+			PrefixOption[62] = 7;
+			SuffixOption[62] = -750000;
+
 			//Attributes.CastSpeed += 50;
 			//Attributes.CastRecovery += 50;
 		}
@@ -43,7 +49,7 @@ namespace Server.Items
 		{
 			get
 			{
-				return 50;
+				return 1000;
 			}
 		}
         public override int BookOffset

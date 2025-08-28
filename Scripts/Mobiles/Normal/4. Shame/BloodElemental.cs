@@ -13,11 +13,11 @@ namespace Server.Mobiles
             this.Body = 159;
             this.BaseSoundID = 278;
 
-            this.SetStr(1326, 1345);
+            this.SetStr(10326, 13045);
             this.SetDex(1266, 1285);
             this.SetInt(1126, 1150);
 
-            this.SetHits(44000, 45470);
+            this.SetHits(24000, 30547);
 			SetStam(220, 225);
 			SetMana(2000, 2500);
 			
@@ -42,7 +42,7 @@ namespace Server.Mobiles
             this.Fame = 24000;
             this.Karma = -24000;
 
-            this.VirtualArmor = 950;
+            this.VirtualArmor = 95;
         }
 
         public BloodElemental(Serial serial)

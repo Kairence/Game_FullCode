@@ -178,7 +178,7 @@ namespace Server.Items
 
         public void CheckMovement(Mobile m)
         {
-            if (!m.Alive || m.AccessLevel > AccessLevel.Player || (m is BaseCreature && ((BaseCreature)m).GetMaster() == null))
+			if (m == null ||!m.Alive || m.AccessLevel > AccessLevel.Player || (m is BaseCreature && ((BaseCreature)m).GetMaster() == null))
                 return;
 
             if (_LavaTimer != null && m.AccessLevel == AccessLevel.Player && m.Alive && _CurrentLava.Contains(m) && !_SafeZone.Contains(m) && !InSafeZone(m))
@@ -190,7 +190,7 @@ namespace Server.Items
         public void DoLavaDamage(Mobile m)
         {
             m.PrivateOverheadMessage(MessageType.Regular, 0x22, 1156497, m.NetState); // *The flowing lava scorches you!*
-            AOS.Damage(m, null, Utility.RandomMinMax(200, 300), 0, 100, 0, 0, 0);
+            AOS.Damage(m, m, Utility.RandomMinMax(200, 300), 0, 100, 0, 0, 0);
         }
 
         public void DoLavaDamageDelayed(Mobile m)

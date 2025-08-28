@@ -12,7 +12,7 @@ namespace Server.Items
             : base(0x1443)
         {
 			PrefixOption[61] = 20;
-			SuffixOption[61] = 75;
+			SuffixOption[61] = 750000;
 			//Attributes.RegenStam += 75;
             this.Weight = 28.0;
         }
@@ -40,14 +40,14 @@ namespace Server.Items
         {
             get
             {
-                return 2500;
+                return 3750;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 2500;
+                return 3750;
             }
         }
         public override int AosIntelligenceReq
@@ -62,14 +62,14 @@ namespace Server.Items
         {
             get
             {
-                return 30;
+                return 1;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 50;
+                return 13;
             }
         }
         public override int AosSpeed

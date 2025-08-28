@@ -17,17 +17,17 @@ namespace Server.Mobiles
         {
             BaseSoundID = 0x3F3;
 
-            SetStr(4580, 5300);
-            SetDex(156, 175);
-            SetInt(1460, 2600);
+            SetStr(5580, 7300);
+            SetDex(3600, 4500);
+            SetInt(4600, 6000);
 
-            SetHits(41000, 54000);
-            SetStam(1200, 1450);
-            SetMana(10, 50);
+            SetHits(11000, 14000);
+            SetStam(12000, 14500);
+            SetMana(100, 500);
 
 			SetAttackSpeed(10.0);
 
-            SetDamage(350, 777);
+            SetDamage(555, 777);
 
             SetDamageType(ResistanceType.Physical, 100);
 
@@ -37,8 +37,8 @@ namespace Server.Mobiles
             SetResistance(ResistanceType.Poison, 5, 10);
             SetResistance(ResistanceType.Energy, 5, 10);
 
-            Fame = 15000;
-            Karma = 15000;
+            Fame = 20000;
+            Karma = 20000;
 
             Tamable = true;
             ControlSlots = 3;

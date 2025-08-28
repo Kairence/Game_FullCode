@@ -14,13 +14,17 @@ namespace Server.Mobiles
             Body = 163;
             BaseSoundID = 263;
 
-            SetStr(326, 355);
+            SetStr(1326, 1755);
             SetDex(166, 185);
-            SetInt(71, 95);
+            SetInt(171, 195);
 
-            SetHits(196, 213);
+            SetHits(1460, 1613);
+            SetStam(1000, 1500);
+            SetMana(1000, 1500);
 
-            SetDamage(11, 17);
+			SetAttackSpeed( 10.0 );
+
+            SetDamage(55, 79);
 
             SetDamageType(ResistanceType.Physical, 20);
             SetDamageType(ResistanceType.Cold, 80);
@@ -38,7 +42,7 @@ namespace Server.Mobiles
             Fame = 5000;
             Karma = -5000;
 
-            VirtualArmor = 50;
+            VirtualArmor = 25;
 
             PackItem(new BlackPearl(3));
             Item ore = new IronOre(3);

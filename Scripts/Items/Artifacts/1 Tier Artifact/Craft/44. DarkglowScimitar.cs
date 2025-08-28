@@ -8,14 +8,14 @@ namespace Server.Items
         [Constructable]
         public DarkglowScimitar()
         {
-			//기력 증가 1000, 기력 회복 0.4
+			//혼돈 속성 25%, 기력 1000
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
-			PrefixOption[11] = 5; //옵션 종류
-			SuffixOption[11] = 100000; //옵션 값
-			PrefixOption[12] = 20; //옵션 종류
-			SuffixOption[12] = 40; //옵션 값
+			PrefixOption[11] = 157; //옵션 종류
+			SuffixOption[11] = 250000; //옵션 값
+			PrefixOption[12] = 5; //옵션 종류
+			SuffixOption[12] = 13000000; //옵션 값
         }
 
         public DarkglowScimitar(Serial serial)

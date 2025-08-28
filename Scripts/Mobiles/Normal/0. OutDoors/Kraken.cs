@@ -21,13 +21,13 @@ namespace Server.Mobiles
             this.SetDex(4260, 4450);
             this.SetInt(4260, 4400);
 
-            this.SetHits(212540, 212680);
+            this.SetHits(21254, 24268);
             SetStam(10000, 12000);
-            SetMana(100, 120);
+            SetMana(1000, 1200);
 			
 			SetAttackSpeed(10.0);
 
-            this.SetDamage(1360, 1640);
+            this.SetDamage(360, 1040);
 
             this.SetDamageType(ResistanceType.Physical, 0);
             this.SetDamageType(ResistanceType.Cold, 100);

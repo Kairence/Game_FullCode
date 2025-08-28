@@ -14,15 +14,15 @@ namespace Server.Mobiles
             Body = 736;
             Hue = 0;
 
-            SetStr(100, 110);
-            SetDex(156, 165);
+            SetStr(300, 510);
+            SetDex(756, 965);
             SetInt(106, 110);
 
-            SetHits(333, 444);
+            SetHits(533, 644);
 			SetStam(150, 200);
             SetMana(40, 50);
 
-            SetDamage(1, 10);
+            SetDamage(1, 50);
 			SetAttackSpeed( 2.5 );
 
             SetDamageType(ResistanceType.Physical, 0);

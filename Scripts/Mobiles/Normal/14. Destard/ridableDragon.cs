@@ -2,12 +2,12 @@ using System;
 
 namespace Server.Mobiles
 {
-    [CorpseName("a dragon corpse")]
+    [CorpseName("a red dragon corpse")]
     public class RidableDragon : BaseMount
     {
         [Constructable]
         public RidableDragon()
-            : this("a dragon")
+            : this("a red dragon")
         {
         }
  		
@@ -18,13 +18,17 @@ namespace Server.Mobiles
             Body = 59;//Utility.RandomList(12, 59);
             BaseSoundID = 362;
 
-            SetStr(796, 825);
-            SetDex(86, 105);
-            SetInt(436, 475);
+            SetStr(5796, 5825);
+            SetDex(6086, 6105);
+            SetInt(6436, 6475);
 
-            SetHits(4780, 4950);
+            SetHits(14780, 14950);
+			SetStam( 10000, 12000 );
+			SetMana( 10000, 11500 );
 
-            SetDamage(24, 26);
+			SetAttackSpeed( 5.0 );
+
+            SetDamage(240, 406);
 
             SetDamageType(ResistanceType.Physical, 100);
 
@@ -34,20 +38,20 @@ namespace Server.Mobiles
             SetResistance(ResistanceType.Poison, 25, 35);
             SetResistance(ResistanceType.Energy, 35, 45);
 
-            SetSkill(SkillName.EvalInt, 100.1, 105.0);
-            SetSkill(SkillName.Magery, 100.1, 105.0);
-            SetSkill(SkillName.MagicResist, 99.1, 100.0);
-            SetSkill(SkillName.Tactics, 97.6, 100.0);
-            SetSkill(SkillName.Wrestling, 90.1, 92.5);
+            SetSkill(SkillName.EvalInt, 200.1, 205.0);
+            SetSkill(SkillName.Magery, 200.1, 205.0);
+            SetSkill(SkillName.MagicResist, 199.1, 200.0);
+            SetSkill(SkillName.Tactics, 197.6, 200.0);
+            SetSkill(SkillName.Wrestling, 190.1, 192.5);
 
             Fame = 21000;
             Karma = -21000;
 
-            VirtualArmor = 60;
+            VirtualArmor = 26;
 
             Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 193.9;
+            ControlSlots = 3;
+            MinTameSkill = 173.9;
 
             SetSpecialAbility(SpecialAbility.DragonBreath);
         }

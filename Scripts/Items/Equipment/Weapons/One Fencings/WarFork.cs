@@ -12,6 +12,8 @@ namespace Server.Items
             : base(0x1405)
         {
             this.Weight = 9.0;
+			PrefixOption[61] = 42;
+			SuffixOption[61] = 50000;			
 		}
 
         public WarFork(Serial serial)
@@ -37,7 +39,7 @@ namespace Server.Items
         {
             get
             {
-                return 500;
+                return 2500;
             }
         }
         public override int AosDexterityReq
@@ -58,14 +60,14 @@ namespace Server.Items
         {
             get
             {
-                return 20;
+                return 1;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 40;
+                return 9;
             }
         }
         public override int AosSpeed

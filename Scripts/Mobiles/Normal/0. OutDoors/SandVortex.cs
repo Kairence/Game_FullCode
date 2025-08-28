@@ -19,9 +19,9 @@ namespace Server.Mobiles
             this.SetDex(1171, 1195);
             this.SetInt(760, 1000);
 
-            this.SetHits(9351, 10362);
+            this.SetHits(2351, 4362);
             SetStam(770, 880);
-            SetMana(25, 52);
+            SetMana(20, 32);
 
 			SetAttackSpeed(1.0);
 
@@ -40,8 +40,8 @@ namespace Server.Mobiles
             this.SetSkill(SkillName.Tactics, 120.0);
             this.SetSkill(SkillName.Wrestling, 120.0);
 
-            this.Fame = 8500;
-            this.Karma = -8500;
+            this.Fame = 8000;
+            this.Karma = -8000;
 
             this.PackItem(new Bone());
         }

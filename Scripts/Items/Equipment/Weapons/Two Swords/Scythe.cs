@@ -42,14 +42,14 @@ namespace Server.Items
         {
             get
             {
-                return 500;
+                return 4500;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 1000;
+                return 3000;
             }
         }
         public override int AosIntelligenceReq
@@ -63,14 +63,14 @@ namespace Server.Items
         {
             get
             {
-                return 10;
+                return 5;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 80;
+                return 20;
             }
         }
         public override int AosSpeed
@@ -84,7 +84,7 @@ namespace Server.Items
         {
             get
             {
-                return 3.00f;
+                return 5.00f;
             }
         }
         public override int OldStrengthReq

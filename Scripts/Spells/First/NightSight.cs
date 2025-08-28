@@ -26,9 +26,18 @@ namespace Server.Spells.First
 
         public override void OnCast()
         {
-            Caster.Target = new NightSightTarget(this);
+			int level = SpellLevel(Caster, 4);
+			
+			TimeSpan length = TimeSpan.FromSeconds(300.0 + level * 60 + Caster.Skills.Magery.Value * 1.5);
+
+			int criBonus = level >= 5 ? 10 : 5;
+
+			BuffInfo.AddBuff(Caster, new BuffInfo(BuffIcon.NightSight, 1075833, length, Caster, criBonus.ToString()));
+			Caster.FixedParticles(0x376A, 9, 32, 5007, EffectLayer.Waist);
+			Caster.PlaySound(0x1E3);
         }
 
+		/*
         public void Target(Mobile targ)
         {
             SpellHelper.Turn(Caster, targ);
@@ -40,6 +49,7 @@ namespace Server.Spells.First
                 targ.LightLevel = LightCycle.DungeonLevel * 100;
                 targ.FixedParticles(0x376A, 9, 32, 5007, EffectLayer.Waist);
                 targ.PlaySound(0x1E3);
+
 
                 BuffInfo.AddBuff(targ, new BuffInfo(BuffIcon.NightSight, 1075643));	//Night Sight/You ignore lighting effects
             }
@@ -74,5 +84,6 @@ namespace Server.Spells.First
                 m_Spell.FinishSequence();
             }
         }
+		*/
     }
 }

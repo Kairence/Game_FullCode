@@ -22,17 +22,32 @@ namespace Server.Items
             }
         }
 
-        public override void OnHit(Mobile attacker, Mobile defender, int damage)
+        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics )
         {
-            if (!this.Validate(attacker))
+            if (!this.Validate(attacker) )
                 return;
+			
+			if ( defender == null )
+				return;
+			
+			bool bonus = attacker.Skills.Tactics.Value >= 100 ? true : false;
+			int weaponBonus = 0;//level >= 5 ? 2 : 0;
+			
+			if ( !this.CalculateStam(attacker, Misc.Util.SPMStam[11,0], Misc.Util.SPMStam[11,1], level, bonus ) )
+				return;
 
-			if( attacker is PlayerMobile )
-			{
-				if( attacker.Stam < 20 )
-					return;
-				attacker.Stam -= 20;
-			}
+			double aggrotactics = tactics * 0.005;
+			double bonusDamage = 2.22 + level * 0.0237;
+			
+			BaseWeapon one = attacker.FindItemOnLayer(Layer.OneHanded) as BaseWeapon;
+			BaseShield shield = attacker.FindItemOnLayer(Layer.TwoHanded) as BaseShield;
+			if( one != null )
+				weaponBonus++;
+			if( shield == null )
+				weaponBonus++;
+			
+			//°è»ê
+			damage = (int)( damage * ( 1 + bonusDamage + weaponBonus * 1.11 ) );
 
             ClearCurrentAbility(attacker);
 
@@ -44,7 +59,9 @@ namespace Server.Items
 
             defender.FixedEffect(0x37BE, 20, 25);
 			
-			AOS.Damage(defender, attacker, damage, true, 100, 0, 0, 0, 0, 0, 0, false, false, false, 0);
+			AOS.Damage(defender, attacker, damage, false, 100, 0, 0, 0, 0, 0, 0, false, false, false, 0);
+			int aggro = (int)( damage * aggrotactics );
+			Misc.Util.AggroTargetCheck(attacker, defender, aggro );
         }
         public override int BaseMana
         {
@@ -53,6 +70,7 @@ namespace Server.Items
                 return 15;
             }
         }		
+		/*
         public override void BeforeAttack(Mobile attacker, Mobile defender, int damage)
         {
 			int range = 1;
@@ -88,5 +106,6 @@ namespace Server.Items
 			}
 
 		}
+		*/
     }
 }

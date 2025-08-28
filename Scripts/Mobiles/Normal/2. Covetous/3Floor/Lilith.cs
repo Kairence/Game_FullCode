@@ -14,17 +14,17 @@ namespace Server.Mobiles
             Body = 174;
             BaseSoundID = 0x4B0;
 
-            SetStr(582, 600);
-            SetDex(782, 800);
-            SetInt(731, 750);
+            SetStr(42582, 43600);
+            SetDex(57820, 68000);
+            SetInt(73100, 75000);
 
-            SetHits(700000, 777777);
-            SetStam(150, 155);
-			SetMana(2000, 2500);
+            SetHits(1900000, 2177777);
+            SetStam(150000, 155000);
+			SetMana(200000, 215000);
 			
 			SetAttackSpeed( 10.0 );
 			
-            SetDamage(431, 800);
+            SetDamage(12310, 18000);
 
             SetDamageType(ResistanceType.Physical, 75);
             SetDamageType(ResistanceType.Fire, 25);
@@ -42,7 +42,7 @@ namespace Server.Mobiles
             Fame = 27000;
             Karma = -27000;
 
-            VirtualArmor = 30;
+            VirtualArmor = 66;
             //SetSpecialAbility(SpecialAbility.LifeDrain);
 			m_Aura = DateTime.Now;
 		}

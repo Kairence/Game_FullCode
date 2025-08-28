@@ -13,15 +13,15 @@ namespace Server.Mobiles
             Name = "a treefellow";
             Body = 301;
 
-            SetStr(300, 325);
-            SetDex(66, 78);
-            SetInt(20, 60);
+            SetStr(1300, 1825);
+            SetDex(1066, 1780);
+            SetInt(1020, 1600);
 
-            SetHits(666, 777);
-			SetMana(50, 75);
-			SetStam(200, 250);
+            SetHits(1266, 1677);
+			SetMana(1050, 1075);
+			SetStam(1200, 1250);
 			
-            SetDamage(18, 40);
+            SetDamage(118, 240);
 			
 			SetAttackSpeed( 10.0 );
 
@@ -35,7 +35,7 @@ namespace Server.Mobiles
             Fame = 5000;  //Unknown
             Karma = -5000;  //Unknown
 
-            VirtualArmor = 2;
+            VirtualArmor = 5;
 
             PackItem(new BarkFragment(6));
         }

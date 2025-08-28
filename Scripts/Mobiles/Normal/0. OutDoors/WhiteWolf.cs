@@ -33,11 +33,11 @@ namespace Server.Mobiles
             SetResistance(ResistanceType.Poison, 5, 10);
             SetResistance(ResistanceType.Energy, 10, 15);
 
-            Fame = 2500;
-            Karma = -2500;
+            Fame = 4000;
+            Karma = -4000;
 
             Tamable = true;
-            ControlSlots = 2;
+            ControlSlots = 1;
             MinTameSkill = 83.1;
         }
 

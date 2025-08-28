@@ -10,17 +10,21 @@ namespace Server.Mobiles
         public Balron()
             : base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
         {
-            Name = NameList.RandomName("balron");
-            Body = 40;
+            Name = "Boss " + NameList.RandomName("balron");
+			
+			Body = Utility.RandomBool() ? 38 : 41;
             BaseSoundID = 357;
 
-            SetStr(986, 1185);
-            SetDex(177, 255);
-            SetInt(151, 250);
+            SetStr(15986, 21185);
+            SetDex(17700, 18255);
+            SetInt(15100, 17250);
 
-            SetHits(592, 711);
+            SetHits(359200, 371100);
+			SetStam(310000, 312000);
+			SetMana(310000, 312000);
 
-            SetDamage(22, 29);
+			SetAttackSpeed( 5.0 );
+            SetDamage(1220, 2429);
 
             SetDamageType(ResistanceType.Physical, 50);
             SetDamageType(ResistanceType.Fire, 25);
@@ -40,8 +44,8 @@ namespace Server.Mobiles
             SetSkill(SkillName.Tactics, 90.1, 100.0);
             SetSkill(SkillName.Wrestling, 90.1, 100.0);
 
-            Fame = 24000;
-            Karma = -24000;
+            Fame = 30000;
+            Karma = -30000;
 
             VirtualArmor = 90;
 

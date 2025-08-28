@@ -12,6 +12,8 @@ namespace Server.Items
             : base(0x13FB)
         {
             this.Weight = 26.0;
+			PrefixOption[61] = 42;
+			SuffixOption[61] = 50000;				
         }
 
         public LargeBattleAxe(Serial serial)
@@ -44,7 +46,7 @@ namespace Server.Items
         {
             get
             {
-                return 5000;
+                return 2500;
             }
         }
         public override int AosIntelligenceReq
@@ -58,14 +60,14 @@ namespace Server.Items
         {
             get
             {
-                return 15;
+                return 1;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 125;
+                return 20;
             }
         }
         public override int AosSpeed

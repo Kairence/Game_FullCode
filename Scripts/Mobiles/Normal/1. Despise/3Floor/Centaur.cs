@@ -14,15 +14,15 @@ namespace Server.Mobiles
             Body = 101;
             BaseSoundID = 679;
 
-            SetStr(202, 300);
-            SetDex(604, 660);
-            SetInt(191, 200);
+            SetStr(2020, 3000);
+            SetDex(2604, 2660);
+            SetInt(1910, 2000);
 
-            SetHits(3130, 3172);
-			SetStam(330, 372);
-			SetMana( 10, 15 );
+            SetHits(2130, 2172);
+			SetStam(1330, 1372);
+			SetMana(100, 150);
 			
-            SetDamage(14, 20);
+            SetDamage(64, 80);
 
 			SetAttackSpeed( 2.5 );
 			
@@ -40,8 +40,8 @@ namespace Server.Mobiles
             SetSkill(SkillName.Tactics, 100.1, 110.0);
             SetSkill(SkillName.Wrestling, 105.1, 110.0);
 
-            Fame = 12000;
-            Karma = -12000;
+            Fame = 9000;
+            Karma = -9000;
 
             VirtualArmor = 5;
 			RepeatingCrossbow rcb = new RepeatingCrossbow();

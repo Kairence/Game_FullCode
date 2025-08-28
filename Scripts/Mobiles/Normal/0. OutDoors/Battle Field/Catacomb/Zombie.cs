@@ -20,7 +20,7 @@ namespace Server.Mobiles
 
 			SetAttackSpeed( 15.0 );
 
-            SetHits(200, 245);
+            SetHits(300, 445);
 			SetStam(50, 100);
 			SetMana(10, 30);
             SetDamage(4, 12);

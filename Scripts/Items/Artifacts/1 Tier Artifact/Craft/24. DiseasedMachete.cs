@@ -8,14 +8,14 @@ namespace Server.Items
         [Constructable]
         public DiseasedMachete()
         {
-			//영혼 대화 5, 물리 치명 피해 4.5%
+			//영혼 대화 5, 물리 치명 피해 50%
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 44; //옵션 종류
-			SuffixOption[11] = 500; //옵션 값
+			SuffixOption[11] = 1000; //옵션 값
 			PrefixOption[12] = 82; //옵션 종류
-			SuffixOption[12] = 450; //옵션 값
+			SuffixOption[12] = 500000; //옵션 값
 
         }
 

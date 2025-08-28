@@ -15,7 +15,7 @@ namespace Server.Mobiles
 
             Hue = Utility.RandomSlimeHue();
 
-            SetStr(122, 134);
+            SetStr(222, 434);
             SetDex(116, 121);
             SetInt(16, 20);
 

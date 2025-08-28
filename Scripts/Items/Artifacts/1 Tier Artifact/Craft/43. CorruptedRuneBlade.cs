@@ -8,14 +8,14 @@ namespace Server.Items
         [Constructable]
         public CorruptedRuneBlade()
         {
-			//시전 100%, 공속 -20%
+			//시전 100%, 공격 속도 50%
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 41; //옵션 종류
-			SuffixOption[11] = 10000; //옵션 값
+			SuffixOption[11] = 1000000; //옵션 값
 			PrefixOption[12] = 40; //옵션 종류
-			SuffixOption[12] = -2000; //옵션 값
+			SuffixOption[12] = 500000; //옵션 값
         }
 
         public CorruptedRuneBlade(Serial serial)

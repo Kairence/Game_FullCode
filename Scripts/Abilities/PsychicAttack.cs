@@ -18,31 +18,47 @@ namespace Server.Items
                 return 25;
             }
         }
-		
-        public override void OnHit(Mobile attacker, Mobile defender, int damage)
+
+        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics )
         {
-            if (!this.Validate(attacker))
+            if (!this.Validate(attacker) )
                 return;
-			if( attacker is PlayerMobile )
-			{
-				if( attacker.Stam < 15 )
-					return;
-				attacker.Stam -= 15;
-			}
-			if( Utility.RandomDouble() < 0.2 )
-			{
-				double duration = 10.0;
-				if( defender is BaseCreature )
-				{
-					BaseCreature bc = defender as BaseCreature;
-					duration *= MonsterTier(bc);
-				}
-				defender.Paralyze(TimeSpan.FromSeconds(duration));
-			}
+			
+			if ( defender == null )
+				return;
+			
+			bool bonus = attacker.Skills.Tactics.Value >= 100 ? true : false;
+			bool levelCastSlowBonus = level >= 5 ? true : false;
+			
+			if ( !this.CalculateStam(attacker, Misc.Util.SPMStam[13,0], Misc.Util.SPMStam[13,1], level, bonus ) )
+				return;
+
+			double bonusDamage = 1.0 + level * 0.005;
+			double time = 20;
+			double damageDown = 0.2 + tactics * 0.0015;
+			
+			//계산
+			damage = (int)( damage * ( 1 + bonusDamage ) );
+			
 			defender.FixedParticles(0x3789, 10, 25, 5032, EffectLayer.Head);
 			defender.PlaySound(0x1F8);
 			defender.SendLocalizedMessage(1074384); // Your mind is attacked by psychic force!
 			AOS.Damage(defender, attacker, damage, false, 0, 0, 0, 0, 100, 0, 0, false, false, false);
+
+			if( defender is PlayerMobile )
+			{
+				PlayerMobile pm = defender as PlayerMobile;
+				pm.psychicTime = DateTime.Now + TimeSpan.FromSeconds(time);
+				pm.psychicDamageDown = damageDown;
+				pm.psychicSlow = levelCastSlowBonus;
+			}
+			else if( defender is BaseCreature )
+			{
+				BaseCreature bc = defender as BaseCreature;
+				bc.psychicTime = DateTime.Now + TimeSpan.FromSeconds(time);
+				bc.psychicDamageDown = damageDown;
+				bc.psychicSlow = levelCastSlowBonus;
+			}
             ClearCurrentAbility(attacker);
         }
 

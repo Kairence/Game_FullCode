@@ -13,20 +13,29 @@ namespace Server.Mobiles
             this.Body = Utility.RandomList(0xE8, 0xE9);
             this.BaseSoundID = 0x64;
 
-            if (0.5 >= Utility.RandomDouble())
+			if(0.001 >= Utility.RandomDouble())
+			{
                 this.Hue = 0x901;
-
-            this.SetStr(277, 444);
+				this.SetStr(2000, 4444);
+				SetHits(3333, 4888);
+				SetAttackSpeed(1.0);
+				this.Fame = 10000;
+			}
+			else
+			{
+				this.SetStr(300, 464);
+				SetHits(333, 388);
+				SetAttackSpeed(10.0);
+				this.Fame = 1000;
+			}
             this.SetDex(256, 275);
             this.SetInt(147, 175);
 
-            SetHits(1333, 1888);
             SetStam(240, 260);
             SetMana(40, 50);
 			
-			SetAttackSpeed(5.0);
 			
-            this.SetDamage(13, 25);
+            this.SetDamage(30, 40);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 
@@ -37,7 +46,6 @@ namespace Server.Mobiles
             this.SetSkill(SkillName.Tactics, 64.0, 66.0);
             this.SetSkill(SkillName.MagicResist, 44.0, 45.0);			
 			
-            this.Fame = 1000;
             this.Karma = 0;
 
             this.VirtualArmor = 2;

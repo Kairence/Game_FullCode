@@ -26,11 +26,15 @@ namespace Server.Mobiles
                 AddItem(new ShortPants(Utility.RandomRedHue())); 
             }
 
-            SetStr(386, 400);
-            SetDex(651, 665);
-            SetInt(361, 375);
+            SetStr(2386, 4400);
+            SetDex(3651, 5665);
+            SetInt(2361, 3375);
 
-            SetDamage(58, 80);
+            SetHits(9000, 11263);
+			SetStam(9130, 10040);
+			SetMana(1000, 1100);
+
+            SetDamage(158, 380);
 			SetAttackSpeed( 5.0 );
 
             SetDamageType(ResistanceType.Physical, 100);

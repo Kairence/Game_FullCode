@@ -31,17 +31,17 @@ namespace Server.Mobiles
 
 			Hue = 1172;
 			
-            SetStr(81, 105);
-            SetDex(91, 115);
-            SetInt(296, 320);
+            SetStr(1281, 1305);
+            SetDex(991, 1150);
+            SetInt(2296, 3200);
 
             SetHits(2490, 2630);
-			SetStam(30, 40);
-			SetMana(100, 120);
+			SetStam(300, 400);
+			SetMana(2100, 2520);
 
 			SetAttackSpeed( 50.0 );
 
-            SetDamage(5, 10);
+            SetDamage(50, 100);
 
             SetDamageType(ResistanceType.Physical, 100);
 
@@ -56,8 +56,8 @@ namespace Server.Mobiles
             SetSkill(SkillName.Tactics, 165.0, 187.5);
             SetSkill(SkillName.Wrestling, 20.2, 60.0);
 
-            Fame = 15000;
-            Karma = -15000;
+            Fame = 10000;
+            Karma = -10000;
 
             VirtualArmor = 16;
             PackReg(6);

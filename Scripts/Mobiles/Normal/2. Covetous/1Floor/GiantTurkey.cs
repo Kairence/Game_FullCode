@@ -15,17 +15,17 @@ namespace Server.Mobiles
 			Body = 1026;
 			BaseSoundID = 0x66A;
 
-            SetStr(520, 740);
-            SetDex(117, 120);
-            SetInt(113, 115);
+            SetStr(5520, 7740);
+            SetDex(6117, 7120);
+            SetInt(1113, 2115);
 
-            SetHits(7000, 8000);
-			SetStam(200, 300);
-            SetMana(10, 100);
+            SetHits(30000, 35000);
+			SetStam(20000, 30000);
+            SetMana(1000, 2000);
 
-			SetAttackSpeed( 10.0 );
+			SetAttackSpeed( 2.5 );
 
-            SetDamage(81, 100);
+            SetDamage(381, 500);
 
             SetDamageType(ResistanceType.Physical, 100);
 
@@ -42,8 +42,8 @@ namespace Server.Mobiles
 			
             VirtualArmor = 10;
 
-			Fame = 10000;
-            Karma = -10000;	
+			Fame = 13000;
+            Karma = -13000;	
 			summoned = false;
         }
 

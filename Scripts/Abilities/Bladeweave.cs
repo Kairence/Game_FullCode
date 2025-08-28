@@ -40,6 +40,85 @@ namespace Server.Items
 
         public override int BaseMana { get { return 30; } }
 
+        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics )
+        {
+            if (!this.Validate(attacker) )
+                return;
+			
+			if ( defender == null )
+				return;
+			
+			bool bonus = attacker.Skills.Tactics.Value >= 100 ? true : false;
+			//bool levelAreaBonus = level >= 5 ? true : false;
+			//double levelDamageBonus = level >= 5 ? 1.0 : 0;
+			
+			if ( !this.CalculateStam(attacker, Misc.Util.SPMStam[9,0], Misc.Util.SPMStam[9,1], level, bonus ) )
+				return;
+
+			double bonusDamage = 1.0 + level * 0.025;	
+			double aggroRemover = 0.5 + tactics * 0.005;
+			
+			//계산
+			damage = (int)( damage * ( 1 + bonusDamage ) );
+
+			AOS.Damage(defender, attacker, damage, false, 100, 0, 0, 0, 0, 0, 0, false, false, false);
+			attacker.SendLocalizedMessage(1063168); // You attack with lightning precision!
+			defender.SendLocalizedMessage(1063169); // Your opponent's quick strike causes extra damage!
+			defender.FixedParticles(0x3818, 1, 11, 0x13A8, 0, 0, EffectLayer.Waist);
+			defender.PlaySound(0x51D);
+			
+			//어그로 삭제 코드
+			if( defender is BaseCreature )
+			{
+				BaseCreature bc = defender as BaseCreature;
+				Misc.Util.AggroTargetCheck(attacker, defender, (int)( damage * aggroRemover ) );
+			}
+
+			/*
+			if( levelAreaBonus )
+			{
+				List<Mobile> targets = new List<Mobile>();
+				IPooledEnumerable eable = attacker.GetMobilesInRange(6);//weapon.MaxRange);
+
+				foreach (Mobile m in eable)
+				{
+					if (m != defender && m != attacker && m.CanBeHarmful(attacker, false) && attacker.InLOS(m) && 
+						Server.Spells.SpellHelper.ValidIndirectTarget(attacker, m))
+					{
+						targets.Add(m);
+					}
+				}
+				eable.Free();
+				if (targets.Count > 0)
+				{
+                    for (int i = 0; i < targets.Count; ++i)
+                    {
+                        Mobile m = targets[i];
+
+						if ( m != attacker || m != defender )
+						{
+							AOS.Damage(defender, attacker, damage, false, 100, 0, 0, 0, 0, 0, 0, false, false, false);
+							attacker.SendLocalizedMessage(1063168); // You attack with lightning precision!
+							defender.SendLocalizedMessage(1063169); // Your opponent's quick strike causes extra damage!
+							defender.FixedParticles(0x3818, 1, 11, 0x13A8, 0, 0, EffectLayer.Waist);
+							defender.PlaySound(0x51D);
+							
+							//어그로 삭제 코드
+							if( defender is BaseCreature )
+							{
+								BaseCreature bc = defender as BaseCreature;
+								Misc.Util.AggroTargetCheck(attacker, defender, (int)( damage * aggroRemover ) );
+							}
+						}
+					}
+					ColUtility.Free(targets);
+				}
+			}
+			*/
+            ClearCurrentAbility(attacker);
+		}
+
+		/*
         public override bool OnBeforeSwing(Mobile attacker, Mobile defender)
         {
             if (!Validate(attacker) || !CheckMana(attacker, false))
@@ -134,7 +213,7 @@ namespace Server.Items
                 ClearCurrentAbility(attacker);
             }
         }
-
+		*/
         public override void OnMiss(Mobile attacker, Mobile defender)
         {
             BladeWeaveRedirect bwr;

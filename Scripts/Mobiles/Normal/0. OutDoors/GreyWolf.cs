@@ -14,7 +14,7 @@ namespace Server.Mobiles
             this.Body = Utility.RandomList(25, 27);
             this.BaseSoundID = 0xE5;
 
-            this.SetStr(256, 280);
+            this.SetStr(456, 680);
             this.SetDex(366, 385);
             this.SetInt(26, 50);
 

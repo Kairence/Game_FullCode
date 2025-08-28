@@ -14,7 +14,8 @@ namespace Server.Items
         public BookOfChivalry(ulong content)
             : base(content, 0x2252)
         {
-            this.Layer = (Core.ML ? Layer.OneHanded : Layer.Invalid);
+			this.Layer = Layer.Invalid;
+            //this.Layer = (Core.ML ? Layer.OneHanded : Layer.Invalid);
         }
 
         public BookOfChivalry(Serial serial)

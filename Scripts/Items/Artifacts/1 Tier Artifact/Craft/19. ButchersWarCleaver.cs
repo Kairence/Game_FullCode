@@ -14,9 +14,9 @@ namespace Server.Items
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 56; //옵션 종류
-			SuffixOption[11] = 3000; //옵션 값
+			SuffixOption[11] = 750000; //옵션 값
 			PrefixOption[12] = 40; //옵션 종류
-			SuffixOption[12] = 2000; //옵션 값
+			SuffixOption[12] = 200000; //옵션 값
         }
 
         public ButchersWarCleaver(Serial serial)

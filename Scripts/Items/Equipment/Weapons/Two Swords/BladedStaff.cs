@@ -11,6 +11,8 @@ namespace Server.Items
         public BladedStaff()
             : base(0x26BD)
         {
+			PrefixOption[61] = 42;
+			SuffixOption[61] = 150000;			
             this.Weight = 9.0;
         }
 
@@ -37,14 +39,14 @@ namespace Server.Items
         {
             get
             {
-                return 500;
+                return 3500;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 400;
+                return 4000;
             }
         }
         public override int AosIntelligenceReq
@@ -58,14 +60,14 @@ namespace Server.Items
         {
             get
             {
-                return 40;
+                return 5;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 60;
+                return 10;
             }
         }
         public override int AosSpeed

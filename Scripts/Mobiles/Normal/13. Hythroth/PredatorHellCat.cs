@@ -14,13 +14,16 @@ namespace Server.Mobiles
             Body = 127;
             BaseSoundID = 0xBA;
 
-            SetStr(161, 185);
-            SetDex(96, 115);
-            SetInt(76, 100);
+            SetStr(2161, 3185);
+            SetDex(1096, 2115);
+            SetInt(2076, 3100);
 
-            SetHits(97, 131);
+            SetHits(2097, 2131);
+			SetStam(1310, 2312);
+			SetMana(1310, 2312);
 
-            SetDamage(5, 17);
+			SetAttackSpeed( 5.0 );
+            SetDamage(25, 175);
 
             SetDamageType(ResistanceType.Physical, 75);
             SetDamageType(ResistanceType.Fire, 25);
@@ -37,16 +40,16 @@ namespace Server.Mobiles
             SetSkill(SkillName.Wrestling, 50.1, 65.0);
             SetSkill(SkillName.DetectHidden, 41.2);
 
-            Fame = 2500;
-            Karma = -2500;
+            Fame = 6000;
+            Karma = -6000;
 
-            VirtualArmor = 3;
+            VirtualArmor = 6;
 
             Tamable = true;
-            ControlSlots = 18;
+            ControlSlots = 2;
             MinTameSkill = 90.0;
 
-            SetSpecialAbility(SpecialAbility.DragonBreath);
+            //SetSpecialAbility(SpecialAbility.DragonBreath);
         }
 
         public PredatorHellCat(Serial serial)

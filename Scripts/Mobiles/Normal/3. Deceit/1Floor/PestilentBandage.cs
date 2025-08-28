@@ -23,15 +23,15 @@ namespace Server.Mobiles
             Hue = 0x515; 
             BaseSoundID = 471; 
 
-            SetStr(391, 440);
+            SetStr(4910, 5400);
             SetDex(441, 480);
             SetInt(251, 280);
 
-            SetHits(2015, 2045);
-            SetStam(230, 250);
+            SetHits(6015, 7045);
+            SetStam(2300, 2500);
 			SetMana(10, 20);
 
-            SetDamage(29, 50);
+            SetDamage(290, 1050);
 
 			SetAttackSpeed( 15 );
 

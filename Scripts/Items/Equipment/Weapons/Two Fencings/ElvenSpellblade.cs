@@ -13,8 +13,10 @@ namespace Server.Items
         {
 			PrefixOption[61] = 58;
 			PrefixOption[62] = 62;
-			SuffixOption[61] = 750;
-			SuffixOption[62] = 750;
+			SuffixOption[61] = 250000;
+			SuffixOption[62] = 250000;
+			PrefixOption[63] = 41;
+			SuffixOption[63] = 500000;
 			
 			//AbsorptionAttributes.ElementalDamage += 750;
 			//AbsorptionAttributes.FeyDamage += 750;
@@ -44,35 +46,35 @@ namespace Server.Items
         {
             get
             {
-                return 1000;
+                return 3750;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
         public override int AosIntelligenceReq
         {
             get
             {
-                return 1000;
+                return 3750;
             }
         }
         public override int AosMinDamage
         {
             get
             {
-                return 15;
+                return 1;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 25;
+                return 2;
             }
         }
         public override int AosSpeed
@@ -86,7 +88,7 @@ namespace Server.Items
         {
             get
             {
-                return 2.00f;
+                return 3.00f;
             }
         }
         public override int OldStrengthReq

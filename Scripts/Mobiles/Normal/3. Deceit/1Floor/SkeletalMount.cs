@@ -15,15 +15,15 @@ namespace Server.Mobiles
         public SkeletalMount(string name)
             : base(name, 793, 0x3EBB, AIType.AI_Melee, FightMode.Aggressor, 10, 1, 0.2, 0.4)
         {
-            this.SetStr(291, 300);
-            this.SetDex(646, 855);
-            this.SetInt(146, 160);
+            this.SetStr(10491, 15000);
+            this.SetDex(6460, 8550);
+            this.SetInt(1460, 1600);
 
-			SetHits(54932, 54979);
-			SetMana(110, 115);
-			SetStam(1360, 1500);
+			SetHits(149302, 194979);
+			SetMana(11000, 11500);
+			SetStam(136000, 150000);
 
-            this.SetDamage(28, 100);
+            this.SetDamage(128, 1200);
 			SetAttackSpeed( 2.5 );
 
 			Boss = true;

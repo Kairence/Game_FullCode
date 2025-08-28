@@ -12,7 +12,7 @@ namespace Server.Items
             : base(0xF49)
         {
 			PrefixOption[61] = 56;
-			SuffixOption[61] = 500;
+			SuffixOption[61] = 500000;
 			//AbsorptionAttributes.HumanoidDamage += 500;
             this.Weight = 7.0;
         }
@@ -40,14 +40,14 @@ namespace Server.Items
         {
             get
             {
-                return 500;
+                return 3750;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 500;
+                return 3750;
             }
         }
         public override int AosIntelligenceReq
@@ -61,14 +61,14 @@ namespace Server.Items
         {
             get
             {
-                return 25;
+                return 5;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 65;
+                return 13;
             }
         }
         public override int AosSpeed

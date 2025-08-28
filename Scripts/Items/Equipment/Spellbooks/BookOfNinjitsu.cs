@@ -14,6 +14,8 @@ namespace Server.Items
         public BookOfNinjitsu(ulong content)
             : base(content, 0x23A0)
         {
+			this.Layer = Layer.Invalid;
+			
             //Layer = (Core.ML ? Layer.OneHanded : Layer.Invalid);
         }
 

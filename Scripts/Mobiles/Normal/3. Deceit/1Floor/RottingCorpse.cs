@@ -14,17 +14,17 @@ namespace Server.Mobiles
             Body = 155;
             BaseSoundID = 471;
 
-            SetStr(601, 650);
+            SetStr(6010, 6500);
             SetDex(250, 300);
             SetInt(101, 200);
 
 			SetAttackSpeed( 10.0 );
 
-            SetHits(4059, 4122);
+            SetHits(8059, 9122);
             SetStam(100, 150);
             SetMana(150, 175);
 
-            SetDamage(22, 56);
+            SetDamage(220, 1156);
 
             SetDamageType(ResistanceType.Physical, 0);
             SetDamageType(ResistanceType.Cold, 50);

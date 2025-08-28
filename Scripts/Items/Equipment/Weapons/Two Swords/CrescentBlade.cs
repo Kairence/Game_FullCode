@@ -13,7 +13,7 @@ namespace Server.Items
         {
             this.Weight = 1.0;
 			PrefixOption[61] = 55;
-			SuffixOption[61] = 2000;
+			SuffixOption[61] = 75000;
 			
 			//WeaponAttributes.HitLightning += 2000;
         }
@@ -41,14 +41,14 @@ namespace Server.Items
         {
             get
             {
-                return 1000;
+                return 2500;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 3000;
+                return 5000;
             }
         }
         public override int AosIntelligenceReq
@@ -62,14 +62,14 @@ namespace Server.Items
         {
             get
             {
-                return 25;
+                return 2;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 35;
+                return 10;
             }
         }
         public override int AosSpeed

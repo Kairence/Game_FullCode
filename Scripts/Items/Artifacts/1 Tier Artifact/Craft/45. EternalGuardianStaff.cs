@@ -10,24 +10,17 @@ namespace Server.Items
         [Constructable]
         public EternalGuardianStaff()
         {		
-			//체 200, 방어율 100%, 모저 20%
-			SuffixOption[0] = 7; //옵션 갯수
+			//체 500, 방어율 50%, 모저 5%
+			SuffixOption[0] = 3; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 4; //옵션 종류
-			SuffixOption[11] = 20000; //옵션 값
+			SuffixOption[11] = 5000000; //옵션 값
 			PrefixOption[12] = 18; //옵션 종류
-			SuffixOption[12] = 10000; //옵션 값
-			PrefixOption[13] = 12; //옵션 종류
-			SuffixOption[13] = 2000; //옵션 값
-			PrefixOption[14] = 13; //옵션 종류
-			SuffixOption[14] = 2000; //옵션 값
-			PrefixOption[15] = 14; //옵션 종류
-			SuffixOption[15] = 2000; //옵션 값
-			PrefixOption[16] = 15; //옵션 종류
-			SuffixOption[16] = 2000; //옵션 값	
-			PrefixOption[17] = 16; //옵션 종류
-			SuffixOption[17] = 2000; //옵션 값	
+			SuffixOption[12] = 500000; //옵션 값
+			PrefixOption[13] = 114; //옵션 종류
+			SuffixOption[13] = 50000; //옵션 값
+
         }
 
         public EternalGuardianStaff(Serial serial)

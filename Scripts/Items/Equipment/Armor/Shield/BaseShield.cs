@@ -82,6 +82,7 @@ namespace Server.Items
         public override void OnRemoved(object parent)
         {
             LastParryChance = 0;
+			InvalidateProperties();
 
             base.OnRemoved(parent);
         }

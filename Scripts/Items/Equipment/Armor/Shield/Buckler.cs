@@ -24,28 +24,28 @@ namespace Server.Items
         {
             get
             {
-                return 500;
+                return 2000;
             }
         }
         public override int AosDexReq
         {
             get
             {
-                return 200;
+                return 1000;
             }
         }
         public override int AosIntReq
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
         public override int ArmorBase
         {
             get
             {
-                return 0;
+                return 25;
             }
         }
 		
@@ -53,13 +53,14 @@ namespace Server.Items
         public Buckler()
             : base(0x1B73)
         {
-            Weight = 5.0;
-			PrefixOption[61] = 109;
-			SuffixOption[61] = 50;
-			PrefixOption[62] = 110;
-			SuffixOption[62] = 3500;
-			PrefixOption[63] = 110;
-			SuffixOption[63] = 100;
+            this.Weight = 15.0;
+			PrefixOption[61] = 41; //시전 속도
+			SuffixOption[61] = -500000;
+			PrefixOption[62] = 109; //방패 방어 확률
+			SuffixOption[62] = 500000;
+			PrefixOption[63] = 110; //모든 피격 데미지 감소
+			SuffixOption[63] = 100000;
+
 		}
 
         public Buckler(Serial serial)

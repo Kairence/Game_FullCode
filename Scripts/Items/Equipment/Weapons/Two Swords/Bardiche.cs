@@ -12,9 +12,9 @@ namespace Server.Items
             : base(0xF4D)
         {
 			PrefixOption[61] = 87;
-			SuffixOption[61] = 1000;
+			SuffixOption[61] = 2000;
 
-			//SkillBonuses.SetValues(5, SkillName.Swords, 10.0);
+			//SkillBonuses.SetValues(5, SkillName.Swords, 20.0);
             this.Weight = 9.0;
         }
 
@@ -41,14 +41,14 @@ namespace Server.Items
         {
             get
             {
-                return 300;
+                return 4000;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 100;
+                return 3500;
             }
         }
         public override int AosIntelligenceReq
@@ -62,14 +62,14 @@ namespace Server.Items
         {
             get
             {
-                return 35;
+                return 5;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 55;
+                return 10;
             }
         }
         public override int AosSpeed

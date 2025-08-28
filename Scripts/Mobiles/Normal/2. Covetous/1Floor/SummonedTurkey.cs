@@ -14,18 +14,17 @@ namespace Server.Mobiles
 			Body = 95;
 			BaseSoundID = 0x66A;
 
-            SetStr(60, 110);
+            SetStr(360, 410);
             SetDex(30, 75);
             SetInt(10, 20);
 
-            this.NoKillAwards = true;
-            SetHits(150, 200);
+            SetHits(150,200);
 			SetStam(30, 50);
             SetMana(1, 5);
 
-			SetAttackSpeed( 7.5 );
+			SetAttackSpeed( 2.5 );
 			
-            SetDamage(2, 2);
+            SetDamage(5, 9);
 
             SetDamageType(ResistanceType.Physical, 100);
 
@@ -33,12 +32,14 @@ namespace Server.Mobiles
             SetSkill(SkillName.Tactics, 5.0);
             SetSkill(SkillName.Wrestling, 5.0);
 
-            Fame = 1000;
-            Karma = -1000;
+            Fame = 0;
+            Karma = 0;
 
             VirtualArmor = 0;
 
             Tamable = false;
+            ControlSlots = 1;
+            MinTameSkill = -0.9;
 
             m_NextGobble = DateTime.UtcNow;
             VirtualArmor = 5;

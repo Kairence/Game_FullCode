@@ -11,8 +11,8 @@ namespace Server.Items
         {
 			PrefixOption[61] = 57;
 			PrefixOption[62] = 61;
-			SuffixOption[61] = 500;
-			SuffixOption[62] = 500;
+			SuffixOption[61] = 50000;
+			SuffixOption[62] = 50000;
 			//AbsorptionAttributes.UndeadDamage += 500;
 			//AbsorptionAttributes.AbyssDamage += 500;
             this.Weight = 6.0;
@@ -41,7 +41,7 @@ namespace Server.Items
         {
             get
             {
-                return 1000;
+                return 5000;
             }
         }
         public override int AosDexterityReq
@@ -62,21 +62,21 @@ namespace Server.Items
         {
             get
             {
-                return 12;
+                return 1;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 20;
+                return 2;
             }
         }
         public override float MlSpeed
         {
             get
             {
-                return 4.00f;
+                return 3.00f;
             }
         }
         public override int InitMinHits

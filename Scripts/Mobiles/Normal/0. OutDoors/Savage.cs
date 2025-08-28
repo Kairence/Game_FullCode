@@ -17,7 +17,7 @@ namespace Server.Mobiles
             else
                 this.Body = 183;
 
-            this.SetStr(136, 145);
+            this.SetStr(336, 645);
             this.SetDex(126, 135);
             this.SetInt(121, 135);
 			SetHits(282, 300);

@@ -13,7 +13,7 @@ namespace Server.Mobiles
             this.Body = 0xDD;
             this.BaseSoundID = 0xE0;
 
-            this.SetStr(25, 30);
+            this.SetStr(250, 630);
             this.SetDex(25, 30);
             this.SetInt(12, 18);
 
@@ -23,7 +23,7 @@ namespace Server.Mobiles
 			
 			SetAttackSpeed(10.0);
 
-            this.SetDamage(7, 11);
+            this.SetDamage(4, 11);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 
@@ -38,9 +38,9 @@ namespace Server.Mobiles
 
             this.Tamable = true;
             this.ControlSlots = 1;
-            this.MinTameSkill = 29.1;
+            this.MinTameSkill = 49.1;
 
-            if (Core.AOS && Utility.Random(1000) == 0) // 0.1% chance to have mad cows
+            if (Utility.Random(1000) == 0) // 0.1% chance to have mad cows
                 FightMode = FightMode.Closest;
         }
 

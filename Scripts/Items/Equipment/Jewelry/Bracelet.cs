@@ -52,11 +52,16 @@ namespace Server.Items
         public GoldBracelet()
             : base(0x1086)
         {
-            //Weight = 0.1;
-			PrefixOption[61] = 7;
-			SuffixOption[61] = 1000;
-			PrefixOption[62] = 1;
-			SuffixOption[62] = 50;
+            Weight = 1.0;
+			PrefixOption[50] = 19;
+			PrefixOption[61] = 114;
+			SuffixOption[61] = 20000;
+			PrefixOption[62] = 4;
+			SuffixOption[62] = 3000000;
+			PrefixOption[63] = 5;
+			SuffixOption[63] = 3000000;
+			PrefixOption[64] = 6;
+			SuffixOption[64] = 3000000;
         }
         public override int InitMinHits
         {
@@ -72,8 +77,8 @@ namespace Server.Items
                 return 100;
             }
         }
-		public override int AosDexterityReq { get { return 1; } }
-		public override int AosIntelligenceReq { get { return 0; } }
+		public override int AosDexterityReq { get { return 100; } }
+		public override int AosIntelligenceReq { get { return 1500; } }
         public override int LabelNumber { get { return 1138011; } }
         public GoldBracelet(Serial serial)
             : base(serial)
@@ -103,10 +108,12 @@ namespace Server.Items
         public SilverBracelet()
             : base(0x1F06)
         {
-			PrefixOption[61] = 8;
-			SuffixOption[61] = 1000;
-			PrefixOption[62] = 2;
-			SuffixOption[62] = 50;
+            Weight = 1.0;
+			PrefixOption[50] = 20;
+			PrefixOption[61] = 113;
+			SuffixOption[61] = 50000;
+			PrefixOption[62] = 6;
+			SuffixOption[62] = 6000000;
         }
         public override int InitMinHits
         {
@@ -122,8 +129,8 @@ namespace Server.Items
                 return 100;
             }
         }
-		public override int AosDexterityReq { get { return 0; } }
-		public override int AosIntelligenceReq { get { return 1; } }
+		public override int AosDexterityReq { get { return 100; } }
+		public override int AosIntelligenceReq { get { return 3000; } }
         public override int LabelNumber { get { return 1138012; } }
         public SilverBracelet(Serial serial)
             : base(serial)

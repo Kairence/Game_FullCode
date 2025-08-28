@@ -14,7 +14,7 @@ namespace Server.Items
 			PrefixOption[61] = 81;
 			SuffixOption[61] = 1000;
 			
-			SkillBonuses.SetValues(5, SkillName.Archery, 10.0);
+			//SkillBonuses.SetValues(5, SkillName.Archery, 10.0);
 
 		}
 
@@ -62,14 +62,14 @@ namespace Server.Items
         {
             get
             {
-                return 500;
+                return 4000;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 200;
+                return 3500;
             }
         }
         public override int AosIntelligenceReq
@@ -84,14 +84,14 @@ namespace Server.Items
         {
             get
             {
-                return 24;
+                return 12;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 60;
+                return 16;
             }
         }
         public override int AosSpeed

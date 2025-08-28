@@ -14,7 +14,7 @@ namespace Server.Mobiles
             this.Body = Utility.RandomList(64, 65);
             this.BaseSoundID = 0x73;
 
-            this.SetStr(256, 280);
+            this.SetStr(456, 680);
             this.SetDex(366, 385);
             this.SetInt(26, 50);
 
@@ -36,10 +36,10 @@ namespace Server.Mobiles
             this.SetSkill(SkillName.Tactics, 75.1, 90.0);
             this.SetSkill(SkillName.Wrestling, 75.1, 90.0);
 
-            this.Fame = 1150;
+            this.Fame = 2150;
             this.Karma = 0;
 
-            this.VirtualArmor = 1;
+            this.VirtualArmor = 3;
 
             this.Tamable = true;
             this.ControlSlots = 1;

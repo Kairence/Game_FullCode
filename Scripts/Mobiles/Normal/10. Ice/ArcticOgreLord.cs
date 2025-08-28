@@ -3,7 +3,7 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    [CorpseName("a frozen ogre lord's corpse")]
+    [CorpseName("a frozen ogre corpse")]
     [TypeAlias("Server.Mobiles.ArticOgreLord")]
     public class ArcticOgreLord : BaseCreature
     {
@@ -11,17 +11,20 @@ namespace Server.Mobiles
         public ArcticOgreLord()
             : base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
         {
-            Name = "an arctic ogre lord";
+            Name = "an arctic ogre";
             Body = 135;
             BaseSoundID = 427;
 
-            SetStr(767, 945);
-            SetDex(66, 75);
-            SetInt(46, 70);
+            SetStr(3767, 3945);
+            SetDex(2066, 2750);
+            SetInt(460, 700);
 
-            SetHits(476, 552);
+            SetHits(8476, 9952);
+			SetStam(7000, 9000);
+			SetMana(1000, 2000);
 
-            SetDamage(20, 25);
+			SetAttackSpeed( 10.0 );
+            SetDamage(350, 650);
 
             SetDamageType(ResistanceType.Physical, 30);
             SetDamageType(ResistanceType.Cold, 70);
@@ -38,7 +41,7 @@ namespace Server.Mobiles
             Fame = 15000;
             Karma = -15000;
 
-            VirtualArmor = 50;
+            this.VirtualArmor = Utility.RandomMinMax(55, 120);
 
             PackItem(new Club());
         }

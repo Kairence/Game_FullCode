@@ -389,6 +389,21 @@ namespace Server.Mobiles
 
         public virtual bool CanBeParagon { get { return false; } }
 
+		//몬스터 변수 지정
+		private DateTime m_WeaponDefenseTime;
+		public DateTime WeaponDefenseTime
+		{
+			get{ return m_WeaponDefenseTime; }
+			set{ m_WeaponDefenseTime = value;}
+		}
+
+		private DateTime m_MagicDefenseTime;
+		public DateTime MagicDefenseTime
+		{
+			get{ return m_MagicDefenseTime; }
+			set{ m_MagicDefenseTime = value;}
+		}
+
         /* Do not serialize this till the code is finalized */
 
 		//변수 지정
@@ -2043,6 +2058,7 @@ namespace Server.Mobiles
                 IsParagon = true;
             }
 
+			//아이스 던전과 파이어 던전은 등급 상승 제외
 			Misc.Util.GradeCreate(this, location, m);
             base.OnBeforeSpawn(location, m);
         }
@@ -4615,7 +4631,30 @@ namespace Server.Mobiles
                 Dispel(attacker);
             }
         }
-		public int disarmcount = 0;
+		public bool disarmcheck = false; //무장해제 체크
+		public DateTime disarmtime = DateTime.Now; //무장해제 시간
+		public int disarmweak = 0; //무장해제 패널티
+		
+		public bool dismountcheck = false; //낙마 체크
+		public DateTime dismounttime = DateTime.Now; //낙마 시간
+		public int dismountweak = 0; //낙마 패널티
+
+		//정신 공격 패널티
+		public DateTime psychicTime = DateTime.Now;
+		public bool psychicSlow = false;
+		public double psychicDamageDown = 0;
+
+
+		DateTime attackchargeTime;
+
+		//독 저장량
+		private int m_PoisonSaving;
+		[CommandProperty( AccessLevel.GameMaster )]
+		public int PoisonSaving 
+		{ 
+			get { return m_PoisonSaving; } 
+			set { m_PoisonSaving = value; InvalidateProperties(); } 
+		}
 
         public virtual void Dispel(Mobile m)
         {
@@ -7674,10 +7713,10 @@ namespace Server.Mobiles
 													{
 														int specialitemnumber = 0;
 														Item item = null; 
-														if( userluck > 1000 )
-															userluck = 1000;
-														int rank = Util.ItemRankMaker( userluck );
-														int tier = Util.ItemTierMaker( Fame, rank, 0 );
+														if( userluck > 10000 )
+															userluck = 10000;
+														int rank = Util.ItemRankMaker( userluck, 0, 0 );
+														//int tier = Util.ItemTierMaker( Fame, rank, 0 );
 														
 														//int uniqueoption = 0;
 														if( 0.95 < Utility.RandomDouble() && monsternumber -1 <= m_MonsterEquipDrop.GetLength(0) && monsternumber >= 1 )
@@ -8800,9 +8839,6 @@ namespace Server.Mobiles
 			}		
 		}
 		*/
-		public bool disarmcheck = false;
-
-		DateTime attackchargeTime;
 		
         public virtual void OnThink()
         {
@@ -8850,6 +8886,11 @@ namespace Server.Mobiles
 					if( Tamable )
 						Tamable = false;
 					m_Boss = true;
+				}
+				//변환 불가능 지역
+				if( Region.IsPartOf("Ice") || Region.IsPartOf("Fire") || Region.IsPartOf("Destard")  )
+				{
+					this.Grade = 1;
 				}
 				if( m_Boss )
 				{

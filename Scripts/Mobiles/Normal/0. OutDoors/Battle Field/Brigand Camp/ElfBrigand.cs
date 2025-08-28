@@ -26,18 +26,18 @@ namespace Server.Mobiles
             Title = "the brigand";
             Hue = Race.RandomSkinHue();
 
-            SetStr(236, 240);
-            SetDex(321, 335);
-            SetInt(131, 135);
+            SetStr(1236, 1240);
+            SetDex(1321, 1335);
+            SetInt(1131, 1135);
 
-			SetHits(560, 580);
+			SetHits(1560, 1580);
 			SetMana(150);
-			SetStam(365, 370);			
+			SetStam(1365, 1370);			
 			
-            SetDamage(15, 44);
+            SetDamage(35, 54);
             this.VirtualArmor = 5;
 
-			SetAttackSpeed( 3.0 );
+			SetAttackSpeed( 2.5 );
 
             SetDamageType(ResistanceType.Physical, 100);
 

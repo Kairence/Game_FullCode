@@ -14,13 +14,14 @@ namespace Server.Mobiles
             Body = 98;
             BaseSoundID = 229;
 
-            SetStr(100, 350);
-            SetDex(80, 300);
-            SetInt(30, 180);
+            SetStr(800, 950);
+            SetDex(800, 1000);
+            SetInt(100, 180);
 
-            SetHits(130, 300);
+            SetHits(1130, 1300);
 
-            SetDamage(11, 17);
+			SetAttackSpeed( 5.0 );
+            SetDamage(11, 117);
 
             SetDamageType(ResistanceType.Physical, 20);
             SetDamageType(ResistanceType.Fire, 80);
@@ -37,17 +38,17 @@ namespace Server.Mobiles
             SetSkill(SkillName.Necromancy, 18);
             SetSkill(SkillName.SpiritSpeak, 18);
 
-            Fame = 3400;
-            Karma = -3400;
+            Fame = 4000;
+            Karma = -4000;
 
             VirtualArmor = 30;
 
             Tamable = true;
-            ControlSlots = 17;
+            ControlSlots = 1;
             MinTameSkill = 85.5;
 
             PackItem(new SulfurousAsh(5));
-            SetSpecialAbility(SpecialAbility.DragonBreath);
+            //SetSpecialAbility(SpecialAbility.DragonBreath);
         }
 
         public HellHound(Serial serial)

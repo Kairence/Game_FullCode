@@ -22,14 +22,16 @@ namespace Server.Mobiles
                     break; //No, this really isn't accurate ;->
             }
 
-            SetStr(401, 450);
-            SetDex(151, 200);
-            SetInt(66, 76);
+            SetStr(2401, 3450);
+            SetDex(2151, 3200);
+            SetInt(3066, 3076);
 
-            SetHits(376, 450);
-            SetMana(40);
+            SetHits(3376, 4450);
+			SetStam( 1000, 1200 );
+			SetMana( 1000, 1150 );
 
-            SetDamage(14, 18);
+			SetAttackSpeed( 5.0 );  
+            SetDamage(104, 180);
 
             SetDamageType(ResistanceType.Physical, 90);
             SetDamageType(ResistanceType.Cold, 5);
@@ -51,8 +53,8 @@ namespace Server.Mobiles
             SetSkill(SkillName.DetectHidden, 100.0);
             SetSkill(SkillName.Parry, 90.0, 100.0);
 
-            Fame = 9000;
-            Karma = -9000;
+            Fame = 10000;
+            Karma = -10000;
 
             
             if (Core.ML && Utility.RandomDouble() < .33)

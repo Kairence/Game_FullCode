@@ -10,15 +10,13 @@ namespace Server.Items
         public MetalKiteShield()
             : base(0x1B74)
         {
-            Weight = 7.0;
-			PrefixOption[61] = 109;
-			SuffixOption[61] = 50;
-			PrefixOption[62] = 110;
-			SuffixOption[62] = 4000;
-			PrefixOption[63] = 110;
-			SuffixOption[63] = 300;			
-			PrefixOption[64] = 12;
-			SuffixOption[64] = 1000;			
+            this.Weight = 25.0;
+			PrefixOption[61] = 41; //시전 속도
+			SuffixOption[61] = -500000;
+			PrefixOption[62] = 109; //방패 방어 확률
+			SuffixOption[62] = 300000;
+			PrefixOption[63] = 110; //모든 피격 데미지 감소
+			SuffixOption[63] = 350000;
         }
 
         public MetalKiteShield(Serial serial)
@@ -44,7 +42,7 @@ namespace Server.Items
         {
             get
             {
-                return 3000;
+                return 3500;
             }
         }
         public override int AosDexReq
@@ -65,7 +63,7 @@ namespace Server.Items
         {
             get
             {
-                return 0;
+                return 30;
             }
         }
         public bool Dye(Mobile from, DyeTub sender)

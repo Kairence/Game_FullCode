@@ -8,14 +8,14 @@ namespace Server.Items
         [Constructable]
         public WoundingAssassinSpike()
         {
-			//기력 회복 2, 기력 200
+			//기력 회복 200, 기력 500
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 20; //옵션 종류
-			SuffixOption[11] = 200; //옵션 값
+			SuffixOption[11] = 2000000; //옵션 값
 			PrefixOption[12] = 5; //옵션 종류
-			SuffixOption[12] = 20000; //옵션 값
+			SuffixOption[12] = 5000000; //옵션 값
 
 
         }

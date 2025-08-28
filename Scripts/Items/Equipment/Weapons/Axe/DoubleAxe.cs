@@ -13,7 +13,7 @@ namespace Server.Items
         {
             this.Weight = 8.0;
 			PrefixOption[61] = 5;
-			SuffixOption[61] = 37500;
+			SuffixOption[61] = 3750000;
 			
 			//Attributes.BonusStam += 37500;			
         }
@@ -41,14 +41,14 @@ namespace Server.Items
         {
             get
             {
-                return 500;
+                return 2500;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 4000;
+                return 5000;
             }
         }
         public override int AosIntelligenceReq
@@ -62,14 +62,14 @@ namespace Server.Items
         {
             get
             {
-                return 32;
+                return 2;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 40;
+                return 12;
             }
         }
         public override int AosSpeed

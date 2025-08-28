@@ -20,9 +20,10 @@ namespace Server.Mobiles
             SetDex(52, 150);
             SetInt(13, 85);
 
-            SetHits(48, 67);
+			SetAttackSpeed( 5.0 );
+            SetHits(348, 367);
 
-            SetDamage(6, 12);
+            SetDamage(6, 22);
 
             SetDamageType(ResistanceType.Physical, 40);
             SetDamageType(ResistanceType.Fire, 60);
@@ -40,13 +41,13 @@ namespace Server.Mobiles
             Fame = 1000;
             Karma = -1000;
 
-            VirtualArmor = 30;
+            VirtualArmor = 3;
 
             Tamable = true;
-            ControlSlots = 14;
+            ControlSlots = 1;
             MinTameSkill = 71.1;
 
-            SetSpecialAbility(SpecialAbility.DragonBreath);
+            //SetSpecialAbility(SpecialAbility.DragonBreath);
         }
 
         public HellCat(Serial serial)

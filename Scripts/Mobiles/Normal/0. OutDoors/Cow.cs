@@ -15,7 +15,7 @@ namespace Server.Mobiles
             Body = Utility.RandomList(0xD8, 0xE7);
             BaseSoundID = 0x78;
 
-            this.SetStr(25, 30);
+            this.SetStr(450, 800);
             this.SetDex(25, 30);
             this.SetInt(12, 18);
 
@@ -25,7 +25,7 @@ namespace Server.Mobiles
 			
 			SetAttackSpeed(10.0);
 
-            this.SetDamage(7, 11);
+            this.SetDamage(4, 6);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 

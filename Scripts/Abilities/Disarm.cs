@@ -23,96 +23,53 @@ namespace Server.Items
                 return 10;
             }
         }
-        public override void BeforeAttack(Mobile attacker, Mobile defender, int damage)
+		
+        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics )
         {
-			BaseWeapon weapon = attacker.Weapon as BaseWeapon;
-            if (!this.Validate(attacker)|| (!attacker.InRange(defender, weapon.MaxRange)))
+            if (!this.Validate(attacker) )
                 return;
-
-			if( attacker is PlayerMobile )
-			{
-				if( attacker.Stam < 15 )
-					return;
-				attacker.Stam -= 15;
-				
-			}
-
-            ClearCurrentAbility(attacker);
-
+			
+			if ( defender == null )
+				return;
+			
+			bool bonus = attacker.Skills.Tactics.Value >= 100 ? true : false;
+			int levelWeakBonus = 10 + (int)( tactics * 0.2 );
+			bool levelDisarmBonus = false;//level >= 5 ? true : false;
+			double skillTime = 4.0 + tactics * 0.04 + level * 0.2;
+			
+			if ( !this.CalculateStam(attacker, Misc.Util.SPMStam[4,0], Misc.Util.SPMStam[4,1], level, bonus ) )
+				return;
+			
+			double bonusDamage = 1.5 + level * 0.05;
+		
             if (IsImmune(defender))
             {
                 attacker.SendLocalizedMessage(1111827); // Your opponent is gripping their weapon too tightly to be disarmed.
                 defender.SendLocalizedMessage(1111828); // You will not be caught off guard by another disarm attack for some time.
                 return;
             }
-			int count = 5;
-			/*
-			if( attacker is PlayerMobile )
-			{
-				PlayerMobile att_pm = attacker as PlayerMobile;
-				count += att_pm.SilverPoint[5] / 4;
-			}
-			*/
 			if( defender is PlayerMobile )
 			{
 				PlayerMobile pm = defender as PlayerMobile;
-				pm.disarmcheck = true;
-				pm.disarmcount = count;
+				pm.disarmcheck = levelDisarmBonus;
+				pm.disarmtime = DateTime.Now + TimeSpan.FromSeconds(skillTime);
+				pm.disarmweak = levelWeakBonus;
 			}
 			else if( defender is BaseCreature )
 			{
 				BaseCreature bc = defender as BaseCreature;
-				bc.disarmcheck = true;
-				bc.disarmcount = count;
+				bc.disarmcheck = levelDisarmBonus;
+				bc.disarmtime = DateTime.Now + TimeSpan.FromSeconds(skillTime);
+				bc.disarmweak = levelWeakBonus;
 			}
+			
+			//계산
+			damage = (int)( damage * ( 1 + bonusDamage ) );
+
             defender.PlaySound(0x3B9);
             defender.FixedParticles(0x37BE, 232, 25, 9948, EffectLayer.LeftHand);
-			AOS.Damage(defender, attacker, damage, true, 100, 0, 0, 0, 0, 0, 0, false, false, false);
-				
-			/*
-            Item toDisarm = defender.FindItemOnLayer(Layer.OneHanded);
-
-            if (toDisarm == null || !toDisarm.Movable)
-                toDisarm = defender.FindItemOnLayer(Layer.TwoHanded);
-
-            Container pack = defender.Backpack;
-
-            if (pack == null || (toDisarm != null && !toDisarm.Movable))
-            {
-                attacker.SendLocalizedMessage(1004001); // You cannot disarm your opponent.
-            }
-            else if (toDisarm == null || toDisarm is BaseShield || toDisarm is Spellbook && !Core.ML)
-            {
-                attacker.SendLocalizedMessage(1060849); // Your target is already unarmed!
-            }
-            else if (this.CheckMana(attacker, true))
-            {
-                attacker.SendLocalizedMessage(1060092); // You disarm their weapon!
-                defender.SendLocalizedMessage(1060093); // Your weapon has been disarmed!
-
-                defender.PlaySound(0x3B9);
-                defender.FixedParticles(0x37BE, 232, 25, 9948, EffectLayer.LeftHand);
-
-                pack.DropItem(toDisarm);
-                
-                BuffInfo.AddBuff(defender, new BuffInfo( BuffIcon.NoRearm, 1075637, BlockEquipDuration, defender));
-
-                BaseWeapon.BlockEquip(defender, BlockEquipDuration);
-
-                if (defender is BaseCreature && _AutoRearms.Any(t => t == defender.GetType()))
-                {
-                    Timer.DelayCall(BlockEquipDuration + TimeSpan.FromSeconds(Utility.RandomMinMax(3, 10)), () =>
-                    {
-                        if (toDisarm != null && !toDisarm.Deleted && toDisarm.IsChildOf(defender.Backpack))
-                            defender.EquipItem(toDisarm);
-                    });
-                }
-
-                if(Core.SA)
-                    AddImmunity(defender, Core.TOL && attacker.Weapon is Fists ? TimeSpan.FromSeconds(10) : TimeSpan.FromSeconds(15));
-            }
-			*/
-        }
+			AOS.Damage(defender, attacker, damage, false, 100, 0, 0, 0, 0, 0, 0, false, false, false);
+		}
 
         private Type[] _AutoRearms =
         {

@@ -17,12 +17,12 @@ namespace Server.Items
 			PrefixOption[64] = 15;
 			PrefixOption[65] = 16;
 			PrefixOption[66] = 111;
-			SuffixOption[61] = 1000;
-			SuffixOption[62] = 1000;
-			SuffixOption[63] = 1000;
-			SuffixOption[64] = 1000;
-			SuffixOption[65] = 1000;
-			SuffixOption[66] = 2500;
+			SuffixOption[61] = 100000;
+			SuffixOption[62] = 100000;
+			SuffixOption[63] = 100000;
+			SuffixOption[64] = 100000;
+			SuffixOption[65] = 100000;
+			SuffixOption[66] = 250000;
 			
 			//WeaponAttributes.ResistPhysicalBonus += 1000;
 			//WeaponAttributes.ResistFireBonus += 1000;
@@ -56,14 +56,14 @@ namespace Server.Items
         {
             get
             {
-                return 500;
+                return 3000;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 100;
+                return 2000;
             }
         }
         public override int AosIntelligenceReq
@@ -77,14 +77,14 @@ namespace Server.Items
         {
             get
             {
-                return 15;
+                return 2;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 20;
+                return 4;
             }
         }
         public override int AosSpeed
@@ -98,7 +98,7 @@ namespace Server.Items
         {
             get
             {
-                return 3.50f;
+                return 3.00f;
             }
         }
         public override int OldStrengthReq

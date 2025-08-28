@@ -14,7 +14,7 @@ namespace Server.Mobiles
             Name = "a clockwork scorpion";
             Body = 717;
 
-            SetStr(125, 135);
+            SetStr(250, 335);
             SetDex(80, 100);
             SetInt(130, 140);
 
@@ -24,7 +24,7 @@ namespace Server.Mobiles
 
             SetDamage(5, 10);
 
-			SetAttackSpeed( 4.0 );
+			SetAttackSpeed( 2.0 );
 
             SetDamageType(ResistanceType.Physical, 60);
             SetDamageType(ResistanceType.Poison, 40);
@@ -40,8 +40,8 @@ namespace Server.Mobiles
             SetSkill(SkillName.Tactics, 70.1, 90.0);
             SetSkill(SkillName.Wrestling, 50.1, 80.0);
 
-            Fame = 4000;
-            Karma = -4000;
+            Fame = 1000;
+            Karma = -1000;
 
             this.VirtualArmor = 5;
         }

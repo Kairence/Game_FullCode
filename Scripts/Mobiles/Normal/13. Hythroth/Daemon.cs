@@ -13,16 +13,19 @@ namespace Server.Mobiles
             : base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
         {
             Name = NameList.RandomName("daemon");
-            Body = 9;
+            Body = 10;
             BaseSoundID = 357;
 
-            SetStr(476, 505);
-            SetDex(76, 95);
-            SetInt(301, 325);
+            SetStr(7476, 10505);
+            SetDex(7600, 9500);
+            SetInt(6301, 9325);
 
-            SetHits(3206, 3303);
+            SetHits(5206, 6303);
+			SetStam(3100, 3120);
+			SetMana(3100, 3120);
 
-            SetDamage(17, 24);
+			SetAttackSpeed( 5.0 );
+            SetDamage(170, 324);
 
             SetDamageType(ResistanceType.Physical, 100);
 

@@ -41,9 +41,16 @@ namespace Server.Spells.First
         {
             if (this.CheckSequence())
             {
-				if( Caster.Hunger == 0 )
-					Caster.Hunger = 50;
-					
+				int level = SpellLevel(Caster, 1);
+				Caster.Hunger += 5000 + (int)( Caster.Skills.Magery.Value * 10) + level * 1000;
+				Caster.Stam += (int)( Caster.Skills.Mysticism.Value * 0.4);
+				if( level >= 5 )
+				{
+					Caster.Hunger += 4000;
+					Caster.Stam += 20;
+				}
+				this.Caster.FixedParticles(0, 10, 5, 2003, EffectLayer.RightHand);
+				this.Caster.PlaySound(0x1E2);
 				/*
                 FoodInfo foodInfo = m_Food[Utility.Random(m_Food.Length)];
                 Item food = foodInfo.Create();

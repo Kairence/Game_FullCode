@@ -10,13 +10,15 @@ namespace Server.Items
         public HeaterShield()
             : base(0x1B76)
         {
-            this.Weight = 8.0;
-			PrefixOption[61] = 109;
-			SuffixOption[61] = 50;
-			PrefixOption[62] = 110;
-			SuffixOption[62] = 5000;
-			PrefixOption[63] = 110;
-			SuffixOption[63] = 300;				
+            this.Weight = 30.0;
+			PrefixOption[61] = 41; //시전 속도
+			SuffixOption[61] = -500000;
+			PrefixOption[62] = 109; //방패 방어 확률
+			SuffixOption[62] = 250000;
+			PrefixOption[63] = 110; //모든 피격 데미지 감소
+			SuffixOption[63] = 300000;
+			PrefixOption[64] = 114; //체력 증가
+			SuffixOption[64] = 30000;		
         }
 
         public HeaterShield(Serial serial)
@@ -42,14 +44,14 @@ namespace Server.Items
         {
             get
             {
-                return 5000;
+                return 4000;
             }
         }
         public override int AosDexReq
         {
             get
             {
-                return 1500;
+                return 1000;
             }
         }
         public override int AosIntReq
@@ -63,7 +65,7 @@ namespace Server.Items
         {
             get
             {
-                return 0;
+                return 35;
             }
         }
         public override void Deserialize(GenericReader reader)

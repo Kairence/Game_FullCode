@@ -53,7 +53,7 @@ namespace Server.Mobiles
             Name = "a plague beast";
             Body = 775;
 
-            SetStr(152, 200);
+            SetStr(200, 250);
             SetDex(80, 100);
             SetInt(16, 20);
 

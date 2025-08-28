@@ -9,9 +9,10 @@ namespace Server.Items
         public Cutlass()
             : base(0x1441)
         {
-			//SkillBonuses.SetValues(5, SkillName.Anatomy, 5.0);
+			//SkillBonuses.SetValues(5, SkillName.Anatomy, 10.0);
 			PrefixOption[61] = 63;
-			SuffixOption[61] = 500;
+			SuffixOption[61] = 1000;
+
             this.Weight = 8.0;
         }
 
@@ -38,14 +39,14 @@ namespace Server.Items
         {
             get
             {
-                return 200;
+                return 1750;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 200;
+                return 3250;
             }
         }
         public override int AosIntelligenceReq
@@ -59,14 +60,14 @@ namespace Server.Items
         {
             get
             {
-                return 20;
+                return 3;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 25;
+                return 7;
             }
         }
         public override int AosSpeed
@@ -80,7 +81,7 @@ namespace Server.Items
         {
             get
             {
-                return 3.00f;
+                return 2.50f;
             }
         }
         public override int OldStrengthReq

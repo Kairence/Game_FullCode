@@ -20,7 +20,7 @@ namespace Server.Mobiles
 			Female = true;
 			Body = 186;
 
-			SetStr(126, 127);
+			SetStr(226, 227);
 			SetDex(111, 120);
 			SetInt(341, 355);
 			SetHits(377, 388);

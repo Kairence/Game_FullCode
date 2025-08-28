@@ -19,14 +19,15 @@ namespace Server.Mobiles
 			Body = 0xB5;
 			BaseSoundID = 0x45A;
 
-			SetStr(126, 130);
-			SetDex(401, 430);
+			SetStr(1326, 1530);
+			SetDex(2401, 2430);
 			SetInt(116, 120);
 
-			SetHits(2758, 2772);
-			SetStam(200);
+			SetHits(2158, 2572);
+			SetStam(2000);
 			SetMana(130, 160);
 
+			SetAttackSpeed( 0.5 );
 			SetDamage(6, 22);
 
 			SetDamageType(ResistanceType.Physical, 100);
@@ -49,8 +50,8 @@ namespace Server.Mobiles
 			SetSkill(SkillName.Hiding, 140.0, 150.0);
 			SetSkill(SkillName.Stealth, 170.1, 220.0);
 
-			Fame = 12000;
-			Karma = -12000;
+			Fame = 9000;
+			Karma = -9000;
 		}
 
 		public OrcScout(Serial serial)

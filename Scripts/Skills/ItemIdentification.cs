@@ -37,6 +37,11 @@ namespace Server.Items
             return TimeSpan.FromSeconds(1.0);
         }
 
+		static double[] canid =
+		{
+			0, 50, 80, 110, 140, 170
+		};
+		
         [PlayerVendorTarget]
         private class InternalTarget : Target
         {
@@ -60,341 +65,45 @@ namespace Server.Items
 						{
 							if( item.RootParent == from || ( house != null && house.IsOwner(from)) )
 							{
-								int skillvalue = (int)from.Skills[SkillName.ItemID].Value * 10;
-								Misc.Util.ItemIdentified( from, skillvalue, item );
+								if( from.Skills.ItemID.Value < 150 && ( equip.PrefixOption[0] == 200 || equip.PrefixOption[0] == 300 ) )
+								{
+									from.SendMessage("유물은 아이템 감정 150이상부터 가능합니다!");
+									return;
+								}							
+								if( equip.PrefixOption[0] < 100 )
+								{
+									from.SendMessage("구 아이템은 감정할 수 없습니다.");
+									return;
+								}
+								if( from.Skills.ItemID.Value < canid[equip.SuffixOption[1]] )
+								{
+									from.SendMessage("이 아이템을 감정하려면 {0}의 스킬을 더 올리세요.", ( canid[equip.SuffixOption[1]] - from.Skills.ItemID.Value ).ToString());
+									return;
+								}
+								int pointBonus = (int)( from.Skills.ItemID.Value - canid[equip.SuffixOption[1]] ) / 10;
+								if( from.Skills.ItemID.Value >= 200 )
+								{
+									pointBonus = (int)( from.Skills.ItemID.Value - canid[equip.SuffixOption[1]] ) / 5;
+								}
+								if( pointBonus < 1 )
+									pointBonus = 1;
+								if( from.Skills.ItemID.Value >= 150 )
+									pointBonus += 1;
+
+								int dice = Utility.RandomMinMax(1, pointBonus);
+								equip.MaxHitPoints += dice;
+								equip.HitPoints += dice;
+								
+								from.SendMessage("아이템 감정으로 내구도를 {0} 올렸습니다!", dice);
+								equip.Identified = true;
 							}
 						}
+						else
+							from.SendMessage("이미 감정이 되었습니다");
 					}
 				}				
-				/*
-				bool fail = false;
-				int power = 0;
-				double skill = from.Skills[SkillName.ItemID].Value;
-				from.SendMessage("아이템을 감정합니다.");
-			
-                if (item == null && m == null)
-                {
-                    from.SendLocalizedMessage(500353); // You are not certain...
-                    return;
-                }
-				if( item is IDWand )
-				{
-					IDWand checkitem = item as IDWand;
-					if( checkitem.SaveSkill == 0 && from.Skills.ItemID.Value >= 40 )
-					{
-						if( from.Skills.ItemID.Value >= 120 )
-							checkitem.SaveSkill = 8;
-						else if( from.Skills.ItemID.Value >= 105 )
-							checkitem.SaveSkill = 7;
-						else if( from.Skills.ItemID.Value >= 100 )
-							checkitem.SaveSkill = 6;
-						else if( from.Skills.ItemID.Value >= 80 )
-							checkitem.SaveSkill = 5;
-						else if( from.Skills.ItemID.Value >= 40 )
-							checkitem.SaveSkill = 4;
-						checkitem.Identified = true;
-					}
-					else
-					{
-						from.SendMessage("이미 감정이 완료되었거나 감정 스킬이 낮습니다.");
-						return;
-					}
-				}
-				else if (item is BaseWeapon ) //|| item is BaseArmor || item is BaseJewel || item is BaseHat)
-				{
-					BaseWeapon checkitem = item as BaseWeapon;
-					if( checkitem.Identified )
-					{
-						from.SendMessage("이미 감정이 완료된 아이템입니다!");
-						return;
-					}
-					power = (int)checkitem.ItemPower;
-					if( OptionCheck(power, skill) )
-					{
-						if( DiceCheck(power) )
-						{
-							checkitem.Identified = true;
-
-							int fire, phys, cold, nrgy, pois, chaos, direct;
-
-							fire = checkitem.AosElementDamages.Fire;
-							cold = checkitem.AosElementDamages.Cold;
-							pois = checkitem.AosElementDamages.Poison;
-							nrgy = checkitem.AosElementDamages.Energy;
-							chaos = checkitem.AosElementDamages.Chaos;
-							direct = checkitem.AosElementDamages.Direct;
-
-							phys = 100 - fire - cold - pois - nrgy - chaos - direct;
-							checkitem.GetDamageTypes(null, out phys, out fire, out cold, out pois, out nrgy, out chaos, out direct);
-							if( phys != 100 )
-								checkitem.Hue = checkitem.GetElementalDamageHue();
-
-							Effects.PlaySound( from.Location, from.Map, 0x243 );
-							Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 6, from.Y - 6, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 0x497, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-							Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 4, from.Y - 6, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 0x497, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-							Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 6, from.Y - 4, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 0x497, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-							from.SendMessage("아이템 감정에 성공합니다!");
-						}
-						else
-						{
-							from.SendMessage("아이템 감정에 실패합니다...");
-							if( checkitem.MaxHitPoints <= 1 )
-								checkitem.Delete();
-							else
-							{
-								checkitem.MaxHitPoints--;
-								if( checkitem.HitPoints > checkitem.MaxHitPoints )
-									checkitem.HitPoints = checkitem.MaxHitPoints;
-							}
-						}
-					}
-					else
-					{
-						from.SendMessage("당신은 이 무기를 감정하기에는 스킬이 부족합니다.");
-						fail = true;
-						if( checkitem.MaxHitPoints <= 1 )
-							checkitem.Delete();
-						else
-						{
-							checkitem.MaxHitPoints--;
-							if( checkitem.HitPoints > checkitem.MaxHitPoints )
-								checkitem.HitPoints = checkitem.MaxHitPoints;
-						}
-					}
-				}
-				else if (item is BaseArmor ) //|| item is BaseArmor || item is BaseJewel || item is BaseHat)
-				{
-					BaseArmor checkitem = item as BaseArmor;
-					if( checkitem.Identified )
-					{
-						from.SendMessage("이미 감정이 완료된 아이템입니다!");
-						return;
-					}
-					power = (int)checkitem.ItemPower;
-					if( OptionCheck(power, skill) )
-					{
-						if( DiceCheck(power) )
-						{
-							checkitem.Identified = true;
-
-							Effects.PlaySound( from.Location, from.Map, 0x243 );
-							Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 6, from.Y - 6, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 0x497, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-							Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 4, from.Y - 6, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 0x497, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-							Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 6, from.Y - 4, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 0x497, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-							from.SendMessage("아이템 감정에 성공합니다!");
-						}
-						else
-						{
-							from.SendMessage("아이템 감정에 실패합니다...");
-							if( checkitem.MaxHitPoints <= 1 )
-								checkitem.Delete();
-							else
-							{
-								checkitem.MaxHitPoints--;
-								if( checkitem.HitPoints > checkitem.MaxHitPoints )
-									checkitem.HitPoints = checkitem.MaxHitPoints;
-
-							}
-						}
-					}
-					else
-					{
-						from.SendMessage("당신은 이 무기를 감정하기에는 스킬이 부족합니다.");
-						fail = true;
-						if( checkitem.MaxHitPoints <= 1 )
-							checkitem.Delete();
-						else
-						{
-							checkitem.MaxHitPoints--;
-							if( checkitem.HitPoints > checkitem.MaxHitPoints )
-								checkitem.HitPoints = checkitem.MaxHitPoints;
-						}
-					}
-				}
-				else if (item is BaseJewel ) //|| item is BaseArmor || item is BaseJewel || item is BaseHat)
-				{
-					BaseJewel checkitem = item as BaseJewel;
-					if( checkitem.Identified )
-					{
-						from.SendMessage("이미 감정이 완료된 아이템입니다!");
-						return;
-					}
-					power = (int)checkitem.ItemPower;
-					if( OptionCheck(power, skill) )
-					{
-						if( DiceCheck(power) )
-						{
-							checkitem.Identified = true;
-
-							Effects.PlaySound( from.Location, from.Map, 0x243 );
-							Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 6, from.Y - 6, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 0x497, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-							Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 4, from.Y - 6, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 0x497, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-							Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 6, from.Y - 4, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 0x497, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-							from.SendMessage("아이템 감정에 성공합니다!");
-						}
-						else
-						{
-							from.SendMessage("아이템 감정에 실패합니다...");
-							if( checkitem.MaxHitPoints <= 1 )
-								checkitem.Delete();
-							else
-							{
-								checkitem.MaxHitPoints--;
-								if( checkitem.HitPoints > checkitem.MaxHitPoints )
-									checkitem.HitPoints = checkitem.MaxHitPoints;
-
-							}
-						}
-					}
-					else
-					{
-						from.SendMessage("당신은 이 무기를 감정하기에는 스킬이 부족합니다.");
-						fail = true;
-						if( checkitem.MaxHitPoints <= 1 )
-							checkitem.Delete();
-						else
-						{
-							checkitem.MaxHitPoints--;
-							if( checkitem.HitPoints > checkitem.MaxHitPoints )
-								checkitem.HitPoints = checkitem.MaxHitPoints;
-						}
-					}
-				}
-				else if (item is BaseClothing ) //|| item is BaseArmor || item is BaseJewel || item is BaseHat)
-				{
-					BaseClothing checkitem = item as BaseClothing;
-
-					if( checkitem.Identified )
-					{
-						from.SendMessage("이미 감정이 완료된 아이템입니다!");
-						return;
-					}
-					power = (int)checkitem.ItemPower;
-					if( OptionCheck(power, skill) )
-					{
-						if( DiceCheck(power) )
-						{
-							checkitem.Identified = true;
-							
-							Effects.PlaySound( from.Location, from.Map, 0x243 );
-							Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 6, from.Y - 6, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 0x497, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-							Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 4, from.Y - 6, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 0x497, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-							Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 6, from.Y - 4, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 0x497, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-							from.SendMessage("아이템 감정에 성공합니다!");
-						}
-						else
-						{
-							from.SendMessage("아이템 감정에 실패합니다...");
-							if( checkitem.MaxHitPoints <= 1 )
-								checkitem.Delete();
-							else
-							{
-								checkitem.MaxHitPoints--;
-								if( checkitem.HitPoints > checkitem.MaxHitPoints )
-									checkitem.HitPoints = checkitem.MaxHitPoints;
-
-							}
-						}
-					}
-					else
-					{
-						from.SendMessage("당신은 이 무기를 감정하기에는 스킬이 부족합니다.");
-						fail = true;
-						if( checkitem.MaxHitPoints <= 1 )
-							checkitem.Delete();
-						else
-						{
-							checkitem.MaxHitPoints--;
-							if( checkitem.HitPoints > checkitem.MaxHitPoints )
-								checkitem.HitPoints = checkitem.MaxHitPoints;
-						}
-					}
-				}
-				else if (item is Spellbook ) //|| item is BaseArmor || item is BaseJewel || item is BaseHat)
-				{
-					Spellbook checkitem = item as Spellbook;
-					if( checkitem.Identified )
-					{
-						from.SendMessage("이미 감정이 완료된 아이템입니다!");
-						return;
-					}
-					power = (int)checkitem.ItemPower;
-					if( OptionCheck(power, skill) )
-					{
-						if( DiceCheck(power) )
-						{
-							checkitem.Identified = true;
-
-							Effects.PlaySound( from.Location, from.Map, 0x243 );
-							Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 6, from.Y - 6, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 0x497, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-							Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 4, from.Y - 6, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 0x497, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-							Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 6, from.Y - 4, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 0x497, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-							from.SendMessage("아이템 감정에 성공합니다!");
-						}
-						else
-						{
-							from.SendMessage("아이템 감정에 실패합니다...");
-							if( checkitem.MaxHitPoints <= 1 )
-								checkitem.Delete();
-							else
-							{
-								checkitem.MaxHitPoints--;
-								if( checkitem.HitPoints > checkitem.MaxHitPoints )
-									checkitem.HitPoints = checkitem.MaxHitPoints;
-
-							}
-						}
-					}
-					else
-					{
-						from.SendMessage("당신은 이 무기를 감정하기에는 스킬이 부족합니다.");
-						fail = true;
-						if( checkitem.MaxHitPoints <= 1 )
-							checkitem.Delete();
-						else
-						{
-							checkitem.MaxHitPoints--;
-							if( checkitem.HitPoints > checkitem.MaxHitPoints )
-								checkitem.HitPoints = checkitem.MaxHitPoints;
-						}
-					}
-				}
-                else
-                {
-					power = -1;
-                    from.SendLocalizedMessage(500353); // You are not certain...
-                }
-
-				int point = 100 + power * 20;
-				
-				if( power > -1 )
-					from.CheckSkill( SkillName.ItemID, 100 + point * 20 );	
-
-				*/
                 Server.Engines.XmlSpawner2.XmlAttach.RevealAttachments(from, o);
             }
-
-			/*
-            public static int GetPriceFor(Item item)
-            {
-                Type type = item.GetType();
-
-                if (GenericBuyInfo.BuyPrices.ContainsKey(type))
-                {
-                    return GenericBuyInfo.BuyPrices[item.GetType()] * item.Amount;
-                }
-
-                if (TypeCostCache == null)
-                    TypeCostCache = new Dictionary<Type, int>();
-
-                if (!TypeCostCache.ContainsKey(type))
-                    TypeCostCache[type] = Utility.RandomMinMax(2, 7);
-
-                return TypeCostCache[type];
-            }
-
-            public static Dictionary<Type, int> TypeCostCache { get; set; }
-			*/
         }
     }
 }

@@ -82,37 +82,58 @@ namespace Server.Items
                     });
             }
         }
-        public override void OnHit(Mobile attacker, Mobile defender, int damage)
+        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics )
         {
-            if (!Validate(attacker))
+            if (!this.Validate(attacker) )
                 return;
+			
+			if ( defender == null )
+				return;
+			
+			bool bonus = attacker.Skills.Tactics.Value >= 100 ? true : false;
+			//double levelDeathBonus = level >= 5 ? 0.66 : 0;
+			//bool levelSneakBonus = level >= 5 ? true : false;
+			
+			if ( !this.CalculateStam(attacker, Misc.Util.SPMStam[8,0], Misc.Util.SPMStam[8,1], level, bonus ) )
+				return;
 
-			if( attacker is PlayerMobile )
-			{
-				if( attacker.Stam < 15 )
-					return;
-				attacker.Stam -= 15;
-			}
-
-            attacker.SendLocalizedMessage(1060086); // You deliver a mortal wound!
-            defender.SendLocalizedMessage(1060087); // You have been mortally wounded!
-
-            defender.PlaySound(0x1E1);
-            defender.FixedParticles(0x37B9, 244, 25, 9944, 31, 0, EffectLayer.Waist);
-
-			/*
-            // Do not reset timer if one is already in place.
-            if (Core.HS || !IsWounded(defender))
-            {
-                if (Spells.SkillMasteries.ResilienceSpell.UnderEffects(defender)) //Halves time
-                    BeginWound(defender, defender.Player ? TimeSpan.FromSeconds(3.0) : TimeSpan.FromSeconds(6));
-                else
-                    BeginWound(defender, defender.Player ? PlayerDuration : NPCDuration);
-            }
-			*/
-			AOS.Damage(defender, attacker, damage, true, 100, 0, 0, 0, 0, 0, 0, false, false, false);
+			bool overkill = false;
 
             ClearCurrentAbility(attacker);
+
+			/*
+			if( defender is BaseCreature )
+			{
+				BaseCreature bc = defender as BaseCreature;
+				double deathChance = 2.0 + level * 0.11 + tactics * 0.005 + levelDeathBonus - bc.Fame * 0.0001 - Misc.Util.MonsterTierCalc(bc);
+				if( deathChance > 0 && Utility.RandomDouble() < deathChance )
+				{
+					overkill = true;
+
+					attacker.SendLocalizedMessage(1063129); // You catch your opponent off guard with your Surprise Attack!
+					defender.SendLocalizedMessage(1063130); // Your defenses are lowered as your opponent surprises you!
+
+					defender.FixedParticles(0x37B9, 1, 5, 0x26DA, 0, 3, EffectLayer.Head);
+
+					AOS.Damage(defender, attacker, defender.HitsMax + 10000, true, 100, 0, 0, 0, 0, 0, 0, false, false, false);
+					return;
+				}
+			}
+			*/
+			damage = (int)( damage * ( 7.66 + level * 0.0666 ) );
+
+			if( Utility.RandomDouble() < tactics * 0.005 )
+			{
+				int specialDamage = (int)( damage * 1 + Misc.Util.SneakCalc(attacker, defender, damage, 1) );
+				damage += specialDamage;
+			}
+			
+			attacker.FixedParticles(0x37BE, 1, 5, 0x26BD, 0x0, 0x1, EffectLayer.Waist);
+			attacker.PlaySound(0x510);
+
+			attacker.SendLocalizedMessage(1063100); // Your quick flight to your target causes extra damage as you strike!
+			defender.FixedParticles(0x37BE, 1, 5, 0x26BD, 0, 0x1, EffectLayer.Waist);
+			AOS.Damage(defender, attacker, damage, false, 100, 0, 0, 0, 0, 0, 0, false, false, false);
         }
 
         private class InternalTimer : Timer
