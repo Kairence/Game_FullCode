@@ -6198,6 +6198,7 @@ namespace Server.Misc
 		public static int[] Equip_Login = { 500, 1000, 1500, 2000, 0, 0, 0, 0, 0, 0 };
 		public static int[] Equip_Etc = { 100, 300, 700, 1000, 2000, 3000, 4000, 5000, 7000, 10000, 20000, 30000, 50000, 75000, 100000, 200000, 300000, 500000, 750000, 1000000, 2000000, 3000000, 5000000, 7500000, 10000000 };
 
+		//테스트 구역 코드
 		/*
 		public static double DungeonTried( int x, int y )
 		{
