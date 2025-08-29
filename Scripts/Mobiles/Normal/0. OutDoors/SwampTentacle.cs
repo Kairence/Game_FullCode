@@ -13,21 +13,21 @@ namespace Server.Mobiles
             this.Body = 66;
             this.BaseSoundID = 352;
 
-            SetStr(152, 200);
+            SetStr(252, 400);
             SetDex(80, 100);
             SetInt(16, 20);
 
-            SetHits(1318, 1404);
+            SetHits(818, 1004);
             SetStam(135, 150);
             SetMana(10, 15);
 
 			SetAttackSpeed(15.0);
 
-            SetDamage(45, 60);
+            SetDamage(125, 180);
 
             SetSkill(SkillName.MagicResist, 35.0);
-            SetSkill(SkillName.Tactics, 200.0);
-            SetSkill(SkillName.Wrestling, 200.0);
+            SetSkill(SkillName.Tactics, 100.0);
+            SetSkill(SkillName.Wrestling, 100.0);
 
             Fame = 3000;
             Karma = -3000;

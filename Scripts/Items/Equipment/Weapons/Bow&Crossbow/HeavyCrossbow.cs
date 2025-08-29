@@ -11,6 +11,8 @@ namespace Server.Items
         {
             this.Weight = 19.0;
             this.Layer = Layer.TwoHanded;
+			PrefixOption[61] = 42;
+			SuffixOption[61] = 50000;			
 		}
 
         public HeavyCrossbow(Serial serial)
@@ -64,7 +66,7 @@ namespace Server.Items
         {
             get
             {
-                return 7500;
+                return 2500;
             }
         }
         public override int AosIntelligenceReq
@@ -79,14 +81,14 @@ namespace Server.Items
         {
             get
             {
-                return 40;
+                return 10;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 160;
+                return 30;
             }
         }
         public override int AosSpeed
@@ -100,7 +102,7 @@ namespace Server.Items
         {
             get
             {
-                return 5.00f;
+                return 4.00f;
             }
         }
         public override int OldStrengthReq

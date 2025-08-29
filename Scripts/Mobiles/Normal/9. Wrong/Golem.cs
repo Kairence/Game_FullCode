@@ -22,13 +22,13 @@ namespace Server.Mobiles
 
             double skill = m.Skills[SkillName.Tinkering].Value;
 
-            if (skill >= 250.0)
+            if (skill >= 200.0)
                 scalar = 1.0;
-            else if (skill >= 200.0)
-                scalar = 0.9;
             else if (skill >= 150.0)
-                scalar = 0.8;
+                scalar = 0.9;
             else if (skill >= 100.0)
+                scalar = 0.8;
+            else if (skill >= 50.0)
                 scalar = 0.7;
             else
                 scalar = 0.6;
@@ -52,15 +52,16 @@ namespace Server.Mobiles
 
             if (summoned)
             {
-				SetStr((int)(251 * scalar), (int)(350 * scalar));
-				SetDex((int)(76 * scalar), (int)(100 * scalar));
-				SetInt((int)(101 * scalar), (int)(150 * scalar));
+				SetStr((int)(3251 * scalar), (int)(3350 * scalar));
+				SetDex((int)(2076 * scalar), (int)(3100 * scalar));
+				SetInt((int)(1010 * scalar), (int)(1500 * scalar));
                 Hue = 2101;               
 
-                SetHits(151, 210);
-				this.SetMana(10, 15);
-				SetStam(75, 80);
+                SetHits(5151, 6210);
+				this.SetMana(1000, 1500);
+				SetStam(5750, 6800);
 
+				SetAttackSpeed( 5.0 );
                 SetResistance(ResistanceType.Fire, 50, 65);
                 SetResistance(ResistanceType.Poison, 75, 85);
 
@@ -70,18 +71,19 @@ namespace Server.Mobiles
 
                 Fame = 10;
                 Karma = 10;
-				SetDamage(13, 24);
+				SetDamage(130, 240);
             }
             else
             {
-				SetStr(251, 350);
-				SetDex(76, 100);
-				SetInt(101, 150);
+				SetStr(3251, 3350);
+				SetDex(2076, 3100);
+				SetInt(1010, 1500);
 
                 SetHits(7500, 7610);
-				this.SetMana(140, 150);
-				SetStam(750, 800);
+				this.SetMana(1400, 2150);
+				SetStam(7500, 7800);
 
+				SetAttackSpeed( 5.0 );
 				SetResistance(ResistanceType.Physical, 90, 99);
                 SetResistance(ResistanceType.Fire, 70, 90);
                 SetResistance(ResistanceType.Poison, 10, 25);
@@ -91,10 +93,10 @@ namespace Server.Mobiles
                 SetSkill(SkillName.Wrestling, 250.0, 290.0);
                 SetSkill(SkillName.DetectHidden, 145.0, 150.0);
 
-                Fame = 17000;
-                Karma = -17000;
+                Fame = 13500;
+                Karma = -13500;
 
-				SetDamage(13, 124);
+				SetDamage(130, 240);
 				this.VirtualArmor = 80;
             }
 

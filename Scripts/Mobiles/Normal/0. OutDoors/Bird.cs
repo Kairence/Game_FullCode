@@ -35,7 +35,7 @@ namespace Server.Mobiles
             this.Body = 6;
             this.BaseSoundID = 0x1B;
 
-            this.SetStr(10, 15);
+            this.SetStr(100, 250);
             this.SetDex(25, 35);
             this.SetInt(10, 15);
 
@@ -45,7 +45,7 @@ namespace Server.Mobiles
 			
 			SetAttackSpeed(10.0);
 
-            SetDamage(5, 9);
+            SetDamage(1, 5);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 

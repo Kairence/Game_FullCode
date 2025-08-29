@@ -208,6 +208,7 @@ namespace Server.Items
                 // return to staff status
                 from.AccessLevel = m_StaffLevel;
                 from.Blessed = true;
+				from.Hidden = true;
             }
             else
             {

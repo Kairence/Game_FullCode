@@ -10,17 +10,20 @@ namespace Server.Mobiles
         public Drake()
             : base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
         {
-            Name = "a drake";
+            Name = "an brown drake";
             Body = 60; //Utility.RandomList(60, 61);
             BaseSoundID = 362;
 
-            SetStr(401, 430);
-            SetDex(133, 152);
-            SetInt(101, 140);
+            SetStr(4010, 4030);
+            SetDex(3133, 3152);
+            SetInt(3101, 3140);
 
-            SetHits(2410, 2580);
+            SetHits(4410, 4580);
+			SetStam( 1000, 2000 );
+			SetMana( 1000, 1500 );
 
-            SetDamage(15, 17);
+			SetAttackSpeed( 5.0 );
+            SetDamage(115, 270);
 
             SetDamageType(ResistanceType.Physical, 80);
             SetDamageType(ResistanceType.Fire, 20);
@@ -31,16 +34,16 @@ namespace Server.Mobiles
             SetResistance(ResistanceType.Poison, 20, 30);
             SetResistance(ResistanceType.Energy, 30, 40);
 
-            SetSkill(SkillName.MagicResist, 60.1, 65.0);
-            SetSkill(SkillName.Tactics, 60.1, 65.0);
-            SetSkill(SkillName.Wrestling, 60.1, 65.0);
+            SetSkill(SkillName.MagicResist, 120.1, 135.0);
+            SetSkill(SkillName.Tactics, 120.1, 135.0);
+            SetSkill(SkillName.Wrestling, 120.1, 135.0);
 
             Fame = 13000;
             Karma = -13000;
 
-            VirtualArmor = 46;
+            VirtualArmor = 26;
             ControlSlots = 2;
-            MinTameSkill = 84.3;
+            MinTameSkill = 104.3;
 
             PackReg(3);
 
@@ -105,7 +108,7 @@ namespace Server.Mobiles
         {
             get
             {
-                return (Body == 60 ? ScaleType.Yellow : ScaleType.Red);
+                return ScaleType.Yellow;
             }
         }
         public override FoodType FavoriteFood

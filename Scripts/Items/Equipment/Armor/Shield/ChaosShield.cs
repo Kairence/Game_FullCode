@@ -11,15 +11,14 @@ namespace Server.Items
         public ChaosShield()
             : base(0x1BC3)
         {
-            this.Weight = 10.0;
-			PrefixOption[61] = 109;
-			SuffixOption[61] = 50;
-			PrefixOption[62] = 110;
-			SuffixOption[62] = 3500;
-			PrefixOption[63] = 110;
-			SuffixOption[63] = 400;
-			PrefixOption[64] = 92;
-			SuffixOption[64] = 500;			
+            Weight = 40.0;
+			PrefixOption[61] = 104; //시전 속도
+			SuffixOption[61] = 100000;
+			PrefixOption[62] = 109; //방패 방어 확률
+			SuffixOption[62] = 200000;
+			PrefixOption[63] = 110; //모든 피격 데미지 감소
+			SuffixOption[63] = 50000;
+		
         }
 
         public ChaosShield(Serial serial)
@@ -45,28 +44,28 @@ namespace Server.Items
         {
             get
             {
-                return 2500;
+                return 3500;
             }
         }
         public override int AosDexReq
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
         public override int AosIntReq
         {
             get
             {
-                return 8000;
+                return 1000;
             }
         }
         public override int ArmorBase
         {
             get
             {
-                return 0;
+                return 20;
             }
         }
         public override void Deserialize(GenericReader reader)

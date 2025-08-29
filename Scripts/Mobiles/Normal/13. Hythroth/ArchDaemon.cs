@@ -12,17 +12,19 @@ namespace Server.Mobiles
             : base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
         {
             this.Name = "an Arch Deamon";
-            this.Body = 40;
-            this.Hue = 1755;
+            this.Body = 9;
             this.BaseSoundID = 357;
 
-            this.SetStr(986, 1185);
-            this.SetDex(177, 255);
-            this.SetInt(151, 250);
+            this.SetStr(5986, 6185);
+            this.SetDex(4177, 5255);
+            this.SetInt(5151, 6250);
 
-            this.SetHits(592, 711);
+            this.SetHits(17592, 17711);
+			SetStam(10000, 12000);
+			SetMana(10000, 12000);
 
-            this.SetDamage(22, 29);
+			SetAttackSpeed( 5.0 );
+            this.SetDamage(220, 490);
 
             this.SetDamageType(ResistanceType.Physical, 50);
             this.SetDamageType(ResistanceType.Fire, 25);
@@ -34,18 +36,18 @@ namespace Server.Mobiles
             this.SetResistance(ResistanceType.Poison, 100);
             this.SetResistance(ResistanceType.Energy, 40, 50);
 
-            this.SetSkill(SkillName.Anatomy, 25.1, 50.0);
-            this.SetSkill(SkillName.EvalInt, 90.1, 100.0);
-            this.SetSkill(SkillName.Magery, 95.5, 100.0);
-            this.SetSkill(SkillName.Meditation, 25.1, 50.0);
-            this.SetSkill(SkillName.MagicResist, 100.5, 150.0);
-            this.SetSkill(SkillName.Tactics, 90.1, 100.0);
-            this.SetSkill(SkillName.Wrestling, 90.1, 100.0);
+            this.SetSkill(SkillName.Anatomy, 225.1, 250.0);
+            this.SetSkill(SkillName.EvalInt, 290.1, 300.0);
+            this.SetSkill(SkillName.Magery, 295.5, 300.0);
+            this.SetSkill(SkillName.Meditation, 225.1, 250.0);
+            this.SetSkill(SkillName.MagicResist, 300.5, 350.0);
+            this.SetSkill(SkillName.Tactics, 290.1, 300.0);
+            this.SetSkill(SkillName.Wrestling, 290.1, 300.0);
 
             this.Fame = 24000;
             this.Karma = -24000;
 
-            this.VirtualArmor = 90;
+            this.VirtualArmor = 33;
         }
 
         public ArchDaemon(Serial serial)

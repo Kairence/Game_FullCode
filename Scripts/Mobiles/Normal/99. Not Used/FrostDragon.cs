@@ -49,7 +49,7 @@ namespace Server.Mobiles
             ControlSlots = 5;
             MinTameSkill = 105.0;
 
-            SetWeaponAbility(WeaponAbility.BleedAttack);
+            //SetWeaponAbility(WeaponAbility.BleedAttack);
             SetSpecialAbility(SpecialAbility.DragonBreath);
             SetAreaEffect(AreaEffect.AuraDamage);
         }

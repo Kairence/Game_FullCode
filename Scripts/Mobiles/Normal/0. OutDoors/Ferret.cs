@@ -20,7 +20,7 @@ namespace Server.Mobiles
             this.Name = "a ferret";
             this.Body = 0x117;
 
-            this.SetStr(10, 15);
+            this.SetStr(200, 250);
             this.SetDex(25, 35);
             this.SetInt(10, 15);
 
@@ -30,7 +30,7 @@ namespace Server.Mobiles
 			
 			SetAttackSpeed(10.0);
 
-            SetDamage(5, 9);
+            SetDamage(1, 5);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 

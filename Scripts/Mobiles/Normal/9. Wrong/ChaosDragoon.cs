@@ -14,13 +14,14 @@ namespace Server.Mobiles
             Body = 0x190;
             Hue = Utility.RandomSkinHue();
 
-            SetStr(176, 225);
-            SetDex(81, 95);
-            SetInt(61, 85);
+            SetStr(2760, 3250);
+            SetDex(3081, 4950);
+            SetInt(1061, 2085);
 
-            SetHits(9760, 10225);
-
-            SetDamage(24, 28);
+            SetHits( 9760, 10225 );
+			SetStam( 4000, 5000 );
+			SetMana( 4000, 5000 );
+            SetDamage( 124, 128 );
 
 			SetAttackSpeed( 2.5 );
 			
@@ -43,10 +44,10 @@ namespace Server.Mobiles
             SetSkill(SkillName.Swords, 177.6, 192.5);
             SetSkill(SkillName.Tactics, 177.6, 187.5);
 
-            Fame = 19000;
-            Karma = -19000;
+            Fame = 16000;
+            Karma = -16000;
 			
-            VirtualArmor = 155;
+            VirtualArmor = 55;
 
             CraftResource res = CraftResource.None;
 

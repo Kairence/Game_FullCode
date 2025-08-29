@@ -12,7 +12,7 @@ namespace Server.Items
             : base(0x1401)
         {
 			PrefixOption[61] = 35;
-			SuffixOption[61] = 5000;
+			SuffixOption[61] = 500000;
 			//AbsorptionAttributes.EaterPoison += 5000;
             Weight = 6.0;
 		}
@@ -40,14 +40,14 @@ namespace Server.Items
         {
             get
             {
-                return 200;
+                return 2000;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 500;
+                return 3000;
             }
         }
         public override int AosIntelligenceReq
@@ -61,14 +61,14 @@ namespace Server.Items
         {
             get
             {
-                return 15;
+                return 4;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 25;
+                return 6;
             }
         }
         public override int AosSpeed

@@ -8,22 +8,14 @@ namespace Server.Items
         [Constructable]
         public TrueWarCleaver()
         {
-			//체력 1000, 모든 저항력 40%
-			SuffixOption[0] = 6; //옵션 갯수
+			//체력 1000, 모든 저항력 10%
+			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 4; //옵션 종류
-			SuffixOption[11] = 100000; //옵션 값
-			PrefixOption[12] = 12; //옵션 종류
-			SuffixOption[12] = 3500; //옵션 값
-			PrefixOption[13] = 13; //옵션 종류
-			SuffixOption[13] = 6000; //옵션 값
-			PrefixOption[14] = 14; //옵션 종류
-			SuffixOption[14] = 3500; //옵션 값
-			PrefixOption[15] = 15; //옵션 종류
-			SuffixOption[15] = 3500; //옵션 값
-			PrefixOption[16] = 16; //옵션 종류
-			SuffixOption[16] = 3500; //옵션 값
+			SuffixOption[11] = 10000000; //옵션 값
+			PrefixOption[12] = 114; //옵션 종류
+			SuffixOption[12] = 100000; //옵션 값
 
         }
 

@@ -10,16 +10,16 @@ namespace Server.Items
         [Constructable]
         public BladeOfBattle() 
         {
-			//치유량 60, 체 300, 마 300
+			//치유량 60, 체 1000, 마 1000
 			SuffixOption[0] = 3; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 47; //옵션 종류
-			SuffixOption[11] = 6000; //옵션 값
+			SuffixOption[11] = 600000; //옵션 값
 			PrefixOption[12] = 4; //옵션 종류
-			SuffixOption[12] = 30000; //옵션 값
+			SuffixOption[12] = 10000000; //옵션 값
 			PrefixOption[13] = 6; //옵션 종류
-			SuffixOption[13] = 30000; //옵션 값
+			SuffixOption[13] = 10000000; //옵션 값
         }
 
         public BladeOfBattle(Serial serial)

@@ -52,22 +52,24 @@ namespace Server.Mobiles
             m_NextWaterBall = DateTime.Now;
 
             // May not be OSI accurate; mostly copied from krakens
-            Name = "a leviathan";
+            Name = "Champion a leviathan";
             Body = 77;
             BaseSoundID = 353;
 
+			Boss = true;
+
             Hue = 0x481;
 
-            SetStr(6666, 7777);
-            SetDex(5010, 5200);
-            SetInt(5010, 5150);
+            SetStr(66666, 77777);
+            SetDex(35010, 45200);
+            SetInt(35010, 45150);
 
-            SetHits(771500, 782222);
+            SetHits(1771500, 1782222);
             SetStam(100000, 120000);
-            SetMana(100, 120);
+            SetMana(10000, 12000);
 			SetAttackSpeed(5.0);
 			
-            SetDamage(1555, 2666);
+            SetDamage(5555, 9999);
 
             SetDamageType(ResistanceType.Physical, 0);
             SetDamageType(ResistanceType.Cold, 100);

@@ -17,11 +17,11 @@ namespace Server.Mobiles
         {
             this.BaseSoundID = 0x270;
 
-            this.SetStr(194, 270);
+            this.SetStr(294, 270);
             this.SetDex(156, 175);
             this.SetInt(16, 20);
 
-            this.SetHits(271, 288);
+            this.SetHits(171, 188);
 			this.SetStam(100, 120);
             this.SetMana(1, 5);
 

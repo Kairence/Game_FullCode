@@ -18,9 +18,12 @@ namespace Server.Mobiles
             SetDex(61, 80);
             SetInt(86, 105);
 
-            SetHits(55, 70);
+            SetHits(855, 1070);
+			SetStam(310, 312);
+			SetMana(310, 312);
 
-            SetDamage(10, 14);
+			SetAttackSpeed( 5.0 );
+            SetDamage(50, 104);
 
             SetDamageType(ResistanceType.Physical, 0);
             SetDamageType(ResistanceType.Fire, 50);
@@ -40,29 +43,13 @@ namespace Server.Mobiles
             SetSkill(SkillName.Necromancy, 20);
             SetSkill(SkillName.SpiritSpeak, 20);
 
-            Fame = 2500;
-            Karma = -2500;
-			switch (Utility.Random(104))
-            {
-                case 0: PackItem(new BloodOathScroll()); break;
-                case 1: PackItem(new CorpseSkinScroll()); break;
-                case 2: PackItem(new CurseWeaponScroll()); break;
-                case 3: PackItem(new EvilOmenScroll()); break;
-				case 4: PackItem(new HorrificBeastScroll()); break;
-				case 5: PackItem(new LichFormScroll()); break;
-				case 6: PackItem(new MindRotScroll()); break;
-				case 7: PackItem(new PainSpikeScroll()); break;
-				case 8: PackItem(new PoisonStrikeScroll()); break;
-				case 9: PackItem(new StrangleScroll()); break;
-				case 10: PackItem(new SummonFamiliarScroll()); break;
-				case 11: PackItem(new WitherScroll()); break;
-				case 12: PackItem(new WraithFormScroll()); break;
-			}
+            Fame = 5000;
+            Karma = -5000;
 
             VirtualArmor = 30;
 
             Tamable = true;
-            ControlSlots = 16;
+            ControlSlots = 2;
             MinTameSkill = 83.1;
         }
 

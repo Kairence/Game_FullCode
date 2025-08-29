@@ -404,13 +404,13 @@ namespace Server.Items
             {
                 if (!(defender is PlayerMobile) || !IsBleedImmune(defender))
                 {
-                    BleedAttack.BeginBleed(defender, from, true);
+                    //BleedAttack.BeginBleed(defender, from, true);
                     AddBleedImmunity(defender);
                 }
             }
             else
             {
-                BleedAttack.BeginBleed(defender, from, true);
+                //BleedAttack.BeginBleed(defender, from, true);
             }
 
             defender.SendLocalizedMessage(1112486); // A shard of the brittle weapon has become lodged in you!

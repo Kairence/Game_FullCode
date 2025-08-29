@@ -1,6 +1,7 @@
 using System;
 using Server.Targeting;
 using System.Collections.Generic;
+using Server.Mobiles;
 
 namespace Server.Spells.First
 {
@@ -67,6 +68,7 @@ namespace Server.Spells.First
                 SpellHelper.Turn(this.Caster, m);
                 SpellHelper.CheckReflect((int)this.Circle, this.Caster, ref m);
 
+
                 if (Mysticism.StoneFormSpell.CheckImmunity(m))
                 {
                     Caster.SendLocalizedMessage(1080192); // Your target resists your ability reduction magic.
@@ -94,8 +96,11 @@ namespace Server.Spells.First
                     {
                         SpellHelper.AddStatCurse(this.Caster, m, StatType.Dex, false, newOffset);
 
-                        double percentage = 10 + Caster.Skills.Magery.Value * 0.01;
-                        TimeSpan length = TimeSpan.FromSeconds(30.0);
+						int level = SpellLevel(Caster, 0);
+						int debuff = level >= 15 ? m.Dex / 10 : 0;
+						
+                        double percentage = 200 + Caster.Skills.Magery.Value + Caster.Skills.Necromancy.Value + level * 100 + debuff;
+                        TimeSpan length = TimeSpan.FromSeconds(600.0 + level * 300);
                         BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Clumsy, 1075831, length, m, percentage.ToString()));
 
                         if (m_Table.ContainsKey(m))

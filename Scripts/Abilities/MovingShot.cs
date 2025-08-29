@@ -34,62 +34,43 @@ namespace Server.Items
 
             attacker.SendLocalizedMessage(1060089); // You fail to execute your special move
         }
-		public override void OnHit(Mobile attacker, Mobile defender, int damage)
-		{
-			if (!Validate(attacker) )
-			{
-				return;
-			}
-
-			ClearCurrentAbility(attacker);
-
-			BaseWeapon weapon = attacker.Weapon as BaseWeapon;
-
-			if (weapon == null)
-			{
-				return;
-			}
-
-            // If no combatant, wrong map, one of us is a ghost, or cannot see, or deleted, then stop combat
-            if (defender.Deleted || attacker.Deleted || defender.Map != attacker.Map || !defender.Alive ||
-                !attacker.Alive || !attacker.CanSee(defender))
-            {
-                weapon.InDoubleStrike = false;
-                attacker.Combatant = null;
+        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics )
+        {
+            if (!this.Validate(attacker) )
                 return;
-            }
-
-			if (!attacker.InRange(defender, weapon.MaxRange))
-			{
-                weapon.InDoubleStrike = false;
-				return;
-			}
-
-            attacker.SendLocalizedMessage(1060216); // Your shot was successful
-
-            //defender.PlaySound(0x3BB);
-            //defender.FixedEffect(0x37B9, 244, 25);
-
-			int count = 1;
 			
-			/*
-			if( attacker is PlayerMobile )
-			{
-				PlayerMobile pm = attacker as PlayerMobile;
-				if( pm.SilverPoint[7] >= 5 )
-					count += pm.SilverPoint[7] / 5;
-			}
-			*/
-			for( int i = 0; i < count; i++ )
-			{
-				if (attacker.InLOS(defender))
-				{
-					attacker.RevealingAction();
-					attacker.NextCombatTime = Core.TickCount + (int)weapon.OnSwing(attacker, defender).TotalMilliseconds;
-				}
-			}
-            weapon.InDoubleStrike = false;
-		}
+			if ( defender == null )
+				return;
+			
+			bool bonus = attacker.Skills.Tactics.Value >= 100 ? true : false;
+			//bool levelAreaBonus = level >= 5 ? true : false;
+			//double levelCrushBonus = level >= 5 ? 0.06 : 0;
+			
+			if ( !this.CalculateStam(attacker, Misc.Util.SPMStam[3,0], Misc.Util.SPMStam[3,1], level, bonus ) )
+				return;
+			
+			//double bonusDamage = 2.5 + level * 1.00;		
+			
+			//계산
+			damage = (int)( damage * ( 4 + level * 0.1 ) );
+			
+			//강타 계산
+			double crushChance = 0.15 + tactics * 0.001 + level * 0.01;
+			int specialDamage = Misc.Util.SmashCalc(attacker, defender, crushChance );
+			damage += specialDamage;
+
+			attacker.SendLocalizedMessage(1060090); // You have delivered a crushing blow!
+			defender.SendLocalizedMessage(1060166); // You feel disoriented!
+
+			defender.PlaySound(0x213);
+			defender.FixedParticles(0x377A, 1, 32, 9949, 1153, 0, EffectLayer.Head);
+
+			Effects.SendMovingParticles(new Entity(Serial.Zero, new Point3D(defender.X, defender.Y, defender.Z + 10), defender.Map), new Entity(Serial.Zero, new Point3D(defender.X, defender.Y, defender.Z + 20), defender.Map), 0x36FE, 1, 0, false, false, 1133, 3, 9501, 1, 0, EffectLayer.Waist, 0x100);			
+
+			AOS.Damage(defender, attacker, damage, false, 100, 0, 0, 0, 0, 0, 0, false, false, false);
+
+            ClearCurrentAbility(attacker);
+        }
 		/*
         public override void BeforeAttack(Mobile attacker, Mobile defender, int damage)
         {

@@ -16,17 +16,17 @@ namespace Server.Mobiles
 			Hue = 1345;
 			BaseSoundID = 0x48D;
 
-			SetStr( 301, 350 );
-			SetDex( 75, 100 );
-			SetInt( 151, 200 );
+			SetStr( 1301, 1350 );
+			SetDex( 1075, 1100 );
+			SetInt( 4151, 4200 );
 
 			SetHits( 4800, 5000);
-			SetStam( 750, 800 );
-			SetMana( 250, 750 );
+			SetStam( 2750, 2800 );
+			SetMana( 4250, 4750 );
 
 			SetAttackSpeed( 2.5 );
 
-			SetDamage( 21, 30 );
+			SetDamage( 70, 140 );
 
 			SetDamageType( ResistanceType.Physical, 0 );
 			SetDamageType( ResistanceType.Cold, 50 );
@@ -45,11 +45,11 @@ namespace Server.Mobiles
 			SetSkill( SkillName.Tactics, 91.7, 100 );
 			SetSkill( SkillName.Wrestling, 98.5, 105 );
 
-			Fame = 16500;
-			Karma = -16500;
+			Fame = 13500;
+			Karma = -13500;
 
             VirtualArmor = 40; 
-            SetWeaponAbility(WeaponAbility.Dismount);
+            //SetWeaponAbility(WeaponAbility.Dismount);
 		}
 
 		public override void GenerateLoot()

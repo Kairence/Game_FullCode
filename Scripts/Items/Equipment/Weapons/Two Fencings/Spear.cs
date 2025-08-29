@@ -12,6 +12,8 @@ namespace Server.Items
             : base(0xF62)
         {
            this.Weight = 17.0;
+			PrefixOption[61] = 42;
+			SuffixOption[61] = 150000;			
 		}
 
         public Spear(Serial serial)
@@ -37,14 +39,14 @@ namespace Server.Items
         {
             get
             {
-                return 1500;
+                return 3500;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 7500;
+                return 4000;
             }
         }
         public override int AosIntelligenceReq
@@ -59,14 +61,14 @@ namespace Server.Items
         {
             get
             {
-                return 45;
+                return 6;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 75;
+                return 12;
             }
         }
         public override int AosSpeed

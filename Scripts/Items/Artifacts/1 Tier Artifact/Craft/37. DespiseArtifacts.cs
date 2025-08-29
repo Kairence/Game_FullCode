@@ -207,12 +207,12 @@ namespace Server.Items
         [Constructable]
 		public HailstormHuman()
 		{
-			//공속 80%
+			//공속 150%
 			SuffixOption[0] = 1; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 40; //옵션 종류
-			SuffixOption[11] = 8000; //옵션 값
+			SuffixOption[11] = 1500000; //옵션 값
 		}
 		
 		public HailstormHuman(Serial serial) : base(serial)

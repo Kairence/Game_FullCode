@@ -11,16 +11,16 @@ namespace Server.Items
         [Constructable]
         public RunedDriftwoodBow()
         {
-			//마법 치명 피해 50%, 마나 회복 0.5, 마법 치명 확률 3%
+			//마법 치명 피해 50%, 마나 회복 50, 마법 치명 확률 3%
 			SuffixOption[0] = 3; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 45; //옵션 종류
-			SuffixOption[11] = 5000; //옵션 값
+			SuffixOption[11] = 500000; //옵션 값
 			PrefixOption[12] = 21; //옵션 종류
-			SuffixOption[12] = 50; //옵션 값
+			SuffixOption[12] = 500000; //옵션 값
 			PrefixOption[13] = 43; //옵션 종류
-			SuffixOption[13] = 300; //옵션 값
+			SuffixOption[13] = 30000; //옵션 값
         }
 
         public RunedDriftwoodBow(Serial serial)

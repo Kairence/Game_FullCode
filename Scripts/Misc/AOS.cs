@@ -153,16 +153,44 @@ namespace Server
 
             int totalDamage;
 
+			int physDamage = damage * phys + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterDamage ) / 100;
+			int fireDamage = damage * fire + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterFire ) / 100;
+			int coldDamage = damage * cold + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterCold ) / 100;
+			int poisonDamage = damage * pois + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterPoison ) / 100;
+			int energyDamage = damage * nrgy + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterEnergy ) / 100;
+			int chaosDamage = damage * chaos;
+			int directDamage = damage * direct;
+			
             if (!ignoreArmor)
             {
 				//옵션 계산
-				int physDamage = (damage + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterDamage ) ) * phys * (100 - damageable.PhysicalResistance);
-				int fireDamage = (damage + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterFire ) ) * fire * (100 - damageable.FireResistance);
-				int coldDamage = (damage + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterCold ) ) * cold * (100 - damageable.ColdResistance);
-				int poisonDamage = (damage + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterPoison ) ) * pois * (100 - damageable.PoisonResistance);
-				int energyDamage = (damage + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterEnergy ) ) * nrgy * (100 - damageable.EnergyResistance);
-				int chaosDamage = damage * chaos * (100 - damageable.ChaosResistance );
-				int directDamage = damage * direct * (100 - damageable.DirectResistance );
+				int physicalResist = damageable.PhysicalResistance;
+				if( from.Skills.Tactics.Value >= 200 && damageable.PhysicalResistance >= 75 )
+					physicalResist = 75;
+
+				int fireResist = damageable.FireResistance;
+				int coldResist = damageable.ColdResistance;
+				int energyResist = damageable.EnergyResistance;
+				if( from.Skills.Spellweaving.Value >= 200 )
+				{
+					if( damageable.FireResistance >= 75 )
+						fireResist = 75;
+					if( damageable.ColdResistance >= 75 )
+						coldResist = 75;
+					if( damageable.EnergyResistance >= 75 )
+						energyResist = 75;
+				}
+				int poisonResist = damageable.PoisonResistance;
+				if( from.Skills.Poisoning.Value >= 200 && damageable.PoisonResistance >= 75 )
+					poisonResist = 75;
+				
+				physDamage =  physDamage * (100 - physicalResist);
+				fireDamage =  fireDamage * (100 - fireResist);
+				coldDamage =  coldDamage * (100 - coldResist);
+				poisonDamage = poisonDamage * (100 - poisonResist);
+				energyDamage = energyDamage * (100 - energyResist);
+				chaosDamage = damage * chaos * (100 - damageable.ChaosResistance );
+				directDamage = damage * direct * (100 - damageable.DirectResistance );
 
 				if( from is PlayerMobile )
 				{
@@ -173,10 +201,10 @@ namespace Server
 					energyDamage = (int)( energyDamage * ( 1 + pm.SilverPoint[14] * 0.1 + SAAbsorptionAttributes.GetValue(pm, SAAbsorptionAttribute.ResonanceEnergy ) * 0.001 ));
 				}
 				
-				
-				totalDamage = physDamage + fireDamage + coldDamage + poisonDamage + energyDamage + chaosDamage + directDamage;
-				totalDamage /= 10000;
+				//totalDamage = physDamage + fireDamage + coldDamage + poisonDamage + energyDamage + chaosDamage + directDamage;
+				//totalDamage /= 10000;
             }
+			/*
             else if (Core.ML && m is PlayerMobile)
             {
                 if (quiver != null)
@@ -186,11 +214,23 @@ namespace Server
             }
             else
             {
-                totalDamage = damage;
+				//int physDamage = (damage + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterDamage ) / 100 ) * phys * 100;
+				//int fireDamage = (damage + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterFire ) / 100 ) * fire * 100;
+				//int coldDamage = (damage + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterCold ) / 100 ) * cold * 100;
+				//int poisonDamage = (damage + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterPoison ) / 100 ) * pois * 100;
+				//int energyDamage = (damage + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterEnergy ) / 100 ) * nrgy * 100;
+				//int chaosDamage = damage * chaos * (100 - damageable.ChaosResistance );
+				//int directDamage = damage * direct * (100 - damageable.DirectResistance );
 
-                if (Core.ML && quiver != null)
-                    totalDamage += totalDamage * quiver.DamageIncrease / 100;
+
+                //if (Core.ML && quiver != null)
+                //    totalDamage += totalDamage * quiver.DamageIncrease / 100;
             }
+			*/
+
+			totalDamage = physDamage + fireDamage + coldDamage + poisonDamage + energyDamage + chaosDamage + directDamage;
+			totalDamage /= 10000;
+			//Console.WriteLine("damage : " + damage + "   totalDamage : " + totalDamage );  
 
             // object being damaged is not a mobile, so we will end here
             if (damageable is Item)
@@ -215,6 +255,7 @@ namespace Server
 				m.Combatant = from;
 			}
 			
+			//몬스터가 공격 시 준 피해의 2배 어그로 잡음. 방패 착용 시 어그로 4배 적용. 이후 어그로 계산 다시 처리
 			if( from is BaseCreature )
 			{
 				BaseCreature bc = from as BaseCreature;
@@ -242,16 +283,15 @@ namespace Server
 					{
 						if( m != null && ( bc.AggroMobile[i] == m || bc.AggroMobile[i] == null ) )
 						{
-							int doublecal = 4;
+							int doublecal = 2;
 							bc.AggroMobile[i] = m;
 							BaseShield shield = m.FindItemOnLayer(Layer.TwoHanded) as BaseShield;
 							if( shield != null )
-								doublecal = 2;
+								doublecal = 4;
 
 							if( aggro > 0 )
 							{
-								double aggrobonus = 1;
-								double aggrominus = 1;
+								/*
 								if( m is PlayerMobile )
 								{
 									PlayerMobile pm = m as PlayerMobile;
@@ -259,9 +299,9 @@ namespace Server
 									aggrominus -= pm.SilverPoint[4] * 0.0015;
 									if( aggrominus == 0 )
 										aggrominus = 0.0025;
-								}							
-								int realaggro = (int)( (( totalDamage / doublecal ) * aggro * aggrobonus / 100 ) / aggrominus);
-								bc.AggroScore[i] += realaggro / doublecal;
+								}
+								*/
+								bc.AggroScore[i] += Misc.Util.AggroCalc(m, totalDamage ) * doublecal;
 							}
 							break;
 						}
@@ -318,6 +358,7 @@ namespace Server
 				}
 			}
 
+			//몬스터가 피격 시 준 피해만큼 어그르. 방패 착용 시 어그로 2배 적용. 이후 어그로 계산 다시 처리
 			if( m is BaseCreature )
 			{
 				BaseCreature bc = m as BaseCreature;
@@ -377,6 +418,7 @@ namespace Server
 							{
 								double aggrobonus = 1;
 								double aggrominus = 1;
+								/*
 								if( from is PlayerMobile )
 								{
 									PlayerMobile pm = from as PlayerMobile;
@@ -384,9 +426,9 @@ namespace Server
 									aggrominus -= pm.SilverPoint[4] * 0.0025;
 									if( aggrominus == 0 )
 										aggrominus = 0.0025;
-								}							
-								int realaggro = (int)(( ( totalDamage / doublecal ) * aggro * aggrobonus / 100 ) / aggrominus);
-								bc.AggroScore[i] += realaggro * doublecal;
+								}
+								*/
+								bc.AggroScore[i] += Misc.Util.AggroCalc(m, totalDamage ) * doublecal;
 							}
 							break;
 						}
@@ -664,22 +706,22 @@ namespace Server
 				case 2: return from.GetMaxResistance( ResistanceType.Cold );
 				case 3: return from.GetMaxResistance( ResistanceType.Poison );
 				case 4: return from.GetMaxResistance( ResistanceType.Energy );
-                case 5: return Math.Min(999, AosAttributes.GetValue(from, AosAttribute.DefendChance));
-                case 6: return 999;
-                case 7: return Math.Min(999, AosAttributes.GetValue(from, AosAttribute.AttackChance));
-                case 8: return Math.Min(999, AosAttributes.GetValue(from, AosAttribute.WeaponSpeed));
-                case 9: return Math.Min(1000, AosAttributes.GetValue(from, AosAttribute.WeaponDamage));
-                case 10: return Math.Min(100, AosAttributes.GetValue(from, AosAttribute.LowerRegCost));
-                case 11: return AosAttributes.GetValue(from, AosAttribute.SpellDamage);
-                case 12: return Math.Min(999, AosAttributes.GetValue(from, AosAttribute.CastRecovery));
-                case 13: return Math.Min(999, AosAttributes.GetValue(from, AosAttribute.CastSpeed));
-                case 14: return Math.Min(80, AosAttributes.GetValue(from, AosAttribute.LowerManaCost) ); // + BaseArmor.GetInherentLowerManaCost(from);
+                case 5: return Math.Min(75, AosAttributes.GetValue(from, AosAttribute.DefendChance) / 100);
+                case 6: return 75;
+                case 7: return Math.Min(75, AosAttributes.GetValue(from, AosAttribute.AttackChance) / 100);
+                case 8: return Math.Min(150, ( AosAttributes.GetValue(from, AosAttribute.WeaponSpeed) + AosWeaponAttributes.GetValue(from, AosWeaponAttribute.MageWeapon) ) / 100);
+                case 9: return Math.Min(175, ( AosAttributes.GetValue(from, AosAttribute.WeaponDamage) + AosWeaponAttributes.GetValue(from, AosWeaponAttribute.UseBestSkill) ) / 100);
+                case 10: return Math.Min(100, AosAttributes.GetValue(from, AosAttribute.LowerRegCost) / 100);
+                case 11: return Math.Min(175, ( AosAttributes.GetValue(from, AosAttribute.SpellDamage) + AosWeaponAttributes.GetValue(from, AosWeaponAttribute.UseBestSkill) ) / 100);
+                case 12: return Math.Min(150, AosAttributes.GetValue(from, AosAttribute.CastRecovery) / 100);
+                case 13: return Math.Min(150, ( AosAttributes.GetValue(from, AosAttribute.CastSpeed) + AosWeaponAttributes.GetValue(from, AosWeaponAttribute.MageWeapon) ) / 100);
+                case 14: return Math.Min(80, AosAttributes.GetValue(from, AosAttribute.LowerManaCost) / 100 ); // + BaseArmor.GetInherentLowerManaCost(from);
                 
                 case 15: return (int)RegenRates.Mobile_HitsRegenRate(from); // HP   REGEN
                 case 16: return (int)RegenRates.Mobile_StamRegenRate(from); // Stam REGEN
                 case 17: return (int)RegenRates.Mobile_ManaRegenRate(from); // MANA REGEN
-                case 18: return Math.Min(1000, AosAttributes.GetValue(from, AosAttribute.ReflectPhysical)); // reflect phys
-                case 19: return Math.Min(1000, AosAttributes.GetValue(from, AosAttribute.EnhancePotions)); // enhance pots
+                case 18: return Math.Min(100, AosAttributes.GetValue(from, AosAttribute.ReflectPhysical) / 100); // reflect phys
+                case 19: return Math.Min(100, AosAttributes.GetValue(from, AosAttribute.EnhancePotions) / 100); // enhance pots
 
                 case 20: return AosAttributes.GetValue(from, AosAttribute.BonusStr) + from.GetStatOffset(StatType.Str); // str inc
                 case 21: return AosAttributes.GetValue(from, AosAttribute.BonusDex) + from.GetStatOffset(StatType.Dex); // dex inc
@@ -1686,11 +1728,11 @@ namespace Server
         HitFireball = 0x00000200, 			//파이어볼 발동
         HitLightning = 0x00000400,			//라이트닝 발동
         HitDispel = 0x00000800,				//위더 발동
-        HitColdArea = 0x00001000,			//광역 냉기 데미지 증가%	
-        HitFireArea = 0x00002000,			//광역 화염 데미지 증가%
-        HitPoisonArea = 0x00004000,			//광역 독 데미지 증가%
-        HitEnergyArea = 0x00008000,			//광역 에너지 데미지 증가%
-        HitPhysicalArea = 0x00010000,		//광역 물리 데미지 증가%
+        HitColdArea = 0x00001000,			//광역 냉기 범위 증가%	
+        HitFireArea = 0x00002000,			//광역 화염 범위 증가%
+        HitPoisonArea = 0x00004000,			//광역 독 범위 증가%
+        HitEnergyArea = 0x00008000,			//광역 에너지 범위 증가%
+        HitPhysicalArea = 0x00010000,		//광역 물리 범위 증가%
         ResistPhysicalBonus = 0x00020000,
         ResistFireBonus = 0x00040000,
         ResistColdBonus = 0x00080000,
@@ -1699,12 +1741,12 @@ namespace Server
         UseBestSkill = 0x00400000,			//모든 피해%
         MageWeapon = 0x00800000,			//모든 속도%
         DurabilityBonus = 0x01000000,
-        BloodDrinker = 0x02000000,			//충격 데미지 -> 출혈 데미지
-        BattleLust = 0x04000000,			//무기 데미지 -> 출혈 데미지
-        HitCurse = 0x08000000,				//독 레벨 +1 확률%
-        HitFatigue = 0x10000000,			//충격 데미지 -> 관통 데미지
-        HitManaDrain = 0x20000000,			//무기 데미지 -> 출혈 데미지
-        SplinteringWeapon = 0x40000000,		//무기 데미지 -> 충격 데미지
+        BloodDrinker = 0x02000000,			//피격 시 물리 치명 확률 감소
+        BattleLust = 0x04000000,			//피격 시 물리 치명 피해 감소
+        HitCurse = 0x08000000,				//
+        HitFatigue = 0x10000000,			//피격 시 마법 치명 확률 감소
+        HitManaDrain = 0x20000000,			//피격 시 마법 치명 피해 감소
+        SplinteringWeapon = 0x40000000,		//펜싱 무기 스킬 +1
         ReactiveParalyze =  0x80000000,		//
     }
 
@@ -1799,6 +1841,10 @@ namespace Server
 					value += pm.ItemSetSaveValue[54];
 				else if( attribute == AosWeaponAttribute.HitLightning )
 					value += pm.ItemSetSaveValue[55];
+				else if( attribute == AosWeaponAttribute.UseBestSkill )
+					value += pm.ItemSetSaveValue[117];
+				else if( attribute == AosWeaponAttribute.MageWeapon )
+					value += pm.ItemSetSaveValue[118];
 			}			
 			
 			
@@ -2322,17 +2368,17 @@ namespace Server
         #endregion
     }
 
-	//특수 데미지
+	//특수 데미지, 전사 특수기
     [Flags]
     public enum ExtendedWeaponAttribute
     {
         BoneBreaker     = 0x00000001, //
-        HitSwarm        = 0x00000002, //
-        HitSparks       = 0x00000004, //감전 데미지 증가
-        Bane            = 0x00000008, //부식 데미지 증가
+        HitSwarm        = 0x00000002, //독 저항성%
+        HitSparks       = 0x00000004, //함정 회피%
+        Bane            = 0x00000008, //독 저항성
         MysticWeapon    = 0x00000010, //
         AssassinHoned   = 0x00000020, //어그로 감소
-        Focus           = 0x00000040, //
+        Focus           = 0x00000040, //붕대 사용 시 독 회복
         HitExplosion    = 0x00000080, //연소 데미지 증가
         Freezing		= 0x00000100, //동상 데미지 증가
 		InfectionBonus	= 0x00000200,  //인팩팅 데미지 증가
@@ -2342,7 +2388,18 @@ namespace Server
 		ChaosPlus		= 0x00002000,  //혼돈 데미지 증가
 		DirectPlus		= 0x00004000,  //신성 데미지 증가
 		AggroPoint		= 0x00008000,  //어그로
-		AggroPointBonus	= 0x00010000  //어그로%
+		AggroPointBonus	= 0x00010000,  //어그로%
+		SPMAllBonus		= 0x00020000,  //모든 특수기 증가
+		SPMFirstBonus	= 0x00040000,  //특수기 첫번째 증가
+		SPMSecondBonus	= 0x00080000,  //특수기 두번째 증가
+		SPMSwordBonus	= 0x00100000,  //검 특수기 증가
+		SPMMaceBonus	= 0x00200000,  //둔기 특수기 증가
+		SPMFancingBonus	= 0x00400000,  //펜싱 특수기 증가
+		SPMBowBonus		= 0x00800000,  //활&석궁 특수기 증가
+		SPMWrestling	= 0x01000000,  //맨손 특수기 증가
+		BaseWeaponDamage= 0x02000000,  //무기 피해
+		BaseSpellDamage	= 0x04000000,  //마법 피해
+		BaseAllDamage	= 0x08000000   //전체 피해
     }
 
     public sealed class ExtendedWeaponAttributes : BaseAttributes
@@ -2641,6 +2698,138 @@ namespace Server
                 this[ExtendedWeaponAttribute.AggroPointBonus] = value;
             }
         }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int SPMAllBonus
+        {
+            get
+            {
+                return this[ExtendedWeaponAttribute.SPMAllBonus];
+            }
+            set
+            {
+                this[ExtendedWeaponAttribute.SPMAllBonus] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int SPMFirstBonus
+        {
+            get
+            {
+                return this[ExtendedWeaponAttribute.SPMFirstBonus];
+            }
+            set
+            {
+                this[ExtendedWeaponAttribute.SPMFirstBonus] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int SPMSecondBonus
+        {
+            get
+            {
+                return this[ExtendedWeaponAttribute.SPMSecondBonus];
+            }
+            set
+            {
+                this[ExtendedWeaponAttribute.SPMSecondBonus] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int SPMSwordBonus
+        {
+            get
+            {
+                return this[ExtendedWeaponAttribute.SPMSwordBonus];
+            }
+            set
+            {
+                this[ExtendedWeaponAttribute.SPMSwordBonus] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int SPMMaceBonus
+        {
+            get
+            {
+                return this[ExtendedWeaponAttribute.SPMMaceBonus];
+            }
+            set
+            {
+                this[ExtendedWeaponAttribute.SPMMaceBonus] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int SPMFancingBonus
+        {
+            get
+            {
+                return this[ExtendedWeaponAttribute.SPMFancingBonus];
+            }
+            set
+            {
+                this[ExtendedWeaponAttribute.SPMFancingBonus] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int SPMBowBonus
+        {
+            get
+            {
+                return this[ExtendedWeaponAttribute.SPMBowBonus];
+            }
+            set
+            {
+                this[ExtendedWeaponAttribute.SPMBowBonus] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int SPMWrestling
+        {
+            get
+            {
+                return this[ExtendedWeaponAttribute.SPMWrestling];
+            }
+            set
+            {
+                this[ExtendedWeaponAttribute.SPMWrestling] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BaseWeaponDamage
+        {
+            get
+            {
+                return this[ExtendedWeaponAttribute.BaseWeaponDamage];
+            }
+            set
+            {
+                this[ExtendedWeaponAttribute.BaseWeaponDamage] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BaseSpellDamage
+        {
+            get
+            {
+                return this[ExtendedWeaponAttribute.BaseSpellDamage];
+            }
+            set
+            {
+                this[ExtendedWeaponAttribute.BaseSpellDamage] = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BaseAllDamage
+        {
+            get
+            {
+                return this[ExtendedWeaponAttribute.BaseAllDamage];
+            }
+            set
+            {
+                this[ExtendedWeaponAttribute.BaseAllDamage] = value;
+            }
+        }
 	}
 
     [Flags]
@@ -2659,28 +2848,24 @@ namespace Server
 		WeaponDefense = 0x00000200, //방어력
 		MagicDefense = 0x00000400, //마법 방어력
 		StunDefense = 0x00000800, //스턴 시간 감소
-		ShieldRecovery = 0x00001000, //방패 회복 속도. 기본 1초
+		ShieldRecovery = 0x00001000, //방패 방어 확률
 		AllDefenseBonus = 0x00002000, //전체 피격 데미지 감소
 		ElementalResist = 0x00004000, //원소 저항력%
 		AllResist = 0x00008000, //모든 저항력%
-		DefenseStam = 0x00010000 //방어시 기력 소모 감소
-		/*
-		BonusMining = 0x00020000, //광물 획득 증가 
-		BonusLumberjacking = 0x00040000, //나무 획득 증가
-		BonusTaning = 0x00080000, //가죽 획득 증가
-		BonusFishing = 0x00100000, //물고기 획득 증가
-		BonusFarming = 0x00200000, //낙농품 획득 증가
-		BonusAlchemy = 0x00400000, //연금술 성공율 증가%
-		BonusBlacksmith = 0x00800000, //대장장이 성공율 증가%
-		BonusBowcrafting = 0x01000000, //활제작 성공율 증가%
-		BonusCapentry = 0x02000000, //목수 성공율 증가%
-		BonusCatography = 0x04000000, //지도 제작 성공율 증가%
-		BonusCooking = 0x08000000, //요리 성공율 증가%
-		BonusInscript = 0x10000000, //기록술 성공율 증가%
-		BonusTailoring = 0x20000000, //재봉술 성공율 증가%
-		BonusTinkering = 0x40000000, //기계공학 성공율 증가%
-		BonusImbuing = 0x80000000 //임뷰잉 성공율 증가%
-		*/
+		DefenseStam = 0x00010000, //방어시 기력 소모 감소
+		MagicAllBonus = 0x00020000, //모든 마법 스킬 증가 
+		MagicOneCircleBonus = 0x00040000, //1써클 마법 스킬 증가
+		MagicTwoCircleBonus = 0x00080000, //2써클 마법 스킬 증가
+		MagicThreeCircleBonus = 0x00100000, //3써클 마법 스킬 증가
+		MagicFourCircleBonus = 0x00200000, //4써클 마법 스킬 증가
+		MagicFiveCircleBonus = 0x00400000, //5써클 마법 스킬 증가
+		MagicSixCircleBonus = 0x00800000, //6써클 마법 스킬 증가
+		MagicSevenCircleBonus = 0x01000000, //7써클 마법 스킬 증가
+		MagicEightCircleBonus = 0x02000000, //8써클 마법 스킬 증가
+		MagicNecromancyBonus = 0x04000000, //강령술 마법 스킬 증가
+		MagicElementalismBonus = 0x08000000, //원소술 마법 스킬 증가
+		MagicMysticismBonus = 0x10000000, //신비술 마법 스킬 증가
+		MagicChivalryBonus = 0x20000000 //기사도 마법 스킬 증가
         #endregion
     }
 
@@ -3047,188 +3232,162 @@ namespace Server
                 this[AosArmorAttribute.DefenseStam] = value;
             }
         }
-		/*
         [CommandProperty(AccessLevel.GameMaster)]
-        public int BonusMining
+        public int MagicAllBonus
         {
             get
             {
-                return this[AosArmorAttribute.BonusMining];
+                return this[AosArmorAttribute.MagicAllBonus];
             }
             set
             {
-                this[AosArmorAttribute.BonusMining] = value;
+                this[AosArmorAttribute.MagicAllBonus] = value;
             }
         }
         [CommandProperty(AccessLevel.GameMaster)]
-        public int BonusLumberjacking
+        public int MagicOneCircleBonus
         {
             get
             {
-                return this[AosArmorAttribute.BonusLumberjacking];
+                return this[AosArmorAttribute.MagicOneCircleBonus];
             }
             set
             {
-                this[AosArmorAttribute.BonusLumberjacking] = value;
+                this[AosArmorAttribute.MagicOneCircleBonus] = value;
             }
         }
         [CommandProperty(AccessLevel.GameMaster)]
-        public int BonusTaning
+        public int MagicTwoCircleBonus
         {
             get
             {
-                return this[AosArmorAttribute.BonusTaning];
+                return this[AosArmorAttribute.MagicTwoCircleBonus];
             }
             set
             {
-                this[AosArmorAttribute.BonusTaning] = value;
+                this[AosArmorAttribute.MagicTwoCircleBonus] = value;
             }
         }
         [CommandProperty(AccessLevel.GameMaster)]
-        public int BonusFishing
+        public int MagicThreeCircleBonus
         {
             get
             {
-                return this[AosArmorAttribute.BonusFishing];
+                return this[AosArmorAttribute.MagicThreeCircleBonus];
             }
             set
             {
-                this[AosArmorAttribute.BonusFishing] = value;
+                this[AosArmorAttribute.MagicThreeCircleBonus] = value;
             }
         }
         [CommandProperty(AccessLevel.GameMaster)]
-        public int BonusFarming
+        public int MagicFourCircleBonus
         {
             get
             {
-                return this[AosArmorAttribute.BonusFarming];
+                return this[AosArmorAttribute.MagicFourCircleBonus];
             }
             set
             {
-                this[AosArmorAttribute.BonusFarming] = value;
+                this[AosArmorAttribute.MagicFourCircleBonus] = value;
             }
         }
         [CommandProperty(AccessLevel.GameMaster)]
-        public int BonusAlchemy
+        public int MagicFiveCircleBonus
         {
             get
             {
-                return this[AosArmorAttribute.BonusAlchemy];
+                return this[AosArmorAttribute.MagicFiveCircleBonus];
             }
             set
             {
-                this[AosArmorAttribute.BonusAlchemy] = value;
+                this[AosArmorAttribute.MagicFiveCircleBonus] = value;
             }
         }
         [CommandProperty(AccessLevel.GameMaster)]
-        public int BonusBlacksmith
+        public int MagicSixCircleBonus
         {
             get
             {
-                return this[AosArmorAttribute.BonusBlacksmith];
+                return this[AosArmorAttribute.MagicSixCircleBonus];
             }
             set
             {
-                this[AosArmorAttribute.BonusBlacksmith] = value;
+                this[AosArmorAttribute.MagicSixCircleBonus] = value;
             }
         }
         [CommandProperty(AccessLevel.GameMaster)]
-        public int BonusBowcrafting
+        public int MagicSevenCircleBonus
         {
             get
             {
-                return this[AosArmorAttribute.BonusBowcrafting];
+                return this[AosArmorAttribute.MagicSevenCircleBonus];
             }
             set
             {
-                this[AosArmorAttribute.BonusBowcrafting] = value;
+                this[AosArmorAttribute.MagicSevenCircleBonus] = value;
             }
         }
         [CommandProperty(AccessLevel.GameMaster)]
-        public int BonusCapentry
+        public int MagicEightCircleBonus
         {
             get
             {
-                return this[AosArmorAttribute.BonusCapentry];
+                return this[AosArmorAttribute.MagicEightCircleBonus];
             }
             set
             {
-                this[AosArmorAttribute.BonusCapentry] = value;
+                this[AosArmorAttribute.MagicEightCircleBonus] = value;
             }
         }
         [CommandProperty(AccessLevel.GameMaster)]
-        public int BonusCatography
+        public int MagicNecromancyBonus
         {
             get
             {
-                return this[AosArmorAttribute.BonusCatography];
+                return this[AosArmorAttribute.MagicNecromancyBonus];
             }
             set
             {
-                this[AosArmorAttribute.BonusCatography] = value;
+                this[AosArmorAttribute.MagicNecromancyBonus] = value;
             }
         }
         [CommandProperty(AccessLevel.GameMaster)]
-        public int BonusCooking
+        public int MagicElementalismBonus
         {
             get
             {
-                return this[AosArmorAttribute.BonusCooking];
+                return this[AosArmorAttribute.MagicElementalismBonus];
             }
             set
             {
-                this[AosArmorAttribute.BonusCooking] = value;
+                this[AosArmorAttribute.MagicElementalismBonus] = value;
             }
         }
         [CommandProperty(AccessLevel.GameMaster)]
-        public int BonusInscript
+        public int MagicMysticismBonus
         {
             get
             {
-                return this[AosArmorAttribute.BonusInscript];
+                return this[AosArmorAttribute.MagicMysticismBonus];
             }
             set
             {
-                this[AosArmorAttribute.BonusInscript] = value;
+                this[AosArmorAttribute.MagicMysticismBonus] = value;
             }
         }
         [CommandProperty(AccessLevel.GameMaster)]
-        public int BonusTailoring
+        public int MagicChivalryBonus
         {
             get
             {
-                return this[AosArmorAttribute.BonusTailoring];
+                return this[AosArmorAttribute.MagicChivalryBonus];
             }
             set
             {
-                this[AosArmorAttribute.BonusTailoring] = value;
+                this[AosArmorAttribute.MagicChivalryBonus] = value;
             }
         }
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int BonusTinkering
-        {
-            get
-            {
-                return this[AosArmorAttribute.BonusTinkering];
-            }
-            set
-            {
-                this[AosArmorAttribute.BonusTinkering] = value;
-            }
-        }
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int BonusImbuing
-        {
-            get
-            {
-                return this[AosArmorAttribute.BonusImbuing];
-            }
-            set
-            {
-                this[AosArmorAttribute.BonusImbuing] = value;
-            }
-        }
-		*/
     }
 
     public sealed class AosSkillBonuses : BaseAttributes

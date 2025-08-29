@@ -17,17 +17,19 @@ namespace Server.Mobiles
             //PackItem(new Robe(Utility.RandomMetalHue())); 
             //PackItem(new WizardsHat(Utility.RandomMetalHue())); 
 
-            SetStr(681, 705);
-            SetDex(191, 215);
+			Boss = true;
+
+            SetStr(6810, 7050);
+            SetDex(10910, 12150);
             SetInt(526, 550);
 
-            SetHits(140900, 142630);
-			SetStam(130, 140);
-			SetMana(100, 110);
+            SetHits(240900, 262630);
+			SetStam(213000, 241400);
+			SetMana(100000, 110000);
 
 			SetAttackSpeed( 10.0 );
 
-            SetDamage(258, 400);
+            SetDamage(1258, 4000);
 
             SetDamageType(ResistanceType.Physical, 100);
 
@@ -49,7 +51,7 @@ namespace Server.Mobiles
 
             SetSpecialAbility(SpecialAbility.ColossalBlow);
 
-            VirtualArmor = 555;
+            VirtualArmor = 55;
         }
 
         public override int GetAngerSound()

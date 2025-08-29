@@ -8,14 +8,16 @@ namespace Server.Items
         [Constructable]
         public ChargedAssassinSpike()
         {
-			//에너지 피해 100, 에너지 저항 70%
-			SuffixOption[0] = 2; //옵션 갯수
+			//에너지 속성 25%, 에너지 피해 140, 에너지 저항 10%
+			SuffixOption[0] = 3; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 36; //옵션 종류
-			SuffixOption[11] = 10000; //옵션 값
+			SuffixOption[11] = 1400000; //옵션 값
 			PrefixOption[12] = 16; //옵션 종류
-			SuffixOption[12] = 7000; //옵션 값
+			SuffixOption[12] = 180000; //옵션 값
+			PrefixOption[13] = 156; //옵션 종류
+			SuffixOption[13] = 250000; //옵션 값
 
 
         }

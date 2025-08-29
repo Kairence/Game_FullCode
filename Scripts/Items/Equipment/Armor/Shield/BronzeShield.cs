@@ -24,28 +24,28 @@ namespace Server.Items
         {
             get
             {
-                return 300;
+                return 1000;
             }
         }
         public override int AosDexReq
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
         public override int AosIntReq
         {
             get
             {
-                return 500;
+                return 1000;
             }
         }
         public override int ArmorBase
         {
             get
             {
-                return 0;
+                return 10;
             }
         }
 		
@@ -55,14 +55,13 @@ namespace Server.Items
             : base(0x1B72)
         {
             Weight = 6.0;
-			PrefixOption[61] = 109;
-			SuffixOption[61] = 100;
-			PrefixOption[62] = 110;
-			SuffixOption[62] = 1000;
-			PrefixOption[63] = 110;
-			SuffixOption[63] = 200;
-			PrefixOption[64] = 116;
-			SuffixOption[64] = 3000;
+			PrefixOption[61] = 40; //공격 속도
+			SuffixOption[61] = -500000;
+			PrefixOption[62] = 109; //방패 방어 확률
+			SuffixOption[62] = 200000;
+			PrefixOption[63] = 6; //모든 피격 데미지 감소
+			SuffixOption[63] = 5000000;
+
 
 		}
 

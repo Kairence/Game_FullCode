@@ -14,7 +14,7 @@ namespace Server.Mobiles
             Hue = 0x901;
             BaseSoundID = 0x462;
 
-            this.SetStr(256, 280);
+            this.SetStr(456, 680);
             this.SetDex(366, 385);
             this.SetInt(26, 50);
 

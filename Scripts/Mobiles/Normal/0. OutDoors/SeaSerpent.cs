@@ -17,16 +17,16 @@ namespace Server.Mobiles
 
             Hue = Utility.Random(0x530, 9);
 
-            SetStr(351, 825);
+            SetStr(451, 825);
             SetDex(487, 535);
-            SetInt(287, 355);
+            SetInt(1287, 1355);
 
-            SetHits(11600, 13000);
+            SetHits(1160, 1300);
             SetStam(100, 150);
             SetMana(50, 100);
 
-			SetAttackSpeed(17.5);
-            SetDamage(66, 100);
+			SetAttackSpeed(20.0);
+            SetDamage(366, 400);
 
             SetDamageType(ResistanceType.Physical, 100);
 

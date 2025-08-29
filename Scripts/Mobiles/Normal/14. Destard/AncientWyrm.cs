@@ -9,17 +9,22 @@ namespace Server.Mobiles
         public AncientWyrm()
             : base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
         {
-            Name = "an ancient wyrm";
+            Name = "Boss an ancient wyrm";
             Body = 46;
             BaseSoundID = 362;
 
-            SetStr(1096, 1185);
-            SetDex(86, 175);
-            SetInt(686, 775);
+			Boss = true;
 
-            SetHits(658, 711);
+            SetStr(16096, 17185);
+            SetDex(16000, 17500);
+            SetInt(16860, 17750);
 
-            SetDamage(29, 35);
+            SetHits(365800, 371100);
+			SetStam( 100000, 120000 );
+			SetMana( 100000, 115000 );
+
+			SetAttackSpeed( 10.0 );  
+            SetDamage(2200, 5000);
 
             SetDamageType(ResistanceType.Physical, 75);
             SetDamageType(ResistanceType.Fire, 25);
@@ -30,17 +35,17 @@ namespace Server.Mobiles
             SetResistance(ResistanceType.Poison, 60, 70);
             SetResistance(ResistanceType.Energy, 60, 70);
 
-            SetSkill(SkillName.EvalInt, 80.1, 100.0);
-            SetSkill(SkillName.Magery, 80.1, 100.0);
-            SetSkill(SkillName.Meditation, 52.5, 75.0);
-            SetSkill(SkillName.MagicResist, 100.5, 150.0);
-            SetSkill(SkillName.Tactics, 97.6, 100.0);
-            SetSkill(SkillName.Wrestling, 97.6, 100.0);
+            SetSkill(SkillName.EvalInt, 380.1, 400.0);
+            SetSkill(SkillName.Magery, 380.1, 400.0);
+            SetSkill(SkillName.Meditation, 352.5, 375.0);
+            SetSkill(SkillName.MagicResist, 300.5, 350.0);
+            SetSkill(SkillName.Tactics, 397.6, 400.0);
+            SetSkill(SkillName.Wrestling, 397.6, 400.0);
 
-            Fame = 22500;
-            Karma = -22500;
+            Fame = 30000;
+            Karma = -30000;
 
-            VirtualArmor = 70;
+            VirtualArmor = 33;
 
             SetSpecialAbility(SpecialAbility.DragonBreath);
         }

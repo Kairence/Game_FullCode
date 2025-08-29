@@ -11,6 +11,8 @@ namespace Server.Items
         public Maul()
             : base(0x143B)
         {
+			PrefixOption[61] = 42;
+			SuffixOption[61] = 100000;			
             Weight = 10.0;
         }
 
@@ -37,14 +39,14 @@ namespace Server.Items
         {
             get
             {
-                return 500;
+                return 2000;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 200;
+                return 3000;
             }
         }
         public override int AosIntelligenceReq
@@ -59,14 +61,14 @@ namespace Server.Items
         {
             get
             {
-                return 27;
+                return 1;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 33;
+                return 7;
             }
         }
         public override int AosSpeed

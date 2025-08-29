@@ -15,7 +15,7 @@ namespace Server.Mobiles
             if (0.5 >= Utility.RandomDouble())
                 Hue = Utility.RandomAnimalHue();
 
-            this.SetStr(10, 15);
+            this.SetStr(200, 250);
             this.SetDex(25, 35);
             this.SetInt(10, 15);
 

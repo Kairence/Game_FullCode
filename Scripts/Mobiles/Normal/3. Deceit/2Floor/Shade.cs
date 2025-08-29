@@ -17,13 +17,13 @@ namespace Server.Mobiles
 
             this.SetStr(276, 300);
             this.SetDex(276, 295);
-            this.SetInt(306, 360);
+            this.SetInt(3060, 3600);
 
             this.SetHits(2846, 2860);
 			this.SetStam(400, 500);
-			this.SetMana(200, 300);
+			this.SetMana(2000, 2300);
 			
-            this.SetDamage(9, 30);
+            this.SetDamage(49, 130);
 
 			SetAttackSpeed( 120 );
 
@@ -39,8 +39,8 @@ namespace Server.Mobiles
             this.SetSkill(SkillName.Tactics, 145.1, 150.0);
             this.SetSkill(SkillName.Wrestling, 215.1, 226.0);
 
-            this.Fame = 14000;
-            this.Karma = -14000;
+            this.Fame = 11000;
+            this.Karma = -11000;
 
             this.VirtualArmor = 22;
 

@@ -20,11 +20,12 @@ namespace Server
 		{
 			if (Core.AOS)
 			{
-				Register(new PoisonImpl("Lesser", 0, 15, 50, 10.0, 4.0, 10.00, 10000, 5));
-				Register(new PoisonImpl("Regular", 1, 35, 80, 20.0, 4.0, 10.00, 10000, 5));
-				Register(new PoisonImpl("Greater", 2, 60, 120, 30.0, 4.0, 10.00, 10000, 5));
-				Register(new PoisonImpl("Deadly", 3, 100, 175, 40.0, 4.0, 10.00, 10000, 5));
-				Register(new PoisonImpl("Lethal", 4, 150, 250, 50.0, 4.0, 10.00, 10000, 5));
+										//이름, 	 레벨,최소,추뎀,배수,딜레이,인터벌,카운트,메시지 카운트
+				Register(new PoisonImpl("Lesser", 0, 0, 0, 20.0, 5.0, 5.00, 10000, 5));
+				Register(new PoisonImpl("Regular", 1, 1001, 100, 15.0, 5.0, 5.00, 10000, 5));
+				Register(new PoisonImpl("Greater", 2, 5001, 500, 10.0, 5.0, 5.00, 10000, 5));
+				Register(new PoisonImpl("Deadly", 3, 20001, 1000, 5.0, 5.0, 5.00, 10000, 5));
+				Register(new PoisonImpl("Lethal", 4, 100001, 2000, 2.5, 5.0, 5.00, 10000, 5));
 			}
 			else
 			{
@@ -134,15 +135,15 @@ namespace Server
 			int count,
 			int messageInterval)
 		{
-			m_Name = name;
-			m_Level = level;
-			m_Minimum = min;
-			m_Maximum = max;
-			m_Scalar = percent;
-			m_Delay = TimeSpan.FromSeconds(delay);
-			m_Interval = TimeSpan.FromSeconds(interval);
-			m_Count = count;
-			m_MessageInterval = messageInterval;
+			m_Name = name;								//독 이름
+			m_Level = level;							//독 레벨
+			m_Minimum = min;							//독 최소 단계(0, 1001, 5001, 20001, 100001)
+			m_Maximum = max;							//독 추뎀(0, 100, 500, 1000, 2000)
+			m_Scalar = percent;							//총 독량의 피해(20%, 15%, 10%, 5%, 2.5%)
+			m_Delay = TimeSpan.FromSeconds(delay);		//5초 마다 독 발생
+			m_Interval = TimeSpan.FromSeconds(interval);//5초 마다 독 발생
+			m_Count = count;							//총 1만번(무한)
+			m_MessageInterval = messageInterval;		//메시지는 독 5회당 발생
 		}
 
 		public override Timer ConstructTimer(Mobile m)
@@ -161,7 +162,7 @@ namespace Server
 			public Mobile From { get { return m_From; } set { m_From = value; } }
 
 			public PoisonTimer(Mobile m, PoisonImpl p)
-				: base(p.m_Delay, p.m_Interval)
+				: base(TimeSpan.FromSeconds(5.0), TimeSpan.FromSeconds(5.0))
 			{
 				m_From = m;
 				m_Mobile = m;
@@ -190,57 +191,111 @@ namespace Server
                 BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Poison, 1017383, 1075633, TimeSpan.FromSeconds((int)((p.m_Count + 1) * p.m_Interval.TotalSeconds)), m, String.Format("{0}\t{1}", damage, (int)p.m_Interval.TotalSeconds)));
             }
 
+			private readonly int[] PoisonLevel =
+			{
+				0, 1000, 5000, 20000, 100000
+			};
+
+			private readonly int[] PoisonPlus =
+			{
+				0, 100, 500, 1000, 2000
+			};
+			private readonly double[] PoisonPercent =
+			{
+				0.2, 0.15, 0.1, 0.5, 0.25
+			};
+
             protected override void OnTick()
             {
-                bool usingPetals = OrangePetals.UnderEffect(m_Mobile);
-
-				double poisonvalue = 0.0;
+				int poisonDamage = 0;
+				int absorbDamage = Misc.Util.PoisonAbsorbDamage(m_Mobile);
 				if( m_Mobile is PlayerMobile )
 				{
 					PlayerMobile pm = m_Mobile as PlayerMobile;
-					poisonvalue = pm.poisonattacker;
+					poisonDamage = pm.PoisonSaving;
+
 				}
 				else if( m_Mobile is BaseCreature )
 				{
 					BaseCreature bc = m_Mobile as BaseCreature;
-					poisonvalue = bc.poisonattacker;
+					poisonDamage = bc.PoisonSaving;
 				}
 				
-                if (Core.SA && usingPetals && m_Poison.RealLevel >= 3 && 0.25 > Utility.RandomDouble())
+				int poisonCheck = 0;
+				for( int i = 4; i < 0; --i)
+				{
+					if( poisonDamage > PoisonLevel[i] )
+					{
+						poisonCheck = i;
+						break;
+					}
+				}
+				poisonDamage = (int)( poisonDamage * PoisonPercent[m_Poison.RealLevel] ) + PoisonPlus[m_Poison.RealLevel];
+
+				switch(poisonCheck)
+				{
+					case 4:
+					{
+						m_Mobile.Poison = Poison.Lethal;
+						break;
+					}
+					case 3:
+					{
+						m_Mobile.Poison = Poison.Deadly;
+						break;
+					}
+					case 2:
+					{
+						m_Mobile.Poison = Poison.Greater;
+						break;
+					}
+					case 1:
+					{
+						m_Mobile.Poison = Poison.Regular;
+						break;
+					}
+					default:
+					{
+						m_Mobile.Poison = Poison.Lesser;
+						break;
+					}
+				}
+
+				int damage = poisonDamage - absorbDamage;
+				//독 피해
+				if( damage > 0 )
+					AOS.Damage(m_Mobile, m_From, damage, 0, 0, 0, 100, 0);
+				else
+					m_Mobile.LocalOverheadMessage(MessageType.Emote, 0x3F, 1053092); // * You feel yourself resisting the effects of the poison *
+
+				//독이 모두 제거되었는지 체크
+                if (m_Index++ == m_Poison.m_Count || poisonDamage < 100 )
                 {
-                    OrangePetals.RemoveContext(m_Mobile);
-                    usingPetals = false;
+					if( m_Mobile is PlayerMobile )
+					{
+						PlayerMobile pm = m_Mobile as PlayerMobile;
+						pm.PoisonSaving = 0;
 
-                    m_Mobile.LocalOverheadMessage(MessageType.Regular, 0x3F, 1053093); // * The strength of the poison overcomes your resistance! *
-                }
+						//스텟 독 저항성
+						absorbDamage += pm.Str * 2;
+					}
+					else if( m_Mobile is BaseCreature )
+					{
+						BaseCreature bc = m_Mobile as BaseCreature;
+						bc.PoisonSaving = 0;
+					}
 
-                if ((Core.AOS && m_Poison.RealLevel < 4 && TransformationSpellHelper.UnderTransformation(m_Mobile, typeof(VampiricEmbraceSpell))) ||
-                    (m_Poison.RealLevel <= 3 && usingPetals) ||
-                    AnimalForm.UnderTransformation(m_Mobile, typeof(Unicorn)) )
-                {
-                    if (m_Mobile.CurePoison(m_Mobile))
-                    {
-                        m_Mobile.LocalOverheadMessage(MessageType.Emote, 0x3F, 1053092); // * You feel yourself resisting the effects of the poison *
-
-                        m_Mobile.NonlocalOverheadMessage(MessageType.Emote, 0x3F, 1114442, m_Mobile.Name); // * ~1_NAME~ seems resistant to the poison *
-
-                        Stop();
-                        return;
-                    }
-                }
-
-                if (m_Index++ == m_Poison.m_Count)
-                {
                     m_Mobile.SendLocalizedMessage(502136); // The poison seems to have worn off.
                     m_Mobile.Poison = null;
-
+					
                     if (m_Mobile is PlayerMobile)
                         BuffInfo.RemoveBuff((PlayerMobile)m_Mobile, BuffIcon.Poison);
 
                     Stop();
                     return;
                 }
-
+				
+				/*
                 int damage;
 
                 if (!Core.AOS && m_LastDamage != 0 && Utility.RandomBool())
@@ -282,7 +337,6 @@ namespace Server
                         damage = m_Poison.m_Minimum;
                     else if (damage > m_Poison.m_Maximum)
                         damage = m_Poison.m_Maximum;
-					*/
                     m_LastDamage = damage;
                 }
 
@@ -334,6 +388,7 @@ namespace Server
 
                 if ((m_Index % m_Poison.m_MessageInterval) == 0)
                     m_Mobile.OnPoisoned(m_From, m_Poison, m_Poison);
+				*/
             }
         }
 	}

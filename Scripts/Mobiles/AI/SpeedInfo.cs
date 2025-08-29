@@ -20,19 +20,20 @@ namespace Server
             //var maxDex = GetMaxMovementDex(bc);
 			
 			
-            double dex = Math.Min(2500, Math.Max(10, bc.Dex));
+            double dex = bc.Dex;
 			
-			if( bc.AI == AIType.AI_Archer || bc.AI == AIType.AI_Mage )
-			{
-				dex /= 2;
-			}
-			else if( bc.Boss )
-				dex *= 2;
-			
-			if( bc.IsMonster || InActiveCombat(bc) )
-				dex *= 2;
+			//if( bc.IsMonster || InActiveCombat(bc) )
+			//	dex *= 2;
 
-            activeSpeed = Math.Truncate( ( 10 / Math.Sqrt( dex ) * 10 )) * 0.1; 
+			//최대 속도 0.2초
+			//몬스터 이속은 2초 ~ 0.2초 사이로 둘 예정. 민첩 10000 경우 이동 속도 100%증가. 이속 1초로 지정
+			//민첩 최대는 10만. 보스 보정 삭제됨
+
+			activeSpeed = Math.Truncate( 20000 / ( dex + 100 ) ) * 0.01;
+			if( activeSpeed < 0.2 )
+				activeSpeed = 0.2;
+
+            //activeSpeed = Math.Truncate( ( 10 / Math.Sqrt( dex ) * 10 )) * 0.1; 
 			if( bc is BaseVendor )
 				passiveSpeed = 60.0;
 			else

@@ -13,6 +13,9 @@ namespace Server.Items
         {
             Weight = 9.0;
             this.Layer = Layer.TwoHanded;
+			PrefixOption[61] = 42;
+			SuffixOption[61] = 50000;			
+			
 		}
 
 
@@ -39,14 +42,14 @@ namespace Server.Items
         {
             get
             {
-                return 2000;
+                return 4500;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 1500;
+                return 3000;
             }
         }
         public override int AosIntelligenceReq
@@ -60,14 +63,14 @@ namespace Server.Items
         {
             get
             {
-                return 35;
+                return 5;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 65;
+                return 15;
             }
         }
         public override int AosSpeed

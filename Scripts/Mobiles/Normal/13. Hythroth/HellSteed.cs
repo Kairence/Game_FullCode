@@ -38,7 +38,10 @@ namespace Server.Mobiles
             Fame = 0;
             Karma = 0;
 
-            SetSpecialAbility(SpecialAbility.DragonBreath);
+            Tamable = true;
+            ControlSlots = 4;
+            MinTameSkill = 171.1;
+            //SetSpecialAbility(SpecialAbility.DragonBreath);
         }
 
         public HellSteed(Serial serial)

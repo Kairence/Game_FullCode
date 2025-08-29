@@ -14,7 +14,7 @@ namespace Server.Mobiles
             Body = 48;
             BaseSoundID = 397;
 
-            SetStr(133, 145);
+            SetStr(233, 245);
             SetDex(136, 145);
             SetInt(116, 130);
 
@@ -38,10 +38,10 @@ namespace Server.Mobiles
             SetSkill(SkillName.Tactics, 46.3, 47.0);
             SetSkill(SkillName.Wrestling, 45.3, 46.0);
 
-			SetAttackSpeed( 4.0 );
+			SetAttackSpeed( 2.5 );
 
-            Fame = 4000;
-            Karma = -4000;
+            Fame = 1000;
+            Karma = -1000;
 
             VirtualArmor = 10;
 

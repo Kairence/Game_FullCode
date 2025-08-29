@@ -15,15 +15,16 @@ namespace Server.Mobiles
             Name = "Boss an orc brute";
             BaseSoundID = 0x45A;
 
-            SetStr(3750, 3850);
+            SetStr(13750, 18500);
             SetDex(5366, 5375);
             SetInt(2600, 2700);
 
-			SetHits(82085, 88888);
-			SetStam(4000, 4200);
-			SetMana(100, 150);
+			SetHits(252085, 268888);
+			SetStam(204000, 242000);
+			SetMana(100000, 150000);
 
-            SetDamage(50, 155);
+			SetAttackSpeed( 5.0 );
+            SetDamage(1050, 1750);
 
             SetDamageType(ResistanceType.Physical, 100);
 

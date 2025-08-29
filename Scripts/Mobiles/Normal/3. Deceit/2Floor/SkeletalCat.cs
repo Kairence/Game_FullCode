@@ -60,13 +60,13 @@ namespace Server.Mobiles
             SetDex(200, 250);
             SetInt(150, 200);
 
-            SetHits(2700, 2900);
+            SetHits(1700, 1900);
 			SetStam(250, 350);
             SetMana(100, 150);
 
 			SetAttackSpeed( 2.5 );
 
-            SetDamage(7, 23);
+            SetDamage(27, 53);
 
             SetDamageType(ResistanceType.Physical, 100);
 
@@ -80,8 +80,8 @@ namespace Server.Mobiles
             SetSkill(SkillName.Tactics, 90.0, 100.0);
             SetSkill(SkillName.Wrestling, 90.0, 95.0);
 
-            Fame = 9000;
-            Karma = -9000;
+            Fame = 5500;
+            Karma = -5500;
 
             VirtualArmor = 10;
             this.Tamable = true;

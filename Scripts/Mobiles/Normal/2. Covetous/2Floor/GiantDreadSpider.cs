@@ -16,14 +16,14 @@ namespace Server.Mobiles
 
             BaseSoundID = 389;
 
-            SetStr(350, 500);
-            SetDex(200, 250);
-            SetInt(650, 900);
+            SetStr(6550, 8500);
+            SetDex(7200, 9250);
+            SetInt(3650, 5900);
 
-            SetHits(15000, 16000);
-            SetStam(250, 300);
-			SetMana(1400, 2000);
-            SetDamage(100, 900);
+            SetHits(55000, 60000);
+            SetStam(25000, 30000);
+			SetMana(14000, 20000);
+            SetDamage(1000, 2900);
 
 			SetAttackSpeed( 10.0 );
 

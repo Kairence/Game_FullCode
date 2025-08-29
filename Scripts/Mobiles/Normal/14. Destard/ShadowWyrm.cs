@@ -13,13 +13,16 @@ namespace Server.Mobiles
             Body = 106;
             BaseSoundID = 362;
 
-            SetStr(898, 1030);
-            SetDex(68, 200);
-            SetInt(488, 620);
+            SetStr(6898, 7030);
+            SetDex(6800, 7200);
+            SetInt(7488, 7620);
 
-            SetHits(558, 599);
+            SetHits(17558, 18599);
+			SetStam( 10000, 12000 );
+			SetMana( 10000, 11500 );
 
-            SetDamage(29, 35);
+			SetAttackSpeed( 1.0 );   
+            SetDamage(40, 120);
 
             SetDamageType(ResistanceType.Physical, 75);
             SetDamageType(ResistanceType.Cold, 25);
@@ -30,24 +33,24 @@ namespace Server.Mobiles
             SetResistance(ResistanceType.Poison, 20, 30);
             SetResistance(ResistanceType.Energy, 50, 60);
 
-            SetSkill(SkillName.EvalInt, 80.1, 100.0);
-            SetSkill(SkillName.Magery, 80.1, 100.0);
-            SetSkill(SkillName.Meditation, 52.5, 75.0);
-            SetSkill(SkillName.MagicResist, 100.3, 130.0);
-            SetSkill(SkillName.Tactics, 97.6, 100.0);
-            SetSkill(SkillName.Wrestling, 97.6, 100.0);
-            SetSkill(SkillName.DetectHidden, 90.0, 100.0);
-            SetSkill(SkillName.Necromancy, 80.0, 90.0);
-            SetSkill(SkillName.SpiritSpeak, 100.0, 105.0);
+            SetSkill(SkillName.EvalInt, 280.1, 300.0);
+            SetSkill(SkillName.Magery, 280.1, 300.0);
+            SetSkill(SkillName.Meditation, 252.5, 275.0);
+            SetSkill(SkillName.MagicResist, 300.3, 330.0);
+            SetSkill(SkillName.Tactics, 297.6, 300.0);
+            SetSkill(SkillName.Wrestling, 297.6, 300.0);
+            SetSkill(SkillName.DetectHidden, 290.0, 300.0);
+            SetSkill(SkillName.Necromancy, 280.0, 290.0);
+            SetSkill(SkillName.SpiritSpeak, 200.0, 305.0);
 
-            Fame = 22500;
-            Karma = -22500;
+            Fame = 25000;
+            Karma = -25000;
 
-            VirtualArmor = 70;
+            VirtualArmor = 35;
 
             Tamable = true;
-            ControlSlots = 35;
-            MinTameSkill = 115.0;
+            ControlSlots = 3;
+            MinTameSkill = 176.0;
 
             SetSpecialAbility(SpecialAbility.DragonBreath);
         }

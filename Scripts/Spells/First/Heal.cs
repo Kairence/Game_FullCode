@@ -65,9 +65,17 @@ namespace Server.Spells.First
                 if (Core.AOS)
                 {
                     //toHeal = this.Caster.Skills.Magery.Fixed / 120;
-                    toHeal = Utility.RandomMinMax(50, 100);
+					int level = SpellLevel(Caster, 3);
+                    toHeal = Utility.RandomMinMax(90 + level * 15, 130 + level * 30) + (int)(Caster.Skills.Magery.Value * 0.15 + Caster.Skills.Chivalry.Value * 0.15);
 					
-					toHeal = Misc.Util.HealCheck(Caster, m, (int)(Caster.Skills.Magery.Value * 10 ), toHeal);
+					Misc.Util.HealCheck(Caster, m, (int)(Caster.Skills.Magery.Value * 10 ));
+					if( level >= 5 )
+					{
+						SpellHelper.Heal(toHeal / 5, this.Caster, this.Caster);
+						//Caster.CheckSkill( SkillName.Mysticism, toHeal * 5 );
+						Caster.FixedParticles(0x376A, 9, 32, 5005, EffectLayer.Waist);
+						Caster.PlaySound(0x1F2);
+					}
                 }
                 else
                 {

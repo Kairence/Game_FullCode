@@ -15,15 +15,15 @@ namespace Server.Mobiles
             this.Body = 2;
             this.BaseSoundID = 427;
 
-            this.SetStr(9570, 9999);
-            this.SetDex(1000, 1200);
-            this.SetInt(200, 250);
+            this.SetStr(12570, 15000);
+            this.SetDex(10000, 12000);
+            this.SetInt(1200, 2500);
 			
-            this.SetHits(100000, 125000);
-            this.SetMana(100, 150);
-			SetStam(500, 700);
+            this.SetHits(165000, 200000);
+            this.SetMana(10000, 15000);
+			SetStam(50000, 70000);
 
-            this.SetDamage(182, 350);
+            this.SetDamage(4820, 7350);
 
 			SetAttackSpeed( 20.0 );
 
@@ -48,8 +48,9 @@ namespace Server.Mobiles
             this.VirtualArmor = Utility.RandomMinMax(175, 350);
 
             this.PackItem(new Club());
-			m_NextAbilityTime = DateTime.Now + TimeSpan.FromSeconds( 20 );
+			//m_NextAbilityTime = DateTime.Now + TimeSpan.FromSeconds( 20 );
         }
+		/*
 		private DateTime m_NextAbilityTime;
 		public override void OnThink()
 		{
@@ -62,13 +63,13 @@ namespace Server.Mobiles
 					if( range < Math.Abs( Location.Y - defender.Location.Y ) )
 						range = Math.Abs( Location.Y - defender.Location.Y );
 				
-					WeaponAbility.ForceArrow.BeforeAttack( this, defender, Utility.RandomMinMax(2050, 3000));
+					WeaponAbility.ForceArrow.BeforeAttack( this, defender, Utility.RandomMinMax(5050, 10000));
 					m_NextAbilityTime = DateTime.Now + TimeSpan.FromSeconds( 20 );
 				}
 			}
 			base.OnThink();
 		}
-				
+		*/		
         public OgreLord(Serial serial)
             : base(serial)
         {

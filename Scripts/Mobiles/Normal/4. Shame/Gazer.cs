@@ -14,17 +14,17 @@ namespace Server.Mobiles
             this.Body = 22;
             this.BaseSoundID = 377;
 
-            this.SetStr(296, 325);
+            this.SetStr(696, 1025);
             this.SetDex(186, 205);
-            this.SetInt(341, 365);
+            this.SetInt(1341, 1365);
 
             this.SetHits(1626, 1733);
-			SetStam(30, 40);
-			SetMana(100, 120);
+			SetStam(300, 400);
+			SetMana(1000, 1200);
 
 			SetAttackSpeed( 50.0 );
 			
-            this.SetDamage(12, 15);
+            this.SetDamage(40, 60);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 
@@ -39,8 +39,8 @@ namespace Server.Mobiles
             SetSkill(SkillName.MagicResist, 175.1, 180.0);
             this.SetSkill(SkillName.Wrestling, 170.0, 175.0);
 
-            this.Fame = 16000;
-            this.Karma = -16000;
+            this.Fame = 6500;
+            this.Karma = -6500;
 
             this.VirtualArmor = 120;
 

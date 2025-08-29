@@ -19,17 +19,17 @@ namespace Server.Mobiles
             Name = "Boss a bloodworm";
             Body = 287;
 
-            SetStr(401, 473);
-            SetDex(280, 290);
-            SetInt(18, 19);
+            SetStr(10010, 12473);
+            SetDex(7280, 9290);
+            SetInt(1800, 1900);
 
-            SetHits(27400, 32200);
-			SetStam(130, 150);
+            SetHits(100000, 123220);
+			SetStam(13000, 15000);
 			SetMana(1000, 2500);
 
-			SetAttackSpeed( 3.0 );
+			SetAttackSpeed( 2.5 );
 
-            SetDamage(46, 100);
+            SetDamage(460, 900);
 
             SetDamageType(ResistanceType.Physical, 60);
             SetDamageType(ResistanceType.Poison, 40);

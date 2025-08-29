@@ -14,13 +14,16 @@ namespace Server.Mobiles
             Body = 161;
             BaseSoundID = 268;
 
-            SetStr(156, 185);
-            SetDex(96, 115);
-            SetInt(171, 192);
+            SetStr(456, 550);
+            SetDex(296, 315);
+            SetInt(1171, 1192);
 
-            SetHits(94, 111);
-
-            SetDamage(10, 21);
+            SetHits(940, 1011);
+			SetStam(200, 300);
+			SetMana(1000, 1100);
+			
+            SetDamage(1, 1);
+			SetAttackSpeed( 60.0 );
 
             SetDamageType(ResistanceType.Physical, 25);
             SetDamageType(ResistanceType.Cold, 75);
@@ -37,13 +40,10 @@ namespace Server.Mobiles
             SetSkill(SkillName.Tactics, 70.1, 100.0);
             SetSkill(SkillName.Wrestling, 60.1, 100.0);
 
-            Fame = 4000;
-            Karma = -4000;
+            Fame = 5000;
+            Karma = -5000;
 
-            VirtualArmor = 40;
-
-            PackItem(new BlackPearl());
-            PackReg(3);
+            VirtualArmor = 10;
 
             SetAreaEffect(AreaEffect.AuraDamage);
         }

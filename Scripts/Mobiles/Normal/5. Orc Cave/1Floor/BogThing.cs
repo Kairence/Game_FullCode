@@ -14,15 +14,15 @@ namespace Server.Mobiles
             this.Name = "Boss a bog thing";
             this.Body = 780;
 
-            this.SetStr(351, 360);
-            this.SetDex(256, 265);
-            this.SetInt(200);
+            this.SetStr(12351, 13360);
+            this.SetDex(10256, 12265);
+            this.SetInt(12000);
 
-            this.SetHits(57510, 57550);
-			SetStam(150, 200);
-            this.SetMana(100, 150);
+            this.SetHits(175100, 175500);
+			SetStam(150000, 162000);
+            this.SetMana(100000, 150000);
 
-            this.SetDamage(142, 200);
+            this.SetDamage(1420, 4000);
 
 			SetAttackSpeed( 10.0 );
 

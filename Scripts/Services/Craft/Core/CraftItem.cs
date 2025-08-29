@@ -1693,6 +1693,12 @@ namespace Server.Engines.Craft
                                                 int iMax = (craftSystem.MaxCraftEffect - iMin) + 1;
                                                 int iRandom = Utility.Random(iMax);
                                                 iRandom += iMin + 1;
+												
+												//제작 스킬이 200인 경우 1번만에 제작
+												if( from.Skills[craftSystem.MainSkill].Value >= 200 )
+												//if( ( craftSystem.MainSkill is SkillName.Blacksmith || craftSystem.MainSkill is SkillName.Fletching || craftSystem.MainSkill is SkillName.Carpentry || craftSystem.MainSkill is SkillName.Tinkering || 
+												//craftSystem.MainSkill is SkillName.Tailoring || craftSystem.MainSkill is SkillName.Inscribe ) && from.Skills[craftSystem.MainSkill].Value >= 200 )
+													iRandom = 2;
 												timecheck = iRandom * 5;
 												if( from is PlayerMobile )
 												{

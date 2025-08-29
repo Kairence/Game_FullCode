@@ -14,17 +14,17 @@ namespace Server.Mobiles
             this.Body = 213;
             this.BaseSoundID = 0xA3;
 
-            this.SetStr(1116, 1410);
+            this.SetStr(4116, 4410);
             this.SetDex(810, 2050);
             this.SetInt(260, 500);
 
-            this.SetHits(7000, 8400);
+            this.SetHits(9000, 10400);
             SetStam(1000, 2000);
             SetMana(10, 20);
 
-			SetAttackSpeed(6.0);
+			SetAttackSpeed(5.0);
 
-            this.SetDamage(77, 120);
+            this.SetDamage(177, 320);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 
@@ -33,12 +33,12 @@ namespace Server.Mobiles
             this.SetResistance(ResistanceType.Poison, 15, 25);
             this.SetResistance(ResistanceType.Energy, 10, 15);
 
-            this.Fame = 3500;
+            this.Fame = 14000;
             this.Karma = 0;
 
             this.Tamable = true;
             this.ControlSlots = 2;
-            this.MinTameSkill = 85.1;
+            this.MinTameSkill = 135.1;
         }
 
         public PolarBear(Serial serial)

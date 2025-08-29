@@ -74,9 +74,37 @@ namespace Server.Spells.First
                 */
                 if (this.CheckSequence())
                 {
+					if( Caster.MeleeDamageAbsorb > 0 )
+					{
+                        Caster.PlaySound(0x1ED);
+                        Caster.FixedParticles(0x376A, 9, 32, 5008, EffectLayer.Waist);
+						Caster.MeleeDamageAbsorb -= 1;
+                        //m_Table.Remove(targ);
+
+                        //for (int i = 0; i < mods.Length; ++i)
+                        //   targ.RemoveResistanceMod(mods[i]);
+
+						Caster.MeleeDamageAbsorb = 0;
+                        BuffInfo.RemoveBuff(this.Caster, BuffIcon.ReactiveArmor);
+					}
+					else
+					{
+						int level = SpellLevel(Caster, 6);
+					
+                        Caster.PlaySound(0x1E9);
+                        Caster.FixedParticles(0x376A, 9, 32, 5008, EffectLayer.Waist);
+						Caster.MeleeDamageAbsorb = 20 + (int)( Caster.Skills.Magery.Value * 0.05 + Caster.Skills.Chivalry.Value * 0.05) + level * 5;
+						if( level >= 5 )
+							Caster.MeleeDamageAbsorb += 15;
+
+                        BuffInfo.AddBuff(this.Caster, new BuffInfo(BuffIcon.ReactiveArmor, 1075812, 1075813, Caster.MeleeDamageAbsorb.ToString()));
+					}
+					
+					
                     Mobile targ = this.Caster;
 
                     //ResistanceMod[] mods = (ResistanceMod[])m_Table[targ];
+
 
                     if (Caster.MeleeDamageAbsorb == 0 || Caster.MeleeDamageAbsorb == 2)
                     {

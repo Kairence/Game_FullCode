@@ -12,7 +12,7 @@ namespace Server.Items
             : base(0x2D21)
         {
 			PrefixOption[61] = 91;
-			SuffixOption[61] = 500;
+			SuffixOption[61] = 2000;
 			
 			//SkillBonuses.SetValues(5, SkillName.Stealth, 5.0);			
             this.Weight = 4.0;
@@ -41,14 +41,14 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1500;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 500;
+                return 3500;
             }
         }
         public override int AosIntelligenceReq
@@ -62,14 +62,14 @@ namespace Server.Items
         {
             get
             {
-                return 12;
+                return 1;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 18;
+                return 3;
             }
         }
         public override int AosSpeed

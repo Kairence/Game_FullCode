@@ -94,8 +94,12 @@ namespace Server.Spells.First
                     {
                         SpellHelper.AddStatCurse(this.Caster, m, StatType.Int, false, newOffset);
 
-                        double percentage = 10 + Caster.Skills.Magery.Value * 0.01;
-                        TimeSpan length = TimeSpan.FromSeconds(30.0);
+						int level = SpellLevel(Caster, 2);
+						int debuff = level >= 15 ? m.Dex / 10 : 0;
+						
+                        double percentage = 200 + Caster.Skills.Magery.Value + Caster.Skills.Necromancy.Value + level * 100 + debuff;
+                        TimeSpan length = TimeSpan.FromSeconds(600.0 + level * 300);
+
                         BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.FeebleMind, 1075833, length, m, percentage.ToString()));
 
                         if (m_Table.ContainsKey(m))

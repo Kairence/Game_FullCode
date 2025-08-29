@@ -7,16 +7,16 @@ namespace Server.Items
         [Constructable]
         public ArcanistsWildStaff()
         {
-			//마나 회복 2, 시전 속도 10%, 에너지 저항력 5%
+			//마나 회복 200, 시전 속도 10%, 에너지 저항력 5%
 			SuffixOption[0] = 3; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 21; //옵션 종류
-			SuffixOption[11] = 200; //옵션 값
+			SuffixOption[11] = 2000000; //옵션 값
 			PrefixOption[12] = 41; //옵션 종류
-			SuffixOption[12] = 1000; //옵션 값
+			SuffixOption[12] = 100000; //옵션 값
 			PrefixOption[13] = 16; //옵션 종류
-			SuffixOption[13] = 500; //옵션 값
+			SuffixOption[13] = 50000; //옵션 값
 
         }
 

@@ -15,16 +15,16 @@ namespace Server.Mobiles
             Body = 11;
             BaseSoundID = 1170;
 
-            SetStr(250, 275);
-            SetDex(100, 150);
-            SetInt(250, 300);
+            SetStr(1550, 2275);
+            SetDex(2100, 2150);
+            SetInt(1250, 1300);
 
-            SetHits(1600, 1750);
+            SetHits(2000, 2450);
 			SetMana(850, 1000);
-			SetStam(50, 80);
+			SetStam(2050, 2480);
 
-            SetDamage(15, 25);
-			SetAttackSpeed( 4.0 );
+            SetDamage(115, 165);
+			SetAttackSpeed( 5.0 );
 
             SetDamageType(ResistanceType.Poison, 100);
 
@@ -38,7 +38,7 @@ namespace Server.Mobiles
 			
 			
             Tamable = true;
-            ControlSlots = 19;
+            ControlSlots = 2;
             MinTameSkill = 96.0;
             VirtualArmor = 15;
         }

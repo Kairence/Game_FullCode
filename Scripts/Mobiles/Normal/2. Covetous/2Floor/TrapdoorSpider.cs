@@ -16,14 +16,14 @@ namespace Server.Mobiles
             Hidden = true; 
 
             SetStr(200, 400);
-            SetDex(10, 50);
-            SetInt(10, 50);
+            SetDex(1010, 1500);
+            SetInt(100, 500);
 
-            SetHits(400, 410);
+            SetHits(800, 1210);
 			SetStam(100, 200);
 			SetMana(50, 90);
 
-            SetDamage(10, 70);
+            SetDamage(10, 600);
 			SetAttackSpeed( 30.0 );
 
             SetDamageType(ResistanceType.Poison, 100);

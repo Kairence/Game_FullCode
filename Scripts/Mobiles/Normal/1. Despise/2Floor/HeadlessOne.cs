@@ -14,7 +14,7 @@ namespace Server.Mobiles
             this.Hue = Utility.RandomSkinHue() & 0x7FFF;
             this.BaseSoundID = 0x39D;
 
-            this.SetStr(126, 130);
+            this.SetStr(226, 430);
             this.SetDex(136, 140);
             this.SetInt(116, 120);
 
@@ -33,8 +33,8 @@ namespace Server.Mobiles
             this.SetSkill(SkillName.Tactics, 35.1, 37.5);
             this.SetSkill(SkillName.Wrestling, 35.1, 37.5);
 
-            this.Fame = 4000;
-            this.Karma = -4000;
+            this.Fame = 500;
+            this.Karma = -500;
 
             this.VirtualArmor = 1;
         }

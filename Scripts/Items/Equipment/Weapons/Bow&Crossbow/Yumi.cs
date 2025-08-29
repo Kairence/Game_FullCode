@@ -11,6 +11,8 @@ namespace Server.Items
         {
             Weight = 8.0;
             Layer = Layer.TwoHanded;
+			PrefixOption[61] = 42;
+			SuffixOption[61] = 200000;			
 		}
 
         public Yumi(Serial serial)
@@ -64,7 +66,7 @@ namespace Server.Items
         {
             get
             {
-                return 3500;
+                return 5000;
             }
         }
         public override int AosIntelligenceReq
@@ -79,14 +81,14 @@ namespace Server.Items
         {
             get
             {
-                return 20;
+                return 1;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 100;
+                return 9;
             }
         }
         public override int AosSpeed
@@ -100,7 +102,7 @@ namespace Server.Items
         {
             get
             {
-                return 3.00f;
+                return 2.00f;
             }
         }
         public override int OldStrengthReq

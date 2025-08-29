@@ -15,7 +15,7 @@ namespace Server.Mobiles
             this.Hue = Utility.RandomAnimalHue();
             this.BaseSoundID = 0x69;
 
-            this.SetStr(10, 15);
+            this.SetStr(230, 580);
             this.SetDex(125, 135);
             this.SetInt(10, 15);
 
@@ -25,7 +25,7 @@ namespace Server.Mobiles
 			
 			SetAttackSpeed(4.0);
 
-            this.SetDamage(4, 8);
+            this.SetDamage(3, 8);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 

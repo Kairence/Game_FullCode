@@ -17,7 +17,7 @@ namespace Server.Mobiles
         {
             this.BaseSoundID = 0x270;
 
-            this.SetStr(94, 170);
+            this.SetStr(294, 370);
             this.SetDex(56, 75);
             this.SetInt(6, 10);
 

@@ -27,12 +27,12 @@ namespace Server.Mobiles
             SetDex(2095, 2105);
             SetInt(4550, 5010);
 
-            SetHits(39800, 40300);
-            SetStam(10000, 20000);
-            SetMana(10000, 20000);
-			SetAttackSpeed(3.5);
+            SetHits(7800, 10300);
+            SetStam(5000, 10000);
+            SetMana(5000, 10000);
+			SetAttackSpeed(5.0);
 
-            SetDamage(288, 455);
+            SetDamage(188, 355);
 
             SetDamageType(ResistanceType.Direct, 100);
 

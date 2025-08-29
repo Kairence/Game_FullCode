@@ -14,17 +14,17 @@ namespace Server.Mobiles
             Body = 28;
             BaseSoundID = 0x388;
 
-            SetStr(126, 130);
-            SetDex(176, 195);
+            SetStr(326, 530);
+            SetDex(760, 950);
             SetInt(116, 120);
 
-            SetHits(450, 500);
+            SetHits(750, 1000);
 			SetStam(50, 100);
             SetMana(20, 30);
 
 			SetAttackSpeed( 10.0 );
 
-            SetDamage(24, 50);
+            SetDamage(48, 90);
 
             SetDamageType(ResistanceType.Poison, 100);
 
@@ -33,8 +33,8 @@ namespace Server.Mobiles
 
             SetSkill(SkillName.Poisoning, 10.1, 12.0);
 
-            Fame = 4000;
-            Karma = -4000;
+            Fame = 3000;
+            Karma = -3000;
 
             Tamable = true;
             ControlSlots = 1;

@@ -37,7 +37,7 @@
 38 Blackgate Demon
 39 Mongbat
 40 Balron
-41 orc w/club
+41 Balron(New)
 42 Ratman
 43 Ice Fiend
 44 Ratman w/mace
@@ -99,7 +99,7 @@
 100 Wolf Artic
 101 Centaur
 102 Demon Unknown Armored
-103 Serpentine Dragon
+103 ·¹ºñ¾ÆÅº(±¸ Serpentine Dragon)
 104 Skeletal Dragon
 105 Dragon Dark Bluish Grey
 106 Earth Elemental Hued
@@ -111,6 +111,7 @@
 112 Earth Elemental Hued
 113 Earth Elemental Hued
 114 Nightmare 1
+115 Shadow Nightmare
 116 Nightmare 2
 117 HolySteed
 118 Faction Horse Purple

@@ -8,14 +8,14 @@ namespace Server.Items
         [Constructable]
         public LeafbladeOfEase()
         {
-			//번개 공격 30%, 체력 회복 1.5
+			//번개 공격 30%, 체력 회복 100
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 55; //옵션 종류
-			SuffixOption[11] = 3000; //옵션 값
+			SuffixOption[11] = 300000; //옵션 값
 			PrefixOption[12] = 19; //옵션 종류
-			SuffixOption[12] = 150; //옵션 값
+			SuffixOption[12] = 1000000; //옵션 값
         }
 
         public LeafbladeOfEase(Serial serial)

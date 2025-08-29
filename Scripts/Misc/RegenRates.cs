@@ -38,6 +38,8 @@ namespace Server.Misc
         {
 			if( from is PlayerMobile )
 			{
+				return 0;
+				/*
 				PlayerMobile pm = from as PlayerMobile;
 				
 				if( pm.Coma )
@@ -49,10 +51,16 @@ namespace Server.Misc
 						pm.UseBandage--;
 				}
 				return 0;
+				*/
 			}
 			else if( from is BaseCreature )
 			{
+				from.HitsRegenBonus += from.Str / 200;
 				BaseCreature bc = from as BaseCreature;
+				if( bc is Troll || bc is FrostTroll )
+					from.HitsRegenBonus *= 3;
+				
+				/*
 				if( bc.ControlMaster == null && bc.SummonMaster == null )
 				{
 					if( bc.Boss )
@@ -76,16 +84,17 @@ namespace Server.Misc
 						case 7: from.HitsRegenBonus = bc.Fame / 100;
 						break;
 					}
-					if( bc is Troll || bc is FrostTroll )
-						from.HitsRegenBonus *= 3;
 					//return regenBonus;
 				}
+				*/
 			}
-			return 1 + AosAttributes.GetValue(from, AosAttribute.RegenHits) + from.HitsRegenBonus;//((Core.ML && from.Race == Race.Human) ? 2 : 1) + AosAttributes.GetValue(from, AosAttribute.RegenHits) / 10 + from.HitsRegenBonus;
+			return 1 + from.HitsRegenBonus;//((Core.ML && from.Race == Race.Human) ? 2 : 1) + AosAttributes.GetValue(from, AosAttribute.RegenHits) / 10 + from.HitsRegenBonus;
         }
 
         public static int Mobile_StamRegenRate(Mobile from)
         {
+			return 0;
+			/*
 			if( from is PlayerMobile )
 			{
 				PlayerMobile pm = from as PlayerMobile;
@@ -127,10 +136,13 @@ namespace Server.Misc
 				}
 			}
 			return 1 + AosAttributes.GetValue(from, AosAttribute.RegenStam ) + from.StamRegenBonus;
+			*/
         }
 
         public static int Mobile_ManaRegenRate(Mobile from)
         {
+			return 0;
+			/*
 			if( from is PlayerMobile )
 			{
 				PlayerMobile pm = from as PlayerMobile;
@@ -172,6 +184,7 @@ namespace Server.Misc
 				}
 			}
 			return 1 + AosAttributes.GetValue(from, AosAttribute.RegenMana ) + from.ManaRegenBonus;
+			*/
         }
     }
 }		

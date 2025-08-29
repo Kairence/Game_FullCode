@@ -13,15 +13,15 @@ namespace Server.Mobiles
             this.Body = 76;
             this.BaseSoundID = 609;
 
-            this.SetStr(236, 285);
-            this.SetDex(260, 450);
-            this.SetInt(481, 505);
+            this.SetStr(2360, 2850);
+            this.SetDex(2600, 4500);
+            this.SetInt(4810, 5050);
 
-            this.SetHits(22322, 22351);
-			this.SetStam(800, 850);
-			this.SetMana(320, 500);
+            this.SetHits(13232, 15351);
+			this.SetStam(8000, 8500);
+			this.SetMana(13200, 15000);
 			
-            this.SetDamage(82, 120);
+            this.SetDamage(282, 1020);
 
 			SetAttackSpeed( 10.0 );
 
@@ -42,7 +42,7 @@ namespace Server.Mobiles
             this.Fame = 21000;
             this.Karma = -21000;
 
-            this.VirtualArmor = 400;
+            this.VirtualArmor = 100;
 		
         }
 

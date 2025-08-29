@@ -7,16 +7,16 @@ namespace Server.Items
         [Constructable]
         public Luckblade()
         {
-			//운 1, 물리 치명 확률 1%, 금화 획득 2%
+			//운 200, 물리 치명 확률 30%, 금화 획득 10%
 			SuffixOption[0] = 3; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 3; //옵션 종류
-			SuffixOption[11] = 100; //옵션 값
+			SuffixOption[11] = 20000; //옵션 값
 			PrefixOption[12] = 42; //옵션 종류
-			SuffixOption[12] = 1000; //옵션 값
+			SuffixOption[12] = 300000; //옵션 값
 			PrefixOption[13] = 51; //옵션 종류
-			SuffixOption[13] = 200; //옵션 값
+			SuffixOption[13] = 100000; //옵션 값
         }
 
         public Luckblade(Serial serial)

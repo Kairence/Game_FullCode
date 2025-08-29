@@ -93,10 +93,16 @@ namespace Server.Items
         public GoldNecklace()
             : base(0x1088)
         {
-			PrefixOption[61] = 42;
-			SuffixOption[61] = 500;
-			PrefixOption[62] = 44;
-			SuffixOption[62] = 1000;
+            Weight = 2.0;
+			PrefixOption[50] = 19;
+			PrefixOption[61] = 114;
+			SuffixOption[61] = 30000;
+			PrefixOption[62] = 19;
+			SuffixOption[62] = 500000;
+			PrefixOption[63] = 20;
+			SuffixOption[63] = 500000;
+			PrefixOption[64] = 21;
+			SuffixOption[64] = 500000;
         }
         public override int InitMinHits
         {
@@ -112,8 +118,8 @@ namespace Server.Items
                 return 100;
             }
         }
-		public override int AosDexterityReq { get { return 1; } }
-		public override int AosIntelligenceReq { get { return 0; } }
+		public override int AosDexterityReq { get { return 100; } }
+		public override int AosIntelligenceReq { get { return 1000; } }
         public override int LabelNumber { get { return 1138015; } }
 		
         public GoldNecklace(Serial serial)
@@ -142,7 +148,7 @@ namespace Server.Items
         public GoldBeadNecklace()
             : base(0x1089)
         {
-            this.Weight = 0.1;
+            this.Weight = 10.0;
         }
 		public override int AosIntelligenceReq
 		{
@@ -177,10 +183,14 @@ namespace Server.Items
         public SilverNecklace()
             : base(0x1F08)
         {
-			PrefixOption[61] = 43;
-			SuffixOption[61] = 500;
-			PrefixOption[62] = 45;
-			SuffixOption[62] = 1000;
+            Weight = 2.0;
+			PrefixOption[50] = 20;
+			PrefixOption[61] = 113;
+			SuffixOption[61] = 50000;
+			PrefixOption[62] = 6;
+			SuffixOption[62] = 3000000;
+			PrefixOption[63] = 21;
+			SuffixOption[63] = 1000000;
         }
         public override int InitMinHits
         {
@@ -196,8 +206,8 @@ namespace Server.Items
                 return 100;
             }
         }
-		public override int AosDexterityReq { get { return 0; } }
-		public override int AosIntelligenceReq { get { return 1; } }
+		public override int AosDexterityReq { get { return 100; } }
+		public override int AosIntelligenceReq { get { return 2000; } }
         public override int LabelNumber { get { return 1138016; } }
         public SilverNecklace(Serial serial)
             : base(serial)

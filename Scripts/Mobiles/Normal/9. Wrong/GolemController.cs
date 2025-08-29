@@ -21,17 +21,17 @@ namespace Server.Mobiles
             AddArcane(new LeatherGloves());
             AddArcane(new Cloak());
 
-            SetStr(126, 150);
-            SetDex(96, 120);
-            SetInt(351, 375);
+            SetStr(3260, 5500);
+            SetDex(1096, 2120);
+            SetInt(5351, 6375);
 
-            SetHits(6676, 6690);
-			SetStam( 100, 150 );
-			SetMana( 100, 150 );
+            SetHits(7676, 8690);
+			SetStam( 4100, 6150 );
+			SetMana( 5100, 7150 );
 
 			SetAttackSpeed( 50 );
 
-            SetDamage(6, 12);
+            SetDamage(66, 512);
 
             SetDamageType(ResistanceType.Physical, 100);
 

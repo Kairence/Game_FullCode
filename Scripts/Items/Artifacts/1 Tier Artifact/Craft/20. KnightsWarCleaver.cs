@@ -13,9 +13,9 @@ namespace Server.Items
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 0; //옵션 종류
-			SuffixOption[11] = 100; //옵션 값
+			SuffixOption[11] = 2000; //옵션 값
 			PrefixOption[12] = 4; //옵션 종류
-			SuffixOption[12] = 20000; //옵션 값
+			SuffixOption[12] = 5000000; //옵션 값
 
 
         }

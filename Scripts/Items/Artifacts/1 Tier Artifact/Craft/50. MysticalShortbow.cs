@@ -8,16 +8,16 @@ namespace Server.Items
         [Constructable]
         public MysticalShortbow()
         {
-			//치유량 100%, 체 500, 마 200
+			//치유량 10%, 체 500, 마 200
 			SuffixOption[0] = 3; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 46; //옵션 종류
-			SuffixOption[11] = 500; //옵션 값
+			SuffixOption[11] = 100000; //옵션 값
 			PrefixOption[12] = 4; //옵션 종류
-			SuffixOption[12] = 50000; //옵션 값
+			SuffixOption[12] = 5000000; //옵션 값
 			PrefixOption[13] = 6; //옵션 종류
-			SuffixOption[13] = 20000; //옵션 값
+			SuffixOption[13] = 2000000; //옵션 값
         }
 
         public MysticalShortbow(Serial serial)

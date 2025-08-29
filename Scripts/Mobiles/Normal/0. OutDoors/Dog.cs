@@ -14,7 +14,7 @@ namespace Server.Mobiles
             Hue = Utility.RandomAnimalHue();
             BaseSoundID = 0x85;
 
-            this.SetStr(10, 15);
+            this.SetStr(240, 415);
             this.SetDex(125, 135);
             this.SetInt(10, 15);
 

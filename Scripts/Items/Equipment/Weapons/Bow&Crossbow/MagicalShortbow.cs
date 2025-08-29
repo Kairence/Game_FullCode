@@ -10,7 +10,9 @@ namespace Server.Items
             : base(0x2D2B)
         {
 			PrefixOption[61] = 36;
-			SuffixOption[61] = 7500;
+			SuffixOption[61] = 500000;
+			PrefixOption[62] = 41;
+			SuffixOption[62] = 500000;
 			
 			//AbsorptionAttributes.ResonanceEnergy += 7500;
             this.Weight = 6.0;
@@ -60,35 +62,35 @@ namespace Server.Items
         {
             get
             {
-                return 500;
+                return 1000;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 1500;
+                return 1000;
             }
         }
         public override int AosIntelligenceReq
         {
             get
             {
-                return 1500;
+                return 5000;
             }
         }
         public override int AosMinDamage
         {
             get
             {
-                return 20;
+                return 1;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 30;
+                return 2;
             }
         }
         public override int AosSpeed
@@ -102,7 +104,7 @@ namespace Server.Items
         {
             get
             {
-                return 2.50f;
+                return 3.00f;
             }
         }
         public override int OldStrengthReq

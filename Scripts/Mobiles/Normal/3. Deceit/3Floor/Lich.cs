@@ -14,17 +14,17 @@ namespace Server.Mobiles
             Body = 24;
             BaseSoundID = 0x3E9;
 
-            SetStr(371, 440);
-            SetDex(236, 245);
-            SetInt(476, 505);
+            SetStr(2371, 3440);
+            SetDex(3236, 3245);
+            SetInt(3476, 3505);
 
             SetHits(5553, 5600);
-			SetStam(100, 150);
-			SetMana(200, 250);
+			SetStam(5100, 5150);
+			SetMana(5200, 5250);
 
 			SetAttackSpeed( 10.0 );
 
-            SetDamage(31, 75);
+            SetDamage(310, 575);
 
             SetDamageType(ResistanceType.Physical, 10);
             SetDamageType(ResistanceType.Cold, 40);
@@ -43,8 +43,8 @@ namespace Server.Mobiles
             SetSkill(SkillName.Tactics, 195.1, 200.0);
             SetSkill(SkillName.Wrestling, 290.1, 300.0);
 
-            Fame = 18000;
-            Karma = -18000;
+            Fame = 14000;
+            Karma = -14000;
 
             VirtualArmor = 50;
         }

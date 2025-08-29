@@ -3,24 +3,27 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    [CorpseName("a dragon corpse")]
+    [CorpseName("an elder dragon corpse")]
     public class GreaterDragon : BaseCreature
     {
         [Constructable]
         public GreaterDragon()
             : base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.3, 0.5)
         {
-            Name = "a greater dragon";
-            Body = 197;
+            Name = "an elder dragon";
+            Body = 172; //구 Rikktor
             BaseSoundID = 362;
 
-            SetStr(1025, 1425);
-            SetDex(81, 148);
-            SetInt(475, 675);
+            SetStr(8025, 8425);
+            SetDex(8100, 8948);
+            SetInt(8475, 9075);
 
-            SetHits(1000, 2000);
-            
-            SetDamage(24, 33);
+            SetHits(35000, 36000);
+			SetStam( 10000, 12000 );
+			SetMana( 10000, 11500 );
+
+			SetAttackSpeed( 5.0 );            
+            SetDamage(240, 633);
 
             SetDamageType(ResistanceType.Physical, 100);
 
@@ -31,24 +34,24 @@ namespace Server.Mobiles
             SetResistance(ResistanceType.Energy, 50, 75);
 
             SetSkill(SkillName.Meditation, 0);
-            SetSkill(SkillName.EvalInt, 110.0, 140.0);
-            SetSkill(SkillName.Magery, 110.0, 140.0);
+            SetSkill(SkillName.EvalInt, 210.0, 340.0);
+            SetSkill(SkillName.Magery, 210.0, 340.0);
             SetSkill(SkillName.Poisoning, 0);
             SetSkill(SkillName.Anatomy, 0);
-            SetSkill(SkillName.MagicResist, 110.0, 140.0);
-            SetSkill(SkillName.Tactics, 110.0, 140.0);
-            SetSkill(SkillName.Wrestling, 115.0, 145.0);
+            SetSkill(SkillName.MagicResist, 210.0, 340.0);
+            SetSkill(SkillName.Tactics, 210.0, 340.0);
+            SetSkill(SkillName.Wrestling, 215.0, 345.0);
 
-            Fame = 22000;
-            Karma = -15000;
+            Fame = 29000;
+            Karma = -29000;
 
-            VirtualArmor = 60;
+            VirtualArmor = 26;
 
             Tamable = true;
             ControlSlots = 4;
-            MinTameSkill = 124.7;
+            MinTameSkill = 194.7;
 
-            SetWeaponAbility(WeaponAbility.BleedAttack);
+            //SetWeaponAbility(WeaponAbility.BleedAttack);
             SetSpecialAbility(SpecialAbility.DragonBreath);
         }
 

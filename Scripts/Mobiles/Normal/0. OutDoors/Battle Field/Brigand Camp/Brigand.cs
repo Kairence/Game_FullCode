@@ -35,7 +35,7 @@ namespace Server.Mobiles
 			SetStam(145, 150);
 			SetMana(120, 125);
 
-			SetAttackSpeed( 2.0 );
+			SetAttackSpeed( 2.5 );
             SetDamage(12, 35);
 
             this.VirtualArmor = 12;
@@ -53,8 +53,8 @@ namespace Server.Mobiles
             SetSkill(SkillName.Tactics, 118.0, 119.5);
             SetSkill(SkillName.Wrestling, 112.0, 115.5);
 
-            Fame = 5000;
-            Karma = -5000;
+            Fame = 2500;
+            Karma = -2500;
 
             AddItem(new Boots(Utility.RandomNeutralHue()));
             AddItem(new FancyShirt());

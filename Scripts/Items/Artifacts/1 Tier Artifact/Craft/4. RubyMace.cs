@@ -7,14 +7,14 @@ namespace Server.Items
         [Constructable]
         public RubyMace()
         {
-			//체력 1000, 힘 0.2
+			//체력 2000, 힘 250
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 4; //옵션 종류
-			SuffixOption[11] = 100000; //옵션 값
+			SuffixOption[11] = 20000000; //옵션 값
 			PrefixOption[12] = 0; //옵션 종류
-			SuffixOption[12] = 20; //옵션 값
+			SuffixOption[12] = 250; //옵션 값
 		}
 		
         public RubyMace(Serial serial)

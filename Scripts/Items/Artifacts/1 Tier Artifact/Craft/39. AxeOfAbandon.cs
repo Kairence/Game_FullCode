@@ -11,14 +11,14 @@ namespace Server.Items
         [Constructable]
         public AxeOfAbandon() 
         {		
-		    //방어율 200%, 기력 400
+		    //방어율 50%, 기력 1000
 			SuffixOption[0] = 6; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 18; //옵션 종류
-			SuffixOption[11] = 20000; //옵션 값
+			SuffixOption[11] = 500000; //옵션 값
 			PrefixOption[12] = 5; //옵션 종류
-			SuffixOption[12] = 40000; //옵션 값
+			SuffixOption[12] = 1000000; //옵션 값
         }
 
         public AxeOfAbandon(Serial serial)

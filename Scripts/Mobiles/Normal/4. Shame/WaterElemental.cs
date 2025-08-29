@@ -19,17 +19,17 @@ namespace Server.Mobiles
             this.Body = 16;
             this.BaseSoundID = 278;
 
-            this.SetStr(136, 145);
-            this.SetDex(136, 145);
-            this.SetInt(301, 325);
+            this.SetStr(536, 1045);
+            this.SetDex(1360, 1450);
+            this.SetInt(3010, 3250);
 
-            this.SetHits(1490, 1500);
-			SetStam(30, 40);
-			SetMana(10, 20);
+            this.SetHits(2490, 2500);
+			SetStam(1030, 1040);
+			SetMana(2110, 2220);
 
 			SetAttackSpeed( 10 );
 
-            this.SetDamage(11, 22);
+            this.SetDamage(111, 152);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 
@@ -43,11 +43,11 @@ namespace Server.Mobiles
             SetSkill(SkillName.Magery, 90.1, 95.0);
             SetSkill(SkillName.MagicResist, 190.1, 195.0);
 
-            Fame = 13000;
-            Karma = -13000;
+            Fame = 10000;
+            Karma = -10000;
 
 
-            this.VirtualArmor =100;
+            this.VirtualArmor = 100;
             this.ControlSlots = 3;
             this.CanSwim = true;
         }

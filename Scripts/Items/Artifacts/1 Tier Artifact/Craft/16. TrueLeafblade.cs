@@ -8,16 +8,16 @@ namespace Server.Items
         [Constructable]
         public TrueLeafblade()
         {
-			//영장류 피해 20%, 무기 피해 30%, 공격속도 20%
+			//영장류 피해 20%, 무기 피해 30%, 공격속도 60%
 			SuffixOption[0] = 3; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 56; //옵션 종류
-			SuffixOption[11] = 2000; //옵션 값
+			SuffixOption[11] = 200000; //옵션 값
 			PrefixOption[12] = 7; //옵션 종류
-			SuffixOption[12] = 3000; //옵션 값
+			SuffixOption[12] = 300000; //옵션 값
 			PrefixOption[13] = 40; //옵션 종류
-			SuffixOption[13] = 2000; //옵션 값
+			SuffixOption[13] = 600000; //옵션 값
 
         }
 

@@ -18,14 +18,13 @@ namespace Server.Mobiles
             this.Name = "an orc bomber";
             this.BaseSoundID = 0x45A;
 
-            this.SetStr(257, 265);
-            this.SetDex(251, 255);
-            this.SetInt(241, 245);
+            this.SetStr(1257, 1265);
+            this.SetDex(1251, 1255);
+            this.SetInt(1241, 1245);
 
             this.SetHits(1165, 1173);
-			SetMana(100);
-			SetStam(100);
-			SetMana(1);
+			SetMana(1000);
+			SetStam(1000);
 
             this.SetDamage(1, 5);
 			SetAttackSpeed( 60.0 );
@@ -44,8 +43,8 @@ namespace Server.Mobiles
             this.SetSkill(SkillName.Tactics, 5.1, 10.0);
             this.SetSkill(SkillName.Wrestling, 10.1, 15.0);
 
-            this.Fame = 9000;
-            this.Karma = -9000;
+            this.Fame = 5500;
+            this.Karma = -5500;
 
             this.VirtualArmor = 8;
         }

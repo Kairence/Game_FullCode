@@ -15,7 +15,7 @@ namespace Server.Mobiles
         public ScaledSwampDragon(string name)
             : base(name, 0x31F, 0x3EBE, AIType.AI_Melee, FightMode.Aggressor, 10, 1, 0.2, 0.4)
         {
-            this.SetStr(194, 270);
+            this.SetStr(200, 270);
             this.SetDex(156, 175);
             this.SetInt(16, 20);
 

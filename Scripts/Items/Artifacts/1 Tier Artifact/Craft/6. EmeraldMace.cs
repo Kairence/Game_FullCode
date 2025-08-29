@@ -7,16 +7,16 @@ namespace Server.Items
         [Constructable]
         public EmeraldMace()
         {
-			//민첩 1, 펜싱 1%, 기력 회복 0.1
+			//민첩 1000, 펜싱 5%, 기력 회복 100
 			SuffixOption[0] = 3; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 1; //옵션 종류
-			SuffixOption[11] = 100; //옵션 값
+			SuffixOption[11] = 1000; //옵션 값
 			PrefixOption[12] = 89; //옵션 종류
-			SuffixOption[12] = 100; //옵션 값
+			SuffixOption[12] = 500; //옵션 값
 			PrefixOption[13] = 20; //옵션 종류
-			SuffixOption[13] = 10; //옵션 값
+			SuffixOption[13] = 1000000; //옵션 값
 
         }
 

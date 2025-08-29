@@ -14,6 +14,8 @@ namespace Server.Items
         public BookOfBushido(ulong content)
             : base(content, 0x238C)
         {
+			
+			this.Layer = Layer.Invalid;
             //this.Layer = (Core.ML ? Layer.OneHanded : Layer.Invalid);
         }
 

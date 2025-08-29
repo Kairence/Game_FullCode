@@ -56,6 +56,16 @@ namespace Server.Items
 		
         public virtual void OnHit(Mobile attacker, Mobile defender, int damage)
         {
+			OnHit(attacker, defender, damage, 0, 0 );
+        }
+
+        public virtual void OnHit(Mobile attacker, Mobile defender, int damage, int level)
+        {
+			OnHit(attacker, defender, damage, 0, 0 );
+        }
+
+        public virtual void OnHit(Mobile attacker, Mobile defender, int damage, int level, double bonus)
+        {
         }
 
         public virtual void OnMiss(Mobile attacker, Mobile defender)
@@ -68,7 +78,18 @@ namespace Server.Items
             return true;
         }
 
+        public virtual bool OnBeforeSwing(Mobile attacker, Mobile defender, int level)
+        {
+            // Here because you must be sure you can use the skill before calling CheckHit if the ability has a HCI bonus for example
+            return true;
+        }
+
         public virtual bool OnBeforeDamage(Mobile attacker, Mobile defender)
+        {
+            return true;
+        }
+
+        public virtual bool OnBeforeDamage(Mobile attacker, Mobile defender, int level)
         {
             return true;
         }
@@ -81,28 +102,29 @@ namespace Server.Items
         public virtual double GetRequiredSkill(Mobile from)
         {
 			return 0.0;
+			/*
             BaseWeapon weapon = from.Weapon as BaseWeapon;
 
-            if (weapon != null && (weapon.PrimaryAbility == this || weapon.PrimaryAbility == Bladeweave))
-                return 70.0;
-            else if (weapon != null && (weapon.SecondaryAbility == this || weapon.SecondaryAbility == Bladeweave))
-                return 90.0;
+            if (weapon != null && (weapon.PrimaryAbility == this ) )
+                return 0.0;
+            else if (weapon != null && (weapon.SecondaryAbility == this ) )
+                return 150.0;
 
             return 200.0;
+			*/
         }
 
         public virtual double GetRequiredSecondarySkill(Mobile from)
         {
-			return 0.0;
-            if (!RequiresSecondarySkill(from))
-                return 0.0;
+            //if (!RequiresSecondarySkill(from))
+            return 0.0;
 
             BaseWeapon weapon = from.Weapon as BaseWeapon;
 
-            if (weapon != null && (weapon.PrimaryAbility == this || weapon.PrimaryAbility == Bladeweave))
-                return Core.TOL ? 30.0 : 70.0;
-            else if (weapon != null && (weapon.SecondaryAbility == this || weapon.SecondaryAbility == Bladeweave))
-                return Core.TOL ? 60.0 : 90.0;
+            if (weapon != null && (weapon.PrimaryAbility == this ) )
+                return 0.0;
+            else if (weapon != null && (weapon.SecondaryAbility == this ) )
+                return 100.0;
 
             return 200.0;
         }
@@ -111,6 +133,27 @@ namespace Server.Items
         {
             return SkillName.Tactics;
         }
+
+		public virtual bool CalculateStam(Mobile from, int baseskill, int levelskill, int level, bool tactics )
+		{
+			if( from is BaseCreature )
+				return true;
+			int stam = baseskill + levelskill;
+			if( from.Skills.Focus.Value >= 150 )
+				stam -= 25;
+			int loss = AosArmorAttributes.GetValue(from, AosArmorAttribute.DefenseStam);
+			stam = (int)( stam * ( 1 - loss * 0.000001 ) );
+			if( from.Stam < stam )
+				return false;
+			else
+			{
+				if( tactics && Utility.RandomDouble() < 0.25 )
+					return true;
+
+				from.Stam -= stam;
+				return true;
+			}
+		}
 
         public virtual int CalculateMana(Mobile from)
         {
@@ -179,9 +222,9 @@ namespace Server.Items
 
             double reqSkill = GetRequiredSkill(from);
             double reqSecondarySkill = GetRequiredSecondarySkill(from);
-            SkillName secondarySkill = Core.TOL ? GetSecondarySkill(from) : SkillName.Tactics;
+            SkillName secondarySkill = SkillName.Tactics;
 
-            if (Core.ML && from.Skills[secondarySkill].Base < reqSecondarySkill)
+            if (Core.ML && from.Skills[secondarySkill].Value < reqSecondarySkill)
             {
                 int loc = GetSkillLocalization(secondarySkill);
 
@@ -245,20 +288,6 @@ namespace Server.Items
                    GetSkill(from, SkillName.Poisoning) + GetSkill(from, SkillName.Bushido) + GetSkill(from, SkillName.Ninjitsu);
         }
 
-		public double MonsterTier(BaseCreature from )
-		{
-			if( from.Boss )
-				return 0.1;
-			else if( from.Grade == 7 )
-				return 0.25;
-			else if( from.Grade == 6 )
-				return 0.34;
-			else if( from.Grade < 1 )
-				return 0.5;
-			else
-				return 1.0;
-		}
-		
         public virtual double GetSkill(Mobile from, SkillName skillName)
         {
             Skill skill = from.Skills[skillName];

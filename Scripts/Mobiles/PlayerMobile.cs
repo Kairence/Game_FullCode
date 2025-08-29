@@ -1369,6 +1369,7 @@ namespace Server.Mobiles
 			Misc.Util.LevelUpEffect(this, getsilverpoint, 2);
 		}
 		
+		//저항력 합산
         public override void ComputeResistances()
         {
             base.ComputeResistances();
@@ -1378,11 +1379,11 @@ namespace Server.Mobiles
                 Resistances[i] = 0;
             }
 		
-            Resistances[0] += BasePhysicalResistance + AosWeaponAttributes.GetValue(this, AosWeaponAttribute.ResistPhysicalBonus ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.AllResist ); // + SilverPoint[27];
-            Resistances[1] += BaseFireResistance + AosWeaponAttributes.GetValue(this, AosWeaponAttribute.ResistFireBonus ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.AllResist ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.ElementalResist ); // + SilverPoint[27];
-            Resistances[2] += BaseColdResistance + AosWeaponAttributes.GetValue(this, AosWeaponAttribute.ResistColdBonus ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.AllResist ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.ElementalResist ); // + SilverPoint[27];
-            Resistances[3] += BasePoisonResistance + AosWeaponAttributes.GetValue(this, AosWeaponAttribute.ResistPoisonBonus ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.AllResist ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.ElementalResist ); // + SilverPoint[27];
-            Resistances[4] += BaseEnergyResistance + AosWeaponAttributes.GetValue(this, AosWeaponAttribute.ResistEnergyBonus ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.AllResist ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.ElementalResist ); // + SilverPoint[27];
+            Resistances[0] += BasePhysicalResistance + ItemSetSaveValue[114] / 10000; // + SilverPoint[27];
+            Resistances[1] += BaseFireResistance + ItemSetSaveValue[113] / 10000 + ItemSetSaveValue[114] / 10000; // + SilverPoint[27];
+            Resistances[2] += BaseColdResistance + ItemSetSaveValue[113] / 10000 + ItemSetSaveValue[114] / 10000; // + SilverPoint[27];
+            Resistances[3] += BasePoisonResistance + ItemSetSaveValue[113] / 10000 + ItemSetSaveValue[114] / 10000; // + SilverPoint[27];
+            Resistances[4] += BaseEnergyResistance + ItemSetSaveValue[113] / 10000 + ItemSetSaveValue[114] / 10000; // + SilverPoint[27];
 			Resistances[5] += BaseChaosResistance;
 			Resistances[6] += BaseDirectResistance;
 			
@@ -1406,6 +1407,13 @@ namespace Server.Mobiles
                     continue;
                 }
 
+				//Resistances[0] += ( AosWeaponAttributes.GetValue(this, AosWeaponAttribute.ResistPhysicalBonus ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.AllResist ) ) / 100; // + SilverPoint[27];
+				//Resistances[1] += ( AosWeaponAttributes.GetValue(this, AosWeaponAttribute.ResistFireBonus ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.AllResist ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.ElementalResist ) ) / 100; // + SilverPoint[27];
+				//Resistances[2] += ( AosWeaponAttributes.GetValue(this, AosWeaponAttribute.ResistColdBonus ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.AllResist ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.ElementalResist ) ) / 100; // + SilverPoint[27];
+				//Resistances[3] += ( AosWeaponAttributes.GetValue(this, AosWeaponAttribute.ResistPoisonBonus ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.AllResist ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.ElementalResist ) ) / 100; // + SilverPoint[27];
+				//Resistances[4] += ( AosWeaponAttributes.GetValue(this, AosWeaponAttribute.ResistEnergyBonus ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.AllResist ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.ElementalResist ) ) / 100; // + SilverPoint[27];
+				//Resistances[5] += BaseChaosResistance;
+				//Resistances[6] += BaseDirectResistance;
                 ISetItem setItem = item as ISetItem;
 
                 Resistances[0] += setItem != null && setItem.SetEquipped ? setItem.SetResistBonus(ResistanceType.Physical) : item.PhysicalResistance;
@@ -1434,6 +1442,7 @@ namespace Server.Mobiles
                     Resistances[i] = min;
                 }
             }
+			//UpdateResistances();
         }
 
 		protected override void OnRaceChange(Race oldRace)
@@ -1570,6 +1579,26 @@ namespace Server.Mobiles
 			}
 		}
 
+		//스텟 재정리
+		public void SkillbyStatCheck(PlayerMobile pm )
+		{
+			for( int i = 0; i < m_StatUp.GetLength(1); i++)
+			{
+				pm.SkillbyStat[i] = 0;
+				for( int j = 0; j < m_StatUp.GetLength(0); j++)
+				{
+					if( pm.SkillbyStat[i] < m_StatUp[j, i] * (int)( pm.Skills[j].Value * 10 ) )
+						pm.SkillbyStat[i] = m_StatUp[j, i] * (int)( pm.Skills[j].Value * 10 );
+				}
+			}
+			if( pm.HitsMax < pm.Hits )
+				pm.Hits = pm.HitsMax;
+			if( pm.StamMax < Stam )
+				pm.Stam = pm.StamMax;
+			if( pm.ManaMax < Mana )
+				pm.Mana = pm.ManaMax;
+		}
+		
 		private static void OnLogin(LoginEventArgs e)
 		{
 			Mobile from = e.Mobile;
@@ -1630,6 +1659,7 @@ namespace Server.Mobiles
                 ReportMurdererGump.CheckMurderer(from);
 				if( ((PlayerMobile)from).SkillsCap == 1000000 )
 					((PlayerMobile)from).SkillsCap = 15000;
+				((PlayerMobile)from).SkillbyStatCheck(((PlayerMobile)from));
 			}
             else if (Siege.SiegeShard && from.Map == Map.Trammel && from.AccessLevel == AccessLevel.Player)
             {
@@ -1657,15 +1687,77 @@ namespace Server.Mobiles
 
             from.CheckStatTimers();
         }
+		
 		private static readonly int[,] m_StatUp = new int[,]
 		{
 			//	str	dex	int	luc	hit	stm	mana
-			{ 250, 550, 550, 0, 800, 800, 800 },  //Alchemy
-			{ 1200, 1100, 500, 0, 1000, 1000, 200 },  //Anatomy
-			{ 200, 700, 1500, 0, 600, 800, 1200 },  //Animal Lore
-			{ 600, 600, 600, 0, 1000, 700, 250 },  //Item Identification
-			{ 500, 500, 1250, 0, 100, 100, 1300 },  //Arms Lore
-			{ 650, 650, 100, 0, 2000, 300, 50 },  //Parrying
+			{200,700,700,0,800,800,800},//Alchemy
+			{1200,1100,200,0,1000,1500,0},//Anatomy
+			{0,800,1800,0,1000,400,0},//AnimalLore
+			{600,600,600,0,1000,1000,200},//ItemIdentification
+			{1000,1000,1000,0,900,100,0},//ArmsLore
+			{2000,0,0,0,1750,0,0},//Parrying
+			{800,800,800,0,600,1000,0},//Begging
+			{1750,1500,0,0,500,250,0},//Blacksmithy
+			{550,1750,200,0,500,1000,0},//BowcraftFletching
+			{0,1000,1750,0,1000,1000,250},//Peacemaking
+			{800,800,600,0,1000,800,0},//Camping
+			{1800,1800,400,0,0,0,0},//Carpentry
+			{200,1200,1500,0,500,600,0},//Cartography
+			{800,800,800,0,800,800,0},//Cooking
+			{0,600,2000,0,0,400,750},//DetectingHidden
+			{100,200,0,0,700,1750,1250},//Discordance
+			{0,0,2000,0,0,0,1750},//Evaluating Intelligence
+			{0,1750,0,0,2000,0,0},//Healing
+			{800,800,800,0,800,800,0},//Fishing
+			{800,800,1000,0,800,800,800},//Belief(ForensicEvaluation)
+			{800,800,800,0,800,800,0},//Farming(Herding)
+			{0,1750,0,0,0,2000,0},//Hiding
+			{600,1750,600,0,1750,0,300},//Provocation
+			{0,250,1500,0,0,0,2000},//Inscription
+			{100,1250,400,0,0,2000,0},//Lockpicking
+			{0,0,1900,0,1200,0,1900},//Magery
+			{50,50,1600,0,1200,1200,900},//ResistingSpells
+			{1000,1750,0,0,1500,750,0},//Tactics
+			{0,2000,500,0,0,1250,0},//Snooping
+			{0,1250,1250,0,1250,1250,0},//Musicianship
+			{0,1000,1800,0,400,1800,0},//Poisoning
+			{0,2000,0,0,0,1750,0},//Archery
+			{200,200,1000,0,1800,100,1700},//SpiritSpeak
+			{200,2000,700,0,300,550,0},//Stealing
+			{0,1750,1250,0,0,1000,0},//Tailoring
+			{500,1800,900,0,1200,600,0},//AnimalTaming
+			{1200,1000,600,0,600,600,0},//Tanning(TasteIdentification)
+			{500,1100,1200,0,200,500,500},//Tinkering
+			{0,750,1000,0,0,2000,0},//Reflexes(Tracking)
+			{1000,1000,1000,0,200,1800,0},//Veterinary
+			{1750,250,0,0,1750,1250,0},//Swordsmanship
+			{2000,0,0,0,1750,0,0},//MaceFighting
+			{0,1900,1200,0,0,1900,0},//Fencing
+			{1500,0,0,0,1750,1750,0},//Wrestling
+			{2000,0,0,0,250,1500,0},//Lumberjacking
+			{1500,250,0,0,2000,0,0},//Mining
+			{0,0,1750,0,0,0,2000},//Meditation
+			{300,1800,1700,0,400,600,200},//Stealth
+			{250,250,2000,0,0,1250,0},//RemoveTrap
+			{600,800,1200,0,800,700,900},//Necromancy
+			{0,0,0,0,2000,1750,0},//Focus
+			{700,700,700,0,1500,700,700},//Chivalry
+			{1250,1250,0,0,1250,1250,0},//Smash(Bushido)
+			{0,1900,1200,0,0,1900,0},//Sneak(Ninjitsu)
+			{1000,1000,1000,0,1000,0,1000},//Elementalism(Spellweaving)
+			{1000,1000,1000,0,1000,0,1000},//Mysticism
+			{0,250,1500,0,0,0,2000},//Imbuing
+			{900,1400,500,0,700,1400,100}//Throwing
+			
+			
+			/*
+			{ 200, 700, 700, 0, 800, 800, 800 },  //Alchemy
+			{ 1200, 1100, 200, 0, 1000, 1500, 0 },  //Anatomy
+			{ 0, 800, 1800, 0, 1000, 400, 0 },  //Animal Lore
+			{ 600, 600, 600, 0, 1000, 1000, 200 },  //Item Identification
+			{ 1000, 1000, 1000, 0, 900, 100, 0 },  //Arms Lore
+			{ 2000, 0, 0, 0, 2000, 300, 50 },  //Parrying
 			{ 600, 600, 800, 0, 700, 1000, 50 },  //Begging
 			{ 1000, 400, 200, 0, 900, 1200, 50 },  //Blacksmithy
 			{ 400, 1500, 100, 0, 700, 1000, 50 },  //Bowcraft/Fletching
@@ -1718,7 +1810,6 @@ namespace Server.Mobiles
 			{ 100, 100, 900, 0, 600, 50, 2000 },  //Mysticism
 			{ 100, 100, 1500, 0, 600, 50, 1400 },  //Imbuing
 			{ 900, 1400, 500, 0, 700, 1400, 100 }  //Throwing
-			/*
 			{	250,550,550,0,	800,800,800	},	//Alchemy
 			{	1200,1100,500,0,1000,1000,200},	//Anatomy
 			{	200,700,1500,0,	8,	7,	2	},	//Animal Lore
@@ -3007,9 +3098,20 @@ namespace Server.Mobiles
 			Timer.DelayCall( TimeSpan.FromSeconds( 30.0 ), new TimerCallback( BuffCount ) );
 		}
 		
-		private int sub_hits = 0;
-		private int sub_stam = 0;
-		private int sub_mana = 0;
+		private int[] sub_regen = { 0, 0, 0 };
+		
+		private int RegenCalc( int regen, int number )
+		{
+			int totalregen = 0;
+			sub_regen[number] += regen;
+
+			if( sub_regen[number] >= 10000 )
+			{
+				totalregen = sub_regen[number] / 10000;
+				sub_regen[number] -= totalregen * 10000;
+			}
+			return totalregen;
+		}
 		
 		private void PlayerCount()
 		{
@@ -3060,7 +3162,7 @@ namespace Server.Mobiles
 			BaseHouse house = BaseHouse.FindHouseAt(this);
 			if( !IsStaff() && ( Poisoned || ( this.Hidden && !( house != null && house.IsOwner(this) ) ) ) )
 			{
-				m_TimerList[64] = 100;
+				m_TimerList[64] = 60;
 				//m_TimerList[65] = 300;
 			}
 
@@ -3079,47 +3181,31 @@ namespace Server.Mobiles
 			}
 			else
 			{
-				if( m_TimerList[73] == 0 )
+				DungeonRegion dungeon = (DungeonRegion)Region.GetRegion(typeof(DungeonRegion));
+				if( m_TimerList[73] == 0 && !Hidden )
 				{
-					int regen = 1 + AosAttributes.GetValue(this, AosAttribute.RegenHits) + SilverPoint[24] * 2;
-					if( Hidden )
-						regen = 0;
-					
-					sub_hits += regen;
-					
-					if( sub_hits >= 10 )
+					if( dungeon != null )
 					{
-						regen = sub_hits / 10;
-						sub_hits -= regen * 10;
-						Hits += regen;
+						m_TimerList[64] = 60;
 					}
-					
-					regen = 1 + AosAttributes.GetValue(this, AosAttribute.RegenStam) + SilverPoint[25];
-					if( Hidden )
-						regen = 0;
-
-					sub_stam += regen;
-
-					if( sub_stam >= 10 )
+					if( m_TimerList[64] == 0 && m_TimerList[65] == 0 )
 					{
-						regen = sub_stam / 10;
-						sub_stam -= regen * 10;
-						Stam += regen;
+						Hits += HitsMax / 20 + RegenCalc( AosAttributes.GetValue(this, AosAttribute.RegenHits) * 100, 0 );
+						Stam += StamMax / 20 + RegenCalc( AosAttributes.GetValue(this, AosAttribute.RegenStam) * 100, 1 );
+						Mana += ManaMax / 20 + RegenCalc( AosAttributes.GetValue(this, AosAttribute.RegenMana) * 100, 2 );
 					}
-
-					regen = 1 + AosAttributes.GetValue(this, AosAttribute.RegenMana) + SilverPoint[26];
-					if( Hidden )
-						regen = 0;
-
-					sub_mana += regen;
-
-					if( sub_mana >= 10 )
+					Hits += RegenCalc( (int)this.Skills.Focus.Value * 50, 0 );
+					Stam += RegenCalc( (int)this.Skills.Focus.Value * 50, 1 );
+					Mana += RegenCalc( (int)this.Skills.Focus.Value * 100, 2 );
+					if( this.Skills.Focus.Value >= 100 )
 					{
-						regen = sub_mana / 10;
-						sub_mana -= regen * 10;
-						Mana += regen;
+						Hits += RegenCalc( 2500, 0 );
+						Stam += RegenCalc( 2500, 1 );
 					}
-
+					if( this.Skills.Meditation.Value >= 100 )
+					{
+						Mana += RegenCalc( 5000, 2 );
+					}
 					int minusMana = 0;
 					if( MeleeDamageAbsorb == 1 || MeleeDamageAbsorb == 2 )
 						minusMana = 1;
@@ -3480,6 +3566,13 @@ namespace Server.Mobiles
 			set{ m_ItemSetSaveValue = value; InvalidateProperties();}
 		}
 		
+		private int[] m_SpellLevelValue = new int[200];
+		public int[] SpellLevelValue
+		{
+			get{ return m_SpellLevelValue;}
+			set{ m_SpellLevelValue = value; InvalidateProperties();}
+		}
+
 		//전투 포인트 총합
 		private int m_SilverPointbyEquipCheck;
 		[CommandProperty( AccessLevel.GameMaster )]
@@ -3518,9 +3611,14 @@ namespace Server.Mobiles
 
 			//SendLocalizedMessage(500118); // You must wait a few moments to use another skill.
 		}
-		public int disarmcount = 0;
+		public bool disarmcheck = false; //무장해제 체크
+		public DateTime disarmtime = DateTime.Now; //무장해제 시간
+		public int disarmweak = 0; //무장해제 패널티
+
+		public bool dismountcheck = false; //낙마 체크
+		public DateTime dismounttime = DateTime.Now; //낙마 시간
+		public int dismountweak = 0; //낙마 패널티
 		
-		public bool disarmcheck = false;
 		private int SkillsTotal_Bonus()
 		{
 			return (int)Math.Sqrt( SkillsTotal / 10 );
@@ -3945,13 +4043,13 @@ namespace Server.Mobiles
 		//스텟 설정
 		#region [Stats]Max
 		[CommandProperty(AccessLevel.GameMaster)]
-		public override int HitsMax { get {	return Math.Min( AosAttributes.GetValue(this, AosAttribute.BonusHits) + SilverPoint[21] * 50 + SkillbyStat[4] / 1000 , 9999 ); } }
+		public override int HitsMax { get {	return Math.Min( 1000 + Math.Min(AosAttributes.GetValue(this, AosAttribute.BonusHits) / 100, 4000) + SkillbyStat[4] / 1000 , 9999 ); } }
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public override int StamMax { get { return Math.Min( AosAttributes.GetValue(this, AosAttribute.BonusStam) + SilverPoint[22] * 20 + SkillbyStat[5] / 1000, 9999 ); } }
+		public override int StamMax { get { return Math.Min( 1000 + Math.Min(AosAttributes.GetValue(this, AosAttribute.BonusStam) / 100, 4000) + SkillbyStat[5] / 1000, 9999 ); } }
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public override int ManaMax { get { return Math.Min( AosAttributes.GetValue(this, AosAttribute.BonusMana) + SilverPoint[23] * 20 + SkillbyStat[6] / 1000, 9999 ); } }
+		public override int ManaMax { get { return Math.Min( 1000 + Math.Min(AosAttributes.GetValue(this, AosAttribute.BonusMana) / 100, 4000) + SkillbyStat[6] / 1000, 9999 ); } }
 		#endregion
 		
 		#region Stat Getters/Setters
@@ -3962,7 +4060,7 @@ namespace Server.Mobiles
 			{
 				if (Core.ML && IsPlayer())
 				{
-					return Math.Min( 100 + SilverPoint[28] * 5 + AosAttributes.GetValue( this, AosAttribute.BonusStr) + SkillbyStat[0] / 1000, 9999 );
+					return Math.Min( 1000 + Math.Min(AosAttributes.GetValue( this, AosAttribute.BonusStr), 4000) + SkillbyStat[0] / 1000, 9999 );
 					//return Math.Min(base.Str, StrMaxCap);
 				}
 
@@ -3978,7 +4076,7 @@ namespace Server.Mobiles
 			{
 				if (Core.ML && IsPlayer())
 				{
-					return Math.Min( 100 + SilverPoint[29] * 5 + AosAttributes.GetValue( this, AosAttribute.BonusDex) + SkillbyStat[1] / 1000, 9999 );
+					return Math.Min( 1000 + Math.Min(AosAttributes.GetValue( this, AosAttribute.BonusDex), 4000) + SkillbyStat[1] / 1000, 9999 );
 					//return Math.Min(base.Dex, DexMaxCap);
 				}
 
@@ -3994,7 +4092,7 @@ namespace Server.Mobiles
 			{
 				if (Core.ML && IsPlayer())
 				{
-					return Math.Min( 100 + SilverPoint[30] * 5 + AosAttributes.GetValue( this, AosAttribute.BonusInt) + SkillbyStat[2] / 1000, 9999 );
+					return Math.Min( 1000 + Math.Min(AosAttributes.GetValue( this, AosAttribute.BonusInt), 4000) + SkillbyStat[2] / 1000, 9999 );
 					//return Math.Min(base.Int, IntMaxCap);
 				}
 
@@ -6412,7 +6510,7 @@ namespace Server.Mobiles
 
 		public List<Mobile> PermaFlags { get { return m_PermaFlags; } }
 
-        public override int Luck { get { return Math.Min( 100 + SilverPoint[31] * 5 + AosAttributes.GetValue(this, AosAttribute.Luck) + TenthAnniversarySculpture.GetLuckBonus(this) + SkillbyStat[3] / 1000, 9999 ); } }
+        public override int Luck { get { return Math.Min( Math.Min(AosAttributes.GetValue(this, AosAttribute.Luck) / 100, 4000) + TenthAnniversarySculpture.GetLuckBonus(this) + SkillbyStat[3] / 1000, 10000 ); } }
 
         public int RealLuck
 		{ 
@@ -6507,6 +6605,21 @@ namespace Server.Mobiles
 			get{ return m_ParryTime; }
 			set{ m_ParryTime = value;}
 		}
+
+		private DateTime m_WeaponDefenseTime;
+		public DateTime WeaponDefenseTime
+		{
+			get{ return m_WeaponDefenseTime; }
+			set{ m_WeaponDefenseTime = value;}
+		}
+
+		private DateTime m_MagicDefenseTime;
+		public DateTime MagicDefenseTime
+		{
+			get{ return m_MagicDefenseTime; }
+			set{ m_MagicDefenseTime = value;}
+		}
+
 		
 		private int m_ActionPoint;
 		[CommandProperty( AccessLevel.GameMaster )]
@@ -6719,7 +6832,22 @@ namespace Server.Mobiles
 			get { return m_UseBandage; } 
 			set { m_UseBandage = value; InvalidateProperties(); } 
 		}
-		
+
+		//독 저장량
+		private int m_PoisonSaving;
+		[CommandProperty( AccessLevel.GameMaster )]
+		public int PoisonSaving 
+		{ 
+			get { return m_PoisonSaving; } 
+			set { m_PoisonSaving = value; InvalidateProperties(); } 
+		}
+
+		//정신 공격 패널티
+		public DateTime psychicTime = DateTime.Now;
+		public bool psychicSlow = false;
+		public double psychicDamageDown = 0;
+
+
 		//스킬 정의
 		private double[] m_SkillList = new double[58];
 		public double[] SkillList
@@ -6855,6 +6983,7 @@ namespace Server.Mobiles
 			get{ return m_EquipMeltingOptionBag;}
 			set{ m_EquipMeltingOptionBag = value; InvalidateProperties();}
 		}
+		
 		//퀘스트 사용 테그
 		//0 ~ 4999 : 채집
 		//5000 ~ 9999 : 제작
@@ -6953,6 +7082,12 @@ namespace Server.Mobiles
             }
         }
 
+		//인스턴스 변수
+		public int arrowCriticalBonus = 0;
+		public int boltCriticalBonus = 0;
+		public int twoFencingBonus = 0;
+		public int twoMacingBonus = 0;
+
 		public override void Deserialize(GenericReader reader)
 		{
 			base.Deserialize(reader);
@@ -6961,6 +7096,14 @@ namespace Server.Mobiles
 
 			switch (version)
 			{
+				case 61:
+				{
+					for (int i = 0; i < 200; i++)
+					{
+						m_SpellLevelValue[i] = reader.ReadInt();
+					}
+					goto case 60;
+				}
 				case 60:
 				{
 					for (int i = 0; i < 100; i++)
@@ -7629,8 +7772,12 @@ namespace Server.Mobiles
 
 			base.Serialize(writer);
 
-			writer.Write(60); // version
+			writer.Write(61); // version
 
+			for (int i = 0; i < 200; i++)
+			{
+				writer.Write( (int) m_SpellLevelValue[i] );
+			}			
 			for (int i = 0; i < 100; i++)
 			{
 				writer.Write( (int) m_ItemSetOption[i] );

@@ -18,8 +18,8 @@ namespace Server.Items
 
             //this.Layer = Layer.OneHanded;
 			Weight = 3.0;
-			Attributes.CastSpeed += 50;
-			Attributes.CastRecovery += 50;
+			//Attributes.CastSpeed += 50;
+			//Attributes.CastRecovery += 50;
         }
         public override int LabelNumber
         {

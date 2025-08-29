@@ -14,17 +14,17 @@ namespace Server.Mobiles
             Body = 0x190;
             Hue = Utility.RandomSkinHue();
 
-            SetStr(276, 350);
-            SetDex(66, 90);
-            SetInt(126, 150);
+            SetStr(4760, 5500);
+            SetDex(3666, 4990);
+            SetInt(1260, 1500);
 
-            SetHits(33276, 34350);
-			SetStam( 100, 150 );
-			SetMana( 100, 150 );
+            SetHits( 20276, 30350 );
+			SetStam( 10000, 15000 );
+			SetMana( 10000, 15000 );
 			
 			SetAttackSpeed( 2.5 );
 
-            SetDamage(29, 39);
+            SetDamage(129, 239);
 
             SetDamageType(ResistanceType.Physical, 25);
             SetDamageType(ResistanceType.Fire, 25);
@@ -47,8 +47,8 @@ namespace Server.Mobiles
             SetSkill(SkillName.Macing, 245.1, 250);
 
             Fame = 23000;
-            Karma = -232000;
-            VirtualArmor = 205;
+            Karma = -23000;
+            VirtualArmor = 105;
 
             CraftResource res = CraftResource.None;
 

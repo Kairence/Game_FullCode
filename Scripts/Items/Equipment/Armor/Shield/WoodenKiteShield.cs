@@ -8,15 +8,13 @@ namespace Server.Items
         public WoodenKiteShield()
             : base(0x1B78)
         {
-            Weight = 5.0;
-			PrefixOption[61] = 109;
-			SuffixOption[61] = 100;
-			PrefixOption[62] = 110;
-			SuffixOption[62] = 2000;
-			PrefixOption[63] = 110;
-			SuffixOption[63] = 200;
-			PrefixOption[64] = 116;
-			SuffixOption[64] = 5000;			
+            Weight = 15.0;
+			PrefixOption[61] = 40; //공격 속도
+			SuffixOption[61] = -500000;
+			PrefixOption[62] = 109; //방패 방어 확률
+			SuffixOption[62] = 150000;
+			PrefixOption[63] = 41; //모든 피격 데미지 감소
+			SuffixOption[63] = 500000;			
         }
 
         public WoodenKiteShield(Serial serial)
@@ -42,28 +40,28 @@ namespace Server.Items
         {
             get
             {
-                return 1500;
+                return 2000;
             }
         }
         public override int AosDexReq
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
         public override int AosIntReq
         {
             get
             {
-                return 2000;
+                return 1000;
             }
         }
         public override int ArmorBase
         {
             get
             {
-                return 0;
+                return 20;
             }
         }
 		

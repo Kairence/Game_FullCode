@@ -261,14 +261,14 @@ namespace Server.Items
         public DemonForks()
             : base()
         {
-			//데몬슬 300%, 공속 20%
+			//데몬슬 75%, 공속 20%
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 61; //옵션 종류
-			SuffixOption[11] = 100000; //옵션 값
+			SuffixOption[11] = 750000; //옵션 값
 			PrefixOption[12] = 40; //옵션 종류
-			SuffixOption[12] = 2000; //옵션 값
+			SuffixOption[12] = 200000; //옵션 값
         }
 
         public DemonForks(Serial serial)
@@ -313,18 +313,18 @@ namespace Server.Items
         public DragonNunchaku()
             : base()
         {
-			//금화 획득 20%, 체력 100, 기력 100, 피해 증가 50%
+			//금화 획득 20%, 체력 500, 기력 500, 무기 피해 50%
 			SuffixOption[0] = 4; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 51; //옵션 종류
-			SuffixOption[11] = 2000; //옵션 값
+			SuffixOption[11] = 200000; //옵션 값
 			PrefixOption[12] = 4; //옵션 종류
-			SuffixOption[12] = 10000; //옵션 값
+			SuffixOption[12] = 5000000; //옵션 값
 			PrefixOption[13] = 5; //옵션 종류
-			SuffixOption[13] = 10000; //옵션 값
+			SuffixOption[13] = 5000000; //옵션 값
 			PrefixOption[14] = 7; //옵션 종류
-			SuffixOption[14] = 5000; //옵션 값
+			SuffixOption[14] = 500000; //옵션 값
         }
 
         public DragonNunchaku(Serial serial)
@@ -370,16 +370,14 @@ namespace Server.Items
         public PeasantsBokuto()
             : base()
         {
-			//마나 600, 주문 피해 30%, 주문속도 20%
-			SuffixOption[0] = 3; //옵션 갯수
+			//혼돈 속성 25%, 기력 1000
+			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
-			PrefixOption[11] = 6; //옵션 종류
-			SuffixOption[11] = 60000; //옵션 값
-			PrefixOption[12] = 8; //옵션 종류
-			SuffixOption[12] = 3000; //옵션 값
-			PrefixOption[13] = 41; //옵션 종류
-			SuffixOption[13] = 2000; //옵션 값
+			PrefixOption[11] = 157; //옵션 종류
+			SuffixOption[11] = 250000; //옵션 값
+			PrefixOption[12] = 5; //옵션 종류
+			SuffixOption[12] = 13000000; //옵션 값
         }
 
         public PeasantsBokuto(Serial serial)
@@ -424,14 +422,14 @@ namespace Server.Items
         public PilferedDancerFans()
             : base()
         {
-			//물리치명피해 10%, 공속 20%
+			//물리치명피해 50%, 공속 50%
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 44; //옵션 종류
-			SuffixOption[11] = 1000; //옵션 값
+			SuffixOption[11] = 500000; //옵션 값
 			PrefixOption[12] = 40; //옵션 종류
-			SuffixOption[12] = 2000; //옵션 값
+			SuffixOption[12] = 500000; //옵션 값
         }
 
         public PilferedDancerFans(Serial serial)
@@ -479,14 +477,14 @@ namespace Server.Items
         {
             LootType = LootType.Regular;
 
-			//지능 1, 마나 200
+			//지능 2000, 마나 500
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 2; //옵션 종류
-			SuffixOption[11] = 100; //옵션 값
+			SuffixOption[11] = 2000; //옵션 값
 			PrefixOption[12] = 6; //옵션 종류
-			SuffixOption[12] = 20000; //옵션 값
+			SuffixOption[12] = 5000000; //옵션 값
         }
 
         public TomeOfEnlightenment(Serial serial)
@@ -601,14 +599,14 @@ namespace Server.Items
         public TheDestroyer()
             : base()
         {
-			//물치확 10%, 체력 -300
+			//물리 치명 확률 50%, 체력 -500
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 26; //옵션 종류
-			SuffixOption[11] = 1000; //옵션 값
+			SuffixOption[11] = 500000; //옵션 값
 			PrefixOption[12] = 4; //옵션 종류
-			SuffixOption[12] = -30000; //옵션 값
+			SuffixOption[12] = -5000000; //옵션 값
         }
 
         public TheDestroyer(Serial serial)
@@ -740,14 +738,14 @@ namespace Server.Items
         public HanzosBow()
             : base()
         {
-			//파충류슬 30%, 공속 20%
+			//파충류슬 75%, 공속 20%
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 60; //옵션 종류
-			SuffixOption[11] = 3000; //옵션 값
+			SuffixOption[11] = 750000; //옵션 값
 			PrefixOption[12] = 40; //옵션 종류
-			SuffixOption[12] = 2000; //옵션 값
+			SuffixOption[12] = 200000; //옵션 값
         }
 
         public HanzosBow(Serial serial)
@@ -1129,11 +1127,11 @@ namespace Server.Items
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 61; //옵션 종류
-			SuffixOption[11] = 2000; //옵션 값
+			SuffixOption[11] = 200000; //옵션 값
 			PrefixOption[12] = 7; //옵션 종류
-			SuffixOption[12] = 3000; //옵션 값
+			SuffixOption[12] = 300000; //옵션 값
 			PrefixOption[13] = 40; //옵션 종류
-			SuffixOption[13] = 2000; //옵션 값
+			SuffixOption[13] = 600000; //옵션 값
         }
 
         public Exiler(Serial serial)

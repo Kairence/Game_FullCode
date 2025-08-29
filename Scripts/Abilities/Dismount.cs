@@ -39,6 +39,57 @@ namespace Server.Items
             return true;
         }
 		*/
+        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics )
+        {
+            if (!this.Validate(attacker) )
+                return;
+			
+			if ( defender == null )
+				return;
+			
+			bool bonus = attacker.Skills.Tactics.Value >= 200 ? true : false;
+			int levelWeakBonus = 10 + (int)( tactics * 0.2 );//level >= 5 ? 50 : 20;
+			bool levelDisarmBonus = false;//level >= 5 ? true : false;
+			double skillTime = 8.0 + tactics * 0.08 + level * 0.4;
+			
+			if ( !this.CalculateStam(attacker, Misc.Util.SPMStam[5,0], Misc.Util.SPMStam[5,1], level, bonus ) )
+				return;
+			
+			double bonusDamage = 1.5 + level * 0.05;
+		
+			if( defender is PlayerMobile )
+			{
+				PlayerMobile pm = defender as PlayerMobile;
+				pm.disarmcheck = levelDisarmBonus;
+				pm.disarmweak = levelWeakBonus;
+			}
+			else if( defender is BaseCreature )
+			{
+				BaseCreature bc = defender as BaseCreature;
+				bc.disarmcheck = levelDisarmBonus;
+				bc.disarmweak = levelWeakBonus;
+			}
+			
+			//계산
+			damage = (int)( damage * ( 1 + bonusDamage ) );
+			
+            IMount mount = defender.Mount;
+			if( mount != null )
+			{
+				defender.PlaySound(0x140);
+				defender.FixedParticles(0x3728, 10, 15, 9955, EffectLayer.Waist);
+				DoDismount(attacker, defender, mount, skillTime);
+			}
+			else
+			{
+				defender.PlaySound(0x3B9);
+				defender.FixedParticles(0x37BE, 232, 25, 9948, EffectLayer.LeftHand);
+			}
+			AOS.Damage(defender, attacker, damage, false, 100, 0, 0, 0, 0, 0, 0, false, false, false);
+		}
+		
+		
+		
         public override void BeforeAttack(Mobile attacker, Mobile defender, int damage)
         {
 			BaseWeapon weapon = attacker.Weapon as BaseWeapon;
@@ -60,7 +111,7 @@ namespace Server.Items
 			if( defender is BaseCreature )
 			{
 				BaseCreature bc = defender as BaseCreature;
-				duration *= MonsterTier(bc);
+				duration *= Misc.Util.MonsterTierCrowdControlRecovery(bc);
 			}
 
 
@@ -102,7 +153,7 @@ namespace Server.Items
 			*/
         }
 
-        public static void DoDismount(Mobile attacker, Mobile defender, IMount mount, int delay, BlockMountType type = BlockMountType.Dazed)
+        public static void DoDismount(Mobile attacker, Mobile defender, IMount mount, double delay, BlockMountType type = BlockMountType.Dazed)
         {
             attacker.SendLocalizedMessage(1060082); // The force of your attack has dislodged them from their mount!
 

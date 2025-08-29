@@ -8,16 +8,16 @@ namespace Server.Items
         [Constructable]
         public TrueAssassinSpike()
         {
-			//명중률 100%, 물리 피해 50, 공격 속도 30%
+			//명중률 50%, 물리 피해 증가 50, 공격 속도 30%
 			SuffixOption[0] = 3; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
-			PrefixOption[11] = 6; //옵션 종류
-			SuffixOption[11] = 10000; //옵션 값
-			PrefixOption[12] = 8; //옵션 종류
-			SuffixOption[12] = 5000; //옵션 값
+			PrefixOption[11] = 17; //옵션 종류
+			SuffixOption[11] = 500000; //옵션 값
+			PrefixOption[12] = 32; //옵션 종류
+			SuffixOption[12] = 500000; //옵션 값
 			PrefixOption[13] = 40; //옵션 종류
-			SuffixOption[13] = 3000; //옵션 값
+			SuffixOption[13] = 300000; //옵션 값
 
         }
 

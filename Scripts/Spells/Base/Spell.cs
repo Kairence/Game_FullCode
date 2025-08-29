@@ -60,7 +60,85 @@ namespace Server.Spells
 
 		public virtual SkillName CastSkill { get { return SkillName.Magery; } }
 		public virtual SkillName DamageSkill { get { return SkillName.EvalInt; } }
+		
+		//보너스 스킬
+		public double BonusSkill(Mobile m)
+		{
+			double skillValue = 0.0;
+			if( SpellRegistry.GetRegistryNumber( this ) >= 0 && SpellRegistry.GetRegistryNumber( this ) <= 63 )
+				skillValue = m.Skills[Misc.Util.CastBonusSkill[SpellRegistry.GetRegistryNumber( this )]].Value;
+			return skillValue;
+		}
 
+		//스펠 레벨
+		public int SpellLevel(Mobile from, int spellcount)
+		{
+			int spellLevel = AosArmorAttributes.GetValue(from, AosArmorAttribute.MagicAllBonus );
+			int circle = spellcount % 8;
+			switch(circle)
+			{
+				case 0:
+				{
+					spellLevel += AosArmorAttributes.GetValue(from, AosArmorAttribute.MagicOneCircleBonus );
+					break;
+				}
+				case 1:
+				{
+					spellLevel += AosArmorAttributes.GetValue(from, AosArmorAttribute.MagicTwoCircleBonus );
+					break;
+				}
+				case 2:
+				{
+					spellLevel += AosArmorAttributes.GetValue(from, AosArmorAttribute.MagicThreeCircleBonus );
+					break;
+				}
+				case 3:
+				{
+					spellLevel += AosArmorAttributes.GetValue(from, AosArmorAttribute.MagicFourCircleBonus );
+					break;
+				}
+				case 4:
+				{
+					spellLevel += AosArmorAttributes.GetValue(from, AosArmorAttribute.MagicFiveCircleBonus );
+					break;
+				}
+				case 5:
+				{
+					spellLevel += AosArmorAttributes.GetValue(from, AosArmorAttribute.MagicSixCircleBonus );
+					break;
+				}
+				case 6:
+				{
+					spellLevel += AosArmorAttributes.GetValue(from, AosArmorAttribute.MagicSevenCircleBonus );
+					break;
+				}
+				case 7:
+				{
+					spellLevel += AosArmorAttributes.GetValue(from, AosArmorAttribute.MagicEightCircleBonus );
+					break;
+				}
+			}
+			if( Misc.Util.CastBonusSkill[spellcount] == SkillName.Necromancy )
+				spellLevel += AosArmorAttributes.GetValue(from, AosArmorAttribute.MagicNecromancyBonus );
+			else if( Misc.Util.CastBonusSkill[spellcount] == SkillName.Spellweaving )
+				spellLevel += AosArmorAttributes.GetValue(from, AosArmorAttribute.MagicElementalismBonus );
+			else if( Misc.Util.CastBonusSkill[spellcount] == SkillName.Mysticism )
+				spellLevel += AosArmorAttributes.GetValue(from, AosArmorAttribute.MagicMysticismBonus );
+			else if( Misc.Util.CastBonusSkill[spellcount] == SkillName.Chivalry )
+				spellLevel += AosArmorAttributes.GetValue(from, AosArmorAttribute.MagicChivalryBonus );
+			
+			int playerBonus = 0;
+			if( from is PlayerMobile )
+			{
+				PlayerMobile pm = from as PlayerMobile;
+				playerBonus = pm.SpellLevelValue[spellcount];
+			}
+			spellLevel = spellLevel / 100 + playerBonus;
+			if( spellLevel > 9 )
+				spellLevel = 9;
+			return spellLevel;
+		}
+		
 		public virtual bool RevealOnCast { get { return true; } }
 		public virtual bool ClearHandsOnCast { get { return true; } }
 		public virtual bool ShowHandMovement { get { return true; } }
@@ -320,19 +398,50 @@ namespace Server.Spells
 			}
 			*/
 			//기본 데미지
-			double statBonus = Caster.Skills.EvalInt.Value * 0.4;
-			double skillBonus = Caster.Skills.Spellweaving.Value * 0.2;
+			//double statBonus = Caster.Skills.EvalInt.Value * 0.4;
+			//double skillBonus = Caster.Skills.Spellweaving.Value * 0.2;
 			
-			int damageBonus = AosAttributes.GetValue(Caster, AosAttribute.SpellDamage);
-
+			int damageBonus = AosAttributes.GetValue(Caster, AosAttribute.SpellDamage) + AosWeaponAttributes.GetValue(Caster, AosWeaponAttribute.UseBestSkill);
+			
+			damageBonus = (int)( damageBonus * ( 1 + Caster.Int * 0.001 ) );
+			
 			if( Caster is PlayerMobile )
 			{
 				PlayerMobile pm = Caster as PlayerMobile;
 				damageBonus += pm.SilverPoint[7] * 100;
 				if( pm.TimerList[70] != 0 )
 					damageBonus += pm.PotionPower;
+				
+				damageBonus += (int)Caster.Skills.EvalInt.Value;
+				if( Caster.Skills.EvalInt.Value >= 200 )
+					damageBonus += 100;
+				else if( Caster.Skills.EvalInt.Value >= 100 )
+					damageBonus += 30;
 			}
 
+			
+			if( target is PlayerMobile )
+			{
+				PlayerMobile pm = target as PlayerMobile;
+				if( target.Skills.EvalInt.Value > 0 && pm.MagicDefenseTime < DateTime.Now )
+				{
+					double magicdamagereduce = target.Skills.EvalInt.Value * 0.2;
+					if( target.Skills.EvalInt.Value >= 200 )
+						damageBonus += 20;
+					else if( target.Skills.EvalInt.Value >= 150 )
+						damageBonus += 10;
+
+					if( magicdamagereduce > 0 )
+					{
+						damageBonus = (int)( damageBonus * (100 - magicdamagereduce ) );
+					}
+					if( target.Skills.EvalInt.Value >= 150 )
+						pm.MagicDefenseTime = DateTime.Now + TimeSpan.FromSeconds(5.0);
+					else
+						pm.MagicDefenseTime = DateTime.Now + TimeSpan.FromSeconds(2.0);
+				}
+			}
+			
 			
 			/*
 			double attackchance = Caster.Skills.Mysticism.Value * 0.003;
@@ -341,55 +450,60 @@ namespace Server.Spells
 
 			target.CheckSkill(SkillName.Mysticism, skillUp(Caster, target, Caster.Skills.Mysticism.Value));			
 			*/
+
+			//슬레이어 데미지
+			double exdamage = Misc.Util.GetSlayerDamageScalar(Caster, target);
 			
-			double totalBonus = ( 1 + damageBonus * 0.001 ) * ( 1 + statBonus * 0.01 ) * ( 1 + skillBonus * 0.01 );
+			double totalBonus = ( 1 + damageBonus * 0.01 ) + ( 1 + exdamage * 0.01 );
 			
 			if( totalBonus < 0 )
 				totalBonus = 0;
 
 			damage = (int) ( damage * totalBonus );
 			
-			int reducedamage = 0;
-			int exreducedamage = 0;
-			//슬레이어 데미지
-			double exdamage = Misc.Util.GetSlayerDamageScalar(Caster, target);
-
+			damage -= target.Int / 10;
+			
+			if( damage < 1 )
+				damage = 1;
+			
 			Caster.CheckSkill(SkillName.Magery, skillUp(Caster, target, damage * 2));
 			target.CheckSkill(SkillName.MagicResist, skillUp(target, Caster, damage * 2 ));
 			Caster.CheckSkill(SkillName.Spellweaving, skillUp(Caster, target, damage * 2 ));
 			Caster.CheckSkill(SkillName.EvalInt, skillUp(Caster, target, target.Skills.EvalInt.Value) * 2);
 			
 			//치명타 데미지
-			double criticalPercent = Caster.Skills.Mysticism.Value * 0.001 + AosAttributes.GetValue(Caster, AosAttribute.CastRecovery) * 0.001;
+			double criticalPercent = Caster.Luck * 0.001 + AosAttributes.GetValue(Caster, AosAttribute.CastRecovery);  //Caster.Skills.Mysticism.Value * 0.001 + AosAttributes.GetValue(Caster, AosAttribute.CastRecovery) * 0.001;
 			//크리 데미지
-			double criticalDamage = 0.5 + Caster.Skills.EvalInt.Value * 0.005 + AosAttributes.GetValue(Caster, AosAttribute.SpellChanneling) * 0.001;
+			double criticalDamage = 50 + Caster.Int * 0.01 + AosAttributes.GetValue(Caster, AosAttribute.SpellChanneling);//Caster.Skills.EvalInt.Value * 0.005 + AosAttributes.GetValue(Caster, AosAttribute.SpellChanneling) * 0.001;
 			
 			if( Caster is PlayerMobile )
 			{
 				PlayerMobile pm = Caster as PlayerMobile;
-				criticalDamage += pm.SilverPoint[20] * 0.025;
-				criticalPercent += pm.SilverPoint[18] * 0.005;
+				//criticalDamage += pm.SilverPoint[20] * 0.025;
+				//criticalPercent += pm.SilverPoint[18] * 0.005;
 				if( pm.Region.Name == "Wrong" )
-					criticalPercent -= 1;
+					criticalPercent -= 50;
 			}
 			//방어 확인
-			if( target is BaseCreature )
-			{
-				BaseCreature bc = target as BaseCreature;
+			//if( target is BaseCreature )
+			//{
+			//	BaseCreature bc = target as BaseCreature;
+				/*
 				if( bc.Grade >= 2 || bc.Boss )
 				{
 					exdamage += AosWeaponAttributes.GetValue(Caster, AosWeaponAttribute.MageWeapon) * 0.001;
 				}
-				exreducedamage = bc.VirtualArmor;
-				if( bc.AI == AIType.AI_Mage && bc.Fame > 10 )
-					exreducedamage += bc.Fame / 10;
-			}			
+				*/
+				//exreducedamage = bc.VirtualArmor;
+				//if( bc.AI == AIType.AI_Mage && bc.Fame > 10 )
+				//	exreducedamage += bc.Fame / 10;
+			//}			
 
 			BaseShield shield = Caster.FindItemOnLayer(Layer.TwoHanded) as BaseShield;
 			if( shield == null )
 				criticalPercent += Caster.Skills.Mysticism.Value * 0.001;
 		
-			if( target.Paralyzed || criticalPercent >= Utility.RandomDouble() )
+			if( target.Paralyzed || criticalPercent * 0.01 >= Utility.RandomDouble() )
 			{
 				if( criticalDamage < 0 )
 					criticalDamage = 0;
@@ -400,7 +514,7 @@ namespace Server.Spells
 					Caster.FixedParticles(0x3779, 10, 20, 0x0, EffectLayer.Waist);
 					Caster.PlaySound(0x64B);
 					Caster.CheckSkill(SkillName.Mysticism, skillUp(Caster, target, damage * 2));
-					exdamage += criticalDamage;
+					//exdamage += criticalDamage;
 				}
 			}
 			//방어 체크
@@ -479,8 +593,8 @@ namespace Server.Spells
 			}
 
 			int extotaldamage = (int)( damage * exdamage ) - damage;
-			if( exreducedamage < extotaldamage )
-				damage += extotaldamage - exreducedamage;
+			//if( exreducedamage < extotaldamage )
+			//	damage += extotaldamage - exreducedamage;
 
 			damage *= 100 - (int)parryBonus;
 			damage /= 100;
@@ -1355,7 +1469,7 @@ namespace Server.Spells
 			//신규 캐스팅 속도
 			if( Caster is PlayerMobile && CastSkill == SkillName.Magery )
 			{
-				int bonus = AosAttributes.GetValue(m_Caster, AosAttribute.CastSpeed);
+				int bonus = AosAttributes.GetValue(m_Caster, AosAttribute.CastSpeed) + AosWeaponAttributes.GetValue(m_Caster, AosWeaponAttribute.MageWeapon);
 				/*
 				if (bonus > 1000)
 				{

@@ -12,8 +12,10 @@ namespace Server.Items
             : base(0x13F8)
         {
             this.Weight = 3.0;
-			PrefixOption[61] = 8;
-			SuffixOption[61] = 3750;
+			PrefixOption[61] = 41;
+			SuffixOption[61] = 500000;
+			PrefixOption[62] = 8;
+			SuffixOption[62] = 500000;
 			//Attributes.SpellDamage += 3750;
 		}
 
@@ -41,35 +43,35 @@ namespace Server.Items
         {
             get
             {
-                return 500;
+                return 3750;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }		
         public override int AosIntelligenceReq
         {
             get
             {
-                return 2000;
+                return 5000;
             }
         }
         public override int AosMinDamage
         {
             get
             {
-                return 15;
+                return 1;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 45;
+                return 2;
             }
         }
         public override int AosSpeed

@@ -13,18 +13,18 @@ namespace Server.Mobiles
             this.Body = 261;
             this.BaseSoundID = 367;
 
-            this.SetStr(606, 715);
-            this.SetDex(446, 555);
-            this.SetInt(111, 115);
+            this.SetStr(10606, 12715);
+            this.SetDex(8446, 10555);
+            this.SetInt(1110, 1150);
 
             //this.SetHits(132, 139);
-			SetHits(14932, 14979);
+			SetHits(114932, 114979);
 			SetMana(110, 115);
-			SetStam(1360, 1500);
+			SetStam(91360, 111500);
 
             //this.SetDamage(7, 13);
-			SetDamage(66, 77);
-			SetAttackSpeed( 4.5 );
+			SetDamage(666, 1977);
+			SetAttackSpeed( 5.0 );
 
             this.SetDamageType(ResistanceType.Physical, 100);
 
@@ -38,8 +38,8 @@ namespace Server.Mobiles
             this.SetSkill(SkillName.Tactics, 210.1, 212.5);
             this.SetSkill(SkillName.Wrestling, 210.1, 212.5);
 
-            this.Fame = 19000;
-            this.Karma = -19000;
+            this.Fame = 20500;
+            this.Karma = -20500;
 
 			Boss = true;
 			

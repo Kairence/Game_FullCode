@@ -10,26 +10,16 @@ namespace Server.Items
         [Constructable]
         public AxesOfFury() 
         {	
-		////민첩 1, 공속 30%, 무피 25%, 모저 -20%
-			SuffixOption[0] = 8; //옵션 갯수
+		//민첩 500, 공격 속도 100%, 무기 피해 25%
+			SuffixOption[0] = 3; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
 			
 			PrefixOption[11] = 1; //옵션 종류
-			SuffixOption[11] = 100; //옵션 값
+			SuffixOption[11] = 500; //옵션 값
 			PrefixOption[12] = 40; //옵션 종류
-			SuffixOption[12] = 3000; //옵션 값
+			SuffixOption[12] = 1000000; //옵션 값
 			PrefixOption[13] = 7; //옵션 종류
-			SuffixOption[13] = 2500; //옵션 값
-			PrefixOption[14] = 12; //옵션 종류
-			SuffixOption[14] = -2000; //옵션 값
-			PrefixOption[15] = 13; //옵션 종류
-			SuffixOption[15] = -2000; //옵션 값
-			PrefixOption[16] = 14; //옵션 종류
-			SuffixOption[16] = -2000; //옵션 값	
-			PrefixOption[17] = 15; //옵션 종류
-			SuffixOption[17] = -2000; //옵션 값	
-			PrefixOption[18] = 16; //옵션 종류
-			SuffixOption[18] = -2000; //옵션 값	
+			SuffixOption[13] = 250000; //옵션 값
         }
 
         public AxesOfFury(Serial serial)

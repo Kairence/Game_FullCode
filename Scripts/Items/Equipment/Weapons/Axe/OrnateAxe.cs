@@ -15,7 +15,7 @@ namespace Server.Items
             this.Layer = Layer.TwoHanded;
 			//Attributes.Luck += 100;
 			PrefixOption[61] = 3;
-			SuffixOption[61] = 10000;
+			SuffixOption[61] = 1000000;
       }
 
         public OrnateAxe(Serial serial)
@@ -41,14 +41,14 @@ namespace Server.Items
         {
             get
             {
-                return 500;
+                return 5000;
             }
         }
         public override int AosDexterityReq
         {
             get
             {
-                return 200;
+                return 4000;
             }
         }
         public override int AosIntelligenceReq
@@ -63,14 +63,14 @@ namespace Server.Items
         {
             get
             {
-                return 30;
+                return 10;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 90;
+                return 18;
             }
         }
         public override int AosSpeed

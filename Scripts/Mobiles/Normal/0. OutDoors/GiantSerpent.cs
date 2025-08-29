@@ -17,9 +17,9 @@ namespace Server.Mobiles
             this.Hue = Utility.RandomSnakeHue();
             this.BaseSoundID = 219;
 
-            this.SetStr(186, 215);
-            this.SetDex(256, 280);
-            this.SetInt(66, 85);
+            this.SetStr(1186, 1215);
+            this.SetDex(1256, 1280);
+            this.SetInt(166, 185);
 
             this.SetHits(1120, 1290);
             SetStam(166, 232);
@@ -38,8 +38,8 @@ namespace Server.Mobiles
             this.SetResistance(ResistanceType.Poison, 45, 50);
             this.SetResistance(ResistanceType.Energy, 10, 20);
 
-            this.Fame = 2500;
-            this.Karma = -2500;
+            this.Fame = 3500;
+            this.Karma = -3500;
 
             Tamable = true;
             ControlSlots = 2;

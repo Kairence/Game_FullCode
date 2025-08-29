@@ -14,17 +14,17 @@ namespace Server.Mobiles
             this.Body = 162;
             this.BaseSoundID = 263;
 
-            this.SetStr(500, 510);
-            this.SetDex(710, 999);
-            this.SetInt(661, 675);
+            this.SetStr(5500, 5910);
+            this.SetDex(5710, 5999);
+            this.SetInt(6610, 6750);
 
-            this.SetHits(25600, 26099);
-			SetStam(240, 245);
-			SetMana(100, 150);
+            this.SetHits(14600, 18999);
+			SetStam(10240, 13245);
+			SetMana(10000, 12150);
 			
-			SetAttackSpeed( 7.5 );
+			SetAttackSpeed( 5.0 );
 
-            this.SetDamage(5, 35);
+            this.SetDamage(205, 435);
 
             this.SetDamageType(ResistanceType.Physical, 10);
             this.SetDamageType(ResistanceType.Poison, 90);

@@ -13,14 +13,16 @@ namespace Server.Mobiles
             Body = 719;
             BaseSoundID = 0x5ED;
 
-            SetStr(1150, 1250);
-            SetDex(860, 875);
-            SetInt(350, 355);
+            SetStr(2150, 2250);
+            SetDex(2860, 2875);
+            SetInt(1350, 1355);
 
-            SetHits(800, 860);
-			SetStam( 100, 200);
-			SetMana( 100, 150 );
-            SetDamage(20, 25);
+            SetHits( 2800, 3860 );
+			SetStam( 1000, 2000 );
+			SetMana( 1000, 1500 );
+
+			SetAttackSpeed( 5.0 );
+            SetDamage(120, 155);
 
             SetDamageType(ResistanceType.Physical, 100);
 
@@ -40,7 +42,7 @@ namespace Server.Mobiles
             Karma = -9000;
             
             Tamable = true;
-            ControlSlots = 22;
+            ControlSlots = 2;
             MinTameSkill = 102.0;
 
             //SetSpecialAbility(SpecialAbility.DragonBreath);

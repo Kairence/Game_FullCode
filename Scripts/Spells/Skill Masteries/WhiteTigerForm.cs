@@ -201,7 +201,7 @@ namespace Server.Spells.SkillMasteries
 
             if (bleedchance > Utility.RandomDouble())
             {
-                BleedAttack.BeginBleed(defender, attacker, false);
+                //BleedAttack.BeginBleed(defender, attacker, false);
 
                 if (_Table == null)
                     _Table = new Dictionary<Mobile, DateTime>();

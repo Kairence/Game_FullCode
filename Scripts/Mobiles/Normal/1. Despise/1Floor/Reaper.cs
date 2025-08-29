@@ -15,17 +15,17 @@ namespace Server.Mobiles
             this.Body = 47;
             this.BaseSoundID = 442;
 
-            this.SetStr(406, 425);
-            this.SetDex(206, 225);
-            this.SetInt(501, 550);
+            this.SetStr(1406, 2025);
+            this.SetDex(2060, 2250);
+            this.SetInt(5010, 5500);
 
-            this.SetHits(7500, 9000);
-            this.SetMana(100, 125);
-			this.SetStam(120, 150);
+            this.SetHits(25000, 30000);
+            this.SetMana(10000, 12500);
+			this.SetStam(12000, 15000);
 
 			SetAttackSpeed( 60.0 );
 			
-            this.SetDamage(29, 80);
+            this.SetDamage(690, 2080);
 
             this.SetDamageType(ResistanceType.Physical, 80);
             this.SetDamageType(ResistanceType.Poison, 20);
@@ -45,7 +45,7 @@ namespace Server.Mobiles
             this.Fame = 11000;
             this.Karma = -11000;
 
-            this.VirtualArmor = 10;
+            this.VirtualArmor = 40;
         }
 
         public Reaper(Serial serial)

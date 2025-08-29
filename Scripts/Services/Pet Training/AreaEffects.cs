@@ -533,7 +533,7 @@ namespace Server.Mobiles
                 : this(TimeSpan.FromSeconds(5), 2, 5, 0, 100, 0, 0, 0, 0, 0, uses)
             {
             }
-
+			
             public AuraDefinition(TimeSpan cooldown, int range, int baseDamage, int phys, int fire, int cold, int poison, int energy, int chaos, int direct, Type[] uses)
             {
                 Cooldown = cooldown;
@@ -556,8 +556,14 @@ namespace Server.Mobiles
             {
                 AuraDefinition defaul;
                 AuraDefinition cora;
+                AuraDefinition fireLesserAura;
                 AuraDefinition fireAura;
+                AuraDefinition fireGreaterAura;
+                AuraDefinition fireDeadlyAura;
+                AuraDefinition coldLesserAura;
                 AuraDefinition coldAura;
+                AuraDefinition coldGreaterAura;
+                AuraDefinition coldDeadlyAura;
 
                 defaul = new AuraDefinition();
                 Definitions.Add(defaul);
@@ -568,16 +574,55 @@ namespace Server.Mobiles
                 cora.Fire = 0;
                 Definitions.Add(cora);
 
-                fireAura = new AuraDefinition(typeof(FlameElemental), typeof(FireDaemon), typeof(LesserFlameElemental));
+				//세부 파이어 오라
+                fireLesserAura = new AuraDefinition(typeof(LavaElemental));
+                fireLesserAura.Range = 5;
+                fireLesserAura.Damage = 173;
+                Definitions.Add(fireLesserAura);
+
+                fireAura = new AuraDefinition(typeof(FireDrake));
                 fireAura.Range = 5;
-                fireAura.Damage = 7;
+                fireAura.Damage = 313;
                 Definitions.Add(fireAura);
 
-                coldAura = new AuraDefinition(typeof(ColdDrake), typeof(FrostDrake), typeof(FrostDragon), typeof(SnowElemental), typeof(FrostMite), typeof(IceFiend), typeof(IceElemental), typeof(CorporealBrume));
-                coldAura.Damage = 15;
+                fireGreaterAura = new AuraDefinition(typeof(FireDaemon));
+                fireGreaterAura.Range = 5;
+                fireGreaterAura.Damage = 391;
+                Definitions.Add(fireGreaterAura);
+
+                fireDeadlyAura = new AuraDefinition(typeof(RedWyrm));
+                fireDeadlyAura.Range = 453;
+                fireDeadlyAura.Damage = 55;
+                Definitions.Add(fireDeadlyAura);
+
+				//세부 아이스 오라
+				coldLesserAura = new AuraDefinition(typeof(IceElemental), typeof(SnowElemental));
+				coldLesserAura.Damage = 79;
+                coldLesserAura.Fire = 0;
+                coldLesserAura.Cold = 100;
+                coldLesserAura.Range = 3;
+                Definitions.Add(coldLesserAura);
+				
+                coldAura = new AuraDefinition(typeof(ColdDrake));
+                coldAura.Damage = 313;
                 coldAura.Fire = 0;
                 coldAura.Cold = 100;
+                coldAura.Range = 3;
                 Definitions.Add(coldAura);
+
+				coldGreaterAura = new AuraDefinition(typeof(IceFiend));
+				coldGreaterAura.Damage = 391;
+                coldGreaterAura.Fire = 0;
+                coldGreaterAura.Cold = 100;
+                coldGreaterAura.Range = 3;
+                Definitions.Add(coldGreaterAura);
+				
+				coldDeadlyAura = new AuraDefinition(typeof(WhiteWyrm));
+				coldDeadlyAura.Damage = 453;
+                coldDeadlyAura.Fire = 0;
+                coldDeadlyAura.Cold = 100;
+                coldDeadlyAura.Range = 3;
+                Definitions.Add(coldDeadlyAura);
             }
 
             public static AuraDefinition GetDefinition(BaseCreature bc)
