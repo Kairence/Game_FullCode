@@ -45,7 +45,7 @@ namespace Server.Items
         {
             get
             {
-                return 25;
+                return 7;
             }
         }
 		
@@ -53,13 +53,9 @@ namespace Server.Items
         public Buckler()
             : base(0x1B73)
         {
-            this.Weight = 15.0;
-			PrefixOption[61] = 41; //시전 속도
-			SuffixOption[61] = -500000;
-			PrefixOption[62] = 109; //방패 방어 확률
-			SuffixOption[62] = 500000;
-			PrefixOption[63] = 110; //모든 피격 데미지 감소
-			SuffixOption[63] = 100000;
+            this.Weight = 25.0;
+			ShieldMinDamage = 5;
+			ShieldMaxDamage = 10;
 
 		}
 

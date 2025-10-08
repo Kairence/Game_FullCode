@@ -8,14 +8,12 @@ namespace Server.Items
         public CloseHelm()
             : base(0x1408)
         {
-			PrefixOption[50] = 15;
-			PrefixOption[61] = 114;
-			SuffixOption[61] = 30000;
-			PrefixOption[62] = 42;
-			SuffixOption[62] = 50000;
-			PrefixOption[63] = 44;
-			SuffixOption[63] = 50000;
-			Weight = 15.0;
+			PrefixOption[50] = 15;	 //세트 옵션 번호
+			PrefixOption[61] = 42;	 //물리 치명 확률%
+			SuffixOption[61] = 50000; //5%
+			PrefixOption[62] = 44;	 //물리 치명 피해%
+			SuffixOption[62] = 50000; //5%
+			Weight = 25.0;
         }
 
         public CloseHelm(Serial serial)
@@ -30,7 +28,7 @@ namespace Server.Items
         {
             get
             {
-                return 12;
+                return 8;
             }
         }
         public override ArmorMaterialType MaterialType

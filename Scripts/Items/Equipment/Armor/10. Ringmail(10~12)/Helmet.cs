@@ -8,14 +8,12 @@ namespace Server.Items
         public Helmet()
             : base(0x140A)
         {
-			PrefixOption[50] = 15;
-			PrefixOption[61] = 114;
-			SuffixOption[61] = 20000;
-			PrefixOption[62] = 5;
-			SuffixOption[62] = 5000000;
-			PrefixOption[63] = 17;
-			SuffixOption[63] = 100000;
-            Weight = 13.0;
+			PrefixOption[50] = 15;	 //세트 옵션 번호
+			PrefixOption[61] = 5;	 //기력
+			SuffixOption[61] = 2500000; //250
+			PrefixOption[62] = 99;	 //명중율% (임의 코드 99)
+			SuffixOption[62] = 100000; //10%
+            Weight = 20.0;
         }
 
         public Helmet(Serial serial)
@@ -31,7 +29,7 @@ namespace Server.Items
         {
             get
             {
-                return 10;
+                return 7;
             }
         }
         public override ArmorMaterialType MaterialType

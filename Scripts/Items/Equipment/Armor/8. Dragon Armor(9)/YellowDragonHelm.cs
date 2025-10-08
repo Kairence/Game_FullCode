@@ -9,11 +9,11 @@ namespace Server.Items
         public YellowDragonHelm()
             : base(0x2645)
         {
-			PrefixOption[50] = 11;
-			PrefixOption[61] = 16;
-			SuffixOption[61] = 100000;
-			PrefixOption[62] = 36;
-			SuffixOption[62] = 200000;
+			PrefixOption[50] = 11;   //세트 옵션 번호
+			PrefixOption[61] = 16;   //에너지 저항력
+			SuffixOption[61] = 250000; //25%
+			PrefixOption[62] = 26;   //에너지 피해 증가
+			SuffixOption[62] = 200000; //20
             Weight = 12.0;
         }
 
@@ -31,7 +31,7 @@ namespace Server.Items
         {
             get
             {
-                return 9;
+                return 5;
             }
         }
         public override ArmorMaterialType MaterialType

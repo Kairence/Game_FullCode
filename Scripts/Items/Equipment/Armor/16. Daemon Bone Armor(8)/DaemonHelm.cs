@@ -11,13 +11,13 @@ namespace Server.Items
         {
             this.Hue = 0x648;
             this.Weight = 8.0;
-			PrefixOption[50] = 14;
-			PrefixOption[61] = 114;
-			SuffixOption[61] = 60000;
-			PrefixOption[62] = 56;
-			SuffixOption[62] = 250000;
-			PrefixOption[63] = 118;
-			SuffixOption[63] = 100000;
+			PrefixOption[50] = 14;   //세트 옵션 번호
+			PrefixOption[61] = 113;  //모든 저항력%
+			SuffixOption[61] = 60000; //6%
+			PrefixOption[62] = 56;   //영장류 피해 증가% 
+			SuffixOption[62] = 250000; //25%
+			PrefixOption[63] = 118;  //모든 속도%
+			SuffixOption[63] = 100000; //10%
 
         }
 
@@ -34,7 +34,7 @@ namespace Server.Items
         {
             get
             {
-                return 8;
+                return 6;
             }
         }
         public override ArmorMaterialType MaterialType

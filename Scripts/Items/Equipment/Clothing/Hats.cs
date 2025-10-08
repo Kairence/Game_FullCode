@@ -980,12 +980,12 @@ namespace Server.Items
         public BearMask(int hue)
             : base(0x1545, hue)
         {
-			BaseArmorRating = 9;
-			PrefixOption[50] = 4;
-			PrefixOption[61] = 114;
-			SuffixOption[61] = 50000;
-			PrefixOption[62] = 4;
-			SuffixOption[62] = 2000000;
+			BaseArmorRating = 5;
+			PrefixOption[50] = 4;    //세트 옵션 번호
+			PrefixOption[61] = 19;   //체력 회복
+			SuffixOption[61] = 50000; //5
+			PrefixOption[62] = 4;    //체력
+			SuffixOption[62] = 2500000; //250
 		}
 
         public override bool Dye(Mobile from, DyeTub sender)
@@ -1037,16 +1037,12 @@ namespace Server.Items
         public DeerMask(int hue)
             : base(0x1547, hue)
         {
-			BaseArmorRating = 9;
-			PrefixOption[50] = 4;
-			PrefixOption[61] = 114;
-			SuffixOption[61] = 20000;
-			PrefixOption[62] = 40;
-			SuffixOption[62] = 100000;
-			PrefixOption[63] = 7;
-			SuffixOption[63] = 100000;
-			PrefixOption[64] = 5;
-			SuffixOption[64] = 1000000;				
+			BaseArmorRating = 3;
+			PrefixOption[50] = 4;    //세트 옵션 번호
+			PrefixOption[61] = 20;   //기력 회복
+			SuffixOption[61] = 50000; //5
+			PrefixOption[62] = 5;    //기력
+			SuffixOption[62] = 2500000; //250			
         }
 
         public override bool Dye(Mobile from, DyeTub sender)

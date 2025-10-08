@@ -9,11 +9,11 @@ namespace Server.Items
         public WhiteDragonGloves()
             : base(0x2643)
         {
-			PrefixOption[50] = 12;
-			PrefixOption[61] = 12;
-			SuffixOption[61] = 100000;
-			PrefixOption[62] = 32;
-			SuffixOption[62] = 200000;
+			PrefixOption[50] = 12;   //세트 옵션 번호
+			PrefixOption[61] = 12;   //물리 저항
+			SuffixOption[61] = 250000; //25%
+			PrefixOption[62] = 22;   //물리 피해 증가
+			SuffixOption[62] = 200000; //20
 
             Weight = 10.0;
         }
@@ -32,7 +32,7 @@ namespace Server.Items
         {
             get
             {
-                return 9;
+                return 8;
             }
         }
         public override ArmorMaterialType MaterialType

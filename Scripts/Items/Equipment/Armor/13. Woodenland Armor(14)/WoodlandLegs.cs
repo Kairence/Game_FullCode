@@ -9,15 +9,13 @@ namespace Server.Items
         public WoodlandLegs()
             : base(0x2B6B)
         {
-			PrefixOption[50] = 18;
-			PrefixOption[61] = 114;
-			SuffixOption[61] = 20000;
-			PrefixOption[62] = 4;
-			SuffixOption[62] = 20000;			
-			PrefixOption[63] = 5;
-			SuffixOption[63] = 20000;
-			PrefixOption[64] = 6;
-			SuffixOption[64] = 20000;
+			PrefixOption[50] = 18;	 //세트 옵션 번호
+			PrefixOption[61] = 4;	 //체력
+			SuffixOption[61] = 2000000; //200
+			PrefixOption[62] = 5;	 //기력
+			SuffixOption[62] = 2000000; //200
+			PrefixOption[63] = 6;	 //마나
+			SuffixOption[63] = 2000000; //200
             this.Weight = 35.0;
 
         }
@@ -35,7 +33,7 @@ namespace Server.Items
         {
             get
             {
-                return 14;
+                return 6;
             }
         }
         public override ArmorMaterialType MaterialType

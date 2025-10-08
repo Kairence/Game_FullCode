@@ -948,7 +948,7 @@ namespace Server.Items
 					{
 						PlayerMobile pm = mob as PlayerMobile;
 						pm.ItemSetValue[PrefixOption[50]]++;
-						Misc.Util.SetOption(pm, false);
+						Misc.SetItem.SetOption(pm, false);
 					}					
 				}
 
@@ -988,7 +988,7 @@ namespace Server.Items
 					{
 						PlayerMobile pm = mob as PlayerMobile;
 						pm.ItemSetValue[PrefixOption[50]]--;
-						Misc.Util.SetOption(pm, false);
+						Misc.SetItem.SetOption(pm, false);
 					}					
 				}				
             }
@@ -1644,12 +1644,12 @@ namespace Server.Items
 
 				//list.Add(1084001);
 				list.Add(1084100 + PrefixOption[50]);
-				int totalset = Misc.Util.SetItemList[PrefixOption[50]].GetLength(0) / 2;
+				int totalset = Misc.SetItem.SetItemList[PrefixOption[50]].GetLength(0) / 2;
 				int maxset = 8;
 				for( int i = 0; i < totalset; ++i)
 				{
-					int equipoption = Misc.Util.SetItemList[PrefixOption[50]][i * 2];
-					int equipvalue = Misc.Util.SetItemList[PrefixOption[50]][i * 2 + 1];
+					int equipoption = Misc.SetItem.SetItemList[PrefixOption[50]][i * 2];
+					int equipvalue = Misc.SetItem.SetItemList[PrefixOption[50]][i * 2 + 1];
 					int optionpercentcheck = 1084011 + i + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[equipoption, 0, 0], maxset);
 
 					//Console.WriteLine("first optionpercentcheck : {0}", optionpercentcheck );

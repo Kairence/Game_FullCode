@@ -11,13 +11,11 @@ namespace Server.Items
         public OrderShield()
             : base(0x1BC4)
         {
-            Weight = 40.0;
+            Weight = 50.0;
+			ShieldMinDamage = 6;
+			ShieldMaxDamage = 10;
 			PrefixOption[61] = 103; //시전 속도
 			SuffixOption[61] = 100000;
-			PrefixOption[62] = 109; //방패 방어 확률
-			SuffixOption[62] = 300000;
-			PrefixOption[63] = 110; //모든 피격 데미지 감소
-			SuffixOption[63] = 50000;
         }
 
         public OrderShield(Serial serial)
@@ -63,7 +61,7 @@ namespace Server.Items
         {
             get
             {
-                return 25;
+                return 5;
             }
         }
 		

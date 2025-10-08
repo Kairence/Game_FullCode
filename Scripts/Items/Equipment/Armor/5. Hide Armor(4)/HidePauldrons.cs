@@ -10,13 +10,11 @@ namespace Server.Items
             : base(0x2B77)
         {
             this.Weight = 18.0;
-			PrefixOption[50] = 5;
-			PrefixOption[61] = 114;
-			SuffixOption[61] = 100;
-			PrefixOption[62] = 43;
-			SuffixOption[62] = 10000;
-			PrefixOption[63] = 41;
-			SuffixOption[63] = 50000;
+			PrefixOption[50] = 5;    //세트 옵션 번호
+			PrefixOption[61] = 43;   //마법 치명타 확률%
+			SuffixOption[61] = 10000; //1%
+			PrefixOption[62] = 8;    //주문 피해%
+			SuffixOption[62] = 50000; //5%
        }
 
         public HidePauldrons(Serial serial)
@@ -24,10 +22,10 @@ namespace Server.Items
         {
         }
 
-        public override int InitMinHits { get { return 1250; } }
+        public override int InitMinHits { get { return 100; } }
         public override int InitMaxHits { get { return 100; } }
 
-        public override int AosStrReq { get { return 400; } }
+        public override int AosStrReq { get { return 1250; } }
         public override int AosDexReq { get { return 100; } }
         public override int AosIntReq { get { return 100; } }
         public override int OldStrReq { get { return 15; } }

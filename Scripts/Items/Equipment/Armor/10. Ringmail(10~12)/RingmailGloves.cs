@@ -11,14 +11,12 @@ namespace Server.Items
         public RingmailGloves()
             : base(0x13EB)
         {
-			PrefixOption[50] = 15;
-			PrefixOption[61] = 114;
-			SuffixOption[61] = 30000;
-			PrefixOption[62] = 7;
-			SuffixOption[62] = 100000;
-			PrefixOption[63] = 40;
-			SuffixOption[63] = 50000;
-            Weight = 10.0;
+			PrefixOption[50] = 15;	 //세트 옵션 번호
+			PrefixOption[61] = 7;	 //무기 피해%
+			SuffixOption[61] = 100000; //10%
+			PrefixOption[62] = 40;	 //공격 속도%
+			SuffixOption[62] = 50000; //5%
+            Weight = 20.0;
         }
 
         public RingmailGloves(Serial serial)
@@ -33,7 +31,7 @@ namespace Server.Items
         {
             get
             {
-                return 12;
+                return 7;
             }
         }
 

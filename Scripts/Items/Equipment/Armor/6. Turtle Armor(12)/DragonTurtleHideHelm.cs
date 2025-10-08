@@ -13,7 +13,7 @@ namespace Server.Items
         public override int AosIntReq { get { return 100; } }
         public override int OldStrReq { get { return 15; } }
 
-        public override int ArmorBase { get { return 12; } }
+        public override int ArmorBase { get { return 6; } }
 
         public override ArmorMaterialType MaterialType { get { return ArmorMaterialType.Leather; } }
         public override CraftResource DefaultResource { get { return CraftResource.RegularLeather; } }
@@ -26,14 +26,12 @@ namespace Server.Items
         public DragonTurtleHideHelm()
             : base(0x782D)
         {
-            Weight = 10.0;
-			PrefixOption[50] = 3;
-			PrefixOption[61] = 12;
-			SuffixOption[61] = 70000;
-			PrefixOption[62] = 18;
-			SuffixOption[62] = 50000;
-			PrefixOption[63] = 100;
-			SuffixOption[63] = 250000;
+            Weight = 15.0;
+            PrefixOption[50] = 3;    //세트 옵션 번호
+            PrefixOption[61] = 18;   //방어율 증가
+            SuffixOption[61] = 50000; //5%
+            PrefixOption[62] = 100;  //무기 공격 반사%
+            SuffixOption[62] = 250000; //25%
         }
 
         public DragonTurtleHideHelm(Serial serial)

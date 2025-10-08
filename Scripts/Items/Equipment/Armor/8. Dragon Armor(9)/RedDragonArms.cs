@@ -10,11 +10,11 @@ namespace Server.Items
             : base(0x2657)
         {
             Weight = 15.0;
-			PrefixOption[50] = 8;
-			PrefixOption[61] = 13;
-			SuffixOption[61] = 100000;
-			PrefixOption[62] = 33;
-			SuffixOption[62] = 200000;
+			PrefixOption[50] = 8;    //세트 옵션 번호
+			PrefixOption[61] = 13;   //화염 저항
+			SuffixOption[61] = 250000; //25%
+			PrefixOption[62] = 23;   //불 피해 증가
+			SuffixOption[62] = 200000; //20
         }
 
         public RedDragonArms(Serial serial)
@@ -31,7 +31,7 @@ namespace Server.Items
         {
             get
             {
-                return 9;
+                return 6;
             }
         }
         public override ArmorMaterialType MaterialType

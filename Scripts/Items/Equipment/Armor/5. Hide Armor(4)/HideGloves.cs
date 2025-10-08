@@ -9,14 +9,12 @@ namespace Server.Items
         public HideGloves()
             : base(0x2B75)
         {
-            this.Weight = 7.0;
-			PrefixOption[50] = 5;
-			PrefixOption[61] = 114;
-			SuffixOption[61] = 100;
-			PrefixOption[62] = 43;
-			SuffixOption[62] = 10000;
-			PrefixOption[63] = 41;
-			SuffixOption[63] = 50000;
+            this.Weight = 10.0;
+			PrefixOption[50] = 5;    //세트 옵션 번호
+			PrefixOption[61] = 43;   //마법 치명타 확률%
+			SuffixOption[61] = 10000; //1%
+			PrefixOption[62] = 8;    //주문 피해%
+			SuffixOption[62] = 50000; //5%
         }
 
         public HideGloves(Serial serial)

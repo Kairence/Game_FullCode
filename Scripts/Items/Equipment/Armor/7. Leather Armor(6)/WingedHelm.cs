@@ -16,7 +16,7 @@ namespace Server.Items
         {
             get
             {
-                return 6;
+                return 2;
             }
         }
 
@@ -25,16 +25,11 @@ namespace Server.Items
             : base(0x2B73)
         {
             Weight = 13.0;
-			
-			PrefixOption[50] = 4;
-			PrefixOption[61] = 114;
-			SuffixOption[61] = 20000;
-			PrefixOption[62] = 41;
-			SuffixOption[62] = 100000;
-			PrefixOption[63] = 8;
-			SuffixOption[63] = 100000;
-			PrefixOption[64] = 6;
-			SuffixOption[64] = 1000000;
+			PrefixOption[50] = 4;    //세트 옵션 번호
+			PrefixOption[61] = 21;   //마나 회복
+			SuffixOption[61] = 50000; //5
+			PrefixOption[62] = 6;    //마나
+			SuffixOption[62] = 2500000; //250
        }
 
         public WingedHelm(Serial serial)

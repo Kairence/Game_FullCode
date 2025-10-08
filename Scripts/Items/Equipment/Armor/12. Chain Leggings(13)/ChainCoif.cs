@@ -9,15 +9,15 @@ namespace Server.Items
         public ChainCoif()
             : base(0x13BB)
         {
-			PrefixOption[50] = 16;
-			PrefixOption[61] = 110;
-			SuffixOption[61] = 50000;
-			PrefixOption[62] = 42;
-			SuffixOption[62] = 50000;
-			PrefixOption[63] = 44;
-			SuffixOption[63] = 50000;
+			PrefixOption[50] = 16;	 //세트 옵션 번호
+			PrefixOption[61] = 120;	 //모든 피격 피해 감소%
+			SuffixOption[61] = 50000; //5%
+			PrefixOption[62] = 42;	 //물리 치명 확률%
+			SuffixOption[62] = 50000; //5%
+			PrefixOption[63] = 44;	 //물리 치명 피해%
+			SuffixOption[63] = 50000; //5%
 
-            this.Weight = 13.0;
+            this.Weight = 20.0;
         }
 
         public ChainCoif(Serial serial)
@@ -32,7 +32,7 @@ namespace Server.Items
         {
             get
             {
-                return 13;
+                return 9;
             }
         }
         public override ArmorMaterialType MaterialType

@@ -8,13 +8,9 @@ namespace Server.Items
         public PlateHelm()
             : base(0x1412)
         {
-			PrefixOption[50] = 17;
-			PrefixOption[61] = 114;
-			SuffixOption[61] = 80000;
-			PrefixOption[62] = 110;
-			SuffixOption[62] = 50000;			
-			PrefixOption[63] = 106;
-			SuffixOption[63] = 5000;				
+			PrefixOption[50] = 17;	 //세트 옵션 번호
+			PrefixOption[61] = 101;	 //기절 시간 감소 (임의 코드 101)
+			SuffixOption[61] = 10000; //1.0초			
             Weight = 25.0;
         }
 
@@ -31,7 +27,7 @@ namespace Server.Items
         {
             get
             {
-                return 15;
+                return 10;
             }
         }
         public override ArmorMaterialType MaterialType

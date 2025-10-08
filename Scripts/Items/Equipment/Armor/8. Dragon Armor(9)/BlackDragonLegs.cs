@@ -9,11 +9,11 @@ namespace Server.Items
         public BlackDragonLegs()
             : base(0x2647)
         {
-			PrefixOption[50] = 13;
-			PrefixOption[61] = 107;
-			SuffixOption[61] = 100000;
-			PrefixOption[62] = 110;
-			SuffixOption[62] = 50000;
+			PrefixOption[50] = 13;   //세트 옵션 번호
+			PrefixOption[61] = 27;   //혼돈 피해 증가
+			SuffixOption[61] = 100000; //10
+			PrefixOption[62] = 120;  //모든 피격 피해 감소%
+			SuffixOption[62] = 50000; //5%
             this.Weight = 20.0;
         }
 
@@ -31,7 +31,7 @@ namespace Server.Items
         {
             get
             {
-                return 9;
+                return 7;
             }
         }
         public override ArmorMaterialType MaterialType

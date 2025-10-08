@@ -9,14 +9,12 @@ namespace Server.Items
         public StuddedGloves()
             : base(0x13D5)
         {
-            Weight = 10.0;
-			PrefixOption[50] = 6;
-			PrefixOption[61] = 12;
-			SuffixOption[61] = 40000;
-			PrefixOption[62] = 3;
-			SuffixOption[62] = 500000;
-			PrefixOption[63] = 5;
-			SuffixOption[63] = 2500000;
+            Weight = 15.0;
+			PrefixOption[50] = 6;    //세트 옵션 번호
+			PrefixOption[61] = 118;  //모든 속도%
+			SuffixOption[61] = 50000; //5%
+			PrefixOption[62] = 117;  //모든 피해%
+			SuffixOption[62] = 50000; //5%
         }
 
         public StuddedGloves(Serial serial)
@@ -35,7 +33,7 @@ namespace Server.Items
         {
             get
             {
-                return 7;
+                return 5;
             }
         }
         public override ArmorMaterialType MaterialType

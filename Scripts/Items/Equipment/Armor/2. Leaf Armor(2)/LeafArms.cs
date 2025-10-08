@@ -11,14 +11,12 @@ namespace Server.Items
         public LeafArms()
             : base(0x2FC8)
         {
-            this.Weight = 3.0;
-			PrefixOption[50] = 1;
-			PrefixOption[61] = 12;
-			SuffixOption[61] = 20000;
-			PrefixOption[62] = 14;
-			SuffixOption[62] = 20000;
-			PrefixOption[63] = 6;
-			SuffixOption[63] = 1000000;
+            this.Weight = 4.0;
+            PrefixOption[50] = 1;    //세트 옵션 번호
+            PrefixOption[61] = 41;   //시전 속도%
+            SuffixOption[61] = 50000; //5%
+            PrefixOption[62] = 6;    //마나
+            SuffixOption[62] = 1000000; //100
         }
 
         public LeafArms(Serial serial)
@@ -64,7 +62,7 @@ namespace Server.Items
         {
             get
             {
-                return 2;
+                return 1;
             }
         }
         public override ArmorMaterialType MaterialType

@@ -12,13 +12,10 @@ namespace Server.Items
             : base(0x1BC3)
         {
             Weight = 40.0;
+			ShieldMinDamage = 3;
+			ShieldMaxDamage = 5;
 			PrefixOption[61] = 104; //시전 속도
 			SuffixOption[61] = 100000;
-			PrefixOption[62] = 109; //방패 방어 확률
-			SuffixOption[62] = 200000;
-			PrefixOption[63] = 110; //모든 피격 데미지 감소
-			SuffixOption[63] = 50000;
-		
         }
 
         public ChaosShield(Serial serial)
@@ -65,7 +62,7 @@ namespace Server.Items
         {
             get
             {
-                return 20;
+                return 4;
             }
         }
         public override void Deserialize(GenericReader reader)

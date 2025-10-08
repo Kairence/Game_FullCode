@@ -1291,6 +1291,37 @@ namespace Server.Items
             }
         }
 
+		private int m_ShieldMaxDamage;
+		private int m_ShieldMinDamage;
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int ShieldMaxDamage
+        {
+            get
+            {
+                return m_ShieldMaxDamage;
+            }
+            set
+            {
+                m_ShieldMaxDamage = value;
+                InvalidateProperties();
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int ShieldMinDamage
+        {
+            get
+            {
+                return m_ShieldMinDamage;			
+            }
+            set
+            {
+                m_ShieldMinDamage = value;
+                InvalidateProperties();
+            }
+        }
+
+
         public virtual int BasePhysicalResistance
         {
             get
@@ -1737,7 +1768,10 @@ namespace Server.Items
         {
             base.Serialize(writer);
 
-            writer.Write((int)18); // version
+            writer.Write((int)19); // version
+			writer.Write(m_ShieldMaxDamage);
+			writer.Write(m_ShieldMinDamage);			
+
 
  			m_ExtendedWeaponAttributes.Serialize(writer);
 			
@@ -1979,6 +2013,12 @@ namespace Server.Items
 
             switch ( version )
             {
+				case 19:
+				{
+					m_ShieldMaxDamage = reader.ReadInt();
+					m_ShieldMinDamage = reader.ReadInt();
+					goto case 18;
+				}
 				case 18: m_ExtendedWeaponAttributes = new ExtendedWeaponAttributes(this, reader);
 						goto case 17;
 				case 17:
@@ -2701,7 +2741,7 @@ namespace Server.Items
 					{
 						PlayerMobile pm = from as PlayerMobile;
 						pm.ItemSetValue[PrefixOption[50]]++;
-						Misc.Util.SetOption(pm, false);
+						Misc.SetItem.SetOption(pm, false);
 					}					
 				}
 
@@ -2740,7 +2780,7 @@ namespace Server.Items
 					{
 						PlayerMobile pm = m as PlayerMobile;
 						pm.ItemSetValue[PrefixOption[50]]--;
-						Misc.Util.SetOption(pm, false);
+						Misc.SetItem.SetOption(pm, false);
 
 					}					
 				}
@@ -2968,6 +3008,11 @@ namespace Server.Items
 
             if (m_Altered)
                 list.Add(1111880); // Altered
+			if( ShieldMaxDamage > 0 && ShieldMinDamage > 0 )
+			{
+				list.Add(1070634, "{0}\t{1}", ShieldMinDamage.ToString(), ShieldMaxDamage.ToString()); // weapon damage ~1_val~ - ~2_val~
+			}
+				
         }
 
         public override void AddWeightProperty(ObjectPropertyList list)
@@ -3232,12 +3277,12 @@ namespace Server.Items
 
 				//list.Add(1084001);
 				list.Add(1084100 + PrefixOption[50]);
-				int totalset = Misc.Util.SetItemList[PrefixOption[50]].GetLength(0) / 2;
+				int totalset = Misc.SetItem.SetItemList[PrefixOption[50]].GetLength(0) / 2;
 				int maxset = 8;
 				for( int i = 0; i < totalset; ++i)
 				{
-					int equipoption = Misc.Util.SetItemList[PrefixOption[50]][i * 2];
-					int equipvalue = Misc.Util.SetItemList[PrefixOption[50]][i * 2 + 1];
+					int equipoption = Misc.SetItem.SetItemList[PrefixOption[50]][i * 2];
+					int equipvalue = Misc.SetItem.SetItemList[PrefixOption[50]][i * 2 + 1];
 					int optionpercentcheck = 1084011 + i + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[equipoption, 0, 0], maxset);
 
 					//Console.WriteLine("first optionpercentcheck : {0}", optionpercentcheck );

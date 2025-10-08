@@ -2700,7 +2700,7 @@ namespace Server.Mobiles
 			}
 			
 			//세트 아이템 체크
-			Misc.Util.SetOption(pm);
+			Misc.SetItem.SetOption(pm);
 			
 			//펫 체크
 			if( pm.Region is Server.Regions.TownRegion )

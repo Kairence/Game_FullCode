@@ -10,13 +10,15 @@ namespace Server.Items
         public WoodenShield()
             : base(0x1B7A)
         {
-            this.Weight = 10.0;
-			PrefixOption[61] = 41; //시전 속도
-			SuffixOption[61] = -500000;
-			PrefixOption[62] = 109; //방패 방어 확률
-			SuffixOption[62] = 500000;
-			PrefixOption[63] = 110; //모든 피격 데미지 감소
-			SuffixOption[63] = 100000;
+			ShieldMinDamage = 3;
+			ShieldMaxDamage = 7;
+            this.Weight = 20.0;
+			//PrefixOption[61] = 41; //시전 속도
+			//SuffixOption[61] = -500000;
+			//PrefixOption[62] = 109; //방패 방어 확률
+			//SuffixOption[62] = 500000;
+			//PrefixOption[63] = 110; //모든 피격 데미지 감소
+			//SuffixOption[63] = 100000;
         }
 
         public WoodenShield(Serial serial)
@@ -63,7 +65,7 @@ namespace Server.Items
         {
             get
             {
-                return 20;
+                return 6;
             }
         }
         public override void Deserialize(GenericReader reader)

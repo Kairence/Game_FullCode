@@ -1361,7 +1361,7 @@ namespace Server.Items
 					{
 						PlayerMobile pm = from as PlayerMobile;
 						pm.ItemSetValue[PrefixOption[50]]++;
-						Misc.Util.SetOption(pm, false);
+						Misc.SetItem.SetOption(pm, false);
 					}					
 				}
                 if (HasSocket<Caddellite>())
@@ -1435,7 +1435,7 @@ namespace Server.Items
 					{
 						PlayerMobile pm = m as PlayerMobile;
 						pm.ItemSetValue[PrefixOption[50]]--;
-						Misc.Util.SetOption(pm, false);
+						Misc.SetItem.SetOption(pm, false);
 					}					
 				}
                 if (HasSocket<Caddellite>())
@@ -2079,16 +2079,17 @@ namespace Server.Items
 			if( defender is PlayerMobile )
 			{
 				Item armorItem = null;
-				BaseShield shield = defender.FindItemOnLayer(Layer.TwoHanded) as BaseShield;
-				BaseWeapon two = defender.FindItemOnLayer(Layer.TwoHanded) as BaseWeapon;
-				BaseWeapon one = defender.FindItemOnLayer(Layer.FirstValid) as BaseWeapon;
-				BaseWeapon one_one = defender.FindItemOnLayer(Layer.OneHanded) as BaseWeapon;
+				//BaseWeapon two = defender.FindItemOnLayer(Layer.TwoHanded) as BaseWeapon;
+				//BaseWeapon one = defender.FindItemOnLayer(Layer.FirstValid) as BaseWeapon;
+				//BaseWeapon one_one = defender.FindItemOnLayer(Layer.OneHanded) as BaseWeapon;
 				switch(target)
 				{
 					case 0:
 					{
+						BaseShield shield = defender.FindItemOnLayer(Layer.TwoHanded) as BaseShield;
 						if( shield != null )
 						{
+							//if( defender.Skills.Parry.Value 
 							//적중 시 이펙트
 							defender.FixedEffect(0x37B9, 10, 16);
 							defender.Animate(AnimationType.Parry, 0);
@@ -2502,6 +2503,12 @@ namespace Server.Items
 				one = attacker.FindItemOnLayer(Layer.OneHanded) as BaseWeapon;
 				two = attacker.FindItemOnLayer(Layer.TwoHanded) as BaseWeapon;
 			}
+			//데미지 감소 및 내구도 하락
+			//int defensedamage = AbsorbDamage(attacker, defender, damage, armorNumber);
+			int defensedamage = AbsorbDamage(attacker, defender, damage, 0);
+			max -= defensedamage;
+			min -= defensedamage;
+			
 			if( bonus_damage == 0 )
 			{
 				//무기술, 명중률, 방어율
@@ -2862,9 +2869,6 @@ namespace Server.Items
 			
 			//슬레이어 데미지
 			damage = (int)( damage * Misc.Util.GetSlayerDamageScalar(attacker, defender) );
-
-			//데미지 감소 및 내구도 하락
-            damage = AbsorbDamage(attacker, defender, damage, armorNumber);
 
 			//택틱, 해부학 스킬 증가
 			if( attacker.Alive && defender.Alive )
@@ -6506,12 +6510,12 @@ namespace Server.Items
 
 				//list.Add(1084001);
 				list.Add(1084100 + PrefixOption[50]);
-				int totalset = Misc.Util.SetItemList[PrefixOption[50]].GetLength(0) / 2;
+				int totalset = Misc.SetItem.SetItemList[PrefixOption[50]].GetLength(0) / 2;
 				int maxset = 8;
 				for( int i = 0; i < totalset; ++i)
 				{
-					int equipoption = Misc.Util.SetItemList[PrefixOption[50]][i * 2];
-					int equipvalue = Misc.Util.SetItemList[PrefixOption[50]][i * 2 + 1];
+					int equipoption = Misc.SetItem.SetItemList[PrefixOption[50]][i * 2];
+					int equipvalue = Misc.SetItem.SetItemList[PrefixOption[50]][i * 2 + 1];
 					int optionpercentcheck = 1084011 + i + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[equipoption, 0, 0], maxset);
 
 					//Console.WriteLine("first optionpercentcheck : {0}", optionpercentcheck );

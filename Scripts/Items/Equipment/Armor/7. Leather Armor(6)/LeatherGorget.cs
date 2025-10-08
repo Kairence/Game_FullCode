@@ -9,15 +9,13 @@ namespace Server.Items
             : base(0x13C7)
         {
             Weight = 9.0;
-			PrefixOption[50] = 4;
-			PrefixOption[61] = 114;
-			SuffixOption[61] = 20000;
-			PrefixOption[62] = 19;
-			SuffixOption[62] = 300000;
-			PrefixOption[63] = 20;
-			SuffixOption[63] = 300000;
-			PrefixOption[64] = 21;
-			SuffixOption[64] = 300000;
+            PrefixOption[50] = 4;    //세트 옵션 번호
+            PrefixOption[61] = 19;   //체력 회복
+            SuffixOption[61] = 30000; //3
+            PrefixOption[62] = 20;   //기력 회복
+            SuffixOption[62] = 30000; //3
+            PrefixOption[63] = 21;   //마나 회복
+            SuffixOption[63] = 30000; //3
         }
 
         public LeatherGorget(Serial serial)
@@ -36,7 +34,7 @@ namespace Server.Items
         {
             get
             {
-                return 6;
+                return 3;
             }
         }
         public override ArmorMaterialType MaterialType

@@ -10,15 +10,9 @@ namespace Server.Items
         public MetalShield()
             : base(0x1B7B)
         {
-            this.Weight = 20.0;
-			PrefixOption[61] = 41; //시전 속도
-			SuffixOption[61] = -500000;
-			PrefixOption[62] = 109; //방패 방어 확률
-			SuffixOption[62] = 400000;
-			PrefixOption[63] = 110; //모든 피격 데미지 감소
-			SuffixOption[63] = 200000;
-			PrefixOption[64] = 4; //체력 증가
-			SuffixOption[64] = 5000000;
+            this.Weight = 40.0;
+			ShieldMinDamage = 4;
+			ShieldMaxDamage = 7;
 
         }
 
@@ -45,7 +39,7 @@ namespace Server.Items
         {
             get
             {
-                return 3000;
+                return 2500;
             }
         }
         public override int AosDexReq
@@ -66,7 +60,7 @@ namespace Server.Items
         {
             get
             {
-                return 30;
+                return 10;
             }
         }
         public override void Deserialize(GenericReader reader)

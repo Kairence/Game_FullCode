@@ -11,15 +11,13 @@ namespace Server.Items
         public OrcHelm()
             : base(0x1F0B)
         {
-            Weight = 11.0;
+            Weight = 20.0;
 
-			PrefixOption[50] = 7;
-			PrefixOption[61] = 117;
-			SuffixOption[61] = 100000;
-			PrefixOption[62] = 118;
-			SuffixOption[62] = 50000;
-			PrefixOption[63] = 12;
-			SuffixOption[63] = 10000;
+			PrefixOption[50] = 7;    //세트 옵션 번호
+			PrefixOption[61] = 4;    //체력
+			SuffixOption[61] = 5000000; //500
+			PrefixOption[62] = 19;   //체력 회복
+			SuffixOption[62] = 160000; //16
         }
 
         public OrcHelm(Serial serial)

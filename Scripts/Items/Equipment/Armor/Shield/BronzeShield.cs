@@ -45,7 +45,7 @@ namespace Server.Items
         {
             get
             {
-                return 10;
+                return 2;
             }
         }
 		
@@ -54,15 +54,11 @@ namespace Server.Items
         public BronzeShield()
             : base(0x1B72)
         {
-            Weight = 6.0;
-			PrefixOption[61] = 40; //공격 속도
-			SuffixOption[61] = -500000;
-			PrefixOption[62] = 109; //방패 방어 확률
-			SuffixOption[62] = 200000;
-			PrefixOption[63] = 6; //모든 피격 데미지 감소
-			SuffixOption[63] = 5000000;
-
-
+            Weight = 15.0;
+			ShieldMinDamage = 1;
+			ShieldMaxDamage = 3;			
+			PrefixOption[61] = 6; //마나
+			SuffixOption[61] = 1000000;
 		}
 
         public BronzeShield(Serial serial)
