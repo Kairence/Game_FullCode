@@ -6,6 +6,8 @@ namespace Server.Items
     {
         int[] PrefixOption { get; set; }
         int[] SuffixOption { get; set; }
+		int Hue { get; set; }
+		Mobile Crafter { get; set; }
         AosAttributes Attributes { get; }
         AosArmorAttributes ArmorAttributes { get; }
         AosSkillBonuses SkillBonuses { get; }
@@ -16,5 +18,8 @@ namespace Server.Items
 		CraftResource Resource { get; set; }
 		ItemPower ItemPower { get; set; }
 		bool Identified { get; set; }
+		Map Map { get; set; }
+        Point3D Location { get; set; }	
+		
     }
 }

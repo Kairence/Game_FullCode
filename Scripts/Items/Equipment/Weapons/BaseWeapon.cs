@@ -6398,7 +6398,7 @@ namespace Server.Items
 				}
 			}			
 			
-			if( PrefixOption[0] >= 100 )
+			if( PrefixOption[0] >= 1000 )
 			{
 				//신규 옵션 정리
 				bool skillcheck = false;
@@ -6417,7 +6417,7 @@ namespace Server.Items
 							skillname = m_AosSkillBonuses.GetSkillName(skill);
 							if ( skillname > 0 )
 							{
-								list.Add(1080641 + skilluse, "#{0}\t{1}", skillname, ((double)SuffixOption[i + 61] * 0.01).ToString());
+								list.Add(1080641 + skilluse, "#{0}\t{1}", skillname, ((double)SuffixOption[i + 61] * 0.0001).ToString());
 								skillcheck = true;
 							}
 							skilluse++;
@@ -6443,7 +6443,7 @@ namespace Server.Items
 						skillname = m_AosSkillBonuses.GetSkillName(skill);
 						if ( skillname > 0 )
 						{
-							list.Add(1080641 + skilluse, "#{0}\t{1}", skillname, ((double)SuffixOption[i + 11] * 0.01).ToString());
+							list.Add(1080641 + skilluse, "#{0}\t{1}", skillname, ((double)SuffixOption[i + 11] * 0.0001).ToString());
 							skillcheck = true;
 						}
 						skilluse++;
@@ -6806,7 +6806,6 @@ namespace Server.Items
 				if( from is PlayerMobile )
 				{
 					double maxValue = 0.8;
-					double bonus = 1;
 					if (Quality == ItemQuality.Exceptional)
 					{
 						maxValue = 1.0;
@@ -6828,18 +6827,14 @@ namespace Server.Items
 					}
 					*/
 					//int rank = Util.ItemRankMaker( from.Skills[craftSystem.MainSkill].Value );
-					int rank = Util.ItemRankMaker( from.Skills.ArmsLore.Value, maxValue, bonus );
+					//int rank = Util.ItemRankMaker( from.Skills.ArmsLore.Value, maxValue, bonus );
 					
 					//int tier = Util.ItemTierMaker( arms, rank, Misc.Util.ResourceNumberToNumber((int)Resource ), from );
 					PlayerMobile pm = from as PlayerMobile;
-					//암즈로어 스킬 상승 보너스
-					if (Quality == ItemQuality.Exceptional)
-						pm.CheckSkill(SkillName.ArmsLore, 1500 + rank * 250);
-					else
-						pm.CheckSkill(SkillName.ArmsLore, 500 + rank * 250);
 
 					//Util.ItemCreate( this, rank, true, pm, tier );
 
+					/*
 					bool artifact = false;
 					
 					if( Resource == CraftResource.Verite || Resource == CraftResource.Bloodwood || Resource == CraftResource.SpinedLeather )
@@ -6858,7 +6853,23 @@ namespace Server.Items
 						}
 						artifact = true;
 					}
-					Util.NewItemCreate(this, rank, pm, artifact );
+					*/
+					//Util.NewItemCreate(this, rank, pm, artifact );
+					//아이템 제작 및 암즈로어 스킬 상승 보너스
+					/*
+						제작술 스킬 1당 옵션 기대치 1로 계산
+						장비학 스킬 1당 옵션 기대치 0.2로 계산
+						고급일 시 옵션 기대치 값 50 증가					
+					*/
+					double bonus = from.Skills[craftSystem.MainSkill].Value + from.Skills.ArmsLore.Value * 0.2;
+					if (Quality == ItemQuality.Exceptional)
+						bonus += 50;
+					
+					int rank = ItemOptionCreator.ItemCreator(this, bonus, pm);
+					if (Quality == ItemQuality.Exceptional)
+						pm.CheckSkill(SkillName.ArmsLore, 1500 + rank * 250);
+					else
+						pm.CheckSkill(SkillName.ArmsLore, 500 + rank * 250);
 				}
 			}
 
