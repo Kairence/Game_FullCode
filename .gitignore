@@ -40,5 +40,7 @@
 *.DotSettings.user
 *.ini
 
+git_upload.bat
+
 !/Data/*
 !/bin/rosyln/*
