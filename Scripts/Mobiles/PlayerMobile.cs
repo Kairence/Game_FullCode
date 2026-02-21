@@ -4043,13 +4043,13 @@ namespace Server.Mobiles
 		//스텟 설정
 		#region [Stats]Max
 		[CommandProperty(AccessLevel.GameMaster)]
-		public override int HitsMax { get {	return Math.Min( 1000 + Math.Min(AosAttributes.GetValue(this, AosAttribute.BonusHits) / 100, 4000) + SkillbyStat[4] / 1000 , 9999 ); } }
+		public override int HitsMax { get {	return Math.Min( 1000 + Math.Min(AosAttributes.GetValue(this, AosAttribute.BonusHits) / 10000, 4000) + SkillbyStat[4] / 1000 , 9999 ); } }
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public override int StamMax { get { return Math.Min( 1000 + Math.Min(AosAttributes.GetValue(this, AosAttribute.BonusStam) / 100, 4000) + SkillbyStat[5] / 1000, 9999 ); } }
+		public override int StamMax { get { return Math.Min( 1000 + Math.Min(AosAttributes.GetValue(this, AosAttribute.BonusStam) / 10000, 4000) + SkillbyStat[5] / 1000, 9999 ); } }
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public override int ManaMax { get { return Math.Min( 1000 + Math.Min(AosAttributes.GetValue(this, AosAttribute.BonusMana) / 100, 4000) + SkillbyStat[6] / 1000, 9999 ); } }
+		public override int ManaMax { get { return Math.Min( 1000 + Math.Min(AosAttributes.GetValue(this, AosAttribute.BonusMana) / 10000, 4000) + SkillbyStat[6] / 1000, 9999 ); } }
 		#endregion
 		
 		#region Stat Getters/Setters
@@ -4060,7 +4060,7 @@ namespace Server.Mobiles
 			{
 				if (Core.ML && IsPlayer())
 				{
-					return Math.Min( 1000 + Math.Min(AosAttributes.GetValue( this, AosAttribute.BonusStr), 4000) + SkillbyStat[0] / 1000, 9999 );
+					return Math.Min( 1000 + Math.Min(AosAttributes.GetValue( this, AosAttribute.BonusStr) / 100, 4000) + SkillbyStat[0] / 1000, 9999 );
 					//return Math.Min(base.Str, StrMaxCap);
 				}
 
@@ -4076,7 +4076,7 @@ namespace Server.Mobiles
 			{
 				if (Core.ML && IsPlayer())
 				{
-					return Math.Min( 1000 + Math.Min(AosAttributes.GetValue( this, AosAttribute.BonusDex), 4000) + SkillbyStat[1] / 1000, 9999 );
+					return Math.Min( 1000 + Math.Min(AosAttributes.GetValue( this, AosAttribute.BonusDex) / 100, 4000) + SkillbyStat[1] / 1000, 9999 );
 					//return Math.Min(base.Dex, DexMaxCap);
 				}
 
@@ -4092,7 +4092,7 @@ namespace Server.Mobiles
 			{
 				if (Core.ML && IsPlayer())
 				{
-					return Math.Min( 1000 + Math.Min(AosAttributes.GetValue( this, AosAttribute.BonusInt), 4000) + SkillbyStat[2] / 1000, 9999 );
+					return Math.Min( 1000 + Math.Min(AosAttributes.GetValue( this, AosAttribute.BonusInt) / 100, 4000) + SkillbyStat[2] / 1000, 9999 );
 					//return Math.Min(base.Int, IntMaxCap);
 				}
 
@@ -6510,7 +6510,7 @@ namespace Server.Mobiles
 
 		public List<Mobile> PermaFlags { get { return m_PermaFlags; } }
 
-        public override int Luck { get { return Math.Min( Math.Min(AosAttributes.GetValue(this, AosAttribute.Luck) / 100, 4000) + TenthAnniversarySculpture.GetLuckBonus(this) + SkillbyStat[3] / 1000, 10000 ); } }
+        public override int Luck { get { return Math.Min( Math.Min(AosAttributes.GetValue(this, AosAttribute.Luck) / 10000, 4000) + TenthAnniversarySculpture.GetLuckBonus(this) + SkillbyStat[3] / 1000, 10000 ); } }
 
         public int RealLuck
 		{ 

@@ -8,6 +8,7 @@ using Server.Accounting;
 using Server.Engines.VeteranRewards;
 using System.Collections.Generic;
 using Server.Gumps;
+using Server.Network;
 
 namespace Server.Misc
 {
@@ -1812,6 +1813,18 @@ namespace Server.Misc
 					casting += "실패하셨습니다...";
 				}
 				World.Broadcast( color, true, casting );
+			}
+		}
+
+		public static void BroadcastLocalized(int cliloc, string args, int hue)
+		{
+			foreach (NetState state in NetState.Instances)
+			{
+				Mobile m = state.Mobile;
+				if (m != null)
+				{
+					m.SendLocalizedMessage(cliloc, args, hue);
+				}
 			}
 		}
 		
@@ -5326,7 +5339,7 @@ namespace Server.Misc
 
 		public static string OneItemRank( int name )
 		{
-			string colorname = "";
+			string colorname = "{0}\t#{1}\t{2}";
 			switch( name )
 			{
 				case 4 : colorname = "<basefont color=#00A000>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";

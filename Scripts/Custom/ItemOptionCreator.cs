@@ -347,6 +347,7 @@ namespace Server.Misc
 			new int[] {0, 1, 2, 3, 4, 5, 6, 8, 12, 13, 14, 15, 16, 19, 21, 46, 47, 51, 56, 57, 58, 59, 60, 61, 62, 64, 66, 68, 69, 71, 74, 75, 76, 79, 80, 82, 84, 86, 90, 92, 94, 97, 98, 101, 119, }, //마법 목걸이
 			new int[] {0, 1, 2, 3, 4, 5, 6, 8, 18, 33, 34, 35, 36, 37, 41, 43, 45, 46, 47, 56, 57, 58, 59, 60, 61, 62, 64, 66, 68, 69, 71, 74, 75, 76, 79, 80, 82, 84, 86, 90, 92, 94, 97, 98, 101, 119, 140, }, //마법 귀걸이(26)
 		};
+
 		#endregion
 		//아이템 옵션 붙이기
 		public static int NewEquipOptionList( Item equip, int itemoption, int itemvalue, int skilluse )
@@ -1455,7 +1456,8 @@ namespace Server.Misc
 			//접미 1 : 랭크 레벨
 			//접두 9 : 랭크 옵션
 			//접미 9 : 랭크 값
-				
+			//접두 41 : 재료 목록 값
+
 				
 			if( item is IEquipOption )
 			{
@@ -1487,7 +1489,15 @@ namespace Server.Misc
 					}
 					else
 						equip.SuffixOption[0] = 0; //안전 코드. 옵션을 체크하지 않음
+						
+					//강화 옵션(바로 장비에서 붙일 예정
+					//equip.PrefixOption[41] = Misc.Util.UseResourceNumber((int)equip.Resource);	//재료 번호(향후 강화에 사용)
+					//int resourceuse = Misc.Util.UseResourceNumber((int)equip.Resource);
+					//equip.PrefixOption[41] = EnhancedOption[resourceuse, selectLine, 0];
+					//equip.PrefixOption[10] = NewResourceOption[resourceuse, equipLine, 1];
+					//equip.SuffixOption[10] = NewResourceOption[resourceuse, equipLine, 2];
 				}
+				
 				
 				//랭크 옵션 처리
 				if( equip.SuffixOption[1] > 0 )
@@ -1690,8 +1700,8 @@ namespace Server.Misc
 				
 				접두 9 : 랭크 옵션
 				접미 9 : 랭크 값
-				접두 10 : 강화 레벨
-				접미 10 : 강화 값
+				접두 10 : 강화 이름
+				접미 10 : 강화 레벨
 				
 				
 				접두 11 ~ 30 : 1 ~ 20 옵션 리스트.
@@ -1700,8 +1710,8 @@ namespace Server.Misc
 				접두 31 ~ 40 : 1 ~ 10 재련 리스트
 				접미 31 ~ 40 : 1 ~ 10 재련 저장값
 				
-				접두 41 : 목록 string 값
-				접미 41 : 최대 옵션 값
+				접두 41 : 강화 이름
+				접미 41 : 
 				접두 42 ~ 45 : 1 ~ 4 재료 리스트
 				접미 42 ~ 45 : 1 ~ 4 재료 저장값
 				접두 50 : 세트 옵션 번호(1번 부터 시작)
@@ -1757,6 +1767,15 @@ namespace Server.Misc
 						break;
 					skilluse = NewEquipOptionList( equip, item.PrefixOption[i + 61], item.SuffixOption[i + 61], skilluse);
 				}
+				#endregion
+				
+				#region 강화 재료 옵션 (최종 최적화)
+
+				int resIndex = Misc.Util.UseResourceNumber((int)item.Resource);
+
+				item.PrefixOption[10] = (resIndex >= 0) ? resIndex : 0;
+				item.SuffixOption[10] = 0;
+
 				#endregion
 			}
 		}

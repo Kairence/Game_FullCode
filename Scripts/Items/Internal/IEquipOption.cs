@@ -7,6 +7,8 @@ namespace Server.Items
         int[] PrefixOption { get; set; }
         int[] SuffixOption { get; set; }
 		int Hue { get; set; }
+		int MaxHitPoints { get; set; }
+		int HitPoints { get; set; }
 		Mobile Crafter { get; set; }
         AosAttributes Attributes { get; }
         AosArmorAttributes ArmorAttributes { get; }

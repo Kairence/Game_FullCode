@@ -5844,6 +5844,9 @@ namespace Server.Items
 
 		public override void AddNameProperty(ObjectPropertyList list)
 		{
+		// SuffixOption[10]이 강화 수치라고 하셨으니 직접 접근합니다.
+			int step = this.SuffixOption[10];
+
             if (m_ExtendedWeaponAttributes.AssassinHoned > 0)
             {
                 list.Add(1152207); // Assassin's Edge
@@ -5938,9 +5941,9 @@ namespace Server.Items
             {
 				if (oreType != 0)
 				{
-					if( !Identified )
-						list.Add(1028266, "<basefont color=#AAAAAA>{0}\t#{1}\t{2}<basefont color=#FFFFFF>", "", oreType, GetNameString());
-					else if( (int)ItemPower == 0 || (int)ItemPower >= 4 )
+					//if( !Identified )
+					//	list.Add(1028266, "<basefont color=#AAAAAA>{0}\t#{1}\t{2}<basefont color=#FFFFFF>", "", oreType, GetNameString());
+					if( (int)ItemPower == 0 || (int)ItemPower >= 4 )
 					{
 						if (m_ReforgedPrefix != ReforgedPrefix.None && m_ReforgedSuffix != ReforgedSuffix.None )
 						{
@@ -5965,16 +5968,22 @@ namespace Server.Items
 				}
 				else if( SuffixOption[99] > 0 )
 				{
-					if( !Identified )
-						list.Add(1028266, "<basefont color=#AAAAAA>{0}\t#{1}\t{2}<basefont color=#FFFFFF>", "", 1052084 + SuffixOption[99], GetNameString());
-					else
+					//if( !Identified )
+					//	list.Add(1028266, "<basefont color=#AAAAAA>{0}\t#{1}\t{2}<basefont color=#FFFFFF>", "", 1052084 + SuffixOption[99], GetNameString());
+					//else
+					if( SuffixOption[10] < 1 )
 						list.Add(1028264, String.Format(Util.OreItemRank( (int)ItemPower), "", 1052084 + SuffixOption[99], GetNameString()));
+					else
+					{
+						string upgrade = "+" + SuffixOption[10].ToString();
+						list.Add(1028263, String.Format(Util.OreItemRank( (int)ItemPower), "", upgrade, 1052084 + SuffixOption[99], GetNameString()));
+					}
 				}
 				else
 				{
-					if( !Identified )
-						list.Add(1028265, "<basefont color=#AAAAAA>{0}\t{1}<basefont color=#FFFFFF>", "", GetNameString());
-					else if( (int)ItemPower == 0 || (int)ItemPower >= 4 )
+					//if( !Identified )
+					//	list.Add(1028265, "<basefont color=#AAAAAA>{0}\t{1}<basefont color=#FFFFFF>", "", GetNameString());
+					if( (int)ItemPower == 0 || (int)ItemPower >= 4 )
 					{
 						if (m_ReforgedPrefix != ReforgedPrefix.None && m_ReforgedSuffix != ReforgedSuffix.None )
 						{
@@ -5987,15 +5996,19 @@ namespace Server.Items
 						else if ( m_ReforgedSuffix != ReforgedSuffix.None )
 						{
 							list.Add(1028260, String.Format(Util.OneItemRank( (int)ItemPower), "", RunicReforging.GetSuffixName(m_ReforgedSuffix), GetNameString()));
-							
+						}
+						else if( SuffixOption[10] > 0 )
+						{
+							list.Add(1028260, String.Format(Util.OneItemRank( (int)ItemPower), "", 1083700 + SuffixOption[10], GetNameString()));
 						}
 						else
 						{
 							list.Add(1053099, Util.ItemRank( (int)ItemPower), "", GetNameString());
 						}
+
 					}
 					else
-						list.Add(1053099, "{0}\t{1}", "", GetNameString());						
+						list.Add(1053099, "{0}\t{1}", "", GetNameString());				
 				}
 				
 				//list.Add(1053099, Util.ItemRank( (int)ItemPower), "", GetNameString());
@@ -6396,8 +6409,10 @@ namespace Server.Items
 						list.Add(1112075); // skill required: throwing
 						break;
 				}
-			}			
-			
+			}
+			//OPL 장비 통합으로 변경			
+			Server.Misc.NewOptionOPL.Append(list, this);
+			/*
 			if( PrefixOption[0] >= 1000 )
 			{
 				//신규 옵션 정리
@@ -6455,11 +6470,11 @@ namespace Server.Items
 					}
 				}
 				//재료 옵션
-				if( PrefixOption[41] != 0 )
-				{
+				//if( PrefixOption[41] != 0 )
+				//{
 					list.Add(1081001);
-					list.Add( PrefixOption[41] );
-				}
+					list.Add( Misc.Util.UseResourceNumber((int)this.Resource) );
+				//}
 				
 				//재련 옵션
 				if( PrefixOption[0] == 100 )
@@ -6481,18 +6496,7 @@ namespace Server.Items
 				}
 				
 				//강화 옵션
-				if( PrefixOption[3] + PrefixOption[4] + PrefixOption[5] + PrefixOption[6] + PrefixOption[7] != 0 )
-				{
-					list.Add(1083001);
-					
-					for(int i = 0; i < 7; ++i)
-					{
-						if( PrefixOption[3 + i] > 0 )
-						{
-							list.Add( 1083002 + i, "{0}\t{1}", PrefixOption[i + 3], (((double)SuffixOption[i + 3])*Misc.Util.PercentCalc(PrefixOption[3 + i])).ToString() );
-						}
-					}
-				}
+				Server.Misc.NewOptionOPL.Append(list, this);
 			}			
 			//세트 옵션
 			if( PrefixOption[50] != 0 )
@@ -6614,7 +6618,7 @@ namespace Server.Items
 					}
 				}
 			}
-			
+			*/
 
 
 			if (IsSetItem && !m_SetEquipped)
