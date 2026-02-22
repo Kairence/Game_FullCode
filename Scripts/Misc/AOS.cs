@@ -264,18 +264,18 @@ namespace Server
 					if( !bc.Boss && bc.attackcharge >= 300 )
 						totalDamage *= 10;
 
-					if( Utility.RandomDouble() < 0.1 * Util.MonsterGrade(bc.Grade) )
+					if( Utility.RandomDouble() < 0.1 * CreatureBalancer.MonsterGrade(bc.Grade) )
 					{
-						bc.RawDex += Util.MonsterGrade(bc.Grade);
-						bc.RawStr += Util.MonsterGrade(bc.Grade);
-						bc.RawInt += Util.MonsterGrade(bc.Grade);
-						bc.HitsMaxSeed += Util.MonsterGrade(bc.Grade);
-						bc.Hits += Util.MonsterGrade(bc.Grade);
-						bc.StamMaxSeed += Util.MonsterGrade(bc.Grade);
+						bc.RawDex += CreatureBalancer.MonsterGrade(bc.Grade);
+						bc.RawStr += CreatureBalancer.MonsterGrade(bc.Grade);
+						bc.RawInt += CreatureBalancer.MonsterGrade(bc.Grade);
+						bc.HitsMaxSeed += CreatureBalancer.MonsterGrade(bc.Grade);
+						bc.Hits += CreatureBalancer.MonsterGrade(bc.Grade);
+						bc.StamMaxSeed += CreatureBalancer.MonsterGrade(bc.Grade);
 						bc.Stam++;
 						bc.ManaMaxSeed++;
 						bc.Mana++;
-						if( bc.Fame > 0 && from.Fame < bc.Fame && bc.Fame < 17500 + Util.MonsterGrade(bc.Grade) * 2500 )
+						if( bc.Fame > 0 && from.Fame < bc.Fame && bc.Fame < 17500 + CreatureBalancer.MonsterGrade(bc.Grade) * 2500 )
 							bc.Fame++;
 					}
 				
@@ -388,19 +388,19 @@ namespace Server
 						}
 					}
 					bc.attackcharge++;
-					if( Utility.RandomDouble() < 0.05 * Util.MonsterGrade(bc.Grade) )
+					if( Utility.RandomDouble() < 0.05 * CreatureBalancer.MonsterGrade(bc.Grade) )
 					{
-						bc.RawDex += Util.MonsterGrade(bc.Grade);
-						bc.RawStr += Util.MonsterGrade(bc.Grade);
-						bc.RawInt += Util.MonsterGrade(bc.Grade);
-						bc.HitsMaxSeed += Util.MonsterGrade(bc.Grade);
-						bc.Hits += Util.MonsterGrade(bc.Grade);
-						bc.StamMaxSeed += Util.MonsterGrade(bc.Grade);
+						bc.RawDex += CreatureBalancer.MonsterGrade(bc.Grade);
+						bc.RawStr += CreatureBalancer.MonsterGrade(bc.Grade);
+						bc.RawInt += CreatureBalancer.MonsterGrade(bc.Grade);
+						bc.HitsMaxSeed += CreatureBalancer.MonsterGrade(bc.Grade);
+						bc.Hits += CreatureBalancer.MonsterGrade(bc.Grade);
+						bc.StamMaxSeed += CreatureBalancer.MonsterGrade(bc.Grade);
 						bc.Stam++;
 						bc.ManaMaxSeed++;
 						bc.Mana++;
-						if( bc.Fame > 0 && from.Fame < bc.Fame && bc.Fame < 17500 + Util.MonsterGrade(bc.Grade) * 2500 )
-							bc.Fame += Util.MonsterGrade(bc.Grade);
+						if( bc.Fame > 0 && from.Fame < bc.Fame && bc.Fame < 17500 + CreatureBalancer.MonsterGrade(bc.Grade) * 2500 )
+							bc.Fame += CreatureBalancer.MonsterGrade(bc.Grade);
 					}
 					for( int i = 0; i < 10000; i++ )
 					{

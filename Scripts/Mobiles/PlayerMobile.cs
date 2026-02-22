@@ -2307,28 +2307,47 @@ namespace Server.Mobiles
 				if( pm.Tired < -108000 )
 					pm.Tired = -108000;
 				
-				//가문 스킬 체크
+				//계정 사용 코드
 				Account acc = pm.Account as Account;
 
-				if( acc != null && acc.Count > 1 )
+				if (acc != null && acc.Point != null && acc.Point.Length >= 1000)
 				{
-					double AccountSkillSum = 0.0;
-					for ( int i = 0; i < 58; i++)
+					// 999번을 버전 관리 인덱스로 사용
+					if (acc.Point[999] == 0) 
 					{
-						for (int j = 0; j < acc.Length; ++j)
+						// 1. 모든 포인트 0으로 초기화 (0번~999번 전체)
+						for (int i = 0; i < acc.Point.Length; i++)
 						{
-							Mobile check = acc[j];
-							if (check != null && check != pm )
-								AccountSkillSum += check.Skills[i].Base * 0.1;
+							acc.Point[i] = 0;
 						}
-						SkillName skill = (SkillName)Enum.ToObject(typeof(SkillName), i);
-						SkillMod sk = new DefaultSkillMod(skill, true, AccountSkillSum);
-						sk.ObeyCap = true;
-						pm.AddSkillMod(sk);
-						AccountSkillSum = 0.0;
+
+						// 2. 버전 번호 1 설정
+						acc.Point[999] = 1;
+
+						pm.SendMessage(0x42, "새로운 시즌 시스템 도입으로 모든 포인트가 초기화되었습니다.");
+					}
+
+					// 가문 스킬 체크
+					if (acc.Count > 1)
+					{
+						double AccountSkillSum = 0.0;
+						for (int i = 0; i < 58; i++)
+						{
+							for (int j = 0; j < acc.Length; ++j)
+							{
+								Mobile check = acc[j];
+								if (check != null && check != pm)
+									AccountSkillSum += check.Skills[i].Base * 0.1;
+							}
+							SkillName skill = (SkillName)Enum.ToObject(typeof(SkillName), i);
+							SkillMod sk = new DefaultSkillMod(skill, true, AccountSkillSum);
+							sk.ObeyCap = true;
+							pm.AddSkillMod(sk);
+							AccountSkillSum = 0.0;
+						}
 					}
 				}
-				
+
 				
 				/*
 				if( pm.StamMax > pm.Stam )
@@ -2817,64 +2836,40 @@ namespace Server.Mobiles
 		{
 			Point3D loc = new Point3D( 2499, 924, 0 );
 			UnEquipCheck();
-			//던전 안일 경우 스타룸으로 이동
-			/*
-			if( !( Location.X > 5125 && Location.Y > 1765 > && Location.X < 5165 && Location.Y < 1775 ) && DeathCheck > 0 && ( this.Region is DungeonRegion || this.Region.Name == "Ancient Lair" ) )
-				loc = new Point3D( 5140, 1773, 0 );
+
+			// 1. SaveTown에 따른 좌표 설정
+			switch ( m_SaveTown )
+			{
+				case 1: loc = new Point3D( 1431, 1696, 0 ); break;
+				case 2: loc = new Point3D( 2715, 2108, 0 ); break;
+				case 3: loc = new Point3D( 2234, 1198, 0 ); break;
+				case 4: loc = new Point3D( 1383, 3815, 0 ); break;
+				case 5: loc = new Point3D( 3721, 2066, 12 ); break;
+				case 6: loc = new Point3D( 2465, 528, 15 ); break;
+				case 7: loc = new Point3D( 4442, 1122, 5 ); break;
+				case 8: loc = new Point3D( 3756, 1280, 5 ); break;
+				case 9: loc = new Point3D( 2990, 3413, 15 ); break;
+				case 10: loc = new Point3D( 610, 2195, 0 ); break;
+				case 11: loc = new Point3D( 1868, 2779, 0 ); break;
+				case 12: loc = new Point3D( 2887, 710, 0 ); break;
+				case 13: loc = new Point3D( 546, 992, 0 ); break;
+				case 14: loc = new Point3D( 3499, 2571, 14 ); break;
+			}
+
+			// 2. 시즌 여부에 따른 맵 결정
+			Map targetMap;
+
+			if (this.Young && Misc.SeasonController.IsSeasonActive())
+			{
+				targetMap = Map.Felucca;
+			}
 			else
 			{
-				*/
-				switch ( m_SaveTown )
-				{
-					case 1:
-						loc = new Point3D( 1431, 1696, 0 );
-						break;
-					case 2:
-						loc = new Point3D( 2715, 2108, 0 );
-						break;
-					case 3:
-						loc = new Point3D( 2234, 1198, 0 );
-						break;
-					case 4:
-						loc = new Point3D( 1383, 3815, 0 );
-						break;
-					case 5:
-						loc = new Point3D( 3721, 2066, 12 );
-						break;
-					case 6:
-						loc = new Point3D( 2465, 528, 15 );
-						break;
-					case 7:
-						loc = new Point3D( 4442, 1122, 5 );
-						break;
-					case 8:
-						loc = new Point3D( 3756, 1280, 5 );
-						break;
-					case 9:
-						loc = new Point3D( 2990, 3413, 15 );
-						break;
-					case 10:
-						loc = new Point3D( 610, 2195, 0 );
-						break;
-					case 11:
-						loc = new Point3D( 1868, 2779, 0 );
-						break;
-					case 12:
-						loc = new Point3D( 2887, 710, 0 );
-						break;
-					case 13:
-						loc = new Point3D( 546, 992, 0 );
-						break;
-					case 14:
-						loc = new Point3D( 3499, 2571, 14 );					
-						break;
-				//}
+				// 시즌이 끝났거나, Young을 포기했거나, 일반 캐릭터인 경우
+				targetMap = Map.Trammel;
 			}
-			Map map = this.Map;
-			if( map == Map.Felucca || m_SaveTown != 0 )
-				map = Map.Trammel;
 
-			//사망 시 해제 코드
+			// 3. 상태 이상 해제 코드
 			if( Paralyzed )
 				Paralyzed = false;
 			if( Frozen )
@@ -2882,9 +2877,11 @@ namespace Server.Mobiles
 			if( Poison != null )
 				Poison = null;
 			
-			MoveToWorld( loc, Map.Trammel );
+			// 4. 결정된 좌표와 맵으로 이동 (핵심 수정: Map.Trammel -> targetMap)
+			MoveToWorld( loc, targetMap );
+
 			if ( cityteleporter )
-			BaseCreature.KillPets( this, loc, map );
+				BaseCreature.KillPets( this, loc, targetMap );
 		}
 
 		public DateTime FireField = DateTime.Now;		
@@ -3432,6 +3429,37 @@ namespace Server.Mobiles
 				}
 				else
 					AutoFood = null;
+			}
+
+			if ( this.AccessLevel == AccessLevel.Player )
+			{
+				bool isSeasonActive = Misc.SeasonController.IsSeasonActive();
+
+				if ( isSeasonActive )
+				{
+					// 1. 시즌 중인데 일반 캐릭터가 펠루카에 무단 침입한 경우
+					if ( !this.Young && this.Map == Map.Felucca )
+					{
+						this.SendMessage( 0x22, "시즌 기간 중 일반 캐릭터는 펠루카에 입장할 수 없습니다." );
+						this.PlayerMove( false );
+					}
+					// 2. 시즌 중인데 시즌 캐릭터(Young)가 어떤 이유로든 트라멜로 나간 경우 (차단)
+					else if ( this.Young && this.Map == Map.Trammel )
+					{
+						this.SendMessage( 0x22, "시즌 캐릭터는 시즌 종료 전까지 펠루카에 머물러야 합니다." );
+						this.PlayerMove( false );
+					}
+				}
+				else
+				{
+					// 3. 시즌이 종료되었는데 아직 Young 상태인 캐릭터 (26일 정각 처리)
+					if ( this.Young )
+					{
+						this.Young = false;
+						this.PlayerMove( false );
+						this.SendMessage( 0x481, "시즌이 종료되었습니다. 일반 지역으로 이동합니다." );
+					}
+				}
 			}
 			
 			Timer.DelayCall( TimeSpan.FromSeconds( 0.1 ), new TimerCallback( PlayerCount ) );
@@ -6816,6 +6844,16 @@ namespace Server.Mobiles
 			set { m_SaveTown = value; InvalidateProperties(); } 
 		}
 
+		//시즌 스킬 보너스
+		private int m_seasonSkillBonus;
+		[CommandProperty( AccessLevel.GameMaster )]
+		public int seasonSkillBonus 
+		{ 
+			get { return m_seasonSkillBonus; } 
+			set { m_seasonSkillBonus = value; InvalidateProperties(); } 
+		}
+
+
 		private int m_StamTimeUp = 36000;
 		[CommandProperty( AccessLevel.GameMaster )]
 		public int StamTimeUp 
@@ -7096,6 +7134,12 @@ namespace Server.Mobiles
 
 			switch (version)
 			{
+				case 62:
+				{
+					m_seasonSkillBonus = reader.ReadInt();
+					goto case 61;
+				}
+				
 				case 61:
 				{
 					for (int i = 0; i < 200; i++)
@@ -7772,7 +7816,10 @@ namespace Server.Mobiles
 
 			base.Serialize(writer);
 
-			writer.Write(61); // version
+			writer.Write(62); // version
+
+
+			writer.Write( (int) m_seasonSkillBonus );
 
 			for (int i = 0; i < 200; i++)
 			{

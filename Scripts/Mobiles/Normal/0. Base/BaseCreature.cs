@@ -602,7 +602,9 @@ namespace Server.Mobiles
 			}
 			set
 			{
-				m_Grade = value; InvalidateProperties();
+				m_Grade = value; 
+				Misc.CreatureBalancer.Apply(this);
+				InvalidateProperties();
 			}
 		}
 		private double m_AttackSpeed;
@@ -2059,7 +2061,7 @@ namespace Server.Mobiles
             }
 
 			//아이스 던전과 파이어 던전은 등급 상승 제외
-			Misc.Util.GradeCreate(this, location, m);
+			//Misc.CreatureBalancer.GradeCreate(this, location, m);
             base.OnBeforeSpawn(location, m);
         }
 
@@ -2670,7 +2672,7 @@ namespace Server.Mobiles
 						LootPlus = 5;
 					else
 					{
-						LootPlus = Util.MonsterGrade(m_Grade) - 1;
+						LootPlus = CreatureBalancer.MonsterGrade(m_Grade) - 1;
 
 					}
 					
@@ -5612,7 +5614,14 @@ namespace Server.Mobiles
             }
         }
 
-        protected override void OnMapChange(Map oldMap)
+		public override void OnAfterSpawn()
+		{
+			base.OnAfterSpawn();
+
+			// 모든 초기화가 끝난 직후, 딱 한 번 밸런서 적용
+		}
+
+		protected override void OnMapChange(Map oldMap)
         {
             CheckAIActive();
 
@@ -7318,589 +7327,121 @@ namespace Server.Mobiles
 			*/
 		}
 		
+		private void HandleBondedDeath()
+		{
+			int sound = GetDeathSound();
 
+			if (sound >= 0)
+			{
+				Effects.PlaySound(this, Map, sound);
+			}
+
+			m_DeathTime = DateTime.Now + TimeSpan.FromMinutes( ControlSlots * ControlSlots );
+			
+			Warmode = false;
+
+			Poison = null;
+			Combatant = null;
+
+			Hits = 0;
+			Stam = 0;
+			Mana = 0;
+
+			IsDeadPet = true;
+			ControlTarget = ControlMaster;
+			ControlOrder = OrderType.Follow;
+
+			ProcessDeltaQueue();
+			SendIncomingPacket();
+			SendIncomingPacket();
+
+			var aggressors = Aggressors;
+
+			for (int i = 0; i < aggressors.Count; ++i)
+			{
+				AggressorInfo info = aggressors[i];
+
+				if (info.Attacker.Combatant == this)
+				{
+					info.Attacker.Combatant = null;
+				}
+			}
+
+			var aggressed = Aggressed;
+
+			for (int i = 0; i < aggressed.Count; ++i)
+			{
+				AggressorInfo info = aggressed[i];
+
+				if (info.Defender.Combatant == this)
+				{
+					info.Defender.Combatant = null;
+				}
+			}
+
+			Mobile owner = ControlMaster;
+
+			if (owner == null || owner.Deleted || owner.Map != Map || !owner.InRange(this, 12) || !CanSee(owner) ||
+				!InLOS(owner))
+			{
+				if (OwnerAbandonTime == DateTime.MinValue)
+				{
+					OwnerAbandonTime = DateTime.UtcNow;
+				}
+			}
+			else
+			{
+				OwnerAbandonTime = DateTime.MinValue;
+			}
+
+			GiftOfLifeSpell.HandleDeath(this);
+
+			CheckStatTimers();
+		}
 		
         public override void OnDeath(Container c)
         {
             MeerMage.StopEffect(this, false);
+			if(IsBonded)
+			{
+				HandleBondedDeath();
+				return;
+			}
+			LootingRights = null;
 
-            if (IsBonded)
-            {
-                int sound = GetDeathSound();
-
-                if (sound >= 0)
-                {
-                    Effects.PlaySound(this, Map, sound);
-                }
-
-				m_DeathTime = DateTime.Now + TimeSpan.FromMinutes( ControlSlots * ControlSlots );
-				
-                Warmode = false;
-
-                Poison = null;
-                Combatant = null;
-
-                Hits = 0;
-                Stam = 0;
-                Mana = 0;
-
-                IsDeadPet = true;
-                ControlTarget = ControlMaster;
-                ControlOrder = OrderType.Follow;
-
-                ProcessDeltaQueue();
-                SendIncomingPacket();
-                SendIncomingPacket();
-
-                var aggressors = Aggressors;
-
-                for (int i = 0; i < aggressors.Count; ++i)
-                {
-                    AggressorInfo info = aggressors[i];
-
-                    if (info.Attacker.Combatant == this)
-                    {
-                        info.Attacker.Combatant = null;
-                    }
-                }
-
-                var aggressed = Aggressed;
-
-                for (int i = 0; i < aggressed.Count; ++i)
-                {
-                    AggressorInfo info = aggressed[i];
-
-                    if (info.Defender.Combatant == this)
-                    {
-                        info.Defender.Combatant = null;
-                    }
-                }
-
-                Mobile owner = ControlMaster;
-
-                if (owner == null || owner.Deleted || owner.Map != Map || !owner.InRange(this, 12) || !CanSee(owner) ||
-                    !InLOS(owner))
-                {
-                    if (OwnerAbandonTime == DateTime.MinValue)
-                    {
-                        OwnerAbandonTime = DateTime.UtcNow;
-                    }
-                }
-                else
-                {
-                    OwnerAbandonTime = DateTime.MinValue;
-                }
-
-                GiftOfLifeSpell.HandleDeath(this);
-
-                CheckStatTimers();
-            }
-            else
-            {
-                LootingRights = null;
-
-                if (!Summoned && !m_NoKillAwards)
-                {
-                    int totalFame = Fame / 100;
-                    int totalKarma = -Karma / 100;
-
-                    var list = GetLootingRights();
-					var killers = new List<Mobile>();
-                    var titles = new List<Mobile>();
-					//var quest = new List<Mobile>();
-                    var fame = new List<int>();
-                    var karma = new List<int>();
-					//var expuser = new List<Mobile>();
-					//var exp = new List<int>();
-
-					PlayerMobile pm;
-
-					DungeonRegion dungeon = (DungeonRegion)Region.GetRegion(typeof(DungeonRegion));
-					
-					bool checksilver = false;
-					
-					if( dungeon != null )
-						checksilver = true;
-					int userluck = 0;
-
-					if( list.Count > 0 )
-					{
-						for (int i = 0; i < list.Count; ++i)
-						{
-							DamageStore ds = list[i];
-
-							if (!ds.m_HasRight)
-							{
-								continue;
-							}
-
-							if (GivesFameAndKarmaAward)
-							{
-								Party party = Engines.PartySystem.Party.Get(ds.m_Mobile);
-								Region region = ds.m_Mobile.Region;
-								if ( party != null )
-								{
-									if( party.Members.Count > 0 )
-									{
-										for ( int j = 0; j < party.Members.Count; ++j )
-										{
-											PartyMemberInfo info = party.Members[ j ] as PartyMemberInfo;
-											if ( info != null && info.Mobile.Alive && info.Mobile != null && Utility.InRange( ds.m_Mobile.Location, info.Mobile.Location, 30 ) )
-											{
-												int index = killers.IndexOf( info.Mobile );
-												if ( index == -1 )
-												{
-													killers.Add( info.Mobile );
-													//quest.Add( info.Mobile );
-													if( userluck < info.Mobile.Luck )
-														userluck = info.Mobile.Luck;
-												}
-											}
-										}
-									}
-								}
-								else
-								{
-									//quest.Add( ds.m_Mobile );
-									killers.Add( ds.m_Mobile );
-									userluck = ds.m_Mobile.Luck;
-								}
-								
-								//int usergold = 0;
-								
-								//int usergold = (int)(( DropGold / killers.Count ) * 1.5 ) + 50;
-
-								double luckcheck = Utility.RandomDouble();
-
-								int boss = 0;
-								
-								if( m_Boss )
-								{
-									/*
-									int artifactfame = Fame;
-									boss = artifactfame / 3000;
-									artifactfame -= boss * 3000;
-									if( artifactfame > 0 && Utility.RandomMinMax( artifactfame, 3000 ) == 3000 )
-										boss++;
-									*/
-									//보스 사망 시 리셋
-									if( Server.Event.dungeoncheck != null )
-									for( i = 0; i < Server.Event.dungeoncheck.Death.Length; i++)
-									{
-										Server.Event.dungeoncheck.Death[i] = 0;
-									}
-								}
-								if( killers.Count > 0 )
-								{
-									for ( int j = 0; j < killers.Count; ++j)
-									{
-										if ( killers[j] != null && killers[j].Alive )
-										{
-											//골드 및 아이템 드랍
-											if ( killers[j] is PlayerMobile )
-											{
-												pm = killers[j] as PlayerMobile;
-												
-												int ItemDrop = 0;
-												int DropRandom = 0;
-
-												//명성별 골드 드랍
-												bool givenFactionKill = false;
-												//int LastGold = 100;
-												//int goldChance = 20;
-
-												if( m_Grade <= 1 ) //0티어 몬스터
-													DropRandom = Utility.RandomMinMax(0, 1);
-												else if( m_Grade <= 5 ) //1티어 몬스터
-												{
-													DropRandom = Utility.RandomMinMax(1, 3);
-												}
-												else if( m_Grade == 6 ) //2티어 몬스터
-												{
-													DropRandom = Utility.RandomMinMax(2, 5);
-													ItemDrop = 1;
-												}
-												else if( m_Grade <= 7 ) //3티어 몬스터
-												{
-													DropRandom = Utility.RandomMinMax(4, 8);
-													ItemDrop = 2;
-												}
-												if( m_Boss ) //4티어 몬스터
-												{
-													DropRandom = Utility.RandomMinMax(7, 12);
-													ItemDrop = 3;
-												}
-												
-												double exp_bonus = 1000 + pm.SilverPoint[2] * 50 + AosAttributes.GetValue(pm, AosAttribute.LowerAmmoCost);
-												int get_silverpoint = (int)( Fame * 0.33 * exp_bonus );
-												get_silverpoint /= 1000;
-												pm.Getsilverpoint(get_silverpoint);
-												
-												//if( m_Boss )
-												//	BossDead(this);
-												
-												//몬스터 킬링 체크
-												int monsternumber = Misc.Util.MonsterEquipItem(this);
-												if( monsternumber > 0 )
-												{
-													Account acc = pm.Account as Account;
-													acc.Point[monsternumber + 200]++;
-												}
-												
-												if( DropRandom > 0 )
-												{
-													for( int k = 0; k < DropRandom; ++k)
-													{
-														int RandomDice = Utility.RandomMinMax(1, 1000);
-														if( RandomDice <= 10 )
-															ItemDrop++;
-														else if( RandomDice <= 100 )
-														{
-															//몬스터 재료 드랍
-															Type type = null;
-															Item MonsterExItem = null;
-															if( 0.99 > Utility.RandomDouble() )
-															{
-																type = Misc.Util.MonsterDropItem(this);
-																if( type != null )
-																{
-																	MonsterExItem = Loot.Construct(type);
-																	if( MonsterExItem.Stackable )
-																	{
-																		MonsterExItem.Amount = Utility.RandomMinMax(1, 10);
-																		if( AosAttributes.GetValue(pm, AosAttribute.NightSight) > 0 )
-																		{
-																			MonsterExItem.Amount += 1000 + AosAttributes.GetValue(pm, AosAttribute.NightSight);
-																			MonsterExItem.Amount /= 1000;
-																		}
-																	}
-																}
-															}
-															else
-															{
-																type = Misc.Util.MonsterHiddenDropItem(this);
-																if( type != null )
-																{
-																	Misc.Util.HiddenGet_Effect(pm);
-																	MonsterExItem = Loot.Construct(type);
-																}
-															}
-															if( MonsterExItem != null )
-															{
-																if( MonsterExItem is MonsterStatuette )
-																{
-																	Misc.Util.MonsterStatuetteSelect(this, (MonsterStatuette)MonsterExItem);
-																}
-																if( MonsterExItem is RecipeScroll )
-																{
-																	Misc.Util.RecipeScrollSelect(this, (RecipeScroll)MonsterExItem);
-																}
-																killers[j].AddToBackpack( MonsterExItem );
-																//killers[j].SendLocalizedMessage( 1071373, MonsterExItem.LabelNumber );
-																if( MonsterExItem.Stackable && MonsterExItem.Amount > 1 )
-																	killers[j].SendLocalizedMessage( 1071572, string.Format("{0}\t{1}", Misc.Util.GetName(MonsterExItem), MonsterExItem.Amount ) );
-																else
-																	killers[j].SendLocalizedMessage( 1075069, Misc.Util.GetName(MonsterExItem) );
-															}
-														}
-														else if( RandomDice <= 300 )
-														{
-															//골드 드랍
-															int GoldDrop = 10 + Utility.RandomMinMax(Fame / 30, Fame / 15);
-															
-															double gold_bonus = 100 + AosAttributes.GetValue(pm, AosAttribute.NightSight) * 0.1;
-															
-															GoldDrop = (int)( GoldDrop * gold_bonus );
-															GoldDrop /= 100;
-															
-															killers[j].SendMessage( "당신은 {0}골드를 획득합니다.",GoldDrop );
-															
-															Gold newgold = new Gold( GoldDrop );
-															killers[j].AddToBackpack( newgold );
-														}
-													}
-												}
-												if( ItemDrop > 0 )
-												{
-													Item[][] m_MonsterEquipDrop = new Item[][]
-													{
-														new Item[] { Loot.RandomArmor() }, //시작 번호 1063700
-														new Item[] { Loot.RandomArmor() },
-														new Item[] { Loot.RandomArmor() },
-														new Item[] { new WizardsHat() },
-														new Item[] { Loot.RandomClothing() }, //독수리
-														new Item[] { Loot.RandomWeapon() },
-														new Item[] { new Katana() },
-														new Item[] { Loot.RandomWeapon() },
-														new Item[] { Loot.RandomArmor() },
-														new Item[] { new BoneArms() }, //거대 검정 거미
-														new Item[] { new BoneChest() },
-														new Item[] { Loot.RandomArmor() },
-														new Item[] { Loot.RandomJewelry() },
-														new Item[] { new ElvenCompositeLongbow() },
-														new Item[] { new LeatherGloves() }, //하피
-														new Item[] { new LeatherGloves() },
-														new Item[] { new PlateGloves() },
-														new Item[] { Loot.RandomArmor() },
-														new Item[] { Loot.RandomArmor() },
-														new Item[] { new LeafGloves(), new LeafGorget() }, //보글링
-														new Item[] { Loot.RandomClothing() },
-														new Item[] { Loot.RandomClothing() },
-														new Item[] { new WoodenChest() },
-														new Item[] { new GnarledStaff() },
-														new Item[] { new LeafGloves(), new LeafGorget(), new Circlet(), new LeafArms(), new LeafChest(), new LeafLegs() }, //보그씽
-														new Item[] { Loot.RandomWeapon() },
-														new Item[] { new LeatherCap() },
-														new Item[] { new StuddedGloves(), new StuddedGorget(), new StuddedArms(), new StuddedLegs(), new StuddedChest() },
-														new Item[] { new ShortSpear() },
-														new Item[] { Loot.RandomArmor() }, //트롤
-														new Item[] { new WarHammer() },
-														new Item[] { new CompositeBow() },
-														new Item[] { new Club() },
-														new Item[] { new PlateGloves() },
-														new Item[] { new WoodenShield() }, //본 나이트
-														new Item[] { new Circlet() },
-														new Item[] { new Bandana() },
-														new Item[] { new Scimitar() },
-														new Item[] { new Magerybook() },
-														new Item[] { new AssassinSpike() }, //스켈레탈 캣
-														new Item[] { Loot.RandomArmor() },
-														new Item[] { new GoldRing() },
-														new Item[] { new SilverRing() },
-														new Item[] { new BoneGloves() },
-														new Item[] { new BoneGloves() }, //스켈레탈 리치
-														new Item[] { Loot.RandomWeapon() },
-														new Item[] { new SilverNecklace() },
-														new Item[] { Loot.RandomArmor() },
-														new Item[] { new BoneHarvester() },
-														new Item[] { new Dagger() }, //전갈
-														new Item[] { Loot.RandomArmor() },
-														new Item[] { Loot.RandomArmor() },
-														new Item[] { Loot.RandomArmor() },
-														new Item[] { Loot.RandomArmor() },
-														new Item[] { Loot.RandomArmor() },
-														new Item[] { new HidePauldrons() },
-														new Item[] { Loot.RandomWeapon() },
-														new Item[] { Loot.RandomWeapon() },
-														new Item[] { new WizardsHat() },
-														new Item[] { Loot.RandomArmor() }, //시궁쥐
-														new Item[] { Loot.RandomArmor() },
-														new Item[] { Loot.RandomJewelry() },
-														new Item[] { new WoodenKiteShield() },
-														new Item[] { new ShepherdsCrook() },
-														new Item[] { Loot.RandomArmor() }, //산성 정령
-														new Item[] { Loot.RandomArmor() },
-														new Item[] { Loot.RandomArmor() },
-														new Item[] { new LongPants(), new ShortPants() },
-														new Item[] { new Robe() },
-														new Item[] { new FancyShirt(), new Shirt() },
-														new Item[] { new LongPants(), new ShortPants() },
-														new Item[] { new GoldBracelet(), new SilverBracelet() },
-														new Item[] { new Club() },
-														new Item[] { new Boots(), new ThighBoots(), new Shoes(), new Sandals(), new JesterShoes()  },
-														new Item[] { Loot.RandomArmor() }, //오크
-														new Item[] { new TwoHandedAxe() },
-														new Item[] { new Magerybook() },
-														new Item[] { new OrcHelm() },
-														new Item[] { Loot.RandomArmor() },
-														new Item[] { new Bow() },
-														new Item[] { new RingmailChest() },
-														new Item[] { new NorseHelm() }
-													};	
-													
-													//아이템 드랍
-													for( int k = 0; k < ItemDrop; ++k)
-													{
-														int specialitemnumber = 0;
-														Item item = null; 
-														if( userluck > 10000 )
-															userluck = 10000;
-														int rank = Util.ItemRankMaker( userluck, 0, 0 );
-														//int tier = Util.ItemTierMaker( Fame, rank, 0 );
-														
-														//int uniqueoption = 0;
-														if( 0.95 < Utility.RandomDouble() && monsternumber -1 <= m_MonsterEquipDrop.GetLength(0) && monsternumber >= 1 )
-														{
-															item = m_MonsterEquipDrop[monsternumber -1][Utility.RandomMinMax(0, m_MonsterEquipDrop[monsternumber -1].GetLength(0) -1)];
-															Misc.Util.ItemGet_Effect(pm);
-															specialitemnumber = monsternumber;
-														}
-														else
-														{
-															item = Loot.RandomArmorOrShieldOrWeaponOrJewelry();
-														}
-														
-														if( item != null )
-														{
-															//유물 체크
-															/*
-															pm.ArtifactPoint[70] += Dungeon_MonsterTier_Score();
-															if( pm.ArtifactPoint[70] >= 10000 )
-															{
-																Item artifactitem = null;
-																if( Utility.RandomDouble() < 0.1 )
-																	artifactitem = (Item)Activator.CreateInstance(Misc.Util.Monster_2Tier_Artifact[Utility.Random(Misc.Util.Monster_2Tier_Artifact.Length)]);
-																else
-																	artifactitem = (Item)Activator.CreateInstance(Misc.Util.Monster_1Tier_Artifact[Utility.Random(Misc.Util.Monster_1Tier_Artifact.Length)]);
-																
-																if( artifactitem != null )
-																{
-																	if( specialitemnumber > 0 && item.GetType().BaseType != artifactitem.GetType().BaseType.BaseType )
-																	{
-																		specialitemnumber = 0;
-																	}
-																	item = artifactitem;
-																	pm.ArtifactPoint[70] = 0;
-																}
-															}
-															*/
-															Util.NewItemCreate( item, rank, pm );
-															pm.SendLocalizedMessage( 1075069, Misc.Util.GetName(item) );
-															
-															Container pack = killers[j].Backpack;
-															bool findequipbag = false;
-															if( pack != null )
-															{
-																List<Container> container = pack.FindItemsByType<Container>();
-																for( int l = container.Count -1; l >=0; l--)
-																{
-																	Container equipbag = container[l];
-																	if( equipbag is EquipBag )
-																	{
-																		EquipBag eb = equipbag as EquipBag;
-																		if( !eb.Active )
-																			continue;
-																		if( item is BaseWeapon && eb.Weapon )
-																		{
-																			eb.DropItem( item );
-																			findequipbag = true;
-																			break;
-																		}
-																		if( item is Spellbook && eb.Weapon )
-																		{
-																			eb.DropItem( item );
-																			findequipbag = true;
-																			break;
-																		}
-																		if( item is BaseArmor && eb.Armor )
-																		{
-																			eb.DropItem( item );
-																			findequipbag = true;
-																			break;
-																		}
-																		if( item is BaseClothing && eb.Armor )
-																		{
-																			eb.DropItem( item );
-																			findequipbag = true;
-																			break;
-																		}
-																		if( item is BaseJewel && eb.Jewelry )
-																		{
-																			eb.DropItem( item );
-																			findequipbag = true;
-																			break;
-																		}
-																	}
-																}
-															}
-															if( !findequipbag )
-																killers[j].AddToBackpack( item );
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-								if (party != null)
-								{
-									int divedFame = totalFame / party.Members.Count;
-									int divedKarma = totalKarma / party.Members.Count;
-									//int divedExp = totalExp / party.Members.Count;
-
-									if( party.Members.Count > 0 )
-									{
-										for ( int j = 0; j < party.Members.Count; ++j )
-										{
-											PartyMemberInfo info = party.Members[ j ] as PartyMemberInfo;
-											if ( info != null && info.Mobile.Alive && info.Mobile != null )
-											{
-												int index = titles.IndexOf( info.Mobile );
-												if ( index == -1 )
-												{
-													titles.Add( info.Mobile );
-													//quest.Add( info.Mobile );
-													//expuser.Add( info.Mobile );
-													fame.Add( divedFame );
-													karma.Add( divedKarma );
-													//exp.Add( divedExp );
-												}
-												else
-												{
-													fame[ index ] += divedFame;
-													karma[ index ] += divedKarma;
-													//exp[ index ] += divedExp;
-												}
-											}
-										}
-									}
-								}
-								else
-								{
-									if ( ds.m_Mobile.Alive )
-									{
-										titles.Add( ds.m_Mobile );
-										//quest.Add( ds.m_Mobile );
-										//expuser.Add( ds.m_Mobile );
-										fame.Add( totalFame );
-										karma.Add( totalKarma );
-										//exp.Add( totalExp );
-										if( ds.m_Mobile is PlayerMobile )
-										{
-											PlayerMobile pm1 = ds.m_Mobile as PlayerMobile;
-											QuestHelper.CheckCreature(pm1, this);
-										}
-									}
-								}
-								//OnKilledBy(ds.m_Mobile);
-							}
-						}
-					}
-					if( titles.Count > 0 )
-					{
-						for ( int i = 0; i < titles.Count; ++i )
-						{
-							//Titles.AwardFame( titles[ i ], fame[ i ], true );
-							Titles.AwardKarma( titles[ i ], karma[ i ], true );
-						}
-					}				
-					if ( dungeon != null || Summoned || NoKillAwards )
-						c.Delete();
-					else if ( Wool == 0 && Meat == 0 && Hides == 0 && Scales == 0 && Fur == 0 )
-					{
-						Container backpack = Backpack;
-						if (backpack == null)
-							c.Delete();
-						else if( backpack != null && backpack.TotalItems == 0 )
-							c.Delete();
-					}
+			if (Summoned || m_NoKillAwards) { base.OnDeath(c); return; }
+			
+			var rights = GetLootingRights();
+			Server.Misc.GoldDistributor.Distribute(this, rights);
+			for (int i = 0; i < rights.Count; ++i)
+			{
+				DamageStore ds = rights[i];
+				if (ds.m_HasRight && ds.m_Mobile is PlayerMobile)
+				{
+					QuestHelper.CheckCreature((PlayerMobile)ds.m_Mobile, this);
 				}
+			}	
 
-                var e = new CreatureDeathEventArgs(this, LastKiller, c);
+			DungeonRegion dungeon = Region.GetRegion(typeof(DungeonRegion)) as DungeonRegion;
 
-                EventSink.InvokeCreatureDeath(e);
-                base.OnDeath(c);
+			if (dungeon != null || DeleteCorpseOnDeath)
+			{
+				c.Delete();
+			}
+			else if (Wool == 0 && Meat == 0 && Hides == 0 && Scales == 0 && Fur == 0)
+			{
+				// 루팅할 전리품이 아예 없는 몬스터라면 시체 삭제
+				if (Backpack == null || Backpack.TotalItems == 0)
+					c.Delete();
+			}
+			var e = new CreatureDeathEventArgs(this, LastKiller, c);
+			EventSink.InvokeCreatureDeath(e);
+			base.OnDeath(c); 
 
-                if (e.PreventDefault)
-                {
-                    return;
-                }
-
-                if (DeleteCorpseOnDeath && !e.PreventDelete)
-                {
-                    c.Delete();
-                }
-            }
+			if (!e.PreventDefault && DeleteCorpseOnDeath && !e.PreventDelete && !c.Deleted)
+			{
+				c.Delete();
+			}
         }
 
 		private int Dungeon_MonsterTier_Score()
@@ -8842,6 +8383,10 @@ namespace Server.Mobiles
 		
         public virtual void OnThink()
         {
+			if (this.Grade <= 0 && !this.Deleted && this.Alive)
+			{
+				Server.Misc.CreatureBalancer.Apply(this);
+			}		
 			//자동 부활
 			if( poisonattacker > 0.0 && !Poisoned )
 				poisonattacker = 0.0;
@@ -8897,6 +8442,7 @@ namespace Server.Mobiles
 					//Name = "Boss " + Name;
 					LootPlus = 5;
 				}
+				/*
 				//티어별 색상
 				else if( !NoKillAwards )
 				{
@@ -8942,7 +8488,7 @@ namespace Server.Mobiles
 							break;
 					}
 				}
-
+				*/
 
 				m_LevelCheck = true;
 			}
@@ -9030,60 +8576,14 @@ namespace Server.Mobiles
                     (int)TimeSpan.FromSeconds(Utility.RandomMinMax(min, max)).TotalMilliseconds;
             }
 			
-			//시야 체크 & AI 변경
+			//시야 체크
 			DungeonRegion dungeon = (DungeonRegion)Region.GetRegion(typeof(DungeonRegion));
 			if( !Blessed && Karma < 0 && dungeon != null && Combatant == null && ControlMaster == null && SummonMaster == null )
 			{
-				if( FightMode == FightMode.Aggressor )
-					FightMode = FightMode.Closest;
-				
-				int range = Int / 10;
-				if( Int > 100 )
-					range = 10 + Int / 20;
-				if( range > 25 )
-					range = 25;
-				if( range < 1 )
-					range = 1;
-				
-				if( range < 3 )
-					range = 3;
-				
-				if( this is FireElemental || this is WaterElemental || this is AirElemental  )
-					range = 11;
-				
-				if( this is Centaur )
-					range = 12;
-				
-				if( this is BloodElemental || this is PoisonElemental )
-					range = 15;
-				
-				if( m_Boss )
-					range += 5;
-				
-				int grade = Util.MonsterGrade(m_Grade);
-				
-				switch( grade )
-				{
-					case 1:
-						break;
-					case 2:
-						range += 1;
-						break;
-					case 3:
-						range += 2;
-						break;
-					case 4:
-						range += 3;
-						break;
-				}				
-				
-				if ( range > 15 )
-					range = 15;
-				
-				m_iRangePerception = range; 
+				m_iRangePerception = RangePerception; 
 				
 				List<Mobile> list = new List<Mobile>();
-				IPooledEnumerable eable = GetMobilesInRange(range);
+				IPooledEnumerable eable = GetMobilesInRange(RangePerception);
 				int targetcount = 0;
 				foreach (Mobile targets in eable)
 				{

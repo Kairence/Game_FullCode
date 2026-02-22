@@ -969,7 +969,8 @@ namespace Server.Misc
 				}
 			}
 			return scalar;
-		}		
+		}
+		/*		
 		public static int[,] MonsterLandTier =
 		{
 			//	1티어		엘리트		치프
@@ -979,115 +980,6 @@ namespace Server.Misc
 			{	0,			0,			0		}  //Ice or Fire
 		};
 
-		public static void GradeBonus(BaseCreature bc)
-		{
-			switch(bc.Grade)
-			{
-				case 2:
-				{
-					bc.HitsMaxSeed *= 2;
-
-					bc.RawStr *= 110;
-					bc.RawStr /= 100;
-
-					bc.RawDex *= 110;
-					bc.RawDex /= 100;
-
-					bc.RawInt *= 110;
-					bc.RawInt /= 100;
-					break;
-				}
-				case 3:
-				{
-					bc.HitsMaxSeed *= 120;
-					bc.HitsMaxSeed /= 100;
-
-					bc.RawStr *= 110;
-					bc.RawStr /= 100;
-
-					bc.RawDex *= 110;
-					bc.RawDex /= 100;
-
-					bc.RawInt *= 150;
-					bc.RawInt /= 100;
-					break;
-				}
-				case 4:
-				{
-					bc.HitsMaxSeed *= 120;
-					bc.HitsMaxSeed /= 100;
-
-					bc.RawStr *= 150;
-					bc.RawStr /= 100;
-
-					bc.RawDex *= 110;
-					bc.RawDex /= 100;
-
-					bc.RawInt *= 110;
-					bc.RawInt /= 100;
-					break;
-				}
-				case 5:
-				{
-					bc.HitsMaxSeed *= 120;
-					bc.HitsMaxSeed /= 100;
-
-					bc.RawStr *= 110;
-					bc.RawStr /= 100;
-
-					bc.RawDex *= 150;
-					bc.RawDex /= 100;
-
-					bc.RawInt *= 110;
-					bc.RawInt /= 100;
-					break;
-				}
-				case 6:
-				{
-					bc.HitsMaxSeed *= 250;
-					bc.HitsMaxSeed /= 100;
-
-					bc.RawStr *= 175;
-					bc.RawStr /= 100;
-
-					bc.RawDex *= 175;
-					bc.RawDex /= 100;
-
-					bc.RawInt *= 175;
-					bc.RawInt /= 100;
-					break;
-				}
-				case 7:
-				{
-					bc.HitsMaxSeed *= 500;
-					bc.HitsMaxSeed /= 100;
-
-					bc.RawStr *= 300;
-					bc.RawStr /= 100;
-
-					bc.RawDex *= 300;
-					bc.RawDex /= 100;
-
-					bc.RawInt *= 300;
-					bc.RawInt /= 100;
-					for (int i = 0; i < bc.Skills.Length; i++)
-					{
-						Skill skill = (Skill)bc.Skills[i];
-
-						if (skill.Base > 0.0)
-							skill.Base *= ( 120 );
-					}
-					break;
-				}
-			}
-			
-			
-			
-			bc.Hits = bc.HitsMax;
-			bc.Stam = bc.StamMax;
-			bc.Mana = bc.ManaMax;
-		}
-		
 		public static void GradeCreate(BaseCreature bc, Point3D loocation, Map m)
 		{
 			if( bc.Grade > 0 )
@@ -1166,7 +1058,7 @@ namespace Server.Misc
 			}
 			return grade;
 		}
-
+		*/
 		public static int UniqueDice(int count, int max)
 		{
 			int selectNumber = Utility.RandomMinMax(0, max);

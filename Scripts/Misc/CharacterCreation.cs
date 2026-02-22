@@ -202,11 +202,16 @@ namespace Server.Misc
 				}
 				
 				pm.Profession = args.Profession;
-				pm.Young = false;
-				pm.Str = 100;
-				pm.Dex = 100;
-				pm.Int = 100;
+                young = Misc.SeasonController.SetSeasonStatus(pm, args.Account);
+				pm.Str = 1000;
+				pm.Dex = 1000;
+				pm.Int = 1000;
 				pm.SaveTown = 1;
+				if(young)
+				{
+					pm.Map = Map.Felucca;
+					pm.seasonSkillBonus = 3;
+				}
 				pm.Hits = pm.HitsMax;
 				pm.Mana = pm.ManaMax;
 				pm.Stam = pm.StamMax;

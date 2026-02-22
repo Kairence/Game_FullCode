@@ -11,6 +11,19 @@ namespace Server.Misc
 {
 	public class ItemOptionCreator
 	{
+		public static int CalculateLootRank(double totalChance)
+		{
+			int dice = Utility.Random(100);
+
+			if (totalChance >= 300)      { if (dice < 10) return 5; if (dice < 50) return 4; return 3; }
+			else if (totalChance >= 250) { if (dice < 5)  return 5; if (dice < 20) return 4; if (dice < 70) return 3; return 2; }
+			else if (totalChance >= 100) { if (dice < 10) return 4; if (dice < 40) return 3; if (dice < 80) return 2; return 1; }
+			else if (totalChance >= 50)  { if (dice < 20) return 3; if (dice < 70) return 2; return 1; }
+			else if (totalChance >= 20)  { if (dice < 50) return 2; return 1; }
+			else if (totalChance >= 5)   { if (dice < 50) return 1; return 0; }
+
+			return 0;
+		}
 
 		#region 장비 신코드 유물 코드
 		public static Item Artifact_Select(Item item, int rank )

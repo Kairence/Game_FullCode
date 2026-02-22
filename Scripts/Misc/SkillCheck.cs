@@ -223,7 +223,7 @@ namespace Server.Misc
 					chance *= 2;
 			}
 			else if ( from is BaseCreature && !((BaseCreature)from).Controlled )
-				chance *= ( Util.MonsterGrade(((BaseCreature)from).Grade) * 2.5 );
+				chance *= ( CreatureBalancer.MonsterGrade(((BaseCreature)from).Grade) * 2.5 );
 
 			//event
 			double chancebonus = 0;
