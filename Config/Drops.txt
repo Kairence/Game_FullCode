@@ -1,0 +1,250 @@
+// [메모]	몬스터명	아이템개수	아이템1_타입	장비1	확률1	최소1	최대1	아이템2_타입	장비2	확률2	최소2	최대2	아이템3_타입	장비3	확률3	최소3	최대3	아이템4_타입	장비4	확률4	최소4	최대4	아이템5_타입	장비5	확률5	최소5	최대5	아이템6_타입	장비6	확률6	최소6	최대6	아이템7_타입	장비7	확률7	최소7	최대7	아이템8_타입	장비8	확률8	최소8	최대8	아이템9_타입	장비9	확률9	최소9	최대9	아이템10_타입	장비10	확률10	최소10	최대10
+# 0. OutDoors
+Bird	3	BaseWeapon	true	100000	1	1	BaseArmor	true	200000	1	1	Feather	false	1000000	10	50
+Boar	1	BaseArmor	true	100	1	1
+Bull	1	BaseArmor	true	100	1	1
+Cat	1	BaseArmor	true	100	1	1
+Chicken	1	BaseArmor	true	100	1	1
+Cougar	1	BaseArmor	true	100	1	1
+Cow	1	BaseArmor	true	100	1	1
+DarkWisp	1	BaseArmor	true	100	1	1
+DeepSeaSerpent	1	BaseArmor	true	100	1	1
+DireWolf	1	BaseArmor	true	100	1	1
+Dog	1	BaseArmor	true	100	1	1
+Dolphin	1	BaseArmor	true	100	1	1
+FairyDragon	1	BaseArmor	true	100	1	1
+Ferret	1	BaseArmor	true	100	1	1
+GiantSerpent	1	BaseArmor	true	100	1	1
+Goat	1	BaseArmor	true	100	1	1
+GreatHart	1	BaseArmor	true	100	1	1
+GreyWolf	1	BaseArmor	true	100	1	1
+Hind	1	BaseArmor	true	100	1	1
+Kraken	1	BaseArmor	true	100	1	1
+Leviathan	1	BaseArmor	true	100	1	1
+MountainGoat	1	BaseArmor	true	100	1	1
+Panther	1	BaseArmor	true	100	1	1
+Pig	1	BaseArmor	true	100	1	1
+PlagueBeast	1	BaseArmor	true	100	1	1
+PlagueBeastLord	1	BaseArmor	true	100	1	1
+PlagueSpawn	1	BaseArmor	true	100	1	1
+PolarBear	1	BaseArmor	true	100	1	1
+Rabbit	1	BaseArmor	true	100	1	1
+Rat	1	BaseArmor	true	100	1	1
+SandVortex	1	BaseArmor	true	100	1	1
+Savage	1	BaseArmor	true	100	1	1
+SavageRider	1	BaseArmor	true	100	1	1
+SavageShaman	1	BaseArmor	true	100	1	1
+SeaSerpent	1	BaseArmor	true	100	1	1
+ShadowWisp	1	BaseArmor	true	100	1	1
+Sheep	1	BaseArmor	true	100	1	1
+Slime	1	BaseArmor	true	100	1	1
+Snake	1	BaseArmor	true	100	1	1
+SnowLeopard	1	BaseArmor	true	100	1	1
+SwampTentacle	1	BaseArmor	true	100	1	1
+TimberWolf	1	BaseArmor	true	100	1	1
+Walrus	1	BaseArmor	true	100	1	1
+WhiteWolf	1	BaseArmor	true	100	1	1
+
+# Painted Caves
+BlackBear	1	BaseArmor	true	100	1	1
+BrownBear	1	BaseArmor	true	100	1	1
+Gorilla	1	BaseArmor	true	100	1	1
+GrizzlyBear	1	BaseArmor	true	100	1	1
+
+# Brigand Camp
+Brigand	1	BaseArmor	true	100	1	1
+ElfBrigand	1	BaseArmor	true	100	1	1
+HumanBrigand	1	BaseArmor	true	100	1	1
+
+# Catacomb
+Skeleton	1	BaseArmor	true	100	1	1
+Spectre	1	BaseArmor	true	100	1	1
+Wraith	1	BaseArmor	true	100	1	1
+Zombie	1	BaseArmor	true	100	1	1
+
+# 1. Despise
+Bogling	1	BaseArmor	true	100	1	1
+Corpser	1	BaseArmor	true	100	1	1
+Crane	1	BaseArmor	true	100	1	1
+Llama	1	BaseArmor	true	100	1	1
+Reaper	1	BaseArmor	true	100	1	1
+Treefellow	1	BaseArmor	true	100	1	1
+BloodWorm	1	BaseArmor	true	100	1	1
+Cyclops	1	BaseArmor	true	100	1	1
+Ettin	1	BaseArmor	true	100	1	1
+HeadlessOne	1	BaseArmor	true	100	1	1
+Lizardman	1	BaseArmor	true	100	1	1
+LizardmanDefender	1	BaseArmor	true	100	1	1
+SummonedEttin	1	BaseArmor	true	100	1	1
+Troll	1	BaseArmor	true	100	1	1
+Centaur	1	BaseArmor	true	100	1	1
+Ogre	1	BaseArmor	true	100	1	1
+OgreLord	1	BaseArmor	true	100	1	1
+
+# 2. Covetous
+Eagle	1	BaseArmor	true	100	1	1
+GiantTurkey	1	BaseArmor	true	100	1	1
+Mongbat	1	BaseArmor	true	100	1	1
+SummonedTurkey	1	BaseArmor	true	100	1	1
+Turkey	1	BaseArmor	true	100	1	1
+DreadSpider	1	BaseArmor	true	100	1	1
+GiantBlackWidow	1	BaseArmor	true	100	1	1
+GiantDreadSpider	1	BaseArmor	true	100	1	1
+GiantSpider	1	BaseArmor	true	100	1	1
+TrapdoorSpider	1	BaseArmor	true	100	1	1
+WolfSpider	1	BaseArmor	true	100	1	1
+Harpy	1	BaseArmor	true	100	1	1
+Lilith	1	BaseArmor	true	100	1	1
+StoneHarpy	1	BaseArmor	true	100	1	1
+Succubus	1	BaseArmor	true	100	1	1
+VampireBat	1	BaseArmor	true	100	1	1
+
+# 3. Deceit
+BoneKnight	1	BaseArmor	true	100	1	1
+BoneMagi	1	BaseArmor	true	100	1	1
+Mummy	1	BaseArmor	true	100	1	1
+PestilentBandage	1	BaseArmor	true	100	1	1
+RottingCorpse	1	BaseArmor	true	100	1	1
+BoneDemon	1	BaseArmor	true	100	1	1
+Ghoul	1	BaseArmor	true	100	1	1
+PatchworkSkeleton	1	BaseArmor	true	100	1	1
+Shade	1	BaseArmor	true	100	1	1
+SkeletalKnight	1	BaseArmor	true	100	1	1
+SkeletalMage	1	BaseArmor	true	100	1	1
+AncientLich	1	BaseArmor	true	100	1	1
+Lich	1	BaseArmor	true	100	1	1
+SkeletalLich	1	BaseArmor	true	100	1	1
+LichLord	1	BaseArmor	true	100	1	1
+SkeletalDragon	1	BaseArmor	true	100	1	1
+
+# 4. Shame
+AirElemental	1	BaseArmor	true	100	1	1
+Beholder	1	BaseArmor	true	100	1	1
+BloodElemental	1	BaseArmor	true	100	1	1
+ClockworkScorpion	1	BaseArmor	true	100	1	1
+EarthElemental	1	BaseArmor	true	100	1	1
+ElderGazer	1	BaseArmor	true	100	1	1
+EnragedColossus	1	BaseArmor	true	100	1	1
+EttinLord	1	BaseArmor	true	100	1	1
+FireElemental	1	BaseArmor	true	100	1	1
+Gazer	1	BaseArmor	true	100	1	1
+GazerLarva	1	BaseArmor	true	100	1	1
+PoisonElemental	1	BaseArmor	true	100	1	1
+Scorpion	1	BaseArmor	true	100	1	1
+WaterElemental	1	BaseArmor	true	100	1	1
+
+# 5. Orc Cave
+BogThing	1	BaseArmor	true	100	1	1
+Orc	1	BaseArmor	true	100	1	1
+OrcBomber	1	BaseArmor	true	100	1	1
+OrcCaptain	1	BaseArmor	true	100	1	1
+OrcChopper	1	BaseArmor	true	100	1	1
+OrcishMage	1	BaseArmor	true	100	1	1
+OrcScout	1	BaseArmor	true	100	1	1
+OrcBrute	1	BaseArmor	true	100	1	1
+OrcishLord	1	BaseArmor	true	100	1	1
+Titan	1	BaseArmor	true	100	1	1
+
+# 9. Wrong
+ChaosDragoon	1	BaseArmor	true	100	1	1
+ChaosDragoonElite	1	BaseArmor	true	100	1	1
+EvilMage	1	BaseArmor	true	100	1	1
+EvilMageLord	1	BaseArmor	true	100	1	1
+Executioner	1	BaseArmor	true	100	1	1
+Golem	1	BaseArmor	true	100	1	1
+GolemController	1	BaseArmor	true	100	1	1
+GolemLord	1	BaseArmor	true	100	1	1
+
+# 10. Ice
+ArcticOgreLord	1	BaseArmor	true	100	1	1
+ColdDrake	1	BaseArmor	true	100	1	1
+FrostMite	1	BaseArmor	true	100	1	1
+FrostOoze	1	BaseArmor	true	100	1	1
+FrostSpider	1	BaseArmor	true	100	1	1
+GiantIceWorm	1	BaseArmor	true	100	1	1
+IceElemental	1	BaseArmor	true	100	1	1
+IceFiend	1	BaseArmor	true	100	1	1
+IceHound	1	BaseArmor	true	100	1	1
+IceSnake	1	BaseArmor	true	100	1	1
+SnowElemental	1	BaseArmor	true	100	1	1
+WhiteWyrm	1	BaseArmor	true	100	1	1
+
+# 11. Fire
+EnslavedGargoyle	1	BaseArmor	true	100	1	1
+EnslavedGrayGoblin	1	BaseArmor	true	100	1	1
+EnslavedGreenGoblin	1	BaseArmor	true	100	1	1
+FireGargoyle	1	BaseArmor	true	100	1	1
+Gargoyle	1	BaseArmor	true	100	1	1
+GrayGoblin	1	BaseArmor	true	100	1	1
+GreenGoblin	1	BaseArmor	true	100	1	1
+LavaLizard	1	BaseArmor	true	100	1	1
+LavaSerpent	1	BaseArmor	true	100	1	1
+LavaSnake	1	BaseArmor	true	100	1	1
+UndeadGargoyle	1	BaseArmor	true	100	1	1
+Efreet	1	BaseArmor	true	100	1	1
+FireDaemon	1	BaseArmor	true	100	1	1
+FireDrake	1	BaseArmor	true	100	1	1
+GargoyleDestroyer	1	BaseArmor	true	100	1	1
+GargoyleEnforcer	1	BaseArmor	true	100	1	1
+LavaElemental	1	BaseArmor	true	100	1	1
+RedWyrm	1	BaseArmor	true	100	1	1
+
+# 13. Hythroth
+ArchDaemon	1	BaseArmor	true	100	1	1
+Balron	1	BaseArmor	true	100	1	1
+Daemon	1	BaseArmor	true	100	1	1
+HellCat	1	BaseArmor	true	100	1	1
+HellHound	1	BaseArmor	true	100	1	1
+Imp	1	BaseArmor	true	100	1	1
+PredatorHellCat	1	BaseArmor	true	100	1	1
+StoneGargoyle	1	BaseArmor	true	100	1	1
+
+# 14. Destard
+AncientWyrm	1	BaseArmor	true	100	1	1
+Dragon	1	BaseArmor	true	100	1	1
+DragonWolf	1	BaseArmor	true	100	1	1
+Drake	1	BaseArmor	true	100	1	1
+GreaterDragon	1	BaseArmor	true	100	1	1
+ShadowWyrm	1	BaseArmor	true	100	1	1
+TsukiWolf	1	BaseArmor	true	100	1	1
+Wyvern	1	BaseArmor	true	100	1	1
+
+# 16. Doom
+AbysmalHorror	1	BaseArmor	true	100	1	1
+AbyssalAbomination	1	BaseArmor	true	100	1	1
+Betrayer	1	BaseArmor	true	100	1	1
+ChaosDaemon	1	BaseArmor	true	100	1	1
+CorruptedSoul	1	BaseArmor	true	100	1	1
+DarknightCreeper	1	BaseArmor	true	100	1	1
+DemonKnight	1	BaseArmor	true	100	1	1
+Devourer	1	BaseArmor	true	100	1	1
+Doppleganger	1	BaseArmor	true	100	1	1
+FleshGolem	1	BaseArmor	true	100	1	1
+FleshRenderer	1	BaseArmor	true	100	1	1
+Gibberling	1	BaseArmor	true	100	1	1
+GoreFiend	1	BaseArmor	true	100	1	1
+Impaler	1	BaseArmor	true	100	1	1
+Lifestealer	1	BaseArmor	true	100	1	1
+MaddeningHorror	1	BaseArmor	true	100	1	1
+Moloch	1	BaseArmor	true	100	1	1
+MoundOfMaggots	1	BaseArmor	true	100	1	1
+Protector	1	BaseArmor	true	100	1	1
+Ravager	1	BaseArmor	true	100	1	1
+RestlessSoul	1	BaseArmor	true	100	1	1
+Revenant	1	BaseArmor	true	100	1	1
+SkitteringHopper	1	BaseArmor	true	100	1	1
+WandererOfTheVoid	1	BaseArmor	true	100	1	1
+
+# 22. Ant Cave
+AntLion	1	BaseArmor	true	100	1	1
+BlackSolenInfiltratorQueen	1	BaseArmor	true	100	1	1
+BlackSolenInfiltratorWarrior	1	BaseArmor	true	100	1	1
+BlackSolenQueen	1	BaseArmor	true	100	1	1
+BlackSolenWarrior	1	BaseArmor	true	100	1	1
+BlackSolenWorker	1	BaseArmor	true	100	1	1
+FireAnt	1	BaseArmor	true	100	1	1
+RedSolenInfiltratorQueen	1	BaseArmor	true	100	1	1
+RedSolenInfiltratorWarrior	1	BaseArmor	true	100	1	1
+RedSolenQueen	1	BaseArmor	true	100	1	1
+RedSolenWarrior	1	BaseArmor	true	100	1	1
+RedSolenWorker	1	BaseArmor	true	100	1	1

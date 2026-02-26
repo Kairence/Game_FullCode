@@ -1962,7 +1962,7 @@ namespace Server.Mobiles
                 chance = 990;
             }
 
-            chance -= (MaxLoyalty - m_Loyalty) * 10;
+            //chance -= (MaxLoyalty - m_Loyalty) * 10;
 
             return ((double)chance / 1000);
         }
@@ -2106,9 +2106,28 @@ namespace Server.Mobiles
             return (p != null && p.RealLevel >= poison.RealLevel);
         }
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int Loyalty { get { return m_Loyalty; } set { m_Loyalty = Math.Min(Math.Max(value, 0), MaxLoyalty); } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int Loyalty
+		{
+			get { return m_Loyalty; }
+			set 
+			{ 
+				int limit = 1000; // 기본 상한선 (야생 몬스터 등급 보너스 수용)
 
+				// [핵심] 테이밍된 상태라면 주인의 Animal Lore 스킬로 상한선 결정
+				if (Controlled && ControlMaster != null)
+				{
+					// 예: Lore 100.0 이면 상한선 100 (스탯 1.1배 보너스 지점)
+					limit = (int)ControlMaster.Skills[SkillName.AnimalLore].Value * 5;
+				}
+
+				// 값의 범위를 강제 (-1000 ~ 계산된 limit)
+				if (value < -1000) value = -1000;
+				else if (value > limit) value = limit;
+
+				m_Loyalty = value; 
+			}
+		}
         [CommandProperty(AccessLevel.GameMaster)]
         public WayPoint CurrentWayPoint { get { return m_CurrentWayPoint; } set { m_CurrentWayPoint = value; } }
 
@@ -2990,7 +3009,7 @@ namespace Server.Mobiles
             {
                 iRangePerception = DefaultRangePerception;
             }
-            m_Loyalty = MaxLoyalty; // Wonderfully Happy
+            //m_Loyalty = MaxLoyalty; // Wonderfully Happy
 
             m_CurrentAI = ai;
             m_DefaultAI = ai;
@@ -3057,9 +3076,15 @@ namespace Server.Mobiles
         {
             base.Serialize(writer);
 
-            writer.Write(37); // version
+            writer.Write(38); // version
 
             int i = 0;
+			
+			for( i = 0; i < m_PassiveSkills.Length; ++i )
+			{
+				writer.Write( m_PassiveSkills[i] );
+			}
+			
 			for( i = 0; i < m_StatExp.Length; ++i )
 			{
 				writer.Write( m_StatExp[i] );
@@ -3287,6 +3312,14 @@ namespace Server.Mobiles
 
             switch (version)
             {
+				case 38:
+				{
+					for( int i = 0; i < m_PassiveSkills.Length; ++i )
+					{
+						m_PassiveSkills[i] = reader.ReadInt();
+					}
+					goto case 37;
+				}
 				case 37:
 				{
 					for( int i = 0; i < m_StatExp.Length; ++i )
@@ -3465,7 +3498,7 @@ namespace Server.Mobiles
             }
             else
             {
-                m_Loyalty = MaxLoyalty; // Wonderfully Happy
+                //m_Loyalty = MaxLoyalty; // Wonderfully Happy
             }
 
             if (version >= 4)
@@ -3549,10 +3582,10 @@ namespace Server.Mobiles
                 ++m_ControlOrder;
             }
 
-            if (version < 16 && Loyalty != MaxLoyalty)
-            {
-                Loyalty *= 10;
-            }
+            //if (version < 16 && Loyalty != MaxLoyalty)
+            //{
+            //    Loyalty *= 10;
+            //}
 
             double activeSpeed = m_dActiveSpeed;
             double passiveSpeed = m_dPassiveSpeed;
@@ -3934,21 +3967,25 @@ namespace Server.Mobiles
 
                         if (Core.SE)
                         {
+							/*
                             if (m_Loyalty < MaxLoyalty)
                             {
                                 m_Loyalty = MaxLoyalty;
                                 happier = true;
                             }
+							*/
                         }
                         else
                         {
                             for (int i = 0; i < amount; ++i)
                             {
+								/*
                                 if (m_Loyalty < MaxLoyalty && 0.5 >= Utility.RandomDouble())
                                 {
                                     m_Loyalty += 10;
                                     happier = true;
                                 }
+								*/
                             }
                         }
 
@@ -5951,6 +5988,49 @@ namespace Server.Mobiles
             SetAverage(min, max, RawInt);
         }
 
+		//m_PassiveSkills 배열에 들어가는 값
+		//0번 값 : 총 패시브 수
+		//1번 값 : 1번째 패시브 번호
+		//0 : 최대 체력
+		//1 : 공격력
+		//2 : 물리 저항
+		//3 : 화염 저항
+		//4 : 냉기 저항
+		//5 : 독 저항
+		//6 : 에너지 저항
+		//7 : 힘
+		//8 : 민첩
+		//9 : 지능
+		//10 : 독 스킬 증가
+		//11 : 마법학 스킬 증가
+		//12 : 주문 저항 스킬 증가
+		//13 : 전술 스킬 증가
+		//14 : 해부학 스킬 증가
+		//15 : 회복술 스킬 증가
+		//16 : 자원 채취율 증가
+		//17 : 배고픔 감소
+		//2번 값 : 1번째  패시브 실제 값
+		//3번 값 : 2번째 패시브 번호
+		//4번 값 : 2번째 패시브 실제 값
+		//5번 값 : 3번째 패시브 번호
+		//6번 값 : 3번째 패시브 실제 값
+		//7번 값 : 4번째 패시브 번호
+		//8번 값 : 4번째 패시브 실제 값
+		//9번 값 : 5번째 패시브 번호
+		//10번 값 : 5번째 패시브 실제 값
+		//11번 값 : 6번째 패시브 번호
+		//12번 값 : 6번째 패시브 실제 값
+		//13번 값 : 7번째 패시브 번호
+		//14번 값 : 7번째 패시브 실제 값
+		
+		private int[] m_PassiveSkills = new int[15];
+		public int[] PassiveSkills
+		{
+			get{ return m_PassiveSkills;}
+			set{ m_PassiveSkills = value; InvalidateProperties();}
+		}
+
+
 		//0번 : 힘
 		//1번 : 민
 		//2번 : 지
@@ -6699,6 +6779,70 @@ namespace Server.Mobiles
 				*/
             }
 
+			if (Controlled && PassiveSkills != null && PassiveSkills[0] > 0)
+			{
+				int count = PassiveSkills[0];
+				List<string> entries = new List<string>();
+
+				for (int i = 0; i < count; i++)
+				{
+					int id = PassiveSkills[1 + (i * 2)];
+					int val = PassiveSkills[1 + (i * 2) + 1];
+
+					string name = AnimalPassiveSkillHandler.GetPassiveName(id);
+					bool isPct = (id <= 1 || (id >= 7 && id <= 9));
+					string valStr = isPct ? String.Format("+{0}%", val) : String.Format("+{0}", val);
+					
+					string rawContent = String.Format("[{0} {1}]", name, valStr);
+					string coloredContent = rawContent;
+
+					// [등급 판정] 수치(val)를 기반으로 색상 결정
+					// AddGradePool(index, hp, main, resist, skill, hunger) 순서에 따른 수치 매칭
+					// 일반(0): 10/5/5, 희귀(1): 20/10/6, 영웅(2): 40/15/7, 서사(3): 60/20/8, 전설(4): 80/25/9, 신화(5): 100/30/10
+					
+					int colorIdx = 0; // 기본 일반
+					
+					// 저항력이나 스킬 수치 기준으로 등급 역산 (단순화된 판정 로직)
+					if (val >= 30 || (id >= 2 && id <= 6 && val >= 10) || (id >= 10 && val >= 30)) colorIdx = 8; // 신화
+					else if (val >= 25 || (id >= 2 && id <= 6 && val >= 9) || (id >= 10 && val >= 25)) colorIdx = 7; // 전설
+					else if (val >= 20 || (id >= 2 && id <= 6 && val >= 8) || (id >= 10 && val >= 20)) colorIdx = 6; // 서사
+					else if (val >= 15 || (id >= 2 && id <= 6 && val >= 7) || (id >= 10 && val >= 15)) colorIdx = 5; // 영웅
+					else if (val >= 10 || (id >= 2 && id <= 6 && val >= 6) || (id >= 10 && val >= 10)) colorIdx = 4; // 희귀
+
+					switch (colorIdx)
+					{
+						case 4: coloredContent = String.Format("<BASEFONT COLOR=#00A000>{0}<BASEFONT COLOR=#FFFFFF>", rawContent); break;
+						case 5: coloredContent = String.Format("<BASEFONT COLOR=#68D5ED>{0}<BASEFONT COLOR=#FFFFFF>", rawContent); break;
+						case 6: coloredContent = String.Format("<BASEFONT COLOR=#B36BFF>{0}<BASEFONT COLOR=#FFFFFF>", rawContent); break;
+						case 7: coloredContent = String.Format("<BASEFONT COLOR=#FFB400>{0}<BASEFONT COLOR=#FFFFFF>", rawContent); break;
+						case 8: coloredContent = String.Format("<BASEFONT COLOR=#FF0090>{0}<BASEFONT COLOR=#FFFFFF>", rawContent); break;
+					}
+
+					entries.Add(coloredContent);
+				}
+
+				if (entries.Count > 0)
+				{
+					// [수정 핵심] 2개씩 짝지어서 줄바꿈 처리
+					System.Text.StringBuilder sb = new System.Text.StringBuilder();
+					for (int i = 0; i < entries.Count; i++)
+					{
+						sb.Append(entries[i]);
+
+						if (i < entries.Count - 1) // 마지막 요소가 아닐 때만
+						{
+							if ((i + 1) % 2 == 0) // 2번째, 4번째... 요소 뒤에는 줄바꿈 삽입
+								sb.Append("<BR>");
+							else // 홀수번째 요소 뒤에는 한 칸 띄우기
+								sb.Append(" ");
+						}
+					}
+
+					list.Add(1042971, sb.ToString());
+				}
+			}
+
+			//}
             if (IsSoulbound)
             {
                 list.Add(1159188); // <BASEFONT COLOR=#FF8300>Soulbound<BASEFONT COLOR=#FFFFFF>
@@ -7470,6 +7614,60 @@ namespace Server.Mobiles
 			return score;
 		}
 		
+		public override void OnStatsQuery(Mobile from)
+		{
+			// 기본 체력/상태 패킷 전송
+			base.OnStatsQuery(from);
+
+			// [추가] OrionUO가 기력과 마나를 0으로 표시하지 않도록 상세 패킷을 즉시 추가 전송
+			if (from.NetState != null && from.CanSee(this))
+			{
+				from.Send(new MobileMana(this)); // 0xA2: 실제 마나 정보
+				from.Send(new MobileStam(this)); // 0xA3: 실제 기력 정보
+			}
+		}		
+		
+		public override void OnManaChange(int oldValue)
+		{
+			base.OnManaChange(oldValue);
+
+			// 몬스터이고, 맵에 존재할 때만 작동
+			if (this is BaseCreature && this.Map != null)
+			{
+				IPooledEnumerable eable = this.Map.GetClientsInRange(this.Location, 18);
+				foreach (NetState ns in eable)
+				{
+					Mobile m = ns.Mobile;
+					if (m != null && m.CanSee(this))
+					{
+						// 주변 유저들에게 이 몬스터의 실제 마나 패킷을 강제로 보냄
+						ns.Send(new MobileMana(this));
+					}
+				}
+				eable.Free();
+			}
+		}
+
+		public override void OnStamChange(int oldValue)
+		{
+			base.OnStamChange(oldValue);
+
+			if (this is BaseCreature && this.Map != null)
+			{
+				IPooledEnumerable eable = this.Map.GetClientsInRange(this.Location, 18);
+				foreach (NetState ns in eable)
+				{
+					Mobile m = ns.Mobile;
+					if (m != null && m.CanSee(this))
+					{
+						// 주변 유저들에게 이 몬스터의 실제 기력 패킷을 강제로 보냄
+						ns.Send(new MobileStam(this));
+					}
+				}
+				eable.Free();
+			}
+		}		
+		
         public bool GivenSpecialArtifact { get; set; }
 
         /* To save on cpu usage, RunUO creatures only reacquire creatures under the following circumstances:
@@ -7641,7 +7839,7 @@ namespace Server.Mobiles
 			{
 				ControlSlotsMax = ControlSlots;
 			}
-			AnimalTaming.ScaleStats(this, 0.5);
+			AnimalTaming.ScaleStats(this);
 			/*
             if (StatLossAfterTame && (!PetTrainingHelper.Enabled || Owners.Count == 0))
             {
@@ -9197,7 +9395,7 @@ namespace Server.Mobiles
                 }
 
                 c.Say(1043255, c.Name); // ~1_NAME~ appears to have decided that is better off without a master!
-                c.Loyalty = BaseCreature.MaxLoyalty; // Wonderfully Happy
+                //c.Loyalty = BaseCreature.MaxLoyalty; // Wonderfully Happy
                 c.IsBonded = true;
                 c.BondingBegin = DateTime.MinValue;
                 c.OwnerAbandonTime = DateTime.MinValue;

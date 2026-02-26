@@ -93,25 +93,72 @@ namespace Server.Misc
                     double individualBonus = 1.0 + (AosAttributes.GetValue(pm, AosAttribute.NightSight) * 0.001);
                     int finalGold = (int)(myGold * individualBonus);
                     pm.AddToBackpack(new Gold(finalGold));
-                    pm.SendMessage(0x48, "파티 분배: {0} gold, {1} fame, {2} karma", finalGold, shareFame, shareKarma);
+                    pm.SendMessage(0x48, "재화 {0} gold", finalGold);
                 }
-				//몬스터 템 드랍. 테스트 중이기 때문에 무조건 장비 1개 드랍으로 진행
-				double totalChance = (bc.Fame / 100.0);
-
-				// 계산된 점수를 기반으로 등급 결정 및 옵션 부여 호출
-				// pm(플레이어) 정보는 필요한 경우 참조용으로만 전달
-				//Misc.ItemOptionCreator.ItemCreator(droppedItem, totalChance, pm);				
-
-                // 4. 특별 아이템 드랍 (기존 확률 유지)
-				/*
-                for (int k = 0; k < dropCount; ++k)
-                {
-                    if (Utility.RandomMinMax(1, 1000) <= 100)
-                        DropSpecialItem(pm, bc);
-                }
-				*/
+				GenerateSmartLoot(pm, bc, dropCount);
 
                 i++;
+            }
+        }
+
+		private static void GenerateSmartLoot(PlayerMobile pm, BaseCreature bc, int dropCount)
+        {
+            if (pm == null || bc == null || dropCount <= 0) return;
+
+            double expectancy = (bc.Fame / 100.0);
+
+            for (int d = 0; d < dropCount; d++)
+            {
+                // 가중치를 계산하여 랜덤 엔트리 하나 추출
+                DropEntry entry = MonsterDropHandler.GetRandomEntry(bc.GetType().Name);
+                if (entry == null) continue;
+
+                Item droppedItem = null;
+
+                // [구분 로직] 장비인가 재료인가?
+                if (entry.IsEquipment)
+                {
+                    // 장비 생성 (카테고리 대응)
+                    if (entry.ItemType == typeof(BaseArmor)) droppedItem = Loot.RandomArmor();
+                    else if (entry.ItemType == typeof(BaseWeapon)) droppedItem = Loot.RandomWeapon();
+                    else if (entry.ItemType == typeof(BaseJewel)) droppedItem = Loot.RandomJewelry();
+                    else droppedItem = Activator.CreateInstance(entry.ItemType) as Item;
+
+                    if (droppedItem != null)
+                    {
+                        // 장비 옵션 부여
+                        ItemOptionCreator.ItemCreator(droppedItem, expectancy, pm);
+                    }
+                }
+                else
+                {
+                    // 재료 생성
+                    droppedItem = Activator.CreateInstance(entry.ItemType) as Item;
+
+                    if (droppedItem != null)
+                    {
+                        if (droppedItem.Stackable)
+                        {
+                            // 수량 결정 (Min/Max 범위 + 명성 보정)
+                            int baseAmount = Utility.RandomMinMax(entry.MinAmount, entry.MaxAmount);
+                            double fameBonus = 1.0 + (bc.Fame / 10000.0);
+                            droppedItem.Amount = (int)(baseAmount * fameBonus);
+                        }
+                        else
+                        {
+                            // 스택 안되는 일반템은 MinAmount만큼 반복 생성하거나 그냥 1개 지급
+                            // 여기서는 일반적인 재료 기획에 맞춰 1개 지급으로 처리
+                        }
+                    }
+                }
+
+                if (droppedItem != null)
+                {
+                    pm.AddToBackpack(droppedItem);
+                    // 가독성을 위한 획득 메시지
+                    //string itemName = droppedItem.Name ?? droppedItem.GetType().Name;
+                    //pm.SendMessage(0x48, "[획득] {0} ({1})", itemName, droppedItem.Amount);
+                }
             }
         }
 

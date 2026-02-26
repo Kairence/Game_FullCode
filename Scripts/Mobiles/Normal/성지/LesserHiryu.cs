@@ -194,6 +194,7 @@ namespace Server.Mobiles
 
             if (version < 2)
             {
+				/*
                 for (int i = 0; i < Skills.Length; ++i)
                 {
                     Skills[i].Cap = Math.Max(100.0, Skills[i].Cap * 0.9);
@@ -203,6 +204,7 @@ namespace Server.Mobiles
                         Skills[i].Base = Skills[i].Cap;
                     }
                 }
+				*/
             }
 
             if (version < 3)
@@ -212,7 +214,7 @@ namespace Server.Mobiles
 
             if (version < 3 && Controlled && RawStr >= 301 && ControlSlots == ControlSlotsMin)
             {
-                Server.SkillHandlers.AnimalTaming.ScaleStats(this, 0.5);
+                //Server.SkillHandlers.AnimalTaming.ScaleStats(this, 0.5);
             }
 
             if (version < 4 && PetTrainingHelper.Enabled && ControlSlots <= 3)

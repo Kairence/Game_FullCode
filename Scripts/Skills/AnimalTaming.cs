@@ -62,80 +62,36 @@ namespace Server.SkillHandlers
 			return bc.SubdueBeforeTame && (bc.Hits > ((double)bc.HitsMax / 10));
 		}
 
-		public static void ScaleStats(BaseCreature bc, double scalar)
+		public static void ScaleStats(BaseCreature bc)
 		{
-			int Grade = bc.Grade;
-			switch ( Grade )
-			{
-				case 2:
-				{
-					bc.HitsMaxSeed /= 2;
-					bc.RawStr = ( bc.RawStr * 10 ) / 11;
-					bc.RawInt = ( bc.RawInt * 10 ) / 11;
-					bc.RawDex = ( bc.RawDex * 10 ) / 11;
-					break;
-				}
-				case 3:
-				{
-					bc.HitsMaxSeed = ( bc.HitsMaxSeed * 5 ) / 6;
-					bc.RawStr = ( bc.RawStr * 10 ) / 11;
-					bc.RawInt = ( bc.RawInt * 2 ) / 3;
-					bc.RawDex = ( bc.RawDex * 10 ) / 11;
-					break;
-					
-				}
-				case 4:
-				{
-					bc.HitsMaxSeed = ( bc.HitsMaxSeed * 5 ) / 6;
-					bc.RawStr /= ( bc.RawStr * 2 ) / 3;
-					bc.RawInt = ( bc.RawInt * 10 ) / 11;
-					bc.RawDex = ( bc.RawDex * 10 ) / 11;
-					break;
-					
-				}
-				case 5:
-				{
-					bc.HitsMaxSeed = ( bc.HitsMaxSeed * 4 ) / 5;
-					bc.RawStr = ( bc.RawStr * 10 ) / 11;
-					bc.RawInt = ( bc.RawInt * 10 ) / 11;
-					bc.RawDex = ( bc.RawDex * 2 ) / 3;
-					break;
-					
-				}
-				case 6:
-				{
-					bc.HitsMaxSeed = ( bc.HitsMaxSeed * 5 ) / 2;
-					bc.RawStr = ( bc.RawStr * 4 ) / 7;
-					bc.RawInt = ( bc.RawInt * 4 ) / 7;
-					bc.RawDex = ( bc.RawDex * 4 ) / 7;
-					break;
-					
-				}
-				case 7:
-				{
-					bc.HitsMaxSeed /= 5;
-					bc.RawStr /= 3;
-					bc.RawInt /= 3;
-					bc.RawDex /= 3;
-					break;
-					
-				}
-				
-			}
-			if (bc.RawStr > 0) { bc.RawStr = (int)Math.Max(1, bc.RawStr * scalar); }
-			if (bc.RawDex > 0) { bc.RawDex = (int)Math.Max(1, bc.RawDex * scalar); }
-			if (bc.RawInt > 0) { bc.RawInt = (int)Math.Max(1, bc.RawInt * scalar); }
-			if (bc.HitsMaxSeed > 0) { bc.HitsMaxSeed = (int)Math.Max(1, bc.HitsMaxSeed * scalar); bc.Hits = bc.Hits; }
-			if (bc.StamMaxSeed > 0) { bc.StamMaxSeed = (int)Math.Max(1, bc.StamMaxSeed * scalar); bc.Stam = bc.Stam; }
+			// 강인함 1당 0.1% 보정 (400이면 1.4배, -400이면 0.6배)
+			double scalar = 1.0 + (bc.Loyalty / 1000.0);
+			if (scalar < 0.1) scalar = 0.1; // 최소치 방어
+
+			if (bc.RawStr > 0) bc.RawStr = (int)Math.Max(1, bc.RawStr * scalar);
+			if (bc.RawDex > 0) bc.RawDex = (int)Math.Max(1, bc.RawDex * scalar);
+			if (bc.RawInt > 0) bc.RawInt = (int)Math.Max(1, bc.RawInt * scalar);
+			
+			if (bc.HitsMaxSeed > 0) bc.HitsMaxSeed = (int)Math.Max(1, bc.HitsMaxSeed * scalar);
+			if (bc.StamMaxSeed > 0) bc.StamMaxSeed = (int)Math.Max(1, bc.StamMaxSeed * scalar);
+			if (bc.ManaMaxSeed > 0) bc.ManaMaxSeed = (int)Math.Max(1, bc.ManaMaxSeed * scalar);
+
+			bc.Hits = bc.HitsMax;
+			bc.Stam = bc.StamMax;
+			bc.Mana = bc.ManaMax;
 		}
 
+		// [수정] 기획 반영: 스킬은 고정 (기존 scalar 로직 제거)
 		public static void ScaleSkills(BaseCreature bc, double scalar, bool firstTame)
 		{
-			ScaleSkills(bc, scalar, scalar, firstTame);
+			// 기획에 따라 스킬은 성장 및 변동이 없으므로 아무 작업도 하지 않음
+			return;
 		}
-
 		public static void ScaleSkills(BaseCreature bc, double scalar, double capScalar, bool firstTame)
 		{
+			
+			// 기획에 따라 스킬은 성장 및 변동이 없으므로 아무 작업도 하지 않음
+			return;
 			for (int i = 0; i < bc.Skills.Length; ++i)
 			{
 				if (!Core.TOL || firstTame)
@@ -323,7 +279,7 @@ namespace Server.SkillHandlers
 						m_Tamer.CheckSkill(SkillName.AnimalTaming, expGain); 
 
 						if (!alreadyOwned)
-							m_Tamer.CheckTargetSkill(SkillName.AnimalLore, m_Creature, 0.0, 120.0);
+							m_Tamer.CheckTargetSkill(SkillName.AnimalLore, m_Creature, 0.0, 200.0);
 
 						if (m_Creature.Paralyzed) m_Paralyzed = true;
 
@@ -347,6 +303,10 @@ namespace Server.SkillHandlers
 					m_Tamer.NextSkillTime = Core.TickCount;
 					m_BeingTamed.Remove(m_Creature);
 
+					m_Creature.Loyalty = -Math.Abs(m_Creature.Loyalty);
+					AnimalTaming.ScaleStats(m_Creature);
+
+					/*
 					if (m_Creature.Owners.Count == 0)
 					{
 						if (m_Paralyzed) ScaleSkills(m_Creature, 0.86, true);
@@ -356,7 +316,7 @@ namespace Server.SkillHandlers
 					{
 						ScaleSkills(m_Creature, 0.90, false);
 					}
-
+					*/
 					// 최종 성공 Cliloc (1080913)
 					m_Creature.PrivateOverheadMessage(MessageType.Regular, 0x3B2, 1080913, m_Tamer.NetState);
 
