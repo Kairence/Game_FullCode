@@ -70,7 +70,7 @@ public static void Apply(BaseCreature bc)
                 case 2: bc.Loyalty = Utility.RandomMinMax(200, 350); break;    // 20% ~ 35% 보너스
                 case 6: bc.Loyalty = Utility.RandomMinMax(500, 750); break;    // 50% ~ 75% 보너스
                 case 7: bc.Loyalty = Utility.RandomMinMax(800, 900); break;    // 80% ~ 90% 보너스
-                case 8: bc.Loyalty = 1000; break;                             // Boss: 100% 보너스 (2배)
+                case 8: bc.Loyalty = 0; break;                             // Boss: 100% 보너스 (2배)
                 default: bc.Loyalty = 0; break;
             }
 
