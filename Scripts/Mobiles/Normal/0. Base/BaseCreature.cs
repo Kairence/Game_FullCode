@@ -8047,11 +8047,6 @@ namespace Server.Mobiles
                     }
                 }
             }
-            else if (BleedAttack.IsBleeding(patient))
-            {
-                patient.SendLocalizedMessage(1060167); // The bleeding wounds have healed, you are no longer bleeding!
-                BleedAttack.EndBleed(patient, false);
-            }
             else
             {
                 double healing = Skills.Healing.Value;

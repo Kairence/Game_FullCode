@@ -382,8 +382,6 @@ namespace Server.Engines.VvV
             Effects.SendBoltEffect(m, true, 0);
             AOS.Damage(m, Owner, dam, 0, 0, 100, 0, 0);
 
-			MortalStrike.BeginWound(m, TimeSpan.FromSeconds(3));
-
             base.Detonate(m);
 		}
 		
@@ -433,7 +431,6 @@ namespace Server.Engines.VvV
 				return;
 				
 			m.SendLocalizedMessage(1060160); // You are bleeding!
-			BleedAttack.BeginBleed(m, Owner, false);
 
             base.Detonate(m);
 		}

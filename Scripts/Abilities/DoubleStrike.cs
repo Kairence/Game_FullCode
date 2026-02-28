@@ -1,60 +1,47 @@
+using System;
 using Server.Mobiles;
 
 namespace Server.Items
 {
-	/// <summary>
-	///     The highly skilled warrior can use this special attack to make two quick swings in succession.
-	///     Landing both blows would be devastating!
-	/// </summary>
-	public class DoubleStrike : WeaponAbility
-	{
-		public override int BaseMana { get { return 5; } }
-		public override double DamageScalar { get { return 0.75; } }
-
-        public override bool OnBeforeDamage(Mobile attacker, Mobile defender)
+    public class DoubleStrike : WeaponAbility
+    {
+        public DoubleStrike()
         {
-            BaseWeapon wep = attacker.Weapon as BaseWeapon;
-
-            if (wep != null)
-                wep.InDoubleStrike = true;
-
-            return true;
         }
 
-        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics )
+        // 마나 소모 없음
+
+        public override void OnHit(Mobile attacker, Mobile defender, int damage)
         {
-            if (!this.Validate(attacker) )
+            if (attacker == null || defender == null || !defender.Alive)
                 return;
-			
-			if ( defender == null )
-				return;
-			
-			bool bonus = attacker.Skills.Tactics.Value >= 100 ? true : false;
-			//int levelCountBonus = level >= 5 ? 1 : 0;
-			//double levelDamageBonus = level >= 5 ? 0.3 : 0;
-			
-			if ( !this.CalculateStam(attacker, Misc.Util.SPMStam[6,0], Misc.Util.SPMStam[6,1], level, bonus ) )
-				return;
-			
-			int count = 1;// + levelCountBonus + (int)(tactics / 100 );
-			//double chance = tactics - (int)(tactics / 100 );
-			//chance *= 0.01;
-			//if( chance > Utility.RandomDouble() )
-			//	count++;
-			
-			//계산
-			damage = (int)( damage * ( 1 + level * 0.01 )  + tactics);
 
+            // 1. 시각 효과 및 알림
+            attacker.SendMessage("연쇄 연속 공격을 시전합니다!");
             attacker.SendLocalizedMessage(1060084); // You attack with lightning speed!
-            defender.SendLocalizedMessage(1060085); // Your attacker strikes with lightning speed!
-
+            
             defender.PlaySound(0x3BB);
             defender.FixedEffect(0x37B9, 244, 25);
 
-			for( int i = 0; i < count; i++ )
-			{
-				AOS.Damage(defender, attacker, damage, false, 100, 0, 0, 0, 0, 0, 0, false, false, false);
-			}
-		}
-	}
+            // 2. 핵심 로직: 특수기 3종 세트 연속 호출
+            
+            // [1] 방어구 무시 (Armor Ignore)
+            // 기본 데미지로 방어력을 무시하고 타격 (물리 100%가 아닌 Direct 피해)
+            WeaponAbility armorIgnore = WeaponAbility.ArmorIgnore;
+            if (armorIgnore != null)
+                armorIgnore.OnHit(attacker, defender, damage);
+
+            // [2] 독 바르기 (Infectious Strike)
+            // 독 스킬에 따른 중독 및 레벨당 보너스 피해
+            WeaponAbility infectiousStrike = WeaponAbility.InfectiousStrike;
+            if (infectiousStrike != null)
+                infectiousStrike.OnHit(attacker, defender, damage);
+
+            // [3] 그림자 일격 (Shadow Strike)
+            // 무기 피해 200% 추가 공격(총 300%) 및 어그로 0, 은신 처리
+            WeaponAbility shadowStrike = WeaponAbility.ShadowStrike;
+            if (shadowStrike != null)
+                shadowStrike.OnHit(attacker, defender, damage);
+        }
+    }
 }

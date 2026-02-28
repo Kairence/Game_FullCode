@@ -1844,6 +1844,17 @@ namespace Server.Items
 			if (Core.AOS)
 			{
 				canSwing = ( /* !attacker.Paralyzed && */ !attacker.Frozen);
+				int useStam = 0;
+				if( attacker.Skills[this.Skill].Value < 150.0 || attacker is PlayerMobile)
+				{
+					useStam = 5;
+				}
+				if( attacker.Stam < useStam )
+				{
+					attacker.SendMessage("당신은 기력이 없어서 무기를 휘두를 힘이 없습니다.");
+					canSwing = false;
+				}
+				
 				if( canSwing )
 				{
 					/*
@@ -1852,13 +1863,16 @@ namespace Server.Items
 						
 						if( attacker.Stam < 1 )
 						{
-							attacker.SendMessage("당신은 기력이 없어서 무기를 휘두를 힘이 없습니다.");
 							canSwing = false;
 						}
 						else
 							attacker.Stam -= 1;
 					}
 					*/
+					if( useStam > 0 )
+					{
+						attacker.Stam -= useStam;
+					}
 					if( attacker is BaseCreature )
 					{
 						BaseCreature bc = attacker as BaseCreature;
@@ -2053,20 +2067,69 @@ namespace Server.Items
 			return false;
 		}
 
-		//데미지 감소
+
+		/*		
 		public virtual int AbsorbDamage(Mobile attacker, Mobile defender, int damage, int target )
 		{
-			/*
-			0 : 방패
-			1 : 손
-			2 : 머리
-			3 : 목
-			4 : 어깨
-			5 : 하의
-			6 : 상의
-			*/
+			int reducedDamage = 0;
+
+			// 1. 플레이어(PlayerMobile) 방어 로직
+			if (defender is PlayerMobile pm)
+			{
+				// [Step A] 방패 체크 (target이 0이거나 -1일 때 방패가 있다면 우선 확률 체크)
+				// ※ 실제 울온의 Parry 확률이나 특정 확률을 여기에 넣습니다.
+				BaseShield shield = pm.FindItemOnLayer(Layer.TwoHanded) as BaseShield;
+				
+				// 방패를 들고 있고, 특정 확률(예: Parry 스킬)에 성공했거나 강제 방패 타격(target 0)인 경우
+				if (shield != null && (target == 0 || (target == -1 && CheckParry(pm))))
+				{
+					pm.FixedEffect(0x37B9, 10, 16);
+					pm.Animate(AnimationType.Parry, 0);
+					
+					damage = shield.OnHit(this, damage); // 내구도 감소
+					reducedDamage = (int)((shield.ArmorBase + shield.ArmorAttributes.WeaponDefense / 100.0) * pm.Str * 0.0025);
+					
+					if (attacker.Alive && pm.Alive)
+						pm.CheckSkill(SkillName.Parry, skillUp(attacker, pm, attacker.Skills[this.Skill].Value));
+					
+					target = 0; // 최종 피격지는 방패로 확정
+				}
+				// [Step B] 방패가 없거나 방패 방어에 실패한 경우 -> 신체 부위 결정
+				else
+				{
+					if (target == -1 || target == 0) // 방패 실패 시 다시 랜덤 부위로
+					{
+						double roll = Utility.RandomDouble();
+						if (roll < 0.10) target = 1;      // 손
+						else if (roll < 0.20) target = 2; // 머리
+						else if (roll < 0.25) target = 3; // 목
+						else if (roll < 0.40) target = 4; // 어깨
+						else if (roll < 0.65) target = 5; // 하의
+						else target = 6;                 // 상의
+					}
+
+					Item armorItem = GetArmorByLocation(pm, target); // 부위별 아이템 추출 (함수화 추천)
+
+					if (armorItem is IWearableDurability armor)
+					{
+						int baseRating = 0;
+						int weaponDefense = 0;
+
+						if (armor is BaseArmor ba) { baseRating = ba.BaseArmorRating; weaponDefense = ba.ArmorAttributes.WeaponDefense; }
+						else if (armor is BaseClothing bc) { baseRating = bc.BaseArmorRating; weaponDefense = bc.ArmorAttributes.WeaponDefense; }
+
+						reducedDamage = (int)((baseRating + (weaponDefense / 100.0)) * pm.Str * 0.0025);
+						damage = armor.OnHit(this, damage);
+					}
+				}
+			}
+			// 2. 몬스터(BaseCreature) 방어 로직
+			else if (defender is BaseCreature bc)
+			{
+				reducedDamage = (int)Math.Min(bc.VirtualArmor * defender.Str * 0.00025, 2500);
+			}		
+
 			double skillBonus = 0;
-			int reducedamage = 0;
 
 			BaseWeapon atkWeapon = attacker.Weapon as BaseWeapon;
 			BaseWeapon defWeapon = defender.Weapon as BaseWeapon;
@@ -2164,7 +2227,7 @@ namespace Server.Items
 
 			return damage;
 		}
-
+		*/
 		public virtual int GetPackInstinctBonus(Mobile attacker, Mobile defender)
 		{
 			if (attacker.Player || defender.Player)
@@ -2376,6 +2439,52 @@ namespace Server.Items
 				return 0;
 		}
 		*/
+		
+		public static int GetWeaponCategoryID(BaseWeapon weapon)
+		{
+			// 0: 한손 검 (Swords + OneHanded)
+			if (weapon.Skill == SkillName.Swords && weapon.Layer == Layer.OneHanded && !(weapon is BaseAxe))
+				return 0;
+
+			// 1: 양손 검 (Swords + TwoHanded)
+			if (weapon.Skill == SkillName.Swords && weapon.Layer == Layer.TwoHanded && !(weapon is BaseAxe))
+				return 1;
+
+			// 2: 도끼 (BaseAxe 클래스 판정)
+			if (weapon is BaseAxe)
+				return 2;
+
+			// 3: 한손 둔기 (Macing + OneHanded)
+			if (weapon.Skill == SkillName.Macing && weapon.Layer == Layer.OneHanded)
+				return 3;
+
+			// 4: 양손 둔기 (Macing + TwoHanded)
+			if (weapon.Skill == SkillName.Macing && weapon.Layer == Layer.TwoHanded)
+				return 4;
+
+			// 5: 한손 펜싱 (Fencing + OneHanded)
+			if (weapon.Skill == SkillName.Fencing && weapon.Layer == Layer.OneHanded)
+				return 5;
+
+			// 6: 양손 펜싱 (Fencing + TwoHanded)
+			if (weapon.Skill == SkillName.Fencing && weapon.Layer == Layer.TwoHanded)
+				return 6;
+
+			// 7: 활 (BaseRanged 중 석궁류가 아닌 것)
+			if (weapon is BaseRanged && !(weapon is Crossbow || weapon is HeavyCrossbow || weapon is RepeatingCrossbow))
+				return 7;
+
+			// 8: 석궁 (Crossbow 계열)
+			if (weapon is Crossbow || weapon is HeavyCrossbow || weapon is RepeatingCrossbow)
+				return 8;
+
+			// 9: 맨손 (Fists)
+			if (weapon is Fists || weapon == null)
+				return 9;
+
+			return 9; // 기본값은 맨손으로 처리
+		}	
+		
 		private int PoisonDamage(Mobile attacker, Mobile defender, int damage )
 		{
 			damage += SAAbsorptionAttributes.GetValue(attacker, SAAbsorptionAttribute.EaterPoison); 
@@ -2397,6 +2506,126 @@ namespace Server.Items
 				return 0;
 		}
 		#endregion
+		
+		//신규 데미지 계산 코드
+		
+		// 패링 체크 로직 (기본 구현)
+		public bool CheckParry(Mobile m)
+		{
+			return false;//(m.ParryChance > Utility.RandomDouble());
+		}
+		// 부위별 방어구 가져오기 로직
+		public BaseArmor GetArmorByLocation(Mobile m, int location)
+		{
+			Layer layer = Layer.Invalid;
+			switch (location)
+			{
+				case 0: layer = Layer.TwoHanded; break; // 방패
+				case 1: layer = Layer.Helm; break;
+				case 2: layer = Layer.Neck; break;
+				case 3: layer = Layer.InnerTorso; break;
+				case 4: layer = Layer.Arms; break;
+				case 5: layer = Layer.Gloves; break;
+				case 6: layer = Layer.Pants; break;
+			}
+			return m.FindItemOnLayer(layer) as BaseArmor;
+		}
+		//스킬 포인트 획득 함수
+		private void CheckWeaponSkillGain(Mobile attacker, Mobile defender, Skill atkSkill, Skill defSkill)
+		{
+			if (attacker == null || defender == null || atkSkill == null || defSkill == null)
+				return;
+
+			double checkPoint = 0;
+
+			// 1. 방어자가 플레이어인 경우 (공격자는 야생 몬스터여야 함)
+			if (defender is PlayerMobile)
+			{
+				BaseCreature bc = attacker as BaseCreature;
+				if (bc != null && bc.ControlMaster == null)
+				{
+					// 플레이어의 방어 기술에 비례하여 대폭 상승 (5배 보너스)
+					checkPoint = defSkill.Value * 5;
+				}
+			}
+			// 2. 방어자가 야생 몬스터인 경우
+			else if (defender is BaseCreature)
+			{
+				BaseCreature bc = defender as BaseCreature;
+				if (bc != null && bc.ControlMaster == null)
+				{
+					// 몬스터의 방어 기술 + 바딩 난이도를 합산하여 체크 포인트 결정
+					checkPoint = defSkill.Value + bc.BardingDifficulty;
+				}
+			}
+
+			// 최종 스킬 체크 실행
+			if (checkPoint > 0)
+			{
+				attacker.CheckSkill(atkSkill.SkillName, checkPoint);
+			}
+		}
+		
+		private void UpdateCombatTimers(Mobile attacker, Mobile defender)
+		{
+			if (attacker == null || defender == null)
+				return;
+
+			// 1. 플레이어 vs 플레이어 (PvP 타이머)
+			if (attacker is PlayerMobile && defender is PlayerMobile)
+			{
+				PlayerMobile apm = (PlayerMobile)attacker;
+				PlayerMobile dpm = (PlayerMobile)defender;
+
+				// TimerList[65]: PvP 전투 상태 유지 (예: 300초)
+				if (apm.TimerList[65] < 300) apm.TimerList[65] = 300;
+				if (dpm.TimerList[65] < 300) dpm.TimerList[65] = 300;
+			}
+			// 2. 몬스터 vs 플레이어 (PvM 타이머)
+			else if (attacker is BaseCreature && defender is PlayerMobile)
+			{
+				PlayerMobile dpm = (PlayerMobile)defender;
+
+				// TimerList[64]: 몬스터와의 전투 상태 유지 (예: 60초)
+				if (dpm.TimerList[64] < 60) dpm.TimerList[64] = 60;
+			}
+		}
+		
+		//2. 데미지 감소
+		public virtual int AbsorbDamage(Mobile attacker, Mobile defender, int damage, int target)
+		{
+			int reducedDamage = 0;
+
+			if (defender is PlayerMobile pm)
+			{
+				// [Step A] 방패 체크
+				BaseShield shield = pm.FindItemOnLayer(Layer.TwoHanded) as BaseShield;
+				if (shield != null && (target == 0 || (target == -1 && CheckParry(pm))))
+				{
+					reducedDamage = (int)((shield.ArmorBase + shield.ArmorAttributes.WeaponDefense / 100.0) * pm.Str * 0.0025);
+					target = 0; // 피격 부위 방패로 확정
+				}
+				// [Step B] 신체 부위 체크
+				else
+				{
+					if (target == -1 || target == 0) target = HitLocationManager.GetRandomLocation(); // 랜덤 부위 결정
+
+					Item armorItem = GetArmorByLocation(pm, target);
+					if (armorItem is BaseArmor ba)
+						reducedDamage = (int)((ba.BaseArmorRating + ba.ArmorAttributes.WeaponDefense / 100.0) * pm.Str * 0.0025);
+					else if (armorItem is BaseClothing bc)
+						reducedDamage = (int)((bc.BaseArmorRating + bc.ArmorAttributes.WeaponDefense / 100.0) * pm.Str * 0.0025);
+				}
+			}
+			else if (defender is BaseCreature bc)
+			{
+				reducedDamage = (int)Math.Min(bc.VirtualArmor * defender.Str * 0.00025, 2500);
+			}
+
+			return Math.Max(0, damage - reducedDamage);
+		}		
+		
+		
         public virtual void OnHit(Mobile attacker, IDamageable damageable, double damageBonus)
 		{
 			if( damageable == null )
@@ -2418,29 +2647,7 @@ namespace Server.Items
 			Skill defSkill = defender.Skills[defWeapon.Skill];
 
 			//무기술 증가
-			if( defender is PlayerMobile )
-			{
-				BaseCreature bc = attacker as BaseCreature;
-				if( attacker is BaseCreature && bc.ControlMaster == null )
-				{
-					double point = defSkill.Value * 5;
-					if( point > 0 )
-					{
-						attacker.CheckSkill(atkSkill.SkillName, point);
-						//attacker.CheckSkill(SkillName.Anatomy, point);
-					}
-				}
-			}
-			if( defender is BaseCreature )
-			{
-				BaseCreature bc = defender as BaseCreature;
-				if( bc.ControlMaster == null )
-				{
-					double point = defSkill.Value + bc.BardingDifficulty;
-					if( point > 0 )
-						attacker.CheckSkill(atkSkill.SkillName, point);
-				}
-			}
+			CheckWeaponSkillGain(attacker, defender, atkSkill, defSkill);
 			
             if (defender != null)
             {
@@ -2466,36 +2673,144 @@ namespace Server.Items
 
 			int bonus_damage = 0;
 			//전투 체크
-			if( attacker is PlayerMobile )
-			{
-				PlayerMobile apm = attacker as PlayerMobile;
+			UpdateCombatTimers(attacker, defender);
+			
+			//전투 로직 시작
+			// --- [1단계: 무기 민 ~ 맥 랜덤치 결정 및 숙련도 가중치] ---
+			// ScaleDamageAOS를 통해 스탯/스킬이 반영된 기초 민~맥뎀을 가져옵니다.
+			int min = Math.Max((int)ScaleDamageAOS(attacker, MinDamage, false), 1);
+			int max = Math.Max((int)ScaleDamageAOS(attacker, MaxDamage, false), 1);
 
-				if( apm.twoMacingBonus >= 1 )
+			// 전술 150 보너스: 최종 민~맥뎀 구간 자체를 +1 상향
+			if (attacker.Skills[SkillName.Tactics].Value >= 150.0) { min += 1; max += 1; }
+
+			// HCI와 DCI의 차이를 변수 없이 즉시 계산 (10,000당 1%)
+			double factor = 0.5 + (AosAttributes.GetValue(attacker, AosAttribute.AttackChance) - 
+									AosAttributes.GetValue(defender, AosAttribute.DefendChance)) * 0.000001;
+
+			// 0.0 ~ 1.0 사이로 값 제한
+			factor = Math.Max(0.0, Math.Min(1.0, factor));
+			
+			// 숙련도가 높을수록 max에 가까운 값이 나옴
+			damage = min + (int)((max - min) * Math.Pow(Utility.RandomDouble(), 0.5 / factor));
+			
+			// --- [2단계: 피격 부위 결정 및 방어력 감쇄] ---
+			int hitLocation = -1; // 기본값 (몬스터나 부위 미지정 시)
+
+			// 1. 방어자가 유저(PlayerMobile)인 경우에만 부위 판정
+			if (defender is PlayerMobile)
+			{
+				PlayerMobile pm = (PlayerMobile)defender;
+
+				// 방패 막기(Parry) 체크 - 성공 시 0번(방패/무기) 부위 고정
+				if (CheckParry(pm))
 				{
-					apm.twoMacingBonus = 0;
-					bonus_damage = 1;
+					hitLocation = 0; 
 				}
-				if( defender is PlayerMobile )
+				else
 				{
-					PlayerMobile dpm = defender as PlayerMobile;
-					if( apm.TimerList[65] < 300 )
-						apm.TimerList[65] = 300;
-					if( dpm.TimerList[65] < 300 )
-						dpm.TimerList[65] = 300;
+					// 방어 실패 시 랜덤 부위 추출 (1:머리, 2:목, 3:몸통, 4:팔, 5:장갑, 6:다리 등)
+					hitLocation = HitLocationManager.GetRandomLocation();
 				}
 			}
-			if( attacker is BaseCreature )
+
+			// 2. 결정된 부위의 방어력을 적용하여 데미지 감쇄 (AbsorbDamage 호출)
+			// 이 함수 내부에서 hitLocation에 따른 Armor AR 값을 계산하여 damage를 깎습니다.
+			damage = AbsorbDamage(attacker, defender, damage, hitLocation);
+
+			//3. 스킬 스텟, 옵션 보너스 계산
+			// 데미지 증폭 (공격력 증가 스칼라 계산)
+			double damageScalar = 1.0;
+
+			// 전술(Tactics) 보너스: 1당 0.2% (100이면 20%)
+			damageScalar += (attacker.Skills[SkillName.Tactics].Value * 0.002);
+
+			// 무기술(Weapon Skill) 보너스: 1당 0.3%
+			damageScalar += (attacker.Skills[this.Skill].Value * 0.003);
+
+			// 무기술 100 보너스: 추가 10% (기본 0.3% * 100 = 30%에 10%를 더해 총 40%가 됨)
+			if (attacker.Skills[this.Skill].Value >= 100.0)
+				damageScalar += 0.1;			
+			
+			//민첩 보너스: 1당 0.01%
+			damageScalar += (attacker.Dex * 0.0001);
+			//아이템 옵션. 10000당 1%
+			damageScalar += (AosAttributes.GetValue(attacker, AosAttribute.WeaponDamage) * 0.000001);
+			
+			
+			//4. 최종 증폭 적용 (방어력 감쇄 후 남은 데미지에 곱하기)
+			damage = (int)(damage * damageScalar);			
+			
+			//5. 슬레이어 데미지
+			damage = (int)( damage * Misc.Util.GetSlayerDamageScalar(attacker, defender) );
+
+			//6. 치명타 계산
+			double criticalPercent = 0.0;
+			double criticalDamage = 1.5; // 기본 1.5배(50% 추가) 시작
+
+			if (defender is PlayerMobile) // 방어자가 '유저'일 때 (부위별 시스템 적용)
 			{
-				if( defender is PlayerMobile )
+				criticalPercent = HitLocationManager.GetCritChanceBonus(hitLocation);
+				criticalDamage += HitLocationManager.GetCritDamageBonus(hitLocation);
+			}
+			else if( attacker is BaseCreature )
+			{
+				BaseCreature bc = attacker as BaseCreature;
+				criticalPercent = attacker.Dex * 0.00001;
+				criticalDamage += attacker.Stam * 0.00001 + Misc.Util.MonsterTierCriticalDamage(bc);
+			}
+			// --- 치명 피해 보너스 합산 ---
+			criticalDamage += (attacker.Skills[SkillName.Tactics].Value * 0.001); // 전술 1당 0.1%
+			if (attacker.Skills[SkillName.Anatomy].Value >= 100.0) criticalDamage += 0.1; // 해부학 100(+10%)
+			criticalDamage += AosAttributes.GetValue(attacker, AosAttribute.Brittle) * 0.000001;
+			criticalPercent += AosAttributes.GetValue(attacker, AosAttribute.WeaponCritical) * 0.000001;
+			criticalPercent += attacker.Luck * 0.0001;
+
+			// 6. 방어자가 '유저'일 때만 부위별 보너스 합산 (HitLocationManager 활용)
+			if (defender is PlayerMobile)
+			{
+				criticalPercent += HitLocationManager.GetCritChanceBonus(hitLocation); // 예: 목 +50%
+				criticalDamage += HitLocationManager.GetCritDamageBonus(hitLocation);   // 예: 목 +150%
+			}
+
+			// 7. 최종 치명타 판정
+			if (criticalPercent > Utility.RandomDouble())
+			{
+				damage = (int)(damage * criticalDamage);
+				
+				// 시각 및 사운드 효과
+
+				int itemID, soundID;
+				switch ( atkWeapon.Skill )
 				{
-					PlayerMobile dpm = defender as PlayerMobile;
-					if( dpm.TimerList[64] < 60 )
-						dpm.TimerList[64] = 60;
+					case SkillName.Macing:
+						itemID = 0xFB4;
+						soundID = 0x232;
+						break;
+					case SkillName.Archery:
+						itemID = 0x13B1;
+						soundID = 0x145;
+						break;
+					default:
+						itemID = 0xF5F;
+						soundID = 0x56;
+						break;
 				}
+
+				attacker.PlaySound(0x20C);
+				attacker.PlaySound(soundID);
+				attacker.FixedParticles(0x3779, 1, 30, 9964, 3, 3, EffectLayer.Waist);
+
+				IEntity from = new Entity(Serial.Zero, new Point3D(attacker.X, attacker.Y, attacker.Z), attacker.Map);
+				IEntity to = new Entity(Serial.Zero, new Point3D(attacker.X, attacker.Y, attacker.Z + 50), attacker.Map);
+				Effects.SendMovingParticles(from, to, itemID, 1, 0, false, false, 33, 3, 9501, 1, 0, EffectLayer.Head, 0x100);
+
+				defender.FixedEffect(0x37B9, 10, 16);
 			}
 			
-			int max = (int)( Math.Max((int)ScaleDamageAOS(attacker, MaxDamage, false), 1) ); //무기 최소뎀
-			int min = (int)( Math.Max((int)ScaleDamageAOS(attacker, MinDamage, false), 1) ); //무기 최대뎀
+			
+			
+			
 			BaseWeapon one = null;
 			BaseWeapon two = null;
 			if( attacker is PlayerMobile )
@@ -2503,66 +2818,7 @@ namespace Server.Items
 				one = attacker.FindItemOnLayer(Layer.OneHanded) as BaseWeapon;
 				two = attacker.FindItemOnLayer(Layer.TwoHanded) as BaseWeapon;
 			}
-			//데미지 감소 및 내구도 하락
-			//int defensedamage = AbsorbDamage(attacker, defender, damage, armorNumber);
-			int defensedamage = AbsorbDamage(attacker, defender, damage, 0);
-			max -= defensedamage;
-			min -= defensedamage;
 			
-			if( bonus_damage == 0 )
-			{
-				//무기술, 명중률, 방어율
-				int ac = Math.Min(AosAttributes.GetValue(attacker, AosAttribute.AttackChance), 500000 ); //명중률 증가 옵션
-				int dc = Math.Min(AosAttributes.GetValue(defender, AosAttribute.DefendChance), 500000 ); //방어율 증가 옵션
-
-
-				if( attacker is BaseCreature )
-				{
-					BaseCreature c = attacker as BaseCreature;
-					max = c.DamageMax;
-					min = c.DamageMin;
-					ac = c.Str * 10;
-					//chance_dice = atkSkill.Value + attacker.Str * 0.1 - defSkill.Value - dc * 0.1;
-				}
-				if( defender is BaseCreature )
-				{
-					BaseCreature d = defender as BaseCreature;
-					dc = d.Dex * 10;
-					
-				}
-				bonus_damage = max - min;
-
-				double chance_dice = Utility.RandomDouble() * 200 + ac * 0.0001 - dc * 0.0001 - 100;
-
-				//무기 데미지 결정 150, 200 보너스
-				if( one != null )
-				{
-					if( atkWeapon.Skill is SkillName.Swords && attacker.Skills[SkillName.Swords].Value >= 200 && chance_dice < 50 )
-						chance_dice = 50;
-					else if( atkWeapon.Skill is SkillName.Macing && attacker.Skills[SkillName.Macing].Value >= 200 && chance_dice < 100 && Utility.RandomDouble() < 0.2 )
-						chance_dice = 100;
-				}
-				else
-				{
-					if( chance_dice > 100 )
-						chance_dice = 100;
-					else if( chance_dice < -100 )
-						chance_dice = -100;
-				}
-				if( chance_dice != 0 )
-				{
-					bonus_damage = (int)( chance_dice * bonus_damage );
-					bonus_damage /= 100;
-				}			
-				damage += bonus_damage;				
-				if( damage > max )
-					damage = max;
-				else if( damage < min )
-					damage = min;
-			}
-			else
-				damage = max;
-
             bool ranged = this is BaseRanged;
             int phys, fire, cold, pois, nrgy, chaos, direct;
 
@@ -2614,261 +2870,6 @@ namespace Server.Items
 
             bool splintering = false;
 
-            bool acidicTarget = MaxRange <= 1 && !(this is Fists) && (defender is Slime );
-
-			m_HiddenRank += 40;
-            if (m_HiddenRank >= 1000)
-            {
-				m_HiddenRank -= 1000;
-                if (MaxRange <= 1 && acidicTarget)
-                {
-                    attacker.LocalOverheadMessage(MessageType.Regular, 0x3B2, 500263); // *Acid blood scars your weapon!*
-                }
-				if (MaxHitPoints == 0 && m_Hits == 0 )
-				{
-					if (Parent is Mobile)
-						((Mobile)Parent).LocalOverheadMessage(MessageType.Regular, 0x3B2, 1061121); // Your equipment is severely damaged.		
-					Delete();
-				}
-				else if (m_MaxHits > 0)
-				{
-					if (m_Hits >= 1)
-						HitPoints--;
-					else if (m_MaxHits > 0)
-					{
-						MaxHitPoints--;
-
-						if (Parent is Mobile)
-							((Mobile)Parent).LocalOverheadMessage(MessageType.Regular, 0x3B2, 1061121); // Your equipment is severely damaged.
-
-						if (m_MaxHits <= 0)
-							Delete();
-					}
-				}
-				if( Parent is PlayerMobile )
-				{
-					PlayerMobile pm = Parent as PlayerMobile;
-					//Misc.Util.EquipPoint( pm, this );
-				}
-            }
-			
-			#region Critical Setting
-			bool criticalUse = false;
-			double criticalPercent = 0.0;
-			double criticalDamage = 1.5;
-			//스텟 치명 계산
-			if( attacker is PlayerMobile )
-				criticalPercent += attacker.Luck * 0.0001;
-			else if( attacker is BaseCreature )
-			{
-				BaseCreature bc = attacker as BaseCreature;
-				criticalPercent += bc.Dex * 0.00001;
-				criticalDamage += bc.Stam * 0.00001 + Misc.Util.MonsterTierCriticalDamage(bc);
-			}				
-
-			//장비 치명 계산
-			criticalDamage += Math.Min( AosAttributes.GetValue(attacker, AosAttribute.Brittle), 300000 ) * 0.000001;
-			criticalPercent += Math.Min( AosAttributes.GetValue(attacker, AosAttribute.WeaponCritical), 500000 ) * 0.000001;
-			
-			//적 장비 치명 계산
-			criticalDamage -= AosWeaponAttributes.GetValue(defender, AosWeaponAttribute.BattleLust ) * 0.000001;
-			criticalPercent -= AosWeaponAttributes.GetValue(defender, AosWeaponAttribute.BloodDrinker ) * 0.000001;
-			//방패 & 옷 치명 계산
-			int armorNumber = 6;
-			bool parry = false;
-			if( defender is PlayerMobile )
-			{
-				BaseShield shield = defender.FindItemOnLayer(Layer.TwoHanded) as BaseShield;
-				if( shield != null )
-				{
-					double parryChance = defender.Skills[SkillName.Parry].Value * 0.001
-					+ AosArmorAttributes.GetValue(defender, AosArmorAttribute.ShieldRecovery) * 0.000001;
-					if( defender.Skills[SkillName.Parry].Value >= 100 )
-						parryChance += 0.05;
-					if( parryChance >= Utility.RandomDouble() )
-					{
-						armorNumber = 0;
-						parry = true;
-					}
-				}
-				if( !parry )
-				{
-					double randomDice = Utility.RandomDouble();
-					if (randomDice < 0.1)
-					{
-						criticalDamage += 0.1;
-						criticalPercent += 0.2;
-						armorNumber = 1;
-					}
-					else if (randomDice < 0.2)
-					{
-						armorNumber = 2;
-						criticalPercent += 0.5;
-						criticalDamage += 1.0;
-					}
-					else if (randomDice < 0.25)
-					{
-						armorNumber = 3;
-						criticalPercent += 0.9;
-						criticalDamage += 0.85;
-					}
-					else if (randomDice < 0.40)
-					{
-						armorNumber = 4;
-						criticalDamage += 0.1;
-						criticalPercent += 0.25;
-					}
-					else if (randomDice < 0.65)
-					{
-						armorNumber = 5;
-						criticalPercent += 0.05;
-						criticalDamage += 0.1;
-					}
-					else
-					{
-						criticalPercent += 0.1;
-						criticalDamage += 0.1;
-					}					
-				}
-			}
-			
-			//무기(맨손) 치명 확률 계산
-			if( attacker.Skills[atkWeapon.Skill].Value >= 150 )
-				criticalPercent += 0.1;
-
-			//도끼 치명 보너스
-			if (atkWeapon.Type != WeaponType.Axe)
-				criticalPercent = attacker.Skills[SkillName.Lumberjacking].Value * 0.0005;
-			
-			//스킬 치명 피해 보너스
-			criticalDamage += attacker.Skills[atkWeapon.Skill].Value * 0.001;
-		
-			int twoWeaponBonusNumber = 0;
-			// 0 : 없음
-			//1 : 활 보너스
-			//2 : 석궁 보너스
-			//3 : 양손 검 보너스
-			//4 : 양손 둔기 보너스
-			//5 : 양손 펜싱 보너스
-			
-			
-			if( attacker is PlayerMobile )
-			{
-				PlayerMobile pm = attacker as PlayerMobile;
-				if( two != null && attacker.Skills[atkWeapon.Skill].Value >= 200 )
-				{
-					if( atkWeapon.Skill is SkillName.Swords )
-						twoWeaponBonusNumber = 3;
-					else if( atkWeapon.Skill is SkillName.Macing )
-						twoWeaponBonusNumber = 4;
-					else if( atkWeapon.Skill is SkillName.Fencing )
-						twoWeaponBonusNumber = 5;
-					else
-					{
-						BaseRanged br = atkWeapon as BaseRanged;
-						if( br.AmmoType == typeof( Bolt ) )
-							twoWeaponBonusNumber = 2;
-						else 
-							twoWeaponBonusNumber = 1;
-					}
-				}
-				//활 치명 확률 보너스
-				criticalPercent += pm.arrowCriticalBonus * 0.1;
-				//석궁 치명 피해 보너스
-				criticalDamage += pm.boltCriticalBonus * 0.05;
-				if( criticalPercent < 0.25 && twoWeaponBonusNumber == 3 )
-					criticalPercent = 0.25;
-				//양손 펜싱 치명 확률 보너스
-				if( pm.twoFencingBonus == 1 && twoWeaponBonusNumber == 5 )
-				{
-					pm.twoFencingBonus = 0;
-					criticalPercent = 1;
-				}
-			}
-			
-			//치명타 반사신경 보너스
-			if( defender.Skills.Tracking.Value >= 150 )
-				criticalDamage -= 0.25;
-			if( defender.Skills.Tracking.Value >= 100 )
-				criticalPercent -= 0.1 + defender.Dex * 0.0001;
-			if( defender.Skills.Tracking.Value > 0 )
-				criticalDamage -= 0.005 * defender.Skills.Tracking.Value;			
-			
-			
-			//전투 포인트 보너스
-			//if( attacker is PlayerMobile )
-			//{
-			//	PlayerMobile pm = attacker as PlayerMobile;
-			//	criticalDamage += pm.SilverPoint[19] * 0.025;
-			//	criticalPercent += pm.SilverPoint[17] * 0.005;
-			//	if( pm.Region.Name == "Wrong" )
-			//		criticalPercent -= 1;
-			//}
-			
-			
-			//치명 데미지 및 전체 데미지 합산
-			if( criticalPercent > Utility.RandomDouble() )
-			{
-				if( attacker is PlayerMobile )
-				{
-					PlayerMobile pm = attacker as PlayerMobile;
-					pm.arrowCriticalBonus = 0;
-					if( twoWeaponBonusNumber == 2 && pm.boltCriticalBonus < 10 )
-						pm.boltCriticalBonus++;
-					else if( twoWeaponBonusNumber == 4 )
-						pm.twoMacingBonus = 1;
-					else if( pm.twoFencingBonus == 0 && twoWeaponBonusNumber == 5 )
-						pm.twoFencingBonus = 1;
-					
-				}
-				//치명타 이펙트
-				int itemID, soundID;
-
-				switch ( atkWeapon.Skill )
-				{
-					case SkillName.Macing:
-						itemID = 0xFB4;
-						soundID = 0x232;
-						break;
-					case SkillName.Archery:
-						itemID = 0x13B1;
-						soundID = 0x145;
-						break;
-					default:
-						itemID = 0xF5F;
-						soundID = 0x56;
-						break;
-				}
-
-				attacker.PlaySound(0x20C);
-				attacker.PlaySound(soundID);
-				attacker.FixedParticles(0x3779, 1, 30, 9964, 3, 3, EffectLayer.Waist);
-
-				IEntity from = new Entity(Serial.Zero, new Point3D(attacker.X, attacker.Y, attacker.Z), attacker.Map);
-				IEntity to = new Entity(Serial.Zero, new Point3D(attacker.X, attacker.Y, attacker.Z + 50), attacker.Map);
-				Effects.SendMovingParticles(from, to, itemID, 1, 0, false, false, 33, 3, 9501, 1, 0, EffectLayer.Head, 0x100);
-				if( criticalDamage < 0.5 )
-					criticalDamage = 0.5;
-				criticalDamage += 1;
-				damage = (int)( damage * criticalDamage );
-				
-			}
-			else
-			{
-				if( attacker is PlayerMobile )
-				{
-					PlayerMobile pm = attacker as PlayerMobile;
-					if( twoWeaponBonusNumber == 1 && pm.arrowCriticalBonus < 10 )
-						pm.arrowCriticalBonus++;
-					if( twoWeaponBonusNumber == 2 )
-						pm.boltCriticalBonus = 0;
-				}
-			}
-				
-			#endregion
-			
-			//슬레이어 데미지
-			damage = (int)( damage * Misc.Util.GetSlayerDamageScalar(attacker, defender) );
 
 			//택틱, 해부학 스킬 증가
 			if( attacker.Alive && defender.Alive )
@@ -2945,18 +2946,51 @@ namespace Server.Items
 			}
 
 			bool first = false;
-            WeaponAbility primary = null;
-            WeaponAbility secondard = null;
-            SpecialMove move = SpecialMove.GetCurrentMove(attacker);
-			WeaponAbility a = WeaponAbility.GetCurrentAbility(attacker);
-			if( a is ArmorIgnore || a is ArmorPierce )
-				FuryCheck = true;
-			int weaponLevel = 0;
-			double weaponBonus = attacker.Skills[SkillName.Tactics].Value;
+            //WeaponAbility primary = null;
+            //WeaponAbility secondard = null;
+            //SpecialMove move = SpecialMove.GetCurrentMove(attacker);
+			//WeaponAbility a = WeaponAbility.GetCurrentAbility(attacker);
+			//if( a is ArmorIgnore || a is ArmorPierce )
+			//	FuryCheck = true;
+			//int weaponLevel = 0;
+			//double weaponBonus = attacker.Skills[SkillName.Tactics].Value;
 			//특수기 공격
-			if( a != null && a == this.SecondaryAbility )
-				weaponBonus -= 100;
-			if( attacker is BaseCreature )
+			//if( a != null && a == this.SecondaryAbility )
+			//	weaponBonus -= 100;
+			//변경된 특수기로 설정
+			/* 신규 특수기 사용법
+			// 무기 공격 시 호출되는 부분 예시
+			double tactics = attacker.Skills.Tactics.Value;
+			WeaponType type = this.GetWeaponType(); // 무기 종류 판단 로직
+
+			WeaponAbility ability = SpecialAbilityManager.PlayerAbility(type, tactics);
+
+			if (ability != null)
+			{
+				ability.OnHit(attacker, defender, damage);
+			}
+			
+			몬스터 강제 호출  부분 예시
+			// 보스 몬스터 AI 예시 (피가 30% 이하일 때 20% 확률로 소용돌이 일격 사용)
+			if (this.Hits < this.HitsMax * 0.3 && 0.2 > Utility.RandomDouble())
+			{
+				// 6번 인덱스: WhirlwindAttack
+				SpecialAbilityManager.MonsterAbility(this, enemy, 6, damage);
+				this.PublicOverheadMessage(MessageType.Regular, 0x22, false, "죽어라!!!");
+			}			
+			*/
+			if( attacker is PlayerMobile && ( attacker.Skills.Tactics.Value - defender.Skills.Tactics.Value ) * 0.001 > Utility.RandomDouble() )
+			{
+				// 무기 타입 판별 (앞서 만든 GetSpecialWeaponType 함수 사용)
+				int typeID = GetWeaponCategoryID(this);
+
+				// 전술 단계에 따른 누적 특수기 연쇄 시전!
+				// 예: 전술 150이면 50점 기술, 100점 기술, 150점 기술이 차례대로 터짐
+				SpecialAbilityManager.ExecuteChainAbilities(typeID, attacker, defender, damage);		
+			}
+			//차 후 수정
+			/*
+			else if( attacker is BaseCreature )
 			{
 				bool dice_SPM = (attacker.Stam * 0.001 > Utility.RandomDouble() );
 				if( dice_SPM )
@@ -3004,11 +3038,13 @@ namespace Server.Items
 					}
 				}
 			}
+			/*
 			else if( attacker is PlayerMobile && a != null )
 			{
-				a.OnHit(attacker, defender, damage, weaponLevel, weaponBonus);
-				WeaponAbility.ClearCurrentAbility(attacker);
+				//a.OnHit(attacker, defender, damage, weaponLevel, weaponBonus);
+				//WeaponAbility.ClearCurrentAbility(attacker);
 			}
+			*/
             if (defender == null)
             {
                 AOS.Damage(damageable, attacker, damage, FuryCheck, phys, fire, cold, pois, nrgy, chaos, direct, false, ranged ? Server.DamageType.Ranged : Server.DamageType.Melee);

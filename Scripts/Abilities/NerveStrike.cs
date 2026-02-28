@@ -46,6 +46,7 @@ namespace Server.Items
             if (!this.Validate(attacker) || !this.CheckMana(attacker, true))
                 return;
 
+			/*
             ClearCurrentAbility(attacker);
 
             bool immune = Server.Items.ParalyzingBlow.IsImmune(defender);
@@ -92,8 +93,9 @@ namespace Server.Items
                 defender.FixedEffect(0x376A, 9, 32);
                 defender.FixedParticles(0x37C4, 1, 8, 0x13AF, 0, 0, EffectLayer.Waist);
             }
-
+			
             Server.Items.ParalyzingBlow.BeginImmunity(defender, Server.Items.ParalyzingBlow.FreezeDelayDuration);
+			*/
         }
     }
 }

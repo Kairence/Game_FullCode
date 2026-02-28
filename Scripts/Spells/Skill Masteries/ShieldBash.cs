@@ -154,13 +154,6 @@ namespace Server.Spells.SkillMasteries
 
         private void CheckParalyze(Mobile defender, TimeSpan duration)
         {
-            if (ParalyzingBlow.IsImmune(defender))
-            {
-                Caster.SendLocalizedMessage(1070804); // Your target resists paralysis.
-                defender.SendLocalizedMessage(1070813); // You resist paralysis.
-                return;
-            }
-
             defender.FixedEffect(0x376A, 9, 32);
             defender.PlaySound(0x204);
 
@@ -169,8 +162,6 @@ namespace Server.Spells.SkillMasteries
 
             // Treat it as paralyze not as freeze, effect must be removed when damaged.
             defender.Paralyze(duration);
-
-            ParalyzingBlow.BeginImmunity(defender, duration);
         }
 
         public override void OnParried(Mobile attacker)

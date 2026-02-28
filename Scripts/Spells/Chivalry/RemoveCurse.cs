@@ -104,7 +104,6 @@ namespace Server.Spells.Chivalry
                     StrangleSpell.RemoveCurse(m);
                     CorpseSkinSpell.RemoveCurse(m);
                     CurseSpell.RemoveEffect(m);
-                    MortalStrike.EndWound(m);
                     WeakenSpell.RemoveEffects(m);
                     FeeblemindSpell.RemoveEffects(m);
                     ClumsySpell.RemoveEffects(m);

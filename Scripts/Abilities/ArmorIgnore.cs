@@ -1,60 +1,41 @@
 using System;
+using Server;
 using Server.Mobiles;
 
 namespace Server.Items
 {
-    /// <summary>
-    /// This special move allows the skilled warrior to bypass his target's physical resistance, for one shot only.
-    /// The Armor Ignore shot does slightly less damage than normal.
-    /// Against a heavily armored opponent, this ability is a big win, but when used against a very lightly armored foe, it might be better to use a standard strike!
-    /// </summary>
-
-	public class ArmorIgnore : WeaponAbility
+    public class ArmorIgnore : WeaponAbility
     {
         public ArmorIgnore()
         {
         }
 
-		public override int BaseMana
-		{
-			get
-			{
-				return 5;
-			}
-		}
-        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics )
+        // 기본 매개변수가 없는 OnHit을 오버라이드하여 패시브에서도 호출 가능하게 합니다.
+        public override void OnHit(Mobile attacker, Mobile defender, int damage)
         {
-            if (!this.Validate(attacker) )
+            // 부모 클래스의 Validate나 마나/기력 체크가 필요하다면 여기서 수행
+            if (attacker == null || defender == null || !defender.Alive)
                 return;
-			
-			if ( defender == null )
-				return;
-			
-			bool bonus = attacker.Skills.Tactics.Value >= 100 ? true : false;
-			int ignoreDamageBonus = (int)tactics * 10;//;( level >= 5 ? 500 : 0 ) + (int)tactics;
-			//double levelDamageBonus = level >= 5 ? 0.25 : 0;
-			//double damageBonus = level >= 5 ? 1.0 : 0.0;
-			
-			if ( !this.CalculateStam(attacker, Misc.Util.SPMStam[0,0], Misc.Util.SPMStam[0,1], level, bonus ) )
-				return;
-			
-			double bonusDamage = level * 0.025;// + damageBonus;
-			
-			attacker.SendLocalizedMessage(1060076); // Your attack penetrates their armor!
-			defender.SendLocalizedMessage(1060077); // The blow penetrated your armor!
 
-			defender.PlaySound(0x56);
-			defender.FixedParticles(0x3728, 200, 25, 9942, EffectLayer.Waist);
+            // 1. 시각 및 사운드 효과
+            attacker.SendLocalizedMessage(1060076); // Your attack penetrates their armor!
+            defender.SendLocalizedMessage(1060077); // The blow penetrated your armor!
 
-			Effects.PlaySound(defender.Location, defender.Map, 0x56);
-			Effects.SendTargetParticles(defender, 0x3728, 200, 25, 0, 0, 9942, EffectLayer.Waist, 0);
+            defender.PlaySound(0x56);
+            defender.FixedParticles(0x3728, 200, 25, 9942, EffectLayer.Waist);
 
-			//계산
-			damage = (int)( damage * ( 1 + bonusDamage ) ) + ignoreDamageBonus;
+            // 2. 데미지 계산: 무기 피해의 200% (baseDamage는 이미 계산되어 들어온 값 기준)
+            int bonusDamage = damage * 2;
 
-			AOS.Damage(defender, attacker, damage, true, 100, 0, 0, 0, 0, 0, 0, false, false, false);
+            // 3. 방어 무시 피해 (Direct Damage)
+            // 인자: defender, attacker, damage, phys, fire, cold, pois, nrgy, chaos, direct
+            AOS.Damage(defender, attacker, bonusDamage, 0, 0, 0, 0, 0, 0, 100);
+        }
 
-            ClearCurrentAbility(attacker);
+        // WeaponAbility의 가상 메서드 형식에 맞춘 오버로딩
+        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double bonus)
+        {
+            OnHit(attacker, defender, damage);
         }
     }
 }

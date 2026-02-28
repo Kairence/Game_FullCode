@@ -1,97 +1,49 @@
 using System;
+using Server.Mobiles;
 
 namespace Server.Items
 {
-    /// <summary>
-    /// Send two arrows flying at your opponent if you're mounted. Requires Bushido or Ninjitsu skill.
-    /// </summary>
     public class DoubleShot : WeaponAbility
     {
         public DoubleShot()
         {
         }
 
-        public override int BaseMana
-        {
-            get
-            {
-                return Core.TOL ? 30 : 35;
-            }
-        }
+        // 마나 소모 없음 (이전 요청 사항 유지)
 
-
-        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics )
+        public override void OnHit(Mobile attacker, Mobile defender, int damage)
         {
-            if (!this.Validate(attacker) )
+            if (attacker == null || defender == null || !defender.Alive)
                 return;
-			
-			if ( defender == null )
-				return;
-			
-			bool bonus = attacker.Skills.Tactics.Value >= 100 ? true : false;
-			//int levelCountBonus = level >= 5 ? 1 : 0;
-			//double levelDamageBonus = level >= 5 ? 0.3 : 0;
-			
-			if ( !this.CalculateStam(attacker, Misc.Util.SPMStam[6,0], Misc.Util.SPMStam[6,1], level, bonus ) )
-				return;
-			
-			int count = 1;// + levelCountBonus + (int)(tactics / 100 );
-			//double chance = tactics - (int)(tactics / 100 );
-			//chance *= 0.01;
-			//if( chance > Utility.RandomDouble() )
-			//	count++;
-			
-			//계산
-			damage = (int)( damage * ( 1 + level * 0.01 )  + tactics);
 
-            attacker.SendLocalizedMessage(1060084); // You attack with lightning speed!
-            defender.SendLocalizedMessage(1060085); // Your attacker strikes with lightning speed!
+            // 1. 효과 알림 및 시각 효과
+            attacker.SendLocalizedMessage(1063348); // You launch two shots at once!
+            defender.SendLocalizedMessage(1063349); // You're attacked with a barrage of shots!
 
             defender.PlaySound(0x3BB);
             defender.FixedEffect(0x37B9, 244, 25);
 
-			for( int i = 0; i < count; i++ )
-			{
-				AOS.Damage(defender, attacker, damage, false, 100, 0, 0, 0, 0, 0, 0, false, false, false);
-			}
-		}
-        public override void OnMiss(Mobile attacker, Mobile defender)
-        {
-            Use(attacker, defender);
-        }
-
-        public override bool Validate(Mobile from)
-        {
-            if (base.Validate(from))
+            // 2. 핵심 로직: 특수기 2종 연속 호출
+            
+            // [1] 출혈 공격 (Bleed Attack)
+            // 상대를 출혈 상태로 만들어 지속 피해를 입힙니다.
+            WeaponAbility bleedAttack = WeaponAbility.BleedAttack;
+            if (bleedAttack != null)
             {
-                if (from.Mounted)
-                    return true;
-                else
-                {
-                    from.SendLocalizedMessage(1070770); // You can only execute this attack while mounted!
-                    ClearCurrentAbility(from);
-                }
+                bleedAttack.OnHit(attacker, defender, damage);
             }
 
-            return false;
+            // [2] 독 바르기 (Infectious Strike)
+            // 우리가 앞서 수정한 로직(독 레벨당 보너스 피해 + 상위 독 교체)이 그대로 적용됩니다.
+            WeaponAbility infectiousStrike = WeaponAbility.InfectiousStrike;
+            if (infectiousStrike != null)
+            {
+                infectiousStrike.OnHit(attacker, defender, damage);
+            }
+
+            attacker.SendMessage("출혈과 독의 연쇄 공격이 적중했습니다!");
         }
-
-        public void Use(Mobile attacker, Mobile defender)
-        {
-            if (!Validate(attacker))	//sanity
-                return;
-
-            ClearCurrentAbility(attacker);
-
-            attacker.SendLocalizedMessage(1063348); // You launch two shots at once!
-            defender.SendLocalizedMessage(1063349); // You're attacked with a barrage of shots!
-
-            defender.FixedParticles(0x37B9, 1, 19, 0x251D, EffectLayer.Waist);
-
-            attacker.Weapon.OnSwing(attacker, defender);
-
-            if (attacker.Weapon is BaseWeapon)
-                ((BaseWeapon)attacker.Weapon).ProcessingMultipleHits = false;
-        }
+        // 미스 시 재시도 로직은 복잡성을 줄이기 위해 제거하거나 
+        // 기존 베이스를 유지하고 싶으시면 그대로 두셔도 됩니다.
     }
 }

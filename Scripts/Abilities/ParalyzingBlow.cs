@@ -1,231 +1,70 @@
 using System;
-using System.Collections;
+using System.Collections.Generic; // Dictionary 사용을 위해 추가
+using Server;
 using Server.Mobiles;
 
 namespace Server.Items
 {
-    /// <summary>
-    /// A successful Paralyzing Blow will leave the target stunned, unable to move, attack, or cast spells, for a few seconds.
-    /// </summary>
     public class ParalyzingBlow : WeaponAbility
     {
-        public static readonly TimeSpan PlayerFreezeDuration = TimeSpan.FromSeconds(3.0);
-        public static readonly TimeSpan NPCFreezeDuration = TimeSpan.FromSeconds(6.0);
-        public static readonly TimeSpan FreezeDelayDuration = TimeSpan.FromSeconds(8.0);
-        // No longer active in pub21:
-        private static readonly Hashtable m_Table = new Hashtable();
+        // 마비 종료 시간을 추적하기 위한 저장소
+        private static Dictionary<Mobile, DateTime> m_ParalyzeTable = new Dictionary<Mobile, DateTime>();
+
         public ParalyzingBlow()
         {
         }
-        public static bool IsImmune(Mobile m)
+
+        public override void OnHit(Mobile attacker, Mobile defender, int damage)
         {
-            return m_Table.Contains(m);
-        }
+            if (attacker == null || defender == null || !defender.Alive)
+                return;
 
-        public static void BeginImmunity(Mobile m, TimeSpan duration)
-        {
-            Timer t = (Timer)m_Table[m];
+            double maxDuration = 30.0;
+            double addDuration = 10.0;
 
-            if (t != null)
-                t.Stop();
+            if (defender is BaseCreature bc)
+                addDuration *= Misc.Util.MonsterTierCrowdControlRecovery(bc);
 
-            t = new InternalTimer(m, duration);
-            m_Table[m] = t;
+            DateTime now = DateTime.UtcNow;
+            double finalSeconds = addDuration;
 
-            t.Start();
-        }
-
-        public static void EndImmunity(Mobile m)
-        {
-            Timer t = (Timer)m_Table[m];
-
-            if (t != null)
-                t.Stop();
-
-            m_Table.Remove(m);
-        }
-
-        public override bool RequiresSecondarySkill(Mobile from)
-        {
-            BaseWeapon weapon = from.Weapon as BaseWeapon;
-
-            if (weapon == null)
-                return true;
-
-            return weapon.Skill != SkillName.Wrestling;
-        }
-
-        public override bool OnBeforeSwing(Mobile attacker, Mobile defender)
-        {
-            if(defender == null)
-                return false;
+            // 1. 중첩 로직 (테이블 확인)
+            if (defender.Paralyzed && m_ParalyzeTable.ContainsKey(defender))
+            {
+                DateTime end = m_ParalyzeTable[defender];
                 
-            if (defender.Paralyzed)
-            {
-                if (attacker != null)
+                if (end > now)
                 {
-                    attacker.SendLocalizedMessage(1061923); // The target is already frozen.
+                    TimeSpan remaining = end - now;
+                    // 이미 마비 중이면 50% 효율로 합산
+                    finalSeconds = Math.Min(maxDuration, remaining.TotalSeconds + (addDuration * 0.5));
                 }
-
-                return false;
             }
 
-            return true;
-        }
-        public override int BaseMana
-        {
-            get
+            // 2. 마비 적용 및 테이블 갱신
+            defender.Paralyze(TimeSpan.FromSeconds(finalSeconds));
+            m_ParalyzeTable[defender] = now + TimeSpan.FromSeconds(finalSeconds);
+
+            // 3. 타이머가 끝난 후 테이블에서 제거 (메모리 관리)
+            Timer.DelayCall(TimeSpan.FromSeconds(finalSeconds), () => {
+                if (m_ParalyzeTable.ContainsKey(defender) && m_ParalyzeTable[defender] <= DateTime.UtcNow)
+                    m_ParalyzeTable.Remove(defender);
+            });
+
+            // 효과 알림
+            if (!defender.Paralyzed) // 새로 걸린 경우만 메시지
             {
-                return 10;
-            }
-        }
-        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics )
-        {
-            if (!this.Validate(attacker) )
-                return;
-			
-			if ( defender == null )
-				return;
-			
-			bool bonus = attacker.Skills.Tactics.Value >= 100 ? true : false;
-			//bool levelStunBonus = level >= 5 ? true : false;
-			
-			if ( !this.CalculateStam(attacker, Misc.Util.SPMStam[10,0], Misc.Util.SPMStam[10,1], level, bonus ) )
-				return;
-
-			double bonusDamage = 2.0 + level * 0.025;	
-			if( defender.Frozen || defender.Paralyzed )
-				bonusDamage += tactics + level * 0.025;
-			
-			//계산
-			damage = (int)( damage * ( 1 + bonusDamage ) );
-
-			double stopTime = 20.0;
-			if( defender is BaseCreature )
-			{
-				BaseCreature bc = defender as BaseCreature;
-				stopTime *= Misc.Util.MonsterTierCrowdControlRecovery(bc);
-			}
-			
-			if (IsImmune(defender))	//Intentionally going after Mana consumption
-			{
-				attacker.SendLocalizedMessage(1070804); // Your target resists paralysis.
-				defender.SendLocalizedMessage(1070813); // You resist paralysis.
-				return;
-			}
-			defender.FixedEffect(0x376A, 9, 32);
-			defender.PlaySound(0x204);
-
-			attacker.SendLocalizedMessage(1060163); // You deliver a paralyzing blow!
-			defender.SendLocalizedMessage(1060164); // The attack has temporarily paralyzed you!
-			
-			if( attacker is Beholder )
-				damage *= 5;
-
-			defender.Paralyze(TimeSpan.FromSeconds(stopTime));
-			/*
-			if( levelStunBonus )
-			{
-				stopTime /= 2;
-				defender.Freeze(TimeSpan.FromSeconds(stopTime));
-				attacker.SendLocalizedMessage(1060911); // You deliver a paralyzing blow!
-				defender.SendLocalizedMessage(1060912); // The attack has temporarily paralyzed you!
-				defender.FixedParticles(0x37B9, 1, 5, 0x251D, 0x651, 0, EffectLayer.Waist);	
-				defender.PlaySound(0x204);
-			}
-			else
-			{
-				if (IsImmune(defender))	//Intentionally going after Mana consumption
-				{
-					attacker.SendLocalizedMessage(1070804); // Your target resists paralysis.
-					defender.SendLocalizedMessage(1070813); // You resist paralysis.
-					return;
-				}
-				defender.FixedEffect(0x376A, 9, 32);
-				defender.PlaySound(0x204);
-
-				attacker.SendLocalizedMessage(1060163); // You deliver a paralyzing blow!
-				defender.SendLocalizedMessage(1060164); // The attack has temporarily paralyzed you!
-				
-				if( attacker is Beholder )
-					damage *= 5;
-
-				defender.Paralyze(TimeSpan.FromSeconds(stopTime));
-			}
-			*/
-			AOS.Damage(defender, attacker, damage, false, 100, 0, 0, 0, 0, 0, 0, false, false, false);
-            ClearCurrentAbility(attacker);
-		}			
-
-		/*
-        public override void BeforeAttack(Mobile attacker, Mobile defender, int damage)
-        {
-			BaseWeapon weapon = attacker.Weapon as BaseWeapon;
-            if ( !this.Validate(attacker)|| (!attacker.InRange(defender, weapon.MaxRange)) )
-                return;
-			
-			if( attacker is PlayerMobile )
-			{
-				if( attacker.Stam < 20 )
-					return;
-				attacker.Stam -= 20;
-			}
-
-            ClearCurrentAbility(attacker);
-
-            if (IsImmune(defender))	//Intentionally going after Mana consumption
-            {
-                attacker.SendLocalizedMessage(1070804); // Your target resists paralysis.
-                defender.SendLocalizedMessage(1070813); // You resist paralysis.
-                return;
+                attacker.SendLocalizedMessage(1060163); 
+                defender.SendLocalizedMessage(1060164);
             }
 
             defender.FixedEffect(0x376A, 9, 32);
             defender.PlaySound(0x204);
-
-            attacker.SendLocalizedMessage(1060163); // You deliver a paralyzing blow!
-            defender.SendLocalizedMessage(1060164); // The attack has temporarily paralyzed you!
-
-			if( attacker is Beholder || Utility.RandomDouble() < 0.2 )
-			{
-				double duration = 10.0;
-				if( defender.Paralyzed )
-				{
-					duration = 0;
-					damage *= 2;
-				}
-				if( attacker is Beholder )
-				{
-					damage *= 5;
-				}
-
-				if( defender is BaseCreature )
-				{
-					BaseCreature bc = defender as BaseCreature;
-					duration *= MonsterTier(bc);
-				}
-				defender.Paralyze(TimeSpan.FromSeconds(duration));
-			}
-			AOS.Damage(defender, attacker, damage, true, 100, 0, 0, 0, 0, 0, 0, false, false, false);
-            // Treat it as paralyze not as freeze, effect must be removed when damaged.
-
-            //BeginImmunity(defender, duration + FreezeDelayDuration);
         }
-		*/
-        private class InternalTimer : Timer
-        {
-            private readonly Mobile m_Mobile;
-            public InternalTimer(Mobile m, TimeSpan duration)
-                : base(duration)
-            {
-                this.m_Mobile = m;
-                this.Priority = TimerPriority.TwoFiftyMS;
-            }
 
-            protected override void OnTick()
-            {
-                EndImmunity(this.m_Mobile);
-            }
+        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double bonus)
+        {
+            OnHit(attacker, defender, damage);
         }
     }
 }

@@ -508,6 +508,7 @@ namespace Server
 			}
 			totalDamage *= 2;
 			
+			/*
 			#region Pet Training
             if (from is BaseCreature || m is BaseCreature)
             {
@@ -539,7 +540,7 @@ namespace Server
                 }
             }
             #endregion
-
+			*/
             if (type <= DamageType.Ranged)
             {
                 AttuneWeaponSpell.TryAbsorb(m, ref totalDamage);
@@ -991,8 +992,8 @@ namespace Server
                 if (BaseMagicalFood.IsUnderInfluence(m, MagicalFood.GrapesOfWrath))
                     value += 15;
 
-                if (PsychicAttack.Registry.ContainsKey(m))
-                    value -= PsychicAttack.Registry[m].SpellDamageMalus;
+                //if (PsychicAttack.Registry.ContainsKey(m))
+                //    value -= PsychicAttack.Registry[m].SpellDamageMalus;
 
                 TransformContext context = TransformationSpellHelper.GetContext(m);
 

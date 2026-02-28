@@ -1,168 +1,71 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Server.Mobiles;
-
 using Server.Spells;
 
 namespace Server.Items
 {
-    /// <summary>
-    /// A godsend to a warrior surrounded, the Whirlwind Attack allows the fighter to strike at all nearby targets in one mighty spinning swing.
-    /// </summary>
     public class WhirlwindAttack : WeaponAbility
     {
         public WhirlwindAttack()
         {
         }
-        public override int BaseMana
+
+        public override int BaseMana => 25;
+
+        // 핵심: 300% 추가 공격 = 기본(100%) + 추가(300%) = 총 400% 위력
+        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics)
         {
-            get
-            {
-                return 25;
-            }
-        }
-
-        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics )
-        {
-            if (!this.Validate(attacker) )
-                return;
-			
-			if ( defender == null )
-				return;
-			
-			bool bonus = attacker.Skills.Tactics.Value >= 100 ? true : false;
-			//int levelTileBonus = level >= 5 ? 2 : 0;
-			bool levelAreaBonus = false; //level >= 5 ? true : false;
-			//double levelDamageBonus = level >= 5 ? 2.5 : 0;
-			
-			if ( !this.CalculateStam(attacker, Misc.Util.SPMStam[12,0], Misc.Util.SPMStam[12,1], level, bonus ) )
-				return;
-
-			double bonusDamage = tactics * 0.0025 + level;
-			int number = 5;
-			if( level < 5 )
-				number += level;
-			int tile = 2;
-
-			BaseWeapon two = attacker.FindItemOnLayer(Layer.TwoHanded) as BaseWeapon;
-			if( two != null )
-			{
-				tile++;
-			}
-			BaseShield shield = attacker.FindItemOnLayer(Layer.TwoHanded) as BaseShield;
-			if( shield != null )
-			{
-				tile++;
-			}
-			//계산
-			damage = (int)( damage * ( 1 + level * 0.005 ) + tactics * 2);
-
-			List<Mobile> targets = new List<Mobile>();
-			IPooledEnumerable eable = attacker.GetMobilesInRange(tile);//weapon.MaxRange);
-
-			foreach (Mobile m in eable)
-			{
-				if (m != defender && m != attacker && m.CanBeHarmful(attacker, false) && attacker.InLOS(m) && 
-					Server.Spells.SpellHelper.ValidIndirectTarget(attacker, m))
-				{
-					targets.Add(m);
-				}
-			}
-			eable.Free();
-			if (targets.Count > 0)
-			{
-				attacker.FixedEffect(0x3728, 10, 15);
-				attacker.PlaySound(0x2A1);
-                attacker.SendLocalizedMessage(1060161); // The whirling attack strikes a target!
-				
-				for (int i = 0; i < targets.Count; ++i)
-				{
-					if( !levelAreaBonus && i >= number )
-						break;
-					Mobile m = targets[i];
-					if ( m != attacker || m != defender )
-						AOS.Damage(m, attacker, damage, false, 100, 0, 0, 0, 0, 0, 0, false, false, false);
-				}
-				ColUtility.Free(targets);
-			}
-		}
-			
-
-		/*
-        public override bool OnBeforeDamage(Mobile attacker, Mobile defender)
-        {
-            BaseWeapon wep = attacker.Weapon as BaseWeapon;
-
-            if (wep != null)
-                wep.ProcessingMultipleHits = true;
-
-            return true;
-        }
-        public override int BaseMana
-        {
-            get
-            {
-                return 25;
-            }
-        }
-		
-        public override void BeforeAttack(Mobile attacker, Mobile defender, int damage)
-        {
-            if (!this.Validate(attacker) )
+            if (!this.Validate(attacker) || defender == null)
                 return;
 
-            ClearCurrentAbility(attacker);
-
-            Map map = attacker.Map;
-
-            if (map == null)
+            // 스테미너 체크 및 소모
+            bool bonus = attacker.Skills.Tactics.Value >= 100.0;
+            if (!this.CalculateStam(attacker, Misc.Util.SPMStam[12, 0], Misc.Util.SPMStam[12, 1], level, bonus))
                 return;
 
-            BaseWeapon weapon = attacker.Weapon as BaseWeapon;
-            weapon.ProcessingMultipleHits = true;
+            // 1. 사거리(Tile) 결정
+            int tile = 2; // 기본 2타일
+            if (attacker.FindItemOnLayer(Layer.TwoHanded) is BaseWeapon) tile++; // 양손무기 +1
+            if (attacker.FindItemOnLayer(Layer.TwoHanded) is BaseShield) tile++; // 방패(일부 엔진) +1
 
-            if (weapon == null)
-               return;
+            // 2. 데미지 계산: 기획하신 "300% 추가 공격" 적용
+            // 기본 데미지(damage)의 4배(400%)로 설정
+            int finalDamage = damage * 4; 
 
-            //if (!this.CheckMana(attacker, true))
-            //    return;
+            // 3. 대상 수집
+            List<Mobile> targets = new List<Mobile>();
+            IPooledEnumerable eable = attacker.GetMobilesInRange(tile);
 
-            attacker.FixedEffect(0x3728, 10, 15);
-            attacker.PlaySound(0x2A1);
-
-			int range = 3;
-			
-			/*
-			if( attacker is PlayerMobile )
-			{
-				PlayerMobile pm = attacker as PlayerMobile;
-				range += pm.SilverPoint[13] / 5;
-			}
-            var list = SpellHelper.AcquireIndirectTargets(attacker, attacker, attacker.Map, range)
-                .OfType<Mobile>()
-                .Where(m => attacker.InRange(m, range) && m != defender).ToList();
-
-            int count = list.Count;
-
-            if (count > 0)
+            foreach (Mobile m in eable)
             {
-                attacker.SendLocalizedMessage(1060161); // The whirling attack strikes a target!
-                attacker.RevealingAction();
-
-                foreach(var m in list)
+                // 자기 자신 제외, 살아있는 적, 공격 가능 대상, 시야(LOS) 확인
+                if (m != attacker && m.Alive && m.CanBeHarmful(attacker, false) && attacker.InLOS(m) &&
+                    SpellHelper.ValidIndirectTarget(attacker, m))
                 {
-                    m.SendLocalizedMessage(1060162); // You are struck by the whirling attack and take damage!
-					AOS.Damage(m, attacker, damage, false, 100, 0, 0, 0, 0, 0, 0, false, false, false);
-                    //weapon.OnHit(attacker, m, damageBonus);
+                    targets.Add(m);
                 }
             }
+            eable.Free();
 
-            ColUtility.Free(list);
+            // 4. 타격 실행
+            if (targets.Count > 0)
+            {
+                attacker.FixedEffect(0x3728, 10, 15);
+                attacker.PlaySound(0x2A1);
+                attacker.SendLocalizedMessage(1060161); // The whirling attack strikes a target!
 
-            weapon.ProcessingMultipleHits = false;
+                foreach (Mobile m in targets)
+                {
+                    // 100% 물리 피해 (물리 저항에 깎임)
+                    // 만약 방어무시 300%라면 마지막 인자를 100으로 변경하세요.
+                    AOS.Damage(m, attacker, finalDamage, 100, 0, 0, 0, 0, 0, 0);
+                    
+                    m.SendLocalizedMessage(1060162); // You are struck by the whirling attack!
+                }
+                
+                ColUtility.Free(targets);
+            }
         }
-		*/
-
     }
 }

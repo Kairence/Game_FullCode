@@ -305,11 +305,7 @@ namespace Server.Items
 
         public override bool CanDoEffects(Mobile m)
         {
-            if (MortalStrike.IsWounded(m))
-            {
-                m.SendLocalizedMessage(1156869); // You may not use this with a mortal wound!
-            }
-            else if (m.Poison != null)
+            if (m.Poison != null)
             {
                 m.SendLocalizedMessage(1156868); // You may not use this while poisoned!
             }

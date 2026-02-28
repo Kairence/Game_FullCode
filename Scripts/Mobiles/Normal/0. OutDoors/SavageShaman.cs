@@ -196,7 +196,7 @@ namespace Server.Mobiles
 									continue;
 								}
 
-								if (m.Poisoned || MortalStrike.IsWounded(m) || !CanBeBeneficial(m))
+								if (m.Poisoned || !CanBeBeneficial(m))
 								{
 									continue;
 								}

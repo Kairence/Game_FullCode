@@ -95,7 +95,6 @@ namespace Server.Items
                     FeeblemindSpell.RemoveEffects(from);
                     ClumsySpell.RemoveEffects(from);
                     CurseSpell.RemoveEffect(from);
-                    MortalStrike.EndWound(from);
                     BloodOathSpell.RemoveCurse(from);
                     MindRotSpell.ClearMindRotScalar(from);
                     SpellPlagueSpell.RemoveFromList(from);

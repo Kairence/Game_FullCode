@@ -297,6 +297,8 @@ namespace Server.Network
 		{
 			EventSink.InvokeSetAbility(new SetAbilityEventArgs(state.Mobile, reader.ReadInt32()));
 		}
+		
+
 
 		public static void GuildGumpRequest(NetState state, IEntity e, EncodedReader reader)
 		{

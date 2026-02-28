@@ -304,7 +304,6 @@ namespace Server.Mobiles
                             continue;
 
                         m.Freeze(TimeSpan.FromSeconds(2));
-                        BleedAttack.BeginBleed(m, this, false);
 
                         AOS.Damage(target, this, Utility.RandomMinMax(100, 110), 100, 0, 0, 0, 0);
                         m.PrivateOverheadMessage(MessageType.Regular, 0x21, 1156849, m.NetState); // *Rising columns of rock rip through your flesh and concuss you!*

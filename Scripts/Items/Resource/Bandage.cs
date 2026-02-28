@@ -288,7 +288,7 @@ namespace Server.Items
 
         public void CheckPoisonOrBleed()
         {
-            bool bleeding = BleedAttack.IsBleeding(m_Patient);
+            bool bleeding = false; //BleedAttack.IsBleeding(m_Patient);
             bool poisoned = m_Patient.Poisoned;
 
             if (bleeding || poisoned)
@@ -309,16 +309,6 @@ namespace Server.Items
                     if (poisoned && m_Patient.CurePoison(m_Healer))
                     {
                         m_Patient.SendLocalizedMessage(1010059); // You have been cured of all poisons.
-                    }
-                    else
-                    {
-                        if (BleedAttack.IsBleeding(m_Patient))
-                        {
-                            BleedAttack.EndBleed(m_Patient, false);
-                        }
-
-                        m_Patient.SendLocalizedMessage(1060088); // You bind the wound and stop the bleeding
-                        m_Patient.SendLocalizedMessage(1060167); // The bleeding wounds have healed, you are no longer bleeding!
                     }
                 }
             }
@@ -746,10 +736,6 @@ namespace Server.Items
             else if (patient is BaseCreature && ((BaseCreature)patient).IsAnimatedDead)
             {
                 healer.SendLocalizedMessage(500951); // You cannot heal that.
-            }
-            else if (!patient.Poisoned && patient.Hits == patient.HitsMax && !BleedAttack.IsBleeding(patient) && !isDeadPet)
-            {
-                healer.SendLocalizedMessage(500955); // That being is not damaged!
             }
             else if (!patient.Alive && (patient.Map == null || !patient.Map.CanFit(patient.Location, 16, false, false)))
             {

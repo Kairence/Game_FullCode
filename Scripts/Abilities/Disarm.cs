@@ -1,100 +1,82 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-
+using Server;
 using Server.Mobiles;
 
 namespace Server.Items
 {
-    /// <summary>
-    /// This attack allows you to disarm your foe.
-    /// Now in Age of Shadows, a successful Disarm leaves the victim unable to re-arm another weapon for several seconds.
-    /// </summary>
+    // 1. static 제거 및 WeaponAbility 상속
     public class Disarm : WeaponAbility
     {
-        public static readonly TimeSpan BlockEquipDuration = TimeSpan.FromSeconds(5.0);
+        // 모든 Disarm 인스턴스가 공유하는 면역 명단
+        public static List<Mobile> m_DisarmImmunity = new List<Mobile>();
+
         public Disarm()
         {
         }
-        public override int BaseMana
+
+        public static bool IsDisarmImmune(Mobile m)
         {
-            get
-            {
-                return 10;
-            }
+            return m_DisarmImmunity != null && m_DisarmImmunity.Contains(m);
         }
-		
-        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics )
+
+        // 2. 메서드명을 OnHit으로 변경 (클래스명 충돌 방지)
+        public override void OnHit(Mobile attacker, Mobile defender, int damage)
         {
-            if (!this.Validate(attacker) )
+            if (attacker == null || defender == null || !defender.Alive)
                 return;
-			
-			if ( defender == null )
-				return;
-			
-			bool bonus = attacker.Skills.Tactics.Value >= 100 ? true : false;
-			int levelWeakBonus = 10 + (int)( tactics * 0.2 );
-			bool levelDisarmBonus = false;//level >= 5 ? true : false;
-			double skillTime = 4.0 + tactics * 0.04 + level * 0.2;
-			
-			if ( !this.CalculateStam(attacker, Misc.Util.SPMStam[4,0], Misc.Util.SPMStam[4,1], level, bonus ) )
-				return;
-			
-			double bonusDamage = 1.5 + level * 0.05;
-		
-            if (IsImmune(defender))
+
+            // 1. 면역 체크
+            if (IsDisarmImmune(defender))
             {
-                attacker.SendLocalizedMessage(1111827); // Your opponent is gripping their weapon too tightly to be disarmed.
-                defender.SendLocalizedMessage(1111828); // You will not be caught off guard by another disarm attack for some time.
+                attacker.SendMessage("상대가 아직 무장 해제에 면역 상태입니다."); 
                 return;
             }
-			if( defender is PlayerMobile )
-			{
-				PlayerMobile pm = defender as PlayerMobile;
-				pm.disarmcheck = levelDisarmBonus;
-				pm.disarmtime = DateTime.Now + TimeSpan.FromSeconds(skillTime);
-				pm.disarmweak = levelWeakBonus;
-			}
-			else if( defender is BaseCreature )
-			{
-				BaseCreature bc = defender as BaseCreature;
-				bc.disarmcheck = levelDisarmBonus;
-				bc.disarmtime = DateTime.Now + TimeSpan.FromSeconds(skillTime);
-				bc.disarmweak = levelWeakBonus;
-			}
-			
-			//계산
-			damage = (int)( damage * ( 1 + bonusDamage ) );
+
+            // 2. 효과 알림 및 시각 효과
+            attacker.SendLocalizedMessage(1060157); // You disarm your opponent!
+            defender.SendLocalizedMessage(1060158); // Your weapon has been disarmed!
 
             defender.PlaySound(0x3B9);
             defender.FixedParticles(0x37BE, 232, 25, 9948, EffectLayer.LeftHand);
-			AOS.Damage(defender, attacker, damage, false, 100, 0, 0, 0, 0, 0, 0, false, false, false);
-		}
 
-        private Type[] _AutoRearms =
-        {
-            typeof(BritannianInfantry)
-        };
+            // 3. 공격력 감소 디버프 적용 (10초 고정)
+            TimeSpan duration = TimeSpan.FromSeconds(10.0);
+            int damageReduction = 50; // 50% 감소
 
-        public static List<Mobile> _Immunity;
+            if (defender is PlayerMobile pm)
+            {
+                pm.disarmtime = DateTime.Now + duration;
+                pm.disarmweak = damageReduction; 
+            }
+            else if (defender is BaseCreature bc)
+            {
+                bc.disarmtime = DateTime.Now + duration;
+                bc.disarmweak = damageReduction;
+            }
 
-        public static bool IsImmune(Mobile m)
-        {
-            return _Immunity != null && _Immunity.Contains(m);
+            // 4. 면역 부여 (디버프 종료 후 다시 걸리지 않게 하려면 시간을 더 길게 잡으세요)
+            AddDisarmImmunity(defender, duration + TimeSpan.FromSeconds(5.0)); // 15초 면역
         }
 
-        public static void AddImmunity(Mobile m, TimeSpan duration)
+        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double bonus)
         {
-            if (_Immunity == null)
-                _Immunity = new List<Mobile>();
+            OnHit(attacker, defender, damage);
+        }
 
-            _Immunity.Add(m);
+        public static void AddDisarmImmunity(Mobile m, TimeSpan duration)
+        {
+            if (m == null) return;
 
-            Timer.DelayCall<Mobile>(duration, mob =>
-                {
-                    if (_Immunity != null && _Immunity.Contains(mob))
-                        _Immunity.Remove(mob);
-                }, m);
+            if (!m_DisarmImmunity.Contains(m))
+                m_DisarmImmunity.Add(m);
+
+            // 지정된 시간 후 면역 제거
+            Timer.DelayCall(duration, () =>
+            {
+                if (m_DisarmImmunity.Contains(m))
+                    m_DisarmImmunity.Remove(m);
+            });
         }
     }
 }

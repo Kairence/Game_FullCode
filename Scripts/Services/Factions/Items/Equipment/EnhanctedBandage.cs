@@ -162,7 +162,6 @@ namespace Server.Factions
                     FeeblemindSpell.RemoveEffects(Patient);
                     ClumsySpell.RemoveEffects(Patient);
                     CurseSpell.RemoveEffect(Patient);
-                    MortalStrike.EndWound(Patient);
                     BloodOathSpell.RemoveCurse(Patient);
                     MindRotSpell.ClearMindRotScalar(Patient);
                     SpellPlagueSpell.RemoveFromList(Patient);

@@ -42,6 +42,7 @@ namespace Server.Items
 
         public override void OnHit(Mobile attacker, Mobile defender, int damage)
         {
+			/*
             if (!defender.Mounted && !defender.Flying && (!Core.ML || !Server.Spells.Ninjitsu.AnimalForm.UnderTransformation(defender)))
             {
                 attacker.SendLocalizedMessage(1060848); // This attack only works on mounted targets
@@ -96,6 +97,7 @@ namespace Server.Items
                     Server.Items.ParalyzingBlow.BeginImmunity(defender, Server.Items.ParalyzingBlow.FreezeDelayDuration);
                 }
             }
+			*/
         }
     }
 }

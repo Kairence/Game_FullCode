@@ -146,7 +146,6 @@ namespace Server.Spells.SkillMasteries
                         StrangleSpell.RemoveCurse(m);
                         CorpseSkinSpell.RemoveCurse(m);
                         CurseSpell.RemoveEffect(m);
-                        MortalStrike.EndWound(m);
                         BloodOathSpell.RemoveCurse(m);
                         MindRotSpell.ClearMindRotScalar(m);
 

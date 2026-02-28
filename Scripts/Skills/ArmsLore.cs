@@ -46,7 +46,7 @@ namespace Server.SkillHandlers
 							if( item.RootParent == from || ( house != null && house.IsOwner(from)) )
 							{
 								int skillvalue = (int)from.Skills[SkillName.ArmsLore].Value * 10;
-								Misc.Util.ItemIdentified( from, skillvalue, item, true );
+								//Misc.Util.ItemIdentified( from, skillvalue, item, true );
 							}
 						}
 						else
