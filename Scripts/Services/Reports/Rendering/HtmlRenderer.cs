@@ -3,9 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Web.UI;
-using HtmlAttr = System.Web.UI.HtmlTextWriterAttribute;
-using HtmlTag = System.Web.UI.HtmlTextWriterTag;
+using System.Text;
 using Server.Misc;
 
 namespace Server.Engines.Reports
@@ -22,13 +20,11 @@ namespace Server.Engines.Reports
         private readonly string m_OutputDirectory;
         private readonly DateTime m_TimeStamp;
         private readonly ObjectCollection m_Objects;
-        public HtmlRenderer(string outputDirectory, Snapshot ss, SnapshotHistory history)
-            : this(outputDirectory)
+
+        public HtmlRenderer(string outputDirectory, Snapshot ss, SnapshotHistory history) : this(outputDirectory)
         {
             this.m_TimeStamp = ss.TimeStamp;
-
             this.m_Objects = new ObjectCollection();
-
             for (int i = 0; i < ss.Children.Count; ++i)
                 this.m_Objects.Add(ss.Children[i]);
 
@@ -40,13 +36,10 @@ namespace Server.Engines.Reports
             this.m_Objects.Add(BarGraph.Growth(history, "General Stats", "Clients"));
         }
 
-        public HtmlRenderer(string outputDirectory, StaffHistory history)
-            : this(outputDirectory)
+        public HtmlRenderer(string outputDirectory, StaffHistory history) : this(outputDirectory)
         {
             this.m_TimeStamp = DateTime.UtcNow;
-
             this.m_Objects = new ObjectCollection();
-
             history.Render(this.m_Objects);
         }
 
@@ -65,24 +58,147 @@ namespace Server.Engines.Reports
                 Directory.CreateDirectory(this.m_OutputDirectory);
         }
 
-        public static string SafeFileName(string name)
-        {
-            return name.ToLower().Replace(' ', '_');
-        }
+        public static string SafeFileName(string name) { return name.ToLower().Replace(' ', '_'); }
 
         public void Render()
         {
             Console.WriteLine("Reports: {0}: Render started", this.m_Title);
-
             this.RenderFull();
-
             for (int i = 0; i < this.m_Objects.Count; ++i)
                 this.RenderSingle(this.m_Objects[i]);
-
             Console.WriteLine("Reports: {0}: Render complete", this.m_Title);
         }
 
-        public void Upload()
+        public void RenderFull()
+        {
+            string filePath = Path.Combine(this.m_OutputDirectory, "reports.html");
+            StringBuilder sb = new StringBuilder();
+            this.RenderFull(sb);
+            File.WriteAllText(filePath, sb.ToString());
+
+            string cssPath = Path.Combine(this.m_OutputDirectory, "styles.css");
+            if (!File.Exists(cssPath))
+            {
+                File.WriteAllText(cssPath, "body { background-color: #FFFFFF; font-family: verdana, arial; font-size: 11px; }\n" +
+                    "a { color: #28435E; }\ntd.header { background-color: #9696AA; font-weight: bold; font-size: 12px; }\n" +
+                    "td.entry { background-color: #FFFFFF; }\n.tbl-border { background-color: #46465A; }");
+            }
+        }
+
+        public void RenderFull(StringBuilder sb)
+        {
+            sb.Append("<html><head><title>").Append(ServerList.ServerName).Append(" Statistics</title>");
+            sb.Append("<link rel=\"stylesheet\" type=\"text/css\" href=\"styles.css\"></head><body>");
+
+            for (int i = 0; i < this.m_Objects.Count; ++i)
+            {
+                this.RenderDirect(this.m_Objects[i], sb);
+                sb.Append("<br><br>");
+            }
+
+            sb.Append("<center>Snapshot taken at ").AppendFormat("{0:d} {0:t}", m_TimeStamp).Append("</center></body></html>");
+        }
+
+        public void RenderSingle(PersistableObject obj)
+        {
+            string filePath = Path.Combine(this.m_OutputDirectory, SafeFileName(this.FindNameFrom(obj)) + ".html");
+            StringBuilder sb = new StringBuilder();
+            this.RenderSingle(obj, sb);
+            File.WriteAllText(filePath, sb.ToString());
+        }
+
+        public void RenderSingle(PersistableObject obj, StringBuilder sb)
+        {
+            sb.Append("<html><head><title>").Append(ServerList.ServerName).Append(" - ").Append(FindNameFrom(obj)).Append("</title>");
+            sb.Append("<link rel=\"stylesheet\" type=\"text/css\" href=\"styles.css\"></head><body><center>");
+            this.RenderDirect(obj, sb);
+            sb.Append("<br>Snapshot taken at ").AppendFormat("{0:d} {0:t}", m_TimeStamp).Append("</center></body></html>");
+        }
+
+        public void RenderDirect(PersistableObject obj, StringBuilder sb)
+        {
+            if (obj is Report) this.RenderReport(obj as Report, sb);
+            else if (obj is BarGraph) this.RenderBarGraph(obj as BarGraph, sb);
+            else if (obj is PieChart) this.RenderPieChart(obj as PieChart, sb);
+        }
+
+        private string FindNameFrom(PersistableObject obj)
+        {
+            if (obj is Report) return (obj as Report).Name;
+            if (obj is Chart) return (obj as Chart).Name;
+            return "Invalid";
+        }
+
+        private void RenderPieChart(PieChart chart, StringBuilder sb)
+        {
+            PieChartRenderer pieChart = new PieChartRenderer(Color.White);
+            pieChart.ShowPercents = chart.ShowPercents;
+            string[] labels = new string[chart.Items.Count];
+            string[] values = new string[chart.Items.Count];
+            for (int i = 0; i < chart.Items.Count; ++i) { labels[i] = chart.Items[i].Name; values[i] = chart.Items[i].Value.ToString(); }
+            pieChart.CollectDataPoints(labels, values);
+            using (Bitmap bmp = pieChart.Draw())
+            {
+                string fileName = chart.FileName + ".png";
+                bmp.Save(Path.Combine(this.m_OutputDirectory, fileName), ImageFormat.Png);
+                sb.AppendFormat("<table cellpadding=0 cellspacing=0 border=0><tr><td class=\"tbl-border\"><table cellpadding=4 cellspacing=1>");
+                sb.AppendFormat("<tr><td colspan=10 align=center class=\"header\">{0}</td></tr>", chart.Name);
+                sb.AppendFormat("<tr><td class=\"entry\"><img src=\"{0}\" width={1} height={2}></td></tr></table></td></tr></table>", fileName, bmp.Width, bmp.Height);
+            }
+        }
+
+        private void RenderBarGraph(BarGraph graph, StringBuilder sb)
+        {
+            BarGraphRenderer barGraph = new BarGraphRenderer(Color.White);
+            barGraph.RenderMode = graph.RenderMode;
+            barGraph._regions = graph.Regions;
+            barGraph.SetTitles(graph.xTitle, null);
+            if (graph.yTitle != null) barGraph.VerticalLabel = graph.yTitle;
+            barGraph.FontColor = Color.Black;
+            barGraph.ShowData = (graph.Interval == 1);
+            barGraph.VerticalTickCount = graph.Ticks;
+            string[] labels = new string[graph.Items.Count];
+            string[] values = new string[graph.Items.Count];
+            for (int i = 0; i < graph.Items.Count; ++i) { labels[i] = graph.Items[i].Name; values[i] = graph.Items[i].Value.ToString(); }
+            barGraph._interval = graph.Interval;
+            barGraph.CollectDataPoints(labels, values);
+            using (Bitmap bmp = barGraph.Draw())
+            {
+                string fileName = graph.FileName + ".png";
+                bmp.Save(Path.Combine(this.m_OutputDirectory, fileName), ImageFormat.Png);
+                sb.AppendFormat("<table cellpadding=0 cellspacing=0 border=0><tr><td class=\"tbl-border\"><table cellpadding=4 cellspacing=1>");
+                sb.AppendFormat("<tr><td colspan=10 align=center class=\"header\">{0}</td></tr>", graph.Name);
+                sb.AppendFormat("<tr><td class=\"entry\"><img src=\"{0}\" width={1} height={2}></td></tr></table></td></tr></table>", fileName, bmp.Width, bmp.Height);
+            }
+        }
+
+        private void RenderReport(Report report, StringBuilder sb)
+        {
+            sb.AppendFormat("<table width=\"{0}\" cellpadding=0 cellspacing=0 border=0><tr><td class=\"tbl-border\"><table width=\"100%\" cellpadding=4 cellspacing=1>", report.Width);
+            sb.AppendFormat("<tr><td colspan=10 align=center class=\"header\">{0}</td></tr>", report.Name);
+
+            bool isNamed = false;
+            for (int i = 0; i < report.Columns.Count && !isNamed; ++i) isNamed = (report.Columns[i].Name != null);
+
+            if (isNamed)
+            {
+                sb.Append("<tr>");
+                foreach (var col in report.Columns)
+                    sb.AppendFormat("<td class=\"header\" width=\"{0}\" align=\"{1}\">{2}</td>", col.Width, col.Align, col.Name);
+                sb.Append("</tr>");
+            }
+
+            foreach (var item in report.Items)
+            {
+                sb.Append("<tr>");
+                for (int j = 0; j < item.Values.Count; ++j)
+                    sb.AppendFormat("<td class=\"entry\" align=\"{0}\">{1}</td>", report.Columns[j].Align, item.Values[j].Value);
+                sb.Append("</tr>");
+            }
+            sb.Append("</table></td></tr></table>");
+        }
+
+		public void Upload()
         {
             if (FtpHost == null)
                 return;
@@ -91,449 +207,51 @@ namespace Server.Engines.Reports
 
             string filePath = Path.Combine(this.m_OutputDirectory, "upload.ftp");
 
-            using (StreamWriter op = new StreamWriter(filePath))
-            {
-                op.WriteLine("open \"{0}\"", FtpHost);
-                op.WriteLine(FtpUsername);
-                op.WriteLine(FtpPassword);
-                op.WriteLine("cd \"{0}\"", (this.m_Type == "staff" ? FtpStaffDirectory : FtpStatsDirectory));
-                op.WriteLine("mput \"{0}\"", Path.Combine(this.m_OutputDirectory, "*.html"));
-                op.WriteLine("mput \"{0}\"", Path.Combine(this.m_OutputDirectory, "*.css"));
-                op.WriteLine("binary");
-                op.WriteLine("mput \"{0}\"", Path.Combine(this.m_OutputDirectory, "*.png"));
-                op.WriteLine("disconnect");
-                op.Write("quit");
-            }
-
-            ProcessStartInfo psi = new ProcessStartInfo();
-
-            psi.FileName = "ftp";
-            psi.Arguments = String.Format("-i -s:\"{0}\"", filePath);
-
-            psi.CreateNoWindow = true;
-            psi.WindowStyle = ProcessWindowStyle.Hidden;
-            //psi.UseShellExecute = true;
-
             try
             {
-                Process p = Process.Start(psi);
+                using (StreamWriter op = new StreamWriter(filePath))
+                {
+                    op.WriteLine("open \"{0}\"", FtpHost);
+                    op.WriteLine(FtpUsername);
+                    op.WriteLine(FtpPassword);
+                    op.WriteLine("cd \"{0}\"", (this.m_Type == "staff" ? FtpStaffDirectory : FtpStatsDirectory));
+                    op.WriteLine("mput \"{0}\"", Path.Combine(this.m_OutputDirectory, "*.html"));
+                    op.WriteLine("mput \"{0}\"", Path.Combine(this.m_OutputDirectory, "*.css"));
+                    op.WriteLine("binary");
+                    op.WriteLine("mput \"{0}\"", Path.Combine(this.m_OutputDirectory, "*.png"));
+                    op.WriteLine("disconnect");
+                    op.Write("quit");
+                }
 
-                p.WaitForExit();
+                ProcessStartInfo psi = new ProcessStartInfo();
+
+                psi.FileName = "ftp";
+                psi.Arguments = String.Format("-i -s:\"{0}\"", filePath);
+
+                psi.CreateNoWindow = true;
+                psi.WindowStyle = ProcessWindowStyle.Hidden;
+
+                using (Process p = Process.Start(psi))
+                {
+                    if (p != null)
+                        p.WaitForExit();
+                }
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine("Reports: Upload Error: {0}", ex.Message);
+            }
+            finally
+            {
+                try
+                {
+                    if (File.Exists(filePath))
+                        File.Delete(filePath);
+                }
+                catch { }
             }
 
             Console.WriteLine("Reports: {0}: Upload complete", this.m_Title);
-
-            try
-            {
-                File.Delete(filePath);
-            }
-            catch
-            {
-            }
-        }
-
-        public void RenderFull()
-        {
-            string filePath = Path.Combine(this.m_OutputDirectory, "reports.html");
-
-            using (StreamWriter op = new StreamWriter(filePath))
-            {
-                using (HtmlTextWriter html = new HtmlTextWriter(op, "\t"))
-                    this.RenderFull(html);
-            }
-
-            string cssPath = Path.Combine(this.m_OutputDirectory, "styles.css");
-
-            if (File.Exists(cssPath))
-                return;
-
-            using (StreamWriter css = new StreamWriter(cssPath))
-            {
-                css.WriteLine("body { background-color: #FFFFFF; font-family: verdana, arial; font-size: 11px; }");
-                css.WriteLine("a { color: #28435E; }");
-                css.WriteLine("a:hover { color: #4878A9; }");
-                css.WriteLine("td.header { background-color: #9696AA; font-weight: bold; font-size: 12px; }");
-                css.WriteLine("td.lentry { background-color: #D7D7EB; width: 10%; }");
-                css.WriteLine("td.rentry { background-color: #FFFFFF; width: 90%; }");
-                css.WriteLine("td.entry { background-color: #FFFFFF; }");
-                css.WriteLine("td { font-size: 11px; }");
-                css.Write(".tbl-border { background-color: #46465A; }");
-            }
-        }
-
-        public void RenderFull(HtmlTextWriter html)
-        {
-            html.RenderBeginTag(HtmlTag.Html);
-
-            html.RenderBeginTag(HtmlTag.Head);
-
-            html.RenderBeginTag(HtmlTag.Title);
-            html.Write("{0} Statistics", ServerList.ServerName);
-            html.RenderEndTag();
-
-            html.AddAttribute("rel", "stylesheet");
-            html.AddAttribute(HtmlAttr.Type, "text/css");
-            html.AddAttribute(HtmlAttr.Href, "styles.css");
-            html.RenderBeginTag(HtmlTag.Link);
-            html.RenderEndTag();
-
-            html.RenderEndTag();
-
-            html.RenderBeginTag(HtmlTag.Body);
-
-            for (int i = 0; i < this.m_Objects.Count; ++i)
-            {
-                this.RenderDirect(this.m_Objects[i], html);
-                html.Write("<br><br>");
-            }
-
-            html.RenderBeginTag(HtmlTag.Center);
-            TimeZone tz = TimeZone.CurrentTimeZone;
-            bool isDaylight = tz.IsDaylightSavingTime(this.m_TimeStamp);
-            TimeSpan utcOffset = tz.GetUtcOffset(this.m_TimeStamp);
-
-            html.Write("Snapshot taken at {0:d} {0:t}. All times are {1}.", this.m_TimeStamp, tz.StandardName);
-            html.RenderEndTag();
-
-            html.RenderEndTag();
-
-            html.RenderEndTag();
-        }
-
-        public void RenderSingle(PersistableObject obj)
-        {
-            string filePath = Path.Combine(this.m_OutputDirectory, SafeFileName(this.FindNameFrom(obj)) + ".html");
-
-            using (StreamWriter op = new StreamWriter(filePath))
-            {
-                using (HtmlTextWriter html = new HtmlTextWriter(op, "\t"))
-                    this.RenderSingle(obj, html);
-            }
-        }
-
-        public void RenderSingle(PersistableObject obj, HtmlTextWriter html)
-        {
-            html.RenderBeginTag(HtmlTag.Html);
-
-            html.RenderBeginTag(HtmlTag.Head);
-
-            html.RenderBeginTag(HtmlTag.Title);
-            html.Write("{0} Statistics - {1}", ServerList.ServerName, this.FindNameFrom(obj));
-            html.RenderEndTag();
-
-            html.AddAttribute("rel", "stylesheet");
-            html.AddAttribute(HtmlAttr.Type, "text/css");
-            html.AddAttribute(HtmlAttr.Href, "styles.css");
-            html.RenderBeginTag(HtmlTag.Link);
-            html.RenderEndTag();
-
-            html.RenderEndTag();
-
-            html.RenderBeginTag(HtmlTag.Body);
-
-            html.RenderBeginTag(HtmlTag.Center);
-
-            this.RenderDirect(obj, html);
-
-            html.Write("<br>");
-
-            TimeZone tz = TimeZone.CurrentTimeZone;
-            bool isDaylight = tz.IsDaylightSavingTime(this.m_TimeStamp);
-            TimeSpan utcOffset = tz.GetUtcOffset(this.m_TimeStamp);
-
-            html.Write("Snapshot taken at {0:d} {0:t}. All times are {1}.", this.m_TimeStamp, tz.StandardName);
-            html.RenderEndTag();
-
-            html.RenderEndTag();
-
-            html.RenderEndTag();
-        }
-
-        public void RenderDirect(PersistableObject obj, HtmlTextWriter html)
-        {
-            if (obj is Report)
-                this.RenderReport(obj as Report, html);
-            else if (obj is BarGraph)
-                this.RenderBarGraph(obj as BarGraph, html);
-            else if (obj is PieChart)
-                this.RenderPieChart(obj as PieChart, html);
-        }
-
-        private string FindNameFrom(PersistableObject obj)
-        {
-            if (obj is Report)
-                return (obj as Report).Name;
-            else if (obj is Chart)
-                return (obj as Chart).Name;
-
-            return "Invalid";
-        }
-
-        private void RenderPieChart(PieChart chart, HtmlTextWriter html)
-        {
-            PieChartRenderer pieChart = new PieChartRenderer(Color.White);
-
-            pieChart.ShowPercents = chart.ShowPercents;
-
-            string[] labels = new string[chart.Items.Count];
-            string[] values = new string[chart.Items.Count];
-
-            for (int i = 0; i < chart.Items.Count; ++i)
-            {
-                ChartItem item = chart.Items[i];
-
-                labels[i] = item.Name;
-                values[i] = item.Value.ToString();
-            }
-
-            pieChart.CollectDataPoints(labels, values);
-
-            Bitmap bmp = pieChart.Draw();
-
-            string fileName = chart.FileName + ".png";
-            bmp.Save(Path.Combine(this.m_OutputDirectory, fileName), ImageFormat.Png);
-
-            html.Write("<!-- ");
-
-            html.AddAttribute(HtmlAttr.Href, "#");
-            html.AddAttribute(HtmlAttr.Onclick, String.Format("javascript:window.open('{0}.html','ChildWindow','width={1},height={2},resizable=no,status=no,toolbar=no')", SafeFileName(this.FindNameFrom(chart)), bmp.Width + 30, bmp.Height + 80));
-            html.RenderBeginTag(HtmlTag.A);
-            html.Write(chart.Name);
-            html.RenderEndTag();
-
-            html.Write(" -->");
-
-            html.AddAttribute(HtmlAttr.Cellpadding, "0");
-            html.AddAttribute(HtmlAttr.Cellspacing, "0");
-            html.AddAttribute(HtmlAttr.Border, "0");
-            html.RenderBeginTag(HtmlTag.Table);
-
-            html.RenderBeginTag(HtmlTag.Tr);
-            html.AddAttribute(HtmlAttr.Class, "tbl-border");
-            html.RenderBeginTag(HtmlTag.Td);
-
-            html.AddAttribute(HtmlAttr.Width, "100%");
-            html.AddAttribute(HtmlAttr.Cellpadding, "4");
-            html.AddAttribute(HtmlAttr.Cellspacing, "1");
-            html.RenderBeginTag(HtmlTag.Table);
-
-            html.RenderBeginTag(HtmlTag.Tr);
-
-            html.AddAttribute(HtmlAttr.Colspan, "10");
-            html.AddAttribute(HtmlAttr.Width, "100%");
-            html.AddAttribute(HtmlAttr.Align, "center");
-            html.AddAttribute(HtmlAttr.Class, "header");
-            html.RenderBeginTag(HtmlTag.Td);
-            html.Write(chart.Name);
-            html.RenderEndTag();
-            html.RenderEndTag();
-
-            html.RenderBeginTag(HtmlTag.Tr);
-
-            html.AddAttribute(HtmlAttr.Colspan, "10");
-            html.AddAttribute(HtmlAttr.Width, "100%");
-            html.AddAttribute(HtmlAttr.Align, "center");
-            html.AddAttribute(HtmlAttr.Class, "entry");
-            html.RenderBeginTag(HtmlTag.Td);
-
-            html.AddAttribute(HtmlAttr.Width, bmp.Width.ToString());
-            html.AddAttribute(HtmlAttr.Height, bmp.Height.ToString());
-            html.AddAttribute(HtmlAttr.Src, fileName);
-            html.RenderBeginTag(HtmlTag.Img);
-            html.RenderEndTag();
-
-            html.RenderEndTag();
-            html.RenderEndTag();
-
-            html.RenderEndTag();
-            html.RenderEndTag();
-            html.RenderEndTag();
-            html.RenderEndTag();
-
-            bmp.Dispose();
-        }
-
-        private void RenderBarGraph(BarGraph graph, HtmlTextWriter html)
-        {
-            BarGraphRenderer barGraph = new BarGraphRenderer(Color.White);
-
-            barGraph.RenderMode = graph.RenderMode;
-
-            barGraph._regions = graph.Regions;
-            barGraph.SetTitles(graph.xTitle, null);
-
-            if (graph.yTitle != null)
-                barGraph.VerticalLabel = graph.yTitle;
-
-            barGraph.FontColor = Color.Black;
-            barGraph.ShowData = (graph.Interval == 1);
-            barGraph.VerticalTickCount = graph.Ticks;
-
-            string[] labels = new string[graph.Items.Count];
-            string[] values = new string[graph.Items.Count];
-
-            for (int i = 0; i < graph.Items.Count; ++i)
-            {
-                ChartItem item = graph.Items[i];
-
-                labels[i] = item.Name;
-                values[i] = item.Value.ToString();
-            }
-
-            barGraph._interval = graph.Interval;
-            barGraph.CollectDataPoints(labels, values);
-
-            Bitmap bmp = barGraph.Draw();
-
-            string fileName = graph.FileName + ".png";
-            bmp.Save(Path.Combine(this.m_OutputDirectory, fileName), ImageFormat.Png);
-
-            html.Write("<!-- ");
-
-            html.AddAttribute(HtmlAttr.Href, "#");
-            html.AddAttribute(HtmlAttr.Onclick, String.Format("javascript:window.open('{0}.html','ChildWindow','width={1},height={2},resizable=no,status=no,toolbar=no')", SafeFileName(this.FindNameFrom(graph)), bmp.Width + 30, bmp.Height + 80));
-            html.RenderBeginTag(HtmlTag.A);
-            html.Write(graph.Name);
-            html.RenderEndTag();
-
-            html.Write(" -->");
-
-            html.AddAttribute(HtmlAttr.Cellpadding, "0");
-            html.AddAttribute(HtmlAttr.Cellspacing, "0");
-            html.AddAttribute(HtmlAttr.Border, "0");
-            html.RenderBeginTag(HtmlTag.Table);
-
-            html.RenderBeginTag(HtmlTag.Tr);
-            html.AddAttribute(HtmlAttr.Class, "tbl-border");
-            html.RenderBeginTag(HtmlTag.Td);
-
-            html.AddAttribute(HtmlAttr.Width, "100%");
-            html.AddAttribute(HtmlAttr.Cellpadding, "4");
-            html.AddAttribute(HtmlAttr.Cellspacing, "1");
-            html.RenderBeginTag(HtmlTag.Table);
-
-            html.RenderBeginTag(HtmlTag.Tr);
-
-            html.AddAttribute(HtmlAttr.Colspan, "10");
-            html.AddAttribute(HtmlAttr.Width, "100%");
-            html.AddAttribute(HtmlAttr.Align, "center");
-            html.AddAttribute(HtmlAttr.Class, "header");
-            html.RenderBeginTag(HtmlTag.Td);
-            html.Write(graph.Name);
-            html.RenderEndTag();
-            html.RenderEndTag();
-
-            html.RenderBeginTag(HtmlTag.Tr);
-
-            html.AddAttribute(HtmlAttr.Colspan, "10");
-            html.AddAttribute(HtmlAttr.Width, "100%");
-            html.AddAttribute(HtmlAttr.Align, "center");
-            html.AddAttribute(HtmlAttr.Class, "entry");
-            html.RenderBeginTag(HtmlTag.Td);
-
-            html.AddAttribute(HtmlAttr.Width, bmp.Width.ToString());
-            html.AddAttribute(HtmlAttr.Height, bmp.Height.ToString());
-            html.AddAttribute(HtmlAttr.Src, fileName);
-            html.RenderBeginTag(HtmlTag.Img);
-            html.RenderEndTag();
-
-            html.RenderEndTag();
-            html.RenderEndTag();
-
-            html.RenderEndTag();
-            html.RenderEndTag();
-            html.RenderEndTag();
-            html.RenderEndTag();
-
-            bmp.Dispose();
-        }
-
-        private void RenderReport(Report report, HtmlTextWriter html)
-        {
-            html.AddAttribute(HtmlAttr.Width, report.Width);
-            html.AddAttribute(HtmlAttr.Cellpadding, "0");
-            html.AddAttribute(HtmlAttr.Cellspacing, "0");
-            html.AddAttribute(HtmlAttr.Border, "0");
-            html.RenderBeginTag(HtmlTag.Table);
-
-            html.RenderBeginTag(HtmlTag.Tr);
-            html.AddAttribute(HtmlAttr.Class, "tbl-border");
-            html.RenderBeginTag(HtmlTag.Td);
-
-            html.AddAttribute(HtmlAttr.Width, "100%");
-            html.AddAttribute(HtmlAttr.Cellpadding, "4");
-            html.AddAttribute(HtmlAttr.Cellspacing, "1");
-            html.RenderBeginTag(HtmlTag.Table);
-
-            html.RenderBeginTag(HtmlTag.Tr);
-            html.AddAttribute(HtmlAttr.Colspan, "10");
-            html.AddAttribute(HtmlAttr.Width, "100%");
-            html.AddAttribute(HtmlAttr.Align, "center");
-            html.AddAttribute(HtmlAttr.Class, "header");
-            html.RenderBeginTag(HtmlTag.Td);
-            html.Write(report.Name);
-            html.RenderEndTag();
-            html.RenderEndTag();
-
-            bool isNamed = false;
-
-            for (int i = 0; i < report.Columns.Count && !isNamed; ++i)
-                isNamed = (report.Columns[i].Name != null);
-
-            if (isNamed)
-            {
-                html.RenderBeginTag(HtmlTag.Tr);
-
-                for (int i = 0; i < report.Columns.Count; ++i)
-                {
-                    ReportColumn column = report.Columns[i];
-
-                    html.AddAttribute(HtmlAttr.Class, "header");
-                    html.AddAttribute(HtmlAttr.Width, column.Width);
-                    html.AddAttribute(HtmlAttr.Align, column.Align);
-                    html.RenderBeginTag(HtmlTag.Td);
-
-                    html.Write(column.Name);
-
-                    html.RenderEndTag();
-                }
-
-                html.RenderEndTag();
-            }
-
-            for (int i = 0; i < report.Items.Count; ++i)
-            {
-                ReportItem item = report.Items[i];
-
-                html.RenderBeginTag(HtmlTag.Tr);
-
-                for (int j = 0; j < item.Values.Count; ++j)
-                {
-                    if (!isNamed && j == 0)
-                        html.AddAttribute(HtmlAttr.Width, report.Columns[j].Width);
-
-                    html.AddAttribute(HtmlAttr.Align, report.Columns[j].Align);
-                    html.AddAttribute(HtmlAttr.Class, "entry");
-                    html.RenderBeginTag(HtmlTag.Td);
-
-                    if (item.Values[j].Format == null)
-                        html.Write(item.Values[j].Value);
-                    else
-                        html.Write(int.Parse(item.Values[j].Value).ToString(item.Values[j].Format));
-
-                    html.RenderEndTag();
-                }
-
-                html.RenderEndTag();
-            }
-
-            html.RenderEndTag();
-            html.RenderEndTag();
-            html.RenderEndTag();
-            html.RenderEndTag();
         }
     }
 }

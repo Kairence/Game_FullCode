@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.Reflection;
 using System.Reflection.Emit;
+using Server;
 
 namespace Server.Commands.Generic
 {

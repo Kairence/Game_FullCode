@@ -351,143 +351,52 @@ namespace Server.Engines.Reports
                 valFont = new Font(this._fontFamily, _labelFontSize);
                 sfFormat = new StringFormat();
                 sfFormat.Alignment = StringAlignment.Center;
-                int i = 0;
 
                 PointF[] linePoints = null;
 
                 if (this._renderMode == BarGraphRenderMode.Lines)
                     linePoints = new PointF[this.DataPoints.Count];
 
-                int pointIndex = 0;
-
                 // Draw bars and the value above each bar
-                using (Pen pen = new Pen(this._fontColor,0.15f))
+                using (Pen pen = new Pen(this._fontColor, 0.15f))
                 {
                     using (SolidBrush whiteBrsh = new SolidBrush(Color.FromArgb(128, Color.White)))
                     {
-                        foreach (DataItem item in this.DataPoints)
+                        // 1. 데이터 포인트 좌표 계산 및 막대 그리기
+                        for (int j = 0; j < this.DataPoints.Count; j++)
                         {
-                            using (SolidBrush barBrush = new SolidBrush(item.ItemColor))
+                            DataItem item = this.DataPoints[j];
+                            float itemY = this._yOrigin + this._graphHeight - item.SweepSize;
+                            float centerX = this._xOrigin + item.StartPos + (this._barWidth / 2);
+
+                            if (this._renderMode == BarGraphRenderMode.Lines)
                             {
-                                float itemY = this._yOrigin + this._graphHeight - item.SweepSize;
-
-                                if (this._renderMode == BarGraphRenderMode.Lines)
-                                {
-                                    linePoints[pointIndex++] = new PointF(this._xOrigin + item.StartPos + (this._barWidth / 2), itemY);
-                                }
-                                else if (this._renderMode == BarGraphRenderMode.Bars)
-                                {
-                                    float ox = this._xOrigin + item.StartPos;
-                                    float oy = itemY;
-                                    float ow = this._barWidth;
-                                    float oh = item.SweepSize;
-                                    float of = 9.5f;
-
-                                    PointF[] pts = new PointF[]
-                                    {
-                                        new PointF(ox, oy),
-                                        new PointF(ox + ow, oy),
-                                        new PointF(ox + of, oy + of),
-                                        new PointF(ox + of + ow, oy + of),
-                                        new PointF(ox, oy + oh),
-                                        new PointF(ox + of, oy + of + oh),
-                                        new PointF(ox + of + ow, oy + of + oh)
-                                    };
-
-                                    graph.FillPolygon(barBrush, new PointF[] { pts[2], pts[3], pts[6], pts[5] });
-
-                                    using (SolidBrush ltBrsh = new SolidBrush(System.Windows.Forms.ControlPaint.Light(item.ItemColor, 0.1f)))
-                                        graph.FillPolygon(ltBrsh, new PointF[] { pts[0], pts[2], pts[5], pts[4] });
-
-                                    using (SolidBrush drkBrush = new SolidBrush(System.Windows.Forms.ControlPaint.Dark(item.ItemColor, 0.05f)))
-                                        graph.FillPolygon(drkBrush, new PointF[] { pts[0], pts[1], pts[3], pts[2] });
-
-                                    graph.DrawLine(pen, pts[0], pts[1]);
-                                    graph.DrawLine(pen, pts[0], pts[2]);
-                                    graph.DrawLine(pen, pts[1], pts[3]);
-                                    graph.DrawLine(pen, pts[2], pts[3]);
-                                    graph.DrawLine(pen, pts[2], pts[5]);
-                                    graph.DrawLine(pen, pts[0], pts[4]);
-                                    graph.DrawLine(pen, pts[4], pts[5]);
-                                    graph.DrawLine(pen, pts[5], pts[6]);
-                                    graph.DrawLine(pen, pts[3], pts[6]);
-
-                                    // Draw data value
-                                    if (this._displayBarData && (i % this._interval) == 0)
-                                    {
-                                        float sectionWidth = (this._barWidth + this._spaceBtwBars);
-                                        float startX = this._xOrigin + (i * sectionWidth) + (sectionWidth / 2);  // This draws the value on center of the bar
-                                        float startY = itemY - 2f - valFont.Height;					  // Positioned on top of each bar by 2 pixels
-                                        RectangleF recVal = new RectangleF(startX - ((sectionWidth * this._interval) / 2), startY, sectionWidth * this._interval, valFont.Height);
-                                        SizeF sz = graph.MeasureString(item.Value.ToString("#,###.##"), valFont, recVal.Size, sfFormat);
-                                        //using ( SolidBrush brsh = new SolidBrush( Color.FromArgb( 180, 255, 255, 255 ) ) )
-                                        //	graph.FillRectangle( brsh, new RectangleF(recVal.X+((recVal.Width-sz.Width)/2),recVal.Y+((recVal.Height-sz.Height)/2),sz.Width+4,sz.Height) );
-
-                                        //graph.DrawString(item.Value.ToString("#,###.##"), valFont, brsFont, recVal, sfFormat);
-
-                                        for (int box = -1; box <= 1; ++box)
-                                        {
-                                            for (int boy = -1; boy <= 1; ++boy)
-                                            {
-                                                if (box == 0 && boy == 0)
-                                                    continue;
-
-                                                RectangleF rco = new RectangleF(recVal.X + box, recVal.Y + boy, recVal.Width, recVal.Height);
-                                                graph.DrawString(item.Value.ToString("#,###.##"), valFont, whiteBrsh, rco, sfFormat);
-                                            }
-                                        }
-
-                                        graph.DrawString(item.Value.ToString("#,###.##"), valFont, brsFont, recVal, sfFormat);	
-                                    }
-                                }
-
-                                i++;
+                                linePoints[j] = new PointF(centerX, itemY);
+                            }
+                            else if (this._renderMode == BarGraphRenderMode.Bars)
+                            {
+                                // 폰트와 포맷 인자를 추가로 전달합니다.
+                                Draw3DBar(graph, item, itemY, pen, whiteBrsh, j, valFont, brsFont, sfFormat);
                             }
                         }
 
-                        if (this._renderMode == BarGraphRenderMode.Lines)
+                        // 2. 라인 모드일 경우 곡선 및 포인트 그리기
+                        if (this._renderMode == BarGraphRenderMode.Lines && linePoints != null && linePoints.Length >= 2)
                         {
-                            if (linePoints.Length >= 2)
-                            {
-                                using (Pen linePen = new Pen(Color.FromArgb(220, Color.Red), 2.5f))
-                                    graph.DrawCurve(linePen, linePoints, 0.5f);
-                            }
+                            using (Pen linePen = new Pen(Color.FromArgb(220, Color.Red), 2.5f))
+                                graph.DrawCurve(linePen, linePoints, 0.5f);
 
-                            using (Pen linePen = new Pen(Color.FromArgb(40, this._fontColor), 0.8f))
+                            using (Pen connectorPen = new Pen(Color.FromArgb(40, this._fontColor), 0.8f))
                             {
-                                for (int j = 0; j < linePoints.Length; ++j)
+                                for (int j = 0; j < linePoints.Length; j++)
                                 {
-                                    graph.DrawLine(linePen, linePoints[j], new PointF(linePoints[j].X, this._yOrigin + this._graphHeight));
-
-                                    DataItem item = this.DataPoints[j];
-                                    float itemY = this._yOrigin + this._graphHeight - item.SweepSize;
-
-                                    // Draw data value
+                                    graph.DrawLine(connectorPen, linePoints[j], new PointF(linePoints[j].X, this._yOrigin + this._graphHeight));
+                                    
                                     if (this._displayBarData && (j % this._interval) == 0)
                                     {
-                                        graph.FillEllipse(brsFont, new RectangleF(linePoints[j].X - 2.0f, linePoints[j].Y - 2.0f, 4.0f, 4.0f));
-
-                                        float sectionWidth = (this._barWidth + this._spaceBtwBars);
-                                        float startX = this._xOrigin + (j * sectionWidth) + (sectionWidth / 2);  // This draws the value on center of the bar
-                                        float startY = itemY - 2f - valFont.Height;					  // Positioned on top of each bar by 2 pixels
-                                        RectangleF recVal = new RectangleF(startX - ((sectionWidth * this._interval) / 2), startY, sectionWidth * this._interval, valFont.Height);
-                                        SizeF sz = graph.MeasureString(item.Value.ToString("#,###.##"), valFont, recVal.Size, sfFormat);
-                                        //using ( SolidBrush brsh = new SolidBrush( Color.FromArgb( 48, 255, 255, 255 ) ) )
-                                        //	graph.FillRectangle( brsh, new RectangleF(recVal.X+((recVal.Width-sz.Width)/2),recVal.Y+((recVal.Height-sz.Height)/2),sz.Width+4,sz.Height) );
-
-                                        for (int box = -1; box <= 1; ++box)
-                                        {
-                                            for (int boy = -1; boy <= 1; ++boy)
-                                            {
-                                                if (box == 0 && boy == 0)
-                                                    continue;
-
-                                                RectangleF rco = new RectangleF(recVal.X + box, recVal.Y + boy, recVal.Width, recVal.Height);
-                                                graph.DrawString(item.Value.ToString("#,###.##"), valFont, whiteBrsh, rco, sfFormat);
-                                            }
-                                        }
-
-                                        graph.DrawString(item.Value.ToString("#,###.##"), valFont, brsFont, recVal, sfFormat);	
+                                        graph.FillEllipse(brsFont, linePoints[j].X - 2f, linePoints[j].Y - 2f, 4f, 4f);
+                                        // 폰트와 포맷 인자를 추가로 전달합니다.
+                                        DrawDataValue(graph, this.DataPoints[j], linePoints[j].X, linePoints[j].Y, whiteBrsh, j, valFont, brsFont, sfFormat);
                                     }
                                 }
                             }
@@ -497,15 +406,90 @@ namespace Server.Engines.Reports
             }
             finally 
             {
-                if (brsFont != null)
-                    brsFont.Dispose();
-                if (valFont != null)
-                    valFont.Dispose();
-                if (sfFormat != null)
-                    sfFormat.Dispose();
+                if (brsFont != null) brsFont.Dispose();
+                if (valFont != null) valFont.Dispose();
+                if (sfFormat != null) sfFormat.Dispose();
             }
         }
+		private void Draw3DBar(Graphics g, DataItem item, float itemY, Pen outlinePen, Brush whiteBrsh, int index, Font valFont, Brush brsFont, StringFormat sfFormat)
+		{
+			float ox = this._xOrigin + item.StartPos;
+			float oy = itemY;
+			float ow = this._barWidth;
+			float oh = item.SweepSize;
+			float of = 9.5f; // 3D 깊이 오프셋
 
+			PointF[] pts = {
+				new PointF(ox, oy),                    // 0: 정면 좌상
+				new PointF(ox + ow, oy),               // 1: 정면 우상
+				new PointF(ox + of, oy + of),          // 2: 뒷면 좌상
+				new PointF(ox + of + ow, oy + of),     // 3: 뒷면 우상
+				new PointF(ox, oy + oh),               // 4: 정면 좌하
+				new PointF(ox + of, oy + of + oh),     // 5: 뒷면 좌하
+				new PointF(ox + of + ow, oy + of + oh) // 6: 뒷면 우하
+			};
+
+			// 직접 계산한 색상을 사용하여 브러시 생성
+			using (var barBrush = new SolidBrush(item.ItemColor))
+			using (var ltBrush = new SolidBrush(GetLightColor(item.ItemColor, 0.2f))) // ControlPaint.Light 대체
+			using (var drkBrush = new SolidBrush(GetDarkColor(item.ItemColor, 0.15f))) // ControlPaint.Dark 대체
+			{
+				// 3D 면 채우기 (정면, 측면, 윗면 순서)
+				g.FillPolygon(barBrush, new[] { pts[2], pts[3], pts[6], pts[5] }); // 뒷/우측면
+				g.FillPolygon(ltBrush, new[] { pts[0], pts[2], pts[5], pts[4] });  // 좌측면
+				g.FillPolygon(drkBrush, new[] { pts[0], pts[1], pts[3], pts[2] }); // 윗면
+			}
+
+			// 테두리 선 그리기
+			g.DrawLine(outlinePen, pts[0], pts[1]);
+			g.DrawLine(outlinePen, pts[0], pts[2]);
+			g.DrawLine(outlinePen, pts[1], pts[3]);
+			g.DrawLine(outlinePen, pts[2], pts[3]);
+			g.DrawLine(outlinePen, pts[2], pts[5]);
+			g.DrawLine(outlinePen, pts[0], pts[4]);
+			g.DrawLine(outlinePen, pts[4], pts[5]);
+			g.DrawLine(outlinePen, pts[5], pts[6]);
+			g.DrawLine(outlinePen, pts[3], pts[6]);
+
+			// 값 표시
+			if (this._displayBarData && (index % this._interval) == 0)
+			{
+				DrawDataValue(g, item, ox + (ow / 2), oy, whiteBrsh, index, valFont, brsFont, sfFormat);
+			}
+		}
+		private Color GetLightColor(Color color, float factor)
+		{
+			return Color.FromArgb(color.A,
+				(int)(color.R + (255 - color.R) * factor),
+				(int)(color.G + (255 - color.G) * factor),
+				(int)(color.B + (255 - color.B) * factor));
+		}
+
+		private Color GetDarkColor(Color color, float factor)
+		{
+			return Color.FromArgb(color.A,
+				(int)(color.R * (1 - factor)),
+				(int)(color.G * (1 - factor)),
+				(int)(color.B * (1 - factor)));
+		}
+        private void DrawDataValue(Graphics g, DataItem item, float x, float y, Brush outlineBrsh, int index, Font valFont, Brush brsFont, StringFormat sfFormat)
+        {
+            string valStr = item.Value.ToString("#,###.##");
+            float sectionWidth = (this._barWidth + this._spaceBtwBars);
+            float startY = y - 2f - valFont.Height;
+
+            RectangleF recVal = new RectangleF(x - ((sectionWidth * this._interval) / 2), startY, sectionWidth * this._interval, valFont.Height);
+
+            for (int ox = -1; ox <= 1; ox++)
+            {
+                for (int oy = -1; oy <= 1; oy++)
+                {
+                    if (ox == 0 && oy == 0) continue;
+                    g.DrawString(valStr, valFont, outlineBrsh, new RectangleF(recVal.X + ox, recVal.Y + oy, recVal.Width, recVal.Height), sfFormat);
+                }
+            }
+            g.DrawString(valStr, valFont, brsFont, recVal, sfFormat);
+        }
         //*********************************************************************
         //
         // This method draws the y label, tick marks, tick values, and the y axis.

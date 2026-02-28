@@ -6,6 +6,8 @@ using System.Threading;
 using Server.Accounting;
 using Server.Engines.Help;
 using Server.Network;
+
+using System.Threading.Tasks;
 #endregion
 
 namespace Server.Misc
@@ -59,7 +61,12 @@ namespace Server.Misc
 		{
 			_PollTimer = Timer.DelayCall(TimeSpan.Zero, TimeSpan.FromMilliseconds(100), ProcessCommand);
 
-			_Listen.BeginInvoke(r => ProcessInput(_Listen.EndInvoke(r)), null);
+            // 수정: BeginInvoke 대신 Task.Run 사용
+            Task.Run(() => 
+            {
+                string input = _Listen();
+                ProcessInput(input);
+            });
 		}
 
 		private static void ProcessInput(string input)
@@ -85,8 +92,14 @@ namespace Server.Misc
 			ProcessCommand(_Command);
 
 			Interlocked.Exchange(ref _Command, String.Empty);
-
-			_Listen.BeginInvoke(r => ProcessInput(_Listen.EndInvoke(r)), null);
+			// 수정: 루프를 돌리기 위해 다시 Task.Run 실행
+            Task.Run(() => 
+            {
+                string input = _Listen();
+                ProcessInput(input);
+            });
+			
+			//_Listen.BeginInvoke(r => ProcessInput(_Listen.EndInvoke(r)), null);
 		}
 
 		private static PageEntry[] _Pages;

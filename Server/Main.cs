@@ -326,12 +326,32 @@ namespace Server
 
 			if (restart)
 			{
-				Process.Start(ExePath, Arguments);
+				ProcessStartInfo psi = new ProcessStartInfo
+				{
+					// Use 'dotnet' as the process for .NET 8 compatibility
+					FileName = "dotnet", 
+					// Pass the DLL path as an argument to the dotnet command
+					Arguments = $"\"{ExePath}\" {Arguments}",
+					WorkingDirectory = Environment.CurrentDirectory,
+					UseShellExecute = true,
+					WindowStyle = ProcessWindowStyle.Normal
+				};
+
+				try
+				{
+					Process.Start(psi);
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine("Restart Error: {0}", ex.Message);
+					// Fallback: If 'dotnet' command fails, try running the ExePath directly
+					try { Process.Start(new ProcessStartInfo(ExePath, Arguments) { UseShellExecute = true }); }
+					catch { }
+				}
 			}
 
-			Process.Kill();
+			Process.GetCurrentProcess().Kill();
 		}
-
 		private static void HandleClosed()
 		{
 			if (Closing)
@@ -470,29 +490,25 @@ namespace Server
 				Name = "Timer Thread"
 			};
 
-			Version ver = Assembly.GetName().Version;
-			var buildDate = new DateTime(2000, 1, 1).AddDays(ver.Build).AddSeconds(ver.Revision * 2);
-			
 			Utility.PushColor(ConsoleColor.Cyan);
-        #if DEBUG
-            Console.WriteLine(
-                "Kairence Server - [http://119.198.28.137/uo] Version {0}.{1}, Build {2}.{3} - Build on {4} UTC - Debug",
-                ver.Major,
-                ver.Minor,
-                ver.Build,
-                ver.Revision,
-				buildDate);
-        #else
-            Console.WriteLine(
-				"Kairence Server - [http://119.198.28.137/uo] Version {0}.{1}, Build {2}.{3} - Build on {4} UTC - Release",
-				ver.Major,
-				ver.Minor,
-				ver.Build,
-				ver.Revision,
-				buildDate);
-        #endif
-			Utility.PopColor();
+        
+			// 1. Get Assembly and Custom Version Info
+            
+            string myVersion = "1.0"; 
+            string myBuild = "1.0.24";
+            DateTime currentBuildDate = DateTime.Now; // Use local system time
 
+            Utility.PushColor(ConsoleColor.Cyan);
+
+            // 2. Display all info: Custom Version, Assembly Version, and Time
+            Console.WriteLine(
+                "Kairence Server - Version: {0} (Build {1}) | Assembly: 8.0 | Build on: {2} - Release",
+                myVersion,
+                myBuild,
+                currentBuildDate.ToString("yyyy-MM-dd tt hh:mm:ss"));
+
+            Utility.PopColor();
+			Console.ResetColor();
 			string s = Arguments;
 
             if (s.Length > 0)

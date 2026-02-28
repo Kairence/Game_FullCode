@@ -10,6 +10,10 @@ using System.Security.Cryptography;
 using System.Text;
 
 using Microsoft.CSharp;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
+
 #endregion
 
 namespace Server
@@ -145,8 +149,9 @@ namespace Server
 		public static bool CompileCSScripts(bool debug, bool cache, out Assembly assembly)
 		{
 			Utility.PushColor(ConsoleColor.Yellow);
-			Console.Write("Scripts: Compiling C# scripts...");
+			Console.Write("Scripts: Compiling C# scripts (Roslyn)... ");
 			Utility.PopColor();
+
 			var files = GetScripts("*.cs");
 
 			if (files.Length == 0)
@@ -158,130 +163,179 @@ namespace Server
 				return true;
 			}
 
-			if (File.Exists("Scripts/Output/Scripts.CS.dll"))
+			try
 			{
-				if (cache && File.Exists("Scripts/Output/Scripts.CS.hash"))
+				// 1. 소스 코드 읽기 및 문법 분석
+				var syntaxTrees = files.Select(f => CSharpSyntaxTree.ParseText(File.ReadAllText(f), path: f)).ToArray();
+
+				// 2. 참조 어셈블리 리스트 생성
+				var references = new List<MetadataReference>();
+
+				// (A) 기본 참조 추가
+				var baseRefs = GetReferenceAssemblies();
+				foreach (var r in baseRefs)
+				{
+					if (!string.IsNullOrWhiteSpace(r) && File.Exists(r))
+						references.Add(MetadataReference.CreateFromFile(r));
+				}
+
+				// (B) 프로세스 내 어셈블리 추가
+				foreach (var assemblyObj in AppDomain.CurrentDomain.GetAssemblies())
 				{
 					try
 					{
-						var hashCode = GetHashCode("Scripts/Output/Scripts.CS.dll", files, debug);
-
-						using (var fs = new FileStream("Scripts/Output/Scripts.CS.hash", FileMode.Open, FileAccess.Read, FileShare.Read))
+						if (!assemblyObj.IsDynamic && !string.IsNullOrWhiteSpace(assemblyObj.Location))
 						{
-							using (var bin = new BinaryReader(fs))
-							{
-								var bytes = bin.ReadBytes(hashCode.Length);
-
-								if (bytes.Length == hashCode.Length)
-								{
-									var valid = true;
-
-									for (var i = 0; i < bytes.Length; ++i)
-									{
-										if (bytes[i] != hashCode[i])
-										{
-											valid = false;
-											break;
-										}
-									}
-
-									if (valid)
-									{
-										assembly = Assembly.LoadFrom("Scripts/Output/Scripts.CS.dll");
-
-										if (!m_AdditionalReferences.Contains(assembly.Location))
-										{
-											m_AdditionalReferences.Add(assembly.Location);
-										}
-
-										Utility.PushColor(ConsoleColor.Green);
-										Console.WriteLine("done (cached)");
-										Utility.PopColor();
-
-										return true;
-									}
-								}
-							}
+							references.Add(MetadataReference.CreateFromFile(assemblyObj.Location));
 						}
 					}
-					catch
-					{ }
-				}
-			}
-
-			DeleteFiles("Scripts.CS*.dll");
-
-#if !MONO
-            using (CodeDomProvider provider = new Microsoft.CodeDom.Providers.DotNetCompilerPlatform.CSharpCodeProvider())
-#else
-            using (CSharpCodeProvider provider = new CSharpCodeProvider())
-#endif
-            {
-                var path = GetUnusedPath("Scripts.CS");
-
-				var parms = new CompilerParameters(GetReferenceAssemblies(), path, debug);
-
-				var options = GetCompilerOptions(debug);
-
-				if (options != null)
-				{
-					parms.CompilerOptions = options;
+					catch { }
 				}
 
-				if (Core.HaltOnWarning)
+				// (C) 핵심 라이브러리 직접 보강
+				var coreDir = Path.GetDirectoryName(typeof(object).Assembly.Location);
+				string[] coreLibs = { 
+				// [Core Runtime]
+				"mscorlib.dll", 
+				"System.Runtime.dll", 
+				"netstandard.dll",
+				"System.Private.CoreLib.dll",
+				"System.Runtime.Extensions.dll",
+				"System.Runtime.Loader.dll",
+
+				// [Collections & Data]
+				"System.Collections.dll", 
+				"System.Collections.NonGeneric.dll", 
+				"System.Collections.Specialized.dll",
+				"System.Linq.dll",
+				"System.Data.dll",
+				"System.Data.Common.dll",
+				"System.Data.DataSetExtensions.dll",
+
+				// [IO & Compression]
+				"System.IO.dll", 
+				"System.IO.Compression.dll",
+				"System.IO.Compression.FileSystem.dll",
+
+				// [XML]
+				"System.Xml.dll", 
+				"System.Xml.ReaderWriter.dll", 
+				"System.Xml.XmlDocument.dll", 
+				"System.Xml.XDocument.dll", 
+				"System.Private.Xml.dll",
+
+				// [Network & Web]
+				"System.Net.Primitives.dll", 
+				"System.Net.Requests.dll", 
+				"System.Net.Mail.dll",
+				"System.Net.WebClient.dll",
+				"System.Net.HttpListener.dll",
+				"System.Net.NetworkInformation.dll",
+				"System.Net.Sockets.dll",
+				"System.Net.NameResolution.dll",
+				"System.Private.Uri.dll",
+
+				// [Drawing & Graphics] - 핵심 에러 해결 포인트
+				"System.Drawing.dll",
+				"System.Drawing.Common.dll", 
+				"System.Drawing.Primitives.dll",
+				"System.Drawing.Common.dll", // .NET 8에서는 이 파일이 핵심입니다.
+
+				// [Text & Parallel]
+				"System.Text.RegularExpressions.dll",
+				"System.Threading.Tasks.Parallel.dll",
+				"System.Console.dll",
+
+				// [OS Services]
+				"Microsoft.Win32.Registry.dll",
+				"System.Diagnostics.FileVersionInfo.dll",
+				"System.ComponentModel.TypeConverter.dll"
+			};
+				foreach (var lib in coreLibs)
 				{
-					parms.WarningLevel = 4;
+					var path = Path.Combine(coreDir, lib);
+					if (File.Exists(path) && !references.Any(r => r.Display != null && r.Display.EndsWith(lib)))
+						references.Add(MetadataReference.CreateFromFile(path));
 				}
 
-				if (Core.Unix)
-                {
-					parms.CompilerOptions = String.Format( "{0} /nowarn:169,219,414 /recurse:Scripts/*.cs", parms.CompilerOptions );
-                    files = new string[0];
-                }
-                
-				var results = provider.CompileAssemblyFromFile(parms, files);
-				
-				m_AdditionalReferences.Add(path);
-
-				Display(results);
-
-				if (results.Errors.Count > 0 && !Core.Unix)
+				try 
 				{
-					assembly = null;
-					return false;
+					// .NET 8 런타임에 이미 로드된 Drawing 및 Compression 라이브러리를 직접 참조에 추가
+					var drawingRef = MetadataReference.CreateFromFile(typeof(System.Drawing.Bitmap).Assembly.Location);
+					if (!references.Any(r => r.Display == drawingRef.Display)) references.Add(drawingRef);
+
+					var zipRef = MetadataReference.CreateFromFile(typeof(System.IO.Compression.ZipFile).Assembly.Location);
+					if (!references.Any(r => r.Display == zipRef.Display)) references.Add(zipRef);
+					
+					// 추가적인 Drawing Primitives 대응
+					var drawingPrimRef = MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies().First(a => a.GetName().Name == "System.Drawing.Primitives").Location);
+					if (!references.Any(r => r.Display == drawingPrimRef.Display)) references.Add(drawingPrimRef);
+				}
+				catch { 
+					// 로드 실패 시 무시 (안정성 확보)
 				}
 
-				if (results.Errors.Count > 0 && Core.Unix) 
-				{
-					foreach( CompilerError err in results.Errors ) {
-						if ( !err.IsWarning ) {
-							assembly = null;
-							return false;
-						}
-					}
-				}
+				// 3. 컴파일 옵션 설정
+				var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
+					.WithAllowUnsafe(true)
+					.WithOptimizationLevel(debug ? OptimizationLevel.Debug : OptimizationLevel.Release);
 
-				if (cache && Path.GetFileName(path) == "Scripts.CS.dll")
+				// 4. 컴파일 객체 생성
+				var compilation = CSharpCompilation.Create(
+					"Scripts.CS.dll",
+					syntaxTrees,
+					references,
+					compilationOptions);
+
+				// 5. DLL 파일 생성
+				var outputPath = GetUnusedPath("Scripts.CS");
+				EnsureDirectory("Scripts/Output/");
+
+				using (var ms = new FileStream(outputPath, FileMode.Create))
 				{
-					try
+					// 여기서 result가 정의됩니다.
+					EmitResult result = compilation.Emit(ms);
+
+					if (!result.Success)
 					{
-						var hashCode = GetHashCode(path, files, debug);
+						Utility.PushColor(ConsoleColor.Red);
+						Console.WriteLine("Failed!");
 
-						using (
-							var fs = new FileStream("Scripts/Output/Scripts.CS.hash", FileMode.Create, FileAccess.Write, FileShare.None))
+						// 파일을 경로별로 그룹화하여 출력
+						var groupedDiagnostics = result.Diagnostics
+							.Where(d => d.Severity == DiagnosticSeverity.Error)
+							.GroupBy(d => d.Location.SourceTree?.FilePath ?? "Unknown File");
+
+						foreach (var group in groupedDiagnostics)
 						{
-							using (var bin = new BinaryWriter(fs))
+							Console.WriteLine(" File: {0}", Path.GetFullPath(group.Key));
+							
+							foreach (var diagnostic in group)
 							{
-								bin.Write(hashCode, 0, hashCode.Length);
+								var line = diagnostic.Location.GetLineSpan().StartLinePosition.Line + 1;
+								Console.WriteLine("  + Line {0}: {1} ({2})", line, diagnostic.GetMessage(), diagnostic.Id);
 							}
 						}
+
+						Utility.PopColor();
+						assembly = null;
+						return false;
 					}
-					catch
-					{ }
 				}
 
-				assembly = results.CompiledAssembly;
+				Utility.PushColor(ConsoleColor.Green);
+				Console.WriteLine("done.");
+				Utility.PopColor();
+
+				assembly = Assembly.LoadFrom(outputPath);
 				return true;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("\nCritical Compiler Error:");
+				Console.WriteLine(ex.ToString());
+				assembly = null;
+				return false;
 			}
 		}
 

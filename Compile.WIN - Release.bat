@@ -1,71 +1,35 @@
-@SET CURPATH=%~dp0
-@SET CSCPATH=%CURPATH%bin\roslyn\
-
-@SET SDKPATH=%CURPATH%Ultima\
-@SET SRVPATH=%CURPATH%Server\
-
-@SET EXENAME=ServUO
-
-@TITLE: %EXENAME% - Kairence
-
-::##########
-
-@ECHO:
-@ECHO: Compile Ultima SDK
-@ECHO:
-
-@PAUSE
-
-@DEL "%CURPATH%Ultima.dll"
-
-@ECHO ON
-
-"%CSCPATH%csc.exe" /r:"%CURPATH%Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll" /target:library /out:"%CURPATH%Ultima.dll" /recurse:"%SDKPATH%*.cs" /d:ServUO /d:NEWTIMERS /nowarn:0618 /nologo /unsafe /optimize
-
 @ECHO OFF
+SETLOCAL
+SET CURPATH=%~dp0
+SET EXENAME=ServUO
+SET DOTNET_EXE="C:\Program Files\dotnet\dotnet.exe"
 
-@ECHO:
-@ECHO: Done!
-@ECHO:
+TITLE %EXENAME% Build System - .NET 8.0
 
-@PAUSE
+:: 1. Build Ultima SDK
+ECHO [1/2] Compiling Ultima SDK...
+%DOTNET_EXE% build "Ultima/Ultima.csproj" -c Release
+IF %ERRORLEVEL% NEQ 0 GOTO :ERROR
 
-@CLS
+:: 2. Build Server Core
+ECHO [2/2] Compiling %EXENAME% Server Core...
+:: Outputting directly to the 4.0 root folder
+%DOTNET_EXE% build "Server/Server.csproj" -c Release -o .
+IF %ERRORLEVEL% NEQ 0 GOTO :ERROR
 
-::##########
+ECHO.
+ECHO ==========================================
+ECHO  BUILD SUCCESSFUL
+ECHO ==========================================
+PAUSE
 
-@ECHO:
-@ECHO: Compile %EXENAME% for Windows
-@ECHO:
-
-@PAUSE
-
-@DEL "%CURPATH%%EXENAME%.exe"
-
-@ECHO ON
-
-"%CSCPATH%csc.exe" /win32icon:"%SRVPATH%servuo.ico" /r:"%CURPATH%Ultima.dll" /r:"%CURPATH%Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll" /target:exe /out:"%CURPATH%%EXENAME%.exe" /recurse:"%SRVPATH%*.cs" /d:ServUO /d:NEWTIMERS /d:NETFX_472 /nowarn:0618 /nologo /unsafe /optimize
-
-@ECHO OFF
-
-@ECHO:
-@ECHO: Done!
-@ECHO:
-
-@PAUSE
-
-@CLS
-
-::##########
-
-@ECHO:
-@ECHO: Ready To Run!
-@ECHO:
-
-@PAUSE
-
-@CLS
-
-@ECHO OFF
-
+:: 3. Run Server
 "%CURPATH%%EXENAME%.exe"
+GOTO :EOF
+
+:ERROR
+ECHO.
+ECHO [!] BUILD FAILED
+ECHO Please check the compiler errors above.
+PAUSE
+ENDLOCAL
