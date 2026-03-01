@@ -6927,6 +6927,27 @@ public static void _TraceEnd(int index)
 				dirname = filename;
 			}
 
+			if (System.IO.File.Exists(dirname) || System.IO.Directory.Exists(dirname))
+			{
+				return dirname;
+			}
+
+			string[] fallbackRoots = new string[]
+			{
+				Path.Combine("Scripts", "XSpawner Rev1.4"),
+				Path.Combine("Archive", "XSpawner")
+			};
+
+			foreach (string root in fallbackRoots)
+			{
+				string candidate = Path.Combine(root, filename);
+
+				if (System.IO.File.Exists(candidate) || System.IO.Directory.Exists(candidate))
+				{
+					return candidate;
+				}
+			}
+
 			return dirname;
 		}
 

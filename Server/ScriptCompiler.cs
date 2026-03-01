@@ -22,13 +22,22 @@ namespace Server
 	{
 		public static Assembly[] Assemblies { get; set; }
 
+		private static ScriptCompilerPaths Paths
+		{
+			get { return ScriptCompilerPaths.Current; }
+		}
+
+		private static readonly bool IsCaseSensitivePathPlatform = Path.DirectorySeparatorChar == '/';
+		private static readonly StringComparer ScriptPathComparer = IsCaseSensitivePathPlatform ? StringComparer.Ordinal : StringComparer.OrdinalIgnoreCase;
+		private static readonly StringComparison ScriptPathComparison = IsCaseSensitivePathPlatform ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+
 		private static readonly List<string> m_AdditionalReferences = new List<string>();
 
 		public static string[] GetReferenceAssemblies()
 		{
 			var list = new List<string>();
 
-			var path = Path.Combine(Core.BaseDirectory, "Data/Assemblies.cfg");
+			var path = Paths.AssembliesConfigPath;
 
 			if (File.Exists(path))
 			{
@@ -158,6 +167,12 @@ namespace Server
 			{
 				Utility.PushColor(ConsoleColor.Red);
 				Console.WriteLine("no files found.");
+
+				if (Paths.SourceRootMode == ScriptSourceRootMode.NewOnly && String.IsNullOrWhiteSpace(Paths.NewScriptSourceRoot))
+				{
+					Console.WriteLine("Hint: Paths.SourceRootMode is NewOnly but Paths.NewSourceRoot is empty.");
+				}
+
 				Utility.PopColor();
 				assembly = null;
 				return true;
@@ -289,7 +304,7 @@ namespace Server
 
 				// 5. DLL 파일 생성
 				var outputPath = GetUnusedPath("Scripts.CS");
-				EnsureDirectory("Scripts/Output/");
+				EnsureDirectory(Paths.ScriptOutputRoot);
 
 				using (var ms = new FileStream(outputPath, FileMode.Create))
 				{
@@ -383,9 +398,6 @@ namespace Server
 					Utility.PopColor();
 				}
 
-				var scriptRoot = Path.GetFullPath(Path.Combine(Core.BaseDirectory, "Scripts" + Path.DirectorySeparatorChar));
-				var scriptRootUri = new Uri(scriptRoot);
-
 				Utility.PushColor(ConsoleColor.Yellow);
 
 				if (warnings.Count > 0)
@@ -398,8 +410,7 @@ namespace Server
 					var fileName = kvp.Key;
 					var list = kvp.Value;
 
-					var fullPath = Path.GetFullPath(fileName);
-					var usedPath = Uri.UnescapeDataString(scriptRootUri.MakeRelativeUri(new Uri(fullPath)).OriginalString);
+					var usedPath = GetScriptDisplayPath(fileName);
 
 					Console.WriteLine(" + {0}:", usedPath);
 
@@ -427,8 +438,7 @@ namespace Server
 					var fileName = kvp.Key;
 					var list = kvp.Value;
 
-					var fullPath = Path.GetFullPath(fileName);
-					var usedPath = Uri.UnescapeDataString(scriptRootUri.MakeRelativeUri(new Uri(fullPath)).OriginalString);
+					var usedPath = GetScriptDisplayPath(fileName);
 
 					Console.WriteLine(" + {0}:", usedPath);
 
@@ -452,13 +462,63 @@ namespace Server
 			}
 		}
 
+		private static string GetScriptDisplayPath(string fileName)
+		{
+			if (String.IsNullOrWhiteSpace(fileName))
+			{
+				return fileName;
+			}
+
+			string fullPath = Path.GetFullPath(fileName);
+			string bestRelative = null;
+			int bestRootLength = -1;
+
+			string[] roots = Paths.ScriptSourceRoots;
+
+			for (int i = 0; i < roots.Length; i++)
+			{
+				string root = roots[i];
+
+				if (String.IsNullOrWhiteSpace(root))
+				{
+					continue;
+				}
+
+				string fullRoot = Path.GetFullPath(root);
+
+				if (!fullRoot.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
+				{
+					fullRoot += Path.DirectorySeparatorChar;
+				}
+
+				if (fullPath.Length < fullRoot.Length)
+				{
+					continue;
+				}
+
+				if (String.Compare(fullPath, 0, fullRoot, 0, fullRoot.Length, ScriptPathComparison) == 0)
+				{
+					string relative = fullPath.Substring(fullRoot.Length);
+
+					if (fullRoot.Length > bestRootLength)
+					{
+						bestRootLength = fullRoot.Length;
+						bestRelative = relative;
+					}
+				}
+			}
+
+			return bestRelative ?? fullPath;
+		}
+
 		public static string GetUnusedPath(string name)
 		{
-			var path = Path.Combine(Core.BaseDirectory, String.Format("Scripts/Output/{0}.dll", name));
+			string outputRoot = Paths.ScriptOutputRoot;
+			string path = Path.Combine(outputRoot, String.Format("{0}.dll", name));
 
 			for (var i = 2; File.Exists(path) && i <= 1000; ++i)
 			{
-				path = Path.Combine(Core.BaseDirectory, String.Format("Scripts/Output/{0}.{1}.dll", name, i));
+				path = Path.Combine(outputRoot, String.Format("{0}.{1}.dll", name, i));
 			}
 
 			return path;
@@ -468,7 +528,7 @@ namespace Server
 		{
 			try
 			{
-				var files = Directory.GetFiles(Path.Combine(Core.BaseDirectory, "Scripts/Output"), mask);
+				var files = Directory.GetFiles(Paths.ScriptOutputRoot, mask);
 
 				foreach (var file in files)
 				{
@@ -498,8 +558,14 @@ namespace Server
 
 		public static bool Compile(bool debug, bool cache)
 		{
-			EnsureDirectory("Scripts/");
-			EnsureDirectory("Scripts/Output/");
+			string[] scriptRoots = Paths.ScriptSourceRoots;
+
+			for (int i = 0; i < scriptRoots.Length; i++)
+			{
+				EnsureDirectory(scriptRoots[i]);
+			}
+
+			EnsureDirectory(Paths.ScriptOutputRoot);
 
 			if (m_AdditionalReferences.Count > 0)
 			{
@@ -698,7 +764,12 @@ namespace Server
 
 		public static void EnsureDirectory(string dir)
 		{
-			var path = Path.Combine(Core.BaseDirectory, dir);
+			var path = dir;
+
+			if (!Path.IsPathRooted(path))
+			{
+				path = Path.Combine(Core.BaseDirectory, path);
+			}
 
 			if (!Directory.Exists(path))
 			{
@@ -709,20 +780,55 @@ namespace Server
 		public static string[] GetScripts(string filter)
 		{
 			var list = new List<string>();
+			HashSet<string> seen = new HashSet<string>(ScriptPathComparer);
+			HashSet<string> excludedDirs = Paths.ExcludedScriptDirectoryNames;
 
-			GetScripts(list, Path.Combine(Core.BaseDirectory, "Scripts"), filter);
+			foreach (var root in Paths.ScriptSourceRoots)
+			{
+				GetScripts(list, seen, excludedDirs, root, filter);
+			}
 
 			return list.ToArray();
 		}
 
-		public static void GetScripts(List<string> list, string path, string filter)
+		public static void GetScripts(List<string> list, HashSet<string> seen, HashSet<string> excludedDirs, string path, string filter)
 		{
-			foreach (var dir in Directory.GetDirectories(path))
+			if (!Directory.Exists(path))
 			{
-				GetScripts(list, dir, filter);
+				return;
 			}
 
-			list.AddRange(Directory.GetFiles(path, filter));
+			foreach (var dir in Directory.GetDirectories(path))
+			{
+				string directoryName = Path.GetFileName(dir);
+
+				if (excludedDirs.Contains(directoryName))
+				{
+					continue;
+				}
+
+				GetScripts(list, seen, excludedDirs, dir, filter);
+			}
+
+			foreach (var file in Directory.GetFiles(path, filter))
+			{
+				string fullPath = Path.GetFullPath(file);
+
+				if (seen.Add(fullPath))
+				{
+					list.Add(fullPath);
+				}
+			}
+		}
+
+		public static void GetScripts(List<string> list, string path, string filter)
+		{
+			GetScripts(
+				list,
+				new HashSet<string>(ScriptPathComparer),
+				new HashSet<string>(StringComparer.OrdinalIgnoreCase),
+				path,
+				filter);
 		}
 	}
 
