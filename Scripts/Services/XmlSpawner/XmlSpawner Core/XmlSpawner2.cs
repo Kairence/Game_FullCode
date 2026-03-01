@@ -6908,28 +6908,33 @@ public static void _TraceEnd(int index)
 
 		}
 
-		public static string LocateFile(string filename)
+		private static readonly Dictionary<string, string> LegacySpawnPathAliases = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
 		{
-			bool found = false;
+			{ "XSpawns/TramSeaMarket.xml", "XSpawns/Trammel/TramSeaMarket.xml" },
+			{ "XSpawns/FelSeaMarket.xml", "XSpawns/Felucca/FelSeaMarket.xml" },
+			{ "XSpawns/Trammel/DespiseRevamped.xml", "RevampedSpawns/DespiseRevamped.xml" }
+		};
 
-			string dirname = null;
+		private static bool PathExists(string path)
+		{
+			return System.IO.File.Exists(path) || System.IO.Directory.Exists(path);
+		}
 
-			if (System.IO.Directory.Exists(XmlSpawnDir) == true)
+		private static string ResolveWithSpawnRoots(string filename)
+		{
+			if (System.IO.Directory.Exists(XmlSpawnDir))
 			{
-				// get it from the defaults directory if it exists
-				dirname = String.Format("{0}/{1}", XmlSpawnDir, filename);
-				found = System.IO.File.Exists(dirname) || System.IO.Directory.Exists(dirname);
+				string defaultDirCandidate = String.Format("{0}/{1}", XmlSpawnDir, filename);
+
+				if (PathExists(defaultDirCandidate))
+				{
+					return defaultDirCandidate;
+				}
 			}
 
-			if (!found)
+			if (PathExists(filename))
 			{
-				// otherwise just get it from the main installation dir
-				dirname = filename;
-			}
-
-			if (System.IO.File.Exists(dirname) || System.IO.Directory.Exists(dirname))
-			{
-				return dirname;
+				return filename;
 			}
 
 			string[] fallbackRoots = new string[]
@@ -6942,13 +6947,38 @@ public static void _TraceEnd(int index)
 			{
 				string candidate = Path.Combine(root, filename);
 
-				if (System.IO.File.Exists(candidate) || System.IO.Directory.Exists(candidate))
+				if (PathExists(candidate))
 				{
 					return candidate;
 				}
 			}
 
-			return dirname;
+			return null;
+		}
+
+		public static string LocateFile(string filename)
+		{
+			string resolvedPath = ResolveWithSpawnRoots(filename);
+
+			if (resolvedPath != null)
+			{
+				return resolvedPath;
+			}
+
+			string normalizedFilename = filename.Replace('\\', '/');
+			string aliasPath;
+
+			if (LegacySpawnPathAliases.TryGetValue(normalizedFilename, out aliasPath))
+			{
+				string resolvedAliasPath = ResolveWithSpawnRoots(aliasPath);
+
+				if (resolvedAliasPath != null)
+				{
+					return resolvedAliasPath;
+				}
+			}
+
+			return filename;
 		}
 
 		public static string LocateMultiFile(string filename)
