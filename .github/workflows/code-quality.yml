@@ -1,0 +1,37 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [main, project-setup]
+    paths: ['**/*.cs']
+  pull_request:
+    branches: [main]
+    paths: ['**/*.cs']
+
+jobs:
+  code-quality:
+    name: CSharpier + Format Check
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dotnet tools
+        run: dotnet tool restore
+
+      - name: Build Ultima SDK
+        run: dotnet build Ultima/Ultima.csproj -c Release
+
+      - name: Build Server
+        run: dotnet build Server/Server.csproj -c Release -o .
+
+      - name: Check CSharpier formatting
+        run: dotnet tool run dotnet-csharpier --check .
+
+      - name: Check dotnet format
+        run: dotnet format --verify-no-changes
