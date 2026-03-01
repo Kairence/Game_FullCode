@@ -1,0 +1,18 @@
+{
+  "tasks": [
+    {
+      "name": "Run CSharpier on staged files",
+      "group": "pre-commit",
+      "command": "dotnet",
+      "args": ["tool", "run", "dotnet-csharpier", "--check", "${staged}"],
+      "include": ["**/*.cs"]
+    },
+    {
+      "name": "Run dotnet format on staged files",
+      "group": "pre-commit",
+      "command": "dotnet",
+      "args": ["format", "--verify-no-changes", "--include", "${staged}"],
+      "include": ["**/*.cs"]
+    }
+  ]
+}

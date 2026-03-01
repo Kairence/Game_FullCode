@@ -1,0 +1,28 @@
+<Project>
+  <!--
+    Centralized build properties for all projects in ServUO solution.
+    This file is auto-imported by MSBuild for all .csproj files.
+  -->
+
+  <PropertyGroup>
+    <!-- Enable .NET code analyzers (included by default in .NET 5+) -->
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+
+    <!-- Enforce code style rules during build (reads from .editorconfig) -->
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+
+    <!-- Analysis level: latest recommended rules for the target framework -->
+    <AnalysisLevel>latest-Recommended</AnalysisLevel>
+
+    <!-- Severity: treat all analyzer warnings as warnings (not errors) -->
+    <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
+
+    <!-- Suppress specific warnings that are too noisy for this legacy codebase -->
+    <!-- CS0618: obsolete member usage (ServUO has many intentional uses) -->
+    <!-- CS0219: variable assigned but never used -->
+    <!-- CS0414: field assigned but never used -->
+    <!-- CS1635: cannot restore warning level -->
+    <NoWarn>$(NoWarn);CS0618;CS0219;CS0414;CS1635</NoWarn>
+  </PropertyGroup>
+
+</Project>
