@@ -85,6 +85,15 @@ jobs:
           $tileStream.SetLength($tileDataLengthBytes)
           $tileStream.Dispose()
 
+          $binaryDataPath = Join-Path $PWD 'Data/Binary'
+          New-Item -Path $binaryDataPath -ItemType Directory -Force | Out-Null
+
+          $boundsPath = Join-Path $binaryDataPath 'Bounds.bin'
+          $boundsEntryCount = 65536
+          $boundsStream = [System.IO.File]::Open($boundsPath, [System.IO.FileMode]::Create, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
+          $boundsStream.SetLength($boundsEntryCount * 8)
+          $boundsStream.Dispose()
+
           $dataPathConfig = Join-Path $PWD 'Config/DataPath.cfg'
           Set-Content -Path $dataPathConfig -Encoding Ascii -Value @(
             '# CI override for Windows smoke test',
@@ -115,9 +124,25 @@ jobs:
                 break
               }
 
-              if ($log -match 'Scripts: One or more scripts failed to compile|Critical Compiler Error|tiledata\.mul was not found') {
+              if ($log -match 'Scripts: One or more scripts failed to compile|Critical Compiler Error|tiledata\.mul was not found|Warning: Data/Binary/Bounds\.bin does not exist|Listener Failed') {
                 break
               }
+            }
+
+            $tcpReady = $false
+            $tcpClient = [System.Net.Sockets.TcpClient]::new()
+            try {
+              $tcpClient.Connect('127.0.0.1', 2593)
+              $tcpReady = $true
+            }
+            catch { }
+            finally {
+              $tcpClient.Dispose()
+            }
+
+            if ($tcpReady) {
+              $ready = $true
+              break
             }
           }
 
