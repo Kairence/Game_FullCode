@@ -3,15 +3,15 @@ name: Code Quality
 on:
   push:
     branches: [main, project-setup]
-    paths: ['**/*.cs']
+    paths: ['**/*.cs', '**/*.csproj', 'Directory.Build.props', '.github/workflows/code-quality.yml']
   pull_request:
     branches: [main]
-    paths: ['**/*.cs']
+    paths: ['**/*.cs', '**/*.csproj', 'Directory.Build.props', '.github/workflows/code-quality.yml']
 
 jobs:
   code-quality:
     name: CSharpier + Format Check
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
       - uses: actions/checkout@v4
@@ -35,3 +35,77 @@ jobs:
 
       - name: Check dotnet analyzers
         run: dotnet format analyzers --verify-no-changes --no-restore --severity error
+
+  windows-smoke:
+    name: Windows Startup Smoke
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build Ultima SDK
+        run: dotnet build Ultima/Ultima.csproj -c Release
+
+      - name: Build Server
+        run: dotnet build Server/Server.csproj -c Release -o .
+
+      - name: Smoke test server startup
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+
+          $logPath = Join-Path $PWD 'Logs/Console.log'
+          if (Test-Path $logPath) {
+            Remove-Item $logPath -Force
+          }
+
+          $proc = Start-Process -FilePath '.\ServUO.exe' -ArgumentList '-service' -PassThru -WorkingDirectory $PWD
+          $deadline = (Get-Date).AddSeconds(420)
+          $ready = $false
+
+          while ((Get-Date) -lt $deadline) {
+            Start-Sleep -Seconds 3
+
+            if ($proc.HasExited) {
+              break
+            }
+
+            if (Test-Path $logPath) {
+              $log = Get-Content $logPath -Raw
+
+              if ($log -match 'Listening:\s') {
+                $ready = $true
+                break
+              }
+
+              if ($log -match 'Scripts: One or more scripts failed to compile|Critical Compiler Error') {
+                break
+              }
+            }
+          }
+
+          if (-not $proc.HasExited) {
+            Stop-Process -Id $proc.Id -Force
+            $proc.WaitForExit()
+          }
+
+          if (Test-Path $logPath) {
+            Get-Content $logPath -Tail 200
+          }
+
+          if (-not $ready) {
+            throw 'Server did not reach listening state within timeout.'
+          }
+
+      - name: Upload smoke log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-smoke-console-log
+          path: Logs/Console.log
+          if-no-files-found: ignore
