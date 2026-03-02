@@ -720,7 +720,7 @@ namespace Ultima
 	///     <seealso cref="ItemData" />
 	///     <seealso cref="LandData" />
 	/// </summary>
-	#pragma warning disable CA1711 // Keep legacy public API name for compatibility.
+#pragma warning disable CA1711 // Keep legacy public API name for compatibility.
 	[Flags]
 	public enum TileFlag : ulong
 	{
@@ -889,7 +889,7 @@ namespace Ultima
 		/// </summary>
 		StairRight = 0x80000000,
 	}
-	#pragma warning restore CA1711
+#pragma warning restore CA1711
 
 	/// <summary>
 	///     Contains lists of <see cref="LandData">land</see> and <see cref="ItemData">item</see> tile data.

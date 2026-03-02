@@ -439,7 +439,7 @@ namespace Ultima
 				return false;
 			}
 			FileStream FileCheck = File.OpenRead(file);
-			#pragma warning disable CA5351 // MD5 is required for UOFiddler hash-file compatibility.
+#pragma warning disable CA5351 // MD5 is required for UOFiddler hash-file compatibility.
 			using (MD5 md5 = new MD5CryptoServiceProvider())
 			{
 				byte[] md5Hash = md5.ComputeHash(FileCheck);
@@ -454,7 +454,7 @@ namespace Ultima
 					return false;
 				}
 			}
-			#pragma warning restore CA5351
+#pragma warning restore CA5351
 		}
 
 		/// <summary>
@@ -469,14 +469,14 @@ namespace Ultima
 				return null;
 			}
 			FileStream FileCheck = File.OpenRead(file);
-			#pragma warning disable CA5351 // MD5 is required for UOFiddler hash-file compatibility.
+#pragma warning disable CA5351 // MD5 is required for UOFiddler hash-file compatibility.
 			using (MD5 md5 = new MD5CryptoServiceProvider())
 			{
 				byte[] md5Hash = md5.ComputeHash(FileCheck);
 				FileCheck.Close();
 				return md5Hash;
 			}
-			#pragma warning restore CA5351
+#pragma warning restore CA5351
 		}
 
 		/// <summary>
