@@ -63,8 +63,9 @@ jobs:
           New-Item -Path $ciDataPath -ItemType Directory -Force | Out-Null
 
           $tileDataPath = Join-Path $ciDataPath 'tiledata.mul'
+          $tileDataLengthBytes = 3188736 # Server.TileData threshold for 0x10000 item table.
           $tileStream = [System.IO.File]::Open($tileDataPath, [System.IO.FileMode]::Create, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
-          $tileStream.SetLength(1036288)
+          $tileStream.SetLength($tileDataLengthBytes)
           $tileStream.Dispose()
 
           $dataPathConfig = Join-Path $PWD 'Config/DataPath.cfg'
