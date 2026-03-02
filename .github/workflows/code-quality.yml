@@ -59,6 +59,20 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
 
+          $ciDataPath = Join-Path $env:RUNNER_TEMP 'uo-data'
+          New-Item -Path $ciDataPath -ItemType Directory -Force | Out-Null
+
+          $tileDataPath = Join-Path $ciDataPath 'tiledata.mul'
+          $tileStream = [System.IO.File]::Open($tileDataPath, [System.IO.FileMode]::Create, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
+          $tileStream.SetLength(1036288)
+          $tileStream.Dispose()
+
+          $dataPathConfig = Join-Path $PWD 'Config/DataPath.cfg'
+          Set-Content -Path $dataPathConfig -Encoding Ascii -Value @(
+            '# CI override for Windows smoke test',
+            "CustomPath=$ciDataPath"
+          )
+
           $logPath = Join-Path $PWD 'Logs/Console.log'
           if (Test-Path $logPath) {
             Remove-Item $logPath -Force
@@ -83,11 +97,13 @@ jobs:
                 break
               }
 
-              if ($log -match 'Scripts: One or more scripts failed to compile|Critical Compiler Error') {
+              if ($log -match 'Scripts: One or more scripts failed to compile|Critical Compiler Error|tiledata\.mul was not found') {
                 break
               }
             }
           }
+
+          Get-Process -Name ServUO -ErrorAction SilentlyContinue | Stop-Process -Force
 
           if (-not $proc.HasExited) {
             Stop-Process -Id $proc.Id -Force
