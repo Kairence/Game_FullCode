@@ -3,76 +3,64 @@ using Server.Items;
 
 namespace Server.Spells.Necromancy
 {
-    public abstract class NecromancerSpell : Spell
-    {
-        public NecromancerSpell(Mobile caster, Item scroll, SpellInfo info)
-            : base(caster, scroll, info)
-        {
-        }
+	public abstract class NecromancerSpell : Spell
+	{
+		public NecromancerSpell(Mobile caster, Item scroll, SpellInfo info)
+			: base(caster, scroll, info) { }
 
-        public abstract double RequiredSkill { get; }
-        public abstract int RequiredMana { get; }
-        public override SkillName CastSkill
-        {
-            get
-            {
-                return SkillName.Necromancy;
-            }
-        }
-        public override SkillName DamageSkill
-        {
-            get
-            {
-                return SkillName.SpiritSpeak;
-            }
-        }
-        //public override int CastDelayBase{ get{ return base.CastDelayBase; } } // Reference, 3
-        public override bool ClearHandsOnCast
-        {
-            get
-            {
-                return false;
-            }
-        }
-        public override double CastDelayFastScalar
-        {
-            get
-            {
-                return (Core.SE ? base.CastDelayFastScalar : 0);
-            }
-        }// Necromancer spells are not affected by fast cast items, though they are by fast cast recovery
-        public override int ComputeKarmaAward()
-        {
-            //TODO: Verify this formula being that Necro spells don't HAVE a circle.
-            //int karma = -(70 + (10 * (int)Circle));
-            int karma = -(40 + (int)(10 * (this.CastDelayBase.TotalSeconds / this.CastDelaySecondsPerTick)));
+		public abstract double RequiredSkill { get; }
+		public abstract int RequiredMana { get; }
+		public override SkillName CastSkill
+		{
+			get { return SkillName.Necromancy; }
+		}
+		public override SkillName DamageSkill
+		{
+			get { return SkillName.SpiritSpeak; }
+		}
 
-            if (Core.ML) // Pub 36: "Added a new property called Increased Karma Loss which grants higher karma loss for casting necromancy spells."
-                karma += AOS.Scale(karma, AosAttributes.GetValue(this.Caster, AosAttribute.IncreasedKarmaLoss));
+		//public override int CastDelayBase{ get{ return base.CastDelayBase; } } // Reference, 3
+		public override bool ClearHandsOnCast
+		{
+			get { return false; }
+		}
+		public override double CastDelayFastScalar
+		{
+			get { return (Core.SE ? base.CastDelayFastScalar : 0); }
+		} // Necromancer spells are not affected by fast cast items, though they are by fast cast recovery
 
-            return karma;
-        }
+		public override int ComputeKarmaAward()
+		{
+			//TODO: Verify this formula being that Necro spells don't HAVE a circle.
+			//int karma = -(70 + (10 * (int)Circle));
+			int karma = -(40 + (int)(10 * (this.CastDelayBase.TotalSeconds / this.CastDelaySecondsPerTick)));
 
-        public override void GetCastSkills(out double min, out double max)
-        {
-            min = this.RequiredSkill;
-            max = this.Scroll != null ? min : this.RequiredSkill + 40.0;
-        }
+			if (Core.ML) // Pub 36: "Added a new property called Increased Karma Loss which grants higher karma loss for casting necromancy spells."
+				karma += AOS.Scale(karma, AosAttributes.GetValue(this.Caster, AosAttribute.IncreasedKarmaLoss));
 
-        public override bool ConsumeReagents()
-        {
-            if (base.ConsumeReagents())
-                return true;
+			return karma;
+		}
 
-            if (ArcaneGem.ConsumeCharges(this.Caster, 1))
-                return true;
+		public override void GetCastSkills(out double min, out double max)
+		{
+			min = this.RequiredSkill;
+			max = this.Scroll != null ? min : this.RequiredSkill + 40.0;
+		}
 
-            return false;
-        }
+		public override bool ConsumeReagents()
+		{
+			if (base.ConsumeReagents())
+				return true;
 
-        public override int GetMana()
-        {
-            return this.RequiredMana;
-        }
-    }
+			if (ArcaneGem.ConsumeCharges(this.Caster, 1))
+				return true;
+
+			return false;
+		}
+
+		public override int GetMana()
+		{
+			return this.RequiredMana;
+		}
+	}
 }

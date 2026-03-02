@@ -1,18 +1,18 @@
 #region References
 using System;
 using System.Collections.Generic;
- using Server.ContextMenus;
 using Server.Commands;
+using Server.ContextMenus;
 using Server.Engines.Craft;
 using Server.Ethics;
+using Server.Factions;
+using Server.Misc;
+using Server.Mobiles;
 using Server.Multis;
 using Server.Network;
 using Server.Spells;
-using Server.Targeting;
-using Server.Mobiles;
 using Server.Spells.Mysticism;
-using Server.Factions;
-using Server.Misc;
+using Server.Targeting;
 #endregion
 
 namespace Server.Items
@@ -27,8 +27,8 @@ namespace Server.Items
 		Samurai,
 		Arcanist,
 		Mystic,
-        SkillMasteries,
-		Magery
+		SkillMasteries,
+		Magery,
 	}
 
 	public enum BookQuality
@@ -37,84 +37,196 @@ namespace Server.Items
 		Exceptional,
 	}
 
-	
-	
-    public class Spellbook : Item, ICraftable, ISlayer, IEngravable, IVvVItem, IOwnerRestricted, IWearableDurability, IFactionItem, IEquipOption
+	public class Spellbook
+		: Item,
+			ICraftable,
+			ISlayer,
+			IEngravable,
+			IVvVItem,
+			IOwnerRestricted,
+			IWearableDurability,
+			IFactionItem,
+			IEquipOption
 	{
 		private static readonly Dictionary<Mobile, List<Spellbook>> m_Table = new Dictionary<Mobile, List<Spellbook>>();
 
 		private static readonly int[] m_LegendPropertyCounts = new[]
 		{
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0 properties : 21/52 : 40%
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 1 property   : 15/52 : 29%
-			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // 2 properties : 10/52 : 19%
-			3, 3, 3, 3, 3, 3 // 3 properties :  6/52 : 12%
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0, // 0 properties : 21/52 : 40%
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1, // 1 property   : 15/52 : 29%
+			2,
+			2,
+			2,
+			2,
+			2,
+			2,
+			2,
+			2,
+			2,
+			2, // 2 properties : 10/52 : 19%
+			3,
+			3,
+			3,
+			3,
+			3,
+			3, // 3 properties :  6/52 : 12%
 		};
 
 		private static readonly int[] m_ElderPropertyCounts = new[]
 		{
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0 properties : 15/34 : 44%
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 1 property   : 10/34 : 29%
-			2, 2, 2, 2, 2, 2, // 2 properties :  6/34 : 18%
-			3, 3, 3 // 3 properties :  3/34 :  9%
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0, // 0 properties : 15/34 : 44%
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1, // 1 property   : 10/34 : 29%
+			2,
+			2,
+			2,
+			2,
+			2,
+			2, // 2 properties :  6/34 : 18%
+			3,
+			3,
+			3, // 3 properties :  3/34 :  9%
 		};
 
 		private static readonly int[] m_GrandPropertyCounts = new[]
 		{
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0 properties : 10/20 : 50%
-			1, 1, 1, 1, 1, 1, // 1 property   :  6/20 : 30%
-			2, 2, 2, // 2 properties :  3/20 : 15%
-			3 // 3 properties :  1/20 :  5%
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0, // 0 properties : 10/20 : 50%
+			1,
+			1,
+			1,
+			1,
+			1,
+			1, // 1 property   :  6/20 : 30%
+			2,
+			2,
+			2, // 2 properties :  3/20 : 15%
+			3, // 3 properties :  1/20 :  5%
 		};
 
 		private static readonly int[] m_MasterPropertyCounts = new[]
 		{
-			0, 0, 0, 0, 0, 0, // 0 properties : 6/10 : 60%
-			1, 1, 1, // 1 property   : 3/10 : 30%
-			2 // 2 properties : 1/10 : 10%
+			0,
+			0,
+			0,
+			0,
+			0,
+			0, // 0 properties : 6/10 : 60%
+			1,
+			1,
+			1, // 1 property   : 3/10 : 30%
+			2, // 2 properties : 1/10 : 10%
 		};
 
 		private static readonly int[] m_AdeptPropertyCounts = new[]
 		{
-			0, 0, 0, // 0 properties : 3/4 : 75%
-			1 // 1 property   : 1/4 : 25%
+			0,
+			0,
+			0, // 0 properties : 3/4 : 75%
+			1, // 1 property   : 1/4 : 25%
 		};
 
-        #region Factions
-        private FactionItem m_FactionState;
+		#region Factions
+		private FactionItem m_FactionState;
 
-        public FactionItem FactionItemState
-        {
-            get { return m_FactionState; }
-            set
-            {
-                m_FactionState = value;
+		public FactionItem FactionItemState
+		{
+			get { return m_FactionState; }
+			set
+			{
+				m_FactionState = value;
 
-                LootType = (m_FactionState == null ? LootType.Regular : LootType.Blessed);
-            }
-        }
-        #endregion
+				LootType = (m_FactionState == null ? LootType.Regular : LootType.Blessed);
+			}
+		}
+		#endregion
 
 		private string m_EngravedText;
 		private BookQuality m_Quality;
 		private AosAttributes m_AosAttributes;
-        private AosArmorAttributes m_AosArmorAttributes;
-        private AosElementAttributes m_AosResistances;
+		private AosArmorAttributes m_AosArmorAttributes;
+		private AosElementAttributes m_AosResistances;
 		private AosSkillBonuses m_AosSkillBonuses;
-        private AosWeaponAttributes m_AosWeaponAttributes;
-        private NegativeAttributes m_NegativeAttributes;
+		private AosWeaponAttributes m_AosWeaponAttributes;
+		private NegativeAttributes m_NegativeAttributes;
 		private SAAbsorptionAttributes m_AbsorptionAttributes;
-        private ExtendedWeaponAttributes m_ExtendedWeaponAttributes;
+		private ExtendedWeaponAttributes m_ExtendedWeaponAttributes;
 		private ulong m_Content;
 		private int m_Count;
 		private Mobile m_Crafter;
 		private SlayerName m_Slayer;
 		private SlayerName m_Slayer2;
-		public virtual int ArtifactRarity { get { return 0; } }
+		public virtual int ArtifactRarity
+		{
+			get { return 0; }
+		}
 
-		
-		
 		private bool m_Identified;
+
 		[CommandProperty(AccessLevel.GameMaster)]
 		public bool Identified
 		{
@@ -125,45 +237,67 @@ namespace Server.Items
 				InvalidateProperties();
 			}
 		}
+
 		//Currently though there are no dual slayer spellbooks, OSI has a habit of putting dual slayer stuff in later
 		[Constructable]
 		public Spellbook()
-			: this(ulong.MaxValue)
-		{ }
+			: this(ulong.MaxValue) { }
 
 		[Constructable]
 		public Spellbook(ulong content)
-			: this( ulong.MaxValue, 0xEFA)
-		{ }
+			: this(ulong.MaxValue, 0xEFA) { }
 
+		private int m_StrReq,
+			m_DexReq,
+			m_IntReq;
+		public virtual int AosStrengthReq
+		{
+			get { return 0; }
+		}
+		public virtual int AosDexterityReq
+		{
+			get { return 0; }
+		}
+		public virtual int AosIntelligenceReq
+		{
+			get { return 0; }
+		}
 
-		private int m_StrReq, m_DexReq, m_IntReq;
-		public virtual int AosStrengthReq { get { return 0; } }
-		public virtual int AosDexterityReq { get { return 0; } }
-		public virtual int AosIntelligenceReq { get { return 0; } }
 		[CommandProperty(AccessLevel.GameMaster)]
 		public int StrRequirement
 		{
-			get{ return m_StrReq == -1 ? AosStrengthReq : 1000; }
-			set{ m_StrReq = value; InvalidateProperties(); }
+			get { return m_StrReq == -1 ? AosStrengthReq : 1000; }
+			set
+			{
+				m_StrReq = value;
+				InvalidateProperties();
+			}
 		}
+
 		[CommandProperty(AccessLevel.GameMaster)]
 		public int DexRequirement
 		{
-			get{ return m_DexReq == -1 ? AosDexterityReq : 1000; }
-			set{ m_DexReq = value; InvalidateProperties(); }
+			get { return m_DexReq == -1 ? AosDexterityReq : 1000; }
+			set
+			{
+				m_DexReq = value;
+				InvalidateProperties();
+			}
 		}
+
 		[CommandProperty(AccessLevel.GameMaster)]
 		public int IntRequirement
 		{
-			get{ return m_IntReq == -1 ? AosIntelligenceReq : 1000; }
-			set{ m_IntReq = value; InvalidateProperties(); }
+			get { return m_IntReq == -1 ? AosIntelligenceReq : 1000; }
+			set
+			{
+				m_IntReq = value;
+				InvalidateProperties();
+			}
 		}
 
-
 		public Spellbook(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		[CommandProperty(AccessLevel.GameMaster)]
 		public string EngravedText
@@ -187,51 +321,85 @@ namespace Server.Items
 			}
 		}
 
-        public override bool DisplayWeight
-        {
-            get
-            {
-                if (IsVvVItem)
-                    return true;
+		public override bool DisplayWeight
+		{
+			get
+			{
+				if (IsVvVItem)
+					return true;
 
-                return base.DisplayWeight;
-            }
-        }
-		[CommandProperty(AccessLevel.GameMaster)]
-		public AosAttributes Attributes { get { return m_AosAttributes; } set { } }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public AosArmorAttributes ArmorAttributes { get { return m_AosArmorAttributes; } set { } }
+				return base.DisplayWeight;
+			}
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public SAAbsorptionAttributes AbsorptionAttributes { get { return m_AbsorptionAttributes; } set { } }
+		public AosAttributes Attributes
+		{
+			get { return m_AosAttributes; }
+			set { }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public ExtendedWeaponAttributes ExtendedWeaponAttributes { get { return m_ExtendedWeaponAttributes; } set { } }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public AosElementAttributes Resistances
-        {
-            get
-            {
-                return m_AosResistances;
-            }
-            set
-            {
-            }
-        }
 		[CommandProperty(AccessLevel.GameMaster)]
-		public AosSkillBonuses SkillBonuses { get { return m_AosSkillBonuses; } set { } }
+		public AosArmorAttributes ArmorAttributes
+		{
+			get { return m_AosArmorAttributes; }
+			set { }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public AosWeaponAttributes WeaponAttributes { get { return m_AosWeaponAttributes; } set { } }
-		
-        [CommandProperty(AccessLevel.GameMaster)]
-        public NegativeAttributes NegativeAttributes { get { return m_NegativeAttributes; } set { } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public SAAbsorptionAttributes AbsorptionAttributes
+		{
+			get { return m_AbsorptionAttributes; }
+			set { }
+		}
 
-		public virtual SpellbookType SpellbookType { get { return SpellbookType.Regular; } }
-		public virtual int BookOffset { get { return 0; } }
-		public virtual int BookCount { get { return 64; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public ExtendedWeaponAttributes ExtendedWeaponAttributes
+		{
+			get { return m_ExtendedWeaponAttributes; }
+			set { }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public AosElementAttributes Resistances
+		{
+			get { return m_AosResistances; }
+			set { }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public AosSkillBonuses SkillBonuses
+		{
+			get { return m_AosSkillBonuses; }
+			set { }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public AosWeaponAttributes WeaponAttributes
+		{
+			get { return m_AosWeaponAttributes; }
+			set { }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public NegativeAttributes NegativeAttributes
+		{
+			get { return m_NegativeAttributes; }
+			set { }
+		}
+
+		public virtual SpellbookType SpellbookType
+		{
+			get { return SpellbookType.Regular; }
+		}
+		public virtual int BookOffset
+		{
+			get { return 0; }
+		}
+		public virtual int BookCount
+		{
+			get { return 64; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
 		public ulong Content
@@ -257,7 +425,10 @@ namespace Server.Items
 		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int SpellCount { get { return m_Count; } }
+		public int SpellCount
+		{
+			get { return m_Count; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
 		public Mobile Crafter
@@ -270,7 +441,10 @@ namespace Server.Items
 			}
 		}
 
-		public override bool DisplayLootType { get { return Core.AOS; } }
+		public override bool DisplayLootType
+		{
+			get { return Core.AOS; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
 		public SlayerName Slayer
@@ -294,170 +468,222 @@ namespace Server.Items
 			}
 		}
 
-        #region IVvVItem / IOwnerRestricted
-        private bool _VvVItem;
-        private Mobile _Owner;
-        private string _OwnerName;
+		#region IVvVItem / IOwnerRestricted
+		private bool _VvVItem;
+		private Mobile _Owner;
+		private string _OwnerName;
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool IsVvVItem
-        {
-            get { return _VvVItem; }
-            set { _VvVItem = value; InvalidateProperties(); }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool IsVvVItem
+		{
+			get { return _VvVItem; }
+			set
+			{
+				_VvVItem = value;
+				InvalidateProperties();
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Mobile Owner
-        {
-            get { return _Owner; }
-            set { _Owner = value; if (_Owner != null) _OwnerName = _Owner.Name; InvalidateProperties(); }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Mobile Owner
+		{
+			get { return _Owner; }
+			set
+			{
+				_Owner = value;
+				if (_Owner != null)
+					_OwnerName = _Owner.Name;
+				InvalidateProperties();
+			}
+		}
 
-        public virtual string OwnerName
-        {
-            get { return _OwnerName; }
-            set { _OwnerName = value; InvalidateProperties(); }
-        }
-        #endregion
+		public virtual string OwnerName
+		{
+			get { return _OwnerName; }
+			set
+			{
+				_OwnerName = value;
+				InvalidateProperties();
+			}
+		}
+		#endregion
 
-        #region IWearableDurability
-        private int m_MaxHitPoints;
-        private int m_HitPoints;
+		#region IWearableDurability
+		private int m_MaxHitPoints;
+		private int m_HitPoints;
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int HitPoints
-        {
-            get { return m_HitPoints; }
-            set
-            {
-                if (m_HitPoints == value)
-                {
-                    return;
-                }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int HitPoints
+		{
+			get { return m_HitPoints; }
+			set
+			{
+				if (m_HitPoints == value)
+				{
+					return;
+				}
 
-                if (value > m_MaxHitPoints)
-                {
-                    value = m_MaxHitPoints;
-                }
+				if (value > m_MaxHitPoints)
+				{
+					value = m_MaxHitPoints;
+				}
 
-                m_HitPoints = value;
+				m_HitPoints = value;
 
-                InvalidateProperties();
-            }
-        }
+				InvalidateProperties();
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int MaxHitPoints
-        {
-            get { return m_MaxHitPoints; }
-            set
-            {
-                m_MaxHitPoints = value;
-                InvalidateProperties();
-            }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int MaxHitPoints
+		{
+			get { return m_MaxHitPoints; }
+			set
+			{
+				m_MaxHitPoints = value;
+				InvalidateProperties();
+			}
+		}
 
-        private ItemPower m_ItemPower;
-        [CommandProperty(AccessLevel.GameMaster)]
-        public ItemPower ItemPower 
-        {
-            get { return m_ItemPower; }
-            set { m_ItemPower = value; InvalidateProperties(); } 
-        }		
+		private ItemPower m_ItemPower;
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public ItemPower ItemPower
+		{
+			get { return m_ItemPower; }
+			set
+			{
+				m_ItemPower = value;
+				InvalidateProperties();
+			}
+		}
 		private int[] m_PrefixOption = new int[100];
 		public int[] PrefixOption
 		{
 			get { return m_PrefixOption; }
-			set { m_PrefixOption = value;}
+			set { m_PrefixOption = value; }
 		}
 		private int[] m_SuffixOption = new int[100];
 		public int[] SuffixOption
 		{
 			get { return m_SuffixOption; }
-			set { m_SuffixOption = value;}
+			set { m_SuffixOption = value; }
 		}
 
-        private ReforgedPrefix m_ReforgedPrefix;
-        [CommandProperty(AccessLevel.GameMaster)]
-        public ReforgedPrefix ReforgedPrefix
-        {
-            get { return m_ReforgedPrefix; }
-            set { m_ReforgedPrefix = value; InvalidateProperties(); }
-        }
+		private ReforgedPrefix m_ReforgedPrefix;
 
-        private ReforgedSuffix m_ReforgedSuffix;
-        [CommandProperty(AccessLevel.GameMaster)]
-        public ReforgedSuffix ReforgedSuffix
-        {
-            get { return m_ReforgedSuffix; }
-            set { m_ReforgedSuffix = value; InvalidateProperties(); }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public ReforgedPrefix ReforgedPrefix
+		{
+			get { return m_ReforgedPrefix; }
+			set
+			{
+				m_ReforgedPrefix = value;
+				InvalidateProperties();
+			}
+		}
 
-		
-        public override int PhysicalResistance
-        {
-            get
-            {
-                return m_AosResistances.Physical + m_AosWeaponAttributes.ResistPhysicalBonus / 10000 + m_AosArmorAttributes.AllResist / 10000;
-            }
-        }
-        public override int FireResistance
-        {
-            get
-            {
-                return m_AosResistances.Fire + m_AosWeaponAttributes.ResistFireBonus / 10000 + m_AosArmorAttributes.ElementalResist / 10000 + m_AosArmorAttributes.AllResist / 10000;
-            }
-        }
-        public override int ColdResistance
-        {
-            get
-            {
-                return m_AosResistances.Cold + m_AosWeaponAttributes.ResistColdBonus / 10000 + m_AosArmorAttributes.ElementalResist / 10000 + m_AosArmorAttributes.AllResist / 10000;
-            }
-        }
-        public override int PoisonResistance
-        {
-            get
-            {
-                return m_AosResistances.Poison + m_AosWeaponAttributes.ResistPoisonBonus / 10000 + m_AosArmorAttributes.ElementalResist / 10000 + m_AosArmorAttributes.AllResist / 10000;
-            }
-        }
-        public override int EnergyResistance
-        {
-            get
-            {
-                return m_AosResistances.Energy + m_AosWeaponAttributes.ResistEnergyBonus / 10000 + m_AosArmorAttributes.ElementalResist / 10000 + m_AosArmorAttributes.AllResist / 10000;
-            }
-        }		
-        public virtual bool CanFortify { get { return false; } }
-        public virtual bool CanRepair { get { return m_NegativeAttributes.NoRepair == 0; } }
+		private ReforgedSuffix m_ReforgedSuffix;
 
-        public virtual int InitMinHits { get { return 0; } }
-        public virtual int InitMaxHits { get { return 0; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public ReforgedSuffix ReforgedSuffix
+		{
+			get { return m_ReforgedSuffix; }
+			set
+			{
+				m_ReforgedSuffix = value;
+				InvalidateProperties();
+			}
+		}
+
+		public override int PhysicalResistance
+		{
+			get
+			{
+				return m_AosResistances.Physical
+					+ m_AosWeaponAttributes.ResistPhysicalBonus / 10000
+					+ m_AosArmorAttributes.AllResist / 10000;
+			}
+		}
+		public override int FireResistance
+		{
+			get
+			{
+				return m_AosResistances.Fire
+					+ m_AosWeaponAttributes.ResistFireBonus / 10000
+					+ m_AosArmorAttributes.ElementalResist / 10000
+					+ m_AosArmorAttributes.AllResist / 10000;
+			}
+		}
+		public override int ColdResistance
+		{
+			get
+			{
+				return m_AosResistances.Cold
+					+ m_AosWeaponAttributes.ResistColdBonus / 10000
+					+ m_AosArmorAttributes.ElementalResist / 10000
+					+ m_AosArmorAttributes.AllResist / 10000;
+			}
+		}
+		public override int PoisonResistance
+		{
+			get
+			{
+				return m_AosResistances.Poison
+					+ m_AosWeaponAttributes.ResistPoisonBonus / 10000
+					+ m_AosArmorAttributes.ElementalResist / 10000
+					+ m_AosArmorAttributes.AllResist / 10000;
+			}
+		}
+		public override int EnergyResistance
+		{
+			get
+			{
+				return m_AosResistances.Energy
+					+ m_AosWeaponAttributes.ResistEnergyBonus / 10000
+					+ m_AosArmorAttributes.ElementalResist / 10000
+					+ m_AosArmorAttributes.AllResist / 10000;
+			}
+		}
+		public virtual bool CanFortify
+		{
+			get { return false; }
+		}
+		public virtual bool CanRepair
+		{
+			get { return m_NegativeAttributes.NoRepair == 0; }
+		}
+
+		public virtual int InitMinHits
+		{
+			get { return 0; }
+		}
+		public virtual int InitMaxHits
+		{
+			get { return 0; }
+		}
 		private int m_HiddenRank;
-		[CommandProperty( AccessLevel.GameMaster )]
+
+		[CommandProperty(AccessLevel.GameMaster)]
 		public int HiddenRank
 		{
-			get{ return m_HiddenRank; }
-			set{ m_HiddenRank = value; }
+			get { return m_HiddenRank; }
+			set { m_HiddenRank = value; }
 		}
 
-        public virtual void ScaleDurability()
-        {
-        }
+		public virtual void ScaleDurability() { }
 
-        public virtual void UnscaleDurability()
-        {
-        }
+		public virtual void UnscaleDurability() { }
+
 		public Spellbook(ulong content, int itemID)
 			: base(itemID)
 		{
 			m_AosAttributes = new AosAttributes(this);
-            m_AosResistances = new AosElementAttributes(this);
+			m_AosResistances = new AosElementAttributes(this);
 			m_AosSkillBonuses = new AosSkillBonuses(this);
-            m_AosWeaponAttributes = new AosWeaponAttributes(this);
-            m_AosArmorAttributes = new AosArmorAttributes(this);
-            m_NegativeAttributes = new NegativeAttributes(this);
+			m_AosWeaponAttributes = new AosWeaponAttributes(this);
+			m_AosArmorAttributes = new AosArmorAttributes(this);
+			m_NegativeAttributes = new NegativeAttributes(this);
 			m_AbsorptionAttributes = new SAAbsorptionAttributes(this);
 			m_ExtendedWeaponAttributes = new ExtendedWeaponAttributes(this);
 
@@ -472,143 +698,145 @@ namespace Server.Items
 
 			Content = content;
 		}
-        public virtual int OnHit(BaseWeapon weap, int damage)
-        {
+
+		public virtual int OnHit(BaseWeapon weap, int damage)
+		{
 			m_HiddenRank += damage;
 			bool destroy = false;
 			int breaken = 1;
-			if( m_HiddenRank >= 1000 )
+			if (m_HiddenRank >= 1000)
 			{
 				destroy = true;
 				breaken = m_HiddenRank / 1000;
 				m_HiddenRank -= 1000 * breaken;
 			}
-            if ( destroy ) // 25% chance to lower durability
-            {
+			if (destroy) // 25% chance to lower durability
+			{
 				if (MaxHitPoints > 0 + breaken)
 				{
 					if (HitPoints >= 1 + breaken)
 						HitPoints -= 1 + breaken;
-					else if ( MaxHitPoints > 0 + breaken)
+					else if (MaxHitPoints > 0 + breaken)
 					{
-						MaxHitPoints-= 1 + breaken;
-						
+						MaxHitPoints -= 1 + breaken;
+
 						if (Parent is Mobile)
 							((Mobile)Parent).LocalOverheadMessage(MessageType.Regular, 0x3B2, 1061121); // Your equipment is severely damaged.
-						if (MaxHitPoints <= 0 + breaken )
+						if (MaxHitPoints <= 0 + breaken)
 							Delete();
 					}
 				}
-				if( Parent is PlayerMobile )
+				if (Parent is PlayerMobile)
 				{
 					PlayerMobile pm = Parent as PlayerMobile;
 					//Misc.Util.EquipPoint( pm, this );
 				}
-            }
-            return damage;
-        }
-        #endregion
-        public virtual void OnAttack()
-        {
+			}
+			return damage;
+		}
+		#endregion
+		public virtual void OnAttack()
+		{
 			m_HiddenRank += 40;
 			bool destroy = false;
 			int breaken = 1;
-			if( m_HiddenRank >= 1000 )
+			if (m_HiddenRank >= 1000)
 			{
 				destroy = true;
 				breaken = m_HiddenRank / 1000;
 				m_HiddenRank -= 1000 * breaken;
 			}
-            if ( destroy ) // 25% chance to lower durability
-            {
+			if (destroy) // 25% chance to lower durability
+			{
 				if (MaxHitPoints > 0 + breaken)
 				{
 					if (HitPoints >= 1 + breaken)
 						HitPoints -= 1 + breaken;
-					else if ( MaxHitPoints > 0 + breaken)
+					else if (MaxHitPoints > 0 + breaken)
 					{
-						MaxHitPoints-= 1 + breaken;
-						
+						MaxHitPoints -= 1 + breaken;
+
 						if (Parent is Mobile)
 							((Mobile)Parent).LocalOverheadMessage(MessageType.Regular, 0x3B2, 1061121); // Your equipment is severely damaged.
-						if (MaxHitPoints <= 0 + breaken )
+						if (MaxHitPoints <= 0 + breaken)
 							Delete();
 					}
 				}
-            }
-        }
-        public static void Initialize()
+			}
+		}
+
+		public static void Initialize()
 		{
 			EventSink.OpenSpellbookRequest += EventSink_OpenSpellbookRequest;
 			EventSink.CastSpellRequest += EventSink_CastSpellRequest;
-            EventSink.TargetedSpell += Targeted_Spell;       
+			EventSink.TargetedSpell += Targeted_Spell;
 
 			CommandSystem.Register("AllSpells", AccessLevel.GameMaster, AllSpells_OnCommand);
 		}
 
-        #region Enhanced Client
-        private static void Targeted_Spell(TargetedSpellEventArgs e)
-        {
-            try
-            {
-                Mobile from = e.Mobile;
+		#region Enhanced Client
+		private static void Targeted_Spell(TargetedSpellEventArgs e)
+		{
+			try
+			{
+				Mobile from = e.Mobile;
 
-                if (!DesignContext.Check(from))
-                {
-                    return; // They are customizing
-                }
+				if (!DesignContext.Check(from))
+				{
+					return; // They are customizing
+				}
 
-                Spellbook book = null;
-                int spellID = e.SpellID;
+				Spellbook book = null;
+				int spellID = e.SpellID;
 
-                if (book == null || !book.HasSpell(spellID))
-                {
-                    book = Find(from, spellID);
-                }
+				if (book == null || !book.HasSpell(spellID))
+				{
+					book = Find(from, spellID);
+				}
 
-                if (book != null && book.HasSpell(spellID))
-                {
-                    SpecialMove move = SpellRegistry.GetSpecialMove(spellID);
+				if (book != null && book.HasSpell(spellID))
+				{
+					SpecialMove move = SpellRegistry.GetSpecialMove(spellID);
 
-                    if (move != null)
-                    {
-                        SpecialMove.SetCurrentMove(from, move);
-                    }
-                    else
-                    {
-                        Mobile to = World.FindMobile(e.Target.Serial);
-                        Item toI = World.FindItem(e.Target.Serial);
-                        Spell spell = SpellRegistry.NewSpell(spellID, from, null);
+					if (move != null)
+					{
+						SpecialMove.SetCurrentMove(from, move);
+					}
+					else
+					{
+						Mobile to = World.FindMobile(e.Target.Serial);
+						Item toI = World.FindItem(e.Target.Serial);
+						Spell spell = SpellRegistry.NewSpell(spellID, from, null);
 
-                        if (to != null)
-                        {
-                            spell.InstantTarget = to;
-                        }
-                        else if (toI != null)
-                        {
-                            spell.InstantTarget = toI as IDamageableItem;
-                        }
+						if (to != null)
+						{
+							spell.InstantTarget = to;
+						}
+						else if (toI != null)
+						{
+							spell.InstantTarget = toI as IDamageableItem;
+						}
 
-                        if (spell != null)
-                        {
-                            spell.Cast();
-                        }
-                        else if (!Server.Spells.SkillMasteries.MasteryInfo.IsPassiveMastery(spellID))
-                        {
-                            from.SendLocalizedMessage(502345); // This spell has been temporarily disabled.
-                        }
-                    }
-                }
-                else
-                {
-                    from.SendLocalizedMessage(500015); // You do not have that spell!
-                }
-            }
-            catch { }
-        }
-        #endregion
+						if (spell != null)
+						{
+							spell.Cast();
+						}
+						else if (!Server.Spells.SkillMasteries.MasteryInfo.IsPassiveMastery(spellID))
+						{
+							from.SendLocalizedMessage(502345); // This spell has been temporarily disabled.
+						}
+					}
+				}
+				else
+				{
+					from.SendLocalizedMessage(500015); // You do not have that spell!
+				}
+			}
+			catch { }
+		}
+		#endregion
 
-        public static SpellbookType GetTypeForSpell(int spellID)
+		public static SpellbookType GetTypeForSpell(int spellID)
 		{
 			if (spellID >= 0 && spellID < 64)
 			{
@@ -638,10 +866,10 @@ namespace Server.Items
 			{
 				return SpellbookType.Mystic;
 			}
-            else if (spellID >= 700 && spellID < 746)
-            {
-                return SpellbookType.SkillMasteries;
-            }
+			else if (spellID >= 700 && spellID < 746)
+			{
+				return SpellbookType.SkillMasteries;
+			}
 			else if (spellID >= 0 && spellID < 64)
 			{
 				return SpellbookType.Magery;
@@ -748,8 +976,11 @@ namespace Server.Items
 
 				Spellbook book = list[i];
 
-				if (!book.Deleted && (book.Parent == from || (pack != null && book.Parent == pack)) &&
-					ValidateSpellbook(book, spellID, type))
+				if (
+					!book.Deleted
+					&& (book.Parent == from || (pack != null && book.Parent == pack))
+					&& ValidateSpellbook(book, spellID, type)
+				)
 				{
 					return book;
 				}
@@ -821,11 +1052,11 @@ namespace Server.Items
 			{
 				return false;
 			}
-            else if (_Owner != null && _Owner != from)
-            {
-                from.SendLocalizedMessage(501023); // You must be the owner to use this item.
-                return false;
-            }
+			else if (_Owner != null && _Owner != from)
+			{
+				from.SendLocalizedMessage(501023); // You must be the owner to use this item.
+				return false;
+			}
 			/*
 			else if( from is PlayerMobile && !Util.EquipCheck( ((PlayerMobile)from), this ) )
 			{
@@ -833,12 +1064,12 @@ namespace Server.Items
 				return false;
 			}
 			*/
-            else if (IsVvVItem && !Engines.VvV.ViceVsVirtueSystem.IsVvV(from))
-            {
-                from.SendLocalizedMessage(1155496); // This item can only be used by VvV participants!
-                return false;
-            }
-			else if( SpellbookType == SpellbookType.Regular )
+			else if (IsVvVItem && !Engines.VvV.ViceVsVirtueSystem.IsVvV(from))
+			{
+				from.SendLocalizedMessage(1155496); // This item can only be used by VvV participants!
+				return false;
+			}
+			else if (SpellbookType == SpellbookType.Regular)
 			{
 				from.SendLocalizedMessage(1071936); // You cannot equip that.
 				return false;
@@ -867,19 +1098,19 @@ namespace Server.Items
 			}
 			//레벨 체크
 			int levelcheck = 40;
-			if( from is PlayerMobile )
+			if (from is PlayerMobile)
 			{
 				PlayerMobile pm = from as PlayerMobile;
 				int equippercent = 1000 - WeaponAttributes.LowerStatReq;
 				levelcheck *= equippercent;
 				levelcheck /= 1000;
-				if( Misc.Util.Level(pm.SilverPoint[0]) < PrefixOption[99] * levelcheck )
+				if (Misc.Util.Level(pm.SilverPoint[0]) < PrefixOption[99] * levelcheck)
 				{
 					from.SendLocalizedMessage(1071936); // You cannot equip that.
 					return false;
 				}
 			}
-			
+
 			return base.CanEquip(from);
 		}
 
@@ -891,8 +1122,8 @@ namespace Server.Items
 		public override bool OnDragDrop(Mobile from, Item dropped)
 		{
 			/*
-            if (dropped is SpellScroll && !(dropped is SpellStone))
-            {
+			if (dropped is SpellScroll && !(dropped is SpellStone))
+			{
 				SpellScroll scroll = (SpellScroll)dropped;
 
 				SpellbookType type = GetTypeForSpell(scroll.SpellID);
@@ -917,23 +1148,23 @@ namespace Server.Items
 						m_Content |= (ulong)1 << val;
 						++m_Count;
 
-                        if (dropped.Amount > 1)
-                        {
-                            dropped.Amount--;
-                            return base.OnDragDrop(from, dropped);
-                        }
-                        else
-                        {
-                            InvalidateProperties();
-                            scroll.Delete();
-                            return true;
-                        }
-                    }
+						if (dropped.Amount > 1)
+						{
+							dropped.Amount--;
+							return base.OnDragDrop(from, dropped);
+						}
+						else
+						{
+							InvalidateProperties();
+							scroll.Delete();
+							return true;
+						}
+					}
 					return false;
 				}
 				*/
 			//}
-  		    return false;
+			return false;
 		}
 
 		public override void OnAfterDuped(Item newItem)
@@ -947,14 +1178,14 @@ namespace Server.Items
 
 			book.m_AosAttributes = new AosAttributes(newItem, m_AosAttributes);
 			book.m_AosArmorAttributes = new AosArmorAttributes(newItem, m_AosArmorAttributes);
-            book.m_AosResistances = new AosElementAttributes(newItem, m_AosResistances);
+			book.m_AosResistances = new AosElementAttributes(newItem, m_AosResistances);
 			book.m_AosSkillBonuses = new AosSkillBonuses(newItem, m_AosSkillBonuses);
-            book.m_AosWeaponAttributes = new AosWeaponAttributes(newItem, m_AosWeaponAttributes);
-            book.m_NegativeAttributes = new NegativeAttributes(newItem, m_NegativeAttributes);
+			book.m_AosWeaponAttributes = new AosWeaponAttributes(newItem, m_AosWeaponAttributes);
+			book.m_NegativeAttributes = new NegativeAttributes(newItem, m_NegativeAttributes);
 			book.m_AbsorptionAttributes = new SAAbsorptionAttributes(newItem, m_AbsorptionAttributes);
-            book.m_ExtendedWeaponAttributes = new ExtendedWeaponAttributes(newItem, m_ExtendedWeaponAttributes);
+			book.m_ExtendedWeaponAttributes = new ExtendedWeaponAttributes(newItem, m_ExtendedWeaponAttributes);
 
-            base.OnAfterDuped(newItem);
+			base.OnAfterDuped(newItem);
 		}
 
 		public override void OnAdded(object parent)
@@ -988,26 +1219,26 @@ namespace Server.Items
 						from.AddStatMod(new StatMod(StatType.Int, modName + "Int", intBonus, TimeSpan.Zero));
 					}
 				}
-				if( !Identified )
+				if (!Identified)
 					Identified = true;
-				if( Owner == null && ( PrefixOption[0] == 200 || PrefixOption[0] == 300 ) )
+				if (Owner == null && (PrefixOption[0] == 200 || PrefixOption[0] == 300))
 					Owner = from;
 
 				//세트 아이템 체크 코드
-				if( PrefixOption[50] > 0 )
+				if (PrefixOption[50] > 0)
 				{
-					if( from is PlayerMobile )
+					if (from is PlayerMobile)
 					{
 						PlayerMobile pm = from as PlayerMobile;
 						pm.ItemSetValue[PrefixOption[50]]++;
 						Misc.SetItem.SetOption(pm, false);
-					}					
-				}				
-				
-                if (HasSocket<Caddellite>())
-                {
-                    Caddellite.UpdateBuff(from);
-                }
+					}
+				}
+
+				if (HasSocket<Caddellite>())
+				{
+					Caddellite.UpdateBuff(from);
+				}
 
 				from.CheckStatTimers();
 			}
@@ -1021,20 +1252,20 @@ namespace Server.Items
 
 				m_AosSkillBonuses.Remove();
 
-                if (HasSocket<Caddellite>())
-                {
-                    Caddellite.UpdateBuff(from);
-                }
+				if (HasSocket<Caddellite>())
+				{
+					Caddellite.UpdateBuff(from);
+				}
 
 				//세트 아이템 해제 코드
-				if( PrefixOption[50] > 0 )
+				if (PrefixOption[50] > 0)
 				{
-					if( from is PlayerMobile )
+					if (from is PlayerMobile)
 					{
 						PlayerMobile pm = from as PlayerMobile;
 						pm.ItemSetValue[PrefixOption[50]]--;
 						Misc.SetItem.SetOption(pm, false);
-					}					
+					}
 				}
 
 				string modName = Serial.ToString();
@@ -1046,16 +1277,16 @@ namespace Server.Items
 				from.CheckStatTimers();
 			}
 		}
-        private string GetNameString()
-        {
-            string name = Name;
 
-            if (name == null)
-                name = String.Format("#{0}", LabelNumber);
+		private string GetNameString()
+		{
+			string name = Name;
 
-            return name;
-        }
+			if (name == null)
+				name = String.Format("#{0}", LabelNumber);
 
+			return name;
+		}
 
 		public bool HasSpell(int spellID)
 		{
@@ -1135,116 +1366,250 @@ namespace Server.Items
 				}
 			}
 		}
-        public override void AddNameProperty(ObjectPropertyList list)
-        {
-            int oreType;
 
-            switch ( m_Resource )
-            {
-                case CraftResource.DullCopper: oreType = 1053108; break; // dull copper
-                case CraftResource.ShadowIron: oreType = 1053107; break; // shadow iron
-                case CraftResource.Copper: oreType = 1053106; break; // copper
-                case CraftResource.Bronze: oreType = 1053105; break; // bronze
-                case CraftResource.Gold: oreType = 1053104; break; // golden
-                case CraftResource.Agapite: oreType = 1053103; break; // agapite
-                case CraftResource.Verite: oreType = 1053102; break; // verite
-                case CraftResource.Valorite: oreType = 1053101; break; // valorite
-				case CraftResource.DernedLeather: oreType = 1051901; break; // 거친 가죽
-				case CraftResource.RatnedLeather: oreType = 1051902; break; // 질긴 가죽
-				case CraftResource.SernedLeather: oreType = 1051903; break; // 경화 가죽
-                case CraftResource.SpinedLeather: oreType = 1061118; break; // spined
-                case CraftResource.HornedLeather: oreType = 1061117; break; // horned
-                case CraftResource.BarbedLeather: oreType = 1061116; break; // barbed
-                case CraftResource.RedScales: oreType = 1060814; break; // red
-                case CraftResource.YellowScales: oreType = 1060818; break; // yellow
-                case CraftResource.BlackScales: oreType = 1060820; break; // black
-                case CraftResource.GreenScales: oreType = 1060819; break; // green
-                case CraftResource.WhiteScales: oreType = 1060821; break; // white
-                case CraftResource.BlueScales: oreType = 1060815; break; // blue
-                case CraftResource.OakWood: oreType = 1072533;  break; // oak
-                case CraftResource.AshWood: oreType = 1072534; break; // ash
-                case CraftResource.YewWood: oreType = 1072535; break; // yew
-                case CraftResource.Heartwood: oreType = 1072536; break; // heartwood
-                case CraftResource.Bloodwood: oreType = 1072538; break; // bloodwood
-                case CraftResource.Frostwood: oreType = 1072539; break; // frostwood
-                default: oreType = 0; break;
-            }
+		public override void AddNameProperty(ObjectPropertyList list)
+		{
+			int oreType;
+
+			switch (m_Resource)
+			{
+				case CraftResource.DullCopper:
+					oreType = 1053108;
+					break; // dull copper
+				case CraftResource.ShadowIron:
+					oreType = 1053107;
+					break; // shadow iron
+				case CraftResource.Copper:
+					oreType = 1053106;
+					break; // copper
+				case CraftResource.Bronze:
+					oreType = 1053105;
+					break; // bronze
+				case CraftResource.Gold:
+					oreType = 1053104;
+					break; // golden
+				case CraftResource.Agapite:
+					oreType = 1053103;
+					break; // agapite
+				case CraftResource.Verite:
+					oreType = 1053102;
+					break; // verite
+				case CraftResource.Valorite:
+					oreType = 1053101;
+					break; // valorite
+				case CraftResource.DernedLeather:
+					oreType = 1051901;
+					break; // 거친 가죽
+				case CraftResource.RatnedLeather:
+					oreType = 1051902;
+					break; // 질긴 가죽
+				case CraftResource.SernedLeather:
+					oreType = 1051903;
+					break; // 경화 가죽
+				case CraftResource.SpinedLeather:
+					oreType = 1061118;
+					break; // spined
+				case CraftResource.HornedLeather:
+					oreType = 1061117;
+					break; // horned
+				case CraftResource.BarbedLeather:
+					oreType = 1061116;
+					break; // barbed
+				case CraftResource.RedScales:
+					oreType = 1060814;
+					break; // red
+				case CraftResource.YellowScales:
+					oreType = 1060818;
+					break; // yellow
+				case CraftResource.BlackScales:
+					oreType = 1060820;
+					break; // black
+				case CraftResource.GreenScales:
+					oreType = 1060819;
+					break; // green
+				case CraftResource.WhiteScales:
+					oreType = 1060821;
+					break; // white
+				case CraftResource.BlueScales:
+					oreType = 1060815;
+					break; // blue
+				case CraftResource.OakWood:
+					oreType = 1072533;
+					break; // oak
+				case CraftResource.AshWood:
+					oreType = 1072534;
+					break; // ash
+				case CraftResource.YewWood:
+					oreType = 1072535;
+					break; // yew
+				case CraftResource.Heartwood:
+					oreType = 1072536;
+					break; // heartwood
+				case CraftResource.Bloodwood:
+					oreType = 1072538;
+					break; // bloodwood
+				case CraftResource.Frostwood:
+					oreType = 1072539;
+					break; // frostwood
+				default:
+					oreType = 0;
+					break;
+			}
 			//아이템 이름 설정
-            if (Name == null)
-            {
+			if (Name == null)
+			{
 				if (oreType != 0)
 				{
-					if( !Identified )
-						list.Add(1028266, "<basefont color=#AAAAAA>{0}\t#{1}\t{2}<basefont color=#FFFFFF>", "", oreType, GetNameString());
-					else if( (int)ItemPower == 0 || (int)ItemPower >= 4 )
+					if (!Identified)
+						list.Add(
+							1028266,
+							"<basefont color=#AAAAAA>{0}\t#{1}\t{2}<basefont color=#FFFFFF>",
+							"",
+							oreType,
+							GetNameString()
+						);
+					else if ((int)ItemPower == 0 || (int)ItemPower >= 4)
 					{
-						if (m_ReforgedPrefix != ReforgedPrefix.None && m_ReforgedSuffix != ReforgedSuffix.None )
+						if (m_ReforgedPrefix != ReforgedPrefix.None && m_ReforgedSuffix != ReforgedSuffix.None)
 						{
-							list.Add(1028261, String.Format(Util.OreAllItemRank( (int)ItemPower), "",  RunicReforging.GetPrefixName(m_ReforgedPrefix), RunicReforging.GetSuffixName(m_ReforgedSuffix), oreType,GetNameString()));
+							list.Add(
+								1028261,
+								String.Format(
+									Util.OreAllItemRank((int)ItemPower),
+									"",
+									RunicReforging.GetPrefixName(m_ReforgedPrefix),
+									RunicReforging.GetSuffixName(m_ReforgedSuffix),
+									oreType,
+									GetNameString()
+								)
+							);
 						}
-						else if ( m_ReforgedPrefix != ReforgedPrefix.None )
+						else if (m_ReforgedPrefix != ReforgedPrefix.None)
 						{
-							list.Add(1028262, String.Format(Util.OreOneItemRank( (int)ItemPower), "",  RunicReforging.GetPrefixName(m_ReforgedPrefix), oreType, GetNameString()));
+							list.Add(
+								1028262,
+								String.Format(
+									Util.OreOneItemRank((int)ItemPower),
+									"",
+									RunicReforging.GetPrefixName(m_ReforgedPrefix),
+									oreType,
+									GetNameString()
+								)
+							);
 						}
-						else if ( m_ReforgedSuffix != ReforgedSuffix.None )
+						else if (m_ReforgedSuffix != ReforgedSuffix.None)
 						{
-							list.Add(1028263, String.Format(Util.OreOneItemRank( (int)ItemPower), "",  RunicReforging.GetSuffixName(m_ReforgedSuffix), oreType, GetNameString()));
-							
+							list.Add(
+								1028263,
+								String.Format(
+									Util.OreOneItemRank((int)ItemPower),
+									"",
+									RunicReforging.GetSuffixName(m_ReforgedSuffix),
+									oreType,
+									GetNameString()
+								)
+							);
 						}
 						else
 						{
-							list.Add(1028264, String.Format(Util.OreItemRank( (int)ItemPower), "", oreType, GetNameString()));
+							list.Add(
+								1028264,
+								String.Format(Util.OreItemRank((int)ItemPower), "", oreType, GetNameString())
+							);
 						}
 					}
 					else
 						list.Add(1053099, "#{0}\t{1}", oreType, GetNameString());
 				}
-				else if( SuffixOption[99] > 0 )
+				else if (SuffixOption[99] > 0)
 				{
-					if( !Identified )
-						list.Add(1028266, "<basefont color=#AAAAAA>{0}\t#{1}\t{2}<basefont color=#FFFFFF>", "", 1052084 + SuffixOption[99], GetNameString());
+					if (!Identified)
+						list.Add(
+							1028266,
+							"<basefont color=#AAAAAA>{0}\t#{1}\t{2}<basefont color=#FFFFFF>",
+							"",
+							1052084 + SuffixOption[99],
+							GetNameString()
+						);
 					else
-						list.Add(1028264, String.Format(Util.OreItemRank( (int)ItemPower), "", 1052084 + SuffixOption[99], GetNameString()));
+						list.Add(
+							1028264,
+							String.Format(
+								Util.OreItemRank((int)ItemPower),
+								"",
+								1052084 + SuffixOption[99],
+								GetNameString()
+							)
+						);
 				}
 				else
 				{
-					if( !Identified )
-						list.Add(1028265, "<basefont color=#AAAAAA>{0}\t{1}<basefont color=#FFFFFF>", "", GetNameString());
-					else if( (int)ItemPower == 0 || (int)ItemPower >= 4 )
+					if (!Identified)
+						list.Add(
+							1028265,
+							"<basefont color=#AAAAAA>{0}\t{1}<basefont color=#FFFFFF>",
+							"",
+							GetNameString()
+						);
+					else if ((int)ItemPower == 0 || (int)ItemPower >= 4)
 					{
-						if (m_ReforgedPrefix != ReforgedPrefix.None && m_ReforgedSuffix != ReforgedSuffix.None )
+						if (m_ReforgedPrefix != ReforgedPrefix.None && m_ReforgedSuffix != ReforgedSuffix.None)
 						{
-							list.Add(1028258, String.Format(Util.AllItemRank( (int)ItemPower), "", RunicReforging.GetPrefixName(m_ReforgedPrefix), RunicReforging.GetSuffixName(m_ReforgedSuffix), GetNameString()));
+							list.Add(
+								1028258,
+								String.Format(
+									Util.AllItemRank((int)ItemPower),
+									"",
+									RunicReforging.GetPrefixName(m_ReforgedPrefix),
+									RunicReforging.GetSuffixName(m_ReforgedSuffix),
+									GetNameString()
+								)
+							);
 						}
-						else if ( m_ReforgedPrefix != ReforgedPrefix.None )
+						else if (m_ReforgedPrefix != ReforgedPrefix.None)
 						{
-							list.Add(1028259, String.Format(Util.OneItemRank( (int)ItemPower), "", RunicReforging.GetPrefixName(m_ReforgedPrefix), GetNameString()));
+							list.Add(
+								1028259,
+								String.Format(
+									Util.OneItemRank((int)ItemPower),
+									"",
+									RunicReforging.GetPrefixName(m_ReforgedPrefix),
+									GetNameString()
+								)
+							);
 						}
-						else if ( m_ReforgedSuffix != ReforgedSuffix.None )
+						else if (m_ReforgedSuffix != ReforgedSuffix.None)
 						{
-							list.Add(1028260, String.Format(Util.OneItemRank( (int)ItemPower), "", RunicReforging.GetSuffixName(m_ReforgedSuffix), GetNameString()));
-							
+							list.Add(
+								1028260,
+								String.Format(
+									Util.OneItemRank((int)ItemPower),
+									"",
+									RunicReforging.GetSuffixName(m_ReforgedSuffix),
+									GetNameString()
+								)
+							);
 						}
 						else
 						{
-							list.Add(1053099, Util.ItemRank( (int)ItemPower), "", GetNameString());
+							list.Add(1053099, Util.ItemRank((int)ItemPower), "", GetNameString());
 						}
 					}
 					else
-						list.Add(1053099, "{0}\t{1}", "", GetNameString());						
+						list.Add(1053099, "{0}\t{1}", "", GetNameString());
 				}
-            }
-            else
-            {
+			}
+			else
+			{
 				list.Add(Name);
-            }
+			}
 
-            //if (!String.IsNullOrEmpty(_EngravedText))
-            //{
-            //   list.Add(1062613, Utility.FixHtml(_EngravedText));
-            //}
-        }
-		
+			//if (!String.IsNullOrEmpty(_EngravedText))
+			//{
+			//   list.Add(1062613, Utility.FixHtml(_EngravedText));
+			//}
+		}
+
 		public int GetLowerStatReq()
 		{
 			if (!Core.AOS)
@@ -1254,7 +1619,7 @@ namespace Server.Items
 
 			int v = m_AosWeaponAttributes.LowerStatReq;
 
-			if( !this.Identified )
+			if (!this.Identified)
 				v = 0;
 			/*
 			#region Mondain's Legacy
@@ -1283,17 +1648,18 @@ namespace Server.Items
 
 			return v;
 		}
-		
-        public override void AddWeightProperty(ObjectPropertyList list)
-        {
-            base.AddWeightProperty(list);
 
-            if (IsVvVItem)
-                list.Add(1154937); // VvV Item
-        }
-        public override void AddNameProperties(ObjectPropertyList list)
-        {
-            base.AddNameProperties(list);
+		public override void AddWeightProperty(ObjectPropertyList list)
+		{
+			base.AddWeightProperty(list);
+
+			if (IsVvVItem)
+				list.Add(1154937); // VvV Item
+		}
+
+		public override void AddNameProperties(ObjectPropertyList list)
+		{
+			base.AddNameProperties(list);
 
 			//구 아이템 체크
 			/*
@@ -1312,7 +1678,7 @@ namespace Server.Items
 
 			if (m_EngravedText != null)
 			{
-                list.Add(1072305, Utility.FixHtml(m_EngravedText)); // Engraved: ~1_INSCRIPTION~
+				list.Add(1072305, Utility.FixHtml(m_EngravedText)); // Engraved: ~1_INSCRIPTION~
 			}
 
 			if (m_Crafter != null)
@@ -1320,50 +1686,68 @@ namespace Server.Items
 				list.Add(1050043, m_Crafter.TitleName); // crafted by ~1_NAME~
 			}
 
-            #region Factions
-            FactionEquipment.AddFactionProperties(this, list);
-            #endregion
+			#region Factions
+			FactionEquipment.AddFactionProperties(this, list);
+			#endregion
 			if (ArtifactRarity > 0)
 			{
 				list.Add(1061078, ArtifactRarity.ToString()); // artifact rarity ~1_val~
 			}
-            int prop = PrefixOption[99] + 1;
-            double fprop;
-			if( PrefixOption[99] > 0 )
+			int prop = PrefixOption[99] + 1;
+			double fprop;
+			if (PrefixOption[99] > 0)
 			{
 				int levelcheck = 40;
-				if( RootParent != null && RootParent is PlayerMobile )
+				if (RootParent != null && RootParent is PlayerMobile)
 				{
 					PlayerMobile pm = RootParent as PlayerMobile;
 					int equippercent = 1000 - WeaponAttributes.LowerStatReq;
-					
+
 					levelcheck *= equippercent;
 					levelcheck /= 1000;
-					
-					if( Misc.Util.Level(pm.SilverPoint[0]) < PrefixOption[99] * levelcheck )
-						list.Add( 1063525, ( PrefixOption[99] * levelcheck ).ToString() );
+
+					if (Misc.Util.Level(pm.SilverPoint[0]) < PrefixOption[99] * levelcheck)
+						list.Add(1063525, (PrefixOption[99] * levelcheck).ToString());
 					else
-						list.Add( 1063520, ( PrefixOption[99] * levelcheck ).ToString() );
+						list.Add(1063520, (PrefixOption[99] * levelcheck).ToString());
 				}
 				else
-					list.Add( 1063520, ( PrefixOption[99] * levelcheck ).ToString() );
+					list.Add(1063520, (PrefixOption[99] * levelcheck).ToString());
 			}
 			//장비요구치
 			int strReq = AOS.Scale2(IntRequirement, 1000 - GetLowerStatReq());
 			if (strReq > 0)
 			{
-				if( GetLowerStatReq() > 0 )
+				if (GetLowerStatReq() > 0)
 				{
-					if( RootParent != null && RootParent is PlayerMobile )
+					if (RootParent != null && RootParent is PlayerMobile)
 					{
 						PlayerMobile pm = RootParent as PlayerMobile;
-						if( pm.Int < strReq )
-							list.Add(1063562, "{0}\t{1}\t{2}", strReq.ToString(), IntRequirement.ToString(), (IntRequirement - strReq).ToString()); // strength requirement ~1_val~
+						if (pm.Int < strReq)
+							list.Add(
+								1063562,
+								"{0}\t{1}\t{2}",
+								strReq.ToString(),
+								IntRequirement.ToString(),
+								(IntRequirement - strReq).ToString()
+							); // strength requirement ~1_val~
 						else
-							list.Add(1063561, "{0}\t{1}\t{2}", strReq.ToString(), IntRequirement.ToString(), (IntRequirement - strReq).ToString()); // strength requirement ~1_val~
+							list.Add(
+								1063561,
+								"{0}\t{1}\t{2}",
+								strReq.ToString(),
+								IntRequirement.ToString(),
+								(IntRequirement - strReq).ToString()
+							); // strength requirement ~1_val~
 					}
 					else
-						list.Add(1063561, "{0}\t{1}\t{2}", strReq.ToString(), IntRequirement.ToString(), (IntRequirement - strReq).ToString()); // strength requirement ~1_val~
+						list.Add(
+							1063561,
+							"{0}\t{1}\t{2}",
+							strReq.ToString(),
+							IntRequirement.ToString(),
+							(IntRequirement - strReq).ToString()
+						); // strength requirement ~1_val~
 				}
 				else
 					list.Add(1005009, strReq.ToString()); // strength requirement ~1_val~
@@ -1376,112 +1760,152 @@ namespace Server.Items
 			{
 				list.Add(1061824); // one-handed weapon
 			}
-			
+
 			//아이템 등급 색
 			//list.Add(Util.ItemRank((int)ItemPower ));
 			//if( !Identified )
 			//	list.Add( 1060659, "<basefont color=#FF0000>아이템 감정\t안됨<basefont color=#FFFFFF>" );
 
-			if( PrefixOption[0] >= 100 )
+			if (PrefixOption[0] >= 100)
 			{
 				bool skillcheck = false;
 				int skilluse = 0;
 				int skillname = 0;
 				//신규 옵션 정리
-				if( PrefixOption[61] + SuffixOption[61] != 0 )
+				if (PrefixOption[61] + SuffixOption[61] != 0)
 				{
-					for( int i = 0; i < 10; ++i)
+					for (int i = 0; i < 10; ++i)
 					{
-						if( PrefixOption[i + 61] == 0 && SuffixOption[i + 61] == 0 )
+						if (PrefixOption[i + 61] == 0 && SuffixOption[i + 61] == 0)
 							break;
-						
-						if( Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0] < 60 ) //스킬
+
+						if (Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0] < 60) //스킬
 						{
-							SkillName skill = (SkillName)Enum.ToObject(typeof(SkillName), Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0]);
+							SkillName skill = (SkillName)
+								Enum.ToObject(typeof(SkillName), Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0]);
 							skillname = m_AosSkillBonuses.GetSkillName(skill);
-							if ( skillname > 0 )
+							if (skillname > 0)
 							{
-								list.Add(1080641 + skilluse, "#{0}\t{1}", skillname, ((double)SuffixOption[i + 61] * 0.01).ToString());
+								list.Add(
+									1080641 + skilluse,
+									"#{0}\t{1}",
+									skillname,
+									((double)SuffixOption[i + 61] * 0.01).ToString()
+								);
 								skillcheck = true;
 							}
 							skilluse++;
 						}
 						else
 						{
-							int optionpercentcheck = 1081997 + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0]);
-							list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0], (((double)SuffixOption[i + 61])*Misc.Util.PercentCalc(PrefixOption[i + 61])).ToString());
+							int optionpercentcheck =
+								1081997
+								+ Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0]);
+							list.Add(
+								optionpercentcheck,
+								"#{0}\t{1}",
+								Misc.Util.NewEquipOption[PrefixOption[i + 61], 0, 0],
+								(
+									((double)SuffixOption[i + 61]) * Misc.Util.PercentCalc(PrefixOption[i + 61])
+								).ToString()
+							);
 						}
 					}
 				}
 
 				list.Add(1063512); // [마법 옵션]
-				for( int i = 0; i < SuffixOption[0]; ++i)
+				for (int i = 0; i < SuffixOption[0]; ++i)
 				{
-					if( Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0] < 60 ) //스킬
+					if (Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0] < 60) //스킬
 					{
-						SkillName skill = (SkillName)Enum.ToObject(typeof(SkillName), Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0]);
+						SkillName skill = (SkillName)
+							Enum.ToObject(typeof(SkillName), Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0]);
 						skillname = m_AosSkillBonuses.GetSkillName(skill);
-						if ( skillname > 0 )
+						if (skillname > 0)
 						{
-							list.Add(1080641 + skilluse, "#{0}\t{1}", skillname, ((double)SuffixOption[i + 11] * 0.01).ToString());
+							list.Add(
+								1080641 + skilluse,
+								"#{0}\t{1}",
+								skillname,
+								((double)SuffixOption[i + 11] * 0.01).ToString()
+							);
 							skillcheck = true;
 						}
 						skilluse++;
 					}
 					else
 					{
-						int optionpercentcheck = 1081999 + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0]);
-						list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0], (((double)SuffixOption[i + 11])*Misc.Util.PercentCalc(PrefixOption[i + 11])).ToString());
+						int optionpercentcheck =
+							1081999 + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0]);
+						list.Add(
+							optionpercentcheck,
+							"#{0}\t{1}",
+							Misc.Util.NewEquipOption[PrefixOption[i + 11], 0, 0],
+							(((double)SuffixOption[i + 11]) * Misc.Util.PercentCalc(PrefixOption[i + 11])).ToString()
+						);
 					}
 				}
 				//재료 옵션
-				if( PrefixOption[41] != 0 )
+				if (PrefixOption[41] != 0)
 				{
 					list.Add(1081001);
-					list.Add( PrefixOption[41] );
+					list.Add(PrefixOption[41]);
 				}
-				
+
 				//재련 옵션
-				if( PrefixOption[0] == 100 )
+				if (PrefixOption[0] == 100)
 				{
 					list.Add(1082001);
-					if( SuffixOption[2] > 0 )
+					if (SuffixOption[2] > 0)
 					{
-						list.Add(1082002, SuffixOption[2].ToString() );
+						list.Add(1082002, SuffixOption[2].ToString());
 					}
-					for(int i = 0; i < 5; ++i )
+					for (int i = 0; i < 5; ++i)
 					{
-						if( PrefixOption[31 + i] == -1 )
+						if (PrefixOption[31 + i] == -1)
 							break;
 
-						int optionpercentcheck = 1082003 + i + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 31], 0, 0], 5);
-						
-						list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[PrefixOption[i + 31], 0, 0], (((double)SuffixOption[i + 31])*Misc.Util.PercentCalc(PrefixOption[31 + i])).ToString() );
+						int optionpercentcheck =
+							1082003
+							+ i
+							+ Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[PrefixOption[i + 31], 0, 0], 5);
+
+						list.Add(
+							optionpercentcheck,
+							"#{0}\t{1}",
+							Misc.Util.NewEquipOption[PrefixOption[i + 31], 0, 0],
+							(((double)SuffixOption[i + 31]) * Misc.Util.PercentCalc(PrefixOption[31 + i])).ToString()
+						);
 					}
 				}
-				
+
 				//강화 옵션
-				if( PrefixOption[3] + PrefixOption[4] + PrefixOption[5] + PrefixOption[6] + PrefixOption[7] != 0 )
+				if (PrefixOption[3] + PrefixOption[4] + PrefixOption[5] + PrefixOption[6] + PrefixOption[7] != 0)
 				{
 					list.Add(1083001);
-					
-					for(int i = 0; i < 7; ++i)
+
+					for (int i = 0; i < 7; ++i)
 					{
-						if( PrefixOption[3 + i] > 0 )
+						if (PrefixOption[3 + i] > 0)
 						{
-							list.Add( 1083002 + i, "{0}\t{1}", PrefixOption[i + 3], (((double)SuffixOption[i + 3])*Misc.Util.PercentCalc(PrefixOption[3 + i])).ToString() );
+							list.Add(
+								1083002 + i,
+								"{0}\t{1}",
+								PrefixOption[i + 3],
+								(((double)SuffixOption[i + 3]) * Misc.Util.PercentCalc(PrefixOption[3 + i])).ToString()
+							);
 						}
 					}
 				}
 			}
 			//세트 옵션
-			if( PrefixOption[50] != 0 )
+			if (PrefixOption[50] != 0)
 			{
 				int setcount = 0;
-				if( RootParent != null && RootParent is Mobile )
+				if (RootParent != null && RootParent is Mobile)
 				{
 					Mobile from = RootParent as Mobile;
-					if( from is PlayerMobile )
+					if (from is PlayerMobile)
 					{
 						PlayerMobile pm = from as PlayerMobile;
 						setcount = pm.ItemSetValue[PrefixOption[50]];
@@ -1492,77 +1916,83 @@ namespace Server.Items
 				list.Add(1084100 + PrefixOption[50]);
 				int totalset = Misc.SetItem.SetItemList[PrefixOption[50]].GetLength(0) / 2;
 				int maxset = 8;
-				for( int i = 0; i < totalset; ++i)
+				for (int i = 0; i < totalset; ++i)
 				{
 					int equipoption = Misc.SetItem.SetItemList[PrefixOption[50]][i * 2];
 					int equipvalue = Misc.SetItem.SetItemList[PrefixOption[50]][i * 2 + 1];
-					int optionpercentcheck = 1084011 + i + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[equipoption, 0, 0], maxset);
+					int optionpercentcheck =
+						1084011 + i + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[equipoption, 0, 0], maxset);
 
 					//Console.WriteLine("first optionpercentcheck : {0}", optionpercentcheck );
-					
-					if( i < setcount -1 )
+
+					if (i < setcount - 1)
 						optionpercentcheck += maxset * 2;
 
 					//Console.WriteLine("second optionpercentcheck : {0}", optionpercentcheck );
-					list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[equipoption, 0, 0], (((double)equipvalue )* Misc.Util.PercentCalc(equipoption)).ToString() );
+					list.Add(
+						optionpercentcheck,
+						"#{0}\t{1}",
+						Misc.Util.NewEquipOption[equipoption, 0, 0],
+						(((double)equipvalue) * Misc.Util.PercentCalc(equipoption)).ToString()
+					);
 				}
-			}			
+			}
 		}
-        public override void GetContextMenuEntries(Mobile from, List<ContextMenuEntry> list)
-        {
-            base.GetContextMenuEntries(from, list);
+
+		public override void GetContextMenuEntries(Mobile from, List<ContextMenuEntry> list)
+		{
+			base.GetContextMenuEntries(from, list);
 
 			if (from.Alive)
 			{
-				if( LootType == LootType.Blessed )
+				if (LootType == LootType.Blessed)
 					list.Add(new UnBlassCheck(this));
-				else if( LootType == LootType.Regular )
+				else if (LootType == LootType.Regular)
 					list.Add(new BlassCheck(this));
 			}
-        }
-		
-        #region ContextMenuEntries
-        private class BlassCheck : ContextMenuEntry
-        {
-            private readonly Spellbook m_Equip;
+		}
 
-            public BlassCheck(Spellbook equip)
-                : base(6310)
-            {
-                m_Equip = equip;
-            }
+		#region ContextMenuEntries
+		private class BlassCheck : ContextMenuEntry
+		{
+			private readonly Spellbook m_Equip;
 
-            public override void OnClick()
-            {
-                if (m_Equip.Deleted)
-                    return;
+			public BlassCheck(Spellbook equip)
+				: base(6310)
+			{
+				m_Equip = equip;
+			}
 
-				m_Equip.LootType = LootType.Blessed;
-            }
-        }
-        private class UnBlassCheck : ContextMenuEntry
-        {
-            private readonly Spellbook m_Equip;
-
-            public UnBlassCheck(Spellbook equip)
-                : base(6311)
-            {
-                m_Equip = equip;
-            }
-
-            public override void OnClick()
-            {
-                if (m_Equip.Deleted)
-                    return;
+			public override void OnClick()
+			{
+				if (m_Equip.Deleted)
+					return;
 
 				m_Equip.LootType = LootType.Blessed;
-            }
-        }
-		
-		#endregion		
-        public virtual void AddProperty(ObjectPropertyList list)
-        {
-        }
+			}
+		}
+
+		private class UnBlassCheck : ContextMenuEntry
+		{
+			private readonly Spellbook m_Equip;
+
+			public UnBlassCheck(Spellbook equip)
+				: base(6311)
+			{
+				m_Equip = equip;
+			}
+
+			public override void OnClick()
+			{
+				if (m_Equip.Deleted)
+					return;
+
+				m_Equip.LootType = LootType.Blessed;
+			}
+		}
+
+		#endregion
+		public virtual void AddProperty(ObjectPropertyList list) { }
 
 		public override void OnSingleClick(Mobile from)
 		{
@@ -1597,14 +2027,14 @@ namespace Server.Items
 		{
 			Container pack = from.Backpack;
 
-			if ( SpellbookType == SpellbookType.Regular && (Parent == from || (pack != null && Parent == pack)) )
+			if (SpellbookType == SpellbookType.Regular && (Parent == from || (pack != null && Parent == pack)))
 			{
 				DisplayTo(from);
 			}
 			else
 			{
 				from.SendLocalizedMessage(500207);
-					// The spellbook must be in your backpack (and not in a container within) to open.
+				// The spellbook must be in your backpack (and not in a container within) to open.
 			}
 		}
 
@@ -1614,53 +2044,53 @@ namespace Server.Items
 
 			writer.Write(17); // version
 
- 			m_AosArmorAttributes.Serialize(writer);
- 			m_ExtendedWeaponAttributes.Serialize(writer);
- 			m_AosWeaponAttributes.Serialize(writer);
+			m_AosArmorAttributes.Serialize(writer);
+			m_ExtendedWeaponAttributes.Serialize(writer);
+			m_AosWeaponAttributes.Serialize(writer);
 
 			writer.Write(m_IntReq);
 			//웨폰 어빌 & 접두 접미 별도 저장 코드
 			for (int i = 0; i < m_PrefixOption.Length; i++)
 			{
-				writer.Write( (int) m_PrefixOption[i] );
+				writer.Write((int)m_PrefixOption[i]);
 			}
 			for (int i = 0; i < m_SuffixOption.Length; i++)
 			{
-				writer.Write( (int) m_SuffixOption[i] );
+				writer.Write((int)m_SuffixOption[i]);
 			}
-						
+
 			//접두, 접미
-            writer.Write((int)m_ReforgedPrefix);
-            writer.Write((int)m_ReforgedSuffix);
-			
+			writer.Write((int)m_ReforgedPrefix);
+			writer.Write((int)m_ReforgedSuffix);
+
 			//버전 12 - 서브 내구도
 			writer.Write(m_HiddenRank);
-			
+
 			//버전 11 - 유저 제작, 크래프트 자원
-            writer.WriteEncodedInt((int)m_Resource);
-            writer.Write(m_PlayerConstructed);
-			
+			writer.WriteEncodedInt((int)m_Resource);
+			writer.Write(m_PlayerConstructed);
+
 			//버전 10 - 내구도 체크
-            writer.WriteEncodedInt((int)m_MaxHitPoints);
-            writer.WriteEncodedInt((int)m_HitPoints);			
-			
+			writer.WriteEncodedInt((int)m_MaxHitPoints);
+			writer.WriteEncodedInt((int)m_HitPoints);
+
 			// 아이템 감정
-			
+
 			m_AbsorptionAttributes.Serialize(writer);
-			
+
 			writer.Write(m_Identified);
-			
-            writer.Write((int)m_ItemPower);
-            m_AosResistances.Serialize(writer);
-			
-            m_NegativeAttributes.Serialize(writer);
 
-            writer.Write(m_HitPoints);
-            writer.Write(m_MaxHitPoints);
+			writer.Write((int)m_ItemPower);
+			m_AosResistances.Serialize(writer);
 
-            writer.Write(_VvVItem);
-            writer.Write(_Owner);
-            writer.Write(_OwnerName);
+			m_NegativeAttributes.Serialize(writer);
+
+			writer.Write(m_HitPoints);
+			writer.Write(m_MaxHitPoints);
+
+			writer.Write(_VvVItem);
+			writer.Write(_Owner);
+			writer.Write(_OwnerName);
 
 			writer.Write((byte)m_Quality);
 
@@ -1686,13 +2116,16 @@ namespace Server.Items
 
 			switch (version)
 			{
-				case 17: m_AosArmorAttributes = new AosArmorAttributes(this, reader);
-						goto case 16;
-				case 16: m_ExtendedWeaponAttributes = new ExtendedWeaponAttributes(this, reader);
-						goto case 15;
-				case 15: m_AosWeaponAttributes = new AosWeaponAttributes(this, reader);
-						goto case 14;
-				case 14: 
+				case 17:
+					m_AosArmorAttributes = new AosArmorAttributes(this, reader);
+					goto case 16;
+				case 16:
+					m_ExtendedWeaponAttributes = new ExtendedWeaponAttributes(this, reader);
+					goto case 15;
+				case 15:
+					m_AosWeaponAttributes = new AosWeaponAttributes(this, reader);
+					goto case 14;
+				case 14:
 				{
 					m_IntReq = reader.ReadInt();
 					for (int i = 0; i < m_PrefixOption.Length; i++)
@@ -1707,8 +2140,8 @@ namespace Server.Items
 				}
 				case 13:
 				{
-                    m_ReforgedPrefix = (ReforgedPrefix)reader.ReadInt();
-                    m_ReforgedSuffix = (ReforgedSuffix)reader.ReadInt();
+					m_ReforgedPrefix = (ReforgedPrefix)reader.ReadInt();
+					m_ReforgedSuffix = (ReforgedSuffix)reader.ReadInt();
 					goto case 12;
 				}
 				case 12:
@@ -1718,99 +2151,98 @@ namespace Server.Items
 				}
 				case 11:
 				{
-                    m_Resource = (CraftResource)reader.ReadEncodedInt();
-                    m_PlayerConstructed = reader.ReadBool();
+					m_Resource = (CraftResource)reader.ReadEncodedInt();
+					m_PlayerConstructed = reader.ReadBool();
 					goto case 10;
 				}
 				case 10:
 				{
 					m_MaxHitPoints = reader.ReadEncodedInt();
-					m_HitPoints = reader.ReadEncodedInt();					
+					m_HitPoints = reader.ReadEncodedInt();
 					goto case 9;
 				}
 				case 9:
 				{
 					m_AbsorptionAttributes = new SAAbsorptionAttributes(this, reader);
-				
+
 					goto case 8;
 				}
 				case 8:
 				{
-                    m_Identified = reader.ReadBool();
+					m_Identified = reader.ReadBool();
 					goto case 7;
 				}
 				case 7:
 				{
-                    m_ItemPower = (ItemPower)reader.ReadInt();
-                    m_AosResistances = new AosElementAttributes(this, reader);
+					m_ItemPower = (ItemPower)reader.ReadInt();
+					m_AosResistances = new AosElementAttributes(this, reader);
 					goto case 6;
 				}
-                case 6:
-                    {
-                        m_NegativeAttributes = new NegativeAttributes(this, reader);
+				case 6:
+				{
+					m_NegativeAttributes = new NegativeAttributes(this, reader);
 
-                        
-                        m_MaxHitPoints = reader.ReadInt();
-                        m_HitPoints = reader.ReadInt();
+					m_MaxHitPoints = reader.ReadInt();
+					m_HitPoints = reader.ReadInt();
 
-                        _VvVItem = reader.ReadBool();
-                        _Owner = reader.ReadMobile();
-                        _OwnerName = reader.ReadString();
+					_VvVItem = reader.ReadBool();
+					_Owner = reader.ReadMobile();
+					_OwnerName = reader.ReadString();
 
-                        goto case 5;
-                    }
+					goto case 5;
+				}
 				case 5:
-					{
-						m_Quality = (BookQuality)reader.ReadByte();
+				{
+					m_Quality = (BookQuality)reader.ReadByte();
 
-						goto case 4;
-					}
+					goto case 4;
+				}
 				case 4:
-					{
-						m_EngravedText = reader.ReadString();
+				{
+					m_EngravedText = reader.ReadString();
 
-						goto case 3;
-					}
+					goto case 3;
+				}
 				case 3:
-					{
-						m_Crafter = reader.ReadMobile();
-						goto case 2;
-					}
+				{
+					m_Crafter = reader.ReadMobile();
+					goto case 2;
+				}
 				case 2:
-					{
-						m_Slayer = (SlayerName)reader.ReadInt();
-						m_Slayer2 = (SlayerName)reader.ReadInt();
-						goto case 1;
-					}
+				{
+					m_Slayer = (SlayerName)reader.ReadInt();
+					m_Slayer2 = (SlayerName)reader.ReadInt();
+					goto case 1;
+				}
 				case 1:
-					{
-						m_AosAttributes = new AosAttributes(this, reader);
-						m_AosSkillBonuses = new AosSkillBonuses(this, reader);
+				{
+					m_AosAttributes = new AosAttributes(this, reader);
+					m_AosSkillBonuses = new AosSkillBonuses(this, reader);
 
-						goto case 0;
-					}
+					goto case 0;
+				}
 				case 0:
-					{
-						m_Content = reader.ReadULong();
-						m_Count = reader.ReadInt();
+				{
+					m_Content = reader.ReadULong();
+					m_Count = reader.ReadInt();
 
-						break;
-					}
+					break;
+				}
 			}
-			if( m_AosArmorAttributes == null )
+			if (m_AosArmorAttributes == null)
 				m_AosArmorAttributes = new AosArmorAttributes(this);
 
-			if( m_ExtendedWeaponAttributes == null )
+			if (m_ExtendedWeaponAttributes == null)
 				m_ExtendedWeaponAttributes = new ExtendedWeaponAttributes(this);
 
-			if( m_AosWeaponAttributes == null )
+			if (m_AosWeaponAttributes == null)
 				m_AosWeaponAttributes = new AosWeaponAttributes(this);
 
-			if (m_AbsorptionAttributes == null )
+			if (m_AbsorptionAttributes == null)
 			{
 				m_AbsorptionAttributes = new SAAbsorptionAttributes(this);
 			}
-			
+
 			if (m_AosAttributes == null)
 			{
 				m_AosAttributes = new AosAttributes(this);
@@ -1820,16 +2252,16 @@ namespace Server.Items
 			{
 				m_AosSkillBonuses = new AosSkillBonuses(this);
 			}
-			
+
 			if (m_AosResistances == null)
 			{
-                m_AosResistances = new AosElementAttributes(this);
+				m_AosResistances = new AosElementAttributes(this);
 			}
 
-            if (m_NegativeAttributes == null)
-            {
-                m_NegativeAttributes = new NegativeAttributes(this);
-            }
+			if (m_NegativeAttributes == null)
+			{
+				m_NegativeAttributes = new NegativeAttributes(this);
+			}
 
 			if (Core.AOS && Parent is Mobile)
 			{
@@ -1874,16 +2306,17 @@ namespace Server.Items
 			Mobile from,
 			CraftSystem craftSystem,
 			Type typeRes,
-            ITool tool,
+			ITool tool,
 			CraftItem craftItem,
-			int resHue)
+			int resHue
+		)
 		{
 			if (makersMark)
 			{
 				Crafter = from;
 			}
 			m_Quality = (BookQuality)(quality - 1);
-			
+
 			PlayerConstructed = true;
 
 			if (typeRes == null)
@@ -1893,7 +2326,12 @@ namespace Server.Items
 
 			if (Core.AOS)
 			{
-				if( this is Magerybook || this is MysticBook || this is NecromancerSpellbook || this is SpellweavingBook )
+				if (
+					this is Magerybook
+					|| this is MysticBook
+					|| this is NecromancerSpellbook
+					|| this is SpellweavingBook
+				)
 				{
 					if (!craftItem.ForceNonExceptional)
 					{
@@ -1901,8 +2339,8 @@ namespace Server.Items
 					}
 
 					CraftContext context = craftSystem.GetContext(from);
-					
-					if( from is PlayerMobile )
+
+					if (from is PlayerMobile)
 					{
 						double maxValue = 0.8;
 						double bonus = 1;
@@ -1912,7 +2350,7 @@ namespace Server.Items
 							this.MaxHitPoints += 20;
 							this.HitPoints += 20;
 						}
-						
+
 						/*
 						if( from.Skills.ArmsLore.Value >= 150 )
 						{
@@ -1932,16 +2370,16 @@ namespace Server.Items
 						}
 						*/
 						//int rank = Util.ItemRankMaker( from.Skills[craftSystem.MainSkill].Value );
-						int rank = Util.ItemRankMaker( from.Skills.ArmsLore.Value, maxValue, bonus );						
-						
+						int rank = Util.ItemRankMaker(from.Skills.ArmsLore.Value, maxValue, bonus);
+
 						//int tier = Util.ItemTierMaker( arms, rank, Misc.Util.ResourceNumberToNumber((int)Resource ), from );
 						PlayerMobile pm = from as PlayerMobile;
 						//암즈로어 스킬 상승 보너스
-						Util.NewItemCreate(this, rank, pm );
+						Util.NewItemCreate(this, rank, pm);
 						if (m_Quality == BookQuality.Exceptional)
-							pm.CheckSkill(SkillName.ArmsLore, 1500 + rank * 250);						
+							pm.CheckSkill(SkillName.ArmsLore, 1500 + rank * 250);
 						else
-							pm.CheckSkill(SkillName.ArmsLore, 500 + rank * 250);						
+							pm.CheckSkill(SkillName.ArmsLore, 500 + rank * 250);
 					}
 				}
 				if (craftItem != null && !craftItem.ForceNonExceptional)
@@ -1956,21 +2394,21 @@ namespace Server.Items
 			}
 			return quality;
 		}
+
 		private CraftResource m_Resource;
-        private bool m_PlayerConstructed;
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool PlayerConstructed
-        {
-            get
-            {
-                return m_PlayerConstructed;
-            }
-            set
-            {
-                m_PlayerConstructed = value;
-                InvalidateProperties();
+		private bool m_PlayerConstructed;
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool PlayerConstructed
+		{
+			get { return m_PlayerConstructed; }
+			set
+			{
+				m_PlayerConstructed = value;
+				InvalidateProperties();
 			}
-        }
+		}
+
 		[CommandProperty(AccessLevel.GameMaster)]
 		public CraftResource Resource
 		{
@@ -2009,7 +2447,12 @@ namespace Server.Items
 				from.SendMessage("The spellbook has been filled.");
 
 				CommandLogging.WriteLine(
-					from, "{0} {1} filling spellbook {2}", from.AccessLevel, CommandLogging.Format(from), CommandLogging.Format(book));
+					from,
+					"{0} {1} filling spellbook {2}",
+					from.AccessLevel,
+					CommandLogging.Format(from),
+					CommandLogging.Format(book)
+				);
 			}
 			else
 			{
@@ -2065,19 +2508,26 @@ namespace Server.Items
 				book.DisplayTo(from);
 			}
 		}
-        public int SetResistBonus(ResistanceType resist)
-        {
-            switch (resist)
-            {
-                case ResistanceType.Physical: return PhysicalResistance;
-                case ResistanceType.Fire: return FireResistance;
-                case ResistanceType.Cold: return ColdResistance;
-                case ResistanceType.Poison: return PoisonResistance;
-                case ResistanceType.Energy: return EnergyResistance;
-            }
 
-            return 0;
-        }
+		public int SetResistBonus(ResistanceType resist)
+		{
+			switch (resist)
+			{
+				case ResistanceType.Physical:
+					return PhysicalResistance;
+				case ResistanceType.Fire:
+					return FireResistance;
+				case ResistanceType.Cold:
+					return ColdResistance;
+				case ResistanceType.Poison:
+					return PoisonResistance;
+				case ResistanceType.Energy:
+					return EnergyResistance;
+			}
+
+			return 0;
+		}
+
 		private static void EventSink_CastSpellRequest(CastSpellRequestEventArgs e)
 		{
 			Mobile from = e.Mobile;
@@ -2111,10 +2561,10 @@ namespace Server.Items
 					{
 						spell.Cast();
 					}
-                    else if ( !Server.Spells.SkillMasteries.MasteryInfo.IsPassiveMastery( spellID ) )
-                    {
-						from.SendLocalizedMessage( 502345 ); // This spell has been temporarily disabled.
-                    }
+					else if (!Server.Spells.SkillMasteries.MasteryInfo.IsPassiveMastery(spellID))
+					{
+						from.SendLocalizedMessage(502345); // This spell has been temporarily disabled.
+					}
 				}
 			}
 			else

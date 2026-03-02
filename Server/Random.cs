@@ -51,9 +51,15 @@ namespace Server
 			}
 		}
 
-		public static bool IsHardwareRNG { get { return _Random is IHardwareRNG; } }
+		public static bool IsHardwareRNG
+		{
+			get { return _Random is IHardwareRNG; }
+		}
 
-		public static Type Type { get { return _Random.GetType(); } }
+		public static Type Type
+		{
+			get { return _Random.GetType(); }
+		}
 
 		public static int Next(int c)
 		{
@@ -95,9 +101,9 @@ namespace Server
 
 		public int Next(int c)
 		{
-            if(c <= 0)
-                return 0;
-            
+			if (c <= 0)
+				return 0;
+
 			int r;
 			lock (m_Random)
 				r = m_Random.Next(c);

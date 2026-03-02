@@ -11,7 +11,15 @@ namespace Ultima
 	public sealed class Gumps
 	{
 		private static FileIndex m_FileIndex = new FileIndex(
-			"Gumpidx.mul", "Gumpart.mul", "gumpartLegacyMUL.uop", 0xFFFF, 12, ".tga", -1, true);
+			"Gumpidx.mul",
+			"Gumpart.mul",
+			"gumpartLegacyMUL.uop",
+			0xFFFF,
+			12,
+			".tga",
+			-1,
+			true
+		);
 
 		private static Bitmap[] m_Cache;
 		private static bool[] m_Removed;
@@ -42,7 +50,16 @@ namespace Ultima
 		{
 			try
 			{
-				m_FileIndex = new FileIndex("Gumpidx.mul", "Gumpart.mul", "gumpartLegacyMUL.uop", 12, -1, ".tga", -1, true);
+				m_FileIndex = new FileIndex(
+					"Gumpidx.mul",
+					"Gumpart.mul",
+					"gumpartLegacyMUL.uop",
+					12,
+					-1,
+					".tga",
+					-1,
+					true
+				);
 				m_Cache = new Bitmap[m_FileIndex.Index.Length];
 				m_Removed = new bool[m_FileIndex.Index.Length];
 			}
@@ -111,7 +128,8 @@ namespace Ultima
 			{
 				return true;
 			}
-			int length, extra;
+			int length,
+				extra;
 			bool patched;
 
 			if (!m_FileIndex.Valid(index, out length, out extra, out patched))
@@ -137,7 +155,8 @@ namespace Ultima
 		{
 			width = -1;
 			height = -1;
-			int length, extra;
+			int length,
+				extra;
 			bool patched;
 			Stream stream = m_FileIndex.Seek(index, out length, out extra, out patched);
 			if (stream == null)
@@ -169,7 +188,8 @@ namespace Ultima
 		/// <returns></returns>
 		public static unsafe Bitmap GetGump(int index, Hue hue, bool onlyHueGrayPixels, out bool patched)
 		{
-			int length, extra;
+			int length,
+				extra;
 			Stream stream = m_FileIndex.Seek(index, out length, out extra, out patched);
 
 			if (stream == null)
@@ -252,7 +272,8 @@ namespace Ultima
 							ushort* pRleEnd = pPixel;
 							ushort* pPixelEnd = pPixel + width;
 
-							ushort color, count;
+							ushort color,
+								count;
 
 							if (onlyHueGrayPixels)
 							{
@@ -269,7 +290,11 @@ namespace Ultima
 
 										pRleEnd += count;
 
-										if (color != 0 && (color & 0x1F) == ((color >> 5) & 0x1F) && (color & 0x1F) == ((color >> 10) & 0x1F))
+										if (
+											color != 0
+											&& (color & 0x1F) == ((color >> 5) & 0x1F)
+											&& (color & 0x1F) == ((color >> 10) & 0x1F)
+										)
 										{
 											color = pColorTable[color >> 10];
 										}
@@ -319,7 +344,13 @@ namespace Ultima
 								}
 							}
 							stream.Close();
-							return new Bitmap(width, height, bytesPerStride, Settings.PixelFormat, (IntPtr)pPixelDataStart);
+							return new Bitmap(
+								width,
+								height,
+								bytesPerStride,
+								Settings.PixelFormat,
+								(IntPtr)pPixelDataStart
+							);
 						}
 					}
 				}
@@ -365,7 +396,8 @@ namespace Ultima
 			{
 				return m_Cache[index];
 			}
-			int length, extra;
+			int length,
+				extra;
 			Stream stream = m_FileIndex.Seek(index, out length, out extra, out patched);
 			if (stream == null)
 			{
@@ -390,7 +422,10 @@ namespace Ultima
 			}
 			var bmp = new Bitmap(width, height, Settings.PixelFormat);
 			BitmapData bd = bmp.LockBits(
-				new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, Settings.PixelFormat);
+				new Rectangle(0, 0, width, height),
+				ImageLockMode.WriteOnly,
+				Settings.PixelFormat
+			);
 
 			if (m_StreamBuffer == null || m_StreamBuffer.Length < length)
 			{
@@ -451,9 +486,13 @@ namespace Ultima
 			string mul = Path.Combine(path, "Gumpart.mul");
 			using (
 				FileStream fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
-						   fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
+					fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write)
+			)
 			{
-				using (BinaryWriter binidx = new BinaryWriter(fsidx), binmul = new BinaryWriter(fsmul))
+				using (
+					BinaryWriter binidx = new BinaryWriter(fsidx),
+						binmul = new BinaryWriter(fsmul)
+				)
 				{
 					for (int index = 0; index < m_Cache.Length; index++)
 					{
@@ -472,7 +511,10 @@ namespace Ultima
 						else
 						{
 							BitmapData bd = bmp.LockBits(
-								new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, Settings.PixelFormat);
+								new Rectangle(0, 0, bmp.Width, bmp.Height),
+								ImageLockMode.ReadOnly,
+								Settings.PixelFormat
+							);
 							var line = (ushort*)bd.Scan0;
 							int delta = bd.Stride >> 1;
 

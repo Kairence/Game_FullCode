@@ -1,130 +1,158 @@
 using System;
 using System.Collections.Generic;
-
 using Server;
+using Server.Commands;
+using Server.Engines.SeasonalEvents;
+using Server.Engines.TreasuresOfKotlCity;
 using Server.Items;
 using Server.Mobiles;
-using Server.Commands;
-using Server.Engines.TreasuresOfKotlCity;
-using Server.Engines.SeasonalEvents;
 
 namespace Server.Engines.Points
 {
-    public class KotlCityData : PointsSystem
-    {
-        public override PointsType Loyalty { get { return PointsType.TreasuresOfKotlCity; } }
-        public override TextDefinition Name { get { return m_Name; } }
-        public override bool AutoAdd { get { return true; } }
-        public override double MaxPoints { get { return double.MaxValue; } }
-        public override bool ShowOnLoyaltyGump { get { return false; } }
+	public class KotlCityData : PointsSystem
+	{
+		public override PointsType Loyalty
+		{
+			get { return PointsType.TreasuresOfKotlCity; }
+		}
+		public override TextDefinition Name
+		{
+			get { return m_Name; }
+		}
+		public override bool AutoAdd
+		{
+			get { return true; }
+		}
+		public override double MaxPoints
+		{
+			get { return double.MaxValue; }
+		}
+		public override bool ShowOnLoyaltyGump
+		{
+			get { return false; }
+		}
 
-        private TextDefinition m_Name = null;
+		private TextDefinition m_Name = null;
 
-        public bool Enabled { get { return SeasonalEventSystem.IsActive(EventType.TreasuresOfKotlCity); } }
+		public bool Enabled
+		{
+			get { return SeasonalEventSystem.IsActive(EventType.TreasuresOfKotlCity); }
+		}
 
-        public KotlCityData()
-        {
-            DungeonPoints = new Dictionary<Mobile, int>();
-        }
+		public KotlCityData()
+		{
+			DungeonPoints = new Dictionary<Mobile, int>();
+		}
 
-        public override void SendMessage(PlayerMobile from, double old, double points, bool quest)
-        {
-            from.SendLocalizedMessage(1156902, ((int)points).ToString()); // You have turned in ~1_COUNT~ artifacts of the Kotl
-        }
+		public override void SendMessage(PlayerMobile from, double old, double points, bool quest)
+		{
+			from.SendLocalizedMessage(1156902, ((int)points).ToString()); // You have turned in ~1_COUNT~ artifacts of the Kotl
+		}
 
-        public override void ProcessKill(Mobile victim, Mobile damager)
-        {
-            var bc = victim as BaseCreature;
+		public override void ProcessKill(Mobile victim, Mobile damager)
+		{
+			var bc = victim as BaseCreature;
 
-            if (!Enabled || bc == null || bc.Controlled || bc.Summoned || !damager.Alive)
-                return;
-                
-            Region r = bc.Region;
+			if (!Enabled || bc == null || bc.Controlled || bc.Summoned || !damager.Alive)
+				return;
 
-            if (damager is PlayerMobile && r.IsPartOf("KotlCity"))
-            {
-                if (!DungeonPoints.ContainsKey(damager))
-                    DungeonPoints[damager] = 0;
+			Region r = bc.Region;
 
-                int fame = bc.Fame / 2;
-                int luck = Math.Max(0, ((PlayerMobile)damager).RealLuck);
+			if (damager is PlayerMobile && r.IsPartOf("KotlCity"))
+			{
+				if (!DungeonPoints.ContainsKey(damager))
+					DungeonPoints[damager] = 0;
 
-                if (bc.Spawner is KotlBattleSimulator)
-                {
-                    fame *= 4;
-                }
+				int fame = bc.Fame / 2;
+				int luck = Math.Max(0, ((PlayerMobile)damager).RealLuck);
 
-                DungeonPoints[damager] += (int)(fame * (1 + Math.Sqrt(luck) / 100));
+				if (bc.Spawner is KotlBattleSimulator)
+				{
+					fame *= 4;
+				}
 
-                int x = DungeonPoints[damager];
-                const double A = 0.000863316841;
-                const double B = 0.00000425531915;
+				DungeonPoints[damager] += (int)(fame * (1 + Math.Sqrt(luck) / 100));
 
-                double chance = A * Math.Pow(10, B * x);
+				int x = DungeonPoints[damager];
+				const double A = 0.000863316841;
+				const double B = 0.00000425531915;
 
-                if (chance > Utility.RandomDouble())
-                {
-                    Item i = Loot.RandomArmorOrShieldOrWeaponOrJewelry(LootPackEntry.IsInTokuno(bc), LootPackEntry.IsMondain(bc), LootPackEntry.IsStygian(bc));
+				double chance = A * Math.Pow(10, B * x);
 
-                    if (i != null)
-                    {
-                        RunicReforging.GenerateRandomItem(i, damager, Math.Max(100, RunicReforging.GetDifficultyFor(bc)), RunicReforging.GetLuckForKiller(bc), ReforgedPrefix.None, ReforgedSuffix.Kotl);
+				if (chance > Utility.RandomDouble())
+				{
+					Item i = Loot.RandomArmorOrShieldOrWeaponOrJewelry(
+						LootPackEntry.IsInTokuno(bc),
+						LootPackEntry.IsMondain(bc),
+						LootPackEntry.IsStygian(bc)
+					);
 
-                        damager.PlaySound(0x5B4);
-                        damager.SendLocalizedMessage(1062317); // For your valor in combating the fallen beast, a special artifact has been bestowed on you.
+					if (i != null)
+					{
+						RunicReforging.GenerateRandomItem(
+							i,
+							damager,
+							Math.Max(100, RunicReforging.GetDifficultyFor(bc)),
+							RunicReforging.GetLuckForKiller(bc),
+							ReforgedPrefix.None,
+							ReforgedSuffix.Kotl
+						);
 
-                        if (!damager.PlaceInBackpack(i))
-                        {
-                            if (damager.BankBox != null && damager.BankBox.TryDropItem(damager, i, false))
-                                damager.SendLocalizedMessage(1079730); // The item has been placed into your bank box.
-                            else
-                            {
-                                damager.SendLocalizedMessage(1072523); // You find an artifact, but your backpack and bank are too full to hold it.
-                                i.MoveToWorld(damager.Location, damager.Map);
-                            }
-                        }
+						damager.PlaySound(0x5B4);
+						damager.SendLocalizedMessage(1062317); // For your valor in combating the fallen beast, a special artifact has been bestowed on you.
 
-                        DungeonPoints.Remove(damager);
-                    }
-                }
-            }
-        }
+						if (!damager.PlaceInBackpack(i))
+						{
+							if (damager.BankBox != null && damager.BankBox.TryDropItem(damager, i, false))
+								damager.SendLocalizedMessage(1079730); // The item has been placed into your bank box.
+							else
+							{
+								damager.SendLocalizedMessage(1072523); // You find an artifact, but your backpack and bank are too full to hold it.
+								i.MoveToWorld(damager.Location, damager.Map);
+							}
+						}
 
-        public Dictionary<Mobile, int> DungeonPoints { get; set; }
+						DungeonPoints.Remove(damager);
+					}
+				}
+			}
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write(1);
+		public Dictionary<Mobile, int> DungeonPoints { get; set; }
 
-            writer.Write(DungeonPoints.Count);
-            foreach (KeyValuePair<Mobile, int> kvp in DungeonPoints)
-            {
-                writer.Write(kvp.Key);
-                writer.Write(kvp.Value);
-            }
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write(1);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write(DungeonPoints.Count);
+			foreach (KeyValuePair<Mobile, int> kvp in DungeonPoints)
+			{
+				writer.Write(kvp.Key);
+				writer.Write(kvp.Value);
+			}
+		}
 
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            if (version == 0)
-            {
-                reader.ReadBool();
-            }
+			int version = reader.ReadInt();
 
-            int count = reader.ReadInt();
-            for (int i = 0; i < count; i++)
-            {
-                Mobile m = reader.ReadMobile();
-                int points = reader.ReadInt();
+			if (version == 0)
+			{
+				reader.ReadBool();
+			}
 
-                if (m != null && points > 0)
-                    DungeonPoints[m] = points;
-            }
-        }
-    }
+			int count = reader.ReadInt();
+			for (int i = 0; i < count; i++)
+			{
+				Mobile m = reader.ReadMobile();
+				int points = reader.ReadInt();
+
+				if (m != null && points > 0)
+					DungeonPoints[m] = points;
+			}
+		}
+	}
 }

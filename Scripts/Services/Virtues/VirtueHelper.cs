@@ -1,7 +1,6 @@
 #region References
 using System;
 using System.Linq;
-
 using Server.Items;
 #endregion
 
@@ -12,7 +11,7 @@ namespace Server.Services.Virtues
 		None,
 		Seeker,
 		Follower,
-		Knight
+		Knight,
 	}
 
 	public enum VirtueName
@@ -24,13 +23,13 @@ namespace Server.Services.Virtues
 		Valor,
 		Honor,
 		Justice,
-		Honesty
+		Honesty,
 	}
 
 	public class VirtueHelper
 	{
 		public static readonly VirtueName[] Virtues = //
-			Enum.GetValues(typeof(VirtueName)).Cast<VirtueName>().ToArray();
+		Enum.GetValues(typeof(VirtueName)).Cast<VirtueName>().ToArray();
 
 		public static bool HasAny(Mobile from, VirtueName virtue)
 		{
@@ -88,13 +87,15 @@ namespace Server.Services.Virtues
 
 			from.Virtues.SetValue((int)virtue, current + amount);
 
-            var newLevel = GetLevel(from, virtue);
-            gainedPath = (newLevel != oldLevel);
+			var newLevel = GetLevel(from, virtue);
+			gainedPath = (newLevel != oldLevel);
 
-            if (gainedPath)
-            {
-                EventSink.InvokeVirtueLevelChange(new VirtueLevelChangeEventArgs(from, (int)oldLevel, (int)newLevel, (int)virtue));
-            }
+			if (gainedPath)
+			{
+				EventSink.InvokeVirtueLevelChange(
+					new VirtueLevelChangeEventArgs(from, (int)oldLevel, (int)newLevel, (int)virtue)
+				);
+			}
 
 			return true;
 		}

@@ -31,7 +31,8 @@ namespace Server.Items
 						writer.Write(DisguiseTimers.TimeRemaining(m));
 						writer.Write(m.NameMod);
 					}
-				});
+				}
+			);
 		}
 
 		private static void OnLoad()
@@ -45,19 +46,20 @@ namespace Server.Items
 					switch (version)
 					{
 						case 0:
-						{
-							var count = reader.ReadInt();
-
-							for (var i = 0; i < count; ++i)
 							{
-								var m = reader.ReadMobile();
-								DisguiseTimers.CreateTimer(m, reader.ReadTimeSpan());
-								m.NameMod = reader.ReadString();
+								var count = reader.ReadInt();
+
+								for (var i = 0; i < count; ++i)
+								{
+									var m = reader.ReadMobile();
+									DisguiseTimers.CreateTimer(m, reader.ReadTimeSpan());
+									m.NameMod = reader.ReadString();
+								}
 							}
-						}
 							break;
 					}
-				});
+				}
+			);
 		}
 	}
 }

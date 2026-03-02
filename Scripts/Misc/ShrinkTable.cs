@@ -3,82 +3,81 @@ using System.IO;
 
 namespace Server
 {
-    public class ShrinkTable
-    {
-        public const int DefaultItemID = 0x1870;// Yellow virtue stone
-        private static int[] m_Table;
-        public static int Lookup(Mobile m)
-        {
-            return Lookup(m.Body.BodyID, DefaultItemID);
-        }
+	public class ShrinkTable
+	{
+		public const int DefaultItemID = 0x1870; // Yellow virtue stone
+		private static int[] m_Table;
 
-        public static int Lookup(int body)
-        {
-            return Lookup(body, DefaultItemID);
-        }
+		public static int Lookup(Mobile m)
+		{
+			return Lookup(m.Body.BodyID, DefaultItemID);
+		}
 
-        public static int Lookup(Mobile m, int defaultValue)
-        {
-            return Lookup(m.Body.BodyID, defaultValue);
-        }
+		public static int Lookup(int body)
+		{
+			return Lookup(body, DefaultItemID);
+		}
 
-        public static int Lookup(int body, int defaultValue)
-        {
-            if (m_Table == null)
-                Load();
+		public static int Lookup(Mobile m, int defaultValue)
+		{
+			return Lookup(m.Body.BodyID, defaultValue);
+		}
 
-            int val = 0;
+		public static int Lookup(int body, int defaultValue)
+		{
+			if (m_Table == null)
+				Load();
 
-            if (body >= 0 && body < m_Table.Length)
-                val = m_Table[body];
+			int val = 0;
 
-            if (val == 0)
-                val = defaultValue;
+			if (body >= 0 && body < m_Table.Length)
+				val = m_Table[body];
 
-            return val;
-        }
+			if (val == 0)
+				val = defaultValue;
 
-        private static void Load()
-        {
-            string path = Path.Combine(Core.BaseDirectory, "Data/shrink.cfg");
+			return val;
+		}
 
-            if (!File.Exists(path))
-            {
-                m_Table = new int[0];
-                return;
-            }
+		private static void Load()
+		{
+			string path = Path.Combine(Core.BaseDirectory, "Data/shrink.cfg");
 
-            m_Table = new int[1500];
+			if (!File.Exists(path))
+			{
+				m_Table = new int[0];
+				return;
+			}
 
-            using (StreamReader ip = new StreamReader(path))
-            {
-                string line;
+			m_Table = new int[1500];
 
-                while ((line = ip.ReadLine()) != null)
-                {
-                    line = line.Trim();
+			using (StreamReader ip = new StreamReader(path))
+			{
+				string line;
 
-                    if (line.Length == 0 || line.StartsWith("#"))
-                        continue;
+				while ((line = ip.ReadLine()) != null)
+				{
+					line = line.Trim();
 
-                    try
-                    {
-                        string[] split = line.Split('\t');
+					if (line.Length == 0 || line.StartsWith("#"))
+						continue;
 
-                        if (split.Length >= 2)
-                        {
-                            int body = Utility.ToInt32(split[0]);
-                            int item = Utility.ToInt32(split[1]);
+					try
+					{
+						string[] split = line.Split('\t');
 
-                            if (body >= 0 && body < m_Table.Length)
-                                m_Table[body] = item;
-                        }
-                    }
-                    catch
-                    {
-                    }
-                }
-            }
-        }
-    }
+						if (split.Length >= 2)
+						{
+							int body = Utility.ToInt32(split[0]);
+							int item = Utility.ToInt32(split[1]);
+
+							if (body >= 0 && body < m_Table.Length)
+								m_Table[body] = item;
+						}
+					}
+					catch { }
+				}
+			}
+		}
+	}
 }

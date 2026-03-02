@@ -9,7 +9,10 @@ namespace Server
 	{
 		private static readonly Rectangle2D[] m_Bounds;
 
-		public static Rectangle2D[] Table { get { return m_Bounds; } }
+		public static Rectangle2D[] Table
+		{
+			get { return m_Bounds; }
+		}
 
 		static ItemBounds()
 		{
@@ -17,7 +20,14 @@ namespace Server
 
 			if (File.Exists("Data/Binary/Bounds.bin"))
 			{
-				using (FileStream fs = new FileStream("Data/Binary/Bounds.bin", FileMode.Open, FileAccess.Read, FileShare.Read))
+				using (
+					FileStream fs = new FileStream(
+						"Data/Binary/Bounds.bin",
+						FileMode.Open,
+						FileAccess.Read,
+						FileShare.Read
+					)
+				)
 				{
 					BinaryReader bin = new BinaryReader(fs);
 

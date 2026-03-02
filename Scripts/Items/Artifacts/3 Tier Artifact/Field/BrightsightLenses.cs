@@ -3,188 +3,145 @@ using Server.Engines.Craft;
 
 namespace Server.Items
 {
-    [Alterable(typeof(DefTinkering), typeof(GargishBrightsightLenses))]
-    public class BrightsightLenses : ElvenGlasses
+	[Alterable(typeof(DefTinkering), typeof(GargishBrightsightLenses))]
+	public class BrightsightLenses : ElvenGlasses
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public BrightsightLenses()
-        {
-            Hue = 0x501;
-            Attributes.NightSight = 1;
-            Attributes.RegenMana = 3;
-            ArmorAttributes.SelfRepair = 3;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public BrightsightLenses(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public BrightsightLenses()
+		{
+			Hue = 0x501;
+			Attributes.NightSight = 1;
+			Attributes.RegenMana = 3;
+			ArmorAttributes.SelfRepair = 3;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1075039;
-            }
-        }// Brightsight Lenses
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 9;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 29;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 7;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 8;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 7;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public BrightsightLenses(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)1); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1075039; }
+		} // Brightsight Lenses
+		public override int BasePhysicalResistance
+		{
+			get { return 9; }
+		}
+		public override int BaseFireResistance
+		{
+			get { return 29; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return 7; }
+		}
+		public override int BasePoisonResistance
+		{
+			get { return 8; }
+		}
+		public override int BaseEnergyResistance
+		{
+			get { return 7; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
+			writer.Write((int)1); // version
+		}
 
-            if (version < 1)
-            {
-                this.WeaponAttributes.SelfRepair = 0;
-                this.ArmorAttributes.SelfRepair = 3;
-            }
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    [Alterable(typeof(DefTinkering), typeof(GargishBrightsightLenses))]
-    public class GargishBrightsightLenses : GargishGlasses
-    {
-        public override bool IsArtifact { get { return true; } }
+			int version = reader.ReadInt();
 
-        [Constructable]
-        public GargishBrightsightLenses()
-        {
-            Hue = 0x501;
-            Attributes.NightSight = 1;
-            Attributes.RegenMana = 3;
-            ArmorAttributes.SelfRepair = 3;
-        }
+			if (version < 1)
+			{
+				this.WeaponAttributes.SelfRepair = 0;
+				this.ArmorAttributes.SelfRepair = 3;
+			}
+		}
+	}
 
-        public GargishBrightsightLenses(Serial serial)
-            : base(serial)
-        {
-        }
+	[Alterable(typeof(DefTinkering), typeof(GargishBrightsightLenses))]
+	public class GargishBrightsightLenses : GargishGlasses
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1075039;
-            }
-        }// Brightsight Lenses
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 9;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 29;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 7;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 8;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 7;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		[Constructable]
+		public GargishBrightsightLenses()
+		{
+			Hue = 0x501;
+			Attributes.NightSight = 1;
+			Attributes.RegenMana = 3;
+			ArmorAttributes.SelfRepair = 3;
+		}
 
-            writer.Write((int)1); // version
-        }
+		public GargishBrightsightLenses(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override int LabelNumber
+		{
+			get { return 1075039; }
+		} // Brightsight Lenses
+		public override int BasePhysicalResistance
+		{
+			get { return 9; }
+		}
+		public override int BaseFireResistance
+		{
+			get { return 29; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return 7; }
+		}
+		public override int BasePoisonResistance
+		{
+			get { return 8; }
+		}
+		public override int BaseEnergyResistance
+		{
+			get { return 7; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)1); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

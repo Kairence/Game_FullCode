@@ -4,100 +4,102 @@ using Server.Network;
 
 namespace Server.Misc
 {
-    public class Profile
-    {
-        public static void Initialize()
-        {
-            EventSink.ProfileRequest += new ProfileRequestEventHandler(EventSink_ProfileRequest);
-            EventSink.ChangeProfileRequest += new ChangeProfileRequestEventHandler(EventSink_ChangeProfileRequest);
-        }
+	public class Profile
+	{
+		public static void Initialize()
+		{
+			EventSink.ProfileRequest += new ProfileRequestEventHandler(EventSink_ProfileRequest);
+			EventSink.ChangeProfileRequest += new ChangeProfileRequestEventHandler(EventSink_ChangeProfileRequest);
+		}
 
-        public static void EventSink_ChangeProfileRequest(ChangeProfileRequestEventArgs e)
-        {
-            if (e.Beholder != e.Beheld && e.Beholder.AccessLevel <= e.Beheld.AccessLevel)
-            {
-                e.Beholder.SendMessage("You do not have permission to do that.");
-                return;
-            }
-            
-            Mobile from = e.Beholder;
+		public static void EventSink_ChangeProfileRequest(ChangeProfileRequestEventArgs e)
+		{
+			if (e.Beholder != e.Beheld && e.Beholder.AccessLevel <= e.Beheld.AccessLevel)
+			{
+				e.Beholder.SendMessage("You do not have permission to do that.");
+				return;
+			}
 
-            if (from.ProfileLocked)
-                from.SendMessage("Your profile is locked. You may not change it.");
-            else
-                from.Profile = e.Text;
-        }
+			Mobile from = e.Beholder;
 
-        public static void EventSink_ProfileRequest(ProfileRequestEventArgs e)
-        {
-            Mobile beholder = e.Beholder;
-            Mobile beheld = e.Beheld;
+			if (from.ProfileLocked)
+				from.SendMessage("Your profile is locked. You may not change it.");
+			else
+				from.Profile = e.Text;
+		}
 
-            if (!beheld.Player)
-                return;
+		public static void EventSink_ProfileRequest(ProfileRequestEventArgs e)
+		{
+			Mobile beholder = e.Beholder;
+			Mobile beheld = e.Beheld;
 
-            if (beholder.Map != beheld.Map || !beholder.InRange(beheld, 12) || !beholder.CanSee(beheld))
-                return;
+			if (!beheld.Player)
+				return;
 
-            string header = Titles.ComputeTitle(beholder, beheld);
+			if (beholder.Map != beheld.Map || !beholder.InRange(beheld, 12) || !beholder.CanSee(beheld))
+				return;
 
-            string footer = "";
+			string header = Titles.ComputeTitle(beholder, beheld);
 
-            if (beheld.ProfileLocked)
-            {
-                if (beholder == beheld)
-                    footer = "Your profile has been locked.";
-                else if (beholder.IsStaff())
-                    footer = "This profile has been locked.";
-            }
+			string footer = "";
 
-            if (footer.Length == 0 && beholder == beheld)
-                footer = GetAccountDuration(beheld);
+			if (beheld.ProfileLocked)
+			{
+				if (beholder == beheld)
+					footer = "Your profile has been locked.";
+				else if (beholder.IsStaff())
+					footer = "This profile has been locked.";
+			}
 
-            string body = beheld.Profile;
+			if (footer.Length == 0 && beholder == beheld)
+				footer = GetAccountDuration(beheld);
 
-            if (body == null || body.Length <= 0)
-                body = "";
+			string body = beheld.Profile;
 
-            beholder.Send(new DisplayProfile(beholder != beheld || !beheld.ProfileLocked, beheld, header, body, footer));
-        }
+			if (body == null || body.Length <= 0)
+				body = "";
 
-        public static bool Format(double value, string format, out string op)
-        {
-            if (value >= 1.0)
-            {
-                op = String.Format(format, (int)value, (int)value != 1 ? "s" : "");
-                return true;
-            }
+			beholder.Send(
+				new DisplayProfile(beholder != beheld || !beheld.ProfileLocked, beheld, header, body, footer)
+			);
+		}
 
-            op = null;
-            return false;
-        }
+		public static bool Format(double value, string format, out string op)
+		{
+			if (value >= 1.0)
+			{
+				op = String.Format(format, (int)value, (int)value != 1 ? "s" : "");
+				return true;
+			}
 
-        private static string GetAccountDuration(Mobile m)
-        {
-            Account a = m.Account as Account;
+			op = null;
+			return false;
+		}
 
-            if (a == null)
-                return "";
+		private static string GetAccountDuration(Mobile m)
+		{
+			Account a = m.Account as Account;
 
-            TimeSpan ts = DateTime.UtcNow - a.Created;
+			if (a == null)
+				return "";
 
-            string v;
+			TimeSpan ts = DateTime.UtcNow - a.Created;
 
-            if (Format(ts.TotalDays, "This account is {0} day{1} old.", out v))
-                return v;
+			string v;
 
-            if (Format(ts.TotalHours, "This account is {0} hour{1} old.", out v))
-                return v;
+			if (Format(ts.TotalDays, "This account is {0} day{1} old.", out v))
+				return v;
 
-            if (Format(ts.TotalMinutes, "This account is {0} minute{1} old.", out v))
-                return v;
+			if (Format(ts.TotalHours, "This account is {0} hour{1} old.", out v))
+				return v;
 
-            if (Format(ts.TotalSeconds, "This account is {0} second{1} old.", out v))
-                return v;
+			if (Format(ts.TotalMinutes, "This account is {0} minute{1} old.", out v))
+				return v;
 
-            return "";
-        }
-    }
+			if (Format(ts.TotalSeconds, "This account is {0} second{1} old.", out v))
+				return v;
+
+			return "";
+		}
+	}
 }

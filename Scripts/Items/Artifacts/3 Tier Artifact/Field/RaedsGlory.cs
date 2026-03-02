@@ -2,57 +2,51 @@ using System;
 
 namespace Server.Items
 {
-    public class RaedsGlory : WarCleaver
+	public class RaedsGlory : WarCleaver
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public RaedsGlory()
-        {
-            Hue = 0x1E6;
-            Attributes.BonusMana = 8;
-            Attributes.SpellChanneling = 1;
-            Attributes.WeaponSpeed = 20;
-            WeaponAttributes.HitLeechHits = 40;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public RaedsGlory(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public RaedsGlory()
+		{
+			Hue = 0x1E6;
+			Attributes.BonusMana = 8;
+			Attributes.SpellChanneling = 1;
+			Attributes.WeaponSpeed = 20;
+			WeaponAttributes.HitLeechHits = 40;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1075036;
-            }
-        }// Raed's Glory
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public RaedsGlory(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1075036; }
+		} // Raed's Glory
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

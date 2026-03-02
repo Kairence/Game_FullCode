@@ -1,6 +1,5 @@
 #region References
 using System;
-
 using Server.Accounting;
 using Server.Network;
 using Server.Services.TownCryer;
@@ -21,12 +20,12 @@ namespace Server
 			AccountGold.ConvertOnBank = true;
 			AccountGold.ConvertOnTrade = false;
 			VirtualCheck.UseEditGump = true;
-            
+
 			TownCryerSystem.Enabled = Core.TOL;
 
 			ObjectPropertyList.Enabled = Core.AOS;
 
-            Mobile.InsuranceEnabled = Core.AOS && !Siege.SiegeShard;
+			Mobile.InsuranceEnabled = Core.AOS && !Siege.SiegeShard;
 			Mobile.VisibleDamageType = Core.AOS ? VisibleDamageType.Related : VisibleDamageType.None;
 			//Mobile.VisibleDamageType = Core.AOS ? VisibleDamageType.Everyone : VisibleDamageType.None;
 			Mobile.GuildClickMessage = !Core.AOS;
@@ -44,7 +43,10 @@ namespace Server
 				PacketHandlers.SingleClickProps = true; // single click for everything is overriden to check object property list
 			}
 
-			Mobile.ActionDelay = Core.TOL ? 500 : Core.AOS ? 1000 : 500;
+			Mobile.ActionDelay =
+				Core.TOL ? 500
+				: Core.AOS ? 1000
+				: 500;
 			Mobile.AOSStatusHandler = AOS.GetStatus;
 		}
 	}

@@ -2,76 +2,61 @@ using System;
 
 namespace Server.Items
 {
-    public class ArmsOfArmstrong : LeatherArms
-    {
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public ArmsOfArmstrong()
-        {
-            LootType = LootType.Blessed;
-            Attributes.BonusStr = 3;
-            Attributes.RegenHits = 1;
-        }
+	public class ArmsOfArmstrong : LeatherArms
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public ArmsOfArmstrong(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public ArmsOfArmstrong()
+		{
+			LootType = LootType.Blessed;
+			Attributes.BonusStr = 3;
+			Attributes.RegenHits = 1;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1077675;
-            }
-        }// Arms of Armstrong
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 6;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 6;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 5;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 5;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 5;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public ArmsOfArmstrong(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1077675; }
+		} // Arms of Armstrong
+		public override int BasePhysicalResistance
+		{
+			get { return 6; }
+		}
+		public override int BaseFireResistance
+		{
+			get { return 6; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return 5; }
+		}
+		public override int BasePoisonResistance
+		{
+			get { return 5; }
+		}
+		public override int BaseEnergyResistance
+		{
+			get { return 5; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

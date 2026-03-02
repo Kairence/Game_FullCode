@@ -1,129 +1,128 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
-using Server.Targeting;
 using Server.Mobiles;
+using Server.Targeting;
 
 namespace Server.Spells.Seventh
 {
-    public class ChainLightningSpell : MagerySpell
-    {
-        public override DamageType SpellDamageType { get { return DamageType.SpellAOE; } }
+	public class ChainLightningSpell : MagerySpell
+	{
+		public override DamageType SpellDamageType
+		{
+			get { return DamageType.SpellAOE; }
+		}
 
-        private static readonly SpellInfo m_Info = new SpellInfo(
-            "Chain Lightning", "Vas Ort Grav",
-            209,
-            9022,
-            false,
-            Reagent.BlackPearl,
-            Reagent.Bloodmoss,
-            Reagent.MandrakeRoot,
-            Reagent.SulfurousAsh);
-        public ChainLightningSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+		private static readonly SpellInfo m_Info = new SpellInfo(
+			"Chain Lightning",
+			"Vas Ort Grav",
+			209,
+			9022,
+			false,
+			Reagent.BlackPearl,
+			Reagent.Bloodmoss,
+			Reagent.MandrakeRoot,
+			Reagent.SulfurousAsh
+		);
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Seventh;
-            }
-        }
-        public override bool DelayedDamage
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override void OnCast()
-        {
-            Caster.Target = new InternalTarget(this);
-        }
+		public ChainLightningSpell(Mobile caster, Item scroll)
+			: base(caster, scroll, m_Info) { }
 
-        public void Target(IPoint3D p)
-        {
-            if (!Caster.CanSee(p))
-            {
-                Caster.SendLocalizedMessage(500237); // Target can not be seen.
-            }
-            else if (SpellHelper.CheckTown(p, Caster) && CheckSequence())
-            {
-                SpellHelper.Turn(Caster, p);
+		public override SpellCircle Circle
+		{
+			get { return SpellCircle.Seventh; }
+		}
+		public override bool DelayedDamage
+		{
+			get { return true; }
+		}
 
-                if (p is Item)
-                    p = ((Item)p).GetWorldLocation();
+		public override void OnCast()
+		{
+			Caster.Target = new InternalTarget(this);
+		}
+
+		public void Target(IPoint3D p)
+		{
+			if (!Caster.CanSee(p))
+			{
+				Caster.SendLocalizedMessage(500237); // Target can not be seen.
+			}
+			else if (SpellHelper.CheckTown(p, Caster) && CheckSequence())
+			{
+				SpellHelper.Turn(Caster, p);
+
+				if (p is Item)
+					p = ((Item)p).GetWorldLocation();
 
 				int range = 6;
 
-                var targets = AcquireIndirectTargets(p, range).ToList();
-                var count = Math.Max(1, targets.Count);
+				var targets = AcquireIndirectTargets(p, range).ToList();
+				var count = Math.Max(1, targets.Count);
 
-                foreach (var dam in targets)
-                {
-                    var id = dam;
-                    var m = id as Mobile;
-                    double damage;
+				foreach (var dam in targets)
+				{
+					var id = dam;
+					var m = id as Mobile;
+					double damage;
 
-                    if (Core.AOS)
-                        damage = GetNewAosDamage(0, 0, 120, id is PlayerMobile, id);
-                    else
-                        damage = Utility.Random(27, 22);
+					if (Core.AOS)
+						damage = GetNewAosDamage(0, 0, 120, id is PlayerMobile, id);
+					else
+						damage = Utility.Random(27, 22);
 
-					damage *= 1000 + AosWeaponAttributes.GetValue(Caster, AosWeaponAttribute.HitLightning );
+					damage *= 1000 + AosWeaponAttributes.GetValue(Caster, AosWeaponAttribute.HitLightning);
 					damage /= 1000;
 					/*
-                    if (!Core.AOS && m != null && CheckResisted(m))
-                    {
-                        damage *= 0.5;
+					if (!Core.AOS && m != null && CheckResisted(m))
+					{
+						damage *= 0.5;
 
-                        m.SendLocalizedMessage(501783); // You feel yourself resisting magical energy.
-                    }
+						m.SendLocalizedMessage(501783); // You feel yourself resisting magical energy.
+					}
 
-                    Mobile source = Caster;
-                    //SpellHelper.CheckReflect((int)Circle, ref source, ref id, SpellDamageType);
+					Mobile source = Caster;
+					//SpellHelper.CheckReflect((int)Circle, ref source, ref id, SpellDamageType);
 
-                    if (m != null)
-                    {
-                        damage *= GetDamageScalar(m);
-                    }
+					if (m != null)
+					{
+						damage *= GetDamageScalar(m);
+					}
 					*/
-                    Effects.SendBoltEffect(id, true, 0, false);
+					Effects.SendBoltEffect(id, true, 0, false);
 
-                    Caster.DoHarmful(id);
-                    SpellHelper.Damage(this, id, damage, 0, 0, 0, 0, 100);
-                }
+					Caster.DoHarmful(id);
+					SpellHelper.Damage(this, id, damage, 0, 0, 0, 0, 100);
+				}
 
-                ColUtility.Free(targets);
-            }
+				ColUtility.Free(targets);
+			}
 
-            FinishSequence();
-        }
+			FinishSequence();
+		}
 
-        private class InternalTarget : Target
-        {
-            private readonly ChainLightningSpell m_Owner;
-            public InternalTarget(ChainLightningSpell owner)
-                : base(Core.ML ? 10 : 12, true, TargetFlags.None)
-            {
-                m_Owner = owner;
-            }
+		private class InternalTarget : Target
+		{
+			private readonly ChainLightningSpell m_Owner;
 
-            protected override void OnTarget(Mobile from, object o)
-            {
-                IPoint3D p = o as IPoint3D;
+			public InternalTarget(ChainLightningSpell owner)
+				: base(Core.ML ? 10 : 12, true, TargetFlags.None)
+			{
+				m_Owner = owner;
+			}
 
-                if (p != null)
-                    m_Owner.Target(p);
-            }
+			protected override void OnTarget(Mobile from, object o)
+			{
+				IPoint3D p = o as IPoint3D;
 
-            protected override void OnTargetFinish(Mobile from)
-            {
-                m_Owner.FinishSequence();
-            }
-        }
-    }
+				if (p != null)
+					m_Owner.Target(p);
+			}
+
+			protected override void OnTargetFinish(Mobile from)
+			{
+				m_Owner.FinishSequence();
+			}
+		}
+	}
 }

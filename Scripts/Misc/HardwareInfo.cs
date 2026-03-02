@@ -1,6 +1,5 @@
 #region References
 using System;
-
 using Server.Accounting;
 using Server.Commands;
 using Server.Gumps;
@@ -14,95 +13,187 @@ namespace Server
 	public class HardwareInfo
 	{
 		private int m_InstanceID;
-		private int m_OSMajor, m_OSMinor, m_OSRevision;
-		private int m_CpuManufacturer, m_CpuFamily, m_CpuModel, m_CpuClockSpeed, m_CpuQuantity;
+		private int m_OSMajor,
+			m_OSMinor,
+			m_OSRevision;
+		private int m_CpuManufacturer,
+			m_CpuFamily,
+			m_CpuModel,
+			m_CpuClockSpeed,
+			m_CpuQuantity;
 		private int m_PhysicalMemory;
-		private int m_ScreenWidth, m_ScreenHeight, m_ScreenDepth;
-		private int m_DXMajor, m_DXMinor;
-		private int m_VCVendorID, m_VCDeviceID, m_VCMemory;
-		private int m_Distribution, m_ClientsRunning, m_ClientsInstalled, m_PartialInstalled;
+		private int m_ScreenWidth,
+			m_ScreenHeight,
+			m_ScreenDepth;
+		private int m_DXMajor,
+			m_DXMinor;
+		private int m_VCVendorID,
+			m_VCDeviceID,
+			m_VCMemory;
+		private int m_Distribution,
+			m_ClientsRunning,
+			m_ClientsInstalled,
+			m_PartialInstalled;
 		private string m_VCDescription;
 		private string m_Language;
 		private string m_Unknown;
 		private DateTime m_TimeReceived;
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int CpuModel { get { return m_CpuModel; } }
+		public int CpuModel
+		{
+			get { return m_CpuModel; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int CpuClockSpeed { get { return m_CpuClockSpeed; } }
+		public int CpuClockSpeed
+		{
+			get { return m_CpuClockSpeed; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int CpuQuantity { get { return m_CpuQuantity; } }
+		public int CpuQuantity
+		{
+			get { return m_CpuQuantity; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int OSMajor { get { return m_OSMajor; } }
+		public int OSMajor
+		{
+			get { return m_OSMajor; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int OSMinor { get { return m_OSMinor; } }
+		public int OSMinor
+		{
+			get { return m_OSMinor; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int OSRevision { get { return m_OSRevision; } }
+		public int OSRevision
+		{
+			get { return m_OSRevision; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int InstanceID { get { return m_InstanceID; } }
+		public int InstanceID
+		{
+			get { return m_InstanceID; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int ScreenWidth { get { return m_ScreenWidth; } }
+		public int ScreenWidth
+		{
+			get { return m_ScreenWidth; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int ScreenHeight { get { return m_ScreenHeight; } }
+		public int ScreenHeight
+		{
+			get { return m_ScreenHeight; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int ScreenDepth { get { return m_ScreenDepth; } }
+		public int ScreenDepth
+		{
+			get { return m_ScreenDepth; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int PhysicalMemory { get { return m_PhysicalMemory; } }
+		public int PhysicalMemory
+		{
+			get { return m_PhysicalMemory; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int CpuManufacturer { get { return m_CpuManufacturer; } }
+		public int CpuManufacturer
+		{
+			get { return m_CpuManufacturer; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int CpuFamily { get { return m_CpuFamily; } }
+		public int CpuFamily
+		{
+			get { return m_CpuFamily; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int VCVendorID { get { return m_VCVendorID; } }
+		public int VCVendorID
+		{
+			get { return m_VCVendorID; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int VCDeviceID { get { return m_VCDeviceID; } }
+		public int VCDeviceID
+		{
+			get { return m_VCDeviceID; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int VCMemory { get { return m_VCMemory; } }
+		public int VCMemory
+		{
+			get { return m_VCMemory; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int DXMajor { get { return m_DXMajor; } }
+		public int DXMajor
+		{
+			get { return m_DXMajor; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int DXMinor { get { return m_DXMinor; } }
+		public int DXMinor
+		{
+			get { return m_DXMinor; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public string VCDescription { get { return m_VCDescription; } }
+		public string VCDescription
+		{
+			get { return m_VCDescription; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public string Language { get { return m_Language; } }
+		public string Language
+		{
+			get { return m_Language; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int Distribution { get { return m_Distribution; } }
+		public int Distribution
+		{
+			get { return m_Distribution; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int ClientsRunning { get { return m_ClientsRunning; } }
+		public int ClientsRunning
+		{
+			get { return m_ClientsRunning; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int ClientsInstalled { get { return m_ClientsInstalled; } }
+		public int ClientsInstalled
+		{
+			get { return m_ClientsInstalled; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int PartialInstalled { get { return m_PartialInstalled; } }
+		public int PartialInstalled
+		{
+			get { return m_PartialInstalled; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public string Unknown { get { return m_Unknown; } }
+		public string Unknown
+		{
+			get { return m_Unknown; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public DateTime TimeReceived { get { return m_TimeReceived; } }
+		public DateTime TimeReceived
+		{
+			get { return m_TimeReceived; }
+		}
 
 		public static void Initialize()
 		{
@@ -137,7 +228,8 @@ namespace Server
 							"{0} {1} viewing hardware info of {2}",
 							from.AccessLevel,
 							CommandLogging.Format(from),
-							CommandLogging.Format(m));
+							CommandLogging.Format(m)
+						);
 					}
 
 					if (hwInfo != null)
@@ -192,7 +284,7 @@ namespace Server
 				m_PartialInstalled = pvSrc.ReadByte(),
 				m_Language = pvSrc.ReadUnicodeStringLESafe(4),
 				m_Unknown = pvSrc.ReadStringSafe(64),
-				m_TimeReceived = DateTime.UtcNow
+				m_TimeReceived = DateTime.UtcNow,
 			};
 
 			var acct = state.Account as Account;

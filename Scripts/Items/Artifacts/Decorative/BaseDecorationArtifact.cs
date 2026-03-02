@@ -2,93 +2,91 @@ using System;
 
 namespace Server.Items
 {
-    public abstract class BaseDecorationArtifact : Item, IArtifact
-    {
-		public override bool IsArtifact { get { return true; } }
-        public virtual bool ShowArtifactRarity { get { return true; } }
+	public abstract class BaseDecorationArtifact : Item, IArtifact
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+		public virtual bool ShowArtifactRarity
+		{
+			get { return true; }
+		}
 
-        public BaseDecorationArtifact(int itemID)
-            : base(itemID)
-        {
-            this.Weight = 10.0;
-        }
+		public BaseDecorationArtifact(int itemID)
+			: base(itemID)
+		{
+			this.Weight = 10.0;
+		}
 
-        public BaseDecorationArtifact(Serial serial)
-            : base(serial)
-        {
-        }
+		public BaseDecorationArtifact(Serial serial)
+			: base(serial) { }
 
-        public abstract int ArtifactRarity { get; }
-        public override bool ForceShowProperties
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+		public abstract int ArtifactRarity { get; }
+		public override bool ForceShowProperties
+		{
+			get { return true; }
+		}
 
-            if(ShowArtifactRarity)
-                list.Add(1061078, this.ArtifactRarity.ToString()); // artifact rarity ~1_val~
-        }
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			if (ShowArtifactRarity)
+				list.Add(1061078, this.ArtifactRarity.ToString()); // artifact rarity ~1_val~
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public abstract class BaseDecorationContainerArtifact : BaseContainer
-    {
-        public BaseDecorationContainerArtifact(int itemID)
-            : base(itemID)
-        {
-            this.Weight = 10.0;
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public BaseDecorationContainerArtifact(Serial serial)
-            : base(serial)
-        {
-        }
+	public abstract class BaseDecorationContainerArtifact : BaseContainer
+	{
+		public BaseDecorationContainerArtifact(int itemID)
+			: base(itemID)
+		{
+			this.Weight = 10.0;
+		}
 
-        public abstract int ArtifactRarity { get; }
-        public override bool ForceShowProperties
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override void AddNameProperties(ObjectPropertyList list)
-        {
-            base.AddNameProperties(list);
+		public BaseDecorationContainerArtifact(Serial serial)
+			: base(serial) { }
 
-            list.Add(1061078, this.ArtifactRarity.ToString()); // artifact rarity ~1_val~
-        }
+		public abstract int ArtifactRarity { get; }
+		public override bool ForceShowProperties
+		{
+			get { return true; }
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void AddNameProperties(ObjectPropertyList list)
+		{
+			base.AddNameProperties(list);
 
-            writer.WriteEncodedInt(0); // version
-        }
+			list.Add(1061078, this.ArtifactRarity.ToString()); // artifact rarity ~1_val~
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

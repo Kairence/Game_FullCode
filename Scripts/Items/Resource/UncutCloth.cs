@@ -3,88 +3,87 @@ using Server.Network;
 
 namespace Server.Items
 {
-    [FlipableAttribute(0x1765, 0x1767)]
-    public class UncutCloth : Item, IScissorable, IDyable, ICommodity
-    {
-        [Constructable]
-        public UncutCloth()
-            : this(1)
-        {
-        }
+	[FlipableAttribute(0x1765, 0x1767)]
+	public class UncutCloth : Item, IScissorable, IDyable, ICommodity
+	{
+		[Constructable]
+		public UncutCloth()
+			: this(1) { }
 
-        [Constructable]
-        public UncutCloth(int amount)
-            : base(0x1767)
-        {
-            this.Stackable = true;
-            this.Amount = amount;
-        }
+		[Constructable]
+		public UncutCloth(int amount)
+			: base(0x1767)
+		{
+			this.Stackable = true;
+			this.Amount = amount;
+		}
 
-        public UncutCloth(Serial serial)
-            : base(serial)
-        {
-        }
+		public UncutCloth(Serial serial)
+			: base(serial) { }
 
-        public override double DefaultWeight
-        {
-            get
-            {
-                return 0.1;
-            }
-        }
-        TextDefinition ICommodity.Description
-        {
-            get
-            {
-                return this.LabelNumber;
-            }
-        }
-        bool ICommodity.IsDeedable
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public bool Dye(Mobile from, DyeTub sender)
-        {
-            if (this.Deleted)
-                return false;
+		public override double DefaultWeight
+		{
+			get { return 0.1; }
+		}
+		TextDefinition ICommodity.Description
+		{
+			get { return this.LabelNumber; }
+		}
+		bool ICommodity.IsDeedable
+		{
+			get { return true; }
+		}
 
-            this.Hue = sender.DyedHue;
+		public bool Dye(Mobile from, DyeTub sender)
+		{
+			if (this.Deleted)
+				return false;
 
-            return true;
-        }
+			this.Hue = sender.DyedHue;
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			return true;
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override void OnSingleClick(Mobile from)
-        {
-            int number = (this.Amount == 1) ? 1049124 : 1049123;
+			int version = reader.ReadInt();
+		}
 
-            from.Send(new MessageLocalized(this.Serial, this.ItemID, MessageType.Regular, 0x3B2, 3, number, "", this.Amount.ToString()));
-        }
+		public override void OnSingleClick(Mobile from)
+		{
+			int number = (this.Amount == 1) ? 1049124 : 1049123;
 
-        public bool Scissor(Mobile from, Scissors scissors)
-        {
-            if (this.Deleted || !from.CanSee(this))
-                return false;
+			from.Send(
+				new MessageLocalized(
+					this.Serial,
+					this.ItemID,
+					MessageType.Regular,
+					0x3B2,
+					3,
+					number,
+					"",
+					this.Amount.ToString()
+				)
+			);
+		}
 
-            base.ScissorHelper(from, new Bandage(), 1);
+		public bool Scissor(Mobile from, Scissors scissors)
+		{
+			if (this.Deleted || !from.CanSee(this))
+				return false;
 
-            return true;
-        }
-    }
+			base.ScissorHelper(from, new Bandage(), 1);
+
+			return true;
+		}
+	}
 }

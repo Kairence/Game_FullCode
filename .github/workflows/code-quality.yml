@@ -33,5 +33,5 @@ jobs:
       - name: Check CSharpier formatting
         run: dotnet tool run dotnet-csharpier --check .
 
-      - name: Check dotnet format
-        run: dotnet format --verify-no-changes
+      - name: Check dotnet analyzers
+        run: dotnet format analyzers --verify-no-changes --no-restore --severity error

@@ -2,44 +2,44 @@ using System;
 
 namespace Server.Items
 {
-    public class BraceletOfResilience : GoldBracelet
+	public class BraceletOfResilience : GoldBracelet
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public BraceletOfResilience()
-        {
-            LootType = LootType.Blessed;
-            Attributes.DefendChance = 5;
-            Resistances.Fire = 5;
-            Resistances.Cold = 5;
-            Resistances.Poison = 5;
-            Resistances.Energy = 5;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public BraceletOfResilience(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public BraceletOfResilience()
+		{
+			LootType = LootType.Blessed;
+			Attributes.DefendChance = 5;
+			Resistances.Fire = 5;
+			Resistances.Cold = 5;
+			Resistances.Poison = 5;
+			Resistances.Energy = 5;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1077627;
-            }
-        }// Bracelet of Resilience
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public BraceletOfResilience(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1077627; }
+		} // Bracelet of Resilience
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

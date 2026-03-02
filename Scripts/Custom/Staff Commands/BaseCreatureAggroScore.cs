@@ -1,8 +1,8 @@
 using System;
-using Server;
-using Server.Mobiles;
-using Server.Commands.Generic;
 using System.Collections.Generic;
+using Server;
+using Server.Commands.Generic;
+using Server.Mobiles;
 using Server.Targeting;
 
 namespace Server.Commands
@@ -11,32 +11,36 @@ namespace Server.Commands
 	{
 		public static void Initialize()
 		{
-	      		CommandSystem.Register( "AggroScore", AccessLevel.GameMaster, new CommandEventHandler( BaseCreatureAggroScoreInfo_OnCommand ) );
+			CommandSystem.Register(
+				"AggroScore",
+				AccessLevel.GameMaster,
+				new CommandEventHandler(BaseCreatureAggroScoreInfo_OnCommand)
+			);
 		}
 
-		[Usage( "BaseCreatureDelete" )]
-		[Description( "¸ó½ºÅÍ »èÁ¦ ÄÚµå." )]
-		public static void BaseCreatureAggroScoreInfo_OnCommand( CommandEventArgs e )
+		[Usage("BaseCreatureDelete")]
+		[Description("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½.")]
+		public static void BaseCreatureAggroScoreInfo_OnCommand(CommandEventArgs e)
 		{
 			e.Mobile.Target = new InternalTarget();
 		}
+
 		private class InternalTarget : Target
 		{
-			public InternalTarget() :  base ( 8, false, TargetFlags.None )
-			{
-			}
+			public InternalTarget()
+				: base(8, false, TargetFlags.None) { }
 
-			protected override void OnTarget( Mobile from, object targeted )
+			protected override void OnTarget(Mobile from, object targeted)
 			{
-				if( targeted is BaseCreature )
+				if (targeted is BaseCreature)
 				{
 					BaseCreature bc = targeted as BaseCreature;
 
-					for( int i = 0; i < 10000; i++)
+					for (int i = 0; i < 10000; i++)
 					{
-						if( bc.AggroMobile[i] == null )
+						if (bc.AggroMobile[i] == null)
 							break;
-						from.SendMessage("¾î±×·Î {0}, Á¡¼ö {1}", bc.AggroMobile[i].Name, bc.AggroScore[i] );
+						from.SendMessage("ï¿½ï¿½×·ï¿½ {0}, ï¿½ï¿½ï¿½ï¿½ {1}", bc.AggroMobile[i].Name, bc.AggroScore[i]);
 					}
 				}
 			}

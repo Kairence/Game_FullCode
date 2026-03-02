@@ -4,82 +4,82 @@ using Server.Spells;
 
 namespace Server.Items
 {
-    public class MoonstoneGate : Moongate
-    {
-        private readonly Mobile m_Caster;
-        public MoonstoneGate(Point3D loc, Map map, Map targetMap, Mobile caster, int hue)
-            : base(loc, targetMap)
-        {
-            this.MoveToWorld(loc, map);
-            this.Dispellable = false;
-            this.Hue = hue;
+	public class MoonstoneGate : Moongate
+	{
+		private readonly Mobile m_Caster;
 
-            this.m_Caster = caster;
+		public MoonstoneGate(Point3D loc, Map map, Map targetMap, Mobile caster, int hue)
+			: base(loc, targetMap)
+		{
+			this.MoveToWorld(loc, map);
+			this.Dispellable = false;
+			this.Hue = hue;
 
-            new InternalTimer(this).Start();
+			this.m_Caster = caster;
 
-            Effects.PlaySound(loc, map, 0x20E);
-        }
+			new InternalTimer(this).Start();
 
-        public MoonstoneGate(Serial serial)
-            : base(serial)
-        {
-        }
+			Effects.PlaySound(loc, map, 0x20E);
+		}
 
-        public override void CheckGate(Mobile m, int range)
-        {
-            if (SpellHelper.RestrictRedTravel && m.Murderer)
-                return;
+		public MoonstoneGate(Serial serial)
+			: base(serial) { }
 
-            Party casterParty = Party.Get(this.m_Caster);
-            Party userParty = Party.Get(m);
+		public override void CheckGate(Mobile m, int range)
+		{
+			if (SpellHelper.RestrictRedTravel && m.Murderer)
+				return;
 
-            if (m == this.m_Caster || (casterParty != null && userParty == casterParty))
-                base.CheckGate(m, range);
-        }
+			Party casterParty = Party.Get(this.m_Caster);
+			Party userParty = Party.Get(m);
 
-        public override void UseGate(Mobile m)
-        {
-            if (m.Murderer)
-                return;
+			if (m == this.m_Caster || (casterParty != null && userParty == casterParty))
+				base.CheckGate(m, range);
+		}
 
-            Party casterParty = Party.Get(this.m_Caster);
-            Party userParty = Party.Get(m);
+		public override void UseGate(Mobile m)
+		{
+			if (m.Murderer)
+				return;
 
-            if (m == this.m_Caster || (casterParty != null && userParty == casterParty))
-                base.UseGate(m);
-        }
+			Party casterParty = Party.Get(this.m_Caster);
+			Party userParty = Party.Get(m);
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			if (m == this.m_Caster || (casterParty != null && userParty == casterParty))
+				base.UseGate(m);
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            this.Delete();
-        }
+			int version = reader.ReadInt();
 
-        private class InternalTimer : Timer
-        {
-            private readonly Item m_Item;
-            public InternalTimer(Item item)
-                : base(TimeSpan.FromSeconds(30.0))
-            {
-                this.m_Item = item;
-                this.Priority = TimerPriority.OneSecond;
-            }
+			this.Delete();
+		}
 
-            protected override void OnTick()
-            {
-                this.m_Item.Delete();
-            }
-        }
-    }
+		private class InternalTimer : Timer
+		{
+			private readonly Item m_Item;
+
+			public InternalTimer(Item item)
+				: base(TimeSpan.FromSeconds(30.0))
+			{
+				this.m_Item = item;
+				this.Priority = TimerPriority.OneSecond;
+			}
+
+			protected override void OnTick()
+			{
+				this.m_Item.Delete();
+			}
+		}
+	}
 }

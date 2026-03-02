@@ -2,311 +2,259 @@ using System;
 
 namespace Server.Items
 {
-    public class LightFlowerTapestryEastAddon : BaseAddon
-    {
-        [Constructable]
-        public LightFlowerTapestryEastAddon()
-        {
-            this.AddComponent(new AddonComponent(0xFDC), 0, 0, 0);
-            this.AddComponent(new AddonComponent(0xFDB), 0, 1, 0);
-        }
+	public class LightFlowerTapestryEastAddon : BaseAddon
+	{
+		[Constructable]
+		public LightFlowerTapestryEastAddon()
+		{
+			this.AddComponent(new AddonComponent(0xFDC), 0, 0, 0);
+			this.AddComponent(new AddonComponent(0xFDB), 0, 1, 0);
+		}
 
-        public LightFlowerTapestryEastAddon(Serial serial)
-            : base(serial)
-        {
-        }
+		public LightFlowerTapestryEastAddon(Serial serial)
+			: base(serial) { }
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new LightFlowerTapestryEastDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override BaseAddonDeed Deed
+		{
+			get { return new LightFlowerTapestryEastDeed(); }
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class LightFlowerTapestryEastDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public LightFlowerTapestryEastDeed()
-        {
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public LightFlowerTapestryEastDeed(Serial serial)
-            : base(serial)
-        {
-        }
+	public class LightFlowerTapestryEastDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public LightFlowerTapestryEastDeed() { }
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new LightFlowerTapestryEastAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1049393;
-            }
-        }// a flower tapestry deed facing east
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public LightFlowerTapestryEastDeed(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override BaseAddon Addon
+		{
+			get { return new LightFlowerTapestryEastAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1049393; }
+		} // a flower tapestry deed facing east
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
 
-    public class LightFlowerTapestrySouthAddon : BaseAddon
-    {
-        [Constructable]
-        public LightFlowerTapestrySouthAddon()
-        {
-            this.AddComponent(new AddonComponent(0xFD9), 0, 0, 0);
-            this.AddComponent(new AddonComponent(0xFDA), 1, 0, 0);
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public LightFlowerTapestrySouthAddon(Serial serial)
-            : base(serial)
-        {
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new LightFlowerTapestrySouthDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+	public class LightFlowerTapestrySouthAddon : BaseAddon
+	{
+		[Constructable]
+		public LightFlowerTapestrySouthAddon()
+		{
+			this.AddComponent(new AddonComponent(0xFD9), 0, 0, 0);
+			this.AddComponent(new AddonComponent(0xFDA), 1, 0, 0);
+		}
 
-            writer.Write((int)0); // version
-        }
+		public LightFlowerTapestrySouthAddon(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override BaseAddonDeed Deed
+		{
+			get { return new LightFlowerTapestrySouthDeed(); }
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-    public class LightFlowerTapestrySouthDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public LightFlowerTapestrySouthDeed()
-        {
-        }
+			writer.Write((int)0); // version
+		}
 
-        public LightFlowerTapestrySouthDeed(Serial serial)
-            : base(serial)
-        {
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new LightFlowerTapestrySouthAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1049394;
-            }
-        }// a flower tapestry deed facing south
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			int version = reader.ReadInt();
+		}
+	}
 
-            writer.Write((int)0); // version
-        }
+	public class LightFlowerTapestrySouthDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public LightFlowerTapestrySouthDeed() { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public LightFlowerTapestrySouthDeed(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override BaseAddon Addon
+		{
+			get { return new LightFlowerTapestrySouthAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1049394; }
+		} // a flower tapestry deed facing south
 
-    public class DarkFlowerTapestryEastAddon : BaseAddon
-    {
-        [Constructable]
-        public DarkFlowerTapestryEastAddon()
-        {
-            this.AddComponent(new AddonComponent(0xFE0), 0, 0, 0);
-            this.AddComponent(new AddonComponent(0xFDF), 0, 1, 0);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public DarkFlowerTapestryEastAddon(Serial serial)
-            : base(serial)
-        {
-        }
+			writer.Write((int)0); // version
+		}
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new DarkFlowerTapestryEastDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            writer.Write((int)0); // version
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+	public class DarkFlowerTapestryEastAddon : BaseAddon
+	{
+		[Constructable]
+		public DarkFlowerTapestryEastAddon()
+		{
+			this.AddComponent(new AddonComponent(0xFE0), 0, 0, 0);
+			this.AddComponent(new AddonComponent(0xFDF), 0, 1, 0);
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public DarkFlowerTapestryEastAddon(Serial serial)
+			: base(serial) { }
 
-    public class DarkFlowerTapestryEastDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public DarkFlowerTapestryEastDeed()
-        {
-        }
+		public override BaseAddonDeed Deed
+		{
+			get { return new DarkFlowerTapestryEastDeed(); }
+		}
 
-        public DarkFlowerTapestryEastDeed(Serial serial)
-            : base(serial)
-        {
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new DarkFlowerTapestryEastAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1049395;
-            }
-        }// a dark flower tapestry deed facing east
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			writer.Write((int)0); // version
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 
-            int version = reader.ReadInt();
-        }
-    }
+	public class DarkFlowerTapestryEastDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public DarkFlowerTapestryEastDeed() { }
 
-    public class DarkFlowerTapestrySouthAddon : BaseAddon
-    {
-        [Constructable]
-        public DarkFlowerTapestrySouthAddon()
-        {
-            this.AddComponent(new AddonComponent(0xFDD), 0, 0, 0);
-            this.AddComponent(new AddonComponent(0xFDE), 1, 0, 0);
-        }
+		public DarkFlowerTapestryEastDeed(Serial serial)
+			: base(serial) { }
 
-        public DarkFlowerTapestrySouthAddon(Serial serial)
-            : base(serial)
-        {
-        }
+		public override BaseAddon Addon
+		{
+			get { return new DarkFlowerTapestryEastAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1049395; }
+		} // a dark flower tapestry deed facing east
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new DarkFlowerTapestrySouthDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((int)0); // version
-        }
+			writer.Write((int)0); // version
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadInt();
-        }
-    }
+			int version = reader.ReadInt();
+		}
+	}
 
-    public class DarkFlowerTapestrySouthDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public DarkFlowerTapestrySouthDeed()
-        {
-        }
+	public class DarkFlowerTapestrySouthAddon : BaseAddon
+	{
+		[Constructable]
+		public DarkFlowerTapestrySouthAddon()
+		{
+			this.AddComponent(new AddonComponent(0xFDD), 0, 0, 0);
+			this.AddComponent(new AddonComponent(0xFDE), 1, 0, 0);
+		}
 
-        public DarkFlowerTapestrySouthDeed(Serial serial)
-            : base(serial)
-        {
-        }
+		public DarkFlowerTapestrySouthAddon(Serial serial)
+			: base(serial) { }
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new DarkFlowerTapestrySouthAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1049396;
-            }
-        }// a dark flower tapestry deed facing south
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override BaseAddonDeed Deed
+		{
+			get { return new DarkFlowerTapestrySouthDeed(); }
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
+
+	public class DarkFlowerTapestrySouthDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public DarkFlowerTapestrySouthDeed() { }
+
+		public DarkFlowerTapestrySouthDeed(Serial serial)
+			: base(serial) { }
+
+		public override BaseAddon Addon
+		{
+			get { return new DarkFlowerTapestrySouthAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1049396; }
+		} // a dark flower tapestry deed facing south
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

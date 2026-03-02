@@ -1,11 +1,11 @@
 using System;
-using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using Server;
-using Server.Network;
 using Server.Commands;
 using Server.Commands.Generic;
+using Server.Network;
 
 namespace Server.Gumps
 {
@@ -37,17 +37,20 @@ namespace Server.Gumps
 		public static readonly int SetGumpID = PropsConfig.SetGumpID;
 
 		public static readonly int SetWidth = PropsConfig.SetWidth;
-		public static readonly int SetOffsetX = PropsConfig.SetOffsetX, SetOffsetY = PropsConfig.SetOffsetY;
+		public static readonly int SetOffsetX = PropsConfig.SetOffsetX,
+			SetOffsetY = PropsConfig.SetOffsetY;
 		public static readonly int SetButtonID1 = PropsConfig.SetButtonID1;
 		public static readonly int SetButtonID2 = PropsConfig.SetButtonID2;
 
 		public static readonly int PrevWidth = PropsConfig.PrevWidth;
-		public static readonly int PrevOffsetX = PropsConfig.PrevOffsetX, PrevOffsetY = PropsConfig.PrevOffsetY;
+		public static readonly int PrevOffsetX = PropsConfig.PrevOffsetX,
+			PrevOffsetY = PropsConfig.PrevOffsetY;
 		public static readonly int PrevButtonID1 = PropsConfig.PrevButtonID1;
 		public static readonly int PrevButtonID2 = PropsConfig.PrevButtonID2;
 
 		public static readonly int NextWidth = PropsConfig.NextWidth;
-		public static readonly int NextOffsetX = PropsConfig.NextOffsetX, NextOffsetY = PropsConfig.NextOffsetY;
+		public static readonly int NextOffsetX = PropsConfig.NextOffsetX,
+			NextOffsetY = PropsConfig.NextOffsetY;
 		public static readonly int NextButtonID1 = PropsConfig.NextButtonID1;
 		public static readonly int NextButtonID2 = PropsConfig.NextButtonID2;
 
@@ -65,9 +68,18 @@ namespace Server.Gumps
 		private static readonly int BackHeight = BorderSize + TotalHeight + BorderSize;
 
 #if (NEWTIMERS)
-		public XmlSetTimeSpanGump( PropertyInfo prop, Mobile mobile, object o, Stack<PropertiesGump.StackEntry> stack, int page, ArrayList list ) : base( GumpOffsetX, GumpOffsetY )
+		public XmlSetTimeSpanGump(
+			PropertyInfo prop,
+			Mobile mobile,
+			object o,
+			Stack<PropertiesGump.StackEntry> stack,
+			int page,
+			ArrayList list
+		)
+			: base(GumpOffsetX, GumpOffsetY)
 #else
-		public XmlSetTimeSpanGump( PropertyInfo prop, Mobile mobile, object o, Stack stack, int page, ArrayList list ) : base( GumpOffsetX, GumpOffsetY )
+		public XmlSetTimeSpanGump(PropertyInfo prop, Mobile mobile, object o, Stack stack, int page, ArrayList list)
+			: base(GumpOffsetX, GumpOffsetY)
 #endif
 		{
 			m_Property = prop;
@@ -77,52 +89,59 @@ namespace Server.Gumps
 			m_Page = page;
 			m_List = list;
 
-			TimeSpan ts = (TimeSpan)prop.GetValue( o, null );
+			TimeSpan ts = (TimeSpan)prop.GetValue(o, null);
 
-			AddPage( 0 );
+			AddPage(0);
 
-			AddBackground( 0, 0, BackWidth, BackHeight, BackGumpID );
-			AddImageTiled( BorderSize, BorderSize, TotalWidth - (OldStyle ? SetWidth + OffsetSize : 0), TotalHeight, OffsetGumpID );
+			AddBackground(0, 0, BackWidth, BackHeight, BackGumpID);
+			AddImageTiled(
+				BorderSize,
+				BorderSize,
+				TotalWidth - (OldStyle ? SetWidth + OffsetSize : 0),
+				TotalHeight,
+				OffsetGumpID
+			);
 
-			AddRect( 0, prop.Name, 0, -1 );
-			AddRect( 1, ts.ToString(), 0, -1 );
-			AddRect( 2, "Zero", 1, -1 );
-			AddRect( 3, "From H:M:S", 2, -1 );
-			AddRect( 4, "H:", 3, 0 );
-			AddRect( 5, "M:", 4, 1 );
-			AddRect( 6, "S:", 5, 2 );
+			AddRect(0, prop.Name, 0, -1);
+			AddRect(1, ts.ToString(), 0, -1);
+			AddRect(2, "Zero", 1, -1);
+			AddRect(3, "From H:M:S", 2, -1);
+			AddRect(4, "H:", 3, 0);
+			AddRect(5, "M:", 4, 1);
+			AddRect(6, "S:", 5, 2);
 		}
 
-		private void AddRect( int index, string str, int button, int text )
+		private void AddRect(int index, string str, int button, int text)
 		{
 			int x = BorderSize + OffsetSize;
 			int y = BorderSize + OffsetSize + (index * (EntryHeight + OffsetSize));
 
-			AddImageTiled( x, y, EntryWidth, EntryHeight, EntryGumpID );
-			AddLabelCropped( x + TextOffsetX, y, EntryWidth - TextOffsetX, EntryHeight, TextHue, str );
+			AddImageTiled(x, y, EntryWidth, EntryHeight, EntryGumpID);
+			AddLabelCropped(x + TextOffsetX, y, EntryWidth - TextOffsetX, EntryHeight, TextHue, str);
 
-			if ( text != -1 )
-				AddTextEntry( x + 16 + TextOffsetX, y, EntryWidth - TextOffsetX - 16, EntryHeight, TextHue, text, "" );
+			if (text != -1)
+				AddTextEntry(x + 16 + TextOffsetX, y, EntryWidth - TextOffsetX - 16, EntryHeight, TextHue, text, "");
 
 			x += EntryWidth + OffsetSize;
 
-			if ( SetGumpID != 0 )
-				AddImageTiled( x, y, SetWidth, EntryHeight, SetGumpID );
+			if (SetGumpID != 0)
+				AddImageTiled(x, y, SetWidth, EntryHeight, SetGumpID);
 
-			if ( button != 0 )
-				AddButton( x + SetOffsetX, y + SetOffsetY, SetButtonID1, SetButtonID2, button, GumpButtonType.Reply, 0 );
+			if (button != 0)
+				AddButton(x + SetOffsetX, y + SetOffsetY, SetButtonID1, SetButtonID2, button, GumpButtonType.Reply, 0);
 		}
 
-		public override void OnResponse( NetState sender, RelayInfo info )
+		public override void OnResponse(NetState sender, RelayInfo info)
 		{
 			TimeSpan toSet;
-			bool shouldSet, shouldSend;
+			bool shouldSet,
+				shouldSend;
 
-			TextRelay h = info.GetTextEntry( 0 );
-			TextRelay m = info.GetTextEntry( 1 );
-			TextRelay s = info.GetTextEntry( 2 );
+			TextRelay h = info.GetTextEntry(0);
+			TextRelay m = info.GetTextEntry(1);
+			TextRelay s = info.GetTextEntry(2);
 
-			switch ( info.ButtonID )
+			switch (info.ButtonID)
 			{
 				case 1: // Zero
 				{
@@ -134,19 +153,17 @@ namespace Server.Gumps
 				}
 				case 2: // From H:M:S
 				{
-					if ( h != null && m != null && s != null )
+					if (h != null && m != null && s != null)
 					{
 						try
 						{
-							toSet = TimeSpan.Parse( h.Text + ":" + m.Text + ":" + s.Text );
+							toSet = TimeSpan.Parse(h.Text + ":" + m.Text + ":" + s.Text);
 							shouldSet = true;
 							shouldSend = true;
 
 							break;
 						}
-						catch
-						{
-						}
+						catch { }
 					}
 
 					toSet = TimeSpan.Zero;
@@ -157,19 +174,17 @@ namespace Server.Gumps
 				}
 				case 3: // From H
 				{
-					if ( h != null )
+					if (h != null)
 					{
 						try
 						{
-							toSet = TimeSpan.FromHours( Utility.ToDouble( h.Text ) );
+							toSet = TimeSpan.FromHours(Utility.ToDouble(h.Text));
 							shouldSet = true;
 							shouldSend = true;
 
 							break;
 						}
-						catch
-						{
-						}
+						catch { }
 					}
 
 					toSet = TimeSpan.Zero;
@@ -180,19 +195,17 @@ namespace Server.Gumps
 				}
 				case 4: // From M
 				{
-					if ( m != null )
+					if (m != null)
 					{
 						try
 						{
-							toSet = TimeSpan.FromMinutes( Utility.ToDouble( m.Text ) );
+							toSet = TimeSpan.FromMinutes(Utility.ToDouble(m.Text));
 							shouldSet = true;
 							shouldSend = true;
 
 							break;
 						}
-						catch
-						{
-						}
+						catch { }
 					}
 
 					toSet = TimeSpan.Zero;
@@ -203,19 +216,17 @@ namespace Server.Gumps
 				}
 				case 5: // From S
 				{
-					if ( s != null )
+					if (s != null)
 					{
 						try
 						{
-							toSet = TimeSpan.FromSeconds( Utility.ToDouble( s.Text ) );
+							toSet = TimeSpan.FromSeconds(Utility.ToDouble(s.Text));
 							shouldSet = true;
 							shouldSend = true;
 
 							break;
 						}
-						catch
-						{
-						}
+						catch { }
 					}
 
 					toSet = TimeSpan.Zero;
@@ -234,21 +245,21 @@ namespace Server.Gumps
 				}
 			}
 
-			if ( shouldSet )
+			if (shouldSet)
 			{
 				try
 				{
-					CommandLogging.LogChangeProperty( m_Mobile, m_Object, m_Property.Name, toSet.ToString() );
-					m_Property.SetValue( m_Object, toSet, null );
+					CommandLogging.LogChangeProperty(m_Mobile, m_Object, m_Property.Name, toSet.ToString());
+					m_Property.SetValue(m_Object, toSet, null);
 				}
 				catch
 				{
-					m_Mobile.SendMessage( "An exception was caught. The property may not have changed." );
+					m_Mobile.SendMessage("An exception was caught. The property may not have changed.");
 				}
 			}
 
-			if ( shouldSend )
-				m_Mobile.SendGump( new XmlPropertiesGump( m_Mobile, m_Object, m_Stack, m_List, m_Page ) );
+			if (shouldSend)
+				m_Mobile.SendGump(new XmlPropertiesGump(m_Mobile, m_Object, m_Stack, m_List, m_Page));
 		}
 	}
 }

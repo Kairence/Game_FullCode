@@ -22,7 +22,7 @@ namespace Ultima
 			UOAB,
 			WSC,
 			MULTICACHE,
-			UOADESIGN
+			UOADESIGN,
 		}
 
 		public static bool PostHSFormat { get; set; }
@@ -68,7 +68,8 @@ namespace Ultima
 		{
 			try
 			{
-				int length, extra;
+				int length,
+					extra;
 				bool patched;
 				Stream stream = m_FileIndex.Seek(index, out length, out extra, out patched);
 
@@ -171,9 +172,13 @@ namespace Ultima
 			}
 			using (
 				FileStream idxfs = new FileStream(idx, FileMode.Open, FileAccess.Read, FileShare.Read),
-						   binfs = new FileStream(bin, FileMode.Open, FileAccess.Read, FileShare.Read))
+					binfs = new FileStream(bin, FileMode.Open, FileAccess.Read, FileShare.Read)
+			)
 			{
-				using (BinaryReader idxbin = new BinaryReader(idxfs), binbin = new BinaryReader(binfs))
+				using (
+					BinaryReader idxbin = new BinaryReader(idxfs),
+						binbin = new BinaryReader(binfs)
+				)
 				{
 					int count = idxbin.ReadInt32();
 					int version = idxbin.ReadInt32();
@@ -196,7 +201,12 @@ namespace Ultima
 								int reccount = idxbin.ReadInt32();
 
 								binbin.BaseStream.Seek(filepos, SeekOrigin.Begin);
-								int index, x, y, z, level, hue;
+								int index,
+									x,
+									y,
+									z,
+									level,
+									hue;
 								for (int j = 0; j < reccount; ++j)
 								{
 									index = x = y = z = level = hue = 0;
@@ -260,8 +270,12 @@ namespace Ultima
 				{
 					for (int i = 1; i < newtiles.Count; ++i) // do we have a better one?
 					{
-						if (newtiles[i].m_OffsetX == 0 && newtiles[i].m_OffsetY == 0 && newtiles[i].m_ItemID != 0x1 &&
-							newtiles[i].m_OffsetZ == 0)
+						if (
+							newtiles[i].m_OffsetX == 0
+							&& newtiles[i].m_OffsetY == 0
+							&& newtiles[i].m_ItemID != 0x1
+							&& newtiles[i].m_OffsetZ == 0
+						)
 						{
 							MultiComponentList.MultiTileEntry centeritem = newtiles[i];
 							newtiles.RemoveAt(i); // jep so save it
@@ -288,8 +302,12 @@ namespace Ultima
 			}
 			for (int i = 0; i < newtiles.Count; ++i) // is there a good one
 			{
-				if (newtiles[i].m_OffsetX == 0 && newtiles[i].m_OffsetY == 0 && newtiles[i].m_ItemID != 0x1 &&
-					newtiles[i].m_OffsetZ == 0)
+				if (
+					newtiles[i].m_OffsetX == 0
+					&& newtiles[i].m_OffsetY == 0
+					&& newtiles[i].m_ItemID != 0x1
+					&& newtiles[i].m_OffsetZ == 0
+				)
 				{
 					MultiComponentList.MultiTileEntry centeritem = newtiles[i];
 					newtiles.RemoveAt(i); // store it
@@ -328,9 +346,13 @@ namespace Ultima
 			string mul = Path.Combine(path, "multi.mul");
 			using (
 				FileStream fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
-						   fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
+					fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write)
+			)
 			{
-				using (BinaryWriter binidx = new BinaryWriter(fsidx), binmul = new BinaryWriter(fsmul))
+				using (
+					BinaryWriter binidx = new BinaryWriter(fsidx),
+						binmul = new BinaryWriter(fsmul)
+				)
 				{
 					for (int index = 0; index < 0x2000; ++index)
 					{
@@ -364,11 +386,11 @@ namespace Ultima
 
 								if (isUOAHS)
 								{
-                                    binmul.Write((ulong)tiles[i].m_Flags);
-                                }
-                                else
-                                {
-                                    binmul.Write((uint)tiles[i].m_Flags);
+									binmul.Write((ulong)tiles[i].m_Flags);
+								}
+								else
+								{
+									binmul.Write((uint)tiles[i].m_Flags);
 								}
 							}
 						}
@@ -380,8 +402,11 @@ namespace Ultima
 
 	public sealed class MultiComponentList
 	{
-		private Point m_Min, m_Max, m_Center;
-		private int m_Width, m_Height;
+		private Point m_Min,
+			m_Max,
+			m_Center;
+		private int m_Width,
+			m_Height;
 		private readonly int m_maxHeight;
 		private int m_Surface;
 		private MTile[][][] m_Tiles;
@@ -389,20 +414,49 @@ namespace Ultima
 
 		public static readonly MultiComponentList Empty = new MultiComponentList();
 
-		public Point Min { get { return m_Min; } }
-		public Point Max { get { return m_Max; } }
-		public Point Center { get { return m_Center; } }
-		public int Width { get { return m_Width; } }
-		public int Height { get { return m_Height; } }
-		public MTile[][][] Tiles { get { return m_Tiles; } }
-		public int maxHeight { get { return m_maxHeight; } }
-		public MultiTileEntry[] SortedTiles { get { return m_SortedTiles; } }
-		public int Surface { get { return m_Surface; } }
+		public Point Min
+		{
+			get { return m_Min; }
+		}
+		public Point Max
+		{
+			get { return m_Max; }
+		}
+		public Point Center
+		{
+			get { return m_Center; }
+		}
+		public int Width
+		{
+			get { return m_Width; }
+		}
+		public int Height
+		{
+			get { return m_Height; }
+		}
+		public MTile[][][] Tiles
+		{
+			get { return m_Tiles; }
+		}
+		public int maxHeight
+		{
+			get { return m_maxHeight; }
+		}
+		public MultiTileEntry[] SortedTiles
+		{
+			get { return m_SortedTiles; }
+		}
+		public int Surface
+		{
+			get { return m_Surface; }
+		}
 
 		public struct MultiTileEntry
 		{
 			public ushort m_ItemID;
-			public short m_OffsetX, m_OffsetY, m_OffsetZ;
+			public short m_OffsetX,
+				m_OffsetY,
+				m_OffsetZ;
 			public TileFlag m_Flags;
 		}
 
@@ -427,8 +481,10 @@ namespace Ultima
 				return null;
 			}
 
-			int xMin = 1000, yMin = 1000;
-			int xMax = -1000, yMax = -1000;
+			int xMin = 1000,
+				yMin = 1000;
+			int xMax = -1000,
+				yMax = -1000;
 
 			for (int x = 0; x < m_Width; ++x)
 			{
@@ -537,11 +593,11 @@ namespace Ultima
 
 				if (useNewMultiFormat)
 				{
-                    m_SortedTiles[i].m_Flags = (TileFlag)reader.ReadUInt64();
+					m_SortedTiles[i].m_Flags = (TileFlag)reader.ReadUInt64();
 				}
 				else
 				{
-                    m_SortedTiles[i].m_Flags = (TileFlag)reader.ReadUInt32();
+					m_SortedTiles[i].m_Flags = (TileFlag)reader.ReadUInt32();
 				}
 
 				MultiTileEntry e = m_SortedTiles[i];
@@ -799,7 +855,7 @@ namespace Ultima
 								m_SortedTiles[itemcount].m_OffsetY = reader.ReadInt16();
 								m_SortedTiles[itemcount].m_OffsetZ = reader.ReadInt16();
 								reader.ReadInt16(); // level
-                                m_SortedTiles[itemcount].m_Flags = TileFlag.Background;
+								m_SortedTiles[itemcount].m_Flags = TileFlag.Background;
 								reader.ReadInt16(); // hue
 
 								MultiTileEntry e = m_SortedTiles[itemcount];
@@ -883,7 +939,7 @@ namespace Ultima
 						string line;
 						var tempitem = new MultiTileEntry();
 						tempitem.m_ItemID = 0xFFFF;
-                        tempitem.m_Flags = TileFlag.Background;
+						tempitem.m_Flags = TileFlag.Background;
 
 						while ((line = ip.ReadLine()) != null)
 						{
@@ -1150,8 +1206,9 @@ namespace Ultima
 				int xOffset = m_SortedTiles[i].m_OffsetX + m_Center.X;
 				int yOffset = m_SortedTiles[i].m_OffsetY + m_Center.Y;
 
-                tiles[xOffset][yOffset]
-                    .Add((m_SortedTiles[i].m_ItemID), (sbyte)m_SortedTiles[i].m_OffsetZ, m_SortedTiles[i].m_Flags);
+				tiles[xOffset]
+					[yOffset]
+					.Add((m_SortedTiles[i].m_ItemID), (sbyte)m_SortedTiles[i].m_OffsetZ, m_SortedTiles[i].m_Flags);
 			}
 
 			m_Surface = 0;
@@ -1242,7 +1299,10 @@ namespace Ultima
 		{
 			using (
 				var Tex = new StreamWriter(
-					new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+					new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite),
+					Encoding.GetEncoding(1252)
+				)
+			)
 			{
 				for (int i = 0; i < m_SortedTiles.Length; ++i)
 				{
@@ -1253,7 +1313,9 @@ namespace Ultima
 							m_SortedTiles[i].m_OffsetX,
 							m_SortedTiles[i].m_OffsetY,
 							m_SortedTiles[i].m_OffsetZ,
-							m_SortedTiles[i].m_Flags));
+							m_SortedTiles[i].m_Flags
+						)
+					);
 				}
 			}
 		}
@@ -1262,7 +1324,10 @@ namespace Ultima
 		{
 			using (
 				var Tex = new StreamWriter(
-					new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+					new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite),
+					Encoding.GetEncoding(1252)
+				)
+			)
 			{
 				for (int i = 0; i < m_SortedTiles.Length; ++i)
 				{
@@ -1282,7 +1347,10 @@ namespace Ultima
 		{
 			using (
 				var Tex = new StreamWriter(
-					new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+					new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite),
+					Encoding.GetEncoding(1252)
+				)
+			)
 			{
 				Tex.WriteLine("6 version");
 				Tex.WriteLine("1 template id");
@@ -1297,7 +1365,9 @@ namespace Ultima
 							m_SortedTiles[i].m_OffsetX,
 							m_SortedTiles[i].m_OffsetY,
 							m_SortedTiles[i].m_OffsetZ,
-							m_SortedTiles[i].m_Flags));
+							m_SortedTiles[i].m_Flags
+						)
+					);
 				}
 			}
 		}

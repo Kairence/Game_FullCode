@@ -1,14 +1,13 @@
 #region References
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using Server.ContextMenus;
+using Server.Engines.Quests;
 using Server.Gumps;
 using Server.Items;
 using Server.Network;
 using Server.Targeting;
-using Server.Engines.Quests;
-using System.Linq;
 #endregion
 
 namespace Server.Mobiles
@@ -27,11 +26,16 @@ namespace Server.Mobiles
 		}
 
 		public AnimalTrainer(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
-		protected override List<SBInfo> SBInfos { get { return m_SBInfos; } }
-		public override VendorShoeType ShoeType { get { return Female ? VendorShoeType.ThighBoots : VendorShoeType.Boots; } }
+		protected override List<SBInfo> SBInfos
+		{
+			get { return m_SBInfos; }
+		}
+		public override VendorShoeType ShoeType
+		{
+			get { return Female ? VendorShoeType.ThighBoots : VendorShoeType.Boots; }
+		}
 
 		public override void InitSBInfo()
 		{
@@ -65,83 +69,91 @@ namespace Server.Mobiles
 			base.AddCustomContextEntries(from, list);
 		}
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-            if (PetTrainingHelper.Enabled)
-            {
-                list.Add(1072269); // Quest Giver
-            }
-        }
+			if (PetTrainingHelper.Enabled)
+			{
+				list.Add(1072269); // Quest Giver
+			}
+		}
 
-        private DateTime _NextTalk;
+		private DateTime _NextTalk;
 
-        public override void OnMovement(Mobile m, Point3D oldLocation)
-        {
-            if (PetTrainingHelper.Enabled && m.Alive && !m.Hidden && m is PlayerMobile)
-            {
-                PlayerMobile pm = (PlayerMobile)m;
+		public override void OnMovement(Mobile m, Point3D oldLocation)
+		{
+			if (PetTrainingHelper.Enabled && m.Alive && !m.Hidden && m is PlayerMobile)
+			{
+				PlayerMobile pm = (PlayerMobile)m;
 
-                if (InLOS(m) && InRange(m, 8) && !InRange(oldLocation, 8) && DateTime.UtcNow >= _NextTalk)
-                {
-                    if (Utility.Random(100) < 50)
-                        Say(1157526); // Such an exciting time to be an Animal Trainer! New taming techniques have been discovered!
+				if (InLOS(m) && InRange(m, 8) && !InRange(oldLocation, 8) && DateTime.UtcNow >= _NextTalk)
+				{
+					if (Utility.Random(100) < 50)
+						Say(1157526); // Such an exciting time to be an Animal Trainer! New taming techniques have been discovered!
 
-                    _NextTalk = DateTime.UtcNow + TimeSpan.FromSeconds(60);
-                }
-            }
-        }
+					_NextTalk = DateTime.UtcNow + TimeSpan.FromSeconds(60);
+				}
+			}
+		}
 
-        private Type[] _Quests = { typeof(TamingPetQuest), typeof(UsingAnimalLoreQuest), typeof(LeadingIntoBattleQuest), typeof(TeachingSomethingNewQuest) };
+		private Type[] _Quests =
+		{
+			typeof(TamingPetQuest),
+			typeof(UsingAnimalLoreQuest),
+			typeof(LeadingIntoBattleQuest),
+			typeof(TeachingSomethingNewQuest),
+		};
 
-        public override void OnDoubleClick(Mobile m)
-        {
-            if (PetTrainingHelper.Enabled && m is PlayerMobile && m.InRange(Location, 5))
-            {
-                CheckQuest((PlayerMobile)m);
-            }
-        }
+		public override void OnDoubleClick(Mobile m)
+		{
+			if (PetTrainingHelper.Enabled && m is PlayerMobile && m.InRange(Location, 5))
+			{
+				CheckQuest((PlayerMobile)m);
+			}
+		}
 
-        public bool CheckQuest(PlayerMobile player)
-        {
-            for (int i = 0; i < _Quests.Length; i++)
-            {
-                var quest = player.Quests.FirstOrDefault(q => q.GetType() == _Quests[i]);
+		public bool CheckQuest(PlayerMobile player)
+		{
+			for (int i = 0; i < _Quests.Length; i++)
+			{
+				var quest = player.Quests.FirstOrDefault(q => q.GetType() == _Quests[i]);
 
-                if (quest != null)
-                {
-                    if (quest.Completed)
-                    {
-                        if (quest.GetType() != typeof(TeachingSomethingNewQuest))
-                        {
-                            quest.GiveRewards();
-                        }
-                        else
-                        {
-                            player.SendGump(new MondainQuestGump(quest, MondainQuestGump.Section.Complete, false, true));
-                        }
+				if (quest != null)
+				{
+					if (quest.Completed)
+					{
+						if (quest.GetType() != typeof(TeachingSomethingNewQuest))
+						{
+							quest.GiveRewards();
+						}
+						else
+						{
+							player.SendGump(
+								new MondainQuestGump(quest, MondainQuestGump.Section.Complete, false, true)
+							);
+						}
 
-                        return true;
-                    }
-                    else
-                    {
-                        player.SendGump(new MondainQuestGump(quest, MondainQuestGump.Section.InProgress, false));
-                        quest.InProgress();
-                    }
+						return true;
+					}
+					else
+					{
+						player.SendGump(new MondainQuestGump(quest, MondainQuestGump.Section.InProgress, false));
+						quest.InProgress();
+					}
 
-                    return false;
-                }
-            }
+					return false;
+				}
+			}
 
-            BaseQuest questt = new TamingPetQuest();
-            questt.Owner = player;
-            questt.Quester = this;
-            player.CloseGump(typeof(MondainQuestGump));
-            player.SendGump(new MondainQuestGump(questt));
+			BaseQuest questt = new TamingPetQuest();
+			questt.Owner = player;
+			questt.Quester = this;
+			player.CloseGump(typeof(MondainQuestGump));
+			player.SendGump(new MondainQuestGump(questt));
 
-            return true;
-        }
+			return true;
+		}
 
 		public static int GetMaxStabled(Mobile from)
 		{
@@ -151,7 +163,7 @@ namespace Server.Mobiles
 			var vetern = from.Skills[SkillName.Veterinary].Value;
 			var sklsum = taming + anlore + vetern;
 
-            int max = from is PlayerMobile ? ((PlayerMobile)from).RewardStableSlots : 0;
+			int max = from is PlayerMobile ? ((PlayerMobile)from).RewardStableSlots : 0;
 
 			if (sklsum >= 240.0)
 			{
@@ -169,18 +181,18 @@ namespace Server.Mobiles
 			{
 				max += 2;
 			}
-			
+
 			// bonus SA stable slots
-			if (Core.SA) 
- 			{ 
- 				max += 2;
- 			}
- 			//bonus ToL stable slots
- 			if (Core.TOL) 
- 			{ 
- 				max += 2;
- 			}
- 
+			if (Core.SA)
+			{
+				max += 2;
+			}
+			//bonus ToL stable slots
+			if (Core.TOL)
+			{
+				max += 2;
+			}
+
 			if (taming >= 100.0)
 			{
 				max += (int)((taming - 90.0) / 10);
@@ -196,7 +208,7 @@ namespace Server.Mobiles
 				max += (int)((vetern - 90.0) / 10);
 			}
 
-            return max + Server.Spells.SkillMasteries.MasteryInfo.BoardingSlotIncrease(from);
+			return max + Server.Spells.SkillMasteries.MasteryInfo.BoardingSlotIncrease(from);
 		}
 
 		private void CloseClaimList(Mobile from)
@@ -280,13 +292,13 @@ namespace Server.Mobiles
 				return;
 			}
 
-			if (from.Backpack == null ) //|| from.Backpack.GetAmount(typeof(Gold)) < 30) && Banker.GetBalance(from) < 30)
+			if (from.Backpack == null) //|| from.Backpack.GetAmount(typeof(Gold)) < 30) && Banker.GetBalance(from) < 30)
 			{
 				SayTo(from, 1042556); // Thou dost not have enough gold, not even in thy bank account.
 				return;
 			}
 
-			/* 
+			/*
 			 * I charge 30 gold per pet for a real week's stable time.
 			 * I will withdraw it from thy bank account.
 			 * Which animal wouldst thou like to stable here?
@@ -327,8 +339,10 @@ namespace Server.Mobiles
 			{
 				SayTo(from, 1048053); // You can't stable that!
 			}
-			else if ((pet is PackLlama || pet is PackHorse || pet is Beetle) &&
-					 (pet.Backpack != null && pet.Backpack.Items.Count > 0))
+			else if (
+				(pet is PackLlama || pet is PackHorse || pet is Beetle)
+				&& (pet.Backpack != null && pet.Backpack.Items.Count > 0)
+			)
 			{
 				SayTo(from, 1042563); // You need to unload your pet.
 			}
@@ -340,7 +354,7 @@ namespace Server.Mobiles
 			{
 				SayTo(from, 1042565); // You have too many pets in the stables!
 			}
-			else if (from.Backpack != null )// && from.Backpack.ConsumeTotal(typeof(Gold), 30)) || Banker.Withdraw(from, 30))
+			else if (from.Backpack != null) // && from.Backpack.ConsumeTotal(typeof(Gold), 30)) || Banker.Withdraw(from, 30))
 			{
 				pet.ControlTarget = null;
 				pet.ControlOrder = OrderType.Stay;
@@ -360,8 +374,8 @@ namespace Server.Mobiles
 				from.Stabled.Add(pet);
 
 				SayTo(from, Core.AOS ? 1049677 : 502679);
-				// [AOS: Your pet has been stabled.] Very well, thy pet is stabled. 
-				// Thou mayst recover it by saying 'claim' to me. In one real world week, 
+				// [AOS: Your pet has been stabled.] Very well, thy pet is stabled.
+				// Thou mayst recover it by saying 'claim' to me. In one real world week,
 				// I shall sell it off if it is not claimed!
 			}
 			else
@@ -467,12 +481,11 @@ namespace Server.Mobiles
 			pet.IsStabled = false;
 			pet.StabledBy = null;
 
-			if( from is PlayerMobile )
+			if (from is PlayerMobile)
 			{
 				PlayerMobile pm = from as PlayerMobile;
 				pm.PetFollows += pet.ControlSlots;
 			}
-
 		}
 
 		public override bool HandlesOnSpeech(Mobile from)
@@ -482,10 +495,10 @@ namespace Server.Mobiles
 
 		public override void OnSpeech(SpeechEventArgs e)
 		{
-            if (e.Mobile.Map.Rules != MapRules.FeluccaRules && !CheckVendorAccess(e.Mobile))
-            {
-                return;
-            }
+			if (e.Mobile.Map.Rules != MapRules.FeluccaRules && !CheckVendorAccess(e.Mobile))
+			{
+				return;
+			}
 
 			if (!e.Handled && e.HasKeyword(0x0008)) // *stable*
 			{
@@ -511,26 +524,33 @@ namespace Server.Mobiles
 					Claim(e.Mobile);
 				}
 			}
-            else if (!e.Handled && e.Speech.ToLower().IndexOf("stablecount") >= 0)
-            {
-                IPooledEnumerable eable = e.Mobile.Map.GetMobilesInRange(e.Mobile.Location, 8);
-                e.Handled = true;
+			else if (!e.Handled && e.Speech.ToLower().IndexOf("stablecount") >= 0)
+			{
+				IPooledEnumerable eable = e.Mobile.Map.GetMobilesInRange(e.Mobile.Location, 8);
+				e.Handled = true;
 
-                foreach (Mobile m in eable)
-                {
-                    if (m is AnimalTrainer)
-                    {
-                        e.Mobile.SendLocalizedMessage(1071250, String.Format("{0}\t{1}", e.Mobile.Stabled.Count.ToString(), GetMaxStabled(e.Mobile).ToString())); // ~1_USED~/~2_MAX~ stable stalls used.
-                        break;
-                    }
-                }
+				foreach (Mobile m in eable)
+				{
+					if (m is AnimalTrainer)
+					{
+						e.Mobile.SendLocalizedMessage(
+							1071250,
+							String.Format(
+								"{0}\t{1}",
+								e.Mobile.Stabled.Count.ToString(),
+								GetMaxStabled(e.Mobile).ToString()
+							)
+						); // ~1_USED~/~2_MAX~ stable stalls used.
+						break;
+					}
+				}
 
-                eable.Free();
-            }
-            else
-            {
-                base.OnSpeech(e);
-            }
+				eable.Free();
+			}
+			else
+			{
+				base.OnSpeech(e);
+			}
 		}
 
 		public override void Serialize(GenericWriter writer)
@@ -558,7 +578,7 @@ namespace Server.Mobiles
 				m_Trainer = trainer;
 				m_From = from;
 
-                Enabled = from.Map.Rules == MapRules.FeluccaRules || trainer.CheckVendorAccess(from);
+				Enabled = from.Map.Rules == MapRules.FeluccaRules || trainer.CheckVendorAccess(from);
 			}
 
 			public override void OnClick()
@@ -592,9 +612,10 @@ namespace Server.Mobiles
 					15,
 					275,
 					20,
-                    "<BASEFONT COLOR=#000008>Select a pet to retrieve from the stables:</BASEFONT>",
+					"<BASEFONT COLOR=#000008>Select a pet to retrieve from the stables:</BASEFONT>",
 					false,
-					false);
+					false
+				);
 
 				for (var i = 0; i < list.Count; ++i)
 				{
@@ -613,7 +634,8 @@ namespace Server.Mobiles
 						18,
 						String.Format("<BASEFONT COLOR=#C6C6EF>{0}</BASEFONT>", pet.Name),
 						false,
-						false);
+						false
+					);
 				}
 			}
 
@@ -639,7 +661,7 @@ namespace Server.Mobiles
 				m_Trainer = trainer;
 				m_From = from;
 
-                Enabled = from.Map.Rules == MapRules.FeluccaRules || trainer.CheckVendorAccess(from);
+				Enabled = from.Map.Rules == MapRules.FeluccaRules || trainer.CheckVendorAccess(from);
 			}
 
 			public override void OnClick()

@@ -4,90 +4,87 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    public class HolyMage : BaseVendor
-    {
-        private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
-        [Constructable]
-        public HolyMage()
-            : base("the Holy Mage")
-        {
-            this.SetSkill(SkillName.EvalInt, 65.0, 88.0);
-            this.SetSkill(SkillName.Inscribe, 60.0, 83.0);
-            this.SetSkill(SkillName.Magery, 64.0, 100.0);
-            this.SetSkill(SkillName.Meditation, 60.0, 83.0);
-            this.SetSkill(SkillName.MagicResist, 65.0, 88.0);
-            this.SetSkill(SkillName.Wrestling, 36.0, 68.0);
-            this.SetSkill(SkillName.ItemID, 100.0, 120.0);
-        }
+	public class HolyMage : BaseVendor
+	{
+		private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
 
-        public HolyMage(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public HolyMage()
+			: base("the Holy Mage")
+		{
+			this.SetSkill(SkillName.EvalInt, 65.0, 88.0);
+			this.SetSkill(SkillName.Inscribe, 60.0, 83.0);
+			this.SetSkill(SkillName.Magery, 64.0, 100.0);
+			this.SetSkill(SkillName.Meditation, 60.0, 83.0);
+			this.SetSkill(SkillName.MagicResist, 65.0, 88.0);
+			this.SetSkill(SkillName.Wrestling, 36.0, 68.0);
+			this.SetSkill(SkillName.ItemID, 100.0, 120.0);
+		}
 
-        protected override List<SBInfo> SBInfos
-        {
-            get
-            {
-                return this.m_SBInfos;
-            }
-        }
-        public override void InitSBInfo()
-        {
-            this.m_SBInfos.Add(new SBHolyMage());
-        }
+		public HolyMage(Serial serial)
+			: base(serial) { }
 
-        public Item ApplyHue(Item item, int hue)
-        {
-            item.Hue = hue;
+		protected override List<SBInfo> SBInfos
+		{
+			get { return this.m_SBInfos; }
+		}
 
-            return item;
-        }
+		public override void InitSBInfo()
+		{
+			this.m_SBInfos.Add(new SBHolyMage());
+		}
 
-        public override void InitOutfit()
-        {
-            this.AddItem(this.ApplyHue(new Robe(), 0x47E));
-            this.AddItem(this.ApplyHue(new ThighBoots(), 0x47E));
-            this.AddItem(this.ApplyHue(new BlackStaff(), 0x47E));
+		public Item ApplyHue(Item item, int hue)
+		{
+			item.Hue = hue;
 
-            if (this.Female)
-            {
-                this.AddItem(this.ApplyHue(new LeatherGloves(), 0x47E));
-                this.AddItem(this.ApplyHue(new GoldNecklace(), 0x47E));
-            }
-            else
-            {
-                this.AddItem(this.ApplyHue(new PlateGloves(), 0x47E));
-                this.AddItem(this.ApplyHue(new PlateGorget(), 0x47E));
-            }
+			return item;
+		}
 
-            switch ( Utility.Random(this.Female ? 2 : 1) )
-            {
-                case 0:
-                    this.HairItemID = 0x203C;
-                    break;
-                case 1:
-                    this.HairItemID = 0x203D;
-                    break;
-            }
+		public override void InitOutfit()
+		{
+			this.AddItem(this.ApplyHue(new Robe(), 0x47E));
+			this.AddItem(this.ApplyHue(new ThighBoots(), 0x47E));
+			this.AddItem(this.ApplyHue(new BlackStaff(), 0x47E));
 
-            this.HairHue = 0x47E;
+			if (this.Female)
+			{
+				this.AddItem(this.ApplyHue(new LeatherGloves(), 0x47E));
+				this.AddItem(this.ApplyHue(new GoldNecklace(), 0x47E));
+			}
+			else
+			{
+				this.AddItem(this.ApplyHue(new PlateGloves(), 0x47E));
+				this.AddItem(this.ApplyHue(new PlateGorget(), 0x47E));
+			}
 
-            this.PackGold(100, 200);
-        }
+			switch (Utility.Random(this.Female ? 2 : 1))
+			{
+				case 0:
+					this.HairItemID = 0x203C;
+					break;
+				case 1:
+					this.HairItemID = 0x203D;
+					break;
+			}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			this.HairHue = 0x47E;
 
-            writer.Write((int)0); // version
-        }
+			this.PackGold(100, 200);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

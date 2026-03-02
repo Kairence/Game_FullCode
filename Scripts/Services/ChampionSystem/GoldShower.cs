@@ -10,12 +10,26 @@ namespace Server.Engines.CannedEvil
 	{
 		public static void DoForChamp(Point3D center, Map map)
 		{
-			Do(center, map, ChampionSystem.GoldShowerPiles, ChampionSystem.GoldShowerMinAmount, ChampionSystem.GoldShowerMaxAmount);
+			Do(
+				center,
+				map,
+				ChampionSystem.GoldShowerPiles,
+				ChampionSystem.GoldShowerMinAmount,
+				ChampionSystem.GoldShowerMaxAmount
+			);
 		}
+
 		public static void DoForHarrower(Point3D center, Map map)
 		{
-			Do(center, map, ChampionSystem.HarrowerGoldShowerPiles, ChampionSystem.HarrowerGoldShowerMinAmount, ChampionSystem.HarrowerGoldShowerMaxAmount);
+			Do(
+				center,
+				map,
+				ChampionSystem.HarrowerGoldShowerPiles,
+				ChampionSystem.HarrowerGoldShowerMinAmount,
+				ChampionSystem.HarrowerGoldShowerMaxAmount
+			);
 		}
+
 		public static void Do(Point3D center, Map map, int piles, int minAmount, int maxAmount)
 		{
 			new GoodiesTimer(center, map, piles, minAmount, maxAmount).Start();
@@ -29,6 +43,7 @@ namespace Server.Engines.CannedEvil
 			private int m_PilesDone = 0;
 			private readonly int m_MinAmount;
 			private readonly int m_MaxAmount;
+
 			public GoodiesTimer(Point3D center, Map map, int piles, int minAmount, int maxAmount)
 				: base(TimeSpan.FromSeconds(0.25d), TimeSpan.FromSeconds(0.25d))
 			{
@@ -41,7 +56,7 @@ namespace Server.Engines.CannedEvil
 
 			protected override void OnTick()
 			{
-				if(m_PilesDone >= m_PilesMax)
+				if (m_PilesDone >= m_PilesMax)
 				{
 					Stop();
 					return;
@@ -54,15 +69,33 @@ namespace Server.Engines.CannedEvil
 				switch (Utility.Random(3))
 				{
 					case 0: // Fire column
-						Effects.SendLocationParticles(EffectItem.Create(g.Location, g.Map, EffectItem.DefaultDuration), 0x3709, 10, 30, 5052);
+						Effects.SendLocationParticles(
+							EffectItem.Create(g.Location, g.Map, EffectItem.DefaultDuration),
+							0x3709,
+							10,
+							30,
+							5052
+						);
 						Effects.PlaySound(g, g.Map, 0x208);
 						break;
 					case 1: // Explosion
-						Effects.SendLocationParticles(EffectItem.Create(g.Location, g.Map, EffectItem.DefaultDuration), 0x36BD, 20, 10, 5044);
+						Effects.SendLocationParticles(
+							EffectItem.Create(g.Location, g.Map, EffectItem.DefaultDuration),
+							0x36BD,
+							20,
+							10,
+							5044
+						);
 						Effects.PlaySound(g, g.Map, 0x307);
 						break;
 					case 2: // Ball of fire
-						Effects.SendLocationParticles(EffectItem.Create(g.Location, g.Map, EffectItem.DefaultDuration), 0x36FE, 10, 10, 5052);
+						Effects.SendLocationParticles(
+							EffectItem.Create(g.Location, g.Map, EffectItem.DefaultDuration),
+							0x36FE,
+							10,
+							10,
+							5052
+						);
 						break;
 				}
 				++m_PilesDone;

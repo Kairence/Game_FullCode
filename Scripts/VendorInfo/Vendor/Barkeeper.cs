@@ -1,6 +1,5 @@
 #region References
 using System.Collections.Generic;
-
 using Server.Items;
 #endregion
 
@@ -12,15 +11,19 @@ namespace Server.Mobiles
 
 		[Constructable]
 		public Barkeeper()
-			: base("the barkeeper")
-		{ }
+			: base("the barkeeper") { }
 
 		public Barkeeper(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
-		public override VendorShoeType ShoeType { get { return Utility.RandomBool() ? VendorShoeType.ThighBoots : VendorShoeType.Boots; } }
-		protected override List<SBInfo> SBInfos { get { return m_SBInfos; } }
+		public override VendorShoeType ShoeType
+		{
+			get { return Utility.RandomBool() ? VendorShoeType.ThighBoots : VendorShoeType.Boots; }
+		}
+		protected override List<SBInfo> SBInfos
+		{
+			get { return m_SBInfos; }
+		}
 
 		public override void InitSBInfo()
 		{

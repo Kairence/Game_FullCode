@@ -10,11 +10,20 @@ namespace Server
 		private readonly IPoint3D m_Target;
 		private bool m_Running;
 
-		public Mobile Mobile { get { return m_Mobile; } }
+		public Mobile Mobile
+		{
+			get { return m_Mobile; }
+		}
 
-		public IPoint3D Target { get { return m_Target; } }
+		public IPoint3D Target
+		{
+			get { return m_Target; }
+		}
 
-		public bool Running { get { return m_Running; } }
+		public bool Running
+		{
+			get { return m_Running; }
+		}
 
 		public void Update()
 		{
@@ -91,11 +100,9 @@ namespace Server
 			OnStop();
 		}
 
-		public virtual void OnStop()
-		{ }
+		public virtual void OnStop() { }
 
-		public virtual void OnClick(bool rightClick)
-		{ }
+		public virtual void OnClick(bool rightClick) { }
 
 		public QuestArrow(Mobile m, IPoint3D t)
 		{

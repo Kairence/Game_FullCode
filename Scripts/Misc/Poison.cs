@@ -1,7 +1,6 @@
 #region References
 using System;
 using System.Globalization;
-
 using Server.Items;
 using Server.Mobiles;
 using Server.Network;
@@ -20,7 +19,7 @@ namespace Server
 		{
 			if (Core.AOS)
 			{
-										//이름, 	 레벨,최소,추뎀,배수,딜레이,인터벌,카운트,메시지 카운트
+				//이름, 	 레벨,최소,추뎀,배수,딜레이,인터벌,카운트,메시지 카운트
 				Register(new PoisonImpl("Lesser", 0, 0, 0, 20.0, 5.0, 5.00, 10000, 5));
 				Register(new PoisonImpl("Regular", 1, 1001, 100, 15.0, 5.0, 5.00, 10000, 5));
 				Register(new PoisonImpl("Greater", 2, 5001, 500, 10.0, 5.0, 5.00, 10000, 5));
@@ -60,12 +59,12 @@ namespace Server
 			return newPoison ?? oldPoison;
 		}
 
-        public static Poison DecreaseLevel(Poison oldPoison)
-        {
-            Poison newPoison = (oldPoison == null ? null : GetPoison(oldPoison.Level - 1));
+		public static Poison DecreaseLevel(Poison oldPoison)
+		{
+			Poison newPoison = (oldPoison == null ? null : GetPoison(oldPoison.Level - 1));
 
-            return (newPoison == null ? oldPoison : newPoison);
-        }
+			return (newPoison == null ? oldPoison : newPoison);
+		}
 
 		// Info
 		private readonly string m_Name;
@@ -83,8 +82,14 @@ namespace Server
 
 		private readonly int m_MessageInterval;
 
-		public override string Name { get { return m_Name; } }
-		public override int Level { get { return m_Level; } }
+		public override string Name
+		{
+			get { return m_Name; }
+		}
+		public override int Level
+		{
+			get { return m_Level; }
+		}
 
 		#region Mondain's Legacy
 		public override int RealLevel
@@ -95,7 +100,7 @@ namespace Server
 				{
 					return m_Level - 14;
 				}
-				
+
 				if (m_Level >= 10)
 				{
 					return m_Level - 10;
@@ -113,7 +118,7 @@ namespace Server
 				{
 					return 1072852; // parasitic poison charges: ~1_val~
 				}
-				
+
 				if (m_Level >= 10)
 				{
 					return 1072853; // darkglow poison charges: ~1_val~
@@ -133,17 +138,18 @@ namespace Server
 			double delay,
 			double interval,
 			int count,
-			int messageInterval)
+			int messageInterval
+		)
 		{
-			m_Name = name;								//독 이름
-			m_Level = level;							//독 레벨
-			m_Minimum = min;							//독 최소 단계(0, 1001, 5001, 20001, 100001)
-			m_Maximum = max;							//독 추뎀(0, 100, 500, 1000, 2000)
-			m_Scalar = percent;							//총 독량의 피해(20%, 15%, 10%, 5%, 2.5%)
-			m_Delay = TimeSpan.FromSeconds(delay);		//5초 마다 독 발생
-			m_Interval = TimeSpan.FromSeconds(interval);//5초 마다 독 발생
-			m_Count = count;							//총 1만번(무한)
-			m_MessageInterval = messageInterval;		//메시지는 독 5회당 발생
+			m_Name = name; //독 이름
+			m_Level = level; //독 레벨
+			m_Minimum = min; //독 최소 단계(0, 1001, 5001, 20001, 100001)
+			m_Maximum = max; //독 추뎀(0, 100, 500, 1000, 2000)
+			m_Scalar = percent; //총 독량의 피해(20%, 15%, 10%, 5%, 2.5%)
+			m_Delay = TimeSpan.FromSeconds(delay); //5초 마다 독 발생
+			m_Interval = TimeSpan.FromSeconds(interval); //5초 마다 독 발생
+			m_Count = count; //총 1만번(무한)
+			m_MessageInterval = messageInterval; //메시지는 독 5회당 발생
 		}
 
 		public override Timer ConstructTimer(Mobile m)
@@ -159,7 +165,11 @@ namespace Server
 			private int m_LastDamage;
 			private int m_Index;
 
-			public Mobile From { get { return m_From; } set { m_From = value; } }
+			public Mobile From
+			{
+				get { return m_From; }
+				set { m_From = value; }
+			}
 
 			public PoisonTimer(Mobile m, PoisonImpl p)
 				: base(TimeSpan.FromSeconds(5.0), TimeSpan.FromSeconds(5.0))
@@ -168,7 +178,7 @@ namespace Server
 				m_Mobile = m;
 				m_Poison = p;
 
-				int damage = damage = Utility.RandomMinMax( p.m_Minimum, p.m_Maximum );
+				int damage = damage = Utility.RandomMinMax(p.m_Minimum, p.m_Maximum);
 				/*
 				if( m_Mobile is PlayerMobile )
 				{
@@ -188,51 +198,51 @@ namespace Server
 					}
 				}
 				*/
-                BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Poison, 1017383, 1075633, TimeSpan.FromSeconds((int)((p.m_Count + 1) * p.m_Interval.TotalSeconds)), m, String.Format("{0}\t{1}", damage, (int)p.m_Interval.TotalSeconds)));
-            }
+				BuffInfo.AddBuff(
+					m,
+					new BuffInfo(
+						BuffIcon.Poison,
+						1017383,
+						1075633,
+						TimeSpan.FromSeconds((int)((p.m_Count + 1) * p.m_Interval.TotalSeconds)),
+						m,
+						String.Format("{0}\t{1}", damage, (int)p.m_Interval.TotalSeconds)
+					)
+				);
+			}
 
-			private readonly int[] PoisonLevel =
-			{
-				0, 1000, 5000, 20000, 100000
-			};
+			private readonly int[] PoisonLevel = { 0, 1000, 5000, 20000, 100000 };
 
-			private readonly int[] PoisonPlus =
-			{
-				0, 100, 500, 1000, 2000
-			};
-			private readonly double[] PoisonPercent =
-			{
-				0.2, 0.15, 0.1, 0.5, 0.25
-			};
+			private readonly int[] PoisonPlus = { 0, 100, 500, 1000, 2000 };
+			private readonly double[] PoisonPercent = { 0.2, 0.15, 0.1, 0.5, 0.25 };
 
-            protected override void OnTick()
-            {
+			protected override void OnTick()
+			{
 				int poisonDamage = 0;
 				int absorbDamage = Misc.Util.PoisonAbsorbDamage(m_Mobile);
-				if( m_Mobile is PlayerMobile )
+				if (m_Mobile is PlayerMobile)
 				{
 					PlayerMobile pm = m_Mobile as PlayerMobile;
 					poisonDamage = pm.PoisonSaving;
-
 				}
-				else if( m_Mobile is BaseCreature )
+				else if (m_Mobile is BaseCreature)
 				{
 					BaseCreature bc = m_Mobile as BaseCreature;
 					poisonDamage = bc.PoisonSaving;
 				}
-				
+
 				int poisonCheck = 0;
-				for( int i = 4; i < 0; --i)
+				for (int i = 4; i < 0; --i)
 				{
-					if( poisonDamage > PoisonLevel[i] )
+					if (poisonDamage > PoisonLevel[i])
 					{
 						poisonCheck = i;
 						break;
 					}
 				}
-				poisonDamage = (int)( poisonDamage * PoisonPercent[m_Poison.RealLevel] ) + PoisonPlus[m_Poison.RealLevel];
+				poisonDamage = (int)(poisonDamage * PoisonPercent[m_Poison.RealLevel]) + PoisonPlus[m_Poison.RealLevel];
 
-				switch(poisonCheck)
+				switch (poisonCheck)
 				{
 					case 4:
 					{
@@ -263,15 +273,15 @@ namespace Server
 
 				int damage = poisonDamage - absorbDamage;
 				//독 피해
-				if( damage > 0 )
+				if (damage > 0)
 					AOS.Damage(m_Mobile, m_From, damage, 0, 0, 0, 100, 0);
 				else
 					m_Mobile.LocalOverheadMessage(MessageType.Emote, 0x3F, 1053092); // * You feel yourself resisting the effects of the poison *
 
 				//독이 모두 제거되었는지 체크
-                if (m_Index++ == m_Poison.m_Count || poisonDamage < 100 )
-                {
-					if( m_Mobile is PlayerMobile )
+				if (m_Index++ == m_Poison.m_Count || poisonDamage < 100)
+				{
+					if (m_Mobile is PlayerMobile)
 					{
 						PlayerMobile pm = m_Mobile as PlayerMobile;
 						pm.PoisonSaving = 0;
@@ -279,31 +289,31 @@ namespace Server
 						//스텟 독 저항성
 						absorbDamage += pm.Str * 2;
 					}
-					else if( m_Mobile is BaseCreature )
+					else if (m_Mobile is BaseCreature)
 					{
 						BaseCreature bc = m_Mobile as BaseCreature;
 						bc.PoisonSaving = 0;
 					}
 
-                    m_Mobile.SendLocalizedMessage(502136); // The poison seems to have worn off.
-                    m_Mobile.Poison = null;
-					
-                    if (m_Mobile is PlayerMobile)
-                        BuffInfo.RemoveBuff((PlayerMobile)m_Mobile, BuffIcon.Poison);
+					m_Mobile.SendLocalizedMessage(502136); // The poison seems to have worn off.
+					m_Mobile.Poison = null;
 
-                    Stop();
-                    return;
-                }
-				
+					if (m_Mobile is PlayerMobile)
+						BuffInfo.RemoveBuff((PlayerMobile)m_Mobile, BuffIcon.Poison);
+
+					Stop();
+					return;
+				}
+
 				/*
-                int damage;
+				int damage;
 
-                if (!Core.AOS && m_LastDamage != 0 && Utility.RandomBool())
-                {
-                    damage = m_LastDamage;
-                }
-                else
-                {
+				if (!Core.AOS && m_LastDamage != 0 && Utility.RandomBool())
+				{
+					damage = m_LastDamage;
+				}
+				else
+				{
 					if( m_Mobile is PlayerMobile )
 					{
 						damage = (int)( m_Mobile.Stam * m_Poison.m_Scalar * 0.01 );
@@ -331,65 +341,65 @@ namespace Server
 					}
 
 					/*
-                    damage = 1 + (int)(m_Mobile.Hits * m_Poison.m_Scalar);
+					damage = 1 + (int)(m_Mobile.Hits * m_Poison.m_Scalar);
 
-                    if (damage < m_Poison.m_Minimum)
-                        damage = m_Poison.m_Minimum;
-                    else if (damage > m_Poison.m_Maximum)
-                        damage = m_Poison.m_Maximum;
-                    m_LastDamage = damage;
-                }
+					if (damage < m_Poison.m_Minimum)
+						damage = m_Poison.m_Minimum;
+					else if (damage > m_Poison.m_Maximum)
+						damage = m_Poison.m_Maximum;
+					m_LastDamage = damage;
+				}
 
-                if (m_From != null)
-                {
-                    if (m_From is BaseCreature && ((BaseCreature)m_From).RecentSetControl && ((BaseCreature)m_From).GetMaster() == m_Mobile)
-                    {
-                        m_From = null;
-                    }
-                    else
-                    {
-                        m_From.DoHarmful(m_Mobile, true);
-                    }
-                }
+				if (m_From != null)
+				{
+					if (m_From is BaseCreature && ((BaseCreature)m_From).RecentSetControl && ((BaseCreature)m_From).GetMaster() == m_Mobile)
+					{
+						m_From = null;
+					}
+					else
+					{
+						m_From.DoHarmful(m_Mobile, true);
+					}
+				}
 
-                IHonorTarget honorTarget = m_Mobile as IHonorTarget;
+				IHonorTarget honorTarget = m_Mobile as IHonorTarget;
 
-                if (honorTarget != null && honorTarget.ReceivedHonorContext != null)
-                    honorTarget.ReceivedHonorContext.OnTargetPoisoned();
+				if (honorTarget != null && honorTarget.ReceivedHonorContext != null)
+					honorTarget.ReceivedHonorContext.OnTargetPoisoned();
 
-                #region Mondain's Legacy
-                if (Core.ML)
-                {
-                    if (m_From != null && m_Mobile != m_From && !m_From.InRange(m_Mobile.Location, 1) && m_Poison.m_Level >= 10 && m_Poison.m_Level <= 13) // darkglow
-                    {
-                        m_From.SendLocalizedMessage(1072850); // Darkglow poison increases your damage!
-                        damage = (int)Math.Floor(damage * 1.1);
-                    }
+				#region Mondain's Legacy
+				if (Core.ML)
+				{
+					if (m_From != null && m_Mobile != m_From && !m_From.InRange(m_Mobile.Location, 1) && m_Poison.m_Level >= 10 && m_Poison.m_Level <= 13) // darkglow
+					{
+						m_From.SendLocalizedMessage(1072850); // Darkglow poison increases your damage!
+						damage = (int)Math.Floor(damage * 1.1);
+					}
 
-                    if (m_From != null && m_Mobile != m_From && m_From.InRange(m_Mobile.Location, 1) && m_Poison.m_Level >= 14 && m_Poison.m_Level <= 18) // parasitic
-                    {
-                        int toHeal = Math.Min(m_From.HitsMax - m_From.Hits, damage);
+					if (m_From != null && m_Mobile != m_From && m_From.InRange(m_Mobile.Location, 1) && m_Poison.m_Level >= 14 && m_Poison.m_Level <= 18) // parasitic
+					{
+						int toHeal = Math.Min(m_From.HitsMax - m_From.Hits, damage);
 
-                        if (toHeal > 0)
-                        {
-                            m_From.SendLocalizedMessage(1060203, toHeal.ToString()); // You have had ~1_HEALED_AMOUNT~ hit points of damage healed.
-                            m_From.Heal(toHeal, m_Mobile, false);
-                        }
-                    }
-                }
-                #endregion
+						if (toHeal > 0)
+						{
+							m_From.SendLocalizedMessage(1060203, toHeal.ToString()); // You have had ~1_HEALED_AMOUNT~ hit points of damage healed.
+							m_From.Heal(toHeal, m_Mobile, false);
+						}
+					}
+				}
+				#endregion
 
-                AOS.Damage(m_Mobile, m_From, damage, 0, 0, 0, 100, 0);
+				AOS.Damage(m_Mobile, m_From, damage, 0, 0, 0, 100, 0);
 
-                if (damage > 0)
-                {
-                    m_Mobile.RevealingAction();
-                }
+				if (damage > 0)
+				{
+					m_Mobile.RevealingAction();
+				}
 
-                if ((m_Index % m_Poison.m_MessageInterval) == 0)
-                    m_Mobile.OnPoisoned(m_From, m_Poison, m_Poison);
+				if ((m_Index % m_Poison.m_MessageInterval) == 0)
+					m_Mobile.OnPoisoned(m_From, m_Poison, m_Poison);
 				*/
-            }
-        }
+			}
+		}
 	}
 }

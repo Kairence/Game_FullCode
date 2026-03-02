@@ -1,30 +1,30 @@
 using System;
 using Server;
 using Server.Commands;
-using Server.Misc; // MonsterDropHandler¿Í Gump°¡ ÀÖ´Â ³×ÀÓ½ºÆäÀÌ½º
+using Server.Misc; // MonsterDropHandlerï¿½ï¿½ Gumpï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½
 
 namespace Server.Commands
 {
-    public class MonsterDropHandlerCommand
-    {
-        public static void Initialize()
-        {
-            // [mlt ¸í·É¾î µî·Ï: °ÔÀÓ¸¶½ºÅÍ(GameMaster) ±ÇÇÑ ÇÊ¿ä
-            CommandSystem.Register("mlt", AccessLevel.GameMaster, new CommandEventHandler(MLT_OnCommand));
-        }
+	public class MonsterDropHandlerCommand
+	{
+		public static void Initialize()
+		{
+			// [mlt ï¿½ï¿½ï¿½É¾ï¿½ ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½Ó¸ï¿½ï¿½ï¿½ï¿½ï¿½(GameMaster) ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
+			CommandSystem.Register("mlt", AccessLevel.GameMaster, new CommandEventHandler(MLT_OnCommand));
+		}
 
-        [Usage("mlt")]
-        [Description("MonsterDropHandler¿¡ µî·ÏµÈ µå¶ø Å×ÀÌºí ¸ó½ºÅÍ ¸ñ·ÏÀ» °ËÇÁ·Î È®ÀÎÇÕ´Ï´Ù.")]
-        private static void MLT_OnCommand(CommandEventArgs e)
-        {
-            Mobile from = e.Mobile;
+		[Usage("mlt")]
+		[Description("MonsterDropHandlerï¿½ï¿½ ï¿½ï¿½Ïµï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìºï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Õ´Ï´ï¿½.")]
+		private static void MLT_OnCommand(CommandEventArgs e)
+		{
+			Mobile from = e.Mobile;
 
-            if (from != null && !from.Deleted)
-            {
-                // Ã¹ ¹øÂ° ÆäÀÌÁö(0)ºÎÅÍ °ËÇÁ¸¦ º¸³À´Ï´Ù.
-                from.SendGump(new MonsterDropHandlerGump(from, 0));
-                from.SendMessage(0x482, "¸ó½ºÅÍ µå¶ø ÇÚµé·¯ ¸®½ºÆ®¸¦ ºÒ·¯¿Ô½À´Ï´Ù.");
-            }
-        }
-    }
+			if (from != null && !from.Deleted)
+			{
+				// Ã¹ ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(0)ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
+				from.SendGump(new MonsterDropHandlerGump(from, 0));
+				from.SendMessage(0x482, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Úµé·¯ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½Ô½ï¿½ï¿½Ï´ï¿½.");
+			}
+		}
+	}
 }

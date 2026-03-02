@@ -12,7 +12,6 @@ using Server.Network;
 using Server.Regions;
 using Server.Spells;
 using Server.Targets;
-
 using MoveImpl = Server.Movement.MovementImpl;
 #endregion
 
@@ -39,7 +38,7 @@ namespace Server.Mobiles
 		AI_Spellweaving,
 		AI_Mystic,
 		AI_Paladin,
-		AI_Necro
+		AI_Necro,
 	}
 
 	public enum ActionType
@@ -49,7 +48,7 @@ namespace Server.Mobiles
 		Guard,
 		Flee,
 		Backoff,
-		Interact
+		Interact,
 	}
 
 	public abstract class BaseAI
@@ -68,7 +67,7 @@ namespace Server.Mobiles
 		/// </summary>
 		public bool DirectionLocked { get; set; }
 
-        public BaseAI(BaseCreature m)
+		public BaseAI(BaseCreature m)
 		{
 			m_Mobile = m;
 
@@ -101,12 +100,12 @@ namespace Server.Mobiles
 			Action = ActionType.Wander;
 		}
 
-        public bool CanRun
-        {
-            get { return m_Mobile.SupportsRunAnimation; }
-        }
+		public bool CanRun
+		{
+			get { return m_Mobile.SupportsRunAnimation; }
+		}
 
-        public ActionType Action
+		public ActionType Action
 		{
 			get { return m_Action; }
 			set
@@ -138,8 +137,15 @@ namespace Server.Mobiles
 				m_AI = ai;
 				m_Order = order;
 
-				if (mobile.IsDeadPet && (order == OrderType.Guard || order == OrderType.Attack || order == OrderType.Transfer ||
-										 order == OrderType.Drop))
+				if (
+					mobile.IsDeadPet
+					&& (
+						order == OrderType.Guard
+						|| order == OrderType.Attack
+						|| order == OrderType.Transfer
+						|| order == OrderType.Drop
+					)
+				)
 				{
 					Enabled = false;
 				}
@@ -149,13 +155,20 @@ namespace Server.Mobiles
 			{
 				if (!m_Mobile.Deleted && m_Mobile.Controlled && m_From.CheckAlive())
 				{
-                    if (m_From.Hidden)
-                    {
-                        m_From.RevealingAction();
-                    }
+					if (m_From.Hidden)
+					{
+						m_From.RevealingAction();
+					}
 
-					if (m_Mobile.IsDeadPet && (m_Order == OrderType.Guard || m_Order == OrderType.Attack ||
-											   m_Order == OrderType.Transfer || m_Order == OrderType.Drop))
+					if (
+						m_Mobile.IsDeadPet
+						&& (
+							m_Order == OrderType.Guard
+							|| m_Order == OrderType.Attack
+							|| m_Order == OrderType.Transfer
+							|| m_Order == OrderType.Drop
+						)
+					)
 					{
 						return;
 					}
@@ -167,7 +180,12 @@ namespace Server.Mobiles
 					{
 						return;
 					}
-					if (isFriend && m_Order != OrderType.Follow && m_Order != OrderType.Stay && m_Order != OrderType.Stop)
+					if (
+						isFriend
+						&& m_Order != OrderType.Follow
+						&& m_Order != OrderType.Stay
+						&& m_Order != OrderType.Stop
+					)
 					{
 						return;
 					}
@@ -190,14 +208,14 @@ namespace Server.Mobiles
 							}
 							else
 							{
-                                if (m_From.NetState != null && m_From.NetState.IsEnhancedClient)
-                                {
-                                    m_AI.BeginPickTargetDelayed(m_From, m_Order);
-                                }
-                                else
-                                {
-                                    m_AI.BeginPickTarget(m_From, m_Order);
-                                }
+								if (m_From.NetState != null && m_From.NetState.IsEnhancedClient)
+								{
+									m_AI.BeginPickTargetDelayed(m_From, m_Order);
+								}
+								else
+								{
+									m_AI.BeginPickTarget(m_From, m_Order);
+								}
 							}
 
 							break;
@@ -258,7 +276,9 @@ namespace Server.Mobiles
 							14,
 							m_Mobile,
 							this,
-							OrderType.Release)); // Dismiss / Release
+							OrderType.Release
+						)
+					); // Dismiss / Release
 				}
 				else if (m_Mobile.IsPetFriend(from))
 				{
@@ -269,10 +289,10 @@ namespace Server.Mobiles
 			}
 		}
 
-        public virtual void BeginPickTargetDelayed(Mobile from, OrderType order)
-        {
-            Timer.DelayCall(TimeSpan.FromMilliseconds(100), () => BeginPickTarget(from, order));
-        }
+		public virtual void BeginPickTargetDelayed(Mobile from, OrderType order)
+		{
+			Timer.DelayCall(TimeSpan.FromMilliseconds(100), () => BeginPickTarget(from, order));
+		}
 
 		public virtual void BeginPickTarget(Mobile from, OrderType order)
 		{
@@ -336,8 +356,12 @@ namespace Server.Mobiles
 		{
 			var currentCombat = m_Mobile.Combatant as Mobile;
 
-			if (currentCombat != null && !aggressor.Hidden && currentCombat != aggressor &&
-				m_Mobile.GetDistanceToSqrt(currentCombat) > m_Mobile.GetDistanceToSqrt(aggressor))
+			if (
+				currentCombat != null
+				&& !aggressor.Hidden
+				&& currentCombat != aggressor
+				&& m_Mobile.GetDistanceToSqrt(currentCombat) > m_Mobile.GetDistanceToSqrt(aggressor)
+			)
 			{
 				m_Mobile.Combatant = aggressor;
 			}
@@ -345,8 +369,13 @@ namespace Server.Mobiles
 
 		public virtual void EndPickTarget(Mobile from, IDamageable target, OrderType order)
 		{
-			if (m_Mobile.Deleted || !m_Mobile.Controlled || !from.InRange(m_Mobile, 14) || from.Map != m_Mobile.Map ||
-				!from.CheckAlive())
+			if (
+				m_Mobile.Deleted
+				|| !m_Mobile.Controlled
+				|| !from.InRange(m_Mobile, 14)
+				|| from.Map != m_Mobile.Map
+				|| !from.CheckAlive()
+			)
 			{
 				return;
 			}
@@ -375,10 +404,14 @@ namespace Server.Mobiles
 						return;
 					}
 
-					if ((bc is IBlackSolen && SolenHelper.CheckBlackFriendship(from)) ||
-						(bc is IRedSolen && SolenHelper.CheckRedFriendship(from)))
+					if (
+						(bc is IBlackSolen && SolenHelper.CheckBlackFriendship(from))
+						|| (bc is IRedSolen && SolenHelper.CheckRedFriendship(from))
+					)
 					{
-						from.SendAsciiMessage("You can not force your pet to attack a creature you are protected from.");
+						from.SendAsciiMessage(
+							"You can not force your pet to attack a creature you are protected from."
+						);
 						return;
 					}
 
@@ -404,8 +437,12 @@ namespace Server.Mobiles
 				return true;
 			}
 
-			if (from.Alive && m_Mobile.Controlled && m_Mobile.Commandable &&
-				(from == m_Mobile.ControlMaster || m_Mobile.IsPetFriend(from)))
+			if (
+				from.Alive
+				&& m_Mobile.Controlled
+				&& m_Mobile.Commandable
+				&& (from == m_Mobile.ControlMaster || m_Mobile.IsPetFriend(from))
+			)
 			{
 				return true;
 			}
@@ -415,16 +452,54 @@ namespace Server.Mobiles
 
 		private static readonly SkillName[] m_KeywordTable =
 		{
-			SkillName.Parry, SkillName.Healing, SkillName.Hiding, SkillName.Stealing, SkillName.Alchemy, SkillName.AnimalLore,
-			SkillName.ItemID, SkillName.ArmsLore, SkillName.Begging, SkillName.Blacksmith, SkillName.Fletching,
-			SkillName.Peacemaking, SkillName.Camping, SkillName.Carpentry, SkillName.Cartography, SkillName.Cooking,
-			SkillName.DetectHidden, SkillName.Discordance, //??
-			SkillName.EvalInt, SkillName.Fishing, SkillName.Provocation, SkillName.Lockpicking, SkillName.Magery,
-			SkillName.MagicResist, SkillName.Tactics, SkillName.Snooping, SkillName.RemoveTrap, SkillName.Musicianship,
-			SkillName.Poisoning, SkillName.Archery, SkillName.SpiritSpeak, SkillName.Tailoring, SkillName.AnimalTaming,
-			SkillName.TasteID, SkillName.Tinkering, SkillName.Veterinary, SkillName.Forensics, SkillName.Herding,
-			SkillName.Tracking, SkillName.Stealth, SkillName.Inscribe, SkillName.Swords, SkillName.Macing, SkillName.Fencing,
-			SkillName.Wrestling, SkillName.Lumberjacking, SkillName.Mining, SkillName.Meditation
+			SkillName.Parry,
+			SkillName.Healing,
+			SkillName.Hiding,
+			SkillName.Stealing,
+			SkillName.Alchemy,
+			SkillName.AnimalLore,
+			SkillName.ItemID,
+			SkillName.ArmsLore,
+			SkillName.Begging,
+			SkillName.Blacksmith,
+			SkillName.Fletching,
+			SkillName.Peacemaking,
+			SkillName.Camping,
+			SkillName.Carpentry,
+			SkillName.Cartography,
+			SkillName.Cooking,
+			SkillName.DetectHidden,
+			SkillName.Discordance, //??
+			SkillName.EvalInt,
+			SkillName.Fishing,
+			SkillName.Provocation,
+			SkillName.Lockpicking,
+			SkillName.Magery,
+			SkillName.MagicResist,
+			SkillName.Tactics,
+			SkillName.Snooping,
+			SkillName.RemoveTrap,
+			SkillName.Musicianship,
+			SkillName.Poisoning,
+			SkillName.Archery,
+			SkillName.SpiritSpeak,
+			SkillName.Tailoring,
+			SkillName.AnimalTaming,
+			SkillName.TasteID,
+			SkillName.Tinkering,
+			SkillName.Veterinary,
+			SkillName.Forensics,
+			SkillName.Herding,
+			SkillName.Tracking,
+			SkillName.Stealth,
+			SkillName.Inscribe,
+			SkillName.Swords,
+			SkillName.Macing,
+			SkillName.Fencing,
+			SkillName.Wrestling,
+			SkillName.Lumberjacking,
+			SkillName.Mining,
+			SkillName.Meditation,
 		};
 
 		public virtual void OnSpeech(SpeechEventArgs e)
@@ -481,7 +556,12 @@ namespace Server.Mobiles
 							var skill = ourSkills[i];
 							var theirSkill = theirSkills[i];
 
-							if (skill != null && theirSkill != null && skill.Base >= 60.0 && m_Mobile.CheckTeach(skill.SkillName, e.Mobile))
+							if (
+								skill != null
+								&& theirSkill != null
+								&& skill.Base >= 60.0
+								&& m_Mobile.CheckTeach(skill.SkillName, e.Mobile)
+							)
 							{
 								var toTeach = skill.Base / 3.0;
 
@@ -691,7 +771,12 @@ namespace Server.Mobiles
 									break;
 								}
 
-								if (!m_Mobile.IsDeadPet && !m_Mobile.Summoned && WasNamed(speech) && m_Mobile.CheckControlChance(e.Mobile))
+								if (
+									!m_Mobile.IsDeadPet
+									&& !m_Mobile.Summoned
+									&& WasNamed(speech)
+									&& m_Mobile.CheckControlChance(e.Mobile)
+								)
 								{
 									m_Mobile.ControlTarget = null;
 									m_Mobile.ControlOrder = OrderType.Drop;
@@ -1033,7 +1118,11 @@ namespace Server.Mobiles
 						{
 							m_Mobile.CurrentNavPoint++;
 							m_Mobile.DebugSay(
-								String.Format("I will go to the next navpoint: {0}", m_Mobile.NavPoints[map][m_Mobile.CurrentNavPoint]));
+								String.Format(
+									"I will go to the next navpoint: {0}",
+									m_Mobile.NavPoints[map][m_Mobile.CurrentNavPoint]
+								)
+							);
 						}
 					}
 				}
@@ -1041,8 +1130,12 @@ namespace Server.Mobiles
 			else if (m_Mobile.CurrentWayPoint != null)
 			{
 				var point = m_Mobile.CurrentWayPoint;
-				if ((point.X != m_Mobile.Location.X || point.Y != m_Mobile.Location.Y) && point.Map == map &&
-					point.Parent == null && !point.Deleted)
+				if (
+					(point.X != m_Mobile.Location.X || point.Y != m_Mobile.Location.Y)
+					&& point.Map == map
+					&& point.Parent == null
+					&& !point.Deleted
+				)
 				{
 					m_Mobile.DebugSay("I will move towards my waypoint.");
 					DoMove(m_Mobile.GetDirectionTo(m_Mobile.CurrentWayPoint));
@@ -1062,8 +1155,11 @@ namespace Server.Mobiles
 				// animated dead follow their master
 				var master = m_Mobile.SummonMaster;
 
-				if (master != null && master.Map == m_Mobile.Map &&
-					master.InRange(m_Mobile, m_Mobile.RangePerception + followRange))
+				if (
+					master != null
+					&& master.Map == m_Mobile.Map
+					&& master.InRange(m_Mobile, m_Mobile.RangePerception + followRange)
+				)
 				{
 					MoveTo(master, false, followRange);
 				}
@@ -1080,8 +1176,13 @@ namespace Server.Mobiles
 				}
 			}
 
-			if (!DirectionLocked && m_Mobile.Combatant != null && !m_Mobile.Combatant.Deleted && m_Mobile.Combatant.Alive &&
-				(!(m_Mobile.Combatant is Mobile) || !((Mobile)m_Mobile.Combatant).IsDeadBondedPet))
+			if (
+				!DirectionLocked
+				&& m_Mobile.Combatant != null
+				&& !m_Mobile.Combatant.Deleted
+				&& m_Mobile.Combatant.Alive
+				&& (!(m_Mobile.Combatant is Mobile) || !((Mobile)m_Mobile.Combatant).IsDeadBondedPet)
+			)
 			{
 				m_Mobile.Direction = m_Mobile.GetDirectionTo(m_Mobile.Combatant);
 			}
@@ -1099,7 +1200,13 @@ namespace Server.Mobiles
 			{
 				var c = m_Mobile.Combatant;
 
-				if (c == null || c.Deleted || c.Map != m_Mobile.Map || !c.Alive || (c is Mobile && ((Mobile)c).IsDeadBondedPet))
+				if (
+					c == null
+					|| c.Deleted
+					|| c.Map != m_Mobile.Map
+					|| !c.Alive
+					|| (c is Mobile && ((Mobile)c).IsDeadBondedPet)
+				)
 				{
 					Action = ActionType.Wander;
 				}
@@ -1246,7 +1353,7 @@ namespace Server.Mobiles
 			switch (m_Mobile.ControlOrder)
 			{
 				case OrderType.None:
-					
+
 					m_Mobile.Home = m_Mobile.Location;
 					m_Mobile.CurrentSpeed = m_Mobile.PassiveSpeed;
 					m_Mobile.PlaySound(m_Mobile.GetIdleSound());
@@ -1254,14 +1361,14 @@ namespace Server.Mobiles
 					m_Mobile.Combatant = null;
 					break;
 				case OrderType.Come:
-					
+
 					m_Mobile.CurrentSpeed = m_Mobile.ActiveSpeed;
 					m_Mobile.PlaySound(m_Mobile.GetIdleSound());
 					m_Mobile.Warmode = false;
 					m_Mobile.Combatant = null;
 					break;
 				case OrderType.Drop:
-					
+
 					m_Mobile.CurrentSpeed = m_Mobile.PassiveSpeed;
 					m_Mobile.PlaySound(m_Mobile.GetIdleSound());
 					m_Mobile.Warmode = true;
@@ -1269,10 +1376,10 @@ namespace Server.Mobiles
 					break;
 				case OrderType.Friend:
 				case OrderType.Unfriend:
-					
+
 					break;
 				case OrderType.Guard:
-					
+
 					m_Mobile.CurrentSpeed = m_Mobile.ActiveSpeed;
 					m_Mobile.PlaySound(m_Mobile.GetIdleSound());
 					m_Mobile.Warmode = true;
@@ -1282,7 +1389,7 @@ namespace Server.Mobiles
 					m_Mobile.ControlMaster.SendLocalizedMessage(1049671, petname); //~1_PETNAME~ is now guarding you.
 					break;
 				case OrderType.Attack:
-					
+
 					m_Mobile.CurrentSpeed = m_Mobile.ActiveSpeed;
 					m_Mobile.PlaySound(m_Mobile.GetIdleSound());
 
@@ -1290,7 +1397,7 @@ namespace Server.Mobiles
 					m_Mobile.Combatant = null;
 					break;
 				case OrderType.Patrol:
-					
+
 					m_Mobile.CurrentSpeed = m_Mobile.ActiveSpeed;
 					m_Mobile.PlaySound(m_Mobile.GetIdleSound());
 					m_Mobile.Warmode = false;
@@ -1306,14 +1413,14 @@ namespace Server.Mobiles
 					*/
 					break;
 				case OrderType.Stay:
-					
+
 					m_Mobile.CurrentSpeed = m_Mobile.PassiveSpeed;
 					m_Mobile.PlaySound(m_Mobile.GetIdleSound());
 					m_Mobile.Warmode = false;
 					m_Mobile.Combatant = null;
 					break;
 				case OrderType.Stop:
-					
+
 					m_Mobile.Home = m_Mobile.Location;
 					m_Mobile.CurrentSpeed = m_Mobile.PassiveSpeed;
 					m_Mobile.PlaySound(m_Mobile.GetIdleSound());
@@ -1321,17 +1428,17 @@ namespace Server.Mobiles
 					m_Mobile.Combatant = null;
 					break;
 				case OrderType.Follow:
-					
+
 					m_Mobile.PlaySound(m_Mobile.GetIdleSound());
 
 					m_Mobile.Warmode = false;
 					m_Mobile.Combatant = null;
-                    m_Mobile.AdjustSpeeds();
+					m_Mobile.AdjustSpeeds();
 
-                    m_Mobile.CurrentSpeed = m_Mobile.ActiveSpeed;
-                    break;
+					m_Mobile.CurrentSpeed = m_Mobile.ActiveSpeed;
+					break;
 				case OrderType.Transfer:
-					
+
 					m_Mobile.CurrentSpeed = m_Mobile.PassiveSpeed;
 					m_Mobile.PlaySound(m_Mobile.GetIdleSound());
 
@@ -1347,8 +1454,12 @@ namespace Server.Mobiles
 
 			WalkRandomInHome(3, 2, 1);
 
-			if (m_Mobile.Combatant is Mobile && !m_Mobile.Combatant.Deleted && m_Mobile.Combatant.Alive &&
-				(!(m_Mobile.Combatant is Mobile) || !((Mobile)m_Mobile.Combatant).IsDeadBondedPet))
+			if (
+				m_Mobile.Combatant is Mobile
+				&& !m_Mobile.Combatant.Deleted
+				&& m_Mobile.Combatant.Alive
+				&& (!(m_Mobile.Combatant is Mobile) || !((Mobile)m_Mobile.Combatant).IsDeadBondedPet)
+			)
 			{
 				m_Mobile.Warmode = true;
 
@@ -1384,8 +1495,12 @@ namespace Server.Mobiles
 
 					if (WalkMobileRange(m_Mobile.ControlMaster, 1, bRun, 0, 1))
 					{
-						if (m_Mobile.Combatant is Mobile && !m_Mobile.Combatant.Deleted && m_Mobile.Combatant.Alive &&
-							(!(m_Mobile.Combatant is Mobile) || !((Mobile)m_Mobile.Combatant).IsDeadBondedPet))
+						if (
+							m_Mobile.Combatant is Mobile
+							&& !m_Mobile.Combatant.Deleted
+							&& m_Mobile.Combatant.Alive
+							&& (!(m_Mobile.Combatant is Mobile) || !((Mobile)m_Mobile.Combatant).IsDeadBondedPet)
+						)
 						{
 							m_Mobile.Warmode = true;
 
@@ -1474,7 +1589,11 @@ namespace Server.Mobiles
 			{
 				m_Mobile.DebugSay("Praise the shepherd!");
 			}
-			else if (m_Mobile.ControlTarget != null && !m_Mobile.ControlTarget.Deleted && m_Mobile.ControlTarget != m_Mobile)
+			else if (
+				m_Mobile.ControlTarget != null
+				&& !m_Mobile.ControlTarget.Deleted
+				&& m_Mobile.ControlTarget != m_Mobile
+			)
 			{
 				var iCurrDist = (int)m_Mobile.GetDistanceToSqrt(m_Mobile.ControlTarget);
 
@@ -1482,8 +1601,12 @@ namespace Server.Mobiles
 				{
 					m_Mobile.DebugSay("I have lost the one to follow. I stay here");
 
-					if (m_Mobile.Combatant is Mobile && !m_Mobile.Combatant.Deleted && m_Mobile.Combatant.Alive &&
-						(!(m_Mobile.Combatant is Mobile) || !((Mobile)m_Mobile.Combatant).IsDeadBondedPet))
+					if (
+						m_Mobile.Combatant is Mobile
+						&& !m_Mobile.Combatant.Deleted
+						&& m_Mobile.Combatant.Alive
+						&& (!(m_Mobile.Combatant is Mobile) || !((Mobile)m_Mobile.Combatant).IsDeadBondedPet)
+					)
 					{
 						m_Mobile.Warmode = true;
 
@@ -1504,8 +1627,12 @@ namespace Server.Mobiles
 
 					if (WalkMobileRange(m_Mobile.ControlTarget, 1, bRun, 0, 1))
 					{
-						if (m_Mobile.Combatant != null && !m_Mobile.Combatant.Deleted && m_Mobile.Combatant.Alive &&
-							(!(m_Mobile.Combatant is Mobile) || !((Mobile)m_Mobile.Combatant).IsDeadBondedPet))
+						if (
+							m_Mobile.Combatant != null
+							&& !m_Mobile.Combatant.Deleted
+							&& m_Mobile.Combatant.Alive
+							&& (!(m_Mobile.Combatant is Mobile) || !((Mobile)m_Mobile.Combatant).IsDeadBondedPet)
+						)
 						{
 							m_Mobile.Warmode = true;
 
@@ -1519,7 +1646,7 @@ namespace Server.Mobiles
 							if (Core.AOS)
 							{
 								m_Mobile.CurrentSpeed = m_Mobile.ActiveSpeed;
-                            }
+							}
 						}
 					}
 				}
@@ -1558,7 +1685,8 @@ namespace Server.Mobiles
 				}
 				else if (from.CanBeBeneficial(to, true))
 				{
-					NetState fromState = from.NetState, toState = to.NetState;
+					NetState fromState = from.NetState,
+						toState = to.NetState;
 
 					if (fromState != null && toState != null)
 					{
@@ -1584,8 +1712,8 @@ namespace Server.Mobiles
 							from.SendLocalizedMessage(1049676, String.Format("{0}\t{1}", m_Mobile.Name, to.Name));
 
 							/* ~1_NAME~ has granted you the ability to give orders to their pet ~2_PET_NAME~.
-                            * This creature will now consider you as a friend.
-                            */
+							* This creature will now consider you as a friend.
+							*/
 							to.SendLocalizedMessage(1043246, String.Format("{0}\t{1}", from.Name, m_Mobile.Name));
 
 							m_Mobile.AddPetFriend(to);
@@ -1624,8 +1752,8 @@ namespace Server.Mobiles
 				from.SendLocalizedMessage(1070951, String.Format("{0}\t{1}", m_Mobile.Name, to.Name));
 
 				/* ~1_NAME~ has no longer granted you the ability to give orders to their pet ~2_PET_NAME~.
-                * This creature will no longer consider you as a friend.
-                */
+				* This creature will no longer consider you as a friend.
+				*/
 				to.SendLocalizedMessage(1070952, String.Format("{0}\t{1}", from.Name, m_Mobile.Name));
 
 				m_Mobile.RemovePetFriend(to);
@@ -1653,58 +1781,58 @@ namespace Server.Mobiles
 
 			var combatant = m_Mobile.Combatant as Mobile;
 
-            if (combatant != null && !ValidGuardTarget(combatant))
-                combatant = null;
+			if (combatant != null && !ValidGuardTarget(combatant))
+				combatant = null;
 
-            Mobile closestMob = combatant;
-            var closestDist = combatant == null ? m_Mobile.RangePerception : combatant.GetDistanceToSqrt(controlMaster);
+			Mobile closestMob = combatant;
+			var closestDist = combatant == null ? m_Mobile.RangePerception : combatant.GetDistanceToSqrt(controlMaster);
 
-            foreach (var aggressor in controlMaster.Aggressors.Select(x => x.Attacker).Where(m => ValidGuardTarget(m)))
-            {
-                var dist = aggressor.GetDistanceToSqrt(controlMaster);
+			foreach (var aggressor in controlMaster.Aggressors.Select(x => x.Attacker).Where(m => ValidGuardTarget(m)))
+			{
+				var dist = aggressor.GetDistanceToSqrt(controlMaster);
 
-                if (closestMob == null || dist < closestDist)
-                {
-                    closestMob = aggressor;
-                    closestDist = dist;
-                }
-            }
+				if (closestMob == null || dist < closestDist)
+				{
+					closestMob = aggressor;
+					closestDist = dist;
+				}
+			}
 
-            foreach (var aggressed in controlMaster.Aggressed.Select(x => x.Defender).Where(m => ValidGuardTarget(m)))
-            {
-                var dist = aggressed.GetDistanceToSqrt(controlMaster);
+			foreach (var aggressed in controlMaster.Aggressed.Select(x => x.Defender).Where(m => ValidGuardTarget(m)))
+			{
+				var dist = aggressed.GetDistanceToSqrt(controlMaster);
 
-                if (closestMob == null || dist < closestDist)
-                {
-                    closestMob = aggressed;
-                    closestDist = dist;
-                }
-            }
+				if (closestMob == null || dist < closestDist)
+				{
+					closestMob = aggressed;
+					closestDist = dist;
+				}
+			}
 
-            if (closestMob != null)
-            {
-                if (m_Mobile.Debug && closestMob != null && combatant != closestMob)
-                {
-                    m_Mobile.DebugSay("Crap, my master has been attacked! I will attack one of those bastards!");
-                }
+			if (closestMob != null)
+			{
+				if (m_Mobile.Debug && closestMob != null && combatant != closestMob)
+				{
+					m_Mobile.DebugSay("Crap, my master has been attacked! I will attack one of those bastards!");
+				}
 
-                combatant = closestMob;
-            }        
+				combatant = closestMob;
+			}
 
-            if (combatant != null)
+			if (combatant != null)
 			{
 				m_Mobile.DebugSay("Guarding from target...");
 
 				m_Mobile.Combatant = combatant;
 				m_Mobile.FocusMob = combatant;
 				Action = ActionType.Combat;
-                m_Mobile.Direction = m_Mobile.GetDirectionTo(combatant);
+				m_Mobile.Direction = m_Mobile.GetDirectionTo(combatant);
 
-                /*
-                * We need to call Think() here or spell casting monsters will not use
-                * spells when guarding because their target is never processed.
-                */
-                Think();
+				/*
+				* We need to call Think() here or spell casting monsters will not use
+				* spells when guarding because their target is never processed.
+				*/
+				Think();
 			}
 			else
 			{
@@ -1715,7 +1843,7 @@ namespace Server.Mobiles
 				if (Core.AOS)
 				{
 					m_Mobile.CurrentSpeed = m_Mobile.ActiveSpeed;
-                }
+				}
 
 				WalkMobileRange(controlMaster, 1, false, 0, 1);
 			}
@@ -1723,28 +1851,40 @@ namespace Server.Mobiles
 			return true;
 		}
 
-        public bool ValidGuardTarget(Mobile combatant)
-        {
-            return combatant != null && combatant != m_Mobile && combatant != m_Mobile.ControlMaster && !combatant.Deleted && m_Mobile.CanSee(combatant) &&
-                combatant.Alive && (!(combatant is Mobile) || !combatant.IsDeadBondedPet) &&
-                m_Mobile.CanBeHarmful(combatant, false) && combatant.Map == m_Mobile.Map && combatant.GetDistanceToSqrt(m_Mobile) <= m_Mobile.RangePerception;
-        }
+		public bool ValidGuardTarget(Mobile combatant)
+		{
+			return combatant != null
+				&& combatant != m_Mobile
+				&& combatant != m_Mobile.ControlMaster
+				&& !combatant.Deleted
+				&& m_Mobile.CanSee(combatant)
+				&& combatant.Alive
+				&& (!(combatant is Mobile) || !combatant.IsDeadBondedPet)
+				&& m_Mobile.CanBeHarmful(combatant, false)
+				&& combatant.Map == m_Mobile.Map
+				&& combatant.GetDistanceToSqrt(m_Mobile) <= m_Mobile.RangePerception;
+		}
 
 		public virtual bool DoOrderAttack()
 		{
-			if( m_Mobile == null )
+			if (m_Mobile == null)
 				return false;
 			if (m_Mobile.IsDeadPet)
 			{
 				return true;
 			}
 
-			if (m_Mobile.ControlTarget == null || m_Mobile.ControlTarget.Deleted || m_Mobile.ControlTarget.Map != m_Mobile.Map ||
-				!m_Mobile.ControlTarget.Alive ||
-				(m_Mobile.ControlTarget is Mobile && ((Mobile)m_Mobile.ControlTarget).IsDeadBondedPet))
+			if (
+				m_Mobile.ControlTarget == null
+				|| m_Mobile.ControlTarget.Deleted
+				|| m_Mobile.ControlTarget.Map != m_Mobile.Map
+				|| !m_Mobile.ControlTarget.Alive
+				|| (m_Mobile.ControlTarget is Mobile && ((Mobile)m_Mobile.ControlTarget).IsDeadBondedPet)
+			)
 			{
 				m_Mobile.DebugSay(
-					"I think he might be dead. He's not anywhere around here at least. That's cool. I'm glad he's dead.");
+					"I think he might be dead. He's not anywhere around here at least. That's cool. I'm glad he's dead."
+				);
 
 				if (Core.AOS)
 				{
@@ -1762,9 +1902,8 @@ namespace Server.Mobiles
 					Mobile newCombatant = null;
 					var newScore = 0.0;
 
+					var eable = m_Mobile.GetMobilesInRange(36); //m_Mobile.RangePerception);
 
-					var eable = m_Mobile.GetMobilesInRange(36);//m_Mobile.RangePerception);
-					
 					double BestAggroScore = 0.0;
 
 					foreach (var aggr in eable)
@@ -1779,10 +1918,15 @@ namespace Server.Mobiles
 							continue;
 						}
 
-						
 						var aggrScore = m_Mobile.GetFightModeRanking(aggr, FightMode.Closest, false);
 
-						if ((newCombatant == null || aggrScore > newScore || (aggrScore == newScore && !aggr.Player && newCombatant.Player)) && m_Mobile.InLOS(aggr))
+						if (
+							(
+								newCombatant == null
+								|| aggrScore > newScore
+								|| (aggrScore == newScore && !aggr.Player && newCombatant.Player)
+							) && m_Mobile.InLOS(aggr)
+						)
 						{
 							newCombatant = aggr;
 							newScore = aggrScore;
@@ -1805,10 +1949,10 @@ namespace Server.Mobiles
 			{
 				m_Mobile.DebugSay("Attacking target...");
 
-                if (m_Mobile.Combatant != null)
-                    m_Mobile.Direction = m_Mobile.GetDirectionTo(m_Mobile.Combatant);
+				if (m_Mobile.Combatant != null)
+					m_Mobile.Direction = m_Mobile.GetDirectionTo(m_Mobile.Combatant);
 
-                Think();
+				Think();
 			}
 
 			return true;
@@ -1834,7 +1978,8 @@ namespace Server.Mobiles
 					0x3B2,
 					1043255,
 					String.Format("{0}", m_Mobile.Name),
-					master.NetState); // ~1_NAME~ appears to have decided that it is better off without a master!
+					master.NetState
+				); // ~1_NAME~ appears to have decided that it is better off without a master!
 			}
 
 			m_Mobile.SetControlMaster(null);
@@ -1905,7 +2050,7 @@ namespace Server.Mobiles
 			m_Mobile.ControlTarget = null;
 
 			m_Mobile.ControlOrder = OrderType.None;
-			
+
 			if (Core.ML)
 			{
 				WalkRandomInHome(3, 2, 1);
@@ -1938,8 +2083,11 @@ namespace Server.Mobiles
 				{
 					Name = creature.Name;
 				}
-				else if (ItemID == ShrinkTable.DefaultItemID ||
-						 creature.GetType().IsDefined(typeof(FriendlyNameAttribute), false) || creature is Reptalon)
+				else if (
+					ItemID == ShrinkTable.DefaultItemID
+					|| creature.GetType().IsDefined(typeof(FriendlyNameAttribute), false)
+					|| creature is Reptalon
+				)
 				{
 					Name = FriendlyNameAttribute.GetFriendlyNameFor(creature.GetType()).ToString();
 				}
@@ -1950,8 +2098,7 @@ namespace Server.Mobiles
 			}
 
 			public TransferItem(Serial serial)
-				: base(serial)
-			{ }
+				: base(serial) { }
 
 			public override void Serialize(GenericWriter writer)
 			{
@@ -1989,8 +2136,14 @@ namespace Server.Mobiles
 					return false;
 				}
 
-				if (Deleted || m_Creature == null || m_Creature.Deleted || m_Creature.ControlMaster != from || !from.CheckAlive() ||
-					!to.CheckAlive())
+				if (
+					Deleted
+					|| m_Creature == null
+					|| m_Creature.Deleted
+					|| m_Creature.ControlMaster != from
+					|| !from.CheckAlive()
+					|| !to.CheckAlive()
+				)
 				{
 					return false;
 				}
@@ -2057,8 +2210,13 @@ namespace Server.Mobiles
 
 				Delete();
 
-				if (m_Creature == null || m_Creature.Deleted || m_Creature.ControlMaster != from || !from.CheckAlive() ||
-					!to.CheckAlive())
+				if (
+					m_Creature == null
+					|| m_Creature.Deleted
+					|| m_Creature.ControlMaster != from
+					|| !from.CheckAlive()
+					|| !to.CheckAlive()
+				)
 				{
 					return;
 				}
@@ -2145,7 +2303,8 @@ namespace Server.Mobiles
 				}
 				else if (m_Mobile.CanTransfer(from))
 				{
-					NetState fromState = from.NetState, toState = to.NetState;
+					NetState fromState = from.NetState,
+						toState = to.NetState;
 
 					if (fromState != null && toState != null)
 					{
@@ -2195,9 +2354,15 @@ namespace Server.Mobiles
 
 		public virtual bool DoBardProvoked()
 		{
-			if (DateTime.UtcNow >= m_Mobile.BardEndTime && (m_Mobile.BardMaster == null || m_Mobile.BardMaster.Deleted ||
-															m_Mobile.BardMaster.Map != m_Mobile.Map ||
-															m_Mobile.GetDistanceToSqrt(m_Mobile.BardMaster) > m_Mobile.RangePerception))
+			if (
+				DateTime.UtcNow >= m_Mobile.BardEndTime
+				&& (
+					m_Mobile.BardMaster == null
+					|| m_Mobile.BardMaster.Deleted
+					|| m_Mobile.BardMaster.Map != m_Mobile.Map
+					|| m_Mobile.GetDistanceToSqrt(m_Mobile.BardMaster) > m_Mobile.RangePerception
+				)
+			)
 			{
 				m_Mobile.DebugSay("I have lost my provoker");
 				m_Mobile.BardProvoked = false;
@@ -2209,8 +2374,12 @@ namespace Server.Mobiles
 			}
 			else
 			{
-				if (m_Mobile.BardTarget == null || m_Mobile.BardTarget.Deleted || m_Mobile.BardTarget.Map != m_Mobile.Map ||
-					m_Mobile.GetDistanceToSqrt(m_Mobile.BardTarget) > m_Mobile.RangePerception)
+				if (
+					m_Mobile.BardTarget == null
+					|| m_Mobile.BardTarget.Deleted
+					|| m_Mobile.BardTarget.Map != m_Mobile.Map
+					|| m_Mobile.GetDistanceToSqrt(m_Mobile.BardTarget) > m_Mobile.RangePerception
+				)
 				{
 					m_Mobile.DebugSay("I have lost my provoke target");
 					m_Mobile.BardProvoked = false;
@@ -2233,78 +2402,82 @@ namespace Server.Mobiles
 			return true;
 		}
 
-        public virtual void WalkRandom(int iChanceToNotMove, int iChanceToDir, int iSteps)
-        {
-            if (m_Mobile.Deleted || m_Mobile.DisallowAllMoves)
-            {
-                return;
-            }
+		public virtual void WalkRandom(int iChanceToNotMove, int iChanceToDir, int iSteps)
+		{
+			if (m_Mobile.Deleted || m_Mobile.DisallowAllMoves)
+			{
+				return;
+			}
 
-            if (m_Mobile.CanFly && Utility.Random(80 * iChanceToNotMove) <= 8)
-            {
-                var p = Point3D.Zero;
+			if (m_Mobile.CanFly && Utility.Random(80 * iChanceToNotMove) <= 8)
+			{
+				var p = Point3D.Zero;
 
-                for (int i = 0; i < 10; i++)
-                {
-                    p.X = m_Mobile.X + Utility.RandomList(-3, -2, 2, 3);
-                    p.Y = m_Mobile.Y + Utility.RandomList(-3, -2, 2, 3);
-                    p.Z = m_Mobile.Map.GetAverageZ(p.X, p.Y);
+				for (int i = 0; i < 10; i++)
+				{
+					p.X = m_Mobile.X + Utility.RandomList(-3, -2, 2, 3);
+					p.Y = m_Mobile.Y + Utility.RandomList(-3, -2, 2, 3);
+					p.Z = m_Mobile.Map.GetAverageZ(p.X, p.Y);
 
-                    if (m_Mobile.Home != Point3D.Zero && m_Mobile.RangeHome > 0 && !Utility.InRange(p, m_Mobile.Home, m_Mobile.RangeHome))
-                    {
-                        continue;
-                    }
+					if (
+						m_Mobile.Home != Point3D.Zero
+						&& m_Mobile.RangeHome > 0
+						&& !Utility.InRange(p, m_Mobile.Home, m_Mobile.RangeHome)
+					)
+					{
+						continue;
+					}
 
-                    WalkMobileRange(p, 1, m_Mobile.CanFly, 0, 1);
-                    return;
-                }
-            }
+					WalkMobileRange(p, 1, m_Mobile.CanFly, 0, 1);
+					return;
+				}
+			}
 
-            for (var i = 0; i < iSteps; i++)
-            {
-                if (Utility.Random(80 * iChanceToNotMove) <= 8)
-                {
-                    var iRndMove = Utility.Random(0, 8 + (9 * iChanceToDir));
+			for (var i = 0; i < iSteps; i++)
+			{
+				if (Utility.Random(80 * iChanceToNotMove) <= 8)
+				{
+					var iRndMove = Utility.Random(0, 8 + (9 * iChanceToDir));
 
-                    switch (iRndMove)
-                    {
-                        case 0:
-                            DoMove(Direction.Up);
-                            break;
-                        case 1:
-                            DoMove(Direction.North);
-                            break;
-                        case 2:
-                            DoMove(Direction.Left);
-                            break;
-                        case 3:
-                            DoMove(Direction.West);
-                            break;
-                        case 5:
-                            DoMove(Direction.Down);
-                            break;
-                        case 6:
-                            DoMove(Direction.South);
-                            break;
-                        case 7:
-                            DoMove(Direction.Right);
-                            break;
-                        case 8:
-                            DoMove(Direction.East);
-                            break;
-                        default:
-                            DoMove(m_Mobile.Direction);
-                            break;
-                    }
-                }
-            }
-        }
+					switch (iRndMove)
+					{
+						case 0:
+							DoMove(Direction.Up);
+							break;
+						case 1:
+							DoMove(Direction.North);
+							break;
+						case 2:
+							DoMove(Direction.Left);
+							break;
+						case 3:
+							DoMove(Direction.West);
+							break;
+						case 5:
+							DoMove(Direction.Down);
+							break;
+						case 6:
+							DoMove(Direction.South);
+							break;
+						case 7:
+							DoMove(Direction.Right);
+							break;
+						case 8:
+							DoMove(Direction.East);
+							break;
+						default:
+							DoMove(m_Mobile.Direction);
+							break;
+					}
+				}
+			}
+		}
 
 		public virtual double TransformMoveDelay(double delay)
 		{
-            delay = SpeedInfo.TransformMoveDelay(m_Mobile, delay);
-            
-            if (double.IsNaN(delay))
+			delay = SpeedInfo.TransformMoveDelay(m_Mobile, delay);
+
+			if (double.IsNaN(delay))
 			{
 				using (var op = new StreamWriter("nan_transform.txt", true))
 				{
@@ -2313,7 +2486,8 @@ namespace Server.Mobiles
 						DateTime.UtcNow,
 						GetType(),
 						m_Mobile == null ? "null" : m_Mobile.GetType().ToString(),
-						m_Mobile.StamMax);
+						m_Mobile.StamMax
+					);
 				}
 
 				return 1.0;
@@ -2338,16 +2512,25 @@ namespace Server.Mobiles
 		{
 			var res = DoMoveImpl(d);
 
-			return (res == MoveResult.Success || res == MoveResult.SuccessAutoTurn ||
-					(badStateOk && res == MoveResult.BadState));
+			return (
+				res == MoveResult.Success
+				|| res == MoveResult.SuccessAutoTurn
+				|| (badStateOk && res == MoveResult.BadState)
+			);
 		}
 
 		private static readonly Queue<Item> m_Obstacles = new Queue<Item>();
 
 		public virtual MoveResult DoMoveImpl(Direction d)
 		{
-			if (m_Mobile.Deleted || m_Mobile.Frozen || m_Mobile.Paralyzed || !m_Mobile.CanMove ||
-				(m_Mobile.Spell != null && m_Mobile.Spell.IsCasting && m_Mobile.FreezeOnCast) || m_Mobile.DisallowAllMoves)
+			if (
+				m_Mobile.Deleted
+				|| m_Mobile.Frozen
+				|| m_Mobile.Paralyzed
+				|| !m_Mobile.CanMove
+				|| (m_Mobile.Spell != null && m_Mobile.Spell.IsCasting && m_Mobile.FreezeOnCast)
+				|| m_Mobile.DisallowAllMoves
+			)
 			{
 				return MoveResult.BadState;
 			}
@@ -2360,7 +2543,7 @@ namespace Server.Mobiles
 			var delay = (int)(TransformMoveDelay(m_Mobile.CurrentSpeed) * 1000);
 
 			var mounted = (m_Mobile.Mounted || m_Mobile.Flying);
-            var running = CanRun && (mounted ? (delay < Mobile.WalkMount) : (delay < Mobile.WalkFoot));
+			var running = CanRun && (mounted ? (delay < Mobile.WalkMount) : (delay < Mobile.WalkFoot));
 
 			if (running)
 			{
@@ -2405,7 +2588,8 @@ namespace Server.Mobiles
 
 					if (map != null)
 					{
-						int x = m_Mobile.X, y = m_Mobile.Y;
+						int x = m_Mobile.X,
+							y = m_Mobile.Y;
 						Movement.Movement.Offset(d, ref x, ref y);
 
 						var destroyables = 0;
@@ -2414,8 +2598,12 @@ namespace Server.Mobiles
 
 						foreach (Item item in eable)
 						{
-							if (canOpenDoors && item is BaseDoor && (item.Z + item.ItemData.Height) > m_Mobile.Z &&
-								(m_Mobile.Z + 16) > item.Z)
+							if (
+								canOpenDoors
+								&& item is BaseDoor
+								&& (item.Z + item.ItemData.Height) > m_Mobile.Z
+								&& (m_Mobile.Z + 16) > item.Z
+							)
 							{
 								if (item.X != x || item.Y != y)
 								{
@@ -2434,8 +2622,13 @@ namespace Server.Mobiles
 									break;
 								}
 							}
-							else if (canDestroyObstacles && item.Movable && item.ItemData.Impassable &&
-									 (item.Z + item.ItemData.Height) > m_Mobile.Z && (m_Mobile.Z + 16) > item.Z)
+							else if (
+								canDestroyObstacles
+								&& item.Movable
+								&& item.ItemData.Impassable
+								&& (item.Z + item.ItemData.Height) > m_Mobile.Z
+								&& (m_Mobile.Z + 16) > item.Z
+							)
 							{
 								if (!m_Mobile.InRange(item.GetWorldLocation(), 1))
 								{
@@ -2465,14 +2658,19 @@ namespace Server.Mobiles
 
 							if (item is BaseDoor)
 							{
-								m_Mobile.DebugSay("Little do they expect, I've learned how to open doors. Didn't they read the script??");
+								m_Mobile.DebugSay(
+									"Little do they expect, I've learned how to open doors. Didn't they read the script??"
+								);
 								m_Mobile.DebugSay("*twist*");
 
 								((BaseDoor)item).Use(m_Mobile);
 							}
 							else
 							{
-								m_Mobile.DebugSay("Ugabooga. I'm so big and tough I can destroy it: {0}", item.GetType().Name);
+								m_Mobile.DebugSay(
+									"Ugabooga. I'm so big and tough I can destroy it: {0}",
+									item.GetType().Name
+								);
 
 								if (item is Container)
 								{
@@ -2482,7 +2680,11 @@ namespace Server.Mobiles
 									{
 										var check = cont.Items[i];
 
-										if (check.Movable && check.ItemData.Impassable && (item.Z + check.ItemData.Height) > m_Mobile.Z)
+										if (
+											check.Movable
+											&& check.ItemData.Impassable
+											&& (item.Z + check.ItemData.Height) > m_Mobile.Z
+										)
 										{
 											m_Obstacles.Enqueue(check);
 										}
@@ -2503,7 +2705,7 @@ namespace Server.Mobiles
 						}
 					}
 				}
-				
+
 				if (blocked)
 				{
 					var offset = (Utility.RandomDouble() >= 0.6 ? 1 : -1);
@@ -2519,10 +2721,10 @@ namespace Server.Mobiles
 						}
 					}
 
-					if( m_Mobile is BaseCreature )
+					if (m_Mobile is BaseCreature)
 					{
 						BaseCreature bc = m_Mobile as BaseCreature;
-						if( bc.IsMonster )
+						if (bc.IsMonster)
 						{
 							MoveImpl.IgnoreMovableImpassables = false;
 							return MoveResult.Success;
@@ -2549,7 +2751,7 @@ namespace Server.Mobiles
 
 			if (m_Mobile.Home == Point3D.Zero)
 			{
-                if (m_Mobile.Spawner is SpawnEntry)
+				if (m_Mobile.Spawner is SpawnEntry)
 				{
 					Region region = ((SpawnEntry)m_Mobile.Spawner).Region;
 
@@ -2654,7 +2856,12 @@ namespace Server.Mobiles
 
 		public virtual bool MoveTo(IPoint3D p, bool run, int range)
 		{
-			if (m_Mobile.Deleted || m_Mobile.DisallowAllMoves || p == null || (p is IDamageable && ((IDamageable)p).Deleted))
+			if (
+				m_Mobile.Deleted
+				|| m_Mobile.DisallowAllMoves
+				|| p == null
+				|| (p is IDamageable && ((IDamageable)p).Deleted)
+			)
 			{
 				return false;
 			}
@@ -2704,14 +2911,14 @@ namespace Server.Mobiles
 		}
 
 		/*
-        *  Walk at range distance from mobile
-        *
-        *	iSteps : Number of steps
-        *	bRun   : Do we run
-        *	iWantDistMin : The minimum distance we want to be
-        *  iWantDistMax : The maximum distance we want to be
-        *
-        */
+		*  Walk at range distance from mobile
+		*
+		*	iSteps : Number of steps
+		*	bRun   : Do we run
+		*	iWantDistMin : The minimum distance we want to be
+		*  iWantDistMax : The maximum distance we want to be
+		*
+		*/
 
 		public virtual bool WalkMobileRange(IPoint3D p, int iSteps, bool bRun, int iWantDistMin, int iWantDistMax)
 		{
@@ -2794,18 +3001,24 @@ namespace Server.Mobiles
 		}
 
 		/*
-        * Here we check to acquire a target from our surronding
-        *
-        *  iRange : The range
-        *  acqType : A type of acquire we want (closest, strongest, etc)
-        *  bPlayerOnly : Don't bother with other creatures or NPCs, want a player
-        *  bFacFriend : Check people in my faction
-        *  bFacFoe : Check people in other factions
-        *
-        * Note: Never use a differing acqType for enemy targeting! It only checks using creature's fightmode!
-        */
+		* Here we check to acquire a target from our surronding
+		*
+		*  iRange : The range
+		*  acqType : A type of acquire we want (closest, strongest, etc)
+		*  bPlayerOnly : Don't bother with other creatures or NPCs, want a player
+		*  bFacFriend : Check people in my faction
+		*  bFacFoe : Check people in other factions
+		*
+		* Note: Never use a differing acqType for enemy targeting! It only checks using creature's fightmode!
+		*/
 
-		public virtual bool AcquireFocusMob(int iRange, FightMode acqType, bool bPlayerOnly, bool bFacFriend, bool bFacFoe)
+		public virtual bool AcquireFocusMob(
+			int iRange,
+			FightMode acqType,
+			bool bPlayerOnly,
+			bool bFacFriend,
+			bool bFacFoe
+		)
 		{
 			if (m_Mobile.Deleted)
 			{
@@ -2824,10 +3037,14 @@ namespace Server.Mobiles
 			}
 			if (m_Mobile.Controlled)
 			{
-				if (m_Mobile.ControlTarget == null || m_Mobile.ControlTarget.Deleted ||
-					(m_Mobile.ControlTarget is Mobile && ((Mobile)m_Mobile.ControlTarget).Hidden) || !m_Mobile.ControlTarget.Alive ||
-					(m_Mobile.ControlTarget is Mobile && ((Mobile)m_Mobile.ControlTarget).IsDeadBondedPet) ||
-					!m_Mobile.InRange(m_Mobile.ControlTarget, m_Mobile.RangePerception * 2))
+				if (
+					m_Mobile.ControlTarget == null
+					|| m_Mobile.ControlTarget.Deleted
+					|| (m_Mobile.ControlTarget is Mobile && ((Mobile)m_Mobile.ControlTarget).Hidden)
+					|| !m_Mobile.ControlTarget.Alive
+					|| (m_Mobile.ControlTarget is Mobile && ((Mobile)m_Mobile.ControlTarget).IsDeadBondedPet)
+					|| !m_Mobile.InRange(m_Mobile.ControlTarget, m_Mobile.RangePerception * 2)
+				)
 				{
 					if (m_Mobile.ControlTarget != null && m_Mobile.ControlTarget != m_Mobile.ControlMaster)
 					{
@@ -2854,8 +3071,13 @@ namespace Server.Mobiles
 				return false;
 			}
 
-			if (acqType == FightMode.Aggressor && m_Mobile.Aggressors.Count == 0 && m_Mobile.Aggressed.Count == 0 &&
-				m_Mobile.FactionAllegiance == null && m_Mobile.EthicAllegiance == null)
+			if (
+				acqType == FightMode.Aggressor
+				&& m_Mobile.Aggressors.Count == 0
+				&& m_Mobile.Aggressed.Count == 0
+				&& m_Mobile.FactionAllegiance == null
+				&& m_Mobile.EthicAllegiance == null
+			)
 			{
 				if ((Core.TOL && m_Mobile.Tribe == TribeType.None) || (!Core.TOL && m_Mobile.OppositionGroup == null))
 				{
@@ -2948,11 +3170,14 @@ namespace Server.Mobiles
 							if (m == m_Mobile.SummonMaster)
 								continue;
 
-                            // It also must abide by harmful spell rules if the master is a player.
-                            if (m_Mobile.SummonMaster is PlayerMobile && !SpellHelper.ValidIndirectTarget(m_Mobile.SummonMaster, m))
-                            {
-                                continue;
-                            }
+							// It also must abide by harmful spell rules if the master is a player.
+							if (
+								m_Mobile.SummonMaster is PlayerMobile
+								&& !SpellHelper.ValidIndirectTarget(m_Mobile.SummonMaster, m)
+							)
+							{
+								continue;
+							}
 
 							// Players animated creatures cannot attack other players directly.
 							if (m is PlayerMobile && m_Mobile.IsAnimatedDead && m_Mobile.SummonMaster is PlayerMobile)
@@ -2962,7 +3187,7 @@ namespace Server.Mobiles
 						// Ignore anyone we can't hurt
 						if (!m_Mobile.CanBeHarmful(m, false))
 						{
-                            continue;
+							continue;
 						}
 
 						// Don't ignore hostile mobiles
@@ -3059,8 +3284,8 @@ namespace Server.Mobiles
 		}
 
 		/*
-        *  The mobile changed it speed, we must ajust the timer
-        */
+		*  The mobile changed it speed, we must ajust the timer
+		*/
 
 		public virtual void OnCurrentSpeedChanged()
 		{
@@ -3070,12 +3295,11 @@ namespace Server.Mobiles
 			m_Timer.Start();
 		}
 
-		public virtual void AfterThink()
-		{ }
+		public virtual void AfterThink() { }
 
 		/*
-        *  The Timer object
-        */
+		*  The Timer object
+		*/
 
 		private class AITimer : Timer
 		{
@@ -3084,7 +3308,8 @@ namespace Server.Mobiles
 			public AITimer(BaseAI owner)
 				: base(
 					TimeSpan.FromSeconds(Utility.RandomDouble()),
-					TimeSpan.FromSeconds(Math.Max(0.0, owner.m_Mobile.CurrentSpeed)))
+					TimeSpan.FromSeconds(Math.Max(0.0, owner.m_Mobile.CurrentSpeed))
+				)
 			{
 				m_Owner = owner;
 

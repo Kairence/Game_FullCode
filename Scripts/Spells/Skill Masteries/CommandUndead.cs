@@ -1,160 +1,185 @@
 using System;
 using Server;
-using Server.Spells;
-using Server.Network;
-using Server.Mobiles;
 using Server.Items;
+using Server.Mobiles;
+using Server.Network;
+using Server.Spells;
 
 namespace Server.Spells.SkillMasteries
 {
 	public class CommandUndeadSpell : SkillMasterySpell
 	{
 		private static SpellInfo m_Info = new SpellInfo(
-				"Command Undead", "In Corp Xen Por",
-				204,
-				9061,
-                Reagent.DaemonBlood,
-                Reagent.PigIron,
-                Reagent.BatWing
-			);
+			"Command Undead",
+			"In Corp Xen Por",
+			204,
+			9061,
+			Reagent.DaemonBlood,
+			Reagent.PigIron,
+			Reagent.BatWing
+		);
 
-		public override double RequiredSkill{ get { return 90; } }
-		public override double UpKeep { get { return 0; } }
-		public override int RequiredMana{ get { return 40; } }
-		public override bool PartyEffects { get { return false; } }
-
-        public override SkillName CastSkill { get { return SkillName.Necromancy; } }
-        public override SkillName DamageSkill { get { return SkillName.SpiritSpeak; } }
-
-        public override TimeSpan CastDelayBase { get { return TimeSpan.FromSeconds(3.0); } }
-
-        public CommandUndeadSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
+		public override double RequiredSkill
 		{
+			get { return 90; }
+		}
+		public override double UpKeep
+		{
+			get { return 0; }
+		}
+		public override int RequiredMana
+		{
+			get { return 40; }
+		}
+		public override bool PartyEffects
+		{
+			get { return false; }
 		}
 
-        public override void OnCast()
-        {
-            Caster.Target = new MasteryTarget(this);
-        }
+		public override SkillName CastSkill
+		{
+			get { return SkillName.Necromancy; }
+		}
+		public override SkillName DamageSkill
+		{
+			get { return SkillName.SpiritSpeak; }
+		}
 
-        protected override void OnTarget(object o)
-        {
-            BaseCreature bc = o as BaseCreature;
+		public override TimeSpan CastDelayBase
+		{
+			get { return TimeSpan.FromSeconds(3.0); }
+		}
 
-            if (bc == null || !Caster.CanSee(bc.Location) || !Caster.InLOS(bc))
-            {
-                Caster.SendLocalizedMessage(500237); // Target can not be seen.
-            }
-            else if (ValidateTarget(bc))
-            {
-                if (Caster.Followers + 2 > Caster.FollowersMax)
-                {
-                    Caster.SendLocalizedMessage(1049607); // You have too many followers to control that creature.
-                }
-                else if (bc.Controlled || bc.Summoned)
-                {
-                    Caster.SendLocalizedMessage(1156015); // You cannot command that!
-                }
-                else if (CheckSequence())
-                {
-                    double difficulty = Items.BaseInstrument.GetBaseDifficulty(bc);
-                    double skill = ((Caster.Skills[CastSkill].Value + Caster.Skills[DamageSkill].Value) / 2) + (GetMasteryLevel() * 3) + 1;
+		public CommandUndeadSpell(Mobile caster, Item scroll)
+			: base(caster, scroll, m_Info) { }
 
-                    double chance = (skill - (difficulty - 25)) / ((difficulty + 25) - (difficulty - 25));
+		public override void OnCast()
+		{
+			Caster.Target = new MasteryTarget(this);
+		}
 
-                    if (chance >= Utility.RandomDouble())
-                    {
-                        bc.ControlSlots = 2;
-                        bc.Combatant = null;
+		protected override void OnTarget(object o)
+		{
+			BaseCreature bc = o as BaseCreature;
 
-                        if (Caster.Combatant == bc)
-                        {
-                            Caster.Combatant = null;
-                            Caster.Warmode = false;
-                        }
+			if (bc == null || !Caster.CanSee(bc.Location) || !Caster.InLOS(bc))
+			{
+				Caster.SendLocalizedMessage(500237); // Target can not be seen.
+			}
+			else if (ValidateTarget(bc))
+			{
+				if (Caster.Followers + 2 > Caster.FollowersMax)
+				{
+					Caster.SendLocalizedMessage(1049607); // You have too many followers to control that creature.
+				}
+				else if (bc.Controlled || bc.Summoned)
+				{
+					Caster.SendLocalizedMessage(1156015); // You cannot command that!
+				}
+				else if (CheckSequence())
+				{
+					double difficulty = Items.BaseInstrument.GetBaseDifficulty(bc);
+					double skill =
+						((Caster.Skills[CastSkill].Value + Caster.Skills[DamageSkill].Value) / 2)
+						+ (GetMasteryLevel() * 3)
+						+ 1;
 
-                        if (bc.SetControlMaster(Caster))
-                        {
-                            bc.PlaySound(0x5C4);
-                            bc.Allured = true;
+					double chance = (skill - (difficulty - 25)) / ((difficulty + 25) - (difficulty - 25));
 
-                            Container pack = bc.Backpack;
+					if (chance >= Utility.RandomDouble())
+					{
+						bc.ControlSlots = 2;
+						bc.Combatant = null;
 
-                            if (pack != null)
-                            {
-                                for (int i = pack.Items.Count - 1; i >= 0; --i)
-                                {
-                                    if (i >= pack.Items.Count)
-                                        continue;
+						if (Caster.Combatant == bc)
+						{
+							Caster.Combatant = null;
+							Caster.Warmode = false;
+						}
 
-                                    pack.Items[i].Delete();
-                                }
-                            }
+						if (bc.SetControlMaster(Caster))
+						{
+							bc.PlaySound(0x5C4);
+							bc.Allured = true;
 
-                            if (bc is SkeletalDragon)
-                            {
-                                Server.Engines.Quests.Doom.BellOfTheDead.TryRemoveDragon((SkeletalDragon)bc);
-                            }
+							Container pack = bc.Backpack;
 
-                            Caster.PlaySound(0x5C4);
-                            Caster.SendLocalizedMessage(1156013); // You command the undead to follow and protect you.
-                        }
-                    }
-                    else
-                    {
-                        Caster.SendLocalizedMessage(1156014); // The undead becomes enraged by your command attempt and attacks you.
-                    }
-                }
-            }
-            else
-                Caster.SendLocalizedMessage(1156015); // You cannot command that!
+							if (pack != null)
+							{
+								for (int i = pack.Items.Count - 1; i >= 0; --i)
+								{
+									if (i >= pack.Items.Count)
+										continue;
 
-            //FinishSequence();
-        }
+									pack.Items[i].Delete();
+								}
+							}
 
-        public static Type[] CommandTypes { get { return _CommandTypes; } }
-        public static Type[] NoCommandTypes { get { return _NoCommandTypes; } }
+							if (bc is SkeletalDragon)
+							{
+								Server.Engines.Quests.Doom.BellOfTheDead.TryRemoveDragon((SkeletalDragon)bc);
+							}
 
-        private static Type[] _CommandTypes =
-        {
-            typeof(SkeletalDragon)
-        };
+							Caster.PlaySound(0x5C4);
+							Caster.SendLocalizedMessage(1156013); // You command the undead to follow and protect you.
+						}
+					}
+					else
+					{
+						Caster.SendLocalizedMessage(1156014); // The undead becomes enraged by your command attempt and attacks you.
+					}
+				}
+			}
+			else
+				Caster.SendLocalizedMessage(1156015); // You cannot command that!
 
-        private static Type[] _NoCommandTypes =
-        {
+			//FinishSequence();
+		}
 
-            typeof(UnfrozenMummy),
-            typeof(RedDeath),
-            typeof(SirPatrick),
-            typeof(LadyJennifyr),
-            typeof(MasterMikael),
-            typeof(MasterJonath),
-            typeof(LadyMarai),
-            typeof(Niporailem),
-            typeof(PestilentBandage),
-        };
+		public static Type[] CommandTypes
+		{
+			get { return _CommandTypes; }
+		}
+		public static Type[] NoCommandTypes
+		{
+			get { return _NoCommandTypes; }
+		}
 
-        public static bool ValidateTarget(BaseCreature bc)
-        {
-            if (bc is BaseRenowned || bc is BaseChampion || bc is Server.Engines.Shadowguard.ShadowguardBoss)
-                return false;
+		private static Type[] _CommandTypes = { typeof(SkeletalDragon) };
 
-            foreach (var t in _CommandTypes)
-            {
-                if (t == bc.GetType())
-                    return true;
-            }
+		private static Type[] _NoCommandTypes =
+		{
+			typeof(UnfrozenMummy),
+			typeof(RedDeath),
+			typeof(SirPatrick),
+			typeof(LadyJennifyr),
+			typeof(MasterMikael),
+			typeof(MasterJonath),
+			typeof(LadyMarai),
+			typeof(Niporailem),
+			typeof(PestilentBandage),
+		};
 
-            foreach (var t in _NoCommandTypes)
-            {
-                if (t == bc.GetType())
-                    return false;
-            }
+		public static bool ValidateTarget(BaseCreature bc)
+		{
+			if (bc is BaseRenowned || bc is BaseChampion || bc is Server.Engines.Shadowguard.ShadowguardBoss)
+				return false;
 
-            SlayerEntry entry = SlayerGroup.GetEntryByName(SlayerName.Silver);
+			foreach (var t in _CommandTypes)
+			{
+				if (t == bc.GetType())
+					return true;
+			}
 
-            return entry != null && entry.Slays(bc);
-        }
+			foreach (var t in _NoCommandTypes)
+			{
+				if (t == bc.GetType())
+					return false;
+			}
+
+			SlayerEntry entry = SlayerGroup.GetEntryByName(SlayerName.Silver);
+
+			return entry != null && entry.Slays(bc);
+		}
 	}
 }

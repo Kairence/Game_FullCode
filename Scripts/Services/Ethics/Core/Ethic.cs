@@ -3,247 +3,239 @@ using Server.Mobiles;
 
 namespace Server.Ethics
 {
-    public abstract class Ethic
-    {
-        public static readonly bool Enabled = false;
-        public static readonly Ethic Hero = new Hero.HeroEthic();
-        public static readonly Ethic Evil = new Evil.EvilEthic();
-        public static readonly Ethic[] Ethics = new Ethic[]
-        {
-            Hero,
-            Evil
-        };
-        protected EthicDefinition m_Definition;
-        protected PlayerCollection m_Players;
-        public Ethic()
-        {
-            this.m_Players = new PlayerCollection();
-        }
+	public abstract class Ethic
+	{
+		public static readonly bool Enabled = false;
+		public static readonly Ethic Hero = new Hero.HeroEthic();
+		public static readonly Ethic Evil = new Evil.EvilEthic();
+		public static readonly Ethic[] Ethics = new Ethic[] { Hero, Evil };
+		protected EthicDefinition m_Definition;
+		protected PlayerCollection m_Players;
 
-        public EthicDefinition Definition
-        {
-            get
-            {
-                return this.m_Definition;
-            }
-        }
-        public PlayerCollection Players
-        {
-            get
-            {
-                return this.m_Players;
-            }
-        }
-        public static Ethic Find(Item item)
-        {
-            if ((item.SavedFlags & 0x100) != 0)
-            {
-                if (item.Hue == Hero.Definition.PrimaryHue)
-                    return Hero;
+		public Ethic()
+		{
+			this.m_Players = new PlayerCollection();
+		}
 
-                item.SavedFlags &= ~0x100;
-            }
+		public EthicDefinition Definition
+		{
+			get { return this.m_Definition; }
+		}
+		public PlayerCollection Players
+		{
+			get { return this.m_Players; }
+		}
 
-            if ((item.SavedFlags & 0x200) != 0)
-            {
-                if (item.Hue == Evil.Definition.PrimaryHue)
-                    return Evil;
+		public static Ethic Find(Item item)
+		{
+			if ((item.SavedFlags & 0x100) != 0)
+			{
+				if (item.Hue == Hero.Definition.PrimaryHue)
+					return Hero;
 
-                item.SavedFlags &= ~0x200;
-            }
+				item.SavedFlags &= ~0x100;
+			}
 
-            return null;
-        }
+			if ((item.SavedFlags & 0x200) != 0)
+			{
+				if (item.Hue == Evil.Definition.PrimaryHue)
+					return Evil;
 
-        public static bool CheckTrade(Mobile from, Mobile to, Mobile newOwner, Item item)
-        {
-            Ethic itemEthic = Find(item);
+				item.SavedFlags &= ~0x200;
+			}
 
-            if (itemEthic == null || Find(newOwner) == itemEthic)
-                return true;
+			return null;
+		}
 
-            if (itemEthic == Hero)
-                (from == newOwner ? to : from).SendMessage("Only heros may receive this item.");
-            else if (itemEthic == Evil)
-                (from == newOwner ? to : from).SendMessage("Only the evil may receive this item.");
+		public static bool CheckTrade(Mobile from, Mobile to, Mobile newOwner, Item item)
+		{
+			Ethic itemEthic = Find(item);
 
-            return false;
-        }
+			if (itemEthic == null || Find(newOwner) == itemEthic)
+				return true;
 
-        public static bool CheckEquip(Mobile from, Item item)
-        {
-            Ethic itemEthic = Find(item);
+			if (itemEthic == Hero)
+				(from == newOwner ? to : from).SendMessage("Only heros may receive this item.");
+			else if (itemEthic == Evil)
+				(from == newOwner ? to : from).SendMessage("Only the evil may receive this item.");
 
-            if (itemEthic == null || Find(from) == itemEthic)
-                return true;
+			return false;
+		}
 
-            if (itemEthic == Hero)
-                from.SendMessage("Only heros may wear this item.");
-            else if (itemEthic == Evil)
-                from.SendMessage("Only the evil may wear this item.");
+		public static bool CheckEquip(Mobile from, Item item)
+		{
+			Ethic itemEthic = Find(item);
 
-            return false;
-        }
+			if (itemEthic == null || Find(from) == itemEthic)
+				return true;
 
-        public static bool IsImbued(Item item)
-        {
-            return IsImbued(item, false);
-        }
+			if (itemEthic == Hero)
+				from.SendMessage("Only heros may wear this item.");
+			else if (itemEthic == Evil)
+				from.SendMessage("Only the evil may wear this item.");
 
-        public static bool IsImbued(Item item, bool recurse)
-        {
-            if (Find(item) != null)
-                return true;
+			return false;
+		}
 
-            if (recurse)
-            {
-                foreach (Item child in item.Items)
-                {
-                    if (IsImbued(child, true))
-                        return true;
-                }
-            }
+		public static bool IsImbued(Item item)
+		{
+			return IsImbued(item, false);
+		}
 
-            return false;
-        }
+		public static bool IsImbued(Item item, bool recurse)
+		{
+			if (Find(item) != null)
+				return true;
 
-        public static void Initialize()
-        {
-            if (Enabled)
-                EventSink.Speech += new SpeechEventHandler(EventSink_Speech);
-        }
+			if (recurse)
+			{
+				foreach (Item child in item.Items)
+				{
+					if (IsImbued(child, true))
+						return true;
+				}
+			}
 
-        public static void EventSink_Speech(SpeechEventArgs e)
-        {
-            if (e.Blocked || e.Handled)
-                return;
+			return false;
+		}
 
-            Player pl = Player.Find(e.Mobile);
+		public static void Initialize()
+		{
+			if (Enabled)
+				EventSink.Speech += new SpeechEventHandler(EventSink_Speech);
+		}
 
-            if (pl == null)
-            {
-                for (int i = 0; i < Ethics.Length; ++i)
-                {
-                    Ethic ethic = Ethics[i];
+		public static void EventSink_Speech(SpeechEventArgs e)
+		{
+			if (e.Blocked || e.Handled)
+				return;
 
-                    if (!ethic.IsEligible(e.Mobile))
-                        continue;
+			Player pl = Player.Find(e.Mobile);
 
-                    if (!Insensitive.Equals(ethic.Definition.JoinPhrase.String, e.Speech))
-                        continue;
+			if (pl == null)
+			{
+				for (int i = 0; i < Ethics.Length; ++i)
+				{
+					Ethic ethic = Ethics[i];
 
-                    bool isNearAnkh = false;
+					if (!ethic.IsEligible(e.Mobile))
+						continue;
 
-                    foreach (Item item in e.Mobile.GetItemsInRange(2))
-                    {
-                        if (item is Items.AnkhNorth || item is Items.AnkhWest)
-                        {
-                            isNearAnkh = true;
-                            break;
-                        }
-                    }
+					if (!Insensitive.Equals(ethic.Definition.JoinPhrase.String, e.Speech))
+						continue;
 
-                    if (!isNearAnkh)
-                        continue;
+					bool isNearAnkh = false;
 
-                    pl = new Player(ethic, e.Mobile);
+					foreach (Item item in e.Mobile.GetItemsInRange(2))
+					{
+						if (item is Items.AnkhNorth || item is Items.AnkhWest)
+						{
+							isNearAnkh = true;
+							break;
+						}
+					}
 
-                    pl.Attach();
+					if (!isNearAnkh)
+						continue;
 
-                    e.Mobile.FixedEffect(0x373A, 10, 30);
-                    e.Mobile.PlaySound(0x209);
+					pl = new Player(ethic, e.Mobile);
 
-                    e.Handled = true;
-                    break;
-                }
-            }
-            else
-            {
-                Ethic ethic = pl.Ethic;
+					pl.Attach();
 
-                for (int i = 0; i < ethic.Definition.Powers.Length; ++i)
-                {
-                    Power power = ethic.Definition.Powers[i];
+					e.Mobile.FixedEffect(0x373A, 10, 30);
+					e.Mobile.PlaySound(0x209);
 
-                    if (!Insensitive.Equals(power.Definition.Phrase.String, e.Speech))
-                        continue;
+					e.Handled = true;
+					break;
+				}
+			}
+			else
+			{
+				Ethic ethic = pl.Ethic;
 
-                    if (!power.CheckInvoke(pl))
-                        continue;
+				for (int i = 0; i < ethic.Definition.Powers.Length; ++i)
+				{
+					Power power = ethic.Definition.Powers[i];
 
-                    power.BeginInvoke(pl);
-                    e.Handled = true;
+					if (!Insensitive.Equals(power.Definition.Phrase.String, e.Speech))
+						continue;
 
-                    break;
-                }
-            }
-        }
+					if (!power.CheckInvoke(pl))
+						continue;
 
-        public static Ethic Find(Mobile mob)
-        {
-            return Find(mob, false, false);
-        }
+					power.BeginInvoke(pl);
+					e.Handled = true;
 
-        public static Ethic Find(Mobile mob, bool inherit)
-        {
-            return Find(mob, inherit, false);
-        }
+					break;
+				}
+			}
+		}
 
-        public static Ethic Find(Mobile mob, bool inherit, bool allegiance)
-        {
-            Player pl = Player.Find(mob);
+		public static Ethic Find(Mobile mob)
+		{
+			return Find(mob, false, false);
+		}
 
-            if (pl != null)
-                return pl.Ethic;
+		public static Ethic Find(Mobile mob, bool inherit)
+		{
+			return Find(mob, inherit, false);
+		}
 
-            if (inherit && mob is BaseCreature)
-            {
-                BaseCreature bc = (BaseCreature)mob;
+		public static Ethic Find(Mobile mob, bool inherit, bool allegiance)
+		{
+			Player pl = Player.Find(mob);
 
-                if (bc.Controlled)
-                    return Find(bc.ControlMaster, false);
-                else if (bc.Summoned)
-                    return Find(bc.SummonMaster, false);
-                else if (allegiance)
-                    return bc.EthicAllegiance;
-            }
+			if (pl != null)
+				return pl.Ethic;
 
-            return null;
-        }
+			if (inherit && mob is BaseCreature)
+			{
+				BaseCreature bc = (BaseCreature)mob;
 
-        public abstract bool IsEligible(Mobile mob);
+				if (bc.Controlled)
+					return Find(bc.ControlMaster, false);
+				else if (bc.Summoned)
+					return Find(bc.SummonMaster, false);
+				else if (allegiance)
+					return bc.EthicAllegiance;
+			}
 
-        public virtual void Deserialize(GenericReader reader)
-        {
-            int version = reader.ReadEncodedInt();
+			return null;
+		}
 
-            switch ( version )
-            {
-                case 0:
-                    {
-                        int playerCount = reader.ReadEncodedInt();
+		public abstract bool IsEligible(Mobile mob);
 
-                        for (int i = 0; i < playerCount; ++i)
-                        {
-                            Player pl = new Player(this, reader);
+		public virtual void Deserialize(GenericReader reader)
+		{
+			int version = reader.ReadEncodedInt();
 
-                            if (pl.Mobile != null)
-                                Timer.DelayCall(TimeSpan.Zero, new TimerCallback(pl.CheckAttach));
-                        }
+			switch (version)
+			{
+				case 0:
+				{
+					int playerCount = reader.ReadEncodedInt();
 
-                        break;
-                    }
-            }
-        }
+					for (int i = 0; i < playerCount; ++i)
+					{
+						Player pl = new Player(this, reader);
 
-        public virtual void Serialize(GenericWriter writer)
-        {
-            writer.WriteEncodedInt(0); // version
+						if (pl.Mobile != null)
+							Timer.DelayCall(TimeSpan.Zero, new TimerCallback(pl.CheckAttach));
+					}
 
-            writer.WriteEncodedInt(this.m_Players.Count);
+					break;
+				}
+			}
+		}
 
-            for (int i = 0; i < this.m_Players.Count; ++i)
-                this.m_Players[i].Serialize(writer);
-        }
-    }
+		public virtual void Serialize(GenericWriter writer)
+		{
+			writer.WriteEncodedInt(0); // version
+
+			writer.WriteEncodedInt(this.m_Players.Count);
+
+			for (int i = 0; i < this.m_Players.Count; ++i)
+				this.m_Players[i].Serialize(writer);
+		}
+	}
 }

@@ -1,6 +1,5 @@
 #region References
 using System;
-
 using Server.Items;
 using Server.Spells;
 using Server.Targeting;
@@ -11,11 +10,10 @@ namespace Server.Mobiles
 	public class OrcScoutAI : BaseAI
 	{
 		private static readonly double teleportChance = 0.04;
-		private static readonly int[] m_Offsets = {0, 0, -1, -1, 0, -1, 1, -1, -1, 0, 1, 0, -1, -1, 0, 1, 1, 1};
+		private static readonly int[] m_Offsets = { 0, 0, -1, -1, 0, -1, 1, -1, -1, 0, 1, 0, -1, -1, 0, 1, 1, 1 };
 
 		public OrcScoutAI(BaseCreature m)
-			: base(m)
-		{ }
+			: base(m) { }
 
 		public override bool DoActionWander()
 		{
@@ -171,7 +169,10 @@ namespace Server.Mobiles
 			//            bool hasAmmo = !(pack == null || pack.FindItemByType(typeof(Arrow)) == null);
 			// They can shoot even with no ammo!
 
-			if ( /*hasAmmo && */m_Mobile.Hits > m_Mobile.HitsMax / 2)
+			if ( /*hasAmmo && */
+				m_Mobile.Hits
+				> m_Mobile.HitsMax / 2
+			)
 			{
 				// If I have a target, go back and fight them
 				if (c != null && m_Mobile.GetDistanceToSqrt(c) <= m_Mobile.RangePerception * 2)
@@ -261,14 +262,18 @@ namespace Server.Mobiles
 
 			for (var i = 0; i < m_Offsets.Length; i += 2)
 			{
-				int x = m_Offsets[i], y = m_Offsets[i + 1];
+				int x = m_Offsets[i],
+					y = m_Offsets[i + 1];
 
 				var p = new Point3D(px + x, py + y, 0);
 
 				var lt = new LandTarget(p, m_Mobile.Map);
 
-				if (m_Mobile.InLOS(lt) && m_Mobile.Map.CanSpawnMobile(px + x, py + y, lt.Z) &&
-					!SpellHelper.CheckMulti(p, m_Mobile.Map))
+				if (
+					m_Mobile.InLOS(lt)
+					&& m_Mobile.Map.CanSpawnMobile(px + x, py + y, lt.Z)
+					&& !SpellHelper.CheckMulti(p, m_Mobile.Map)
+				)
 				{
 					m_Mobile.FixedParticles(0x376A, 9, 32, 0x13AF, EffectLayer.Waist);
 					m_Mobile.PlaySound(0x1FE);
@@ -290,7 +295,8 @@ namespace Server.Mobiles
 					0x3728,
 					10,
 					10,
-					2023);
+					2023
+				);
 
 				m_Mobile.PlaySound(0x22F);
 				m_Mobile.Hidden = true;

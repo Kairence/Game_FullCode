@@ -1,8 +1,9 @@
 using System;
 using Server;
 using Server.Gumps;
-using Server.Network;
 using Server.Mobiles;
+using Server.Network;
+
 /*
 ** QuestNote
 ** ArteGordon
@@ -12,7 +13,6 @@ namespace Server.Items
 {
 	public class QuestHolder : XmlQuestHolder
 	{
-
 		[Constructable]
 		public QuestHolder()
 			: base()
@@ -22,16 +22,13 @@ namespace Server.Items
 		}
 
 		public QuestHolder(Serial serial)
-			: base(serial)
-		{
-		}
+			: base(serial) { }
 
 		public override void Serialize(GenericWriter writer)
 		{
 			base.Serialize(writer);
 
 			writer.Write((int)0); // version
-
 		}
 
 		public override void Deserialize(GenericReader reader)
@@ -39,7 +36,6 @@ namespace Server.Items
 			base.Deserialize(reader);
 
 			int version = reader.ReadInt();
-
 		}
 
 		public override void OnDoubleClick(Mobile from)
@@ -59,6 +55,5 @@ namespace Server.Items
 				from.SendGump(new XmlQuestStatusGump(this, this.TitleString));
 			}
 		}
-
 	}
 }

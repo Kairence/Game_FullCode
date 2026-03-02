@@ -1,15 +1,12 @@
 #region References
 using System;
 using System.Reflection;
-
 using CustomsFramework;
-
 using Server.Commands;
 using Server.Commands.Generic;
 using Server.Gumps;
-using Server.Targeting;
 using Server.Mobiles;
-
+using Server.Targeting;
 using CPA = Server.CommandPropertyAttribute;
 #endregion
 
@@ -20,7 +17,7 @@ namespace Server.Commands
 	{
 		Read = 0x01,
 		Write = 0x02,
-		ReadWrite = Read | Write
+		ReadWrite = Read | Write,
 	}
 
 	public class Properties
@@ -34,15 +31,21 @@ namespace Server.Commands
 		private static readonly Type _TypeOfIDynamicEnum = typeof(IDynamicEnum);
 		private static readonly Type _TypeOfText = typeof(TextDefinition);
 		private static readonly Type _TypeOfTimeSpan = typeof(TimeSpan);
-        private static readonly Type _TypeOfParsable = typeof(ParsableAttribute);
+		private static readonly Type _TypeOfParsable = typeof(ParsableAttribute);
 
-		private static readonly Type[] _ParseTypes = new[] {typeof(string)};
+		private static readonly Type[] _ParseTypes = new[] { typeof(string) };
 		private static readonly object[] _ParseParams = new object[1];
 
 		private static readonly Type[] _NumericTypes = new[]
 		{
-			typeof(Byte), typeof(SByte), typeof(Int16), typeof(UInt16), typeof(Int32), typeof(UInt32), typeof(Int64),
-			typeof(UInt64)
+			typeof(Byte),
+			typeof(SByte),
+			typeof(Int16),
+			typeof(UInt16),
+			typeof(Int32),
+			typeof(UInt32),
+			typeof(Int64),
+			typeof(UInt64),
 		};
 
 		public static void Initialize()
@@ -58,7 +61,12 @@ namespace Server.Commands
 		}
 
 		public static PropertyInfo[] GetPropertyInfoChain(
-			Mobile m, Type type, string propertyString, PropertyAccess endAccess, ref string failReason)
+			Mobile m,
+			Type type,
+			string propertyString,
+			PropertyAccess endAccess,
+			ref string failReason
+		)
 		{
 			var split = propertyString.Split('.');
 
@@ -107,7 +115,10 @@ namespace Server.Commands
 					if ((access & PropertyAccess.Read) != 0 && m.AccessLevel < attr.ReadLevel)
 					{
 						failReason = String.Format(
-							"You must be at least {0} to get the property '{1}'.", Mobile.GetAccessLevelName(attr.ReadLevel), propertyName);
+							"You must be at least {0} to get the property '{1}'.",
+							Mobile.GetAccessLevelName(attr.ReadLevel),
+							propertyName
+						);
 
 						return null;
 					}
@@ -115,7 +126,10 @@ namespace Server.Commands
 					if ((access & PropertyAccess.Write) != 0 && m.AccessLevel < attr.WriteLevel)
 					{
 						failReason = String.Format(
-							"You must be at least {0} to set the property '{1}'.", Mobile.GetAccessLevelName(attr.WriteLevel), propertyName);
+							"You must be at least {0} to set the property '{1}'.",
+							Mobile.GetAccessLevelName(attr.WriteLevel),
+							propertyName
+						);
 
 						return null;
 					}
@@ -150,7 +164,12 @@ namespace Server.Commands
 		}
 
 		public static PropertyInfo GetPropertyInfo(
-			Mobile m, ref object obj, string propertyName, PropertyAccess access, ref string failReason)
+			Mobile m,
+			ref object obj,
+			string propertyName,
+			PropertyAccess access,
+			ref string failReason
+		)
 		{
 			var chain = GetPropertyInfoChain(m, obj.GetType(), propertyName, access, ref failReason);
 
@@ -210,7 +229,8 @@ namespace Server.Commands
 			var realProps = new PropertyInfo[len];
 			var realValues = new int[len];
 
-			bool positive = false, negative = false;
+			bool positive = false,
+				negative = false;
 
 			for (int i = 0; i < realProps.Length; ++i)
 			{
@@ -249,7 +269,7 @@ namespace Server.Commands
 				}
 
 				string failReason = null;
-				
+
 				realObjs[i] = o;
 				realProps[i] = GetPropertyInfo(m, ref realObjs[i], name, PropertyAccess.ReadWrite, ref failReason);
 
@@ -279,7 +299,9 @@ namespace Server.Commands
 					object toSet = Convert.ChangeType(v, realProps[i].PropertyType);
 					realProps[i].SetValue(realObjs[i], toSet, null);
 
-					EventSink.InvokeOnPropertyChanged(new OnPropertyChangedEventArgs(m, realObjs[i], realProps[i], obj, toSet));
+					EventSink.InvokeOnPropertyChanged(
+						new OnPropertyChangedEventArgs(m, realObjs[i], realProps[i], obj, toSet)
+					);
 				}
 				catch
 				{
@@ -404,7 +426,14 @@ namespace Server.Commands
 		}
 
 		public static string SetDirect(
-			Mobile m, object logObject, object obj, PropertyInfo prop, string givenName, object toSet, bool shouldLog)
+			Mobile m,
+			object logObject,
+			object obj,
+			PropertyInfo prop,
+			string givenName,
+			object toSet,
+			bool shouldLog
+		)
 		{
 			try
 			{
@@ -430,24 +459,29 @@ namespace Server.Commands
 
 				if (shouldLog)
 				{
-					CommandLogging.LogChangeProperty(m, logObject, givenName, toSet == null ? "(-null-)" : toSet.ToString());
+					CommandLogging.LogChangeProperty(
+						m,
+						logObject,
+						givenName,
+						toSet == null ? "(-null-)" : toSet.ToString()
+					);
 				}
-				
-                if (obj is PlayerMobile && prop.PropertyType == typeof(Map) && toSet == null)
-                {
-                    return "Invalid -null- value, propery not set.";
-                }
 
-                object oldValue = prop.GetValue(obj, null);
+				if (obj is PlayerMobile && prop.PropertyType == typeof(Map) && toSet == null)
+				{
+					return "Invalid -null- value, propery not set.";
+				}
+
+				object oldValue = prop.GetValue(obj, null);
 				prop.SetValue(obj, toSet, null);
 
 				EventSink.InvokeOnPropertyChanged(new OnPropertyChangedEventArgs(m, obj, prop, oldValue, toSet));
-				
+
 				return "Property has been set.";
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
-                Console.WriteLine(e.ToString());
+				Console.WriteLine(e.ToString());
 				return "An exception was caught, the property may not be set.";
 			}
 		}
@@ -461,10 +495,10 @@ namespace Server.Commands
 					return "You do not have access to that level.";
 				}
 
-                if (obj is PlayerMobile && prop.PropertyType == typeof(Map) && toSet == null)
-                {
-                    return "Invalid -null- value, propery not set.";
-                }
+				if (obj is PlayerMobile && prop.PropertyType == typeof(Map) && toSet == null)
+				{
+					return "Invalid -null- value, propery not set.";
+				}
 
 				object oldValue = prop.GetValue(obj, null);
 				prop.SetValue(obj, toSet, null);
@@ -473,15 +507,22 @@ namespace Server.Commands
 
 				return "Property has been set.";
 			}
-            catch (Exception e)
+			catch (Exception e)
 			{
-                Console.WriteLine(e.ToString());
+				Console.WriteLine(e.ToString());
 				return "An exception was caught, the property may not be set.";
 			}
 		}
 
 		public static string InternalSetValue(
-			Mobile m, object logobj, object o, PropertyInfo p, string pname, string value, bool shouldLog)
+			Mobile m,
+			object logobj,
+			object o,
+			PropertyInfo p,
+			string pname,
+			string value,
+			bool shouldLog
+		)
 		{
 			IDynamicEnum toSet;
 			object toSetObj = null;
@@ -601,9 +642,10 @@ namespace Server.Commands
 			}
 			else if (IsIDynamicEnum(type))
 			{
-				toString = ((IDynamicEnum)value).Value == "null"
-							   ? @"@""null"""
-							   : String.Format("\"{0}\"", ((IDynamicEnum)value).Value);
+				toString =
+					((IDynamicEnum)value).Value == "null"
+						? @"@""null"""
+						: String.Format("\"{0}\"", ((IDynamicEnum)value).Value);
 			}
 			else if (IsText(type))
 			{
@@ -696,8 +738,7 @@ namespace Server.Commands
 		private class PropsTarget : Target
 		{
 			public PropsTarget()
-				: base(-1, true, TargetFlags.None)
-			{ }
+				: base(-1, true, TargetFlags.None) { }
 
 			protected override void OnTarget(Mobile from, object o)
 			{
@@ -730,57 +771,49 @@ namespace Server
 	public abstract class BindingException : PropertyException
 	{
 		public BindingException(Property property, string message)
-			: base(property, message)
-		{ }
+			: base(property, message) { }
 	}
 
 	public sealed class NotYetBoundException : BindingException
 	{
 		public NotYetBoundException(Property property)
-			: base(property, String.Format("Property has not yet been bound."))
-		{ }
+			: base(property, String.Format("Property has not yet been bound.")) { }
 	}
 
 	public sealed class AlreadyBoundException : BindingException
 	{
 		public AlreadyBoundException(Property property)
-			: base(property, String.Format("Property has already been bound."))
-		{ }
+			: base(property, String.Format("Property has already been bound.")) { }
 	}
 
 	public sealed class UnknownPropertyException : BindingException
 	{
 		public UnknownPropertyException(Property property, string current)
-			: base(property, String.Format("Property '{0}' not found.", current))
-		{ }
+			: base(property, String.Format("Property '{0}' not found.", current)) { }
 	}
 
 	public sealed class ReadOnlyException : BindingException
 	{
 		public ReadOnlyException(Property property)
-			: base(property, "Property is read-only.")
-		{ }
+			: base(property, "Property is read-only.") { }
 	}
 
 	public sealed class WriteOnlyException : BindingException
 	{
 		public WriteOnlyException(Property property)
-			: base(property, "Property is write-only.")
-		{ }
+			: base(property, "Property is write-only.") { }
 	}
 
 	public abstract class AccessException : PropertyException
 	{
 		public AccessException(Property property, string message)
-			: base(property, message)
-		{ }
+			: base(property, message) { }
 	}
 
 	public sealed class InternalAccessException : AccessException
 	{
 		public InternalAccessException(Property property)
-			: base(property, "Property is internal.")
-		{ }
+			: base(property, "Property is internal.") { }
 	}
 
 	public abstract class ClearanceException : AccessException
@@ -788,29 +821,33 @@ namespace Server
 		public AccessLevel PlayerAccess { get; protected set; }
 		public AccessLevel NeededAccess { get; protected set; }
 
-		public ClearanceException(Property property, AccessLevel playerAccess, AccessLevel neededAccess, string accessType)
+		public ClearanceException(
+			Property property,
+			AccessLevel playerAccess,
+			AccessLevel neededAccess,
+			string accessType
+		)
 			: base(
 				property,
 				string.Format(
 					"You must be at least {0} to {1} this property, you are currently {2}.",
 					Mobile.GetAccessLevelName(neededAccess),
 					accessType,
-					Mobile.GetAccessLevelName(playerAccess)))
-		{ }
+					Mobile.GetAccessLevelName(playerAccess)
+				)
+			) { }
 	}
 
 	public sealed class ReadAccessException : ClearanceException
 	{
 		public ReadAccessException(Property property, AccessLevel playerAccess, AccessLevel neededAccess)
-			: base(property, playerAccess, neededAccess, "read")
-		{ }
+			: base(property, playerAccess, neededAccess, "read") { }
 	}
 
 	public sealed class WriteAccessException : ClearanceException
 	{
 		public WriteAccessException(Property property, AccessLevel playerAccess, AccessLevel neededAccess)
-			: base(property, playerAccess, neededAccess, "write")
-		{ }
+			: base(property, playerAccess, neededAccess, "write") { }
 	}
 
 	public sealed class Property
@@ -820,7 +857,10 @@ namespace Server
 		public PropertyAccess Access { get; private set; }
 		public string Binding { get; private set; }
 
-		public bool IsBound { get { return _Chain != null; } }
+		public bool IsBound
+		{
+			get { return _Chain != null; }
+		}
 
 		public PropertyInfo[] Chain
 		{
@@ -897,7 +937,10 @@ namespace Server
 					throw new ReadAccessException(this, from.AccessLevel, security.ReadLevel);
 				}
 
-				if ((access & PropertyAccess.Write) != 0 && (from.AccessLevel < security.WriteLevel || security.ReadOnly))
+				if (
+					(access & PropertyAccess.Write) != 0
+					&& (from.AccessLevel < security.WriteLevel || security.ReadOnly)
+				)
 				{
 					throw new WriteAccessException(this, from.AccessLevel, security.ReadLevel);
 				}
@@ -920,7 +963,10 @@ namespace Server
 			{
 				bool isFinal = i == chain.Length - 1;
 
-				chain[i] = objectType.GetProperty(split[i], BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+				chain[i] = objectType.GetProperty(
+					split[i],
+					BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase
+				);
 
 				if (chain[i] == null)
 				{

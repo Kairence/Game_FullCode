@@ -1,6 +1,5 @@
 #region References
 using System;
-
 using Server.Gumps;
 using Server.Mobiles;
 using Server.Network;
@@ -54,8 +53,7 @@ namespace Server.Services.Virtues
 					pm.LastSacrificeLoss = DateTime.UtcNow;
 				}
 			}
-			catch
-			{ }
+			catch { }
 		}
 
 		public static void Resurrect(Mobile from)
@@ -178,15 +176,20 @@ namespace Server.Services.Virtues
 			if (m is BaseCreature && (((BaseCreature)m).Controlled || ((BaseCreature)m).Summoned))
 				return false;
 
-			return (m is Lich || m is Succubus || m is Daemon || m is EvilMage || m is EnslavedGargoyle ||
-					m is GargoyleEnforcer);
+			return (
+				m is Lich
+				|| m is Succubus
+				|| m is Daemon
+				|| m is EvilMage
+				|| m is EnslavedGargoyle
+				|| m is GargoyleEnforcer
+			);
 		}
 
 		private class InternalTarget : Target
 		{
 			public InternalTarget()
-				: base(8, false, TargetFlags.None)
-			{ }
+				: base(8, false, TargetFlags.None) { }
 
 			protected override void OnTarget(Mobile from, object targeted)
 			{

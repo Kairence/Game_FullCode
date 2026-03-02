@@ -2,49 +2,49 @@ using System;
 
 namespace Server.Items
 {
-    public class SilverSnakeSkin : Item, ICommodity
-    {
-        [Constructable]
-        public SilverSnakeSkin()
-            : this(1)
-        {
-        }
+	public class SilverSnakeSkin : Item, ICommodity
+	{
+		[Constructable]
+		public SilverSnakeSkin()
+			: this(1) { }
 
-        [Constructable]
-        public SilverSnakeSkin(int amount)
-            : base(0x5744)
-        {
-            this.Stackable = true;
-            this.Amount = amount;
-        }
+		[Constructable]
+		public SilverSnakeSkin(int amount)
+			: base(0x5744)
+		{
+			this.Stackable = true;
+			this.Amount = amount;
+		}
 
-        public SilverSnakeSkin(Serial serial)
-            : base(serial)
-        {
-        }
+		public SilverSnakeSkin(Serial serial)
+			: base(serial) { }
 
-        TextDefinition ICommodity.Description { get { return LabelNumber; } }
-        bool ICommodity.IsDeedable { get { return true; } }
+		TextDefinition ICommodity.Description
+		{
+			get { return LabelNumber; }
+		}
+		bool ICommodity.IsDeedable
+		{
+			get { return true; }
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1113357;
-            }
-        }// silver snake skin
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int LabelNumber
+		{
+			get { return 1113357; }
+		} // silver snake skin
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

@@ -5,79 +5,87 @@ using Server.Mobiles;
 
 namespace Server.Misc
 {
-    public class SpecialAbilityManager
-    {
-        // ¸ðµç Æ¯¼ö±â Ç® (ÀÎµ¦½º À¯Áö)
-        public static WeaponAbility[] AbilityPool = new WeaponAbility[]
-        {
-            WeaponAbility.ArmorIgnore,      // 0
-            WeaponAbility.BleedAttack,      // 1
-            WeaponAbility.Disarm,           // 2
-            WeaponAbility.Bladeweave,       // 3
-            WeaponAbility.CrushingBlow,     // 4
-            WeaponAbility.ParalyzingBlow,   // 5
-            WeaponAbility.WhirlwindAttack,  // 6
-            WeaponAbility.Dismount,         // 7
-            WeaponAbility.ConcussionBlow,   // 8
-            WeaponAbility.PsychicAttack,    // 9
-            WeaponAbility.InfectiousStrike, // 10
-            WeaponAbility.ShadowStrike,     // 11
-            WeaponAbility.DoubleStrike,     // 12
-            WeaponAbility.MovingShot,       // 13
-            WeaponAbility.LightningArrow,   // 14
-            WeaponAbility.MortalStrike      // 15
-        };
+	public class SpecialAbilityManager
+	{
+		// ï¿½ï¿½ï¿½ Æ¯ï¿½ï¿½ï¿½ï¿½ Ç® (ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+		public static WeaponAbility[] AbilityPool = new WeaponAbility[]
+		{
+			WeaponAbility.ArmorIgnore, // 0
+			WeaponAbility.BleedAttack, // 1
+			WeaponAbility.Disarm, // 2
+			WeaponAbility.Bladeweave, // 3
+			WeaponAbility.CrushingBlow, // 4
+			WeaponAbility.ParalyzingBlow, // 5
+			WeaponAbility.WhirlwindAttack, // 6
+			WeaponAbility.Dismount, // 7
+			WeaponAbility.ConcussionBlow, // 8
+			WeaponAbility.PsychicAttack, // 9
+			WeaponAbility.InfectiousStrike, // 10
+			WeaponAbility.ShadowStrike, // 11
+			WeaponAbility.DoubleStrike, // 12
+			WeaponAbility.MovingShot, // 13
+			WeaponAbility.LightningArrow, // 14
+			WeaponAbility.MortalStrike, // 15
+		};
 
-        // Àü¼ú ¼öÄ¡ ±â¹Ý ¸ÅÇÎ Å×ÀÌºí (Çà: ¹«±âID 0~9, ¿­: Tier 0~3)
-        // ¿äÃ»ÇÏ½Å Á¤·Ä ¼ø¼­´ë·Î Çà(Row)À» ¹èÄ¡Çß½À´Ï´Ù.
-        private static readonly int[,] _AbilityMap = new int[,]
-        {
-            /* 0: ÇÑ¼Õ °Ë   */ { 0, 1, 2, 3 },
-            /* 1: ¾ç¼Õ °Ë   */ { 0, 4, 5, 6 },
-            /* 2: µµ³¢      */ { 4, 1, 7, 6 },
-            /* 3: ÇÑ¼Õ µÐ±â */ { 8, 5, 9, 2 },
-            /* 4: ¾ç¼Õ µÐ±â */ { 4, 8, 7, 6 },
-            /* 5: ÇÑ¼Õ Ææ½Ì */ { 0, 10, 11, 12 },
-            /* 6: ¾ç¼Õ Ææ½Ì */ { 0, 5, 1, 12 },
-            /* 7: È°        */ { 1, 10, 12, 14 },
-            /* 8: ¼®±Ã      */ { 0, 4, 5, 15 },
-            /* 9: ¸Ç¼Õ      */ { 8, 5, 2, 9 }
-        };
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìºï¿½ (ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ID 0~9, ï¿½ï¿½: Tier 0~3)
+		// ï¿½ï¿½Ã»ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½(Row)ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ß½ï¿½ï¿½Ï´ï¿½.
+		private static readonly int[,] _AbilityMap = new int[,]
+		{
+			/* 0: ï¿½Ñ¼ï¿½ ï¿½ï¿½   */{ 0, 1, 2, 3 },
+			/* 1: ï¿½ï¿½ï¿½ ï¿½ï¿½   */{ 0, 4, 5, 6 },
+			/* 2: ï¿½ï¿½ï¿½ï¿½      */{ 4, 1, 7, 6 },
+			/* 3: ï¿½Ñ¼ï¿½ ï¿½Ð±ï¿½ */{ 8, 5, 9, 2 },
+			/* 4: ï¿½ï¿½ï¿½ ï¿½Ð±ï¿½ */{ 4, 8, 7, 6 },
+			/* 5: ï¿½Ñ¼ï¿½ ï¿½ï¿½ï¿½ */{ 0, 10, 11, 12 },
+			/* 6: ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ */{ 0, 5, 1, 12 },
+			/* 7: È°        */{ 1, 10, 12, 14 },
+			/* 8: ï¿½ï¿½ï¿½ï¿½      */{ 0, 4, 5, 15 },
+			/* 9: ï¿½Ç¼ï¿½      */{ 8, 5, 2, 9 },
+		};
 
-        // 1. [OPL¿ë] Æ¯Á¤ ¹«±â IDÀÇ ¸ðµç ±â¼ú ÀÌ¸§ ¹ÝÈ¯
-        public static string[] GetAbilityNames(int typeID)
-        {
-            if (typeID < 0 || typeID > 9) return new string[] { "None", "None", "None", "None" };
+		// 1. [OPLï¿½ï¿½] Æ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ IDï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ ï¿½ï¿½È¯
+		public static string[] GetAbilityNames(int typeID)
+		{
+			if (typeID < 0 || typeID > 9)
+				return new string[] { "None", "None", "None", "None" };
 
-            string[] names = new string[4];
-            for (int i = 0; i < 4; i++)
-            {
-                int index = _AbilityMap[typeID, i];
-                WeaponAbility ability = AbilityPool[index];
-                names[i] = (ability != null) ? ability.GetType().Name : "None";
-            }
-            return names;
-        }
+			string[] names = new string[4];
+			for (int i = 0; i < 4; i++)
+			{
+				int index = _AbilityMap[typeID, i];
+				WeaponAbility ability = AbilityPool[index];
+				names[i] = (ability != null) ? ability.GetType().Name : "None";
+			}
+			return names;
+		}
 
-        // 2. [ÀüÅõ¿ë] Àü¼ú ¼öÄ¡¿¡ µû¸¥ ´©Àû ½ÃÀü (int typeID·Î º¯°æ)
-        public static void ExecuteChainAbilities(int typeID, Mobile attacker, Mobile defender, int damage)
-        {
-            if (typeID < 0 || typeID > 9) return;
+		// 2. [ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½] ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (int typeIDï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+		public static void ExecuteChainAbilities(int typeID, Mobile attacker, Mobile defender, int damage)
+		{
+			if (typeID < 0 || typeID > 9)
+				return;
 
-            double tactics = attacker.Skills.Tactics.Value;
-            int maxTier = (tactics >= 200) ? 3 : (tactics >= 150) ? 2 : (tactics >= 100) ? 1 : (tactics >= 50) ? 0 : -1;
+			double tactics = attacker.Skills.Tactics.Value;
+			int maxTier =
+				(tactics >= 200) ? 3
+				: (tactics >= 150) ? 2
+				: (tactics >= 100) ? 1
+				: (tactics >= 50) ? 0
+				: -1;
 
-            if (maxTier == -1) return;
+			if (maxTier == -1)
+				return;
 
-            for (int i = 0; i <= maxTier; i++)
-            {
-                int poolIndex = _AbilityMap[typeID, i];
-                WeaponAbility ability = AbilityPool[poolIndex];
-                if (ability != null)
-                {
-                    ability.OnHit(attacker, defender, damage);
-                }
-            }
-        }
-    }
+			for (int i = 0; i <= maxTier; i++)
+			{
+				int poolIndex = _AbilityMap[typeID, i];
+				WeaponAbility ability = AbilityPool[poolIndex];
+				if (ability != null)
+				{
+					ability.OnHit(attacker, defender, damage);
+				}
+			}
+		}
+	}
 }

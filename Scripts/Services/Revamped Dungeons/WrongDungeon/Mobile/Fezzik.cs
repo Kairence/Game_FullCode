@@ -3,109 +3,113 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    [CorpseName("an ogre corpse")]
-    public class Fezzik : BaseCreature
-    {
-        private DateTime m_StinkingCauldronTime;
+	[CorpseName("an ogre corpse")]
+	public class Fezzik : BaseCreature
+	{
+		private DateTime m_StinkingCauldronTime;
 
-        [Constructable]
-        public Fezzik()
-            : base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
-        {
-            this.Name = "Fezzik";
-            this.Title = "The Ogre Cook";
-            this.Body = 1;
-            this.BaseSoundID = 427;
+		[Constructable]
+		public Fezzik()
+			: base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
+		{
+			this.Name = "Fezzik";
+			this.Title = "The Ogre Cook";
+			this.Body = 1;
+			this.BaseSoundID = 427;
 
-            this.SetStr(1142, 1381);
-            this.SetDex(73, 90);
-            this.SetInt(52, 84);
-            
-            this.SetMana(0);
+			this.SetStr(1142, 1381);
+			this.SetDex(73, 90);
+			this.SetInt(52, 84);
 
-            this.SetDamage(25, 30);
+			this.SetMana(0);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamage(25, 30);
 
-            this.SetResistance(ResistanceType.Physical, 75, 80);
-            this.SetResistance(ResistanceType.Fire, 70, 75);
-            this.SetResistance(ResistanceType.Cold, 65, 75);
-            this.SetResistance(ResistanceType.Poison, 55, 65);
-            this.SetResistance(ResistanceType.Energy, 65, 75);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetSkill(SkillName.MagicResist, 133.3, 151.9);
-            this.SetSkill(SkillName.Tactics, 120.3, 130.0);
-            this.SetSkill(SkillName.Wrestling, 122.2, 128.9);
-            this.SetSkill(SkillName.Anatomy, 10.0, 15.0);
-            this.SetSkill(SkillName.DetectHidden, 90.0);
-            this.SetSkill(SkillName.Parry, 95.0, 100.0);
+			this.SetResistance(ResistanceType.Physical, 75, 80);
+			this.SetResistance(ResistanceType.Fire, 70, 75);
+			this.SetResistance(ResistanceType.Cold, 65, 75);
+			this.SetResistance(ResistanceType.Poison, 55, 65);
+			this.SetResistance(ResistanceType.Energy, 65, 75);
 
-            this.Fame = 3000;
-            this.Karma = -3000;
+			this.SetSkill(SkillName.MagicResist, 133.3, 151.9);
+			this.SetSkill(SkillName.Tactics, 120.3, 130.0);
+			this.SetSkill(SkillName.Wrestling, 122.2, 128.9);
+			this.SetSkill(SkillName.Anatomy, 10.0, 15.0);
+			this.SetSkill(SkillName.DetectHidden, 90.0);
+			this.SetSkill(SkillName.Parry, 95.0, 100.0);
 
-            this.VirtualArmor = 52;
+			this.Fame = 3000;
+			this.Karma = -3000;
 
-            this.PackItem(new Club());
-        }
+			this.VirtualArmor = 52;
 
-        public Fezzik(Serial serial)
-            : base(serial)
-        {
-        }
+			this.PackItem(new Club());
+		}
 
-        public override int Meat { get { return 2; } }
+		public Fezzik(Serial serial)
+			: base(serial) { }
 
-        public override void AlterDamageScalarFrom(Mobile caster, ref double scalar)
-        {
-            if (0.5 >= Utility.RandomDouble())
-                this.SpawnGreenGoo();
-        }
+		public override int Meat
+		{
+			get { return 2; }
+		}
 
-        public override void OnGotMeleeAttack(Mobile attacker)
-        {
-            base.OnGotMeleeAttack(attacker);
+		public override void AlterDamageScalarFrom(Mobile caster, ref double scalar)
+		{
+			if (0.5 >= Utility.RandomDouble())
+				this.SpawnGreenGoo();
+		}
 
-            if (0.5 >= Utility.RandomDouble())
-                this.SpawnGreenGoo();
-        }
+		public override void OnGotMeleeAttack(Mobile attacker)
+		{
+			base.OnGotMeleeAttack(attacker);
 
-        public void SpawnGreenGoo()
-        {
-            if (this.m_StinkingCauldronTime <= DateTime.UtcNow)
-            {
-                new StinkingCauldron().MoveToWorld(this.Location, this.Map);
+			if (0.5 >= Utility.RandomDouble())
+				this.SpawnGreenGoo();
+		}
 
-                this.m_StinkingCauldronTime = DateTime.UtcNow + TimeSpan.FromMinutes(2);
-            }
-        }
+		public void SpawnGreenGoo()
+		{
+			if (this.m_StinkingCauldronTime <= DateTime.UtcNow)
+			{
+				new StinkingCauldron().MoveToWorld(this.Location, this.Map);
 
-        public override void OnDeath(Container c)
-        {
-            base.OnDeath(c);
+				this.m_StinkingCauldronTime = DateTime.UtcNow + TimeSpan.FromMinutes(2);
+			}
+		}
 
-            if (0.1 > Utility.RandomDouble())
-            {
-                c.DropItem(new RecipeScroll(603));
-            } 
-        }
-		
-		public override int TreasureMapLevel { get { return 3; } }
+		public override void OnDeath(Container c)
+		{
+			base.OnDeath(c);
 
-        public override void GenerateLoot()
-        {
-            AddLoot(LootPack.Meager, 2);
-        }
+			if (0.1 > Utility.RandomDouble())
+			{
+				c.DropItem(new RecipeScroll(603));
+			}
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
+		public override int TreasureMapLevel
+		{
+			get { return 3; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+		public override void GenerateLoot()
+		{
+			AddLoot(LootPack.Meager, 2);
+		}
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 }

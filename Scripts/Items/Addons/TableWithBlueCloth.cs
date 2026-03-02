@@ -2,82 +2,71 @@ using System;
 
 namespace Server.Items
 {
-    public class TableWithBlueClothAddon : BaseAddon
-    {
-        [Constructable]
-        public TableWithBlueClothAddon()
-            : base()
-        {
-            this.AddComponent(new LocalizedAddonComponent(0x118C, 1076276), 0, 0, 0);
-        }
+	public class TableWithBlueClothAddon : BaseAddon
+	{
+		[Constructable]
+		public TableWithBlueClothAddon()
+			: base()
+		{
+			this.AddComponent(new LocalizedAddonComponent(0x118C, 1076276), 0, 0, 0);
+		}
 
-        public TableWithBlueClothAddon(Serial serial)
-            : base(serial)
-        {
-        }
+		public TableWithBlueClothAddon(Serial serial)
+			: base(serial) { }
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new TableWithBlueClothDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override BaseAddonDeed Deed
+		{
+			get { return new TableWithBlueClothDeed(); }
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class TableWithBlueClothDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public TableWithBlueClothDeed()
-            : base()
-        {
-            this.LootType = LootType.Blessed;
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public TableWithBlueClothDeed(Serial serial)
-            : base(serial)
-        {
-        }
+	public class TableWithBlueClothDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public TableWithBlueClothDeed()
+			: base()
+		{
+			this.LootType = LootType.Blessed;
+		}
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new TableWithBlueClothAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1076276;
-            }
-        }// Table With A Blue Tablecloth
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public TableWithBlueClothDeed(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override BaseAddon Addon
+		{
+			get { return new TableWithBlueClothAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1076276; }
+		} // Table With A Blue Tablecloth
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

@@ -2,49 +2,49 @@ using System;
 
 namespace Server.Items
 {
-    public class CrushedGlass : Item, ICommodity
-    {
-        [Constructable]
-        public CrushedGlass()
-            : this(1)
-        {
-        }
+	public class CrushedGlass : Item, ICommodity
+	{
+		[Constructable]
+		public CrushedGlass()
+			: this(1) { }
 
-        [Constructable]
-        public CrushedGlass(int amount)
-            : base(0x573B)
-        {
-            this.Stackable = true;
-            this.Amount = amount;
-        }
+		[Constructable]
+		public CrushedGlass(int amount)
+			: base(0x573B)
+		{
+			this.Stackable = true;
+			this.Amount = amount;
+		}
 
-        public CrushedGlass(Serial serial)
-            : base(serial)
-        {
-        }
+		public CrushedGlass(Serial serial)
+			: base(serial) { }
 
-        TextDefinition ICommodity.Description { get { return LabelNumber; } }
-        bool ICommodity.IsDeedable { get { return true; } }
+		TextDefinition ICommodity.Description
+		{
+			get { return LabelNumber; }
+		}
+		bool ICommodity.IsDeedable
+		{
+			get { return true; }
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1113351;
-            }
-        }// crushed glass
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int LabelNumber
+		{
+			get { return 1113351; }
+		} // crushed glass
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

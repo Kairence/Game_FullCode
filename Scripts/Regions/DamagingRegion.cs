@@ -10,24 +10,35 @@ using Server.Network;
 
 namespace Server.Regions
 {
-    public class DamagingRegion : MondainRegion
-    { 
+	public class DamagingRegion : MondainRegion
+	{
 		private Dictionary<Mobile, Timer> m_Table;
 
-		public Dictionary<Mobile, Timer> Table { get { return m_Table; } }
+		public Dictionary<Mobile, Timer> Table
+		{
+			get { return m_Table; }
+		}
 
-		public virtual int EnterMessage { get { return 0; } }
-		public virtual int EnterSound { get { return 0; } }
+		public virtual int EnterMessage
+		{
+			get { return 0; }
+		}
+		public virtual int EnterSound
+		{
+			get { return 0; }
+		}
 
-		public virtual TimeSpan DamageInterval { get { return TimeSpan.FromSeconds(1); } }
+		public virtual TimeSpan DamageInterval
+		{
+			get { return TimeSpan.FromSeconds(1); }
+		}
 
-        public DamagingRegion(XmlElement xml, Map map, Region parent)
-            : base(xml, map, parent)
-		{ }
+		public DamagingRegion(XmlElement xml, Map map, Region parent)
+			: base(xml, map, parent) { }
 
-        public override void OnEnter(Mobile m)
-        {
-            base.OnEnter(m);
+		public override void OnEnter(Mobile m)
+		{
+			base.OnEnter(m);
 
 			if (!CanDamage(m))
 			{
@@ -45,7 +56,7 @@ namespace Server.Regions
 			}
 
 			StartTimer(m);
-        }
+		}
 
 		public override void OnExit(Mobile m)
 		{
@@ -69,12 +80,12 @@ namespace Server.Regions
 		}
 
 		protected void StartTimer(Mobile m)
-        {
-            if (m_Table == null)
+		{
+			if (m_Table == null)
 			{
 				m_Table = new Dictionary<Mobile, Timer>();
 			}
-				
+
 			Timer t;
 
 			if (m_Table.TryGetValue(m, out t) && t != null)
@@ -83,13 +94,13 @@ namespace Server.Regions
 			}
 			else
 			{
-                m_Table[m] = Timer.DelayCall(DamageInterval, DamageInterval, Damage, m);
+				m_Table[m] = Timer.DelayCall(DamageInterval, DamageInterval, Damage, m);
 			}
-        }
+		}
 
 		protected void StopTimer(Mobile m)
-        {
-            if (m_Table == null)
+		{
+			if (m_Table == null)
 			{
 				m_Table = new Dictionary<Mobile, Timer>();
 			}
@@ -105,7 +116,7 @@ namespace Server.Regions
 
 				m_Table.Remove(m);
 			}
-        }
+		}
 
 		public void Damage(Mobile m)
 		{
@@ -143,204 +154,218 @@ namespace Server.Regions
 
 			return true;
 		}
-    }
+	}
 
-    public class CrystalField : DamagingRegion
-    {
+	public class CrystalField : DamagingRegion
+	{
 		// An electric wind chills your blood, making it difficult to traverse the cave unharmed.
-		public override int EnterMessage { get { return 1072396; } }
+		public override int EnterMessage
+		{
+			get { return 1072396; }
+		}
 
-		public override int EnterSound { get { return 0x22F; } }
+		public override int EnterSound
+		{
+			get { return 0x22F; }
+		}
 
-        public CrystalField(XmlElement xml, Map map, Region parent)
-            : base(xml, map, parent)
-		{ }
+		public CrystalField(XmlElement xml, Map map, Region parent)
+			: base(xml, map, parent) { }
 
 		protected override void OnDamage(Mobile m)
-        {
+		{
 			base.OnDamage(m);
-			
-            AOS.Damage(m, Utility.Random(2, 6), 0, 0, 100, 0, 0);
-        }
-    }
 
-    public class IcyRiver : DamagingRegion
-    { 
-        public IcyRiver(XmlElement xml, Map map, Region parent)
-            : base(xml, map, parent)
-		{ }
+			AOS.Damage(m, Utility.Random(2, 6), 0, 0, 100, 0, 0);
+		}
+	}
+
+	public class IcyRiver : DamagingRegion
+	{
+		public IcyRiver(XmlElement xml, Map map, Region parent)
+			: base(xml, map, parent) { }
 
 		protected override void OnDamage(Mobile m)
-        {
+		{
 			base.OnDamage(m);
 
 			var dmg = Utility.Random(2, 3);
 
-            if (m is PlayerMobile)
-            {
+			if (m is PlayerMobile)
+			{
 				dmg = (int)BalmOfProtection.HandleDamage((PlayerMobile)m, dmg);
-            }
+			}
 
-            AOS.Damage(m, dmg, 0, 0, 100, 0, 0);
-        }
-    }
+			AOS.Damage(m, dmg, 0, 0, 100, 0, 0);
+		}
+	}
 
-    public class PoisonedSemetery : DamagingRegion
-    { 
-		public override TimeSpan DamageInterval { get { return TimeSpan.FromSeconds(5); } }
+	public class PoisonedSemetery : DamagingRegion
+	{
+		public override TimeSpan DamageInterval
+		{
+			get { return TimeSpan.FromSeconds(5); }
+		}
 
-        public PoisonedSemetery(XmlElement xml, Map map, Region parent)
-            : base(xml, map, parent)
-		{ }
-
-		protected override void OnDamage(Mobile m)
-        {
-			base.OnDamage(m);
-			
-            m.FixedParticles(0x36B0, 1, 14, 0x26BB, 0x3F, 0x7, EffectLayer.Waist);
-            m.PlaySound(0x229);
-
-            AOS.Damage(m, Utility.Random(2, 3), 0, 0, 0, 100, 0);
-        }
-    }
-
-    public class PoisonedTree : DamagingRegion
-    { 
-		public override TimeSpan DamageInterval { get { return TimeSpan.FromSeconds(1); } }
-
-        public PoisonedTree(XmlElement xml, Map map, Region parent)
-            : base(xml, map, parent)
-		{ }
+		public PoisonedSemetery(XmlElement xml, Map map, Region parent)
+			: base(xml, map, parent) { }
 
 		protected override void OnDamage(Mobile m)
-        {
+		{
 			base.OnDamage(m);
-			
-            m.FixedEffect(0x374A, 1, 17);
-            m.PlaySound(0x1E1);
-            m.LocalOverheadMessage(MessageType.Regular, 0x21, 1074165); // You feel dizzy from a lack of clear air
-				
+
+			m.FixedParticles(0x36B0, 1, 14, 0x26BB, 0x3F, 0x7, EffectLayer.Waist);
+			m.PlaySound(0x229);
+
+			AOS.Damage(m, Utility.Random(2, 3), 0, 0, 0, 100, 0);
+		}
+	}
+
+	public class PoisonedTree : DamagingRegion
+	{
+		public override TimeSpan DamageInterval
+		{
+			get { return TimeSpan.FromSeconds(1); }
+		}
+
+		public PoisonedTree(XmlElement xml, Map map, Region parent)
+			: base(xml, map, parent) { }
+
+		protected override void OnDamage(Mobile m)
+		{
+			base.OnDamage(m);
+
+			m.FixedEffect(0x374A, 1, 17);
+			m.PlaySound(0x1E1);
+			m.LocalOverheadMessage(MessageType.Regular, 0x21, 1074165); // You feel dizzy from a lack of clear air
+
 			var mod = (int)(m.Str * 0.1);
-				
-            if (mod > 10)
+
+			if (mod > 10)
 			{
-                mod = 10;
+				mod = 10;
 			}
-					
-            m.AddStatMod(new StatMod(StatType.Str, "Poisoned Tree Str", mod * -1, TimeSpan.FromSeconds(1)));
-			
-            mod = (int)(m.Int * 0.1);
-			
-            if (mod > 10)
+
+			m.AddStatMod(new StatMod(StatType.Str, "Poisoned Tree Str", mod * -1, TimeSpan.FromSeconds(1)));
+
+			mod = (int)(m.Int * 0.1);
+
+			if (mod > 10)
 			{
-                mod = 10;
+				mod = 10;
 			}
-				
-            m.AddStatMod(new StatMod(StatType.Int, "Poisoned Tree Int", mod * -1, TimeSpan.FromSeconds(1)));
-        }
-    }
 
-    public class ParoxysmusBossEntry : DamagingRegion
-    {
-        public override TimeSpan DamageInterval { get { return TimeSpan.FromSeconds(2); } }
+			m.AddStatMod(new StatMod(StatType.Int, "Poisoned Tree Int", mod * -1, TimeSpan.FromSeconds(1)));
+		}
+	}
 
-        public ParoxysmusBossEntry(XmlElement xml, Map map, Region parent)
-            : base(xml, map, parent)
-        { }
+	public class ParoxysmusBossEntry : DamagingRegion
+	{
+		public override TimeSpan DamageInterval
+		{
+			get { return TimeSpan.FromSeconds(2); }
+		}
 
-        public override void OnEnter(Mobile m)
-        {
-            if (ParoxysmusAltar.IsUnderEffects(m))
-            {
-                m.SendLocalizedMessage(1074604); // The slimy ointment continues to protect you from the corrosive river.
-            }
-            else
-            {
-                m.MoveToWorld(new Point3D(6537, 506, -50), m.Map);
-                m.Kill();
-            }
-        }
+		public ParoxysmusBossEntry(XmlElement xml, Map map, Region parent)
+			: base(xml, map, parent) { }
 
-        protected override void OnDamage(Mobile m)
-        {
-            base.OnDamage(m);
+		public override void OnEnter(Mobile m)
+		{
+			if (ParoxysmusAltar.IsUnderEffects(m))
+			{
+				m.SendLocalizedMessage(1074604); // The slimy ointment continues to protect you from the corrosive river.
+			}
+			else
+			{
+				m.MoveToWorld(new Point3D(6537, 506, -50), m.Map);
+				m.Kill();
+			}
+		}
 
-            if (!ParoxysmusAltar.IsUnderEffects(m))
-            {
-                m.MoveToWorld(new Point3D(6537, 506, -50), m.Map);
-                m.Kill();
-            }
-        }
-    }
+		protected override void OnDamage(Mobile m)
+		{
+			base.OnDamage(m);
 
-    public class AcidRiver : DamagingRegion
-    {
-        public override TimeSpan DamageInterval { get { return TimeSpan.FromSeconds(2); } }
+			if (!ParoxysmusAltar.IsUnderEffects(m))
+			{
+				m.MoveToWorld(new Point3D(6537, 506, -50), m.Map);
+				m.Kill();
+			}
+		}
+	}
 
-        public AcidRiver(XmlElement xml, Map map, Region parent)
-            : base(xml, map, parent)
-        { }
+	public class AcidRiver : DamagingRegion
+	{
+		public override TimeSpan DamageInterval
+		{
+			get { return TimeSpan.FromSeconds(2); }
+		}
 
-        protected override void OnDamage(Mobile m)
-        {
-            base.OnDamage(m);
+		public AcidRiver(XmlElement xml, Map map, Region parent)
+			: base(xml, map, parent) { }
 
-            if (m.Location.X > 6484 && m.Location.Y > 500)
-            {
-                m.Kill();
-            }
-            else
-            {
-                m.FixedParticles(0x36B0, 1, 14, 0x26BB, 0x3F, 0x7, EffectLayer.Waist);
-                m.PlaySound(0x229);
+		protected override void OnDamage(Mobile m)
+		{
+			base.OnDamage(m);
 
-                var damage = 0;
+			if (m.Location.X > 6484 && m.Location.Y > 500)
+			{
+				m.Kill();
+			}
+			else
+			{
+				m.FixedParticles(0x36B0, 1, 14, 0x26BB, 0x3F, 0x7, EffectLayer.Waist);
+				m.PlaySound(0x229);
 
-                damage += (int)Math.Pow(m.Location.X - 6200, 0.5);
-                damage += (int)Math.Pow(m.Location.Y - 330, 0.5);
+				var damage = 0;
 
-                if (damage > 20)
-                {
-                    // The acid river is much stronger here. You realize that allowing the acid to touch your flesh will surely kill you.
-                    m.SendLocalizedMessage(1074567);
-                }
-                else if (damage > 10)
-                {
-                    // The acid river has gotten deeper. The concentration of acid is significantly stronger.
-                    m.SendLocalizedMessage(1074566);
-                }
-                else
-                {
-                    // The acid river burns your skin.
-                    m.SendLocalizedMessage(1074565);
-                }
+				damage += (int)Math.Pow(m.Location.X - 6200, 0.5);
+				damage += (int)Math.Pow(m.Location.Y - 330, 0.5);
 
-                AOS.Damage(m, damage, 0, 0, 0, 100, 0);
-            }
-        }
-    }
+				if (damage > 20)
+				{
+					// The acid river is much stronger here. You realize that allowing the acid to touch your flesh will surely kill you.
+					m.SendLocalizedMessage(1074567);
+				}
+				else if (damage > 10)
+				{
+					// The acid river has gotten deeper. The concentration of acid is significantly stronger.
+					m.SendLocalizedMessage(1074566);
+				}
+				else
+				{
+					// The acid river burns your skin.
+					m.SendLocalizedMessage(1074565);
+				}
 
-    public class TheLostCityEntry : DamagingRegion
-    {
-        public override TimeSpan DamageInterval { get { return TimeSpan.FromMilliseconds(500); } }
+				AOS.Damage(m, damage, 0, 0, 0, 100, 0);
+			}
+		}
+	}
 
-        public TheLostCityEntry(XmlElement xml, Map map, Region parent)
-            : base(xml, map, parent)
-        { }
+	public class TheLostCityEntry : DamagingRegion
+	{
+		public override TimeSpan DamageInterval
+		{
+			get { return TimeSpan.FromMilliseconds(500); }
+		}
 
-        protected override void OnDamage(Mobile m)
-        {
-            base.OnDamage(m);
+		public TheLostCityEntry(XmlElement xml, Map map, Region parent)
+			: base(xml, map, parent) { }
 
-            if (m is Kodar)
-                return;
+		protected override void OnDamage(Mobile m)
+		{
+			base.OnDamage(m);
 
-            m.FixedParticles(0x36B0, 1, 14, 0x26BB, 0x3F, 0x7, EffectLayer.Waist);
-            m.PlaySound(0x229);
+			if (m is Kodar)
+				return;
 
-            var damage = Utility.RandomMinMax(10, 20);                
+			m.FixedParticles(0x36B0, 1, 14, 0x26BB, 0x3F, 0x7, EffectLayer.Waist);
+			m.PlaySound(0x229);
 
-            AOS.Damage(m, damage, 0, 0, 0, 100, 0);
-        }
-    }
+			var damage = Utility.RandomMinMax(10, 20);
+
+			AOS.Damage(m, damage, 0, 0, 0, 100, 0);
+		}
+	}
 }

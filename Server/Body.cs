@@ -12,7 +12,7 @@ namespace Server
 		Sea,
 		Animal,
 		Human,
-		Equipment
+		Equipment,
 	}
 
 	public struct Body
@@ -43,8 +43,12 @@ namespace Server
 						BodyType type;
 						int bodyID;
 
-						if (int.TryParse(split[0], out bodyID) && Enum.TryParse(split[1], true, out type) && bodyID >= 0 &&
-							bodyID < m_Types.Length)
+						if (
+							int.TryParse(split[0], out bodyID)
+							&& Enum.TryParse(split[1], true, out type)
+							&& bodyID >= 0
+							&& bodyID < m_Types.Length
+						)
 						{
 							m_Types[bodyID] = type;
 						}
@@ -88,14 +92,22 @@ namespace Server
 		{
 			get
 			{
-				return (m_BodyID >= 0 && m_BodyID < m_Types.Length && m_Types[m_BodyID] == BodyType.Human && m_BodyID != 402 &&
-						m_BodyID != 403 && m_BodyID != 607 && m_BodyID != 608 && m_BodyID != 970)
-
-					   #region Stygian Abyss
-					   || m_BodyID == 694 || m_BodyID == 695
+				return (
+						m_BodyID >= 0
+						&& m_BodyID < m_Types.Length
+						&& m_Types[m_BodyID] == BodyType.Human
+						&& m_BodyID != 402
+						&& m_BodyID != 403
+						&& m_BodyID != 607
+						&& m_BodyID != 608
+						&& m_BodyID != 970
+					)
+					#region Stygian Abyss
+					|| m_BodyID == 694
+					|| m_BodyID == 695
 					#endregion
 
-					;
+				;
 			}
 		}
 
@@ -103,14 +115,19 @@ namespace Server
 		{
 			get
 			{
-				return m_BodyID == 183 || m_BodyID == 185 || m_BodyID == 400 || m_BodyID == 402 || m_BodyID == 605 ||
-					   m_BodyID == 607 || m_BodyID == 750
-
-					   #region Stygian Abyss
-					   || m_BodyID == 666 || m_BodyID == 694
+				return m_BodyID == 183
+					|| m_BodyID == 185
+					|| m_BodyID == 400
+					|| m_BodyID == 402
+					|| m_BodyID == 605
+					|| m_BodyID == 607
+					|| m_BodyID == 750
+					#region Stygian Abyss
+					|| m_BodyID == 666
+					|| m_BodyID == 694
 					#endregion
 
-					;
+				;
 			}
 		}
 
@@ -118,18 +135,23 @@ namespace Server
 		{
 			get
 			{
-				return m_BodyID == 184 || m_BodyID == 186 || m_BodyID == 401 || m_BodyID == 403 || m_BodyID == 606 ||
-					   m_BodyID == 608 || m_BodyID == 751
-
-					   #region Stygian Abyss
-					   || m_BodyID == 667 || m_BodyID == 695
-					   #endregion
-
-					   #region High Seas
-					   || m_BodyID == 1253
+				return m_BodyID == 184
+					|| m_BodyID == 186
+					|| m_BodyID == 401
+					|| m_BodyID == 403
+					|| m_BodyID == 606
+					|| m_BodyID == 608
+					|| m_BodyID == 751
+					#region Stygian Abyss
+					|| m_BodyID == 667
+					|| m_BodyID == 695
 					#endregion
 
-					;
+					#region High Seas
+					|| m_BodyID == 1253
+					#endregion
+
+				;
 			}
 		}
 
@@ -137,31 +159,56 @@ namespace Server
 		{
 			get
 			{
-				return m_BodyID == 402 || m_BodyID == 403 || m_BodyID == 607 || m_BodyID == 608 || m_BodyID == 970
-
-					   #region Stygian Abyss
-					   || m_BodyID == 694 || m_BodyID == 695
+				return m_BodyID == 402
+					|| m_BodyID == 403
+					|| m_BodyID == 607
+					|| m_BodyID == 608
+					|| m_BodyID == 970
+					#region Stygian Abyss
+					|| m_BodyID == 694
+					|| m_BodyID == 695
 					#endregion
 
-					;
+				;
 			}
 		}
 
-		public bool IsMonster { get { return m_BodyID >= 0 && m_BodyID < m_Types.Length && m_Types[m_BodyID] == BodyType.Monster; } }
+		public bool IsMonster
+		{
+			get { return m_BodyID >= 0 && m_BodyID < m_Types.Length && m_Types[m_BodyID] == BodyType.Monster; }
+		}
 
-		public bool IsAnimal { get { return m_BodyID >= 0 && m_BodyID < m_Types.Length && m_Types[m_BodyID] == BodyType.Animal; } }
+		public bool IsAnimal
+		{
+			get { return m_BodyID >= 0 && m_BodyID < m_Types.Length && m_Types[m_BodyID] == BodyType.Animal; }
+		}
 
-		public bool IsEmpty { get { return m_BodyID >= 0 && m_BodyID < m_Types.Length && m_Types[m_BodyID] == BodyType.Empty; } }
+		public bool IsEmpty
+		{
+			get { return m_BodyID >= 0 && m_BodyID < m_Types.Length && m_Types[m_BodyID] == BodyType.Empty; }
+		}
 
-		public bool IsSea { get { return m_BodyID >= 0 && m_BodyID < m_Types.Length && m_Types[m_BodyID] == BodyType.Sea; } }
+		public bool IsSea
+		{
+			get { return m_BodyID >= 0 && m_BodyID < m_Types.Length && m_Types[m_BodyID] == BodyType.Sea; }
+		}
 
-		public bool IsEquipment { get { return m_BodyID >= 0 && m_BodyID < m_Types.Length && m_Types[m_BodyID] == BodyType.Equipment; } }
+		public bool IsEquipment
+		{
+			get { return m_BodyID >= 0 && m_BodyID < m_Types.Length && m_Types[m_BodyID] == BodyType.Equipment; }
+		}
 
 		#region Stygian Abyss
-		public bool IsGargoyle { get { return m_BodyID == 666 || m_BodyID == 667 || m_BodyID == 694 || m_BodyID == 695; } }
+		public bool IsGargoyle
+		{
+			get { return m_BodyID == 666 || m_BodyID == 667 || m_BodyID == 694 || m_BodyID == 695; }
+		}
 		#endregion
 
-		public int BodyID { get { return m_BodyID; } }
+		public int BodyID
+		{
+			get { return m_BodyID; }
+		}
 
 		public static implicit operator int(Body a)
 		{

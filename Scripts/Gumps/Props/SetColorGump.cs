@@ -4,7 +4,6 @@ using System.Collections;
 using System.Drawing;
 using System.Globalization;
 using System.Reflection;
-
 using Server.Commands;
 using Server.Network;
 #endregion
@@ -36,17 +35,20 @@ namespace Server.Gumps
 		public static readonly int SetGumpID = PropsConfig.SetGumpID;
 
 		public static readonly int SetWidth = PropsConfig.SetWidth;
-		public static readonly int SetOffsetX = PropsConfig.SetOffsetX, SetOffsetY = PropsConfig.SetOffsetY;
+		public static readonly int SetOffsetX = PropsConfig.SetOffsetX,
+			SetOffsetY = PropsConfig.SetOffsetY;
 		public static readonly int SetButtonID1 = PropsConfig.SetButtonID1;
 		public static readonly int SetButtonID2 = PropsConfig.SetButtonID2;
 
 		public static readonly int PrevWidth = PropsConfig.PrevWidth;
-		public static readonly int PrevOffsetX = PropsConfig.PrevOffsetX, PrevOffsetY = PropsConfig.PrevOffsetY;
+		public static readonly int PrevOffsetX = PropsConfig.PrevOffsetX,
+			PrevOffsetY = PropsConfig.PrevOffsetY;
 		public static readonly int PrevButtonID1 = PropsConfig.PrevButtonID1;
 		public static readonly int PrevButtonID2 = PropsConfig.PrevButtonID2;
 
 		public static readonly int NextWidth = PropsConfig.NextWidth;
-		public static readonly int NextOffsetX = PropsConfig.NextOffsetX, NextOffsetY = PropsConfig.NextOffsetY;
+		public static readonly int NextOffsetX = PropsConfig.NextOffsetX,
+			NextOffsetY = PropsConfig.NextOffsetY;
 		public static readonly int NextButtonID1 = PropsConfig.NextButtonID1;
 		public static readonly int NextButtonID2 = PropsConfig.NextButtonID2;
 
@@ -83,9 +85,13 @@ namespace Server.Gumps
 				BorderSize,
 				TotalWidth - (OldStyle ? SetWidth + OffsetSize : 0),
 				TotalHeight,
-				OffsetGumpID);
+				OffsetGumpID
+			);
 
-			var name = m_OldColor.IsNamedColor ? m_OldColor.Name : m_OldColor.IsEmpty ? "Empty" : "";
+			var name =
+				m_OldColor.IsNamedColor ? m_OldColor.Name
+				: m_OldColor.IsEmpty ? "Empty"
+				: "";
 
 			var rgb = "#" + (m_OldColor.ToArgb() & 0x00FFFFFF).ToString("X6");
 
@@ -154,56 +160,71 @@ namespace Server.Gumps
 			switch (info.ButtonID)
 			{
 				case 1: // Name
-				{
-					var toapply = name != string.Empty
-						? name
-						: m_OldColor.IsNamedColor
-							? m_OldColor.Name
-							: m_OldColor.IsEmpty
-								? "Empty"
-								: "";
+					{
+						var toapply =
+							name != string.Empty ? name
+							: m_OldColor.IsNamedColor ? m_OldColor.Name
+							: m_OldColor.IsEmpty ? "Empty"
+							: "";
 
-					toSet = Color.FromName(toapply);
+						toSet = Color.FromName(toapply);
 
-					shouldSet = true;
-				}
+						shouldSet = true;
+					}
 					break;
 				case 2: // RGB
-				{
-					var toapply = rgb != string.Empty ? rgb : String.Format("{0},{1},{2}", m_OldColor.R, m_OldColor.G, m_OldColor.B);
-
-					var args = toapply.Split(',');
-
-					if (args.Length >= 3)
 					{
-						byte r, g, b;
+						var toapply =
+							rgb != string.Empty
+								? rgb
+								: String.Format("{0},{1},{2}", m_OldColor.R, m_OldColor.G, m_OldColor.B);
 
-						if (Byte.TryParse(args[0], out r) && Byte.TryParse(args[1], out g) && Byte.TryParse(args[2], out b))
+						var args = toapply.Split(',');
+
+						if (args.Length >= 3)
 						{
-							toSet = Color.FromArgb(r, g, b);
+							byte r,
+								g,
+								b;
+
+							if (
+								Byte.TryParse(args[0], out r)
+								&& Byte.TryParse(args[1], out g)
+								&& Byte.TryParse(args[2], out b)
+							)
+							{
+								toSet = Color.FromArgb(r, g, b);
+								shouldSet = true;
+							}
+						}
+					}
+					break;
+				case 3: // Hex
+					{
+						var toapply =
+							hex != string.Empty ? hex : String.Format("#{0:X6}", m_OldColor.ToArgb() & 0x00FFFFFF);
+
+						int val;
+
+						if (
+							Int32.TryParse(
+								toapply.TrimStart('#'),
+								NumberStyles.HexNumber,
+								CultureInfo.CurrentCulture,
+								out val
+							)
+						)
+						{
+							toSet = Color.FromArgb(val);
 							shouldSet = true;
 						}
 					}
-				}
-					break;
-				case 3: // Hex
-				{
-					var toapply = hex != string.Empty ? hex : String.Format("#{0:X6}", m_OldColor.ToArgb() & 0x00FFFFFF);
-
-					int val;
-
-					if (Int32.TryParse(toapply.TrimStart('#'), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out val))
-					{
-						toSet = Color.FromArgb(val);
-						shouldSet = true;
-					}
-				}
 					break;
 				case 4: // Empty
-				{
-					toSet = Color.Empty;
-					shouldSet = true;
-				}
+					{
+						toSet = Color.Empty;
+						shouldSet = true;
+					}
 					break;
 			}
 

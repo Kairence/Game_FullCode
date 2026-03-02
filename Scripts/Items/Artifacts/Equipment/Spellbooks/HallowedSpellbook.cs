@@ -2,41 +2,41 @@ using System;
 
 namespace Server.Items
 {
-    public class HallowedSpellbook : Spellbook
+	public class HallowedSpellbook : Spellbook
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public HallowedSpellbook()
-            : base(0x3FFFFFFFF)
-        {
-            LootType = LootType.Blessed;
-            Slayer = SlayerName.Silver;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public HallowedSpellbook(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public HallowedSpellbook()
+			: base(0x3FFFFFFFF)
+		{
+			LootType = LootType.Blessed;
+			Slayer = SlayerName.Silver;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1077620;
-            }
-        }// Hallowed Spellbook
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public HallowedSpellbook(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1077620; }
+		} // Hallowed Spellbook
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

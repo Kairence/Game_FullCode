@@ -56,7 +56,8 @@ namespace Ultima
 				return true;
 			}
 
-			int length, extra;
+			int length,
+				extra;
 			bool patched;
 
 			Stream stream = m_FileIndex.Seek(index, out length, out extra, out patched);
@@ -104,7 +105,8 @@ namespace Ultima
 			{
 				return null;
 			}
-			int length, extra;
+			int length,
+				extra;
 			bool patched;
 
 			Stream stream = m_FileIndex.Seek(index, out length, out extra, out patched);
@@ -138,7 +140,8 @@ namespace Ultima
 				return m_Cache[index];
 			}
 
-			int length, extra;
+			int length,
+				extra;
 			bool patched;
 
 			Stream stream = m_FileIndex.Seek(index, out length, out extra, out patched);
@@ -159,7 +162,10 @@ namespace Ultima
 
 			var bmp = new Bitmap(width, height, Settings.PixelFormat);
 			BitmapData bd = bmp.LockBits(
-				new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, Settings.PixelFormat);
+				new Rectangle(0, 0, width, height),
+				ImageLockMode.WriteOnly,
+				Settings.PixelFormat
+			);
 
 			var line = (ushort*)bd.Scan0;
 			int delta = bd.Stride >> 1;
@@ -198,9 +204,13 @@ namespace Ultima
 			string mul = Path.Combine(path, "light.mul");
 			using (
 				FileStream fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
-						   fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
+					fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write)
+			)
 			{
-				using (BinaryWriter binidx = new BinaryWriter(fsidx), binmul = new BinaryWriter(fsmul))
+				using (
+					BinaryWriter binidx = new BinaryWriter(fsidx),
+						binmul = new BinaryWriter(fsmul)
+				)
 				{
 					for (int index = 0; index < m_Cache.Length; index++)
 					{
@@ -219,7 +229,10 @@ namespace Ultima
 						else
 						{
 							BitmapData bd = bmp.LockBits(
-								new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, Settings.PixelFormat);
+								new Rectangle(0, 0, bmp.Width, bmp.Height),
+								ImageLockMode.ReadOnly,
+								Settings.PixelFormat
+							);
 							var line = (ushort*)bd.Scan0;
 							int delta = bd.Stride >> 1;
 

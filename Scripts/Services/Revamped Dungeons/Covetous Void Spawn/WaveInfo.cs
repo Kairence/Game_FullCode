@@ -1,6 +1,6 @@
-using Server;
 using System;
 using System.Collections.Generic;
+using Server;
 using Server.Mobiles;
 
 namespace Server.Engines.VoidPool
@@ -11,12 +11,12 @@ namespace Server.Engines.VoidPool
 		public bool Cleared { get; set; }
 		public List<BaseCreature> Creatures { get; private set; }
 		public List<Mobile> Credit { get; set; }
-	
+
 		public WaveInfo(int index, List<BaseCreature> list)
 		{
 			Wave = index;
 			Creatures = list;
-			
+
 			Credit = new List<Mobile>();
 		}
 	}

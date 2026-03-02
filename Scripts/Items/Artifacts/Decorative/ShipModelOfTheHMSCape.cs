@@ -2,40 +2,40 @@ using System;
 
 namespace Server.Items
 {
-    public class ShipModelOfTheHMSCape : Item
-    {
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public ShipModelOfTheHMSCape()
-            : base(0x14F3)
-        {
-            this.Hue = 0x37B;
-        }
+	public class ShipModelOfTheHMSCape : Item
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public ShipModelOfTheHMSCape(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public ShipModelOfTheHMSCape()
+			: base(0x14F3)
+		{
+			this.Hue = 0x37B;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1063476;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public ShipModelOfTheHMSCape(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0);
-        }
+		public override int LabelNumber
+		{
+			get { return 1063476; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

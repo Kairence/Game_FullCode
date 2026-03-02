@@ -1,6 +1,5 @@
 #region References
 using System.Collections.Generic;
-
 using Server.Multis;
 #endregion
 
@@ -22,10 +21,12 @@ namespace Server.Items
 		}
 
 		public BaseAddonContainer(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
-		public override bool DisplayWeight { get { return false; } }
+		public override bool DisplayWeight
+		{
+			get { return false; }
+		}
 
 		[Hue, CommandProperty(AccessLevel.GameMaster)]
 		public override int Hue
@@ -64,13 +65,34 @@ namespace Server.Items
 			}
 		}
 
-		public virtual bool RetainDeedHue { get { return false; } }
-		public virtual bool NeedsWall { get { return false; } }
-		public virtual bool ShareHue { get { return true; } }
-		public virtual Point3D WallPosition { get { return Point3D.Zero; } }
-		public virtual BaseAddonContainerDeed Deed { get { return null; } }
-		public List<AddonContainerComponent> Components { get { return m_Components; } }
-		Item IAddon.Deed { get { return Deed; } }
+		public virtual bool RetainDeedHue
+		{
+			get { return false; }
+		}
+		public virtual bool NeedsWall
+		{
+			get { return false; }
+		}
+		public virtual bool ShareHue
+		{
+			get { return true; }
+		}
+		public virtual Point3D WallPosition
+		{
+			get { return Point3D.Zero; }
+		}
+		public virtual BaseAddonContainerDeed Deed
+		{
+			get { return null; }
+		}
+		public List<AddonContainerComponent> Components
+		{
+			get { return m_Components; }
+		}
+		Item IAddon.Deed
+		{
+			get { return Deed; }
+		}
 
 		public override void OnLocationChange(Point3D oldLoc)
 		{
@@ -125,9 +147,7 @@ namespace Server.Items
 			}
 		}
 
-		public virtual void GetProperties(ObjectPropertyList list, AddonContainerComponent c)
-		{
-		}
+		public virtual void GetProperties(ObjectPropertyList list, AddonContainerComponent c) { }
 
 		public override void GetProperties(ObjectPropertyList list)
 		{
@@ -242,16 +262,26 @@ namespace Server.Items
 						var addonLoc = new Point3D(p.X + c.Offset.X, p.Y + c.Offset.Y, p.Z + c.Offset.Z);
 						var addonHeight = c.ItemData.CalcHeight;
 
-						if (Utility.InRange(doorLoc, addonLoc, 1) && (addonLoc.Z == doorLoc.Z ||
-																	  ((addonLoc.Z + addonHeight) > doorLoc.Z && (doorLoc.Z + doorHeight) > addonLoc.Z)))
+						if (
+							Utility.InRange(doorLoc, addonLoc, 1)
+							&& (
+								addonLoc.Z == doorLoc.Z
+								|| ((addonLoc.Z + addonHeight) > doorLoc.Z && (doorLoc.Z + doorHeight) > addonLoc.Z)
+							)
+						)
 							return AddonFitResult.DoorTooClose;
 					}
 
 					var addonLo = new Point3D(p.X, p.Y, p.Z);
 					var addonHeigh = ItemData.CalcHeight;
 
-					if (Utility.InRange(doorLoc, addonLo, 1) && (addonLo.Z == doorLoc.Z ||
-																 ((addonLo.Z + addonHeigh) > doorLoc.Z && (doorLoc.Z + doorHeight) > addonLo.Z)))
+					if (
+						Utility.InRange(doorLoc, addonLo, 1)
+						&& (
+							addonLo.Z == doorLoc.Z
+							|| ((addonLo.Z + addonHeigh) > doorLoc.Z && (doorLoc.Z + doorHeight) > addonLo.Z)
+						)
+					)
 						return AddonFitResult.DoorTooClose;
 				}
 			}
@@ -313,8 +343,7 @@ namespace Server.Items
 			}
 		}
 
-		public virtual void OnComponentLoaded(AddonContainerComponent c)
-		{ }
+		public virtual void OnComponentLoaded(AddonContainerComponent c) { }
 
 		public virtual void OnComponentUsed(AddonContainerComponent c, Mobile from)
 		{

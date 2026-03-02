@@ -8,261 +8,264 @@ using Server.Network;
 
 namespace Server.Misc
 {
-    public class CrashGuard
-    {
-        private static readonly bool Enabled = true;
-        private static readonly bool SaveBackup = true;
-        private static readonly bool RestartServer = true;
-        private static readonly bool GenerateReport = true;
-        public static void Initialize()
-        {
-            if (Enabled) // If enabled, register our crash event handler
-                EventSink.Crashed += new CrashedEventHandler(CrashGuard_OnCrash);
-        }
+	public class CrashGuard
+	{
+		private static readonly bool Enabled = true;
+		private static readonly bool SaveBackup = true;
+		private static readonly bool RestartServer = true;
+		private static readonly bool GenerateReport = true;
 
-        public static void CrashGuard_OnCrash(CrashedEventArgs e)
-        {
-            if (GenerateReport)
-                GenerateCrashReport(e);
+		public static void Initialize()
+		{
+			if (Enabled) // If enabled, register our crash event handler
+				EventSink.Crashed += new CrashedEventHandler(CrashGuard_OnCrash);
+		}
 
-            World.WaitForWriteCompletion();
+		public static void CrashGuard_OnCrash(CrashedEventArgs e)
+		{
+			if (GenerateReport)
+				GenerateCrashReport(e);
 
-            if (SaveBackup)
-                Backup();
+			World.WaitForWriteCompletion();
 
-            /*if ( Core.Service )
-            e.Close = true;
-            else */ if (RestartServer)
-                Restart(e);
-        }
+			if (SaveBackup)
+				Backup();
 
-        private static void SendEmail(string filePath)
-        {
-            Console.Write("Crash: Sending email...");
+			/*if ( Core.Service )
+			e.Close = true;
+			else */if (RestartServer)
+				Restart(e);
+		}
 
-            MailMessage message = new MailMessage(Email.FromAddress, Email.CrashAddresses);
+		private static void SendEmail(string filePath)
+		{
+			Console.Write("Crash: Sending email...");
 
-            message.Subject = "Automated ServUO Crash Report";
+			MailMessage message = new MailMessage(Email.FromAddress, Email.CrashAddresses);
 
-            message.Body = "Automated ServUO Crash Report. See attachment for details.";
+			message.Subject = "Automated ServUO Crash Report";
 
-            message.Attachments.Add(new Attachment(filePath));
+			message.Body = "Automated ServUO Crash Report. See attachment for details.";
 
-            if (Email.Send(message))
-                Console.WriteLine("done");
-            else
-                Console.WriteLine("failed");
-        }
+			message.Attachments.Add(new Attachment(filePath));
 
-        private static string GetRoot()
-        {
-            try
-            {
-                return Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
-            }
-            catch
-            {
-                return "";
-            }
-        }
+			if (Email.Send(message))
+				Console.WriteLine("done");
+			else
+				Console.WriteLine("failed");
+		}
 
-        private static string Combine(string path1, string path2)
-        {
-            if (path1.Length == 0)
-                return path2;
+		private static string GetRoot()
+		{
+			try
+			{
+				return Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
+			}
+			catch
+			{
+				return "";
+			}
+		}
 
-            return Path.Combine(path1, path2);
-        }
+		private static string Combine(string path1, string path2)
+		{
+			if (path1.Length == 0)
+				return path2;
 
-        private static void Restart(CrashedEventArgs e)
-        {
-            string root = GetRoot();
+			return Path.Combine(path1, path2);
+		}
 
-            Console.Write("Crash: Restarting...");
+		private static void Restart(CrashedEventArgs e)
+		{
+			string root = GetRoot();
 
-            try
-            {
-                Process.Start(Core.ExePath, Core.Arguments);
-                Console.WriteLine("done");
+			Console.Write("Crash: Restarting...");
 
-                e.Close = true;
-            }
-            catch
-            {
-                Console.WriteLine("failed");
-            }
-        }
+			try
+			{
+				Process.Start(Core.ExePath, Core.Arguments);
+				Console.WriteLine("done");
 
-        private static void CreateDirectory(string path)
-        {
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-        }
+				e.Close = true;
+			}
+			catch
+			{
+				Console.WriteLine("failed");
+			}
+		}
 
-        private static void CreateDirectory(string path1, string path2)
-        {
-            CreateDirectory(Combine(path1, path2));
-        }
+		private static void CreateDirectory(string path)
+		{
+			if (!Directory.Exists(path))
+				Directory.CreateDirectory(path);
+		}
 
-        private static void CopyFile(string rootOrigin, string rootBackup, string path)
-        {
-            string originPath = Combine(rootOrigin, path);
-            string backupPath = Combine(rootBackup, path);
+		private static void CreateDirectory(string path1, string path2)
+		{
+			CreateDirectory(Combine(path1, path2));
+		}
 
-            try
-            {
-                if (File.Exists(originPath))
-                    File.Copy(originPath, backupPath);
-            }
-            catch
-            {
-            }
-        }
+		private static void CopyFile(string rootOrigin, string rootBackup, string path)
+		{
+			string originPath = Combine(rootOrigin, path);
+			string backupPath = Combine(rootBackup, path);
 
-        private static void Backup()
-        {
-            Console.Write("Crash: Backing up...");
+			try
+			{
+				if (File.Exists(originPath))
+					File.Copy(originPath, backupPath);
+			}
+			catch { }
+		}
 
-            try
-            {
-                string timeStamp = GetTimeStamp();
+		private static void Backup()
+		{
+			Console.Write("Crash: Backing up...");
 
-                string root = GetRoot();
-                string rootBackup = Combine(root, String.Format("Backups/Crashed/{0}/", timeStamp));
-                string rootOrigin = Combine(root, String.Format("Saves/"));
+			try
+			{
+				string timeStamp = GetTimeStamp();
 
-                // Create new directories
-                CreateDirectory(rootBackup);
-                CreateDirectory(rootBackup, "Accounts/");
-                CreateDirectory(rootBackup, "Items/");
-                CreateDirectory(rootBackup, "Mobiles/");
-                CreateDirectory(rootBackup, "Guilds/");
-                CreateDirectory(rootBackup, "Regions/");
+				string root = GetRoot();
+				string rootBackup = Combine(root, String.Format("Backups/Crashed/{0}/", timeStamp));
+				string rootOrigin = Combine(root, String.Format("Saves/"));
 
-                // Copy files
-                CopyFile(rootOrigin, rootBackup, "Accounts/Accounts.xml");
+				// Create new directories
+				CreateDirectory(rootBackup);
+				CreateDirectory(rootBackup, "Accounts/");
+				CreateDirectory(rootBackup, "Items/");
+				CreateDirectory(rootBackup, "Mobiles/");
+				CreateDirectory(rootBackup, "Guilds/");
+				CreateDirectory(rootBackup, "Regions/");
 
-                CopyFile(rootOrigin, rootBackup, "Items/Items.bin");
-                CopyFile(rootOrigin, rootBackup, "Items/Items.idx");
-                CopyFile(rootOrigin, rootBackup, "Items/Items.tdb");
+				// Copy files
+				CopyFile(rootOrigin, rootBackup, "Accounts/Accounts.xml");
 
-                CopyFile(rootOrigin, rootBackup, "Mobiles/Mobiles.bin");
-                CopyFile(rootOrigin, rootBackup, "Mobiles/Mobiles.idx");
-                CopyFile(rootOrigin, rootBackup, "Mobiles/Mobiles.tdb");
+				CopyFile(rootOrigin, rootBackup, "Items/Items.bin");
+				CopyFile(rootOrigin, rootBackup, "Items/Items.idx");
+				CopyFile(rootOrigin, rootBackup, "Items/Items.tdb");
 
-                CopyFile(rootOrigin, rootBackup, "Guilds/Guilds.bin");
-                CopyFile(rootOrigin, rootBackup, "Guilds/Guilds.idx");
+				CopyFile(rootOrigin, rootBackup, "Mobiles/Mobiles.bin");
+				CopyFile(rootOrigin, rootBackup, "Mobiles/Mobiles.idx");
+				CopyFile(rootOrigin, rootBackup, "Mobiles/Mobiles.tdb");
 
-                CopyFile(rootOrigin, rootBackup, "Regions/Regions.bin");
-                CopyFile(rootOrigin, rootBackup, "Regions/Regions.idx");
+				CopyFile(rootOrigin, rootBackup, "Guilds/Guilds.bin");
+				CopyFile(rootOrigin, rootBackup, "Guilds/Guilds.idx");
 
-                Console.WriteLine("done");
-            }
-            catch
-            {
-                Console.WriteLine("failed");
-            }
-        }
+				CopyFile(rootOrigin, rootBackup, "Regions/Regions.bin");
+				CopyFile(rootOrigin, rootBackup, "Regions/Regions.idx");
 
-        private static void GenerateCrashReport(CrashedEventArgs e)
-        {
-            Console.Write("Crash: Generating report...");
+				Console.WriteLine("done");
+			}
+			catch
+			{
+				Console.WriteLine("failed");
+			}
+		}
 
-            try
-            {
-                string timeStamp = GetTimeStamp();
-                string fileName = String.Format("Crash {0}.log", timeStamp);
+		private static void GenerateCrashReport(CrashedEventArgs e)
+		{
+			Console.Write("Crash: Generating report...");
 
-                string root = GetRoot();
-                string filePath = Combine(root, fileName);
+			try
+			{
+				string timeStamp = GetTimeStamp();
+				string fileName = String.Format("Crash {0}.log", timeStamp);
 
-                using (StreamWriter op = new StreamWriter(filePath))
-                {
-                    Version ver = Core.Assembly.GetName().Version;
+				string root = GetRoot();
+				string filePath = Combine(root, fileName);
 
-                    op.WriteLine("Server Crash Report");
-                    op.WriteLine("===================");
-                    op.WriteLine();
-                    op.WriteLine("ServUO Version {0}.{1}, Build {2}.{3}", ver.Major, ver.Minor, ver.Build, ver.Revision);
-                    op.WriteLine("Operating System: {0}", Environment.OSVersion);
-                    op.WriteLine(".NET Framework: {0}", Environment.Version);
-                    op.WriteLine("Time: {0}", DateTime.UtcNow);
+				using (StreamWriter op = new StreamWriter(filePath))
+				{
+					Version ver = Core.Assembly.GetName().Version;
 
-                    try
-                    {
-                        op.WriteLine("Mobiles: {0}", World.Mobiles.Count);
-                    }
-                    catch
-                    {
-                    }
+					op.WriteLine("Server Crash Report");
+					op.WriteLine("===================");
+					op.WriteLine();
+					op.WriteLine(
+						"ServUO Version {0}.{1}, Build {2}.{3}",
+						ver.Major,
+						ver.Minor,
+						ver.Build,
+						ver.Revision
+					);
+					op.WriteLine("Operating System: {0}", Environment.OSVersion);
+					op.WriteLine(".NET Framework: {0}", Environment.Version);
+					op.WriteLine("Time: {0}", DateTime.UtcNow);
 
-                    try
-                    {
-                        op.WriteLine("Items: {0}", World.Items.Count);
-                    }
-                    catch
-                    {
-                    }
+					try
+					{
+						op.WriteLine("Mobiles: {0}", World.Mobiles.Count);
+					}
+					catch { }
 
-                    op.WriteLine("Exception:");
-                    op.WriteLine(e.Exception);
-                    op.WriteLine();
+					try
+					{
+						op.WriteLine("Items: {0}", World.Items.Count);
+					}
+					catch { }
 
-                    op.WriteLine("Clients:");
+					op.WriteLine("Exception:");
+					op.WriteLine(e.Exception);
+					op.WriteLine();
 
-                    try
-                    {
-                        List<NetState> states = NetState.Instances;
+					op.WriteLine("Clients:");
 
-                        op.WriteLine("- Count: {0}", states.Count);
+					try
+					{
+						List<NetState> states = NetState.Instances;
 
-                        for (int i = 0; i < states.Count; ++i)
-                        {
-                            NetState state = states[i];
+						op.WriteLine("- Count: {0}", states.Count);
 
-                            op.Write("+ {0}:", state);
+						for (int i = 0; i < states.Count; ++i)
+						{
+							NetState state = states[i];
 
-                            Account a = state.Account as Account;
+							op.Write("+ {0}:", state);
 
-                            if (a != null)
-                                op.Write(" (account = {0})", a.Username);
+							Account a = state.Account as Account;
 
-                            Mobile m = state.Mobile;
+							if (a != null)
+								op.Write(" (account = {0})", a.Username);
 
-                            if (m != null)
-                                op.Write(" (mobile = 0x{0:X} '{1}')", m.Serial.Value, m.Name);
+							Mobile m = state.Mobile;
 
-                            op.WriteLine();
-                        }
-                    }
-                    catch
-                    {
-                        op.WriteLine("- Failed");
-                    }
-                }
+							if (m != null)
+								op.Write(" (mobile = 0x{0:X} '{1}')", m.Serial.Value, m.Name);
 
-                Console.WriteLine("done");
+							op.WriteLine();
+						}
+					}
+					catch
+					{
+						op.WriteLine("- Failed");
+					}
+				}
 
-                if (Email.FromAddress != null && Email.CrashAddresses != null)
-                    SendEmail(filePath);
-            }
-            catch
-            {
-                Console.WriteLine("failed");
-            }
-        }
+				Console.WriteLine("done");
 
-        private static string GetTimeStamp()
-        {
-            DateTime now = DateTime.UtcNow;
+				if (Email.FromAddress != null && Email.CrashAddresses != null)
+					SendEmail(filePath);
+			}
+			catch
+			{
+				Console.WriteLine("failed");
+			}
+		}
 
-            return String.Format("{0}-{1}-{2}-{3}-{4}-{5}",
-                now.Day,
-                now.Month,
-                now.Year,
-                now.Hour,
-                now.Minute,
-                now.Second);
-        }
-    }
+		private static string GetTimeStamp()
+		{
+			DateTime now = DateTime.UtcNow;
+
+			return String.Format(
+				"{0}-{1}-{2}-{3}-{4}-{5}",
+				now.Day,
+				now.Month,
+				now.Year,
+				now.Hour,
+				now.Minute,
+				now.Second
+			);
+		}
+	}
 }

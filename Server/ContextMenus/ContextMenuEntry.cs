@@ -1,6 +1,5 @@
 #region References
 using System;
-
 using Server.Network;
 #endregion
 
@@ -47,7 +46,10 @@ namespace Server.ContextMenus
 		/// <summary>
 		///     Gets a value indicating if non local use of this entry is permitted.
 		/// </summary>
-		public virtual bool NonLocalUse { get { return false; } }
+		public virtual bool NonLocalUse
+		{
+			get { return false; }
+		}
 
 		/// <summary>
 		///     Instantiates a new ContextMenuEntry with a given <see cref="Number">localization number</see> (
@@ -60,8 +62,7 @@ namespace Server.ContextMenus
 		///     <seealso cref="Number" />
 		/// </param>
 		public ContextMenuEntry(int number)
-			: this(number, -1)
-		{ }
+			: this(number, -1) { }
 
 		/// <summary>
 		///     Instantiates a new ContextMenuEntry with a given <see cref="Number">localization number</see> (
@@ -101,14 +102,12 @@ namespace Server.ContextMenus
 		/// <summary>
 		///     Overridable. Virtual event invoked when the entry is clicked.
 		/// </summary>
-		public virtual void OnClick()
-		{ }
+		public virtual void OnClick() { }
 
-        /// <summary>
-        ///     Overridable. Virtual event invoked when the entry is clicked and the entry is disabled.
-        /// </summary>
-        public virtual void OnClickDisabled()
-        { }
+		/// <summary>
+		///     Overridable. Virtual event invoked when the entry is clicked and the entry is disabled.
+		/// </summary>
+		public virtual void OnClickDisabled() { }
 
 		public void Dispose()
 		{
@@ -135,7 +134,6 @@ namespace Server.ContextMenus
 			Owner = null;
 		}
 
-		protected virtual void OnDispose()
-		{ }
+		protected virtual void OnDispose() { }
 	}
 }

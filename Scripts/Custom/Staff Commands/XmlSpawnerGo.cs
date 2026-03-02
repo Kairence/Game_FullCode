@@ -1,8 +1,8 @@
 using System;
-using Server;
-using Server.Mobiles;
-using Server.Commands.Generic;
 using System.Collections.Generic;
+using Server;
+using Server.Commands.Generic;
+using Server.Mobiles;
 
 namespace Server.Commands
 {
@@ -10,35 +10,35 @@ namespace Server.Commands
 	{
 		public static void Initialize()
 		{
-	      	CommandSystem.Register( "XSG", AccessLevel.GameMaster, new CommandEventHandler( XmlSpawnerGoInfo_OnCommand ) );
+			CommandSystem.Register("XSG", AccessLevel.GameMaster, new CommandEventHandler(XmlSpawnerGoInfo_OnCommand));
 		}
 
-		[Usage( "XmlSpawnerGo Outdoorsnumber" )]
-		[Description( "½ºÆ÷³Ê »èÁ¦ ÄÚµå." )]
-		public static void XmlSpawnerGoInfo_OnCommand( CommandEventArgs e )
+		[Usage("XmlSpawnerGo Outdoorsnumber")]
+		[Description("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½.")]
+		public static void XmlSpawnerGoInfo_OnCommand(CommandEventArgs e)
 		{
-			//e.Mobile.SendMessage("½ºÆ÷³Ê »èÁ¦¸¦ ½ÃÀÛÇÕ´Ï´Ù!");
+			//e.Mobile.SendMessage("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½!");
 			string index = "Outdoors#";
-			if( e.Arguments.Length == 0 )
-				e.Mobile.SendMessage( String.Format("½ºÆ÷³Ê ÀÌ¸§À» ³Ö¾î¾ßÇÕ´Ï´Ù.") ); // Thy current bank balance is ~1_AMOUNT~ platinum and ~2_AMOUNT~ gold.
+			if (e.Arguments.Length == 0)
+				e.Mobile.SendMessage(String.Format("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½Õ´Ï´ï¿½.")); // Thy current bank balance is ~1_AMOUNT~ platinum and ~2_AMOUNT~ gold.
 			else
 			{
 				index += e.Arguments[0];
 				bool count = false;
 
-				foreach ( Item i in World.Items.Values )
+				foreach (Item i in World.Items.Values)
 				{
-					if ( i is XmlSpawner && i.Name == index )
+					if (i is XmlSpawner && i.Name == index)
 					{
 						Map map = i.Map;
-						Point3D loc = new Point3D( i.X, i.Y, i.Z);
-						e.Mobile.MoveToWorld( loc, map );
+						Point3D loc = new Point3D(i.X, i.Y, i.Z);
+						e.Mobile.MoveToWorld(loc, map);
 						count = true;
 						break;
 					}
 				}
-				if( !count )
-					e.Mobile.SendMessage("ÇØ´ç ÀÌ¸§ÀÇ ½ºÆ÷³Ê°¡ ¾ø½À´Ï´Ù!");
+				if (!count)
+					e.Mobile.SendMessage("ï¿½Ø´ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ê°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½!");
 			}
 		}
 	}

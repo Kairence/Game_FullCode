@@ -2,62 +2,67 @@ using System;
 
 namespace Server.Items
 {
-    [FlipableAttribute(0x2647, 0x2648)]
-    public class RedDragonLegs : BaseArmor
-    {
-        [Constructable]
-        public RedDragonLegs()
-            : base(0x2647)
-        {
-            Weight = 20.0;
-			PrefixOption[50] = 8;    //세트 옵션 번호
-			PrefixOption[61] = 13;   //화염 저항
+	[FlipableAttribute(0x2647, 0x2648)]
+	public class RedDragonLegs : BaseArmor
+	{
+		[Constructable]
+		public RedDragonLegs()
+			: base(0x2647)
+		{
+			Weight = 20.0;
+			PrefixOption[50] = 8; //세트 옵션 번호
+			PrefixOption[61] = 13; //화염 저항
 			SuffixOption[61] = 250000; //25%
-			PrefixOption[62] = 23;   //불 피해 증가
+			PrefixOption[62] = 23; //불 피해 증가
 			SuffixOption[62] = 200000; //20
-        }
+		}
 
-        public RedDragonLegs(Serial serial)
-            : base(serial)
-        {
-        }
+		public RedDragonLegs(Serial serial)
+			: base(serial) { }
 
- 		public override int LabelNumber { get { return 1029799; } }
-		public override int AosStrReq { get { return 3500; } }
-        public override int AosDexReq { get { return 3500; } }
-        public override int AosIntReq { get { return 3500; } }
-        public override int OldStrReq { get { return 15; } }
-        public override int ArmorBase
-        {
-            get
-            {
-                return 6;
-            }
-        }
-        public override ArmorMaterialType MaterialType
-        {
-            get
-            {
-                return ArmorMaterialType.Dragon;
-            }
-        }
-        public override CraftResource DefaultResource
-        {
-            get
-            {
-                return CraftResource.RedScales;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
+		public override int LabelNumber
+		{
+			get { return 1029799; }
+		}
+		public override int AosStrReq
+		{
+			get { return 3500; }
+		}
+		public override int AosDexReq
+		{
+			get { return 3500; }
+		}
+		public override int AosIntReq
+		{
+			get { return 3500; }
+		}
+		public override int OldStrReq
+		{
+			get { return 15; }
+		}
+		public override int ArmorBase
+		{
+			get { return 6; }
+		}
+		public override ArmorMaterialType MaterialType
+		{
+			get { return ArmorMaterialType.Dragon; }
+		}
+		public override CraftResource DefaultResource
+		{
+			get { return CraftResource.RedScales; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 }

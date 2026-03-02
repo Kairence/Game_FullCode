@@ -3,37 +3,35 @@ using Server.Mobiles;
 
 namespace Server.Items
 {
-    public class MiniNightSightPotion : BasePotion
-    {
-        [Constructable]
-        public MiniNightSightPotion()
-            : base(0xF06, PotionEffect.NightsightMini)
-        {
-  			Name = "최하급 방어 물약";
-        }
+	public class MiniNightSightPotion : BasePotion
+	{
+		[Constructable]
+		public MiniNightSightPotion()
+			: base(0xF06, PotionEffect.NightsightMini)
+		{
+			Name = "최하급 방어 물약";
+		}
 
-        public MiniNightSightPotion(Serial serial)
-            : base(serial)
-        {
-        }
+		public MiniNightSightPotion(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((int)0); // version
-        }
+			writer.Write((int)0); // version
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadInt();
-        }
+			int version = reader.ReadInt();
+		}
 
-        public override void Drink(Mobile from)
-        {
-			if( from is PlayerMobile )
+		public override void Drink(Mobile from)
+		{
+			if (from is PlayerMobile)
 			{
 				PlayerMobile pm = from as PlayerMobile;
 				pm.TimerList[69] = 3000;
@@ -46,6 +44,6 @@ namespace Server.Items
 				PlayDrinkEffect(from);
 				Consume();
 			}
-        }
-    }
+		}
+	}
 }

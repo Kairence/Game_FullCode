@@ -2,42 +2,42 @@ using System;
 
 namespace Server.Items
 {
-    public class EssenceOfBattle : GoldRing
+	public class EssenceOfBattle : GoldRing
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public EssenceOfBattle()
-        {
-            Hue = 0x550;
-            Attributes.BonusDex = 7;
-            Attributes.BonusStr = 7;
-            Attributes.WeaponDamage = 30;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public EssenceOfBattle(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public EssenceOfBattle()
+		{
+			Hue = 0x550;
+			Attributes.BonusDex = 7;
+			Attributes.BonusStr = 7;
+			Attributes.WeaponDamage = 30;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1072935;
-            }
-        }// Essence of Battle
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public EssenceOfBattle(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1072935; }
+		} // Essence of Battle
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

@@ -85,21 +85,25 @@ namespace Server
 				yield break;
 			}
 
-			int x, y, z = Math.Min(rect.Start.Z, rect.End.Z);
-			int ow, oh, od = rect.Depth;
+			int x,
+				y,
+				z = Math.Min(rect.Start.Z, rect.End.Z);
+			int ow,
+				oh,
+				od = rect.Depth;
 
 			x = rect.Start.X;
 
 			while (x < rect.End.X)
 			{
 				ow = Math.Min(Stride, rect.End.X - x);
-				
+
 				y = rect.Start.Y;
 
 				while (y < rect.End.Y)
 				{
 					oh = Math.Min(Stride, rect.End.Y - y);
-					
+
 					yield return new Rectangle3D(x, y, z, ow, oh, od);
 
 					y += oh;
@@ -132,7 +136,12 @@ namespace Server
 			}
 		}
 
-		private static int GetHashCode(Map facet, string region, IEnumerable<TileFlag> filters, SpawnValidator validator)
+		private static int GetHashCode(
+			Map facet,
+			string region,
+			IEnumerable<TileFlag> filters,
+			SpawnValidator validator
+		)
 		{
 			unchecked
 			{
@@ -181,13 +190,25 @@ namespace Server
 
 		public Point2D Center { get; private set; }
 
-		public Rectangle3D Bounds { get { return _Bounds; } }
+		public Rectangle3D Bounds
+		{
+			get { return _Bounds; }
+		}
 
-		public int Count { get { return _Points.Count; } }
+		public int Count
+		{
+			get { return _Points.Count; }
+		}
 
-		public Bitmap Image { get { return GetImage(); } }
+		public Bitmap Image
+		{
+			get { return GetImage(); }
+		}
 
-		bool ICollection<Point3D>.IsReadOnly { get { return true; } }
+		bool ICollection<Point3D>.IsReadOnly
+		{
+			get { return true; }
+		}
 
 		private SpawnArea(Map facet, string region, TileFlag[] filters, SpawnValidator validator)
 		{
@@ -241,7 +262,12 @@ namespace Server
 
 				var map = new Bitmap(_Bounds.Width, _Bounds.Height, PixelFormat.Format16bppRgb555);
 
-				var b = new Rectangle(_Bounds.Start.X >> 3, _Bounds.Start.Y >> 3, _Bounds.Width >> 3, _Bounds.Height >> 3);
+				var b = new Rectangle(
+					_Bounds.Start.X >> 3,
+					_Bounds.Start.Y >> 3,
+					_Bounds.Width >> 3,
+					_Bounds.Height >> 3
+				);
 
 				umap.GetImage(b.X, b.Y, b.Width, b.Height, map, true);
 
@@ -290,14 +316,14 @@ namespace Server
 				return _Points.Values.ElementAt(Utility.Random(Count));
 			}
 
-			int x, y;
+			int x,
+				y;
 
 			do
 			{
 				x = Utility.RandomMinMax(_Bounds.Start.X, _Bounds.End.X);
 				y = Utility.RandomMinMax(_Bounds.Start.Y, _Bounds.End.Y);
-			}
-			while (!Contains(x, y));
+			} while (!Contains(x, y));
 
 			var z = Facet.GetAverageZ(x, y);
 
@@ -348,8 +374,12 @@ namespace Server
 			}
 			else
 			{
-				int x1 = Int16.MaxValue, y1 = Int16.MaxValue, z1 = SByte.MaxValue;
-				int x2 = Int16.MinValue, y2 = Int16.MinValue, z2 = SByte.MinValue;
+				int x1 = Int16.MaxValue,
+					y1 = Int16.MaxValue,
+					z1 = SByte.MaxValue;
+				int x2 = Int16.MinValue,
+					y2 = Int16.MinValue,
+					z2 = SByte.MinValue;
 
 				foreach (var o in region.Area)
 				{
@@ -380,16 +410,21 @@ namespace Server
 				var land3 = Facet.Tiles.GetLandTile(area.Start.X, area.End.Y); // BL
 				var land4 = Facet.Tiles.GetLandTile(area.End.X, area.End.Y); // BR
 
-				if ((land1.Ignored || TileData.LandTable[land1.ID].Flags.HasFlag(TileFlag.Wet)) &&
-					(land2.Ignored || TileData.LandTable[land2.ID].Flags.HasFlag(TileFlag.Wet)) &&
-					(land3.Ignored || TileData.LandTable[land3.ID].Flags.HasFlag(TileFlag.Wet)) &&
-					(land4.Ignored || TileData.LandTable[land4.ID].Flags.HasFlag(TileFlag.Wet)))
+				if (
+					(land1.Ignored || TileData.LandTable[land1.ID].Flags.HasFlag(TileFlag.Wet))
+					&& (land2.Ignored || TileData.LandTable[land2.ID].Flags.HasFlag(TileFlag.Wet))
+					&& (land3.Ignored || TileData.LandTable[land3.ID].Flags.HasFlag(TileFlag.Wet))
+					&& (land4.Ignored || TileData.LandTable[land4.ID].Flags.HasFlag(TileFlag.Wet))
+				)
 				{
 					return;
 				}
 			}
 
-			int x, y, z, h;
+			int x,
+				y,
+				z,
+				h;
 
 			for (x = area.Start.X; x < area.End.X; x++)
 			{
@@ -402,7 +437,7 @@ namespace Server
 						continue;
 					}
 
-					z = Facet.Tiles.GetLandTile(x, y).Z;//.GetAverageZ(x, y);
+					z = Facet.Tiles.GetLandTile(x, y).Z; //.GetAverageZ(x, y);
 
 					if (!CanSpawn(x, y, z))
 					{

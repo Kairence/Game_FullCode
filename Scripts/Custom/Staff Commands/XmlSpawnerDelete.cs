@@ -1,8 +1,8 @@
 using System;
-using Server;
-using Server.Mobiles;
-using Server.Commands.Generic;
 using System.Collections.Generic;
+using Server;
+using Server.Commands.Generic;
+using Server.Mobiles;
 
 namespace Server.Commands
 {
@@ -10,30 +10,34 @@ namespace Server.Commands
 	{
 		public static void Initialize()
 		{
-	      	CommandSystem.Register( "XSD", AccessLevel.GameMaster, new CommandEventHandler( XmlSpawnerDeleteInfo_OnCommand ) );
+			CommandSystem.Register(
+				"XSD",
+				AccessLevel.GameMaster,
+				new CommandEventHandler(XmlSpawnerDeleteInfo_OnCommand)
+			);
 		}
 
-		[Usage( "XmlSpawnerDelete" )]
-		[Description( "½ºÆ÷³Ê »èÁ¦ ÄÚµå." )]
-		public static void XmlSpawnerDeleteInfo_OnCommand( CommandEventArgs e )
+		[Usage("XmlSpawnerDelete")]
+		[Description("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½.")]
+		public static void XmlSpawnerDeleteInfo_OnCommand(CommandEventArgs e)
 		{
-			e.Mobile.SendMessage("½ºÆ÷³Ê »èÁ¦¸¦ ½ÃÀÛÇÕ´Ï´Ù!");
+			e.Mobile.SendMessage("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½!");
 			int count = 0;
 			var list = new List<Item>();
-			foreach ( Item i in World.Items.Values )
+			foreach (Item i in World.Items.Values)
 			{
-				if (( i is XmlSpawner || i is Spawner ) && i.Map != Map.Trammel )
+				if ((i is XmlSpawner || i is Spawner) && i.Map != Map.Trammel)
 				{
 					count++;
-					list.Add( i );
+					list.Add(i);
 				}
 			}
-			for ( int i = 0; i < list.Count; ++i )
+			for (int i = 0; i < list.Count; ++i)
 			{
 				Item tar = (Item)list[i];
 				tar.Delete();
 			}
-			e.Mobile.SendMessage("ÃÑ {0}°³ÀÇ ½ºÆ÷³Ê¸¦ »èÁ¦Çß½À´Ï´Ù.", count);
+			e.Mobile.SendMessage("ï¿½ï¿½ {0}ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ê¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.", count);
 		}
 	}
 }

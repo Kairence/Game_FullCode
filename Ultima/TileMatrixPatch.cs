@@ -96,7 +96,8 @@ namespace Ultima
 			BlockHeight = matrix.BlockWidth;
 
 			LandBlocksCount = StaticBlocksCount = 0;
-			string mapDataPath, mapIndexPath;
+			string mapDataPath,
+				mapIndexPath;
 			if (path == null)
 			{
 				mapDataPath = Files.GetFilePath("mapdif{0}.mul", index);
@@ -122,7 +123,9 @@ namespace Ultima
 				LandBlocksCount = PatchLand(matrix, mapDataPath, mapIndexPath);
 			}
 
-			string staDataPath, staIndexPath, staLookupPath;
+			string staDataPath,
+				staIndexPath,
+				staLookupPath;
 			if (path == null)
 			{
 				staDataPath = Files.GetFilePath("stadif{0}.mul", index);
@@ -159,7 +162,8 @@ namespace Ultima
 		{
 			using (
 				FileStream fsData = new FileStream(dataPath, FileMode.Open, FileAccess.Read, FileShare.Read),
-						   fsIndex = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+					fsIndex = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read)
+			)
 			{
 				using (var indexReader = new BinaryReader(fsIndex))
 				{
@@ -206,12 +210,19 @@ namespace Ultima
 		{
 			using (
 				FileStream fsData = new FileStream(dataPath, FileMode.Open, FileAccess.Read, FileShare.Read),
-						   fsIndex = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read),
-						   fsLookup = new FileStream(lookupPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+					fsIndex = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read),
+					fsLookup = new FileStream(lookupPath, FileMode.Open, FileAccess.Read, FileShare.Read)
+			)
 			{
-				using (BinaryReader indexReader = new BinaryReader(fsIndex), lookupReader = new BinaryReader(fsLookup))
+				using (
+					BinaryReader indexReader = new BinaryReader(fsIndex),
+						lookupReader = new BinaryReader(fsLookup)
+				)
 				{
-					int count = Math.Min((int)(indexReader.BaseStream.Length / 4), (int)(lookupReader.BaseStream.Length / 12));
+					int count = Math.Min(
+						(int)(indexReader.BaseStream.Length / 4),
+						(int)(lookupReader.BaseStream.Length / 12)
+					);
 
 					var lists = new HuedTileList[8][];
 
@@ -272,7 +283,9 @@ namespace Ultima
 							for (int j = 0; j < tileCount; ++j)
 							{
 								StaticTile cur = staTiles[j];
-								lists[cur.m_X & 0x7][cur.m_Y & 0x7].Add(Art.GetLegalItemID(cur.m_ID), cur.m_Hue, cur.m_Z);
+								lists[cur.m_X & 0x7]
+									[cur.m_Y & 0x7]
+									.Add(Art.GetLegalItemID(cur.m_ID), cur.m_Hue, cur.m_Z);
 							}
 
 							var tiles = new HuedTile[8][][];

@@ -1,102 +1,102 @@
 using System;
-using Server;
-using Server.Mobiles;
-using Server.Commands.Generic;
 using System.Collections.Generic;
-using Server.Targeting;
+using Server;
+using Server.Commands.Generic;
 using Server.Items;
-using Server.Spells;
+using Server.Mobiles;
 using Server.Network;
+using Server.Spells;
+using Server.Targeting;
 
 namespace Server.Commands
 {
 	public class ItemSaveInfoCommand
 	{
 		private static int target_number = 0;
-		
+
 		public static void Initialize()
 		{
-	      	CommandSystem.Register( "Item", AccessLevel.Player, new CommandEventHandler( ItemSaveInfo_OnCommand ) );
+			CommandSystem.Register("Item", AccessLevel.Player, new CommandEventHandler(ItemSaveInfo_OnCommand));
 		}
 
-		[Usage( "Status" )]
-		[Description( "°èÁ¤ ±Ý°í °ñµå È®ÀÎ." )]
-		public static void ItemSaveInfo_OnCommand( CommandEventArgs e )
+		[Usage("Status")]
+		[Description("ï¿½ï¿½ï¿½ï¿½ ï¿½Ý°ï¿½ ï¿½ï¿½ï¿½ È®ï¿½ï¿½.")]
+		public static void ItemSaveInfo_OnCommand(CommandEventArgs e)
 		{
 			var sub = "";
-			if (e.Length > 0 )
+			if (e.Length > 0)
 				sub = e.GetString(0);
-			
-			if( e.Mobile is PlayerMobile )
+
+			if (e.Mobile is PlayerMobile)
 			{
 				PlayerMobile pm = e.Mobile as PlayerMobile;
-				if( pm.IsStaff() && sub == "" )
+				if (pm.IsStaff() && sub == "")
 				{
-					for( int i = 0; i < 100; i++ )
+					for (int i = 0; i < 100; i++)
 					{
-						if( pm.ItemSave[i] == null )
+						if (pm.ItemSave[i] == null)
 							continue;
-						else if ( pm.ItemSave[i] is Item )
+						else if (pm.ItemSave[i] is Item)
 						{
 							Item item = pm.ItemSave[i] as Item;
 							string name = item.Name;
-							if( item.Name == null )
+							if (item.Name == null)
 								name = String.Format("#{0}", item.LabelNumber);
-							pm.SendMessage("{0}¹ø : {1}", i + 1, name );
+							pm.SendMessage("{0}ï¿½ï¿½ : {1}", i + 1, name);
 						}
 					}
 				}
-				if( sub != "" )
+				if (sub != "")
 				{
 					sub.ToLower();
 					bool savecheck = sub.Contains("save");
 					bool loadcheck = sub.Contains("load");
-					Int32.TryParse(sub.Substring(4), out target_number );
-					
-					if( target_number > 100 )
+					Int32.TryParse(sub.Substring(4), out target_number);
+
+					if (target_number > 100)
 						return;
-					
-					if( savecheck )
+
+					if (savecheck)
 					{
 						e.Mobile.Target = new InternalTarget();
 					}
-					else if( loadcheck && target_number >= 1 && pm.ItemSave[target_number -1] is Item )
+					else if (loadcheck && target_number >= 1 && pm.ItemSave[target_number - 1] is Item)
 					{
-						Item item = pm.ItemSave[target_number -1] as Item;
+						Item item = pm.ItemSave[target_number - 1] as Item;
 						if (e.Mobile.InRange(item.GetWorldLocation(), 1))
 							item.OnDoubleClick(e.Mobile);
 						else
 						{
 							bool check = false;
 							Container pack = pm.Backpack;
-							if( pack != null )
+							if (pack != null)
 							{
 								List<Item> Search = pack.FindItemsByType<Item>();
-								for ( int i = Search.Count -1; i >= 0; i--)
+								for (int i = Search.Count - 1; i >= 0; i--)
 								{
 									Item Next = Search[i];
-									if( Next.GetType() == item.GetType() )
+									if (Next.GetType() == item.GetType())
 									{
 										check = true;
-										pm.ItemSave[target_number -1] = Next;
+										pm.ItemSave[target_number - 1] = Next;
 										Next.OnDoubleClick(e.Mobile);
 										break;
 									}
 								}
 							}
-							if( !check )
+							if (!check)
 							{
-								pm.ItemSave[target_number -1] = null;
-								pm.SendMessage("ÇØ´ç ¾ÆÀÌÅÛÀÌ ¾ø°Å³ª »ç¿ëÇÒ ¼ö ¾ø½À´Ï´Ù!");
+								pm.ItemSave[target_number - 1] = null;
+								pm.SendMessage("ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Å³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½!");
 							}
 						}
 					}
 				}
-				
+
 				/*
 				else if( sub == "save1" )
 				{
-					//Å¸°Ù1 ÁöÁ¤
+					//Å¸ï¿½ï¿½1 ï¿½ï¿½ï¿½ï¿½
 					target_number = 1;
 				}
 				else if( pm.ItemSave[target_number -1] != null && sub == "load1" )
@@ -111,7 +111,7 @@ namespace Server.Commands
 				}
 				else if( sub == "save2" )
 				{
-					//Å¸°Ù1 ÁöÁ¤
+					//Å¸ï¿½ï¿½1 ï¿½ï¿½ï¿½ï¿½
 					e.Mobile.Target = new InternalTarget();
 					target_number = 2;
 				}
@@ -123,12 +123,12 @@ namespace Server.Commands
 						if (e.Mobile.InRange(i.GetWorldLocation(), 1))
 							i.OnDoubleClick(e.Mobile);
 						else
-							pm.SendMessage("Á» ´õ °¡±îÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù!");
+							pm.SendMessage("ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Õ´Ï´ï¿½!");
 					}
 				}
 				else if( sub == "save3" )
 				{
-					//Å¸°Ù1 ÁöÁ¤
+					//Å¸ï¿½ï¿½1 ï¿½ï¿½ï¿½ï¿½
 					e.Mobile.Target = new InternalTarget();
 					target_number = 3;
 				}
@@ -140,12 +140,12 @@ namespace Server.Commands
 						if (e.Mobile.InRange(i.GetWorldLocation(), 1))
 							i.OnDoubleClick(e.Mobile);
 						else
-							pm.SendMessage("Á» ´õ °¡±îÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù!");
+							pm.SendMessage("ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Õ´Ï´ï¿½!");
 					}
 				}
 				else if( sub == "save4" )
 				{
-					//Å¸°Ù1 ÁöÁ¤
+					//Å¸ï¿½ï¿½1 ï¿½ï¿½ï¿½ï¿½
 					e.Mobile.Target = new InternalTarget();
 					target_number = 4;
 				}
@@ -157,12 +157,12 @@ namespace Server.Commands
 						if (e.Mobile.InRange(i.GetWorldLocation(), 1))
 							i.OnDoubleClick(e.Mobile);
 						else
-							pm.SendMessage("Á» ´õ °¡±îÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù!");
+							pm.SendMessage("ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Õ´Ï´ï¿½!");
 					}
 				}
 				else if( sub == "save5" )
 				{
-					//Å¸°Ù1 ÁöÁ¤
+					//Å¸ï¿½ï¿½1 ï¿½ï¿½ï¿½ï¿½
 					e.Mobile.Target = new InternalTarget();
 					target_number = 5;
 				}
@@ -174,12 +174,12 @@ namespace Server.Commands
 						if (e.Mobile.InRange(i.GetWorldLocation(), 1))
 							i.OnDoubleClick(e.Mobile);
 						else
-							pm.SendMessage("Á» ´õ °¡±îÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù!");
+							pm.SendMessage("ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Õ´Ï´ï¿½!");
 					}
 				}
 				else if( sub == "save6" )
 				{
-					//Å¸°Ù1 ÁöÁ¤
+					//Å¸ï¿½ï¿½1 ï¿½ï¿½ï¿½ï¿½
 					e.Mobile.Target = new InternalTarget();
 					target_number = 6;
 				}
@@ -191,12 +191,12 @@ namespace Server.Commands
 						if (e.Mobile.InRange(i.GetWorldLocation(), 1))
 							i.OnDoubleClick(e.Mobile);
 						else
-							pm.SendMessage("Á» ´õ °¡±îÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù!");
+							pm.SendMessage("ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Õ´Ï´ï¿½!");
 					}
 				}
 				else if( sub == "save7" )
 				{
-					//Å¸°Ù1 ÁöÁ¤
+					//Å¸ï¿½ï¿½1 ï¿½ï¿½ï¿½ï¿½
 					e.Mobile.Target = new InternalTarget();
 					target_number = 7;
 				}
@@ -208,12 +208,12 @@ namespace Server.Commands
 						if (e.Mobile.InRange(i.GetWorldLocation(), 1))
 							i.OnDoubleClick(e.Mobile);
 						else
-							pm.SendMessage("Á» ´õ °¡±îÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù!");
+							pm.SendMessage("ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Õ´Ï´ï¿½!");
 					}
 				}
 				else if( sub == "save8" )
 				{
-					//Å¸°Ù1 ÁöÁ¤
+					//Å¸ï¿½ï¿½1 ï¿½ï¿½ï¿½ï¿½
 					e.Mobile.Target = new InternalTarget();
 					target_number = 8;
 				}
@@ -225,12 +225,12 @@ namespace Server.Commands
 						if (e.Mobile.InRange(i.GetWorldLocation(), 1))
 							i.OnDoubleClick(e.Mobile);
 						else
-							pm.SendMessage("Á» ´õ °¡±îÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù!");
+							pm.SendMessage("ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Õ´Ï´ï¿½!");
 					}
 				}
 				else if( sub == "save9" )
 				{
-					//Å¸°Ù1 ÁöÁ¤
+					//Å¸ï¿½ï¿½1 ï¿½ï¿½ï¿½ï¿½
 					e.Mobile.Target = new InternalTarget();
 					target_number = 9;
 				}
@@ -242,12 +242,12 @@ namespace Server.Commands
 						if (e.Mobile.InRange(i.GetWorldLocation(), 1))
 							i.OnDoubleClick(e.Mobile);
 						else
-							pm.SendMessage("Á» ´õ °¡±îÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù!");
+							pm.SendMessage("ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Õ´Ï´ï¿½!");
 					}
 				}
 				else if( sub == "save10" )
 				{
-					//Å¸°Ù1 ÁöÁ¤
+					//Å¸ï¿½ï¿½1 ï¿½ï¿½ï¿½ï¿½
 					e.Mobile.Target = new InternalTarget();
 					target_number = 10;
 				}
@@ -259,7 +259,7 @@ namespace Server.Commands
 						if (e.Mobile.InRange(i.GetWorldLocation(), 1))
 							i.OnDoubleClick(e.Mobile);
 						else
-							pm.SendMessage("Á» ´õ °¡±îÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù!");
+							pm.SendMessage("ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Õ´Ï´ï¿½!");
 					}
 				}
 				*/
@@ -268,106 +268,106 @@ namespace Server.Commands
 
 		private class InternalTarget : Target
 		{
-			public InternalTarget() :  base ( 8, false, TargetFlags.None )
-			{
-			}
+			public InternalTarget()
+				: base(8, false, TargetFlags.None) { }
 
-			protected override void OnTarget( Mobile from, object targeted )
+			protected override void OnTarget(Mobile from, object targeted)
 			{
-				if( target_number > 0 && from is PlayerMobile )
+				if (target_number > 0 && from is PlayerMobile)
 				{
 					PlayerMobile pm = from as PlayerMobile;
-					if( targeted is Item )
+					if (targeted is Item)
 					{
 						Item item = targeted as Item;
 						pm.ItemSave[target_number - 1] = item;
 					}
 					else
-						pm.SendMessage("¾ÆÀÌÅÛÀÌ ¾Æ´Õ´Ï´Ù!");
+						pm.SendMessage("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´Õ´Ï´ï¿½!");
 				}
-			}			
+			}
 		}
 	}
+
 	public class MonsterSaveInfoCommand
 	{
 		private static int target_number = 0;
-		
+
 		public static void Initialize()
 		{
-	      		CommandSystem.Register( "Monster", AccessLevel.Player, new CommandEventHandler( MonsterSaveInfo_OnCommand ) );
+			CommandSystem.Register("Monster", AccessLevel.Player, new CommandEventHandler(MonsterSaveInfo_OnCommand));
 		}
 
-		[Usage( "Status" )]
-		[Description( "°èÁ¤ ±Ý°í °ñµå È®ÀÎ." )]
-		public static void MonsterSaveInfo_OnCommand( CommandEventArgs e )
+		[Usage("Status")]
+		[Description("ï¿½ï¿½ï¿½ï¿½ ï¿½Ý°ï¿½ ï¿½ï¿½ï¿½ È®ï¿½ï¿½.")]
+		public static void MonsterSaveInfo_OnCommand(CommandEventArgs e)
 		{
 			var sub = "";
-			if (e.Length > 0 )
+			if (e.Length > 0)
 				sub = e.GetString(0);
-			
-			if( e.Mobile is PlayerMobile )
+
+			if (e.Mobile is PlayerMobile)
 			{
 				PlayerMobile pm = e.Mobile as PlayerMobile;
-				if( pm.IsStaff() && sub == "" )
+				if (pm.IsStaff() && sub == "")
 				{
-					for( int i = 0; i < 100; i++ )
+					for (int i = 0; i < 100; i++)
 					{
-						if( pm.MonsterSave[i] == null )
+						if (pm.MonsterSave[i] == null)
 							continue;
 						else
 						{
 							string item = pm.MonsterSave[i];
-							pm.SendMessage("{0}¹ø : {1}", i + 1, item );
+							pm.SendMessage("{0}ï¿½ï¿½ : {1}", i + 1, item);
 						}
 					}
 				}
-				if( sub != "" )
+				if (sub != "")
 				{
 					sub.ToLower();
 					bool savecheck = sub.Contains("save");
 					bool loadcheck = sub.Contains("load");
-					Int32.TryParse(sub.Substring(4), out target_number );
-					
-					if( target_number > 100 )
+					Int32.TryParse(sub.Substring(4), out target_number);
+
+					if (target_number > 100)
 						return;
-					
-					if( savecheck )
+
+					if (savecheck)
 					{
 						e.Mobile.Target = new InternalTarget();
 					}
-					else if( loadcheck && target_number >= 1 )
+					else if (loadcheck && target_number >= 1)
 					{
-						string item = pm.MonsterSave[target_number -1];
-						
+						string item = pm.MonsterSave[target_number - 1];
+
 						List<Mobile> Search = new List<Mobile>();
 						IPooledEnumerable eable = pm.GetMobilesInRange(20);
 
 						bool check = false;
-						
-						foreach ( Mobile Next in eable )
+
+						foreach (Mobile Next in eable)
 						{
-							if( Next.GetType().Name == item && pm.CanBeHarmful( Next ) && pm.CanSee( Next ) )
+							if (Next.GetType().Name == item && pm.CanBeHarmful(Next) && pm.CanSee(Next))
 							{
-								Search.Add( Next );
+								Search.Add(Next);
 								//e.Mobile.OnDoubleClick(bc);
 								break;
 							}
 						}
 						eable.Free();
-						if( Search.Count > 0 )
+						if (Search.Count > 0)
 						{
-							if( Search[0] is BaseCreature )
+							if (Search[0] is BaseCreature)
 							{
 								BaseCreature bc = Search[0] as BaseCreature;
-								if( bc.IsMonster ) 
+								if (bc.IsMonster)
 								{
 									bc.OnDoubleClick(pm);
-									if( pm.Target != null )
+									if (pm.Target != null)
 									{
-										pm.Target.Invoke( pm, bc );
+										pm.Target.Invoke(pm, bc);
 										pm.ClearTarget();
 										NetState ns = pm.NetState;
-										if( pm != null )
+										if (pm != null)
 											ns.Send(CancelTarget.Instance);
 									}
 									pm.Combatant = bc;
@@ -375,7 +375,7 @@ namespace Server.Commands
 							}
 						}
 						else
-							pm.SendMessage("ÇØ´ç ¸ó½ºÅÍ°¡ ¾ø½À´Ï´Ù!");
+							pm.SendMessage("ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½!");
 					}
 				}
 			}
@@ -383,22 +383,21 @@ namespace Server.Commands
 
 		private class InternalTarget : Target
 		{
-			public InternalTarget() :  base ( 8, false, TargetFlags.None )
-			{
-			}
+			public InternalTarget()
+				: base(8, false, TargetFlags.None) { }
 
-			protected override void OnTarget( Mobile from, object targeted )
+			protected override void OnTarget(Mobile from, object targeted)
 			{
-				if( target_number > 0 && from is PlayerMobile )
+				if (target_number > 0 && from is PlayerMobile)
 				{
 					PlayerMobile pm = from as PlayerMobile;
-					if( targeted is Mobile )
+					if (targeted is Mobile)
 					{
 						Mobile item = targeted as Mobile;
-						if( item is BaseCreature )
+						if (item is BaseCreature)
 						{
 							BaseCreature bc = item as BaseCreature;
-							if( bc.IsMonster )
+							if (bc.IsMonster)
 							{
 								pm.MonsterSave[target_number - 1] = bc.GetType().Name;
 								pm.Combatant = bc;
@@ -414,89 +413,94 @@ namespace Server.Commands
 								*/
 							}
 							else
-								pm.SendMessage("¸ó½ºÅÍ°¡ ¾Æ´Õ´Ï´Ù!");
+								pm.SendMessage("ï¿½ï¿½ï¿½Í°ï¿½ ï¿½Æ´Õ´Ï´ï¿½!");
 						}
 						else
-							pm.SendMessage("¸ó½ºÅÍ°¡ ¾Æ´Õ´Ï´Ù!");
+							pm.SendMessage("ï¿½ï¿½ï¿½Í°ï¿½ ï¿½Æ´Õ´Ï´ï¿½!");
 					}
 					else
-						pm.SendMessage("¸ó½ºÅÍ°¡ ¾Æ´Õ´Ï´Ù!");
+						pm.SendMessage("ï¿½ï¿½ï¿½Í°ï¿½ ï¿½Æ´Õ´Ï´ï¿½!");
 				}
-			}			
+			}
 		}
 	}
+
 	public class PetSaveInfoCommand
 	{
 		private static int target_number = 0;
-		
+
 		public static void Initialize()
 		{
-	      		CommandSystem.Register( "Pet", AccessLevel.Player, new CommandEventHandler( PetSaveInfo_OnCommand ) );
+			CommandSystem.Register("Pet", AccessLevel.Player, new CommandEventHandler(PetSaveInfo_OnCommand));
 		}
 
-		[Usage( "Status" )]
-		[Description( "°èÁ¤ ±Ý°í °ñµå È®ÀÎ." )]
-		public static void PetSaveInfo_OnCommand( CommandEventArgs e )
+		[Usage("Status")]
+		[Description("ï¿½ï¿½ï¿½ï¿½ ï¿½Ý°ï¿½ ï¿½ï¿½ï¿½ È®ï¿½ï¿½.")]
+		public static void PetSaveInfo_OnCommand(CommandEventArgs e)
 		{
 			var sub = "";
-			if (e.Length > 0 )
+			if (e.Length > 0)
 				sub = e.GetString(0);
-			
-			if( e.Mobile is PlayerMobile )
+
+			if (e.Mobile is PlayerMobile)
 			{
 				PlayerMobile pm = e.Mobile as PlayerMobile;
-				if( pm.IsStaff() && sub == "" )
+				if (pm.IsStaff() && sub == "")
 				{
-					for( int i = 0; i < 100; i++ )
+					for (int i = 0; i < 100; i++)
 					{
-						if( pm.PetSave[i] == null )
+						if (pm.PetSave[i] == null)
 							continue;
 						else
 						{
 							Mobile item = pm.PetSave[i];
-							pm.SendMessage("{0}¹ø : {1}", i + 1, item );
+							pm.SendMessage("{0}ï¿½ï¿½ : {1}", i + 1, item);
 						}
 					}
 				}
-				if( sub != "" )
+				if (sub != "")
 				{
 					sub.ToLower();
 					bool savecheck = sub.Contains("save");
 					bool loadcheck = sub.Contains("load");
-					Int32.TryParse(sub.Substring(4), out target_number );
-					
-					if( target_number > 100 )
+					Int32.TryParse(sub.Substring(4), out target_number);
+
+					if (target_number > 100)
 						return;
-					
-					if( savecheck )
+
+					if (savecheck)
 					{
 						e.Mobile.Target = new InternalTarget();
 					}
-					else if( loadcheck && target_number >= 1 )
+					else if (loadcheck && target_number >= 1)
 					{
-						Mobile item = pm.PetSave[target_number -1];
-						
-						if( item != null && ( pm.Mount == item || pm.InRange( item.Location, 20 ) && pm.CanSee( item ) ) && item is BaseCreature )
+						Mobile item = pm.PetSave[target_number - 1];
+
+						if (
+							item != null
+							&& (pm.Mount == item || pm.InRange(item.Location, 20) && pm.CanSee(item))
+							&& item is BaseCreature
+						)
 						{
 							BaseCreature bc = item as BaseCreature;
-							if ( !bc.IsMonster )
+							if (!bc.IsMonster)
 							{
-								if( pm.Mount == item )
-									pm.OnDoubleClick( pm );
+								if (pm.Mount == item)
+									pm.OnDoubleClick(pm);
 								else
-									bc.OnDoubleClick( pm );
-								if( pm.Target != null )
+									bc.OnDoubleClick(pm);
+								if (pm.Target != null)
 								{
-									pm.Target.Invoke( pm, bc );
+									pm.Target.Invoke(pm, bc);
 									pm.ClearTarget();
 									NetState ns = pm.NetState;
-									if( pm != null )
+									if (pm != null)
 										ns.Send(CancelTarget.Instance);
 								}
 							}
 						}
 						else
-							pm.SendMessage("ÇØ´ç ÆêÀÌ ¾ø½À´Ï´Ù!");
+							pm.SendMessage("ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½!");
 					}
 				}
 			}
@@ -504,22 +508,21 @@ namespace Server.Commands
 
 		private class InternalTarget : Target
 		{
-			public InternalTarget() :  base ( 8, false, TargetFlags.None )
-			{
-			}
+			public InternalTarget()
+				: base(8, false, TargetFlags.None) { }
 
-			protected override void OnTarget( Mobile from, object targeted )
+			protected override void OnTarget(Mobile from, object targeted)
 			{
-				if( target_number > 0 && from is PlayerMobile )
+				if (target_number > 0 && from is PlayerMobile)
 				{
 					PlayerMobile pm = from as PlayerMobile;
-					if( targeted is Mobile )
+					if (targeted is Mobile)
 					{
 						Mobile item = targeted as Mobile;
-						if( item is BaseCreature )
+						if (item is BaseCreature)
 						{
 							BaseCreature bc = item as BaseCreature;
-							if( !bc.IsMonster )
+							if (!bc.IsMonster)
 							{
 								pm.PetSave[target_number - 1] = bc;
 								/*
@@ -534,83 +537,84 @@ namespace Server.Commands
 								*/
 							}
 							else
-								pm.SendMessage("ÆêÀÌ ¾Æ´Õ´Ï´Ù!");
+								pm.SendMessage("ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´Õ´Ï´ï¿½!");
 						}
 						else
-							pm.SendMessage("ÆêÀÌ ¾Æ´Õ´Ï´Ù!");
+							pm.SendMessage("ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´Õ´Ï´ï¿½!");
 					}
 					else
-						pm.SendMessage("ÆêÀÌ ¾Æ´Õ´Ï´Ù!");
+						pm.SendMessage("ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´Õ´Ï´ï¿½!");
 				}
-			}			
+			}
 		}
-	}	
+	}
+
 	public class PlayerSaveInfoCommand
 	{
 		private static int target_number = 0;
-		
+
 		public static void Initialize()
 		{
-	      		CommandSystem.Register( "Player", AccessLevel.Player, new CommandEventHandler( PlayerSaveInfo_OnCommand ) );
+			CommandSystem.Register("Player", AccessLevel.Player, new CommandEventHandler(PlayerSaveInfo_OnCommand));
 		}
 
-		[Usage( "Status" )]
-		[Description( "°èÁ¤ ±Ý°í °ñµå È®ÀÎ." )]
-		public static void PlayerSaveInfo_OnCommand( CommandEventArgs e )
+		[Usage("Status")]
+		[Description("ï¿½ï¿½ï¿½ï¿½ ï¿½Ý°ï¿½ ï¿½ï¿½ï¿½ È®ï¿½ï¿½.")]
+		public static void PlayerSaveInfo_OnCommand(CommandEventArgs e)
 		{
 			var sub = "";
-			if (e.Length > 0 )
+			if (e.Length > 0)
 				sub = e.GetString(0);
-			
-			if( e.Mobile is PlayerMobile )
+
+			if (e.Mobile is PlayerMobile)
 			{
 				PlayerMobile pm = e.Mobile as PlayerMobile;
-				if( pm.IsStaff() && sub == "" )
+				if (pm.IsStaff() && sub == "")
 				{
-					for( int i = 0; i < 100; i++ )
+					for (int i = 0; i < 100; i++)
 					{
-						if( pm.PlayerSave[i] == null )
+						if (pm.PlayerSave[i] == null)
 							continue;
 						else
 						{
 							Mobile item = pm.PlayerSave[i];
-							pm.SendMessage("{0}¹ø : {1}", i + 1, item );
+							pm.SendMessage("{0}ï¿½ï¿½ : {1}", i + 1, item);
 						}
 					}
 				}
-				if( sub != "" )
+				if (sub != "")
 				{
 					sub.ToLower();
 					bool savecheck = sub.Contains("save");
 					bool loadcheck = sub.Contains("load");
-					Int32.TryParse(sub.Substring(4), out target_number );
-					
-					if( target_number > 100 )
+					Int32.TryParse(sub.Substring(4), out target_number);
+
+					if (target_number > 100)
 						return;
-					
-					if( savecheck )
+
+					if (savecheck)
 					{
 						e.Mobile.Target = new InternalTarget();
 					}
-					else if( loadcheck && target_number >= 1 )
+					else if (loadcheck && target_number >= 1)
 					{
-						Mobile item = pm.PlayerSave[target_number -1];
-						
-						if( item != null && pm.InRange( item.Location, 20 ) && pm.CanSee( item ) && item is PlayerMobile )
+						Mobile item = pm.PlayerSave[target_number - 1];
+
+						if (item != null && pm.InRange(item.Location, 20) && pm.CanSee(item) && item is PlayerMobile)
 						{
 							PlayerMobile bc = item as PlayerMobile;
-							bc.OnDoubleClick( pm );
-							if( pm.Spell != null )
+							bc.OnDoubleClick(pm);
+							if (pm.Spell != null)
 							{
-								pm.Target.Invoke( pm, bc );
+								pm.Target.Invoke(pm, bc);
 								pm.ClearTarget();
 								NetState ns = pm.NetState;
-								if( pm != null )
+								if (pm != null)
 									ns.Send(CancelTarget.Instance);
 							}
 						}
 						else
-							pm.SendMessage("ÇØ´ç À¯Àú°¡ ¾ø½À´Ï´Ù!");
+							pm.SendMessage("ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½!");
 					}
 				}
 			}
@@ -618,19 +622,18 @@ namespace Server.Commands
 
 		private class InternalTarget : Target
 		{
-			public InternalTarget() :  base ( 8, false, TargetFlags.None )
-			{
-			}
+			public InternalTarget()
+				: base(8, false, TargetFlags.None) { }
 
-			protected override void OnTarget( Mobile from, object targeted )
+			protected override void OnTarget(Mobile from, object targeted)
 			{
-				if( target_number > 0 && from is PlayerMobile )
+				if (target_number > 0 && from is PlayerMobile)
 				{
 					PlayerMobile pm = from as PlayerMobile;
-					if( targeted is Mobile )
+					if (targeted is Mobile)
 					{
 						Mobile item = targeted as Mobile;
-						if( item is PlayerMobile )
+						if (item is PlayerMobile)
 						{
 							PlayerMobile bc = item as PlayerMobile;
 							pm.PlayerSave[target_number - 1] = bc;
@@ -643,15 +646,15 @@ namespace Server.Commands
 								if( pm != null )
 									ns.Send(CancelTarget.Instance);
 							}
-							*/							
+							*/
 						}
 						else
-							pm.SendMessage("À¯Àú°¡ ¾Æ´Õ´Ï´Ù!");
+							pm.SendMessage("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´Õ´Ï´ï¿½!");
 					}
 					else
-						pm.SendMessage("À¯Àú°¡ ¾Æ´Õ´Ï´Ù!");
+						pm.SendMessage("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´Õ´Ï´ï¿½!");
 				}
-			}			
+			}
 		}
-	}		
+	}
 }

@@ -2,204 +2,206 @@ using System;
 
 namespace Server.Items
 {
-    public class ArcaneBookShelfAddonEast : BaseAddonContainer
-    {
-        public override BaseAddonContainerDeed Deed { get { return new ArcaneBookShelfDeedEast(); } }
-        public override bool RetainDeedHue { get { return true; } }
-        public override int DefaultGumpID { get { return 0x107; } }
-        public override int DefaultDropSound { get { return 0x42; } }
+	public class ArcaneBookShelfAddonEast : BaseAddonContainer
+	{
+		public override BaseAddonContainerDeed Deed
+		{
+			get { return new ArcaneBookShelfDeedEast(); }
+		}
+		public override bool RetainDeedHue
+		{
+			get { return true; }
+		}
+		public override int DefaultGumpID
+		{
+			get { return 0x107; }
+		}
+		public override int DefaultDropSound
+		{
+			get { return 0x42; }
+		}
 
-        public override bool ForceShowProperties { get { return true; } }
+		public override bool ForceShowProperties
+		{
+			get { return true; }
+		}
 
-        [Constructable]
-        public ArcaneBookShelfAddonEast()
-            : base(0x3086)
-        {
-            AddComponent(new AddonContainerComponent(0x3087), 0, -1, 0);
-        }
+		[Constructable]
+		public ArcaneBookShelfAddonEast()
+			: base(0x3086)
+		{
+			AddComponent(new AddonContainerComponent(0x3087), 0, -1, 0);
+		}
 
-        public ArcaneBookShelfAddonEast(Serial serial)
-            : base(serial)
-        {
-        }
+		public ArcaneBookShelfAddonEast(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.WriteEncodedInt(0); // version
-        }
+			writer.WriteEncodedInt(0); // version
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-    public class ArcaneBookShelfDeedEast : BaseAddonContainerDeed
-    {
-        public override BaseAddonContainer Addon { get { return new ArcaneBookShelfAddonEast(); } }
-        public override int LabelNumber { get { return 1073371; } } // arcane bookshelf (east)
+	public class ArcaneBookShelfDeedEast : BaseAddonContainerDeed
+	{
+		public override BaseAddonContainer Addon
+		{
+			get { return new ArcaneBookShelfAddonEast(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1073371; }
+		} // arcane bookshelf (east)
 
-        [Constructable]
-        public ArcaneBookShelfDeedEast()
-            : base()
-        {
-        }
+		[Constructable]
+		public ArcaneBookShelfDeedEast()
+			: base() { }
 
-        public ArcaneBookShelfDeedEast(Serial serial)
-            : base(serial)
-        {
-        }
+		public ArcaneBookShelfDeedEast(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.WriteEncodedInt(0); // version
-        }
+			writer.WriteEncodedInt(0); // version
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-    public class ArcaneBookshelfEastAddon : BaseAddon
-    {
-        [Constructable]
-        public ArcaneBookshelfEastAddon()
-        {
-            this.AddComponent(new AddonComponent(0x3084), 0, 0, 0);
-            this.AddComponent(new AddonComponent(0x3085), -1, 0, 0);
-        }
+	public class ArcaneBookshelfEastAddon : BaseAddon
+	{
+		[Constructable]
+		public ArcaneBookshelfEastAddon()
+		{
+			this.AddComponent(new AddonComponent(0x3084), 0, 0, 0);
+			this.AddComponent(new AddonComponent(0x3085), -1, 0, 0);
+		}
 
-        public ArcaneBookshelfEastAddon(Serial serial)
-            : base(serial)
-        {
-        }
+		public ArcaneBookshelfEastAddon(Serial serial)
+			: base(serial) { }
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new ArcaneBookshelfEastDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override BaseAddonDeed Deed
+		{
+			get { return new ArcaneBookshelfEastDeed(); }
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            Timer.DelayCall(TimeSpan.FromSeconds(10), Replace);
-        }
+			int version = reader.ReadEncodedInt();
 
-        private void Replace()
-        {
-            Server.Multis.BaseHouse house = Server.Multis.BaseHouse.FindHouseAt(this);
+			Timer.DelayCall(TimeSpan.FromSeconds(10), Replace);
+		}
 
-            if (house != null)
-            {
-                Point3D p = this.Location;
-                Map map = this.Map;
+		private void Replace()
+		{
+			Server.Multis.BaseHouse house = Server.Multis.BaseHouse.FindHouseAt(this);
 
-                house.Addons.Remove(this);
-                Delete();
+			if (house != null)
+			{
+				Point3D p = this.Location;
+				Map map = this.Map;
 
-                var addon = new ArcaneBookShelfAddonSouth();
-                addon.MoveToWorld(p, map);
-                house.Addons[addon] = house.Owner;
-            }
-        }
-    }
+				house.Addons.Remove(this);
+				Delete();
 
-    public class ArcaneBookshelfEastDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public ArcaneBookshelfEastDeed()
-        {
-        }
+				var addon = new ArcaneBookShelfAddonSouth();
+				addon.MoveToWorld(p, map);
+				house.Addons[addon] = house.Owner;
+			}
+		}
+	}
 
-        public ArcaneBookshelfEastDeed(Serial serial)
-            : base(serial)
-        {
-        }
+	public class ArcaneBookshelfEastDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public ArcaneBookshelfEastDeed() { }
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new ArcaneBookshelfEastAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073371;
-            }
-        }// arcane bookshelf (east)
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public ArcaneBookshelfEastDeed(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override BaseAddon Addon
+		{
+			get { return new ArcaneBookshelfEastAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1073371; }
+		} // arcane bookshelf (east)
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
+			writer.WriteEncodedInt(0); // version
+		}
 
-            Timer.DelayCall(TimeSpan.FromSeconds(10), Replace);
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        private void Replace()
-        {
-            Container c = this.Parent as Container;
+			int version = reader.ReadEncodedInt();
 
-            if (c != null)
-            {
-                var deed = new ArcaneBookShelfDeedEast();
-                c.DropItem(deed);
-            }
-            else if (this.Parent == null)
-            {
-                Server.Multis.BaseHouse house = Server.Multis.BaseHouse.FindHouseAt(this);
+			Timer.DelayCall(TimeSpan.FromSeconds(10), Replace);
+		}
 
-                var deed = new ArcaneBookShelfDeedEast();
-                deed.MoveToWorld(this.Location, this.Map);
+		private void Replace()
+		{
+			Container c = this.Parent as Container;
 
-                deed.IsLockedDown = IsLockedDown;
-                deed.IsSecure = IsSecure;
-                deed.Movable = Movable;
+			if (c != null)
+			{
+				var deed = new ArcaneBookShelfDeedEast();
+				c.DropItem(deed);
+			}
+			else if (this.Parent == null)
+			{
+				Server.Multis.BaseHouse house = Server.Multis.BaseHouse.FindHouseAt(this);
 
-                if (house != null && house.LockDowns.ContainsKey(this))
-                {
-                    house.LockDowns.Remove(this);
-                    house.LockDowns.Add(deed, house.Owner);
-                }
-                else if (house != null && house.IsSecure(this))
-                {
-                    house.ReleaseSecure(house.Owner, this);
-                    house.AddSecure(house.Owner, deed);
-                }
-            }
+				var deed = new ArcaneBookShelfDeedEast();
+				deed.MoveToWorld(this.Location, this.Map);
 
-            Delete();
-        }
-    }
+				deed.IsLockedDown = IsLockedDown;
+				deed.IsSecure = IsSecure;
+				deed.Movable = Movable;
+
+				if (house != null && house.LockDowns.ContainsKey(this))
+				{
+					house.LockDowns.Remove(this);
+					house.LockDowns.Add(deed, house.Owner);
+				}
+				else if (house != null && house.IsSecure(this))
+				{
+					house.ReleaseSecure(house.Owner, this);
+					house.AddSecure(house.Owner, deed);
+				}
+			}
+
+			Delete();
+		}
+	}
 }

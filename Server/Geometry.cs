@@ -19,14 +19,21 @@ namespace Server
 		}
 
 		public Point2D(IPoint2D p)
-			: this(p.X, p.Y)
-		{ }
+			: this(p.X, p.Y) { }
 
 		[CommandProperty(AccessLevel.Counselor)]
-		public int X { get { return m_X; } set { m_X = value; } }
+		public int X
+		{
+			get { return m_X; }
+			set { m_X = value; }
+		}
 
 		[CommandProperty(AccessLevel.Counselor)]
-		public int Y { get { return m_Y; } set { m_Y = value; } }
+		public int Y
+		{
+			get { return m_Y; }
+			set { m_Y = value; }
+		}
 
 		public override string ToString()
 		{
@@ -66,7 +73,7 @@ namespace Server
 			{
 				return CompareTo((Point2D)other);
 			}
-			
+
 			if (other == null)
 			{
 				return -1;
@@ -228,21 +235,31 @@ namespace Server
 		}
 
 		public Point3D(IPoint3D p)
-			: this(p.X, p.Y, p.Z)
-		{ }
+			: this(p.X, p.Y, p.Z) { }
 
 		public Point3D(IPoint2D p, int z)
-			: this(p.X, p.Y, z)
-		{ }
+			: this(p.X, p.Y, z) { }
 
 		[CommandProperty(AccessLevel.Counselor)]
-		public int X { get { return m_X; } set { m_X = value; } }
+		public int X
+		{
+			get { return m_X; }
+			set { m_X = value; }
+		}
 
 		[CommandProperty(AccessLevel.Counselor)]
-		public int Y { get { return m_Y; } set { m_Y = value; } }
+		public int Y
+		{
+			get { return m_Y; }
+			set { m_Y = value; }
+		}
 
 		[CommandProperty(AccessLevel.Counselor)]
-		public int Z { get { return m_Z; } set { m_Z = value; } }
+		public int Z
+		{
+			get { return m_Z; }
+			set { m_Z = value; }
+		}
 
 		public override string ToString()
 		{
@@ -348,7 +365,7 @@ namespace Server
 			{
 				return CompareTo((Point3D)other);
 			}
-			
+
 			if (other == null)
 			{
 				return -1;
@@ -410,26 +427,51 @@ namespace Server
 				Convert.ToInt32(param1),
 				Convert.ToInt32(param2),
 				Convert.ToInt32(param3),
-				Convert.ToInt32(param4));
+				Convert.ToInt32(param4)
+			);
 		}
 
 		[CommandProperty(AccessLevel.Counselor)]
-		public Point2D Start { get { return m_Start; } set { m_Start = value; } }
+		public Point2D Start
+		{
+			get { return m_Start; }
+			set { m_Start = value; }
+		}
 
 		[CommandProperty(AccessLevel.Counselor)]
-		public Point2D End { get { return m_End; } set { m_End = value; } }
+		public Point2D End
+		{
+			get { return m_End; }
+			set { m_End = value; }
+		}
 
 		[CommandProperty(AccessLevel.Counselor)]
-		public int X { get { return m_Start.m_X; } set { m_Start.m_X = value; } }
+		public int X
+		{
+			get { return m_Start.m_X; }
+			set { m_Start.m_X = value; }
+		}
 
 		[CommandProperty(AccessLevel.Counselor)]
-		public int Y { get { return m_Start.m_Y; } set { m_Start.m_Y = value; } }
+		public int Y
+		{
+			get { return m_Start.m_Y; }
+			set { m_Start.m_Y = value; }
+		}
 
 		[CommandProperty(AccessLevel.Counselor)]
-		public int Width { get { return m_End.m_X - m_Start.m_X; } set { m_End.m_X = m_Start.m_X + value; } }
+		public int Width
+		{
+			get { return m_End.m_X - m_Start.m_X; }
+			set { m_End.m_X = m_Start.m_X + value; }
+		}
 
 		[CommandProperty(AccessLevel.Counselor)]
-		public int Height { get { return m_End.m_Y - m_Start.m_Y; } set { m_End.m_Y = m_Start.m_Y + value; } }
+		public int Height
+		{
+			get { return m_End.m_Y - m_Start.m_Y; }
+			set { m_End.m_Y = m_Start.m_Y + value; }
+		}
 
 		public void MakeHold(Rectangle2D r)
 		{
@@ -553,34 +595,60 @@ namespace Server
 				Convert.ToInt32(param3),
 				Convert.ToInt32(param4),
 				Convert.ToInt32(param5),
-				Convert.ToInt32(param6));
+				Convert.ToInt32(param6)
+			);
 		}
 
 		[CommandProperty(AccessLevel.Counselor)]
-		public Point3D Start { get { return m_Start; } set { m_Start = value; } }
+		public Point3D Start
+		{
+			get { return m_Start; }
+			set { m_Start = value; }
+		}
 
 		[CommandProperty(AccessLevel.Counselor)]
-		public Point3D End { get { return m_End; } set { m_End = value; } }
+		public Point3D End
+		{
+			get { return m_End; }
+			set { m_End = value; }
+		}
 
 		[CommandProperty(AccessLevel.Counselor)]
-		public int Width { get { return m_End.X - m_Start.X; } }
+		public int Width
+		{
+			get { return m_End.X - m_Start.X; }
+		}
 
 		[CommandProperty(AccessLevel.Counselor)]
-		public int Height { get { return m_End.Y - m_Start.Y; } }
+		public int Height
+		{
+			get { return m_End.Y - m_Start.Y; }
+		}
 
 		[CommandProperty(AccessLevel.Counselor)]
-		public int Depth { get { return m_End.Z - m_Start.Z; } }
+		public int Depth
+		{
+			get { return m_End.Z - m_Start.Z; }
+		}
 
 		public bool Contains(Point3D p)
 		{
-			return (p.m_X >= m_Start.m_X) && (p.m_X < m_End.m_X) && (p.m_Y >= m_Start.m_Y) && (p.m_Y < m_End.m_Y) &&
-				   (p.m_Z >= m_Start.m_Z) && (p.m_Z < m_End.m_Z);
+			return (p.m_X >= m_Start.m_X)
+				&& (p.m_X < m_End.m_X)
+				&& (p.m_Y >= m_Start.m_Y)
+				&& (p.m_Y < m_End.m_Y)
+				&& (p.m_Z >= m_Start.m_Z)
+				&& (p.m_Z < m_End.m_Z);
 		}
 
 		public bool Contains(IPoint3D p)
 		{
-			return (p.X >= m_Start.m_X) && (p.X < m_End.m_X) && (p.Y >= m_Start.m_Y) && (p.Y < m_End.m_Y) && (p.Z >= m_Start.m_Z) &&
-				   (p.Z < m_End.m_Z);
+			return (p.X >= m_Start.m_X)
+				&& (p.X < m_End.m_X)
+				&& (p.Y >= m_Start.m_Y)
+				&& (p.Y < m_End.m_Y)
+				&& (p.Z >= m_Start.m_Z)
+				&& (p.Z < m_End.m_Z);
 		}
 
 		public override string ToString()

@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-
 using Server.Commands.Generic;
 using Server.Engines.BulkOrders;
 using Server.Items;
@@ -46,7 +45,8 @@ namespace Server.Commands
 					0x35,
 					true,
 					"Documentation has been completed. The entire process took {0:F1} seconds.",
-					(endTime - startTime).TotalSeconds);
+					(endTime - startTime).TotalSeconds
+				);
 				Console.WriteLine("Documentation complete.");
 			}
 			else
@@ -54,7 +54,8 @@ namespace Server.Commands
 				World.Broadcast(
 					0x35,
 					true,
-					"Docmentation failed: Documentation directories are locked and in use. Please close all open files and directories and try again.");
+					"Docmentation failed: Documentation directories are locked and in use. Please close all open files and directories and try again."
+				);
 				Console.WriteLine("Documentation failed.");
 			}
 		}
@@ -120,7 +121,8 @@ namespace Server.Commands
 					v = String.Compare(
 						GetNameFrom(aCtor, aProp, aMethod),
 						GetNameFrom(bCtor, bProp, bMethod),
-						StringComparison.Ordinal);
+						StringComparison.Ordinal
+					);
 				}
 
 				if (v == 0 && aCtor != null && bCtor != null)
@@ -212,7 +214,8 @@ namespace Server.Commands
 			public readonly Type m_Type;
 			public readonly Type m_BaseType;
 			public readonly Type m_Declaring;
-			public List<TypeInfo> m_Derived, m_Nested;
+			public List<TypeInfo> m_Derived,
+				m_Nested;
 			public readonly Type[] m_Interfaces;
 			private readonly string m_FileName;
 			private readonly string m_TypeName;
@@ -234,8 +237,14 @@ namespace Server.Commands
 				//				m_Writer = Docs.GetWriter( "docs/types/", m_FileName );
 			}
 
-			public string FileName { get { return m_FileName; } }
-			public string TypeName { get { return m_TypeName; } }
+			public string FileName
+			{
+				get { return m_FileName; }
+			}
+			public string TypeName
+			{
+				get { return m_TypeName; }
+			}
 
 			public string LinkName(string dirRoot)
 			{
@@ -307,22 +316,22 @@ namespace Server.Commands
 		#region GetPair
 		private static readonly string[,] m_Aliases =
 		{
-			{"System.Object", "<span style=\"color: blue;\">object</span>"},
-			{"System.String", "<span style=\"color: blue;\">string</span>"},
-			{"System.Boolean", "<span style=\"color: blue;\">bool</span>"},
-			{"System.Byte", "<span style=\"color: blue;\">byte</span>"},
-			{"System.SByte", "<span style=\"color: blue;\">sbyte</span>"},
-			{"System.Int16", "<span style=\"color: blue;\">short</span>"},
-			{"System.UInt16", "<span style=\"color: blue;\">ushort</span>"},
-			{"System.Int32", "<span style=\"color: blue;\">int</span>"},
-			{"System.UInt32", "<span style=\"color: blue;\">uint</span>"},
-			{"System.Int64", "<span style=\"color: blue;\">long</span>"},
-			{"System.UInt64", "<span style=\"color: blue;\">ulong</span>"},
-			{"System.Single", "<span style=\"color: blue;\">float</span>"},
-			{"System.Double", "<span style=\"color: blue;\">double</span>"},
-			{"System.Decimal", "<span style=\"color: blue;\">decimal</span>"},
-			{"System.Char", "<span style=\"color: blue;\">char</span>"},
-			{"System.Void", "<span style=\"color: blue;\">void</span>"}
+			{ "System.Object", "<span style=\"color: blue;\">object</span>" },
+			{ "System.String", "<span style=\"color: blue;\">string</span>" },
+			{ "System.Boolean", "<span style=\"color: blue;\">bool</span>" },
+			{ "System.Byte", "<span style=\"color: blue;\">byte</span>" },
+			{ "System.SByte", "<span style=\"color: blue;\">sbyte</span>" },
+			{ "System.Int16", "<span style=\"color: blue;\">short</span>" },
+			{ "System.UInt16", "<span style=\"color: blue;\">ushort</span>" },
+			{ "System.Int32", "<span style=\"color: blue;\">int</span>" },
+			{ "System.UInt32", "<span style=\"color: blue;\">uint</span>" },
+			{ "System.Int64", "<span style=\"color: blue;\">long</span>" },
+			{ "System.UInt64", "<span style=\"color: blue;\">ulong</span>" },
+			{ "System.Single", "<span style=\"color: blue;\">float</span>" },
+			{ "System.Double", "<span style=\"color: blue;\">double</span>" },
+			{ "System.Decimal", "<span style=\"color: blue;\">decimal</span>" },
+			{ "System.Char", "<span style=\"color: blue;\">char</span>" },
+			{ "System.Void", "<span style=\"color: blue;\">void</span>" },
 		};
 
 		private static readonly int m_AliasLength = m_Aliases.GetLength(0);
@@ -362,8 +371,7 @@ namespace Server.Commands
 						append.Append(']');
 
 						realType = realType.GetElementType();
-					}
-					while (realType.IsArray);
+					} while (realType.IsArray);
 
 					append.Append(' ');
 				}
@@ -387,8 +395,7 @@ namespace Server.Commands
 					append.Append(']');
 
 					realType = realType.GetElementType();
-				}
-				while (realType.IsArray);
+				} while (realType.IsArray);
 
 				append.Append(' ');
 			}
@@ -413,7 +420,9 @@ namespace Server.Commands
 				//FormatGeneric( );
 				if (realType.IsGenericType)
 				{
-					string typeName, fileName, linkName;
+					string typeName,
+						fileName,
+						linkName;
 					FormatGeneric(realType, out typeName, out fileName, out linkName);
 					linkName = linkName.Replace("@directory@", null);
 					aliased = linkName;
@@ -469,18 +478,15 @@ namespace Server.Commands
 			DocumentKeywords();
 			DocumentBodies();
 
-            if (!BulkOrderSystem.NewSystemEnabled)
-            {
-                DocumentBulkOrders();
-            }
+			if (!BulkOrderSystem.NewSystemEnabled)
+			{
+				DocumentBulkOrders();
+			}
 
 			m_Types = new Dictionary<Type, TypeInfo>();
 			m_Namespaces = new Dictionary<string, List<TypeInfo>>();
 
-			var assemblies = new List<Assembly>
-			{
-				Core.Assembly
-			};
+			var assemblies = new List<Assembly> { Core.Assembly };
 
 			assemblies.AddRange(ScriptCompiler.Assemblies);
 
@@ -555,37 +561,44 @@ namespace Server.Commands
 					html,
 					"commands.html",
 					"Commands",
-					"Every available command. This contains command name, usage, aliases, and description.");
+					"Every available command. This contains command name, usage, aliases, and description."
+				);
 				AddIndexLink(
 					html,
 					"objects.html",
 					"Constructable Objects",
-					"Every constructable item or npc. This contains object name and usage. Hover mouse over parameters to see type description.");
+					"Every constructable item or npc. This contains object name and usage. Hover mouse over parameters to see type description."
+				);
 				AddIndexLink(
 					html,
 					"keywords.html",
 					"Speech Keywords",
-					"Lists speech keyword numbers and associated match patterns. These are used in some scripts for multi-language matching of client speech.");
+					"Lists speech keyword numbers and associated match patterns. These are used in some scripts for multi-language matching of client speech."
+				);
 				AddIndexLink(
 					html,
 					"bodies.html",
 					"Body List",
-					"Every usable body number and name. Table is generated from a UO:3D client datafile. If you do not have UO:3D installed, this may be blank.");
+					"Every usable body number and name. Table is generated from a UO:3D client datafile. If you do not have UO:3D installed, this may be blank."
+				);
 				AddIndexLink(
 					html,
 					"overview.html",
 					"Class Overview",
-					"Scripting reference. Contains every class type and contained methods in the core and scripts.");
+					"Scripting reference. Contains every class type and contained methods in the core and scripts."
+				);
 				AddIndexLink(
 					html,
 					"bods/bod_smith_rewards.html",
 					"Bulk Order Rewards: Smithing",
-					"Reference table for large and small smithing bulk order deed rewards.");
+					"Reference table for large and small smithing bulk order deed rewards."
+				);
 				AddIndexLink(
 					html,
 					"bods/bod_tailor_rewards.html",
 					"Bulk Order Rewards: Tailoring",
-					"Reference table for large and small tailoring bulk order deed rewards.");
+					"Reference table for large and small tailoring bulk order deed rewards."
+				);
 
 				html.WriteLine("   </body>");
 				html.WriteLine("</html>");
@@ -711,7 +724,9 @@ namespace Server.Commands
 				WriteTailorBODHeader(html, "Small Bulk Order");
 
 				html.WriteLine("         <tr>");
-				html.WriteLine("            <td style=\"width: 850px;\" colspan=\"21\" class=\"entry\"><b>Regular: 10, 15</b></td>");
+				html.WriteLine(
+					"            <td style=\"width: 850px;\" colspan=\"21\" class=\"entry\"><b>Regular: 10, 15</b></td>"
+				);
 				html.WriteLine("         </tr>");
 
 				sbod.AmountMax = 10;
@@ -734,7 +749,9 @@ namespace Server.Commands
 				}
 
 				html.WriteLine("         <tr>");
-				html.WriteLine("            <td style=\"width: 850px;\" colspan=\"21\" class=\"entry\"><b>Regular: 20</b></td>");
+				html.WriteLine(
+					"            <td style=\"width: 850px;\" colspan=\"21\" class=\"entry\"><b>Regular: 20</b></td>"
+				);
 				html.WriteLine("         </tr>");
 
 				sbod.AmountMax = 20;
@@ -758,7 +775,8 @@ namespace Server.Commands
 
 				html.WriteLine("         <tr>");
 				html.WriteLine(
-					"            <td style=\"width: 850px;\" colspan=\"21\" class=\"entry\"><b>Exceptional: 10, 15</b></td>");
+					"            <td style=\"width: 850px;\" colspan=\"21\" class=\"entry\"><b>Exceptional: 10, 15</b></td>"
+				);
 				html.WriteLine("         </tr>");
 
 				sbod.AmountMax = 10;
@@ -781,7 +799,9 @@ namespace Server.Commands
 				}
 
 				html.WriteLine("         <tr>");
-				html.WriteLine("            <td style=\"width: 850px;\" colspan=\"21\" class=\"entry\"><b>Exceptional: 20</b></td>");
+				html.WriteLine(
+					"            <td style=\"width: 850px;\" colspan=\"21\" class=\"entry\"><b>Exceptional: 20</b></td>"
+				);
 				html.WriteLine("         </tr>");
 
 				sbod.AmountMax = 20;
@@ -825,7 +845,8 @@ namespace Server.Commands
 			string name,
 			SmallBulkEntry[] entries,
 			bool expandCloth,
-			bool expandPlain)
+			bool expandPlain
+		)
 		{
 			WriteTailorBODHeader(html, name);
 
@@ -838,7 +859,9 @@ namespace Server.Commands
 			var showCloth = !(type.IsSubclassOf(typeof(BaseArmor)) || type.IsSubclassOf(typeof(BaseShoes)));
 
 			html.WriteLine("         <tr>");
-			html.WriteLine("            <td style=\"width: 850px;\" colspan=\"21\" class=\"entry\"><b>Regular</b></td>");
+			html.WriteLine(
+				"            <td style=\"width: 850px;\" colspan=\"21\" class=\"entry\"><b>Regular</b></td>"
+			);
 			html.WriteLine("         </tr>");
 
 			lbod.RequireExceptional = false;
@@ -887,7 +910,9 @@ namespace Server.Commands
 			}
 
 			html.WriteLine("         <tr>");
-			html.WriteLine("            <td style=\"width: 850px;\" colspan=\"21\" class=\"entry\"><b>Exceptional</b></td>");
+			html.WriteLine(
+				"            <td style=\"width: 850px;\" colspan=\"21\" class=\"entry\"><b>Exceptional</b></td>"
+			);
 			html.WriteLine("         </tr>");
 
 			lbod.RequireExceptional = true;
@@ -949,49 +974,76 @@ namespace Server.Commands
 			html.WriteLine("         <tr>");
 			html.WriteLine(
 				"            <td style=\"width: 250px;\" rowspan=\"2\" class=\"entry\"><center>{0}</center></td>",
-				title);
+				title
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_cloth_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_cloth_1.jpg\" alt=\"Colored Cloth (Level 1)\" border=\"0\"></a></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_cloth_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_cloth_1.jpg\" alt=\"Colored Cloth (Level 1)\" border=\"0\"></a></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_cloth_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_cloth_2.jpg\" alt=\"Colored Cloth (Level 2)\" border=\"0\"></a></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_cloth_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_cloth_2.jpg\" alt=\"Colored Cloth (Level 2)\" border=\"0\"></a></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_cloth_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_cloth_3.jpg\" alt=\"Colored Cloth (Level 3)\" border=\"0\"></a></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_cloth_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_cloth_3.jpg\" alt=\"Colored Cloth (Level 3)\" border=\"0\"></a></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_cloth_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_cloth_4.jpg\" alt=\"Colored Cloth (Level 4)\" border=\"0\"></a></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_cloth_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_cloth_4.jpg\" alt=\"Colored Cloth (Level 4)\" border=\"0\"></a></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_cloth_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_cloth_5.jpg\" alt=\"Colored Cloth (Level 5)\" border=\"0\"></a></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_cloth_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_cloth_5.jpg\" alt=\"Colored Cloth (Level 5)\" border=\"0\"></a></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_sandals_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_sandals.jpg\" alt=\"Colored Sandals\" border=\"0\"></a></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_sandals_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_sandals.jpg\" alt=\"Colored Sandals\" border=\"0\"></a></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 100px;\" colspan=\"4\" class=\"entry\"><center>Power Scrolls</center></td>");
+				"            <td style=\"width: 100px;\" colspan=\"4\" class=\"entry\"><center>Power Scrolls</center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_smallhides.jpg\" alt=\"Small Stretched Hide\"></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_smallhides.jpg\" alt=\"Small Stretched Hide\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_mediumhides.jpg\" alt=\"Medium Stretched Hide\"></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_mediumhides.jpg\" alt=\"Medium Stretched Hide\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_lighttapestry.jpg\" alt=\"Light Flower Tapestry\"></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_lighttapestry.jpg\" alt=\"Light Flower Tapestry\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_darktapestry.jpg\" alt=\"Dark Flower Tapestry\"></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_darktapestry.jpg\" alt=\"Dark Flower Tapestry\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_brownbearrug.jpg\" alt=\"Brown Bear Rug\"></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_brownbearrug.jpg\" alt=\"Brown Bear Rug\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_polarbearrug.jpg\" alt=\"Polar Bear Rug\"></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_polarbearrug.jpg\" alt=\"Polar Bear Rug\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_clothingbless.jpg\" alt=\"Clothing Bless Deed\"></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_clothingbless.jpg\" alt=\"Clothing Bless Deed\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 75px;\" colspan=\"3\" class=\"entry\"><center>Runic Kits</center></td>");
+				"            <td style=\"width: 75px;\" colspan=\"3\" class=\"entry\"><center>Runic Kits</center></td>"
+			);
 			html.WriteLine("         </tr>");
 			html.WriteLine("         <tr>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+5</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+10</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+15</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+20</small></center></td>");
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_runic_spined.jpg\" alt=\"Runic Sewing Kit: Spined\"></center></td>");
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+5</small></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_runic_horned.jpg\" alt=\"Runic Sewing Kit: Horned\"></center></td>");
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+10</small></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_runic_barbed.jpg\" alt=\"Runic Sewing Kit: Barbed\"></center></td>");
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+15</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+20</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_runic_spined.jpg\" alt=\"Runic Sewing Kit: Spined\"></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_runic_horned.jpg\" alt=\"Runic Sewing Kit: Horned\"></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_runic_barbed.jpg\" alt=\"Runic Sewing Kit: Barbed\"></center></td>"
+			);
 			html.WriteLine("         </tr>");
 		}
 
@@ -1000,47 +1052,73 @@ namespace Server.Commands
 			html.WriteLine("         <tr>");
 			html.WriteLine("            <td style=\"width: 250px;\" rowspan=\"2\" class=\"entry\">&nbsp;</td>");
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_cloth_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_cloth_1.jpg\" alt=\"Colored Cloth (Level 1)\" border=\"0\"></a></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_cloth_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_cloth_1.jpg\" alt=\"Colored Cloth (Level 1)\" border=\"0\"></a></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_cloth_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_cloth_2.jpg\" alt=\"Colored Cloth (Level 2)\" border=\"0\"></a></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_cloth_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_cloth_2.jpg\" alt=\"Colored Cloth (Level 2)\" border=\"0\"></a></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_cloth_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_cloth_3.jpg\" alt=\"Colored Cloth (Level 3)\" border=\"0\"></a></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_cloth_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_cloth_3.jpg\" alt=\"Colored Cloth (Level 3)\" border=\"0\"></a></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_cloth_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_cloth_4.jpg\" alt=\"Colored Cloth (Level 4)\" border=\"0\"></a></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_cloth_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_cloth_4.jpg\" alt=\"Colored Cloth (Level 4)\" border=\"0\"></a></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_cloth_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_cloth_5.jpg\" alt=\"Colored Cloth (Level 5)\" border=\"0\"></a></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_cloth_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_cloth_5.jpg\" alt=\"Colored Cloth (Level 5)\" border=\"0\"></a></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_sandals_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_sandals.jpg\" alt=\"Colored Sandals\" border=\"0\"></a></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+5</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+10</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+15</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+20</small></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><a href=\"http://www.runuo.com/images/bodreward_sandals_full.jpg\"><img src=\"http://www.runuo.com/images/bodreward_sandals.jpg\" alt=\"Colored Sandals\" border=\"0\"></a></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_smallhides.jpg\" alt=\"Small Stretched Hide\"></center></td>");
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+5</small></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_mediumhides.jpg\" alt=\"Medium Stretched Hide\"></center></td>");
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+10</small></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_lighttapestry.jpg\" alt=\"Light Flower Tapestry\"></center></td>");
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+15</small></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_darktapestry.jpg\" alt=\"Dark Flower Tapestry\"></center></td>");
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+20</small></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_brownbearrug.jpg\" alt=\"Brown Bear Rug\"></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_smallhides.jpg\" alt=\"Small Stretched Hide\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_polarbearrug.jpg\" alt=\"Polar Bear Rug\"></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_mediumhides.jpg\" alt=\"Medium Stretched Hide\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_clothingbless.jpg\" alt=\"Clothing Bless Deed\"></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_lighttapestry.jpg\" alt=\"Light Flower Tapestry\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_runic_spined.jpg\" alt=\"Runic Sewing Kit: Spined\"></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_darktapestry.jpg\" alt=\"Dark Flower Tapestry\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_runic_horned.jpg\" alt=\"Runic Sewing Kit: Horned\"></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_brownbearrug.jpg\" alt=\"Brown Bear Rug\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_runic_barbed.jpg\" alt=\"Runic Sewing Kit: Barbed\"></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_polarbearrug.jpg\" alt=\"Polar Bear Rug\"></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_clothingbless.jpg\" alt=\"Clothing Bless Deed\"></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_runic_spined.jpg\" alt=\"Runic Sewing Kit: Spined\"></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_runic_horned.jpg\" alt=\"Runic Sewing Kit: Horned\"></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_runic_barbed.jpg\" alt=\"Runic Sewing Kit: Barbed\"></center></td>"
+			);
 			html.WriteLine("         </tr>");
 			html.WriteLine("         <tr>");
 			html.WriteLine(
-				"            <td style=\"width: 100px;\" colspan=\"4\" class=\"entry\"><center>Power Scrolls</center></td>");
+				"            <td style=\"width: 100px;\" colspan=\"4\" class=\"entry\"><center>Power Scrolls</center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 75px;\" colspan=\"3\" class=\"entry\"><center>Runic Kits</center></td>");
+				"            <td style=\"width: 75px;\" colspan=\"3\" class=\"entry\"><center>Runic Kits</center></td>"
+			);
 			html.WriteLine("         </tr>");
 			html.WriteLine("      </table></td></tr></table>");
 		}
@@ -1050,7 +1128,8 @@ namespace Server.Commands
 			IEnumerable<Item> items,
 			string amt,
 			BulkMaterialType material,
-			Type type)
+			Type type
+		)
 		{
 			var rewards = new bool[20];
 
@@ -1180,7 +1259,8 @@ namespace Server.Commands
 			html.WriteLine(
 				"            <td style=\"width: 250px;\" class=\"entry\">&nbsp;- {0} <span style=\"font-size: 1pt;\">{1}</span></td>",
 				name,
-				amt);
+				amt
+			);
 
 			var index = 0;
 
@@ -1188,7 +1268,10 @@ namespace Server.Commands
 			{
 				if (rewards[index])
 				{
-					html.WriteLine("            <td style=\"width: 25px;\" class=\"{0}\"><center><b>X</b></center></td>", style);
+					html.WriteLine(
+						"            <td style=\"width: 25px;\" class=\"{0}\"><center><b>X</b></center></td>",
+						style
+					);
 					++index;
 				}
 				else
@@ -1209,7 +1292,8 @@ namespace Server.Commands
 					html.WriteLine(
 						"            <td width=\"{0}\"{1} class=\"entry\">&nbsp;</td>",
 						count * 25,
-						count == 1 ? "" : String.Format(" colspan=\"{0}\"", count));
+						count == 1 ? "" : String.Format(" colspan=\"{0}\"", count)
+					);
 				}
 			}
 
@@ -1266,45 +1350,94 @@ namespace Server.Commands
 			html.WriteLine("         <tr>");
 			html.WriteLine(
 				"            <td style=\"width: 250px;\" rowspan=\"2\" class=\"entry\"><center>{0}</center></td>",
-				title);
+				title
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_sturdytool.jpg\" alt=\"Sturdy Pickaxe/Shovel (150 uses)\"></center></td>");
-			html.WriteLine("            <td style=\"width: 75px;\" colspan=\"3\" class=\"entry\"><center>Gloves</center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_sturdytool.jpg\" alt=\"Sturdy Pickaxe/Shovel (150 uses)\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_gargaxe.jpg\" alt=\"Gargoyles Pickaxe (100 uses)\"></center></td>");
+				"            <td style=\"width: 75px;\" colspan=\"3\" class=\"entry\"><center>Gloves</center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_prospectortool.jpg\" alt=\"Prospectors Tool (50 uses)\"></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_gargaxe.jpg\" alt=\"Gargoyles Pickaxe (100 uses)\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_powder.jpg\" alt=\"Powder of Temperament (10 uses)\"></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_prospectortool.jpg\" alt=\"Prospectors Tool (50 uses)\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_anvil.jpg\" alt=\"Colored Anvil\"></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_powder.jpg\" alt=\"Powder of Temperament (10 uses)\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 100px;\" colspan=\"4\" class=\"entry\"><center>Power Scrolls</center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_anvil.jpg\" alt=\"Colored Anvil\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 200px;\" colspan=\"8\" class=\"entry\"><center>Runic Hammers</center></td>");
+				"            <td style=\"width: 100px;\" colspan=\"4\" class=\"entry\"><center>Power Scrolls</center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 100px;\" colspan=\"4\" class=\"entry\"><center>Ancient Hammers</center></td>");
+				"            <td style=\"width: 200px;\" colspan=\"8\" class=\"entry\"><center>Runic Hammers</center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 100px;\" colspan=\"4\" class=\"entry\"><center>Ancient Hammers</center></td>"
+			);
 			html.WriteLine("         </tr>");
 			html.WriteLine("         <tr>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+1</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+3</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+5</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+5</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+10</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+15</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+20</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"du\"><center><small>Du</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"sh\"><center><small>Sh</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"co\"><center><small>Co</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"br\"><center><small>Br</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"go\"><center><small>Go</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"ag\"><center><small>Ag</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"ve\"><center><small>Ve</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"va\"><center><small>Va</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+10</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+15</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+30</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+60</small></center></td>");
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+1</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+3</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+5</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+5</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+10</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+15</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+20</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"du\"><center><small>Du</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"sh\"><center><small>Sh</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"co\"><center><small>Co</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"br\"><center><small>Br</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"go\"><center><small>Go</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"ag\"><center><small>Ag</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"ve\"><center><small>Ve</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"va\"><center><small>Va</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+10</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+15</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+30</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+60</small></center></td>"
+			);
 			html.WriteLine("         </tr>");
 		}
 
@@ -1313,46 +1446,91 @@ namespace Server.Commands
 			html.WriteLine("         <tr>");
 			html.WriteLine("            <td style=\"width: 250px;\" rowspan=\"2\" class=\"entry\">&nbsp;</td>");
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_sturdytool.jpg\" alt=\"Sturdy Pickaxe/Shovel (150 uses)\"></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_sturdytool.jpg\" alt=\"Sturdy Pickaxe/Shovel (150 uses)\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+1</small></center>&nbsp;</td>");
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+1</small></center>&nbsp;</td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+3</small></center>&nbsp;</td>");
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+3</small></center>&nbsp;</td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+5</small></center>&nbsp;</td>");
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+5</small></center>&nbsp;</td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_gargaxe.jpg\" alt=\"Gargoyles Pickaxe (100 uses)\"></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_gargaxe.jpg\" alt=\"Gargoyles Pickaxe (100 uses)\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_prospectortool.jpg\" alt=\"Prospectors Tool (50 uses)\"></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_prospectortool.jpg\" alt=\"Prospectors Tool (50 uses)\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_powder.jpg\" alt=\"Powder of Temperament (10 uses)\"></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_powder.jpg\" alt=\"Powder of Temperament (10 uses)\"></center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_anvil.jpg\" alt=\"Colored Anvil\"></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+5</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+10</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+15</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+20</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"du\"><center><small>Du</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"sh\"><center><small>Sh</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"co\"><center><small>Co</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"br\"><center><small>Br</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"go\"><center><small>Go</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"ag\"><center><small>Ag</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"ve\"><center><small>Ve</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"va\"><center><small>Va</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+10</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+15</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+30</small></center></td>");
-			html.WriteLine("            <td style=\"width: 25px;\" class=\"entry\"><center><small>+60</small></center></td>");
+				"            <td style=\"width: 25px;\" rowspan=\"2\" class=\"entry\"><center><img src=\"http://www.runuo.com/images/bodreward_anvil.jpg\" alt=\"Colored Anvil\"></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+5</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+10</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+15</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+20</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"du\"><center><small>Du</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"sh\"><center><small>Sh</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"co\"><center><small>Co</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"br\"><center><small>Br</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"go\"><center><small>Go</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"ag\"><center><small>Ag</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"ve\"><center><small>Ve</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"va\"><center><small>Va</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+10</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+15</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+30</small></center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 25px;\" class=\"entry\"><center><small>+60</small></center></td>"
+			);
 			html.WriteLine("         </tr>");
 			html.WriteLine("         <tr>");
-			html.WriteLine("            <td style=\"width: 75px;\" colspan=\"3\" class=\"entry\"><center>Gloves</center></td>");
 			html.WriteLine(
-				"            <td style=\"width: 100px;\" colspan=\"4\" class=\"entry\"><center>Power Scrolls</center></td>");
+				"            <td style=\"width: 75px;\" colspan=\"3\" class=\"entry\"><center>Gloves</center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 200px;\" colspan=\"8\" class=\"entry\"><center>Runic Hammers</center></td>");
+				"            <td style=\"width: 100px;\" colspan=\"4\" class=\"entry\"><center>Power Scrolls</center></td>"
+			);
 			html.WriteLine(
-				"            <td style=\"width: 100px;\" colspan=\"4\" class=\"entry\"><center>Ancient Hammers</center></td>");
+				"            <td style=\"width: 200px;\" colspan=\"8\" class=\"entry\"><center>Runic Hammers</center></td>"
+			);
+			html.WriteLine(
+				"            <td style=\"width: 100px;\" colspan=\"4\" class=\"entry\"><center>Ancient Hammers</center></td>"
+			);
 			html.WriteLine("         </tr>");
 			html.WriteLine("      </table></td></tr></table>");
 		}
@@ -1361,7 +1539,8 @@ namespace Server.Commands
 			StreamWriter html,
 			IEnumerable<Item> items,
 			string amt,
-			BulkMaterialType material)
+			BulkMaterialType material
+		)
 		{
 			var rewards = new bool[24];
 
@@ -1498,7 +1677,8 @@ namespace Server.Commands
 			html.WriteLine(
 				"            <td style=\"width: 250px\" class=\"entry\">{0} <span style=\"font-size: 1pt\">{1}</span></td>",
 				name,
-				amt);
+				amt
+			);
 
 			var index = 0;
 
@@ -1506,7 +1686,10 @@ namespace Server.Commands
 			{
 				if (rewards[index])
 				{
-					html.WriteLine("            <td style=\"width: 25px;\" class=\"{0}\"><center><b>X</b></center></td>", style);
+					html.WriteLine(
+						"            <td style=\"width: 25px;\" class=\"{0}\"><center><b>X</b></center></td>",
+						style
+					);
 					++index;
 				}
 				else
@@ -1527,7 +1710,8 @@ namespace Server.Commands
 					html.WriteLine(
 						"            <td style=\"width: {0}px;\"{1} class=\"entry\">&nbsp;</td>",
 						count * 25,
-						count == 1 ? "" : String.Format(" colspan=\"{0}\"", count));
+						count == 1 ? "" : String.Format(" colspan=\"{0}\"", count)
+					);
 				}
 			}
 
@@ -1580,7 +1764,10 @@ namespace Server.Commands
 							type = ModelBodyType.Invalid;
 						}
 
-						var name = String.Join(" ", split.Skip(2).Select(n => !String.IsNullOrWhiteSpace(n) ? n : "unknown"));
+						var name = String.Join(
+							" ",
+							split.Skip(2).Select(n => !String.IsNullOrWhiteSpace(n) ? n : "unknown")
+						);
 
 						var entry = new BodyEntry(body, type, name);
 
@@ -1645,23 +1832,28 @@ namespace Server.Commands
 							{
 								case ModelBodyType.Monsters:
 									html.WriteLine(
-										"      <b>Monsters</b> | <a href=\"#Sea\">Sea</a> | <a href=\"#Animals\">Animals</a> | <a href=\"#Human\">Human</a> | <a href=\"#Equipment\">Equipment</a><br /><br />");
+										"      <b>Monsters</b> | <a href=\"#Sea\">Sea</a> | <a href=\"#Animals\">Animals</a> | <a href=\"#Human\">Human</a> | <a href=\"#Equipment\">Equipment</a><br /><br />"
+									);
 									break;
 								case ModelBodyType.Sea:
 									html.WriteLine(
-										"      <a href=\"#Top\">Monsters</a> | <b>Sea</b> | <a href=\"#Animals\">Animals</a> | <a href=\"#Human\">Human</a> | <a href=\"#Equipment\">Equipment</a><br /><br />");
+										"      <a href=\"#Top\">Monsters</a> | <b>Sea</b> | <a href=\"#Animals\">Animals</a> | <a href=\"#Human\">Human</a> | <a href=\"#Equipment\">Equipment</a><br /><br />"
+									);
 									break;
 								case ModelBodyType.Animals:
 									html.WriteLine(
-										"      <a href=\"#Top\">Monsters</a> | <a href=\"#Sea\">Sea</a> | <b>Animals</b> | <a href=\"#Human\">Human</a> | <a href=\"#Equipment\">Equipment</a><br /><br />");
+										"      <a href=\"#Top\">Monsters</a> | <a href=\"#Sea\">Sea</a> | <b>Animals</b> | <a href=\"#Human\">Human</a> | <a href=\"#Equipment\">Equipment</a><br /><br />"
+									);
 									break;
 								case ModelBodyType.Human:
 									html.WriteLine(
-										"      <a href=\"#Top\">Monsters</a> | <a href=\"#Sea\">Sea</a> | <a href=\"#Animals\">Animals</a> | <b>Human</b> | <a href=\"#Equipment\">Equipment</a><br /><br />");
+										"      <a href=\"#Top\">Monsters</a> | <a href=\"#Sea\">Sea</a> | <a href=\"#Animals\">Animals</a> | <b>Human</b> | <a href=\"#Equipment\">Equipment</a><br /><br />"
+									);
 									break;
 								case ModelBodyType.Equipment:
 									html.WriteLine(
-										"      <a href=\"#Top\">Monsters</a> | <a href=\"#Sea\">Sea</a> | <a href=\"#Animals\">Animals</a> | <a href=\"#Human\">Human</a> | <b>Equipment</b><br /><br />");
+										"      <a href=\"#Top\">Monsters</a> | <a href=\"#Sea\">Sea</a> | <a href=\"#Animals\">Animals</a> | <a href=\"#Human\">Human</a> | <b>Equipment</b><br /><br />"
+									);
 									break;
 							}
 
@@ -1674,7 +1866,8 @@ namespace Server.Commands
 						html.WriteLine(
 							"         <tr><td class=\"lentry\">{0}</td><td class=\"rentry\">{1}</td></tr>",
 							entry.Body.BodyID,
-							entry.Name);
+							entry.Name
+						);
 					}
 
 					html.WriteLine("      </table>");
@@ -1765,16 +1958,16 @@ namespace Server.Commands
 										html.Write("&apos;");
 										break;
 									default:
-									{
-										if (c >= 0x20 && c < 0x80)
 										{
-											html.Write(c);
+											if (c >= 0x20 && c < 0x80)
+											{
+												html.Write(c);
+											}
+											else
+											{
+												html.Write("&#{0};", (int)c);
+											}
 										}
-										else
-										{
-											html.Write("&#{0};", (int)c);
-										}
-									}
 										break;
 								}
 							}
@@ -1796,8 +1989,14 @@ namespace Server.Commands
 			private readonly int m_Index;
 			private readonly List<string> m_Strings;
 
-			public int Index { get { return m_Index; } }
-			public List<string> Strings { get { return m_Strings; } }
+			public int Index
+			{
+				get { return m_Index; }
+			}
+			public List<string> Strings
+			{
+				get { return m_Strings; }
+			}
 
 			public SpeechEntry(int index)
 			{
@@ -1880,13 +2079,34 @@ namespace Server.Commands
 			private readonly string m_Usage;
 			private readonly string m_Description;
 
-			public AccessLevel AccessLevel { get { return m_AccessLevel; } }
-			public string Name { get { return m_Name; } }
-			public string[] Aliases { get { return m_CmdAliases; } }
-			public string Usage { get { return m_Usage; } }
-			public string Description { get { return m_Description; } }
+			public AccessLevel AccessLevel
+			{
+				get { return m_AccessLevel; }
+			}
+			public string Name
+			{
+				get { return m_Name; }
+			}
+			public string[] Aliases
+			{
+				get { return m_CmdAliases; }
+			}
+			public string Usage
+			{
+				get { return m_Usage; }
+			}
+			public string Description
+			{
+				get { return m_Description; }
+			}
 
-			public DocCommandEntry(AccessLevel accessLevel, string name, string[] aliases, string usage, string description)
+			public DocCommandEntry(
+				AccessLevel accessLevel,
+				string name,
+				string[] aliases,
+				string usage,
+				string description
+			)
 			{
 				m_AccessLevel = accessLevel;
 				m_Name = name;
@@ -1976,7 +2196,8 @@ namespace Server.Commands
 					list.Add(
 						aliases == null
 							? new DocCommandEntry(e.AccessLevel, e.Command, null, usage.Usage, descString)
-							: new DocCommandEntry(e.AccessLevel, e.Command, aliases.Aliases, usage.Usage, descString));
+							: new DocCommandEntry(e.AccessLevel, e.Command, aliases.Aliases, usage.Usage, descString)
+					);
 				}
 
 				foreach (var command in TargetCommands.AllCommands)
@@ -2098,23 +2319,28 @@ namespace Server.Commands
 						{
 							case AccessLevel.Administrator:
 								html.WriteLine(
-									"      <b>Administrator</b> | <a href=\"#GameMaster\">Game Master</a> | <a href=\"#Counselor\">Counselor</a> | <a href=\"#Player\">Player</a><br /><br />");
+									"      <b>Administrator</b> | <a href=\"#GameMaster\">Game Master</a> | <a href=\"#Counselor\">Counselor</a> | <a href=\"#Player\">Player</a><br /><br />"
+								);
 								break;
 							case AccessLevel.GameMaster:
 								html.WriteLine(
-									"      <a href=\"#Top\">Administrator</a> | <b>Game Master</b> | <a href=\"#Counselor\">Counselor</a> | <a href=\"#Player\">Player</a><br /><br />");
+									"      <a href=\"#Top\">Administrator</a> | <b>Game Master</b> | <a href=\"#Counselor\">Counselor</a> | <a href=\"#Player\">Player</a><br /><br />"
+								);
 								break;
 							case AccessLevel.Seer:
 								html.WriteLine(
-									"      <a href=\"#Top\">Administrator</a> | <a href=\"#GameMaster\">Game Master</a> | <a href=\"#Counselor\">Counselor</a> | <a href=\"#Player\">Player</a><br /><br />");
+									"      <a href=\"#Top\">Administrator</a> | <a href=\"#GameMaster\">Game Master</a> | <a href=\"#Counselor\">Counselor</a> | <a href=\"#Player\">Player</a><br /><br />"
+								);
 								break;
 							case AccessLevel.Counselor:
 								html.WriteLine(
-									"      <a href=\"#Top\">Administrator</a> | <a href=\"#GameMaster\">Game Master</a> | <b>Counselor</b> | <a href=\"#Player\">Player</a><br /><br />");
+									"      <a href=\"#Top\">Administrator</a> | <a href=\"#GameMaster\">Game Master</a> | <b>Counselor</b> | <a href=\"#Player\">Player</a><br /><br />"
+								);
 								break;
 							case AccessLevel.Player:
 								html.WriteLine(
-									"      <a href=\"#Top\">Administrator</a> | <a href=\"#GameMaster\">Game Master</a> | <a href=\"#Counselor\">Counselor</a> | <b>Player</b><br /><br />");
+									"      <a href=\"#Top\">Administrator</a> | <a href=\"#GameMaster\">Game Master</a> | <a href=\"#Counselor\">Counselor</a> | <b>Player</b><br /><br />"
+								);
 								break;
 						}
 
@@ -2123,7 +2349,8 @@ namespace Server.Commands
 						html.WriteLine("      <table cellpadding=\"4\" cellspacing=\"1\">");
 						html.WriteLine(
 							"         <tr><td colspan=\"2\" class=\"header\">{0}</td></tr>",
-							last == AccessLevel.GameMaster ? "Game Master" : last.ToString());
+							last == AccessLevel.GameMaster ? "Game Master" : last.ToString()
+						);
 					}
 
 					DocumentCommand(html, e);
@@ -2167,14 +2394,16 @@ namespace Server.Commands
 				html.Write(
 					"<td class=\"rentry\"><b>Usage: {0}</b><br />{1}</td>",
 					usage.Replace("<", "&lt;").Replace(">", "&gt;"),
-					desc);
+					desc
+				);
 			}
 			else
 			{
 				html.Write(
 					"<td class=\"rentry\"><b>Usage: {0}</b><br />Alias{1}: ",
 					usage.Replace("<", "&lt;").Replace(">", "&gt;"),
-					aliases.Length == 1 ? "" : "es");
+					aliases.Length == 1 ? "" : "es"
+				);
 
 				for (var i = 0; i < aliases.Length; ++i)
 				{
@@ -2317,7 +2546,8 @@ namespace Server.Commands
 			var types = new List<TypeInfo>(m_Types.Values);
 			types.Sort(new TypeComparer());
 
-			ArrayList items = new ArrayList(), mobiles = new ArrayList();
+			ArrayList items = new ArrayList(),
+				mobiles = new ArrayList();
 
 			foreach (var t in types.Select(ti => ti.m_Type))
 			{
@@ -2361,7 +2591,9 @@ namespace Server.Commands
 				html.WriteLine("   </head>");
 				html.WriteLine("   <body>");
 				html.WriteLine("      <h4><a href=\"index.html\">Back to the index</a></h4>");
-				html.WriteLine("      <h2>Constructable <a href=\"#items\">Items</a> and <a href=\"#mobiles\">Mobiles</a></h2>");
+				html.WriteLine(
+					"      <h2>Constructable <a href=\"#items\">Items</a> and <a href=\"#mobiles\">Mobiles</a></h2>"
+				);
 
 				html.WriteLine("      <a name=\"items\" />");
 				html.WriteLine("      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\">");
@@ -2380,7 +2612,9 @@ namespace Server.Commands
 				html.WriteLine("      <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">");
 				html.WriteLine("      <tr><td class=\"tbl-border\">");
 				html.WriteLine("      <table width=\"100%\" cellpadding=\"4\" cellspacing=\"1\">");
-				html.WriteLine("         <tr><td class=\"header\">Mobile Name</td><td class=\"header\">Usage</td></tr>");
+				html.WriteLine(
+					"         <tr><td class=\"header\">Mobile Name</td><td class=\"header\">Usage</td></tr>"
+				);
 
 				for (var i = 0; i < mobiles.Count; i += 2)
 				{
@@ -2438,28 +2672,34 @@ namespace Server.Commands
 
 		private static readonly object[,] m_Tooltips =
 		{
-			{typeof(Byte), "Numeric value in the range from 0 to 255, inclusive."},
-			{typeof(SByte), "Numeric value in the range from negative 128 to positive 127, inclusive."},
-			{typeof(UInt16), "Numeric value in the range from 0 to 65,535, inclusive."},
-			{typeof(Int16), "Numeric value in the range from negative 32,768 to positive 32,767, inclusive."},
-			{typeof(UInt32), "Numeric value in the range from 0 to 4,294,967,295, inclusive."},
-			{typeof(Int32), "Numeric value in the range from negative 2,147,483,648 to positive 2,147,483,647, inclusive."},
-			{typeof(UInt64), "Numeric value in the range from 0 through about 10^20."},
-			{typeof(Int64), "Numeric value in the approximate range from negative 10^19 through 10^19."},
+			{ typeof(Byte), "Numeric value in the range from 0 to 255, inclusive." },
+			{ typeof(SByte), "Numeric value in the range from negative 128 to positive 127, inclusive." },
+			{ typeof(UInt16), "Numeric value in the range from 0 to 65,535, inclusive." },
+			{ typeof(Int16), "Numeric value in the range from negative 32,768 to positive 32,767, inclusive." },
+			{ typeof(UInt32), "Numeric value in the range from 0 to 4,294,967,295, inclusive." },
+			{
+				typeof(Int32),
+				"Numeric value in the range from negative 2,147,483,648 to positive 2,147,483,647, inclusive.",
+			},
+			{ typeof(UInt64), "Numeric value in the range from 0 through about 10^20." },
+			{ typeof(Int64), "Numeric value in the approximate range from negative 10^19 through 10^19." },
 			{
 				typeof(String),
-				"Text value. To specify a value containing spaces, encapsulate the value in quote characters:{0}{0}&quot;Spaced text example&quot;"
+				"Text value. To specify a value containing spaces, encapsulate the value in quote characters:{0}{0}&quot;Spaced text example&quot;",
 			},
-			{typeof(Boolean), "Boolean value which can be either True or False."},
-			{typeof(Map), "Map or facet name. Possible values include:{0}{0}- Felucca{0}- Trammel{0}- Ilshenar{0}- Malas"},
+			{ typeof(Boolean), "Boolean value which can be either True or False." },
+			{
+				typeof(Map),
+				"Map or facet name. Possible values include:{0}{0}- Felucca{0}- Trammel{0}- Ilshenar{0}- Malas",
+			},
 			{
 				typeof(Poison),
-				"Poison name or level. Possible values include:{0}{0}- Lesser{0}- Regular{0}- Greater{0}- Deadly{0}- Lethal"
+				"Poison name or level. Possible values include:{0}{0}- Lesser{0}- Regular{0}- Greater{0}- Deadly{0}- Lethal",
 			},
 			{
 				typeof(Point3D),
-				"Three-dimensional coordinate value. Format as follows:{0}{0}&quot;(<x value>, <y value>, <z value>)&quot;"
-			}
+				"Three-dimensional coordinate value. Format as follows:{0}{0}&quot;(<x value>, <y value>, <z value>)&quot;",
+			},
 		};
 
 		private static string GetTooltipFor(ParameterInfo param)
@@ -2700,7 +2940,12 @@ namespace Server.Commands
 
 			var extendCount = 0;
 
-			if (baseType != null && baseType != typeof(object) && baseType != typeof(ValueType) && !baseType.IsPrimitive)
+			if (
+				baseType != null
+				&& baseType != typeof(object)
+				&& baseType != typeof(ValueType)
+				&& !baseType.IsPrimitive
+			)
 			{
 				typeHtml.Write(" : ");
 
@@ -2740,7 +2985,9 @@ namespace Server.Commands
 
 					if (ifaceInfo == null)
 					{
-						string typeName, fileName, linkName;
+						string typeName,
+							fileName,
+							linkName;
 						FormatGeneric(iface, out typeName, out fileName, out linkName);
 						linkName = linkName.Replace("@directory@", null);
 						typeHtml.Write("<!-- DBG-2.1 -->" + linkName);
@@ -2802,10 +3049,13 @@ namespace Server.Commands
 				typeHtml.WriteLine("</h4>");
 			}
 
-			var membs =
-				type.GetMembers(
-					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance |
-					BindingFlags.DeclaredOnly);
+			var membs = type.GetMembers(
+				BindingFlags.Public
+					| BindingFlags.NonPublic
+					| BindingFlags.Static
+					| BindingFlags.Instance
+					| BindingFlags.DeclaredOnly
+			);
 
 			Array.Sort(membs, new MemberComparer());
 
@@ -2972,11 +3222,11 @@ namespace Server.Commands
 					var nameBuilder = new StringBuilder(rootType);
 					var fnamBuilder = new StringBuilder("docs/types/" + SanitizeType(rootType));
 
-					var linkBuilder =
-						new StringBuilder(
-							DontLink(type)
-								? ("<span style=\"color: blue;\">" + rootType + "</span>")
-								: ("<a href=\"" + "@directory@" + rootType + "-T-.html\">" + rootType + "</a>"));
+					var linkBuilder = new StringBuilder(
+						DontLink(type)
+							? ("<span style=\"color: blue;\">" + rootType + "</span>")
+							: ("<a href=\"" + "@directory@" + rootType + "-T-.html\">" + rootType + "</a>")
+					);
 
 					nameBuilder.Append("&lt;");
 					fnamBuilder.Append("-");
@@ -3005,7 +3255,9 @@ namespace Server.Commands
 						}
 						else
 						{
-							linkBuilder.Append("<a href=\"" + "@directory@" + aliasedName + ".html\">" + aliasedName + "</a>");
+							linkBuilder.Append(
+								"<a href=\"" + "@directory@" + aliasedName + ".html\">" + aliasedName + "</a>"
+							);
 						}
 					}
 
@@ -3038,7 +3290,13 @@ namespace Server.Commands
 				}
 				else
 				{
-					linkName = "<a href=\"" + "@directory@" + SanitizeType(type.Name) + ".html\">" + SanitizeType(type.Name) + "</a>";
+					linkName =
+						"<a href=\""
+						+ "@directory@"
+						+ SanitizeType(type.Name)
+						+ ".html\">"
+						+ SanitizeType(type.Name)
+						+ "</a>";
 				}
 			}
 			else
@@ -3106,7 +3364,7 @@ namespace Server.Commands
 		Sea,
 		Animals,
 		Human,
-		Equipment
+		Equipment,
 	}
 
 	public class BodyEntry

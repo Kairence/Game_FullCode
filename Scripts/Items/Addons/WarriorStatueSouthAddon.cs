@@ -2,79 +2,66 @@ using System;
 
 namespace Server.Items
 {
-    public class WarriorStatueSouthAddon : BaseAddon
-    {
-        [Constructable]
-        public WarriorStatueSouthAddon()
-        {
-            this.AddComponent(new AddonComponent(0x2D13), 0, 0, 0);
-        }
+	public class WarriorStatueSouthAddon : BaseAddon
+	{
+		[Constructable]
+		public WarriorStatueSouthAddon()
+		{
+			this.AddComponent(new AddonComponent(0x2D13), 0, 0, 0);
+		}
 
-        public WarriorStatueSouthAddon(Serial serial)
-            : base(serial)
-        {
-        }
+		public WarriorStatueSouthAddon(Serial serial)
+			: base(serial) { }
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new WarriorStatueSouthDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override BaseAddonDeed Deed
+		{
+			get { return new WarriorStatueSouthDeed(); }
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class WarriorStatueSouthDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public WarriorStatueSouthDeed()
-        {
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public WarriorStatueSouthDeed(Serial serial)
-            : base(serial)
-        {
-        }
+	public class WarriorStatueSouthDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public WarriorStatueSouthDeed() { }
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new WarriorStatueSouthAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1072887;
-            }
-        }// warrior statue (south)
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public WarriorStatueSouthDeed(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override BaseAddon Addon
+		{
+			get { return new WarriorStatueSouthAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1072887; }
+		} // warrior statue (south)
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

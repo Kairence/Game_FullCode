@@ -1,43 +1,44 @@
-using Server;
 using System;
+using Server;
 
 namespace Server.Items
 {
-    public class GargishRobeBearingTheCrestOfBlackthorn5 : GargishRobe
-    {
-        public override bool IsArtifact { get { return true; } }
-        
-        [Constructable]
-        public GargishRobeBearingTheCrestOfBlackthorn5()
-            : base()
-        {
-            ReforgedSuffix = ReforgedSuffix.Blackthorn;
-            Attributes.BonusHits = 3;
-            Attributes.RegenHits = 1;
-            Hue = 132;            
-        }
+	public class GargishRobeBearingTheCrestOfBlackthorn5 : GargishRobe
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public GargishRobeBearingTheCrestOfBlackthorn5(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public GargishRobeBearingTheCrestOfBlackthorn5()
+			: base()
+		{
+			ReforgedSuffix = ReforgedSuffix.Blackthorn;
+			Attributes.BonusHits = 3;
+			Attributes.RegenHits = 1;
+			Hue = 132;
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write(1);
-        }
+		public GargishRobeBearingTheCrestOfBlackthorn5(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-			
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write(1);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+
 			if (version == 0)
-            {
-                MaxHitPoints = 0;
-                HitPoints = 0;
-            }
-        }
-    }
+			{
+				MaxHitPoints = 0;
+				HitPoints = 0;
+			}
+		}
+	}
 }

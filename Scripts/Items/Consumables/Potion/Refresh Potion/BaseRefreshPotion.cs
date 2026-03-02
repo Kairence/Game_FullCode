@@ -2,47 +2,44 @@ using System;
 
 namespace Server.Items
 {
-    public abstract class BaseRefreshPotion : BasePotion
-    {
-        public BaseRefreshPotion(PotionEffect effect)
-            : base(0xF0B, effect)
-        {
-        }
+	public abstract class BaseRefreshPotion : BasePotion
+	{
+		public BaseRefreshPotion(PotionEffect effect)
+			: base(0xF0B, effect) { }
 
-        public BaseRefreshPotion(Serial serial)
-            : base(serial)
-        {
-        }
+		public BaseRefreshPotion(Serial serial)
+			: base(serial) { }
 
-        public abstract int Refresh { get; }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public abstract int Refresh { get; }
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override void Drink(Mobile from)
-        {
-            if (from.Stam < from.StamMax)
-            {
+			int version = reader.ReadInt();
+		}
+
+		public override void Drink(Mobile from)
+		{
+			if (from.Stam < from.StamMax)
+			{
 				int stam = Scale(from, this.Refresh);
 				from.Stam += stam;
 
-                PlayDrinkEffect(from);
-                Consume();
-            }
-            else
-            {
-                from.SendMessage("You decide against drinking this potion, as you are already at full stamina.");
-            }
-        }
-    }
+				PlayDrinkEffect(from);
+				Consume();
+			}
+			else
+			{
+				from.SendMessage("You decide against drinking this potion, as you are already at full stamina.");
+			}
+		}
+	}
 }

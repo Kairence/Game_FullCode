@@ -6,7 +6,7 @@ namespace Server.Mobiles
 		public GypsyAnimalTrainer()
 		{
 			SetSkill(SkillName.Begging, 64.0, 100.0);
-			
+
 			if (Utility.RandomBool())
 			{
 				Title = "the gypsy animal trainer";
@@ -18,10 +18,12 @@ namespace Server.Mobiles
 		}
 
 		public GypsyAnimalTrainer(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
-		public override VendorShoeType ShoeType { get { return Female ? VendorShoeType.ThighBoots : VendorShoeType.Boots; } }
+		public override VendorShoeType ShoeType
+		{
+			get { return Female ? VendorShoeType.ThighBoots : VendorShoeType.Boots; }
+		}
 
 		public override int GetShoeHue()
 		{

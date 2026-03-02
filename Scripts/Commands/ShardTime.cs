@@ -6,14 +6,14 @@ namespace Server.Commands
 	{
 		public static void Initialize()
 		{
-			CommandSystem.Register( "Time", AccessLevel.Player, new CommandEventHandler( Time_OnCommand ) );
+			CommandSystem.Register("Time", AccessLevel.Player, new CommandEventHandler(Time_OnCommand));
 		}
 
-		[Usage( "Time" )]
-		[Description( "Returns the server's local time." )]
-		private static void Time_OnCommand( CommandEventArgs e )
+		[Usage("Time")]
+		[Description("Returns the server's local time.")]
+		private static void Time_OnCommand(CommandEventArgs e)
 		{
-			e.Mobile.SendMessage( DateTime.UtcNow.ToString() );
+			e.Mobile.SendMessage(DateTime.UtcNow.ToString());
 		}
 	}
 }

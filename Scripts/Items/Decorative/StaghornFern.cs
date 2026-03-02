@@ -5,178 +5,191 @@ using Server.Targeting;
 
 namespace Server.Items
 {
-    public class StaghornFernAddon : Item
-    {
-        public override int LabelNumber { get { return 1154460; } } // Staghorn Fern
+	public class StaghornFernAddon : Item
+	{
+		public override int LabelNumber
+		{
+			get { return 1154460; }
+		} // Staghorn Fern
 
-        [Constructable]
-        public StaghornFernAddon()
-            : base(0x9965)
-        {
-            Movable = false;
-            Weight = 0;
-        }
+		[Constructable]
+		public StaghornFernAddon()
+			: base(0x9965)
+		{
+			Movable = false;
+			Weight = 0;
+		}
 
-        public StaghornFernAddon(Serial serial)
-            : base(serial)
-        {
-        }
+		public StaghornFernAddon(Serial serial)
+			: base(serial) { }
 
-        public Item Deed { get { return new StaghornFernDeed(); } }
-        
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0); // version
-        }
+		public Item Deed
+		{
+			get { return new StaghornFernDeed(); }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0); // version
+		}
 
-            Timer.DelayCall(TimeSpan.Zero, new TimerCallback(FixMovingCrate));
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            BaseHouse house = BaseHouse.FindHouseAt(this);
+			Timer.DelayCall(TimeSpan.Zero, new TimerCallback(FixMovingCrate));
+		}
 
-            if (house != null && house.IsCoOwner(from))
-            {
-                if (from.InRange(GetWorldLocation(), 3))
-                {
-                    from.AddToBackpack(Deed);
-                    Delete();
-                }
-                else
-                {
-                    from.LocalOverheadMessage(MessageType.Regular, 0x3B2, 1019045); // I can't reach that.
-                }
-            }
-        }
+		public override void OnDoubleClick(Mobile from)
+		{
+			BaseHouse house = BaseHouse.FindHouseAt(this);
 
-        private void FixMovingCrate()
-        {
-            if (Deleted)
-                return;
+			if (house != null && house.IsCoOwner(from))
+			{
+				if (from.InRange(GetWorldLocation(), 3))
+				{
+					from.AddToBackpack(Deed);
+					Delete();
+				}
+				else
+				{
+					from.LocalOverheadMessage(MessageType.Regular, 0x3B2, 1019045); // I can't reach that.
+				}
+			}
+		}
 
-            if (Movable || IsLockedDown)
-            {
-                Item deed = Deed;
+		private void FixMovingCrate()
+		{
+			if (Deleted)
+				return;
 
-                if (Parent is Item)
-                {
-                    ((Item)Parent).AddItem(deed);
-                    deed.Location = Location;
-                }
-                else
-                {
-                    deed.MoveToWorld(Location, Map);
-                }
+			if (Movable || IsLockedDown)
+			{
+				Item deed = Deed;
 
-                Delete();
-            }
-        }        
-    }
+				if (Parent is Item)
+				{
+					((Item)Parent).AddItem(deed);
+					deed.Location = Location;
+				}
+				else
+				{
+					deed.MoveToWorld(Location, Map);
+				}
 
-    [Flipable(0x14F0, 0x14EF)]
-    public class StaghornFernDeed : Item
-    {
-        public override int LabelNumber { get { return 1154460; } } // Staghorn Fern
-        
-        [Constructable]
-        public StaghornFernDeed()
-            : base(0x14F0)
-        {
-            LootType = LootType.Blessed;
-        }
+				Delete();
+			}
+		}
+	}
 
-        public StaghornFernDeed(Serial serial)
-            : base(serial)
-        {
-        }
+	[Flipable(0x14F0, 0x14EF)]
+	public class StaghornFernDeed : Item
+	{
+		public override int LabelNumber
+		{
+			get { return 1154460; }
+		} // Staghorn Fern
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0); // version
-        }
+		[Constructable]
+		public StaghornFernDeed()
+			: base(0x14F0)
+		{
+			LootType = LootType.Blessed;
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
+		public StaghornFernDeed(Serial serial)
+			: base(serial) { }
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            BaseHouse house = BaseHouse.FindHouseAt(from);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0); // version
+		}
 
-            if (house != null && house.IsCoOwner(from))
-            {
-                from.BeginTarget(-1, true, TargetFlags.None, new TargetStateCallback(Placement_OnTarget), null);
-            }
-            else
-            {
-                from.SendLocalizedMessage(502092); // You must be in your house to do this.
-            }
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
 
-        public void Placement_OnTarget(Mobile from, object targeted, object state)
-        {
-            IPoint3D p = targeted as IPoint3D;
+		public override void OnDoubleClick(Mobile from)
+		{
+			BaseHouse house = BaseHouse.FindHouseAt(from);
 
-            if (p == null)
-                return;
+			if (house != null && house.IsCoOwner(from))
+			{
+				from.BeginTarget(-1, true, TargetFlags.None, new TargetStateCallback(Placement_OnTarget), null);
+			}
+			else
+			{
+				from.SendLocalizedMessage(502092); // You must be in your house to do this.
+			}
+		}
 
-            Point3D loc = new Point3D(p);
+		public void Placement_OnTarget(Mobile from, object targeted, object state)
+		{
+			IPoint3D p = targeted as IPoint3D;
 
-            BaseHouse house = BaseHouse.FindHouseAt(loc, from.Map, 16);            
+			if (p == null)
+				return;
 
-            if (house != null && house.IsCoOwner(from))
-            {
-                bool northWall = BaseAddon.IsWall(loc.X, loc.Y - 1, loc.Z, from.Map);
-                bool westWall = BaseAddon.IsWall(loc.X - 1, loc.Y, loc.Z, from.Map);
+			Point3D loc = new Point3D(p);
 
-                if (northWall && westWall)
-                {
-                    switch (from.Direction & Direction.Mask)
-                    {
-                        case Direction.North:
-                        case Direction.South: northWall = true; westWall = false; break;
+			BaseHouse house = BaseHouse.FindHouseAt(loc, from.Map, 16);
 
-                        case Direction.East:
-                        case Direction.West: northWall = false; westWall = true; break;
+			if (house != null && house.IsCoOwner(from))
+			{
+				bool northWall = BaseAddon.IsWall(loc.X, loc.Y - 1, loc.Z, from.Map);
+				bool westWall = BaseAddon.IsWall(loc.X - 1, loc.Y, loc.Z, from.Map);
 
-                        default: from.SendMessage("Turn to face the wall on which to hang this trophy."); return;
-                    }
-                }
+				if (northWall && westWall)
+				{
+					switch (from.Direction & Direction.Mask)
+					{
+						case Direction.North:
+						case Direction.South:
+							northWall = true;
+							westWall = false;
+							break;
 
-                int itemID = 0;
+						case Direction.East:
+						case Direction.West:
+							northWall = false;
+							westWall = true;
+							break;
 
-                if (northWall)
-                    itemID = 0x9964;
-                else if (westWall)
-                    itemID = 0x9965;
-                else
-                    from.SendLocalizedMessage(1042626); // The trophy must be placed next to a wall.
+						default:
+							from.SendMessage("Turn to face the wall on which to hang this trophy.");
+							return;
+					}
+				}
 
-                if (itemID > 0)
-                {
-                    Item addon = new StaghornFernAddon();
+				int itemID = 0;
 
-                    addon.ItemID = itemID;
-                    addon.MoveToWorld(loc, from.Map);
+				if (northWall)
+					itemID = 0x9964;
+				else if (westWall)
+					itemID = 0x9965;
+				else
+					from.SendLocalizedMessage(1042626); // The trophy must be placed next to a wall.
 
-                    house.Addons[addon] = from;
-                    Delete();
-                }
-            }
-            else
-            {
-                from.SendLocalizedMessage(1042036); // That location is not in your house.
-            }
-        }
-    }
+				if (itemID > 0)
+				{
+					Item addon = new StaghornFernAddon();
+
+					addon.ItemID = itemID;
+					addon.MoveToWorld(loc, from.Map);
+
+					house.Addons[addon] = from;
+					Delete();
+				}
+			}
+			else
+			{
+				from.SendLocalizedMessage(1042036); // That location is not in your house.
+			}
+		}
+	}
 }

@@ -3,53 +3,83 @@ using Server;
 
 namespace Server.Items
 {
-    public class TigerPeltHelm : BaseArmor
-    {
-        public override int InitMinHits { get { return 100; } }
-        public override int InitMaxHits { get { return 100; } }
+	public class TigerPeltHelm : BaseArmor
+	{
+		public override int InitMinHits
+		{
+			get { return 100; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 100; }
+		}
 
-        public override int AosStrReq { get { return 1500; } }
-        public override int AosDexReq { get { return 100; } }
-        public override int AosIntReq { get { return 100; } }
-        public override int OldStrReq { get { return 15; } }
+		public override int AosStrReq
+		{
+			get { return 1500; }
+		}
+		public override int AosDexReq
+		{
+			get { return 100; }
+		}
+		public override int AosIntReq
+		{
+			get { return 100; }
+		}
+		public override int OldStrReq
+		{
+			get { return 15; }
+		}
 
-        public override int ArmorBase { get { return 3; } }
+		public override int ArmorBase
+		{
+			get { return 3; }
+		}
 
-        public override ArmorMaterialType MaterialType { get { return ArmorMaterialType.Leather; } }
-        public override CraftResource DefaultResource { get { return CraftResource.RegularLeather; } }
+		public override ArmorMaterialType MaterialType
+		{
+			get { return ArmorMaterialType.Leather; }
+		}
+		public override CraftResource DefaultResource
+		{
+			get { return CraftResource.RegularLeather; }
+		}
 
-        public override ArmorMeditationAllowance DefMedAllowance { get { return ArmorMeditationAllowance.All; } }
+		public override ArmorMeditationAllowance DefMedAllowance
+		{
+			get { return ArmorMeditationAllowance.All; }
+		}
 
-        public override int LabelNumber { get { return 1109632; } } // Tiger Pelt Helm
+		public override int LabelNumber
+		{
+			get { return 1109632; }
+		} // Tiger Pelt Helm
 
-        [Constructable]
-        public TigerPeltHelm()
-            : base(0x7828)
-        {
-            Weight = 10.0;
-            PrefixOption[50] = 2;    //세트 옵션 번호
-            PrefixOption[61] = 40;   //공격 속도%
-            SuffixOption[61] = 25000; //2.5%
-            PrefixOption[62] = 5;    //기력
-            SuffixOption[62] = 1000000; //100
+		[Constructable]
+		public TigerPeltHelm()
+			: base(0x7828)
+		{
+			Weight = 10.0;
+			PrefixOption[50] = 2; //세트 옵션 번호
+			PrefixOption[61] = 40; //공격 속도%
+			SuffixOption[61] = 25000; //2.5%
+			PrefixOption[62] = 5; //기력
+			SuffixOption[62] = 1000000; //100
+		}
 
-      }
+		public TigerPeltHelm(Serial serial)
+			: base(serial) { }
 
-        public TigerPeltHelm(Serial serial)
-            : base(serial)
-        {
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0); // version
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0); // version
-        }
-
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 }

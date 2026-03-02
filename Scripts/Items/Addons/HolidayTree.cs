@@ -4,339 +4,320 @@ using Server.Multis;
 
 namespace Server.Items
 {
-    public enum HolidayTreeType
-    {
-        Classic,
-        Modern
-    }
+	public enum HolidayTreeType
+	{
+		Classic,
+		Modern,
+	}
 
-    public class HolidayTree : Item, IAddon
-    {
-        private ArrayList m_Components;
-        private Mobile m_Placer;
-        public HolidayTree(Mobile from, HolidayTreeType type, Point3D loc)
-            : base(1)
-        {
-            this.Movable = false;
-            this.MoveToWorld(loc, from.Map);
+	public class HolidayTree : Item, IAddon
+	{
+		private ArrayList m_Components;
+		private Mobile m_Placer;
 
-            this.m_Placer = from;
-            this.m_Components = new ArrayList();
+		public HolidayTree(Mobile from, HolidayTreeType type, Point3D loc)
+			: base(1)
+		{
+			this.Movable = false;
+			this.MoveToWorld(loc, from.Map);
 
-            switch ( type )
-            {
-                case HolidayTreeType.Classic:
-                    {
-                        this.ItemID = 0xCD7;
+			this.m_Placer = from;
+			this.m_Components = new ArrayList();
 
-                        this.AddItem(0, 0, 0, new TreeTrunk(this, 0xCD6));
+			switch (type)
+			{
+				case HolidayTreeType.Classic:
+				{
+					this.ItemID = 0xCD7;
 
-                        this.AddOrnament(0, 0, 2, 0xF22);
-                        this.AddOrnament(0, 0, 9, 0xF18);
-                        this.AddOrnament(0, 0, 15, 0xF20);
-                        this.AddOrnament(0, 0, 19, 0xF17);
-                        this.AddOrnament(0, 0, 20, 0xF24);
-                        this.AddOrnament(0, 0, 20, 0xF1F);
-                        this.AddOrnament(0, 0, 20, 0xF19);
-                        this.AddOrnament(0, 0, 21, 0xF1B);
-                        this.AddOrnament(0, 0, 28, 0xF2F);
-                        this.AddOrnament(0, 0, 30, 0xF23);
-                        this.AddOrnament(0, 0, 32, 0xF2A);
-                        this.AddOrnament(0, 0, 33, 0xF30);
-                        this.AddOrnament(0, 0, 34, 0xF29);
-                        this.AddOrnament(0, 1, 7, 0xF16);
-                        this.AddOrnament(0, 1, 7, 0xF1E);
-                        this.AddOrnament(0, 1, 12, 0xF0F);
-                        this.AddOrnament(0, 1, 13, 0xF13);
-                        this.AddOrnament(0, 1, 18, 0xF12);
-                        this.AddOrnament(0, 1, 19, 0xF15);
-                        this.AddOrnament(0, 1, 25, 0xF28);
-                        this.AddOrnament(0, 1, 29, 0xF1A);
-                        this.AddOrnament(0, 1, 37, 0xF2B);
-                        this.AddOrnament(1, 0, 13, 0xF10);
-                        this.AddOrnament(1, 0, 14, 0xF1C);
-                        this.AddOrnament(1, 0, 16, 0xF14);
-                        this.AddOrnament(1, 0, 17, 0xF26);
-                        this.AddOrnament(1, 0, 22, 0xF27);
+					this.AddItem(0, 0, 0, new TreeTrunk(this, 0xCD6));
 
-                        break;
-                    }
-                case HolidayTreeType.Modern:
-                    {
-                        this.ItemID = 0x1B7E;
+					this.AddOrnament(0, 0, 2, 0xF22);
+					this.AddOrnament(0, 0, 9, 0xF18);
+					this.AddOrnament(0, 0, 15, 0xF20);
+					this.AddOrnament(0, 0, 19, 0xF17);
+					this.AddOrnament(0, 0, 20, 0xF24);
+					this.AddOrnament(0, 0, 20, 0xF1F);
+					this.AddOrnament(0, 0, 20, 0xF19);
+					this.AddOrnament(0, 0, 21, 0xF1B);
+					this.AddOrnament(0, 0, 28, 0xF2F);
+					this.AddOrnament(0, 0, 30, 0xF23);
+					this.AddOrnament(0, 0, 32, 0xF2A);
+					this.AddOrnament(0, 0, 33, 0xF30);
+					this.AddOrnament(0, 0, 34, 0xF29);
+					this.AddOrnament(0, 1, 7, 0xF16);
+					this.AddOrnament(0, 1, 7, 0xF1E);
+					this.AddOrnament(0, 1, 12, 0xF0F);
+					this.AddOrnament(0, 1, 13, 0xF13);
+					this.AddOrnament(0, 1, 18, 0xF12);
+					this.AddOrnament(0, 1, 19, 0xF15);
+					this.AddOrnament(0, 1, 25, 0xF28);
+					this.AddOrnament(0, 1, 29, 0xF1A);
+					this.AddOrnament(0, 1, 37, 0xF2B);
+					this.AddOrnament(1, 0, 13, 0xF10);
+					this.AddOrnament(1, 0, 14, 0xF1C);
+					this.AddOrnament(1, 0, 16, 0xF14);
+					this.AddOrnament(1, 0, 17, 0xF26);
+					this.AddOrnament(1, 0, 22, 0xF27);
 
-                        this.AddOrnament(0, 0, 2, 0xF2F);
-                        this.AddOrnament(0, 0, 2, 0xF20);
-                        this.AddOrnament(0, 0, 2, 0xF22);
-                        this.AddOrnament(0, 0, 5, 0xF30);
-                        this.AddOrnament(0, 0, 5, 0xF15);
-                        this.AddOrnament(0, 0, 5, 0xF1F);
-                        this.AddOrnament(0, 0, 5, 0xF2B);
-                        this.AddOrnament(0, 0, 6, 0xF0F);
-                        this.AddOrnament(0, 0, 7, 0xF1E);
-                        this.AddOrnament(0, 0, 7, 0xF24);
-                        this.AddOrnament(0, 0, 8, 0xF29);
-                        this.AddOrnament(0, 0, 9, 0xF18);
-                        this.AddOrnament(0, 0, 14, 0xF1C);
-                        this.AddOrnament(0, 0, 15, 0xF13);
-                        this.AddOrnament(0, 0, 15, 0xF20);
-                        this.AddOrnament(0, 0, 16, 0xF26);
-                        this.AddOrnament(0, 0, 17, 0xF12);
-                        this.AddOrnament(0, 0, 18, 0xF17);
-                        this.AddOrnament(0, 0, 20, 0xF1B);
-                        this.AddOrnament(0, 0, 23, 0xF28);
-                        this.AddOrnament(0, 0, 25, 0xF18);
-                        this.AddOrnament(0, 0, 25, 0xF2A);
-                        this.AddOrnament(0, 1, 7, 0xF16);
+					break;
+				}
+				case HolidayTreeType.Modern:
+				{
+					this.ItemID = 0x1B7E;
 
-                        break;
-                    }
-            }
-        }
+					this.AddOrnament(0, 0, 2, 0xF2F);
+					this.AddOrnament(0, 0, 2, 0xF20);
+					this.AddOrnament(0, 0, 2, 0xF22);
+					this.AddOrnament(0, 0, 5, 0xF30);
+					this.AddOrnament(0, 0, 5, 0xF15);
+					this.AddOrnament(0, 0, 5, 0xF1F);
+					this.AddOrnament(0, 0, 5, 0xF2B);
+					this.AddOrnament(0, 0, 6, 0xF0F);
+					this.AddOrnament(0, 0, 7, 0xF1E);
+					this.AddOrnament(0, 0, 7, 0xF24);
+					this.AddOrnament(0, 0, 8, 0xF29);
+					this.AddOrnament(0, 0, 9, 0xF18);
+					this.AddOrnament(0, 0, 14, 0xF1C);
+					this.AddOrnament(0, 0, 15, 0xF13);
+					this.AddOrnament(0, 0, 15, 0xF20);
+					this.AddOrnament(0, 0, 16, 0xF26);
+					this.AddOrnament(0, 0, 17, 0xF12);
+					this.AddOrnament(0, 0, 18, 0xF17);
+					this.AddOrnament(0, 0, 20, 0xF1B);
+					this.AddOrnament(0, 0, 23, 0xF28);
+					this.AddOrnament(0, 0, 25, 0xF18);
+					this.AddOrnament(0, 0, 25, 0xF2A);
+					this.AddOrnament(0, 1, 7, 0xF16);
 
-        public HolidayTree(Serial serial)
-            : base(serial)
-        {
-        }
+					break;
+				}
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Mobile Placer
-        {
-            get
-            {
-                return this.m_Placer;
-            }
-            set
-            {
-                this.m_Placer = value;
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1041117;
-            }
-        }// a tree for the holidays
-        Item IAddon.Deed
-        {
-            get
-            {
-                return new HolidayTreeDeed();
-            }
-        }
-        public override void OnAfterDelete()
-        {
-            for (int i = 0; i < this.m_Components.Count; ++i)
-                ((Item)this.m_Components[i]).Delete();
-        }
+		public HolidayTree(Serial serial)
+			: base(serial) { }
 
-        public bool CouldFit(IPoint3D p, Map map)
-        {
-            return map.CanFit((Point3D)p, 20);
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Mobile Placer
+		{
+			get { return this.m_Placer; }
+			set { this.m_Placer = value; }
+		}
+		public override int LabelNumber
+		{
+			get { return 1041117; }
+		} // a tree for the holidays
+		Item IAddon.Deed
+		{
+			get { return new HolidayTreeDeed(); }
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void OnAfterDelete()
+		{
+			for (int i = 0; i < this.m_Components.Count; ++i)
+				((Item)this.m_Components[i]).Delete();
+		}
 
-            writer.Write((int)1); // version
+		public bool CouldFit(IPoint3D p, Map map)
+		{
+			return map.CanFit((Point3D)p, 20);
+		}
 
-            writer.Write(this.m_Placer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((int)this.m_Components.Count);
+			writer.Write((int)1); // version
 
-            for (int i = 0; i < this.m_Components.Count; ++i)
-                writer.Write((Item)this.m_Components[i]);
-        }
+			writer.Write(this.m_Placer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)this.m_Components.Count);
 
-            int version = reader.ReadInt();
+			for (int i = 0; i < this.m_Components.Count; ++i)
+				writer.Write((Item)this.m_Components[i]);
+		}
 
-            switch ( version )
-            {
-                case 1:
-                    {
-                        this.m_Placer = reader.ReadMobile();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-                        goto case 0;
-                    }
-                case 0:
-                    {
-                        int count = reader.ReadInt();
+			int version = reader.ReadInt();
 
-                        this.m_Components = new ArrayList(count);
+			switch (version)
+			{
+				case 1:
+				{
+					this.m_Placer = reader.ReadMobile();
 
-                        for (int i = 0; i < count; ++i)
-                        {
-                            Item item = reader.ReadItem();
+					goto case 0;
+				}
+				case 0:
+				{
+					int count = reader.ReadInt();
 
-                            if (item != null)
-                                this.m_Components.Add(item);
-                        }
+					this.m_Components = new ArrayList(count);
 
-                        break;
-                    }
-            }
+					for (int i = 0; i < count; ++i)
+					{
+						Item item = reader.ReadItem();
 
-            Timer.DelayCall(TimeSpan.Zero, ValidatePlacement);
-        }
+						if (item != null)
+							this.m_Components.Add(item);
+					}
 
-        public void ValidatePlacement()
-        {
-            BaseHouse house = BaseHouse.FindHouseAt(this);
+					break;
+				}
+			}
 
-            if (house == null)
-            {
-                HolidayTreeDeed deed = new HolidayTreeDeed();
-                deed.MoveToWorld(this.Location, this.Map);
-                this.Delete();
-            }
-        }
+			Timer.DelayCall(TimeSpan.Zero, ValidatePlacement);
+		}
 
-        void IChopable.OnChop(Mobile user)
-        {
-            OnDoubleClick(user);
-        }
+		public void ValidatePlacement()
+		{
+			BaseHouse house = BaseHouse.FindHouseAt(this);
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (from.InRange(this.GetWorldLocation(), 1))
-            {
-                if (this.m_Placer == null || from == this.m_Placer || from.AccessLevel >= AccessLevel.GameMaster)
-                {
-                    from.AddToBackpack(new HolidayTreeDeed());
+			if (house == null)
+			{
+				HolidayTreeDeed deed = new HolidayTreeDeed();
+				deed.MoveToWorld(this.Location, this.Map);
+				this.Delete();
+			}
+		}
 
-                    this.Delete();
+		void IChopable.OnChop(Mobile user)
+		{
+			OnDoubleClick(user);
+		}
 
-                    BaseHouse house = BaseHouse.FindHouseAt(this);
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (from.InRange(this.GetWorldLocation(), 1))
+			{
+				if (this.m_Placer == null || from == this.m_Placer || from.AccessLevel >= AccessLevel.GameMaster)
+				{
+					from.AddToBackpack(new HolidayTreeDeed());
 
-                    if (house != null && house.Addons.ContainsKey(this))
-                    {
-                        house.Addons.Remove(this);
-                    }
+					this.Delete();
 
-                    from.SendLocalizedMessage(503393); // A deed for the tree has been placed in your backpack.
-                }
-                else
-                {
-                    from.SendLocalizedMessage(503396); // You cannot take this tree down.
-                }
-            }
-            else
-            {
-                from.SendLocalizedMessage(500446); // That is too far away.
-            }
-        }
+					BaseHouse house = BaseHouse.FindHouseAt(this);
 
-        private void AddOrnament(int x, int y, int z, int itemID)
-        {
-            this.AddItem(x + 1, y + 1, z + 11, new Ornament(itemID));
-        }
+					if (house != null && house.Addons.ContainsKey(this))
+					{
+						house.Addons.Remove(this);
+					}
 
-        private void AddItem(int x, int y, int z, Item item)
-        {
-            item.MoveToWorld(new Point3D(this.Location.X + x, this.Location.Y + y, this.Location.Z + z), this.Map);
+					from.SendLocalizedMessage(503393); // A deed for the tree has been placed in your backpack.
+				}
+				else
+				{
+					from.SendLocalizedMessage(503396); // You cannot take this tree down.
+				}
+			}
+			else
+			{
+				from.SendLocalizedMessage(500446); // That is too far away.
+			}
+		}
 
-            this.m_Components.Add(item);
-        }
+		private void AddOrnament(int x, int y, int z, int itemID)
+		{
+			this.AddItem(x + 1, y + 1, z + 11, new Ornament(itemID));
+		}
 
-        private class Ornament : Item
-        {
-            public Ornament(int itemID)
-                : base(itemID)
-            {
-                this.Movable = false;
-            }
+		private void AddItem(int x, int y, int z, Item item)
+		{
+			item.MoveToWorld(new Point3D(this.Location.X + x, this.Location.Y + y, this.Location.Z + z), this.Map);
 
-            public Ornament(Serial serial)
-                : base(serial)
-            {
-            }
+			this.m_Components.Add(item);
+		}
 
-            public override int LabelNumber
-            {
-                get
-                {
-                    return 1041118;
-                }
-            }// a tree ornament
-            public override void Serialize(GenericWriter writer)
-            {
-                base.Serialize(writer);
+		private class Ornament : Item
+		{
+			public Ornament(int itemID)
+				: base(itemID)
+			{
+				this.Movable = false;
+			}
 
-                writer.Write((int)0); // version
-            }
+			public Ornament(Serial serial)
+				: base(serial) { }
 
-            public override void Deserialize(GenericReader reader)
-            {
-                base.Deserialize(reader);
+			public override int LabelNumber
+			{
+				get { return 1041118; }
+			} // a tree ornament
 
-                int version = reader.ReadInt();
-            }
-        }
+			public override void Serialize(GenericWriter writer)
+			{
+				base.Serialize(writer);
 
-        private class TreeTrunk : Item
-        {
-            private HolidayTree m_Tree;
-            public TreeTrunk(HolidayTree tree, int itemID)
-                : base(itemID)
-            {
-                this.Movable = false;
-                this.MoveToWorld(tree.Location, tree.Map);
+				writer.Write((int)0); // version
+			}
 
-                this.m_Tree = tree;
-            }
+			public override void Deserialize(GenericReader reader)
+			{
+				base.Deserialize(reader);
 
-            public TreeTrunk(Serial serial)
-                : base(serial)
-            {
-            }
+				int version = reader.ReadInt();
+			}
+		}
 
-            public override int LabelNumber
-            {
-                get
-                {
-                    return 1041117;
-                }
-            }// a tree for the holidays
-            public override void OnDoubleClick(Mobile from)
-            {
-                if (this.m_Tree != null && !this.m_Tree.Deleted)
-                    this.m_Tree.OnDoubleClick(from);
-            }
+		private class TreeTrunk : Item
+		{
+			private HolidayTree m_Tree;
 
-            public override void Serialize(GenericWriter writer)
-            {
-                base.Serialize(writer);
+			public TreeTrunk(HolidayTree tree, int itemID)
+				: base(itemID)
+			{
+				this.Movable = false;
+				this.MoveToWorld(tree.Location, tree.Map);
 
-                writer.Write((int)0); // version
+				this.m_Tree = tree;
+			}
 
-                writer.Write(this.m_Tree);
-            }
+			public TreeTrunk(Serial serial)
+				: base(serial) { }
 
-            public override void Deserialize(GenericReader reader)
-            {
-                base.Deserialize(reader);
+			public override int LabelNumber
+			{
+				get { return 1041117; }
+			} // a tree for the holidays
 
-                int version = reader.ReadInt();
+			public override void OnDoubleClick(Mobile from)
+			{
+				if (this.m_Tree != null && !this.m_Tree.Deleted)
+					this.m_Tree.OnDoubleClick(from);
+			}
 
-                switch ( version )
-                {
-                    case 0:
-                        {
-                            this.m_Tree = reader.ReadItem() as HolidayTree;
+			public override void Serialize(GenericWriter writer)
+			{
+				base.Serialize(writer);
 
-                            if (this.m_Tree == null)
-                                this.Delete();
+				writer.Write((int)0); // version
 
-                            break;
-                        }
-                }
-            }
-        }
-    }
+				writer.Write(this.m_Tree);
+			}
+
+			public override void Deserialize(GenericReader reader)
+			{
+				base.Deserialize(reader);
+
+				int version = reader.ReadInt();
+
+				switch (version)
+				{
+					case 0:
+					{
+						this.m_Tree = reader.ReadItem() as HolidayTree;
+
+						if (this.m_Tree == null)
+							this.Delete();
+
+						break;
+					}
+				}
+			}
+		}
+	}
 }

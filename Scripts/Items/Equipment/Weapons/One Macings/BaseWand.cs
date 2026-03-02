@@ -6,414 +6,367 @@ using Server.Targeting;
 
 namespace Server.Items
 {
-    public enum WandEffect
-    {
-        Clumsiness,
-        Identification,
-        Healing,
-        Feeblemindedness,
-        Weakness,
-        MagicArrow,
-        Harming,
-        Fireball,
-        GreaterHealing,
-        Lightning,
-        ManaDraining,
-        None
-    }
+	public enum WandEffect
+	{
+		Clumsiness,
+		Identification,
+		Healing,
+		Feeblemindedness,
+		Weakness,
+		MagicArrow,
+		Harming,
+		Fireball,
+		GreaterHealing,
+		Lightning,
+		ManaDraining,
+		None,
+	}
 
-    public abstract class BaseWand : BaseBashing
-    {
-        private WandEffect m_WandEffect;
-        private int m_Charges;
-		
-		public BaseWand() : base(Utility.RandomList(0xDF2, 0xDF3, 0xDF4, 0xDF5))
+	public abstract class BaseWand : BaseBashing
+	{
+		private WandEffect m_WandEffect;
+		private int m_Charges;
+
+		public BaseWand()
+			: base(Utility.RandomList(0xDF2, 0xDF3, 0xDF4, 0xDF5))
 		{
-            this.Weight = 1.0;
-            this.Effect = WandEffect.None;
-            this.Charges = 0;
+			this.Weight = 1.0;
+			this.Effect = WandEffect.None;
+			this.Charges = 0;
 		}
-		
-        public BaseWand(WandEffect effect, int minCharges, int maxCharges)
-            : base(Utility.RandomList(0xDF2, 0xDF3, 0xDF4, 0xDF5))
-        {
-            this.Weight = 1.0;
-            this.Effect = effect;
-            this.Charges = Utility.RandomMinMax(minCharges, maxCharges);
+
+		public BaseWand(WandEffect effect, int minCharges, int maxCharges)
+			: base(Utility.RandomList(0xDF2, 0xDF3, 0xDF4, 0xDF5))
+		{
+			this.Weight = 1.0;
+			this.Effect = effect;
+			this.Charges = Utility.RandomMinMax(minCharges, maxCharges);
 			PrefixOption[61] = 41;
 			SuffixOption[61] = 1000000;
-			
+
 			//Attributes.CastSpeed += 500;
-        }
+		}
 
-        public BaseWand(Serial serial)
-            : base(serial)
-        {
-        }
+		public BaseWand(Serial serial)
+			: base(serial) { }
 
-        public override WeaponAbility PrimaryAbility
-        {
-            get
-            {
-                return WeaponAbility.Dismount;
-            }
-        }
-        public override WeaponAbility SecondaryAbility
-        {
-            get
-            {
-                return WeaponAbility.Disarm;
-            }
-        }
-        public override int AosStrengthReq
-        {
-            get
-            {
-                return 1000;
-            }
-        }
-        public override int AosDexterityReq
-        {
-            get
-            {
-                return 1000;
-            }
-        }
-        public override int AosIntelligenceReq
-        {
-            get
-            {
-                return 2500;
-            }
-        }
-        public override int AosMinDamage
-        {
-            get
-            {
-                return 1;
-            }
-        }
-        public override int AosMaxDamage
-        {
-            get
-            {
-                return 5;
-            }
-        }
-        public override int AosSpeed
-        {
-            get
-            {
-                return 40;
-            }
-        }
-        public override float MlSpeed
-        {
-            get
-            {
-                return 3.00f;
-            }
-        }
-        public override int OldStrengthReq
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override int OldMinDamage
-        {
-            get
-            {
-                return 2;
-            }
-        }
-        public override int OldMaxDamage
-        {
-            get
-            {
-                return 6;
-            }
-        }
-        public override int OldSpeed
-        {
-            get
-            {
-                return 35;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 100;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 100;
-            }
-        }
-        public virtual TimeSpan GetUseDelay
-        {
-            get
-            {
-                return TimeSpan.FromSeconds(4.0);
-            }
-        }
-        [CommandProperty(AccessLevel.GameMaster)]
-        public WandEffect Effect
-        {
-            get
-            {
-                return this.m_WandEffect;
-            }
-            set
-            {
-                this.m_WandEffect = value;
-                this.InvalidateProperties();
-            }
-        }
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int Charges
-        {
-            get
-            {
-                return this.m_Charges;
-            }
-            set
-            {
-                this.m_Charges = value;
-                this.InvalidateProperties();
-            }
-        }
-        public void ConsumeCharge(Mobile from)
-        {
-            --this.Charges;
+		public override WeaponAbility PrimaryAbility
+		{
+			get { return WeaponAbility.Dismount; }
+		}
+		public override WeaponAbility SecondaryAbility
+		{
+			get { return WeaponAbility.Disarm; }
+		}
+		public override int AosStrengthReq
+		{
+			get { return 1000; }
+		}
+		public override int AosDexterityReq
+		{
+			get { return 1000; }
+		}
+		public override int AosIntelligenceReq
+		{
+			get { return 2500; }
+		}
+		public override int AosMinDamage
+		{
+			get { return 1; }
+		}
+		public override int AosMaxDamage
+		{
+			get { return 5; }
+		}
+		public override int AosSpeed
+		{
+			get { return 40; }
+		}
+		public override float MlSpeed
+		{
+			get { return 3.00f; }
+		}
+		public override int OldStrengthReq
+		{
+			get { return 0; }
+		}
+		public override int OldMinDamage
+		{
+			get { return 2; }
+		}
+		public override int OldMaxDamage
+		{
+			get { return 6; }
+		}
+		public override int OldSpeed
+		{
+			get { return 35; }
+		}
+		public override int InitMinHits
+		{
+			get { return 100; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 100; }
+		}
+		public virtual TimeSpan GetUseDelay
+		{
+			get { return TimeSpan.FromSeconds(4.0); }
+		}
 
-            if (this.Charges == 0)
-                from.SendLocalizedMessage(1019073); // This item is out of charges.
+		[CommandProperty(AccessLevel.GameMaster)]
+		public WandEffect Effect
+		{
+			get { return this.m_WandEffect; }
+			set
+			{
+				this.m_WandEffect = value;
+				this.InvalidateProperties();
+			}
+		}
 
-            this.ApplyDelayTo(from);
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int Charges
+		{
+			get { return this.m_Charges; }
+			set
+			{
+				this.m_Charges = value;
+				this.InvalidateProperties();
+			}
+		}
 
-        public virtual void ApplyDelayTo(Mobile from)
-        {
-            from.BeginAction(typeof(BaseWand));
-            Timer.DelayCall(this.GetUseDelay, new TimerStateCallback(ReleaseWandLock_Callback), from);
-        }
+		public void ConsumeCharge(Mobile from)
+		{
+			--this.Charges;
 
-        public virtual void ReleaseWandLock_Callback(object state)
-        {
-            ((Mobile)state).EndAction(typeof(BaseWand));
-        }
+			if (this.Charges == 0)
+				from.SendLocalizedMessage(1019073); // This item is out of charges.
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (!from.CanBeginAction(typeof(BaseWand)))
-            {
-                from.SendLocalizedMessage(1070860); // You must wait a moment for the wand to recharge.
-                return;
-            }
+			this.ApplyDelayTo(from);
+		}
 
-            if (this.Parent == from)
-            {
-                if (this.Charges > 0)
-                    this.OnWandUse(from);
-                else
-                    from.SendLocalizedMessage(1019073); // This item is out of charges.
-            }
-            else
-            {
-                from.SendLocalizedMessage(502641); // You must equip this item to use it.
-            }
-        }
+		public virtual void ApplyDelayTo(Mobile from)
+		{
+			from.BeginAction(typeof(BaseWand));
+			Timer.DelayCall(this.GetUseDelay, new TimerStateCallback(ReleaseWandLock_Callback), from);
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public virtual void ReleaseWandLock_Callback(object state)
+		{
+			((Mobile)state).EndAction(typeof(BaseWand));
+		}
 
-            writer.Write((int)0); // version
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (!from.CanBeginAction(typeof(BaseWand)))
+			{
+				from.SendLocalizedMessage(1070860); // You must wait a moment for the wand to recharge.
+				return;
+			}
 
-            writer.Write((int)this.m_WandEffect);
-            writer.Write((int)this.m_Charges);
-        }
+			if (this.Parent == from)
+			{
+				if (this.Charges > 0)
+					this.OnWandUse(from);
+				else
+					from.SendLocalizedMessage(1019073); // This item is out of charges.
+			}
+			else
+			{
+				from.SendLocalizedMessage(502641); // You must equip this item to use it.
+			}
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
+			writer.Write((int)0); // version
 
-            switch ( version )
-            {
-                case 0:
-                    {
-                        this.m_WandEffect = (WandEffect)reader.ReadInt();
-                        this.m_Charges = (int)reader.ReadInt();
+			writer.Write((int)this.m_WandEffect);
+			writer.Write((int)this.m_Charges);
+		}
 
-                        break;
-                    }
-            }
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+			int version = reader.ReadInt();
 
-            switch ( this.m_WandEffect )
-            {
-                case WandEffect.Clumsiness:
-                    list.Add(1017326, this.m_Charges.ToString());
-                    break; // clumsiness charges: ~1_val~
-                case WandEffect.Identification:
-                    list.Add(1017350, this.m_Charges.ToString());
-                    break; // identification charges: ~1_val~
-                case WandEffect.Healing:
-                    list.Add(1017329, this.m_Charges.ToString());
-                    break; // healing charges: ~1_val~
-                case WandEffect.Feeblemindedness:
-                    list.Add(1017327, this.m_Charges.ToString());
-                    break; // feeblemind charges: ~1_val~
-                case WandEffect.Weakness:
-                    list.Add(1017328, this.m_Charges.ToString());
-                    break; // weakness charges: ~1_val~
-                case WandEffect.MagicArrow:
-                    list.Add(1060492, this.m_Charges.ToString());
-                    break; // magic arrow charges: ~1_val~
-                case WandEffect.Harming:
-                    list.Add(1017334, this.m_Charges.ToString());
-                    break; // harm charges: ~1_val~
-                case WandEffect.Fireball:
-                    list.Add(1060487, this.m_Charges.ToString());
-                    break; // fireball charges: ~1_val~
-                case WandEffect.GreaterHealing:
-                    list.Add(1017330, this.m_Charges.ToString());
-                    break; // greater healing charges: ~1_val~
-                case WandEffect.Lightning:
-                    list.Add(1060491, this.m_Charges.ToString());
-                    break; // lightning charges: ~1_val~
-                case WandEffect.ManaDraining:
-                    list.Add(1017339, this.m_Charges.ToString());
-                    break; // mana drain charges: ~1_val~
-            }
-        }
+			switch (version)
+			{
+				case 0:
+				{
+					this.m_WandEffect = (WandEffect)reader.ReadInt();
+					this.m_Charges = (int)reader.ReadInt();
 
-        public override void OnSingleClick(Mobile from)
-        {
-            ArrayList attrs = new ArrayList();
+					break;
+				}
+			}
+		}
 
-            if (this.DisplayLootType)
-            {
-                if (this.LootType == LootType.Blessed)
-                    attrs.Add(new EquipInfoAttribute(1038021)); // blessed
-                else if (this.LootType == LootType.Cursed)
-                    attrs.Add(new EquipInfoAttribute(1049643)); // cursed
-            }
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-            if (!this.Identified)
-            {
-                attrs.Add(new EquipInfoAttribute(1038000)); // Unidentified
-            }
-            else
-            {
-                int num = 0;
+			switch (this.m_WandEffect)
+			{
+				case WandEffect.Clumsiness:
+					list.Add(1017326, this.m_Charges.ToString());
+					break; // clumsiness charges: ~1_val~
+				case WandEffect.Identification:
+					list.Add(1017350, this.m_Charges.ToString());
+					break; // identification charges: ~1_val~
+				case WandEffect.Healing:
+					list.Add(1017329, this.m_Charges.ToString());
+					break; // healing charges: ~1_val~
+				case WandEffect.Feeblemindedness:
+					list.Add(1017327, this.m_Charges.ToString());
+					break; // feeblemind charges: ~1_val~
+				case WandEffect.Weakness:
+					list.Add(1017328, this.m_Charges.ToString());
+					break; // weakness charges: ~1_val~
+				case WandEffect.MagicArrow:
+					list.Add(1060492, this.m_Charges.ToString());
+					break; // magic arrow charges: ~1_val~
+				case WandEffect.Harming:
+					list.Add(1017334, this.m_Charges.ToString());
+					break; // harm charges: ~1_val~
+				case WandEffect.Fireball:
+					list.Add(1060487, this.m_Charges.ToString());
+					break; // fireball charges: ~1_val~
+				case WandEffect.GreaterHealing:
+					list.Add(1017330, this.m_Charges.ToString());
+					break; // greater healing charges: ~1_val~
+				case WandEffect.Lightning:
+					list.Add(1060491, this.m_Charges.ToString());
+					break; // lightning charges: ~1_val~
+				case WandEffect.ManaDraining:
+					list.Add(1017339, this.m_Charges.ToString());
+					break; // mana drain charges: ~1_val~
+			}
+		}
 
-                switch ( this.m_WandEffect )
-                {
-                    case WandEffect.Clumsiness:
-                        num = 3002011;
-                        break;
-                    case WandEffect.Identification:
-                        num = 1044063;
-                        break;
-                    case WandEffect.Healing:
-                        num = 3002014;
-                        break;
-                    case WandEffect.Feeblemindedness:
-                        num = 3002013;
-                        break;
-                    case WandEffect.Weakness:
-                        num = 3002018;
-                        break;
-                    case WandEffect.MagicArrow:
-                        num = 3002015;
-                        break;
-                    case WandEffect.Harming:
-                        num = 3002022;
-                        break;
-                    case WandEffect.Fireball:
-                        num = 3002028;
-                        break;
-                    case WandEffect.GreaterHealing:
-                        num = 3002039;
-                        break;
-                    case WandEffect.Lightning:
-                        num = 3002040;
-                        break;
-                    case WandEffect.ManaDraining:
-                        num = 3002041;
-                        break;
-                }
+		public override void OnSingleClick(Mobile from)
+		{
+			ArrayList attrs = new ArrayList();
 
-                if (num > 0)
-                    attrs.Add(new EquipInfoAttribute(num, this.m_Charges));
-            }
+			if (this.DisplayLootType)
+			{
+				if (this.LootType == LootType.Blessed)
+					attrs.Add(new EquipInfoAttribute(1038021)); // blessed
+				else if (this.LootType == LootType.Cursed)
+					attrs.Add(new EquipInfoAttribute(1049643)); // cursed
+			}
 
-            int number;
+			if (!this.Identified)
+			{
+				attrs.Add(new EquipInfoAttribute(1038000)); // Unidentified
+			}
+			else
+			{
+				int num = 0;
 
-            if (this.Name == null)
-            {
-                number = 1017085;
-            }
-            else
-            {
-                this.LabelTo(from, this.Name);
-                number = 1041000;
-            }
+				switch (this.m_WandEffect)
+				{
+					case WandEffect.Clumsiness:
+						num = 3002011;
+						break;
+					case WandEffect.Identification:
+						num = 1044063;
+						break;
+					case WandEffect.Healing:
+						num = 3002014;
+						break;
+					case WandEffect.Feeblemindedness:
+						num = 3002013;
+						break;
+					case WandEffect.Weakness:
+						num = 3002018;
+						break;
+					case WandEffect.MagicArrow:
+						num = 3002015;
+						break;
+					case WandEffect.Harming:
+						num = 3002022;
+						break;
+					case WandEffect.Fireball:
+						num = 3002028;
+						break;
+					case WandEffect.GreaterHealing:
+						num = 3002039;
+						break;
+					case WandEffect.Lightning:
+						num = 3002040;
+						break;
+					case WandEffect.ManaDraining:
+						num = 3002041;
+						break;
+				}
 
-            if (attrs.Count == 0 && this.Crafter == null && this.Name != null)
-                return;
+				if (num > 0)
+					attrs.Add(new EquipInfoAttribute(num, this.m_Charges));
+			}
 
-            EquipmentInfo eqInfo = new EquipmentInfo(number, this.Crafter, false, (EquipInfoAttribute[])attrs.ToArray(typeof(EquipInfoAttribute)));
+			int number;
 
-            from.Send(new DisplayEquipmentInfo(this, eqInfo));
-        }
+			if (this.Name == null)
+			{
+				number = 1017085;
+			}
+			else
+			{
+				this.LabelTo(from, this.Name);
+				number = 1041000;
+			}
 
-        public void Cast(Spell spell)
-        {
-            bool m = this.Movable;
+			if (attrs.Count == 0 && this.Crafter == null && this.Name != null)
+				return;
 
-            this.Movable = false;
-            spell.Cast();
-            this.Movable = m;
-        }
+			EquipmentInfo eqInfo = new EquipmentInfo(
+				number,
+				this.Crafter,
+				false,
+				(EquipInfoAttribute[])attrs.ToArray(typeof(EquipInfoAttribute))
+			);
 
-        public virtual void OnWandUse(Mobile from)
-        {
-			if( from.Hunger < 100 )
+			from.Send(new DisplayEquipmentInfo(this, eqInfo));
+		}
+
+		public void Cast(Spell spell)
+		{
+			bool m = this.Movable;
+
+			this.Movable = false;
+			spell.Cast();
+			this.Movable = m;
+		}
+
+		public virtual void OnWandUse(Mobile from)
+		{
+			if (from.Hunger < 100)
 				from.SendMessage("완드를 사용하려면 만복도가 1% 이상이어야 합니다.");
 			else
 			{
 				from.Hunger -= 100;
 				from.Target = new WandTarget(this);
 			}
-        }
+		}
 
-        public virtual void DoWandTarget(Mobile from, object o)
-        {
-            if (this.Deleted || this.Charges <= 0 || this.Parent != from || o is StaticTarget || o is LandTarget)
-                return;
+		public virtual void DoWandTarget(Mobile from, object o)
+		{
+			if (this.Deleted || this.Charges <= 0 || this.Parent != from || o is StaticTarget || o is LandTarget)
+				return;
 
-            if (this.OnWandTarget(from, o))
-                this.ConsumeCharge(from);
-        }
+			if (this.OnWandTarget(from, o))
+				this.ConsumeCharge(from);
+		}
 
-        public virtual bool OnWandTarget(Mobile from, object o)
-        {
-            return true;
-        }
-    }
+		public virtual bool OnWandTarget(Mobile from, object o)
+		{
+			return true;
+		}
+	}
 }

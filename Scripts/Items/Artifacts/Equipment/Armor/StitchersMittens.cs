@@ -2,56 +2,50 @@ using System;
 
 namespace Server.Items
 {
-    public class StitchersMittens : LeafGloves
+	public class StitchersMittens : LeafGloves
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public StitchersMittens()
-        {
-            Hue = 0x481;
-            SkillBonuses.SetValues(0, SkillName.Healing, 10.0);
-            Attributes.BonusDex = 5;
-            Attributes.LowerRegCost = 30;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public StitchersMittens(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public StitchersMittens()
+		{
+			Hue = 0x481;
+			SkillBonuses.SetValues(0, SkillName.Healing, 10.0);
+			Attributes.BonusDex = 5;
+			Attributes.LowerRegCost = 30;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1072932;
-            }
-        }// Stitcher's Mittens
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 20;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 20;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public StitchersMittens(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1072932; }
+		} // Stitcher's Mittens
+		public override int BasePhysicalResistance
+		{
+			get { return 20; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return 20; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

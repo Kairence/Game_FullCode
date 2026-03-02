@@ -10,15 +10,23 @@ namespace Server.Menus.ItemLists
 		private readonly int m_ItemID;
 		private readonly int m_Hue;
 
-		public string Name { get { return m_Name; } }
+		public string Name
+		{
+			get { return m_Name; }
+		}
 
-		public int ItemID { get { return m_ItemID; } }
+		public int ItemID
+		{
+			get { return m_ItemID; }
+		}
 
-		public int Hue { get { return m_Hue; } }
+		public int Hue
+		{
+			get { return m_Hue; }
+		}
 
 		public ItemListEntry(string name, int itemID)
-			: this(name, itemID, 0)
-		{ }
+			: this(name, itemID, 0) { }
 
 		public ItemListEntry(string name, int itemID, int hue)
 		{
@@ -36,13 +44,26 @@ namespace Server.Menus.ItemLists
 		private readonly int m_Serial;
 		private static int m_NextSerial;
 
-		int IMenu.Serial { get { return m_Serial; } }
+		int IMenu.Serial
+		{
+			get { return m_Serial; }
+		}
 
-		int IMenu.EntryLength { get { return m_Entries.Length; } }
+		int IMenu.EntryLength
+		{
+			get { return m_Entries.Length; }
+		}
 
-		public string Question { get { return m_Question; } }
+		public string Question
+		{
+			get { return m_Question; }
+		}
 
-		public ItemListEntry[] Entries { get { return m_Entries; } set { m_Entries = value; } }
+		public ItemListEntry[] Entries
+		{
+			get { return m_Entries; }
+			set { m_Entries = value; }
+		}
 
 		public ItemListMenu(string question, ItemListEntry[] entries)
 		{
@@ -53,17 +74,14 @@ namespace Server.Menus.ItemLists
 			{
 				m_Serial = m_NextSerial++;
 				m_Serial &= 0x7FFFFFFF;
-			}
-			while (m_Serial == 0);
+			} while (m_Serial == 0);
 
 			m_Serial = (int)((uint)m_Serial | 0x80000000);
 		}
 
-		public virtual void OnCancel(NetState state)
-		{ }
+		public virtual void OnCancel(NetState state) { }
 
-		public virtual void OnResponse(NetState state, int index)
-		{ }
+		public virtual void OnResponse(NetState state, int index) { }
 
 		public void SendTo(NetState state)
 		{

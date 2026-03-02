@@ -1,59 +1,63 @@
 using System;
-using Server.Items;
 using Server.Gumps;
-using Server.Network;
+using Server.Items;
 using Server.Mobiles;
+using Server.Network;
 
 namespace Server.Items
 {
 	/*
-		ÃÖÃÊ 100 À¯Àú
+		ï¿½ï¿½ï¿½ï¿½ 100 ï¿½ï¿½ï¿½ï¿½
 	*/
-	
-	public class RespawnCheck : Item 
+
+	public class RespawnCheck : Item
 	{
 		private DateTime m_RespawnTime = DateTime.Now;
-		
+
 		public DateTime RespawnTime
 		{
-			get{ return m_RespawnTime;}
-			set{ m_RespawnTime = value; InvalidateProperties();}
+			get { return m_RespawnTime; }
+			set
+			{
+				m_RespawnTime = value;
+				InvalidateProperties();
+			}
 		}
-		
+
 		public override string DefaultName
 		{
-			get { return "´øÀü º¸»ó Ã¼Å© ½Ã½ºÅÛ"; }
+			get { return "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼Å© ï¿½Ã½ï¿½ï¿½ï¿½"; }
 		}
+
 		[Constructable]
-		public RespawnCheck() : base( 0xED4 )
+		public RespawnCheck()
+			: base(0xED4)
 		{
 			Movable = false;
 			Hue = 1168;
-			Name = "´øÀü º¸»ó Ã¼Å© ½Ã½ºÅÛ";
-		}
-		
-		public override void OnDoubleClick( Mobile from )
-		{
-			from.SendMessage( m_RespawnTime.ToString());
+			Name = "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼Å© ï¿½Ã½ï¿½ï¿½ï¿½";
 		}
 
-		public RespawnCheck( Serial serial ) : base( serial )
+		public override void OnDoubleClick(Mobile from)
 		{
+			from.SendMessage(m_RespawnTime.ToString());
 		}
 
-		public override void Serialize( GenericWriter writer )
+		public RespawnCheck(Serial serial)
+			: base(serial) { }
+
+		public override void Serialize(GenericWriter writer)
 		{
-			base.Serialize( writer );
+			base.Serialize(writer);
 
-			writer.Write( (int) 0 ); // version
+			writer.Write((int)0); // version
 
-			writer.Write( (DateTime) m_RespawnTime );
-
+			writer.Write((DateTime)m_RespawnTime);
 		}
 
-		public override void Deserialize( GenericReader reader )
+		public override void Deserialize(GenericReader reader)
 		{
-			base.Deserialize( reader );
+			base.Deserialize(reader);
 
 			int version = reader.ReadInt();
 

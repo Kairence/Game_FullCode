@@ -5,78 +5,67 @@ using Server.Targeting;
 
 namespace Server.Items
 {
-    [TypeAlias("Server.Items.DragonBarding")]
-    public class DragonBardingDeed : Item, ICraftable
-    {
-        private bool m_Exceptional;
-        private Mobile m_Crafter;
-        private CraftResource m_Resource;
+	[TypeAlias("Server.Items.DragonBarding")]
+	public class DragonBardingDeed : Item, ICraftable
+	{
+		private bool m_Exceptional;
+		private Mobile m_Crafter;
+		private CraftResource m_Resource;
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return this.m_Exceptional ? 1053181 : 1053012;
-            }
-        }// dragon barding deed
+		public override int LabelNumber
+		{
+			get { return this.m_Exceptional ? 1053181 : 1053012; }
+		} // dragon barding deed
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Mobile Crafter
-        {
-            get
-            {
-                return this.m_Crafter;
-            }
-            set
-            {
-                this.m_Crafter = value;
-                this.InvalidateProperties();
-            }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Mobile Crafter
+		{
+			get { return this.m_Crafter; }
+			set
+			{
+				this.m_Crafter = value;
+				this.InvalidateProperties();
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool Exceptional
-        {
-            get
-            {
-                return this.m_Exceptional;
-            }
-            set
-            {
-                this.m_Exceptional = value;
-                this.InvalidateProperties();
-            }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool Exceptional
+		{
+			get { return this.m_Exceptional; }
+			set
+			{
+				this.m_Exceptional = value;
+				this.InvalidateProperties();
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public CraftResource Resource
-        {
-            get
-            {
-                return this.m_Resource;
-            }
-            set
-            {
-                this.m_Resource = value;
-                this.Hue = CraftResources.GetHue(value);
-                this.InvalidateProperties();
-            }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public CraftResource Resource
+		{
+			get { return this.m_Resource; }
+			set
+			{
+				this.m_Resource = value;
+				this.Hue = CraftResources.GetHue(value);
+				this.InvalidateProperties();
+			}
+		}
 
-        [Constructable]
-        public DragonBardingDeed()
-            : base(0x14F0)
-        {
-            this.Weight = 1.0;
-        }
+		[Constructable]
+		public DragonBardingDeed()
+			: base(0x14F0)
+		{
+			this.Weight = 1.0;
+		}
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-            if (this.m_Exceptional && this.m_Crafter != null)
+			if (this.m_Exceptional && this.m_Crafter != null)
 				list.Add(1050043, m_Crafter.TitleName); // crafted by ~1_NAME~
-        }
+		}
+
 		public override void OnSingleClick(Mobile from)
 		{
 			base.OnSingleClick(from);
@@ -86,110 +75,117 @@ namespace Server.Items
 				LabelTo(from, 1050043, m_Crafter.TitleName); // crafted by ~1_NAME~
 			}
 		}
-        
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (this.IsChildOf(from.Backpack))
-            {
-                from.BeginTarget(6, false, TargetFlags.None, new TargetCallback(OnTarget));
-                from.SendLocalizedMessage(1053024); // Select the swamp dragon you wish to place the barding on.
-            }
-            else
-            {
-                from.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
-            }
-        }
 
-        public virtual void OnTarget(Mobile from, object obj)
-        {
-            if (this.Deleted)
-                return;
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (this.IsChildOf(from.Backpack))
+			{
+				from.BeginTarget(6, false, TargetFlags.None, new TargetCallback(OnTarget));
+				from.SendLocalizedMessage(1053024); // Select the swamp dragon you wish to place the barding on.
+			}
+			else
+			{
+				from.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
+			}
+		}
 
-            SwampDragon pet = obj as SwampDragon;
+		public virtual void OnTarget(Mobile from, object obj)
+		{
+			if (this.Deleted)
+				return;
 
-            if (pet == null || pet.HasBarding)
-            {
-                from.SendLocalizedMessage(1053025); // That is not an unarmored swamp dragon.
-            }
-            else if (!pet.Controlled || pet.ControlMaster != from)
-            {
-                from.SendLocalizedMessage(1053026); // You can only put barding on a tamed swamp dragon that you own.
-            }
-            else if (!this.IsChildOf(from.Backpack))
-            {
-                from.SendLocalizedMessage(1060640); // The item must be in your backpack to use it.
-            }
-            else
-            {
-                pet.BardingExceptional = this.Exceptional;
-                pet.BardingCrafter = this.Crafter;
-                pet.BardingResource = this.Resource;
-                pet.HasBarding = true;
-                pet.Hue = this.Hue;
-                pet.BardingHP = pet.BardingMaxHP;
+			SwampDragon pet = obj as SwampDragon;
 
-                this.Delete();
+			if (pet == null || pet.HasBarding)
+			{
+				from.SendLocalizedMessage(1053025); // That is not an unarmored swamp dragon.
+			}
+			else if (!pet.Controlled || pet.ControlMaster != from)
+			{
+				from.SendLocalizedMessage(1053026); // You can only put barding on a tamed swamp dragon that you own.
+			}
+			else if (!this.IsChildOf(from.Backpack))
+			{
+				from.SendLocalizedMessage(1060640); // The item must be in your backpack to use it.
+			}
+			else
+			{
+				pet.BardingExceptional = this.Exceptional;
+				pet.BardingCrafter = this.Crafter;
+				pet.BardingResource = this.Resource;
+				pet.HasBarding = true;
+				pet.Hue = this.Hue;
+				pet.BardingHP = pet.BardingMaxHP;
 
-                from.SendLocalizedMessage(1053027); // You place the barding on your swamp dragon.  Use a bladed item on your dragon to remove the armor.
-            }
-        }
+				this.Delete();
 
-        public DragonBardingDeed(Serial serial)
-            : base(serial)
-        {
-        }
+				from.SendLocalizedMessage(1053027); // You place the barding on your swamp dragon.  Use a bladed item on your dragon to remove the armor.
+			}
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public DragonBardingDeed(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)1); // version
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((bool)this.m_Exceptional);
-            writer.Write((Mobile)this.m_Crafter);
-            writer.Write((int)this.m_Resource);
-        }
+			writer.Write((int)1); // version
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((bool)this.m_Exceptional);
+			writer.Write((Mobile)this.m_Crafter);
+			writer.Write((int)this.m_Resource);
+		}
 
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            switch ( version )
-            {
-                case 1:
-                case 0:
-                    {
-                        this.m_Exceptional = reader.ReadBool();
-                        this.m_Crafter = reader.ReadMobile();
+			int version = reader.ReadInt();
 
-                        if (version < 1)
-                            reader.ReadInt();
+			switch (version)
+			{
+				case 1:
+				case 0:
+				{
+					this.m_Exceptional = reader.ReadBool();
+					this.m_Crafter = reader.ReadMobile();
 
-                        this.m_Resource = (CraftResource)reader.ReadInt();
-                        break;
-                    }
-            }
-        }
+					if (version < 1)
+						reader.ReadInt();
 
-        #region ICraftable Members
+					this.m_Resource = (CraftResource)reader.ReadInt();
+					break;
+				}
+			}
+		}
 
-        public int OnCraft(int quality, bool makersMark, Mobile from, CraftSystem craftSystem, Type typeRes, ITool tool, CraftItem craftItem, int resHue)
-        {
-            this.Exceptional = (quality >= 2);
+		#region ICraftable Members
 
-            if (makersMark)
-                this.Crafter = from;
+		public int OnCraft(
+			int quality,
+			bool makersMark,
+			Mobile from,
+			CraftSystem craftSystem,
+			Type typeRes,
+			ITool tool,
+			CraftItem craftItem,
+			int resHue
+		)
+		{
+			this.Exceptional = (quality >= 2);
 
-            Type resourceType = typeRes;
+			if (makersMark)
+				this.Crafter = from;
 
-            if (resourceType == null)
-                resourceType = craftItem.Resources.GetAt(0).ItemType;
+			Type resourceType = typeRes;
 
-            this.Resource = CraftResources.GetFromType(resourceType);
-            return quality;
-        }
-        #endregion
-    }
+			if (resourceType == null)
+				resourceType = craftItem.Resources.GetAt(0).ItemType;
+
+			this.Resource = CraftResources.GetFromType(resourceType);
+			return quality;
+		}
+		#endregion
+	}
 }

@@ -5,8 +5,14 @@ namespace Server.Items
 {
 	public class BootsOfTheIceWyrm : Boots
 	{
-		public override int LabelNumber { get { return 1151208; } } // Boots of the Ice Wyrm
-		public override bool IsArtifact { get { return true; } }
+		public override int LabelNumber
+		{
+			get { return 1151208; }
+		} // Boots of the Ice Wyrm
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
 		[Constructable]
 		public BootsOfTheIceWyrm()
@@ -15,21 +21,19 @@ namespace Server.Items
 			Resistances.Cold = 2;
 		}
 
-		public BootsOfTheIceWyrm( Serial serial )
-			: base( serial )
+		public BootsOfTheIceWyrm(Serial serial)
+			: base(serial) { }
+
+		public override void Serialize(GenericWriter writer)
 		{
+			base.Serialize(writer);
+
+			writer.Write((int)0);
 		}
 
-		public override void Serialize( GenericWriter writer )
+		public override void Deserialize(GenericReader reader)
 		{
-			base.Serialize( writer );
-
-			writer.Write( (int) 0 );
-		}
-
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
+			base.Deserialize(reader);
 
 			int version = reader.ReadInt();
 		}

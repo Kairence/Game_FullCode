@@ -11,8 +11,7 @@ namespace Server.Targeting
 		public Point3D Offset { get; set; }
 
 		protected MultiTarget(int multiID, Point3D offset)
-			: this(multiID, offset, 10, true, TargetFlags.None)
-		{ }
+			: this(multiID, offset, 10, true, TargetFlags.None) { }
 
 		protected MultiTarget(int multiID, Point3D offset, int range, bool allowGround, TargetFlags flags)
 			: base(range, allowGround, flags)

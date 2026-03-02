@@ -8,6 +8,7 @@ namespace Server.Targets
 	public class MoveTarget : Target
 	{
 		private readonly object m_Object;
+
 		public MoveTarget(object o)
 			: base(-1, true, TargetFlags.None)
 		{
@@ -29,7 +30,14 @@ namespace Server.Targets
 				if (p is Item)
 					p = ((Item)p).GetWorldTop();
 
-				CommandLogging.WriteLine(from, "{0} {1} moving {2} to {3}", from.AccessLevel, CommandLogging.Format(from), CommandLogging.Format(this.m_Object), new Point3D(p));
+				CommandLogging.WriteLine(
+					from,
+					"{0} {1} moving {2} to {3}",
+					from.AccessLevel,
+					CommandLogging.Format(from),
+					CommandLogging.Format(this.m_Object),
+					new Point3D(p)
+				);
 
 				if (this.m_Object is Item)
 				{

@@ -1,7 +1,6 @@
 #region References
 using System.Collections.Generic;
 using Server.Mobiles;
-
 using Server.Multis;
 #endregion
 
@@ -14,7 +13,7 @@ namespace Server.Items
 		NotInHouse,
 		DoorTooClose,
 		NoWall,
-		DoorsNotClosed
+		DoorsNotClosed,
 	}
 
 	public interface IAddon : IEntity, IChopable
@@ -49,22 +48,22 @@ namespace Server.Items
 
 		public void BedUse(PlayerMobile pm, bool house)
 		{
-			if( pm.Tired == 0 )
+			if (pm.Tired == 0)
 				pm.Tired = -1000;
 
 			int damage = 1;
-			
-			if( house )
+
+			if (house)
 			{
-				if( MaxHits > 0 )
+				if (MaxHits > 0)
 				{
-					if ( Hits >= damage )
+					if (Hits >= damage)
 					{
 						Hits -= damage;
 					}
 					else
 					{
-						if( Hits + MaxHits > damage )
+						if (Hits + MaxHits > damage)
 						{
 							Hits = 0;
 							MaxHits -= damage - Hits;
@@ -74,16 +73,14 @@ namespace Server.Items
 							Delete();
 						}
 					}
-					
 				}
 			}
 			pm.SendMessage("몸이 가뿐해집니다.");
-				
-			pm.SendMessage("남은 내구도 : {0} / {1}", Hits, MaxHits );
+
+			pm.SendMessage("남은 내구도 : {0} / {1}", Hits, MaxHits);
 			pm.TimerList[72] = 18000;
 		}
-		
-		
+
 		private int m_Hits;
 		private int m_MaxHits;
 
@@ -92,7 +89,8 @@ namespace Server.Items
 		{
 			get { return m_Hits; }
 			set
-			{ m_Hits = value;
+			{
+				m_Hits = value;
 
 				InvalidateProperties();
 			}
@@ -108,8 +106,8 @@ namespace Server.Items
 
 				InvalidateProperties();
 			}
-		}		
-		
+		}
+
 		private List<AddonComponent> m_Components;
 
 		public void AddComponent(AddonComponent c, int x, int y, int z)
@@ -139,10 +137,11 @@ namespace Server.Items
 				m_Hits = m_MaxHits = 0;//Utility.RandomMinMax(InitMinHits, InitMaxHits);
 			*/
 		}
+
 		/*
-        public override void AddNameProperties(ObjectPropertyList list)
-        {
-            base.AddNameProperties(list);
+		public override void AddNameProperties(ObjectPropertyList list)
+		{
+			base.AddNameProperties(list);
 			if (m_Hits >= 0 && m_MaxHits > 0)
 			{
 				list.Add(1060639, "{0}\t{1}", m_Hits, m_MaxHits); // durability ~1_val~ / ~2_val~
@@ -159,7 +158,10 @@ namespace Server.Items
 			}
 		}
 
-		public virtual bool RetainDeedHue {  get  { return Hue != 0 && CraftResources.GetHue(Resource) != Hue; } }
+		public virtual bool RetainDeedHue
+		{
+			get { return Hue != 0 && CraftResources.GetHue(Resource) != Hue; }
+		}
 
 		public virtual void OnChop(Mobile from)
 		{
@@ -174,7 +176,10 @@ namespace Server.Items
 			}
 			#endregion
 
-			if (house != null && (house.IsOwner(from) || (house.Addons.ContainsKey(this) && house.Addons[this] == from)))
+			if (
+				house != null
+				&& (house.IsOwner(from) || (house.Addons.ContainsKey(this) && house.Addons[this] == from))
+			)
 			{
 				Effects.PlaySound(GetWorldLocation(), Map, 0x3B3);
 				from.SendLocalizedMessage(500461); // You destroy the item.
@@ -207,7 +212,7 @@ namespace Server.Items
 					else
 						deed.Hue = 0;
 
-                    deed.IsReDeed = true;
+					deed.IsReDeed = true;
 
 					from.AddToBackpack(deed);
 				}
@@ -219,7 +224,10 @@ namespace Server.Items
 			}
 		}
 
-		public virtual BaseAddonDeed Deed { get { return null; } }
+		public virtual BaseAddonDeed Deed
+		{
+			get { return null; }
+		}
 
 		public virtual BaseAddonDeed GetDeed()
 		{
@@ -233,13 +241,18 @@ namespace Server.Items
 			return deed;
 		}
 
-		Item IAddon.Deed { get { return GetDeed(); } }
+		Item IAddon.Deed
+		{
+			get { return GetDeed(); }
+		}
 
-		public List<AddonComponent> Components { get { return m_Components; } }
+		public List<AddonComponent> Components
+		{
+			get { return m_Components; }
+		}
 
 		public BaseAddon(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		public bool CouldFit(IPoint3D p, Map map)
 		{
@@ -252,7 +265,7 @@ namespace Server.Items
 			if (Deleted)
 				return AddonFitResult.Blocked;
 
-            foreach (var c in m_Components)
+			foreach (var c in m_Components)
 			{
 				var p3D = new Point3D(p.X + c.Offset.X, p.Y + c.Offset.Y, p.Z + c.Offset.Z);
 
@@ -286,8 +299,13 @@ namespace Server.Items
 						var addonLoc = new Point3D(p.X + c.Offset.X, p.Y + c.Offset.Y, p.Z + c.Offset.Z);
 						var addonHeight = c.ItemData.CalcHeight;
 
-						if (Utility.InRange(doorLoc, addonLoc, 1) && (addonLoc.Z == doorLoc.Z ||
-																	  ((addonLoc.Z + addonHeight) > doorLoc.Z && (doorLoc.Z + doorHeight) > addonLoc.Z)))
+						if (
+							Utility.InRange(doorLoc, addonLoc, 1)
+							&& (
+								addonLoc.Z == doorLoc.Z
+								|| ((addonLoc.Z + addonHeight) > doorLoc.Z && (doorLoc.Z + doorHeight) > addonLoc.Z)
+							)
+						)
 							return AddonFitResult.DoorTooClose;
 					}
 				}
@@ -325,11 +343,9 @@ namespace Server.Items
 			return false;
 		}
 
-		public virtual void OnComponentLoaded(AddonComponent c)
-		{ }
+		public virtual void OnComponentLoaded(AddonComponent c) { }
 
-		public virtual void OnComponentUsed(AddonComponent c, Mobile from)
-		{ }
+		public virtual void OnComponentUsed(AddonComponent c, Mobile from) { }
 
 		public override void OnLocationChange(Point3D oldLoc)
 		{
@@ -357,7 +373,10 @@ namespace Server.Items
 				c.Delete();
 		}
 
-		public virtual bool ShareHue { get { return true; } }
+		public virtual bool ShareHue
+		{
+			get { return true; }
+		}
 
 		[Hue, CommandProperty(AccessLevel.Decorator)]
 		public override int Hue
@@ -388,9 +407,7 @@ namespace Server.Items
 			}
 		}
 
-		public virtual void GetProperties(ObjectPropertyList list, AddonComponent c)
-		{
-		}
+		public virtual void GetProperties(ObjectPropertyList list, AddonComponent c) { }
 
 		public override void Serialize(GenericWriter writer)
 		{
@@ -400,7 +417,7 @@ namespace Server.Items
 
 			writer.Write(m_Hits);
 			writer.Write(m_MaxHits);
-			
+
 			writer.Write((int)m_Resource);
 
 			writer.WriteItemList(m_Components);

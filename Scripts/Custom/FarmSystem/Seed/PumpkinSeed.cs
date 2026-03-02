@@ -1,35 +1,34 @@
-using System; 
+using System;
 
 namespace Server.Items
-{ 
-	public class PumpkinSeed : BaseSeed 
-	{ 
+{
+	public class PumpkinSeed : BaseSeed
+	{
 		[Constructable]
-		public PumpkinSeed() : this( 1 )
+		public PumpkinSeed()
+			: this(1) { }
+
+		[Constructable]
+		public PumpkinSeed(int amount)
+			: base(0xDCF)
 		{
+			Hue = 0x30;
+			Name = "호박 씨앗";
 		}
 
-		[Constructable]
-		public PumpkinSeed( int amount ) : base( 0xDCF )
+		public PumpkinSeed(Serial serial)
+			: base(serial) { }
+
+		public override void Serialize(GenericWriter writer)
 		{
-			Hue = 0x30; 
-			Name = "호박 씨앗"; 
+			base.Serialize(writer);
+			writer.Write((int)0);
 		}
-		
-		public PumpkinSeed( Serial serial ) : base( serial ) 
-		{ 
-		} 
 
-		public override void Serialize( GenericWriter writer ) 
-		{ 
-			base.Serialize( writer ); 
-			writer.Write( (int) 0 ); 
-		} 
-
-		public override void Deserialize( GenericReader reader ) 
-		{ 
-			base.Deserialize( reader ); 
-			int version = reader.ReadInt(); 
-		} 
-	} 
-} 
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
+}

@@ -61,7 +61,9 @@ namespace Server.Services.Virtues
 							m_Beholder,
 							VirtueName.Humility,
 							1052051,
-							@"http://uo.com/wiki/ultima-online-wiki/gameplay/npc-commercial-transactions/the-virtues/#humility"));
+							@"http://uo.com/wiki/ultima-online-wiki/gameplay/npc-commercial-transactions/the-virtues/#humility"
+						)
+					);
 					break;
 				}
 				case 2:
@@ -71,7 +73,9 @@ namespace Server.Services.Virtues
 							m_Beholder,
 							VirtueName.Sacrifice,
 							1052053,
-							@"http://uo.com/wiki/ultima-online-wiki/gameplay/npc-commercial-transactions/the-virtues/#sacrafice"));
+							@"http://uo.com/wiki/ultima-online-wiki/gameplay/npc-commercial-transactions/the-virtues/#sacrafice"
+						)
+					);
 					break;
 				}
 				case 3:
@@ -81,7 +85,9 @@ namespace Server.Services.Virtues
 							m_Beholder,
 							VirtueName.Compassion,
 							1053000,
-							@"http://uo.com/wiki/ultima-online-wiki/gameplay/npc-commercial-transactions/the-virtues/#compassion"));
+							@"http://uo.com/wiki/ultima-online-wiki/gameplay/npc-commercial-transactions/the-virtues/#compassion"
+						)
+					);
 					break;
 				}
 				case 4:
@@ -91,7 +97,9 @@ namespace Server.Services.Virtues
 							m_Beholder,
 							VirtueName.Spirituality,
 							1052056,
-							@"http://uo.com/wiki/ultima-online-wiki/gameplay/npc-commercial-transactions/the-virtues/#spirituality"));
+							@"http://uo.com/wiki/ultima-online-wiki/gameplay/npc-commercial-transactions/the-virtues/#spirituality"
+						)
+					);
 					break;
 				}
 				case 5:
@@ -101,7 +109,9 @@ namespace Server.Services.Virtues
 							m_Beholder,
 							VirtueName.Valor,
 							1054033,
-							@"http://uo.com/wiki/ultima-online-wiki/gameplay/npc-commercial-transactions/the-virtues/#valor"));
+							@"http://uo.com/wiki/ultima-online-wiki/gameplay/npc-commercial-transactions/the-virtues/#valor"
+						)
+					);
 					break;
 				}
 				case 6:
@@ -111,7 +121,9 @@ namespace Server.Services.Virtues
 							m_Beholder,
 							VirtueName.Honor,
 							1052058,
-							@"http://uo.com/wiki/ultima-online-wiki/gameplay/npc-commercial-transactions/the-virtues/#honor"));
+							@"http://uo.com/wiki/ultima-online-wiki/gameplay/npc-commercial-transactions/the-virtues/#honor"
+						)
+					);
 					break;
 				}
 				case 7:
@@ -121,7 +133,9 @@ namespace Server.Services.Virtues
 							m_Beholder,
 							VirtueName.Justice,
 							1052059,
-							@"http://uo.com/wiki/ultima-online-wiki/gameplay/npc-commercial-transactions/the-virtues/#justice"));
+							@"http://uo.com/wiki/ultima-online-wiki/gameplay/npc-commercial-transactions/the-virtues/#justice"
+						)
+					);
 					break;
 				}
 				case 8:
@@ -131,7 +145,9 @@ namespace Server.Services.Virtues
 							m_Beholder,
 							VirtueName.Honesty,
 							1052060,
-							@"http://uo.com/wiki/ultima-online-wiki/gameplay/npc-commercial-transactions/the-virtues/#honesty"));
+							@"http://uo.com/wiki/ultima-online-wiki/gameplay/npc-commercial-transactions/the-virtues/#honesty"
+						)
+					);
 					break;
 				}
 				case 9:

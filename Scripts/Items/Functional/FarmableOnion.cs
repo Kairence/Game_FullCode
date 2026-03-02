@@ -2,50 +2,46 @@ using System;
 
 namespace Server.Items
 {
-    public class FarmableOnion : FarmableCrop
-    {
-        [Constructable]
-        public FarmableOnion()
-            : base(GetCropID())
-        {
-        }
+	public class FarmableOnion : FarmableCrop
+	{
+		[Constructable]
+		public FarmableOnion()
+			: base(GetCropID()) { }
 
-        public FarmableOnion(Serial serial)
-            : base(serial)
-        {
-        }
+		public FarmableOnion(Serial serial)
+			: base(serial) { }
 
-        public static int GetCropID()
-        {
-            return 3183;
-        }
+		public static int GetCropID()
+		{
+			return 3183;
+		}
 
-        public override Item GetCropObject()
-        {
-            Onion onion = new Onion();
+		public override Item GetCropObject()
+		{
+			Onion onion = new Onion();
 
-            onion.ItemID = Utility.Random(3181, 2);
+			onion.ItemID = Utility.Random(3181, 2);
 
-            return onion;
-        }
+			return onion;
+		}
 
-        public override int GetPickedID()
-        {
-            return 3254;
-        }
+		public override int GetPickedID()
+		{
+			return 3254;
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.WriteEncodedInt(0); // version
-        }
+			writer.WriteEncodedInt(0); // version
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

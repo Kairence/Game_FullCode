@@ -3,12 +3,12 @@ using System;
 using Server.Accounting;
 using Server.Engines.Quests;
 using Server.Factions;
+using Server.Gumps;
 using Server.Items;
 using Server.Mobiles;
 using Server.Multis;
 using Server.Regions;
 using Server.Spells.SkillMasteries;
-using Server.Gumps;
 #endregion
 
 namespace Server.Misc
@@ -38,7 +38,10 @@ namespace Server.Misc
 		/// </summary>
 		private const int LocationSize = 4;
 
-		public static bool GGSActive { get { return !Siege.SiegeShard; } }
+		public static bool GGSActive
+		{
+			get { return !Siege.SiegeShard; }
+		}
 
 		static SkillCheck()
 		{
@@ -115,7 +118,6 @@ namespace Server.Misc
 			true, // Bushido = 52
 			true, //Ninjitsu = 53
 			true, // Spellweaving = 54
-
 			#region Stygian Abyss
 			true, // Mysticism = 55
 			true, // Imbuing = 56
@@ -155,7 +157,12 @@ namespace Server.Misc
 
 			CrystalBallOfKnowledge.TellSkillDifficulty(from, skillName, chance);
 
-			return CheckSkill(from, skill, new Point2D(from.Location.X / LocationSize, from.Location.Y / LocationSize), chance);
+			return CheckSkill(
+				from,
+				skill,
+				new Point2D(from.Location.X / LocationSize, from.Location.Y / LocationSize),
+				chance
+			);
 		}
 
 		public static bool Mobile_SkillCheckDirectLocation(Mobile from, SkillName skillName, double chance)
@@ -167,190 +174,195 @@ namespace Server.Misc
 
 			CrystalBallOfKnowledge.TellSkillDifficulty(from, skillName, chance);
 
-			return CheckSkill(from, skill, new Point2D(from.Location.X / LocationSize, from.Location.Y / LocationSize), chance);
+			return CheckSkill(
+				from,
+				skill,
+				new Point2D(from.Location.X / LocationSize, from.Location.Y / LocationSize),
+				chance
+			);
 		}
 
-        /// <summary>
-        /// This should be a successful skill check, where a system can register several skill gains at once. Only system
-        /// using this currently is UseAllRes for CraftItem.cs
-        /// </summary>
-        /// <param name="from"></param>
-        /// <param name="skill"></param>
-        /// <param name="amount"></param>
-        /// <returns></returns>
-        public static bool CheckSkill(Mobile from, SkillName sk, double minSkill, double maxSkill, int amount)
-        {
-            if (from.Skills.Cap == 0)
-                return false;
+		/// <summary>
+		/// This should be a successful skill check, where a system can register several skill gains at once. Only system
+		/// using this currently is UseAllRes for CraftItem.cs
+		/// </summary>
+		/// <param name="from"></param>
+		/// <param name="skill"></param>
+		/// <param name="amount"></param>
+		/// <returns></returns>
+		public static bool CheckSkill(Mobile from, SkillName sk, double minSkill, double maxSkill, int amount)
+		{
+			if (from.Skills.Cap == 0)
+				return false;
 
-            var skill = from.Skills[sk];
-            var gains = 0;
+			var skill = from.Skills[sk];
+			var gains = 0;
 
-            for (int i = 0; i < amount; i++)
-            {
-                var gc = GetGainChance(from, skill, (skill.Value - minSkill) / (maxSkill - minSkill), true);
+			for (int i = 0; i < amount; i++)
+			{
+				var gc = GetGainChance(from, skill, (skill.Value - minSkill) / (maxSkill - minSkill), true);
 
-                if (AllowGain(from, skill, new Point2D(from.Location.X / LocationSize, from.Location.Y / LocationSize)))
-                {
-                    if (from.Alive && (skill.Base < 10.0 || Utility.RandomDouble() <= gc || CheckGGS(from, skill)))
-                    {
-                        gains++;
-                    }
-                }
+				if (AllowGain(from, skill, new Point2D(from.Location.X / LocationSize, from.Location.Y / LocationSize)))
+				{
+					if (from.Alive && (skill.Base < 10.0 || Utility.RandomDouble() <= gc || CheckGGS(from, skill)))
+					{
+						gains++;
+					}
+				}
+			}
 
-            }
+			if (gains > 0)
+			{
+				Gain(from, skill, gains);
+				EventSink.InvokeSkillCheck(new SkillCheckEventArgs(from, skill, true));
+				return true;
+			}
 
-            if (gains > 0)
-            {
-                Gain(from, skill, gains);
-                EventSink.InvokeSkillCheck(new SkillCheckEventArgs(from, skill, true));
-                return true;
-            }
-
-            return false;
-        }
+			return false;
+		}
 
 		public static bool CheckSkill(Mobile from, Skill skill, object obj, double chance)
 		{
 			if (from.Skills.Cap == 0)
 				return false;
 
-			if ( from is BaseCreature && ((BaseCreature)from).Controlled )
+			if (from is BaseCreature && ((BaseCreature)from).Controlled)
 			{
-				if ( from is IronBeetle )
+				if (from is IronBeetle)
 					chance *= 0.2;
 				else
 					chance *= 2;
 			}
-			else if ( from is BaseCreature && !((BaseCreature)from).Controlled )
-				chance *= ( CreatureBalancer.MonsterGrade(((BaseCreature)from).Grade) * 2.5 );
+			else if (from is BaseCreature && !((BaseCreature)from).Controlled)
+				chance *= (CreatureBalancer.MonsterGrade(((BaseCreature)from).Grade) * 2.5);
 
 			//event
 			double chancebonus = 0;
 			Event ev = new Event();
 
-			if ( ev.TGEvent )
+			if (ev.TGEvent)
 				chancebonus += 0.15;
-			if ( ev.ServerEvent == 1 )
+			if (ev.ServerEvent == 1)
 				chancebonus += 0.5;
 
-			chance *= ( 1 + chancebonus );
-			
-			if( skill.Value < 200 )
+			chance *= (1 + chancebonus);
+
+			if (skill.Value < 200)
 				chance *= 5;
 
-			if ( from.Combatant is BaseCreature )
+			if (from.Combatant is BaseCreature)
 			{
 				BaseCreature ownerbc = from.Combatant as BaseCreature;
-				if ( ownerbc.Controlled )
+				if (ownerbc.Controlled)
 					chance = 0;
 			}
 
-			if ( from is BaseCreature )
+			if (from is BaseCreature)
 			{
 				BaseCreature bc = from as BaseCreature;
-	
-				if ( bc.ControlMaster != null )
+
+				if (bc.ControlMaster != null)
 				{
-
-					if ( !bc.ControlMaster.Alive )
+					if (!bc.ControlMaster.Alive)
 						chance = 0;
 
-					double petSkillMax = 100 + ( bc.MinTameSkill < 0 ? 0 : bc.MinTameSkill ) / 2 + bc.ControlMaster.Skills.AnimalLore.Value / 4; 					
-					
-					if( petSkillMax <= skill.Value )
+					double petSkillMax =
+						100
+						+ (bc.MinTameSkill < 0 ? 0 : bc.MinTameSkill) / 2
+						+ bc.ControlMaster.Skills.AnimalLore.Value / 4;
+
+					if (petSkillMax <= skill.Value)
 						chance = 0;
-					
+
 					bool mastercheck = false;
-					foreach ( Mobile m in from.GetMobilesInRange( 10 ) )
+					foreach (Mobile m in from.GetMobilesInRange(10))
 					{
-						if ( m == bc.ControlMaster )
+						if (m == bc.ControlMaster)
 						{
 							mastercheck = true;
 							break;
 						}
 					}
-					if ( !mastercheck )
+					if (!mastercheck)
 						chance = 0;
 				}
 			}
 
-			if( chance < 0 )
+			if (chance < 0)
 				chance = 0;
-			
-			
+
 			chance *= 5;
-			if ( from is PlayerMobile )
+			if (from is PlayerMobile)
 			{
 				PlayerMobile pm = from as PlayerMobile;
 				double totalbonus = 1.0;
 				Account acc = pm.Account as Account;
-				if( acc.TeachingBonus > 0 )
+				if (acc.TeachingBonus > 0)
 					totalbonus += acc.TeachingBonus * 0.01;
-				if( pm.Followers > pm.FollowersMax )
+				if (pm.Followers > pm.FollowersMax)
 					return false;
-				
+
 				//if( pm.GoldPoint[14] > 0 )
 				//	chance *= 1 + pm.GoldPoint[14] * 0.01;
 
-				if( pm.Hunger >= 50000 )
+				if (pm.Hunger >= 50000)
 					totalbonus += 0.15;
-				else if( pm.Hunger >= 10000 )
+				else if (pm.Hunger >= 10000)
 					totalbonus += 0.1;
-				
+
 				chance *= totalbonus;
 
-				if ( from.Alive && skill.Lock == SkillLock.Up && pm.SkillUpCheck( skill.Base, skill.SkillID, chance ) )
-					Gain( from, skill );
-				if( pm.HasGump(typeof(SkillPointGump)) )
+				if (from.Alive && skill.Lock == SkillLock.Up && pm.SkillUpCheck(skill.Base, skill.SkillID, chance))
+					Gain(from, skill);
+				if (pm.HasGump(typeof(SkillPointGump)))
 					pm.SendGump(new SkillPointGump(pm));
-				
 			}
-			if( from is BaseCreature )
+			if (from is BaseCreature)
 			{
 				BaseCreature bc = from as BaseCreature;
-				if ( from.Alive && bc.SkillUpCheck( skill.Base, skill.SkillID, chance ) )
+				if (from.Alive && bc.SkillUpCheck(skill.Base, skill.SkillID, chance))
 				{
-					Gain( from, skill );
+					Gain(from, skill);
 				}
 			}
 
-            EventSink.InvokeSkillCheck(new SkillCheckEventArgs(from, skill, true));
+			EventSink.InvokeSkillCheck(new SkillCheckEventArgs(from, skill, true));
 
-            return true;
+			return true;
 		}
 
-        private static double GetGainChance(Mobile from, Skill skill, double chance, bool success)
-        {
-            var gc = (double)(from.Skills.Cap - from.Skills.Total) / from.Skills.Cap;
+		private static double GetGainChance(Mobile from, Skill skill, double chance, bool success)
+		{
+			var gc = (double)(from.Skills.Cap - from.Skills.Total) / from.Skills.Cap;
 
-            gc += (skill.Cap - skill.Base) / skill.Cap;
-            gc /= 2;
+			gc += (skill.Cap - skill.Base) / skill.Cap;
+			gc /= 2;
 
-            gc += (1.0 - chance) * (success ? 0.5 : (Core.AOS ? 0.0 : 0.2));
-            gc /= 2;
+			gc += (1.0 - chance) * (success ? 0.5 : (Core.AOS ? 0.0 : 0.2));
+			gc /= 2;
 
-            gc *= skill.Info.GainFactor;
+			gc *= skill.Info.GainFactor;
 
-            if (gc < 0.01)
-                gc = 0.01;
+			if (gc < 0.01)
+				gc = 0.01;
 
-            // Pets get a 100% bonus
-            if (from is BaseCreature && ((BaseCreature)from).Controlled)
-                gc += gc * 1.00;
+			// Pets get a 100% bonus
+			if (from is BaseCreature && ((BaseCreature)from).Controlled)
+				gc += gc * 1.00;
 
-            if (gc > 1.00)
-                gc = 1.00;
+			if (gc > 1.00)
+				gc = 1.00;
 
-            return gc;
-        }
+			return gc;
+		}
 
 		public static bool Mobile_SkillCheckTarget(
 			Mobile from,
 			SkillName skillName,
 			object target,
 			double minSkill,
-			double maxSkill)
+			double maxSkill
+		)
 		{
 			var skill = from.Skills[skillName];
 
@@ -401,15 +413,15 @@ namespace Server.Misc
 		{
 			Str,
 			Dex,
-			Int
+			Int,
 		}
 
-        public static void Gain(Mobile from, Skill skill)
-        {
-            Gain(from, skill, (int)(from.Region.SkillGain(from) * 10));
-        }
+		public static void Gain(Mobile from, Skill skill)
+		{
+			Gain(from, skill, (int)(from.Region.SkillGain(from) * 10));
+		}
 
-        public static void Gain(Mobile from, Skill skill, int toGain)
+		public static void Gain(Mobile from, Skill skill, int toGain)
 		{
 			if (from.Region.IsPartOf<Jail>())
 				return;
@@ -417,27 +429,30 @@ namespace Server.Misc
 			if (from is BaseCreature && ((BaseCreature)from).IsDeadPet)
 				return;
 
-			if (skill.SkillName == SkillName.Focus && from is BaseCreature &&
-				(!PetTrainingHelper.Enabled || !((BaseCreature)from).Controlled))
+			if (
+				skill.SkillName == SkillName.Focus
+				&& from is BaseCreature
+				&& (!PetTrainingHelper.Enabled || !((BaseCreature)from).Controlled)
+			)
 				return;
 
-			if( from is BaseCreature )
+			if (from is BaseCreature)
 			{
 				BaseCreature bc = from as BaseCreature;
-				if( bc.Controlled && skill.Base >= skill.Cap )
+				if (bc.Controlled && skill.Base >= skill.Cap)
 				{
 					return;
 				}
 			}
 			bool skillcheck = true;
-			
-			if( from is PlayerMobile )
+
+			if (from is PlayerMobile)
 			{
 				var skills = from.Skills;
 				int skillovercheck = 0;
-				if( from.SkillsCap < from.SkillsTotal )
+				if (from.SkillsCap < from.SkillsTotal)
 					skillovercheck = from.SkillsTotal - from.SkillsCap;
-				CheckReduceSkill(skills, toGain + skillovercheck, skill);				
+				CheckReduceSkill(skills, toGain + skillovercheck, skill);
 				/*
 				foreach (var toLower in from.Skills)
 				{
@@ -451,13 +466,12 @@ namespace Server.Misc
 				}
 				*/
 			}
-			if( skillcheck )
-            {
-                int toGain1 = 1;
-                Skills skills = from.Skills;
+			if (skillcheck)
+			{
+				int toGain1 = 1;
+				Skills skills = from.Skills;
 				skill.BaseFixedPoint = Math.Min(skill.CapFixedPoint, skill.BaseFixedPoint + toGain1);
-            }
-
+			}
 
 			#region Mondain's Legacy
 			if (from is PlayerMobile)
@@ -476,7 +490,7 @@ namespace Server.Misc
 				lockcheck += 4;
 			// Selection
 
-			switch( lockcheck )
+			switch (lockcheck)
 			{
 				case 0:
 					break;
@@ -502,7 +516,7 @@ namespace Server.Misc
 					GainStat(from, Utility.RandomList(Stat.Str, Stat.Dex, Stat.Int));
 					break;
 			}
-		}	
+		}
 
 		private static void CheckReduceSkill(Skills skills, int toGain, Skill gainSKill)
 		{
@@ -525,14 +539,14 @@ namespace Server.Misc
 			// Chance roll
 			double chance;
 
-            if (from is BaseCreature && ((BaseCreature)from).Controlled)
-            {
-                chance = _PetChanceToGainStats / 100.0;
-            }
-            else
-            {
-                chance = _PlayerChanceToGainStats / 100.0;
-            }
+			if (from is BaseCreature && ((BaseCreature)from).Controlled)
+			{
+				chance = _PetChanceToGainStats / 100.0;
+			}
+			else
+			{
+				chance = _PlayerChanceToGainStats / 100.0;
+			}
 
 			if (Utility.RandomDouble() >= chance)
 			{
@@ -607,137 +621,149 @@ namespace Server.Misc
 			switch (stat)
 			{
 				case Stat.Str:
-                    if (from.RawStr < from.StrCap)
-                    {
-                        if (atTotalCap && from is PlayerMobile)
-                        {
-                            return CanLower(from, Stat.Dex) || CanLower(from, Stat.Int); 
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }
-                    return false;
+					if (from.RawStr < from.StrCap)
+					{
+						if (atTotalCap && from is PlayerMobile)
+						{
+							return CanLower(from, Stat.Dex) || CanLower(from, Stat.Int);
+						}
+						else
+						{
+							return true;
+						}
+					}
+					return false;
 				case Stat.Dex:
 					if (from.RawDex < from.DexCap)
-                    {
-                        if (atTotalCap && from is PlayerMobile)
-                        {
-                            return CanLower(from, Stat.Str) || CanLower(from, Stat.Int);
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }
-                    return false;
+					{
+						if (atTotalCap && from is PlayerMobile)
+						{
+							return CanLower(from, Stat.Str) || CanLower(from, Stat.Int);
+						}
+						else
+						{
+							return true;
+						}
+					}
+					return false;
 				case Stat.Int:
 					if (from.RawInt < from.IntCap)
-                    {
-                        if (atTotalCap && from is PlayerMobile)
-                        {
-                            return CanLower(from, Stat.Str) || CanLower(from, Stat.Dex);
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }
-                    return false;
+					{
+						if (atTotalCap && from is PlayerMobile)
+						{
+							return CanLower(from, Stat.Str) || CanLower(from, Stat.Dex);
+						}
+						else
+						{
+							return true;
+						}
+					}
+					return false;
 			}
 
 			return false;
 		}
 
-        public static void IncreaseStat(Mobile from, Stat stat)
-        {
-            bool atTotalCap = from.RawStatTotal >= from.StatCap;
+		public static void IncreaseStat(Mobile from, Stat stat)
+		{
+			bool atTotalCap = from.RawStatTotal >= from.StatCap;
 
-            switch (stat)
-            {
-                case Stat.Str:
+			switch (stat)
+			{
+				case Stat.Str:
 				{
-                    if (CanRaise(from, Stat.Str, atTotalCap))
-                    {
-                        if (atTotalCap)
-                        {
-                            if (CanLower(from, Stat.Dex) && (from.RawDex < from.RawInt || !CanLower(from, Stat.Int)))
-                                --from.RawDex;
-                            else if (CanLower(from, Stat.Int))
-                                --from.RawInt;
-                        }
+					if (CanRaise(from, Stat.Str, atTotalCap))
+					{
+						if (atTotalCap)
+						{
+							if (CanLower(from, Stat.Dex) && (from.RawDex < from.RawInt || !CanLower(from, Stat.Int)))
+								--from.RawDex;
+							else if (CanLower(from, Stat.Int))
+								--from.RawInt;
+						}
 
-                        ++from.RawStr;
+						++from.RawStr;
 
-                        if (from is BaseCreature && ((BaseCreature)from).HitsMaxSeed > -1 && ((BaseCreature)from).HitsMaxSeed < from.StrCap)
-                        {
-                            ((BaseCreature)from).HitsMaxSeed++;
-                        }
+						if (
+							from is BaseCreature
+							&& ((BaseCreature)from).HitsMaxSeed > -1
+							&& ((BaseCreature)from).HitsMaxSeed < from.StrCap
+						)
+						{
+							((BaseCreature)from).HitsMaxSeed++;
+						}
 
-                        if (Siege.SiegeShard && from is PlayerMobile)
-                        {
-                            Siege.IncreaseStat((PlayerMobile)from);
-                        }
-                    }
+						if (Siege.SiegeShard && from is PlayerMobile)
+						{
+							Siege.IncreaseStat((PlayerMobile)from);
+						}
+					}
 
-                    break;
+					break;
 				}
-                case Stat.Dex:
+				case Stat.Dex:
 				{
-                    if (CanRaise(from, Stat.Dex, atTotalCap))
-                    {
-                        if (atTotalCap)
-                        {
-                            if (CanLower(from, Stat.Str) && (from.RawStr < from.RawInt || !CanLower(from, Stat.Int)))
-                                --from.RawStr;
-                            else if (CanLower(from, Stat.Int))
-                                --from.RawInt;
-                        }
+					if (CanRaise(from, Stat.Dex, atTotalCap))
+					{
+						if (atTotalCap)
+						{
+							if (CanLower(from, Stat.Str) && (from.RawStr < from.RawInt || !CanLower(from, Stat.Int)))
+								--from.RawStr;
+							else if (CanLower(from, Stat.Int))
+								--from.RawInt;
+						}
 
-                        ++from.RawDex;
+						++from.RawDex;
 
-                        if (from is BaseCreature && ((BaseCreature)from).StamMaxSeed > -1 && ((BaseCreature)from).StamMaxSeed < from.DexCap)
-                        {
-                            ((BaseCreature)from).StamMaxSeed++;
-                        }
+						if (
+							from is BaseCreature
+							&& ((BaseCreature)from).StamMaxSeed > -1
+							&& ((BaseCreature)from).StamMaxSeed < from.DexCap
+						)
+						{
+							((BaseCreature)from).StamMaxSeed++;
+						}
 
-                        if (Siege.SiegeShard && from is PlayerMobile)
-                        {
-                            Siege.IncreaseStat((PlayerMobile)from);
-                        }
-                    }
+						if (Siege.SiegeShard && from is PlayerMobile)
+						{
+							Siege.IncreaseStat((PlayerMobile)from);
+						}
+					}
 
-                    break;
+					break;
 				}
-                case Stat.Int:
+				case Stat.Int:
 				{
-                    if (CanRaise(from, Stat.Int, atTotalCap))
-                    {
-                        if (atTotalCap)
-                        {
-                            if (CanLower(from, Stat.Str) && (from.RawStr < from.RawDex || !CanLower(from, Stat.Dex)))
-                                --from.RawStr;
-                            else if (CanLower(from, Stat.Dex))
-                                --from.RawDex;
-                        }
+					if (CanRaise(from, Stat.Int, atTotalCap))
+					{
+						if (atTotalCap)
+						{
+							if (CanLower(from, Stat.Str) && (from.RawStr < from.RawDex || !CanLower(from, Stat.Dex)))
+								--from.RawStr;
+							else if (CanLower(from, Stat.Dex))
+								--from.RawDex;
+						}
 
-                        ++from.RawInt;
+						++from.RawInt;
 
-                        if (from is BaseCreature && ((BaseCreature)from).ManaMaxSeed > -1 && ((BaseCreature)from).ManaMaxSeed < from.IntCap)
-                        {
-                            ((BaseCreature)from).ManaMaxSeed++;
-                        }
+						if (
+							from is BaseCreature
+							&& ((BaseCreature)from).ManaMaxSeed > -1
+							&& ((BaseCreature)from).ManaMaxSeed < from.IntCap
+						)
+						{
+							((BaseCreature)from).ManaMaxSeed++;
+						}
 
-                        if (Siege.SiegeShard && from is PlayerMobile)
-                        {
-                            Siege.IncreaseStat((PlayerMobile)from);
-                        }
-                    }
+						if (Siege.SiegeShard && from is PlayerMobile)
+						{
+							Siege.IncreaseStat((PlayerMobile)from);
+						}
+					}
 
-                    break;
-	            }
-	        }
+					break;
+				}
+			}
 		}
 
 		public static void GainStat(Mobile from, Stat stat)
@@ -814,19 +840,40 @@ namespace Server.Misc
 				return;
 
 			var list = (int)Math.Min(GGSTable.Length - 1, skill.Base / 5);
-			var column = from.Skills.Total >= 7000 ? 2 : from.Skills.Total >= 3500 ? 1 : 0;
+			var column =
+				from.Skills.Total >= 7000 ? 2
+				: from.Skills.Total >= 3500 ? 1
+				: 0;
 
 			skill.NextGGSGain = DateTime.UtcNow + TimeSpan.FromMinutes(GGSTable[list][column]);
 		}
 
 		private static readonly int[][] GGSTable =
 		{
-			new[] {1, 3, 5}, // 0.0 - 4.9
-			new[] {4, 10, 18}, new[] {7, 17, 30}, new[] {9, 24, 44}, new[] {12, 31, 57}, new[] {14, 38, 90}, new[] {17, 45, 84},
-			new[] {20, 52, 96}, new[] {23, 60, 106}, new[] {25, 66, 120}, new[] {27, 72, 138}, new[] {33, 90, 162},
-			new[] {55, 150, 264}, new[] {78, 216, 390}, new[] {114, 294, 540}, new[] {144, 384, 708}, new[] {180, 492, 900},
-			new[] {228, 606, 1116}, new[] {276, 744, 1356}, new[] {336, 894, 1620}, new[] {396, 1056, 1920},
-			new[] {468, 1242, 2280}, new[] {540, 1440, 2580}, new[] {618, 1662, 3060}
+			new[] { 1, 3, 5 }, // 0.0 - 4.9
+			new[] { 4, 10, 18 },
+			new[] { 7, 17, 30 },
+			new[] { 9, 24, 44 },
+			new[] { 12, 31, 57 },
+			new[] { 14, 38, 90 },
+			new[] { 17, 45, 84 },
+			new[] { 20, 52, 96 },
+			new[] { 23, 60, 106 },
+			new[] { 25, 66, 120 },
+			new[] { 27, 72, 138 },
+			new[] { 33, 90, 162 },
+			new[] { 55, 150, 264 },
+			new[] { 78, 216, 390 },
+			new[] { 114, 294, 540 },
+			new[] { 144, 384, 708 },
+			new[] { 180, 492, 900 },
+			new[] { 228, 606, 1116 },
+			new[] { 276, 744, 1356 },
+			new[] { 336, 894, 1620 },
+			new[] { 396, 1056, 1920 },
+			new[] { 468, 1242, 2280 },
+			new[] { 540, 1440, 2580 },
+			new[] { 618, 1662, 3060 },
 		};
 	}
 }

@@ -6,13 +6,10 @@
 
 #region References
 using System;
-
 using CustomsFramework;
-
 using Server;
 using Server.Commands;
 using Server.Gumps;
-
 using Services.Toolbar.Gumps;
 #endregion
 
@@ -75,15 +72,28 @@ namespace Services.Toolbar.Core
 		}
 
 		public ToolbarCore(CustomSerial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
-		public override string Name { get { return @"Toolbar Core"; } }
-		public override string Description { get { return @"Core that maintains the [Toolbar system."; } }
-		public override string Version { get { return SystemVersion; } }
-		public override AccessLevel EditLevel { get { return AccessLevel.Developer; } }
-		public override Gump SettingsGump { get { return null; } }
-
+		public override string Name
+		{
+			get { return @"Toolbar Core"; }
+		}
+		public override string Description
+		{
+			get { return @"Core that maintains the [Toolbar system."; }
+		}
+		public override string Version
+		{
+			get { return SystemVersion; }
+		}
+		public override AccessLevel EditLevel
+		{
+			get { return AccessLevel.Developer; }
+		}
+		public override Gump SettingsGump
+		{
+			get { return null; }
+		}
 
 		public override void Serialize(GenericWriter writer)
 		{

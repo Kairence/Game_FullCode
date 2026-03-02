@@ -1,6 +1,5 @@
 #region References
 using System;
-
 using Server.Items;
 #endregion
 
@@ -8,13 +7,13 @@ namespace Server.Mobiles
 {
 	public class ArcherGuard : BaseGuard
 	{
-		private Timer m_AttackTimer, m_IdleTimer;
+		private Timer m_AttackTimer,
+			m_IdleTimer;
 		private Mobile m_Focus;
 
 		[Constructable]
 		public ArcherGuard()
-			: this(null)
-		{ }
+			: this(null) { }
 
 		public ArcherGuard(Mobile target)
 			: base(target)
@@ -79,8 +78,7 @@ namespace Server.Mobiles
 		}
 
 		public ArcherGuard(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		[CommandProperty(AccessLevel.GameMaster)]
 		public override Mobile Focus
@@ -176,22 +174,22 @@ namespace Server.Mobiles
 			switch (version)
 			{
 				case 0:
+				{
+					m_Focus = reader.ReadMobile();
+
+					if (m_Focus != null)
 					{
-						m_Focus = reader.ReadMobile();
-
-						if (m_Focus != null)
-						{
-							m_AttackTimer = new AttackTimer(this);
-							m_AttackTimer.Start();
-						}
-						else
-						{
-							m_IdleTimer = new IdleTimer(this);
-							m_IdleTimer.Start();
-						}
-
-						break;
+						m_AttackTimer = new AttackTimer(this);
+						m_AttackTimer.Start();
 					}
+					else
+					{
+						m_IdleTimer = new IdleTimer(this);
+						m_IdleTimer.Start();
+					}
+
+					break;
+				}
 			}
 		}
 
@@ -218,7 +216,7 @@ namespace Server.Mobiles
 
 			public AvengeTimer(Mobile focus)
 				: base(TimeSpan.FromSeconds(2.5), TimeSpan.FromSeconds(1.0), 3)
-				// After 2.5 seconds, one guard will spawn every 1.0 second, three times
+			// After 2.5 seconds, one guard will spawn every 1.0 second, three times
 			{
 				m_Focus = focus;
 			}
@@ -232,6 +230,7 @@ namespace Server.Mobiles
 		private class AttackTimer : Timer
 		{
 			private readonly ArcherGuard m_Owner;
+
 			//	private bool m_Shooting;
 			public AttackTimer(ArcherGuard owner)
 				: base(TimeSpan.FromSeconds(0.25), TimeSpan.FromSeconds(0.1))
@@ -303,49 +302,49 @@ namespace Server.Mobiles
 					Stop();
 				} // </instakill>
 				/*else if ( !m_Owner.InRange( target, 20 ) )
-                {
-                m_Shooting = false;
-                m_Owner.Focus = null;
-                }
-                else if ( !m_Owner.InLOS( target ) )
-                {
-                m_Shooting = false;
-                TeleportTo( target );
-                }
-                else if ( !m_Owner.CanSee( target ) )
-                {
-                m_Shooting = false;
-                if ( !m_Owner.InRange( target, 2 ) )
-                {
-                if ( !m_Owner.Move( m_Owner.GetDirectionTo( target ) | Direction.Running ) && OutOfMaxDistance( target ) )
-                TeleportTo( target );
-                }
-                else
-                {
-                if ( !m_Owner.UseSkill( SkillName.DetectHidden ) && Utility.Random( 50 ) == 0 )
-                m_Owner.Say( "Reveal!" );
-                }
-                }
-                else
-                {
-                if ( m_Shooting && (TimeToSpare() || OutOfMaxDistance( target )) )
-                m_Shooting = false;
-                else if ( !m_Shooting && InMinDistance( target ) )
-                m_Shooting = true;
-                if ( !m_Shooting )
-                {
-                if ( m_Owner.InRange( target, 1 ) )
-                {
-                if ( !m_Owner.Move( (Direction)(m_Owner.GetDirectionTo( target ) - 4) | Direction.Running ) && OutOfMaxDistance( target ) ) // Too close, move away
-                TeleportTo( target );
-                }
-                else if ( !m_Owner.InRange( target, 2 ) )
-                {
-                if ( !m_Owner.Move( m_Owner.GetDirectionTo( target ) | Direction.Running ) && OutOfMaxDistance( target ) )
-                TeleportTo( target );
-                }
-                }
-                }*/
+				{
+				m_Shooting = false;
+				m_Owner.Focus = null;
+				}
+				else if ( !m_Owner.InLOS( target ) )
+				{
+				m_Shooting = false;
+				TeleportTo( target );
+				}
+				else if ( !m_Owner.CanSee( target ) )
+				{
+				m_Shooting = false;
+				if ( !m_Owner.InRange( target, 2 ) )
+				{
+				if ( !m_Owner.Move( m_Owner.GetDirectionTo( target ) | Direction.Running ) && OutOfMaxDistance( target ) )
+				TeleportTo( target );
+				}
+				else
+				{
+				if ( !m_Owner.UseSkill( SkillName.DetectHidden ) && Utility.Random( 50 ) == 0 )
+				m_Owner.Say( "Reveal!" );
+				}
+				}
+				else
+				{
+				if ( m_Shooting && (TimeToSpare() || OutOfMaxDistance( target )) )
+				m_Shooting = false;
+				else if ( !m_Shooting && InMinDistance( target ) )
+				m_Shooting = true;
+				if ( !m_Shooting )
+				{
+				if ( m_Owner.InRange( target, 1 ) )
+				{
+				if ( !m_Owner.Move( (Direction)(m_Owner.GetDirectionTo( target ) - 4) | Direction.Running ) && OutOfMaxDistance( target ) ) // Too close, move away
+				TeleportTo( target );
+				}
+				else if ( !m_Owner.InRange( target, 2 ) )
+				{
+				if ( !m_Owner.Move( m_Owner.GetDirectionTo( target ) | Direction.Running ) && OutOfMaxDistance( target ) )
+				TeleportTo( target );
+				}
+				}
+				}*/
 			}
 
 			private bool TimeToSpare()
@@ -371,8 +370,19 @@ namespace Server.Mobiles
 				m_Owner.Location = to;
 
 				Effects.SendLocationParticles(
-					EffectItem.Create(from, m_Owner.Map, EffectItem.DefaultDuration), 0x3728, 10, 10, 2023);
-				Effects.SendLocationParticles(EffectItem.Create(to, m_Owner.Map, EffectItem.DefaultDuration), 0x3728, 10, 10, 5023);
+					EffectItem.Create(from, m_Owner.Map, EffectItem.DefaultDuration),
+					0x3728,
+					10,
+					10,
+					2023
+				);
+				Effects.SendLocationParticles(
+					EffectItem.Create(to, m_Owner.Map, EffectItem.DefaultDuration),
+					0x3728,
+					10,
+					10,
+					5023
+				);
 
 				m_Owner.PlaySound(0x1FE);
 			}
@@ -405,7 +415,12 @@ namespace Server.Mobiles
 				if (m_Stage > 16)
 				{
 					Effects.SendLocationParticles(
-						EffectItem.Create(m_Owner.Location, m_Owner.Map, EffectItem.DefaultDuration), 0x3728, 10, 10, 2023);
+						EffectItem.Create(m_Owner.Location, m_Owner.Map, EffectItem.DefaultDuration),
+						0x3728,
+						10,
+						10,
+						2023
+					);
 					m_Owner.PlaySound(0x1FE);
 
 					m_Owner.Delete();

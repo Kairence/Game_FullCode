@@ -1,26 +1,28 @@
 using System;
-using Server;
-using Server.Items;
-using Server.Network;
-using Server.Mobiles;
-using Server.Targeting;
-using Server.Multis;
-using Server.Accounting;
 using System.Collections.Generic;
+using Server;
+using Server.Accounting;
+using Server.Items;
+using Server.Mobiles;
+using Server.Multis;
+using Server.Network;
+using Server.Targeting;
+
 //using Server.Engines.CityLoyalty;
 
 namespace Server.Gumps
 {
 	public class CityPointGump : Gump
 	{
-        //private const int LabelColor = 0x7FFF;
-        //private const int LabelColorDisabled = 0x4210;
+		//private const int LabelColor = 0x7FFF;
+		//private const int LabelColorDisabled = 0x4210;
 		private readonly PlayerMobile m_pm;
-		
-        public CityPointGump(PlayerMobile pm) : base(50, 50)
-        {
-            AddHtml(50, 7, 345, 20, "°æÇè ½Ã½ºÅÛ", false, false); // City Loyalty
-			
+
+		public CityPointGump(PlayerMobile pm)
+			: base(50, 50)
+		{
+			AddHtml(50, 7, 345, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½Ã½ï¿½ï¿½ï¿½", false, false); // City Loyalty
+
 			m_pm = pm;
 
 			pm.CloseGump(typeof(CityPointGump));
@@ -29,94 +31,104 @@ namespace Server.Gumps
 			//pm.CloseGump(typeof(EquipPointGump));
 			//pm.CloseGump(typeof(ArtifactPointGump));
 			//pm.CloseGump(typeof(SkillPointGump));
-			
-            AddPage(0);
+
+			AddPage(0);
 
 			Account acc = pm.Account as Account;
-			
-			
-            AddBackground(0, 0, 280, 220, 5054);
 
-            AddHtml(10, 10, 250, 20, "°æÇè ½Ã½ºÅÛ", false, false); 
+			AddBackground(0, 0, 280, 220, 5054);
 
-            AddButton(10, 190, 4017, 4019, 0, GumpButtonType.Reply, 0);
-            AddHtmlLocalized(45, 190, 150, 20, 3000363, false, false); // Close
+			AddHtml(10, 10, 250, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½Ã½ï¿½ï¿½ï¿½", false, false);
 
-            AddPage(1);
+			AddButton(10, 190, 4017, 4019, 0, GumpButtonType.Reply, 0);
+			AddHtmlLocalized(45, 190, 150, 20, 3000363, false, false); // Close
 
-            AddButton(10, 40, 4005, 4007, 1, GumpButtonType.Reply, 0);
-            AddHtml(45, 40, 105, 20, "¿¹Àü »ý»ê Æ÷ÀÎÆ®:", false, false); 
+			AddPage(1);
+
+			AddButton(10, 40, 4005, 4007, 1, GumpButtonType.Reply, 0);
+			AddHtml(45, 40, 105, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®:", false, false);
 			AddHtml(150, 40, 110, 16, String.Format("{0:#,###}", pm.GoldPoint[49]), false, false);
 
-            AddButton(10, 60, 4005, 4007, 2, GumpButtonType.Reply, 0);
-            AddHtml(45, 60, 105, 20,  "ÀüÅõ Æ÷ÀÎÆ®:", false, false);  
+			AddButton(10, 60, 4005, 4007, 2, GumpButtonType.Reply, 0);
+			AddHtml(45, 60, 105, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®:", false, false);
 			AddHtml(150, 60, 110, 16, String.Format("{0:#,###}", pm.SilverPoint[0]), false, false);
 
-            AddButton(10, 80, 4005, 4007, 3, GumpButtonType.Reply, 0);
-            AddHtml(45, 80, 105, 20,  "°¡¹® Æ÷ÀÎÆ®", false, false); 
+			AddButton(10, 80, 4005, 4007, 3, GumpButtonType.Reply, 0);
+			AddHtml(45, 80, 105, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®", false, false);
 			AddHtml(150, 80, 110, 16, String.Format("{0:#,###}", acc.Point[0]), false, false);
 			//AddHtml(150, 40, 110, 16, "), false, false);
 
 			AddButton(10, 100, 4005, 4007, 4, GumpButtonType.Reply, 0);
-			AddHtml(45, 100, 105, 20,  "À¯¹° Æ÷ÀÎÆ®:", false, false);
+			AddHtml(45, 100, 105, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®:", false, false);
 			AddHtml(150, 40, 110, 16, String.Format("{0:#,###}", pm.ArtifactPoint[0]), false, false);
-			
+
 			AddButton(10, 120, 4005, 4007, 5, GumpButtonType.Reply, 0);
-			AddHtml(45, 120, 105, 20,  "½ºÅ³ Æ÷ÀÎÆ®", false, false);
+			AddHtml(45, 120, 105, 20, "ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½Æ®", false, false);
 			//AddHtml(150, 40, 110, 16, String.Format("{0:#,###}", pm.ArtifactPoint[0]), false, false);
 
-            AddHtml(10, 150, 150, 20, "¸í¼º: ", false, false); // Fame: ~1_AMT~
-            AddHtml(10, 170, 150, 20, "Ä«¸£¸¶: ", false, false); // Karma: ~1_AMT~}
+			AddHtml(10, 150, 150, 20, "ï¿½ï¿½ï¿½ï¿½: ", false, false); // Fame: ~1_AMT~
+			AddHtml(10, 170, 150, 20, "Ä«ï¿½ï¿½ï¿½ï¿½: ", false, false); // Karma: ~1_AMT~}
 
-            AddHtml(65, 150, 150, 20, pm.Fame.ToString(), false, false); // Fame: ~1_AMT~
-            AddHtml(65, 170, 150, 20, pm.Karma.ToString(), false, false); // Fame: ~1_AMT~
+			AddHtml(65, 150, 150, 20, pm.Fame.ToString(), false, false); // Fame: ~1_AMT~
+			AddHtml(65, 170, 150, 20, pm.Karma.ToString(), false, false); // Fame: ~1_AMT~
 		}
-        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
-        {
-            if (!m_pm.CheckAlive())
-                return;
 
-            switch ( info.ButtonID )
-            {
-                case 1:
-                    {
-                        m_pm.SendGump(new GoldPointGump(m_pm));
-                        break;
-                    }
-                case 2:
-                    {
-                        m_pm.SendGump(new SilverPointGump(m_pm));
-                        break;
-                    }
-                case 3:
-                    {
-                        m_pm.SendGump(new EquipPointGump(m_pm));
-                        break;
-                    }
-                case 4:
-                    {
-                        m_pm.SendGump(new ArtifactPointGump(m_pm));
-						break;
-                    }
-                case 5:
-                    {
-                        m_pm.SendGump(new SkillPointGump(m_pm));
-						break;
-                    }
+		public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+		{
+			if (!m_pm.CheckAlive())
+				return;
+
+			switch (info.ButtonID)
+			{
+				case 1:
+				{
+					m_pm.SendGump(new GoldPointGump(m_pm));
+					break;
+				}
+				case 2:
+				{
+					m_pm.SendGump(new SilverPointGump(m_pm));
+					break;
+				}
+				case 3:
+				{
+					m_pm.SendGump(new EquipPointGump(m_pm));
+					break;
+				}
+				case 4:
+				{
+					m_pm.SendGump(new ArtifactPointGump(m_pm));
+					break;
+				}
+				case 5:
+				{
+					m_pm.SendGump(new SkillPointGump(m_pm));
+					break;
+				}
 			}
-        }		
+		}
 	}
 
-	#region Ã¤Áý/»ý»ê
-    public class GoldPointGump : Gump
-    {
-		private string[] GrawName = { "Ã¤Áý °æÇè Áõ°¡", "°í±Þ Ã¤Áý Áõ°¡", "Ã¤Áý ¼ö·® Áõ°¡", "Ã¤Áý º¯È¯ Áõ°¡", "Á¦ÀÛ °æÇè Áõ°¡", "Á¦ÀÛ ¼º°ø Áõ°¡", "°í±Þ Á¦ÀÛ Áõ°¡", "Á¦ÀÛ ¼ö·® Áõ°¡" };
-		
+	#region Ã¤ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½
+	public class GoldPointGump : Gump
+	{
+		private string[] GrawName =
+		{
+			"Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"Ã¤ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+		};
+
 		//private int[] MaxLevel = { 40, 75, 25, 50, 50, 70, 100, 100 };
 		//private int[] BuffOption = { 100, 300, 500, 1000, 2000, 5000, 100, 250, 500, 1000, 2000 };
 
 		//private int[] SkillCount = { 3, 36, 19, 10, 38, 56};
-		
+
 		/*
 		private int pointCal( int number, int level )
 		{
@@ -135,134 +147,195 @@ namespace Server.Gumps
 		readonly int Max_Level = 100;
 
 		private PlayerMobile m_pm;
-		private int m_Harvestpoint = 0; 
-		private int m_Craftpoint = 0; 
-        public GoldPointGump(PlayerMobile pm) : base(50, 50)
-        {
+		private int m_Harvestpoint = 0;
+		private int m_Craftpoint = 0;
+
+		public GoldPointGump(PlayerMobile pm)
+			: base(50, 50)
+		{
 			/*
-			49¹ø : ±âÁ¸ »ý»ê °æÇèÄ¡
-			0¹ø : Ã¤Áý °æÇèÄ¡
-			1¹ø : Ã¤Áý Æ÷ÀÎÆ®
-			2¹ø : Ã¤Áý °æÇè Áõ°¡
-			3¹ø : °í±Þ Ã¤Áý Áõ°¡
-			4¹ø : Ã¤Áý ¼ö·® Áõ°¡
-			5¹ø : Ã¤Áý º¯È¯ Áõ°¡
-			10¹ø : Á¦ÀÛ °æÇèÄ¡
-			11¹ø : Á¦ÀÛ Æ÷ÀÎÆ®
-			12¹ø : Á¦ÀÛ °æÇè Áõ°¡
-			13¹ø : Á¦ÀÛ ¼º°ø Áõ°¡
-			14¹ø : °í±Þ Á¦ÀÛ Áõ°¡
-			15¹ø : Á¦ÀÛ ¼ö·® Áõ°¡
+			49ï¿½ï¿½ : ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡
+			0ï¿½ï¿½ : Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡
+			1ï¿½ï¿½ : Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®
+			2ï¿½ï¿½ : Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+			3ï¿½ï¿½ : ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+			4ï¿½ï¿½ : Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+			5ï¿½ï¿½ : Ã¤ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿½ï¿½
+			10ï¿½ï¿½ : ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡
+			11ï¿½ï¿½ : ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®
+			12ï¿½ï¿½ : ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+			13ï¿½ï¿½ : ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+			14ï¿½ï¿½ : ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+			15ï¿½ï¿½ : ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			*/
 			pm.CloseGump(typeof(CityPointGump));
 			pm.CloseGump(typeof(GoldPointGump));
 			m_pm = pm;
 
 			int HarvestQuest = 0;
-			for( int i = 0; i < 9; i++ )
+			for (int i = 0; i < 9; i++)
 			{
-				if ( pm.QuestCheck[i] )
+				if (pm.QuestCheck[i])
 				{
 					HarvestQuest += 5;
-					if( i == 8 )
+					if (i == 8)
 						HarvestQuest += 5;
 				}
 			}
-			
-			m_Harvestpoint = Misc.Util.Level( pm.GoldPoint[0] ) - pm.GoldPoint[1] + HarvestQuest;
-			m_Craftpoint = Misc.Util.Level( pm.GoldPoint[10] ) - pm.GoldPoint[11];
+
+			m_Harvestpoint = Misc.Util.Level(pm.GoldPoint[0]) - pm.GoldPoint[1] + HarvestQuest;
+			m_Craftpoint = Misc.Util.Level(pm.GoldPoint[10]) - pm.GoldPoint[11];
 			//pm.CloseGump(typeof(SilverPointGump));
 			//pm.CloseGump(typeof(EquipPointGump));
 			//pm.CloseGump(typeof(ArtifactPointGump));
 			//pm.CloseGump(typeof(SkillPointGump));
 
-            AddPage(0);
+			AddPage(0);
 
-            AddBackground(0, 0, 425, 600, 5054);
-	
-            //AddImageTiled(10, 10, 500, 150, 2624);
-            //AddAlphaRegion(10, 10, 500, 150);
+			AddBackground(0, 0, 425, 600, 5054);
 
-            AddHtml(10, 10, 250, 20, "Ã¤Áý °æÇèÄ¡", false, false); // <CENTER>HOUSE 			
-			AddHtml(130, 10, 200, 16, pm.GoldPoint[0] > 0 ? (String.Format("{0:#,###}", pm.GoldPoint[0])) : "0", false, false);
+			//AddImageTiled(10, 10, 500, 150, 2624);
+			//AddAlphaRegion(10, 10, 500, 150);
 
-			
-            AddHtml(10, 60, 250, 20, "³²Àº Æ÷ÀÎÆ®", false, false); // <CENTER>HOUSE 			
-			AddHtml(130, 60, 200, 16, m_Harvestpoint > 0 ? String.Format("{0:#,###}", m_Harvestpoint ) : "0", false, false);
-			
-            AddHtml(10, 80, 100, 20, "ÇöÀç ·¹º§", false, false); // <CENTER>HOUSE 			
-			AddHtml(130, 80, 40, 16, Misc.Util.Level( pm.GoldPoint[0] ) >= Misc.Util.MaxLevel ? Misc.Util.MaxLevel.ToString() : Misc.Util.Level( pm.GoldPoint[0] ).ToString(), false, false);
+			AddHtml(10, 10, 250, 20, "Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡", false, false); // <CENTER>HOUSE
+			AddHtml(
+				130,
+				10,
+				200,
+				16,
+				pm.GoldPoint[0] > 0 ? (String.Format("{0:#,###}", pm.GoldPoint[0])) : "0",
+				false,
+				false
+			);
 
-            AddHtml(10, 110, 130, 20, "´ÙÀ½ °æÇèÄ¡", false, false); // <CENTER>HOUSE 			
-			AddHtml(130, 110, 250, 16, Misc.Util.Level( pm.GoldPoint[0] ) >= Misc.Util.MaxLevel ? "¾øÀ½" : String.Format("{0:#,###}", Misc.Util.NextLevel( pm.GoldPoint[0] ) ), false, false);
-			
-            AddHtml(210, 10, 250, 20, "Á¦ÀÛ °æÇèÄ¡", false, false); // <CENTER>HOUSE 			
-			AddHtml(330, 10, 200, 16, pm.GoldPoint[10] > 0 ? (String.Format("{0:#,###}", pm.GoldPoint[10])) : "0", false, false);
+			AddHtml(10, 60, 250, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®", false, false); // <CENTER>HOUSE
+			AddHtml(
+				130,
+				60,
+				200,
+				16,
+				m_Harvestpoint > 0 ? String.Format("{0:#,###}", m_Harvestpoint) : "0",
+				false,
+				false
+			);
 
-            AddHtml(210, 60, 250, 20, "³²Àº Æ÷ÀÎÆ®", false, false); // <CENTER>HOUSE 			
-			AddHtml(330, 60, 200, 16, m_Craftpoint > 0 ? String.Format("{0:#,###}", m_Craftpoint ) : "0", false, false);
-			
-            AddHtml(210, 80, 100, 20, "ÇöÀç ·¹º§", false, false); // <CENTER>HOUSE 			
-			AddHtml(330, 80, 40, 16, Misc.Util.Level( pm.GoldPoint[10] ) >= Misc.Util.MaxLevel ? "ÃÖ´ë ·¹º§" : Misc.Util.Level( pm.GoldPoint[10] ).ToString(), false, false);
+			AddHtml(10, 80, 100, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", false, false); // <CENTER>HOUSE
+			AddHtml(
+				130,
+				80,
+				40,
+				16,
+				Misc.Util.Level(pm.GoldPoint[0]) >= Misc.Util.MaxLevel
+					? Misc.Util.MaxLevel.ToString()
+					: Misc.Util.Level(pm.GoldPoint[0]).ToString(),
+				false,
+				false
+			);
 
-            AddHtml(210, 110, 130, 20, "´ÙÀ½ °æÇèÄ¡", false, false); // <CENTER>HOUSE 			
-			AddHtml(330, 110, 250, 16, Misc.Util.Level( pm.GoldPoint[10] ) >= Misc.Util.MaxLevel ? "¾øÀ½" : String.Format("{0:#,###}", Misc.Util.NextLevel( pm.GoldPoint[10] ) ), false, false);
-			
+			AddHtml(10, 110, 130, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡", false, false); // <CENTER>HOUSE
+			AddHtml(
+				130,
+				110,
+				250,
+				16,
+				Misc.Util.Level(pm.GoldPoint[0]) >= Misc.Util.MaxLevel
+					? "ï¿½ï¿½ï¿½ï¿½"
+					: String.Format("{0:#,###}", Misc.Util.NextLevel(pm.GoldPoint[0])),
+				false,
+				false
+			);
 
+			AddHtml(210, 10, 250, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡", false, false); // <CENTER>HOUSE
+			AddHtml(
+				330,
+				10,
+				200,
+				16,
+				pm.GoldPoint[10] > 0 ? (String.Format("{0:#,###}", pm.GoldPoint[10])) : "0",
+				false,
+				false
+			);
 
-			
-            AddHtml(50, 140, 225, 20, "¿É¼Ç", false, false); // House Description
-            AddHtml(260, 140, 225, 20, "¿É¼Ç", false, false); // House Description
-            //AddHtml(275, 90, 225, 20, "ÀÌ¸§(ÇöÀç ·¹º§)", false, false); // House Description
-			
-			if( pm.DeathCheck == 0 )
+			AddHtml(210, 60, 250, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®", false, false); // <CENTER>HOUSE
+			AddHtml(330, 60, 200, 16, m_Craftpoint > 0 ? String.Format("{0:#,###}", m_Craftpoint) : "0", false, false);
+
+			AddHtml(210, 80, 100, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", false, false); // <CENTER>HOUSE
+			AddHtml(
+				330,
+				80,
+				40,
+				16,
+				Misc.Util.Level(pm.GoldPoint[10]) >= Misc.Util.MaxLevel
+					? "ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½"
+					: Misc.Util.Level(pm.GoldPoint[10]).ToString(),
+				false,
+				false
+			);
+
+			AddHtml(210, 110, 130, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡", false, false); // <CENTER>HOUSE
+			AddHtml(
+				330,
+				110,
+				250,
+				16,
+				Misc.Util.Level(pm.GoldPoint[10]) >= Misc.Util.MaxLevel
+					? "ï¿½ï¿½ï¿½ï¿½"
+					: String.Format("{0:#,###}", Misc.Util.NextLevel(pm.GoldPoint[10])),
+				false,
+				false
+			);
+
+			AddHtml(50, 140, 225, 20, "ï¿½É¼ï¿½", false, false); // House Description
+			AddHtml(260, 140, 225, 20, "ï¿½É¼ï¿½", false, false); // House Description
+			//AddHtml(275, 90, 225, 20, "ï¿½Ì¸ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)", false, false); // House Description
+
+			if (pm.DeathCheck == 0)
 			{
-				AddHtml(50, 40, 195, 20, "Æ÷ÀÎÆ® ¸®¼Â(1ÁÖ 1È¸)", false, false);
-				AddButton( 10, 40, 4005, 4007, 100, GumpButtonType.Reply, 0);
-				AddHtml(260, 40, 195, 20, "Æ÷ÀÎÆ® ¸®¼Â(1ÁÖ 1È¸)", false, false);
-				AddButton( 210, 40, 4005, 4007, 200, GumpButtonType.Reply, 0);
+				AddHtml(50, 40, 195, 20, "ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½(1ï¿½ï¿½ 1È¸)", false, false);
+				AddButton(10, 40, 4005, 4007, 100, GumpButtonType.Reply, 0);
+				AddHtml(260, 40, 195, 20, "ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½(1ï¿½ï¿½ 1È¸)", false, false);
+				AddButton(210, 40, 4005, 4007, 200, GumpButtonType.Reply, 0);
 			}
 
 			int x = 50;
 			int y = 160;
 			int index = 2;
-			for ( int i = 0; i < GrawName.Length; i++)
+			for (int i = 0; i < GrawName.Length; i++)
 			{
-				if( i == 4 )
+				if (i == 4)
 				{
 					x = 260;
 					y = 160;
 					index = 8;
 				}
 				int point = 0;
-				//ÀÌ¸§
+				//ï¿½Ì¸ï¿½
 				string allname = GrawName[i];
 
 				allname += "(" + pm.GoldPoint[i + index].ToString() + ")";
 				AddHtml(x, y, 250, 20, allname, false, false);
-				if( i < 4 )
+				if (i < 4)
 				{
-					if( m_Harvestpoint > 0 && pm.GoldPoint[i + index] < Max_Level )
+					if (m_Harvestpoint > 0 && pm.GoldPoint[i + index] < Max_Level)
 						AddButton(x - 40, y, 4005, 4007, i + index, GumpButtonType.Reply, 0);
 				}
 				else
-
 				{
-					if( m_Craftpoint > 0 && pm.GoldPoint[i + index] < Max_Level )
+					if (m_Craftpoint > 0 && pm.GoldPoint[i + index] < Max_Level)
 						AddButton(x - 40, y, 4005, 4007, i + index, GumpButtonType.Reply, 0);
 				}
 				y += 20;
 				//index++;
 			}
-			
+
 			y += 20;
-			
-			string HarvestQuestList = "Ã¤Áý Äù½ºÆ® ´Þ¼º ¾øÀ½";
-			for( int i = 8; i < 0; --i )
+
+			string HarvestQuestList = "Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Þ¼ï¿½ ï¿½ï¿½ï¿½ï¿½";
+			for (int i = 8; i < 0; --i)
 			{
-				if ( pm.QuestCheck[i] )
+				if (pm.QuestCheck[i])
 				{
-					HarvestQuestList = "Ã¤Áý Äù½ºÆ® " + (i + 1).ToString() + "´Ü°è ´Þ¼º";
+					HarvestQuestList = "Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® " + (i + 1).ToString() + "ï¿½Ü°ï¿½ ï¿½Þ¼ï¿½";
 					break;
 				}
 			}
@@ -270,102 +343,103 @@ namespace Server.Gumps
 
 			y += 20;
 
-			AddHtml(50, y, 250, 20, "Ã¤Áý ¾÷Àû È®ÀÎ ¹öÆ°", false, false);
-			AddButton( 10, y, 4005, 4007, 150, GumpButtonType.Reply, 0);
-			
-			AddHtml(260, y, 250, 20, "Á¦ÀÛ ¾÷Àû È®ÀÎ ¹öÆ°", false, false);
-			AddButton( 210, y, 4005, 4007, 250, GumpButtonType.Reply, 0);
-			
-			if( pm.GoldPoint[49] > 0 )
+			AddHtml(50, y, 250, 20, "Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ ï¿½ï¿½Æ°", false, false);
+			AddButton(10, y, 4005, 4007, 150, GumpButtonType.Reply, 0);
+
+			AddHtml(260, y, 250, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ ï¿½ï¿½Æ°", false, false);
+			AddButton(210, y, 4005, 4007, 250, GumpButtonType.Reply, 0);
+
+			if (pm.GoldPoint[49] > 0)
 			{
 				y += 30;
-				AddHtml(50, y, 205, 20, "¿¹Àü »ý»ê Æ÷ÀÎÆ®:", false, false); 
+				AddHtml(50, y, 205, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®:", false, false);
 				AddHtml(215, y, 110, 16, String.Format("{0:#,###}", pm.GoldPoint[49]), false, false);
-				
-				y += 20;
-				AddHtml(50, y, 300, 20, "¿¹Àü »ý»ê Æ÷ÀÎÆ®¸¦ Ã¤Áý Æ÷ÀÎÆ®·Î ÀüÈ¯", false, false); 
-				AddButton( 10, y, 4005, 4007, 300, GumpButtonType.Reply, 0);
 
 				y += 20;
-				AddHtml(50, y, 300, 20, "¿¹Àü »ý»ê Æ÷ÀÎÆ®¸¦ Á¦ÀÛ Æ÷ÀÎÆ®·Î ÀüÈ¯", false, false); 
-				AddButton( 10, y, 4005, 4007, 400, GumpButtonType.Reply, 0);
+				AddHtml(50, y, 300, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½È¯", false, false);
+				AddButton(10, y, 4005, 4007, 300, GumpButtonType.Reply, 0);
+
+				y += 20;
+				AddHtml(50, y, 300, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½È¯", false, false);
+				AddButton(10, y, 4005, 4007, 400, GumpButtonType.Reply, 0);
 			}
 		}
-        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
-        {
-            if (!m_pm.CheckAlive() || info.ButtonID == 0)
-                return;
 
-			if( info.ButtonID == 100 )
+		public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+		{
+			if (!m_pm.CheckAlive() || info.ButtonID == 0)
+				return;
+
+			if (info.ButtonID == 100)
 			{
 				m_pm.DeathCheck = 1;
-				for( int i = 1; i <= 5; i++ )
+				for (int i = 1; i <= 5; i++)
 				{
 					m_pm.GoldPoint[i] = 0;
 				}
 				m_pm.SendGump(new GoldPointGump(m_pm));
 			}
-			else if( info.ButtonID == 150 )
+			else if (info.ButtonID == 150)
 			{
 				m_pm.CloseGump(typeof(HarvestGump));
 				m_pm.SendGump(new HarvestGump(m_pm));
-				
 			}
-			else if( info.ButtonID == 200 )
+			else if (info.ButtonID == 200)
 			{
 				m_pm.DeathCheck = 1;
-				for( int i = 11; i <= 15; i++ )
+				for (int i = 11; i <= 15; i++)
 				{
 					m_pm.GoldPoint[i] = 0;
 				}
 				m_pm.SendGump(new GoldPointGump(m_pm));
 			}
-			else if( info.ButtonID == 250 )
+			else if (info.ButtonID == 250)
 			{
 				m_pm.CloseGump(typeof(CraftingGump));
 				m_pm.SendGump(new CraftingGump(m_pm));
-				
 			}
-			else if( info.ButtonID == 300 )
+			else if (info.ButtonID == 300)
 			{
-				m_pm.SendMessage("1ºÎÅÍ " + m_pm.GoldPoint[49].ToString() + "»çÀÌÀÇ ¼ýÀÚ¸¦ ÀûÀ¸¼¼¿ä!");
+				m_pm.SendMessage("1ï¿½ï¿½ï¿½ï¿½ " + m_pm.GoldPoint[49].ToString() + "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½!");
 				m_pm.BeginPrompt(
-				(from, text) =>
-				{
-					int amount = Utility.ToInt32(text);
-					if( amount <= m_pm.GoldPoint[49] )
+					(from, text) =>
 					{
-						from.SendMessage("Ã¤Áý Æ÷ÀÎÆ®¸¦ " + amount.ToString() + "¸¸Å­ È¹µæÇÕ´Ï´Ù!" );
-						m_pm.GoldPoint[0] += amount;
-						m_pm.GoldPoint[49] -= amount;
+						int amount = Utility.ToInt32(text);
+						if (amount <= m_pm.GoldPoint[49])
+						{
+							from.SendMessage("Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ " + amount.ToString() + "ï¿½ï¿½Å­ È¹ï¿½ï¿½ï¿½Õ´Ï´ï¿½!");
+							m_pm.GoldPoint[0] += amount;
+							m_pm.GoldPoint[49] -= amount;
+						}
+						else
+							from.SendMessage("ï¿½ß¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú³ï¿½ ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì³×¿ï¿½...");
 					}
-					else
-						from.SendMessage("Àß¸øµÈ ¼ýÀÚ³ª ¹®ÀÚ¸¦ ³ÖÀ¸¼Ì³×¿ä...");
-				});				
+				);
 				m_pm.SendGump(new GoldPointGump(m_pm));
 			}
-			else if( info.ButtonID == 400 )
+			else if (info.ButtonID == 400)
 			{
-				m_pm.SendMessage("1ºÎÅÍ " + m_pm.GoldPoint[49].ToString() + "»çÀÌÀÇ ¼ýÀÚ¸¦ ÀûÀ¸¼¼¿ä!");
+				m_pm.SendMessage("1ï¿½ï¿½ï¿½ï¿½ " + m_pm.GoldPoint[49].ToString() + "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½!");
 				m_pm.BeginPrompt(
-				(from, text) =>
-				{
-					int amount = Utility.ToInt32(text);
-					if( amount <= m_pm.GoldPoint[49] )
+					(from, text) =>
 					{
-						from.SendMessage("Á¦ÀÛ Æ÷ÀÎÆ®¸¦ " + amount.ToString() + "¸¸Å­ È¹µæÇÕ´Ï´Ù!" );
-						m_pm.GoldPoint[10] += amount;
-						m_pm.GoldPoint[49] -= amount;
+						int amount = Utility.ToInt32(text);
+						if (amount <= m_pm.GoldPoint[49])
+						{
+							from.SendMessage("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ " + amount.ToString() + "ï¿½ï¿½Å­ È¹ï¿½ï¿½ï¿½Õ´Ï´ï¿½!");
+							m_pm.GoldPoint[10] += amount;
+							m_pm.GoldPoint[49] -= amount;
+						}
+						else
+							from.SendMessage("ï¿½ß¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú³ï¿½ ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì³×¿ï¿½...");
 					}
-					else
-						from.SendMessage("Àß¸øµÈ ¼ýÀÚ³ª ¹®ÀÚ¸¦ ³ÖÀ¸¼Ì³×¿ä...");
-				});				
+				);
 				m_pm.SendGump(new GoldPointGump(m_pm));
 			}
 			else
 			{
 				int index = 1;
-				if( info.ButtonID >= 12 && info.ButtonID <= 15 )
+				if (info.ButtonID >= 12 && info.ButtonID <= 15)
 					index = 11;
 				m_pm.GoldPoint[info.ButtonID]++;
 				m_pm.GoldPoint[index]++;
@@ -374,190 +448,254 @@ namespace Server.Gumps
 				m_pm.SendGump(new GoldPointGump(m_pm));
 			}
 			//Timer.DelayCall(TimeSpan.FromSeconds(0.1), SendGump);
-        }
-        private void SendGump()
-        {
-            m_pm.SendGump(new GoldPointGump(m_pm));
-        }
+		}
+
+		private void SendGump()
+		{
+			m_pm.SendGump(new GoldPointGump(m_pm));
+		}
 	}
 	#endregion
 
-	#region ÀüÅõ
-    public class SilverPointGump : Gump
-    {
+	#region ï¿½ï¿½ï¿½ï¿½
+	public class SilverPointGump : Gump
+	{
 		readonly int Max_Level = 50;
 		private PlayerMobile m_pm;
-		
-		//30¹ø±îÁö Áõ°¡
-		//35¹ø±îÁö Æ÷ÀÎÆ®
-		//70¹ø ÀüÃ¼ ´øÀü Æ÷ÀÎÆ®
-		//71¹øºÎÅÍ ´øÀü Æ÷ÀÎÆ®
-		
-		private string[] Name = { "ÀüÅõ °æÇè Áõ°¡", "¾î±×·Î Áõ°¡", "¾î±×·Î °¨¼Ò", "Æ¯¼ö±â È®·ü Áõ°¡", "¹«±â µ¥¹ÌÁö Áõ°¡", "¸¶¹ý µ¥¹ÌÁö Áõ°¡", "°üÅë µ¥¹ÌÁö Áõ°¡", "Ãæ°Ý µ¥¹ÌÁö Áõ°¡", "ÃâÇ÷ µ¥¹ÌÁö Áõ°¡", "È­¿° µ¥¹ÌÁö Áõ°¡", "³Ã±â µ¥¹ÌÁö Áõ°¡", "µ¶ µ¥¹ÌÁö Áõ°¡", "¿¡³ÊÁö µ¥¹ÌÁö Áõ°¡", "Ä¡À¯·® Áõ°¡", "È¸º¹·® Áõ°¡", "¹«±â Ä¡¸íÅ¸ È®·ü Áõ°¡", "¸¶¹ý Ä¡¸íÅ¸ È®·ü Áõ°¡", "¹«±â Ä¡¸íÅ¸ µ¥¹ÌÁö Áõ°¡", "¸¶¹ý Ä¡¸íÅ¸ µ¥¹ÌÁö Áõ°¡", "Ã¼·Â Áõ°¡", "±â·Â Áõ°¡", "¸¶³ª Áõ°¡", "Ã¼·Â Àç»ý Áõ°¡", "±â·Â Àç»ý Áõ°¡", "¸¶³ª Àç»ý Áõ°¡", "¸ðµç ÀúÇ× Áõ°¡", "Èû Áõ°¡", "¹ÎÃ¸ Áõ°¡", "Áö´É Áõ°¡", "¿î Áõ°¡" };
 
-		private string[] Point_Name = {"Èñ±Í Æ÷ÀÎÆ®", "¿µ¿õ Æ÷ÀÎÆ®", "¼­»ç Æ÷ÀÎÆ®", "Àü¼³ Æ÷ÀÎÆ®", "½ÅÈ­ Æ÷ÀÎÆ®" };
-		
-		private string[] Basic_Dungeon_Name = {"ÄÚº£Åõ½º", "µ¥½ºÆÄÀÌÁî", "µð½Ë", "½¦ÀÓ", "¿ÀÅ© ´øÀü", "·Õ ´øÀü", "¾ÆÀÌ½º ´øÀü", "ÆÄÀÌ¾î ´øÀü", "È÷½º·Î½º ´øÀü", "µ¥½ºÅ¸µå ´øÀü" };
-		
+		//30ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		//35ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®
+		//70ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®
+		//71ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®
+
+		private string[] Name =
+		{
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½×·ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½×·ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"Æ¯ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½Ã±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"Ä¡ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ Ä¡ï¿½ï¿½Å¸ È®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ Ä¡ï¿½ï¿½Å¸ È®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ Ä¡ï¿½ï¿½Å¸ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ Ä¡ï¿½ï¿½Å¸ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½Ã¸ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+		};
+
+		private string[] Point_Name = { "ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®", "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®", "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®", "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®", "ï¿½ï¿½È­ ï¿½ï¿½ï¿½ï¿½Æ®" };
+
+		private string[] Basic_Dungeon_Name =
+		{
+			"ï¿½Úºï¿½ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½Å© ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½Î½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+		};
+
 		private int[] Space = { 0, 2, 3, 5, 8, 12, 14, 16, 18, 21, 24 };
-		
-		private int m_point = 0; 
-        public SilverPointGump(PlayerMobile pm) : base(50, 50)
-        {
+
+		private int m_point = 0;
+
+		public SilverPointGump(PlayerMobile pm)
+			: base(50, 50)
+		{
 			int DungeonQuest = 0;
-			for( int i = 0; i < 30; i++ )
+			for (int i = 0; i < 30; i++)
 			{
-				if ( pm.QuestCheck[10000 + i] )
+				if (pm.QuestCheck[10000 + i])
 				{
-					DungeonQuest += ( i % 3 ) + 1;
+					DungeonQuest += (i % 3) + 1;
 				}
 			}
 
 			pm.CloseGump(typeof(CityPointGump));
 			//pm.CloseGump(typeof(GoldPointGump));
 			m_pm = pm;
-			m_point = Misc.Util.Level( pm.SilverPoint[0] ) - pm.SilverPoint[1] + DungeonQuest;
+			m_point = Misc.Util.Level(pm.SilverPoint[0]) - pm.SilverPoint[1] + DungeonQuest;
 			pm.CloseGump(typeof(SilverPointGump));
 			//pm.CloseGump(typeof(EquipPointGump));
 			//pm.CloseGump(typeof(ArtifactPointGump));
 			//pm.CloseGump(typeof(SkillPointGump));
-            AddPage(0);
+			AddPage(0);
 
-			
-            AddBackground(0, 0, 1300, 880, 5054);
-			
-            AddHtml(10, 10, 250, 20, "ÀüÅõ Æ÷ÀÎÆ®", false, false); // <CENTER>HOUSE 			
+			AddBackground(0, 0, 1300, 880, 5054);
+
+			AddHtml(10, 10, 250, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®", false, false); // <CENTER>HOUSE
 			AddHtml(130, 10, 200, 16, String.Format("{0:#,###}", pm.SilverPoint[0]), false, false);
 
-            AddBackground(0, 0, 1300, 880, 5054);
-			
-            AddHtml(10, 40, 250, 20, "³²Àº Æ÷ÀÎÆ®", false, false); // <CENTER>HOUSE 			
-			AddHtml(130, 40, 200, 16, m_point > 0 ? String.Format("{0:#,###}", m_point ) : "0", false, false);
-			
-            AddHtml(10, 60, 100, 20, "ÇöÀç ·¹º§", false, false); // <CENTER>HOUSE 			
-			AddHtml(120, 60, 40, 16, Misc.Util.Level( pm.SilverPoint[0] ) >= Misc.Util.MaxLevel ? Misc.Util.MaxLevel.ToString() : Misc.Util.Level( pm.SilverPoint[0] ).ToString(), false, false);
+			AddBackground(0, 0, 1300, 880, 5054);
 
-            AddHtml(10, 90, 130, 20, "´ÙÀ½ °æÇèÄ¡", false, false); // <CENTER>HOUSE 			
-			AddHtml(130, 90, 250, 16, Misc.Util.Level( pm.SilverPoint[0] ) >= Misc.Util.MaxLevel ? "¾øÀ½" : String.Format("{0:#,###}", Misc.Util.NextLevel( pm.SilverPoint[0] ) ), false, false);
+			AddHtml(10, 40, 250, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®", false, false); // <CENTER>HOUSE
+			AddHtml(130, 40, 200, 16, m_point > 0 ? String.Format("{0:#,###}", m_point) : "0", false, false);
 
+			AddHtml(10, 60, 100, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", false, false); // <CENTER>HOUSE
+			AddHtml(
+				120,
+				60,
+				40,
+				16,
+				Misc.Util.Level(pm.SilverPoint[0]) >= Misc.Util.MaxLevel
+					? Misc.Util.MaxLevel.ToString()
+					: Misc.Util.Level(pm.SilverPoint[0]).ToString(),
+				false,
+				false
+			);
 
+			AddHtml(10, 90, 130, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡", false, false); // <CENTER>HOUSE
+			AddHtml(
+				130,
+				90,
+				250,
+				16,
+				Misc.Util.Level(pm.SilverPoint[0]) >= Misc.Util.MaxLevel
+					? "ï¿½ï¿½ï¿½ï¿½"
+					: String.Format("{0:#,###}", Misc.Util.NextLevel(pm.SilverPoint[0])),
+				false,
+				false
+			);
 
-            //AddHtml(500, 10, 250, 20, "ÀüÅõ ½ºÅ³ Æ÷ÀÎÆ®", false, false); // <CENTER>HOUSE 			
+			//AddHtml(500, 10, 250, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½Æ®", false, false); // <CENTER>HOUSE
 			//AddHtml(380, 10, 200, 16, String.Format("{0:#,###}", m_point), false, false);
-			
-			
-            AddHtml(50, 120, 225, 20, "¿É¼Ç", false, false); // House Description
-            //AddHtml(275, 40, 225, 20, "ÀÌ¸§(ÇöÀç ·¹º§)", false, false); // House Description
-            //AddHtml(275, 40, 75, 20, "·¹º§", false, false); // Storage
-            //AddHtml(350, 40, 150, 20, "ºñ¿ë", false, false); // Lockdowns
-			if( pm.DeathCheck == 0 )
+
+
+			AddHtml(50, 120, 225, 20, "ï¿½É¼ï¿½", false, false); // House Description
+			//AddHtml(275, 40, 225, 20, "ï¿½Ì¸ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)", false, false); // House Description
+			//AddHtml(275, 40, 75, 20, "ï¿½ï¿½ï¿½ï¿½", false, false); // Storage
+			//AddHtml(350, 40, 150, 20, "ï¿½ï¿½ï¿½", false, false); // Lockdowns
+			if (pm.DeathCheck == 0)
 			{
-				AddHtml(655, 40, 195, 20, "Æ÷ÀÎÆ® ¸®¼Â(1ÁÖ 1È¸)", false, false);
-				AddButton( 850, 40, 4005, 4007, 100, GumpButtonType.Reply, 0);
+				AddHtml(655, 40, 195, 20, "ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½(1ï¿½ï¿½ 1È¸)", false, false);
+				AddButton(850, 40, 4005, 4007, 100, GumpButtonType.Reply, 0);
 			}
 			int y = 140;
 			int size = 0;
-			
-			for ( int i = 0; i < Name.Length; i++)
+
+			for (int i = 0; i < Name.Length; i++)
 			{
 				int point = 0;
-				//ÀÌ¸§
+				//ï¿½Ì¸ï¿½
 				string allname = Name[i];
 
 				allname += "(" + pm.SilverPoint[i + 2].ToString() + ")";
 				AddHtml(50 + size, y, 250, 20, allname, false, false);
-				if( m_point > 0 && pm.SilverPoint[i + 2] < Max_Level )
+				if (m_point > 0 && pm.SilverPoint[i + 2] < Max_Level)
 					AddButton(10 + size, y, 4005, 4007, i + 1, GumpButtonType.Reply, 0);
 				size += 250;
-				for( int j = 0; j < Space.Length; j++ )
+				for (int j = 0; j < Space.Length; j++)
 				{
-					if( i == Space[j] ) //¶ç¾î¾²±â
+					if (i == Space[j]) //ï¿½ï¿½î¾²ï¿½ï¿½
 					{
 						y += 20;
 						size = 0;
 					}
 				}
 			}
-			//Æ÷ÀÎÆ® Àû¸³
+			//ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
 			/*
 			y += 30;
-            AddHtml(50, y, 405, 20, "µî±Þ Æ÷ÀÎÆ®", false, false); // House Description
+			AddHtml(50, y, 405, 20, "ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®", false, false); // House Description
 			y += 20;
-            AddHtml(50, y, 405, 20, "Æ÷ÀÎÆ® º¯È¯ ½Ã Æ¼¾î ´ç 1, 2, 4, 7, 10, 15, 23°³ È¹µæ. À¯¹° 1´Ü°è ´ç 5°³ Ãß°¡ Áõ°¡", false, false); // 			y += 20;
+			AddHtml(50, y, 405, 20, "ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½È¯ ï¿½ï¿½ Æ¼ï¿½ï¿½ ï¿½ï¿½ 1, 2, 4, 7, 10, 15, 23ï¿½ï¿½ È¹ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ 1ï¿½Ü°ï¿½ ï¿½ï¿½ 5ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½", false, false); // 			y += 20;
 			y += 20;
-            AddHtml(50, y, 405, 20, "¾ÆÀÌÅÛ Á¦ÀÛ ½Ã 1 + À¯¹° µî±Þ * À¯¹° µî±Þ ¼Ò¸ð", false, false); // House Description
+			AddHtml(50, y, 405, 20, "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ 1 + ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ * ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ò¸ï¿½", false, false); // House Description
 			y += 20;
-            AddHtml(50, y, 405, 20, "¾ÆÀÌÅÛ º¯È¯Àº µî±Þ ¿·ÀÇ È­»ìÇ¥ Å¬¸¯. Á¦ÀÛÀº Á¦ÀÛ ½ºÅ³ÀÇ ¾ÆÀÌÅÛ °­È­ Å¬¸¯.", false, false); // House Description
+			AddHtml(50, y, 405, 20, "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È­ï¿½ï¿½Ç¥ Å¬ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È­ Å¬ï¿½ï¿½.", false, false); // House Description
 			y += 20;
 			size = 0;
 			for ( int i = 0; i < Point_Name.Length; i++ )
 			{
 				string allname = Point_Name[i];
 				Account acc = pm.Account as Account;
-				allname += " : " + String.Format("{0:#,###}", acc.Point[861 + i] > 0 ? acc.Point[861 + i].ToString() : "0" ) + "Á¡";
+				allname += " : " + String.Format("{0:#,###}", acc.Point[861 + i] > 0 ? acc.Point[861 + i].ToString() : "0" ) + "ï¿½ï¿½";
 				AddHtml(50 + size, y, 250, 20, allname, false, false);
 				AddButton(10 + size, y, 4005, 4007, i + 31, GumpButtonType.Reply, 0);
 				size += 250;
 			}
 			*/
-			//¾÷Àû È®ÀÎ
+			//ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 			y += 30;
 			size = 0;
-            AddHtml(50, y, 405, 20, "¾÷Àû È®ÀÎ ¹öÆ°", false, false); // House Description
+			AddHtml(50, y, 405, 20, "ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ ï¿½ï¿½Æ°", false, false); // House Description
 			AddButton(10 + size, y, 4005, 4007, 150, GumpButtonType.Reply, 0);
-			
-			//Äù½ºÆ® ¿Ï·á È®ÀÎ
+
+			//ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ï·ï¿½ È®ï¿½ï¿½
 			y += 30;
-            AddHtml(50, y, 405, 20, "Äù½ºÆ® ¿Ï·á È®ÀÎ", false, false); // House Description
+			AddHtml(50, y, 405, 20, "ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ï·ï¿½ È®ï¿½ï¿½", false, false); // House Description
 
 			y += 30;
-			
+
 			string BasicDungeonList = "";
 			int index = 0;
-			for( int i = 0; i < 10; ++i)
+			for (int i = 0; i < 10; ++i)
 			{
-				BasicDungeonList = " Äù½ºÆ® ´Þ¼º ¾øÀ½";
-				for( int j = 0; j < 3; ++j )
+				BasicDungeonList = " ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Þ¼ï¿½ ï¿½ï¿½ï¿½ï¿½";
+				for (int j = 0; j < 3; ++j)
 				{
-					if( pm.QuestCheck[10000 + index * 3 + j] )
-						BasicDungeonList = " Äù½ºÆ® " + (index + 1).ToString() + "´Ü°è ´Þ¼º";
+					if (pm.QuestCheck[10000 + index * 3 + j])
+						BasicDungeonList = " ï¿½ï¿½ï¿½ï¿½Æ® " + (index + 1).ToString() + "ï¿½Ü°ï¿½ ï¿½Þ¼ï¿½";
 				}
-				if( i == 5 )
+				if (i == 5)
 				{
 					index = 0;
 					size = 0;
 					y += 20;
 				}
-				AddHtml(50 + size, y, 250, 20, Basic_Dungeon_Name[i] + BasicDungeonList, false, false); 
+				AddHtml(50 + size, y, 250, 20, Basic_Dungeon_Name[i] + BasicDungeonList, false, false);
 
 				index++;
 				size += 250;
 			}
 		}
 
-        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
-        {
-            if (!m_pm.CheckAlive() || info.ButtonID == 0)
-                return;
-			
-			if( info.ButtonID == 100 )
+		public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+		{
+			if (!m_pm.CheckAlive() || info.ButtonID == 0)
+				return;
+
+			if (info.ButtonID == 100)
 			{
 				m_pm.DeathCheck = 1;
 				int returnPoint = 0;
 				m_pm.DeathCheck = 1;
-				for( int i = 1; i < m_pm.SilverPoint.Length; i++ )
+				for (int i = 1; i < m_pm.SilverPoint.Length; i++)
 				{
 					m_pm.SilverPoint[i] = 0;
 				}
 				m_pm.SendGump(new SilverPointGump(m_pm));
 				//Timer.DelayCall(TimeSpan.FromSeconds(0.1), SendGump);
 			}
-			else if( info.ButtonID == 150 )
+			else if (info.ButtonID == 150)
 			{
 				m_pm.CloseGump(typeof(MonsterFeatGump));
 				m_pm.SendGump(new MonsterFeatGump(m_pm));
 			}
-			else if( info.ButtonID <= 30 )
+			else if (info.ButtonID <= 30)
 			{
 				m_pm.SilverPoint[info.ButtonID + 1]++;
 				m_pm.SilverPoint[1]++;
@@ -572,9 +710,9 @@ namespace Server.Gumps
 				//m_pm.Target = new InternalTarget(info.ButtonID - 30);
 				m_pm.SendGump(new SilverPointGump(m_pm));
 			}
-        }
-		
-		//Àåºñ º¯È¯ Å¬¸¯
+		}
+
+		//ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ Å¬ï¿½ï¿½
 		/*
 		private class InternalTarget : Target
 		{
@@ -602,32 +740,49 @@ namespace Server.Gumps
 			}
 		}
 		*/
-        private void SendGump()
-        {
-            m_pm.SendGump(new SilverPointGump(m_pm));
-        }
+		private void SendGump()
+		{
+			m_pm.SendGump(new SilverPointGump(m_pm));
+		}
 	}
 	#endregion
-	
-	#region ¾÷Àû
-    public class EquipPointGump : Gump //1Æ÷ÀÎÆ® ±â´ë°ª 171.6666666 ÁöÇÇ
-    {
+
+	#region ï¿½ï¿½ï¿½ï¿½
+	public class EquipPointGump : Gump //1ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ë°ª 171.6666666 ï¿½ï¿½ï¿½ï¿½
+	{
 		private PlayerMobile m_pm;
-		
-		private string[] NameA = { "·Î±×ÀÎ º¸³Ê½º" }; //, "»ý»ê Æ÷ÀÎÆ® (10 Æ÷ÀÎÆ®)", "ÀüÅõ Æ÷ÀÎÆ® (10 Æ÷ÀÎÆ®)" }; 
-		private string[] Name = { "±¤¹° Ã¤Áý", "¸ñÀç Ã¤Áý", "°¡Á× Ã¤Áý", "»ý»êÇ° Á¦ÀÛ", "1¸¸ ¸í¼º", "2¸¸ ¸í¼º", "3¸¸ ¸í¼º" }; 
-		private string[] accProduct = { "ÄÉ¸¯ÅÍ ±¸¸Å", "Áý ±¸¸Å", "½ºÅ³ °æÇèÄ¡ 1% Áõ°¡ ±¸¸Å" };
-		private string[] goldProduct = { "Áï¼® º¹±Ç ±¸¸Å(0.25% 100¸¸, 1% 10¸¸, 10% 1¸¸)", "ÃßÃ· º¹±Ç ±¸¸Å", "½Ã¾à 8Á¾ 1000¼¼Æ® 6Ãµ", "½Ã¾à 8Á¾ 10000¼¼Æ® 6¸¸", "Áý ÅÚ·¹Æ÷Æ® 10¸¸" };
-		
+
+		private string[] NameA = { "ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ê½ï¿½" }; //, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® (10 ï¿½ï¿½ï¿½ï¿½Æ®)", "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® (10 ï¿½ï¿½ï¿½ï¿½Æ®)" };
+		private string[] Name =
+		{
+			"ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½Ç° ï¿½ï¿½ï¿½ï¿½",
+			"1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"2ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"3ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+		};
+		private string[] accProduct = { "ï¿½É¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", "ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", "ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½Ä¡ 1% ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½" };
+		private string[] goldProduct =
+		{
+			"ï¿½ï¼® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(0.25% 100ï¿½ï¿½, 1% 10ï¿½ï¿½, 10% 1ï¿½ï¿½)",
+			"ï¿½ï¿½Ã· ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½Ã¾ï¿½ 8ï¿½ï¿½ 1000ï¿½ï¿½Æ® 6Ãµ",
+			"ï¿½Ã¾ï¿½ 8ï¿½ï¿½ 10000ï¿½ï¿½Æ® 6ï¿½ï¿½",
+			"ï¿½ï¿½ ï¿½Ú·ï¿½ï¿½ï¿½Æ® 10ï¿½ï¿½",
+		};
+
 		private int[] GivePoint = { 100, 900, 8500, 80000 };
-		
-		private int[] CharacterBuyPrice = { 10, 80, 500, 2500, 10000, 25000 }; 
-		
+
+		private int[] CharacterBuyPrice = { 10, 80, 500, 2500, 10000, 25000 };
+
 		private int[] Price = { 15, 150, 17, 165, 1600, 10000 };
 		private int[] goldPrice = { 1000, 1000, 6000, 60000, 100000 };
-		
-        public EquipPointGump(PlayerMobile pm) : base(50, 50)
-        {
+
+		public EquipPointGump(PlayerMobile pm)
+			: base(50, 50)
+		{
 			pm.CloseGump(typeof(CityPointGump));
 			//pm.CloseGump(typeof(GoldPointGump));
 			m_pm = pm;
@@ -637,37 +792,37 @@ namespace Server.Gumps
 			//pm.CloseGump(typeof(SkillPointGump));
 
 			Account acc = pm.Account as Account;
-			
-            AddPage(0);
 
-            AddBackground(0, 0, 525, 590, 5054);
-			
-            //AddImageTiled(10, 10, 500, 150, 2624);
-            //AddAlphaRegion(10, 10, 500, 150);
+			AddPage(0);
 
-            AddHtml(10, 10, 250, 20, "°¡¹® Æ÷ÀÎÆ®: ", false, false); // <CENTER>HOUSE 			
+			AddBackground(0, 0, 525, 590, 5054);
+
+			//AddImageTiled(10, 10, 500, 150, 2624);
+			//AddAlphaRegion(10, 10, 500, 150);
+
+			AddHtml(10, 10, 250, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®: ", false, false); // <CENTER>HOUSE
 			AddHtml(130, 10, 200, 16, String.Format("{0:#,###}", acc.Point[0]), false, false);
 
-            AddHtml(50, 40, 225, 20, "¸ñ·Ï", false, false); // House Description
-            AddHtml(275, 40, 75, 20, "»óÅÂ", false, false); // Storage
-            AddHtml(350, 40, 150, 20, "È¹µæ", false, false); // Lockdowns
+			AddHtml(50, 40, 225, 20, "ï¿½ï¿½ï¿½", false, false); // House Description
+			AddHtml(275, 40, 75, 20, "ï¿½ï¿½ï¿½ï¿½", false, false); // Storage
+			AddHtml(350, 40, 150, 20, "È¹ï¿½ï¿½", false, false); // Lockdowns
 
 			string donation = String.Format("{0:#,###}", acc.DonationPoint);
-			
-			if( acc.DonationPoint == 0 )
-				AddHtml(50, 90, 350, 20, "ÀÌ¹ø ÁÖ ±âºÎ ¾øÀ½", false, false); // House 				
+
+			if (acc.DonationPoint == 0)
+				AddHtml(50, 90, 350, 20, "ï¿½Ì¹ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", false, false); // House
 			else
-				AddHtml(50, 90,3500, 20, "ÀÌ¹ø ÁÖ ±âºÎ Æ÷ÀÎÆ® " + donation + "Á¡", false, false); // House Description
+				AddHtml(50, 90, 3500, 20, "ï¿½Ì¹ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® " + donation + "ï¿½ï¿½", false, false); // House Description
 			AddButton(10, 90, 4005, 4007, 100, GumpButtonType.Reply, 0);
 
 			donation = "";
 
 			DonationCheck check = null;
-			if( Server.Event.dc == null )
+			if (Server.Event.dc == null)
 			{
-				foreach ( Item item in World.Items.Values )
+				foreach (Item item in World.Items.Values)
 				{
-					if ( item is DonationCheck )
+					if (item is DonationCheck)
 					{
 						DonationCheck dc = item as DonationCheck;
 						Server.Event.dc = dc;
@@ -678,175 +833,205 @@ namespace Server.Gumps
 			}
 			else
 				check = Server.Event.dc;
-			
-			if( check != null )
+
+			if (check != null)
 			{
-				for( int i = 0; i < 1000; i++ )
+				for (int i = 0; i < 1000; i++)
 				{
-					if( check.DonationList[i] == acc.Username )
+					if (check.DonationList[i] == acc.Username)
 					{
-						donation = ( i + 1 ).ToString();
+						donation = (i + 1).ToString();
 						break;
 					}
 				}
 			}
-			
-			
-			if( donation == "")
-				AddHtml(250, 90, 150, 20, "ÇöÀç ¼øÀ§ ¾øÀ½", false, false); // Storage
-			else
-				AddHtml(250, 90, 150, 20, "ÇöÀç ¼øÀ§ " + donation + "µî", false, false); // Storage
 
-            AddHtml(50, 110, 500, 20, "1¸¸ °ñµå ±âºÎÇÏ±â : ±âºÎ & °¡¹® Æ÷ÀÎÆ® 100Á¡ È¹µæ", false, false); // Lockdowns
-            AddHtml(50, 130, 500, 20, "10¸¸ °ñµå ±âºÎÇÏ±â : ±âºÎ & °¡¹® Æ÷ÀÎÆ® 900Á¡ È¹µæ", false, false); // Lockdowns
-            AddHtml(50, 150, 500, 20, "100¸¸ °ñµå ±âºÎÇÏ±â : ±âºÎ & °¡¹® Æ÷ÀÎÆ® 8500Á¡ È¹µæ", false, false); // Lockdowns
-            AddHtml(50, 170, 500, 20, "1000¸¸ °ñµå ±âºÎÇÏ±â : ±âºÎ & °¡¹® Æ÷ÀÎÆ® 80000Á¡ È¹µæ", false, false); // Lockdowns
-			if( Banker.GetBalance(pm) >= 10000 )
+			if (donation == "")
+				AddHtml(250, 90, 150, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", false, false); // Storage
+			else
+				AddHtml(250, 90, 150, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ " + donation + "ï¿½ï¿½", false, false); // Storage
+
+			AddHtml(50, 110, 500, 20, "1ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ : ï¿½ï¿½ï¿½ & ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® 100ï¿½ï¿½ È¹ï¿½ï¿½", false, false); // Lockdowns
+			AddHtml(50, 130, 500, 20, "10ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ : ï¿½ï¿½ï¿½ & ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® 900ï¿½ï¿½ È¹ï¿½ï¿½", false, false); // Lockdowns
+			AddHtml(50, 150, 500, 20, "100ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ : ï¿½ï¿½ï¿½ & ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® 8500ï¿½ï¿½ È¹ï¿½ï¿½", false, false); // Lockdowns
+			AddHtml(50, 170, 500, 20, "1000ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ : ï¿½ï¿½ï¿½ & ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® 80000ï¿½ï¿½ È¹ï¿½ï¿½", false, false); // Lockdowns
+			if (Banker.GetBalance(pm) >= 10000)
 				AddButton(10, 110, 4005, 4007, 1, GumpButtonType.Reply, 0);
-			if( Banker.GetBalance(pm) >= 100000 )
+			if (Banker.GetBalance(pm) >= 100000)
 				AddButton(10, 130, 4005, 4007, 2, GumpButtonType.Reply, 0);
-			if( Banker.GetBalance(pm) >= 1000000 )
+			if (Banker.GetBalance(pm) >= 1000000)
 				AddButton(10, 150, 4005, 4007, 3, GumpButtonType.Reply, 0);
-			if( Banker.GetBalance(pm) >= 10000000 )
+			if (Banker.GetBalance(pm) >= 10000000)
 				AddButton(10, 170, 4005, 4007, 4, GumpButtonType.Reply, 0);
 
 			int y = 60;
-			
-			for ( int i = 0; i < 1; i++)
+
+			for (int i = 0; i < 1; i++)
 			{
-				//ÀÌ¸§
-				AddHtml( 50, y + i * 20, 225, 20, NameA[i], false, false);
-				switch ( i )
+				//ï¿½Ì¸ï¿½
+				AddHtml(50, y + i * 20, 225, 20, NameA[i], false, false);
+				switch (i)
 				{
-					case 0: //·Î±×ÀÎ
+					case 0: //ï¿½Î±ï¿½ï¿½ï¿½
 					{
-						//´Þ¼º·®
-						AddHtml( 275, y + i * 20, 75, 20, acc.LoginBonus.ToString() + "ÀÏ", false, false);
-						//º¸³Ê½º
-						if( acc.LoginBonus <= 1 )
-							AddHtml( 350, y + i * 20, 150, 20, Misc.Util.Equip_Login[0].ToString() + " Æ÷ÀÎÆ®", false, false);
+						//ï¿½Þ¼ï¿½ï¿½ï¿½
+						AddHtml(275, y + i * 20, 75, 20, acc.LoginBonus.ToString() + "ï¿½ï¿½", false, false);
+						//ï¿½ï¿½ï¿½Ê½ï¿½
+						if (acc.LoginBonus <= 1)
+							AddHtml(
+								350,
+								y + i * 20,
+								150,
+								20,
+								Misc.Util.Equip_Login[0].ToString() + " ï¿½ï¿½ï¿½ï¿½Æ®",
+								false,
+								false
+							);
 						else
-							AddHtml( 350, y + i * 20, 150, 20, Misc.Util.Equip_Login[acc.LoginBonus -1].ToString() + " Æ÷ÀÎÆ®", false, false);
+							AddHtml(
+								350,
+								y + i * 20,
+								150,
+								20,
+								Misc.Util.Equip_Login[acc.LoginBonus - 1].ToString() + " ï¿½ï¿½ï¿½ï¿½Æ®",
+								false,
+								false
+							);
 						break;
 					}
 				}
 			}
 
-			AddHtml(50, 200, 500, 20, "¾÷Àû ½Ã½ºÅÛ È®ÀÎ", false, false); // Storage
+			AddHtml(50, 200, 500, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½Ã½ï¿½ï¿½ï¿½ È®ï¿½ï¿½", false, false); // Storage
 			int x = 0;
 			y = 0;
-			for ( int i = 0; i < Name.Length; i++)
+			for (int i = 0; i < Name.Length; i++)
 			{
-				if( i == 4 )
+				if (i == 4)
 				{
 					x = 0;
 					y += 20;
 				}
-				AddHtml( 50 + x * 125, 220 + y, 200, 20, Name[i], false, false);
-				AddButton( 10 + x * 125, 220 + y, 4005, 4007, i + 5, GumpButtonType.Reply, 0 );
+				AddHtml(50 + x * 125, 220 + y, 200, 20, Name[i], false, false);
+				AddButton(10 + x * 125, 220 + y, 4005, 4007, i + 5, GumpButtonType.Reply, 0);
 				x++;
 			}
 
-			//°¡¹® Æ÷ÀÎÆ® »ç¿ë
-			AddHtml(50, 270, 500, 20, "°¡¹® Æ÷ÀÎÆ® ±¸¸Å", false, false); // Storage
-			
-			if( acc.CharacterSlotsBonus < 6 )
+			//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½
+			AddHtml(50, 270, 500, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½", false, false); // Storage
+
+			if (acc.CharacterSlotsBonus < 6)
 			{
-				AddHtml( 50, 290, 500, 20, accProduct[0] + "(" + CharacterBuyPrice[acc.CharacterSlotsBonus].ToString() + ")", false, false);
-				if( CharacterBuyPrice[acc.CharacterSlotsBonus] <= acc.Point[0] )
-					AddButton( 10, 290, 4005, 4007, 15, GumpButtonType.Reply, 0 );
+				AddHtml(
+					50,
+					290,
+					500,
+					20,
+					accProduct[0] + "(" + CharacterBuyPrice[acc.CharacterSlotsBonus].ToString() + ")",
+					false,
+					false
+				);
+				if (CharacterBuyPrice[acc.CharacterSlotsBonus] <= acc.Point[0])
+					AddButton(10, 290, 4005, 4007, 15, GumpButtonType.Reply, 0);
 			}
 			else
-				AddHtml( 50, 290, 500, 20, "¸ðµç ÄÉ¸¯ÅÍ ±¸¸Å", false, false);
-			int usePrice = ( acc.HouseSlotsBonus + 1 ) * 2000;
-			
-			AddHtml( 50, 310, 500, 20, accProduct[1] + "(" + usePrice.ToString() + ")", false, false);
-			if( acc.HouseSlotsBonus < 5 + acc.CharacterSlotsBonus && usePrice <= acc.Point[0] )
-				AddButton( 10, 310, 4005, 4007, 16, GumpButtonType.Reply, 0 );
-			
-			usePrice = ( acc.TeachingBonus + 1 ) * 500;
+				AddHtml(50, 290, 500, 20, "ï¿½ï¿½ï¿½ ï¿½É¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", false, false);
+			int usePrice = (acc.HouseSlotsBonus + 1) * 2000;
 
-			AddHtml( 50, 330, 500, 20, accProduct[2] + "(" + usePrice.ToString() + ")", false, false);
-			if( usePrice <= acc.Point[0] )
-				AddButton( 10, 330, 4005, 4007, 17, GumpButtonType.Reply, 0 );
-			
-			for( int i = 0; i < goldProduct.Length; i++ )
+			AddHtml(50, 310, 500, 20, accProduct[1] + "(" + usePrice.ToString() + ")", false, false);
+			if (acc.HouseSlotsBonus < 5 + acc.CharacterSlotsBonus && usePrice <= acc.Point[0])
+				AddButton(10, 310, 4005, 4007, 16, GumpButtonType.Reply, 0);
+
+			usePrice = (acc.TeachingBonus + 1) * 500;
+
+			AddHtml(50, 330, 500, 20, accProduct[2] + "(" + usePrice.ToString() + ")", false, false);
+			if (usePrice <= acc.Point[0])
+				AddButton(10, 330, 4005, 4007, 17, GumpButtonType.Reply, 0);
+
+			for (int i = 0; i < goldProduct.Length; i++)
 			{
-				if( i == 1 && acc.Lotto != 0 )
+				if (i == 1 && acc.Lotto != 0)
 				{
-					AddHtml(50, 360 + i * 20, 300, 20, "´ç½ÅÀÌ ¼±ÅÃÇÑ ¹øÈ£´Â" + acc.Lotto.ToString() + "ÀÔ´Ï´Ù.", false, false); // Storage
+					AddHtml(
+						50,
+						360 + i * 20,
+						300,
+						20,
+						"ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ï¿½ï¿½" + acc.Lotto.ToString() + "ï¿½Ô´Ï´ï¿½.",
+						false,
+						false
+					); // Storage
 				}
 				else
 				{
 					AddHtml(50, 360 + i * 20, 500, 20, goldProduct[i], false, false); // Storage
-					if( acc.Point[0] >= goldPrice[i] )
-						AddButton( 10, 360 + i * 20, 4005, 4007, 18 + i, GumpButtonType.Reply, 0 );
-				}					
+					if (acc.Point[0] >= goldPrice[i])
+						AddButton(10, 360 + i * 20, 4005, 4007, 18 + i, GumpButtonType.Reply, 0);
+				}
 			}
 			LottoCheck lottocheck = null;
-			if( Server.Event.lc == null )
+			if (Server.Event.lc == null)
 			{
-				foreach ( Item item in World.Items.Values )
+				foreach (Item item in World.Items.Values)
 				{
-					if ( item is LottoCheck )
+					if (item is LottoCheck)
 					{
 						LottoCheck lc = item as LottoCheck;
 						Server.Event.lc = lc;
 						lottocheck = lc;
 						break;
 					}
-				}				
+				}
 				Console.WriteLine("Donation Respawn success");
 			}
 			else
 				lottocheck = Server.Event.lc;
-			if( lottocheck != null )
+			if (lottocheck != null)
 			{
-				if( lottocheck.LottoNumber == 0 || lottocheck.LottoNumber == null )
-					AddHtml(350, 380, 200, 20, "ÃßÃ· ÁøÇàÁßÀÔ´Ï´Ù", false, false); // Storage
+				if (lottocheck.LottoNumber == 0 || lottocheck.LottoNumber == null)
+					AddHtml(350, 380, 200, 20, "ï¿½ï¿½Ã· ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½", false, false); // Storage
 				else
-					AddHtml(350, 400, 200, 20, "ÃßÃ· ¹øÈ£ : " + lottocheck.LottoNumber.ToString() , false, false); // Storage
-				
+					AddHtml(350, 400, 200, 20, "ï¿½ï¿½Ã· ï¿½ï¿½È£ : " + lottocheck.LottoNumber.ToString(), false, false); // Storage
 			}
 		}
 
-		private void RandomCheck_Reward( PlayerMobile pm )
+		private void RandomCheck_Reward(PlayerMobile pm)
 		{
 			int Dice = Utility.RandomMinMax(1, 10000);
 			int price = 0;
-			if( Dice <= 25 )
-				price = 1000000; //±â´ë°ª 1000¿ø
-			else if( Dice <= 125 )
-				price = 100000; //±â´ë°ª 900¿ø
-			else if( Dice <= 1125 )
-				price = 10000; //±â´ë°ª 400¿ø
+			if (Dice <= 25)
+				price = 1000000; //ï¿½ï¿½ë°ª 1000ï¿½ï¿½
+			else if (Dice <= 125)
+				price = 100000; //ï¿½ï¿½ë°ª 900ï¿½ï¿½
+			else if (Dice <= 1125)
+				price = 10000; //ï¿½ï¿½ë°ª 400ï¿½ï¿½
 
-			if( price > 0 )
+			if (price > 0)
 			{
-				Banker.Deposit( pm, price );
+				Banker.Deposit(pm, price);
 
-				if( price == 1000000 )
-					World.Broadcast(0x0, false, "{0}´ÔÀÌ Áï¼® º¹±Ç¿¡¼­ 100¸¸ °ñµå¿¡ ´çÃ·µÇ¼Ì½À´Ï´Ù!", m_pm.Name);
+				if (price == 1000000)
+					World.Broadcast(0x0, false, "{0}ï¿½ï¿½ï¿½ï¿½ ï¿½ï¼® ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½ 100ï¿½ï¿½ ï¿½ï¿½å¿¡ ï¿½ï¿½Ã·ï¿½Ç¼Ì½ï¿½ï¿½Ï´ï¿½!", m_pm.Name);
 				else
-					pm.SendMessage("Áï¼® º¹±Ç¿¡¼­ {0}°ñµå¸¦ È¹µæÇÕ´Ï´Ù!", price.ToString());
+					pm.SendMessage("ï¿½ï¼® ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½ {0}ï¿½ï¿½å¸¦ È¹ï¿½ï¿½ï¿½Õ´Ï´ï¿½!", price.ToString());
 			}
 			else
-				pm.SendMessage("¿îÀÌ ¾ø³×¿ä...");
+				pm.SendMessage("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½×¿ï¿½...");
 		}
-		
-		private void DonationSave( Account acc, int donation )
+
+		private void DonationSave(Account acc, int donation)
 		{
 			acc.DonationPoint += donation;
 			acc.Point[0] += donation;
-			
-			if( acc.DonationPoint >= 100 )
+
+			if (acc.DonationPoint >= 100)
 			{
 				DonationCheck check = null;
-				if( Server.Event.dc == null )
+				if (Server.Event.dc == null)
 				{
-					foreach ( Item item in World.Items.Values )
+					foreach (Item item in World.Items.Values)
 					{
-						if ( item is DonationCheck )
+						if (item is DonationCheck)
 						{
 							DonationCheck dc = item as DonationCheck;
 							Server.Event.dc = dc;
@@ -857,30 +1042,30 @@ namespace Server.Gumps
 				}
 				else
 					check = Server.Event.dc;
-				
-				if( check != null )
+
+				if (check != null)
 				{
-					for( int i = 0; i < check.DonationList.Length; i++ )
+					for (int i = 0; i < check.DonationList.Length; i++)
 					{
-						if( check.DonationList[i] == acc.Username )
+						if (check.DonationList[i] == acc.Username)
 							break;
-						if( check.DonationList[i] == "" || check.DonationList[i] == null )
+						if (check.DonationList[i] == "" || check.DonationList[i] == null)
 						{
 							check.DonationList[i] = acc.Username;
 							break;
 						}
-						if( check.DonationList[i] != "" )
+						if (check.DonationList[i] != "")
 						{
 							foreach (Account a in Accounts.GetAccounts())
 							{
-								if( check.DonationList[i] == a.Username )
+								if (check.DonationList[i] == a.Username)
 								{
-									if( a.DonationPoint < acc.DonationPoint )
+									if (a.DonationPoint < acc.DonationPoint)
 									{
 										check.DonationList[i] = acc.Username;
-										for( int j = i; j < check.DonationList.Length - 1; j++ ) 
+										for (int j = i; j < check.DonationList.Length - 1; j++)
 										{
-											if( check.DonationList[j] == "" || check.DonationList[i] == null )
+											if (check.DonationList[j] == "" || check.DonationList[i] == null)
 												break;
 											else
 												check.DonationList[j + 1] = check.DonationList[j];
@@ -889,135 +1074,152 @@ namespace Server.Gumps
 									}
 								}
 							}
-						}					
+						}
 					}
 				}
 			}
 		}
-		
-        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
-        {
-            if (!m_pm.CheckAlive() || info.ButtonID == 0)
-                return;
-			
+
+		public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+		{
+			if (!m_pm.CheckAlive() || info.ButtonID == 0)
+				return;
+
 			//m_pm.EquipPoint[0] -= Price[info.ButtonID - 1];
-			
-			if( info.ButtonID >= 1 && info.ButtonID < 5 )
+
+			if (info.ButtonID >= 1 && info.ButtonID < 5)
 			{
 				Banker.Withdraw(m_pm, (int)Math.Pow(10, info.ButtonID + 3), true);
 				Account acc = m_pm.Account as Account;
-				DonationSave( acc, GivePoint[info.ButtonID - 1] );
+				DonationSave(acc, GivePoint[info.ButtonID - 1]);
 				m_pm.SendGump(new EquipPointGump(m_pm));
-			}		
-			else if( info.ButtonID >= 5 && info.ButtonID < 12 )
+			}
+			else if (info.ButtonID >= 5 && info.ButtonID < 12)
 			{
 				//m_pm.CloseGump(typeof(SavingAccountGump));
 				m_pm.SendGump(new SavingAccountGump(m_pm, info.ButtonID - 5));
 			}
-			else if( info.ButtonID == 15 )
+			else if (info.ButtonID == 15)
 			{
 				Account acc = m_pm.Account as Account;
 				acc.Point[0] -= CharacterBuyPrice[acc.CharacterSlotsBonus];
 				acc.CharacterSlotsBonus++;
 				m_pm.SendGump(new EquipPointGump(m_pm));
 			}
-			else if( info.ButtonID == 16 )
+			else if (info.ButtonID == 16)
 			{
 				Account acc = m_pm.Account as Account;
-				acc.Point[0] -= ( acc.HouseSlotsBonus + 1 ) * 2000;
+				acc.Point[0] -= (acc.HouseSlotsBonus + 1) * 2000;
 				acc.HouseSlotsBonus++;
 				m_pm.SendGump(new EquipPointGump(m_pm));
 			}
-			else if( info.ButtonID == 17 )
+			else if (info.ButtonID == 17)
 			{
 				Account acc = m_pm.Account as Account;
-				acc.Point[0] -= ( acc.TeachingBonus + 1 ) * 500;
+				acc.Point[0] -= (acc.TeachingBonus + 1) * 500;
 				acc.TeachingBonus++;
 				m_pm.SendGump(new EquipPointGump(m_pm));
 			}
-			else if( info.ButtonID >= 18 && info.ButtonID <= 22 )
+			else if (info.ButtonID >= 18 && info.ButtonID <= 22)
 			{
 				Account acc = m_pm.Account as Account;
-				if( info.ButtonID != 19 )
+				if (info.ButtonID != 19)
 					acc.Point[0] -= goldPrice[info.ButtonID - 18];
-					//Banker.Withdraw(m_pm, goldPrice[info.ButtonID - 18], true);
-				switch ( info.ButtonID )
+				//Banker.Withdraw(m_pm, goldPrice[info.ButtonID - 18], true);
+				switch (info.ButtonID)
 				{
 					case 18:
 					{
-						RandomCheck_Reward( m_pm );
+						RandomCheck_Reward(m_pm);
 						break;
 					}
 					case 19:
 					{
-						if( acc.Lotto == 0 )
+						if (acc.Lotto == 0)
 						{
-							m_pm.SendMessage("1ºÎÅÍ 9999 »çÀÌÀÇ ¼ýÀÚ¸¦ ÀûÀ¸¼¼¿ä!");
+							m_pm.SendMessage("1ï¿½ï¿½ï¿½ï¿½ 9999 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½!");
 							m_pm.BeginPrompt(
-							(from, text) =>
-							{
-								int amount = Utility.ToInt32(text);
-								if( amount >= 1 && amount <= 10000 )
+								(from, text) =>
 								{
-									from.SendMessage(amount.ToString() + "¹øÀ» ¼±ÅÃÇÏ¼Ì½À´Ï´Ù. Çà¿îÀ» º÷´Ï´Ù!" );
-									acc.Lotto = amount;
-									Banker.Withdraw(m_pm, 10000, true);
+									int amount = Utility.ToInt32(text);
+									if (amount >= 1 && amount <= 10000)
+									{
+										from.SendMessage(amount.ToString() + "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¼Ì½ï¿½ï¿½Ï´ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï´ï¿½!");
+										acc.Lotto = amount;
+										Banker.Withdraw(m_pm, 10000, true);
+									}
+									else
+										from.SendMessage("ï¿½ß¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú³ï¿½ ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì³×¿ï¿½...");
 								}
-								else
-									from.SendMessage("Àß¸øµÈ ¼ýÀÚ³ª ¹®ÀÚ¸¦ ³ÖÀ¸¼Ì³×¿ä...");
-							});
+							);
 						}
 						break;
 					}
 					case 20:
 					{
-						BagOfReagents br = new BagOfReagents ( 1000 );
-						m_pm.AddToBackpack( br );
-						m_pm.SendMessage("¸ðµç ½Ã¾àÀ» 1000°³ È¹µæÇÕ´Ï´Ù.");
+						BagOfReagents br = new BagOfReagents(1000);
+						m_pm.AddToBackpack(br);
+						m_pm.SendMessage("ï¿½ï¿½ï¿½ ï¿½Ã¾ï¿½ï¿½ï¿½ 1000ï¿½ï¿½ È¹ï¿½ï¿½ï¿½Õ´Ï´ï¿½.");
 						break;
 					}
 					case 21:
 					{
-						BagOfReagents br = new BagOfReagents ( 10000 );
-						m_pm.AddToBackpack( br );
-						m_pm.SendMessage("¸ðµç ½Ã¾àÀ» 10000°³ È¹µæÇÕ´Ï´Ù.");
+						BagOfReagents br = new BagOfReagents(10000);
+						m_pm.AddToBackpack(br);
+						m_pm.SendMessage("ï¿½ï¿½ï¿½ ï¿½Ã¾ï¿½ï¿½ï¿½ 10000ï¿½ï¿½ È¹ï¿½ï¿½ï¿½Õ´Ï´ï¿½.");
 						break;
 					}
 					case 22:
 					{
 						HouseTeleporterTileBag br = new HouseTeleporterTileBag(false);
-						m_pm.AddToBackpack( br );
-						m_pm.SendMessage("Áý ÅÚ·¹Æ÷Æ®¸¦ È¹µæÇÕ´Ï´Ù.");
+						m_pm.AddToBackpack(br);
+						m_pm.SendMessage("ï¿½ï¿½ ï¿½Ú·ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ È¹ï¿½ï¿½ï¿½Õ´Ï´ï¿½.");
 						break;
 					}
 				}
 				m_pm.SendGump(new EquipPointGump(m_pm));
 			}
-			else if( info.ButtonID == 100 )
+			else if (info.ButtonID == 100)
 			{
 				m_pm.CloseGump(typeof(DonationRankingGump));
 				m_pm.SendGump(new DonationRankingGump(m_pm));
 			}
-        }		
-        private void SendGump()
-        {
-            m_pm.SendGump(new EquipPointGump(m_pm));
-        }
+		}
+
+		private void SendGump()
+		{
+			m_pm.SendGump(new EquipPointGump(m_pm));
+		}
 	}
 	#endregion
-	
-	#region À¯¹°
-    public class ArtifactPointGump : Gump
-    {
-        //private const int LabelColor = 0x7FFF;
-        //private const int LabelHue = 0x481;
+
+	#region ï¿½ï¿½ï¿½ï¿½
+	public class ArtifactPointGump : Gump
+	{
+		//private const int LabelColor = 0x7FFF;
+		//private const int LabelHue = 0x481;
 
 		private PlayerMobile m_pm;
-		
-		private string[] Name = { "Èû Áõ°¡", "¹ÎÃ¸¼º Áõ°¡", "Áö´É Áõ°¡", "Çà¿î Áõ°¡", "Ã¼·Â Áõ°¡", "±â·Â Áõ°¡", "¸¶³ª Áõ°¡", "¹°¸® µ¥¹ÌÁö Áõ°¡", "¸¶¹ý µ¥¹ÌÁö Áõ°¡", "¹°¸® µ¥¹ÌÁö °¨¼Ò", "¸¶¹ý µ¥¹ÌÁö °¨¼Ò", "ÃßÁ¾ÀÚ Áõ°¡"};
-		
-        public ArtifactPointGump(PlayerMobile pm) : base(50, 50)
-        {
+
+		private string[] Name =
+		{
+			"ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½Ã¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+		};
+
+		public ArtifactPointGump(PlayerMobile pm)
+			: base(50, 50)
+		{
 			pm.CloseGump(typeof(CityPointGump));
 			//pm.CloseGump(typeof(GoldPointGump));
 			m_pm = pm;
@@ -1026,28 +1228,28 @@ namespace Server.Gumps
 			pm.CloseGump(typeof(ArtifactPointGump));
 			//pm.CloseGump(typeof(SkillPointGump));
 
-            AddPage(0);
+			AddPage(0);
 
-            AddBackground(0, 0, 500, 350, 5054);
-			
-			//11 : ¸ó½ºÅÍ À¯¹° È¹µæ Ã¼Å©
-			
-            //AddImageTiled(10, 10, 500, 150, 2624);
-            //AddAlphaRegion(10, 10, 500, 150);
+			AddBackground(0, 0, 500, 350, 5054);
 
-            AddHtml(10, 10, 250, 20, "À¯¹° Æ÷ÀÎÆ® ¼öÁ¤ Áß", false, false); // <CENTER>HOUSE 			
+			//11 : ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È¹ï¿½ï¿½ Ã¼Å©
+
+			//AddImageTiled(10, 10, 500, 150, 2624);
+			//AddAlphaRegion(10, 10, 500, 150);
+
+			AddHtml(10, 10, 250, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½", false, false); // <CENTER>HOUSE
 			/*
 			AddHtml(130, 10, 200, 16, String.Format("{0:#,###}", pm.ArtifactPoint[0]), false, false);
 
-            AddHtml(50, 40, 225, 20, "ÀÌ¸§", false, false); // House Description
-            AddHtml(275, 40, 75, 20, "·¹º§", false, false); // Storage
-            AddHtml(350, 40, 150, 20, "ºñ¿ë", false, false); // Lockdowns
+			AddHtml(50, 40, 225, 20, "ï¿½Ì¸ï¿½", false, false); // House Description
+			AddHtml(275, 40, 75, 20, "ï¿½ï¿½ï¿½ï¿½", false, false); // Storage
+			AddHtml(350, 40, 150, 20, "ï¿½ï¿½ï¿½", false, false); // Lockdowns
 			
-            //AddImageTiled(10, 70, 500, 280, 2624);
-            //AddAlphaRegion(10, 70, 500, 280);			
+			//AddImageTiled(10, 70, 500, 280, 2624);
+			//AddAlphaRegion(10, 70, 500, 280);
 
-           // AddImageTiled(10, 970, 500, 20, 2624);
-           // AddAlphaRegion(10, 970, 500, 20);
+		   // AddImageTiled(10, 970, 500, 20, 2624);
+		   // AddAlphaRegion(10, 970, 500, 20);
 
 			int y = 60;
 			for ( int i = 0; i < 12; i++)
@@ -1058,28 +1260,30 @@ namespace Server.Gumps
 				if( ( pm.ArtifactPoint[i + 1] + 1 ) * ( pm.ArtifactPoint[i + 1] + 1 ) * mul <= pm.ArtifactPoint[0] && pm.ArtifactPoint[i + 1] < 100 )
 					AddButton(10, y + i * 20, 4005, 4007, i + 1, GumpButtonType.Reply, 0);
 				
-				//ÀÌ¸§
+				//ï¿½Ì¸ï¿½
 				AddHtml( 50, y + i * 20, 225, 20, Name[i], false, false);
 
-				//·¹º§
+				//ï¿½ï¿½ï¿½ï¿½
 				AddHtml( 275, y + i * 20, 75, 20, pm.ArtifactPoint[i + 1].ToString(), false, false);
 
-				//ºñ¿ë
+				//ï¿½ï¿½ï¿½
 				if( pm.ArtifactPoint[ i + 1 ] < 100 )
 					AddHtml( 350, y + i * 20, 150, 20, ( ( pm.ArtifactPoint[i + 1] + 1 ) * ( pm.ArtifactPoint[i + 1] + 1 ) * mul ).ToString(), false, false);
 			}
 			*/
 		}
-        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
-        {
-            if (!m_pm.CheckAlive() || info.ButtonID == 0)
-                return;
-			
+
+		public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+		{
+			if (!m_pm.CheckAlive() || info.ButtonID == 0)
+				return;
+
 			int mul = 1;
-			
-			if( info.ButtonID == 12 )
+
+			if (info.ButtonID == 12)
 				mul = 10;
-			m_pm.ArtifactPoint[0] -= ( m_pm.ArtifactPoint[info.ButtonID] + 1 ) * ( m_pm.ArtifactPoint[info.ButtonID] + 1 ) * mul;
+			m_pm.ArtifactPoint[0] -=
+				(m_pm.ArtifactPoint[info.ButtonID] + 1) * (m_pm.ArtifactPoint[info.ButtonID] + 1) * mul;
 			m_pm.ArtifactPoint[info.ButtonID]++;
 			m_pm.Delta(MobileDelta.Stat);
 			m_pm.ProcessDelta();
@@ -1087,62 +1291,62 @@ namespace Server.Gumps
 
 			//m_pm.CloseGump(typeof(SilverPointGump));
 			//m_pm.SendGump(new SilverPointGump(m_pm));
-        }		
-        private void SendGump()
-        {
-            m_pm.SendGump(new ArtifactPointGump(m_pm));
-        }
+		}
+
+		private void SendGump()
+		{
+			m_pm.SendGump(new ArtifactPointGump(m_pm));
+		}
 	}
 	#endregion
 
-	#region ½ºÅ³
-    public class SkillPointGump : Gump
-    {
-
+	#region ï¿½ï¿½Å³
+	public class SkillPointGump : Gump
+	{
 		private PlayerMobile m_pm;
-		
+
 		private FirstSkillCheck fsc = null;
 		private int price = 0;
 
 		//private bool pagecheck = false;
-	
-        public SkillPointGump(PlayerMobile pm) : base(50, 50)
-        {
+
+		public SkillPointGump(PlayerMobile pm)
+			: base(50, 50)
+		{
 			pm.CloseGump(typeof(CityPointGump));
 			m_pm = pm;
 
 			pm.CloseGump(typeof(SkillPointGump));
-			
-			foreach ( Item item in World.Items.Values )
+
+			foreach (Item item in World.Items.Values)
 			{
-				if ( item is FirstSkillCheck )
+				if (item is FirstSkillCheck)
 				{
 					fsc = item as FirstSkillCheck;
 					break;
 				}
-			}			
+			}
 			AddPage(0);
-            
 
-            AddBackground(0, 0, 810, 650, 5054);
-			
-            //AddImageTiled(10, 10, 500, 150, 2624);
-            //AddAlphaRegion(10, 10, 500, 150);
+			AddBackground(0, 0, 810, 650, 5054);
 
-            AddHtml(10, 10, 250, 20, "½ºÅ³ °æÇèÄ¡", false, false); // <CENTER>HOUSE 			
+			//AddImageTiled(10, 10, 500, 150, 2624);
+			//AddAlphaRegion(10, 10, 500, 150);
+
+			AddHtml(10, 10, 250, 20, "ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½Ä¡", false, false); // <CENTER>HOUSE
 			//AddHtml(130, 10, 200, 16, String.Format("{0:#,###}", pm.ArtifactPoint[0]), false, false);
 
-            AddHtml(300, 10, 75, 20, "½ºÅ³ ÃÑÇÕ: ", false, false); // <CENTER>HOUSE 
+			AddHtml(300, 10, 75, 20, "ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½: ", false, false); // <CENTER>HOUSE
 			AddHtml(380, 10, 100, 16, String.Format("{0:N1}", (double)pm.SkillsTotal * 0.1), false, false);
 
-            AddHtml(50, 40, 100, 20, "ÀÌ¸§", false, false); // House Description
-            AddHtml(150, 40, 75, 20, "ÀúÀå »óÅÂ", false, false); // House Description
-            AddHtml(225, 40, 75, 20, "ÀúÀå ½ºÅ³", false, false); // House Description
-            AddHtml(300, 40, 175, 20, "»óÅÂ", false, false); // Storage
-			AddHtml(475, 40, 75, 20, "³» ½ºÅ³", false, false);
-            AddHtml(550, 40, 100, 20, "½ºÅ³ ÆÛ¼¾Æ®", false, false); // Storage
-            AddHtml(650, 40, 100, 20, "ÃÖ´ë ½ºÅ³", false, false); // Storage
-            //AddHtml(750, 40, 50, 20, "±¸¸Å", false, false); // Storage
+			AddHtml(50, 40, 100, 20, "ï¿½Ì¸ï¿½", false, false); // House Description
+			AddHtml(150, 40, 75, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", false, false); // House Description
+			AddHtml(225, 40, 75, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³", false, false); // House Description
+			AddHtml(300, 40, 175, 20, "ï¿½ï¿½ï¿½ï¿½", false, false); // Storage
+			AddHtml(475, 40, 75, 20, "ï¿½ï¿½ ï¿½ï¿½Å³", false, false);
+			AddHtml(550, 40, 100, 20, "ï¿½ï¿½Å³ ï¿½Û¼ï¿½Æ®", false, false); // Storage
+			AddHtml(650, 40, 100, 20, "ï¿½Ö´ï¿½ ï¿½ï¿½Å³", false, false); // Storage
+			//AddHtml(750, 40, 50, 20, "ï¿½ï¿½ï¿½ï¿½", false, false); // Storage
 
 			//AddButton(100, 10, 4005, 4007, 100, GumpButtonType.Reply, 0);
 
@@ -1152,10 +1356,10 @@ namespace Server.Gumps
 			//pm.skillpage = false;
 			//AddButton( 130, 10, 4005, 4007, 100, GumpButtonType.Reply, 0);
 			Account acc = pm.Account as Account;
-	
-			for ( int i = 0 + page * 29; i < 29 + page * 29; i++)
+
+			for (int i = 0 + page * 29; i < 29 + page * 29; i++)
 			{
-				if( page == 0 )
+				if (page == 0)
 				{
 					AddButton(750, 10, 4005, 4007, 98, GumpButtonType.Reply, 0);
 				}
@@ -1166,15 +1370,15 @@ namespace Server.Gumps
 				//double AccountSkillSum = 0.0;
 				double AccountSkillBest = 0.0;
 
-				//°¡¹® ½ºÅ³ Ã¼Å©
-				if( acc.Count > 1 )
+				//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ Ã¼Å©
+				if (acc.Count > 1)
 				{
 					for (int j = 0; j < acc.Length; ++j)
 					{
 						Mobile check = acc[j];
-						if (check != null && check != pm )
+						if (check != null && check != pm)
 						{
-							if( AccountSkillBest < check.Skills[i].Base )
+							if (AccountSkillBest < check.Skills[i].Base)
 								AccountSkillBest = check.Skills[i].Base;
 
 							//AccountSkillSum += check.Skills[i].Base * 0.1;
@@ -1182,67 +1386,69 @@ namespace Server.Gumps
 					}
 				}
 
-				//½ºÅ³ ÀúÀå || ·Îµå ¹öÆ°
-				if( ( acc.Point[i + 801] == 0 && pm.Skills[i].Base != 0 ) || ( acc.Point[i + 801] != 0 && acc.Point[i + 801] > pm.Skills[i].Base && pm.SkillsTotal + acc.Point[i + 801] <= 15000 ) )
+				//ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ || ï¿½Îµï¿½ ï¿½ï¿½Æ°
+				if (
+					(acc.Point[i + 801] == 0 && pm.Skills[i].Base != 0)
+					|| (
+						acc.Point[i + 801] != 0
+						&& acc.Point[i + 801] > pm.Skills[i].Base
+						&& pm.SkillsTotal + acc.Point[i + 801] <= 15000
+					)
+				)
 					AddButton(10, y + index * 20, 4005, 4007, i + 1, GumpButtonType.Reply, 0);
-				
-				//ÀÌ¸§
-				AddHtml( 50, y + index * 20, 100, 20, fsc.SkillName[i], false, false);
 
-				//ÀúÀå »óÅÂ & ÀúÀå ½ºÅ³
-				string save = "¾øÀ½";
-				string skill = "¾øÀ½";
-				if( acc.Point[i + 801] != 0 )
+				//ï¿½Ì¸ï¿½
+				AddHtml(50, y + index * 20, 100, 20, fsc.SkillName[i], false, false);
+
+				//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ & ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³
+				string save = "ï¿½ï¿½ï¿½ï¿½";
+				string skill = "ï¿½ï¿½ï¿½ï¿½";
+				if (acc.Point[i + 801] != 0)
 				{
-					save = "ÀúÀå µÊ";
-					skill = ( acc.Point[i + 801] * 0.1 ).ToString();
+					save = "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½";
+					skill = (acc.Point[i + 801] * 0.1).ToString();
 				}
-				AddHtml( 150, y + index * 20, 75, 20, save, false, false);
-				AddHtml( 225, y + index * 20, 75, 20, skill, false, false);
-				
-				//»óÅÂ
+				AddHtml(150, y + index * 20, 75, 20, save, false, false);
+				AddHtml(225, y + index * 20, 75, 20, skill, false, false);
+
+				//ï¿½ï¿½ï¿½ï¿½
 				string skillnow = ((int)(pm.SkillList[i])).ToString();
-				if( pm.SkillList[i] >= 1000 )
+				if (pm.SkillList[i] >= 1000)
 					skillnow = string.Format("{0:#,###}", pm.SkillList[i]);
 				skillnow += " / " + string.Format("{0:#,###}", Misc.Util.SkillExp_Calc(pm, i));
-				AddHtml( 300, y + index * 20, 175, 20, skillnow, false, false );
-				
-				//³» ½ºÅ³
-				AddHtml( 475, y + index * 20, 75, 20, pm.Skills[i].Base.ToString(), false, false);
-				
-				//½ºÅ³ ÆÛ¼¾Æ®
-				AddHtml( 550, y + index * 20, 100, 20, string.Format("{0:N2}%", SkillPercent(pm, i)), false, false);
+				AddHtml(300, y + index * 20, 175, 20, skillnow, false, false);
 
-				//°¡¹® ÃÖ°í ½ºÅ³
-				AddHtml( 650, y + index * 20, 150, 20, AccountSkillBest.ToString(), false, false);
+				//ï¿½ï¿½ ï¿½ï¿½Å³
+				AddHtml(475, y + index * 20, 75, 20, pm.Skills[i].Base.ToString(), false, false);
+
+				//ï¿½ï¿½Å³ ï¿½Û¼ï¿½Æ®
+				AddHtml(550, y + index * 20, 100, 20, string.Format("{0:N2}%", SkillPercent(pm, i)), false, false);
+
+				//ï¿½ï¿½ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½ï¿½Å³
+				AddHtml(650, y + index * 20, 150, 20, AccountSkillBest.ToString(), false, false);
 
 				index++;
-			}			
-
+			}
 		}
 
-		
-		private double SkillPercent(PlayerMobile pm, int skill )
+		private double SkillPercent(PlayerMobile pm, int skill)
 		{
 			double skillcalc = pm.SkillList[skill] * 100 / Misc.Util.SkillExp_Calc(pm, skill);
 			return skillcalc > 100 ? 100 : skillcalc;
 		}
-		
-        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
-        {
-            if (!m_pm.CheckAlive() || info.ButtonID == 0)
-                return;
 
-			if ( info.ButtonID == 100 )
-			{
-				
-			}
-			else if( info.ButtonID == 99 )
+		public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+		{
+			if (!m_pm.CheckAlive() || info.ButtonID == 0)
+				return;
+
+			if (info.ButtonID == 100) { }
+			else if (info.ButtonID == 99)
 			{
 				m_pm.SkillGumpPage = 0;
 				m_pm.SendGump(new SkillPointGump(m_pm));
 			}
-			else if( info.ButtonID == 98 )
+			else if (info.ButtonID == 98)
 			{
 				m_pm.SkillGumpPage = 1;
 				m_pm.SendGump(new SkillPointGump(m_pm));
@@ -1250,12 +1456,15 @@ namespace Server.Gumps
 			else
 			{
 				Account acc = m_pm.Account as Account;
-				if( acc.Point[info.ButtonID + 800] == 0 && m_pm.Skills[info.ButtonID - 1].Base != 0 )
+				if (acc.Point[info.ButtonID + 800] == 0 && m_pm.Skills[info.ButtonID - 1].Base != 0)
 				{
-					acc.Point[info.ButtonID + 800] = (int)( m_pm.Skills[info.ButtonID - 1].Base * 10 );
+					acc.Point[info.ButtonID + 800] = (int)(m_pm.Skills[info.ButtonID - 1].Base * 10);
 					m_pm.Skills[info.ButtonID - 1].Base = 0;
 				}
-				else if( acc.Point[info.ButtonID + 800] != 0 && acc.Point[info.ButtonID + 800] > m_pm.Skills[info.ButtonID - 1].Base )
+				else if (
+					acc.Point[info.ButtonID + 800] != 0
+					&& acc.Point[info.ButtonID + 800] > m_pm.Skills[info.ButtonID - 1].Base
+				)
 				{
 					m_pm.Skills[info.ButtonID - 1].Base = acc.Point[info.ButtonID + 800] * 0.1;
 					acc.Point[info.ButtonID + 800] = 0;
@@ -1263,36 +1472,77 @@ namespace Server.Gumps
 				m_pm.SendGump(new SkillPointGump(m_pm));
 			}
 			//Timer.DelayCall(TimeSpan.FromSeconds(0.1), SendGump);
-        }
-        private void SendGump()
-        {
-            m_pm.SendGump(new SkillPointGump(m_pm));
-        }
+		}
+
+		private void SendGump()
+		{
+			m_pm.SendGump(new SkillPointGump(m_pm));
+		}
 	}
 	#endregion
-    public class HarvestGump : Gump
-    {
+	public class HarvestGump : Gump
+	{
 		PlayerMobile m_pm;
 		int m_maxpage = 1;
 		private string[] HarvestName =
 		{
-			"Ã¶ Ã¤Áý", "±¸¸® Ã¤Áý", "Ã»µ¿ Ã¤Áý", "±Ý Ã¤Áý", "¾Æ°¡ÆÄÀÌÆ® Ã¤Áý", "º£¶óÀÌÆ® Ã¤Áý", "º§·¯¶óÀÌÆ® Ã¤Áý", "¹Ì½º¸± Ã¤Áý", "¿É½Ãµð¾ð Ã¤Áý", "¸ð·¡ Ã¤Áý", "ÀÏ¹Ý ³ª¹« Ã¤Áý", "¶±°¥ ³ª¹« Ã¤Áý", "¹°Çª·¹ ³ª¹« Ã¤Áý", "ÁÖ¸ñ ³ª¹« Ã¤Áý", "½ÉÀç ³ª¹« Ã¤Áý", "ÇÇ ³ª¹« Ã¤Áý", "¼­¸® ³ª¹« Ã¤Áý", "Ä¥Èæ ³ª¹« Ã¤Áý", "¿µ¸ñ ³ª¹« Ã¤Áý", "", "ÀÏ¹Ý °¡Á× Ã¤Áý", "Áú±ä °¡Á× Ã¤Áý", "°ÅÄ£ °¡Á× Ã¤Áý", "°æÈ­ °¡Á× Ã¤Áý", "°¡½Ã °¡Á× Ã¤Áý", "»Ô °¡Á× Ã¤Áý", "¹Ì´Ã °¡Á× Ã¤Áý", "±ØÁö °¡Á× Ã¤Áý", "Èæ´Ü °¡Á× Ã¤Áý", "", "¼Û¾î Ã¤Áý", "¹è½º Ã¤Áý", "Àº¾î Ã¤Áý", "ºØ¾î Ã¤Áý", "¸Þ±â Ã¤Áý", "´ë±¸ Ã¤Áý", "³ó¾î Ã¤Áý", "Ã»¾î Ã¤Áý", "ÂüÄ¡ Ã¤Áý", ""
+			"Ã¶ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"Ã»ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½Æ°ï¿½ï¿½ï¿½ï¿½ï¿½Æ® Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® Ã¤ï¿½ï¿½",
+			"ï¿½Ì½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½É½Ãµï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½Ï¹ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½Çªï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½Ö¸ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"Ä¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"",
+			"ï¿½Ï¹ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½Ä£ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½È­ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"",
+			"ï¿½Û¾ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½è½º Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½Ø¾ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½Þ±ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½ë±¸ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"Ã»ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½Ä¡ Ã¤ï¿½ï¿½",
+			"",
 		};
-	
-		int[] AllCount = { 1, 5, 10, 20, 30, 50, 75, 100, 140, 200 };
-		int[] HarvestStartNumber = {2, 12, 22, 82};
 
-        public HarvestGump(PlayerMobile pm) : base(50, 50)
-        {
-            AddPage(0);
-            AddBackground(0, 0, 620, 270, 5054);
-            AddImageTiled(10, 10, 600, 250, 2624);
-			
-			AddHtml(0, 20, 620, 20, CenterGray("Ã¤Áý Ã¤Ãë ¼ö"), false, false); // <CENTER>HOUSE
-			
+		int[] AllCount = { 1, 5, 10, 20, 30, 50, 75, 100, 140, 200 };
+		int[] HarvestStartNumber = { 2, 12, 22, 82 };
+
+		public HarvestGump(PlayerMobile pm)
+			: base(50, 50)
+		{
+			AddPage(0);
+			AddBackground(0, 0, 620, 270, 5054);
+			AddImageTiled(10, 10, 600, 250, 2624);
+
+			AddHtml(0, 20, 620, 20, CenterGray("Ã¤ï¿½ï¿½ Ã¤ï¿½ï¿½ ï¿½ï¿½"), false, false); // <CENTER>HOUSE
+
 			m_pm = pm;
 			pm.CloseGump(typeof(HarvestGump));
-			
+
 			Account acc = pm.Account as Account;
 			int page = pm.HarvestGumpPage;
 			int index = 0;
@@ -1300,76 +1550,93 @@ namespace Server.Gumps
 			int step = 10;
 			m_maxpage = maxlist / step;
 			int maxpage = Misc.Util.MaxpageCreate(maxlist, page, step);
-			
-			for ( int i = page * step; i < maxpage + page * step; i++)
+
+			for (int i = page * step; i < maxpage + page * step; i++)
 			{
-				if( page < m_maxpage -1 )
+				if (page < m_maxpage - 1)
 				{
 					AddButton(480, 10, 4005, 4007, 98, GumpButtonType.Reply, 0);
 				}
-				if( page > 0 )
+				if (page > 0)
 				{
 					AddButton(450, 10, 4014, 4016, 99, GumpButtonType.Reply, 0);
 				}
-				
+
 				AddHtml(50, 50 + index * 20, 200, 20, LeftGreen(HarvestName[i]), false, false); // <DIV ALIGN=LEFT>Name:</DIV>
 
-				if( i == 9 )
-					AddHtml(250, 50 + index * 20, 200, 20, LeftGreen("´©Àû : " + acc.Point[90].ToString()), false, false); // <DIV
-				else if( i == 19 || i == 29 || i == 39 )
+				if (i == 9)
+					AddHtml(
+						250,
+						50 + index * 20,
+						200,
+						20,
+						LeftGreen("ï¿½ï¿½ï¿½ï¿½ : " + acc.Point[90].ToString()),
+						false,
+						false
+					); // <DIV
+				else if (i == 19 || i == 29 || i == 39)
 				{
 					continue;
-				}//AddHtml(250, 50 + index * 20, 200, 20, LeftGreen("´©Àû : 0", false, false)); // <DIV
+				} //AddHtml(250, 50 + index * 20, 200, 20, LeftGreen("ï¿½ï¿½ï¿½ï¿½ : 0", false, false)); // <DIV
 				else
-					AddHtml(250, 50 + index * 20, 200, 20, LeftGreen("´©Àû : " + acc.Point[HarvestStartNumber[page] + index].ToString()), false, false); // <DIV ALIGN=LEFT>Name:</DIV>
+					AddHtml(
+						250,
+						50 + index * 20,
+						200,
+						20,
+						LeftGreen("ï¿½ï¿½ï¿½ï¿½ : " + acc.Point[HarvestStartNumber[page] + index].ToString()),
+						false,
+						false
+					); // <DIV ALIGN=LEFT>Name:</DIV>
 
-				//10ÀÏ ¶§ 400 11ÀÏ ¶§ 600 13ÀÏ ¶§ 1000, ÀÌÈÄ 5´ÜÀ§·Î 1000. 
+				//10ï¿½ï¿½ ï¿½ï¿½ 400 11ï¿½ï¿½ ï¿½ï¿½ 600 13ï¿½ï¿½ ï¿½ï¿½ 1000, ï¿½ï¿½ï¿½ï¿½ 5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 1000.
 				int nextCount = 200;
-				if( pm.HarvestPoint[i] < 10 )
+				if (pm.HarvestPoint[i] < 10)
 					nextCount = AllCount[pm.HarvestPoint[i]];
-				else if( pm.HarvestPoint[i] < 310 )
-					nextCount = ( pm.HarvestPoint[i] - 9 ) * 200;
-				else if( pm.HarvestPoint[i] < 400 )
-					nextCount = ( pm.HarvestPoint[i] - 250 ) * 1000;
-				else if( pm.HarvestPoint[i] < 485 )
-					nextCount = ( pm.HarvestPoint[i] - 483 ) * 10000;
-				else if( pm.HarvestPoint[i] < 494 )
-					nextCount = ( pm.HarvestPoint[i] - 492 ) * 1000000;
+				else if (pm.HarvestPoint[i] < 310)
+					nextCount = (pm.HarvestPoint[i] - 9) * 200;
+				else if (pm.HarvestPoint[i] < 400)
+					nextCount = (pm.HarvestPoint[i] - 250) * 1000;
+				else if (pm.HarvestPoint[i] < 485)
+					nextCount = (pm.HarvestPoint[i] - 483) * 10000;
+				else if (pm.HarvestPoint[i] < 494)
+					nextCount = (pm.HarvestPoint[i] - 492) * 1000000;
 				else
-					nextCount = ( pm.HarvestPoint[i] + 1 ) * 10000000;
-					
-				AddHtml(450, 50 + index * 20, 200, 20, LeftGreen("´ÙÀ½ : " + nextCount.ToString()), false, false); // <DIV ALIGN=LEFT>Name:</DIV>
+					nextCount = (pm.HarvestPoint[i] + 1) * 10000000;
 
-				if( index == 9 )
+				AddHtml(450, 50 + index * 20, 200, 20, LeftGreen("ï¿½ï¿½ï¿½ï¿½ : " + nextCount.ToString()), false, false); // <DIV ALIGN=LEFT>Name:</DIV>
+
+				if (index == 9)
 				{
-					if( i == 9 && acc.Point[90] >= nextCount )
+					if (i == 9 && acc.Point[90] >= nextCount)
 						AddButton(10, 50 + index * 20, 4005, 4007, i + 1, GumpButtonType.Reply, 0);
-					else if( i == 19 && acc.Point[91] >= nextCount )
+					else if (i == 19 && acc.Point[91] >= nextCount)
 						AddButton(10, 50 + index * 20, 4005, 4007, i + 1, GumpButtonType.Reply, 0);
-					else if( i == 29 && acc.Point[92] >= nextCount )
+					else if (i == 29 && acc.Point[92] >= nextCount)
 						AddButton(10, 50 + index * 20, 4005, 4007, i + 1, GumpButtonType.Reply, 0);
-					else if( i == 39 && acc.Point[93] >= nextCount )
+					else if (i == 39 && acc.Point[93] >= nextCount)
 						AddButton(10, 50 + index * 20, 4005, 4007, i + 1, GumpButtonType.Reply, 0);
 				}
-				else if( acc.Point[HarvestStartNumber[page] + index] >= nextCount )
+				else if (acc.Point[HarvestStartNumber[page] + index] >= nextCount)
 					AddButton(10, 50 + index * 20, 4005, 4007, i + 1, GumpButtonType.Reply, 0);
 				index++;
 			}
 		}
-        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
-        {
-            if (!m_pm.CheckAlive() || info.ButtonID == 0)
-                return;
 
-			if( info.ButtonID == 99 )
+		public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+		{
+			if (!m_pm.CheckAlive() || info.ButtonID == 0)
+				return;
+
+			if (info.ButtonID == 99)
 			{
-				if( m_pm.HarvestGumpPage > 0 )
+				if (m_pm.HarvestGumpPage > 0)
 					m_pm.HarvestGumpPage--;
 				m_pm.SendGump(new HarvestGump(m_pm));
 			}
-			else if( info.ButtonID == 98 )
+			else if (info.ButtonID == 98)
 			{
-				if( m_pm.HarvestGumpPage < m_maxpage )
+				if (m_pm.HarvestGumpPage < m_maxpage)
 					m_pm.HarvestGumpPage++;
 				m_pm.SendGump(new HarvestGump(m_pm));
 			}
@@ -1381,41 +1648,56 @@ namespace Server.Gumps
 				m_pm.SendGump(new HarvestGump(m_pm));
 			}
 			//Timer.DelayCall(TimeSpan.FromSeconds(0.1), SendGump);
-        }
-		
-        private void SendGump()
-        {
-            m_pm.SendGump(new HarvestGump(m_pm));
-        }
-		
-        private string CenterGray(string format)
-        {
-            return String.Format("<basefont color=#A9A9A9><DIV ALIGN=CENTER>{0}</DIV>", format);
-        }
-        private string LeftGreen(string format)
-        {
-            return String.Format("<basefont color=#00FA9A><DIV ALIGN=LEFT>{0:#,###}</DIV>", format);
-        }
-    }
+		}
+
+		private void SendGump()
+		{
+			m_pm.SendGump(new HarvestGump(m_pm));
+		}
+
+		private string CenterGray(string format)
+		{
+			return String.Format("<basefont color=#A9A9A9><DIV ALIGN=CENTER>{0}</DIV>", format);
+		}
+
+		private string LeftGreen(string format)
+		{
+			return String.Format("<basefont color=#00FA9A><DIV ALIGN=LEFT>{0:#,###}</DIV>", format);
+		}
+	}
+
 	#region Crafting
-    public class CraftingGump : Gump
-    {
+	public class CraftingGump : Gump
+	{
 		PlayerMobile m_pm;
 		int m_maxpage = 1;
-		private string[] CraftName = 
-			{ "Æ÷¼Ç Á¦ÀÛ", "´ëÀåÀåÀÌ Á¦ÀÛ", "È°&¼®±Ã Á¦ÀÛ", "¸ñ¼ö Á¦ÀÛ", "Áöµµ Á¦ÀÛ", "¿ä¸® Á¦ÀÛ", "½ºÅ©·Ñ Á¦ÀÛ", "ÀçºÀ Á¦ÀÛ", "±â°è°ø Á¦ÀÛ", "ÀÓºäÀ× Á¦ÀÛ" };
-		
+		private string[] CraftName =
+		{
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"È°&ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ä¸® ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½Óºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+		};
+
 		int[] AllCount = { 1, 5, 10, 20, 30, 50, 75, 100, 140, 200 };
-        public CraftingGump(PlayerMobile pm) : base(50, 50)
-        {
-            AddPage(0);
-            AddBackground(0, 0, 620, 270, 5054);
-            AddImageTiled(10, 10, 600, 250, 2624);
-			
-			AddHtml(0, 20, 620, 20, CenterGray("Á¦ÀÛ »ý»ê ¼ö"), false, false); // <CENTER>HOUSE
+
+		public CraftingGump(PlayerMobile pm)
+			: base(50, 50)
+		{
+			AddPage(0);
+			AddBackground(0, 0, 620, 270, 5054);
+			AddImageTiled(10, 10, 600, 250, 2624);
+
+			AddHtml(0, 20, 620, 20, CenterGray("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½"), false, false); // <CENTER>HOUSE
 
 			m_pm = pm;
-			
+
 			pm.CloseGump(typeof(CraftingGump));
 			Account acc = pm.Account as Account;
 			int page = pm.CraftGumpPage;
@@ -1424,8 +1706,8 @@ namespace Server.Gumps
 			int step = 10;
 			//m_maxpage = 1 + maxlist / step;
 			int maxpage = Misc.Util.MaxpageCreate(maxlist, page, step);
-			
-			for ( int i = 0; i < 10; i++)
+
+			for (int i = 0; i < 10; i++)
 			{
 				/*
 				if( page < m_maxpage -1 )
@@ -1439,7 +1721,7 @@ namespace Server.Gumps
 				*/
 				AddHtml(50, 50 + i * 20, 200, 20, LeftGreen(CraftName[i]), false, false); // <DIV ALIGN=LEFT>Name:</DIV>
 
-				AddHtml(250, 50 + i * 20, 200, 20, LeftGreen("´©Àû : " + acc.Point[31 + i].ToString()), false, false); // <DIV ALIGN=LEFT>Name:</DIV>
+				AddHtml(250, 50 + i * 20, 200, 20, LeftGreen("ï¿½ï¿½ï¿½ï¿½ : " + acc.Point[31 + i].ToString()), false, false); // <DIV ALIGN=LEFT>Name:</DIV>
 
 				/*
 				int nextCount = 200;
@@ -1450,30 +1732,31 @@ namespace Server.Gumps
 				*/
 
 				int nextCount = 200;
-				if( pm.CraftPoint[i] < 10 )
+				if (pm.CraftPoint[i] < 10)
 					nextCount = AllCount[pm.CraftPoint[i]];
-				else if( pm.CraftPoint[i] < 310 )
-					nextCount = ( pm.CraftPoint[i] - 9 ) * 200;
-				else if( pm.CraftPoint[i] < 400 )
-					nextCount = ( pm.CraftPoint[i] - 250 ) * 1000;
-				else if( pm.CraftPoint[i] < 485 )
-					nextCount = ( pm.CraftPoint[i] - 483 ) * 10000;
-				else if( pm.CraftPoint[i] < 494 )
-					nextCount = ( pm.CraftPoint[i] - 492 ) * 1000000;
+				else if (pm.CraftPoint[i] < 310)
+					nextCount = (pm.CraftPoint[i] - 9) * 200;
+				else if (pm.CraftPoint[i] < 400)
+					nextCount = (pm.CraftPoint[i] - 250) * 1000;
+				else if (pm.CraftPoint[i] < 485)
+					nextCount = (pm.CraftPoint[i] - 483) * 10000;
+				else if (pm.CraftPoint[i] < 494)
+					nextCount = (pm.CraftPoint[i] - 492) * 1000000;
 				else
-					nextCount = ( pm.CraftPoint[i] + 1 ) * 10000000;
-			
-				AddHtml(450, 50 + index * 20, 200, 20, LeftGreen("´ÙÀ½ : " + nextCount.ToString()), false, false); // <DIV ALIGN=LEFT>Name:</DIV>
-				
-				if( acc.Point[31 + i] >= nextCount )
+					nextCount = (pm.CraftPoint[i] + 1) * 10000000;
+
+				AddHtml(450, 50 + index * 20, 200, 20, LeftGreen("ï¿½ï¿½ï¿½ï¿½ : " + nextCount.ToString()), false, false); // <DIV ALIGN=LEFT>Name:</DIV>
+
+				if (acc.Point[31 + i] >= nextCount)
 					AddButton(10, 50 + index * 20, 4005, 4007, i + 1, GumpButtonType.Reply, 0);
 				index++;
 			}
 		}
-        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
-        {
-            if (!m_pm.CheckAlive() || info.ButtonID == 0)
-                return;
+
+		public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+		{
+			if (!m_pm.CheckAlive() || info.ButtonID == 0)
+				return;
 
 			/*
 			if( info.ButtonID == 99 )
@@ -1489,60 +1772,64 @@ namespace Server.Gumps
 			*/
 			m_pm.CraftPoint[info.ButtonID - 1]++;
 			Misc.Util.CraftReward(m_pm, info.ButtonID - 1);
-            m_pm.SendGump(new CraftingGump(m_pm));
+			m_pm.SendGump(new CraftingGump(m_pm));
 			//Timer.DelayCall(TimeSpan.FromSeconds(0.1), SendGump);
-        }
-        private void SendGump()
-        {
-            m_pm.SendGump(new CraftingGump(m_pm));
-        }
-		
-        private string CenterGray(string format)
-        {
-            return String.Format("<basefont color=#A9A9A9><DIV ALIGN=CENTER>{0}</DIV>", format);
-        }
-        private string LeftGreen(string format)
-        {
-            return String.Format("<basefont color=#00FA9A><DIV ALIGN=LEFT>{0:#,###}</DIV>", format);
-        }
-    }		
-	
+		}
+
+		private void SendGump()
+		{
+			m_pm.SendGump(new CraftingGump(m_pm));
+		}
+
+		private string CenterGray(string format)
+		{
+			return String.Format("<basefont color=#A9A9A9><DIV ALIGN=CENTER>{0}</DIV>", format);
+		}
+
+		private string LeftGreen(string format)
+		{
+			return String.Format("<basefont color=#00FA9A><DIV ALIGN=LEFT>{0:#,###}</DIV>", format);
+		}
+	}
+
 	#endregion
-	
+
 	public class MonsterFeatGump : Gump
 	{
-        private string CenterGray(string format)
-        {
-            return String.Format("<basefont color=#A9A9A9><DIV ALIGN=CENTER>{0}</DIV>", format);
-        }
+		private string CenterGray(string format)
+		{
+			return String.Format("<basefont color=#A9A9A9><DIV ALIGN=CENTER>{0}</DIV>", format);
+		}
 
-        private string RightGray(string format)
-        {
-            return String.Format("<basefont color=#A9A9A9><DIV ALIGN=RIGHT>{0}</DIV>", format);
-        }
+		private string RightGray(string format)
+		{
+			return String.Format("<basefont color=#A9A9A9><DIV ALIGN=RIGHT>{0}</DIV>", format);
+		}
 
-        private string LeftGray(string format)
-        {
-            return String.Format("<basefont color=#A9A9A9><DIV ALIGN=LEFT>{0}</DIV>", format);
-        }
+		private string LeftGray(string format)
+		{
+			return String.Format("<basefont color=#A9A9A9><DIV ALIGN=LEFT>{0}</DIV>", format);
+		}
 
-        private string LeftGreen(string format)
-        {
-            return String.Format("<basefont color=#00FA9A><DIV ALIGN=LEFT>{0:#,###}</DIV>", format);
-        }
-		
+		private string LeftGreen(string format)
+		{
+			return String.Format("<basefont color=#00FA9A><DIV ALIGN=LEFT>{0:#,###}</DIV>", format);
+		}
+
 		int[] KillCount = { 1, 3, 5, 10, 15, 20, 30, 50, 75, 100 };
-		
+
 		PlayerMobile m_pm;
 		int m_maxpage = 1;
-        public MonsterFeatGump(PlayerMobile pm) : base(50, 50)
-        {
+
+		public MonsterFeatGump(PlayerMobile pm)
+			: base(50, 50)
+		{
 			m_pm = pm;
-            AddPage(0);
-            AddBackground(0, 0, 620, 270, 5054);
-            AddImageTiled(10, 10, 600, 250, 2624);
-			
-			AddHtml(0, 20, 620, 20, CenterGray("¸ó½ºÅÍ »ç¸Á ¼ö"), false, false); // <CENTER>HOUSE
+			AddPage(0);
+			AddBackground(0, 0, 620, 270, 5054);
+			AddImageTiled(10, 10, 600, 250, 2624);
+
+			AddHtml(0, 20, 620, 20, CenterGray("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½"), false, false); // <CENTER>HOUSE
 
 			pm.CloseGump(typeof(MonsterFeatGump));
 			Account acc = pm.Account as Account;
@@ -1552,59 +1839,67 @@ namespace Server.Gumps
 			m_maxpage = 1 + maxlist / 10;
 			int step = 10;
 			int maxpage = Misc.Util.MaxpageCreate(maxlist, page, step);
-			
-			for ( int i = page * step; i < maxpage + page * step; i++)
+
+			for (int i = page * step; i < maxpage + page * step; i++)
 			{
-				if( page < m_maxpage -1 )
+				if (page < m_maxpage - 1)
 				{
 					AddButton(480, 10, 4005, 4007, 98, GumpButtonType.Reply, 0);
 				}
-				if( page > 0 )
+				if (page > 0)
 				{
 					AddButton(450, 10, 4014, 4016, 99, GumpButtonType.Reply, 0);
 				}
-		
+
 				AddHtmlLocalized(50, 50 + index * 20, 200, 20, 1052085 + i, "", 0x00FA9A, false, false); // <DIV ALIGN=LEFT>Name:</DIV>
 
-				AddHtml(250, 50 + index * 20, 200, 20, LeftGreen("´©Àû : " + acc.Point[i + 201].ToString()), false, false); // <DIV ALIGN=LEFT>Name:</DIV>
+				AddHtml(
+					250,
+					50 + index * 20,
+					200,
+					20,
+					LeftGreen("ï¿½ï¿½ï¿½ï¿½ : " + acc.Point[i + 201].ToString()),
+					false,
+					false
+				); // <DIV ALIGN=LEFT>Name:</DIV>
 
 				int nextCount = 100;
-				if( pm.MonsterPoint[i] < 10 )
+				if (pm.MonsterPoint[i] < 10)
 					nextCount = KillCount[pm.MonsterPoint[i]];
-				else if( pm.MonsterPoint[i] < 310 )
-					nextCount = ( pm.MonsterPoint[i] - 10 ) * 100;
-				else if( pm.MonsterPoint[i] < 400 )
-					nextCount = ( pm.MonsterPoint[i] - 250 ) * 500;
-				else if( pm.MonsterPoint[i] < 485 )
-					nextCount = ( pm.MonsterPoint[i] - 483 ) * 5000;
-				else if( pm.MonsterPoint[i] < 494 )
-					nextCount = ( pm.MonsterPoint[i] - 492 ) * 500000;
+				else if (pm.MonsterPoint[i] < 310)
+					nextCount = (pm.MonsterPoint[i] - 10) * 100;
+				else if (pm.MonsterPoint[i] < 400)
+					nextCount = (pm.MonsterPoint[i] - 250) * 500;
+				else if (pm.MonsterPoint[i] < 485)
+					nextCount = (pm.MonsterPoint[i] - 483) * 5000;
+				else if (pm.MonsterPoint[i] < 494)
+					nextCount = (pm.MonsterPoint[i] - 492) * 500000;
 				else
-					nextCount = ( pm.MonsterPoint[i] + 1 ) * 5000000;
+					nextCount = (pm.MonsterPoint[i] + 1) * 5000000;
 
-					
-				AddHtml(450, 50 + index * 20, 200, 20, LeftGreen("´ÙÀ½ : " + nextCount.ToString()), false, false); // <DIV ALIGN=LEFT>Name:</DIV>
-				
-				if( acc.Point[i + 201] >= nextCount )
+				AddHtml(450, 50 + index * 20, 200, 20, LeftGreen("ï¿½ï¿½ï¿½ï¿½ : " + nextCount.ToString()), false, false); // <DIV ALIGN=LEFT>Name:</DIV>
+
+				if (acc.Point[i + 201] >= nextCount)
 					AddButton(10, 50 + index * 20, 4005, 4007, i + 1, GumpButtonType.Reply, 0);
 
 				index++;
 			}
 		}
-        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
-        {
-            if (!m_pm.CheckAlive() || info.ButtonID == 0)
-                return;
 
-			if( info.ButtonID == 99 )
+		public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+		{
+			if (!m_pm.CheckAlive() || info.ButtonID == 0)
+				return;
+
+			if (info.ButtonID == 99)
 			{
-				if( m_pm.MonsterFeatGumpPage > 0 )
+				if (m_pm.MonsterFeatGumpPage > 0)
 					m_pm.MonsterFeatGumpPage--;
 				m_pm.SendGump(new MonsterFeatGump(m_pm));
 			}
-			else if( info.ButtonID == 98 )
+			else if (info.ButtonID == 98)
 			{
-				if( m_pm.MonsterFeatGumpPage < m_maxpage )
+				if (m_pm.MonsterFeatGumpPage < m_maxpage)
 					m_pm.MonsterFeatGumpPage++;
 				m_pm.SendGump(new MonsterFeatGump(m_pm));
 			}
@@ -1615,86 +1910,146 @@ namespace Server.Gumps
 				m_pm.SendGump(new MonsterFeatGump(m_pm));
 			}
 			//Timer.DelayCall(TimeSpan.FromSeconds(0.1), SendGump);
-        }
-        private void SendGump()
-        {
-            m_pm.SendGump(new MonsterFeatGump(m_pm));
-        }
+		}
+
+		private void SendGump()
+		{
+			m_pm.SendGump(new MonsterFeatGump(m_pm));
+		}
 	}
-	
-    public class SavingAccountGump : Gump
-    {
+
+	public class SavingAccountGump : Gump
+	{
 		private string[,] Name =
 		{
-			{ "±¤¹° Ã¤Áý", "Ã¶ Ã¤Áý", "±¸¸® Ã¤Áý", "Ã»µ¿ Ã¤Áý", "±Ý Ã¤Áý", "¾Æ°¡ÆÄÀÌÆ® Ã¤Áý", "º£¶óÀÌÆ® Ã¤Áý", "º§·¯¶óÀÌÆ® Ã¤Áý", "¹Ì½º¸± Ã¤Áý", "¿É½Ãµð¾ð Ã¤Áý" },
-			{ "³ª¹« Ã¤Áý", "ÀÏ¹Ý ³ª¹« Ã¤Áý", "¶±°¥ ³ª¹« Ã¤Áý", "¹°Çª·¹ ³ª¹« Ã¤Áý", "ÁÖ¸ñ ³ª¹« Ã¤Áý", "½ÉÀç ³ª¹« Ã¤Áý", "ÇÇ ³ª¹« Ã¤Áý", "¼­¸® ³ª¹« Ã¤Áý", "Ä¥Èæ ³ª¹« Ã¤Áý", "¿µ¸ñ ³ª¹« Ã¤Áý" },
-			{ "°¡Á× Ã¤Áý", "ÀÏ¹Ý °¡Á× Ã¤Áý", "Áú±ä °¡Á× Ã¤Áý", "°ÅÄ£ °¡Á× Ã¤Áý", "°æÈ­ °¡Á× Ã¤Áý", "°¡½Ã °¡Á× Ã¤Áý", "»Ô °¡Á× Ã¤Áý", "¹Ì´Ã °¡Á× Ã¤Áý", "±ØÁö °¡Á× Ã¤Áý", "Èæ´Ü °¡Á× Ã¤Áý" },
-			{ "Æ÷¼Ç Á¦ÀÛ", "´ëÀåÀåÀÌ Á¦ÀÛ", "È°&¼®±Ã Á¦ÀÛ", "¸ñ¼ö Á¦ÀÛ", "Áöµµ Á¦ÀÛ", "¿ä¸® Á¦ÀÛ", "½ºÅ©·Ñ Á¦ÀÛ", "ÀçºÀ Á¦ÀÛ", "±â°è°ø Á¦ÀÛ", "ÀÓºäÀ× Á¦ÀÛ" },
+			{
+				"ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"Ã¶ Ã¤ï¿½ï¿½",
+				"ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"Ã»ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"ï¿½Æ°ï¿½ï¿½ï¿½ï¿½ï¿½Æ® Ã¤ï¿½ï¿½",
+				"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® Ã¤ï¿½ï¿½",
+				"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® Ã¤ï¿½ï¿½",
+				"ï¿½Ì½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"ï¿½É½Ãµï¿½ï¿½ Ã¤ï¿½ï¿½",
+			},
+			{
+				"ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"ï¿½Ï¹ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"ï¿½ï¿½Çªï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"ï¿½Ö¸ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"Ä¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			},
+			{
+				"ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"ï¿½Ï¹ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"ï¿½ï¿½Ä£ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"ï¿½ï¿½È­ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+				"ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½",
+			},
+			{
+				"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+				"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+				"È°&ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+				"ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+				"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+				"ï¿½ä¸® ï¿½ï¿½ï¿½ï¿½",
+				"ï¿½ï¿½Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+				"ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+				"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+				"ï¿½Óºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			},
 			{ "1,000", "2,000", "3,000", "4,000", "5,000", "6,000", "7,000", "8,000", "9,000", "10,000" },
 			{ "11,000", "12,000", "13,000", "14,000", "15,000", "16,000", "17,000", "18,000", "19,000", "20,000" },
-			{ "21,000", "22,000", "23,000", "24,000", "25,000", "26,000", "27,000", "28,000", "29,000", "30,000" }
+			{ "21,000", "22,000", "23,000", "24,000", "25,000", "26,000", "27,000", "28,000", "29,000", "30,000" },
 		};
-        public SavingAccountGump(PlayerMobile pm, int list) : base(50, 50)
-        {
-            AddPage(0);
-            AddBackground(0, 0, 620, 270, 5054);
-            AddImageTiled(10, 10, 600, 250, 2624);
-			
-			AddHtml(0, 20, 620, 20, CenterGray("¾÷Àû ½Ã½ºÅÛ"), false, false); // <CENTER>HOUSE
+
+		public SavingAccountGump(PlayerMobile pm, int list)
+			: base(50, 50)
+		{
+			AddPage(0);
+			AddBackground(0, 0, 620, 270, 5054);
+			AddImageTiled(10, 10, 600, 250, 2624);
+
+			AddHtml(0, 20, 620, 20, CenterGray("ï¿½ï¿½ï¿½ï¿½ ï¿½Ã½ï¿½ï¿½ï¿½"), false, false); // <CENTER>HOUSE
 			pm.CloseGump(typeof(SavingAccountGump));
 
 			Account acc = pm.Account as Account;
-			
-			for( int i = 0; i < Name.GetLength(1); i++ )
+
+			for (int i = 0; i < Name.GetLength(1); i++)
 			{
-				AddHtml(20, 50 + i * 20, 200, 20, LeftGreen(Name[list,i]), false, false); // <DIV ALIGN=LEFT>Name:</DIV>
+				AddHtml(20, 50 + i * 20, 200, 20, LeftGreen(Name[list, i]), false, false); // <DIV ALIGN=LEFT>Name:</DIV>
 
-				AddHtml(220, 50 + i * 20, 200, 20, LeftGreen("´©Àû : " + acc.Point[list * 10 + i + 1].ToString()), false, false); // <DIV ALIGN=LEFT>Name:</DIV>
+				AddHtml(
+					220,
+					50 + i * 20,
+					200,
+					20,
+					LeftGreen("ï¿½ï¿½ï¿½ï¿½ : " + acc.Point[list * 10 + i + 1].ToString()),
+					false,
+					false
+				); // <DIV ALIGN=LEFT>Name:</DIV>
 
-				AddHtml(420, 50 + i * 20, 200, 20, LeftGreen("´ÙÀ½ : " + Math.Pow(acc.Point[500 + list * 10 + i + 1] + 1, 2).ToString()), false, false); // <DIV ALIGN=LEFT>Name:</DIV>
+				AddHtml(
+					420,
+					50 + i * 20,
+					200,
+					20,
+					LeftGreen("ï¿½ï¿½ï¿½ï¿½ : " + Math.Pow(acc.Point[500 + list * 10 + i + 1] + 1, 2).ToString()),
+					false,
+					false
+				); // <DIV ALIGN=LEFT>Name:</DIV>
 			}
-			
 		}
 
-		private string PointText( int ranking, string point ) 
+		private string PointText(int ranking, string point)
 		{
-			if( point == "0" )
-				point = "¾øÀ½";
-			
+			if (point == "0")
+				point = "ï¿½ï¿½ï¿½ï¿½";
 			else
-				point += "Á¡";
-			
-			if( ranking == 0 )
+				point += "ï¿½ï¿½";
+
+			if (ranking == 0)
 				return String.Format("<basefont color=#FF0090><DIV ALIGN=CENTER>{0}</DIV>", point);
-			else if( ranking == 1 )
+			else if (ranking == 1)
 				return String.Format("<basefont color=#FFB400><DIV ALIGN=CENTER>{0}</DIV>", point);
-			else if( ranking == 2 )
+			else if (ranking == 2)
 				return String.Format("<basefont color=#B36BFF><DIV ALIGN=CENTER>{0}</DIV>", point);
-			else if( ranking == 3 || ranking == 4 )
+			else if (ranking == 3 || ranking == 4)
 				return String.Format("<basefont color=#68D5ED><DIV ALIGN=CENTER>{0}</DIV>", point);
 			else
 				return String.Format("<basefont color=#00A000><DIV ALIGN=CENTER>{0}</DIV>", point);
 		}
 
-		
-        private string CenterGray(string format)
-        {
-            return String.Format("<basefont color=#A9A9A9><DIV ALIGN=CENTER>{0}</DIV>", format);
-        }
+		private string CenterGray(string format)
+		{
+			return String.Format("<basefont color=#A9A9A9><DIV ALIGN=CENTER>{0}</DIV>", format);
+		}
 
-        private string RightGray(string format)
-        {
-            return String.Format("<basefont color=#A9A9A9><DIV ALIGN=RIGHT>{0}</DIV>", format);
-        }
+		private string RightGray(string format)
+		{
+			return String.Format("<basefont color=#A9A9A9><DIV ALIGN=RIGHT>{0}</DIV>", format);
+		}
 
-        private string LeftGray(string format)
-        {
-            return String.Format("<basefont color=#A9A9A9><DIV ALIGN=LEFT>{0}</DIV>", format);
-        }
+		private string LeftGray(string format)
+		{
+			return String.Format("<basefont color=#A9A9A9><DIV ALIGN=LEFT>{0}</DIV>", format);
+		}
 
-        private string LeftGreen(string format)
-        {
-            return String.Format("<basefont color=#00FA9A><DIV ALIGN=LEFT>{0:#,###}</DIV>", format);
-        }
-    }	
+		private string LeftGreen(string format)
+		{
+			return String.Format("<basefont color=#00FA9A><DIV ALIGN=LEFT>{0:#,###}</DIV>", format);
+		}
+	}
 }

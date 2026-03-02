@@ -2,117 +2,100 @@ using System;
 
 namespace Server.Items
 {
-    [Flipable(0x1E34, 0x1E35)]
-    public class ScarecrowComponent : AddonComponent
-    {
-        public ScarecrowComponent()
-            : base(0x1E34)
-        {
-        }
+	[Flipable(0x1E34, 0x1E35)]
+	public class ScarecrowComponent : AddonComponent
+	{
+		public ScarecrowComponent()
+			: base(0x1E34) { }
 
-        public ScarecrowComponent(Serial serial)
-            : base(serial)
-        {
-        }
+		public ScarecrowComponent(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1076608;
-            }
-        }// Scarecrow
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int LabelNumber
+		{
+			get { return 1076608; }
+		} // Scarecrow
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class ScarecrowAddon : BaseAddon
-    {
-        [Constructable]
-        public ScarecrowAddon()
-            : base()
-        {
-            this.AddComponent(new ScarecrowComponent(), 0, 0, 0);
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public ScarecrowAddon(Serial serial)
-            : base(serial)
-        {
-        }
+	public class ScarecrowAddon : BaseAddon
+	{
+		[Constructable]
+		public ScarecrowAddon()
+			: base()
+		{
+			this.AddComponent(new ScarecrowComponent(), 0, 0, 0);
+		}
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new ScarecrowDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public ScarecrowAddon(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override BaseAddonDeed Deed
+		{
+			get { return new ScarecrowDeed(); }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
 
-    public class ScarecrowDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public ScarecrowDeed()
-            : base()
-        {
-            this.LootType = LootType.Blessed;
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public ScarecrowDeed(Serial serial)
-            : base(serial)
-        {
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new ScarecrowAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1076608;
-            }
-        }// Scarecrow
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+	public class ScarecrowDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public ScarecrowDeed()
+			: base()
+		{
+			this.LootType = LootType.Blessed;
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public ScarecrowDeed(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override BaseAddon Addon
+		{
+			get { return new ScarecrowAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1076608; }
+		} // Scarecrow
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

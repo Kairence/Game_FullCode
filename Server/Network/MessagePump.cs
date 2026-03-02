@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading;
-
 using Server.Diagnostics;
 #endregion
 
@@ -16,7 +15,7 @@ namespace Server.Network
 		private readonly Queue<NetState> m_Throttled;
 
 		public Listener[] Listeners { get; set; }
-		
+
 		public MessagePump()
 		{
 			var ipep = Listener.EndPoints;
@@ -42,8 +41,7 @@ namespace Server.Network
 
 					Thread.Sleep(10000);
 				}
-			}
-			while (!success);
+			} while (!success);
 
 			m_Queue = new Queue<NetState>();
 			m_WorkingQueue = new Queue<NetState>();
@@ -76,7 +74,7 @@ namespace Server.Network
 
 					ns.Start();
 
-                    if (ns.Running && Display(ns))
+					if (ns.Running && Display(ns))
 					{
 						Utility.PushColor(ConsoleColor.Green);
 						Console.WriteLine("Client: {0}: Connected. [{1} Online]", ns, NetState.Instances.Count);
@@ -86,27 +84,23 @@ namespace Server.Network
 			}
 		}
 
-        public static bool Display(NetState ns)
-        {
-            if (ns == null)
-                return false;
+		public static bool Display(NetState ns)
+		{
+			if (ns == null)
+				return false;
 
-            string state = ns.ToString();
+			string state = ns.ToString();
 
-            foreach (var str in _NoDisplay)
-            {
-                if (str == state)
-                    return false;
-            }
+			foreach (var str in _NoDisplay)
+			{
+				if (str == state)
+					return false;
+			}
 
-            return true;
-        }
+			return true;
+		}
 
-        private static string[] _NoDisplay =
-        {
-            "192.99.10.155",
-            "192.99.69.21",
-        };
+		private static string[] _NoDisplay = { "192.99.10.155", "192.99.69.21" };
 
 		public void OnReceive(NetState ns)
 		{
@@ -158,7 +152,7 @@ namespace Server.Network
 				ns.Seeded = true;
 				return true;
 			}
-			
+
 			if (buffer.Length >= 4)
 			{
 				var m_Peek = new byte[4];
@@ -189,13 +183,23 @@ namespace Server.Network
 
 		public static bool CheckEncrypted(NetState ns, int packetID)
 		{
-			if (!ns.SentFirstPacket && packetID != 0xF0 && packetID != 0xF1 && packetID != 0xCF && packetID != 0x80 &&
-				packetID != 0x91 && packetID != 0xA4 && packetID != 0xEF && packetID != 0xE4 && packetID != 0xFF)
+			if (
+				!ns.SentFirstPacket
+				&& packetID != 0xF0
+				&& packetID != 0xF1
+				&& packetID != 0xCF
+				&& packetID != 0x80
+				&& packetID != 0x91
+				&& packetID != 0xA4
+				&& packetID != 0xEF
+				&& packetID != 0xE4
+				&& packetID != 0xFF
+			)
 			{
 				Utility.PushColor(ConsoleColor.Red);
 				Console.WriteLine("Client: {0}: Encrypted Client Unsupported", ns);
 				Utility.PopColor();
-				
+
 				ns.Dispose();
 
 				return true;
@@ -301,10 +305,10 @@ namespace Server.Network
 							{
 								m_Throttled.Enqueue(ns);
 							}
-                            else
-                            {
-                                buffer.Dequeue(new byte[packetLength], 0, packetLength);
-                            }
+							else
+							{
+								buffer.Dequeue(new byte[packetLength], 0, packetLength);
+							}
 
 							return;
 						}

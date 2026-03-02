@@ -6,7 +6,6 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
-
 using Server.Commands;
 using Server.Items;
 using Server.Misc;
@@ -26,8 +25,8 @@ namespace Server.Accounting
 
 		private static MD5CryptoServiceProvider m_MD5HashProvider;
 		private static SHA1CryptoServiceProvider m_SHA1HashProvider;
-        private static SHA512CryptoServiceProvider m_SHA512HashProvider;
-        private static byte[] m_HashBuffer;
+		private static SHA512CryptoServiceProvider m_SHA512HashProvider;
+		private static byte[] m_HashBuffer;
 
 		public static void Configure()
 		{
@@ -39,18 +38,21 @@ namespace Server.Accounting
 			e.Mobile.SendMessage(
 				"Converting All Banked Gold from {0} to {1}.  Please wait...",
 				AccountGold.Enabled ? "checks and coins" : "account treasury",
-				AccountGold.Enabled ? "account treasury" : "checks and coins");
+				AccountGold.Enabled ? "account treasury" : "checks and coins"
+			);
 
 			NetState.Pause();
 
-			double found = 0.0, converted = 0.0;
+			double found = 0.0,
+				converted = 0.0;
 
 			try
 			{
 				BankBox box;
 				List<Gold> gold;
 				List<BankCheck> checks;
-				long share = 0, shared;
+				long share = 0,
+					shared;
 				int diff;
 
 				foreach (var a in Accounts.GetAccounts().OfType<Account>().Where(a => a.Count > 0))
@@ -147,16 +149,18 @@ namespace Server.Accounting
 							box.UpdateTotals();
 						}
 					}
-					catch
-					{ }
+					catch { }
 				}
 			}
-			catch
-			{ }
+			catch { }
 
 			NetState.Resume();
 
-			e.Mobile.SendMessage("Operation complete: {0:#,0} of {1:#,0} Gold has been converted in total.", converted, found);
+			e.Mobile.SendMessage(
+				"Operation complete: {0:#,0} of {1:#,0} Gold has been converted in total.",
+				converted,
+				found
+			);
 		}
 
 		private readonly Mobile[] m_Mobiles;
@@ -168,8 +172,7 @@ namespace Server.Accounting
 		private Timer m_YoungTimer;
 
 		private int[] m_Point = new int[1000];
-		
-		
+
 		public Account(string username, string password)
 		{
 			Username = username;
@@ -196,9 +199,9 @@ namespace Server.Accounting
 			var plainPassword = Utility.GetText(node["password"], null);
 			var MD5Password = Utility.GetText(node["cryptPassword"], null);
 			var SHA1Password = Utility.GetText(node["newCryptPassword"], null);
-            var SHA512Password = Utility.GetText(node["newSecureCryptPassword"], null);
+			var SHA512Password = Utility.GetText(node["newSecureCryptPassword"], null);
 
-            switch (AccountHandler.ProtectPasswords)
+			switch (AccountHandler.ProtectPasswords)
 			{
 				case PasswordProtection.None:
 				{
@@ -210,11 +213,11 @@ namespace Server.Accounting
 					{
 						_SHA512Password = SHA512Password;
 					}
-                    else if (SHA1Password != null)
-                    {
-                        _SHA1Password = SHA1Password;
-                    }
-                    else if (MD5Password != null)
+					else if (SHA1Password != null)
+					{
+						_SHA1Password = SHA1Password;
+					}
+					else if (MD5Password != null)
 					{
 						_MD5Password = MD5Password;
 					}
@@ -239,53 +242,53 @@ namespace Server.Accounting
 					{
 						_SHA1Password = SHA1Password;
 					}
-                    else if (SHA512Password != null)
-                    {
-                        _SHA512Password = SHA512Password;
-                    }
-                    else
+					else if (SHA512Password != null)
+					{
+						_SHA512Password = SHA512Password;
+					}
+					else
 					{
 						SetPassword("empty");
 					}
 
 					break;
 				}
-                case PasswordProtection.NewCrypt:
-                {
-                    if (SHA1Password != null)
-                    {
-                    	_SHA1Password = SHA1Password;
-                    }
-                    else if (plainPassword != null)
-                    {
-                        SetPassword(plainPassword);
-                    }
-                    else if (MD5Password != null)
-                    {
-                        _MD5Password = MD5Password;
-                    }
-                    else if (SHA512Password != null)
-                    {
-                        _SHA512Password = SHA512Password;
-                    }
-                    else
-                    {
-                        SetPassword("empty");
-                    }
-
-                    break;
-                }
-                default: // PasswordProtection.NewSecureCrypt
-                {
-                    if (SHA512Password != null)
-                    {
-                        _SHA512Password = SHA512Password;
-                    }
+				case PasswordProtection.NewCrypt:
+				{
+					if (SHA1Password != null)
+					{
+						_SHA1Password = SHA1Password;
+					}
 					else if (plainPassword != null)
 					{
 						SetPassword(plainPassword);
 					}
-                    else if (SHA1Password != null)
+					else if (MD5Password != null)
+					{
+						_MD5Password = MD5Password;
+					}
+					else if (SHA512Password != null)
+					{
+						_SHA512Password = SHA512Password;
+					}
+					else
+					{
+						SetPassword("empty");
+					}
+
+					break;
+				}
+				default: // PasswordProtection.NewSecureCrypt
+				{
+					if (SHA512Password != null)
+					{
+						_SHA512Password = SHA512Password;
+					}
+					else if (plainPassword != null)
+					{
+						SetPassword(plainPassword);
+					}
+					else if (SHA1Password != null)
 					{
 						_SHA1Password = SHA1Password;
 					}
@@ -310,7 +313,7 @@ namespace Server.Accounting
 			LastLogin = Utility.GetXMLDateTime(Utility.GetText(node["lastLogin"], null), DateTime.UtcNow);
 
 			TotalCurrency = Utility.GetXMLDouble(Utility.GetText(node["totalCurrency"], "0"), 0);
-            Sovereigns = Utility.GetXMLInt32(Utility.GetText(node["sovereigns"], "0"), 0);
+			Sovereigns = Utility.GetXMLInt32(Utility.GetText(node["sovereigns"], "0"), 0);
 
 			m_Mobiles = LoadMobiles(node);
 			m_Comments = LoadComments(node);
@@ -327,7 +330,9 @@ namespace Server.Accounting
 
 			if (totalGameTime == TimeSpan.Zero)
 			{
-				totalGameTime = m_Mobiles.OfType<PlayerMobile>().Aggregate(totalGameTime, (current, m) => current + m.GameTime);
+				totalGameTime = m_Mobiles
+					.OfType<PlayerMobile>()
+					.Aggregate(totalGameTime, (current, m) => current + m.GameTime);
 			}
 
 			m_TotalGameTime = totalGameTime;
@@ -337,15 +342,15 @@ namespace Server.Accounting
 				CheckYoung();
 			}
 
-            LoadSecureAccounts(node);
+			LoadSecureAccounts(node);
 
-            CharacterSlotsBonus = Utility.GetXMLInt32(Utility.GetText(node["characterslotsbonus"], "0"), 0);
-            HouseSlotsBonus = Utility.GetXMLInt32(Utility.GetText(node["houseslotsbonus"], "0"), 0);
+			CharacterSlotsBonus = Utility.GetXMLInt32(Utility.GetText(node["characterslotsbonus"], "0"), 0);
+			HouseSlotsBonus = Utility.GetXMLInt32(Utility.GetText(node["houseslotsbonus"], "0"), 0);
 
-            TeachingBonus = Utility.GetXMLInt32(Utility.GetText(node["teachingbonus"], "0"), 0);
+			TeachingBonus = Utility.GetXMLInt32(Utility.GetText(node["teachingbonus"], "0"), 0);
 
-            Lotto = Utility.GetXMLInt32(Utility.GetText(node["lotto"], "0"), 0);
-			
+			Lotto = Utility.GetXMLInt32(Utility.GetText(node["lotto"], "0"), 0);
+
 			/*
 			0번 : 계정 포인트
 			1번 ~ 1000번 : 시즌용 집계 포인트
@@ -392,7 +397,7 @@ namespace Server.Accounting
 			37번 : 대구 채집
 			38번 : 농어 채집
 			39번 : 청어 채집
-			40번 : 참치 채집			
+			40번 : 참치 채집
 			41 ~ 50번 생산품 제작
 			41번 : 포션 제작
 			42번 : 대장장이 제작
@@ -452,7 +457,7 @@ namespace Server.Accounting
 			437번 : 대구 채집
 			438번 : 농어 채집
 			439번 : 청어 채집
-			440번 : 참치 채집			
+			440번 : 참치 채집
 			441번 : 포션 제작
 			442번 : 대장장이 제작
 			443번 : 활&석궁 제작
@@ -475,19 +480,27 @@ namespace Server.Accounting
 			999번 : 계정 포인트 버전 관리
 			*/
 			m_Point = LoadPoints(node);
-			
-			
-            LoginBonus = Utility.GetXMLInt32(Utility.GetText(node["loginbonus"], "0"), 0);
-			
-            DonationPoint = Utility.GetXMLInt32(Utility.GetText(node["donationpoint"], "0"), 0);
-			
-			Daychecktime = Utility.GetXMLDateTime(Utility.GetText(node["daychecktime"], null), DateTime.Now) + TimeSpan.FromHours(9);
-			Weekchecktime = Utility.GetXMLDateTime(Utility.GetText(node["weekchecktime"], null), DateTime.Now) + TimeSpan.FromHours(9);
-			Monthchecktime = Utility.GetXMLDateTime(Utility.GetText(node["monthchecktime"], null), DateTime.Now) + TimeSpan.FromHours(9);
-			ThreeMonthchecktime = Utility.GetXMLDateTime(Utility.GetText(node["threemonthchecktime"], null), DateTime.Now) + TimeSpan.FromHours(9);
+
+			LoginBonus = Utility.GetXMLInt32(Utility.GetText(node["loginbonus"], "0"), 0);
+
+			DonationPoint = Utility.GetXMLInt32(Utility.GetText(node["donationpoint"], "0"), 0);
+
+			Daychecktime =
+				Utility.GetXMLDateTime(Utility.GetText(node["daychecktime"], null), DateTime.Now)
+				+ TimeSpan.FromHours(9);
+			Weekchecktime =
+				Utility.GetXMLDateTime(Utility.GetText(node["weekchecktime"], null), DateTime.Now)
+				+ TimeSpan.FromHours(9);
+			Monthchecktime =
+				Utility.GetXMLDateTime(Utility.GetText(node["monthchecktime"], null), DateTime.Now)
+				+ TimeSpan.FromHours(9);
+			ThreeMonthchecktime =
+				Utility.GetXMLDateTime(Utility.GetText(node["threemonthchecktime"], null), DateTime.Now)
+				+ TimeSpan.FromHours(9);
 
 			Accounts.Add(this);
 		}
+
 		public static int[] LoadPoints(XmlElement node)
 		{
 			var list = new int[1000];
@@ -512,12 +525,12 @@ namespace Server.Accounting
 						list[index] = serial;
 					}
 				}
-				catch
-				{ }
+				catch { }
 			}
 
 			return list;
-		}	
+		}
+
 		public static string[] LoadAccessCheck(XmlElement node)
 		{
 			string[] stringList;
@@ -525,12 +538,12 @@ namespace Server.Accounting
 
 			if (accessCheck != null)
 			{
-				stringList =
-					accessCheck.GetElementsByTagName("ip")
-							   .Cast<XmlElement>()
-							   .Select(ip => Utility.GetText(ip, null))
-							   .Where(text => text != null)
-							   .ToArray();
+				stringList = accessCheck
+					.GetElementsByTagName("ip")
+					.Cast<XmlElement>()
+					.Select(ip => Utility.GetText(ip, null))
+					.Where(text => text != null)
+					.ToArray();
 			}
 			else
 			{
@@ -539,42 +552,42 @@ namespace Server.Accounting
 
 			return stringList;
 		}
-		
-        /// <summary>
-        /// Deserializes a list of secure account balances, and converts it to a dictionary containing the account characters
-        /// </summary>
-        /// <param name="node"></param>
-        public void LoadSecureAccounts(XmlElement node)
-        {
-            int[] list = new int[7];
-            XmlElement chars = node["SecureAccounts"];
 
-            if (chars != null)
-            {
-                foreach (XmlElement ele in chars.GetElementsByTagName("char"))
-                {
-                    try
-                    {
-                        int index = Utility.GetXMLInt32(Utility.GetAttribute(ele, "index", "0"), 0);
-                        int balance = Utility.GetXMLInt32(Utility.GetText(ele, "0"), 0);
+		/// <summary>
+		/// Deserializes a list of secure account balances, and converts it to a dictionary containing the account characters
+		/// </summary>
+		/// <param name="node"></param>
+		public void LoadSecureAccounts(XmlElement node)
+		{
+			int[] list = new int[7];
+			XmlElement chars = node["SecureAccounts"];
 
-                        if (balance > 0 && index >= 0 && index < list.Length && index < m_Mobiles.Length)
-                        {
-                            if (SecureAccounts == null)
-                                SecureAccounts = new Dictionary<Mobile, int>();
+			if (chars != null)
+			{
+				foreach (XmlElement ele in chars.GetElementsByTagName("char"))
+				{
+					try
+					{
+						int index = Utility.GetXMLInt32(Utility.GetAttribute(ele, "index", "0"), 0);
+						int balance = Utility.GetXMLInt32(Utility.GetText(ele, "0"), 0);
 
-                            SecureAccounts[m_Mobiles[index]] = balance;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Utility.PushColor(ConsoleColor.Red);
-                        Console.WriteLine("Writing Secure Account Exception: {0}", ex);
-                        Utility.PopColor();
-                    }
-                }
-            }
-        }
+						if (balance > 0 && index >= 0 && index < list.Length && index < m_Mobiles.Length)
+						{
+							if (SecureAccounts == null)
+								SecureAccounts = new Dictionary<Mobile, int>();
+
+							SecureAccounts[m_Mobiles[index]] = balance;
+						}
+					}
+					catch (Exception ex)
+					{
+						Utility.PushColor(ConsoleColor.Red);
+						Console.WriteLine("Writing Secure Account Exception: {0}", ex);
+						Utility.PopColor();
+					}
+				}
+			}
+		}
 
 		/// <summary>
 		///     Object detailing information about the hardware of the last person to log into this account
@@ -624,16 +637,16 @@ namespace Server.Accounting
 		/// </summary>
 		public string _SHA1Password { get; set; }
 
-        /// <summary>
-        ///     Account username and password hashed with SHA512. May be null.
-        /// </summary>
-        public string _SHA512Password { get; set; }
+		/// <summary>
+		///     Account username and password hashed with SHA512. May be null.
+		/// </summary>
+		public string _SHA512Password { get; set; }
 
-        /// <summary>
-        ///     Internal bitfield of account flags. Consider using direct access properties (Banned, Young), or GetFlag/SetFlag
-        ///     methods
-        /// </summary>
-        public int Flags { get; set; }
+		/// <summary>
+		///     Internal bitfield of account flags. Consider using direct access properties (Banned, Young), or GetFlag/SetFlag
+		///     methods
+		/// </summary>
+		public int Flags { get; set; }
 
 		/// <summary>
 		///     Gets or sets a flag indiciating if this account is banned.
@@ -653,8 +666,11 @@ namespace Server.Accounting
 				DateTime banTime;
 				TimeSpan banDuration;
 
-				if (!GetBanTags(out banTime, out banDuration) || banDuration == TimeSpan.MaxValue ||
-					DateTime.UtcNow < (banTime + banDuration))
+				if (
+					!GetBanTags(out banTime, out banDuration)
+					|| banDuration == TimeSpan.MaxValue
+					|| DateTime.UtcNow < (banTime + banDuration)
+				)
 				{
 					return true;
 				}
@@ -694,7 +710,10 @@ namespace Server.Accounting
 		public DateTime Created { get; set; }
 
 		[CommandProperty(AccessLevel.Administrator)]
-		public TimeSpan Age { get { return DateTime.UtcNow - Created; } }
+		public TimeSpan Age
+		{
+			get { return DateTime.UtcNow - Created; }
+		}
 
 		/// <summary>
 		///     Gets or sets the date and time when this account was last accessed.
@@ -756,7 +775,11 @@ namespace Server.Accounting
 		///     Initial AccessLevel for new characters created on this account.
 		/// </summary>
 		[CommandProperty(AccessLevel.Administrator, AccessLevel.Owner)]
-		public AccessLevel AccessLevel { get { return m_AccessLevel; } set { m_AccessLevel = value; } }
+		public AccessLevel AccessLevel
+		{
+			get { return m_AccessLevel; }
+			set { m_AccessLevel = value; }
+		}
 
 		/// <summary>
 		///     Gets the current number of characters on this account.
@@ -785,13 +808,27 @@ namespace Server.Accounting
 		///     not supported by the client.
 		/// </summary>
 		[CommandProperty(AccessLevel.Administrator)]
-		public int Limit { get { return (Siege.SiegeShard ? Siege.CharacterSlots : Core.SA ? 7 : Core.AOS ? 6 : 5); } }
+		public int Limit
+		{
+			get
+			{
+				return (
+					Siege.SiegeShard ? Siege.CharacterSlots
+					: Core.SA ? 7
+					: Core.AOS ? 6
+					: 5
+				);
+			}
+		}
 
 		/// <summary>
 		///     Gets the maxmimum amount of characters that this account can hold.
 		/// </summary>
 		[CommandProperty(AccessLevel.Administrator)]
-		public int Length { get { return m_Mobiles.Length; } }
+		public int Length
+		{
+			get { return m_Mobiles.Length; }
+		}
 
 		/// <summary>
 		///     Gets or sets the character at a specified index for this account.
@@ -837,7 +874,7 @@ namespace Server.Accounting
 				}
 			}
 		}
-		
+
 		/// <summary>
 		///     Deletes the account, all characters of the account, and all houses of those characters
 		/// </summary>
@@ -880,36 +917,36 @@ namespace Server.Accounting
 			switch (AccountHandler.ProtectPasswords)
 			{
 				case PasswordProtection.None:
-				{
-					PlainPassword = plainPassword;
-					_MD5Password = null;
-					_SHA1Password = null;
-					_SHA512Password = null;
-				}
+					{
+						PlainPassword = plainPassword;
+						_MD5Password = null;
+						_SHA1Password = null;
+						_SHA512Password = null;
+					}
 					break;
 				case PasswordProtection.Crypt:
-				{
-					PlainPassword = null;
-					_MD5Password = HashMD5(plainPassword);
-					_SHA1Password = null;
-					_SHA512Password = null;
-				}
+					{
+						PlainPassword = null;
+						_MD5Password = HashMD5(plainPassword);
+						_SHA1Password = null;
+						_SHA512Password = null;
+					}
 					break;
-                case PasswordProtection.NewCrypt:
-                {
-                    PlainPassword = null;
-                    _MD5Password = null;
-                    _SHA1Password = HashSHA1(Username + plainPassword);
-					_SHA512Password = null;
-                }
-                    break;
-                default: // PasswordProtection.NewSecureCrypt
-				{
-					PlainPassword = null;
-					_MD5Password = null;
-					_SHA1Password = null;
-                    _SHA512Password = HashSHA512(Username + plainPassword); 
-				}
+				case PasswordProtection.NewCrypt:
+					{
+						PlainPassword = null;
+						_MD5Password = null;
+						_SHA1Password = HashSHA1(Username + plainPassword);
+						_SHA512Password = null;
+					}
+					break;
+				default: // PasswordProtection.NewSecureCrypt
+					{
+						PlainPassword = null;
+						_MD5Password = null;
+						_SHA1Password = null;
+						_SHA512Password = HashSHA512(Username + plainPassword);
+					}
 					break;
 			}
 		}
@@ -930,17 +967,17 @@ namespace Server.Accounting
 				curProt = PasswordProtection.Crypt;
 			}
 			else if (_SHA1Password != null)
-            {
+			{
 				ok = (_SHA1Password == HashSHA1(Username + plainPassword));
 				curProt = PasswordProtection.NewCrypt;
 			}
-            else
-            {
-                ok = (_SHA512Password == HashSHA512(Username + plainPassword));
-                curProt = PasswordProtection.NewSecureCrypt;
-            }
+			else
+			{
+				ok = (_SHA512Password == HashSHA512(Username + plainPassword));
+				curProt = PasswordProtection.NewSecureCrypt;
+			}
 
-            if (ok && curProt != AccountHandler.ProtectPasswords)
+			if (ok && curProt != AccountHandler.ProtectPasswords)
 			{
 				SetPassword(plainPassword);
 			}
@@ -1014,25 +1051,25 @@ namespace Server.Accounting
 			return BitConverter.ToString(hashed);
 		}
 
-        public static string HashSHA512(string phrase)
-        {
-            if (m_SHA512HashProvider == null)
-            {
-                m_SHA512HashProvider = new SHA512CryptoServiceProvider();
-            }
+		public static string HashSHA512(string phrase)
+		{
+			if (m_SHA512HashProvider == null)
+			{
+				m_SHA512HashProvider = new SHA512CryptoServiceProvider();
+			}
 
-            if (m_HashBuffer == null)
-            {
-                m_HashBuffer = new byte[256];
-            }
+			if (m_HashBuffer == null)
+			{
+				m_HashBuffer = new byte[256];
+			}
 
-            var length = Encoding.ASCII.GetBytes(phrase, 0, phrase.Length > 256 ? 256 : phrase.Length, m_HashBuffer, 0);
-            var hashed = m_SHA512HashProvider.ComputeHash(m_HashBuffer, 0, length);
+			var length = Encoding.ASCII.GetBytes(phrase, 0, phrase.Length > 256 ? 256 : phrase.Length, m_HashBuffer, 0);
+			var hashed = m_SHA512HashProvider.ComputeHash(m_HashBuffer, 0, length);
 
-            return BitConverter.ToString(hashed);
-        }
+			return BitConverter.ToString(hashed);
+		}
 
-        public static void Initialize()
+		public static void Initialize()
 		{
 			EventSink.Connected += EventSink_Connected;
 			EventSink.Disconnected += EventSink_Disconnected;
@@ -1063,7 +1100,12 @@ namespace Server.Accounting
 
 				count = 0;
 
-				foreach (XmlElement ip in addressList.GetElementsByTagName("ip").Cast<XmlElement>().Where(ip => count < list.Length))
+				foreach (
+					XmlElement ip in addressList
+						.GetElementsByTagName("ip")
+						.Cast<XmlElement>()
+						.Where(ip => count < list.Length)
+				)
 				{
 					IPAddress address;
 
@@ -1128,8 +1170,7 @@ namespace Server.Accounting
 						list[index] = World.FindMobile(serial);
 					}
 				}
-				catch
-				{ }
+				catch { }
 			}
 
 			return list;
@@ -1157,8 +1198,7 @@ namespace Server.Accounting
 				{
 					list.Add(new AccountComment(comment));
 				}
-				catch
-				{ }
+				catch { }
 			}
 
 			return list;
@@ -1186,8 +1226,7 @@ namespace Server.Accounting
 				{
 					list.Add(new AccountTag(tag));
 				}
-				catch
-				{ }
+				catch { }
 			}
 
 			return list;
@@ -1527,14 +1566,14 @@ namespace Server.Accounting
 				xml.WriteEndElement();
 			}
 
-            if (_SHA512Password != null)
-            {
-                xml.WriteStartElement("newSecureCryptPassword");
-                xml.WriteString(_SHA512Password);
-                xml.WriteEndElement();
-            }
+			if (_SHA512Password != null)
+			{
+				xml.WriteStartElement("newSecureCryptPassword");
+				xml.WriteString(_SHA512Password);
+				xml.WriteEndElement();
+			}
 
-            if (m_AccessLevel >= AccessLevel.Counselor)
+			if (m_AccessLevel >= AccessLevel.Counselor)
 			{
 				xml.WriteStartElement("accessLevel");
 				xml.WriteString(m_AccessLevel.ToString());
@@ -1635,25 +1674,25 @@ namespace Server.Accounting
 			xml.WriteString(XmlConvert.ToString(TotalCurrency));
 			xml.WriteEndElement();
 
-            xml.WriteStartElement("sovereigns");
-            xml.WriteString(XmlConvert.ToString(Sovereigns));
-            xml.WriteEndElement();
+			xml.WriteStartElement("sovereigns");
+			xml.WriteString(XmlConvert.ToString(Sovereigns));
+			xml.WriteEndElement();
 
-            xml.WriteStartElement("characterslotsbonus");
-            xml.WriteString(XmlConvert.ToString(CharacterSlotsBonus));
-            xml.WriteEndElement();
-			
-            xml.WriteStartElement("houseslotsbonus");
-            xml.WriteString(XmlConvert.ToString(HouseSlotsBonus));
-            xml.WriteEndElement();
+			xml.WriteStartElement("characterslotsbonus");
+			xml.WriteString(XmlConvert.ToString(CharacterSlotsBonus));
+			xml.WriteEndElement();
 
-            xml.WriteStartElement("teachingbonus");
-            xml.WriteString(XmlConvert.ToString(TeachingBonus));
-            xml.WriteEndElement();
-			
-            xml.WriteStartElement("lotto");
-            xml.WriteString(XmlConvert.ToString(Lotto));
-            xml.WriteEndElement();
+			xml.WriteStartElement("houseslotsbonus");
+			xml.WriteString(XmlConvert.ToString(HouseSlotsBonus));
+			xml.WriteEndElement();
+
+			xml.WriteStartElement("teachingbonus");
+			xml.WriteString(XmlConvert.ToString(TeachingBonus));
+			xml.WriteEndElement();
+
+			xml.WriteStartElement("lotto");
+			xml.WriteString(XmlConvert.ToString(Lotto));
+			xml.WriteEndElement();
 
 			xml.WriteStartElement("points");
 			for (var i = 0; i < 1000; ++i)
@@ -1662,21 +1701,21 @@ namespace Server.Accounting
 
 				xml.WriteStartElement("point");
 				xml.WriteAttributeString("index", i.ToString());
-				if( m != null )
+				if (m != null)
 					xml.WriteString(m.ToString());
 				else
 					xml.WriteString("0");
 				xml.WriteEndElement();
 			}
-			xml.WriteEndElement();			
-			
-            xml.WriteStartElement("loginbonus"); //출석 체크
-            xml.WriteString(XmlConvert.ToString(LoginBonus));
-            xml.WriteEndElement();
-			
-            xml.WriteStartElement("donationpoint"); //기부 계산
-            xml.WriteString(XmlConvert.ToString(DonationPoint));
-            xml.WriteEndElement();
+			xml.WriteEndElement();
+
+			xml.WriteStartElement("loginbonus"); //출석 체크
+			xml.WriteString(XmlConvert.ToString(LoginBonus));
+			xml.WriteEndElement();
+
+			xml.WriteStartElement("donationpoint"); //기부 계산
+			xml.WriteString(XmlConvert.ToString(DonationPoint));
+			xml.WriteEndElement();
 
 			xml.WriteStartElement("daychecktime");
 			xml.WriteString(XmlConvert.ToString(Daychecktime));
@@ -1685,7 +1724,7 @@ namespace Server.Accounting
 			xml.WriteStartElement("weekchecktime");
 			xml.WriteString(XmlConvert.ToString(Weekchecktime));
 			xml.WriteEndElement();
-			
+
 			xml.WriteStartElement("monthchecktime");
 			xml.WriteString(XmlConvert.ToString(Monthchecktime));
 			xml.WriteEndElement();
@@ -1693,26 +1732,26 @@ namespace Server.Accounting
 			xml.WriteStartElement("threemonthchecktime");
 			xml.WriteString(XmlConvert.ToString(ThreeMonthchecktime));
 			xml.WriteEndElement();
-            if (SecureAccounts != null)
-            {
-                xml.WriteStartElement("SecureAccounts");
+			if (SecureAccounts != null)
+			{
+				xml.WriteStartElement("SecureAccounts");
 
-                for (int i = 0; i < m_Mobiles.Length; ++i)
-                {
-                    Mobile m = m_Mobiles[i];
-                    int balance = GetSecureAccountAmount(m);
+				for (int i = 0; i < m_Mobiles.Length; ++i)
+				{
+					Mobile m = m_Mobiles[i];
+					int balance = GetSecureAccountAmount(m);
 
-                    if (m != null && !m.Deleted && balance > 0)
-                    {
-                        xml.WriteStartElement("char");
-                        xml.WriteAttributeString("index", i.ToString());
-                        xml.WriteString(balance.ToString());
-                        xml.WriteEndElement();
-                    }
-                }
+					if (m != null && !m.Deleted && balance > 0)
+					{
+						xml.WriteStartElement("char");
+						xml.WriteAttributeString("index", i.ToString());
+						xml.WriteString(balance.ToString());
+						xml.WriteEndElement();
+					}
+				}
 
-                xml.WriteEndElement();
-            }
+				xml.WriteEndElement();
+			}
 
 			xml.WriteEndElement();
 		}
@@ -1790,7 +1829,8 @@ namespace Server.Accounting
 			m.SendAsciiMessage(
 				"You will enjoy the benefits and relatively safe status of a young player for {0} more hour{1}.",
 				hours,
-				hours != 1 ? "s" : "");
+				hours != 1 ? "s" : ""
+			);
 		}
 
 		private class YoungTimer : Timer
@@ -1840,7 +1880,11 @@ namespace Server.Accounting
 		[CommandProperty(AccessLevel.Administrator)]
 		public int TotalGold
 		{
-			get { return (int)Math.Floor((TotalCurrency - Math.Truncate(TotalCurrency)) * Math.Max(1.0, CurrencyThreshold)); }
+			get
+			{
+				return (int)
+					Math.Floor((TotalCurrency - Math.Truncate(TotalCurrency)) * Math.Max(1.0, CurrencyThreshold));
+			}
 		}
 
 		/// <summary>
@@ -1850,7 +1894,10 @@ namespace Server.Accounting
 		///     One Platinum represents the value of CurrencyThreshold in Gold.
 		/// </summary>
 		[CommandProperty(AccessLevel.Administrator)]
-		public int TotalPlat { get { return (int)Math.Truncate(TotalCurrency); } }
+		public int TotalPlat
+		{
+			get { return (int)Math.Truncate(TotalCurrency); }
+		}
 
 		/// <summary>
 		///     Attempts to deposit the given amount of Gold and Platinum into this account.
@@ -1864,10 +1911,10 @@ namespace Server.Accounting
 				return false;
 			}
 
-            double oldAmount = TotalCurrency;
-            TotalCurrency += amount;
+			double oldAmount = TotalCurrency;
+			TotalCurrency += amount;
 
-            EventSink.InvokeAccountGoldChange(new AccountGoldChangeEventArgs(this, oldAmount, TotalCurrency));
+			EventSink.InvokeAccountGoldChange(new AccountGoldChangeEventArgs(this, oldAmount, TotalCurrency));
 
 			return true;
 		}
@@ -1933,11 +1980,11 @@ namespace Server.Accounting
 				return false;
 			}
 
-            double oldAmount = TotalCurrency;
+			double oldAmount = TotalCurrency;
 			TotalCurrency -= amount;
 
-            EventSink.InvokeAccountGoldChange(new AccountGoldChangeEventArgs(this, oldAmount, TotalCurrency));
-            return true;
+			EventSink.InvokeAccountGoldChange(new AccountGoldChangeEventArgs(this, oldAmount, TotalCurrency));
+			return true;
 		}
 
 		/// <summary>
@@ -2075,134 +2122,134 @@ namespace Server.Accounting
 		}
 		#endregion
 
-        #region Secure Account
-        public Dictionary<Mobile, int> SecureAccounts;
+		#region Secure Account
+		public Dictionary<Mobile, int> SecureAccounts;
 
-        public static readonly int MaxSecureAmount = 100000000;
+		public static readonly int MaxSecureAmount = 100000000;
 
-        public int GetSecureAccountAmount(Mobile m)
-        {
-            for(int i = 0; i < Length; i++)
-            {
-                Mobile mob = m_Mobiles[i];
+		public int GetSecureAccountAmount(Mobile m)
+		{
+			for (int i = 0; i < Length; i++)
+			{
+				Mobile mob = m_Mobiles[i];
 
-                if (mob == null)
-                    continue;
+				if (mob == null)
+					continue;
 
-                if (mob == m)
-                {
-                    if (SecureAccounts != null && SecureAccounts.ContainsKey(m))
-                        return SecureAccounts[m];
-                }
-            }
+				if (mob == m)
+				{
+					if (SecureAccounts != null && SecureAccounts.ContainsKey(m))
+						return SecureAccounts[m];
+				}
+			}
 
-            return 0;
-        }
+			return 0;
+		}
 
-        public bool DepositToSecure(Mobile m, int amount)
-        {
-            for (int i = 0; i < Length; i++)
-            {
-                Mobile mob = m_Mobiles[i];
+		public bool DepositToSecure(Mobile m, int amount)
+		{
+			for (int i = 0; i < Length; i++)
+			{
+				Mobile mob = m_Mobiles[i];
 
-                if (mob == null)
-                    continue;
+				if (mob == null)
+					continue;
 
-                if (mob == m)
-                {
-                    if (SecureAccounts == null)
-                        SecureAccounts = new Dictionary<Mobile, int>();
+				if (mob == m)
+				{
+					if (SecureAccounts == null)
+						SecureAccounts = new Dictionary<Mobile, int>();
 
-                    if (!SecureAccounts.ContainsKey(m))
-                        SecureAccounts[m] = Math.Min(MaxSecureAmount, amount);
-                    else
-                        SecureAccounts[m] = Math.Min(MaxSecureAmount, SecureAccounts[m] + amount);
+					if (!SecureAccounts.ContainsKey(m))
+						SecureAccounts[m] = Math.Min(MaxSecureAmount, amount);
+					else
+						SecureAccounts[m] = Math.Min(MaxSecureAmount, SecureAccounts[m] + amount);
 
-                    return true;
-                }
-            }
+					return true;
+				}
+			}
 
-            return false;
-        }
+			return false;
+		}
 
-        public bool WithdrawFromSecure(Mobile m, int amount)
-        {
-            for (int i = 0; i < Length; i++)
-            {
-                Mobile mob = m_Mobiles[i];
+		public bool WithdrawFromSecure(Mobile m, int amount)
+		{
+			for (int i = 0; i < Length; i++)
+			{
+				Mobile mob = m_Mobiles[i];
 
-                if (mob == null)
-                    continue;
+				if (mob == null)
+					continue;
 
-                if (m == mob)
-                {
-                    if (SecureAccounts == null || !SecureAccounts.ContainsKey(m) || SecureAccounts[m] < amount)
-                        return false;
+				if (m == mob)
+				{
+					if (SecureAccounts == null || !SecureAccounts.ContainsKey(m) || SecureAccounts[m] < amount)
+						return false;
 
-                    SecureAccounts[m] -= amount;
+					SecureAccounts[m] -= amount;
 
-                    return true;
-                }
-            }
+					return true;
+				}
+			}
 
-            return false;
-        }
-        #endregion
+			return false;
+		}
+		#endregion
 
-        #region Sovereigns
-        /// <summary>
-        ///     Sovereigns which can be used at the shard owners disposal. On EA, they are used for curerncy with the Ultima Store
-        /// </summary>
-        [CommandProperty(AccessLevel.Administrator, true)]
-        public int Sovereigns { get; private set; }
+		#region Sovereigns
+		/// <summary>
+		///     Sovereigns which can be used at the shard owners disposal. On EA, they are used for curerncy with the Ultima Store
+		/// </summary>
+		[CommandProperty(AccessLevel.Administrator, true)]
+		public int Sovereigns { get; private set; }
 
-        public void SetSovereigns(int amount)
-        {
-            Sovereigns = amount;
-        }
+		public void SetSovereigns(int amount)
+		{
+			Sovereigns = amount;
+		}
 
-        public bool DepositSovereigns(int amount)
-        {
-            if (amount <= 0)
-            {
-                return false;
-            }
+		public bool DepositSovereigns(int amount)
+		{
+			if (amount <= 0)
+			{
+				return false;
+			}
 
-            Sovereigns += amount;
-            return true;
-        }
+			Sovereigns += amount;
+			return true;
+		}
 
-        public bool WithdrawSovereigns(int amount)
-        {
-            if (amount <= 0)
-            {
-                return true;
-            }
+		public bool WithdrawSovereigns(int amount)
+		{
+			if (amount <= 0)
+			{
+				return true;
+			}
 
-            if (amount > Sovereigns)
-            {
-                return false;
-            }
+			if (amount > Sovereigns)
+			{
+				return false;
+			}
 
-            Sovereigns -= amount;
-            return true;
-        }
-        #endregion
-		
+			Sovereigns -= amount;
+			return true;
+		}
+		#endregion
+
 		#region CharacterSlotsBonus
-        [CommandProperty(AccessLevel.Administrator, true)]
-        public int CharacterSlotsBonus { get; set; }
-		
+		[CommandProperty(AccessLevel.Administrator, true)]
+		public int CharacterSlotsBonus { get; set; }
+
 		public void SetCharacterSlotsBonus(int amount)
 		{
 			CharacterSlotsBonus = amount;
 		}
 		#endregion
-		
+
 		#region HouseSlotsBonus
-        [CommandProperty(AccessLevel.Administrator, true)]
-        public int HouseSlotsBonus { get; set; }
-		
+		[CommandProperty(AccessLevel.Administrator, true)]
+		public int HouseSlotsBonus { get; set; }
+
 		public void SetHouseSlotsBonus(int amount)
 		{
 			HouseSlotsBonus = amount;
@@ -2210,9 +2257,9 @@ namespace Server.Accounting
 		#endregion
 
 		#region TeachingBonus
-        [CommandProperty(AccessLevel.Administrator, true)]
-        public int TeachingBonus { get; set; }
-		
+		[CommandProperty(AccessLevel.Administrator, true)]
+		public int TeachingBonus { get; set; }
+
 		public void SetTeachingBonus(int amount)
 		{
 			TeachingBonus = amount;
@@ -2220,33 +2267,34 @@ namespace Server.Accounting
 		#endregion
 
 		#region Lotto
-        [CommandProperty(AccessLevel.Administrator, true)]
-        public int Lotto { get; set; }
-		
+		[CommandProperty(AccessLevel.Administrator, true)]
+		public int Lotto { get; set; }
+
 		public void SetLotto(int amount)
 		{
 			Lotto = amount;
 		}
 		#endregion
-		
-		
+
+
 		#region Point
 		public int[] Point
 		{
-			get{ return m_Point;}
-			set{ m_Point = value;}
+			get { return m_Point; }
+			set { m_Point = value; }
 		}
+
 		public void SetPoint(int amount)
 		{
 			Point[0] = amount;
 		}
-		
+
 		#endregion
-		
+
 		#region LoginBonus
-        [CommandProperty(AccessLevel.Administrator, true)]
-        public int LoginBonus { get; set; }
-		
+		[CommandProperty(AccessLevel.Administrator, true)]
+		public int LoginBonus { get; set; }
+
 		public void SetLoginBonus(int amount)
 		{
 			LoginBonus = amount;
@@ -2254,46 +2302,48 @@ namespace Server.Accounting
 		#endregion
 
 		#region DonationPoint
-        [CommandProperty(AccessLevel.Administrator, true)]
-        public int DonationPoint { get; set; }
-		
+		[CommandProperty(AccessLevel.Administrator, true)]
+		public int DonationPoint { get; set; }
+
 		public void SetDonationPoint(int amount)
 		{
 			DonationPoint = amount;
 		}
 		#endregion
-		
-		
+
+
 		#region Resetcheck
-        [CommandProperty(AccessLevel.Administrator, true)]
-        public DateTime Daychecktime { get; set; }
-		
+		[CommandProperty(AccessLevel.Administrator, true)]
+		public DateTime Daychecktime { get; set; }
+
 		public void SetDaychecktime()
 		{
 			Daychecktime = DateTime.Now;
 		}
-        [CommandProperty(AccessLevel.Administrator, true)]
-        public DateTime Weekchecktime { get; set; }
-		
+
+		[CommandProperty(AccessLevel.Administrator, true)]
+		public DateTime Weekchecktime { get; set; }
+
 		public void SetWeekchecktime()
 		{
 			Weekchecktime = DateTime.Now;
 		}
-        [CommandProperty(AccessLevel.Administrator, true)]
-        public DateTime Monthchecktime { get; set; }
-		
+
+		[CommandProperty(AccessLevel.Administrator, true)]
+		public DateTime Monthchecktime { get; set; }
+
 		public void SetMonthchecktime()
 		{
 			Monthchecktime = DateTime.Now;
 		}
-        [CommandProperty(AccessLevel.Administrator, true)]
-        public DateTime ThreeMonthchecktime { get; set; }
-		
+
+		[CommandProperty(AccessLevel.Administrator, true)]
+		public DateTime ThreeMonthchecktime { get; set; }
+
 		public void SetThreeMonthchecktime()
 		{
 			ThreeMonthchecktime = DateTime.Now;
 		}
 		#endregion
-
-    }
+	}
 }

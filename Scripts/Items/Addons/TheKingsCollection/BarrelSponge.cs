@@ -1,181 +1,195 @@
-using Server.Multis;
 using System;
+using Server.Multis;
 
 namespace Server.Items
 {
-    public class BarrelSpongeAddon : BaseAddon, IDyable
-    {
-        public override bool ForceShowProperties { get { return true; } }
+	public class BarrelSpongeAddon : BaseAddon, IDyable
+	{
+		public override bool ForceShowProperties
+		{
+			get { return true; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public DateTime NextResourceCount { get; set; }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public DateTime NextResourceCount { get; set; }
 
-        private int m_ResourceCount;
+		private int m_ResourceCount;
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int ResourceCount { get { return m_ResourceCount; } set { m_ResourceCount = value; UpdateProperties(); } }
-        
-        [Constructable]
-        public BarrelSpongeAddon()
-           : this(0, DateTime.UtcNow + TimeSpan.FromDays(7))
-        {
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int ResourceCount
+		{
+			get { return m_ResourceCount; }
+			set
+			{
+				m_ResourceCount = value;
+				UpdateProperties();
+			}
+		}
 
-        [Constructable]
-        public BarrelSpongeAddon(int resCount, DateTime nextuse)
-        {
-            NextResourceCount = nextuse;
-            ResourceCount = resCount;
+		[Constructable]
+		public BarrelSpongeAddon()
+			: this(0, DateTime.UtcNow + TimeSpan.FromDays(7)) { }
 
-            AddComponent(new BarrelSpongeComponent(0x4C30), 0, 0, 0);
-        }
+		[Constructable]
+		public BarrelSpongeAddon(int resCount, DateTime nextuse)
+		{
+			NextResourceCount = nextuse;
+			ResourceCount = resCount;
 
-        public virtual bool Dye(Mobile from, DyeTub sender)
-        {
-            if (Deleted)
-                return false;
+			AddComponent(new BarrelSpongeComponent(0x4C30), 0, 0, 0);
+		}
 
-            Hue = sender.DyedHue;
-            return true;
-        }
+		public virtual bool Dye(Mobile from, DyeTub sender)
+		{
+			if (Deleted)
+				return false;
 
-        public BarrelSpongeAddon(Serial serial)
-            : base(serial)
-        {
-        }
+			Hue = sender.DyedHue;
+			return true;
+		}
 
-        private readonly Type[] m_Potions = new Type[]
-        {
-            typeof(ShatterPotion),
-            typeof(FearEssence),
-            typeof(InvisibilityPotion),
-            typeof(GreaterConflagrationPotion),
-            typeof(ParasiticPotion),
-            typeof(ExplodingTarPotion),
-            typeof(GreaterConfusionBlastPotion)
-        };
+		public BarrelSpongeAddon(Serial serial)
+			: base(serial) { }
 
-        public override void OnComponentUsed(AddonComponent component, Mobile from)
-        {
-            BaseHouse house = BaseHouse.FindHouseAt(from);
+		private readonly Type[] m_Potions = new Type[]
+		{
+			typeof(ShatterPotion),
+			typeof(FearEssence),
+			typeof(InvisibilityPotion),
+			typeof(GreaterConflagrationPotion),
+			typeof(ParasiticPotion),
+			typeof(ExplodingTarPotion),
+			typeof(GreaterConfusionBlastPotion),
+		};
 
-            if (house != null && (house.IsOwner(from) || (house.LockDowns.ContainsKey(this) && house.LockDowns[this] == from)))
-            {
-                if (ResourceCount > 0)
-                {
-                    Item item = Loot.Construct(m_Potions);
+		public override void OnComponentUsed(AddonComponent component, Mobile from)
+		{
+			BaseHouse house = BaseHouse.FindHouseAt(from);
 
-                    if (item == null)
-                        return;
+			if (
+				house != null
+				&& (house.IsOwner(from) || (house.LockDowns.ContainsKey(this) && house.LockDowns[this] == from))
+			)
+			{
+				if (ResourceCount > 0)
+				{
+					Item item = Loot.Construct(m_Potions);
 
-                    ResourceCount--;
+					if (item == null)
+						return;
 
-                    from.AddToBackpack(item);
-                    from.SendLocalizedMessage(1154176); // Potions have been placed in your backpack. 
-                }
-            }
-            else
-            {
-                from.SendLocalizedMessage(502092); // You must be in your house to do this.
-            }
-        }
+					ResourceCount--;
 
-        public override BaseAddonDeed Deed { get { return new BarrelSpongeDeed(); } }
+					from.AddToBackpack(item);
+					from.SendLocalizedMessage(1154176); // Potions have been placed in your backpack.
+				}
+			}
+			else
+			{
+				from.SendLocalizedMessage(502092); // You must be in your house to do this.
+			}
+		}
 
-        private class BarrelSpongeComponent : LocalizedAddonComponent
-        {
-            public BarrelSpongeComponent(int id)
-                : base(id, 1098376) // Barrel Sponge
-            {
-            }
+		public override BaseAddonDeed Deed
+		{
+			get { return new BarrelSpongeDeed(); }
+		}
 
-            public override void GetProperties(ObjectPropertyList list)
-            {
-                base.GetProperties(list);
+		private class BarrelSpongeComponent : LocalizedAddonComponent
+		{
+			public BarrelSpongeComponent(int id)
+				: base(id, 1098376) // Barrel Sponge
+			{ }
 
-                if (Addon is BarrelSpongeAddon)
-                {
-                    list.Add(1154178, ((BarrelSpongeAddon)Addon).ResourceCount.ToString()); // Potions: ~1_COUNT~
-                }
-            }
+			public override void GetProperties(ObjectPropertyList list)
+			{
+				base.GetProperties(list);
 
-            public BarrelSpongeComponent(Serial serial)
-                : base(serial)
-            {
-            }
+				if (Addon is BarrelSpongeAddon)
+				{
+					list.Add(1154178, ((BarrelSpongeAddon)Addon).ResourceCount.ToString()); // Potions: ~1_COUNT~
+				}
+			}
 
-            public override void Serialize(GenericWriter writer)
-            {
-                base.Serialize(writer);
-                writer.Write(0); // Version
-            }
+			public BarrelSpongeComponent(Serial serial)
+				: base(serial) { }
 
-            public override void Deserialize(GenericReader reader)
-            {
-                base.Deserialize(reader);
-                int version = reader.ReadInt();
-            }
-        }
+			public override void Serialize(GenericWriter writer)
+			{
+				base.Serialize(writer);
+				writer.Write(0); // Version
+			}
 
-        private void TryGiveResourceCount()
-        {
-            if (NextResourceCount < DateTime.UtcNow)
-            {
-                ResourceCount = Math.Min(140, m_ResourceCount + 35);
-                NextResourceCount = DateTime.UtcNow + TimeSpan.FromDays(7);
+			public override void Deserialize(GenericReader reader)
+			{
+				base.Deserialize(reader);
+				int version = reader.ReadInt();
+			}
+		}
 
-                UpdateProperties();
-            }
-        }
+		private void TryGiveResourceCount()
+		{
+			if (NextResourceCount < DateTime.UtcNow)
+			{
+				ResourceCount = Math.Min(140, m_ResourceCount + 35);
+				NextResourceCount = DateTime.UtcNow + TimeSpan.FromDays(7);
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0); // version
+				UpdateProperties();
+			}
+		}
 
-            TryGiveResourceCount();
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0); // version
 
-            writer.Write(m_ResourceCount);
-            writer.Write(NextResourceCount);
-        }
+			TryGiveResourceCount();
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
+			writer.Write(m_ResourceCount);
+			writer.Write(NextResourceCount);
+		}
 
-            m_ResourceCount = reader.ReadInt();
-            NextResourceCount = reader.ReadDateTime();
-        }
-    }    
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
 
-    public class BarrelSpongeDeed : BaseAddonDeed
-    {
-        public override int LabelNumber { get { return 1098376; } } // Barrel Sponge
+			m_ResourceCount = reader.ReadInt();
+			NextResourceCount = reader.ReadDateTime();
+		}
+	}
 
-        [Constructable]
-        public BarrelSpongeDeed()
-        {
-            LootType = LootType.Blessed;
-        }
+	public class BarrelSpongeDeed : BaseAddonDeed
+	{
+		public override int LabelNumber
+		{
+			get { return 1098376; }
+		} // Barrel Sponge
 
-        public BarrelSpongeDeed(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public BarrelSpongeDeed()
+		{
+			LootType = LootType.Blessed;
+		}
 
-        public override BaseAddon Addon { get { return new BarrelSpongeAddon(); } }
-        
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0); // version
-        }
+		public BarrelSpongeDeed(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+		public override BaseAddon Addon
+		{
+			get { return new BarrelSpongeAddon(); }
+		}
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 }

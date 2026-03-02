@@ -2,57 +2,51 @@ using System;
 
 namespace Server.Items
 {
-    public class NightsKiss : Dagger
+	public class NightsKiss : Dagger
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public NightsKiss()
-        {
-            Hue = 0x455;
-            WeaponAttributes.HitLeechHits = 40;
-            Slayer = SlayerName.Repond;
-            Attributes.WeaponSpeed = 30;
-            Attributes.WeaponDamage = 35;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public NightsKiss(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public NightsKiss()
+		{
+			Hue = 0x455;
+			WeaponAttributes.HitLeechHits = 40;
+			Slayer = SlayerName.Repond;
+			Attributes.WeaponSpeed = 30;
+			Attributes.WeaponDamage = 35;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1063475;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public NightsKiss(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0);
-        }
+		public override int LabelNumber
+		{
+			get { return 1063475; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

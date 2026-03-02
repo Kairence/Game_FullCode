@@ -91,7 +91,12 @@ namespace Ultima
 
 		public static void ExportToCSV(string FileName)
 		{
-			using (var Tex = new StreamWriter(new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite), Encoding.Unicode))
+			using (
+				var Tex = new StreamWriter(
+					new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite),
+					Encoding.Unicode
+				)
+			)
 			{
 				Tex.WriteLine("Order;ID;KeyWord");
 				foreach (SpeechEntry entry in Entries)
@@ -135,8 +140,7 @@ namespace Ultima
 						word = word.Replace("\"", "");
 						Entries.Add(new SpeechEntry((short)id, word, order));
 					}
-					catch
-					{ }
+					catch { }
 				}
 			}
 		}

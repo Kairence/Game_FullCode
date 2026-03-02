@@ -2,40 +2,40 @@ using System;
 
 namespace Server.Items
 {
-    public class TatteredAncientMummyWrapping : Item
-    {
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public TatteredAncientMummyWrapping()
-            : base(0xE21)
-        {
-            this.Hue = 0x909;
-        }
+	public class TatteredAncientMummyWrapping : Item
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public TatteredAncientMummyWrapping(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public TatteredAncientMummyWrapping()
+			: base(0xE21)
+		{
+			this.Hue = 0x909;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1094912;
-            }
-        }// Tattered Ancient Mummy Wrapping [Replica]
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public TatteredAncientMummyWrapping(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1094912; }
+		} // Tattered Ancient Mummy Wrapping [Replica]
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

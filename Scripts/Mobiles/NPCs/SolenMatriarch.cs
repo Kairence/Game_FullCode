@@ -8,350 +8,336 @@ using Server.Targeting;
 
 namespace Server.Engines.Quests.Matriarch
 {
-    public abstract class BaseSolenMatriarch : BaseQuester
-    {
-        public BaseSolenMatriarch()
-        {
-            this.Name = "the solen matriarch";
+	public abstract class BaseSolenMatriarch : BaseQuester
+	{
+		public BaseSolenMatriarch()
+		{
+			this.Name = "the solen matriarch";
 
-            this.Body = 0x328;
+			this.Body = 0x328;
 
-            if (!this.RedSolen)
-                this.Hue = 0x44E;
+			if (!this.RedSolen)
+				this.Hue = 0x44E;
 
-            this.SpeechHue = 0;
-        }
+			this.SpeechHue = 0;
+		}
 
-        public BaseSolenMatriarch(Serial serial)
-            : base(serial)
-        {
-        }
+		public BaseSolenMatriarch(Serial serial)
+			: base(serial) { }
 
-        public override void CheckMorph()
-        {          
-        }
+		public override void CheckMorph() { }
 
-        public abstract bool RedSolen { get; }
-        public override bool DisallowAllMoves
-        {
-            get
-            {
-                return false;
-            }
-        }
-        public override int GetIdleSound()
-        {
-            return 0x10D;
-        }
+		public abstract bool RedSolen { get; }
+		public override bool DisallowAllMoves
+		{
+			get { return false; }
+		}
 
-        public override bool CanTalkTo(PlayerMobile to)
-        {
-            if (SolenMatriarchQuest.IsFriend(to, this.RedSolen))
-                return true;
+		public override int GetIdleSound()
+		{
+			return 0x10D;
+		}
 
-            SolenMatriarchQuest qs = to.Quest as SolenMatriarchQuest;
+		public override bool CanTalkTo(PlayerMobile to)
+		{
+			if (SolenMatriarchQuest.IsFriend(to, this.RedSolen))
+				return true;
 
-            return qs != null && qs.RedSolen == this.RedSolen;
-        }
+			SolenMatriarchQuest qs = to.Quest as SolenMatriarchQuest;
 
-        public override void OnTalk(PlayerMobile player, bool contextMenu)
-        {
-            this.Direction = this.GetDirectionTo(player);
+			return qs != null && qs.RedSolen == this.RedSolen;
+		}
 
-            SolenMatriarchQuest qs = player.Quest as SolenMatriarchQuest;
+		public override void OnTalk(PlayerMobile player, bool contextMenu)
+		{
+			this.Direction = this.GetDirectionTo(player);
 
-            if (qs != null && qs.RedSolen == this.RedSolen)
-            {
-                if (qs.IsObjectiveInProgress(typeof(KillInfiltratorsObjective)))
-                {
-                    qs.AddConversation(new DuringKillInfiltratorsConversation());
-                }
-                else
-                {
-                    QuestObjective obj = qs.FindObjective(typeof(ReturnAfterKillsObjective));
+			SolenMatriarchQuest qs = player.Quest as SolenMatriarchQuest;
 
-                    if (obj != null && !obj.Completed)
-                    {
-                        obj.Complete();
-                    }
-                    else if (qs.IsObjectiveInProgress(typeof(GatherWaterObjective)))
-                    {
-                        qs.AddConversation(new DuringWaterGatheringConversation());
-                    }
-                    else
-                    {
-                        obj = qs.FindObjective(typeof(ReturnAfterWaterObjective));
+			if (qs != null && qs.RedSolen == this.RedSolen)
+			{
+				if (qs.IsObjectiveInProgress(typeof(KillInfiltratorsObjective)))
+				{
+					qs.AddConversation(new DuringKillInfiltratorsConversation());
+				}
+				else
+				{
+					QuestObjective obj = qs.FindObjective(typeof(ReturnAfterKillsObjective));
 
-                        if (obj != null && !obj.Completed)
-                        {
-                            obj.Complete();
-                        }
-                        else if (qs.IsObjectiveInProgress(typeof(ProcessFungiObjective)))
-                        {
-                            qs.AddConversation(new DuringFungiProcessConversation());
-                        }
-                        else
-                        {
-                            obj = qs.FindObjective(typeof(GetRewardObjective));
+					if (obj != null && !obj.Completed)
+					{
+						obj.Complete();
+					}
+					else if (qs.IsObjectiveInProgress(typeof(GatherWaterObjective)))
+					{
+						qs.AddConversation(new DuringWaterGatheringConversation());
+					}
+					else
+					{
+						obj = qs.FindObjective(typeof(ReturnAfterWaterObjective));
 
-                            if (obj != null && !obj.Completed)
-                            {
-                                if (SolenMatriarchQuest.GiveRewardTo(player))
-                                {
-                                    obj.Complete();
-                                }
-                                else
-                                {
-                                    qs.AddConversation(new FullBackpackConversation(false));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            else if (SolenMatriarchQuest.IsFriend(player, this.RedSolen))
-            {
-                QuestSystem newQuest = new SolenMatriarchQuest(player, this.RedSolen);
+						if (obj != null && !obj.Completed)
+						{
+							obj.Complete();
+						}
+						else if (qs.IsObjectiveInProgress(typeof(ProcessFungiObjective)))
+						{
+							qs.AddConversation(new DuringFungiProcessConversation());
+						}
+						else
+						{
+							obj = qs.FindObjective(typeof(GetRewardObjective));
 
-                if (player.Quest == null && QuestSystem.CanOfferQuest(player, typeof(SolenMatriarchQuest)))
-                {
-                    newQuest.SendOffer();
-                }
-                else
-                {
-                    newQuest.AddConversation(new DontOfferConversation(true));
-                }
-            }
-        }
+							if (obj != null && !obj.Completed)
+							{
+								if (SolenMatriarchQuest.GiveRewardTo(player))
+								{
+									obj.Complete();
+								}
+								else
+								{
+									qs.AddConversation(new FullBackpackConversation(false));
+								}
+							}
+						}
+					}
+				}
+			}
+			else if (SolenMatriarchQuest.IsFriend(player, this.RedSolen))
+			{
+				QuestSystem newQuest = new SolenMatriarchQuest(player, this.RedSolen);
 
-        public override bool OnDragDrop(Mobile from, Item dropped)
-        {
-            PlayerMobile player = from as PlayerMobile;
+				if (player.Quest == null && QuestSystem.CanOfferQuest(player, typeof(SolenMatriarchQuest)))
+				{
+					newQuest.SendOffer();
+				}
+				else
+				{
+					newQuest.AddConversation(new DontOfferConversation(true));
+				}
+			}
+		}
 
-            if (player != null)
-            {
-                if (dropped is Seed)
-                {
-                    SolenMatriarchQuest qs = player.Quest as SolenMatriarchQuest;
+		public override bool OnDragDrop(Mobile from, Item dropped)
+		{
+			PlayerMobile player = from as PlayerMobile;
 
-                    if (qs != null && qs.RedSolen == this.RedSolen)
-                    {
-                        this.SayTo(player, 1054080); // Thank you for that plant seed. Those have such wonderful flavor.
-                    }
-                    else
-                    {
-                        QuestSystem newQuest = new SolenMatriarchQuest(player, this.RedSolen);
+			if (player != null)
+			{
+				if (dropped is Seed)
+				{
+					SolenMatriarchQuest qs = player.Quest as SolenMatriarchQuest;
 
-                        if (player.Quest == null && QuestSystem.CanOfferQuest(player, typeof(SolenMatriarchQuest)))
-                        {
-                            newQuest.SendOffer();
-                        }
-                        else
-                        {
-                            newQuest.AddConversation(new DontOfferConversation(SolenMatriarchQuest.IsFriend(player, this.RedSolen)));
-                        }
-                    }
+					if (qs != null && qs.RedSolen == this.RedSolen)
+					{
+						this.SayTo(player, 1054080); // Thank you for that plant seed. Those have such wonderful flavor.
+					}
+					else
+					{
+						QuestSystem newQuest = new SolenMatriarchQuest(player, this.RedSolen);
 
-                    dropped.Delete();
-                    return true;
-                }
-                else if (dropped is ZoogiFungus)
-                {
-                    this.OnGivenFungi(player, (ZoogiFungus)dropped);
+						if (player.Quest == null && QuestSystem.CanOfferQuest(player, typeof(SolenMatriarchQuest)))
+						{
+							newQuest.SendOffer();
+						}
+						else
+						{
+							newQuest.AddConversation(
+								new DontOfferConversation(SolenMatriarchQuest.IsFriend(player, this.RedSolen))
+							);
+						}
+					}
 
-                    return dropped.Deleted;
-                }
-            }
+					dropped.Delete();
+					return true;
+				}
+				else if (dropped is ZoogiFungus)
+				{
+					this.OnGivenFungi(player, (ZoogiFungus)dropped);
 
-            return base.OnDragDrop(from, dropped);
-        }
+					return dropped.Deleted;
+				}
+			}
 
-        public override void GetContextMenuEntries(Mobile from, List<ContextMenuEntry> list)
-        {
-            base.GetContextMenuEntries(from, list);
+			return base.OnDragDrop(from, dropped);
+		}
 
-            if (from.Alive)
-            {
-                PlayerMobile pm = from as PlayerMobile;
+		public override void GetContextMenuEntries(Mobile from, List<ContextMenuEntry> list)
+		{
+			base.GetContextMenuEntries(from, list);
 
-                if (pm != null)
-                {
-                    SolenMatriarchQuest qs = pm.Quest as SolenMatriarchQuest;
+			if (from.Alive)
+			{
+				PlayerMobile pm = from as PlayerMobile;
 
-                    if (qs != null && qs.RedSolen == this.RedSolen)
-                    {
-                        if (qs.IsObjectiveInProgress(typeof(ProcessFungiObjective)))
-                        {
-                            list.Add(new ProcessZoogiFungusEntry(this, pm));
-                        }
-                    }
-                }
-            }
-        }
+				if (pm != null)
+				{
+					SolenMatriarchQuest qs = pm.Quest as SolenMatriarchQuest;
 
-        public void OnGivenFungi(PlayerMobile player, ZoogiFungus fungi)
-        {
-            this.Direction = this.GetDirectionTo(player);
+					if (qs != null && qs.RedSolen == this.RedSolen)
+					{
+						if (qs.IsObjectiveInProgress(typeof(ProcessFungiObjective)))
+						{
+							list.Add(new ProcessZoogiFungusEntry(this, pm));
+						}
+					}
+				}
+			}
+		}
 
-            SolenMatriarchQuest qs = player.Quest as SolenMatriarchQuest;
+		public void OnGivenFungi(PlayerMobile player, ZoogiFungus fungi)
+		{
+			this.Direction = this.GetDirectionTo(player);
 
-            if (qs != null && qs.RedSolen == this.RedSolen)
-            {
-                QuestObjective obj = qs.FindObjective(typeof(ProcessFungiObjective));
+			SolenMatriarchQuest qs = player.Quest as SolenMatriarchQuest;
 
-                if (obj != null && !obj.Completed)
-                {
-                    int amount = fungi.Amount / 2;
+			if (qs != null && qs.RedSolen == this.RedSolen)
+			{
+				QuestObjective obj = qs.FindObjective(typeof(ProcessFungiObjective));
 
-                    if (amount > 100)
-                        amount = 100;
+				if (obj != null && !obj.Completed)
+				{
+					int amount = fungi.Amount / 2;
 
-                    if (amount > 0)
-                    {
-                        if (amount * 2 >= fungi.Amount)
-                            fungi.Delete();
-                        else
-                            fungi.Amount -= amount * 2;
+					if (amount > 100)
+						amount = 100;
 
-                        PowderOfTranslocation powder = new PowderOfTranslocation(amount);
-                        player.AddToBackpack(powder);
+					if (amount > 0)
+					{
+						if (amount * 2 >= fungi.Amount)
+							fungi.Delete();
+						else
+							fungi.Amount -= amount * 2;
 
-                        player.SendLocalizedMessage(1054100); // You receive some powder of translocation.
+						PowderOfTranslocation powder = new PowderOfTranslocation(amount);
+						player.AddToBackpack(powder);
 
-                        obj.Complete();
-                    }
-                }
-            }
-        }
+						player.SendLocalizedMessage(1054100); // You receive some powder of translocation.
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+						obj.Complete();
+					}
+				}
+			}
+		}
 
-            writer.WriteEncodedInt((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt((int)0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        private class ProcessZoogiFungusEntry : ContextMenuEntry
-        {
-            private readonly BaseSolenMatriarch m_Matriarch;
-            private readonly PlayerMobile m_From;
-            public ProcessZoogiFungusEntry(BaseSolenMatriarch matriarch, PlayerMobile from)
-                : base(6184)
-            {
-                this.m_Matriarch = matriarch;
-                this.m_From = from;
-            }
+			int version = reader.ReadEncodedInt();
+		}
 
-            public override void OnClick()
-            {
-                if (this.m_From.Alive)
-                    this.m_From.Target = new ProcessFungiTarget(this.m_Matriarch, this.m_From);
-            }
-        }
+		private class ProcessZoogiFungusEntry : ContextMenuEntry
+		{
+			private readonly BaseSolenMatriarch m_Matriarch;
+			private readonly PlayerMobile m_From;
 
-        private class ProcessFungiTarget : Target
-        {
-            private readonly BaseSolenMatriarch m_Matriarch;
-            private readonly PlayerMobile m_From;
-            public ProcessFungiTarget(BaseSolenMatriarch matriarch, PlayerMobile from)
-                : base(-1, false, TargetFlags.None)
-            {
-                this.m_Matriarch = matriarch;
-                this.m_From = from;
-            }
+			public ProcessZoogiFungusEntry(BaseSolenMatriarch matriarch, PlayerMobile from)
+				: base(6184)
+			{
+				this.m_Matriarch = matriarch;
+				this.m_From = from;
+			}
 
-            protected override void OnTargetCancel(Mobile from, TargetCancelType cancelType)
-            {
-                from.SendLocalizedMessage(1042021, "", 0x59); // Cancelled.
-            }
+			public override void OnClick()
+			{
+				if (this.m_From.Alive)
+					this.m_From.Target = new ProcessFungiTarget(this.m_Matriarch, this.m_From);
+			}
+		}
 
-            protected override void OnTarget(Mobile from, object targeted)
-            {
-                if (targeted is ZoogiFungus)
-                {
-                    ZoogiFungus fungus = (ZoogiFungus)targeted;
+		private class ProcessFungiTarget : Target
+		{
+			private readonly BaseSolenMatriarch m_Matriarch;
+			private readonly PlayerMobile m_From;
 
-                    if (fungus.IsChildOf(this.m_From.Backpack))
-                        this.m_Matriarch.OnGivenFungi(this.m_From, (ZoogiFungus)targeted);
-                    else
-                        this.m_From.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
-                }
-            }
-        }
-    }
+			public ProcessFungiTarget(BaseSolenMatriarch matriarch, PlayerMobile from)
+				: base(-1, false, TargetFlags.None)
+			{
+				this.m_Matriarch = matriarch;
+				this.m_From = from;
+			}
 
-    public class RedSolenMatriarch : BaseSolenMatriarch
-    {
-        [Constructable]
-        public RedSolenMatriarch()
-        {
-        }
+			protected override void OnTargetCancel(Mobile from, TargetCancelType cancelType)
+			{
+				from.SendLocalizedMessage(1042021, "", 0x59); // Cancelled.
+			}
 
-        public RedSolenMatriarch(Serial serial)
-            : base(serial)
-        {
-        }
+			protected override void OnTarget(Mobile from, object targeted)
+			{
+				if (targeted is ZoogiFungus)
+				{
+					ZoogiFungus fungus = (ZoogiFungus)targeted;
 
-        public override bool RedSolen
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+					if (fungus.IsChildOf(this.m_From.Backpack))
+						this.m_Matriarch.OnGivenFungi(this.m_From, (ZoogiFungus)targeted);
+					else
+						this.m_From.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
+				}
+			}
+		}
+	}
 
-            writer.WriteEncodedInt((int)0); // version
-        }
+	public class RedSolenMatriarch : BaseSolenMatriarch
+	{
+		[Constructable]
+		public RedSolenMatriarch() { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public RedSolenMatriarch(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override bool RedSolen
+		{
+			get { return true; }
+		}
 
-    public class BlackSolenMatriarch : BaseSolenMatriarch
-    {
-        [Constructable]
-        public BlackSolenMatriarch()
-        {
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public BlackSolenMatriarch(Serial serial)
-            : base(serial)
-        {
-        }
+			writer.WriteEncodedInt((int)0); // version
+		}
 
-        public override bool RedSolen
-        {
-            get
-            {
-                return false;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            writer.WriteEncodedInt((int)0); // version
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+	public class BlackSolenMatriarch : BaseSolenMatriarch
+	{
+		[Constructable]
+		public BlackSolenMatriarch() { }
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public BlackSolenMatriarch(Serial serial)
+			: base(serial) { }
+
+		public override bool RedSolen
+		{
+			get { return false; }
+		}
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.WriteEncodedInt((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

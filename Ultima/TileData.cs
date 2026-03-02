@@ -47,22 +47,38 @@ namespace Ultima
 		/// <summary>
 		///     Gets the name of this land tile.
 		/// </summary>
-		public string Name { get { return m_Name; } set { m_Name = value; } }
+		public string Name
+		{
+			get { return m_Name; }
+			set { m_Name = value; }
+		}
 
 		/// <summary>
 		///     Gets the Texture ID of this land tile.
 		/// </summary>
-		public short TextureID { get { return m_TexID; } set { m_TexID = value; } }
+		public short TextureID
+		{
+			get { return m_TexID; }
+			set { m_TexID = value; }
+		}
 
 		/// <summary>
 		///     Gets a bitfield representing the 32 individual flags of this land tile.
 		/// </summary>
-		public TileFlag Flags { get { return m_Flags; } set { m_Flags = value; } }
+		public TileFlag Flags
+		{
+			get { return m_Flags; }
+			set { m_Flags = value; }
+		}
 
 		/// <summary>
 		///     Gets a new UOHSA Unknown Int
 		/// </summary>
-		public int Unk1 { get { return m_Unk1; } set { m_Unk1 = value; } }
+		public int Unk1
+		{
+			get { return m_Unk1; }
+			set { m_Unk1 = value; }
+		}
 
 		public void ReadData(string[] split)
 		{
@@ -270,7 +286,8 @@ namespace Ultima
 			int stackingoffset,
 			int MiscData,
 			int unk2,
-			int unk3)
+			int unk3
+		)
 		{
 			m_Name = name;
 			m_Flags = flags;
@@ -327,98 +344,166 @@ namespace Ultima
 		/// <summary>
 		///     Gets the name of this item.
 		/// </summary>
-		public string Name { get { return m_Name; } set { m_Name = value; } }
+		public string Name
+		{
+			get { return m_Name; }
+			set { m_Name = value; }
+		}
 
 		/// <summary>
 		///     Gets the animation body index of this item.
 		///     <seealso cref="Animations" />
 		/// </summary>
-		public short Animation { get { return m_Animation; } set { m_Animation = value; } }
+		public short Animation
+		{
+			get { return m_Animation; }
+			set { m_Animation = value; }
+		}
 
 		/// <summary>
 		///     Gets a bitfield representing the 32 individual flags of this item.
 		///     <seealso cref="TileFlag" />
 		/// </summary>
-		public TileFlag Flags { get { return m_Flags; } set { m_Flags = value; } }
+		public TileFlag Flags
+		{
+			get { return m_Flags; }
+			set { m_Flags = value; }
+		}
 
 		/// <summary>
 		///     Gets an unknown new UOAHS int
 		/// </summary>
-		public int Unk1 { get { return m_Unk1; } set { m_Unk1 = value; } }
+		public int Unk1
+		{
+			get { return m_Unk1; }
+			set { m_Unk1 = value; }
+		}
 
 		/// <summary>
 		///     Whether or not this item is flagged as '<see cref="TileFlag.Background" />'.
 		///     <seealso cref="TileFlag" />
 		/// </summary>
-		public bool Background { get { return ((m_Flags & TileFlag.Background) != 0); } }
+		public bool Background
+		{
+			get { return ((m_Flags & TileFlag.Background) != 0); }
+		}
 
 		/// <summary>
 		///     Whether or not this item is flagged as '<see cref="TileFlag.Bridge" />'.
 		///     <seealso cref="TileFlag" />
 		/// </summary>
-		public bool Bridge { get { return ((m_Flags & TileFlag.Bridge) != 0); } }
+		public bool Bridge
+		{
+			get { return ((m_Flags & TileFlag.Bridge) != 0); }
+		}
 
 		/// <summary>
 		///     Whether or not this item is flagged as '<see cref="TileFlag.Impassable" />'.
 		///     <seealso cref="TileFlag" />
 		/// </summary>
-		public bool Impassable { get { return ((m_Flags & TileFlag.Impassable) != 0); } }
+		public bool Impassable
+		{
+			get { return ((m_Flags & TileFlag.Impassable) != 0); }
+		}
 
 		/// <summary>
 		///     Whether or not this item is flagged as '<see cref="TileFlag.Surface" />'.
 		///     <seealso cref="TileFlag" />
 		/// </summary>
-		public bool Surface { get { return ((m_Flags & TileFlag.Surface) != 0); } }
+		public bool Surface
+		{
+			get { return ((m_Flags & TileFlag.Surface) != 0); }
+		}
 
 		/// <summary>
 		///     Gets the weight of this item.
 		/// </summary>
-		public byte Weight { get { return m_Weight; } set { m_Weight = value; } }
+		public byte Weight
+		{
+			get { return m_Weight; }
+			set { m_Weight = value; }
+		}
 
 		/// <summary>
 		///     Gets the 'quality' of this item. For wearable items, this will be the layer.
 		/// </summary>
-		public byte Quality { get { return m_Quality; } set { m_Quality = value; } }
+		public byte Quality
+		{
+			get { return m_Quality; }
+			set { m_Quality = value; }
+		}
 
 		/// <summary>
 		///     Gets the 'quantity' of this item.
 		/// </summary>
-		public byte Quantity { get { return m_Quantity; } set { m_Quantity = value; } }
+		public byte Quantity
+		{
+			get { return m_Quantity; }
+			set { m_Quantity = value; }
+		}
 
 		/// <summary>
 		///     Gets the 'value' of this item.
 		/// </summary>
-		public byte Value { get { return m_Value; } set { m_Value = value; } }
+		public byte Value
+		{
+			get { return m_Value; }
+			set { m_Value = value; }
+		}
 
 		/// <summary>
 		///     Gets the Hue of this item.
 		/// </summary>
-		public byte Hue { get { return m_Hue; } set { m_Hue = value; } }
+		public byte Hue
+		{
+			get { return m_Hue; }
+			set { m_Hue = value; }
+		}
 
 		/// <summary>
 		///     Gets the stackingoffset of this item. (If flag Generic)
 		/// </summary>
-		public byte StackingOffset { get { return m_StackOffset; } set { m_StackOffset = value; } }
+		public byte StackingOffset
+		{
+			get { return m_StackOffset; }
+			set { m_StackOffset = value; }
+		}
 
 		/// <summary>
 		///     Gets the height of this item.
 		/// </summary>
-		public byte Height { get { return m_Height; } set { m_Height = value; } }
+		public byte Height
+		{
+			get { return m_Height; }
+			set { m_Height = value; }
+		}
 
 		/// <summary>
 		///     Gets the MiscData of this item. (old UO Demo weapontemplate definition) (Unk1)
 		/// </summary>
-		public short MiscData { get { return m_MiscData; } set { m_MiscData = value; } }
+		public short MiscData
+		{
+			get { return m_MiscData; }
+			set { m_MiscData = value; }
+		}
 
 		/// <summary>
 		///     Gets the unk2 of this item.
 		/// </summary>
-		public byte Unk2 { get { return m_Unk2; } set { m_Unk2 = value; } }
+		public byte Unk2
+		{
+			get { return m_Unk2; }
+			set { m_Unk2 = value; }
+		}
 
 		/// <summary>
 		///     Gets the unk3 of this item.
 		/// </summary>
-		public byte Unk3 { get { return m_Unk3; } set { m_Unk3 = value; } }
+		public byte Unk3
+		{
+			get { return m_Unk3; }
+			set { m_Unk3 = value; }
+		}
 
 		/// <summary>
 		///     Gets the 'calculated height' of this item. For <see cref="Bridge">bridges</see>, this will be:
@@ -446,7 +531,10 @@ namespace Ultima
 		///     Whether or not this item is wearable as '<see cref="TileFlag.Wearable" />'.
 		///     <seealso cref="TileFlag" />
 		/// </summary>
-		public bool Wearable { get { return ((m_Flags & TileFlag.Wearable) != 0); } }
+		public bool Wearable
+		{
+			get { return ((m_Flags & TileFlag.Wearable) != 0); }
+		}
 
 		public void ReadData(string[] split)
 		{
@@ -798,7 +886,7 @@ namespace Ultima
 		/// <summary>
 		///     Not yet documented.
 		/// </summary>
-		StairRight = 0x80000000
+		StairRight = 0x80000000,
 	}
 
 	/// <summary>
@@ -815,14 +903,25 @@ namespace Ultima
 		/// <summary>
 		///     Gets the list of <see cref="LandData">land tile data</see>.
 		/// </summary>
-		public static LandData[] LandTable { get { return m_LandData; } set { m_LandData = value; } }
+		public static LandData[] LandTable
+		{
+			get { return m_LandData; }
+			set { m_LandData = value; }
+		}
 
 		/// <summary>
 		///     Gets the list of <see cref="ItemData">item tile data</see>.
 		/// </summary>
-		public static ItemData[] ItemTable { get { return m_ItemData; } set { m_ItemData = value; } }
+		public static ItemData[] ItemTable
+		{
+			get { return m_ItemData; }
+			set { m_ItemData = value; }
+		}
 
-		public static int[] HeightTable { get { return m_HeightTable; } }
+		public static int[] HeightTable
+		{
+			get { return m_HeightTable; }
+		}
 
 		private static readonly byte[] m_StringBuffer = new byte[20];
 
@@ -889,13 +988,15 @@ namespace Ultima
 								if (useNeWTileDataFormat)
 								{
 									currpos += sizeof(NewLandTileDataMul);
-									var cur = (NewLandTileDataMul)Marshal.PtrToStructure(ptr, typeof(NewLandTileDataMul));
+									var cur = (NewLandTileDataMul)
+										Marshal.PtrToStructure(ptr, typeof(NewLandTileDataMul));
 									m_LandData[i + count] = new LandData(cur);
 								}
 								else
 								{
 									currpos += sizeof(OldLandTileDataMul);
-									var cur = (OldLandTileDataMul)Marshal.PtrToStructure(ptr, typeof(OldLandTileDataMul));
+									var cur = (OldLandTileDataMul)
+										Marshal.PtrToStructure(ptr, typeof(OldLandTileDataMul));
 									m_LandData[i + count] = new LandData(cur);
 								}
 							}
@@ -921,14 +1022,16 @@ namespace Ultima
 								if (useNeWTileDataFormat)
 								{
 									currpos += sizeof(NewItemTileDataMul);
-									var cur = (NewItemTileDataMul)Marshal.PtrToStructure(ptr, typeof(NewItemTileDataMul));
+									var cur = (NewItemTileDataMul)
+										Marshal.PtrToStructure(ptr, typeof(NewItemTileDataMul));
 									m_ItemData[i + count] = new ItemData(cur);
 									m_HeightTable[i + count] = cur.height;
 								}
 								else
 								{
 									currpos += sizeof(OldItemTileDataMul);
-									var cur = (OldItemTileDataMul)Marshal.PtrToStructure(ptr, typeof(OldItemTileDataMul));
+									var cur = (OldItemTileDataMul)
+										Marshal.PtrToStructure(ptr, typeof(OldItemTileDataMul));
 									m_ItemData[i + count] = new ItemData(cur);
 									m_HeightTable[i + count] = cur.height;
 								}
@@ -1030,10 +1133,14 @@ namespace Ultima
 		{
 			using (
 				var Tex = new StreamWriter(
-					new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+					new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite),
+					Encoding.GetEncoding(1252)
+				)
+			)
 			{
 				Tex.Write(
-					"ID;Name;Weight/Quantity;Layer/Quality;Gump/AnimID;Height;Hue;Class/Quantity;StackingOffset;MiscData;Unknown1;Unknown2;Unknown3");
+					"ID;Name;Weight/Quantity;Layer/Quality;Gump/AnimID;Height;Hue;Class/Quantity;StackingOffset;MiscData;Unknown1;Unknown2;Unknown3"
+				);
 				Tex.Write(";Background;Weapon;Transparent;Translucent;Wall;Damage;Impassible;Wet;Unknow1");
 				Tex.Write(";Surface;Bridge;Generic;Window;NoShoot;PrefixA;PrefixAn;Internal;Foliage;PartialHue");
 				Tex.Write(";Unknow2;Map;Container/Height;Wearable;Lightsource;Animation;HoverOver");
@@ -1196,8 +1303,7 @@ namespace Ultima
 						int id = ConvertStringToInt(split[0]);
 						m_ItemData[id].ReadData(split);
 					}
-					catch
-					{ }
+					catch { }
 				}
 			}
 		}
@@ -1232,8 +1338,7 @@ namespace Ultima
 						int id = ConvertStringToInt(split[0]);
 						m_LandData[id].ReadData(split);
 					}
-					catch
-					{ }
+					catch { }
 				}
 			}
 		}
@@ -1244,7 +1349,7 @@ namespace Ultima
 	{
 		public int flags;
 		public short texID;
-		public fixed byte name [20];
+		public fixed byte name[20];
 	}
 
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -1253,7 +1358,7 @@ namespace Ultima
 		public int flags;
 		public int unk1;
 		public short texID;
-		public fixed byte name [20];
+		public fixed byte name[20];
 	}
 
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -1271,7 +1376,7 @@ namespace Ultima
 		public byte stackingoffset;
 		public byte value;
 		public byte height;
-		public fixed byte name [20];
+		public fixed byte name[20];
 	}
 
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -1290,6 +1395,6 @@ namespace Ultima
 		public byte stackingoffset;
 		public byte value;
 		public byte height;
-		public fixed byte name [20];
+		public fixed byte name[20];
 	}
 }

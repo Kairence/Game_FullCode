@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Server;
 using Server.Items;
 using Server.Mobiles;
-using System.Collections.Generic;
 using Server.Targeting;
 
 /*
@@ -11,25 +11,23 @@ using Server.Targeting;
 
 namespace Server.Engines.Quests
 {
-    public abstract class SimpleObjective : BaseObjective
-    {
-        public abstract List<string> Descriptions { get; }
+	public abstract class SimpleObjective : BaseObjective
+	{
+		public abstract List<string> Descriptions { get; }
 
-        public SimpleObjective(int amount, int seconds)
-            : base(amount, seconds)
-        {
-        }
+		public SimpleObjective(int amount, int seconds)
+			: base(amount, seconds) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0); // version
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 }

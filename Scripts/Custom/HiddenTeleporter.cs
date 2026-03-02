@@ -1,50 +1,58 @@
-using Server;
 using System;
-using Server.Mobiles;
-using Server.Engines.Despise;
 using System.Collections.Generic;
 using System.Linq;
+using Server;
+using Server.Engines.Despise;
 using Server.Gumps;
+using Server.Mobiles;
 using Server.Network;
 using Server.Regions;
 
 namespace Server.Items
 {
-    public class HiddenTeleporter : Teleporter
-    {
-        [Constructable]
-        public HiddenTeleporter()
-        {
+	public class HiddenTeleporter : Teleporter
+	{
+		[Constructable]
+		public HiddenTeleporter()
+		{
 			ItemID = 3948;
 			Hue = 0;
 			Visible = true;
-        }
+		}
+
 		public override void OnDoubleClick(Mobile from)
 		{
 			base.OnDoubleClick(from);
 			if (from.InRange(GetWorldLocation(), 1))
 				CanTeleport(from);
-		}			
-        public override bool CanTeleport(Mobile m)
-        {
-			if ( m_TeleportPoint < 38 )
-				return false;
-            if (m is BaseCreature)
-                return false;
+		}
 
-            return base.CanTeleport(m);
-        }
+		public override bool CanTeleport(Mobile m)
+		{
+			if (m_TeleportPoint < 38)
+				return false;
+			if (m is BaseCreature)
+				return false;
+
+			return base.CanTeleport(m);
+		}
 
 		private Map map = null;
 		private Point3D p = Point3D.Zero;
 
 		private int m_TeleportPoint;
-		[CommandProperty( AccessLevel.GameMaster )]
+
+		[CommandProperty(AccessLevel.GameMaster)]
 		public int TeleportPoint
 		{
-			get{ return m_TeleportPoint;}
-			set{ m_TeleportPoint = value; InvalidateProperties();}
-		}		
+			get { return m_TeleportPoint; }
+			set
+			{
+				m_TeleportPoint = value;
+				InvalidateProperties();
+			}
+		}
+
 		private bool TicketCheck(PlayerMobile pm)
 		{
 			//38 : 코베투스 2층 -> 거미 던전 (이후 테라탄 킵 -> 네이비 둥지까지 이어짐)
@@ -56,14 +64,14 @@ namespace Server.Items
 			//44 : 쉐임 2층 -> 타이탄 섬 (배를 꺼내서 숨겨진 크라켄을 잡으면 보너스 있음)
 			//45 : 쉐임 3층 -> 비홀더 보스
 			//46 : 쉐임 4층 -> 레비아탄 보스
-			//47 : 오크 던전 2층 -> 
-			for( int i = 38; i < 48; i++ )
+			//47 : 오크 던전 2층 ->
+			for (int i = 38; i < 48; i++)
 			{
-				if( pm.SilverPoint[i] >= 1 )
+				if (pm.SilverPoint[i] >= 1)
 				{
-					if( i == 38 ) //5단계 독 확인
+					if (i == 38) //5단계 독 확인
 					{
-						if( pm.Poison == Poison.Lethal )
+						if (pm.Poison == Poison.Lethal)
 						{
 							pm.Poison = null;
 						}
@@ -78,8 +86,8 @@ namespace Server.Items
 			}
 			return false;
 		}
-		
-		private static Map[] MapSelect = 
+
+		private static Map[] MapSelect =
 		{
 			Map.Ilshenar, //38 5레벨 독이 걸린 상태에서 가장 큰 거미줄 통과 (이동 시 독 회복 됨)
 			Map.Ilshenar, // 찢어진 그림에서 비밀키를 외치면 이동
@@ -91,58 +99,58 @@ namespace Server.Items
 			Map.Trammel, //45 마비 상태에서 책장 클릭 시 이동 (이동 시 마비 해제 됨)
 			Map.Trammel, //46 물 정령이 소환된 상태에서 이동
 			Map.Trammel, //47 손도끼로 그루터기 클릭
-			Map.Trammel  //48
+			Map.Trammel, //48
 		};
-		
-		private static Point3D[] LocationSelect = 
+
+		private static Point3D[] LocationSelect =
 		{
-			new Point3D( 1785, 994, -29 ), //38
-			new Point3D( 566, 454, -3 ), //39 [add static 284
-			new Point3D( 338, 1952, 5), //40
-			new Point3D( 156, 1625, 0 ), //41
-			new Point3D( 172, 1740, 50 ), //42
-			new Point3D( 111, 1620, 90 ), //43
-			new Point3D( 6444, 1236, 10), //44
-			new Point3D( 6861, 1195, 0), //45
-			new Point3D( 6848, 1408, 0), //46
-			new Point3D( 0, 0, 0), //47
-			new Point3D( 6650, 191, 0)  //48
+			new Point3D(1785, 994, -29), //38
+			new Point3D(566, 454, -3), //39 [add static 284
+			new Point3D(338, 1952, 5), //40
+			new Point3D(156, 1625, 0), //41
+			new Point3D(172, 1740, 50), //42
+			new Point3D(111, 1620, 90), //43
+			new Point3D(6444, 1236, 10), //44
+			new Point3D(6861, 1195, 0), //45
+			new Point3D(6848, 1408, 0), //46
+			new Point3D(0, 0, 0), //47
+			new Point3D(6650, 191, 0), //48
 		};
-		
-        public override void DoTeleport(Mobile m)
-        {
-			if( m is PlayerMobile && !m.Hidden )
+
+		public override void DoTeleport(Mobile m)
+		{
+			if (m is PlayerMobile && !m.Hidden)
 			{
 				PlayerMobile pm = m as PlayerMobile;
-				if( TicketCheck( pm ) )
+				if (TicketCheck(pm))
 				{
 					m.Send(new PlaySound(0x20E, m.Location));
 					EndConfirmation(m);
 				}
 			}
-        }
+		}
 
 		public virtual void EndConfirmation(Mobile m)
 		{
-            Map map = MapDest;
+			Map map = MapDest;
 
-            if (map == null || map == Map.Internal)
-                map = m.Map;
+			if (map == null || map == Map.Internal)
+				map = m.Map;
 
-            Point3D p = PointDest;
+			Point3D p = PointDest;
 
-            if (p == Point3D.Zero)
-                p = m.Location;
+			if (p == Point3D.Zero)
+				p = m.Location;
 
-            TeleportPets(m, p, map);
+			TeleportPets(m, p, map);
 
-            bool sendEffect = (!m.Hidden || m.AccessLevel == AccessLevel.Player);
+			bool sendEffect = (!m.Hidden || m.AccessLevel == AccessLevel.Player);
 
-            if (SourceEffect && sendEffect)
-                Effects.SendLocationEffect(m.Location, m.Map, 0x3728, 10, 10);
+			if (SourceEffect && sendEffect)
+				Effects.SendLocationEffect(m.Location, m.Map, 0x3728, 10, 10);
 
 			m.MoveToWorld(p, map);
-			
+
 			/*
 			if( m is PlayerMobile )
 			{
@@ -155,60 +163,61 @@ namespace Server.Items
 					Effects.PlaySound(m.Location, m.Map, SoundID);
 			}
 			*/
-		}			
-
-        public static void TeleportPets(Mobile master, Point3D loc, Map map)
-        {
-            var move = new List<Mobile>();
-            IPooledEnumerable eable = master.GetMobilesInRange(3);
-
-            foreach (Mobile m in eable)
-            {
-                if (m is BaseCreature && !(m is DespiseCreature))
-                {
-                    BaseCreature pet = (BaseCreature)m;
-
-                    if (pet.Controlled && pet.ControlMaster == master)
-                    {
-                        if (pet.ControlOrder == OrderType.Guard || pet.ControlOrder == OrderType.Follow ||
-                            pet.ControlOrder == OrderType.Come)
-                        {
-                            move.Add(pet);
-                        }
-                    }
-                }
-            }
-
-            eable.Free();
-
-            foreach (Mobile m in move)
-            {
-                m.MoveToWorld(loc, map);
-            }
-
-            move.Clear();
-            move.TrimExcess();
-        }
-
-        public HiddenTeleporter(Serial serial)
-            : base(serial)
-		{
 		}
-		
+
+		public static void TeleportPets(Mobile master, Point3D loc, Map map)
+		{
+			var move = new List<Mobile>();
+			IPooledEnumerable eable = master.GetMobilesInRange(3);
+
+			foreach (Mobile m in eable)
+			{
+				if (m is BaseCreature && !(m is DespiseCreature))
+				{
+					BaseCreature pet = (BaseCreature)m;
+
+					if (pet.Controlled && pet.ControlMaster == master)
+					{
+						if (
+							pet.ControlOrder == OrderType.Guard
+							|| pet.ControlOrder == OrderType.Follow
+							|| pet.ControlOrder == OrderType.Come
+						)
+						{
+							move.Add(pet);
+						}
+					}
+				}
+			}
+
+			eable.Free();
+
+			foreach (Mobile m in move)
+			{
+				m.MoveToWorld(loc, map);
+			}
+
+			move.Clear();
+			move.TrimExcess();
+		}
+
+		public HiddenTeleporter(Serial serial)
+			: base(serial) { }
+
 		public override void Serialize(GenericWriter writer)
 		{
 			base.Serialize(writer);
 			writer.Write((int)0);
-			
+
 			writer.Write(m_TeleportPoint);
 		}
-		
+
 		public override void Deserialize(GenericReader reader)
 		{
 			base.Deserialize(reader);
 			int v = reader.ReadInt();
-			
+
 			m_TeleportPoint = reader.ReadInt();
 		}
-    }
+	}
 }

@@ -1,230 +1,279 @@
 using System;
-using Server;
-using Server.Spells;
-using Server.Network;
-using Server.Mobiles;
-using Server.Misc;
 using System.Collections.Generic;
-using Server.Items;
 using System.Linq;
+using Server;
+using Server.Items;
+using Server.Misc;
+using Server.Mobiles;
+using Server.Network;
+using Server.Spells;
 
 namespace Server.Spells.SkillMasteries
 {
-    public class NetherBlastSpell : SkillMasterySpell
-    {
-        private static SpellInfo m_Info = new SpellInfo(
-                "Nether Blast", "In Vas Por Grav",
-                204,
-				9061,
-                Reagent.DragonBlood,
-                Reagent.DaemonBone
-            );
+	public class NetherBlastSpell : SkillMasterySpell
+	{
+		private static SpellInfo m_Info = new SpellInfo(
+			"Nether Blast",
+			"In Vas Por Grav",
+			204,
+			9061,
+			Reagent.DragonBlood,
+			Reagent.DaemonBone
+		);
 
-        public override double RequiredSkill { get { return 90; } }
-        public override double UpKeep { get { return 0; } }
-        public override int RequiredMana { get { return 40; } }
-        public override bool PartyEffects { get { return false; } }
+		public override double RequiredSkill
+		{
+			get { return 90; }
+		}
+		public override double UpKeep
+		{
+			get { return 0; }
+		}
+		public override int RequiredMana
+		{
+			get { return 40; }
+		}
+		public override bool PartyEffects
+		{
+			get { return false; }
+		}
 
-        public override SkillName CastSkill { get { return SkillName.Mysticism; } }
-        public override SkillName DamageSkill
-        {
-            get
-            {
-                if (Caster.Skills[SkillName.Focus].Value > Caster.Skills[SkillName.Imbuing].Value)
-                    return SkillName.Focus;
+		public override SkillName CastSkill
+		{
+			get { return SkillName.Mysticism; }
+		}
+		public override SkillName DamageSkill
+		{
+			get
+			{
+				if (Caster.Skills[SkillName.Focus].Value > Caster.Skills[SkillName.Imbuing].Value)
+					return SkillName.Focus;
 
-                return SkillName.Imbuing;
-            }
-        }
+				return SkillName.Imbuing;
+			}
+		}
 
-        public NetherBlastSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+		public NetherBlastSpell(Mobile caster, Item scroll)
+			: base(caster, scroll, m_Info) { }
 
-        public override void SendCastEffect()
-        {
-            Caster.FixedEffect(0x37C4, 87, (int)(GetCastDelay().TotalSeconds * 28), 0x66C, 3);
-        }
+		public override void SendCastEffect()
+		{
+			Caster.FixedEffect(0x37C4, 87, (int)(GetCastDelay().TotalSeconds * 28), 0x66C, 3);
+		}
 
-        public override bool CheckCast()
-        {
-            if (HasSpell(Caster, this.GetType()))
-            {
-                Caster.SendMessage("You cannot use this ability until the last one has expired.");
-                return false;
-            }
+		public override bool CheckCast()
+		{
+			if (HasSpell(Caster, this.GetType()))
+			{
+				Caster.SendMessage("You cannot use this ability until the last one has expired.");
+				return false;
+			}
 
-            return base.CheckCast();
-        }
+			return base.CheckCast();
+		}
 
-        public override void OnCast()
-        {
-            Caster.Target = new MasteryTarget(this, 10, true, Server.Targeting.TargetFlags.None);
-        }
+		public override void OnCast()
+		{
+			Caster.Target = new MasteryTarget(this, 10, true, Server.Targeting.TargetFlags.None);
+		}
 
-        protected override void OnTarget(object o)
-        {
-            if (o is IPoint3D)
-            {
-                IPoint3D p = o as IPoint3D;
+		protected override void OnTarget(object o)
+		{
+			if (o is IPoint3D)
+			{
+				IPoint3D p = o as IPoint3D;
 
-                SpellHelper.Turn(Caster, p);
+				SpellHelper.Turn(Caster, p);
 
-                if (SpellHelper.CheckTown(Caster, Caster) && CheckSequence())
-                {
-                    double skill = ((Caster.Skills[CastSkill].Value * 2) + Caster.Skills[DamageSkill].Value) / 3;
-                    TimeSpan duration = TimeSpan.FromSeconds(1.0 + (skill / 40.0));
+				if (SpellHelper.CheckTown(Caster, Caster) && CheckSequence())
+				{
+					double skill = ((Caster.Skills[CastSkill].Value * 2) + Caster.Skills[DamageSkill].Value) / 3;
+					TimeSpan duration = TimeSpan.FromSeconds(1.0 + (skill / 40.0));
 
-                    Direction d = Utility.GetDirection(Caster, p);
-                    Point3D loc = Caster.Location;
+					Direction d = Utility.GetDirection(Caster, p);
+					Point3D loc = Caster.Location;
 
-                    for (int i = 0; i < 5; ++i)
-                    {
-                        Server.Timer.DelayCall(TimeSpan.FromMilliseconds(i*250), () =>
-                            {
-                                int x = loc.X;
-                                int y = loc.Y;
-                                int z = loc.Z;
+					for (int i = 0; i < 5; ++i)
+					{
+						Server.Timer.DelayCall(
+							TimeSpan.FromMilliseconds(i * 250),
+							() =>
+							{
+								int x = loc.X;
+								int y = loc.Y;
+								int z = loc.Z;
 
-                                Movement.Movement.Offset(d, ref x, ref y);
+								Movement.Movement.Offset(d, ref x, ref y);
 
-                                loc = new Point3D(x, y, z);
+								loc = new Point3D(x, y, z);
 
-                                bool canFit = SpellHelper.AdjustField(ref loc, Caster.Map, 12, false);
+								bool canFit = SpellHelper.AdjustField(ref loc, Caster.Map, 12, false);
 
-                                if (canFit)
-                                {
-                                    Item item = new InternalItem(Caster, this, 0x37CC, loc, Caster.Map, duration);
-                                    item.ProcessDelta();
-                                    Effects.SendLocationParticles(EffectItem.Create(loc, Caster.Map, EffectItem.DefaultDuration), 0x376A, 9, 10, 5048);
-                                }
-                            });
-                    }
+								if (canFit)
+								{
+									Item item = new InternalItem(Caster, this, 0x37CC, loc, Caster.Map, duration);
+									item.ProcessDelta();
+									Effects.SendLocationParticles(
+										EffectItem.Create(loc, Caster.Map, EffectItem.DefaultDuration),
+										0x376A,
+										9,
+										10,
+										5048
+									);
+								}
+							}
+						);
+					}
 
-                    Caster.PlaySound(0x211);
-                }
-            }
-        }
+					Caster.PlaySound(0x211);
+				}
+			}
+		}
 
-        [DispellableField]
-        public class InternalItem : Item
-        {
-            public override bool BlocksFit { get { return true; } }
+		[DispellableField]
+		public class InternalItem : Item
+		{
+			public override bool BlocksFit
+			{
+				get { return true; }
+			}
 
-            public Mobile Caster { get; set; }
-            public Timer Timer { get; set; }
-            public DateTime Expires { get; set; }
-            public NetherBlastSpell Owner { get; set; }
+			public Mobile Caster { get; set; }
+			public Timer Timer { get; set; }
+			public DateTime Expires { get; set; }
+			public NetherBlastSpell Owner { get; set; }
 
-            public InternalItem(Mobile caster, NetherBlastSpell owner, int itemID, Point3D loc, Map map, TimeSpan duration)
-                : base(itemID)
-            {
-                Visible = false;
-                Movable = false;
-                Light = LightType.Circle300;
+			public InternalItem(
+				Mobile caster,
+				NetherBlastSpell owner,
+				int itemID,
+				Point3D loc,
+				Map map,
+				TimeSpan duration
+			)
+				: base(itemID)
+			{
+				Visible = false;
+				Movable = false;
+				Light = LightType.Circle300;
 
-                Owner = owner;
-                Expires = DateTime.UtcNow + duration;
-                MoveToWorld(loc, map);
+				Owner = owner;
+				Expires = DateTime.UtcNow + duration;
+				MoveToWorld(loc, map);
 
-                if (caster.InLOS(this))
-                    Visible = true;
-                else
-                    Delete();
+				if (caster.InLOS(this))
+					Visible = true;
+				else
+					Delete();
 
-                if (Deleted)
-                    return;
+				if (Deleted)
+					return;
 
-                Timer = Timer.DelayCall(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1), OnTick);
-                Timer.Start();
+				Timer = Timer.DelayCall(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1), OnTick);
+				Timer.Start();
 
-                Caster = caster;
-            }
+				Caster = caster;
+			}
 
-            private void OnTick()
-            {
-                if (DateTime.UtcNow > Expires)
-                    Delete();
+			private void OnTick()
+			{
+				if (DateTime.UtcNow > Expires)
+					Delete();
 
-                if (this.Deleted)
-                    return;
+				if (this.Deleted)
+					return;
 
-                foreach (var m in Owner.AcquireIndirectTargets(Location, 1).OfType<Mobile>().Where(m =>
-                    (m.Z + 16) > Z && 
-                    (Z + 12) > m.Z))
-                {
-                    DoDamage(m);
-                }
-            }
+				foreach (
+					var m in Owner
+						.AcquireIndirectTargets(Location, 1)
+						.OfType<Mobile>()
+						.Where(m => (m.Z + 16) > Z && (Z + 12) > m.Z)
+				)
+				{
+					DoDamage(m);
+				}
+			}
 
-            public override void OnAfterDelete()
-            {
-                base.OnAfterDelete();
+			public override void OnAfterDelete()
+			{
+				base.OnAfterDelete();
 
-                if (Timer != null)
-                {
-                    Timer.Stop();
-                    Timer = null;
-                }
-            }
+				if (Timer != null)
+				{
+					Timer.Stop();
+					Timer = null;
+				}
+			}
 
-            public InternalItem(Serial serial)
-                : base(serial)
-            {
-            }
+			public InternalItem(Serial serial)
+				: base(serial) { }
 
-            public override void Serialize(GenericWriter writer)
-            {
-                base.Serialize(writer);
+			public override void Serialize(GenericWriter writer)
+			{
+				base.Serialize(writer);
 
-                writer.Write((int)0); // version
-            }
+				writer.Write((int)0); // version
+			}
 
-            public override void Deserialize(GenericReader reader)
-            {
-                base.Deserialize(reader);
+			public override void Deserialize(GenericReader reader)
+			{
+				base.Deserialize(reader);
 
-                int version = reader.ReadInt();
+				int version = reader.ReadInt();
 
-                Delete();
-            }
+				Delete();
+			}
 
-            public bool DoDamage(Mobile m)
-            {
-                if (Visible && Caster != null && (!Core.AOS || m != Caster) && SpellHelper.ValidIndirectTarget(Caster, m) && Caster.CanBeHarmful(m, false))
-                {
-                    if (SpellHelper.CanRevealCaster(m))
-                        Caster.RevealingAction();
+			public bool DoDamage(Mobile m)
+			{
+				if (
+					Visible
+					&& Caster != null
+					&& (!Core.AOS || m != Caster)
+					&& SpellHelper.ValidIndirectTarget(Caster, m)
+					&& Caster.CanBeHarmful(m, false)
+				)
+				{
+					if (SpellHelper.CanRevealCaster(m))
+						Caster.RevealingAction();
 
-                    SkillName damageSkill = Caster.Skills[SkillName.Focus].Value > Caster.Skills[SkillName.Imbuing].Value ? SkillName.Focus : SkillName.Imbuing;
+					SkillName damageSkill =
+						Caster.Skills[SkillName.Focus].Value > Caster.Skills[SkillName.Imbuing].Value
+							? SkillName.Focus
+							: SkillName.Imbuing;
 
-                    double skill = ((Caster.Skills[SkillName.Mysticism].Value) + Caster.Skills[damageSkill].Value * 2) / 3;
-                    skill /= m.Player ? 3.5 : 2;
+					double skill =
+						((Caster.Skills[SkillName.Mysticism].Value) + Caster.Skills[damageSkill].Value * 2) / 3;
+					skill /= m.Player ? 3.5 : 2;
 
-                    int damage = (int)skill + Utility.RandomMinMax(-3, 3);
-                    damage *= (int)Owner.GetDamageScalar(m);
+					int damage = (int)skill + Utility.RandomMinMax(-3, 3);
+					damage *= (int)Owner.GetDamageScalar(m);
 
-                    int sdiBonus = SpellHelper.GetSpellDamageBonus(Caster, m, Owner.CastSkill, Caster.Player && m.Player);
+					int sdiBonus = SpellHelper.GetSpellDamageBonus(
+						Caster,
+						m,
+						Owner.CastSkill,
+						Caster.Player && m.Player
+					);
 
-                    damage *= (100 + sdiBonus);
-                    damage /= 100;
+					damage *= (100 + sdiBonus);
+					damage /= 100;
 
-                    AOS.Damage(m, Caster, damage, 0, 0, 0, 0, 0, 100, 0, DamageType.SpellAOE);
+					AOS.Damage(m, Caster, damage, 0, 0, 0, 0, 0, 100, 0, DamageType.SpellAOE);
 
-                    m.FixedParticles(0x374A, 1, 15, 9502, 97, 3, (EffectLayer)255);
+					m.FixedParticles(0x374A, 1, 15, 9502, 97, 3, (EffectLayer)255);
 
-                    int manaRip = Math.Max(m.Mana, damage / 4);
+					int manaRip = Math.Max(m.Mana, damage / 4);
 
-                    if (manaRip > 0)
-                    {
-                        m.Mana -= manaRip;
-                        Caster.Mana += manaRip;
-                    }
-                }
+					if (manaRip > 0)
+					{
+						m.Mana -= manaRip;
+						Caster.Mana += manaRip;
+					}
+				}
 
-                return true;
-            }
-        }
-    }
+				return true;
+			}
+		}
+	}
 }

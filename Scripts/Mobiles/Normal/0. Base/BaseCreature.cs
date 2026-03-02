@@ -26,343 +26,359 @@ using Server.Spells;
 using Server.Spells.Bushido;
 using Server.Spells.Necromancy;
 using Server.Spells.Sixth;
-using Server.Spells.Third;
 using Server.Spells.SkillMasteries;
 using Server.Spells.Spellweaving;
+using Server.Spells.Third;
 using Server.Targeting;
 #endregion
 
 namespace Server.Mobiles
 {
-    #region Enums
-    /// <summary>
-    ///     Summary description for MobileAI.
-    /// </summary>
-    public enum FightMode
-    {
-        None, // Never focus on others
-        Aggressor, // Only attack aggressors
-        Strongest, // Attack the strongest
-        Weakest, // Attack the weakest
-        Closest, // Attack the closest
-        Evil, // Only attack aggressor -or- negative karma
-        Good // Only attack aggressor -or- positive karma
-    }
+	#region Enums
+	/// <summary>
+	///     Summary description for MobileAI.
+	/// </summary>
+	public enum FightMode
+	{
+		None, // Never focus on others
+		Aggressor, // Only attack aggressors
+		Strongest, // Attack the strongest
+		Weakest, // Attack the weakest
+		Closest, // Attack the closest
+		Evil, // Only attack aggressor -or- negative karma
+		Good // Only attack aggressor -or- positive karma
+		,
+	}
 
-    public enum OrderType
-    {
-        None, //When no order, let's roam
-        Come, //"(All/Name) come"  Summons all or one pet to your location.
-        Drop, //"(Name) drop"  Drops its loot to the ground (if it carries any).
-        Follow, //"(Name) follow"  Follows targeted being.
-                //"(All/Name) follow me"  Makes all or one pet follow you.
-        Friend, //"(Name) friend"  Allows targeted player to confirm resurrection.
-        Unfriend, // Remove a friend
-        Guard, //"(Name) guard"  Makes the specified pet guard you. Pets can only guard their owner.
-               //"(All/Name) guard me"  Makes all or one pet guard you.
-        Attack, //"(All/Name) kill",
-                //"(All/Name) attack"  All or the specified pet(s) currently under your control attack the target.
-        Patrol, //"(Name) patrol"  Roves between two or more guarded targets.
-        Release, //"(Name) release"  Releases pet back into the wild (removes "tame" status).
-        Stay, //"(All/Name) stay" All or the specified pet(s) will stop and stay in current spot.
-        Stop, //"(All/Name) stop Cancels any current orders to attack, guard or follow.
-        Transfer //"(Name) transfer" Transfers complete ownership to targeted player.
-    }
+	public enum OrderType
+	{
+		None, //When no order, let's roam
+		Come, //"(All/Name) come"  Summons all or one pet to your location.
+		Drop, //"(Name) drop"  Drops its loot to the ground (if it carries any).
+		Follow, //"(Name) follow"  Follows targeted being.
 
-    [Flags]
-    public enum FoodType
-    {
-        None = 0x0000,
-        Meat = 0x0001,
-        FruitsAndVegies = 0x0002,
-        GrainsAndHay = 0x0004,
-        Fish = 0x0008,
-        Eggs = 0x0010,
-        Gold = 0x0020,
-        Metal = 0x0040,
-        BlackrockStew = 0x0080
-    }
+		//"(All/Name) follow me"  Makes all or one pet follow you.
+		Friend, //"(Name) friend"  Allows targeted player to confirm resurrection.
+		Unfriend, // Remove a friend
+		Guard, //"(Name) guard"  Makes the specified pet guard you. Pets can only guard their owner.
 
-    [Flags]
-    public enum PackInstinct
-    {
-        None = 0x0000,
-        Canine = 0x0001,
-        Ostard = 0x0002,
-        Feline = 0x0004,
-        Arachnid = 0x0008,
-        Daemon = 0x0010,
-        Bear = 0x0020,
-        Equine = 0x0040,
-        Bull = 0x0080
-    }
+		//"(All/Name) guard me"  Makes all or one pet guard you.
+		Attack, //"(All/Name) kill",
 
-    public enum ScaleType
-    {
-        Red,
-        Yellow,
-        Black,
-        Green,
-        White,
-        Blue,
-        MedusaLight,
-        MedusaDark,
-        All
-    }
+		//"(All/Name) attack"  All or the specified pet(s) currently under your control attack the target.
+		Patrol, //"(Name) patrol"  Roves between two or more guarded targets.
+		Release, //"(Name) release"  Releases pet back into the wild (removes "tame" status).
+		Stay, //"(All/Name) stay" All or the specified pet(s) will stop and stay in current spot.
+		Stop, //"(All/Name) stop Cancels any current orders to attack, guard or follow.
+		Transfer //"(Name) transfer" Transfers complete ownership to targeted player.
+		,
+	}
 
-    public enum MeatType
-    {
-        Ribs,
-        Bird,
-        LambLeg,
-        Rotworm
-    }
+	[Flags]
+	public enum FoodType
+	{
+		None = 0x0000,
+		Meat = 0x0001,
+		FruitsAndVegies = 0x0002,
+		GrainsAndHay = 0x0004,
+		Fish = 0x0008,
+		Eggs = 0x0010,
+		Gold = 0x0020,
+		Metal = 0x0040,
+		BlackrockStew = 0x0080,
+	}
 
-    public enum HideType
-    {
-        Regular,
-        Derned,
-        Ratned,
-        Serned,
-        Spined,
-        Horned,
-        Barbed
-    }
+	[Flags]
+	public enum PackInstinct
+	{
+		None = 0x0000,
+		Canine = 0x0001,
+		Ostard = 0x0002,
+		Feline = 0x0004,
+		Arachnid = 0x0008,
+		Daemon = 0x0010,
+		Bear = 0x0020,
+		Equine = 0x0040,
+		Bull = 0x0080,
+	}
 
-    public enum FurType
-    {
-        None,
-        Green,
-        LightBrown,
-        Yellow,
-        Brown
-    }
+	public enum ScaleType
+	{
+		Red,
+		Yellow,
+		Black,
+		Green,
+		White,
+		Blue,
+		MedusaLight,
+		MedusaDark,
+		All,
+	}
 
-    public enum TribeType
-    {
-        None,
-        Terathan,
-        Ophidian,
-        Savage,
-        Orc,
-        Fey,
-        Undead,
-        GrayGoblin,
-        GreenGoblin
-    }
-    #endregion
+	public enum MeatType
+	{
+		Ribs,
+		Bird,
+		LambLeg,
+		Rotworm,
+	}
 
-    public class DamageStore : IComparable
-    {
-        public Mobile m_Mobile;
-        public int m_Damage;
-        public bool m_HasRight;
+	public enum HideType
+	{
+		Regular,
+		Derned,
+		Ratned,
+		Serned,
+		Spined,
+		Horned,
+		Barbed,
+	}
 
-        public DamageStore(Mobile m, int damage)
-        {
-            m_Mobile = m;
-            m_Damage = damage;
-        }
+	public enum FurType
+	{
+		None,
+		Green,
+		LightBrown,
+		Yellow,
+		Brown,
+	}
 
-        public int CompareTo(object obj)
-        {
-            DamageStore ds = (DamageStore)obj;
+	public enum TribeType
+	{
+		None,
+		Terathan,
+		Ophidian,
+		Savage,
+		Orc,
+		Fey,
+		Undead,
+		GrayGoblin,
+		GreenGoblin,
+	}
+	#endregion
 
-            return ds.m_Damage - m_Damage;
-        }
-    }
+	public class DamageStore : IComparable
+	{
+		public Mobile m_Mobile;
+		public int m_Damage;
+		public bool m_HasRight;
 
-    [AttributeUsage(AttributeTargets.Class)]
-    public class FriendlyNameAttribute : Attribute
-    {
-        //future use: Talisman 'Protection/Bonus vs. Specific Creature
-        private readonly TextDefinition m_FriendlyName;
+		public DamageStore(Mobile m, int damage)
+		{
+			m_Mobile = m;
+			m_Damage = damage;
+		}
 
-        public TextDefinition FriendlyName { get { return m_FriendlyName; } }
+		public int CompareTo(object obj)
+		{
+			DamageStore ds = (DamageStore)obj;
 
-        public FriendlyNameAttribute(TextDefinition friendlyName)
-        {
-            m_FriendlyName = friendlyName;
-        }
+			return ds.m_Damage - m_Damage;
+		}
+	}
 
-        public static TextDefinition GetFriendlyNameFor(Type t)
-        {
-            if (t.IsDefined(typeof(FriendlyNameAttribute), false))
-            {
-                var objs = t.GetCustomAttributes(typeof(FriendlyNameAttribute), false);
+	[AttributeUsage(AttributeTargets.Class)]
+	public class FriendlyNameAttribute : Attribute
+	{
+		//future use: Talisman 'Protection/Bonus vs. Specific Creature
+		private readonly TextDefinition m_FriendlyName;
 
-                if (objs != null && objs.Length > 0)
-                {
-                    FriendlyNameAttribute friendly = objs[0] as FriendlyNameAttribute;
+		public TextDefinition FriendlyName
+		{
+			get { return m_FriendlyName; }
+		}
 
-                    return friendly.FriendlyName;
-                }
-            }
+		public FriendlyNameAttribute(TextDefinition friendlyName)
+		{
+			m_FriendlyName = friendlyName;
+		}
 
-            return t.Name;
-        }
-    }
+		public static TextDefinition GetFriendlyNameFor(Type t)
+		{
+			if (t.IsDefined(typeof(FriendlyNameAttribute), false))
+			{
+				var objs = t.GetCustomAttributes(typeof(FriendlyNameAttribute), false);
 
-    public class BaseCreature : Mobile, IHonorTarget, IEngravable
-    {
-        public const int MaxLoyalty = 100;
+				if (objs != null && objs.Length > 0)
+				{
+					FriendlyNameAttribute friendly = objs[0] as FriendlyNameAttribute;
 
-        private bool _LockDirection;
+					return friendly.FriendlyName;
+				}
+			}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool LockDirection
-        {
-            get
-            {
-                if (AIObject == null)
-                {
-                    return _LockDirection;
-                }
+			return t.Name;
+		}
+	}
 
-                return AIObject.DirectionLocked = _LockDirection;
-            }
-            set
-            {
-                _LockDirection = value;
+	public class BaseCreature : Mobile, IHonorTarget, IEngravable
+	{
+		public const int MaxLoyalty = 100;
 
-                if (AIObject != null)
-                {
-                    AIObject.DirectionLocked = value;
-                }
-            }
-        }
+		private bool _LockDirection;
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool CanMove { get; set; }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool LockDirection
+		{
+			get
+			{
+				if (AIObject == null)
+				{
+					return _LockDirection;
+				}
 
-        public virtual bool CanCallGuards
-        {
-            get { return !Deleted && Alive && !AlwaysMurderer && Kills < 5 && (Player || Body.IsHuman); }
-        }
+				return AIObject.DirectionLocked = _LockDirection;
+			}
+			set
+			{
+				_LockDirection = value;
 
-        #region Var declarations
-        private BaseAI m_AI; // THE AI
+				if (AIObject != null)
+				{
+					AIObject.DirectionLocked = value;
+				}
+			}
+		}
 
-        private AIType m_CurrentAI; // The current AI
-        private AIType m_DefaultAI; // The default AI
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool CanMove { get; set; }
 
-        private FightMode m_FightMode; // The style the mob uses
+		public virtual bool CanCallGuards
+		{
+			get { return !Deleted && Alive && !AlwaysMurderer && Kills < 5 && (Player || Body.IsHuman); }
+		}
 
-        private int m_iRangePerception; // The view area
-        private int m_iRangeFight; // The fight distance
+		#region Var declarations
+		private BaseAI m_AI; // THE AI
 
-        private bool m_bDebugAI; // Show debug AI messages
+		private AIType m_CurrentAI; // The current AI
+		private AIType m_DefaultAI; // The default AI
 
-        private int m_iTeam; // Monster Team
+		private FightMode m_FightMode; // The style the mob uses
 
-        private double m_ForceActiveSpeed;
-        private double m_ForcePassiveSpeed;
+		private int m_iRangePerception; // The view area
+		private int m_iRangeFight; // The fight distance
 
-        private double m_dActiveSpeed; // Timer speed when active
-        private double m_dPassiveSpeed; // Timer speed when not active
-        private double m_dCurrentSpeed; // The current speed, lets say it could be changed by something;
+		private bool m_bDebugAI; // Show debug AI messages
 
-        private Point3D m_pHome; // The home position of the creature, used by some AI
-        private int m_iRangeHome = 10; // The home range of the creature
+		private int m_iTeam; // Monster Team
 
-        private readonly List<Type> m_arSpellAttack; // List of attack spell/power
-        private readonly List<Type> m_arSpellDefense; // List of defensive spell/power
+		private double m_ForceActiveSpeed;
+		private double m_ForcePassiveSpeed;
 
-        private bool m_bControlled; // Is controlled
-        private Mobile m_ControlMaster; // My master
-        private IDamageable m_ControlTarget; // My target mobile
-        private Point3D m_ControlDest; // My target destination (patrol)
-        private OrderType m_ControlOrder; // My order
+		private double m_dActiveSpeed; // Timer speed when active
+		private double m_dPassiveSpeed; // Timer speed when not active
+		private double m_dCurrentSpeed; // The current speed, lets say it could be changed by something;
+
+		private Point3D m_pHome; // The home position of the creature, used by some AI
+		private int m_iRangeHome = 10; // The home range of the creature
+
+		private readonly List<Type> m_arSpellAttack; // List of attack spell/power
+		private readonly List<Type> m_arSpellDefense; // List of defensive spell/power
+
+		private bool m_bControlled; // Is controlled
+		private Mobile m_ControlMaster; // My master
+		private IDamageable m_ControlTarget; // My target mobile
+		private Point3D m_ControlDest; // My target destination (patrol)
+		private OrderType m_ControlOrder; // My order
 
 		public int attackcharge = 0;
-        private int m_Loyalty;
+		private int m_Loyalty;
 
-        private double m_dMinTameSkill;
-        private double m_CurrentTameSkill;
-        private bool m_bTamable;
+		private double m_dMinTameSkill;
+		private double m_CurrentTameSkill;
+		private bool m_bTamable;
 
-        private bool m_bSummoned;
-        private DateTime m_SummonEnd;
-        private int m_iControlSlots = 1;
+		private bool m_bSummoned;
+		private DateTime m_SummonEnd;
+		private int m_iControlSlots = 1;
 
-        private bool m_bBardProvoked;
-        private bool m_bBardPacified;
-        private Mobile m_bBardMaster;
-        private Mobile m_bBardTarget;
-        private WayPoint m_CurrentWayPoint;
-        private IPoint2D m_TargetLocation;
+		private bool m_bBardProvoked;
+		private bool m_bBardPacified;
+		private Mobile m_bBardMaster;
+		private Mobile m_bBardTarget;
+		private WayPoint m_CurrentWayPoint;
+		private IPoint2D m_TargetLocation;
 
-        private int _CurrentNavPoint;
-        private Dictionary<Map, List<Point2D>> _NavPoints;
+		private int _CurrentNavPoint;
+		private Dictionary<Map, List<Point2D>> _NavPoints;
 
-        private Mobile m_SummonMaster;
+		private Mobile m_SummonMaster;
 
-        private int m_HitsMax = -1;
-        private int m_StamMax = -1;
-        private int m_ManaMax = -1;
-        private int m_DamageMin = -1;
-        private int m_DamageMax = -1;
+		private int m_HitsMax = -1;
+		private int m_StamMax = -1;
+		private int m_ManaMax = -1;
+		private int m_DamageMin = -1;
+		private int m_DamageMax = -1;
 
-        private int m_PhysicalResistance, m_PhysicalDamage = 100;
-        private int m_FireResistance, m_FireDamage;
-        private int m_ColdResistance, m_ColdDamage;
-        private int m_PoisonResistance, m_PoisonDamage;
-        private int m_EnergyResistance, m_EnergyDamage;
-        private int m_ChaosResistance, m_ChaosDamage;
-        private int m_DirectResistance, m_DirectDamage;
+		private int m_PhysicalResistance,
+			m_PhysicalDamage = 100;
+		private int m_FireResistance,
+			m_FireDamage;
+		private int m_ColdResistance,
+			m_ColdDamage;
+		private int m_PoisonResistance,
+			m_PoisonDamage;
+		private int m_EnergyResistance,
+			m_EnergyDamage;
+		private int m_ChaosResistance,
+			m_ChaosDamage;
+		private int m_DirectResistance,
+			m_DirectDamage;
 
-        private List<Mobile> m_Owners;
-        private List<Mobile> m_Friends;
+		private List<Mobile> m_Owners;
+		private List<Mobile> m_Friends;
 
-        private bool m_IsStabled;
+		private bool m_IsStabled;
 
-        private bool m_HasGeneratedLoot; // have we generated our loot yet?
+		private bool m_HasGeneratedLoot; // have we generated our loot yet?
 
-        private bool m_Paragon;
+		private bool m_Paragon;
 
-        private string m_CorpseNameOverride;
+		private string m_CorpseNameOverride;
 
-        private int m_FailedReturnHome; /* return to home failure counter */
+		private int m_FailedReturnHome; /* return to home failure counter */
 
-        private bool m_IsChampionSpawn;
+		private bool m_IsChampionSpawn;
 
-        private Mobile m_InitialFocus;
-        #endregion
+		private Mobile m_InitialFocus;
+		#endregion
 
-        #region Monster Stealables
-        private bool m_HasBeenStolen;
+		#region Monster Stealables
+		private bool m_HasBeenStolen;
 
-        [CommandProperty(AccessLevel.Administrator)]
-        public bool HasBeenStolen
-        {
-            get { return m_HasBeenStolen; }
-            set { m_HasBeenStolen = value; }
-        }
-        #endregion
-		
+		[CommandProperty(AccessLevel.Administrator)]
+		public bool HasBeenStolen
+		{
+			get { return m_HasBeenStolen; }
+			set { m_HasBeenStolen = value; }
+		}
+		#endregion
+
 		private int loot_count;
-        [CommandProperty(AccessLevel.Administrator)]
-        public int LootCount
-        {
-            get { return loot_count; }
-            set { loot_count = value; }
-        }
-		private int loot_grade;
-        [CommandProperty(AccessLevel.Administrator)]
-        public int LootGrade
-        {
-            get { return loot_grade; }
-            set { loot_grade = value; }
-        }
 
+		[CommandProperty(AccessLevel.Administrator)]
+		public int LootCount
+		{
+			get { return loot_count; }
+			set { loot_count = value; }
+		}
+		private int loot_grade;
+
+		[CommandProperty(AccessLevel.Administrator)]
+		public int LootGrade
+		{
+			get { return loot_grade; }
+			set { loot_grade = value; }
+		}
 
 		public override bool CheckShove(Mobile shoved)
 		{
 			//base.CheckShove(shoved);
 
-			DungeonRegion dungeon = (DungeonRegion)Region.GetRegion(typeof(DungeonRegion));			
-			
-			if( dungeon != null && IsMonster )
+			DungeonRegion dungeon = (DungeonRegion)Region.GetRegion(typeof(DungeonRegion));
+
+			if (dungeon != null && IsMonster)
 				return false;
 			else
 				return true;
@@ -379,32 +395,40 @@ namespace Server.Mobiles
 			return false;
 			*/
 		}
-	
-		
-        public virtual InhumanSpeech SpeechType { get { return null; } }
 
-        public virtual bool ForceStayHome { get { return false; } }
+		public virtual InhumanSpeech SpeechType
+		{
+			get { return null; }
+		}
 
-        public int FollowRange { get; set; }
+		public virtual bool ForceStayHome
+		{
+			get { return false; }
+		}
 
-        public virtual bool CanBeParagon { get { return false; } }
+		public int FollowRange { get; set; }
+
+		public virtual bool CanBeParagon
+		{
+			get { return false; }
+		}
 
 		//몬스터 변수 지정
 		private DateTime m_WeaponDefenseTime;
 		public DateTime WeaponDefenseTime
 		{
-			get{ return m_WeaponDefenseTime; }
-			set{ m_WeaponDefenseTime = value;}
+			get { return m_WeaponDefenseTime; }
+			set { m_WeaponDefenseTime = value; }
 		}
 
 		private DateTime m_MagicDefenseTime;
 		public DateTime MagicDefenseTime
 		{
-			get{ return m_MagicDefenseTime; }
-			set{ m_MagicDefenseTime = value;}
+			get { return m_MagicDefenseTime; }
+			set { m_MagicDefenseTime = value; }
 		}
 
-        /* Do not serialize this till the code is finalized */
+		/* Do not serialize this till the code is finalized */
 
 		//변수 지정
 		private static int[] m_DefaultExps = new int[]
@@ -509,798 +533,942 @@ namespace Server.Mobiles
 			4835,
 			4895,
 			4950,
-			5000
+			5000,
 		};
-        public void SetExp(int val)
-        {
+
+		public void SetExp(int val)
+		{
 			val += 100;
 			DungeonRegion dungeon = (DungeonRegion)Region.GetRegion(typeof(DungeonRegion));
-			if ( m_Grade != 0 && dungeon != null)
+			if (m_Grade != 0 && dungeon != null)
 				val += 10;
 			val *= m_Exp;
 			val /= 100;
-            m_Exp = val;
-        }
-		
+			m_Exp = val;
+		}
+
 		private bool m_Boss;
-		[CommandProperty( AccessLevel.GameMaster )]
+
+		[CommandProperty(AccessLevel.GameMaster)]
 		public bool Boss
 		{
-			get
-			{
-				return m_Boss;
-			}
+			get { return m_Boss; }
 			set
 			{
-				m_Boss = value; InvalidateProperties();
-			}
-		}		
-		
-		private int m_Exp;
-		[CommandProperty( AccessLevel.GameMaster )]
-		public int Exp
-		{
-			get
-			{
-				return ( !Controlled ? m_DefaultExps[m_Level] : m_Exp );
-			}
-			set
-			{
-				m_Exp = value; InvalidateProperties();
-			}
-		}		
-
-		private bool m_LevelCheck;
-		[CommandProperty( AccessLevel.GameMaster )]
-		public bool LevelCheck
-		{
-			get
-			{
-				return m_LevelCheck;
-			}
-			set
-			{
-				m_LevelCheck = value; InvalidateProperties();
-			}
-		}		
-
-		private string m_RawName;
-		[CommandProperty( AccessLevel.GameMaster )]
-		public string RawName
-		{
-			get
-			{
-				return m_RawName;
-			}
-			set
-			{
-				m_RawName = value; InvalidateProperties();
-			}
-		}		
-		
-		private int m_Level;
-		[CommandProperty( AccessLevel.GameMaster )]
-		public int Level
-		{
-			get
-			{
-				return m_Level;
-			}
-			set
-			{
-				m_Level = value; InvalidateProperties();
+				m_Boss = value;
+				InvalidateProperties();
 			}
 		}
-	
-		private int m_Grade;
-		[CommandProperty( AccessLevel.GameMaster )]
-		public int Grade
+
+		private int m_Exp;
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int Exp
 		{
-			get
-			{
-				return m_Grade;
-			}
+			get { return (!Controlled ? m_DefaultExps[m_Level] : m_Exp); }
 			set
 			{
-				m_Grade = value; 
+				m_Exp = value;
+				InvalidateProperties();
+			}
+		}
+
+		private bool m_LevelCheck;
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool LevelCheck
+		{
+			get { return m_LevelCheck; }
+			set
+			{
+				m_LevelCheck = value;
+				InvalidateProperties();
+			}
+		}
+
+		private string m_RawName;
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public string RawName
+		{
+			get { return m_RawName; }
+			set
+			{
+				m_RawName = value;
+				InvalidateProperties();
+			}
+		}
+
+		private int m_Level;
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int Level
+		{
+			get { return m_Level; }
+			set
+			{
+				m_Level = value;
+				InvalidateProperties();
+			}
+		}
+
+		private int m_Grade;
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int Grade
+		{
+			get { return m_Grade; }
+			set
+			{
+				m_Grade = value;
 				Misc.CreatureBalancer.Apply(this);
 				InvalidateProperties();
 			}
 		}
 		private double m_AttackSpeed;
-		[CommandProperty( AccessLevel.GameMaster )]
+
+		[CommandProperty(AccessLevel.GameMaster)]
 		public double AttackSpeed
 		{
-			get
-			{
-				return m_AttackSpeed;
-			}
+			get { return m_AttackSpeed; }
 			set
 			{
-				m_AttackSpeed = value; InvalidateProperties();
+				m_AttackSpeed = value;
+				InvalidateProperties();
 			}
 		}
 		private double m_AttackRange;
-		[CommandProperty( AccessLevel.GameMaster )]
+
+		[CommandProperty(AccessLevel.GameMaster)]
 		public double AttackRange
 		{
-			get
-			{
-				return m_AttackRange;
-			}
+			get { return m_AttackRange; }
 			set
 			{
-				m_AttackRange = value; InvalidateProperties();
+				m_AttackRange = value;
+				InvalidateProperties();
 			}
 		}
 
 		private bool m_AcidBreath;
-		[CommandProperty( AccessLevel.GameMaster )]
+
+		[CommandProperty(AccessLevel.GameMaster)]
 		public bool AcidBreath
 		{
-			get
-			{
-				return m_AcidBreath;
-			}
+			get { return m_AcidBreath; }
 			set
 			{
-				m_AcidBreath = value; InvalidateProperties();
+				m_AcidBreath = value;
+				InvalidateProperties();
 			}
 		}
 
 		private double m_AcidTime;
-		[CommandProperty( AccessLevel.GameMaster )]
+
+		[CommandProperty(AccessLevel.GameMaster)]
 		public double AcidTime
 		{
-			get
-			{
-				return m_AcidTime;
-			}
+			get { return m_AcidTime; }
 			set
 			{
-				m_AcidTime = value; InvalidateProperties();
+				m_AcidTime = value;
+				InvalidateProperties();
 			}
 		}
 
 		private int m_PetTier;
-		[CommandProperty( AccessLevel.GameMaster )]
+
+		[CommandProperty(AccessLevel.GameMaster)]
 		public int PetTier
 		{
-			get{ return m_PetTier; }
-			set{ m_PetTier = value; }
+			get { return m_PetTier; }
+			set { m_PetTier = value; }
 		}
-		
+
 		private DateTime m_FarmTime;
-		[CommandProperty( AccessLevel.GameMaster )]
+
+		[CommandProperty(AccessLevel.GameMaster)]
 		public DateTime FarmTime
 		{
-			get{ return m_FarmTime; }
-			set{ m_FarmTime = value; }
-		}		
-		
-        private bool m_SeeksHome;
+			get { return m_FarmTime; }
+			set { m_FarmTime = value; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool SeeksHome { get { return m_SeeksHome; } set { m_SeeksHome = value; } }
+		private bool m_SeeksHome;
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public string CorpseNameOverride { get { return m_CorpseNameOverride; } set { m_CorpseNameOverride = value; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool SeeksHome
+		{
+			get { return m_SeeksHome; }
+			set { m_SeeksHome = value; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
-        public bool IsStabled
-        {
-            get { return m_IsStabled; }
-            set
-            {
-                m_IsStabled = value;
-                if (m_IsStabled)
-                {
-                    StopDeleteTimer();
-                }
-            }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public string CorpseNameOverride
+		{
+			get { return m_CorpseNameOverride; }
+			set { m_CorpseNameOverride = value; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
-        public Mobile StabledBy { get; set; }
+		[CommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
+		public bool IsStabled
+		{
+			get { return m_IsStabled; }
+			set
+			{
+				m_IsStabled = value;
+				if (m_IsStabled)
+				{
+					StopDeleteTimer();
+				}
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool IsPrisoner { get; set; }
-		
+		[CommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
+		public Mobile StabledBy { get; set; }
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool IsPrisoner { get; set; }
+
 		private DateTime m_DeathTime;
-        [CommandProperty(AccessLevel.GameMaster)]
+
+		[CommandProperty(AccessLevel.GameMaster)]
 		public DateTime DeathTime
 		{
-			get { return m_DeathTime;  }
+			get { return m_DeathTime; }
 			set { value = m_DeathTime; }
 		}
-		
-        protected DateTime SummonEnd { get { return m_SummonEnd; } set { m_SummonEnd = value; } }
 
-        public virtual Faction FactionAllegiance { get { return null; } }
-
-        public virtual int DefaultHitsRegen 
-        {
-            get
-            {
-                int regen = 1;
-
-                if (IsAnimatedDead)
-                    regen = 4;
-
-                if (IsParagon)
-                    regen += 40;
-
-				if( this is Troll )
-					regen += 20;
-				
-                regen += HumilityVirtue.GetRegenBonus(this);
-
-                if (AbilityProfile != null)
-                    regen += AbilityProfile.RegenHits;
-
-                return regen;
-            }
-        }
-
-        public virtual int DefaultStamRegen
-        {
-            get
-            {
-                int regen = 1;
-
-                regen += MasteryInfo.EnchantedSummoningBonus(this);
-
-                if (IsParagon)
-                    regen += 40;
-
-                if (AbilityProfile != null)
-                    regen += AbilityProfile.RegenStam;
-
-                return regen;
-            }
-        }
-
-        public virtual int DefaultManaRegen
-        {
-            get
-            {
-                int regen = 1;
-
-                if (IsParagon)
-                    regen += 40;
-
-                if (AbilityProfile != null)
-                    regen += AbilityProfile.RegenMana;
-
-                return regen;
-            }
-        }
-
-        #region Bonding
-        public const bool BondingEnabled = true;
-
-        public virtual bool IsBondable { get { return (BondingEnabled && !Summoned && !m_Allured && !IsGolem); } }
-        public virtual TimeSpan BondingDelay { get { return TimeSpan.FromDays(7.0); } }
-        public virtual TimeSpan BondingAbandonDelay { get { return TimeSpan.FromDays(1.0); } }
-
-        public override bool CanRegenHits { get { return !m_IsDeadPet && !Summoned && base.CanRegenHits; } }
-        public override bool CanRegenStam { get { return !IsParagon && !m_IsDeadPet && base.CanRegenStam; } }
-        public override bool CanRegenMana { get { return !m_IsDeadPet && base.CanRegenMana; } }
-
-        public override bool IsDeadBondedPet { get { return m_IsDeadPet; } }
-
-        private bool m_IsBonded = false;
-        private bool m_IsDeadPet;
-        private DateTime m_BondingBegin;
-        private DateTime m_OwnerAbandonTime;
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Spawner MySpawner
-        {
-            get
-            {
-                if (Spawner is Spawner)
-                {
-                    return (Spawner as Spawner);
-                }
-
-                return null;
-            }
-            set { }
-        }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Mobile LastOwner
-        {
-            get
-            {
-                if (m_Owners == null || m_Owners.Count == 0)
-                {
-                    return null;
-                }
-
-                return m_Owners[m_Owners.Count - 1];
-            }
-        }
-
-        public bool IsGolem
-        {
-            get { return this is IRepairableMobile; }
-        }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool IsBonded
-        {
-            get { return m_IsBonded; }
-            set
-            {
-                m_IsBonded = value;
-                InvalidateProperties();
-            }
-        }
-
-        public bool IsDeadPet { get { return m_IsDeadPet; } set { m_IsDeadPet = value; } }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public DateTime BondingBegin { get { return m_BondingBegin; } set { m_BondingBegin = value; } }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public DateTime OwnerAbandonTime { get { return m_OwnerAbandonTime; } set { m_OwnerAbandonTime = value; } }
-        #endregion
-
-        #region Delete Previously Tamed Timer
-        private DeleteTimer m_DeleteTimer;
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public TimeSpan DeleteTimeLeft
-        {
-            get
-            {
-                if (m_DeleteTimer != null && m_DeleteTimer.Running)
-                {
-                    return m_DeleteTimer.Next - DateTime.UtcNow;
-                }
-
-                return TimeSpan.Zero;
-            }
-        }
-
-        private class DeleteTimer : Timer
-        {
-            private readonly Mobile m;
-
-            public DeleteTimer(Mobile creature, TimeSpan delay)
-                : base(delay)
-            {
-                m = creature;
-                Priority = TimerPriority.OneMinute;
-            }
-
-            protected override void OnTick()
-            {
-                m.Delete();
-            }
-        }
-
-        public void BeginDeleteTimer()
-        {
-            if (!(this is BaseEscortable) && !Summoned && !Deleted && !IsStabled)
-            {
-                StopDeleteTimer();
-                m_DeleteTimer = new DeleteTimer(this, TimeSpan.FromDays(3.0));
-                m_DeleteTimer.Start();
-            }
-        }
-
-        public void StopDeleteTimer()
-        {
-            if (m_DeleteTimer != null)
-            {
-                m_DeleteTimer.Stop();
-                m_DeleteTimer = null;
-            }
-        }
-        #endregion
-
-        #region IEngravable Members
-        private string m_EngravedText;
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public string EngravedText
-        {
-            get { return m_EngravedText != null ? Utility.FixHtml(m_EngravedText) : null; }
-            set
-            {
-                m_EngravedText = value;
-                InvalidateProperties();
-            }
-        }
-        #endregion
-
-        #region Pet Training
-        public static double MaxTameRequirement = 108.0;
-
-        private AbilityProfile _Profile;
-        private TrainingProfile _TrainingProfile;
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public AbilityProfile AbilityProfile { get { return _Profile; } set { _Profile = value; } }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public TrainingProfile TrainingProfile { get { return _TrainingProfile; } set { _TrainingProfile = value; } }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public double BardingDifficulty { get { return BaseInstrument.GetBaseDifficulty(this); } }
-
-        public virtual WeaponAbility TryGetWeaponAbility()
-        {
-            if (_Profile != null && _Profile.WeaponAbilities != null && _Profile.WeaponAbilities.Length > 0)
-            {
-                return _Profile.WeaponAbilities[Utility.Random(_Profile.WeaponAbilities.Length)];
-            }
-            else
-            {
-                return GetWeaponAbility();
-            }
-        }
-
-        public virtual TrainingDefinition TrainingDefinition
-        {
-            get { return null; }
-        }
-
-        public virtual void InitializeAbilities()
-        {
-            switch (AI)
-            {
-                case AIType.AI_Mage: SetMagicalAbility(MagicalAbility.Magery); break;
-                case AIType.AI_NecroMage: SetMagicalAbility(!Controlled ? MagicalAbility.Necromancy : MagicalAbility.Necromage); break;
-                case AIType.AI_Necro: SetMagicalAbility(MagicalAbility.Necromancy); break;
-                case AIType.AI_Spellweaving: SetMagicalAbility(MagicalAbility.Spellweaving); break;
-                case AIType.AI_Mystic: SetMagicalAbility(MagicalAbility.Mysticism); break;
-                case AIType.AI_Samurai: SetMagicalAbility(MagicalAbility.Bushido); break;
-                case AIType.AI_Ninja: SetMagicalAbility(MagicalAbility.Ninjitsu); break;
-                case AIType.AI_Paladin: SetMagicalAbility(MagicalAbility.Chivalry); break;
-            }
-
-            if (HealChance > 0.0 && HealChance >= Utility.RandomDouble())
-            {
-                SetSpecialAbility(SpecialAbility.Heal);
-            }
-
-            if (PetTrainingHelper.Enabled)
-            {
-                if (Skills[SkillName.Focus].Value == 0)
-                    SetSkill(SkillName.Focus, 2, 20);
-
-                if (Skills[SkillName.DetectHidden].Value == 0 && !(this is BaseVendor))
-                    SetSkill(SkillName.DetectHidden, Utility.RandomList(10, 60));
-            }
-        }
-
-        public void SetMagicalAbility(MagicalAbility ability)
-        {
-            PetTrainingHelper.GetAbilityProfile(this, true).AddAbility(ability, false);
-        }
-
-        public void SetSpecialAbility(SpecialAbility ability)
-        {
-            PetTrainingHelper.GetAbilityProfile(this, true).AddAbility(ability, false);
-        }
-
-        public void SetAreaEffect(AreaEffect ability)
-        {
-            PetTrainingHelper.GetAbilityProfile(this, true).AddAbility(ability, false);
-        }
-
-        public void SetWeaponAbility(WeaponAbility ability)
-        {
-            PetTrainingHelper.GetAbilityProfile(this, true).AddAbility(ability, false);
-        }
-
-        public void RemoveMagicalAbility(MagicalAbility ability)
-        {
-            PetTrainingHelper.GetAbilityProfile(this, true).RemoveAbility(ability);
-        }
-
-        public void RemoveSpecialAbility(SpecialAbility ability)
-        {
-            PetTrainingHelper.GetAbilityProfile(this, true).RemoveAbility(ability);
-        }
-
-        public void RemoveAreaEffect(AreaEffect ability)
-        {
-            PetTrainingHelper.GetAbilityProfile(this, true).RemoveAbility(ability);
-        }
-
-        public void RemoveWeaponAbility(WeaponAbility ability)
-        {
-            PetTrainingHelper.GetAbilityProfile(this, true).RemoveAbility(ability);
-        }
-
-        public bool HasAbility(object o)
-        {
-            return PetTrainingHelper.GetAbilityProfile(this, true).HasAbility(o);
-        }
-
-        public virtual double AverageThreshold { get { return 0.33; } }
-
-        public List<double> _InitAverage;
-
-        private void SetAverage(double min, double max, double value)
-        {
-            if (PetTrainingHelper.Enabled && CanLowerSlot() && max > min)
-            {
-                if (_InitAverage == null)
-                    _InitAverage = new List<double>();
-
-                _InitAverage.Add((value - min) / (max - min));
-            }
-        }
-
-        public static Type[] SlotLowerables { get { return _SlotLowerables; } }
-        private static Type[] _SlotLowerables =
-        {
-            typeof(Nightmare), typeof(Najasaurus), typeof(RuneBeetle), typeof(GreaterDragon), typeof(FrostDragon),
-            typeof(WhiteWyrm), typeof(Reptalon), typeof(DragonTurtleHatchling), typeof(Phoenix), typeof(FrostMite),
-            typeof(DireWolf), typeof(Skree), typeof(HighPlainsBoura), typeof(LesserHiryu), typeof(DragonWolf),
-            typeof(BloodFox)
-        };
-
-        private bool CanLowerSlot()
-        {
-            return _SlotLowerables.Any(t => t == GetType());
-        }
-
-        public void CalculateSlots(int slots)
-        {
-			return;
-            var def = PetTrainingHelper.GetTrainingDefinition(this);
-
-            if (def == null)
-            {
-                ControlSlotsMin = slots;
-                ControlSlotsMax = slots;
-                return;
-            }
-            else
-            {
-                ControlSlotsMin = def.ControlSlotsMin;
-                ControlSlotsMax = def.ControlSlotsMax;
-            }
-
-            if (_InitAverage == null)
-                return;
-
-            double total = _InitAverage.Sum(d => d);
-
-            if (total / (double)_InitAverage.Count <= AverageThreshold)
-            {
-                ControlSlotsMin = Math.Max(1, ControlSlotsMin - 1);
-            }
-
-            ColUtility.Free(_InitAverage);
-            _InitAverage = null;
-        }
-
-        public void AdjustTameRequirements()
-        {
-            if (ControlSlots <= ControlSlotsMin)
-            {
-                CurrentTameSkill = MinTameSkill;
-            }
-            else
-            {
-                CurrentTameSkill = ((ControlSlots - ControlSlotsMin) * 21) + 1;
-            }
-
-            if (CurrentTameSkill > MaxTameRequirement)
-            {
-                CurrentTameSkill = MaxTameRequirement;
-            }
-        }
-        #endregion
-
-        #region Skill Masteries
-        private SkillName _Mastery;
-
-        [CommandProperty(AccessLevel.GameMaster)]
-		public SkillName Mastery 
+		protected DateTime SummonEnd
 		{
-			get { return _Mastery; } 
+			get { return m_SummonEnd; }
+			set { m_SummonEnd = value; }
+		}
+
+		public virtual Faction FactionAllegiance
+		{
+			get { return null; }
+		}
+
+		public virtual int DefaultHitsRegen
+		{
+			get
+			{
+				int regen = 1;
+
+				if (IsAnimatedDead)
+					regen = 4;
+
+				if (IsParagon)
+					regen += 40;
+
+				if (this is Troll)
+					regen += 20;
+
+				regen += HumilityVirtue.GetRegenBonus(this);
+
+				if (AbilityProfile != null)
+					regen += AbilityProfile.RegenHits;
+
+				return regen;
+			}
+		}
+
+		public virtual int DefaultStamRegen
+		{
+			get
+			{
+				int regen = 1;
+
+				regen += MasteryInfo.EnchantedSummoningBonus(this);
+
+				if (IsParagon)
+					regen += 40;
+
+				if (AbilityProfile != null)
+					regen += AbilityProfile.RegenStam;
+
+				return regen;
+			}
+		}
+
+		public virtual int DefaultManaRegen
+		{
+			get
+			{
+				int regen = 1;
+
+				if (IsParagon)
+					regen += 40;
+
+				if (AbilityProfile != null)
+					regen += AbilityProfile.RegenMana;
+
+				return regen;
+			}
+		}
+
+		#region Bonding
+		public const bool BondingEnabled = true;
+
+		public virtual bool IsBondable
+		{
+			get { return (BondingEnabled && !Summoned && !m_Allured && !IsGolem); }
+		}
+		public virtual TimeSpan BondingDelay
+		{
+			get { return TimeSpan.FromDays(7.0); }
+		}
+		public virtual TimeSpan BondingAbandonDelay
+		{
+			get { return TimeSpan.FromDays(1.0); }
+		}
+
+		public override bool CanRegenHits
+		{
+			get { return !m_IsDeadPet && !Summoned && base.CanRegenHits; }
+		}
+		public override bool CanRegenStam
+		{
+			get { return !IsParagon && !m_IsDeadPet && base.CanRegenStam; }
+		}
+		public override bool CanRegenMana
+		{
+			get { return !m_IsDeadPet && base.CanRegenMana; }
+		}
+
+		public override bool IsDeadBondedPet
+		{
+			get { return m_IsDeadPet; }
+		}
+
+		private bool m_IsBonded = false;
+		private bool m_IsDeadPet;
+		private DateTime m_BondingBegin;
+		private DateTime m_OwnerAbandonTime;
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Spawner MySpawner
+		{
+			get
+			{
+				if (Spawner is Spawner)
+				{
+					return (Spawner as Spawner);
+				}
+
+				return null;
+			}
+			set { }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Mobile LastOwner
+		{
+			get
+			{
+				if (m_Owners == null || m_Owners.Count == 0)
+				{
+					return null;
+				}
+
+				return m_Owners[m_Owners.Count - 1];
+			}
+		}
+
+		public bool IsGolem
+		{
+			get { return this is IRepairableMobile; }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool IsBonded
+		{
+			get { return m_IsBonded; }
+			set
+			{
+				m_IsBonded = value;
+				InvalidateProperties();
+			}
+		}
+
+		public bool IsDeadPet
+		{
+			get { return m_IsDeadPet; }
+			set { m_IsDeadPet = value; }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public DateTime BondingBegin
+		{
+			get { return m_BondingBegin; }
+			set { m_BondingBegin = value; }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public DateTime OwnerAbandonTime
+		{
+			get { return m_OwnerAbandonTime; }
+			set { m_OwnerAbandonTime = value; }
+		}
+		#endregion
+
+		#region Delete Previously Tamed Timer
+		private DeleteTimer m_DeleteTimer;
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public TimeSpan DeleteTimeLeft
+		{
+			get
+			{
+				if (m_DeleteTimer != null && m_DeleteTimer.Running)
+				{
+					return m_DeleteTimer.Next - DateTime.UtcNow;
+				}
+
+				return TimeSpan.Zero;
+			}
+		}
+
+		private class DeleteTimer : Timer
+		{
+			private readonly Mobile m;
+
+			public DeleteTimer(Mobile creature, TimeSpan delay)
+				: base(delay)
+			{
+				m = creature;
+				Priority = TimerPriority.OneMinute;
+			}
+
+			protected override void OnTick()
+			{
+				m.Delete();
+			}
+		}
+
+		public void BeginDeleteTimer()
+		{
+			if (!(this is BaseEscortable) && !Summoned && !Deleted && !IsStabled)
+			{
+				StopDeleteTimer();
+				m_DeleteTimer = new DeleteTimer(this, TimeSpan.FromDays(3.0));
+				m_DeleteTimer.Start();
+			}
+		}
+
+		public void StopDeleteTimer()
+		{
+			if (m_DeleteTimer != null)
+			{
+				m_DeleteTimer.Stop();
+				m_DeleteTimer = null;
+			}
+		}
+		#endregion
+
+		#region IEngravable Members
+		private string m_EngravedText;
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public string EngravedText
+		{
+			get { return m_EngravedText != null ? Utility.FixHtml(m_EngravedText) : null; }
+			set
+			{
+				m_EngravedText = value;
+				InvalidateProperties();
+			}
+		}
+		#endregion
+
+		#region Pet Training
+		public static double MaxTameRequirement = 108.0;
+
+		private AbilityProfile _Profile;
+		private TrainingProfile _TrainingProfile;
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public AbilityProfile AbilityProfile
+		{
+			get { return _Profile; }
+			set { _Profile = value; }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public TrainingProfile TrainingProfile
+		{
+			get { return _TrainingProfile; }
+			set { _TrainingProfile = value; }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public double BardingDifficulty
+		{
+			get { return BaseInstrument.GetBaseDifficulty(this); }
+		}
+
+		public virtual WeaponAbility TryGetWeaponAbility()
+		{
+			if (_Profile != null && _Profile.WeaponAbilities != null && _Profile.WeaponAbilities.Length > 0)
+			{
+				return _Profile.WeaponAbilities[Utility.Random(_Profile.WeaponAbilities.Length)];
+			}
+			else
+			{
+				return GetWeaponAbility();
+			}
+		}
+
+		public virtual TrainingDefinition TrainingDefinition
+		{
+			get { return null; }
+		}
+
+		public virtual void InitializeAbilities()
+		{
+			switch (AI)
+			{
+				case AIType.AI_Mage:
+					SetMagicalAbility(MagicalAbility.Magery);
+					break;
+				case AIType.AI_NecroMage:
+					SetMagicalAbility(!Controlled ? MagicalAbility.Necromancy : MagicalAbility.Necromage);
+					break;
+				case AIType.AI_Necro:
+					SetMagicalAbility(MagicalAbility.Necromancy);
+					break;
+				case AIType.AI_Spellweaving:
+					SetMagicalAbility(MagicalAbility.Spellweaving);
+					break;
+				case AIType.AI_Mystic:
+					SetMagicalAbility(MagicalAbility.Mysticism);
+					break;
+				case AIType.AI_Samurai:
+					SetMagicalAbility(MagicalAbility.Bushido);
+					break;
+				case AIType.AI_Ninja:
+					SetMagicalAbility(MagicalAbility.Ninjitsu);
+					break;
+				case AIType.AI_Paladin:
+					SetMagicalAbility(MagicalAbility.Chivalry);
+					break;
+			}
+
+			if (HealChance > 0.0 && HealChance >= Utility.RandomDouble())
+			{
+				SetSpecialAbility(SpecialAbility.Heal);
+			}
+
+			if (PetTrainingHelper.Enabled)
+			{
+				if (Skills[SkillName.Focus].Value == 0)
+					SetSkill(SkillName.Focus, 2, 20);
+
+				if (Skills[SkillName.DetectHidden].Value == 0 && !(this is BaseVendor))
+					SetSkill(SkillName.DetectHidden, Utility.RandomList(10, 60));
+			}
+		}
+
+		public void SetMagicalAbility(MagicalAbility ability)
+		{
+			PetTrainingHelper.GetAbilityProfile(this, true).AddAbility(ability, false);
+		}
+
+		public void SetSpecialAbility(SpecialAbility ability)
+		{
+			PetTrainingHelper.GetAbilityProfile(this, true).AddAbility(ability, false);
+		}
+
+		public void SetAreaEffect(AreaEffect ability)
+		{
+			PetTrainingHelper.GetAbilityProfile(this, true).AddAbility(ability, false);
+		}
+
+		public void SetWeaponAbility(WeaponAbility ability)
+		{
+			PetTrainingHelper.GetAbilityProfile(this, true).AddAbility(ability, false);
+		}
+
+		public void RemoveMagicalAbility(MagicalAbility ability)
+		{
+			PetTrainingHelper.GetAbilityProfile(this, true).RemoveAbility(ability);
+		}
+
+		public void RemoveSpecialAbility(SpecialAbility ability)
+		{
+			PetTrainingHelper.GetAbilityProfile(this, true).RemoveAbility(ability);
+		}
+
+		public void RemoveAreaEffect(AreaEffect ability)
+		{
+			PetTrainingHelper.GetAbilityProfile(this, true).RemoveAbility(ability);
+		}
+
+		public void RemoveWeaponAbility(WeaponAbility ability)
+		{
+			PetTrainingHelper.GetAbilityProfile(this, true).RemoveAbility(ability);
+		}
+
+		public bool HasAbility(object o)
+		{
+			return PetTrainingHelper.GetAbilityProfile(this, true).HasAbility(o);
+		}
+
+		public virtual double AverageThreshold
+		{
+			get { return 0.33; }
+		}
+
+		public List<double> _InitAverage;
+
+		private void SetAverage(double min, double max, double value)
+		{
+			if (PetTrainingHelper.Enabled && CanLowerSlot() && max > min)
+			{
+				if (_InitAverage == null)
+					_InitAverage = new List<double>();
+
+				_InitAverage.Add((value - min) / (max - min));
+			}
+		}
+
+		public static Type[] SlotLowerables
+		{
+			get { return _SlotLowerables; }
+		}
+		private static Type[] _SlotLowerables =
+		{
+			typeof(Nightmare),
+			typeof(Najasaurus),
+			typeof(RuneBeetle),
+			typeof(GreaterDragon),
+			typeof(FrostDragon),
+			typeof(WhiteWyrm),
+			typeof(Reptalon),
+			typeof(DragonTurtleHatchling),
+			typeof(Phoenix),
+			typeof(FrostMite),
+			typeof(DireWolf),
+			typeof(Skree),
+			typeof(HighPlainsBoura),
+			typeof(LesserHiryu),
+			typeof(DragonWolf),
+			typeof(BloodFox),
+		};
+
+		private bool CanLowerSlot()
+		{
+			return _SlotLowerables.Any(t => t == GetType());
+		}
+
+		public void CalculateSlots(int slots)
+		{
+			return;
+			var def = PetTrainingHelper.GetTrainingDefinition(this);
+
+			if (def == null)
+			{
+				ControlSlotsMin = slots;
+				ControlSlotsMax = slots;
+				return;
+			}
+			else
+			{
+				ControlSlotsMin = def.ControlSlotsMin;
+				ControlSlotsMax = def.ControlSlotsMax;
+			}
+
+			if (_InitAverage == null)
+				return;
+
+			double total = _InitAverage.Sum(d => d);
+
+			if (total / (double)_InitAverage.Count <= AverageThreshold)
+			{
+				ControlSlotsMin = Math.Max(1, ControlSlotsMin - 1);
+			}
+
+			ColUtility.Free(_InitAverage);
+			_InitAverage = null;
+		}
+
+		public void AdjustTameRequirements()
+		{
+			if (ControlSlots <= ControlSlotsMin)
+			{
+				CurrentTameSkill = MinTameSkill;
+			}
+			else
+			{
+				CurrentTameSkill = ((ControlSlots - ControlSlotsMin) * 21) + 1;
+			}
+
+			if (CurrentTameSkill > MaxTameRequirement)
+			{
+				CurrentTameSkill = MaxTameRequirement;
+			}
+		}
+		#endregion
+
+		#region Skill Masteries
+		private SkillName _Mastery;
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public SkillName Mastery
+		{
+			get { return _Mastery; }
 			set
 			{
 				var old = _Mastery;
 				_Mastery = value;
 
-                if (old != _Mastery)
-                {
-                    UpdateMasteryInfo();
-                }
+				if (old != _Mastery)
+				{
+					UpdateMasteryInfo();
+				}
 			}
 		}
-		
+
 		public virtual MasteryInfo[] Masteries { get; set; }
 		public DateTime NextMastery { get; set; }
 
-        public void UpdateMasteryInfo()
-        {
-            if (_Mastery == SkillName.Alchemy)
-            {
-                Masteries = null;
-            }
-            else
-            {
-                var masteries = MasteryInfo.Infos.Where(i => i.MasterySkill == _Mastery && !i.Passive && (i.SpellType != typeof(BodyGuardSpell) || Controlled)).ToArray();
+		public void UpdateMasteryInfo()
+		{
+			if (_Mastery == SkillName.Alchemy)
+			{
+				Masteries = null;
+			}
+			else
+			{
+				var masteries = MasteryInfo
+					.Infos.Where(i =>
+						i.MasterySkill == _Mastery
+						&& !i.Passive
+						&& (i.SpellType != typeof(BodyGuardSpell) || Controlled)
+					)
+					.ToArray();
 
-                if (masteries != null && masteries.Length > 0)
-                {
-                    Masteries = masteries;
-                }
-            }
-        }
+				if (masteries != null && masteries.Length > 0)
+				{
+					Masteries = masteries;
+				}
+			}
+		}
 
-        public virtual void CheckCastMastery()
-        {
-            if (Spell == null && Masteries != null && Masteries.Length > 0 && NextMastery < DateTime.UtcNow)
-            {
-                var info = Masteries[Utility.Random(Masteries.Length)];
+		public virtual void CheckCastMastery()
+		{
+			if (Spell == null && Masteries != null && Masteries.Length > 0 && NextMastery < DateTime.UtcNow)
+			{
+				var info = Masteries[Utility.Random(Masteries.Length)];
 
-                if (info != null)
-                {
-                    if (info.SpellType.IsSubclassOf(typeof(SkillMasteryMove)))
-                    {
-                        var move = SpellRegistry.GetSpecialMove(info.SpellID);
+				if (info != null)
+				{
+					if (info.SpellType.IsSubclassOf(typeof(SkillMasteryMove)))
+					{
+						var move = SpellRegistry.GetSpecialMove(info.SpellID);
 
-                        if (move != null)
-                        {
-                            SpecialMove.SetCurrentMove(this, move);
-                            NextMastery = DateTime.UtcNow + TimeSpan.FromSeconds(Utility.RandomMinMax(10, 60));
-                        }
-                    }
-                    else
-                    {
-                        var spell = SpellRegistry.NewSpell(info.SpellID, this, null);
+						if (move != null)
+						{
+							SpecialMove.SetCurrentMove(this, move);
+							NextMastery = DateTime.UtcNow + TimeSpan.FromSeconds(Utility.RandomMinMax(10, 60));
+						}
+					}
+					else
+					{
+						var spell = SpellRegistry.NewSpell(info.SpellID, this, null);
 
-                        if (spell != null)
-                        {
-                            spell.Cast();
-                            NextMastery = DateTime.UtcNow + TimeSpan.FromSeconds(Utility.RandomMinMax(10, 60));
-                        }
-                    }
-                }
-            }
-        }
-        #endregion
+						if (spell != null)
+						{
+							spell.Cast();
+							NextMastery = DateTime.UtcNow + TimeSpan.FromSeconds(Utility.RandomMinMax(10, 60));
+						}
+					}
+				}
+			}
+		}
+		#endregion
 
-        public virtual double WeaponAbilityChance { get { return 0.4; } }
+		public virtual double WeaponAbilityChance
+		{
+			get { return 0.4; }
+		}
 
-        public virtual WeaponAbility GetWeaponAbility()
-        {
-            return null;
-        }
+		public virtual WeaponAbility GetWeaponAbility()
+		{
+			return null;
+		}
 
-        #region Elemental Resistance/Damage
-        public override int BasePhysicalResistance { get { return m_PhysicalResistance; } }
-        public override int BaseFireResistance { get { return m_FireResistance; } }
-        public override int BaseColdResistance { get { return m_ColdResistance; } }
-        public override int BasePoisonResistance { get { return m_PoisonResistance; } }
-        public override int BaseEnergyResistance { get { return m_EnergyResistance; } }
-        public override int BaseChaosResistance { get { return m_ChaosResistance; } }
-        public override int BaseDirectResistance { get { return m_DirectResistance; } }
+		#region Elemental Resistance/Damage
+		public override int BasePhysicalResistance
+		{
+			get { return m_PhysicalResistance; }
+		}
+		public override int BaseFireResistance
+		{
+			get { return m_FireResistance; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return m_ColdResistance; }
+		}
+		public override int BasePoisonResistance
+		{
+			get { return m_PoisonResistance; }
+		}
+		public override int BaseEnergyResistance
+		{
+			get { return m_EnergyResistance; }
+		}
+		public override int BaseChaosResistance
+		{
+			get { return m_ChaosResistance; }
+		}
+		public override int BaseDirectResistance
+		{
+			get { return m_DirectResistance; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int PhysicalResistanceSeed
-        {
-            get { return m_PhysicalResistance; }
-            set
-            {
-                m_PhysicalResistance = value;
-                UpdateResistances();
-            }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int PhysicalResistanceSeed
+		{
+			get { return m_PhysicalResistance; }
+			set
+			{
+				m_PhysicalResistance = value;
+				UpdateResistances();
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int FireResistSeed
-        {
-            get { return m_FireResistance; }
-            set
-            {
-                m_FireResistance = value;
-                UpdateResistances();
-            }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int FireResistSeed
+		{
+			get { return m_FireResistance; }
+			set
+			{
+				m_FireResistance = value;
+				UpdateResistances();
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int ColdResistSeed
-        {
-            get { return m_ColdResistance; }
-            set
-            {
-                m_ColdResistance = value;
-                UpdateResistances();
-            }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int ColdResistSeed
+		{
+			get { return m_ColdResistance; }
+			set
+			{
+				m_ColdResistance = value;
+				UpdateResistances();
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int PoisonResistSeed
-        {
-            get { return m_PoisonResistance; }
-            set
-            {
-                m_PoisonResistance = value;
-                UpdateResistances();
-            }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int PoisonResistSeed
+		{
+			get { return m_PoisonResistance; }
+			set
+			{
+				m_PoisonResistance = value;
+				UpdateResistances();
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int EnergyResistSeed
-        {
-            get { return m_EnergyResistance; }
-            set
-            {
-                m_EnergyResistance = value;
-                UpdateResistances();
-            }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int EnergyResistSeed
+		{
+			get { return m_EnergyResistance; }
+			set
+			{
+				m_EnergyResistance = value;
+				UpdateResistances();
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int ChaosResistSeed
-        {
-            get { return m_ChaosResistance; }
-            set
-            {
-                m_ChaosResistance = value;
-                UpdateResistances();
-            }
-        }
-		
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int DirectResistSeed
-        {
-            get { return m_DirectResistance; }
-            set
-            {
-                m_DirectResistance = value;
-                UpdateResistances();
-            }
-        }		
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int ChaosResistSeed
+		{
+			get { return m_ChaosResistance; }
+			set
+			{
+				m_ChaosResistance = value;
+				UpdateResistances();
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int PhysicalDamage { get { return m_PhysicalDamage; } set { m_PhysicalDamage = value; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int DirectResistSeed
+		{
+			get { return m_DirectResistance; }
+			set
+			{
+				m_DirectResistance = value;
+				UpdateResistances();
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int FireDamage { get { return m_FireDamage; } set { m_FireDamage = value; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int PhysicalDamage
+		{
+			get { return m_PhysicalDamage; }
+			set { m_PhysicalDamage = value; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int ColdDamage { get { return m_ColdDamage; } set { m_ColdDamage = value; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int FireDamage
+		{
+			get { return m_FireDamage; }
+			set { m_FireDamage = value; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int PoisonDamage { get { return m_PoisonDamage; } set { m_PoisonDamage = value; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int ColdDamage
+		{
+			get { return m_ColdDamage; }
+			set { m_ColdDamage = value; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int EnergyDamage { get { return m_EnergyDamage; } set { m_EnergyDamage = value; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int PoisonDamage
+		{
+			get { return m_PoisonDamage; }
+			set { m_PoisonDamage = value; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int ChaosDamage { get { return m_ChaosDamage; } set { m_ChaosDamage = value; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int EnergyDamage
+		{
+			get { return m_EnergyDamage; }
+			set { m_EnergyDamage = value; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int DirectDamage { get { return m_DirectDamage; } set { m_DirectDamage = value; } }
-        #endregion
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int ChaosDamage
+		{
+			get { return m_ChaosDamage; }
+			set { m_ChaosDamage = value; }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int DirectDamage
+		{
+			get { return m_DirectDamage; }
+			set { m_DirectDamage = value; }
+		}
+		#endregion
 
 		private DateTime m_BeggingTime;
-		[CommandProperty( AccessLevel.GameMaster )]
+
+		[CommandProperty(AccessLevel.GameMaster)]
 		public DateTime BeggingTime
 		{
-			get{ return m_BeggingTime; }
-			set{ m_BeggingTime = value; }
-		}	
-		
-		
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool IsParagon
+			get { return m_BeggingTime; }
+			set { m_BeggingTime = value; }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool IsParagon
 		{
-			get{ return m_Paragon; }
+			get { return m_Paragon; }
 			set
 			{
 				if (m_Paragon == value)
@@ -1322,288 +1490,423 @@ namespace Server.Mobiles
 			}
 		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool IsChampionSpawn
-        {
-            get { return m_IsChampionSpawn; }
-            set
-            {
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool IsChampionSpawn
+		{
+			get { return m_IsChampionSpawn; }
+			set
+			{
 				if (m_IsChampionSpawn != value)
 				{
-	                if (!m_IsChampionSpawn && value)
-	                    SetToChampionSpawn();
-	
-	                m_IsChampionSpawn = value;
+					if (!m_IsChampionSpawn && value)
+						SetToChampionSpawn();
 
-                    OnChampionSpawnChange();
+					m_IsChampionSpawn = value;
+
+					OnChampionSpawnChange();
 				}
-            }
-        }
+			}
+		}
 
-        protected virtual void OnChampionSpawnChange()
-        { }
+		protected virtual void OnChampionSpawnChange() { }
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Mobile InitialFocus
-        {
-            get
-            {
-                if (m_InitialFocus != null && (!m_InitialFocus.Alive || m_InitialFocus.Deleted))
-                {
-                    m_InitialFocus = null;
-                }
-
-                return m_InitialFocus;
-            }
-            set { m_InitialFocus = value; }
-        }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public override IDamageable Combatant
-        {
-            get
-            {
-                return base.Combatant;
-            }
-            set
-            {
-                Mobile initialFocus = InitialFocus;
-
-                if (base.Combatant == null)
-                {
-                    if (value is Mobile && AttacksFocus)
-                        InitialFocus = (Mobile)value;
-                }
-                else if (AttacksFocus && initialFocus != null && value != initialFocus && !initialFocus.Hidden && InRange(initialFocus.Location, RangePerception))
-                {
-                    //Keeps focus
-                    base.Combatant = initialFocus;
-                    return;
-                }
-
-                base.Combatant = value;
-
-                if (Controlled)
-                {
-                    AdjustSpeeds();
-                }
-            }
-        }
-
-        public bool IsAmbusher { get; set; }
-
-        public virtual FoodType FavoriteFood { get { return FoodType.Meat; } }
-        public virtual PackInstinct PackInstinct { get { return PackInstinct.None; } }
-
-        public List<Mobile> Owners { get { return m_Owners; } }
-
-        public virtual bool AllowMaleTamer { get { return true; } }
-        public virtual bool AllowFemaleTamer { get { return true; } }
-        public virtual bool SubdueBeforeTame { get { return false; } }
-        public virtual bool StatLossAfterTame { get { return SubdueBeforeTame; } }
-        public virtual bool ReduceSpeedWithDamage { get { return true; } }
-        public virtual bool IsSubdued { get { return SubdueBeforeTame && (Hits < ((double)HitsMax / 10)); } }
-
-        public virtual bool Commandable { get { return true; } }
-
-        public virtual Poison HitPoison { get { return null; } }
-        public virtual double HitPoisonChance { get { return 0.5; } }
-        public virtual Poison PoisonImmune { get { return null; } }
-
-        public virtual bool BardImmune { get { return false; } }
-        public virtual bool Unprovokable { get { return BardImmune || m_IsDeadPet; } }
-        public virtual bool Uncalmable { get { return BardImmune || m_IsDeadPet; } }
-        public virtual bool AreaPeaceImmune { get { return BardImmune || m_IsDeadPet; } }
-
-        public virtual bool BleedImmune { get { return false; } }
-        public virtual double BonusPetDamageScalar { get { return 1.0; } }
-        public virtual bool AllureImmune { get { return false; } }
-
-        public virtual bool DeathAdderCharmable { get { return false; } }
-
-        public virtual bool GivesFameAndKarmaAward { get { return true; } }
-
-        //TODO: Find the pub 31 tweaks to the DispelDifficulty and apply them of course.
-        public virtual double DispelDifficulty { get { return 0.0; } } // at this skill level we dispel 50% chance
-        public virtual double DispelFocus { get { return 20.0; } }
-        // at difficulty - focus we have 0%, at difficulty + focus we have 100%
-        public virtual bool DisplayWeight { get { return Backpack is StrongBackpack; } }
-
-        public virtual double TeleportChance { get { return 0.05; } }
-        public virtual bool AttacksFocus { get { return false; } }
-        public virtual bool ShowSpellMantra { get { return false; } }
-        public virtual bool FreezeOnCast { get { return ShowSpellMantra; } }
-        public virtual bool CanFly { get { return false; } }
-
-        public virtual bool CanAutoStable
-		{ 
-			get 
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Mobile InitialFocus
+		{
+			get
 			{
-				if(!(ControlMaster is PlayerMobile))
+				if (m_InitialFocus != null && (!m_InitialFocus.Alive || m_InitialFocus.Deleted))
+				{
+					m_InitialFocus = null;
+				}
+
+				return m_InitialFocus;
+			}
+			set { m_InitialFocus = value; }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public override IDamageable Combatant
+		{
+			get { return base.Combatant; }
+			set
+			{
+				Mobile initialFocus = InitialFocus;
+
+				if (base.Combatant == null)
+				{
+					if (value is Mobile && AttacksFocus)
+						InitialFocus = (Mobile)value;
+				}
+				else if (
+					AttacksFocus
+					&& initialFocus != null
+					&& value != initialFocus
+					&& !initialFocus.Hidden
+					&& InRange(initialFocus.Location, RangePerception)
+				)
+				{
+					//Keeps focus
+					base.Combatant = initialFocus;
+					return;
+				}
+
+				base.Combatant = value;
+
+				if (Controlled)
+				{
+					AdjustSpeeds();
+				}
+			}
+		}
+
+		public bool IsAmbusher { get; set; }
+
+		public virtual FoodType FavoriteFood
+		{
+			get { return FoodType.Meat; }
+		}
+		public virtual PackInstinct PackInstinct
+		{
+			get { return PackInstinct.None; }
+		}
+
+		public List<Mobile> Owners
+		{
+			get { return m_Owners; }
+		}
+
+		public virtual bool AllowMaleTamer
+		{
+			get { return true; }
+		}
+		public virtual bool AllowFemaleTamer
+		{
+			get { return true; }
+		}
+		public virtual bool SubdueBeforeTame
+		{
+			get { return false; }
+		}
+		public virtual bool StatLossAfterTame
+		{
+			get { return SubdueBeforeTame; }
+		}
+		public virtual bool ReduceSpeedWithDamage
+		{
+			get { return true; }
+		}
+		public virtual bool IsSubdued
+		{
+			get { return SubdueBeforeTame && (Hits < ((double)HitsMax / 10)); }
+		}
+
+		public virtual bool Commandable
+		{
+			get { return true; }
+		}
+
+		public virtual Poison HitPoison
+		{
+			get { return null; }
+		}
+		public virtual double HitPoisonChance
+		{
+			get { return 0.5; }
+		}
+		public virtual Poison PoisonImmune
+		{
+			get { return null; }
+		}
+
+		public virtual bool BardImmune
+		{
+			get { return false; }
+		}
+		public virtual bool Unprovokable
+		{
+			get { return BardImmune || m_IsDeadPet; }
+		}
+		public virtual bool Uncalmable
+		{
+			get { return BardImmune || m_IsDeadPet; }
+		}
+		public virtual bool AreaPeaceImmune
+		{
+			get { return BardImmune || m_IsDeadPet; }
+		}
+
+		public virtual bool BleedImmune
+		{
+			get { return false; }
+		}
+		public virtual double BonusPetDamageScalar
+		{
+			get { return 1.0; }
+		}
+		public virtual bool AllureImmune
+		{
+			get { return false; }
+		}
+
+		public virtual bool DeathAdderCharmable
+		{
+			get { return false; }
+		}
+
+		public virtual bool GivesFameAndKarmaAward
+		{
+			get { return true; }
+		}
+
+		//TODO: Find the pub 31 tweaks to the DispelDifficulty and apply them of course.
+		public virtual double DispelDifficulty
+		{
+			get { return 0.0; }
+		} // at this skill level we dispel 50% chance
+		public virtual double DispelFocus
+		{
+			get { return 20.0; }
+		}
+
+		// at difficulty - focus we have 0%, at difficulty + focus we have 100%
+		public virtual bool DisplayWeight
+		{
+			get { return Backpack is StrongBackpack; }
+		}
+
+		public virtual double TeleportChance
+		{
+			get { return 0.05; }
+		}
+		public virtual bool AttacksFocus
+		{
+			get { return false; }
+		}
+		public virtual bool ShowSpellMantra
+		{
+			get { return false; }
+		}
+		public virtual bool FreezeOnCast
+		{
+			get { return ShowSpellMantra; }
+		}
+		public virtual bool CanFly
+		{
+			get { return false; }
+		}
+
+		public virtual bool CanAutoStable
+		{
+			get
+			{
+				if (!(ControlMaster is PlayerMobile))
 					return false;
 
-				if(Allured || Summoned)
+				if (Allured || Summoned)
 					return false;
 
-				if(this is IMount && ((IMount)this).Rider != null)
+				if (this is IMount && ((IMount)this).Rider != null)
 					return false;
 
 				return true;
 			}
 		}
 
-        public virtual bool TaintedLifeAura { get { return false; } }
-        public virtual bool BreathImmune { get { return false; } }
+		public virtual bool TaintedLifeAura
+		{
+			get { return false; }
+		}
+		public virtual bool BreathImmune
+		{
+			get { return false; }
+		}
 
-        #region Spill Acid
-        public void SpillAcid(int Amount)
-        {
-            SpillAcid(null, Amount);
-        }
+		#region Spill Acid
+		public void SpillAcid(int Amount)
+		{
+			SpillAcid(null, Amount);
+		}
 
-        public void SpillAcid(Mobile target, int Amount)
-        {
-            if ((target != null && target.Map == null) || Map == null)
-            {
-                return;
-            }
+		public void SpillAcid(Mobile target, int Amount)
+		{
+			if ((target != null && target.Map == null) || Map == null)
+			{
+				return;
+			}
 
-            for (int i = 0; i < Amount; ++i)
-            {
-                Point3D loc = Location;
-                Map map = Map;
-                Item acid = NewHarmfulItem();
+			for (int i = 0; i < Amount; ++i)
+			{
+				Point3D loc = Location;
+				Map map = Map;
+				Item acid = NewHarmfulItem();
 
-                if (target != null && target.Map != null && Amount == 1)
-                {
-                    loc = target.Location;
-                    map = target.Map;
-                }
-                else
-                {
-                    bool validLocation = false;
-                    for (int j = 0; !validLocation && j < 10; ++j)
-                    {
-                        loc = new Point3D(loc.X + (Utility.Random(0, 3) - 2), loc.Y + (Utility.Random(0, 3) - 2), loc.Z);
-                        loc.Z = map.GetAverageZ(loc.X, loc.Y);
-                        validLocation = map.CanFit(loc, 16, false, false);
-                    }
-                }
-                acid.MoveToWorld(loc, map);
-            }
-        }
+				if (target != null && target.Map != null && Amount == 1)
+				{
+					loc = target.Location;
+					map = target.Map;
+				}
+				else
+				{
+					bool validLocation = false;
+					for (int j = 0; !validLocation && j < 10; ++j)
+					{
+						loc = new Point3D(
+							loc.X + (Utility.Random(0, 3) - 2),
+							loc.Y + (Utility.Random(0, 3) - 2),
+							loc.Z
+						);
+						loc.Z = map.GetAverageZ(loc.X, loc.Y);
+						validLocation = map.CanFit(loc, 16, false, false);
+					}
+				}
+				acid.MoveToWorld(loc, map);
+			}
+		}
 
-        public virtual Item NewHarmfulItem()
-        {
-            return new PoolOfAcid(TimeSpan.FromSeconds(10), 30, 30);
-        }
-        #endregion
+		public virtual Item NewHarmfulItem()
+		{
+			return new PoolOfAcid(TimeSpan.FromSeconds(10), 30, 30);
+		}
+		#endregion
 
-        public virtual void OnDrainLife(Mobile victim)
-        {
-        }
+		public virtual void OnDrainLife(Mobile victim) { }
 
-        #region Flee!!!
-        public virtual bool CanFlee { get { return false; }} //!m_Paragon && !GivesMLMinorArtifact; } }
+		#region Flee!!!
+		public virtual bool CanFlee
+		{
+			get { return false; }
+		} //!m_Paragon && !GivesMLMinorArtifact; } }
 
-        private DateTime m_EndFlee;
+		private DateTime m_EndFlee;
 
-        public DateTime EndFleeTime { get { return m_EndFlee; } set { m_EndFlee = value; } }
+		public DateTime EndFleeTime
+		{
+			get { return m_EndFlee; }
+			set { m_EndFlee = value; }
+		}
 
-        public virtual void StopFlee()
-        {
-            m_EndFlee = DateTime.MinValue;
-        }
+		public virtual void StopFlee()
+		{
+			m_EndFlee = DateTime.MinValue;
+		}
 
-        public virtual bool CheckFlee()
-        {
-            if (HitsMax >= 500)
-            {
-                return false;
-            }
+		public virtual bool CheckFlee()
+		{
+			if (HitsMax >= 500)
+			{
+				return false;
+			}
 
-            if (m_EndFlee == DateTime.MinValue)
-            {
-                return false;
-            }
+			if (m_EndFlee == DateTime.MinValue)
+			{
+				return false;
+			}
 
-            if (DateTime.UtcNow >= m_EndFlee)
-            {
-                StopFlee();
-                return false;
-            }
+			if (DateTime.UtcNow >= m_EndFlee)
+			{
+				StopFlee();
+				return false;
+			}
 
-            return true;
-        }
+			return true;
+		}
 
-        public virtual void BeginFlee(TimeSpan maxDuration)
-        {
-            m_EndFlee = DateTime.UtcNow + maxDuration;
-        }
-        #endregion
+		public virtual void BeginFlee(TimeSpan maxDuration)
+		{
+			m_EndFlee = DateTime.UtcNow + maxDuration;
+		}
+		#endregion
 
-        public virtual bool IsInvulnerable { get { return false; } }
+		public virtual bool IsInvulnerable
+		{
+			get { return false; }
+		}
 
-        public BaseAI AIObject { get { return m_AI; } }
+		public BaseAI AIObject
+		{
+			get { return m_AI; }
+		}
 
-        public const int MaxOwners = 5;
+		public const int MaxOwners = 5;
 
-        public virtual OppositionGroup OppositionGroup { get { return null; } }
+		public virtual OppositionGroup OppositionGroup
+		{
+			get { return null; }
+		}
 
-        // Tribe Opposition stuff
-        public virtual TribeType Tribe{ get{ return TribeType.None ; } } // What opposition list am I in?
+		// Tribe Opposition stuff
+		public virtual TribeType Tribe
+		{
+			get { return TribeType.None; }
+		} // What opposition list am I in?
 
-        public virtual bool IsTribeEnemy(Mobile m)
-        {
-            // Target must be BaseCreature
-            if (!(m is BaseCreature))
-            {
-                return false;
-            }
+		public virtual bool IsTribeEnemy(Mobile m)
+		{
+			// Target must be BaseCreature
+			if (!(m is BaseCreature))
+			{
+				return false;
+			}
 
-            BaseCreature c = (BaseCreature)m;
+			BaseCreature c = (BaseCreature)m;
 
-            switch(Tribe)
-            {
-                case TribeType.Terathan: return (c.Tribe == TribeType.Ophidian);
-                case TribeType.Ophidian: return (c.Tribe == TribeType.Terathan);
-                case TribeType.Savage: return (c.Tribe == TribeType.Orc);
-                case TribeType.Orc: return (c.Tribe == TribeType.Savage);
-                case TribeType.Fey: return (c.Tribe == TribeType.Undead);
-                case TribeType.Undead: return (c.Tribe == TribeType.Fey);
-                case TribeType.GrayGoblin: return (c.Tribe == TribeType.GreenGoblin);
-                case TribeType.GreenGoblin: return (c.Tribe == TribeType.GrayGoblin);
-                default: return false;
-            }
-        }
+			switch (Tribe)
+			{
+				case TribeType.Terathan:
+					return (c.Tribe == TribeType.Ophidian);
+				case TribeType.Ophidian:
+					return (c.Tribe == TribeType.Terathan);
+				case TribeType.Savage:
+					return (c.Tribe == TribeType.Orc);
+				case TribeType.Orc:
+					return (c.Tribe == TribeType.Savage);
+				case TribeType.Fey:
+					return (c.Tribe == TribeType.Undead);
+				case TribeType.Undead:
+					return (c.Tribe == TribeType.Fey);
+				case TribeType.GrayGoblin:
+					return (c.Tribe == TribeType.GreenGoblin);
+				case TribeType.GreenGoblin:
+					return (c.Tribe == TribeType.GrayGoblin);
+				default:
+					return false;
+			}
+		}
 
-        #region Friends
-        public List<Mobile> Friends { get { return m_Friends; } }
+		#region Friends
+		public List<Mobile> Friends
+		{
+			get { return m_Friends; }
+		}
 
-        public virtual bool AllowNewPetFriend { get { return (m_Friends == null || m_Friends.Count < 5); } }
+		public virtual bool AllowNewPetFriend
+		{
+			get { return (m_Friends == null || m_Friends.Count < 5); }
+		}
 
-        public virtual bool IsPetFriend(Mobile m)
-        {
-            return (m_Friends != null && m_Friends.Contains(m));
-        }
+		public virtual bool IsPetFriend(Mobile m)
+		{
+			return (m_Friends != null && m_Friends.Contains(m));
+		}
 
-        public virtual void AddPetFriend(Mobile m)
-        {
-            if (m_Friends == null)
-            {
-                m_Friends = new List<Mobile>();
-            }
+		public virtual void AddPetFriend(Mobile m)
+		{
+			if (m_Friends == null)
+			{
+				m_Friends = new List<Mobile>();
+			}
 
-            m_Friends.Add(m);
-        }
+			m_Friends.Add(m);
+		}
 
-        public virtual void RemovePetFriend(Mobile m)
-        {
-            if (m_Friends != null)
-            {
-                m_Friends.Remove(m);
-            }
-        }
+		public virtual void RemovePetFriend(Mobile m)
+		{
+			if (m_Friends != null)
+			{
+				m_Friends.Remove(m);
+			}
+		}
 
 		public virtual bool IsFriend(Mobile m)
 		{
@@ -1635,60 +1938,63 @@ namespace Server.Mobiles
 			{
 				return false;
 			}
-/*
-			if (c.Combatant == this)
-			{
-				return false;
-			}
-*/
+			/*
+						if (c.Combatant == this)
+						{
+							return false;
+						}
+			*/
 			return ((m_bSummoned || m_bControlled) == (c.m_bSummoned || c.m_bControlled));
 		}
-        #endregion
+		#endregion
 
-        #region Allegiance
-        public virtual Ethic EthicAllegiance { get { return null; } }
+		#region Allegiance
+		public virtual Ethic EthicAllegiance
+		{
+			get { return null; }
+		}
 
-        public enum Allegiance
-        {
-            None,
-            Ally,
-            Enemy
-        }
+		public enum Allegiance
+		{
+			None,
+			Ally,
+			Enemy,
+		}
 
-        public virtual Allegiance GetFactionAllegiance(Mobile mob)
-        {
-            if (mob == null || mob.Map != Faction.Facet || FactionAllegiance == null)
-            {
-                return Allegiance.None;
-            }
+		public virtual Allegiance GetFactionAllegiance(Mobile mob)
+		{
+			if (mob == null || mob.Map != Faction.Facet || FactionAllegiance == null)
+			{
+				return Allegiance.None;
+			}
 
-            Faction fac = Faction.Find(mob, true);
+			Faction fac = Faction.Find(mob, true);
 
-            if (fac == null)
-            {
-                return Allegiance.None;
-            }
+			if (fac == null)
+			{
+				return Allegiance.None;
+			}
 
-            return (fac == FactionAllegiance ? Allegiance.Ally : Allegiance.Enemy);
-        }
+			return (fac == FactionAllegiance ? Allegiance.Ally : Allegiance.Enemy);
+		}
 
-        public virtual Allegiance GetEthicAllegiance(Mobile mob)
-        {
-            if (mob == null || mob.Map != Faction.Facet || EthicAllegiance == null)
-            {
-                return Allegiance.None;
-            }
+		public virtual Allegiance GetEthicAllegiance(Mobile mob)
+		{
+			if (mob == null || mob.Map != Faction.Facet || EthicAllegiance == null)
+			{
+				return Allegiance.None;
+			}
 
-            Ethic ethic = Ethic.Find(mob, true);
+			Ethic ethic = Ethic.Find(mob, true);
 
-            if (ethic == null)
-            {
-                return Allegiance.None;
-            }
+			if (ethic == null)
+			{
+				return Allegiance.None;
+			}
 
-            return (ethic == EthicAllegiance ? Allegiance.Ally : Allegiance.Enemy);
-        }
-        #endregion
+			return (ethic == EthicAllegiance ? Allegiance.Ally : Allegiance.Enemy);
+		}
+		#endregion
 
 		public virtual bool IsEnemy(Mobile m)
 		{
@@ -1706,15 +2012,15 @@ namespace Server.Mobiles
 
 			if (Combatant != m)
 			{
-                if (m is PlayerMobile && ((PlayerMobile)m).HonorActive)
-                {
-                    return false;
-                }
+				if (m is PlayerMobile && ((PlayerMobile)m).HonorActive)
+				{
+					return false;
+				}
 
-                if (TransformationSpellHelper.UnderTransformation(m, typeof(EtherealVoyageSpell)))
-                {
-                    return false;
-                }
+				if (TransformationSpellHelper.UnderTransformation(m, typeof(EtherealVoyageSpell)))
+				{
+					return false;
+				}
 			}
 
 			if (Core.TOL)
@@ -1734,49 +2040,53 @@ namespace Server.Mobiles
 				}
 			}
 
-            BaseCreature c = m as BaseCreature;
+			BaseCreature c = m as BaseCreature;
 
-            // Are we a non-aggressive FightMode or are they an uncontrolled Summon?
-            if (FightMode == FightMode.Aggressor || FightMode == FightMode.Evil || FightMode == FightMode.Good ||
-                (c != null && c.m_bSummoned && !c.m_bControlled && c.SummonMaster != null))
-            {
-                // Faction Opposed Players/Pets are my enemies
-                if (GetFactionAllegiance(m) == BaseCreature.Allegiance.Enemy)
-                {
-                    return true;
-                }
+			// Are we a non-aggressive FightMode or are they an uncontrolled Summon?
+			if (
+				FightMode == FightMode.Aggressor
+				|| FightMode == FightMode.Evil
+				|| FightMode == FightMode.Good
+				|| (c != null && c.m_bSummoned && !c.m_bControlled && c.SummonMaster != null)
+			)
+			{
+				// Faction Opposed Players/Pets are my enemies
+				if (GetFactionAllegiance(m) == BaseCreature.Allegiance.Enemy)
+				{
+					return true;
+				}
 
-                // Ethic Opposed Players/Pets are my enemies
-                if (GetEthicAllegiance(m) == BaseCreature.Allegiance.Enemy)
-                {
-                    return true;
-                }
+				// Ethic Opposed Players/Pets are my enemies
+				if (GetEthicAllegiance(m) == BaseCreature.Allegiance.Enemy)
+				{
+					return true;
+				}
 
-                // Negative Karma are my enemies
-                if (FightMode == FightMode.Evil)
-                {
-                    if (c != null && c.GetMaster() != null)
-                    {
-                        return (c.GetMaster().Karma < 0);
-                    }
+				// Negative Karma are my enemies
+				if (FightMode == FightMode.Evil)
+				{
+					if (c != null && c.GetMaster() != null)
+					{
+						return (c.GetMaster().Karma < 0);
+					}
 
-                    return (m.Karma < 0);
-                }
+					return (m.Karma < 0);
+				}
 
-                // Positive Karma are my enemies
-                if (FightMode == FightMode.Good)
-                {
-                    if (c != null && c.GetMaster() != null)
-                    {
-                        return (c.GetMaster().Karma > 0);
-                    }
+				// Positive Karma are my enemies
+				if (FightMode == FightMode.Good)
+				{
+					if (c != null && c.GetMaster() != null)
+					{
+						return (c.GetMaster().Karma > 0);
+					}
 
-                    return (m.Karma > 0);
-                }
+					return (m.Karma > 0);
+				}
 
-                // Others are not my enemies
-                return false;
-            }
+				// Others are not my enemies
+				return false;
+			}
 
 			// Faction Allied Players/Pets are not my enemies
 			if (GetFactionAllegiance(m) == Allegiance.Ally)
@@ -1793,21 +2103,21 @@ namespace Server.Mobiles
 				return false;
 			}
 
-            if (c == null)
-            {
-                return true;
-            }
-            else
-            {
-                var master = c.GetMaster();
+			if (c == null)
+			{
+				return true;
+			}
+			else
+			{
+				var master = c.GetMaster();
 
-                if (master != null && !(master is BaseCreature))
-                {
-                    return true;
-                }
-            }
+				if (master != null && !(master is BaseCreature))
+				{
+					return true;
+				}
+			}
 
-            if (c is Server.Engines.Quests.Haven.MilitiaFighter)
+			if (c is Server.Engines.Quests.Haven.MilitiaFighter)
 			{
 				return true;
 			}
@@ -1834,284 +2144,311 @@ namespace Server.Mobiles
 
 			// If I'm summoned/controlled and they aren't summoned/controlled, they are my enemy
 			// If I'm not summoned/controlled and they are summoned/controlled, they are my enemy
-            // Summoned creatures must have masters to count as summoned here
-			return (((t.m_bSummoned && t.SummonMaster != null) || t.m_bControlled) !=
-                ((c.m_bSummoned && c.SummonMaster != null) || c.m_bControlled));
+			// Summoned creatures must have masters to count as summoned here
+			return (
+				((t.m_bSummoned && t.SummonMaster != null) || t.m_bControlled)
+				!= ((c.m_bSummoned && c.SummonMaster != null) || c.m_bControlled)
+			);
 		}
-		public void Upgrade()
+
+		public void Upgrade() { }
+
+		public override string ApplyNameSuffix(string suffix)
 		{
-			
-			
-			
+			if (IsParagon && !GivesMLMinorArtifact)
+			{
+				if (suffix.Length == 0)
+				{
+					suffix = "(Paragon)";
+				}
+				else
+				{
+					suffix = String.Concat(suffix, " (Paragon)");
+				}
+			}
+
+			return base.ApplyNameSuffix(suffix);
 		}
-		
-        public override string ApplyNameSuffix(string suffix)
-        {
-            if (IsParagon && !GivesMLMinorArtifact)
-            {
-                if (suffix.Length == 0)
-                {
-                    suffix = "(Paragon)";
-                }
-                else
-                {
-                    suffix = String.Concat( suffix, " (Paragon)" );
-                }
-            }
 
-            return base.ApplyNameSuffix(suffix);
-        }
+		public virtual bool CheckControlChance(Mobile m)
+		{
+			if (GetControlChance(m) > Utility.RandomDouble())
+			{
+				Loyalty += 1;
+				return true;
+			}
 
-        public virtual bool CheckControlChance(Mobile m)
-        {
-            if (GetControlChance(m) > Utility.RandomDouble())
-            {
-                Loyalty += 1;
-                return true;
-            }
+			PlaySound(GetAngerSound());
 
-            PlaySound(GetAngerSound());
+			if (Core.SA)
+			{
+				Animate(AnimationType.Alert, 0);
+			}
+			else
+			{
+				Animate(Body.IsAnimal ? 10 : 18, 5, 1, true, false, 0);
+			}
 
-            if (Core.SA)
-            {
-                Animate(AnimationType.Alert, 0);
-            }
-            else
-            {
-                Animate(Body.IsAnimal ? 10 : 18, 5, 1, true, false, 0);
-            }
+			Loyalty -= 3;
+			return false;
+		}
 
-            Loyalty -= 3;
-            return false;
-        }
+		public virtual bool CanBeControlledBy(Mobile m)
+		{
+			return (GetControlChance(m) > 0.0);
+		}
 
-        public virtual bool CanBeControlledBy(Mobile m)
-        {
-            return (GetControlChance(m) > 0.0);
-        }
+		public double GetControlChance(Mobile m)
+		{
+			return GetControlChance(m, false);
+		}
 
-        public double GetControlChance(Mobile m)
-        {
-            return GetControlChance(m, false);
-        }
-
-        public virtual double GetControlChance(Mobile m, bool useBaseSkill)
-        {
+		public virtual double GetControlChance(Mobile m, bool useBaseSkill)
+		{
 			return 1.0;
-            if (m_CurrentTameSkill <= 29.1 || m_bSummoned || m.AccessLevel >= AccessLevel.GameMaster)
-            {
-                return 1.0;
-            }
+			if (m_CurrentTameSkill <= 29.1 || m_bSummoned || m.AccessLevel >= AccessLevel.GameMaster)
+			{
+				return 1.0;
+			}
 
-            double dMinTameSkill = m_CurrentTameSkill;
+			double dMinTameSkill = m_CurrentTameSkill;
 
-            if (dMinTameSkill > -24.9 && DarkWolfFamiliar.CheckMastery(m, this))
-            {
-                dMinTameSkill = -24.9;
-            }
+			if (dMinTameSkill > -24.9 && DarkWolfFamiliar.CheckMastery(m, this))
+			{
+				dMinTameSkill = -24.9;
+			}
 
-            int taming = (int)((useBaseSkill ? m.Skills[SkillName.AnimalTaming].Base : m.Skills[SkillName.AnimalTaming].Value) * 10);
-            int lore =   (int)((useBaseSkill ? m.Skills[SkillName.AnimalLore].Base : m.Skills[SkillName.AnimalLore].Value) * 10);
-            int bonus = 0, chance = 700;
+			int taming = (int)(
+				(useBaseSkill ? m.Skills[SkillName.AnimalTaming].Base : m.Skills[SkillName.AnimalTaming].Value) * 10
+			);
+			int lore = (int)(
+				(useBaseSkill ? m.Skills[SkillName.AnimalLore].Base : m.Skills[SkillName.AnimalLore].Value) * 10
+			);
+			int bonus = 0,
+				chance = 700;
 
-            if (Core.ML)
-            {
-                int SkillBonus = taming - (int)(dMinTameSkill * 10);
-                int LoreBonus = lore - (int)(dMinTameSkill * 10);
+			if (Core.ML)
+			{
+				int SkillBonus = taming - (int)(dMinTameSkill * 10);
+				int LoreBonus = lore - (int)(dMinTameSkill * 10);
 
-                int SkillMod = 6, LoreMod = 6;
+				int SkillMod = 6,
+					LoreMod = 6;
 
-                if (SkillBonus < 0)
-                {
-                    SkillMod = 28;
-                }
-                if (LoreBonus < 0)
-                {
-                    LoreMod = 14;
-                }
+				if (SkillBonus < 0)
+				{
+					SkillMod = 28;
+				}
+				if (LoreBonus < 0)
+				{
+					LoreMod = 14;
+				}
 
-                SkillBonus *= SkillMod;
-                LoreBonus *= LoreMod;
+				SkillBonus *= SkillMod;
+				LoreBonus *= LoreMod;
 
-                bonus = (SkillBonus + LoreBonus) / 2;
-            }
-            else
-            {
-                int difficulty = (int)(dMinTameSkill * 10);
-                int weighted = ((taming * 4) + lore) / 5;
-                bonus = weighted - difficulty;
+				bonus = (SkillBonus + LoreBonus) / 2;
+			}
+			else
+			{
+				int difficulty = (int)(dMinTameSkill * 10);
+				int weighted = ((taming * 4) + lore) / 5;
+				bonus = weighted - difficulty;
 
-                if (bonus <= 0)
-                {
-                    bonus *= 14;
-                }
-                else
-                {
-                    bonus *= 6;
-                }
-            }
+				if (bonus <= 0)
+				{
+					bonus *= 14;
+				}
+				else
+				{
+					bonus *= 6;
+				}
+			}
 
-            chance += bonus;
+			chance += bonus;
 
-            if (chance >= 0 && chance < 200)
-            {
-                chance = 200;
-            }
-            else if (chance > 990)
-            {
-                chance = 990;
-            }
+			if (chance >= 0 && chance < 200)
+			{
+				chance = 200;
+			}
+			else if (chance > 990)
+			{
+				chance = 990;
+			}
 
-            //chance -= (MaxLoyalty - m_Loyalty) * 10;
+			//chance -= (MaxLoyalty - m_Loyalty) * 10;
 
-            return ((double)chance / 1000);
-        }
+			return ((double)chance / 1000);
+		}
 
-        public virtual bool CanTransfer(Mobile m)
-        {
-            return false;// !Allured;
-        }
+		public virtual bool CanTransfer(Mobile m)
+		{
+			return false; // !Allured;
+		}
 
-        public virtual bool CanFriend(Mobile m)
-        {
-            return true;
-        }
-		
-        private static readonly Type[] m_AnimateDeadTypes = new[]
-        {
-            typeof(MoundOfMaggots), typeof(HellSteed), typeof(SkeletalMount), typeof(WailingBanshee), typeof(Wraith),
-            typeof(SkeletalDragon), typeof(LichLord), typeof(FleshGolem), typeof(Lich), typeof(SkeletalKnight),
-            typeof(BoneKnight), typeof(Mummy), typeof(SkeletalMage), typeof(BoneMagi), typeof(PatchworkSkeleton)
-        };
+		public virtual bool CanFriend(Mobile m)
+		{
+			return true;
+		}
 
-        public virtual bool IsAnimatedDead
-        {
-            get
-            {
-                return Summoned && m_AnimateDeadTypes.Any(t => t == GetType());
-            }
-        }
+		private static readonly Type[] m_AnimateDeadTypes = new[]
+		{
+			typeof(MoundOfMaggots),
+			typeof(HellSteed),
+			typeof(SkeletalMount),
+			typeof(WailingBanshee),
+			typeof(Wraith),
+			typeof(SkeletalDragon),
+			typeof(LichLord),
+			typeof(FleshGolem),
+			typeof(Lich),
+			typeof(SkeletalKnight),
+			typeof(BoneKnight),
+			typeof(Mummy),
+			typeof(SkeletalMage),
+			typeof(BoneMagi),
+			typeof(PatchworkSkeleton),
+		};
 
-        public virtual bool IsNecroFamiliar
-        {
-            get
-            {
-                if (!Summoned)
-                {
-                    return false;
-                }
+		public virtual bool IsAnimatedDead
+		{
+			get { return Summoned && m_AnimateDeadTypes.Any(t => t == GetType()); }
+		}
 
-                if (m_ControlMaster != null && SummonFamiliarSpell.Table.Contains(m_ControlMaster))
-                {
-                    return SummonFamiliarSpell.Table[m_ControlMaster] == this;
-                }
+		public virtual bool IsNecroFamiliar
+		{
+			get
+			{
+				if (!Summoned)
+				{
+					return false;
+				}
 
-                return false;
-            }
-        }
+				if (m_ControlMaster != null && SummonFamiliarSpell.Table.Contains(m_ControlMaster))
+				{
+					return SummonFamiliarSpell.Table[m_ControlMaster] == this;
+				}
 
-        public override int Damage(int amount, Mobile from)
-        {
-            return Damage(amount, from, false, false);
-        }
+				return false;
+			}
+		}
 
-        public override int Damage(int amount, Mobile from, bool informMount)
-        {
-            return Damage(amount, from, informMount, false);
-        }
+		public override int Damage(int amount, Mobile from)
+		{
+			return Damage(amount, from, false, false);
+		}
 
-        public override int Damage(int amount, Mobile from, bool informMount, bool checkDisrupt)
-        {
-            int oldHits = Hits;
+		public override int Damage(int amount, Mobile from, bool informMount)
+		{
+			return Damage(amount, from, informMount, false);
+		}
 
-            if (Core.AOS && Controlled && from is BaseCreature && !((BaseCreature)from).Controlled && !((BaseCreature)from).Summoned)
-                amount = (int)(amount * ((BaseCreature)from).BonusPetDamageScalar);
+		public override int Damage(int amount, Mobile from, bool informMount, bool checkDisrupt)
+		{
+			int oldHits = Hits;
 
-            amount = base.Damage(amount, from, informMount, checkDisrupt);
+			if (
+				Core.AOS
+				&& Controlled
+				&& from is BaseCreature
+				&& !((BaseCreature)from).Controlled
+				&& !((BaseCreature)from).Summoned
+			)
+				amount = (int)(amount * ((BaseCreature)from).BonusPetDamageScalar);
 
-            if (SubdueBeforeTame && !Controlled)
-            {
-                if ((oldHits > ((double)HitsMax / 10)) && ((double)Hits <= ((double)HitsMax / 10)))
-                {
-                    PublicOverheadMessage(MessageType.Regular, 0x3B2, false, "* The creature has been beaten into subjugation! *");
-                }
-            }
+			amount = base.Damage(amount, from, informMount, checkDisrupt);
 
-            return amount;
-        }
+			if (SubdueBeforeTame && !Controlled)
+			{
+				if ((oldHits > ((double)HitsMax / 10)) && ((double)Hits <= ((double)HitsMax / 10)))
+				{
+					PublicOverheadMessage(
+						MessageType.Regular,
+						0x3B2,
+						false,
+						"* The creature has been beaten into subjugation! *"
+					);
+				}
+			}
 
-        public virtual bool DeleteCorpseOnDeath { get { return !Core.AOS && m_bSummoned; } }
+			return amount;
+		}
 
-        public override void SetLocation(Point3D newLocation, bool isTeleport)
-        {
-            base.SetLocation(newLocation, isTeleport);
+		public virtual bool DeleteCorpseOnDeath
+		{
+			get { return !Core.AOS && m_bSummoned; }
+		}
 
-            if (isTeleport && m_AI != null)
-            {
-                m_AI.OnTeleported();
-            }
-        }
+		public override void SetLocation(Point3D newLocation, bool isTeleport)
+		{
+			base.SetLocation(newLocation, isTeleport);
+
+			if (isTeleport && m_AI != null)
+			{
+				m_AI.OnTeleported();
+			}
+		}
 
 		//소환 전 코드
-        public override void OnBeforeSpawn(Point3D location, Map m)
-        {
-            if (Paragon.CheckConvert(this, location, m))
-            {
-                IsParagon = true;
-            }
+		public override void OnBeforeSpawn(Point3D location, Map m)
+		{
+			if (Paragon.CheckConvert(this, location, m))
+			{
+				IsParagon = true;
+			}
 
 			//아이스 던전과 파이어 던전은 등급 상승 제외
 			//Misc.CreatureBalancer.GradeCreate(this, location, m);
-            base.OnBeforeSpawn(location, m);
-        }
+			base.OnBeforeSpawn(location, m);
+		}
 
-        public override ApplyPoisonResult ApplyPoison(Mobile from, Poison poison)
-        {
-            if (!Alive || IsDeadPet)
-            {
-                return ApplyPoisonResult.Immune;
-            }
+		public override ApplyPoisonResult ApplyPoison(Mobile from, Poison poison)
+		{
+			if (!Alive || IsDeadPet)
+			{
+				return ApplyPoisonResult.Immune;
+			}
 
-            if (EvilOmenSpell.TryEndEffect(this))
-            {
-                poison = PoisonImpl.IncreaseLevel(poison);
-            }
+			if (EvilOmenSpell.TryEndEffect(this))
+			{
+				poison = PoisonImpl.IncreaseLevel(poison);
+			}
 
-            ApplyPoisonResult result = base.ApplyPoison(from, poison);
+			ApplyPoisonResult result = base.ApplyPoison(from, poison);
 
-            if (from != null && result == ApplyPoisonResult.Poisoned && PoisonTimer is PoisonImpl.PoisonTimer)
-            {
-                (PoisonTimer as PoisonImpl.PoisonTimer).From = from;
-            }
+			if (from != null && result == ApplyPoisonResult.Poisoned && PoisonTimer is PoisonImpl.PoisonTimer)
+			{
+				(PoisonTimer as PoisonImpl.PoisonTimer).From = from;
+			}
 
-            return result;
-        }
+			return result;
+		}
 
-        public override bool CheckPoisonImmunity(Mobile from, Poison poison)
-        {
-            if (base.CheckPoisonImmunity(from, poison))
-            {
-                return true;
-            }
+		public override bool CheckPoisonImmunity(Mobile from, Poison poison)
+		{
+			if (base.CheckPoisonImmunity(from, poison))
+			{
+				return true;
+			}
 
-            Poison p = PoisonImmune;
+			Poison p = PoisonImmune;
 
-            XmlPoison xp = (XmlPoison)XmlAttach.FindAttachment(this, typeof(XmlPoison));
+			XmlPoison xp = (XmlPoison)XmlAttach.FindAttachment(this, typeof(XmlPoison));
 
-            if (xp != null)
-            {
-                p = xp.PoisonImmune;
-            }
+			if (xp != null)
+			{
+				p = xp.PoisonImmune;
+			}
 
-            return (p != null && p.RealLevel >= poison.RealLevel);
-        }
+			return (p != null && p.RealLevel >= poison.RealLevel);
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
 		public int Loyalty
 		{
 			get { return m_Loyalty; }
-			set 
-			{ 
+			set
+			{
 				int limit = 1000; // 기본 상한선 (야생 몬스터 등급 보너스 수용)
 
 				// [핵심] 테이밍된 상태라면 주인의 Animal Lore 스킬로 상한선 결정
@@ -2122,497 +2459,547 @@ namespace Server.Mobiles
 				}
 
 				// 값의 범위를 강제 (-1000 ~ 계산된 limit)
-				if (value < -1000) value = -1000;
-				else if (value > limit) value = limit;
+				if (value < -1000)
+					value = -1000;
+				else if (value > limit)
+					value = limit;
 
-				m_Loyalty = value; 
+				m_Loyalty = value;
 			}
 		}
-        [CommandProperty(AccessLevel.GameMaster)]
-        public WayPoint CurrentWayPoint { get { return m_CurrentWayPoint; } set { m_CurrentWayPoint = value; } }
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int CurrentNavPoint
-        {
-            get
-            {
-                return _CurrentNavPoint;
-            }
-            set
-            {
-                _CurrentNavPoint = value;
-            }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public WayPoint CurrentWayPoint
+		{
+			get { return m_CurrentWayPoint; }
+			set { m_CurrentWayPoint = value; }
+		}
 
-        public Dictionary<Map, List<Point2D>> NavPoints
-        {
-            get
-            {
-                if(_NavPoints == null)
-                    _NavPoints = new Dictionary<Map, List<Point2D>>();
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int CurrentNavPoint
+		{
+			get { return _CurrentNavPoint; }
+			set { _CurrentNavPoint = value; }
+		}
 
-                return _NavPoints;
-            }
-            set
-            {
-                _NavPoints = value;
-            }
-        }
+		public Dictionary<Map, List<Point2D>> NavPoints
+		{
+			get
+			{
+				if (_NavPoints == null)
+					_NavPoints = new Dictionary<Map, List<Point2D>>();
 
-        public List<Point2D> CurrentNavPoints
-        {
-            get
-            {
-                if (Map != null && _NavPoints.ContainsKey(Map))
-                    return _NavPoints[Map];
+				return _NavPoints;
+			}
+			set { _NavPoints = value; }
+		}
 
-                return null;
-            }
-        }
+		public List<Point2D> CurrentNavPoints
+		{
+			get
+			{
+				if (Map != null && _NavPoints.ContainsKey(Map))
+					return _NavPoints[Map];
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public IPoint2D TargetLocation { get { return m_TargetLocation; } set { m_TargetLocation = value; } }
+				return null;
+			}
+		}
 
-        public virtual Mobile ConstantFocus { get { return null; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public IPoint2D TargetLocation
+		{
+			get { return m_TargetLocation; }
+			set { m_TargetLocation = value; }
+		}
 
-        public virtual bool DisallowAllMoves
-        {
-            get
-            {
-                XmlData x = (XmlData)XmlAttach.FindAttachment(this, typeof(XmlData), "NoSpecials");
+		public virtual Mobile ConstantFocus
+		{
+			get { return null; }
+		}
 
-                return x != null && x.Data == "True";
-            }
-        }
+		public virtual bool DisallowAllMoves
+		{
+			get
+			{
+				XmlData x = (XmlData)XmlAttach.FindAttachment(this, typeof(XmlData), "NoSpecials");
 
-        public virtual bool InitialInnocent
-        {
-            get
-            {
-                XmlData x = (XmlData)XmlAttach.FindAttachment(this, typeof(XmlData), "Notoriety");
+				return x != null && x.Data == "True";
+			}
+		}
 
-                return x != null && x.Data == "True";
-            }
-        }
+		public virtual bool InitialInnocent
+		{
+			get
+			{
+				XmlData x = (XmlData)XmlAttach.FindAttachment(this, typeof(XmlData), "Notoriety");
 
-        public virtual bool AlwaysMurderer
-        {
-            get
-            {
-                XmlData x = (XmlData)XmlAttach.FindAttachment(this, typeof(XmlData), "Notoriety");
+				return x != null && x.Data == "True";
+			}
+		}
 
-                return x != null && x.Data == "True";
-            }
-        }
+		public virtual bool AlwaysMurderer
+		{
+			get
+			{
+				XmlData x = (XmlData)XmlAttach.FindAttachment(this, typeof(XmlData), "Notoriety");
 
-        public virtual bool AlwaysAttackable
-        {
-            get
-            {
-                XmlData x = (XmlData)XmlAttach.FindAttachment(this, typeof(XmlData), "Notoriety");
+				return x != null && x.Data == "True";
+			}
+		}
 
-                return x != null && x.Data == "True";
-            }
-        }
+		public virtual bool AlwaysAttackable
+		{
+			get
+			{
+				XmlData x = (XmlData)XmlAttach.FindAttachment(this, typeof(XmlData), "Notoriety");
 
-        public virtual bool ForceNotoriety
-        {
-            get
-            {
-                return false;
-            }
-        }
+				return x != null && x.Data == "True";
+			}
+		}
 
-        public virtual bool HoldSmartSpawning { get { return IsParagon; } }
-        public virtual bool UseSmartAI { get { return false; } }
+		public virtual bool ForceNotoriety
+		{
+			get { return false; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public virtual int DamageMin { get { return m_DamageMin; } set { m_DamageMin = value; } }
+		public virtual bool HoldSmartSpawning
+		{
+			get { return IsParagon; }
+		}
+		public virtual bool UseSmartAI
+		{
+			get { return false; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public virtual int DamageMax { get { return m_DamageMax; } set { m_DamageMax = value; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public virtual int DamageMin
+		{
+			get { return m_DamageMin; }
+			set { m_DamageMin = value; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public override int HitsMax
-        {
-            get
-            {
-                int value = Str;
+		[CommandProperty(AccessLevel.GameMaster)]
+		public virtual int DamageMax
+		{
+			get { return m_DamageMax; }
+			set { m_DamageMax = value; }
+		}
 
-                if (m_HitsMax > 0)
-                {
-                    value = m_HitsMax + GetStatOffset(StatType.Str);
+		[CommandProperty(AccessLevel.GameMaster)]
+		public override int HitsMax
+		{
+			get
+			{
+				int value = Str;
 
-                    if (value < 1)
-                    {
-                        value = 1;
-                    }
-                    else if (value > 1000000)
-                    {
-                        value = 1000000;
-                    }
-                }
+				if (m_HitsMax > 0)
+				{
+					value = m_HitsMax + GetStatOffset(StatType.Str);
 
-                // Skill Masteries
-                if (Core.TOL)
-                {
-                    value += ToughnessSpell.GetHPBonus(this);
-                    value += InvigorateSpell.GetHPBonus(this);
-                }
+					if (value < 1)
+					{
+						value = 1;
+					}
+					else if (value > 1000000)
+					{
+						value = 1000000;
+					}
+				}
 
-                return value;
-            }
-        }
+				// Skill Masteries
+				if (Core.TOL)
+				{
+					value += ToughnessSpell.GetHPBonus(this);
+					value += InvigorateSpell.GetHPBonus(this);
+				}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int HitsMaxSeed { get { return m_HitsMax; } set { m_HitsMax = value; } }
+				return value;
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public override int StamMax
-        {
-            get
-            {
-                if (m_StamMax > 0)
-                {
-                    int value = m_StamMax + GetStatOffset(StatType.Dex);
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int HitsMaxSeed
+		{
+			get { return m_HitsMax; }
+			set { m_HitsMax = value; }
+		}
 
-                    if (value < 1)
-                    {
-                        value = 1;
-                    }
-                    else if (value > 1000000)
-                    {
-                        value = 1000000;
-                    }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public override int StamMax
+		{
+			get
+			{
+				if (m_StamMax > 0)
+				{
+					int value = m_StamMax + GetStatOffset(StatType.Dex);
 
-                    return value;
-                }
+					if (value < 1)
+					{
+						value = 1;
+					}
+					else if (value > 1000000)
+					{
+						value = 1000000;
+					}
 
-                return Dex;
-            }
-        }
+					return value;
+				}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int StamMaxSeed { get { return m_StamMax; } set { m_StamMax = value; } }
+				return Dex;
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public override int ManaMax
-        {
-            get
-            {
-                if (m_ManaMax > 0)
-                {
-                    int value = m_ManaMax + GetStatOffset(StatType.Int);
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int StamMaxSeed
+		{
+			get { return m_StamMax; }
+			set { m_StamMax = value; }
+		}
 
-                    if (value < 1)
-                    {
-                        value = 1;
-                    }
-                    else if (value > 1000000)
-                    {
-                        value = 1000000;
-                    }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public override int ManaMax
+		{
+			get
+			{
+				if (m_ManaMax > 0)
+				{
+					int value = m_ManaMax + GetStatOffset(StatType.Int);
 
-                    return value;
-                }
+					if (value < 1)
+					{
+						value = 1;
+					}
+					else if (value > 1000000)
+					{
+						value = 1000000;
+					}
 
-                return Int;
-            }
-        }
+					return value;
+				}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int ManaMaxSeed { get { return m_ManaMax; } set { m_ManaMax = value; } }
+				return Int;
+			}
+		}
 
-        public virtual bool CanOpenDoors { get { return !Body.IsAnimal && !Body.IsSea; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int ManaMaxSeed
+		{
+			get { return m_ManaMax; }
+			set { m_ManaMax = value; }
+		}
 
-        public virtual bool CanMoveOverObstacles { get { return Core.AOS || Body.IsMonster; } }
+		public virtual bool CanOpenDoors
+		{
+			get { return !Body.IsAnimal && !Body.IsSea; }
+		}
 
-        public virtual bool CanDestroyObstacles
-        {
-            get
-            {
-                // to enable breaking of furniture, 'return CanMoveOverObstacles;'
-                return false;
-            }
-        }
+		public virtual bool CanMoveOverObstacles
+		{
+			get { return Core.AOS || Body.IsMonster; }
+		}
 
-        public void Unpacify()
-        {
-            BardEndTime = DateTime.UtcNow;
-            BardPacified = false;
-        }
+		public virtual bool CanDestroyObstacles
+		{
+			get
+			{
+				// to enable breaking of furniture, 'return CanMoveOverObstacles;'
+				return false;
+			}
+		}
 
-        private HonorContext m_ReceivedHonorContext;
+		public void Unpacify()
+		{
+			BardEndTime = DateTime.UtcNow;
+			BardPacified = false;
+		}
 
-        public HonorContext ReceivedHonorContext { get { return m_ReceivedHonorContext; } set { m_ReceivedHonorContext = value; } }
+		private HonorContext m_ReceivedHonorContext;
 
-        /*
+		public HonorContext ReceivedHonorContext
+		{
+			get { return m_ReceivedHonorContext; }
+			set { m_ReceivedHonorContext = value; }
+		}
 
-        Seems this actually was removed on OSI somewhere between the original bug report and now.
-        We will call it ML, until we can get better information. I suspect it was on the OSI TC when
-        originally it taken out of RunUO, and not implmented on OSIs production shards until more
-        recently.  Either way, this is, or was, accurate OSI behavior, and just entirely
-        removing it was incorrect.  OSI followers were distracted by being attacked well into
-        AoS, at very least.
+		/*
 
-        */
+		Seems this actually was removed on OSI somewhere between the original bug report and now.
+		We will call it ML, until we can get better information. I suspect it was on the OSI TC when
+		originally it taken out of RunUO, and not implmented on OSIs production shards until more
+		recently.  Either way, this is, or was, accurate OSI behavior, and just entirely
+		removing it was incorrect.  OSI followers were distracted by being attacked well into
+		AoS, at very least.
 
-        public virtual bool CanBeDistracted { get { return !Core.ML; } }
+		*/
 
-        public virtual void CheckDistracted(Mobile from)
-        {
-            if (Utility.RandomDouble() < .10)
-            {
-                ControlTarget = from;
-                ControlOrder = OrderType.Attack;
-                Combatant = from;
-                Warmode = true;
-            }
-        }
+		public virtual bool CanBeDistracted
+		{
+			get { return !Core.ML; }
+		}
+
+		public virtual void CheckDistracted(Mobile from)
+		{
+			if (Utility.RandomDouble() < .10)
+			{
+				ControlTarget = from;
+				ControlOrder = OrderType.Attack;
+				Combatant = from;
+				Warmode = true;
+			}
+		}
 
 		public virtual void AttackerCheck(Mobile from)
 		{
-			if( Combatant == null )
+			if (Combatant == null)
 			{
 				Combatant = from;
 				Warmode = true;
 			}
 			m_iRangePerception = 24;
 		}
-		
-        public virtual void OnBeforeDamage(Mobile from, ref int totalDamage, DamageType type)
-        {
-            if (type >= DamageType.Spell && RecentSetControl)
-            {
-                totalDamage = 0;
-            }
-        }
 
-        public override void OnDamage(int amount, Mobile from, bool willKill)
-        {
-            if (BardPacified && (HitsMax - Hits) * 0.001 > Utility.RandomDouble())
-            {
-                Unpacify();
-            }
+		public virtual void OnBeforeDamage(Mobile from, ref int totalDamage, DamageType type)
+		{
+			if (type >= DamageType.Spell && RecentSetControl)
+			{
+				totalDamage = 0;
+			}
+		}
 
-            int disruptThreshold;
-            //NPCs can use bandages too!
-            if (!Core.AOS)
-            {
-                disruptThreshold = 0;
-            }
-            else if (from != null && from.Player)
-            {
-                disruptThreshold = 18;
-            }
-            else
-            {
-                disruptThreshold = 25;
-            }
+		public override void OnDamage(int amount, Mobile from, bool willKill)
+		{
+			if (BardPacified && (HitsMax - Hits) * 0.001 > Utility.RandomDouble())
+			{
+				Unpacify();
+			}
 
-            if (amount > disruptThreshold)
-            {
-                BandageContext c = BandageContext.GetContext(this);
+			int disruptThreshold;
+			//NPCs can use bandages too!
+			if (!Core.AOS)
+			{
+				disruptThreshold = 0;
+			}
+			else if (from != null && from.Player)
+			{
+				disruptThreshold = 18;
+			}
+			else
+			{
+				disruptThreshold = 25;
+			}
 
-                if (c != null)
-                {
-                    c.Slip();
-                }
-            }
+			if (amount > disruptThreshold)
+			{
+				BandageContext c = BandageContext.GetContext(this);
 
-            if (Confidence.IsRegenerating(this))
-            {
-                Confidence.StopRegenerating(this);
-            }
+				if (c != null)
+				{
+					c.Slip();
+				}
+			}
 
-            InhumanSpeech speechType = SpeechType;
+			if (Confidence.IsRegenerating(this))
+			{
+				Confidence.StopRegenerating(this);
+			}
 
-            if (speechType != null && !willKill)
-            {
-                speechType.OnDamage(this, amount);
-            }
+			InhumanSpeech speechType = SpeechType;
 
-            if (m_ReceivedHonorContext != null)
-            {
-                m_ReceivedHonorContext.OnTargetDamaged(from, amount);
-            }
+			if (speechType != null && !willKill)
+			{
+				speechType.OnDamage(this, amount);
+			}
 
-            if (!willKill)
-            {
-                if (CanBeDistracted && ControlOrder == OrderType.Follow)
-                {
-                    CheckDistracted(from);
-                }
-            }
-            else if (from is PlayerMobile)
-            {
-                Timer.DelayCall(TimeSpan.FromSeconds(10), ((PlayerMobile)@from).RecoverAmmo);
-            }
-		
+			if (m_ReceivedHonorContext != null)
+			{
+				m_ReceivedHonorContext.OnTargetDamaged(from, amount);
+			}
+
+			if (!willKill)
+			{
+				if (CanBeDistracted && ControlOrder == OrderType.Follow)
+				{
+					CheckDistracted(from);
+				}
+			}
+			else if (from is PlayerMobile)
+			{
+				Timer.DelayCall(TimeSpan.FromSeconds(10), ((PlayerMobile)@from).RecoverAmmo);
+			}
+
 			//if ( ControlMaster == null && Combatant == null )
 			//		AttackerCheck(from);
 			base.OnDamage(amount, from, willKill);
-        }
+		}
 
-        public virtual void OnDamagedBySpell(Mobile from)
-        {
-            if (CanBeDistracted && ControlOrder == OrderType.Follow)
-            {
-                CheckDistracted(from);
-            }
+		public virtual void OnDamagedBySpell(Mobile from)
+		{
+			if (CanBeDistracted && ControlOrder == OrderType.Follow)
+			{
+				CheckDistracted(from);
+			}
 
 			//if ( ControlMaster == null && Combatant == null )
 			//		AttackerCheck(from);
-        }
-		
-        public virtual void OnHarmfulSpell(Mobile from)
-        { }
+		}
 
-        #region Alter[...]Damage From/To
-        public virtual void AlterDamageScalarFrom(Mobile caster, ref double scalar)
-        { }
+		public virtual void OnHarmfulSpell(Mobile from) { }
 
-        public virtual void AlterDamageScalarTo(Mobile target, ref double scalar)
-        { }
+		#region Alter[...]Damage From/To
+		public virtual void AlterDamageScalarFrom(Mobile caster, ref double scalar) { }
 
-        public virtual void AlterSpellDamageFrom(Mobile from, ref int damage)
-        {
-            if (m_TempDamageAbsorb > 0 && VialofArmorEssence.UnderInfluence(this))
-                damage -= damage / m_TempDamageAbsorb;
-        }
+		public virtual void AlterDamageScalarTo(Mobile target, ref double scalar) { }
 
-        public virtual void AlterSpellDamageTo(Mobile to, ref int damage)
-        { }
+		public virtual void AlterSpellDamageFrom(Mobile from, ref int damage)
+		{
+			if (m_TempDamageAbsorb > 0 && VialofArmorEssence.UnderInfluence(this))
+				damage -= damage / m_TempDamageAbsorb;
+		}
 
-        public virtual void AlterMeleeDamageFrom(Mobile from, ref int damage)
-        {
-            #region Mondain's Legacy
-            if (from != null && from.Talisman is BaseTalisman)
-            {
-                BaseTalisman talisman = (BaseTalisman)from.Talisman;
+		public virtual void AlterSpellDamageTo(Mobile to, ref int damage) { }
 
-                if (talisman.Killer != null && talisman.Killer.Type != null)
-                {
-                    Type type = talisman.Killer.Type;
+		public virtual void AlterMeleeDamageFrom(Mobile from, ref int damage)
+		{
+			#region Mondain's Legacy
+			if (from != null && from.Talisman is BaseTalisman)
+			{
+				BaseTalisman talisman = (BaseTalisman)from.Talisman;
 
-                    if (type.IsAssignableFrom(GetType()))
-                    {
-                        damage = (int)(damage * (1 + (double)talisman.Killer.Amount / 100));
-                    }
-                }
-            }
-            #endregion
+				if (talisman.Killer != null && talisman.Killer.Type != null)
+				{
+					Type type = talisman.Killer.Type;
 
-            if (m_TempDamageAbsorb > 0 && VialofArmorEssence.UnderInfluence(this))
-                damage -= damage / m_TempDamageAbsorb;
-        }
+					if (type.IsAssignableFrom(GetType()))
+					{
+						damage = (int)(damage * (1 + (double)talisman.Killer.Amount / 100));
+					}
+				}
+			}
+			#endregion
 
-        public virtual void AlterMeleeDamageTo(Mobile to, ref int damage)
-        {
-            if (m_TempDamageBonus > 0 && TastyTreat.UnderInfluence(this))
-                damage += damage / m_TempDamageBonus;
-        }
-        #endregion
+			if (m_TempDamageAbsorb > 0 && VialofArmorEssence.UnderInfluence(this))
+				damage -= damage / m_TempDamageAbsorb;
+		}
 
-        #region SA / High Seas Tasty Treats/Vial of Armor Essense
-        private int m_TempDamageBonus = 0;
-        private int m_TempDamageAbsorb = 0;
+		public virtual void AlterMeleeDamageTo(Mobile to, ref int damage)
+		{
+			if (m_TempDamageBonus > 0 && TastyTreat.UnderInfluence(this))
+				damage += damage / m_TempDamageBonus;
+		}
+		#endregion
 
-        public int TempDamageBonus { get { return m_TempDamageBonus; } set { m_TempDamageBonus = value; } }
-        public int TempDamageAbsorb { get { return m_TempDamageAbsorb; } set { m_TempDamageAbsorb = value; } }
-        #endregion
+		#region SA / High Seas Tasty Treats/Vial of Armor Essense
+		private int m_TempDamageBonus = 0;
+		private int m_TempDamageAbsorb = 0;
 
-        public virtual void CheckReflect(Mobile caster, ref bool reflect)
-        { }
+		public int TempDamageBonus
+		{
+			get { return m_TempDamageBonus; }
+			set { m_TempDamageBonus = value; }
+		}
+		public int TempDamageAbsorb
+		{
+			get { return m_TempDamageAbsorb; }
+			set { m_TempDamageAbsorb = value; }
+		}
+		#endregion
+
+		public virtual void CheckReflect(Mobile caster, ref bool reflect) { }
+
 		private int[] buffpoint = { 500, 2000, 10000, 25000, 50000, 200000 };
 
-        public virtual void OnCarve(Mobile from, Corpse corpse, Item with)
-        {
-            int feathers = Feathers;
-            int wool = Wool;
-            int meat = Meat;
-            int hides = Hides;
-            int scales = Scales;
-            int dragonblood = DragonBlood;
-            int fur = Fur;
-			
+		public virtual void OnCarve(Mobile from, Corpse corpse, Item with)
+		{
+			int feathers = Feathers;
+			int wool = Wool;
+			int meat = Meat;
+			int hides = Hides;
+			int scales = Scales;
+			int dragonblood = DragonBlood;
+			int fur = Fur;
+
 			int fame = this.Fame;
 
-            bool special = with is HarvestersBlade;
-			
-			if( Summoned )
+			bool special = with is HarvestersBlade;
+
+			if (Summoned)
 			{
 				from.SendMessage("소환한 몬스터는 얻을 아이템이 없습니다.");
 				return;
 			}
 
-            if ((feathers == 0 && wool == 0 && meat == 0 && hides == 0 && scales == 0 && fur == 0) || Summoned || IsBonded || corpse.Animated)
-            {
-                if (corpse.Animated)
-                {
-                    corpse.SendLocalizedMessageTo(from, 500464); // Use this on corpses to carve away meat and hide
-                }
-                else
-                {
-                    from.SendLocalizedMessage(500485); // You see nothing useful to carve from the corpse.
-                }
-            }
-            else
-            {
-                if (Core.ML && from.Race == Race.Human)
-                {
-                    hides = (int)Math.Ceiling(hides * 1.1); // 10% bonus only applies to hides, ore & logs
-                }
+			if (
+				(feathers == 0 && wool == 0 && meat == 0 && hides == 0 && scales == 0 && fur == 0)
+				|| Summoned
+				|| IsBonded
+				|| corpse.Animated
+			)
+			{
+				if (corpse.Animated)
+				{
+					corpse.SendLocalizedMessageTo(from, 500464); // Use this on corpses to carve away meat and hide
+				}
+				else
+				{
+					from.SendLocalizedMessage(500485); // You see nothing useful to carve from the corpse.
+				}
+			}
+			else
+			{
+				if (Core.ML && from.Race == Race.Human)
+				{
+					hides = (int)Math.Ceiling(hides * 1.1); // 10% bonus only applies to hides, ore & logs
+				}
 				bool skinning = false;
-				if( with is SkinningKnife || with is ButcherKnife )
+				if (with is SkinningKnife || with is ButcherKnife)
 					skinning = true;
-				
-                //var cutHides = (with is SkinningKnife && from.FindItemOnLayer(Layer.OneHanded) == with) || special || with is ButchersWarCleaver;
+
+				//var cutHides = (with is SkinningKnife && from.FindItemOnLayer(Layer.OneHanded) == with) || special || with is ButchersWarCleaver;
 
 				//아나토미, 맛감정
 				//int anatomy = 0;
 				double tasteID = 0;
 
-                new Blood(0x122D).MoveToWorld(corpse.Location, corpse.Map);
+				new Blood(0x122D).MoveToWorld(corpse.Location, corpse.Map);
 
 				/*
-                if (wool != 0 && skinning )
-                {
+				if (wool != 0 && skinning )
+				{
 					tasteID += wool * 100;
-                    Item w = new TaintedWool(wool);
+					Item w = new TaintedWool(wool);
 
-                    if (!Core.AOS || !from.AddToBackpack(w))
-                    {
-                        corpse.AddCarvedItem(w, from);
-                        from.SendLocalizedMessage(500483); // You shear it, and the wool is now on the corpse.
-                    }
-                    else
-                    {
-                        from.SendLocalizedMessage(1114099); // You shear the creature and put the resources in your backpack.
-                    }
-                }
+					if (!Core.AOS || !from.AddToBackpack(w))
+					{
+						corpse.AddCarvedItem(w, from);
+						from.SendLocalizedMessage(500483); // You shear it, and the wool is now on the corpse.
+					}
+					else
+					{
+						from.SendLocalizedMessage(1114099); // You shear the creature and put the resources in your backpack.
+					}
+				}
 				if( wool != 0 && !skinning )
 				{
 					from.SendMessage("죽은 양은 피복칼로만 양털을 획득 할 수 있을 것 같습니다.");
 				}
 				*/
-                if (meat != 0 )
-                {
-                    Item m = null;
+				if (meat != 0)
+				{
+					Item m = null;
 
-					if( skinning ) 
+					if (skinning)
 					{
-						if( MeatType == MeatType.Bird )
+						if (MeatType == MeatType.Bird)
 						{
-							m = new RawBird(meat); 
+							m = new RawBird(meat);
 							tasteID += meat * 200;
 						}
-						if( MeatType == MeatType.LambLeg )
+						if (MeatType == MeatType.LambLeg)
 						{
-							 m = new RawLambLeg(meat);
-							 tasteID += meat * 100;
+							m = new RawLambLeg(meat);
+							tasteID += meat * 100;
 						}
-						if( MeatType == MeatType.Ribs )
+						if (MeatType == MeatType.Ribs)
 						{
 							m = new RawRibs(meat);
 							tasteID += meat * 10;
@@ -2627,16 +3014,16 @@ namespace Server.Mobiles
 							from.SendLocalizedMessage(1114101); // You carve some meat and put it in your backpack.
 						}
 					}
-					else if( MeatType == MeatType.Ribs ||  MeatType == MeatType.Rotworm )
+					else if (MeatType == MeatType.Ribs || MeatType == MeatType.Rotworm)
 					{
-						if( MeatType == MeatType.Ribs )
+						if (MeatType == MeatType.Ribs)
 						{
 							meat /= 2;
-							if( meat < 1 )
+							if (meat < 1)
 								meat = 1;
 							m = new RawRibs(meat);
 						}
-						if( MeatType == MeatType.Rotworm )
+						if (MeatType == MeatType.Rotworm)
 						{
 							m = new RawRotwormMeat(meat);
 						}
@@ -2652,79 +3039,78 @@ namespace Server.Mobiles
 					}
 					else
 						from.SendMessage("양고기와 새고기는 푸줏간 칼 혹은 피복칼로 다듬어야 할 것 같습니다.");
-                }
-                if (feathers != 0)
-                {
-					if( skinning )
+				}
+				if (feathers != 0)
+				{
+					if (skinning)
 					{
 						tasteID += feathers;
 					}
 					else
 					{
 						feathers /= 2;
-						if( feathers < 1 )
+						if (feathers < 1)
 							feathers = 1;
 					}
-                    Item feather = new Feather(feathers);
+					Item feather = new Feather(feathers);
 
-                    if (!Core.AOS || !from.AddToBackpack(feather))
-                    {
-                        corpse.AddCarvedItem(feather, from);
-                        from.SendLocalizedMessage(500479); // You pluck the bird. The feathers are now on the corpse.
-                    }
-                    else
-                    {
-                        from.SendLocalizedMessage(1114097); // You pluck the bird and place the feathers in your backpack.
-                    }
-                }
+					if (!Core.AOS || !from.AddToBackpack(feather))
+					{
+						corpse.AddCarvedItem(feather, from);
+						from.SendLocalizedMessage(500479); // You pluck the bird. The feathers are now on the corpse.
+					}
+					else
+					{
+						from.SendLocalizedMessage(1114097); // You pluck the bird and place the feathers in your backpack.
+					}
+				}
 
-                if (hides != 0 )
-                {
+				if (hides != 0)
+				{
 					corpse.ItemID = 6928;
-                    Item leather = null;
+					Item leather = null;
 
 					int loot_grade = 0;
 					int loot_count = 0;
 					int LootPlus = 0;
 
-					if( m_Boss )
+					if (m_Boss)
 						LootPlus = 5;
 					else
 					{
 						LootPlus = CreatureBalancer.MonsterGrade(m_Grade) - 1;
-
 					}
-					
+
 					int temp_Fame = this.Fame;
-					if( Tamable )
+					if (Tamable)
 						temp_Fame = (int)MinTameSkill * 200;
 
-					if( temp_Fame < 2000 ) //가난 등급
+					if (temp_Fame < 2000) //가난 등급
 					{
 						loot_grade = 0;
 						//loot_count = this.Fame / 500 + 1;
 					}
-					else if( temp_Fame < 5000 ) //취약 등급
+					else if (temp_Fame < 5000) //취약 등급
 					{
 						loot_grade = 1;
 						//loot_count = ( this.Fame - 1500 ) / 500 + 1;
 					}
-					else if( temp_Fame < 8000 ) //일반 등급
+					else if (temp_Fame < 8000) //일반 등급
 					{
 						loot_grade = 2;
 						//loot_count = ( this.Fame - 3000 ) / 1000 + 1;
 					}
-					else if( temp_Fame < 11000 )
+					else if (temp_Fame < 11000)
 					{
 						loot_grade = 3;
 						//loot_count = ( this.Fame - 6000 ) / 1000 + 1;
 					}
-					else if( temp_Fame < 15000 )
+					else if (temp_Fame < 15000)
 					{
 						loot_grade = 4;
 						//loot_count = ( this.Fame - 9000 ) / 2000 + 1;
 					}
-					else if( temp_Fame < 19000 )
+					else if (temp_Fame < 19000)
 					{
 						loot_grade = 5;
 						//loot_count = ( this.Fame - 15000 ) / 3000 + 1;
@@ -2744,50 +3130,53 @@ namespace Server.Mobiles
 					}
 					*/
 					loot_count += LootPlus;
-					if( m_Boss )
+					if (m_Boss)
 						loot_grade++;
-					
-					if( loot_grade > 6 )
+
+					if (loot_grade > 6)
 					{
 						loot_grade = 6;
 						loot_count++;
 					}
 					hides += loot_count + 5;
-					
+
 					hides *= 2;
-					
+
 					int point = loot_grade * 20 + 80;
-					
-					if( from.Skills.TasteID.Value >= 100 && (( from.Skills.TasteID.Value + 50 - point ) * 0.01 > Utility.RandomDouble()) )
+
+					if (
+						from.Skills.TasteID.Value >= 100
+						&& ((from.Skills.TasteID.Value + 50 - point) * 0.01 > Utility.RandomDouble())
+					)
 						hides++;
 
 					double bonus = 0.0;
 					int maxchance = Misc.Util.upgradechance[loot_grade];
-					if( from is PlayerMobile )
+					if (from is PlayerMobile)
 					{
 						PlayerMobile pm = from as PlayerMobile;
-						maxchance = Misc.Util.ExpHarvestBonus( pm, maxchance );
+						maxchance = Misc.Util.ExpHarvestBonus(pm, maxchance);
 						bonus = pm.GoldPoint[4];
 
-						if( skinning )
+						if (skinning)
 						{
-							double chance = 1 + ( from.Skills.TasteID.Value - loot_grade ) * 0.02;
-							if( chance >= Utility.RandomDouble() )
+							double chance = 1 + (from.Skills.TasteID.Value - loot_grade) * 0.02;
+							if (chance >= Utility.RandomDouble())
 							{
-								if( Utility.RandomMinMax(1, 10000) > maxchance )
+								if (Utility.RandomMinMax(1, 10000) > maxchance)
 								{
 									from.SendMessage("스킬이 부족하여 좋은 가죽을 얻는데 실패합니다.");
 									loot_grade = 0;
 								}
 								else
 									from.SendMessage("가죽을 얻는데 성공합니다.");
-								tasteID += hides * 30; 
-								
+								tasteID += hides * 30;
+
 								switch (loot_grade)
 								{
 									case 0:
-									{ 
-										leather = new Hides(hides); 
+									{
+										leather = new Hides(hides);
 										break;
 									}
 									case 1:
@@ -2826,9 +3215,9 @@ namespace Server.Mobiles
 								double skillpoint = minSkill + maxSkill;
 
 								Server.Misc.Util.SavingAccountPoint(pm, 21, 1);
-								Server.Misc.Util.SavingAccountPoint(pm, (int)( 22 + loot_grade ), 1 );
+								Server.Misc.Util.SavingAccountPoint(pm, (int)(22 + loot_grade), 1);
 								tasteID = skillpoint * hides;
-								QuestHelper.CheckHarvest(pm, leather);								
+								QuestHelper.CheckHarvest(pm, leather);
 							}
 							else
 							{
@@ -2839,55 +3228,67 @@ namespace Server.Mobiles
 						else
 						{
 							hides /= 2;
-							if( hides < 1 )
+							if (hides < 1)
 								hides = 1;
-							leather = new Hides(hides);  
+							leather = new Hides(hides);
 						}
 						int getgoldpoint = (int)(tasteID);
 
-						if( getgoldpoint > 0 )
+						if (getgoldpoint > 0)
 						{
 							pm.Getgoldpoint(getgoldpoint);
 						}
-						from.CheckSkill(SkillName.TasteID, tasteID );
-					}						
+						from.CheckSkill(SkillName.TasteID, tasteID);
+					}
 
-                    if ( hides > 0 && !from.AddToBackpack(leather))
-                    {
+					if (hides > 0 && !from.AddToBackpack(leather))
+					{
 						corpse.AddCarvedItem(leather, from);
 						from.SendLocalizedMessage(500471); // You skin it, and the hides are now in the corpse.
-                    }
-                    else
-                    {
-                        from.SendLocalizedMessage(1073555); // You skin it and place the cut-up hides in your backpack.
-                    }
-                }
+					}
+					else
+					{
+						from.SendLocalizedMessage(1073555); // You skin it and place the cut-up hides in your backpack.
+					}
+				}
 
-                if (scales != 0)
-                {
-                    ScaleType sc = ScaleType;
-                    List<Item> list = new List<Item>();
+				if (scales != 0)
+				{
+					ScaleType sc = ScaleType;
+					List<Item> list = new List<Item>();
 
-                    switch (sc)
-                    {
-                        default:
-                        case ScaleType.Red: list.Add(new RedScales(scales)); break;
-                        case ScaleType.Yellow: list.Add(new YellowScales(scales)); break;
-                        case ScaleType.Black: list.Add(new BlackScales(scales)); break;
-                        case ScaleType.Green: list.Add(new GreenScales(scales)); break;
-                        case ScaleType.White: list.Add(new WhiteScales(scales)); break;
-                        case ScaleType.Blue: list.Add(new BlueScales(scales)); break;
-                        case ScaleType.All:
-                            {
-                                list.Add(new RedScales(scales));
-                                list.Add(new YellowScales(scales));
-                                list.Add(new BlackScales(scales));
-                                list.Add(new GreenScales(scales));
-                                list.Add(new WhiteScales(scales));
-                                list.Add(new BlueScales(scales));
-                                break;
-                            }
-                    }
+					switch (sc)
+					{
+						default:
+						case ScaleType.Red:
+							list.Add(new RedScales(scales));
+							break;
+						case ScaleType.Yellow:
+							list.Add(new YellowScales(scales));
+							break;
+						case ScaleType.Black:
+							list.Add(new BlackScales(scales));
+							break;
+						case ScaleType.Green:
+							list.Add(new GreenScales(scales));
+							break;
+						case ScaleType.White:
+							list.Add(new WhiteScales(scales));
+							break;
+						case ScaleType.Blue:
+							list.Add(new BlueScales(scales));
+							break;
+						case ScaleType.All:
+						{
+							list.Add(new RedScales(scales));
+							list.Add(new YellowScales(scales));
+							list.Add(new BlackScales(scales));
+							list.Add(new GreenScales(scales));
+							list.Add(new WhiteScales(scales));
+							list.Add(new BlueScales(scales));
+							break;
+						}
+					}
 
 					foreach (Item s in list)
 					{
@@ -2895,426 +3296,458 @@ namespace Server.Mobiles
 					}
 
 					from.SendLocalizedMessage(1079284); // You cut away some scales, but they remain on the corpse.
-                    ColUtility.Free(list);
-                }
+					ColUtility.Free(list);
+				}
 
 				/*
-                if (dragonblood != 0)
-                {
-                    Item dblood = new DragonBlood(dragonblood);
+				if (dragonblood != 0)
+				{
+					Item dblood = new DragonBlood(dragonblood);
 
-                    if (!Core.AOS || !special || !from.AddToBackpack(dblood))
-                    {
-                        corpse.AddCarvedItem(dblood, from);
-                        from.SendLocalizedMessage(1094946); // Some blood is left on the corpse.
-                    }
-                    else
-                    {
-                        from.SendLocalizedMessage(1114100); // You take some blood off the corpse and put it in your backpack.
-                    }
-                }
-                if (fur != 0)
-                {
-                    Item _fur = new Fur(FurType, fur);
+					if (!Core.AOS || !special || !from.AddToBackpack(dblood))
+					{
+						corpse.AddCarvedItem(dblood, from);
+						from.SendLocalizedMessage(1094946); // Some blood is left on the corpse.
+					}
+					else
+					{
+						from.SendLocalizedMessage(1114100); // You take some blood off the corpse and put it in your backpack.
+					}
+				}
+				if (fur != 0)
+				{
+					Item _fur = new Fur(FurType, fur);
 
-                    corpse.AddCarvedItem(_fur, from);
-                    from.SendLocalizedMessage(1112765); // You shear it, and the fur is now on the corpse.
-                }
+					corpse.AddCarvedItem(_fur, from);
+					from.SendLocalizedMessage(1112765); // You shear it, and the fur is now on the corpse.
+				}
 
 				*/
-                corpse.Carved = true;
+				corpse.Carved = true;
 				//해부학 스킬
 				//from.CheckSkill(SkillName.Anatomy, anatomy );
 
-                if (corpse.IsCriminalAction(from))
-                {
-                    from.CriminalAction(true);
-                }
-            }
+				if (corpse.IsCriminalAction(from))
+				{
+					from.CriminalAction(true);
+				}
+			}
 			//제거
 			//List<Item> packcheck = corpse.FindItemsByType<Item>();
-			if( corpse.TotalItems == 0 )
+			if (corpse.TotalItems == 0)
 				corpse.Delete();
-        }
+		}
 
-        public const int DefaultRangePerception = 16;
-        public const int OldRangePerception = 10;
+		public const int DefaultRangePerception = 16;
+		public const int OldRangePerception = 10;
+
 		//스킬 정의
 		private double[] m_SkillList = new double[58];
 		public double[] SkillList
 		{
-			get{ return m_SkillList;}
-			set{ m_SkillList = value; InvalidateProperties();}
+			get { return m_SkillList; }
+			set
+			{
+				m_SkillList = value;
+				InvalidateProperties();
+			}
 		}
-		
+
 		public bool SkillUpCheck(double skillvalue, int skill, double gain)
 		{
 			double maxvalue = 1000;
 			m_SkillList[skill] += gain;
-			if( skillvalue < 9.9 )
+			if (skillvalue < 9.9)
 				maxvalue = 1000 + skillvalue * 100; //00.1 ~ 10.0 스킬 포인트. 10포인트 씩 증가
-			else if( skillvalue < 19.9 )
-				maxvalue = 2100 + ( skillvalue - 9.9 ) * 100; //00.1 ~ 10.0 스킬 포인트. 10포인트 씩 증가
-			else if( skillvalue < 29.9 )
-				maxvalue = 3200 + ( skillvalue - 19.9 ) * 200; //20.1 ~ 30.0 스킬 포인트. 20포인트 씩 증가
-			else if( skillvalue < 39.9 )
-				maxvalue = 5300 + ( skillvalue - 29.9 ) * 300; //30.1 ~ 40.0 스킬 포인트. 30포인트 씩 증가
-			else if( skillvalue < 49.9 )
-				maxvalue = 8500 + ( skillvalue - 39.9 ) * 400; //40.1 ~ 50.0 스킬 포인트. 40포인트 씩 증가
-			else if( skillvalue < 59.9 )
-				maxvalue = 13000 + ( skillvalue - 49.9 ) * 500; //50.1 ~ 60.0 스킬 포인트. 50포인트 씩 증가
-			else if( skillvalue < 69.9 )
-				maxvalue = 20000 + ( skillvalue - 59.9 ) * 750; //60.1 ~ 70.0 스킬 포인트. 75포인트 씩 증가
-			else if( skillvalue < 79.9 )
-				maxvalue = 31000 + ( skillvalue - 69.9 ) * 1000; //70.1 ~ 80.0 스킬 포인트. 100포인트 씩 증가
-			else if( skillvalue < 89.9 )
-				maxvalue = 45000 + ( skillvalue - 79.9 ) * 1500; //80.1 ~ 90.0 스킬 포인트. 150포인트 씩 증가
-			else if( skillvalue < 99.9 )
-				maxvalue = 65000 + ( skillvalue - 89.9 ) * 2500; //90.1 ~ 100.0 스킬 포인트. 250포인트 씩 증가
-			else if( skillvalue < 104.9 )
-				maxvalue = 100000 + ( skillvalue - 99.9 ) * 5000; //100.1 ~ 105.0 스킬 포인트. 500포인트 씩 증가
-			else if( skillvalue < 109.9 )
-				maxvalue = 150000 + ( skillvalue - 104.9 ) * 10000; //105.1 ~ 110.0 스킬 포인트. 1000포인트 씩 증가
-			else if( skillvalue < 104.9 )
-				maxvalue = 300000 + ( skillvalue - 109.9 ) * 50000; //110.1 ~ 115.0 스킬 포인트. 5000포인트 씩 증가
-			else if( skillvalue < 119.9 )
-				maxvalue = 750000 + ( skillvalue - 114.9 ) * 100000; //115.1 ~ 119.9 스킬 포인트. 10000포인트 씩 증가
-			else if( skillvalue >= 120.0 )
-				maxvalue = 2000000 + ( skillvalue - 119.9 ) * 200000; //120.0 ~ 스킬 포인트. 20000포인트 씩 증가
-				
-			if( m_SkillList[skill] >= maxvalue )
+			else if (skillvalue < 19.9)
+				maxvalue = 2100 + (skillvalue - 9.9) * 100; //00.1 ~ 10.0 스킬 포인트. 10포인트 씩 증가
+			else if (skillvalue < 29.9)
+				maxvalue = 3200 + (skillvalue - 19.9) * 200; //20.1 ~ 30.0 스킬 포인트. 20포인트 씩 증가
+			else if (skillvalue < 39.9)
+				maxvalue = 5300 + (skillvalue - 29.9) * 300; //30.1 ~ 40.0 스킬 포인트. 30포인트 씩 증가
+			else if (skillvalue < 49.9)
+				maxvalue = 8500 + (skillvalue - 39.9) * 400; //40.1 ~ 50.0 스킬 포인트. 40포인트 씩 증가
+			else if (skillvalue < 59.9)
+				maxvalue = 13000 + (skillvalue - 49.9) * 500; //50.1 ~ 60.0 스킬 포인트. 50포인트 씩 증가
+			else if (skillvalue < 69.9)
+				maxvalue = 20000 + (skillvalue - 59.9) * 750; //60.1 ~ 70.0 스킬 포인트. 75포인트 씩 증가
+			else if (skillvalue < 79.9)
+				maxvalue = 31000 + (skillvalue - 69.9) * 1000; //70.1 ~ 80.0 스킬 포인트. 100포인트 씩 증가
+			else if (skillvalue < 89.9)
+				maxvalue = 45000 + (skillvalue - 79.9) * 1500; //80.1 ~ 90.0 스킬 포인트. 150포인트 씩 증가
+			else if (skillvalue < 99.9)
+				maxvalue = 65000 + (skillvalue - 89.9) * 2500; //90.1 ~ 100.0 스킬 포인트. 250포인트 씩 증가
+			else if (skillvalue < 104.9)
+				maxvalue = 100000 + (skillvalue - 99.9) * 5000; //100.1 ~ 105.0 스킬 포인트. 500포인트 씩 증가
+			else if (skillvalue < 109.9)
+				maxvalue = 150000 + (skillvalue - 104.9) * 10000; //105.1 ~ 110.0 스킬 포인트. 1000포인트 씩 증가
+			else if (skillvalue < 104.9)
+				maxvalue = 300000 + (skillvalue - 109.9) * 50000; //110.1 ~ 115.0 스킬 포인트. 5000포인트 씩 증가
+			else if (skillvalue < 119.9)
+				maxvalue = 750000 + (skillvalue - 114.9) * 100000; //115.1 ~ 119.9 스킬 포인트. 10000포인트 씩 증가
+			else if (skillvalue >= 120.0)
+				maxvalue = 2000000 + (skillvalue - 119.9) * 200000; //120.0 ~ 스킬 포인트. 20000포인트 씩 증가
+
+			if (m_SkillList[skill] >= maxvalue)
 			{
 				m_SkillList[skill] = 0;
 				return true;
 			}
 			return false;
 		}
-		
-        public BaseCreature(AIType ai, FightMode mode, int iRangePerception, int iRangeFight)
-            : this(ai, mode, iRangePerception, iRangeFight, .2, .4)
-        {
-        }
 
-        public BaseCreature(
-            AIType ai, FightMode mode, int iRangePerception, int iRangeFight, double dActiveSpeed, double dPassiveSpeed)
-        {
-            PhysicalDamage = 100;
+		public BaseCreature(AIType ai, FightMode mode, int iRangePerception, int iRangeFight)
+			: this(ai, mode, iRangePerception, iRangeFight, .2, .4) { }
 
-            CanMove = true;
+		public BaseCreature(
+			AIType ai,
+			FightMode mode,
+			int iRangePerception,
+			int iRangeFight,
+			double dActiveSpeed,
+			double dPassiveSpeed
+		)
+		{
+			PhysicalDamage = 100;
 
-            ApproachWait = false;
-            ApproachRange = 10;
+			CanMove = true;
 
-            if (iRangePerception == OldRangePerception)
-            {
-                iRangePerception = DefaultRangePerception;
-            }
-            //m_Loyalty = MaxLoyalty; // Wonderfully Happy
+			ApproachWait = false;
+			ApproachRange = 10;
 
-            m_CurrentAI = ai;
-            m_DefaultAI = ai;
+			if (iRangePerception == OldRangePerception)
+			{
+				iRangePerception = DefaultRangePerception;
+			}
+			//m_Loyalty = MaxLoyalty; // Wonderfully Happy
 
-            m_iRangePerception = iRangePerception;
-            m_iRangeFight = iRangeFight;
+			m_CurrentAI = ai;
+			m_DefaultAI = ai;
 
-            m_FightMode = mode;
+			m_iRangePerception = iRangePerception;
+			m_iRangeFight = iRangeFight;
 
-            m_iTeam = 0;
+			m_FightMode = mode;
 
-            //SpeedInfo.GetSpeeds(this, ref dActiveSpeed, ref dPassiveSpeed);
+			m_iTeam = 0;
 
-            m_dActiveSpeed = dActiveSpeed;
-            m_dPassiveSpeed = dPassiveSpeed;
-            m_dCurrentSpeed = dPassiveSpeed;
+			//SpeedInfo.GetSpeeds(this, ref dActiveSpeed, ref dPassiveSpeed);
+
+			m_dActiveSpeed = dActiveSpeed;
+			m_dPassiveSpeed = dPassiveSpeed;
+			m_dCurrentSpeed = dPassiveSpeed;
 
 			//m_dActiveSpeed /= 2;
-			
-            m_bDebugAI = false;
 
-            m_arSpellAttack = new List<Type>();
-            m_arSpellDefense = new List<Type>();
+			m_bDebugAI = false;
 
-            m_bControlled = false;
-            m_ControlMaster = null;
-            m_ControlTarget = null;
-            m_ControlOrder = OrderType.None;
+			m_arSpellAttack = new List<Type>();
+			m_arSpellDefense = new List<Type>();
 
-            m_bTamable = false;
+			m_bControlled = false;
+			m_ControlMaster = null;
+			m_ControlTarget = null;
+			m_ControlOrder = OrderType.None;
 
-            m_Owners = new List<Mobile>();
+			m_bTamable = false;
 
-            m_NextReacquireTime = Core.TickCount + (int)ReacquireDelay.TotalMilliseconds;
+			m_Owners = new List<Mobile>();
 
-            ChangeAIType(AI);
+			m_NextReacquireTime = Core.TickCount + (int)ReacquireDelay.TotalMilliseconds;
 
-            InhumanSpeech speechType = SpeechType;
+			ChangeAIType(AI);
 
-            if (speechType != null)
-            {
-                speechType.OnConstruct(this);
-            }
+			InhumanSpeech speechType = SpeechType;
 
-            if (IsInvulnerable && !Core.AOS)
-            {
-                NameHue = 0x35;
-            }
-
-            InitializeAbilities();
-            Timer.DelayCall(GenerateLoot, true);
-        }
-
-        public BaseCreature(Serial serial)
-            : base(serial)
-        {
-            m_arSpellAttack = new List<Type>();
-            m_arSpellDefense = new List<Type>();
-
-            m_bDebugAI = false;
-        }
-
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-
-            writer.Write(38); // version
-
-            int i = 0;
-			
-			for( i = 0; i < m_PassiveSkills.Length; ++i )
+			if (speechType != null)
 			{
-				writer.Write( m_PassiveSkills[i] );
+				speechType.OnConstruct(this);
 			}
-			
-			for( i = 0; i < m_StatExp.Length; ++i )
-			{
-				writer.Write( m_StatExp[i] );
-			}
-			
-			writer.Write( m_AttackRange );
 
-            writer.Write(m_ChaosResistance);
-            writer.Write(m_ChaosDamage);
-            writer.Write(m_DirectResistance);
-            writer.Write(m_DirectDamage);
-			
-			writer.Write( (double)m_AcidTime );
-			writer.Write( (bool)m_AcidBreath );
+			if (IsInvulnerable && !Core.AOS)
+			{
+				NameHue = 0x35;
+			}
+
+			InitializeAbilities();
+			Timer.DelayCall(GenerateLoot, true);
+		}
+
+		public BaseCreature(Serial serial)
+			: base(serial)
+		{
+			m_arSpellAttack = new List<Type>();
+			m_arSpellDefense = new List<Type>();
+
+			m_bDebugAI = false;
+		}
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write(38); // version
+
+			int i = 0;
+
+			for (i = 0; i < m_PassiveSkills.Length; ++i)
+			{
+				writer.Write(m_PassiveSkills[i]);
+			}
+
+			for (i = 0; i < m_StatExp.Length; ++i)
+			{
+				writer.Write(m_StatExp[i]);
+			}
+
+			writer.Write(m_AttackRange);
+
+			writer.Write(m_ChaosResistance);
+			writer.Write(m_ChaosDamage);
+			writer.Write(m_DirectResistance);
+			writer.Write(m_DirectDamage);
+
+			writer.Write((double)m_AcidTime);
+			writer.Write((bool)m_AcidBreath);
 			//Version 33
-			writer.Write( (double)m_AttackSpeed );
-			
+			writer.Write((double)m_AttackSpeed);
+
 			//Version 32
-			writer.Write( (DateTime) m_DeathTime );
+			writer.Write((DateTime)m_DeathTime);
 
 			//Version 31
-			writer.Write( (int)LootCount );
-			writer.Write( (int)LootGrade );
-			
+			writer.Write((int)LootCount);
+			writer.Write((int)LootGrade);
+
 			//Version 30
-			writer.Write( (int)m_PetTier );
-			writer.Write( (int)m_Exp );
-			writer.Write( (DateTime) m_FarmTime );
-			writer.Write( (int)m_Level );
-			writer.Write( (int)m_Grade );
-			writer.Write( (bool)m_Boss );
-			writer.Write( (bool)m_LevelCheck );
-			writer.Write( (string)m_RawName );
+			writer.Write((int)m_PetTier);
+			writer.Write((int)m_Exp);
+			writer.Write((DateTime)m_FarmTime);
+			writer.Write((int)m_Level);
+			writer.Write((int)m_Grade);
+			writer.Write((bool)m_Boss);
+			writer.Write((bool)m_LevelCheck);
+			writer.Write((string)m_RawName);
 			for (i = 0; i < 58; i++)
 			{
-				writer.Write( (double)m_SkillList[i] );
-			}	
+				writer.Write((double)m_SkillList[i]);
+			}
 
-            writer.Write(IsSoulbound);
+			writer.Write(IsSoulbound);
 
-            writer.Write(m_ForceActiveSpeed);
-            writer.Write(m_ForcePassiveSpeed);
+			writer.Write(m_ForceActiveSpeed);
+			writer.Write(m_ForcePassiveSpeed);
 
-            writer.Write(CanMove);
-            writer.Write(_LockDirection);
-            writer.Write(ApproachWait);
-            writer.Write(ApproachRange);
+			writer.Write(CanMove);
+			writer.Write(_LockDirection);
+			writer.Write(ApproachWait);
+			writer.Write(ApproachRange);
 
-            writer.Write((int)m_CurrentAI);
-            writer.Write((int)m_DefaultAI);
+			writer.Write((int)m_CurrentAI);
+			writer.Write((int)m_DefaultAI);
 
-            writer.Write(m_iRangePerception);
-            writer.Write(m_iRangeFight);
+			writer.Write(m_iRangePerception);
+			writer.Write(m_iRangeFight);
 
-            writer.Write(m_iTeam);
+			writer.Write(m_iTeam);
 
-            writer.Write(m_dActiveSpeed);
-            writer.Write(m_dPassiveSpeed);
-            writer.Write(m_dCurrentSpeed);
+			writer.Write(m_dActiveSpeed);
+			writer.Write(m_dPassiveSpeed);
+			writer.Write(m_dCurrentSpeed);
 
-            writer.Write(m_pHome.X);
-            writer.Write(m_pHome.Y);
-            writer.Write(m_pHome.Z);
+			writer.Write(m_pHome.X);
+			writer.Write(m_pHome.Y);
+			writer.Write(m_pHome.Z);
 
-            // Version 1
-            writer.Write(m_iRangeHome);
+			// Version 1
+			writer.Write(m_iRangeHome);
 
+			writer.Write(m_arSpellAttack.Count);
 
-            writer.Write(m_arSpellAttack.Count);
+			for (i = 0; i < m_arSpellAttack.Count; i++)
+			{
+				writer.Write(m_arSpellAttack[i].ToString());
+			}
 
-            for (i = 0; i < m_arSpellAttack.Count; i++)
-            {
-                writer.Write(m_arSpellAttack[i].ToString());
-            }
+			writer.Write(m_arSpellDefense.Count);
 
-            writer.Write(m_arSpellDefense.Count);
+			for (i = 0; i < m_arSpellDefense.Count; i++)
+			{
+				writer.Write(m_arSpellDefense[i].ToString());
+			}
 
-            for (i = 0; i < m_arSpellDefense.Count; i++)
-            {
-                writer.Write(m_arSpellDefense[i].ToString());
-            }
+			// Version 2
+			writer.Write((int)m_FightMode);
 
-            // Version 2
-            writer.Write((int)m_FightMode);
+			writer.Write(m_bControlled);
+			writer.Write(m_ControlMaster);
+			writer.Write(m_ControlTarget is Mobile ? (Mobile)m_ControlTarget : null);
+			writer.Write(m_ControlDest);
+			writer.Write((int)m_ControlOrder);
+			writer.Write(m_dMinTameSkill);
 
-            writer.Write(m_bControlled);
-            writer.Write(m_ControlMaster);
-            writer.Write(m_ControlTarget is Mobile ? (Mobile)m_ControlTarget : null);
-            writer.Write(m_ControlDest);
-            writer.Write((int)m_ControlOrder);
-            writer.Write(m_dMinTameSkill);
+			writer.Write(m_bTamable);
+			writer.Write(m_bSummoned);
 
-            writer.Write(m_bTamable);
-            writer.Write(m_bSummoned);
+			if (m_bSummoned)
+			{
+				writer.WriteDeltaTime(m_SummonEnd);
+			}
 
-            if (m_bSummoned)
-            {
-                writer.WriteDeltaTime(m_SummonEnd);
-            }
-
-			if( this is Horse && m_iControlSlots == 5 )
+			if (this is Horse && m_iControlSlots == 5)
 				m_iControlSlots = 1;
-			
-            writer.Write(m_iControlSlots);
 
-            // Version 3
-            writer.Write(m_Loyalty);
+			writer.Write(m_iControlSlots);
 
-            // Version 4
-            writer.Write(m_CurrentWayPoint);
+			// Version 3
+			writer.Write(m_Loyalty);
 
-            // Verison 5
-            writer.Write(m_SummonMaster);
+			// Version 4
+			writer.Write(m_CurrentWayPoint);
 
-            // Version 6
-            writer.Write(m_HitsMax);
-            writer.Write(m_StamMax);
-            writer.Write(m_ManaMax);
-            writer.Write(m_DamageMin);
-            writer.Write(m_DamageMax);
+			// Verison 5
+			writer.Write(m_SummonMaster);
 
-            // Version 7
-            writer.Write(m_PhysicalResistance);
-            writer.Write(m_PhysicalDamage);
+			// Version 6
+			writer.Write(m_HitsMax);
+			writer.Write(m_StamMax);
+			writer.Write(m_ManaMax);
+			writer.Write(m_DamageMin);
+			writer.Write(m_DamageMax);
 
-            writer.Write(m_FireResistance);
-            writer.Write(m_FireDamage);
+			// Version 7
+			writer.Write(m_PhysicalResistance);
+			writer.Write(m_PhysicalDamage);
 
-            writer.Write(m_ColdResistance);
-            writer.Write(m_ColdDamage);
+			writer.Write(m_FireResistance);
+			writer.Write(m_FireDamage);
 
-            writer.Write(m_PoisonResistance);
-            writer.Write(m_PoisonDamage);
+			writer.Write(m_ColdResistance);
+			writer.Write(m_ColdDamage);
 
-            writer.Write(m_EnergyResistance);
-            writer.Write(m_EnergyDamage);
+			writer.Write(m_PoisonResistance);
+			writer.Write(m_PoisonDamage);
 
-            // Version 8
-            writer.Write(m_Owners, true);
+			writer.Write(m_EnergyResistance);
+			writer.Write(m_EnergyDamage);
 
-            // Version 10
-            writer.Write(m_IsDeadPet);
-            writer.Write(m_IsBonded);
-            writer.Write(m_BondingBegin);
-            writer.Write(m_OwnerAbandonTime);
+			// Version 8
+			writer.Write(m_Owners, true);
 
-            // Version 11
-            writer.Write(m_HasGeneratedLoot);
+			// Version 10
+			writer.Write(m_IsDeadPet);
+			writer.Write(m_IsBonded);
+			writer.Write(m_BondingBegin);
+			writer.Write(m_OwnerAbandonTime);
 
-            // Version 12
-            writer.Write(m_Paragon);
+			// Version 11
+			writer.Write(m_HasGeneratedLoot);
 
-            // Version 13
-            writer.Write((m_Friends != null && m_Friends.Count > 0));
+			// Version 12
+			writer.Write(m_Paragon);
 
-            if (m_Friends != null && m_Friends.Count > 0)
-            {
-                writer.Write(m_Friends, true);
-            }
+			// Version 13
+			writer.Write((m_Friends != null && m_Friends.Count > 0));
 
-            // Version 14
-            writer.Write(m_RemoveIfUntamed);
-            writer.Write(m_RemoveStep);
+			if (m_Friends != null && m_Friends.Count > 0)
+			{
+				writer.Write(m_Friends, true);
+			}
 
-            // Version 17
-            if (IsStabled || (Controlled && ControlMaster != null))
-            {
-                writer.Write(TimeSpan.Zero);
-            }
-            else
-            {
-                writer.Write(DeleteTimeLeft);
-            }
+			// Version 14
+			writer.Write(m_RemoveIfUntamed);
+			writer.Write(m_RemoveStep);
 
-            // Version 18
-            writer.Write(m_CorpseNameOverride);
+			// Version 17
+			if (IsStabled || (Controlled && ControlMaster != null))
+			{
+				writer.Write(TimeSpan.Zero);
+			}
+			else
+			{
+				writer.Write(DeleteTimeLeft);
+			}
 
-            // Mondain's Legacy version 19
-            writer.Write(m_Allured);
+			// Version 18
+			writer.Write(m_CorpseNameOverride);
 
-            // Pet Branding version 22
-            writer.Write(m_EngravedText);
+			// Mondain's Legacy version 19
+			writer.Write(m_Allured);
 
-            // Version 24 Pet Training
-            writer.Write(ControlSlotsMin);
-            writer.Write(ControlSlotsMax);
+			// Pet Branding version 22
+			writer.Write(m_EngravedText);
 
-            writer.Write((int)Mastery);
+			// Version 24 Pet Training
+			writer.Write(ControlSlotsMin);
+			writer.Write(ControlSlotsMax);
 
-            if (_Profile != null)
-            {
-                writer.Write(1);
-                _Profile.Serialize(writer);
-            }
-            else
-            {
-                writer.Write(0);
-            }
+			writer.Write((int)Mastery);
 
-            if (_TrainingProfile != null)
-            {
-                writer.Write(1);
-                _TrainingProfile.Serialize(writer);
-            }
-            else
-            {
-                writer.Write(0);
-            }
+			if (_Profile != null)
+			{
+				writer.Write(1);
+				_Profile.Serialize(writer);
+			}
+			else
+			{
+				writer.Write(0);
+			}
 
-            // Version 25 Current Tame Skill
-            writer.Write(m_CurrentTameSkill);
-			if( m_AttackRange < 1 )
+			if (_TrainingProfile != null)
+			{
+				writer.Write(1);
+				_TrainingProfile.Serialize(writer);
+			}
+			else
+			{
+				writer.Write(0);
+			}
+
+			// Version 25 Current Tame Skill
+			writer.Write(m_CurrentTameSkill);
+			if (m_AttackRange < 1)
 				m_AttackRange = 1;
-        }
+		}
 
-        private static readonly double[] m_StandardActiveSpeeds = new[] { 0.175, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.8 };
+		private static readonly double[] m_StandardActiveSpeeds = new[]
+		{
+			0.175,
+			0.1,
+			0.15,
+			0.2,
+			0.25,
+			0.3,
+			0.4,
+			0.5,
+			0.6,
+			0.8,
+		};
 
-        private static readonly double[] m_StandardPassiveSpeeds = new[] { 0.350, 0.2, 0.4, 0.5, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0 };
+		private static readonly double[] m_StandardPassiveSpeeds = new[]
+		{
+			0.350,
+			0.2,
+			0.4,
+			0.5,
+			0.6,
+			0.8,
+			1.0,
+			1.2,
+			1.6,
+			2.0,
+		};
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadInt();
+			int version = reader.ReadInt();
 
-            switch (version)
-            {
+			switch (version)
+			{
 				case 38:
 				{
-					for( int i = 0; i < m_PassiveSkills.Length; ++i )
+					for (int i = 0; i < m_PassiveSkills.Length; ++i)
 					{
 						m_PassiveSkills[i] = reader.ReadInt();
 					}
@@ -3322,7 +3755,7 @@ namespace Server.Mobiles
 				}
 				case 37:
 				{
-					for( int i = 0; i < m_StatExp.Length; ++i )
+					for (int i = 0; i < m_StatExp.Length; ++i)
 					{
 						m_StatExp[i] = reader.ReadInt();
 					}
@@ -3336,9 +3769,9 @@ namespace Server.Mobiles
 				case 35:
 				{
 					m_ChaosResistance = reader.ReadInt();
-					m_ChaosDamage = reader.ReadInt();					
+					m_ChaosDamage = reader.ReadInt();
 					m_DirectResistance = reader.ReadInt();
-					m_DirectDamage = reader.ReadInt();					
+					m_DirectDamage = reader.ReadInt();
 					goto case 34;
 				}
 				case 34:
@@ -3379,1301 +3812,1494 @@ namespace Server.Mobiles
 					}
 					goto case 29;
 				}
-                case 29:
-                    IsSoulbound = reader.ReadBool();
-                    goto case 28;
-                case 28:
-                    m_ForceActiveSpeed = reader.ReadDouble();
-                    m_ForcePassiveSpeed = reader.ReadDouble();
-                    goto case 27;
-                case 27: // Pet Slot Fix
-                case 26:
-                {
-                    CanMove = reader.ReadBool();
-                    _LockDirection = reader.ReadBool();
-
-                    ApproachWait = reader.ReadBool();
-                    ApproachRange = reader.ReadInt();
-                }
-                    break;
-            }
-
-            m_CurrentAI = (AIType)reader.ReadInt();
-            m_DefaultAI = (AIType)reader.ReadInt();
-
-            m_iRangePerception = reader.ReadInt();
-            m_iRangeFight = reader.ReadInt();
-
-            m_iTeam = reader.ReadInt();
-
-            m_dActiveSpeed = reader.ReadDouble();
-            m_dPassiveSpeed = reader.ReadDouble();
-            m_dCurrentSpeed = reader.ReadDouble();
-
-            if (m_iRangePerception == OldRangePerception)
-            {
-                m_iRangePerception = DefaultRangePerception;
-            }
-
-            m_pHome.X = reader.ReadInt();
-            m_pHome.Y = reader.ReadInt();
-            m_pHome.Z = reader.ReadInt();
-
-            if (version >= 1)
-            {
-                m_iRangeHome = reader.ReadInt();
-
-                int i, iCount;
-
-                iCount = reader.ReadInt();
-                for (i = 0; i < iCount; i++)
-                {
-                    string str = reader.ReadString();
-                    Type type = Type.GetType(str);
-
-                    if (type != null)
-                    {
-                        m_arSpellAttack.Add(type);
-                    }
-                }
-
-                iCount = reader.ReadInt();
-                for (i = 0; i < iCount; i++)
-                {
-                    string str = reader.ReadString();
-                    Type type = Type.GetType(str);
-
-                    if (type != null)
-                    {
-                        m_arSpellDefense.Add(type);
-                    }
-                }
-            }
-            else
-            {
-                m_iRangeHome = 0;
-            }
-
-            if (version >= 2)
-            {
-                m_FightMode = (FightMode)reader.ReadInt();
-
-                m_bControlled = reader.ReadBool();
-                m_ControlMaster = reader.ReadMobile();
-                m_ControlTarget = reader.ReadMobile();
-                m_ControlDest = reader.ReadPoint3D();
-                m_ControlOrder = (OrderType)reader.ReadInt();
-
-                m_dMinTameSkill = reader.ReadDouble();
-
-                if (version < 9)
-                {
-                    reader.ReadDouble();
-                }
-
-                m_bTamable = reader.ReadBool();
-                m_bSummoned = reader.ReadBool();
-
-                if (m_bSummoned)
-                {
-                    m_SummonEnd = reader.ReadDeltaTime();
-                    new UnsummonTimer(m_ControlMaster, this, m_SummonEnd - DateTime.UtcNow).Start();
-                }
-
-                m_iControlSlots = reader.ReadInt();
-            }
-            else
-            {
-                m_FightMode = FightMode.Closest;
-
-                m_bControlled = false;
-                m_ControlMaster = null;
-                m_ControlTarget = null;
-                m_ControlOrder = OrderType.None;
-            }
-
-            if (version >= 3)
-            {
-                m_Loyalty = reader.ReadInt();
-            }
-            else
-            {
-                //m_Loyalty = MaxLoyalty; // Wonderfully Happy
-            }
-
-            if (version >= 4)
-            {
-                m_CurrentWayPoint = reader.ReadItem() as WayPoint;
-            }
-
-            if (version >= 5)
-            {
-                m_SummonMaster = reader.ReadMobile();
-            }
-
-            if (version >= 6)
-            {
-                m_HitsMax = reader.ReadInt();
-                m_StamMax = reader.ReadInt();
-                m_ManaMax = reader.ReadInt();
-                m_DamageMin = reader.ReadInt();
-                m_DamageMax = reader.ReadInt();
-            }
-
-            if (version >= 7)
-            {
-                m_PhysicalResistance = reader.ReadInt();
-                m_PhysicalDamage = reader.ReadInt();
-
-                m_FireResistance = reader.ReadInt();
-                m_FireDamage = reader.ReadInt();
-
-                m_ColdResistance = reader.ReadInt();
-                m_ColdDamage = reader.ReadInt();
-
-                m_PoisonResistance = reader.ReadInt();
-                m_PoisonDamage = reader.ReadInt();
-
-                m_EnergyResistance = reader.ReadInt();
-                m_EnergyDamage = reader.ReadInt();
-            }
-
-            if (version >= 8)
-            {
-                m_Owners = reader.ReadStrongMobileList();
-            }
-            else
-            {
-                m_Owners = new List<Mobile>();
-            }
-
-            if (version >= 10)
-            {
-                m_IsDeadPet = reader.ReadBool();
-                m_IsBonded = reader.ReadBool();
-                m_BondingBegin = reader.ReadDateTime();
-                m_OwnerAbandonTime = reader.ReadDateTime();
-            }
-
-            if (version >= 11)
-            {
-                m_HasGeneratedLoot = reader.ReadBool();
-            }
-            else
-            {
-                m_HasGeneratedLoot = true;
-            }
-
-            if (version >= 12)
-            {
-                m_Paragon = reader.ReadBool();
-            }
-            else
-            {
-                m_Paragon = false;
-            }
-
-            if (version >= 13 && reader.ReadBool())
-            {
-                m_Friends = reader.ReadStrongMobileList();
-            }
-            else if (version < 13 && m_ControlOrder >= OrderType.Unfriend)
-            {
-                ++m_ControlOrder;
-            }
-
-            //if (version < 16 && Loyalty != MaxLoyalty)
-            //{
-            //    Loyalty *= 10;
-            //}
-
-            double activeSpeed = m_dActiveSpeed;
-            double passiveSpeed = m_dPassiveSpeed;
-
-            if (version >= 28)
-            {
-                SpeedInfo.GetSpeedsNew(this, ref activeSpeed, ref passiveSpeed);
-
-                m_dActiveSpeed = activeSpeed;
-                m_dPassiveSpeed = passiveSpeed;
-            }
-            else
-            {
-                SpeedInfo.GetSpeeds(this, ref activeSpeed, ref passiveSpeed);
-
-                bool isStandardActive = false;
-                for (int i = 0; !isStandardActive && i < m_StandardActiveSpeeds.Length; ++i)
-                {
-                    isStandardActive = (m_dActiveSpeed == m_StandardActiveSpeeds[i]);
-                }
-
-                bool isStandardPassive = false;
-                for (int i = 0; !isStandardPassive && i < m_StandardPassiveSpeeds.Length; ++i)
-                {
-                    isStandardPassive = (m_dPassiveSpeed == m_StandardPassiveSpeeds[i]);
-                }
-
-                if (isStandardActive && m_dCurrentSpeed == m_dActiveSpeed)
-                {
-                    m_dCurrentSpeed = activeSpeed;
-                }
-                else if (isStandardPassive && m_dCurrentSpeed == m_dPassiveSpeed)
-                {
-                    m_dCurrentSpeed = passiveSpeed;
-                }
-
-                if (isStandardActive && !m_Paragon)
-                {
-                    m_dActiveSpeed = activeSpeed;
-                }
-
-                if (isStandardPassive && !m_Paragon)
-                {
-                    m_dPassiveSpeed = passiveSpeed;
-                }
-            }
-
-            if (version >= 14)
-            {
-                m_RemoveIfUntamed = reader.ReadBool();
-                m_RemoveStep = reader.ReadInt();
-            }
-
-            TimeSpan deleteTime = TimeSpan.Zero;
-
-            if (version >= 17)
-            {
-                deleteTime = reader.ReadTimeSpan();
-            }
-
-            if (deleteTime > TimeSpan.Zero || LastOwner != null && !Controlled && !IsStabled)
-            {
-                if (deleteTime == TimeSpan.Zero)
-                {
-                    deleteTime = TimeSpan.FromDays(3.0);
-                }
-
-                m_DeleteTimer = new DeleteTimer(this, deleteTime);
-                m_DeleteTimer.Start();
-            }
-
-            if (version >= 18)
-            {
-                m_CorpseNameOverride = reader.ReadString();
-            }
-
-            if (version >= 19)
-            {
-                m_Allured = reader.ReadBool();
-            }
-
-            if (version <= 20)
-            {
-                reader.ReadInt();
-            }
-
-            if (version < 26)
-            {
-                CanMove = true;
-
-                ApproachWait = false;
-                ApproachRange = 10;
-            }
-
-            if (version >= 22)
-            {
-                m_EngravedText = reader.ReadString();
-            }
-
-            if (version == 23)
-            {
-                reader.ReadBool();
-            }
-
-            if (version >= 24)
-            {
-                ControlSlotsMin = reader.ReadInt();
-                ControlSlotsMax = reader.ReadInt();
-
-                Mastery = (SkillName)reader.ReadInt();
-
-                if (reader.ReadInt() == 1)
-                {
-                    _Profile = new AbilityProfile(this, reader);
-                }
-
-                if (reader.ReadInt() == 1)
-                {
-                    _TrainingProfile = new TrainingProfile(this, reader);
-                }
-            }
-            else
-            {
-                if (Tamable)
-                {
-                    CalculateSlots(m_iControlSlots);
-
-                    if (m_iControlSlots < ControlSlotsMin)
-                    {
-                        ControlSlotsMin = m_iControlSlots;
-                    }
-
-                    ControlSlots = ControlSlotsMin;
-                }
-
-                InitializeAbilities();
-            }
-
-            if (version >= 25)
-            {
-                CurrentTameSkill = reader.ReadDouble();
-
-                if (Controlled && version == 26)
-                {
-                    AdjustTameRequirements();
-                }
-                else if (Controlled && CurrentTameSkill > MaxTameRequirement)
-                {
-                    CurrentTameSkill = MaxTameRequirement;
-                }
-            }
-            else
-            {
-                AdjustTameRequirements();
-            }
-
-            if (version <= 14 && m_Paragon && Hue == 0x31)
-            {
-                Hue = Paragon.Hue; //Paragon hue fixed, should now be 0x501.
-            }
-
-            if (Core.AOS && NameHue == 0x35)
-            {
-                NameHue = -1;
-            }
-
-			if ( m_AttackSpeed <= 0 )
+				case 29:
+					IsSoulbound = reader.ReadBool();
+					goto case 28;
+				case 28:
+					m_ForceActiveSpeed = reader.ReadDouble();
+					m_ForcePassiveSpeed = reader.ReadDouble();
+					goto case 27;
+				case 27: // Pet Slot Fix
+				case 26:
+					{
+						CanMove = reader.ReadBool();
+						_LockDirection = reader.ReadBool();
+
+						ApproachWait = reader.ReadBool();
+						ApproachRange = reader.ReadInt();
+					}
+					break;
+			}
+
+			m_CurrentAI = (AIType)reader.ReadInt();
+			m_DefaultAI = (AIType)reader.ReadInt();
+
+			m_iRangePerception = reader.ReadInt();
+			m_iRangeFight = reader.ReadInt();
+
+			m_iTeam = reader.ReadInt();
+
+			m_dActiveSpeed = reader.ReadDouble();
+			m_dPassiveSpeed = reader.ReadDouble();
+			m_dCurrentSpeed = reader.ReadDouble();
+
+			if (m_iRangePerception == OldRangePerception)
+			{
+				m_iRangePerception = DefaultRangePerception;
+			}
+
+			m_pHome.X = reader.ReadInt();
+			m_pHome.Y = reader.ReadInt();
+			m_pHome.Z = reader.ReadInt();
+
+			if (version >= 1)
+			{
+				m_iRangeHome = reader.ReadInt();
+
+				int i,
+					iCount;
+
+				iCount = reader.ReadInt();
+				for (i = 0; i < iCount; i++)
+				{
+					string str = reader.ReadString();
+					Type type = Type.GetType(str);
+
+					if (type != null)
+					{
+						m_arSpellAttack.Add(type);
+					}
+				}
+
+				iCount = reader.ReadInt();
+				for (i = 0; i < iCount; i++)
+				{
+					string str = reader.ReadString();
+					Type type = Type.GetType(str);
+
+					if (type != null)
+					{
+						m_arSpellDefense.Add(type);
+					}
+				}
+			}
+			else
+			{
+				m_iRangeHome = 0;
+			}
+
+			if (version >= 2)
+			{
+				m_FightMode = (FightMode)reader.ReadInt();
+
+				m_bControlled = reader.ReadBool();
+				m_ControlMaster = reader.ReadMobile();
+				m_ControlTarget = reader.ReadMobile();
+				m_ControlDest = reader.ReadPoint3D();
+				m_ControlOrder = (OrderType)reader.ReadInt();
+
+				m_dMinTameSkill = reader.ReadDouble();
+
+				if (version < 9)
+				{
+					reader.ReadDouble();
+				}
+
+				m_bTamable = reader.ReadBool();
+				m_bSummoned = reader.ReadBool();
+
+				if (m_bSummoned)
+				{
+					m_SummonEnd = reader.ReadDeltaTime();
+					new UnsummonTimer(m_ControlMaster, this, m_SummonEnd - DateTime.UtcNow).Start();
+				}
+
+				m_iControlSlots = reader.ReadInt();
+			}
+			else
+			{
+				m_FightMode = FightMode.Closest;
+
+				m_bControlled = false;
+				m_ControlMaster = null;
+				m_ControlTarget = null;
+				m_ControlOrder = OrderType.None;
+			}
+
+			if (version >= 3)
+			{
+				m_Loyalty = reader.ReadInt();
+			}
+			else
+			{
+				//m_Loyalty = MaxLoyalty; // Wonderfully Happy
+			}
+
+			if (version >= 4)
+			{
+				m_CurrentWayPoint = reader.ReadItem() as WayPoint;
+			}
+
+			if (version >= 5)
+			{
+				m_SummonMaster = reader.ReadMobile();
+			}
+
+			if (version >= 6)
+			{
+				m_HitsMax = reader.ReadInt();
+				m_StamMax = reader.ReadInt();
+				m_ManaMax = reader.ReadInt();
+				m_DamageMin = reader.ReadInt();
+				m_DamageMax = reader.ReadInt();
+			}
+
+			if (version >= 7)
+			{
+				m_PhysicalResistance = reader.ReadInt();
+				m_PhysicalDamage = reader.ReadInt();
+
+				m_FireResistance = reader.ReadInt();
+				m_FireDamage = reader.ReadInt();
+
+				m_ColdResistance = reader.ReadInt();
+				m_ColdDamage = reader.ReadInt();
+
+				m_PoisonResistance = reader.ReadInt();
+				m_PoisonDamage = reader.ReadInt();
+
+				m_EnergyResistance = reader.ReadInt();
+				m_EnergyDamage = reader.ReadInt();
+			}
+
+			if (version >= 8)
+			{
+				m_Owners = reader.ReadStrongMobileList();
+			}
+			else
+			{
+				m_Owners = new List<Mobile>();
+			}
+
+			if (version >= 10)
+			{
+				m_IsDeadPet = reader.ReadBool();
+				m_IsBonded = reader.ReadBool();
+				m_BondingBegin = reader.ReadDateTime();
+				m_OwnerAbandonTime = reader.ReadDateTime();
+			}
+
+			if (version >= 11)
+			{
+				m_HasGeneratedLoot = reader.ReadBool();
+			}
+			else
+			{
+				m_HasGeneratedLoot = true;
+			}
+
+			if (version >= 12)
+			{
+				m_Paragon = reader.ReadBool();
+			}
+			else
+			{
+				m_Paragon = false;
+			}
+
+			if (version >= 13 && reader.ReadBool())
+			{
+				m_Friends = reader.ReadStrongMobileList();
+			}
+			else if (version < 13 && m_ControlOrder >= OrderType.Unfriend)
+			{
+				++m_ControlOrder;
+			}
+
+			//if (version < 16 && Loyalty != MaxLoyalty)
+			//{
+			//    Loyalty *= 10;
+			//}
+
+			double activeSpeed = m_dActiveSpeed;
+			double passiveSpeed = m_dPassiveSpeed;
+
+			if (version >= 28)
+			{
+				SpeedInfo.GetSpeedsNew(this, ref activeSpeed, ref passiveSpeed);
+
+				m_dActiveSpeed = activeSpeed;
+				m_dPassiveSpeed = passiveSpeed;
+			}
+			else
+			{
+				SpeedInfo.GetSpeeds(this, ref activeSpeed, ref passiveSpeed);
+
+				bool isStandardActive = false;
+				for (int i = 0; !isStandardActive && i < m_StandardActiveSpeeds.Length; ++i)
+				{
+					isStandardActive = (m_dActiveSpeed == m_StandardActiveSpeeds[i]);
+				}
+
+				bool isStandardPassive = false;
+				for (int i = 0; !isStandardPassive && i < m_StandardPassiveSpeeds.Length; ++i)
+				{
+					isStandardPassive = (m_dPassiveSpeed == m_StandardPassiveSpeeds[i]);
+				}
+
+				if (isStandardActive && m_dCurrentSpeed == m_dActiveSpeed)
+				{
+					m_dCurrentSpeed = activeSpeed;
+				}
+				else if (isStandardPassive && m_dCurrentSpeed == m_dPassiveSpeed)
+				{
+					m_dCurrentSpeed = passiveSpeed;
+				}
+
+				if (isStandardActive && !m_Paragon)
+				{
+					m_dActiveSpeed = activeSpeed;
+				}
+
+				if (isStandardPassive && !m_Paragon)
+				{
+					m_dPassiveSpeed = passiveSpeed;
+				}
+			}
+
+			if (version >= 14)
+			{
+				m_RemoveIfUntamed = reader.ReadBool();
+				m_RemoveStep = reader.ReadInt();
+			}
+
+			TimeSpan deleteTime = TimeSpan.Zero;
+
+			if (version >= 17)
+			{
+				deleteTime = reader.ReadTimeSpan();
+			}
+
+			if (deleteTime > TimeSpan.Zero || LastOwner != null && !Controlled && !IsStabled)
+			{
+				if (deleteTime == TimeSpan.Zero)
+				{
+					deleteTime = TimeSpan.FromDays(3.0);
+				}
+
+				m_DeleteTimer = new DeleteTimer(this, deleteTime);
+				m_DeleteTimer.Start();
+			}
+
+			if (version >= 18)
+			{
+				m_CorpseNameOverride = reader.ReadString();
+			}
+
+			if (version >= 19)
+			{
+				m_Allured = reader.ReadBool();
+			}
+
+			if (version <= 20)
+			{
+				reader.ReadInt();
+			}
+
+			if (version < 26)
+			{
+				CanMove = true;
+
+				ApproachWait = false;
+				ApproachRange = 10;
+			}
+
+			if (version >= 22)
+			{
+				m_EngravedText = reader.ReadString();
+			}
+
+			if (version == 23)
+			{
+				reader.ReadBool();
+			}
+
+			if (version >= 24)
+			{
+				ControlSlotsMin = reader.ReadInt();
+				ControlSlotsMax = reader.ReadInt();
+
+				Mastery = (SkillName)reader.ReadInt();
+
+				if (reader.ReadInt() == 1)
+				{
+					_Profile = new AbilityProfile(this, reader);
+				}
+
+				if (reader.ReadInt() == 1)
+				{
+					_TrainingProfile = new TrainingProfile(this, reader);
+				}
+			}
+			else
+			{
+				if (Tamable)
+				{
+					CalculateSlots(m_iControlSlots);
+
+					if (m_iControlSlots < ControlSlotsMin)
+					{
+						ControlSlotsMin = m_iControlSlots;
+					}
+
+					ControlSlots = ControlSlotsMin;
+				}
+
+				InitializeAbilities();
+			}
+
+			if (version >= 25)
+			{
+				CurrentTameSkill = reader.ReadDouble();
+
+				if (Controlled && version == 26)
+				{
+					AdjustTameRequirements();
+				}
+				else if (Controlled && CurrentTameSkill > MaxTameRequirement)
+				{
+					CurrentTameSkill = MaxTameRequirement;
+				}
+			}
+			else
+			{
+				AdjustTameRequirements();
+			}
+
+			if (version <= 14 && m_Paragon && Hue == 0x31)
+			{
+				Hue = Paragon.Hue; //Paragon hue fixed, should now be 0x501.
+			}
+
+			if (Core.AOS && NameHue == 0x35)
+			{
+				NameHue = -1;
+			}
+
+			if (m_AttackSpeed <= 0)
 				m_AttackSpeed = 2.5;
-			
-            CheckStatTimers();
 
-            ChangeAIType(m_CurrentAI);
+			CheckStatTimers();
 
-            AddFollowers();
+			ChangeAIType(m_CurrentAI);
 
-            if (IsAnimatedDead)
-            {
-                AnimateDeadSpell.Register(m_SummonMaster, this);
-            }
+			AddFollowers();
 
-            if (Tamable && CurrentTameSkill == 0)
-            {
-                AdjustTameRequirements();
-            }
-        }
+			if (IsAnimatedDead)
+			{
+				AnimateDeadSpell.Register(m_SummonMaster, this);
+			}
+
+			if (Tamable && CurrentTameSkill == 0)
+			{
+				AdjustTameRequirements();
+			}
+		}
 
 		//public int TempControlSlots = 1;
-		
-        public virtual bool IsHumanInTown()
-        {
-            return (Body.IsHuman && Region.IsPartOf<GuardedRegion>());
-        }
 
-        public virtual bool CheckGold(Mobile from, Item dropped)
-        {
-            if (dropped is Gold)
-            {
-                return OnGoldGiven(from, (Gold)dropped);
-            }
+		public virtual bool IsHumanInTown()
+		{
+			return (Body.IsHuman && Region.IsPartOf<GuardedRegion>());
+		}
 
-            return false;
-        }
+		public virtual bool CheckGold(Mobile from, Item dropped)
+		{
+			if (dropped is Gold)
+			{
+				return OnGoldGiven(from, (Gold)dropped);
+			}
 
-        public virtual bool OnGoldGiven(Mobile from, Gold dropped)
-        {
-            if (CheckTeachingMatch(from))
-            {
-                if (Teach(m_Teaching, from, dropped.Amount, true))
-                {
-                    dropped.Delete();
-                    return true;
-                }
-            }
-            else if (IsHumanInTown())
-            {
-                Direction = GetDirectionTo(from);
+			return false;
+		}
 
-                int oldSpeechHue = SpeechHue;
+		public virtual bool OnGoldGiven(Mobile from, Gold dropped)
+		{
+			if (CheckTeachingMatch(from))
+			{
+				if (Teach(m_Teaching, from, dropped.Amount, true))
+				{
+					dropped.Delete();
+					return true;
+				}
+			}
+			else if (IsHumanInTown())
+			{
+				Direction = GetDirectionTo(from);
 
-                SpeechHue = 0x23F;
-                SayTo(from, "Thou art giving me gold?");
+				int oldSpeechHue = SpeechHue;
 
-                if (dropped.Amount >= 400)
-                {
-                    SayTo(from, "'Tis a noble gift.");
-                }
-                else
-                {
-                    SayTo(from, "Money is always welcome.");
-                }
+				SpeechHue = 0x23F;
+				SayTo(from, "Thou art giving me gold?");
 
-                SpeechHue = 0x3B2;
-                SayTo(from, 501548); // I thank thee.
+				if (dropped.Amount >= 400)
+				{
+					SayTo(from, "'Tis a noble gift.");
+				}
+				else
+				{
+					SayTo(from, "Money is always welcome.");
+				}
 
-                SpeechHue = oldSpeechHue;
+				SpeechHue = 0x3B2;
+				SayTo(from, 501548); // I thank thee.
 
-                dropped.Delete();
-                return true;
-            }
+				SpeechHue = oldSpeechHue;
 
-            return false;
-        }
+				dropped.Delete();
+				return true;
+			}
 
-        public override bool ShouldCheckStatTimers { get { return false; } }
+			return false;
+		}
 
-        #region Food
-        private static readonly Type[] m_Eggs = new[] { typeof(FriedEggs), typeof(Eggs) };
+		public override bool ShouldCheckStatTimers
+		{
+			get { return false; }
+		}
 
-        private static readonly Type[] m_Fish = new[] { typeof(FishSteak), typeof(RawFishSteak) };
+		#region Food
+		private static readonly Type[] m_Eggs = new[] { typeof(FriedEggs), typeof(Eggs) };
 
-        private static readonly Type[] m_GrainsAndHay = new[] { typeof(BreadLoaf), typeof(FrenchBread), typeof(SheafOfHay) };
+		private static readonly Type[] m_Fish = new[] { typeof(FishSteak), typeof(RawFishSteak) };
 
-        private static readonly Type[] m_Meat = new[]
-        {
+		private static readonly Type[] m_GrainsAndHay = new[]
+		{
+			typeof(BreadLoaf),
+			typeof(FrenchBread),
+			typeof(SheafOfHay),
+		};
+
+		private static readonly Type[] m_Meat = new[]
+		{
 			/* Cooked */
-			typeof(Bacon), typeof(CookedBird), typeof(Sausage), typeof(Ham), typeof(Ribs), typeof(LambLeg), typeof(ChickenLeg),
+			typeof(Bacon),
+			typeof(CookedBird),
+			typeof(Sausage),
+			typeof(Ham),
+			typeof(Ribs),
+			typeof(LambLeg),
+			typeof(ChickenLeg),
 			/* Uncooked */
-			typeof(RawBird), typeof(RawRibs), typeof(RawLambLeg), typeof(RawChickenLeg), /* Body Parts */
-			typeof(Head), typeof(LeftArm), typeof(LeftLeg), typeof(Torso), typeof(RightArm), typeof(RightLeg)
-        };
+			typeof(RawBird),
+			typeof(RawRibs),
+			typeof(RawLambLeg),
+			typeof(RawChickenLeg), /* Body Parts */
+			typeof(Head),
+			typeof(LeftArm),
+			typeof(LeftLeg),
+			typeof(Torso),
+			typeof(RightArm),
+			typeof(RightLeg),
+		};
 
-        private static readonly Type[] m_FruitsAndVegies = new[]
-        {
-            typeof(HoneydewMelon), typeof(YellowGourd), typeof(GreenGourd), typeof(Banana), typeof(Bananas), typeof(Lemon),
-            typeof(Lime), typeof(Dates), typeof(Grapes), typeof(Peach), typeof(Pear), typeof(Apple), typeof(Watermelon),
-            typeof(Squash), typeof(Cantaloupe), typeof(Carrot), typeof(Cabbage), typeof(Onion), typeof(Lettuce), typeof(Pumpkin)
-        };
+		private static readonly Type[] m_FruitsAndVegies = new[]
+		{
+			typeof(HoneydewMelon),
+			typeof(YellowGourd),
+			typeof(GreenGourd),
+			typeof(Banana),
+			typeof(Bananas),
+			typeof(Lemon),
+			typeof(Lime),
+			typeof(Dates),
+			typeof(Grapes),
+			typeof(Peach),
+			typeof(Pear),
+			typeof(Apple),
+			typeof(Watermelon),
+			typeof(Squash),
+			typeof(Cantaloupe),
+			typeof(Carrot),
+			typeof(Cabbage),
+			typeof(Onion),
+			typeof(Lettuce),
+			typeof(Pumpkin),
+		};
 
-        private static Type[] m_Gold = new[]
-        {
+		private static Type[] m_Gold = new[]
+		{
 			// white wyrms eat gold..
-			typeof(Gold)
-        };
+			typeof(Gold),
+		};
 
-        private static readonly Type[] m_Metal = new[]
-        {
+		private static readonly Type[] m_Metal = new[]
+		{
 			// Some Stygian Abyss Monsters eat Metal..
-			typeof(IronIngot), typeof(DullCopperIngot), typeof(ShadowIronIngot), typeof(CopperIngot), typeof(BronzeIngot),
-            typeof(GoldIngot), typeof(AgapiteIngot), typeof(VeriteIngot), typeof(ValoriteIngot)
-        };
+			typeof(IronIngot),
+			typeof(DullCopperIngot),
+			typeof(ShadowIronIngot),
+			typeof(CopperIngot),
+			typeof(BronzeIngot),
+			typeof(GoldIngot),
+			typeof(AgapiteIngot),
+			typeof(VeriteIngot),
+			typeof(ValoriteIngot),
+		};
 
-        private static readonly Type[] m_BlackrockStew =
-        {
-            typeof(BowlOfBlackrockStew)
-        };
+		private static readonly Type[] m_BlackrockStew = { typeof(BowlOfBlackrockStew) };
 
-        public virtual bool CheckFoodPreference(Item f)
-        {
-            if (CheckFoodPreference(f, FoodType.Eggs, m_Eggs))
-            {
-                return true;
-            }
+		public virtual bool CheckFoodPreference(Item f)
+		{
+			if (CheckFoodPreference(f, FoodType.Eggs, m_Eggs))
+			{
+				return true;
+			}
 
-            if (CheckFoodPreference(f, FoodType.Fish, m_Fish))
-            {
-                return true;
-            }
+			if (CheckFoodPreference(f, FoodType.Fish, m_Fish))
+			{
+				return true;
+			}
 
-            if (CheckFoodPreference(f, FoodType.GrainsAndHay, m_GrainsAndHay))
-            {
-                return true;
-            }
+			if (CheckFoodPreference(f, FoodType.GrainsAndHay, m_GrainsAndHay))
+			{
+				return true;
+			}
 
-            if (CheckFoodPreference(f, FoodType.Meat, m_Meat))
-            {
-                return true;
-            }
+			if (CheckFoodPreference(f, FoodType.Meat, m_Meat))
+			{
+				return true;
+			}
 
-            if (CheckFoodPreference(f, FoodType.FruitsAndVegies, m_FruitsAndVegies))
-            {
-                return true;
-            }
+			if (CheckFoodPreference(f, FoodType.FruitsAndVegies, m_FruitsAndVegies))
+			{
+				return true;
+			}
 
-            if (CheckFoodPreference(f, FoodType.Metal, m_Metal))
-            {
-                return true;
-            }
+			if (CheckFoodPreference(f, FoodType.Metal, m_Metal))
+			{
+				return true;
+			}
 
-            if (CheckFoodPreference(f, FoodType.BlackrockStew, m_BlackrockStew))
-            {
-                return true;
-            }
+			if (CheckFoodPreference(f, FoodType.BlackrockStew, m_BlackrockStew))
+			{
+				return true;
+			}
 
-            return false;
-        }
+			return false;
+		}
 
-        public virtual bool CheckFoodPreference(Item fed, FoodType type, Type[] types)
-        {
-            if ((FavoriteFood & type) == 0)
-            {
-                return false;
-            }
+		public virtual bool CheckFoodPreference(Item fed, FoodType type, Type[] types)
+		{
+			if ((FavoriteFood & type) == 0)
+			{
+				return false;
+			}
 
-            Type fedType = fed.GetType();
-            bool contains = false;
+			Type fedType = fed.GetType();
+			bool contains = false;
 
-            for (int i = 0; !contains && i < types.Length; ++i)
-            {
-                contains = (fedType == types[i]);
-            }
+			for (int i = 0; !contains && i < types.Length; ++i)
+			{
+				contains = (fedType == types[i]);
+			}
 
-            return contains;
-        }
+			return contains;
+		}
 
-        public virtual bool CheckFeed(Mobile from, Item dropped)
-        {
-            if (!IsDeadPet && Controlled && (ControlMaster == from || IsPetFriend(from))) /*&&
+		public virtual bool CheckFeed(Mobile from, Item dropped)
+		{
+			if (!IsDeadPet && Controlled && (ControlMaster == from || IsPetFriend(from))) /*&&
                 (dropped is Food || dropped is Gold || dropped is CookableFood || dropped is Head || dropped is LeftArm ||
                  dropped is LeftLeg || dropped is Torso || dropped is RightArm || dropped is RightLeg || dropped is IronIngot ||
                  dropped is DullCopperIngot || dropped is ShadowIronIngot || dropped is CopperIngot || dropped is BronzeIngot ||
                  dropped is GoldIngot || dropped is AgapiteIngot || dropped is VeriteIngot || dropped is ValoriteIngot))*/
-                // Why do we need all this crap, when its checked in CheckFootPreference?
-            {
-                Item f = dropped;
+			// Why do we need all this crap, when its checked in CheckFootPreference?
+			{
+				Item f = dropped;
 
-                if (CheckFoodPreference(f))
-                {
-                    int amount = f.Amount;
+				if (CheckFoodPreference(f))
+				{
+					int amount = f.Amount;
 
-                    if (amount > 0)
-                    {
-                        bool happier = false;
+					if (amount > 0)
+					{
+						bool happier = false;
 
-                        int stamGain;
+						int stamGain;
 
-                        if (f is Gold)
-                        {
-                            stamGain = amount - 50;
-                        }
-                        else
-                        {
-                            stamGain = (amount * 15) - 50;
-                        }
+						if (f is Gold)
+						{
+							stamGain = amount - 50;
+						}
+						else
+						{
+							stamGain = (amount * 15) - 50;
+						}
 
-                        if (stamGain > 0)
-                        {
-                            Stam += stamGain;
-                        }
+						if (stamGain > 0)
+						{
+							Stam += stamGain;
+						}
 
-                        if (Core.SE)
-                        {
+						if (Core.SE)
+						{
 							/*
-                            if (m_Loyalty < MaxLoyalty)
-                            {
-                                m_Loyalty = MaxLoyalty;
-                                happier = true;
-                            }
+							if (m_Loyalty < MaxLoyalty)
+							{
+								m_Loyalty = MaxLoyalty;
+								happier = true;
+							}
 							*/
-                        }
-                        else
-                        {
-                            for (int i = 0; i < amount; ++i)
-                            {
+						}
+						else
+						{
+							for (int i = 0; i < amount; ++i)
+							{
 								/*
-                                if (m_Loyalty < MaxLoyalty && 0.5 >= Utility.RandomDouble())
-                                {
-                                    m_Loyalty += 10;
-                                    happier = true;
-                                }
+								if (m_Loyalty < MaxLoyalty && 0.5 >= Utility.RandomDouble())
+								{
+									m_Loyalty += 10;
+									happier = true;
+								}
 								*/
-                            }
-                        }
-
-                        if (happier)
-                        {
-                            SayTo(from, 502060); // Your pet looks happier.
-                        }
-
-                        if (Core.SA)
-                        {
-                            Animate(AnimationType.Eat, 0);
-                        }
-                        else
-                        {
-                            Animate(Body.IsAnimal ? 3 : Body.IsHuman ? 34 : 17, 5, 1, true, false, 0);
-                        }
-
-                        if (IsBondable && !IsBonded)
-                        {
-                            Mobile master = m_ControlMaster;
-
-                            if (master != null && master == from) //So friends can't start the bonding process
-                            {
-                                if (m_CurrentTameSkill <= 29.1 || master.Skills[SkillName.AnimalTaming].Base >= m_CurrentTameSkill ||
-                                    OverrideBondingReqs() || (Core.ML && master.Skills[SkillName.AnimalTaming].Value >= m_CurrentTameSkill))
-                                {
-                                    if (BondingBegin == DateTime.MinValue)
-                                    {
-                                        BondingBegin = DateTime.UtcNow;
-                                    }
-                                    else if ((BondingBegin + BondingDelay) <= DateTime.UtcNow)
-                                    {
-                                        IsBonded = true;
-                                        BondingBegin = DateTime.MinValue;
-                                        from.SendLocalizedMessage(1049666); // Your pet has bonded with you!
-                                    }
-                                }
-                                else if (Core.ML)
-                                {
-                                    from.SendLocalizedMessage(1075268);
-                                    // Your pet cannot form a bond with you until your animal taming ability has risen.
-                                }
-                            }
-                        }
-
-                        dropped.Delete();
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-        #endregion
-
-        public virtual bool OverrideBondingReqs()
-        {
-            return false;
-        }
-
-        public virtual bool CanAngerOnTame { get { return false; } }
-
-        #region OnAction[...]
-        public virtual void OnActionWander()
-        { }
-
-        public virtual void OnActionCombat()
-        { }
-
-        public virtual void OnActionGuard()
-        { }
-
-        public virtual void OnActionFlee()
-        { }
-
-        public virtual void OnActionInteract()
-        { }
-
-        public virtual void OnActionBackoff()
-        { }
-        #endregion
-
-        public override bool OnDragDrop(Mobile from, Item dropped)
-        {
-            if (CheckFeed(from, dropped))
-            {
-                return true;
-            }
-            if (CheckGold(from, dropped))
-            {
-                return true;
-            }
-
-	        if (!from.InRange(Location, 2))
-                return base.OnDragDrop(from, dropped);
-
-	        bool gainedPath = false;
-
-            var honestySocket = dropped.GetSocket<HonestyItemSocket>();
-
-            if (honestySocket != null && honestySocket.HonestyOwner == this)
-            {
-                VirtueHelper.Award(from, VirtueName.Honesty, 120, ref gainedPath);
-            }
-            else
-            {
-                return false;
-            }
-
-	        from.SendMessage(gainedPath ? "You have gained a path in Honesty!" : "You have gained in Honesty.");
-	        SayTo(from, 1074582); //Ah!  You found my property.  Thank you for your honesty in returning it to me.
-	        dropped.Delete();
-	        return true;
-        }
-
-        protected virtual BaseAI ForcedAI { get { return null; } }
-
-        public void ChangeAIType(AIType NewAI)
-        {
-            if (m_AI != null)
-            {
-                m_AI.m_Timer.Stop();
-            }
-
-            if (ForcedAI != null)
-            {
-                m_AI = ForcedAI;
-                return;
-            }
-
-            m_AI = null;
-
-            switch (NewAI)
-            {
-                case AIType.AI_Melee:
-                    m_AI = new MeleeAI(this);
-                    break;
-                case AIType.AI_Animal:
-                    m_AI = new AnimalAI(this);
-                    break;
-                case AIType.AI_Berserk:
-                    m_AI = new BerserkAI(this);
-                    break;
-                case AIType.AI_Archer:
-                    m_AI = new ArcherAI(this);
-                    break;
-                case AIType.AI_Healer:
-                    m_AI = new HealerAI(this);
-                    break;
-                case AIType.AI_Vendor:
-                    m_AI = new VendorAI(this);
-                    break;
-                case AIType.AI_Mage:
-                    m_AI = new MageAI(this);
-                    break;
-                case AIType.AI_Predator:
-                    //m_AI = new PredatorAI(this);
-                    m_AI = new MeleeAI(this);
-                    break;
-                case AIType.AI_Thief:
-                    m_AI = new ThiefAI(this);
-                    break;
-                case AIType.AI_NecroMage:
-                    m_AI = new NecroMageAI(this);
-                    break;
-                case AIType.AI_OrcScout:
-                    m_AI = new OrcScoutAI(this);
-                    break;
-                case AIType.AI_Samurai:
-                    m_AI = new SamuraiAI(this);
-                    break;
-                case AIType.AI_Ninja:
-                    m_AI = new NinjaAI(this);
-                    break;
-                case AIType.AI_Spellweaving:
-                    m_AI = new SpellweavingAI(this);
-                    break;
-                case AIType.AI_Mystic:
-                    m_AI = new MysticAI(this);
-                    break;
-                case AIType.AI_Paladin:
-                    m_AI = new PaladinAI(this);
-                    break;
-                case AIType.AI_Spellbinder:
-                    m_AI = new SpellbinderAI(this);
-                    break;
-                case AIType.AI_Necro:
-                    m_AI = new NecroAI(this);
-                    break;
-            }
-        }
-
-        public void ChangeAIToDefault()
-        {
-            ChangeAIType(m_DefaultAI);
-        }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public AIType AI
-        {
-            get { return m_CurrentAI; }
-            set
-            {
-                m_CurrentAI = value;
-
-                if (m_CurrentAI == AIType.AI_Use_Default)
-                {
-                    m_CurrentAI = m_DefaultAI;
-                }
-
-                ChangeAIType(m_CurrentAI);
-            }
-        }
-
-        [CommandProperty(AccessLevel.Administrator)]
-        public bool Debug { get { return m_bDebugAI; } set { m_bDebugAI = value; } }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int Team
-        {
-            get { return m_iTeam; }
-            set
-            {
-                m_iTeam = value;
-
-                OnTeamChange();
-            }
-        }
-
-        public virtual void OnTeamChange()
-        { }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public IDamageable FocusMob { get; set; }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public FightMode FightMode { get { return m_FightMode; } set { m_FightMode = value; } }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int RangePerception { get { return m_iRangePerception; } set { m_iRangePerception = value; } }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int RangeFight { get { return m_iRangeFight; } set { m_iRangeFight = value; } }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int RangeHome { get { return m_iRangeHome; } set { m_iRangeHome = value; } }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public double ForceActiveSpeed { get { return m_ForceActiveSpeed; } set { m_ForceActiveSpeed = value; } }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public double ForcePassiveSpeed { get { return m_ForcePassiveSpeed; } set { m_ForcePassiveSpeed = value; } }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public double ActiveSpeed { get { return m_ForceActiveSpeed != 0.0 ? m_ForceActiveSpeed : m_dActiveSpeed; } set { m_dActiveSpeed = value; } }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public double PassiveSpeed { get { return m_ForcePassiveSpeed != 0.0 ? m_ForcePassiveSpeed : m_dPassiveSpeed; } set { m_dPassiveSpeed = value; } }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public double CurrentSpeed
-        {
-            get
-            {
-                if (m_TargetLocation != null)
-                {
-                    return 0.3;
-                }
-
-                return m_dCurrentSpeed;
-            }
-            set
-            {
-                if (m_dCurrentSpeed != value)
-                {
-                    m_dCurrentSpeed = value;
-
-                    if (m_AI != null)
-                    {
-                        m_AI.OnCurrentSpeedChanged();
-                    }
-                }
-            }
-        }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Point3D Home { get { return m_pHome; } set { m_pHome = value; } }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool Controlled
-        {
-            get { return m_bControlled; }
-            set
-            {
-                if (m_bControlled == value)
-                {
-                    return;
-                }
-
-                m_bControlled = value;
-                Delta(MobileDelta.Noto);
-
-                InvalidateProperties();
-            }
-        }
-
-        #region Snake Charming
-        private Mobile m_CharmMaster;
-        private Point2D m_CharmTarget;
-        private Timer m_CharmTimer;
-
-        public void BeginCharm(Mobile master, Point2D target)
-        {
-            m_CharmMaster = master;
-            m_CharmTarget = target;
-
-            m_CharmTimer = new CharmTimer(this);
-            m_CharmTimer.Start();
-        }
-
-        public void EndCharm()
-        {
-            if (!Deleted && m_CharmMaster != null)
-            {
-                // The charm seems to wear off.
-                PrivateOverheadMessage(MessageType.Regular, 0x3B2, 1112181, m_CharmMaster.NetState);
-
-                Frozen = false;
-
-                m_CharmMaster = null;
-                m_CharmTarget = Point2D.Zero;
-
-                if (m_CharmTimer != null)
-                {
-                    m_CharmTimer.Stop();
-                    m_CharmTimer = null;
-                }
-            }
-        }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Mobile CharmMaster { get { return m_CharmMaster; } }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Point2D CharmTarget { get { return m_CharmTarget; } }
-
-        private class CharmTimer : Timer
-        {
-            private BaseCreature m_Owner;
-            private int m_Count;
-
-            public CharmTimer(BaseCreature owner)
-                : base(TimeSpan.Zero, TimeSpan.FromSeconds(2.0))
-            {
-                m_Owner = owner;
-                m_Count = 10;
-            }
-
-            protected override void OnTick()
-            {
-                if (m_Count == 0 || m_Owner.CharmMaster == null || !m_Owner.CharmMaster.InRange(m_Owner.Location, 10))
-                {
-                    Stop();
-                    m_Owner.EndCharm();
-                }
-                else
-                {
-                    m_Owner.FixedParticles(0x376A, 9, 32, 5030, EffectLayer.Waist);
-                    m_Count--;
-                }
-            }
-        }
-        #endregion
-
-        public override void RevealingAction()
-        {
-            InvisibilitySpell.RemoveTimer(this);
-
-            base.RevealingAction();
-        }
-
-        public void RemoveFollowers()
-        {
-            if (m_ControlMaster != null)
-            {
-                m_ControlMaster.Followers -= ControlSlots;
-
-                if (m_ControlMaster is PlayerMobile)
-                {
-                    PlayerMobile pm = (PlayerMobile)m_ControlMaster;
-
-                    pm.AllFollowers.Remove(this);
-
-                    if (pm.AutoStabled.Contains(this))
-                    {
-                        pm.AutoStabled.Remove(this);
-                    }
-
-                    NetState ns = m_ControlMaster.NetState;
-
-                    if (ns != null && ns.IsEnhancedClient && Commandable)
-                    {
-                        ns.Send(new PetWindow(pm, this));
-                    }
-
-                    if (KhaldunTastyTreat.UnderInfluence(this))
-                    {
-                        Caddellite.UpdateBuff(m_ControlMaster);
-                    }
-                }
-            }
-            else if (m_SummonMaster != null)
-            {
-                m_SummonMaster.Followers -= ControlSlots;
-
-                if (m_SummonMaster is PlayerMobile)
-                {
-                    ((PlayerMobile)m_SummonMaster).AllFollowers.Remove(this);
-                }
-            }
-
-            if (m_ControlMaster != null && m_ControlMaster.Followers < 0)
-            {
-                m_ControlMaster.Followers = 0;
-            }
-
-            if (m_SummonMaster != null && m_SummonMaster.Followers < 0)
-            {
-                m_SummonMaster.Followers = 0;
-            }
-        }
-
-        public void AddFollowers()
-        {
-            if (m_ControlMaster != null )
-            {
+							}
+						}
+
+						if (happier)
+						{
+							SayTo(from, 502060); // Your pet looks happier.
+						}
+
+						if (Core.SA)
+						{
+							Animate(AnimationType.Eat, 0);
+						}
+						else
+						{
+							Animate(
+								Body.IsAnimal ? 3
+									: Body.IsHuman ? 34
+									: 17,
+								5,
+								1,
+								true,
+								false,
+								0
+							);
+						}
+
+						if (IsBondable && !IsBonded)
+						{
+							Mobile master = m_ControlMaster;
+
+							if (master != null && master == from) //So friends can't start the bonding process
+							{
+								if (
+									m_CurrentTameSkill <= 29.1
+									|| master.Skills[SkillName.AnimalTaming].Base >= m_CurrentTameSkill
+									|| OverrideBondingReqs()
+									|| (Core.ML && master.Skills[SkillName.AnimalTaming].Value >= m_CurrentTameSkill)
+								)
+								{
+									if (BondingBegin == DateTime.MinValue)
+									{
+										BondingBegin = DateTime.UtcNow;
+									}
+									else if ((BondingBegin + BondingDelay) <= DateTime.UtcNow)
+									{
+										IsBonded = true;
+										BondingBegin = DateTime.MinValue;
+										from.SendLocalizedMessage(1049666); // Your pet has bonded with you!
+									}
+								}
+								else if (Core.ML)
+								{
+									from.SendLocalizedMessage(1075268);
+									// Your pet cannot form a bond with you until your animal taming ability has risen.
+								}
+							}
+						}
+
+						dropped.Delete();
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+		#endregion
+
+		public virtual bool OverrideBondingReqs()
+		{
+			return false;
+		}
+
+		public virtual bool CanAngerOnTame
+		{
+			get { return false; }
+		}
+
+		#region OnAction[...]
+		public virtual void OnActionWander() { }
+
+		public virtual void OnActionCombat() { }
+
+		public virtual void OnActionGuard() { }
+
+		public virtual void OnActionFlee() { }
+
+		public virtual void OnActionInteract() { }
+
+		public virtual void OnActionBackoff() { }
+		#endregion
+
+		public override bool OnDragDrop(Mobile from, Item dropped)
+		{
+			if (CheckFeed(from, dropped))
+			{
+				return true;
+			}
+			if (CheckGold(from, dropped))
+			{
+				return true;
+			}
+
+			if (!from.InRange(Location, 2))
+				return base.OnDragDrop(from, dropped);
+
+			bool gainedPath = false;
+
+			var honestySocket = dropped.GetSocket<HonestyItemSocket>();
+
+			if (honestySocket != null && honestySocket.HonestyOwner == this)
+			{
+				VirtueHelper.Award(from, VirtueName.Honesty, 120, ref gainedPath);
+			}
+			else
+			{
+				return false;
+			}
+
+			from.SendMessage(gainedPath ? "You have gained a path in Honesty!" : "You have gained in Honesty.");
+			SayTo(from, 1074582); //Ah!  You found my property.  Thank you for your honesty in returning it to me.
+			dropped.Delete();
+			return true;
+		}
+
+		protected virtual BaseAI ForcedAI
+		{
+			get { return null; }
+		}
+
+		public void ChangeAIType(AIType NewAI)
+		{
+			if (m_AI != null)
+			{
+				m_AI.m_Timer.Stop();
+			}
+
+			if (ForcedAI != null)
+			{
+				m_AI = ForcedAI;
+				return;
+			}
+
+			m_AI = null;
+
+			switch (NewAI)
+			{
+				case AIType.AI_Melee:
+					m_AI = new MeleeAI(this);
+					break;
+				case AIType.AI_Animal:
+					m_AI = new AnimalAI(this);
+					break;
+				case AIType.AI_Berserk:
+					m_AI = new BerserkAI(this);
+					break;
+				case AIType.AI_Archer:
+					m_AI = new ArcherAI(this);
+					break;
+				case AIType.AI_Healer:
+					m_AI = new HealerAI(this);
+					break;
+				case AIType.AI_Vendor:
+					m_AI = new VendorAI(this);
+					break;
+				case AIType.AI_Mage:
+					m_AI = new MageAI(this);
+					break;
+				case AIType.AI_Predator:
+					//m_AI = new PredatorAI(this);
+					m_AI = new MeleeAI(this);
+					break;
+				case AIType.AI_Thief:
+					m_AI = new ThiefAI(this);
+					break;
+				case AIType.AI_NecroMage:
+					m_AI = new NecroMageAI(this);
+					break;
+				case AIType.AI_OrcScout:
+					m_AI = new OrcScoutAI(this);
+					break;
+				case AIType.AI_Samurai:
+					m_AI = new SamuraiAI(this);
+					break;
+				case AIType.AI_Ninja:
+					m_AI = new NinjaAI(this);
+					break;
+				case AIType.AI_Spellweaving:
+					m_AI = new SpellweavingAI(this);
+					break;
+				case AIType.AI_Mystic:
+					m_AI = new MysticAI(this);
+					break;
+				case AIType.AI_Paladin:
+					m_AI = new PaladinAI(this);
+					break;
+				case AIType.AI_Spellbinder:
+					m_AI = new SpellbinderAI(this);
+					break;
+				case AIType.AI_Necro:
+					m_AI = new NecroAI(this);
+					break;
+			}
+		}
+
+		public void ChangeAIToDefault()
+		{
+			ChangeAIType(m_DefaultAI);
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public AIType AI
+		{
+			get { return m_CurrentAI; }
+			set
+			{
+				m_CurrentAI = value;
+
+				if (m_CurrentAI == AIType.AI_Use_Default)
+				{
+					m_CurrentAI = m_DefaultAI;
+				}
+
+				ChangeAIType(m_CurrentAI);
+			}
+		}
+
+		[CommandProperty(AccessLevel.Administrator)]
+		public bool Debug
+		{
+			get { return m_bDebugAI; }
+			set { m_bDebugAI = value; }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int Team
+		{
+			get { return m_iTeam; }
+			set
+			{
+				m_iTeam = value;
+
+				OnTeamChange();
+			}
+		}
+
+		public virtual void OnTeamChange() { }
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public IDamageable FocusMob { get; set; }
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public FightMode FightMode
+		{
+			get { return m_FightMode; }
+			set { m_FightMode = value; }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int RangePerception
+		{
+			get { return m_iRangePerception; }
+			set { m_iRangePerception = value; }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int RangeFight
+		{
+			get { return m_iRangeFight; }
+			set { m_iRangeFight = value; }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int RangeHome
+		{
+			get { return m_iRangeHome; }
+			set { m_iRangeHome = value; }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public double ForceActiveSpeed
+		{
+			get { return m_ForceActiveSpeed; }
+			set { m_ForceActiveSpeed = value; }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public double ForcePassiveSpeed
+		{
+			get { return m_ForcePassiveSpeed; }
+			set { m_ForcePassiveSpeed = value; }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public double ActiveSpeed
+		{
+			get { return m_ForceActiveSpeed != 0.0 ? m_ForceActiveSpeed : m_dActiveSpeed; }
+			set { m_dActiveSpeed = value; }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public double PassiveSpeed
+		{
+			get { return m_ForcePassiveSpeed != 0.0 ? m_ForcePassiveSpeed : m_dPassiveSpeed; }
+			set { m_dPassiveSpeed = value; }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public double CurrentSpeed
+		{
+			get
+			{
+				if (m_TargetLocation != null)
+				{
+					return 0.3;
+				}
+
+				return m_dCurrentSpeed;
+			}
+			set
+			{
+				if (m_dCurrentSpeed != value)
+				{
+					m_dCurrentSpeed = value;
+
+					if (m_AI != null)
+					{
+						m_AI.OnCurrentSpeedChanged();
+					}
+				}
+			}
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Point3D Home
+		{
+			get { return m_pHome; }
+			set { m_pHome = value; }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool Controlled
+		{
+			get { return m_bControlled; }
+			set
+			{
+				if (m_bControlled == value)
+				{
+					return;
+				}
+
+				m_bControlled = value;
+				Delta(MobileDelta.Noto);
+
+				InvalidateProperties();
+			}
+		}
+
+		#region Snake Charming
+		private Mobile m_CharmMaster;
+		private Point2D m_CharmTarget;
+		private Timer m_CharmTimer;
+
+		public void BeginCharm(Mobile master, Point2D target)
+		{
+			m_CharmMaster = master;
+			m_CharmTarget = target;
+
+			m_CharmTimer = new CharmTimer(this);
+			m_CharmTimer.Start();
+		}
+
+		public void EndCharm()
+		{
+			if (!Deleted && m_CharmMaster != null)
+			{
+				// The charm seems to wear off.
+				PrivateOverheadMessage(MessageType.Regular, 0x3B2, 1112181, m_CharmMaster.NetState);
+
+				Frozen = false;
+
+				m_CharmMaster = null;
+				m_CharmTarget = Point2D.Zero;
+
+				if (m_CharmTimer != null)
+				{
+					m_CharmTimer.Stop();
+					m_CharmTimer = null;
+				}
+			}
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Mobile CharmMaster
+		{
+			get { return m_CharmMaster; }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Point2D CharmTarget
+		{
+			get { return m_CharmTarget; }
+		}
+
+		private class CharmTimer : Timer
+		{
+			private BaseCreature m_Owner;
+			private int m_Count;
+
+			public CharmTimer(BaseCreature owner)
+				: base(TimeSpan.Zero, TimeSpan.FromSeconds(2.0))
+			{
+				m_Owner = owner;
+				m_Count = 10;
+			}
+
+			protected override void OnTick()
+			{
+				if (m_Count == 0 || m_Owner.CharmMaster == null || !m_Owner.CharmMaster.InRange(m_Owner.Location, 10))
+				{
+					Stop();
+					m_Owner.EndCharm();
+				}
+				else
+				{
+					m_Owner.FixedParticles(0x376A, 9, 32, 5030, EffectLayer.Waist);
+					m_Count--;
+				}
+			}
+		}
+		#endregion
+
+		public override void RevealingAction()
+		{
+			InvisibilitySpell.RemoveTimer(this);
+
+			base.RevealingAction();
+		}
+
+		public void RemoveFollowers()
+		{
+			if (m_ControlMaster != null)
+			{
+				m_ControlMaster.Followers -= ControlSlots;
+
+				if (m_ControlMaster is PlayerMobile)
+				{
+					PlayerMobile pm = (PlayerMobile)m_ControlMaster;
+
+					pm.AllFollowers.Remove(this);
+
+					if (pm.AutoStabled.Contains(this))
+					{
+						pm.AutoStabled.Remove(this);
+					}
+
+					NetState ns = m_ControlMaster.NetState;
+
+					if (ns != null && ns.IsEnhancedClient && Commandable)
+					{
+						ns.Send(new PetWindow(pm, this));
+					}
+
+					if (KhaldunTastyTreat.UnderInfluence(this))
+					{
+						Caddellite.UpdateBuff(m_ControlMaster);
+					}
+				}
+			}
+			else if (m_SummonMaster != null)
+			{
+				m_SummonMaster.Followers -= ControlSlots;
+
+				if (m_SummonMaster is PlayerMobile)
+				{
+					((PlayerMobile)m_SummonMaster).AllFollowers.Remove(this);
+				}
+			}
+
+			if (m_ControlMaster != null && m_ControlMaster.Followers < 0)
+			{
+				m_ControlMaster.Followers = 0;
+			}
+
+			if (m_SummonMaster != null && m_SummonMaster.Followers < 0)
+			{
+				m_SummonMaster.Followers = 0;
+			}
+		}
+
+		public void AddFollowers()
+		{
+			if (m_ControlMaster != null)
+			{
 				m_iRangePerception = 24;
 				m_ControlMaster.Followers += ControlSlots;
 
-                if (m_ControlMaster is PlayerMobile && !(this is PersonalAttendant))
-                {
-                    ((PlayerMobile)m_ControlMaster).AllFollowers.Add(this);
+				if (m_ControlMaster is PlayerMobile && !(this is PersonalAttendant))
+				{
+					((PlayerMobile)m_ControlMaster).AllFollowers.Add(this);
 
-                    NetState ns = m_ControlMaster.NetState;
+					NetState ns = m_ControlMaster.NetState;
 
-                    if (ns != null && ns.IsEnhancedClient && Commandable)
-                    {
-                        ns.Send(new PetWindow((PlayerMobile)m_ControlMaster, this));
-                    }
+					if (ns != null && ns.IsEnhancedClient && Commandable)
+					{
+						ns.Send(new PetWindow((PlayerMobile)m_ControlMaster, this));
+					}
 
-                    if (KhaldunTastyTreat.UnderInfluence(this))
-                    {
-                        Caddellite.UpdateBuff(m_ControlMaster);
-                    }
-                }
-            }
-            else if (m_SummonMaster != null)
-            {
-                m_SummonMaster.Followers += ControlSlots;
-                if (m_SummonMaster is PlayerMobile)
-                {
-                    ((PlayerMobile)m_SummonMaster).AllFollowers.Add(this);
-                }
-            }
-        }
+					if (KhaldunTastyTreat.UnderInfluence(this))
+					{
+						Caddellite.UpdateBuff(m_ControlMaster);
+					}
+				}
+			}
+			else if (m_SummonMaster != null)
+			{
+				m_SummonMaster.Followers += ControlSlots;
+				if (m_SummonMaster is PlayerMobile)
+				{
+					((PlayerMobile)m_SummonMaster).AllFollowers.Add(this);
+				}
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Mobile ControlMaster
-        {
-            get { return m_ControlMaster; }
-            set
-            {
-                if (m_ControlMaster == value || this == value)
-                {
-                    return;
-                }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Mobile ControlMaster
+		{
+			get { return m_ControlMaster; }
+			set
+			{
+				if (m_ControlMaster == value || this == value)
+				{
+					return;
+				}
 
-                RemoveFollowers();
-                m_ControlMaster = value;
-                AddFollowers();
-                if (m_ControlMaster != null)
-                {
-                    StopDeleteTimer();
-                }
+				RemoveFollowers();
+				m_ControlMaster = value;
+				AddFollowers();
+				if (m_ControlMaster != null)
+				{
+					StopDeleteTimer();
+				}
 
-                Delta(MobileDelta.Noto);
-            }
-        }
+				Delta(MobileDelta.Noto);
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Mobile SummonMaster
-        {
-            get { return m_SummonMaster; }
-            set
-            {
-                if (m_SummonMaster == value || this == value)
-                {
-                    return;
-                }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Mobile SummonMaster
+		{
+			get { return m_SummonMaster; }
+			set
+			{
+				if (m_SummonMaster == value || this == value)
+				{
+					return;
+				}
 
-                RemoveFollowers();
-                m_SummonMaster = value;
-                AddFollowers();
+				RemoveFollowers();
+				m_SummonMaster = value;
+				AddFollowers();
 
-                Delta(MobileDelta.Noto);
-            }
-        }
+				Delta(MobileDelta.Noto);
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public IDamageable ControlTarget { get { return m_ControlTarget; } set { m_ControlTarget = value; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public IDamageable ControlTarget
+		{
+			get { return m_ControlTarget; }
+			set { m_ControlTarget = value; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Point3D ControlDest { get { return m_ControlDest; } set { m_ControlDest = value; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Point3D ControlDest
+		{
+			get { return m_ControlDest; }
+			set { m_ControlDest = value; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public virtual OrderType ControlOrder
-        {
-            get { return m_ControlOrder; }
-            set
-            {
-                m_ControlOrder = value;
+		[CommandProperty(AccessLevel.GameMaster)]
+		public virtual OrderType ControlOrder
+		{
+			get { return m_ControlOrder; }
+			set
+			{
+				m_ControlOrder = value;
 
-                if (m_Allured)
-                {
-                    if (m_ControlOrder == OrderType.Release)
-                    {
-                        Say(502003); // Sorry, but no.
-                    }
-                    else if (m_ControlOrder != OrderType.None)
-                    {
-                        Say(1079120); // Very well.
-                    }
-                }
+				if (m_Allured)
+				{
+					if (m_ControlOrder == OrderType.Release)
+					{
+						Say(502003); // Sorry, but no.
+					}
+					else if (m_ControlOrder != OrderType.None)
+					{
+						Say(1079120); // Very well.
+					}
+				}
 
-                if (m_AI != null)
-                {
-                    m_AI.OnCurrentOrderChanged();
-                }
+				if (m_AI != null)
+				{
+					m_AI.OnCurrentOrderChanged();
+				}
 
-                InvalidateProperties();
+				InvalidateProperties();
 
-                if (m_ControlMaster != null)
-                {
-                    m_ControlMaster.InvalidateProperties();
-                }
-            }
-        }
+				if (m_ControlMaster != null)
+				{
+					m_ControlMaster.InvalidateProperties();
+				}
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool BardProvoked { get { return m_bBardProvoked; } set { m_bBardProvoked = value; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool BardProvoked
+		{
+			get { return m_bBardProvoked; }
+			set { m_bBardProvoked = value; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool BardPacified { get { return m_bBardPacified; } set { m_bBardPacified = value; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool BardPacified
+		{
+			get { return m_bBardPacified; }
+			set { m_bBardPacified = value; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Mobile BardMaster { get { return m_bBardMaster; } set { m_bBardMaster = value; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Mobile BardMaster
+		{
+			get { return m_bBardMaster; }
+			set { m_bBardMaster = value; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Mobile BardTarget { get { return m_bBardTarget; } set { m_bBardTarget = value; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Mobile BardTarget
+		{
+			get { return m_bBardTarget; }
+			set { m_bBardTarget = value; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public DateTime BardEndTime { get; set; }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public DateTime BardEndTime { get; set; }
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public double MinTameSkill 
-        {
-            get { return m_dMinTameSkill; }
-            set
-            {
-                double skill = m_dMinTameSkill;
+		[CommandProperty(AccessLevel.GameMaster)]
+		public double MinTameSkill
+		{
+			get { return m_dMinTameSkill; }
+			set
+			{
+				double skill = m_dMinTameSkill;
 
-                if (skill != value)
-                {
-                    m_dMinTameSkill = value;
-                    var adjusted = CurrentTameSkill - skill;
+				if (skill != value)
+				{
+					m_dMinTameSkill = value;
+					var adjusted = CurrentTameSkill - skill;
 
-                    if (adjusted > 0)
-                    {
-                        m_CurrentTameSkill = value + adjusted;
-                    }
-                    else
-                    {
-                        m_CurrentTameSkill = value;
-                    }
-                }
-            } 
-        }
+					if (adjusted > 0)
+					{
+						m_CurrentTameSkill = value + adjusted;
+					}
+					else
+					{
+						m_CurrentTameSkill = value;
+					}
+				}
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public double CurrentTameSkill { get { return m_CurrentTameSkill; } set { m_CurrentTameSkill = value; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public double CurrentTameSkill
+		{
+			get { return m_CurrentTameSkill; }
+			set { m_CurrentTameSkill = value; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool Tamable { get { return m_bTamable && !m_Paragon; } set { m_bTamable = value; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool Tamable
+		{
+			get { return m_bTamable && !m_Paragon; }
+			set { m_bTamable = value; }
+		}
 
-        [CommandProperty(AccessLevel.Administrator)]
-        public bool Summoned
-        {
-            get { return m_bSummoned; }
-            set
-            {
-                if (m_bSummoned == value)
-                {
-                    return;
-                }
+		[CommandProperty(AccessLevel.Administrator)]
+		public bool Summoned
+		{
+			get { return m_bSummoned; }
+			set
+			{
+				if (m_bSummoned == value)
+				{
+					return;
+				}
 
-                m_NextReacquireTime = Core.TickCount;
+				m_NextReacquireTime = Core.TickCount;
 
-                m_bSummoned = value;
-                Delta(MobileDelta.Noto);
+				m_bSummoned = value;
+				Delta(MobileDelta.Noto);
 
-                InvalidateProperties();
-            }
-        }
+				InvalidateProperties();
+			}
+		}
 
-        [CommandProperty(AccessLevel.Administrator)]
-        public int ControlSlots
-        {
-            get { return m_iControlSlots; }
-            set
-            {
-                if (PetTrainingHelper.Enabled && ControlSlotsMin == 0 && ControlSlotsMax == 0)
-                {
-                    m_iControlSlots = value;
-
-                    CalculateSlots(value);
-
-                    if (m_iControlSlots != ControlSlotsMin)
-                    {
-                        m_iControlSlots = ControlSlotsMin;
-                    }
-                }
-                else
-                {
+		[CommandProperty(AccessLevel.Administrator)]
+		public int ControlSlots
+		{
+			get { return m_iControlSlots; }
+			set
+			{
+				if (PetTrainingHelper.Enabled && ControlSlotsMin == 0 && ControlSlotsMax == 0)
+				{
 					m_iControlSlots = value;
-                }
-                InvalidateProperties();
-            }
-        }
 
-        [CommandProperty(AccessLevel.Administrator)]
-        public int ControlSlotsMax { get; set; }
+					CalculateSlots(value);
 
-        [CommandProperty(AccessLevel.Administrator)]
-        public int ControlSlotsMin { get; set; }
+					if (m_iControlSlots != ControlSlotsMin)
+					{
+						m_iControlSlots = ControlSlotsMin;
+					}
+				}
+				else
+				{
+					m_iControlSlots = value;
+				}
+				InvalidateProperties();
+			}
+		}
 
-        public virtual bool NoHouseRestrictions { get { return false; } }
-        public virtual bool IsHouseSummonable { get { return false; } }
+		[CommandProperty(AccessLevel.Administrator)]
+		public int ControlSlotsMax { get; set; }
 
-        #region Corpse Resources
-        [CommandProperty(AccessLevel.Administrator)]
-        public virtual int Feathers { get { return 0; } }
-        public virtual int Wool { get { return 0; } }
+		[CommandProperty(AccessLevel.Administrator)]
+		public int ControlSlotsMin { get; set; }
 
-        public virtual int Fur { get { return 0; } }
-        public virtual FurType FurType { get { return FurType.Green; } }
+		public virtual bool NoHouseRestrictions
+		{
+			get { return false; }
+		}
+		public virtual bool IsHouseSummonable
+		{
+			get { return false; }
+		}
 
-        public virtual MeatType MeatType { get { return MeatType.Ribs; } }
-        public virtual int Meat { get { return 0; } }
+		#region Corpse Resources
+		[CommandProperty(AccessLevel.Administrator)]
+		public virtual int Feathers
+		{
+			get { return 0; }
+		}
+		public virtual int Wool
+		{
+			get { return 0; }
+		}
 
-        public virtual int Hides { get { return 0; } }
-        public virtual HideType HideType { get { return HideType.Regular; } }
+		public virtual int Fur
+		{
+			get { return 0; }
+		}
+		public virtual FurType FurType
+		{
+			get { return FurType.Green; }
+		}
 
-        public virtual int Scales { get { return 0; } }
-        public virtual ScaleType ScaleType { get { return ScaleType.Red; } }
+		public virtual MeatType MeatType
+		{
+			get { return MeatType.Ribs; }
+		}
+		public virtual int Meat
+		{
+			get { return 0; }
+		}
 
-        public virtual int DragonBlood { get { return 0; } }
-        #endregion
+		public virtual int Hides
+		{
+			get { return 0; }
+		}
+		public virtual HideType HideType
+		{
+			get { return HideType.Regular; }
+		}
 
-        public virtual bool AutoDispel { get { return false; } }
-        public virtual double AutoDispelChance { get { return ((Core.SE) ? .10 : 1.0); } }
+		public virtual int Scales
+		{
+			get { return 0; }
+		}
+		public virtual ScaleType ScaleType
+		{
+			get { return ScaleType.Red; }
+		}
 
-        public virtual bool IsScaryToPets { get { return false; } }
-        public virtual bool IsScaredOfScaryThings { get { return true; } }
+		public virtual int DragonBlood
+		{
+			get { return 0; }
+		}
+		#endregion
 
-        public virtual bool CanRummageCorpses { get { return false; } }
+		public virtual bool AutoDispel
+		{
+			get { return false; }
+		}
+		public virtual double AutoDispelChance
+		{
+			get { return ((Core.SE) ? .10 : 1.0); }
+		}
 
-        public virtual void OnGotMeleeAttack(Mobile attacker)
-        {
-            if (AutoDispel && attacker is BaseCreature && ((BaseCreature)attacker).IsDispellable &&
-                AutoDispelChance > Utility.RandomDouble())
-            {
-                Dispel(attacker);
-            }
-        }
+		public virtual bool IsScaryToPets
+		{
+			get { return false; }
+		}
+		public virtual bool IsScaredOfScaryThings
+		{
+			get { return true; }
+		}
+
+		public virtual bool CanRummageCorpses
+		{
+			get { return false; }
+		}
+
+		public virtual void OnGotMeleeAttack(Mobile attacker)
+		{
+			if (
+				AutoDispel
+				&& attacker is BaseCreature
+				&& ((BaseCreature)attacker).IsDispellable
+				&& AutoDispelChance > Utility.RandomDouble()
+			)
+			{
+				Dispel(attacker);
+			}
+		}
+
 		public bool disarmcheck = false; //무장해제 체크
 		public DateTime disarmtime = DateTime.Now; //무장해제 시간
 		public int disarmweak = 0; //무장해제 패널티
-		
+
 		public bool dismountcheck = false; //낙마 체크
 		public DateTime dismounttime = DateTime.Now; //낙마 시간
 		public int dismountweak = 0; //낙마 패널티
@@ -4683,973 +5309,1050 @@ namespace Server.Mobiles
 		public bool psychicSlow = false;
 		public double psychicDamageDown = 0;
 
-
 		DateTime attackchargeTime;
 
 		//독 저장량
 		private int m_PoisonSaving;
-		[CommandProperty( AccessLevel.GameMaster )]
-		public int PoisonSaving 
-		{ 
-			get { return m_PoisonSaving; } 
-			set { m_PoisonSaving = value; InvalidateProperties(); } 
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int PoisonSaving
+		{
+			get { return m_PoisonSaving; }
+			set
+			{
+				m_PoisonSaving = value;
+				InvalidateProperties();
+			}
 		}
 
-        public virtual void Dispel(Mobile m)
-        {
-            Effects.SendLocationParticles(EffectItem.Create(m.Location, m.Map, EffectItem.DefaultDuration), 0x3728, 8, 20, 5042);
-            Effects.PlaySound(m, m.Map, 0x201);
+		public virtual void Dispel(Mobile m)
+		{
+			Effects.SendLocationParticles(
+				EffectItem.Create(m.Location, m.Map, EffectItem.DefaultDuration),
+				0x3728,
+				8,
+				20,
+				5042
+			);
+			Effects.PlaySound(m, m.Map, 0x201);
 
-            m.Delete();
-        }
+			m.Delete();
+		}
 
-        public virtual bool DeleteOnRelease { get { return m_bSummoned; } }
+		public virtual bool DeleteOnRelease
+		{
+			get { return m_bSummoned; }
+		}
 
-        public virtual void OnGaveMeleeAttack(Mobile defender)
-        {
-            Poison p = GetHitPoison();
-			
-            XmlPoison xp = (XmlPoison)XmlAttach.FindAttachment(this, typeof(XmlPoison));
+		public virtual void OnGaveMeleeAttack(Mobile defender)
+		{
+			Poison p = GetHitPoison();
 
-            if (xp != null)
-            {
-                p = xp.HitPoison;
-            }
+			XmlPoison xp = (XmlPoison)XmlAttach.FindAttachment(this, typeof(XmlPoison));
 
-            if (m_Paragon)
-            {
-                p = PoisonImpl.IncreaseLevel(p);
-            }
+			if (xp != null)
+			{
+				p = xp.HitPoison;
+			}
 
-            if (p != null)
-            {
-                if (TryHitPoison(defender))
-                {
-                    if (Core.TOL)
-                    {
-                        defender.FixedEffect(0x3779, 1, 10, 1271, 0);
-                    }
+			if (m_Paragon)
+			{
+				p = PoisonImpl.IncreaseLevel(p);
+			}
 
-                    defender.ApplyPoison(this, p);
-                }
+			if (p != null)
+			{
+				if (TryHitPoison(defender))
+				{
+					if (Core.TOL)
+					{
+						defender.FixedEffect(0x3779, 1, 10, 1271, 0);
+					}
 
-                if (Controlled)
-                {
-                    if (!PetTrainingHelper.Enabled || (AbilityProfile != null && AbilityProfile.HasAbility(MagicalAbility.Poisoning)))
-                    {
-                        CheckSkill(SkillName.Poisoning, 0, Skills[SkillName.Poisoning].Cap);
-                    }
-                }
-            }
+					defender.ApplyPoison(this, p);
+				}
 
-            if (AutoDispel && defender is BaseCreature && ((BaseCreature)defender).IsDispellable &&
-                AutoDispelChance > Utility.RandomDouble())
-            {
-                Dispel(defender);
-            }
+				if (Controlled)
+				{
+					if (
+						!PetTrainingHelper.Enabled
+						|| (AbilityProfile != null && AbilityProfile.HasAbility(MagicalAbility.Poisoning))
+					)
+					{
+						CheckSkill(SkillName.Poisoning, 0, Skills[SkillName.Poisoning].Cap);
+					}
+				}
+			}
 
-            if (ColossalRage.HasRage(this) && 0.33 >= Utility.RandomDouble())
-            {
-                DoRageHit(defender);
-            }
-        }
+			if (
+				AutoDispel
+				&& defender is BaseCreature
+				&& ((BaseCreature)defender).IsDispellable
+				&& AutoDispelChance > Utility.RandomDouble()
+			)
+			{
+				Dispel(defender);
+			}
 
-        public virtual Poison GetHitPoison()
-        {
-            //if (!PetTrainingHelper.Enabled || !Controlled)
-            //    return HitPoison;
+			if (ColossalRage.HasRage(this) && 0.33 >= Utility.RandomDouble())
+			{
+				DoRageHit(defender);
+			}
+		}
 
-            int current = 0;
+		public virtual Poison GetHitPoison()
+		{
+			//if (!PetTrainingHelper.Enabled || !Controlled)
+			//    return HitPoison;
 
-            double total = Skills[SkillName.Poisoning].Value;
+			int current = 0;
 
-			if( total >= 250 )
+			double total = Skills[SkillName.Poisoning].Value;
+
+			if (total >= 250)
 				return Poison.Lethal;
-			if( total == 0 )
+			if (total == 0)
 				return null;
 
-            int level = (int)( total / 50 );
+			int level = (int)(total / 50);
 
-			
 			double bonus = total % 50;
-			if( bonus > 0 && Utility.Random(50) <= bonus )
+			if (bonus > 0 && Utility.Random(50) <= bonus)
 				level++;
-			
-			if( level == 4 )
+
+			if (level == 4)
 				return Poison.Deadly;
-			else if( level == 3 )
+			else if (level == 3)
 				return Poison.Greater;
-			else if( level == 2 )
+			else if (level == 2)
 				return Poison.Regular;
-			else if( level == 1 )
+			else if (level == 1)
 				return Poison.Lesser;
 			else
 				return null;
-        }
+		}
 
-        private bool TryHitPoison(Mobile defender)
-        {
-			
+		private bool TryHitPoison(Mobile defender)
+		{
 			BaseWeapon atkWeapon = Weapon as BaseWeapon;
 			BaseWeapon defWeapon = defender.Weapon as BaseWeapon;
 
 			Skill atkSkill = Skills[atkWeapon.Skill];
 			Skill defSkill = defender.Skills[defWeapon.Skill];
-			
+
 			double chance = atkSkill.Value - defSkill.Value + 50;
-			
+
 			return chance < Utility.Random(100);
-			
+
 			/*
-            if(!PetTrainingHelper.Enabled || !Controlled)
-                return HitPoisonChance >= Utility.RandomDouble();
+			if(!PetTrainingHelper.Enabled || !Controlled)
+				return HitPoisonChance >= Utility.RandomDouble();
 
-            var profile = AbilityProfile;
+			var profile = AbilityProfile;
 
-            if (profile == null || !profile.HasAbility(MagicalAbility.Poisoning))
-                return false;
+			if (profile == null || !profile.HasAbility(MagicalAbility.Poisoning))
+				return false;
 
-            return Skills[SkillName.Poisoning].Value >= Utility.Random(300);
+			return Skills[SkillName.Poisoning].Value >= Utility.Random(300);
 			*/
-        }
+		}
 
-        public override void OnAfterDelete()
-        {
-            if (m_AI != null)
-            {
-                if (m_AI.m_Timer != null)
-                {
-                    m_AI.m_Timer.Stop();
-                }
+		public override void OnAfterDelete()
+		{
+			if (m_AI != null)
+			{
+				if (m_AI.m_Timer != null)
+				{
+					m_AI.m_Timer.Stop();
+				}
 
-                m_AI = null;
-            }
+				m_AI = null;
+			}
 
-            if (m_DeleteTimer != null)
-            {
-                m_DeleteTimer.Stop();
-                m_DeleteTimer = null;
-            }
+			if (m_DeleteTimer != null)
+			{
+				m_DeleteTimer.Stop();
+				m_DeleteTimer = null;
+			}
 
-            FocusMob = null;
+			FocusMob = null;
 
-            if (IsAnimatedDead)
-            {
-                AnimateDeadSpell.Unregister(m_SummonMaster, this);
-            }
+			if (IsAnimatedDead)
+			{
+				AnimateDeadSpell.Unregister(m_SummonMaster, this);
+			}
 
-            base.OnAfterDelete();
-        }
+			base.OnAfterDelete();
+		}
 
-        public void DebugSay(string text)
-        {
-            if (m_bDebugAI)
-            {
-                PublicOverheadMessage(MessageType.Regular, 41, false, text);
-            }
-        }
+		public void DebugSay(string text)
+		{
+			if (m_bDebugAI)
+			{
+				PublicOverheadMessage(MessageType.Regular, 41, false, text);
+			}
+		}
 
-        public void DebugSay(string format, params object[] args)
-        {
-            if (m_bDebugAI)
-            {
-                PublicOverheadMessage(MessageType.Regular, 41, false, String.Format(format, args));
-            }
-        }
+		public void DebugSay(string format, params object[] args)
+		{
+			if (m_bDebugAI)
+			{
+				PublicOverheadMessage(MessageType.Regular, 41, false, String.Format(format, args));
+			}
+		}
 
-        /*
-        * This function can be overriden.. so a "Strongest" mobile, can have a different definition depending
-        * on who check for value
-        * -Could add a FightMode.Prefered
-        *
-        */
+		/*
+		* This function can be overriden.. so a "Strongest" mobile, can have a different definition depending
+		* on who check for value
+		* -Could add a FightMode.Prefered
+		*
+		*/
 
 		public double[] AggroScore = new double[10000];
 		public Mobile[] AggroMobile = new Mobile[10000];
-		
-        public virtual double GetFightModeRanking(Mobile m, FightMode acqType, bool bPlayerOnly)
-        {
-            if ((bPlayerOnly && m.Player) || !bPlayerOnly)
-            {
-                switch (acqType)
-                {
-                    case FightMode.Strongest:
-                        return (m.Skills[SkillName.Tactics].Value + m.Str); //returns strongest mobile
-
-                    case FightMode.Weakest:
-                        return -m.Hits; // returns weakest mobile
-
-                    default:
-                        return -GetDistanceToSqrt(m); // returns closest mobile
-                }
-            }
-            else
-            {
-                return double.MinValue;
-            }
-        }
-
-        // Turn, - for left, + for right
-        // Basic for now, needs work
-        public virtual void Turn(int iTurnSteps)
-        {
-            int v = (int)Direction;
-
-            Direction = (Direction)((((v & 0x7) + iTurnSteps) & 0x7) | (v & 0x80));
-        }
-
-        public virtual void TurnInternal(int iTurnSteps)
-        {
-            int v = (int)Direction;
-
-            SetDirection((Direction)((((v & 0x7) + iTurnSteps) & 0x7) | (v & 0x80)));
-        }
-
-        public bool IsHurt()
-        {
-            return (Hits != HitsMax);
-        }
-
-        public double GetHomeDistance()
-        {
-            return GetDistanceToSqrt(m_pHome);
-        }
-
-        public virtual int GetTeamSize(int iRange)
-        {
-            int iCount = 0;
-
-            IPooledEnumerable eable = GetMobilesInRange(iRange);
-
-            foreach (Mobile m in eable)
-            {
-                if (m is BaseCreature)
-                {
-                    if (((BaseCreature)m).Team == Team)
-                    {
-                        if (!m.Deleted)
-                        {
-                            if (m != this)
-                            {
-                                if (CanSee(m))
-                                {
-                                    iCount++;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            eable.Free();
-
-            return iCount;
-        }
-
-        private class TameEntry : ContextMenuEntry
-        {
-            private readonly BaseCreature m_Mobile;
-
-            public TameEntry(Mobile from, BaseCreature creature)
-                : base(6130, 6)
-            {
-                m_Mobile = creature;
-
-                Enabled = Enabled && (from.Female ? creature.AllowFemaleTamer : creature.AllowMaleTamer);
-            }
-
-            public override void OnClick()
-            {
-                if (!Owner.From.CheckAlive())
-                {
-                    return;
-                }
-
-                Owner.From.TargetLocked = true;
-                AnimalTaming.DisableMessage = true;
-                AnimalTaming.DeferredTarget = false;
-
-                if (Owner.From.UseSkill(SkillName.AnimalTaming) && Owner.From.Target != null)
-                {
-                    Owner.From.Target.Invoke(Owner.From, m_Mobile);
-                }
-
-                AnimalTaming.DeferredTarget = true;
-                AnimalTaming.DisableMessage = false;
-                Owner.From.TargetLocked = false;
-            }
-        }
-
-        private class RenameEntry : ContextMenuEntry
-        {
-            private Mobile m_From;
-            private BaseCreature m_Creature;
-
-            public RenameEntry(Mobile from, BaseCreature creature)
-                : base(1111680, 6)
-            {
-                m_From = from;
-                m_Creature = creature;
-            }
-
-            public override void OnClick()
-            {
-                if (!m_Creature.Deleted && m_Creature.Controlled && m_Creature.ControlMaster == m_From)
-                    m_From.Prompt = new PetRenamePrompt(m_Creature);
-            }
-        }
-
-        public class PetRenamePrompt : Prompt
-        {
-            // Enter a new name for your pet.
-            public override int MessageCliloc { get { return 1115558; } }
-
-            private BaseCreature m_Creature;
-
-            public PetRenamePrompt(BaseCreature creature)
-                : base(creature)
-            {
-                m_Creature = creature;
-            }
-
-            public override void OnCancel(Mobile from)
-            {
-                from.SendLocalizedMessage(501806); // Request cancelled.
-            }
-
-            public override void OnResponse(Mobile from, string text)
-            {
-                if (!m_Creature.Deleted && m_Creature.Controlled && m_Creature.ControlMaster == from)
-                {
-                    if (Utility.IsAlpha(text))
-                    {
-                        m_Creature.Name = text;
-                        from.SendLocalizedMessage(1115559); // Pet name changed.
-                    }
-                    else
-                    {
-                        from.SendLocalizedMessage(1075246); // That name is not valid.
-                    }
-                }
-            }
-        }
-
-        #region Teaching
-        public virtual bool CanTeach { get { return false; } }
-
-        public virtual bool CheckTeach(SkillName skill, Mobile from)
-        {
-            if (!CanTeach || Siege.SiegeShard)
-            {
-                return false;
-            }
-
-            if (skill == SkillName.Stealth && from.Skills[SkillName.Hiding].Base < Stealth.HidingRequirement)
-            {
-                return false;
-            }
-
-            if (skill == SkillName.RemoveTrap &&
-                (from.Skills[SkillName.Lockpicking].Base < 50.0 || from.Skills[SkillName.DetectHidden].Base < 50.0))
-            {
-                return false;
-            }
-
-            if (!Core.AOS && (skill == SkillName.Focus || skill == SkillName.Chivalry || skill == SkillName.Necromancy))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public enum TeachResult
-        {
-            Success,
-            Failure,
-            KnowsMoreThanMe,
-            KnowsWhatIKnow,
-            SkillNotRaisable,
-            NotEnoughFreePoints
-        }
-
-        public virtual TeachResult CheckTeachSkills(
-            SkillName skill, Mobile m, int maxPointsToLearn, ref int pointsToLearn, bool doTeach)
-        {
-            if (!CheckTeach(skill, m) || !m.CheckAlive())
-            {
-                return TeachResult.Failure;
-            }
-
-            Skill ourSkill = Skills[skill];
-            Skill theirSkill = m.Skills[skill];
-
-            if (ourSkill == null || theirSkill == null)
-            {
-                return TeachResult.Failure;
-            }
-
-            int baseToSet = ourSkill.BaseFixedPoint / 3;
-
-            if (baseToSet > 420)
-            {
-                baseToSet = 420;
-            }
-            else if (baseToSet < 200)
-            {
-                return TeachResult.Failure;
-            }
-
-            if (baseToSet > theirSkill.CapFixedPoint)
-            {
-                baseToSet = theirSkill.CapFixedPoint;
-            }
-
-            pointsToLearn = baseToSet - theirSkill.BaseFixedPoint;
-
-            if (maxPointsToLearn > 0 && pointsToLearn > maxPointsToLearn)
-            {
-                pointsToLearn = maxPointsToLearn;
-                baseToSet = theirSkill.BaseFixedPoint + pointsToLearn;
-            }
-
-            if (pointsToLearn < 0)
-            {
-                return TeachResult.KnowsMoreThanMe;
-            }
-
-            if (pointsToLearn == 0)
-            {
-                return TeachResult.KnowsWhatIKnow;
-            }
-
-            if (theirSkill.Lock != SkillLock.Up)
-            {
-                return TeachResult.SkillNotRaisable;
-            }
-
-            int freePoints = m.Skills.Cap - m.Skills.Total;
-            int freeablePoints = 0;
-
-            if (freePoints < 0)
-            {
-                freePoints = 0;
-            }
-
-            for (int i = 0; (freePoints + freeablePoints) < pointsToLearn && i < m.Skills.Length; ++i)
-            {
-                Skill sk = m.Skills[i];
-
-                if (sk == theirSkill || sk.Lock != SkillLock.Down)
-                {
-                    continue;
-                }
-
-                freeablePoints += sk.BaseFixedPoint;
-            }
-
-            if ((freePoints + freeablePoints) == 0)
-            {
-                return TeachResult.NotEnoughFreePoints;
-            }
-
-            if ((freePoints + freeablePoints) < pointsToLearn)
-            {
-                pointsToLearn = freePoints + freeablePoints;
-                baseToSet = theirSkill.BaseFixedPoint + pointsToLearn;
-            }
-
-            if (doTeach)
-            {
-                int need = pointsToLearn - freePoints;
-
-                for (int i = 0; need > 0 && i < m.Skills.Length; ++i)
-                {
-                    Skill sk = m.Skills[i];
-
-                    if (sk == theirSkill || sk.Lock != SkillLock.Down)
-                    {
-                        continue;
-                    }
-
-                    if (sk.BaseFixedPoint < need)
-                    {
-                        need -= sk.BaseFixedPoint;
-                        sk.BaseFixedPoint = 0;
-                    }
-                    else
-                    {
-                        sk.BaseFixedPoint -= need;
-                        need = 0;
-                    }
-                }
-
-                /* Sanity check */
-                if (baseToSet > theirSkill.CapFixedPoint || (m.Skills.Total - theirSkill.BaseFixedPoint + baseToSet) > m.Skills.Cap)
-                {
-                    // Full refund
-                    m.Backpack.TryDropItem(m, new Gold(maxPointsToLearn), false);
-                    return TeachResult.NotEnoughFreePoints;
-                }
-
-                // Partial refund if needed
-                if (maxPointsToLearn > pointsToLearn)
-                {
-                    m.Backpack.TryDropItem(m, new Gold(maxPointsToLearn - pointsToLearn), false);
-                }
-                theirSkill.BaseFixedPoint = baseToSet;
-            }
-
-            return TeachResult.Success;
-        }
-
-        public virtual bool CheckTeachingMatch(Mobile m)
-        {
-            if (m_Teaching == (SkillName)(-1))
-            {
-                return false;
-            }
-
-            if (m is PlayerMobile)
-            {
-                return (((PlayerMobile)m).Learning == m_Teaching);
-            }
-
-            return true;
-        }
-
-        private SkillName m_Teaching = (SkillName)(-1);
-
-        public virtual bool Teach(SkillName skill, Mobile m, int maxPointsToLearn, bool doTeach)
-        {
-            int pointsToLearn = 0;
-            TeachResult res = CheckTeachSkills(skill, m, maxPointsToLearn, ref pointsToLearn, doTeach);
-
-            switch (res)
-            {
-                case TeachResult.KnowsMoreThanMe:
-                    {
-                        Say(501508); // I cannot teach thee, for thou knowest more than I!
-                        break;
-                    }
-                case TeachResult.KnowsWhatIKnow:
-                    {
-                        Say(501509); // I cannot teach thee, for thou knowest all I can teach!
-                        break;
-                    }
-                case TeachResult.NotEnoughFreePoints:
-                case TeachResult.SkillNotRaisable:
-                    {
-                        // Make sure this skill is marked to raise. If you are near the skill cap (700 points) you may need to lose some points in another skill first.
-                        m.SendLocalizedMessage(501510, "", 0x22);
-                        break;
-                    }
-                case TeachResult.Success:
-                    {
-                        if (doTeach)
-                        {
-                            Say(501539); // Let me show thee something of how this is done.
-                            m.SendLocalizedMessage(501540); // Your skill level increases.
-
-                            m_Teaching = (SkillName)(-1);
-
-                            if (m is PlayerMobile)
-                            {
-                                ((PlayerMobile)m).Learning = (SkillName)(-1);
-                            }
-                        }
-                        else
-                        {
-                            // I will teach thee all I know, if paid the amount in full.  The price is:
-                            Say(1019077, AffixType.Append, String.Format(" {0}", pointsToLearn), "");
-                            Say(1043108); // For less I shall teach thee less.
-
-                            m_Teaching = skill;
-
-                            if (m is PlayerMobile)
-                            {
-                                ((PlayerMobile)m).Learning = skill;
-                            }
-                        }
-
-                        return true;
-                    }
-            }
-
-            return false;
-        }
-        #endregion
-
-        public override void AggressiveAction(Mobile aggressor, bool criminal)
-        {
-            base.AggressiveAction(aggressor, criminal);
-
-            if (ControlMaster != null && ControlMaster != aggressor)
-            {
-                if (NotorietyHandlers.CheckAggressor(Aggressors, aggressor))
-                {
-                    ControlMaster.Aggressors.Add(AggressorInfo.Create(aggressor, ControlMaster, criminal));
-                    ControlMaster.Delta(MobileDelta.Noto);
-
-                    if (NotorietyHandlers.CheckAggressed(aggressor.Aggressed, this))
-                        aggressor.Aggressed.Add(AggressorInfo.Create(aggressor, ControlMaster, criminal));
-
-                    if (aggressor is PlayerMobile || (aggressor is BaseCreature && !((BaseCreature)aggressor).IsMonster))
-                    {
-                        BuffInfo.AddBuff(ControlMaster, new BuffInfo(BuffIcon.HeatOfBattleStatus, 1153801, 1153827, Aggression.CombatHeatDelay, ControlMaster, true));
-                        BuffInfo.AddBuff(aggressor, new BuffInfo(BuffIcon.HeatOfBattleStatus, 1153801, 1153827, Aggression.CombatHeatDelay, aggressor, true));
-                    }
-                }
-            }
-
-            OrderType ct = m_ControlOrder;
-
-            if (m_AI != null)
-            {
-                if (!Core.ML || (ct != OrderType.Follow && ct != OrderType.Stop && ct != OrderType.Stay))
-                {
-                    m_AI.OnAggressiveAction(aggressor);
-                }
-                else
-                {
-                    DebugSay("I'm being attacked but my master told me not to fight.");
-                    Warmode = false;
-                    return;
-                }
-            }
-
-            StopFlee();
-
-            ForceReacquire();
-
-            if (!IsEnemy(aggressor))
-            {
-                Player pl = Ethics.Player.Find(aggressor, true);
-
-                if (pl != null && pl.IsShielded)
-                {
-                    pl.FinishShield();
-                }
-            }
-
-            if (aggressor.ChangingCombatant && (m_bControlled || m_bSummoned) &&
-                (ct == OrderType.Come || (!Core.ML && ct == OrderType.Stay) || ct == OrderType.Stop || ct == OrderType.None ||
-                 ct == OrderType.Follow))
-            {
-                ControlTarget = aggressor;
-                ControlOrder = OrderType.Attack;
-            }
-            else if (Combatant == null && !m_bBardPacified)
-            {
-                Warmode = true;
-                Combatant = aggressor;
-            }
-        }
-
-        public override bool OnMoveOver(Mobile m) //m이 이동 시도, 없는게 기다리는 케릭
-        {
-			if (!Alive || !m.Alive || IsDeadBondedPet || m.IsDeadBondedPet || (Hidden && IsStaff()) || (m.Hidden && m.IsStaff()) || ( m is BaseCreature && ((BaseCreature)m).IsMonster ) )
+
+		public virtual double GetFightModeRanking(Mobile m, FightMode acqType, bool bPlayerOnly)
+		{
+			if ((bPlayerOnly && m.Player) || !bPlayerOnly)
+			{
+				switch (acqType)
+				{
+					case FightMode.Strongest:
+						return (m.Skills[SkillName.Tactics].Value + m.Str); //returns strongest mobile
+
+					case FightMode.Weakest:
+						return -m.Hits; // returns weakest mobile
+
+					default:
+						return -GetDistanceToSqrt(m); // returns closest mobile
+				}
+			}
+			else
+			{
+				return double.MinValue;
+			}
+		}
+
+		// Turn, - for left, + for right
+		// Basic for now, needs work
+		public virtual void Turn(int iTurnSteps)
+		{
+			int v = (int)Direction;
+
+			Direction = (Direction)((((v & 0x7) + iTurnSteps) & 0x7) | (v & 0x80));
+		}
+
+		public virtual void TurnInternal(int iTurnSteps)
+		{
+			int v = (int)Direction;
+
+			SetDirection((Direction)((((v & 0x7) + iTurnSteps) & 0x7) | (v & 0x80)));
+		}
+
+		public bool IsHurt()
+		{
+			return (Hits != HitsMax);
+		}
+
+		public double GetHomeDistance()
+		{
+			return GetDistanceToSqrt(m_pHome);
+		}
+
+		public virtual int GetTeamSize(int iRange)
+		{
+			int iCount = 0;
+
+			IPooledEnumerable eable = GetMobilesInRange(iRange);
+
+			foreach (Mobile m in eable)
+			{
+				if (m is BaseCreature)
+				{
+					if (((BaseCreature)m).Team == Team)
+					{
+						if (!m.Deleted)
+						{
+							if (m != this)
+							{
+								if (CanSee(m))
+								{
+									iCount++;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			eable.Free();
+
+			return iCount;
+		}
+
+		private class TameEntry : ContextMenuEntry
+		{
+			private readonly BaseCreature m_Mobile;
+
+			public TameEntry(Mobile from, BaseCreature creature)
+				: base(6130, 6)
+			{
+				m_Mobile = creature;
+
+				Enabled = Enabled && (from.Female ? creature.AllowFemaleTamer : creature.AllowMaleTamer);
+			}
+
+			public override void OnClick()
+			{
+				if (!Owner.From.CheckAlive())
+				{
+					return;
+				}
+
+				Owner.From.TargetLocked = true;
+				AnimalTaming.DisableMessage = true;
+				AnimalTaming.DeferredTarget = false;
+
+				if (Owner.From.UseSkill(SkillName.AnimalTaming) && Owner.From.Target != null)
+				{
+					Owner.From.Target.Invoke(Owner.From, m_Mobile);
+				}
+
+				AnimalTaming.DeferredTarget = true;
+				AnimalTaming.DisableMessage = false;
+				Owner.From.TargetLocked = false;
+			}
+		}
+
+		private class RenameEntry : ContextMenuEntry
+		{
+			private Mobile m_From;
+			private BaseCreature m_Creature;
+
+			public RenameEntry(Mobile from, BaseCreature creature)
+				: base(1111680, 6)
+			{
+				m_From = from;
+				m_Creature = creature;
+			}
+
+			public override void OnClick()
+			{
+				if (!m_Creature.Deleted && m_Creature.Controlled && m_Creature.ControlMaster == m_From)
+					m_From.Prompt = new PetRenamePrompt(m_Creature);
+			}
+		}
+
+		public class PetRenamePrompt : Prompt
+		{
+			// Enter a new name for your pet.
+			public override int MessageCliloc
+			{
+				get { return 1115558; }
+			}
+
+			private BaseCreature m_Creature;
+
+			public PetRenamePrompt(BaseCreature creature)
+				: base(creature)
+			{
+				m_Creature = creature;
+			}
+
+			public override void OnCancel(Mobile from)
+			{
+				from.SendLocalizedMessage(501806); // Request cancelled.
+			}
+
+			public override void OnResponse(Mobile from, string text)
+			{
+				if (!m_Creature.Deleted && m_Creature.Controlled && m_Creature.ControlMaster == from)
+				{
+					if (Utility.IsAlpha(text))
+					{
+						m_Creature.Name = text;
+						from.SendLocalizedMessage(1115559); // Pet name changed.
+					}
+					else
+					{
+						from.SendLocalizedMessage(1075246); // That name is not valid.
+					}
+				}
+			}
+		}
+
+		#region Teaching
+		public virtual bool CanTeach
+		{
+			get { return false; }
+		}
+
+		public virtual bool CheckTeach(SkillName skill, Mobile from)
+		{
+			if (!CanTeach || Siege.SiegeShard)
+			{
+				return false;
+			}
+
+			if (skill == SkillName.Stealth && from.Skills[SkillName.Hiding].Base < Stealth.HidingRequirement)
+			{
+				return false;
+			}
+
+			if (
+				skill == SkillName.RemoveTrap
+				&& (from.Skills[SkillName.Lockpicking].Base < 50.0 || from.Skills[SkillName.DetectHidden].Base < 50.0)
+			)
+			{
+				return false;
+			}
+
+			if (!Core.AOS && (skill == SkillName.Focus || skill == SkillName.Chivalry || skill == SkillName.Necromancy))
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		public enum TeachResult
+		{
+			Success,
+			Failure,
+			KnowsMoreThanMe,
+			KnowsWhatIKnow,
+			SkillNotRaisable,
+			NotEnoughFreePoints,
+		}
+
+		public virtual TeachResult CheckTeachSkills(
+			SkillName skill,
+			Mobile m,
+			int maxPointsToLearn,
+			ref int pointsToLearn,
+			bool doTeach
+		)
+		{
+			if (!CheckTeach(skill, m) || !m.CheckAlive())
+			{
+				return TeachResult.Failure;
+			}
+
+			Skill ourSkill = Skills[skill];
+			Skill theirSkill = m.Skills[skill];
+
+			if (ourSkill == null || theirSkill == null)
+			{
+				return TeachResult.Failure;
+			}
+
+			int baseToSet = ourSkill.BaseFixedPoint / 3;
+
+			if (baseToSet > 420)
+			{
+				baseToSet = 420;
+			}
+			else if (baseToSet < 200)
+			{
+				return TeachResult.Failure;
+			}
+
+			if (baseToSet > theirSkill.CapFixedPoint)
+			{
+				baseToSet = theirSkill.CapFixedPoint;
+			}
+
+			pointsToLearn = baseToSet - theirSkill.BaseFixedPoint;
+
+			if (maxPointsToLearn > 0 && pointsToLearn > maxPointsToLearn)
+			{
+				pointsToLearn = maxPointsToLearn;
+				baseToSet = theirSkill.BaseFixedPoint + pointsToLearn;
+			}
+
+			if (pointsToLearn < 0)
+			{
+				return TeachResult.KnowsMoreThanMe;
+			}
+
+			if (pointsToLearn == 0)
+			{
+				return TeachResult.KnowsWhatIKnow;
+			}
+
+			if (theirSkill.Lock != SkillLock.Up)
+			{
+				return TeachResult.SkillNotRaisable;
+			}
+
+			int freePoints = m.Skills.Cap - m.Skills.Total;
+			int freeablePoints = 0;
+
+			if (freePoints < 0)
+			{
+				freePoints = 0;
+			}
+
+			for (int i = 0; (freePoints + freeablePoints) < pointsToLearn && i < m.Skills.Length; ++i)
+			{
+				Skill sk = m.Skills[i];
+
+				if (sk == theirSkill || sk.Lock != SkillLock.Down)
+				{
+					continue;
+				}
+
+				freeablePoints += sk.BaseFixedPoint;
+			}
+
+			if ((freePoints + freeablePoints) == 0)
+			{
+				return TeachResult.NotEnoughFreePoints;
+			}
+
+			if ((freePoints + freeablePoints) < pointsToLearn)
+			{
+				pointsToLearn = freePoints + freeablePoints;
+				baseToSet = theirSkill.BaseFixedPoint + pointsToLearn;
+			}
+
+			if (doTeach)
+			{
+				int need = pointsToLearn - freePoints;
+
+				for (int i = 0; need > 0 && i < m.Skills.Length; ++i)
+				{
+					Skill sk = m.Skills[i];
+
+					if (sk == theirSkill || sk.Lock != SkillLock.Down)
+					{
+						continue;
+					}
+
+					if (sk.BaseFixedPoint < need)
+					{
+						need -= sk.BaseFixedPoint;
+						sk.BaseFixedPoint = 0;
+					}
+					else
+					{
+						sk.BaseFixedPoint -= need;
+						need = 0;
+					}
+				}
+
+				/* Sanity check */
+				if (
+					baseToSet > theirSkill.CapFixedPoint
+					|| (m.Skills.Total - theirSkill.BaseFixedPoint + baseToSet) > m.Skills.Cap
+				)
+				{
+					// Full refund
+					m.Backpack.TryDropItem(m, new Gold(maxPointsToLearn), false);
+					return TeachResult.NotEnoughFreePoints;
+				}
+
+				// Partial refund if needed
+				if (maxPointsToLearn > pointsToLearn)
+				{
+					m.Backpack.TryDropItem(m, new Gold(maxPointsToLearn - pointsToLearn), false);
+				}
+				theirSkill.BaseFixedPoint = baseToSet;
+			}
+
+			return TeachResult.Success;
+		}
+
+		public virtual bool CheckTeachingMatch(Mobile m)
+		{
+			if (m_Teaching == (SkillName)(-1))
+			{
+				return false;
+			}
+
+			if (m is PlayerMobile)
+			{
+				return (((PlayerMobile)m).Learning == m_Teaching);
+			}
+
+			return true;
+		}
+
+		private SkillName m_Teaching = (SkillName)(-1);
+
+		public virtual bool Teach(SkillName skill, Mobile m, int maxPointsToLearn, bool doTeach)
+		{
+			int pointsToLearn = 0;
+			TeachResult res = CheckTeachSkills(skill, m, maxPointsToLearn, ref pointsToLearn, doTeach);
+
+			switch (res)
+			{
+				case TeachResult.KnowsMoreThanMe:
+				{
+					Say(501508); // I cannot teach thee, for thou knowest more than I!
+					break;
+				}
+				case TeachResult.KnowsWhatIKnow:
+				{
+					Say(501509); // I cannot teach thee, for thou knowest all I can teach!
+					break;
+				}
+				case TeachResult.NotEnoughFreePoints:
+				case TeachResult.SkillNotRaisable:
+				{
+					// Make sure this skill is marked to raise. If you are near the skill cap (700 points) you may need to lose some points in another skill first.
+					m.SendLocalizedMessage(501510, "", 0x22);
+					break;
+				}
+				case TeachResult.Success:
+				{
+					if (doTeach)
+					{
+						Say(501539); // Let me show thee something of how this is done.
+						m.SendLocalizedMessage(501540); // Your skill level increases.
+
+						m_Teaching = (SkillName)(-1);
+
+						if (m is PlayerMobile)
+						{
+							((PlayerMobile)m).Learning = (SkillName)(-1);
+						}
+					}
+					else
+					{
+						// I will teach thee all I know, if paid the amount in full.  The price is:
+						Say(1019077, AffixType.Append, String.Format(" {0}", pointsToLearn), "");
+						Say(1043108); // For less I shall teach thee less.
+
+						m_Teaching = skill;
+
+						if (m is PlayerMobile)
+						{
+							((PlayerMobile)m).Learning = skill;
+						}
+					}
+
+					return true;
+				}
+			}
+
+			return false;
+		}
+		#endregion
+
+		public override void AggressiveAction(Mobile aggressor, bool criminal)
+		{
+			base.AggressiveAction(aggressor, criminal);
+
+			if (ControlMaster != null && ControlMaster != aggressor)
+			{
+				if (NotorietyHandlers.CheckAggressor(Aggressors, aggressor))
+				{
+					ControlMaster.Aggressors.Add(AggressorInfo.Create(aggressor, ControlMaster, criminal));
+					ControlMaster.Delta(MobileDelta.Noto);
+
+					if (NotorietyHandlers.CheckAggressed(aggressor.Aggressed, this))
+						aggressor.Aggressed.Add(AggressorInfo.Create(aggressor, ControlMaster, criminal));
+
+					if (
+						aggressor is PlayerMobile
+						|| (aggressor is BaseCreature && !((BaseCreature)aggressor).IsMonster)
+					)
+					{
+						BuffInfo.AddBuff(
+							ControlMaster,
+							new BuffInfo(
+								BuffIcon.HeatOfBattleStatus,
+								1153801,
+								1153827,
+								Aggression.CombatHeatDelay,
+								ControlMaster,
+								true
+							)
+						);
+						BuffInfo.AddBuff(
+							aggressor,
+							new BuffInfo(
+								BuffIcon.HeatOfBattleStatus,
+								1153801,
+								1153827,
+								Aggression.CombatHeatDelay,
+								aggressor,
+								true
+							)
+						);
+					}
+				}
+			}
+
+			OrderType ct = m_ControlOrder;
+
+			if (m_AI != null)
+			{
+				if (!Core.ML || (ct != OrderType.Follow && ct != OrderType.Stop && ct != OrderType.Stay))
+				{
+					m_AI.OnAggressiveAction(aggressor);
+				}
+				else
+				{
+					DebugSay("I'm being attacked but my master told me not to fight.");
+					Warmode = false;
+					return;
+				}
+			}
+
+			StopFlee();
+
+			ForceReacquire();
+
+			if (!IsEnemy(aggressor))
+			{
+				Player pl = Ethics.Player.Find(aggressor, true);
+
+				if (pl != null && pl.IsShielded)
+				{
+					pl.FinishShield();
+				}
+			}
+
+			if (
+				aggressor.ChangingCombatant
+				&& (m_bControlled || m_bSummoned)
+				&& (
+					ct == OrderType.Come
+					|| (!Core.ML && ct == OrderType.Stay)
+					|| ct == OrderType.Stop
+					|| ct == OrderType.None
+					|| ct == OrderType.Follow
+				)
+			)
+			{
+				ControlTarget = aggressor;
+				ControlOrder = OrderType.Attack;
+			}
+			else if (Combatant == null && !m_bBardPacified)
+			{
+				Warmode = true;
+				Combatant = aggressor;
+			}
+		}
+
+		public override bool OnMoveOver(Mobile m) //m이 이동 시도, 없는게 기다리는 케릭
+		{
+			if (
+				!Alive
+				|| !m.Alive
+				|| IsDeadBondedPet
+				|| m.IsDeadBondedPet
+				|| (Hidden && IsStaff())
+				|| (m.Hidden && m.IsStaff())
+				|| (m is BaseCreature && ((BaseCreature)m).IsMonster)
+			)
 				return true;
-			
-			DungeonRegion dungeon = (DungeonRegion)Region.GetRegion(typeof(DungeonRegion));			
-			if( dungeon == null )
+
+			DungeonRegion dungeon = (DungeonRegion)Region.GetRegion(typeof(DungeonRegion));
+			if (dungeon == null)
 				return true;
 
 			return false;
-			
+
 			/*
 			
 			if ( dungeon != null && m is PlayerMobile )
 				return false;
 			
-            return base.OnMoveOver(m);
+			return base.OnMoveOver(m);
 			*/
-        }
+		}
 
-        public virtual void AddCustomContextEntries(Mobile from, List<ContextMenuEntry> list)
-        { }
+		public virtual void AddCustomContextEntries(Mobile from, List<ContextMenuEntry> list) { }
 
-        public override void GetContextMenuEntries(Mobile from, List<ContextMenuEntry> list)
-        {
-            base.GetContextMenuEntries(from, list);
+		public override void GetContextMenuEntries(Mobile from, List<ContextMenuEntry> list)
+		{
+			base.GetContextMenuEntries(from, list);
 
-            if (CanBeRenamedBy(from) && m_bControlled && m_ControlMaster == from && !m_bSummoned)
-            {
-                list.Add(new RenameEntry(from, this));
-            }
+			if (CanBeRenamedBy(from) && m_bControlled && m_ControlMaster == from && !m_bSummoned)
+			{
+				list.Add(new RenameEntry(from, this));
+			}
 
-            if (m_AI != null && Commandable)
-            {
-                m_AI.GetContextMenuEntries(from, list);
-            }
+			if (m_AI != null && Commandable)
+			{
+				m_AI.GetContextMenuEntries(from, list);
+			}
 
 			//길들이기
 			DungeonRegion dungeon = (DungeonRegion)Region.GetRegion(typeof(DungeonRegion));
-            if (m_bTamable && !m_bControlled && from.Alive && dungeon == null)
-            {
-                list.Add(new TameEntry(from, this));
-            }
+			if (m_bTamable && !m_bControlled && from.Alive && dungeon == null)
+			{
+				list.Add(new TameEntry(from, this));
+			}
 
-            AddCustomContextEntries(from, list);
+			AddCustomContextEntries(from, list);
 
-            if (CanTeach && from.Alive)
-            {
-                Skills ourSkills = Skills;
-                Skills theirSkills = from.Skills;
+			if (CanTeach && from.Alive)
+			{
+				Skills ourSkills = Skills;
+				Skills theirSkills = from.Skills;
 
-                for (int i = 0; i < ourSkills.Length && i < theirSkills.Length; ++i)
-                {
-                    Skill skill = ourSkills[i];
-                    Skill theirSkill = theirSkills[i];
+				for (int i = 0; i < ourSkills.Length && i < theirSkills.Length; ++i)
+				{
+					Skill skill = ourSkills[i];
+					Skill theirSkill = theirSkills[i];
 
-                    if (skill != null && theirSkill != null && skill.Base >= 10000.0 && CheckTeach(skill.SkillName, from))
-                    {
-                        int toTeach = skill.BaseFixedPoint / 3;
+					if (
+						skill != null
+						&& theirSkill != null
+						&& skill.Base >= 10000.0
+						&& CheckTeach(skill.SkillName, from)
+					)
+					{
+						int toTeach = skill.BaseFixedPoint / 3;
 
-                        if (toTeach > 420)
-                        {
-                            toTeach = 420;
-                        }
+						if (toTeach > 420)
+						{
+							toTeach = 420;
+						}
 
-                        list.Add(new TeachEntry((SkillName)i, this, from, (toTeach > theirSkill.BaseFixedPoint)));
-                    }
-                }
-            }
-        }
+						list.Add(new TeachEntry((SkillName)i, this, from, (toTeach > theirSkill.BaseFixedPoint)));
+					}
+				}
+			}
+		}
 
-        public override bool HandlesOnSpeech(Mobile from)
-        {
-            InhumanSpeech speechType = SpeechType;
+		public override bool HandlesOnSpeech(Mobile from)
+		{
+			InhumanSpeech speechType = SpeechType;
 
-            if (speechType != null && (speechType.Flags & IHSFlags.OnSpeech) != 0 && from.InRange(this, 6))
-            {
-                return true;
-            }
+			if (speechType != null && (speechType.Flags & IHSFlags.OnSpeech) != 0 && from.InRange(this, 6))
+			{
+				return true;
+			}
 
-            return (m_AI != null && m_AI.HandlesOnSpeech(from) && from.InRange(this, m_iRangePerception));
-        }
+			return (m_AI != null && m_AI.HandlesOnSpeech(from) && from.InRange(this, m_iRangePerception));
+		}
 
-        public override void OnSpeech(SpeechEventArgs e)
-        {
-            InhumanSpeech speechType = SpeechType;
+		public override void OnSpeech(SpeechEventArgs e)
+		{
+			InhumanSpeech speechType = SpeechType;
 
-            if (speechType != null && speechType.OnSpeech(this, e.Mobile, e.Speech))
-            {
-                e.Handled = true;
-            }
-            else if (!e.Handled && m_AI != null && e.Mobile.InRange(this, m_iRangePerception))
-            {
-                m_AI.OnSpeech(e);
-            }
-        }
+			if (speechType != null && speechType.OnSpeech(this, e.Mobile, e.Speech))
+			{
+				e.Handled = true;
+			}
+			else if (!e.Handled && m_AI != null && e.Mobile.InRange(this, m_iRangePerception))
+			{
+				m_AI.OnSpeech(e);
+			}
+		}
 
-        public override bool IsHarmfulCriminal(IDamageable damageable)
-        {
-            Mobile target = damageable as Mobile;
+		public override bool IsHarmfulCriminal(IDamageable damageable)
+		{
+			Mobile target = damageable as Mobile;
 
-            if ((Controlled && target == m_ControlMaster) || (Summoned && target == m_SummonMaster))
-            {
-                return false;
-            }
+			if ((Controlled && target == m_ControlMaster) || (Summoned && target == m_SummonMaster))
+			{
+				return false;
+			}
 
-            if (target is BaseCreature && ((BaseCreature)target).InitialInnocent && !((BaseCreature)target).Controlled)
-            {
-                return false;
-            }
+			if (target is BaseCreature && ((BaseCreature)target).InitialInnocent && !((BaseCreature)target).Controlled)
+			{
+				return false;
+			}
 
-            if (target is PlayerMobile && ((PlayerMobile)target).PermaFlags.Count > 0)
-            {
-                return false;
-            }
+			if (target is PlayerMobile && ((PlayerMobile)target).PermaFlags.Count > 0)
+			{
+				return false;
+			}
 
-            return base.IsHarmfulCriminal(damageable);
-        }
+			return base.IsHarmfulCriminal(damageable);
+		}
 
-        public override void CriminalAction(bool message)
-        {
-            base.CriminalAction(message);
+		public override void CriminalAction(bool message)
+		{
+			base.CriminalAction(message);
 
-            if (Controlled || Summoned)
-            {
-                if (m_ControlMaster != null && m_ControlMaster.Player)
-                {
-                    m_ControlMaster.CriminalAction(false);
-                }
-                else if (m_SummonMaster != null && m_SummonMaster.Player)
-                {
-                    m_SummonMaster.CriminalAction(false);
-                }
-            }
-        }
+			if (Controlled || Summoned)
+			{
+				if (m_ControlMaster != null && m_ControlMaster.Player)
+				{
+					m_ControlMaster.CriminalAction(false);
+				}
+				else if (m_SummonMaster != null && m_SummonMaster.Player)
+				{
+					m_SummonMaster.CriminalAction(false);
+				}
+			}
+		}
 
-        public override void DoHarmful(IDamageable damageable, bool indirect)
-        {
-            if (RecentSetControl && GetMaster() == damageable as Mobile)
-            {
-                return;
-            }
+		public override void DoHarmful(IDamageable damageable, bool indirect)
+		{
+			if (RecentSetControl && GetMaster() == damageable as Mobile)
+			{
+				return;
+			}
 
-            base.DoHarmful(damageable, indirect);
+			base.DoHarmful(damageable, indirect);
 
-            Mobile target = damageable as Mobile;
+			Mobile target = damageable as Mobile;
 
-            if (target == null)
-                return;
+			if (target == null)
+				return;
 
-            if (target == this || target == m_ControlMaster || target == m_SummonMaster || (!Controlled && !Summoned))
-            {
-                return;
-            }
+			if (target == this || target == m_ControlMaster || target == m_SummonMaster || (!Controlled && !Summoned))
+			{
+				return;
+			}
 
-            if (ViceVsVirtueSystem.Enabled && Map == Faction.Facet)
-            {
-                ViceVsVirtueSystem.CheckHarmful(this, target);
-            }
-        }
+			if (ViceVsVirtueSystem.Enabled && Map == Faction.Facet)
+			{
+				ViceVsVirtueSystem.CheckHarmful(this, target);
+			}
+		}
 
-        public override void DoBeneficial(Mobile target)
-        {
-            base.DoBeneficial(target);
+		public override void DoBeneficial(Mobile target)
+		{
+			base.DoBeneficial(target);
 
-            if (ViceVsVirtueSystem.Enabled && Map == Faction.Facet && target != null)
-            {
-                ViceVsVirtueSystem.CheckBeneficial(this, target);
-            }
-        }
+			if (ViceVsVirtueSystem.Enabled && Map == Faction.Facet && target != null)
+			{
+				ViceVsVirtueSystem.CheckBeneficial(this, target);
+			}
+		}
 
-        private static Mobile m_NoDupeGuards;
+		private static Mobile m_NoDupeGuards;
 
-        public void ReleaseGuardDupeLock()
-        {
-            m_NoDupeGuards = null;
-        }
+		public void ReleaseGuardDupeLock()
+		{
+			m_NoDupeGuards = null;
+		}
 
-        public void ReleaseGuardLock()
-        {
-            EndAction(typeof(GuardedRegion));
-        }
+		public void ReleaseGuardLock()
+		{
+			EndAction(typeof(GuardedRegion));
+		}
 
-        private DateTime m_IdleReleaseTime;
+		private DateTime m_IdleReleaseTime;
 
-        public virtual bool CheckIdle()
-        {
-            if (Combatant != null)
-            {
-                return false; // in combat.. not idling
-            }
+		public virtual bool CheckIdle()
+		{
+			if (Combatant != null)
+			{
+				return false; // in combat.. not idling
+			}
 
-            if (m_IdleReleaseTime > DateTime.MinValue)
-            {
-                // idling...
-                if (DateTime.UtcNow >= m_IdleReleaseTime)
-                {
-                    m_IdleReleaseTime = DateTime.MinValue;
-                    return false; // idle is over
-                }
+			if (m_IdleReleaseTime > DateTime.MinValue)
+			{
+				// idling...
+				if (DateTime.UtcNow >= m_IdleReleaseTime)
+				{
+					m_IdleReleaseTime = DateTime.MinValue;
+					return false; // idle is over
+				}
 
-                return true; // still idling
-            }
+				return true; // still idling
+			}
 
-            if (95 > Utility.Random(100))
-            {
-                return false; // not idling, but don't want to enter idle state
-            }
+			if (95 > Utility.Random(100))
+			{
+				return false; // not idling, but don't want to enter idle state
+			}
 
-            m_IdleReleaseTime = DateTime.UtcNow + TimeSpan.FromSeconds(Utility.RandomMinMax(15, 25));
+			m_IdleReleaseTime = DateTime.UtcNow + TimeSpan.FromSeconds(Utility.RandomMinMax(15, 25));
 
-            if (Core.SA)
-            {
-                Animate(AnimationType.Fidget, 0);
-            }
-            else
-            {
-                if (Body.IsHuman && !Mounted)
-                {
-                    if (Flying)
-                    {
-                        Animate(66, 10, 1, true, false, 1);
-                    }
-                    else
-                    {
-                        switch (Utility.Random(2))
-                        {
-                            case 0:
-                                Animate(5, 5, 1, true, true, 1);
-                                break;
-                            case 1:
-                                Animate(6, 5, 1, true, false, 1);
-                                break;
-                        }
-                    }
-                }
-                else if (Body.IsAnimal)
-                {
-                    switch (Utility.Random(3))
-                    {
-                        case 0:
-                            Animate(3, 3, 1, true, false, 1);
-                            break;
-                        case 1:
-                            Animate(9, 5, 1, true, false, 1);
-                            break;
-                        case 2:
-                            Animate(10, 5, 1, true, false, 1);
-                            break;
-                    }
-                }
-                else if (Body.IsMonster)
-                {
-                    switch (Utility.Random(2))
-                    {
-                        case 0:
-                            Animate(17, 5, 1, true, false, 1);
-                            break;
-                        case 1:
-                            Animate(18, 5, 1, true, false, 1);
-                            break;
-                    }
-                }
-            }
+			if (Core.SA)
+			{
+				Animate(AnimationType.Fidget, 0);
+			}
+			else
+			{
+				if (Body.IsHuman && !Mounted)
+				{
+					if (Flying)
+					{
+						Animate(66, 10, 1, true, false, 1);
+					}
+					else
+					{
+						switch (Utility.Random(2))
+						{
+							case 0:
+								Animate(5, 5, 1, true, true, 1);
+								break;
+							case 1:
+								Animate(6, 5, 1, true, false, 1);
+								break;
+						}
+					}
+				}
+				else if (Body.IsAnimal)
+				{
+					switch (Utility.Random(3))
+					{
+						case 0:
+							Animate(3, 3, 1, true, false, 1);
+							break;
+						case 1:
+							Animate(9, 5, 1, true, false, 1);
+							break;
+						case 2:
+							Animate(10, 5, 1, true, false, 1);
+							break;
+					}
+				}
+				else if (Body.IsMonster)
+				{
+					switch (Utility.Random(2))
+					{
+						case 0:
+							Animate(17, 5, 1, true, false, 1);
+							break;
+						case 1:
+							Animate(18, 5, 1, true, false, 1);
+							break;
+					}
+				}
+			}
 
-            PlaySound(GetIdleSound());
+			PlaySound(GetIdleSound());
 
-            return true; // entered idle state
-        }
+			return true; // entered idle state
+		}
 
-        public override void Animate(int action, int frameCount, int repeatCount, bool forward, bool repeat, int delay)
-        {
-            base.Animate(action, frameCount, repeatCount, forward, repeat, delay);
-        }
+		public override void Animate(int action, int frameCount, int repeatCount, bool forward, bool repeat, int delay)
+		{
+			base.Animate(action, frameCount, repeatCount, forward, repeat, delay);
+		}
 
-        private void CheckAIActive()
-        {
-            Map map = Map;
+		private void CheckAIActive()
+		{
+			Map map = Map;
 
-            if (PlayerRangeSensitive && m_AI != null && map != null && map.GetSector(Location).Active)
-            {
-                m_AI.Activate();
-            }
-        }
+			if (PlayerRangeSensitive && m_AI != null && map != null && map.GetSector(Location).Active)
+			{
+				m_AI.Activate();
+			}
+		}
 
-        public override void OnCombatantChange()
-        {
-            base.OnCombatantChange();
+		public override void OnCombatantChange()
+		{
+			base.OnCombatantChange();
 
-            Warmode = (Combatant != null && !Combatant.Deleted && Combatant.Alive);
+			Warmode = (Combatant != null && !Combatant.Deleted && Combatant.Alive);
 
-            if (Warmode)
-            {
-                if (Core.SA)
-                {
-                    Animate(AnimationType.Alert, 0);
-                }
+			if (Warmode)
+			{
+				if (Core.SA)
+				{
+					Animate(AnimationType.Alert, 0);
+				}
 
-                if (CanFly)
-                {
-                    Flying = false;
-                }
-            }
-        }
+				if (CanFly)
+				{
+					Flying = false;
+				}
+			}
+		}
 
 		public override void OnAfterSpawn()
 		{
@@ -5659,334 +6362,357 @@ namespace Server.Mobiles
 		}
 
 		protected override void OnMapChange(Map oldMap)
-        {
-            CheckAIActive();
+		{
+			CheckAIActive();
 
-            base.OnMapChange(oldMap);
-        }
+			base.OnMapChange(oldMap);
+		}
 
-        protected override void OnLocationChange(Point3D oldLocation)
-        {
-            CheckAIActive();
+		protected override void OnLocationChange(Point3D oldLocation)
+		{
+			CheckAIActive();
 
-            base.OnLocationChange(oldLocation);
-        }
+			base.OnLocationChange(oldLocation);
+		}
 
-        public virtual void ForceReacquire()
-        {
-            m_NextReacquireTime = Core.TickCount;
-        }
+		public virtual void ForceReacquire()
+		{
+			m_NextReacquireTime = Core.TickCount;
+		}
 
-        public virtual bool CanStealth { get { return false; } }
-        public virtual bool SupportsRunAnimation { get { return true; } }
+		public virtual bool CanStealth
+		{
+			get { return false; }
+		}
+		public virtual bool SupportsRunAnimation
+		{
+			get { return true; }
+		}
 
-        protected override bool OnMove(Direction d)
-        {
+		protected override bool OnMove(Direction d)
+		{
+			if (Hidden) //Hidden, let's try stealth
+			{
+				if (!Mounted && Skills.Stealth.Value >= 25.0 && CanStealth)
+				{
+					bool running = (d & Direction.Running) != 0;
 
-            if (Hidden) //Hidden, let's try stealth
-            {
-                if (!Mounted && Skills.Stealth.Value >= 25.0 && CanStealth)
-                {
-                    bool running = (d & Direction.Running) != 0;
+					if (running)
+					{
+						if ((AllowedStealthSteps -= 2) <= 0)
+							RevealingAction();
+					}
+					else if (AllowedStealthSteps-- <= 0)
+					{
+						Server.SkillHandlers.Stealth.OnUse(this);
+					}
+				}
+				else
+				{
+					RevealingAction();
+				}
+			}
 
-                    if (running)
-                    {
-                        if ((AllowedStealthSteps -= 2) <= 0)
-                            RevealingAction();
-                    }
-                    else if (AllowedStealthSteps-- <= 0)
-                    {
-                        Server.SkillHandlers.Stealth.OnUse(this);
-                    }
-                }
-                else
-                {
-                    RevealingAction();
-                }
-            }
+			return true;
+		}
 
-            return true;
+		public override void OnMovement(Mobile m, Point3D oldLocation)
+		{
+			if (AcquireOnApproach && (!Controlled && !Summoned) && FightMode == FightMode.Closest && IsEnemy(m))
+			{
+				if (InRange(m.Location, AcquireOnApproachRange) && !InRange(oldLocation, AcquireOnApproachRange))
+				{
+					if (CanBeHarmful(m) && IsEnemy(m))
+					{
+						Combatant = FocusMob = m;
 
-        }
+						if (AIObject != null)
+						{
+							AIObject.MoveTo(m, true, 1);
+						}
 
-        public override void OnMovement(Mobile m, Point3D oldLocation)
-        {
-            if (AcquireOnApproach && (!Controlled && !Summoned) && FightMode == FightMode.Closest && IsEnemy(m))
-            {
-                if (InRange(m.Location, AcquireOnApproachRange) && !InRange(oldLocation, AcquireOnApproachRange))
-                {
-                    if (CanBeHarmful(m) && IsEnemy(m))
-                    {
-                        Combatant = FocusMob = m;
+						DoHarmful(m);
+					}
+				}
+			}
+			else if (ReacquireOnMovement)
+			{
+				ForceReacquire();
+			}
 
-                        if (AIObject != null)
-                        {
-                            AIObject.MoveTo(m, true, 1);
-                        }
+			SpecialAbility.CheckApproachTrigger(this, m, oldLocation);
 
-                        DoHarmful(m);
-                    }
-                }
-            }
-            else if (ReacquireOnMovement)
-            {
-                ForceReacquire();
-            }
+			InhumanSpeech speechType = SpeechType;
 
-            SpecialAbility.CheckApproachTrigger(this, m, oldLocation);
+			if (speechType != null)
+			{
+				speechType.OnMovement(this, m, oldLocation);
+			}
 
-            InhumanSpeech speechType = SpeechType;
+			/* Begin notice sound */
+			if (
+				(!m.Hidden || m.IsPlayer())
+				&& m.Player
+				&& m_FightMode != FightMode.Aggressor
+				&& m_FightMode != FightMode.None
+				&& Combatant == null
+				&& !Controlled
+				&& !Summoned
+			)
+			{
+				// If this creature defends itself but doesn't actively attack (animal) or
+				// doesn't fight at all (vendor) then no notice sounds are played..
+				// So, players are only notified of aggressive monsters
+				// Monsters that are currently fighting are ignored
+				// Controlled or summoned creatures are ignored
+				if (InRange(m.Location, 18) && !InRange(oldLocation, 18))
+				{
+					if (Body.IsMonster)
+					{
+						if (Core.SA)
+						{
+							Animate(AnimationType.Pillage, 0);
+						}
+						else
+						{
+							Animate(11, 5, 1, true, false, 1);
+						}
+					}
 
-            if (speechType != null)
-            {
-                speechType.OnMovement(this, m, oldLocation);
-            }
+					PlaySound(GetAngerSound());
+				}
+			}
+			/* End notice sound */
 
-            /* Begin notice sound */
-            if ((!m.Hidden || m.IsPlayer()) && m.Player && m_FightMode != FightMode.Aggressor && m_FightMode != FightMode.None &&
-                Combatant == null && !Controlled && !Summoned)
-            {
-                // If this creature defends itself but doesn't actively attack (animal) or
-                // doesn't fight at all (vendor) then no notice sounds are played..
-                // So, players are only notified of aggressive monsters
-                // Monsters that are currently fighting are ignored
-                // Controlled or summoned creatures are ignored
-                if (InRange(m.Location, 18) && !InRange(oldLocation, 18))
-                {
-                    if (Body.IsMonster)
-                    {
-                        if (Core.SA)
-                        {
-                            Animate(AnimationType.Pillage, 0);
-                        }
-                        else
-                        {
-                            Animate(11, 5, 1, true, false, 1);
-                        }
-                    }
+			if (m_NoDupeGuards == m)
+			{
+				return;
+			}
 
-                    PlaySound(GetAngerSound());
-                }
-            }
-            /* End notice sound */
+			if (
+				!Body.IsHuman
+				|| Murderer
+				|| AlwaysMurderer
+				|| AlwaysAttackable
+				|| m.Kills < 5
+				|| !m.InRange(Location, 12)
+				|| !m.Alive
+			)
+			{
+				return;
+			}
 
-            if (m_NoDupeGuards == m)
-            {
-                return;
-            }
+			GuardedRegion guardedRegion = (GuardedRegion)Region.GetRegion(typeof(GuardedRegion));
 
-            if (!Body.IsHuman || Murderer || AlwaysMurderer || AlwaysAttackable || m.Kills < 5 || !m.InRange(Location, 12) ||
-                !m.Alive)
-            {
-                return;
-            }
+			if (guardedRegion != null)
+			{
+				if (
+					!guardedRegion.IsDisabled()
+					&& guardedRegion.IsGuardCandidate(m)
+					&& BeginAction(typeof(GuardedRegion))
+				)
+				{
+					Say(1013037 + Utility.Random(16));
+					guardedRegion.CallGuards(Location);
 
-            GuardedRegion guardedRegion = (GuardedRegion)Region.GetRegion(typeof(GuardedRegion));
+					Timer.DelayCall(TimeSpan.FromSeconds(5.0), ReleaseGuardLock);
 
-            if (guardedRegion != null)
-            {
-                if (!guardedRegion.IsDisabled() && guardedRegion.IsGuardCandidate(m) && BeginAction(typeof(GuardedRegion)))
-                {
-                    Say(1013037 + Utility.Random(16));
-                    guardedRegion.CallGuards(Location);
+					m_NoDupeGuards = m;
+					Timer.DelayCall(TimeSpan.Zero, ReleaseGuardDupeLock);
+				}
+			}
+		}
 
-                    Timer.DelayCall(TimeSpan.FromSeconds(5.0), ReleaseGuardLock);
+		public void AddSpellAttack(Type type)
+		{
+			m_arSpellAttack.Add(type);
+		}
 
-                    m_NoDupeGuards = m;
-                    Timer.DelayCall(TimeSpan.Zero, ReleaseGuardDupeLock);
-                }
-            }
-        }
+		public void AddSpellDefense(Type type)
+		{
+			m_arSpellDefense.Add(type);
+		}
 
-        public void AddSpellAttack(Type type)
-        {
-            m_arSpellAttack.Add(type);
-        }
+		public Spell GetAttackSpellRandom()
+		{
+			if (m_arSpellAttack.Count > 0)
+			{
+				Type type = m_arSpellAttack[Utility.Random(m_arSpellAttack.Count)];
 
-        public void AddSpellDefense(Type type)
-        {
-            m_arSpellDefense.Add(type);
-        }
+				object[] args = { this, null };
+				return Activator.CreateInstance(type, args) as Spell;
+			}
+			else
+			{
+				return null;
+			}
+		}
 
-        public Spell GetAttackSpellRandom()
-        {
-            if (m_arSpellAttack.Count > 0)
-            {
-                Type type = m_arSpellAttack[Utility.Random(m_arSpellAttack.Count)];
+		public Spell GetDefenseSpellRandom()
+		{
+			if (m_arSpellDefense.Count > 0)
+			{
+				Type type = m_arSpellDefense[Utility.Random(m_arSpellDefense.Count)];
 
-                object[] args = { this, null };
-                return Activator.CreateInstance(type, args) as Spell;
-            }
-            else
-            {
-                return null;
-            }
-        }
+				object[] args = { this, null };
+				return Activator.CreateInstance(type, args) as Spell;
+			}
+			else
+			{
+				return null;
+			}
+		}
 
-        public Spell GetDefenseSpellRandom()
-        {
-            if (m_arSpellDefense.Count > 0)
-            {
-                Type type = m_arSpellDefense[Utility.Random(m_arSpellDefense.Count)];
+		public Spell GetSpellSpecific(Type type)
+		{
+			int i;
 
-                object[] args = { this, null };
-                return Activator.CreateInstance(type, args) as Spell;
-            }
-            else
-            {
-                return null;
-            }
-        }
+			for (i = 0; i < m_arSpellAttack.Count; i++)
+			{
+				if (m_arSpellAttack[i] == type)
+				{
+					object[] args = { this, null };
+					return Activator.CreateInstance(type, args) as Spell;
+				}
+			}
 
-        public Spell GetSpellSpecific(Type type)
-        {
-            int i;
+			for (i = 0; i < m_arSpellDefense.Count; i++)
+			{
+				if (m_arSpellDefense[i] == type)
+				{
+					object[] args = { this, null };
+					return Activator.CreateInstance(type, args) as Spell;
+				}
+			}
 
-            for (i = 0; i < m_arSpellAttack.Count; i++)
-            {
-                if (m_arSpellAttack[i] == type)
-                {
-                    object[] args = { this, null };
-                    return Activator.CreateInstance(type, args) as Spell;
-                }
-            }
+			return null;
+		}
 
-            for (i = 0; i < m_arSpellDefense.Count; i++)
-            {
-                if (m_arSpellDefense[i] == type)
-                {
-                    object[] args = { this, null };
-                    return Activator.CreateInstance(type, args) as Spell;
-                }
-            }
+		#region Set[...]
+		public void SetDamage(int val)
+		{
+			m_DamageMin = val;
+			m_DamageMax = val;
+		}
 
-            return null;
-        }
+		public void SetDamage(int min, int max)
+		{
+			m_DamageMin = min;
+			m_DamageMax = max;
+		}
 
-        #region Set[...]
-        public void SetDamage(int val)
-        {
-            m_DamageMin = val;
-            m_DamageMax = val;
-        }
+		public void SetHits(int val)
+		{
+			if (val < 1000 && !Core.AOS)
+			{
+				val = (val * 100) / 60;
+			}
 
-        public void SetDamage(int min, int max)
-        {
-            m_DamageMin = min;
-            m_DamageMax = max;
-        }
+			m_HitsMax = val;
+			//m_HitsMax = GradeHitsBonus( val );
+			Hits = HitsMax;
+		}
 
-        public void SetHits(int val)
-        {
-            if (val < 1000 && !Core.AOS)
-            {
-                val = (val * 100) / 60;
-            }
-
-            m_HitsMax = val;
-            //m_HitsMax = GradeHitsBonus( val );
-            Hits = HitsMax;
-        }
-
-        public void SetHits(int min, int max)
-        {
-            if (min < 1000 && !Core.AOS)
-            {
-                min = (min * 100) / 60;
-                max = (max * 100) / 60;
-            }
+		public void SetHits(int min, int max)
+		{
+			if (min < 1000 && !Core.AOS)
+			{
+				min = (min * 100) / 60;
+				max = (max * 100) / 60;
+			}
 
 			int val = Utility.RandomMinMax(min, max);
 			//val += m_Level * 10 + Str;
-            //m_HitsMax = GradeHitsBonus( val );
-            m_HitsMax = val;
-            Hits = HitsMax;
-            SetAverage(min, max, m_HitsMax);
-        }
+			//m_HitsMax = GradeHitsBonus( val );
+			m_HitsMax = val;
+			Hits = HitsMax;
+			SetAverage(min, max, m_HitsMax);
+		}
 
-        public void SetStam(int val)
-        {
-            m_StamMax = val + Dex;
-            Stam = StamMax;
-        }
+		public void SetStam(int val)
+		{
+			m_StamMax = val + Dex;
+			Stam = StamMax;
+		}
 
-        public void SetStam(int min, int max)
-        {
+		public void SetStam(int min, int max)
+		{
 			int val = Utility.RandomMinMax(min, max);
-            m_StamMax = val + Dex;
-            Stam = StamMax;
-            SetAverage(min, max, m_StamMax);
-        }
+			m_StamMax = val + Dex;
+			Stam = StamMax;
+			SetAverage(min, max, m_StamMax);
+		}
 
-        public void SetMana(int val)
-        {
-            m_ManaMax = val + Int;
-            Mana = ManaMax;
-        }
+		public void SetMana(int val)
+		{
+			m_ManaMax = val + Int;
+			Mana = ManaMax;
+		}
 
-        public void SetMana(int min, int max)
-        {
+		public void SetMana(int min, int max)
+		{
 			int val = Utility.RandomMinMax(min, max);
-            m_ManaMax = val + Int;
-            Mana = ManaMax;
-            SetAverage(min, max, m_ManaMax);
-        }
+			m_ManaMax = val + Int;
+			Mana = ManaMax;
+			SetAverage(min, max, m_ManaMax);
+		}
 
 		//공속
-		public void SetAttackSpeed( double val)
+		public void SetAttackSpeed(double val)
 		{
-			if( AttackSpeed == 0 || val == 0 )
+			if (AttackSpeed == 0 || val == 0)
 				AttackSpeed = 2.5;
 			else
 				AttackSpeed = val;
 		}
-        public void SetStr(int val)
-        {
-            RawStr = val;
-			//RawStr = GradeStrBonus(val);
-            Hits = HitsMax;
-        }
 
-        public void SetStr(int min, int max)
-        {
-			int val = Utility.RandomMinMax(min, max);
-            //RawStr = GradeStrBonus(val);
+		public void SetStr(int val)
+		{
 			RawStr = val;
-            Hits = HitsMax;
-            SetAverage(min, max, RawStr);
-        }
+			//RawStr = GradeStrBonus(val);
+			Hits = HitsMax;
+		}
 
-        public void SetDex(int val)
-        {
-            //RawDex = GradeDexBonus(val);
-			RawDex = val;
-            Stam = StamMax;
-        }
-
-        public void SetDex(int min, int max)
-        {
+		public void SetStr(int min, int max)
+		{
 			int val = Utility.RandomMinMax(min, max);
-            //RawDex = GradeDexBonus(val);
+			//RawStr = GradeStrBonus(val);
+			RawStr = val;
+			Hits = HitsMax;
+			SetAverage(min, max, RawStr);
+		}
+
+		public void SetDex(int val)
+		{
+			//RawDex = GradeDexBonus(val);
 			RawDex = val;
-            Stam = StamMax;
-            SetAverage(min, max, RawDex);
-        }
+			Stam = StamMax;
+		}
 
-        public void SetInt(int val)
-        {
-            //RawInt = GradeIntBonus(val);
-			RawInt = val;
-            Mana = ManaMax;
-        }
-
-        public void SetInt(int min, int max)
-        {
+		public void SetDex(int min, int max)
+		{
 			int val = Utility.RandomMinMax(min, max);
-            //RawInt = GradeIntBonus(val);
+			//RawDex = GradeDexBonus(val);
+			RawDex = val;
+			Stam = StamMax;
+			SetAverage(min, max, RawDex);
+		}
+
+		public void SetInt(int val)
+		{
+			//RawInt = GradeIntBonus(val);
 			RawInt = val;
-            Mana = ManaMax;
-            SetAverage(min, max, RawInt);
-        }
+			Mana = ManaMax;
+		}
+
+		public void SetInt(int min, int max)
+		{
+			int val = Utility.RandomMinMax(min, max);
+			//RawInt = GradeIntBonus(val);
+			RawInt = val;
+			Mana = ManaMax;
+			SetAverage(min, max, RawInt);
+		}
 
 		//m_PassiveSkills 배열에 들어가는 값
 		//0번 값 : 총 패시브 수
@@ -6022,14 +6748,17 @@ namespace Server.Mobiles
 		//12번 값 : 6번째 패시브 실제 값
 		//13번 값 : 7번째 패시브 번호
 		//14번 값 : 7번째 패시브 실제 값
-		
+
 		private int[] m_PassiveSkills = new int[15];
 		public int[] PassiveSkills
 		{
-			get{ return m_PassiveSkills;}
-			set{ m_PassiveSkills = value; InvalidateProperties();}
+			get { return m_PassiveSkills; }
+			set
+			{
+				m_PassiveSkills = value;
+				InvalidateProperties();
+			}
 		}
-
 
 		//0번 : 힘
 		//1번 : 민
@@ -6037,747 +6766,829 @@ namespace Server.Mobiles
 		//3번 : 체
 		//4번 : 기
 		//5번 : 마
-		
+
 		private int[] m_StatExp = new int[6];
 		public int[] StatExp
 		{
-			get{ return m_StatExp;}
-			set{ m_StatExp = value; InvalidateProperties();}
+			get { return m_StatExp; }
+			set
+			{
+				m_StatExp = value;
+				InvalidateProperties();
+			}
 		}
-		
-		
-        public void SetDamageType(ResistanceType type, int min, int max)
-        {
-            SetDamageType(type, Utility.RandomMinMax(min, max));
-        }
 
-        public void SetDamageType(ResistanceType type, int val)
-        {
-            switch (type)
-            {
-                case ResistanceType.Physical:
-                    m_PhysicalDamage = val;
-                    break;
-                case ResistanceType.Fire:
-                    m_FireDamage = val;
-                    break;
-                case ResistanceType.Cold:
-                    m_ColdDamage = val;
-                    break;
-                case ResistanceType.Poison:
-                    m_PoisonDamage = val;
-                    break;
-                case ResistanceType.Energy:
-                    m_EnergyDamage = val;
-                    break;
-                case ResistanceType.Chaos:
-                    m_ChaosDamage = val;
-                    break;
-                case ResistanceType.Direct:
-                    m_DirectDamage = val;
-                    break;
-            }
-        }
+		public void SetDamageType(ResistanceType type, int min, int max)
+		{
+			SetDamageType(type, Utility.RandomMinMax(min, max));
+		}
 
-        public void SetResistance(ResistanceType type, int value)
-        {
-            SetResistance(type, value, value);
-        }
+		public void SetDamageType(ResistanceType type, int val)
+		{
+			switch (type)
+			{
+				case ResistanceType.Physical:
+					m_PhysicalDamage = val;
+					break;
+				case ResistanceType.Fire:
+					m_FireDamage = val;
+					break;
+				case ResistanceType.Cold:
+					m_ColdDamage = val;
+					break;
+				case ResistanceType.Poison:
+					m_PoisonDamage = val;
+					break;
+				case ResistanceType.Energy:
+					m_EnergyDamage = val;
+					break;
+				case ResistanceType.Chaos:
+					m_ChaosDamage = val;
+					break;
+				case ResistanceType.Direct:
+					m_DirectDamage = val;
+					break;
+			}
+		}
 
-        public void SetResistance(ResistanceType type, int min, int max)
-        {
-            int val = min == max ? min : Utility.RandomMinMax(min, max);
+		public void SetResistance(ResistanceType type, int value)
+		{
+			SetResistance(type, value, value);
+		}
 
-            SetAverage(min, max, val);
+		public void SetResistance(ResistanceType type, int min, int max)
+		{
+			int val = min == max ? min : Utility.RandomMinMax(min, max);
 
-            switch (type)
-            {
-                case ResistanceType.Physical: m_PhysicalResistance = val; break;
-                case ResistanceType.Fire: m_FireResistance = val; break;
-                case ResistanceType.Cold: m_ColdResistance = val; break;
-                case ResistanceType.Poison: m_PoisonResistance = val; break;
-                case ResistanceType.Energy: m_EnergyResistance = val; break;
-                case ResistanceType.Chaos: m_ChaosResistance = val; break;
-                case ResistanceType.Direct: m_DirectResistance = val; break;
-            }
+			SetAverage(min, max, val);
 
-            UpdateResistances();
-        }
+			switch (type)
+			{
+				case ResistanceType.Physical:
+					m_PhysicalResistance = val;
+					break;
+				case ResistanceType.Fire:
+					m_FireResistance = val;
+					break;
+				case ResistanceType.Cold:
+					m_ColdResistance = val;
+					break;
+				case ResistanceType.Poison:
+					m_PoisonResistance = val;
+					break;
+				case ResistanceType.Energy:
+					m_EnergyResistance = val;
+					break;
+				case ResistanceType.Chaos:
+					m_ChaosResistance = val;
+					break;
+				case ResistanceType.Direct:
+					m_DirectResistance = val;
+					break;
+			}
 
-        public void SetSkill(SkillName name, double val)
-        {
-            Skills[name].BaseFixedPoint = (int)(val * 10);
+			UpdateResistances();
+		}
 
-            if (Skills[name].Base > Skills[name].Cap)
-            {
-                if (Core.SE)
-                {
-                    SkillsCap += (Skills[name].BaseFixedPoint - Skills[name].CapFixedPoint);
-                }
+		public void SetSkill(SkillName name, double val)
+		{
+			Skills[name].BaseFixedPoint = (int)(val * 10);
 
-                Skills[name].Cap = Skills[name].Base;
-            }
+			if (Skills[name].Base > Skills[name].Cap)
+			{
+				if (Core.SE)
+				{
+					SkillsCap += (Skills[name].BaseFixedPoint - Skills[name].CapFixedPoint);
+				}
 
-            if (name == SkillName.Poisoning && Skills[name].Base > 0 && 
-                !Controlled &&
-                (AbilityProfile == null || !AbilityProfile.HasAbility(MagicalAbility.Poisoning)))
-            {
-                SetMagicalAbility(MagicalAbility.Poisoning);
-            }
+				Skills[name].Cap = Skills[name].Base;
+			}
 
-            if (!Controlled && name == SkillName.Magery && 
-                (AbilityProfile == null || !AbilityProfile.HasAbility(MagicalAbility.Magery)) && 
-                Skills[SkillName.Magery].Base > 0 && 
-                (AI == AIType.AI_Mage || AI == AIType.AI_Necro || AI == AIType.AI_NecroMage || AI == AIType.AI_Mystic || AI == AIType.AI_Spellweaving))
+			if (
+				name == SkillName.Poisoning
+				&& Skills[name].Base > 0
+				&& !Controlled
+				&& (AbilityProfile == null || !AbilityProfile.HasAbility(MagicalAbility.Poisoning))
+			)
+			{
+				SetMagicalAbility(MagicalAbility.Poisoning);
+			}
 
-            {
-                SetMagicalAbility(MagicalAbility.Magery);
-            }
-        }
+			if (
+				!Controlled
+				&& name == SkillName.Magery
+				&& (AbilityProfile == null || !AbilityProfile.HasAbility(MagicalAbility.Magery))
+				&& Skills[SkillName.Magery].Base > 0
+				&& (
+					AI == AIType.AI_Mage
+					|| AI == AIType.AI_Necro
+					|| AI == AIType.AI_NecroMage
+					|| AI == AIType.AI_Mystic
+					|| AI == AIType.AI_Spellweaving
+				)
+			)
+			{
+				SetMagicalAbility(MagicalAbility.Magery);
+			}
+		}
 
-        public void SetSkill(SkillName name, double min, double max)
-        {
-            int minFixed = (int)(min * 10);
-            int maxFixed = (int)(max * 10);
+		public void SetSkill(SkillName name, double min, double max)
+		{
+			int minFixed = (int)(min * 10);
+			int maxFixed = (int)(max * 10);
 
-            Skills[name].BaseFixedPoint = Utility.RandomMinMax(minFixed, maxFixed);
+			Skills[name].BaseFixedPoint = Utility.RandomMinMax(minFixed, maxFixed);
 
-            SetAverage(min, max, Skills[name].BaseFixedPoint / 10);
+			SetAverage(min, max, Skills[name].BaseFixedPoint / 10);
 
-            if (Skills[name].Base > Skills[name].Cap)
-            {
-                if (Core.SE)
-                {
-                    SkillsCap += (Skills[name].BaseFixedPoint - Skills[name].CapFixedPoint);
-                }
+			if (Skills[name].Base > Skills[name].Cap)
+			{
+				if (Core.SE)
+				{
+					SkillsCap += (Skills[name].BaseFixedPoint - Skills[name].CapFixedPoint);
+				}
 
-                Skills[name].Cap = Skills[name].Base;
-            }
+				Skills[name].Cap = Skills[name].Base;
+			}
 
-            if (name == SkillName.Poisoning && Skills[name].Base > 0 && 
-                !Controlled &&
-                (AbilityProfile == null || !AbilityProfile.HasAbility(MagicalAbility.Poisoning)))
-            {
-                SetMagicalAbility(MagicalAbility.Poisoning);
-            }
+			if (
+				name == SkillName.Poisoning
+				&& Skills[name].Base > 0
+				&& !Controlled
+				&& (AbilityProfile == null || !AbilityProfile.HasAbility(MagicalAbility.Poisoning))
+			)
+			{
+				SetMagicalAbility(MagicalAbility.Poisoning);
+			}
 
-            if (!Controlled && name == SkillName.Magery &&
-                (AbilityProfile == null || !AbilityProfile.HasAbility(MagicalAbility.Magery)) && 
-                Skills[SkillName.Magery].Base > 0 && 
-                (AI == AIType.AI_Mage || AI == AIType.AI_Necro || AI == AIType.AI_NecroMage || AI == AIType.AI_Mystic || AI == AIType.AI_Spellweaving))
+			if (
+				!Controlled
+				&& name == SkillName.Magery
+				&& (AbilityProfile == null || !AbilityProfile.HasAbility(MagicalAbility.Magery))
+				&& Skills[SkillName.Magery].Base > 0
+				&& (
+					AI == AIType.AI_Mage
+					|| AI == AIType.AI_Necro
+					|| AI == AIType.AI_NecroMage
+					|| AI == AIType.AI_Mystic
+					|| AI == AIType.AI_Spellweaving
+				)
+			)
+			{
+				SetMagicalAbility(MagicalAbility.Magery);
+			}
+		}
 
-            {
-                SetMagicalAbility(MagicalAbility.Magery);
-            }
-        }
+		public void SetFameLevel(int level)
+		{
+			switch (level)
+			{
+				case 1:
+					Fame = Utility.RandomMinMax(0, 1249);
+					break;
+				case 2:
+					Fame = Utility.RandomMinMax(1250, 2499);
+					break;
+				case 3:
+					Fame = Utility.RandomMinMax(2500, 4999);
+					break;
+				case 4:
+					Fame = Utility.RandomMinMax(5000, 9999);
+					break;
+				case 5:
+					Fame = Utility.RandomMinMax(10000, 10000);
+					break;
+			}
+		}
 
-        public void SetFameLevel(int level)
-        {
-            switch (level)
-            {
-                case 1:
-                    Fame = Utility.RandomMinMax(0, 1249);
-                    break;
-                case 2:
-                    Fame = Utility.RandomMinMax(1250, 2499);
-                    break;
-                case 3:
-                    Fame = Utility.RandomMinMax(2500, 4999);
-                    break;
-                case 4:
-                    Fame = Utility.RandomMinMax(5000, 9999);
-                    break;
-                case 5:
-                    Fame = Utility.RandomMinMax(10000, 10000);
-                    break;
-            }
-        }
+		public void SetKarmaLevel(int level)
+		{
+			switch (level)
+			{
+				case 0:
+					Karma = -Utility.RandomMinMax(0, 624);
+					break;
+				case 1:
+					Karma = -Utility.RandomMinMax(625, 1249);
+					break;
+				case 2:
+					Karma = -Utility.RandomMinMax(1250, 2499);
+					break;
+				case 3:
+					Karma = -Utility.RandomMinMax(2500, 4999);
+					break;
+				case 4:
+					Karma = -Utility.RandomMinMax(5000, 9999);
+					break;
+				case 5:
+					Karma = -Utility.RandomMinMax(10000, 10000);
+					break;
+			}
+		}
 
-        public void SetKarmaLevel(int level)
-        {
-            switch (level)
-            {
-                case 0:
-                    Karma = -Utility.RandomMinMax(0, 624);
-                    break;
-                case 1:
-                    Karma = -Utility.RandomMinMax(625, 1249);
-                    break;
-                case 2:
-                    Karma = -Utility.RandomMinMax(1250, 2499);
-                    break;
-                case 3:
-                    Karma = -Utility.RandomMinMax(2500, 4999);
-                    break;
-                case 4:
-                    Karma = -Utility.RandomMinMax(5000, 9999);
-                    break;
-                case 5:
-                    Karma = -Utility.RandomMinMax(10000, 10000);
-                    break;
-            }
-        }
+		public override void OnRawDexChange(int oldDex)
+		{
+			if (Core.ML && oldDex != RawDex)
+			{
+				AdjustSpeeds();
+			}
+		}
 
-        public override void OnRawDexChange(int oldDex)
-        {
-            if (Core.ML && oldDex != RawDex)
-            {
-                AdjustSpeeds();
-            }
-        }
+		public void AdjustSpeeds()
+		{
+			double activeSpeed = 0.0;
+			double passiveSpeed = 0.0;
 
-        public void AdjustSpeeds()
-        {
-            double activeSpeed = 0.0;
-            double passiveSpeed = 0.0;
+			SpeedInfo.GetSpeedsNew(this, ref activeSpeed, ref passiveSpeed);
 
-            SpeedInfo.GetSpeedsNew(this, ref activeSpeed, ref passiveSpeed);
+			m_dActiveSpeed = activeSpeed;
+			m_dPassiveSpeed = passiveSpeed;
+		}
+		#endregion
 
-            m_dActiveSpeed = activeSpeed;
-            m_dPassiveSpeed = passiveSpeed;
-        }
-        #endregion
+		public static void Cap(ref int val, int min, int max)
+		{
+			if (val < min)
+			{
+				val = min;
+			}
+			else if (val > max)
+			{
+				val = max;
+			}
+		}
 
-        public static void Cap(ref int val, int min, int max)
-        {
-            if (val < min)
-            {
-                val = min;
-            }
-            else if (val > max)
-            {
-                val = max;
-            }
-        }
+		public virtual void DropBackpack()
+		{
+			if (Backpack != null)
+			{
+				if (Backpack.Items.Count > 0)
+				{
+					Backpack b = new CreatureBackpack(Name);
 
-        public virtual void DropBackpack()
-        {
-            if (Backpack != null)
-            {
-                if (Backpack.Items.Count > 0)
-                {
-                    Backpack b = new CreatureBackpack(Name);
+					var list = new List<Item>(Backpack.Items);
+					foreach (Item item in list)
+					{
+						b.DropItem(item);
+					}
 
-                    var list = new List<Item>(Backpack.Items);
-                    foreach (Item item in list)
-                    {
-                        b.DropItem(item);
-                    }
+					BaseHouse house = BaseHouse.FindHouseAt(this);
+					if (house != null)
+					{
+						b.MoveToWorld(house.BanLocation, house.Map);
+					}
+					else
+					{
+						b.MoveToWorld(Location, Map);
+					}
+				}
+			}
+		}
 
-                    BaseHouse house = BaseHouse.FindHouseAt(this);
-                    if (house != null)
-                    {
-                        b.MoveToWorld(house.BanLocation, house.Map);
-                    }
-                    else
-                    {
-                        b.MoveToWorld(Location, Map);
-                    }
-                }
-            }
-        }
+		protected bool m_Spawning;
+		protected int m_KillersLuck;
 
-        protected bool m_Spawning;
-        protected int m_KillersLuck;
-
-        public virtual void GenerateLoot(bool spawning)
-        {
+		public virtual void GenerateLoot(bool spawning)
+		{
 			return;
 			//일반 룻
-            if (m_NoLootOnDeath || m_Allured)
-                return;
+			if (m_NoLootOnDeath || m_Allured)
+				return;
 
-            m_Spawning = spawning;
+			m_Spawning = spawning;
 
-            if (!spawning)
-            {
-                m_KillersLuck = LootPack.GetLuckChanceForKiller(this);
-            }
+			if (!spawning)
+			{
+				m_KillersLuck = LootPack.GetLuckChanceForKiller(this);
+			}
 
-            //GenerateLoot();
+			//GenerateLoot();
 			SpecialLoot();
 
-
-			
 			/*
-            if (m_Paragon)
-            {
-                if (Fame < 1250)
-                {
-                    AddLoot(LootPack.Meager);
-                }
-                else if (Fame < 2500)
-                {
-                    AddLoot(LootPack.Average);
-                }
-                else if (Fame < 5000)
-                {
-                    AddLoot(LootPack.Rich);
-                }
-                else if (Fame < 10000)
-                {
-                    AddLoot(LootPack.FilthyRich);
-                }
-                else
-                {
-                    AddLoot(LootPack.UltraRich);
-                }
-            }
+			if (m_Paragon)
+			{
+				if (Fame < 1250)
+				{
+					AddLoot(LootPack.Meager);
+				}
+				else if (Fame < 2500)
+				{
+					AddLoot(LootPack.Average);
+				}
+				else if (Fame < 5000)
+				{
+					AddLoot(LootPack.Rich);
+				}
+				else if (Fame < 10000)
+				{
+					AddLoot(LootPack.FilthyRich);
+				}
+				else
+				{
+					AddLoot(LootPack.UltraRich);
+				}
+			}
 			*/
-            m_Spawning = false;
-            m_KillersLuck = 0;
-        }
+			m_Spawning = false;
+			m_KillersLuck = 0;
+		}
 
-        public virtual void GenerateLoot()
-        { }
+		public virtual void GenerateLoot() { }
 
-		public virtual void SpecialLoot()
-		{ }
-		
-        public virtual void AddLoot(LootPack pack, int amount)
-        {
+		public virtual void SpecialLoot() { }
+
+		public virtual void AddLoot(LootPack pack, int amount)
+		{
 			/*
-            for (int i = 0; i < amount; ++i)
-            {
-                AddLoot(pack);
-            }
+			for (int i = 0; i < amount; ++i)
+			{
+				AddLoot(pack);
+			}
 			*/
-        }
-
-        public virtual void AddLoot(LootPack pack)
-        {
-            if (Summoned)
-            {
-                return;
-            }
-
-            Container backpack = Backpack;
-
-            if (backpack == null)
-            {
-                backpack = new Backpack();
-
-                backpack.Movable = false;
-
-                AddItem(backpack);
-            }
-
-            pack.Generate(this, backpack, m_Spawning, m_KillersLuck);
-        }
-
-        public static void GetRandomAOSStats(int minLevel, int maxLevel, out int attributeCount, out int min, out int max)
-        {
-            int v = RandomMinMaxScaled(minLevel, maxLevel);
-
-            if (v >= 5)
-            {
-                attributeCount = Utility.RandomMinMax(2, 6);
-                min = 20;
-                max = 70;
-            }
-            else if (v == 4)
-            {
-                attributeCount = Utility.RandomMinMax(2, 4);
-                min = 20;
-                max = 50;
-            }
-            else if (v == 3)
-            {
-                attributeCount = Utility.RandomMinMax(2, 3);
-                min = 20;
-                max = 40;
-            }
-            else if (v == 2)
-            {
-                attributeCount = Utility.RandomMinMax(1, 2);
-                min = 10;
-                max = 30;
-            }
-            else
-            {
-                attributeCount = 1;
-                min = 10;
-                max = 20;
-            }
-        }
-
-        public static int RandomMinMaxScaled(int min, int max)
-        {
-            if (min == max)
-            {
-                return min;
-            }
-
-            if (min > max)
-            {
-                int hold = min;
-                min = max;
-                max = hold;
-            }
-
-            /* Example:
-            *    min: 1
-            *    max: 5
-            *  count: 5
-            *
-            * total = (5*5) + (4*4) + (3*3) + (2*2) + (1*1) = 25 + 16 + 9 + 4 + 1 = 55
-            *
-            * chance for min+0 : 25/55 : 45.45%
-            * chance for min+1 : 16/55 : 29.09%
-            * chance for min+2 :  9/55 : 16.36%
-            * chance for min+3 :  4/55 :  7.27%
-            * chance for min+4 :  1/55 :  1.81%
-            */
-
-            int count = max - min + 1;
-            int total = 0, toAdd = count;
-
-            for (int i = 0; i < count; ++i, --toAdd)
-            {
-                total += toAdd * toAdd;
-            }
-
-            int rand = Utility.Random(total);
-            toAdd = count;
-
-            int val = min;
-
-            for (int i = 0; i < count; ++i, --toAdd, ++val)
-            {
-                rand -= toAdd * toAdd;
-
-                if (rand < 0)
-                {
-                    break;
-                }
-            }
-
-            return val;
-        }
-
-        public void PackGold(int amount)
-        {
-            if (amount > 0)
-            {
-                PackItem(new Gold(amount));
-            }
-        }
-
-        public void PackGold(int min, int max)
-        {
-            PackGold(Utility.RandomMinMax(min, max));
-        }
-
-        public void PackStatue(int min, int max)
-        {
-            PackStatue(Utility.RandomMinMax(min, max));
-        }
-
-        public void PackStatue(int amount)
-        {
-            for (int i = 0; i < amount; ++i)
-            {
-                PackStatue();
-            }
-        }
-
-        public void PackStatue()
-        {
-            PackItem(Loot.RandomStatue());
-        }
-
-        public void PackGem()
-        {
-            PackGem(1);
-        }
-
-        public void PackGem(int min, int max)
-        {
-            PackGem(Utility.RandomMinMax(min, max));
-        }
-
-        public void PackGem(int amount)
-        {
-            if (amount <= 0)
-            {
-                return;
-            }
-
-            Item gem = Loot.RandomGem();
-
-            gem.Amount = amount;
-
-            PackItem(gem);
-        }
-
-        public void PackNecroReg(int min, int max)
-        {
-            PackNecroReg(Utility.RandomMinMax(min, max));
-        }
-
-        public void PackNecroReg(int amount)
-        {
-            for (int i = 0; i < amount; ++i)
-            {
-                PackNecroReg();
-            }
-        }
-
-        public void PackNecroReg()
-        {
-            if (!Core.AOS)
-            {
-                return;
-            }
-
-            PackItem(Loot.RandomNecromancyReagent());
-        }
-
-        public void PackReg(int min, int max)
-        {
-            PackReg(Utility.RandomMinMax(min, max));
-        }
-
-        public void PackReg(int amount)
-        {
-            if (amount <= 0)
-            {
-                return;
-            }
-
-            Item reg = Loot.RandomReagent();
-
-            reg.Amount = amount;
-
-            PackItem(reg);
-        }
-
-        public void PackBodyPart()
-        {
-            switch (Utility.Random(5))
-            {
-                case 0: PackItem(new LeftArm()); break;
-                case 1: PackItem(new RightArm()); break;
-                case 2: PackItem(new Torso()); break;
-                case 3: PackItem(new RightLeg()); break;
-                case 4: PackItem(new LeftLeg()); break;
-            }
-        }
-
-        public void PackBones()
-        {
-            switch (Utility.Random(6))
-            {
-                case 0: PackItem(new Bone()); break;
-                case 1: PackItem(new RibCage()); break;
-                case 2: PackItem(new RibCage()); break;
-                case 3: PackItem(new BonePile()); break;
-                case 4: PackItem(new BonePile()); break;
-                case 5: PackItem(new BonePile()); break;
-            }
-        }
-
-        public void PackBodyPartOrBones()
-        {
-            switch (Utility.Random(8))
-            {
-                case 0: PackItem(new LeftArm()); break;
-                case 1: PackItem(new RightArm()); break;
-                case 2: PackItem(new Torso()); break;
-                case 3: PackItem(new RightLeg()); break;
-                case 4: PackItem(new LeftLeg()); break;
-                case 5: PackItem(new Bone()); break;
-                case 6: PackItem(new RibCage()); break;
-                case 7: PackItem(new BonePile()); break;
-            }
-        }
-
-        public void PackItem(Item item)
-        {
-            if (Summoned || item == null)
-            {
-                if (item != null)
-                {
-                    item.Delete();
-                }
-
-                return;
-            }
-
-            Container pack = Backpack;
-
-            if (pack == null)
-            {
-                pack = new Backpack();
-
-                pack.Movable = false;
-
-                AddItem(pack);
-            }
-
-            if (!item.Stackable || !pack.TryDropItem(this, item, false)) // try stack
-            {
-                pack.DropItem(item); // failed, drop it anyway
-            }
-        }
-
-        public virtual void SetToChampionSpawn()
-        {
-        }
-
-        public virtual void SetWearable(Item item, int hue = -1, double dropChance = 0.0)
-        {
-            if (hue > -1)
-                item.Hue = hue;
-
-            item.Movable = dropChance > Utility.RandomDouble();
-
-            if (!CheckEquip(item) || !OnEquip(item) || !item.OnEquip(this))
-            {
-                PackItem(item);
-            }
-            else
-            {
-                AddItem(item);
-            }
-        }
-
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (from.AccessLevel >= AccessLevel.GameMaster && !Body.IsHuman)
-            {
-                Container pack = Backpack;
-
-                if (pack != null)
-                {
-                    pack.DisplayTo(from);
-                }
-            }
-
-            if (DeathAdderCharmable && from.CanBeHarmful(this, false))
-            {
-                DeathAdder da = SummonFamiliarSpell.Table[from] as DeathAdder;
-
-                if (da != null && !da.Deleted)
-                {
-                    from.SendAsciiMessage("You charm the snake.  Select a target to attack.");
-                    from.Target = new DeathAdderCharmTarget(this);
-                }
-            }
-
-            base.OnDoubleClick(from);
-        }
-
-        private class DeathAdderCharmTarget : Target
-        {
-            private readonly BaseCreature m_Charmed;
-
-            public DeathAdderCharmTarget(BaseCreature charmed)
-                : base(-1, false, TargetFlags.Harmful)
-            {
-                m_Charmed = charmed;
-            }
-
-            protected override void OnTarget(Mobile from, object targeted)
-            {
-                if (!m_Charmed.DeathAdderCharmable || m_Charmed.Combatant != null || !from.CanBeHarmful(m_Charmed, false))
-                {
-                    return;
-                }
-
-                DeathAdder da = SummonFamiliarSpell.Table[from] as DeathAdder;
-                if (da == null || da.Deleted)
-                {
-                    return;
-                }
-
-                Mobile targ = targeted as Mobile;
-                if (targ == null || !from.CanBeHarmful(targ, false))
-                {
-                    return;
-                }
-
-                from.RevealingAction();
-                from.DoHarmful(targ, true);
-
-                m_Charmed.Combatant = targ;
-
-                if (m_Charmed.AIObject != null)
-                {
-                    m_Charmed.AIObject.Action = ActionType.Combat;
-                }
-            }
-        }
-
-		private string[] SlayerName = {"영장류", "언데드", "정령", "데몬", "곤충류", "파충류", "요정"};
-		
-        public override void AddNameProperties(ObjectPropertyList list)
-        {
-            base.AddNameProperties(list);
-
-            if (Controlled && !String.IsNullOrEmpty(EngravedText))
-            {
-                list.Add(1157315, EngravedText); // <BASEFONT COLOR=#668cff>Branded: ~1_VAL~<BASEFONT COLOR=#FFFFFF>
-            }
-
-            if (Core.ML)
-            {
-                if (DisplayWeight)
-                {
-                    list.Add(TotalWeight == 1 ? 1072788 : 1072789, TotalWeight.ToString()); // Weight: ~1_WEIGHT~ stones
-                }
-
-                if (m_ControlOrder == OrderType.Guard)
-                {
-                    list.Add(1080078); // guarding
-                }
-            }
+		}
+
+		public virtual void AddLoot(LootPack pack)
+		{
+			if (Summoned)
+			{
+				return;
+			}
+
+			Container backpack = Backpack;
+
+			if (backpack == null)
+			{
+				backpack = new Backpack();
+
+				backpack.Movable = false;
+
+				AddItem(backpack);
+			}
+
+			pack.Generate(this, backpack, m_Spawning, m_KillersLuck);
+		}
+
+		public static void GetRandomAOSStats(
+			int minLevel,
+			int maxLevel,
+			out int attributeCount,
+			out int min,
+			out int max
+		)
+		{
+			int v = RandomMinMaxScaled(minLevel, maxLevel);
+
+			if (v >= 5)
+			{
+				attributeCount = Utility.RandomMinMax(2, 6);
+				min = 20;
+				max = 70;
+			}
+			else if (v == 4)
+			{
+				attributeCount = Utility.RandomMinMax(2, 4);
+				min = 20;
+				max = 50;
+			}
+			else if (v == 3)
+			{
+				attributeCount = Utility.RandomMinMax(2, 3);
+				min = 20;
+				max = 40;
+			}
+			else if (v == 2)
+			{
+				attributeCount = Utility.RandomMinMax(1, 2);
+				min = 10;
+				max = 30;
+			}
+			else
+			{
+				attributeCount = 1;
+				min = 10;
+				max = 20;
+			}
+		}
+
+		public static int RandomMinMaxScaled(int min, int max)
+		{
+			if (min == max)
+			{
+				return min;
+			}
+
+			if (min > max)
+			{
+				int hold = min;
+				min = max;
+				max = hold;
+			}
+
+			/* Example:
+			*    min: 1
+			*    max: 5
+			*  count: 5
+			*
+			* total = (5*5) + (4*4) + (3*3) + (2*2) + (1*1) = 25 + 16 + 9 + 4 + 1 = 55
+			*
+			* chance for min+0 : 25/55 : 45.45%
+			* chance for min+1 : 16/55 : 29.09%
+			* chance for min+2 :  9/55 : 16.36%
+			* chance for min+3 :  4/55 :  7.27%
+			* chance for min+4 :  1/55 :  1.81%
+			*/
+
+			int count = max - min + 1;
+			int total = 0,
+				toAdd = count;
+
+			for (int i = 0; i < count; ++i, --toAdd)
+			{
+				total += toAdd * toAdd;
+			}
+
+			int rand = Utility.Random(total);
+			toAdd = count;
+
+			int val = min;
+
+			for (int i = 0; i < count; ++i, --toAdd, ++val)
+			{
+				rand -= toAdd * toAdd;
+
+				if (rand < 0)
+				{
+					break;
+				}
+			}
+
+			return val;
+		}
+
+		public void PackGold(int amount)
+		{
+			if (amount > 0)
+			{
+				PackItem(new Gold(amount));
+			}
+		}
+
+		public void PackGold(int min, int max)
+		{
+			PackGold(Utility.RandomMinMax(min, max));
+		}
+
+		public void PackStatue(int min, int max)
+		{
+			PackStatue(Utility.RandomMinMax(min, max));
+		}
+
+		public void PackStatue(int amount)
+		{
+			for (int i = 0; i < amount; ++i)
+			{
+				PackStatue();
+			}
+		}
+
+		public void PackStatue()
+		{
+			PackItem(Loot.RandomStatue());
+		}
+
+		public void PackGem()
+		{
+			PackGem(1);
+		}
+
+		public void PackGem(int min, int max)
+		{
+			PackGem(Utility.RandomMinMax(min, max));
+		}
+
+		public void PackGem(int amount)
+		{
+			if (amount <= 0)
+			{
+				return;
+			}
+
+			Item gem = Loot.RandomGem();
+
+			gem.Amount = amount;
+
+			PackItem(gem);
+		}
+
+		public void PackNecroReg(int min, int max)
+		{
+			PackNecroReg(Utility.RandomMinMax(min, max));
+		}
+
+		public void PackNecroReg(int amount)
+		{
+			for (int i = 0; i < amount; ++i)
+			{
+				PackNecroReg();
+			}
+		}
+
+		public void PackNecroReg()
+		{
+			if (!Core.AOS)
+			{
+				return;
+			}
+
+			PackItem(Loot.RandomNecromancyReagent());
+		}
+
+		public void PackReg(int min, int max)
+		{
+			PackReg(Utility.RandomMinMax(min, max));
+		}
+
+		public void PackReg(int amount)
+		{
+			if (amount <= 0)
+			{
+				return;
+			}
+
+			Item reg = Loot.RandomReagent();
+
+			reg.Amount = amount;
+
+			PackItem(reg);
+		}
+
+		public void PackBodyPart()
+		{
+			switch (Utility.Random(5))
+			{
+				case 0:
+					PackItem(new LeftArm());
+					break;
+				case 1:
+					PackItem(new RightArm());
+					break;
+				case 2:
+					PackItem(new Torso());
+					break;
+				case 3:
+					PackItem(new RightLeg());
+					break;
+				case 4:
+					PackItem(new LeftLeg());
+					break;
+			}
+		}
+
+		public void PackBones()
+		{
+			switch (Utility.Random(6))
+			{
+				case 0:
+					PackItem(new Bone());
+					break;
+				case 1:
+					PackItem(new RibCage());
+					break;
+				case 2:
+					PackItem(new RibCage());
+					break;
+				case 3:
+					PackItem(new BonePile());
+					break;
+				case 4:
+					PackItem(new BonePile());
+					break;
+				case 5:
+					PackItem(new BonePile());
+					break;
+			}
+		}
+
+		public void PackBodyPartOrBones()
+		{
+			switch (Utility.Random(8))
+			{
+				case 0:
+					PackItem(new LeftArm());
+					break;
+				case 1:
+					PackItem(new RightArm());
+					break;
+				case 2:
+					PackItem(new Torso());
+					break;
+				case 3:
+					PackItem(new RightLeg());
+					break;
+				case 4:
+					PackItem(new LeftLeg());
+					break;
+				case 5:
+					PackItem(new Bone());
+					break;
+				case 6:
+					PackItem(new RibCage());
+					break;
+				case 7:
+					PackItem(new BonePile());
+					break;
+			}
+		}
+
+		public void PackItem(Item item)
+		{
+			if (Summoned || item == null)
+			{
+				if (item != null)
+				{
+					item.Delete();
+				}
+
+				return;
+			}
+
+			Container pack = Backpack;
+
+			if (pack == null)
+			{
+				pack = new Backpack();
+
+				pack.Movable = false;
+
+				AddItem(pack);
+			}
+
+			if (!item.Stackable || !pack.TryDropItem(this, item, false)) // try stack
+			{
+				pack.DropItem(item); // failed, drop it anyway
+			}
+		}
+
+		public virtual void SetToChampionSpawn() { }
+
+		public virtual void SetWearable(Item item, int hue = -1, double dropChance = 0.0)
+		{
+			if (hue > -1)
+				item.Hue = hue;
+
+			item.Movable = dropChance > Utility.RandomDouble();
+
+			if (!CheckEquip(item) || !OnEquip(item) || !item.OnEquip(this))
+			{
+				PackItem(item);
+			}
+			else
+			{
+				AddItem(item);
+			}
+		}
+
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (from.AccessLevel >= AccessLevel.GameMaster && !Body.IsHuman)
+			{
+				Container pack = Backpack;
+
+				if (pack != null)
+				{
+					pack.DisplayTo(from);
+				}
+			}
+
+			if (DeathAdderCharmable && from.CanBeHarmful(this, false))
+			{
+				DeathAdder da = SummonFamiliarSpell.Table[from] as DeathAdder;
+
+				if (da != null && !da.Deleted)
+				{
+					from.SendAsciiMessage("You charm the snake.  Select a target to attack.");
+					from.Target = new DeathAdderCharmTarget(this);
+				}
+			}
+
+			base.OnDoubleClick(from);
+		}
+
+		private class DeathAdderCharmTarget : Target
+		{
+			private readonly BaseCreature m_Charmed;
+
+			public DeathAdderCharmTarget(BaseCreature charmed)
+				: base(-1, false, TargetFlags.Harmful)
+			{
+				m_Charmed = charmed;
+			}
+
+			protected override void OnTarget(Mobile from, object targeted)
+			{
+				if (
+					!m_Charmed.DeathAdderCharmable
+					|| m_Charmed.Combatant != null
+					|| !from.CanBeHarmful(m_Charmed, false)
+				)
+				{
+					return;
+				}
+
+				DeathAdder da = SummonFamiliarSpell.Table[from] as DeathAdder;
+				if (da == null || da.Deleted)
+				{
+					return;
+				}
+
+				Mobile targ = targeted as Mobile;
+				if (targ == null || !from.CanBeHarmful(targ, false))
+				{
+					return;
+				}
+
+				from.RevealingAction();
+				from.DoHarmful(targ, true);
+
+				m_Charmed.Combatant = targ;
+
+				if (m_Charmed.AIObject != null)
+				{
+					m_Charmed.AIObject.Action = ActionType.Combat;
+				}
+			}
+		}
+
+		private string[] SlayerName = { "영장류", "언데드", "정령", "데몬", "곤충류", "파충류", "요정" };
+
+		public override void AddNameProperties(ObjectPropertyList list)
+		{
+			base.AddNameProperties(list);
+
+			if (Controlled && !String.IsNullOrEmpty(EngravedText))
+			{
+				list.Add(1157315, EngravedText); // <BASEFONT COLOR=#668cff>Branded: ~1_VAL~<BASEFONT COLOR=#FFFFFF>
+			}
+
+			if (Core.ML)
+			{
+				if (DisplayWeight)
+				{
+					list.Add(TotalWeight == 1 ? 1072788 : 1072789, TotalWeight.ToString()); // Weight: ~1_WEIGHT~ stones
+				}
+
+				if (m_ControlOrder == OrderType.Guard)
+				{
+					list.Add(1080078); // guarding
+				}
+			}
 
 			int[] Kin = new int[2];
 			Kin = Util.SlayerCheck(this);
 			bool slaying = false;
 			string SlayingIndex = "";
-			if( Kin[0] != -1 )
+			if (Kin[0] != -1)
 			{
 				SlayingIndex = "종족\t" + SlayerName[Kin[0]];
 				slaying = true;
 			}
-			if( Kin[1] != -1 )
+			if (Kin[1] != -1)
 			{
 				SlayingIndex += " ," + SlayerName[Kin[1]];
 			}
-			if( slaying )
+			if (slaying)
 			{
-				list.Add( 1060660,  SlayingIndex );
-			}			
-			if( Tamable && ControlSlots > 0 && !Blessed )
-				list.Add( 1060658,  "요구 추종자 수\t{0}", ControlSlots );
+				list.Add(1060660, SlayingIndex);
+			}
+			if (Tamable && ControlSlots > 0 && !Blessed)
+				list.Add(1060658, "요구 추종자 수\t{0}", ControlSlots);
 
-            if (Summoned && !IsAnimatedDead && !IsNecroFamiliar && !(this is Clone))
-            {
-                list.Add(1049646); // (summoned)
-            }
-            else if (Controlled && Commandable)
-            {
-                if (this is BaseHire)
-                {
-                    list.Add(1062030); // (hired)
-                }
-                else if (IsBonded) //Intentional difference (showing ONLY bonded when bonded instead of bonded & tame)
-                {
-                    list.Add(1049608); // (bonded)
-                }
-                else
-                {
-                    list.Add(502006); // (tame)
-                }
+			if (Summoned && !IsAnimatedDead && !IsNecroFamiliar && !(this is Clone))
+			{
+				list.Add(1049646); // (summoned)
+			}
+			else if (Controlled && Commandable)
+			{
+				if (this is BaseHire)
+				{
+					list.Add(1062030); // (hired)
+				}
+				else if (IsBonded) //Intentional difference (showing ONLY bonded when bonded instead of bonded & tame)
+				{
+					list.Add(1049608); // (bonded)
+				}
+				else
+				{
+					list.Add(502006); // (tame)
+				}
 				/*
 				if( m_Level >= 100 )
 					list.Add( 1060658, "레벨\t{0}, 요구 경험치 없음", m_Level );
 				else
 					list.Add( 1060658, "레벨\t{0}, 요구 경험치: {1}", m_Level, Levels.ExpCal( this ) );
 				*/
-            }
+			}
 
 			if (Controlled && PassiveSkills != null && PassiveSkills[0] > 0)
 			{
@@ -6792,30 +7603,60 @@ namespace Server.Mobiles
 					string name = AnimalPassiveSkillHandler.GetPassiveName(id);
 					bool isPct = (id <= 1 || (id >= 7 && id <= 9));
 					string valStr = isPct ? String.Format("+{0}%", val) : String.Format("+{0}", val);
-					
+
 					string rawContent = String.Format("[{0} {1}]", name, valStr);
 					string coloredContent = rawContent;
 
 					// [등급 판정] 수치(val)를 기반으로 색상 결정
 					// AddGradePool(index, hp, main, resist, skill, hunger) 순서에 따른 수치 매칭
 					// 일반(0): 10/5/5, 희귀(1): 20/10/6, 영웅(2): 40/15/7, 서사(3): 60/20/8, 전설(4): 80/25/9, 신화(5): 100/30/10
-					
+
 					int colorIdx = 0; // 기본 일반
-					
+
 					// 저항력이나 스킬 수치 기준으로 등급 역산 (단순화된 판정 로직)
-					if (val >= 30 || (id >= 2 && id <= 6 && val >= 10) || (id >= 10 && val >= 30)) colorIdx = 8; // 신화
-					else if (val >= 25 || (id >= 2 && id <= 6 && val >= 9) || (id >= 10 && val >= 25)) colorIdx = 7; // 전설
-					else if (val >= 20 || (id >= 2 && id <= 6 && val >= 8) || (id >= 10 && val >= 20)) colorIdx = 6; // 서사
-					else if (val >= 15 || (id >= 2 && id <= 6 && val >= 7) || (id >= 10 && val >= 15)) colorIdx = 5; // 영웅
-					else if (val >= 10 || (id >= 2 && id <= 6 && val >= 6) || (id >= 10 && val >= 10)) colorIdx = 4; // 희귀
+					if (val >= 30 || (id >= 2 && id <= 6 && val >= 10) || (id >= 10 && val >= 30))
+						colorIdx = 8; // 신화
+					else if (val >= 25 || (id >= 2 && id <= 6 && val >= 9) || (id >= 10 && val >= 25))
+						colorIdx = 7; // 전설
+					else if (val >= 20 || (id >= 2 && id <= 6 && val >= 8) || (id >= 10 && val >= 20))
+						colorIdx = 6; // 서사
+					else if (val >= 15 || (id >= 2 && id <= 6 && val >= 7) || (id >= 10 && val >= 15))
+						colorIdx = 5; // 영웅
+					else if (val >= 10 || (id >= 2 && id <= 6 && val >= 6) || (id >= 10 && val >= 10))
+						colorIdx = 4; // 희귀
 
 					switch (colorIdx)
 					{
-						case 4: coloredContent = String.Format("<BASEFONT COLOR=#00A000>{0}<BASEFONT COLOR=#FFFFFF>", rawContent); break;
-						case 5: coloredContent = String.Format("<BASEFONT COLOR=#68D5ED>{0}<BASEFONT COLOR=#FFFFFF>", rawContent); break;
-						case 6: coloredContent = String.Format("<BASEFONT COLOR=#B36BFF>{0}<BASEFONT COLOR=#FFFFFF>", rawContent); break;
-						case 7: coloredContent = String.Format("<BASEFONT COLOR=#FFB400>{0}<BASEFONT COLOR=#FFFFFF>", rawContent); break;
-						case 8: coloredContent = String.Format("<BASEFONT COLOR=#FF0090>{0}<BASEFONT COLOR=#FFFFFF>", rawContent); break;
+						case 4:
+							coloredContent = String.Format(
+								"<BASEFONT COLOR=#00A000>{0}<BASEFONT COLOR=#FFFFFF>",
+								rawContent
+							);
+							break;
+						case 5:
+							coloredContent = String.Format(
+								"<BASEFONT COLOR=#68D5ED>{0}<BASEFONT COLOR=#FFFFFF>",
+								rawContent
+							);
+							break;
+						case 6:
+							coloredContent = String.Format(
+								"<BASEFONT COLOR=#B36BFF>{0}<BASEFONT COLOR=#FFFFFF>",
+								rawContent
+							);
+							break;
+						case 7:
+							coloredContent = String.Format(
+								"<BASEFONT COLOR=#FFB400>{0}<BASEFONT COLOR=#FFFFFF>",
+								rawContent
+							);
+							break;
+						case 8:
+							coloredContent = String.Format(
+								"<BASEFONT COLOR=#FF0090>{0}<BASEFONT COLOR=#FFFFFF>",
+								rawContent
+							);
+							break;
 					}
 
 					entries.Add(coloredContent);
@@ -6843,14 +7684,14 @@ namespace Server.Mobiles
 			}
 
 			//}
-            if (IsSoulbound)
-            {
-                list.Add(1159188); // <BASEFONT COLOR=#FF8300>Soulbound<BASEFONT COLOR=#FFFFFF>
-            }
+			if (IsSoulbound)
+			{
+				list.Add(1159188); // <BASEFONT COLOR=#FF8300>Soulbound<BASEFONT COLOR=#FFFFFF>
+			}
 
-            if (IsAmbusher)
-                list.Add(1155480); // Ambusher
-			
+			if (IsAmbusher)
+				list.Add(1155480); // Ambusher
+
 			//템 드랍표
 			/*
 			if( !Controlled && Fame > 0 && !Blessed && !(this is BaseVendor ) )
@@ -6866,7 +7707,7 @@ namespace Server.Mobiles
 					double dice = Utility.RandomMinMax(Mod / 1200, Mod / 1200);
 					dice = Math.Sqrt( dice );
 					itemRank = (int)dice;
-				}				
+				}
 				if( itemRank > 0 )
 					itemRank += 3;
 				/*
@@ -6906,117 +7747,129 @@ namespace Server.Mobiles
 			*/
 		}
 
-        public override void OnSingleClick(Mobile from)
-        {
-            if (Controlled && Commandable)
-            {
-                int number;
+		public override void OnSingleClick(Mobile from)
+		{
+			if (Controlled && Commandable)
+			{
+				int number;
 
-                if (Summoned)
-                {
-                    number = 1049646; // (summoned)
-                }
-                else if (IsBonded)
-                {
-                    number = 1049608; // (bonded)
-                }
-                else
-                {
-                    number = 502006; // (tame)
-                }
+				if (Summoned)
+				{
+					number = 1049646; // (summoned)
+				}
+				else if (IsBonded)
+				{
+					number = 1049608; // (bonded)
+				}
+				else
+				{
+					number = 502006; // (tame)
+				}
 
-                PrivateOverheadMessage(MessageType.Regular, 0x3B2, number, from.NetState);
-            }
+				PrivateOverheadMessage(MessageType.Regular, 0x3B2, number, from.NetState);
+			}
 
-            base.OnSingleClick(from);
-        }
+			base.OnSingleClick(from);
+		}
 
-        public virtual double TreasureMapChance { get { return TreasureMap.LootChance; } }
-        public virtual int TreasureMapLevel { get { return -1; } }
+		public virtual double TreasureMapChance
+		{
+			get { return TreasureMap.LootChance; }
+		}
+		public virtual int TreasureMapLevel
+		{
+			get { return -1; }
+		}
 
-        public virtual bool IgnoreYoungProtection { get { return false; } }
+		public virtual bool IgnoreYoungProtection
+		{
+			get { return false; }
+		}
 
-        public bool IsSoulbound { get; set; }
-        public bool IsSoulboundEnemies { get { return Core.EJ && PointsSystem.FellowshipData.Enabled; } }
+		public bool IsSoulbound { get; set; }
+		public bool IsSoulboundEnemies
+		{
+			get { return Core.EJ && PointsSystem.FellowshipData.Enabled; }
+		}
 
-        public override bool OnBeforeDeath()
-        {
-            int treasureLevel = TreasureMapLevel;
-            GetLootingRights();
+		public override bool OnBeforeDeath()
+		{
+			int treasureLevel = TreasureMapLevel;
+			GetLootingRights();
 
 			/*
-            if (IsSoulbound && LastKiller is PlayerMobile)
-            {
-                if (LastKiller.Backpack != null)
-                {
-                    EtherealSoulbinder es = LastKiller.Backpack.FindItemsByType<EtherealSoulbinder>().Where(x => x.SoulPoint < x.MaxSoulPoint).FirstOrDefault();
+			if (IsSoulbound && LastKiller is PlayerMobile)
+			{
+				if (LastKiller.Backpack != null)
+				{
+					EtherealSoulbinder es = LastKiller.Backpack.FindItemsByType<EtherealSoulbinder>().Where(x => x.SoulPoint < x.MaxSoulPoint).FirstOrDefault();
 
-                    if (es != null)
-                    {
-                        es.SoulPoint += HitsMax / 1000;
-                    }
-                }
-            }
-            if (!Summoned && !NoKillAwards && !IsBonded && !NoLootOnDeath)
-            {
-                if (treasureLevel >= 0)
-                {
+					if (es != null)
+					{
+						es.SoulPoint += HitsMax / 1000;
+					}
+				}
+			}
+			if (!Summoned && !NoKillAwards && !IsBonded && !NoLootOnDeath)
+			{
+				if (treasureLevel >= 0)
+				{
 					if (m_Paragon && Paragon.ChestChance > Utility.RandomDouble())
 					{
 						PackItem( new ParagonChest( this.Name, treasureLevel ) );
 					}
-                    else if (TreasureMapChance >= Utility.RandomDouble())
-                    {
-                        Map map = Map;
+					else if (TreasureMapChance >= Utility.RandomDouble())
+					{
+						Map map = Map;
 
-                        if (map == Map.Trammel && Siege.SiegeShard)
-                            map = Map.Felucca;
+						if (map == Map.Trammel && Siege.SiegeShard)
+							map = Map.Felucca;
 
-                        PackItem(new TreasureMap(treasureLevel, map));
-                    }
-                }
-            }
+						PackItem(new TreasureMap(treasureLevel, map));
+					}
+				}
+			}
 			*/
 
-            if (!Summoned && !NoKillAwards && !m_HasGeneratedLoot && !m_NoLootOnDeath)
-            {
-                m_HasGeneratedLoot = true;
-                GenerateLoot(false);
-            }
+			if (!Summoned && !NoKillAwards && !m_HasGeneratedLoot && !m_NoLootOnDeath)
+			{
+				m_HasGeneratedLoot = true;
+				GenerateLoot(false);
+			}
 
 			/*
-            if (!NoKillAwards && Region.IsPartOf("Doom"))
-            {
-                int bones = TheSummoningQuest.GetDaemonBonesFor(this);
+			if (!NoKillAwards && Region.IsPartOf("Doom"))
+			{
+				int bones = TheSummoningQuest.GetDaemonBonesFor(this);
 
-                if (bones > 0)
-                {
-                    PackItem(new DaemonBone(bones));
-                }
-            }
+				if (bones > 0)
+				{
+					PackItem(new DaemonBone(bones));
+				}
+			}
 			*/
-            if (IsAnimatedDead)
-            {
-                Effects.SendLocationEffect(Location, Map, 0x3728, 13, 1, 0x461, 4);
-            }
+			if (IsAnimatedDead)
+			{
+				Effects.SendLocationEffect(Location, Map, 0x3728, 13, 1, 0x461, 4);
+			}
 
-            InhumanSpeech speechType = SpeechType;
+			InhumanSpeech speechType = SpeechType;
 
-            if (speechType != null)
-            {
-                speechType.OnDeath(this);
-            }
+			if (speechType != null)
+			{
+				speechType.OnDeath(this);
+			}
 
-            if (m_ReceivedHonorContext != null)
-            {
-                m_ReceivedHonorContext.OnTargetKilled();
-            }
+			if (m_ReceivedHonorContext != null)
+			{
+				m_ReceivedHonorContext.OnTargetKilled();
+			}
 			//자동 룻 시스템
 			Container pack = this.Backpack;
-			if( this.TotalGold > 0 )
+			if (this.TotalGold > 0)
 			{
 				oldgold = this.TotalGold;
-				Item monstergold = pack.FindItemByType( typeof ( Gold ) );
+				Item monstergold = pack.FindItemByType(typeof(Gold));
 				monstergold.Delete();
 			}
 			//oldgold = this.Fame / 100 + Utility.RandomMinMax( 0, 20 );
@@ -7040,34 +7893,33 @@ namespace Server.Mobiles
 			*/
 
 			//던전 체크
-			DungeonCheckInDeath( DungeonCheck() );
-			
-            return base.OnBeforeDeath();
-        }
+			DungeonCheckInDeath(DungeonCheck());
 
-		private void DungeonCheckInDeath( int dungeon )
+			return base.OnBeforeDeath();
+		}
+
+		private void DungeonCheckInDeath(int dungeon)
 		{
-			if( dungeon == -1 )
+			if (dungeon == -1)
 				return;
 			int[] Loop = { 0, 1, 2, 3, 4 };
 
-			for( int i = 0; i < Loop.Length; i++)
+			for (int i = 0; i < Loop.Length; i++)
 			{
-				if( dungeon != Loop[i] )
+				if (dungeon != Loop[i])
 					Server.Event.dungeoncheck.Death[Loop[i]]++;
-				else if( Server.Event.dungeoncheck.Death[Loop[i]] >= 4 )
+				else if (Server.Event.dungeoncheck.Death[Loop[i]] >= 4)
 					Server.Event.dungeoncheck.Death[Loop[i]] -= 4;
 			}
 		}
 
-		
 		private int DungeonCheck()
 		{
-			if ( Server.Event.dungeoncheck == null )
+			if (Server.Event.dungeoncheck == null)
 			{
-				foreach ( Item item in World.Items.Values )
+				foreach (Item item in World.Items.Values)
 				{
-					if ( item is DungeonCheck )
+					if (item is DungeonCheck)
 					{
 						DungeonCheck ac = item as DungeonCheck;
 						Server.Event.dungeoncheck = ac;
@@ -7076,325 +7928,339 @@ namespace Server.Mobiles
 					}
 				}
 			}
-			if( Region.IsPartOf("Covetous") )
+			if (Region.IsPartOf("Covetous"))
 				return 0;
-			else if( Region.IsPartOf("Despise") )
+			else if (Region.IsPartOf("Despise"))
 				return 1;
-			else if( Region.IsPartOf("Deceit") )
+			else if (Region.IsPartOf("Deceit"))
 				return 2;
-			else if( Region.IsPartOf("Shame") )
+			else if (Region.IsPartOf("Shame"))
 				return 3;
-			else if( Region.IsPartOf("Orc Cave") )
+			else if (Region.IsPartOf("Orc Cave"))
 				return 4;
-			else if( Region.IsPartOf("Wrong") )
+			else if (Region.IsPartOf("Wrong"))
 				return 5;
-			else if( Region.IsPartOf("Painted Caves") )
+			else if (Region.IsPartOf("Painted Caves"))
 				return 6;
 
 			return -1;
 		}
-		
-		private int DungeonCheckInReward( int dungeon )
+
+		private int DungeonCheckInReward(int dungeon)
 		{
-			if( dungeon == -1 )
+			if (dungeon == -1)
 				return 0;
 			return Server.Event.dungeoncheck.Death[dungeon] / 100;
 		}
-		
-        private bool m_NoKillAwards;
-        private bool m_NoLootOnDeath;
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool NoKillAwards { get { return m_NoKillAwards; } set { m_NoKillAwards = value; } }
+		private bool m_NoKillAwards;
+		private bool m_NoLootOnDeath;
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool NoLootOnDeath { get { return m_NoLootOnDeath; } set { m_NoLootOnDeath = value; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool NoKillAwards
+		{
+			get { return m_NoKillAwards; }
+			set { m_NoKillAwards = value; }
+		}
 
-        public int ComputeBonusDamage(List<DamageEntry> list, Mobile m)
-        {
-            int bonus = 0;
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool NoLootOnDeath
+		{
+			get { return m_NoLootOnDeath; }
+			set { m_NoLootOnDeath = value; }
+		}
 
-            for (int i = list.Count - 1; i >= 0; --i)
-            {
-                DamageEntry de = list[i];
+		public int ComputeBonusDamage(List<DamageEntry> list, Mobile m)
+		{
+			int bonus = 0;
 
-                if (de.Damager == m || !(de.Damager is BaseCreature))
-                {
-                    continue;
-                }
+			for (int i = list.Count - 1; i >= 0; --i)
+			{
+				DamageEntry de = list[i];
 
-                BaseCreature bc = (BaseCreature)de.Damager;
-                Mobile master = null;
+				if (de.Damager == m || !(de.Damager is BaseCreature))
+				{
+					continue;
+				}
 
-                master = bc.GetMaster();
+				BaseCreature bc = (BaseCreature)de.Damager;
+				Mobile master = null;
 
-                if (master == m)
-                {
-                    bonus += de.DamageGiven;
-                }
-            }
+				master = bc.GetMaster();
 
-            return bonus;
-        }
+				if (master == m)
+				{
+					bonus += de.DamageGiven;
+				}
+			}
 
-        public Mobile GetMaster()
-        {
-            if (Controlled && ControlMaster != null)
-            {
-                return ControlMaster;
-            }
-            else if (Summoned && SummonMaster != null)
-            {
-                return SummonMaster;
-            }
+			return bonus;
+		}
 
-            return null;
-        }
+		public Mobile GetMaster()
+		{
+			if (Controlled && ControlMaster != null)
+			{
+				return ControlMaster;
+			}
+			else if (Summoned && SummonMaster != null)
+			{
+				return SummonMaster;
+			}
 
-        public virtual bool IsMonster
-        {
-            get
-            {
-                if (!Controlled)
-                    return true;
+			return null;
+		}
 
-                var master = GetMaster();
+		public virtual bool IsMonster
+		{
+			get
+			{
+				if (!Controlled)
+					return true;
 
-                return master == null || (master is BaseCreature && !((BaseCreature)master).Controlled);
-            }
-        }
+				var master = GetMaster();
 
-        public virtual bool IsAggressiveMonster
-        {
-            get
-            {
-                return IsMonster && (m_FightMode == FightMode.Closest ||
-                                     m_FightMode == FightMode.Strongest ||
-                                     m_FightMode == FightMode.Weakest ||
-                                     m_FightMode == FightMode.Good);
-            }
-        }
+				return master == null || (master is BaseCreature && !((BaseCreature)master).Controlled);
+			}
+		}
 
-        private class FKEntry
-        {
-            public Mobile m_Mobile;
-            public int m_Damage;
+		public virtual bool IsAggressiveMonster
+		{
+			get
+			{
+				return IsMonster
+					&& (
+						m_FightMode == FightMode.Closest
+						|| m_FightMode == FightMode.Strongest
+						|| m_FightMode == FightMode.Weakest
+						|| m_FightMode == FightMode.Good
+					);
+			}
+		}
 
-            public FKEntry(Mobile m, int damage)
-            {
-                m_Mobile = m;
-                m_Damage = damage;
-            }
-        }
+		private class FKEntry
+		{
+			public Mobile m_Mobile;
+			public int m_Damage;
 
-        public List<DamageStore> LootingRights { get; set; }
+			public FKEntry(Mobile m, int damage)
+			{
+				m_Mobile = m;
+				m_Damage = damage;
+			}
+		}
 
-        public bool HasLootingRights(Mobile m)
-        {
-            if (LootingRights == null)
-                return false;
+		public List<DamageStore> LootingRights { get; set; }
 
-            return LootingRights.FirstOrDefault(ds => ds.m_Mobile == m && ds.m_HasRight) != null;
-        }
+		public bool HasLootingRights(Mobile m)
+		{
+			if (LootingRights == null)
+				return false;
 
-        public Mobile GetHighestDamager()
-        {
-            if (LootingRights == null || LootingRights.Count == 0)
-                return null;
+			return LootingRights.FirstOrDefault(ds => ds.m_Mobile == m && ds.m_HasRight) != null;
+		}
 
-            return LootingRights[0].m_Mobile;
-        }
+		public Mobile GetHighestDamager()
+		{
+			if (LootingRights == null || LootingRights.Count == 0)
+				return null;
 
-        public bool IsHighestDamager(Mobile m)
-        {
-            return LootingRights != null && LootingRights.Count > 0 && LootingRights[0].m_Mobile == m;
-        }
+			return LootingRights[0].m_Mobile;
+		}
 
-        public List<DamageStore> GetLootingRights()
-        {
-            if (LootingRights != null)
-                return LootingRights;
+		public bool IsHighestDamager(Mobile m)
+		{
+			return LootingRights != null && LootingRights.Count > 0 && LootingRights[0].m_Mobile == m;
+		}
 
-            List<DamageEntry> damageEntries = DamageEntries;
-            int hitsMax = HitsMax;
+		public List<DamageStore> GetLootingRights()
+		{
+			if (LootingRights != null)
+				return LootingRights;
 
-            List<DamageStore> rights = new List<DamageStore>();
+			List<DamageEntry> damageEntries = DamageEntries;
+			int hitsMax = HitsMax;
 
-            for (int i = damageEntries.Count - 1; i >= 0; --i)
-            {
-                if (i >= damageEntries.Count)
-                {
-                    continue;
-                }
+			List<DamageStore> rights = new List<DamageStore>();
 
-                DamageEntry de = damageEntries[i];
+			for (int i = damageEntries.Count - 1; i >= 0; --i)
+			{
+				if (i >= damageEntries.Count)
+				{
+					continue;
+				}
 
-                if (de.HasExpired)
-                {
-                    damageEntries.RemoveAt(i);
-                    continue;
-                }
+				DamageEntry de = damageEntries[i];
 
-                int damage = de.DamageGiven;
+				if (de.HasExpired)
+				{
+					damageEntries.RemoveAt(i);
+					continue;
+				}
 
-                var respList = de.Responsible;
+				int damage = de.DamageGiven;
 
-                if (respList != null)
-                {
-                    for (int j = 0; j < respList.Count; ++j)
-                    {
-                        DamageEntry subEntry = respList[j];
-                        Mobile master = subEntry.Damager;
+				var respList = de.Responsible;
 
-                        if (master == null || master.Deleted || !master.Player)
-                        {
-                            continue;
-                        }
+				if (respList != null)
+				{
+					for (int j = 0; j < respList.Count; ++j)
+					{
+						DamageEntry subEntry = respList[j];
+						Mobile master = subEntry.Damager;
 
-                        bool needNewSubEntry = true;
+						if (master == null || master.Deleted || !master.Player)
+						{
+							continue;
+						}
 
-                        for (int k = 0; needNewSubEntry && k < rights.Count; ++k)
-                        {
-                            DamageStore ds = rights[k];
+						bool needNewSubEntry = true;
 
-                            if (ds.m_Mobile == master)
-                            {
-                                ds.m_Damage += subEntry.DamageGiven;
-                                needNewSubEntry = false;
-                            }
-                        }
+						for (int k = 0; needNewSubEntry && k < rights.Count; ++k)
+						{
+							DamageStore ds = rights[k];
 
-                        if (needNewSubEntry)
-                        {
-                            rights.Add(new DamageStore(master, subEntry.DamageGiven));
-                        }
+							if (ds.m_Mobile == master)
+							{
+								ds.m_Damage += subEntry.DamageGiven;
+								needNewSubEntry = false;
+							}
+						}
 
-                        damage -= subEntry.DamageGiven;
-                    }
-                }
+						if (needNewSubEntry)
+						{
+							rights.Add(new DamageStore(master, subEntry.DamageGiven));
+						}
 
-                Mobile m = de.Damager;
+						damage -= subEntry.DamageGiven;
+					}
+				}
 
-                if (m == null || m.Deleted || !m.Player)
-                {
-                    continue;
-                }
+				Mobile m = de.Damager;
 
-                if (damage <= 0)
-                {
-                    continue;
-                }
+				if (m == null || m.Deleted || !m.Player)
+				{
+					continue;
+				}
 
-                bool needNewEntry = true;
+				if (damage <= 0)
+				{
+					continue;
+				}
 
-                for (int j = 0; needNewEntry && j < rights.Count; ++j)
-                {
-                    DamageStore ds = rights[j];
+				bool needNewEntry = true;
 
-                    if (ds.m_Mobile == m)
-                    {
-                        ds.m_Damage += damage;
-                        needNewEntry = false;
-                    }
-                }
+				for (int j = 0; needNewEntry && j < rights.Count; ++j)
+				{
+					DamageStore ds = rights[j];
 
-                if (needNewEntry)
-                {
-                    rights.Add(new DamageStore(m, damage));
-                }
-            }
+					if (ds.m_Mobile == m)
+					{
+						ds.m_Damage += damage;
+						needNewEntry = false;
+					}
+				}
 
-            if (rights.Count > 0)
-            {
-                rights[0].m_Damage = (int)(rights[0].m_Damage * 1.25);
-                //This would be the first valid person attacking it.  Gets a 25% bonus.  Per 1/19/07 Five on Friday
+				if (needNewEntry)
+				{
+					rights.Add(new DamageStore(m, damage));
+				}
+			}
 
-                if (rights.Count > 1)
-                {
-                    rights.Sort(); //Sort by damage
-                }
+			if (rights.Count > 0)
+			{
+				rights[0].m_Damage = (int)(rights[0].m_Damage * 1.25);
+				//This would be the first valid person attacking it.  Gets a 25% bonus.  Per 1/19/07 Five on Friday
 
-                int topDamage = rights[0].m_Damage;
-                int minDamage;
+				if (rights.Count > 1)
+				{
+					rights.Sort(); //Sort by damage
+				}
 
-                if (Core.SA)
-                {
-                    minDamage = (int)((double)topDamage * 0.06);
-                }
-                else
-                {
-                    if (hitsMax >= 3000)
-                    {
+				int topDamage = rights[0].m_Damage;
+				int minDamage;
+
+				if (Core.SA)
+				{
+					minDamage = (int)((double)topDamage * 0.06);
+				}
+				else
+				{
+					if (hitsMax >= 3000)
+					{
 						minDamage = 200;
-                    }
-                    else if (hitsMax >= 1000)
-                    {
+					}
+					else if (hitsMax >= 1000)
+					{
 						minDamage = 50;
-                    }
-                    else
-                    {
-                        minDamage = topDamage / 2;
-                    }
-                }
+					}
+					else
+					{
+						minDamage = topDamage / 2;
+					}
+				}
 
-                for (int i = 0; i < rights.Count; ++i)
-                {
-                    DamageStore ds = rights[i];
+				for (int i = 0; i < rights.Count; ++i)
+				{
+					DamageStore ds = rights[i];
 
-                    ds.m_HasRight = (ds.m_Damage >= minDamage);
-                }
-            }
+					ds.m_HasRight = (ds.m_Damage >= minDamage);
+				}
+			}
 
-            LootingRights = rights;
-            return rights;
-        }
+			LootingRights = rights;
+			return rights;
+		}
 
-        #region Mondain's Legacy
-		
-        private bool m_Allured;
+		#region Mondain's Legacy
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool Allured 
-        { 
-            get { return m_Allured; } 
-            set 
-            { 
-                m_Allured = value;
+		private bool m_Allured;
 
-                if (value && Backpack != null)
-                {
-                    ColUtility.SafeDelete(Backpack.Items);
-                }
-            }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool Allured
+		{
+			get { return m_Allured; }
+			set
+			{
+				m_Allured = value;
 
-        public virtual bool GivesMLMinorArtifact { get { return false; } }
-        #endregion
+				if (value && Backpack != null)
+				{
+					ColUtility.SafeDelete(Backpack.Items);
+				}
+			}
+		}
 
-        public virtual void OnRelease(Mobile from)
-        {
-            if (m_Allured)
-            {
-                Timer.DelayCall(TimeSpan.FromSeconds(2), Delete);
-            }
-        }
+		public virtual bool GivesMLMinorArtifact
+		{
+			get { return false; }
+		}
+		#endregion
 
-        public override void OnItemLifted(Mobile from, Item item)
-        {
-            base.OnItemLifted(from, item);
+		public virtual void OnRelease(Mobile from)
+		{
+			if (m_Allured)
+			{
+				Timer.DelayCall(TimeSpan.FromSeconds(2), Delete);
+			}
+		}
 
-            InvalidateProperties();
-        }
+		public override void OnItemLifted(Mobile from, Item item)
+		{
+			base.OnItemLifted(from, item);
 
-        public virtual void OnKilledBy(Mobile mob)
-        {
-            if (m_Paragon && Paragon.CheckArtifactChance(mob, this))
-            {
-                Paragon.GiveArtifactTo(mob);
-            }
+			InvalidateProperties();
+		}
 
-            EventSink.InvokeOnKilledBy(new OnKilledByEventArgs(this, mob));
-        }
+		public virtual void OnKilledBy(Mobile mob)
+		{
+			if (m_Paragon && Paragon.CheckArtifactChance(mob, this))
+			{
+				Paragon.GiveArtifactTo(mob);
+			}
+
+			EventSink.InvokeOnKilledBy(new OnKilledByEventArgs(this, mob));
+		}
 
 		private int oldgold = 0;
 		private int oldexp = 0;
@@ -7404,20 +8270,20 @@ namespace Server.Mobiles
 		public void BossDead(BaseCreature boss)
 		{
 			var list = new List<Mobile>();
-			foreach ( Mobile m in World.Mobiles.Values )
+			foreach (Mobile m in World.Mobiles.Values)
 			{
-				if ( m is BaseCreature )
+				if (m is BaseCreature)
 				{
 					BaseCreature bc = m as BaseCreature;
 					{
-						if( boss is GiantTurkey && m is SummonedTurkey )
+						if (boss is GiantTurkey && m is SummonedTurkey)
 							list.Add(m);
 					}
 				}
 			}
-			if ( list.Count > 0 )
+			if (list.Count > 0)
 			{
-				for( int i = 0; i < list.Count; ++i)
+				for (int i = 0; i < list.Count; ++i)
 				{
 					list[i].Delete();
 				}
@@ -7451,7 +8317,7 @@ namespace Server.Mobiles
 								BaseCreature bc = m as BaseCreature;
 								if( bc.ControlMaster != null || bc.AI == AIType.AI_Vendor )
 									continue;
-								if( bc.Home.X - Math.Abs( xs.Location.X ) <= 10 && bc.Home.Y - Math.Abs( xs.Location.Y ) <= 10 )  
+								if( bc.Home.X - Math.Abs( xs.Location.X ) <= 10 && bc.Home.Y - Math.Abs( xs.Location.Y ) <= 10 )
 								{
 									kill.Add( bc );
 								}
@@ -7459,7 +8325,7 @@ namespace Server.Mobiles
 						}
 					}
 				}
-			}	
+			}
 			if( kill.Count > 0 )
 			{
 				for ( int j = 0; j < kill.Count; ++j )
@@ -7470,7 +8336,7 @@ namespace Server.Mobiles
 			}
 			*/
 		}
-		
+
 		private void HandleBondedDeath()
 		{
 			int sound = GetDeathSound();
@@ -7480,8 +8346,8 @@ namespace Server.Mobiles
 				Effects.PlaySound(this, Map, sound);
 			}
 
-			m_DeathTime = DateTime.Now + TimeSpan.FromMinutes( ControlSlots * ControlSlots );
-			
+			m_DeathTime = DateTime.Now + TimeSpan.FromMinutes(ControlSlots * ControlSlots);
+
 			Warmode = false;
 
 			Poison = null;
@@ -7525,8 +8391,14 @@ namespace Server.Mobiles
 
 			Mobile owner = ControlMaster;
 
-			if (owner == null || owner.Deleted || owner.Map != Map || !owner.InRange(this, 12) || !CanSee(owner) ||
-				!InLOS(owner))
+			if (
+				owner == null
+				|| owner.Deleted
+				|| owner.Map != Map
+				|| !owner.InRange(this, 12)
+				|| !CanSee(owner)
+				|| !InLOS(owner)
+			)
 			{
 				if (OwnerAbandonTime == DateTime.MinValue)
 				{
@@ -7542,19 +8414,23 @@ namespace Server.Mobiles
 
 			CheckStatTimers();
 		}
-		
-        public override void OnDeath(Container c)
-        {
-            MeerMage.StopEffect(this, false);
-			if(IsBonded)
+
+		public override void OnDeath(Container c)
+		{
+			MeerMage.StopEffect(this, false);
+			if (IsBonded)
 			{
 				HandleBondedDeath();
 				return;
 			}
 			LootingRights = null;
 
-			if (Summoned || m_NoKillAwards) { base.OnDeath(c); return; }
-			
+			if (Summoned || m_NoKillAwards)
+			{
+				base.OnDeath(c);
+				return;
+			}
+
 			var rights = GetLootingRights();
 			Server.Misc.GoldDistributor.Distribute(this, rights);
 			for (int i = 0; i < rights.Count; ++i)
@@ -7564,7 +8440,7 @@ namespace Server.Mobiles
 				{
 					QuestHelper.CheckCreature((PlayerMobile)ds.m_Mobile, this);
 				}
-			}	
+			}
 
 			DungeonRegion dungeon = Region.GetRegion(typeof(DungeonRegion)) as DungeonRegion;
 
@@ -7580,40 +8456,40 @@ namespace Server.Mobiles
 			}
 			var e = new CreatureDeathEventArgs(this, LastKiller, c);
 			EventSink.InvokeCreatureDeath(e);
-			base.OnDeath(c); 
+			base.OnDeath(c);
 
 			if (!e.PreventDefault && DeleteCorpseOnDeath && !e.PreventDelete && !c.Deleted)
 			{
 				c.Delete();
 			}
-        }
+		}
 
 		private int Dungeon_MonsterTier_Score()
 		{
 			int score = 0;
-			if( Boss )
+			if (Boss)
 			{
 				score = 3;
 			}
-			else if( Grade == 7 )
+			else if (Grade == 7)
 			{
 				score = 10;
 			}
-			else if( Grade == 6 )
+			else if (Grade == 6)
 			{
 				score = 6;
 			}
-			else if( Grade >= 2 )
+			else if (Grade >= 2)
 			{
 				score = 2;
 			}
-			else if( Grade == 1 )
+			else if (Grade == 1)
 			{
 				score = 1;
 			}
 			return score;
 		}
-		
+
 		public override void OnStatsQuery(Mobile from)
 		{
 			// 기본 체력/상태 패킷 전송
@@ -7625,8 +8501,8 @@ namespace Server.Mobiles
 				from.Send(new MobileMana(this)); // 0xA2: 실제 마나 정보
 				from.Send(new MobileStam(this)); // 0xA3: 실제 기력 정보
 			}
-		}		
-		
+		}
+
 		public override void OnManaChange(int oldValue)
 		{
 			base.OnManaChange(oldValue);
@@ -7666,971 +8542,1113 @@ namespace Server.Mobiles
 				}
 				eable.Free();
 			}
-		}		
-		
-        public bool GivenSpecialArtifact { get; set; }
+		}
 
-        /* To save on cpu usage, RunUO creatures only reacquire creatures under the following circumstances:
-        *  - 10 seconds have elapsed since the last time it tried
-        *  - The creature was attacked
-        *  - Some creatures, like dragons, will reacquire when they see someone move
-        *
-        * This functionality appears to be implemented on OSI as well
-        */
+		public bool GivenSpecialArtifact { get; set; }
 
-        private long m_NextReacquireTime;
+		/* To save on cpu usage, RunUO creatures only reacquire creatures under the following circumstances:
+		*  - 10 seconds have elapsed since the last time it tried
+		*  - The creature was attacked
+		*  - Some creatures, like dragons, will reacquire when they see someone move
+		*
+		* This functionality appears to be implemented on OSI as well
+		*/
 
-        public long NextReacquireTime { get { return m_NextReacquireTime; } set { m_NextReacquireTime = value; } }
+		private long m_NextReacquireTime;
 
-        public virtual TimeSpan ReacquireDelay { get { double delay = 10.0 - (double)Int * 0.2; 
-		if( delay < 0.1 ) 
-			delay = 0.1;
-		return TimeSpan.FromSeconds(delay); } }
-        public virtual bool ReacquireOnMovement { get { return false; } }
+		public long NextReacquireTime
+		{
+			get { return m_NextReacquireTime; }
+			set { m_NextReacquireTime = value; }
+		}
 
-        public virtual bool AcquireOnApproach { get { return m_Paragon || ApproachWait; } }
-        public virtual int AcquireOnApproachRange { get { return ApproachRange; } }
+		public virtual TimeSpan ReacquireDelay
+		{
+			get
+			{
+				double delay = 10.0 - (double)Int * 0.2;
+				if (delay < 0.1)
+					delay = 0.1;
+				return TimeSpan.FromSeconds(delay);
+			}
+		}
+		public virtual bool ReacquireOnMovement
+		{
+			get { return false; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool ApproachWait { get; set; }
+		public virtual bool AcquireOnApproach
+		{
+			get { return m_Paragon || ApproachWait; }
+		}
+		public virtual int AcquireOnApproachRange
+		{
+			get { return ApproachRange; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int ApproachRange { get; set; }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool ApproachWait { get; set; }
 
-        public override void OnDelete()
-        {
-            Mobile m = m_ControlMaster;
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int ApproachRange { get; set; }
 
-            SetControlMaster(null);
-            SummonMaster = null;
+		public override void OnDelete()
+		{
+			Mobile m = m_ControlMaster;
 
-            if (m_ReceivedHonorContext != null)
-            {
-                m_ReceivedHonorContext.Cancel();
-            }
+			SetControlMaster(null);
+			SummonMaster = null;
 
-            base.OnDelete();
+			if (m_ReceivedHonorContext != null)
+			{
+				m_ReceivedHonorContext.Cancel();
+			}
 
-            if (m != null)
-            {
-                m.InvalidateProperties();
-            }
-        }
+			base.OnDelete();
 
-        public override bool CanBeHarmful(IDamageable damageable, bool message, bool ignoreOurBlessedness)
-        {
-            Mobile target = damageable as Mobile;
+			if (m != null)
+			{
+				m.InvalidateProperties();
+			}
+		}
 
-            if (RecentSetControl && GetMaster() == target)
-            {
-                return false;
-            }
+		public override bool CanBeHarmful(IDamageable damageable, bool message, bool ignoreOurBlessedness)
+		{
+			Mobile target = damageable as Mobile;
 
-            if (target is BaseFactionGuard)
-            {
-                return false;
-            }
+			if (RecentSetControl && GetMaster() == target)
+			{
+				return false;
+			}
 
-            if ((target is BaseVendor && ((BaseVendor)target).IsInvulnerable) || target is PlayerVendor || target is TownCrier)
-            {
-                return false;
-            }
+			if (target is BaseFactionGuard)
+			{
+				return false;
+			}
 
-            if (damageable is IDamageableItem && !((IDamageableItem)damageable).CanDamage)
-            {
-                return false;
-            }
+			if (
+				(target is BaseVendor && ((BaseVendor)target).IsInvulnerable)
+				|| target is PlayerVendor
+				|| target is TownCrier
+			)
+			{
+				return false;
+			}
 
-            return base.CanBeHarmful(damageable, message, ignoreOurBlessedness);
-        }
+			if (damageable is IDamageableItem && !((IDamageableItem)damageable).CanDamage)
+			{
+				return false;
+			}
 
-        public override bool CanBeRenamedBy(Mobile from)
-        {
-            bool ret = base.CanBeRenamedBy(from);
+			return base.CanBeHarmful(damageable, message, ignoreOurBlessedness);
+		}
 
-            if (Controlled && from == ControlMaster && !from.Region.IsPartOf<Jail>())
-            {
-                ret = true;
-            }
+		public override bool CanBeRenamedBy(Mobile from)
+		{
+			bool ret = base.CanBeRenamedBy(from);
 
-            return ret;
-        }
+			if (Controlled && from == ControlMaster && !from.Region.IsPartOf<Jail>())
+			{
+				ret = true;
+			}
 
-        public bool SetControlMaster(Mobile m)
-        {
-            if (m == null)
-            {
-                ControlMaster = null;
-                Controlled = false;
-                ControlTarget = null;
-                ControlOrder = OrderType.None;
-                Guild = null;
-				
+			return ret;
+		}
+
+		public bool SetControlMaster(Mobile m)
+		{
+			if (m == null)
+			{
+				ControlMaster = null;
+				Controlled = false;
+				ControlTarget = null;
+				ControlOrder = OrderType.None;
+				Guild = null;
+
 				IsBonded = false;
 
-                UpdateMasteryInfo();
+				UpdateMasteryInfo();
 
-                Delta(MobileDelta.Noto);
-            }
-            else
-            {
-                ISpawner se = Spawner;
+				Delta(MobileDelta.Noto);
+			}
+			else
+			{
+				ISpawner se = Spawner;
 
-                if (se != null && se.UnlinkOnTaming)
-                {
-                    Spawner.Remove(this);
-                    Spawner = null;
-                }
+				if (se != null && se.UnlinkOnTaming)
+				{
+					Spawner.Remove(this);
+					Spawner = null;
+				}
 
-                if (m.Followers + ControlSlots > m.FollowersMax)
-                {
-                    m.SendLocalizedMessage(1049607); // You have too many followers to control that creature.
-                    return false;
-                }
+				if (m.Followers + ControlSlots > m.FollowersMax)
+				{
+					m.SendLocalizedMessage(1049607); // You have too many followers to control that creature.
+					return false;
+				}
 
-                CurrentWayPoint = null; //so tamed animals don't try to go back
+				CurrentWayPoint = null; //so tamed animals don't try to go back
 
-                Home = Point3D.Zero;
+				Home = Point3D.Zero;
 
-                ControlMaster = m;
-                Controlled = true;
-                ControlTarget = null;
-                ControlOrder = OrderType.Come;
-                Guild = null;
+				ControlMaster = m;
+				Controlled = true;
+				ControlTarget = null;
+				ControlOrder = OrderType.Come;
+				Guild = null;
 
-                UpdateMasteryInfo();
+				UpdateMasteryInfo();
 
-                AdjustSpeeds();
-                CurrentSpeed = m_dActiveSpeed;
+				AdjustSpeeds();
+				CurrentSpeed = m_dActiveSpeed;
 
-                if (m_DeleteTimer != null)
-                {
-                    m_DeleteTimer.Stop();
-                    m_DeleteTimer = null;
-                }
+				if (m_DeleteTimer != null)
+				{
+					m_DeleteTimer.Stop();
+					m_DeleteTimer = null;
+				}
 
-                RemoveAggressed(m);
-                RemoveAggressor(m);
-                m.RemoveAggressed(this);
-                m.RemoveAggressor(this);
+				RemoveAggressed(m);
+				RemoveAggressor(m);
+				m.RemoveAggressed(this);
+				m.RemoveAggressor(this);
 
-                if (Combatant != null)
-                    Combatant = null;
+				if (Combatant != null)
+					Combatant = null;
 
-                if (m.Combatant == this)
-                    m.Combatant = null;
+				if (m.Combatant == this)
+					m.Combatant = null;
 
-                RecentSetControl = true;
-                Timer.DelayCall(TimeSpan.FromSeconds(3), () => RecentSetControl = false);
+				RecentSetControl = true;
+				Timer.DelayCall(TimeSpan.FromSeconds(3), () => RecentSetControl = false);
 
-                Delta(MobileDelta.Noto);
-            }
+				Delta(MobileDelta.Noto);
+			}
 
-            InvalidateProperties();
+			InvalidateProperties();
 
-            return true;
-        }
+			return true;
+		}
 
-        public bool RecentSetControl { get; set; }
+		public bool RecentSetControl { get; set; }
 
-        public virtual void OnAfterTame(Mobile tamer)
-        {
-			if( Owners.Count == 0 )
+		public virtual void OnAfterTame(Mobile tamer)
+		{
+			if (Owners.Count == 0)
 			{
 				ControlSlotsMax = ControlSlots;
 			}
 			AnimalTaming.ScaleStats(this);
 			/*
-            if (StatLossAfterTame && (!PetTrainingHelper.Enabled || Owners.Count == 0))
-            {
-                AnimalTaming.ScaleStats(this, 0.5);
-            }
-			*/
-        }
-
-        public override void OnRegionChange(Region Old, Region New)
-        {
-            base.OnRegionChange(Old, New);
-
-            if (Controlled)
-            {
-                SpawnEntry se = Spawner as SpawnEntry;
-
-                if (se != null && !se.UnlinkOnTaming && (New == null || !New.AcceptsSpawnsFrom(se.Region)))
-                {
-                    Spawner.Remove(this);
-                    Spawner = null;
-                }
-            }
-        }
-
-        public virtual double GetDispelDifficulty()
-        {
-            double dif = DispelDifficulty;
-            if (SummonMaster != null)
-                dif += ArcaneEmpowermentSpell.GetDispellBonus(SummonMaster);
-            return dif;
-        }
-
-        private static bool m_Summoning;
-
-        public static bool Summoning { get { return m_Summoning; } set { m_Summoning = value; } }
-
-        public static bool Summon(BaseCreature creature, Mobile caster, Point3D p, int sound, TimeSpan duration)
-        {
-            return Summon(creature, true, caster, p, sound, duration);
-        }
-
-        public static bool Summon(
-            BaseCreature creature, bool controlled, Mobile caster, Point3D p, int sound, TimeSpan duration)
-        {
-            if (caster.Followers + creature.ControlSlots > caster.FollowersMax)
-            {
-                caster.SendLocalizedMessage(1049645); // You have too many followers to summon that creature.
-                creature.Delete();
-                return false;
-            }
-
-            m_Summoning = true;
-
-            if (controlled)
-            {
-                creature.SetControlMaster(caster);
-            }
-
-            creature.RangeHome = 10;
-            creature.Summoned = true;
-
-            creature.SummonMaster = caster;
-
-            Container pack = creature.Backpack;
-
-            if (pack != null)
-            {
-                for (int i = pack.Items.Count - 1; i >= 0; --i)
-                {
-                    if (i >= pack.Items.Count)
-                    {
-                        continue;
-                    }
-
-                    pack.Items[i].Delete();
-                }
-            }
-
-            creature.SetHits(
-                (int)Math.Floor(creature.HitsMax * (1 + ArcaneEmpowermentSpell.GetSpellBonus(caster, false) / 100.0)));
-
-            new UnsummonTimer(caster, creature, duration).Start();
-            creature.m_SummonEnd = DateTime.UtcNow + duration;
-
-            creature.MoveToWorld(p, caster.Map);
-
-            Effects.PlaySound(p, creature.Map, sound);
-
-            m_Summoning = false;
-
-            // Skill Masteries
-            //creature.HitsMaxSeed += MasteryInfo.EnchantedSummoningBonus(creature);
-            //creature.Hits = creature.HitsMaxSeed;
-
-            return true;
-        }        
-
-        private static bool EnableRummaging = true;
-
-        private const double ChanceToRummage = 0.5; // 50%
-
-        private const double MinutesToNextRummageMin = 1.0;
-        private const double MinutesToNextRummageMax = 4.0;
-
-        private const double MinutesToNextChanceMin = 0.25;
-        private const double MinutesToNextChanceMax = 0.75;
-
-        private long m_NextRummageTime;
-
-        public virtual bool IsDispellable { get { return Summoned && !IsAnimatedDead; } }
-
-        #region Healing
-        public virtual double HealChance { get { return 0.0; } }
-
-        private long m_NextHealTime = Core.TickCount;
-        private long m_NextHealOwnerTime = Core.TickCount;
-        private Timer m_HealTimer;
-
-        public bool IsHealing { get { return (m_HealTimer != null); } }
-
-        public virtual bool CheckHeal()
-        {
-            long tc = Core.TickCount;
-
-            if (Alive && !IsHealing && !BardPacified)
-            {
-                Mobile owner = ControlMaster;
-
-                if (owner != null && tc >= m_NextHealOwnerTime && CanBeBeneficial(owner, true, true) &&
-                    owner.Map == Map && InRange(owner, 2) && InLOS(owner) && owner.Hits < .78 * owner.HitsMax)
-                {
-                    HealStart(owner);
-                    m_NextHealOwnerTime = tc + (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
-
-                    return true;
-                }
-                else if (tc >= m_NextHealTime && CanBeBeneficial(this) && (Hits < .78 * HitsMax || Poisoned))
-                {
-                    HealStart(this);
-                    m_NextHealTime = tc + (int)TimeSpan.FromSeconds(1.0).TotalMilliseconds;
-
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public virtual void HealStart(Mobile patient)
-        {
-            bool onSelf = (patient == this);
-
-            //DoBeneficial( patient );
-
-            RevealingAction();
-
-            if (!onSelf)
-            {
-                patient.RevealingAction();
-                patient.SendLocalizedMessage(1008078, false, Name); //  : Attempting to heal you.
-            }
-
-            double seconds = 6.5 + (patient.Alive ? 0.0 : 5.0);
-
-            m_HealTimer = Timer.DelayCall(TimeSpan.FromSeconds(seconds), new TimerStateCallback(Heal_Callback), patient);
-        }
-
-        private void Heal_Callback(object state)
-        {
-            if (state is Mobile)
-            {
-                Heal((Mobile)state);
-            }
-        }
-
-        public virtual void Heal(Mobile patient)
-        {
-            if (!Alive || Map == Map.Internal || !CanBeBeneficial(patient, true, true) || patient.Map != Map ||
-                !InRange(patient, RangePerception))
-            {
-                StopHeal();
-                return;
-            }
-
-            bool onSelf = (patient == this);
-
-            if (!patient.Alive)
-            { }
-            else if (patient.Poisoned)
-            {
-                int poisonLevel = patient.Poison.RealLevel;
-
-                double healing = Skills.Healing.Value;
-                double anatomy = Skills.Anatomy.Value;
-                double chance = (healing - 30.0) / 50.0 - poisonLevel * 0.1;
-
-                if ((healing >= 60.0 && anatomy >= 60.0) && chance > Utility.RandomDouble())
-                {
-                    if (patient.CurePoison(this))
-                    {
-                        patient.SendLocalizedMessage(1010059); // You have been cured of all poisons.
-
-                        CheckSkill(SkillName.Healing, 60.0 + poisonLevel * 10.0); // TODO: Verify formula
-                        CheckSkill(SkillName.Anatomy, 60.0 + poisonLevel * 10.0);
-                    }
-                }
-            }
-            else
-            {
-                double healing = Skills.Healing.Value;
-                double anatomy = Skills.Anatomy.Value;
-                double chance = (healing + 10.0) / 100.0;
-
-                if (chance > Utility.RandomDouble())
-                {
-                    double min, max;
-
-                    min = (anatomy / 10.0) + (healing / 6.0) + 4.0;
-                    max = (anatomy / 8.0) + (healing / 3.0) + 4.0;
-
-                    if (onSelf)
-                    {
-                        max += 10;
-                    }
-
-                    double toHeal = min + (Utility.RandomDouble() * (max - min));
-
-                    patient.Heal((int)toHeal, this);
-
-                    CheckSkill(SkillName.Healing, toHeal);
-                    CheckSkill(SkillName.Anatomy, toHeal);
-                }
-                else if (PetTrainingHelper.Enabled && Controlled)
-                {
-                    CheckSkill(SkillName.Healing, 10);
-                    CheckSkill(SkillName.Anatomy, 10);
-                }
-            }
-
-            HealEffect(patient);
-
-            StopHeal();
-
-            if ((onSelf && Hits >= .78 * HitsMax && Hits < HitsMax) ||
-                (!onSelf && patient.Hits >= .78 * patient.HitsMax && patient.Hits < patient.HitsMax))
-            {
-                HealStart(patient);
-            }
-        }
-
-        public virtual void StopHeal()
-        {
-            if (m_HealTimer != null)
-            {
-                m_HealTimer.Stop();
-            }
-
-            m_HealTimer = null;
-        }
-
-        public virtual void HealEffect(Mobile patient)
-        {
-            patient.PlaySound(0x57);
-        }
-        #endregion
-
-        public override void OnHeal(ref int amount, Mobile from)
-        {
-            base.OnHeal(ref amount, from);
-
-            if (from == null)
-                return;
-
-            if (Core.SA && amount > 0 && from != null && from != this)
-            {
-                for (int i = Aggressed.Count - 1; i >= 0; i--)
-                {
-                    var info = Aggressed[i];
-
-                    if (info.Defender.InRange(Location, Core.GlobalMaxUpdateRange) && info.Defender.DamageEntries.Any(de => de.Damager == this))
-                    {
-                        info.Defender.RegisterDamage(amount, from);
-                    }
-
-                    if (info.Defender.Player && from.CanBeHarmful(info.Defender))
-                    {
-                        from.DoHarmful(info.Defender, true);
-                    }
-                }
-
-                for (int i = Aggressors.Count - 1; i >= 0; i--)
-                {
-                    var info = Aggressors[i];
-
-                    if (info.Attacker.InRange(Location, Core.GlobalMaxUpdateRange) && info.Attacker.DamageEntries.Any(de => de.Damager == this))
-                    {
-                        info.Attacker.RegisterDamage(amount, from);
-                    }
-
-                    if (info.Attacker.Player && from.CanBeHarmful(info.Attacker))
-                    {
-                        from.DoHarmful(info.Attacker, true);
-                    }
-                }
-            }
-        }
-
-        #region Spawn Position
-        public virtual Point3D GetSpawnPosition(int range)
-        {
-            return GetSpawnPosition(Location, Map, range);
-        }
-
-        public static Point3D GetSpawnPosition(Point3D from, Map map, int range)
-        {
-            if (map == null)
-                return from;
-
-            for (int i = 0; i < 10; i++)
-            {
-                int x = from.X + Utility.RandomMinMax(-range, range);
-                int y = from.Y + Utility.RandomMinMax(-range, range);
-                int z = map.GetAverageZ(x, y);
-
-                Point3D p = new Point3D(x, y, from.Z);
-
-                if (map.CanSpawnMobile(p) && map.LineOfSight(from, p))
-                    return p;
-
-                p = new Point3D(x, y, z);
-
-                if (map.CanSpawnMobile(p) && map.LineOfSight(from, p))
-                    return p;
-            }
-
-            return from;
-        }
-        #endregion
-
-        #region Rage
-        public virtual void DoRageHit(Mobile defender)
-        {
-            if (defender != null && defender.Alive)
-            {
-                var damage = 0;
-
-                SpecialAbility.ColossalBlow.DoEffects(this, defender, ref damage);
-            }
-        }
-        #endregion
-
-        #region Barding Skills
-        private long m_NextDiscord;
-        private long m_NextPeace;
-        private long m_NextProvoke;
-
-        public virtual bool CanDiscord 
-        { 
-            get 
-            {
-                if (Controlled && AbilityProfile != null)
-                {
-                    return AbilityProfile.HasAbility(MagicalAbility.Discordance);
-                }
-
-                return false; 
-            } 
-        }
-
-        public virtual bool CanPeace { get { return false; } }
-        public virtual bool CanProvoke { get { return false; } }
-
-        public virtual bool PlayInstrumentSound { get { return true; } }
-
-        public virtual bool DoDiscord()
-        {
-            Mobile target = GetBardTarget(Controlled);
-
-            if (target == null || !target.InLOS(this) || !InRange(target.Location, BaseInstrument.GetBardRange(this, SkillName.Discordance)) || CheckInstrument() == null)
-                return false;
-
-            // TODO: get mana
-            if (AbilityProfile != null && AbilityProfile.HasAbility(MagicalAbility.Discordance) && Mana < 25)
-            {
-                return false;
-            }
-            else
-            {
-                Mana -= 25;
-            }
-
-            if (Spell != null)
-                Spell = null;
-
-            if (!UseSkill(SkillName.Discordance))
-                return false;
-
-            if (Target is Discordance.DiscordanceTarget)
-            {
-                Target.Invoke(this, target);
-                return true;
-            }
-
-            return false;
-        }
-
-        public virtual bool DoPeace()
-        {
-            Mobile target = GetBardTarget();
-
-            if (target == null || !target.InLOS(this) || !InRange(target.Location, BaseInstrument.GetBardRange(this, SkillName.Peacemaking)) || CheckInstrument() == null)
-                return false;
-
-            if (Spell != null)
-                Spell = null;
-
-            if (!UseSkill(SkillName.Peacemaking))
-                return false;
-
-            if (Target is Peacemaking.InternalTarget)
-            {
-                Target.Invoke(this, target);
-                return true;
-            }
-
-            return false;
-        }
-
-        public virtual bool DoProvoke()
-        {
-            Mobile target = GetBardTarget();
-
-            if (target == null || !target.InLOS(this) || !InRange(target.Location, BaseInstrument.GetBardRange(this, SkillName.Provocation)) || CheckInstrument() == null || !(target is BaseCreature))
-                return false;
-
-            if (Spell != null)
-                Spell = null;
-
-            if (!UseSkill(SkillName.Provocation))
-                return false;
-
-            if (Target is Provocation.InternalFirstTarget)
-            {
-                Target.Invoke(this, target);
-
-                if (Target is Provocation.InternalSecondTarget)
-                {
-                    Mobile second = GetSecondTarget((BaseCreature)target);
-
-                    if (second != null)
-                        Target.Invoke(this, second);
-
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Auto Checks creature for an instrument. Creates if none in pack, and sets for barding skills.
-        /// </summary>
-        /// <returns></returns>
-        public BaseInstrument CheckInstrument()
-        {
-            BaseInstrument inst = BaseInstrument.GetInstrument(this);
-
-            if (inst == null)
-            {
-                if (Backpack == null)
-                    return null;
-
-                inst = Backpack.FindItemByType(typeof(BaseInstrument)) as BaseInstrument;
-
-                if (inst == null)
-                {
-                    inst = new Harp();
-                    inst.SuccessSound = PlayInstrumentSound ? 0x58B : 0;
-                    inst.FailureSound = PlayInstrumentSound ? 0x58C : 0;
-                    inst.Movable = false;
-                    inst.Quality = ItemQuality.Exceptional;
-
-                    PackItem(inst);
-                }
-            }
-
-            BaseInstrument.SetInstrument(this, inst);
-
-            return inst;
-        }
-
-        /// <summary>
-        /// Default Method to get bard target. Simplisticly gets combatant. Override for a more dynamic way to choosing target
-        /// </summary>
-        /// <returns></returns>
-        public virtual Mobile GetBardTarget(bool creaturesOnly = false)
-        {
-            Mobile m = Combatant as Mobile;
-
-            if (m == null && GetMaster() is PlayerMobile)
-            {
-                m = GetMaster().Combatant as Mobile;
-            }
-
-            if (creaturesOnly && m is PlayerMobile)
-            {
-                return null;
-            }
-
-            if (m == null || m == this || !CanBeHarmful(m, false) || (creaturesOnly && !(m is BaseCreature)))
-            {
-                List<AggressorInfo> list = new List<AggressorInfo>();
-                list.AddRange(Aggressors.Where(info => !creaturesOnly || info.Attacker is PlayerMobile));
-
-                if (list.Count > 0)
-                {
-                    m = list[Utility.Random(list.Count)].Attacker;
-                }
-                else
-                {
-                    m = null;
-                }
-
-                ColUtility.Free(list);
-            }
-
-            return m;
-        }
-
-        /// <summary>
-        /// Used for second Provocation target.
-        /// </summary>
-        /// <param name="first"></param>
-        /// <returns></returns>
-        public virtual Mobile GetSecondTarget(BaseCreature first)
-        {
-            if (first == null)
-                return null;
-
-            int range = BaseInstrument.GetBardRange(this, SkillName.Provocation);
-
-            IPooledEnumerable eable = Map.GetMobilesInRange(Location, range);
-            List<Mobile> possibles = new List<Mobile>();
-
-            foreach (Mobile m in eable)
-            {
-                if (m != first && m != this && first.InRange(m.Location, range))
-                {
-                    if (CanBeHarmful(m, false) && first.CanBeHarmful(m, false))
-                        possibles.Add(m);
-                }
-            }
-            eable.Free();
-
-            Mobile t = null;
-
-            if (possibles.Count > 0)
-                t = possibles[Utility.Random(possibles.Count)];
-
-            ColUtility.Free(possibles);
-
-            return t;
-        }
-        #endregion
-
-        #region TeleportTo
-        private long m_NextTeleport;
-
-        public virtual bool TeleportsTo { get { return false; } }
-        public virtual TimeSpan TeleportDuration { get { return TimeSpan.FromSeconds(1); } }
-        public virtual int TeleportRange { get { return 16; } }
-        public virtual double TeleportProb { get { return 1; } }
-
-        public virtual bool TeleportsPets { get { return false; } }
-
-        private static int[] m_Offsets = new int[]
+			if (StatLossAfterTame && (!PetTrainingHelper.Enabled || Owners.Count == 0))
 			{
-				-1, -1,
-				-1,  0,
-				-1,  1,
-				0, -1,
-				0,  1,
-				1, -1,
-				1,  0,
-				1,  1
-			};
+				AnimalTaming.ScaleStats(this, 0.5);
+			}
+			*/
+		}
 
-        public void TryTeleport()
-        {
-            if (Deleted)
-                return;
+		public override void OnRegionChange(Region Old, Region New)
+		{
+			base.OnRegionChange(Old, New);
 
-            if (TeleportProb > Utility.RandomDouble())
-            {
-                Mobile toTeleport = GetTeleportTarget();
+			if (Controlled)
+			{
+				SpawnEntry se = Spawner as SpawnEntry;
 
-                if (toTeleport != null)
-                {
-                    int offset = Utility.Random(8) * 2;
+				if (se != null && !se.UnlinkOnTaming && (New == null || !New.AcceptsSpawnsFrom(se.Region)))
+				{
+					Spawner.Remove(this);
+					Spawner = null;
+				}
+			}
+		}
 
-                    Point3D to = Location;
+		public virtual double GetDispelDifficulty()
+		{
+			double dif = DispelDifficulty;
+			if (SummonMaster != null)
+				dif += ArcaneEmpowermentSpell.GetDispellBonus(SummonMaster);
+			return dif;
+		}
 
-                    for (int i = 0; i < m_Offsets.Length; i += 2)
-                    {
-                        int x = X + m_Offsets[(offset + i) % m_Offsets.Length];
-                        int y = Y + m_Offsets[(offset + i + 1) % m_Offsets.Length];
+		private static bool m_Summoning;
 
-                        if (Map.CanSpawnMobile(x, y, Z))
-                        {
-                            to = new Point3D(x, y, Z);
-                            break;
-                        }
-                        else
-                        {
-                            int z = Map.GetAverageZ(x, y);
+		public static bool Summoning
+		{
+			get { return m_Summoning; }
+			set { m_Summoning = value; }
+		}
 
-                            if (Map.CanSpawnMobile(x, y, z))
-                            {
-                                to = new Point3D(x, y, z);
-                                break;
-                            }
-                        }
-                    }
+		public static bool Summon(BaseCreature creature, Mobile caster, Point3D p, int sound, TimeSpan duration)
+		{
+			return Summon(creature, true, caster, p, sound, duration);
+		}
 
-                    Point3D from = toTeleport.Location;
-                    toTeleport.MoveToWorld(to, Map);
+		public static bool Summon(
+			BaseCreature creature,
+			bool controlled,
+			Mobile caster,
+			Point3D p,
+			int sound,
+			TimeSpan duration
+		)
+		{
+			if (caster.Followers + creature.ControlSlots > caster.FollowersMax)
+			{
+				caster.SendLocalizedMessage(1049645); // You have too many followers to summon that creature.
+				creature.Delete();
+				return false;
+			}
 
-                    Server.Spells.SpellHelper.Turn(this, toTeleport);
-                    Server.Spells.SpellHelper.Turn(toTeleport, this);
+			m_Summoning = true;
 
-                    toTeleport.ProcessDelta();
+			if (controlled)
+			{
+				creature.SetControlMaster(caster);
+			}
 
-                    Effects.SendLocationParticles(EffectItem.Create(from, Map, EffectItem.DefaultDuration), 0x3728, 10, 10, 2023);
-                    Effects.SendLocationParticles(EffectItem.Create(to, Map, EffectItem.DefaultDuration), 0x3728, 10, 10, 5023);
+			creature.RangeHome = 10;
+			creature.Summoned = true;
 
-                    toTeleport.PlaySound(0x1FE);
+			creature.SummonMaster = caster;
 
-                    Combatant = toTeleport;
+			Container pack = creature.Backpack;
 
-                    OnAfterTeleport(toTeleport);
-                }
-            }
-        }
+			if (pack != null)
+			{
+				for (int i = pack.Items.Count - 1; i >= 0; --i)
+				{
+					if (i >= pack.Items.Count)
+					{
+						continue;
+					}
 
-        public virtual Mobile GetTeleportTarget()
-        {
-            IPooledEnumerable eable = GetMobilesInRange(TeleportRange);
-            List<Mobile> list = new List<Mobile>();
+					pack.Items[i].Delete();
+				}
+			}
 
-            foreach (Mobile m in eable)
-            {
-                bool isPet = m is BaseCreature && ((BaseCreature)m).GetMaster() is PlayerMobile;
+			creature.SetHits(
+				(int)Math.Floor(creature.HitsMax * (1 + ArcaneEmpowermentSpell.GetSpellBonus(caster, false) / 100.0))
+			);
 
-                if (m != this && (m.Player || (TeleportsPets && isPet)) && CanBeHarmful(m) && CanSee(m))
-                {
-                    list.Add(m);
-                }
-            }
+			new UnsummonTimer(caster, creature, duration).Start();
+			creature.m_SummonEnd = DateTime.UtcNow + duration;
 
-            eable.Free();
+			creature.MoveToWorld(p, caster.Map);
 
-            Mobile mob = null;
+			Effects.PlaySound(p, creature.Map, sound);
 
-            if (list.Count > 0)
-                mob = list[Utility.Random(list.Count)];
+			m_Summoning = false;
 
-            ColUtility.Free(list);
-            return mob;
-        }
+			// Skill Masteries
+			//creature.HitsMaxSeed += MasteryInfo.EnchantedSummoningBonus(creature);
+			//creature.Hits = creature.HitsMaxSeed;
 
-        public virtual void OnAfterTeleport(Mobile m)
-        {
-        }
-        #endregion
+			return true;
+		}
 
-        #region Detect Hidden
-        private long _NextDetect;
+		private static bool EnableRummaging = true;
 
-        public virtual bool CanDetectHidden { get { return Controlled && Skills.DetectHidden.Value > 0; } }
+		private const double ChanceToRummage = 0.5; // 50%
 
-        public virtual int FindPlayerDelayBase { get { return (15000 / Int); } }
-        public virtual int FindPlayerDelayMax { get { return 60; } }
-        public virtual int FindPlayerDelayMin { get { return 5; } }
-        public virtual int FindPlayerDelayHigh { get { return 10; } }
-        public virtual int FindPlayerDelayLow { get { return 9; } }
+		private const double MinutesToNextRummageMin = 1.0;
+		private const double MinutesToNextRummageMax = 4.0;
 
-        public virtual void TryFindPlayer()
-        {
-            if (Deleted || Map == null)
-            {
-                return;
-            }
+		private const double MinutesToNextChanceMin = 0.25;
+		private const double MinutesToNextChanceMax = 0.75;
 
-            double srcSkill = Skills[SkillName.DetectHidden].Value;
+		private long m_NextRummageTime;
 
-            if (srcSkill <= 0)
-            {
-                return;
-            }
+		public virtual bool IsDispellable
+		{
+			get { return Summoned && !IsAnimatedDead; }
+		}
 
-            DetectHidden.OnUse(this);
+		#region Healing
+		public virtual double HealChance
+		{
+			get { return 0.0; }
+		}
 
-            if (Target is DetectHidden.InternalTarget)
-            {
-                Target.Invoke(this, this);
-                DebugSay("Checking for hidden players");
-            }
-            else
-            {
-                DebugSay("Failed Checking for hidden players");
-            }
-        }
-        #endregion
+		private long m_NextHealTime = Core.TickCount;
+		private long m_NextHealOwnerTime = Core.TickCount;
+		private Timer m_HealTimer;
+
+		public bool IsHealing
+		{
+			get { return (m_HealTimer != null); }
+		}
+
+		public virtual bool CheckHeal()
+		{
+			long tc = Core.TickCount;
+
+			if (Alive && !IsHealing && !BardPacified)
+			{
+				Mobile owner = ControlMaster;
+
+				if (
+					owner != null
+					&& tc >= m_NextHealOwnerTime
+					&& CanBeBeneficial(owner, true, true)
+					&& owner.Map == Map
+					&& InRange(owner, 2)
+					&& InLOS(owner)
+					&& owner.Hits < .78 * owner.HitsMax
+				)
+				{
+					HealStart(owner);
+					m_NextHealOwnerTime = tc + (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
+
+					return true;
+				}
+				else if (tc >= m_NextHealTime && CanBeBeneficial(this) && (Hits < .78 * HitsMax || Poisoned))
+				{
+					HealStart(this);
+					m_NextHealTime = tc + (int)TimeSpan.FromSeconds(1.0).TotalMilliseconds;
+
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		public virtual void HealStart(Mobile patient)
+		{
+			bool onSelf = (patient == this);
+
+			//DoBeneficial( patient );
+
+			RevealingAction();
+
+			if (!onSelf)
+			{
+				patient.RevealingAction();
+				patient.SendLocalizedMessage(1008078, false, Name); //  : Attempting to heal you.
+			}
+
+			double seconds = 6.5 + (patient.Alive ? 0.0 : 5.0);
+
+			m_HealTimer = Timer.DelayCall(
+				TimeSpan.FromSeconds(seconds),
+				new TimerStateCallback(Heal_Callback),
+				patient
+			);
+		}
+
+		private void Heal_Callback(object state)
+		{
+			if (state is Mobile)
+			{
+				Heal((Mobile)state);
+			}
+		}
+
+		public virtual void Heal(Mobile patient)
+		{
+			if (
+				!Alive
+				|| Map == Map.Internal
+				|| !CanBeBeneficial(patient, true, true)
+				|| patient.Map != Map
+				|| !InRange(patient, RangePerception)
+			)
+			{
+				StopHeal();
+				return;
+			}
+
+			bool onSelf = (patient == this);
+
+			if (!patient.Alive) { }
+			else if (patient.Poisoned)
+			{
+				int poisonLevel = patient.Poison.RealLevel;
+
+				double healing = Skills.Healing.Value;
+				double anatomy = Skills.Anatomy.Value;
+				double chance = (healing - 30.0) / 50.0 - poisonLevel * 0.1;
+
+				if ((healing >= 60.0 && anatomy >= 60.0) && chance > Utility.RandomDouble())
+				{
+					if (patient.CurePoison(this))
+					{
+						patient.SendLocalizedMessage(1010059); // You have been cured of all poisons.
+
+						CheckSkill(SkillName.Healing, 60.0 + poisonLevel * 10.0); // TODO: Verify formula
+						CheckSkill(SkillName.Anatomy, 60.0 + poisonLevel * 10.0);
+					}
+				}
+			}
+			else
+			{
+				double healing = Skills.Healing.Value;
+				double anatomy = Skills.Anatomy.Value;
+				double chance = (healing + 10.0) / 100.0;
+
+				if (chance > Utility.RandomDouble())
+				{
+					double min,
+						max;
+
+					min = (anatomy / 10.0) + (healing / 6.0) + 4.0;
+					max = (anatomy / 8.0) + (healing / 3.0) + 4.0;
+
+					if (onSelf)
+					{
+						max += 10;
+					}
+
+					double toHeal = min + (Utility.RandomDouble() * (max - min));
+
+					patient.Heal((int)toHeal, this);
+
+					CheckSkill(SkillName.Healing, toHeal);
+					CheckSkill(SkillName.Anatomy, toHeal);
+				}
+				else if (PetTrainingHelper.Enabled && Controlled)
+				{
+					CheckSkill(SkillName.Healing, 10);
+					CheckSkill(SkillName.Anatomy, 10);
+				}
+			}
+
+			HealEffect(patient);
+
+			StopHeal();
+
+			if (
+				(onSelf && Hits >= .78 * HitsMax && Hits < HitsMax)
+				|| (!onSelf && patient.Hits >= .78 * patient.HitsMax && patient.Hits < patient.HitsMax)
+			)
+			{
+				HealStart(patient);
+			}
+		}
+
+		public virtual void StopHeal()
+		{
+			if (m_HealTimer != null)
+			{
+				m_HealTimer.Stop();
+			}
+
+			m_HealTimer = null;
+		}
+
+		public virtual void HealEffect(Mobile patient)
+		{
+			patient.PlaySound(0x57);
+		}
+		#endregion
+
+		public override void OnHeal(ref int amount, Mobile from)
+		{
+			base.OnHeal(ref amount, from);
+
+			if (from == null)
+				return;
+
+			if (Core.SA && amount > 0 && from != null && from != this)
+			{
+				for (int i = Aggressed.Count - 1; i >= 0; i--)
+				{
+					var info = Aggressed[i];
+
+					if (
+						info.Defender.InRange(Location, Core.GlobalMaxUpdateRange)
+						&& info.Defender.DamageEntries.Any(de => de.Damager == this)
+					)
+					{
+						info.Defender.RegisterDamage(amount, from);
+					}
+
+					if (info.Defender.Player && from.CanBeHarmful(info.Defender))
+					{
+						from.DoHarmful(info.Defender, true);
+					}
+				}
+
+				for (int i = Aggressors.Count - 1; i >= 0; i--)
+				{
+					var info = Aggressors[i];
+
+					if (
+						info.Attacker.InRange(Location, Core.GlobalMaxUpdateRange)
+						&& info.Attacker.DamageEntries.Any(de => de.Damager == this)
+					)
+					{
+						info.Attacker.RegisterDamage(amount, from);
+					}
+
+					if (info.Attacker.Player && from.CanBeHarmful(info.Attacker))
+					{
+						from.DoHarmful(info.Attacker, true);
+					}
+				}
+			}
+		}
+
+		#region Spawn Position
+		public virtual Point3D GetSpawnPosition(int range)
+		{
+			return GetSpawnPosition(Location, Map, range);
+		}
+
+		public static Point3D GetSpawnPosition(Point3D from, Map map, int range)
+		{
+			if (map == null)
+				return from;
+
+			for (int i = 0; i < 10; i++)
+			{
+				int x = from.X + Utility.RandomMinMax(-range, range);
+				int y = from.Y + Utility.RandomMinMax(-range, range);
+				int z = map.GetAverageZ(x, y);
+
+				Point3D p = new Point3D(x, y, from.Z);
+
+				if (map.CanSpawnMobile(p) && map.LineOfSight(from, p))
+					return p;
+
+				p = new Point3D(x, y, z);
+
+				if (map.CanSpawnMobile(p) && map.LineOfSight(from, p))
+					return p;
+			}
+
+			return from;
+		}
+		#endregion
+
+		#region Rage
+		public virtual void DoRageHit(Mobile defender)
+		{
+			if (defender != null && defender.Alive)
+			{
+				var damage = 0;
+
+				SpecialAbility.ColossalBlow.DoEffects(this, defender, ref damage);
+			}
+		}
+		#endregion
+
+		#region Barding Skills
+		private long m_NextDiscord;
+		private long m_NextPeace;
+		private long m_NextProvoke;
+
+		public virtual bool CanDiscord
+		{
+			get
+			{
+				if (Controlled && AbilityProfile != null)
+				{
+					return AbilityProfile.HasAbility(MagicalAbility.Discordance);
+				}
+
+				return false;
+			}
+		}
+
+		public virtual bool CanPeace
+		{
+			get { return false; }
+		}
+		public virtual bool CanProvoke
+		{
+			get { return false; }
+		}
+
+		public virtual bool PlayInstrumentSound
+		{
+			get { return true; }
+		}
+
+		public virtual bool DoDiscord()
+		{
+			Mobile target = GetBardTarget(Controlled);
+
+			if (
+				target == null
+				|| !target.InLOS(this)
+				|| !InRange(target.Location, BaseInstrument.GetBardRange(this, SkillName.Discordance))
+				|| CheckInstrument() == null
+			)
+				return false;
+
+			// TODO: get mana
+			if (AbilityProfile != null && AbilityProfile.HasAbility(MagicalAbility.Discordance) && Mana < 25)
+			{
+				return false;
+			}
+			else
+			{
+				Mana -= 25;
+			}
+
+			if (Spell != null)
+				Spell = null;
+
+			if (!UseSkill(SkillName.Discordance))
+				return false;
+
+			if (Target is Discordance.DiscordanceTarget)
+			{
+				Target.Invoke(this, target);
+				return true;
+			}
+
+			return false;
+		}
+
+		public virtual bool DoPeace()
+		{
+			Mobile target = GetBardTarget();
+
+			if (
+				target == null
+				|| !target.InLOS(this)
+				|| !InRange(target.Location, BaseInstrument.GetBardRange(this, SkillName.Peacemaking))
+				|| CheckInstrument() == null
+			)
+				return false;
+
+			if (Spell != null)
+				Spell = null;
+
+			if (!UseSkill(SkillName.Peacemaking))
+				return false;
+
+			if (Target is Peacemaking.InternalTarget)
+			{
+				Target.Invoke(this, target);
+				return true;
+			}
+
+			return false;
+		}
+
+		public virtual bool DoProvoke()
+		{
+			Mobile target = GetBardTarget();
+
+			if (
+				target == null
+				|| !target.InLOS(this)
+				|| !InRange(target.Location, BaseInstrument.GetBardRange(this, SkillName.Provocation))
+				|| CheckInstrument() == null
+				|| !(target is BaseCreature)
+			)
+				return false;
+
+			if (Spell != null)
+				Spell = null;
+
+			if (!UseSkill(SkillName.Provocation))
+				return false;
+
+			if (Target is Provocation.InternalFirstTarget)
+			{
+				Target.Invoke(this, target);
+
+				if (Target is Provocation.InternalSecondTarget)
+				{
+					Mobile second = GetSecondTarget((BaseCreature)target);
+
+					if (second != null)
+						Target.Invoke(this, second);
+
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Auto Checks creature for an instrument. Creates if none in pack, and sets for barding skills.
+		/// </summary>
+		/// <returns></returns>
+		public BaseInstrument CheckInstrument()
+		{
+			BaseInstrument inst = BaseInstrument.GetInstrument(this);
+
+			if (inst == null)
+			{
+				if (Backpack == null)
+					return null;
+
+				inst = Backpack.FindItemByType(typeof(BaseInstrument)) as BaseInstrument;
+
+				if (inst == null)
+				{
+					inst = new Harp();
+					inst.SuccessSound = PlayInstrumentSound ? 0x58B : 0;
+					inst.FailureSound = PlayInstrumentSound ? 0x58C : 0;
+					inst.Movable = false;
+					inst.Quality = ItemQuality.Exceptional;
+
+					PackItem(inst);
+				}
+			}
+
+			BaseInstrument.SetInstrument(this, inst);
+
+			return inst;
+		}
+
+		/// <summary>
+		/// Default Method to get bard target. Simplisticly gets combatant. Override for a more dynamic way to choosing target
+		/// </summary>
+		/// <returns></returns>
+		public virtual Mobile GetBardTarget(bool creaturesOnly = false)
+		{
+			Mobile m = Combatant as Mobile;
+
+			if (m == null && GetMaster() is PlayerMobile)
+			{
+				m = GetMaster().Combatant as Mobile;
+			}
+
+			if (creaturesOnly && m is PlayerMobile)
+			{
+				return null;
+			}
+
+			if (m == null || m == this || !CanBeHarmful(m, false) || (creaturesOnly && !(m is BaseCreature)))
+			{
+				List<AggressorInfo> list = new List<AggressorInfo>();
+				list.AddRange(Aggressors.Where(info => !creaturesOnly || info.Attacker is PlayerMobile));
+
+				if (list.Count > 0)
+				{
+					m = list[Utility.Random(list.Count)].Attacker;
+				}
+				else
+				{
+					m = null;
+				}
+
+				ColUtility.Free(list);
+			}
+
+			return m;
+		}
+
+		/// <summary>
+		/// Used for second Provocation target.
+		/// </summary>
+		/// <param name="first"></param>
+		/// <returns></returns>
+		public virtual Mobile GetSecondTarget(BaseCreature first)
+		{
+			if (first == null)
+				return null;
+
+			int range = BaseInstrument.GetBardRange(this, SkillName.Provocation);
+
+			IPooledEnumerable eable = Map.GetMobilesInRange(Location, range);
+			List<Mobile> possibles = new List<Mobile>();
+
+			foreach (Mobile m in eable)
+			{
+				if (m != first && m != this && first.InRange(m.Location, range))
+				{
+					if (CanBeHarmful(m, false) && first.CanBeHarmful(m, false))
+						possibles.Add(m);
+				}
+			}
+			eable.Free();
+
+			Mobile t = null;
+
+			if (possibles.Count > 0)
+				t = possibles[Utility.Random(possibles.Count)];
+
+			ColUtility.Free(possibles);
+
+			return t;
+		}
+		#endregion
+
+		#region TeleportTo
+		private long m_NextTeleport;
+
+		public virtual bool TeleportsTo
+		{
+			get { return false; }
+		}
+		public virtual TimeSpan TeleportDuration
+		{
+			get { return TimeSpan.FromSeconds(1); }
+		}
+		public virtual int TeleportRange
+		{
+			get { return 16; }
+		}
+		public virtual double TeleportProb
+		{
+			get { return 1; }
+		}
+
+		public virtual bool TeleportsPets
+		{
+			get { return false; }
+		}
+
+		private static int[] m_Offsets = new int[] { -1, -1, -1, 0, -1, 1, 0, -1, 0, 1, 1, -1, 1, 0, 1, 1 };
+
+		public void TryTeleport()
+		{
+			if (Deleted)
+				return;
+
+			if (TeleportProb > Utility.RandomDouble())
+			{
+				Mobile toTeleport = GetTeleportTarget();
+
+				if (toTeleport != null)
+				{
+					int offset = Utility.Random(8) * 2;
+
+					Point3D to = Location;
+
+					for (int i = 0; i < m_Offsets.Length; i += 2)
+					{
+						int x = X + m_Offsets[(offset + i) % m_Offsets.Length];
+						int y = Y + m_Offsets[(offset + i + 1) % m_Offsets.Length];
+
+						if (Map.CanSpawnMobile(x, y, Z))
+						{
+							to = new Point3D(x, y, Z);
+							break;
+						}
+						else
+						{
+							int z = Map.GetAverageZ(x, y);
+
+							if (Map.CanSpawnMobile(x, y, z))
+							{
+								to = new Point3D(x, y, z);
+								break;
+							}
+						}
+					}
+
+					Point3D from = toTeleport.Location;
+					toTeleport.MoveToWorld(to, Map);
+
+					Server.Spells.SpellHelper.Turn(this, toTeleport);
+					Server.Spells.SpellHelper.Turn(toTeleport, this);
+
+					toTeleport.ProcessDelta();
+
+					Effects.SendLocationParticles(
+						EffectItem.Create(from, Map, EffectItem.DefaultDuration),
+						0x3728,
+						10,
+						10,
+						2023
+					);
+					Effects.SendLocationParticles(
+						EffectItem.Create(to, Map, EffectItem.DefaultDuration),
+						0x3728,
+						10,
+						10,
+						5023
+					);
+
+					toTeleport.PlaySound(0x1FE);
+
+					Combatant = toTeleport;
+
+					OnAfterTeleport(toTeleport);
+				}
+			}
+		}
+
+		public virtual Mobile GetTeleportTarget()
+		{
+			IPooledEnumerable eable = GetMobilesInRange(TeleportRange);
+			List<Mobile> list = new List<Mobile>();
+
+			foreach (Mobile m in eable)
+			{
+				bool isPet = m is BaseCreature && ((BaseCreature)m).GetMaster() is PlayerMobile;
+
+				if (m != this && (m.Player || (TeleportsPets && isPet)) && CanBeHarmful(m) && CanSee(m))
+				{
+					list.Add(m);
+				}
+			}
+
+			eable.Free();
+
+			Mobile mob = null;
+
+			if (list.Count > 0)
+				mob = list[Utility.Random(list.Count)];
+
+			ColUtility.Free(list);
+			return mob;
+		}
+
+		public virtual void OnAfterTeleport(Mobile m) { }
+		#endregion
+
+		#region Detect Hidden
+		private long _NextDetect;
+
+		public virtual bool CanDetectHidden
+		{
+			get { return Controlled && Skills.DetectHidden.Value > 0; }
+		}
+
+		public virtual int FindPlayerDelayBase
+		{
+			get { return (15000 / Int); }
+		}
+		public virtual int FindPlayerDelayMax
+		{
+			get { return 60; }
+		}
+		public virtual int FindPlayerDelayMin
+		{
+			get { return 5; }
+		}
+		public virtual int FindPlayerDelayHigh
+		{
+			get { return 10; }
+		}
+		public virtual int FindPlayerDelayLow
+		{
+			get { return 9; }
+		}
+
+		public virtual void TryFindPlayer()
+		{
+			if (Deleted || Map == null)
+			{
+				return;
+			}
+
+			double srcSkill = Skills[SkillName.DetectHidden].Value;
+
+			if (srcSkill <= 0)
+			{
+				return;
+			}
+
+			DetectHidden.OnUse(this);
+
+			if (Target is DetectHidden.InternalTarget)
+			{
+				Target.Invoke(this, this);
+				DebugSay("Checking for hidden players");
+			}
+			else
+			{
+				DebugSay("Failed Checking for hidden players");
+			}
+		}
+		#endregion
 		/*
 		private void GradeAura()
 		{
 			if( m_Grade == 7 )
 			{
 				this.FixedParticles( 9010, 10, 5, 9031, EffectLayer.LeftHand );
-				this.FixedParticles( 9010, 10, 5, 9031, EffectLayer.RightHand );				
+				this.FixedParticles( 9010, 10, 5, 9031, EffectLayer.RightHand );
 			}
 			else if( m_Grade == 6 )
 			{
 				this.FixedParticles( 9010, 10, 5, 9020, EffectLayer.LeftHand );
-				this.FixedParticles( 9010, 10, 5, 9020, EffectLayer.RightHand );				
+				this.FixedParticles( 9010, 10, 5, 9020, EffectLayer.RightHand );
 			}
 			else
 			{
 				this.FixedParticles( 9010, 10, 5, 9010, EffectLayer.LeftHand );
-				this.FixedParticles( 9010, 10, 5, 9010, EffectLayer.RightHand );				
-			}		
+				this.FixedParticles( 9010, 10, 5, 9010, EffectLayer.RightHand );
+			}
 		}
 		*/
-		
-        public virtual void OnThink()
-        {
+
+		public virtual void OnThink()
+		{
 			if (this.Grade <= 0 && !this.Deleted && this.Alive)
 			{
 				Server.Misc.CreatureBalancer.Apply(this);
-			}		
+			}
 			//자동 부활
-			if( poisonattacker > 0.0 && !Poisoned )
+			if (poisonattacker > 0.0 && !Poisoned)
 				poisonattacker = 0.0;
-			if( IsDeadBondedPet && m_DeathTime < DateTime.Now && ControlMaster != null && ((Mobile)ControlMaster).Hunger > 1 )
+			if (
+				IsDeadBondedPet
+				&& m_DeathTime < DateTime.Now
+				&& ControlMaster != null
+				&& ((Mobile)ControlMaster).Hunger > 1
+			)
 			{
 				ResurrectPet();
 			}
-			if( ControlMaster != null && CurrentSpeed != 0.01 )
+			if (ControlMaster != null && CurrentSpeed != 0.01)
 			{
-				if( !IsBonded && !( this is BaseEscortable ) )
+				if (!IsBonded && !(this is BaseEscortable))
 					IsBonded = true;
 				CurrentSpeed = 0.01;
 			}
 
 			//거리 조절
 			BaseWeapon weapon = this.Weapon as BaseWeapon;
-			if( weapon.MaxRange > 1)
+			if (weapon.MaxRange > 1)
 			{
-				if( AI != AIType.AI_Archer )
+				if (AI != AIType.AI_Archer)
 				{
-					if( m_AttackRange > 1 )
+					if (m_AttackRange > 1)
 						weapon.MaxRange = (int)m_AttackRange;
 					else
 						weapon.MaxRange = 1;
 				}
 			}
-			
-			if( attackchargeTime < DateTime.Now )
+
+			if (attackchargeTime < DateTime.Now)
 				attackcharge = 0;
-			if( attackcharge >= 300 )
-				attackchargeTime = DateTime.Now + TimeSpan.FromSeconds( 30.0 );
-			
-			if ( !m_LevelCheck && !Controlled && !(this is BaseVendor ) )
+			if (attackcharge >= 300)
+				attackchargeTime = DateTime.Now + TimeSpan.FromSeconds(30.0);
+
+			if (!m_LevelCheck && !Controlled && !(this is BaseVendor))
 			{
 				m_RawName = Name;
 				int LootPlus = 0;
 
 				//보스 설정
 				//데스파이즈
-				if( this is BogThing || this is Cyclops || this is OgreLord || this is Reaper /* || this is RottingCorpse */ || this is GiantTurkey || this is GiantDreadSpider || this is Lilith || this is AncientLich || this is BoneDemon || this is Titan || this is OrcBrute )
+				if (
+					this is BogThing
+					|| this is Cyclops
+					|| this is OgreLord
+					|| this is Reaper /* || this is RottingCorpse */
+					|| this is GiantTurkey
+					|| this is GiantDreadSpider
+					|| this is Lilith
+					|| this is AncientLich
+					|| this is BoneDemon
+					|| this is Titan
+					|| this is OrcBrute
+				)
 				{
-					if( Tamable )
+					if (Tamable)
 						Tamable = false;
 					m_Boss = true;
 				}
 				//변환 불가능 지역
-				if( Region.IsPartOf("Ice") || Region.IsPartOf("Fire") || Region.IsPartOf("Destard")  )
+				if (Region.IsPartOf("Ice") || Region.IsPartOf("Fire") || Region.IsPartOf("Destard"))
 				{
 					this.Grade = 1;
 				}
-				if( m_Boss )
+				if (m_Boss)
 				{
 					//Name = "Boss " + Name;
 					LootPlus = 5;
@@ -8686,7 +9704,6 @@ namespace Server.Mobiles
 				m_LevelCheck = true;
 			}
 
-
 			/*
 			if( m_ControlMaster != null )
 			{
@@ -8700,106 +9717,125 @@ namespace Server.Mobiles
 				}
 			}
 			*/
-			if ( LastOwner != null && !Controlled )
+			if (LastOwner != null && !Controlled)
 				Delete();
 
-            long tc = Core.TickCount;
+			long tc = Core.TickCount;
 
-            if (Paralyzed || Frozen)
-            {
-                return;
-            }
+			if (Paralyzed || Frozen)
+			{
+				return;
+			}
 
-            if (!Summoned && _Profile != null)
-            {
-                SpecialAbility.CheckThinkTrigger(this);
-                AreaEffect.CheckThinkTrigger(this);
-            }
+			if (!Summoned && _Profile != null)
+			{
+				SpecialAbility.CheckThinkTrigger(this);
+				AreaEffect.CheckThinkTrigger(this);
+			}
 
-            if (Combatant != null && Core.TOL)
-            {
-                CheckCastMastery();
-            }
+			if (Combatant != null && Core.TOL)
+			{
+				CheckCastMastery();
+			}
 
-            Mobile combatant = Combatant as Mobile;
+			Mobile combatant = Combatant as Mobile;
 
-            if (combatant != null && CanDiscord && !Discordance.UnderEffects(combatant) && tc >= m_NextDiscord && 0.33 > Utility.RandomDouble())
-            {
-                DoDiscord();
-                m_NextDiscord = tc + Utility.RandomMinMax(5000, 12500);
-            }
-            else if (combatant != null && CanPeace && !Peacemaking.UnderEffects(combatant) && tc >= m_NextPeace && 0.33 > Utility.RandomDouble())
-            {
-                DoPeace();
-                m_NextPeace = tc + Utility.RandomMinMax(5000, 12500);
-            }
-            else if (combatant != null && CanProvoke && tc >= m_NextProvoke && 0.33 > Utility.RandomDouble())
-            {
-                DoProvoke();
-                m_NextProvoke = tc + Utility.RandomMinMax(5000, 12500);
-            }
+			if (
+				combatant != null
+				&& CanDiscord
+				&& !Discordance.UnderEffects(combatant)
+				&& tc >= m_NextDiscord
+				&& 0.33 > Utility.RandomDouble()
+			)
+			{
+				DoDiscord();
+				m_NextDiscord = tc + Utility.RandomMinMax(5000, 12500);
+			}
+			else if (
+				combatant != null
+				&& CanPeace
+				&& !Peacemaking.UnderEffects(combatant)
+				&& tc >= m_NextPeace
+				&& 0.33 > Utility.RandomDouble()
+			)
+			{
+				DoPeace();
+				m_NextPeace = tc + Utility.RandomMinMax(5000, 12500);
+			}
+			else if (combatant != null && CanProvoke && tc >= m_NextProvoke && 0.33 > Utility.RandomDouble())
+			{
+				DoProvoke();
+				m_NextProvoke = tc + Utility.RandomMinMax(5000, 12500);
+			}
 
-            if (combatant != null && TeleportsTo && tc >= m_NextTeleport)
-            {
-                TryTeleport();
-                m_NextTeleport = tc + (int)TeleportDuration.TotalMilliseconds;
-            }
+			if (combatant != null && TeleportsTo && tc >= m_NextTeleport)
+			{
+				TryTeleport();
+				m_NextTeleport = tc + (int)TeleportDuration.TotalMilliseconds;
+			}
 
 			//플레이어 체크
-            if (CanDetectHidden && Core.TickCount >= _NextDetect)
-            {
-                TryFindPlayer();
+			if (CanDetectHidden && Core.TickCount >= _NextDetect)
+			{
+				TryFindPlayer();
 
-                // Not exactly OSI style, approximation.
-                int delay = FindPlayerDelayBase;
+				// Not exactly OSI style, approximation.
+				int delay = FindPlayerDelayBase;
 
-                if (delay > FindPlayerDelayMax)
-                {
-                    delay = FindPlayerDelayMax; // 60s max at 250 int
-                }
-                else if (delay < FindPlayerDelayMin)
-                {
-                    delay = FindPlayerDelayMin; // 5s min at 3000 int
-                }
+				if (delay > FindPlayerDelayMax)
+				{
+					delay = FindPlayerDelayMax; // 60s max at 250 int
+				}
+				else if (delay < FindPlayerDelayMin)
+				{
+					delay = FindPlayerDelayMin; // 5s min at 3000 int
+				}
 
-                int min = delay * (FindPlayerDelayLow / FindPlayerDelayHigh); // 13s at 1000 int, 33s at 400 int, 54s at <250 int
-                int max = delay * (FindPlayerDelayHigh / FindPlayerDelayLow); // 16s at 1000 int, 41s at 400 int, 66s at <250 int
+				int min = delay * (FindPlayerDelayLow / FindPlayerDelayHigh); // 13s at 1000 int, 33s at 400 int, 54s at <250 int
+				int max = delay * (FindPlayerDelayHigh / FindPlayerDelayLow); // 16s at 1000 int, 41s at 400 int, 66s at <250 int
 
-                _NextDetect = Core.TickCount +
-                    (int)TimeSpan.FromSeconds(Utility.RandomMinMax(min, max)).TotalMilliseconds;
-            }
-			
+				_NextDetect =
+					Core.TickCount + (int)TimeSpan.FromSeconds(Utility.RandomMinMax(min, max)).TotalMilliseconds;
+			}
+
 			//시야 체크
 			DungeonRegion dungeon = (DungeonRegion)Region.GetRegion(typeof(DungeonRegion));
-			if( !Blessed && Karma < 0 && dungeon != null && Combatant == null && ControlMaster == null && SummonMaster == null )
+			if (
+				!Blessed
+				&& Karma < 0
+				&& dungeon != null
+				&& Combatant == null
+				&& ControlMaster == null
+				&& SummonMaster == null
+			)
 			{
-				m_iRangePerception = RangePerception; 
-				
+				m_iRangePerception = RangePerception;
+
 				List<Mobile> list = new List<Mobile>();
 				IPooledEnumerable eable = GetMobilesInRange(RangePerception);
 				int targetcount = 0;
 				foreach (Mobile targets in eable)
 				{
-					if ( this == targets || !CanBeHarmful( targets ) || targets is PlayerMobile )
+					if (this == targets || !CanBeHarmful(targets) || targets is PlayerMobile)
 						continue;
-					
-					if( targets is BaseCreature )
+
+					if (targets is BaseCreature)
 					{
 						BaseCreature bc = targets as BaseCreature;
-						if( bc.ControlMaster is PlayerMobile || bc.SummonMaster is PlayerMobile )
+						if (bc.ControlMaster is PlayerMobile || bc.SummonMaster is PlayerMobile)
 							continue;
 						else
-							list.Add( targets );
+							list.Add(targets);
 					}
 				}
 				eable.Free();
 
 				if (list.Count > 0)
 				{
-					for( int i = 0; i < list.Count; i++ )
+					for (int i = 0; i < list.Count; i++)
 					{
 						Mobile target = list[i] as Mobile;
-						if( !target.Deleted && target.Alive && target.Combatant != null )
+						if (!target.Deleted && target.Alive && target.Combatant != null)
 						{
 							Combatant = target.Combatant;
 							break;
@@ -8807,633 +9843,702 @@ namespace Server.Mobiles
 					}
 				}
 			}
-			if( !Blessed )
+			if (!Blessed)
 			{
 				List<Mobile> AggroCheck = new List<Mobile>();
 				IPooledEnumerable eable = GetMobilesInRange(20);
 
 				foreach (Mobile targets in eable)
 				{
-					if ( this == targets || !CanBeHarmful( targets ) )
+					if (this == targets || !CanBeHarmful(targets))
 						continue;
-					
-					if( targets is PlayerMobile )
-						AggroCheck.Add( targets );
-					else if( targets is BaseCreature )
+
+					if (targets is PlayerMobile)
+						AggroCheck.Add(targets);
+					else if (targets is BaseCreature)
 					{
 						BaseCreature bc = targets as BaseCreature;
-						if( !bc.IsMonster )
-							AggroCheck.Add( targets );
+						if (!bc.IsMonster)
+							AggroCheck.Add(targets);
 					}
 				}
 				eable.Free();
 
-				if( AggroCheck.Count > 0 )
+				if (AggroCheck.Count > 0)
 				{
 					double BestAggroScore = 0.0;
-					for( int i = 0; i < 10000; i++ )
+					for (int i = 0; i < 10000; i++)
 					{
-						if( AggroMobile[i] == null )
+						if (AggroMobile[i] == null)
 							break;
-						for( int j = 0; j < AggroCheck.Count; j++ )
+						for (int j = 0; j < AggroCheck.Count; j++)
 						{
 							Mobile target = AggroCheck[j] as Mobile;
-							if( !target.Deleted && target.Alive && target == AggroMobile[i] && BestAggroScore < AggroScore[i] )
+							if (
+								!target.Deleted
+								&& target.Alive
+								&& target == AggroMobile[i]
+								&& BestAggroScore < AggroScore[i]
+							)
 							{
 								BestAggroScore = AggroScore[i];
 								Combatant = AggroMobile[i];
 							}
-							
 						}
 					}
 				}
 			}
-			if( ControlMaster == null && SummonMaster == null && !(this is BaseVendor ) && !Blessed && Karma < 0 && CreationTime + TimeSpan.FromDays( 2 ) < DateTime.UtcNow )
+			if (
+				ControlMaster == null
+				&& SummonMaster == null
+				&& !(this is BaseVendor)
+				&& !Blessed
+				&& Karma < 0
+				&& CreationTime + TimeSpan.FromDays(2) < DateTime.UtcNow
+			)
 			{
 				Delete();
 			}
-			
+
 			//독 원거리 데미지
-			if( m_AcidBreath && m_AcidTime != 0 && m_NextAcidBreath < DateTime.Now )
+			if (m_AcidBreath && m_AcidTime != 0 && m_NextAcidBreath < DateTime.Now)
 			{
 				Mobile m = Combatant as Mobile;
 
-				if (m == null || m.Deleted || !m.Alive || !Alive || !CanBeHarmful(m) || !CanSee(m) || !m.InRange( this, 12 ) || !InLOS(m) )
+				if (
+					m == null
+					|| m.Deleted
+					|| !m.Alive
+					|| !Alive
+					|| !CanBeHarmful(m)
+					|| !CanSee(m)
+					|| !m.InRange(this, 12)
+					|| !InLOS(m)
+				)
 					return;
 
-				AOS.Damage( m, this, Utility.RandomMinMax( m_DamageMin, m_DamageMax ), false, 0, 0, 0, 100, 0 );
-				
+				AOS.Damage(m, this, Utility.RandomMinMax(m_DamageMin, m_DamageMax), false, 0, 0, 0, 100, 0);
+
 				PlaySound(0x118);
 				MovingEffect(m, 0x36D4, 1, 0, false, false, 0x3F, 0);
 
-			   // TimeSpan delay = TimeSpan.FromSeconds(GetDistanceToSqrt(m) / 5.0);
-			   // Timer.DelayCall<Mobile>(delay, new TimerStateCallback<Mobile>(EndAcidBreath), m);
+				// TimeSpan delay = TimeSpan.FromSeconds(GetDistanceToSqrt(m) / 5.0);
+				// Timer.DelayCall<Mobile>(delay, new TimerStateCallback<Mobile>(EndAcidBreath), m);
 
-				m_NextAcidBreath = DateTime.Now + TimeSpan.FromSeconds(m_AcidTime);				
+				m_NextAcidBreath = DateTime.Now + TimeSpan.FromSeconds(m_AcidTime);
 			}
-			
+
 			//if ( PaintedCavesArea( Location.X, Location.Y ) && ControlMaster == null && SummonMaster == null && !Blessed && Karma < 0 )
-			if ( ControlMaster == null && SummonMaster == null && Combatant != null && !InRange(Home, RangeHome))
+			if (ControlMaster == null && SummonMaster == null && Combatant != null && !InRange(Home, RangeHome))
 			{
 				Warmode = false;
 				Combatant = null;
-				MoveToWorld( Home, Map );
+				MoveToWorld(Home, Map);
 				Hits = HitsMax;
 				Mana = ManaMax;
 				Stam = StamMax;
-				for( int i = 0; i < 10000; i++ )
+				for (int i = 0; i < 10000; i++)
 				{
 					AggroMobile[i] = null;
 					AggroScore[i] = 0;
 				}
 			}
-        }
-		
-		public DateTime FireField = DateTime.Now;		
+		}
+
+		public DateTime FireField = DateTime.Now;
 		private DateTime m_RestTime;
 		private DateTime m_NextAcidBreath = DateTime.Now;
 		bool rest = false;
-        public virtual bool Rummage()
-        {
-            if (Map == null)
-                return false;
 
-            Corpse toRummage = null;
-
-            IPooledEnumerable eable = Map.GetItemsInRange(Location, 2);
-            foreach (Item item in eable)
-            {
-                if (item is Corpse && ((Corpse)item).Items.Count > 0)
-                {
-                    toRummage = (Corpse)item;
-                    break;
-                }
-            }
-            eable.Free();
-
-            if (toRummage == null)
-            {
-                return false;
-            }
-
-            Container pack = Backpack;
-
-            if (pack == null)
-            {
-                return false;
-            }
-
-            var items = toRummage.Items;
-
-            bool rejected;
-            LRReason reason;
-
-            for (int i = 0; i < items.Count; ++i)
-            {
-                Item item = items[Utility.Random(items.Count)];
-
-                Lift(item, item.Amount, out rejected, out reason);
-
-                if (!rejected && Drop(pack, new Point3D(-1, -1, 0)))
-                {
-                    // *rummages through a corpse and takes an item*
-                    PublicOverheadMessage(MessageType.Emote, 0x3B2, 1008086);
-                    //TODO: Instancing of Rummaged stuff.
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public void Pacify(Mobile master, DateTime endtime)
-        {
-            BardPacified = true;
-            BardEndTime = endtime;
-        }
-
-        public override Mobile GetDamageMaster(Mobile damagee)
-        {
-            if (m_bBardProvoked && damagee == m_bBardTarget)
-            {
-                return m_bBardMaster;
-            }
-            else if (m_bControlled && m_ControlMaster != null)
-            {
-                return m_ControlMaster;
-            }
-            else if (m_bSummoned && m_SummonMaster != null)
-            {
-                return m_SummonMaster;
-            }
-
-            return base.GetDamageMaster(damagee);
-        }
-
-        public void Provoke(Mobile master, Mobile target, bool bSuccess)
-        {
-            BardProvoked = true;
-
-            if (!Core.ML)
-            {
-                PublicOverheadMessage(MessageType.Emote, EmoteHue, false, "*looks furious*");
-            }
-
-            if (bSuccess)
-            {
-                PlaySound(GetIdleSound());
-
-                BardMaster = master;
-                BardTarget = target;
-                Combatant = target;
-                BardEndTime = DateTime.UtcNow + TimeSpan.FromSeconds(30.0);
-
-                if (target is BaseCreature)
-                {
-                    BaseCreature t = (BaseCreature)target;
-
-                    if (t.Unprovokable || (t.IsParagon && BaseInstrument.GetBaseDifficulty(t) >= 160.0))
-                    {
-                        return;
-                    }
-
-                    t.BardProvoked = true;
-
-                    t.BardMaster = master;
-                    t.BardTarget = this;
-                    t.Combatant = this;
-                    t.BardEndTime = DateTime.UtcNow + TimeSpan.FromSeconds(30.0);
-                }
-                else if (target is PlayerMobile)
-                {
-                    ((PlayerMobile)target).Combatant = this;
-                    Combatant = target;
-                }
-            }
-            else
-            {
-                PlaySound(GetAngerSound());
-
-                BardMaster = master;
-                BardTarget = target;
-            }
-        }
-
-        public bool FindMyName(string str, bool bWithAll)
-        {
-            int i, j;
-
-            string name = Name;
-
-            if (name == null || str.Length < name.Length)
-            {
-                return false;
-            }
-
-            var wordsString = str.Split(' ');
-            var wordsName = name.Split(' ');
-
-            for (j = 0; j < wordsName.Length; j++)
-            {
-                string wordName = wordsName[j];
-
-                bool bFound = false;
-                for (i = 0; i < wordsString.Length; i++)
-                {
-                    string word = wordsString[i];
-
-                    if (Insensitive.Equals(word, wordName))
-                    {
-                        bFound = true;
-                    }
-
-                    if (bWithAll && Insensitive.Equals(word, "all"))
-                    {
-                        return true;
-                    }
-                }
-
-                if (!bFound)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public static void TeleportPets(Mobile master, Point3D loc, Map map)
-        {
-            TeleportPets(master, loc, map, false);
-        }
-		public static void KillPets( Mobile master, Point3D loc, Map map )
+		public virtual bool Rummage()
 		{
-			List<Mobile> move = new List<Mobile>();
+			if (Map == null)
+				return false;
 
-			foreach ( Mobile m in World.Mobiles.Values )
+			Corpse toRummage = null;
+
+			IPooledEnumerable eable = Map.GetItemsInRange(Location, 2);
+			foreach (Item item in eable)
 			{
-				if ( m is BaseCreature )
+				if (item is Corpse && ((Corpse)item).Items.Count > 0)
 				{
-					BaseCreature pet = (BaseCreature)m;
-					if ( pet.Controlled && pet.ControlMaster == master )
-						move.Add( pet );
-					else if ( pet.Summoned && pet.SummonMaster == master )
-						move.Add( pet );
+					toRummage = (Corpse)item;
+					break;
+				}
+			}
+			eable.Free();
+
+			if (toRummage == null)
+			{
+				return false;
+			}
+
+			Container pack = Backpack;
+
+			if (pack == null)
+			{
+				return false;
+			}
+
+			var items = toRummage.Items;
+
+			bool rejected;
+			LRReason reason;
+
+			for (int i = 0; i < items.Count; ++i)
+			{
+				Item item = items[Utility.Random(items.Count)];
+
+				Lift(item, item.Amount, out rejected, out reason);
+
+				if (!rejected && Drop(pack, new Point3D(-1, -1, 0)))
+				{
+					// *rummages through a corpse and takes an item*
+					PublicOverheadMessage(MessageType.Emote, 0x3B2, 1008086);
+					//TODO: Instancing of Rummaged stuff.
+					return true;
 				}
 			}
 
-			foreach ( Mobile m in move )
+			return false;
+		}
+
+		public void Pacify(Mobile master, DateTime endtime)
+		{
+			BardPacified = true;
+			BardEndTime = endtime;
+		}
+
+		public override Mobile GetDamageMaster(Mobile damagee)
+		{
+			if (m_bBardProvoked && damagee == m_bBardTarget)
 			{
-				m.Kill();
-				m.MoveToWorld( loc, map );
+				return m_bBardMaster;
+			}
+			else if (m_bControlled && m_ControlMaster != null)
+			{
+				return m_ControlMaster;
+			}
+			else if (m_bSummoned && m_SummonMaster != null)
+			{
+				return m_SummonMaster;
+			}
+
+			return base.GetDamageMaster(damagee);
+		}
+
+		public void Provoke(Mobile master, Mobile target, bool bSuccess)
+		{
+			BardProvoked = true;
+
+			if (!Core.ML)
+			{
+				PublicOverheadMessage(MessageType.Emote, EmoteHue, false, "*looks furious*");
+			}
+
+			if (bSuccess)
+			{
+				PlaySound(GetIdleSound());
+
+				BardMaster = master;
+				BardTarget = target;
+				Combatant = target;
+				BardEndTime = DateTime.UtcNow + TimeSpan.FromSeconds(30.0);
+
+				if (target is BaseCreature)
+				{
+					BaseCreature t = (BaseCreature)target;
+
+					if (t.Unprovokable || (t.IsParagon && BaseInstrument.GetBaseDifficulty(t) >= 160.0))
+					{
+						return;
+					}
+
+					t.BardProvoked = true;
+
+					t.BardMaster = master;
+					t.BardTarget = this;
+					t.Combatant = this;
+					t.BardEndTime = DateTime.UtcNow + TimeSpan.FromSeconds(30.0);
+				}
+				else if (target is PlayerMobile)
+				{
+					((PlayerMobile)target).Combatant = this;
+					Combatant = target;
+				}
+			}
+			else
+			{
+				PlaySound(GetAngerSound());
+
+				BardMaster = master;
+				BardTarget = target;
 			}
 		}
-        public static void TeleportPets(Mobile master, Point3D loc, Map map, bool onlyBonded)
-        {
-            var move = new List<Mobile>();
 
-            IPooledEnumerable eable = master.GetMobilesInRange(3);
+		public bool FindMyName(string str, bool bWithAll)
+		{
+			int i,
+				j;
 
-            foreach (Mobile m in eable)
-            {
-                if (m is BaseCreature)
-                {
-                    BaseCreature pet = (BaseCreature)m;
+			string name = Name;
 
-                    if (pet.Controlled && pet.ControlMaster == master)
-                    {
-                        if (!onlyBonded || pet.IsBonded)
-                        {
-                            if (pet.ControlOrder == OrderType.Guard || pet.ControlOrder == OrderType.Follow ||
-                                pet.ControlOrder == OrderType.Come)
-                            {
-                                move.Add(pet);
-                            }
-                        }
-                    }
-                }
-            }
+			if (name == null || str.Length < name.Length)
+			{
+				return false;
+			}
 
-            eable.Free();
+			var wordsString = str.Split(' ');
+			var wordsName = name.Split(' ');
 
-            foreach (Mobile m in move)
-            {
-                m.MoveToWorld(loc, map);
-            }
+			for (j = 0; j < wordsName.Length; j++)
+			{
+				string wordName = wordsName[j];
 
-            ColUtility.Free(move);
-        }
+				bool bFound = false;
+				for (i = 0; i < wordsString.Length; i++)
+				{
+					string word = wordsString[i];
 
-        public virtual void ResurrectPet()
-        {
-            if (!IsDeadPet)
-            {
-                return;
-            }
+					if (Insensitive.Equals(word, wordName))
+					{
+						bFound = true;
+					}
 
-            OnBeforeResurrect();
+					if (bWithAll && Insensitive.Equals(word, "all"))
+					{
+						return true;
+					}
+				}
 
-            Poison = null;
+				if (!bFound)
+				{
+					return false;
+				}
+			}
 
-            Warmode = false;
+			return true;
+		}
 
-            Hits = 10;
-            Stam = StamMax;
-            Mana = 0;
+		public static void TeleportPets(Mobile master, Point3D loc, Map map)
+		{
+			TeleportPets(master, loc, map, false);
+		}
 
-            ProcessDeltaQueue();
+		public static void KillPets(Mobile master, Point3D loc, Map map)
+		{
+			List<Mobile> move = new List<Mobile>();
 
-            IsDeadPet = false;
+			foreach (Mobile m in World.Mobiles.Values)
+			{
+				if (m is BaseCreature)
+				{
+					BaseCreature pet = (BaseCreature)m;
+					if (pet.Controlled && pet.ControlMaster == master)
+						move.Add(pet);
+					else if (pet.Summoned && pet.SummonMaster == master)
+						move.Add(pet);
+				}
+			}
 
-            Effects.SendPacket(Location, Map, new BondedStatus(0, Serial, 0));
+			foreach (Mobile m in move)
+			{
+				m.Kill();
+				m.MoveToWorld(loc, map);
+			}
+		}
 
-            SendIncomingPacket();
-            SendIncomingPacket();
+		public static void TeleportPets(Mobile master, Point3D loc, Map map, bool onlyBonded)
+		{
+			var move = new List<Mobile>();
 
-            OnAfterResurrect();
+			IPooledEnumerable eable = master.GetMobilesInRange(3);
 
-            Mobile owner = ControlMaster;
+			foreach (Mobile m in eable)
+			{
+				if (m is BaseCreature)
+				{
+					BaseCreature pet = (BaseCreature)m;
 
-            if (owner == null || owner.Deleted || owner.Map != Map || !owner.InRange(this, 12) || !CanSee(owner) || !InLOS(owner))
-            {
-                if (OwnerAbandonTime == DateTime.MinValue)
-                {
-                    OwnerAbandonTime = DateTime.UtcNow;
-                }
-            }
-            else
-            {
-                OwnerAbandonTime = DateTime.MinValue;
-            }
+					if (pet.Controlled && pet.ControlMaster == master)
+					{
+						if (!onlyBonded || pet.IsBonded)
+						{
+							if (
+								pet.ControlOrder == OrderType.Guard
+								|| pet.ControlOrder == OrderType.Follow
+								|| pet.ControlOrder == OrderType.Come
+							)
+							{
+								move.Add(pet);
+							}
+						}
+					}
+				}
+			}
 
-            CheckStatTimers();
-        }
+			eable.Free();
 
-        public override bool CanBeDamaged()
-        {
-            if (IsDeadPet || IsInvulnerable)
-            {
-                return false;
-            }
+			foreach (Mobile m in move)
+			{
+				m.MoveToWorld(loc, map);
+			}
 
-            return base.CanBeDamaged();
-        }
+			ColUtility.Free(move);
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public virtual bool PlayerRangeSensitive { get { return CurrentWayPoint == null && (_NavPoints == null || _NavPoints.Count == 0); } }
-        //If they are following a waypoint, they'll continue to follow it even if players aren't around
+		public virtual void ResurrectPet()
+		{
+			if (!IsDeadPet)
+			{
+				return;
+			}
 
-        /* until we are sure about who should be getting deleted, move them instead */
-        /* On OSI, they despawn */
+			OnBeforeResurrect();
 
-        private bool m_ReturnQueued;
+			Poison = null;
 
-        private bool IsSpawnerBound()
-        {
-            if ((Map != null) && (Map != Map.Internal))
-            {
-                if (FightMode != FightMode.None && (RangeHome >= 0))
-                {
-                    if (!Controlled && !Summoned)
-                    {
-                        if (Spawner != null && Spawner is Spawner && ((Spawner as Spawner).Map) == Map)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
+			Warmode = false;
 
-            return false;
-        }
+			Hits = 10;
+			Stam = StamMax;
+			Mana = 0;
 
-        public virtual bool ReturnsToHome { get { return (m_SeeksHome && (Home != Point3D.Zero) && !m_ReturnQueued && !Controlled && !Summoned); } }
+			ProcessDeltaQueue();
 
-        public override void OnSectorDeactivate()
-        {
-            if (!Deleted && ReturnsToHome && IsSpawnerBound() && !InRange(Home, (RangeHome + 5)))
-            {
-                Timer.DelayCall(TimeSpan.FromSeconds((Utility.Random(45) + 15)), GoHome_Callback);
+			IsDeadPet = false;
 
-                m_ReturnQueued = true;
-            }
-            else if (PlayerRangeSensitive && m_AI != null)
-            {
-                m_AI.Deactivate();
-            }
+			Effects.SendPacket(Location, Map, new BondedStatus(0, Serial, 0));
 
-            base.OnSectorDeactivate();
-        }
+			SendIncomingPacket();
+			SendIncomingPacket();
 
-        public void GoHome_Callback()
-        {
-            if (m_ReturnQueued && IsSpawnerBound())
-            {
-                if (!((Map.GetSector(X, Y)).Active))
-                {
-                    SetLocation(Home, true);
+			OnAfterResurrect();
 
-                    if (!((Map.GetSector(X, Y)).Active) && m_AI != null)
-                    {
-                        m_AI.Deactivate();
-                    }
-                }
-            }
+			Mobile owner = ControlMaster;
 
-            m_ReturnQueued = false;
-        }
+			if (
+				owner == null
+				|| owner.Deleted
+				|| owner.Map != Map
+				|| !owner.InRange(this, 12)
+				|| !CanSee(owner)
+				|| !InLOS(owner)
+			)
+			{
+				if (OwnerAbandonTime == DateTime.MinValue)
+				{
+					OwnerAbandonTime = DateTime.UtcNow;
+				}
+			}
+			else
+			{
+				OwnerAbandonTime = DateTime.MinValue;
+			}
 
-        public override void OnSectorActivate()
-        {
-            if (PlayerRangeSensitive && m_AI != null)
-            {
-                m_AI.Activate();
-            }
+			CheckStatTimers();
+		}
 
-            base.OnSectorActivate();
-        }
+		public override bool CanBeDamaged()
+		{
+			if (IsDeadPet || IsInvulnerable)
+			{
+				return false;
+			}
 
-        private bool m_RemoveIfUntamed;
+			return base.CanBeDamaged();
+		}
 
-        // used for deleting untamed creatures [in houses]
-        private int m_RemoveStep;
+		[CommandProperty(AccessLevel.GameMaster)]
+		public virtual bool PlayerRangeSensitive
+		{
+			get { return CurrentWayPoint == null && (_NavPoints == null || _NavPoints.Count == 0); }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool RemoveIfUntamed { get { return m_RemoveIfUntamed; } set { m_RemoveIfUntamed = value; } }
+		//If they are following a waypoint, they'll continue to follow it even if players aren't around
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int RemoveStep { get { return m_RemoveStep; } set { m_RemoveStep = value; } }
+		/* until we are sure about who should be getting deleted, move them instead */
+		/* On OSI, they despawn */
 
-        // used for deleting untamed creatures [on save]
-        private bool m_RemoveOnSave;
+		private bool m_ReturnQueued;
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool RemoveOnSave { get { return m_RemoveOnSave; } set { m_RemoveOnSave = value; } }
-    }
+		private bool IsSpawnerBound()
+		{
+			if ((Map != null) && (Map != Map.Internal))
+			{
+				if (FightMode != FightMode.None && (RangeHome >= 0))
+				{
+					if (!Controlled && !Summoned)
+					{
+						if (Spawner != null && Spawner is Spawner && ((Spawner as Spawner).Map) == Map)
+						{
+							return true;
+						}
+					}
+				}
+			}
 
-    public class LoyaltyTimer : Timer
-    {
-        private static readonly TimeSpan InternalDelay = TimeSpan.FromMinutes(5.0);
+			return false;
+		}
 
-        public static void Initialize()
-        {
-            new LoyaltyTimer().Start();
-        }
+		public virtual bool ReturnsToHome
+		{
+			get { return (m_SeeksHome && (Home != Point3D.Zero) && !m_ReturnQueued && !Controlled && !Summoned); }
+		}
 
-        public LoyaltyTimer()
-            : base(InternalDelay, InternalDelay)
-        {
-            m_NextHourlyCheck = DateTime.UtcNow + TimeSpan.FromHours(10.0);
-            Priority = TimerPriority.FiveSeconds;
-        }
+		public override void OnSectorDeactivate()
+		{
+			if (!Deleted && ReturnsToHome && IsSpawnerBound() && !InRange(Home, (RangeHome + 5)))
+			{
+				Timer.DelayCall(TimeSpan.FromSeconds((Utility.Random(45) + 15)), GoHome_Callback);
 
-        private DateTime m_NextHourlyCheck;
+				m_ReturnQueued = true;
+			}
+			else if (PlayerRangeSensitive && m_AI != null)
+			{
+				m_AI.Deactivate();
+			}
 
-        protected override void OnTick()
-        {
-            if (DateTime.UtcNow >= m_NextHourlyCheck)
-            {
-                m_NextHourlyCheck = DateTime.UtcNow + TimeSpan.FromHours(10.0);
-            }
-            else
-            {
-                return;
-            }
+			base.OnSectorDeactivate();
+		}
 
-            var toRelease = new List<BaseCreature>();
+		public void GoHome_Callback()
+		{
+			if (m_ReturnQueued && IsSpawnerBound())
+			{
+				if (!((Map.GetSector(X, Y)).Active))
+				{
+					SetLocation(Home, true);
 
-            // added array for wild creatures in house regions to be removed
-            var toRemove = new List<BaseCreature>();
+					if (!((Map.GetSector(X, Y)).Active) && m_AI != null)
+					{
+						m_AI.Deactivate();
+					}
+				}
+			}
 
-            Parallel.ForEach(
-                World.Mobiles.Values,
-                m =>
-                {
-                    if (m is BaseMount && ((BaseMount)m).Rider != null)
-                    {
-                        ((BaseCreature)m).OwnerAbandonTime = DateTime.MinValue;
-                    }
-                    else if (m is BaseCreature)
-                    {
-                        BaseCreature c = (BaseCreature)m;
+			m_ReturnQueued = false;
+		}
 
-                        if (c.IsDeadPet)
-                        {
-                            Mobile owner = c.ControlMaster;
+		public override void OnSectorActivate()
+		{
+			if (PlayerRangeSensitive && m_AI != null)
+			{
+				m_AI.Activate();
+			}
 
-                            if (!c.IsStabled && !(c is BaseVendor) &&
-                                (owner == null || owner.Deleted || owner.Map != c.Map || !owner.InRange(c, 12) || !c.CanSee(owner) ||
-                                 !c.InLOS(owner)))
-                            {
-                                if (c.OwnerAbandonTime == DateTime.MinValue)
-                                {
-                                    c.OwnerAbandonTime = DateTime.UtcNow;
-                                }
-                                else if ((c.OwnerAbandonTime + c.BondingAbandonDelay) <= DateTime.UtcNow)
-                                {
-                                    toRemove.Add(c);
-                                }
-                            }
-                            else
-                            {
-                                c.OwnerAbandonTime = DateTime.MinValue;
-                            }
-                        }
-                        else if (c.Controlled && c.Commandable)
-                        {
-                            c.OwnerAbandonTime = DateTime.MinValue;
+			base.OnSectorActivate();
+		}
+
+		private bool m_RemoveIfUntamed;
+
+		// used for deleting untamed creatures [in houses]
+		private int m_RemoveStep;
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool RemoveIfUntamed
+		{
+			get { return m_RemoveIfUntamed; }
+			set { m_RemoveIfUntamed = value; }
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int RemoveStep
+		{
+			get { return m_RemoveStep; }
+			set { m_RemoveStep = value; }
+		}
+
+		// used for deleting untamed creatures [on save]
+		private bool m_RemoveOnSave;
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool RemoveOnSave
+		{
+			get { return m_RemoveOnSave; }
+			set { m_RemoveOnSave = value; }
+		}
+	}
+
+	public class LoyaltyTimer : Timer
+	{
+		private static readonly TimeSpan InternalDelay = TimeSpan.FromMinutes(5.0);
+
+		public static void Initialize()
+		{
+			new LoyaltyTimer().Start();
+		}
+
+		public LoyaltyTimer()
+			: base(InternalDelay, InternalDelay)
+		{
+			m_NextHourlyCheck = DateTime.UtcNow + TimeSpan.FromHours(10.0);
+			Priority = TimerPriority.FiveSeconds;
+		}
+
+		private DateTime m_NextHourlyCheck;
+
+		protected override void OnTick()
+		{
+			if (DateTime.UtcNow >= m_NextHourlyCheck)
+			{
+				m_NextHourlyCheck = DateTime.UtcNow + TimeSpan.FromHours(10.0);
+			}
+			else
+			{
+				return;
+			}
+
+			var toRelease = new List<BaseCreature>();
+
+			// added array for wild creatures in house regions to be removed
+			var toRemove = new List<BaseCreature>();
+
+			Parallel.ForEach(
+				World.Mobiles.Values,
+				m =>
+				{
+					if (m is BaseMount && ((BaseMount)m).Rider != null)
+					{
+						((BaseCreature)m).OwnerAbandonTime = DateTime.MinValue;
+					}
+					else if (m is BaseCreature)
+					{
+						BaseCreature c = (BaseCreature)m;
+
+						if (c.IsDeadPet)
+						{
+							Mobile owner = c.ControlMaster;
+
+							if (
+								!c.IsStabled
+								&& !(c is BaseVendor)
+								&& (
+									owner == null
+									|| owner.Deleted
+									|| owner.Map != c.Map
+									|| !owner.InRange(c, 12)
+									|| !c.CanSee(owner)
+									|| !c.InLOS(owner)
+								)
+							)
+							{
+								if (c.OwnerAbandonTime == DateTime.MinValue)
+								{
+									c.OwnerAbandonTime = DateTime.UtcNow;
+								}
+								else if ((c.OwnerAbandonTime + c.BondingAbandonDelay) <= DateTime.UtcNow)
+								{
+									toRemove.Add(c);
+								}
+							}
+							else
+							{
+								c.OwnerAbandonTime = DateTime.MinValue;
+							}
+						}
+						else if (c.Controlled && c.Commandable)
+						{
+							c.OwnerAbandonTime = DateTime.MinValue;
 
 							/*
-                            if (c.Map != Map.Internal)
-                            {
-                                c.Loyalty -= (BaseCreature.MaxLoyalty / 10);
+							if (c.Map != Map.Internal)
+							{
+								c.Loyalty -= (BaseCreature.MaxLoyalty / 10);
 
-                                if (c.Loyalty < (BaseCreature.MaxLoyalty / 10))
-                                {
-                                    c.Say(1043270, c.Name); // * ~1_NAME~ looks around desperately *
-                                    c.PlaySound(c.GetIdleSound());
-                                }
+								if (c.Loyalty < (BaseCreature.MaxLoyalty / 10))
+								{
+									c.Say(1043270, c.Name); // * ~1_NAME~ looks around desperately *
+									c.PlaySound(c.GetIdleSound());
+								}
 
-                                if (c.Loyalty <= 0)
-                                {
-                                    toRelease.Add(c);
-                                }
-                            }
+								if (c.Loyalty <= 0)
+								{
+									toRelease.Add(c);
+								}
+							}
 							*/
-                        }
+						}
 
-                        // added lines to check if a wild creature in a house region has to be removed or not
-                        if (!c.Controlled && !c.IsStabled &&
-                            ((c.Region.IsPartOf<HouseRegion>() && c.CanBeDamaged()) || (c.RemoveIfUntamed && c.Spawner == null)))
-                        {
-                            c.RemoveStep++;
+						// added lines to check if a wild creature in a house region has to be removed or not
+						if (
+							!c.Controlled
+							&& !c.IsStabled
+							&& (
+								(c.Region.IsPartOf<HouseRegion>() && c.CanBeDamaged())
+								|| (c.RemoveIfUntamed && c.Spawner == null)
+							)
+						)
+						{
+							c.RemoveStep++;
 
-                            if (c.RemoveStep >= 20)
-                            {
-                                lock (toRemove)
-                                    toRemove.Add(c);
-                            }
-                        }
-                        else
-                        {
-                            c.RemoveStep = 0;
-                        }
-                    }
-                });
+							if (c.RemoveStep >= 20)
+							{
+								lock (toRemove)
+									toRemove.Add(c);
+							}
+						}
+						else
+						{
+							c.RemoveStep = 0;
+						}
+					}
+				}
+			);
 
-            foreach (BaseCreature c in toRelease.Where(c => c != null))
-            {
-                if (c.IsDeadBondedPet)
-                {
-                    c.Delete();
-                    continue;
-                }
+			foreach (BaseCreature c in toRelease.Where(c => c != null))
+			{
+				if (c.IsDeadBondedPet)
+				{
+					c.Delete();
+					continue;
+				}
 
-                c.Say(1043255, c.Name); // ~1_NAME~ appears to have decided that is better off without a master!
-                //c.Loyalty = BaseCreature.MaxLoyalty; // Wonderfully Happy
-                c.IsBonded = true;
-                c.BondingBegin = DateTime.MinValue;
-                c.OwnerAbandonTime = DateTime.MinValue;
-                c.ControlTarget = null;
+				c.Say(1043255, c.Name); // ~1_NAME~ appears to have decided that is better off without a master!
+				//c.Loyalty = BaseCreature.MaxLoyalty; // Wonderfully Happy
+				c.IsBonded = true;
+				c.BondingBegin = DateTime.MinValue;
+				c.OwnerAbandonTime = DateTime.MinValue;
+				c.ControlTarget = null;
 
-                if (c.AIObject != null)
-                {
-                    c.AIObject.DoOrderRelease();
-                }
+				if (c.AIObject != null)
+				{
+					c.AIObject.DoOrderRelease();
+				}
 
-                // this will prevent no release of creatures left alone with AI disabled (and consequent bug of Followers)
-                c.DropBackpack();
-                c.RemoveOnSave = true;
-            }
+				// this will prevent no release of creatures left alone with AI disabled (and consequent bug of Followers)
+				c.DropBackpack();
+				c.RemoveOnSave = true;
+			}
 
-            // added code to handle removing of wild creatures in house regions
-            foreach (BaseCreature c in toRemove)
-            {
-                c.Delete();
-            }
+			// added code to handle removing of wild creatures in house regions
+			foreach (BaseCreature c in toRemove)
+			{
+				c.Delete();
+			}
 
-            ColUtility.Free(toRelease);
-            ColUtility.Free(toRemove);
-        }
-    }
+			ColUtility.Free(toRelease);
+			ColUtility.Free(toRemove);
+		}
+	}
 
-    public sealed class PetWindow : Packet
-    {
-        public PetWindow(PlayerMobile owner, Mobile pet)
-            : base(0x31)
-        {
-            int count = owner.AllFollowers.Count;
+	public sealed class PetWindow : Packet
+	{
+		public PetWindow(PlayerMobile owner, Mobile pet)
+			: base(0x31)
+		{
+			int count = owner.AllFollowers.Count;
 
-            EnsureCapacity(6 + (6 * count));
+			EnsureCapacity(6 + (6 * count));
 
-            m_Stream.Write(owner.Serial);
-            m_Stream.Write((byte)count);
+			m_Stream.Write(owner.Serial);
+			m_Stream.Write((byte)count);
 
-            for (int i = 0; i < owner.AllFollowers.Count; i++)
-            {
-                m_Stream.Write(owner.AllFollowers[i].Serial);
-                m_Stream.Write((byte)0x01);
-            }
-        }
-    }
+			for (int i = 0; i < owner.AllFollowers.Count; i++)
+			{
+				m_Stream.Write(owner.AllFollowers[i].Serial);
+				m_Stream.Write((byte)0x01);
+			}
+		}
+	}
 }

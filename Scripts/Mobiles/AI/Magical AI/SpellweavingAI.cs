@@ -8,7 +8,10 @@ namespace Server.Mobiles
 {
 	public class SpellweavingAI : MageAI
 	{
-		public override SkillName CastSkill { get { return SkillName.Spellweaving; } }
+		public override SkillName CastSkill
+		{
+			get { return SkillName.Spellweaving; }
+		}
 
 		public override bool UsesMagery
 		{
@@ -16,8 +19,7 @@ namespace Server.Mobiles
 		}
 
 		public SpellweavingAI(BaseCreature m)
-			: base(m)
-		{ }
+			: base(m) { }
 
 		public override Spell GetRandomBuffSpell()
 		{

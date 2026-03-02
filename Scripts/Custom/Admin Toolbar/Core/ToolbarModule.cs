@@ -6,11 +6,8 @@
 
 #region References
 using System;
-
 using CustomsFramework;
-
 using Server;
-
 using Services.Toolbar.Core;
 #endregion
 
@@ -27,20 +24,34 @@ namespace Services.Toolbar
 		}
 
 		public ToolbarModule(CustomSerial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		public override string Name
 		{
-			get { return LinkedMobile != null ? String.Format(@"Toolbar Module - {0}", LinkedMobile.Name) : @"Unlinked Toolbar Module"; }
+			get
+			{
+				return LinkedMobile != null
+					? String.Format(@"Toolbar Module - {0}", LinkedMobile.Name)
+					: @"Unlinked Toolbar Module";
+			}
 		}
 
-		public override string Version { get { return ToolbarCore.SystemVersion; } }
+		public override string Version
+		{
+			get { return ToolbarCore.SystemVersion; }
+		}
 
-		public override AccessLevel EditLevel { get { return AccessLevel.Developer; } }
+		public override AccessLevel EditLevel
+		{
+			get { return AccessLevel.Developer; }
+		}
 
 		[CommandProperty(AccessLevel.Developer)]
-		public ToolbarInfo ToolbarInfo { get { return _ToolbarInfo; } set { _ToolbarInfo = value; } }
+		public ToolbarInfo ToolbarInfo
+		{
+			get { return _ToolbarInfo; }
+			set { _ToolbarInfo = value; }
+		}
 
 		public override void Serialize(GenericWriter writer)
 		{
@@ -61,10 +72,10 @@ namespace Services.Toolbar
 			switch (version)
 			{
 				case 0:
-					{
-						_ToolbarInfo = new ToolbarInfo(reader);
-						break;
-					}
+				{
+					_ToolbarInfo = new ToolbarInfo(reader);
+					break;
+				}
 			}
 		}
 	}

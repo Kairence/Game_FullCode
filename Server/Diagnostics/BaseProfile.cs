@@ -9,11 +9,17 @@ namespace Server.Diagnostics
 {
 	public abstract class BaseProfile
 	{
-		public static void WriteAll<T>(TextWriter op, IEnumerable<T> profiles) where T : BaseProfile
+		public static void WriteAll<T>(TextWriter op, IEnumerable<T> profiles)
+			where T : BaseProfile
 		{
 			var list = new List<T>(profiles);
 
-			list.Sort(delegate(T a, T b) { return -a.TotalTime.CompareTo(b.TotalTime); });
+			list.Sort(
+				delegate(T a, T b)
+				{
+					return -a.TotalTime.CompareTo(b.TotalTime);
+				}
+			);
 
 			foreach (T prof in list)
 			{
@@ -31,15 +37,30 @@ namespace Server.Diagnostics
 
 		private readonly Stopwatch _stopwatch;
 
-		public string Name { get { return _name; } }
+		public string Name
+		{
+			get { return _name; }
+		}
 
-		public long Count { get { return _count; } }
+		public long Count
+		{
+			get { return _count; }
+		}
 
-		public TimeSpan AverageTime { get { return TimeSpan.FromTicks(_totalTime.Ticks / Math.Max(1, _count)); } }
+		public TimeSpan AverageTime
+		{
+			get { return TimeSpan.FromTicks(_totalTime.Ticks / Math.Max(1, _count)); }
+		}
 
-		public TimeSpan PeakTime { get { return _peakTime; } }
+		public TimeSpan PeakTime
+		{
+			get { return _peakTime; }
+		}
 
-		public TimeSpan TotalTime { get { return _totalTime; } }
+		public TimeSpan TotalTime
+		{
+			get { return _totalTime; }
+		}
 
 		protected BaseProfile(string name)
 		{
@@ -82,7 +103,8 @@ namespace Server.Diagnostics
 				Count,
 				AverageTime.TotalSeconds,
 				PeakTime.TotalSeconds,
-				TotalTime.TotalSeconds);
+				TotalTime.TotalSeconds
+			);
 		}
 	}
 }

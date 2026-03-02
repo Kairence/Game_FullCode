@@ -1,128 +1,142 @@
-using Server;
 using System;
+using System.Collections.Generic;
+using Server;
+using Server.Engines.Quests;
 using Server.Items;
 using Server.Multis;
-using System.Collections.Generic;
-using Server.Engines.Quests;
 
 namespace Server.Mobiles
 {
-    public class MerchantCrew : BaseCreature
-    {
-        public override bool InitialInnocent { get { return true; } }
-        public override WeaponAbility GetWeaponAbility()
-        {
-            Item weapon = FindItemOnLayer(Layer.TwoHanded);
+	public class MerchantCrew : BaseCreature
+	{
+		public override bool InitialInnocent
+		{
+			get { return true; }
+		}
 
-            if (weapon == null)
-                return null;
+		public override WeaponAbility GetWeaponAbility()
+		{
+			Item weapon = FindItemOnLayer(Layer.TwoHanded);
 
-            if (weapon is BaseWeapon)
-            {
-                if (Utility.RandomBool())
-                    return ((BaseWeapon)weapon).PrimaryAbility;
-                else
-                    return ((BaseWeapon)weapon).SecondaryAbility;
-            }
-            return null;
-        }
-        
-        [Constructable]
-        public MerchantCrew()
-            : base(AIType.AI_Paladin, FightMode.Aggressor, 10, 1, .2, .4)
-        {
-            Title = "the merchant";
-            Hue = Race.RandomSkinHue();
+			if (weapon == null)
+				return null;
 
-            if (this.Female = Utility.RandomBool())
-            {
-                Body = 0x191;
-                Name = NameList.RandomName("female");
-                AddItem(new Skirt(Utility.RandomNeutralHue()));
-            }
-            else
-            {
-                Body = 0x190;
-                Name = NameList.RandomName("male");
-                AddItem(new ShortPants(Utility.RandomNeutralHue()));
-            }
+			if (weapon is BaseWeapon)
+			{
+				if (Utility.RandomBool())
+					return ((BaseWeapon)weapon).PrimaryAbility;
+				else
+					return ((BaseWeapon)weapon).SecondaryAbility;
+			}
+			return null;
+		}
 
-            bool magery = 0.33 > Utility.RandomDouble();
+		[Constructable]
+		public MerchantCrew()
+			: base(AIType.AI_Paladin, FightMode.Aggressor, 10, 1, .2, .4)
+		{
+			Title = "the merchant";
+			Hue = Race.RandomSkinHue();
 
-            SetStr(100, 125);
-            SetDex(125, 150);
-            SetInt(250, 400);
-            SetHits(250, 400);
-            SetDamage(15, 25);
+			if (this.Female = Utility.RandomBool())
+			{
+				Body = 0x191;
+				Name = NameList.RandomName("female");
+				AddItem(new Skirt(Utility.RandomNeutralHue()));
+			}
+			else
+			{
+				Body = 0x190;
+				Name = NameList.RandomName("male");
+				AddItem(new ShortPants(Utility.RandomNeutralHue()));
+			}
 
-            if (magery)
-            {
-                ChangeAIType(AIType.AI_Mage);
-                SetSkill(SkillName.Magery, 100.0, 120.0);
-                SetSkill(SkillName.EvalInt, 100.0, 120.0);
-                SetSkill(SkillName.Meditation, 100.0, 120.0);
-                SetSkill(SkillName.MagicResist, 100.0, 120.0);
-            }
+			bool magery = 0.33 > Utility.RandomDouble();
 
-            SetSkill(SkillName.Archery, 100.0, 120.0);
-            SetSkill(SkillName.Chivalry, 100.0, 120.0);
-            SetSkill(SkillName.Focus, 100.0, 120.0);
-            SetSkill(SkillName.Tactics, 100.0, 120.0);
-            SetSkill(SkillName.Wrestling, 100.0, 120.0);
-            SetSkill(SkillName.Anatomy, 100.0, 120.0);
+			SetStr(100, 125);
+			SetDex(125, 150);
+			SetInt(250, 400);
+			SetHits(250, 400);
+			SetDamage(15, 25);
 
-            SetDamageType(ResistanceType.Physical, 70);
-            SetResistance(ResistanceType.Physical, 45, 55);
-            SetResistance(ResistanceType.Fire, 45, 55);
-            SetResistance(ResistanceType.Cold, 45, 55);
-            SetResistance(ResistanceType.Poison, 45, 55);
-            SetResistance(ResistanceType.Energy, 45, 55);
+			if (magery)
+			{
+				ChangeAIType(AIType.AI_Mage);
+				SetSkill(SkillName.Magery, 100.0, 120.0);
+				SetSkill(SkillName.EvalInt, 100.0, 120.0);
+				SetSkill(SkillName.Meditation, 100.0, 120.0);
+				SetSkill(SkillName.MagicResist, 100.0, 120.0);
+			}
 
-            Item bow;
+			SetSkill(SkillName.Archery, 100.0, 120.0);
+			SetSkill(SkillName.Chivalry, 100.0, 120.0);
+			SetSkill(SkillName.Focus, 100.0, 120.0);
+			SetSkill(SkillName.Tactics, 100.0, 120.0);
+			SetSkill(SkillName.Wrestling, 100.0, 120.0);
+			SetSkill(SkillName.Anatomy, 100.0, 120.0);
 
-            switch (Utility.Random(4))
-            {
-                default:
-                case 0: bow = new CompositeBow(); PackItem(new Arrow(25)); break;
-                case 1: bow = new Crossbow(); PackItem(new Bolt(25)); break;
-                case 2: bow = new Bow(); PackItem(new Arrow(25)); break;
-                case 3: bow = new HeavyCrossbow(); PackItem(new Bolt(25)); break;
-            }
+			SetDamageType(ResistanceType.Physical, 70);
+			SetResistance(ResistanceType.Physical, 45, 55);
+			SetResistance(ResistanceType.Fire, 45, 55);
+			SetResistance(ResistanceType.Cold, 45, 55);
+			SetResistance(ResistanceType.Poison, 45, 55);
+			SetResistance(ResistanceType.Energy, 45, 55);
 
-            AddItem(bow);
+			Item bow;
 
-            AddItem(new TricorneHat());
-            AddItem(new FancyShirt());
-            AddItem(new Boots(Utility.RandomNeutralHue()));
-            AddItem(new GoldEarrings());
+			switch (Utility.Random(4))
+			{
+				default:
+				case 0:
+					bow = new CompositeBow();
+					PackItem(new Arrow(25));
+					break;
+				case 1:
+					bow = new Crossbow();
+					PackItem(new Bolt(25));
+					break;
+				case 2:
+					bow = new Bow();
+					PackItem(new Arrow(25));
+					break;
+				case 3:
+					bow = new HeavyCrossbow();
+					PackItem(new Bolt(25));
+					break;
+			}
 
-            Fame = 8000;
-            Karma = 8000;
+			AddItem(bow);
 
-            if (IsSoulboundEnemies)
-                IsSoulbound = true;
-        }
+			AddItem(new TricorneHat());
+			AddItem(new FancyShirt());
+			AddItem(new Boots(Utility.RandomNeutralHue()));
+			AddItem(new GoldEarrings());
 
-        public override void GenerateLoot()
-        {
-            AddLoot(LootPack.UltraRich, 2);
-        }
+			Fame = 8000;
+			Karma = 8000;
 
-        public MerchantCrew(Serial serial)
-            : base(serial)
-        {
-        }
+			if (IsSoulboundEnemies)
+				IsSoulbound = true;
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
+		public override void GenerateLoot()
+		{
+			AddLoot(LootPack.UltraRich, 2);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+		public MerchantCrew(Serial serial)
+			: base(serial) { }
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 }

@@ -1,6 +1,5 @@
 #region References
 using System;
-
 using Server.Spells;
 using Server.Spells.Fifth;
 using Server.Spells.First;
@@ -19,8 +18,54 @@ namespace Server.Mobiles
 	{
 		private static readonly int[] m_Offsets =
 		{
-			-1, -1, -1, 0, -1, 1, 0, -1, 0, 1, 1, -1, 1, 0, 1, 1, -2, -2, -2, -1, -2, 0, -2, 1, -2, 2, -1, -2, -1, 2, 0, -2, 0,
-			2, 1, -2, 1, 2, 2, -2, 2, -1, 2, 0, 2, 1, 2, 2
+			-1,
+			-1,
+			-1,
+			0,
+			-1,
+			1,
+			0,
+			-1,
+			0,
+			1,
+			1,
+			-1,
+			1,
+			0,
+			1,
+			1,
+			-2,
+			-2,
+			-2,
+			-1,
+			-2,
+			0,
+			-2,
+			1,
+			-2,
+			2,
+			-1,
+			-2,
+			-1,
+			2,
+			0,
+			-2,
+			0,
+			2,
+			1,
+			-2,
+			1,
+			2,
+			2,
+			-2,
+			2,
+			-1,
+			2,
+			0,
+			2,
+			1,
+			2,
+			2,
 		};
 
 		private const double HealChance = 0.05; // 5% chance to heal at gm necromancy, uses spirit speak healing
@@ -30,8 +75,7 @@ namespace Server.Mobiles
 		private DateTime m_NextHealTime = DateTime.UtcNow;
 
 		public SpellbinderAI(BaseCreature m)
-			: base(m)
-		{ }
+			: base(m) { }
 
 		public override bool Think()
 		{
@@ -158,8 +202,13 @@ namespace Server.Mobiles
 
 		public void Run(Direction d)
 		{
-			if ((m_Mobile.Spell != null && m_Mobile.Spell.IsCasting) || !m_Mobile.CanMove || m_Mobile.Paralyzed ||
-				m_Mobile.Frozen || m_Mobile.DisallowAllMoves)
+			if (
+				(m_Mobile.Spell != null && m_Mobile.Spell.IsCasting)
+				|| !m_Mobile.CanMove
+				|| m_Mobile.Paralyzed
+				|| m_Mobile.Frozen
+				|| m_Mobile.DisallowAllMoves
+			)
 				return;
 
 			m_Mobile.Direction = d | Direction.Running;
@@ -241,8 +290,9 @@ namespace Server.Mobiles
 			}
 
 			var mob = c as Mobile;
-			var damage = ((m_Mobile.Skills[SkillName.SpiritSpeak].Value - mob.Skills[SkillName.MagicResist].Value) / 10) +
-						 (mob.Player ? 18 : 30);
+			var damage =
+				((m_Mobile.Skills[SkillName.SpiritSpeak].Value - mob.Skills[SkillName.MagicResist].Value) / 10)
+				+ (mob.Player ? 18 : 30);
 
 			if (damage > c.Hits)
 				spell = new ManaDrainSpell(m_Mobile, null);
@@ -296,7 +346,10 @@ namespace Server.Mobiles
 				{
 					m_Mobile.DebugSay("Attempting to blood oath");
 
-					if (m_Mobile.Skills[SkillName.Necromancy].Value > 30 && BloodOathSpell.GetBloodOath(mob) != m_Mobile)
+					if (
+						m_Mobile.Skills[SkillName.Necromancy].Value > 30
+						&& BloodOathSpell.GetBloodOath(mob) != m_Mobile
+					)
 						spell = new BloodOathSpell(m_Mobile, null);
 
 					break;
@@ -311,14 +364,24 @@ namespace Server.Mobiles
 			var c = m_Mobile.Combatant;
 			m_Mobile.Warmode = true;
 
-			if (c == null || c.Deleted || !c.Alive || (c is Mobile && ((Mobile)c).IsDeadBondedPet) || !m_Mobile.CanSee(c) ||
-				!m_Mobile.CanBeHarmful(c, false) || c.Map != m_Mobile.Map)
+			if (
+				c == null
+				|| c.Deleted
+				|| !c.Alive
+				|| (c is Mobile && ((Mobile)c).IsDeadBondedPet)
+				|| !m_Mobile.CanSee(c)
+				|| !m_Mobile.CanBeHarmful(c, false)
+				|| c.Map != m_Mobile.Map
+			)
 			{
 				// Our combatant is deleted, dead, hidden, or we cannot hurt them
 				// Try to find another combatant
 				if (AcquireFocusMob(m_Mobile.RangePerception, m_Mobile.FightMode, false, false, true))
 				{
-					m_Mobile.DebugSay("Something happened to my combatant, so I am going to fight {0}", m_Mobile.FocusMob.Name);
+					m_Mobile.DebugSay(
+						"Something happened to my combatant, so I am going to fight {0}",
+						m_Mobile.FocusMob.Name
+					);
 
 					m_Mobile.Combatant = c = m_Mobile.FocusMob;
 					m_Mobile.FocusMob = null;
@@ -340,8 +403,11 @@ namespace Server.Mobiles
 				}
 			}
 
-			if (!m_Mobile.StunReady && m_Mobile.Skills[SkillName.Wrestling].Value >= 80.0 &&
-				m_Mobile.Skills[SkillName.Anatomy].Value >= 80.0)
+			if (
+				!m_Mobile.StunReady
+				&& m_Mobile.Skills[SkillName.Wrestling].Value >= 80.0
+				&& m_Mobile.Skills[SkillName.Anatomy].Value >= 80.0
+			)
 				EventSink.InvokeStunRequest(new StunRequestEventArgs(m_Mobile));
 
 			if (!m_Mobile.InRange(c, m_Mobile.RangePerception))
@@ -400,8 +466,11 @@ namespace Server.Mobiles
 
 					spell = DoDispel(toDispel);
 				}
-				else if (c is Mobile && (((Mobile)c).Spell is HealSpell || ((Mobile)c).Spell is GreaterHealSpell) &&
-						 !((Mobile)c).Poisoned) // They have a heal spell out
+				else if (
+					c is Mobile
+					&& (((Mobile)c).Spell is HealSpell || ((Mobile)c).Spell is GreaterHealSpell)
+					&& !((Mobile)c).Poisoned
+				) // They have a heal spell out
 				{
 					spell = new BloodOathSpell(m_Mobile, null);
 				}
@@ -526,8 +595,14 @@ namespace Server.Mobiles
 
 				var comb = m_Mobile.Combatant as Mobile;
 
-				if (comb != null && !comb.Deleted && comb.Alive && !comb.IsDeadBondedPet && m_Mobile.InRange(comb, 12) &&
-					CanDispel(comb))
+				if (
+					comb != null
+					&& !comb.Deleted
+					&& comb.Alive
+					&& !comb.IsDeadBondedPet
+					&& m_Mobile.InRange(comb, 12)
+					&& CanDispel(comb)
+				)
 				{
 					active = comb;
 					activePrio = m_Mobile.GetDistanceToSqrt(comb);
@@ -582,8 +657,10 @@ namespace Server.Mobiles
 
 			if (map != null)
 			{
-				Mobile active = null, inactive = null;
-				double actPrio = 0.0, inactPrio = 0.0;
+				Mobile active = null,
+					inactive = null;
+				double actPrio = 0.0,
+					inactPrio = 0.0;
 
 				var comb = m_Mobile.Combatant as Mobile;
 
@@ -625,8 +702,12 @@ namespace Server.Mobiles
 
 		public bool CanDispel(Mobile m)
 		{
-			return (m is BaseCreature && ((BaseCreature)m).Summoned && m_Mobile.CanBeHarmful(m, false) &&
-					!((BaseCreature)m).IsAnimatedDead);
+			return (
+				m is BaseCreature
+				&& ((BaseCreature)m).Summoned
+				&& m_Mobile.CanBeHarmful(m, false)
+				&& !((BaseCreature)m).IsAnimatedDead
+			);
 		}
 
 		private Spell CheckCastHealingSpell()
@@ -730,8 +811,11 @@ namespace Server.Mobiles
 
 			if ((targ.Flags & TargetFlags.Harmful) != 0 && toTarget != null)
 			{
-				if ((targ.Range == -1 || m_Mobile.InRange(toTarget, targ.Range)) && m_Mobile.CanSee(toTarget) &&
-					m_Mobile.InLOS(toTarget))
+				if (
+					(targ.Range == -1 || m_Mobile.InRange(toTarget, targ.Range))
+					&& m_Mobile.CanSee(toTarget)
+					&& m_Mobile.InLOS(toTarget)
+				)
 				{
 					targ.Invoke(m_Mobile, toTarget);
 				}
@@ -754,7 +838,8 @@ namespace Server.Mobiles
 					return;
 				}
 
-				int px, py;
+				int px,
+					py;
 
 				if (teleportAway)
 				{
@@ -774,14 +859,19 @@ namespace Server.Mobiles
 
 				for (var i = 0; i < m_Offsets.Length; i += 2)
 				{
-					int x = m_Offsets[i], y = m_Offsets[i + 1];
+					int x = m_Offsets[i],
+						y = m_Offsets[i + 1];
 
 					var p = new Point3D(px + x, py + y, 0);
 
 					var lt = new LandTarget(p, map);
 
-					if ((targ.Range == -1 || m_Mobile.InRange(p, targ.Range)) && m_Mobile.InLOS(lt) &&
-						map.CanSpawnMobile(px + x, py + y, lt.Z) && !SpellHelper.CheckMulti(p, map))
+					if (
+						(targ.Range == -1 || m_Mobile.InRange(p, targ.Range))
+						&& m_Mobile.InLOS(lt)
+						&& map.CanSpawnMobile(px + x, py + y, lt.Z)
+						&& !SpellHelper.CheckMulti(p, map)
+					)
 					{
 						targ.Invoke(m_Mobile, lt);
 						return;
@@ -798,11 +888,16 @@ namespace Server.Mobiles
 					var randomPoint = new Point3D(
 						m_Mobile.X - teleRange + Utility.Random(teleRange * 2 + 1),
 						m_Mobile.Y - teleRange + Utility.Random(teleRange * 2 + 1),
-						0);
+						0
+					);
 
 					var lt = new LandTarget(randomPoint, map);
 
-					if (m_Mobile.InLOS(lt) && map.CanSpawnMobile(lt.X, lt.Y, lt.Z) && !SpellHelper.CheckMulti(randomPoint, map))
+					if (
+						m_Mobile.InLOS(lt)
+						&& map.CanSpawnMobile(lt.X, lt.Y, lt.Z)
+						&& !SpellHelper.CheckMulti(randomPoint, map)
+					)
 					{
 						targ.Invoke(m_Mobile, new LandTarget(randomPoint, map));
 						return;

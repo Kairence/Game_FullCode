@@ -3,107 +3,106 @@ using Server.Mobiles;
 
 namespace Server.Engines.XmlSpawner2
 {
-    public class XmlIsEnemy : XmlAttachment
-    {
-        private string m_TestString = null;// Test condition to see if mobile is an enemy of the object this is attached to
-        public XmlIsEnemy(ASerial serial)
-            : base(serial)
-        {
-        }
+	public class XmlIsEnemy : XmlAttachment
+	{
+		private string m_TestString = null; // Test condition to see if mobile is an enemy of the object this is attached to
 
-        [Attachable]
-        public XmlIsEnemy()
-        {
-            this.Test = String.Empty;
-        }
+		public XmlIsEnemy(ASerial serial)
+			: base(serial) { }
 
-        [Attachable]
-        public XmlIsEnemy(string name)
-        {
-            this.Name = name;
-            this.Test = String.Empty;
-        }
+		[Attachable]
+		public XmlIsEnemy()
+		{
+			this.Test = String.Empty;
+		}
 
-        [Attachable]
-        public XmlIsEnemy(string name, string test)
-        {
-            this.Name = name;
-            this.Test = test;
-        }
+		[Attachable]
+		public XmlIsEnemy(string name)
+		{
+			this.Name = name;
+			this.Test = String.Empty;
+		}
 
-        [Attachable]
-        public XmlIsEnemy(string name, string test, double expiresin)
-        {
-            this.Name = name;
-            this.Test = test;
-            this.Expiration = TimeSpan.FromMinutes(expiresin);
-        }
+		[Attachable]
+		public XmlIsEnemy(string name, string test)
+		{
+			this.Name = name;
+			this.Test = test;
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public string Test
-        {
-            get
-            {
-                return this.m_TestString;
-            }
-            set
-            {
-                this.m_TestString = value;
-            }
-        }
-        public bool IsEnemy(Mobile from)
-        {
-            if (from == null)
-                return false;
+		[Attachable]
+		public XmlIsEnemy(string name, string test, double expiresin)
+		{
+			this.Name = name;
+			this.Test = test;
+			this.Expiration = TimeSpan.FromMinutes(expiresin);
+		}
 
-            bool isenemy = false;
+		[CommandProperty(AccessLevel.GameMaster)]
+		public string Test
+		{
+			get { return this.m_TestString; }
+			set { this.m_TestString = value; }
+		}
 
-            // test the condition if there is one
-            if (this.Test != null && this.Test.Length > 0)
-            {
-                string status_str;
+		public bool IsEnemy(Mobile from)
+		{
+			if (from == null)
+				return false;
 
-                isenemy = BaseXmlSpawner.CheckPropertyString(null, this.AttachedTo, this.Test, from, out status_str);
-            }
+			bool isenemy = false;
 
-            return isenemy;
-        }
+			// test the condition if there is one
+			if (this.Test != null && this.Test.Length > 0)
+			{
+				string status_str;
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+				isenemy = BaseXmlSpawner.CheckPropertyString(null, this.AttachedTo, this.Test, from, out status_str);
+			}
 
-            writer.Write((int)0);
-            // version 0
-            writer.Write(this.m_TestString);
-        }
+			return isenemy;
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-            switch (version)
-            {
-                case 0:
-                    this.m_TestString = reader.ReadString();
-                    break;
-            }
-        }
+			writer.Write((int)0);
+			// version 0
+			writer.Write(this.m_TestString);
+		}
 
-        public override string OnIdentify(Mobile from)
-        {
-            if (from == null || from.AccessLevel < AccessLevel.Counselor)
-                return null;
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            if (this.Expiration > TimeSpan.Zero)
-            {
-                return String.Format("{0}: IsEnemy '{1}' expires in {2} mins", this.Name, this.Test, this.Expiration.TotalMinutes);
-            }
-            else
-            {
-                return String.Format("{0}: IsEnemy '{1}'", this.Name, this.Test);
-            }
-        }
-    }
+			int version = reader.ReadInt();
+			switch (version)
+			{
+				case 0:
+					this.m_TestString = reader.ReadString();
+					break;
+			}
+		}
+
+		public override string OnIdentify(Mobile from)
+		{
+			if (from == null || from.AccessLevel < AccessLevel.Counselor)
+				return null;
+
+			if (this.Expiration > TimeSpan.Zero)
+			{
+				return String.Format(
+					"{0}: IsEnemy '{1}' expires in {2} mins",
+					this.Name,
+					this.Test,
+					this.Expiration.TotalMinutes
+				);
+			}
+			else
+			{
+				return String.Format("{0}: IsEnemy '{1}'", this.Name, this.Test);
+			}
+		}
+	}
 }

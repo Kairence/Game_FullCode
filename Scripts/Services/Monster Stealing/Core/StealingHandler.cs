@@ -2,254 +2,264 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Server;
-using Server.Mobiles;
-using Server.Items;
-using Server.Regions;
 using Server.Engines.CannedEvil;
+using Server.Items;
+using Server.Mobiles;
+using Server.Regions;
 
 namespace Server.Engines.CreatureStealing
 {
-    class StealingHandler
-    {
-        private static Type[] SpecialItemList = 
-        { 
-            typeof(SeedOfLife), 
-            typeof(BalmOfStrength), 
-            typeof(BalmOfWisdom),
-            typeof(BalmOfSwiftness), 
-            typeof(ManaDraught), 
-            typeof(BalmOfProtection), 
-            typeof(StoneSkinLotion), 
-            typeof(GemOfSalvation), 
-            typeof(LifeShieldLotion),
-            typeof(SmugglersLantern),
-            typeof(SmugglersToolBox)
-        };
+	class StealingHandler
+	{
+		private static Type[] SpecialItemList =
+		{
+			typeof(SeedOfLife),
+			typeof(BalmOfStrength),
+			typeof(BalmOfWisdom),
+			typeof(BalmOfSwiftness),
+			typeof(ManaDraught),
+			typeof(BalmOfProtection),
+			typeof(StoneSkinLotion),
+			typeof(GemOfSalvation),
+			typeof(LifeShieldLotion),
+			typeof(SmugglersLantern),
+			typeof(SmugglersToolBox),
+		};
 
-        public static void HandleSteal(BaseCreature from, PlayerMobile thief)
-        {
-            if (from.HasBeenStolen)
-            {
-                thief.SendLocalizedMessage(1094948); //That creature has already been stolen from.  There is nothing left to steal.
-                return; 
-            }
-            
-            if (from.Controlled || from.Summoned)
-            {
-                thief.SendLocalizedMessage(502708); //You can't steal from this.
-                return; 
-            }
+		public static void HandleSteal(BaseCreature from, PlayerMobile thief)
+		{
+			if (from.HasBeenStolen)
+			{
+				thief.SendLocalizedMessage(1094948); //That creature has already been stolen from.  There is nothing left to steal.
+				return;
+			}
 
-            if (!CheckLocation(thief, from))
-                return;
+			if (from.Controlled || from.Summoned)
+			{
+				thief.SendLocalizedMessage(502708); //You can't steal from this.
+				return;
+			}
 
-            double stealing = thief.Skills.Stealing.Value;
+			if (!CheckLocation(thief, from))
+				return;
 
-            if (stealing < 100)
-                return;
+			double stealing = thief.Skills.Stealing.Value;
 
-            int chance = GetStealingChance(thief, from, stealing);
+			if (stealing < 100)
+				return;
 
-            if ((Utility.Random(100)+1) <= chance) 
-            {
-                thief.SendLocalizedMessage(1094947);//You successfully steal a special item from the creature!
+			int chance = GetStealingChance(thief, from, stealing);
 
-                Item item;
+			if ((Utility.Random(100) + 1) <= chance)
+			{
+				thief.SendLocalizedMessage(1094947); //You successfully steal a special item from the creature!
 
-                if (from is ExodusZealot)
-                {
-                    item = Activator.CreateInstance(ExodusChest.RituelItem[Utility.Random(ExodusChest.RituelItem.Length)]) as Item;
-                }
-                else
-                {
-                    item = Activator.CreateInstance(SpecialItemList[Utility.Random(SpecialItemList.Length - 2)]) as Item;
-                }
+				Item item;
 
-                thief.AddToBackpack(item);
-            } 
+				if (from is ExodusZealot)
+				{
+					item =
+						Activator.CreateInstance(ExodusChest.RituelItem[Utility.Random(ExodusChest.RituelItem.Length)])
+						as Item;
+				}
+				else
+				{
+					item =
+						Activator.CreateInstance(SpecialItemList[Utility.Random(SpecialItemList.Length - 2)]) as Item;
+				}
 
-            from.HasBeenStolen = true;
-        }
+				thief.AddToBackpack(item);
+			}
 
-        public static void HandleSmugglersEdgeSteal(BaseCreature from, PlayerMobile thief)
-        {
-            if (from.HasBeenStolen || !CheckLocation(thief, from))
-                return;
+			from.HasBeenStolen = true;
+		}
 
-            if (0.05 > Utility.RandomDouble())
-            {
-                double tempSkill = Utility.RandomMinMax(80, 110);
-                double realSkill = thief.Skills[SkillName.Stealing].Value;
+		public static void HandleSmugglersEdgeSteal(BaseCreature from, PlayerMobile thief)
+		{
+			if (from.HasBeenStolen || !CheckLocation(thief, from))
+				return;
 
-                if (realSkill > tempSkill)
-                    tempSkill = realSkill;
+			if (0.05 > Utility.RandomDouble())
+			{
+				double tempSkill = Utility.RandomMinMax(80, 110);
+				double realSkill = thief.Skills[SkillName.Stealing].Value;
 
-                if (tempSkill > 100)
-                {
-                    int chance = GetStealingChance(thief, from, tempSkill);
+				if (realSkill > tempSkill)
+					tempSkill = realSkill;
 
-                    if (realSkill <= 109.9)
-                        chance += 1;
-                    else if (realSkill <= 114.9)
-                        chance += 2;
-                    else if (realSkill >= 115.0)
-                        chance += 3;
+				if (tempSkill > 100)
+				{
+					int chance = GetStealingChance(thief, from, tempSkill);
 
-                    if (chance >= Utility.Random(100))
-                    {
-                        Item item = Activator.CreateInstance(SpecialItemList[Utility.Random(SpecialItemList.Length)]) as Item;
+					if (realSkill <= 109.9)
+						chance += 1;
+					else if (realSkill <= 114.9)
+						chance += 2;
+					else if (realSkill >= 115.0)
+						chance += 3;
 
-                        if (item != null)
-                        {
-                            thief.AddToBackpack(item);
+					if (chance >= Utility.Random(100))
+					{
+						Item item =
+							Activator.CreateInstance(SpecialItemList[Utility.Random(SpecialItemList.Length)]) as Item;
 
-                            thief.SendLocalizedMessage(1094947);//You successfully steal a special item from the creature!
-                        }
-                    }
-                    else
-                    {
-                        Container pack = from.Backpack;
+						if (item != null)
+						{
+							thief.AddToBackpack(item);
 
-                        if (pack != null && pack.Items.Count > 0)
-                        {
-                            int randomIndex = Utility.Random(pack.Items.Count);
+							thief.SendLocalizedMessage(1094947); //You successfully steal a special item from the creature!
+						}
+					}
+					else
+					{
+						Container pack = from.Backpack;
 
-                            Item stolen = TryStealItem(pack.Items[randomIndex], tempSkill);
+						if (pack != null && pack.Items.Count > 0)
+						{
+							int randomIndex = Utility.Random(pack.Items.Count);
 
-                            if (stolen != null)
-                            {
-                                thief.AddToBackpack(stolen);
+							Item stolen = TryStealItem(pack.Items[randomIndex], tempSkill);
 
-                                thief.SendLocalizedMessage(502724); // You succesfully steal the item.
-                            }
-                            else
-                            {
-                                thief.SendLocalizedMessage(502723); // You fail to steal the item.
-                            }
-                        }
-                    }
+							if (stolen != null)
+							{
+								thief.AddToBackpack(stolen);
 
-                    from.HasBeenStolen = true;
-                }
-            }
-        }
+								thief.SendLocalizedMessage(502724); // You succesfully steal the item.
+							}
+							else
+							{
+								thief.SendLocalizedMessage(502723); // You fail to steal the item.
+							}
+						}
+					}
 
-        private static bool CheckLocation(Mobile thief, Mobile from)
-        {
-            if (!((thief.Map == Map.Felucca && thief.Region is DungeonRegion) || thief.Region is ChampionSpawnRegion || from is ExodusZealot))
-            {
-                return false;
-            }
+					from.HasBeenStolen = true;
+				}
+			}
+		}
 
-            return true;
-        }
+		private static bool CheckLocation(Mobile thief, Mobile from)
+		{
+			if (
+				!(
+					(thief.Map == Map.Felucca && thief.Region is DungeonRegion)
+					|| thief.Region is ChampionSpawnRegion
+					|| from is ExodusZealot
+				)
+			)
+			{
+				return false;
+			}
 
-        private static int GetStealingChance(Mobile thief, BaseCreature from, double stealing)
-        {
-            int fame = from.Fame;
+			return true;
+		}
 
-            fame = Math.Max(1, fame);
-            fame = Math.Min(30000, fame);
+		private static int GetStealingChance(Mobile thief, BaseCreature from, double stealing)
+		{
+			int fame = from.Fame;
 
-            int chance = 0;
+			fame = Math.Max(1, fame);
+			fame = Math.Min(30000, fame);
 
-            if (stealing == 120)
-                chance += 10;
-            else if (stealing >= 110.1)
-                chance += 8;
-            else if (stealing >= 100.1)
-                chance += 5;
-            else if (stealing == 100)
-                chance += 2;
+			int chance = 0;
 
-            int level = (int)(40.0 / 29999.0 * fame - 40.0 / 29999.0);
+			if (stealing == 120)
+				chance += 10;
+			else if (stealing >= 110.1)
+				chance += 8;
+			else if (stealing >= 100.1)
+				chance += 5;
+			else if (stealing == 100)
+				chance += 2;
 
-            if (level >= 40)
-                chance += 5;
-             else if (level >= 35) 
-                chance += 3;
-            else if (level >= 30)
-                chance += 2;
-            else if (level >= 25)
-                chance += 1;
+			int level = (int)(40.0 / 29999.0 * fame - 40.0 / 29999.0);
 
-            return chance;
-        }
+			if (level >= 40)
+				chance += 5;
+			else if (level >= 35)
+				chance += 3;
+			else if (level >= 30)
+				chance += 2;
+			else if (level >= 25)
+				chance += 1;
 
-        private static Item TryStealItem(Item toSteal, double skill)
-        {
-            Item stolen = null;
-            double w = toSteal.Weight + toSteal.TotalWeight;
+			return chance;
+		}
 
-            if (w <= 10)
-            {
-                if (toSteal.Stackable && toSteal.Amount > 1)
-                {
-                    int maxAmount = (int)((skill / 10.0) / toSteal.Weight);
+		private static Item TryStealItem(Item toSteal, double skill)
+		{
+			Item stolen = null;
+			double w = toSteal.Weight + toSteal.TotalWeight;
 
-                    if (maxAmount < 1)
-                    {
-                        maxAmount = 1;
-                    }
-                    else if (maxAmount > toSteal.Amount)
-                    {
-                        maxAmount = toSteal.Amount;
-                    }
+			if (w <= 10)
+			{
+				if (toSteal.Stackable && toSteal.Amount > 1)
+				{
+					int maxAmount = (int)((skill / 10.0) / toSteal.Weight);
 
-                    int amount = Utility.RandomMinMax(1, maxAmount);
+					if (maxAmount < 1)
+					{
+						maxAmount = 1;
+					}
+					else if (maxAmount > toSteal.Amount)
+					{
+						maxAmount = toSteal.Amount;
+					}
 
-                    if (amount >= toSteal.Amount)
-                    {
-                        int pileWeight = (int)Math.Ceiling(toSteal.Weight * toSteal.Amount);
-                        pileWeight *= 10;
+					int amount = Utility.RandomMinMax(1, maxAmount);
 
-                        double chance = (skill - (pileWeight - 22.5)) / ((pileWeight + 27.5) - (pileWeight - 22.5));
+					if (amount >= toSteal.Amount)
+					{
+						int pileWeight = (int)Math.Ceiling(toSteal.Weight * toSteal.Amount);
+						pileWeight *= 10;
 
-                        if (chance >= Utility.RandomDouble())
-                        {
-                            stolen = toSteal;
-                        }
-                    }
-                    else
-                    {
-                        int pileWeight = (int)Math.Ceiling(toSteal.Weight * amount);
-                        pileWeight *= 10;
+						double chance = (skill - (pileWeight - 22.5)) / ((pileWeight + 27.5) - (pileWeight - 22.5));
 
-                        double chance = (skill - (pileWeight - 22.5)) / ((pileWeight + 27.5) - (pileWeight - 22.5));
+						if (chance >= Utility.RandomDouble())
+						{
+							stolen = toSteal;
+						}
+					}
+					else
+					{
+						int pileWeight = (int)Math.Ceiling(toSteal.Weight * amount);
+						pileWeight *= 10;
 
-                        if (chance >= Utility.RandomDouble())
-                        {
-                            stolen = Mobile.LiftItemDupe(toSteal, toSteal.Amount - amount);
+						double chance = (skill - (pileWeight - 22.5)) / ((pileWeight + 27.5) - (pileWeight - 22.5));
 
-                            if (stolen == null)
-                            {
-                                stolen = toSteal;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    int iw = (int)Math.Ceiling(w);
-                    iw *= 10;
+						if (chance >= Utility.RandomDouble())
+						{
+							stolen = Mobile.LiftItemDupe(toSteal, toSteal.Amount - amount);
 
-                    double chance = (skill - (iw - 22.5)) / ((iw + 27.5) - (iw - 22.5));
+							if (stolen == null)
+							{
+								stolen = toSteal;
+							}
+						}
+					}
+				}
+				else
+				{
+					int iw = (int)Math.Ceiling(w);
+					iw *= 10;
 
-                    if (chance >= Utility.RandomDouble())
-                    {
-                        stolen = toSteal;
-                    }
-                }
+					double chance = (skill - (iw - 22.5)) / ((iw + 27.5) - (iw - 22.5));
 
-                if (stolen != null)
-                {
-                    ItemFlags.SetTaken(stolen, true);
-                    ItemFlags.SetStealable(stolen, false);
-                    stolen.Movable = true;
-                }
-            }
+					if (chance >= Utility.RandomDouble())
+					{
+						stolen = toSteal;
+					}
+				}
 
-            return stolen;
-        }
-    }
+				if (stolen != null)
+				{
+					ItemFlags.SetTaken(stolen, true);
+					ItemFlags.SetStealable(stolen, false);
+					stolen.Movable = true;
+				}
+			}
+
+			return stolen;
+		}
+	}
 }

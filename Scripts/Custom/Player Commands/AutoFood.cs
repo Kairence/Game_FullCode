@@ -1,12 +1,12 @@
 using System;
 using Server;
+using Server.Accounting;
+using Server.Commands.Generic;
+using Server.Gumps;
+using Server.Items;
 using Server.Mobiles;
 using Server.Network;
-using Server.Gumps;
-using Server.Commands.Generic;
-using Server.Accounting;
 using Server.Targeting;
-using Server.Items;
 
 namespace Server.Commands
 {
@@ -14,61 +14,59 @@ namespace Server.Commands
 	{
 		public static void Initialize()
 		{
-	      		CommandSystem.Register( "Food", AccessLevel.Player, new CommandEventHandler( UserAutoFoodInfo_OnCommand ) );
+			CommandSystem.Register("Food", AccessLevel.Player, new CommandEventHandler(UserAutoFoodInfo_OnCommand));
 		}
 
-		[Usage( "Status" )]
-		[Description( "ÀÚµ¿ À½½Ä ¸Ô±â." )]
-		public static void UserAutoFoodInfo_OnCommand( CommandEventArgs e )
+		[Usage("Status")]
+		[Description("ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô±ï¿½.")]
+		public static void UserAutoFoodInfo_OnCommand(CommandEventArgs e)
 		{
-			if( e.Mobile is PlayerMobile )
+			if (e.Mobile is PlayerMobile)
 			{
 				PlayerMobile pm = e.Mobile as PlayerMobile;
-				if( pm.AutoFood == null || e.Arguments.Length == 0 )
+				if (pm.AutoFood == null || e.Arguments.Length == 0)
 					e.Mobile.Target = new InternalTarget();
-				else if( pm.AutoFood != null )
+				else if (pm.AutoFood != null)
 				{
 					string index = e.Arguments[0];
 					int number;
-					bool isNum = Int32.TryParse(index, out number );
-					if( !isNum )
-						e.Mobile.SendMessage("Àß¸øµÈ ¸í·É¾î ÀÔ´Ï´Ù. [Food ¼ýÀÚ ¸¦ ³ÖÀ¸¼¼¿ä.");
-						
-					if( number == 0 )
+					bool isNum = Int32.TryParse(index, out number);
+					if (!isNum)
+						e.Mobile.SendMessage("ï¿½ß¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½É¾ï¿½ ï¿½Ô´Ï´ï¿½. [Food ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.");
+
+					if (number == 0)
 					{
 						pm.AutoFood = null;
 						pm.FoodPercent = 250;
 					}
-					else if( number < 0 || number > 1000 ) 
-						e.Mobile.SendMessage( String.Format("0 ~ 1000 »çÀÌÀÇ °ªÀ» ³Ö¾î¾ß ÇÕ´Ï´Ù.") );
+					else if (number < 0 || number > 1000)
+						e.Mobile.SendMessage(String.Format("0 ~ 1000 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Õ´Ï´ï¿½."));
 					else
 					{
 						pm.FoodPercent = number;
-						e.Mobile.SendMessage( String.Format("¹è°íÇÄÀÌ {0}% ÀÏ ¶§ À½½ÄÀ» ¸Ôµµ·Ï ¼³Á¤ÇÕ´Ï´Ù.", number * 0.1) );
+						e.Mobile.SendMessage(String.Format("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ {0}% ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ôµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.", number * 0.1));
 					}
 				}
 			}
-
 		}
 
 		private class InternalTarget : Target
 		{
-			public InternalTarget() :  base ( 8, false, TargetFlags.None )
-			{
-			}
+			public InternalTarget()
+				: base(8, false, TargetFlags.None) { }
 
-			protected override void OnTarget( Mobile from, object targeted )
+			protected override void OnTarget(Mobile from, object targeted)
 			{
-				if ( targeted is Food )
+				if (targeted is Food)
 				{
 					Food food = targeted as Food;
-					if( from is PlayerMobile )
+					if (from is PlayerMobile)
 					{
 						PlayerMobile pm = from as PlayerMobile;
 						pm.AutoFood = food;
 					}
 				}
-			}			
+			}
 		}
 	}
 }

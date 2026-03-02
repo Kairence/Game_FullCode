@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Runtime;
+using System.Text;
 
 namespace Server.Commands
 {
@@ -16,21 +16,29 @@ namespace Server.Commands
 
 		public static void Initialize()
 		{
-			CommandSystem.Register("GenGameDocs", AccessLevel.GameMaster, new CommandEventHandler(GenGameDocs_OnCommand));
+			CommandSystem.Register(
+				"GenGameDocs",
+				AccessLevel.GameMaster,
+				new CommandEventHandler(GenGameDocs_OnCommand)
+			);
 		}
 
 		private static void GenGameDocs_OnCommand(CommandEventArgs e)
 		{
 			csv = new CsvFile();
-			AppDomain.CurrentDomain.GetAssemblies()
+			AppDomain
+				.CurrentDomain.GetAssemblies()
 				.SelectMany(t => t.GetTypes())
-				.Where(t => t.IsClass && t.Namespace == "Server.Mobiles" && typeof(Mobiles.BaseCreature).IsAssignableFrom(t))
+				.Where(t =>
+					t.IsClass && t.Namespace == "Server.Mobiles" && typeof(Mobiles.BaseCreature).IsAssignableFrom(t)
+				)
 				.ToList()
 				.ForEach(t => ConsumeType(t, HandleBaseCreature));
 			csv.Write("Creatures.csv");
 
 			csv = new CsvFile();
-			AppDomain.CurrentDomain.GetAssemblies()
+			AppDomain
+				.CurrentDomain.GetAssemblies()
 				.SelectMany(t => t.GetTypes())
 				.Where(t => t.IsClass && t.Namespace == "Server.Items" && typeof(Items.BaseWeapon).IsAssignableFrom(t))
 				.ToList()
@@ -38,7 +46,8 @@ namespace Server.Commands
 			csv.Write("Weapons.csv");
 
 			csv = new CsvFile();
-			AppDomain.CurrentDomain.GetAssemblies()
+			AppDomain
+				.CurrentDomain.GetAssemblies()
 				.SelectMany(t => t.GetTypes())
 				.Where(t => t.IsClass && t.Namespace == "Server.Items" && typeof(Items.BaseArmor).IsAssignableFrom(t))
 				.ToList()
@@ -62,7 +71,6 @@ namespace Server.Commands
 			csv.AddValue("Poison Resist", arm.PoisonResistance);
 			csv.AddValue("Energy Resist", arm.EnergyResistance);
 			csv.AddValue("DCI", arm.Attributes.DefendChance);
-
 		}
 
 		private static void HandleBaseWeapon(object obj)
@@ -147,9 +155,7 @@ namespace Server.Commands
 			private HashSet<String> headerSet = new HashSet<string>();
 			private List<String> allHeaders = new List<string>();
 
-			public CsvFile()
-			{
-			}
+			public CsvFile() { }
 
 			public void AddRow()
 			{
@@ -179,7 +185,7 @@ namespace Server.Commands
 				bool first;
 
 				first = true;
-				foreach(String header in allHeaders)
+				foreach (String header in allHeaders)
 				{
 					if (first)
 					{
@@ -193,7 +199,7 @@ namespace Server.Commands
 				}
 				outf.WriteLine("");
 
-				foreach(Dictionary<String, String> row in rows)
+				foreach (Dictionary<String, String> row in rows)
 				{
 					first = true;
 					foreach (String header in allHeaders)

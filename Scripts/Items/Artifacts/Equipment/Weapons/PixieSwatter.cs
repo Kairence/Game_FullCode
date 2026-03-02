@@ -2,66 +2,69 @@ using System;
 
 namespace Server.Items
 {
-    public class PixieSwatter : Scepter
+	public class PixieSwatter : Scepter
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public PixieSwatter()
-        {
-            Hue = 0x8A;
-            WeaponAttributes.HitPoisonArea = 75;
-            Attributes.WeaponSpeed = 30;         
-            WeaponAttributes.UseBestSkill = 1;
-            WeaponAttributes.ResistFireBonus = 12;
-            WeaponAttributes.ResistEnergyBonus = 12;
-            Slayer = SlayerName.Fey;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public PixieSwatter(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public PixieSwatter()
+		{
+			Hue = 0x8A;
+			WeaponAttributes.HitPoisonArea = 75;
+			Attributes.WeaponSpeed = 30;
+			WeaponAttributes.UseBestSkill = 1;
+			WeaponAttributes.ResistFireBonus = 12;
+			WeaponAttributes.ResistEnergyBonus = 12;
+			Slayer = SlayerName.Fey;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1070854;
-            }
-        }// Pixie Swatter
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void GetDamageTypes(Mobile wielder, out int phys, out int fire, out int cold, out int pois, out int nrgy, out int chaos, out int direct)
-        {
-            fire = 100;
+		public PixieSwatter(Serial serial)
+			: base(serial) { }
 
-            cold = pois = phys = nrgy = chaos = direct = 0;
-        }
+		public override int LabelNumber
+		{
+			get { return 1070854; }
+		} // Pixie Swatter
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void GetDamageTypes(
+			Mobile wielder,
+			out int phys,
+			out int fire,
+			out int cold,
+			out int pois,
+			out int nrgy,
+			out int chaos,
+			out int direct
+		)
+		{
+			fire = 100;
 
-            writer.Write((int)0);
-        }
+			cold = pois = phys = nrgy = chaos = direct = 0;
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

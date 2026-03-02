@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
-
 using Server.Commands;
 using Server.Mobiles;
 #endregion
@@ -57,10 +56,17 @@ namespace Server.Regions
 		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public bool Disabled { get { return m_Disabled; } set { m_Disabled = value; } }
+		public bool Disabled
+		{
+			get { return m_Disabled; }
+			set { m_Disabled = value; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public virtual bool AllowReds { get { return Core.AOS; } }
+		public virtual bool AllowReds
+		{
+			get { return Core.AOS; }
+		}
 
 		public virtual Type DefaultGuardType
 		{
@@ -102,7 +108,7 @@ namespace Server.Regions
 				return true;
 			}
 
-            return !from.Murderer;
+			return !from.Murderer;
 		}
 
 		public override bool OnBeginSpellCast(Mobile m, ISpell s)
@@ -124,9 +130,9 @@ namespace Server.Regions
 		public override void MakeGuard(Mobile focus)
 		{
 			BaseGuard useGuard = null;
-            IPooledEnumerable eable = focus.GetMobilesInRange(8);
+			IPooledEnumerable eable = focus.GetMobilesInRange(8);
 
-            foreach (Mobile m in eable)
+			foreach (Mobile m in eable)
 			{
 				if (m is BaseGuard)
 				{
@@ -140,7 +146,7 @@ namespace Server.Regions
 				}
 			}
 
-            eable.Free();
+			eable.Free();
 
 			if (useGuard == null)
 			{
@@ -150,8 +156,7 @@ namespace Server.Regions
 				{
 					Activator.CreateInstance(m_GuardType, m_GuardParams);
 				}
-				catch
-				{ }
+				catch { }
 			}
 			else
 			{
@@ -201,9 +206,17 @@ namespace Server.Regions
 		{
 			base.OnAggressed(aggressor, aggressed, criminal);
 
-            if (!IsDisabled() && aggressor != aggressed && criminal && Utility.InRange(aggressor.Location, aggressed.Location, 12))
+			if (
+				!IsDisabled()
+				&& aggressor != aggressed
+				&& criminal
+				&& Utility.InRange(aggressor.Location, aggressed.Location, 12)
+			)
 			{
-				CheckGuardCandidate(aggressor, aggressor is BaseCreature && ((BaseCreature)aggressor).IsAggressiveMonster);
+				CheckGuardCandidate(
+					aggressor,
+					aggressor is BaseCreature && ((BaseCreature)aggressor).IsAggressiveMonster
+				);
 			}
 		}
 
@@ -234,10 +247,10 @@ namespace Server.Regions
 			}
 		}
 
-        public void CheckGuardCandidate(Mobile m)
-        {
-            CheckGuardCandidate(m, false);
-        }
+		public void CheckGuardCandidate(Mobile m)
+		{
+			CheckGuardCandidate(m, false);
+		}
 
 		public void CheckGuardCandidate(Mobile m, bool autoCallGuards)
 		{
@@ -251,17 +264,17 @@ namespace Server.Regions
 				GuardTimer timer = null;
 				m_GuardCandidates.TryGetValue(m, out timer);
 
-                if (autoCallGuards)
-                {
-                    MakeGuard(m);
+				if (autoCallGuards)
+				{
+					MakeGuard(m);
 
-                    if (timer != null)
-                    {
-                        timer.Stop();
-                        m_GuardCandidates.Remove(m);
-                        m.SendLocalizedMessage(502276); // Guards can no longer be called on you.
-                    }
-                }
+					if (timer != null)
+					{
+						timer.Stop();
+						m_GuardCandidates.Remove(m);
+						m.SendLocalizedMessage(502276); // Guards can no longer be called on you.
+					}
+				}
 				else if (timer == null)
 				{
 					timer = new GuardTimer(m, m_GuardCandidates);
@@ -277,12 +290,20 @@ namespace Server.Regions
 						Mobile fakeCall = null;
 						double prio = 0.0;
 
-                        IPooledEnumerable eable = m.GetMobilesInRange(8);
+						IPooledEnumerable eable = m.GetMobilesInRange(8);
 
-                        foreach (Mobile v in eable)
+						foreach (Mobile v in eable)
 						{
-							if (!v.Player && v != m && !IsGuardCandidate(v) &&
-								((v is BaseCreature) ? ((BaseCreature)v).IsHumanInTown() : (v.Body.IsHuman && v.Region.IsPartOf(this))))
+							if (
+								!v.Player
+								&& v != m
+								&& !IsGuardCandidate(v)
+								&& (
+									(v is BaseCreature)
+										? ((BaseCreature)v).IsHumanInTown()
+										: (v.Body.IsHuman && v.Region.IsPartOf(this))
+								)
+							)
 							{
 								double dist = m.GetDistanceToSqrt(v);
 
@@ -294,11 +315,23 @@ namespace Server.Regions
 							}
 						}
 
-                        eable.Free();
+						eable.Free();
 
 						if (fakeCall != null)
 						{
-							fakeCall.Say(Utility.RandomList(1007037, 501603, 1013037, 1013038, 1013039, 1013041, 1013042, 1013043, 1013052));
+							fakeCall.Say(
+								Utility.RandomList(
+									1007037,
+									501603,
+									1013037,
+									1013038,
+									1013039,
+									1013041,
+									1013042,
+									1013043,
+									1013052
+								)
+							);
 							MakeGuard(m);
 							timer.Stop();
 							m_GuardCandidates.Remove(m);
@@ -327,24 +360,24 @@ namespace Server.Regions
 			{
 				if (IsGuardCandidate(m))
 				{
-                    if (m_GuardCandidates.ContainsKey(m) || (!AllowReds && m.Murderer && m.Region.IsPartOf(this)))
-                    {
-                        GuardTimer timer = null;
-                        m_GuardCandidates.TryGetValue(m, out timer);
+					if (m_GuardCandidates.ContainsKey(m) || (!AllowReds && m.Murderer && m.Region.IsPartOf(this)))
+					{
+						GuardTimer timer = null;
+						m_GuardCandidates.TryGetValue(m, out timer);
 
-                        if (timer != null)
-                        {
-                            timer.Stop();
-                            m_GuardCandidates.Remove(m);
-                        }
+						if (timer != null)
+						{
+							timer.Stop();
+							m_GuardCandidates.Remove(m);
+						}
 
-                        MakeGuard(m);
-                        m.SendLocalizedMessage(502276); // Guards can no longer be called on you.
-                    }
-                    else if (m is BaseCreature && ((BaseCreature)m).IsAggressiveMonster && m.Region.IsPartOf(this))
-                    {
-                        MakeGuard(m);
-                    }
+						MakeGuard(m);
+						m.SendLocalizedMessage(502276); // Guards can no longer be called on you.
+					}
+					else if (m is BaseCreature && ((BaseCreature)m).IsAggressiveMonster && m.Region.IsPartOf(this))
+					{
+						MakeGuard(m);
+					}
 
 					break;
 				}
@@ -355,13 +388,22 @@ namespace Server.Regions
 
 		public bool IsGuardCandidate(Mobile m)
 		{
-			if (m is BaseGuard || m.GuardImmune || !m.Alive || m.IsStaff() || m.Blessed || (m is BaseCreature && ((BaseCreature)m).IsInvulnerable) ||
-				IsDisabled())
+			if (
+				m is BaseGuard
+				|| m.GuardImmune
+				|| !m.Alive
+				|| m.IsStaff()
+				|| m.Blessed
+				|| (m is BaseCreature && ((BaseCreature)m).IsInvulnerable)
+				|| IsDisabled()
+			)
 			{
 				return false;
 			}
 
-			return (!AllowReds && m.Murderer) || m.Criminal || (m is BaseCreature && ((BaseCreature)m).IsAggressiveMonster);
+			return (!AllowReds && m.Murderer)
+				|| m.Criminal
+				|| (m is BaseCreature && ((BaseCreature)m).IsAggressiveMonster);
 		}
 
 		[Usage("CheckGuarded")]

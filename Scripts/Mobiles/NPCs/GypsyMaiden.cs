@@ -1,6 +1,5 @@
 #region References
 using System.Collections.Generic;
-
 using Server.Items;
 #endregion
 
@@ -13,15 +12,17 @@ namespace Server.Mobiles
 		[Constructable]
 		public GypsyMaiden()
 			: base("the gypsy maiden")
-		{ 
+		{
 			SetSkill(SkillName.Begging, 64.0, 100.0);
 		}
 
 		public GypsyMaiden(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
-		protected override List<SBInfo> SBInfos { get { return m_SBInfos; } }
+		protected override List<SBInfo> SBInfos
+		{
+			get { return m_SBInfos; }
+		}
 
 		public override bool GetGender()
 		{

@@ -5,37 +5,36 @@ namespace Server.Items
 {
 	public class WispCostume : BaseCostume
 	{
-        public override string CreatureName { get { return "wisp"; } }
-
-        [Constructable]
-		public WispCostume() : base( )
+		public override string CreatureName
 		{
-            this.CostumeBody = 58;
+			get { return "wisp"; }
 		}
-		
+
+		[Constructable]
+		public WispCostume()
+			: base()
+		{
+			this.CostumeBody = 58;
+		}
+
 		public override int LabelNumber
-        {
-            get
-            {
-                return 1114225;
-            }
-        }// wisp costume
-		
-
-		public WispCostume( Serial serial ) : base( serial )
 		{
+			get { return 1114225; }
+		} // wisp costume
+
+		public WispCostume(Serial serial)
+			: base(serial) { }
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0);
 		}
 
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
-
-			writer.Write( (int) 0 );
-		}
-		
 		public override void Deserialize(GenericReader reader)
 		{
-			base.Deserialize( reader );
+			base.Deserialize(reader);
 
 			int version = reader.ReadInt();
 		}

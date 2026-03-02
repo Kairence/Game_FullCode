@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Server.Items;
 using Server.Mobiles;
 #endregion
@@ -26,14 +25,15 @@ namespace Server.Movement
 			Movement.Impl = new FastMovementImpl();
 		}
 
-		private FastMovementImpl()
-		{ }
+		private FastMovementImpl() { }
 
 		private static bool IsOk(StaticTile tile, int ourZ, int ourTop)
 		{
 			var itemData = TileData.ItemTable[tile.ID & TileData.MaxItemValue];
 
-			return tile.Z + itemData.CalcHeight <= ourZ || ourTop <= tile.Z || (itemData.Flags & ImpassableSurface) == 0;
+			return tile.Z + itemData.CalcHeight <= ourZ
+				|| ourTop <= tile.Z
+				|| (itemData.Flags & ImpassableSurface) == 0;
 		}
 
 		private static bool IsOk(Mobile m, Item item, int ourZ, int ourTop, bool ignoreDoors, bool ignoreSpellFields)
@@ -46,8 +46,15 @@ namespace Server.Movement
 				return true;
 			}
 
-			if (((itemData.Flags & TileFlag.Door) != 0 || itemID == 0x692 || itemID == 0x846 || itemID == 0x873 ||
-				 (itemID >= 0x6F5 && itemID <= 0x6F6)) && ignoreDoors)
+			if (
+				(
+					(itemData.Flags & TileFlag.Door) != 0
+					|| itemID == 0x692
+					|| itemID == 0x846
+					|| itemID == 0x873
+					|| (itemID >= 0x6F5 && itemID <= 0x6F6)
+				) && ignoreDoors
+			)
 			{
 				return !(item is BaseHouseDoor) || m == null || ((BaseHouseDoor)item).CheckAccess(m);
 			}
@@ -73,9 +80,11 @@ namespace Server.Movement
 			int ourZ,
 			int ourTop,
 			IEnumerable<StaticTile> tiles,
-			IEnumerable<Item> items)
+			IEnumerable<Item> items
+		)
 		{
-			return tiles.All(t => IsOk(t, ourZ, ourTop)) && items.All(i => IsOk(m, i, ourZ, ourTop, ignoreDoors, ignoreSpellFields));
+			return tiles.All(t => IsOk(t, ourZ, ourTop))
+				&& items.All(i => IsOk(m, i, ourZ, ourTop, ignoreDoors, ignoreSpellFields));
 		}
 
 		private static bool Check(
@@ -88,7 +97,8 @@ namespace Server.Movement
 			int startZ,
 			bool canSwim,
 			bool cantWalk,
-			out int newZ)
+			out int newZ
+		)
 		{
 			newZ = 0;
 
@@ -109,7 +119,9 @@ namespace Server.Movement
 				landBlocks = true;
 			}
 
-			int landZ = 0, landCenter = 0, landTop = 0;
+			int landZ = 0,
+				landCenter = 0,
+				landTop = 0;
 
 			map.GetAverageZ(x, y, ref landZ, ref landCenter, ref landTop);
 
@@ -118,13 +130,22 @@ namespace Server.Movement
 			var stepTop = startTop + StepHeight;
 			var checkTop = startZ + PersonHeight;
 
-            Mobile m = p as Mobile;
+			Mobile m = p as Mobile;
 
-			var ignoreDoors = MovementImpl.AlwaysIgnoreDoors || m == null || !m.Alive || m.IsDeadBondedPet || m.Body.IsGhost ||
-							  m.Body.BodyID == 987;
+			var ignoreDoors =
+				MovementImpl.AlwaysIgnoreDoors
+				|| m == null
+				|| !m.Alive
+				|| m.IsDeadBondedPet
+				|| m.Body.IsGhost
+				|| m.Body.BodyID == 987;
 			var ignoreSpellFields = m is PlayerMobile && map.MapID != 0;
 
-			int itemZ, itemTop, ourZ, ourTop, testTop;
+			int itemZ,
+				itemTop,
+				ourZ,
+				ourTop,
+				testTop;
 			ItemData itemData;
 			TileFlag flags;
 
@@ -132,10 +153,14 @@ namespace Server.Movement
 			foreach (var tile in tiles)
 			{
 				itemData = TileData.ItemTable[tile.ID & TileData.MaxItemValue];
-                flags = itemData.Flags;
+				flags = itemData.Flags;
 
-                #region SA
-                if (m != null && m.Flying && (Insensitive.Equals(itemData.Name, "hover over") || (flags & TileFlag.HoverOver) != 0))
+				#region SA
+				if (
+					m != null
+					&& m.Flying
+					&& (Insensitive.Equals(itemData.Name, "hover over") || (flags & TileFlag.HoverOver) != 0)
+				)
 				{
 					newZ = tile.Z;
 					return true;
@@ -242,7 +267,11 @@ namespace Server.Movement
 				flags = itemData.Flags;
 
 				#region SA
-				if (m != null && m.Flying && (Insensitive.Equals(itemData.Name, "hover over") || (flags & TileFlag.HoverOver) != 0))
+				if (
+					m != null
+					&& m.Flying
+					&& (Insensitive.Equals(itemData.Name, "hover over") || (flags & TileFlag.HoverOver) != 0)
+				)
 				{
 					newZ = item.Z;
 					return true;
@@ -254,7 +283,10 @@ namespace Server.Movement
 					continue;
 				}
 
-				if ((flags & ImpassableSurface) != TileFlag.Surface && ((m != null && !m.CanSwim) || (flags & TileFlag.Wet) == 0))
+				if (
+					(flags & ImpassableSurface) != TileFlag.Surface
+					&& ((m != null && !m.CanSwim) || (flags & TileFlag.Wet) == 0)
+				)
 				{
 					continue;
 				}
@@ -358,7 +390,7 @@ namespace Server.Movement
 			return moveIsOk;
 		}
 
-        public bool CheckMovement(IPoint3D p, Map map, Point3D loc, Direction d, out int newZ)
+		public bool CheckMovement(IPoint3D p, Map map, Point3D loc, Direction d, out int newZ)
 		{
 			if (!Enabled && _Successor != null)
 			{
@@ -374,9 +406,12 @@ namespace Server.Movement
 			var xStart = loc.X;
 			var yStart = loc.Y;
 
-			int xForward = xStart, yForward = yStart;
-			int xRight = xStart, yRight = yStart;
-			int xLeft = xStart, yLeft = yStart;
+			int xForward = xStart,
+				yForward = yStart;
+			int xRight = xStart,
+				yRight = yStart;
+			int xLeft = xStart,
+				yLeft = yStart;
 
 			var checkDiagonals = ((int)d & 0x1) == 0x1;
 
@@ -390,9 +425,13 @@ namespace Server.Movement
 				return false;
 			}
 
-			int startZ, startTop;
+			int startZ,
+				startTop;
 
-			IEnumerable<Item> itemsStart, itemsForward, itemsLeft, itemsRight;
+			IEnumerable<Item> itemsStart,
+				itemsForward,
+				itemsLeft,
+				itemsRight;
 
 			var ignoreMovableImpassables = MovementImpl.IgnoreMovableImpassables;
 			var reqFlags = ImpassableSurface;
@@ -410,7 +449,9 @@ namespace Server.Movement
 				var sRight = map.GetSector(xRight, yRight);
 
 				itemsStart = sStart.Items.Where(i => Verify(i, reqFlags, ignoreMovableImpassables, xStart, yStart));
-				itemsForward = sForward.Items.Where(i => Verify(i, reqFlags, ignoreMovableImpassables, xForward, yForward));
+				itemsForward = sForward.Items.Where(i =>
+					Verify(i, reqFlags, ignoreMovableImpassables, xForward, yForward)
+				);
 				itemsLeft = sLeft.Items.Where(i => Verify(i, reqFlags, ignoreMovableImpassables, xLeft, yLeft));
 				itemsRight = sRight.Items.Where(i => Verify(i, reqFlags, ignoreMovableImpassables, xRight, yRight));
 			}
@@ -420,7 +461,9 @@ namespace Server.Movement
 				var sForward = map.GetSector(xForward, yForward);
 
 				itemsStart = sStart.Items.Where(i => Verify(i, reqFlags, ignoreMovableImpassables, xStart, yStart));
-				itemsForward = sForward.Items.Where(i => Verify(i, reqFlags, ignoreMovableImpassables, xForward, yForward));
+				itemsForward = sForward.Items.Where(i =>
+					Verify(i, reqFlags, ignoreMovableImpassables, xForward, yForward)
+				);
 				itemsLeft = Enumerable.Empty<Item>();
 				itemsRight = Enumerable.Empty<Item>();
 			}
@@ -430,15 +473,26 @@ namespace Server.Movement
 			List<Item> list = null;
 
 			MovementPool.AcquireMoveCache(ref list, itemsForward);
-            Mobile m = p as Mobile;
+			Mobile m = p as Mobile;
 
-			var moveIsOk = Check(map, p, list, xForward, yForward, startTop, startZ, m != null && m.CanSwim, m != null && m.CantWalk, out newZ);
+			var moveIsOk = Check(
+				map,
+				p,
+				list,
+				xForward,
+				yForward,
+				startTop,
+				startZ,
+				m != null && m.CanSwim,
+				m != null && m.CantWalk,
+				out newZ
+			);
 
 			if (m != null && moveIsOk && checkDiagonals)
 			{
 				int hold;
 
-                if (m.Player && m.AccessLevel < AccessLevel.GameMaster)
+				if (m.Player && m.AccessLevel < AccessLevel.GameMaster)
 				{
 					MovementPool.AcquireMoveCache(ref list, itemsLeft);
 
@@ -460,11 +514,11 @@ namespace Server.Movement
 				{
 					MovementPool.AcquireMoveCache(ref list, itemsLeft);
 
-                    if (!Check(map, m, list, xLeft, yLeft, startTop, startZ, m.CanSwim, m.CantWalk, out hold))
+					if (!Check(map, m, list, xLeft, yLeft, startTop, startZ, m.CanSwim, m.CantWalk, out hold))
 					{
 						MovementPool.AcquireMoveCache(ref list, itemsRight);
 
-                        if (!Check(map, m, list, xRight, yRight, startTop, startZ, m.CanSwim, m.CantWalk, out hold))
+						if (!Check(map, m, list, xRight, yRight, startTop, startZ, m.CanSwim, m.CantWalk, out hold))
 						{
 							moveIsOk = false;
 						}
@@ -517,15 +571,23 @@ namespace Server.Movement
 			return Verify(item, reqFlags, ignoreMovableImpassables) && Verify(item, x, y);
 		}
 
-		private static void GetStartZ(IPoint3D p, Map map, Point3D loc, IEnumerable<Item> itemList, out int zLow, out int zTop)
+		private static void GetStartZ(
+			IPoint3D p,
+			Map map,
+			Point3D loc,
+			IEnumerable<Item> itemList,
+			out int zLow,
+			out int zTop
+		)
 		{
-			int xCheck = loc.X, yCheck = loc.Y;
+			int xCheck = loc.X,
+				yCheck = loc.Y;
 
 			var landTile = map.Tiles.GetLandTile(xCheck, yCheck);
 			var landData = TileData.LandTable[landTile.ID & TileData.MaxLandValue];
 			var landBlocks = (landData.Flags & TileFlag.Impassable) != 0;
 
-            Mobile m = p as Mobile;
+			Mobile m = p as Mobile;
 
 			if (m != null)
 			{
@@ -539,7 +601,9 @@ namespace Server.Movement
 				}
 			}
 
-			int landZ = 0, landCenter = 0, landTop = 0;
+			int landZ = 0,
+				landCenter = 0,
+				landTop = 0;
 
 			map.GetAverageZ(xCheck, yCheck, ref landZ, ref landCenter, ref landTop);
 
@@ -568,7 +632,10 @@ namespace Server.Movement
 					continue;
 				}
 
-				if ((tileData.Flags & TileFlag.Surface) == 0 && ((m != null && !m.CanSwim) || (tileData.Flags & TileFlag.Wet) == 0))
+				if (
+					(tileData.Flags & TileFlag.Surface) == 0
+					&& ((m != null && !m.CanSwim) || (tileData.Flags & TileFlag.Wet) == 0)
+				)
 				{
 					continue;
 				}
@@ -609,7 +676,10 @@ namespace Server.Movement
 					continue;
 				}
 
-				if ((itemData.Flags & TileFlag.Surface) == 0 && ((m != null && !m.CanSwim) || (itemData.Flags & TileFlag.Wet) == 0))
+				if (
+					(itemData.Flags & TileFlag.Surface) == 0
+					&& ((m != null && !m.CanSwim) || (itemData.Flags & TileFlag.Wet) == 0)
+				)
 				{
 					continue;
 				}

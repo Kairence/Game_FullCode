@@ -12,7 +12,7 @@ namespace Ultima
 		{
 			Original = 0x0,
 			Custom = 0x1,
-			Modified = 0x2
+			Modified = 0x2,
 		}
 
 		private string m_Text;
@@ -54,10 +54,11 @@ namespace Ultima
 		// Razor
 		private static readonly Regex m_RegEx = new Regex(
 			@"~(\d+)[_\w]+~",
-			RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.CultureInvariant);
+			RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.CultureInvariant
+		);
 
 		private string m_FmtTxt;
-		private static readonly object[] m_Args = new object[] {"", "", "", "", "", "", "", "", "", "", ""};
+		private static readonly object[] m_Args = new object[] { "", "", "", "", "", "", "", "", "", "", "" };
 
 		public string Format(params object[] args)
 		{

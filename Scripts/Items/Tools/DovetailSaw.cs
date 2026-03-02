@@ -3,50 +3,46 @@ using Server.Engines.Craft;
 
 namespace Server.Items
 {
-    [Flipable(0x1028, 0x1029)]
-    public class DovetailSaw : BaseTool
-    {
-        [Constructable]
-        public DovetailSaw()
-            : base(0x1028)
-        {
-            this.Weight = 2.0;
-        }
+	[Flipable(0x1028, 0x1029)]
+	public class DovetailSaw : BaseTool
+	{
+		[Constructable]
+		public DovetailSaw()
+			: base(0x1028)
+		{
+			this.Weight = 2.0;
+		}
 
-        [Constructable]
-        public DovetailSaw(int uses)
-            : base(uses, 0x1028)
-        {
-            this.Weight = 2.0;
-        }
+		[Constructable]
+		public DovetailSaw(int uses)
+			: base(uses, 0x1028)
+		{
+			this.Weight = 2.0;
+		}
 
-        public DovetailSaw(Serial serial)
-            : base(serial)
-        {
-        }
+		public DovetailSaw(Serial serial)
+			: base(serial) { }
 
-        public override CraftSystem CraftSystem
-        {
-            get
-            {
-                return DefCarpentry.CraftSystem;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override CraftSystem CraftSystem
+		{
+			get { return DefCarpentry.CraftSystem; }
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            if (this.Weight == 1.0)
-                this.Weight = 2.0;
-        }
-    }
+			int version = reader.ReadInt();
+
+			if (this.Weight == 1.0)
+				this.Weight = 2.0;
+		}
+	}
 }

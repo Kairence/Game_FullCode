@@ -3,209 +3,184 @@ using Server.Mobiles;
 
 namespace Server.Ethics
 {
-    public class PlayerCollection : System.Collections.ObjectModel.Collection<Player>
-    {
-    }
+	public class PlayerCollection : System.Collections.ObjectModel.Collection<Player> { }
 
-    [PropertyObject]
-    public class Player
-    {
-        private readonly Ethic m_Ethic;
-        private readonly Mobile m_Mobile;
-        private int m_Power;
-        private int m_History;
-        private Mobile m_Steed;
-        private Mobile m_Familiar;
-        private DateTime m_Shield;
-        public Player(Ethic ethic, Mobile mobile)
-        {
-            this.m_Ethic = ethic;
-            this.m_Mobile = mobile;
+	[PropertyObject]
+	public class Player
+	{
+		private readonly Ethic m_Ethic;
+		private readonly Mobile m_Mobile;
+		private int m_Power;
+		private int m_History;
+		private Mobile m_Steed;
+		private Mobile m_Familiar;
+		private DateTime m_Shield;
 
-            this.m_Power = 5;
-            this.m_History = 5;
-        }
+		public Player(Ethic ethic, Mobile mobile)
+		{
+			this.m_Ethic = ethic;
+			this.m_Mobile = mobile;
 
-        public Player(Ethic ethic, GenericReader reader)
-        {
-            this.m_Ethic = ethic;
+			this.m_Power = 5;
+			this.m_History = 5;
+		}
 
-            int version = reader.ReadEncodedInt();
+		public Player(Ethic ethic, GenericReader reader)
+		{
+			this.m_Ethic = ethic;
 
-            switch ( version )
-            {
-                case 0:
-                    {
-                        this.m_Mobile = reader.ReadMobile();
+			int version = reader.ReadEncodedInt();
 
-                        this.m_Power = reader.ReadEncodedInt();
-                        this.m_History = reader.ReadEncodedInt();
+			switch (version)
+			{
+				case 0:
+				{
+					this.m_Mobile = reader.ReadMobile();
 
-                        this.m_Steed = reader.ReadMobile();
-                        this.m_Familiar = reader.ReadMobile();
+					this.m_Power = reader.ReadEncodedInt();
+					this.m_History = reader.ReadEncodedInt();
 
-                        this.m_Shield = reader.ReadDeltaTime();
+					this.m_Steed = reader.ReadMobile();
+					this.m_Familiar = reader.ReadMobile();
 
-                        break;
-                    }
-            }
-        }
+					this.m_Shield = reader.ReadDeltaTime();
 
-        public Ethic Ethic
-        {
-            get
-            {
-                return this.m_Ethic;
-            }
-        }
-        public Mobile Mobile
-        {
-            get
-            {
-                return this.m_Mobile;
-            }
-        }
-        [CommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
-        public int Power
-        {
-            get
-            {
-                return this.m_Power;
-            }
-            set
-            {
-                this.m_Power = value;
-            }
-        }
-        [CommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
-        public int History
-        {
-            get
-            {
-                return this.m_History;
-            }
-            set
-            {
-                this.m_History = value;
-            }
-        }
-        [CommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
-        public Mobile Steed
-        {
-            get
-            {
-                return this.m_Steed;
-            }
-            set
-            {
-                this.m_Steed = value;
-            }
-        }
-        [CommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
-        public Mobile Familiar
-        {
-            get
-            {
-                return this.m_Familiar;
-            }
-            set
-            {
-                this.m_Familiar = value;
-            }
-        }
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool IsShielded
-        {
-            get
-            {
-                if (this.m_Shield == DateTime.MinValue)
-                    return false;
+					break;
+				}
+			}
+		}
 
-                if (DateTime.UtcNow < (this.m_Shield + TimeSpan.FromHours(1.0)))
-                    return true;
+		public Ethic Ethic
+		{
+			get { return this.m_Ethic; }
+		}
+		public Mobile Mobile
+		{
+			get { return this.m_Mobile; }
+		}
 
-                this.FinishShield();
-                return false;
-            }
-        }
-        public static Player Find(Mobile mob)
-        {
-            return Find(mob, false);
-        }
+		[CommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
+		public int Power
+		{
+			get { return this.m_Power; }
+			set { this.m_Power = value; }
+		}
 
-        public static Player Find(Mobile mob, bool inherit)
-        {
-            PlayerMobile pm = mob as PlayerMobile;
+		[CommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
+		public int History
+		{
+			get { return this.m_History; }
+			set { this.m_History = value; }
+		}
 
-            if (pm == null)
-            {
-                if (inherit && mob is BaseCreature)
-                {
-                    BaseCreature bc = mob as BaseCreature;
+		[CommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
+		public Mobile Steed
+		{
+			get { return this.m_Steed; }
+			set { this.m_Steed = value; }
+		}
 
-                    if (bc != null && bc.Controlled)
-                        pm = bc.ControlMaster as PlayerMobile;
-                    else if (bc != null && bc.Summoned)
-                        pm = bc.SummonMaster as PlayerMobile;
-                }
+		[CommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
+		public Mobile Familiar
+		{
+			get { return this.m_Familiar; }
+			set { this.m_Familiar = value; }
+		}
 
-                if (pm == null)
-                    return null;
-            }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool IsShielded
+		{
+			get
+			{
+				if (this.m_Shield == DateTime.MinValue)
+					return false;
 
-            Player pl = pm.EthicPlayer;
+				if (DateTime.UtcNow < (this.m_Shield + TimeSpan.FromHours(1.0)))
+					return true;
 
-            if (pl != null && !pl.Ethic.IsEligible(pl.Mobile))
-                pm.EthicPlayer = pl = null;
+				this.FinishShield();
+				return false;
+			}
+		}
 
-            return pl;
-        }
+		public static Player Find(Mobile mob)
+		{
+			return Find(mob, false);
+		}
 
-        public void BeginShield()
-        {
-            this.m_Shield = DateTime.UtcNow;
-        }
+		public static Player Find(Mobile mob, bool inherit)
+		{
+			PlayerMobile pm = mob as PlayerMobile;
 
-        public void FinishShield()
-        {
-            this.m_Shield = DateTime.MinValue;
-        }
+			if (pm == null)
+			{
+				if (inherit && mob is BaseCreature)
+				{
+					BaseCreature bc = mob as BaseCreature;
 
-        public void CheckAttach()
-        {
-            if (this.m_Ethic.IsEligible(this.m_Mobile))
-                this.Attach();
-        }
+					if (bc != null && bc.Controlled)
+						pm = bc.ControlMaster as PlayerMobile;
+					else if (bc != null && bc.Summoned)
+						pm = bc.SummonMaster as PlayerMobile;
+				}
 
-        public void Attach()
-        {
-            if (this.m_Mobile is PlayerMobile)
-                (this.m_Mobile as PlayerMobile).EthicPlayer = this;
+				if (pm == null)
+					return null;
+			}
 
-            this.m_Ethic.Players.Add(this);
-        }
+			Player pl = pm.EthicPlayer;
 
-        public void Detach()
-        {
-            if (this.m_Mobile is PlayerMobile)
-                (this.m_Mobile as PlayerMobile).EthicPlayer = null;
+			if (pl != null && !pl.Ethic.IsEligible(pl.Mobile))
+				pm.EthicPlayer = pl = null;
 
-            this.m_Ethic.Players.Remove(this);
-        }
+			return pl;
+		}
 
-        public void Serialize(GenericWriter writer)
-        {
-            writer.WriteEncodedInt(0); // version
+		public void BeginShield()
+		{
+			this.m_Shield = DateTime.UtcNow;
+		}
 
-            writer.Write(this.m_Mobile);
+		public void FinishShield()
+		{
+			this.m_Shield = DateTime.MinValue;
+		}
 
-            writer.WriteEncodedInt(this.m_Power);
-            writer.WriteEncodedInt(this.m_History);
+		public void CheckAttach()
+		{
+			if (this.m_Ethic.IsEligible(this.m_Mobile))
+				this.Attach();
+		}
 
-            writer.Write(this.m_Steed);
-            writer.Write(this.m_Familiar);
+		public void Attach()
+		{
+			if (this.m_Mobile is PlayerMobile)
+				(this.m_Mobile as PlayerMobile).EthicPlayer = this;
 
-            writer.WriteDeltaTime(this.m_Shield);
-        }
-    }
+			this.m_Ethic.Players.Add(this);
+		}
+
+		public void Detach()
+		{
+			if (this.m_Mobile is PlayerMobile)
+				(this.m_Mobile as PlayerMobile).EthicPlayer = null;
+
+			this.m_Ethic.Players.Remove(this);
+		}
+
+		public void Serialize(GenericWriter writer)
+		{
+			writer.WriteEncodedInt(0); // version
+
+			writer.Write(this.m_Mobile);
+
+			writer.WriteEncodedInt(this.m_Power);
+			writer.WriteEncodedInt(this.m_History);
+
+			writer.Write(this.m_Steed);
+			writer.Write(this.m_Familiar);
+
+			writer.WriteDeltaTime(this.m_Shield);
+		}
+	}
 }

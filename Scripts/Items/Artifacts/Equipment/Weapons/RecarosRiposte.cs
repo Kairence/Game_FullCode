@@ -2,42 +2,42 @@ using System;
 
 namespace Server.Items
 {
-    public class RecarosRiposte : WarFork
+	public class RecarosRiposte : WarFork
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public RecarosRiposte()
-        {
-            LootType = LootType.Blessed;
-            Attributes.AttackChance = 5;
-            Attributes.WeaponSpeed = 10;
-            Attributes.WeaponDamage = 25;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public RecarosRiposte(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public RecarosRiposte()
+		{
+			LootType = LootType.Blessed;
+			Attributes.AttackChance = 5;
+			Attributes.WeaponSpeed = 10;
+			Attributes.WeaponDamage = 25;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1078195;
-            }
-        }// Recaro's Riposte
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public RecarosRiposte(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1078195; }
+		} // Recaro's Riposte
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

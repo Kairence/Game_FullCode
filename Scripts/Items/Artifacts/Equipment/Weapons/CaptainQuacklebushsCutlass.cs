@@ -2,58 +2,52 @@ using System;
 
 namespace Server.Items
 {
-    public class CaptainQuacklebushsCutlass : Cutlass
+	public class CaptainQuacklebushsCutlass : Cutlass
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public CaptainQuacklebushsCutlass()
-        {
-            Hue = 0x66C;
-            Attributes.BonusDex = 5;
-            Attributes.AttackChance = 10;
-            Attributes.WeaponSpeed = 20;
-            Attributes.WeaponDamage = 50;
-            WeaponAttributes.UseBestSkill = 1;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public CaptainQuacklebushsCutlass(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public CaptainQuacklebushsCutlass()
+		{
+			Hue = 0x66C;
+			Attributes.BonusDex = 5;
+			Attributes.AttackChance = 10;
+			Attributes.WeaponSpeed = 20;
+			Attributes.WeaponDamage = 50;
+			WeaponAttributes.UseBestSkill = 1;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1063474;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public CaptainQuacklebushsCutlass(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0);
-        }
+		public override int LabelNumber
+		{
+			get { return 1063474; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

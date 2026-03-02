@@ -2,118 +2,116 @@ using System;
 
 namespace Server.Items
 {
-    public class DecayedCorpse : Container
-    {
-        private static readonly TimeSpan m_DefaultDecayTime = TimeSpan.FromMinutes(7.0);
-        private Timer m_DecayTimer;
-        private DateTime m_DecayTime;
-        public DecayedCorpse(string name)
-            : base(Utility.Random(0xECA, 9))
-        {
-            this.Movable = false;
-            this.Name = name;
+	public class DecayedCorpse : Container
+	{
+		private static readonly TimeSpan m_DefaultDecayTime = TimeSpan.FromMinutes(7.0);
+		private Timer m_DecayTimer;
+		private DateTime m_DecayTime;
 
-            this.BeginDecay(m_DefaultDecayTime);
-        }
+		public DecayedCorpse(string name)
+			: base(Utility.Random(0xECA, 9))
+		{
+			this.Movable = false;
+			this.Name = name;
 
-        public DecayedCorpse(Serial serial)
-            : base(serial)
-        {
-        }
+			this.BeginDecay(m_DefaultDecayTime);
+		}
 
-        // Do not display (x items, y stones)
-        public override bool DisplaysContent
-        {
-            get
-            {
-                return false;
-            }
-        }
-        public void BeginDecay(TimeSpan delay)
-        {
-            if (this.m_DecayTimer != null)
-                this.m_DecayTimer.Stop();
+		public DecayedCorpse(Serial serial)
+			: base(serial) { }
 
-            this.m_DecayTime = DateTime.UtcNow + delay;
+		// Do not display (x items, y stones)
+		public override bool DisplaysContent
+		{
+			get { return false; }
+		}
 
-            this.m_DecayTimer = new InternalTimer(this, delay);
-            this.m_DecayTimer.Start();
-        }
+		public void BeginDecay(TimeSpan delay)
+		{
+			if (this.m_DecayTimer != null)
+				this.m_DecayTimer.Stop();
 
-        public override void OnAfterDelete()
-        {
-            if (this.m_DecayTimer != null)
-                this.m_DecayTimer.Stop();
+			this.m_DecayTime = DateTime.UtcNow + delay;
 
-            this.m_DecayTimer = null;
-        }
+			this.m_DecayTimer = new InternalTimer(this, delay);
+			this.m_DecayTimer.Start();
+		}
 
-        // Do not display (x items, y stones)
-        public override bool CheckContentDisplay(Mobile from)
-        {
-            return false;
-        }
+		public override void OnAfterDelete()
+		{
+			if (this.m_DecayTimer != null)
+				this.m_DecayTimer.Stop();
 
-        public override void AddNameProperty(ObjectPropertyList list)
-        {
-            list.Add(1046414, this.Name); // the remains of ~1_NAME~
-        }
+			this.m_DecayTimer = null;
+		}
 
-        public override void OnSingleClick(Mobile from)
-        {
-            this.LabelTo(from, 1046414, this.Name); // the remains of ~1_NAME~
-        }
+		// Do not display (x items, y stones)
+		public override bool CheckContentDisplay(Mobile from)
+		{
+			return false;
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void AddNameProperty(ObjectPropertyList list)
+		{
+			list.Add(1046414, this.Name); // the remains of ~1_NAME~
+		}
 
-            writer.Write((int)1); // version
+		public override void OnSingleClick(Mobile from)
+		{
+			this.LabelTo(from, 1046414, this.Name); // the remains of ~1_NAME~
+		}
 
-            writer.Write(this.m_DecayTimer != null);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            if (this.m_DecayTimer != null)
-                writer.WriteDeltaTime(this.m_DecayTime);
-        }
+			writer.Write((int)1); // version
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write(this.m_DecayTimer != null);
 
-            int version = reader.ReadInt();
+			if (this.m_DecayTimer != null)
+				writer.WriteDeltaTime(this.m_DecayTime);
+		}
 
-            switch ( version )
-            {
-                case 0:
-                    {
-                        this.BeginDecay(m_DefaultDecayTime);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-                        break;
-                    }
-                case 1:
-                    {
-                        if (reader.ReadBool())
-                            this.BeginDecay(reader.ReadDeltaTime() - DateTime.UtcNow);
+			int version = reader.ReadInt();
 
-                        break;
-                    }
-            }
-        }
+			switch (version)
+			{
+				case 0:
+				{
+					this.BeginDecay(m_DefaultDecayTime);
 
-        private class InternalTimer : Timer
-        {
-            private readonly DecayedCorpse m_Corpse;
-            public InternalTimer(DecayedCorpse c, TimeSpan delay)
-                : base(delay)
-            {
-                this.m_Corpse = c;
-                this.Priority = TimerPriority.FiveSeconds;
-            }
+					break;
+				}
+				case 1:
+				{
+					if (reader.ReadBool())
+						this.BeginDecay(reader.ReadDeltaTime() - DateTime.UtcNow);
 
-            protected override void OnTick()
-            {
-                this.m_Corpse.Delete();
-            }
-        }
-    }
+					break;
+				}
+			}
+		}
+
+		private class InternalTimer : Timer
+		{
+			private readonly DecayedCorpse m_Corpse;
+
+			public InternalTimer(DecayedCorpse c, TimeSpan delay)
+				: base(delay)
+			{
+				this.m_Corpse = c;
+				this.Priority = TimerPriority.FiveSeconds;
+			}
+
+			protected override void OnTick()
+			{
+				this.m_Corpse.Delete();
+			}
+		}
+	}
 }

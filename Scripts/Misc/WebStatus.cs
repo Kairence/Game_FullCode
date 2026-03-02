@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-
 using Server.Guilds;
 using Server.Network;
 #endregion
@@ -75,8 +74,7 @@ namespace Server.Misc
 				context.Response.OutputStream.Write(buffer, 0, buffer.Length);
 				context.Response.OutputStream.Close();
 			}
-			catch
-			{ }
+			catch { }
 
 			Listen();
 		}
@@ -125,7 +123,9 @@ namespace Server.Misc
 				op.WriteLine("      <h1>" + ServerList.ServerName + "Server Status</h1>");
 				op.WriteLine("      <h3>Online clients</h3>");
 				op.WriteLine("      <table cellpadding=\"0\" cellspacing=\"0\">");
-				op.WriteLine("         <tr class=\"ruo-header\"><td>Name</td><td>Location</td><td>Kills</td><td>Karma/Fame</td></tr>");
+				op.WriteLine(
+					"         <tr class=\"ruo-header\"><td>Name</td><td>Location</td><td>Kills</td><td>Karma/Fame</td></tr>"
+				);
 
 				var index = 0;
 

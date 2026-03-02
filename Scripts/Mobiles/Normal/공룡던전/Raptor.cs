@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Server;
 using Server.Items;
+
 namespace Server.Mobiles
 {
 	[CorpseName("a raptor corpse")]
@@ -15,9 +16,7 @@ namespace Server.Mobiles
 
 		[Constructable]
 		public Raptor()
-			: this(false)
-		{
-		}
+			: this(false) { }
 
 		[Constructable]
 		public Raptor(bool isFriend)
@@ -55,10 +54,13 @@ namespace Server.Mobiles
 			MinTameSkill = 107.1;
 			ControlSlots = 27;
 
-            SetWeaponAbility(WeaponAbility.BleedAttack);
+			SetWeaponAbility(WeaponAbility.BleedAttack);
 		}
-		
-		public override int TreasureMapLevel { get { return 3; } }
+
+		public override int TreasureMapLevel
+		{
+			get { return 3; }
+		}
 
 		public override int Meat
 		{
@@ -104,7 +106,6 @@ namespace Server.Mobiles
 		{
 			return 1571;
 		}
-
 
 		public override void OnCombatantChange()
 		{
@@ -179,17 +180,15 @@ namespace Server.Mobiles
 			{
 				c.DropItem(new AncientPotteryFragments());
 			}
-            
-            if (!Controlled && Utility.RandomDouble() <= 0.005)
+
+			if (!Controlled && Utility.RandomDouble() <= 0.005)
 			{
 				c.DropItem(new RaptorClaw());
 			}
 		}
 
 		public Raptor(Serial serial)
-			: base(serial)
-		{
-		}
+			: base(serial) { }
 
 		public override void Serialize(GenericWriter writer)
 		{
@@ -209,8 +208,8 @@ namespace Server.Mobiles
 			if (version > 0)
 				m_IsFriend = reader.ReadBool();
 
-            if(version == 1)
-                SetWeaponAbility(WeaponAbility.BleedAttack);
+			if (version == 1)
+				SetWeaponAbility(WeaponAbility.BleedAttack);
 
 			if (m_IsFriend)
 				Delete();

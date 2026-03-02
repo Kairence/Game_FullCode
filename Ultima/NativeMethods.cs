@@ -1,7 +1,6 @@
 #region References
 using System.Runtime.InteropServices;
 using System.Text;
-
 using Microsoft.Win32.SafeHandles;
 #endregion
 
@@ -20,18 +19,31 @@ namespace Ultima
 
 		[DllImport("Kernel32")]
 		public static extern ClientProcessHandle OpenProcess(
-			int desiredAccess, int inheritClientHandle, ClientProcessHandle processID);
+			int desiredAccess,
+			int inheritClientHandle,
+			ClientProcessHandle processID
+		);
 
 		[DllImport("Kernel32")]
 		public static extern int CloseHandle(ClientProcessHandle handle);
 
 		[DllImport("Kernel32")]
 		public static extern unsafe int ReadProcessMemory(
-			ClientProcessHandle process, int baseAddress, void* buffer, int size, ref int op);
+			ClientProcessHandle process,
+			int baseAddress,
+			void* buffer,
+			int size,
+			ref int op
+		);
 
 		[DllImport("Kernel32")]
 		public static extern unsafe int WriteProcessMemory(
-			ClientProcessHandle process, int baseAddress, void* buffer, int size, int nullMe);
+			ClientProcessHandle process,
+			int baseAddress,
+			void* buffer,
+			int size,
+			int nullMe
+		);
 
 		[DllImport("User32")]
 		public static extern int SetForegroundWindow(ClientWindowHandle hWnd);

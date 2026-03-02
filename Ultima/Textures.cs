@@ -75,7 +75,8 @@ namespace Ultima
 		/// <returns></returns>
 		public static bool TestTexture(int index)
 		{
-			int length, extra;
+			int length,
+				extra;
 			bool patched;
 			if (m_Removed[index])
 			{
@@ -129,7 +130,8 @@ namespace Ultima
 				return m_Cache[index];
 			}
 
-			int length, extra;
+			int length,
+				extra;
 			Stream stream = m_FileIndex.Seek(index, out length, out extra, out patched);
 			if (stream == null)
 			{
@@ -148,7 +150,10 @@ namespace Ultima
 
 			var bmp = new Bitmap(size, size, Settings.PixelFormat);
 			BitmapData bd = bmp.LockBits(
-				new Rectangle(0, 0, size, size), ImageLockMode.WriteOnly, Settings.PixelFormat);
+				new Rectangle(0, 0, size, size),
+				ImageLockMode.WriteOnly,
+				Settings.PixelFormat
+			);
 
 			var line = (ushort*)bd.Scan0;
 			int delta = bd.Stride >> 1;
@@ -196,11 +201,15 @@ namespace Ultima
 			checksums = new List<CheckSums>();
 			using (
 				FileStream fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
-						   fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
+					fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write)
+			)
 			{
 				var memidx = new MemoryStream();
 				var memmul = new MemoryStream();
-				using (BinaryWriter binidx = new BinaryWriter(memidx), binmul = new BinaryWriter(memmul))
+				using (
+					BinaryWriter binidx = new BinaryWriter(memidx),
+						binmul = new BinaryWriter(memmul)
+				)
 				{
 					var sha = new SHA256Managed();
 					//StreamWriter Tex = new StreamWriter(new FileStream("d:/texlog.txt", FileMode.Create, FileAccess.ReadWrite));
@@ -234,7 +243,10 @@ namespace Ultima
 								continue;
 							}
 							BitmapData bd = bmp.LockBits(
-								new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, Settings.PixelFormat);
+								new Rectangle(0, 0, bmp.Width, bmp.Height),
+								ImageLockMode.ReadOnly,
+								Settings.PixelFormat
+							);
 							var line = (ushort*)bd.Scan0;
 							int delta = bd.Stride >> 1;
 
@@ -259,7 +271,7 @@ namespace Ultima
 								pos = start,
 								length = length,
 								checksum = checksum,
-								index = index
+								index = index,
 							};
 							//Tex.WriteLine(System.String.Format("0x{0:X4} : 0x{1:X4} 0x{2:X4}", index, start, length));
 							checksums.Add(s);

@@ -2,7 +2,6 @@
 using System;
 using System.Collections;
 using System.Reflection;
-
 using Server.Commands;
 using Server.Network;
 #endregion
@@ -11,7 +10,10 @@ namespace Server.Gumps
 {
 	public class SetBodyGump : Gump
 	{
-		private static ArrayList m_Monster, m_Animal, m_Sea, m_Human;
+		private static ArrayList m_Monster,
+			m_Animal,
+			m_Sea,
+			m_Human;
 		private const int LabelColor32 = 0xFFFFFF;
 		private const int SelectedColor32 = 0x8080FF;
 		private const int TextColor32 = 0xFFFFFF;
@@ -26,8 +28,7 @@ namespace Server.Gumps
 		private readonly ModelBodyType m_OurType;
 
 		public SetBodyGump(PropertyInfo prop, Mobile mobile, object o, Stack stack, int page, ArrayList list)
-			: this(prop, mobile, o, stack, page, list, 0, null, ModelBodyType.Invalid)
-		{ }
+			: this(prop, mobile, o, stack, page, list, 0, null, ModelBodyType.Invalid) { }
 
 		public SetBodyGump(
 			PropertyInfo prop,
@@ -38,7 +39,8 @@ namespace Server.Gumps
 			ArrayList list,
 			int ourPage,
 			ArrayList ourList,
-			ModelBodyType ourType)
+			ModelBodyType ourType
+		)
 			: base(20, 30)
 		{
 			m_Property = prop;
@@ -89,7 +91,11 @@ namespace Server.Gumps
 					var x = 15 + ((i % 4) * 125);
 					var y = 40 + ((i / 4) * 93);
 
-					AddItem(x + ((120 - bounds.Width) / 2) - bounds.X, y + ((69 - bounds.Height) / 2) - bounds.Y, itemID);
+					AddItem(
+						x + ((120 - bounds.Width) / 2) - bounds.X,
+						y + ((69 - bounds.Height) / 2) - bounds.Y,
+						itemID
+					);
 					AddButton(x + 6, y + 66, 0x98D, 0x98D, 7 + index, GumpButtonType.Reply, 0);
 
 					x += 6;
@@ -165,7 +171,9 @@ namespace Server.Gumps
 						break;
 				}
 
-				m_Mobile.SendGump(new SetBodyGump(m_Property, m_Mobile, m_Object, m_Stack, m_Page, m_List, 0, list, type));
+				m_Mobile.SendGump(
+					new SetBodyGump(m_Property, m_Mobile, m_Object, m_Stack, m_Page, m_List, 0, list, type)
+				);
 			}
 			else if (m_OurList != null)
 			{
@@ -174,12 +182,34 @@ namespace Server.Gumps
 				if (index == 0 && m_OurPage > 0)
 				{
 					m_Mobile.SendGump(
-						new SetBodyGump(m_Property, m_Mobile, m_Object, m_Stack, m_Page, m_List, m_OurPage - 1, m_OurList, m_OurType));
+						new SetBodyGump(
+							m_Property,
+							m_Mobile,
+							m_Object,
+							m_Stack,
+							m_Page,
+							m_List,
+							m_OurPage - 1,
+							m_OurList,
+							m_OurType
+						)
+					);
 				}
 				else if (index == 1 && ((m_OurPage + 1) * 12) < m_OurList.Count)
 				{
 					m_Mobile.SendGump(
-						new SetBodyGump(m_Property, m_Mobile, m_Object, m_Stack, m_Page, m_List, m_OurPage + 1, m_OurList, m_OurType));
+						new SetBodyGump(
+							m_Property,
+							m_Mobile,
+							m_Object,
+							m_Stack,
+							m_Page,
+							m_List,
+							m_OurPage + 1,
+							m_OurList,
+							m_OurType
+						)
+					);
 				}
 				else
 				{
@@ -191,7 +221,12 @@ namespace Server.Gumps
 						{
 							var entry = (InternalEntry)m_OurList[index];
 
-							CommandLogging.LogChangeProperty(m_Mobile, m_Object, m_Property.Name, entry.Body.ToString());
+							CommandLogging.LogChangeProperty(
+								m_Mobile,
+								m_Object,
+								m_Property.Name,
+								entry.Body.ToString()
+							);
 							m_Property.SetValue(m_Object, entry.Body, null);
 							PropertiesGump.OnValueChanged(m_Object, m_Property, m_Stack);
 						}
@@ -201,7 +236,18 @@ namespace Server.Gumps
 						}
 
 						m_Mobile.SendGump(
-							new SetBodyGump(m_Property, m_Mobile, m_Object, m_Stack, m_Page, m_List, m_OurPage, m_OurList, m_OurType));
+							new SetBodyGump(
+								m_Property,
+								m_Mobile,
+								m_Object,
+								m_Stack,
+								m_Page,
+								m_List,
+								m_OurPage,
+								m_OurList,
+								m_OurType
+							)
+						);
 					}
 				}
 			}
@@ -261,13 +307,66 @@ namespace Server.Gumps
 		{
 			private static readonly string[] m_GroupNames =
 			{
-				"ogres_", "ettins_", "walking_dead_", "gargoyles_", "orcs_", "flails_", "daemons_", "arachnids_", "dragons_",
-				"elementals_", "serpents_", "gazers_", "liche_", "spirits_", "harpies_", "headless_", "lizard_race_", "mongbat_",
-				"rat_race_", "scorpions_", "trolls_", "slimes_", "skeletons_", "ethereals_", "terathan_", "imps_", "cyclops_",
-				"krakens_", "frogs_", "ophidians_", "centaurs_", "mages_", "fey_race_", "genies_", "paladins_", "shadowlords_",
-				"succubi_", "lizards_", "rodents_", "birds_", "bovines_", "bruins_", "canines_", "deer_", "equines_", "felines_",
-				"fowl_", "gorillas_", "kirin_", "llamas_", "ostards_", "porcines_", "ruminants_", "walrus_", "dolphins_",
-				"sea_horse_", "sea_serpents_", "character_", "h_", "titans_"
+				"ogres_",
+				"ettins_",
+				"walking_dead_",
+				"gargoyles_",
+				"orcs_",
+				"flails_",
+				"daemons_",
+				"arachnids_",
+				"dragons_",
+				"elementals_",
+				"serpents_",
+				"gazers_",
+				"liche_",
+				"spirits_",
+				"harpies_",
+				"headless_",
+				"lizard_race_",
+				"mongbat_",
+				"rat_race_",
+				"scorpions_",
+				"trolls_",
+				"slimes_",
+				"skeletons_",
+				"ethereals_",
+				"terathan_",
+				"imps_",
+				"cyclops_",
+				"krakens_",
+				"frogs_",
+				"ophidians_",
+				"centaurs_",
+				"mages_",
+				"fey_race_",
+				"genies_",
+				"paladins_",
+				"shadowlords_",
+				"succubi_",
+				"lizards_",
+				"rodents_",
+				"birds_",
+				"bovines_",
+				"bruins_",
+				"canines_",
+				"deer_",
+				"equines_",
+				"felines_",
+				"fowl_",
+				"gorillas_",
+				"kirin_",
+				"llamas_",
+				"ostards_",
+				"porcines_",
+				"ruminants_",
+				"walrus_",
+				"dolphins_",
+				"sea_horse_",
+				"sea_serpents_",
+				"character_",
+				"h_",
+				"titans_",
 			};
 
 			private readonly int m_Body;
@@ -295,10 +394,22 @@ namespace Server.Gumps
 				m_DisplayName = m_DisplayName.Replace('_', ' ');
 			}
 
-			public int Body { get { return m_Body; } }
-			public int ItemID { get { return m_ItemID; } }
-			public string Name { get { return m_Name; } }
-			public string DisplayName { get { return m_DisplayName; } }
+			public int Body
+			{
+				get { return m_Body; }
+			}
+			public int ItemID
+			{
+				get { return m_ItemID; }
+			}
+			public string Name
+			{
+				get { return m_Name; }
+			}
+			public string DisplayName
+			{
+				get { return m_DisplayName; }
+			}
 
 			public int CompareTo(object obj)
 			{

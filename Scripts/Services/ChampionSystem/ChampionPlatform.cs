@@ -3,127 +3,126 @@ using Server.Items;
 
 namespace Server.Engines.CannedEvil
 {
-    public class ChampionPlatform : BaseAddon
-    {
-        private ChampionSpawn m_Spawn;
-        public ChampionPlatform(ChampionSpawn spawn)
-        {
-            m_Spawn = spawn;
+	public class ChampionPlatform : BaseAddon
+	{
+		private ChampionSpawn m_Spawn;
 
-            for (int x = -2; x <= 2; ++x)
-                for (int y = -2; y <= 2; ++y)
-                    AddComponent(0x3EE, x, y, -5);
+		public ChampionPlatform(ChampionSpawn spawn)
+		{
+			m_Spawn = spawn;
 
-            for (int x = -1; x <= 1; ++x)
-                for (int y = -1; y <= 1; ++y)
-                    AddComponent(0x3EE, x, y, 0);
+			for (int x = -2; x <= 2; ++x)
+			for (int y = -2; y <= 2; ++y)
+				AddComponent(0x3EE, x, y, -5);
 
-            for (int i = -1; i <= 1; ++i)
-            {
-                AddComponent(0x3EF, i, 2, 0);
-                AddComponent(0x3F0, 2, i, 0);
+			for (int x = -1; x <= 1; ++x)
+			for (int y = -1; y <= 1; ++y)
+				AddComponent(0x3EE, x, y, 0);
 
-                AddComponent(0x3F1, i, -2, 0);
-                AddComponent(0x3F2, -2, i, 0);
-            }
+			for (int i = -1; i <= 1; ++i)
+			{
+				AddComponent(0x3EF, i, 2, 0);
+				AddComponent(0x3F0, 2, i, 0);
 
-            AddComponent(0x03F7, -2, -2, 0);
-            AddComponent(0x03F8, 2, 2, 0);
-            AddComponent(0x03F9, -2, 2, 0);
-            AddComponent(0x03FA, 2, -2, 0);
-        }
+				AddComponent(0x3F1, i, -2, 0);
+				AddComponent(0x3F2, -2, i, 0);
+			}
 
-        public ChampionPlatform(Serial serial)
-            : base(serial)
-        {
-        }
+			AddComponent(0x03F7, -2, -2, 0);
+			AddComponent(0x03F8, 2, 2, 0);
+			AddComponent(0x03F9, -2, 2, 0);
+			AddComponent(0x03FA, 2, -2, 0);
+		}
 
-        public void AddComponent(int id, int x, int y, int z)
-        {
-            AddonComponent ac = new AddonComponent(id);
+		public ChampionPlatform(Serial serial)
+			: base(serial) { }
 
-            ac.Hue = 0x452;
+		public void AddComponent(int id, int x, int y, int z)
+		{
+			AddonComponent ac = new AddonComponent(id);
 
-            AddComponent(ac, x, y, z);
-        }
+			ac.Hue = 0x452;
 
-        public override void OnAfterDelete()
-        {
-            base.OnAfterDelete();
+			AddComponent(ac, x, y, z);
+		}
 
-            if (m_Spawn != null)
-                m_Spawn.Delete();
-        }
+		public override void OnAfterDelete()
+		{
+			base.OnAfterDelete();
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			if (m_Spawn != null)
+				m_Spawn.Delete();
+		}
 
-            writer.Write((int)2); // version
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write(m_Spawn);
-        }
+			writer.Write((int)2); // version
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write(m_Spawn);
+		}
 
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            switch ( version )
-            {
-                case 2:
-                case 1:
-                case 0:
-                    {
-                        m_Spawn = reader.ReadItem() as ChampionSpawn;
+			int version = reader.ReadInt();
 
-                        if (m_Spawn == null)
-                            Delete();
+			switch (version)
+			{
+				case 2:
+				case 1:
+				case 0:
+				{
+					m_Spawn = reader.ReadItem() as ChampionSpawn;
 
-                        break;
-                    }
-            }
+					if (m_Spawn == null)
+						Delete();
 
-            if (version < 2)
-            {
-                Timer.DelayCall(TimeSpan.FromSeconds(10), FixComponents);
-            }
-        }
+					break;
+				}
+			}
 
-        private void FixComponents()
-        {
-            foreach (var comp in Components)
-            {
-                comp.Hue = 0x452;
+			if (version < 2)
+			{
+				Timer.DelayCall(TimeSpan.FromSeconds(10), FixComponents);
+			}
+		}
 
-                if (comp.ItemID == 0x750)
-                    comp.ItemID = 0x3EE;
+		private void FixComponents()
+		{
+			foreach (var comp in Components)
+			{
+				comp.Hue = 0x452;
 
-                if (comp.ItemID == 0x751)
-                    comp.ItemID = 0x3EF;
+				if (comp.ItemID == 0x750)
+					comp.ItemID = 0x3EE;
 
-                if (comp.ItemID == 0x752)
-                    comp.ItemID = 0x3F0;
+				if (comp.ItemID == 0x751)
+					comp.ItemID = 0x3EF;
 
-                if (comp.ItemID == 0x753)
-                    comp.ItemID = 0x3F1;
+				if (comp.ItemID == 0x752)
+					comp.ItemID = 0x3F0;
 
-                if (comp.ItemID == 0x754)
-                    comp.ItemID = 0x3F2;
+				if (comp.ItemID == 0x753)
+					comp.ItemID = 0x3F1;
 
-                if (comp.ItemID == 0x759)
-                    comp.ItemID = 0x3F7;
+				if (comp.ItemID == 0x754)
+					comp.ItemID = 0x3F2;
 
-                if (comp.ItemID == 0x75A)
-                    comp.ItemID = 0x3F8;
+				if (comp.ItemID == 0x759)
+					comp.ItemID = 0x3F7;
 
-                if (comp.ItemID == 0x75B)
-                    comp.ItemID = 0x3F9;
+				if (comp.ItemID == 0x75A)
+					comp.ItemID = 0x3F8;
 
-                if (comp.ItemID == 0x75C)
-                    comp.ItemID = 0x3FA;
-            }
-        }
-    }
+				if (comp.ItemID == 0x75B)
+					comp.ItemID = 0x3F9;
+
+				if (comp.ItemID == 0x75C)
+					comp.ItemID = 0x3FA;
+			}
+		}
+	}
 }

@@ -2,117 +2,100 @@ using System;
 
 namespace Server.Items
 {
-    [Flipable(0x3D8E, 0x3D8F)]
-    public class LargeFishingNetComponent : AddonComponent
-    {
-        public LargeFishingNetComponent()
-            : base(0x3D8E)
-        {
-        }
+	[Flipable(0x3D8E, 0x3D8F)]
+	public class LargeFishingNetComponent : AddonComponent
+	{
+		public LargeFishingNetComponent()
+			: base(0x3D8E) { }
 
-        public LargeFishingNetComponent(Serial serial)
-            : base(serial)
-        {
-        }
+		public LargeFishingNetComponent(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1076285;
-            }
-        }// Large Fish Net
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int LabelNumber
+		{
+			get { return 1076285; }
+		} // Large Fish Net
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class LargeFishingNetAddon : BaseAddon
-    {
-        [Constructable]
-        public LargeFishingNetAddon()
-            : base()
-        {
-            this.AddComponent(new LargeFishingNetComponent(), 0, 0, 0);
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public LargeFishingNetAddon(Serial serial)
-            : base(serial)
-        {
-        }
+	public class LargeFishingNetAddon : BaseAddon
+	{
+		[Constructable]
+		public LargeFishingNetAddon()
+			: base()
+		{
+			this.AddComponent(new LargeFishingNetComponent(), 0, 0, 0);
+		}
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new LargeFishingNetDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public LargeFishingNetAddon(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override BaseAddonDeed Deed
+		{
+			get { return new LargeFishingNetDeed(); }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
 
-    public class LargeFishingNetDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public LargeFishingNetDeed()
-            : base()
-        {
-            this.LootType = LootType.Blessed;
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public LargeFishingNetDeed(Serial serial)
-            : base(serial)
-        {
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new LargeFishingNetAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1076285;
-            }
-        }// Large Fish Net
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+	public class LargeFishingNetDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public LargeFishingNetDeed()
+			: base()
+		{
+			this.LootType = LootType.Blessed;
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public LargeFishingNetDeed(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override BaseAddon Addon
+		{
+			get { return new LargeFishingNetAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1076285; }
+		} // Large Fish Net
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

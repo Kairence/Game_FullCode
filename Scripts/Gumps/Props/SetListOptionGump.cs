@@ -1,7 +1,6 @@
 #region References
 using System.Collections;
 using System.Reflection;
-
 using Server.Commands;
 using Server.Network;
 #endregion
@@ -21,15 +20,18 @@ namespace Server.Gumps
 		public static readonly int BackGumpID = PropsConfig.BackGumpID;
 		public static readonly int SetGumpID = PropsConfig.SetGumpID;
 		public static readonly int SetWidth = PropsConfig.SetWidth;
-		public static readonly int SetOffsetX = PropsConfig.SetOffsetX, SetOffsetY = PropsConfig.SetOffsetY;
+		public static readonly int SetOffsetX = PropsConfig.SetOffsetX,
+			SetOffsetY = PropsConfig.SetOffsetY;
 		public static readonly int SetButtonID1 = PropsConfig.SetButtonID1;
 		public static readonly int SetButtonID2 = PropsConfig.SetButtonID2;
 		public static readonly int PrevWidth = PropsConfig.PrevWidth;
-		public static readonly int PrevOffsetX = PropsConfig.PrevOffsetX, PrevOffsetY = PropsConfig.PrevOffsetY;
+		public static readonly int PrevOffsetX = PropsConfig.PrevOffsetX,
+			PrevOffsetY = PropsConfig.PrevOffsetY;
 		public static readonly int PrevButtonID1 = PropsConfig.PrevButtonID1;
 		public static readonly int PrevButtonID2 = PropsConfig.PrevButtonID2;
 		public static readonly int NextWidth = PropsConfig.NextWidth;
-		public static readonly int NextOffsetX = PropsConfig.NextOffsetX, NextOffsetY = PropsConfig.NextOffsetY;
+		public static readonly int NextOffsetX = PropsConfig.NextOffsetX,
+			NextOffsetY = PropsConfig.NextOffsetY;
 		public static readonly int NextButtonID1 = PropsConfig.NextButtonID1;
 		public static readonly int NextButtonID2 = PropsConfig.NextButtonID2;
 		public static readonly int OffsetSize = PropsConfig.OffsetSize;
@@ -63,7 +65,8 @@ namespace Server.Gumps
 			int propspage,
 			ArrayList list,
 			string[] names,
-			object[] values)
+			object[] values
+		)
 			: base(GumpOffsetX, GumpOffsetY)
 		{
 			m_Property = prop;
@@ -99,18 +102,28 @@ namespace Server.Gumps
 					BorderSize,
 					TotalWidth - (OldStyle ? SetWidth + OffsetSize : 0),
 					totalHeight,
-					OffsetGumpID);
+					OffsetGumpID
+				);
 
 				var x = BorderSize + OffsetSize;
 				var y = BorderSize + OffsetSize;
 
-				var emptyWidth = TotalWidth - PrevWidth - NextWidth - (OffsetSize * 4) - (OldStyle ? SetWidth + OffsetSize : 0);
+				var emptyWidth =
+					TotalWidth - PrevWidth - NextWidth - (OffsetSize * 4) - (OldStyle ? SetWidth + OffsetSize : 0);
 
 				AddImageTiled(x, y, PrevWidth, EntryHeight, HeaderGumpID);
 
 				if (page > 1)
 				{
-					AddButton(x + PrevOffsetX, y + PrevOffsetY, PrevButtonID1, PrevButtonID2, 0, GumpButtonType.Page, page - 1);
+					AddButton(
+						x + PrevOffsetX,
+						y + PrevOffsetY,
+						PrevButtonID1,
+						PrevButtonID2,
+						0,
+						GumpButtonType.Page,
+						page - 1
+					);
 
 					if (PrevLabel)
 					{
@@ -127,7 +140,8 @@ namespace Server.Gumps
 						y,
 						emptyWidth + (OldStyle ? OffsetSize * 2 : 0),
 						EntryHeight,
-						HeaderGumpID);
+						HeaderGumpID
+					);
 				}
 
 				x += emptyWidth + OffsetSize;
@@ -139,7 +153,15 @@ namespace Server.Gumps
 
 				if (page < pages)
 				{
-					AddButton(x + NextOffsetX, y + NextOffsetY, NextButtonID1, NextButtonID2, 0, GumpButtonType.Page, page + 1);
+					AddButton(
+						x + NextOffsetX,
+						y + NextOffsetY,
+						NextButtonID1,
+						NextButtonID2,
+						0,
+						GumpButtonType.Page,
+						page + 1
+					);
 
 					if (NextLabel)
 					{
@@ -166,7 +188,15 @@ namespace Server.Gumps
 				{
 					var toSet = m_Values[index];
 
-					var result = Properties.SetDirect(m_Mobile, m_Object, m_Object, m_Property, m_Property.Name, toSet, true);
+					var result = Properties.SetDirect(
+						m_Mobile,
+						m_Object,
+						m_Object,
+						m_Property,
+						m_Property.Name,
+						toSet,
+						true
+					);
 
 					m_Mobile.SendMessage(result);
 

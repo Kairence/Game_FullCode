@@ -1,35 +1,34 @@
-using System; 
+using System;
 
 namespace Server.Items
-{ 
-	public class WheatSeed : BaseSeed 
-	{ 
+{
+	public class WheatSeed : BaseSeed
+	{
 		[Constructable]
-		public WheatSeed() : this( 1 )
+		public WheatSeed()
+			: this(1) { }
+
+		[Constructable]
+		public WheatSeed(int amount)
+			: base(0xDCF)
 		{
+			Hue = 45;
+			Name = "밀 씨앗";
 		}
 
-		[Constructable]
-		public WheatSeed( int amount ) : base( 0xDCF )
+		public WheatSeed(Serial serial)
+			: base(serial) { }
+
+		public override void Serialize(GenericWriter writer)
 		{
-			Hue = 45; 
-			Name = "밀 씨앗"; 
+			base.Serialize(writer);
+			writer.Write((int)0);
 		}
-		
-		public WheatSeed( Serial serial ) : base( serial ) 
-		{ 
-		} 
 
-		public override void Serialize( GenericWriter writer ) 
-		{ 
-			base.Serialize( writer ); 
-			writer.Write( (int) 0 ); 
-		} 
-
-		public override void Deserialize( GenericReader reader ) 
-		{ 
-			base.Deserialize( reader ); 
-			int version = reader.ReadInt(); 
-		} 
-	} 
-} 
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
+}

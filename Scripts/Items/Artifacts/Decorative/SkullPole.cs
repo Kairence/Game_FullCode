@@ -2,33 +2,35 @@ using System;
 
 namespace Server.Items
 {
-    public class SkullPole : Item
-    {
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public SkullPole()
-            : base(0x2204)
-        {
-            this.Weight = 5;
-        }
+	public class SkullPole : Item
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public SkullPole(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public SkullPole()
+			: base(0x2204)
+		{
+			this.Weight = 5;
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public SkullPole(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

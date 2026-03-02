@@ -3,53 +3,83 @@ using Server.Items;
 
 namespace Server.Items
 {
-    public class DragonTurtleHideArms : BaseArmor
-    {
-        public override int InitMinHits { get { return 100; } }
-        public override int InitMaxHits { get { return 100; } }
+	public class DragonTurtleHideArms : BaseArmor
+	{
+		public override int InitMinHits
+		{
+			get { return 100; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 100; }
+		}
 
-        public override int AosStrReq { get { return 2500; } }
-        public override int AosDexReq { get { return 100; } }
-        public override int AosIntReq { get { return 100; } }
-        public override int OldStrReq { get { return 15; } }
+		public override int AosStrReq
+		{
+			get { return 2500; }
+		}
+		public override int AosDexReq
+		{
+			get { return 100; }
+		}
+		public override int AosIntReq
+		{
+			get { return 100; }
+		}
+		public override int OldStrReq
+		{
+			get { return 15; }
+		}
 
-        public override int ArmorBase { get { return 6; } }
+		public override int ArmorBase
+		{
+			get { return 6; }
+		}
 
-        public override ArmorMaterialType MaterialType { get { return ArmorMaterialType.Leather; } }
-        public override CraftResource DefaultResource { get { return CraftResource.RegularLeather; } }
+		public override ArmorMaterialType MaterialType
+		{
+			get { return ArmorMaterialType.Leather; }
+		}
+		public override CraftResource DefaultResource
+		{
+			get { return CraftResource.RegularLeather; }
+		}
 
-        public override ArmorMeditationAllowance DefMedAllowance { get { return ArmorMeditationAllowance.All; } }
+		public override ArmorMeditationAllowance DefMedAllowance
+		{
+			get { return ArmorMeditationAllowance.All; }
+		}
 
-        public override int LabelNumber { get { return 1109638; } } // Dragon Turtle Hide Arms
+		public override int LabelNumber
+		{
+			get { return 1109638; }
+		} // Dragon Turtle Hide Arms
 
-        [Constructable]
-        public DragonTurtleHideArms()
-            : base(0x782E)
-        {
-            Weight = 15.0;
-            PrefixOption[50] = 3;    //세트 옵션 번호
-            PrefixOption[61] = 18;   //방어율 증가
-            SuffixOption[61] = 50000; //5%
-            PrefixOption[62] = 100;  //무기 공격 반사%
-            SuffixOption[62] = 250000; //25%
+		[Constructable]
+		public DragonTurtleHideArms()
+			: base(0x782E)
+		{
+			Weight = 15.0;
+			PrefixOption[50] = 3; //세트 옵션 번호
+			PrefixOption[61] = 18; //방어율 증가
+			SuffixOption[61] = 50000; //5%
+			PrefixOption[62] = 100; //무기 공격 반사%
+			SuffixOption[62] = 250000; //25%
+		}
 
-        }
+		public DragonTurtleHideArms(Serial serial)
+			: base(serial) { }
 
-        public DragonTurtleHideArms(Serial serial)
-            : base(serial)
-        {
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0); // version
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0); // version
-        }
-
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 }

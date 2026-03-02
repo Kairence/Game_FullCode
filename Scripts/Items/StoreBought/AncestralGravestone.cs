@@ -8,143 +8,144 @@ using Server.Network;
 
 namespace Server.Items
 {
-    [Flipable(0x1173, 0x1174)]
-    public class AncestralGravestone : Item
-    {
-        public override int LabelNumber { get { return 1071096; } } // Ancestral Gravestone
+	[Flipable(0x1173, 0x1174)]
+	public class AncestralGravestone : Item
+	{
+		public override int LabelNumber
+		{
+			get { return 1071096; }
+		} // Ancestral Gravestone
 
-        [Constructable]
-        public AncestralGravestone()
-            : base(0x1173)
-        {
-            LootType = LootType.Blessed;
-        }
+		[Constructable]
+		public AncestralGravestone()
+			: base(0x1173)
+		{
+			LootType = LootType.Blessed;
+		}
 
-        public override void OnDoubleClick(Mobile m)
-        {
-            //TODO: Clilocs?
-            BaseHouse house = BaseHouse.FindHouseAt(this);
+		public override void OnDoubleClick(Mobile m)
+		{
+			//TODO: Clilocs?
+			BaseHouse house = BaseHouse.FindHouseAt(this);
 
-            if (house != null && house.IsFriend(m) && (IsLockedDown || IsSecure))
-            {
-                if (IsInCooldown(m))
-                {
-                    TimeSpan tsRem = _Cooldown[m] - DateTime.UtcNow;
+			if (house != null && house.IsFriend(m) && (IsLockedDown || IsSecure))
+			{
+				if (IsInCooldown(m))
+				{
+					TimeSpan tsRem = _Cooldown[m] - DateTime.UtcNow;
 
-                    m.SendLocalizedMessage(1071505, ((int)tsRem.TotalMinutes).ToString()); // In order to get a buff again, you have to wait for at least ~1_VAL~ minutes.
-                }
-                else
-                {
-                    AddBonus(m);
-                    m.FixedParticles(0x376A, 9, 32, 5030, EffectLayer.Waist);
-                }
-            }
-        }
+					m.SendLocalizedMessage(1071505, ((int)tsRem.TotalMinutes).ToString()); // In order to get a buff again, you have to wait for at least ~1_VAL~ minutes.
+				}
+				else
+				{
+					AddBonus(m);
+					m.FixedParticles(0x376A, 9, 32, 5030, EffectLayer.Waist);
+				}
+			}
+		}
 
-        private static Dictionary<Mobile, SkillMod> _Table;
-        private static Dictionary<Mobile, DateTime> _Cooldown;
-        private static Timer _Timer;
+		private static Dictionary<Mobile, SkillMod> _Table;
+		private static Dictionary<Mobile, DateTime> _Cooldown;
+		private static Timer _Timer;
 
-        public static bool UnderEffects(Mobile m)
-        {
-            return _Table != null && _Table.ContainsKey(m);
-        }
+		public static bool UnderEffects(Mobile m)
+		{
+			return _Table != null && _Table.ContainsKey(m);
+		}
 
-        public static void AddBonus(Mobile m)
-        {
-            if (_Table == null)
-                _Table = new Dictionary<Mobile, SkillMod>();
+		public static void AddBonus(Mobile m)
+		{
+			if (_Table == null)
+				_Table = new Dictionary<Mobile, SkillMod>();
 
-            var mod = new DefaultSkillMod(SkillName.SpiritSpeak, true, 5.0);
-            _Table[m] = mod;
+			var mod = new DefaultSkillMod(SkillName.SpiritSpeak, true, 5.0);
+			_Table[m] = mod;
 
-            m.AddSkillMod(mod);
-            AddToCooldown(m);
-            
-            Timer.DelayCall(TimeSpan.FromMinutes(Utility.RandomMinMax(5, 40)), ExpireBonus, new object[] { m, mod });
-        }
+			m.AddSkillMod(mod);
+			AddToCooldown(m);
 
-        public static void ExpireBonus(object o)
-        {
-            object[] objects = (object[])o;
-            Mobile mob = objects[0] as Mobile;
-            SkillMod sm = objects[1] as SkillMod;
+			Timer.DelayCall(TimeSpan.FromMinutes(Utility.RandomMinMax(5, 40)), ExpireBonus, new object[] { m, mod });
+		}
 
-            mob.RemoveSkillMod(sm);
-        }
+		public static void ExpireBonus(object o)
+		{
+			object[] objects = (object[])o;
+			Mobile mob = objects[0] as Mobile;
+			SkillMod sm = objects[1] as SkillMod;
 
-        public static bool IsInCooldown(Mobile m)
-        {
-            if (UnderEffects(m))
-            {
-                return true;
-            }
+			mob.RemoveSkillMod(sm);
+		}
 
-            CheckCooldown();
+		public static bool IsInCooldown(Mobile m)
+		{
+			if (UnderEffects(m))
+			{
+				return true;
+			}
 
-            return _Cooldown != null && _Cooldown.ContainsKey(m);
-        }
+			CheckCooldown();
 
-        public static void AddToCooldown(Mobile m)
-        {
-            if (_Cooldown == null)
-                _Cooldown = new Dictionary<Mobile, DateTime>();
+			return _Cooldown != null && _Cooldown.ContainsKey(m);
+		}
 
-            _Cooldown[m] = DateTime.UtcNow + TimeSpan.FromMinutes(90);
+		public static void AddToCooldown(Mobile m)
+		{
+			if (_Cooldown == null)
+				_Cooldown = new Dictionary<Mobile, DateTime>();
 
-            if (_Timer != null)
-            {
-                _Timer = Timer.DelayCall(TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1), CheckCooldown);
-                _Timer.Priority = TimerPriority.FiveSeconds;
-            }
-        }
+			_Cooldown[m] = DateTime.UtcNow + TimeSpan.FromMinutes(90);
 
-        public static void CheckCooldown()
-        {
-            if (_Cooldown == null)
-                return;
+			if (_Timer != null)
+			{
+				_Timer = Timer.DelayCall(TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1), CheckCooldown);
+				_Timer.Priority = TimerPriority.FiveSeconds;
+			}
+		}
 
-            List<Mobile> list = new List<Mobile>(_Cooldown.Keys);
+		public static void CheckCooldown()
+		{
+			if (_Cooldown == null)
+				return;
 
-            foreach (var m in list)
-            {
-                if (_Cooldown[m] < DateTime.UtcNow)
-                {
-                    _Cooldown.Remove(m);
-                }
-            }
+			List<Mobile> list = new List<Mobile>(_Cooldown.Keys);
 
-            if (_Cooldown.Count == 0)
-            {
-                _Cooldown = null;
+			foreach (var m in list)
+			{
+				if (_Cooldown[m] < DateTime.UtcNow)
+				{
+					_Cooldown.Remove(m);
+				}
+			}
 
-                if (_Timer != null)
-                {
-                    _Timer.Stop();
-                    _Timer = null;
-                }
-            }
+			if (_Cooldown.Count == 0)
+			{
+				_Cooldown = null;
 
-            ColUtility.Free(list);
-        }
+				if (_Timer != null)
+				{
+					_Timer.Stop();
+					_Timer = null;
+				}
+			}
 
-        public AncestralGravestone(Serial serial)
-            : base(serial)
-        {
-        }
+			ColUtility.Free(list);
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public AncestralGravestone(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

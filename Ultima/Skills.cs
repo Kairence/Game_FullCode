@@ -59,7 +59,8 @@ namespace Ultima
 		/// <returns></returns>
 		public static SkillInfo GetSkill(int index)
 		{
-			int length, extra;
+			int length,
+				extra;
 			bool patched;
 
 			Stream stream = m_FileIndex.Seek(index, out length, out extra, out patched);
@@ -100,9 +101,13 @@ namespace Ultima
 			string mul = Path.Combine(path, "skills.mul");
 			using (
 				FileStream fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
-						   fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
+					fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write)
+			)
 			{
-				using (BinaryWriter binidx = new BinaryWriter(fsidx), binmul = new BinaryWriter(fsmul))
+				using (
+					BinaryWriter binidx = new BinaryWriter(fsidx),
+						binmul = new BinaryWriter(fsmul)
+				)
 				{
 					for (int i = 0; i < m_FileIndex.Index.Length; ++i)
 					{

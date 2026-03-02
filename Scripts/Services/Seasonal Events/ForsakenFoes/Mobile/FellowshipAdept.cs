@@ -1,130 +1,141 @@
-using Server;
 using System;
 using System.Collections.Generic;
-using Server.Mobiles;
-using Server.Items;
+using Server;
 using Server.ContextMenus;
+using Server.Items;
+using Server.Mobiles;
 
 namespace Server.Engines.Fellowship
 {
-    public class FellowshipAdept : BaseVendor
-    {
-        public override bool IsActiveVendor { get { return false; } }
-        public override bool IsInvulnerable { get { return true; } }
-        public override bool DisallowAllMoves { get { return true; } }
-        public override bool ClickTitle { get { return true; } }
-        public override bool CanTeach { get { return false; } }
+	public class FellowshipAdept : BaseVendor
+	{
+		public override bool IsActiveVendor
+		{
+			get { return false; }
+		}
+		public override bool IsInvulnerable
+		{
+			get { return true; }
+		}
+		public override bool DisallowAllMoves
+		{
+			get { return true; }
+		}
+		public override bool ClickTitle
+		{
+			get { return true; }
+		}
+		public override bool CanTeach
+		{
+			get { return false; }
+		}
 
-        protected List<SBInfo> m_SBInfos = new List<SBInfo>();
-        protected override List<SBInfo> SBInfos { get { return m_SBInfos; } }
-        public override void InitSBInfo() { }
+		protected List<SBInfo> m_SBInfos = new List<SBInfo>();
+		protected override List<SBInfo> SBInfos
+		{
+			get { return m_SBInfos; }
+		}
 
-        public static FellowshipAdept InstanceTram { get; set; }
-        public static FellowshipAdept InstanceFel { get; set; }
+		public override void InitSBInfo() { }
 
-        [Constructable]
-        public FellowshipAdept()
-            : base("the Fellowship Adept")
-        {
-        }
+		public static FellowshipAdept InstanceTram { get; set; }
+		public static FellowshipAdept InstanceFel { get; set; }
 
-        public override void InitBody()
-        {
-            base.InitBody();
+		[Constructable]
+		public FellowshipAdept()
+			: base("the Fellowship Adept") { }
 
-            Name = NameList.RandomName("male");
+		public override void InitBody()
+		{
+			base.InitBody();
 
-            Hue = Utility.RandomSkinHue();
-            Body = 0x190;
-            HairItemID = 0x2044;
-            HairHue = 1644;
-            FacialHairItemID = 0x203F;
-            FacialHairHue = 1644;
-        }
+			Name = NameList.RandomName("male");
 
-        public override void InitOutfit()
-        {
-            SetWearable(new Kamishimo());
-            SetWearable(new Sandals());
-            SetWearable(new GoldRing());
+			Hue = Utility.RandomSkinHue();
+			Body = 0x190;
+			HairItemID = 0x2044;
+			HairHue = 1644;
+			FacialHairItemID = 0x203F;
+			FacialHairHue = 1644;
+		}
 
-            if (Backpack == null)
-            {
-                Item backpack = new Backpack
-                {
-                    Movable = false
-                };
+		public override void InitOutfit()
+		{
+			SetWearable(new Kamishimo());
+			SetWearable(new Sandals());
+			SetWearable(new GoldRing());
 
-                AddItem(backpack);
-            }    
-        }        
+			if (Backpack == null)
+			{
+				Item backpack = new Backpack { Movable = false };
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+				AddItem(backpack);
+			}
+		}
 
-            list.Add(1159182); // Fellowship Shop
-        }
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-        public override void AddCustomContextEntries(Mobile from, List<ContextMenuEntry> list)
-        {
+			list.Add(1159182); // Fellowship Shop
+		}
 
-            if (from.Alive)
-            {
-                list.Add(new BrowseShopEntry(from, this));
-            }
+		public override void AddCustomContextEntries(Mobile from, List<ContextMenuEntry> list)
+		{
+			if (from.Alive)
+			{
+				list.Add(new BrowseShopEntry(from, this));
+			}
 
-            base.AddCustomContextEntries(from, list);
-        }
+			base.AddCustomContextEntries(from, list);
+		}
 
-        private class BrowseShopEntry : ContextMenuEntry
-        {
-            private Mobile m_From;
-            private BaseVendor m_Vendor;
+		private class BrowseShopEntry : ContextMenuEntry
+		{
+			private Mobile m_From;
+			private BaseVendor m_Vendor;
 
-            public BrowseShopEntry(Mobile from, BaseVendor vendor)
-                : base(1159181, 2) // Browse the Fellowship Shop
-            {
-                Enabled = vendor.CheckVendorAccess(from);
+			public BrowseShopEntry(Mobile from, BaseVendor vendor)
+				: base(1159181, 2) // Browse the Fellowship Shop
+			{
+				Enabled = vendor.CheckVendorAccess(from);
 
-                m_From = from;
-                m_Vendor = vendor;
-            }
+				m_From = from;
+				m_Vendor = vendor;
+			}
 
-            public override void OnClick()
-            {
-                if (!m_From.InRange(m_Vendor.Location, 5) || !(m_From is PlayerMobile))
-                    return;
+			public override void OnClick()
+			{
+				if (!m_From.InRange(m_Vendor.Location, 5) || !(m_From is PlayerMobile))
+					return;
 
-                m_From.SendGump(new FellowshipRewardGump(m_Vendor, m_From as PlayerMobile));
-            }
-        }
+				m_From.SendGump(new FellowshipRewardGump(m_Vendor, m_From as PlayerMobile));
+			}
+		}
 
-        public FellowshipAdept(Serial serial)
-            : base(serial)
-        {
-        }
+		public FellowshipAdept(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write(0);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write(0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
 
-            if (Map == Map.Trammel)
-            {
-                InstanceTram = this;
-            }
+			if (Map == Map.Trammel)
+			{
+				InstanceTram = this;
+			}
 
-            if (Map == Map.Felucca)
-            {
-                InstanceFel = this;
-            }
-        }
-    }    
+			if (Map == Map.Felucca)
+			{
+				InstanceFel = this;
+			}
+		}
+	}
 }

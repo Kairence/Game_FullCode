@@ -298,7 +298,12 @@ namespace Ultima
 				GCHandle gc = GCHandle.Alloc(m_StaticIndex, GCHandleType.Pinned);
 				var buffer = new byte[index.Length];
 				index.Read(buffer, 0, (int)index.Length);
-				Marshal.Copy(buffer, 0, gc.AddrOfPinnedObject(), (int)Math.Min(index.Length, BlockHeight * BlockWidth * 12));
+				Marshal.Copy(
+					buffer,
+					0,
+					gc.AddrOfPinnedObject(),
+					(int)Math.Min(index.Length, BlockHeight * BlockWidth * 12)
+				);
 				gc.Free();
 				for (var i = (int)Math.Min(index.Length, BlockHeight * BlockWidth); i < BlockHeight * BlockWidth; ++i)
 				{
@@ -433,7 +438,10 @@ namespace Ultima
 		}
 
 		private UOPFile[] UOPFiles { get; set; }
-		private long UOPLength { get { return m_Map.Length; } }
+		private long UOPLength
+		{
+			get { return m_Map.Length; }
+		}
 
 		private void ReadUOPFiles(string pattern)
 		{
@@ -495,7 +503,9 @@ namespace Ultima
 					{
 						if (idx < 0 || idx > UOPFiles.Length)
 						{
-							throw new IndexOutOfRangeException("hashes dictionary and files collection have different count of entries!");
+							throw new IndexOutOfRangeException(
+								"hashes dictionary and files collection have different count of entries!"
+							);
 						}
 
 						UOPFiles[idx] = new UOPFile(offset + headerLength, length);
@@ -503,11 +513,14 @@ namespace Ultima
 					else
 					{
 						throw new ArgumentException(
-							string.Format("File with hash 0x{0:X8} was not found in hashes dictionary! EA Mythic changed UOP format!", hash));
+							string.Format(
+								"File with hash 0x{0:X8} was not found in hashes dictionary! EA Mythic changed UOP format!",
+								hash
+							)
+						);
 					}
 				}
-			}
-			while (m_UOPReader.BaseStream.Seek(nextBlock, SeekOrigin.Begin) != 0);
+			} while (m_UOPReader.BaseStream.Seek(nextBlock, SeekOrigin.Begin) != 0);
 		}
 
 		private long CalculateOffsetFromUOP(long offset)
@@ -705,9 +718,21 @@ namespace Ultima
 		internal ushort m_ID;
 		internal int m_Hue;
 
-		public ushort ID { get { return m_ID; } set { m_ID = value; } }
-		public int Hue { get { return m_Hue; } set { m_Hue = value; } }
-		public int Z { get { return m_Z; } set { m_Z = (sbyte)value; } }
+		public ushort ID
+		{
+			get { return m_ID; }
+			set { m_ID = value; }
+		}
+		public int Hue
+		{
+			get { return m_Hue; }
+			set { m_Hue = value; }
+		}
+		public int Z
+		{
+			get { return m_Z; }
+			set { m_Z = (sbyte)value; }
+		}
 
 		public HuedTile(ushort id, short hue, sbyte z)
 		{
@@ -728,24 +753,39 @@ namespace Ultima
 	{
 		internal ushort m_ID;
 		internal sbyte m_Z;
-        internal TileFlag m_Flag;
+		internal TileFlag m_Flag;
 		internal int m_Solver;
 
-		public ushort ID { get { return m_ID; } }
-		public int Z { get { return m_Z; } set { m_Z = (sbyte)value; } }
+		public ushort ID
+		{
+			get { return m_ID; }
+		}
+		public int Z
+		{
+			get { return m_Z; }
+			set { m_Z = (sbyte)value; }
+		}
 
-        public TileFlag Flag { get { return m_Flag; } set { m_Flag = value; } }
-		public int Solver { get { return m_Solver; } set { m_Solver = value; } }
+		public TileFlag Flag
+		{
+			get { return m_Flag; }
+			set { m_Flag = value; }
+		}
+		public int Solver
+		{
+			get { return m_Solver; }
+			set { m_Solver = value; }
+		}
 
 		public MTile(ushort id, sbyte z)
 		{
 			m_ID = Art.GetLegalItemID(id);
 			m_Z = z;
-            m_Flag = TileFlag.Background;
+			m_Flag = TileFlag.Background;
 			m_Solver = 0;
 		}
 
-        public MTile(ushort id, sbyte z, TileFlag flag)
+		public MTile(ushort id, sbyte z, TileFlag flag)
 		{
 			m_ID = Art.GetLegalItemID(id);
 			m_Z = z;
@@ -759,7 +799,7 @@ namespace Ultima
 			m_Z = z;
 		}
 
-        public void Set(ushort id, sbyte z, TileFlag flag)
+		public void Set(ushort id, sbyte z, TileFlag flag)
 		{
 			m_ID = Art.GetLegalItemID(id);
 			m_Z = z;
@@ -825,8 +865,15 @@ namespace Ultima
 		internal ushort m_ID;
 		internal sbyte m_Z;
 
-		public ushort ID { get { return m_ID; } }
-		public int Z { get { return m_Z; } set { m_Z = (sbyte)value; } }
+		public ushort ID
+		{
+			get { return m_ID; }
+		}
+		public int Z
+		{
+			get { return m_Z; }
+			set { m_Z = (sbyte)value; }
+		}
 
 		public Tile(ushort id, sbyte z)
 		{

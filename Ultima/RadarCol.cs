@@ -16,7 +16,10 @@ namespace Ultima
 		}
 
 		private static short[] m_Colors;
-		public static short[] Colors { get { return m_Colors; } }
+		public static short[] Colors
+		{
+			get { return m_Colors; }
+		}
 
 		public static short GetItemColor(int index)
 		{
@@ -85,7 +88,10 @@ namespace Ultima
 		{
 			using (
 				var Tex = new StreamWriter(
-					new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+					new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite),
+					Encoding.GetEncoding(1252)
+				)
+			)
 			{
 				Tex.WriteLine("ID;Color");
 
@@ -145,8 +151,7 @@ namespace Ultima
 						int color = ConvertStringToInt(split[1]);
 						m_Colors[id] = (short)color;
 					}
-					catch
-					{ }
+					catch { }
 				}
 			}
 		}

@@ -1,289 +1,285 @@
-using Server.Commands;
 using System;
 using System.Collections.Generic;
+using Server.Commands;
 
 namespace Server.Items
 {
-    public enum Parts
-    {     
-        None = -1,   
-        Flywheel,
-        WireSpool,
-        PowerCore,
-        BearingAssembly,
-    };    
+	public enum Parts
+	{
+		None = -1,
+		Flywheel,
+		WireSpool,
+		PowerCore,
+		BearingAssembly,
+	};
 
-    [Furniture]
-    [Flipable(0x285D, 0x285E)]
-    public class StorageLocker : FillableContainer
-    {
-        public override int LabelNumber { get { return 1154431; } } // Storage Locker
+	[Furniture]
+	[Flipable(0x285D, 0x285E)]
+	public class StorageLocker : FillableContainer
+	{
+		public override int LabelNumber
+		{
+			get { return 1154431; }
+		} // Storage Locker
 
-        private bool m_Active;
-        private Parts m_Type;
-        private List<Item> m_Barrels;
-        private Timer m_RestartTimer;
-        private DateTime m_RestartTime;
-		
+		private bool m_Active;
+		private Parts m_Type;
+		private List<Item> m_Barrels;
+		private Timer m_RestartTimer;
+		private DateTime m_RestartTime;
+
 		public List<Item> Barrels
-        {
-            get { return m_Barrels; }
-            set { m_Barrels = value; }
-        }
+		{
+			get { return m_Barrels; }
+			set { m_Barrels = value; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool Active
-        {
-            get
-            {
-                return m_Active;
-            }
-            set
-            {
-                if (value)
-                    Start();
-                else
-                    Stop();
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool Active
+		{
+			get { return m_Active; }
+			set
+			{
+				if (value)
+					Start();
+				else
+					Stop();
 
-                InvalidateProperties();
-            }
-        }
+				InvalidateProperties();
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public DateTime RestartTime
-        {
-            get
-            {
-                return m_RestartTime;
-            }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public DateTime RestartTime
+		{
+			get { return m_RestartTime; }
+		}
 
-        public override bool IsDecoContainer { get { return false; } }
+		public override bool IsDecoContainer
+		{
+			get { return false; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Parts Type
-        {
-            get
-            {
-                return m_Type;
-            }
-            set
-            {
-                m_Type = value;
-                InvalidateProperties();
-            }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Parts Type
+		{
+			get { return m_Type; }
+			set
+			{
+				m_Type = value;
+				InvalidateProperties();
+			}
+		}
 
-        [Constructable]
-        public StorageLocker(Parts type)
-            : base(0x285E)
-        {
-            m_Barrels = new List<Item>();
+		[Constructable]
+		public StorageLocker(Parts type)
+			: base(0x285E)
+		{
+			m_Barrels = new List<Item>();
 
-            Locked = true;
-            Hue = 2301;
-            Movable = false;
-            m_Type = type;
-        }
+			Locked = true;
+			Hue = 2301;
+			Movable = false;
+			m_Type = type;
+		}
 
-        public StorageLocker(Serial serial)
-            : base(serial)
-        {
-        }
+		public StorageLocker(Serial serial)
+			: base(serial) { }
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
-            
-            list.Add(1154425, String.Format("#{0}", 1154427 + (int)m_Type)); // *You barely make out some words on a rusted nameplate*<BR>REPLACEMENT PARTS: ~1_PART~
-        }
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-        public static int[][] WoodenToMetalBarrelCoordinate =
-        {
-            new int[] { 0, 1 },
-            new int[] { 1, 1 },
-            new int[] { 1, 0 },
-            new int[] { 1, -1 },
-            new int[] { 0, -1 },
-            new int[] { -1, -1 },
-            new int[] { -1, 0 },
-            new int[] { -1, 1 }
-        };
+			list.Add(1154425, String.Format("#{0}", 1154427 + (int)m_Type)); // *You barely make out some words on a rusted nameplate*<BR>REPLACEMENT PARTS: ~1_PART~
+		}
 
-        private Parts key;
+		public static int[][] WoodenToMetalBarrelCoordinate =
+		{
+			new int[] { 0, 1 },
+			new int[] { 1, 1 },
+			new int[] { 1, 0 },
+			new int[] { 1, -1 },
+			new int[] { 0, -1 },
+			new int[] { -1, -1 },
+			new int[] { -1, 0 },
+			new int[] { -1, 1 },
+		};
 
-        public void Start()
-        {
-            if (m_Active || Deleted)
-                return;
+		private Parts key;
 
-            m_Active = true;
+		public void Start()
+		{
+			if (m_Active || Deleted)
+				return;
 
-            if (m_RestartTimer != null)
-                m_RestartTimer.Stop();
+			m_Active = true;
 
-            m_RestartTimer = null;
+			if (m_RestartTimer != null)
+				m_RestartTimer.Stop();
 
-            int index = Utility.Random(0, 8);
-            int randomkey = Utility.Random(-4, 4);            
-            bool loot = false;
-            Item barrel = null;
+			m_RestartTimer = null;
 
-            for (int k = 0; k < 8; k++)
-            {
-                int itemx = Location.X + WoodenToMetalBarrelCoordinate[k][0];
-                int itemy = Location.Y + WoodenToMetalBarrelCoordinate[k][1];
-                int z = Map.GetAverageZ(itemx, itemy);
+			int index = Utility.Random(0, 8);
+			int randomkey = Utility.Random(-4, 4);
+			bool loot = false;
+			Item barrel = null;
 
-                if (index == k)
-                {
-                    barrel = new WoodenKeyBarrel(Parts.None);
-                    m_Barrels.Add(barrel);
-                }
-                else
-                {
-                    barrel = new WoodenToMetalBarrel(this);
-                    m_Barrels.Add(barrel);
-                }
+			for (int k = 0; k < 8; k++)
+			{
+				int itemx = Location.X + WoodenToMetalBarrelCoordinate[k][0];
+				int itemy = Location.Y + WoodenToMetalBarrelCoordinate[k][1];
+				int z = Map.GetAverageZ(itemx, itemy);
 
-                barrel.MoveToWorld(new Point3D(itemx, itemy, z), Map);
-            }
+				if (index == k)
+				{
+					barrel = new WoodenKeyBarrel(Parts.None);
+					m_Barrels.Add(barrel);
+				}
+				else
+				{
+					barrel = new WoodenToMetalBarrel(this);
+					m_Barrels.Add(barrel);
+				}
 
-            for (int x = -4; x < 5; x++)
-            {
-                for (int y = 4; y > -5; y--)
-                {
-                    if ((x >= -1 && x <= 1) && (y >= -1 && y <= 1))
-                        continue;
+				barrel.MoveToWorld(new Point3D(itemx, itemy, z), Map);
+			}
 
-                    int itemx = Location.X + x;
-                    int itemy = Location.Y + y;
-                    int z = Map.GetAverageZ(itemx, itemy);
+			for (int x = -4; x < 5; x++)
+			{
+				for (int y = 4; y > -5; y--)
+				{
+					if ((x >= -1 && x <= 1) && (y >= -1 && y <= 1))
+						continue;
 
-                    if (!loot)
-                    {
-                        if (x == randomkey)
-                        {
-                            key = m_Type;
-                            loot = true;
+					int itemx = Location.X + x;
+					int itemy = Location.Y + y;
+					int z = Map.GetAverageZ(itemx, itemy);
 
-                            barrel = new WoodenKeyBarrel(key);
-                            ((WoodenKeyBarrel)barrel).StorageLocker = this;
-                        }
-                        else
-                        {
-                            key = Parts.None;
-                            barrel = new WoodenKeyBarrel(key);
-                        }
-                    }
-                    else
-                    {
-                        key = Parts.None;
-                        barrel = new WoodenKeyBarrel(key);
-                    }
+					if (!loot)
+					{
+						if (x == randomkey)
+						{
+							key = m_Type;
+							loot = true;
 
-                    m_Barrels.Add(barrel);                 
+							barrel = new WoodenKeyBarrel(key);
+							((WoodenKeyBarrel)barrel).StorageLocker = this;
+						}
+						else
+						{
+							key = Parts.None;
+							barrel = new WoodenKeyBarrel(key);
+						}
+					}
+					else
+					{
+						key = Parts.None;
+						barrel = new WoodenKeyBarrel(key);
+					}
 
-                    barrel.MoveToWorld(new Point3D(itemx, itemy, z), Map);
-                }
-            }            
-        }
+					m_Barrels.Add(barrel);
 
-        public void Stop()
-        {
-            if (!m_Active || Deleted)
-                return;
+					barrel.MoveToWorld(new Point3D(itemx, itemy, z), Map);
+				}
+			}
+		}
 
-            m_Active = false;
+		public void Stop()
+		{
+			if (!m_Active || Deleted)
+				return;
 
-            if (m_RestartTimer != null)
-                m_RestartTimer.Stop();
+			m_Active = false;
 
-            m_RestartTimer = null;
+			if (m_RestartTimer != null)
+				m_RestartTimer.Stop();
 
-            if (m_Barrels != null)
-            {                
-                for (int i = 0; i < m_Barrels.Count; ++i)
-                {
-                    if (m_Barrels[i] != null)
-                        m_Barrels[i].Delete();
-                }
+			m_RestartTimer = null;
 
-                m_Barrels.Clear();
-            }
-            
-            for (int i = Items.Count - 1; i >= 0; --i)
-            {
-                if (i < Items.Count)
-                    Items[i].Delete();
-            }
-        }
+			if (m_Barrels != null)
+			{
+				for (int i = 0; i < m_Barrels.Count; ++i)
+				{
+					if (m_Barrels[i] != null)
+						m_Barrels[i].Delete();
+				}
 
-        public void BeginRestart(TimeSpan ts)
-        {
-            if (m_RestartTimer != null)
-                m_RestartTimer.Stop();
+				m_Barrels.Clear();
+			}
 
-            m_RestartTime = DateTime.UtcNow + ts;
+			for (int i = Items.Count - 1; i >= 0; --i)
+			{
+				if (i < Items.Count)
+					Items[i].Delete();
+			}
+		}
 
-            m_RestartTimer = new RestartTimer(this, ts);
-            m_RestartTimer.Start();
-        }
+		public void BeginRestart(TimeSpan ts)
+		{
+			if (m_RestartTimer != null)
+				m_RestartTimer.Stop();
 
-        public override void OnDelete()
-        {
-            Stop();
+			m_RestartTime = DateTime.UtcNow + ts;
 
-            base.OnDelete();
-        }
+			m_RestartTimer = new RestartTimer(this, ts);
+			m_RestartTimer.Start();
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0); // version
+		public override void OnDelete()
+		{
+			Stop();
 
-            writer.Write((bool)m_Active);
-            writer.Write((int)m_Type);            
-            writer.Write(m_Barrels, true);
+			base.OnDelete();
+		}
 
-            writer.Write(m_RestartTimer != null);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0); // version
 
-            if (m_RestartTimer != null)
-                writer.WriteDeltaTime(m_RestartTime);
-        }
+			writer.Write((bool)m_Active);
+			writer.Write((int)m_Type);
+			writer.Write(m_Barrels, true);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
+			writer.Write(m_RestartTimer != null);
 
-            m_Active = reader.ReadBool();
-            m_Type = (Parts)reader.ReadInt();
-            m_Barrels = reader.ReadStrongItemList();
+			if (m_RestartTimer != null)
+				writer.WriteDeltaTime(m_RestartTime);
+		}
 
-            if (reader.ReadBool())
-            {
-                m_RestartTime = reader.ReadDeltaTime();
-            }
-			
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+
+			m_Active = reader.ReadBool();
+			m_Type = (Parts)reader.ReadInt();
+			m_Barrels = reader.ReadStrongItemList();
+
+			if (reader.ReadBool())
+			{
+				m_RestartTime = reader.ReadDeltaTime();
+			}
+
 			BeginRestart(TimeSpan.FromSeconds(10.0));
-        }
-    }
+		}
+	}
 
-    public class RestartTimer : Timer
-    {
-        private readonly StorageLocker m_Storage;
-        public RestartTimer(StorageLocker storage, TimeSpan delay)
-            : base(delay)
-        {
-            m_Storage = storage;
-            Priority = TimerPriority.FiveSeconds;
-        }
+	public class RestartTimer : Timer
+	{
+		private readonly StorageLocker m_Storage;
 
-        protected override void OnTick()
-        {
-            m_Storage.Stop();
-            m_Storage.Start();
-        }
-    }
+		public RestartTimer(StorageLocker storage, TimeSpan delay)
+			: base(delay)
+		{
+			m_Storage = storage;
+			Priority = TimerPriority.FiveSeconds;
+		}
+
+		protected override void OnTick()
+		{
+			m_Storage.Stop();
+			m_Storage.Start();
+		}
+	}
 }

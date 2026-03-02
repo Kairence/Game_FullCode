@@ -1,5 +1,3 @@
-
-
 // Ideas
 // When you run on animals the panic
 // When if ( distance < 8 && Utility.RandomDouble() * Math.Sqrt( (8 - distance) / 6 ) >= incoming.Skills[SkillName.AnimalTaming].Value )
@@ -14,8 +12,7 @@ namespace Server.Mobiles
 	public class AnimalAI : BaseAI
 	{
 		public AnimalAI(BaseCreature m)
-			: base(m)
-		{ }
+			: base(m) { }
 
 		public override bool DoActionWander()
 		{
@@ -36,7 +33,7 @@ namespace Server.Mobiles
 				base.DoActionWander();
 			}
 			return true;
-            #endif
+#endif
 			// New, only flee @ 10%
 			var hitPercent = (double)m_Mobile.Hits / m_Mobile.HitsMax;
 
@@ -117,7 +114,15 @@ namespace Server.Mobiles
 			{
 				if (AcquireFocusMob(m_Mobile.RangePerception * 2, FightMode.Closest, true, false, true))
 				{
-					if (WalkMobileRange(m_Mobile.FocusMob, 1, false, m_Mobile.RangePerception, m_Mobile.RangePerception * 2))
+					if (
+						WalkMobileRange(
+							m_Mobile.FocusMob,
+							1,
+							false,
+							m_Mobile.RangePerception,
+							m_Mobile.RangePerception * 2
+						)
+					)
 					{
 						m_Mobile.DebugSay("Well, here I am safe");
 						Action = ActionType.Wander;

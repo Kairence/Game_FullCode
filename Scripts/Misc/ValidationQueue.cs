@@ -4,51 +4,53 @@ using System.Reflection;
 
 namespace Server
 {
-    public delegate void ValidationEventHandler();
+	public delegate void ValidationEventHandler();
 
-    public static class ValidationQueue
-    {
-        public static event ValidationEventHandler StartValidation;
-        public static void Initialize()
-        {
-            if (StartValidation != null)
-                StartValidation();
+	public static class ValidationQueue
+	{
+		public static event ValidationEventHandler StartValidation;
 
-            StartValidation = null;
-        }
-    }
+		public static void Initialize()
+		{
+			if (StartValidation != null)
+				StartValidation();
 
-    public static class ValidationQueue<T>
-    {
-        private static List<T> m_Queue;
-        static ValidationQueue()
-        {
-            m_Queue = new List<T>();
-            ValidationQueue.StartValidation += new ValidationEventHandler(ValidateAll);
-        }
+			StartValidation = null;
+		}
+	}
 
-        public static void Add(T obj)
-        {
-            m_Queue.Add(obj);
-        }
+	public static class ValidationQueue<T>
+	{
+		private static List<T> m_Queue;
 
-        private static void ValidateAll()
-        {
-            Type type = typeof(T);
+		static ValidationQueue()
+		{
+			m_Queue = new List<T>();
+			ValidationQueue.StartValidation += new ValidationEventHandler(ValidateAll);
+		}
 
-            if (type != null)
-            {
-                MethodInfo m = type.GetMethod("Validate", BindingFlags.Instance | BindingFlags.Public);
+		public static void Add(T obj)
+		{
+			m_Queue.Add(obj);
+		}
 
-                if (m != null)
-                {
-                    for (int i = 0; i < m_Queue.Count; ++i)
-                        m.Invoke(m_Queue[i], null);
-                }
-            }
+		private static void ValidateAll()
+		{
+			Type type = typeof(T);
 
-            m_Queue.Clear();
-            m_Queue = null;
-        }
-    }
+			if (type != null)
+			{
+				MethodInfo m = type.GetMethod("Validate", BindingFlags.Instance | BindingFlags.Public);
+
+				if (m != null)
+				{
+					for (int i = 0; i < m_Queue.Count; ++i)
+						m.Invoke(m_Queue[i], null);
+				}
+			}
+
+			m_Queue.Clear();
+			m_Queue = null;
+		}
+	}
 }

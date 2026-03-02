@@ -86,8 +86,7 @@ namespace Server.Network
 		///     Instantiates a new PacketWriter instance with the default capacity of 4 bytes.
 		/// </summary>
 		public PacketWriter()
-			: this(32)
-		{ }
+			: this(32) { }
 
 		/// <summary>
 		///     Instantiates a new PacketWriter instance with a given capacity.
@@ -196,7 +195,13 @@ namespace Server.Network
 
 			if (length >= size)
 			{
-				m_Stream.Position += Encoding.ASCII.GetBytes(value, 0, size, m_Stream.GetBuffer(), (int)m_Stream.Position);
+				m_Stream.Position += Encoding.ASCII.GetBytes(
+					value,
+					0,
+					size,
+					m_Stream.GetBuffer(),
+					(int)m_Stream.Position
+				);
 			}
 			else
 			{
@@ -256,7 +261,13 @@ namespace Server.Network
 
 			m_Stream.SetLength(m_Stream.Length + ((length + 1) * 2));
 
-			m_Stream.Position += Encoding.Unicode.GetBytes(value, 0, length, m_Stream.GetBuffer(), (int)m_Stream.Position);
+			m_Stream.Position += Encoding.Unicode.GetBytes(
+				value,
+				0,
+				length,
+				m_Stream.GetBuffer(),
+				(int)m_Stream.Position
+			);
 			m_Stream.Position += 2;
 
 			/*byte[] buffer = Encoding.Unicode.GetBytes( value );
@@ -287,7 +298,13 @@ namespace Server.Network
 
 			if ((length * 2) >= size)
 			{
-				m_Stream.Position += Encoding.Unicode.GetBytes(value, 0, length, m_Stream.GetBuffer(), (int)m_Stream.Position);
+				m_Stream.Position += Encoding.Unicode.GetBytes(
+					value,
+					0,
+					length,
+					m_Stream.GetBuffer(),
+					(int)m_Stream.Position
+				);
 			}
 			else
 			{
@@ -326,7 +343,12 @@ namespace Server.Network
 			m_Stream.SetLength(m_Stream.Length + ((length + 1) * 2));
 
 			m_Stream.Position += Encoding.BigEndianUnicode.GetBytes(
-				value, 0, length, m_Stream.GetBuffer(), (int)m_Stream.Position);
+				value,
+				0,
+				length,
+				m_Stream.GetBuffer(),
+				(int)m_Stream.Position
+			);
 			m_Stream.Position += 2;
 
 			/*byte[] buffer = Encoding.BigEndianUnicode.GetBytes( value );
@@ -358,7 +380,12 @@ namespace Server.Network
 			if ((length * 2) >= size)
 			{
 				m_Stream.Position += Encoding.BigEndianUnicode.GetBytes(
-					value, 0, length, m_Stream.GetBuffer(), (int)m_Stream.Position);
+					value,
+					0,
+					length,
+					m_Stream.GetBuffer(),
+					(int)m_Stream.Position
+				);
 			}
 			else
 			{
@@ -408,17 +435,27 @@ namespace Server.Network
 		/// <summary>
 		///     Gets the total stream length.
 		/// </summary>
-		public long Length { get { return m_Stream.Length; } }
+		public long Length
+		{
+			get { return m_Stream.Length; }
+		}
 
 		/// <summary>
 		///     Gets or sets the current stream position.
 		/// </summary>
-		public long Position { get { return m_Stream.Position; } set { m_Stream.Position = value; } }
+		public long Position
+		{
+			get { return m_Stream.Position; }
+			set { m_Stream.Position = value; }
+		}
 
 		/// <summary>
 		///     The internal stream used by this PacketWriter instance.
 		/// </summary>
-		public MemoryStream UnderlyingStream { get { return m_Stream; } }
+		public MemoryStream UnderlyingStream
+		{
+			get { return m_Stream; }
+		}
 
 		/// <summary>
 		///     Offsets the current position from an origin.

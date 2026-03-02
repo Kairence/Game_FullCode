@@ -13,7 +13,16 @@ namespace Ultima
 	public sealed class Art
 	{
 		private static FileIndex m_FileIndex = new FileIndex(
-			"Artidx.mul", "Art.mul", "artLegacyMUL.uop", 0x10000 /*0x13FDC*/, 4, ".tga", 0x13FDC, false);
+			"Artidx.mul",
+			"Art.mul",
+			"artLegacyMUL.uop",
+			0x10000 /*0x13FDC*/
+			,
+			4,
+			".tga",
+			0x13FDC,
+			false
+		);
 
 		private static Bitmap[] m_Cache;
 		private static bool[] m_Removed;
@@ -89,7 +98,16 @@ namespace Ultima
 		public static void Reload()
 		{
 			m_FileIndex = new FileIndex(
-				"Artidx.mul", "Art.mul", "artLegacyMUL.uop", 0x10000 /*0x13FDC*/, 4, ".tga", 0x13FDC, false);
+				"Artidx.mul",
+				"Art.mul",
+				"artLegacyMUL.uop",
+				0x10000 /*0x13FDC*/
+				,
+				4,
+				".tga",
+				0x13FDC,
+				false
+			);
 			m_Cache = new Bitmap[0xFFFF];
 			m_Removed = new bool[0xFFFF];
 			m_patched.Clear();
@@ -175,7 +193,8 @@ namespace Ultima
 				return true;
 			}
 
-			int length, extra;
+			int length,
+				extra;
 			bool patched;
 			Stream stream = m_FileIndex.Seek(index, out length, out extra, out patched);
 
@@ -218,7 +237,8 @@ namespace Ultima
 				return true;
 			}
 
-			int length, extra;
+			int length,
+				extra;
 			bool patched;
 
 			return m_FileIndex.Valid(index, out length, out extra, out patched);
@@ -262,7 +282,8 @@ namespace Ultima
 				return m_Cache[index];
 			}
 
-			int length, extra;
+			int length,
+				extra;
 			Stream stream = m_FileIndex.Seek(index, out length, out extra, out patched);
 			if (stream == null)
 			{
@@ -287,7 +308,8 @@ namespace Ultima
 		{
 			index &= 0x3FFF;
 
-			int length, extra;
+			int length,
+				extra;
 			bool patched;
 			Stream stream = m_FileIndex.Seek(index, out length, out extra, out patched);
 			if (stream == null)
@@ -340,7 +362,8 @@ namespace Ultima
 				return m_Cache[index];
 			}
 
-			int length, extra;
+			int length,
+				extra;
 			Stream stream = m_FileIndex.Seek(index, out length, out extra, out patched);
 			if (stream == null)
 			{
@@ -366,7 +389,8 @@ namespace Ultima
 			index = GetLegalItemID(index);
 			index += 0x4000;
 
-			int length, extra;
+			int length,
+				extra;
 			bool patched;
 			Stream stream = m_FileIndex.Seek(index, out length, out extra, out patched);
 			if (stream == null)
@@ -390,7 +414,10 @@ namespace Ultima
 			}
 
 			BitmapData bd = bmp.LockBits(
-				new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, Settings.PixelFormat);
+				new Rectangle(0, 0, bmp.Width, bmp.Height),
+				ImageLockMode.ReadOnly,
+				Settings.PixelFormat
+			);
 
 			int delta = (bd.Stride >> 1) - bd.Width;
 			int lineDelta = bd.Stride >> 1;
@@ -401,7 +428,8 @@ namespace Ultima
 
 			bool foundPixel = false;
 
-			int x = 0, y = 0;
+			int x = 0,
+				y = 0;
 
 			while (pBuffer < pEnd)
 			{
@@ -486,7 +514,10 @@ namespace Ultima
 
 				bmp = new Bitmap(width, height, Settings.PixelFormat);
 				BitmapData bd = bmp.LockBits(
-					new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, Settings.PixelFormat);
+					new Rectangle(0, 0, width, height),
+					ImageLockMode.WriteOnly,
+					Settings.PixelFormat
+				);
 
 				var line = (ushort*)bd.Scan0;
 				int delta = bd.Stride >> 1;
@@ -497,7 +528,8 @@ namespace Ultima
 
 					ushort* cur = line;
 					ushort* end;
-					int xOffset, xRun;
+					int xOffset,
+						xRun;
 
 					while (((xOffset = bindata[count++]) + (xRun = bindata[count++])) != 0)
 					{
@@ -583,14 +615,18 @@ namespace Ultima
 			string mul = Path.Combine(path, "art.mul");
 			using (
 				FileStream fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
-						   fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
+					fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write)
+			)
 			{
 				var memidx = new MemoryStream();
 				var memmul = new MemoryStream();
 				var sha = new SHA256Managed();
 				//StreamWriter Tex = new StreamWriter(new FileStream("d:/artlog.txt", FileMode.Create, FileAccess.ReadWrite));
 
-				using (BinaryWriter binidx = new BinaryWriter(memidx), binmul = new BinaryWriter(memmul))
+				using (
+					BinaryWriter binidx = new BinaryWriter(memidx),
+						binmul = new BinaryWriter(memmul)
+				)
 				{
 					for (int index = 0; index < GetIdxLength(); index++)
 					{
@@ -631,7 +667,10 @@ namespace Ultima
 							}
 							//land
 							BitmapData bd = bmp.LockBits(
-								new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, Settings.PixelFormat);
+								new Rectangle(0, 0, bmp.Width, bmp.Height),
+								ImageLockMode.ReadOnly,
+								Settings.PixelFormat
+							);
 							var line = (ushort*)bd.Scan0;
 							int delta = bd.Stride >> 1;
 							binidx.Write((int)binmul.BaseStream.Position); //lookup
@@ -671,7 +710,7 @@ namespace Ultima
 								pos = start,
 								length = length,
 								checksum = checksum,
-								index = index
+								index = index,
 							};
 							//Tex.WriteLine(System.String.Format("0x{0:X4} : 0x{1:X4} 0x{2:X4}", index, start, length));
 							checksumsLand.Add(s);
@@ -694,7 +733,10 @@ namespace Ultima
 
 							// art
 							BitmapData bd = bmp.LockBits(
-								new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, Settings.PixelFormat);
+								new Rectangle(0, 0, bmp.Width, bmp.Height),
+								ImageLockMode.ReadOnly,
+								Settings.PixelFormat
+							);
 							var line = (ushort*)bd.Scan0;
 							int delta = bd.Stride >> 1;
 							binidx.Write((int)binmul.BaseStream.Position); //lookup
@@ -766,7 +808,7 @@ namespace Ultima
 								pos = start,
 								length = length,
 								checksum = checksum,
-								index = index
+								index = index,
 							};
 							//Tex.WriteLine(System.String.Format("0x{0:X4} : 0x{1:X4} 0x{2:X4}", index, start, length));
 							checksumsStatic.Add(s);

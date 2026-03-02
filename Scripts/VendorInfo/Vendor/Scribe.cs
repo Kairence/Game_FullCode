@@ -4,88 +4,82 @@ using Server.Engines.BulkOrders;
 
 namespace Server.Mobiles
 {
-    public class Scribe : BaseVendor
-    {
-        private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
-        [Constructable]
-        public Scribe()
-            : base("the scribe")
-        {
-            this.SetSkill(SkillName.EvalInt, 60.0, 83.0);
-            this.SetSkill(SkillName.Inscribe, 90.0, 100.0);
-        }
+	public class Scribe : BaseVendor
+	{
+		private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
 
-        public Scribe(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public Scribe()
+			: base("the scribe")
+		{
+			this.SetSkill(SkillName.EvalInt, 60.0, 83.0);
+			this.SetSkill(SkillName.Inscribe, 90.0, 100.0);
+		}
 
-        public override NpcGuild NpcGuild
-        {
-            get
-            {
-                return NpcGuild.MagesGuild;
-            }
-        }
-        public override VendorShoeType ShoeType
-        {
-            get
-            {
-                return Utility.RandomBool() ? VendorShoeType.Shoes : VendorShoeType.Sandals;
-            }
-        }
-        protected override List<SBInfo> SBInfos
-        {
-            get
-            {
-                return this.m_SBInfos;
-            }
-        }
-        public override void InitSBInfo()
-        {
-            this.m_SBInfos.Add(new SBScribe(this));
-        }
+		public Scribe(Serial serial)
+			: base(serial) { }
 
-        public override void InitOutfit()
-        {
-            base.InitOutfit();
+		public override NpcGuild NpcGuild
+		{
+			get { return NpcGuild.MagesGuild; }
+		}
+		public override VendorShoeType ShoeType
+		{
+			get { return Utility.RandomBool() ? VendorShoeType.Shoes : VendorShoeType.Sandals; }
+		}
+		protected override List<SBInfo> SBInfos
+		{
+			get { return this.m_SBInfos; }
+		}
 
-            this.AddItem(new Server.Items.Robe(Utility.RandomNeutralHue()));
-        }
+		public override void InitSBInfo()
+		{
+			this.m_SBInfos.Add(new SBScribe(this));
+		}
 
-        #region Bulk Orders
-        public override BODType BODType { get { return BODType.Inscription; } }
+		public override void InitOutfit()
+		{
+			base.InitOutfit();
 
-        public override bool IsValidBulkOrder(Item item)
-        {
-            return (item is SmallInscriptionBOD || item is LargeInscriptionBOD);
-        }
+			this.AddItem(new Server.Items.Robe(Utility.RandomNeutralHue()));
+		}
 
-        public override bool SupportsBulkOrders(Mobile from)
-        {
-            return BulkOrderSystem.NewSystemEnabled && from is PlayerMobile && from.Skills[SkillName.Inscribe].Base > 0;
-        }
+		#region Bulk Orders
+		public override BODType BODType
+		{
+			get { return BODType.Inscription; }
+		}
 
-        public override void OnSuccessfulBulkOrderReceive(Mobile from)
-        {
-            if (from is PlayerMobile)
-                ((PlayerMobile)from).NextInscriptionBulkOrder = TimeSpan.Zero;
-        }
+		public override bool IsValidBulkOrder(Item item)
+		{
+			return (item is SmallInscriptionBOD || item is LargeInscriptionBOD);
+		}
 
-        #endregion
+		public override bool SupportsBulkOrders(Mobile from)
+		{
+			return BulkOrderSystem.NewSystemEnabled && from is PlayerMobile && from.Skills[SkillName.Inscribe].Base > 0;
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void OnSuccessfulBulkOrderReceive(Mobile from)
+		{
+			if (from is PlayerMobile)
+				((PlayerMobile)from).NextInscriptionBulkOrder = TimeSpan.Zero;
+		}
 
-            writer.Write((int)0); // version
-        }
+		#endregion
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

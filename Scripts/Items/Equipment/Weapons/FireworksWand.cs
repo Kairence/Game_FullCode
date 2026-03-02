@@ -2,147 +2,155 @@ using System;
 
 namespace Server.Items
 {
-    public class FireworksWand : MagicWand
-    {
-        private int m_Charges;
-        [Constructable]
-        public FireworksWand()
-            : this(100)
-        {
-        }
+	public class FireworksWand : MagicWand
+	{
+		private int m_Charges;
 
-        [Constructable]
-        public FireworksWand(int charges)
-        {
-            this.m_Charges = charges;
-            this.LootType = LootType.Blessed;
-        }
+		[Constructable]
+		public FireworksWand()
+			: this(100) { }
 
-        public FireworksWand(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public FireworksWand(int charges)
+		{
+			this.m_Charges = charges;
+			this.LootType = LootType.Blessed;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1041424;
-            }
-        }// a fireworks wand
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int Charges
-        {
-            get
-            {
-                return this.m_Charges;
-            }
-            set
-            {
-                this.m_Charges = value;
-                this.InvalidateProperties();
-            }
-        }
-        public override void AddNameProperties(ObjectPropertyList list)
-        {
-            base.AddNameProperties(list);
+		public FireworksWand(Serial serial)
+			: base(serial) { }
 
-            list.Add(1060741, this.m_Charges.ToString()); // charges: ~1_val~
-        }
+		public override int LabelNumber
+		{
+			get { return 1041424; }
+		} // a fireworks wand
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            this.BeginLaunch(from, true);
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int Charges
+		{
+			get { return this.m_Charges; }
+			set
+			{
+				this.m_Charges = value;
+				this.InvalidateProperties();
+			}
+		}
 
-        public void BeginLaunch(Mobile from, bool useCharges)
-        {
-            Map map = from.Map;
+		public override void AddNameProperties(ObjectPropertyList list)
+		{
+			base.AddNameProperties(list);
 
-            if (map == null || map == Map.Internal)
-                return;
+			list.Add(1060741, this.m_Charges.ToString()); // charges: ~1_val~
+		}
 
-            if (useCharges)
-            {
-                if (this.Charges > 0)
-                {
-                    --this.Charges;
-                }
-                else
-                {
-                    from.SendLocalizedMessage(502412); // There are no charges left on that item.
-                    return;
-                }
-            }
+		public override void OnDoubleClick(Mobile from)
+		{
+			this.BeginLaunch(from, true);
+		}
 
-            from.SendLocalizedMessage(502615); // You launch a firework!
+		public void BeginLaunch(Mobile from, bool useCharges)
+		{
+			Map map = from.Map;
 
-            Point3D ourLoc = this.GetWorldLocation();
+			if (map == null || map == Map.Internal)
+				return;
 
-            Point3D startLoc = new Point3D(ourLoc.X, ourLoc.Y, ourLoc.Z + 10);
-            Point3D endLoc = new Point3D(startLoc.X + Utility.RandomMinMax(-2, 2), startLoc.Y + Utility.RandomMinMax(-2, 2), startLoc.Z + 32);
+			if (useCharges)
+			{
+				if (this.Charges > 0)
+				{
+					--this.Charges;
+				}
+				else
+				{
+					from.SendLocalizedMessage(502412); // There are no charges left on that item.
+					return;
+				}
+			}
 
-            Effects.SendMovingEffect(new Entity(Serial.Zero, startLoc, map), new Entity(Serial.Zero, endLoc, map),
-                0x36E4, 5, 0, false, false);
+			from.SendLocalizedMessage(502615); // You launch a firework!
 
-            Timer.DelayCall(TimeSpan.FromSeconds(1.0), new TimerStateCallback(FinishLaunch), new object[] { from, endLoc, map });
-        }
+			Point3D ourLoc = this.GetWorldLocation();
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			Point3D startLoc = new Point3D(ourLoc.X, ourLoc.Y, ourLoc.Z + 10);
+			Point3D endLoc = new Point3D(
+				startLoc.X + Utility.RandomMinMax(-2, 2),
+				startLoc.Y + Utility.RandomMinMax(-2, 2),
+				startLoc.Z + 32
+			);
 
-            writer.Write((int)0); // version
+			Effects.SendMovingEffect(
+				new Entity(Serial.Zero, startLoc, map),
+				new Entity(Serial.Zero, endLoc, map),
+				0x36E4,
+				5,
+				0,
+				false,
+				false
+			);
 
-            writer.Write((int)this.m_Charges);
-        }
+			Timer.DelayCall(
+				TimeSpan.FromSeconds(1.0),
+				new TimerStateCallback(FinishLaunch),
+				new object[] { from, endLoc, map }
+			);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
+			writer.Write((int)0); // version
 
-            switch ( version )
-            {
-                case 0:
-                    {
-                        this.m_Charges = reader.ReadInt();
-                        break;
-                    }
-            }
-        }
+			writer.Write((int)this.m_Charges);
+		}
 
-        private void FinishLaunch(object state)
-        {
-            object[] states = (object[])state;
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            Mobile from = (Mobile)states[0];
-            Point3D endLoc = (Point3D)states[1];
-            Map map = (Map)states[2];
+			int version = reader.ReadInt();
 
-            int hue = Utility.Random(40);
+			switch (version)
+			{
+				case 0:
+				{
+					this.m_Charges = reader.ReadInt();
+					break;
+				}
+			}
+		}
 
-            if (hue < 8)
-                hue = 0x66D;
-            else if (hue < 10)
-                hue = 0x482;
-            else if (hue < 12)
-                hue = 0x47E;
-            else if (hue < 16)
-                hue = 0x480;
-            else if (hue < 20)
-                hue = 0x47F;
-            else
-                hue = 0;
+		private void FinishLaunch(object state)
+		{
+			object[] states = (object[])state;
 
-            if (Utility.RandomBool())
-                hue = Utility.RandomList(0x47E, 0x47F, 0x480, 0x482, 0x66D);
+			Mobile from = (Mobile)states[0];
+			Point3D endLoc = (Point3D)states[1];
+			Map map = (Map)states[2];
 
-            int renderMode = Utility.RandomList(0, 2, 3, 4, 5, 7);
+			int hue = Utility.Random(40);
 
-            Effects.PlaySound(endLoc, map, Utility.Random(0x11B, 4));
-            Effects.SendLocationEffect(endLoc, map, 0x373A + (0x10 * Utility.Random(4)), 16, 10, hue, renderMode);
-        }
-    }
+			if (hue < 8)
+				hue = 0x66D;
+			else if (hue < 10)
+				hue = 0x482;
+			else if (hue < 12)
+				hue = 0x47E;
+			else if (hue < 16)
+				hue = 0x480;
+			else if (hue < 20)
+				hue = 0x47F;
+			else
+				hue = 0;
+
+			if (Utility.RandomBool())
+				hue = Utility.RandomList(0x47E, 0x47F, 0x480, 0x482, 0x66D);
+
+			int renderMode = Utility.RandomList(0, 2, 3, 4, 5, 7);
+
+			Effects.PlaySound(endLoc, map, Utility.Random(0x11B, 4));
+			Effects.SendLocationEffect(endLoc, map, 0x373A + (0x10 * Utility.Random(4)), 16, 10, hue, renderMode);
+		}
+	}
 }

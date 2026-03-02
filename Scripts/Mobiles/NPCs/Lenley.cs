@@ -4,178 +4,200 @@ using Server.Regions;
 
 namespace Server.Engines.Quests
 {
-    public class FreedomQuest : BaseQuest
-    {
-        public override bool DoneOnce { get { return true; } }
+	public class FreedomQuest : BaseQuest
+	{
+		public override bool DoneOnce
+		{
+			get { return true; }
+		}
 
-        public FreedomQuest()
-            : base()
-        {
-            AddObjective(new EscortObjective("Sanctuary Entrance"));
+		public FreedomQuest()
+			: base()
+		{
+			AddObjective(new EscortObjective("Sanctuary Entrance"));
 
-            AddReward(new BaseReward(typeof(StolenRing), "Lenley's Favorite Sparkly"));
-        }
+			AddReward(new BaseReward(typeof(StolenRing), "Lenley's Favorite Sparkly"));
+		}
 
-        /* Freedom! */
-        public override object Title { get { return 1072367; } }
+		/* Freedom! */
+		public override object Title
+		{
+			get { return 1072367; }
+		}
 
-        /*
-         * Lenley isn't seen.  Why you see me? Lenley is sneaking.  Lenley runs away.
-         * You help Lenley to not get dead?  We go out past pig-men orcs?  Yes? Yes? You say yes?
-        */
-        public override object Description { get { return 1072552; } }
+		/*
+		 * Lenley isn't seen.  Why you see me? Lenley is sneaking.  Lenley runs away.
+		 * You help Lenley to not get dead?  We go out past pig-men orcs?  Yes? Yes? You say yes?
+		*/
+		public override object Description
+		{
+			get { return 1072552; }
+		}
 
-        /* You no like Lenley? No hurt Lenley!  No see Lenley.  Go 'way. */
-        public override object Refuse { get { return 1072553; } }
+		/* You no like Lenley? No hurt Lenley!  No see Lenley.  Go 'way. */
+		public override object Refuse
+		{
+			get { return 1072553; }
+		}
 
-        /* Lenley not run away yet.  Go, go, Lenley not past pig-men orcs.  You go, Lenley go after you.  Go! */
-        public override object Uncomplete { get { return 1072554; } }
+		/* Lenley not run away yet.  Go, go, Lenley not past pig-men orcs.  You go, Lenley go after you.  Go! */
+		public override object Uncomplete
+		{
+			get { return 1072554; }
+		}
 
-        /* Lenley so happy!  Lenley not get dead.  You have best Lenley shiny! */
-        public override object Complete { get { return 1072556; } }
+		/* Lenley so happy!  Lenley not get dead.  You have best Lenley shiny! */
+		public override object Complete
+		{
+			get { return 1072556; }
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0); // version
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 
-    public class Lenley : BaseEscort
-    {
-        public override Type[] Quests { get { return new Type[] { typeof(FreedomQuest) }; } }
+	public class Lenley : BaseEscort
+	{
+		public override Type[] Quests
+		{
+			get { return new Type[] { typeof(FreedomQuest) }; }
+		}
 
-        public LenleyRegion _Region { get; set; }
+		public LenleyRegion _Region { get; set; }
 
-        [Constructable]
-        public Lenley()
-            : base()
-        {
-            Name = "Lenley";
-            Title = "the Snitch";
-            Body = 0x2A;
-            Hidden = true;
-            CantWalk = true;
+		[Constructable]
+		public Lenley()
+			: base()
+		{
+			Name = "Lenley";
+			Title = "the Snitch";
+			Body = 0x2A;
+			Hidden = true;
+			CantWalk = true;
 
-            SetStr(96, 120);
-            SetDex(81, 100);
-            SetInt(36, 60);
+			SetStr(96, 120);
+			SetDex(81, 100);
+			SetInt(36, 60);
 
-            SetHits(58, 72);
+			SetHits(58, 72);
 
-            SetDamage(4, 5);
+			SetDamage(4, 5);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 25, 30);
-            SetResistance(ResistanceType.Fire, 10, 20);
-            SetResistance(ResistanceType.Cold, 10, 20);
-            SetResistance(ResistanceType.Poison, 10, 20);
-            SetResistance(ResistanceType.Energy, 10, 20);
+			SetResistance(ResistanceType.Physical, 25, 30);
+			SetResistance(ResistanceType.Fire, 10, 20);
+			SetResistance(ResistanceType.Cold, 10, 20);
+			SetResistance(ResistanceType.Poison, 10, 20);
+			SetResistance(ResistanceType.Energy, 10, 20);
 
-            SetSkill(SkillName.MagicResist, 35.1, 60.0);
-            SetSkill(SkillName.Tactics, 50.1, 75.0);
-            SetSkill(SkillName.Wrestling, 50.1, 75.0);
-            SetSkill(SkillName.Hiding, 75.0);
+			SetSkill(SkillName.MagicResist, 35.1, 60.0);
+			SetSkill(SkillName.Tactics, 50.1, 75.0);
+			SetSkill(SkillName.Wrestling, 50.1, 75.0);
+			SetSkill(SkillName.Hiding, 75.0);
 
-            Fame = 1500;
-            Karma = 1500;
+			Fame = 1500;
+			Karma = 1500;
 
-            VirtualArmor = 28;
-        }
+			VirtualArmor = 28;
+		}
 
-        public Lenley(Serial serial)
-            : base(serial)
-        {
-        }
+		public Lenley(Serial serial)
+			: base(serial) { }
 
-        public override void RevealingAction()
-        {
-            if (_Region != null)
-                _Region.Unregister();
+		public override void RevealingAction()
+		{
+			if (_Region != null)
+				_Region.Unregister();
 
-            CantWalk = false;
+			CantWalk = false;
 
-            base.RevealingAction();
-        }
+			base.RevealingAction();
+		}
 
-        public override void OnDelete()
-        {
-            DeleteLenleyRegion();
+		public override void OnDelete()
+		{
+			DeleteLenleyRegion();
 
-            base.OnDelete();
-        }
+			base.OnDelete();
+		}
 
-        public void DeleteLenleyRegion()
-        {
-            if (_Region != null)
-                _Region.Unregister();
-        }
+		public void DeleteLenleyRegion()
+		{
+			if (_Region != null)
+				_Region.Unregister();
+		}
 
-        protected override void OnLocationChange(Point3D oldLocation)
-        {
-            if (Deleted)
-                return;
+		protected override void OnLocationChange(Point3D oldLocation)
+		{
+			if (Deleted)
+				return;
 
-            UpdateLenleyRegion();
-        }
+			UpdateLenleyRegion();
+		}
 
-        protected override void OnMapChange(Map oldMap)
-        {
-            if (Deleted)
-                return;
+		protected override void OnMapChange(Map oldMap)
+		{
+			if (Deleted)
+				return;
 
-            UpdateLenleyRegion();
-        }
+			UpdateLenleyRegion();
+		}
 
-        public void UpdateLenleyRegion()
-        {
-            if (Hidden)
-            {
-                DeleteLenleyRegion();
+		public void UpdateLenleyRegion()
+		{
+			if (Hidden)
+			{
+				DeleteLenleyRegion();
 
-                if (!Deleted && Map != Map.Internal)
-                {
-                    _Region = new LenleyRegion(this);
-                    _Region.Register();
-                }
-            }
-        }
+				if (!Deleted && Map != Map.Internal)
+				{
+					_Region = new LenleyRegion(this);
+					_Region.Register();
+				}
+			}
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0); // version
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
 
-            if (Hidden)
-            {
-                Timer.DelayCall(TimeSpan.Zero, new TimerCallback(UpdateLenleyRegion));
-            }
-        }
-    }
+			if (Hidden)
+			{
+				Timer.DelayCall(TimeSpan.Zero, new TimerCallback(UpdateLenleyRegion));
+			}
+		}
+	}
 
-    public class LenleyRegion : BaseRegion
-    {
-        public LenleyRegion(Mobile lenley)
-            : base(null, lenley.Map, Region.Find(lenley.Location, lenley.Map), new Rectangle2D(lenley.Location.X - 2, lenley.Location.Y - 2, 5, 5))
-        {
-        }
+	public class LenleyRegion : BaseRegion
+	{
+		public LenleyRegion(Mobile lenley)
+			: base(
+				null,
+				lenley.Map,
+				Region.Find(lenley.Location, lenley.Map),
+				new Rectangle2D(lenley.Location.X - 2, lenley.Location.Y - 2, 5, 5)
+			) { }
 
-        public override void OnEnter(Mobile m)
-        {
-            m.SendLocalizedMessage(1075014); // Psst!  Lenley isn't seen.  You help Lenley?
-        }
-    }
+		public override void OnEnter(Mobile m)
+		{
+			m.SendLocalizedMessage(1075014); // Psst!  Lenley isn't seen.  You help Lenley?
+		}
+	}
 }

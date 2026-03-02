@@ -1,113 +1,123 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Server.Mobiles;
 using Server.Network;
 
 namespace Server.Spells.Spellweaving
 {
-    public class ThunderstormSpell : ArcanistSpell
-    {
-        private static readonly SpellInfo m_Info = new SpellInfo(
-            "Thunderstorm", "Erelonia",
-            -1);
+	public class ThunderstormSpell : ArcanistSpell
+	{
+		private static readonly SpellInfo m_Info = new SpellInfo("Thunderstorm", "Erelonia", -1);
 
-        private static readonly Dictionary<Mobile, Timer> m_Table = new Dictionary<Mobile, Timer>();
+		private static readonly Dictionary<Mobile, Timer> m_Table = new Dictionary<Mobile, Timer>();
 
-        public override DamageType SpellDamageType { get { return DamageType.SpellAOE; } }
+		public override DamageType SpellDamageType
+		{
+			get { return DamageType.SpellAOE; }
+		}
 
-        public ThunderstormSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+		public ThunderstormSpell(Mobile caster, Item scroll)
+			: base(caster, scroll, m_Info) { }
 
-        public override TimeSpan CastDelayBase
-        {
-            get
-            {
-                return TimeSpan.FromSeconds(1.5);
-            }
-        }
-        public override double RequiredSkill
-        {
-            get
-            {
-                return 10.0;
-            }
-        }
-        public override int RequiredMana
-        {
-            get
-            {
-                return 32;
-            }
-        }
-        public static int GetCastRecoveryMalus(Mobile m)
-        {
-            return m_Table.ContainsKey(m) ? 6 : 0;
-        }
+		public override TimeSpan CastDelayBase
+		{
+			get { return TimeSpan.FromSeconds(1.5); }
+		}
+		public override double RequiredSkill
+		{
+			get { return 10.0; }
+		}
+		public override int RequiredMana
+		{
+			get { return 32; }
+		}
 
-        public static void DoExpire(Mobile m)
-        {
-            Timer t;
+		public static int GetCastRecoveryMalus(Mobile m)
+		{
+			return m_Table.ContainsKey(m) ? 6 : 0;
+		}
 
-            if (m_Table.TryGetValue(m, out t))
-            {
-                t.Stop();
-                m_Table.Remove(m);
+		public static void DoExpire(Mobile m)
+		{
+			Timer t;
 
-                BuffInfo.RemoveBuff(m, BuffIcon.Thunderstorm);
-                m.Delta(MobileDelta.WeaponDamage);
-            }
-        }
+			if (m_Table.TryGetValue(m, out t))
+			{
+				t.Stop();
+				m_Table.Remove(m);
 
-        public override void OnCast()
-        {
-            if (CheckSequence())
-            {
-                Caster.PlaySound(0x5CE);
+				BuffInfo.RemoveBuff(m, BuffIcon.Thunderstorm);
+				m.Delta(MobileDelta.WeaponDamage);
+			}
+		}
 
-                double skill = Caster.Skills[SkillName.Spellweaving].Value;
+		public override void OnCast()
+		{
+			if (CheckSequence())
+			{
+				Caster.PlaySound(0x5CE);
 
-                int damage = Math.Max(11, 10 + (int)(skill / 24)) + FocusLevel;
+				double skill = Caster.Skills[SkillName.Spellweaving].Value;
 
-                int sdiBonus = AosAttributes.GetValue(Caster, AosAttribute.SpellDamage);
-						
-                int pvmDamage = damage * (100 + sdiBonus);
-                pvmDamage /= 100;
+				int damage = Math.Max(11, 10 + (int)(skill / 24)) + FocusLevel;
 
-                if (sdiBonus > 15)
-                    sdiBonus = 15;
-						
-                int pvpDamage = damage * (100 + sdiBonus);
-                pvpDamage /= 100;
+				int sdiBonus = AosAttributes.GetValue(Caster, AosAttribute.SpellDamage);
 
-                TimeSpan duration = TimeSpan.FromSeconds(5 + FocusLevel);
+				int pvmDamage = damage * (100 + sdiBonus);
+				pvmDamage /= 100;
 
-                foreach (var m in AcquireIndirectTargets(Caster.Location, 3 + FocusLevel).OfType<Mobile>())
-                {
-                    Caster.DoHarmful(m);
+				if (sdiBonus > 15)
+					sdiBonus = 15;
 
-                    Spell oldSpell = m.Spell as Spell;
+				int pvpDamage = damage * (100 + sdiBonus);
+				pvpDamage /= 100;
 
-                    SpellHelper.Damage(this, m, (m.Player && Caster.Player) ? pvpDamage : pvmDamage, 0, 0, 0, 0, 100);
-                    Effects.SendPacket(m.Location, m.Map, new HuedEffect(EffectType.FixedFrom, m.Serial, Serial.Zero, 0x1B6C, m.Location, m.Location, 10, 10, false, false, 0x480, 4));
+				TimeSpan duration = TimeSpan.FromSeconds(5 + FocusLevel);
 
-                    if (oldSpell != null && oldSpell != m.Spell)
-                    {
-                        if (!CheckResisted(m))
-                        {
-                            m_Table[m] = Timer.DelayCall<Mobile>(duration, DoExpire, m);
+				foreach (var m in AcquireIndirectTargets(Caster.Location, 3 + FocusLevel).OfType<Mobile>())
+				{
+					Caster.DoHarmful(m);
 
-                            BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Thunderstorm, 1075800, duration, m, GetCastRecoveryMalus(m)));
-                            m.Delta(MobileDelta.WeaponDamage);
-                        }
-                    }
-                }
-            }
+					Spell oldSpell = m.Spell as Spell;
 
-            FinishSequence();
-        }
-    }
+					SpellHelper.Damage(this, m, (m.Player && Caster.Player) ? pvpDamage : pvmDamage, 0, 0, 0, 0, 100);
+					Effects.SendPacket(
+						m.Location,
+						m.Map,
+						new HuedEffect(
+							EffectType.FixedFrom,
+							m.Serial,
+							Serial.Zero,
+							0x1B6C,
+							m.Location,
+							m.Location,
+							10,
+							10,
+							false,
+							false,
+							0x480,
+							4
+						)
+					);
+
+					if (oldSpell != null && oldSpell != m.Spell)
+					{
+						if (!CheckResisted(m))
+						{
+							m_Table[m] = Timer.DelayCall<Mobile>(duration, DoExpire, m);
+
+							BuffInfo.AddBuff(
+								m,
+								new BuffInfo(BuffIcon.Thunderstorm, 1075800, duration, m, GetCastRecoveryMalus(m))
+							);
+							m.Delta(MobileDelta.WeaponDamage);
+						}
+					}
+				}
+			}
+
+			FinishSequence();
+		}
+	}
 }

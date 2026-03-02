@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Server.Commands;
 using Server.Engines.CityLoyalty;
 using Server.Factions;
@@ -17,7 +16,7 @@ namespace Server.Items
 	public class PublicMoongate : Item
 	{
 		public static List<PublicMoongate> Moongates { get; private set; }
-		
+
 		static PublicMoongate()
 		{
 			Moongates = new List<PublicMoongate>();
@@ -91,7 +90,7 @@ namespace Server.Items
 
 			while (--index >= 0)
 			{
-				if(index < Moongates.Count)
+				if (index < Moongates.Count)
 					Moongates[index].Delete();
 			}
 
@@ -123,11 +122,20 @@ namespace Server.Items
 				}
 			}
 		}
-		
-		public override int LabelNumber {get {return 1076082;} } // Moongate
 
-		public override bool HandlesOnMovement { get { return true; } }
-		public override bool ForceShowProperties { get { return true; } }
+		public override int LabelNumber
+		{
+			get { return 1076082; }
+		} // Moongate
+
+		public override bool HandlesOnMovement
+		{
+			get { return true; }
+		}
+		public override bool ForceShowProperties
+		{
+			get { return true; }
+		}
 
 		[Constructable]
 		public PublicMoongate()
@@ -161,10 +169,10 @@ namespace Server.Items
 
 		public override void OnDoubleClick(Mobile m)
 		{
-            if (m.InRange(GetWorldLocation(), 1))
-            {
-                UseGate(m);
-            }
+			if (m.InRange(GetWorldLocation(), 1))
+			{
+				UseGate(m);
+			}
 		}
 
 		public override bool OnMoveOver(Mobile m)
@@ -192,32 +200,32 @@ namespace Server.Items
 				//Staff can always use a gate!
 				return true;
 			}
-			
+
 			if (m.Criminal)
 			{
 				// Thou'rt a criminal and cannot escape so easily.
-				m.SendLocalizedMessage(1005561, "", 0x22); 
+				m.SendLocalizedMessage(1005561, "", 0x22);
 				return false;
 			}
-			
+
 			if (SpellHelper.CheckCombat(m))
 			{
 				// Wouldst thou flee during the heat of battle??
-				m.SendLocalizedMessage(1005564, "", 0x22); 
+				m.SendLocalizedMessage(1005564, "", 0x22);
 				return false;
 			}
-			
+
 			if (m.Spell != null)
 			{
 				// You are too busy to do that at the moment.
-				m.SendLocalizedMessage(1049616); 
+				m.SendLocalizedMessage(1049616);
 				return false;
 			}
-			
+
 			if (m.Holding != null)
 			{
 				// You cannot teleport while dragging an object.
-				m.SendLocalizedMessage(1071955); 
+				m.SendLocalizedMessage(1071955);
 				return false;
 			}
 
@@ -230,7 +238,7 @@ namespace Server.Items
 			{
 				return false;
 			}
-            
+
 			m.CloseGump(typeof(MoongateGump));
 			m.SendGump(new MoongateGump(m, this));
 
@@ -288,8 +296,7 @@ namespace Server.Items
 		public TextDefinition Desc { get; private set; }
 
 		public PMEntry(Point3D loc, string str)
-			: this(loc, str, String.Empty)
-		{ }
+			: this(loc, str, String.Empty) { }
 
 		public PMEntry(Point3D loc, string str, TextDefinition desc)
 		{
@@ -312,12 +319,13 @@ namespace Server.Items
 				new PMEntry(new Point3D(1499, 3771, 5), "젤롬"), // Jhelom
 				new PMEntry(new Point3D(771, 752, 5), "유"), // Yew
 				new PMEntry(new Point3D(2701, 692, 5), "미녹"), // Minoc
-				new PMEntry(new Point3D(1828, 2948, -20),  "트린식"), // Trinsic
+				new PMEntry(new Point3D(1828, 2948, -20), "트린식"), // Trinsic
 				new PMEntry(new Point3D(643, 2067, 5), "스카라 브레"), // Skara Brae
 				/* Dynamic Z for Magincia to support both old and new maps. */
 				new PMEntry(new Point3D(3563, 2139, Map.Trammel.GetAverageZ(3563, 2139)), "마젠시아"), // (New) Magincia
-				new PMEntry(new Point3D(2359, 1191, 10), "코브") // New Haven
-			});
+				new PMEntry(new Point3D(2359, 1191, 10), "코브"), // New Haven
+			}
+		);
 
 		public static readonly PMList Felucca = new PMList(
 			1012001,
@@ -325,17 +333,18 @@ namespace Server.Items
 			Map.Felucca,
 			new[]
 			{
-				new PMEntry( new Point3D( 4467, 1283, 5 ), "문글로우" ), // Moonglow
-				new PMEntry( new Point3D( 1336, 1997, 5 ), "브리튼" ), // Britain
-				new PMEntry( new Point3D( 1499, 3771, 5 ), "젤롬" ), // Jhelom
-				new PMEntry( new Point3D(  771,  752, 5 ), "유" ), // Yew
-				new PMEntry( new Point3D( 2701,  692, 5 ), "미녹" ), // Minoc
-				new PMEntry( new Point3D( 1828, 2948,-20), "트린식" ), // Trinsic
-				new PMEntry( new Point3D(  643, 2067, 5 ), "스카라 브레" ), // Skara Brae
+				new PMEntry(new Point3D(4467, 1283, 5), "문글로우"), // Moonglow
+				new PMEntry(new Point3D(1336, 1997, 5), "브리튼"), // Britain
+				new PMEntry(new Point3D(1499, 3771, 5), "젤롬"), // Jhelom
+				new PMEntry(new Point3D(771, 752, 5), "유"), // Yew
+				new PMEntry(new Point3D(2701, 692, 5), "미녹"), // Minoc
+				new PMEntry(new Point3D(1828, 2948, -20), "트린식"), // Trinsic
+				new PMEntry(new Point3D(643, 2067, 5), "스카라 브레"), // Skara Brae
 				/* Dynamic Z for Magincia to support both old and new maps. */
-				new PMEntry( new Point3D( 3563, 2139, Map.Felucca.GetAverageZ( 3563, 2139 ) ), "마젠시아" ), // (New) Magincia
-				new PMEntry( new Point3D( 2711, 2234, 0 ), "부케니어스 덴" )  // Buccaneer's Den
-			});
+				new PMEntry(new Point3D(3563, 2139, Map.Felucca.GetAverageZ(3563, 2139)), "마젠시아"), // (New) Magincia
+				new PMEntry(new Point3D(2711, 2234, 0), "부케니어스 덴"), // Buccaneer's Den
+			}
+		);
 
 		public static readonly PMList Ilshenar = new PMList(
 			1012002,
@@ -343,16 +352,17 @@ namespace Server.Items
 			Map.Ilshenar,
 			new[]
 			{
-				new PMEntry( new Point3D( 1215,  467, -13 ), "자비"), // Compassion
-				new PMEntry( new Point3D(  722, 1366, -60 ), "정직"), // Honesty
-				new PMEntry( new Point3D(  744,  724, -28 ), "명예"), // Honor
-				new PMEntry( new Point3D(  281, 1016,   0 ), "겸손"), // Humility
-				new PMEntry( new Point3D(  987, 1011, -32 ), "정의"), // Justice
-				new PMEntry( new Point3D( 1174, 1286, -30 ), "희생"), // Sacrifice
-				new PMEntry( new Point3D( 1532, 1340, - 3 ), "숭고함"), // Spirituality
-				new PMEntry( new Point3D(  528,  216, -45 ), "용맹"), // Valor
-				new PMEntry( new Point3D( 1721,  218,  96 ), "카오스")  // Chaos
-			});
+				new PMEntry(new Point3D(1215, 467, -13), "자비"), // Compassion
+				new PMEntry(new Point3D(722, 1366, -60), "정직"), // Honesty
+				new PMEntry(new Point3D(744, 724, -28), "명예"), // Honor
+				new PMEntry(new Point3D(281, 1016, 0), "겸손"), // Humility
+				new PMEntry(new Point3D(987, 1011, -32), "정의"), // Justice
+				new PMEntry(new Point3D(1174, 1286, -30), "희생"), // Sacrifice
+				new PMEntry(new Point3D(1532, 1340, -3), "숭고함"), // Spirituality
+				new PMEntry(new Point3D(528, 216, -45), "용맹"), // Valor
+				new PMEntry(new Point3D(1721, 218, 96), "카오스"), // Chaos
+			}
+		);
 
 		public static readonly PMList Malas = new PMList(
 			1060643,
@@ -360,9 +370,10 @@ namespace Server.Items
 			Map.Malas,
 			new[]
 			{
-				new PMEntry(new Point3D(1015, 527, -65), "루나") // Luna
+				new PMEntry(new Point3D(1015, 527, -65), "루나"), // Luna
 				//new PMEntry(new Point3D(1997, 1386, -85), 1060642) // Umbra
-			});
+			}
+		);
 
 		public static readonly PMList Tokuno = new PMList(
 			1063258,
@@ -371,9 +382,10 @@ namespace Server.Items
 			new[]
 			{
 				//new PMEntry(new Point3D(1169, 998, 41), 1063412), // Isamu-Jima
-				new PMEntry(new Point3D(802, 1204, 25), "마코토 지마 섬") // Makoto-Jima
+				new PMEntry(new Point3D(802, 1204, 25), "마코토 지마 섬"), // Makoto-Jima
 				//new PMEntry(new Point3D(270, 628, 15), 1063414) // Homare-Jima
-			});
+			}
+		);
 
 		public static readonly PMList TerMur = new PMList(
 			1113602,
@@ -381,45 +393,47 @@ namespace Server.Items
 			Map.TerMur,
 			new[]
 			{
-				new PMEntry(new Point3D(850, 3525, -38), "로얄 시티") // Royal City
+				new PMEntry(new Point3D(850, 3525, -38), "로얄 시티"), // Royal City
 				/*
 				Core.TOL
 					? new PMEntry(new Point3D(719, 1863, 40), 1156262)
 					: new PMEntry(new Point3D(926, 3989, -36), 1112572) // Valley of Eodon
 				// Holy City
 				*/
-			});
-		public static readonly PMList TrammelDG = new PMList( 
-			1012000, 
-			1012012, 
+			}
+		);
+		public static readonly PMList TrammelDG = new PMList(
+			1012000,
+			1012012,
 			Map.Trammel,
 			new[]
 			{
-				new PMEntry( new Point3D( 2499, 924,  0 ), "코베투스" ), // 코베투스
-				new PMEntry( new Point3D( 1303, 1080, 0 ), "데스파이즈" ), // 데스파이즈
-				new PMEntry( new Point3D( 4111, 440,  5 ), "디싯" ), // 디싯
-				new PMEntry( new Point3D(  512, 1565, 1 ), "쉐임" ), // 쉐임
-				new PMEntry( new Point3D( 2042, 225, 14 ), "롱" ), // 롱
-				new PMEntry( new Point3D( 1012, 1425, 0 ), "오크 던전" ),  // 오크던전
-				new PMEntry( new Point3D( 4721, 3824, 0 ), "히스로스" ), // 히스로스
-				new PMEntry( new Point3D( 1176, 2642, 2), "데스타드" ), // 데스타드
-				new PMEntry( new Point3D( 2933, 3403, 1), "파이어" ),  // 파이어
-				new PMEntry( new Point3D( 1996, 74,   8 ), "아이스" ), // 아이스
-				new PMEntry( new Point3D( 5451, 3140,-60), "테라탄 킵" ),  // 테라탄 킵
-				new PMEntry( new Point3D( 5881, 3819, 2), "칼둔" )  // 칼둔
-				} );
-		public static readonly PMList[] UORLists = {Trammel, Felucca};
-		public static readonly PMList[] UORListsYoung = {Trammel};
-		public static readonly PMList[] LBRLists = {Trammel, Felucca, Ilshenar};
-		public static readonly PMList[] LBRListsYoung = {Trammel, Ilshenar};
-		public static readonly PMList[] AOSLists = {Trammel, Felucca, Ilshenar, Malas};
-		public static readonly PMList[] AOSListsYoung = {Trammel, Ilshenar, Malas};
-		public static readonly PMList[] SELists = {Trammel, Felucca, Ilshenar, Malas, Tokuno};
-		public static readonly PMList[] SEListsYoung = {Trammel, Ilshenar, Malas, Tokuno};
-		public static readonly PMList[] SALists = {Trammel, Felucca, Ilshenar, Malas, Tokuno, TerMur};
-		public static readonly PMList[] SAListsYoung = {Trammel, Ilshenar, Malas, Tokuno, TerMur};
-		public static readonly PMList[] RedLists = {Felucca};
-		public static readonly PMList[] SigilLists = {Felucca};
+				new PMEntry(new Point3D(2499, 924, 0), "코베투스"), // 코베투스
+				new PMEntry(new Point3D(1303, 1080, 0), "데스파이즈"), // 데스파이즈
+				new PMEntry(new Point3D(4111, 440, 5), "디싯"), // 디싯
+				new PMEntry(new Point3D(512, 1565, 1), "쉐임"), // 쉐임
+				new PMEntry(new Point3D(2042, 225, 14), "롱"), // 롱
+				new PMEntry(new Point3D(1012, 1425, 0), "오크 던전"), // 오크던전
+				new PMEntry(new Point3D(4721, 3824, 0), "히스로스"), // 히스로스
+				new PMEntry(new Point3D(1176, 2642, 2), "데스타드"), // 데스타드
+				new PMEntry(new Point3D(2933, 3403, 1), "파이어"), // 파이어
+				new PMEntry(new Point3D(1996, 74, 8), "아이스"), // 아이스
+				new PMEntry(new Point3D(5451, 3140, -60), "테라탄 킵"), // 테라탄 킵
+				new PMEntry(new Point3D(5881, 3819, 2), "칼둔"), // 칼둔
+			}
+		);
+		public static readonly PMList[] UORLists = { Trammel, Felucca };
+		public static readonly PMList[] UORListsYoung = { Trammel };
+		public static readonly PMList[] LBRLists = { Trammel, Felucca, Ilshenar };
+		public static readonly PMList[] LBRListsYoung = { Trammel, Ilshenar };
+		public static readonly PMList[] AOSLists = { Trammel, Felucca, Ilshenar, Malas };
+		public static readonly PMList[] AOSListsYoung = { Trammel, Ilshenar, Malas };
+		public static readonly PMList[] SELists = { Trammel, Felucca, Ilshenar, Malas, Tokuno };
+		public static readonly PMList[] SEListsYoung = { Trammel, Ilshenar, Malas, Tokuno };
+		public static readonly PMList[] SALists = { Trammel, Felucca, Ilshenar, Malas, Tokuno, TerMur };
+		public static readonly PMList[] SAListsYoung = { Trammel, Ilshenar, Malas, Tokuno, TerMur };
+		public static readonly PMList[] RedLists = { Felucca };
+		public static readonly PMList[] SigilLists = { Felucca };
 
 		public static readonly PMList[] AllLists = { Trammel, Felucca, Ilshenar, Malas, Tokuno, TerMur };
 
@@ -515,10 +529,22 @@ namespace Server.Items
 			m_Entries = entries;
 		}
 
-		public int Number { get { return m_Number; } }
-		public int SelNumber { get { return m_SelNumber; } }
-		public Map Map { get { return m_Map; } }
-		public PMEntry[] Entries { get { return m_Entries; } }
+		public int Number
+		{
+			get { return m_Number; }
+		}
+		public int SelNumber
+		{
+			get { return m_SelNumber; }
+		}
+		public Map Map
+		{
+			get { return m_Map; }
+		}
+		public PMEntry[] Entries
+		{
+			get { return m_Entries; }
+		}
 	}
 
 	public class MoongateGump : Gump
@@ -566,7 +592,7 @@ namespace Server.Items
 				{
 					checkLists = PMList.SigilLists;
 				}
-                else if (SpellHelper.RestrictRedTravel && mobile.Murderer && !Siege.SiegeShard)
+				else if (SpellHelper.RestrictRedTravel && mobile.Murderer && !Siege.SiegeShard)
 				{
 					checkLists = PMList.RedLists;
 				}
@@ -644,7 +670,15 @@ namespace Server.Items
 					continue;
 				}
 
-				AddButton(10, 35 + (i * 25), 2117, 2118, 0, GumpButtonType.Page, Array.IndexOf(m_Lists, checkLists[i]) + 1);
+				AddButton(
+					10,
+					35 + (i * 25),
+					2117,
+					2118,
+					0,
+					GumpButtonType.Page,
+					Array.IndexOf(m_Lists, checkLists[i]) + 1
+				);
 				AddHtmlLocalized(30, 35 + (i * 25), 150, 20, checkLists[i].Number, false, false);
 			}
 
@@ -704,7 +738,13 @@ namespace Server.Items
 				m_Mobile.SendLocalizedMessage(1019002); // You are too far away to use the gate.
 				return;
 			}
-            else if (m_Mobile.Player && SpellHelper.RestrictRedTravel && m_Mobile.Murderer && list.Map != Map.Felucca && !Siege.SiegeShard)
+			else if (
+				m_Mobile.Player
+				&& SpellHelper.RestrictRedTravel
+				&& m_Mobile.Murderer
+				&& list.Map != Map.Felucca
+				&& !Siege.SiegeShard
+			)
 			{
 				m_Mobile.SendLocalizedMessage(1019004); // You are not allowed to travel there.
 				return;

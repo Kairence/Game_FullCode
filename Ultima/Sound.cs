@@ -98,7 +98,8 @@ namespace Ultima
 				return m_Cache[soundID];
 			}
 
-			int length, extra;
+			int length,
+				extra;
 			bool patched;
 			Stream stream = m_FileIndex.Seek(soundID, out length, out extra, out patched);
 
@@ -134,7 +135,7 @@ namespace Ultima
 			Buffer.BlockCopy(buffer, 0, resultBuffer, (waveHeader.Length << 2), buffer.Length);
 
 			string str = Encoding.ASCII.GetString(stringBuffer);
-				// seems that the null terminator's not being properly recognized :/
+			// seems that the null terminator's not being properly recognized :/
 			if (str.IndexOf('\0') > 0)
 			{
 				str = str.Substring(0, str.IndexOf('\0'));
@@ -174,7 +175,19 @@ namespace Ultima
 			 * ====================
 			 * */
 			return new[]
-			{0x46464952, (length + 36), 0x45564157, 0x20746D66, 0x10, 0x010001, 0x5622, 0xAC44, 0x100002, 0x61746164, length};
+			{
+				0x46464952,
+				(length + 36),
+				0x45564157,
+				0x20746D66,
+				0x10,
+				0x010001,
+				0x5622,
+				0xAC44,
+				0x100002,
+				0x61746164,
+				length,
+			};
 		}
 
 		/// <summary>
@@ -189,7 +202,8 @@ namespace Ultima
 			{
 				return false;
 			}
-			int length, extra;
+			int length,
+				extra;
 			bool patched;
 			Stream stream = m_FileIndex.Seek(soundID, out length, out extra, out patched);
 
@@ -237,7 +251,8 @@ namespace Ultima
 			}
 			else
 			{
-				int length, extra;
+				int length,
+					extra;
 				bool patched;
 				Stream stream = m_FileIndex.Seek(soundID, out length, out extra, out patched);
 				if ((m_FileIndex.Index[soundID].lookup < 0) || (length <= 0))
@@ -289,9 +304,13 @@ namespace Ultima
 			int Headerlength = 44;
 			using (
 				FileStream fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
-						   fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
+					fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write)
+			)
 			{
-				using (BinaryWriter binidx = new BinaryWriter(fsidx), binmul = new BinaryWriter(fsmul))
+				using (
+					BinaryWriter binidx = new BinaryWriter(fsidx),
+						binmul = new BinaryWriter(fsmul)
+				)
 				{
 					for (int i = 0; i < m_Cache.Length; ++i)
 					{
@@ -352,7 +371,10 @@ namespace Ultima
 		{
 			using (
 				var Tex = new StreamWriter(
-					new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+					new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite),
+					Encoding.GetEncoding(1252)
+				)
+			)
 			{
 				Tex.WriteLine("ID;Name;Length");
 				string name = "";

@@ -4,44 +4,37 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    public class SBMonk : SBInfo
-    {
-        private readonly List<GenericBuyInfo> m_BuyInfo = new InternalBuyInfo();
-        private readonly IShopSellInfo m_SellInfo = new InternalSellInfo();
-        public SBMonk()
-        {
-        }
+	public class SBMonk : SBInfo
+	{
+		private readonly List<GenericBuyInfo> m_BuyInfo = new InternalBuyInfo();
+		private readonly IShopSellInfo m_SellInfo = new InternalSellInfo();
 
-        public override IShopSellInfo SellInfo
-        {
-            get
-            {
-                return m_SellInfo;
-            }
-        }
-        public override List<GenericBuyInfo> BuyInfo
-        {
-            get
-            {
-                return m_BuyInfo;
-            }
-        }
+		public SBMonk() { }
 
-        public class InternalBuyInfo : List<GenericBuyInfo>
-        {
-            public InternalBuyInfo()
-            {
-                if (Core.AOS)
-                    Add(new GenericBuyInfo(typeof(MonkRobe), 150000, 20, 0x2687, 0x21E));
-            }
-        }
+		public override IShopSellInfo SellInfo
+		{
+			get { return m_SellInfo; }
+		}
+		public override List<GenericBuyInfo> BuyInfo
+		{
+			get { return m_BuyInfo; }
+		}
 
-        public class InternalSellInfo : GenericSellInfo
-        {
-            public InternalSellInfo()
-            {
- 				Add(typeof(MonkRobe), 5 );
-           }
-        }
-    }
+		public class InternalBuyInfo : List<GenericBuyInfo>
+		{
+			public InternalBuyInfo()
+			{
+				if (Core.AOS)
+					Add(new GenericBuyInfo(typeof(MonkRobe), 150000, 20, 0x2687, 0x21E));
+			}
+		}
+
+		public class InternalSellInfo : GenericSellInfo
+		{
+			public InternalSellInfo()
+			{
+				Add(typeof(MonkRobe), 5);
+			}
+		}
+	}
 }

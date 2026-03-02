@@ -1,97 +1,104 @@
 using System;
 using System.Linq;
-
 using Server.Spells.Necromancy;
 
 namespace Server.Mobiles
 {
-    [CorpseName("a dark wolf corpse")]
-    public class DarkWolfFamiliar : BaseFamiliar
-    {
-        private DateTime m_NextRestore;
-        public DarkWolfFamiliar()
-        {
-            Name = "a dark wolf";
-            Body = 99;
-            Hue = 0x901;
-            BaseSoundID = 0xE5;
+	[CorpseName("a dark wolf corpse")]
+	public class DarkWolfFamiliar : BaseFamiliar
+	{
+		private DateTime m_NextRestore;
 
-            SetStr(100);
-            SetDex(90);
-            SetInt(90);
+		public DarkWolfFamiliar()
+		{
+			Name = "a dark wolf";
+			Body = 99;
+			Hue = 0x901;
+			BaseSoundID = 0xE5;
 
-            SetHits(60);
-            SetStam(90);
-            SetMana(0);
+			SetStr(100);
+			SetDex(90);
+			SetInt(90);
 
-            SetDamage(5, 10);
+			SetHits(60);
+			SetStam(90);
+			SetMana(0);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			SetDamage(5, 10);
 
-            SetResistance(ResistanceType.Physical, 40, 50);
-            SetResistance(ResistanceType.Fire, 25, 40);
-            SetResistance(ResistanceType.Cold, 25, 40);
-            SetResistance(ResistanceType.Poison, 25, 40);
-            SetResistance(ResistanceType.Energy, 25, 40);
+			SetDamageType(ResistanceType.Physical, 100);
 
-            SetSkill(SkillName.Wrestling, 85.1, 90.0);
-            SetSkill(SkillName.Tactics, 50.0);
+			SetResistance(ResistanceType.Physical, 40, 50);
+			SetResistance(ResistanceType.Fire, 25, 40);
+			SetResistance(ResistanceType.Cold, 25, 40);
+			SetResistance(ResistanceType.Poison, 25, 40);
+			SetResistance(ResistanceType.Energy, 25, 40);
 
-            ControlSlots = 1;
-        }
+			SetSkill(SkillName.Wrestling, 85.1, 90.0);
+			SetSkill(SkillName.Tactics, 50.0);
 
-        public DarkWolfFamiliar(Serial serial)
-            : base(serial)
-        {
-        }
+			ControlSlots = 1;
+		}
 
-        public static readonly Type[] ControlTypes =
-        {
-            typeof(DireWolf), typeof(GreyWolf), typeof(TimberWolf), typeof(WhiteWolf), typeof(BakeKitsune)
-        };
+		public DarkWolfFamiliar(Serial serial)
+			: base(serial) { }
 
-        public static bool CheckMastery(Mobile tamer, BaseCreature creature)
-        {
-            var familiar = (BaseCreature)SummonFamiliarSpell.Table[tamer];
+		public static readonly Type[] ControlTypes =
+		{
+			typeof(DireWolf),
+			typeof(GreyWolf),
+			typeof(TimberWolf),
+			typeof(WhiteWolf),
+			typeof(BakeKitsune),
+		};
 
-            if (familiar != null && !familiar.Deleted && familiar is DarkWolfFamiliar && ControlTypes.Any(t => t == creature.GetType()))
-            {
-                return true;
-            }
+		public static bool CheckMastery(Mobile tamer, BaseCreature creature)
+		{
+			var familiar = (BaseCreature)SummonFamiliarSpell.Table[tamer];
 
-            return false;
-        }
+			if (
+				familiar != null
+				&& !familiar.Deleted
+				&& familiar is DarkWolfFamiliar
+				&& ControlTypes.Any(t => t == creature.GetType())
+			)
+			{
+				return true;
+			}
 
-        public override void OnThink()
-        {
-            base.OnThink();
+			return false;
+		}
 
-            if (DateTime.UtcNow < m_NextRestore)
-                return;
+		public override void OnThink()
+		{
+			base.OnThink();
 
-            m_NextRestore = DateTime.UtcNow + TimeSpan.FromSeconds(2.0);
+			if (DateTime.UtcNow < m_NextRestore)
+				return;
 
-            Mobile caster = ControlMaster;
+			m_NextRestore = DateTime.UtcNow + TimeSpan.FromSeconds(2.0);
 
-            if (caster == null)
-                caster = SummonMaster;
+			Mobile caster = ControlMaster;
 
-            if (caster != null)
-                ++caster.Stam;
-        }
+			if (caster == null)
+				caster = SummonMaster;
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			if (caster != null)
+				++caster.Stam;
+		}
 
-            writer.Write((int)0);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0);
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

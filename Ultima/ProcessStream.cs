@@ -40,8 +40,7 @@ namespace Ultima
 			m_Open = false;
 		}
 
-		public override void Flush()
-		{ }
+		public override void Flush() { }
 
 		public override int Read(byte[] buffer, int offset, int count)
 		{
@@ -81,12 +80,28 @@ namespace Ultima
 			}
 		}
 
-		public override bool CanRead { get { return true; } }
-		public override bool CanWrite { get { return true; } }
-		public override bool CanSeek { get { return true; } }
+		public override bool CanRead
+		{
+			get { return true; }
+		}
+		public override bool CanWrite
+		{
+			get { return true; }
+		}
+		public override bool CanSeek
+		{
+			get { return true; }
+		}
 
-		public override long Length { get { throw new NotSupportedException(); } }
-		public override long Position { get { return m_Position; } set { m_Position = (int)value; } }
+		public override long Length
+		{
+			get { throw new NotSupportedException(); }
+		}
+		public override long Position
+		{
+			get { return m_Position; }
+			set { m_Position = (int)value; }
+		}
 
 		public override void SetLength(long value)
 		{

@@ -2,54 +2,45 @@ using System;
 
 namespace Server.Items
 {
-    public class Bone : Item, ICommodity
-    {
-        [Constructable]
-        public Bone()
-            : this(1)
-        {
-        }
+	public class Bone : Item, ICommodity
+	{
+		[Constructable]
+		public Bone()
+			: this(1) { }
 
-        [Constructable]
-        public Bone(int amount)
-            : base(0xf7e)
-        {
-            this.Stackable = true;
-            this.Amount = amount;
-            this.Weight = 0.1;
-        }
+		[Constructable]
+		public Bone(int amount)
+			: base(0xf7e)
+		{
+			this.Stackable = true;
+			this.Amount = amount;
+			this.Weight = 0.1;
+		}
 
-        public Bone(Serial serial)
-            : base(serial)
-        {
-        }
+		public Bone(Serial serial)
+			: base(serial) { }
 
-        TextDefinition ICommodity.Description
-        {
-            get
-            {
-                return this.LabelNumber;
-            }
-        }
-        bool ICommodity.IsDeedable
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		TextDefinition ICommodity.Description
+		{
+			get { return this.LabelNumber; }
+		}
+		bool ICommodity.IsDeedable
+		{
+			get { return true; }
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

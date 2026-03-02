@@ -2,7 +2,6 @@
 using System;
 using System.Collections;
 using System.Reflection;
-
 using Server.Commands;
 using Server.Items;
 using Server.Targeting;
@@ -20,7 +19,15 @@ namespace Server.Gumps
 		private readonly int m_Page;
 		private readonly ArrayList m_List;
 
-		public SetObjectTarget(PropertyInfo prop, Mobile mobile, object o, Stack stack, Type type, int page, ArrayList list)
+		public SetObjectTarget(
+			PropertyInfo prop,
+			Mobile mobile,
+			object o,
+			Stack stack,
+			Type type,
+			int page,
+			ArrayList list
+		)
 			: base(-1, false, TargetFlags.None)
 		{
 			m_Property = prop;
@@ -38,7 +45,10 @@ namespace Server.Gumps
 			{
 				if (m_Type == typeof(Type))
 					targeted = targeted.GetType();
-				else if ((m_Type == typeof(BaseAddon) || m_Type.IsAssignableFrom(typeof(BaseAddon))) && targeted is AddonComponent)
+				else if (
+					(m_Type == typeof(BaseAddon) || m_Type.IsAssignableFrom(typeof(BaseAddon)))
+					&& targeted is AddonComponent
+				)
 					targeted = ((AddonComponent)targeted).Addon;
 
 				if (m_Type.IsAssignableFrom(targeted.GetType()))

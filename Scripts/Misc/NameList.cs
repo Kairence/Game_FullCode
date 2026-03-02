@@ -5,112 +5,106 @@ using System.Xml;
 
 namespace Server
 {
-    public class NameList
-    {
-        private static Dictionary<string, NameList> m_Table;
-        private readonly string m_Type;
-        private readonly string[] m_List;
-        public NameList(string type, XmlElement xml)
-        {
-            this.m_Type = type;
-            this.m_List = xml.InnerText.Split(',');
+	public class NameList
+	{
+		private static Dictionary<string, NameList> m_Table;
+		private readonly string m_Type;
+		private readonly string[] m_List;
 
-            for (int i = 0; i < this.m_List.Length; ++i)
-                this.m_List[i] = Utility.Intern(this.m_List[i].Trim());
-        }
+		public NameList(string type, XmlElement xml)
+		{
+			this.m_Type = type;
+			this.m_List = xml.InnerText.Split(',');
 
-        static NameList()
-        {
-            m_Table = new Dictionary<string, NameList>(StringComparer.OrdinalIgnoreCase);
+			for (int i = 0; i < this.m_List.Length; ++i)
+				this.m_List[i] = Utility.Intern(this.m_List[i].Trim());
+		}
 
-            string filePath = Path.Combine(Core.BaseDirectory, "Data/names.xml");
+		static NameList()
+		{
+			m_Table = new Dictionary<string, NameList>(StringComparer.OrdinalIgnoreCase);
 
-            if (!File.Exists(filePath))
-                return;
+			string filePath = Path.Combine(Core.BaseDirectory, "Data/names.xml");
 
-            try
-            {
-                Load(filePath);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Warning: Exception caught loading name lists:");
-                Console.WriteLine(e);
-            }
-        }
+			if (!File.Exists(filePath))
+				return;
 
-        public string Type
-        {
-            get
-            {
-                return this.m_Type;
-            }
-        }
-        public string[] List
-        {
-            get
-            {
-                return this.m_List;
-            }
-        }
-        public static NameList GetNameList(string type)
-        {
-            NameList n = null;
-            m_Table.TryGetValue(type, out n);
-            return n;
-        }
+			try
+			{
+				Load(filePath);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("Warning: Exception caught loading name lists:");
+				Console.WriteLine(e);
+			}
+		}
 
-        public static string RandomName(string type)
-        {
-            NameList list = GetNameList(type);
+		public string Type
+		{
+			get { return this.m_Type; }
+		}
+		public string[] List
+		{
+			get { return this.m_List; }
+		}
 
-            if (list != null)
-                return list.GetRandomName();
+		public static NameList GetNameList(string type)
+		{
+			NameList n = null;
+			m_Table.TryGetValue(type, out n);
+			return n;
+		}
 
-            return "";
-        }
+		public static string RandomName(string type)
+		{
+			NameList list = GetNameList(type);
 
-        public bool ContainsName(string name)
-        {
-            for (int i = 0; i < this.m_List.Length; i++)
-                if (name == this.m_List[i])
-                    return true;
+			if (list != null)
+				return list.GetRandomName();
 
-            return false;
-        }
+			return "";
+		}
 
-        public string GetRandomName()
-        {
-            if (this.m_List.Length > 0)
-                return this.m_List[Utility.Random(this.m_List.Length)];
+		public bool ContainsName(string name)
+		{
+			for (int i = 0; i < this.m_List.Length; i++)
+				if (name == this.m_List[i])
+					return true;
 
-            return "";
-        }
+			return false;
+		}
 
-        private static void Load(string filePath)
-        {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(filePath);
+		public string GetRandomName()
+		{
+			if (this.m_List.Length > 0)
+				return this.m_List[Utility.Random(this.m_List.Length)];
 
-            XmlElement root = doc["names"];
+			return "";
+		}
 
-            foreach (XmlElement element in root.GetElementsByTagName("namelist"))
-            {
-                string type = element.GetAttribute("type");
+		private static void Load(string filePath)
+		{
+			XmlDocument doc = new XmlDocument();
+			doc.Load(filePath);
 
-                if (String.IsNullOrEmpty(type))
-                    continue;
+			XmlElement root = doc["names"];
 
-                try
-                {
-                    NameList list = new NameList(type, element);
+			foreach (XmlElement element in root.GetElementsByTagName("namelist"))
+			{
+				string type = element.GetAttribute("type");
 
-                    m_Table[type] = list;
-                }
-                catch
-                {
-                }
-            }
-        }
-    }
+				if (String.IsNullOrEmpty(type))
+					continue;
+
+				try
+				{
+					NameList list = new NameList(type, element);
+
+					m_Table[type] = list;
+				}
+				catch { }
+			}
+		}
+	}
 }

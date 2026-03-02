@@ -1,6 +1,5 @@
 #region References
 using System;
-
 using Server.Mobiles;
 using Server.Network;
 using Server.Spells;
@@ -14,14 +13,32 @@ namespace Server.Items
 		public abstract Type AmmoType { get; }
 		public abstract Item Ammo { get; }
 
-		public override int DefHitSound { get { return 0x234; } }
-		public override int DefMissSound { get { return 0x238; } }
+		public override int DefHitSound
+		{
+			get { return 0x234; }
+		}
+		public override int DefMissSound
+		{
+			get { return 0x238; }
+		}
 
-		public override SkillName DefSkill { get { return SkillName.Archery; } }
-		public override WeaponType DefType { get { return WeaponType.Ranged; } }
-		public override WeaponAnimation DefAnimation { get { return WeaponAnimation.ShootXBow; } }
+		public override SkillName DefSkill
+		{
+			get { return SkillName.Archery; }
+		}
+		public override WeaponType DefType
+		{
+			get { return WeaponType.Ranged; }
+		}
+		public override WeaponAnimation DefAnimation
+		{
+			get { return WeaponAnimation.ShootXBow; }
+		}
 
-		public override SkillName AccuracySkill { get { return SkillName.Archery; } }
+		public override SkillName AccuracySkill
+		{
+			get { return SkillName.Archery; }
+		}
 
 		private Timer m_RecoveryTimer; // so we don't start too many timers
 		private int m_Velocity;
@@ -29,13 +46,13 @@ namespace Server.Items
 		[CommandProperty(AccessLevel.GameMaster)]
 		public bool Balanced
 		{
-            get { return Attributes.BalancedWeapon > 0; }
+			get { return Attributes.BalancedWeapon > 0; }
 			set
 			{
-                if (value)
-                    Attributes.BalancedWeapon = 1;
-                else
-                    Attributes.BalancedWeapon = 0;
+				if (value)
+					Attributes.BalancedWeapon = 1;
+				else
+					Attributes.BalancedWeapon = 0;
 			}
 		}
 
@@ -51,37 +68,40 @@ namespace Server.Items
 		}
 
 		public BaseRanged(int itemID)
-			: base(itemID)
-		{ }
+			: base(itemID) { }
 
 		public BaseRanged(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		public override TimeSpan OnSwing(Mobile attacker, IDamageable damageable, double damageBonus)
 		{
-            long nextShoot;
+			long nextShoot;
 
-            if (attacker is PlayerMobile)
-                nextShoot = ((PlayerMobile)attacker).NextMovementTime + (Core.SE ? 250 : Core.AOS ? 500 : 1000);
-            else
-                nextShoot = attacker.LastMoveTime + attacker.ComputeMovementSpeed();
+			if (attacker is PlayerMobile)
+				nextShoot =
+					((PlayerMobile)attacker).NextMovementTime
+					+ (
+						Core.SE ? 250
+						: Core.AOS ? 500
+						: 1000
+					);
+			else
+				nextShoot = attacker.LastMoveTime + attacker.ComputeMovementSpeed();
 
 			// Make sure we've been standing still for .25/.5/1 second depending on Era
-            if (nextShoot <= Core.TickCount ||
-				(Core.AOS && WeaponAbility.GetCurrentAbility(attacker) is MovingShot))
+			if (nextShoot <= Core.TickCount || (Core.AOS && WeaponAbility.GetCurrentAbility(attacker) is MovingShot))
 			{
 				bool canSwing = true;
 
 				if (Core.AOS)
 				{
 					canSwing = (!attacker.Frozen);
-					if( canSwing )
+					if (canSwing)
 					{
-						if( attacker is PlayerMobile )
+						if (attacker is PlayerMobile)
 						{
 							PlayerMobile pm = attacker as PlayerMobile;
-							if( pm.Stam < 1)
+							if (pm.Stam < 1)
 							{
 								pm.Stam = 0;
 								attacker.SendMessage("당신은 허기 때문에 무기를 휘두를 힘이 없습니다.");
@@ -92,22 +112,20 @@ namespace Server.Items
 								pm.Stam -= 1;
 							}
 						}
-						else if( attacker is BaseCreature )
+						else if (attacker is BaseCreature)
 						{
 							BaseCreature bc = attacker as BaseCreature;
-							if( bc.ControlMaster == null && bc.SummonMaster == null )
+							if (bc.ControlMaster == null && bc.SummonMaster == null) { }
+							else if (bc.ControlMaster != null && bc.ControlMaster is PlayerMobile)
 							{
-							}
-							else if( bc.ControlMaster != null && bc.ControlMaster is PlayerMobile )
-							{
-								if( bc.ControlMaster.Hunger <= 10 )
+								if (bc.ControlMaster.Hunger <= 10)
 									canSwing = false;
 								else
 									bc.ControlMaster.Hunger -= 10;
 							}
-							else if( bc.SummonMaster != null && bc.ControlMaster is PlayerMobile )
+							else if (bc.SummonMaster != null && bc.ControlMaster is PlayerMobile)
 							{
-								if(  bc.SummonMaster.Hunger <= 10 )
+								if (bc.SummonMaster.Hunger <= 10)
 									canSwing = false;
 								else
 									bc.SummonMaster.Hunger -= 10;
@@ -133,14 +151,14 @@ namespace Server.Items
 							damageBonus *= 0.5;
 						OnHit(attacker, damageable, damageBonus);
 						/*
-                        if (!CheckHit(attacker, damageable))
+						if (!CheckHit(attacker, damageable))
 						{
 							
-                            OnStun(attacker, damageable);
+							OnStun(attacker, damageable);
 						}
 						else
 						{
-                            OnMiss(attacker, damageable);
+							OnMiss(attacker, damageable);
 						}
 						OnHit(attacker, damageable, 1.0);
 						*/
@@ -151,7 +169,7 @@ namespace Server.Items
 
 				return GetDelay(attacker);
 			}
-			
+
 			attacker.RevealingAction();
 
 			return TimeSpan.FromSeconds(0.25);
@@ -160,7 +178,7 @@ namespace Server.Items
 		/*
 		public override void OnHit(Mobile attacker, IDamageable damageable, double damageBonus)
 		{
-            if (AmmoType != null && attacker.Player && damageable is Mobile && !((Mobile)damageable).Player && (((Mobile)damageable).Body.IsAnimal || ((Mobile)damageable).Body.IsMonster) &&
+			if (AmmoType != null && attacker.Player && damageable is Mobile && !((Mobile)damageable).Player && (((Mobile)damageable).Body.IsAnimal || ((Mobile)damageable).Body.IsMonster) &&
 				0.4 >= Utility.RandomDouble())
 			{
 				var ammo = Ammo;
@@ -173,7 +191,7 @@ namespace Server.Items
 
 			base.OnHit(attacker, damageable, damageBonus);
 		}
-        public override void OnMiss(Mobile attacker, IDamageable damageable)
+		public override void OnMiss(Mobile attacker, IDamageable damageable)
 		{
 			if (attacker.Player && 0.4 >= Utility.RandomDouble())
 			{
@@ -227,12 +245,12 @@ namespace Server.Items
 		}
 		*/
 
-        public virtual bool OnFired(Mobile attacker, IDamageable damageable)
+		public virtual bool OnFired(Mobile attacker, IDamageable damageable)
 		{
-			if( attacker is BaseCreature )
+			if (attacker is BaseCreature)
 				return true;
 			WeaponAbility ability = WeaponAbility.GetCurrentAbility(attacker);
-			
+
 			// Respect special moves that use no ammo
 			if (ability != null && ability.ConsumeAmmo == false)
 			{
@@ -244,9 +262,9 @@ namespace Server.Items
 				BaseQuiver quiver = attacker.FindItemOnLayer(Layer.Cloak) as BaseQuiver;
 				Container pack = attacker.Backpack;
 
-                int lowerAmmo = AosAttributes.GetValue(attacker, AosAttribute.LowerAmmoCost);
+				int lowerAmmo = AosAttributes.GetValue(attacker, AosAttribute.LowerAmmoCost);
 
-                if (quiver == null || Utility.Random(100) >= lowerAmmo)
+				if (quiver == null || Utility.Random(100) >= lowerAmmo)
 				{
 					// consume ammo
 					if (quiver != null && quiver.ConsumeTotal(AmmoType, 1))
@@ -258,14 +276,17 @@ namespace Server.Items
 						return false;
 					}
 				}
-				else if (quiver.FindItemByType(AmmoType) == null && (pack == null || pack.FindItemByType(AmmoType) == null))
+				else if (
+					quiver.FindItemByType(AmmoType) == null
+					&& (pack == null || pack.FindItemByType(AmmoType) == null)
+				)
 				{
 					// lower ammo cost should not work when we have no ammo at all
 					return false;
 				}
 			}
 
-            attacker.MovingEffect(damageable, EffectID, 18, 1, false, false);
+			attacker.MovingEffect(damageable, EffectID, 18, 1, false, false);
 
 			return true;
 		}
@@ -287,27 +308,27 @@ namespace Server.Items
 
 			switch (version)
 			{
-                case 4:
+				case 4:
 				case 3:
-					{
-                        if (version == 3 && reader.ReadBool())
-                            Attributes.BalancedWeapon = 1;
+				{
+					if (version == 3 && reader.ReadBool())
+						Attributes.BalancedWeapon = 1;
 
-						m_Velocity = reader.ReadInt();
+					m_Velocity = reader.ReadInt();
 
-						goto case 2;
-					}
+					goto case 2;
+				}
 				case 2:
 				case 1:
-					{
-						break;
-					}
+				{
+					break;
+				}
 				case 0:
-					{
-						/*m_EffectID =*/
-						reader.ReadInt();
-						break;
-					}
+				{
+					/*m_EffectID =*/
+					reader.ReadInt();
+					break;
+				}
 			}
 
 			if (version < 2)

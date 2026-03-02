@@ -1,27 +1,27 @@
 using System;
+using System.Collections.Generic;
+using Server.Items;
 using Server.Mobiles;
 using Server.Network;
 using Server.Targeting;
-using System.Collections.Generic;
-using Server.Items;
 using Server.Targets;
 
 namespace Server.SkillHandlers
 {
-    public class Camping
-    {
-        public static void Initialize()
-        {
-            SkillInfo.Table[(int)SkillName.Camping].Callback = new SkillUseCallback(OnUse);
-        }
+	public class Camping
+	{
+		public static void Initialize()
+		{
+			SkillInfo.Table[(int)SkillName.Camping].Callback = new SkillUseCallback(OnUse);
+		}
 
-        public static TimeSpan OnUse(Mobile m)
-        {
-			if( m is PlayerMobile )
+		public static TimeSpan OnUse(Mobile m)
+		{
+			if (m is PlayerMobile)
 			{
 				PlayerMobile pm = m as PlayerMobile;
-				if( pm.Fury < 100 )
-					m.SendMessage("분노가 {0} 부족합니다.", 100 - pm.Fury );
+				if (pm.Fury < 100)
+					m.SendMessage("분노가 {0} 부족합니다.", 100 - pm.Fury);
 				else
 				{
 					pm.Fury = 0;
@@ -30,46 +30,54 @@ namespace Server.SkillHandlers
 					BaseWeapon atkWeapon = pm.Weapon as BaseWeapon;
 					atkWeapon.PlaySwingAnimation(pm);
 					pm.CheckSkill(SkillName.Anatomy, 1000);
-					if( atkWeapon.Skill is SkillName.Swords )
+					if (atkWeapon.Skill is SkillName.Swords)
 					{
-						if ( one != null )
+						if (one != null)
 						{
-							Server.Spells.Bushido.Evasion spell = new Server.Spells.Bushido.Evasion( pm, null );
+							Server.Spells.Bushido.Evasion spell = new Server.Spells.Bushido.Evasion(pm, null);
 							spell.Cast();
 						}
-						else if ( two != null )
+						else if (two != null)
 						{
-							if( atkWeapon is BaseAxe )
+							if (atkWeapon is BaseAxe)
 							{
-								Server.Spells.Chivalry.DivineFurySpell spell = new Server.Spells.Chivalry.DivineFurySpell( pm, null );
+								Server.Spells.Chivalry.DivineFurySpell spell =
+									new Server.Spells.Chivalry.DivineFurySpell(pm, null);
 								spell.Cast();
 							}
 							else
 							{
-								Server.Spells.Chivalry.ConsecrateWeaponSpell spell = new Server.Spells.Chivalry.ConsecrateWeaponSpell( pm, null );
+								Server.Spells.Chivalry.ConsecrateWeaponSpell spell =
+									new Server.Spells.Chivalry.ConsecrateWeaponSpell(pm, null);
 								spell.Cast();
 							}
 						}
 					}
-					else if( atkWeapon.Skill is SkillName.Macing )
+					else if (atkWeapon.Skill is SkillName.Macing)
 					{
-						if ( one != null)
+						if (one != null)
 						{
-							Server.Spells.Bushido.Confidence spell = new Server.Spells.Bushido.Confidence( pm, null );
+							Server.Spells.Bushido.Confidence spell = new Server.Spells.Bushido.Confidence(pm, null);
 							spell.Cast();
 						}
 						else
 						{
-							Server.Spells.Chivalry.HolyLightSpell spell = new Server.Spells.Chivalry.HolyLightSpell( pm, null );
+							Server.Spells.Chivalry.HolyLightSpell spell = new Server.Spells.Chivalry.HolyLightSpell(
+								pm,
+								null
+							);
 							spell.Cast();
 							//SpecialAttack = 5;
 						}
 					}
-					else if( atkWeapon.Skill is SkillName.Fencing )
+					else if (atkWeapon.Skill is SkillName.Fencing)
 					{
-						if ( one != null)
+						if (one != null)
 						{
-							Server.Spells.Bushido.CounterAttack spell = new Server.Spells.Bushido.CounterAttack( pm, null );
+							Server.Spells.Bushido.CounterAttack spell = new Server.Spells.Bushido.CounterAttack(
+								pm,
+								null
+							);
 							spell.Cast();
 						}
 						else
@@ -81,23 +89,24 @@ namespace Server.SkillHandlers
 							*/
 						}
 					}
-					else if( atkWeapon.Skill is SkillName.Archery )
+					else if (atkWeapon.Skill is SkillName.Archery)
 					{
-						if ( two != null && atkWeapon is BaseRanged )
+						if (two != null && atkWeapon is BaseRanged)
 						{
 							BaseRanged br = atkWeapon as BaseRanged;
-							if( br.AmmoType == typeof( Bolt ) )
+							if (br.AmmoType == typeof(Bolt))
 								pm.FuryActive = true;
 							else
 							{
-								Server.Spells.Chivalry.EnemyOfOneSpell spell = new Server.Spells.Chivalry.EnemyOfOneSpell( pm, null );
+								Server.Spells.Chivalry.EnemyOfOneSpell spell =
+									new Server.Spells.Chivalry.EnemyOfOneSpell(pm, null);
 								spell.Cast();
 							}
 						}
-					}					
+					}
 				}
 			}
-            //m.Target = new Anatomy.InternalTarget();
+			//m.Target = new Anatomy.InternalTarget();
 			/*
 			Container pack = m.Backpack;
 			bool skinning = false;
@@ -116,24 +125,22 @@ namespace Server.SkillHandlers
 						break;
 					}
 				}
-           // m.SendLocalizedMessage(500321); // Whom shall I examine?
+		   // m.SendLocalizedMessage(500321); // Whom shall I examine?
 		   
 			}
 			if( !skinning )
 				m.SendMessage("해부학 스킬을 사용하기 위해서는 가방 안에 피복칼이 있어야합니다.");
 			*/
-            return TimeSpan.FromSeconds(1.0);
-        }
+			return TimeSpan.FromSeconds(1.0);
+		}
 
-        private class InternalTarget : Target
-        {
-            public InternalTarget()
-                : base(8, false, TargetFlags.None)
-            {
-            }
+		private class InternalTarget : Target
+		{
+			public InternalTarget()
+				: base(8, false, TargetFlags.None) { }
 
-            protected override void OnTarget(Mobile from, object targeted)
-            {
+			protected override void OnTarget(Mobile from, object targeted)
+			{
 				/*
 				//아나토미 가죽 채취
 				if( from.Backpack != null && SkinningKnife.IsChildOf( from.Backpack) )
@@ -144,54 +151,54 @@ namespace Server.SkillHandlers
 				}
 
 
-                if (from == targeted)
-                {
-                    from.LocalOverheadMessage(MessageType.Regular, 0x3B2, 500324); // You know yourself quite well enough already.
-                }
-                else if (targeted is TownCrier)
-                {
-                    ((TownCrier)targeted).PrivateOverheadMessage(MessageType.Regular, 0x3B2, 500322, from.NetState); // This person looks fine to me, though he may have some news...
-                }
-                else if (targeted is BaseVendor && ((BaseVendor)targeted).IsInvulnerable)
-                {
-                    ((BaseVendor)targeted).PrivateOverheadMessage(MessageType.Regular, 0x3B2, 500326, from.NetState); // That can not be inspected.
-                }
-                else if (targeted is Mobile)
-                {
-                    Mobile targ = (Mobile)targeted;
+				if (from == targeted)
+				{
+					from.LocalOverheadMessage(MessageType.Regular, 0x3B2, 500324); // You know yourself quite well enough already.
+				}
+				else if (targeted is TownCrier)
+				{
+					((TownCrier)targeted).PrivateOverheadMessage(MessageType.Regular, 0x3B2, 500322, from.NetState); // This person looks fine to me, though he may have some news...
+				}
+				else if (targeted is BaseVendor && ((BaseVendor)targeted).IsInvulnerable)
+				{
+					((BaseVendor)targeted).PrivateOverheadMessage(MessageType.Regular, 0x3B2, 500326, from.NetState); // That can not be inspected.
+				}
+				else if (targeted is Mobile)
+				{
+					Mobile targ = (Mobile)targeted;
 
-                    int marginOfError = Math.Max(0, 25 - (int)(from.Skills[SkillName.Anatomy].Value / 4));
+					int marginOfError = Math.Max(0, 25 - (int)(from.Skills[SkillName.Anatomy].Value / 4));
 
-                    int str = targ.Str + Utility.RandomMinMax(-marginOfError, +marginOfError);
-                    int dex = targ.Dex + Utility.RandomMinMax(-marginOfError, +marginOfError);
-                    int stm = ((targ.Stam * 100) / Math.Max(targ.StamMax, 1)) + Utility.RandomMinMax(-marginOfError, +marginOfError);
+					int str = targ.Str + Utility.RandomMinMax(-marginOfError, +marginOfError);
+					int dex = targ.Dex + Utility.RandomMinMax(-marginOfError, +marginOfError);
+					int stm = ((targ.Stam * 100) / Math.Max(targ.StamMax, 1)) + Utility.RandomMinMax(-marginOfError, +marginOfError);
 
-                    int strMod = str / 10;
-                    int dexMod = dex / 10;
-                    int stmMod = stm / 10;
+					int strMod = str / 10;
+					int dexMod = dex / 10;
+					int stmMod = stm / 10;
 
-                    if (strMod < 0)
-                        strMod = 0;
-                    else if (strMod > 10)
-                        strMod = 10;
+					if (strMod < 0)
+						strMod = 0;
+					else if (strMod > 10)
+						strMod = 10;
 
-                    if (dexMod < 0)
-                        dexMod = 0;
-                    else if (dexMod > 10)
-                        dexMod = 10;
+					if (dexMod < 0)
+						dexMod = 0;
+					else if (dexMod > 10)
+						dexMod = 10;
 
-                    if (stmMod > 10)
-                        stmMod = 10;
-                    else if (stmMod < 0)
-                        stmMod = 0;
+					if (stmMod > 10)
+						stmMod = 10;
+					else if (stmMod < 0)
+						stmMod = 0;
 
-                }
-                else if (targeted is Item)
-                {
-                    ((Item)targeted).SendLocalizedMessageTo(from, 500323, ""); // Only living things have anatomies!
-                }
+				}
+				else if (targeted is Item)
+				{
+					((Item)targeted).SendLocalizedMessageTo(from, 500323, ""); // Only living things have anatomies!
+				}
 				*/
-            }
-        }
-    }
+			}
+		}
+	}
 }

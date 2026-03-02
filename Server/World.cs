@@ -5,9 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading;
-
 using CustomsFramework;
-
 using Server.Guilds;
 using Server.Network;
 #endregion
@@ -19,7 +17,7 @@ namespace Server
 		private static Dictionary<Serial, Mobile> m_Mobiles;
 		private static Dictionary<Serial, Item> m_Items;
 		private static Dictionary<CustomSerial, SaveData> _Data;
-		
+
 		private static bool m_Metrics = Config.Get("General.Metrics", false);
 
 		private static bool m_Loading;
@@ -28,12 +26,23 @@ namespace Server
 		private static bool m_Saving;
 		private static readonly ManualResetEvent m_DiskWriteHandle = new ManualResetEvent(true);
 
-		private static Queue<IEntity> _addQueue, _deleteQueue;
-		private static Queue<ICustomsEntity> _CustomsAddQueue, _CustomsDeleteQueue;
+		private static Queue<IEntity> _addQueue,
+			_deleteQueue;
+		private static Queue<ICustomsEntity> _CustomsAddQueue,
+			_CustomsDeleteQueue;
 
-		public static bool Saving { get { return m_Saving; } }
-		public static bool Loaded { get { return m_Loaded; } }
-		public static bool Loading { get { return m_Loading; } }
+		public static bool Saving
+		{
+			get { return m_Saving; }
+		}
+		public static bool Loaded
+		{
+			get { return m_Loaded; }
+		}
+		public static bool Loading
+		{
+			get { return m_Loading; }
+		}
 
 		public static readonly string MobileIndexPath = Path.Combine("Saves/Mobiles/", "Mobiles.idx");
 		public static readonly string MobileTypesPath = Path.Combine("Saves/Mobiles/", "Mobiles.tdb");
@@ -63,11 +72,20 @@ namespace Server
 			m_DiskWriteHandle.WaitOne();
 		}
 
-		public static Dictionary<Serial, Mobile> Mobiles { get { return m_Mobiles; } }
+		public static Dictionary<Serial, Mobile> Mobiles
+		{
+			get { return m_Mobiles; }
+		}
 
-		public static Dictionary<Serial, Item> Items { get { return m_Items; } }
+		public static Dictionary<Serial, Item> Items
+		{
+			get { return m_Items; }
+		}
 
-		public static Dictionary<CustomSerial, SaveData> Data { get { return _Data; } }
+		public static Dictionary<CustomSerial, SaveData> Data
+		{
+			get { return _Data; }
+		}
 
 		public static bool OnDelete(IEntity entity)
 		{
@@ -177,15 +195,30 @@ namespace Server
 			private readonly long m_Position;
 			private readonly int m_Length;
 
-			public BaseGuild Guild { get { return m_Guild; } }
+			public BaseGuild Guild
+			{
+				get { return m_Guild; }
+			}
 
-			public Serial Serial { get { return m_Guild == null ? 0 : m_Guild.Id; } }
+			public Serial Serial
+			{
+				get { return m_Guild == null ? 0 : m_Guild.Id; }
+			}
 
-			public int TypeID { get { return 0; } }
+			public int TypeID
+			{
+				get { return 0; }
+			}
 
-			public long Position { get { return m_Position; } }
+			public long Position
+			{
+				get { return m_Position; }
+			}
 
-			public int Length { get { return m_Length; } }
+			public int Length
+			{
+				get { return m_Length; }
+			}
 
 			public GuildEntry(BaseGuild g, long pos, int length)
 			{
@@ -203,17 +236,35 @@ namespace Server
 			private readonly long m_Position;
 			private readonly int m_Length;
 
-			public Item Item { get { return m_Item; } }
+			public Item Item
+			{
+				get { return m_Item; }
+			}
 
-			public Serial Serial { get { return m_Item == null ? Serial.MinusOne : m_Item.Serial; } }
+			public Serial Serial
+			{
+				get { return m_Item == null ? Serial.MinusOne : m_Item.Serial; }
+			}
 
-			public int TypeID { get { return m_TypeID; } }
+			public int TypeID
+			{
+				get { return m_TypeID; }
+			}
 
-			public string TypeName { get { return m_TypeName; } }
+			public string TypeName
+			{
+				get { return m_TypeName; }
+			}
 
-			public long Position { get { return m_Position; } }
+			public long Position
+			{
+				get { return m_Position; }
+			}
 
-			public int Length { get { return m_Length; } }
+			public int Length
+			{
+				get { return m_Length; }
+			}
 
 			public ItemEntry(Item item, int typeID, string typeName, long pos, int length)
 			{
@@ -233,17 +284,35 @@ namespace Server
 			private readonly long m_Position;
 			private readonly int m_Length;
 
-			public Mobile Mobile { get { return m_Mobile; } }
+			public Mobile Mobile
+			{
+				get { return m_Mobile; }
+			}
 
-			public Serial Serial { get { return m_Mobile == null ? Serial.MinusOne : m_Mobile.Serial; } }
+			public Serial Serial
+			{
+				get { return m_Mobile == null ? Serial.MinusOne : m_Mobile.Serial; }
+			}
 
-			public int TypeID { get { return m_TypeID; } }
+			public int TypeID
+			{
+				get { return m_TypeID; }
+			}
 
-			public string TypeName { get { return m_TypeName; } }
+			public string TypeName
+			{
+				get { return m_TypeName; }
+			}
 
-			public long Position { get { return m_Position; } }
+			public long Position
+			{
+				get { return m_Position; }
+			}
 
-			public int Length { get { return m_Length; } }
+			public int Length
+			{
+				get { return m_Length; }
+			}
 
 			public MobileEntry(Mobile mobile, int typeID, string typeName, long pos, int length)
 			{
@@ -272,20 +341,41 @@ namespace Server
 				_Length = length;
 			}
 
-			public SaveData Data { get { return _Data; } }
-			public CustomSerial Serial { get { return _Data == null ? CustomSerial.MinusOne : _Data.Serial; } }
-			public int TypeID { get { return _TypeID; } }
-			public string TypeName { get { return _TypeName; } }
-			public long Position { get { return _Position; } }
-			public int Length { get { return _Length; } }
+			public SaveData Data
+			{
+				get { return _Data; }
+			}
+			public CustomSerial Serial
+			{
+				get { return _Data == null ? CustomSerial.MinusOne : _Data.Serial; }
+			}
+			public int TypeID
+			{
+				get { return _TypeID; }
+			}
+			public string TypeName
+			{
+				get { return _TypeName; }
+			}
+			public long Position
+			{
+				get { return _Position; }
+			}
+			public int Length
+			{
+				get { return _Length; }
+			}
 		}
 
 		private static string m_LoadingType;
 
-		public static string LoadingType { get { return m_LoadingType; } }
+		public static string LoadingType
+		{
+			get { return m_LoadingType; }
+		}
 
-		private static readonly Type[] m_SerialTypeArray = new Type[1] {typeof(Serial)};
-		private static readonly Type[] _CustomSerialTypeArray = new Type[1] {typeof(CustomSerial)};
+		private static readonly Type[] m_SerialTypeArray = new Type[1] { typeof(Serial) };
+		private static readonly Type[] _CustomSerialTypeArray = new Type[1] { typeof(CustomSerial) };
 
 		private static List<Tuple<ConstructorInfo, string>> ReadTypes(BinaryReader tdbReader)
 		{
@@ -305,9 +395,12 @@ namespace Server
 
 					if (!Core.Service)
 					{
-						Console.WriteLine("Error: Type '{0}' was not found. Delete all of those types? (y/n)", typeName);
+						Console.WriteLine(
+							"Error: Type '{0}' was not found. Delete all of those types? (y/n)",
+							typeName
+						);
 
-                        if (Console.ReadKey(true).Key == ConsoleKey.Y)
+						if (Console.ReadKey(true).Key == ConsoleKey.Y)
 						{
 							types.Add(null);
 							Utility.PushColor(ConsoleColor.Yellow);
@@ -369,7 +462,10 @@ namespace Server
 			_CustomsAddQueue = new Queue<ICustomsEntity>();
 			_CustomsDeleteQueue = new Queue<ICustomsEntity>();
 
-			int mobileCount = 0, itemCount = 0, guildCount = 0, dataCount = 0;
+			int mobileCount = 0,
+				itemCount = 0,
+				guildCount = 0,
+				dataCount = 0;
 
 			var ctorArgs = new object[1];
 
@@ -384,7 +480,9 @@ namespace Server
 				{
 					BinaryReader idxReader = new BinaryReader(idx);
 
-					using (FileStream tdb = new FileStream(MobileTypesPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+					using (
+						FileStream tdb = new FileStream(MobileTypesPath, FileMode.Open, FileAccess.Read, FileShare.Read)
+					)
 					{
 						BinaryReader tdbReader = new BinaryReader(tdb);
 
@@ -417,8 +515,7 @@ namespace Server
 								ctorArgs[0] = (Serial)serial;
 								m = (Mobile)(ctor.Invoke(ctorArgs));
 							}
-							catch
-							{ }
+							catch { }
 
 							if (m != null)
 							{
@@ -444,7 +541,9 @@ namespace Server
 				{
 					BinaryReader idxReader = new BinaryReader(idx);
 
-					using (FileStream tdb = new FileStream(ItemTypesPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+					using (
+						FileStream tdb = new FileStream(ItemTypesPath, FileMode.Open, FileAccess.Read, FileShare.Read)
+					)
 					{
 						BinaryReader tdbReader = new BinaryReader(tdb);
 
@@ -477,8 +576,7 @@ namespace Server
 								ctorArgs[0] = (Serial)serial;
 								item = (Item)(ctor.Invoke(ctorArgs));
 							}
-							catch
-							{ }
+							catch { }
 
 							if (item != null)
 							{
@@ -529,11 +627,25 @@ namespace Server
 
 			if (File.Exists(DataIndexPath) && File.Exists(DataTypesPath))
 			{
-				using (FileStream indexStream = new FileStream(DataIndexPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+				using (
+					FileStream indexStream = new FileStream(
+						DataIndexPath,
+						FileMode.Open,
+						FileAccess.Read,
+						FileShare.Read
+					)
+				)
 				{
 					BinaryReader indexReader = new BinaryReader(indexStream);
 
-					using (FileStream typeStream = new FileStream(DataTypesPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+					using (
+						FileStream typeStream = new FileStream(
+							DataTypesPath,
+							FileMode.Open,
+							FileAccess.Read,
+							FileShare.Read
+						)
+					)
 					{
 						BinaryReader typeReader = new BinaryReader(typeStream);
 
@@ -590,7 +702,10 @@ namespace Server
 				_Data = new Dictionary<CustomSerial, SaveData>();
 			}
 
-			bool failedMobiles = false, failedItems = false, failedGuilds = false, failedData = false;
+			bool failedMobiles = false,
+				failedItems = false,
+				failedGuilds = false,
+				failedData = false;
 			Type failedType = null;
 			Serial failedSerial = Serial.Zero;
 			CustomSerial failedCustomSerial = CustomSerial.Zero;
@@ -663,7 +778,9 @@ namespace Server
 
 								if (reader.Position != (entry.Position + entry.Length))
 								{
-									throw new Exception(String.Format("***** Bad serialize on {0} *****", item.GetType()));
+									throw new Exception(
+										String.Format("***** Bad serialize on {0} *****", item.GetType())
+									);
 								}
 							}
 							catch (Exception e)
@@ -732,7 +849,9 @@ namespace Server
 
 			if (!failedMobiles && !failedItems && !failedGuilds && File.Exists(DataBinaryPath))
 			{
-				using (FileStream stream = new FileStream(DataBinaryPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+				using (
+					FileStream stream = new FileStream(DataBinaryPath, FileMode.Open, FileAccess.Read, FileShare.Read)
+				)
 				{
 					BinaryFileReader reader = new BinaryFileReader(new BinaryReader(stream));
 
@@ -752,7 +871,9 @@ namespace Server
 
 								if (reader.Position != (entry.Position + entry.Length))
 								{
-									throw new Exception(String.Format("***** Bad serialize on {0} *****", saveData.GetType()));
+									throw new Exception(
+										String.Format("***** Bad serialize on {0} *****", saveData.GetType())
+									);
 								}
 							}
 							catch (Exception error)
@@ -795,17 +916,17 @@ namespace Server
 				{
 					Console.WriteLine("Delete the object? (y/n)");
 
-                    if (Console.ReadKey(true).Key == ConsoleKey.Y)
+					if (Console.ReadKey(true).Key == ConsoleKey.Y)
 					{
 						if (failedType != typeof(BaseGuild))
 						{
 							Console.WriteLine("Delete all objects of that type? (y/n)");
 
-                            if (Console.ReadKey(true).Key == ConsoleKey.Y)
+							if (Console.ReadKey(true).Key == ConsoleKey.Y)
 							{
 								if (failedMobiles)
 								{
-									for (int i = 0; i < mobiles.Count;)
+									for (int i = 0; i < mobiles.Count; )
 									{
 										if (mobiles[i].TypeID == failedTypeID)
 										{
@@ -819,7 +940,7 @@ namespace Server
 								}
 								else if (failedItems)
 								{
-									for (int i = 0; i < items.Count;)
+									for (int i = 0; i < items.Count; )
 									{
 										if (items[i].TypeID == failedTypeID)
 										{
@@ -833,7 +954,7 @@ namespace Server
 								}
 								else if (failedData)
 								{
-									for (int i = 0; i < data.Count;)
+									for (int i = 0; i < data.Count; )
 									{
 										if (data[i].TypeID == failedTypeID)
 										{
@@ -854,7 +975,9 @@ namespace Server
 						SaveIndex(DataIndexPath, data);
 					}
 
-					Console.WriteLine("After pressing return an exception will be thrown and the server will terminate.");
+					Console.WriteLine(
+						"After pressing return an exception will be thrown and the server will terminate."
+					);
 					Console.ReadLine();
 				}
 				else
@@ -872,8 +995,10 @@ namespace Server
 						failedGuilds,
 						failedData,
 						failedType,
-						(failedSerial != Serial.Zero ? failedSerial.ToString() : failedCustomSerial.ToString())),
-					failed);
+						(failedSerial != Serial.Zero ? failedSerial.ToString() : failedCustomSerial.ToString())
+					),
+					failed
+				);
 			}
 
 			EventSink.InvokeWorldLoad();
@@ -913,7 +1038,8 @@ namespace Server
 				watch.Elapsed.TotalSeconds,
 				m_Items.Count,
 				m_Mobiles.Count,
-				_Data.Count);
+				_Data.Count
+			);
 			Utility.PopColor();
 		}
 
@@ -988,26 +1114,28 @@ namespace Server
 
 		private static void AppendSafetyLog(string action, ICustomsEntity entity)
 		{
-			string message =
-				String.Format(
-					"Warning: Attempted to {1} {2} during world save." + "{0}This action could cause inconsistent state." +
-					"{0}It is strongly advised that the offending scripts be corrected.",
-					Environment.NewLine,
-					action,
-					entity);
+			string message = String.Format(
+				"Warning: Attempted to {1} {2} during world save."
+					+ "{0}This action could cause inconsistent state."
+					+ "{0}It is strongly advised that the offending scripts be corrected.",
+				Environment.NewLine,
+				action,
+				entity
+			);
 
 			AppendSafetyLog(message);
 		}
 
 		private static void AppendSafetyLog(string action, IEntity entity)
 		{
-			string message =
-				String.Format(
-					"Warning: Attempted to {1} {2} during world save." + "{0}This action could cause inconsistent state." +
-					"{0}It is strongly advised that the offending scripts be corrected.",
-					Environment.NewLine,
-					action,
-					entity);
+			string message = String.Format(
+				"Warning: Attempted to {1} {2} during world save."
+					+ "{0}This action could cause inconsistent state."
+					+ "{0}It is strongly advised that the offending scripts be corrected.",
+				Environment.NewLine,
+				action,
+				entity
+			);
 
 			AppendSafetyLog(message);
 		}
@@ -1025,11 +1153,11 @@ namespace Server
 					op.WriteLine();
 				}
 			}
-			catch
-			{ }
+			catch { }
 		}
 
-		private static void SaveIndex<T>(List<T> list, string path) where T : IEntityEntry
+		private static void SaveIndex<T>(List<T> list, string path)
+			where T : IEntityEntry
 		{
 			if (!Directory.Exists("Saves/Mobiles/"))
 			{
@@ -1066,7 +1194,8 @@ namespace Server
 			}
 		}
 
-		private static void SaveIndex<T>(string path, List<T> list) where T : ICustomsEntry
+		private static void SaveIndex<T>(string path, List<T> list)
+			where T : ICustomsEntry
 		{
 			if (!Directory.Exists("Saves/Customs/"))
 			{
@@ -1106,8 +1235,8 @@ namespace Server
 			{
 				return;
 			}
-            
-            ++m_Saves;
+
+			++m_Saves;
 
 			NetState.FlushAll();
 			NetState.Pause();
@@ -1147,14 +1276,14 @@ namespace Server
 				Directory.CreateDirectory("Saves/Customs/");
 			}
 
-            try
-            {
-                EventSink.InvokeBeforeWorldSave(new BeforeWorldSaveEventArgs());
-            }
-            catch (Exception e)
-            {
-                throw new Exception("FATAL: Exception in EventSink.BeforeWorldSave", e);
-            }
+			try
+			{
+				EventSink.InvokeBeforeWorldSave(new BeforeWorldSaveEventArgs());
+			}
+			catch (Exception e)
+			{
+				throw new Exception("FATAL: Exception in EventSink.BeforeWorldSave", e);
+			}
 
 			if (m_Metrics)
 			{
@@ -1171,9 +1300,9 @@ namespace Server
 				EventSink.InvokeWorldSave(new WorldSaveEventArgs(message));
 			}
 			catch (Exception e)
-            {
-                throw new Exception("FATAL: Exception in EventSink.WorldSave", e);
-            }
+			{
+				throw new Exception("FATAL: Exception in EventSink.WorldSave", e);
+			}
 
 			watch.Stop();
 
@@ -1193,20 +1322,26 @@ namespace Server
 
 			if (message)
 			{
-				Broadcast(0x35, true, AccessLevel.Counselor, "World save done in {0:F1} seconds.", watch.Elapsed.TotalSeconds);
+				Broadcast(
+					0x35,
+					true,
+					AccessLevel.Counselor,
+					"World save done in {0:F1} seconds.",
+					watch.Elapsed.TotalSeconds
+				);
 			}
 
 			NetState.Resume();
 
-            try
-            {
-                EventSink.InvokeAfterWorldSave(new AfterWorldSaveEventArgs());
-            }
-            catch (Exception e)
-            {
-                throw new Exception("FATAL: Exception in EventSink.AfterWorldSave", e);
-            }
-        }
+			try
+			{
+				EventSink.InvokeAfterWorldSave(new AfterWorldSaveEventArgs());
+			}
+			catch (Exception e)
+			{
+				throw new Exception("FATAL: Exception in EventSink.AfterWorldSave", e);
+			}
+		}
 
 		internal static List<Type> m_ItemTypes = new List<Type>();
 		internal static List<Type> m_MobileTypes = new List<Type>();

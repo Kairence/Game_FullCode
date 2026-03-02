@@ -4,86 +4,80 @@ using Server.Mobiles;
 
 namespace Server.Engines.Quests.Samurai
 {
-    public class HonorCandle : CandleLong
-    {
-        private static readonly TimeSpan LitDuration = TimeSpan.FromSeconds(20.0);
-        [Constructable]
-        public HonorCandle()
-        {
-            this.Movable = false;
-            this.Duration = LitDuration;
-        }
+	public class HonorCandle : CandleLong
+	{
+		private static readonly TimeSpan LitDuration = TimeSpan.FromSeconds(20.0);
 
-        public HonorCandle(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public HonorCandle()
+		{
+			this.Movable = false;
+			this.Duration = LitDuration;
+		}
 
-        public override int LitSound
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override int UnlitSound
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override void OnDoubleClick(Mobile from)
-        {
-            bool wasBurning = this.Burning;
+		public HonorCandle(Serial serial)
+			: base(serial) { }
 
-            base.OnDoubleClick(from);
+		public override int LitSound
+		{
+			get { return 0; }
+		}
+		public override int UnlitSound
+		{
+			get { return 0; }
+		}
 
-            if (!wasBurning && this.Burning)
-            {
-                PlayerMobile player = from as PlayerMobile;
+		public override void OnDoubleClick(Mobile from)
+		{
+			bool wasBurning = this.Burning;
 
-                if (player == null)
-                    return;
+			base.OnDoubleClick(from);
 
-                QuestSystem qs = player.Quest;
+			if (!wasBurning && this.Burning)
+			{
+				PlayerMobile player = from as PlayerMobile;
 
-                if (qs != null && qs is HaochisTrialsQuest)
-                {
-                    QuestObjective obj = qs.FindObjective(typeof(SixthTrialIntroObjective));
+				if (player == null)
+					return;
 
-                    if (obj != null && !obj.Completed)
-                        obj.Complete();
+				QuestSystem qs = player.Quest;
 
-                    this.SendLocalizedMessageTo(from, 1063251); // You light a candle in honor.
-                }
-            }
-        }
+				if (qs != null && qs is HaochisTrialsQuest)
+				{
+					QuestObjective obj = qs.FindObjective(typeof(SixthTrialIntroObjective));
 
-        public override void Burn()
-        {
-            this.Douse();
-        }
+					if (obj != null && !obj.Completed)
+						obj.Complete();
 
-        public override void Douse()
-        {
-            base.Douse();
+					this.SendLocalizedMessageTo(from, 1063251); // You light a candle in honor.
+				}
+			}
+		}
 
-            this.Duration = LitDuration;
-        }
+		public override void Burn()
+		{
+			this.Douse();
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Douse()
+		{
+			base.Douse();
 
-            writer.WriteEncodedInt(0); // version
-        }
+			this.Duration = LitDuration;
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

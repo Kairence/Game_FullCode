@@ -1,21 +1,23 @@
 using System;
 using Server;
 using Server.Items;
-using Server.Network;
 using Server.Mobiles;
+using Server.Network;
 using Server.Targeting;
 
 namespace Server.Gumps
 {
 	public class PointQuestGump : Gump
 	{
-		string[] QuestName = { "¼ö¼Û", "È£À§", "ÀÚ¿ø", "Á¦ÀÛ", "»ç³É" };
-		public PointQuestGump( PlayerMobile pm, int list ) : base( 0, 0 )
+		string[] QuestName = { "ï¿½ï¿½ï¿½ï¿½", "È£ï¿½ï¿½", "ï¿½Ú¿ï¿½", "ï¿½ï¿½ï¿½ï¿½", "ï¿½ï¿½ï¿½" };
+
+		public PointQuestGump(PlayerMobile pm, int list)
+			: base(0, 0)
 		{
-			this.Closable=true;
-			this.Disposable=true;
-			this.Dragable=true;
-			this.Resizable=false;
+			this.Closable = true;
+			this.Disposable = true;
+			this.Dragable = true;
+			this.Resizable = false;
 
 			this.AddPage(0);
 			this.AddBackground(0, 0, 300, 170, 5170);
@@ -32,7 +34,7 @@ namespace Server.Gumps
 			//	this.AddButton(90, 110, 2061, 2062, 2, GumpButtonType.Reply, 0);
 			//	this.AddLabel(104, 108, 0, @"Reward");
 			//}
-		}		
+		}
 		/*
 		
 		public override void OnResponse( NetState state, RelayInfo info )
@@ -44,12 +46,12 @@ namespace Server.Gumps
 			Event ev = new Event();
 			if(ev.ServerEvent == 2 )
 				Event = 110;
-       			if (m_from != null && m_InscriptionBodParent != null)
+				   if (m_from != null && m_InscriptionBodParent != null)
 			{
 				if ( info.ButtonID == 1 )
 				{
-					m_from.SendMessage("Ãß°¡ÇÒ ¾ÆÀÌÅÛÀ» Å¬¸¯ÇÏ¼¼¿ä.");
-       	        			m_from.Target = new InscriptionItemedTarget(m_InscriptionBodParent);
+					m_from.SendMessage("ï¿½ß°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½.");
+							   m_from.Target = new InscriptionItemedTarget(m_InscriptionBodParent);
 				}
 				if ( info.ButtonID == 2 )
 				{
@@ -57,12 +59,12 @@ namespace Server.Gumps
 					{
 						if ( pm.InscriptionPoint + (int)( m_InscriptionBodParent.Reward * ( 1 + m_from.Skills.ItemID.Value / 200 * Event ) / 100 ) <= 4000000000 )
 						{
-							m_from.SendMessage( 0x40, "ÈÇ¸¢ÇÏ±º¿ä! ÀÎ½ºÅ©¸³¼Ç ÄÚÀÎÀ» Ãß°¡·Î {0} ´õ µå¸®°Ú¾î¿ä!", (int)( m_InscriptionBodParent.Reward * ( 1 + m_from.Skills.ItemID.Value / 200 * Event ) / 100 ) );
-	                    				pm.InscriptionPoint += (int)( m_InscriptionBodParent.Reward * ( 1 + m_from.Skills.ItemID.Value / 20 * Event ) / 100 );
+							m_from.SendMessage( 0x40, "ï¿½Ç¸ï¿½ï¿½Ï±ï¿½ï¿½ï¿½! ï¿½Î½ï¿½Å©ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ {0} ï¿½ï¿½ ï¿½å¸®ï¿½Ú¾ï¿½ï¿½!", (int)( m_InscriptionBodParent.Reward * ( 1 + m_from.Skills.ItemID.Value / 200 * Event ) / 100 ) );
+										pm.InscriptionPoint += (int)( m_InscriptionBodParent.Reward * ( 1 + m_from.Skills.ItemID.Value / 20 * Event ) / 100 );
 						}
 						else
 						{
-							m_from.SendMessage("ÀÎ½ºÅ©¸³¼Ç ÄÚÀÎ ÀúÀå·®ÀÌ ³Ê¹« ¸¹¾Æ ÀºÇàÀ¸·Î ¼Û±ÝµË´Ï´Ù.");
+							m_from.SendMessage("ï¿½Î½ï¿½Å©ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½å·®ï¿½ï¿½ ï¿½Ê¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Û±ÝµË´Ï´ï¿½.");
 							m_from.BankBox.DropItem(new Inscriptioncoins((int)( m_InscriptionBodParent.Reward * ( 1 + m_from.Skills.ItemID.Value / 200 * Event ) / 100 )));
 						}
 					}
@@ -70,23 +72,23 @@ namespace Server.Gumps
 					{
 						if ( pm.InscriptionPoint + m_InscriptionBodParent.Reward <= 4000000000 )
 						{
-							m_from.SendMessage("ÀÎ½ºÅ©¸³¼Ç ÄÚÀÎÀÌ {0} Àû¸³µË´Ï´Ù.", (int)( ( m_InscriptionBodParent.Reward * Event ) / 100 ) );
-        	            				pm.InscriptionPoint += ( m_InscriptionBodParent.Reward * Event ) / 100;
+							m_from.SendMessage("ï¿½Î½ï¿½Å©ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ {0} ï¿½ï¿½ï¿½ï¿½ï¿½Ë´Ï´ï¿½.", (int)( ( m_InscriptionBodParent.Reward * Event ) / 100 ) );
+										pm.InscriptionPoint += ( m_InscriptionBodParent.Reward * Event ) / 100;
 						}
 						else
 						{
-							m_from.SendMessage("ÀÎ½ºÅ©¸³¼Ç ÄÚÀÎ ÀúÀå·®ÀÌ ³Ê¹« ¸¹¾Æ ÀºÇàÀ¸·Î ¼Û±ÝµË´Ï´Ù.");
+							m_from.SendMessage("ï¿½Î½ï¿½Å©ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½å·®ï¿½ï¿½ ï¿½Ê¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Û±ÝµË´Ï´ï¿½.");
 							m_from.BankBox.DropItem(new Inscriptioncoins((int)( ( m_InscriptionBodParent.Reward * Event ) / 100 )));
 						}
 					}
 				m_from.AddToBackpack(new Gold(m_InscriptionBodParent.Reward));
-       	        		m_InscriptionBodParent.Delete();
+						   m_InscriptionBodParent.Delete();
 				}
 			}
 		}
 		*/
 	}
-	
+
 	/*
 	public class InscriptionItemedTarget : Target
 	{
@@ -99,30 +101,30 @@ namespace Server.Gumps
 		
 		protected override void OnTarget( Mobile from, object target )
 		{
-            		if (m_InscriptionBodParent == null || from == null || target == null || m_InscriptionBodParent.Item == null)
-           		{
-                		Console.WriteLine( "InscriptionBod: Sa bug !! Mais o? on sait pas :p" );
-                		return;
-            		}
+					if (m_InscriptionBodParent == null || from == null || target == null || m_InscriptionBodParent.Item == null)
+				   {
+						Console.WriteLine( "InscriptionBod: Sa bug !! Mais o? on sait pas :p" );
+						return;
+					}
 
 			if ( target == from && m_InscriptionBodParent.AmountItemed == 0 )
 			{
-				from.SendMessage("Äù½ºÆ®¸¦ Æ÷±âÇß½À´Ï´Ù.");
+				from.SendMessage("ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.");
 				m_InscriptionBodParent.AmountItemed = 0;
 				m_InscriptionBodParent.AmountToItem = 0;
 				m_InscriptionBodParent.Reward = 1000;
 			}
 
-            		if (target is Item)
+					if (target is Item)
 			{
-                		Item Itemed = (Item)target;
+						Item Itemed = (Item)target;
 
-                      		if (Itemed.GetType() == ProductBodType.Inscription[m_InscriptionBodParent.Item].Type)
+							  if (Itemed.GetType() == ProductBodType.Inscription[m_InscriptionBodParent.Item].Type)
 				{
-               				 m_InscriptionBodParent.AmountItemed += 1;
-                			Itemed.Delete();
+								m_InscriptionBodParent.AmountItemed += 1;
+							Itemed.Delete();
 					if ( m_InscriptionBodParent.AmountItemed < m_InscriptionBodParent.AmountToItem )
-       	        			from.Target = new InscriptionItemedTarget(m_InscriptionBodParent);
+							   from.Target = new InscriptionItemedTarget(m_InscriptionBodParent);
 				}
 				else
 				{

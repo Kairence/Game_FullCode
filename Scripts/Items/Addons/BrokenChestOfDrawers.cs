@@ -2,117 +2,100 @@ using System;
 
 namespace Server.Items
 {
-    [Flipable(0xC24, 0xC25)]
-    public class BrokenChestOfDrawersComponent : AddonComponent
-    {
-        public BrokenChestOfDrawersComponent()
-            : base(0xC24)
-        {
-        }
+	[Flipable(0xC24, 0xC25)]
+	public class BrokenChestOfDrawersComponent : AddonComponent
+	{
+		public BrokenChestOfDrawersComponent()
+			: base(0xC24) { }
 
-        public BrokenChestOfDrawersComponent(Serial serial)
-            : base(serial)
-        {
-        }
+		public BrokenChestOfDrawersComponent(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1076261;
-            }
-        }// Broken Chest of Drawers
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int LabelNumber
+		{
+			get { return 1076261; }
+		} // Broken Chest of Drawers
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class BrokenChestOfDrawersAddon : BaseAddon
-    {
-        [Constructable]
-        public BrokenChestOfDrawersAddon()
-            : base()
-        {
-            this.AddComponent(new BrokenChestOfDrawersComponent(), 0, 0, 0);
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public BrokenChestOfDrawersAddon(Serial serial)
-            : base(serial)
-        {
-        }
+	public class BrokenChestOfDrawersAddon : BaseAddon
+	{
+		[Constructable]
+		public BrokenChestOfDrawersAddon()
+			: base()
+		{
+			this.AddComponent(new BrokenChestOfDrawersComponent(), 0, 0, 0);
+		}
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new BrokenChestOfDrawersDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public BrokenChestOfDrawersAddon(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override BaseAddonDeed Deed
+		{
+			get { return new BrokenChestOfDrawersDeed(); }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
 
-    public class BrokenChestOfDrawersDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public BrokenChestOfDrawersDeed()
-            : base()
-        {
-            this.LootType = LootType.Blessed;
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public BrokenChestOfDrawersDeed(Serial serial)
-            : base(serial)
-        {
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new BrokenChestOfDrawersAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1076261;
-            }
-        }// Broken Chest of Drawers
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+	public class BrokenChestOfDrawersDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public BrokenChestOfDrawersDeed()
+			: base()
+		{
+			this.LootType = LootType.Blessed;
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public BrokenChestOfDrawersDeed(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override BaseAddon Addon
+		{
+			get { return new BrokenChestOfDrawersAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1076261; }
+		} // Broken Chest of Drawers
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

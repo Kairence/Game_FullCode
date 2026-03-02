@@ -8,11 +8,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Server;
 using Server.Gumps;
 using Server.Network;
-
 using Services.Toolbar.Core;
 #endregion
 
@@ -20,11 +18,11 @@ namespace Services.Toolbar.Gumps
 {
 	public class ToolbarEdit : Gump
 	{
-		public static string HTML =
-			String.Format(
-				"<center><u>Command Toolbar v{0}</u><br>Made by Joeku AKA Demortris<br>{1}<br>- Customized for ServUO -</center><br>   This toolbar is extremely versatile. You can switch skins and increase or decrease columns or rows. The toolbar operates like a spreadsheet; you can use the navigation menu to scroll through different commands and bind them. Enjoy!<br><p>If you have questions, concerns, or bug reports, please <A HREF=\"mailto:demortris@adelphia.net\">e-mail me</A>.",
-				ToolbarCore.SystemVersion,
-				ToolbarCore.ReleaseDate);
+		public static string HTML = String.Format(
+			"<center><u>Command Toolbar v{0}</u><br>Made by Joeku AKA Demortris<br>{1}<br>- Customized for ServUO -</center><br>   This toolbar is extremely versatile. You can switch skins and increase or decrease columns or rows. The toolbar operates like a spreadsheet; you can use the navigation menu to scroll through different commands and bind them. Enjoy!<br><p>If you have questions, concerns, or bug reports, please <A HREF=\"mailto:demortris@adelphia.net\">e-mail me</A>.",
+			ToolbarCore.SystemVersion,
+			ToolbarCore.ReleaseDate
+		);
 
 		private readonly bool _Expanded;
 		private readonly int _ExpandedInt;
@@ -33,8 +31,7 @@ namespace Services.Toolbar.Gumps
 		private List<TextRelay> _TextRelays;
 
 		public ToolbarEdit(ToolbarInfo info)
-			: this(info, false)
-		{ }
+			: this(info, false) { }
 
 		public ToolbarEdit(ToolbarInfo info, bool expanded)
 			: base(0, 28)
@@ -61,117 +58,120 @@ namespace Services.Toolbar.Gumps
 				case 0:
 					break;
 				case 1:
-					{
-						_Info.Skin++;
-						m.SendGump(new ToolbarEdit(_Info, _Expanded));
-						break;
-					}
+				{
+					_Info.Skin++;
+					m.SendGump(new ToolbarEdit(_Info, _Expanded));
+					break;
+				}
 				case 2:
-					{
-						_Info.Skin--;
-						m.SendGump(new ToolbarEdit(_Info, _Expanded));
-						break;
-					}
+				{
+					_Info.Skin--;
+					m.SendGump(new ToolbarEdit(_Info, _Expanded));
+					break;
+				}
 				case 3:
-					{
-						_Info.Rows++;
-						m.SendGump(new ToolbarEdit(_Info, _Expanded));
-						break;
-					}
+				{
+					_Info.Rows++;
+					m.SendGump(new ToolbarEdit(_Info, _Expanded));
+					break;
+				}
 				case 4:
-					{
-						_Info.Rows--;
-						m.SendGump(new ToolbarEdit(_Info, _Expanded));
-						break;
-					}
+				{
+					_Info.Rows--;
+					m.SendGump(new ToolbarEdit(_Info, _Expanded));
+					break;
+				}
 				case 5:
-					{
-						_Info.Collumns++;
-						m.SendGump(new ToolbarEdit(_Info, _Expanded));
-						break;
-					}
+				{
+					_Info.Collumns++;
+					m.SendGump(new ToolbarEdit(_Info, _Expanded));
+					break;
+				}
 				case 6:
-					{
-						_Info.Collumns--;
-						m.SendGump(new ToolbarEdit(_Info, _Expanded));
-						break;
-					}
+				{
+					_Info.Collumns--;
+					m.SendGump(new ToolbarEdit(_Info, _Expanded));
+					break;
+				}
 				case 9: // Default
-					{
-						var toolbarinfo = ToolbarInfo.DefaultEntries(m.AccessLevel);
-						CombineEntries(toolbarinfo);
-						toolbarinfo.AddRange(AnalyzeEntries(toolbarinfo.Count));
-						_Info.Entries = toolbarinfo;
-						m.SendGump(new ToolbarEdit(_Info, _Expanded));
-						break;
-					}
+				{
+					var toolbarinfo = ToolbarInfo.DefaultEntries(m.AccessLevel);
+					CombineEntries(toolbarinfo);
+					toolbarinfo.AddRange(AnalyzeEntries(toolbarinfo.Count));
+					_Info.Entries = toolbarinfo;
+					m.SendGump(new ToolbarEdit(_Info, _Expanded));
+					break;
+				}
 				case 10: // Okay
 					goto case 12;
 				case 11: // Cancel
 					goto case 0;
 				case 12: // Apply
+				{
+					ToolbarModule module = m.GetModule(typeof(ToolbarModule)) as ToolbarModule ?? new ToolbarModule(m);
+
+					module.ToolbarInfo.Entries = AnalyzeEntries();
+
+					module.ToolbarInfo.Phantom = info.IsSwitched(21);
+					module.ToolbarInfo.Stealth = info.IsSwitched(23);
+					module.ToolbarInfo.Reverse = info.IsSwitched(25);
+					module.ToolbarInfo.Lock = info.IsSwitched(27);
+
+					if (info.ButtonID == 12)
 					{
-						ToolbarModule module = m.GetModule(typeof(ToolbarModule)) as ToolbarModule ?? new ToolbarModule(m);
-
-						module.ToolbarInfo.Entries = AnalyzeEntries();
-						
-						module.ToolbarInfo.Phantom = info.IsSwitched(21);
-						module.ToolbarInfo.Stealth = info.IsSwitched(23);
-						module.ToolbarInfo.Reverse = info.IsSwitched(25);
-						module.ToolbarInfo.Lock = info.IsSwitched(27);
-
-						if (info.ButtonID == 12)
-						{
-							m.SendGump(new ToolbarEdit(_Info, _Expanded));
-						}
-
-						m.CloseGump(typeof(ToolbarGump));
-						m.SendGump(new ToolbarGump(module.ToolbarInfo, m));
-
-						break;
+						m.SendGump(new ToolbarEdit(_Info, _Expanded));
 					}
+
+					m.CloseGump(typeof(ToolbarGump));
+					m.SendGump(new ToolbarGump(module.ToolbarInfo, m));
+
+					break;
+				}
 				case 18:
-					{
-						_Info.Font++;
-						m.SendGump(new ToolbarEdit(_Info, _Expanded));
-						break;
-					}
+				{
+					_Info.Font++;
+					m.SendGump(new ToolbarEdit(_Info, _Expanded));
+					break;
+				}
 				case 19:
-					{
-						_Info.Font--;
-						m.SendGump(new ToolbarEdit(_Info, _Expanded));
-						break;
-					}
+				{
+					_Info.Font--;
+					m.SendGump(new ToolbarEdit(_Info, _Expanded));
+					break;
+				}
 				case 20:
-					{
-						m.SendGump(new ToolbarEdit(_Info, _Expanded));
-						m.SendMessage(2101, "Phantom mode turns the toolbar semi-transparent.");
-						break;
-					}
+				{
+					m.SendGump(new ToolbarEdit(_Info, _Expanded));
+					m.SendMessage(2101, "Phantom mode turns the toolbar semi-transparent.");
+					break;
+				}
 				case 22:
-					{
-						m.SendGump(new ToolbarEdit(_Info, _Expanded));
-						m.SendMessage(2101, "Stealth mode makes the toolbar automatically minimize when you click a button.");
-						break;
-					}
+				{
+					m.SendGump(new ToolbarEdit(_Info, _Expanded));
+					m.SendMessage(
+						2101,
+						"Stealth mode makes the toolbar automatically minimize when you click a button."
+					);
+					break;
+				}
 				case 24:
-					{
-						m.SendGump(new ToolbarEdit(_Info, _Expanded));
-						m.SendMessage(2101, "Reverse mode puts the minimize bar above the toolbar instead of below.");
-						break;
-					}
+				{
+					m.SendGump(new ToolbarEdit(_Info, _Expanded));
+					m.SendMessage(2101, "Reverse mode puts the minimize bar above the toolbar instead of below.");
+					break;
+				}
 				case 26:
-					{
-						m.SendGump(new ToolbarEdit(_Info, _Expanded));
-						m.SendMessage(2101, "Lock mode disables closing the toolbar with right-click.");
-						break;
-					}
+				{
+					m.SendGump(new ToolbarEdit(_Info, _Expanded));
+					m.SendMessage(2101, "Lock mode disables closing the toolbar with right-click.");
+					break;
+				}
 				case 28: // Expand
-					{
-						m.SendGump(new ToolbarEdit(_Info, !_Expanded));
-						m.SendMessage(2101, "Expanded view {0}activated.", _Expanded ? "de" : "");
-						break;
-					}
+				{
+					m.SendGump(new ToolbarEdit(_Info, !_Expanded));
+					m.SendMessage(2101, "Expanded view {0}activated.", _Expanded ? "de" : "");
+					break;
+				}
 			}
 		}
 
@@ -186,7 +186,7 @@ namespace Services.Toolbar.Gumps
 		public void CombineEntries(List<string> list)
 		{
 			string temp;
-			
+
 			for (int i = 0; i < list.Count; i++)
 			{
 				if (list[i] == "-*UNUSED*-" && (temp = GetEntry(i + 13, this).Text) != "")
@@ -209,7 +209,7 @@ namespace Services.Toolbar.Gumps
 			var list = new List<string>();
 
 			string temp;
-			
+
 			for (int j = i; j < 135; j++)
 			{
 				list.Add((temp = GetEntry(j + 13, this).Text) == "" ? "-*UNUSED*-" : temp);
@@ -294,7 +294,15 @@ namespace Services.Toolbar.Gumps
 				AddButton(359, 71, 2437, 2438, 6, GumpButtonType.Reply, 0);
 			}
 
-			AddHtml(276, 87, 100, 20, String.Format("{0}Font - {1}", GumpIDs.Fonts[_Info.Font], _Info.Font + 1), false, false);
+			AddHtml(
+				276,
+				87,
+				100,
+				20,
+				String.Format("{0}Font - {1}", GumpIDs.Fonts[_Info.Font], _Info.Font + 1),
+				false,
+				false
+			);
 
 			if (_Info.Font < GumpIDs.Fonts.Length - 1)
 			{
@@ -353,9 +361,12 @@ namespace Services.Toolbar.Gumps
 			const int buffer = 2;
 
 			// CALC
-			int entryX = _ExpandedInt * 149, entryY = _ExpandedInt * 20;
-			int bgX = 10 + 4 + (buffer * 3) + (entryX * 3), bgY = 10 + 8 + (entryY * 5);
-			int divX = bgX - 10, divY = bgY - 10;
+			int entryX = _ExpandedInt * 149,
+				entryY = _ExpandedInt * 20;
+			int bgX = 10 + 4 + (buffer * 3) + (entryX * 3),
+				bgY = 10 + 8 + (entryY * 5);
+			int divX = bgX - 10,
+				divY = bgY - 10;
 			// ENDCALC
 
 			AddBackground(0, 120, 33 + bgX, 32 + bgY, 9200);
@@ -374,12 +385,13 @@ namespace Services.Toolbar.Gumps
 				AddImageTiled(38, 155 + (n * (entryY + 2)), divX, 2, 10001);
 			}
 
-			int start = -3, temp;
+			int start = -3,
+				temp;
 
 			for (int i = 1; i <= 9; i++)
 			{
 				start += 3;
-				
+
 				switch (i)
 				{
 					case 4:
@@ -413,13 +425,14 @@ namespace Services.Toolbar.Gumps
 						20,
 						String.Format("<center>Column {0}</center>", (j + 1) + CalculateColumns(i)),
 						false,
-						false);
+						false
+					);
 				}
 
 				AddHtml(2, 128, 30, 20, "<center>Row</center>", false, false);
 
 				int tempInt = 0;
-				
+
 				if (_Expanded)
 				{
 					tempInt = 11;
@@ -435,7 +448,8 @@ namespace Services.Toolbar.Gumps
 						20,
 						String.Format("<center>{0}</center>", (k + 1) + CalculateRows(i)),
 						false,
-						false);
+						false
+					);
 				}
 
 				// Add command entries
@@ -448,7 +462,8 @@ namespace Services.Toolbar.Gumps
 						entryY,
 						2101,
 						temp + 13,
-						_Info.Entries[temp] /*,int size*/);
+						_Info.Entries[temp] /*,int size*/
+					);
 
 					if (l % 3 == 2)
 					{
@@ -465,8 +480,11 @@ namespace Services.Toolbar.Gumps
 		/// </summary>
 		public void CalculatePages(int i)
 		{
-			int up = 0, down = 0, left = 0, right = 0;
-			
+			int up = 0,
+				down = 0,
+				left = 0,
+				right = 0;
+
 			switch (i)
 			{
 				case 1:
@@ -571,12 +589,12 @@ namespace Services.Toolbar.Gumps
 			{
 				return 0;
 			}
-			
+
 			if (i >= 4 && i <= 6)
 			{
 				return 5;
 			}
-			
+
 			return 10;
 		}
 	}

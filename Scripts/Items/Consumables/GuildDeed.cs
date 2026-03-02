@@ -5,143 +5,140 @@ using Server.Prompts;
 
 namespace Server.Items
 {
-    public class GuildDeed : Item
-    {
-        [Constructable]
-        public GuildDeed()
-            : base(0x14F0)
-        {
-            this.Weight = 1.0;
-        }
+	public class GuildDeed : Item
+	{
+		[Constructable]
+		public GuildDeed()
+			: base(0x14F0)
+		{
+			this.Weight = 1.0;
+		}
 
-        public GuildDeed(Serial serial)
-            : base(serial)
-        {
-        }
+		public GuildDeed(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1041055;
-            }
-        }// a guild deed
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int LabelNumber
+		{
+			get { return 1041055; }
+		} // a guild deed
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            if (this.Weight == 0.0)
-                this.Weight = 1.0;
-        }
+			int version = reader.ReadInt();
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (Guild.NewGuildSystem)
-                return;
+			if (this.Weight == 0.0)
+				this.Weight = 1.0;
+		}
 
-            if (!this.IsChildOf(from.Backpack))
-            {
-                from.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
-            }
-            else if (from.Guild != null)
-            {
-                from.SendLocalizedMessage(501137); // You must resign from your current guild before founding another!
-            }
-            else
-            {
-                BaseHouse house = BaseHouse.FindHouseAt(from);
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (Guild.NewGuildSystem)
+				return;
 
-                if (house == null)
-                {
-                    from.SendLocalizedMessage(501138); // You can only place a guildstone in a house.
-                }
-                else if (house.FindGuildstone() != null)
-                {
-                    from.SendLocalizedMessage(501142);//Only one guildstone may reside in a given house.
-                }
-                else if (!house.IsOwner(from))
-                {
-                    from.SendLocalizedMessage(501141); // You can only place a guildstone in a house you own!
-                }
-                else
-                {
-                    from.SendLocalizedMessage(1013060); // Enter new guild name (40 characters max):
-                    from.Prompt = new InternalPrompt(this);
-                }
-            }
-        }
+			if (!this.IsChildOf(from.Backpack))
+			{
+				from.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
+			}
+			else if (from.Guild != null)
+			{
+				from.SendLocalizedMessage(501137); // You must resign from your current guild before founding another!
+			}
+			else
+			{
+				BaseHouse house = BaseHouse.FindHouseAt(from);
 
-        private class InternalPrompt : Prompt
-        {
-            private readonly GuildDeed m_Deed;
-            public InternalPrompt(GuildDeed deed)
-            {
-                this.m_Deed = deed;
-            }
+				if (house == null)
+				{
+					from.SendLocalizedMessage(501138); // You can only place a guildstone in a house.
+				}
+				else if (house.FindGuildstone() != null)
+				{
+					from.SendLocalizedMessage(501142); //Only one guildstone may reside in a given house.
+				}
+				else if (!house.IsOwner(from))
+				{
+					from.SendLocalizedMessage(501141); // You can only place a guildstone in a house you own!
+				}
+				else
+				{
+					from.SendLocalizedMessage(1013060); // Enter new guild name (40 characters max):
+					from.Prompt = new InternalPrompt(this);
+				}
+			}
+		}
 
-            public override void OnResponse(Mobile from, string text)
-            {
-                if (this.m_Deed.Deleted)
-                    return;
+		private class InternalPrompt : Prompt
+		{
+			private readonly GuildDeed m_Deed;
 
-                if (!this.m_Deed.IsChildOf(from.Backpack))
-                {
-                    from.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
-                }
-                else if (from.Guild != null)
-                {
-                    from.SendLocalizedMessage(501137); // You must resign from your current guild before founding another!
-                }
-                else
-                {
-                    BaseHouse house = BaseHouse.FindHouseAt(from);
+			public InternalPrompt(GuildDeed deed)
+			{
+				this.m_Deed = deed;
+			}
 
-                    if (house == null)
-                    {
-                        from.SendLocalizedMessage(501138); // You can only place a guildstone in a house.
-                    }
-                    else if (house.FindGuildstone() != null)
-                    {
-                        from.SendLocalizedMessage(501142);//Only one guildstone may reside in a given house.
-                    }
-                    else if (!house.IsOwner(from))
-                    {
-                        from.SendLocalizedMessage(501141); // You can only place a guildstone in a house you own!
-                    }
-                    else
-                    {
-                        this.m_Deed.Delete();
+			public override void OnResponse(Mobile from, string text)
+			{
+				if (this.m_Deed.Deleted)
+					return;
 
-                        if (text.Length > 40)
-                            text = text.Substring(0, 40);
+				if (!this.m_Deed.IsChildOf(from.Backpack))
+				{
+					from.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
+				}
+				else if (from.Guild != null)
+				{
+					from.SendLocalizedMessage(501137); // You must resign from your current guild before founding another!
+				}
+				else
+				{
+					BaseHouse house = BaseHouse.FindHouseAt(from);
 
-                        Guild guild = new Guild(from, text, "none");
+					if (house == null)
+					{
+						from.SendLocalizedMessage(501138); // You can only place a guildstone in a house.
+					}
+					else if (house.FindGuildstone() != null)
+					{
+						from.SendLocalizedMessage(501142); //Only one guildstone may reside in a given house.
+					}
+					else if (!house.IsOwner(from))
+					{
+						from.SendLocalizedMessage(501141); // You can only place a guildstone in a house you own!
+					}
+					else
+					{
+						this.m_Deed.Delete();
 
-                        from.Guild = guild;
-                        from.GuildTitle = "Guildmaster";
+						if (text.Length > 40)
+							text = text.Substring(0, 40);
 
-                        Guildstone stone = new Guildstone(guild);
+						Guild guild = new Guild(from, text, "none");
 
-                        stone.MoveToWorld(from.Location, from.Map);
+						from.Guild = guild;
+						from.GuildTitle = "Guildmaster";
 
-                        guild.Guildstone = stone;
-                    }
-                }
-            }
+						Guildstone stone = new Guildstone(guild);
 
-            public override void OnCancel(Mobile from)
-            {
-                from.SendLocalizedMessage(501145); // Placement of guildstone cancelled.
-            }
-        }
-    }
+						stone.MoveToWorld(from.Location, from.Map);
+
+						guild.Guildstone = stone;
+					}
+				}
+			}
+
+			public override void OnCancel(Mobile from)
+			{
+				from.SendLocalizedMessage(501145); // Placement of guildstone cancelled.
+			}
+		}
+	}
 }

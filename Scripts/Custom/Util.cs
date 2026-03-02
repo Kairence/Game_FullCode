@@ -1,13 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using Server;
-using Server.Mobiles;
-using Server.Items;
-using Server.Engines.Craft;
 using Server.Accounting;
+using Server.Engines.Craft;
 using Server.Engines.VeteranRewards;
-using System.Collections.Generic;
 using Server.Gumps;
+using Server.Items;
+using Server.Mobiles;
 using Server.Network;
 
 namespace Server.Misc
@@ -15,144 +15,295 @@ namespace Server.Misc
 	public class Util
 	{
 		#region Effect
-		public static void Good_Effect( Mobile from )
+		public static void Good_Effect(Mobile from)
 		{
-			Effects.PlaySound( from.Location, from.Map, 0x243 );
-			Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 6, from.Y - 6, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 0x497, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-			Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 4, from.Y - 6, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 0x497, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-			Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 6, from.Y - 4, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 0x497, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
+			Effects.PlaySound(from.Location, from.Map, 0x243);
+			Effects.SendMovingParticles(
+				new Entity(Serial.Zero, new Point3D(from.X - 6, from.Y - 6, from.Z + 15), from.Map),
+				from,
+				0x36D4,
+				7,
+				0,
+				false,
+				true,
+				0x497,
+				0,
+				9502,
+				1,
+				0,
+				(EffectLayer)255,
+				0x100
+			);
+			Effects.SendMovingParticles(
+				new Entity(Serial.Zero, new Point3D(from.X - 4, from.Y - 6, from.Z + 15), from.Map),
+				from,
+				0x36D4,
+				7,
+				0,
+				false,
+				true,
+				0x497,
+				0,
+				9502,
+				1,
+				0,
+				(EffectLayer)255,
+				0x100
+			);
+			Effects.SendMovingParticles(
+				new Entity(Serial.Zero, new Point3D(from.X - 6, from.Y - 4, from.Z + 15), from.Map),
+				from,
+				0x36D4,
+				7,
+				0,
+				false,
+				true,
+				0x497,
+				0,
+				9502,
+				1,
+				0,
+				(EffectLayer)255,
+				0x100
+			);
 		}
-		
-		public static void ItemGet_Effect( Mobile from )
+
+		public static void ItemGet_Effect(Mobile from)
 		{
-			Effects.PlaySound( from.Location, from.Map, 0x243 );
-			Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 6, from.Y - 6, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 1153, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-			Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 4, from.Y - 6, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 1153, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-			Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 6, from.Y - 4, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 1153, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
+			Effects.PlaySound(from.Location, from.Map, 0x243);
+			Effects.SendMovingParticles(
+				new Entity(Serial.Zero, new Point3D(from.X - 6, from.Y - 6, from.Z + 15), from.Map),
+				from,
+				0x36D4,
+				7,
+				0,
+				false,
+				true,
+				1153,
+				0,
+				9502,
+				1,
+				0,
+				(EffectLayer)255,
+				0x100
+			);
+			Effects.SendMovingParticles(
+				new Entity(Serial.Zero, new Point3D(from.X - 4, from.Y - 6, from.Z + 15), from.Map),
+				from,
+				0x36D4,
+				7,
+				0,
+				false,
+				true,
+				1153,
+				0,
+				9502,
+				1,
+				0,
+				(EffectLayer)255,
+				0x100
+			);
+			Effects.SendMovingParticles(
+				new Entity(Serial.Zero, new Point3D(from.X - 6, from.Y - 4, from.Z + 15), from.Map),
+				from,
+				0x36D4,
+				7,
+				0,
+				false,
+				true,
+				1153,
+				0,
+				9502,
+				1,
+				0,
+				(EffectLayer)255,
+				0x100
+			);
 		}
-		public static void HiddenGet_Effect( Mobile from )
+
+		public static void HiddenGet_Effect(Mobile from)
 		{
-			Effects.PlaySound( from.Location, from.Map, 0x243 );
-			Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 6, from.Y - 6, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 1166, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-			Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 4, from.Y - 6, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 1166, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-			Effects.SendMovingParticles( new Entity( Serial.Zero, new Point3D( from.X - 6, from.Y - 4, from.Z + 15 ), from.Map ), from, 0x36D4, 7, 0, false, true, 1166, 0, 9502, 1, 0, (EffectLayer)255, 0x100 );
-		}		
-		
-		public static void LevelUp_Effect( Mobile from )
+			Effects.PlaySound(from.Location, from.Map, 0x243);
+			Effects.SendMovingParticles(
+				new Entity(Serial.Zero, new Point3D(from.X - 6, from.Y - 6, from.Z + 15), from.Map),
+				from,
+				0x36D4,
+				7,
+				0,
+				false,
+				true,
+				1166,
+				0,
+				9502,
+				1,
+				0,
+				(EffectLayer)255,
+				0x100
+			);
+			Effects.SendMovingParticles(
+				new Entity(Serial.Zero, new Point3D(from.X - 4, from.Y - 6, from.Z + 15), from.Map),
+				from,
+				0x36D4,
+				7,
+				0,
+				false,
+				true,
+				1166,
+				0,
+				9502,
+				1,
+				0,
+				(EffectLayer)255,
+				0x100
+			);
+			Effects.SendMovingParticles(
+				new Entity(Serial.Zero, new Point3D(from.X - 6, from.Y - 4, from.Z + 15), from.Map),
+				from,
+				0x36D4,
+				7,
+				0,
+				false,
+				true,
+				1166,
+				0,
+				9502,
+				1,
+				0,
+				(EffectLayer)255,
+				0x100
+			);
+		}
+
+		public static void LevelUp_Effect(Mobile from)
 		{
-			for( int i = 0; i < 10; ++i)
+			for (int i = 0; i < 10; ++i)
 			{
 				Point3D ourLoc = from.Location;
 
 				Point3D startLoc = new Point3D(ourLoc.X, ourLoc.Y, ourLoc.Z + 10);
-				Point3D endLoc = new Point3D(startLoc.X + Utility.RandomMinMax(-2, 2), startLoc.Y + Utility.RandomMinMax(-2, 2), startLoc.Z + 32);
+				Point3D endLoc = new Point3D(
+					startLoc.X + Utility.RandomMinMax(-2, 2),
+					startLoc.Y + Utility.RandomMinMax(-2, 2),
+					startLoc.Z + 32
+				);
 
-				Effects.SendMovingEffect(new Entity(Serial.Zero, startLoc, from.Map), new Entity(Serial.Zero, endLoc, from.Map), 0x36E4, 5, 0, false, false);
-				Timer.DelayCall(TimeSpan.FromSeconds(1.0), new TimerStateCallback(FinishLaunch), new object[] { from, endLoc, from.Map });			
+				Effects.SendMovingEffect(
+					new Entity(Serial.Zero, startLoc, from.Map),
+					new Entity(Serial.Zero, endLoc, from.Map),
+					0x36E4,
+					5,
+					0,
+					false,
+					false
+				);
+				Timer.DelayCall(
+					TimeSpan.FromSeconds(1.0),
+					new TimerStateCallback(FinishLaunch),
+					new object[] { from, endLoc, from.Map }
+				);
 			}
 		}
-		
-        private static void FinishLaunch(object state)
-        {
-            object[] states = (object[])state;
 
-            Mobile from = (Mobile)states[0];
-            Point3D endLoc = (Point3D)states[1];
-            Map map = (Map)states[2];
+		private static void FinishLaunch(object state)
+		{
+			object[] states = (object[])state;
 
-            int hue = Utility.Random(40);
+			Mobile from = (Mobile)states[0];
+			Point3D endLoc = (Point3D)states[1];
+			Map map = (Map)states[2];
 
-            if (hue < 8)
-                hue = 0x66D;
-            else if (hue < 10)
-                hue = 0x482;
-            else if (hue < 12)
-                hue = 0x47E;
-            else if (hue < 16)
-                hue = 0x480;
-            else if (hue < 20)
-                hue = 0x47F;
-            else
-                hue = 0;
+			int hue = Utility.Random(40);
 
-            if (Utility.RandomBool())
-                hue = Utility.RandomList(0x47E, 0x47F, 0x480, 0x482, 0x66D);
+			if (hue < 8)
+				hue = 0x66D;
+			else if (hue < 10)
+				hue = 0x482;
+			else if (hue < 12)
+				hue = 0x47E;
+			else if (hue < 16)
+				hue = 0x480;
+			else if (hue < 20)
+				hue = 0x47F;
+			else
+				hue = 0;
 
-            int renderMode = Utility.RandomList(0, 2, 3, 4, 5, 7);
+			if (Utility.RandomBool())
+				hue = Utility.RandomList(0x47E, 0x47F, 0x480, 0x482, 0x66D);
 
-            Effects.PlaySound(endLoc, map, Utility.Random(0x11B, 4));
-            Effects.SendLocationEffect(endLoc, map, 0x373A + (0x10 * Utility.Random(4)), 16, 10, hue, renderMode);
-        }
-		
+			int renderMode = Utility.RandomList(0, 2, 3, 4, 5, 7);
+
+			Effects.PlaySound(endLoc, map, Utility.Random(0x11B, 4));
+			Effects.SendLocationEffect(endLoc, map, 0x373A + (0x10 * Utility.Random(4)), 16, 10, hue, renderMode);
+		}
 
 		#endregion
-		
+
 		#region Gump AutoTab
-		public static int MaxpageCreate(int maxlist, int page, int step )
+		public static int MaxpageCreate(int maxlist, int page, int step)
 		{
 			int maxpage = maxlist - page * step;
-			if( maxpage > step )
+			if (maxpage > step)
 				maxpage = step;
-			
+
 			return maxpage;
-		}		
-			
+		}
+
 		#endregion
-		
-		
+
+
 		#region item identified
-		
-		public static bool IdentifiedSuccess( int rank, int item_value )
+
+		public static bool IdentifiedSuccess(int rank, int item_value)
 		{
-			if( Utility.RandomMinMax( 0, 199 ) - 200 < item_value - rank * 200 )
+			if (Utility.RandomMinMax(0, 199) - 200 < item_value - rank * 200)
 				return true;
-			
+
 			return false;
 		}
-		
+
 		//유물 조각 수를 읽어서 레벨 및 조각 남은 수 파악하는 알고리즘
 		/*
 		* 구현은 아래 코드를 이용할 것
-            Console.Write("값 : ");
+			Console.Write("값 : ");
 
-            int total = Convert.ToInt32(Console.ReadLine());
-            int piece;
-            int level;
+			int total = Convert.ToInt32(Console.ReadLine());
+			int piece;
+			int level;
 
-            total = Level_Calc(total, out level, out piece);
-            Console.WriteLine("레벨 : {0}", level);
-            Console.WriteLine("다음 레벨에 필요한 조각 수 :{0} / {1}", total, piece * 40);
-            Console.WriteLine("");
+			total = Level_Calc(total, out level, out piece);
+			Console.WriteLine("레벨 : {0}", level);
+			Console.WriteLine("다음 레벨에 필요한 조각 수 :{0} / {1}", total, piece * 40);
+			Console.WriteLine("");
 		*/
 		//total : 유물 조각 수, level ; 유물 조각에 따른 레벨, piece : 다음 레벨에 필요한 조각 수
-		
-        static int Level_Calc(int total, out int level, out int piece) 
-        {
-            level = 0;
-            piece = 1;
-            if (total >= 20020000) // 1001 * 500 * 40
-            {
-                piece = 0;
-                level = 1000;
-                return 0;
-            }
-            else
-            {
-                for (int i = 1; i < 1000; ++i)
-                {
-                    if (total >= i * 40)
-                    {
-                        level++;
-                        piece += level;
-                        total -= level * 40;
-                    }
-                    else
-                        break;
-                }
-                return total;
-            }
-        }
-		
+
+		static int Level_Calc(int total, out int level, out int piece)
+		{
+			level = 0;
+			piece = 1;
+			if (total >= 20020000) // 1001 * 500 * 40
+			{
+				piece = 0;
+				level = 1000;
+				return 0;
+			}
+			else
+			{
+				for (int i = 1; i < 1000; ++i)
+				{
+					if (total >= i * 40)
+					{
+						level++;
+						piece += level;
+						total -= level * 40;
+					}
+					else
+						break;
+				}
+				return total;
+			}
+		}
+
 		/*
 		public static bool TierUpgradeSuccess( int tier, double skillvalue )
 		{
@@ -161,7 +312,7 @@ namespace Server.Misc
 			else
 				return false;
 		}
-		public static double[] TierUpgradeChance = 
+		public static double[] TierUpgradeChance =
 		{ 1, 0.9, 0.7, 0.5, 0.1, 0.01 };
 		public static bool TierUpgradeSuccess( int tier )
 		{
@@ -173,24 +324,24 @@ namespace Server.Misc
 				return false;
 		}
 		*/
-		public static void ItemReOption( Mobile from, Item item, int rank )
+		public static void ItemReOption(Mobile from, Item item, int rank)
 		{
-			if( item is IEquipOption )
+			if (item is IEquipOption)
 			{
 				IEquipOption equip = item as IEquipOption;
-				if( rank > 0 )
+				if (rank > 0)
 					rank -= 3;
-				
-				if( rank == 0 )
+
+				if (rank == 0)
 					rank = 1;
-				if( from is PlayerMobile )
+				if (from is PlayerMobile)
 				{
 					PlayerMobile pm = from as PlayerMobile;
 					//ItemCreate( item, rank, equip.PlayerConstructed, pm, equip.PrefixOption[99], equip.SuffixOption[99], true );
 				}
 			}
 		}
-		
+
 		/*
 		public static void ItemTierFail( Mobile from, Item item, int tier )
 		{
@@ -206,7 +357,7 @@ namespace Server.Misc
 				{
 					item.Delete();
 					from.SendMessage("아이템이 파괴되었습니다!");
-				}						
+				}
 			}
 		}
 		
@@ -275,86 +426,79 @@ namespace Server.Misc
 			}
 		}
 		*/
-		
+
 		#endregion
-		
-		public static string[] HarvestName =
-		{
-			"오류 아이템",
-			"잉갓을",
-			"판자를",
-			"생선살을",
-			"가죽을"
-		};
-		
+
+		public static string[] HarvestName = { "오류 아이템", "잉갓을", "판자를", "생선살을", "가죽을" };
+
 		#region Harvest
-		public static int HarvestMake( Mobile from, Item harvestitem, double difficulty, SkillName harvestskill )
+		public static int HarvestMake(Mobile from, Item harvestitem, double difficulty, SkillName harvestskill)
 		{
 			int skillcheck = 0;
 			int harvestAmount = 0;
 			int realAmount = 0;
-			if( harvestskill == SkillName.Mining )
+			if (harvestskill == SkillName.Mining)
 			{
 				skillcheck = 1;
 			}
-			else if( harvestskill == SkillName.Lumberjacking )
+			else if (harvestskill == SkillName.Lumberjacking)
 			{
 				skillcheck = 2;
 			}
-			else if( harvestskill == SkillName.Fishing )
+			else if (harvestskill == SkillName.Fishing)
 			{
 				skillcheck = 3;
 			}
-			else if( harvestskill == SkillName.TasteID )
+			else if (harvestskill == SkillName.TasteID)
 			{
 				skillcheck = 4;
-			}		
-			if( skillcheck == 0 )
+			}
+			if (skillcheck == 0)
 				return 0;
 			PlayerMobile pm = from as PlayerMobile;
 			{
-				if( from.Hunger < 10 )
+				if (from.Hunger < 10)
 				{
 					pm.LastObject = null;
-					from.SendMessage("당신은 배가 고픕니다."); 
+					from.SendMessage("당신은 배가 고픕니다.");
 					return 0;
 				}
-				else if( pm.TimerList[71] == 0 )
+				else if (pm.TimerList[71] == 0)
 				{
 					pm.TimerList[71] = 5;
 					pm.LastTarget = harvestitem;
-				
+
 					double minSkill = difficulty - 50.0;
 					double maxSkill = difficulty;
 
 					double skillpoint = minSkill + maxSkill;
 
-					if (minSkill > from.Skills[harvestskill].Value )
+					if (minSkill > from.Skills[harvestskill].Value)
 					{
 						from.SendMessage("당신은 {0} 생성하는데 실패합니다...", HarvestName[skillcheck]);
 						return 0;
 					}
 					harvestAmount = 50 + pm.GoldPoint[5] * 2;
-					if( harvestitem.Amount < harvestAmount )
+					if (harvestitem.Amount < harvestAmount)
 						harvestAmount = harvestitem.Amount;
 
-					if ( 50 + ( from.Skills[harvestskill].Value - difficulty ) * 2 > Utility.Random(100) )
+					if (50 + (from.Skills[harvestskill].Value - difficulty) * 2 > Utility.Random(100))
 					{
-						if( from.Hunger < harvestAmount * 10 )
+						if (from.Hunger < harvestAmount * 10)
 						{
 							harvestAmount = from.Hunger / 10;
 						}
 						realAmount = harvestAmount;
-						
+
 						from.SendMessage("{0} 생성하는데 성공했습니다.", HarvestName[skillcheck]);
-					}						
+					}
 					else
 					{
 						harvestAmount = 1;
 						from.SendMessage("{0} 생성하는데 실패합니다.", HarvestName[skillcheck]);
 						realAmount = 0;
-					}					
-					if( harvestAmount >= harvestitem.Amount )
+					}
+					if (harvestAmount >= harvestitem.Amount)
 					{
 						pm.Loop = false;
 						pm.LastTarget = null;
@@ -365,8 +509,8 @@ namespace Server.Misc
 						harvestitem.Amount -= harvestAmount;
 						//Timer.DelayCall(TimeSpan.FromSeconds(0.5), OnDoubleClick, from);
 					}
-					from.CheckSkill( harvestskill, skillpoint * harvestAmount );
-					pm.Getgoldpoint( (int)skillpoint * harvestAmount);
+					from.CheckSkill(harvestskill, skillpoint * harvestAmount);
+					pm.Getgoldpoint((int)skillpoint * harvestAmount);
 					from.Hunger -= harvestAmount * 10;
 					harvestAmount = realAmount;
 				}
@@ -374,45 +518,45 @@ namespace Server.Misc
 			return harvestAmount;
 		}
 		#endregion
-		public static int RankCheck( int item )
+		public static int RankCheck(int item)
 		{
-			if( item >= 100 )
+			if (item >= 100)
 				return 8;
-			if( item >= 80 )
+			if (item >= 80)
 				return 7;
-			if( item >= 60 )
+			if (item >= 60)
 				return 6;
-			if( item >= 40 )
+			if (item >= 40)
 				return 5;
-			if( item >= 20 )
+			if (item >= 20)
 				return 4;
-			if( item >= 10 )
+			if (item >= 10)
 				return 3;
-			if( item >= 5 )
+			if (item >= 5)
 				return 2;
-			if( item >= 2 )
+			if (item >= 2)
 				return 1;
 			return 0;
 		}
 
 		//몬스터 등급 계산
-		public static int MonsterTierCalc(BaseCreature bc )
+		public static int MonsterTierCalc(BaseCreature bc)
 		{
-			if( bc.Boss )
+			if (bc.Boss)
 				return 5;
-			else if( bc.Grade == 7 )
+			else if (bc.Grade == 7)
 				return 4;
-			else if( bc.Grade == 6 )
+			else if (bc.Grade == 6)
 				return 3;
-			else if( bc.Grade > 1 )
+			else if (bc.Grade > 1)
 				return 2;
 			return 1;
 		}
 
 		//몬스터 군중제어 회복 시간
-		public static double MonsterTierCrowdControlRecovery(BaseCreature from )
+		public static double MonsterTierCrowdControlRecovery(BaseCreature from)
 		{
-			switch( MonsterTierCalc(from) )
+			switch (MonsterTierCalc(from))
 			{
 				case 5:
 					return 0.1;
@@ -425,14 +569,12 @@ namespace Server.Misc
 			}
 			return 1.0;
 		}
-		
-
 
 		//크리티컬 보정 계산
-		public static double MonsterTierCriticalDamage(BaseCreature bc )
+		public static double MonsterTierCriticalDamage(BaseCreature bc)
 		{
 			double criticalDamage = 0.0;
-			switch(MonsterTierCalc(bc))
+			switch (MonsterTierCalc(bc))
 			{
 				case 5:
 				{
@@ -456,11 +598,10 @@ namespace Server.Misc
 				}
 			}
 			return criticalDamage;
-			
 		}
 
 		//슬레이어 데미지 계산
-		public static double MonsterTierSlayerDamage(BaseCreature from )
+		public static double MonsterTierSlayerDamage(BaseCreature from)
 		{
 			return 1.0;
 			/*
@@ -476,61 +617,84 @@ namespace Server.Misc
 				return 1.0;
 			*/
 		}
+
 		//슬레이어 데미지 계산
 		public static double GetSlayerDamageScalar(Mobile attacker, Mobile defender)
 		{
 			double scalar = 1.0;
-			
-            int slayer_Damage = Math.Min(SAAbsorptionAttributes.GetValue(attacker, SAAbsorptionAttribute.HumanoidDamage), 5000);
-			
-			if( defender is BaseCreature )
+
+			int slayer_Damage = Math.Min(
+				SAAbsorptionAttributes.GetValue(attacker, SAAbsorptionAttribute.HumanoidDamage),
+				5000
+			);
+
+			if (defender is BaseCreature)
 			{
 				BaseCreature bc = defender as BaseCreature;
-				if( slayer_Damage > 0 )
+				if (slayer_Damage > 0)
 				{
-					if( Util.SlayerCheck(SlayerName.Repond, defender) )
+					if (Util.SlayerCheck(SlayerName.Repond, defender))
 						scalar += slayer_Damage * 0.0001 * MonsterTierSlayerDamage(bc);
 				}
-				slayer_Damage =  Math.Min(SAAbsorptionAttributes.GetValue(attacker, SAAbsorptionAttribute.UndeadDamage), 5000);
-				if( slayer_Damage > 0 )
+				slayer_Damage = Math.Min(
+					SAAbsorptionAttributes.GetValue(attacker, SAAbsorptionAttribute.UndeadDamage),
+					5000
+				);
+				if (slayer_Damage > 0)
 				{
-					if( Util.SlayerCheck(SlayerName.Silver, defender) )
+					if (Util.SlayerCheck(SlayerName.Silver, defender))
 						scalar += slayer_Damage * 0.0001 * MonsterTierSlayerDamage(bc);
 				}
-				slayer_Damage =  Math.Min(SAAbsorptionAttributes.GetValue(attacker, SAAbsorptionAttribute.ElementalDamage), 5000);
-				if( slayer_Damage > 0 )
+				slayer_Damage = Math.Min(
+					SAAbsorptionAttributes.GetValue(attacker, SAAbsorptionAttribute.ElementalDamage),
+					5000
+				);
+				if (slayer_Damage > 0)
 				{
-					if( Util.SlayerCheck(SlayerName.ElementalBan, defender) )
+					if (Util.SlayerCheck(SlayerName.ElementalBan, defender))
 						scalar += slayer_Damage * 0.0001 * MonsterTierSlayerDamage(bc);
 				}
-				slayer_Damage =  Math.Min(SAAbsorptionAttributes.GetValue(attacker, SAAbsorptionAttribute.AbyssDamage), 5000);
-				if( slayer_Damage > 0 )
+				slayer_Damage = Math.Min(
+					SAAbsorptionAttributes.GetValue(attacker, SAAbsorptionAttribute.AbyssDamage),
+					5000
+				);
+				if (slayer_Damage > 0)
 				{
-					if( Util.SlayerCheck(SlayerName.Exorcism, defender) )
+					if (Util.SlayerCheck(SlayerName.Exorcism, defender))
 						scalar += slayer_Damage * 0.0001 * MonsterTierSlayerDamage(bc);
 				}
-				slayer_Damage =  Math.Min(SAAbsorptionAttributes.GetValue(attacker, SAAbsorptionAttribute.ArachnidDamage), 5000);
-				if( slayer_Damage > 0 )
+				slayer_Damage = Math.Min(
+					SAAbsorptionAttributes.GetValue(attacker, SAAbsorptionAttribute.ArachnidDamage),
+					5000
+				);
+				if (slayer_Damage > 0)
 				{
-					if( Util.SlayerCheck(SlayerName.ArachnidDoom, defender) )
+					if (Util.SlayerCheck(SlayerName.ArachnidDoom, defender))
 						scalar += slayer_Damage * 0.0001 * MonsterTierSlayerDamage(bc);
 				}
-				slayer_Damage =  Math.Min(SAAbsorptionAttributes.GetValue(attacker, SAAbsorptionAttribute.ReptilianDamage), 5000);
-				if( slayer_Damage > 0 )
+				slayer_Damage = Math.Min(
+					SAAbsorptionAttributes.GetValue(attacker, SAAbsorptionAttribute.ReptilianDamage),
+					5000
+				);
+				if (slayer_Damage > 0)
 				{
-					if( Util.SlayerCheck(SlayerName.ReptilianDeath, defender) )
+					if (Util.SlayerCheck(SlayerName.ReptilianDeath, defender))
 						scalar += slayer_Damage * 0.0001 * MonsterTierSlayerDamage(bc);
 				}
-				slayer_Damage =  Math.Min(SAAbsorptionAttributes.GetValue(attacker, SAAbsorptionAttribute.FeyDamage), 5000);
-				if( slayer_Damage > 0 )
+				slayer_Damage = Math.Min(
+					SAAbsorptionAttributes.GetValue(attacker, SAAbsorptionAttribute.FeyDamage),
+					5000
+				);
+				if (slayer_Damage > 0)
 				{
-					if( Util.SlayerCheck(SlayerName.Fey, defender) )
+					if (Util.SlayerCheck(SlayerName.Fey, defender))
 						scalar += slayer_Damage * 0.0001 * MonsterTierSlayerDamage(bc);
 				}
 			}
 			return scalar;
 		}
-		/*		
+
+		/*
 		public static int[,] MonsterLandTier =
 		{
 			//	1티어		엘리트		치프
@@ -622,30 +786,32 @@ namespace Server.Misc
 		public static int UniqueDice(int count, int max)
 		{
 			int selectNumber = Utility.RandomMinMax(0, max);
-			while(true)
+			while (true)
 			{
-				if( selectNumber != count )
+				if (selectNumber != count)
 					return selectNumber;
 				else
 					selectNumber = Utility.RandomMinMax(0, max);
 			}
 			return selectNumber;
 		}
-		
+
 		#region 경험치 계산
 		public static readonly int MaxLevel = 250;
-		public static int Level( int point )
+
+		public static int Level(int point)
 		{
-			if( point > MaxLevel * MaxLevel * 10000 )
+			if (point > MaxLevel * MaxLevel * 10000)
 			{
 				point = MaxLevel * MaxLevel * 10000;
 				return MaxLevel;
 			}
-			return (int)( Math.Sqrt(point) / 100 );
+			return (int)(Math.Sqrt(point) / 100);
 		}
-		public static int NextLevel( int point )
+
+		public static int NextLevel(int point)
 		{
-			return (int)( Math.Pow( ( Level(point) + 1) * 100, 2 ) ) - point;
+			return (int)(Math.Pow((Level(point) + 1) * 100, 2)) - point;
 		}
 		#endregion
 		public static string GetName(Item item)
@@ -654,101 +820,109 @@ namespace Server.Misc
 			if (!string.IsNullOrEmpty(item.Name))
 				name = item.Name;
 			else
-				name = "#" + item.LabelNumber.ToString();		
+				name = "#" + item.LabelNumber.ToString();
 
-			return name;			
+			return name;
 		}
 
 		public static string GetName(int labelnumber)
 		{
-			return "#" + labelnumber.ToString();		
+			return "#" + labelnumber.ToString();
 		}
-	
+
 		public static int MonsterItemGrade(int luckbonus, int MaxBonus)
 		{
-			double dice = Math.Sqrt(luckbonus) * 0.1 + Math.Pow( Utility.RandomDouble() * 0.1, 7 ) * ( MaxBonus - 1 ) * 10000000;
+			double dice =
+				Math.Sqrt(luckbonus) * 0.1 + Math.Pow(Utility.RandomDouble() * 0.1, 7) * (MaxBonus - 1) * 10000000;
 
-			if( dice >= 99.9 )
+			if (dice >= 99.9)
 				return 8;
-			else if( dice >= 99 )
+			else if (dice >= 99)
 				return 7;
-			else if( dice >= 90 )
+			else if (dice >= 90)
 				return 6;
-			else if( dice >= 75 )
+			else if (dice >= 75)
 				return 5;
-			else if( dice >= 50 )
+			else if (dice >= 50)
 				return 4;
 			else
 				return 0;
 		}
-		
-		public static double[] ItemRankList =
-		{
-			0.5, 0.15, 0.01, 0.0001
-		};
-		
-		public static double[] ItemRankLuckBonus = 
-		{
-			0.002, 0.0005, 0.00009, 0.0000004
-		};
-		
-		public static int ResourceNumberToNumber( int resource )
+
+		public static double[] ItemRankList = { 0.5, 0.15, 0.01, 0.0001 };
+
+		public static double[] ItemRankLuckBonus = { 0.002, 0.0005, 0.00009, 0.0000004 };
+
+		public static int ResourceNumberToNumber(int resource)
 		{
 			int returnvalue = 0;
-			if( resource == 1 )
+			if (resource == 1)
 				returnvalue = 0;
-			else if( resource <= 9 )
+			else if (resource <= 9)
 				returnvalue = resource - 2;
-			else if( resource <= 107 )
+			else if (resource <= 107)
 				returnvalue = resource - 101;
-			else if( resource <= 207 )
+			else if (resource <= 207)
 				returnvalue = 0;
-			else if( resource <= 307 )
+			else if (resource <= 307)
 				returnvalue = resource - 301;
 			return returnvalue;
 		}
-		
-		private static int[] ResourceTier =
+
+		private static int[] ResourceTier = { 0, 50, 125, 225, 350, 500, 675 };
+
+		public static int ItemTierMaker(int fame, int rank, int resource, Mobile from = null)
 		{
-			0, 50, 125, 225, 350, 500, 675
-		};
-		
-		public static int ItemTierMaker( int fame, int rank, int resource, Mobile from = null )
-		{
-			if( fame >= 30000 )
+			if (fame >= 30000)
 				fame = 30000;
 
 			//int tier = Utility.RandomMinMax( fame, fame + 12000 );
 			//tier = 1 + tier / 10000;
 
 			double value = fame * 0.0002;
-			
-			int tier = (int)Utility.RandomMinMax( (double)value - 2, (double)value + 0.2 );
-			
-			if( tier > 6 )
+
+			int tier = (int)Utility.RandomMinMax((double)value - 2, (double)value + 0.2);
+
+			if (tier > 6)
 				tier = 6;
 
-			if( tier < 0 )
+			if (tier < 0)
 				tier = 0;
-			
-			if( from != null )
-				from.CheckSkill( SkillName.ArmsLore, ( 200 + tier * 100 + ResourceTier[resource] ) * 2 );
+
+			if (from != null)
+				from.CheckSkill(SkillName.ArmsLore, (200 + tier * 100 + ResourceTier[resource]) * 2);
 
 			return tier;
 		}
-		
 
 		public static Type[] Monster_1Tier_Artifact =
 		{
-			typeof( TomeOfEnlightenment ), typeof( PilferedDancerFans ), typeof( PeasantsBokuto ), typeof( DragonNunchaku ), typeof( DemonForks ), 
-			typeof( DaimyosHelm ), typeof( BlackLotusHood ), typeof( ArmsOfTacticalExcellence ), typeof( AncientSamuraiDo ), typeof( AncientFarmersKasa )
+			typeof(TomeOfEnlightenment),
+			typeof(PilferedDancerFans),
+			typeof(PeasantsBokuto),
+			typeof(DragonNunchaku),
+			typeof(DemonForks),
+			typeof(DaimyosHelm),
+			typeof(BlackLotusHood),
+			typeof(ArmsOfTacticalExcellence),
+			typeof(AncientSamuraiDo),
+			typeof(AncientFarmersKasa),
 		};
-		
+
 		public static Type[] Monster_2Tier_Artifact =
 		{
-			typeof( CompassionsEye ), typeof( DespicableQuiver ), typeof( UnforgivenVeil ), typeof( DarkenedSky ), typeof( KasaOfTheRajin ),
-			typeof( Stormgrip ), typeof( SwordOfTheStampede ), typeof( SwordsOfProsperity ), typeof( TheHorselord ), typeof( TomeOfLostKnowledge ), 
-			typeof( WindsEdge ), typeof( RuneBeetleCarapace )
+			typeof(CompassionsEye),
+			typeof(DespicableQuiver),
+			typeof(UnforgivenVeil),
+			typeof(DarkenedSky),
+			typeof(KasaOfTheRajin),
+			typeof(Stormgrip),
+			typeof(SwordOfTheStampede),
+			typeof(SwordsOfProsperity),
+			typeof(TheHorselord),
+			typeof(TomeOfLostKnowledge),
+			typeof(WindsEdge),
+			typeof(RuneBeetleCarapace),
 		};
 
 		/*
@@ -787,228 +961,227 @@ namespace Server.Misc
 			}
 			
 			return false;
-		}		
+		}
 		*/
-		public static int RepairSkillCheck( double level )
+		public static int RepairSkillCheck(double level)
 		{
 			int Tier = 0;
-			if( level < 50 )
+			if (level < 50)
 				Tier = 0;
-			else if( level < 100 )
+			else if (level < 100)
 				Tier = 1;
-			else if( level < 125 )
+			else if (level < 125)
 				Tier = 2;
-			else if( level < 150 )
+			else if (level < 150)
 				Tier = 3;
-			else if( level < 175 )
+			else if (level < 175)
 				Tier = 4;
-			else if( level < 200 )
+			else if (level < 200)
 				Tier = 5;
 			else
 				Tier = 6;
 			return Tier;
 		}
 
-        public static double NewItemDice(int minValue, int maxValue)
+		public static double NewItemDice(int minValue, int maxValue)
 		{
-			double dice = ( minValue + Math.Pow( Utility.RandomDouble() * 0.1, 7 ) * ( maxValue - minValue ) * 10000000 ) * 0.01;
+			double dice =
+				(minValue + Math.Pow(Utility.RandomDouble() * 0.1, 7) * (maxValue - minValue) * 10000000) * 0.01;
 			return dice * 100;
 		}
 
-        public static int OptionLoop()
-        {
+		public static int OptionLoop()
+		{
 			int loop = 3;
-            if (Utility.RandomDouble() < 0.1)
-                loop = 4;
+			if (Utility.RandomDouble() < 0.1)
+				loop = 4;
 			/*
-            int loop = 2 * (rank % 4 ) - 1;
+			int loop = 2 * (rank % 4 ) - 1;
 			if( rank >= 4 )
 				loop = rank--;
 			
 
-            return loop;
+			return loop;
 			*/
 			return loop;
-        }
-		
+		}
+
 		//몬스터 아이템 드랍 설정
 		#region MonsterItemDrop
 		public static readonly Type[,] m_MonsterItemDrop = new[,]
 		{
 			//몬스터 1052085 시작		일반 아이템, 			희귀 아이템
-			{ typeof(Skeleton), 		typeof(Bone), 			typeof(MonsterStatuette)},
-			{ typeof(Zombie), 			typeof(FertileDirt), 	typeof(MonsterStatuette)},
-			{ typeof(Spectre), 			typeof(GraveDust), 		typeof(AncestralGravestone)},
-			{ typeof(Wraith), 			typeof(Nightshade), 	typeof(TombstoneOfTheDamned)},
-			{ typeof(Eagle), 			typeof(Feather), 		typeof(CoralTheOwl)},
-			{ typeof(Mongbat), 			typeof(BatWing), 		typeof(MonsterStatuette)},
-			{ typeof(Turkey), 			typeof(Feather), 		typeof(TurkeyDinner)},
-			{ typeof(GiantTurkey), 		typeof(Feather), 		typeof(TurkeyPlatter)},
-			{ typeof(GiantSpider), 		typeof(SpidersSilk), 	typeof(MonsterStatuette)},
-			{ typeof(GiantBlackWidow), 	typeof(SpidersSilk), 	typeof(DecorativeBlackwidowDeed)},
-			{ typeof(DreadSpider), 		typeof(SpidersSilk), 	typeof(DreadSpiderSilk)},
-			{ typeof(TrapdoorSpider), 	typeof(SpidersSilk), 	typeof(SpiderCarapace)},
-			{ typeof(WolfSpider), 		typeof(SpidersSilk), 	typeof(Web)},
-			{ typeof(GiantDreadSpider), typeof(SpidersSilk), 	typeof(DreadSpiderStatuette)},
-			{ typeof(Harpy), 			typeof(Feather), 		typeof(JewelryBox)},
-			{ typeof(VampireBat), 		typeof(BatWing), 		typeof(WallBlood)},
-			{ typeof(StoneHarpy), 		typeof(Feather), 		typeof(EnchantedGraniteCartAddonDeed)},
-			{ typeof(Mummy), 			typeof(Bandage), 		typeof(ExcellentIronMaiden)},
-			{ typeof(RottingCorpse), 	typeof(Bandage), 		typeof(IronMaidenDeed)},
-			{ typeof(Bogling), 			typeof(Engines.Plants.Seed),typeof(DecorativePlant)},
-			{ typeof(Corpser), 			typeof(ParasiticPlant),	typeof(PottedCactusDeed)},
-			{ typeof(Crane), 			typeof(Feather),		typeof(CraneZooStatuette)},
-			{ typeof(Treefellow), 		typeof(BarkFragment),	typeof(TreeStumpDeed)},
-			{ typeof(Reaper), 			typeof(MandrakeRoot),	typeof(MonsterStatuette)},
-			{ typeof(BogThing), 		typeof(BarkFragment),	typeof(Engines.Plants.SeedBox)},
-			{ typeof(Ettin), 			typeof(MiniHealPotion),	typeof(MonsterStatuette)},
-			{ typeof(HeadlessOne), 		typeof(MiniHealPotion),	typeof(FlamingHeadDeed)},
-			{ typeof(Lizardman), 		typeof(MiniHealPotion),	typeof(MonsterStatuette)},
-			{ typeof(LizardmanDefender),typeof(MiniCurePotion),	typeof(RedPoinsettia)},
-			{ typeof(Troll),	 		typeof(MiniRefreshPotion),typeof(MonsterStatuette)},
-			{ typeof(Cyclops),	 		typeof(LesserHealPotion),typeof(DecoRocks2)},
-			{ typeof(Centaur),	 		typeof(Arrow),			typeof(DecorativeBow)},
-			{ typeof(Ogre),		 		typeof(MiniRefreshPotion),	typeof(MonsterStatuette)},
-			{ typeof(OgreLord),		 	typeof(RefreshPotion),	typeof(MiniHouseDeed)},
-			{ typeof(BoneKnight),		typeof(Bone),			typeof(HangingSkeletonDeed)},
-			{ typeof(BoneMagi),			typeof(BlackPearl),		typeof(RedPoinsettia)},
-			{ typeof(PestilentBandage),	typeof(Bandage),		typeof(WoodenCoffinDeed)},
-			{ typeof(SkeletalKnight),	typeof(Bone),			typeof(HangingSwordsDeed)},
-			{ typeof(SkeletalMage),		typeof(BlackPearl),		typeof(WhitePoinsettia)},
-			{ typeof(SkeletalCat),		typeof(Bone),			typeof(SkeletalCatStatue)},
-			{ typeof(PatchworkSkeleton),typeof(Bone),			typeof(SkeletonPortrait)},
-			{ typeof(Ghoul),			typeof(PigIron),		typeof(DisturbingPortraitDeed)},
-			{ typeof(Shade),			typeof(PigIron),		typeof(CreepyPortraitDeed)},
-			{ typeof(BoneDemon),		typeof(DaemonBone),		typeof(BoneTableDeed)},
-			{ typeof(SkeletalLich),		typeof(DaemonBlood),	typeof(SkeletalHangmanAddonDeed)},
-			{ typeof(Lich),				typeof(NoxCrystal),		typeof(MonsterStatuette)},
-			{ typeof(AncientLich),		typeof(PrimalLichDust),	typeof(MonsterStatuette)},
-			{ typeof(LichLord),			typeof(NoxCrystal),		typeof(LichPainting)},
-			{ typeof(SkeletalDragon),	typeof(DaemonBone),		typeof(Server.Engines.Shadowguard.WitheringBones)},
-			{ typeof(Scorpion),			typeof(Nightshade),		typeof(LeatherDyeTub)},
-			{ typeof(ClockworkScorpion),typeof(Nightshade),		typeof(RuinedClock)},
-			{ typeof(FireElemental),	typeof(SulfurousAsh),	typeof(MonsterStatuette)},
-			{ typeof(WaterElemental),	typeof(BlackPearl),		typeof(WaterWheelDeed)},
-			{ typeof(AirElemental),		typeof(LesserAgilityPotion),typeof(BrokenFallenChairDeed)},
-			{ typeof(Gazer),			typeof(LesserAgilityPotion),typeof(MonsterStatuette)},
-			{ typeof(ElderGazer),		typeof(AgilityPotion),	typeof(SuitOfGoldArmorDeed)},
-			{ typeof(PoisonElemental),	typeof(PoisonPotion),	typeof(SkullsOnPike)},
-			{ typeof(BloodElemental),	typeof(GreaterHealPotion),typeof(BloodyPentagramDeed)},
-			{ typeof(Beholder),			typeof(GreaterAgilityPotion),typeof(AnkhOfSacrificeDeed)},
-			{ typeof(Sewerrat),			typeof(RatnedHides),	typeof(CheeseSlice)},
-			{ typeof(BullFrog),			typeof(DernedHides),	typeof(Items.MusicBox.MusicBoxGears)},
-			{ typeof(Alligator),		typeof(SernedHides),	typeof(MonsterStatuette)},
-			{ typeof(GiantRat),			typeof(RatnedHides),	typeof(CheeseWedge)},
-			{ typeof(GiantToad),		typeof(DernedHides),	typeof(DawnsMusicBox)},
-			{ typeof(AcidElemental),	typeof(GreaterAgilityPotion),typeof(AcidProofRope)},
-			{ typeof(EarthElemental),	typeof(GreaterAgilityPotion),typeof(MonsterStatuette)},
-			{ typeof(BloodWorm),		typeof(Bloodmoss),		typeof(RunebookDyeTub)},
-			{ typeof(EvilMage),			typeof(BlankScroll),	typeof(BlackDyeTub)},
-			{ typeof(EvilMageLord),		typeof(BlankScroll),	typeof(SpecialDyeTub)},
-			{ typeof(Brigand),			typeof(RawRibs),		typeof(WhiteClothDyeTub)},
-			{ typeof(ElfBrigand),		typeof(Arrow),			typeof(BlazeDyeTub)},
-			{ typeof(Kraken),			typeof(Rope),			typeof(WaterTile)},
-			{ typeof(EttinLord), 		typeof(HealPotion),		typeof(WhiteLeatherDyeTub)},
-			{ typeof(SkeletalMount),	typeof(Bone),			typeof(ChargerOfTheFallen)},
-			{ typeof(Orc),				typeof(BolaBall),		typeof(MonsterStatuette)},
-			{ typeof(OrcChopper),		typeof(Shaft),			typeof(FallenLogDeed)},
-			{ typeof(OrcishMage),		typeof(BolaBall),		typeof(BrokenBookcaseDeed)},
-			{ typeof(OrcCaptain),		typeof(BolaBall),		typeof(DecoBottlesOfLiquor)},
-			{ typeof(OrcBomber),		typeof(SulfurousAsh),	typeof(DragonCannonDeed)},
-			{ typeof(OrcScout),			typeof(Arrow),			typeof(RecipeScroll)},
-			{ typeof(OrcishLord),		typeof(BolaBall),		typeof(RecipeScroll)},
-			{ typeof(Titan),			typeof(RoastPig),		typeof(RecipeScroll)}
+			{ typeof(Skeleton), typeof(Bone), typeof(MonsterStatuette) },
+			{ typeof(Zombie), typeof(FertileDirt), typeof(MonsterStatuette) },
+			{ typeof(Spectre), typeof(GraveDust), typeof(AncestralGravestone) },
+			{ typeof(Wraith), typeof(Nightshade), typeof(TombstoneOfTheDamned) },
+			{ typeof(Eagle), typeof(Feather), typeof(CoralTheOwl) },
+			{ typeof(Mongbat), typeof(BatWing), typeof(MonsterStatuette) },
+			{ typeof(Turkey), typeof(Feather), typeof(TurkeyDinner) },
+			{ typeof(GiantTurkey), typeof(Feather), typeof(TurkeyPlatter) },
+			{ typeof(GiantSpider), typeof(SpidersSilk), typeof(MonsterStatuette) },
+			{ typeof(GiantBlackWidow), typeof(SpidersSilk), typeof(DecorativeBlackwidowDeed) },
+			{ typeof(DreadSpider), typeof(SpidersSilk), typeof(DreadSpiderSilk) },
+			{ typeof(TrapdoorSpider), typeof(SpidersSilk), typeof(SpiderCarapace) },
+			{ typeof(WolfSpider), typeof(SpidersSilk), typeof(Web) },
+			{ typeof(GiantDreadSpider), typeof(SpidersSilk), typeof(DreadSpiderStatuette) },
+			{ typeof(Harpy), typeof(Feather), typeof(JewelryBox) },
+			{ typeof(VampireBat), typeof(BatWing), typeof(WallBlood) },
+			{ typeof(StoneHarpy), typeof(Feather), typeof(EnchantedGraniteCartAddonDeed) },
+			{ typeof(Mummy), typeof(Bandage), typeof(ExcellentIronMaiden) },
+			{ typeof(RottingCorpse), typeof(Bandage), typeof(IronMaidenDeed) },
+			{ typeof(Bogling), typeof(Engines.Plants.Seed), typeof(DecorativePlant) },
+			{ typeof(Corpser), typeof(ParasiticPlant), typeof(PottedCactusDeed) },
+			{ typeof(Crane), typeof(Feather), typeof(CraneZooStatuette) },
+			{ typeof(Treefellow), typeof(BarkFragment), typeof(TreeStumpDeed) },
+			{ typeof(Reaper), typeof(MandrakeRoot), typeof(MonsterStatuette) },
+			{ typeof(BogThing), typeof(BarkFragment), typeof(Engines.Plants.SeedBox) },
+			{ typeof(Ettin), typeof(MiniHealPotion), typeof(MonsterStatuette) },
+			{ typeof(HeadlessOne), typeof(MiniHealPotion), typeof(FlamingHeadDeed) },
+			{ typeof(Lizardman), typeof(MiniHealPotion), typeof(MonsterStatuette) },
+			{ typeof(LizardmanDefender), typeof(MiniCurePotion), typeof(RedPoinsettia) },
+			{ typeof(Troll), typeof(MiniRefreshPotion), typeof(MonsterStatuette) },
+			{ typeof(Cyclops), typeof(LesserHealPotion), typeof(DecoRocks2) },
+			{ typeof(Centaur), typeof(Arrow), typeof(DecorativeBow) },
+			{ typeof(Ogre), typeof(MiniRefreshPotion), typeof(MonsterStatuette) },
+			{ typeof(OgreLord), typeof(RefreshPotion), typeof(MiniHouseDeed) },
+			{ typeof(BoneKnight), typeof(Bone), typeof(HangingSkeletonDeed) },
+			{ typeof(BoneMagi), typeof(BlackPearl), typeof(RedPoinsettia) },
+			{ typeof(PestilentBandage), typeof(Bandage), typeof(WoodenCoffinDeed) },
+			{ typeof(SkeletalKnight), typeof(Bone), typeof(HangingSwordsDeed) },
+			{ typeof(SkeletalMage), typeof(BlackPearl), typeof(WhitePoinsettia) },
+			{ typeof(SkeletalCat), typeof(Bone), typeof(SkeletalCatStatue) },
+			{ typeof(PatchworkSkeleton), typeof(Bone), typeof(SkeletonPortrait) },
+			{ typeof(Ghoul), typeof(PigIron), typeof(DisturbingPortraitDeed) },
+			{ typeof(Shade), typeof(PigIron), typeof(CreepyPortraitDeed) },
+			{ typeof(BoneDemon), typeof(DaemonBone), typeof(BoneTableDeed) },
+			{ typeof(SkeletalLich), typeof(DaemonBlood), typeof(SkeletalHangmanAddonDeed) },
+			{ typeof(Lich), typeof(NoxCrystal), typeof(MonsterStatuette) },
+			{ typeof(AncientLich), typeof(PrimalLichDust), typeof(MonsterStatuette) },
+			{ typeof(LichLord), typeof(NoxCrystal), typeof(LichPainting) },
+			{ typeof(SkeletalDragon), typeof(DaemonBone), typeof(Server.Engines.Shadowguard.WitheringBones) },
+			{ typeof(Scorpion), typeof(Nightshade), typeof(LeatherDyeTub) },
+			{ typeof(ClockworkScorpion), typeof(Nightshade), typeof(RuinedClock) },
+			{ typeof(FireElemental), typeof(SulfurousAsh), typeof(MonsterStatuette) },
+			{ typeof(WaterElemental), typeof(BlackPearl), typeof(WaterWheelDeed) },
+			{ typeof(AirElemental), typeof(LesserAgilityPotion), typeof(BrokenFallenChairDeed) },
+			{ typeof(Gazer), typeof(LesserAgilityPotion), typeof(MonsterStatuette) },
+			{ typeof(ElderGazer), typeof(AgilityPotion), typeof(SuitOfGoldArmorDeed) },
+			{ typeof(PoisonElemental), typeof(PoisonPotion), typeof(SkullsOnPike) },
+			{ typeof(BloodElemental), typeof(GreaterHealPotion), typeof(BloodyPentagramDeed) },
+			{ typeof(Beholder), typeof(GreaterAgilityPotion), typeof(AnkhOfSacrificeDeed) },
+			{ typeof(Sewerrat), typeof(RatnedHides), typeof(CheeseSlice) },
+			{ typeof(BullFrog), typeof(DernedHides), typeof(Items.MusicBox.MusicBoxGears) },
+			{ typeof(Alligator), typeof(SernedHides), typeof(MonsterStatuette) },
+			{ typeof(GiantRat), typeof(RatnedHides), typeof(CheeseWedge) },
+			{ typeof(GiantToad), typeof(DernedHides), typeof(DawnsMusicBox) },
+			{ typeof(AcidElemental), typeof(GreaterAgilityPotion), typeof(AcidProofRope) },
+			{ typeof(EarthElemental), typeof(GreaterAgilityPotion), typeof(MonsterStatuette) },
+			{ typeof(BloodWorm), typeof(Bloodmoss), typeof(RunebookDyeTub) },
+			{ typeof(EvilMage), typeof(BlankScroll), typeof(BlackDyeTub) },
+			{ typeof(EvilMageLord), typeof(BlankScroll), typeof(SpecialDyeTub) },
+			{ typeof(Brigand), typeof(RawRibs), typeof(WhiteClothDyeTub) },
+			{ typeof(ElfBrigand), typeof(Arrow), typeof(BlazeDyeTub) },
+			{ typeof(Kraken), typeof(Rope), typeof(WaterTile) },
+			{ typeof(EttinLord), typeof(HealPotion), typeof(WhiteLeatherDyeTub) },
+			{ typeof(SkeletalMount), typeof(Bone), typeof(ChargerOfTheFallen) },
+			{ typeof(Orc), typeof(BolaBall), typeof(MonsterStatuette) },
+			{ typeof(OrcChopper), typeof(Shaft), typeof(FallenLogDeed) },
+			{ typeof(OrcishMage), typeof(BolaBall), typeof(BrokenBookcaseDeed) },
+			{ typeof(OrcCaptain), typeof(BolaBall), typeof(DecoBottlesOfLiquor) },
+			{ typeof(OrcBomber), typeof(SulfurousAsh), typeof(DragonCannonDeed) },
+			{ typeof(OrcScout), typeof(Arrow), typeof(RecipeScroll) },
+			{ typeof(OrcishLord), typeof(BolaBall), typeof(RecipeScroll) },
+			{ typeof(Titan), typeof(RoastPig), typeof(RecipeScroll) },
 		};
-		
-		public static string[] exp_Type_Name =
-		{
-			"채집", "제작", "전투"
-		};
-		
+
+		public static string[] exp_Type_Name = { "채집", "제작", "전투" };
+
 		public static void LevelUpEffect(PlayerMobile pm, int getpoint, int exp_Type)
 		{
 			int savepoint = 0;
-			switch(exp_Type)
+			switch (exp_Type)
 			{
 				case 0:
 				{
-					if( Level( pm.GoldPoint[0] ) >= MaxLevel )
+					if (Level(pm.GoldPoint[0]) >= MaxLevel)
 						return;
 
 					savepoint = pm.GoldPoint[0];
 					pm.GoldPoint[0] += getpoint;
-					if( pm.HasGump(typeof(GoldPointGump)) )
+					if (pm.HasGump(typeof(GoldPointGump)))
 						pm.SendGump(new GoldPointGump(pm));
 					break;
 				}
 				case 1:
 				{
-					if( Level( pm.GoldPoint[10] ) >= MaxLevel )
+					if (Level(pm.GoldPoint[10]) >= MaxLevel)
 						return;
 
 					savepoint = pm.GoldPoint[10];
 					pm.GoldPoint[10] += getpoint;
-					if( pm.HasGump(typeof(GoldPointGump)) )
+					if (pm.HasGump(typeof(GoldPointGump)))
 						pm.SendGump(new GoldPointGump(pm));
 					break;
 				}
 				case 2:
 				{
-					if( Level( pm.SilverPoint[0] ) >= MaxLevel )
+					if (Level(pm.SilverPoint[0]) >= MaxLevel)
 						return;
 
 					savepoint = pm.SilverPoint[0];
 					pm.SilverPoint[0] += getpoint;
-					if( pm.HasGump(typeof(SilverPointGump)) )
+					if (pm.HasGump(typeof(SilverPointGump)))
 						pm.SendGump(new SilverPointGump(pm));
 					break;
 				}
 			}
-			if( getpoint + Level( savepoint ) >= NextLevel( savepoint ) )
+			if (getpoint + Level(savepoint) >= NextLevel(savepoint))
 			{
-				if( getpoint + Level( savepoint ) >= MaxLevel )
+				if (getpoint + Level(savepoint) >= MaxLevel)
 					pm.DeathCheck = 0;
 				LevelUp_Effect(pm);
 				pm.SendMessage("레벨이 올랐습니다!");
 				pm.ProcessDelta();
 				pm.Delta(MobileDelta.Stat);
 			}
-			pm.SendMessage("{0} 경험치를 {1} 획득합니다!", exp_Type_Name[exp_Type], getpoint );
+			pm.SendMessage("{0} 경험치를 {1} 획득합니다!", exp_Type_Name[exp_Type], getpoint);
 		}
-		
-		
-		public static void HarvestReward( PlayerMobile pm, int harvestNumber )
+
+		public static void HarvestReward(PlayerMobile pm, int harvestNumber)
 		{
 			int harvestrank = harvestNumber % 9;
 			harvestrank = 50 + harvestrank * 40;
 			LevelUpEffect(pm, harvestrank * 1000, 0);
 		}
-		public static void CraftReward( PlayerMobile pm, int harvestNumber )
+
+		public static void CraftReward(PlayerMobile pm, int harvestNumber)
 		{
 			LevelUpEffect(pm, 150000, 1);
-		}	
-		public static void MonsterFeatReward( PlayerMobile pm, int monsterNumber )
+		}
+
+		public static void MonsterFeatReward(PlayerMobile pm, int monsterNumber)
 		{
 			BaseCreature bc = null;
 			bc = MonsterListCheck(monsterNumber);
-			if( bc != null )
+			if (bc != null)
 			{
 				LevelUpEffect(pm, bc.Fame * 10, 2);
-			}		
+			}
 		}
-		
-		public static bool MonsterCheck( BaseCreature mob )
+
+		public static bool MonsterCheck(BaseCreature mob)
 		{
-			if( mob.ControlMaster == null && mob.SummonMaster == null )
+			if (mob.ControlMaster == null && mob.SummonMaster == null)
 				return true;
 			else
 				return false;
 		}
-		
-		public static bool PetStat( BaseCreature bc, int exp, int petStat, int MonsterStat )
+
+		public static bool PetStat(BaseCreature bc, int exp, int petStat, int MonsterStat)
 		{
 			exp += MonsterStat;
-			if( exp <= petStat * petStat )
+			if (exp <= petStat * petStat)
 			{
 				LevelUp_Effect(bc);
 				exp -= petStat * petStat;
@@ -1016,7 +1189,7 @@ namespace Server.Misc
 			}
 			return false;
 		}
-		
+
 		public static BaseCreature MonsterListCheck(int number)
 		{
 			BaseCreature bc = null;
@@ -1024,63 +1197,60 @@ namespace Server.Misc
 			{
 				bc = Activator.CreateInstance(m_MonsterItemDrop[number, 0]) as BaseCreature;
 			}
-			catch
-			{
-			}
+			catch { }
 			return bc;
 		}
-		
+
 		public static void RecipeScrollSelect(BaseCreature bc, RecipeScroll item)
 		{
-			if( bc is OrcScout )
+			if (bc is OrcScout)
 			{
 				item.RecipeID = 208;
 			}
-			if( bc is OrcScout )
+			if (bc is OrcScout)
 			{
 				item.RecipeID = 208;
 			}
-			if( bc is Titan )
+			if (bc is Titan)
 			{
 				item.RecipeID = 208;
 			}
-			
 		}
-		
+
 		public static void MonsterStatuetteSelect(BaseCreature bc, MonsterStatuette item)
 		{
 			string bcName = bc.GetType().Name;
-			for( int i = 0; i < Enum.GetValues(typeof(MonsterStatuetteType)).Length; i++ )
+			for (int i = 0; i < Enum.GetValues(typeof(MonsterStatuetteType)).Length; i++)
 			{
 				MonsterStatuetteType monster = (MonsterStatuetteType)i;
-				if( bcName == monster.ToString() )
+				if (bcName == monster.ToString())
 				{
 					item.Type = monster;
 					break;
 				}
 			}
 		}
-		
+
 		public static int MonsterEquipItem(BaseCreature bc)
 		{
 			int number = 0;
-			for( int i = 0; i < m_MonsterItemDrop.GetLength(0); i++)
+			for (int i = 0; i < m_MonsterItemDrop.GetLength(0); i++)
 			{
-				if( bc.GetType() == m_MonsterItemDrop[i, 0] )
+				if (bc.GetType() == m_MonsterItemDrop[i, 0])
 				{
 					number += i + 1;
 					break;
 				}
 			}
 			return number;
-		}		
-		
+		}
+
 		public static Type MonsterDropItem(BaseCreature bc)
 		{
 			Type type = null;
-			for( int i = 0; i < m_MonsterItemDrop.GetLength(0); i++)
+			for (int i = 0; i < m_MonsterItemDrop.GetLength(0); i++)
 			{
-				if( bc.GetType() == m_MonsterItemDrop[i, 0] )
+				if (bc.GetType() == m_MonsterItemDrop[i, 0])
 				{
 					type = m_MonsterItemDrop[i, 1];
 					break;
@@ -1088,12 +1258,13 @@ namespace Server.Misc
 			}
 			return type;
 		}
+
 		public static Type MonsterHiddenDropItem(BaseCreature bc)
 		{
 			Type type = null;
-			for( int i = 0; i < m_MonsterItemDrop.GetLength(0); i++)
+			for (int i = 0; i < m_MonsterItemDrop.GetLength(0); i++)
 			{
-				if( bc.GetType() == m_MonsterItemDrop[i, 0] )
+				if (bc.GetType() == m_MonsterItemDrop[i, 0])
 				{
 					type = m_MonsterItemDrop[i, 2];
 					break;
@@ -1103,134 +1274,181 @@ namespace Server.Misc
 		}
 
 		#endregion
-		
+
 		public static int QuestTier(PlayerMobile pm, int maxtier)
 		{
-			int tier = Level( pm.SilverPoint[0] );
+			int tier = Level(pm.SilverPoint[0]);
 			int playerlevel = tier / 35;
-			int totalMaxTier = Math.Min( playerlevel, maxtier );
-			tier = Utility.RandomMinMax( tier - ( maxtier * 30 ), tier + 15 );
+			int totalMaxTier = Math.Min(playerlevel, maxtier);
+			tier = Utility.RandomMinMax(tier - (maxtier * 30), tier + 15);
 			tier /= 35;
-			tier = Math.Min( Math.Max(tier, 0 ), totalMaxTier );
+			tier = Math.Min(Math.Max(tier, 0), totalMaxTier);
 			return tier;
 		}
-
 
 		#region 유물 설정
 
 		#endregion
-		
-		
+
+
 		#region 2.1 신규 옵션 코드
 		//강화 성공 확률
 		public static readonly int[,,] NewItemPowerUpgrade = new int[,,]
 		{
 			//확률, 일반재료, 일반상승치, 희귀, 희귀, 영웅, 영웅, 서사, 서사, 전설, 전설, 신화, 신화
-			{{ 	9000, 3, 500, 7, 600, 12, 800, 20, 1000, 30, 1400, 45, 1900 }, //1강
-			{	9000, 3, 100, 7, 120, 12, 150, 20, 200, 30, 275, 45, 375	}},
-			{{ 	8500, 7, 600, 12, 700, 20, 900, 30, 1200, 45, 1700, 60, 2300 }, //2강
-			{	8500, 7, 110, 12, 132, 20, 165, 30, 220, 45, 303, 60, 413	}},
-			{{	8000, 12, 700, 20, 800, 30, 1100, 45, 1400, 60, 1900, 80, 2600 }, //3강
-			{	8000, 12, 120, 20, 144, 30, 180, 45, 240, 60, 330, 80, 450	}},
-			{{ 	7500, 20, 800, 30, 1000, 45, 1200, 60, 1600, 80, 2200, 100, 3000 }, //4강
-			{	7500, 20, 135, 30, 162, 45, 203, 60, 270, 80, 371, 100, 506	}},
-			{{ 	7000, 30, 900, 45, 1100, 60, 1400, 80, 1800, 100, 2500, 120, 3400 }, //5강
-			{	7000, 30, 150, 45, 180, 60, 225, 80, 300, 100, 413, 120, 563 }},
-			{{ 	6500, 45, 1100, 60, 1300, 80, 1700, 100, 2200, 120, 3000, 140, 4100 }, //6강
-			{	6500, 45, 170, 60, 204, 80, 255, 100, 340, 120, 468, 140, 638}},
-			{{ 	6000, 60, 1300, 80, 1600, 100, 2000, 120, 2600, 140, 3600, 160, 4900 }, //7강
-			{	6000, 60, 200, 80, 240, 100, 300, 120, 400, 140, 550, 160, 750	}},
-			{{ 	5500, 80, 1500, 100, 1900, 120, 2300, 140, 3000, 160, 4100, 180, 5600 }, //8강
-			{	5500, 80, 250, 100, 300, 120, 375, 140, 500, 160, 688, 180, 938	}},
-			{{ 	5000, 100, 1800, 120, 2200, 140, 2700, 160, 3600, 180, 5000, 200, 6800 }, //9강
-			{	5000, 100, 300, 120, 360, 140, 450, 160, 600, 180, 825, 200, 1125}},
-			{{ 	4000, 120, 2200, 140, 2600, 160, 3300, 180, 4400, 200, 6100, 225, 8300 }, //10강
-			{	4000, 120, 400, 140, 480, 160, 600, 180, 800, 200, 1100, 225, 1500	}},
-			{{ 	3000, 140, 2600, 160, 3100, 180, 3900, 200, 5200, 225, 7200, 250, 9800 }, //11강
-			{	3000, 140, 500, 160, 600, 180, 750, 200, 1000, 225, 1375, 250, 1875 }},
-			{{ 	2000, 160, 3000, 180, 3600, 200, 4500, 225, 6000, 250, 8300, 275, 11300 }, //12강
-			{	2000, 160, 650, 180, 780, 200, 975, 225, 1300, 250, 1788, 275, 2438	}},
-			{{ 	1500, 180, 3500, 200, 4200, 225, 5300, 250, 7000, 275, 9600, 300, 13100 }, //13강
-			{	1500, 180, 900, 200, 1080, 225, 1350, 250, 1800, 275, 2475, 300, 3375 }},
-			{{ 	1200, 200, 4000, 225, 4800, 250, 6000, 275, 8000, 300, 11000, 350, 15000 }, //14강
-			{	1200, 200, 1300, 225, 1560, 250, 1950, 275, 2600, 300, 3575, 350, 4875 }},
-			{{ 	1000, 225, 5000, 250, 6000, 275, 7500, 300, 10000, 350, 13800, 400, 18800 }, //15강
-			{	1000, 225, 2000, 250, 2400, 275, 3000, 300, 4000, 350, 5500, 400, 7500 }},
-			{{ 	800, 250, 6000, 275, 7200, 300, 9000, 350, 12000, 400, 16500, 500, 22500 }, //16강
-			{	800, 250, 3200, 275, 3840, 300, 4800, 350, 6400, 400, 8800, 500, 12000	}},
-			{{ 	600, 275, 7000, 300, 8400, 350, 10500, 400, 14000, 500, 19300, 600, 26300 }, //17강
-			{	600, 275, 5000, 300, 6000, 350, 7500, 400, 10000, 500, 13750, 600, 18750 }},
-			{{ 	4000, 300, 8000, 350, 9600, 400, 12000, 500, 16000, 600, 22000, 700, 30000 }, //18강
-			{	4000, 300, 7500, 350, 9000, 400, 11250, 500, 15000, 600, 20625, 700, 28125 }},
-			{{ 	200, 350, 9000, 400, 10800, 500, 13500, 600, 18000, 700, 24800, 800, 33800 }, //19강
-			{	200, 350, 12000, 400, 14400, 500, 18000, 600, 24000, 700, 33000, 800, 45000 }},
-			{{ 	100, 400, 10000, 500, 12000, 600, 15000, 700, 20000, 800, 27500, 1000, 37500 }, //20강
-			{	100, 400, 20000, 500, 24000, 600, 30000, 700, 40000, 800, 55000, 1000, 75000}}
+			{
+				{ 9000, 3, 500, 7, 600, 12, 800, 20, 1000, 30, 1400, 45, 1900 }, //1강
+				{ 9000, 3, 100, 7, 120, 12, 150, 20, 200, 30, 275, 45, 375 },
+			},
+			{
+				{ 8500, 7, 600, 12, 700, 20, 900, 30, 1200, 45, 1700, 60, 2300 }, //2강
+				{ 8500, 7, 110, 12, 132, 20, 165, 30, 220, 45, 303, 60, 413 },
+			},
+			{
+				{ 8000, 12, 700, 20, 800, 30, 1100, 45, 1400, 60, 1900, 80, 2600 }, //3강
+				{ 8000, 12, 120, 20, 144, 30, 180, 45, 240, 60, 330, 80, 450 },
+			},
+			{
+				{ 7500, 20, 800, 30, 1000, 45, 1200, 60, 1600, 80, 2200, 100, 3000 }, //4강
+				{ 7500, 20, 135, 30, 162, 45, 203, 60, 270, 80, 371, 100, 506 },
+			},
+			{
+				{ 7000, 30, 900, 45, 1100, 60, 1400, 80, 1800, 100, 2500, 120, 3400 }, //5강
+				{ 7000, 30, 150, 45, 180, 60, 225, 80, 300, 100, 413, 120, 563 },
+			},
+			{
+				{ 6500, 45, 1100, 60, 1300, 80, 1700, 100, 2200, 120, 3000, 140, 4100 }, //6강
+				{ 6500, 45, 170, 60, 204, 80, 255, 100, 340, 120, 468, 140, 638 },
+			},
+			{
+				{ 6000, 60, 1300, 80, 1600, 100, 2000, 120, 2600, 140, 3600, 160, 4900 }, //7강
+				{ 6000, 60, 200, 80, 240, 100, 300, 120, 400, 140, 550, 160, 750 },
+			},
+			{
+				{ 5500, 80, 1500, 100, 1900, 120, 2300, 140, 3000, 160, 4100, 180, 5600 }, //8강
+				{ 5500, 80, 250, 100, 300, 120, 375, 140, 500, 160, 688, 180, 938 },
+			},
+			{
+				{ 5000, 100, 1800, 120, 2200, 140, 2700, 160, 3600, 180, 5000, 200, 6800 }, //9강
+				{ 5000, 100, 300, 120, 360, 140, 450, 160, 600, 180, 825, 200, 1125 },
+			},
+			{
+				{ 4000, 120, 2200, 140, 2600, 160, 3300, 180, 4400, 200, 6100, 225, 8300 }, //10강
+				{ 4000, 120, 400, 140, 480, 160, 600, 180, 800, 200, 1100, 225, 1500 },
+			},
+			{
+				{ 3000, 140, 2600, 160, 3100, 180, 3900, 200, 5200, 225, 7200, 250, 9800 }, //11강
+				{ 3000, 140, 500, 160, 600, 180, 750, 200, 1000, 225, 1375, 250, 1875 },
+			},
+			{
+				{ 2000, 160, 3000, 180, 3600, 200, 4500, 225, 6000, 250, 8300, 275, 11300 }, //12강
+				{ 2000, 160, 650, 180, 780, 200, 975, 225, 1300, 250, 1788, 275, 2438 },
+			},
+			{
+				{ 1500, 180, 3500, 200, 4200, 225, 5300, 250, 7000, 275, 9600, 300, 13100 }, //13강
+				{ 1500, 180, 900, 200, 1080, 225, 1350, 250, 1800, 275, 2475, 300, 3375 },
+			},
+			{
+				{ 1200, 200, 4000, 225, 4800, 250, 6000, 275, 8000, 300, 11000, 350, 15000 }, //14강
+				{ 1200, 200, 1300, 225, 1560, 250, 1950, 275, 2600, 300, 3575, 350, 4875 },
+			},
+			{
+				{ 1000, 225, 5000, 250, 6000, 275, 7500, 300, 10000, 350, 13800, 400, 18800 }, //15강
+				{ 1000, 225, 2000, 250, 2400, 275, 3000, 300, 4000, 350, 5500, 400, 7500 },
+			},
+			{
+				{ 800, 250, 6000, 275, 7200, 300, 9000, 350, 12000, 400, 16500, 500, 22500 }, //16강
+				{ 800, 250, 3200, 275, 3840, 300, 4800, 350, 6400, 400, 8800, 500, 12000 },
+			},
+			{
+				{ 600, 275, 7000, 300, 8400, 350, 10500, 400, 14000, 500, 19300, 600, 26300 }, //17강
+				{ 600, 275, 5000, 300, 6000, 350, 7500, 400, 10000, 500, 13750, 600, 18750 },
+			},
+			{
+				{ 4000, 300, 8000, 350, 9600, 400, 12000, 500, 16000, 600, 22000, 700, 30000 }, //18강
+				{ 4000, 300, 7500, 350, 9000, 400, 11250, 500, 15000, 600, 20625, 700, 28125 },
+			},
+			{
+				{ 200, 350, 9000, 400, 10800, 500, 13500, 600, 18000, 700, 24800, 800, 33800 }, //19강
+				{ 200, 350, 12000, 400, 14400, 500, 18000, 600, 24000, 700, 33000, 800, 45000 },
+			},
+			{
+				{ 100, 400, 10000, 500, 12000, 600, 15000, 700, 20000, 800, 27500, 1000, 37500 }, //20강
+				{ 100, 400, 20000, 500, 24000, 600, 30000, 700, 40000, 800, 55000, 1000, 75000 },
+			},
 		};
 
 		public static int[] NewItemPowerOption = new int[]
 		{
 			//물리 데미지 증가, 화염 데미지 증가, 냉기 데미지 증가, 독 데미지 증가, 에너지 데미지 증가, 혼돈 데미지 증가(102), 신성 데미지 증가(103), 무기 뎀감(104), 마법 뎀감(105), 기절 시간 감소(106)
-			22, 23, 24, 25, 26, 102, 103, 104, 105, 106
+			22,
+			23,
+			24,
+			25,
+			26,
+			102,
+			103,
+			104,
+			105,
+			106,
 		};
-		
+
 		//아이템 제작, 등급 및 장비학 보너스
 		public static double[,] RankCreateValue = new double[,]
 		{
 			//희귀, 영웅, 서사, 전설 신화
 			{ 0, 40, 90, 140, 190 }, //암즈로어 스킬 체크. 몬스터는 6000, 13500, 21000, 28500
 			{ 0.1, 0.05, 0.02, 0.01, 0.001 }, //등급 보너스
-			{ 0.01, 0.005, 0.002, 0.001, 0.0001}, //암즈로어 당 스킬 보너스
+			{ 0.01, 0.005, 0.002, 0.001, 0.0001 }, //암즈로어 당 스킬 보너스
 		};
-		
-		public static bool SuccessCheck(double original, double bonus, double maxvalue )
+
+		public static bool SuccessCheck(double original, double bonus, double maxvalue)
 		{
 			double minvalue = original + bonus;
-			if( minvalue > maxvalue )
+			if (minvalue > maxvalue)
 				minvalue = maxvalue;
-			if( Utility.RandomDouble() < minvalue )
+			if (Utility.RandomDouble() < minvalue)
 				return true;
 			else
 				return false;
 		}
-		
-		
-		public static int ItemRankMaker( double luck, double maxvalue, double skillbonus )
+
+		public static int ItemRankMaker(double luck, double maxvalue, double skillbonus)
 		{
 			bool craftitem = false;
-			if( skillbonus == 1 )
+			if (skillbonus == 1)
 				craftitem = true;
-			return ItemRankMaker( luck, maxvalue, craftitem );
+			return ItemRankMaker(luck, maxvalue, craftitem);
 		}
-		
+
 		//아이템 랭크 결정
-		public static int ItemRankMaker( double luck, double maxvalue, bool skillbonus )
+		public static int ItemRankMaker(double luck, double maxvalue, bool skillbonus)
 		{
 			int rank = 0;
 			bool create = false;
-			for( int i = 4; i >= 0; --i )
+			for (int i = 4; i >= 0; --i)
 			{
-				if( luck >= RankCreateValue[0,i] )
+				if (luck >= RankCreateValue[0, i])
 				{
 					//double bonus = luck - RankCreateValue[0,i];
-					double bonus = luck * RankCreateValue[2,i];
-					if( skillbonus ) //장비학 보너스 설계
+					double bonus = luck * RankCreateValue[2, i];
+					if (skillbonus) //장비학 보너스 설계
 					{
-						if( luck >= 200 && i == 4 )
-							 bonus += 0.005; //신화
-						 else if( luck >= 150 && i == 3 )
-							 bonus += 0.03; //전설
-						 else if( luck >= 100 )
-						 {
-							if( i == 2 )
+						if (luck >= 200 && i == 4)
+							bonus += 0.005; //신화
+						else if (luck >= 150 && i == 3)
+							bonus += 0.03; //전설
+						else if (luck >= 100)
+						{
+							if (i == 2)
 								bonus += 0.10; //영웅
-							else if ( i == 1 )
+							else if (i == 1)
 								bonus += 0.50; //희귀
-						 }
+						}
 					}
 					//bonus *= skillbonus;
 					//bonus *= RankCreateValue[2,i];
-					if( SuccessCheck(RankCreateValue[1,i], bonus, maxvalue ) )
+					if (SuccessCheck(RankCreateValue[1, i], bonus, maxvalue))
 					{
 						rank = i + 1;
 						break;
@@ -1239,24 +1457,22 @@ namespace Server.Misc
 			}
 			return rank;
 		}
-		
-		
-		
+
 		public void UpgradeMessage(Mobile from, bool success, int rank)
 		{
 			int failcheck = success ? 0 : 1;
 			int color = success ? 1165 : 1166;
-			if( rank < 9 + failcheck )
+			if (rank < 9 + failcheck)
 			{
-				if( success )
-					from.SendMessage("{0}강화에 성공하였습니다!!!", rank );
+				if (success)
+					from.SendMessage("{0}강화에 성공하였습니다!!!", rank);
 				else
-					from.SendMessage("{0}강화에 실패하였습니다...", rank );
+					from.SendMessage("{0}강화에 실패하였습니다...", rank);
 			}
 			else
 			{
 				string casting = from.Name + "님이 " + rank.ToString() + "강화에 ";
-				if( success )
+				if (success)
 				{
 					casting += "성공하셨습니다!!!";
 				}
@@ -1264,7 +1480,7 @@ namespace Server.Misc
 				{
 					casting += "실패하셨습니다...";
 				}
-				World.Broadcast( color, true, casting );
+				World.Broadcast(color, true, casting);
 			}
 		}
 
@@ -1279,64 +1495,69 @@ namespace Server.Misc
 				}
 			}
 		}
-		
+
 		public static bool NewItemPowerChance(int upgrade)
 		{
 			int dice = Utility.RandomMinMax(1, 10000);
-			if( dice <= NewItemPowerUpgrade[upgrade + 1, 0, 0] )
+			if (dice <= NewItemPowerUpgrade[upgrade + 1, 0, 0])
 				return true;
 			else
 				return false;
 		}
-		
+
 		public static void NewItemPowerMake(Item equip, int scroll)
 		{
 			//접두 3 ~ 10 : 강화 종류
 			//접미 3 ~ 10 : 강화 레벨
-			if( equip is IEquipOption )
+			if (equip is IEquipOption)
 			{
 				IEquipOption item = equip as IEquipOption;
 				int check = NewEquipNumber(equip);
 				int itemline = NewItemLine(check);
-				item.SuffixOption[3 + scroll] = NewItemPowerUpgrade[ item.PrefixOption[3 + scroll], itemline, (item.SuffixOption[1] + 1) * 2 ];
+				item.SuffixOption[3 + scroll] = NewItemPowerUpgrade[
+					item.PrefixOption[3 + scroll],
+					itemline,
+					(item.SuffixOption[1] + 1) * 2
+				];
 				int optioncheck = NewItemPowerOption[itemline == 0 ? scroll : scroll + 7];
 				int itemvalue = item.SuffixOption[3 + scroll];
-				if( item.PrefixOption[3 + scroll] > 0 )
+				if (item.PrefixOption[3 + scroll] > 0)
 				{
-					itemvalue = NewItemPowerUpgrade[ item.PrefixOption[3 + scroll] + 1, itemline, ( (scroll + 1) * 2) ] - item.SuffixOption[3 + scroll];
+					itemvalue =
+						NewItemPowerUpgrade[item.PrefixOption[3 + scroll] + 1, itemline, ((scroll + 1) * 2)]
+						- item.SuffixOption[3 + scroll];
 				}
 				item.PrefixOption[3 + scroll]++;
-				NewEquipOptionList( equip, optioncheck, itemvalue, 0 );
+				NewEquipOptionList(equip, optioncheck, itemvalue, 0);
 				//Console.WriteLine("강화 번호 : {0}, optioncheck : {1}, itemvalue : {2}, rank : {3}", 3 + scroll, optioncheck, itemvalue, item.SuffixOption[1] );
 			}
 		}
-		
-        //아이템 옵션 설정
-		public static double PercentCalc(int number )
+
+		//아이템 옵션 설정
+		public static double PercentCalc(int number)
 		{
-			if( number < 3 )
+			if (number < 3)
 				return 0.01;
 			return 0.0001;
-			
 		}
-		
+
 		public static int OPLPercentCheck(int number, int step = 1)
 		{
 			//스텝일 시 퍼센트 처리
 			int check = 0;
-			if( number >= 1080585 && number <= 1080596 )
+			if (number >= 1080585 && number <= 1080596)
 				check = step;
-			else if( number >= 1080600 && number <= 1080609 )
+			else if (number >= 1080600 && number <= 1080609)
 				check = step;
-			else if( number >= 1080615 && number <= 1080624 )
+			else if (number >= 1080615 && number <= 1080624)
 				check = step;
-			else if( number >= 1080629 && number <= 1080640 )
+			else if (number >= 1080629 && number <= 1080640)
 				check = step;
-			else if( number >= 1080651 && number <= 1080654 )
+			else if (number >= 1080651 && number <= 1080654)
 				check = step;
-			else if( number >= 1080661 && number <= 1080662 )
+			else if (number >= 1080661 && number <= 1080662)
 				check = step;
-			else if( number >= 1080664 && number <= 1080670 )
+			else if (number >= 1080664 && number <= 1080670)
 				check = step;
 			return check;
 		}
@@ -1345,56 +1566,62 @@ namespace Server.Misc
 		public static int NewEquipNumber(Item equip)
 		{
 			int check = -1;
-			if( equip is IEquipOption )
+			if (equip is IEquipOption)
 			{
 				IEquipOption item = equip as IEquipOption;
-				if( item is BaseWeapon )
+				if (item is BaseWeapon)
 				{
 					BaseWeapon newmake = item as BaseWeapon;
 					check = WeaponList(newmake);
 				}
-				
-				else if( item is BaseArmor )
+				else if (item is BaseArmor)
 				{
 					BaseArmor newmake = item as BaseArmor;
 					check = ArmorList(newmake);
 				}
-				else if( item is BaseClothing )
+				else if (item is BaseClothing)
 				{
 					BaseClothing newmake = item as BaseClothing;
-					if( !(newmake.Layer == Layer.Neck || newmake.Layer == Layer.Gloves || newmake.Layer == Layer.Arms || newmake.Layer == Layer.Helm || newmake.Layer == Layer.Pants || newmake.Layer == Layer.InnerTorso ) )
+					if (
+						!(
+							newmake.Layer == Layer.Neck
+							|| newmake.Layer == Layer.Gloves
+							|| newmake.Layer == Layer.Arms
+							|| newmake.Layer == Layer.Helm
+							|| newmake.Layer == Layer.Pants
+							|| newmake.Layer == Layer.InnerTorso
+						)
+					)
 					{
 						check = -1;
 					}
 					else
 						check = 11;
 				}
-				else if( item is BaseJewel )
+				else if (item is BaseJewel)
 				{
 					BaseJewel newmake = item as BaseJewel;
-					check = JewelList(newmake);					
-
+					check = JewelList(newmake);
 				}
-				else if( item is Spellbook )
+				else if (item is Spellbook)
 				{
 					check = 9;
 				}
 			}
 
 			return check;
-			
 		}
-		
+
 		public static int NewItemLine(int check)
 		{
 			int itemline = 0;
-			if( check >= 10 && check <= 18 )
+			if (check >= 10 && check <= 18)
 				itemline = 1;
-			else if( check >= 19 )
+			else if (check >= 19)
 				itemline = 2;
 			return itemline;
 		}
-		
+
 		//재련 코드
 		public static void NewUseGem(Item equip, int gem)
 		{
@@ -1402,21 +1629,26 @@ namespace Server.Misc
 			//접미 31 ~ 40 : 1 ~ 10 재련 저장값
 			//접미 2 : 재련 최대값
 
-			if( equip is IEquipOption )
+			if (equip is IEquipOption)
 			{
 				IEquipOption item = equip as IEquipOption;
 				int check = NewEquipNumber(equip);
 				int skilluse = 0;
 
-				if( gem == -1 )
+				if (gem == -1)
 				{
 					int count = 0;
-					for(int i = 0; i < 10; ++i)
+					for (int i = 0; i < 10; ++i)
 					{
-						if(item.PrefixOption[31 + i] != -1 )
+						if (item.PrefixOption[31 + i] != -1)
 						{
 							count++;
-							skilluse = NewEquipOptionList( equip, item.PrefixOption[31 + i], item.SuffixOption[31 + i] * -1, 0 );
+							skilluse = NewEquipOptionList(
+								equip,
+								item.PrefixOption[31 + i],
+								item.SuffixOption[31 + i] * -1,
+								0
+							);
 							item.PrefixOption[31 + i] = -1;
 							item.SuffixOption[31 + i] = -1;
 						}
@@ -1424,332 +1656,337 @@ namespace Server.Misc
 							break;
 					}
 				}
-				else if( item.SuffixOption[2] > 0 )
+				else if (item.SuffixOption[2] > 0)
 				{
 					int itemline = NewItemLine(check);
 					item.SuffixOption[2]--;
-					for( int i = 0; i < 10; ++i )
+					for (int i = 0; i < 10; ++i)
 					{
-						if( item.PrefixOption[31 + i] == -1 )
+						if (item.PrefixOption[31 + i] == -1)
 						{
 							item.PrefixOption[31 + i] = NewSelectGemOption[gem, check];
-							if( itemline == 1 && item.PrefixOption[31 + i] >= 56 && item.PrefixOption[31 + i] <= 62 )
+							if (itemline == 1 && item.PrefixOption[31 + i] >= 56 && item.PrefixOption[31 + i] <= 62)
 								item.SuffixOption[31 + i] = 200;
 							else
-								item.SuffixOption[31 + i] = NewEquipOption[item.PrefixOption[i + 31],	itemline, 	3] / 6;
-							skilluse = NewEquipOptionList( equip, item.PrefixOption[ i + 31], item.SuffixOption[ i + 31], skilluse);
+								item.SuffixOption[31 + i] = NewEquipOption[item.PrefixOption[i + 31], itemline, 3] / 6;
+							skilluse = NewEquipOptionList(
+								equip,
+								item.PrefixOption[i + 31],
+								item.SuffixOption[i + 31],
+								skilluse
+							);
 							break;
 						}
 					}
 				}
 			}
 		}
-		
+
 		#endregion
 
 		#region 공통 제작 코드
 		/*
-        private static readonly int[,,] EquipOption = new int[,,]
+		private static readonly int[,,] EquipOption = new int[,,]
 		{
 			//1080578부터 시작
 			//	이름,			Min1, 	Max1, 	Min2, 	Max2, 	Min3, 	Max3, 	Min4, 	Max4, 	Min5, 	Max5, 	Min6,	Max6, 	Min7, 	Max7
 			{{ 	1080578,	 	5,		15,		20,		30,		35,		50, 	55, 	70,		75,		100, 	125, 	135,	150,	200	},	//0 힘 증가
 			{	1080578,	 	1,		5,		6,		10,		11,		16, 	17, 	24,		25,		33,		34,		44,		45,		66	},
-			{	1080578,	 	5,		10,		11,		15,		16,		25, 	26, 	35,		36,		50,		51,		70,		71,		100	}},	
+			{	1080578,	 	5,		10,		11,		15,		16,		25, 	26, 	35,		36,		50,		51,		70,		71,		100	}},
 			{{ 	1080579,	 	5,		15,		20,		30,		35,		50, 	55, 	70,		75,		100, 	125, 	135,	150,	200	},	//1 민첩성 증가
 			{	1080579,	 	1,		5,		6,		10,		11,		16, 	17, 	24,		25,		33,		34,		44,		45,		66	},
-			{	1080579,	 	5,		10,		11,		15,		16,		25, 	26, 	35,		36,		50,		51,		70,		71,		100	}},	
+			{	1080579,	 	5,		10,		11,		15,		16,		25, 	26, 	35,		36,		50,		51,		70,		71,		100	}},
 			{{ 	1080580,	 	5,		15,		20,		30,		35,		50, 	55, 	70,		75,		100, 	125, 	135,	150,	200	},	//2 지능 증가
 			{	1080580,	 	1,		5,		6,		10,		11,		16, 	17, 	24,		25,		33,		34,		44,		45,		66	},
-			{	1080580,	 	5,		10,		11,		15,		16,		25, 	26, 	35,		36,		50,		51,		70,		71,		100	}},	
+			{	1080580,	 	5,		10,		11,		15,		16,		25, 	26, 	35,		36,		50,		51,		70,		71,		100	}},
 			{{ 	1080581,	 	5,		15,		20,		30,		35,		50, 	55, 	70,		75,		100, 	125, 	135,	150,	200	},	//3 운 증가
 			{	1080581,	 	1,		5,		6,		10,		11,		16, 	17, 	24,		25,		33,		34,		44,		45,		66	},
-			{	1080581,	 	5,		10,		11,		15,		16,		25, 	26, 	35,		36,		50,		51,		70,		71,		100	}},	
+			{	1080581,	 	5,		10,		11,		15,		16,		25, 	26, 	35,		36,		50,		51,		70,		71,		100	}},
 			{{ 	1080582,	 	50,		150,	200,	300,	350,	500, 	550, 	700,	750,	1000, 	1250, 	1350,	1500,	2000},	//4 체력 증가
 			{	1080582,	 	10,		50,		60,		100,	110,	160, 	170, 	240,	250,	330,	340,	440,	450,	660	},
-			{	1080582,	 	50,		100,	110,	150,	160,	250, 	260, 	350,	360,	500,	510,	700,	710,	1000}},	
+			{	1080582,	 	50,		100,	110,	150,	160,	250, 	260, 	350,	360,	500,	510,	700,	710,	1000}},
 			{{ 	1080583,	 	10,		30,		40,		60,		70,		100, 	110, 	140,	150,	200, 	220, 	270,	300,	400	},	//5 기력 증가
 			{	1080583,	 	1,		10,		11,		20,		21,		32,		33, 	49,		50,		66,		67,		88,		89,		132	},
-			{	1080583,	 	10,		20,		21,		31,		32,		51, 	52, 	71,		72,		100,	101,	140,	141,	200	}},	
+			{	1080583,	 	10,		20,		21,		31,		32,		51, 	52, 	71,		72,		100,	101,	140,	141,	200	}},
 			{{ 	1080584,	 	10,		30,		40,		60,		70,		100, 	110, 	140,	150,	200, 	220, 	270,	300,	400	},	//6 마나 증가
 			{	1080584,	 	1,		10,		11,		20,		21,		32,		33, 	49,		50,		66,		67,		88,		89,		132	},
-			{	1080584,	 	10,		20,		21,		31,		32,		51, 	52, 	71,		72,		100,	101,	140,	141,	200	}},	
+			{	1080584,	 	10,		20,		21,		31,		32,		51, 	52, 	71,		72,		100,	101,	140,	141,	200	}},
 			{{ 	1080585,	 	100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//7 피해 증가%
 			{	1080585,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080585,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080585,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080586,	 	100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//8 주문 피해 증가%
 			{	1080586,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080586,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080586,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080587,	 	100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//9 관통 피해 증가%
 			{	1080587,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080587,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080587,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080588,	 	100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//10 충격 피해 증가%
 			{	1080588,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080588,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080588,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080589,	 	100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//11 출혈 피해 증가%
 			{	1080589,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080589,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080589,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080590,	 	1,		4,		5,		10,		11,		15, 	16, 	25,		26,		50,		51,		65,		66,		80	},	//12 물리 저항력%
 			{	1080590,	 	1,		2,		3,		5,		6,		7, 		8, 		12,		13,		25,		26,		33,		34,		50	},
-			{	1080590,	 	1,		2,		3,		5,		6,		7, 		8, 		12,		13,		25,		26,		33,		34,		50	}},	
+			{	1080590,	 	1,		2,		3,		5,		6,		7, 		8, 		12,		13,		25,		26,		33,		34,		50	}},
 			{{ 	1080591,	 	1,		4,		5,		10,		11,		15, 	16, 	25,		26,		50,		51,		65,		66,		80	},	//13 화염 저항력%
 			{	1080591,	 	1,		2,		3,		5,		6,		7, 		8, 		12,		13,		25,		26,		33,		34,		50	},
-			{	1080591,	 	1,		2,		3,		5,		6,		7, 		8, 		12,		13,		25,		26,		33,		34,		50	}},	
+			{	1080591,	 	1,		2,		3,		5,		6,		7, 		8, 		12,		13,		25,		26,		33,		34,		50	}},
 			{{ 	1080592,	 	1,		4,		5,		10,		11,		15, 	16, 	25,		26,		50,		51,		65,		66,		80	},	//14 냉기 저항력%
 			{	1080592,	 	1,		2,		3,		5,		6,		7, 		8, 		12,		13,		25,		26,		33,		34,		50	},
-			{	1080592,	 	1,		2,		3,		5,		6,		7, 		8, 		12,		13,		25,		26,		33,		34,		50	}},	
+			{	1080592,	 	1,		2,		3,		5,		6,		7, 		8, 		12,		13,		25,		26,		33,		34,		50	}},
 			{{ 	1080593,	 	1,		4,		5,		10,		11,		15, 	16, 	25,		26,		50,		51,		65,		66,		80	},	//15 독 저항력%
 			{	1080593,	 	1,		2,		3,		5,		6,		7, 		8, 		12,		13,		25,		26,		33,		34,		50	},
-			{	1080593,	 	1,		2,		3,		5,		6,		7, 		8, 		12,		13,		25,		26,		33,		34,		50	}},	
+			{	1080593,	 	1,		2,		3,		5,		6,		7, 		8, 		12,		13,		25,		26,		33,		34,		50	}},
 			{{ 	1080594,	 	1,		4,		5,		10,		11,		15, 	16, 	25,		26,		50,		51,		65,		66,		80	},	//16 에너지 저항력%
 			{	1080594,	 	1,		2,		3,		5,		6,		7, 		8, 		12,		13,		25,		26,		33,		34,		50	},
-			{	1080594,	 	1,		2,		3,		5,		6,		7, 		8, 		12,		13,		25,		26,		33,		34,		50	}},	
+			{	1080594,	 	1,		2,		3,		5,		6,		7, 		8, 		12,		13,		25,		26,		33,		34,		50	}},
 			{{ 	1080595,	 	100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//17 명중 확률 증가%
 			{	1080595,	 	20,		40,		50,		70,		80,		110, 	120, 	150,	160,	200,	310,	350,	360,	550 },
-			{	1080595,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080595,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080596,	 	100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//18 방어 확률 증가%
 			{	1080596,	 	20,		40,		50,		70,		80,		110, 	120, 	150,	160,	200,	310,	350,	360,	550 },
-			{	1080596,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080596,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080597,		1,		3,		4,		6,		7,		10, 	11, 	16,		17,		25,		30,		42,		45,		60	},	//19 체력 회복
 			{	1080597,	 	1,		2,		3,		4,		5,		7,	 	8, 		10,		11,		15,		16,		22,		23,		30 },
-			{	1080597,	 	1,		2,		3,		4,		5,		7,	 	8, 		10,		11,		15,		16,		24,		27,		40 }},	
+			{	1080597,	 	1,		2,		3,		4,		5,		7,	 	8, 		10,		11,		15,		16,		24,		27,		40 }},
 			{{ 	1080598,		1,		3,		4,		6,		7,		10, 	11, 	16,		17,		25,		30,		42,		45,		60	},	//20 기력 회복
 			{	1080598,	 	1,		2,		3,		4,		5,		7,	 	8, 		10,		11,		15,		16,		22,		23,		30 },
-			{	1080598,	 	1,		2,		3,		4,		5,		7,	 	8, 		10,		11,		15,		16,		24,		27,		40 }},	
+			{	1080598,	 	1,		2,		3,		4,		5,		7,	 	8, 		10,		11,		15,		16,		24,		27,		40 }},
 			{{ 	1080599,		1,		3,		4,		6,		7,		10, 	11, 	16,		17,		25,		30,		42,		45,		60	},	//21 마나 회복
 			{	1080599,	 	1,		2,		3,		4,		5,		7,	 	8, 		10,		11,		15,		16,		22,		23,		30 },
-			{	1080599,	 	1,		2,		3,		4,		5,		7,	 	8, 		10,		11,		15,		16,		24,		27,		40 }},	
+			{	1080599,	 	1,		2,		3,		4,		5,		7,	 	8, 		10,		11,		15,		16,		24,		27,		40 }},
 			{{ 	1080600,	 	100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//22 물리 피해 증가%
 			{	1080600,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080600,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080600,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080601,	 	100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//23 화염 피해 증가%
 			{	1080601,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080601,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080601,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080602,	 	100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//24 냉기 피해 증가%
 			{	1080602,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080602,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080602,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080603,	 	100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//25 독 피해 증가%
 			{	1080603,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080603,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080603,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080604,	 	100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//26 에너지 피해 증가%
 			{	1080604,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080604,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080604,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080605,	 	100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//27 광역 물리 피해 증가%
 			{	1080605,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080605,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080605,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080606,	 	100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//28 광역 화염 피해 증가%
 			{	1080606,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080606,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080606,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080607,	 	100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//29 광역 냉기 피해 증가%
 			{	1080607,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080607,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080607,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080608,	 	100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//30 광역 독 피해 증가%
 			{	1080608,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080608,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080608,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080609,	 	100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//31 광역 에너지 피해 증가%
 			{	1080609,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080609,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080609,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080610,		1,		3,		4,		6,		7,		10, 	11, 	16,		17,		25,		30,		42,		45,		60	},	//32 물리 피해 증가
 			{	1080610,	 	1,		2,		3,		4,		5,		7,	 	8, 		10,		11,		15,		16,		22,		23,		30 	},
-			{	1080610,	 	1,		2,		3,		5,		6,		8,	 	9, 		13,		14,		20,		21,		30,		31,		45	}},	
+			{	1080610,	 	1,		2,		3,		5,		6,		8,	 	9, 		13,		14,		20,		21,		30,		31,		45	}},
 			{{ 	1080611,		1,		3,		4,		6,		7,		10, 	11, 	16,		17,		25,		30,		42,		45,		60	},	//33 화염 피해 증가
 			{	1080611,	 	1,		2,		3,		4,		5,		7,	 	8, 		10,		11,		15,		16,		22,		23,		30 	},
-			{	1080611,	 	1,		2,		3,		5,		6,		8,	 	9, 		13,		14,		20,		21,		30,		31,		45	}},	
+			{	1080611,	 	1,		2,		3,		5,		6,		8,	 	9, 		13,		14,		20,		21,		30,		31,		45	}},
 			{{ 	1080612,		1,		3,		4,		6,		7,		10, 	11, 	16,		17,		25,		30,		42,		45,		60	},	//34 냉기 피해 증가
 			{	1080612,	 	1,		2,		3,		4,		5,		7,	 	8, 		10,		11,		15,		16,		22,		23,		30 	},
-			{	1080612,	 	1,		2,		3,		5,		6,		8,	 	9, 		13,		14,		20,		21,		30,		31,		45	}},	
+			{	1080612,	 	1,		2,		3,		5,		6,		8,	 	9, 		13,		14,		20,		21,		30,		31,		45	}},
 			{{ 	1080613,		1,		3,		4,		6,		7,		10, 	11, 	16,		17,		25,		30,		42,		45,		60	},	//35 독 피해 증가
 			{	1080613,	 	1,		2,		3,		4,		5,		7,	 	8, 		10,		11,		15,		16,		22,		23,		30 	},
-			{	1080613,	 	1,		2,		3,		5,		6,		8,	 	9, 		13,		14,		20,		21,		30,		31,		45	}},	
+			{	1080613,	 	1,		2,		3,		5,		6,		8,	 	9, 		13,		14,		20,		21,		30,		31,		45	}},
 			{{ 	1080614,		1,		3,		4,		6,		7,		10, 	11, 	16,		17,		25,		30,		42,		45,		60	},	//36 에너지 피해 증가
 			{	1080614,	 	1,		2,		3,		4,		5,		7,	 	8, 		10,		11,		15,		16,		22,		23,		30 	},
-			{	1080614,	 	1,		2,		3,		5,		6,		8,	 	9, 		13,		14,		20,		21,		30,		31,		45	}},	
+			{	1080614,	 	1,		2,		3,		5,		6,		8,	 	9, 		13,		14,		20,		21,		30,		31,		45	}},
 			{{ 	1080615,		3,		5,		7,		10,		15,		19, 	22, 	28,		35,		50,		55,		60,		65,		75	},	//37 체력 흡수%
 			{	1080615,	 	1,		1,		2,		2,		3,		3, 		4, 		4,		5,		5,		6,		6,		7,		7	},
-			{	1080615,	 	1,		3,		4,		7,		8,		13, 	14, 	20,		21,		30,		31,		40,		41,		55	}},	
+			{	1080615,	 	1,		3,		4,		7,		8,		13, 	14, 	20,		21,		30,		31,		40,		41,		55	}},
 			{{ 	1080616,		3,		5,		7,		10,		15,		19, 	22, 	28,		35,		50,		55,		60,		65,		75	},	//38 기력 흡수%
 			{	1080616,	 	1,		1,		2,		2,		3,		3, 		4, 		4,		5,		5,		6,		6,		7,		7	},
-			{	1080616,	 	1,		3,		4,		7,		8,		13, 	14, 	20,		21,		30,		31,		40,		41,		55	}},	
+			{	1080616,	 	1,		3,		4,		7,		8,		13, 	14, 	20,		21,		30,		31,		40,		41,		55	}},
 			{{ 	1080617,		3,		5,		7,		10,		15,		19, 	22, 	28,		35,		50,		55,		60,		65,		75	},	//39 마나 흡수%
 			{	1080617,	 	1,		1,		2,		2,		3,		3, 		4, 		4,		5,		5,		6,		6,		7,		7	},
-			{	1080617,	 	1,		3,		4,		7,		8,		13, 	14, 	20,		21,		30,		31,		40,		41,		55	}},	
+			{	1080617,	 	1,		3,		4,		7,		8,		13, 	14, 	20,		21,		30,		31,		40,		41,		55	}},
 			{{ 	1080618,	 	100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//40 공격 속도 증가%
 			{	1080618,	 	20,		40,		50,		70,		80,		110, 	120, 	150,	160,	200,	310,	350,	360,	550 },
-			{	1080618,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080618,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080619,	 	100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//41 시전 속도 증가%
 			{	1080619,	 	20,		40,		50,		70,		80,		110, 	120, 	150,	160,	200,	310,	350,	360,	550 },
-			{	1080619,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080619,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080620,		10,		30,		40,		60,		70,		100, 	110, 	160,	170,	250,	300,	420,	450,	600	},	//42 물리 치명타 확률 증가%
 			{	1080620,	 	1,		7,		8,		12,		13,		20, 	21, 	33,		34,		50,		51,		65,		66,		99	},
-			{	1080620,	 	5,		15,		16,		25,		26,		40, 	41, 	60,		61,		100,	101,	120,	121,	150	}},	
+			{	1080620,	 	5,		15,		16,		25,		26,		40, 	41, 	60,		61,		100,	101,	120,	121,	150	}},
 			{{ 	1080621,		10,		30,		40,		60,		70,		100, 	110, 	160,	170,	250,	300,	420,	450,	600	},	//43 마법 치명타 확률 증가%
 			{	1080621,	 	1,		7,		8,		12,		13,		20, 	21, 	33,		34,		50,		51,		65,		66,		99	},
-			{	1080621,	 	5,		15,		16,		25,		26,		40, 	41, 	60,		61,		100,	101,	120,	121,	150	}},	
+			{	1080621,	 	5,		15,		16,		25,		26,		40, 	41, 	60,		61,		100,	101,	120,	121,	150	}},
 			{{ 	1080622,		100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//44 물리 치명타 피해 증가%
 			{	1080622,	 	20,		40,		50,		70,		80,		110, 	120, 	150,	160,	200,	310,	350,	360,	550	},
-			{	1080622,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000}},	
+			{	1080622,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000}},
 			{{ 	1080623,		100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//45 마법 치명타 피해 증가%
 			{	1080623,	 	20,		40,		50,		70,		80,		110, 	120, 	150,	160,	200,	310,	350,	360,	550	},
-			{	1080623,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000}},	
+			{	1080623,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000}},
 			{{ 	1080624,		100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//46 치유량 증가%
 			{	1080624,	 	20,		40,		50,		70,		80,		110, 	120, 	150,	160,	200,	310,	350,	360,	550	},
-			{	1080624,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000}},	
+			{	1080624,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000}},
 			{{ 	1080625,		1,		3,		4,		6,		7,		10, 	11, 	16,		17,		25,		30,		42,		45,		60	},	//47 치유량 증가
 			{	1080625,	 	1,		3,		4,		6,		7,		10, 	11, 	16,		17,		25,		30,		42,		45,		60	},
-			{	1080625,	 	1,		2,		3,		5,		6,		8,	 	9, 		13,		14,		20,		21,		30,		31,		45	}},	
+			{	1080625,	 	1,		2,		3,		5,		6,		8,	 	9, 		13,		14,		20,		21,		30,		31,		45	}},
 			{{ 	1080626,		1,		3,		4,		6,		7,		10, 	11, 	16,		17,		25,		30,		42,		45,		60	},	//48 관통 피해 증가
 			{	1080626,	 	1,		3,		4,		6,		7,		10, 	11, 	16,		17,		25,		30,		42,		45,		60	},
-			{	1080626,	 	1,		2,		3,		5,		6,		8,	 	9, 		13,		14,		20,		21,		30,		31,		45	}},	
+			{	1080626,	 	1,		2,		3,		5,		6,		8,	 	9, 		13,		14,		20,		21,		30,		31,		45	}},
 			{{ 	1080627,		1,		3,		4,		6,		7,		10, 	11, 	16,		17,		25,		30,		42,		45,		60	},	//49 충격 피해 증가
 			{	1080627,	 	1,		3,		4,		6,		7,		10, 	11, 	16,		17,		25,		30,		42,		45,		60	},
-			{	1080627,	 	1,		2,		3,		5,		6,		8,	 	9, 		13,		14,		20,		21,		30,		31,		45	}},	
+			{	1080627,	 	1,		2,		3,		5,		6,		8,	 	9, 		13,		14,		20,		21,		30,		31,		45	}},
 			{{ 	1080628,		1,		3,		4,		6,		7,		10, 	11, 	16,		17,		25,		30,		42,		45,		60	},	//50 출혈 피해 증가
 			{	1080628,	 	1,		3,		4,		6,		7,		10, 	11, 	16,		17,		25,		30,		42,		45,		60	},
-			{	1080628,	 	1,		2,		3,		5,		6,		8,	 	9, 		13,		14,		20,		21,		30,		31,		45	}},	
+			{	1080628,	 	1,		2,		3,		5,		6,		8,	 	9, 		13,		14,		20,		21,		30,		31,		45	}},
 			{{ 	1080629,		10,		30,		40,		60,		70,		100, 	110, 	160,	170,	250,	300,	420,	450,	600	},	//51 금화 획득 증가
 			{	1080629,	 	1,		5,		6,		9,		10,		15, 	16, 	23,		24,		40,		41,		51,		52,		75	},
-			{	1080629,	 	5,		15,		16,		25,		26,		40, 	41, 	60,		61,		100,	101,	120,	121,	150	}},	
+			{	1080629,	 	5,		15,		16,		25,		26,		40, 	41, 	60,		61,		100,	101,	120,	121,	150	}},
 			{{ 	1080630,		100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//52 마법 화살 공격%
 			{	1080630,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080630,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080630,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080631,		100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//53 체력 손상 공격%
 			{	1080631,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080631,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080631,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080632,		100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//54 화염구 공격%
 			{	1080632,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080632,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080632,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080633,		100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//55 번개 공격%
 			{	1080633,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080633,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080633,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080634,		100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//56 영장류 피해 증가%
 			{	1080634,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080634,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080634,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080635,		100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//57 언데드 피해 증가%
 			{	1080635,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080635,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080635,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080636,		100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//58 정령 피해 증가%
 			{	1080636,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080636,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080636,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080637,		100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//59 곤충 피해 증가%
 			{	1080637,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080637,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080637,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080638,		100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//60 파충류 피해 증가%
 			{	1080638,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080638,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080638,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080639,		100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//61 악마 피해 증가%
 			{	1080639,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080639,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080639,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1080640,		100,	200,	250,	350,	400,	550, 	600, 	750,	800,	1000,	1250,	1400,	1450,	2000},	//62 요정 피해 증가%
 			{	1080640,	 	30,		60,		70,		110,	120,	180, 	190, 	250,	260,	350,	360,	480,	490,	750 },
-			{	1080640,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},	
+			{	1080640,	 	50,		100,	150,	200,	250,	300, 	350, 	400,	450,	500,	550,	750,	800,	1000 }},
 			{{ 	1,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//63 해부학 스킬 증가%
 			{	1,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	1,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	1,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	2,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//64 동물지식 스킬 증가%
 			{	2,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	2,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	2,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	5,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//65 방패술 스킬 증가%
 			{	5,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	5,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	5,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	9,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//66 평화연주 스킬 증가%
 			{	9,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	9,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	9,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	14,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//67 은신감지 스킬 증가%
 			{	14,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	14,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	14,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	15,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//68 불협화음 스킬 증가%
 			{	15,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	15,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	15,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	16,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//69 지능평가 스킬 증가%
 			{	16,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	16,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	16,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	17,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//70 회복술 스킬 증가%
 			{	17,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	17,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	17,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	19,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//71 법의학 스킬 증가%
 			{	19,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	19,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	19,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	20,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//72 목동술 스킬 증가%
 			{	20,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	20,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	20,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	21,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//73 은신 스킬 증가%
 			{	21,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	21,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	21,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	22,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//74 도발연주 스킬 증가%
 			{	22,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	22,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	22,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	25,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//75 마법학 스킬 증가%
 			{	25,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	25,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	25,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	26,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//76 마법저항 스킬 증가%
 			{	26,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	26,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	26,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	27,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//77 전술 스킬 증가%
 			{	27,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	27,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	27,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	28,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//78 훔쳐보기 스킬 증가%
 			{	28,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	28,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	28,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	29,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//79 음악연주 스킬 증가%
 			{	29,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	29,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	29,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	30,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//80 포이즈닝 스킬 증가%
 			{	30,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	30,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	30,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	31,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//81 궁술 스킬 증가%
 			{	31,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	31,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	31,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	32,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//82 영혼대화 스킬 증가%
 			{	32,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	32,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	32,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	33,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//83 훔치기 스킬 증가%
 			{	33,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	33,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	33,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	35,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//84 길들이기 스킬 증가%
 			{	35,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	35,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	35,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	38,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//85 추적하기 스킬 증가%
 			{	38,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	38,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	38,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	39,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//86 수의학 스킬 증가%
 			{	39,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	39,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	39,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	40,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//87 검술 스킬 증가%
 			{	40,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	40,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	40,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	41,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//88 둔기술 스킬 증가%
 			{	41,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	41,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	41,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	42,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//89 펜싱술 스킬 증가%
 			{	42,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	42,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	42,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	46,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//90 명상 스킬 증가%
 			{	46,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	46,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	46,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	47,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//91 은신이동 스킬 증가%
 			{	47,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	47,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	47,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	49,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//92 강령술 스킬 증가%
 			{	49,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	49,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	49,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	50,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//93 집중 스킬 증가%
 			{	50,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	50,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	50,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	51,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//94 기사도 스킬 증가%
 			{	51,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	51,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	51,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	52,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//95 무사도 스킬 증가%
 			{	52,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	52,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	52,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	53,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//96 암술 스킬 증가%
 			{	53,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	53,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	53,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	54,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//97 주문 조합 스킬 증가%
 			{	54,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	54,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	54,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	55,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//98 신비술 스킬 증가%
 			{	55,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
-			{	55,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},	
+			{	55,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}},
 			{{ 	57,	 			10,		20,		30,		40,		50,		70, 	80, 	100,	110,	150,	160,	250,	300,	500	},	//99 던지기 스킬 증가%
 			{	57,	 			1,		5,		6,		9,		10,		15, 	16, 	20,		21,		30,		31,		38,		39,		50	},
 			{	57,	 			25,		45,		50,		70,		75,		95, 	100, 	130,	131,	200,	201,	375,	376,	625	}}
@@ -1774,541 +2011,2815 @@ namespace Server.Misc
 			{ 2,  5,  6,  4,  0,  3,  1,  51, 18 }, //팔찌
 			{ 39, 25, 24, 23, 37, 38, 26, 51, 22 }, //반지
 			{ 21, 15, 14, 13, 19, 20, 16, 51, 12 }, //목걸이
-			{ 62, 56, 57, 46, 58, 60, 59, 51, 61 } //귀걸이					
+			{ 62, 56, 57, 46, 58, 60, 59, 51, 61 } //귀걸이
 		};
 		*/
 		#endregion
-		
-		
+
+
 		#region 장비 신코드 전역 변수
 		//2.0 버전
-        public static readonly int[,,] NewEquipOption = new int[,,]
+		public static readonly int[,,] NewEquipOption = new int[,,]
 		{
 			//	이름,			Score, 	Min, 	Max
-			{{ 	1080578,	 	2,		10,		1500},	//0 힘 증가
-			{	1080578,	 	1,		1,		300	},
-			{	1080578,	 	1,		2,		600	}},	
-			{{ 	1080579,	 	2,		10,		1500},	//1 민첩성 증가
-			{	1080579,	 	1,		1,		300	},
-			{	1080579,	 	1,		2,		600	}},	
-			{{ 	1080580,	 	2,		10,		1500},	//2 지능 증가
-			{	1080580,	 	1,		1,		300	},
-			{	1080580,	 	1,		2,		600	}},	
-			{{ 	1080581,	 	2,		100000,	15000000},	//3 운 증가
-			{	1080581,	 	1,		10000,	3000000},
-			{	1080581,	 	1,		20000,	6000000}},	
-			{{ 	1080582,	 	1,		50000,	15000000 },	//4 체력 증가
-			{	1080582,	 	1,		10000,	3000000},
-			{	1080582,	 	1,		20000,	6000000 }},	
-			{{ 	1080583,	 	1,		50000,	15000000	},	//5 기력 증가
-			{	1080583,	 	1,		10000,	3000000	},
-			{	1080583,	 	1,		20000,	6000000	}},	
-			{{ 	1080584,	 	1,		50000,	15000000	},	//6 마나 증가
-			{	1080584,	 	1,		10000,	3000000	},
-			{	1080584,	 	1,		20000,	6000000	}},	
-			{{ 	1080585,	 	2,		10000,	1500000	},	//7 피해 증가%
-			{	1080585,	 	4,		1000,	75000 },
-			{	1080585,	 	1,		1000,	300000 }},	
-			{{ 	1080586,	 	2,		10000,	1500000	},	//8 주문 피해 증가%
-			{	1080586,	 	4,		1000,	75000 },
-			{	1080586,	 	1,		1000,	300000 }},	
-			{{ 	1080587,	 	0,		200,	250},	//9 관통 피해 증가%
-			{	1080587,	 	0,		60,		70 },
-			{	1080587,	 	0,		100,	150 }},	
-			{{ 	1080588,	 	0,		200,	250},	//10 충격 피해 증가%
-			{	1080588,	 	0,		60,		70 },
-			{	1080588,	 	0,		100,	150 }},	
-			{{ 	1080589,	 	0,		200,	250},	//11 출혈 피해 증가%
-			{	1080589,	 	0,		60,		70 },
-			{	1080589,	 	0,		100,	150 }},	
-			{{ 	1080590,	 	10,		10000,	300000},	//12 물리 저항력%
-			{	1080590,	 	20,		10000,	150000},
-			{	1080590,	 	15,		10000,	200000}},	
-			{{ 	1080591,	 	10,		10000,	300000},	//13 화염 저항력%
-			{	1080591,	 	20,		10000,	150000},
-			{	1080591,	 	15,		10000,	200000}},	
-			{{ 	1080592,	 	10,		10000,	300000},	//14 냉기 저항력%
-			{	1080592,	 	20,		10000,	200000},
-			{	1080592,	 	15,		10000,	150000}},	
-			{{ 	1080593,	 	10,		10000,	300000},	//15 독 저항력%
-			{	1080593,	 	20,		10000,	150000},
-			{	1080593,	 	15,		10000,	200000}},	
-			{{ 	1080594,	 	10,		10000,	300000},	//16 에너지 저항력%
-			{	1080594,	 	20,		10000,	150000},
-			{	1080594,	 	15,		10000,	200000}},	
-			{{ 	1080595,	 	30,		50000,	500000},	//17 명중 확률 증가%
-			{	1080595,	 	3,		1000,	100000},
-			{	1080595,	 	1,		500,	150000 }},	
-			{{ 	1080596,	 	30,		50000,	500000},	//18 방어 확률 증가%
-			{	1080596,	 	3,		1000,	100000},
-			{	1080596,	 	1,		500,	150000}},	
-			{{ 	1080597,		2,		10000,	1500000	},	//19 체력 회복
-			{	1080597,	 	1,		2000,	600000 },
-			{	1080597,	 	3,		10000,	1000000 }},	
-			{{ 	1080598,		2,		10000,	1500000	},	//20 기력 회복
-			{	1080598,	 	1,		2000,	600000 },
-			{	1080598,	 	3,		10000,	1500000 }},	
-			{{ 	1080599,		2,		10000,	1500000	},	//21 마나 회복
-			{	1080599,	 	1,		2000,	600000 },
-			{	1080599,	 	3,		10000,	1500000 }},	
-			{{ 	1080600,	 	0,		200,	250 },	//22 물리 피해 증가%
-			{	1080600,	 	0,		60,		70 },
-			{	1080600,	 	0,		100,	1500 }},	
-			{{ 	1080601,	 	0,		200,	2500},	//23 화염 피해 증가%
-			{	1080601,	 	0,		60,		70 },
-			{	1080601,	 	0,		100,	1500 }},	
-			{{ 	1080602,	 	0,		200,	2500},	//24 냉기 피해 증가%
-			{	1080602,	 	0,		60,		70},
-			{	1080602,	 	0,		100,	150 }},	
-			{{ 	1080603,	 	0,		200,	250},	//25 독 피해 증가%
-			{	1080603,	 	0,		60,		70 },
-			{	1080603,	 	0,		100,	150 }},	
-			{{ 	1080604,	 	0,		200,	250},	//26 에너지 피해 증가%
-			{	1080604,	 	0,		60,		70 },
-			{	1080604,	 	0,		100,	150 }},	
-			{{ 	1080605,	 	0,		200,	250},	//27 광역 물리 피해 증가%
-			{	1080605,	 	0,		60,		70 },
-			{	1080605,	 	0,		100,	150 }},	
-			{{ 	1080606,	 	0,		200,	2500},	//28 광역 화염 피해 증가%
-			{	1080606,	 	0,		60,		70 },
-			{	1080606,	 	0,		100,	150 }},	
-			{{ 	1080607,	 	0,		200,	250},	//29 광역 냉기 피해 증가%
-			{	1080607,	 	0,		60,		70 },
-			{	1080607,	 	0,		100,	150 }},	
-			{{ 	1080608,	 	0,		200,	250},	//30 광역 독 피해 증가%
-			{	1080608,	 	0,		60,		70 },
-			{	1080608,	 	0,		100,	150 }},	
-			{{ 	1080609,	 	0,		200,	250},	//31 광역 에너지 피해 증가%
-			{	1080609,	 	0,		60,		70 },
-			{	1080609,	 	0,		100,	150 }},	
-			{{ 	1080610,		3,		10000,	1000000}, //32 물리 피해 증가
-			{	1080610,	 	30,		10000,	100000},
-			{	1080610,	 	5,		50000,	250000}},	
-			{{ 	1080611,		3,		10000,	1000000},	//33 화염 피해 증가
-			{	1080611,	 	30,		10000,	100000},
-			{	1080611,	 	5,		50000,	250000}},	
-			{{ 	1080612,		3,		10000,	1000000},	//34 냉기 피해 증가
-			{	1080612,	 	30,		10000,	100000},
-			{	1080612,	 	5,		50000,	250000}},	
-			{{ 	1080613,		3,		10000,	1000000},	//35 독 피해 증가
-			{	1080613,	 	30,		10000,	100000},
-			{	1080613,	 	5,		50000,	250000}},	
-			{{ 	1080614,		3,		10000,	1000000},	//36 에너지 피해 증가
-			{	1080614,	 	30,		10000,	100000},
-			{	1080614,	 	5,		50000,	250000}},	
-			{{ 	1080615,		5,		1000,	10000},	//37 체력 흡수
-			{	1080615,	 	3,		100,	10000},
-			{	1080615,	 	5,		500,	30000}},	
-			{{ 	1080616,		5,		1000,	60000},	//38 기력 흡수
-			{	1080616,	 	3,		100,	10000},
-			{	1080616,	 	5,		500,	30000}},
-			{{ 	1080617,		5,		1000,	60000},	//39 마나 흡수
-			{	1080617,	 	3,		100,	10000},
-			{	1080617,	 	5,		500,	30000}},
-			{{ 	1080618,	 	3,		10000,	1000000},	//40 공격 속도 증가%
-			{	1080618,	 	6,		1000,	50000},
-			{	1080618,	 	15,		1000,	200000 }},	
-			{{ 	1080619,	 	3,		10000,	1000000},	//41 시전 속도 증가%
-			{	1080619,	 	6,		1000,	50000},
-			{	1080619,	 	15,		1000,	200000 }},
-			{{ 	1080620,		1,		1000,	300000},	//42 물리 치명타 확률 증가%
-			{	1080620,	 	1,		100,	30000	},
-			{	1080620,	 	3,		500,	150000	}},	
-			{{ 	1080621,		1,		1000,	300000},	//43 마법 치명타 확률 증가%
-			{	1080621,	 	1,		100,	30000	},
-			{	1080621,	 	3,		500,	150000	}},	
-			{{ 	1080622,		6,		10000,	500000},	//44 물리 치명타 피해 증가%
-			{	1080622,	 	15,		5000,	100000},
-			{	1080622,	 	3,		2000,	200000}},	
-			{{ 	1080623,		6,		10000,	500000},	//45 마법 치명타 피해 증가%
-			{	1080623,	 	15,		5000,	100000},
-			{	1080623,	 	3,		2000,	200000}},	
-			{{ 	1080624,		30,		10000,	100000},//46 치유량 증가%
-			{	1080624,	 	6,		1000,	50000},
-			{	1080624,	 	4,		1000,	75000}},	
-			{{ 	1080625,		1,		10000,	3000000},	//47 치유량 증가
-			{	1080625,	 	10,		10000,	300000},
-			{	1080625,	 	2,		10000,	150000}},	
-			{{ 	1080626,		0,		3,		4	},	//48 관통 피해 증가
-			{	1080626,	 	0,		3,		4	},
-			{	1080626,	 	0,		2,		3	}},	
-			{{ 	1080627,		0,		3,		4	},	//49 충격 피해 증가
-			{	1080627,	 	0,		3,		4	},
-			{	1080627,	 	0,		2,		3	}},	
-			{{ 	1080628,		0,		3,		4	},	//50 출혈 피해 증가
-			{	1080628,	 	0,		3,		4	},
-			{	1080628,	 	0,		2,		3	}},	
-			{{ 	1080629,		1,		1000,	300000},	//51 금화 획득 증가%
-			{	1080629,	 	3,		1000,	100000},
-			{	1080629,	 	2,		1000,	150000}},	
-			{{ 	1080630,		4,		10000,	750000},	//52 마법 화살 공격%
-			{	1080630,	 	0,		60,		70 },
-			{	1080630,	 	0,		100,	150}},	
-			{{ 	1080631,		6,		10000,	500000},	//53 체력 손상 공격%
-			{	1080631,	 	0,		60,		70 },
-			{	1080631,	 	0,		100,	150 }},	
-			{{ 	1080632,		10,		10000,	300000},	//54 화염구 공격%
-			{	1080632,	 	0,		60,		700 },
-			{	1080632,	 	0,		100,	1500 }},	
-			{{ 	1080633,		15,		10000,	200000},	//55 번개 공격%
-			{	1080633,	 	0,		60,		70 },
-			{	1080633,	 	0,		100,	150 }},	
-			{{ 	1080634,		60,		100000,	500000},	//56 영장류 피해 증가%
-			{	1080634,	 	3,		1000,	100000},
-			{	1080634,	 	15,		10000,	200000}},	
-			{{ 	1080635,		60,		100000,	500000},	//57 언데드 피해 증가%
-			{	1080635,	 	3,		1000,	100000},
-			{	1080635,	 	15,		10000,	200000}},
-			{{ 	1080636,		60,		100000,	500000},	//58 정령 피해 증가%
-			{	1080636,	 	3,		1000,	100000},
-			{	1080636,	 	15,		10000,	200000}},
-			{{ 	1080637,		60,		100000,	500000},	//59 곤충 피해 증가%
-			{	1080637,	 	3,		1000,	100000},
-			{	1080637,	 	15,		10000,	200000}},
-			{{ 	1080638,		60,		100000,	500000},	//60 파충류 피해 증가%
-			{	1080638,	 	3,		1000,	100000},
-			{	1080638,	 	15,		10000,	200000}},
-			{{ 	1080639,		60,		100000,	500000},	//61 악마 피해 증가%
-			{	1080639,	 	3,		1000,	100000},
-			{	1080639,	 	15,		10000,	200000}},
-			{{ 	1080640,		60,		100000,	500000},	//62 요정 피해 증가%
-			{	1080640,	 	3,		1000,	100000},
-			{	1080640,	 	15,		10000,	200000}},
-			{{ 	1,	 			15,		100,	2000},	//63 해부학 스킬 증가%
-			{	1,	 			15,		100,	2000},
-			{	1,	 			15,		100,	2000}},	
-			{{ 	2,	 			15,		100,	2000},	//64 동물지식 스킬 증가%
-			{	2,	 			15,		100,	2000},
-			{	2,	 			15,		100,	2000}},	
-			{{ 	5,	 			15,		100,	2000},	//65 방패술 스킬 증가%
-			{	5,	 			15,		100,	2000},
-			{	5,	 			15,		100,	2000}},	
-			{{ 	9,	 			15,		100,	2000},	//66 평화연주 스킬 증가%
-			{	9,	 			15,		100,	2000},
-			{	9,	 			15,		100,	2000}},	
-			{{ 	14,	 			15,		100,	2000},	//67 은신감지 스킬 증가%
-			{	14,	 			15,		100,	2000},
-			{	14,	 			15,		100,	2000}},	
-			{{ 	15,	 			15,		100,	2000},	//68 불협화음 스킬 증가%
-			{	15,	 			15,		100,	2000},
-			{	15,	 			15,		100,	2000}},	
-			{{ 	16,	 			15,		100,	2000},	//69 지능평가 스킬 증가%
-			{	16,	 			15,		100,	2000},
-			{	16,	 			15,		100,	2000}},	
-			{{ 	17,	 			15,		100,	2000},	//70 회복술 스킬 증가%
-			{	17,	 			15,		100,	2000},
-			{	17,	 			15,		100,	2000}},	
-			{{ 	19,	 			15,		100,	2000},	//71 법의학 스킬 증가%
-			{	19,	 			15,		100,	2000},
-			{	19,	 			15,		100,	2000}},	
-			{{ 	20,	 			15,		100,	2000},	//72 목동술 스킬 증가%
-			{	20,	 			15,		100,	2000},
-			{	20,	 			15,		100,	2000}},	
-			{{ 	21,	 			15,		100,	2000},	//73 은신 스킬 증가%
-			{	21,	 			15,		100,	2000},
-			{	21,	 			15,		100,	2000}},	
-			{{ 	22,	 			15,		100,	2000},	//74 도발연주 스킬 증가%
-			{	22,	 			15,		100,	2000},
-			{	22,	 			15,		100,	2000}},	
-			{{ 	25,	 			15,		100,	2000},	//75 마법학 스킬 증가%
-			{	25,	 			15,		100,	2000},
-			{	25,	 			15,		100,	2000}},	
-			{{ 	26,	 			15,		100,	2000},	//76 마법저항 스킬 증가%
-			{	26,	 			15,		100,	2000},
-			{	26,	 			15,		100,	2000}},	
-			{{ 	27,	 			15,		100,	2000},	//77 전술 스킬 증가%
-			{	27,	 			15,		100,	2000},
-			{	27,	 			15,		100,	2000}},	
-			{{ 	28,	 			15,		100,	2000},	//78 훔쳐보기 스킬 증가%
-			{	28,	 			15,		100,	2000},
-			{	28,	 			15,		100,	2000}},	
-			{{ 	29,	 			15,		100,	2000},	//79 음악연주 스킬 증가%
-			{	29,	 			15,		100,	2000},
-			{	29,	 			15,		100,	2000}},	
-			{{ 	30,	 			15,		100,	2000},	//80 포이즈닝 스킬 증가%
-			{	30,	 			15,		100,	2000},
-			{	30,	 			15,		100,	2000}},	
-			{{ 	31,	 			15,		100,	2000},	//81 궁술 스킬 증가%
-			{	31,	 			15,		100,	2000},
-			{	31,	 			15,		100,	2000}},	
-			{{ 	32,	 			15,		100,	2000},	//82 영혼대화 스킬 증가%
-			{	32,	 			15,		100,	2000},
-			{	32,	 			15,		100,	2000}},	
-			{{ 	33,	 			15,		100,	2000},	//83 훔치기 스킬 증가%
-			{	33,	 			15,		100,	2000},
-			{	33,	 			15,		100,	2000}},	
-			{{ 	35,	 			15,		100,	2000},	//84 길들이기 스킬 증가%
-			{	35,	 			15,		100,	2000},
-			{	35,	 			15,		100,	2000}},	
-			{{ 	38,	 			15,		100,	2000},	//85 추적하기 스킬 증가%
-			{	38,	 			15,		100,	2000},
-			{	38,	 			15,		100,	2000}},	
-			{{ 	39,	 			15,		100,	2000},	//86 수의학 스킬 증가%
-			{	39,	 			15,		100,	2000},
-			{	39,	 			15,		100,	2000}},	
-			{{ 	40,	 			15,		100,	2000},	//87 검술 스킬 증가%
-			{	40,	 			15,		100,	2000},
-			{	40,	 			15,		100,	2000}},	
-			{{ 	41,	 			15,		100,	2000},	//88 둔기술 스킬 증가%
-			{	41,	 			15,		100,	2000},
-			{	41,	 			15,		100,	2000}},	
-			{{ 	42,	 			15,		100,	2000},	//89 펜싱술 스킬 증가%
-			{	42,	 			15,		100,	2000},
-			{	42,	 			15,		100,	2000}},	
-			{{ 	46,	 			15,		100,	2000},	//90 명상 스킬 증가%
-			{	46,	 			15,		100,	2000},
-			{	46,	 			15,		100,	2000}},	
-			{{ 	47,	 			15,		100,	2000},	//91 은신이동 스킬 증가%
-			{	47,	 			15,		100,	2000},
-			{	47,	 			15,		100,	2000}},	
-			{{ 	49,	 			15,		100,	2000},	//92 강령술 스킬 증가%
-			{	49,	 			15,		100,	2000},
-			{	49,	 			15,		100,	2000}},	
-			{{ 	50,	 			15,		100,	2000},	//93 집중 스킬 증가%
-			{	50,	 			15,		100,	2000},
-			{	50,	 			15,		100,	2000}},	
-			{{ 	51,	 			15,		100,	2000},	//94 기사도 스킬 증가%
-			{	51,	 			15,		100,	2000},
-			{	51,	 			15,		100,	2000}},	
-			{{ 	52,	 			15,		100,	2000},	//95 무사도 스킬 증가%
-			{	52,	 			15,		100,	2000},
-			{	52,	 			15,		100,	2000}},	
-			{{ 	53,	 			15,		100,	2000},	//96 암술 스킬 증가%
-			{	53,	 			15,		100,	2000},
-			{	53,	 			15,		100,	2000}},	
-			{{ 	54,	 			15,		100,	2000},	//97 주문 조합 스킬 증가%
-			{	54,	 			15,		100,	2000},
-			{	54,	 			15,		100,	2000}},	
-			{{ 	55,	 			15,		100,	2000},	//98 신비술 스킬 증가%
-			{	55,	 			15,		100,	2000},
-			{	55,	 			15,		100,	2000}},	
-			{{ 	57,	 			15,		100,	2000},	//99 던지기 스킬 증가%
-			{	57,	 			15,		100,	2000},
-			{	57,	 			15,		100,	2000}},
-			{{ 	1080651,		5,		10000,	600000},	//100 무기 공격 반사%
-			{	1080651,		15,		10000,	200000},
-			{	1080651,		30,		100000,	100000}},
-			{{ 	1080652,		10,		1000,	300000},	//101 전투 경험치%
-			{	1080652,	 	1,		100,	30000},
-			{	1080652,	 	3,		3000,	100000}},
-			{{ 	1080653,		0,		10,		3000},	//102 혼돈 피해%
-			{	1080653,	 	0,		1,		300	},
-			{	1080653,	 	0,		10,		1000}},
-			{{ 	1080654,		0,		10,		3000},	//103 신성 피해%
-			{	1080654,	 	0,		1,		300	},
-			{	1080654,	 	0,		10,		1000}},
-			{{ 	1080655,		0,		10,		3000},	//104 무기 데미지 감소
-			{	1080655,	 	0,		1,		300	},
-			{	1080655,	 	0,		10,		1000}},
-			{{ 	1080656,		0,		10,		3000},	//105 마법 데미지 감소
-			{	1080656,	 	0,		1,		300	},
-			{	1080656,	 	0,		10,		1000}},
-			{{ 	1080657,		0,		10,		3000},	//106 기절 시간 감소
-			{	1080657,	 	0,		1,		300	},
-			{	1080657,	 	0,		10,		1000}},
-			{{ 	1080658,		0,		10,		3000},	//107 혼돈 피해
-			{	1080658,	 	0,		1,		300	},
-			{	1080658,	 	0,		10,		1000}},
-			{{ 	1080659,		0,		10,		3000},	//108 신성 피해
-			{	1080659,	 	0,		1,		300	},
-			{	1080659,	 	0,		10,		1000}},
-			{{ 	1080660,		0,		10,		3000},	//109 방패 방어 확률 
-			{	1080660,	 	0,		1,		300	},
-			{	1080660,	 	0,		10,		1000}},
-			{{ 	1080661,		0,		10,		3000},	//110 전체 피격 감소
-			{	1080661,	 	0,		1,		300	},
-			{	1080661,	 	0,		10,		1000}},
-			{{ 	1080662,		0,		10,		3000},	//111 어그로%
-			{	1080662,	 	0,		1,		300	},
-			{	1080662,	 	0,		10,		1000}},
-			{{ 	1080663,		0,		10,		3000},	//112 어그로
-			{	1080663,	 	0,		1,		300	},
-			{	1080663,	 	0,		10,		1000}},
-			{{ 	1080664,		0,		10,		3000},	//113 원소 저항력%
-			{	1080664,	 	0,		1,		300	},
-			{	1080664,	 	0,		10,		1000}},
-			{{ 	1080665,		0,		10,		3000},	//114 모든 저항력%
-			{	1080665,	 	0,		1,		300	},
-			{	1080665,	 	0,		10,		1000}},
-			{{ 	1080666,		10,		1000,	30000},	//115 기력 소모 감소%
-			{	1080666,	 	3,		100,	10000},
-			{	1080666,	 	15,		1000,	20000}},
-			{{ 	1080667,		0,		10,		3000},	//116 시전 실패 감소%
-			{	1080667,	 	0,		1,		300	},
-			{	1080667,	 	0,		10,		1000}},
-			{{ 	1080668,		0,		10,		3000},	//117 모든 피해%
-			{	1080668,	 	0,		1,		300	},
-			{	1080668,	 	0,		10,		1000}},
-			{{ 	1080669,		0,		10,		3000},	//118 모든 속도%
-			{	1080669,	 	0,		1,		300	},
-			{	1080669,	 	0,		10,		1000}},
-			{{ 	1080670,		10,		1000,	30000},	//119 마나 소모 감소%
-			{	1080670,	 	3,		100,	10000},
-			{	1080670,	 	15,		1000,	20000}},
-			{{ 	1080671,		0,		10,		3000},	//120 장비 요구치 감소%
-			{	1080671,	 	0,		1,		300	},
-			{	1080671,	 	0,		10,		1000}},
-			{{ 	1080672,		0,		10,		3000},	//121 무기 피해
-			{	1080672,	 	0,		1,		300	},
-			{	1080672,	 	0,		10,		1000}},
-			{{ 	1080673,		0,		10,		3000},	//122 마법 피해
-			{	1080673,	 	0,		1,		300	},
-			{	1080673,	 	0,		10,		1000}},
-			{{ 	1080674,		0,		10,		3000},	//123 모든 피해
-			{	1080674,	 	0,		1,		300	},
-			{	1080674,	 	0,		10,		1000}},
-			{{ 	1080675,		0,		10,		3000},	//124 피격 시 물리 치명 확률 감소
-			{	1080675,	 	0,		1,		300	},
-			{	1080675,	 	0,		10,		1000}},
-			{{ 	1080676,		0,		10,		3000},	//125 피격 시 물리 치명 피해 감소
-			{	1080676,	 	0,		1,		300	},
-			{	1080676,	 	0,		10,		1000}},
-			{{ 	1080677,		0,		10,		3000},	//126 피격 시 마법 치명 확률 감소
-			{	1080677,	 	0,		1,		300	},
-			{	1080677,	 	0,		10,		1000}},
-			{{ 	1080678,		0,		10,		3000},	//127 피격 시 마법 치명 피해 감소
-			{	1080678,	 	0,		1,		300	},
-			{	1080678,	 	0,		10,		1000}},
-			{{ 	1080679,		0,		10,		3000},	//128 붕대 사용 시 독 회복
-			{	1080679,	 	0,		1,		300	},
-			{	1080679,	 	0,		10,		1000}},
-			{{ 	1080680,		0,		10,		3000},	//129 독 저항성%
-			{	1080680,	 	0,		1,		300	},
-			{	1080680,	 	0,		10,		1000}},
-			{{ 	1080681,		0,		10,		3000},	//130 독 저항성
-			{	1080681,	 	0,		1,		300	},
-			{	1080681,	 	0,		10,		1000}},
-			{{ 	1080682,		0,		10,		3000},	//131 함정 회피
-			{	1080682,	 	0,		1,		300	},
-			{	1080682,	 	0,		10,		1000}},
-			{{ 	1080683,		150,	10000,	20000},	//132 모든 특수기
-			{	1080683,	 	0,		1,		300	},
-			{	1080683,	 	150,	10000,	20000}},
-			{{ 	1080684,		100,	10000,	300},	//133 첫 번째 특수기
-			{	1080684,	 	0,		100,	0},
-			{	1080684,	 	0,		10,		0}},
-			{{ 	1080685,		100,	10000,	30000},	//134 두 번째 특수기
-			{	1080685,	 	0,		1,		0	},
-			{	1080685,	 	0,		10,		0}},
-			{{ 	1080686,		75,		10000,	40000},	//135 검 특수기
-			{	1080686,	 	300,	100,	100	},
-			{	1080686,	 	0,		10,		0}},
-			{{ 	1080687,		75,		10000,	40000},	//136 둔기 특수기
-			{	1080687,	 	300,	100,	100	},
-			{	1080687,	 	0,		10,		0}},
-			{{ 	1080688,		75,		10000,	40000},	//137 펜싱 특수기
-			{	1080688,	 	300,	100,	100	},
-			{	1080688,	 	0,		10,		0}},
-			{{ 	1080689,		75,		10000,	40000},	//138 활&석궁 특수기
-			{	1080689,	 	0,		1,		0},
-			{	1080689,	 	300,	10000,	10000}},
-			{{ 	1080690,		0,		10,		0},	//139 맨손 특수기
-			{	1080690,	 	300,	10000,	10000},
-			{	1080690,	 	75,		10000,	40000}},
-			{{ 	1080691,		150,	10000,	20000},	//140 모든 스펠
-			{	1080691,	 	0,		1,		0},
-			{	1080691,	 	150,	10000,	20000}},
-			{{ 	1080692,		100,	10000,	30000},	//141 1써클 스펠
-			{	1080692,	 	300,	10000,	10000},
-			{	1080692,	 	100,	10000,	30000}},
-			{{ 	1080693,		100,	10000,	30000},	//142 2써클 스펠
-			{	1080693,	 	300,	10000,	10000},
-			{	1080693,	 	100,	10000,	30000}},
-			{{ 	1080694,		100,	10000,	30000},	//143 3써클 스펠
-			{	1080694,	 	300,	10000,	10000},
-			{	1080694,	 	100,	10000,	30000}},
-			{{ 	1080695,		100,	10000,	30000},	//144 4써클 스펠
-			{	1080695,	 	300,	10000,	10000},
-			{	1080695,	 	100,	10000,	30000}},
-			{{ 	1080696,		100,	10000,	30000},	//145 5써클 스펠
-			{	1080696,	 	0,		1,		0},
-			{	1080696,	 	100,	10000,	30000}},
-			{{ 	1080697,		100,	10000,	30000},	//146 6써클 스펠
-			{	1080697,	 	0,		1,		30000},
-			{	1080697,	 	100,	10000,	30000}},
-			{{ 	1080698,		100,	10000,	30000},	//147 7써클 스펠
-			{	1080698,	 	0,		1,		0},
-			{	1080698,	 	0,		10,		0}},
-			{{ 	1080699,		100,	10000,	30000},	//148 8써클 스펠
-			{	1080699,	 	0,		1,		30000},
-			{	1080699,	 	0,		10,		0}},
-			{{ 	1080700,		75,		10000,	40000},	//149 강령술 스펠
-			{	1080700,	 	300,	10000,	10000},
-			{	1080700,	 	0,		10,		0}},
-			{{ 	1080701,		75,		10000,	40000},	//150 원소술 스펠
-			{	1080701,	 	300,	10000,	10000},
-			{	1080701,	 	0,		10,		0}},
-			{{ 	1080702,		75,		10000,	40000},	//151 신비술 스펠
-			{	1080702,	 	300,	10000,	10000},
-			{	1080702,	 	0,		10,		0}},
-			{{ 	1080703,		75,		10000,	40000},	//152 기사도 스펠
-			{	1080703,	 	300,	10000,	10000},
-			{	1080703,	 	0,		10,		0}},
-			{{ 	1080704,		75,		100,	400},	//153 화염 속성
-			{	1080704,	 	300,	100,	100},
-			{	1080704,	 	0,		10,		0}},
-			{{ 	1080705,		75,		100,	400},	//154 냉기 속성
-			{	1080705,	 	300,	100,	100	},
-			{	1080705,	 	0,		10,		0}},
-			{{ 	1080706,		75,		100,	400},	//155 독 속성
-			{	1080706,	 	300,	100,	100	},
-			{	1080706,	 	0,		10,		0}},
-			{{ 	1080707,		75,		100,	400},	//156 에너지 속성
-			{	1080707,	 	300,	100,	100	},
-			{	1080707,	 	0,		10,		0}},
-			{{ 	1080708,		75,		100,	400},	//157 혼돈 속성
-			{	1080708,	 	300,	100,	100	},
-			{	1080708,	 	0,		10,		0}},
-			{{ 	1080709,		75,		100,	400},	//158 신성 속성
-			{	1080709,	 	300,	100,	100	},
-			{	1080709,	 	0,		10,		0}}
+			{
+				{ 1080578, 2, 10, 1500 }, //0 힘 증가
+				{ 1080578, 1, 1, 300 },
+				{ 1080578, 1, 2, 600 },
+			},
+			{
+				{ 1080579, 2, 10, 1500 }, //1 민첩성 증가
+				{ 1080579, 1, 1, 300 },
+				{ 1080579, 1, 2, 600 },
+			},
+			{
+				{ 1080580, 2, 10, 1500 }, //2 지능 증가
+				{ 1080580, 1, 1, 300 },
+				{ 1080580, 1, 2, 600 },
+			},
+			{
+				{ 1080581, 2, 100000, 15000000 }, //3 운 증가
+				{ 1080581, 1, 10000, 3000000 },
+				{ 1080581, 1, 20000, 6000000 },
+			},
+			{
+				{ 1080582, 1, 50000, 15000000 }, //4 체력 증가
+				{ 1080582, 1, 10000, 3000000 },
+				{ 1080582, 1, 20000, 6000000 },
+			},
+			{
+				{ 1080583, 1, 50000, 15000000 }, //5 기력 증가
+				{ 1080583, 1, 10000, 3000000 },
+				{ 1080583, 1, 20000, 6000000 },
+			},
+			{
+				{ 1080584, 1, 50000, 15000000 }, //6 마나 증가
+				{ 1080584, 1, 10000, 3000000 },
+				{ 1080584, 1, 20000, 6000000 },
+			},
+			{
+				{ 1080585, 2, 10000, 1500000 }, //7 피해 증가%
+				{ 1080585, 4, 1000, 75000 },
+				{ 1080585, 1, 1000, 300000 },
+			},
+			{
+				{ 1080586, 2, 10000, 1500000 }, //8 주문 피해 증가%
+				{ 1080586, 4, 1000, 75000 },
+				{ 1080586, 1, 1000, 300000 },
+			},
+			{
+				{ 1080587, 0, 200, 250 }, //9 관통 피해 증가%
+				{ 1080587, 0, 60, 70 },
+				{ 1080587, 0, 100, 150 },
+			},
+			{
+				{ 1080588, 0, 200, 250 }, //10 충격 피해 증가%
+				{ 1080588, 0, 60, 70 },
+				{ 1080588, 0, 100, 150 },
+			},
+			{
+				{ 1080589, 0, 200, 250 }, //11 출혈 피해 증가%
+				{ 1080589, 0, 60, 70 },
+				{ 1080589, 0, 100, 150 },
+			},
+			{
+				{ 1080590, 10, 10000, 300000 }, //12 물리 저항력%
+				{ 1080590, 20, 10000, 150000 },
+				{ 1080590, 15, 10000, 200000 },
+			},
+			{
+				{ 1080591, 10, 10000, 300000 }, //13 화염 저항력%
+				{ 1080591, 20, 10000, 150000 },
+				{ 1080591, 15, 10000, 200000 },
+			},
+			{
+				{ 1080592, 10, 10000, 300000 }, //14 냉기 저항력%
+				{ 1080592, 20, 10000, 200000 },
+				{ 1080592, 15, 10000, 150000 },
+			},
+			{
+				{ 1080593, 10, 10000, 300000 }, //15 독 저항력%
+				{ 1080593, 20, 10000, 150000 },
+				{ 1080593, 15, 10000, 200000 },
+			},
+			{
+				{ 1080594, 10, 10000, 300000 }, //16 에너지 저항력%
+				{ 1080594, 20, 10000, 150000 },
+				{ 1080594, 15, 10000, 200000 },
+			},
+			{
+				{ 1080595, 30, 50000, 500000 }, //17 명중 확률 증가%
+				{ 1080595, 3, 1000, 100000 },
+				{ 1080595, 1, 500, 150000 },
+			},
+			{
+				{ 1080596, 30, 50000, 500000 }, //18 방어 확률 증가%
+				{ 1080596, 3, 1000, 100000 },
+				{ 1080596, 1, 500, 150000 },
+			},
+			{
+				{ 1080597, 2, 10000, 1500000 }, //19 체력 회복
+				{ 1080597, 1, 2000, 600000 },
+				{ 1080597, 3, 10000, 1000000 },
+			},
+			{
+				{ 1080598, 2, 10000, 1500000 }, //20 기력 회복
+				{ 1080598, 1, 2000, 600000 },
+				{ 1080598, 3, 10000, 1500000 },
+			},
+			{
+				{ 1080599, 2, 10000, 1500000 }, //21 마나 회복
+				{ 1080599, 1, 2000, 600000 },
+				{ 1080599, 3, 10000, 1500000 },
+			},
+			{
+				{ 1080600, 0, 200, 250 }, //22 물리 피해 증가%
+				{ 1080600, 0, 60, 70 },
+				{ 1080600, 0, 100, 1500 },
+			},
+			{
+				{ 1080601, 0, 200, 2500 }, //23 화염 피해 증가%
+				{ 1080601, 0, 60, 70 },
+				{ 1080601, 0, 100, 1500 },
+			},
+			{
+				{ 1080602, 0, 200, 2500 }, //24 냉기 피해 증가%
+				{ 1080602, 0, 60, 70 },
+				{ 1080602, 0, 100, 150 },
+			},
+			{
+				{ 1080603, 0, 200, 250 }, //25 독 피해 증가%
+				{ 1080603, 0, 60, 70 },
+				{ 1080603, 0, 100, 150 },
+			},
+			{
+				{ 1080604, 0, 200, 250 }, //26 에너지 피해 증가%
+				{ 1080604, 0, 60, 70 },
+				{ 1080604, 0, 100, 150 },
+			},
+			{
+				{ 1080605, 0, 200, 250 }, //27 광역 물리 피해 증가%
+				{ 1080605, 0, 60, 70 },
+				{ 1080605, 0, 100, 150 },
+			},
+			{
+				{ 1080606, 0, 200, 2500 }, //28 광역 화염 피해 증가%
+				{ 1080606, 0, 60, 70 },
+				{ 1080606, 0, 100, 150 },
+			},
+			{
+				{ 1080607, 0, 200, 250 }, //29 광역 냉기 피해 증가%
+				{ 1080607, 0, 60, 70 },
+				{ 1080607, 0, 100, 150 },
+			},
+			{
+				{ 1080608, 0, 200, 250 }, //30 광역 독 피해 증가%
+				{ 1080608, 0, 60, 70 },
+				{ 1080608, 0, 100, 150 },
+			},
+			{
+				{ 1080609, 0, 200, 250 }, //31 광역 에너지 피해 증가%
+				{ 1080609, 0, 60, 70 },
+				{ 1080609, 0, 100, 150 },
+			},
+			{
+				{ 1080610, 3, 10000, 1000000 }, //32 물리 피해 증가
+				{ 1080610, 30, 10000, 100000 },
+				{ 1080610, 5, 50000, 250000 },
+			},
+			{
+				{ 1080611, 3, 10000, 1000000 }, //33 화염 피해 증가
+				{ 1080611, 30, 10000, 100000 },
+				{ 1080611, 5, 50000, 250000 },
+			},
+			{
+				{ 1080612, 3, 10000, 1000000 }, //34 냉기 피해 증가
+				{ 1080612, 30, 10000, 100000 },
+				{ 1080612, 5, 50000, 250000 },
+			},
+			{
+				{ 1080613, 3, 10000, 1000000 }, //35 독 피해 증가
+				{ 1080613, 30, 10000, 100000 },
+				{ 1080613, 5, 50000, 250000 },
+			},
+			{
+				{ 1080614, 3, 10000, 1000000 }, //36 에너지 피해 증가
+				{ 1080614, 30, 10000, 100000 },
+				{ 1080614, 5, 50000, 250000 },
+			},
+			{
+				{ 1080615, 5, 1000, 10000 }, //37 체력 흡수
+				{ 1080615, 3, 100, 10000 },
+				{ 1080615, 5, 500, 30000 },
+			},
+			{
+				{ 1080616, 5, 1000, 60000 }, //38 기력 흡수
+				{ 1080616, 3, 100, 10000 },
+				{ 1080616, 5, 500, 30000 },
+			},
+			{
+				{ 1080617, 5, 1000, 60000 }, //39 마나 흡수
+				{ 1080617, 3, 100, 10000 },
+				{ 1080617, 5, 500, 30000 },
+			},
+			{
+				{ 1080618, 3, 10000, 1000000 }, //40 공격 속도 증가%
+				{ 1080618, 6, 1000, 50000 },
+				{ 1080618, 15, 1000, 200000 },
+			},
+			{
+				{ 1080619, 3, 10000, 1000000 }, //41 시전 속도 증가%
+				{ 1080619, 6, 1000, 50000 },
+				{ 1080619, 15, 1000, 200000 },
+			},
+			{
+				{ 1080620, 1, 1000, 300000 }, //42 물리 치명타 확률 증가%
+				{ 1080620, 1, 100, 30000 },
+				{ 1080620, 3, 500, 150000 },
+			},
+			{
+				{ 1080621, 1, 1000, 300000 }, //43 마법 치명타 확률 증가%
+				{ 1080621, 1, 100, 30000 },
+				{ 1080621, 3, 500, 150000 },
+			},
+			{
+				{ 1080622, 6, 10000, 500000 }, //44 물리 치명타 피해 증가%
+				{ 1080622, 15, 5000, 100000 },
+				{ 1080622, 3, 2000, 200000 },
+			},
+			{
+				{ 1080623, 6, 10000, 500000 }, //45 마법 치명타 피해 증가%
+				{ 1080623, 15, 5000, 100000 },
+				{ 1080623, 3, 2000, 200000 },
+			},
+			{
+				{ 1080624, 30, 10000, 100000 }, //46 치유량 증가%
+				{ 1080624, 6, 1000, 50000 },
+				{ 1080624, 4, 1000, 75000 },
+			},
+			{
+				{ 1080625, 1, 10000, 3000000 }, //47 치유량 증가
+				{ 1080625, 10, 10000, 300000 },
+				{ 1080625, 2, 10000, 150000 },
+			},
+			{
+				{ 1080626, 0, 3, 4 }, //48 관통 피해 증가
+				{ 1080626, 0, 3, 4 },
+				{ 1080626, 0, 2, 3 },
+			},
+			{
+				{ 1080627, 0, 3, 4 }, //49 충격 피해 증가
+				{ 1080627, 0, 3, 4 },
+				{ 1080627, 0, 2, 3 },
+			},
+			{
+				{ 1080628, 0, 3, 4 }, //50 출혈 피해 증가
+				{ 1080628, 0, 3, 4 },
+				{ 1080628, 0, 2, 3 },
+			},
+			{
+				{ 1080629, 1, 1000, 300000 }, //51 금화 획득 증가%
+				{ 1080629, 3, 1000, 100000 },
+				{ 1080629, 2, 1000, 150000 },
+			},
+			{
+				{ 1080630, 4, 10000, 750000 }, //52 마법 화살 공격%
+				{ 1080630, 0, 60, 70 },
+				{ 1080630, 0, 100, 150 },
+			},
+			{
+				{ 1080631, 6, 10000, 500000 }, //53 체력 손상 공격%
+				{ 1080631, 0, 60, 70 },
+				{ 1080631, 0, 100, 150 },
+			},
+			{
+				{ 1080632, 10, 10000, 300000 }, //54 화염구 공격%
+				{ 1080632, 0, 60, 700 },
+				{ 1080632, 0, 100, 1500 },
+			},
+			{
+				{ 1080633, 15, 10000, 200000 }, //55 번개 공격%
+				{ 1080633, 0, 60, 70 },
+				{ 1080633, 0, 100, 150 },
+			},
+			{
+				{ 1080634, 60, 100000, 500000 }, //56 영장류 피해 증가%
+				{ 1080634, 3, 1000, 100000 },
+				{ 1080634, 15, 10000, 200000 },
+			},
+			{
+				{ 1080635, 60, 100000, 500000 }, //57 언데드 피해 증가%
+				{ 1080635, 3, 1000, 100000 },
+				{ 1080635, 15, 10000, 200000 },
+			},
+			{
+				{ 1080636, 60, 100000, 500000 }, //58 정령 피해 증가%
+				{ 1080636, 3, 1000, 100000 },
+				{ 1080636, 15, 10000, 200000 },
+			},
+			{
+				{ 1080637, 60, 100000, 500000 }, //59 곤충 피해 증가%
+				{ 1080637, 3, 1000, 100000 },
+				{ 1080637, 15, 10000, 200000 },
+			},
+			{
+				{ 1080638, 60, 100000, 500000 }, //60 파충류 피해 증가%
+				{ 1080638, 3, 1000, 100000 },
+				{ 1080638, 15, 10000, 200000 },
+			},
+			{
+				{ 1080639, 60, 100000, 500000 }, //61 악마 피해 증가%
+				{ 1080639, 3, 1000, 100000 },
+				{ 1080639, 15, 10000, 200000 },
+			},
+			{
+				{ 1080640, 60, 100000, 500000 }, //62 요정 피해 증가%
+				{ 1080640, 3, 1000, 100000 },
+				{ 1080640, 15, 10000, 200000 },
+			},
+			{
+				{ 1, 15, 100, 2000 }, //63 해부학 스킬 증가%
+				{ 1, 15, 100, 2000 },
+				{ 1, 15, 100, 2000 },
+			},
+			{
+				{ 2, 15, 100, 2000 }, //64 동물지식 스킬 증가%
+				{ 2, 15, 100, 2000 },
+				{ 2, 15, 100, 2000 },
+			},
+			{
+				{ 5, 15, 100, 2000 }, //65 방패술 스킬 증가%
+				{ 5, 15, 100, 2000 },
+				{ 5, 15, 100, 2000 },
+			},
+			{
+				{ 9, 15, 100, 2000 }, //66 평화연주 스킬 증가%
+				{ 9, 15, 100, 2000 },
+				{ 9, 15, 100, 2000 },
+			},
+			{
+				{ 14, 15, 100, 2000 }, //67 은신감지 스킬 증가%
+				{ 14, 15, 100, 2000 },
+				{ 14, 15, 100, 2000 },
+			},
+			{
+				{ 15, 15, 100, 2000 }, //68 불협화음 스킬 증가%
+				{ 15, 15, 100, 2000 },
+				{ 15, 15, 100, 2000 },
+			},
+			{
+				{ 16, 15, 100, 2000 }, //69 지능평가 스킬 증가%
+				{ 16, 15, 100, 2000 },
+				{ 16, 15, 100, 2000 },
+			},
+			{
+				{ 17, 15, 100, 2000 }, //70 회복술 스킬 증가%
+				{ 17, 15, 100, 2000 },
+				{ 17, 15, 100, 2000 },
+			},
+			{
+				{ 19, 15, 100, 2000 }, //71 법의학 스킬 증가%
+				{ 19, 15, 100, 2000 },
+				{ 19, 15, 100, 2000 },
+			},
+			{
+				{ 20, 15, 100, 2000 }, //72 목동술 스킬 증가%
+				{ 20, 15, 100, 2000 },
+				{ 20, 15, 100, 2000 },
+			},
+			{
+				{ 21, 15, 100, 2000 }, //73 은신 스킬 증가%
+				{ 21, 15, 100, 2000 },
+				{ 21, 15, 100, 2000 },
+			},
+			{
+				{ 22, 15, 100, 2000 }, //74 도발연주 스킬 증가%
+				{ 22, 15, 100, 2000 },
+				{ 22, 15, 100, 2000 },
+			},
+			{
+				{ 25, 15, 100, 2000 }, //75 마법학 스킬 증가%
+				{ 25, 15, 100, 2000 },
+				{ 25, 15, 100, 2000 },
+			},
+			{
+				{ 26, 15, 100, 2000 }, //76 마법저항 스킬 증가%
+				{ 26, 15, 100, 2000 },
+				{ 26, 15, 100, 2000 },
+			},
+			{
+				{ 27, 15, 100, 2000 }, //77 전술 스킬 증가%
+				{ 27, 15, 100, 2000 },
+				{ 27, 15, 100, 2000 },
+			},
+			{
+				{ 28, 15, 100, 2000 }, //78 훔쳐보기 스킬 증가%
+				{ 28, 15, 100, 2000 },
+				{ 28, 15, 100, 2000 },
+			},
+			{
+				{ 29, 15, 100, 2000 }, //79 음악연주 스킬 증가%
+				{ 29, 15, 100, 2000 },
+				{ 29, 15, 100, 2000 },
+			},
+			{
+				{ 30, 15, 100, 2000 }, //80 포이즈닝 스킬 증가%
+				{ 30, 15, 100, 2000 },
+				{ 30, 15, 100, 2000 },
+			},
+			{
+				{ 31, 15, 100, 2000 }, //81 궁술 스킬 증가%
+				{ 31, 15, 100, 2000 },
+				{ 31, 15, 100, 2000 },
+			},
+			{
+				{ 32, 15, 100, 2000 }, //82 영혼대화 스킬 증가%
+				{ 32, 15, 100, 2000 },
+				{ 32, 15, 100, 2000 },
+			},
+			{
+				{ 33, 15, 100, 2000 }, //83 훔치기 스킬 증가%
+				{ 33, 15, 100, 2000 },
+				{ 33, 15, 100, 2000 },
+			},
+			{
+				{ 35, 15, 100, 2000 }, //84 길들이기 스킬 증가%
+				{ 35, 15, 100, 2000 },
+				{ 35, 15, 100, 2000 },
+			},
+			{
+				{ 38, 15, 100, 2000 }, //85 추적하기 스킬 증가%
+				{ 38, 15, 100, 2000 },
+				{ 38, 15, 100, 2000 },
+			},
+			{
+				{ 39, 15, 100, 2000 }, //86 수의학 스킬 증가%
+				{ 39, 15, 100, 2000 },
+				{ 39, 15, 100, 2000 },
+			},
+			{
+				{ 40, 15, 100, 2000 }, //87 검술 스킬 증가%
+				{ 40, 15, 100, 2000 },
+				{ 40, 15, 100, 2000 },
+			},
+			{
+				{ 41, 15, 100, 2000 }, //88 둔기술 스킬 증가%
+				{ 41, 15, 100, 2000 },
+				{ 41, 15, 100, 2000 },
+			},
+			{
+				{ 42, 15, 100, 2000 }, //89 펜싱술 스킬 증가%
+				{ 42, 15, 100, 2000 },
+				{ 42, 15, 100, 2000 },
+			},
+			{
+				{ 46, 15, 100, 2000 }, //90 명상 스킬 증가%
+				{ 46, 15, 100, 2000 },
+				{ 46, 15, 100, 2000 },
+			},
+			{
+				{ 47, 15, 100, 2000 }, //91 은신이동 스킬 증가%
+				{ 47, 15, 100, 2000 },
+				{ 47, 15, 100, 2000 },
+			},
+			{
+				{ 49, 15, 100, 2000 }, //92 강령술 스킬 증가%
+				{ 49, 15, 100, 2000 },
+				{ 49, 15, 100, 2000 },
+			},
+			{
+				{ 50, 15, 100, 2000 }, //93 집중 스킬 증가%
+				{ 50, 15, 100, 2000 },
+				{ 50, 15, 100, 2000 },
+			},
+			{
+				{ 51, 15, 100, 2000 }, //94 기사도 스킬 증가%
+				{ 51, 15, 100, 2000 },
+				{ 51, 15, 100, 2000 },
+			},
+			{
+				{ 52, 15, 100, 2000 }, //95 무사도 스킬 증가%
+				{ 52, 15, 100, 2000 },
+				{ 52, 15, 100, 2000 },
+			},
+			{
+				{ 53, 15, 100, 2000 }, //96 암술 스킬 증가%
+				{ 53, 15, 100, 2000 },
+				{ 53, 15, 100, 2000 },
+			},
+			{
+				{ 54, 15, 100, 2000 }, //97 주문 조합 스킬 증가%
+				{ 54, 15, 100, 2000 },
+				{ 54, 15, 100, 2000 },
+			},
+			{
+				{ 55, 15, 100, 2000 }, //98 신비술 스킬 증가%
+				{ 55, 15, 100, 2000 },
+				{ 55, 15, 100, 2000 },
+			},
+			{
+				{ 57, 15, 100, 2000 }, //99 던지기 스킬 증가%
+				{ 57, 15, 100, 2000 },
+				{ 57, 15, 100, 2000 },
+			},
+			{
+				{ 1080651, 5, 10000, 600000 }, //100 무기 공격 반사%
+				{ 1080651, 15, 10000, 200000 },
+				{ 1080651, 30, 100000, 100000 },
+			},
+			{
+				{ 1080652, 10, 1000, 300000 }, //101 전투 경험치%
+				{ 1080652, 1, 100, 30000 },
+				{ 1080652, 3, 3000, 100000 },
+			},
+			{
+				{ 1080653, 0, 10, 3000 }, //102 혼돈 피해%
+				{ 1080653, 0, 1, 300 },
+				{ 1080653, 0, 10, 1000 },
+			},
+			{
+				{ 1080654, 0, 10, 3000 }, //103 신성 피해%
+				{ 1080654, 0, 1, 300 },
+				{ 1080654, 0, 10, 1000 },
+			},
+			{
+				{ 1080655, 0, 10, 3000 }, //104 무기 데미지 감소
+				{ 1080655, 0, 1, 300 },
+				{ 1080655, 0, 10, 1000 },
+			},
+			{
+				{ 1080656, 0, 10, 3000 }, //105 마법 데미지 감소
+				{ 1080656, 0, 1, 300 },
+				{ 1080656, 0, 10, 1000 },
+			},
+			{
+				{ 1080657, 0, 10, 3000 }, //106 기절 시간 감소
+				{ 1080657, 0, 1, 300 },
+				{ 1080657, 0, 10, 1000 },
+			},
+			{
+				{ 1080658, 0, 10, 3000 }, //107 혼돈 피해
+				{ 1080658, 0, 1, 300 },
+				{ 1080658, 0, 10, 1000 },
+			},
+			{
+				{ 1080659, 0, 10, 3000 }, //108 신성 피해
+				{ 1080659, 0, 1, 300 },
+				{ 1080659, 0, 10, 1000 },
+			},
+			{
+				{ 1080660, 0, 10, 3000 }, //109 방패 방어 확률
+				{ 1080660, 0, 1, 300 },
+				{ 1080660, 0, 10, 1000 },
+			},
+			{
+				{ 1080661, 0, 10, 3000 }, //110 전체 피격 감소
+				{ 1080661, 0, 1, 300 },
+				{ 1080661, 0, 10, 1000 },
+			},
+			{
+				{ 1080662, 0, 10, 3000 }, //111 어그로%
+				{ 1080662, 0, 1, 300 },
+				{ 1080662, 0, 10, 1000 },
+			},
+			{
+				{ 1080663, 0, 10, 3000 }, //112 어그로
+				{ 1080663, 0, 1, 300 },
+				{ 1080663, 0, 10, 1000 },
+			},
+			{
+				{ 1080664, 0, 10, 3000 }, //113 원소 저항력%
+				{ 1080664, 0, 1, 300 },
+				{ 1080664, 0, 10, 1000 },
+			},
+			{
+				{ 1080665, 0, 10, 3000 }, //114 모든 저항력%
+				{ 1080665, 0, 1, 300 },
+				{ 1080665, 0, 10, 1000 },
+			},
+			{
+				{ 1080666, 10, 1000, 30000 }, //115 기력 소모 감소%
+				{ 1080666, 3, 100, 10000 },
+				{ 1080666, 15, 1000, 20000 },
+			},
+			{
+				{ 1080667, 0, 10, 3000 }, //116 시전 실패 감소%
+				{ 1080667, 0, 1, 300 },
+				{ 1080667, 0, 10, 1000 },
+			},
+			{
+				{ 1080668, 0, 10, 3000 }, //117 모든 피해%
+				{ 1080668, 0, 1, 300 },
+				{ 1080668, 0, 10, 1000 },
+			},
+			{
+				{ 1080669, 0, 10, 3000 }, //118 모든 속도%
+				{ 1080669, 0, 1, 300 },
+				{ 1080669, 0, 10, 1000 },
+			},
+			{
+				{ 1080670, 10, 1000, 30000 }, //119 마나 소모 감소%
+				{ 1080670, 3, 100, 10000 },
+				{ 1080670, 15, 1000, 20000 },
+			},
+			{
+				{ 1080671, 0, 10, 3000 }, //120 장비 요구치 감소%
+				{ 1080671, 0, 1, 300 },
+				{ 1080671, 0, 10, 1000 },
+			},
+			{
+				{ 1080672, 0, 10, 3000 }, //121 무기 피해
+				{ 1080672, 0, 1, 300 },
+				{ 1080672, 0, 10, 1000 },
+			},
+			{
+				{ 1080673, 0, 10, 3000 }, //122 마법 피해
+				{ 1080673, 0, 1, 300 },
+				{ 1080673, 0, 10, 1000 },
+			},
+			{
+				{ 1080674, 0, 10, 3000 }, //123 모든 피해
+				{ 1080674, 0, 1, 300 },
+				{ 1080674, 0, 10, 1000 },
+			},
+			{
+				{ 1080675, 0, 10, 3000 }, //124 피격 시 물리 치명 확률 감소
+				{ 1080675, 0, 1, 300 },
+				{ 1080675, 0, 10, 1000 },
+			},
+			{
+				{ 1080676, 0, 10, 3000 }, //125 피격 시 물리 치명 피해 감소
+				{ 1080676, 0, 1, 300 },
+				{ 1080676, 0, 10, 1000 },
+			},
+			{
+				{ 1080677, 0, 10, 3000 }, //126 피격 시 마법 치명 확률 감소
+				{ 1080677, 0, 1, 300 },
+				{ 1080677, 0, 10, 1000 },
+			},
+			{
+				{ 1080678, 0, 10, 3000 }, //127 피격 시 마법 치명 피해 감소
+				{ 1080678, 0, 1, 300 },
+				{ 1080678, 0, 10, 1000 },
+			},
+			{
+				{ 1080679, 0, 10, 3000 }, //128 붕대 사용 시 독 회복
+				{ 1080679, 0, 1, 300 },
+				{ 1080679, 0, 10, 1000 },
+			},
+			{
+				{ 1080680, 0, 10, 3000 }, //129 독 저항성%
+				{ 1080680, 0, 1, 300 },
+				{ 1080680, 0, 10, 1000 },
+			},
+			{
+				{ 1080681, 0, 10, 3000 }, //130 독 저항성
+				{ 1080681, 0, 1, 300 },
+				{ 1080681, 0, 10, 1000 },
+			},
+			{
+				{ 1080682, 0, 10, 3000 }, //131 함정 회피
+				{ 1080682, 0, 1, 300 },
+				{ 1080682, 0, 10, 1000 },
+			},
+			{
+				{ 1080683, 150, 10000, 20000 }, //132 모든 특수기
+				{ 1080683, 0, 1, 300 },
+				{ 1080683, 150, 10000, 20000 },
+			},
+			{
+				{ 1080684, 100, 10000, 300 }, //133 첫 번째 특수기
+				{ 1080684, 0, 100, 0 },
+				{ 1080684, 0, 10, 0 },
+			},
+			{
+				{ 1080685, 100, 10000, 30000 }, //134 두 번째 특수기
+				{ 1080685, 0, 1, 0 },
+				{ 1080685, 0, 10, 0 },
+			},
+			{
+				{ 1080686, 75, 10000, 40000 }, //135 검 특수기
+				{ 1080686, 300, 100, 100 },
+				{ 1080686, 0, 10, 0 },
+			},
+			{
+				{ 1080687, 75, 10000, 40000 }, //136 둔기 특수기
+				{ 1080687, 300, 100, 100 },
+				{ 1080687, 0, 10, 0 },
+			},
+			{
+				{ 1080688, 75, 10000, 40000 }, //137 펜싱 특수기
+				{ 1080688, 300, 100, 100 },
+				{ 1080688, 0, 10, 0 },
+			},
+			{
+				{ 1080689, 75, 10000, 40000 }, //138 활&석궁 특수기
+				{ 1080689, 0, 1, 0 },
+				{ 1080689, 300, 10000, 10000 },
+			},
+			{
+				{ 1080690, 0, 10, 0 }, //139 맨손 특수기
+				{ 1080690, 300, 10000, 10000 },
+				{ 1080690, 75, 10000, 40000 },
+			},
+			{
+				{ 1080691, 150, 10000, 20000 }, //140 모든 스펠
+				{ 1080691, 0, 1, 0 },
+				{ 1080691, 150, 10000, 20000 },
+			},
+			{
+				{ 1080692, 100, 10000, 30000 }, //141 1써클 스펠
+				{ 1080692, 300, 10000, 10000 },
+				{ 1080692, 100, 10000, 30000 },
+			},
+			{
+				{ 1080693, 100, 10000, 30000 }, //142 2써클 스펠
+				{ 1080693, 300, 10000, 10000 },
+				{ 1080693, 100, 10000, 30000 },
+			},
+			{
+				{ 1080694, 100, 10000, 30000 }, //143 3써클 스펠
+				{ 1080694, 300, 10000, 10000 },
+				{ 1080694, 100, 10000, 30000 },
+			},
+			{
+				{ 1080695, 100, 10000, 30000 }, //144 4써클 스펠
+				{ 1080695, 300, 10000, 10000 },
+				{ 1080695, 100, 10000, 30000 },
+			},
+			{
+				{ 1080696, 100, 10000, 30000 }, //145 5써클 스펠
+				{ 1080696, 0, 1, 0 },
+				{ 1080696, 100, 10000, 30000 },
+			},
+			{
+				{ 1080697, 100, 10000, 30000 }, //146 6써클 스펠
+				{ 1080697, 0, 1, 30000 },
+				{ 1080697, 100, 10000, 30000 },
+			},
+			{
+				{ 1080698, 100, 10000, 30000 }, //147 7써클 스펠
+				{ 1080698, 0, 1, 0 },
+				{ 1080698, 0, 10, 0 },
+			},
+			{
+				{ 1080699, 100, 10000, 30000 }, //148 8써클 스펠
+				{ 1080699, 0, 1, 30000 },
+				{ 1080699, 0, 10, 0 },
+			},
+			{
+				{ 1080700, 75, 10000, 40000 }, //149 강령술 스펠
+				{ 1080700, 300, 10000, 10000 },
+				{ 1080700, 0, 10, 0 },
+			},
+			{
+				{ 1080701, 75, 10000, 40000 }, //150 원소술 스펠
+				{ 1080701, 300, 10000, 10000 },
+				{ 1080701, 0, 10, 0 },
+			},
+			{
+				{ 1080702, 75, 10000, 40000 }, //151 신비술 스펠
+				{ 1080702, 300, 10000, 10000 },
+				{ 1080702, 0, 10, 0 },
+			},
+			{
+				{ 1080703, 75, 10000, 40000 }, //152 기사도 스펠
+				{ 1080703, 300, 10000, 10000 },
+				{ 1080703, 0, 10, 0 },
+			},
+			{
+				{ 1080704, 75, 100, 400 }, //153 화염 속성
+				{ 1080704, 300, 100, 100 },
+				{ 1080704, 0, 10, 0 },
+			},
+			{
+				{ 1080705, 75, 100, 400 }, //154 냉기 속성
+				{ 1080705, 300, 100, 100 },
+				{ 1080705, 0, 10, 0 },
+			},
+			{
+				{ 1080706, 75, 100, 400 }, //155 독 속성
+				{ 1080706, 300, 100, 100 },
+				{ 1080706, 0, 10, 0 },
+			},
+			{
+				{ 1080707, 75, 100, 400 }, //156 에너지 속성
+				{ 1080707, 300, 100, 100 },
+				{ 1080707, 0, 10, 0 },
+			},
+			{
+				{ 1080708, 75, 100, 400 }, //157 혼돈 속성
+				{ 1080708, 300, 100, 100 },
+				{ 1080708, 0, 10, 0 },
+			},
+			{
+				{ 1080709, 75, 100, 400 }, //158 신성 속성
+				{ 1080709, 300, 100, 100 },
+				{ 1080709, 0, 10, 0 },
+			},
 		};
-		
+
 		public static int[,] NewSelectGemOption =
 		{
-			{ 	38,	38, 38, 38, 38, 38, 38, 38, 38, 39,	100, 8, 6, 	6, 	32,	32,	58,	17,	17,	21,	39,	46,	47 	},	//별무늬 사파이어
-			{	5, 	1, 	1, 	20, 18, 5, 	1, 	1, 	1, 	5,	15, 35,	20,	15, 35, 1, 	1, 	1,	20,	5,	1,	15,	35	},  //에메랄드
-			{	6, 	2, 	2, 	21, 46, 6, 	2, 	2, 	2, 	8,	14, 34, 21, 14, 35, 7, 	62,	2, 	21,	6,	2,	14,	34	},  //사파이어
-			{	4, 	0, 	37, 19, 12, 4, 	1, 	1, 	1, 	4,	13, 33, 19, 13, 33, 0,	0, 	0, 	19,	4,	0,	13,	33	},  //루비
-			{	17, 7, 	7, 	32, 33, 35, 34, 7, 	7, 	36,	16, 36, 5, 	16,	36,	5,	56,	17,	17,	19,	37,	16,	36	},  //황수정
-			{	3, 	3, 	3, 	3, 	3, 	3, 	3, 	3, 	3, 	3,	3,	3,	3,	3,	3,	3,	61,	3,	3,	3,	3,	3,	3	},  //자수정
-			{	44, 44, 44, 44, 44, 44, 44, 44, 44, 46,	46,	47,	4,	4,	4,	4,	60,	7,	46,	20,	38,	12,	32	},  //전기석
-			{	51, 51, 51, 51, 51, 51, 51, 51, 51, 51,	51,	51,	51,	51,	51,	51,	59,	51,	51,	51,	51,	51,	51	},  //호박
-			{	12, 12, 12, 12, 12, 12, 12, 12, 12, 46,	12,	18,	12,	12,	12,	12,	57,	12,	18,	100,100, 100, 100	}  //다이아몬드
+			{ 38, 38, 38, 38, 38, 38, 38, 38, 38, 39, 100, 8, 6, 6, 32, 32, 58, 17, 17, 21, 39, 46, 47 }, //별무늬 사파이어
+			{ 5, 1, 1, 20, 18, 5, 1, 1, 1, 5, 15, 35, 20, 15, 35, 1, 1, 1, 20, 5, 1, 15, 35 }, //에메랄드
+			{ 6, 2, 2, 21, 46, 6, 2, 2, 2, 8, 14, 34, 21, 14, 35, 7, 62, 2, 21, 6, 2, 14, 34 }, //사파이어
+			{ 4, 0, 37, 19, 12, 4, 1, 1, 1, 4, 13, 33, 19, 13, 33, 0, 0, 0, 19, 4, 0, 13, 33 }, //루비
+			{ 17, 7, 7, 32, 33, 35, 34, 7, 7, 36, 16, 36, 5, 16, 36, 5, 56, 17, 17, 19, 37, 16, 36 }, //황수정
+			{ 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 61, 3, 3, 3, 3, 3, 3 }, //자수정
+			{ 44, 44, 44, 44, 44, 44, 44, 44, 44, 46, 46, 47, 4, 4, 4, 4, 60, 7, 46, 20, 38, 12, 32 }, //전기석
+			{ 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 59, 51, 51, 51, 51, 51, 51 }, //호박
+			{ 12, 12, 12, 12, 12, 12, 12, 12, 12, 46, 12, 18, 12, 12, 12, 12, 57, 12, 18, 100, 100, 100, 100 }, //다이아몬드
 		};
-		
+
 		private static readonly int[][] EquipOptionType = new int[][]
 		{
-			new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 51, 52, 53, 55, 56, 57, 58, 59, 60, 61, 62, 63, 65, 66, 67, 68, 69, 70, 71, 73, 74, 75, 76, 77, 78, 79, 80, 82, 83, 85, 87, 90, 91, 92, 93, 94, 96, 97, 98, 100, 101, 115, 119, 132, 133, 134, 135, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152 }, //한손검
-			new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 51, 53, 54, 56, 57, 58, 59, 60, 61, 62, 63, 67, 69, 70, 71, 75, 76, 77, 82, 87, 90, 92, 93, 94, 95, 97, 98, 100, 101, 115, 119, 132, 133, 134, 135, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152 }, //양손검
-			new int[] {0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15, 16, 17, 18, 19, 20, 32, 33, 34, 35, 36, 37, 38, 40, 42, 44, 51, 53, 55, 56, 57, 58, 59, 60, 61, 62, 63, 70, 73, 76, 77, 78, 80, 82, 83, 87, 90, 91, 92, 93, 95, 100, 101, 115, 132, 133, 134, 135, 149 }, //도끼
-			new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 65, 66, 67, 68, 69, 70, 71, 74, 75, 76, 77, 79, 82, 85, 88, 90, 92, 93, 94, 96, 97, 98, 100, 101, 115, 119, 132, 133, 134, 136, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152 }, //한손 둔기
-			new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 51, 53, 54, 56, 57, 58, 59, 60, 61, 62, 63, 64, 66, 67, 68, 69, 70, 71, 74, 75, 76, 77, 79, 82, 84, 86, 88, 90, 92, 93, 94, 95, 97, 98, 100, 101, 115, 119, 132, 133, 134, 136, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152 }, //양손 둔기
-			new int[] {0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15, 16, 17, 18, 19, 20, 32, 33, 34, 35, 36, 37, 38, 40, 42, 44, 51, 52, 53, 55, 56, 57, 58, 59, 60, 61, 62, 63, 65, 67, 70, 73, 76, 77, 78, 80, 82, 83, 85, 89, 90, 91, 92, 93, 94, 96, 100, 101, 115, 132, 133, 134, 137, 149, 152 }, //한손 펜싱
-			new int[] {0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15, 16, 17, 18, 19, 20, 32, 33, 34, 35, 36, 37, 38, 40, 42, 44, 51, 53, 55, 56, 57, 58, 59, 60, 61, 62, 63, 69, 70, 73, 75, 76, 77, 78, 80, 82, 83, 89, 90, 91, 92, 93, 95, 97, 98, 100, 101, 115, 119, 132, 133, 134, 137, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152 }, //양손 펜싱
-			new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 67, 69, 73, 75, 76, 77, 78, 80, 81, 83, 84, 86, 90, 91, 93, 95, 97, 98, 101, 115, 119, 132, 133, 134, 138, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152 }, //활
-			new int[] {0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15, 16, 17, 18, 19, 20, 32, 33, 34, 35, 36, 37, 38, 40, 42, 44, 46, 47, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 67, 76, 77, 81, 84, 86, 93, 95, 101, 115, 132, 133, 134, 138 }, //석궁
-			new int[] {0, 1, 2, 3, 4, 5, 6, 8, 13, 14, 15, 16, 18, 21, 32, 33, 34, 35, 36, 39, 41, 43, 45, 46, 47, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 64, 65, 66, 68, 69, 74, 75, 76, 79, 84, 86, 90, 96, 97, 98, 101, 119, 132, 133, 134, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152 }, //마법책(9)
-			new int[] {0, 1, 2, 3, 4, 5, 6, 12, 13, 14, 15, 16, 18, 19, 20, 21, 46, 47, 51, 63, 64, 65, 66, 68, 69, 70, 71, 74, 75, 76, 77, 79, 82, 83, 84, 86, 87, 88, 89, 90, 92, 93, 94, 97, 98, 100, 101, 115, 119, 139, 141, 142, 143, 144, 149, 150, 151, 152 }, //방패
-			new int[] {0, 1, 2, 3, 4, 5, 6, 8, 12, 13, 14, 15, 16, 18, 19, 20, 21, 33, 34, 35, 36, 39, 41, 43, 45, 46, 47, 51, 56, 57, 58, 59, 60, 61, 62, 63, 64, 66, 67, 68, 69, 70, 71, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 96, 97, 98, 99, 100, 101, 115, 119, 135, 136, 137, 138, 139, 141, 142, 143, 144, 149, 150, 151, 152 }, //천 옷
-			new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 32, 33, 34, 35, 36, 37, 38, 40, 41, 42, 43, 44, 45, 46, 47, 51, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 115, 135, 136, 137, 138, 139, 149, 150, 151, 152 }, //가죽 갑옷
-			new int[] {0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 32, 37, 38, 40, 42, 44, 51, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 70, 71, 76, 77, 81, 86, 87, 88, 89, 93, 94, 95, 96, 99, 100, 101, 115, 119, 135, 136, 137, 138, 139, 141, 142, 143, 144, 149, 150, 151, 152 }, //스텃 갑옷
-			new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 51, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 115, 119, 135, 136, 137, 138, 139, 141, 142, 143, 144, 149, 150, 151, 152 }, //뼈 갑옷
-			new int[] {0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 32, 38, 40, 42, 44, 51, 56, 57, 58, 59, 60, 61, 62, 63, 65, 70, 76, 77, 81, 82, 87, 88, 89, 92, 93, 94, 95, 99, 100, 101, 115, 135, 136, 137, 138, 139, 149, 150, 151, 152 }, //링 갑옷(투구)
-			new int[] {0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 32, 37, 38, 40, 42, 44, 51, 56, 57, 58, 59, 60, 61, 62, 63, 65, 70, 76, 77, 82, 87, 88, 89, 92, 93, 94, 95, 100, 101, 115, 119, 135, 136, 137, 138, 139, 141, 142, 143, 144, 149, 150, 151, 152 }, //체인 갑옷
-			new int[] {0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 32, 37, 39, 40, 42, 44, 46, 47, 51, 56, 57, 58, 59, 60, 61, 62, 63, 65, 70, 76, 77, 82, 87, 88, 89, 90, 92, 93, 94, 95, 101, 115, 119, 135, 136, 137, 138, 141, 142, 143, 144, 149, 150, 151, 152 }, //플레이트 갑옷
-			new int[] {0, 1, 2, 3, 4, 5, 6, 8, 12, 13, 14, 15, 16, 18, 19, 20, 21, 33, 34, 35, 36, 37, 38, 39, 41, 43, 45, 46, 47, 51, 56, 57, 58, 59, 60, 61, 62, 64, 65, 66, 67, 68, 69, 70, 71, 74, 75, 76, 77, 79, 81, 83, 84, 86, 87, 88, 89, 90, 93, 94, 95, 97, 98, 99, 101, 115, 135, 136, 137, 138, 149, 150, 151, 152 }, //나무 갑옷(18)
-			new int[] {0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 37, 39, 40, 42, 51, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 70, 71, 73, 74, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 115 }, //전투 팔찌
-			new int[] {0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 32, 37, 38, 39, 40, 42, 44, 51, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 70, 71, 73, 74, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 115, 132, 133, 134, 135, 136, 137, 138, 139 }, //전투 반지
-			new int[] {0, 1, 2, 3, 4, 5, 6, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 51, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 70, 71, 73, 74, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 115 }, //전투 목걸이
-			new int[] {0, 1, 2, 3, 4, 5, 6, 7, 17, 32, 37, 38, 40, 42, 44, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 70, 71, 73, 74, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 115 }, //전투 귀걸이(22)
-			new int[] {0, 1, 2, 3, 4, 5, 6, 8, 12, 13, 14, 15, 16, 18, 19, 21, 37, 39, 41, 43, 46, 47, 51, 56, 57, 58, 59, 60, 61, 62, 64, 66, 68, 69, 71, 74, 75, 76, 79, 80, 82, 84, 86, 90, 92, 94, 97, 98, 101, 119, 140, 141, 142, 143, 144, 145, 146 }, //마법 팔찌
-			new int[] {0, 1, 2, 3, 4, 5, 6, 8, 12, 13, 14, 15, 16, 18, 19, 21, 33, 34, 35, 36, 37, 39, 41, 43, 45, 46, 47, 51, 56, 57, 58, 59, 60, 61, 62, 64, 66, 68, 69, 71, 74, 75, 76, 79, 80, 82, 84, 86, 90, 92, 94, 97, 98, 101, 119, 139, 140, 141, 142, 143, 144, 145, 146 }, //마법 반지
-			new int[] {0, 1, 2, 3, 4, 5, 6, 8, 12, 13, 14, 15, 16, 19, 21, 46, 47, 51, 56, 57, 58, 59, 60, 61, 62, 64, 66, 68, 69, 71, 74, 75, 76, 79, 80, 82, 84, 86, 90, 92, 94, 97, 98, 101, 119, }, //마법 목걸이
-			new int[] {0, 1, 2, 3, 4, 5, 6, 8, 18, 33, 34, 35, 36, 37, 41, 43, 45, 46, 47, 56, 57, 58, 59, 60, 61, 62, 64, 66, 68, 69, 71, 74, 75, 76, 79, 80, 82, 84, 86, 90, 92, 94, 97, 98, 101, 119, 140, }, //마법 귀걸이(26)
-			
-			
-			
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				39,
+				40,
+				41,
+				42,
+				43,
+				44,
+				45,
+				46,
+				47,
+				51,
+				52,
+				53,
+				55,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				65,
+				66,
+				67,
+				68,
+				69,
+				70,
+				71,
+				73,
+				74,
+				75,
+				76,
+				77,
+				78,
+				79,
+				80,
+				82,
+				83,
+				85,
+				87,
+				90,
+				91,
+				92,
+				93,
+				94,
+				96,
+				97,
+				98,
+				100,
+				101,
+				115,
+				119,
+				132,
+				133,
+				134,
+				135,
+				140,
+				141,
+				142,
+				143,
+				144,
+				145,
+				146,
+				147,
+				148,
+				149,
+				150,
+				151,
+				152,
+			}, //한손검
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				39,
+				40,
+				41,
+				42,
+				43,
+				44,
+				45,
+				46,
+				47,
+				51,
+				53,
+				54,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				67,
+				69,
+				70,
+				71,
+				75,
+				76,
+				77,
+				82,
+				87,
+				90,
+				92,
+				93,
+				94,
+				95,
+				97,
+				98,
+				100,
+				101,
+				115,
+				119,
+				132,
+				133,
+				134,
+				135,
+				140,
+				141,
+				142,
+				143,
+				144,
+				145,
+				146,
+				147,
+				148,
+				149,
+				150,
+				151,
+				152,
+			}, //양손검
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				40,
+				42,
+				44,
+				51,
+				53,
+				55,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				70,
+				73,
+				76,
+				77,
+				78,
+				80,
+				82,
+				83,
+				87,
+				90,
+				91,
+				92,
+				93,
+				95,
+				100,
+				101,
+				115,
+				132,
+				133,
+				134,
+				135,
+				149,
+			}, //도끼
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				39,
+				40,
+				41,
+				42,
+				43,
+				44,
+				45,
+				46,
+				47,
+				51,
+				52,
+				53,
+				54,
+				55,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				65,
+				66,
+				67,
+				68,
+				69,
+				70,
+				71,
+				74,
+				75,
+				76,
+				77,
+				79,
+				82,
+				85,
+				88,
+				90,
+				92,
+				93,
+				94,
+				96,
+				97,
+				98,
+				100,
+				101,
+				115,
+				119,
+				132,
+				133,
+				134,
+				136,
+				140,
+				141,
+				142,
+				143,
+				144,
+				145,
+				146,
+				147,
+				148,
+				149,
+				150,
+				151,
+				152,
+			}, //한손 둔기
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				39,
+				40,
+				41,
+				42,
+				43,
+				44,
+				45,
+				46,
+				47,
+				51,
+				53,
+				54,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				64,
+				66,
+				67,
+				68,
+				69,
+				70,
+				71,
+				74,
+				75,
+				76,
+				77,
+				79,
+				82,
+				84,
+				86,
+				88,
+				90,
+				92,
+				93,
+				94,
+				95,
+				97,
+				98,
+				100,
+				101,
+				115,
+				119,
+				132,
+				133,
+				134,
+				136,
+				140,
+				141,
+				142,
+				143,
+				144,
+				145,
+				146,
+				147,
+				148,
+				149,
+				150,
+				151,
+				152,
+			}, //양손 둔기
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				40,
+				42,
+				44,
+				51,
+				52,
+				53,
+				55,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				65,
+				67,
+				70,
+				73,
+				76,
+				77,
+				78,
+				80,
+				82,
+				83,
+				85,
+				89,
+				90,
+				91,
+				92,
+				93,
+				94,
+				96,
+				100,
+				101,
+				115,
+				132,
+				133,
+				134,
+				137,
+				149,
+				152,
+			}, //한손 펜싱
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				40,
+				42,
+				44,
+				51,
+				53,
+				55,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				69,
+				70,
+				73,
+				75,
+				76,
+				77,
+				78,
+				80,
+				82,
+				83,
+				89,
+				90,
+				91,
+				92,
+				93,
+				95,
+				97,
+				98,
+				100,
+				101,
+				115,
+				119,
+				132,
+				133,
+				134,
+				137,
+				140,
+				141,
+				142,
+				143,
+				144,
+				145,
+				146,
+				147,
+				148,
+				149,
+				150,
+				151,
+				152,
+			}, //양손 펜싱
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				39,
+				40,
+				41,
+				42,
+				43,
+				44,
+				45,
+				46,
+				47,
+				51,
+				52,
+				53,
+				54,
+				55,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				64,
+				67,
+				69,
+				73,
+				75,
+				76,
+				77,
+				78,
+				80,
+				81,
+				83,
+				84,
+				86,
+				90,
+				91,
+				93,
+				95,
+				97,
+				98,
+				101,
+				115,
+				119,
+				132,
+				133,
+				134,
+				138,
+				140,
+				141,
+				142,
+				143,
+				144,
+				145,
+				146,
+				147,
+				148,
+				149,
+				150,
+				151,
+				152,
+			}, //활
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				40,
+				42,
+				44,
+				46,
+				47,
+				51,
+				52,
+				53,
+				54,
+				55,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				64,
+				67,
+				76,
+				77,
+				81,
+				84,
+				86,
+				93,
+				95,
+				101,
+				115,
+				132,
+				133,
+				134,
+				138,
+			}, //석궁
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				8,
+				13,
+				14,
+				15,
+				16,
+				18,
+				21,
+				32,
+				33,
+				34,
+				35,
+				36,
+				39,
+				41,
+				43,
+				45,
+				46,
+				47,
+				51,
+				52,
+				53,
+				54,
+				55,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				64,
+				65,
+				66,
+				68,
+				69,
+				74,
+				75,
+				76,
+				79,
+				84,
+				86,
+				90,
+				96,
+				97,
+				98,
+				101,
+				119,
+				132,
+				133,
+				134,
+				140,
+				141,
+				142,
+				143,
+				144,
+				145,
+				146,
+				147,
+				148,
+				149,
+				150,
+				151,
+				152,
+			}, //마법책(9)
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				12,
+				13,
+				14,
+				15,
+				16,
+				18,
+				19,
+				20,
+				21,
+				46,
+				47,
+				51,
+				63,
+				64,
+				65,
+				66,
+				68,
+				69,
+				70,
+				71,
+				74,
+				75,
+				76,
+				77,
+				79,
+				82,
+				83,
+				84,
+				86,
+				87,
+				88,
+				89,
+				90,
+				92,
+				93,
+				94,
+				97,
+				98,
+				100,
+				101,
+				115,
+				119,
+				139,
+				141,
+				142,
+				143,
+				144,
+				149,
+				150,
+				151,
+				152,
+			}, //방패
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				8,
+				12,
+				13,
+				14,
+				15,
+				16,
+				18,
+				19,
+				20,
+				21,
+				33,
+				34,
+				35,
+				36,
+				39,
+				41,
+				43,
+				45,
+				46,
+				47,
+				51,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				64,
+				66,
+				67,
+				68,
+				69,
+				70,
+				71,
+				73,
+				74,
+				75,
+				76,
+				77,
+				78,
+				79,
+				80,
+				81,
+				82,
+				83,
+				84,
+				85,
+				86,
+				87,
+				88,
+				89,
+				90,
+				91,
+				92,
+				93,
+				94,
+				96,
+				97,
+				98,
+				99,
+				100,
+				101,
+				115,
+				119,
+				135,
+				136,
+				137,
+				138,
+				139,
+				141,
+				142,
+				143,
+				144,
+				149,
+				150,
+				151,
+				152,
+			}, //천 옷
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				40,
+				41,
+				42,
+				43,
+				44,
+				45,
+				46,
+				47,
+				51,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				64,
+				65,
+				66,
+				67,
+				68,
+				69,
+				70,
+				71,
+				73,
+				74,
+				75,
+				76,
+				77,
+				78,
+				79,
+				80,
+				81,
+				82,
+				83,
+				85,
+				86,
+				87,
+				88,
+				89,
+				90,
+				91,
+				92,
+				93,
+				94,
+				95,
+				96,
+				97,
+				98,
+				99,
+				100,
+				101,
+				115,
+				135,
+				136,
+				137,
+				138,
+				139,
+				149,
+				150,
+				151,
+				152,
+			}, //가죽 갑옷
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				32,
+				37,
+				38,
+				40,
+				42,
+				44,
+				51,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				64,
+				65,
+				70,
+				71,
+				76,
+				77,
+				81,
+				86,
+				87,
+				88,
+				89,
+				93,
+				94,
+				95,
+				96,
+				99,
+				100,
+				101,
+				115,
+				119,
+				135,
+				136,
+				137,
+				138,
+				139,
+				141,
+				142,
+				143,
+				144,
+				149,
+				150,
+				151,
+				152,
+			}, //스텃 갑옷
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				39,
+				40,
+				41,
+				42,
+				43,
+				44,
+				45,
+				46,
+				47,
+				51,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				64,
+				65,
+				66,
+				67,
+				68,
+				69,
+				70,
+				71,
+				73,
+				74,
+				75,
+				76,
+				77,
+				78,
+				79,
+				80,
+				81,
+				82,
+				83,
+				84,
+				85,
+				86,
+				87,
+				88,
+				89,
+				90,
+				91,
+				92,
+				93,
+				94,
+				95,
+				96,
+				97,
+				98,
+				99,
+				100,
+				101,
+				115,
+				119,
+				135,
+				136,
+				137,
+				138,
+				139,
+				141,
+				142,
+				143,
+				144,
+				149,
+				150,
+				151,
+				152,
+			}, //뼈 갑옷
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				32,
+				38,
+				40,
+				42,
+				44,
+				51,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				65,
+				70,
+				76,
+				77,
+				81,
+				82,
+				87,
+				88,
+				89,
+				92,
+				93,
+				94,
+				95,
+				99,
+				100,
+				101,
+				115,
+				135,
+				136,
+				137,
+				138,
+				139,
+				149,
+				150,
+				151,
+				152,
+			}, //링 갑옷(투구)
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				32,
+				37,
+				38,
+				40,
+				42,
+				44,
+				51,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				65,
+				70,
+				76,
+				77,
+				82,
+				87,
+				88,
+				89,
+				92,
+				93,
+				94,
+				95,
+				100,
+				101,
+				115,
+				119,
+				135,
+				136,
+				137,
+				138,
+				139,
+				141,
+				142,
+				143,
+				144,
+				149,
+				150,
+				151,
+				152,
+			}, //체인 갑옷
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				32,
+				37,
+				39,
+				40,
+				42,
+				44,
+				46,
+				47,
+				51,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				65,
+				70,
+				76,
+				77,
+				82,
+				87,
+				88,
+				89,
+				90,
+				92,
+				93,
+				94,
+				95,
+				101,
+				115,
+				119,
+				135,
+				136,
+				137,
+				138,
+				141,
+				142,
+				143,
+				144,
+				149,
+				150,
+				151,
+				152,
+			}, //플레이트 갑옷
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				8,
+				12,
+				13,
+				14,
+				15,
+				16,
+				18,
+				19,
+				20,
+				21,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				39,
+				41,
+				43,
+				45,
+				46,
+				47,
+				51,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				64,
+				65,
+				66,
+				67,
+				68,
+				69,
+				70,
+				71,
+				74,
+				75,
+				76,
+				77,
+				79,
+				81,
+				83,
+				84,
+				86,
+				87,
+				88,
+				89,
+				90,
+				93,
+				94,
+				95,
+				97,
+				98,
+				99,
+				101,
+				115,
+				135,
+				136,
+				137,
+				138,
+				149,
+				150,
+				151,
+				152,
+			}, //나무 갑옷(18)
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				37,
+				39,
+				40,
+				42,
+				51,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				64,
+				65,
+				66,
+				67,
+				68,
+				70,
+				71,
+				73,
+				74,
+				76,
+				77,
+				78,
+				79,
+				80,
+				81,
+				82,
+				83,
+				84,
+				85,
+				86,
+				87,
+				88,
+				89,
+				90,
+				91,
+				92,
+				93,
+				94,
+				95,
+				96,
+				97,
+				98,
+				99,
+				101,
+				115,
+			}, //전투 팔찌
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				32,
+				37,
+				38,
+				39,
+				40,
+				42,
+				44,
+				51,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				64,
+				65,
+				66,
+				67,
+				68,
+				70,
+				71,
+				73,
+				74,
+				76,
+				77,
+				78,
+				79,
+				80,
+				81,
+				82,
+				83,
+				84,
+				85,
+				86,
+				87,
+				88,
+				89,
+				90,
+				91,
+				92,
+				93,
+				94,
+				95,
+				96,
+				97,
+				98,
+				99,
+				101,
+				115,
+				132,
+				133,
+				134,
+				135,
+				136,
+				137,
+				138,
+				139,
+			}, //전투 반지
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				51,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				64,
+				65,
+				66,
+				67,
+				68,
+				70,
+				71,
+				73,
+				74,
+				76,
+				77,
+				78,
+				79,
+				80,
+				81,
+				82,
+				83,
+				84,
+				85,
+				86,
+				87,
+				88,
+				89,
+				90,
+				91,
+				92,
+				93,
+				94,
+				95,
+				96,
+				97,
+				98,
+				99,
+				100,
+				101,
+				115,
+			}, //전투 목걸이
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				17,
+				32,
+				37,
+				38,
+				40,
+				42,
+				44,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				64,
+				65,
+				66,
+				67,
+				68,
+				70,
+				71,
+				73,
+				74,
+				76,
+				77,
+				78,
+				79,
+				80,
+				81,
+				82,
+				83,
+				84,
+				85,
+				86,
+				87,
+				88,
+				89,
+				90,
+				91,
+				92,
+				93,
+				94,
+				95,
+				96,
+				97,
+				98,
+				99,
+				100,
+				101,
+				115,
+			}, //전투 귀걸이(22)
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				8,
+				12,
+				13,
+				14,
+				15,
+				16,
+				18,
+				19,
+				21,
+				37,
+				39,
+				41,
+				43,
+				46,
+				47,
+				51,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				64,
+				66,
+				68,
+				69,
+				71,
+				74,
+				75,
+				76,
+				79,
+				80,
+				82,
+				84,
+				86,
+				90,
+				92,
+				94,
+				97,
+				98,
+				101,
+				119,
+				140,
+				141,
+				142,
+				143,
+				144,
+				145,
+				146,
+			}, //마법 팔찌
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				8,
+				12,
+				13,
+				14,
+				15,
+				16,
+				18,
+				19,
+				21,
+				33,
+				34,
+				35,
+				36,
+				37,
+				39,
+				41,
+				43,
+				45,
+				46,
+				47,
+				51,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				64,
+				66,
+				68,
+				69,
+				71,
+				74,
+				75,
+				76,
+				79,
+				80,
+				82,
+				84,
+				86,
+				90,
+				92,
+				94,
+				97,
+				98,
+				101,
+				119,
+				139,
+				140,
+				141,
+				142,
+				143,
+				144,
+				145,
+				146,
+			}, //마법 반지
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				8,
+				12,
+				13,
+				14,
+				15,
+				16,
+				19,
+				21,
+				46,
+				47,
+				51,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				64,
+				66,
+				68,
+				69,
+				71,
+				74,
+				75,
+				76,
+				79,
+				80,
+				82,
+				84,
+				86,
+				90,
+				92,
+				94,
+				97,
+				98,
+				101,
+				119,
+			}, //마법 목걸이
+			new int[]
+			{
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				8,
+				18,
+				33,
+				34,
+				35,
+				36,
+				37,
+				41,
+				43,
+				45,
+				46,
+				47,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				64,
+				66,
+				68,
+				69,
+				71,
+				74,
+				75,
+				76,
+				79,
+				80,
+				82,
+				84,
+				86,
+				90,
+				92,
+				94,
+				97,
+				98,
+				101,
+				119,
+				140,
+			}, //마법 귀걸이(26)
+
 			/*
 			new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 32, 33, 34, 35, 36, 40, 41, 42, 43, 44, 45, 46, 47, 51, 53, 56, 57, 58, 59, 60, 61, 62, 63, 65, 69, 70, 71, 73, 75, 76, 77, 82, 87, 90, 92, 93, 94, 95, 96 },
 			new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 32, 33, 34, 35, 36, 40, 41, 42, 43, 44, 45, 46, 47, 51, 53, 56, 57, 58, 59, 60, 61, 62, 63, 69, 70, 71, 75, 76, 77, 82, 87, 90, 92, 93, 94, 95, 96 },
@@ -2332,7 +4843,7 @@ namespace Server.Misc
 			new int[] { 4, 5, 12, 13, 14, 15, 16, 18, 19, 20, 40, 42, 44, 46, 51, 115}, //팔찌
 			new int[] { 0, 1, 3, 4, 5, 7, 17, 19, 20, 32, 37, 38, 40, 42, 44, 51, 115, 132, 133, 134 }, //반지
 			new int[] { 3, 4, 5, 12, 13, 14, 15, 16, 17, 18, 19, 20, 46, 47, 51, 115 },  //목걸이
-			new int[] { 0, 1, 2, 3, 4, 5, 6, 12, 13, 14, 15, 16, 42, 44, 51, 115  }, //귀걸이 여기까지 전투 악세(22)			
+			new int[] { 0, 1, 2, 3, 4, 5, 6, 12, 13, 14, 15, 16, 42, 44, 51, 115  }, //귀걸이 여기까지 전투 악세(22)
 			new int[] { 3, 4, 6, 13, 14, 15, 16, 19, 21, 33, 41, 43, 45, 46, 51, 119, 140, 141, 142, 143, 144, 145, 146}, //팔찌
 			new int[] { 2, 3, 6, 8, 21, 33, 34, 35, 36, 39, 41, 43, 45, 47, 51, 119, 140, 141, 142, 143, 144, 145, 146 }, //반지
 			new int[] { 3, 4, 6, 13, 14, 15, 16, 18, 19, 21, 43, 45, 46, 47, 51 119 }, //목걸이
@@ -2343,12 +4854,12 @@ namespace Server.Misc
 		//독 적립 계산식
 		public static void PoisonSavingDamage(Mobile from, int saving)
 		{
-			if( from is PlayerMobile )
+			if (from is PlayerMobile)
 			{
 				PlayerMobile pm = from as PlayerMobile;
 				pm.PoisonSaving += saving;
 			}
-			else if( from is BaseCreature )
+			else if (from is BaseCreature)
 			{
 				BaseCreature bc = from as BaseCreature;
 				bc.PoisonSaving += saving;
@@ -2359,53 +4870,56 @@ namespace Server.Misc
 		public static int PoisonAbsorbDamage(Mobile from)
 		{
 			int absorbDamage = ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.Bane) / 100;
-			if( from is PlayerMobile )
+			if (from is PlayerMobile)
 			{
 				PlayerMobile pm = from as PlayerMobile;
 				//스텟 독 저항성
 				absorbDamage += pm.Str * 2;
 			}
-			absorbDamage += (int)( from.Skills.MagicResist.Value * 80 );
-			if( from.Skills.MagicResist.Value >= 100 )
-				absorbDamage += 4000;				
+			absorbDamage += (int)(from.Skills.MagicResist.Value * 80);
+			if (from.Skills.MagicResist.Value >= 100)
+				absorbDamage += 4000;
 
 			//옵션 독 저항성%
-			absorbDamage = (int)( absorbDamage * ( 1 + ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.HitSwarm) * 0.0000001 ) );
-			
+			absorbDamage = (int)(
+				absorbDamage
+				* (1 + ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.HitSwarm) * 0.0000001)
+			);
+
 			return absorbDamage;
 		}
 
 		//강타 스킬 계산
-		public static int SmashCalc(Mobile attacker, Mobile defender, double chanceBonus = 0.0, double damageBonus = 0 )
+		public static int SmashCalc(Mobile attacker, Mobile defender, double chanceBonus = 0.0, double damageBonus = 0)
 		{
 			int specialDamage = 0;
-			if( defender != null )
+			if (defender != null)
 			{
 				BaseWeapon atkWeapon = attacker.Weapon as BaseWeapon;
 
-				if( attacker.Skills[SkillName.Bushido].Value >= 100 )
+				if (attacker.Skills[SkillName.Bushido].Value >= 100)
 				{
 					double smashChance = 0.1;
-					if( chanceBonus > 0 )
+					if (chanceBonus > 0)
 						smashChance = chanceBonus;
 					double smashDamage = 0.1;
-					if( damageBonus > 0 )
+					if (damageBonus > 0)
 						smashDamage = damageBonus;
-					
-					if( atkWeapon.Skill is SkillName.Archery )
+
+					if (atkWeapon.Skill is SkillName.Archery)
 						smashChance /= 2;
-					if( attacker.Skills[atkWeapon.Skill].Value >= 150 )
+					if (attacker.Skills[atkWeapon.Skill].Value >= 150)
 					{
-						if( atkWeapon.Skill is SkillName.Swords )
+						if (atkWeapon.Skill is SkillName.Swords)
 						{
 							smashChance += 0.05;
 							smashDamage = 0.15;
 						}
-						else if( atkWeapon.Skill is SkillName.Macing )
+						else if (atkWeapon.Skill is SkillName.Macing)
 						{
 							smashDamage = 0.2;
 						}
-						else if( atkWeapon.Skill is SkillName.Fencing )
+						else if (atkWeapon.Skill is SkillName.Fencing)
 						{
 							smashChance += 0.1;
 						}
@@ -2414,15 +4928,15 @@ namespace Server.Misc
 							smashChance *= 2;
 						}
 					}
-					if( Utility.RandomDouble() < smashChance )
+					if (Utility.RandomDouble() < smashChance)
 					{
-						specialDamage = (int)( defender.Hits * smashDamage );
-						if( attacker.Skills[atkWeapon.Skill].Value >= 200 )
-							specialDamage = (int)( defender.HitsMax * smashDamage );
-						if( defender is BaseCreature )
+						specialDamage = (int)(defender.Hits * smashDamage);
+						if (attacker.Skills[atkWeapon.Skill].Value >= 200)
+							specialDamage = (int)(defender.HitsMax * smashDamage);
+						if (defender is BaseCreature)
 						{
 							BaseCreature bc = defender as BaseCreature;
-							if( bc.Boss )
+							if (bc.Boss)
 								specialDamage = 0;
 							else
 							{
@@ -2434,36 +4948,42 @@ namespace Server.Misc
 					}
 				}
 			}
-			return specialDamage;			
+			return specialDamage;
 		}
-		
+
 		//급소 스킬 계산
-		public static int SneakCalc(Mobile attacker, Mobile defender, int damage, double chanceBonus = 0.0, double damageBonus = 0 )
+		public static int SneakCalc(
+			Mobile attacker,
+			Mobile defender,
+			int damage,
+			double chanceBonus = 0.0,
+			double damageBonus = 0
+		)
 		{
 			int specialDamage = 0;
-			if( defender != null )
+			if (defender != null)
 			{
 				BaseWeapon atkWeapon = attacker.Weapon as BaseWeapon;
 				BaseShield shieldCheck = attacker.FindItemOnLayer(Layer.TwoHanded) as BaseShield;
 
 				double sneakChance = 0.05;
-				if( chanceBonus != 0 )
+				if (chanceBonus != 0)
 					sneakChance = chanceBonus;
 				double sneakDamage = 1.0;
-				if( damageBonus != 0 )
+				if (damageBonus != 0)
 					sneakDamage = damageBonus;
-				
-				if( shieldCheck != null )
+
+				if (shieldCheck != null)
 					sneakDamage = 0.5;
 
-				if( defender is BaseCreature )
+				if (defender is BaseCreature)
 				{
-					if( sneakChance < 1.0 )
+					if (sneakChance < 1.0)
 					{
 						BaseCreature bc = defender as BaseCreature;
-						if( bc.Boss )
+						if (bc.Boss)
 						{
-							if( attacker.Skills[SkillName.Ninjitsu].Value >= 200 )
+							if (attacker.Skills[SkillName.Ninjitsu].Value >= 200)
 								sneakChance = 0.01;
 							else
 								sneakChance = 0.0;
@@ -2473,11 +4993,11 @@ namespace Server.Misc
 							sneakChance -= Misc.Util.MonsterTierCalc(bc) * 0.01;
 						}
 					}
-					if( attacker.Skills[SkillName.Ninjitsu].Value >= 150 )
+					if (attacker.Skills[SkillName.Ninjitsu].Value >= 150)
 					{
-						if( atkWeapon.Skill is SkillName.Swords )
+						if (atkWeapon.Skill is SkillName.Swords)
 						{
-							if( shieldCheck != null )
+							if (shieldCheck != null)
 							{
 								sneakChance *= 1.25;
 								sneakDamage *= 1.25;
@@ -2488,16 +5008,16 @@ namespace Server.Misc
 								sneakDamage *= 1.5;
 							}
 						}
-						else if( atkWeapon.Skill is SkillName.Macing )
+						else if (atkWeapon.Skill is SkillName.Macing)
 						{
-							if( shieldCheck != null )
+							if (shieldCheck != null)
 								sneakDamage *= 1.5;
 							else
 								sneakDamage *= 2;
 						}
-						else if( atkWeapon.Skill is SkillName.Fencing )
+						else if (atkWeapon.Skill is SkillName.Fencing)
 						{
-							if( shieldCheck != null )
+							if (shieldCheck != null)
 								sneakChance *= 1.5;
 							else
 								sneakChance *= 2;
@@ -2505,266 +5025,274 @@ namespace Server.Misc
 					}
 				}
 
-				if( Utility.RandomDouble() < sneakChance )
+				if (Utility.RandomDouble() < sneakChance)
 				{
-					specialDamage = (int)( damage * 1 + sneakDamage );
+					specialDamage = (int)(damage * 1 + sneakDamage);
 					defender.FixedParticles(0x374A, 1, 17, 0x26BC, EffectLayer.Waist); //DeathStrike 이펙트
 					attacker.PlaySound(attacker.Female ? 0x50D : 0x50E);
 				}
 			}
 			return specialDamage;
 		}
-		
+
 		//마법 보너스 스킬
-		public static SkillName[] CastBonusSkill = 
+		public static SkillName[] CastBonusSkill =
 		{
 			//1써클
-			SkillName.Necromancy,	//둔화
-			SkillName.Mysticism,	//음식 만들기
-			SkillName.Necromancy,	//정신 쇠약
-			SkillName.Chivalry,		//치료
-			SkillName.Spellweaving,	//마법 화살
-			SkillName.Chivalry,		//야간 시야
-			SkillName.Chivalry,		//반응 갑옷
-			SkillName.Necromancy,	//약화
+			SkillName.Necromancy, //둔화
+			SkillName.Mysticism, //음식 만들기
+			SkillName.Necromancy, //정신 쇠약
+			SkillName.Chivalry, //치료
+			SkillName.Spellweaving, //마법 화살
+			SkillName.Chivalry, //야간 시야
+			SkillName.Chivalry, //반응 갑옷
+			SkillName.Necromancy, //약화
 			//2써클
-			SkillName.Spellweaving,	//민첩
-			SkillName.Spellweaving,	//교활
-			SkillName.Chivalry,		//치유
-			SkillName.Spellweaving,	//체력 손상
-			SkillName.Necromancy,	//마법 함정
-			SkillName.Mysticism,	//마법 함정제거
-			SkillName.Chivalry,		//마법 보호
-			SkillName.Mysticism,	//힘
+			SkillName.Spellweaving, //민첩
+			SkillName.Spellweaving, //교활
+			SkillName.Chivalry, //치유
+			SkillName.Spellweaving, //체력 손상
+			SkillName.Necromancy, //마법 함정
+			SkillName.Mysticism, //마법 함정제거
+			SkillName.Chivalry, //마법 보호
+			SkillName.Mysticism, //힘
 			//3써클
-			SkillName.Chivalry,		//축복
-			SkillName.Spellweaving,	//화염구
-			SkillName.Mysticism,	//마법 자물쇠
-			SkillName.Spellweaving,	//독
-			SkillName.Spellweaving,	//염동력
-			SkillName.Mysticism,	//순간이동
-			SkillName.Mysticism,	//잠금 해제
-			SkillName.Necromancy,	//오염된 돌 벽
+			SkillName.Chivalry, //축복
+			SkillName.Spellweaving, //화염구
+			SkillName.Mysticism, //마법 자물쇠
+			SkillName.Spellweaving, //독
+			SkillName.Spellweaving, //염동력
+			SkillName.Mysticism, //순간이동
+			SkillName.Mysticism, //잠금 해제
+			SkillName.Necromancy, //오염된 돌 벽
 			//4써클
-			SkillName.Chivalry,		//대 치유
-			SkillName.Chivalry,		//단체 마법 보호
-			SkillName.Necromancy,	//저주
-			SkillName.Spellweaving,	//화염지대
-			SkillName.Chivalry,		//대회복
-			SkillName.Spellweaving,	//번개
-			SkillName.Necromancy,	//마나 흡수
-			SkillName.Mysticism,	//귀환
+			SkillName.Chivalry, //대 치유
+			SkillName.Chivalry, //단체 마법 보호
+			SkillName.Necromancy, //저주
+			SkillName.Spellweaving, //화염지대
+			SkillName.Chivalry, //대회복
+			SkillName.Spellweaving, //번개
+			SkillName.Necromancy, //마나 흡수
+			SkillName.Mysticism, //귀환
 			//5써클
-			SkillName.Necromancy,	//칼날의 정령
-			SkillName.Chivalry,		//지역 마법해제
-			SkillName.Mysticism,	//변장
-			SkillName.Chivalry,		//마법 반사
-			SkillName.Necromancy,	//정신 파괴
-			SkillName.Necromancy,	//마비
-			SkillName.Spellweaving,	//독성 지대
-			SkillName.Mysticism,	//짐승 소환
+			SkillName.Necromancy, //칼날의 정령
+			SkillName.Chivalry, //지역 마법해제
+			SkillName.Mysticism, //변장
+			SkillName.Chivalry, //마법 반사
+			SkillName.Necromancy, //정신 파괴
+			SkillName.Necromancy, //마비
+			SkillName.Spellweaving, //독성 지대
+			SkillName.Mysticism, //짐승 소환
 			//6써클
-			SkillName.Chivalry,		//마법 해제
-			SkillName.Spellweaving,	//에너지 볼트
-			SkillName.Spellweaving,	//폭발
-			SkillName.Mysticism,	//투명화
-			SkillName.Mysticism,	//기록
-			SkillName.Necromancy,	//단체 저주
-			SkillName.Necromancy,	//마비 지대
-			SkillName.Chivalry,		//발각
+			SkillName.Chivalry, //마법 해제
+			SkillName.Spellweaving, //에너지 볼트
+			SkillName.Spellweaving, //폭발
+			SkillName.Mysticism, //투명화
+			SkillName.Mysticism, //기록
+			SkillName.Necromancy, //단체 저주
+			SkillName.Necromancy, //마비 지대
+			SkillName.Chivalry, //발각
 			//7써클
-			SkillName.Spellweaving,	//연속 번개
-			SkillName.Spellweaving,	//에너지 지대
-			SkillName.Spellweaving,	//화염 강타
-			SkillName.Mysticism,	//게이트 여행
-			SkillName.Necromancy,	//마나 흡혈
-			SkillName.Chivalry,		//집단 마법해제
-			SkillName.Spellweaving,	//유성 폭풍
-			SkillName.Mysticism,	//변신
+			SkillName.Spellweaving, //연속 번개
+			SkillName.Spellweaving, //에너지 지대
+			SkillName.Spellweaving, //화염 강타
+			SkillName.Mysticism, //게이트 여행
+			SkillName.Necromancy, //마나 흡혈
+			SkillName.Chivalry, //집단 마법해제
+			SkillName.Spellweaving, //유성 폭풍
+			SkillName.Mysticism, //변신
 			//8써클
-			SkillName.Mysticism,	//지진
-			SkillName.Necromancy,	//에너지 소용돌이
-			SkillName.Chivalry,		//부활
-			SkillName.Spellweaving,	//공기의 정령 소환
-			SkillName.Necromancy,	//악마 소환
-			SkillName.Chivalry,		//땅의 정령 소환
-			SkillName.Spellweaving,	//불의 정령 소환
-			SkillName.Spellweaving	//물의 정령 소환
+			SkillName.Mysticism, //지진
+			SkillName.Necromancy, //에너지 소용돌이
+			SkillName.Chivalry, //부활
+			SkillName.Spellweaving, //공기의 정령 소환
+			SkillName.Necromancy, //악마 소환
+			SkillName.Chivalry, //땅의 정령 소환
+			SkillName.Spellweaving, //불의 정령 소환
+			SkillName.Spellweaving, //물의 정령 소환
 		};
-		
-		//SPM 기력 소모 
+
+		//SPM 기력 소모
 		public static int[,] SPMStam =
 		{
-			{ 500, 0 },		//1  방어구 무시(Armor Ignore), 방어구 관통(Armor Pierce)
-			{ 500, 0 },		//2  출혈 공격(Bleed Attack), 힘 화살(Force Arrow)
-			{ 1000, 0 },		//3  충격파(Concussion Blow)
-			{ 1000, 0 },		//4  파괴 일격(Crushing Blow), 헤드샷(Head Shot, 구 Moving Shot)
-			{ 350, 0 },		//5  무장 해제(Disarm)
-			{ 350, 0 },		//6  낙마(Dismount)
-			{ 250, 0 },		//7  연속 공격(Double Strike)
-			{ 250, 0 },		//8  독 바르기(Infecting), 맹독 화살(Serpent Arrow)
-			{ 1500, 0 },		//9  급소 가격(Mortal Strike)
-			{ 250, 0 },		//10 칼날 매듭(Bladeweave)
-			{ 750, 0 },		//11 마비 일격(Paralyzing Blow)
-			{ 1000, 0 },		//12 그림자 일격(Shadow Strike)
-			{ 500, 0 },			//13 소용돌이 일격(Whirlwind Attack)
-			{ 250, 0 },		//14 정신 공격(Psychic Attack)
-			{ 750, 0 },		//15 전격 화살(Lightning Arrow)
-			{ 100, 0 }			//16 자연의 힘(Force of Nature)
+			{ 500, 0 }, //1  방어구 무시(Armor Ignore), 방어구 관통(Armor Pierce)
+			{ 500, 0 }, //2  출혈 공격(Bleed Attack), 힘 화살(Force Arrow)
+			{ 1000, 0 }, //3  충격파(Concussion Blow)
+			{ 1000, 0 }, //4  파괴 일격(Crushing Blow), 헤드샷(Head Shot, 구 Moving Shot)
+			{ 350, 0 }, //5  무장 해제(Disarm)
+			{ 350, 0 }, //6  낙마(Dismount)
+			{ 250, 0 }, //7  연속 공격(Double Strike)
+			{ 250, 0 }, //8  독 바르기(Infecting), 맹독 화살(Serpent Arrow)
+			{ 1500, 0 }, //9  급소 가격(Mortal Strike)
+			{ 250, 0 }, //10 칼날 매듭(Bladeweave)
+			{ 750, 0 }, //11 마비 일격(Paralyzing Blow)
+			{ 1000, 0 }, //12 그림자 일격(Shadow Strike)
+			{ 500, 0 }, //13 소용돌이 일격(Whirlwind Attack)
+			{ 250, 0 }, //14 정신 공격(Psychic Attack)
+			{ 750, 0 }, //15 전격 화살(Lightning Arrow)
+			{ 100, 0 }, //16 자연의 힘(Force of Nature)
 		};
-		
-		
-		public static double[] RankDice =
-		{
-			1.1, 1.22, 1.35, 1.5
-		};
-		
+
+		public static double[] RankDice = { 1.1, 1.22, 1.35, 1.5 };
+
 		//재료 보너스
-        public static readonly int[,,] NewResourceOption = new int[,,]
+		public static readonly int[,,] NewResourceOption = new int[,,]
 		{
 			//금속
-			{{ 	1081002,			-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1	},			//철 무기
-			{	1081023,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1	},	  			//방어구
-			{	1081044,	-1,	-1,				-1, -1,	-1,	-1,	-1,	-1}},	//악세사리
-
-			{{ 	1081003,	120, 500000, -1, -1, 	-1, -1, -1, -1	},			//구리 무기
-			{	1081024,	109, 10000,	-1, -1,	-1, -1, -1, -1},  			//방어구
-			{	1081045,	120, 500000,				-1, -1,	-1,	-1,	-1,	-1}},	//악세사리
-
-			{{ 	1081004,	121,	10000,				-1, -1,	-1,	-1,	-1,	-1},	//청동 무기
-			{	1081025,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1	},  				//방어구
-			{	1081046,	117,	50000,				-1, -1,	-1,	-1,	-1,	-1	}},	//악세사리
-
-			{{ 	1081005,	3,	50000,				-1, -1,	-1,	-1,	-1,	-1	},	// 금 무기
-			{	1081026,	3,	10000,				-1, -1, -1, -1, -1, -1},  	//방어구
-			{	1081047,	3,	20000,				-1, -1,	-1,	-1,	-1,	-1	}},	//악세사리
-
-			{{ 	1081006,	7,	250000,				-1, -1,	-1,	-1,	-1,	-1	},	//무기
-			{	1081027,	125,	250000,				-1, -1, -1, -1, -1, -1},  	//방어구
-			{	1081048,	0,	200,				-1, -1,	-1,	-1,	-1,	-1}},	//악세사리
-
-			{{ 	1081007,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1	},	//무기
-			{	1081028,	129,	250000,					-1, -1, -1, -1, -1, -1},//방어구
-			{	1081049,	1,	200,				-1, -1,	-1,	-1,	-1,	-1	}},	//악세사리
-
-			{{ 	1081008,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1	},		//무기
-			{	1081029,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1	},  		//방어구
-			{	1081050,	2,	200,	-1,	-1,	-1,	-1,	-1,	-1 }},	//악세사리 잉갓 끝
-
-
+			{
+				{ 1081002, -1, -1, -1, -1, -1, -1, -1, -1 }, //철 무기
+				{ 1081023, -1, -1, -1, -1, -1, -1, -1, -1 }, //방어구
+				{ 1081044, -1, -1, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리
+			{
+				{ 1081003, 120, 500000, -1, -1, -1, -1, -1, -1 }, //구리 무기
+				{ 1081024, 109, 10000, -1, -1, -1, -1, -1, -1 }, //방어구
+				{ 1081045, 120, 500000, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리
+			{
+				{ 1081004, 121, 10000, -1, -1, -1, -1, -1, -1 }, //청동 무기
+				{ 1081025, -1, -1, -1, -1, -1, -1, -1, -1 }, //방어구
+				{ 1081046, 117, 50000, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리
+			{
+				{ 1081005, 3, 50000, -1, -1, -1, -1, -1, -1 }, // 금 무기
+				{ 1081026, 3, 10000, -1, -1, -1, -1, -1, -1 }, //방어구
+				{ 1081047, 3, 20000, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리
+			{
+				{ 1081006, 7, 250000, -1, -1, -1, -1, -1, -1 }, //무기
+				{ 1081027, 125, 250000, -1, -1, -1, -1, -1, -1 }, //방어구
+				{ 1081048, 0, 200, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리
+			{
+				{ 1081007, -1, -1, -1, -1, -1, -1, -1, -1 }, //무기
+				{ 1081028, 129, 250000, -1, -1, -1, -1, -1, -1 }, //방어구
+				{ 1081049, 1, 200, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리
+			{
+				{ 1081008, -1, -1, -1, -1, -1, -1, -1, -1 }, //무기
+				{ 1081029, -1, -1, -1, -1, -1, -1, -1, -1 }, //방어구
+				{ 1081050, 2, 200, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리 잉갓 끝
 			//가죽
-			{{ 	1081009,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1	},	//무기
-			{	1081030,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1	},  //방어구
-			{	1081051,	-1,	-1,				-1, -1,	-1,	-1,	-1,	-1}},	//악세사리
-			
-			{{ 	1081010,	120, 500000, -1, -1, 	-1, -1, -1, -1	},						//무기
-			{	1081031,	109, 10000,	-1, -1,	-1, -1, -1, -1},  //방어구
-			{	1081052,	120, 500000,				-1, -1,	-1,	-1,	-1,	-1}},	//악세사리
-			
-			{{ 	1081011,	122,	10000,				-1, -1,	-1,	-1,	-1,	-1},	//무기
-			{	1081032,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1	},  //방어구
-			{	1081053,	117,	50000,				-1, -1,	-1,	-1,	-1,	-1	}},	//악세사리
-			
-			{{ 	1081012,	3,	50000,				-1, -1,	-1,	-1,	-1,	-1	},		//무기
-			{	1081033,	-1,	-1,	-1, -1, -1, -1, -1, -1	},  //방어구
-			{	1081054,	3,	20000,				-1, -1,	-1,	-1,	-1,	-1	}},	//악세사리
-			
-			{{ 	1081013,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1	},	//무기
-			{	1081034,	3,	10000,	-1, -1, -1, -1, -1, -1},   //방어구
-			{	1081055,	0, 200, 		-1,	-1,	-1,	-1, -1, -1	}},	//악세사리
-			
-			{{ 	1081014,	8,	250000,				-1, -1,	-1,	-1,	-1,	-1	},	//무기
-			{	1081035,	131,	150000,					-1, -1, -1, -1, -1, -1	},  //방어구
-			{	1081056,	1, 200, 					-1,	-1,	-1,	-1, -1, -1	}},	//악세사리
-			
-			{{ 	1081015,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1	},		//무기
-			{	1081036,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1	},   //방어구
-			{	1081057,	2,	200,	-1,	-1,	-1,	-1,	-1,	-1	}},	//악세사리 가죽 끝
-			
-			
+			{
+				{ 1081009, -1, -1, -1, -1, -1, -1, -1, -1 }, //무기
+				{ 1081030, -1, -1, -1, -1, -1, -1, -1, -1 }, //방어구
+				{ 1081051, -1, -1, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리
+			{
+				{ 1081010, 120, 500000, -1, -1, -1, -1, -1, -1 }, //무기
+				{ 1081031, 109, 10000, -1, -1, -1, -1, -1, -1 }, //방어구
+				{ 1081052, 120, 500000, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리
+			{
+				{ 1081011, 122, 10000, -1, -1, -1, -1, -1, -1 }, //무기
+				{ 1081032, -1, -1, -1, -1, -1, -1, -1, -1 }, //방어구
+				{ 1081053, 117, 50000, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리
+			{
+				{ 1081012, 3, 50000, -1, -1, -1, -1, -1, -1 }, //무기
+				{ 1081033, -1, -1, -1, -1, -1, -1, -1, -1 }, //방어구
+				{ 1081054, 3, 20000, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리
+			{
+				{ 1081013, -1, -1, -1, -1, -1, -1, -1, -1 }, //무기
+				{ 1081034, 3, 10000, -1, -1, -1, -1, -1, -1 }, //방어구
+				{ 1081055, 0, 200, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리
+			{
+				{ 1081014, 8, 250000, -1, -1, -1, -1, -1, -1 }, //무기
+				{ 1081035, 131, 150000, -1, -1, -1, -1, -1, -1 }, //방어구
+				{ 1081056, 1, 200, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리
+			{
+				{ 1081015, -1, -1, -1, -1, -1, -1, -1, -1 }, //무기
+				{ 1081036, -1, -1, -1, -1, -1, -1, -1, -1 }, //방어구
+				{ 1081057, 2, 200, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리 가죽 끝
 			//나무
-			{{ 	1081016,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1	},	//무기
-			{	1081037,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1	},  //방어구
-			{	0,	 							-1, -1, -1,	-1,	-1,	-1, -1, -1	}},	//악세사리
-			
-			{{ 	1081017,	120, 500000,-1, -1, 	-1, -1, -1, -1	},	//무기
-			{	1081038,	109, 10000,	-1, -1,	-1, -1, -1, -1}, //방어구
-			{	0,	 							-1, -1, -1,	-1,	-1,	-1, -1, -1	}},	//악세사리
-			
-			{{ 	1081018,	123,	10000,				-1, -1,	-1,	-1,	-1,	-1},	//무기
-			{	1081039,	110,	20000,	15, 100, 16, 600, 100, 2500	},  //방어구
-			{	0,	 							-1, -1, -1,	-1,	-1,	-1, -1, -1	}},	//악세사리
-			
-			{{ 	1081019,	3,	50000,				-1, -1,	-1,	-1,	-1,	-1	},	
-			{	1081040,	128, 250000,	-1, -1, 			-1, -1, -1, -1	},  //방어구
-			{	0,	 							-1, -1, -1,	-1,	-1,	-1, -1, -1	}},	//악세사리
-			
-			{{ 	1081020,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1	},	//무기
-			{	1081041,	3,	10000,				-1, -1, -1, -1, -1, -1},   //방어구
-			{	0,	 							-1, -1, -1,	-1,	-1,	-1, -1, -1}},	//악세사리
-			
-			{{ 	1081021,	47,	1000000,				-1, -1,	-1,	-1,	-1,	-1	},	//무기
-			{	1081042,	4,	1000000,	-1, -1,	 			-1, -1, -1, -1	},  //방어구
-			{	0,	 							-1, -1, -1,	-1,	-1,	-1, -1, -1	}},	//악세사리
-			
-			{{ 	1081022,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1	},		//무기
-			{	1081043,	-1,	-1,	-1,	-1,	-1,	-1,	-1,	-1	},  //방어구
-			{	0,	 							-1, -1, -1,	-1,	-1,	-1, -1, -1	}}	//악세사리 나무 끝
-
-
+			{
+				{ 1081016, -1, -1, -1, -1, -1, -1, -1, -1 }, //무기
+				{ 1081037, -1, -1, -1, -1, -1, -1, -1, -1 }, //방어구
+				{ 0, -1, -1, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리
+			{
+				{ 1081017, 120, 500000, -1, -1, -1, -1, -1, -1 }, //무기
+				{ 1081038, 109, 10000, -1, -1, -1, -1, -1, -1 }, //방어구
+				{ 0, -1, -1, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리
+			{
+				{ 1081018, 123, 10000, -1, -1, -1, -1, -1, -1 }, //무기
+				{ 1081039, 110, 20000, 15, 100, 16, 600, 100, 2500 }, //방어구
+				{ 0, -1, -1, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리
+			{
+				{ 1081019, 3, 50000, -1, -1, -1, -1, -1, -1 },
+				{ 1081040, 128, 250000, -1, -1, -1, -1, -1, -1 }, //방어구
+				{ 0, -1, -1, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리
+			{
+				{ 1081020, -1, -1, -1, -1, -1, -1, -1, -1 }, //무기
+				{ 1081041, 3, 10000, -1, -1, -1, -1, -1, -1 }, //방어구
+				{ 0, -1, -1, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리
+			{
+				{ 1081021, 47, 1000000, -1, -1, -1, -1, -1, -1 }, //무기
+				{ 1081042, 4, 1000000, -1, -1, -1, -1, -1, -1 }, //방어구
+				{ 0, -1, -1, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리
+			{
+				{ 1081022, -1, -1, -1, -1, -1, -1, -1, -1 }, //무기
+				{ 1081043, -1, -1, -1, -1, -1, -1, -1, -1 }, //방어구
+				{ 0, -1, -1, -1, -1, -1, -1, -1, -1 },
+			}, //악세사리 나무 끝
 		};
 
-		public static int[] NewRandomOptionStock = 
-		{
-			0, 40, 90, 160, 240, 300
-		};
-		
-		public static int[] NewUpgradeOptionStock = 
-		{
-			3, 3, 3, 3, 3, 4
-		};
+		public static int[] NewRandomOptionStock = { 0, 40, 90, 160, 240, 300 };
+
+		public static int[] NewUpgradeOptionStock = { 3, 3, 3, 3, 3, 4 };
 
 		#endregion
-		
+
 		#region 장비 신코드 전역 함수
 		#region 신규 장비 리스트
-		public static int WeaponList( BaseWeapon newmake )
+		public static int WeaponList(BaseWeapon newmake)
 		{
 			int check = -1;
-			if( newmake.Skill is SkillName.Swords )
+			if (newmake.Skill is SkillName.Swords)
 			{
-				if( newmake is BaseAxe )
+				if (newmake is BaseAxe)
 					check = 2;
-				else if( newmake.Layer == Layer.TwoHanded )
+				else if (newmake.Layer == Layer.TwoHanded)
 					check = 1;
-				else if( newmake.Layer == Layer.OneHanded )
+				else if (newmake.Layer == Layer.OneHanded)
 					check = 0;
 			}
-			else if( newmake.Skill is SkillName.Macing )
+			else if (newmake.Skill is SkillName.Macing)
 			{
-				if( newmake.Layer == Layer.TwoHanded )
+				if (newmake.Layer == Layer.TwoHanded)
 					check = 4;
-				else if( newmake.Layer == Layer.OneHanded )
+				else if (newmake.Layer == Layer.OneHanded)
 					check = 3;
 			}
-			else if( newmake.Skill is SkillName.Fencing )
+			else if (newmake.Skill is SkillName.Fencing)
 			{
-				if( newmake.Layer == Layer.TwoHanded )
+				if (newmake.Layer == Layer.TwoHanded)
 					check = 6;
-				else if( newmake.Layer == Layer.OneHanded )
+				else if (newmake.Layer == Layer.OneHanded)
 					check = 5;
 			}
-			else if( newmake is BaseRanged )
+			else if (newmake is BaseRanged)
 			{
-				if( ((BaseRanged)newmake).AmmoType == typeof(Bolt) )
+				if (((BaseRanged)newmake).AmmoType == typeof(Bolt))
 					check = 8;
-				else if( ((BaseRanged)newmake).AmmoType == typeof(Arrow) )
+				else if (((BaseRanged)newmake).AmmoType == typeof(Arrow))
 					check = 7;
 			}
 			return check;
 		}
-		
-		public static int ArmorList( BaseArmor newmake )
+
+		public static int ArmorList(BaseArmor newmake)
 		{
 			/*
 			아머타입 10 : 방패 //탱커
@@ -2793,64 +5321,67 @@ namespace Server.Misc
 				check = 7;
 			else if (check == 12)
 				check = 8;
-			check += 10;			
-			
+			check += 10;
+
 			return check;
 		}
-		
-		
+
 		public static int JewelList(BaseJewel newmake)
 		{
 			/*
-			악세타입 19 : 팔찌 
-			아머타입 20 : 반지 
-			아머타입 21 : 목걸이 
-			아머타입 22 : 귀걸이 
+			악세타입 19 : 팔찌
+			아머타입 20 : 반지
+			아머타입 21 : 목걸이
+			아머타입 22 : 귀걸이
 			*/
 			int check = 19;
 
-			if( newmake.Layer == Layer.Ring )
+			if (newmake.Layer == Layer.Ring)
 				check = 20;
-			else if( newmake.Layer == Layer.Neck )
+			else if (newmake.Layer == Layer.Neck)
 				check = 21;
-			else if( newmake.Layer == Layer.Earrings )
+			else if (newmake.Layer == Layer.Earrings)
 				check = 22;
-			
-			if( newmake is SilverEarrings || newmake is SilverRing || newmake is SilverBracelet || newmake is SilverNecklace )
+
+			if (
+				newmake is SilverEarrings
+				|| newmake is SilverRing
+				|| newmake is SilverBracelet
+				|| newmake is SilverNecklace
+			)
 				check += 4;
-			
+
 			return check;
-			
 		}
-		
-		#endregion		
-		
-		public static int UseResourceNumber( int resource )
+
+		#endregion
+
+		public static int UseResourceNumber(int resource)
 		{
 			int usedresource = resource;
-			if( usedresource >= 2 && usedresource <= 9 ) //구리 ~ 벨러. 2 ~ 7
+			if (usedresource >= 2 && usedresource <= 9) //구리 ~ 벨러. 2 ~ 7
 				usedresource -= 2;
-			else if( usedresource >= 101 && usedresource <= 107 ) //가죽 ~ 미늘. 8 ~ 14
+			else if (usedresource >= 101 && usedresource <= 107) //가죽 ~ 미늘. 8 ~ 14
 				usedresource -= 93;
-			else if( usedresource >= 301 && usedresource <= 307 ) //가죽 ~ 미늘. 8 ~ 14
-				usedresource -= 286;			
-			
+			else if (usedresource >= 301 && usedresource <= 307) //가죽 ~ 미늘. 8 ~ 14
+				usedresource -= 286;
+
 			usedresource--;
 			return usedresource;
 		}
-		
-		public static bool UniqueNumberCheck(int checknumber, int dice )
+
+		public static bool UniqueNumberCheck(int checknumber, int dice)
 		{
-			if( checknumber == dice )
+			if (checknumber == dice)
 				return true;
 			else
 				return false;
 		}
 
 		//아이템 옵션 붙이기
-		public static int NewEquipOptionList( Item equip, int itemoption, int itemvalue, int skilluse )
+		public static int NewEquipOptionList(Item equip, int itemoption, int itemvalue, int skilluse)
 		{
-			if( equip is IEquipOption )
+			if (equip is IEquipOption)
 			{
 				IEquipOption item = equip as IEquipOption;
 				//옵션 지정 코드
@@ -2860,7 +5391,7 @@ namespace Server.Misc
 				ExtendedWeaponAttributes exweapon = item.ExtendedWeaponAttributes;
 				AosSkillBonuses skill = item.SkillBonuses;
 				AosArmorAttributes armor = item.ArmorAttributes;
-				switch( itemoption )
+				switch (itemoption)
 				{
 					case 0: //힘 증가
 					{
@@ -3179,223 +5710,223 @@ namespace Server.Misc
 					}
 					case 63: //해부학 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Anatomy, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Anatomy, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 64: //동물지식 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.AnimalLore, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.AnimalLore, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 65: //방패술 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Parry, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Parry, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 66: //평화연주 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Peacemaking, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Peacemaking, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 67: //은신감지 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.DetectHidden, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.DetectHidden, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 68: //불협화음 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Discordance, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Discordance, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 69: //지능평가 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.EvalInt, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.EvalInt, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 70: //회복술 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Healing, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Healing, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 71: //법의학 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Forensics, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Forensics, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 72: //목동술 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Herding, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Herding, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 73: //은신 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Hiding, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Hiding, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 74: //도발연주 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Provocation, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Provocation, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 75: //마법학 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Magery, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Magery, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 76: //마법저항 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.MagicResist, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.MagicResist, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 77: //전술 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Tactics, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Tactics, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 78: //훔쳐보기 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Snooping, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Snooping, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 79: //음악연주 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Musicianship, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Musicianship, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 80: //포이즈닝 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Poisoning, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Poisoning, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 81: //궁술 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Archery, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Archery, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 82: //영혼대화 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.SpiritSpeak, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.SpiritSpeak, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 83: //훔치기 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Stealing, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Stealing, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 84: //길들이기 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.AnimalTaming, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.AnimalTaming, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 85: //반사신경 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Tracking, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Tracking, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 86: //수의학 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Veterinary, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Veterinary, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 87: //검술 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Swords, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Swords, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 88: //둔기술 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Macing, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Macing, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 89: //펜싱 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Fencing, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Fencing, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 90: //명상 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Meditation, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Meditation, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 91: //은신이동 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Stealth, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Stealth, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 92: //강령술 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Necromancy, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Necromancy, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 93: //집중 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Focus, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Focus, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 94: //기사도 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Chivalry, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Chivalry, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 95: //무사도 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Bushido, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Bushido, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 96: //암술 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Ninjitsu, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Ninjitsu, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 97: //주문조합 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Spellweaving, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Spellweaving, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 98: //신비술 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Mysticism, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Mysticism, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
 					case 99: //던지기 스킬 증가%
 					{
-						skill.SetValues(skilluse, SkillName.Throwing, (double)itemvalue * 0.01 );
+						skill.SetValues(skilluse, SkillName.Throwing, (double)itemvalue * 0.01);
 						skilluse++;
 						break;
 					}
@@ -3666,7 +6197,7 @@ namespace Server.Misc
 					}
 					case 153: //화염 속성
 					{
-						if( equip is BaseWeapon )
+						if (equip is BaseWeapon)
 						{
 							BaseWeapon elementalweapon = equip as BaseWeapon;
 							elementalweapon.AosElementDamages.Fire += itemvalue;
@@ -3677,7 +6208,7 @@ namespace Server.Misc
 					}
 					case 154: //냉기 속성
 					{
-						if( equip is BaseWeapon )
+						if (equip is BaseWeapon)
 						{
 							BaseWeapon elementalweapon = equip as BaseWeapon;
 							elementalweapon.AosElementDamages.Cold += itemvalue;
@@ -3688,7 +6219,7 @@ namespace Server.Misc
 					}
 					case 155: //독 속성
 					{
-						if( equip is BaseWeapon )
+						if (equip is BaseWeapon)
 						{
 							BaseWeapon elementalweapon = equip as BaseWeapon;
 							elementalweapon.AosElementDamages.Poison += itemvalue;
@@ -3699,7 +6230,7 @@ namespace Server.Misc
 					}
 					case 156: //에너지 속성
 					{
-						if( equip is BaseWeapon )
+						if (equip is BaseWeapon)
 						{
 							BaseWeapon elementalweapon = equip as BaseWeapon;
 							elementalweapon.AosElementDamages.Energy += itemvalue;
@@ -3710,7 +6241,7 @@ namespace Server.Misc
 					}
 					case 157: //혼돈 속성
 					{
-						if( equip is BaseWeapon )
+						if (equip is BaseWeapon)
 						{
 							BaseWeapon elementalweapon = equip as BaseWeapon;
 							elementalweapon.AosElementDamages.Chaos += itemvalue;
@@ -3721,7 +6252,7 @@ namespace Server.Misc
 					}
 					case 158: //신성 속성
 					{
-						if( equip is BaseWeapon )
+						if (equip is BaseWeapon)
 						{
 							BaseWeapon elementalweapon = equip as BaseWeapon;
 							elementalweapon.AosElementDamages.Direct += itemvalue;
@@ -3734,53 +6265,61 @@ namespace Server.Misc
 			}
 			return skilluse;
 		}
-		
-		public static void NewEquipRandomOptionSelect( Item equip, int i ) 
+
+		public static void NewEquipRandomOptionSelect(Item equip, int i)
 		{
-			if( equip is IEquipOption )
+			if (equip is IEquipOption)
 			{
 				IEquipOption item = equip as IEquipOption;
 
 				int check = NewEquipNumber(equip);
 				int equipLine = NewItemLine(check);
-				item.PrefixOption[i + 11] = EquipOptionType[check][Utility.RandomMinMax(0, EquipOptionType[check].GetLength(0) -1)];
+				item.PrefixOption[i + 11] = EquipOptionType[check][
+					Utility.RandomMinMax(0, EquipOptionType[check].GetLength(0) - 1)
+				];
 
-				if( i != 0 )
+				if (i != 0)
 				{
-					while(UniqueNumberCheck(item.PrefixOption[11], item.PrefixOption[12]))
+					while (UniqueNumberCheck(item.PrefixOption[11], item.PrefixOption[12]))
 					{
-						item.PrefixOption[12] = EquipOptionType[check][Utility.RandomMinMax(0, EquipOptionType[check].GetLength(0) -1)];
+						item.PrefixOption[12] = EquipOptionType[check][
+							Utility.RandomMinMax(0, EquipOptionType[check].GetLength(0) - 1)
+						];
 					}
 				}
 
 				int score = NewEquipOption[item.PrefixOption[i + 11], equipLine, 1];
-				
-				if( score == 0 )
+
+				if (score == 0)
 				{
-					Console.WriteLine("Score Zero!!!. Count : {0}, item.PrefixOption[i + 11] : {1}", i + 1, item.PrefixOption[i + 11] );
+					Console.WriteLine(
+						"Score Zero!!!. Count : {0}, item.PrefixOption[i + 11] : {1}",
+						i + 1,
+						item.PrefixOption[i + 11]
+					);
 					return;
 				}
-				
-				int optionvalue = NewEquipOption[item.PrefixOption[i + 11],equipLine, 2];
-				
+
+				int optionvalue = NewEquipOption[item.PrefixOption[i + 11], equipLine, 2];
+
 				item.SuffixOption[i + 11] = item.PrefixOption[2] / score;
-				if( item.SuffixOption[i + 11] * score < item.PrefixOption[2] )
+				if (item.SuffixOption[i + 11] * score < item.PrefixOption[2])
 				{
 					item.SuffixOption[i + 11]++;
 				}
-				item.SuffixOption[i + 11] *= optionvalue;	
-			}				
+				item.SuffixOption[i + 11] *= optionvalue;
+			}
 		}
-		
-		public static void NewEquipOptionCreate( Item equip, int rank, bool onlyone = false, bool artifact = false )
+
+		public static void NewEquipOptionCreate(Item equip, int rank, bool onlyone = false, bool artifact = false)
 		{
-			if( equip is IEquipOption )
+			if (equip is IEquipOption)
 			{
 				IEquipOption item = equip as IEquipOption;
 				int check = -1;
 				int equipLine = 0;
 				int skilluse = 0;
-				
+
 				//신규 아이템 제작 코드
 				/*
 				아이템 접두, 접미 체크
@@ -3819,11 +6358,11 @@ namespace Server.Misc
 				0 ~ 4 : 마법 or 유물 옵션
 				5 ~ 7 : 기본 옵션
 				8 ~ 9 : 세트 옵션
-				*/					
-								
-				
+				*/
+
+
 				#region 장비 기본 옵션 설정
-				if( artifact )
+				if (artifact)
 				{
 					item.ItemPower = (ItemPower)Enum.ToObject(typeof(ItemPower), item.SuffixOption[1] + 3);
 					item.PrefixOption[0] = item.PlayerConstructed ? 200 : 300;
@@ -3834,9 +6373,9 @@ namespace Server.Misc
 					//접두 2, 접두 11 ~ 30, 접미 11 ~ 30 구현 코드
 					check = NewEquipNumber(equip);
 					equipLine = NewItemLine(check);
-					
+
 					item.SuffixOption[0] = onlyone ? 1 : 2;
-					for( int i = 0; i < 20; ++i)
+					for (int i = 0; i < 20; ++i)
 					{
 						item.PrefixOption[11 + i] = -1;
 					}
@@ -3845,100 +6384,113 @@ namespace Server.Misc
 					item.PrefixOption[0] = 100;
 					item.SuffixOption[1] = rank;
 				}
-				for( int i = 0; i < 10; ++i)
+				for (int i = 0; i < 10; ++i)
 				{
 					item.PrefixOption[i + 31] = -1;
 					item.SuffixOption[i + 31] = -1;
 				}
-				#endregion				
+				#endregion
 
-				
+
 				#region 재료 옵션
 				//접두 41 ~ 45, 접미 41 ~ 45 구현 코드
 				int resourceuse = UseResourceNumber((int)item.Resource);
 				Console.WriteLine("check code : {0} ", check);
-				if( check >= 23 && check <= 26 )
+				if (check >= 23 && check <= 26)
 				{
 					resourceuse += 7;
 				}
 
 				item.PrefixOption[41] = NewResourceOption[resourceuse, equipLine, 0];
-				for( int i = 1; i < 5; ++i )
+				for (int i = 1; i < 5; ++i)
 				{
-					item.PrefixOption[41 + i] = NewResourceOption[resourceuse, equipLine, ( i * 2) -1];
+					item.PrefixOption[41 + i] = NewResourceOption[resourceuse, equipLine, (i * 2) - 1];
 					item.SuffixOption[41 + i] = NewResourceOption[resourceuse, equipLine, i * 2];
-					if( item.PrefixOption[41 + i] != - 1 )
+					if (item.PrefixOption[41 + i] != -1)
 					{
-						skilluse = NewEquipOptionList( equip, item.PrefixOption[i + 41], item.SuffixOption[ i + 41], skilluse);
+						skilluse = NewEquipOptionList(
+							equip,
+							item.PrefixOption[i + 41],
+							item.SuffixOption[i + 41],
+							skilluse
+						);
 					}
-				}				
+				}
 				#endregion
 
 				#region 마법 옵션 설정
-				if( item.SuffixOption[0] != 0 )
+				if (item.SuffixOption[0] != 0)
 				{
-					for( int i = 0; i < item.SuffixOption[0]; ++i)
+					for (int i = 0; i < item.SuffixOption[0]; ++i)
 					{
-						if( !artifact )
+						if (!artifact)
 						{
 							NewEquipRandomOptionSelect(equip, i);
 						}
-						skilluse = NewEquipOptionList( equip, item.PrefixOption[i + 11], item.SuffixOption[i + 11], skilluse);
+						skilluse = NewEquipOptionList(
+							equip,
+							item.PrefixOption[i + 11],
+							item.SuffixOption[i + 11],
+							skilluse
+						);
 					}
-				}				
+				}
 				#endregion
-				
+
 				skilluse = 5;
 				#region 기본 옵션
 				//접두 61 ~ 70, 접미 61 ~ 70 구현 코드
 				//악세사리는 여기에서 지정
 				//악세사리 19 ~ 26
-				if( check >= 19 && check <= 26 && item.SuffixOption[1] > 0 )
+				if (check >= 19 && check <= 26 && item.SuffixOption[1] > 0)
 				{
-					item.SuffixOption[61] = item.SuffixOption[61] * ( item.SuffixOption[1] + 1 );
-					item.SuffixOption[62] = item.SuffixOption[62] * ( item.SuffixOption[1] + 1 );
+					item.SuffixOption[61] = item.SuffixOption[61] * (item.SuffixOption[1] + 1);
+					item.SuffixOption[62] = item.SuffixOption[62] * (item.SuffixOption[1] + 1);
 				}
-				
-				for( int i = 0; i < 10; ++i )
+
+				for (int i = 0; i < 10; ++i)
 				{
-					if( item.SuffixOption[61 + i] == 0 )
+					if (item.SuffixOption[61 + i] == 0)
 						break;
-					skilluse = NewEquipOptionList( equip, item.PrefixOption[i + 61], item.SuffixOption[i + 61], skilluse);
+					skilluse = NewEquipOptionList(
+						equip,
+						item.PrefixOption[i + 61],
+						item.SuffixOption[i + 61],
+						skilluse
+					);
 				}
 				#endregion
-				
 			}
 		}
 
-
 		public static void NewItemDrop(Item make, Item newmake, Mobile pm)
 		{
-			if( make.Parent is Container && pm != null )
+			if (make.Parent is Container && pm != null)
 			{
 				Container cont = make.Parent as Container;
 				if (!cont.TryDropItem(pm, newmake, false))
 				{
-					if(cont != pm.Backpack)
+					if (cont != pm.Backpack)
 						pm.AddToBackpack(newmake);
 					else
 						newmake.MoveToWorld(pm.Location, pm.Map);
 				}
 			}
 		}
-		
-		public static void NewItemCreate( Item item, int rank, PlayerMobile pm = null, bool artifact = false )
+
+		public static void NewItemCreate(Item item, int rank, PlayerMobile pm = null, bool artifact = false)
 		{
 			bool onlyone = false;
 			#region 유물 설정
-			if( artifact )
+			if (artifact)
 			{
 				Item artifactitem = Artifact_Select(item, rank);
-				if( artifactitem != null )
+				if (artifactitem != null)
 				{
-					if( item is BaseWeapon )
+					if (item is BaseWeapon)
 					{
 						BaseWeapon make = item as BaseWeapon;
-						if( make.PlayerConstructed && artifactitem is BaseWeapon )
+						if (make.PlayerConstructed && artifactitem is BaseWeapon)
 						{
 							BaseWeapon newmake = artifactitem as BaseWeapon;
 							newmake.Quality = make.Quality;
@@ -3950,48 +6502,63 @@ namespace Server.Misc
 							newmake.Resource = make.Resource;
 						}
 					}
-					
-					NewEquipOptionCreate( artifactitem, rank, onlyone, artifact );
+
+					NewEquipOptionCreate(artifactitem, rank, onlyone, artifact);
 					artifactitem.Map = item.Map;
 					artifactitem.Location = item.Location;
 					NewItemDrop(item, artifactitem, pm);
-					
+
 					item.Delete();
 					return;
 				}
 			}
 			#endregion
 			#region 장비 설정
-			if( item is IEquipOption )
+			if (item is IEquipOption)
 			{
 				IEquipOption make = item as IEquipOption;
-				if( ( item is BaseWeapon && ( make.Resource == CraftResource.Agapite || make.Resource == CraftResource.Heartwood || make.Resource == CraftResource.HornedLeather ) ) ||
-					( item is BaseArmor && (  make.Resource == CraftResource.Agapite || make.Resource == CraftResource.Heartwood || make.Resource == CraftResource.SpinedLeather ) ) ||
-					( item is BaseJewel && make.Resource == CraftResource.Bronze ) )
+				if (
+					(
+						item is BaseWeapon
+						&& (
+							make.Resource == CraftResource.Agapite
+							|| make.Resource == CraftResource.Heartwood
+							|| make.Resource == CraftResource.HornedLeather
+						)
+					)
+					|| (
+						item is BaseArmor
+						&& (
+							make.Resource == CraftResource.Agapite
+							|| make.Resource == CraftResource.Heartwood
+							|| make.Resource == CraftResource.SpinedLeather
+						)
+					)
+					|| (item is BaseJewel && make.Resource == CraftResource.Bronze)
+				)
 				{
 					onlyone = true;
 				}
 				make.Identified = true;
-				if( rank > 0 )
+				if (rank > 0)
 				{
 					make.Identified = false;
-					NewEquipOptionCreate( item, rank, onlyone, artifact );
+					NewEquipOptionCreate(item, rank, onlyone, artifact);
 					make.ItemPower = (ItemPower)Enum.ToObject(typeof(ItemPower), rank + 3);
 				}
 			}
 			#endregion
 		}
-		
-		
+
 		#endregion
 
 		#region 장비 신코드 유물 코드
-		public static Item Artifact_Select(Item item, int rank )
+		public static Item Artifact_Select(Item item, int rank)
 		{
 			//유물 체크
-			List <Type> artifactitemSelect = new List <Type>();
+			List<Type> artifactitemSelect = new List<Type>();
 			Item artifactitem = null;
-			switch(rank)
+			switch (rank)
 			{
 				/*
 				case 5:
@@ -4082,46 +6649,94 @@ namespace Server.Misc
 					goto case 1;
 				case 1:
 				{
-					for( int i = 0; i < Artifact_1Tier.Length; ++i )
+					for (int i = 0; i < Artifact_1Tier.Length; ++i)
 					{
-						if( item.GetType() == Artifact_1Tier[i].BaseType )
+						if (item.GetType() == Artifact_1Tier[i].BaseType)
 						{
-							artifactitemSelect.Add( Artifact_1Tier[i] );
+							artifactitemSelect.Add(Artifact_1Tier[i]);
 						}
 					}
-					if( artifactitemSelect.Count > 0 )
+					if (artifactitemSelect.Count > 0)
 					{
-						artifactitem = (Item)Activator.CreateInstance(artifactitemSelect[Utility.Random(artifactitemSelect.Count)]);
+						artifactitem = (Item)
+							Activator.CreateInstance(artifactitemSelect[Utility.Random(artifactitemSelect.Count)]);
 					}
 					break;
 				}
-				
 			}
 			return artifactitem;
 		}
-		
-		public static Type[] Artifact_1Tier = 
+
+		public static Type[] Artifact_1Tier =
 		{
-			typeof( AdventurersMachete ), typeof( SilverEtchedMace ), typeof( Luckblade ), typeof( RubyMace ), typeof( TrueSpellblade ), typeof( EmeraldMace ), typeof( ArcanistsWildStaff ), typeof( AncientWildStaff ), typeof( IcySpellblade ), 
-			typeof( FierySpellblade ), typeof( SpellbladeOfDefense ), typeof( TrueAssassinSpike ), typeof( ChargedAssassinSpike ), typeof( MagekillerAssassinSpike ), typeof( MagekillerLeafblade ), typeof( TrueLeafblade ), typeof( WoundingAssassinSpike ), typeof( LeafbladeOfEase ), typeof( ButchersWarCleaver ), 
-			typeof( KnightsWarCleaver ), typeof( OrcishMachete ), typeof( SerratedWarCleaver ), typeof( TrueWarCleaver ), typeof( DiseasedMachete ), typeof( MacheteOfDefense ), typeof( MagesRuneBlade ), typeof( RuneBladeOfKnowledge ), typeof( Runesabre ), typeof( OrcishBow ), 
-			typeof( DemonForks ), typeof( DragonNunchaku ), typeof( PeasantsBokuto ), typeof( PilferedDancerFans ), typeof( TomeOfEnlightenment ), typeof( TheDestroyer ), typeof( HanzosBow ), typeof( Exiler ), typeof( HailstormHuman ), typeof( AssassinsShortbow ), 
-			typeof( AxeOfAbandon ), typeof( AxesOfFury ), typeof( BarbedLongbow ), typeof( BladeOfBattle ), typeof( CorruptedRuneBlade ), typeof( DarkglowScimitar ), typeof( EternalGuardianStaff ), typeof( HolySword ), typeof( IcyScimitar ), typeof( JadeWarAxe ), 
-			typeof( LongbowOfMight ), typeof( MysticalShortbow ), typeof( PhantomStaff ), typeof( RangersShortbow ), typeof( SlayerLongbow ), typeof( ResonantStaffofEnlightenment ), typeof( RunedDriftwoodBow ), typeof( SingingAxe ), typeof( WindOfCorruption )
+			typeof(AdventurersMachete),
+			typeof(SilverEtchedMace),
+			typeof(Luckblade),
+			typeof(RubyMace),
+			typeof(TrueSpellblade),
+			typeof(EmeraldMace),
+			typeof(ArcanistsWildStaff),
+			typeof(AncientWildStaff),
+			typeof(IcySpellblade),
+			typeof(FierySpellblade),
+			typeof(SpellbladeOfDefense),
+			typeof(TrueAssassinSpike),
+			typeof(ChargedAssassinSpike),
+			typeof(MagekillerAssassinSpike),
+			typeof(MagekillerLeafblade),
+			typeof(TrueLeafblade),
+			typeof(WoundingAssassinSpike),
+			typeof(LeafbladeOfEase),
+			typeof(ButchersWarCleaver),
+			typeof(KnightsWarCleaver),
+			typeof(OrcishMachete),
+			typeof(SerratedWarCleaver),
+			typeof(TrueWarCleaver),
+			typeof(DiseasedMachete),
+			typeof(MacheteOfDefense),
+			typeof(MagesRuneBlade),
+			typeof(RuneBladeOfKnowledge),
+			typeof(Runesabre),
+			typeof(OrcishBow),
+			typeof(DemonForks),
+			typeof(DragonNunchaku),
+			typeof(PeasantsBokuto),
+			typeof(PilferedDancerFans),
+			typeof(TomeOfEnlightenment),
+			typeof(TheDestroyer),
+			typeof(HanzosBow),
+			typeof(Exiler),
+			typeof(HailstormHuman),
+			typeof(AssassinsShortbow),
+			typeof(AxeOfAbandon),
+			typeof(AxesOfFury),
+			typeof(BarbedLongbow),
+			typeof(BladeOfBattle),
+			typeof(CorruptedRuneBlade),
+			typeof(DarkglowScimitar),
+			typeof(EternalGuardianStaff),
+			typeof(HolySword),
+			typeof(IcyScimitar),
+			typeof(JadeWarAxe),
+			typeof(LongbowOfMight),
+			typeof(MysticalShortbow),
+			typeof(PhantomStaff),
+			typeof(RangersShortbow),
+			typeof(SlayerLongbow),
+			typeof(ResonantStaffofEnlightenment),
+			typeof(RunedDriftwoodBow),
+			typeof(SingingAxe),
+			typeof(WindOfCorruption),
 		};
-				
-		
+
 		#endregion
 
 		#region 인헨트 코드
-		public static double[] Enhance_RankUpgrade =
-		{
-			100.0, 20.0, 2.5, 0.1, 0.001, 0.000
-		};
+		public static double[] Enhance_RankUpgrade = { 100.0, 20.0, 2.5, 0.1, 0.001, 0.000 };
 
 		public static void NewItemOptionClear(Item equip)
 		{
-			if( equip is IEquipOption )
+			if (equip is IEquipOption)
 			{
 				IEquipOption item = equip as IEquipOption;
 				//옵션 지정 코드
@@ -4131,8 +6746,8 @@ namespace Server.Misc
 				ExtendedWeaponAttributes exweapon = item.ExtendedWeaponAttributes;
 				AosSkillBonuses skill = item.SkillBonuses;
 				AosArmorAttributes armor = item.ArmorAttributes;
-				
-				if( equip is BaseWeapon )
+
+				if (equip is BaseWeapon)
 				{
 					/*
 					for( int i = 0; i < Enum.GetNames(typeof(Attribute)).Length -1; i++ )
@@ -4192,7 +6807,7 @@ namespace Server.Misc
 					newmake.Delete();
 					NewItemCreate( equip, rank );
 					*/
-					Console.WriteLine("{0}", Enum.GetNames(typeof(Attribute)).Length );
+					Console.WriteLine("{0}", Enum.GetNames(typeof(Attribute)).Length);
 				}
 				/*
 				else if( item is BaseArmor )
@@ -4301,24 +6916,24 @@ namespace Server.Misc
 					if( rank > 3 )
 						rank -= 3;
 					NewItemCreate( item, rank );
-				}	
+				}
 				*/
 			}
 		}
-		
+
 		public static void NewOptionCreate(Item item, Mobile from = null, bool enhance = false)
 		{
-			if( item is IEquipOption )
+			if (item is IEquipOption)
 			{
 				IEquipOption equip = item as IEquipOption;
-			
+
 				//예전 장비 체크
-				if( equip.PrefixOption[0] < 100 )
+				if (equip.PrefixOption[0] < 100)
 				{
 					NewItemOptionClear(item);
 					return;
 				}
-				else if( equip.PrefixOption[0] == 100 && equip.PlayerConstructed )
+				else if (equip.PrefixOption[0] == 100 && equip.PlayerConstructed)
 				{
 					equip.PrefixOption[0] = 200;
 					return;
@@ -4326,86 +6941,106 @@ namespace Server.Misc
 
 				int skilluse = 0;
 				//이전 데이터 삭제
-				if( equip.SuffixOption[0] > 0 )
+				if (equip.SuffixOption[0] > 0)
 				{
-					for( int i = 0; i < equip.SuffixOption[0]; ++i )
+					for (int i = 0; i < equip.SuffixOption[0]; ++i)
 					{
-						skilluse = NewEquipOptionList( item, equip.PrefixOption[ i + 11], equip.SuffixOption[ i + 11] * -1, skilluse);
+						skilluse = NewEquipOptionList(
+							item,
+							equip.PrefixOption[i + 11],
+							equip.SuffixOption[i + 11] * -1,
+							skilluse
+						);
 					}
 				}
-				
+
 				//만약 인헨스면
-				if( enhance )
+				if (enhance)
 				{
-					if( equip.SuffixOption[1] < 5 && Utility.RandomDouble() < ( Enhance_RankUpgrade[equip.SuffixOption[1]] * 0.01 ) )
+					if (
+						equip.SuffixOption[1] < 5
+						&& Utility.RandomDouble() < (Enhance_RankUpgrade[equip.SuffixOption[1]] * 0.01)
+					)
 					{
 						from.SendMessage("아이템 등급이 상승되었습니다!!!");
 						equip.SuffixOption[1]++;
 						equip.ItemPower = (ItemPower)equip.SuffixOption[1];
 					}
-					
 				}
-				
+
 				//신규 랜덤 코드 입력
-				if( equip.SuffixOption[0] > 0 )
+				if (equip.SuffixOption[0] > 0)
 				{
-					for( int i = 0; i < equip.SuffixOption[0]; ++i)
+					for (int i = 0; i < equip.SuffixOption[0]; ++i)
 					{
 						NewEquipRandomOptionSelect(item, i);
-						skilluse = NewEquipOptionList( item, equip.PrefixOption[ i + 11], equip.SuffixOption[ i + 11], skilluse);
+						skilluse = NewEquipOptionList(
+							item,
+							equip.PrefixOption[i + 11],
+							equip.SuffixOption[i + 11],
+							skilluse
+						);
 					}
-				}				
-			}	
-		}		
+				}
+			}
+		}
 		#endregion
-		
-		public static int ItemRankPoint( int item )
+
+		public static int ItemRankPoint(int item)
 		{
 			int point = 0;
-			switch( item )
+			switch (item)
 			{
-				case 1 : point = 2;
-				break;
-				case 2 : point = 5;
-				break;
-				case 3 : point = 10;
-				break;
-				case 4 : point = 20;
-				break;
-				case 5 : point = 40;
-				break;
-				case 6 : point = 60;
-				break;
-				case 7 : point = 80;
-				break;
-				case 8 : point = 100;
-				break;
+				case 1:
+					point = 2;
+					break;
+				case 2:
+					point = 5;
+					break;
+				case 3:
+					point = 10;
+					break;
+				case 4:
+					point = 20;
+					break;
+				case 5:
+					point = 40;
+					break;
+				case 6:
+					point = 60;
+					break;
+				case 7:
+					point = 80;
+					break;
+				case 8:
+					point = 100;
+					break;
 			}
 			return point;
 		}
 
-		public static double PercentCal( int min, int max )
+		public static double PercentCal(int min, int max)
 		{
 			double percent = max - min;
-			if( percent <= 0 )
+			if (percent <= 0)
 				percent = 100;
 			else
 				percent = 100 / percent;
 			return percent;
 		}
-		
-		public static double PercentCal( BaseVendor vendor, double min, double max )
+
+		public static double PercentCal(BaseVendor vendor, double min, double max)
 		{
 			double percent = max - min;
-			if( percent <= 0 )
+			if (percent <= 0)
 				percent = 100;
 			else
 				percent = 100 / percent;
 			return percent;
 		}
-		
+
 		//구입 판매 처리
-		public static int Price( Item item, int price )
+		public static int Price(Item item, int price)
 		{
 			/*
 			if( item is Gold )
@@ -4414,35 +7049,42 @@ namespace Server.Misc
 				return 0;
 			}
 			*/
-			if( item is IEquipOption )
+			if (item is IEquipOption)
 			{
 				IEquipOption buyitem = item as IEquipOption;
 				//옵션 정의
-				if( (int)buyitem.ItemPower == 7 )
+				if ((int)buyitem.ItemPower == 7)
 					price = 100;
-				else if( (int)buyitem.ItemPower == 8 )
+				else if ((int)buyitem.ItemPower == 8)
 					price = 200;
-				else if( (int)buyitem.ItemPower <= 6 )
+				else if ((int)buyitem.ItemPower <= 6)
 				{
 					int count = 1;
-					while( buyitem.PrefixOption[count] != 0 && buyitem.PrefixOption[count + 1] != 0 && buyitem.PrefixOption[count + 2] != 0 && buyitem.PrefixOption[count + 3] != 0 && buyitem.PrefixOption[count + 4] != 0 )
+					while (
+						buyitem.PrefixOption[count] != 0
+						&& buyitem.PrefixOption[count + 1] != 0
+						&& buyitem.PrefixOption[count + 2] != 0
+						&& buyitem.PrefixOption[count + 3] != 0
+						&& buyitem.PrefixOption[count + 4] != 0
+					)
 					{
-						double percent = PercentCal(buyitem.PrefixOption[count + 2], buyitem.PrefixOption[count + 3]) * 0.01;
+						double percent =
+							PercentCal(buyitem.PrefixOption[count + 2], buyitem.PrefixOption[count + 3]) * 0.01;
 						percent *= buyitem.PrefixOption[count + 4]; //1 ~ 100원 증가, 최대 800원
 						price = (int)percent;
 						count += 4;
 					}
-					if( buyitem.SuffixOption[99] > 0 )
+					if (buyitem.SuffixOption[99] > 0)
 					{
-						BaseCreature bc = MonsterListCheck( buyitem.SuffixOption[99] );
-						if( bc != null )
+						BaseCreature bc = MonsterListCheck(buyitem.SuffixOption[99]);
+						if (bc != null)
 							price += bc.Fame / 100; //몬스터 명성 대비 가격. 1 ~ 320원 증가
 					}
-					else if( buyitem.PlayerConstructed )
+					else if (buyitem.PlayerConstructed)
 						price += 100; //제작품이면 일단 100원 증가
-					if( (int)buyitem.ItemPower >= 4 && (int)buyitem.ItemPower <= 6 )
+					if ((int)buyitem.ItemPower >= 4 && (int)buyitem.ItemPower <= 6)
 					{
-						price *= ( (int)buyitem.ItemPower - 3 ) / 5; //티어당 20%씩 처리
+						price *= ((int)buyitem.ItemPower - 3) / 5; //티어당 20%씩 처리
 					}
 					else
 						price /= 10; //그 외 10% 처리
@@ -4450,41 +7092,41 @@ namespace Server.Misc
 				else
 					price = 10;
 				//마지막 내구도 체크
-				double InitCheck = PercentCal( buyitem.InitMinHits, buyitem.InitMaxHits) * 0.01;
+				double InitCheck = PercentCal(buyitem.InitMinHits, buyitem.InitMaxHits) * 0.01;
 				price *= (int)InitCheck;
 			}
-			else if( item is BaseInstrument )
+			else if (item is BaseInstrument)
 			{
 				BaseInstrument buyitem = item as BaseInstrument;
 				price = buyitem.UsesRemaining / 10;
 			}
-			else if( item is BaseTool )
+			else if (item is BaseTool)
 			{
 				BaseTool buyitem = item as BaseTool;
-				price =  buyitem.UsesRemaining / 10;
+				price = buyitem.UsesRemaining / 10;
 			}
-			else if( item is BaseHarvestTool )
+			else if (item is BaseHarvestTool)
 			{
 				BaseHarvestTool buyitem = item as BaseHarvestTool;
-				price =  buyitem.UsesRemaining / 10;
+				price = buyitem.UsesRemaining / 10;
 			}
-			else if( item is CraftableFurniture )
+			else if (item is CraftableFurniture)
 			{
 				//카펜 가구 체크
 				CraftableFurniture buyitem = item as CraftableFurniture;
-				CraftItem craftItem = DefCarpentry.CraftSystem.CraftItems.SearchFor(buyitem.GetType() );
-				if( craftItem == null )
+				CraftItem craftItem = DefCarpentry.CraftSystem.CraftItems.SearchFor(buyitem.GetType());
+				if (craftItem == null)
 					return 0;
 
 				CraftRes craftResource = craftItem.Resources.GetAt(0);
-				if( craftResource == null || craftResource.Amount < 1 )
+				if (craftResource == null || craftResource.Amount < 1)
 					return 0;
 				else
 				{
 					price = craftResource.Amount * 5;
 				}
 				int mulPrice = 100;
-				switch ( buyitem.Resource )
+				switch (buyitem.Resource)
 				{
 					case CraftResource.OakWood:
 						mulPrice = 110;
@@ -4512,17 +7154,25 @@ namespace Server.Misc
 			{
 				int resourcePrice = 1;
 				//보석 체크
-				if( item is IGem )
+				if (item is IGem)
 					resourcePrice = 10;
 				//물고기 체크
-				if( item is Fish )
+				if (item is Fish)
 					resourcePrice = 2;
 				//고기 체크
-				if( item is RawBird || item is RawLambLeg || item is RawChickenLeg || item is LambLeg || item is CookedBird || item is ChickenLeg )
+				if (
+					item is RawBird
+					|| item is RawLambLeg
+					|| item is RawChickenLeg
+					|| item is LambLeg
+					|| item is CookedBird
+					|| item is ChickenLeg
+				)
 					resourcePrice = 5;
 				if (item is BaseBeverage)
 				{
-					int price1 = (int)price, price2 = (int)price;
+					int price1 = (int)price,
+						price2 = (int)price;
 
 					if (item is Pitcher)
 					{
@@ -4546,79 +7196,79 @@ namespace Server.Misc
 						price = price1;
 					else
 						price = price2;
-				}				
-				
+				}
+
 				//알케미 체크
-				CraftItem craftItem = DefAlchemy.CraftSystem.CraftItems.SearchFor(item.GetType() );
-				if( craftItem != null )
+				CraftItem craftItem = DefAlchemy.CraftSystem.CraftItems.SearchFor(item.GetType());
+				if (craftItem != null)
 				{
 					CraftRes craftResource = craftItem.Resources.GetAt(0);
-					if( craftResource.Amount < 1 )
+					if (craftResource.Amount < 1)
 						return 0;
 					else
 						resourcePrice = craftResource.Amount;
 				}
 				//카펜 체크
-				craftItem = DefCarpentry.CraftSystem.CraftItems.SearchFor(item.GetType() );
-				if( craftItem != null )
+				craftItem = DefCarpentry.CraftSystem.CraftItems.SearchFor(item.GetType());
+				if (craftItem != null)
 				{
 					CraftRes craftResource = craftItem.Resources.GetAt(0);
-					if( craftResource.Amount < 1 )
+					if (craftResource.Amount < 1)
 						return 0;
 					else
 						resourcePrice = craftResource.Amount;
 				}
 				//보크
-				craftItem = DefBowFletching.CraftSystem.CraftItems.SearchFor(item.GetType() );
-				if( craftItem != null )
+				craftItem = DefBowFletching.CraftSystem.CraftItems.SearchFor(item.GetType());
+				if (craftItem != null)
 				{
 					CraftRes craftResource = craftItem.Resources.GetAt(0);
-					if( craftResource.Amount < 1 )
+					if (craftResource.Amount < 1)
 						return 0;
 					else
 						resourcePrice = craftResource.Amount;
 				}
 				//카토
-				craftItem = DefCartography.CraftSystem.CraftItems.SearchFor(item.GetType() );
-				if( craftItem != null )
+				craftItem = DefCartography.CraftSystem.CraftItems.SearchFor(item.GetType());
+				if (craftItem != null)
 				{
 					CraftRes craftResource = craftItem.Resources.GetAt(0);
-					if( craftResource.Amount < 1 )
+					if (craftResource.Amount < 1)
 						return 0;
 					else
 						resourcePrice = craftResource.Amount;
 				}
 				//요리
-				craftItem = DefCooking.CraftSystem.CraftItems.SearchFor(item.GetType() );
-				if( craftItem != null )
+				craftItem = DefCooking.CraftSystem.CraftItems.SearchFor(item.GetType());
+				if (craftItem != null)
 				{
 					CraftRes craftResource = craftItem.Resources.GetAt(0);
-					if( craftResource.Amount < 1 )
+					if (craftResource.Amount < 1)
 						return 0;
 					else
 						resourcePrice = craftResource.Amount;
 				}
 				//테일러
-				craftItem = DefTailoring.CraftSystem.CraftItems.SearchFor(item.GetType() );
-				if( craftItem != null )
+				craftItem = DefTailoring.CraftSystem.CraftItems.SearchFor(item.GetType());
+				if (craftItem != null)
 				{
 					CraftRes craftResource = craftItem.Resources.GetAt(0);
-					if( craftResource.Amount < 1 )
+					if (craftResource.Amount < 1)
 						return 0;
 					else
 						resourcePrice = craftResource.Amount;
 				}
 				//팅커
-				craftItem = DefTinkering.CraftSystem.CraftItems.SearchFor(item.GetType() );
-				if( craftItem != null )
+				craftItem = DefTinkering.CraftSystem.CraftItems.SearchFor(item.GetType());
+				if (craftItem != null)
 				{
 					CraftRes craftResource = craftItem.Resources.GetAt(0);
-					if( craftResource.Amount < 1 )
+					if (craftResource.Amount < 1)
 						return 0;
 					else
 						resourcePrice = craftResource.Amount;
 				}
-				if( item.Stackable )
+				if (item.Stackable)
 				{
 					price = item.Amount * resourcePrice * 5; //스택 아이템 모두 5 지피로 구매
 				}
@@ -4629,64 +7279,65 @@ namespace Server.Misc
 			}
 			//if( !LastPriceCheck( vendor, buyPrice, pm ) )
 			//	return 0;
-		
+
 			return price;
 		}
+
 		public static int RegionPrice(BaseVendor vendor)
 		{
 			int regionprice = 1000;
-			if( vendor.Region.Name == "Britain" ) //대도시
+			if (vendor.Region.Name == "Britain") //대도시
 				regionprice = 8000;
-			else if( vendor.Region.Name == "Buccaneer's Den" ) //도둑 도시
+			else if (vendor.Region.Name == "Buccaneer's Den") //도둑 도시
 			{
-				if ( vendor is Thief )
+				if (vendor is Thief)
 					regionprice = 6000;
-				else 
+				else
 					regionprice = 1000;
 			}
-			else if( vendor.Region.Name == "Cove" ) //초보자 도시
+			else if (vendor.Region.Name == "Cove") //초보자 도시
 				regionprice = 1500;
-			else if( vendor.Region.Name == "Jhelom" ) //전사의 도시
+			else if (vendor.Region.Name == "Jhelom") //전사의 도시
 			{
-				if( vendor is Weaponsmith || vendor is Tanner )
-				regionprice = 5000;
+				if (vendor is Weaponsmith || vendor is Tanner)
+					regionprice = 5000;
 			}
-			else if( vendor.Region.Name == "Magincia" ) //벤더의 도시
+			else if (vendor.Region.Name == "Magincia") //벤더의 도시
 				regionprice = 2000;
-			else if( vendor.Region.Name == "Minoc" ) //광부의 도시
+			else if (vendor.Region.Name == "Minoc") //광부의 도시
 			{
-				if( vendor is Miner || vendor is OreSeller )
+				if (vendor is Miner || vendor is OreSeller)
 					regionprice = 10000;
-				else if( vendor is Cook || vendor is Barkeeper )
+				else if (vendor is Cook || vendor is Barkeeper)
 					regionprice = 3500;
 			}
-			else if( vendor.Region.Name == "Moonglow" )
+			else if (vendor.Region.Name == "Moonglow")
 				regionprice = 5000;
-			else if( vendor.Region.Name == "Nujel'm" )
+			else if (vendor.Region.Name == "Nujel'm")
 				regionprice = 5000;
-			else if( vendor.Region.Name == "Serpent's Hold" )
+			else if (vendor.Region.Name == "Serpent's Hold")
 				regionprice = 5000;
-			else if( vendor.Region.Name == "Skara Brae" ) //동물과 식물의 도시
+			else if (vendor.Region.Name == "Skara Brae") //동물과 식물의 도시
 			{
-				
 				regionprice = 5000;
 			}
-			else if( vendor.Region.Name == "Trinsic" )
+			else if (vendor.Region.Name == "Trinsic")
 				regionprice = 5000;
-			else if( vendor.Region.Name == "Vesper" )
+			else if (vendor.Region.Name == "Vesper")
 				regionprice = 5000;
-			else if( vendor.Region.Name == "Yew" )
+			else if (vendor.Region.Name == "Yew")
 				regionprice = 5000;
-			else if( vendor.Region.Name == "New Haven" )
+			else if (vendor.Region.Name == "New Haven")
 				regionprice = 5000;
-			
-			if( vendor is AnimalTrainer )
+
+			if (vendor is AnimalTrainer)
 				regionprice /= 100;
 			return regionprice;
 		}
-		public static bool LastPriceCheck( BaseVendor vendor, int Price, Mobile from )
+
+		public static bool LastPriceCheck(BaseVendor vendor, int Price, Mobile from)
 		{
-			if( vendor.MyGold < Price )
+			if (vendor.MyGold < Price)
 			{
 				from.SendMessage("상인이 가진 돈보다 판매금이 더 많습니다!");
 				return false;
@@ -4694,28 +7345,31 @@ namespace Server.Misc
 			return true;
 		}
 
-		public static string NotIdentedItemName( int name )
+		public static string NotIdentedItemName(int name)
 		{
 			return "<basefont color=#AAAAAA>{0}\t{1}<basefont color=#FFFFFF>";
 		}
 
-
-
-		public static string ItemRankName( int name )
+		public static string ItemRankName(int name)
 		{
 			string colorname = "[ 일반 장비 ]";
-			switch( name )
+			switch (name)
 			{
-				case 4 : colorname = "[ 희귀 장비 ]";
-				break;
-				case 5 : colorname = "[ 영웅 장비 ]";
-				break;
-				case 6 : colorname = "[ 서사 장비 ]";
-				break;
-				case 7 : colorname = "[ 전설 장비 ]";
-				break;
-				case 8 : colorname = "[ 신화 장비 ]";
-				break;
+				case 4:
+					colorname = "[ 희귀 장비 ]";
+					break;
+				case 5:
+					colorname = "[ 영웅 장비 ]";
+					break;
+				case 6:
+					colorname = "[ 서사 장비 ]";
+					break;
+				case 7:
+					colorname = "[ 전설 장비 ]";
+					break;
+				case 8:
+					colorname = "[ 신화 장비 ]";
+					break;
 			}
 			return colorname;
 		}
@@ -4724,247 +7378,297 @@ namespace Server.Misc
 		#region Color Setting
 		public static int RandomColor_Red(bool specialcolor)
 		{
-			if ( specialcolor && Utility.RandomDouble() < 0.01 )
+			if (specialcolor && Utility.RandomDouble() < 0.01)
 				return 1166;
 
-			return Utility.RandomMinMax( 23, 41 );
+			return Utility.RandomMinMax(23, 41);
 		}
 
 		public static int RandomColor_Blue(bool specialcolor)
 		{
-			if ( specialcolor && Utility.RandomDouble() < 0.01 )
+			if (specialcolor && Utility.RandomDouble() < 0.01)
 				return 1154;
-				
-			return Utility.RandomMinMax( 87, 105 );
+
+			return Utility.RandomMinMax(87, 105);
 		}
-		
+
 		public static int RandomColor_Yellow(bool specialcolor)
 		{
-			if ( specialcolor && Utility.RandomDouble() < 0.01 )
+			if (specialcolor && Utility.RandomDouble() < 0.01)
 				return 1169;
-				
-			return Utility.RandomMinMax( 49, 56 );
+
+			return Utility.RandomMinMax(49, 56);
 		}
 
 		public static int RandomColor_Green(bool specialcolor)
 		{
-			if ( specialcolor && Utility.RandomDouble() < 0.01 )
+			if (specialcolor && Utility.RandomDouble() < 0.01)
 				return 1167;
-				
-			return Utility.RandomMinMax( 57, 81 );
+
+			return Utility.RandomMinMax(57, 81);
 		}
+
 		public static int RandomColor_Rare(bool specialcolor)
 		{
-			if ( specialcolor && Utility.RandomDouble() < 0.01 )
-				return Utility.RandomList( 0x657, 0x515, 0x4B1, 0x481, 0x482, 0x455 );
+			if (specialcolor && Utility.RandomDouble() < 0.01)
+				return Utility.RandomList(0x657, 0x515, 0x4B1, 0x481, 0x482, 0x455);
 
-			return Utility.RandomList( 0x97A, 0x978, 0x901, 0x8AC, 0x5A7, 0x527 );
+			return Utility.RandomList(0x97A, 0x978, 0x901, 0x8AC, 0x5A7, 0x527);
 		}
 
 		public static int RandomColor_Legendary(bool specialcolor)
 		{
-			if ( specialcolor && Utility.RandomDouble() < 0.01 )
+			if (specialcolor && Utility.RandomDouble() < 0.01)
 				return Utility.RandomList(0x489, 0x480, 0xAAC, 0xAB4, 0xAAF, 0xAB5, 0xAAB);
 
-			return Utility.RandomList(0x483, 0x38C, 0x488, 0x48A, 0x495, 0x48B, 0x486, 0x485, 0x48D, 0x490, 0x48E, 0x491, 0x48F, 0x494, 0x484, 0x497, 0x47F, 0x47E );
+			return Utility.RandomList(
+				0x483,
+				0x38C,
+				0x488,
+				0x48A,
+				0x495,
+				0x48B,
+				0x486,
+				0x485,
+				0x48D,
+				0x490,
+				0x48E,
+				0x491,
+				0x48F,
+				0x494,
+				0x484,
+				0x497,
+				0x47F,
+				0x47E
+			);
 		}
-		
+
 		//보핑주금빨 -> 녹파보금핑
-		public static string ItemRank( int name )
+		public static string ItemRank(int name)
 		{
 			string colorname = "{0}\t{1}";
-			switch( name )
+			switch (name)
 			{
-				case 4 : colorname = "<basefont color=#00A000>{0}\t{1}<basefont color=#FFFFFF>";
-				break;
-				case 5 : colorname = "<basefont color=#68D5ED>{0}\t{1}<basefont color=#FFFFFF>";
-				break;
-				case 6 : colorname = "<basefont color=#B36BFF>{0}\t{1}<basefont color=#FFFFFF>";
-				break;
-				case 7 : colorname = "<basefont color=#FFB400>{0}\t{1}<basefont color=#FFFFFF>";
-				break;
-				case 8 : colorname = "<basefont color=#FF0090>{0}\t{1}<basefont color=#FFFFFF>";
-				break;
+				case 4:
+					colorname = "<basefont color=#00A000>{0}\t{1}<basefont color=#FFFFFF>";
+					break;
+				case 5:
+					colorname = "<basefont color=#68D5ED>{0}\t{1}<basefont color=#FFFFFF>";
+					break;
+				case 6:
+					colorname = "<basefont color=#B36BFF>{0}\t{1}<basefont color=#FFFFFF>";
+					break;
+				case 7:
+					colorname = "<basefont color=#FFB400>{0}\t{1}<basefont color=#FFFFFF>";
+					break;
+				case 8:
+					colorname = "<basefont color=#FF0090>{0}\t{1}<basefont color=#FFFFFF>";
+					break;
 			}
 			return colorname;
 		}
 
-		public static string OneItemRank( int name )
+		public static string OneItemRank(int name)
 		{
 			string colorname = "{0}\t#{1}\t{2}";
-			switch( name )
+			switch (name)
 			{
-				case 4 : colorname = "<basefont color=#00A000>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";
-				break;
-				case 5 : colorname = "<basefont color=#68D5ED>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";
-				break;
-				case 6 : colorname = "<basefont color=#B36BFF>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";
-				break;
-				case 7 : colorname = "<basefont color=#FFB400>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";
-				break;
-				case 8 : colorname = "<basefont color=#FF0090>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";
-				break;
+				case 4:
+					colorname = "<basefont color=#00A000>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";
+					break;
+				case 5:
+					colorname = "<basefont color=#68D5ED>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";
+					break;
+				case 6:
+					colorname = "<basefont color=#B36BFF>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";
+					break;
+				case 7:
+					colorname = "<basefont color=#FFB400>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";
+					break;
+				case 8:
+					colorname = "<basefont color=#FF0090>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";
+					break;
 			}
 			return colorname;
 		}
 
-		public static string AllItemRank( int name )
+		public static string AllItemRank(int name)
 		{
 			string colorname = "";
-			switch( name )
+			switch (name)
 			{
-				case 4 : colorname = "<basefont color=#00A000>{0}\t#{1}\t#{2}\t{3}<basefont color=#FFFFFF>";
-				break;
-				case 5 : colorname = "<basefont color=#68D5ED>{0}\t#{1}\t#{2}\t{3}<basefont color=#FFFFFF>";
-				break;
-				case 6 : colorname = "<basefont color=#B36BFF>{0}\t#{1}\t#{2}\t{3}<basefont color=#FFFFFF>";
-				break;
-				case 7 : colorname = "<basefont color=#FFB400>{0}\t#{1}\t#{2}\t{3}<basefont color=#FFFFFF>";
-				break;
-				case 8 : colorname = "<basefont color=#FF0090>{0}\t#{1}\t#{2}\t{3}<basefont color=#FFFFFF>";
-				break;
+				case 4:
+					colorname = "<basefont color=#00A000>{0}\t#{1}\t#{2}\t{3}<basefont color=#FFFFFF>";
+					break;
+				case 5:
+					colorname = "<basefont color=#68D5ED>{0}\t#{1}\t#{2}\t{3}<basefont color=#FFFFFF>";
+					break;
+				case 6:
+					colorname = "<basefont color=#B36BFF>{0}\t#{1}\t#{2}\t{3}<basefont color=#FFFFFF>";
+					break;
+				case 7:
+					colorname = "<basefont color=#FFB400>{0}\t#{1}\t#{2}\t{3}<basefont color=#FFFFFF>";
+					break;
+				case 8:
+					colorname = "<basefont color=#FF0090>{0}\t#{1}\t#{2}\t{3}<basefont color=#FFFFFF>";
+					break;
 			}
 			return colorname;
 		}
 
-		public static string OreItemRank( int name )
+		public static string OreItemRank(int name)
 		{
 			string colorname = "{0}\t#{1}\t{2}";
-			switch( name )
+			switch (name)
 			{
-				case 4 : colorname = "<basefont color=#00A000>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";
-				break;
-				case 5 : colorname = "<basefont color=#68D5ED>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";
-				break;
-				case 6 : colorname = "<basefont color=#B36BFF>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";
-				break;
-				case 7 : colorname = "<basefont color=#FFB400>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";
-				break;
-				case 8 : colorname = "<basefont color=#FF0090>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";
-				break;
+				case 4:
+					colorname = "<basefont color=#00A000>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";
+					break;
+				case 5:
+					colorname = "<basefont color=#68D5ED>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";
+					break;
+				case 6:
+					colorname = "<basefont color=#B36BFF>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";
+					break;
+				case 7:
+					colorname = "<basefont color=#FFB400>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";
+					break;
+				case 8:
+					colorname = "<basefont color=#FF0090>{0}\t#{1}\t{2}<basefont color=#FFFFFF>";
+					break;
 			}
 			return colorname;
 		}
 
-		public static string OreOneItemRank( int name )
+		public static string OreOneItemRank(int name)
 		{
 			string colorname = "";
-			switch( name )
+			switch (name)
 			{
-				case 4 : colorname = "<basefont color=#00A000>{0}\t#{1}\t#{2}\t{3}<basefont color=#FFFFFF>";
-				break;
-				case 5 : colorname = "<basefont color=#68D5ED>{0}\t#{1}\t#{2}\t{3}<basefont color=#FFFFFF>";
-				break;
-				case 6 : colorname = "<basefont color=#B36BFF>{0}\t#{1}\t#{2}\t{3}<basefont color=#FFFFFF>";
-				break;
-				case 7 : colorname = "<basefont color=#FFB400>{0}\t#{1}\t#{2}\t{3}<basefont color=#FFFFFF>";
-				break;
-				case 8 : colorname = "<basefont color=#FF0090>{0}\t#{1}\t#{2}\t{3}<basefont color=#FFFFFF>";
-				break;
+				case 4:
+					colorname = "<basefont color=#00A000>{0}\t#{1}\t#{2}\t{3}<basefont color=#FFFFFF>";
+					break;
+				case 5:
+					colorname = "<basefont color=#68D5ED>{0}\t#{1}\t#{2}\t{3}<basefont color=#FFFFFF>";
+					break;
+				case 6:
+					colorname = "<basefont color=#B36BFF>{0}\t#{1}\t#{2}\t{3}<basefont color=#FFFFFF>";
+					break;
+				case 7:
+					colorname = "<basefont color=#FFB400>{0}\t#{1}\t#{2}\t{3}<basefont color=#FFFFFF>";
+					break;
+				case 8:
+					colorname = "<basefont color=#FF0090>{0}\t#{1}\t#{2}\t{3}<basefont color=#FFFFFF>";
+					break;
 			}
 			return colorname;
 		}
 
-		public static string OreAllItemRank( int name )
+		public static string OreAllItemRank(int name)
 		{
 			string colorname = "";
-			switch( name )
+			switch (name)
 			{
-				case 4 : colorname = "<basefont color=#00A000>{0}\t#{1}\t#{2}\t#{3}\t{4}<basefont color=#FFFFFF>";
-				break;
-				case 5 : colorname = "<basefont color=#68D5ED>{0}\t#{1}\t#{2}\t#{3}\t{4}<basefont color=#FFFFFF>";
-				break;
-				case 6 : colorname = "<basefont color=#B36BFF>{0}\t#{1}\t#{2}\t#{3}\t{4}<basefont color=#FFFFFF>";
-				break;
-				case 7 : colorname = "<basefont color=#FFB400>{0}\t#{1}\t#{2}\t#{3}\t{4}<basefont color=#FFFFFF>";
-				break;
-				case 8 : colorname = "<basefont color=#FF0090>{0}\t#{1}\t#{2}\t#{3}\t{4}<basefont color=#FFFFFF>";
-				break;
+				case 4:
+					colorname = "<basefont color=#00A000>{0}\t#{1}\t#{2}\t#{3}\t{4}<basefont color=#FFFFFF>";
+					break;
+				case 5:
+					colorname = "<basefont color=#68D5ED>{0}\t#{1}\t#{2}\t#{3}\t{4}<basefont color=#FFFFFF>";
+					break;
+				case 6:
+					colorname = "<basefont color=#B36BFF>{0}\t#{1}\t#{2}\t#{3}\t{4}<basefont color=#FFFFFF>";
+					break;
+				case 7:
+					colorname = "<basefont color=#FFB400>{0}\t#{1}\t#{2}\t#{3}\t{4}<basefont color=#FFFFFF>";
+					break;
+				case 8:
+					colorname = "<basefont color=#FF0090>{0}\t#{1}\t#{2}\t#{3}\t{4}<basefont color=#FFFFFF>";
+					break;
 			}
 			return colorname;
 		}
 		#endregion
 
-		public static void SavingAccountPoint( PlayerMobile pm, int target, int point )
+		public static void SavingAccountPoint(PlayerMobile pm, int target, int point)
 		{
-			if( target > 0 )
+			if (target > 0)
 			{
 				Account acc = pm.Account as Account;
 				acc.Point[target]++;
-				if( Math.Pow( acc.Point[target + 500] + 1, 2 ) <= acc.Point[target] )
+				if (Math.Pow(acc.Point[target + 500] + 1, 2) <= acc.Point[target])
 				{
-					acc.Point[target + 500 ] += point;
-					acc.Point[0] += acc.Point[target + 500 ];
+					acc.Point[target + 500] += point;
+					acc.Point[0] += acc.Point[target + 500];
 					pm.SendMessage("가문 포인트를 {0}점 획득하였습니다.", point);
 				}
 			}
-			if( pm.HasGump(typeof(HarvestGump)) )
+			if (pm.HasGump(typeof(HarvestGump)))
 				pm.SendGump(new HarvestGump(pm));
-			if( pm.HasGump(typeof(CraftingGump)) )
+			if (pm.HasGump(typeof(CraftingGump)))
 				pm.SendGump(new CraftingGump(pm));
-			if( pm.HasGump(typeof(MonsterFeatGump)) )
+			if (pm.HasGump(typeof(MonsterFeatGump)))
 				pm.SendGump(new MonsterFeatGump(pm));
 		}
-		
+
 		//생산 업그레이드 확률
 		public static int[] upgradechance = { 0, 3000, 1000, 500, 250, 100, 50, 10, 5 };
 
 		//장비포인트 획득
 		public static int[] EquipPoint = { 1, 2, 4, 7, 10, 15, 23 };
-		
-		private static bool EquipMeltingBoolCheck( PlayerMobile pm, int tier, int rank, int named )
+
+		private static bool EquipMeltingBoolCheck(PlayerMobile pm, int tier, int rank, int named)
 		{
 			bool melting = false;
 			//티어
 			melting = pm.EquipMeltingOptionTier[tier];
-			if( !melting )
+			if (!melting)
 				return false;
 			//랭크
-			if( rank == 0 && pm.EquipMeltingOptionRank[0] )
+			if (rank == 0 && pm.EquipMeltingOptionRank[0])
 				melting = true;
-			else if( rank >= 4 && pm.EquipMeltingOptionRank[rank - 3] )
+			else if (rank >= 4 && pm.EquipMeltingOptionRank[rank - 3])
 				melting = true;
 			else
 				return false;
 			//고유
-			if( named == 100000 && pm.EquipMeltingOptionNamed[0] )
+			if (named == 100000 && pm.EquipMeltingOptionNamed[0])
 				melting = true;
-			else if( named > 0 && pm.EquipMeltingOptionNamed[1] )
+			else if (named > 0 && pm.EquipMeltingOptionNamed[1])
 				melting = true;
-			else if( named == 0 )
+			else if (named == 0)
 				melting = true;
 			else
 				return false;
-			
+
 			return melting;
 		}
-		
-		private static void EquipPointCalc( Account acc, int rank, int tier, int artifact )
+
+		private static void EquipPointCalc(Account acc, int rank, int tier, int artifact)
 		{
 			acc.Point[861 + rank] += tier + artifact * 5;
 		}
-		
-		public static void EquipPointReturn( PlayerMobile pm )
+
+		public static void EquipPointReturn(PlayerMobile pm)
 		{
 			Account acc = pm.Account as Account;
 			Container pack = pm.Backpack;
-			
-			List<BaseWeapon> weapon = new List <BaseWeapon>();
-			List<BaseArmor> armor = new List <BaseArmor>();
-			List<BaseClothing> clothing = new List <BaseClothing>();
-			List<BaseJewel> jewel = new List <BaseJewel>();
-			List<Spellbook> spellbook = new List <Spellbook>();
 
-			if( pm.EquipMeltingOptionBag )
+			List<BaseWeapon> weapon = new List<BaseWeapon>();
+			List<BaseArmor> armor = new List<BaseArmor>();
+			List<BaseClothing> clothing = new List<BaseClothing>();
+			List<BaseJewel> jewel = new List<BaseJewel>();
+			List<Spellbook> spellbook = new List<Spellbook>();
+
+			if (pm.EquipMeltingOptionBag)
 			{
 				List<Container> container = pack.FindItemsByType<Container>();
-				for( int l = container.Count -1; l >=0; l--)
+				for (int l = container.Count - 1; l >= 0; l--)
 				{
 					Container equipbag = container[l];
-					if( equipbag is EquipBag )
+					if (equipbag is EquipBag)
 					{
 						EquipBag eb = equipbag as EquipBag;
-						if( eb != null )
+						if (eb != null)
 						{
 							weapon = eb.FindItemsByType<BaseWeapon>();
 							armor = eb.FindItemsByType<BaseArmor>();
@@ -4983,19 +7687,19 @@ namespace Server.Misc
 				jewel = pack.FindItemsByType<BaseJewel>();
 				spellbook = pack.FindItemsByType<Spellbook>();
 			}
-			if( weapon.Count > 0 )
+			if (weapon.Count > 0)
 			{
-				for( int i = weapon.Count -1; i >= 0; --i)
+				for (int i = weapon.Count - 1; i >= 0; --i)
 				{
 					int tier = weapon[i].PrefixOption[99];
 					int rank = (int)weapon[i].ItemPower;
 					int named = weapon[i].SuffixOption[99];
-					if( weapon[i].PlayerConstructed )
+					if (weapon[i].PlayerConstructed)
 						named = 100000;
-					if( weapon[i].LootType != LootType.Blessed && EquipMeltingBoolCheck( pm, tier, rank, named ) )
+					if (weapon[i].LootType != LootType.Blessed && EquipMeltingBoolCheck(pm, tier, rank, named))
 					{
 						int pointrank = rank;
-						if( rank >= 4 )
+						if (rank >= 4)
 							pointrank -= 4;
 						else
 							pointrank = 0;
@@ -5004,19 +7708,19 @@ namespace Server.Misc
 					}
 				}
 			}
-			if( armor.Count > 0 )
+			if (armor.Count > 0)
 			{
-				for( int i = armor.Count -1; i >= 0; --i)
+				for (int i = armor.Count - 1; i >= 0; --i)
 				{
 					int tier = armor[i].PrefixOption[99];
 					int rank = (int)armor[i].ItemPower;
 					int named = armor[i].SuffixOption[99];
-					if( armor[i].PlayerConstructed )
+					if (armor[i].PlayerConstructed)
 						named = 100000;
-					if( armor[i].LootType != LootType.Blessed && EquipMeltingBoolCheck( pm, tier, rank, named ) )
+					if (armor[i].LootType != LootType.Blessed && EquipMeltingBoolCheck(pm, tier, rank, named))
 					{
 						int pointrank = rank;
-						if( rank >= 4 )
+						if (rank >= 4)
 							pointrank -= 4;
 						else
 							pointrank = 0;
@@ -5025,19 +7729,19 @@ namespace Server.Misc
 					}
 				}
 			}
-			if( clothing.Count > 0 )
+			if (clothing.Count > 0)
 			{
-				for( int i = clothing.Count -1; i >= 0; --i)
+				for (int i = clothing.Count - 1; i >= 0; --i)
 				{
 					int tier = clothing[i].PrefixOption[99];
 					int rank = (int)clothing[i].ItemPower;
 					int named = clothing[i].SuffixOption[99];
-					if( clothing[i].PlayerConstructed )
+					if (clothing[i].PlayerConstructed)
 						named = 100000;
-					if( clothing[i].LootType != LootType.Blessed && EquipMeltingBoolCheck( pm, tier, rank, named ) )
+					if (clothing[i].LootType != LootType.Blessed && EquipMeltingBoolCheck(pm, tier, rank, named))
 					{
 						int pointrank = rank;
-						if( rank >= 4 )
+						if (rank >= 4)
 							pointrank -= 4;
 						else
 							pointrank = 0;
@@ -5046,19 +7750,19 @@ namespace Server.Misc
 					}
 				}
 			}
-			if( jewel.Count > 0 )
+			if (jewel.Count > 0)
 			{
-				for( int i = jewel.Count -1; i >= 0; --i)
+				for (int i = jewel.Count - 1; i >= 0; --i)
 				{
 					int tier = jewel[i].PrefixOption[99];
 					int rank = (int)jewel[i].ItemPower;
 					int named = jewel[i].SuffixOption[99];
-					if( jewel[i].PlayerConstructed )
+					if (jewel[i].PlayerConstructed)
 						named = 100000;
-					if( jewel[i].LootType != LootType.Blessed && EquipMeltingBoolCheck( pm, tier, rank, named ) )
+					if (jewel[i].LootType != LootType.Blessed && EquipMeltingBoolCheck(pm, tier, rank, named))
 					{
 						int pointrank = rank;
-						if( rank >= 4 )
+						if (rank >= 4)
 							pointrank -= 4;
 						else
 							pointrank = 0;
@@ -5067,19 +7771,19 @@ namespace Server.Misc
 					}
 				}
 			}
-			if( spellbook.Count > 0 )
+			if (spellbook.Count > 0)
 			{
-				for( int i = spellbook.Count -1; i >= 0; --i)
+				for (int i = spellbook.Count - 1; i >= 0; --i)
 				{
 					int tier = spellbook[i].PrefixOption[99];
 					int rank = (int)spellbook[i].ItemPower;
 					int named = spellbook[i].SuffixOption[99];
-					if( spellbook[i].PlayerConstructed )
+					if (spellbook[i].PlayerConstructed)
 						named = 100000;
-					if( spellbook[i].LootType != LootType.Blessed && EquipMeltingBoolCheck( pm, tier, rank, named ) )
+					if (spellbook[i].LootType != LootType.Blessed && EquipMeltingBoolCheck(pm, tier, rank, named))
 					{
 						int pointrank = rank;
-						if( rank >= 4 )
+						if (rank >= 4)
 							pointrank -= 4;
 						else
 							pointrank = 0;
@@ -5089,129 +7793,128 @@ namespace Server.Misc
 				}
 			}
 
-			pm.SendGump(new EquipMeltingGump(pm));			
+			pm.SendGump(new EquipMeltingGump(pm));
 		}
-		
+
 		public static int MonthCal()
 		{
 			int monthcheck = 0;
 			int year = DateTime.Now.Year;
 			int month = DateTime.Now.Month;
 			int days = DateTime.Now.Day;
-			int daysInMonth = DateTime.DaysInMonth( year, month );
+			int daysInMonth = DateTime.DaysInMonth(year, month);
 			return daysInMonth - days;
 		}
-		
+
 		public static int WeekCal()
 		{
 			int weekcheck = 0;
-			switch ( DateTime.Now.DayOfWeek )
+			switch (DateTime.Now.DayOfWeek)
 			{
 				case DayOfWeek.Monday: //월
-				weekcheck = 5;
-				break;
+					weekcheck = 5;
+					break;
 
 				case DayOfWeek.Tuesday: //화
-				weekcheck = 4;
-				break;
+					weekcheck = 4;
+					break;
 
 				case DayOfWeek.Wednesday: //수
-				weekcheck = 3;
-				break;
+					weekcheck = 3;
+					break;
 
 				case DayOfWeek.Thursday: //목
-				weekcheck = 2;
-				break;
+					weekcheck = 2;
+					break;
 
 				case DayOfWeek.Friday: //금
-				weekcheck = 1;
-				break;
+					weekcheck = 1;
+					break;
 
 				case DayOfWeek.Saturday: //토
-				weekcheck = 7;
-				break;
+					weekcheck = 7;
+					break;
 
 				case DayOfWeek.Sunday: //일
-				weekcheck = 6;
-				break;
-			}			
+					weekcheck = 6;
+					break;
+			}
 			return weekcheck;
 		}
-		
-		public static string NowTime( long nowtime )
+
+		public static string NowTime(long nowtime)
 		{
 			string time = "";
 			int duration = (int)nowtime / 10;
-			if( ( duration * 60 * 60 * 24 ) > 0 )
+			if ((duration * 60 * 60 * 24) > 0)
 			{
-				int day = (duration/60/60/24)%24;
-				if( day > 0 )
+				int day = (duration / 60 / 60 / 24) % 24;
+				if (day > 0)
 				{
 					time += day.ToString() + "일 ";
 					duration -= day * 60 * 60 * 24;
 				}
 			}
-			if( ( duration * 60 * 60 ) > 0 )
+			if ((duration * 60 * 60) > 0)
 			{
-				int hour = (duration/60/60)%60;
-				if( hour > 0 )
+				int hour = (duration / 60 / 60) % 60;
+				if (hour > 0)
 				{
 					time += hour.ToString() + "시 ";
 					duration -= hour * 60 * 60;
 				}
 			}
-			if( ( duration * 60 ) > 0 )
+			if ((duration * 60) > 0)
 			{
-				int minute = (duration/60)%60;
-				if( minute > 0 )
+				int minute = (duration / 60) % 60;
+				if (minute > 0)
 				{
 					time += minute.ToString() + "분 ";
 					duration -= minute * 60;
 				}
 			}
-			if(  duration > 0 )
+			if (duration > 0)
 				time += duration.ToString() + "초";
 			return time;
 		}
 
-
-		public static string TickCal( long oldtime )
+		public static string TickCal(long oldtime)
 		{
 			string time = "";
 			int duration = (int)(oldtime - Core.TickCount) / 1000;
-			if( ( duration * 60 * 60 * 24 ) > 0 )
+			if ((duration * 60 * 60 * 24) > 0)
 			{
-				int day = (duration/60/60/24)%24;
-				if( day > 0 )
+				int day = (duration / 60 / 60 / 24) % 24;
+				if (day > 0)
 				{
 					time += day.ToString() + "일 ";
 					duration -= day * 60 * 60 * 24;
 				}
 			}
-			if( ( duration * 60 * 60 ) > 0 )
+			if ((duration * 60 * 60) > 0)
 			{
-				int hour = (duration/60/60)%60;
-				if( hour > 0 )
+				int hour = (duration / 60 / 60) % 60;
+				if (hour > 0)
 				{
 					time += hour.ToString() + "시 ";
 					duration -= hour * 60 * 60;
 				}
 			}
-			if( ( duration * 60 ) > 0 )
+			if ((duration * 60) > 0)
 			{
-				int minute = (duration/60)%60;
-				if( minute > 0 )
+				int minute = (duration / 60) % 60;
+				if (minute > 0)
 				{
 					time += minute.ToString() + "분 ";
 					duration -= minute * 60;
 				}
 			}
-			if(  duration > 0 )
+			if (duration > 0)
 				time += duration.ToString() + "초";
 			return time;
 		}
 
-		public static string TimeCal( DateTime oldtime, DateTime nowtime )
+		public static string TimeCal(DateTime oldtime, DateTime nowtime)
 		{
 			TimeSpan timecal = oldtime - nowtime;
 			int day = timecal.Days;
@@ -5219,29 +7922,29 @@ namespace Server.Misc
 			int minute = timecal.Minutes;
 			int second = timecal.Seconds;
 			string time = "";
-			if( day > 0 )
+			if (day > 0)
 				time += day.ToString() + "일 ";
-			if( hour > 0 )
+			if (hour > 0)
 				time += hour.ToString() + "시 ";
-			if( minute > 0 )
+			if (minute > 0)
 				time += minute.ToString() + "분 ";
-			if( second > 0 )
+			if (second > 0)
 				time += second.ToString() + "초";
 			return time;
 		}
 
-		public static double RestCal( DateTime oldtime, DateTime nowtime )
+		public static double RestCal(DateTime oldtime, DateTime nowtime)
 		{
 			TimeSpan timecal = nowtime - oldtime;
 			int time = 0;
 
-			if( timecal.Days > 0 )
+			if (timecal.Days > 0)
 				time += timecal.Days * 86400;
-			if( timecal.Hours > 0 )
+			if (timecal.Hours > 0)
 				time += timecal.Hours * 3600;
-			if( timecal.Minutes > 0 )
+			if (timecal.Minutes > 0)
 				time += timecal.Minutes * 60;
-			if( timecal.Seconds > 0 )
+			if (timecal.Seconds > 0)
 				time += timecal.Seconds;
 
 			double result = time * 0.25;
@@ -5254,9 +7957,9 @@ namespace Server.Misc
 		{
 			int level = (int)Math.Sqrt(point);
 			level /= 100;
-			if( level < 0 )
+			if (level < 0)
 				level = 0;
-			else if( level > 150 )
+			else if (level > 150)
 				level = 150;
 
 			return level;
@@ -5266,7 +7969,7 @@ namespace Server.Misc
 		public static int PointUsed(int[] point)
 		{
 			int used_point = 0;
-			for( int i = 1; i < point.Length; i++)
+			for (int i = 1; i < point.Length; i++)
 			{
 				used_point += point[i];
 			}
@@ -5276,8 +7979,8 @@ namespace Server.Misc
 		//슬레이어 몬스터 체크
 		public static bool SlayerCheck(SlayerName name, Mobile defender)
 		{
-            SlayerEntry atkSlayer = SlayerGroup.GetEntryByName(name);
-			if( atkSlayer.Slays(defender) )
+			SlayerEntry atkSlayer = SlayerGroup.GetEntryByName(name);
+			if (atkSlayer.Slays(defender))
 			{
 				defender.FixedEffect(0x37B9, 10, 5);
 				return true;
@@ -5285,10 +7988,10 @@ namespace Server.Misc
 			return false;
 		}
 
-		public static double AttackSpeedTicks( double speed, int bonus )
+		public static double AttackSpeedTicks(double speed, int bonus)
 		{
-			double delayInSeconds = Math.Truncate( ( speed * 10000 / ( 1000 + bonus ) ) ) * 0.1;
-			if( delayInSeconds < 0.5 )
+			double delayInSeconds = Math.Truncate((speed * 10000 / (1000 + bonus))) * 0.1;
+			if (delayInSeconds < 0.5)
 				delayInSeconds = 0.5;
 			return delayInSeconds;
 		}
@@ -5299,43 +8002,43 @@ namespace Server.Misc
 			int count = 0;
 
 			SlayerEntry atkSlayer = SlayerGroup.GetEntryByName(SlayerName.Repond);
-			if( atkSlayer.Slays(target) )
+			if (atkSlayer.Slays(target))
 			{
 				set_array[count] = 0;
 				count++;
 			}
 			atkSlayer = SlayerGroup.GetEntryByName(SlayerName.Silver);
-			if( atkSlayer.Slays(target) )
+			if (atkSlayer.Slays(target))
 			{
 				set_array[count] = 1;
 				count++;
 			}
 			atkSlayer = SlayerGroup.GetEntryByName(SlayerName.ElementalBan);
-			if( count < 2 && atkSlayer.Slays(target) )
+			if (count < 2 && atkSlayer.Slays(target))
 			{
 				set_array[count] = 2;
 				count++;
 			}
 			atkSlayer = SlayerGroup.GetEntryByName(SlayerName.Exorcism);
-			if( count < 2 && atkSlayer.Slays(target) )
+			if (count < 2 && atkSlayer.Slays(target))
 			{
 				set_array[count] = 3;
 				count++;
 			}
 			atkSlayer = SlayerGroup.GetEntryByName(SlayerName.ArachnidDoom);
-			if( count < 2 && atkSlayer.Slays(target) )
+			if (count < 2 && atkSlayer.Slays(target))
 			{
 				set_array[count] = 4;
 				count++;
 			}
 			atkSlayer = SlayerGroup.GetEntryByName(SlayerName.ReptilianDeath);
-			if( count < 2 && atkSlayer.Slays(target) )
+			if (count < 2 && atkSlayer.Slays(target))
 			{
 				set_array[count] = 5;
 				count++;
 			}
 			atkSlayer = SlayerGroup.GetEntryByName(SlayerName.Fey);
-			if( count < 2 && atkSlayer.Slays(target) )
+			if (count < 2 && atkSlayer.Slays(target))
 			{
 				set_array[count] = 6;
 				count++;
@@ -5343,7 +8046,7 @@ namespace Server.Misc
 			return set_array;
 		}
 
-		public static int ExpHarvestBonus( PlayerMobile pm, int maxchance )
+		public static int ExpHarvestBonus(PlayerMobile pm, int maxchance)
 		{
 			maxchance *= 100 + pm.GoldPoint[3];
 			maxchance /= 100;
@@ -5351,21 +8054,21 @@ namespace Server.Misc
 		}
 
 		//어그로 제거 계산
-		public static void AggroTargetCheck( Mobile attacker, Mobile defender, int aggro )
+		public static void AggroTargetCheck(Mobile attacker, Mobile defender, int aggro)
 		{
-			if( defender is BaseCreature )
+			if (defender is BaseCreature)
 			{
 				BaseCreature bc = defender as BaseCreature;
-				for( int i = 0; i < bc.AggroMobile.Length; ++i )
+				for (int i = 0; i < bc.AggroMobile.Length; ++i)
 				{
-					if( bc.AggroMobile[i] == attacker )
+					if (bc.AggroMobile[i] == attacker)
 					{
 						bc.AggroScore[i] -= aggro;
-						if( bc.AggroScore[i] < 1 )
+						if (bc.AggroScore[i] < 1)
 							bc.AggroScore[i] = 1;
 						break;
 					}
-					if( bc.AggroMobile[i] == null )
+					if (bc.AggroMobile[i] == null)
 					{
 						bc.AggroMobile[i] = attacker;
 						bc.AggroScore[i] = 1;
@@ -5376,36 +8079,36 @@ namespace Server.Misc
 		}
 
 		//어그로 계산
-		public static int AggroCalc( Mobile from, int aggro )
+		public static int AggroCalc(Mobile from, int aggro)
 		{
-			int aggropercent = ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.AggroPointBonus );
-			if ( aggropercent < -75 )
+			int aggropercent = ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.AggroPointBonus);
+			if (aggropercent < -75)
 				aggropercent = -75;
-			int realaggro = aggro * ( 100 + aggropercent ) / 100;
-			realaggro += ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.AggroPoint );
-			if( realaggro < 0 )
+			int realaggro = aggro * (100 + aggropercent) / 100;
+			realaggro += ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.AggroPoint);
+			if (realaggro < 0)
 				realaggro = 0;
 			return realaggro;
 		}
-		
-		public static void HealAggroCheck( Mobile from, Mobile to, int aggro )
+
+		public static void HealAggroCheck(Mobile from, Mobile to, int aggro)
 		{
-            Map map = to.Map;
+			Map map = to.Map;
 
 			//힐은 회복의 100% 만큼 어그로가 발생
 			int range = 20;
-			
-            IPooledEnumerable eable = to.Map.GetMobilesInRange(to.Location, range);
-            foreach (Mobile m in eable)
-            {
-                if (m is BaseCreature)
-                {
+
+			IPooledEnumerable eable = to.Map.GetMobilesInRange(to.Location, range);
+			foreach (Mobile m in eable)
+			{
+				if (m is BaseCreature)
+				{
 					BaseCreature bc = m as BaseCreature;
-					if( bc != null && bc.SummonMaster == null && bc.ControlMaster == null && bc.AggroMobile != null )
+					if (bc != null && bc.SummonMaster == null && bc.ControlMaster == null && bc.AggroMobile != null)
 					{
-						for( int i = 0; i < bc.AggroMobile.Length; ++i )
+						for (int i = 0; i < bc.AggroMobile.Length; ++i)
 						{
-							if( bc.AggroMobile[i] == to )
+							if (bc.AggroMobile[i] == to)
 							{
 								bc.AggroScore[i] += AggroCalc(m, aggro);
 								/*
@@ -5416,7 +8119,7 @@ namespace Server.Misc
 									PlayerMobile pm = from as PlayerMobile;
 									aggrobonus += pm.SilverPoint[3] * 0.005;
 									aggrominus -= pm.SilverPoint[4] * 0.0025;
-								}							
+								}
 								int realaggro = (int)( ( heal * 100 * aggrobonus / 100 ) / aggrominus);
 								bc.AggroScore[i] += realaggro;
 								*/
@@ -5424,12 +8127,12 @@ namespace Server.Misc
 							}
 						}
 					}
-                }
-            }
-            eable.Free();
+				}
+			}
+			eable.Free();
 		}
-		
-		public static int HealCheck( Mobile from, Mobile to, int heal, bool aggrohalf = false )
+
+		public static int HealCheck(Mobile from, Mobile to, int heal, bool aggrohalf = false)
 		{
 			//실버 포인트 15 치유량, 16 회복량%
 			//AOS EnhancePotions : 치유량%, HealBonus : 치유량+, SoulChargeKinetic : 회복량%, SoulCharge : 회복량+
@@ -5440,44 +8143,46 @@ namespace Server.Misc
 			heal *= 100 + Percent;
 			heal /= 100;
 			heal += Plus;
-			
-			if( to.Hits + heal > to.HitsMax )
+
+			if (to.Hits + heal > to.HitsMax)
 				heal = to.HitsMax - to.Hits;
-			
+
 			int aggro = heal;
-			if( aggrohalf )
+			if (aggrohalf)
 				aggro /= 2;
-			
-			HealAggroCheck( from, to, aggro );
-			
+
+			HealAggroCheck(from, to, aggro);
+
 			return heal;
 		}
-		public static int TimeValue( DateTime oldtime, DateTime nowtime )
+
+		public static int TimeValue(DateTime oldtime, DateTime nowtime)
 		{
 			TimeSpan timecal = oldtime - nowtime;
 			int time = 0;
-			if( timecal.Days > 0 )
+			if (timecal.Days > 0)
 				time += timecal.Days * 864000;
-			if( timecal.Hours > 0 )
+			if (timecal.Hours > 0)
 				time += timecal.Hours * 36000;
-			if( timecal.Minutes > 0 )
+			if (timecal.Minutes > 0)
 				time += timecal.Minutes * 600;
-			if( timecal.Seconds > 0 )
+			if (timecal.Seconds > 0)
 				time += timecal.Seconds * 10;
 			return time;
 		}
 
 		//피로도 체크
-		public static int TiredCheck( PlayerMobile pm, int hunger, int point, int master = 0 )
+		public static int TiredCheck(PlayerMobile pm, int hunger, int point, int master = 0)
 		{
-			return TiredCheck( pm, hunger, (double)point, master );
+			return TiredCheck(pm, hunger, (double)point, master);
 		}
-		public static int TiredCheck( PlayerMobile pm, int hunger, double point, int master = 0 )
+
+		public static int TiredCheck(PlayerMobile pm, int hunger, double point, int master = 0)
 		{
 			//int doublecheck = ( hunger <= 0 ) ? 2 : 1;
 			//double tiredcal = ( point * ( 100 - master ) / 100 ) * doublecheck * 0.1;
 
-			if( pm.Tired > 0 )
+			if (pm.Tired > 0)
 			{
 				pm.Tired = 0;
 				/*
@@ -5490,9 +8195,9 @@ namespace Server.Misc
 			}
 			else
 			{
-				if( pm.Tired > -100 )
+				if (pm.Tired > -100)
 				{
-					point *= (int)( 100 + pm.Tired * -1 );
+					point *= (int)(100 + pm.Tired * -1);
 					point /= 100;
 					pm.Tired = 0;
 				}
@@ -5501,80 +8206,105 @@ namespace Server.Misc
 					point *= 2;
 					pm.Tired += 100;
 				}
-				
 			}
 			//pm.SendMessage("피로도 {0} 증가", ( point * ( 100 - master ) / 100 ) * doublecheck );
 
-			if( pm.Hunger < 0 )
+			if (pm.Hunger < 0)
 				pm.Hunger = 0;
 
 			return (int)point;
-
 		}
 
-		public static double SkillExp_Calc( Mobile from, int skill )
+		public static double SkillExp_Calc(Mobile from, int skill)
 		{
 			double maxvalue = 1000;
 			double skillvalue = from.Skills[skill].Base;
 
-			if( skillvalue < 10.0 ) // 1000 증가
+			if (skillvalue < 10.0) // 1000 증가
 				maxvalue = 1000 + skillvalue * 100; //00.1 ~ 9.9 스킬 포인트. 1000 ~ 1990
-			else if( skillvalue < 20.0 ) // 1500 증가
-				maxvalue = 2000 + ( skillvalue - 10.0 ) * 200; //10.0 ~ 19.9 스킬 포인트. 2500 ~ 3985
-			else if( skillvalue < 30.0 ) // 2000 증가
-				maxvalue = 4000 + ( skillvalue - 20.0 ) * 300; //20.0 ~ 29.9 스킬 포인트. 5000 ~ 6980
-			else if( skillvalue < 40.0 ) // 3000 증가
-				maxvalue = 7000 + ( skillvalue - 30.0 ) * 500; //30.0 ~ 39.9 스킬 포인트. 9000 ~ 10970
-			else if( skillvalue < 50.0 ) // 7000 증가
-				maxvalue = 12000 + ( skillvalue - 40.0 ) * 800; //40.0 ~ 49.9 스킬 포인트. 15000 ~ 21930
-			else if( skillvalue < 60.0 ) // 10000 증가
-				maxvalue = 20000 + ( skillvalue - 50.0 ) * 1000; //50.0 ~ 59.9 스킬 포인트. 27000 ~ 36900
-			else if( skillvalue < 70.0 ) // 20000 증가
-				maxvalue = 30000 + ( skillvalue - 60.0 ) * 1500; //60.0 ~ 69.9 스킬 포인트. 45000 ~ 64800
-			else if( skillvalue < 80.0 ) // 30000 증가
-				maxvalue = 45000 + ( skillvalue - 70.0 ) * 2250; //70.0 ~ 79.9 스킬 포인트. 85000 ~ 114700
-			else if( skillvalue < 90.0 ) // 65500 증가
-				maxvalue = 67500 + ( skillvalue - 80.0 ) * 3250; //80.0 ~ 89.9 스킬 포인트. 200000 ~ 299000
-			else if( skillvalue < 100.0 ) // 200000 증가
-				maxvalue = 100000 + ( skillvalue - 90.0 ) * 5000; //90.0 ~ 99.9 스킬 포인트. 500000 ~ 995000
-			else if( skillvalue < 110.0 ) // 500000 증가
-				maxvalue = 150000 + ( skillvalue - 100.0 ) * 7000; //100.0 ~ 104.9 스킬 포인트. 1500000 ~ 498000
-			else if( skillvalue < 120.0 ) // 1000000 증가
-				maxvalue = 220000 + ( skillvalue - 110.0 ) * 10000; //105.0 ~ 109.9 스킬 포인트. 700000 ~ 945000
-			else if( skillvalue < 130.0 ) // 2500000 증가
-				maxvalue = 320000 + ( skillvalue - 120.0 ) * 15000; //110.0 ~ 114.9 스킬 포인트. 1500000 ~ 1990000
-			else if( skillvalue < 140.0 ) // 8000000 증가
-				maxvalue = 470000 + ( skillvalue - 130.0 ) * 21500; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
-			else if( skillvalue < 150.0 ) // 8000000 증가
-				maxvalue = 685000 + ( skillvalue - 140.0 ) * 30000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
-			else if( skillvalue < 160.0 ) // 8000000 증가
-				maxvalue = 985000 + ( skillvalue - 150.0 ) * 40000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
-			else if( skillvalue < 170.0 ) // 8000000 증가
-				maxvalue = 1385000 + ( skillvalue - 160.0 ) * 55000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
-			else if( skillvalue < 180.0 ) // 8000000 증가
-				maxvalue = 1935000 + ( skillvalue - 170.0 ) * 75000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
-			else if( skillvalue < 190.0 ) // 8000000 증가
-				maxvalue = 2685000 + ( skillvalue - 180.0 ) * 100000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
-			else if( skillvalue < 200.0 ) // 8000000 증가
-				maxvalue = 3685000 + ( skillvalue - 190.0 ) * 150000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
-			else if( skillvalue < 210.0 ) // 8000000 증가
-				maxvalue = 5185000 + ( skillvalue - 200.0 ) * 500000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
-			else if( skillvalue < 220.0 ) // 8000000 증가
-				maxvalue = 10185000 + ( skillvalue - 210.0 ) * 1500000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
-			else if( skillvalue < 230.0 ) // 8000000 증가
-				maxvalue = 25185000 + ( skillvalue - 220.0 ) * 5000000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
-			else if( skillvalue < 240.0 ) // 8000000 증가
-				maxvalue = 75185000 + ( skillvalue - 230.0 ) * 20000000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
-			else if( skillvalue < 250.0 ) // 8000000 증가
-				maxvalue = 275185000 + ( skillvalue - 240.0 ) * 100000000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
-				
-			if( skillvalue >= 2100000000 )
+			else if (skillvalue < 20.0) // 1500 증가
+				maxvalue = 2000 + (skillvalue - 10.0) * 200; //10.0 ~ 19.9 스킬 포인트. 2500 ~ 3985
+			else if (skillvalue < 30.0) // 2000 증가
+				maxvalue = 4000 + (skillvalue - 20.0) * 300; //20.0 ~ 29.9 스킬 포인트. 5000 ~ 6980
+			else if (skillvalue < 40.0) // 3000 증가
+				maxvalue = 7000 + (skillvalue - 30.0) * 500; //30.0 ~ 39.9 스킬 포인트. 9000 ~ 10970
+			else if (skillvalue < 50.0) // 7000 증가
+				maxvalue = 12000 + (skillvalue - 40.0) * 800; //40.0 ~ 49.9 스킬 포인트. 15000 ~ 21930
+			else if (skillvalue < 60.0) // 10000 증가
+				maxvalue = 20000 + (skillvalue - 50.0) * 1000; //50.0 ~ 59.9 스킬 포인트. 27000 ~ 36900
+			else if (skillvalue < 70.0) // 20000 증가
+				maxvalue = 30000 + (skillvalue - 60.0) * 1500; //60.0 ~ 69.9 스킬 포인트. 45000 ~ 64800
+			else if (skillvalue < 80.0) // 30000 증가
+				maxvalue = 45000 + (skillvalue - 70.0) * 2250; //70.0 ~ 79.9 스킬 포인트. 85000 ~ 114700
+			else if (skillvalue < 90.0) // 65500 증가
+				maxvalue = 67500 + (skillvalue - 80.0) * 3250; //80.0 ~ 89.9 스킬 포인트. 200000 ~ 299000
+			else if (skillvalue < 100.0) // 200000 증가
+				maxvalue = 100000 + (skillvalue - 90.0) * 5000; //90.0 ~ 99.9 스킬 포인트. 500000 ~ 995000
+			else if (skillvalue < 110.0) // 500000 증가
+				maxvalue = 150000 + (skillvalue - 100.0) * 7000; //100.0 ~ 104.9 스킬 포인트. 1500000 ~ 498000
+			else if (skillvalue < 120.0) // 1000000 증가
+				maxvalue = 220000 + (skillvalue - 110.0) * 10000; //105.0 ~ 109.9 스킬 포인트. 700000 ~ 945000
+			else if (skillvalue < 130.0) // 2500000 증가
+				maxvalue = 320000 + (skillvalue - 120.0) * 15000; //110.0 ~ 114.9 스킬 포인트. 1500000 ~ 1990000
+			else if (skillvalue < 140.0) // 8000000 증가
+				maxvalue = 470000 + (skillvalue - 130.0) * 21500; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
+			else if (skillvalue < 150.0) // 8000000 증가
+				maxvalue = 685000 + (skillvalue - 140.0) * 30000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
+			else if (skillvalue < 160.0) // 8000000 증가
+				maxvalue = 985000 + (skillvalue - 150.0) * 40000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
+			else if (skillvalue < 170.0) // 8000000 증가
+				maxvalue = 1385000 + (skillvalue - 160.0) * 55000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
+			else if (skillvalue < 180.0) // 8000000 증가
+				maxvalue = 1935000 + (skillvalue - 170.0) * 75000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
+			else if (skillvalue < 190.0) // 8000000 증가
+				maxvalue = 2685000 + (skillvalue - 180.0) * 100000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
+			else if (skillvalue < 200.0) // 8000000 증가
+				maxvalue = 3685000 + (skillvalue - 190.0) * 150000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
+			else if (skillvalue < 210.0) // 8000000 증가
+				maxvalue = 5185000 + (skillvalue - 200.0) * 500000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
+			else if (skillvalue < 220.0) // 8000000 증가
+				maxvalue = 10185000 + (skillvalue - 210.0) * 1500000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
+			else if (skillvalue < 230.0) // 8000000 증가
+				maxvalue = 25185000 + (skillvalue - 220.0) * 5000000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
+			else if (skillvalue < 240.0) // 8000000 증가
+				maxvalue = 75185000 + (skillvalue - 230.0) * 20000000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
+			else if (skillvalue < 250.0) // 8000000 증가
+				maxvalue = 275185000 + (skillvalue - 240.0) * 100000000; //115.0 ~ 119.9 스킬 포인트. 15000000 ~ 16225000
+
+			if (skillvalue >= 2100000000)
 				skillvalue = 2100000000;
 			return maxvalue;
 		}
 
 		public static int[] Equip_Login = { 500, 1000, 1500, 2000, 0, 0, 0, 0, 0, 0 };
-		public static int[] Equip_Etc = { 100, 300, 700, 1000, 2000, 3000, 4000, 5000, 7000, 10000, 20000, 30000, 50000, 75000, 100000, 200000, 300000, 500000, 750000, 1000000, 2000000, 3000000, 5000000, 7500000, 10000000 };
+		public static int[] Equip_Etc =
+		{
+			100,
+			300,
+			700,
+			1000,
+			2000,
+			3000,
+			4000,
+			5000,
+			7000,
+			10000,
+			20000,
+			30000,
+			50000,
+			75000,
+			100000,
+			200000,
+			300000,
+			500000,
+			750000,
+			1000000,
+			2000000,
+			3000000,
+			5000000,
+			7500000,
+			10000000,
+		};
 
 		//테스트 구역 코드
 		/*

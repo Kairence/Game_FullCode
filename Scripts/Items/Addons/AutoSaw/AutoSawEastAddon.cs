@@ -1,33 +1,33 @@
 using System;
 using Server.Mobiles;
+
 namespace Server.Items
 {
-    public class AutoSawEastAddon : BaseAddon
-    {
-        [Constructable]
-        public AutoSawEastAddon()
-        {
-            this.AddComponent(new AddonComponent(0xB8C), 0, 0, 0);
-            this.AddComponent(new AddonComponent(0xB8B), 1, 0, 0);
-            this.AddComponent(new AddonComponent(0xB8E), 0, -1, 0);
-            this.AddComponent(new AddonComponent(0xB8E), 1, -1, 0);
-            this.AddComponent(new AddonComponent(0xB8D), 0, -2, 0);
-            this.AddComponent(new AddonComponent(0xB8A), 1, -2, 0);
-            this.AddComponent(new AddonComponent(0x11B5), 1, 0, 6);
- 			Server.Multis.BaseHouse house = Server.Multis.BaseHouse.FindHouseAt(this);
-			if ( house != null )
+	public class AutoSawEastAddon : BaseAddon
+	{
+		[Constructable]
+		public AutoSawEastAddon()
+		{
+			this.AddComponent(new AddonComponent(0xB8C), 0, 0, 0);
+			this.AddComponent(new AddonComponent(0xB8B), 1, 0, 0);
+			this.AddComponent(new AddonComponent(0xB8E), 0, -1, 0);
+			this.AddComponent(new AddonComponent(0xB8E), 1, -1, 0);
+			this.AddComponent(new AddonComponent(0xB8D), 0, -2, 0);
+			this.AddComponent(new AddonComponent(0xB8A), 1, -2, 0);
+			this.AddComponent(new AddonComponent(0x11B5), 1, 0, 6);
+			Server.Multis.BaseHouse house = Server.Multis.BaseHouse.FindHouseAt(this);
+			if (house != null)
 			{
-				MaxHits = Utility.RandomMinMax(30, 50);//Utility.RandomMinMax(InitMinHits, InitMaxHits);
+				MaxHits = Utility.RandomMinMax(30, 50); //Utility.RandomMinMax(InitMinHits, InitMaxHits);
 				Hits = MaxHits;
 			}
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1046485;
-            }
-        }		
+		}
+
+		public override int LabelNumber
+		{
+			get { return 1046485; }
+		}
+
 		/*
 		public override void OnComponentUsed( AddonComponent c, Mobile from )
 		{
@@ -38,7 +38,7 @@ namespace Server.Items
 				housecheck = 1;
 				useOk = true;
 			}
- 			Server.Multis.BaseHouse house = Server.Multis.BaseHouse.FindHouseAt(from);
+			 Server.Multis.BaseHouse house = Server.Multis.BaseHouse.FindHouseAt(from);
 
 			if( house != null )
 			{
@@ -88,72 +88,58 @@ namespace Server.Items
 			}
 		}
 		*/
-        public AutoSawEastAddon(Serial serial)
-            : base(serial)
-        {
-        }
+		public AutoSawEastAddon(Serial serial)
+			: base(serial) { }
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new ElvenBedEastDeed();
-            }
-        }
+		public override BaseAddonDeed Deed
+		{
+			get { return new ElvenBedEastDeed(); }
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.WriteEncodedInt(0); // version
-        }
+			writer.WriteEncodedInt(0); // version
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-    public class AutoSawEastAddonDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public AutoSawEastAddonDeed()
-        {
-        }
+	public class AutoSawEastAddonDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public AutoSawEastAddonDeed() { }
 
-        public AutoSawEastAddonDeed(Serial serial)
-            : base(serial)
-        {
-        }
+		public AutoSawEastAddonDeed(Serial serial)
+			: base(serial) { }
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new AutoSawEastAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1046483;
-            }
-        }// elven bed (east)
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override BaseAddon Addon
+		{
+			get { return new AutoSawEastAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1046483; }
+		} // elven bed (east)
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

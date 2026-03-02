@@ -1,53 +1,48 @@
 using System;
 using System.Collections.Generic;
 
-namespace Server.Mobiles 
-{ 
-    public class TavernKeeper : BaseVendor 
-    { 
-        private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
-        [Constructable]
-        public TavernKeeper()
-            : base("the tavern keeper")
-        { 
-        }
+namespace Server.Mobiles
+{
+	public class TavernKeeper : BaseVendor
+	{
+		private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
 
-        public TavernKeeper(Serial serial)
-            : base(serial)
-        { 
-        }
+		[Constructable]
+		public TavernKeeper()
+			: base("the tavern keeper") { }
 
-        protected override List<SBInfo> SBInfos
-        {
-            get
-            {
-                return this.m_SBInfos;
-            }
-        }
-        public override void InitSBInfo() 
-        { 
-            this.m_SBInfos.Add(new SBTavernKeeper()); 
-        }
+		public TavernKeeper(Serial serial)
+			: base(serial) { }
 
-        public override void InitOutfit()
-        {
-            base.InitOutfit();
+		protected override List<SBInfo> SBInfos
+		{
+			get { return this.m_SBInfos; }
+		}
 
-            this.AddItem(new Server.Items.HalfApron());
-        }
+		public override void InitSBInfo()
+		{
+			this.m_SBInfos.Add(new SBTavernKeeper());
+		}
 
-        public override void Serialize(GenericWriter writer) 
-        { 
-            base.Serialize(writer); 
+		public override void InitOutfit()
+		{
+			base.InitOutfit();
 
-            writer.Write((int)0); // version 
-        }
+			this.AddItem(new Server.Items.HalfApron());
+		}
 
-        public override void Deserialize(GenericReader reader) 
-        { 
-            base.Deserialize(reader); 
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt(); 
-        }
-    }
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

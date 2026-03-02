@@ -2,80 +2,67 @@ using System;
 
 namespace Server.Items
 {
-    public class GrayBrickFireplaceSouthAddon : BaseAddon
-    {
-        [Constructable]
-        public GrayBrickFireplaceSouthAddon()
-        {
-            this.AddComponent(new AddonComponent(0x94B), -1, 0, 0);
-            this.AddComponent(new AddonComponent(0x945), 0, 0, 0);
-        }
+	public class GrayBrickFireplaceSouthAddon : BaseAddon
+	{
+		[Constructable]
+		public GrayBrickFireplaceSouthAddon()
+		{
+			this.AddComponent(new AddonComponent(0x94B), -1, 0, 0);
+			this.AddComponent(new AddonComponent(0x945), 0, 0, 0);
+		}
 
-        public GrayBrickFireplaceSouthAddon(Serial serial)
-            : base(serial)
-        {
-        }
+		public GrayBrickFireplaceSouthAddon(Serial serial)
+			: base(serial) { }
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new GrayBrickFireplaceSouthDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override BaseAddonDeed Deed
+		{
+			get { return new GrayBrickFireplaceSouthDeed(); }
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class GrayBrickFireplaceSouthDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public GrayBrickFireplaceSouthDeed()
-        {
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public GrayBrickFireplaceSouthDeed(Serial serial)
-            : base(serial)
-        {
-        }
+	public class GrayBrickFireplaceSouthDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public GrayBrickFireplaceSouthDeed() { }
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new GrayBrickFireplaceSouthAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1061847;
-            }
-        }// grey brick fireplace (south)
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public GrayBrickFireplaceSouthDeed(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override BaseAddon Addon
+		{
+			get { return new GrayBrickFireplaceSouthAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1061847; }
+		} // grey brick fireplace (south)
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

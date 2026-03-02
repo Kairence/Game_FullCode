@@ -1,7 +1,6 @@
 #region References
 using System;
 using System.Collections.Generic;
-
 using Server.Network;
 #endregion
 
@@ -16,15 +15,30 @@ namespace Server.Commands
 		private readonly string m_ArgString;
 		private readonly string[] m_Arguments;
 
-		public Mobile Mobile { get { return m_Mobile; } }
+		public Mobile Mobile
+		{
+			get { return m_Mobile; }
+		}
 
-		public string Command { get { return m_Command; } }
+		public string Command
+		{
+			get { return m_Command; }
+		}
 
-		public string ArgString { get { return m_ArgString; } }
+		public string ArgString
+		{
+			get { return m_ArgString; }
+		}
 
-		public string[] Arguments { get { return m_Arguments; } }
+		public string[] Arguments
+		{
+			get { return m_Arguments; }
+		}
 
-		public int Length { get { return m_Arguments.Length; } }
+		public int Length
+		{
+			get { return m_Arguments.Length; }
+		}
 
 		public string GetString(int index)
 		{
@@ -91,11 +105,20 @@ namespace Server.Commands
 		private readonly CommandEventHandler m_Handler;
 		private readonly AccessLevel m_AccessLevel;
 
-		public string Command { get { return m_Command; } }
+		public string Command
+		{
+			get { return m_Command; }
+		}
 
-		public CommandEventHandler Handler { get { return m_Handler; } }
+		public CommandEventHandler Handler
+		{
+			get { return m_Handler; }
+		}
 
-		public AccessLevel AccessLevel { get { return m_AccessLevel; } }
+		public AccessLevel AccessLevel
+		{
+			get { return m_AccessLevel; }
+		}
 
 		public CommandEntry(string command, CommandEventHandler handler, AccessLevel accessLevel)
 		{
@@ -130,14 +153,19 @@ namespace Server.Commands
 	{
 		private static string m_Prefix = "[";
 
-		public static string Prefix { get { return m_Prefix; } set { m_Prefix = value; } }
+		public static string Prefix
+		{
+			get { return m_Prefix; }
+			set { m_Prefix = value; }
+		}
 
 		public static string[] Split(string value)
 		{
 			var array = value.ToCharArray();
 			var list = new List<string>();
 
-			int start = 0, end = 0;
+			int start = 0,
+				end = 0;
 
 			while (start < array.Length)
 			{
@@ -195,7 +223,10 @@ namespace Server.Commands
 
 		private static readonly Dictionary<string, CommandEntry> m_Entries;
 
-		public static Dictionary<string, CommandEntry> Entries { get { return m_Entries; } }
+		public static Dictionary<string, CommandEntry> Entries
+		{
+			get { return m_Entries; }
+		}
 
 		static CommandSystem()
 		{
@@ -209,7 +240,11 @@ namespace Server.Commands
 
 		private static AccessLevel m_BadCommandIngoreLevel = AccessLevel.Player;
 
-		public static AccessLevel BadCommandIgnoreLevel { get { return m_BadCommandIngoreLevel; } set { m_BadCommandIngoreLevel = value; } }
+		public static AccessLevel BadCommandIgnoreLevel
+		{
+			get { return m_BadCommandIngoreLevel; }
+			set { m_BadCommandIngoreLevel = value; }
+		}
 
 		public static bool Handle(Mobile from, string text)
 		{

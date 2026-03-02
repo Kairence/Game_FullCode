@@ -1,17 +1,14 @@
-
-
 /*
 * PredatorAI, its an animal that can attack
 *	Dont flee but dont attack if not hurt or attacked
-* 
+*
 */
 namespace Server.Mobiles
 {
 	public class PredatorAI : BaseAI
 	{
 		public PredatorAI(BaseCreature m)
-			: base(m)
-		{ }
+			: base(m) { }
 
 		public override bool DoActionWander()
 		{
@@ -75,7 +72,15 @@ namespace Server.Mobiles
 			{
 				if (AcquireFocusMob(m_Mobile.RangePerception * 2, FightMode.Closest, true, false, true))
 				{
-					if (WalkMobileRange(m_Mobile.FocusMob, 1, false, m_Mobile.RangePerception, m_Mobile.RangePerception * 2))
+					if (
+						WalkMobileRange(
+							m_Mobile.FocusMob,
+							1,
+							false,
+							m_Mobile.RangePerception,
+							m_Mobile.RangePerception * 2
+						)
+					)
 					{
 						m_Mobile.DebugSay("Well, here I am safe");
 						Action = ActionType.Wander;

@@ -1,35 +1,34 @@
-using System; 
+using System;
 
 namespace Server.Items
-{ 
-	public class CarrotSeed : BaseSeed 
-	{ 
+{
+	public class CarrotSeed : BaseSeed
+	{
 		[Constructable]
-		public CarrotSeed() : this( 1 )
+		public CarrotSeed()
+			: this(1) { }
+
+		[Constructable]
+		public CarrotSeed(int amount)
+			: base(0xDCF)
 		{
+			Hue = 0x5E2;
+			Name = "당근 씨앗";
 		}
 
-		[Constructable]
-		public CarrotSeed( int amount ) : base( 0xDCF )
+		public CarrotSeed(Serial serial)
+			: base(serial) { }
+
+		public override void Serialize(GenericWriter writer)
 		{
-			Hue = 0x5E2; 
-			Name = "당근 씨앗"; 
+			base.Serialize(writer);
+			writer.Write((int)0);
 		}
-		
-		public CarrotSeed( Serial serial ) : base( serial ) 
-		{ 
-		} 
 
-		public override void Serialize( GenericWriter writer ) 
-		{ 
-			base.Serialize( writer ); 
-			writer.Write( (int) 0 ); 
-		} 
-
-		public override void Deserialize( GenericReader reader ) 
-		{ 
-			base.Deserialize( reader ); 
-			int version = reader.ReadInt(); 
-		} 
-	} 
-} 
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
+}

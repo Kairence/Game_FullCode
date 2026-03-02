@@ -36,16 +36,27 @@ namespace Server.Network
 			private byte[] _buffer;
 			private int _length;
 
-			public byte[] Buffer { get { return _buffer; } }
+			public byte[] Buffer
+			{
+				get { return _buffer; }
+			}
 
-			public int Length { get { return _length; } }
+			public int Length
+			{
+				get { return _length; }
+			}
 
-			public int Available { get { return (_buffer.Length - _length); } }
+			public int Available
+			{
+				get { return (_buffer.Length - _length); }
+			}
 
-			public bool IsFull { get { return (_length == _buffer.Length); } }
+			public bool IsFull
+			{
+				get { return (_length == _buffer.Length); }
+			}
 
-			private Gram()
-			{ }
+			private Gram() { }
 
 			public int Write(byte[] buffer, int offset, int length)
 			{
@@ -115,9 +126,15 @@ namespace Server.Network
 
 		private Gram _buffered;
 
-		public bool IsFlushReady { get { return (_pending.Count == 0 && _buffered != null); } }
+		public bool IsFlushReady
+		{
+			get { return (_pending.Count == 0 && _buffered != null); }
+		}
 
-		public bool IsEmpty { get { return (_pending.Count == 0 && _buffered == null); } }
+		public bool IsEmpty
+		{
+			get { return (_pending.Count == 0 && _buffered == null); }
+		}
 
 		public SendQueue()
 		{
@@ -165,12 +182,18 @@ namespace Server.Network
 			else if (!(offset >= 0 && offset < buffer.Length))
 			{
 				throw new ArgumentOutOfRangeException(
-					"offset", offset, "Offset must be greater than or equal to zero and less than the size of the buffer.");
+					"offset",
+					offset,
+					"Offset must be greater than or equal to zero and less than the size of the buffer."
+				);
 			}
 			else if (length < 0 || length > buffer.Length)
 			{
 				throw new ArgumentOutOfRangeException(
-					"length", length, "Length cannot be less than zero or greater than the size of the buffer.");
+					"length",
+					length,
+					"Length cannot be less than zero or greater than the size of the buffer."
+				);
 			}
 			else if ((buffer.Length - offset) < length)
 			{
@@ -233,7 +256,6 @@ namespace Server.Network
 	public sealed class CapacityExceededException : Exception
 	{
 		public CapacityExceededException()
-			: base("Too much data pending.")
-		{ }
+			: base("Too much data pending.") { }
 	}
 }

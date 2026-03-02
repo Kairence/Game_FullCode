@@ -4,187 +4,200 @@ using Server.Engines.Craft;
 
 namespace Server.Engines.BulkOrders
 {
-    public class SmallCarpentryBOD : SmallBOD
-    {
-        public static double[] m_CarpentryMaterialChances = new double[]
-        {
-            0.513718750, // None
-            0.292968750, // Oak
-            0.117187500, // Ash
-            0.046875000, // Yew
-            0.018750000, // Heartwood
-            0.007500000, // Bloodwood
-            0.003000000 // Frostwood
-        };
+	public class SmallCarpentryBOD : SmallBOD
+	{
+		public static double[] m_CarpentryMaterialChances = new double[]
+		{
+			0.513718750, // None
+			0.292968750, // Oak
+			0.117187500, // Ash
+			0.046875000, // Yew
+			0.018750000, // Heartwood
+			0.007500000, // Bloodwood
+			0.003000000, // Frostwood
+		};
 
-        public override BODType BODType { get { return BODType.Carpentry; } }
+		public override BODType BODType
+		{
+			get { return BODType.Carpentry; }
+		}
 
-        [Constructable]
-        public SmallCarpentryBOD()
-        {
-            SmallBulkEntry[] entries;
-            bool useMaterials = Utility.RandomBool();
+		[Constructable]
+		public SmallCarpentryBOD()
+		{
+			SmallBulkEntry[] entries;
+			bool useMaterials = Utility.RandomBool();
 
-            entries = SmallBulkEntry.CarpentrySmalls;
+			entries = SmallBulkEntry.CarpentrySmalls;
 
-            if (entries.Length > 0)
-            {
-                int amountMax = Utility.RandomList(10, 15, 20);
+			if (entries.Length > 0)
+			{
+				int amountMax = Utility.RandomList(10, 15, 20);
 
-                BulkMaterialType material = BulkMaterialType.None;
-                
-                if(useMaterials)
-                    material = GetRandomMaterial(BulkMaterialType.OakWood, m_CarpentryMaterialChances);
+				BulkMaterialType material = BulkMaterialType.None;
 
-                bool reqExceptional = Utility.RandomBool() || (material == BulkMaterialType.None);
+				if (useMaterials)
+					material = GetRandomMaterial(BulkMaterialType.OakWood, m_CarpentryMaterialChances);
 
-                SmallBulkEntry entry = entries[Utility.Random(entries.Length)];
+				bool reqExceptional = Utility.RandomBool() || (material == BulkMaterialType.None);
 
-                this.Hue = 1512;
-                this.AmountMax = amountMax;
-                this.Type = entry.Type;
-                this.Number = entry.Number;
-                this.Graphic = entry.Graphic;
-                this.RequireExceptional = reqExceptional;
-                this.Material = material;
-                this.GraphicHue = entry.Hue;
-            }
-        }
+				SmallBulkEntry entry = entries[Utility.Random(entries.Length)];
 
-        public SmallCarpentryBOD(int amountCur, int amountMax, Type type, int number, int graphic, bool reqExceptional, BulkMaterialType mat, int hue)
-        {
-            this.Hue = 1512;
-            this.AmountMax = amountMax;
-            this.AmountCur = amountCur;
-            this.Type = type;
-            this.Number = number;
-            this.Graphic = graphic;
-            this.RequireExceptional = reqExceptional;
-            this.Material = mat;
-            this.GraphicHue = hue;
-        }
+				this.Hue = 1512;
+				this.AmountMax = amountMax;
+				this.Type = entry.Type;
+				this.Number = entry.Number;
+				this.Graphic = entry.Graphic;
+				this.RequireExceptional = reqExceptional;
+				this.Material = material;
+				this.GraphicHue = entry.Hue;
+			}
+		}
 
-        public SmallCarpentryBOD(Serial serial)
-            : base(serial)
-        {
-        }
+		public SmallCarpentryBOD(
+			int amountCur,
+			int amountMax,
+			Type type,
+			int number,
+			int graphic,
+			bool reqExceptional,
+			BulkMaterialType mat,
+			int hue
+		)
+		{
+			this.Hue = 1512;
+			this.AmountMax = amountMax;
+			this.AmountCur = amountCur;
+			this.Type = type;
+			this.Number = number;
+			this.Graphic = graphic;
+			this.RequireExceptional = reqExceptional;
+			this.Material = mat;
+			this.GraphicHue = hue;
+		}
 
-        private SmallCarpentryBOD(SmallBulkEntry entry, BulkMaterialType material, int amountMax, bool reqExceptional)
-        {
-            this.Hue = 1512;
-            this.AmountMax = amountMax;
-            this.Type = entry.Type;
-            this.Number = entry.Number;
-            this.Graphic = entry.Graphic;
-            this.RequireExceptional = reqExceptional;
-            this.Material = material;
-        }
+		public SmallCarpentryBOD(Serial serial)
+			: base(serial) { }
 
-        public static SmallCarpentryBOD CreateRandomFor(Mobile m)
-        {
-            SmallBulkEntry[] entries;
-            bool useMaterials = Utility.RandomBool();
+		private SmallCarpentryBOD(SmallBulkEntry entry, BulkMaterialType material, int amountMax, bool reqExceptional)
+		{
+			this.Hue = 1512;
+			this.AmountMax = amountMax;
+			this.Type = entry.Type;
+			this.Number = entry.Number;
+			this.Graphic = entry.Graphic;
+			this.RequireExceptional = reqExceptional;
+			this.Material = material;
+		}
 
-            double theirSkill = BulkOrderSystem.GetBODSkill(m, SkillName.Carpentry);
+		public static SmallCarpentryBOD CreateRandomFor(Mobile m)
+		{
+			SmallBulkEntry[] entries;
+			bool useMaterials = Utility.RandomBool();
 
-            entries = SmallBulkEntry.CarpentrySmalls;
+			double theirSkill = BulkOrderSystem.GetBODSkill(m, SkillName.Carpentry);
 
-            if (entries.Length > 0)
-            {
-                int amountMax;
+			entries = SmallBulkEntry.CarpentrySmalls;
 
-                if (theirSkill >= 70.1)
-                    amountMax = Utility.RandomList(10, 15, 20, 20);
-                else if (theirSkill >= 50.1)
-                    amountMax = Utility.RandomList(10, 15, 15, 20);
-                else
-                    amountMax = Utility.RandomList(10, 10, 15, 20);
+			if (entries.Length > 0)
+			{
+				int amountMax;
 
-                BulkMaterialType material = BulkMaterialType.None;
+				if (theirSkill >= 70.1)
+					amountMax = Utility.RandomList(10, 15, 20, 20);
+				else if (theirSkill >= 50.1)
+					amountMax = Utility.RandomList(10, 15, 15, 20);
+				else
+					amountMax = Utility.RandomList(10, 10, 15, 20);
 
-                if (useMaterials && theirSkill >= 70.1)
-                {
-                    for (int i = 0; i < 20; ++i)
-                    {
-                        BulkMaterialType check = GetRandomMaterial(BulkMaterialType.OakWood, m_CarpentryMaterialChances);
-                        double skillReq = GetRequiredSkill(check);
+				BulkMaterialType material = BulkMaterialType.None;
 
-                        if (theirSkill >= skillReq)
-                        {
-                            material = check;
-                            break;
-                        }
-                    }
-                }
+				if (useMaterials && theirSkill >= 70.1)
+				{
+					for (int i = 0; i < 20; ++i)
+					{
+						BulkMaterialType check = GetRandomMaterial(
+							BulkMaterialType.OakWood,
+							m_CarpentryMaterialChances
+						);
+						double skillReq = GetRequiredSkill(check);
 
-                double excChance = 0.0;
+						if (theirSkill >= skillReq)
+						{
+							material = check;
+							break;
+						}
+					}
+				}
 
-                if (theirSkill >= 70.1)
-                    excChance = (theirSkill + 80.0) / 200.0;
+				double excChance = 0.0;
 
-                bool reqExceptional = (excChance > Utility.RandomDouble());
+				if (theirSkill >= 70.1)
+					excChance = (theirSkill + 80.0) / 200.0;
 
-                CraftSystem system = DefCarpentry.CraftSystem;
+				bool reqExceptional = (excChance > Utility.RandomDouble());
 
-                List<SmallBulkEntry> validEntries = new List<SmallBulkEntry>();
+				CraftSystem system = DefCarpentry.CraftSystem;
 
-                for (int i = 0; i < entries.Length; ++i)
-                {
-                    CraftItem item = system.CraftItems.SearchFor(entries[i].Type);
+				List<SmallBulkEntry> validEntries = new List<SmallBulkEntry>();
 
-                    if (item != null)
-                    {
-                        bool allRequiredSkills = true;
-                        double chance = item.GetSuccessChance(m, null, system, false, ref allRequiredSkills);
+				for (int i = 0; i < entries.Length; ++i)
+				{
+					CraftItem item = system.CraftItems.SearchFor(entries[i].Type);
 
-                        if (allRequiredSkills && chance >= 0.0)
-                        {
-                            if (reqExceptional)
-                                chance = item.GetExceptionalChance(system, chance, m);
+					if (item != null)
+					{
+						bool allRequiredSkills = true;
+						double chance = item.GetSuccessChance(m, null, system, false, ref allRequiredSkills);
 
-                            if (chance > 0.0)
-                                validEntries.Add(entries[i]);
-                        }
-                    }
-                }
+						if (allRequiredSkills && chance >= 0.0)
+						{
+							if (reqExceptional)
+								chance = item.GetExceptionalChance(system, chance, m);
 
-                if (validEntries.Count > 0)
-                {
-                    SmallBulkEntry entry = validEntries[Utility.Random(validEntries.Count)];
-                    return new SmallCarpentryBOD(entry, material, amountMax, reqExceptional);
-                }
-            }
+							if (chance > 0.0)
+								validEntries.Add(entries[i]);
+						}
+					}
+				}
 
-            return null;
-        }
+				if (validEntries.Count > 0)
+				{
+					SmallBulkEntry entry = validEntries[Utility.Random(validEntries.Count)];
+					return new SmallCarpentryBOD(entry, material, amountMax, reqExceptional);
+				}
+			}
 
-        public override int ComputeFame()
-        {
-            return CarpentryRewardCalculator.Instance.ComputeFame(this);
-        }
+			return null;
+		}
 
-        public override int ComputeGold()
-        {
-            return CarpentryRewardCalculator.Instance.ComputeGold(this);
-        }
+		public override int ComputeFame()
+		{
+			return CarpentryRewardCalculator.Instance.ComputeFame(this);
+		}
 
-        public override List<Item> ComputeRewards(bool full)
-        {
-            return null;
-        }
+		public override int ComputeGold()
+		{
+			return CarpentryRewardCalculator.Instance.ComputeGold(this);
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override List<Item> ComputeRewards(bool full)
+		{
+			return null;
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

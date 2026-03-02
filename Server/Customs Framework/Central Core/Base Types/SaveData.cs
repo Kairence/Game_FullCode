@@ -1,6 +1,5 @@
 ﻿#region References
 using System;
-
 using Server;
 #endregion
 
@@ -37,20 +36,37 @@ namespace CustomsFramework
 
 		internal int _TypeID;
 
-		int ISerializable.TypeReference { get { return _TypeID; } }
+		int ISerializable.TypeReference
+		{
+			get { return _TypeID; }
+		}
 
-		int ISerializable.SerialIdentity { get { return _Serial; } }
+		int ISerializable.SerialIdentity
+		{
+			get { return _Serial; }
+		}
 
 		private bool _Deleted;
 		private CustomSerial _Serial;
 
 		[CommandProperty(AccessLevel.Developer)]
-		public bool Deleted { get { return _Deleted; } set { _Deleted = value; } }
+		public bool Deleted
+		{
+			get { return _Deleted; }
+			set { _Deleted = value; }
+		}
 
 		[CommandProperty(AccessLevel.Developer)]
-		public CustomSerial Serial { get { return _Serial; } set { _Serial = value; } }
+		public CustomSerial Serial
+		{
+			get { return _Serial; }
+			set { _Serial = value; }
+		}
 
-		public virtual string Name { get { return @"Save Data"; } }
+		public virtual string Name
+		{
+			get { return @"Save Data"; }
+		}
 
 		public SaveData(CustomSerial serial)
 		{
@@ -82,11 +98,9 @@ namespace CustomsFramework
 			}
 		}
 
-		public virtual void Prep()
-		{ }
+		public virtual void Prep() { }
 
-		public virtual void Delete()
-		{ }
+		public virtual void Delete() { }
 
 		public virtual void Serialize(GenericWriter writer)
 		{
@@ -103,10 +117,10 @@ namespace CustomsFramework
 			switch (version)
 			{
 				case 0:
-					{
-						_Deleted = reader.ReadBool();
-						break;
-					}
+				{
+					_Deleted = reader.ReadBool();
+					break;
+				}
 			}
 		}
 	}

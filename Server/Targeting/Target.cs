@@ -1,6 +1,5 @@
 #region References
 using System;
-
 using Server.Network;
 #endregion
 
@@ -12,7 +11,11 @@ namespace Server.Targeting
 
 		private static bool m_TargetIDValidation = true;
 
-		public static bool TargetIDValidation { get { return m_TargetIDValidation; } set { m_TargetIDValidation = value; } }
+		public static bool TargetIDValidation
+		{
+			get { return m_TargetIDValidation; }
+			set { m_TargetIDValidation = value; }
+		}
 
 		private readonly int m_TargetID;
 		private int m_Range;
@@ -20,7 +23,10 @@ namespace Server.Targeting
 		private bool m_AllowNonlocal;
 		private DateTime m_TimeoutTime;
 
-		public DateTime TimeoutTime { get { return m_TimeoutTime; } }
+		public DateTime TimeoutTime
+		{
+			get { return m_TimeoutTime; }
+		}
 
 		protected Target(int range, bool allowGround, TargetFlags flags)
 		{
@@ -127,13 +133,24 @@ namespace Server.Targeting
 			}
 		}
 
-		public bool CheckLOS { get { return m_CheckLOS; } set { m_CheckLOS = value; } }
+		public bool CheckLOS
+		{
+			get { return m_CheckLOS; }
+			set { m_CheckLOS = value; }
+		}
 
 		public bool DisallowMultis { get; set; }
 
-		public bool AllowNonlocal { get { return m_AllowNonlocal; } set { m_AllowNonlocal = value; } }
+		public bool AllowNonlocal
+		{
+			get { return m_AllowNonlocal; }
+			set { m_AllowNonlocal = value; }
+		}
 
-		public int TargetID { get { return m_TargetID; } }
+		public int TargetID
+		{
+			get { return m_TargetID; }
+		}
 
 		public virtual Packet GetPacketFor(NetState ns)
 		{
@@ -151,12 +168,12 @@ namespace Server.Targeting
 
 		public void Invoke(Mobile from, object targeted)
 		{
-            bool enhancedClient = from.NetState != null && from.NetState.IsEnhancedClient;
+			bool enhancedClient = from.NetState != null && from.NetState.IsEnhancedClient;
 
 			CancelTimeout();
 			from.ClearTarget();
 
-            if (from.Deleted)
+			if (from.Deleted)
 			{
 				OnTargetCancel(from, TargetCancelType.Canceled);
 				OnTargetFinish(from);
@@ -171,12 +188,12 @@ namespace Server.Targeting
 				loc = ((LandTarget)targeted).Location;
 				map = from.Map;
 
-                if (enhancedClient && (loc.X == 0 && loc.Y == 0) && !from.InRange(loc, 10))
-                {
-                    OnTargetCancel(from, TargetCancelType.Canceled);
-                    OnTargetFinish(from);
-                    return;
-                }
+				if (enhancedClient && (loc.X == 0 && loc.Y == 0) && !from.InRange(loc, 10))
+				{
+					OnTargetCancel(from, TargetCancelType.Canceled);
+					OnTargetFinish(from);
+					return;
+				}
 			}
 			else if (targeted is StaticTarget)
 			{
@@ -243,7 +260,7 @@ namespace Server.Targeting
 			}
 			else
 			{
-                if (!from.CanSee(targeted))
+				if (!from.CanSee(targeted))
 				{
 					OnCantSeeTarget(from, targeted);
 				}
@@ -276,8 +293,7 @@ namespace Server.Targeting
 			OnTargetFinish(from);
 		}
 
-		protected virtual void OnTarget(Mobile from, object targeted)
-		{ }
+		protected virtual void OnTarget(Mobile from, object targeted) { }
 
 		protected virtual void OnTargetNotAccessible(Mobile from, object targeted)
 		{
@@ -309,21 +325,22 @@ namespace Server.Targeting
 			from.SendLocalizedMessage(500446); // That is too far away.
 		}
 
-		protected virtual void OnTargetDeleted(Mobile from, object targeted)
-		{ }
+		protected virtual void OnTargetDeleted(Mobile from, object targeted) { }
 
 		protected virtual void OnTargetUntargetable(Mobile from, object targeted)
 		{
 			from.SendLocalizedMessage(500447); // That is not accessible.
 		}
 
-		protected virtual void OnTargetCancel(Mobile from, TargetCancelType cancelType)
-		{ }
+		protected virtual void OnTargetCancel(Mobile from, TargetCancelType cancelType) { }
 
-		protected virtual void OnTargetFinish(Mobile from)
-		{ }
+		protected virtual void OnTargetFinish(Mobile from) { }
 
-		public int Range { get { return m_Range; } set { m_Range = value; } }
+		public int Range
+		{
+			get { return m_Range; }
+			set { m_Range = value; }
+		}
 
 		public bool AllowGround { get; set; }
 

@@ -2,99 +2,93 @@ using System;
 
 namespace Server.Items
 {
-    public abstract class BaseSuit : Item
-    {
-        private AccessLevel m_AccessLevel;
-        public BaseSuit(AccessLevel level, int hue, int itemID)
-            : base(itemID)
-        {
-            this.Hue = hue;
-            this.Weight = 1.0;
-            this.Movable = false;
-            this.LootType = LootType.Newbied;
-            this.Layer = Layer.OuterTorso;
+	public abstract class BaseSuit : Item
+	{
+		private AccessLevel m_AccessLevel;
 
-            this.m_AccessLevel = level;
-        }
+		public BaseSuit(AccessLevel level, int hue, int itemID)
+			: base(itemID)
+		{
+			this.Hue = hue;
+			this.Weight = 1.0;
+			this.Movable = false;
+			this.LootType = LootType.Newbied;
+			this.Layer = Layer.OuterTorso;
 
-        public BaseSuit(Serial serial)
-            : base(serial)
-        {
-        }
+			this.m_AccessLevel = level;
+		}
 
-        [CommandProperty(AccessLevel.Administrator)]
-        public AccessLevel AccessLevel
-        {
-            get
-            {
-                return this.m_AccessLevel;
-            }
-            set
-            {
-                this.m_AccessLevel = value;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public BaseSuit(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
+		[CommandProperty(AccessLevel.Administrator)]
+		public AccessLevel AccessLevel
+		{
+			get { return this.m_AccessLevel; }
+			set { this.m_AccessLevel = value; }
+		}
 
-            writer.Write((int)this.m_AccessLevel);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
 
-            int version = reader.ReadInt();
+			writer.Write((int)this.m_AccessLevel);
+		}
 
-            switch ( version )
-            {
-                case 0:
-                    {
-                        this.m_AccessLevel = (AccessLevel)reader.ReadInt();
-                        break;
-                    }
-            }
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public bool Validate()
-        {
-            object root = this.RootParent;
+			int version = reader.ReadInt();
 
-            if (root is Mobile && ((Mobile)root).AccessLevel < this.m_AccessLevel)
-            {
-                this.Delete();
-                return false;
-            }
+			switch (version)
+			{
+				case 0:
+				{
+					this.m_AccessLevel = (AccessLevel)reader.ReadInt();
+					break;
+				}
+			}
+		}
 
-            return true;
-        }
+		public bool Validate()
+		{
+			object root = this.RootParent;
 
-        public override void OnSingleClick(Mobile from)
-        {
-            if (this.Validate())
-                base.OnSingleClick(from);
-        }
+			if (root is Mobile && ((Mobile)root).AccessLevel < this.m_AccessLevel)
+			{
+				this.Delete();
+				return false;
+			}
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (this.Validate())
-                base.OnDoubleClick(from);
-        }
+			return true;
+		}
 
-        public override bool VerifyMove(Mobile from)
-        {
-            return (from.AccessLevel >= this.m_AccessLevel);
-        }
+		public override void OnSingleClick(Mobile from)
+		{
+			if (this.Validate())
+				base.OnSingleClick(from);
+		}
 
-        public override bool OnEquip(Mobile from)
-        {
-            if (from.AccessLevel < this.m_AccessLevel)
-                from.SendMessage("You may not wear this.");
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (this.Validate())
+				base.OnDoubleClick(from);
+		}
 
-            return (from.AccessLevel >= this.m_AccessLevel);
-        }
-    }
+		public override bool VerifyMove(Mobile from)
+		{
+			return (from.AccessLevel >= this.m_AccessLevel);
+		}
+
+		public override bool OnEquip(Mobile from)
+		{
+			if (from.AccessLevel < this.m_AccessLevel)
+				from.SendMessage("You may not wear this.");
+
+			return (from.AccessLevel >= this.m_AccessLevel);
+		}
+	}
 }

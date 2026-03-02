@@ -1,7 +1,6 @@
 #region References
 using System;
 using System.Diagnostics;
-
 using DiagELog = System.Diagnostics.EventLog;
 #endregion
 

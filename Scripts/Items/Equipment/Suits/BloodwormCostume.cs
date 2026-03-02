@@ -5,36 +5,36 @@ namespace Server.Items
 {
 	public class BloodwormCostume : BaseCostume
 	{
-        public override string CreatureName { get { return "bloodworm"; } }
-
-        [Constructable]
-		public BloodwormCostume() : base( )
+		public override string CreatureName
 		{
-            this.CostumeBody = 287;
+			get { return "bloodworm"; }
 		}
-		
+
+		[Constructable]
+		public BloodwormCostume()
+			: base()
+		{
+			this.CostumeBody = 287;
+		}
+
 		public override int LabelNumber
-        {
-            get
-            {
-                return 1114006;
-            }
-        }// bloodworm halloween costume
-
-		public BloodwormCostume( Serial serial ) : base( serial )
 		{
+			get { return 1114006; }
+		} // bloodworm halloween costume
+
+		public BloodwormCostume(Serial serial)
+			: base(serial) { }
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0);
 		}
 
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
-
-			writer.Write( (int) 0 );
-		}
-		
 		public override void Deserialize(GenericReader reader)
 		{
-			base.Deserialize( reader );
+			base.Deserialize(reader);
 
 			int version = reader.ReadInt();
 		}

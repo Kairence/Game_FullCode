@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
 using Server.Accounting;
 using Server.ContextMenus;
 using Server.Engines.BulkOrders;
@@ -26,17 +25,17 @@ namespace Server.Mobiles
 		Shoes,
 		Boots,
 		Sandals,
-		ThighBoots
+		ThighBoots,
 	}
 
 	public abstract class BaseVendor : BaseCreature, IVendor
 	{
-        public static bool UseVendorEconomy = true; //Core.AOS && !Siege.SiegeShard;
-        public static int BuyItemChange = Config.Get("Vendors.BuyItemChange", 1000);
-        public static int SellItemChange = Config.Get("Vendors.SellItemChange", 1000);
-        public static int EconomyStockAmount = Config.Get("Vendors.EconomyStockAmount", 500);
-        public static TimeSpan DelayRestock = TimeSpan.FromMinutes(Config.Get("Vendors.RestockDelay", 60));
-        public static int MaxSell = Config.Get("Vendors.MaxSell", 500);
+		public static bool UseVendorEconomy = true; //Core.AOS && !Siege.SiegeShard;
+		public static int BuyItemChange = Config.Get("Vendors.BuyItemChange", 1000);
+		public static int SellItemChange = Config.Get("Vendors.SellItemChange", 1000);
+		public static int EconomyStockAmount = Config.Get("Vendors.EconomyStockAmount", 500);
+		public static TimeSpan DelayRestock = TimeSpan.FromMinutes(Config.Get("Vendors.RestockDelay", 60));
+		public static int MaxSell = Config.Get("Vendors.MaxSell", 500);
 
 		public static List<BaseVendor> AllVendors { get; private set; }
 
@@ -51,30 +50,69 @@ namespace Server.Mobiles
 		private readonly ArrayList m_ArmorSellInfo = new ArrayList();
 
 		private DateTime m_LastRestock;
-		
-		public override bool CanTeach { get { return true; } }
 
-		public override bool BardImmune { get { return true; } }
+		public override bool CanTeach
+		{
+			get { return true; }
+		}
 
-		public override bool PlayerRangeSensitive { get { return true; } }
+		public override bool BardImmune
+		{
+			get { return true; }
+		}
 
-        public override bool UseSmartAI { get { return true; } }
+		public override bool PlayerRangeSensitive
+		{
+			get { return true; }
+		}
 
-		public virtual bool IsActiveVendor { get { return true; } }
-		public virtual bool IsActiveBuyer { get { return true; } } //IsActiveVendor && !Siege.SiegeShard; } } // response to vendor SELL
-		public virtual bool IsActiveSeller { get { return true; } } // repsonse to vendor BUY
-		public virtual bool HasHonestyDiscount { get { return false; } }
+		public override bool UseSmartAI
+		{
+			get { return true; }
+		}
 
-		public virtual NpcGuild NpcGuild { get { return NpcGuild.None; } }
+		public virtual bool IsActiveVendor
+		{
+			get { return true; }
+		}
+		public virtual bool IsActiveBuyer
+		{
+			get { return true; }
+		} //IsActiveVendor && !Siege.SiegeShard; } } // response to vendor SELL
+		public virtual bool IsActiveSeller
+		{
+			get { return true; }
+		} // repsonse to vendor BUY
+		public virtual bool HasHonestyDiscount
+		{
+			get { return false; }
+		}
 
-        public virtual bool ChangeRace { get { return true; } }
+		public virtual NpcGuild NpcGuild
+		{
+			get { return NpcGuild.None; }
+		}
 
-		public override bool IsInvulnerable { get { return true; } }
+		public virtual bool ChangeRace
+		{
+			get { return true; }
+		}
+
+		public override bool IsInvulnerable
+		{
+			get { return true; }
+		}
 
 		public virtual DateTime NextTrickOrTreat { get; set; }
-        public virtual double GetMoveDelay { get { return (double)Utility.RandomMinMax(3000, 12000); } }
+		public virtual double GetMoveDelay
+		{
+			get { return (double)Utility.RandomMinMax(3000, 12000); }
+		}
 
-		public override bool ShowFameTitle { get { return false; } }
+		public override bool ShowFameTitle
+		{
+			get { return false; }
+		}
 
 		public virtual bool IsValidBulkOrder(Item item)
 		{
@@ -96,10 +134,12 @@ namespace Server.Mobiles
 			return TimeSpan.Zero;
 		}
 
-		public virtual void OnSuccessfulBulkOrderReceive(Mobile from)
-		{ }
+		public virtual void OnSuccessfulBulkOrderReceive(Mobile from) { }
 
-        public virtual BODType BODType { get { return BODType.Smith; } }
+		public virtual BODType BODType
+		{
+			get { return BODType.Smith; }
+		}
 
 		#region Faction
 		public virtual int GetPriceScalar()
@@ -138,7 +178,7 @@ namespace Server.Mobiles
 			public BulkOrderInfoEntry(Mobile from, BaseVendor vendor)
 				: base(6152, 10)
 			{
-                Enabled = vendor.CheckVendorAccess(from);
+				Enabled = vendor.CheckVendorAccess(from);
 
 				m_From = from;
 				m_Vendor = vendor;
@@ -146,167 +186,178 @@ namespace Server.Mobiles
 
 			public override void OnClick()
 			{
-                if (!m_From.InRange(m_Vendor.Location, 10))
-                    return;
+				if (!m_From.InRange(m_Vendor.Location, 10))
+					return;
 
 				EventSink.InvokeBODOffered(new BODOfferEventArgs(m_From, m_Vendor));
 
-                if (m_Vendor.SupportsBulkOrders(m_From) && m_From is PlayerMobile)
-                {
-                    if (BulkOrderSystem.NewSystemEnabled)
-                    {
-                        if (BulkOrderSystem.CanGetBulkOrder(m_From, m_Vendor.BODType) || m_From.AccessLevel > AccessLevel.Player)
-                        {
-                            Item bulkOrder = BulkOrderSystem.CreateBulkOrder(m_From, m_Vendor.BODType, true);
+				if (m_Vendor.SupportsBulkOrders(m_From) && m_From is PlayerMobile)
+				{
+					if (BulkOrderSystem.NewSystemEnabled)
+					{
+						if (
+							BulkOrderSystem.CanGetBulkOrder(m_From, m_Vendor.BODType)
+							|| m_From.AccessLevel > AccessLevel.Player
+						)
+						{
+							Item bulkOrder = BulkOrderSystem.CreateBulkOrder(m_From, m_Vendor.BODType, true);
 
-                            if (bulkOrder is LargeBOD)
-                            {
-								m_From.CloseGump(typeof (LargeBODAcceptGump));
-                                m_From.SendGump(new LargeBODAcceptGump(m_From, (LargeBOD)bulkOrder));
-                            }
-                            else if (bulkOrder is SmallBOD)
-                            {
-								m_From.CloseGump(typeof (SmallBODAcceptGump));
-                                m_From.SendGump(new SmallBODAcceptGump(m_From, (SmallBOD)bulkOrder));
-                            }
-                        }
-                        else
-                        {
-                            TimeSpan ts = BulkOrderSystem.GetNextBulkOrder(m_Vendor.BODType, (PlayerMobile)m_From);
+							if (bulkOrder is LargeBOD)
+							{
+								m_From.CloseGump(typeof(LargeBODAcceptGump));
+								m_From.SendGump(new LargeBODAcceptGump(m_From, (LargeBOD)bulkOrder));
+							}
+							else if (bulkOrder is SmallBOD)
+							{
+								m_From.CloseGump(typeof(SmallBODAcceptGump));
+								m_From.SendGump(new SmallBODAcceptGump(m_From, (SmallBOD)bulkOrder));
+							}
+						}
+						else
+						{
+							TimeSpan ts = BulkOrderSystem.GetNextBulkOrder(m_Vendor.BODType, (PlayerMobile)m_From);
 
-                            int totalSeconds = (int)ts.TotalSeconds;
-                            int totalHours = (totalSeconds + 3599) / 3600;
-                            int totalMinutes = (totalSeconds + 59) / 60;
+							int totalSeconds = (int)ts.TotalSeconds;
+							int totalHours = (totalSeconds + 3599) / 3600;
+							int totalMinutes = (totalSeconds + 59) / 60;
 
-                            m_Vendor.SayTo(m_From, 1072058, totalMinutes.ToString(), 0x3B2); // An offer may be available in about ~1_minutes~ minutes.
-                        }
-                    }
-                    else
-                    {
-                        TimeSpan ts = m_Vendor.GetNextBulkOrder(m_From);
+							m_Vendor.SayTo(m_From, 1072058, totalMinutes.ToString(), 0x3B2); // An offer may be available in about ~1_minutes~ minutes.
+						}
+					}
+					else
+					{
+						TimeSpan ts = m_Vendor.GetNextBulkOrder(m_From);
 
-                        int totalSeconds = (int)ts.TotalSeconds;
-                        int totalHours = (totalSeconds + 3599) / 3600;
-                        int totalMinutes = (totalSeconds + 59) / 60;
+						int totalSeconds = (int)ts.TotalSeconds;
+						int totalHours = (totalSeconds + 3599) / 3600;
+						int totalMinutes = (totalSeconds + 59) / 60;
 
-                        if (((Core.SE) ? totalMinutes == 0 : totalHours == 0))
-                        {
-                            m_From.SendLocalizedMessage(1049038); // You can get an order now.
+						if (((Core.SE) ? totalMinutes == 0 : totalHours == 0))
+						{
+							m_From.SendLocalizedMessage(1049038); // You can get an order now.
 
-                            if (Core.AOS)
-                            {
-                                Item bulkOrder = m_Vendor.CreateBulkOrder(m_From, true);
+							if (Core.AOS)
+							{
+								Item bulkOrder = m_Vendor.CreateBulkOrder(m_From, true);
 
-                                if (bulkOrder is LargeBOD)
-                                {
-									m_From.CloseGump(typeof (LargeBODAcceptGump));
-                                    m_From.SendGump(new LargeBODAcceptGump(m_From, (LargeBOD)bulkOrder));
-                                }
-                                else if (bulkOrder is SmallBOD)
-                                {
-									m_From.CloseGump(typeof (SmallBODAcceptGump));
-                                    m_From.SendGump(new SmallBODAcceptGump(m_From, (SmallBOD)bulkOrder));
-                                }
-                            }
-                        }
-                        else
-                        {
-                            int oldSpeechHue = m_Vendor.SpeechHue;
-                            m_Vendor.SpeechHue = 0x3B2;
+								if (bulkOrder is LargeBOD)
+								{
+									m_From.CloseGump(typeof(LargeBODAcceptGump));
+									m_From.SendGump(new LargeBODAcceptGump(m_From, (LargeBOD)bulkOrder));
+								}
+								else if (bulkOrder is SmallBOD)
+								{
+									m_From.CloseGump(typeof(SmallBODAcceptGump));
+									m_From.SendGump(new SmallBODAcceptGump(m_From, (SmallBOD)bulkOrder));
+								}
+							}
+						}
+						else
+						{
+							int oldSpeechHue = m_Vendor.SpeechHue;
+							m_Vendor.SpeechHue = 0x3B2;
 
-                            if (Core.SE)
-                            {
-                                m_Vendor.SayTo(m_From, 1072058, totalMinutes.ToString(), 0x3B2);
-                                // An offer may be available in about ~1_minutes~ minutes.
-                            }
-                            else
-                            {
-                                m_Vendor.SayTo(m_From, 1049039, totalHours.ToString(), 0x3B2); // An offer may be available in about ~1_hours~ hours.
-                            }
+							if (Core.SE)
+							{
+								m_Vendor.SayTo(m_From, 1072058, totalMinutes.ToString(), 0x3B2);
+								// An offer may be available in about ~1_minutes~ minutes.
+							}
+							else
+							{
+								m_Vendor.SayTo(m_From, 1049039, totalHours.ToString(), 0x3B2); // An offer may be available in about ~1_hours~ hours.
+							}
 
-                            m_Vendor.SpeechHue = oldSpeechHue;
-                        }
-                    }
-                }
+							m_Vendor.SpeechHue = oldSpeechHue;
+						}
+					}
+				}
 			}
 		}
 
-        private class BribeEntry : ContextMenuEntry
-        {
-            private Mobile m_From;
-            private BaseVendor m_Vendor;
+		private class BribeEntry : ContextMenuEntry
+		{
+			private Mobile m_From;
+			private BaseVendor m_Vendor;
 
-            public BribeEntry(Mobile from, BaseVendor vendor)
-                : base(1152294, 2)
-            {
-                Enabled = vendor.CheckVendorAccess(from);
-
-                m_From = from;
-                m_Vendor = vendor;
-            }
-
-            public override void OnClick()
-            {
-                if (!m_From.InRange(m_Vendor.Location, 2) || !(m_From is PlayerMobile))
-                    return;
-
-                if (m_Vendor.SupportsBulkOrders(m_From) && m_From is PlayerMobile)
-                {
-                    if (m_From.NetState != null && m_From.NetState.IsEnhancedClient)
-                    {
-                        Timer.DelayCall(TimeSpan.FromMilliseconds(100), m_Vendor.TryBribe, m_From);
-                    }
-                    else
-                    {
-                        m_Vendor.TryBribe(m_From);
-                    }
-                }
-            }
-        }
-
-        private class ClaimRewardsEntry : ContextMenuEntry
-        {
-            private readonly Mobile m_From;
-			private readonly BaseVendor m_Vendor;
-
-            public ClaimRewardsEntry(Mobile from, BaseVendor vendor)
-                : base(1155593, 3)
+			public BribeEntry(Mobile from, BaseVendor vendor)
+				: base(1152294, 2)
 			{
-                Enabled = vendor.CheckVendorAccess(from);
+				Enabled = vendor.CheckVendorAccess(from);
 
 				m_From = from;
 				m_Vendor = vendor;
 			}
 
-            public override void OnClick()
-            {
-                if (!m_From.InRange(m_Vendor.Location, 3) || !(m_From is PlayerMobile))
-                    return;
+			public override void OnClick()
+			{
+				if (!m_From.InRange(m_Vendor.Location, 2) || !(m_From is PlayerMobile))
+					return;
 
-                var context = BulkOrderSystem.GetContext(m_From);
-                int pending = context.GetPendingRewardFor(m_Vendor.BODType);
+				if (m_Vendor.SupportsBulkOrders(m_From) && m_From is PlayerMobile)
+				{
+					if (m_From.NetState != null && m_From.NetState.IsEnhancedClient)
+					{
+						Timer.DelayCall(TimeSpan.FromMilliseconds(100), m_Vendor.TryBribe, m_From);
+					}
+					else
+					{
+						m_Vendor.TryBribe(m_From);
+					}
+				}
+			}
+		}
 
-                if (pending > 0)
-                {
-                    if (context.PointsMode == PointsMode.Enabled)
-                    {
-                        m_From.SendGump(new ConfirmBankPointsGump((PlayerMobile)m_From, m_Vendor, m_Vendor.BODType, pending, (double)pending * 0.02));
-                    }
-                    else
-                    {
-                        m_From.SendGump(new RewardsGump(m_Vendor, (PlayerMobile)m_From, m_Vendor.BODType, pending));
-                    }
-                }
-                else if (!BulkOrderSystem.CanClaimRewards(m_From))
-                {
-                    m_Vendor.SayTo(m_From, 1157083, 0x3B2); // You must claim your last turn-in reward in order for us to continue doing business.
-                }
-                else
-                {
-                    m_From.SendGump(new RewardsGump(m_Vendor, (PlayerMobile)m_From, m_Vendor.BODType));
-                }
-            }
-        }
+		private class ClaimRewardsEntry : ContextMenuEntry
+		{
+			private readonly Mobile m_From;
+			private readonly BaseVendor m_Vendor;
+
+			public ClaimRewardsEntry(Mobile from, BaseVendor vendor)
+				: base(1155593, 3)
+			{
+				Enabled = vendor.CheckVendorAccess(from);
+
+				m_From = from;
+				m_Vendor = vendor;
+			}
+
+			public override void OnClick()
+			{
+				if (!m_From.InRange(m_Vendor.Location, 3) || !(m_From is PlayerMobile))
+					return;
+
+				var context = BulkOrderSystem.GetContext(m_From);
+				int pending = context.GetPendingRewardFor(m_Vendor.BODType);
+
+				if (pending > 0)
+				{
+					if (context.PointsMode == PointsMode.Enabled)
+					{
+						m_From.SendGump(
+							new ConfirmBankPointsGump(
+								(PlayerMobile)m_From,
+								m_Vendor,
+								m_Vendor.BODType,
+								pending,
+								(double)pending * 0.02
+							)
+						);
+					}
+					else
+					{
+						m_From.SendGump(new RewardsGump(m_Vendor, (PlayerMobile)m_From, m_Vendor.BODType, pending));
+					}
+				}
+				else if (!BulkOrderSystem.CanClaimRewards(m_From))
+				{
+					m_Vendor.SayTo(m_From, 1157083, 0x3B2); // You must claim your last turn-in reward in order for us to continue doing business.
+				}
+				else
+				{
+					m_From.SendGump(new RewardsGump(m_Vendor, (PlayerMobile)m_From, m_Vendor.BODType));
+				}
+			}
+		}
 
 		public BaseVendor(string title)
 			: base(AIType.AI_Vendor, FightMode.None, 2, 1, 0.5, 5)
@@ -326,7 +377,7 @@ namespace Server.Mobiles
 			pack.Layer = Layer.ShopBuy;
 			pack.Movable = false;
 			pack.Visible = false;
-            AddItem(pack);
+			AddItem(pack);
 
 			pack = new Backpack();
 			pack.Layer = Layer.ShopResale;
@@ -334,10 +385,10 @@ namespace Server.Mobiles
 			pack.Visible = false;
 			AddItem(pack);
 
-            BribeMultiplier = Utility.Random(10);
+			BribeMultiplier = Utility.Random(10);
 
-			MyGold = Utility.RandomMinMax( 5000, 50000 );
-			
+			MyGold = Utility.RandomMinMax(5000, 50000);
+
 			m_LastRestock = DateTime.Now;
 		}
 
@@ -357,14 +408,21 @@ namespace Server.Mobiles
 		public override void OnAfterDelete()
 		{
 			base.OnAfterDelete();
-			
+
 			AllVendors.Remove(this);
 		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-		public DateTime LastRestock { get { return m_LastRestock; } set { m_LastRestock = value; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public DateTime LastRestock
+		{
+			get { return m_LastRestock; }
+			set { m_LastRestock = value; }
+		}
 
-        public virtual TimeSpan RestockDelay { get { return TimeSpan.FromMinutes(Utility.RandomMinMax(60, 120)); } }
+		public virtual TimeSpan RestockDelay
+		{
+			get { return TimeSpan.FromMinutes(Utility.RandomMinMax(60, 120)); }
+		}
 
 		public Container BuyPack
 		{
@@ -386,8 +444,14 @@ namespace Server.Mobiles
 
 		public abstract void InitSBInfo();
 
-		public virtual bool IsTokunoVendor { get { return (Map == Map.Tokuno); } }
-        public virtual bool IsStygianVendor { get { return (Map == Map.TerMur); } }
+		public virtual bool IsTokunoVendor
+		{
+			get { return (Map == Map.Tokuno); }
+		}
+		public virtual bool IsStygianVendor
+		{
+			get { return (Map == Map.TerMur); }
+		}
 
 		protected void LoadSBInfo()
 		{
@@ -471,12 +535,15 @@ namespace Server.Mobiles
 			return Utility.RandomNeutralHue();
 		}
 
-		public virtual VendorShoeType ShoeType { get { return VendorShoeType.Shoes; } }
+		public virtual VendorShoeType ShoeType
+		{
+			get { return VendorShoeType.Shoes; }
+		}
 
 		public virtual void CheckMorph()
 		{
-            if (!ChangeRace)
-                return;
+			if (!ChangeRace)
+				return;
 
 			if (CheckGargoyle())
 			{
@@ -560,18 +627,18 @@ namespace Server.Mobiles
 		}
 
 		#region SA Change
-        public virtual bool CheckTerMur()
-        {
-            Map map = Map;
+		public virtual bool CheckTerMur()
+		{
+			Map map = Map;
 
-            if (map != Map.TerMur || Server.Spells.SpellHelper.IsEodon(map, Location))
-                return false;
+			if (map != Map.TerMur || Server.Spells.SpellHelper.IsEodon(map, Location))
+				return false;
 
-            if (Body != 0x29A || Body != 0x29B)
-                TurnToGargRace();
+			if (Body != 0x29A || Body != 0x29B)
+				TurnToGargRace();
 
-            return true;
-        }
+			return true;
+		}
 		#endregion
 
 		public virtual bool CheckNecromancer()
@@ -785,12 +852,12 @@ namespace Server.Mobiles
 
 			Utility.AssignRandomHair(this, hairHue);
 			Utility.AssignRandomFacialHair(this, hairHue);
-			
+
 			if (Body == 0x191)
 			{
 				FacialHairItemID = 0;
 			}
-						
+
 			if (Body == 0x191)
 			{
 				switch (Utility.Random(6))
@@ -822,8 +889,8 @@ namespace Server.Mobiles
 				}
 			}
 
-            if(!Siege.SiegeShard)
-			    PackGold(50, 100);
+			if (!Siege.SiegeShard)
+				PackGold(50, 100);
 		}
 
 		#region SA
@@ -870,25 +937,25 @@ namespace Server.Mobiles
 				}
 			}
 
-            if(!Siege.SiegeShard)
-			    PackGold(50, 100);
+			if (!Siege.SiegeShard)
+				PackGold(50, 100);
 		}
 		#endregion
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool ForceRestock
-        {
-            get { return false; }
-            set
-            {
-                if (value)
-                {
-                    Restock();
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool ForceRestock
+		{
+			get { return false; }
+			set
+			{
+				if (value)
+				{
+					Restock();
 					ReBuyandSell();
 					Say("Restocked!");
-                }
-            }
-        }
+				}
+			}
+		}
 
 		public virtual void ReBuyandSell()
 		{
@@ -904,42 +971,42 @@ namespace Server.Mobiles
 					int rebalance = Misc.Util.RegionPrice(this);
 					GenericBuyInfo gbi = buyInfo[j];
 
-					rebalance = Utility.RandomMinMax( rebalance * -2, rebalance * 2 );
+					rebalance = Utility.RandomMinMax(rebalance * -2, rebalance * 2);
 					//rebalance가 +면 상인이 구매 유저가 판매하면 rebalance는 +
 					//rebalance가 -면 상인이 판매 유저가 구매하니 rebalance는 -
-					
-					if( MyGold >= Misc.Util.RegionPrice(this) * 100 && rebalance < 0 )
+
+					if (MyGold >= Misc.Util.RegionPrice(this) * 100 && rebalance < 0)
 						rebalance *= -1;
-					
-					if( rebalance == 0 || gbi.Price == 0 )
+
+					if (rebalance == 0 || gbi.Price == 0)
 						continue;
-					else if( rebalance > 0 ) //상인이 구매
+					else if (rebalance > 0) //상인이 구매
 					{
-						if( MyGold < gbi.Price )
+						if (MyGold < gbi.Price)
 							continue;
-						else if( MyGold < gbi.Price * rebalance )
+						else if (MyGold < gbi.Price * rebalance)
 							rebalance = MyGold / gbi.Price;
 						MyGold -= gbi.Price * rebalance;
 					}
 					else
 					{
-						MyGold += gbi.Price * ( rebalance * -1);
-					}					
+						MyGold += gbi.Price * (rebalance * -1);
+					}
 					gbi.TotalBought -= rebalance;
 				}
 			}
 		}
-		
+
 		public virtual void Restock()
 		{
 			m_LastRestock = DateTime.Now;
 
 			var buyInfo = GetBuyInfo();
 
-			if( MyGold < 50000 )
-				MyGold += Utility.RandomMinMax( ( 50000 - MyGold ) / 20, ( 50000 - MyGold ) / 5 );
-			
-			MyGold += Utility.RandomMinMax( 1000, 2500 );
+			if (MyGold < 50000)
+				MyGold += Utility.RandomMinMax((50000 - MyGold) / 20, (50000 - MyGold) / 5);
+
+			MyGold += Utility.RandomMinMax(1000, 2500);
 
 			/*
 			foreach (IBuyItemInfo bii in buyInfo)
@@ -1000,10 +1067,10 @@ namespace Server.Mobiles
 				GenericBuyInfo gbi = (GenericBuyInfo)buyItem;
 				IEntity disp = gbi.GetDisplayEntity();
 
-                if (Siege.SiegeShard && !Siege.VendorCanSell(gbi.Type))
-                {
-                    continue;
-                }
+				if (Siege.SiegeShard && !Siege.VendorCanSell(gbi.Type))
+				{
+					continue;
+				}
 				list.Add(
 					new BuyItemState(
 						buyItem.Name,
@@ -1012,7 +1079,9 @@ namespace Server.Mobiles
 						buyItem.Price,
 						buyItem.Amount,
 						buyItem.ItemID,
-						buyItem.Hue));
+						buyItem.Hue
+					)
+				);
 				count++;
 
 				if (opls == null)
@@ -1051,10 +1120,10 @@ namespace Server.Mobiles
 			{
 				Item item = playerItems[i];
 
-                if (Siege.SiegeShard && !Siege.VendorCanSell(item.GetType()))
-                {
-                    continue;
-                }
+				if (Siege.SiegeShard && !Siege.VendorCanSell(item.GetType()))
+				{
+					continue;
+				}
 
 				int price = 0;
 				string name = null;
@@ -1071,7 +1140,9 @@ namespace Server.Mobiles
 
 				if (name != null && list.Count < 250)
 				{
-					list.Add(new BuyItemState(name, cont.Serial, item.Serial, price, item.Amount, item.ItemID, item.Hue));
+					list.Add(
+						new BuyItemState(name, cont.Serial, item.Serial, price, item.Amount, item.ItemID, item.Hue)
+					);
 					count++;
 
 					if (opls == null)
@@ -1126,7 +1197,7 @@ namespace Server.Mobiles
 					}
 				}
 
-                SayTo(from, 500186, 0x3B2); // Greetings.  Have a look around.
+				SayTo(from, 500186, 0x3B2); // Greetings.  Have a look around.
 			}
 		}
 
@@ -1177,7 +1248,7 @@ namespace Server.Mobiles
 			{
 				return;
 			}
-			
+
 			if (!CheckVendorAccess(from))
 			{
 				Say(501522); // I shall not treat with scum like thee!
@@ -1189,7 +1260,7 @@ namespace Server.Mobiles
 				Restock();
 				ReBuyandSell();
 			}
-			
+
 			Container pack = from.Backpack;
 
 			if (pack != null)
@@ -1211,7 +1282,11 @@ namespace Server.Mobiles
 
 						if (item.IsStandardLoot() && item.Movable && ssi.IsSellable(item))
 						{
-							table[item] = new SellItemState(item, ssi.GetSellPriceFor(item, this), ssi.GetNameFor(item));
+							table[item] = new SellItemState(
+								item,
+								ssi.GetSellPriceFor(item, this),
+								ssi.GetNameFor(item)
+							);
 						}
 					}
 				}
@@ -1232,111 +1307,111 @@ namespace Server.Mobiles
 		public override bool OnDragDrop(Mobile from, Item dropped)
 		{
 			/*
-            if (ConvertsMageArmor && dropped is BaseArmor && CheckConvertArmor(from, (BaseArmor)dropped))
-            {
-                return false;
-            }
+			if (ConvertsMageArmor && dropped is BaseArmor && CheckConvertArmor(from, (BaseArmor)dropped))
+			{
+				return false;
+			}
 
 			if (dropped is SmallBOD || dropped is LargeBOD)
 			{
-                PlayerMobile pm = from as PlayerMobile;
-                IBOD bod = dropped as IBOD;
+				PlayerMobile pm = from as PlayerMobile;
+				IBOD bod = dropped as IBOD;
 
-                if (bod != null && BulkOrderSystem.NewSystemEnabled && Bribes != null && Bribes.ContainsKey(from) && Bribes[from].BOD == bod)
-                {
-                    if (BulkOrderSystem.CanExchangeBOD(from, this, bod, Bribes[from].Amount))
-                    {
-                        DoBribe(from, bod);
-                        return false;
-                    }
-                }
-				
-                if (Core.ML && pm != null && pm.NextBODTurnInTime > DateTime.UtcNow)
+				if (bod != null && BulkOrderSystem.NewSystemEnabled && Bribes != null && Bribes.ContainsKey(from) && Bribes[from].BOD == bod)
 				{
-                    SayTo(from, 1079976, 0x3B2); // You'll have to wait a few seconds while I inspect the last order.
+					if (BulkOrderSystem.CanExchangeBOD(from, this, bod, Bribes[from].Amount))
+					{
+						DoBribe(from, bod);
+						return false;
+					}
+				}
+				
+				if (Core.ML && pm != null && pm.NextBODTurnInTime > DateTime.UtcNow)
+				{
+					SayTo(from, 1079976, 0x3B2); // You'll have to wait a few seconds while I inspect the last order.
 					return false;
 				}
 				else if (!IsValidBulkOrder(dropped) || !SupportsBulkOrders(from))
 				{
-                    SayTo(from, 1045130, 0x3B2); // That order is for some other shopkeeper.
+					SayTo(from, 1045130, 0x3B2); // That order is for some other shopkeeper.
 					return false;
 				}
-                else if (!BulkOrderSystem.CanClaimRewards(from))
-                {
-                    SayTo(from, 1157083, 0x3B2); // You must claim your last turn-in reward in order for us to continue doing business.
-                    return false;
-                }
-                else if (bod == null || !bod.Complete)
+				else if (!BulkOrderSystem.CanClaimRewards(from))
 				{
-                    SayTo(from, 1045131, 0x3B2); // You have not completed the order yet.
+					SayTo(from, 1157083, 0x3B2); // You must claim your last turn-in reward in order for us to continue doing business.
+					return false;
+				}
+				else if (bod == null || !bod.Complete)
+				{
+					SayTo(from, 1045131, 0x3B2); // You have not completed the order yet.
 					return false;
 				}
 
-                Item reward;
-                int gold, fame;
+				Item reward;
+				int gold, fame;
 
-                if (dropped is SmallBOD)
-                {
-                    ((SmallBOD)dropped).GetRewards(out reward, out gold, out fame);
-                }
-                else
-                {
-                    ((LargeBOD)dropped).GetRewards(out reward, out gold, out fame);
-                }
+				if (dropped is SmallBOD)
+				{
+					((SmallBOD)dropped).GetRewards(out reward, out gold, out fame);
+				}
+				else
+				{
+					((LargeBOD)dropped).GetRewards(out reward, out gold, out fame);
+				}
 
-                from.SendSound(0x3D);
+				from.SendSound(0x3D);
 
-                if (BulkOrderSystem.NewSystemEnabled && from is PlayerMobile)
-                {
-                    SayTo(from, 1157204, from.Name, 0x3B2); // Ho! Ho! Thank ye ~1_PLAYER~ for giving me a Bulk Order Deed!
+				if (BulkOrderSystem.NewSystemEnabled && from is PlayerMobile)
+				{
+					SayTo(from, 1157204, from.Name, 0x3B2); // Ho! Ho! Thank ye ~1_PLAYER~ for giving me a Bulk Order Deed!
 
-                    BODContext context = BulkOrderSystem.GetContext(from); 
+					BODContext context = BulkOrderSystem.GetContext(from);
 
-                    int points = 0;
-                    double banked = 0.0;
+					int points = 0;
+					double banked = 0.0;
 
-                    if(dropped is SmallBOD)
-                        BulkOrderSystem.ComputePoints((SmallBOD)dropped, out points, out banked);
-                    else
-                        BulkOrderSystem.ComputePoints((LargeBOD)dropped, out points, out banked);
+					if(dropped is SmallBOD)
+						BulkOrderSystem.ComputePoints((SmallBOD)dropped, out points, out banked);
+					else
+						BulkOrderSystem.ComputePoints((LargeBOD)dropped, out points, out banked);
 
-                    switch (context.PointsMode)
-                    {
-                        case PointsMode.Enabled:
-                            context.AddPending(BODType, points);
-                            from.SendGump(new ConfirmBankPointsGump((PlayerMobile)from, this, this.BODType, points, banked));
-                            break;
-                        case PointsMode.Disabled:
-                            context.AddPending(BODType, points);
-                            from.SendGump(new RewardsGump(this, (PlayerMobile)from, this.BODType, points));
-                            break;
-                        case PointsMode.Automatic:
-                            BulkOrderSystem.SetPoints(from, this.BODType, banked);
-                            from.SendGump(new RewardsGump(this, (PlayerMobile)from, this.BODType));
-                            break;
-                    }
+					switch (context.PointsMode)
+					{
+						case PointsMode.Enabled:
+							context.AddPending(BODType, points);
+							from.SendGump(new ConfirmBankPointsGump((PlayerMobile)from, this, this.BODType, points, banked));
+							break;
+						case PointsMode.Disabled:
+							context.AddPending(BODType, points);
+							from.SendGump(new RewardsGump(this, (PlayerMobile)from, this.BODType, points));
+							break;
+						case PointsMode.Automatic:
+							BulkOrderSystem.SetPoints(from, this.BODType, banked);
+							from.SendGump(new RewardsGump(this, (PlayerMobile)from, this.BODType));
+							break;
+					}
 
-                    // On EA, you have to choose the reward before you get the gold/fame reward.  IF you right click the gump, you lose 
-                    // the gold/fame for that bod.
+					// On EA, you have to choose the reward before you get the gold/fame reward.  IF you right click the gump, you lose
+					// the gold/fame for that bod.
 
-                    Banker.Deposit(from, gold, true);
-                }
-                else
-                {
-                    SayTo(from, 1045132, 0x3B2); // Thank you so much!  Here is a reward for your effort.
+					Banker.Deposit(from, gold, true);
+				}
+				else
+				{
+					SayTo(from, 1045132, 0x3B2); // Thank you so much!  Here is a reward for your effort.
 
-                    if (reward != null)
-                    {
-                        from.AddToBackpack(reward);
-                    }
+					if (reward != null)
+					{
+						from.AddToBackpack(reward);
+					}
 
-                    Banker.Deposit(from, gold, true);
-                }
+					Banker.Deposit(from, gold, true);
+				}
 
 				Titles.AwardFame(from, fame, true);
 
 				OnSuccessfulBulkOrderReceive(from);
-                Server.Engines.CityLoyalty.CityLoyaltySystem.OnBODTurnIn(from, gold);
+				Server.Engines.CityLoyalty.CityLoyaltySystem.OnBODTurnIn(from, gold);
 
 				if (Core.ML && pm != null)
 				{
@@ -1346,186 +1421,205 @@ namespace Server.Mobiles
 				dropped.Delete();
 				return true;
 			}
-            else if (AcceptsGift(from, dropped))
-            {
-                dropped.Delete();
-            }
+			else if (AcceptsGift(from, dropped))
+			{
+				dropped.Delete();
+			}
 			*/
 			return base.OnDragDrop(from, dropped);
 		}
 
-        public bool AcceptsGift(Mobile from, Item dropped)
-        {
-            string name;
+		public bool AcceptsGift(Mobile from, Item dropped)
+		{
+			string name;
 
-            if (dropped.Name != null)
-            {
-                if (dropped.Amount > 0)
-                {
-                    name = String.Format("{0} {1}", dropped.Amount, dropped.Name);
-                }
-                else
-                {
-                    name = dropped.Name;
-                }
-            }
-            else
-            {
-                name = Server.Engines.VendorSearching.VendorSearch.GetItemName(dropped);
-            }
+			if (dropped.Name != null)
+			{
+				if (dropped.Amount > 0)
+				{
+					name = String.Format("{0} {1}", dropped.Amount, dropped.Name);
+				}
+				else
+				{
+					name = dropped.Name;
+				}
+			}
+			else
+			{
+				name = Server.Engines.VendorSearching.VendorSearch.GetItemName(dropped);
+			}
 
-            if (!String.IsNullOrEmpty(name))
-            {
-                PrivateOverheadMessage(MessageType.Regular, 0x3B2, true, String.Format("Thou art giving me {0}.", name), from.NetState);
-            }
-            else
-            {
-                this.SayTo(from, 1071971, String.Format("#{0}", dropped.LabelNumber.ToString()), 0x3B2); // Thou art giving me ~1_VAL~?
-            }
+			if (!String.IsNullOrEmpty(name))
+			{
+				PrivateOverheadMessage(
+					MessageType.Regular,
+					0x3B2,
+					true,
+					String.Format("Thou art giving me {0}.", name),
+					from.NetState
+				);
+			}
+			else
+			{
+				this.SayTo(from, 1071971, String.Format("#{0}", dropped.LabelNumber.ToString()), 0x3B2); // Thou art giving me ~1_VAL~?
+			}
 
-            if (dropped is Gold)
-            {
-                this.SayTo(from, 501548, 0x3B2); // I thank thee.
-                Titles.AwardFame(from, dropped.Amount / 100, true);
+			if (dropped is Gold)
+			{
+				this.SayTo(from, 501548, 0x3B2); // I thank thee.
+				Titles.AwardFame(from, dropped.Amount / 100, true);
 
-                return true;
-            }
+				return true;
+			}
 
-            var info = GetSellInfo();
+			var info = GetSellInfo();
 
-            foreach (IShopSellInfo ssi in info)
-            {
-                if (ssi.IsSellable(dropped))
-                {
-                    this.SayTo(from, 501548, 0x3B2); // I thank thee.
-                    Titles.AwardFame(from, ssi.GetSellPriceFor(dropped, this) * dropped.Amount, true);
+			foreach (IShopSellInfo ssi in info)
+			{
+				if (ssi.IsSellable(dropped))
+				{
+					this.SayTo(from, 501548, 0x3B2); // I thank thee.
+					Titles.AwardFame(from, ssi.GetSellPriceFor(dropped, this) * dropped.Amount, true);
 
-                    return true;
-                }
-            }
+					return true;
+				}
+			}
 
-            this.SayTo(from, 501550, 0x3B2); // I am not interested in this.
+			this.SayTo(from, 501550, 0x3B2); // I am not interested in this.
 
-            return false;
-        }
+			return false;
+		}
 
-        #region BOD Bribing
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int BribeMultiplier { get; set; }
+		#region BOD Bribing
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int BribeMultiplier { get; set; }
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public DateTime NextMultiplierDecay { get; set; }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public DateTime NextMultiplierDecay { get; set; }
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public DateTime WatchEnds { get; set; }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public DateTime WatchEnds { get; set; }
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int RecentBribes { get; set; }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int RecentBribes { get; set; }
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool UnderWatch { get { return WatchEnds > DateTime.MinValue; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool UnderWatch
+		{
+			get { return WatchEnds > DateTime.MinValue; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int MyGold { get; set; }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int MyGold { get; set; }
 
-        public Dictionary<Mobile, PendingBribe> Bribes { get; set; }
+		public Dictionary<Mobile, PendingBribe> Bribes { get; set; }
 
-        private void CheckNextMultiplierDecay(bool force = true)
-        {
-            int minDays = Config.Get("Vendors.BribeDecayMinTime", 25);
-            int maxDays = Config.Get("Vendors.BribeDecayMaxTime", 30);
+		private void CheckNextMultiplierDecay(bool force = true)
+		{
+			int minDays = Config.Get("Vendors.BribeDecayMinTime", 25);
+			int maxDays = Config.Get("Vendors.BribeDecayMaxTime", 30);
 
-            if (force || (NextMultiplierDecay > DateTime.UtcNow + TimeSpan.FromDays(maxDays)))
-                NextMultiplierDecay = DateTime.UtcNow + TimeSpan.FromDays(Utility.RandomMinMax(minDays, maxDays));
-        }
+			if (force || (NextMultiplierDecay > DateTime.UtcNow + TimeSpan.FromDays(maxDays)))
+				NextMultiplierDecay = DateTime.UtcNow + TimeSpan.FromDays(Utility.RandomMinMax(minDays, maxDays));
+		}
 
-        public void TryBribe(Mobile m)
-        {
-            if (UnderWatch)
-            {
-                if (WatchEnds < DateTime.UtcNow)
-                {
-                    WatchEnds = DateTime.MinValue;
-                    RecentBribes = 0;
-                }
-                else
-                {
-                    SayTo(m, 1152293, 0x3B2); // My business is being watched by the Guild, so I can't be messing with bulk orders right now. Come back when there's less heat on me!
-                    return;
-                }
-            }
+		public void TryBribe(Mobile m)
+		{
+			if (UnderWatch)
+			{
+				if (WatchEnds < DateTime.UtcNow)
+				{
+					WatchEnds = DateTime.MinValue;
+					RecentBribes = 0;
+				}
+				else
+				{
+					SayTo(m, 1152293, 0x3B2); // My business is being watched by the Guild, so I can't be messing with bulk orders right now. Come back when there's less heat on me!
+					return;
+				}
+			}
 
-            SayTo(m, 1152295, 0x3B2); // So you want to do a little business under the table?
-            m.SendLocalizedMessage(1152296); // Target a bulk order deed to show to the shopkeeper.
+			SayTo(m, 1152295, 0x3B2); // So you want to do a little business under the table?
+			m.SendLocalizedMessage(1152296); // Target a bulk order deed to show to the shopkeeper.
 
-            m.BeginTarget(-1, false, Server.Targeting.TargetFlags.None, (from, targeted) =>
-            {
-                IBOD bod = targeted as IBOD;
+			m.BeginTarget(
+				-1,
+				false,
+				Server.Targeting.TargetFlags.None,
+				(from, targeted) =>
+				{
+					IBOD bod = targeted as IBOD;
 
-                if (bod is Item && ((Item)bod).IsChildOf(from.Backpack))
-                {
-                    if (BulkOrderSystem.CanExchangeBOD(from, this, bod, -1))
-                    {
-                        int amount = BulkOrderSystem.GetBribe(bod);
-                        amount *= BribeMultiplier;
+					if (bod is Item && ((Item)bod).IsChildOf(from.Backpack))
+					{
+						if (BulkOrderSystem.CanExchangeBOD(from, this, bod, -1))
+						{
+							int amount = BulkOrderSystem.GetBribe(bod);
+							amount *= BribeMultiplier;
 
-                        if (Bribes == null)
-                            Bribes = new Dictionary<Mobile, PendingBribe>();
+							if (Bribes == null)
+								Bribes = new Dictionary<Mobile, PendingBribe>();
 
-                        // Per EA, new bribe replaced old pending bribe
-                        if (!Bribes.ContainsKey(m))
-                        {
-                            Bribes[m] = new PendingBribe(bod, amount);
-                        }
-                        else
-                        {
-                            Bribes[m].BOD = bod;
-                            Bribes[m].Amount = amount;
-                        }
+							// Per EA, new bribe replaced old pending bribe
+							if (!Bribes.ContainsKey(m))
+							{
+								Bribes[m] = new PendingBribe(bod, amount);
+							}
+							else
+							{
+								Bribes[m].BOD = bod;
+								Bribes[m].Amount = amount;
+							}
 
-                        SayTo(from, 1152292, amount.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("en-US")), 0x3B2);
-                        // If you help me out, I'll help you out. I can replace that bulk order with a better one, but it's gonna cost you ~1_amt~ gold coin. Payment is due immediately. Just hand me the order and I'll pull the old switcheroo.
-                    }
-                }
-                else if (bod == null)
-                {
-                    SayTo(from, 1152297, 0x3B2); // That is not a bulk order deed.
-                }
-            });
-        }
+							SayTo(
+								from,
+								1152292,
+								amount.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("en-US")),
+								0x3B2
+							);
+							// If you help me out, I'll help you out. I can replace that bulk order with a better one, but it's gonna cost you ~1_amt~ gold coin. Payment is due immediately. Just hand me the order and I'll pull the old switcheroo.
+						}
+					}
+					else if (bod == null)
+					{
+						SayTo(from, 1152297, 0x3B2); // That is not a bulk order deed.
+					}
+				}
+			);
+		}
 
-        public void DoBribe(Mobile m, IBOD bod)
-        {
-            BulkOrderSystem.MutateBOD(bod);
+		public void DoBribe(Mobile m, IBOD bod)
+		{
+			BulkOrderSystem.MutateBOD(bod);
 
-            RecentBribes++;
+			RecentBribes++;
 
-            if (RecentBribes >= 3 && Utility.Random(6) < RecentBribes)
-            {
-                WatchEnds = DateTime.UtcNow + TimeSpan.FromMinutes(Utility.RandomMinMax(120, 180));
-            }
+			if (RecentBribes >= 3 && Utility.Random(6) < RecentBribes)
+			{
+				WatchEnds = DateTime.UtcNow + TimeSpan.FromMinutes(Utility.RandomMinMax(120, 180));
+			}
 
-            SayTo(m, 1152303, 0x3B2); // You'll find this one much more to your liking. It's been a pleasure, and I look forward to you greasing my palm again very soon.
+			SayTo(m, 1152303, 0x3B2); // You'll find this one much more to your liking. It's been a pleasure, and I look forward to you greasing my palm again very soon.
 
-            if (Bribes.ContainsKey(m))
-            {
-                Bribes.Remove(m);
-            }
+			if (Bribes.ContainsKey(m))
+			{
+				Bribes.Remove(m);
+			}
 
-            BribeMultiplier++;
-            CheckNextMultiplierDecay();
-        }
+			BribeMultiplier++;
+			CheckNextMultiplierDecay();
+		}
 
-        #endregion
+		#endregion
 
-        private GenericBuyInfo LookupDisplayObject(object obj)
+		private GenericBuyInfo LookupDisplayObject(object obj)
 		{
 			var buyInfo = GetBuyInfo();
 
 			for (int i = 0; i < buyInfo.Length; ++i)
 			{
 				GenericBuyInfo gbi = (GenericBuyInfo)buyInfo[i];
-				
+
 				if (gbi.GetDisplayEntity() == obj)
 				{
 					return gbi;
@@ -1541,7 +1635,8 @@ namespace Server.Mobiles
 			List<BuyItemResponse> validBuy,
 			ref int controlSlots,
 			ref bool fullPurchase,
-			ref double cost)
+			ref double cost
+		)
 		{
 			int amount = buy.Amount;
 
@@ -1585,7 +1680,7 @@ namespace Server.Mobiles
 			{
 				amount = bii.Amount;
 			}
-			
+
 			if (amount < 1)
 			{
 				return;
@@ -1633,13 +1728,13 @@ namespace Server.Mobiles
 					}
 				}
 
-                bii.OnBought(buyer, this, item, amount);
-            }
+				bii.OnBought(buyer, this, item, amount);
+			}
 			else if (o is Mobile)
 			{
 				Mobile m = (Mobile)o;
 
-                bii.OnBought(buyer, this, m, amount);
+				bii.OnBought(buyer, this, m, amount);
 
 				m.Direction = (Direction)Utility.Random(8);
 				m.MoveToWorld(buyer.Location, buyer.Map);
@@ -1702,7 +1797,7 @@ namespace Server.Mobiles
 			{
 				Serial ser = buy.Serial;
 				int amount = buy.Amount;
-                double cost = 0;
+				double cost = 0;
 
 				if (ser.IsItem)
 				{
@@ -1745,17 +1840,17 @@ namespace Server.Mobiles
 						}
 					}
 
-                    if (validBuy.Contains(buy))
-                    {
-                        if (ValidateBought(buyer, item))
-                        {
-                            totalCost += cost;
-                        }
-                        else
-                        {
-                            validBuy.Remove(buy);
-                        }
-                    }
+					if (validBuy.Contains(buy))
+					{
+						if (ValidateBought(buyer, item))
+						{
+							totalCost += cost;
+						}
+						else
+						{
+							validBuy.Remove(buy);
+						}
+					}
 				}
 				else if (ser.IsMobile)
 				{
@@ -1773,23 +1868,23 @@ namespace Server.Mobiles
 						ProcessSinglePurchase(buy, gbi, validBuy, ref controlSlots, ref fullPurchase, ref cost);
 					}
 
-                    if (validBuy.Contains(buy))
-                    {
-                        if (ValidateBought(buyer, mob))
-                        {
-                            totalCost += cost;
-                        }
-                        else
-                        {
-                            validBuy.Remove(buy);
-                        }
-                    }
+					if (validBuy.Contains(buy))
+					{
+						if (ValidateBought(buyer, mob))
+						{
+							totalCost += cost;
+						}
+						else
+						{
+							validBuy.Remove(buy);
+						}
+					}
 				}
 			} //foreach
 
 			if (fullPurchase && validBuy.Count == 0)
 			{
-                SayTo(buyer, 500190, 0x3B2); // Thou hast bought nothing!
+				SayTo(buyer, 500190, 0x3B2); // Thou hast bought nothing!
 			}
 			else if (validBuy.Count == 0)
 			{
@@ -1829,7 +1924,7 @@ namespace Server.Mobiles
 				totalCost -= discount;
 			}
 			*/
-			
+
 			if (!bought && cont != null && ConsumeGold(cont, totalCost))
 			{
 				bought = true;
@@ -1868,17 +1963,17 @@ namespace Server.Mobiles
 
 			if (!bought)
 			{
-				// ? Begging thy pardon, but thy bank account lacks these funds. 
+				// ? Begging thy pardon, but thy bank account lacks these funds.
 				// : Begging thy pardon, but thou casnt afford that.
-                SayTo(buyer, totalCost >= 2000 ? 500191 : 500192, 0x3B2);
+				SayTo(buyer, totalCost >= 2000 ? 500191 : 500192, 0x3B2);
 
 				return false;
 			}
 
 			MyGold += (int)totalCost;
-			
+
 			buyer.PlaySound(0x32);
-			
+
 			cont = buyer.Backpack ?? buyer.BankBox;
 
 			foreach (BuyItemResponse buy in validBuy)
@@ -1966,32 +2061,42 @@ namespace Server.Mobiles
 
 			if (discount > 0)
 			{
-                SayTo(buyer, 1151517, discount.ToString(), 0x3B2);
+				SayTo(buyer, 1151517, discount.ToString(), 0x3B2);
 			}
 
 			if (fullPurchase)
 			{
 				if (buyer.AccessLevel >= AccessLevel.GameMaster)
 				{
-                    SayTo(
-                        buyer,
-                        0x3B2,
-                        "I would not presume to charge thee anything.  Here are the goods you requested.", 
-                        null,
-                        !Core.AOS);
+					SayTo(
+						buyer,
+						0x3B2,
+						"I would not presume to charge thee anything.  Here are the goods you requested.",
+						null,
+						!Core.AOS
+					);
 				}
 				else if (fromBank)
 				{
 					SayTo(
 						buyer,
-                        0x3B2,
+						0x3B2,
 						"The total of thy purchase is {0} gold, which has been withdrawn from your bank account.  My thanks for the patronage.",
-                        totalCost.ToString(),
-                        !Core.AOS);
+						totalCost.ToString(),
+						!Core.AOS
+					);
 				}
 				else
 				{
-                    SayTo(buyer, String.Format("The total of thy purchase is {0} gold.  My thanks for the patronage.", totalCost), 0x3B2, true);
+					SayTo(
+						buyer,
+						String.Format(
+							"The total of thy purchase is {0} gold.  My thanks for the patronage.",
+							totalCost
+						),
+						0x3B2,
+						true
+					);
 				}
 			}
 			else
@@ -2000,43 +2105,46 @@ namespace Server.Mobiles
 				{
 					SayTo(
 						buyer,
-                        0x3B2,
+						0x3B2,
 						"I would not presume to charge thee anything.  Unfortunately, I could not sell you all the goods you requested.",
-                        null,
-                        !Core.AOS);
+						null,
+						!Core.AOS
+					);
 				}
 				else if (fromBank)
 				{
-                    SayTo(
-                        buyer,
-                        0x3B2,
-                        "The total of thy purchase is {0} gold, which has been withdrawn from your bank account.  My thanks for the patronage.  Unfortunately, I could not sell you all the goods you requested.", 
-                        totalCost.ToString(),
-                        !Core.AOS);
+					SayTo(
+						buyer,
+						0x3B2,
+						"The total of thy purchase is {0} gold, which has been withdrawn from your bank account.  My thanks for the patronage.  Unfortunately, I could not sell you all the goods you requested.",
+						totalCost.ToString(),
+						!Core.AOS
+					);
 				}
 				else
 				{
 					SayTo(
 						buyer,
-                        0x3B2,
+						0x3B2,
 						"The total of thy purchase is {0} gold.  My thanks for the patronage.  Unfortunately, I could not sell you all the goods you requested.",
-                        totalCost.ToString(),
-                        !Core.AOS);
+						totalCost.ToString(),
+						!Core.AOS
+					);
 				}
 			}
 
 			return true;
 		}
 
-        public virtual bool ValidateBought(Mobile buyer, Item item)
-        {
-            return true;
-        }
+		public virtual bool ValidateBought(Mobile buyer, Item item)
+		{
+			return true;
+		}
 
-        public virtual bool ValidateBought(Mobile buyer, Mobile m)
-        {
-            return true;
-        }
+		public virtual bool ValidateBought(Mobile buyer, Mobile m)
+		{
+			return true;
+		}
 
 		public static bool ConsumeGold(Container cont, double amount)
 		{
@@ -2099,7 +2207,7 @@ namespace Server.Mobiles
 
 			var count = cont.Items.Count;
 
-			while(--count >= 0)
+			while (--count >= 0)
 			{
 				if (count >= cont.Items.Count)
 				{
@@ -2179,8 +2287,13 @@ namespace Server.Mobiles
 
 			foreach (SellItemResponse resp in list)
 			{
-				if (resp.Item.RootParent != seller || resp.Amount <= 0 || !resp.Item.IsStandardLoot() || !resp.Item.Movable ||
-					(resp.Item is Container && (resp.Item).Items.Count != 0))
+				if (
+					resp.Item.RootParent != seller
+					|| resp.Amount <= 0
+					|| !resp.Item.IsStandardLoot()
+					|| !resp.Item.Movable
+					|| (resp.Item is Container && (resp.Item).Items.Count != 0)
+				)
 				{
 					continue;
 				}
@@ -2192,13 +2305,12 @@ namespace Server.Mobiles
 						Sold++;
 						break;
 					}
-					
 				}
 			}
 
 			if (Sold > MaxSell)
 			{
-                SayTo(seller, "You may only sell {0} items at a time!", MaxSell, 0x3B2, true);
+				SayTo(seller, "You may only sell {0} items at a time!", MaxSell, 0x3B2, true);
 				return false;
 			}
 			else if (Sold == 0)
@@ -2208,8 +2320,13 @@ namespace Server.Mobiles
 
 			foreach (SellItemResponse resp in list)
 			{
-				if (resp.Item.RootParent != seller || resp.Amount <= 0 || !resp.Item.IsStandardLoot() || !resp.Item.Movable ||
-					(resp.Item is Container && (resp.Item).Items.Count != 0))
+				if (
+					resp.Item.RootParent != seller
+					|| resp.Amount <= 0
+					|| !resp.Item.IsStandardLoot()
+					|| !resp.Item.Movable
+					|| (resp.Item is Container && (resp.Item).Items.Count != 0)
+				)
 				{
 					continue;
 				}
@@ -2227,7 +2344,7 @@ namespace Server.Mobiles
 						var singlePrice = ssi.GetSellPriceFor(resp.Item, this);
 						GiveGold += singlePrice * amount;
 
-						if( !Misc.Util.LastPriceCheck( this, GiveGold, seller ) )
+						if (!Misc.Util.LastPriceCheck(this, GiveGold, seller))
 							return false;
 
 						if (ssi.IsResellable(resp.Item))
@@ -2238,12 +2355,12 @@ namespace Server.Mobiles
 							{
 								if (bii.Restock(resp.Item, amount))
 								{
-                                    bii.OnSold(this, amount);
+									bii.OnSold(this, amount);
 
 									resp.Item.Consume(amount);
 									found = true;
 
-                                    break;
+									break;
 								}
 							}
 
@@ -2285,8 +2402,10 @@ namespace Server.Mobiles
 							}
 						}
 
-                        EventSink.InvokeValidVendorSell(new ValidVendorSellEventArgs(seller, this, resp.Item, singlePrice));
-                        break;
+						EventSink.InvokeValidVendorSell(
+							new ValidVendorSellEventArgs(seller, this, resp.Item, singlePrice)
+						);
+						break;
 					}
 				}
 			}
@@ -2321,7 +2440,7 @@ namespace Server.Mobiles
 			//SayTo( seller, true, "Thank you! I bought {0} item{1}. Here is your {2}gp.", Sold, (Sold > 1 ? "s" : ""), GiveGold );
 
 			MyGold -= GiveGold;
-			
+
 			return true;
 		}
 
@@ -2332,9 +2451,9 @@ namespace Server.Mobiles
 			writer.Write(4); // version
 
 			writer.Write(MyGold);
-            writer.Write(BribeMultiplier);
-            writer.Write(NextMultiplierDecay);
-            writer.Write(RecentBribes);
+			writer.Write(BribeMultiplier);
+			writer.Write(NextMultiplierDecay);
+			writer.Write(RecentBribes);
 
 			var sbInfos = SBInfos;
 
@@ -2349,8 +2468,8 @@ namespace Server.Mobiles
 
 					int maxAmount = gbi.MaxAmount;
 					int doubled = 0;
-                    int bought = gbi.TotalBought;
-                    int sold = gbi.TotalSold;
+					int bought = gbi.TotalBought;
+					int sold = gbi.TotalSold;
 
 					/*
 					switch (maxAmount)
@@ -2381,24 +2500,27 @@ namespace Server.Mobiles
 					{
 						writer.WriteEncodedInt(1 + ((j * sbInfos.Count) + i));
 						writer.WriteEncodedInt(doubled);
-                        writer.WriteEncodedInt(bought);
-                        writer.WriteEncodedInt(sold);
+						writer.WriteEncodedInt(bought);
+						writer.WriteEncodedInt(sold);
 					}
 				}
 			}
 
 			writer.WriteEncodedInt(0);
 
-            if (NextMultiplierDecay != DateTime.MinValue && NextMultiplierDecay < DateTime.UtcNow)
-            {
-                Timer.DelayCall(TimeSpan.FromSeconds(10), () =>
-                {
-                    if (BribeMultiplier > 0)
-                        BribeMultiplier /= 2;
+			if (NextMultiplierDecay != DateTime.MinValue && NextMultiplierDecay < DateTime.UtcNow)
+			{
+				Timer.DelayCall(
+					TimeSpan.FromSeconds(10),
+					() =>
+					{
+						if (BribeMultiplier > 0)
+							BribeMultiplier /= 2;
 
-                    CheckNextMultiplierDecay();
-                });
-            }
+						CheckNextMultiplierDecay();
+					}
+				);
+			}
 		}
 
 		public override void Deserialize(GenericReader reader)
@@ -2418,91 +2540,91 @@ namespace Server.Mobiles
 					MyGold = reader.ReadInt();
 					goto case 3;
 				}
-                case 3:
-                case 2:
-                    BribeMultiplier = reader.ReadInt();
-                    NextMultiplierDecay = reader.ReadDateTime();
-                    CheckNextMultiplierDecay(false); // Reset NextMultiplierDecay if it is out of range of the config
-                    RecentBribes = reader.ReadInt();
-                    goto case 1;
+				case 3:
+				case 2:
+					BribeMultiplier = reader.ReadInt();
+					NextMultiplierDecay = reader.ReadDateTime();
+					CheckNextMultiplierDecay(false); // Reset NextMultiplierDecay if it is out of range of the config
+					RecentBribes = reader.ReadInt();
+					goto case 1;
 				case 1:
+				{
+					int index;
+
+					while ((index = reader.ReadEncodedInt()) > 0)
 					{
-						int index;
+						int doubled = reader.ReadEncodedInt();
+						int bought = 0;
+						int sold = 0;
 
-						while ((index = reader.ReadEncodedInt()) > 0)
+						if (version >= 3)
 						{
-							int doubled = reader.ReadEncodedInt();
-                            int bought = 0;
-                            int sold = 0;
+							bought = reader.ReadEncodedInt();
+							sold = reader.ReadEncodedInt();
+						}
 
-                            if (version >= 3)
-                            {
-                                bought = reader.ReadEncodedInt();
-                                sold = reader.ReadEncodedInt();
-                            }
+						if (sbInfos != null)
+						{
+							index -= 1;
+							int sbInfoIndex = index % sbInfos.Count;
+							int buyInfoIndex = index / sbInfos.Count;
 
-							if (sbInfos != null)
+							if (sbInfoIndex >= 0 && sbInfoIndex < sbInfos.Count)
 							{
-								index -= 1;
-								int sbInfoIndex = index % sbInfos.Count;
-								int buyInfoIndex = index / sbInfos.Count;
+								SBInfo sbInfo = sbInfos[sbInfoIndex];
+								var buyInfo = sbInfo.BuyInfo;
 
-								if (sbInfoIndex >= 0 && sbInfoIndex < sbInfos.Count)
+								if (buyInfo != null && buyInfoIndex >= 0 && buyInfoIndex < buyInfo.Count)
 								{
-									SBInfo sbInfo = sbInfos[sbInfoIndex];
-									var buyInfo = sbInfo.BuyInfo;
+									GenericBuyInfo gbi = buyInfo[buyInfoIndex];
 
-									if (buyInfo != null && buyInfoIndex >= 0 && buyInfoIndex < buyInfo.Count)
+									int amount = 500;
+
+									/*
+									switch (doubled)
 									{
-										GenericBuyInfo gbi = buyInfo[buyInfoIndex];
-
-										int amount = 500;
-
-										/*
-										switch (doubled)
-										{
-                                            case 0:
-                                                break;
-											case 1:
-												amount = 40;
-												break;
-											case 2:
-												amount = 80;
-												break;
-											case 3:
-												amount = 160;
-												break;
-											case 4:
-												amount = 320;
-												break;
-											case 5:
-												amount = 640;
-												break;
-											case 6:
-												amount = 999;
-												break;
-										}
-										*/
-                                        if (version == 2 && gbi.Stackable)
-                                        {
-                                            gbi.Amount = gbi.MaxAmount = BaseVendor.EconomyStockAmount;
-                                        }
-                                        else
-                                        {
-                                            gbi.Amount = gbi.MaxAmount = amount;
-                                        }
-
-										gbi.Amount = gbi.MaxAmount = 500;
-										
-                                        gbi.TotalBought = bought;
-                                        gbi.TotalSold = sold;
+										case 0:
+											break;
+										case 1:
+											amount = 40;
+											break;
+										case 2:
+											amount = 80;
+											break;
+										case 3:
+											amount = 160;
+											break;
+										case 4:
+											amount = 320;
+											break;
+										case 5:
+											amount = 640;
+											break;
+										case 6:
+											amount = 999;
+											break;
 									}
+									*/
+									if (version == 2 && gbi.Stackable)
+									{
+										gbi.Amount = gbi.MaxAmount = BaseVendor.EconomyStockAmount;
+									}
+									else
+									{
+										gbi.Amount = gbi.MaxAmount = amount;
+									}
+
+									gbi.Amount = gbi.MaxAmount = 500;
+
+									gbi.TotalBought = bought;
+									gbi.TotalSold = sold;
 								}
 							}
 						}
-
-						break;
 					}
+
+					break;
+				}
 			}
 
 			if (IsParagon)
@@ -2510,14 +2632,13 @@ namespace Server.Mobiles
 				IsParagon = false;
 			}
 
-			if( MyGold <= 5000 )
-				MyGold = Utility.RandomMinMax( 5000, 50000 );
-				
-			
-            if (version == 1)
-            {
-                BribeMultiplier = Utility.Random(10);
-            }
+			if (MyGold <= 5000)
+				MyGold = Utility.RandomMinMax(5000, 50000);
+
+			if (version == 1)
+			{
+				BribeMultiplier = Utility.Random(10);
+			}
 
 			Timer.DelayCall(TimeSpan.Zero, CheckMorph);
 		}
@@ -2525,10 +2646,10 @@ namespace Server.Mobiles
 		public override void AddCustomContextEntries(Mobile from, List<ContextMenuEntry> list)
 		{
 			/*
-            if (ConvertsMageArmor)
-            {
-                list.Add(new UpgradeMageArmor(from, this));
-            }
+			if (ConvertsMageArmor)
+			{
+				list.Add(new UpgradeMageArmor(from, this));
+			}
 			*/
 			if (from.Alive && IsActiveVendor)
 			{
@@ -2537,11 +2658,11 @@ namespace Server.Mobiles
 				{
 					list.Add(new BulkOrderInfoEntry(from, this));
 
-                    if (BulkOrderSystem.NewSystemEnabled)
-                    {
-                        list.Add(new BribeEntry(from, this));
-                        list.Add(new ClaimRewardsEntry(from, this));
-                    }
+					if (BulkOrderSystem.NewSystemEnabled)
+					{
+						list.Add(new BribeEntry(from, this));
+						list.Add(new ClaimRewardsEntry(from, this));
+					}
 				}
 				*/
 				if (IsActiveSeller)
@@ -2566,165 +2687,181 @@ namespace Server.Mobiles
 		public virtual IBuyItemInfo[] GetBuyInfo()
 		{
 			return (IBuyItemInfo[])m_ArmorBuyInfo.ToArray(typeof(IBuyItemInfo));
-        }
+		}
 
-        #region Mage Armor Conversion
-        public virtual bool ConvertsMageArmor { get { return false; } }
+		#region Mage Armor Conversion
+		public virtual bool ConvertsMageArmor
+		{
+			get { return false; }
+		}
 
-        private List<PendingConvert> _PendingConvertEntries = new List<PendingConvert>();
+		private List<PendingConvert> _PendingConvertEntries = new List<PendingConvert>();
 
-        private bool CheckConvertArmor(Mobile from, BaseArmor armor)
-        {
-            var convert = GetConvert(from, armor);
+		private bool CheckConvertArmor(Mobile from, BaseArmor armor)
+		{
+			var convert = GetConvert(from, armor);
 
-            if (convert == null || !(from is PlayerMobile))
-                return false;
+			if (convert == null || !(from is PlayerMobile))
+				return false;
 
-            object state = convert.Armor;
+			object state = convert.Armor;
 
-            RemoveConvertEntry(convert);
-            from.CloseGump(typeof(Server.Gumps.ConfirmCallbackGump));
+			RemoveConvertEntry(convert);
+			from.CloseGump(typeof(Server.Gumps.ConfirmCallbackGump));
 
-            from.SendGump(new Server.Gumps.ConfirmCallbackGump((PlayerMobile)from, 1049004, 1154115, state, null, 
-                (m, obj) =>
-                {
-                    BaseArmor ar = obj as BaseArmor;
+			from.SendGump(
+				new Server.Gumps.ConfirmCallbackGump(
+					(PlayerMobile)from,
+					1049004,
+					1154115,
+					state,
+					null,
+					(m, obj) =>
+					{
+						BaseArmor ar = obj as BaseArmor;
 
-                    if (!Deleted && ar != null && armor.IsChildOf(m.Backpack) && CanConvertArmor(m, ar))
-                    {
-                        if (!InRange(m.Location, 3))
-                        {
-                            m.SendLocalizedMessage(1149654); // You are too far away.
-                        }
-                        else if (!Banker.Withdraw(m, 250000, true))
-                        {
-                            m.SendLocalizedMessage(1019022); // You do not have enough gold.
-                        }
-                        else
-                        {
-                            ConvertMageArmor(m, ar);
-                        }
-                    }
-                },
-                (m, obj) =>
-                {
-                    var con = GetConvert(m, armor);
+						if (!Deleted && ar != null && armor.IsChildOf(m.Backpack) && CanConvertArmor(m, ar))
+						{
+							if (!InRange(m.Location, 3))
+							{
+								m.SendLocalizedMessage(1149654); // You are too far away.
+							}
+							else if (!Banker.Withdraw(m, 250000, true))
+							{
+								m.SendLocalizedMessage(1019022); // You do not have enough gold.
+							}
+							else
+							{
+								ConvertMageArmor(m, ar);
+							}
+						}
+					},
+					(m, obj) =>
+					{
+						var con = GetConvert(m, armor);
 
-                    if (con != null)
-                    {
-                        RemoveConvertEntry(con);
-                    }
-                }));
+						if (con != null)
+						{
+							RemoveConvertEntry(con);
+						}
+					}
+				)
+			);
 
-            return true;
-        }
+			return true;
+		}
 
-        protected virtual bool CanConvertArmor(Mobile from, BaseArmor armor)
-        {
-            if (armor == null || armor is BaseShield/*|| armor.ArtifactRarity != 0 || armor.IsArtifact*/)
-            {
-                from.SendLocalizedMessage(1113044); // You can't convert that.
-                return false;
-            }
+		protected virtual bool CanConvertArmor(Mobile from, BaseArmor armor)
+		{
+			if (
+				armor == null
+				|| armor is BaseShield /*|| armor.ArtifactRarity != 0 || armor.IsArtifact*/
+			)
+			{
+				from.SendLocalizedMessage(1113044); // You can't convert that.
+				return false;
+			}
 
-            if (armor.ArmorAttributes.MageArmor == 0 &&
-                Server.SkillHandlers.Imbuing.GetTotalMods(armor) > 4)
-            {
-                from.SendLocalizedMessage(1154119); // This action would exceed a stat cap
-                return false;
-            }
+			if (armor.ArmorAttributes.MageArmor == 0 && Server.SkillHandlers.Imbuing.GetTotalMods(armor) > 4)
+			{
+				from.SendLocalizedMessage(1154119); // This action would exceed a stat cap
+				return false;
+			}
 
-            return true;
-        }
+			return true;
+		}
 
-        public void TryConvertArmor(Mobile from, BaseArmor armor)
-        {
-            if (CanConvertArmor(from, armor))
-            {
-                from.SendLocalizedMessage(1154117); // Ah yes, I will convert this piece of armor but it's gonna cost you 250,000 gold coin. Payment is due immediately. Just hand me the armor.
+		public void TryConvertArmor(Mobile from, BaseArmor armor)
+		{
+			if (CanConvertArmor(from, armor))
+			{
+				from.SendLocalizedMessage(1154117); // Ah yes, I will convert this piece of armor but it's gonna cost you 250,000 gold coin. Payment is due immediately. Just hand me the armor.
 
-                var convert = GetConvert(from, armor);
+				var convert = GetConvert(from, armor);
 
-                if (convert != null)
-                {
-                    convert.ResetTimer();
-                }
-                else
-                {
-                    _PendingConvertEntries.Add(new PendingConvert(from, armor, this));
-                }
-            }
-        }
+				if (convert != null)
+				{
+					convert.ResetTimer();
+				}
+				else
+				{
+					_PendingConvertEntries.Add(new PendingConvert(from, armor, this));
+				}
+			}
+		}
 
-        public virtual void ConvertMageArmor(Mobile from, BaseArmor armor)
-        {
-            if (armor.ArmorAttributes.MageArmor > 0)
-                armor.ArmorAttributes.MageArmor = 0;
-            else
-                armor.ArmorAttributes.MageArmor = 1;
+		public virtual void ConvertMageArmor(Mobile from, BaseArmor armor)
+		{
+			if (armor.ArmorAttributes.MageArmor > 0)
+				armor.ArmorAttributes.MageArmor = 0;
+			else
+				armor.ArmorAttributes.MageArmor = 1;
 
-            from.SendLocalizedMessage(1154118); // Your armor has been converted.
-        }
+			from.SendLocalizedMessage(1154118); // Your armor has been converted.
+		}
 
-        private void RemoveConvertEntry(PendingConvert convert)
-        {
-            _PendingConvertEntries.Remove(convert);
+		private void RemoveConvertEntry(PendingConvert convert)
+		{
+			_PendingConvertEntries.Remove(convert);
 
-            if (convert.Timer != null)
-            {
-                convert.Timer.Stop();
-            }
-        }
+			if (convert.Timer != null)
+			{
+				convert.Timer.Stop();
+			}
+		}
 
-        private PendingConvert GetConvert(Mobile from, BaseArmor armor)
-        {
-            return _PendingConvertEntries.FirstOrDefault(c => c.From == from && c.Armor == armor);
-        }
+		private PendingConvert GetConvert(Mobile from, BaseArmor armor)
+		{
+			return _PendingConvertEntries.FirstOrDefault(c => c.From == from && c.Armor == armor);
+		}
 
-        protected class PendingConvert
-        {
-            public Mobile From { get; set; }
-            public BaseArmor Armor { get; set; }
-            public BaseVendor Vendor { get; set; }
+		protected class PendingConvert
+		{
+			public Mobile From { get; set; }
+			public BaseArmor Armor { get; set; }
+			public BaseVendor Vendor { get; set; }
 
-            public Timer Timer { get; set; }
-            public DateTime Expires { get; set; }
+			public Timer Timer { get; set; }
+			public DateTime Expires { get; set; }
 
-            public bool Expired { get { return DateTime.UtcNow > Expires; } }
+			public bool Expired
+			{
+				get { return DateTime.UtcNow > Expires; }
+			}
 
-            public PendingConvert(Mobile from, BaseArmor armor, BaseVendor vendor)
-            {
-                From = from;
-                Armor = armor;
-                Vendor = vendor;
+			public PendingConvert(Mobile from, BaseArmor armor, BaseVendor vendor)
+			{
+				From = from;
+				Armor = armor;
+				Vendor = vendor;
 
-                ResetTimer();
-            }
+				ResetTimer();
+			}
 
-            public void ResetTimer()
-            {
-                if (Timer != null)
-                {
-                    Timer.Stop();
-                    Timer = null;
-                }
+			public void ResetTimer()
+			{
+				if (Timer != null)
+				{
+					Timer.Stop();
+					Timer = null;
+				}
 
-                Expires = DateTime.UtcNow + TimeSpan.FromSeconds(120);
+				Expires = DateTime.UtcNow + TimeSpan.FromSeconds(120);
 
-                Timer = Timer.DelayCall(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1), OnTick);
-                Timer.Start();
-            }
+				Timer = Timer.DelayCall(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1), OnTick);
+				Timer.Start();
+			}
 
-            public void OnTick()
-            {
-                if (Expired)
-                {
-                    Vendor.RemoveConvertEntry(this);
-                }
-            }
-        }
-        #endregion
-    }
+			public void OnTick()
+			{
+				if (Expired)
+				{
+					Vendor.RemoveConvertEntry(this);
+				}
+			}
+		}
+		#endregion
+	}
 }
 
 namespace Server.ContextMenus
@@ -2763,48 +2900,48 @@ namespace Server.ContextMenus
 		}
 	}
 
-    public class UpgradeMageArmor : ContextMenuEntry
-    {
-        public Mobile From { get; set; }
-        public BaseVendor Vendor { get; set; }
+	public class UpgradeMageArmor : ContextMenuEntry
+	{
+		public Mobile From { get; set; }
+		public BaseVendor Vendor { get; set; }
 
-        public UpgradeMageArmor(Mobile from, BaseVendor vendor)
-            : base(1154114) // Convert Mage Armor
-        {
-            Enabled = vendor.CheckVendorAccess(from);
+		public UpgradeMageArmor(Mobile from, BaseVendor vendor)
+			: base(1154114) // Convert Mage Armor
+		{
+			Enabled = vendor.CheckVendorAccess(from);
 
-            From = from;
-            Vendor = vendor;
-        }
+			From = from;
+			Vendor = vendor;
+		}
 
-        public override void OnClick()
-        {
-            From.Target = new InternalTarget(From, Vendor);
-            From.SendLocalizedMessage(1154116); // Target a piece of armor to show to the guild master.
-        }
+		public override void OnClick()
+		{
+			From.Target = new InternalTarget(From, Vendor);
+			From.SendLocalizedMessage(1154116); // Target a piece of armor to show to the guild master.
+		}
 
-        private class InternalTarget : Target
-        {
-            public Mobile From { get; set; }
-            public BaseVendor Vendor { get; set; }
+		private class InternalTarget : Target
+		{
+			public Mobile From { get; set; }
+			public BaseVendor Vendor { get; set; }
 
-            public InternalTarget(Mobile from, BaseVendor vendor)
-                : base(1, false, TargetFlags.None)
-            {
-                From = from;
-                Vendor = vendor;
-            }
+			public InternalTarget(Mobile from, BaseVendor vendor)
+				: base(1, false, TargetFlags.None)
+			{
+				From = from;
+				Vendor = vendor;
+			}
 
-            protected override void OnTarget(Mobile from, object targeted)
-            {
-                if (targeted is BaseArmor)
-                {
-                    BaseArmor armor = (BaseArmor)targeted;
-                    Vendor.TryConvertArmor(from, armor);
-                }
-            }
-        }
-    }
+			protected override void OnTarget(Mobile from, object targeted)
+			{
+				if (targeted is BaseArmor)
+				{
+					BaseArmor armor = (BaseArmor)targeted;
+					Vendor.TryConvertArmor(from, armor);
+				}
+			}
+		}
+	}
 }
 
 namespace Server
@@ -2815,16 +2952,16 @@ namespace Server
 		string GetNameFor(Item item);
 
 		//get price for an item which the player is selling
-        int GetSellPriceFor(Item item);
+		int GetSellPriceFor(Item item);
 		int GetSellPriceFor(Item item, BaseVendor vendor);
 
 		//get price for an item which the player is buying
-        int GetBuyPriceFor(Item item);
+		int GetBuyPriceFor(Item item);
 		int GetBuyPriceFor(Item item, BaseVendor vendor);
 
 		//can we sell this item to this vendor?
 		bool IsSellable(Item item);
-		
+
 		//bool IsSellable(BaseVendor vendor, Item item);
 
 		//What do we sell?
@@ -2843,12 +2980,12 @@ namespace Server
 
 		int PriceScalar { get; set; }
 
-        bool Stackable { get; set; }
-        int TotalBought { get; set; }
-        int TotalSold { get; set; }
+		bool Stackable { get; set; }
+		int TotalBought { get; set; }
+		int TotalSold { get; set; }
 
-        void OnBought(Mobile buyer, BaseVendor vendor, IEntity entity, int amount);
-        void OnSold(BaseVendor vendor, int amount);
+		void OnBought(Mobile buyer, BaseVendor vendor, IEntity entity, int amount);
+		void OnSold(BaseVendor vendor, int amount);
 
 		//display price of the item
 		int Price { get; }

@@ -6,9 +6,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
-
 using CustomsFramework;
-
 using Server.Guilds;
 #endregion
 
@@ -49,10 +47,14 @@ namespace Server
 		public abstract BaseGuild ReadGuild();
 		public abstract SaveData ReadData();
 
-		public abstract T ReadItem<T>() where T : Item;
-		public abstract T ReadMobile<T>() where T : Mobile;
-		public abstract T ReadGuild<T>() where T : BaseGuild;
-		public abstract T ReadData<T>() where T : SaveData;
+		public abstract T ReadItem<T>()
+			where T : Item;
+		public abstract T ReadMobile<T>()
+			where T : Mobile;
+		public abstract T ReadGuild<T>()
+			where T : BaseGuild;
+		public abstract T ReadData<T>()
+			where T : SaveData;
 
 		public abstract ArrayList ReadItemList();
 		public abstract ArrayList ReadMobileList();
@@ -60,28 +62,36 @@ namespace Server
 		public abstract ArrayList ReadDataList();
 
 		public abstract List<Item> ReadStrongItemList();
-		public abstract List<T> ReadStrongItemList<T>() where T : Item;
+		public abstract List<T> ReadStrongItemList<T>()
+			where T : Item;
 
 		public abstract List<Mobile> ReadStrongMobileList();
-		public abstract List<T> ReadStrongMobileList<T>() where T : Mobile;
+		public abstract List<T> ReadStrongMobileList<T>()
+			where T : Mobile;
 
 		public abstract List<BaseGuild> ReadStrongGuildList();
-		public abstract List<T> ReadStrongGuildList<T>() where T : BaseGuild;
+		public abstract List<T> ReadStrongGuildList<T>()
+			where T : BaseGuild;
 
 		public abstract List<SaveData> ReadStrongDataList();
-		public abstract List<T> ReadStrongDataList<T>() where T : SaveData;
+		public abstract List<T> ReadStrongDataList<T>()
+			where T : SaveData;
 
 		public abstract HashSet<Item> ReadItemSet();
-		public abstract HashSet<T> ReadItemSet<T>() where T : Item;
+		public abstract HashSet<T> ReadItemSet<T>()
+			where T : Item;
 
 		public abstract HashSet<Mobile> ReadMobileSet();
-		public abstract HashSet<T> ReadMobileSet<T>() where T : Mobile;
+		public abstract HashSet<T> ReadMobileSet<T>()
+			where T : Mobile;
 
 		public abstract HashSet<BaseGuild> ReadGuildSet();
-		public abstract HashSet<T> ReadGuildSet<T>() where T : BaseGuild;
+		public abstract HashSet<T> ReadGuildSet<T>()
+			where T : BaseGuild;
 
 		public abstract HashSet<SaveData> ReadDataSet();
-		public abstract HashSet<T> ReadDataSet<T>() where T : SaveData;
+		public abstract HashSet<T> ReadDataSet<T>()
+			where T : SaveData;
 
 		public abstract Race ReadRace();
 
@@ -127,10 +137,14 @@ namespace Server
 		public abstract void Write(BaseGuild value);
 		public abstract void Write(SaveData value);
 
-		public abstract void WriteItem<T>(T value) where T : Item;
-		public abstract void WriteMobile<T>(T value) where T : Mobile;
-		public abstract void WriteGuild<T>(T value) where T : BaseGuild;
-		public abstract void WriteData<T>(T value) where T : SaveData;
+		public abstract void WriteItem<T>(T value)
+			where T : Item;
+		public abstract void WriteMobile<T>(T value)
+			where T : Mobile;
+		public abstract void WriteGuild<T>(T value)
+			where T : BaseGuild;
+		public abstract void WriteData<T>(T value)
+			where T : SaveData;
 
 		public abstract void Write(Race value);
 
@@ -149,50 +163,66 @@ namespace Server
 		public abstract void Write(List<Item> list);
 		public abstract void Write(List<Item> list, bool tidy);
 
-		public abstract void WriteItemList<T>(List<T> list) where T : Item;
-		public abstract void WriteItemList<T>(List<T> list, bool tidy) where T : Item;
+		public abstract void WriteItemList<T>(List<T> list)
+			where T : Item;
+		public abstract void WriteItemList<T>(List<T> list, bool tidy)
+			where T : Item;
 
 		public abstract void Write(HashSet<Item> list);
 		public abstract void Write(HashSet<Item> list, bool tidy);
 
-		public abstract void WriteItemSet<T>(HashSet<T> set) where T : Item;
-		public abstract void WriteItemSet<T>(HashSet<T> set, bool tidy) where T : Item;
+		public abstract void WriteItemSet<T>(HashSet<T> set)
+			where T : Item;
+		public abstract void WriteItemSet<T>(HashSet<T> set, bool tidy)
+			where T : Item;
 
 		public abstract void Write(List<Mobile> list);
 		public abstract void Write(List<Mobile> list, bool tidy);
 
-		public abstract void WriteMobileList<T>(List<T> list) where T : Mobile;
-		public abstract void WriteMobileList<T>(List<T> list, bool tidy) where T : Mobile;
+		public abstract void WriteMobileList<T>(List<T> list)
+			where T : Mobile;
+		public abstract void WriteMobileList<T>(List<T> list, bool tidy)
+			where T : Mobile;
 
 		public abstract void Write(HashSet<Mobile> list);
 		public abstract void Write(HashSet<Mobile> list, bool tidy);
 
-		public abstract void WriteMobileSet<T>(HashSet<T> set) where T : Mobile;
-		public abstract void WriteMobileSet<T>(HashSet<T> set, bool tidy) where T : Mobile;
+		public abstract void WriteMobileSet<T>(HashSet<T> set)
+			where T : Mobile;
+		public abstract void WriteMobileSet<T>(HashSet<T> set, bool tidy)
+			where T : Mobile;
 
 		public abstract void Write(List<BaseGuild> list);
 		public abstract void Write(List<BaseGuild> list, bool tidy);
 
-		public abstract void WriteGuildList<T>(List<T> list) where T : BaseGuild;
-		public abstract void WriteGuildList<T>(List<T> list, bool tidy) where T : BaseGuild;
+		public abstract void WriteGuildList<T>(List<T> list)
+			where T : BaseGuild;
+		public abstract void WriteGuildList<T>(List<T> list, bool tidy)
+			where T : BaseGuild;
 
 		public abstract void Write(HashSet<BaseGuild> list);
 		public abstract void Write(HashSet<BaseGuild> list, bool tidy);
 
-		public abstract void WriteGuildSet<T>(HashSet<T> set) where T : BaseGuild;
-		public abstract void WriteGuildSet<T>(HashSet<T> set, bool tidy) where T : BaseGuild;
+		public abstract void WriteGuildSet<T>(HashSet<T> set)
+			where T : BaseGuild;
+		public abstract void WriteGuildSet<T>(HashSet<T> set, bool tidy)
+			where T : BaseGuild;
 
 		public abstract void Write(List<SaveData> list);
 		public abstract void Write(List<SaveData> list, bool tidy);
 
-		public abstract void WriteDataList<T>(List<T> list) where T : SaveData;
-		public abstract void WriteDataList<T>(List<T> list, bool tidy) where T : SaveData;
+		public abstract void WriteDataList<T>(List<T> list)
+			where T : SaveData;
+		public abstract void WriteDataList<T>(List<T> list, bool tidy)
+			where T : SaveData;
 
 		public abstract void Write(HashSet<SaveData> set);
 		public abstract void Write(HashSet<SaveData> set, bool tidy);
 
-		public abstract void WriteDataSet<T>(HashSet<T> set) where T : SaveData;
-		public abstract void WriteDataSet<T>(HashSet<T> set, bool tidy) where T : SaveData;
+		public abstract void WriteDataSet<T>(HashSet<T> set)
+			where T : SaveData;
+		public abstract void WriteDataSet<T>(HashSet<T> set, bool tidy)
+			where T : SaveData;
 	}
 
 	public class BinaryFileWriter : GenericWriter
@@ -200,7 +230,10 @@ namespace Server
 		private readonly bool PrefixStrings;
 		private readonly Stream m_File;
 
-		protected virtual int BufferSize { get { return 64 * 1024; } }
+		protected virtual int BufferSize
+		{
+			get { return 64 * 1024; }
+		}
 
 		private readonly byte[] m_Buffer;
 
@@ -237,7 +270,10 @@ namespace Server
 
 		private long m_Position;
 
-		public override long Position { get { return m_Position + m_Index; } }
+		public override long Position
+		{
+			get { return m_Position + m_Index; }
+		}
 
 		public Stream UnderlyingStream
 		{
@@ -714,7 +750,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (((Mobile)list[i]).Deleted)
 					{
@@ -744,7 +780,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (((Item)list[i]).Deleted)
 					{
@@ -774,7 +810,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (((BaseGuild)list[i]).Disbanded)
 					{
@@ -804,7 +840,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (((SaveData)list[i]).Deleted)
 					{
@@ -834,7 +870,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (list[i].Deleted)
 					{
@@ -864,7 +900,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (list[i].Deleted)
 					{
@@ -934,7 +970,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (list[i].Deleted)
 					{
@@ -964,7 +1000,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (list[i].Deleted)
 					{
@@ -1034,7 +1070,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (list[i].Disbanded)
 					{
@@ -1064,7 +1100,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (list[i].Disbanded)
 					{
@@ -1134,7 +1170,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (list[i].Deleted)
 					{
@@ -1164,7 +1200,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (list[i].Deleted)
 					{
@@ -1240,7 +1276,10 @@ namespace Server
 			m_File.Close();
 		}
 
-		public long Position { get { return m_File.BaseStream.Position; } }
+		public long Position
+		{
+			get { return m_File.BaseStream.Position; }
+		}
 
 		public long Seek(long offset, SeekOrigin origin)
 		{
@@ -1297,7 +1336,8 @@ namespace Server
 
 		public override int ReadEncodedInt()
 		{
-			int v = 0, shift = 0;
+			int v = 0,
+				shift = 0;
 			byte b;
 
 			do
@@ -1305,8 +1345,7 @@ namespace Server
 				b = m_File.ReadByte();
 				v |= (b & 0x7F) << shift;
 				shift += 7;
-			}
-			while (b >= 0x80);
+			} while (b >= 0x80);
 
 			return v;
 		}
@@ -1353,7 +1392,7 @@ namespace Server
 			{
 				value = m_File.ReadInt32();
 			}
-			catch(EndOfStreamException)
+			catch (EndOfStreamException)
 			{
 				// Ignore this exception, the defalut value 0 will be returned
 			}
@@ -1843,11 +1882,15 @@ namespace Server
 	public sealed class AsyncWriter : GenericWriter
 	{
 		private static int m_ThreadCount;
-		public static int ThreadCount { get { return m_ThreadCount; } }
+		public static int ThreadCount
+		{
+			get { return m_ThreadCount; }
+		}
 
 		private readonly int BufferSize;
 
-		private long m_LastPos, m_CurPos;
+		private long m_LastPos,
+			m_CurPos;
 		private bool m_Closed;
 		private readonly bool PrefixStrings;
 
@@ -1960,7 +2003,10 @@ namespace Server
 			m_Closed = true;
 		}
 
-		public override long Position { get { return m_CurPos; } }
+		public override long Position
+		{
+			get { return m_CurPos; }
+		}
 
 		public override void Write(IPAddress value)
 		{
@@ -2252,7 +2298,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (((Mobile)list[i]).Deleted)
 					{
@@ -2282,7 +2328,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (((Item)list[i]).Deleted)
 					{
@@ -2312,7 +2358,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (((BaseGuild)list[i]).Disbanded)
 					{
@@ -2342,7 +2388,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (((SaveData)list[i]).Deleted)
 					{
@@ -2372,7 +2418,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (list[i].Deleted)
 					{
@@ -2402,7 +2448,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (list[i].Deleted)
 					{
@@ -2472,7 +2518,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (list[i].Deleted)
 					{
@@ -2502,7 +2548,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (list[i].Deleted)
 					{
@@ -2572,7 +2618,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (list[i].Disbanded)
 					{
@@ -2602,7 +2648,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (list[i].Disbanded)
 					{
@@ -2672,7 +2718,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (list[i].Deleted)
 					{
@@ -2702,7 +2748,7 @@ namespace Server
 		{
 			if (tidy)
 			{
-				for (int i = 0; i < list.Count;)
+				for (int i = 0; i < list.Count; )
 				{
 					if (list[i].Deleted)
 					{

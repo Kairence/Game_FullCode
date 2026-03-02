@@ -11,16 +11,25 @@ namespace Server
 			m_Count = 0;
 		}
 
-		public int Count { get { return m_Count; } }
+		public int Count
+		{
+			get { return m_Count; }
+		}
 
 		public void Clear()
 		{
 			m_Count = 0;
 		}
 
-		public Point3D Last { get { return m_List[m_Count - 1]; } }
+		public Point3D Last
+		{
+			get { return m_List[m_Count - 1]; }
+		}
 
-		public Point3D this[int index] { get { return m_List[index]; } }
+		public Point3D this[int index]
+		{
+			get { return m_List[index]; }
+		}
 
 		public void Add(int x, int y, int z)
 		{

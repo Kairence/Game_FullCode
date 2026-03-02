@@ -2,7 +2,6 @@
 using System;
 using System.IO;
 using System.Text;
-
 using Server.Network;
 #endregion
 
@@ -16,11 +15,25 @@ namespace Server
 		private int m_Strings;
 		private string m_HeaderArgs;
 
-		public IEntity Entity { get { return m_Entity; } }
-		public int Hash { get { return 0x40000000 + m_Hash; } }
+		public IEntity Entity
+		{
+			get { return m_Entity; }
+		}
+		public int Hash
+		{
+			get { return 0x40000000 + m_Hash; }
+		}
 
-		public int Header { get { return m_Header; } set { m_Header = value; } }
-		public string HeaderArgs { get { return m_HeaderArgs; } set { m_HeaderArgs = value; } }
+		public int Header
+		{
+			get { return m_Header; }
+			set { m_Header = value; }
+		}
+		public string HeaderArgs
+		{
+			get { return m_HeaderArgs; }
+			set { m_HeaderArgs = value; }
+		}
 
 		public static bool Enabled { get; set; }
 
@@ -131,7 +144,7 @@ namespace Server
 		}
 
 		// Each of these are localized to "~1_NOTHING~" which allows the string argument to be used
-		private static readonly int[] m_StringNumbers = new[] {1042971, 1070722};
+		private static readonly int[] m_StringNumbers = new[] { 1042971, 1070722 };
 
 		private int GetStringNumber()
 		{

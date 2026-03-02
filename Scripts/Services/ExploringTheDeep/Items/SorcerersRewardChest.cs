@@ -1,129 +1,142 @@
 ﻿using System;
 using Server.Mobiles;
-using Server.Targeting;
 using Server.Network;
+using Server.Targeting;
 
 namespace Server.Items
 {
-    public class SorcerersRewardChest : Item
-    {
-        public override int LabelNumber { get { return 1023712; } } // strong box
-        
-        [Constructable]
-        public SorcerersRewardChest() : base(0x9AA)
-        {
-            this.Movable = false;
-            this.Hue = 1912;
-        }
+	public class SorcerersRewardChest : Item
+	{
+		public override int LabelNumber
+		{
+			get { return 1023712; }
+		} // strong box
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            from.PublicOverheadMessage(MessageType.Regular, 0x3B2, 1154226); // *It's an unassuming strong box. You examine the lock more closely and determine there is no way to pick it. You'll need to find a key.*
-            
-            base.OnDoubleClick(from);
-        }
+		[Constructable]
+		public SorcerersRewardChest()
+			: base(0x9AA)
+		{
+			this.Movable = false;
+			this.Hue = 1912;
+		}
 
-        public SorcerersRewardChest(Serial serial) : base(serial)
-        {
-        }
+		public override void OnDoubleClick(Mobile from)
+		{
+			from.PublicOverheadMessage(MessageType.Regular, 0x3B2, 1154226); // *It's an unassuming strong box. You examine the lock more closely and determine there is no way to pick it. You'll need to find a key.*
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0); // version
-        }
+			base.OnDoubleClick(from);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+		public SorcerersRewardChest(Serial serial)
+			: base(serial) { }
 
-    public class StrongboxKey : BaseDecayingItem
-    {
-        public override int LabelNumber { get { return 1154227; } } // Strongbox Key        
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0); // version
+		}
 
-        [Constructable]
-        public StrongboxKey() : base(0x410A)
-        {
-            Stackable = false;
-            Weight = 0.01;
-            Hue = 2721;
-            LootType = LootType.Blessed;
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 
-        public override int Lifespan { get { return 3600; } }
-        public override bool UseSeconds { get { return false; } }
+	public class StrongboxKey : BaseDecayingItem
+	{
+		public override int LabelNumber
+		{
+			get { return 1154227; }
+		} // Strongbox Key
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+		[Constructable]
+		public StrongboxKey()
+			: base(0x410A)
+		{
+			Stackable = false;
+			Weight = 0.01;
+			Hue = 2721;
+			LootType = LootType.Blessed;
+		}
 
-            list.Add(1072351); // Quest Item
-        }
+		public override int Lifespan
+		{
+			get { return 3600; }
+		}
+		public override bool UseSeconds
+		{
+			get { return false; }
+		}
 
-        public StrongboxKey(Serial serial) : base(serial)
-        {
-        }
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (!(from is PlayerMobile))
-                return;
+			list.Add(1072351); // Quest Item
+		}
 
-            if (!this.IsChildOf(from.Backpack))
-            {
-                from.SendLocalizedMessage(1054107); // This item must be in your backpack.
-                return;
-            }
+		public StrongboxKey(Serial serial)
+			: base(serial) { }
 
-            from.Target = new ChestTarget(from, this);
-            from.SendLocalizedMessage(1010086); // What do you want to use this on?
-        }
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (!(from is PlayerMobile))
+				return;
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0); // version
-        }
+			if (!this.IsChildOf(from.Backpack))
+			{
+				from.SendLocalizedMessage(1054107); // This item must be in your backpack.
+				return;
+			}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+			from.Target = new ChestTarget(from, this);
+			from.SendLocalizedMessage(1010086); // What do you want to use this on?
+		}
 
-    public class ChestTarget : Target
-    {
-        private static Mobile m_From;
-        private static StrongboxKey m_Key;
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0); // version
+		}
 
-        public ChestTarget(Mobile from, StrongboxKey key) : base(2, false, TargetFlags.None)
-        {
-            m_From = from;
-            m_Key = key;
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 
-        protected override void OnTarget(Mobile from, object o)
-        {
-            if (o is SorcerersRewardChest)
-            {
-                Item item = new SalvagerSuitPlans();
-                Container pack = from.Backpack;
+	public class ChestTarget : Target
+	{
+		private static Mobile m_From;
+		private static StrongboxKey m_Key;
 
-                if (pack == null || !pack.TryDropItem(from, item, false))
-                    from.BankBox.DropItem(item);
+		public ChestTarget(Mobile from, StrongboxKey key)
+			: base(2, false, TargetFlags.None)
+		{
+			m_From = from;
+			m_Key = key;
+		}
 
-                m_From.PublicOverheadMessage(MessageType.Regular, 0x3B2, 1154228); // *You insert the key into the mechanism and turn it. To your delight the lock opens with a click and you remove the contents*
-                
-                m_Key.Delete();
-            }
-            else
-            {
-                from.SendLocalizedMessage(501668); // This key doesn't seem to unlock that.
-            }
-        }
-    }
+		protected override void OnTarget(Mobile from, object o)
+		{
+			if (o is SorcerersRewardChest)
+			{
+				Item item = new SalvagerSuitPlans();
+				Container pack = from.Backpack;
+
+				if (pack == null || !pack.TryDropItem(from, item, false))
+					from.BankBox.DropItem(item);
+
+				m_From.PublicOverheadMessage(MessageType.Regular, 0x3B2, 1154228); // *You insert the key into the mechanism and turn it. To your delight the lock opens with a click and you remove the contents*
+
+				m_Key.Delete();
+			}
+			else
+			{
+				from.SendLocalizedMessage(501668); // This key doesn't seem to unlock that.
+			}
+		}
+	}
 }

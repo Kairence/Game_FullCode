@@ -1,64 +1,73 @@
 using System;
-using Server.Items;
-using Server.Gumps;
-using Server.Network;
-using Server.Mobiles;
 using Server.Accounting;
+using Server.Gumps;
+using Server.Items;
+using Server.Mobiles;
+using Server.Network;
 
 namespace Server.Items
 {
-	public class LottoCheck : Item 
+	public class LottoCheck : Item
 	{
 		private DateTime m_RespawnTime = DateTime.Now;
-		
+
 		public DateTime RespawnTime
 		{
-			get{ return m_RespawnTime;}
-			set{ m_RespawnTime = value; InvalidateProperties();}
+			get { return m_RespawnTime; }
+			set
+			{
+				m_RespawnTime = value;
+				InvalidateProperties();
+			}
 		}
-		
+
 		private int m_LottoNumber;
 		public int LottoNumber
 		{
-			get{ return m_LottoNumber;}
-			set{ m_LottoNumber = value; InvalidateProperties();}
+			get { return m_LottoNumber; }
+			set
+			{
+				m_LottoNumber = value;
+				InvalidateProperties();
+			}
 		}
-		
+
 		public override string DefaultName
 		{
-			get { return "·Î¶Ç Ã¼Å© ½Ã½ºÅÛ"; }
+			get { return "ï¿½Î¶ï¿½ Ã¼Å© ï¿½Ã½ï¿½ï¿½ï¿½"; }
 		}
+
 		[Constructable]
-		public LottoCheck() : base( 0xED4 )
+		public LottoCheck()
+			: base(0xED4)
 		{
 			Movable = false;
 			Hue = 1123;
-			Name = "·Î¶Ç Ã¼Å© ½Ã½ºÅÛ";
-		}
-		
-		public override void OnDoubleClick( Mobile from )
-		{
-			from.SendMessage( "´ÙÀ½ ÃßÃ· ½Ã°£ : {0}", m_RespawnTime.ToString());
-			from.SendMessage( "·Î¶Ç ¹øÈ£ :{0}", m_LottoNumber);
+			Name = "ï¿½Î¶ï¿½ Ã¼Å© ï¿½Ã½ï¿½ï¿½ï¿½";
 		}
 
-		public LottoCheck( Serial serial ) : base( serial )
+		public override void OnDoubleClick(Mobile from)
 		{
+			from.SendMessage("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã· ï¿½Ã°ï¿½ : {0}", m_RespawnTime.ToString());
+			from.SendMessage("ï¿½Î¶ï¿½ ï¿½ï¿½È£ :{0}", m_LottoNumber);
 		}
 
-		public override void Serialize( GenericWriter writer )
+		public LottoCheck(Serial serial)
+			: base(serial) { }
+
+		public override void Serialize(GenericWriter writer)
 		{
-			base.Serialize( writer );
+			base.Serialize(writer);
 
-			writer.Write( (int) 0 ); // version
+			writer.Write((int)0); // version
 
-			writer.Write( (DateTime) m_RespawnTime );
-			writer.Write( (int) m_LottoNumber );
+			writer.Write((DateTime)m_RespawnTime);
+			writer.Write((int)m_LottoNumber);
 		}
 
-		public override void Deserialize( GenericReader reader )
+		public override void Deserialize(GenericReader reader)
 		{
-			base.Deserialize( reader );
+			base.Deserialize(reader);
 
 			int version = reader.ReadInt();
 

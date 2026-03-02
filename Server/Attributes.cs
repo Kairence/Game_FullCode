@@ -8,20 +8,16 @@ using System.Reflection;
 namespace Server
 {
 	[AttributeUsage(AttributeTargets.Property)]
-	public class HueAttribute : Attribute
-	{ }
+	public class HueAttribute : Attribute { }
 
 	[AttributeUsage(AttributeTargets.Property)]
-	public class BodyAttribute : Attribute
-	{ }
+	public class BodyAttribute : Attribute { }
 
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface)]
-	public class PropertyObjectAttribute : Attribute
-	{ }
+	public class PropertyObjectAttribute : Attribute { }
 
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-	public class NoSortAttribute : Attribute
-	{ }
+	public class NoSortAttribute : Attribute { }
 
 	[AttributeUsage(AttributeTargets.Method)]
 	public class CallPriorityAttribute : Attribute
@@ -95,7 +91,10 @@ namespace Server
 	{
 		private readonly string[] m_Aliases;
 
-		public string[] Aliases { get { return m_Aliases; } }
+		public string[] Aliases
+		{
+			get { return m_Aliases; }
+		}
 
 		public TypeAliasAttribute(params string[] aliases)
 		{
@@ -104,15 +103,17 @@ namespace Server
 	}
 
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-	public class ParsableAttribute : Attribute
-	{ }
+	public class ParsableAttribute : Attribute { }
 
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum)]
 	public class CustomEnumAttribute : Attribute
 	{
 		private readonly string[] m_Names;
 
-		public string[] Names { get { return m_Names; } }
+		public string[] Names
+		{
+			get { return m_Names; }
+		}
 
 		public CustomEnumAttribute(string[] names)
 		{
@@ -126,15 +127,15 @@ namespace Server
 		public string Message { get; set; }
 
 		public DeleteConfirmAttribute()
-			: this("Are you sure you wish to delete this item?")
-		{ }
+			: this("Are you sure you wish to delete this item?") { }
 
 		public DeleteConfirmAttribute(string message)
 		{
 			Message = message;
 		}
 
-		public static bool Find<T>(out string message) where T : class
+		public static bool Find<T>(out string message)
+			where T : class
 		{
 			return Find(typeof(T), out message);
 		}
@@ -181,11 +182,20 @@ namespace Server
 		private readonly AccessLevel m_WriteLevel;
 		private readonly bool m_ReadOnly;
 
-		public AccessLevel ReadLevel { get { return m_ReadLevel; } }
+		public AccessLevel ReadLevel
+		{
+			get { return m_ReadLevel; }
+		}
 
-		public AccessLevel WriteLevel { get { return m_WriteLevel; } }
+		public AccessLevel WriteLevel
+		{
+			get { return m_WriteLevel; }
+		}
 
-		public bool ReadOnly { get { return m_ReadOnly; } }
+		public bool ReadOnly
+		{
+			get { return m_ReadOnly; }
+		}
 
 		public CommandPropertyAttribute(AccessLevel level, bool readOnly)
 		{
@@ -194,8 +204,7 @@ namespace Server
 		}
 
 		public CommandPropertyAttribute(AccessLevel level)
-			: this(level, level)
-		{ }
+			: this(level, level) { }
 
 		public CommandPropertyAttribute(AccessLevel readLevel, AccessLevel writeLevel)
 		{

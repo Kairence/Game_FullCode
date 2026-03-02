@@ -2,44 +2,46 @@ using System;
 
 namespace Server.Items
 {
-    [Flipable(0x1F03, 0x1F04)]
-    public class RobeOfTheEclipse : BaseOuterTorso
+	[Flipable(0x1F03, 0x1F04)]
+	public class RobeOfTheEclipse : BaseOuterTorso
 	{
-        public override bool CanBeWornByGargoyles { get { return true; } }
-		public override bool IsArtifact { get { return true; } }
-        
-        [Constructable]
-        public RobeOfTheEclipse()
-            : base(0x1F03, 0x486)
-        {
-            Weight = 3.0;
-            Attributes.Luck = 95;
-        }
+		public override bool CanBeWornByGargoyles
+		{
+			get { return true; }
+		}
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public RobeOfTheEclipse(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public RobeOfTheEclipse()
+			: base(0x1F03, 0x486)
+		{
+			Weight = 3.0;
+			Attributes.Luck = 95;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1075082;
-            }
-        }// Robe of the Eclipse
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public RobeOfTheEclipse(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1075082; }
+		} // Robe of the Eclipse
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

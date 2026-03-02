@@ -2,65 +2,56 @@ using System;
 
 namespace Server.Items
 {
-    public class BladeOfTheRighteous : Longsword
+	public class BladeOfTheRighteous : Longsword
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public BladeOfTheRighteous()
-        {
-            Hue = 0x47E;
-            Slayer = SlayerName.Exorcism;
-            WeaponAttributes.HitLeechHits = 87;
-            WeaponAttributes.UseBestSkill = 1;
-            Attributes.BonusHits = 10;
-            Attributes.WeaponDamage = 50;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public BladeOfTheRighteous(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public BladeOfTheRighteous()
+		{
+			Hue = 0x47E;
+			Slayer = SlayerName.Exorcism;
+			WeaponAttributes.HitLeechHits = 87;
+			WeaponAttributes.UseBestSkill = 1;
+			Attributes.BonusHits = 10;
+			Attributes.WeaponDamage = 50;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1061107;
-            }
-        }// Blade of the Righteous
-        public override int ArtifactRarity
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public BladeOfTheRighteous(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0);
-        }
+		public override int LabelNumber
+		{
+			get { return 1061107; }
+		} // Blade of the Righteous
+		public override int ArtifactRarity
+		{
+			get { return 10; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

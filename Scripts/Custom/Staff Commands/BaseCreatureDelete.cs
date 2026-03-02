@@ -1,8 +1,8 @@
 using System;
-using Server;
-using Server.Mobiles;
-using Server.Commands.Generic;
 using System.Collections.Generic;
+using Server;
+using Server.Commands.Generic;
+using Server.Mobiles;
 
 namespace Server.Commands
 {
@@ -10,36 +10,40 @@ namespace Server.Commands
 	{
 		public static void Initialize()
 		{
-	      		CommandSystem.Register( "BCD", AccessLevel.GameMaster, new CommandEventHandler( BaseCreatureDeleteInfo_OnCommand ) );
+			CommandSystem.Register(
+				"BCD",
+				AccessLevel.GameMaster,
+				new CommandEventHandler(BaseCreatureDeleteInfo_OnCommand)
+			);
 		}
 
-		[Usage( "BaseCreatureDelete" )]
-		[Description( "¸ó½ºÅÍ »èÁ¦ ÄÚµå." )]
-		public static void BaseCreatureDeleteInfo_OnCommand( CommandEventArgs e )
+		[Usage("BaseCreatureDelete")]
+		[Description("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½.")]
+		public static void BaseCreatureDeleteInfo_OnCommand(CommandEventArgs e)
 		{
-			e.Mobile.SendMessage("¸ó½ºÅÍ »èÁ¦¸¦ ½ÃÀÛÇÕ´Ï´Ù!");
+			e.Mobile.SendMessage("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½!");
 			int count = 0;
 			var list = new List<Mobile>();
-			foreach ( Mobile m in World.Mobiles.Values )
+			foreach (Mobile m in World.Mobiles.Values)
 			{
-				if ( m is BaseCreature )
+				if (m is BaseCreature)
 				{
 					BaseCreature bc = m as BaseCreature;
-					if( bc.ControlMaster != null || bc.AI == AIType.AI_Vendor )
+					if (bc.ControlMaster != null || bc.AI == AIType.AI_Vendor)
 						continue;
 					else
 					{
 						count++;
-						list.Add( m );
+						list.Add(m);
 					}
 				}
 			}
-			for ( int i = 0; i < list.Count; ++i )
+			for (int i = 0; i < list.Count; ++i)
 			{
 				Mobile tar = (Mobile)list[i];
 				tar.Delete();
 			}
-			e.Mobile.SendMessage("ÃÑ {0}¸¶¸®ÀÇ ¸ó½ºÅÍ¸¦ »èÁ¦Çß½À´Ï´Ù.", count);
+			e.Mobile.SendMessage("ï¿½ï¿½ {0}ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.", count);
 		}
 	}
 }

@@ -3,150 +3,100 @@ using Server.Engines.Craft;
 
 namespace Server.Items
 {
-    [Alterable(typeof(DefBlacksmithy), typeof(GargishWarHammer))]
-    [FlipableAttribute(0x1439, 0x1438)]
-    public class WarHammer : BaseBashing
-    {
-        [Constructable]
-        public WarHammer()
-            : base(0x1439)
-        {
-            this.Weight = 10.0;
-            this.Layer = Layer.TwoHanded;
+	[Alterable(typeof(DefBlacksmithy), typeof(GargishWarHammer))]
+	[FlipableAttribute(0x1439, 0x1438)]
+	public class WarHammer : BaseBashing
+	{
+		[Constructable]
+		public WarHammer()
+			: base(0x1439)
+		{
+			this.Weight = 10.0;
+			this.Layer = Layer.TwoHanded;
 			PrefixOption[61] = 42;
-			SuffixOption[61] = 100000;			
-			
+			SuffixOption[61] = 100000;
 		}
 
-        public WarHammer(Serial serial)
-            : base(serial)
-        {
-        }
+		public WarHammer(Serial serial)
+			: base(serial) { }
 
-        public override WeaponAbility PrimaryAbility
-        {
-            get
-            {
-                return WeaponAbility.WhirlwindAttack;
-            }
-        }
-        public override WeaponAbility SecondaryAbility
-        {
-            get
-            {
-                return WeaponAbility.CrushingBlow;
-            }
-        }
-        public override int AosStrengthReq
-        {
-            get
-            {
-                return 5000;
-            }
-        }
-        public override int AosDexterityReq
-        {
-            get
-            {
-                return 2500;
-            }
-        }
-        public override int AosIntelligenceReq
-        {
-            get
-            {
-                return 100;
-            }
-        }		
-        public override int AosMinDamage
-        {
-            get
-            {
-                return 1;
-            }
-        }
-        public override int AosMaxDamage
-        {
-            get
-            {
-                return 20;
-            }
-        }
-        public override int AosSpeed
-        {
-            get
-            {
-                return 28;
-            }
-        }
-        public override float MlSpeed
-        {
-            get
-            {
-                return 3.00f;
-            }
-        }
-        public override int OldStrengthReq
-        {
-            get
-            {
-                return 40;
-            }
-        }
-        public override int OldMinDamage
-        {
-            get
-            {
-                return 8;
-            }
-        }
-        public override int OldMaxDamage
-        {
-            get
-            {
-                return 36;
-            }
-        }
-        public override int OldSpeed
-        {
-            get
-            {
-                return 31;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 100;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 100;
-            }
-        }
-        public override WeaponAnimation DefAnimation
-        {
-            get
-            {
-                return WeaponAnimation.Bash2H;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override WeaponAbility PrimaryAbility
+		{
+			get { return WeaponAbility.WhirlwindAttack; }
+		}
+		public override WeaponAbility SecondaryAbility
+		{
+			get { return WeaponAbility.CrushingBlow; }
+		}
+		public override int AosStrengthReq
+		{
+			get { return 5000; }
+		}
+		public override int AosDexterityReq
+		{
+			get { return 2500; }
+		}
+		public override int AosIntelligenceReq
+		{
+			get { return 100; }
+		}
+		public override int AosMinDamage
+		{
+			get { return 1; }
+		}
+		public override int AosMaxDamage
+		{
+			get { return 20; }
+		}
+		public override int AosSpeed
+		{
+			get { return 28; }
+		}
+		public override float MlSpeed
+		{
+			get { return 3.00f; }
+		}
+		public override int OldStrengthReq
+		{
+			get { return 40; }
+		}
+		public override int OldMinDamage
+		{
+			get { return 8; }
+		}
+		public override int OldMaxDamage
+		{
+			get { return 36; }
+		}
+		public override int OldSpeed
+		{
+			get { return 31; }
+		}
+		public override int InitMinHits
+		{
+			get { return 100; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 100; }
+		}
+		public override WeaponAnimation DefAnimation
+		{
+			get { return WeaponAnimation.Bash2H; }
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

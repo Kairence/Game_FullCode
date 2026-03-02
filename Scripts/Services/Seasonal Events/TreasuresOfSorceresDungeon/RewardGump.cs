@@ -1,26 +1,24 @@
-using Server;
 using System;
-using Server.Mobiles;
-using Server.Gumps;
+using Server;
 using Server.Engines.Points;
+using Server.Gumps;
+using Server.Mobiles;
 
 namespace Server.Engines.SorcerersDungeon
 {
 	public class SorcerersDungeonRewardGump : BaseRewardGump
 	{
-        public SorcerersDungeonRewardGump(Mobile owner, PlayerMobile user)
-            : base(owner, user, SorcerersDungeonRewards.Rewards, 1158744)
+		public SorcerersDungeonRewardGump(Mobile owner, PlayerMobile user)
+			: base(owner, user, SorcerersDungeonRewards.Rewards, 1158744) { }
+
+		public override double GetPoints(Mobile m)
 		{
+			return PointsSystem.SorcerersDungeon.GetPoints(m);
 		}
 
-        public override double GetPoints(Mobile m)
-        {
-            return PointsSystem.SorcerersDungeon.GetPoints(m);
-        }
-
-        public override void RemovePoints(double points)
-        {
-            PointsSystem.SorcerersDungeon.DeductPoints(User, points);
-        }
+		public override void RemovePoints(double points)
+		{
+			PointsSystem.SorcerersDungeon.DeductPoints(User, points);
+		}
 	}
 }

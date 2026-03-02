@@ -4,243 +4,237 @@ using Server.Items;
 
 namespace Server.Spells.Bushido
 {
-    public class Evasion : SamuraiSpell
-    {
-        private static readonly SpellInfo m_Info = new SpellInfo(
-            "Evasion", null,
-            -1,
-            9002);
-        private static readonly Hashtable m_Table = new Hashtable();
-        public Evasion(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+	public class Evasion : SamuraiSpell
+	{
+		private static readonly SpellInfo m_Info = new SpellInfo("Evasion", null, -1, 9002);
+		private static readonly Hashtable m_Table = new Hashtable();
 
-        public override TimeSpan CastDelayBase
-        {
-            get
-            {
-                return TimeSpan.FromSeconds(0.0);
-            }
-        }
-        public override double RequiredSkill
-        {
-            get
-            {
-                return 0.0;
-            }
-        }
-        public override int RequiredMana
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public static bool VerifyCast(Mobile Caster, bool messages)
-        {
-            if (Caster == null) // Sanity
-                return false;
+		public Evasion(Mobile caster, Item scroll)
+			: base(caster, scroll, m_Info) { }
+
+		public override TimeSpan CastDelayBase
+		{
+			get { return TimeSpan.FromSeconds(0.0); }
+		}
+		public override double RequiredSkill
+		{
+			get { return 0.0; }
+		}
+		public override int RequiredMana
+		{
+			get { return 0; }
+		}
+
+		public static bool VerifyCast(Mobile Caster, bool messages)
+		{
+			if (Caster == null) // Sanity
+				return false;
 
 			return true;
-				
-            BaseWeapon weap = Caster.FindItemOnLayer(Layer.OneHanded) as BaseWeapon;
 
-            if (weap == null)
-                weap = Caster.FindItemOnLayer(Layer.TwoHanded) as BaseWeapon;
+			BaseWeapon weap = Caster.FindItemOnLayer(Layer.OneHanded) as BaseWeapon;
+
+			if (weap == null)
+				weap = Caster.FindItemOnLayer(Layer.TwoHanded) as BaseWeapon;
 
 			/*
-            if (weap != null)
-            {
-                if (Core.ML && Caster.Skills[weap.Skill].Base < 50)
-                {
-                    if (messages)
-                    {
-                        Caster.SendLocalizedMessage(1076206); // Your skill with your equipped weapon must be 50 or higher to use Evasion.
-                    }
-                    return false;
-                }
-            }
-            else if (!(Caster.FindItemOnLayer(Layer.TwoHanded) is BaseShield))
-            {
-                if (messages)
-                {
-                    Caster.SendLocalizedMessage(1062944); // You must have a weapon or a shield equipped to use this ability!
-                }
-                return false;
-            }
+			if (weap != null)
+			{
+				if (Core.ML && Caster.Skills[weap.Skill].Base < 50)
+				{
+					if (messages)
+					{
+						Caster.SendLocalizedMessage(1076206); // Your skill with your equipped weapon must be 50 or higher to use Evasion.
+					}
+					return false;
+				}
+			}
+			else if (!(Caster.FindItemOnLayer(Layer.TwoHanded) is BaseShield))
+			{
+				if (messages)
+				{
+					Caster.SendLocalizedMessage(1062944); // You must have a weapon or a shield equipped to use this ability!
+				}
+				return false;
+			}
 			*/
-            if (!Caster.CanBeginAction(typeof(Evasion)))
-            {
-                if (messages)
-                {
-                    Caster.SendLocalizedMessage(501789); // You must wait before trying again.
-                }
-                return false;
-            }
+			if (!Caster.CanBeginAction(typeof(Evasion)))
+			{
+				if (messages)
+				{
+					Caster.SendLocalizedMessage(501789); // You must wait before trying again.
+				}
+				return false;
+			}
 
-            return true;
-        }
+			return true;
+		}
 
-        public static bool CheckSpellEvasion(Mobile defender)
-        {
-            BaseWeapon weap = defender.FindItemOnLayer(Layer.OneHanded) as BaseWeapon;
+		public static bool CheckSpellEvasion(Mobile defender)
+		{
+			BaseWeapon weap = defender.FindItemOnLayer(Layer.OneHanded) as BaseWeapon;
 
-            if (weap == null)
-                weap = defender.FindItemOnLayer(Layer.TwoHanded) as BaseWeapon;
+			if (weap == null)
+				weap = defender.FindItemOnLayer(Layer.TwoHanded) as BaseWeapon;
 
-            if (Core.ML)
-            {
-                if (defender.Spell != null && defender.Spell.IsCasting)
-                {
-                    return false;
-                }
-				
+			if (Core.ML)
+			{
+				if (defender.Spell != null && defender.Spell.IsCasting)
+				{
+					return false;
+				}
+
 				/*
-                if (weap != null)
-                {
-                    if (defender.Skills[weap.Skill].Base < 50)
-                    {
-                        return false;
-                    }
-                }
+				if (weap != null)
+				{
+					if (defender.Skills[weap.Skill].Base < 50)
+					{
+						return false;
+					}
+				}
 				*/
-                if (!(defender.FindItemOnLayer(Layer.TwoHanded) is BaseShield))
-                {
-                    return false;
-                }
-            }
-            return false;
-        }
+				if (!(defender.FindItemOnLayer(Layer.TwoHanded) is BaseShield))
+				{
+					return false;
+				}
+			}
+			return false;
+		}
 
-        public static bool IsEvading(Mobile m)
-        {
-            return m_Table.Contains(m);
-        }
+		public static bool IsEvading(Mobile m)
+		{
+			return m_Table.Contains(m);
+		}
 
-        public static TimeSpan GetEvadeDuration(Mobile m)
-        {
-            /* Evasion duration now scales with Bushido skill
-            * 
-            * If the player has higher than GM Bushido, and GM Tactics and Anatomy, they get a 1 second bonus
-            * Evasion duration range:
-            * o 3-6 seconds w/o tactics/anatomy
-            * o 6-7 seconds w/ GM+ Bushido and GM tactics/anatomy 
-            */
-            if (!Core.ML)
-                return TimeSpan.FromSeconds(1.0);
+		public static TimeSpan GetEvadeDuration(Mobile m)
+		{
+			/* Evasion duration now scales with Bushido skill
+			*
+			* If the player has higher than GM Bushido, and GM Tactics and Anatomy, they get a 1 second bonus
+			* Evasion duration range:
+			* o 3-6 seconds w/o tactics/anatomy
+			* o 6-7 seconds w/ GM+ Bushido and GM tactics/anatomy
+			*/
+			if (!Core.ML)
+				return TimeSpan.FromSeconds(1.0);
 
-            double seconds = 1;
+			double seconds = 1;
 
 			BaseWeapon weapon = m.Weapon as BaseWeapon as BaseWeapon;
-			
-			if( weapon != null && weapon.Skill is SkillName.Swords )
+
+			if (weapon != null && weapon.Skill is SkillName.Swords)
 			{
-				seconds = 30;//(double)weapon.Speed * 0.2;
+				seconds = 30; //(double)weapon.Speed * 0.2;
 			}
-			
-			
-            return TimeSpan.FromSeconds((int)seconds);
-        }
 
-        public static double GetParryScalar(Mobile m)
-        {
-            /* Evasion modifier to parry now scales with Bushido skill
-            * 
-            * If the player has higher than GM Bushido, and at least GM Tactics and Anatomy, they get a bonus to their evasion modifier (10% bonus to the evasion modifier to parry NOT 10% to the final parry chance)
-            * 
-            * Bonus modifier to parry range: (these are the ranges for the evasion modifier)
-            * o 16-40% bonus w/o tactics/anatomy
-            * o 42-50% bonus w/ GM+ bushido and GM tactics/anatomy
-            */
-            if (!Core.ML)
-                return 1.0;
+			return TimeSpan.FromSeconds((int)seconds);
+		}
 
-            double bonus = 1;
+		public static double GetParryScalar(Mobile m)
+		{
+			/* Evasion modifier to parry now scales with Bushido skill
+			*
+			* If the player has higher than GM Bushido, and at least GM Tactics and Anatomy, they get a bonus to their evasion modifier (10% bonus to the evasion modifier to parry NOT 10% to the final parry chance)
+			*
+			* Bonus modifier to parry range: (these are the ranges for the evasion modifier)
+			* o 16-40% bonus w/o tactics/anatomy
+			* o 42-50% bonus w/ GM+ bushido and GM tactics/anatomy
+			*/
+			if (!Core.ML)
+				return 1.0;
 
-            return 1.0;
-        }
+			double bonus = 1;
 
-        public static void BeginEvasion(Mobile m)
-        {
-            Timer t = (Timer)m_Table[m];
+			return 1.0;
+		}
 
-            if (t != null)
-                t.Stop();
+		public static void BeginEvasion(Mobile m)
+		{
+			Timer t = (Timer)m_Table[m];
 
-            TimeSpan duration = GetEvadeDuration(m);
-            t = new InternalTimer(m, duration);
+			if (t != null)
+				t.Stop();
 
-            BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Evasion, 1060597, 1153810, duration, m));
+			TimeSpan duration = GetEvadeDuration(m);
+			t = new InternalTimer(m, duration);
 
-            m_Table[m] = t;
+			BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Evasion, 1060597, 1153810, duration, m));
 
-            t.Start();
-        }
+			m_Table[m] = t;
 
-        public static void EndEvasion(Mobile m)
-        {
-            Timer t = (Timer)m_Table[m];
+			t.Start();
+		}
 
-            if (t != null)
-                t.Stop();
+		public static void EndEvasion(Mobile m)
+		{
+			Timer t = (Timer)m_Table[m];
 
-            m_Table.Remove(m);
+			if (t != null)
+				t.Stop();
 
-            BuffInfo.RemoveBuff(m, BuffIcon.Evasion);
+			m_Table.Remove(m);
 
-            OnEffectEnd(m, typeof(Evasion));
-        }
+			BuffInfo.RemoveBuff(m, BuffIcon.Evasion);
 
-        public override bool CheckCast()
-        {
-            if (VerifyCast(this.Caster, true))
-                return base.CheckCast();
+			OnEffectEnd(m, typeof(Evasion));
+		}
 
-            return false;
-        }
+		public override bool CheckCast()
+		{
+			if (VerifyCast(this.Caster, true))
+				return base.CheckCast();
 
-        public override void OnBeginCast()
-        {
-            base.OnBeginCast();
+			return false;
+		}
 
-            this.Caster.FixedEffect(0x37C4, 10, 7, 4, 3);
-        }
+		public override void OnBeginCast()
+		{
+			base.OnBeginCast();
 
-        public override void OnCast()
-        {
-            if (this.CheckSequence())
-            {
-                this.Caster.SendLocalizedMessage(1063120); // You feel that you might be able to deflect any attack!
-                this.Caster.FixedParticles(0x376A, 1, 20, 0x7F5, 0x960, 3, EffectLayer.Waist);
-                this.Caster.PlaySound(0x51B);
+			this.Caster.FixedEffect(0x37C4, 10, 7, 4, 3);
+		}
 
-                this.OnCastSuccessful(this.Caster);
+		public override void OnCast()
+		{
+			if (this.CheckSequence())
+			{
+				this.Caster.SendLocalizedMessage(1063120); // You feel that you might be able to deflect any attack!
+				this.Caster.FixedParticles(0x376A, 1, 20, 0x7F5, 0x960, 3, EffectLayer.Waist);
+				this.Caster.PlaySound(0x51B);
 
-                BeginEvasion(this.Caster);
-				
-                this.Caster.BeginAction(typeof(Evasion));
-                Timer.DelayCall(TimeSpan.FromSeconds(0.0), delegate { this.Caster.EndAction(typeof(Evasion)); });
-            }
+				this.OnCastSuccessful(this.Caster);
 
-            this.FinishSequence();
-        }
+				BeginEvasion(this.Caster);
 
-        private class InternalTimer : Timer
-        {
-            private readonly Mobile m_Mobile;
-            public InternalTimer(Mobile m, TimeSpan delay)
-                : base(delay)
-            {
-                this.m_Mobile = m;
-                this.Priority = TimerPriority.TwoFiftyMS;
-            }
+				this.Caster.BeginAction(typeof(Evasion));
+				Timer.DelayCall(
+					TimeSpan.FromSeconds(0.0),
+					delegate
+					{
+						this.Caster.EndAction(typeof(Evasion));
+					}
+				);
+			}
 
-            protected override void OnTick()
-            {
-                EndEvasion(this.m_Mobile);
-                this.m_Mobile.SendLocalizedMessage(1063121); // You no longer feel that you could deflect any attack.
-            }
-        }
-    }
+			this.FinishSequence();
+		}
+
+		private class InternalTimer : Timer
+		{
+			private readonly Mobile m_Mobile;
+
+			public InternalTimer(Mobile m, TimeSpan delay)
+				: base(delay)
+			{
+				this.m_Mobile = m;
+				this.Priority = TimerPriority.TwoFiftyMS;
+			}
+
+			protected override void OnTick()
+			{
+				EndEvasion(this.m_Mobile);
+				this.m_Mobile.SendLocalizedMessage(1063121); // You no longer feel that you could deflect any attack.
+			}
+		}
+	}
 }

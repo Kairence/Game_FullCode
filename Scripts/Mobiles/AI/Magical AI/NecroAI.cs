@@ -7,12 +7,17 @@ namespace Server.Mobiles
 {
 	public class NecroAI : MageAI
 	{
-		public override SkillName CastSkill { get { return SkillName.Necromancy; } }
-		public override bool UsesMagery { get { return false; } }
+		public override SkillName CastSkill
+		{
+			get { return SkillName.Necromancy; }
+		}
+		public override bool UsesMagery
+		{
+			get { return false; }
+		}
 
 		public NecroAI(BaseCreature m)
-			: base(m)
-		{ }
+			: base(m) { }
 
 		public override Spell GetRandomDamageSpell()
 		{
@@ -41,15 +46,15 @@ namespace Server.Mobiles
 			return null;
 		}
 
-        public override Spell GetRandomSummonSpell()
-        {
-            if (!m_Mobile.Controlled && !m_Mobile.Summoned && m_Mobile.Mana >= 23)
-            {
-                return new AnimateDeadSpell(m_Mobile, null);
-            }
+		public override Spell GetRandomSummonSpell()
+		{
+			if (!m_Mobile.Controlled && !m_Mobile.Summoned && m_Mobile.Mana >= 23)
+			{
+				return new AnimateDeadSpell(m_Mobile, null);
+			}
 
-            return null;
-        }
+			return null;
+		}
 
 		public override Spell GetRandomCurseSpell()
 		{
@@ -87,11 +92,11 @@ namespace Server.Mobiles
 			return null;
 		}
 
-        public override Spell GetCureSpell()
-        {
-            return null;
-        }
-		
+		public override Spell GetCureSpell()
+		{
+			return null;
+		}
+
 		public override Spell GetRandomBuffSpell()
 		{
 			return new CurseWeaponSpell(m_Mobile, null);

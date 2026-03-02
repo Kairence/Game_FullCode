@@ -6,355 +6,316 @@ using Server.Spells.Seventh;
 
 namespace Server.Mobiles
 {
-    public class Barracoon : BaseChampion
-    {
-        [Constructable]
-        public Barracoon()
-            : base(AIType.AI_Melee)
-        {
-            Name = "Barracoon";
-            Title = "the piper";
-            Body = 0x190;
-            Hue = 0x83EC;
+	public class Barracoon : BaseChampion
+	{
+		[Constructable]
+		public Barracoon()
+			: base(AIType.AI_Melee)
+		{
+			Name = "Barracoon";
+			Title = "the piper";
+			Body = 0x190;
+			Hue = 0x83EC;
 
-            SetStr(283, 425);
-            SetDex(72, 150);
-            SetInt(505, 750);
+			SetStr(283, 425);
+			SetDex(72, 150);
+			SetInt(505, 750);
 
-            SetHits(12000);
-            SetStam(102, 300);
-            SetMana(505, 750);
+			SetHits(12000);
+			SetStam(102, 300);
+			SetMana(505, 750);
 
-            SetDamage(29, 38);
+			SetDamage(29, 38);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 65, 75);
-            SetResistance(ResistanceType.Fire, 70, 80);
-            SetResistance(ResistanceType.Cold, 65, 80);
-            SetResistance(ResistanceType.Poison, 70, 75);
-            SetResistance(ResistanceType.Energy, 70, 80);
+			SetResistance(ResistanceType.Physical, 65, 75);
+			SetResistance(ResistanceType.Fire, 70, 80);
+			SetResistance(ResistanceType.Cold, 65, 80);
+			SetResistance(ResistanceType.Poison, 70, 75);
+			SetResistance(ResistanceType.Energy, 70, 80);
 
-            SetSkill(SkillName.MagicResist, 100.0);
-            SetSkill(SkillName.Tactics, 118.3, 120.2);
-            SetSkill(SkillName.Wrestling, 118.4, 122.7);
+			SetSkill(SkillName.MagicResist, 100.0);
+			SetSkill(SkillName.Tactics, 118.3, 120.2);
+			SetSkill(SkillName.Wrestling, 118.4, 122.7);
 
-            Fame = 22500;
-            Karma = -22500;
+			Fame = 22500;
+			Karma = -22500;
 
-            VirtualArmor = 70;
+			VirtualArmor = 70;
 
-            AddItem(new FancyShirt(Utility.RandomGreenHue()));
-            AddItem(new LongPants(Utility.RandomYellowHue()));
-            AddItem(new JesterHat(Utility.RandomPinkHue()));
-            AddItem(new Cloak(Utility.RandomPinkHue()));
-            AddItem(new Sandals());
+			AddItem(new FancyShirt(Utility.RandomGreenHue()));
+			AddItem(new LongPants(Utility.RandomYellowHue()));
+			AddItem(new JesterHat(Utility.RandomPinkHue()));
+			AddItem(new Cloak(Utility.RandomPinkHue()));
+			AddItem(new Sandals());
 
-            HairItemID = 0x203B; // Short Hair
-            HairHue = 0x94;
+			HairItemID = 0x203B; // Short Hair
+			HairHue = 0x94;
 
-            m_SpecialSlayerMechanics = true;
-        }
+			m_SpecialSlayerMechanics = true;
+		}
 
-        public Barracoon(Serial serial)
-            : base(serial)
-        {
-        }
+		public Barracoon(Serial serial)
+			: base(serial) { }
 
-        public override ChampionSkullType SkullType
-        {
-            get
-            {
-                return ChampionSkullType.Greed;
-            }
-        }
-        public override Type[] UniqueList
-        {
-            get
-            {
-                return new Type[] { typeof(FangOfRactus) };
-            }
-        }
-        public override Type[] SharedList
-        {
-            get
-            {
-                return new Type[]
-                {
-                    typeof(EmbroideredOakLeafCloak),
-                    typeof(DjinnisRing),
-                    typeof(DetectiveBoots),
-                    typeof(GauntletsOfAnger)
-                };
-            }
-        }
-        public override Type[] DecorativeList
-        {
-            get
-            {
-                return new Type[] { typeof(SwampTile), typeof(MonsterStatuette) };
-            }
-        }
-        public override MonsterStatuetteType[] StatueTypes
-        {
-            get
-            {
-                return new MonsterStatuetteType[] { MonsterStatuetteType.Slime };
-            }
-        }
-        public override bool AlwaysMurderer
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override bool AutoDispel
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override double AutoDispelChance
-        {
-            get
-            {
-                return 1.0;
-            }
-        }
-        public override bool BardImmune
-        {
-            get
-            {
-                return !Core.SE;
-            }
-        }
-		public override bool AllureImmune
+		public override ChampionSkullType SkullType
+		{
+			get { return ChampionSkullType.Greed; }
+		}
+		public override Type[] UniqueList
+		{
+			get { return new Type[] { typeof(FangOfRactus) }; }
+		}
+		public override Type[] SharedList
 		{
 			get
 			{
-				return true;
+				return new Type[]
+				{
+					typeof(EmbroideredOakLeafCloak),
+					typeof(DjinnisRing),
+					typeof(DetectiveBoots),
+					typeof(GauntletsOfAnger),
+				};
 			}
 		}
-        public override bool Unprovokable
-        {
-            get
-            {
-                return Core.SE;
-            }
-        }
-        public override bool Uncalmable
-        {
-            get
-            {
-                return Core.SE;
-            }
-        }
-        public override Poison PoisonImmune
-        {
-            get
-            {
-                return Poison.Deadly;
-            }
-        }
-        public override bool ShowFameTitle
-        {
-            get
-            {
-                return false;
-            }
-        }
-        public override bool ClickTitle
-        {
-            get
-            {
-                return false;
-            }
-        }
+		public override Type[] DecorativeList
+		{
+			get { return new Type[] { typeof(SwampTile), typeof(MonsterStatuette) }; }
+		}
+		public override MonsterStatuetteType[] StatueTypes
+		{
+			get { return new MonsterStatuetteType[] { MonsterStatuetteType.Slime }; }
+		}
+		public override bool AlwaysMurderer
+		{
+			get { return true; }
+		}
+		public override bool AutoDispel
+		{
+			get { return true; }
+		}
+		public override double AutoDispelChance
+		{
+			get { return 1.0; }
+		}
+		public override bool BardImmune
+		{
+			get { return !Core.SE; }
+		}
+		public override bool AllureImmune
+		{
+			get { return true; }
+		}
+		public override bool Unprovokable
+		{
+			get { return Core.SE; }
+		}
+		public override bool Uncalmable
+		{
+			get { return Core.SE; }
+		}
+		public override Poison PoisonImmune
+		{
+			get { return Poison.Deadly; }
+		}
+		public override bool ShowFameTitle
+		{
+			get { return false; }
+		}
+		public override bool ClickTitle
+		{
+			get { return false; }
+		}
 
-        public override bool ForceStayHome { get { return true; } }
+		public override bool ForceStayHome
+		{
+			get { return true; }
+		}
 
-        public override void GenerateLoot()
-        {
-            AddLoot(LootPack.UltraRich, 3);
-        }
+		public override void GenerateLoot()
+		{
+			AddLoot(LootPack.UltraRich, 3);
+		}
 
-        public void Polymorph(Mobile m)
-        {
-            if (!m.CanBeginAction(typeof(PolymorphSpell)) || !m.CanBeginAction(typeof(IncognitoSpell)) || m.IsBodyMod)
-                return;
+		public void Polymorph(Mobile m)
+		{
+			if (!m.CanBeginAction(typeof(PolymorphSpell)) || !m.CanBeginAction(typeof(IncognitoSpell)) || m.IsBodyMod)
+				return;
 
-            IMount mount = m.Mount;
+			IMount mount = m.Mount;
 
-            if (mount != null)
-                mount.Rider = null;
+			if (mount != null)
+				mount.Rider = null;
 
-            if (m.Flying)
-                m.ToggleFlying();
+			if (m.Flying)
+				m.ToggleFlying();
 
-            if (m.Mounted)
-                return;
+			if (m.Mounted)
+				return;
 
-            if (m.BeginAction(typeof(PolymorphSpell)))
-            {
-                m.BodyMod = 42;
-                m.HueMod = 0;
-                if (m == this) { 
-                    m_SlayerVulnerabilities.Add("Vermin");
-                    m_SlayerVulnerabilities.Add("Repond");
-                }
-   
-                new ExpirePolymorphTimer(m).Start();
-            }
-        }
+			if (m.BeginAction(typeof(PolymorphSpell)))
+			{
+				m.BodyMod = 42;
+				m.HueMod = 0;
+				if (m == this)
+				{
+					m_SlayerVulnerabilities.Add("Vermin");
+					m_SlayerVulnerabilities.Add("Repond");
+				}
 
-        public void SpawnRatmen(Mobile target)
-        {
-            Map map = Map;
+				new ExpirePolymorphTimer(m).Start();
+			}
+		}
 
-            if (map == null)
-                return;
+		public void SpawnRatmen(Mobile target)
+		{
+			Map map = Map;
 
-            int rats = 0;
+			if (map == null)
+				return;
 
-            IPooledEnumerable eable = GetMobilesInRange(10);
+			int rats = 0;
 
-            foreach (Mobile m in eable)
-            {
-                if (m is Ratman || m is RatmanArcher || m is RatmanMage)
-                    ++rats;
-            }
+			IPooledEnumerable eable = GetMobilesInRange(10);
 
-            eable.Free();
+			foreach (Mobile m in eable)
+			{
+				if (m is Ratman || m is RatmanArcher || m is RatmanMage)
+					++rats;
+			}
 
-            if (rats < 16)
-            {
-                PlaySound(0x3D);
+			eable.Free();
 
-                int newRats = Utility.RandomMinMax(3, 6);
+			if (rats < 16)
+			{
+				PlaySound(0x3D);
 
-                for (int i = 0; i < newRats; ++i)
-                {
-                    BaseCreature rat;
+				int newRats = Utility.RandomMinMax(3, 6);
 
-                    switch ( Utility.Random(5) )
-                    {
-                        default:
-                        case 0:
-                        case 1:
-                            rat = new Ratman();
-                            break;
-                        case 2:
-                        case 3:
-                            rat = new RatmanArcher();
-                            break;
-                        case 4:
-                            rat = new RatmanMage();
-                            break;
-                    }
+				for (int i = 0; i < newRats; ++i)
+				{
+					BaseCreature rat;
 
-                    rat.Team = Team;
+					switch (Utility.Random(5))
+					{
+						default:
+						case 0:
+						case 1:
+							rat = new Ratman();
+							break;
+						case 2:
+						case 3:
+							rat = new RatmanArcher();
+							break;
+						case 4:
+							rat = new RatmanMage();
+							break;
+					}
 
-                    bool validLocation = false;
-                    Point3D loc = Location;
+					rat.Team = Team;
 
-                    for (int j = 0; !validLocation && j < 10; ++j)
-                    {
-                        int x = X + Utility.Random(3) - 1;
-                        int y = Y + Utility.Random(3) - 1;
-                        int z = map.GetAverageZ(x, y);
+					bool validLocation = false;
+					Point3D loc = Location;
 
-                        if (validLocation = map.CanFit(x, y, Z, 16, false, false))
-                            loc = new Point3D(x, y, Z);
-                        else if (validLocation = map.CanFit(x, y, z, 16, false, false))
-                            loc = new Point3D(x, y, z);
-                    }
+					for (int j = 0; !validLocation && j < 10; ++j)
+					{
+						int x = X + Utility.Random(3) - 1;
+						int y = Y + Utility.Random(3) - 1;
+						int z = map.GetAverageZ(x, y);
 
-                    rat.IsChampionSpawn = true;
-                    rat.MoveToWorld(loc, map);
-                    rat.Combatant = target;
-                }
-            }
-        }
+						if (validLocation = map.CanFit(x, y, Z, 16, false, false))
+							loc = new Point3D(x, y, Z);
+						else if (validLocation = map.CanFit(x, y, z, 16, false, false))
+							loc = new Point3D(x, y, z);
+					}
 
-        public void DoSpecialAbility(Mobile target)
-        {
-            if (target == null || target.Deleted) //sanity
-                return;
+					rat.IsChampionSpawn = true;
+					rat.MoveToWorld(loc, map);
+					rat.Combatant = target;
+				}
+			}
+		}
 
-            if (target.Player && 0.6 >= Utility.RandomDouble()) // 60% chance to polymorph attacker into a ratman
-                Polymorph(target);
+		public void DoSpecialAbility(Mobile target)
+		{
+			if (target == null || target.Deleted) //sanity
+				return;
 
-            if (0.1 >= Utility.RandomDouble()) // 10% chance to more ratmen
-                SpawnRatmen(target);
+			if (target.Player && 0.6 >= Utility.RandomDouble()) // 60% chance to polymorph attacker into a ratman
+				Polymorph(target);
 
-            if (0.05 >= Utility.RandomDouble() && !IsBodyMod) // 5% chance to polymorph into a ratman
-                Polymorph(this);
-        }
+			if (0.1 >= Utility.RandomDouble()) // 10% chance to more ratmen
+				SpawnRatmen(target);
 
-        public override void OnGotMeleeAttack(Mobile attacker)
-        {
-            base.OnGotMeleeAttack(attacker);
+			if (0.05 >= Utility.RandomDouble() && !IsBodyMod) // 5% chance to polymorph into a ratman
+				Polymorph(this);
+		}
 
-            DoSpecialAbility(attacker);
-        }
+		public override void OnGotMeleeAttack(Mobile attacker)
+		{
+			base.OnGotMeleeAttack(attacker);
 
-        public override void OnGaveMeleeAttack(Mobile defender)
-        {
-            base.OnGaveMeleeAttack(defender);
+			DoSpecialAbility(attacker);
+		}
 
-            DoSpecialAbility(defender);
-        }
+		public override void OnGaveMeleeAttack(Mobile defender)
+		{
+			base.OnGaveMeleeAttack(defender);
 
-        public override void OnDamagedBySpell(Mobile from)
-        {
-            base.OnDamagedBySpell(from);
+			DoSpecialAbility(defender);
+		}
 
-            DoSpecialAbility(from);
-        }
+		public override void OnDamagedBySpell(Mobile from)
+		{
+			base.OnDamagedBySpell(from);
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			DoSpecialAbility(from);
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            m_SlayerVulnerabilities.Clear();
-        }
+			int version = reader.ReadInt();
 
-        private class ExpirePolymorphTimer : Timer
-        {
-            private Mobile m_Owner;
-            public ExpirePolymorphTimer(Mobile owner)
-                : base(TimeSpan.FromMinutes(3.0)) //3.0
-            {
-                m_Owner = owner;
+			m_SlayerVulnerabilities.Clear();
+		}
 
-                Priority = TimerPriority.OneSecond;
-            }
+		private class ExpirePolymorphTimer : Timer
+		{
+			private Mobile m_Owner;
 
-            protected override void OnTick()
-            {
-                if (!m_Owner.CanBeginAction(typeof(PolymorphSpell)))
-                {
-                    m_Owner.BodyMod = 0;
-                    m_Owner.HueMod = -1;
-                    m_Owner.EndAction(typeof(PolymorphSpell));
-                    if (m_Owner.SlayerVulnerabilities != null)
-                    {
-                        m_Owner.SlayerVulnerabilities.Remove("Vermin");
-                        m_Owner.SlayerVulnerabilities.Remove("Repond");    
-                    }
-                }
-            }
-        }
-    }
+			public ExpirePolymorphTimer(Mobile owner)
+				: base(TimeSpan.FromMinutes(3.0)) //3.0
+			{
+				m_Owner = owner;
+
+				Priority = TimerPriority.OneSecond;
+			}
+
+			protected override void OnTick()
+			{
+				if (!m_Owner.CanBeginAction(typeof(PolymorphSpell)))
+				{
+					m_Owner.BodyMod = 0;
+					m_Owner.HueMod = -1;
+					m_Owner.EndAction(typeof(PolymorphSpell));
+					if (m_Owner.SlayerVulnerabilities != null)
+					{
+						m_Owner.SlayerVulnerabilities.Remove("Vermin");
+						m_Owner.SlayerVulnerabilities.Remove("Repond");
+					}
+				}
+			}
+		}
+	}
 }

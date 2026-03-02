@@ -4,281 +4,251 @@ using Server.Network;
 
 namespace Server.Items
 {
-    [Flipable(0x456E, 0x456F)]
-    public class SnowStatuePegasus : Item
-    {
-        [Constructable]
-        public SnowStatuePegasus()
-            : base(0x456E)
-        {
-        }
+	[Flipable(0x456E, 0x456F)]
+	public class SnowStatuePegasus : Item
+	{
+		[Constructable]
+		public SnowStatuePegasus()
+			: base(0x456E) { }
 
-        public SnowStatuePegasus(Serial serial)
-            : base(serial)
-        {
-        }
+		public SnowStatuePegasus(Serial serial)
+			: base(serial) { }
 
-        public override bool ForceShowProperties
-        {
-            get
-            {
-                return ObjectPropertyList.Enabled;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override bool ForceShowProperties
+		{
+			get { return ObjectPropertyList.Enabled; }
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    [Flipable(0x4578, 0x4579)]
-    public class SnowStatueSeahorse : Item
-    {
-        [Constructable]
-        public SnowStatueSeahorse()
-            : base(0x4578)
-        {
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public SnowStatueSeahorse(Serial serial)
-            : base(serial)
-        {
-        }
+	[Flipable(0x4578, 0x4579)]
+	public class SnowStatueSeahorse : Item
+	{
+		[Constructable]
+		public SnowStatueSeahorse()
+			: base(0x4578) { }
 
-        public override bool ForceShowProperties
-        {
-            get
-            {
-                return ObjectPropertyList.Enabled;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public SnowStatueSeahorse(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override bool ForceShowProperties
+		{
+			get { return ObjectPropertyList.Enabled; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
 
-    [Flipable(0x457A, 0x457B)]
-    public class SnowStatueMermaid : Item
-    {
-        [Constructable]
-        public SnowStatueMermaid()
-            : base(0x457A)
-        {
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public SnowStatueMermaid(Serial serial)
-            : base(serial)
-        {
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public override bool ForceShowProperties
-        {
-            get
-            {
-                return ObjectPropertyList.Enabled;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+	[Flipable(0x457A, 0x457B)]
+	public class SnowStatueMermaid : Item
+	{
+		[Constructable]
+		public SnowStatueMermaid()
+			: base(0x457A) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public SnowStatueMermaid(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override bool ForceShowProperties
+		{
+			get { return ObjectPropertyList.Enabled; }
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-    [Flipable(0x457C, 0x457D)]
-    public class SnowStatueGriffon : Item
-    {
-        [Constructable]
-        public SnowStatueGriffon()
-            : base(0x457C)
-        {
-        }
+			writer.WriteEncodedInt(0); // version
+		}
 
-        public SnowStatueGriffon(Serial serial)
-            : base(serial)
-        {
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override bool ForceShowProperties
-        {
-            get
-            {
-                return ObjectPropertyList.Enabled;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-            writer.WriteEncodedInt(0); // version
-        }
+	[Flipable(0x457C, 0x457D)]
+	public class SnowStatueGriffon : Item
+	{
+		[Constructable]
+		public SnowStatueGriffon()
+			: base(0x457C) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public SnowStatueGriffon(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override bool ForceShowProperties
+		{
+			get { return ObjectPropertyList.Enabled; }
+		}
 
-    public class SnowStatueDeed : Item
-    {
-        [Constructable]
-        public SnowStatueDeed()
-            : base(0x14F0)
-        {
-            this.LootType = LootType.Blessed;
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public SnowStatueDeed(Serial serial)
-            : base(serial)
-        {
-        }
+			writer.WriteEncodedInt(0); // version
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1114296;
-            }
-        }// snow statue deed
-        public override double DefaultWeight
-        {
-            get
-            {
-                return 1.0;
-            }
-        }
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (this.IsChildOf(from.Backpack))
-            {
-                from.CloseGump(typeof(InternalGump));
-                from.SendGump(new InternalGump(this));
-            }
-            else
-            {
-                from.SendLocalizedMessage(1042038); // You must have the object in your backpack to use it.
-            }
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-            writer.WriteEncodedInt(0); // version
-        }
+	public class SnowStatueDeed : Item
+	{
+		[Constructable]
+		public SnowStatueDeed()
+			: base(0x14F0)
+		{
+			this.LootType = LootType.Blessed;
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public SnowStatueDeed(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadEncodedInt();
-        }
+		public override int LabelNumber
+		{
+			get { return 1114296; }
+		} // snow statue deed
+		public override double DefaultWeight
+		{
+			get { return 1.0; }
+		}
 
-        private class InternalGump : Gump
-        {
-            private readonly SnowStatueDeed m_Deed;
-            public InternalGump(SnowStatueDeed deed)
-                : base(100, 200)
-            {
-                this.m_Deed = deed;
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (this.IsChildOf(from.Backpack))
+			{
+				from.CloseGump(typeof(InternalGump));
+				from.SendGump(new InternalGump(this));
+			}
+			else
+			{
+				from.SendLocalizedMessage(1042038); // You must have the object in your backpack to use it.
+			}
+		}
 
-                this.Closable = true;
-                this.Disposable = true;
-                this.Dragable = true;
-                this.Resizable = false;
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-                this.AddPage(0);
-                this.AddBackground(0, 0, 360, 225, 0xA28);
+			writer.WriteEncodedInt(0); // version
+		}
 
-                this.AddPage(1);
-                this.AddLabel(45, 15, 0, "Select One:");
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-                this.AddItem(35, 75, 0x456E);
-                this.AddButton(65, 50, 0x845, 0x846, 1, GumpButtonType.Reply, 0);
+			int version = reader.ReadEncodedInt();
+		}
 
-                this.AddItem(120, 75, 0x4578);
-                this.AddButton(135, 50, 0x845, 0x846, 2, GumpButtonType.Reply, 0);
+		private class InternalGump : Gump
+		{
+			private readonly SnowStatueDeed m_Deed;
 
-                this.AddItem(190, 75, 0x457A);
-                this.AddButton(205, 50, 0x845, 0x846, 3, GumpButtonType.Reply, 0);
+			public InternalGump(SnowStatueDeed deed)
+				: base(100, 200)
+			{
+				this.m_Deed = deed;
 
-                this.AddItem(250, 75, 0x457C);
-                this.AddButton(275, 50, 0x845, 0x846, 4, GumpButtonType.Reply, 0);
-            }
+				this.Closable = true;
+				this.Disposable = true;
+				this.Dragable = true;
+				this.Resizable = false;
 
-            public override void OnResponse(NetState sender, RelayInfo info)
-            {
-                if (this.m_Deed == null || this.m_Deed.Deleted)
-                    return;
+				this.AddPage(0);
+				this.AddBackground(0, 0, 360, 225, 0xA28);
 
-                Mobile from = sender.Mobile;
+				this.AddPage(1);
+				this.AddLabel(45, 15, 0, "Select One:");
 
-                if (!this.m_Deed.IsChildOf(from.Backpack))
-                {
-                    from.SendLocalizedMessage(1042038); // You must have the object in your backpack to use it
-                    return;
-                }
+				this.AddItem(35, 75, 0x456E);
+				this.AddButton(65, 50, 0x845, 0x846, 1, GumpButtonType.Reply, 0);
 
-                Item statue = null;
+				this.AddItem(120, 75, 0x4578);
+				this.AddButton(135, 50, 0x845, 0x846, 2, GumpButtonType.Reply, 0);
 
-                switch ( info.ButtonID )
-                {
-                    case 1:
-                        statue = new SnowStatuePegasus();
-                        break;
-                    case 2:
-                        statue = new SnowStatueSeahorse();
-                        break;
-                    case 3:
-                        statue = new SnowStatueMermaid();
-                        break;
-                    case 4:
-                        statue = new SnowStatueGriffon();
-                        break;
-                }
+				this.AddItem(190, 75, 0x457A);
+				this.AddButton(205, 50, 0x845, 0x846, 3, GumpButtonType.Reply, 0);
 
-                if (statue == null)
-                    return;
+				this.AddItem(250, 75, 0x457C);
+				this.AddButton(275, 50, 0x845, 0x846, 4, GumpButtonType.Reply, 0);
+			}
 
-                if (!from.PlaceInBackpack(statue))
-                {
-                    statue.Delete();
-                    from.SendLocalizedMessage(1078837); // Your backpack is full! Please make room and try again.
-                }
-                else
-                {
-                    this.m_Deed.Delete();
-                }
-            }
-        }
-    }
+			public override void OnResponse(NetState sender, RelayInfo info)
+			{
+				if (this.m_Deed == null || this.m_Deed.Deleted)
+					return;
+
+				Mobile from = sender.Mobile;
+
+				if (!this.m_Deed.IsChildOf(from.Backpack))
+				{
+					from.SendLocalizedMessage(1042038); // You must have the object in your backpack to use it
+					return;
+				}
+
+				Item statue = null;
+
+				switch (info.ButtonID)
+				{
+					case 1:
+						statue = new SnowStatuePegasus();
+						break;
+					case 2:
+						statue = new SnowStatueSeahorse();
+						break;
+					case 3:
+						statue = new SnowStatueMermaid();
+						break;
+					case 4:
+						statue = new SnowStatueGriffon();
+						break;
+				}
+
+				if (statue == null)
+					return;
+
+				if (!from.PlaceInBackpack(statue))
+				{
+					statue.Delete();
+					from.SendLocalizedMessage(1078837); // Your backpack is full! Please make room and try again.
+				}
+				else
+				{
+					this.m_Deed.Delete();
+				}
+			}
+		}
+	}
 }

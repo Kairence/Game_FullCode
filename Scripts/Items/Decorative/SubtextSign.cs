@@ -2,73 +2,70 @@ using System;
 
 namespace Server.Items
 {
-    public class SubtextSign : Sign
-    {
-        private string m_Subtext;
-        [Constructable]
-        public SubtextSign(SignType type, SignFacing facing, string subtext)
-            : base(type, facing)
-        {
-            this.m_Subtext = subtext;
-        }
+	public class SubtextSign : Sign
+	{
+		private string m_Subtext;
 
-        [Constructable]
-        public SubtextSign(int itemID, string subtext)
-            : base(itemID)
-        {
-            this.m_Subtext = subtext;
-        }
+		[Constructable]
+		public SubtextSign(SignType type, SignFacing facing, string subtext)
+			: base(type, facing)
+		{
+			this.m_Subtext = subtext;
+		}
 
-        public SubtextSign(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public SubtextSign(int itemID, string subtext)
+			: base(itemID)
+		{
+			this.m_Subtext = subtext;
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public string Subtext
-        {
-            get
-            {
-                return this.m_Subtext;
-            }
-            set
-            {
-                this.m_Subtext = value;
-                this.InvalidateProperties();
-            }
-        }
-        public override void OnSingleClick(Mobile from)
-        {
-            base.OnSingleClick(from);
+		public SubtextSign(Serial serial)
+			: base(serial) { }
 
-            if (!String.IsNullOrEmpty(this.m_Subtext))
-                this.LabelTo(from, this.m_Subtext);
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public string Subtext
+		{
+			get { return this.m_Subtext; }
+			set
+			{
+				this.m_Subtext = value;
+				this.InvalidateProperties();
+			}
+		}
 
-        public override void AddNameProperties(ObjectPropertyList list)
-        {
-            base.AddNameProperties(list);
+		public override void OnSingleClick(Mobile from)
+		{
+			base.OnSingleClick(from);
 
-            if (!String.IsNullOrEmpty(this.m_Subtext))
-                list.Add(this.m_Subtext);
-        }
+			if (!String.IsNullOrEmpty(this.m_Subtext))
+				this.LabelTo(from, this.m_Subtext);
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void AddNameProperties(ObjectPropertyList list)
+		{
+			base.AddNameProperties(list);
 
-            writer.Write((int)0);
+			if (!String.IsNullOrEmpty(this.m_Subtext))
+				list.Add(this.m_Subtext);
+		}
 
-            writer.Write(this.m_Subtext);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0);
 
-            int version = reader.ReadInt();
+			writer.Write(this.m_Subtext);
+		}
 
-            this.m_Subtext = reader.ReadString();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+
+			this.m_Subtext = reader.ReadString();
+		}
+	}
 }

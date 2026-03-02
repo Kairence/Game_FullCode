@@ -1,8 +1,8 @@
 using System;
-using Server;
 using System.Collections.Generic;
-using Server.Mobiles;
 using System.Linq;
+using Server;
+using Server.Mobiles;
 using Server.Network;
 using Server.Regions;
 using Server.Spells;
@@ -10,217 +10,269 @@ using Server.Spells;
 namespace Server.Items
 {
 	public class Volcano
-    {
-        public static readonly Rectangle2D LavaStart = new Rectangle2D(927, 1615, 2, 2);
-        public static readonly int LastLavaStage = 70;
+	{
+		public static readonly Rectangle2D LavaStart = new Rectangle2D(927, 1615, 2, 2);
+		public static readonly int LastLavaStage = 70;
 
-        public static readonly Rectangle2D[] SafeZone = new Rectangle2D[] 
-        {
-            new Rectangle2D(959, 1704, 15, 14),
-            new Rectangle2D(915, 1696, 15, 15),
-            new Rectangle2D(1056, 1584, 17, 19),
-            new Rectangle2D(884, 1695, 13, 15),
-            new Rectangle2D(1009, 1663, 13, 13),
-            new Rectangle2D(994, 1526, 15, 15),
-            new Rectangle2D(1012, 1541, 15, 14),
-            new Rectangle2D(1032, 1520, 19, 18),
-            new Rectangle2D(1011, 1601, 9, 9),
-            new Rectangle2D(897, 1554, 15, 15),
-            new Rectangle2D(834, 1546, 23, 20),
-            new Rectangle2D(837, 1675, 11, 14),
-            new Rectangle2D(838, 1636, 15, 12),
-            new Rectangle2D(856, 1697, 19, 18),
-            new Rectangle2D(879, 1668, 15, 19),
-            new Rectangle2D(991, 1590, 15, 15)
-        };
+		public static readonly Rectangle2D[] SafeZone = new Rectangle2D[]
+		{
+			new Rectangle2D(959, 1704, 15, 14),
+			new Rectangle2D(915, 1696, 15, 15),
+			new Rectangle2D(1056, 1584, 17, 19),
+			new Rectangle2D(884, 1695, 13, 15),
+			new Rectangle2D(1009, 1663, 13, 13),
+			new Rectangle2D(994, 1526, 15, 15),
+			new Rectangle2D(1012, 1541, 15, 14),
+			new Rectangle2D(1032, 1520, 19, 18),
+			new Rectangle2D(1011, 1601, 9, 9),
+			new Rectangle2D(897, 1554, 15, 15),
+			new Rectangle2D(834, 1546, 23, 20),
+			new Rectangle2D(837, 1675, 11, 14),
+			new Rectangle2D(838, 1636, 15, 12),
+			new Rectangle2D(856, 1697, 19, 18),
+			new Rectangle2D(879, 1668, 15, 19),
+			new Rectangle2D(991, 1590, 15, 15),
+		};
 
-        public static bool InSafeZone(IPoint3D point)
-        {
-            foreach (Rectangle2D rec in SafeZone)
-            {
-                if (rec.Contains(point))
-                    return true;
-            }
+		public static bool InSafeZone(IPoint3D point)
+		{
+			foreach (Rectangle2D rec in SafeZone)
+			{
+				if (rec.Contains(point))
+					return true;
+			}
 
-            return false;
-        }
+			return false;
+		}
 
-        public static TimeSpan FlameRespawn { get { return TimeSpan.FromSeconds(Utility.RandomMinMax(1, 3)); } }
-        public static TimeSpan LavaRespawn { get { return TimeSpan.FromSeconds(Utility.RandomMinMax(20, 30)); } }
-        public static TimeSpan LavaAdvance { get { return TimeSpan.FromSeconds(2); } }
+		public static TimeSpan FlameRespawn
+		{
+			get { return TimeSpan.FromSeconds(Utility.RandomMinMax(1, 3)); }
+		}
+		public static TimeSpan LavaRespawn
+		{
+			get { return TimeSpan.FromSeconds(Utility.RandomMinMax(20, 30)); }
+		}
+		public static TimeSpan LavaAdvance
+		{
+			get { return TimeSpan.FromSeconds(2); }
+		}
 
-        public static Volcano Instance { get; set; }
+		public static Volcano Instance { get; set; }
 
-        private Timer _LavaTimer;
-        private DateTime _NextLava;
-        private long _NextLavaAdvance;
-        private int _LavaStage;
-        private Rectangle2D _CurrentLava;
-        private Rectangle2D _SafeZone;
-        private Region _Region;
+		private Timer _LavaTimer;
+		private DateTime _NextLava;
+		private long _NextLavaAdvance;
+		private int _LavaStage;
+		private Rectangle2D _CurrentLava;
+		private Rectangle2D _SafeZone;
+		private Region _Region;
 
-        public static void Initialize()
-        {
-            Instance = new Volcano();
-        }
+		public static void Initialize()
+		{
+			Instance = new Volcano();
+		}
 
-        public Volcano()
-        {
-            _Region = new VolcanoRegion(this);
-            Timer.DelayCall(TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10), OnTick);
-        }
+		public Volcano()
+		{
+			_Region = new VolcanoRegion(this);
+			Timer.DelayCall(TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10), OnTick);
+		}
 
-        public void OnTick()
-        {
-            if (_Region == null)
-                return;
+		public void OnTick()
+		{
+			if (_Region == null)
+				return;
 
-            int count = _Region.GetPlayerCount();
+			int count = _Region.GetPlayerCount();
 
-            if (count == 0 && _LavaTimer == null && _NextLava < DateTime.UtcNow)
-            {
-                _NextLava = DateTime.UtcNow + LavaRespawn;
-                return;
-            }
+			if (count == 0 && _LavaTimer == null && _NextLava < DateTime.UtcNow)
+			{
+				_NextLava = DateTime.UtcNow + LavaRespawn;
+				return;
+			}
 
-            if (count > 0 && _LavaTimer == null && _NextLava < DateTime.UtcNow)
-            {
-                List<Mobile> players = _Region.GetPlayers();
-                players.ForEach(m =>
-                {
-                    if (m.AccessLevel == AccessLevel.Player)
-                        m.PrivateOverheadMessage(MessageType.Regular, 0x21, 1156506, m.NetState); // *The Volcano is becoming unstable!*
-                });
+			if (count > 0 && _LavaTimer == null && _NextLava < DateTime.UtcNow)
+			{
+				List<Mobile> players = _Region.GetPlayers();
+				players.ForEach(m =>
+				{
+					if (m.AccessLevel == AccessLevel.Player)
+						m.PrivateOverheadMessage(MessageType.Regular, 0x21, 1156506, m.NetState); // *The Volcano is becoming unstable!*
+				});
 
-                ColUtility.Free(players);
+				ColUtility.Free(players);
 
-                _CurrentLava = LavaStart;
-                _NextLavaAdvance = Core.TickCount + 450;
+				_CurrentLava = LavaStart;
+				_NextLavaAdvance = Core.TickCount + 450;
 
-                _LavaTimer = Timer.DelayCall(TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(250), () =>
-                {
-                    if (Core.TickCount - _NextLavaAdvance >= 0)
-                    {
-                        _CurrentLava = new Rectangle2D(_CurrentLava.X - 2, _CurrentLava.Y - 2, _CurrentLava.Width + 4, _CurrentLava.Height + 4);
-                        _SafeZone = new Rectangle2D(_CurrentLava.X + 2, _CurrentLava.Y + 2, _CurrentLava.Width - 4, _CurrentLava.Height - 4);
-                        _NextLavaAdvance = Core.TickCount + 450;
+				_LavaTimer = Timer.DelayCall(
+					TimeSpan.FromMilliseconds(250),
+					TimeSpan.FromMilliseconds(250),
+					() =>
+					{
+						if (Core.TickCount - _NextLavaAdvance >= 0)
+						{
+							_CurrentLava = new Rectangle2D(
+								_CurrentLava.X - 2,
+								_CurrentLava.Y - 2,
+								_CurrentLava.Width + 4,
+								_CurrentLava.Height + 4
+							);
+							_SafeZone = new Rectangle2D(
+								_CurrentLava.X + 2,
+								_CurrentLava.Y + 2,
+								_CurrentLava.Width - 4,
+								_CurrentLava.Height - 4
+							);
+							_NextLavaAdvance = Core.TickCount + 450;
 
-                        AddLava();
-                    }
-                });
+							AddLava();
+						}
+					}
+				);
 
-                _LavaTimer.Start();
-            }
-        }
+				_LavaTimer.Start();
+			}
+		}
 
-        public bool CheckCoordinate(int x, int y)
-        {
-            if (x <= _CurrentLava.X + 2 || x >= (_CurrentLava.X + _CurrentLava.Width) - 2 || y <= _CurrentLava.Y + 2 || y >= (_CurrentLava.Y + _CurrentLava.Height) - 2)
-            {
-                return true;
-            }
+		public bool CheckCoordinate(int x, int y)
+		{
+			if (
+				x <= _CurrentLava.X + 2
+				|| x >= (_CurrentLava.X + _CurrentLava.Width) - 2
+				|| y <= _CurrentLava.Y + 2
+				|| y >= (_CurrentLava.Y + _CurrentLava.Height) - 2
+			)
+			{
+				return true;
+			}
 
-            return false;
-        }
+			return false;
+		}
 
-        public void AddLava()
-        {
-            _LavaStage++;
+		public void AddLava()
+		{
+			_LavaStage++;
 
-            for (int x = _CurrentLava.X; x <= _CurrentLava.X + _CurrentLava.Width; x++)
-            {
-                for (int y = _CurrentLava.Y; y <= _CurrentLava.Y + _CurrentLava.Height; y++)
-                {
-                    if (CheckCoordinate(x, y))
-                    {
-                        Point3D p = new Point3D(x, y, 0);
+			for (int x = _CurrentLava.X; x <= _CurrentLava.X + _CurrentLava.Width; x++)
+			{
+				for (int y = _CurrentLava.Y; y <= _CurrentLava.Y + _CurrentLava.Height; y++)
+				{
+					if (CheckCoordinate(x, y))
+					{
+						Point3D p = new Point3D(x, y, 0);
 
-                        IPooledEnumerable mobiles = Map.TerMur.GetMobilesInRange(p, 20);
+						IPooledEnumerable mobiles = Map.TerMur.GetMobilesInRange(p, 20);
 
-                        foreach (Mobile m in mobiles)
-                        {
-                            if (m.AccessLevel == AccessLevel.Player && m is PlayerMobile)
-                                m.PlaySound(520);
-                        }
+						foreach (Mobile m in mobiles)
+						{
+							if (m.AccessLevel == AccessLevel.Player && m is PlayerMobile)
+								m.PlaySound(520);
+						}
 
-                        mobiles.Free();
+						mobiles.Free();
 
-                        if (Map.TerMur.CanFit(x, y, 0, 16, false, false, true) && !InSafeZone(p))
-                        {                            
-                            Effects.SendLocationEffect(p, Map.TerMur, 4847, (int)LavaAdvance.TotalSeconds * 10);
+						if (Map.TerMur.CanFit(x, y, 0, 16, false, false, true) && !InSafeZone(p))
+						{
+							Effects.SendLocationEffect(p, Map.TerMur, 4847, (int)LavaAdvance.TotalSeconds * 10);
 
-                            IPooledEnumerable eable = Map.TerMur.GetMobilesInRange(p, 0);
+							IPooledEnumerable eable = Map.TerMur.GetMobilesInRange(p, 0);
 
-                            foreach (Mobile m in eable)
-                            {
-                                if (m.Alive && m.AccessLevel == AccessLevel.Player && (m is PlayerMobile || (m is BaseCreature && ((BaseCreature)m).GetMaster() is PlayerMobile)))
-                                    DoLavaDamageDelayed(m);
-                            }
+							foreach (Mobile m in eable)
+							{
+								if (
+									m.Alive
+									&& m.AccessLevel == AccessLevel.Player
+									&& (
+										m is PlayerMobile
+										|| (m is BaseCreature && ((BaseCreature)m).GetMaster() is PlayerMobile)
+									)
+								)
+									DoLavaDamageDelayed(m);
+							}
 
-                            eable.Free();
-                        }
-                    }
-                }
-            }
+							eable.Free();
+						}
+					}
+				}
+			}
 
-            if (_LavaStage >= LastLavaStage)
-            {
-                if (_LavaTimer != null)
-                {
-                    _LavaTimer.Stop();
-                    _LavaTimer = null;
-                }
+			if (_LavaStage >= LastLavaStage)
+			{
+				if (_LavaTimer != null)
+				{
+					_LavaTimer.Stop();
+					_LavaTimer = null;
+				}
 
-                _NextLava = DateTime.UtcNow + LavaRespawn;
-                _LavaStage = 0;
-            }
-        }
+				_NextLava = DateTime.UtcNow + LavaRespawn;
+				_LavaStage = 0;
+			}
+		}
 
-        public void CheckMovement(Mobile m)
-        {
-			if (m == null ||!m.Alive || m.AccessLevel > AccessLevel.Player || (m is BaseCreature && ((BaseCreature)m).GetMaster() == null))
-                return;
+		public void CheckMovement(Mobile m)
+		{
+			if (
+				m == null
+				|| !m.Alive
+				|| m.AccessLevel > AccessLevel.Player
+				|| (m is BaseCreature && ((BaseCreature)m).GetMaster() == null)
+			)
+				return;
 
-            if (_LavaTimer != null && m.AccessLevel == AccessLevel.Player && m.Alive && _CurrentLava.Contains(m) && !_SafeZone.Contains(m) && !InSafeZone(m))
-            {
-                DoLavaDamageDelayed(m);
-            }
-        }
+			if (
+				_LavaTimer != null
+				&& m.AccessLevel == AccessLevel.Player
+				&& m.Alive
+				&& _CurrentLava.Contains(m)
+				&& !_SafeZone.Contains(m)
+				&& !InSafeZone(m)
+			)
+			{
+				DoLavaDamageDelayed(m);
+			}
+		}
 
-        public void DoLavaDamage(Mobile m)
-        {
-            m.PrivateOverheadMessage(MessageType.Regular, 0x22, 1156497, m.NetState); // *The flowing lava scorches you!*
-            AOS.Damage(m, m, Utility.RandomMinMax(200, 300), 0, 100, 0, 0, 0);
-        }
+		public void DoLavaDamage(Mobile m)
+		{
+			m.PrivateOverheadMessage(MessageType.Regular, 0x22, 1156497, m.NetState); // *The flowing lava scorches you!*
+			AOS.Damage(m, m, Utility.RandomMinMax(200, 300), 0, 100, 0, 0, 0);
+		}
 
-        public void DoLavaDamageDelayed(Mobile m)
-        {
-            Timer.DelayCall(TimeSpan.FromSeconds(.25), new TimerStateCallback<Mobile>(DoLavaDamage), m);
-        }
-    }
+		public void DoLavaDamageDelayed(Mobile m)
+		{
+			Timer.DelayCall(TimeSpan.FromSeconds(.25), new TimerStateCallback<Mobile>(DoLavaDamage), m);
+		}
+	}
 
-    public class VolcanoRegion : BaseRegion
-    {
-        public Volcano Volcano { get; private set; }
+	public class VolcanoRegion : BaseRegion
+	{
+		public Volcano Volcano { get; private set; }
 
-        public VolcanoRegion(Volcano volcano)
-            : base("Eodon_Volcano", Map.TerMur, Region.DefaultPriority, new Rectangle2D[] { new Rectangle2D(832, 1502, 255, 217)})
-        {
-            Volcano = volcano;
-            Register();
-        }
+		public VolcanoRegion(Volcano volcano)
+			: base(
+				"Eodon_Volcano",
+				Map.TerMur,
+				Region.DefaultPriority,
+				new Rectangle2D[] { new Rectangle2D(832, 1502, 255, 217) }
+			)
+		{
+			Volcano = volcano;
+			Register();
+		}
 
-        public override bool CheckTravel(Mobile m, Point3D newLocation, TravelCheckType travelType)
-        {
-            return travelType >= (TravelCheckType)4; // teleport only
-        }
+		public override bool CheckTravel(Mobile m, Point3D newLocation, TravelCheckType travelType)
+		{
+			return travelType >= (TravelCheckType)4; // teleport only
+		}
 
-        public override void OnLocationChanged(Mobile m, Point3D oldLocation)
-        {
-            if(Volcano != null)
-                Volcano.CheckMovement(m);
+		public override void OnLocationChanged(Mobile m, Point3D oldLocation)
+		{
+			if (Volcano != null)
+				Volcano.CheckMovement(m);
 
-            base.OnLocationChanged(m, oldLocation);
-        }
-    }
+			base.OnLocationChanged(m, oldLocation);
+		}
+	}
 }

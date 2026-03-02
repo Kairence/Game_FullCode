@@ -13,7 +13,10 @@ namespace Ultima
 			m_Tiles = new List<HuedTile>();
 		}
 
-		public int Count { get { return m_Tiles.Count; } }
+		public int Count
+		{
+			get { return m_Tiles.Count; }
+		}
 
 		public void Add(ushort id, short hue, sbyte z)
 		{
@@ -43,7 +46,10 @@ namespace Ultima
 			m_Tiles = new List<Tile>();
 		}
 
-		public int Count { get { return m_Tiles.Count; } }
+		public int Count
+		{
+			get { return m_Tiles.Count; }
+		}
 
 		public void Add(ushort id, sbyte z)
 		{
@@ -82,14 +88,17 @@ namespace Ultima
 			m_Tiles = new List<MTile>();
 		}
 
-		public int Count { get { return m_Tiles.Count; } }
+		public int Count
+		{
+			get { return m_Tiles.Count; }
+		}
 
 		public void Add(ushort id, sbyte z)
 		{
 			m_Tiles.Add(new MTile(id, z));
 		}
 
-        public void Add(ushort id, sbyte z, TileFlag flag)
+		public void Add(ushort id, sbyte z, TileFlag flag)
 		{
 			m_Tiles.Add(new MTile(id, z, flag));
 		}
@@ -120,7 +129,7 @@ namespace Ultima
 			}
 		}
 
-        public void Set(int i, ushort id, sbyte z, TileFlag flag)
+		public void Set(int i, ushort id, sbyte z, TileFlag flag)
 		{
 			if (i < Count)
 			{

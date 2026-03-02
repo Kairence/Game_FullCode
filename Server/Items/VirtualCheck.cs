@@ -1,7 +1,6 @@
 #region References
 using System;
 using System.Drawing;
-
 using Server.Accounting;
 using Server.Gumps;
 using Server.Network;
@@ -13,14 +12,29 @@ namespace Server
 	{
 		public static bool UseEditGump = false;
 
-		public override bool IsVirtualItem { get { return true; } }
+		public override bool IsVirtualItem
+		{
+			get { return true; }
+		}
 
-		public override bool DisplayWeight { get { return false; } }
-		public override bool DisplayLootType { get { return false; } }
+		public override bool DisplayWeight
+		{
+			get { return false; }
+		}
+		public override bool DisplayLootType
+		{
+			get { return false; }
+		}
 
-		public override double DefaultWeight { get { return 0; } }
+		public override double DefaultWeight
+		{
+			get { return 0; }
+		}
 
-		public override string DefaultName { get { return "Offer Of Currency"; } }
+		public override string DefaultName
+		{
+			get { return "Offer Of Currency"; }
+		}
 
 		public EditGump Editor { get; private set; }
 
@@ -51,8 +65,7 @@ namespace Server
 		}
 
 		public VirtualCheck()
-			: this(0, 0)
-		{ }
+			: this(0, 0) { }
 
 		public VirtualCheck(int plat, int gold)
 			: base(0x14F0)
@@ -64,8 +77,7 @@ namespace Server
 		}
 
 		public VirtualCheck(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		public override bool IsAccessibleTo(Mobile check)
 		{
@@ -149,8 +161,7 @@ namespace Server
 			}
 		}
 
-		public override void Serialize(GenericWriter writer)
-		{ }
+		public override void Serialize(GenericWriter writer) { }
 
 		public override void Deserialize(GenericReader reader)
 		{
@@ -165,10 +176,11 @@ namespace Server
 				Clear,
 				Accept,
 				AllPlat,
-				AllGold
+				AllGold,
 			}
 
-			private int _Plat, _Gold;
+			private int _Plat,
+				_Gold;
 
 			public Mobile User { get; private set; }
 			public VirtualCheck Check { get; private set; }
@@ -267,7 +279,8 @@ namespace Server
 				var title = String.Format(
 					"<BASEFONT COLOR=#{0:X6}><CENTER>BANK OF {1}</CENTER>",
 					Color.DarkSlateGray.ToArgb() & 0x00FFFFFF,
-					User.RawName.ToUpper());
+					User.RawName.ToUpper()
+				);
 
 				AddHtml(40, 15, 320, 20, title, false, false);
 
@@ -309,65 +322,66 @@ namespace Server
 					return;
 				}
 
-				bool refresh = false, updated = false;
+				bool refresh = false,
+					updated = false;
 
 				switch ((Buttons)info.ButtonID)
 				{
 					case Buttons.Close:
 						break;
 					case Buttons.Clear:
-					{
-						_Plat = _Gold = 0;
-						refresh = true;
-					}
+						{
+							_Plat = _Gold = 0;
+							refresh = true;
+						}
 						break;
 					case Buttons.Accept:
-					{
-						var platText = info.GetTextEntry(0).Text;
-						var goldText = info.GetTextEntry(1).Text;
+						{
+							var platText = info.GetTextEntry(0).Text;
+							var goldText = info.GetTextEntry(1).Text;
 
-						if (!Int32.TryParse(platText, out _Plat))
-						{
-							User.SendMessage("That is not a valid amount of platinum.");
-							refresh = true;
-						}
-						else if (!Int32.TryParse(goldText, out _Gold))
-						{
-							User.SendMessage("That is not a valid amount of gold.");
-							refresh = true;
-						}
-						else
-						{
-							var cur = User.Account.TotalCurrency;
-							var off = _Plat + (_Gold / Math.Max(1.0, AccountGold.CurrencyThreshold));
-
-							if (off > cur)
+							if (!Int32.TryParse(platText, out _Plat))
 							{
-								_Plat = User.Account.TotalPlat;
-								_Gold = User.Account.TotalGold;
-								User.SendMessage("You do not have that much currency.");
+								User.SendMessage("That is not a valid amount of platinum.");
+								refresh = true;
+							}
+							else if (!Int32.TryParse(goldText, out _Gold))
+							{
+								User.SendMessage("That is not a valid amount of gold.");
 								refresh = true;
 							}
 							else
 							{
-								Check.Plat = _Plat;
-								Check.Gold = _Gold;
-								updated = true;
+								var cur = User.Account.TotalCurrency;
+								var off = _Plat + (_Gold / Math.Max(1.0, AccountGold.CurrencyThreshold));
+
+								if (off > cur)
+								{
+									_Plat = User.Account.TotalPlat;
+									_Gold = User.Account.TotalGold;
+									User.SendMessage("You do not have that much currency.");
+									refresh = true;
+								}
+								else
+								{
+									Check.Plat = _Plat;
+									Check.Gold = _Gold;
+									updated = true;
+								}
 							}
 						}
-					}
 						break;
 					case Buttons.AllPlat:
-					{
-						_Plat = User.Account.TotalPlat;
-						refresh = true;
-					}
+						{
+							_Plat = User.Account.TotalPlat;
+							refresh = true;
+						}
 						break;
 					case Buttons.AllGold:
-					{
-						_Gold = User.Account.TotalGold;
-						refresh = true;
-					}
+						{
+							_Gold = User.Account.TotalGold;
+							refresh = true;
+						}
 						break;
 				}
 

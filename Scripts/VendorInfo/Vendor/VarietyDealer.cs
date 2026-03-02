@@ -3,44 +3,39 @@ using System.Collections.Generic;
 
 namespace Server.Mobiles
 {
-    public class VarietyDealer : BaseVendor
-    {
-        private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
-        [Constructable]
-        public VarietyDealer()
-            : base("the variety dealer")
-        {
-        }
+	public class VarietyDealer : BaseVendor
+	{
+		private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
 
-        public VarietyDealer(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public VarietyDealer()
+			: base("the variety dealer") { }
 
-        protected override List<SBInfo> SBInfos
-        {
-            get
-            {
-                return this.m_SBInfos;
-            }
-        }
-        public override void InitSBInfo()
-        {
-            this.m_SBInfos.Add(new SBVarietyDealer());
-        }
+		public VarietyDealer(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		protected override List<SBInfo> SBInfos
+		{
+			get { return this.m_SBInfos; }
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void InitSBInfo()
+		{
+			this.m_SBInfos.Add(new SBVarietyDealer());
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

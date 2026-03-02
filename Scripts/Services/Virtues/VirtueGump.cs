@@ -1,7 +1,6 @@
 #region References
 using System;
 using System.Collections;
-
 using Server.Gumps;
 using Server.Network;
 #endregion
@@ -16,8 +15,30 @@ namespace Server.Services.Virtues
 
 		private static readonly int[] m_Table = new int[24]
 		{
-			0x0481, 0x0963, 0x0965, 0x060A, 0x060F, 0x002A, 0x08A4, 0x08A7, 0x0034, 0x0965, 0x08FD, 0x0480, 0x00EA, 0x0845,
-			0x0020, 0x0011, 0x0269, 0x013D, 0x08A1, 0x08A3, 0x0042, 0x0543, 0x0547, 0x0061
+			0x0481,
+			0x0963,
+			0x0965,
+			0x060A,
+			0x060F,
+			0x002A,
+			0x08A4,
+			0x08A7,
+			0x0034,
+			0x0965,
+			0x08FD,
+			0x0480,
+			0x00EA,
+			0x0845,
+			0x0020,
+			0x0011,
+			0x0269,
+			0x013D,
+			0x08A1,
+			0x08A3,
+			0x0042,
+			0x0543,
+			0x0547,
+			0x0061,
 		};
 
 		private readonly Mobile m_Beholder;
@@ -162,8 +183,7 @@ namespace Server.Services.Virtues
 			private static readonly byte[] m_Class = StringToBuffer(" class=VirtueGumpItem");
 
 			public InternalEntry(int x, int y, int gumpID, int hue)
-				: base(x, y, gumpID, hue)
-			{ }
+				: base(x, y, gumpID, hue) { }
 
 			public override string Compile()
 			{

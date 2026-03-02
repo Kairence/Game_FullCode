@@ -2,49 +2,49 @@ using System;
 
 namespace Server.Items
 {
-    public class CrystalShards : Item, ICommodity
-    {
-        [Constructable]
-        public CrystalShards()
-            : this(1)
-        {
-        }
+	public class CrystalShards : Item, ICommodity
+	{
+		[Constructable]
+		public CrystalShards()
+			: this(1) { }
 
-        [Constructable]
-        public CrystalShards(int amount)
-            : base(0x5738)
-        {
-            this.Stackable = true;
-            this.Amount = amount;
-        }
+		[Constructable]
+		public CrystalShards(int amount)
+			: base(0x5738)
+		{
+			this.Stackable = true;
+			this.Amount = amount;
+		}
 
-        public CrystalShards(Serial serial)
-            : base(serial)
-        {
-        }
+		public CrystalShards(Serial serial)
+			: base(serial) { }
 
-        TextDefinition ICommodity.Description { get { return LabelNumber; } }
-        bool ICommodity.IsDeedable { get { return true; } }
+		TextDefinition ICommodity.Description
+		{
+			get { return LabelNumber; }
+		}
+		bool ICommodity.IsDeedable
+		{
+			get { return true; }
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1113347;
-            }
-        }// crystal shards
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int LabelNumber
+		{
+			get { return 1113347; }
+		} // crystal shards
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

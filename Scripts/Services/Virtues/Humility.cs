@@ -1,7 +1,6 @@
 ﻿#region References
 using System;
 using System.Collections.Generic;
-
 using Server.Mobiles;
 using Server.Network;
 using Server.Targeting;
@@ -75,11 +74,7 @@ namespace Server.Services.Virtues
 
 								ActiveTable[bc] = from;
 
-								m.PrivateOverheadMessage(
-									MessageType.Regular,
-									1150,
-									1155819,
-									from.NetState); // *Your pet surges with the power of your Humility!*
+								m.PrivateOverheadMessage(MessageType.Regular, 1150, 1155819, from.NetState); // *Your pet surges with the power of your Humility!*
 
 								bc.FixedEffect(0x373A, 10, 16);
 
@@ -91,7 +86,9 @@ namespace Server.Services.Virtues
 										1156050,
 										TimeSpan.FromMinutes(20),
 										from,
-										String.Format("{0}\t{1}", bc.Name, GetRegenBonus(bc)))); // Pet: ~1_NAME~<br>+~2_VAL~ HPR<br>
+										String.Format("{0}\t{1}", bc.Name, GetRegenBonus(bc))
+									)
+								); // Pet: ~1_NAME~<br>+~2_VAL~ HPR<br>
 
 								CheckTimer();
 								bc.ResetStatTimers();
@@ -111,19 +108,22 @@ namespace Server.Services.Virtues
 												MessageType.Regular,
 												1150,
 												1155823,
-												from.NetState); // *Your pet's power returns to normal*
+												from.NetState
+											); // *Your pet's power returns to normal*
 
 											CheckTimer();
 										}
 									},
-									bc);
+									bc
+								);
 							}
 						}
 						else
 						{
 							from.SendLocalizedMessage(1155813); // You can only embrace your Humility on a pet.
 						}
-					});
+					}
+				);
 			}
 		}
 
@@ -152,7 +152,8 @@ namespace Server.Services.Virtues
 							{
 								mob.FixedParticles(0x376A, 9, 32, 5005, EffectLayer.Waist);
 							}
-						});
+						}
+					);
 
 					_Timer.Start();
 				}
@@ -195,8 +196,7 @@ namespace Server.Services.Virtues
 					from.SendLocalizedMessage(1155800); // You have ended your journey on the Path of Humility.
 				}
 				else
-					from.SendLocalizedMessage(
-						1155796); // You have already ended your journey on the Path of Humility.  You must wait before you restart your path.
+					from.SendLocalizedMessage(1155796); // You have already ended your journey on the Path of Humility.  You must wait before you restart your path.
 			}
 			else
 			{
@@ -206,11 +206,8 @@ namespace Server.Services.Virtues
 				{
 					HuntTable[pm] = new HumilityHuntContext(pm, new List<Mobile>(pm.AllFollowers));
 
-					pm.SendLocalizedMessage(
-						1155802,
-						"70"); // You have begun your journey on the Path of Humility.  Your resists have been debuffed by ~1_DEBUFF~.
-					pm.SendLocalizedMessage(
-						1155858); // You are now on a Humility Hunt. For each kill while you forgo the protection of resists," you shall continue on your path to Humility.  You may end your Hunt by speaking ""Lum Lum Lum"" at any time.
+					pm.SendLocalizedMessage(1155802, "70"); // You have begun your journey on the Path of Humility.  Your resists have been debuffed by ~1_DEBUFF~.
+					pm.SendLocalizedMessage(1155858); // You are now on a Humility Hunt. For each kill while you forgo the protection of resists," you shall continue on your path to Humility.  You may end your Hunt by speaking ""Lum Lum Lum"" at any time.
 
 					BuffInfo.AddBuff(pm, new BuffInfo(BuffIcon.HumilityDebuff, 1025327, 1155806, "70"));
 				}
@@ -266,7 +263,8 @@ namespace Server.Services.Virtues
 				{
 					if (HuntTable.ContainsKey(m))
 						HuntTable.Remove(m);
-				});
+				}
+			);
 		}
 
 		public class HumilityHuntContext
@@ -283,9 +281,11 @@ namespace Server.Services.Virtues
 				{
 					return new[]
 					{
-						new ResistanceMod(ResistanceType.Physical, -70), new ResistanceMod(ResistanceType.Fire, -70),
-						new ResistanceMod(ResistanceType.Poison, -70), new ResistanceMod(ResistanceType.Cold, -70),
-						new ResistanceMod(ResistanceType.Energy, -70)
+						new ResistanceMod(ResistanceType.Physical, -70),
+						new ResistanceMod(ResistanceType.Fire, -70),
+						new ResistanceMod(ResistanceType.Poison, -70),
+						new ResistanceMod(ResistanceType.Cold, -70),
+						new ResistanceMod(ResistanceType.Energy, -70),
 					};
 				}
 			}
@@ -318,17 +318,16 @@ namespace Server.Services.Virtues
 					owner.AddResistanceMod(mods);
 
 				Table[owner] = mod;
-				pets.ForEach(
-					m =>
-					{
-						mod = GetMod;
+				pets.ForEach(m =>
+				{
+					mod = GetMod;
 
-						foreach (var mods in mod)
-							m.AddResistanceMod(mods);
+					foreach (var mods in mod)
+						m.AddResistanceMod(mods);
 
-						m.FixedEffect(0x373A, 10, 16);
-						Table[m] = mod;
-					});
+					m.FixedEffect(0x373A, 10, 16);
+					Table[m] = mod;
+				});
 			}
 
 			public void AddPet(Mobile pet)

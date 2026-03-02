@@ -3,73 +3,77 @@ using Server.Multis;
 
 namespace Server.Items
 {
-    [FlipableAttribute(0xA12E, 0xA12F)]
-    public class HolidayWreath : Item, IDyable
-    {
-        public override int LabelNumber { get { return 1029004; } } // wreath
-        public override bool IsArtifact { get { return true; } }
+	[FlipableAttribute(0xA12E, 0xA12F)]
+	public class HolidayWreath : Item, IDyable
+	{
+		public override int LabelNumber
+		{
+			get { return 1029004; }
+		} // wreath
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public int MadeID{ get; set; }
+		public int MadeID { get; set; }
 
-        [Constructable]
-        public HolidayWreath()
-            : base(0xA12E)
-        {
-            MadeID = Utility.Random(1114138, 13);
-        }
+		[Constructable]
+		public HolidayWreath()
+			: base(0xA12E)
+		{
+			MadeID = Utility.Random(1114138, 13);
+		}
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-            list.Add(1158828, String.Format("#{0}", MadeID)); // Made From Handpicked Trees Near ~1_WHERE~
-        }        
+			list.Add(1158828, String.Format("#{0}", MadeID)); // Made From Handpicked Trees Near ~1_WHERE~
+		}
 
-        public HolidayWreath(Serial serial)
-            : base(serial)
-        {
-        }
+		public HolidayWreath(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0); // version
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0); // version
 
-            writer.Write((int)MadeID);
-        }
+			writer.Write((int)MadeID);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
 
-            MadeID = reader.ReadInt();
-        }
+			MadeID = reader.ReadInt();
+		}
 
-        public virtual bool Dye(Mobile from, DyeTub sender)
-        {
-            if (Deleted)
-                return false;
+		public virtual bool Dye(Mobile from, DyeTub sender)
+		{
+			if (Deleted)
+				return false;
 
-            BaseHouse house = BaseHouse.FindHouseAt(this);
+			BaseHouse house = BaseHouse.FindHouseAt(this);
 
-            if (house != null && house.IsCoOwner(from))
-            {
-                if (from.InRange(GetWorldLocation(), 1))
-                {
-                    Hue = sender.DyedHue;
-                    return true;
-                }
-                else
-                {
-                    from.SendLocalizedMessage(500295); // You are too far away to do that.
-                    return false;
-                }
-            }
-            else 
-            {
-                return false;
-            }
-        }
-    }
+			if (house != null && house.IsCoOwner(from))
+			{
+				if (from.InRange(GetWorldLocation(), 1))
+				{
+					Hue = sender.DyedHue;
+					return true;
+				}
+				else
+				{
+					from.SendLocalizedMessage(500295); // You are too far away to do that.
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
 }

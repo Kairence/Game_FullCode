@@ -2,80 +2,67 @@ using System;
 
 namespace Server.Items
 {
-    public class ElvenWashBasinSouthAddon : BaseAddon
-    {
-        [Constructable]
-        public ElvenWashBasinSouthAddon()
-        {
-            this.AddComponent(new AddonComponent(0x30E1), 0, 0, 0);
-            this.AddComponent(new AddonComponent(0x30E2), 1, 0, 0);
-        }
+	public class ElvenWashBasinSouthAddon : BaseAddon
+	{
+		[Constructable]
+		public ElvenWashBasinSouthAddon()
+		{
+			this.AddComponent(new AddonComponent(0x30E1), 0, 0, 0);
+			this.AddComponent(new AddonComponent(0x30E2), 1, 0, 0);
+		}
 
-        public ElvenWashBasinSouthAddon(Serial serial)
-            : base(serial)
-        {
-        }
+		public ElvenWashBasinSouthAddon(Serial serial)
+			: base(serial) { }
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new ElvenWashBasinSouthDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override BaseAddonDeed Deed
+		{
+			get { return new ElvenWashBasinSouthDeed(); }
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class ElvenWashBasinSouthDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public ElvenWashBasinSouthDeed()
-        {
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public ElvenWashBasinSouthDeed(Serial serial)
-            : base(serial)
-        {
-        }
+	public class ElvenWashBasinSouthDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public ElvenWashBasinSouthDeed() { }
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new ElvenWashBasinSouthAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1072865;
-            }
-        }// elven wash basin (south)
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public ElvenWashBasinSouthDeed(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override BaseAddon Addon
+		{
+			get { return new ElvenWashBasinSouthAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1072865; }
+		} // elven wash basin (south)
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

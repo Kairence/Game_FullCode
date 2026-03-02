@@ -2,39 +2,38 @@ using System;
 
 namespace Server.Items
 {
-    public class Drums : BaseInstrument
-    {
-        [Constructable]
-        public Drums()
-            : base(0xE9C, 0x38, 0x39)
-        {
-            this.Weight = 4.0;
-        }
+	public class Drums : BaseInstrument
+	{
+		[Constructable]
+		public Drums()
+			: base(0xE9C, 0x38, 0x39)
+		{
+			this.Weight = 4.0;
+		}
 
-        public Drums(Serial serial)
-            : base(serial)
-        {
-        }
+		public Drums(Serial serial)
+			: base(serial) { }
 
-        public override void OnDoubleClick(Mobile from)
-        {
-			from.Animate( 10, 7, 1, true, false, 0);
-		}		
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void OnDoubleClick(Mobile from)
+		{
+			from.Animate(10, 7, 1, true, false, 0);
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            if (this.Weight == 3.0)
-                this.Weight = 4.0;
-        }
-    }
+			int version = reader.ReadInt();
+
+			if (this.Weight == 3.0)
+				this.Weight = 4.0;
+		}
+	}
 }

@@ -2,81 +2,80 @@ using System;
 using Server.Mobiles;
 
 namespace Server.Items
-{ 
+{
 	public class MasterCraftsmanTalisman : BaseTalisman
-    {
-        public override bool IsArtifact { get { return true; } }
-    
-        private int _Type;
-        public virtual int Type { get { return _Type; } }
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        [Constructable]
-        public MasterCraftsmanTalisman(int charges, int itemID, TalismanSkill skill)
-            : base(itemID)
-        {
-            Skill = skill;
+		private int _Type;
+		public virtual int Type
+		{
+			get { return _Type; }
+		}
 
-            SuccessBonus = GetRandomSuccessful();
-            ExceptionalBonus = BaseTalisman.GetRandomExceptional();
-            Blessed = GetRandomBlessed();
+		[Constructable]
+		public MasterCraftsmanTalisman(int charges, int itemID, TalismanSkill skill)
+			: base(itemID)
+		{
+			Skill = skill;
 
-            _Type = charges;
+			SuccessBonus = GetRandomSuccessful();
+			ExceptionalBonus = BaseTalisman.GetRandomExceptional();
+			Blessed = GetRandomBlessed();
+
+			_Type = charges;
 			Charges = charges;
 		}
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-            list.Add(1157213); // Crafting Failure Protection
+			list.Add(1157213); // Crafting Failure Protection
 
-            if (Charges > 0)
-                list.Add(1049116, Charges.ToString()); // [ Charges: ~1_CHARGES~ ]
-        }
+			if (Charges > 0)
+				list.Add(1049116, Charges.ToString()); // [ Charges: ~1_CHARGES~ ]
+		}
 
-        public MasterCraftsmanTalisman(Serial serial)
-            : base(serial)
-        {
-        }
+		public MasterCraftsmanTalisman(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1157217;
-            }
-        }// MasterCraftsmanTalisman
-        public override bool ForceShowName
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int LabelNumber
+		{
+			get { return 1157217; }
+		} // MasterCraftsmanTalisman
+		public override bool ForceShowName
+		{
+			get { return true; }
+		}
 
-            writer.Write((int)1); // version
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write(_Type);
-        }
+			writer.Write((int)1); // version
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write(_Type);
+		}
 
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            switch (version)
-            {
-                case 1:
-                    _Type = reader.ReadInt();
-                    break;
-                case 0:
-                    _Type = 10;
-                    break;
-            }
-        }
-    }
+			int version = reader.ReadInt();
+
+			switch (version)
+			{
+				case 1:
+					_Type = reader.ReadInt();
+					break;
+				case 0:
+					_Type = 10;
+					break;
+			}
+		}
+	}
 }

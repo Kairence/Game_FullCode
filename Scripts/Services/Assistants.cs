@@ -1,7 +1,6 @@
 ﻿#region References
 using System;
 using System.Collections.Generic;
-
 using Server.Gumps;
 using Server.Network;
 #endregion
@@ -39,7 +38,9 @@ namespace Server.Misc
 			JScriptMacros = 1 << 19, // Javascript macro engine
 			AutoRemount = 1 << 20, // Auto remount after dismount
 
-			All = UInt64.MaxValue // Every feature possible
+			All =
+				UInt64.MaxValue // Every feature possible
+			,
 		}
 
 		public class Settings
@@ -173,7 +174,8 @@ namespace Server.Misc
 						}
 
 						_Dictionary.Remove(m);
-					});
+					}
+				);
 			}
 
 			private static void OnHandshakeResponse(NetState state, PacketReader pvSrc)
@@ -226,7 +228,9 @@ namespace Server.Misc
 				}
 				else if (m.NetState != null && m.NetState.Running)
 				{
-					m.SendGump(new WarningGump(1060635, 30720, Settings.WarningMessage, 0xFFC000, 420, 250, null, null));
+					m.SendGump(
+						new WarningGump(1060635, 30720, Settings.WarningMessage, 0xFFC000, 420, 250, null, null)
+					);
 
 					if (m.AccessLevel <= AccessLevel.Player)
 					{

@@ -3,59 +3,58 @@ using Server.Items;
 
 namespace Server.Engines.CannedEvil
 {
-    public class ChampionAltar : PentagramAddon
-    {
-        private ChampionSpawn m_Spawn;
-        public ChampionAltar(ChampionSpawn spawn)
-        {
-            m_Spawn = spawn;
-            Hue = 0x455;
-        }
+	public class ChampionAltar : PentagramAddon
+	{
+		private ChampionSpawn m_Spawn;
 
-        public ChampionAltar(Serial serial)
-            : base(serial)
-        {
-        }
+		public ChampionAltar(ChampionSpawn spawn)
+		{
+			m_Spawn = spawn;
+			Hue = 0x455;
+		}
 
-        public override void OnAfterDelete()
-        {
-            base.OnAfterDelete();
+		public ChampionAltar(Serial serial)
+			: base(serial) { }
 
-            if (m_Spawn != null)
-                m_Spawn.Delete();
-        }
+		public override void OnAfterDelete()
+		{
+			base.OnAfterDelete();
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			if (m_Spawn != null)
+				m_Spawn.Delete();
+		}
 
-            writer.Write((int)0); // version
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write(m_Spawn);
-        }
+			writer.Write((int)0); // version
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write(m_Spawn);
+		}
 
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            switch ( version )
-            {
-                case 0:
-                    {
-                        m_Spawn = reader.ReadItem() as ChampionSpawn;
+			int version = reader.ReadInt();
 
-                        if (m_Spawn == null)
-                            Delete();
-                        else if (!m_Spawn.Active)
-                            Hue = 0x455;
-                        else
-                            Hue = 0;
+			switch (version)
+			{
+				case 0:
+				{
+					m_Spawn = reader.ReadItem() as ChampionSpawn;
 
-                        break;
-                    }
-            }
-        }
-    }
+					if (m_Spawn == null)
+						Delete();
+					else if (!m_Spawn.Active)
+						Hue = 0x455;
+					else
+						Hue = 0;
+
+					break;
+				}
+			}
+		}
+	}
 }

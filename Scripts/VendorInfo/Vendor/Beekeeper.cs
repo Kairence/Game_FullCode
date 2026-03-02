@@ -1,53 +1,45 @@
 using System;
 using System.Collections.Generic;
 
-namespace Server.Mobiles 
-{ 
-    public class Beekeeper : BaseVendor 
-    { 
-        private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
-        [Constructable]
-        public Beekeeper()
-            : base("the beekeeper")
-        { 
-        }
+namespace Server.Mobiles
+{
+	public class Beekeeper : BaseVendor
+	{
+		private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
 
-        public Beekeeper(Serial serial)
-            : base(serial)
-        { 
-        }
+		[Constructable]
+		public Beekeeper()
+			: base("the beekeeper") { }
 
-        public override VendorShoeType ShoeType
-        {
-            get
-            {
-                return VendorShoeType.Boots;
-            }
-        }
-        protected override List<SBInfo> SBInfos
-        {
-            get
-            {
-                return this.m_SBInfos;
-            }
-        }
-        public override void InitSBInfo() 
-        { 
-            this.m_SBInfos.Add(new SBBeekeeper()); 
-        }
+		public Beekeeper(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer) 
-        { 
-            base.Serialize(writer); 
+		public override VendorShoeType ShoeType
+		{
+			get { return VendorShoeType.Boots; }
+		}
+		protected override List<SBInfo> SBInfos
+		{
+			get { return this.m_SBInfos; }
+		}
 
-            writer.Write((int)0); // version 
-        }
+		public override void InitSBInfo()
+		{
+			this.m_SBInfos.Add(new SBBeekeeper());
+		}
 
-        public override void Deserialize(GenericReader reader) 
-        { 
-            base.Deserialize(reader); 
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt(); 
-        }
-    }
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

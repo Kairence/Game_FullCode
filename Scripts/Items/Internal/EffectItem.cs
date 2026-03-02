@@ -3,90 +3,88 @@ using System.Collections.Generic;
 
 namespace Server.Items
 {
-    public class EffectItem : Item
-    {
-        public static readonly TimeSpan DefaultDuration = TimeSpan.FromSeconds(5.0);
-        private static readonly List<EffectItem> m_Free = new List<EffectItem>();// List of available EffectItems
-        public EffectItem(Serial serial)
-            : base(serial)
-        {
-        }
+	public class EffectItem : Item
+	{
+		public static readonly TimeSpan DefaultDuration = TimeSpan.FromSeconds(5.0);
+		private static readonly List<EffectItem> m_Free = new List<EffectItem>(); // List of available EffectItems
 
-        private EffectItem()
-            : base(1)// nodraw
-        {
-            this.Movable = false;
-        }
+		public EffectItem(Serial serial)
+			: base(serial) { }
 
-        public override bool Decays
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public static EffectItem Create(Point3D p, Map map, TimeSpan duration)
-        {
-            EffectItem item = null;
+		private EffectItem()
+			: base(1) // nodraw
+		{
+			this.Movable = false;
+		}
 
-            for (int i = m_Free.Count - 1; item == null && i >= 0; --i) // We reuse new entries first so decay works better
-            {
-                EffectItem free = m_Free[i];
+		public override bool Decays
+		{
+			get { return true; }
+		}
 
-                m_Free.RemoveAt(i);
+		public static EffectItem Create(Point3D p, Map map, TimeSpan duration)
+		{
+			EffectItem item = null;
 
-                if (!free.Deleted && free.Map == Map.Internal)
-                    item = free;
-            }
+			for (int i = m_Free.Count - 1; item == null && i >= 0; --i) // We reuse new entries first so decay works better
+			{
+				EffectItem free = m_Free[i];
 
-            if (item == null)
-                item = new EffectItem();
-            else
-                item.ItemID = 1;
+				m_Free.RemoveAt(i);
 
-            item.MoveToWorld(p, map);
-            item.BeginFree(duration);
+				if (!free.Deleted && free.Map == Map.Internal)
+					item = free;
+			}
 
-            return item;
-        }
+			if (item == null)
+				item = new EffectItem();
+			else
+				item.ItemID = 1;
 
-        public void BeginFree(TimeSpan duration)
-        {
-            new FreeTimer(this, duration).Start();
-        }
+			item.MoveToWorld(p, map);
+			item.BeginFree(duration);
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			return item;
+		}
 
-            writer.Write((int)0); // version
-        }
+		public void BeginFree(TimeSpan duration)
+		{
+			new FreeTimer(this, duration).Start();
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
+			writer.Write((int)0); // version
+		}
 
-            this.Delete();
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        private class FreeTimer : Timer
-        {
-            private readonly EffectItem m_Item;
-            public FreeTimer(EffectItem item, TimeSpan delay)
-                : base(delay)
-            {
-                this.m_Item = item;
-                this.Priority = TimerPriority.OneSecond;
-            }
+			int version = reader.ReadInt();
 
-            protected override void OnTick()
-            {
-                this.m_Item.Internalize();
+			this.Delete();
+		}
 
-                m_Free.Add(this.m_Item);
-            }
-        }
-    }
+		private class FreeTimer : Timer
+		{
+			private readonly EffectItem m_Item;
+
+			public FreeTimer(EffectItem item, TimeSpan delay)
+				: base(delay)
+			{
+				this.m_Item = item;
+				this.Priority = TimerPriority.OneSecond;
+			}
+
+			protected override void OnTick()
+			{
+				this.m_Item.Internalize();
+
+				m_Free.Add(this.m_Item);
+			}
+		}
+	}
 }

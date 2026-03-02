@@ -2,35 +2,38 @@ using System;
 
 namespace Server.Ethics
 {
-    public abstract class Power
-    {
-        protected PowerDefinition m_Definition;
-        public PowerDefinition Definition
-        {
-            get
-            {
-                return this.m_Definition;
-            }
-        }
-        public virtual bool CheckInvoke(Player from)
-        {
-            if (!from.Mobile.CheckAlive())
-                return false;
+	public abstract class Power
+	{
+		protected PowerDefinition m_Definition;
+		public PowerDefinition Definition
+		{
+			get { return this.m_Definition; }
+		}
 
-            if (from.Power < this.m_Definition.Power)
-            {
-                from.Mobile.LocalOverheadMessage(Server.Network.MessageType.Regular, 0x3B2, false, "You lack the power to invoke this ability.");
-                return false;
-            }
+		public virtual bool CheckInvoke(Player from)
+		{
+			if (!from.Mobile.CheckAlive())
+				return false;
 
-            return true;
-        }
+			if (from.Power < this.m_Definition.Power)
+			{
+				from.Mobile.LocalOverheadMessage(
+					Server.Network.MessageType.Regular,
+					0x3B2,
+					false,
+					"You lack the power to invoke this ability."
+				);
+				return false;
+			}
 
-        public abstract void BeginInvoke(Player from);
+			return true;
+		}
 
-        public virtual void FinishInvoke(Player from)
-        {
-            from.Power -= this.m_Definition.Power;
-        }
-    }
+		public abstract void BeginInvoke(Player from);
+
+		public virtual void FinishInvoke(Player from)
+		{
+			from.Power -= this.m_Definition.Power;
+		}
+	}
 }

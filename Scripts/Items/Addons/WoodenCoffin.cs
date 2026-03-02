@@ -4,181 +4,166 @@ using Server.Network;
 
 namespace Server.Items
 {
-    public class WoodenCoffinComponent : AddonComponent
-    {
-        public WoodenCoffinComponent(int itemID)
-            : base(itemID)
-        {
-        }
+	public class WoodenCoffinComponent : AddonComponent
+	{
+		public WoodenCoffinComponent(int itemID)
+			: base(itemID) { }
 
-        public WoodenCoffinComponent(Serial serial)
-            : base(serial)
-        {
-        }
+		public WoodenCoffinComponent(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1076274;
-            }
-        }// Coffin
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int LabelNumber
+		{
+			get { return 1076274; }
+		} // Coffin
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class WoodenCoffinAddon : BaseAddon
-    {
-        [Constructable]
-        public WoodenCoffinAddon(bool east)
-            : base()
-        {
-            if (east) // east
-            {
-                this.AddComponent(new WoodenCoffinComponent(0x1C41), 0, 0, 0);
-                this.AddComponent(new WoodenCoffinComponent(0x1C42), 1, 0, 0);
-                this.AddComponent(new WoodenCoffinComponent(0x1C43), 2, 0, 0);
-            }
-            else // south
-            {
-                this.AddComponent(new WoodenCoffinComponent(0x1C4F), 0, 0, 0);
-                this.AddComponent(new WoodenCoffinComponent(0x1C50), 0, 1, 0);
-                this.AddComponent(new WoodenCoffinComponent(0x1C51), 0, 2, 0);
-            }
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public WoodenCoffinAddon(Serial serial)
-            : base(serial)
-        {
-        }
+	public class WoodenCoffinAddon : BaseAddon
+	{
+		[Constructable]
+		public WoodenCoffinAddon(bool east)
+			: base()
+		{
+			if (east) // east
+			{
+				this.AddComponent(new WoodenCoffinComponent(0x1C41), 0, 0, 0);
+				this.AddComponent(new WoodenCoffinComponent(0x1C42), 1, 0, 0);
+				this.AddComponent(new WoodenCoffinComponent(0x1C43), 2, 0, 0);
+			}
+			else // south
+			{
+				this.AddComponent(new WoodenCoffinComponent(0x1C4F), 0, 0, 0);
+				this.AddComponent(new WoodenCoffinComponent(0x1C50), 0, 1, 0);
+				this.AddComponent(new WoodenCoffinComponent(0x1C51), 0, 2, 0);
+			}
+		}
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new WoodenCoffinDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public WoodenCoffinAddon(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override BaseAddonDeed Deed
+		{
+			get { return new WoodenCoffinDeed(); }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
 
-    public class WoodenCoffinDeed : BaseAddonDeed
-    {
-        private bool m_East;
-        [Constructable]
-        public WoodenCoffinDeed()
-            : base()
-        {
-            this.LootType = LootType.Blessed;
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public WoodenCoffinDeed(Serial serial)
-            : base(serial)
-        {
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new WoodenCoffinAddon(this.m_East);
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1076274;
-            }
-        }// Coffin
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (this.IsChildOf(from.Backpack))
-            {
-                from.CloseGump(typeof(InternalGump));
-                from.SendGump(new InternalGump(this));
-            }
-            else
-                from.SendLocalizedMessage(1062334); // This item must be in your backpack to be used.
-        }
+	public class WoodenCoffinDeed : BaseAddonDeed
+	{
+		private bool m_East;
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		[Constructable]
+		public WoodenCoffinDeed()
+			: base()
+		{
+			this.LootType = LootType.Blessed;
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public WoodenCoffinDeed(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override BaseAddon Addon
+		{
+			get { return new WoodenCoffinAddon(this.m_East); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1076274; }
+		} // Coffin
 
-            int version = reader.ReadEncodedInt();
-        }
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (this.IsChildOf(from.Backpack))
+			{
+				from.CloseGump(typeof(InternalGump));
+				from.SendGump(new InternalGump(this));
+			}
+			else
+				from.SendLocalizedMessage(1062334); // This item must be in your backpack to be used.
+		}
 
-        private void SendTarget(Mobile m)
-        {
-            base.OnDoubleClick(m);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        private class InternalGump : Gump
-        {
-            private readonly WoodenCoffinDeed m_Deed;
-            public InternalGump(WoodenCoffinDeed deed)
-                : base(60, 36)
-            {
-                this.m_Deed = deed;
+			writer.WriteEncodedInt(0); // version
+		}
 
-                this.AddPage(0);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-                this.AddBackground(0, 0, 273, 324, 0x13BE);
-                this.AddImageTiled(10, 10, 253, 20, 0xA40);
-                this.AddImageTiled(10, 40, 253, 244, 0xA40);
-                this.AddImageTiled(10, 294, 253, 20, 0xA40);
-                this.AddAlphaRegion(10, 10, 253, 304);
-                this.AddButton(10, 294, 0xFB1, 0xFB2, 0, GumpButtonType.Reply, 0);
-                this.AddHtmlLocalized(45, 296, 450, 20, 1060051, 0x7FFF, false, false); // CANCEL
-                this.AddHtmlLocalized(14, 12, 273, 20, 1076748, 0x7FFF, false, false); // Please select your coffin position
+			int version = reader.ReadEncodedInt();
+		}
 
-                this.AddPage(1);
+		private void SendTarget(Mobile m)
+		{
+			base.OnDoubleClick(m);
+		}
 
-                this.AddButton(19, 49, 0x845, 0x846, 1, GumpButtonType.Reply, 0);
-                this.AddHtmlLocalized(44, 47, 213, 20, 1075386, 0x7FFF, false, false); // South
-                this.AddButton(19, 73, 0x845, 0x846, 2, GumpButtonType.Reply, 0);
-                this.AddHtmlLocalized(44, 71, 213, 20, 1075387, 0x7FFF, false, false); // East
-            }
+		private class InternalGump : Gump
+		{
+			private readonly WoodenCoffinDeed m_Deed;
 
-            public override void OnResponse(NetState sender, RelayInfo info)
-            {
-                if (this.m_Deed == null || this.m_Deed.Deleted || info.ButtonID == 0)
-                    return;
+			public InternalGump(WoodenCoffinDeed deed)
+				: base(60, 36)
+			{
+				this.m_Deed = deed;
 
-                this.m_Deed.m_East = (info.ButtonID != 1);
-                this.m_Deed.SendTarget(sender.Mobile);
-            }
-        }
-    }
+				this.AddPage(0);
+
+				this.AddBackground(0, 0, 273, 324, 0x13BE);
+				this.AddImageTiled(10, 10, 253, 20, 0xA40);
+				this.AddImageTiled(10, 40, 253, 244, 0xA40);
+				this.AddImageTiled(10, 294, 253, 20, 0xA40);
+				this.AddAlphaRegion(10, 10, 253, 304);
+				this.AddButton(10, 294, 0xFB1, 0xFB2, 0, GumpButtonType.Reply, 0);
+				this.AddHtmlLocalized(45, 296, 450, 20, 1060051, 0x7FFF, false, false); // CANCEL
+				this.AddHtmlLocalized(14, 12, 273, 20, 1076748, 0x7FFF, false, false); // Please select your coffin position
+
+				this.AddPage(1);
+
+				this.AddButton(19, 49, 0x845, 0x846, 1, GumpButtonType.Reply, 0);
+				this.AddHtmlLocalized(44, 47, 213, 20, 1075386, 0x7FFF, false, false); // South
+				this.AddButton(19, 73, 0x845, 0x846, 2, GumpButtonType.Reply, 0);
+				this.AddHtmlLocalized(44, 71, 213, 20, 1075387, 0x7FFF, false, false); // East
+			}
+
+			public override void OnResponse(NetState sender, RelayInfo info)
+			{
+				if (this.m_Deed == null || this.m_Deed.Deleted || info.ButtonID == 0)
+					return;
+
+				this.m_Deed.m_East = (info.ButtonID != 1);
+				this.m_Deed.SendTarget(sender.Mobile);
+			}
+		}
+	}
 }

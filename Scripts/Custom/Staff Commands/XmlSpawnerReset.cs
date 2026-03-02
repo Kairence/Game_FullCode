@@ -1,8 +1,8 @@
 using System;
-using Server;
-using Server.Mobiles;
-using Server.Commands.Generic;
 using System.Collections.Generic;
+using Server;
+using Server.Commands.Generic;
+using Server.Mobiles;
 using Server.Regions;
 
 namespace Server.Commands
@@ -11,29 +11,33 @@ namespace Server.Commands
 	{
 		public static void Initialize()
 		{
-	      	CommandSystem.Register( "XSS", AccessLevel.GameMaster, new CommandEventHandler( XmlSpawnerResetInfo_OnCommand ) );
+			CommandSystem.Register(
+				"XSS",
+				AccessLevel.GameMaster,
+				new CommandEventHandler(XmlSpawnerResetInfo_OnCommand)
+			);
 		}
 
-		[Usage( "XmlSpawnerReset" )]
-		[Description( "½ºÆ÷³Ê ¸®¼Â." )]
-		public static void XmlSpawnerResetInfo_OnCommand( CommandEventArgs e )
+		[Usage("XmlSpawnerReset")]
+		[Description("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.")]
+		public static void XmlSpawnerResetInfo_OnCommand(CommandEventArgs e)
 		{
 			var list = new List<Item>();
-			foreach ( Item i in World.Items.Values )
+			foreach (Item i in World.Items.Values)
 			{
-				if ( i is XmlSpawner && i.Map == Map.Ilshenar )
+				if (i is XmlSpawner && i.Map == Map.Ilshenar)
 				{
 					XmlSpawner xs = i as XmlSpawner;
-					
-					if( xs.X >= 1752 && xs.Y >= 952 && xs.X <= 1864 && xs.Y <= 1000 ) //½ºÆÄÀÌ´õ ´øÀü 1Ãþ
-						list.Add( i );
-					if( xs.X >= 1480 && xs.Y >= 864 && xs.X <= 1528 && xs.Y <= 896 ) //½ºÆÄÀÌ´õ ´øÀü 2Ãþ
-						list.Add( i );
+
+					if (xs.X >= 1752 && xs.Y >= 952 && xs.X <= 1864 && xs.Y <= 1000) //ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½
+						list.Add(i);
+					if (xs.X >= 1480 && xs.Y >= 864 && xs.X <= 1528 && xs.Y <= 896) //ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ 2ï¿½ï¿½
+						list.Add(i);
 				}
 			}
-			if( list.Count > 0 )
+			if (list.Count > 0)
 			{
-				for ( int i = 0; i < list.Count; ++i )
+				for (int i = 0; i < list.Count; ++i)
 				{
 					XmlSpawner targeted = (XmlSpawner)list[i];
 					targeted.HomeRange = 20;
@@ -41,10 +45,10 @@ namespace Server.Commands
 					targeted.Reset();
 					targeted.Respawn();
 				}
-				e.Mobile.SendMessage("ÃÑ {0}°³ÀÇ ½ºÆ÷³Ê¸¦ ¼öÁ¤Çß½À´Ï´Ù.", list.Count);
+				e.Mobile.SendMessage("ï¿½ï¿½ {0}ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ê¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.", list.Count);
 			}
 			else
-				e.Mobile.SendMessage("¼öÁ¤ÇÒ ³»¿ªÀÌ ¾ø½À´Ï´Ù.");
+				e.Mobile.SendMessage("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
 		}
 	}
 }

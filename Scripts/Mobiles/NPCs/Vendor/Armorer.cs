@@ -1,165 +1,164 @@
 using System;
 using System.Collections.Generic;
-
 using Server.Engines.BulkOrders;
 
 namespace Server.Mobiles
 {
-    public class Armorer : BaseVendor
-    {
-        private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
+	public class Armorer : BaseVendor
+	{
+		private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
 
-        [Constructable]
-        public Armorer()
-            : base("the armourer")
-        {
-            SetSkill(SkillName.ArmsLore, 64.0, 100.0);
-            SetSkill(SkillName.Blacksmith, 60.0, 83.0);
-        }
+		[Constructable]
+		public Armorer()
+			: base("the armourer")
+		{
+			SetSkill(SkillName.ArmsLore, 64.0, 100.0);
+			SetSkill(SkillName.Blacksmith, 60.0, 83.0);
+		}
 
-        public Armorer(Serial serial)
-            : base(serial)
-        {
-        }
+		public Armorer(Serial serial)
+			: base(serial) { }
 
-        public override VendorShoeType ShoeType
-        {
-            get
-            {
-                return VendorShoeType.Boots;
-            }
-        }
-        protected override List<SBInfo> SBInfos
-        {
-            get
-            {
-                return m_SBInfos;
-            }
-        }
-        public override void InitSBInfo()
-        {
-            switch ( Utility.Random(4))
-            {
-                case 0:
-                    {
-                        m_SBInfos.Add(new SBLeatherArmor());
-                        m_SBInfos.Add(new SBStuddedArmor());
-                        m_SBInfos.Add(new SBMetalShields());
-                        m_SBInfos.Add(new SBPlateArmor());
-                        m_SBInfos.Add(new SBHelmetArmor());
-                        m_SBInfos.Add(new SBChainmailArmor());
-                        m_SBInfos.Add(new SBRingmailArmor());
-                        break;
-                    }
-                case 1:
-                    {
-                        m_SBInfos.Add(new SBStuddedArmor());
-                        m_SBInfos.Add(new SBLeatherArmor());
-                        m_SBInfos.Add(new SBMetalShields());
-                        m_SBInfos.Add(new SBHelmetArmor());
-                        break;
-                    }
-                case 2:
-                    {
-                        m_SBInfos.Add(new SBMetalShields());
-                        m_SBInfos.Add(new SBPlateArmor());
-                        m_SBInfos.Add(new SBHelmetArmor());
-                        m_SBInfos.Add(new SBChainmailArmor());
-                        m_SBInfos.Add(new SBRingmailArmor());
-                        break;
-                    }
-                case 3:
-                    {
-                        m_SBInfos.Add(new SBMetalShields());
-                        m_SBInfos.Add(new SBHelmetArmor());
-                        break;
-                    }
-            }
-            if (IsTokunoVendor)
-            {
-                m_SBInfos.Add(new SBSELeatherArmor());	
-                m_SBInfos.Add(new SBSEArmor());
-            }
-        }
+		public override VendorShoeType ShoeType
+		{
+			get { return VendorShoeType.Boots; }
+		}
+		protected override List<SBInfo> SBInfos
+		{
+			get { return m_SBInfos; }
+		}
 
-        #region Bulk Orders
-        public override BODType BODType { get { return BODType.Smith; } }
+		public override void InitSBInfo()
+		{
+			switch (Utility.Random(4))
+			{
+				case 0:
+				{
+					m_SBInfos.Add(new SBLeatherArmor());
+					m_SBInfos.Add(new SBStuddedArmor());
+					m_SBInfos.Add(new SBMetalShields());
+					m_SBInfos.Add(new SBPlateArmor());
+					m_SBInfos.Add(new SBHelmetArmor());
+					m_SBInfos.Add(new SBChainmailArmor());
+					m_SBInfos.Add(new SBRingmailArmor());
+					break;
+				}
+				case 1:
+				{
+					m_SBInfos.Add(new SBStuddedArmor());
+					m_SBInfos.Add(new SBLeatherArmor());
+					m_SBInfos.Add(new SBMetalShields());
+					m_SBInfos.Add(new SBHelmetArmor());
+					break;
+				}
+				case 2:
+				{
+					m_SBInfos.Add(new SBMetalShields());
+					m_SBInfos.Add(new SBPlateArmor());
+					m_SBInfos.Add(new SBHelmetArmor());
+					m_SBInfos.Add(new SBChainmailArmor());
+					m_SBInfos.Add(new SBRingmailArmor());
+					break;
+				}
+				case 3:
+				{
+					m_SBInfos.Add(new SBMetalShields());
+					m_SBInfos.Add(new SBHelmetArmor());
+					break;
+				}
+			}
+			if (IsTokunoVendor)
+			{
+				m_SBInfos.Add(new SBSELeatherArmor());
+				m_SBInfos.Add(new SBSEArmor());
+			}
+		}
 
-        public override Item CreateBulkOrder(Mobile from, bool fromContextMenu)
-        {
-            PlayerMobile pm = from as PlayerMobile;
+		#region Bulk Orders
+		public override BODType BODType
+		{
+			get { return BODType.Smith; }
+		}
 
-            if (pm != null && pm.NextSmithBulkOrder == TimeSpan.Zero && (fromContextMenu || 0.2 > Utility.RandomDouble()))
-            {
-                double theirSkill = pm.Skills[SkillName.Blacksmith].Base;
+		public override Item CreateBulkOrder(Mobile from, bool fromContextMenu)
+		{
+			PlayerMobile pm = from as PlayerMobile;
 
-                if (theirSkill >= 70.1)
-                    pm.NextSmithBulkOrder = TimeSpan.FromHours(6.0);
-                else if (theirSkill >= 50.1)
-                    pm.NextSmithBulkOrder = TimeSpan.FromHours(2.0);
-                else
-                    pm.NextSmithBulkOrder = TimeSpan.FromHours(1.0);
+			if (
+				pm != null
+				&& pm.NextSmithBulkOrder == TimeSpan.Zero
+				&& (fromContextMenu || 0.2 > Utility.RandomDouble())
+			)
+			{
+				double theirSkill = pm.Skills[SkillName.Blacksmith].Base;
 
-                if (theirSkill >= 70.1 && ((theirSkill - 40.0) / 300.0) > Utility.RandomDouble())
-                    return new LargeSmithBOD();
+				if (theirSkill >= 70.1)
+					pm.NextSmithBulkOrder = TimeSpan.FromHours(6.0);
+				else if (theirSkill >= 50.1)
+					pm.NextSmithBulkOrder = TimeSpan.FromHours(2.0);
+				else
+					pm.NextSmithBulkOrder = TimeSpan.FromHours(1.0);
 
-                return SmallSmithBOD.CreateRandomFor(from);
-            }
+				if (theirSkill >= 70.1 && ((theirSkill - 40.0) / 300.0) > Utility.RandomDouble())
+					return new LargeSmithBOD();
 
-            return null;
-        }
+				return SmallSmithBOD.CreateRandomFor(from);
+			}
 
-        public override bool IsValidBulkOrder(Item item)
-        {
-            return (item is SmallSmithBOD || item is LargeSmithBOD);
-        }
+			return null;
+		}
 
-        public override bool SupportsBulkOrders(Mobile from)
-        {
-            return (from is PlayerMobile && from.Skills[SkillName.Blacksmith].Base > 0);
-        }
+		public override bool IsValidBulkOrder(Item item)
+		{
+			return (item is SmallSmithBOD || item is LargeSmithBOD);
+		}
 
-        public override TimeSpan GetNextBulkOrder(Mobile from)
-        {
-            if (from is PlayerMobile)
-                return ((PlayerMobile)from).NextSmithBulkOrder;
+		public override bool SupportsBulkOrders(Mobile from)
+		{
+			return (from is PlayerMobile && from.Skills[SkillName.Blacksmith].Base > 0);
+		}
 
-            return TimeSpan.Zero;
-        }
+		public override TimeSpan GetNextBulkOrder(Mobile from)
+		{
+			if (from is PlayerMobile)
+				return ((PlayerMobile)from).NextSmithBulkOrder;
 
-        public override void OnSuccessfulBulkOrderReceive(Mobile from)
-        {
-            if (Core.SE && from is PlayerMobile)
-                ((PlayerMobile)from).NextSmithBulkOrder = TimeSpan.Zero;
-        }
+			return TimeSpan.Zero;
+		}
 
-        #endregion
+		public override void OnSuccessfulBulkOrderReceive(Mobile from)
+		{
+			if (Core.SE && from is PlayerMobile)
+				((PlayerMobile)from).NextSmithBulkOrder = TimeSpan.Zero;
+		}
 
-        public override void InitOutfit()
-        {
-            base.InitOutfit();
+		#endregion
 
-            AddItem(new Server.Items.HalfApron(Utility.RandomYellowHue()));
-            AddItem(new Server.Items.Bascinet());
-        }
+		public override void InitOutfit()
+		{
+			base.InitOutfit();
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			AddItem(new Server.Items.HalfApron(Utility.RandomYellowHue()));
+			AddItem(new Server.Items.Bascinet());
+		}
 
-            writer.Write((int)1); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)1); // version
+		}
 
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            if (version == 0)
-            {
-                Title = "the armourer";
-            }
-        }
-    }
+			int version = reader.ReadInt();
+
+			if (version == 0)
+			{
+				Title = "the armourer";
+			}
+		}
+	}
 }

@@ -3,57 +3,50 @@ using Server.Engines.Craft;
 
 namespace Server.Items
 {
-    [FlipableAttribute(0x0FBF, 0x0FC0)]
-    public class MapmakersPen : BaseTool
-    {
-        [Constructable]
-        public MapmakersPen()
-            : base(0x0FBF)
-        {
-            this.Weight = 1.0;
-        }
+	[FlipableAttribute(0x0FBF, 0x0FC0)]
+	public class MapmakersPen : BaseTool
+	{
+		[Constructable]
+		public MapmakersPen()
+			: base(0x0FBF)
+		{
+			this.Weight = 1.0;
+		}
 
-        [Constructable]
-        public MapmakersPen(int uses)
-            : base(uses, 0x0FBF)
-        {
-            this.Weight = 1.0;
-        }
+		[Constructable]
+		public MapmakersPen(int uses)
+			: base(uses, 0x0FBF)
+		{
+			this.Weight = 1.0;
+		}
 
-        public MapmakersPen(Serial serial)
-            : base(serial)
-        {
-        }
+		public MapmakersPen(Serial serial)
+			: base(serial) { }
 
-        public override CraftSystem CraftSystem
-        {
-            get
-            {
-                return DefCartography.CraftSystem;
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1044167;
-            }
-        }// mapmaker's pen
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override CraftSystem CraftSystem
+		{
+			get { return DefCartography.CraftSystem; }
+		}
+		public override int LabelNumber
+		{
+			get { return 1044167; }
+		} // mapmaker's pen
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            if (this.Weight == 2.0)
-                this.Weight = 1.0;
-        }
-    }
+			int version = reader.ReadInt();
+
+			if (this.Weight == 2.0)
+				this.Weight = 1.0;
+		}
+	}
 }

@@ -2,89 +2,74 @@ using System;
 
 namespace Server.Items
 {
-    public class TunicOfFire : ChainChest
+	public class TunicOfFire : ChainChest
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public TunicOfFire()
-        {
-            Hue = 0x54F;
-            ArmorAttributes.SelfRepair = 5;
-            Attributes.NightSight = 1;
-            Attributes.ReflectPhysical = 15;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public TunicOfFire(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public TunicOfFire()
+		{
+			Hue = 0x54F;
+			ArmorAttributes.SelfRepair = 5;
+			Attributes.NightSight = 1;
+			Attributes.ReflectPhysical = 15;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1061099;
-            }
-        }// Tunic of Fire
-        public override int ArtifactRarity
-        {
-            get
-            {
-                return 11;
-            }
-        }
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 24;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 34;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public TunicOfFire(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)1);
-        }
+		public override int LabelNumber
+		{
+			get { return 1061099; }
+		} // Tunic of Fire
+		public override int ArtifactRarity
+		{
+			get { return 11; }
+		}
+		public override int BasePhysicalResistance
+		{
+			get { return 24; }
+		}
+		public override int BaseFireResistance
+		{
+			get { return 34; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
+			writer.Write((int)1);
+		}
 
-            if (version < 1)
-            {
-                if (this.Hue == 0x54E)
-                    this.Hue = 0x54F;
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-                if (this.Attributes.NightSight == 0)
-                    this.Attributes.NightSight = 1;
+			int version = reader.ReadInt();
 
-                this.PhysicalBonus = 0;
-                this.FireBonus = 0;
-            }
-        }
-    }
+			if (version < 1)
+			{
+				if (this.Hue == 0x54E)
+					this.Hue = 0x54F;
+
+				if (this.Attributes.NightSight == 0)
+					this.Attributes.NightSight = 1;
+
+				this.PhysicalBonus = 0;
+				this.FireBonus = 0;
+			}
+		}
+	}
 }

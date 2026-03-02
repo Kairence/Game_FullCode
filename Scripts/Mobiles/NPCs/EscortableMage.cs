@@ -3,87 +3,80 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    public class EscortableMage : BaseEscortable
-    {
-        [Constructable]
-        public EscortableMage()
-        {
-            this.Title = "the mage";
+	public class EscortableMage : BaseEscortable
+	{
+		[Constructable]
+		public EscortableMage()
+		{
+			this.Title = "the mage";
 
-            this.SetSkill(SkillName.EvalInt, 80.0, 100.0);
-            this.SetSkill(SkillName.Inscribe, 80.0, 100.0);
-            this.SetSkill(SkillName.Magery, 80.0, 100.0);
-            this.SetSkill(SkillName.Meditation, 80.0, 100.0);
-            this.SetSkill(SkillName.MagicResist, 80.0, 100.0);
-        }
+			this.SetSkill(SkillName.EvalInt, 80.0, 100.0);
+			this.SetSkill(SkillName.Inscribe, 80.0, 100.0);
+			this.SetSkill(SkillName.Magery, 80.0, 100.0);
+			this.SetSkill(SkillName.Meditation, 80.0, 100.0);
+			this.SetSkill(SkillName.MagicResist, 80.0, 100.0);
+		}
 
-        public EscortableMage(Serial serial)
-            : base(serial)
-        {
-        }
+		public EscortableMage(Serial serial)
+			: base(serial) { }
 
-        public override bool CanTeach
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override bool ClickTitle
-        {
-            get
-            {
-                return false;
-            }
-        }// Do not display 'the mage' when single-clicking
-        public override void InitOutfit()
-        {
-            this.AddItem(new Robe(GetRandomHue()));
+		public override bool CanTeach
+		{
+			get { return true; }
+		}
+		public override bool ClickTitle
+		{
+			get { return false; }
+		} // Do not display 'the mage' when single-clicking
 
-            int lowHue = GetRandomHue();
+		public override void InitOutfit()
+		{
+			this.AddItem(new Robe(GetRandomHue()));
 
-            this.AddItem(new ShortPants(lowHue));
+			int lowHue = GetRandomHue();
 
-            if (this.Female)
-                this.AddItem(new ThighBoots(lowHue));
-            else
-                this.AddItem(new Boots(lowHue));
+			this.AddItem(new ShortPants(lowHue));
 
-            Utility.AssignRandomHair(this);
+			if (this.Female)
+				this.AddItem(new ThighBoots(lowHue));
+			else
+				this.AddItem(new Boots(lowHue));
 
-            this.PackGold(200, 250);
-        }
+			Utility.AssignRandomHair(this);
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			this.PackGold(200, 250);
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        private static int GetRandomHue()
-        {
-            switch ( Utility.Random(5) )
-            {
-                default:
-                case 0:
-                    return Utility.RandomBlueHue();
-                case 1:
-                    return Utility.RandomGreenHue();
-                case 2:
-                    return Utility.RandomRedHue();
-                case 3:
-                    return Utility.RandomYellowHue();
-                case 4:
-                    return Utility.RandomNeutralHue();
-            }
-        }
-    }
+			int version = reader.ReadInt();
+		}
+
+		private static int GetRandomHue()
+		{
+			switch (Utility.Random(5))
+			{
+				default:
+				case 0:
+					return Utility.RandomBlueHue();
+				case 1:
+					return Utility.RandomGreenHue();
+				case 2:
+					return Utility.RandomRedHue();
+				case 3:
+					return Utility.RandomYellowHue();
+				case 4:
+					return Utility.RandomNeutralHue();
+			}
+		}
+	}
 }

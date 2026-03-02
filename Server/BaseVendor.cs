@@ -36,9 +36,15 @@ namespace Server.Mobiles
 			m_Amount = amount;
 		}
 
-		public Serial Serial { get { return m_Serial; } }
+		public Serial Serial
+		{
+			get { return m_Serial; }
+		}
 
-		public int Amount { get { return m_Amount; } }
+		public int Amount
+		{
+			get { return m_Amount; }
+		}
 	}
 
 	public class SellItemResponse
@@ -52,9 +58,15 @@ namespace Server.Mobiles
 			m_Amount = amount;
 		}
 
-		public Item Item { get { return m_Item; } }
+		public Item Item
+		{
+			get { return m_Item; }
+		}
 
-		public int Amount { get { return m_Amount; } }
+		public int Amount
+		{
+			get { return m_Amount; }
+		}
 	}
 
 	public class SellItemState
@@ -70,11 +82,20 @@ namespace Server.Mobiles
 			m_Name = name;
 		}
 
-		public Item Item { get { return m_Item; } }
+		public Item Item
+		{
+			get { return m_Item; }
+		}
 
-		public int Price { get { return m_Price; } }
+		public int Price
+		{
+			get { return m_Price; }
+		}
 
-		public string Name { get { return m_Name; } }
+		public string Name
+		{
+			get { return m_Name; }
+		}
 	}
 
 	public class BuyItemState
@@ -98,18 +119,39 @@ namespace Server.Mobiles
 			m_Hue = hue;
 		}
 
-		public int Price { get { return m_Price; } }
+		public int Price
+		{
+			get { return m_Price; }
+		}
 
-		public Serial MySerial { get { return m_MySer; } }
+		public Serial MySerial
+		{
+			get { return m_MySer; }
+		}
 
-		public Serial ContainerSerial { get { return m_ContSer; } }
+		public Serial ContainerSerial
+		{
+			get { return m_ContSer; }
+		}
 
-		public int ItemID { get { return m_ItemID; } }
+		public int ItemID
+		{
+			get { return m_ItemID; }
+		}
 
-		public int Amount { get { return m_Amount; } }
+		public int Amount
+		{
+			get { return m_Amount; }
+		}
 
-		public int Hue { get { return m_Hue; } }
+		public int Hue
+		{
+			get { return m_Hue; }
+		}
 
-		public string Description { get { return m_Desc; } }
+		public string Description
+		{
+			get { return m_Desc; }
+		}
 	}
 }

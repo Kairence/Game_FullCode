@@ -1,77 +1,82 @@
 using System;
 using Server;
+using Server.Misc;
 using Server.Mobiles;
 using Server.Network;
-using Server.Misc;
 using Server.Targeting;
 
 namespace Server.Commands
 {
-    public class YoungInfoCommand
-    {
-        public static void Initialize()
-        {
-            // ¸í·É¾î¸¦ ´©±¸³ª »ç¿ëÇÒ ¼ö ÀÖµµ·Ï Player ±ÇÇÑÀ¸·Î µî·ÏÇÏµÇ, ³»ºÎ¿¡¼­ ·ÎÁ÷À» ºÐ¸®ÇÕ´Ï´Ù.
-            CommandSystem.Register("Young", AccessLevel.Player, new CommandEventHandler(YoungInfo_OnCommand));
-        }
+	public class YoungInfoCommand
+	{
+		public static void Initialize()
+		{
+			// ï¿½ï¿½ï¿½É¾î¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Öµï¿½ï¿½ï¿½ Player ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ïµï¿½, ï¿½ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¸ï¿½ï¿½Õ´Ï´ï¿½.
+			CommandSystem.Register("Young", AccessLevel.Player, new CommandEventHandler(YoungInfo_OnCommand));
+		}
 
-        [Usage("Young")]
-        [Description("½ÃÁð Ä³¸¯ÅÍ »óÅÂ¸¦ °ü¸®ÇÏ°Å³ª Æ÷±âÇÕ´Ï´Ù.")]
-        public static void YoungInfo_OnCommand(CommandEventArgs e)
-        {
-            PlayerMobile from = e.Mobile as PlayerMobile;
-            if (from == null) return;
+		[Usage("Young")]
+		[Description("ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°Å³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.")]
+		public static void YoungInfo_OnCommand(CommandEventArgs e)
+		{
+			PlayerMobile from = e.Mobile as PlayerMobile;
+			if (from == null)
+				return;
 
-            // 1. °ü¸®ÀÚ(GameMaster ÀÌ»ó)°¡ »ç¿ëÇÑ °æ¿ì -> Å¸°ÙÆÃ ¸ðµå
-            if (from.AccessLevel >= AccessLevel.GameMaster)
-            {
-                from.SendMessage("½ÃÁð(Young) »óÅÂ¸¦ º¯°æÇÒ Ä³¸¯ÅÍ¸¦ ¼±ÅÃÇÏ¼¼¿ä.");
-                from.Target = new YoungTarget();
-            }
-            // 2. ÀÏ¹Ý ÇÃ·¹ÀÌ¾î°¡ »ç¿ëÇÑ °æ¿ì -> º»ÀÎ ½ÃÁð Æ÷±â ¸ðµå
+			// 1. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(GameMaster ï¿½Ì»ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ -> Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+			if (from.AccessLevel >= AccessLevel.GameMaster)
+			{
+				from.SendMessage("ï¿½ï¿½ï¿½ï¿½(Young) ï¿½ï¿½ï¿½Â¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½.");
+				from.Target = new YoungTarget();
+			}
+			// 2. ï¿½Ï¹ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 			else
 			{
 				if (!from.Young)
 				{
-					from.SendMessage(0x22, "´ç½ÅÀº ½ÃÁð Ä³¸¯ÅÍ »óÅÂ°¡ ¾Æ´Õ´Ï´Ù.");
+					from.SendMessage(0x22, "ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â°ï¿½ ï¿½Æ´Õ´Ï´ï¿½.");
 					return;
 				}
 
 				from.Young = false;
-				from.SendMessage(0x481, "½ÃÁð Ä³¸¯ÅÍ »óÅÂ¸¦ Æ÷±âÇÏ¼Ì½À´Ï´Ù.");
+				from.SendMessage(0x481, "ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¼Ì½ï¿½ï¿½Ï´ï¿½.");
 
 				if (SeasonController.IsSeasonActive())
 				{
-					// ´ºÇìºì ÁÂÇ¥ ´ë½Å pm.PlayerMove¸¦ È£ÃâÇÏ¿© 
-					// º»ÀÎÀÌ ¼³Á¤ÇÑ SaveTown À§Ä¡ÀÇ Æ®¶ó¸á ¸ÊÀ¸·Î ÀÌµ¿½ÃÅµ´Ï´Ù.
+					// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ pm.PlayerMoveï¿½ï¿½ È£ï¿½ï¿½ï¿½Ï¿ï¿½
+					// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ SaveTown ï¿½ï¿½Ä¡ï¿½ï¿½ Æ®ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½Åµï¿½Ï´ï¿½.
 					from.PlayerMove(false);
-					from.SendMessage(0x22, "½ÃÁð Æ÷±â·Î ÀÎÇØ º»ÀÎÀÇ °íÇâ ¸¶À»(Æ®¶ó¸á)·Î ÀÌ¼ÛµÇ¾ú½À´Ï´Ù.");
+					from.SendMessage(0x22, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(Æ®ï¿½ï¿½ï¿½)ï¿½ï¿½ ï¿½Ì¼ÛµÇ¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
 				}
 			}
-        }
+		}
 
-        // °ü¸®ÀÚ Àü¿ë Å¸°Ù Å¬·¡½º
-        private class YoungTarget : Target
-        {
-            public YoungTarget() : base(12, false, TargetFlags.None) { }
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½
+		private class YoungTarget : Target
+		{
+			public YoungTarget()
+				: base(12, false, TargetFlags.None) { }
 
-            protected override void OnTarget(Mobile from, object targeted)
-            {
-                if (targeted is PlayerMobile pm)
-                {
-                    pm.Young = !pm.Young; // »óÅÂ ¹ÝÀü (ON/OFF)
-                    
-                    from.SendMessage(0x481, "{0} Ä³¸¯ÅÍÀÇ ½ÃÁð(Young) »óÅÂ¸¦ {1}·Î º¯°æÇß½À´Ï´Ù.", 
-                        pm.Name, pm.Young ? "ON" : "OFF");
-                    
-                    pm.SendMessage(0x481, "°ü¸®ÀÚ¿¡ ÀÇÇØ ½ÃÁð Ä³¸¯ÅÍ »óÅÂ°¡ {0} µÇ¾ú½À´Ï´Ù.", 
-                        pm.Young ? "È°¼ºÈ­" : "ÇØÁ¦");
-                }
-                else
-                {
-                    from.SendMessage("ÇÃ·¹ÀÌ¾î Ä³¸¯ÅÍ¸¸ ¼±ÅÃ °¡´ÉÇÕ´Ï´Ù.");
-                }
-            }
-        }
-    }
+			protected override void OnTarget(Mobile from, object targeted)
+			{
+				if (targeted is PlayerMobile pm)
+				{
+					pm.Young = !pm.Young; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ON/OFF)
+
+					from.SendMessage(
+						0x481,
+						"{0} Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(Young) ï¿½ï¿½ï¿½Â¸ï¿½ {1}ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.",
+						pm.Name,
+						pm.Young ? "ON" : "OFF"
+					);
+
+					pm.SendMessage(0x481, "ï¿½ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â°ï¿½ {0} ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.", pm.Young ? "È°ï¿½ï¿½È­" : "ï¿½ï¿½ï¿½ï¿½");
+				}
+				else
+				{
+					from.SendMessage("ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ Ä³ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.");
+				}
+			}
+		}
+	}
 }

@@ -2,48 +2,45 @@ using System;
 
 namespace Server.Items
 {
-    public class BraceletOfHealth : GoldBracelet
+	public class BraceletOfHealth : GoldBracelet
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public BraceletOfHealth()
-        {
-            Hue = 0x21;
-            Attributes.BonusHits = 5;
-            Attributes.RegenHits = 10;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public BraceletOfHealth(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public BraceletOfHealth()
+		{
+			Hue = 0x21;
+			Attributes.BonusHits = 5;
+			Attributes.RegenHits = 10;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1061103;
-            }
-        }// Bracelet of Health
-        public override int ArtifactRarity
-        {
-            get
-            {
-                return 11;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public BraceletOfHealth(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0);
-        }
+		public override int LabelNumber
+		{
+			get { return 1061103; }
+		} // Bracelet of Health
+		public override int ArtifactRarity
+		{
+			get { return 11; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

@@ -2,5 +2,5 @@
 
 namespace Server
 {
-    public interface IGem { }
+	public interface IGem { }
 }

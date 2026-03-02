@@ -5,7 +5,10 @@ namespace Server.Items
 {
 	public class SoulForge : BaseAddon
 	{
-		public override BaseAddonDeed Deed{ get{ return new SoulForgeDeed(); } }
+		public override BaseAddonDeed Deed
+		{
+			get { return new SoulForgeDeed(); }
+		}
 
 		[Constructable]
 		public SoulForge()
@@ -29,22 +32,21 @@ namespace Server.Items
 			AddComponent(new AddonComponent(0x4270), +1, +3, 0);
 			AddComponent(new AddonComponent(0x4271), +2, +3, 0);
 			AddComponent(new AddonComponent(0x4272), +3, +3, 0);
-        }
-
-        public SoulForge( Serial serial ) : base( serial )
-		{
 		}
 
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
+		public SoulForge(Serial serial)
+			: base(serial) { }
 
-			writer.WriteEncodedInt( (int) 0 ); // version
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.WriteEncodedInt((int)0); // version
 		}
 
-		public override void Deserialize( GenericReader reader )
+		public override void Deserialize(GenericReader reader)
 		{
-			base.Deserialize( reader );
+			base.Deserialize(reader);
 
 			int version = reader.ReadEncodedInt();
 		}
@@ -52,28 +54,31 @@ namespace Server.Items
 
 	public class SoulForgeDeed : BaseAddonDeed
 	{
-		public override BaseAddon Addon{ get{ return new SoulForge(); } }
-		public override int LabelNumber{ get{ return 1031696; } }
+		public override BaseAddon Addon
+		{
+			get { return new SoulForge(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1031696; }
+		}
 
 		[Constructable]
-		public SoulForgeDeed()
+		public SoulForgeDeed() { }
+
+		public SoulForgeDeed(Serial serial)
+			: base(serial) { }
+
+		public override void Serialize(GenericWriter writer)
 		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
 		}
 
-		public SoulForgeDeed( Serial serial ) : base( serial )
+		public override void Deserialize(GenericReader reader)
 		{
-		}
-
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
-
-			writer.Write( (int) 0 ); // version
-		}
-
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
+			base.Deserialize(reader);
 
 			int version = reader.ReadInt();
 		}

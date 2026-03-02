@@ -2,62 +2,51 @@ using System;
 
 namespace Server.Engines.Reports
 {
-    public class PieChart : Chart
-    {
-        #region Type Identification
-        public static readonly PersistableType ThisTypeID = new PersistableType("pc", new ConstructCallback(Construct));
+	public class PieChart : Chart
+	{
+		#region Type Identification
+		public static readonly PersistableType ThisTypeID = new PersistableType("pc", new ConstructCallback(Construct));
 
-        private static PersistableObject Construct()
-        {
-            return new PieChart();
-        }
+		private static PersistableObject Construct()
+		{
+			return new PieChart();
+		}
 
-        public override PersistableType TypeID
-        {
-            get
-            {
-                return ThisTypeID;
-            }
-        }
-        #endregion
+		public override PersistableType TypeID
+		{
+			get { return ThisTypeID; }
+		}
+		#endregion
 
-        private bool m_ShowPercents;
+		private bool m_ShowPercents;
 
-        public bool ShowPercents
-        {
-            get
-            {
-                return this.m_ShowPercents;
-            }
-            set
-            {
-                this.m_ShowPercents = value;
-            }
-        }
+		public bool ShowPercents
+		{
+			get { return this.m_ShowPercents; }
+			set { this.m_ShowPercents = value; }
+		}
 
-        public PieChart(string name, string fileName, bool showPercents)
-        {
-            this.m_Name = name;
-            this.m_FileName = fileName;
-            this.m_ShowPercents = showPercents;
-        }
+		public PieChart(string name, string fileName, bool showPercents)
+		{
+			this.m_Name = name;
+			this.m_FileName = fileName;
+			this.m_ShowPercents = showPercents;
+		}
 
-        private PieChart()
-        {
-        }
+		private PieChart() { }
 
-        public override void SerializeAttributes(PersistenceWriter op)
-        {
-            base.SerializeAttributes(op);
+		public override void SerializeAttributes(PersistenceWriter op)
+		{
+			base.SerializeAttributes(op);
 
-            op.SetBoolean("p", this.m_ShowPercents);
-        }
+			op.SetBoolean("p", this.m_ShowPercents);
+		}
 
-        public override void DeserializeAttributes(PersistenceReader ip)
-        {
-            base.DeserializeAttributes(ip);
+		public override void DeserializeAttributes(PersistenceReader ip)
+		{
+			base.DeserializeAttributes(ip);
 
-            this.m_ShowPercents = ip.GetBoolean("p");
-        }
-    }
+			this.m_ShowPercents = ip.GetBoolean("p");
+		}
+	}
 }

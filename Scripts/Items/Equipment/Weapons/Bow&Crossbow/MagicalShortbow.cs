@@ -2,172 +2,114 @@ using System;
 
 namespace Server.Items
 {
-    [FlipableAttribute(0x2D2B, 0x2D1F)]
-    public class MagicalShortbow : BaseRanged
-    {
-        [Constructable]
-        public MagicalShortbow()
-            : base(0x2D2B)
-        {
+	[FlipableAttribute(0x2D2B, 0x2D1F)]
+	public class MagicalShortbow : BaseRanged
+	{
+		[Constructable]
+		public MagicalShortbow()
+			: base(0x2D2B)
+		{
 			PrefixOption[61] = 36;
 			SuffixOption[61] = 500000;
 			PrefixOption[62] = 41;
 			SuffixOption[62] = 500000;
-			
+
 			//AbsorptionAttributes.ResonanceEnergy += 7500;
-            this.Weight = 6.0;
+			this.Weight = 6.0;
 		}
 
-        public MagicalShortbow(Serial serial)
-            : base(serial)
-        {
-        }
+		public MagicalShortbow(Serial serial)
+			: base(serial) { }
 
-        public override int EffectID
-        {
-            get
-            {
-                return 0xF42;
-            }
-        }
-        public override Type AmmoType
-        {
-            get
-            {
-                return typeof(Arrow);
-            }
-        }
-        public override Item Ammo
-        {
-            get
-            {
-                return new Arrow();
-            }
-        }
-        public override WeaponAbility PrimaryAbility
-        {
-            get
-            {
-                return WeaponAbility.LightningArrow;
-            }
-        }
-        public override WeaponAbility SecondaryAbility
-        {
-            get
-            {
-                return WeaponAbility.PsychicAttack;
-            }
-        }
-        public override int AosStrengthReq
-        {
-            get
-            {
-                return 1000;
-            }
-        }
-        public override int AosDexterityReq
-        {
-            get
-            {
-                return 1000;
-            }
-        }
-        public override int AosIntelligenceReq
-        {
-            get
-            {
-                return 5000;
-            }
-        }
-        public override int AosMinDamage
-        {
-            get
-            {
-                return 1;
-            }
-        }
-        public override int AosMaxDamage
-        {
-            get
-            {
-                return 2;
-            }
-        }
-        public override int AosSpeed
-        {
-            get
-            {
-                return 38;
-            }
-        }
-        public override float MlSpeed
-        {
-            get
-            {
-                return 3.00f;
-            }
-        }
-        public override int OldStrengthReq
-        {
-            get
-            {
-                return 45;
-            }
-        }
-        public override int OldMinDamage
-        {
-            get
-            {
-                return 9;
-            }
-        }
-        public override int OldMaxDamage
-        {
-            get
-            {
-                return 13;
-            }
-        }
-        public override int OldSpeed
-        {
-            get
-            {
-                return 38;
-            }
-        }
-        public override int DefMaxRange
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 100;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 100;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int EffectID
+		{
+			get { return 0xF42; }
+		}
+		public override Type AmmoType
+		{
+			get { return typeof(Arrow); }
+		}
+		public override Item Ammo
+		{
+			get { return new Arrow(); }
+		}
+		public override WeaponAbility PrimaryAbility
+		{
+			get { return WeaponAbility.LightningArrow; }
+		}
+		public override WeaponAbility SecondaryAbility
+		{
+			get { return WeaponAbility.PsychicAttack; }
+		}
+		public override int AosStrengthReq
+		{
+			get { return 1000; }
+		}
+		public override int AosDexterityReq
+		{
+			get { return 1000; }
+		}
+		public override int AosIntelligenceReq
+		{
+			get { return 5000; }
+		}
+		public override int AosMinDamage
+		{
+			get { return 1; }
+		}
+		public override int AosMaxDamage
+		{
+			get { return 2; }
+		}
+		public override int AosSpeed
+		{
+			get { return 38; }
+		}
+		public override float MlSpeed
+		{
+			get { return 3.00f; }
+		}
+		public override int OldStrengthReq
+		{
+			get { return 45; }
+		}
+		public override int OldMinDamage
+		{
+			get { return 9; }
+		}
+		public override int OldMaxDamage
+		{
+			get { return 13; }
+		}
+		public override int OldSpeed
+		{
+			get { return 38; }
+		}
+		public override int DefMaxRange
+		{
+			get { return 10; }
+		}
+		public override int InitMinHits
+		{
+			get { return 100; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 100; }
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

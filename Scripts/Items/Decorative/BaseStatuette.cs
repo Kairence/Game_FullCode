@@ -5,153 +5,150 @@ using Server.Network;
 
 namespace Server.Items
 {
-    public class BaseStatuette : Item
-    {
-        private bool m_TurnedOn;
-        [Constructable]
-        public BaseStatuette(int itemID)
-            : base(itemID)
-        {
-            this.LootType = LootType.Blessed;
-        }
+	public class BaseStatuette : Item
+	{
+		private bool m_TurnedOn;
 
-        public BaseStatuette(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public BaseStatuette(int itemID)
+			: base(itemID)
+		{
+			this.LootType = LootType.Blessed;
+		}
 
-        public override bool HandlesOnMovement
-        {
-            get
-            {
-                return this.m_TurnedOn && this.IsLockedDown;
-            }
-        }
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool TurnedOn
-        {
-            get
-            {
-                return this.m_TurnedOn;
-            }
-            set
-            {
-                this.m_TurnedOn = value;
-                this.InvalidateProperties();
-            }
-        }
-        public override double DefaultWeight
-        {
-            get
-            {
-                return 1.0;
-            }
-        }
-        public override void OnMovement(Mobile m, Point3D oldLocation)
-        {
-            if (this.m_TurnedOn && this.IsLockedDown && (!m.Hidden || m.IsPlayer()) && Utility.InRange(m.Location, this.Location, 2) && !Utility.InRange(oldLocation, this.Location, 2))
-            {
-                this.PlaySound(m);
-            }
+		public BaseStatuette(Serial serial)
+			: base(serial) { }
 
-            base.OnMovement(m, oldLocation);
-        }
+		public override bool HandlesOnMovement
+		{
+			get { return this.m_TurnedOn && this.IsLockedDown; }
+		}
 
-        public virtual void PlaySound(Mobile to)
-        {
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool TurnedOn
+		{
+			get { return this.m_TurnedOn; }
+			set
+			{
+				this.m_TurnedOn = value;
+				this.InvalidateProperties();
+			}
+		}
+		public override double DefaultWeight
+		{
+			get { return 1.0; }
+		}
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+		public override void OnMovement(Mobile m, Point3D oldLocation)
+		{
+			if (
+				this.m_TurnedOn
+				&& this.IsLockedDown
+				&& (!m.Hidden || m.IsPlayer())
+				&& Utility.InRange(m.Location, this.Location, 2)
+				&& !Utility.InRange(oldLocation, this.Location, 2)
+			)
+			{
+				this.PlaySound(m);
+			}
 
-            if (this.m_TurnedOn)
-                list.Add(502695); // turned on
-            else
-                list.Add(502696); // turned off
-        }
+			base.OnMovement(m, oldLocation);
+		}
 
-        public bool IsOwner(Mobile mob)
-        {
-            BaseHouse house = BaseHouse.FindHouseAt(this);
+		public virtual void PlaySound(Mobile to) { }
 
-            return (house != null && house.IsOwner(mob));
-        }
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (this.IsOwner(from))
-            {
-                OnOffGump onOffGump = new OnOffGump(this);
-                from.SendGump(onOffGump);
-            }
-            else
-            {
-                from.SendLocalizedMessage(502691); // You must be the owner to use this.
-            }
-        }
+			if (this.m_TurnedOn)
+				list.Add(502695); // turned on
+			else
+				list.Add(502696); // turned off
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public bool IsOwner(Mobile mob)
+		{
+			BaseHouse house = BaseHouse.FindHouseAt(this);
 
-            writer.Write((int)0); // version
+			return (house != null && house.IsOwner(mob));
+		}
 
-            writer.Write((bool)this.m_TurnedOn);
-        }
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (this.IsOwner(from))
+			{
+				OnOffGump onOffGump = new OnOffGump(this);
+				from.SendGump(onOffGump);
+			}
+			else
+			{
+				from.SendLocalizedMessage(502691); // You must be the owner to use this.
+			}
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
+			writer.Write((int)0); // version
 
-            switch ( version )
-            {
-                case 0:
-                    {
-                        this.m_TurnedOn = reader.ReadBool();
-                        break;
-                    }
-            }
-        }
+			writer.Write((bool)this.m_TurnedOn);
+		}
 
-        private class OnOffGump : Gump
-        {
-            private readonly BaseStatuette m_Statuette;
-            public OnOffGump(BaseStatuette statuette)
-                : base(150, 200)
-            {
-                this.m_Statuette = statuette;
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-                this.AddBackground(0, 0, 300, 150, 0xA28);
+			int version = reader.ReadInt();
 
-                this.AddHtmlLocalized(45, 20, 300, 35, statuette.TurnedOn ? 1011035 : 1011034, false, false); // [De]Activate this item
+			switch (version)
+			{
+				case 0:
+				{
+					this.m_TurnedOn = reader.ReadBool();
+					break;
+				}
+			}
+		}
 
-                this.AddButton(40, 53, 0xFA5, 0xFA7, 1, GumpButtonType.Reply, 0);
-                this.AddHtmlLocalized(80, 55, 65, 35, 1011036, false, false); // OKAY
+		private class OnOffGump : Gump
+		{
+			private readonly BaseStatuette m_Statuette;
 
-                this.AddButton(150, 53, 0xFA5, 0xFA7, 0, GumpButtonType.Reply, 0);
-                this.AddHtmlLocalized(190, 55, 100, 35, 1011012, false, false); // CANCEL
-            }
+			public OnOffGump(BaseStatuette statuette)
+				: base(150, 200)
+			{
+				this.m_Statuette = statuette;
 
-            public override void OnResponse(NetState sender, RelayInfo info)
-            {
-                Mobile from = sender.Mobile;
+				this.AddBackground(0, 0, 300, 150, 0xA28);
 
-                if (info.ButtonID == 1)
-                {
-                    bool newValue = !this.m_Statuette.TurnedOn;
-                    this.m_Statuette.TurnedOn = newValue;
+				this.AddHtmlLocalized(45, 20, 300, 35, statuette.TurnedOn ? 1011035 : 1011034, false, false); // [De]Activate this item
 
-                    if (newValue && !this.m_Statuette.IsLockedDown)
-                        from.SendLocalizedMessage(502693); // Remember, this only works when locked down.
-                }
-                else
-                {
-                    from.SendLocalizedMessage(502694); // Cancelled action.
-                }
-            }
-        }
-    }
+				this.AddButton(40, 53, 0xFA5, 0xFA7, 1, GumpButtonType.Reply, 0);
+				this.AddHtmlLocalized(80, 55, 65, 35, 1011036, false, false); // OKAY
+
+				this.AddButton(150, 53, 0xFA5, 0xFA7, 0, GumpButtonType.Reply, 0);
+				this.AddHtmlLocalized(190, 55, 100, 35, 1011012, false, false); // CANCEL
+			}
+
+			public override void OnResponse(NetState sender, RelayInfo info)
+			{
+				Mobile from = sender.Mobile;
+
+				if (info.ButtonID == 1)
+				{
+					bool newValue = !this.m_Statuette.TurnedOn;
+					this.m_Statuette.TurnedOn = newValue;
+
+					if (newValue && !this.m_Statuette.IsLockedDown)
+						from.SendLocalizedMessage(502693); // Remember, this only works when locked down.
+				}
+				else
+				{
+					from.SendLocalizedMessage(502694); // Cancelled action.
+				}
+			}
+		}
+	}
 }

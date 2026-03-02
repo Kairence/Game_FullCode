@@ -2,81 +2,68 @@ using System;
 
 namespace Server.Items
 {
-    public class OrnateElvenTableSouthAddon : BaseAddon
-    {
-        [Constructable]
-        public OrnateElvenTableSouthAddon()
-        {
+	public class OrnateElvenTableSouthAddon : BaseAddon
+	{
+		[Constructable]
+		public OrnateElvenTableSouthAddon()
+		{
 			this.AddComponent(new AddonComponent(0x308E), -1, 0, 0);
 			this.AddComponent(new AddonComponent(0x308D), 0, 0, 0);
 			this.AddComponent(new AddonComponent(0x308C), 1, 0, 0);
-        }
+		}
 
-        public OrnateElvenTableSouthAddon(Serial serial)
-            : base(serial)
-        {
-        }
+		public OrnateElvenTableSouthAddon(Serial serial)
+			: base(serial) { }
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new OrnateElvenTableSouthDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override BaseAddonDeed Deed
+		{
+			get { return new OrnateElvenTableSouthDeed(); }
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class OrnateElvenTableSouthDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public OrnateElvenTableSouthDeed()
-        {
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public OrnateElvenTableSouthDeed(Serial serial)
-            : base(serial)
-        {
-        }
+	public class OrnateElvenTableSouthDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public OrnateElvenTableSouthDeed() { }
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new OrnateElvenTableSouthAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1072869;
-            }
-        }// ornate table (south)
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public OrnateElvenTableSouthDeed(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override BaseAddon Addon
+		{
+			get { return new OrnateElvenTableSouthAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1072869; }
+		} // ornate table (south)
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

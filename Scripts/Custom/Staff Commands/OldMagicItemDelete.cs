@@ -1,9 +1,9 @@
 using System;
-using Server;
-using Server.Mobiles;
-using Server.Commands.Generic;
 using System.Collections.Generic;
+using Server;
+using Server.Commands.Generic;
 using Server.Items;
+using Server.Mobiles;
 
 namespace Server.Commands
 {
@@ -11,29 +11,33 @@ namespace Server.Commands
 	{
 		public static void Initialize()
 		{
-	      	CommandSystem.Register( "OMID", AccessLevel.GameMaster, new CommandEventHandler( OldMagicItemDeleteInfo_OnCommand ) );
+			CommandSystem.Register(
+				"OMID",
+				AccessLevel.GameMaster,
+				new CommandEventHandler(OldMagicItemDeleteInfo_OnCommand)
+			);
 		}
 
-		[Usage( "OldMagicItemDelete" )]
-		[Description( "¿¹Àü ¾ÆÀÌÅÛ »èÁ¦ ÄÚµå." )]
-		public static void OldMagicItemDeleteInfo_OnCommand( CommandEventArgs e )
+		[Usage("OldMagicItemDelete")]
+		[Description("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½.")]
+		public static void OldMagicItemDeleteInfo_OnCommand(CommandEventArgs e)
 		{
-			e.Mobile.SendMessage("¿¹Àü ¾ÆÀÌÅÛ »èÁ¦¸¦ ½ÃÀÛÇÕ´Ï´Ù!");
+			e.Mobile.SendMessage("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½!");
 			int count = 0;
 			var list = new List<Item>();
-			foreach ( Item i in World.Items.Values )
+			foreach (Item i in World.Items.Values)
 			{
-				if (( i is BaseWeapon || i is BaseArmor || i is BaseClothing || i is BaseJewel || i is Spellbook ))
+				if ((i is BaseWeapon || i is BaseArmor || i is BaseClothing || i is BaseJewel || i is Spellbook))
 				{
-					list.Add( i );
+					list.Add(i);
 				}
 			}
-			for ( int i = 0; i < list.Count; ++i )
+			for (int i = 0; i < list.Count; ++i)
 			{
-				if( list is BaseWeapon )
+				if (list is BaseWeapon)
 				{
 					BaseWeapon tar = list[i] as BaseWeapon;
-					if( tar.ReforgedPrefix == ReforgedPrefix.None && tar.ReforgedSuffix == ReforgedSuffix.None )
+					if (tar.ReforgedPrefix == ReforgedPrefix.None && tar.ReforgedSuffix == ReforgedSuffix.None)
 						continue;
 					else
 					{
@@ -41,10 +45,10 @@ namespace Server.Commands
 						count++;
 					}
 				}
-				if( list is BaseArmor )
+				if (list is BaseArmor)
 				{
 					BaseArmor tar = list[i] as BaseArmor;
-					if( tar.ReforgedPrefix == ReforgedPrefix.None && tar.ReforgedSuffix == ReforgedSuffix.None )
+					if (tar.ReforgedPrefix == ReforgedPrefix.None && tar.ReforgedSuffix == ReforgedSuffix.None)
 						continue;
 					else
 					{
@@ -52,10 +56,10 @@ namespace Server.Commands
 						count++;
 					}
 				}
-				if( list is BaseClothing )
+				if (list is BaseClothing)
 				{
 					BaseClothing tar = list[i] as BaseClothing;
-					if( tar.ReforgedPrefix == ReforgedPrefix.None && tar.ReforgedSuffix == ReforgedSuffix.None )
+					if (tar.ReforgedPrefix == ReforgedPrefix.None && tar.ReforgedSuffix == ReforgedSuffix.None)
 						continue;
 					else
 					{
@@ -63,10 +67,10 @@ namespace Server.Commands
 						count++;
 					}
 				}
-				if( list is BaseJewel )
+				if (list is BaseJewel)
 				{
 					BaseJewel tar = list[i] as BaseJewel;
-					if( tar.ReforgedPrefix == ReforgedPrefix.None && tar.ReforgedSuffix == ReforgedSuffix.None )
+					if (tar.ReforgedPrefix == ReforgedPrefix.None && tar.ReforgedSuffix == ReforgedSuffix.None)
 						continue;
 					else
 					{
@@ -74,10 +78,10 @@ namespace Server.Commands
 						count++;
 					}
 				}
-				if( list is Spellbook )
+				if (list is Spellbook)
 				{
 					Spellbook tar = list[i] as Spellbook;
-					if( tar.ReforgedPrefix == ReforgedPrefix.None && tar.ReforgedSuffix == ReforgedSuffix.None )
+					if (tar.ReforgedPrefix == ReforgedPrefix.None && tar.ReforgedSuffix == ReforgedSuffix.None)
 						continue;
 					else
 					{
@@ -86,7 +90,7 @@ namespace Server.Commands
 					}
 				}
 			}
-			e.Mobile.SendMessage("ÃÑ {0}°³ÀÇ ¾ÆÀÌÅÛÀ» »èÁ¦Çß½À´Ï´Ù.", count);
+			e.Mobile.SendMessage("ï¿½ï¿½ {0}ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.", count);
 		}
 	}
 }

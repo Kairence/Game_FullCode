@@ -3,88 +3,83 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    [CorpseName("an ice elemental corpse")]
-    public class IceElemental : BaseCreature, IAuraCreature
-    {
-        [Constructable]
-        public IceElemental()
-            : base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
-        {
-            Name = "an ice elemental";
-            Body = 161;
-            BaseSoundID = 268;
+	[CorpseName("an ice elemental corpse")]
+	public class IceElemental : BaseCreature, IAuraCreature
+	{
+		[Constructable]
+		public IceElemental()
+			: base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
+		{
+			Name = "an ice elemental";
+			Body = 161;
+			BaseSoundID = 268;
 
-            SetStr(456, 550);
-            SetDex(296, 315);
-            SetInt(1171, 1192);
+			SetStr(456, 550);
+			SetDex(296, 315);
+			SetInt(1171, 1192);
 
-            SetHits(940, 1011);
+			SetHits(940, 1011);
 			SetStam(200, 300);
 			SetMana(1000, 1100);
-			
-            SetDamage(1, 1);
-			SetAttackSpeed( 60.0 );
 
-            SetDamageType(ResistanceType.Physical, 25);
-            SetDamageType(ResistanceType.Cold, 75);
+			SetDamage(1, 1);
+			SetAttackSpeed(60.0);
 
-            SetResistance(ResistanceType.Physical, 35, 45);
-            SetResistance(ResistanceType.Fire, 5, 10);
-            SetResistance(ResistanceType.Cold, 50, 60);
-            SetResistance(ResistanceType.Poison, 20, 30);
-            SetResistance(ResistanceType.Energy, 20, 30);
+			SetDamageType(ResistanceType.Physical, 25);
+			SetDamageType(ResistanceType.Cold, 75);
 
-            SetSkill(SkillName.EvalInt, 10.5, 60.0);
-            SetSkill(SkillName.Magery, 10.5, 60.0);
-            SetSkill(SkillName.MagicResist, 30.1, 80.0);
-            SetSkill(SkillName.Tactics, 70.1, 100.0);
-            SetSkill(SkillName.Wrestling, 60.1, 100.0);
+			SetResistance(ResistanceType.Physical, 35, 45);
+			SetResistance(ResistanceType.Fire, 5, 10);
+			SetResistance(ResistanceType.Cold, 50, 60);
+			SetResistance(ResistanceType.Poison, 20, 30);
+			SetResistance(ResistanceType.Energy, 20, 30);
 
-            Fame = 5000;
-            Karma = -5000;
+			SetSkill(SkillName.EvalInt, 10.5, 60.0);
+			SetSkill(SkillName.Magery, 10.5, 60.0);
+			SetSkill(SkillName.MagicResist, 30.1, 80.0);
+			SetSkill(SkillName.Tactics, 70.1, 100.0);
+			SetSkill(SkillName.Wrestling, 60.1, 100.0);
 
-            VirtualArmor = 10;
+			Fame = 5000;
+			Karma = -5000;
 
-            SetAreaEffect(AreaEffect.AuraDamage);
-        }
+			VirtualArmor = 10;
 
-        public IceElemental(Serial serial)
-            : base(serial)
-        {
-        }
+			SetAreaEffect(AreaEffect.AuraDamage);
+		}
 
-        public override bool BleedImmune
-        {
-            get
-            {
-                return true;
-            }
-        }
+		public IceElemental(Serial serial)
+			: base(serial) { }
 
-        public void AuraEffect(Mobile m)
-        {
-            m.FixedParticles(0x374A, 10, 30, 5052, Hue, 0, EffectLayer.Waist);
-            m.PlaySound(0x5C6);
+		public override bool BleedImmune
+		{
+			get { return true; }
+		}
 
-            m.SendLocalizedMessage(1008111, false, Name); //  : The intense cold is damaging you!
-        }
+		public void AuraEffect(Mobile m)
+		{
+			m.FixedParticles(0x374A, 10, 30, 5052, Hue, 0, EffectLayer.Waist);
+			m.PlaySound(0x5C6);
 
-        public override void GenerateLoot()
-        {
-            AddLoot(LootPack.Average, 2);
-            AddLoot(LootPack.Gems, 2);
-        }
+			m.SendLocalizedMessage(1008111, false, Name); //  : The intense cold is damaging you!
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
+		public override void GenerateLoot()
+		{
+			AddLoot(LootPack.Average, 2);
+			AddLoot(LootPack.Gems, 2);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 }

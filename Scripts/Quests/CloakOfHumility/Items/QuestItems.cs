@@ -1,272 +1,267 @@
 using System;
-using Server.Items;
-using Server.Mobiles;
 using System.Collections.Generic;
 using Server.Gumps;
+using Server.Items;
+using Server.Mobiles;
+
 namespace Server.Engines.Quests
 {
-    public class IronChain : Item
-    {
-        public override int LabelNumber { get { return 1075788; } } // Iron Chain
+	public class IronChain : Item
+	{
+		public override int LabelNumber
+		{
+			get { return 1075788; }
+		} // Iron Chain
 
-        [Constructable]
-        public IronChain() : base(0x1A07)
-        {
-        }
+		[Constructable]
+		public IronChain()
+			: base(0x1A07) { }
 
-        public IronChain(Serial serial)
-            : base(serial)
-        {
-        }
- 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public IronChain(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class GreyCloak : Cloak
-    {
-        public override int LabelNumber { get { return 1075789; } } // A Plain Grey Cloak
+			int version = reader.ReadInt();
+		}
+	}
 
-        [Constructable]
-        public GreyCloak()
-        {
-        }
+	public class GreyCloak : Cloak
+	{
+		public override int LabelNumber
+		{
+			get { return 1075789; }
+		} // A Plain Grey Cloak
 
-        public GreyCloak(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public GreyCloak() { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public GreyCloak(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)1); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)1); // version
+		}
 
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            if(version == 0)
-                reader.ReadMobile();
-        }
-    }
+			int version = reader.ReadInt();
 
-    public class SeasonedSkillet : Item
-    {
-        public override int LabelNumber { get { return 1075774; } } // Seasoned Skillet
+			if (version == 0)
+				reader.ReadMobile();
+		}
+	}
 
-        [Constructable]
-        public SeasonedSkillet() : base(0x097F)
-        {
-        }
+	public class SeasonedSkillet : Item
+	{
+		public override int LabelNumber
+		{
+			get { return 1075774; }
+		} // Seasoned Skillet
 
-        public SeasonedSkillet(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public SeasonedSkillet()
+			: base(0x097F) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public SeasonedSkillet(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class VillageCauldron : Item
-    {
-        public override int LabelNumber { get { return 1075775; } } // Village Cauldron
+			int version = reader.ReadInt();
+		}
+	}
 
-        [Constructable]
-        public VillageCauldron()
-            : base(Utility.RandomMinMax(0x0974, 0x0975))
-        {
-        }
+	public class VillageCauldron : Item
+	{
+		public override int LabelNumber
+		{
+			get { return 1075775; }
+		} // Village Cauldron
 
-        public VillageCauldron(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public VillageCauldron()
+			: base(Utility.RandomMinMax(0x0974, 0x0975)) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public VillageCauldron(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class ShortStool : Stool
-    {
-        public override int LabelNumber { get { return 1075776; } } // Short Stool
+			int version = reader.ReadInt();
+		}
+	}
 
-        [Constructable]
-        public ShortStool()
-        {
-        }
+	public class ShortStool : Stool
+	{
+		public override int LabelNumber
+		{
+			get { return 1075776; }
+		} // Short Stool
 
-        public ShortStool(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public ShortStool() { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public ShortStool(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class FriendshipMug : CeramicMug
-    {
-        public override int LabelNumber { get { return 1075777; } } // Friendship Mug
+			int version = reader.ReadInt();
+		}
+	}
 
-        [Constructable]
-        public FriendshipMug()
-        {
-        }
+	public class FriendshipMug : CeramicMug
+	{
+		public override int LabelNumber
+		{
+			get { return 1075777; }
+		} // Friendship Mug
 
-        public FriendshipMug(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public FriendshipMug() { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public FriendshipMug(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class BrassRing : GoldRing
-    {
-        public override int LabelNumber { get { return 1075778; } } // Brass Ring
+			int version = reader.ReadInt();
+		}
+	}
 
-        [Constructable]
-        public BrassRing()
-        {
-        }
+	public class BrassRing : GoldRing
+	{
+		public override int LabelNumber
+		{
+			get { return 1075778; }
+		} // Brass Ring
 
-        public BrassRing(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public BrassRing() { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public BrassRing(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class WornHammer : Item
-    {
-        public override int LabelNumber { get { return 1075779; } } // Worn Hammer
+			int version = reader.ReadInt();
+		}
+	}
 
-        [Constructable]
-        public WornHammer() : base(0x102A)
-        {
-        }
+	public class WornHammer : Item
+	{
+		public override int LabelNumber
+		{
+			get { return 1075779; }
+		} // Worn Hammer
 
-        public WornHammer(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public WornHammer()
+			: base(0x102A) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public WornHammer(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class PairOfWorkGloves : LeatherGloves
-    {
-        public override int LabelNumber { get { return 1075780; } } // Pair of Work Gloves
+			int version = reader.ReadInt();
+		}
+	}
 
-        [Constructable]
-        public PairOfWorkGloves()
-        {
-        }
+	public class PairOfWorkGloves : LeatherGloves
+	{
+		public override int LabelNumber
+		{
+			get { return 1075780; }
+		} // Pair of Work Gloves
 
-        public PairOfWorkGloves(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public PairOfWorkGloves() { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public PairOfWorkGloves(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

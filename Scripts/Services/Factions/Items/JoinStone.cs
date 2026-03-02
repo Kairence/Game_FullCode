@@ -4,86 +4,78 @@ using Server.Network;
 
 namespace Server.Factions
 {
-    public class JoinStone : BaseSystemController
-    {
-        private Faction m_Faction;
-        [Constructable]
-        public JoinStone()
-            : this(null)
-        {
-        }
+	public class JoinStone : BaseSystemController
+	{
+		private Faction m_Faction;
 
-        [Constructable]
-        public JoinStone(Faction faction)
-            : base(0xEDC)
-        {
-            this.Movable = false;
-            this.Faction = faction;
-        }
+		[Constructable]
+		public JoinStone()
+			: this(null) { }
 
-        public JoinStone(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public JoinStone(Faction faction)
+			: base(0xEDC)
+		{
+			this.Movable = false;
+			this.Faction = faction;
+		}
 
-        [CommandProperty(AccessLevel.Counselor, AccessLevel.Administrator)]
-        public Faction Faction
-        {
-            get
-            {
-                return this.m_Faction;
-            }
-            set
-            {
-                this.m_Faction = value;
+		public JoinStone(Serial serial)
+			: base(serial) { }
 
-                this.Hue = (this.m_Faction == null ? 0 : this.m_Faction.Definition.HueJoin);
-                this.AssignName(this.m_Faction == null ? null : this.m_Faction.Definition.SignupName);
-            }
-        }
-        public override string DefaultName
-        {
-            get
-            {
-                return "faction signup stone";
-            }
-        }
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (this.m_Faction == null)
-                return;
+		[CommandProperty(AccessLevel.Counselor, AccessLevel.Administrator)]
+		public Faction Faction
+		{
+			get { return this.m_Faction; }
+			set
+			{
+				this.m_Faction = value;
 
-            if (!from.InRange(this.GetWorldLocation(), 2))
-                from.LocalOverheadMessage(MessageType.Regular, 0x3B2, 1019045); // I can't reach that.
-            else if (FactionGump.Exists(from))
-                from.SendLocalizedMessage(1042160); // You already have a faction menu open.
-            else if (Faction.Find(from) == null && from is PlayerMobile)
-                from.SendGump(new JoinStoneGump((PlayerMobile)from, this.m_Faction));
-        }
+				this.Hue = (this.m_Faction == null ? 0 : this.m_Faction.Definition.HueJoin);
+				this.AssignName(this.m_Faction == null ? null : this.m_Faction.Definition.SignupName);
+			}
+		}
+		public override string DefaultName
+		{
+			get { return "faction signup stone"; }
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (this.m_Faction == null)
+				return;
 
-            writer.Write((int)0); // version
+			if (!from.InRange(this.GetWorldLocation(), 2))
+				from.LocalOverheadMessage(MessageType.Regular, 0x3B2, 1019045); // I can't reach that.
+			else if (FactionGump.Exists(from))
+				from.SendLocalizedMessage(1042160); // You already have a faction menu open.
+			else if (Faction.Find(from) == null && from is PlayerMobile)
+				from.SendGump(new JoinStoneGump((PlayerMobile)from, this.m_Faction));
+		}
 
-            Faction.WriteReference(writer, this.m_Faction);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
 
-            int version = reader.ReadInt();
+			Faction.WriteReference(writer, this.m_Faction);
+		}
 
-            switch ( version )
-            {
-                case 0:
-                    {
-                        this.Faction = Faction.ReadReference(reader);
-                        break;
-                    }
-            }
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+
+			switch (version)
+			{
+				case 0:
+				{
+					this.Faction = Faction.ReadReference(reader);
+					break;
+				}
+			}
+		}
+	}
 }

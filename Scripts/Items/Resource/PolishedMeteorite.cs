@@ -2,32 +2,33 @@ using System;
 
 namespace Server.Items
 {
-    public class PolishedMeteorite : Item
-    {
-        public override int LabelNumber { get { return 1158693; } } // polished meteorite
-        
-        [Constructable]
-        public PolishedMeteorite()
-            : base(41422 + Utility.Random(12))
-        {
-            Weight = 3;
-        }
+	public class PolishedMeteorite : Item
+	{
+		public override int LabelNumber
+		{
+			get { return 1158693; }
+		} // polished meteorite
 
-        public PolishedMeteorite(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public PolishedMeteorite()
+			: base(41422 + Utility.Random(12))
+		{
+			Weight = 3;
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
+		public PolishedMeteorite(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int v = reader.ReadInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int v = reader.ReadInt();
+		}
+	}
 }

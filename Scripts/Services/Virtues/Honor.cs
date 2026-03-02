@@ -1,6 +1,5 @@
 #region References
 using System;
-
 using Server.Gumps;
 using Server.Mobiles;
 using Server.Regions;
@@ -49,7 +48,9 @@ namespace Server.Services.Virtues
 					TimeSpan.FromSeconds(duration),
 					pm,
 					"You have embraced your honor",
-                    true));
+					true
+				)
+			);
 
 			Timer.DelayCall(
 				TimeSpan.FromSeconds(duration),
@@ -59,7 +60,8 @@ namespace Server.Services.Virtues
 					m.LastHonorUse = DateTime.UtcNow;
 					m.SendLocalizedMessage(1063236); // You no longer embrace your honor
 				},
-				pm);
+				pm
+			);
 		}
 
 		private static void OnVirtueUsed(Mobile from)
@@ -107,9 +109,7 @@ namespace Server.Services.Virtues
 				var remainingTime = UseDelay - waitTime;
 				var remainingMinutes = (int)Math.Ceiling(remainingTime.TotalMinutes);
 
-				pm.SendLocalizedMessage(
-					1063240,
-					remainingMinutes.ToString()); // You must wait ~1_HONOR_WAIT~ minutes before embracing honor again
+				pm.SendLocalizedMessage(1063240, remainingMinutes.ToString()); // You must wait ~1_HONOR_WAIT~ minutes before embracing honor again
 				return;
 			}
 
@@ -129,8 +129,7 @@ namespace Server.Services.Virtues
 			{
 				if (honorTarget.ReceivedHonorContext.Source == source)
 				{
-					source.SendLocalizedMessage(
-						1115882); // You don't need to declare again. You are already under Honorable Combat with this target.
+					source.SendLocalizedMessage(1115882); // You don't need to declare again. You are already under Honorable Combat with this target.
 					return;
 				}
 
@@ -183,8 +182,14 @@ namespace Server.Services.Virtues
 			if (!source.Mounted && !source.IsBodyMod)
 				source.Animate(32, 5, 1, true, true, 0);
 
-			BuffInfo.AddBuff(source, new BuffInfo(BuffIcon.Honored, 1075649, 1153815, String.Format("{0}", target.Name, true)));
-			BuffInfo.AddBuff(source, new BuffInfo(BuffIcon.Perfection, 1153786, 1151394, String.Format("0\t{0}", target.Name)));
+			BuffInfo.AddBuff(
+				source,
+				new BuffInfo(BuffIcon.Honored, 1075649, 1153815, String.Format("{0}", target.Name, true))
+			);
+			BuffInfo.AddBuff(
+				source,
+				new BuffInfo(BuffIcon.Perfection, 1153786, 1151394, String.Format("0\t{0}", target.Name))
+			);
 		}
 
 		private class InternalTarget : Target
@@ -259,23 +264,36 @@ namespace Server.Services.Virtues
 						Cancel();
 					}
 				},
-				source);
+				source
+			);
 		}
 
 		private enum FirstHit
 		{
 			NotDelivered,
 			Delivered,
-			Granted
+			Granted,
 		}
 
-		public PlayerMobile Source { get { return m_Source; } }
+		public PlayerMobile Source
+		{
+			get { return m_Source; }
+		}
 
-		public Mobile Target { get { return m_Target; } }
+		public Mobile Target
+		{
+			get { return m_Target; }
+		}
 
-		public int PerfectionDamageBonus { get { return m_Perfection; } }
+		public int PerfectionDamageBonus
+		{
+			get { return m_Perfection; }
+		}
 
-		public int PerfectionLuckBonus { get { return (m_Perfection * m_Perfection) / 10; } }
+		public int PerfectionLuckBonus
+		{
+			get { return (m_Perfection * m_Perfection) / 10; }
+		}
 
 		public void OnSourceDamaged(Mobile from, int amount)
 		{
@@ -308,8 +326,14 @@ namespace Server.Services.Virtues
 
 			if (from == m_Source)
 			{
-				if (m_Target.CanSee(m_Source) && m_Target.InLOS(m_Source) &&
-					(m_Source.InRange(m_Target, 1) || (m_Source.Location == m_InitialLocation && m_Source.Map == m_InitialMap)))
+				if (
+					m_Target.CanSee(m_Source)
+					&& m_Target.InLOS(m_Source)
+					&& (
+						m_Source.InRange(m_Target, 1)
+						|| (m_Source.Location == m_InitialLocation && m_Source.Map == m_InitialMap)
+					)
+				)
 				{
 					m_HonorDamage += amount;
 				}
@@ -351,7 +375,9 @@ namespace Server.Services.Virtues
 						1075652,
 						TimeSpan.FromSeconds(5),
 						from,
-						String.Format("{0}\t{1}", m_Perfection, from.Name)));
+						String.Format("{0}\t{1}", m_Perfection, from.Name)
+					)
+				);
 			}
 			else
 			{
@@ -359,7 +385,13 @@ namespace Server.Services.Virtues
 
 				BuffInfo.AddBuff(
 					from,
-					new BuffInfo(BuffIcon.Perfection, 1153786, 1151394, String.Format("{0}\t{1}", m_Target.Name, m_Perfection)));
+					new BuffInfo(
+						BuffIcon.Perfection,
+						1153786,
+						1151394,
+						String.Format("{0}\t{1}", m_Target.Name, m_Perfection)
+					)
+				);
 			}
 		}
 
@@ -397,8 +429,7 @@ namespace Server.Services.Virtues
 			}
 		}
 
-		public void OnSourceKilled()
-		{ }
+		public void OnSourceKilled() { }
 
 		public void OnTargetKilled()
 		{

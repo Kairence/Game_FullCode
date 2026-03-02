@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO;
-using Server.Gumps;
-using Server.Commands;
 using System.Xml;
+using Server.Commands;
+using Server.Gumps;
 
 namespace Server.Engines.CannedEvil
 {
@@ -33,16 +33,43 @@ namespace Server.Engines.CannedEvil
 		private static double m_ScrollChance;
 		private static bool m_ForceGenerate = false;
 
-		public static int GoldShowerPiles { get { return m_GoldShowerPiles; } }
-		public static int GoldShowerMinAmount { get { return m_GoldShowerMinAmount; } }
-		public static int GoldShowerMaxAmount { get { return m_GoldShowerMaxAmount; } }
-		public static int HarrowerGoldShowerPiles { get { return m_HarrowerGoldPiles; } }
-		public static int HarrowerGoldShowerMinAmount { get { return m_HarrowerGoldMinAmount; } }
-		public static int HarrowerGoldShowerMaxAmount { get { return m_HarrowerGoldMaxAmount; } }
-		public static int PowerScrollAmount { get { return m_PowerScrollAmount; } }
-		public static int StatScrollAmount { get { return m_StatScrollAmount; } }
+		public static int GoldShowerPiles
+		{
+			get { return m_GoldShowerPiles; }
+		}
+		public static int GoldShowerMinAmount
+		{
+			get { return m_GoldShowerMinAmount; }
+		}
+		public static int GoldShowerMaxAmount
+		{
+			get { return m_GoldShowerMaxAmount; }
+		}
+		public static int HarrowerGoldShowerPiles
+		{
+			get { return m_HarrowerGoldPiles; }
+		}
+		public static int HarrowerGoldShowerMinAmount
+		{
+			get { return m_HarrowerGoldMinAmount; }
+		}
+		public static int HarrowerGoldShowerMaxAmount
+		{
+			get { return m_HarrowerGoldMaxAmount; }
+		}
+		public static int PowerScrollAmount
+		{
+			get { return m_PowerScrollAmount; }
+		}
+		public static int StatScrollAmount
+		{
+			get { return m_StatScrollAmount; }
+		}
 
-        public static List<ChampionSpawn> AllSpawns { get { return m_AllSpawns; } }
+		public static List<ChampionSpawn> AllSpawns
+		{
+			get { return m_AllSpawns; }
+		}
 
 		public static int RankForLevel(int l)
 		{
@@ -52,22 +79,35 @@ namespace Server.Engines.CannedEvil
 				return 3;
 			return m_Rank[l];
 		}
+
 		public static int MaxKillsForLevel(int l)
 		{
 			return m_MaxKill[RankForLevel(l)];
 		}
+
 		public static double SpawnRadiusModForLevel(int l)
 		{
 			switch (RankForLevel(l))
 			{
-				case 0: return 1.0d;
-				case 1: return 0.75d;
-				case 2: return 0.5d;
-				default: return 0.25d;
+				case 0:
+					return 1.0d;
+				case 1:
+					return 0.75d;
+				case 2:
+					return 0.5d;
+				default:
+					return 0.25d;
 			}
 		}
-		public static double TranscendenceChance { get { return m_TranscendenceChance; } }
-		public static double ScrollChance { get { return m_ScrollChance; } }
+
+		public static double TranscendenceChance
+		{
+			get { return m_TranscendenceChance; }
+		}
+		public static double ScrollChance
+		{
+			get { return m_ScrollChance; }
+		}
 
 		public static void Configure()
 		{
@@ -104,6 +144,7 @@ namespace Server.Engines.CannedEvil
 			EventSink.WorldLoad += EventSink_WorldLoad;
 			EventSink.WorldSave += EventSink_WorldSave;
 		}
+
 		private static void EventSink_WorldSave(WorldSaveEventArgs e)
 		{
 			Persistence.Serialize(
@@ -114,7 +155,8 @@ namespace Server.Engines.CannedEvil
 					writer.Write(m_Initialized);
 					writer.Write(m_LastRotate);
 					writer.WriteItemList(m_AllSpawns, true);
-				});
+				}
+			);
 		}
 
 		private static void EventSink_WorldLoad()
@@ -129,128 +171,133 @@ namespace Server.Engines.CannedEvil
 					m_LastRotate = reader.ReadDateTime();
 					m_AllSpawns.AddRange(reader.ReadItemList().Cast<ChampionSpawn>());
 
-					if(version == 0)
+					if (version == 0)
 					{
 						//m_ForceGenerate = true;
 					}
-				});
+				}
+			);
 		}
 
 		public static void Initialize()
-        {
-            CommandSystem.Register("GenChampSpawns", AccessLevel.GameMaster, GenSpawns_OnCommand);
-            CommandSystem.Register("DelChampSpawns", AccessLevel.GameMaster, DelSpawns_OnCommand);
+		{
+			CommandSystem.Register("GenChampSpawns", AccessLevel.GameMaster, GenSpawns_OnCommand);
+			CommandSystem.Register("DelChampSpawns", AccessLevel.GameMaster, DelSpawns_OnCommand);
 
-			CommandSystem.Register("ChampionInfo", AccessLevel.GameMaster, new CommandEventHandler(ChampionInfo_OnCommand));
+			CommandSystem.Register(
+				"ChampionInfo",
+				AccessLevel.GameMaster,
+				new CommandEventHandler(ChampionInfo_OnCommand)
+			);
 
 			if (!m_Enabled || m_ForceGenerate)
 			{
 				m_Initialized = false;
 
-                if (m_Enabled)
-                {
-                    LoadSpawns();
-                }
-                else
-                {
-                    RemoveSpawns();
-                }
+				if (m_Enabled)
+				{
+					LoadSpawns();
+				}
+				else
+				{
+					RemoveSpawns();
+				}
 			}
 
-            if (m_Enabled)
-            {
-                m_Timer = new InternalTimer();
-            }
+			if (m_Enabled)
+			{
+				m_Timer = new InternalTimer();
+			}
 		}
 
-        public static void GenSpawns_OnCommand(CommandEventArgs e)
-        {
-            LoadSpawns();
-            e.Mobile.SendMessage("Champ Spawns Generated!");
-        }
+		public static void GenSpawns_OnCommand(CommandEventArgs e)
+		{
+			LoadSpawns();
+			e.Mobile.SendMessage("Champ Spawns Generated!");
+		}
 
-        public static void DelSpawns_OnCommand(CommandEventArgs e)
-        {
-            RemoveSpawns();
-            e.Mobile.SendMessage("Champ Spawns Removed!");
-        }
+		public static void DelSpawns_OnCommand(CommandEventArgs e)
+		{
+			RemoveSpawns();
+			e.Mobile.SendMessage("Champ Spawns Removed!");
+		}
 
-        public static void LoadSpawns()
-        {
-            if (m_Initialized)
-                return;
+		public static void LoadSpawns()
+		{
+			if (m_Initialized)
+				return;
 
-            RemoveSpawns();
+			RemoveSpawns();
 
-            Utility.PushColor(ConsoleColor.White);
-            Console.WriteLine("Generating Champion Spawns");
-            Utility.PopColor();
+			Utility.PushColor(ConsoleColor.White);
+			Console.WriteLine("Generating Champion Spawns");
+			Utility.PopColor();
 
-            ChampionSpawn spawn;
+			ChampionSpawn spawn;
 
-            XmlDocument doc = new XmlDocument();
-            doc.Load(m_ConfigPath);
-            foreach (XmlNode node in doc.GetElementsByTagName("championSystem")[0].ChildNodes)
-            {
-                if (node.Name.Equals("spawn"))
-                {
-                    spawn = new ChampionSpawn();
-                    spawn.SpawnName = GetAttr(node, "name", "Unamed Spawner");
-                    string value = GetAttr(node, "type", null);
+			XmlDocument doc = new XmlDocument();
+			doc.Load(m_ConfigPath);
+			foreach (XmlNode node in doc.GetElementsByTagName("championSystem")[0].ChildNodes)
+			{
+				if (node.Name.Equals("spawn"))
+				{
+					spawn = new ChampionSpawn();
+					spawn.SpawnName = GetAttr(node, "name", "Unamed Spawner");
+					string value = GetAttr(node, "type", null);
 
-                    if (value == null)
-                        spawn.RandomizeType = true;
-                    else
-                        spawn.Type = (ChampionSpawnType)Enum.Parse(typeof(ChampionSpawnType), value);
+					if (value == null)
+						spawn.RandomizeType = true;
+					else
+						spawn.Type = (ChampionSpawnType)Enum.Parse(typeof(ChampionSpawnType), value);
 
-                    value = GetAttr(node, "spawnMod", "1.0");
-                    spawn.SpawnMod = XmlConvert.ToDouble(value);
-                    value = GetAttr(node, "killsMod", "1.0");
-                    spawn.KillsMod = XmlConvert.ToDouble(value);
+					value = GetAttr(node, "spawnMod", "1.0");
+					spawn.SpawnMod = XmlConvert.ToDouble(value);
+					value = GetAttr(node, "killsMod", "1.0");
+					spawn.KillsMod = XmlConvert.ToDouble(value);
 
-                    foreach (XmlNode child in node.ChildNodes)
-                    {
-                        if (child.Name.Equals("location"))
-                        {
-                            int x = XmlConvert.ToInt32(GetAttr(child, "x", "0"));
-                            int y = XmlConvert.ToInt32(GetAttr(child, "y", "0"));
-                            int z = XmlConvert.ToInt32(GetAttr(child, "z", "0"));
-                            int r = XmlConvert.ToInt32(GetAttr(child, "radius", "0"));
-                            string mapName = GetAttr(child, "map", "Felucca");
-                            Map map = Map.Parse(mapName);
+					foreach (XmlNode child in node.ChildNodes)
+					{
+						if (child.Name.Equals("location"))
+						{
+							int x = XmlConvert.ToInt32(GetAttr(child, "x", "0"));
+							int y = XmlConvert.ToInt32(GetAttr(child, "y", "0"));
+							int z = XmlConvert.ToInt32(GetAttr(child, "z", "0"));
+							int r = XmlConvert.ToInt32(GetAttr(child, "radius", "0"));
+							string mapName = GetAttr(child, "map", "Felucca");
+							Map map = Map.Parse(mapName);
 
-                            spawn.SpawnRadius = r;
-                            spawn.MoveToWorld(new Point3D(x, y, z), map);
-                        }
-                    }
+							spawn.SpawnRadius = r;
+							spawn.MoveToWorld(new Point3D(x, y, z), map);
+						}
+					}
 
-                    spawn.GroupName = GetAttr(node, "group", null);
-                    m_AllSpawns.Add(spawn);
+					spawn.GroupName = GetAttr(node, "group", null);
+					m_AllSpawns.Add(spawn);
 
-                    if (spawn.Type == ChampionSpawnType.Infuse)
-                    {
-                        PrimevalLichPuzzle.GenLichPuzzle(null);
-                    }
-                }
-            }
+					if (spawn.Type == ChampionSpawnType.Infuse)
+					{
+						PrimevalLichPuzzle.GenLichPuzzle(null);
+					}
+				}
+			}
 
-            Rotate();
+			Rotate();
 
-            m_Initialized = true;
-        }
+			m_Initialized = true;
+		}
 
-        public static void RemoveSpawns()
-        {
-            if (m_AllSpawns != null && m_AllSpawns.Count > 0)
-            {
-                foreach (ChampionSpawn s in m_AllSpawns.Where(sp => sp != null && !sp.Deleted))
-                {
-                    s.Delete();
-                }
+		public static void RemoveSpawns()
+		{
+			if (m_AllSpawns != null && m_AllSpawns.Count > 0)
+			{
+				foreach (ChampionSpawn s in m_AllSpawns.Where(sp => sp != null && !sp.Deleted))
+				{
+					s.Delete();
+				}
 
-                m_AllSpawns.Clear();
-            }
-        }
+				m_AllSpawns.Clear();
+			}
+		}
 
 		private static string GetAttr(XmlNode node, string name, string def)
 		{
@@ -282,7 +329,7 @@ namespace Server.Engines.CannedEvil
 			Dictionary<String, List<ChampionSpawn>> groups = new Dictionary<string, List<ChampionSpawn>>();
 			m_LastRotate = DateTime.UtcNow;
 
-            foreach (ChampionSpawn spawn in m_AllSpawns.Where(spawn => spawn != null && !spawn.Deleted))
+			foreach (ChampionSpawn spawn in m_AllSpawns.Where(spawn => spawn != null && !spawn.Deleted))
 			{
 				List<ChampionSpawn> group;
 				if (spawn.GroupName == null)
@@ -343,14 +390,14 @@ namespace Server.Engines.CannedEvil
 			private static readonly int[] gTab;
 			private static readonly int gWidth;
 
-            public List<ChampionSpawn> Spawners { get; set; }
+			public List<ChampionSpawn> Spawners { get; set; }
 
 			static ChampionSystemGump()
 			{
 				gWidth = gWidths.Sum();
 				int tab = 0;
 				gTab = new int[gWidths.Length];
-				for(int i = 0; i < gWidths.Length; ++i)
+				for (int i = 0; i < gWidths.Length; ++i)
 				{
 					gTab[i] = tab;
 					tab += gWidths[i];
@@ -360,7 +407,7 @@ namespace Server.Engines.CannedEvil
 			public ChampionSystemGump()
 				: base(40, 40)
 			{
-                Spawners = m_AllSpawns.Where(spawn => spawn != null && !spawn.Deleted).ToList();
+				Spawners = m_AllSpawns.Where(spawn => spawn != null && !spawn.Deleted).ToList();
 
 				AddBackground(0, 0, gWidth, gBoarder * 2 + Spawners.Count * gRowHeight + gRowHeight * 2, 0x13BE);
 
@@ -380,9 +427,9 @@ namespace Server.Engines.CannedEvil
 				AddLabel(gTab[10], top, gFontHue, "Info");
 				top += gRowHeight;
 
-                for(int i = 0; i < Spawners.Count; i++)
+				for (int i = 0; i < Spawners.Count; i++)
 				{
-                    ChampionSpawn spawn = Spawners[i];
+					ChampionSpawn spawn = Spawners[i];
 					AddLabel(gTab[1], top, gFontHue, spawn.SpawnName);
 					AddLabel(gTab[2], top, gFontHue, spawn.GroupName != null ? spawn.GroupName : "None");
 					AddLabel(gTab[3], top, gFontHue, spawn.X.ToString());
@@ -407,7 +454,7 @@ namespace Server.Engines.CannedEvil
 					idx = info.ButtonID - 1;
 					if (idx < 0 || idx >= Spawners.Count)
 						return;
-                    spawn = Spawners[idx];
+					spawn = Spawners[idx];
 					sender.Mobile.MoveToWorld(spawn.Location, spawn.Map);
 					sender.Mobile.SendGump(this);
 				}
@@ -416,7 +463,7 @@ namespace Server.Engines.CannedEvil
 					idx = info.ButtonID - 1001;
 					if (idx < 0 || idx > Spawners.Count)
 						return;
-                    spawn = Spawners[idx];
+					spawn = Spawners[idx];
 					spawn.SendGump(sender.Mobile);
 				}
 			}

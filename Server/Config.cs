@@ -27,7 +27,15 @@ namespace Server
 
 			public bool UseDefault { get; set; }
 
-			public Entry(string file, int fileIndex, string scope, string desc, string key, string value, bool useDefault)
+			public Entry(
+				string file,
+				int fileIndex,
+				string scope,
+				string desc,
+				string key,
+				string value,
+				bool useDefault
+			)
 			{
 				File = file;
 				FileIndex = fileIndex;
@@ -77,9 +85,11 @@ namespace Server
 					return true;
 				}
 
-				return Insensitive.Equals(File, other.File) && //
-					   Insensitive.Equals(Scope, other.Scope) && //
-					   Insensitive.Equals(Key, other.Key);
+				return Insensitive.Equals(File, other.File)
+					&& //
+					Insensitive.Equals(Scope, other.Scope)
+					&& //
+					Insensitive.Equals(Key, other.Key);
 			}
 
 			public int CompareTo(Entry other)
@@ -104,10 +114,14 @@ namespace Server
 
 		private static readonly IFormatProvider _NumFormatter = CultureInfo.InvariantCulture.NumberFormat;
 
-		private static readonly Dictionary<string, Entry> _Entries =
-			new Dictionary<string, Entry>(StringComparer.OrdinalIgnoreCase);
+		private static readonly Dictionary<string, Entry> _Entries = new Dictionary<string, Entry>(
+			StringComparer.OrdinalIgnoreCase
+		);
 
-		public static IEnumerable<Entry> Entries { get { return _Entries.Values; } }
+		public static IEnumerable<Entry> Entries
+		{
+			get { return _Entries.Values; }
+		}
 
 		public static void Load()
 		{
@@ -151,21 +165,20 @@ namespace Server
 
 					ConsoleKey key;
 
-                    do
-                    {
-                        Console.WriteLine("Ignore this warning? (y/n)");
+					do
+					{
+						Console.WriteLine("Ignore this warning? (y/n)");
 
 						key = Console.ReadKey(true).Key;
-                    }
-					while (key != ConsoleKey.Y && key != ConsoleKey.N);
-                    
+					} while (key != ConsoleKey.Y && key != ConsoleKey.N);
+
 					if (key != ConsoleKey.Y)
 					{
 						Console.WriteLine("Press any key to exit...");
 						Console.ReadKey();
 
 						Core.Kill(false);
-					
+
 						return;
 					}
 				}
@@ -205,7 +218,7 @@ namespace Server
 			var parts = path.Split(Path.DirectorySeparatorChar);
 
 			var scope = String.Join(".", parts.Where(p => !String.IsNullOrWhiteSpace(p)));
-			
+
 			if (scope.Length > 0)
 			{
 				scope += ".";
@@ -242,7 +255,7 @@ namespace Server
 				}
 
 				io = line.IndexOf('=');
-				
+
 				if (io < 0)
 				{
 					throw new FormatException(String.Format("Bad format at line {0}", i + 1));
@@ -277,7 +290,7 @@ namespace Server
 			{
 				Load();
 			}
-			
+
 			if (!Directory.Exists(_Path))
 			{
 				Directory.CreateDirectory(_Path);
@@ -361,7 +374,11 @@ namespace Server
 			parts = parts.Take(parts.Length - 1).ToArray();
 
 			var file = new FileInfo(Path.Combine(_Path, Path.Combine(parts) + ".cfg"));
-			var idx = _Entries.Values.Where(o => Insensitive.Equals(o.File, file.FullName)).Select(o => o.FileIndex).DefaultIfEmpty().Max();
+			var idx = _Entries
+				.Values.Where(o => Insensitive.Equals(o.File, file.FullName))
+				.Select(o => o.FileIndex)
+				.DefaultIfEmpty()
+				.Max();
 
 			_Entries[key] = new Entry(file.FullName, idx, String.Join(".", parts), String.Empty, realKey, value, false);
 		}
@@ -446,7 +463,8 @@ namespace Server
 			InternalSet(key, value.ToString(CultureInfo.InvariantCulture));
 		}
 
-		public static void SetEnum<T>(string key, T value) where T : struct, IConvertible
+		public static void SetEnum<T>(string key, T value)
+			where T : struct, IConvertible
 		{
 			var t = typeof(T);
 
@@ -519,7 +537,10 @@ namespace Server
 			var ret = defaultValue;
 			var value = InternalGet(key);
 
-			if (value == null || byte.TryParse(value, NumberStyles.Any & ~NumberStyles.AllowLeadingSign, _NumFormatter, out ret))
+			if (
+				value == null
+				|| byte.TryParse(value, NumberStyles.Any & ~NumberStyles.AllowLeadingSign, _NumFormatter, out ret)
+			)
 			{
 				return ret;
 			}
@@ -549,7 +570,10 @@ namespace Server
 			var ret = defaultValue;
 			var value = InternalGet(key);
 
-			if (value == null || ushort.TryParse(value, NumberStyles.Any & ~NumberStyles.AllowLeadingSign, _NumFormatter, out ret))
+			if (
+				value == null
+				|| ushort.TryParse(value, NumberStyles.Any & ~NumberStyles.AllowLeadingSign, _NumFormatter, out ret)
+			)
 			{
 				return ret;
 			}
@@ -579,7 +603,10 @@ namespace Server
 			var ret = defaultValue;
 			var value = InternalGet(key);
 
-			if (value == null || uint.TryParse(value, NumberStyles.Any & ~NumberStyles.AllowLeadingSign, _NumFormatter, out ret))
+			if (
+				value == null
+				|| uint.TryParse(value, NumberStyles.Any & ~NumberStyles.AllowLeadingSign, _NumFormatter, out ret)
+			)
 			{
 				return ret;
 			}
@@ -609,7 +636,10 @@ namespace Server
 			var ret = defaultValue;
 			var value = InternalGet(key);
 
-			if (value == null || ulong.TryParse(value, NumberStyles.Any & ~NumberStyles.AllowLeadingSign, _NumFormatter, out ret))
+			if (
+				value == null
+				|| ulong.TryParse(value, NumberStyles.Any & ~NumberStyles.AllowLeadingSign, _NumFormatter, out ret)
+			)
 			{
 				return ret;
 			}
@@ -667,7 +697,7 @@ namespace Server
 		public static bool Get(string key, bool defaultValue)
 		{
 			var value = InternalGet(key);
-			
+
 			if (value == null)
 			{
 				return defaultValue;
@@ -736,7 +766,8 @@ namespace Server
 			return defaultValue;
 		}
 
-		public static T GetEnum<T>(string key, T defaultValue) where T : struct, IConvertible
+		public static T GetEnum<T>(string key, T defaultValue)
+			where T : struct, IConvertible
 		{
 			if (!typeof(T).IsEnum)
 			{
@@ -797,15 +828,14 @@ namespace Server
 				if (target != null)
 				{
 					var info = target.GetMethod(method, (BindingFlags)0x38);
-	
+
 					if (info != null)
 					{
 						return (T)(object)Delegate.CreateDelegate(typeof(T), info);
 					}
 				}
 			}
-			catch
-			{ }
+			catch { }
 
 			Warn<T>(key);
 

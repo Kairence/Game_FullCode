@@ -1,6 +1,5 @@
 #region References
 using System;
-
 using Server.Spells;
 using Server.Spells.Bushido;
 #endregion

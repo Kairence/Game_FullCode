@@ -4,188 +4,199 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    [TypeAlias("Server.Mobiles.BaseSABosses")]
-    public abstract class BaseSABoss : BasePeerless
-    {
-        public override bool GiveMLSpecial { get { return false; } }
+	[TypeAlias("Server.Mobiles.BaseSABosses")]
+	public abstract class BaseSABoss : BasePeerless
+	{
+		public override bool GiveMLSpecial
+		{
+			get { return false; }
+		}
 
-        Dictionary<Mobile, int> m_DamageEntries;
-        public BaseSABoss(AIType aiType, FightMode fightMode, int rangePerception, int rangeFight, double activeSpeed, double passiveSpeed)
-            : base(aiType, fightMode, rangePerception, rangeFight, activeSpeed, passiveSpeed)
-        {
-        }
+		Dictionary<Mobile, int> m_DamageEntries;
 
-        public BaseSABoss(Serial serial)
-            : base(serial)
-        {
-        }
+		public BaseSABoss(
+			AIType aiType,
+			FightMode fightMode,
+			int rangePerception,
+			int rangeFight,
+			double activeSpeed,
+			double passiveSpeed
+		)
+			: base(aiType, fightMode, rangePerception, rangeFight, activeSpeed, passiveSpeed) { }
 
-        public abstract Type[] UniqueSAList { get; }
-        public abstract Type[] SharedSAList { get; }
+		public BaseSABoss(Serial serial)
+			: base(serial) { }
 
-        public virtual bool NoGoodies
-        {
-            get
-            {
-                return false;
-            }
-        }
+		public abstract Type[] UniqueSAList { get; }
+		public abstract Type[] SharedSAList { get; }
 
-        public override bool DropPrimer { get { return false; } }
+		public virtual bool NoGoodies
+		{
+			get { return false; }
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override bool DropPrimer
+		{
+			get { return false; }
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public virtual void RegisterDamageTo(Mobile m)
-        {
-            if (m == null)
-                return;
+			int version = reader.ReadInt();
+		}
 
-            foreach (DamageEntry de in m.DamageEntries)
-            {
-                Mobile damager = de.Damager;
+		public virtual void RegisterDamageTo(Mobile m)
+		{
+			if (m == null)
+				return;
 
-                Mobile master = damager.GetDamageMaster(m);
+			foreach (DamageEntry de in m.DamageEntries)
+			{
+				Mobile damager = de.Damager;
 
-                if (master != null)
-                    damager = master;
+				Mobile master = damager.GetDamageMaster(m);
 
-                RegisterDamage(damager, de.DamageGiven);
-            }
-        }
+				if (master != null)
+					damager = master;
 
-        public void RegisterDamage(Mobile from, int amount)
-        {
-            if (from == null || !from.Player)
-                return;
+				RegisterDamage(damager, de.DamageGiven);
+			}
+		}
 
-            if (m_DamageEntries.ContainsKey(from))
-                m_DamageEntries[from] += amount;
-            else
-                m_DamageEntries.Add(from, amount);
-        }
+		public void RegisterDamage(Mobile from, int amount)
+		{
+			if (from == null || !from.Player)
+				return;
 
-        public void AwardArtifact(Item artifact)
-        {
-            if (artifact == null)
-                return;
+			if (m_DamageEntries.ContainsKey(from))
+				m_DamageEntries[from] += amount;
+			else
+				m_DamageEntries.Add(from, amount);
+		}
 
-            int totalDamage = 0;
+		public void AwardArtifact(Item artifact)
+		{
+			if (artifact == null)
+				return;
 
-            Dictionary<Mobile, int> validEntries = new Dictionary<Mobile, int>();
+			int totalDamage = 0;
 
-            foreach (KeyValuePair<Mobile, int> kvp in m_DamageEntries)
-            {
-                if (IsEligible(kvp.Key, artifact))
-                {
-                    validEntries.Add(kvp.Key, kvp.Value);
-                    totalDamage += kvp.Value;
-                }
-            }
+			Dictionary<Mobile, int> validEntries = new Dictionary<Mobile, int>();
 
-            int randomDamage = Utility.RandomMinMax(1, totalDamage);
+			foreach (KeyValuePair<Mobile, int> kvp in m_DamageEntries)
+			{
+				if (IsEligible(kvp.Key, artifact))
+				{
+					validEntries.Add(kvp.Key, kvp.Value);
+					totalDamage += kvp.Value;
+				}
+			}
 
-            totalDamage = 0;
+			int randomDamage = Utility.RandomMinMax(1, totalDamage);
 
-            foreach (KeyValuePair<Mobile, int> kvp in m_DamageEntries)
-            {
-                totalDamage += kvp.Value;
+			totalDamage = 0;
 
-                if (totalDamage > randomDamage)
-                {
-                    GiveArtifact(kvp.Key, artifact);
-                    break;
-                }
-            }
-        }
+			foreach (KeyValuePair<Mobile, int> kvp in m_DamageEntries)
+			{
+				totalDamage += kvp.Value;
 
-        public void GiveArtifact(Mobile to, Item artifact)
-        {
-            if (to == null || artifact == null)
-                return;
+				if (totalDamage > randomDamage)
+				{
+					GiveArtifact(kvp.Key, artifact);
+					break;
+				}
+			}
+		}
+
+		public void GiveArtifact(Mobile to, Item artifact)
+		{
+			if (to == null || artifact == null)
+				return;
 
 			to.PlaySound(0x5B4);
 
-            Container pack = to.Backpack;
+			Container pack = to.Backpack;
 
-            if (pack == null || !pack.TryDropItem(to, artifact, false))
-                artifact.Delete();
-            else
-                to.SendLocalizedMessage(1062317); // For your valor in combating the fallen beast, a special artifact has been bestowed on you.
-        }
+			if (pack == null || !pack.TryDropItem(to, artifact, false))
+				artifact.Delete();
+			else
+				to.SendLocalizedMessage(1062317); // For your valor in combating the fallen beast, a special artifact has been bestowed on you.
+		}
 
-        public bool IsEligible(Mobile m, Item Artifact)
-        {
-            return m.Player && m.Alive && m.InRange(Location, 32) && m.Backpack != null && m.Backpack.CheckHold(m, Artifact, false);
-        }
+		public bool IsEligible(Mobile m, Item Artifact)
+		{
+			return m.Player
+				&& m.Alive
+				&& m.InRange(Location, 32)
+				&& m.Backpack != null
+				&& m.Backpack.CheckHold(m, Artifact, false);
+		}
 
-        public Item GetArtifact()
-        {
-            double random = Utility.RandomDouble();
-            if (0.05 >= random)
-                return CreateArtifact(UniqueSAList);
-            else if (0.15 >= random)
-                return CreateArtifact(SharedSAList);
+		public Item GetArtifact()
+		{
+			double random = Utility.RandomDouble();
+			if (0.05 >= random)
+				return CreateArtifact(UniqueSAList);
+			else if (0.15 >= random)
+				return CreateArtifact(SharedSAList);
 
-            return null;
-        }
+			return null;
+		}
 
-        public Item CreateArtifact(Type[] list)
-        {
-            if (list.Length == 0)
-                return null;
+		public Item CreateArtifact(Type[] list)
+		{
+			if (list.Length == 0)
+				return null;
 
-            int random = Utility.Random(list.Length);
+			int random = Utility.Random(list.Length);
 
-            Type type = list[random];
+			Type type = list[random];
 
-            Item artifact = Loot.Construct(type);
+			Item artifact = Loot.Construct(type);
 
-            return artifact;
-        }
+			return artifact;
+		}
 
-        public override bool OnBeforeDeath()
-        {
-            if (!NoKillAwards)
-            {
-                m_DamageEntries = new Dictionary<Mobile, int>();
+		public override bool OnBeforeDeath()
+		{
+			if (!NoKillAwards)
+			{
+				m_DamageEntries = new Dictionary<Mobile, int>();
 
-                RegisterDamageTo(this);
-                AwardArtifact(GetArtifact());
-            }
+				RegisterDamageTo(this);
+				AwardArtifact(GetArtifact());
+			}
 
-            return base.OnBeforeDeath();
-        }
+			return base.OnBeforeDeath();
+		}
 
-        public override void OnDeath(Container c)
-        {
-            if (Map == Map.Felucca || Map == Map.TerMur)
-            {
-                //TODO: Confirm SE change or AoS one too?
-                List<DamageStore> rights = GetLootingRights();
-                List<Mobile> toGive = new List<Mobile>();
+		public override void OnDeath(Container c)
+		{
+			if (Map == Map.Felucca || Map == Map.TerMur)
+			{
+				//TODO: Confirm SE change or AoS one too?
+				List<DamageStore> rights = GetLootingRights();
+				List<Mobile> toGive = new List<Mobile>();
 
-                for (int i = rights.Count - 1; i >= 0; --i)
-                {
-                    DamageStore ds = rights[i];
+				for (int i = rights.Count - 1; i >= 0; --i)
+				{
+					DamageStore ds = rights[i];
 
-                    if (ds.m_HasRight)
-                        toGive.Add(ds.m_Mobile);
-                }
-            }
+					if (ds.m_HasRight)
+						toGive.Add(ds.m_Mobile);
+				}
+			}
 
-            base.OnDeath(c);
-        }
-    }
+			base.OnDeath(c);
+		}
+	}
 }

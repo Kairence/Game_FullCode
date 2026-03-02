@@ -4,46 +4,46 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    public class Lilith : BaseCreature
-    {
-        [Constructable]
-        public Lilith()
-            : base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
-        {
-            Name = "Champion Lilith";
-            Body = 174;
-            BaseSoundID = 0x4B0;
+	public class Lilith : BaseCreature
+	{
+		[Constructable]
+		public Lilith()
+			: base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
+		{
+			Name = "Champion Lilith";
+			Body = 174;
+			BaseSoundID = 0x4B0;
 
-            SetStr(42582, 43600);
-            SetDex(57820, 68000);
-            SetInt(73100, 75000);
+			SetStr(42582, 43600);
+			SetDex(57820, 68000);
+			SetInt(73100, 75000);
 
-            SetHits(1900000, 2177777);
-            SetStam(150000, 155000);
+			SetHits(1900000, 2177777);
+			SetStam(150000, 155000);
 			SetMana(200000, 215000);
-			
-			SetAttackSpeed( 10.0 );
-			
-            SetDamage(12310, 18000);
 
-            SetDamageType(ResistanceType.Physical, 75);
-            SetDamageType(ResistanceType.Fire, 25);
+			SetAttackSpeed(10.0);
 
-            SetResistance(ResistanceType.Physical, 75, 90);
-            SetResistance(ResistanceType.Fire, 65, 75);
-            SetResistance(ResistanceType.Cold, 60, 70);
-            SetResistance(ResistanceType.Poison, 65, 75);
-            SetResistance(ResistanceType.Energy, 65, 75);
+			SetDamage(12310, 18000);
 
-            SetSkill(SkillName.MagicResist, 240.2, 250.0);
-            SetSkill(SkillName.Tactics, 280.1, 285.0);
-            SetSkill(SkillName.Wrestling, 280.1, 285.0);
+			SetDamageType(ResistanceType.Physical, 75);
+			SetDamageType(ResistanceType.Fire, 25);
 
-            Fame = 27000;
-            Karma = -27000;
+			SetResistance(ResistanceType.Physical, 75, 90);
+			SetResistance(ResistanceType.Fire, 65, 75);
+			SetResistance(ResistanceType.Cold, 60, 70);
+			SetResistance(ResistanceType.Poison, 65, 75);
+			SetResistance(ResistanceType.Energy, 65, 75);
 
-            VirtualArmor = 66;
-            //SetSpecialAbility(SpecialAbility.LifeDrain);
+			SetSkill(SkillName.MagicResist, 240.2, 250.0);
+			SetSkill(SkillName.Tactics, 280.1, 285.0);
+			SetSkill(SkillName.Wrestling, 280.1, 285.0);
+
+			Fame = 27000;
+			Karma = -27000;
+
+			VirtualArmor = 66;
+			//SetSpecialAbility(SpecialAbility.LifeDrain);
 			m_Aura = DateTime.Now;
 		}
 
@@ -51,21 +51,17 @@ namespace Server.Mobiles
 		public int DrainCount = 0;
 		private int DrainTotal = 100;
 
-        public Lilith(Serial serial)
-            : base(serial)
-        {
-        }
+		public Lilith(Serial serial)
+			: base(serial) { }
 
-        public override Poison PoisonImmune
-        {
-            get
-            {
-                return Poison.Lethal;
-            }
-        }
+		public override Poison PoisonImmune
+		{
+			get { return Poison.Lethal; }
+		}
+
 		/*
 		public override void OnThink()
-        {
+		{
 			if ( !Controlled && DateTime.Now >= m_Aura && this.Combatant != null && Combatant is Mobile )
 			{
 				Mobile defender = Combatant as Mobile;
@@ -120,38 +116,38 @@ namespace Server.Mobiles
 					{
 						DoHarmful(defender);
 						defender.SendMessage("You feel the life drain out of you!");
-						FixedParticles(0x374A, 10, 15, 5013, 0x496, 0, EffectLayer.Waist);	
+						FixedParticles(0x374A, 10, 15, 5013, 0x496, 0, EffectLayer.Waist);
 						AOS.Damage(defender, this, 99, 0, 0, 0, 0, 0, 0, 100);
 						Hits += 10;
 					}
 					m_Aura = DateTime.Now + TimeSpan.FromSeconds( 5.0 );
 				}
 			}
-			base.OnThink();	
+			base.OnThink();
 		}
 		*/
-        public override void GenerateLoot()
-        {
-            AddLoot(LootPack.UltraRich, 4);
-            AddLoot(LootPack.FilthyRich);
-        }
+		public override void GenerateLoot()
+		{
+			AddLoot(LootPack.UltraRich, 4);
+			AddLoot(LootPack.FilthyRich);
+		}
 
-        /*public override void AlterDamageScalarFrom(Mobile caster, ref double scalar)
-        {
-            if (caster.Body.IsMale)
-                scalar = 20; // Male bodies always reflect.. damage scaled 20x
-        }*/
+		/*public override void AlterDamageScalarFrom(Mobile caster, ref double scalar)
+		{
+			if (caster.Body.IsMale)
+				scalar = 20; // Male bodies always reflect.. damage scaled 20x
+		}*/
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 }

@@ -1,6 +1,5 @@
 #region References
 using System;
-
 using Server.Engines.CannedEvil;
 using Server.Mobiles;
 using Server.Targeting;
@@ -44,8 +43,7 @@ namespace Server.Services.Virtues
 					pm.LastValorLoss = DateTime.UtcNow;
 				}
 			}
-			catch
-			{ }
+			catch { }
 		}
 
 		public static void Valor(Mobile from, object targ)
@@ -67,7 +65,8 @@ namespace Server.Services.Virtues
 					if (idol.Spawn.Champion != null) //TODO: Message?
 						return;
 
-					int needed, consumed;
+					int needed,
+						consumed;
 
 					switch (idol.Spawn.Rank)
 					{
@@ -105,8 +104,7 @@ namespace Server.Services.Virtues
 						idol.Spawn.AdvanceLevel();
 					}
 					else
-						from.SendLocalizedMessage(
-							1054039); // The Champion of this region ignores your challenge. You must further prove your valor.
+						from.SendLocalizedMessage(1054039); // The Champion of this region ignores your challenge. You must further prove your valor.
 				}
 				else
 				{
@@ -121,8 +119,7 @@ namespace Server.Services.Virtues
 					}
 					else
 					{
-						from.SendLocalizedMessage(
-							1054036); // You must be a Knight of Valor to summon the champion's spawn in this manner!
+						from.SendLocalizedMessage(1054036); // You must be a Knight of Valor to summon the champion's spawn in this manner!
 					}
 				}
 			}
@@ -131,8 +128,7 @@ namespace Server.Services.Virtues
 		private class InternalTarget : Target
 		{
 			public InternalTarget()
-				: base(14, false, TargetFlags.None)
-			{ }
+				: base(14, false, TargetFlags.None) { }
 
 			protected override void OnTarget(Mobile from, object targeted)
 			{

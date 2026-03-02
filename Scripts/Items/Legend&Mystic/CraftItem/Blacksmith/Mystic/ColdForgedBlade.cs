@@ -2,41 +2,37 @@ using System;
 
 namespace Server.Items
 {
-    public class ColdForgedBlade : Scimitar
+	public class ColdForgedBlade : Scimitar
 	{
-        [Constructable]
-        public ColdForgedBlade()
-        {
+		[Constructable]
+		public ColdForgedBlade()
+		{
 			PrefixOption[80] = 1;
 			PrefixOption[81] = 24;
 			PrefixOption[82] = 39;
 			PrefixOption[83] = 53;
 		}
 
-        public ColdForgedBlade(Serial serial)
-            : base(serial)
-        {
-        }
+		public ColdForgedBlade(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1072916;
-            }
-        }// Cold Forged Blade
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int LabelNumber
+		{
+			get { return 1072916; }
+		} // Cold Forged Blade
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

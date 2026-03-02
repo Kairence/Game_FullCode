@@ -1,8 +1,7 @@
 #region References
 using System;
-using System.Linq;
 using System.Collections;
-
+using System.Linq;
 using Server.Network;
 using Server.Spells;
 using Server.Targeting;
@@ -16,16 +15,17 @@ namespace Server.Items
 		private Timer m_Timer;
 
 		public BaseExplosionPotion(PotionEffect effect)
-			: base(0xF0D, effect)
-		{ }
+			: base(0xF0D, effect) { }
 
 		public BaseExplosionPotion(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		public abstract int MinDamage { get; }
 		public abstract int MaxDamage { get; }
-		public override bool RequireFreeHand { get { return false; } }
+		public override bool RequireFreeHand
+		{
+			get { return false; }
+		}
 
 		public override void Serialize(GenericWriter writer)
 		{
@@ -96,7 +96,8 @@ namespace Server.Items
 							TimeSpan.FromSeconds(1.25),
 							5,
 							new TimerStateCallback(Detonate_OnTick),
-							new object[] {from, 3}); // 3.6 seconds explosion delay
+							new object[] { from, 3 }
+						); // 3.6 seconds explosion delay
 					}
 					else
 					{
@@ -105,7 +106,8 @@ namespace Server.Items
 							TimeSpan.FromSeconds(1.0),
 							4,
 							new TimerStateCallback(Detonate_OnTick),
-							new object[] {from, 3}); // 2.6 seconds explosion delay
+							new object[] { from, 3 }
+						); // 2.6 seconds explosion delay
 					}
 				}
 				Timer.DelayCall(TimeSpan.FromSeconds(30.0), new TimerStateCallback(ReleaseExplosionLock), from);
@@ -115,10 +117,12 @@ namespace Server.Items
 				from.SendMessage("동일한 포션은 30초 이내에 던질 수 없습니다!"); // You must wait 10 seconds before using another healing potion.
 			}
 		}
-        private static void ReleaseExplosionLock(object state)
-        {
-            ((Mobile)state).EndAction(typeof(BaseExplosionPotion));
-        }
+
+		private static void ReleaseExplosionLock(object state)
+		{
+			((Mobile)state).EndAction(typeof(BaseExplosionPotion));
+		}
+
 		public void Explode(Mobile from, bool direct, Point3D loc, Map map)
 		{
 			if (Deleted)
@@ -126,24 +130,24 @@ namespace Server.Items
 				return;
 			}
 
-            bool damageThrower = false;
+			bool damageThrower = false;
 
-            if (from != null)
-            {
-                if (from.Target is ThrowTarget && ((ThrowTarget)from.Target).Potion == this)
-                {
-                    Target.Cancel(from);
-                }
+			if (from != null)
+			{
+				if (from.Target is ThrowTarget && ((ThrowTarget)from.Target).Potion == this)
+				{
+					Target.Cancel(from);
+				}
 
-                if (IsChildOf(from.Backpack) || Parent == from)
-                {
-                    damageThrower = true;
-                }
-            }
+				if (IsChildOf(from.Backpack) || Parent == from)
+				{
+					damageThrower = true;
+				}
+			}
 
-            Consume();
+			Consume();
 
-            if (map == null)
+			if (map == null)
 			{
 				return;
 			}
@@ -161,37 +165,40 @@ namespace Server.Items
 			int min = Scale(from, MinDamage);
 			int max = Scale(from, MaxDamage);
 
-            var list = SpellHelper.AcquireIndirectTargets(from, loc, map, ExplosionRange, false).OfType<Mobile>().ToList();
+			var list = SpellHelper
+				.AcquireIndirectTargets(from, loc, map, ExplosionRange, false)
+				.OfType<Mobile>()
+				.ToList();
 
-            if (from != null && damageThrower && !list.Contains(from))
-            {
-                list.Add(from);
-            }
+			if (from != null && damageThrower && !list.Contains(from))
+			{
+				list.Add(from);
+			}
 
-            foreach (var m in list)
-            {
-                if (from != null)
-                {
-                    from.DoHarmful(m);
-                }
+			foreach (var m in list)
+			{
+				if (from != null)
+				{
+					from.DoHarmful(m);
+				}
 
-                int damage = Utility.RandomMinMax(min, max);
+				int damage = Utility.RandomMinMax(min, max);
 
-                damage += alchemyBonus;
+				damage += alchemyBonus;
 
-                if (!Core.AOS && damage > 40)
-                {
-                    damage = 40;
-                }
-                else if (Core.AOS && list.Count > 2)
-                {
-                    damage /= list.Count - 1;
-                }
+				if (!Core.AOS && damage > 40)
+				{
+					damage = 40;
+				}
+				else if (Core.AOS && list.Count > 2)
+				{
+					damage /= list.Count - 1;
+				}
 
-                AOS.Damage(m, from, damage, 0, 100, 0, 0, 0, Server.DamageType.SpellAOE);
-            }
+				AOS.Damage(m, from, damage, 0, 100, 0, 0, 0, Server.DamageType.SpellAOE);
+			}
 
-            list.Clear();
+			list.Clear();
 		}
 
 		private void Detonate_OnTick(object state)
@@ -262,7 +269,7 @@ namespace Server.Items
 			Map map = (Map)states[2];
 
 			Point3D loc = new Point3D(p);
-		    MoveToWorld(loc, map);
+			MoveToWorld(loc, map);
 		}
 
 		private class ThrowTarget : Target
@@ -275,7 +282,10 @@ namespace Server.Items
 				m_Potion = potion;
 			}
 
-			public BaseExplosionPotion Potion { get { return m_Potion; } }
+			public BaseExplosionPotion Potion
+			{
+				get { return m_Potion; }
+			}
 
 			protected override void OnTarget(Mobile from, object targeted)
 			{
@@ -306,10 +316,10 @@ namespace Server.Items
 
 				to = new Entity(Serial.Zero, new Point3D(p), map);
 
-                if (p is Mobile)
-                {
-                    to = (Mobile)p;
-                }
+				if (p is Mobile)
+				{
+					to = (Mobile)p;
+				}
 
 				Effects.SendMovingEffect(from, to, m_Potion.ItemID, 7, 0, false, false, m_Potion.Hue, 0);
 
@@ -320,7 +330,10 @@ namespace Server.Items
 
 				m_Potion.Internalize();
 				Timer.DelayCall(
-					TimeSpan.FromSeconds(1.0), new TimerStateCallback(m_Potion.Reposition_OnTick), new object[] {from, p, map});
+					TimeSpan.FromSeconds(1.0),
+					new TimerStateCallback(m_Potion.Reposition_OnTick),
+					new object[] { from, p, map }
+				);
 			}
 		}
 	}

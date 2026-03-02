@@ -4,83 +4,90 @@ using System.Collections.Generic;
 
 namespace Server.Commands.Generic
 {
-    public sealed class DistinctExtension : BaseExtension
-    {
-        public static ExtensionInfo ExtInfo = new ExtensionInfo(30, "Distinct", -1, delegate() { return new DistinctExtension(); });
-        private readonly List<Property> m_Properties;
-        private IComparer m_Comparer;
-        public DistinctExtension()
-        {
-            this.m_Properties = new List<Property>();
-        }
+	public sealed class DistinctExtension : BaseExtension
+	{
+		public static ExtensionInfo ExtInfo = new ExtensionInfo(
+			30,
+			"Distinct",
+			-1,
+			delegate()
+			{
+				return new DistinctExtension();
+			}
+		);
+		private readonly List<Property> m_Properties;
+		private IComparer m_Comparer;
 
-        public override ExtensionInfo Info
-        {
-            get
-            {
-                return ExtInfo;
-            }
-        }
-        public static void Initialize()
-        {
-            ExtensionInfo.Register(ExtInfo);
-        }
+		public DistinctExtension()
+		{
+			this.m_Properties = new List<Property>();
+		}
 
-        public override void Optimize(Mobile from, Type baseType, ref AssemblyEmitter assembly)
-        {
-            if (baseType == null)
-                throw new Exception("Distinct extension may only be used in combination with an object conditional.");
+		public override ExtensionInfo Info
+		{
+			get { return ExtInfo; }
+		}
 
-            foreach (Property prop in this.m_Properties)
-            {
-                prop.BindTo(baseType, PropertyAccess.Read);
-                prop.CheckAccess(from);
-            }
+		public static void Initialize()
+		{
+			ExtensionInfo.Register(ExtInfo);
+		}
 
-            if (assembly == null)
-                assembly = new AssemblyEmitter("__dynamic", false);
+		public override void Optimize(Mobile from, Type baseType, ref AssemblyEmitter assembly)
+		{
+			if (baseType == null)
+				throw new Exception("Distinct extension may only be used in combination with an object conditional.");
 
-            this.m_Comparer = DistinctCompiler.Compile(assembly, baseType, this.m_Properties.ToArray());
-        }
+			foreach (Property prop in this.m_Properties)
+			{
+				prop.BindTo(baseType, PropertyAccess.Read);
+				prop.CheckAccess(from);
+			}
 
-        public override void Parse(Mobile from, string[] arguments, int offset, int size)
-        {
-            if (size < 1)
-                throw new Exception("Invalid distinction syntax.");
+			if (assembly == null)
+				assembly = new AssemblyEmitter("__dynamic", false);
 
-            int end = offset + size;
+			this.m_Comparer = DistinctCompiler.Compile(assembly, baseType, this.m_Properties.ToArray());
+		}
 
-            while (offset < end)
-            {
-                string binding = arguments[offset++];
+		public override void Parse(Mobile from, string[] arguments, int offset, int size)
+		{
+			if (size < 1)
+				throw new Exception("Invalid distinction syntax.");
 
-                this.m_Properties.Add(new Property(binding));
-            }
-        }
+			int end = offset + size;
 
-        public override void Filter(ArrayList list)
-        {
-            if (this.m_Comparer == null)
-                throw new InvalidOperationException("The extension must first be optimized.");
+			while (offset < end)
+			{
+				string binding = arguments[offset++];
 
-            ArrayList copy = new ArrayList(list);
+				this.m_Properties.Add(new Property(binding));
+			}
+		}
 
-            copy.Sort(this.m_Comparer);
+		public override void Filter(ArrayList list)
+		{
+			if (this.m_Comparer == null)
+				throw new InvalidOperationException("The extension must first be optimized.");
 
-            list.Clear();
+			ArrayList copy = new ArrayList(list);
 
-            object last = null;
+			copy.Sort(this.m_Comparer);
 
-            for (int i = 0; i < copy.Count; ++i)
-            {
-                object obj = copy[i];
+			list.Clear();
 
-                if (last == null || this.m_Comparer.Compare(obj, last) != 0)
-                {
-                    list.Add(obj);
-                    last = obj;
-                }
-            }
-        }
-    }
+			object last = null;
+
+			for (int i = 0; i < copy.Count; ++i)
+			{
+				object obj = copy[i];
+
+				if (last == null || this.m_Comparer.Compare(obj, last) != 0)
+				{
+					list.Add(obj);
+					last = obj;
+				}
+			}
+		}
+	}
 }

@@ -1,36 +1,34 @@
 using System;
-using Server.Gumps;
-using Server.Targeting;
-using Server.Mobiles;
 using System.Collections;
 using System.Collections.Generic;
+using Server.Gumps;
+using Server.Mobiles;
+using Server.Targeting;
 
 namespace Server.Spells.Eighth
 {
-    public class ResurrectionSpell : MagerySpell
-    {
-        private static readonly SpellInfo m_Info = new SpellInfo(
-            "Resurrection", "An Corp",
-            245,
-            9062,
-            Reagent.Bloodmoss,
-            Reagent.Garlic,
-            Reagent.Ginseng);
-        public ResurrectionSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+	public class ResurrectionSpell : MagerySpell
+	{
+		private static readonly SpellInfo m_Info = new SpellInfo(
+			"Resurrection",
+			"An Corp",
+			245,
+			9062,
+			Reagent.Bloodmoss,
+			Reagent.Garlic,
+			Reagent.Ginseng
+		);
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Eighth;
-            }
-        }
-        
-        public override void OnCast()
-        {
+		public ResurrectionSpell(Mobile caster, Item scroll)
+			: base(caster, scroll, m_Info) { }
+
+		public override SpellCircle Circle
+		{
+			get { return SpellCircle.Eighth; }
+		}
+
+		public override void OnCast()
+		{
 			if (this.CheckSequence())
 			{
 				List<Mobile> targets = new List<Mobile>();
@@ -40,9 +38,16 @@ namespace Server.Spells.Eighth
 				if (map != null)
 				{
 					var list = new List<Mobile>();
-					foreach ( Mobile m in World.Mobiles.Values )
+					foreach (Mobile m in World.Mobiles.Values)
 					{
-						if (!this.Caster.CanSee(m) && m == this.Caster && !this.Caster.Alive && !m.Player && m.Region != null && m.Region.IsPartOf("Khaldun") )
+						if (
+							!this.Caster.CanSee(m)
+							&& m == this.Caster
+							&& !this.Caster.Alive
+							&& !m.Player
+							&& m.Region != null
+							&& m.Region.IsPartOf("Khaldun")
+						)
 							targets.Add(m);
 					}
 
@@ -51,91 +56,92 @@ namespace Server.Spells.Eighth
 						for (int i = 0; i < targets.Count; ++i)
 						{
 							Mobile m = targets[i];
-							if( m is PlayerMobile )
+							if (m is PlayerMobile)
 							{
 								PlayerMobile pm = m as PlayerMobile;
-								if( pm.Coma )
+								if (pm.Coma)
 									pm.Coma = false;
 							}
 						}
 					}
 				}
 			}
-            this.FinishSequence();
-		
-            //this.Caster.Target = new InternalTarget(this);
-        }
+			this.FinishSequence();
 
-        public void Target(Mobile m)
-        {
-            if (!this.Caster.CanSee(m))
-            {
-                this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
-            }
-            else if (m == this.Caster)
-            {
-                this.Caster.SendLocalizedMessage(501039); // Thou can not resurrect thyself.
-            }
-            else if (!this.Caster.Alive)
-            {
-                this.Caster.SendLocalizedMessage(501040); // The resurrecter must be alive.
-            }
-            else if (m.Alive)
-            {
-                this.Caster.SendLocalizedMessage(501041); // Target is not dead.
-            }
-            else if (!this.Caster.InRange(m, 1))
-            {
-                this.Caster.SendLocalizedMessage(501042); // Target is not close enough.
-            }
-            else if (!m.Player)
-            {
-                this.Caster.SendLocalizedMessage(501043); // Target is not a being.
-            }
-            else if (m.Map == null || !m.Map.CanFit(m.Location, 16, false, false))
-            {
-                this.Caster.SendLocalizedMessage(501042); // Target can not be resurrected at that location.
-                m.SendLocalizedMessage(502391); // Thou can not be resurrected there!
-            }
-            else if (m.Region != null && m.Region.IsPartOf("Khaldun"))
-            {
-                this.Caster.SendLocalizedMessage(1010395); // The veil of death in this area is too strong and resists thy efforts to restore life.
-            }
-            else if (this.CheckBSequence(m, true))
-            {
-                SpellHelper.Turn(this.Caster, m);
+			//this.Caster.Target = new InternalTarget(this);
+		}
 
-                m.PlaySound(0x214);
-                m.FixedEffect(0x376A, 10, 16);
+		public void Target(Mobile m)
+		{
+			if (!this.Caster.CanSee(m))
+			{
+				this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
+			}
+			else if (m == this.Caster)
+			{
+				this.Caster.SendLocalizedMessage(501039); // Thou can not resurrect thyself.
+			}
+			else if (!this.Caster.Alive)
+			{
+				this.Caster.SendLocalizedMessage(501040); // The resurrecter must be alive.
+			}
+			else if (m.Alive)
+			{
+				this.Caster.SendLocalizedMessage(501041); // Target is not dead.
+			}
+			else if (!this.Caster.InRange(m, 1))
+			{
+				this.Caster.SendLocalizedMessage(501042); // Target is not close enough.
+			}
+			else if (!m.Player)
+			{
+				this.Caster.SendLocalizedMessage(501043); // Target is not a being.
+			}
+			else if (m.Map == null || !m.Map.CanFit(m.Location, 16, false, false))
+			{
+				this.Caster.SendLocalizedMessage(501042); // Target can not be resurrected at that location.
+				m.SendLocalizedMessage(502391); // Thou can not be resurrected there!
+			}
+			else if (m.Region != null && m.Region.IsPartOf("Khaldun"))
+			{
+				this.Caster.SendLocalizedMessage(1010395); // The veil of death in this area is too strong and resists thy efforts to restore life.
+			}
+			else if (this.CheckBSequence(m, true))
+			{
+				SpellHelper.Turn(this.Caster, m);
 
-                m.CloseGump(typeof(ResurrectGump));
-                m.SendGump(new ResurrectGump(m, this.Caster));
-            }
+				m.PlaySound(0x214);
+				m.FixedEffect(0x376A, 10, 16);
 
-            this.FinishSequence();
-        }
+				m.CloseGump(typeof(ResurrectGump));
+				m.SendGump(new ResurrectGump(m, this.Caster));
+			}
 
-        private class InternalTarget : Target
-        {
-            private readonly ResurrectionSpell m_Owner;
-            public InternalTarget(ResurrectionSpell owner)
-                : base(1, false, TargetFlags.Beneficial)
-            {
-                this.m_Owner = owner;
-            }
+			this.FinishSequence();
+		}
 
-            protected override void OnTarget(Mobile from, object o)
-            {
-                if (o is Mobile)
-                {
-                    this.m_Owner.Target((Mobile)o);
-                }
-            }
+		private class InternalTarget : Target
+		{
+			private readonly ResurrectionSpell m_Owner;
 
-            protected override void OnTargetFinish(Mobile from)
-            {
-                this.m_Owner.FinishSequence();
-            }
-        }
-    }
+			public InternalTarget(ResurrectionSpell owner)
+				: base(1, false, TargetFlags.Beneficial)
+			{
+				this.m_Owner = owner;
+			}
+
+			protected override void OnTarget(Mobile from, object o)
+			{
+				if (o is Mobile)
+				{
+					this.m_Owner.Target((Mobile)o);
+				}
+			}
+
+			protected override void OnTargetFinish(Mobile from)
+			{
+				this.m_Owner.FinishSequence();
+			}
+		}
+	}
 }

@@ -9,7 +9,7 @@ namespace Server
 		LegacyOnly,
 		LegacyFirst,
 		NewFirst,
-		NewOnly
+		NewOnly,
 	}
 
 	public sealed class ScriptCompilerPaths
@@ -38,9 +38,7 @@ namespace Server
 		public string[] ScriptSourceRoots { get; private set; }
 		public HashSet<string> ExcludedScriptDirectoryNames { get; private set; }
 
-		private ScriptCompilerPaths()
-		{
-		}
+		private ScriptCompilerPaths() { }
 
 		private static ScriptCompilerPaths Load()
 		{
@@ -49,7 +47,10 @@ namespace Server
 			paths.LegacyScriptSourceRoot = ResolvePath(Config.Get("Paths.LegacySourceRoot", "Scripts"), "Scripts");
 			paths.NewScriptSourceRoot = ResolveOptionalPath(Config.Get("Paths.NewSourceRoot", String.Empty));
 			paths.ScriptOutputRoot = ResolvePath(Config.Get("Paths.OutputRoot", "Scripts/Output"), "Scripts/Output");
-			paths.AssembliesConfigPath = ResolvePath(Config.Get("Paths.AssembliesConfigPath", "Data/Assemblies.cfg"), "Data/Assemblies.cfg");
+			paths.AssembliesConfigPath = ResolvePath(
+				Config.Get("Paths.AssembliesConfigPath", "Data/Assemblies.cfg"),
+				"Data/Assemblies.cfg"
+			);
 
 			string mode = Config.Get("Paths.SourceRootMode", "LegacyFirst");
 			ScriptSourceRootMode parsedMode;
@@ -61,18 +62,29 @@ namespace Server
 
 			paths.SourceRootMode = parsedMode;
 
-			if (paths.SourceRootMode == ScriptSourceRootMode.NewOnly && String.IsNullOrWhiteSpace(paths.NewScriptSourceRoot) && !_newOnlyEmptySourceWarningShown)
+			if (
+				paths.SourceRootMode == ScriptSourceRootMode.NewOnly
+				&& String.IsNullOrWhiteSpace(paths.NewScriptSourceRoot)
+				&& !_newOnlyEmptySourceWarningShown
+			)
 			{
 				_newOnlyEmptySourceWarningShown = true;
 				Utility.PushColor(ConsoleColor.Yellow);
-				Console.WriteLine("Config: Warning, Paths.SourceRootMode is NewOnly but Paths.NewSourceRoot is empty. No script source roots will be scanned.");
+				Console.WriteLine(
+					"Config: Warning, Paths.SourceRootMode is NewOnly but Paths.NewSourceRoot is empty. No script source roots will be scanned."
+				);
 				Utility.PopColor();
 			}
 
 			paths.ExcludedScriptDirectoryNames = ParseExcludedDirectories(
-				Config.Get("Paths.ExcludedDirectoryNames", String.Empty));
+				Config.Get("Paths.ExcludedDirectoryNames", String.Empty)
+			);
 
-			paths.ScriptSourceRoots = BuildSourceRoots(paths.LegacyScriptSourceRoot, paths.NewScriptSourceRoot, paths.SourceRootMode);
+			paths.ScriptSourceRoots = BuildSourceRoots(
+				paths.LegacyScriptSourceRoot,
+				paths.NewScriptSourceRoot,
+				paths.SourceRootMode
+			);
 
 			return paths;
 		}

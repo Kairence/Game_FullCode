@@ -6,114 +6,131 @@ using Server.Targeting;
 
 namespace Server.Spells.Seventh
 {
-    public class MassDispelSpell : MagerySpell
-    {
-        private static readonly SpellInfo m_Info = new SpellInfo(
-            "Mass Dispel", "Vas An Ort",
-            263,
-            9002,
-            Reagent.Garlic,
-            Reagent.MandrakeRoot,
-            Reagent.BlackPearl,
-            Reagent.SulfurousAsh);
-        public MassDispelSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+	public class MassDispelSpell : MagerySpell
+	{
+		private static readonly SpellInfo m_Info = new SpellInfo(
+			"Mass Dispel",
+			"Vas An Ort",
+			263,
+			9002,
+			Reagent.Garlic,
+			Reagent.MandrakeRoot,
+			Reagent.BlackPearl,
+			Reagent.SulfurousAsh
+		);
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Seventh;
-            }
-        }
-        public override void OnCast()
-        {
-            this.Caster.Target = new InternalTarget(this);
-        }
+		public MassDispelSpell(Mobile caster, Item scroll)
+			: base(caster, scroll, m_Info) { }
 
-        public void Target(IPoint3D p)
-        {
-            if (!this.Caster.CanSee(p))
-            {
-                this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
-            }
-            else if (this.CheckSequence())
-            {
-                SpellHelper.Turn(this.Caster, p);
+		public override SpellCircle Circle
+		{
+			get { return SpellCircle.Seventh; }
+		}
 
-                SpellHelper.GetSurfaceTop(ref p);
+		public override void OnCast()
+		{
+			this.Caster.Target = new InternalTarget(this);
+		}
 
-                List<Mobile> targets = new List<Mobile>();
+		public void Target(IPoint3D p)
+		{
+			if (!this.Caster.CanSee(p))
+			{
+				this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
+			}
+			else if (this.CheckSequence())
+			{
+				SpellHelper.Turn(this.Caster, p);
 
-                Map map = this.Caster.Map;
+				SpellHelper.GetSurfaceTop(ref p);
 
-                if (map != null)
-                {
-                    IPooledEnumerable eable = map.GetMobilesInRange(new Point3D(p), 8);
+				List<Mobile> targets = new List<Mobile>();
 
-                    foreach (Mobile m in eable)
-                        if (m is BaseCreature && (m as BaseCreature).IsDispellable && (((BaseCreature)m).SummonMaster == this.Caster || this.Caster.CanBeHarmful(m, false)))
-                            targets.Add(m);
+				Map map = this.Caster.Map;
 
-                    eable.Free();
-                }
+				if (map != null)
+				{
+					IPooledEnumerable eable = map.GetMobilesInRange(new Point3D(p), 8);
 
-                for (int i = 0; i < targets.Count; ++i)
-                {
-                    Mobile m = targets[i];
+					foreach (Mobile m in eable)
+						if (
+							m is BaseCreature
+							&& (m as BaseCreature).IsDispellable
+							&& (((BaseCreature)m).SummonMaster == this.Caster || this.Caster.CanBeHarmful(m, false))
+						)
+							targets.Add(m);
 
-                    BaseCreature bc = m as BaseCreature;
+					eable.Free();
+				}
 
-                    if (bc == null)
-                        continue;
+				for (int i = 0; i < targets.Count; ++i)
+				{
+					Mobile m = targets[i];
 
-                    double dispelChance = (50.0 + ((100 * (this.Caster.Skills.Magery.Value - bc.GetDispelDifficulty())) / (bc.DispelFocus * 2))) / 100;
-                    
-                    // Skill Masteries
-                    dispelChance -= ((double)SkillMasteries.MasteryInfo.EnchantedSummoningBonus(bc) / 100);
+					BaseCreature bc = m as BaseCreature;
 
-                    if (dispelChance > Utility.RandomDouble())
-                    {
-                        Effects.SendLocationParticles(EffectItem.Create(m.Location, m.Map, EffectItem.DefaultDuration), 0x3728, 8, 20, 5042);
-                        Effects.PlaySound(m, m.Map, 0x201);
+					if (bc == null)
+						continue;
 
-                        m.Delete();
-                    }
-                    else
-                    {
-                        this.Caster.DoHarmful(m);
+					double dispelChance =
+						(
+							50.0
+							+ (
+								(100 * (this.Caster.Skills.Magery.Value - bc.GetDispelDifficulty()))
+								/ (bc.DispelFocus * 2)
+							)
+						) / 100;
 
-                        m.FixedEffect(0x3779, 10, 20);
-                    }
-                }
-            }
+					// Skill Masteries
+					dispelChance -= ((double)SkillMasteries.MasteryInfo.EnchantedSummoningBonus(bc) / 100);
 
-            this.FinishSequence();
-        }
+					if (dispelChance > Utility.RandomDouble())
+					{
+						Effects.SendLocationParticles(
+							EffectItem.Create(m.Location, m.Map, EffectItem.DefaultDuration),
+							0x3728,
+							8,
+							20,
+							5042
+						);
+						Effects.PlaySound(m, m.Map, 0x201);
 
-        public class InternalTarget : Target
-        {
-            private readonly MassDispelSpell m_Owner;
-            public InternalTarget(MassDispelSpell owner)
-                : base(Core.ML ? 10 : 12, true, TargetFlags.None)
-            {
-                this.m_Owner = owner;
-            }
+						m.Delete();
+					}
+					else
+					{
+						this.Caster.DoHarmful(m);
 
-            protected override void OnTarget(Mobile from, object o)
-            {
-                IPoint3D p = o as IPoint3D;
+						m.FixedEffect(0x3779, 10, 20);
+					}
+				}
+			}
 
-                if (p != null)
-                    this.m_Owner.Target(p);
-            }
+			this.FinishSequence();
+		}
 
-            protected override void OnTargetFinish(Mobile from)
-            {
-                this.m_Owner.FinishSequence();
-            }
-        }
-    }
+		public class InternalTarget : Target
+		{
+			private readonly MassDispelSpell m_Owner;
+
+			public InternalTarget(MassDispelSpell owner)
+				: base(Core.ML ? 10 : 12, true, TargetFlags.None)
+			{
+				this.m_Owner = owner;
+			}
+
+			protected override void OnTarget(Mobile from, object o)
+			{
+				IPoint3D p = o as IPoint3D;
+
+				if (p != null)
+					this.m_Owner.Target(p);
+			}
+
+			protected override void OnTargetFinish(Mobile from)
+			{
+				this.m_Owner.FinishSequence();
+			}
+		}
+	}
 }

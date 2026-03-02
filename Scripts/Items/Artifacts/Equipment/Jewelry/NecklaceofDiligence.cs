@@ -2,55 +2,49 @@ using System;
 
 namespace Server.Items
 {
-    public class NecklaceofDiligence : SilverNecklace
+	public class NecklaceofDiligence : SilverNecklace
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public NecklaceofDiligence()
-        {
-            Hue = 221;
-            Attributes.RegenMana = 1;
-            Attributes.BonusInt = 5;	
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public NecklaceofDiligence(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public NecklaceofDiligence()
+		{
+			Hue = 221;
+			Attributes.RegenMana = 1;
+			Attributes.BonusInt = 5;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1113137;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public NecklaceofDiligence(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0);
-        }
+		public override int LabelNumber
+		{
+			get { return 1113137; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

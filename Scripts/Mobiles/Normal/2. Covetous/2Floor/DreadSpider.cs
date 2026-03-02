@@ -3,109 +3,108 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    [TypeAlias("Server.Mobiles.DreadSpiderWeak")]
-    [CorpseName("a dread spider corpse")]
-    public class DreadSpider : BaseCreature
-    {
-        [Constructable]
-        public DreadSpider()
-            : base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
-        {
-            Name = "a dread spider";
-            Body = 11;
-            BaseSoundID = 1170;
+	[TypeAlias("Server.Mobiles.DreadSpiderWeak")]
+	[CorpseName("a dread spider corpse")]
+	public class DreadSpider : BaseCreature
+	{
+		[Constructable]
+		public DreadSpider()
+			: base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
+		{
+			Name = "a dread spider";
+			Body = 11;
+			BaseSoundID = 1170;
 
-            SetStr(1550, 2275);
-            SetDex(2100, 2150);
-            SetInt(1250, 1300);
+			SetStr(1550, 2275);
+			SetDex(2100, 2150);
+			SetInt(1250, 1300);
 
-            SetHits(2000, 2450);
+			SetHits(2000, 2450);
 			SetMana(850, 1000);
 			SetStam(2050, 2480);
 
-            SetDamage(115, 165);
-			SetAttackSpeed( 5.0 );
+			SetDamage(115, 165);
+			SetAttackSpeed(5.0);
 
-            SetDamageType(ResistanceType.Poison, 100);
+			SetDamageType(ResistanceType.Poison, 100);
 
-            Fame = 9000;
-            Karma = -9000;
+			Fame = 9000;
+			Karma = -9000;
 
-            PackItem(new SpidersSilk(30));
+			PackItem(new SpidersSilk(30));
 
 			AcidTime = 4.0;
 			AcidBreath = true;
-			
-			
-            Tamable = true;
-            ControlSlots = 2;
-            MinTameSkill = 96.0;
-            VirtualArmor = 15;
-        }
 
-        public DreadSpider(Serial serial)
-            : base(serial)
-        {
-        }
+			Tamable = true;
+			ControlSlots = 2;
+			MinTameSkill = 96.0;
+			VirtualArmor = 15;
+		}
 
+		public DreadSpider(Serial serial)
+			: base(serial) { }
 
-        public override Poison PoisonImmune { get { return Poison.Greater; } }
+		public override Poison PoisonImmune
+		{
+			get { return Poison.Greater; }
+		}
 
 		/*
-        public void BeginAcidBreath()
-        {
-            Mobile m = Combatant as Mobile;
-            // Mobile m = Combatant;
+		public void BeginAcidBreath()
+		{
+			Mobile m = Combatant as Mobile;
+			// Mobile m = Combatant;
 
-            if (m == null || m.Deleted || !m.Alive || !Alive || !CanBeHarmful(m) || m.Poisoned )
-                return;
+			if (m == null || m.Deleted || !m.Alive || !Alive || !CanBeHarmful(m) || m.Poisoned )
+				return;
 
 			if( 0.4 >= Utility.RandomDouble() )
 				m.ApplyPoison(m, Poison.Greater);
 			else
 				AOS.Damage( m, this, Utility.RandomMinMax( 40, 51 ), false, 0, 0, 0, 100, 0 );
 			
-            PlaySound(0x118);
-            MovingEffect(m, 0x36D4, 1, 0, false, false, 0x3F, 0);
+			PlaySound(0x118);
+			MovingEffect(m, 0x36D4, 1, 0, false, false, 0x3F, 0);
 
-           // TimeSpan delay = TimeSpan.FromSeconds(GetDistanceToSqrt(m) / 5.0);
-           // Timer.DelayCall<Mobile>(delay, new TimerStateCallback<Mobile>(EndAcidBreath), m);
+		   // TimeSpan delay = TimeSpan.FromSeconds(GetDistanceToSqrt(m) / 5.0);
+		   // Timer.DelayCall<Mobile>(delay, new TimerStateCallback<Mobile>(EndAcidBreath), m);
 
-            //m_NextAcidBreath = DateTime.Now + TimeSpan.FromSeconds(5);
-        }
+			//m_NextAcidBreath = DateTime.Now + TimeSpan.FromSeconds(5);
+		}
 		
-        public override void OnGotMeleeAttack(Mobile attacker)
-        {
-            BeginAcidBreath();
-            base.OnGotMeleeAttack(attacker);
-        }
+		public override void OnGotMeleeAttack(Mobile attacker)
+		{
+			BeginAcidBreath();
+			base.OnGotMeleeAttack(attacker);
+		}
 
-        public override void OnDamagedBySpell(Mobile attacker)
-        {
-            base.OnDamagedBySpell(attacker);
-            BeginAcidBreath();
-        }
+		public override void OnDamagedBySpell(Mobile attacker)
+		{
+			base.OnDamagedBySpell(attacker);
+			BeginAcidBreath();
+		}
 		*/
-        public override void GenerateLoot()
-        {
-            AddLoot(LootPack.FilthyRich);
-        }
+		public override void GenerateLoot()
+		{
+			AddLoot(LootPack.FilthyRich);
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)1);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)1);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
 
-            if (version == 0 && (AbilityProfile == null || AbilityProfile.MagicalAbility == MagicalAbility.None))
-            {
-                SetMagicalAbility(MagicalAbility.Poisoning);
-            }
-        }
-    }
+			if (version == 0 && (AbilityProfile == null || AbilityProfile.MagicalAbility == MagicalAbility.None))
+			{
+				SetMagicalAbility(MagicalAbility.Poisoning);
+			}
+		}
+	}
 }

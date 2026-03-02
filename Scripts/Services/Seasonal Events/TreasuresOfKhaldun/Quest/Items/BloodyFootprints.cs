@@ -1,7 +1,7 @@
-using Server;
 using System;
-using Server.Mobiles;
+using Server;
 using Server.Engines.Quests;
+using Server.Mobiles;
 
 // 0x1E06 => South
 // 0x1E03 => West
@@ -10,33 +10,31 @@ using Server.Engines.Quests;
 
 namespace Server.Mobiles
 {
-    public class BloodyFootPrints : Item
-    {
-        [Constructable]
-        public BloodyFootPrints(int itemID)
-            : base(itemID)
-        {
-            Movable = false;
-            Hue = 1975;
-        }
+	public class BloodyFootPrints : Item
+	{
+		[Constructable]
+		public BloodyFootPrints(int itemID)
+			: base(itemID)
+		{
+			Movable = false;
+			Hue = 1975;
+		}
 
-        public BloodyFootPrints(Serial serial)
-            : base(serial)
-        {
-        }
+		public BloodyFootPrints(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((int)0); // version
-        }
+			writer.Write((int)0); // version
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadInt();
-        }
-    }
+			int version = reader.ReadInt();
+		}
+	}
 }

@@ -4,110 +4,137 @@ using Server.Mobiles;
 
 namespace Server.Items
 {
-    public class Macaw : BaseCreature
-    {
-        [CommandProperty(AccessLevel.GameMaster)]
-        public MacawSpawner MacawSpawner { get; set; }
+	public class Macaw : BaseCreature
+	{
+		[CommandProperty(AccessLevel.GameMaster)]
+		public MacawSpawner MacawSpawner { get; set; }
 
-        [Constructable]
-        public Macaw()
-            : this(null)
-        {
-        }
+		[Constructable]
+		public Macaw()
+			: this(null) { }
 
-        public Macaw(MacawSpawner spawner)
-            : base(AIType.AI_Melee, FightMode.Closest, 10, 1, .15, .03)
-        {
-            MacawSpawner = spawner;
+		public Macaw(MacawSpawner spawner)
+			: base(AIType.AI_Melee, FightMode.Closest, 10, 1, .15, .03)
+		{
+			MacawSpawner = spawner;
 
-            Name = "vicious macaw";
-            Body = 5;
-            Hue = Utility.RandomBirdHue();
+			Name = "vicious macaw";
+			Body = 5;
+			Hue = Utility.RandomBirdHue();
 
-            SetStr(100, 150);
-            SetDex(400, 500);
-            SetInt(80, 90);
+			SetStr(100, 150);
+			SetDex(400, 500);
+			SetInt(80, 90);
 
-            SetHits(700, 800);
+			SetHits(700, 800);
 
-            SetDamage(15, 25);
+			SetDamage(15, 25);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 80, 90);
-            SetResistance(ResistanceType.Fire, 60, 77);
-            SetResistance(ResistanceType.Cold, 70, 85);
-            SetResistance(ResistanceType.Poison, 55, 85);
-            SetResistance(ResistanceType.Energy, 50, 60);
+			SetResistance(ResistanceType.Physical, 80, 90);
+			SetResistance(ResistanceType.Fire, 60, 77);
+			SetResistance(ResistanceType.Cold, 70, 85);
+			SetResistance(ResistanceType.Poison, 55, 85);
+			SetResistance(ResistanceType.Energy, 50, 60);
 
-            SetSkill(SkillName.Wrestling, 120.0, 140.0);
-            SetSkill(SkillName.Tactics, 120.0, 140.0);
-            SetSkill(SkillName.MagicResist, 95.0, 105.0);
+			SetSkill(SkillName.Wrestling, 120.0, 140.0);
+			SetSkill(SkillName.Tactics, 120.0, 140.0);
+			SetSkill(SkillName.MagicResist, 95.0, 105.0);
 
-            Fame = 7000;
-            Karma = -7000;
-        }
+			Fame = 7000;
+			Karma = -7000;
+		}
 
-        public override int GetIdleSound() { return 0x2EF; }
-        public override int GetAttackSound() { return 0x2EE; }
-        public override int GetAngerSound() { return 0x2EF; }
-        public override int GetHurtSound() { return 0x2F1; }
-        public override int GetDeathSound() { return 0x2F2; }
+		public override int GetIdleSound()
+		{
+			return 0x2EF;
+		}
 
-        public override MeatType MeatType { get { return MeatType.Bird; } }
-        public override int Feathers { get { return 32; } }
-        public override int Meat { get { return 1; } }
-        public override FoodType FavoriteFood { get { return FoodType.FruitsAndVegies | FoodType.GrainsAndHay; } }
+		public override int GetAttackSound()
+		{
+			return 0x2EE;
+		}
 
-        public override void GenerateLoot()
-        {
-            AddLoot(LootPack.FilthyRich, 2);
-        }
+		public override int GetAngerSound()
+		{
+			return 0x2EF;
+		}
 
-        protected override void OnLocationChange(Point3D oldLocation)
+		public override int GetHurtSound()
+		{
+			return 0x2F1;
+		}
+
+		public override int GetDeathSound()
+		{
+			return 0x2F2;
+		}
+
+		public override MeatType MeatType
+		{
+			get { return MeatType.Bird; }
+		}
+		public override int Feathers
+		{
+			get { return 32; }
+		}
+		public override int Meat
+		{
+			get { return 1; }
+		}
+		public override FoodType FavoriteFood
+		{
+			get { return FoodType.FruitsAndVegies | FoodType.GrainsAndHay; }
+		}
+
+		public override void GenerateLoot()
+		{
+			AddLoot(LootPack.FilthyRich, 2);
+		}
+
+		protected override void OnLocationChange(Point3D oldLocation)
 		{
 			base.OnLocationChange(oldLocation);
 
-            if (MacawSpawner != null && !InRange(MacawSpawner.Location, 20))
+			if (MacawSpawner != null && !InRange(MacawSpawner.Location, 20))
 			{
-                MacawSpawner.Spawn.Remove(this);
-                MacawSpawner = null;
+				MacawSpawner.Spawn.Remove(this);
+				MacawSpawner = null;
 			}
 		}
 
-        public override void OnDeath(Container c)
-        {
-            base.OnDeath(c);
+		public override void OnDeath(Container c)
+		{
+			base.OnDeath(c);
 
-            if (0.25 > Utility.RandomDouble())
-                c.DropItem(new GoldFoil());
-        }
+			if (0.25 > Utility.RandomDouble())
+				c.DropItem(new GoldFoil());
+		}
 
-        public override void Delete()
-        {
-            base.Delete();
+		public override void Delete()
+		{
+			base.Delete();
 
-            if (MacawSpawner != null)
-                MacawSpawner.Spawn.Remove(this);
-        }
+			if (MacawSpawner != null)
+				MacawSpawner.Spawn.Remove(this);
+		}
 
-        public Macaw(Serial serial)
-            : base(serial)
-        {
-        }
+		public Macaw(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((int)0);
-        }
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadInt();
-        }
-    }
+			int version = reader.ReadInt();
+		}
+	}
 }

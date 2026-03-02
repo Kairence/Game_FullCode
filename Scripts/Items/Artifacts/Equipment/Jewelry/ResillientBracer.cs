@@ -2,50 +2,47 @@ using System;
 
 namespace Server.Items
 {
-    public class ResilientBracer : GoldBracelet
+	public class ResilientBracer : GoldBracelet
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public ResilientBracer()
-        {
-            Hue = 0x488;
-            SkillBonuses.SetValues(0, SkillName.MagicResist, 15.0);
-            Attributes.BonusHits = 5;
-            Attributes.RegenHits = 2;
-            Attributes.DefendChance = 10;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public ResilientBracer(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public ResilientBracer()
+		{
+			Hue = 0x488;
+			SkillBonuses.SetValues(0, SkillName.MagicResist, 15.0);
+			Attributes.BonusHits = 5;
+			Attributes.RegenHits = 2;
+			Attributes.DefendChance = 10;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1072933;
-            }
-        }// Resillient Bracer
-        public override int PhysicalResistance
-        {
-            get
-            {
-                return 20;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public ResilientBracer(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1072933; }
+		} // Resillient Bracer
+		public override int PhysicalResistance
+		{
+			get { return 20; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

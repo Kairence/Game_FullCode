@@ -24,10 +24,12 @@ namespace Server.Items
 		}
 
 		public DisguiseKit(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
-		public override int LabelNumber { get { return 1041078; } } // a disguise kit
+		public override int LabelNumber
+		{
+			get { return 1041078; }
+		} // a disguise kit
 
 		public override void Serialize(GenericWriter writer)
 		{
@@ -105,7 +107,9 @@ namespace Server.Items
 
 	public class DisguiseGump : Gump
 	{
-		private static readonly DisguiseEntry[] m_HairEntries = {new DisguiseEntry(8251, 50700, 0, 5, 1011052), // Short
+		private static readonly DisguiseEntry[] m_HairEntries =
+		{
+			new DisguiseEntry(8251, 50700, 0, 5, 1011052), // Short
 			new DisguiseEntry(8261, 60710, 0, 3, 1011047), // Pageboy
 			new DisguiseEntry(8252, 60708, 0, -5, 1011053), // Long
 			new DisguiseEntry(8264, 60901, 0, 5, 1011048), // Receding
@@ -113,16 +117,20 @@ namespace Server.Items
 			new DisguiseEntry(8265, 60707, 0, -5, 1011049), // 2-tails
 			new DisguiseEntry(8260, 50703, 0, 5, 1011055), // Mohawk
 			new DisguiseEntry(8266, 60713, 0, 10, 1011050), // Topknot
-			null, new DisguiseEntry(0, 0, 0, 0, 1011051) // None
+			null,
+			new DisguiseEntry(0, 0, 0, 0, 1011051), // None
 		};
 
-		private static readonly DisguiseEntry[] m_BeardEntries = {new DisguiseEntry(8269, 50906, 0, 0, 1011401), // Vandyke
+		private static readonly DisguiseEntry[] m_BeardEntries =
+		{
+			new DisguiseEntry(8269, 50906, 0, 0, 1011401), // Vandyke
 			new DisguiseEntry(8257, 50808, 0, -2, 1011062), // Mustache
 			new DisguiseEntry(8255, 50802, 0, 0, 1011060), // Short beard
 			new DisguiseEntry(8268, 50905, 0, -10, 1011061), // Long beard
 			new DisguiseEntry(8267, 50904, 0, 0, 1011060), // Short beard
 			new DisguiseEntry(8254, 50801, 0, -10, 1011061), // Long beard
-			null, new DisguiseEntry(0, 0, 0, 0, 1011051) // None
+			null,
+			new DisguiseEntry(0, 0, 0, 0, 1011051), // None
 		};
 
 		private readonly Mobile m_From;
@@ -232,8 +240,11 @@ namespace Server.Items
 
 				DisguiseTimers.CreateTimer(m_From, TimeSpan.FromHours(2.0));
 				DisguiseTimers.StartTimer(m_From);
-				
-				BuffInfo.AddBuff(m_From, new BuffInfo(BuffIcon.Disguised, 1075821, 1075820, TimeSpan.FromHours(2.0), m_From));
+
+				BuffInfo.AddBuff(
+					m_From,
+					new BuffInfo(BuffIcon.Disguised, 1075821, 1075820, TimeSpan.FromHours(2.0), m_From)
+				);
 			}
 		}
 
@@ -291,9 +302,12 @@ namespace Server.Items
 
 	public class DisguiseTimers
 	{
-        private static Dictionary<Mobile, InternalTimer> m_Timers = new Dictionary<Mobile, InternalTimer>();
+		private static Dictionary<Mobile, InternalTimer> m_Timers = new Dictionary<Mobile, InternalTimer>();
 
-        public static Dictionary<Mobile, InternalTimer> Timers { get { return m_Timers; } }
+		public static Dictionary<Mobile, InternalTimer> Timers
+		{
+			get { return m_Timers; }
+		}
 
 		public static void CreateTimer(Mobile m, TimeSpan delay)
 		{
@@ -308,15 +322,15 @@ namespace Server.Items
 
 		public static void StartTimer(Mobile m)
 		{
-            if (m_Timers.ContainsKey(m))
-            {
-                var t = m_Timers[m];
+			if (m_Timers.ContainsKey(m))
+			{
+				var t = m_Timers[m];
 
-                if (t != null)
-                {
-                    t.Start();
-                }
-            }
+				if (t != null)
+				{
+					t.Start();
+				}
+			}
 		}
 
 		public static bool IsDisguised(Mobile m)
@@ -326,50 +340,50 @@ namespace Server.Items
 
 		public static bool StopTimer(Mobile m)
 		{
-            if (m_Timers.ContainsKey(m))
-            {
-                var t = m_Timers[m];
+			if (m_Timers.ContainsKey(m))
+			{
+				var t = m_Timers[m];
 
-                if (t != null)
-                {
-                    t.Stop();
-                }
+				if (t != null)
+				{
+					t.Stop();
+				}
 
-                return true;
-            }
+				return true;
+			}
 
-            return false;
+			return false;
 		}
 
 		public static bool RemoveTimer(Mobile m)
 		{
-            if (m_Timers.ContainsKey(m))
-            {
-                var t = m_Timers[m];
+			if (m_Timers.ContainsKey(m))
+			{
+				var t = m_Timers[m];
 
-                if (t != null)
-                {
-                    t.Stop();
-                    m_Timers.Remove(m);
-                }
+				if (t != null)
+				{
+					t.Stop();
+					m_Timers.Remove(m);
+				}
 
-                return true;
-            }
+				return true;
+			}
 
-            return false;
+			return false;
 		}
 
 		public static TimeSpan TimeRemaining(Mobile m)
 		{
-            if (m_Timers.ContainsKey(m))
-            {
-                var t = m_Timers[m];
+			if (m_Timers.ContainsKey(m))
+			{
+				var t = m_Timers[m];
 
-                if (t != null && t.Expires > DateTime.UtcNow)
-                {
-                    return t.Expires - DateTime.UtcNow;
-                }
-            }
+				if (t != null && t.Expires > DateTime.UtcNow)
+				{
+					return t.Expires - DateTime.UtcNow;
+				}
+			}
 
 			return TimeSpan.Zero;
 		}
@@ -378,7 +392,7 @@ namespace Server.Items
 		{
 			private readonly Mobile m_Player;
 
-            public DateTime Expires { get; private set; }
+			public DateTime Expires { get; private set; }
 
 			public InternalTimer(Mobile m, TimeSpan delay)
 				: base(delay)
@@ -386,7 +400,7 @@ namespace Server.Items
 				m_Player = m;
 				Priority = TimerPriority.OneMinute;
 
-                Expires = DateTime.UtcNow + delay;
+				Expires = DateTime.UtcNow + delay;
 			}
 
 			protected override void OnTick()

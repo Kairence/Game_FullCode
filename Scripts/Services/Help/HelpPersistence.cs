@@ -10,7 +10,6 @@ namespace Server.Engines.Help
 	{
 		private static readonly string _FilePath = Path.Combine("Saves", "Help", "Pages.bin");
 
-
 		[CallPriority(900)]
 		public static void Configure()
 		{
@@ -26,10 +25,10 @@ namespace Server.Engines.Help
 				{
 					writer.Write(1); // version
 
-                    writer.Write(ResponseEntry.Entries.Count);
+					writer.Write(ResponseEntry.Entries.Count);
 
-                    foreach (var entry in ResponseEntry.Entries)
-                        entry.Serialize(writer);
+					foreach (var entry in ResponseEntry.Entries)
+						entry.Serialize(writer);
 
 					writer.Write(PageQueue.List.Count);
 
@@ -42,9 +41,9 @@ namespace Server.Engines.Help
 						writer.Write(pe.Sent);
 						writer.Write(pe.PageLocation);
 						writer.Write(pe.PageMap);
-
 					}
-				});
+				}
+			);
 		}
 
 		private static void OnLoad()
@@ -57,19 +56,19 @@ namespace Server.Engines.Help
 
 					switch (version)
 					{
-                        case 1:
-                            {
-                                var c = reader.ReadInt();
+						case 1:
+							{
+								var c = reader.ReadInt();
 
-                                for (var i = 0; i < c; ++i)
-                                {
-                                    new ResponseEntry(reader);
-                                }
-                            }
-                            goto case 0;
+								for (var i = 0; i < c; ++i)
+								{
+									new ResponseEntry(reader);
+								}
+							}
+							goto case 0;
 						case 0:
 							{
-                                var count = reader.ReadInt();
+								var count = reader.ReadInt();
 
 								for (var i = 0; i < count; ++i)
 								{
@@ -81,7 +80,7 @@ namespace Server.Engines.Help
 										Handler = reader.ReadMobile(),
 										Sent = reader.ReadDateTime(),
 										PageLocation = reader.ReadPoint3D(),
-										PageMap = reader.ReadMap()
+										PageMap = reader.ReadMap(),
 									};
 									pe.Stop();
 
@@ -90,7 +89,8 @@ namespace Server.Engines.Help
 							}
 							break;
 					}
-				});
+				}
+			);
 		}
 	}
 }

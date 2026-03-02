@@ -1,5 +1,6 @@
 #region References
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -10,11 +11,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
 using CustomsFramework;
-
 using Server.Network;
-using System.Collections;
 #endregion
 
 namespace Server
@@ -29,12 +27,15 @@ namespace Server
 
 			GlobalMaxUpdateRange = 24;
 			GlobalUpdateRange = 18;
-            GlobalRadarRange = 40;
+			GlobalRadarRange = 40;
 		}
 
 		public static Action<CrashedEventArgs> CrashedHandler { get; set; }
 
-		public static bool Crashed { get { return _Crashed; } }
+		public static bool Crashed
+		{
+			get { return _Crashed; }
+		}
 
 		private static bool _Crashed;
 		private static Thread _TimerThread;
@@ -87,7 +88,7 @@ namespace Server
 
 		public static bool Service { get; private set; }
 
-        public static bool NoConsole { get; private set; }
+		public static bool NoConsole { get; private set; }
 		public static bool Debug { get; private set; }
 
 		public static bool HaltOnWarning { get; private set; }
@@ -97,14 +98,17 @@ namespace Server
 
 		public static Assembly Assembly { get; set; }
 
-		public static Version Version { get { return Assembly.GetName().Version; } }
+		public static Version Version
+		{
+			get { return Assembly.GetName().Version; }
+		}
 
 		public static Process Process { get; private set; }
 		public static Thread Thread { get; private set; }
 
 		public static MultiTextWriter MultiConsoleOut { get; private set; }
 
-		/* 
+		/*
 		 * DateTime.Now and DateTime.UtcNow are based on actual system clock time.
 		 * The resolution is acceptable but large clock jumps are possible and cause issues.
 		 * GetTickCount and GetTickCount64 have poor resolution.
@@ -122,9 +126,15 @@ namespace Server
 
 		private static bool _UseHRT;
 
-		public static bool UsingHighResolutionTiming { get { return _UseHRT && _HighRes && !Unix; } }
+		public static bool UsingHighResolutionTiming
+		{
+			get { return _UseHRT && _HighRes && !Unix; }
+		}
 
-		public static long TickCount { get { return (long)Ticks; } }
+		public static long TickCount
+		{
+			get { return (long)Ticks; }
+		}
 
 		public static double Ticks
 		{
@@ -145,12 +155,14 @@ namespace Server
 		public static int ProcessorCount { get; private set; }
 
 		public static bool Unix { get; private set; }
-		
+
 		public static string FindDataFile(string path)
 		{
 			if (DataDirectories.Count == 0)
 			{
-				throw new InvalidOperationException("Attempted to FindDataFile before DataDirectories list has been filled.");
+				throw new InvalidOperationException(
+					"Attempted to FindDataFile before DataDirectories list has been filled."
+				);
 			}
 
 			string fullPath = null;
@@ -178,20 +190,56 @@ namespace Server
 		#region Expansions
 		public static Expansion Expansion { get; set; }
 
-		public static bool T2A { get { return Expansion >= Expansion.T2A; } }
-		public static bool UOR { get { return Expansion >= Expansion.UOR; } }
-		public static bool UOTD { get { return Expansion >= Expansion.UOTD; } }
-		public static bool LBR { get { return Expansion >= Expansion.LBR; } }
-		public static bool AOS { get { return Expansion >= Expansion.AOS; } }
-		public static bool SE { get { return Expansion >= Expansion.SE; } }
-		public static bool ML { get { return Expansion >= Expansion.ML; } }
-		public static bool SA { get { return Expansion >= Expansion.SA; } }
-		public static bool HS { get { return Expansion >= Expansion.HS; } }
-		public static bool TOL { get { return Expansion >= Expansion.TOL; } }
-		public static bool EJ { get { return Expansion >= Expansion.EJ; } }
+		public static bool T2A
+		{
+			get { return Expansion >= Expansion.T2A; }
+		}
+		public static bool UOR
+		{
+			get { return Expansion >= Expansion.UOR; }
+		}
+		public static bool UOTD
+		{
+			get { return Expansion >= Expansion.UOTD; }
+		}
+		public static bool LBR
+		{
+			get { return Expansion >= Expansion.LBR; }
+		}
+		public static bool AOS
+		{
+			get { return Expansion >= Expansion.AOS; }
+		}
+		public static bool SE
+		{
+			get { return Expansion >= Expansion.SE; }
+		}
+		public static bool ML
+		{
+			get { return Expansion >= Expansion.ML; }
+		}
+		public static bool SA
+		{
+			get { return Expansion >= Expansion.SA; }
+		}
+		public static bool HS
+		{
+			get { return Expansion >= Expansion.HS; }
+		}
+		public static bool TOL
+		{
+			get { return Expansion >= Expansion.TOL; }
+		}
+		public static bool EJ
+		{
+			get { return Expansion >= Expansion.EJ; }
+		}
 		#endregion
 
-		public static string ExePath { get { return _ExePath ?? (_ExePath = Assembly.Location); } }
+		public static string ExePath
+		{
+			get { return _ExePath ?? (_ExePath = Assembly.Location); }
+		}
 
 		public static string BaseDirectory
 		{
@@ -236,8 +284,7 @@ namespace Server
 					EventSink.InvokeCrashed(args);
 					close = args.Close;
 				}
-				catch
-				{ }
+				catch { }
 
 				if (CrashedHandler != null)
 				{
@@ -246,8 +293,7 @@ namespace Server
 						CrashedHandler(args);
 						close = args.Close;
 					}
-					catch
-					{ }
+					catch { }
 				}
 
 				if (!close && !Service)
@@ -259,8 +305,7 @@ namespace Server
 							l.Dispose();
 						}
 					}
-					catch
-					{ }
+					catch { }
 
 					Console.WriteLine("This exception is fatal, press return to exit");
 					Console.ReadLine();
@@ -276,7 +321,7 @@ namespace Server
 			CTRL_BREAK_EVENT,
 			CTRL_CLOSE_EVENT,
 			CTRL_LOGOFF_EVENT = 5,
-			CTRL_SHUTDOWN_EVENT
+			CTRL_SHUTDOWN_EVENT,
 		}
 
 		private delegate bool ConsoleEventHandler(ConsoleEventType type);
@@ -311,9 +356,15 @@ namespace Server
 		private static int _CycleIndex = 1;
 		private static readonly float[] _CyclesPerSecond = new float[100];
 
-		public static float CyclesPerSecond { get { return _CyclesPerSecond[(_CycleIndex - 1) % _CyclesPerSecond.Length]; } }
+		public static float CyclesPerSecond
+		{
+			get { return _CyclesPerSecond[(_CycleIndex - 1) % _CyclesPerSecond.Length]; }
+		}
 
-		public static float AverageCPS { get { return _CyclesPerSecond.Take(_CycleIndex).Average(); } }
+		public static float AverageCPS
+		{
+			get { return _CyclesPerSecond.Take(_CycleIndex).Average(); }
+		}
 
 		public static void Kill()
 		{
@@ -329,12 +380,12 @@ namespace Server
 				ProcessStartInfo psi = new ProcessStartInfo
 				{
 					// Use 'dotnet' as the process for .NET 8 compatibility
-					FileName = "dotnet", 
+					FileName = "dotnet",
 					// Pass the DLL path as an argument to the dotnet command
 					Arguments = $"\"{ExePath}\" {Arguments}",
 					WorkingDirectory = Environment.CurrentDirectory,
 					UseShellExecute = true,
-					WindowStyle = ProcessWindowStyle.Normal
+					WindowStyle = ProcessWindowStyle.Normal,
 				};
 
 				try
@@ -345,13 +396,17 @@ namespace Server
 				{
 					Console.WriteLine("Restart Error: {0}", ex.Message);
 					// Fallback: If 'dotnet' command fails, try running the ExePath directly
-					try { Process.Start(new ProcessStartInfo(ExePath, Arguments) { UseShellExecute = true }); }
+					try
+					{
+						Process.Start(new ProcessStartInfo(ExePath, Arguments) { UseShellExecute = true });
+					}
 					catch { }
 				}
 			}
 
 			Process.GetCurrentProcess().Kill();
 		}
+
 		private static void HandleClosed()
 		{
 			if (Closing)
@@ -361,8 +416,8 @@ namespace Server
 
 			Closing = true;
 
-            if(Debug)
-                Console.Write("Exiting...");
+			if (Debug)
+				Console.Write("Exiting...");
 
 			World.WaitForWriteCompletion();
 
@@ -373,8 +428,8 @@ namespace Server
 
 			Timer.TimerThread.Set();
 
-            if (Debug)
-                Console.WriteLine("done");
+			if (Debug)
+				Console.WriteLine("done");
 		}
 
 		private static readonly AutoResetEvent _Signal = new AutoResetEvent(true);
@@ -423,32 +478,46 @@ namespace Server
 				{
 					_UseHRT = true;
 				}
-                else if (Insensitive.Equals(a, "-noconsole"))
-                {
-                    NoConsole = true;
-                }
-                else if (Insensitive.Equals(a, "-h") || Insensitive.Equals(a, "-help"))
-                {
-                    Console.WriteLine("An Ultima Online server emulator written in C# - Visit http://119.198.28.137/uo for more information.\n\n");
-                    Console.WriteLine(System.AppDomain.CurrentDomain.FriendlyName + " [Parameter]\n\n");
-                    Console.WriteLine("     -debug              Starting Server in Debug Mode. Debug Mode is being used in Core and Scripts to give extended inforamtion during runtime.");
-                    Console.WriteLine("     -haltonwarning      server halts if any warning is raised during compilation of scripts.");
-                    Console.WriteLine("     -h or -help         Displays this help text.");
-                    Console.WriteLine("     -nocache            No known effect.");
-                    Console.WriteLine("     -noconsole          No user interaction during startup and runtime.");
-                    Console.WriteLine("     -profile            Enables profiling allowing to get performance diagnostic information of packets, timers etc. in AdminGump -> Maintenance. Use with caution. This increases server load.");
-                    Console.WriteLine("     -service            This parameter should be set if you're running server as a Windows Service. No user interaction. *Windows only*");
-                    Console.WriteLine("     -usehrt             Enables High Resolution Timing if requirements are met. Increasing the resolution of the timer. *Windows only*");
-                    Console.WriteLine("     -vb                 Enables compilation of VB.NET Scripts. Without this option VB.NET Scripts are skipped.");
+				else if (Insensitive.Equals(a, "-noconsole"))
+				{
+					NoConsole = true;
+				}
+				else if (Insensitive.Equals(a, "-h") || Insensitive.Equals(a, "-help"))
+				{
+					Console.WriteLine(
+						"An Ultima Online server emulator written in C# - Visit http://119.198.28.137/uo for more information.\n\n"
+					);
+					Console.WriteLine(System.AppDomain.CurrentDomain.FriendlyName + " [Parameter]\n\n");
+					Console.WriteLine(
+						"     -debug              Starting Server in Debug Mode. Debug Mode is being used in Core and Scripts to give extended inforamtion during runtime."
+					);
+					Console.WriteLine(
+						"     -haltonwarning      server halts if any warning is raised during compilation of scripts."
+					);
+					Console.WriteLine("     -h or -help         Displays this help text.");
+					Console.WriteLine("     -nocache            No known effect.");
+					Console.WriteLine("     -noconsole          No user interaction during startup and runtime.");
+					Console.WriteLine(
+						"     -profile            Enables profiling allowing to get performance diagnostic information of packets, timers etc. in AdminGump -> Maintenance. Use with caution. This increases server load."
+					);
+					Console.WriteLine(
+						"     -service            This parameter should be set if you're running server as a Windows Service. No user interaction. *Windows only*"
+					);
+					Console.WriteLine(
+						"     -usehrt             Enables High Resolution Timing if requirements are met. Increasing the resolution of the timer. *Windows only*"
+					);
+					Console.WriteLine(
+						"     -vb                 Enables compilation of VB.NET Scripts. Without this option VB.NET Scripts are skipped."
+					);
 
-                    System.Environment.Exit(0);
-                }
-            }
+					System.Environment.Exit(0);
+				}
+			}
 
-            if (!Environment.UserInteractive || Service)
-            {
-                NoConsole = true;
-            }
+			if (!Environment.UserInteractive || Service)
+			{
+				NoConsole = true;
+			}
 
 			try
 			{
@@ -466,8 +535,7 @@ namespace Server
 					Console.SetOut(MultiConsoleOut = new MultiTextWriter(Console.Out));
 				}
 			}
-			catch
-			{ }
+			catch { }
 
 			Thread = Thread.CurrentThread;
 			Process = Process.GetCurrentProcess();
@@ -485,33 +553,31 @@ namespace Server
 
 			Timer.TimerThread ttObj = new Timer.TimerThread();
 
-			_TimerThread = new Thread(ttObj.TimerMain)
-			{
-				Name = "Timer Thread"
-			};
+			_TimerThread = new Thread(ttObj.TimerMain) { Name = "Timer Thread" };
 
 			Utility.PushColor(ConsoleColor.Cyan);
-        
+
 			// 1. Get Assembly and Custom Version Info
-            
-            string myVersion = "1.0"; 
-            string myBuild = "1.0.24";
-            DateTime currentBuildDate = DateTime.Now; // Use local system time
 
-            Utility.PushColor(ConsoleColor.Cyan);
+			string myVersion = "1.0";
+			string myBuild = "1.0.24";
+			DateTime currentBuildDate = DateTime.Now; // Use local system time
 
-            // 2. Display all info: Custom Version, Assembly Version, and Time
-            Console.WriteLine(
-                "Kairence Server - Version: {0} (Build {1}) | Assembly: 8.0 | Build on: {2} - Release",
-                myVersion,
-                myBuild,
-                currentBuildDate.ToString("yyyy-MM-dd tt hh:mm:ss"));
+			Utility.PushColor(ConsoleColor.Cyan);
 
-            Utility.PopColor();
+			// 2. Display all info: Custom Version, Assembly Version, and Time
+			Console.WriteLine(
+				"Kairence Server - Version: {0} (Build {1}) | Assembly: 8.0 | Build on: {2} - Release",
+				myVersion,
+				myBuild,
+				currentBuildDate.ToString("yyyy-MM-dd tt hh:mm:ss")
+			);
+
+			Utility.PopColor();
 			Console.ResetColor();
 			string s = Arguments;
 
-            if (s.Length > 0)
+			if (s.Length > 0)
 			{
 				Utility.PushColor(ConsoleColor.Yellow);
 				Console.WriteLine("Core: Running with arguments: {0}", s);
@@ -532,24 +598,26 @@ namespace Server
 					"Core: Optimizing for {0} {2}processor{1}",
 					ProcessorCount,
 					ProcessorCount == 1 ? "" : "s",
-					Is64Bit ? "64-bit " : "");
+					Is64Bit ? "64-bit " : ""
+				);
 				Utility.PopColor();
 			}
-			
+
 			string dotnet = null;
 
 			if (Type.GetType("Mono.Runtime") != null)
-			{	
-				MethodInfo displayName = Type.GetType("Mono.Runtime").GetMethod("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static);
+			{
+				MethodInfo displayName = Type.GetType("Mono.Runtime")
+					.GetMethod("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static);
 
 				if (displayName != null)
 				{
 					dotnet = displayName.Invoke(null, null).ToString();
-					
+
 					Utility.PushColor(ConsoleColor.Yellow);
 					Console.WriteLine("Core: Unix environment detected");
 					Utility.PopColor();
-					
+
 					Unix = true;
 				}
 			}
@@ -558,53 +626,53 @@ namespace Server
 				m_ConsoleEventHandler = OnConsoleEvent;
 				UnsafeNativeMethods.SetConsoleCtrlHandler(m_ConsoleEventHandler, true);
 			}
-            
-            #if NETFX_30
-                        dotnet = "3.0";
-            #endif
 
-            #if NETFX_35
-                        dotnet = "3.5";
-            #endif
+#if NETFX_30
+			dotnet = "3.0";
+#endif
 
-            #if NETFX_40
-                        dotnet = "4.0";
-            #endif
+#if NETFX_35
+			dotnet = "3.5";
+#endif
 
-            #if NETFX_45
-                        dotnet = "4.5";
-            #endif
+#if NETFX_40
+			dotnet = "4.0";
+#endif
 
-            #if NETFX_451
-                        dotnet = "4.5.1";
-            #endif
+#if NETFX_45
+			dotnet = "4.5";
+#endif
 
-            #if NETFX_46
-                        dotnet = "4.6.0";
-            #endif
+#if NETFX_451
+			dotnet = "4.5.1";
+#endif
 
-            #if NETFX_461
-                        dotnet = "4.6.1";
-            #endif
+#if NETFX_46
+			dotnet = "4.6.0";
+#endif
 
-            #if NETFX_462
-                        dotnet = "4.6.2";
-            #endif
+#if NETFX_461
+			dotnet = "4.6.1";
+#endif
 
-            #if NETFX_47
-                        dotnet = "4.7";
-            #endif
+#if NETFX_462
+			dotnet = "4.6.2";
+#endif
 
-            #if NETFX_471
-                        dotnet = "4.7.1";
-            #endif
+#if NETFX_47
+			dotnet = "4.7";
+#endif
 
-            if (String.IsNullOrEmpty(dotnet))
-                dotnet = "MONO/CSC/Unknown";
-            
-            Utility.PushColor(ConsoleColor.Green);
-            Console.WriteLine("Core: Compiled for " + ( Unix ? "MONO and running on {0}" : ".NET {0}" ), dotnet);
-            Utility.PopColor();
+#if NETFX_471
+			dotnet = "4.7.1";
+#endif
+
+			if (String.IsNullOrEmpty(dotnet))
+				dotnet = "MONO/CSC/Unknown";
+
+			Utility.PushColor(ConsoleColor.Green);
+			Console.WriteLine("Core: Compiled for " + (Unix ? "MONO and running on {0}" : ".NET {0}"), dotnet);
+			Utility.PopColor();
 
 			if (GCSettings.IsServerGC)
 			{
@@ -618,12 +686,17 @@ namespace Server
 				Utility.PushColor(ConsoleColor.DarkYellow);
 				Console.WriteLine(
 					"Core: Requested high resolution timing ({0})",
-					UsingHighResolutionTiming ? "Supported" : "Unsupported");
+					UsingHighResolutionTiming ? "Supported" : "Unsupported"
+				);
 				Utility.PopColor();
 			}
 
 			Utility.PushColor(ConsoleColor.DarkYellow);
-			Console.WriteLine("RandomImpl: {0} ({1})", RandomImpl.Type.Name, RandomImpl.IsHardwareRNG ? "Hardware" : "Software");
+			Console.WriteLine(
+				"RandomImpl: {0} ({1})",
+				RandomImpl.Type.Name,
+				RandomImpl.IsHardwareRNG ? "Hardware" : "Software"
+			);
 			Utility.PopColor();
 
 			Utility.PushColor(ConsoleColor.Green);
@@ -644,7 +717,7 @@ namespace Server
 
 				Console.WriteLine(" - Press return to exit, or R to try again.");
 
-                if (Console.ReadKey(true).Key != ConsoleKey.R)
+				if (Console.ReadKey(true).Key != ConsoleKey.R)
 				{
 					return;
 				}
@@ -672,7 +745,8 @@ namespace Server
 
 			try
 			{
-				long now, last = TickCount;
+				long now,
+					last = TickCount;
 
 				const int sampleInterval = 100;
 				const float ticksPerSecond = 1000.0f * sampleInterval;
@@ -754,10 +828,10 @@ namespace Server
 					Utility.Separate(sb, "-usehrt", " ");
 				}
 
-                if (NoConsole)
-                {
-                    Utility.Separate(sb, "-noconsole", " ");
-                }
+				if (NoConsole)
+				{
+					Utility.Separate(sb, "-noconsole", " ");
+				}
 
 				return sb.ToString();
 			}
@@ -765,13 +839,24 @@ namespace Server
 
 		public static int GlobalUpdateRange { get; set; }
 		public static int GlobalMaxUpdateRange { get; set; }
-        public static int GlobalRadarRange { get; set; }
-		
-		private static int m_ItemCount, m_MobileCount, m_CustomsCount;
+		public static int GlobalRadarRange { get; set; }
 
-		public static int ScriptItems { get { return m_ItemCount; } }
-		public static int ScriptMobiles { get { return m_MobileCount; } }
-		public static int ScriptCustoms { get { return m_CustomsCount; } }
+		private static int m_ItemCount,
+			m_MobileCount,
+			m_CustomsCount;
+
+		public static int ScriptItems
+		{
+			get { return m_ItemCount; }
+		}
+		public static int ScriptMobiles
+		{
+			get { return m_MobileCount; }
+		}
+		public static int ScriptCustoms
+		{
+			get { return m_CustomsCount; }
+		}
 
 		public static void VerifySerialization()
 		{
@@ -787,8 +872,8 @@ namespace Server
 			}
 		}
 
-		private static readonly Type[] m_SerialTypeArray = {typeof(Serial)};
-		private static readonly Type[] m_CustomsSerialTypeArray = {typeof(CustomSerial)};
+		private static readonly Type[] m_SerialTypeArray = { typeof(Serial) };
+		private static readonly Type[] m_CustomsSerialTypeArray = { typeof(CustomSerial) };
 
 		private static void VerifyType(Type t)
 		{
@@ -819,7 +904,12 @@ namespace Server
 					if (
 						t.GetMethod(
 							"Serialize",
-							BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly) == null)
+							BindingFlags.Public
+								| BindingFlags.NonPublic
+								| BindingFlags.Instance
+								| BindingFlags.DeclaredOnly
+						) == null
+					)
 					{
 						if (warningSb == null)
 						{
@@ -832,7 +922,12 @@ namespace Server
 					if (
 						t.GetMethod(
 							"Deserialize",
-							BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly) == null)
+							BindingFlags.Public
+								| BindingFlags.NonPublic
+								| BindingFlags.Instance
+								| BindingFlags.DeclaredOnly
+						) == null
+					)
 					{
 						if (warningSb == null)
 						{
@@ -874,7 +969,12 @@ namespace Server
 					if (
 						t.GetMethod(
 							"Serialize",
-							BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly) == null)
+							BindingFlags.Public
+								| BindingFlags.NonPublic
+								| BindingFlags.Instance
+								| BindingFlags.DeclaredOnly
+						) == null
+					)
 					{
 						if (warningSb == null)
 						{
@@ -887,7 +987,12 @@ namespace Server
 					if (
 						t.GetMethod(
 							"Deserialize",
-							BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly) == null)
+							BindingFlags.Public
+								| BindingFlags.NonPublic
+								| BindingFlags.Instance
+								| BindingFlags.DeclaredOnly
+						) == null
+					)
 					{
 						if (warningSb == null)
 						{
@@ -931,20 +1036,25 @@ namespace Server
 		public string FileName { get; private set; }
 
 		public FileLogger(string file)
-			: this(file, false)
-		{ }
+			: this(file, false) { }
 
 		public FileLogger(string file, bool append)
 		{
 			FileName = file;
 
 			using (
-				var writer =
-					new StreamWriter(
-						new FileStream(FileName, append ? FileMode.Append : FileMode.Create, FileAccess.Write, FileShare.Read)))
+				var writer = new StreamWriter(
+					new FileStream(
+						FileName,
+						append ? FileMode.Append : FileMode.Create,
+						FileAccess.Write,
+						FileShare.Read
+					)
+				)
+			)
 			{
 				writer.WriteLine(">>>Logging started on {0:f}.", DateTime.Now);
-				//f = Tuesday, April 10, 2001 3:51 PM 
+				//f = Tuesday, April 10, 2001 3:51 PM
 			}
 
 			_NewLine = true;
@@ -952,7 +1062,11 @@ namespace Server
 
 		public override void Write(char ch)
 		{
-			using (var writer = new StreamWriter(new FileStream(FileName, FileMode.Append, FileAccess.Write, FileShare.Read)))
+			using (
+				var writer = new StreamWriter(
+					new FileStream(FileName, FileMode.Append, FileAccess.Write, FileShare.Read)
+				)
+			)
 			{
 				if (_NewLine)
 				{
@@ -966,7 +1080,11 @@ namespace Server
 
 		public override void Write(string str)
 		{
-			using (var writer = new StreamWriter(new FileStream(FileName, FileMode.Append, FileAccess.Write, FileShare.Read)))
+			using (
+				var writer = new StreamWriter(
+					new FileStream(FileName, FileMode.Append, FileAccess.Write, FileShare.Read)
+				)
+			)
 			{
 				if (_NewLine)
 				{
@@ -980,7 +1098,11 @@ namespace Server
 
 		public override void WriteLine(string line)
 		{
-			using (var writer = new StreamWriter(new FileStream(FileName, FileMode.Append, FileAccess.Write, FileShare.Read)))
+			using (
+				var writer = new StreamWriter(
+					new FileStream(FileName, FileMode.Append, FileAccess.Write, FileShare.Read)
+				)
+			)
 			{
 				if (_NewLine)
 				{
@@ -992,7 +1114,10 @@ namespace Server
 			}
 		}
 
-		public override Encoding Encoding { get { return Encoding.Default; } }
+		public override Encoding Encoding
+		{
+			get { return Encoding.Default; }
+		}
 	}
 
 	public class MultiTextWriter : TextWriter
@@ -1040,6 +1165,9 @@ namespace Server
 			WriteLine(String.Format(line, args));
 		}
 
-		public override Encoding Encoding { get { return Encoding.Default; } }
+		public override Encoding Encoding
+		{
+			get { return Encoding.Default; }
+		}
 	}
 }

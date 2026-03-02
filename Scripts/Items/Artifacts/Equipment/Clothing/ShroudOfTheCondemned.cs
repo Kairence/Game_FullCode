@@ -2,40 +2,47 @@ using System;
 
 namespace Server.Items
 {
-    [Flipable(0x1F03, 0x1F04)]
-    public class ShroudOfTheCondemned : BaseOuterTorso
+	[Flipable(0x1F03, 0x1F04)]
+	public class ShroudOfTheCondemned : BaseOuterTorso
 	{
-		public override bool IsArtifact { get { return true; } }
-        public override bool CanBeWornByGargoyles { get { return true; } }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+		public override bool CanBeWornByGargoyles
+		{
+			get { return true; }
+		}
 
-        public override int LabelNumber { get { return 1113703; } } // Shroud of the Condemned
+		public override int LabelNumber
+		{
+			get { return 1113703; }
+		} // Shroud of the Condemned
 
-        [Constructable]
-        public ShroudOfTheCondemned()
-            : base(0x1F04, 0xD6)
-        {
-            Hue = 2075;
-            Attributes.BonusHits = 3;
-            Attributes.BonusInt = 5;
-        }
+		[Constructable]
+		public ShroudOfTheCondemned()
+			: base(0x1F04, 0xD6)
+		{
+			Hue = 2075;
+			Attributes.BonusHits = 3;
+			Attributes.BonusInt = 5;
+		}
 
-        public ShroudOfTheCondemned(Serial serial)
-            : base(serial)
-        {
-        }
+		public ShroudOfTheCondemned(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.WriteEncodedInt(0); // version
-        }
+			writer.WriteEncodedInt(0); // version
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }
