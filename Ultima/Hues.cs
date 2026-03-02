@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -409,11 +410,11 @@ namespace Ultima
 			)
 			{
 				Tex.WriteLine(Name);
-				Tex.WriteLine(((short)(TableStart ^ 0x8000)).ToString());
-				Tex.WriteLine(((short)(TableEnd ^ 0x8000)).ToString());
+				Tex.WriteLine(((short)(TableStart ^ 0x8000)).ToString(CultureInfo.CurrentCulture));
+				Tex.WriteLine(((short)(TableEnd ^ 0x8000)).ToString(CultureInfo.CurrentCulture));
 				for (int i = 0; i < Colors.Length; ++i)
 				{
-					Tex.WriteLine(((short)(Colors[i] ^ 0x8000)).ToString());
+					Tex.WriteLine(((short)(Colors[i] ^ 0x8000)).ToString(CultureInfo.CurrentCulture));
 				}
 			}
 		}
@@ -443,15 +444,15 @@ namespace Ultima
 						}
 						else if (i == -2)
 						{
-							TableStart = (short)(ushort.Parse(line) | 0x8000);
+							TableStart = (short)(ushort.Parse(line, CultureInfo.CurrentCulture) | 0x8000);
 						}
 						else if (i == -1)
 						{
-							TableEnd = (short)(ushort.Parse(line) | 0x8000);
+							TableEnd = (short)(ushort.Parse(line, CultureInfo.CurrentCulture) | 0x8000);
 						}
 						else
 						{
-							Colors[i] = (short)(ushort.Parse(line) | 0x8000);
+							Colors[i] = (short)(ushort.Parse(line, CultureInfo.CurrentCulture) | 0x8000);
 						}
 						++i;
 					}

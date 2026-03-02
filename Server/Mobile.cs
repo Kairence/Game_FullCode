@@ -2157,7 +2157,7 @@ namespace Server
 
 		public override string ToString()
 		{
-			return String.Format("0x{0:X} \"{1}\"", m_Serial.Value, Name);
+			return String.Format(CultureInfo.CurrentCulture, "0x{0:X} \"{1}\"", m_Serial.Value, Name);
 		}
 
 		public long NextActionTime { get; set; }
@@ -7410,17 +7410,35 @@ namespace Server
 
 					Utility.WriteConsoleColor(
 						ConsoleColor.Red,
-						String.Format("Offending Mobile: {0} [{1}]", GetType().ToString(), this)
+						String.Format(
+							CultureInfo.CurrentCulture,
+							"Offending Mobile: {0} [{1}]",
+							GetType().ToString(),
+							this
+						)
 					);
 					Utility.WriteConsoleColor(
 						ConsoleColor.Red,
-						String.Format("Offending Item: {0} [{1}]", item, item.GetType().ToString())
+						String.Format(
+							CultureInfo.CurrentCulture,
+							"Offending Item: {0} [{1}]",
+							item,
+							item.GetType().ToString()
+						)
 					);
 					Utility.WriteConsoleColor(
 						ConsoleColor.Red,
-						String.Format("Equipped Item: {0} [{1}]", equipped, equipped.GetType().ToString())
+						String.Format(
+							CultureInfo.CurrentCulture,
+							"Equipped Item: {0} [{1}]",
+							equipped,
+							equipped.GetType().ToString()
+						)
 					);
-					Utility.WriteConsoleColor(ConsoleColor.Red, String.Format("Layer: {0}", item.Layer.ToString()));
+					Utility.WriteConsoleColor(
+						ConsoleColor.Red,
+						String.Format(CultureInfo.CurrentCulture, "Layer: {0}", item.Layer.ToString())
+					);
 				}
 				catch { }
 			}
@@ -7813,12 +7831,12 @@ namespace Server
 
 		public void SayTo(Mobile to, string format, params object[] args)
 		{
-			SayTo(to, false, String.Format(format, args));
+			SayTo(to, false, String.Format(CultureInfo.CurrentCulture, format, args));
 		}
 
 		public void SayTo(Mobile to, bool ascii, string format, params object[] args)
 		{
-			SayTo(to, ascii, String.Format(format, args));
+			SayTo(to, ascii, String.Format(CultureInfo.CurrentCulture, format, args));
 		}
 
 		public void SayTo(Mobile to, int number)
@@ -7848,7 +7866,13 @@ namespace Server
 
 		public void SayTo(Mobile to, int hue, string text, string args, bool ascii)
 		{
-			PrivateOverheadMessage(MessageType.Regular, hue, ascii, String.Format(text, args), to.NetState);
+			PrivateOverheadMessage(
+				MessageType.Regular,
+				hue,
+				ascii,
+				String.Format(CultureInfo.CurrentCulture, text, args),
+				to.NetState
+			);
 		}
 
 		public void Say(int number, int hue)
@@ -7878,7 +7902,7 @@ namespace Server
 
 		public void Say(string format, params object[] args)
 		{
-			Say(String.Format(format, args));
+			Say(String.Format(CultureInfo.CurrentCulture, format, args));
 		}
 
 		public void Say(int number, AffixType type, string affix, string args)
@@ -7903,7 +7927,7 @@ namespace Server
 
 		public void Emote(string format, params object[] args)
 		{
-			Emote(String.Format(format, args));
+			Emote(String.Format(CultureInfo.CurrentCulture, format, args));
 		}
 
 		public void Emote(int number)
@@ -7923,7 +7947,7 @@ namespace Server
 
 		public void Whisper(string format, params object[] args)
 		{
-			Whisper(String.Format(format, args));
+			Whisper(String.Format(CultureInfo.CurrentCulture, format, args));
 		}
 
 		public void Whisper(int number)
@@ -7943,7 +7967,7 @@ namespace Server
 
 		public void Yell(string format, params object[] args)
 		{
-			Yell(String.Format(format, args));
+			Yell(String.Format(CultureInfo.CurrentCulture, format, args));
 		}
 
 		public void Yell(int number)
@@ -13144,7 +13168,7 @@ namespace Server
 
 		public void SendMessage(string format, params object[] args)
 		{
-			SendMessage(0x3B2, String.Format(format, args));
+			SendMessage(0x3B2, String.Format(CultureInfo.CurrentCulture, format, args));
 		}
 
 		public void SendMessage(int hue, string text)
@@ -13164,7 +13188,7 @@ namespace Server
 
 		public void SendMessage(int hue, string format, params object[] args)
 		{
-			SendMessage(hue, String.Format(format, args));
+			SendMessage(hue, String.Format(CultureInfo.CurrentCulture, format, args));
 		}
 
 		public void SendAsciiMessage(string text)
@@ -13174,7 +13198,7 @@ namespace Server
 
 		public void SendAsciiMessage(string format, params object[] args)
 		{
-			SendAsciiMessage(0x3B2, String.Format(format, args));
+			SendAsciiMessage(0x3B2, String.Format(CultureInfo.CurrentCulture, format, args));
 		}
 
 		public void SendAsciiMessage(int hue, string text)
@@ -13194,7 +13218,7 @@ namespace Server
 
 		public void SendAsciiMessage(int hue, string format, params object[] args)
 		{
-			SendAsciiMessage(hue, String.Format(format, args));
+			SendAsciiMessage(hue, String.Format(CultureInfo.CurrentCulture, format, args));
 		}
 		#endregion
 
@@ -13245,9 +13269,9 @@ namespace Server
 			Delta(MobileDelta.Stat | MobileDelta.Hits | MobileDelta.Stam | MobileDelta.Mana);
 		}
 
-		public virtual void DisplayPaperdollTo(Mobile to)
+		public virtual void DisplayPaperdollTo(Mobile target)
 		{
-			EventSink.InvokePaperdollRequest(new PaperdollRequestEventArgs(to, this));
+			EventSink.InvokePaperdollRequest(new PaperdollRequestEventArgs(target, this));
 		}
 
 		private static bool m_DisableDismountInWarmode;
@@ -13331,17 +13355,17 @@ namespace Server
 		}
 
 		/// <summary>
-		///     Overridable. Event invoked when <paramref name="from" /> wants to see this Mobile's stats.
+		///     Overridable. Event invoked when <paramref name="m" /> wants to see this Mobile's stats.
 		/// </summary>
-		/// <param name="from"></param>
-		public virtual void OnStatsQuery(Mobile from)
+		/// <param name="m"></param>
+		public virtual void OnStatsQuery(Mobile m)
 		{
-			if (from.Map == Map && Utility.InUpdateRange(this, from) && from.CanSee(this))
+			if (m.Map == Map && Utility.InUpdateRange(this, m) && m.CanSee(this))
 			{
-				from.Send(new MobileStatus(from, this, m_NetState));
+				m.Send(new MobileStatus(m, this, m_NetState));
 			}
 
-			if (from == this)
+			if (m == this)
 			{
 				Send(new StatLockInfo(this));
 			}
@@ -13350,7 +13374,7 @@ namespace Server
 
 			if (ip != null)
 			{
-				ip.OnStatsQuery(from, this);
+				ip.OnStatsQuery(m, this);
 			}
 		}
 
@@ -13368,7 +13392,7 @@ namespace Server
 		/// <summary>
 		///     Overridable. Virtual event invoked when <see cref="Region" /> changes.
 		/// </summary>
-		public virtual void OnRegionChange(Region Old, Region New) { }
+		public virtual void OnRegionChange(Region oldRegion, Region newRegion) { }
 
 		private Item m_MountItem;
 
@@ -13511,6 +13535,7 @@ namespace Server
 					}
 
 					string text = String.Format(
+						CultureInfo.CurrentCulture,
 						title.Length <= 0 ? "[{1}]{2}" : "[{0}, {1}]{2}",
 						title,
 						guild.Abbreviation,

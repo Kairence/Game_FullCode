@@ -1,6 +1,7 @@
 #region References
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 #endregion
@@ -27,7 +28,7 @@ namespace Ultima
 		public StringList(string language)
 		{
 			Language = language;
-			LoadEntry(Files.GetFilePath(String.Format("cliloc.{0}", language)));
+			LoadEntry(Files.GetFilePath(String.Format(CultureInfo.CurrentCulture, "cliloc.{0}", language)));
 		}
 
 		/// <summary>
@@ -109,22 +110,34 @@ namespace Ultima
 
 		public string GetString(int number)
 		{
-			if (m_StringTable == null || !m_StringTable.ContainsKey(number))
+			if (m_StringTable == null)
 			{
 				return null;
 			}
 
-			return m_StringTable[number];
+			string text;
+			if (!m_StringTable.TryGetValue(number, out text))
+			{
+				return null;
+			}
+
+			return text;
 		}
 
 		public StringEntry GetEntry(int number)
 		{
-			if (m_EntryTable == null || !m_EntryTable.ContainsKey(number))
+			if (m_EntryTable == null)
 			{
 				return null;
 			}
 
-			return m_EntryTable[number];
+			StringEntry entry;
+			if (!m_EntryTable.TryGetValue(number, out entry))
+			{
+				return null;
+			}
+
+			return entry;
 		}
 
 		#region SortComparer
@@ -137,19 +150,19 @@ namespace Ultima
 				m_desc = desc;
 			}
 
-			public int Compare(StringEntry objA, StringEntry objB)
+			public int Compare(StringEntry x, StringEntry y)
 			{
-				if (objA.Number == objB.Number)
+				if (x.Number == y.Number)
 				{
 					return 0;
 				}
 				else if (m_desc)
 				{
-					return (objA.Number < objB.Number) ? 1 : -1;
+					return (x.Number < y.Number) ? 1 : -1;
 				}
 				else
 				{
-					return (objA.Number < objB.Number) ? -1 : 1;
+					return (x.Number < y.Number) ? -1 : 1;
 				}
 			}
 		}
@@ -163,30 +176,30 @@ namespace Ultima
 				m_desc = desc;
 			}
 
-			public int Compare(StringEntry objA, StringEntry objB)
+			public int Compare(StringEntry x, StringEntry y)
 			{
-				if ((byte)objA.Flag == (byte)objB.Flag)
+				if ((byte)x.Flag == (byte)y.Flag)
 				{
-					if (objA.Number == objB.Number)
+					if (x.Number == y.Number)
 					{
 						return 0;
 					}
 					else if (m_desc)
 					{
-						return (objA.Number < objB.Number) ? 1 : -1;
+						return (x.Number < y.Number) ? 1 : -1;
 					}
 					else
 					{
-						return (objA.Number < objB.Number) ? -1 : 1;
+						return (x.Number < y.Number) ? -1 : 1;
 					}
 				}
 				else if (m_desc)
 				{
-					return ((byte)objA.Flag < (byte)objB.Flag) ? 1 : -1;
+					return ((byte)x.Flag < (byte)y.Flag) ? 1 : -1;
 				}
 				else
 				{
-					return ((byte)objA.Flag < (byte)objB.Flag) ? -1 : 1;
+					return ((byte)x.Flag < (byte)y.Flag) ? -1 : 1;
 				}
 			}
 		}
@@ -200,15 +213,15 @@ namespace Ultima
 				m_desc = desc;
 			}
 
-			public int Compare(StringEntry objA, StringEntry objB)
+			public int Compare(StringEntry x, StringEntry y)
 			{
 				if (m_desc)
 				{
-					return String.Compare(objB.Text, objA.Text);
+					return StringComparer.CurrentCulture.Compare(y.Text, x.Text);
 				}
 				else
 				{
-					return String.Compare(objA.Text, objB.Text);
+					return StringComparer.CurrentCulture.Compare(x.Text, y.Text);
 				}
 			}
 		}

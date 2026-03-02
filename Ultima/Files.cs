@@ -1,6 +1,7 @@
 ﻿#region References
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using Microsoft.Win32;
@@ -285,9 +286,9 @@ namespace Ultima
 			if (MulPath.Count > 0)
 			{
 				string path = "";
-				if (MulPath.ContainsKey(file.ToLower()))
+				if (MulPath.ContainsKey(file.ToLower(CultureInfo.CurrentCulture)))
 				{
-					path = MulPath[file.ToLower()];
+					path = MulPath[file.ToLower(CultureInfo.CurrentCulture)];
 				}
 				if (String.IsNullOrEmpty(path))
 				{
@@ -308,7 +309,7 @@ namespace Ultima
 
 		internal static string GetFilePath(string format, params object[] args)
 		{
-			return GetFilePath(String.Format(format, args));
+			return GetFilePath(String.Format(CultureInfo.CurrentCulture, format, args));
 		}
 
 		private static readonly string[] knownRegkeys = new[]
@@ -343,7 +344,7 @@ namespace Ultima
 
 				if (Environment.Is64BitOperatingSystem)
 				{
-					exePath = GetPath(string.Format(@"Wow6432Node\{0}", knownRegkeys[i]));
+					exePath = GetPath(string.Format(CultureInfo.CurrentCulture, @"Wow6432Node\{0}", knownRegkeys[i]));
 				}
 				else
 				{
@@ -363,11 +364,15 @@ namespace Ultima
 		{
 			try
 			{
-				RegistryKey key = Registry.LocalMachine.OpenSubKey(string.Format(@"SOFTWARE\{0}", regkey));
+				RegistryKey key = Registry.LocalMachine.OpenSubKey(
+					string.Format(CultureInfo.CurrentCulture, @"SOFTWARE\{0}", regkey)
+				);
 
 				if (key == null)
 				{
-					key = Registry.CurrentUser.OpenSubKey(string.Format(@"SOFTWARE\{0}", regkey));
+					key = Registry.CurrentUser.OpenSubKey(
+						string.Format(CultureInfo.CurrentCulture, @"SOFTWARE\{0}", regkey)
+					);
 
 					if (key == null)
 					{
@@ -434,11 +439,12 @@ namespace Ultima
 				return false;
 			}
 			FileStream FileCheck = File.OpenRead(file);
+			#pragma warning disable CA5351 // MD5 is required for UOFiddler hash-file compatibility.
 			using (MD5 md5 = new MD5CryptoServiceProvider())
 			{
 				byte[] md5Hash = md5.ComputeHash(FileCheck);
 				FileCheck.Close();
-				string md5string = BitConverter.ToString(md5Hash).Replace("-", "").ToLower();
+				string md5string = BitConverter.ToString(md5Hash).Replace("-", "").ToLower(CultureInfo.CurrentCulture);
 				if (md5string == hash)
 				{
 					return true;
@@ -448,6 +454,7 @@ namespace Ultima
 					return false;
 				}
 			}
+			#pragma warning restore CA5351
 		}
 
 		/// <summary>
@@ -462,12 +469,14 @@ namespace Ultima
 				return null;
 			}
 			FileStream FileCheck = File.OpenRead(file);
+			#pragma warning disable CA5351 // MD5 is required for UOFiddler hash-file compatibility.
 			using (MD5 md5 = new MD5CryptoServiceProvider())
 			{
 				byte[] md5Hash = md5.ComputeHash(FileCheck);
 				FileCheck.Close();
 				return md5Hash;
 			}
+			#pragma warning restore CA5351
 		}
 
 		/// <summary>
@@ -477,7 +486,7 @@ namespace Ultima
 		/// <returns></returns>
 		public static bool CompareHashFile(string what, string path)
 		{
-			string FileName = Path.Combine(path, String.Format("UOFiddler{0}.hash", what));
+			string FileName = Path.Combine(path, String.Format(CultureInfo.CurrentCulture, "UOFiddler{0}.hash", what));
 			if (File.Exists(FileName))
 			{
 				try
@@ -491,8 +500,14 @@ namespace Ultima
 						int length = bin.ReadInt32();
 						var buffer = new byte[length];
 						bin.Read(buffer, 0, length);
-						string hashold = BitConverter.ToString(buffer).Replace("-", "").ToLower();
-						return CompareMD5(GetFilePath(String.Format("{0}.mul", what)), hashold);
+						string hashold = BitConverter
+							.ToString(buffer)
+							.Replace("-", "")
+							.ToLower(CultureInfo.CurrentCulture);
+						return CompareMD5(
+							GetFilePath(String.Format(CultureInfo.CurrentCulture, "{0}.mul", what)),
+							hashold
+						);
 					}
 				}
 				catch

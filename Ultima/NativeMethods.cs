@@ -9,26 +9,29 @@ namespace Ultima
 	public static class NativeMethods
 	{
 		[DllImport("User32")]
-		public static extern int IsWindow(ClientWindowHandle window);
+		private static extern int IsWindowNative(ClientWindowHandle window);
 
 		[DllImport("User32")]
-		public static extern int GetWindowThreadProcessId(ClientWindowHandle window, ref ClientProcessHandle processID);
+		private static extern int GetWindowThreadProcessIdNative(
+			ClientWindowHandle window,
+			ref ClientProcessHandle processID
+		);
+
+		[DllImport("Kernel32", EntryPoint = "_lread")]
+		private static extern unsafe int LReadNative(SafeFileHandle hFile, void* lpBuffer, int wBytes);
 
 		[DllImport("Kernel32")]
-		public static extern unsafe int _lread(SafeFileHandle hFile, void* lpBuffer, int wBytes);
-
-		[DllImport("Kernel32")]
-		public static extern ClientProcessHandle OpenProcess(
+		private static extern ClientProcessHandle OpenProcessNative(
 			int desiredAccess,
 			int inheritClientHandle,
 			ClientProcessHandle processID
 		);
 
 		[DllImport("Kernel32")]
-		public static extern int CloseHandle(ClientProcessHandle handle);
+		private static extern int CloseHandleNative(ClientProcessHandle handle);
 
 		[DllImport("Kernel32")]
-		public static extern unsafe int ReadProcessMemory(
+		private static extern unsafe int ReadProcessMemoryNative(
 			ClientProcessHandle process,
 			int baseAddress,
 			void* buffer,
@@ -37,7 +40,7 @@ namespace Ultima
 		);
 
 		[DllImport("Kernel32")]
-		public static extern unsafe int WriteProcessMemory(
+		private static extern unsafe int WriteProcessMemoryNative(
 			ClientProcessHandle process,
 			int baseAddress,
 			void* buffer,
@@ -46,19 +49,95 @@ namespace Ultima
 		);
 
 		[DllImport("User32")]
-		public static extern int SetForegroundWindow(ClientWindowHandle hWnd);
+		private static extern int SetForegroundWindowNative(ClientWindowHandle hWnd);
 
 		[DllImport("User32")]
-		public static extern int SendMessage(ClientWindowHandle hWnd, int wMsg, int wParam, int lParam);
+		private static extern int SendMessageNative(ClientWindowHandle hWnd, int wMsg, int wParam, int lParam);
 
 		[DllImport("User32")]
-		public static extern bool PostMessage(ClientWindowHandle hWnd, int wMsg, int wParam, int lParam);
+		private static extern bool PostMessageNative(ClientWindowHandle hWnd, int wMsg, int wParam, int lParam);
 
 		[DllImport("User32")]
-		public static extern int OemKeyScan(int wOemChar);
+		private static extern int OemKeyScanNative(int wOemChar);
 
-		[DllImport("user32")]
-		public static extern ClientWindowHandle FindWindowA(string lpClassName, string lpWindowName);
+		[DllImport("user32", EntryPoint = "FindWindowW", CharSet = CharSet.Unicode, ExactSpelling = true)]
+		private static extern ClientWindowHandle FindWindowNative(string lpClassName, string lpWindowName);
+
+		public static int IsWindow(ClientWindowHandle window)
+		{
+			return IsWindowNative(window);
+		}
+
+		public static int GetWindowThreadProcessId(ClientWindowHandle window, ref ClientProcessHandle processID)
+		{
+			return GetWindowThreadProcessIdNative(window, ref processID);
+		}
+
+		public static unsafe int LRead(SafeFileHandle fileHandle, void* buffer, int bytes)
+		{
+			return LReadNative(fileHandle, buffer, bytes);
+		}
+
+		public static ClientProcessHandle OpenProcess(
+			int desiredAccess,
+			int inheritClientHandle,
+			ClientProcessHandle processID
+		)
+		{
+			return OpenProcessNative(desiredAccess, inheritClientHandle, processID);
+		}
+
+		public static int CloseHandle(ClientProcessHandle handle)
+		{
+			return CloseHandleNative(handle);
+		}
+
+		public static unsafe int ReadProcessMemory(
+			ClientProcessHandle process,
+			int baseAddress,
+			void* buffer,
+			int size,
+			ref int op
+		)
+		{
+			return ReadProcessMemoryNative(process, baseAddress, buffer, size, ref op);
+		}
+
+		public static unsafe int WriteProcessMemory(
+			ClientProcessHandle process,
+			int baseAddress,
+			void* buffer,
+			int size,
+			int nullMe
+		)
+		{
+			return WriteProcessMemoryNative(process, baseAddress, buffer, size, nullMe);
+		}
+
+		public static int SetForegroundWindow(ClientWindowHandle window)
+		{
+			return SetForegroundWindowNative(window);
+		}
+
+		public static int SendMessage(ClientWindowHandle window, int message, int wParam, int lParam)
+		{
+			return SendMessageNative(window, message, wParam, lParam);
+		}
+
+		public static bool PostMessage(ClientWindowHandle window, int message, int wParam, int lParam)
+		{
+			return PostMessageNative(window, message, wParam, lParam);
+		}
+
+		public static int OemKeyScan(int oemChar)
+		{
+			return OemKeyScanNative(oemChar);
+		}
+
+		public static ClientWindowHandle FindWindowA(string className, string windowName)
+		{
+			return FindWindowNative(className, windowName);
+		}
 
 		/// <summary>
 		///     Swaps from Big to LittleEndian and vise versa

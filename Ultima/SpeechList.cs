@@ -101,7 +101,9 @@ namespace Ultima
 				Tex.WriteLine("Order;ID;KeyWord");
 				foreach (SpeechEntry entry in Entries)
 				{
-					Tex.WriteLine(String.Format("{0};{1};{2}", entry.Order, entry.ID, entry.KeyWord));
+					Tex.WriteLine(
+						String.Format(CultureInfo.CurrentCulture, "{0};{1};{2}", entry.Order, entry.ID, entry.KeyWord)
+					);
 				}
 			}
 		}
@@ -118,7 +120,7 @@ namespace Ultima
 				string line;
 				while ((line = sr.ReadLine()) != null)
 				{
-					if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
+					if ((line = line.Trim()).Length == 0 || line.StartsWith("#", StringComparison.CurrentCulture))
 					{
 						continue;
 					}
@@ -151,11 +153,11 @@ namespace Ultima
 			if (text.Contains("0x"))
 			{
 				string convert = text.Replace("0x", "");
-				int.TryParse(convert, NumberStyles.HexNumber, null, out result);
+				int.TryParse(convert, NumberStyles.HexNumber, CultureInfo.CurrentCulture, out result);
 			}
 			else
 			{
-				int.TryParse(text, NumberStyles.Integer, null, out result);
+				int.TryParse(text, NumberStyles.Integer, CultureInfo.CurrentCulture, out result);
 			}
 
 			return result;
@@ -171,19 +173,19 @@ namespace Ultima
 				m_desc = desc;
 			}
 
-			public int Compare(SpeechEntry objA, SpeechEntry objB)
+			public int Compare(SpeechEntry x, SpeechEntry y)
 			{
-				if (objA.ID == objB.ID)
+				if (x.ID == y.ID)
 				{
 					return 0;
 				}
 				else if (m_desc)
 				{
-					return (objA.ID < objB.ID) ? 1 : -1;
+					return (x.ID < y.ID) ? 1 : -1;
 				}
 				else
 				{
-					return (objA.ID < objB.ID) ? -1 : 1;
+					return (x.ID < y.ID) ? -1 : 1;
 				}
 			}
 		}
@@ -197,30 +199,30 @@ namespace Ultima
 				m_desc = desc;
 			}
 
-			public int Compare(SpeechEntry objA, SpeechEntry objB)
+			public int Compare(SpeechEntry x, SpeechEntry y)
 			{
 				if (m_desc)
 				{
-					return String.Compare(objB.KeyWord, objA.KeyWord);
+					return StringComparer.CurrentCulture.Compare(y.KeyWord, x.KeyWord);
 				}
 				else
 				{
-					return String.Compare(objA.KeyWord, objB.KeyWord);
+					return StringComparer.CurrentCulture.Compare(x.KeyWord, y.KeyWord);
 				}
 			}
 		}
 
 		public class OrderComparer : IComparer<SpeechEntry>
 		{
-			public int Compare(SpeechEntry objA, SpeechEntry objB)
+			public int Compare(SpeechEntry x, SpeechEntry y)
 			{
-				if (objA.Order == objB.Order)
+				if (x.Order == y.Order)
 				{
 					return 0;
 				}
 				else
 				{
-					return (objA.Order < objB.Order) ? -1 : 1;
+					return (x.Order < y.Order) ? -1 : 1;
 				}
 			}
 		}

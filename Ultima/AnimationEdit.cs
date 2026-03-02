@@ -419,7 +419,7 @@ namespace Ultima
 
 	public sealed class AnimIdx
 	{
-		public int idxextra;
+		public int idxextra { get; set; }
 		public ushort[] Palette { get; private set; }
 		public List<FrameEdit> Frames { get; private set; }
 
@@ -959,16 +959,16 @@ namespace Ultima
 
 		public struct Raw
 		{
-			public int run;
-			public int offx;
-			public int offy;
-			public byte[] data;
+			public int run { get; set; }
+			public int offx { get; set; }
+			public int offy { get; set; }
+			public byte[] data { get; set; }
 		}
 
 		public Raw[] RawData { get; private set; }
 		public Point Center { get; set; }
-		public int width;
-		public int height;
+		public int width { get; set; }
+		public int height { get; set; }
 
 		public FrameEdit(BinaryReader bin)
 		{

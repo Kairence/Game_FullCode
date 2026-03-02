@@ -1,4 +1,5 @@
 #region References
+using System;
 using System.IO;
 #endregion
 
@@ -43,7 +44,7 @@ namespace Ultima
 
 			if (path == null)
 			{
-				Patches = new Entry5D[0];
+				Patches = Array.Empty<Entry5D>();
 				Stream = Stream.Null;
 			}
 			else
@@ -56,11 +57,13 @@ namespace Ultima
 
 						for (int i = 0; i < Patches.Length; ++i)
 						{
-							Patches[i].file = bin.ReadInt32();
-							Patches[i].index = bin.ReadInt32();
-							Patches[i].lookup = bin.ReadInt32();
-							Patches[i].length = bin.ReadInt32();
-							Patches[i].extra = bin.ReadInt32();
+							Entry5D patch = Patches[i];
+							patch.file = bin.ReadInt32();
+							patch.index = bin.ReadInt32();
+							patch.lookup = bin.ReadInt32();
+							patch.length = bin.ReadInt32();
+							patch.extra = bin.ReadInt32();
+							Patches[i] = patch;
 						}
 					}
 				}
@@ -83,10 +86,10 @@ namespace Ultima
 
 	public struct Entry5D
 	{
-		public int file;
-		public int index;
-		public int lookup;
-		public int length;
-		public int extra;
+		public int file { get; set; }
+		public int index { get; set; }
+		public int lookup { get; set; }
+		public int length { get; set; }
+		public int extra { get; set; }
 	}
 }

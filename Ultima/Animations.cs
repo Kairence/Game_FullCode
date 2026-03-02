@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 #endregion
 
@@ -54,7 +55,7 @@ namespace Ultima
 
 				while ((line = ip.ReadLine()) != null)
 				{
-					if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
+					if ((line = line.Trim()).Length == 0 || line.StartsWith("#", StringComparison.CurrentCulture))
 					{
 						continue;
 					}
@@ -63,15 +64,15 @@ namespace Ultima
 					{
 						string[] split = line.Split('\t');
 
-						int original = System.Convert.ToInt32(split[0]);
-						int anim2 = System.Convert.ToInt32(split[1]);
+						int original = System.Convert.ToInt32(split[0], CultureInfo.CurrentCulture);
+						int anim2 = System.Convert.ToInt32(split[1], CultureInfo.CurrentCulture);
 						int anim3;
 						int anim4;
 						int anim5;
 
 						try
 						{
-							anim3 = System.Convert.ToInt32(split[2]);
+							anim3 = System.Convert.ToInt32(split[2], CultureInfo.CurrentCulture);
 						}
 						catch
 						{
@@ -80,7 +81,7 @@ namespace Ultima
 
 						try
 						{
-							anim4 = System.Convert.ToInt32(split[3]);
+							anim4 = System.Convert.ToInt32(split[3], CultureInfo.CurrentCulture);
 						}
 						catch
 						{
@@ -89,7 +90,7 @@ namespace Ultima
 
 						try
 						{
-							anim5 = System.Convert.ToInt32(split[4]);
+							anim5 = System.Convert.ToInt32(split[4], CultureInfo.CurrentCulture);
 						}
 						catch
 						{
@@ -951,7 +952,7 @@ namespace Ultima
 			}
 			else
 			{
-				return String.Format("anim{0}.mul", fileType);
+				return String.Format(CultureInfo.CurrentCulture, "anim{0}.mul", fileType);
 			}
 		}
 	}
@@ -1082,15 +1083,15 @@ namespace Ultima
 
 				while ((line = def.ReadLine()) != null)
 				{
-					if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
+					if ((line = line.Trim()).Length == 0 || line.StartsWith("#", StringComparison.CurrentCulture))
 					{
 						continue;
 					}
 
 					try
 					{
-						int index1 = line.IndexOf("{");
-						int index2 = line.IndexOf("}");
+						int index1 = line.IndexOf("{", StringComparison.CurrentCulture);
+						int index2 = line.IndexOf("}", StringComparison.CurrentCulture);
 
 						string param1 = line.Substring(0, index1);
 						string param2 = line.Substring(index1 + 1, index2 - index1 - 1);
@@ -1103,9 +1104,9 @@ namespace Ultima
 							param2 = param2.Substring(0, indexOf).Trim();
 						}
 
-						int iParam1 = Convert.ToInt32(param1.Trim());
-						int iParam2 = Convert.ToInt32(param2.Trim());
-						int iParam3 = Convert.ToInt32(param3.Trim());
+						int iParam1 = Convert.ToInt32(param1.Trim(), CultureInfo.CurrentCulture);
+						int iParam2 = Convert.ToInt32(param2.Trim(), CultureInfo.CurrentCulture);
+						int iParam3 = Convert.ToInt32(param3.Trim(), CultureInfo.CurrentCulture);
 
 						m_Entries[iParam1] = new BodyTableEntry(iParam2, iParam1, iParam3);
 					}

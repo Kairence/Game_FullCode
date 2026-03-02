@@ -9,35 +9,35 @@ namespace Ultima
 	{
 		private const int ProcessAllAccess = 0x1F0FFF;
 
-		protected bool m_Open;
-		protected ClientProcessHandle m_Process;
+		protected bool IsOpen { get; set; }
+		protected ClientProcessHandle ProcessHandle { get; set; }
 
-		protected int m_Position;
+		protected int ProcessPosition { get; set; }
 
 		public abstract ClientProcessHandle ProcessID { get; }
 
 		public virtual bool BeginAccess()
 		{
-			if (m_Open)
+			if (IsOpen)
 			{
 				return false;
 			}
 
-			m_Process = NativeMethods.OpenProcess(ProcessAllAccess, 0, ProcessID);
-			m_Open = true;
+			ProcessHandle = NativeMethods.OpenProcess(ProcessAllAccess, 0, ProcessID);
+			IsOpen = true;
 
 			return true;
 		}
 
 		public virtual void EndAccess()
 		{
-			if (!m_Open)
+			if (!IsOpen)
 			{
 				return;
 			}
 
-			m_Process.Close();
-			m_Open = false;
+			ProcessHandle.Close();
+			IsOpen = false;
 		}
 
 		public override void Flush() { }
@@ -50,10 +50,17 @@ namespace Ultima
 
 			fixed (byte* p = buffer)
 			{
-				NativeMethods.ReadProcessMemory(m_Process, m_Position, p + offset, count, ref res);
+				int readProcessMemoryResult = NativeMethods.ReadProcessMemory(
+					ProcessHandle,
+					ProcessPosition,
+					p + offset,
+					count,
+					ref res
+				);
+				_ = readProcessMemoryResult;
 			}
 
-			m_Position += count;
+			ProcessPosition += count;
 
 			if (end)
 			{
@@ -69,10 +76,17 @@ namespace Ultima
 
 			fixed (byte* p = buffer)
 			{
-				NativeMethods.WriteProcessMemory(m_Process, m_Position, p + offset, count, 0);
+				int writeProcessMemoryResult = NativeMethods.WriteProcessMemory(
+					ProcessHandle,
+					ProcessPosition,
+					p + offset,
+					count,
+					0
+				);
+				_ = writeProcessMemoryResult;
 			}
 
-			m_Position += count;
+			ProcessPosition += count;
 
 			if (end)
 			{
@@ -99,8 +113,8 @@ namespace Ultima
 		}
 		public override long Position
 		{
-			get { return m_Position; }
-			set { m_Position = (int)value; }
+			get { return ProcessPosition; }
+			set { ProcessPosition = (int)value; }
 		}
 
 		public override void SetLength(long value)
@@ -113,16 +127,16 @@ namespace Ultima
 			switch (origin)
 			{
 				case SeekOrigin.Begin:
-					m_Position = (int)offset;
+					ProcessPosition = (int)offset;
 					break;
 				case SeekOrigin.Current:
-					m_Position += (int)offset;
+					ProcessPosition += (int)offset;
 					break;
 				case SeekOrigin.End:
 					throw new NotSupportedException();
 			}
 
-			return m_Position;
+			return ProcessPosition;
 		}
 	}
 }

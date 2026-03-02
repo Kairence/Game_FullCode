@@ -2,13 +2,14 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Text;
 #endregion
 
 namespace Ultima
 {
-	public sealed class Map
+	public sealed class Map : IDisposable
 	{
 		private TileMatrix m_Tiles;
 		private readonly int m_FileIndex;
@@ -58,6 +59,14 @@ namespace Ultima
 			m_Width = width;
 			m_Height = height;
 			m_path = path;
+		}
+
+		public void Dispose()
+		{
+			if (m_Tiles != null)
+			{
+				m_Tiles.Dispose();
+			}
 		}
 
 		/// <summary>
@@ -641,8 +650,8 @@ namespace Ultima
 			int blockx = width >> 3;
 			int blocky = height >> 3;
 
-			string idx = Path.Combine(path, String.Format("staidx{0}.mul", map.FileIndex));
-			string mul = Path.Combine(path, String.Format("statics{0}.mul", map.FileIndex));
+			string idx = Path.Combine(path, String.Format(CultureInfo.CurrentCulture, "staidx{0}.mul", map.FileIndex));
+			string mul = Path.Combine(path, String.Format(CultureInfo.CurrentCulture, "statics{0}.mul", map.FileIndex));
 			using (
 				FileStream fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
 					fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write)
@@ -892,7 +901,7 @@ namespace Ultima
 			int blockx = width >> 3;
 			int blocky = height >> 3;
 
-			string mul = Path.Combine(path, String.Format("map{0}.mul", map));
+			string mul = Path.Combine(path, String.Format(CultureInfo.CurrentCulture, "map{0}.mul", map));
 			using (var fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
 			{
 				var memmul = new MemoryStream();
@@ -954,7 +963,10 @@ namespace Ultima
 
 		public void ReportInvisStatics(string reportfile)
 		{
-			reportfile = Path.Combine(reportfile, String.Format("staticReport-{0}.csv", m_MapID));
+			reportfile = Path.Combine(
+				reportfile,
+				String.Format(CultureInfo.CurrentCulture, "staticReport-{0}.csv", m_MapID)
+			);
 			using (
 				var Tex = new StreamWriter(
 					new FileStream(reportfile, FileMode.Create, FileAccess.ReadWrite),
@@ -975,7 +987,14 @@ namespace Ultima
 								if (TileData.ItemTable[currstatic.ID].Height + currstatic.Z < currtile.Z)
 								{
 									Tex.WriteLine(
-										String.Format("{0};{1};{2};0x{3:X}", x, y, currstatic.Z, currstatic.ID)
+										String.Format(
+											CultureInfo.CurrentCulture,
+											"{0};{1};{2};0x{3:X}",
+											x,
+											y,
+											currstatic.Z,
+											currstatic.ID
+										)
 									);
 								}
 							}
@@ -987,7 +1006,10 @@ namespace Ultima
 
 		public void ReportInvalidMapIDs(string reportfile)
 		{
-			reportfile = Path.Combine(reportfile, String.Format("ReportInvalidMapIDs-{0}.csv", m_MapID));
+			reportfile = Path.Combine(
+				reportfile,
+				String.Format(CultureInfo.CurrentCulture, "ReportInvalidMapIDs-{0}.csv", m_MapID)
+			);
 			using (
 				var Tex = new StreamWriter(
 					new FileStream(reportfile, FileMode.Create, FileAccess.ReadWrite),
@@ -1003,14 +1025,30 @@ namespace Ultima
 						Tile currtile = Tiles.GetLandTile(x, y);
 						if (!Art.IsValidLand(currtile.ID))
 						{
-							Tex.WriteLine(String.Format("{0};{1};{2};0;0x{3:X}", x, y, currtile.Z, currtile.ID));
+							Tex.WriteLine(
+								String.Format(
+									CultureInfo.CurrentCulture,
+									"{0};{1};{2};0;0x{3:X}",
+									x,
+									y,
+									currtile.Z,
+									currtile.ID
+								)
+							);
 						}
 						foreach (HuedTile currstatic in Tiles.GetStaticTiles(x, y))
 						{
 							if (!Art.IsValidStatic(currstatic.ID))
 							{
 								Tex.WriteLine(
-									String.Format("{0};{1};{2};0x{3:X};0", x, y, currstatic.Z, currstatic.ID)
+									String.Format(
+										CultureInfo.CurrentCulture,
+										"{0};{1};{2};0x{3:X};0",
+										x,
+										y,
+										currstatic.Z,
+										currstatic.ID
+									)
 								);
 							}
 						}

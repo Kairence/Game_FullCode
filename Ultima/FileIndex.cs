@@ -1,6 +1,7 @@
 #region References
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 #endregion
@@ -165,12 +166,15 @@ namespace Ultima
 
 			if (Files.MulPath.Count > 0)
 			{
-				idxPath = Files.MulPath[idxFile.ToLower()];
-				MulPath = Files.MulPath[mulFile.ToLower()];
+				idxPath = Files.MulPath[idxFile.ToLower(CultureInfo.CurrentCulture)];
+				MulPath = Files.MulPath[mulFile.ToLower(CultureInfo.CurrentCulture)];
 
-				if (!String.IsNullOrEmpty(uopFile) && Files.MulPath.ContainsKey(uopFile.ToLower()))
+				if (
+					!String.IsNullOrEmpty(uopFile)
+					&& Files.MulPath.ContainsKey(uopFile.ToLower(CultureInfo.CurrentCulture))
+				)
 				{
-					uopPath = Files.MulPath[uopFile.ToLower()];
+					uopPath = Files.MulPath[uopFile.ToLower(CultureInfo.CurrentCulture)];
 				}
 
 				if (String.IsNullOrEmpty(idxPath))
@@ -236,7 +240,7 @@ namespace Ultima
 			 * It's possible that UOP can include some entries with unknown hash: not really unknown for me, but
 			 * not useful for reading legacy entries. That's why i removed unknown hash exception throwing from this code
 			 */
-			if (MulPath != null && MulPath.EndsWith(".uop"))
+			if (MulPath != null && MulPath.EndsWith(".uop", StringComparison.CurrentCulture))
 			{
 				using (var index = new FileStream(MulPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
 				{
@@ -268,7 +272,13 @@ namespace Ultima
 
 						for (int i = 0; i < length; i++)
 						{
-							string entryName = string.Format("build/{0}/{1:D8}{2}", uopPattern, i, uopEntryExtension);
+							string entryName = string.Format(
+								CultureInfo.CurrentCulture,
+								"build/{0}/{1:D8}{2}",
+								uopPattern,
+								i,
+								uopEntryExtension
+							);
 							ulong hash = HashFileName(entryName);
 
 							if (!hashes.ContainsKey(hash))
@@ -304,9 +314,9 @@ namespace Ultima
 								int idx;
 								if (hashes.TryGetValue(hash, out idx))
 								{
-									if (idx < 0 || idx > Index.Length)
+									if (idx < 0 || idx >= Index.Length)
 									{
-										throw new IndexOutOfRangeException(
+										throw new InvalidDataException(
 											"hashes dictionary and files collection have different count of entries!"
 										);
 									}
@@ -394,8 +404,8 @@ namespace Ultima
 			}
 			if (Files.MulPath.Count > 0)
 			{
-				idxPath = Files.MulPath[idxFile.ToLower()];
-				MulPath = Files.MulPath[mulFile.ToLower()];
+				idxPath = Files.MulPath[idxFile.ToLower(CultureInfo.CurrentCulture)];
+				MulPath = Files.MulPath[mulFile.ToLower(CultureInfo.CurrentCulture)];
 				if (String.IsNullOrEmpty(idxPath))
 				{
 					idxPath = null;

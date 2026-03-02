@@ -1,13 +1,14 @@
 #region References
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 #endregion
 
 namespace Ultima
 {
-	public sealed class TileMatrix
+	public sealed class TileMatrix : IDisposable
 	{
 		private readonly HuedTile[][][][][] m_StaticTiles;
 		private readonly Tile[][][] m_LandTiles;
@@ -34,7 +35,7 @@ namespace Ultima
 			}
 		}
 
-		public bool StaticIndexInit;
+		public bool StaticIndexInit { get; set; }
 
 		public TileMatrixPatch Patch { get; private set; }
 
@@ -84,25 +85,28 @@ namespace Ultima
 					mapPath = Files.GetFilePath("map{0}LegacyMUL.uop", fileIndex);
 				}
 
-				if (mapPath != null && mapPath.EndsWith(".uop"))
+				if (mapPath != null && mapPath.EndsWith(".uop", StringComparison.CurrentCulture))
 				{
 					IsUOPFormat = true;
 				}
 			}
 			else
 			{
-				mapPath = Path.Combine(path, String.Format("map{0}.mul", fileIndex));
+				mapPath = Path.Combine(path, String.Format(CultureInfo.CurrentCulture, "map{0}.mul", fileIndex));
 
 				if (!File.Exists(mapPath))
 				{
-					mapPath = Path.Combine(path, String.Format("map{0}LegacyMUL.uop", fileIndex));
+					mapPath = Path.Combine(
+						path,
+						String.Format(CultureInfo.CurrentCulture, "map{0}LegacyMUL.uop", fileIndex)
+					);
 				}
 
 				if (!File.Exists(mapPath))
 				{
 					mapPath = null;
 				}
-				else if (mapPath != null && mapPath.EndsWith(".uop"))
+				else if (mapPath != null && mapPath.EndsWith(".uop", StringComparison.CurrentCulture))
 				{
 					IsUOPFormat = true;
 				}
@@ -114,7 +118,7 @@ namespace Ultima
 			}
 			else
 			{
-				indexPath = Path.Combine(path, String.Format("staidx{0}.mul", fileIndex));
+				indexPath = Path.Combine(path, String.Format(CultureInfo.CurrentCulture, "staidx{0}.mul", fileIndex));
 				if (!File.Exists(indexPath))
 				{
 					indexPath = null;
@@ -127,7 +131,10 @@ namespace Ultima
 			}
 			else
 			{
-				staticsPath = Path.Combine(path, String.Format("statics{0}.mul", fileIndex));
+				staticsPath = Path.Combine(
+					path,
+					String.Format(CultureInfo.CurrentCulture, "statics{0}.mul", fileIndex)
+				);
 				if (!File.Exists(staticsPath))
 				{
 					staticsPath = null;
@@ -142,7 +149,7 @@ namespace Ultima
 
 				for (int j = 0; j < 8; ++j)
 				{
-					EmptyStaticBlock[i][j] = new HuedTile[0];
+					EmptyStaticBlock[i][j] = Array.Empty<HuedTile>();
 				}
 			}
 
@@ -465,7 +472,7 @@ namespace Ultima
 
 			for (int i = 0; i < count; i++)
 			{
-				string file = string.Format("build/{0}/{1:D8}.dat", pattern, i);
+				string file = string.Format(CultureInfo.CurrentCulture, "build/{0}/{1:D8}.dat", pattern, i);
 				ulong hash = FileIndex.HashFileName(file);
 
 				if (!hashes.ContainsKey(hash))
@@ -501,9 +508,9 @@ namespace Ultima
 					int idx;
 					if (hashes.TryGetValue(hash, out idx))
 					{
-						if (idx < 0 || idx > UOPFiles.Length)
+						if (idx < 0 || idx >= UOPFiles.Length)
 						{
-							throw new IndexOutOfRangeException(
+							throw new InvalidDataException(
 								"hashes dictionary and files collection have different count of entries!"
 							);
 						}
@@ -514,6 +521,7 @@ namespace Ultima
 					{
 						throw new ArgumentException(
 							string.Format(
+								CultureInfo.CurrentCulture,
 								"File with hash 0x{0:X8} was not found in hashes dictionary! EA Mythic changed UOP format!",
 								hash
 							)
@@ -749,7 +757,7 @@ namespace Ultima
 		}
 	}
 
-	public struct MTile : IComparable
+	public struct MTile : IComparable, IComparable<MTile>, IEquatable<MTile>
 	{
 		internal ushort m_ID;
 		internal sbyte m_Z;
@@ -806,22 +814,10 @@ namespace Ultima
 			m_Flag = flag;
 		}
 
-		public int CompareTo(object x)
+		public int CompareTo(MTile other)
 		{
-			if (x == null)
-			{
-				return 1;
-			}
-
-			if (!(x is MTile))
-			{
-				throw new ArgumentNullException();
-			}
-
-			var a = (MTile)x;
-
 			ItemData ourData = TileData.ItemTable[m_ID];
-			ItemData theirData = TileData.ItemTable[a.ID];
+			ItemData theirData = TileData.ItemTable[other.ID];
 
 			int ourTreshold = 0;
 			if (ourData.Height > 0)
@@ -842,7 +838,7 @@ namespace Ultima
 			{
 				++theirTreshold;
 			}
-			int theirZ = a.Z;
+			int theirZ = other.Z;
 
 			ourZ += ourTreshold;
 			theirZ += theirTreshold;
@@ -853,14 +849,81 @@ namespace Ultima
 			}
 			if (res == 0)
 			{
-				res = m_Solver - a.Solver;
+				res = m_Solver - other.Solver;
 			}
 			return res;
+		}
+
+		public int CompareTo(object obj)
+		{
+			if (obj == null)
+			{
+				return 1;
+			}
+
+			if (!(obj is MTile))
+			{
+				throw new ArgumentException("Object must be of type MTile.", nameof(obj));
+			}
+
+			return CompareTo((MTile)obj);
+		}
+
+		public bool Equals(MTile other)
+		{
+			return m_ID == other.m_ID && m_Z == other.m_Z && m_Flag == other.m_Flag && m_Solver == other.m_Solver;
+		}
+
+		public override bool Equals(object obj)
+		{
+			return obj is MTile other && Equals(other);
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				int hash = m_ID;
+				hash = (hash * 397) ^ m_Z;
+				hash = (hash * 397) ^ (int)m_Flag;
+				hash = (hash * 397) ^ m_Solver;
+				return hash;
+			}
+		}
+
+		public static bool operator ==(MTile left, MTile right)
+		{
+			return left.Equals(right);
+		}
+
+		public static bool operator !=(MTile left, MTile right)
+		{
+			return !left.Equals(right);
+		}
+
+		public static bool operator <(MTile left, MTile right)
+		{
+			return left.CompareTo(right) < 0;
+		}
+
+		public static bool operator <=(MTile left, MTile right)
+		{
+			return left.CompareTo(right) <= 0;
+		}
+
+		public static bool operator >(MTile left, MTile right)
+		{
+			return left.CompareTo(right) > 0;
+		}
+
+		public static bool operator >=(MTile left, MTile right)
+		{
+			return left.CompareTo(right) >= 0;
 		}
 	}
 
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
-	public struct Tile : IComparable
+	public struct Tile : IComparable, IComparable<Tile>, IEquatable<Tile>
 	{
 		internal ushort m_ID;
 		internal sbyte m_Z;
@@ -899,31 +962,19 @@ namespace Ultima
 			m_Z = z;
 		}
 
-		public int CompareTo(object x)
+		public int CompareTo(Tile other)
 		{
-			if (x == null)
+			if (m_Z > other.m_Z)
 			{
 				return 1;
 			}
-
-			if (!(x is Tile))
-			{
-				throw new ArgumentNullException();
-			}
-
-			var a = (Tile)x;
-
-			if (m_Z > a.m_Z)
-			{
-				return 1;
-			}
-			else if (a.m_Z > m_Z)
+			else if (other.m_Z > m_Z)
 			{
 				return -1;
 			}
 
 			ItemData ourData = TileData.ItemTable[m_ID];
-			ItemData theirData = TileData.ItemTable[a.m_ID];
+			ItemData theirData = TileData.ItemTable[other.m_ID];
 
 			if (ourData.Height > theirData.Height)
 			{
@@ -944,6 +995,69 @@ namespace Ultima
 			}
 
 			return 0;
+		}
+
+		public int CompareTo(object obj)
+		{
+			if (obj == null)
+			{
+				return 1;
+			}
+
+			if (!(obj is Tile))
+			{
+				throw new ArgumentException("Object must be of type Tile.", nameof(obj));
+			}
+
+			return CompareTo((Tile)obj);
+		}
+
+		public bool Equals(Tile other)
+		{
+			return m_ID == other.m_ID && m_Z == other.m_Z;
+		}
+
+		public override bool Equals(object obj)
+		{
+			return obj is Tile other && Equals(other);
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				return (m_ID * 397) ^ m_Z;
+			}
+		}
+
+		public static bool operator ==(Tile left, Tile right)
+		{
+			return left.Equals(right);
+		}
+
+		public static bool operator !=(Tile left, Tile right)
+		{
+			return !left.Equals(right);
+		}
+
+		public static bool operator <(Tile left, Tile right)
+		{
+			return left.CompareTo(right) < 0;
+		}
+
+		public static bool operator <=(Tile left, Tile right)
+		{
+			return left.CompareTo(right) <= 0;
+		}
+
+		public static bool operator >(Tile left, Tile right)
+		{
+			return left.CompareTo(right) > 0;
+		}
+
+		public static bool operator >=(Tile left, Tile right)
+		{
+			return left.CompareTo(right) >= 0;
 		}
 	}
 }

@@ -1,5 +1,6 @@
 #region References
 using System;
+using System.Globalization;
 using System.Text.RegularExpressions;
 #endregion
 
@@ -8,7 +9,7 @@ namespace Ultima
 	public sealed class StringEntry
 	{
 		[Flags]
-		public enum CliLocFlag
+		public enum CliLocState
 		{
 			Original = 0x0,
 			Custom = 0x1,
@@ -35,16 +36,16 @@ namespace Ultima
 			}
 		}
 
-		public CliLocFlag Flag { get; set; }
+		public CliLocState Flag { get; set; }
 
 		public StringEntry(int number, string text, byte flag)
 		{
 			Number = number;
 			m_Text = text;
-			Flag = (CliLocFlag)flag;
+			Flag = (CliLocState)flag;
 		}
 
-		public StringEntry(int number, string text, CliLocFlag flag)
+		public StringEntry(int number, string text, CliLocState flag)
 		{
 			Number = number;
 			m_Text = text;
@@ -70,7 +71,7 @@ namespace Ultima
 			{
 				m_Args[i + 1] = args[i];
 			}
-			return String.Format(m_FmtTxt, m_Args);
+			return String.Format(CultureInfo.CurrentCulture, m_FmtTxt, m_Args);
 		}
 
 		public string SplitFormat(string argstr)
@@ -84,7 +85,7 @@ namespace Ultima
 			{
 				m_Args[i + 1] = args[i];
 			}
-			return String.Format(m_FmtTxt, m_Args);
+			return String.Format(CultureInfo.CurrentCulture, m_FmtTxt, m_Args);
 			/*
 			{
 				StringBuilder sb = new StringBuilder();

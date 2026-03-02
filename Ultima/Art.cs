@@ -27,7 +27,7 @@ namespace Ultima
 		private static Bitmap[] m_Cache;
 		private static bool[] m_Removed;
 		private static readonly Hashtable m_patched = new Hashtable();
-		public static bool Modified = false;
+		public static bool Modified;
 
 		private static byte[] m_StreamBuffer;
 		private static byte[] Validbuffer;

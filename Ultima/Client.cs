@@ -1,5 +1,6 @@
 #region References
 using System;
+using System.Globalization;
 using System.IO;
 #endregion
 
@@ -17,7 +18,7 @@ namespace Ultima
 		private static WindowProcessStream m_ProcStream;
 		private static LocationPointer m_LocationPointer;
 
-		private static bool m_Is_Iris2;
+		private static bool m_IsIris2;
 
 		private Client() { }
 
@@ -128,7 +129,7 @@ namespace Ultima
 		{
 			if (mask.Length != vals.Length)
 			{
-				throw new Exception();
+				throw new ArgumentException("Mask and values must have the same length.", nameof(vals));
 			}
 
 			const int chunkSize = 4096;
@@ -416,10 +417,10 @@ namespace Ultima
 		/// <summary>
 		///     Is Client Iris2
 		/// </summary>
-		public static bool Is_Iris2
+		public static bool IsIris2
 		{
-			get { return m_Is_Iris2; }
-			set { m_Is_Iris2 = value; }
+			get { return m_IsIris2; }
+			set { m_IsIris2 = value; }
 		}
 
 		private static void SendChar(ClientWindowHandle hWnd, char c)
@@ -440,7 +441,8 @@ namespace Ultima
 
 			if (!hWnd.IsInvalid)
 			{
-				NativeMethods.SetForegroundWindow(hWnd);
+				int setForegroundWindowResult = NativeMethods.SetForegroundWindow(hWnd);
+				_ = setForegroundWindowResult;
 
 				return true;
 			}
@@ -487,7 +489,7 @@ namespace Ultima
 		/// <returns>True if the Client is running, false if not.</returns>
 		public static bool SendText(string format, params object[] args)
 		{
-			return SendText(String.Format(format, args));
+			return SendText(String.Format(CultureInfo.CurrentCulture, format, args));
 		}
 
 		private static ClientWindowHandle FindHandle()
@@ -505,7 +507,7 @@ namespace Ultima
 			}
 			if (NativeMethods.IsWindow(hWnd = NativeMethods.FindWindowA("OgreGLWindow", null)) != 0)
 			{
-				m_Is_Iris2 = true;
+				m_IsIris2 = true;
 				return hWnd;
 			}
 

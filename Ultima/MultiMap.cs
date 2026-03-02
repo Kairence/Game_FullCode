@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 #endregion
 
@@ -166,7 +167,7 @@ namespace Ultima
 		public static unsafe Bitmap GetFacetImage(int id)
 		{
 			Bitmap bmp;
-			string path = Files.GetFilePath(String.Format("facet0{0}.mul", id));
+			string path = Files.GetFilePath(String.Format(CultureInfo.CurrentCulture, "facet0{0}.mul", id));
 			if (path != null)
 			{
 				using (

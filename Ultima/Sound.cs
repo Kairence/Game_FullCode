@@ -1,6 +1,7 @@
 #region References
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -10,15 +11,15 @@ namespace Ultima
 {
 	public sealed class UOSound
 	{
-		public string Name;
-		public int ID;
-		public byte[] buffer;
+		public string Name { get; private set; }
+		public int ID { get; private set; }
+		public byte[] Buffer { get; private set; }
 
 		public UOSound(string name, int id, byte[] buff)
 		{
 			Name = name;
 			ID = id;
-			buffer = buff;
+			Buffer = buff;
 		}
 	};
 
@@ -56,13 +57,16 @@ namespace Ultima
 			{
 				while ((line = reader.ReadLine()) != null)
 				{
-					if (((line = line.Trim()).Length != 0) && !line.StartsWith("#"))
+					if (((line = line.Trim()).Length != 0) && !line.StartsWith("#", StringComparison.CurrentCulture))
 					{
 						Match match = reg.Match(line);
 
 						if (match.Success)
 						{
-							m_Translations.Add(int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value));
+							m_Translations.Add(
+								int.Parse(match.Groups[1].Value, CultureInfo.CurrentCulture),
+								int.Parse(match.Groups[2].Value, CultureInfo.CurrentCulture)
+							);
 						}
 					}
 				}
@@ -246,7 +250,7 @@ namespace Ultima
 			double len;
 			if (m_Cache[soundID] != null)
 			{
-				len = m_Cache[soundID].buffer.Length;
+				len = m_Cache[soundID].Buffer.Length;
 				len -= 44; //wavheaderlength
 			}
 			else
@@ -350,7 +354,7 @@ namespace Ultima
 								bb.CopyTo(b, 0);
 							}
 							binmul.Write(b);
-							using (var m = new MemoryStream(sound.buffer))
+							using (var m = new MemoryStream(sound.Buffer))
 							{
 								m.Seek(Headerlength, SeekOrigin.Begin);
 								var resultBuffer = new byte[m.Length - Headerlength];
@@ -382,9 +386,9 @@ namespace Ultima
 				{
 					if (IsValidSound(i - 1, out name))
 					{
-						Tex.Write(String.Format("0x{0:X3}", i));
-						Tex.Write(String.Format(";{0}", name));
-						Tex.WriteLine(String.Format(";{0:f}", GetSoundLength(i - 1)));
+						Tex.Write(String.Format(CultureInfo.CurrentCulture, "0x{0:X3}", i));
+						Tex.Write(String.Format(CultureInfo.CurrentCulture, ";{0}", name));
+						Tex.WriteLine(String.Format(CultureInfo.CurrentCulture, ";{0:f}", GetSoundLength(i - 1)));
 					}
 				}
 			}
