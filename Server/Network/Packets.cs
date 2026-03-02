@@ -4953,7 +4953,7 @@ m_Stream.Write( (int) renderMode );
 			{
 				if (m_MD5Provider == null)
 				{
-					m_MD5Provider = new MD5CryptoServiceProvider();
+					m_MD5Provider = MD5.Create();
 				}
 
 				m_Stream.UnderlyingStream.Flush();
@@ -4982,7 +4982,7 @@ m_Stream.Write( (int) renderMode );
 			}
 		}
 
-		private static MD5CryptoServiceProvider m_MD5Provider;
+		private static MD5 m_MD5Provider;
 
 		public static CharacterListFlags AdditionalFlags { get; set; }
 	}
@@ -5056,7 +5056,7 @@ m_Stream.Write( (int) renderMode );
 			{
 				if (m_MD5Provider == null)
 				{
-					m_MD5Provider = new MD5CryptoServiceProvider();
+					m_MD5Provider = MD5.Create();
 				}
 
 				m_Stream.UnderlyingStream.Flush();
@@ -5085,7 +5085,7 @@ m_Stream.Write( (int) renderMode );
 			}
 		}
 
-		private static MD5CryptoServiceProvider m_MD5Provider;
+		private static MD5 m_MD5Provider;
 	}
 
 	public sealed class ClearWeaponAbility : Packet
