@@ -6,198 +6,199 @@ using Server.Network;
 
 namespace Server.Engines.Quests.Haven
 {
-    public class SchmendrickApprenticeCorpse : Corpse
-    {
-        private static int m_HairHue;
-        private Lantern m_Lantern;
-        [Constructable]
-        public SchmendrickApprenticeCorpse()
-            : base(GetOwner(), GetHair(), GetFacialHair(), GetEquipment())
-        {
-            this.Direction = Direction.West;
+	public class SchmendrickApprenticeCorpse : Corpse
+	{
+		private static int m_HairHue;
+		private Lantern m_Lantern;
 
-            foreach (Item item in this.EquipItems)
-            {
-                this.DropItem(item);
-            }
+		[Constructable]
+		public SchmendrickApprenticeCorpse()
+			: base(GetOwner(), GetHair(), GetFacialHair(), GetEquipment())
+		{
+			this.Direction = Direction.West;
 
-            this.m_Lantern = new Lantern();
-            this.m_Lantern.Movable = false;
-            this.m_Lantern.Protected = true;
-            this.m_Lantern.Ignite();
-        }
+			foreach (Item item in this.EquipItems)
+			{
+				this.DropItem(item);
+			}
 
-        public SchmendrickApprenticeCorpse(Serial serial)
-            : base(serial)
-        {
-        }
+			this.m_Lantern = new Lantern();
+			this.m_Lantern.Movable = false;
+			this.m_Lantern.Protected = true;
+			this.m_Lantern.Ignite();
+		}
 
-        public override void AddNameProperty(ObjectPropertyList list)
-        {
-            if (this.ItemID == 0x2006) // Corpse form
-            {
-                list.Add("a human corpse");
-                list.Add(1049144, this.Name); // the remains of ~1_NAME~ the apprentice
-            }
-            else
-            {
-                list.Add(1049145); // the remains of a wizard's apprentice
-            }
-        }
+		public SchmendrickApprenticeCorpse(Serial serial)
+			: base(serial) { }
 
-        public override void OnSingleClick(Mobile from)
-        {
-            int hue = Notoriety.GetHue(Server.Misc.NotorietyHandlers.CorpseNotoriety(from, this));
+		public override void AddNameProperty(ObjectPropertyList list)
+		{
+			if (this.ItemID == 0x2006) // Corpse form
+			{
+				list.Add("a human corpse");
+				list.Add(1049144, this.Name); // the remains of ~1_NAME~ the apprentice
+			}
+			else
+			{
+				list.Add(1049145); // the remains of a wizard's apprentice
+			}
+		}
 
-            if (this.ItemID == 0x2006) // Corpse form
-                from.Send(new MessageLocalized(this.Serial, this.ItemID, MessageType.Label, hue, 3, 1049144, "", this.Name)); // the remains of ~1_NAME~ the apprentice
-            else
-                from.Send(new MessageLocalized(this.Serial, this.ItemID, MessageType.Label, hue, 3, 1049145, "", "")); // the remains of a wizard's apprentice
-        }
+		public override void OnSingleClick(Mobile from)
+		{
+			int hue = Notoriety.GetHue(Server.Misc.NotorietyHandlers.CorpseNotoriety(from, this));
 
-        public override void Open(Mobile from, bool checkSelfLoot)
-        {
-            if (!from.InRange(this.GetWorldLocation(), 2))
-                return;
+			if (this.ItemID == 0x2006) // Corpse form
+				from.Send(
+					new MessageLocalized(this.Serial, this.ItemID, MessageType.Label, hue, 3, 1049144, "", this.Name)
+				); // the remains of ~1_NAME~ the apprentice
+			else
+				from.Send(new MessageLocalized(this.Serial, this.ItemID, MessageType.Label, hue, 3, 1049145, "", "")); // the remains of a wizard's apprentice
+		}
 
-            PlayerMobile player = from as PlayerMobile;
+		public override void Open(Mobile from, bool checkSelfLoot)
+		{
+			if (!from.InRange(this.GetWorldLocation(), 2))
+				return;
 
-            if (player != null)
-            {
-                QuestSystem qs = player.Quest;
+			PlayerMobile player = from as PlayerMobile;
 
-                if (qs is UzeraanTurmoilQuest)
-                {
-                    QuestObjective obj = qs.FindObjective(typeof(FindApprenticeObjective));
+			if (player != null)
+			{
+				QuestSystem qs = player.Quest;
 
-                    if (obj != null && !obj.Completed)
-                    {
-                        Item scroll = new SchmendrickScrollOfPower();
+				if (qs is UzeraanTurmoilQuest)
+				{
+					QuestObjective obj = qs.FindObjective(typeof(FindApprenticeObjective));
 
-                        if (player.PlaceInBackpack(scroll))
-                        {
-                            player.SendLocalizedMessage(1049147, "", 0x22); // You find the scroll and put it in your pack.
-                            obj.Complete();
-                        }
-                        else
-                        {
-                            player.SendLocalizedMessage(1049146, "", 0x22); // You find the scroll, but can't pick it up because your pack is too full.  Come back when you have more room in your pack.
-                            scroll.Delete();
-                        }
+					if (obj != null && !obj.Completed)
+					{
+						Item scroll = new SchmendrickScrollOfPower();
 
-                        return;
-                    }
-                }
-            }
+						if (player.PlaceInBackpack(scroll))
+						{
+							player.SendLocalizedMessage(1049147, "", 0x22); // You find the scroll and put it in your pack.
+							obj.Complete();
+						}
+						else
+						{
+							player.SendLocalizedMessage(1049146, "", 0x22); // You find the scroll, but can't pick it up because your pack is too full.  Come back when you have more room in your pack.
+							scroll.Delete();
+						}
 
-            from.SendLocalizedMessage(1049143, "", 0x22); // This is the corpse of a wizard's apprentice.  You can't bring yourself to search it without a good reason.
-        }
+						return;
+					}
+				}
+			}
 
-        public override void OnLocationChange(Point3D oldLoc)
-        {
-            if (this.m_Lantern != null && !this.m_Lantern.Deleted)
-                this.m_Lantern.Location = new Point3D(this.X, this.Y + 1, this.Z);
-        }
+			from.SendLocalizedMessage(1049143, "", 0x22); // This is the corpse of a wizard's apprentice.  You can't bring yourself to search it without a good reason.
+		}
 
-        public override void OnMapChange()
-        {
-            if (this.m_Lantern != null && !this.m_Lantern.Deleted)
-                this.m_Lantern.Map = this.Map;
-        }
+		public override void OnLocationChange(Point3D oldLoc)
+		{
+			if (this.m_Lantern != null && !this.m_Lantern.Deleted)
+				this.m_Lantern.Location = new Point3D(this.X, this.Y + 1, this.Z);
+		}
 
-        public override void OnAfterDelete()
-        {
-            base.OnAfterDelete();
+		public override void OnMapChange()
+		{
+			if (this.m_Lantern != null && !this.m_Lantern.Deleted)
+				this.m_Lantern.Map = this.Map;
+		}
 
-            if (this.m_Lantern != null && !this.m_Lantern.Deleted)
-                this.m_Lantern.Delete();
-        }
+		public override void OnAfterDelete()
+		{
+			base.OnAfterDelete();
 
-        public override void Serialize(GenericWriter writer)
-        {
-            if (this.m_Lantern != null && this.m_Lantern.Deleted)
-                this.m_Lantern = null;
+			if (this.m_Lantern != null && !this.m_Lantern.Deleted)
+				this.m_Lantern.Delete();
+		}
 
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			if (this.m_Lantern != null && this.m_Lantern.Deleted)
+				this.m_Lantern = null;
 
-            writer.Write((int)0); // version
+			base.Serialize(writer);
 
-            writer.Write(this.m_Lantern);
-        }
+			writer.Write((int)0); // version
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write(this.m_Lantern);
+		}
 
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            this.m_Lantern = (Lantern)reader.ReadItem();
-        }
+			int version = reader.ReadInt();
 
-        private static Mobile GetOwner()
-        {
-            Mobile apprentice = new Mobile();
+			this.m_Lantern = (Lantern)reader.ReadItem();
+		}
 
-            apprentice.Hue = Utility.RandomSkinHue();
-            apprentice.Female = false;
-            apprentice.Body = 0x190;
-            apprentice.Name = NameList.RandomName("male");
+		private static Mobile GetOwner()
+		{
+			Mobile apprentice = new Mobile();
 
-            apprentice.Delete();
+			apprentice.Hue = Utility.RandomSkinHue();
+			apprentice.Female = false;
+			apprentice.Body = 0x190;
+			apprentice.Name = NameList.RandomName("male");
 
-            return apprentice;
-        }
+			apprentice.Delete();
 
-        private static List<Item> GetEquipment()
-        {
-            List<Item> list = new List<Item>();
+			return apprentice;
+		}
 
-            list.Add(new Robe(QuestSystem.RandomBrightHue()));
-            list.Add(new WizardsHat(Utility.RandomNeutralHue()));
-            list.Add(new Shoes(Utility.RandomNeutralHue()));
+		private static List<Item> GetEquipment()
+		{
+			List<Item> list = new List<Item>();
 
-            /*
-            int hairHue = Utility.RandomHairHue();
+			list.Add(new Robe(QuestSystem.RandomBrightHue()));
+			list.Add(new WizardsHat(Utility.RandomNeutralHue()));
+			list.Add(new Shoes(Utility.RandomNeutralHue()));
 
-            switch ( Utility.Random( 8 ) )
-            {
-            case 0: list.Add( new Afro( hairHue ) ); break;
-            case 1: list.Add( new KrisnaHair( hairHue ) ); break;
-            case 2: list.Add( new PageboyHair( hairHue ) ); break;
-            case 3: list.Add( new PonyTail( hairHue ) ); break;
-            case 4: list.Add( new ReceedingHair( hairHue ) ); break;
-            case 5: list.Add( new TwoPigTails( hairHue ) ); break;
-            case 6: list.Add( new ShortHair( hairHue ) ); break;
-            case 7: list.Add( new LongHair( hairHue ) ); break;
-            }
+			/*
+			int hairHue = Utility.RandomHairHue();
 
-            switch ( Utility.Random( 5 ) )
-            {
-            case 0: list.Add( new LongBeard( hairHue ) ); break;
-            case 1: list.Add( new MediumLongBeard( hairHue ) ); break;
-            case 2: list.Add( new Vandyke( hairHue ) ); break;
-            case 3: list.Add( new Mustache( hairHue ) ); break;
-            case 4: list.Add( new Goatee( hairHue ) ); break;
-            }
-            * */
+			switch ( Utility.Random( 8 ) )
+			{
+			case 0: list.Add( new Afro( hairHue ) ); break;
+			case 1: list.Add( new KrisnaHair( hairHue ) ); break;
+			case 2: list.Add( new PageboyHair( hairHue ) ); break;
+			case 3: list.Add( new PonyTail( hairHue ) ); break;
+			case 4: list.Add( new ReceedingHair( hairHue ) ); break;
+			case 5: list.Add( new TwoPigTails( hairHue ) ); break;
+			case 6: list.Add( new ShortHair( hairHue ) ); break;
+			case 7: list.Add( new LongHair( hairHue ) ); break;
+			}
 
-            list.Add(new Spellbook());
+			switch ( Utility.Random( 5 ) )
+			{
+			case 0: list.Add( new LongBeard( hairHue ) ); break;
+			case 1: list.Add( new MediumLongBeard( hairHue ) ); break;
+			case 2: list.Add( new Vandyke( hairHue ) ); break;
+			case 3: list.Add( new Mustache( hairHue ) ); break;
+			case 4: list.Add( new Goatee( hairHue ) ); break;
+			}
+			* */
 
-            return list;
-        }
+			list.Add(new Spellbook());
 
-        private static HairInfo GetHair()
-        {
-            m_HairHue = Race.Human.RandomHairHue();
+			return list;
+		}
 
-            return new HairInfo(Race.Human.RandomHair(false), m_HairHue);
-        }
+		private static HairInfo GetHair()
+		{
+			m_HairHue = Race.Human.RandomHairHue();
 
-        private static FacialHairInfo GetFacialHair()
-        {
-            m_HairHue = Race.Human.RandomHairHue();
+			return new HairInfo(Race.Human.RandomHair(false), m_HairHue);
+		}
 
-            return new FacialHairInfo(Race.Human.RandomFacialHair(false), m_HairHue);
-        }
-    }
+		private static FacialHairInfo GetFacialHair()
+		{
+			m_HairHue = Race.Human.RandomHairHue();
+
+			return new FacialHairInfo(Race.Human.RandomFacialHair(false), m_HairHue);
+		}
+	}
 }

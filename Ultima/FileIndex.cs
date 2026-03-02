@@ -1,6 +1,7 @@
 #region References
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 #endregion
@@ -139,8 +140,7 @@ namespace Ultima
 		}
 
 		public FileIndex(string idxFile, string mulFile, int length, int file)
-			: this(idxFile, mulFile, null, length, file, ".dat", -1, false)
-		{ }
+			: this(idxFile, mulFile, null, length, file, ".dat", -1, false) { }
 
 		public FileIndex(
 			string idxFile,
@@ -150,7 +150,8 @@ namespace Ultima
 			int file,
 			string uopEntryExtension,
 			int idxLength,
-			bool hasExtra)
+			bool hasExtra
+		)
 		{
 			Index = new Entry3D[length];
 
@@ -165,12 +166,15 @@ namespace Ultima
 
 			if (Files.MulPath.Count > 0)
 			{
-				idxPath = Files.MulPath[idxFile.ToLower()];
-				MulPath = Files.MulPath[mulFile.ToLower()];
+				idxPath = Files.MulPath[idxFile.ToLower(CultureInfo.CurrentCulture)];
+				MulPath = Files.MulPath[mulFile.ToLower(CultureInfo.CurrentCulture)];
 
-				if (!String.IsNullOrEmpty(uopFile) && Files.MulPath.ContainsKey(uopFile.ToLower()))
+				if (
+					!String.IsNullOrEmpty(uopFile)
+					&& Files.MulPath.ContainsKey(uopFile.ToLower(CultureInfo.CurrentCulture))
+				)
 				{
-					uopPath = Files.MulPath[uopFile.ToLower()];
+					uopPath = Files.MulPath[uopFile.ToLower(CultureInfo.CurrentCulture)];
 				}
 
 				if (String.IsNullOrEmpty(idxPath))
@@ -236,7 +240,7 @@ namespace Ultima
 			 * It's possible that UOP can include some entries with unknown hash: not really unknown for me, but
 			 * not useful for reading legacy entries. That's why i removed unknown hash exception throwing from this code
 			 */
-			if (MulPath != null && MulPath.EndsWith(".uop"))
+			if (MulPath != null && MulPath.EndsWith(".uop", StringComparison.CurrentCulture))
 			{
 				using (var index = new FileStream(MulPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
 				{
@@ -268,7 +272,13 @@ namespace Ultima
 
 						for (int i = 0; i < length; i++)
 						{
-							string entryName = string.Format("build/{0}/{1:D8}{2}", uopPattern, i, uopEntryExtension);
+							string entryName = string.Format(
+								CultureInfo.CurrentCulture,
+								"build/{0}/{1:D8}{2}",
+								uopPattern,
+								i,
+								uopEntryExtension
+							);
 							ulong hash = HashFileName(entryName);
 
 							if (!hashes.ContainsKey(hash))
@@ -304,9 +314,11 @@ namespace Ultima
 								int idx;
 								if (hashes.TryGetValue(hash, out idx))
 								{
-									if (idx < 0 || idx > Index.Length)
+									if (idx < 0 || idx >= Index.Length)
 									{
-										throw new IndexOutOfRangeException("hashes dictionary and files collection have different count of entries!");
+										throw new InvalidDataException(
+											"hashes dictionary and files collection have different count of entries!"
+										);
 									}
 
 									Index[idx].lookup = (int)(offset + headerLength);
@@ -320,8 +332,12 @@ namespace Ultima
 
 										byte[] extra = br.ReadBytes(8);
 
-										var extra1 = (ushort)((extra[3] << 24) | (extra[2] << 16) | (extra[1] << 8) | extra[0]);
-										var extra2 = (ushort)((extra[7] << 24) | (extra[6] << 16) | (extra[5] << 8) | extra[4]);
+										var extra1 = (ushort)(
+											(extra[3] << 24) | (extra[2] << 16) | (extra[1] << 8) | extra[0]
+										);
+										var extra2 = (ushort)(
+											(extra[7] << 24) | (extra[6] << 16) | (extra[5] << 8) | extra[4]
+										);
 
 										Index[idx].lookup += 8;
 										Index[idx].extra = extra1 << 16 | extra2;
@@ -330,8 +346,7 @@ namespace Ultima
 									}
 								}
 							}
-						}
-						while (br.BaseStream.Seek(nextBlock, SeekOrigin.Begin) != 0);
+						} while (br.BaseStream.Seek(nextBlock, SeekOrigin.Begin) != 0);
 					}
 				}
 			}
@@ -389,8 +404,8 @@ namespace Ultima
 			}
 			if (Files.MulPath.Count > 0)
 			{
-				idxPath = Files.MulPath[idxFile.ToLower()];
-				MulPath = Files.MulPath[mulFile.ToLower()];
+				idxPath = Files.MulPath[idxFile.ToLower(CultureInfo.CurrentCulture)];
+				MulPath = Files.MulPath[mulFile.ToLower(CultureInfo.CurrentCulture)];
 				if (String.IsNullOrEmpty(idxPath))
 				{
 					idxPath = null;
@@ -470,7 +485,12 @@ namespace Ultima
 		/// <returns></returns>
 		public static ulong HashFileName(string s)
 		{
-			uint eax, ecx, edx, ebx, esi, edi;
+			uint eax,
+				ecx,
+				edx,
+				ebx,
+				esi,
+				edi;
 
 			eax = ecx = edx = ebx = esi = edi = 0;
 			ebx = edi = esi = (uint)s.Length + 0xDEADBEEF;

@@ -5,204 +5,166 @@ using Server.Mobiles;
 
 namespace Server.Items
 {
-    [FlipableAttribute(0x27AA, 0x27F5)]
-    public class Fukiya : Item, INinjaWeapon
-    {
-        private int m_UsesRemaining;
-        private Poison m_Poison;
-        private int m_PoisonCharges;
-        [Constructable]
-        public Fukiya()
-            : base(0x27AA)
-        {
-            this.Weight = 4.0;
-            this.Layer = Layer.OneHanded;
-        }
+	[FlipableAttribute(0x27AA, 0x27F5)]
+	public class Fukiya : Item, INinjaWeapon
+	{
+		private int m_UsesRemaining;
+		private Poison m_Poison;
+		private int m_PoisonCharges;
 
-        public Fukiya(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public Fukiya()
+			: base(0x27AA)
+		{
+			this.Weight = 4.0;
+			this.Layer = Layer.OneHanded;
+		}
 
-        public virtual int WrongAmmoMessage
-        {
-            get
-            {
-                return 1063329;
-            }
-        }//You can only load fukiya darts
-        public virtual int NoFreeHandMessage
-        {
-            get
-            {
-                return 1063327;
-            }
-        }//You must have a free hand to use a fukiya.
-        public virtual int EmptyWeaponMessage
-        {
-            get
-            {
-                return 1063325;
-            }
-        }//You have no fukiya darts!
-        public virtual int RecentlyUsedMessage
-        {
-            get
-            {
-                return 1063326;
-            }
-        }//You are already using that fukiya.
-        public virtual int FullWeaponMessage
-        {
-            get
-            {
-                return 1063330;
-            }
-        }//You can only load fukiya darts
-        public virtual int WeaponMinRange
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public virtual int WeaponMaxRange
-        {
-            get
-            {
-                return 6;
-            }
-        }
-        public virtual int WeaponDamage
-        {
-            get
-            {
-                return Utility.RandomMinMax(4, 6);
-            }
-        }
-        public Type AmmoType
-        {
-            get
-            {
-                return typeof(FukiyaDarts);
-            }
-        }
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int UsesRemaining
-        {
-            get
-            {
-                return this.m_UsesRemaining;
-            }
-            set
-            {
-                this.m_UsesRemaining = value;
-                this.InvalidateProperties();
-            }
-        }
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Poison Poison
-        {
-            get
-            {
-                return this.m_Poison;
-            }
-            set
-            {
-                this.m_Poison = value;
-                this.InvalidateProperties();
-            }
-        }
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int PoisonCharges
-        {
-            get
-            {
-                return this.m_PoisonCharges;
-            }
-            set
-            {
-                this.m_PoisonCharges = value;
-                this.InvalidateProperties();
-            }
-        }
-        public bool ShowUsesRemaining
-        {
-            get
-            {
-                return true;
-            }
-            set
-            {
-            }
-        }
-        public void AttackAnimation(Mobile from, Mobile to)
-        {
-            if (from.Body.IsHuman && !from.Mounted && !Core.SA)
-            {
-                from.Animate(33, 2, 1, true, true, 0);
-            }
+		public Fukiya(Serial serial)
+			: base(serial) { }
 
-            from.PlaySound(0x223);
-            from.MovingEffect(to, 0x2804, 5, 0, false, false);
-        }
+		public virtual int WrongAmmoMessage
+		{
+			get { return 1063329; }
+		} //You can only load fukiya darts
+		public virtual int NoFreeHandMessage
+		{
+			get { return 1063327; }
+		} //You must have a free hand to use a fukiya.
+		public virtual int EmptyWeaponMessage
+		{
+			get { return 1063325; }
+		} //You have no fukiya darts!
+		public virtual int RecentlyUsedMessage
+		{
+			get { return 1063326; }
+		} //You are already using that fukiya.
+		public virtual int FullWeaponMessage
+		{
+			get { return 1063330; }
+		} //You can only load fukiya darts
+		public virtual int WeaponMinRange
+		{
+			get { return 0; }
+		}
+		public virtual int WeaponMaxRange
+		{
+			get { return 6; }
+		}
+		public virtual int WeaponDamage
+		{
+			get { return Utility.RandomMinMax(4, 6); }
+		}
+		public Type AmmoType
+		{
+			get { return typeof(FukiyaDarts); }
+		}
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int UsesRemaining
+		{
+			get { return this.m_UsesRemaining; }
+			set
+			{
+				this.m_UsesRemaining = value;
+				this.InvalidateProperties();
+			}
+		}
 
-            list.Add(1060584, this.m_UsesRemaining.ToString()); // uses remaining: ~1_val~
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Poison Poison
+		{
+			get { return this.m_Poison; }
+			set
+			{
+				this.m_Poison = value;
+				this.InvalidateProperties();
+			}
+		}
 
-            if (this.m_Poison != null && this.m_PoisonCharges > 0)
-                list.Add(1062412 + this.m_Poison.Level, this.m_PoisonCharges.ToString());
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int PoisonCharges
+		{
+			get { return this.m_PoisonCharges; }
+			set
+			{
+				this.m_PoisonCharges = value;
+				this.InvalidateProperties();
+			}
+		}
+		public bool ShowUsesRemaining
+		{
+			get { return true; }
+			set { }
+		}
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            NinjaWeapon.AttemptShoot((PlayerMobile)from, this);
-        }
+		public void AttackAnimation(Mobile from, Mobile to)
+		{
+			if (from.Body.IsHuman && !from.Mounted && !Core.SA)
+			{
+				from.Animate(33, 2, 1, true, true, 0);
+			}
 
-        public override void GetContextMenuEntries(Mobile from, List<ContextMenuEntry> list)
-        {
-            base.GetContextMenuEntries(from, list);
+			from.PlaySound(0x223);
+			from.MovingEffect(to, 0x2804, 5, 0, false, false);
+		}
 
-            if (this.IsChildOf(from))
-            {
-                list.Add(new NinjaWeapon.LoadEntry(this, 6224));
-                list.Add(new NinjaWeapon.UnloadEntry(this, 6225));
-            }
-        }
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			list.Add(1060584, this.m_UsesRemaining.ToString()); // uses remaining: ~1_val~
 
-            writer.Write((int)0);
+			if (this.m_Poison != null && this.m_PoisonCharges > 0)
+				list.Add(1062412 + this.m_Poison.Level, this.m_PoisonCharges.ToString());
+		}
 
-            writer.Write((int)this.m_UsesRemaining);
+		public override void OnDoubleClick(Mobile from)
+		{
+			NinjaWeapon.AttemptShoot((PlayerMobile)from, this);
+		}
 
-            Poison.Serialize(this.m_Poison, writer);
-            writer.Write((int)this.m_PoisonCharges);
-        }
+		public override void GetContextMenuEntries(Mobile from, List<ContextMenuEntry> list)
+		{
+			base.GetContextMenuEntries(from, list);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			if (this.IsChildOf(from))
+			{
+				list.Add(new NinjaWeapon.LoadEntry(this, 6224));
+				list.Add(new NinjaWeapon.UnloadEntry(this, 6225));
+			}
+		}
 
-            int version = reader.ReadInt();
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            switch ( version )
-            {
-                case 0:
-                    {
-                        this.m_UsesRemaining = reader.ReadInt();
+			writer.Write((int)0);
 
-                        this.m_Poison = Poison.Deserialize(reader);
-                        this.m_PoisonCharges = reader.ReadInt();
+			writer.Write((int)this.m_UsesRemaining);
 
-                        break;
-                    }
-            }
-        }
-    }
+			Poison.Serialize(this.m_Poison, writer);
+			writer.Write((int)this.m_PoisonCharges);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+
+			switch (version)
+			{
+				case 0:
+				{
+					this.m_UsesRemaining = reader.ReadInt();
+
+					this.m_Poison = Poison.Deserialize(reader);
+					this.m_PoisonCharges = reader.ReadInt();
+
+					break;
+				}
+			}
+		}
+	}
 }

@@ -1,62 +1,62 @@
-using Server.Engines.Craft;
 using System;
+using Server.Engines.Craft;
 
 namespace Server.Items
 {
-    public class BlankScroll : Item, ICommodity, ICraftable
-    {
-        [Constructable]
-        public BlankScroll()
-            : this(1)
-        {
-        }
+	public class BlankScroll : Item, ICommodity, ICraftable
+	{
+		[Constructable]
+		public BlankScroll()
+			: this(1) { }
 
-        [Constructable]
-        public BlankScroll(int amount)
-            : base(0xEF3)
-        {
-            this.Stackable = true;
-            this.Weight = 0.1;
-            this.Amount = amount;
-        }
+		[Constructable]
+		public BlankScroll(int amount)
+			: base(0xEF3)
+		{
+			this.Stackable = true;
+			this.Weight = 0.1;
+			this.Amount = amount;
+		}
 
-        public BlankScroll(Serial serial)
-            : base(serial)
-        {
-        }
+		public BlankScroll(Serial serial)
+			: base(serial) { }
 
-        TextDefinition ICommodity.Description
-        {
-            get
-            {
-                return this.LabelNumber;
-            }
-        }
-        bool ICommodity.IsDeedable
-        {
-            get
-            {
-                return (Core.ML);
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		TextDefinition ICommodity.Description
+		{
+			get { return this.LabelNumber; }
+		}
+		bool ICommodity.IsDeedable
+		{
+			get { return (Core.ML); }
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public int OnCraft(int quality, bool makersMark, Mobile from, CraftSystem craftSystem, Type typeRes, ITool tool, CraftItem craftItem, int resHue)
-        {
-            Amount = 5;
-            return 1;
-        }
-    }
+			int version = reader.ReadInt();
+		}
+
+		public int OnCraft(
+			int quality,
+			bool makersMark,
+			Mobile from,
+			CraftSystem craftSystem,
+			Type typeRes,
+			ITool tool,
+			CraftItem craftItem,
+			int resHue
+		)
+		{
+			Amount = 5;
+			return 1;
+		}
+	}
 }

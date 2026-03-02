@@ -2,90 +2,81 @@ using System;
 
 namespace Server.Factions
 {
-    public class FactionTrapRemovalKit : Item
-    {
-        private int m_Charges;
-        [Constructable]
-        public FactionTrapRemovalKit()
-            : base(7867)
-        {
-            this.LootType = LootType.Blessed;
-            this.m_Charges = 25;
-        }
+	public class FactionTrapRemovalKit : Item
+	{
+		private int m_Charges;
 
-        public FactionTrapRemovalKit(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public FactionTrapRemovalKit()
+			: base(7867)
+		{
+			this.LootType = LootType.Blessed;
+			this.m_Charges = 25;
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int Charges
-        {
-            get
-            {
-                return this.m_Charges;
-            }
-            set
-            {
-                this.m_Charges = value;
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1041508;
-            }
-        }// a faction trap removal kit
-        public void ConsumeCharge(Mobile consumer)
-        {
-            --this.m_Charges;
+		public FactionTrapRemovalKit(Serial serial)
+			: base(serial) { }
 
-            if (this.m_Charges <= 0)
-            {
-                this.Delete();
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int Charges
+		{
+			get { return this.m_Charges; }
+			set { this.m_Charges = value; }
+		}
+		public override int LabelNumber
+		{
+			get { return 1041508; }
+		} // a faction trap removal kit
 
-                if (consumer != null)
-                    consumer.SendLocalizedMessage(1042531); // You have used all of the parts in your trap removal kit.
-            }
-        }
+		public void ConsumeCharge(Mobile consumer)
+		{
+			--this.m_Charges;
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+			if (this.m_Charges <= 0)
+			{
+				this.Delete();
 
-            // NOTE: OSI does not list uses remaining; intentional difference
-            list.Add(1060584, this.m_Charges.ToString()); // uses remaining: ~1_val~
-        }
+				if (consumer != null)
+					consumer.SendLocalizedMessage(1042531); // You have used all of the parts in your trap removal kit.
+			}
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-            writer.Write((int)1); // version
+			// NOTE: OSI does not list uses remaining; intentional difference
+			list.Add(1060584, this.m_Charges.ToString()); // uses remaining: ~1_val~
+		}
 
-            writer.WriteEncodedInt((int)this.m_Charges);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)1); // version
 
-            int version = reader.ReadInt();
+			writer.WriteEncodedInt((int)this.m_Charges);
+		}
 
-            switch ( version )
-            {
-                case 1:
-                    {
-                        this.m_Charges = reader.ReadEncodedInt();
-                        break;
-                    }
-                case 0:
-                    {
-                        this.m_Charges = 25;
-                        break;
-                    }
-            }
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+
+			switch (version)
+			{
+				case 1:
+				{
+					this.m_Charges = reader.ReadEncodedInt();
+					break;
+				}
+				case 0:
+				{
+					this.m_Charges = 25;
+					break;
+				}
+			}
+		}
+	}
 }

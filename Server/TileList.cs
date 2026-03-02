@@ -11,7 +11,10 @@ namespace Server
 			m_Count = 0;
 		}
 
-		public int Count { get { return m_Count; } }
+		public int Count
+		{
+			get { return m_Count; }
+		}
 
 		public void AddRange(StaticTile[] tiles)
 		{

@@ -2,41 +2,41 @@ using System;
 
 namespace Server.Items
 {
-    [TypeAlias("Server.Items.AdmiralHeartyRum")]
-    public class AdmiralsHeartyRum : BeverageBottle
-    {
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public AdmiralsHeartyRum()
-            : base(BeverageType.Ale)
-        {
-            Hue = 0x66C;
-        }
+	[TypeAlias("Server.Items.AdmiralHeartyRum")]
+	public class AdmiralsHeartyRum : BeverageBottle
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public AdmiralsHeartyRum(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public AdmiralsHeartyRum()
+			: base(BeverageType.Ale)
+		{
+			Hue = 0x66C;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1063477;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public AdmiralsHeartyRum(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0);
-        }
+		public override int LabelNumber
+		{
+			get { return 1063477; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

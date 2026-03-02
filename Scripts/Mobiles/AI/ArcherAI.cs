@@ -5,8 +5,7 @@ namespace Server.Mobiles
 	public class ArcherAI : BaseAI
 	{
 		public ArcherAI(BaseCreature m)
-			: base(m)
-		{ }
+			: base(m) { }
 
 		public override bool DoActionWander()
 		{
@@ -96,7 +95,7 @@ namespace Server.Mobiles
 		{
 			var c = m_Mobile.Combatant as Mobile;
 
-			if ( m_Mobile.Hits > (m_Mobile.HitsMax / 2))
+			if (m_Mobile.Hits > (m_Mobile.HitsMax / 2))
 			{
 				// If I have a target, go back and fight them
 				if (c != null && m_Mobile.GetDistanceToSqrt(c) <= m_Mobile.RangePerception * 2)

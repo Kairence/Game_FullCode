@@ -11,7 +11,7 @@ namespace Server
 		Regular,
 		UOTD,
 		God,
-		SA
+		SA,
 	}
 
 	public class ClientVersion : IComparable, IComparer
@@ -23,21 +23,38 @@ namespace Server
 		private readonly ClientType m_Type;
 		private readonly string m_SourceString;
 
-		public int Major { get { return m_Major; } }
+		public int Major
+		{
+			get { return m_Major; }
+		}
 
-		public int Minor { get { return m_Minor; } }
+		public int Minor
+		{
+			get { return m_Minor; }
+		}
 
-		public int Revision { get { return m_Revision; } }
+		public int Revision
+		{
+			get { return m_Revision; }
+		}
 
-		public int Patch { get { return m_Patch; } }
+		public int Patch
+		{
+			get { return m_Patch; }
+		}
 
-		public ClientType Type { get { return m_Type; } }
+		public ClientType Type
+		{
+			get { return m_Type; }
+		}
 
-		public string SourceString { get { return m_SourceString; } }
+		public string SourceString
+		{
+			get { return m_SourceString; }
+		}
 
 		public ClientVersion(int maj, int min, int rev, int pat)
-			: this(maj, min, rev, pat, ClientType.Regular)
-		{ }
+			: this(maj, min, rev, pat, ClientType.Regular) { }
 
 		public ClientVersion(int maj, int min, int rev, int pat, ClientType type)
 		{
@@ -47,10 +64,10 @@ namespace Server
 			m_Patch = pat;
 			m_Type = type;
 
-            if (m_Type != ClientType.SA && m_Major >= 67)
-            {
-                m_Type = ClientType.SA;
-            }
+			if (m_Type != ClientType.SA && m_Major >= 67)
+			{
+				m_Type = ClientType.SA;
+			}
 
 			m_SourceString = _ToStringImpl();
 		}
@@ -104,8 +121,11 @@ namespace Server
 				return false;
 			}
 
-			return m_Major == v.m_Major && m_Minor == v.m_Minor && m_Revision == v.m_Revision && m_Patch == v.m_Patch &&
-				   m_Type == v.m_Type;
+			return m_Major == v.m_Major
+				&& m_Minor == v.m_Minor
+				&& m_Revision == v.m_Revision
+				&& m_Patch == v.m_Patch
+				&& m_Type == v.m_Type;
 		}
 
 		private string _ToStringImpl()
@@ -181,16 +201,21 @@ namespace Server
 					}
 				}
 
-                if (m_Major >= 67)
-                {
-                    m_Type = ClientType.SA;
-                }
-                else if(fmt.IndexOf("god") >= 0 || fmt.IndexOf("gq") >= 0)
+				if (m_Major >= 67)
+				{
+					m_Type = ClientType.SA;
+				}
+				else if (fmt.IndexOf("god") >= 0 || fmt.IndexOf("gq") >= 0)
 				{
 					m_Type = ClientType.God;
 				}
-				else if (fmt.IndexOf("third dawn") >= 0 || fmt.IndexOf("uo:td") >= 0 || fmt.IndexOf("uotd") >= 0 ||
-						 fmt.IndexOf("uo3d") >= 0 || fmt.IndexOf("uo:3d") >= 0)
+				else if (
+					fmt.IndexOf("third dawn") >= 0
+					|| fmt.IndexOf("uo:td") >= 0
+					|| fmt.IndexOf("uotd") >= 0
+					|| fmt.IndexOf("uo3d") >= 0
+					|| fmt.IndexOf("uo:3d") >= 0
+				)
 				{
 					m_Type = ClientType.UOTD;
 				}

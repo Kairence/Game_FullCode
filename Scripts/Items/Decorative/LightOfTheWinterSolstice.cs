@@ -2,111 +2,103 @@ using System;
 
 namespace Server.Items
 {
-    [FlipableAttribute(0x236E, 0x2371)]
-    public class LightOfTheWinterSolstice : Item
-    {
-        private static readonly string[] m_StaffNames = new string[]
-        {
-            "Aenima",
-            "Alkiser",
-            "ASayre",
-            "David",
-            "Krrios",
-            "Mark",
-            "Merlin",
-            "Merlix", //LordMerlix
-            "Phantom",
-            "Phenos",
-            "psz",
-            "Ryan",
-            "Quantos",
-            "Outkast", //TheOutkastDev
-            "V", //Admin_V
-            "Zippy"
-        };
-        private string m_Dipper;
-        [Constructable]
-        public LightOfTheWinterSolstice()
-            : this(m_StaffNames[Utility.Random(m_StaffNames.Length)])
-        {
-        }
+	[FlipableAttribute(0x236E, 0x2371)]
+	public class LightOfTheWinterSolstice : Item
+	{
+		private static readonly string[] m_StaffNames = new string[]
+		{
+			"Aenima",
+			"Alkiser",
+			"ASayre",
+			"David",
+			"Krrios",
+			"Mark",
+			"Merlin",
+			"Merlix", //LordMerlix
+			"Phantom",
+			"Phenos",
+			"psz",
+			"Ryan",
+			"Quantos",
+			"Outkast", //TheOutkastDev
+			"V", //Admin_V
+			"Zippy",
+		};
+		private string m_Dipper;
 
-        [Constructable]
-        public LightOfTheWinterSolstice(string dipper)
-            : base(0x236E)
-        {
-            this.m_Dipper = dipper;
+		[Constructable]
+		public LightOfTheWinterSolstice()
+			: this(m_StaffNames[Utility.Random(m_StaffNames.Length)]) { }
 
-            this.Weight = 1.0;
-            this.LootType = LootType.Blessed;
-            this.Light = LightType.Circle300;
-            this.Hue = Utility.RandomDyedHue();
-        }
+		[Constructable]
+		public LightOfTheWinterSolstice(string dipper)
+			: base(0x236E)
+		{
+			this.m_Dipper = dipper;
 
-        public LightOfTheWinterSolstice(Serial serial)
-            : base(serial)
-        {
-        }
+			this.Weight = 1.0;
+			this.LootType = LootType.Blessed;
+			this.Light = LightType.Circle300;
+			this.Hue = Utility.RandomDyedHue();
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public string Dipper
-        {
-            get
-            {
-                return this.m_Dipper;
-            }
-            set
-            {
-                this.m_Dipper = value;
-            }
-        }
-        public override void OnSingleClick(Mobile from)
-        {
-            base.OnSingleClick(from);
+		public LightOfTheWinterSolstice(Serial serial)
+			: base(serial) { }
 
-            this.LabelTo(from, 1070881, this.m_Dipper); // Hand Dipped by ~1_name~
-            this.LabelTo(from, 1070880); // Winter 2004
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public string Dipper
+		{
+			get { return this.m_Dipper; }
+			set { this.m_Dipper = value; }
+		}
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+		public override void OnSingleClick(Mobile from)
+		{
+			base.OnSingleClick(from);
 
-            list.Add(1070881, this.m_Dipper); // Hand Dipped by ~1_name~
-            list.Add(1070880); // Winter 2004
-        }
+			this.LabelTo(from, 1070881, this.m_Dipper); // Hand Dipped by ~1_name~
+			this.LabelTo(from, 1070880); // Winter 2004
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-            writer.Write((int)1); // version
+			list.Add(1070881, this.m_Dipper); // Hand Dipped by ~1_name~
+			list.Add(1070880); // Winter 2004
+		}
 
-            writer.Write((string)this.m_Dipper);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)1); // version
 
-            int version = reader.ReadInt();
+			writer.Write((string)this.m_Dipper);
+		}
 
-            switch ( version )
-            {
-                case 1:
-                    {
-                        this.m_Dipper = reader.ReadString();
-                        break;
-                    }
-                case 0:
-                    {
-                        this.m_Dipper = m_StaffNames[Utility.Random(m_StaffNames.Length)];
-                        break;
-                    }
-            }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            if (this.m_Dipper != null)
-                this.m_Dipper = String.Intern(this.m_Dipper);
-        }
-    }
+			int version = reader.ReadInt();
+
+			switch (version)
+			{
+				case 1:
+				{
+					this.m_Dipper = reader.ReadString();
+					break;
+				}
+				case 0:
+				{
+					this.m_Dipper = m_StaffNames[Utility.Random(m_StaffNames.Length)];
+					break;
+				}
+			}
+
+			if (this.m_Dipper != null)
+				this.m_Dipper = String.Intern(this.m_Dipper);
+		}
+	}
 }

@@ -2,353 +2,339 @@ using System;
 
 namespace Server.Items
 {
-    public class OrigamiPaper : Item
-    {
-        [Constructable]
-        public OrigamiPaper()
-            : base(0x2830)
-        {
-        }
+	public class OrigamiPaper : Item
+	{
+		[Constructable]
+		public OrigamiPaper()
+			: base(0x2830) { }
 
-        public OrigamiPaper(Serial serial)
-            : base(serial)
-        {
-        }
+		public OrigamiPaper(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1030288;
-            }
-        }// origami paper
+		public override int LabelNumber
+		{
+			get { return 1030288; }
+		} // origami paper
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (!IsChildOf(from.Backpack))
-            {
-                from.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
-            }
-            else
-            {
-                this.Delete();
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (!IsChildOf(from.Backpack))
+			{
+				from.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
+			}
+			else
+			{
+				this.Delete();
 
-                Item i = null;
+				Item i = null;
 
-                switch (Utility.Random((from.BAC >= 7) ? 8 : 7)) //switch ( Utility.Random( (from.BAC >= 5) ? 6 : 5) )
-                {
-                    case 0: i = new OrigamiButterfly(); break;
-                    case 1: i = new OrigamiSwan(); break;
-                    case 2: i = new OrigamiFrog(); break;
-                    case 3: i = new OrigamiShape(); break;
-                    case 4: i = new OrigamiSongbird(); break;
-                    case 5: i = new OrigamiFish(); break;
-                    case 6: i = new OrigamiDragon(); break;
-                    case 7: i = new OrigamiBunny(); break;
-                }
+				switch (Utility.Random((from.BAC >= 7) ? 8 : 7)) //switch ( Utility.Random( (from.BAC >= 5) ? 6 : 5) )
+				{
+					case 0:
+						i = new OrigamiButterfly();
+						break;
+					case 1:
+						i = new OrigamiSwan();
+						break;
+					case 2:
+						i = new OrigamiFrog();
+						break;
+					case 3:
+						i = new OrigamiShape();
+						break;
+					case 4:
+						i = new OrigamiSongbird();
+						break;
+					case 5:
+						i = new OrigamiFish();
+						break;
+					case 6:
+						i = new OrigamiDragon();
+						break;
+					case 7:
+						i = new OrigamiBunny();
+						break;
+				}
 
-                if (i != null)
-                    from.AddToBackpack(i);
+				if (i != null)
+					from.AddToBackpack(i);
 
-                from.SendLocalizedMessage(1070822); // You fold the paper into an interesting shape.
-            }
-        }
+				from.SendLocalizedMessage(1070822); // You fold the paper into an interesting shape.
+			}
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.WriteEncodedInt(0);
-        }
+			writer.WriteEncodedInt(0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-    public class OrigamiButterfly : Item
-    {
-        [Constructable]
-        public OrigamiButterfly()
-            : base(0x2838)
-        {
-            this.LootType = LootType.Blessed;
-        }
+	public class OrigamiButterfly : Item
+	{
+		[Constructable]
+		public OrigamiButterfly()
+			: base(0x2838)
+		{
+			this.LootType = LootType.Blessed;
+		}
 
-        public OrigamiButterfly(Serial serial)
-            : base(serial)
-        {
-        }
+		public OrigamiButterfly(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1030296;
-            }
-        }// a delicate origami butterfly
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int LabelNumber
+		{
+			get { return 1030296; }
+		} // a delicate origami butterfly
 
-            writer.WriteEncodedInt(0);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0);
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class OrigamiSwan : Item
-    {
-        [Constructable]
-        public OrigamiSwan()
-            : base(0x2839)
-        {
-            this.LootType = LootType.Blessed;
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public OrigamiSwan(Serial serial)
-            : base(serial)
-        {
-        }
+	public class OrigamiSwan : Item
+	{
+		[Constructable]
+		public OrigamiSwan()
+			: base(0x2839)
+		{
+			this.LootType = LootType.Blessed;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1030297;
-            }
-        }// a delicate origami swan
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public OrigamiSwan(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0);
-        }
+		public override int LabelNumber
+		{
+			get { return 1030297; }
+		} // a delicate origami swan
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0);
+		}
 
-    public class OrigamiFrog : Item
-    {
-        [Constructable]
-        public OrigamiFrog()
-            : base(0x283A)
-        {
-            this.LootType = LootType.Blessed;
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public OrigamiFrog(Serial serial)
-            : base(serial)
-        {
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1030298;
-            }
-        }// a delicate origami frog
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+	public class OrigamiFrog : Item
+	{
+		[Constructable]
+		public OrigamiFrog()
+			: base(0x283A)
+		{
+			this.LootType = LootType.Blessed;
+		}
 
-            writer.WriteEncodedInt(0);
-        }
+		public OrigamiFrog(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override int LabelNumber
+		{
+			get { return 1030298; }
+		} // a delicate origami frog
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-    public class OrigamiShape : Item
-    {
-        [Constructable]
-        public OrigamiShape()
-            : base(0x283B)
-        {
-            this.LootType = LootType.Blessed;
-        }
+			writer.WriteEncodedInt(0);
+		}
 
-        public OrigamiShape(Serial serial)
-            : base(serial)
-        {
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1030299;
-            }
-        }// an intricate geometric origami shape
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-            writer.WriteEncodedInt(0);
-        }
+	public class OrigamiShape : Item
+	{
+		[Constructable]
+		public OrigamiShape()
+			: base(0x283B)
+		{
+			this.LootType = LootType.Blessed;
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public OrigamiShape(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override int LabelNumber
+		{
+			get { return 1030299; }
+		} // an intricate geometric origami shape
 
-    public class OrigamiSongbird : Item
-    {
-        [Constructable]
-        public OrigamiSongbird()
-            : base(0x283C)
-        {
-            this.LootType = LootType.Blessed;
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public OrigamiSongbird(Serial serial)
-            : base(serial)
-        {
-        }
+			writer.WriteEncodedInt(0);
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1030300;
-            }
-        }// a delicate origami songbird
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            writer.WriteEncodedInt(0);
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+	public class OrigamiSongbird : Item
+	{
+		[Constructable]
+		public OrigamiSongbird()
+			: base(0x283C)
+		{
+			this.LootType = LootType.Blessed;
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public OrigamiSongbird(Serial serial)
+			: base(serial) { }
 
-    public class OrigamiFish : Item
-    {
-        [Constructable]
-        public OrigamiFish()
-            : base(0x283D)
-        {
-            this.LootType = LootType.Blessed;
-        }
+		public override int LabelNumber
+		{
+			get { return 1030300; }
+		} // a delicate origami songbird
 
-        public OrigamiFish(Serial serial)
-            : base(serial)
-        {
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1030301;
-            }
-        }// a delicate origami fish
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			writer.WriteEncodedInt(0);
+		}
 
-            writer.WriteEncodedInt(0);
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+	public class OrigamiFish : Item
+	{
+		[Constructable]
+		public OrigamiFish()
+			: base(0x283D)
+		{
+			this.LootType = LootType.Blessed;
+		}
 
-    public class OrigamiDragon : Item
-    {
-        public override int LabelNumber{ get{ return 1157959; } } // a delicate origami butterfly
+		public OrigamiFish(Serial serial)
+			: base(serial) { }
 
-        [Constructable]
-        public OrigamiDragon()
-            : base(0x4B1C)
-        {
+		public override int LabelNumber
+		{
+			get { return 1030301; }
+		} // a delicate origami fish
 
-            //Name = "a delicate origami dragon";
-            Weight = 1.0;
-            LootType = LootType.Blessed;
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public OrigamiDragon(Serial serial)
-            : base(serial)
-        {
-        }
+			writer.WriteEncodedInt(0);
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            writer.WriteEncodedInt(0);
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+	public class OrigamiDragon : Item
+	{
+		public override int LabelNumber
+		{
+			get { return 1157959; }
+		} // a delicate origami butterfly
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		[Constructable]
+		public OrigamiDragon()
+			: base(0x4B1C)
+		{
+			//Name = "a delicate origami dragon";
+			Weight = 1.0;
+			LootType = LootType.Blessed;
+		}
 
-    // [FlipableAttribute( 0x4B1E, 0x4B1F )]
-    public class OrigamiBunny : Item
-    {
-        public override int LabelNumber{ get{ return 1032973; } } // a delicate origami butterfly
+		public OrigamiDragon(Serial serial)
+			: base(serial) { }
 
-        [Constructable]
-        public OrigamiBunny()
-            : base(0x4B1F)
-        {
-            Weight = 1.0;
-            LootType = LootType.Blessed;
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public OrigamiBunny(Serial serial)
-            : base(serial)
-        {
-        }
+			writer.WriteEncodedInt(0);
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            writer.WriteEncodedInt(0);
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+	// [FlipableAttribute( 0x4B1E, 0x4B1F )]
+	public class OrigamiBunny : Item
+	{
+		public override int LabelNumber
+		{
+			get { return 1032973; }
+		} // a delicate origami butterfly
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		[Constructable]
+		public OrigamiBunny()
+			: base(0x4B1F)
+		{
+			Weight = 1.0;
+			LootType = LootType.Blessed;
+		}
+
+		public OrigamiBunny(Serial serial)
+			: base(serial) { }
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.WriteEncodedInt(0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

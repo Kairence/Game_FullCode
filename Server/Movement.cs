@@ -4,7 +4,11 @@ namespace Server.Movement
 	{
 		private static IMovementImpl m_Impl;
 
-		public static IMovementImpl Impl { get { return m_Impl; } set { m_Impl = value; } }
+		public static IMovementImpl Impl
+		{
+			get { return m_Impl; }
+			set { m_Impl = value; }
+		}
 
 		/*public static bool CheckMovement(IPoint3D p, Direction d, out int newZ)
 		{
@@ -17,7 +21,7 @@ namespace Server.Movement
 			return false;
 		}*/
 
-        public static bool CheckMovement(IPoint3D p, Map map, Point3D loc, Direction d, out int newZ)
+		public static bool CheckMovement(IPoint3D p, Map map, Point3D loc, Direction d, out int newZ)
 		{
 			if (m_Impl != null)
 			{
@@ -66,7 +70,7 @@ namespace Server.Movement
 
 	public interface IMovementImpl
 	{
-        //bool CheckMovement(IPoint3D p, Direction d, out int newZ);
-        bool CheckMovement(IPoint3D p, Map map, Point3D loc, Direction d, out int newZ);
+		//bool CheckMovement(IPoint3D p, Direction d, out int newZ);
+		bool CheckMovement(IPoint3D p, Map map, Point3D loc, Direction d, out int newZ);
 	}
 }

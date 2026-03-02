@@ -1,7 +1,6 @@
 #region References
 using System.Collections;
 using System.Reflection;
-
 using Server.Commands;
 using Server.Network;
 using Server.Targeting;
@@ -22,15 +21,18 @@ namespace Server.Gumps
 		public static readonly int BackGumpID = PropsConfig.BackGumpID;
 		public static readonly int SetGumpID = PropsConfig.SetGumpID;
 		public static readonly int SetWidth = PropsConfig.SetWidth;
-		public static readonly int SetOffsetX = PropsConfig.SetOffsetX, SetOffsetY = PropsConfig.SetOffsetY;
+		public static readonly int SetOffsetX = PropsConfig.SetOffsetX,
+			SetOffsetY = PropsConfig.SetOffsetY;
 		public static readonly int SetButtonID1 = PropsConfig.SetButtonID1;
 		public static readonly int SetButtonID2 = PropsConfig.SetButtonID2;
 		public static readonly int PrevWidth = PropsConfig.PrevWidth;
-		public static readonly int PrevOffsetX = PropsConfig.PrevOffsetX, PrevOffsetY = PropsConfig.PrevOffsetY;
+		public static readonly int PrevOffsetX = PropsConfig.PrevOffsetX,
+			PrevOffsetY = PropsConfig.PrevOffsetY;
 		public static readonly int PrevButtonID1 = PropsConfig.PrevButtonID1;
 		public static readonly int PrevButtonID2 = PropsConfig.PrevButtonID2;
 		public static readonly int NextWidth = PropsConfig.NextWidth;
-		public static readonly int NextOffsetX = PropsConfig.NextOffsetX, NextOffsetY = PropsConfig.NextOffsetY;
+		public static readonly int NextOffsetX = PropsConfig.NextOffsetX,
+			NextOffsetY = PropsConfig.NextOffsetY;
 		public static readonly int NextButtonID1 = PropsConfig.NextButtonID1;
 		public static readonly int NextButtonID2 = PropsConfig.NextButtonID2;
 		public static readonly int OffsetSize = PropsConfig.OffsetSize;
@@ -69,7 +71,8 @@ namespace Server.Gumps
 				BorderSize,
 				TotalWidth - (OldStyle ? SetWidth + OffsetSize : 0),
 				TotalHeight,
-				OffsetGumpID);
+				OffsetGumpID
+			);
 
 			var x = BorderSize + OffsetSize;
 			var y = BorderSize + OffsetSize;
@@ -129,7 +132,8 @@ namespace Server.Gumps
 		public override void OnResponse(NetState sender, RelayInfo info)
 		{
 			Point3D toSet;
-			bool shouldSet, shouldSend;
+			bool shouldSet,
+				shouldSend;
 
 			switch (info.ButtonID)
 			{
@@ -160,7 +164,8 @@ namespace Server.Gumps
 					toSet = new Point3D(
 						x == null ? 0 : Utility.ToInt32(x.Text),
 						y == null ? 0 : Utility.ToInt32(y.Text),
-						z == null ? 0 : Utility.ToInt32(z.Text));
+						z == null ? 0 : Utility.ToInt32(z.Text)
+					);
 					shouldSet = true;
 					shouldSend = true;
 
@@ -222,7 +227,12 @@ namespace Server.Gumps
 				{
 					try
 					{
-						CommandLogging.LogChangeProperty(m_Mobile, m_Object, m_Property.Name, new Point3D(p).ToString());
+						CommandLogging.LogChangeProperty(
+							m_Mobile,
+							m_Object,
+							m_Property.Name,
+							new Point3D(p).ToString()
+						);
 						m_Property.SetValue(m_Object, new Point3D(p), null);
 						PropertiesGump.OnValueChanged(m_Object, m_Property, m_Stack);
 					}

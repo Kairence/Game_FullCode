@@ -1,7 +1,6 @@
 #region References
 using System;
 using System.Collections.Generic;
-
 using Server.Items;
 using Server.SkillHandlers;
 using Server.Spells;
@@ -24,12 +23,24 @@ namespace Server.Mobiles
 {
 	public class MageAI : BaseAI
 	{
-		public virtual SkillName CastSkill { get { return SkillName.Magery; } }
-		public virtual bool UsesMagery { get { return true; } }
-        public virtual double HealChance { get { return .25; } }
+		public virtual SkillName CastSkill
+		{
+			get { return SkillName.Magery; }
+		}
+		public virtual bool UsesMagery
+		{
+			get { return true; }
+		}
+		public virtual double HealChance
+		{
+			get { return .25; }
+		}
 
 		protected const double DispelChance = 0.75; // 75% chance to dispel at gm skill
-		protected double TeleportChance { get { return m_Mobile.TeleportChance; } }
+		protected double TeleportChance
+		{
+			get { return m_Mobile.TeleportChance; }
+		}
 
 		private LandTarget m_RevealTarget;
 
@@ -44,8 +55,7 @@ namespace Server.Mobiles
 		}
 
 		public MageAI(BaseCreature m)
-			: base(m)
-		{ }
+			: base(m) { }
 
 		public override bool Think()
 		{
@@ -80,30 +90,35 @@ namespace Server.Mobiles
 		{
 			if (UsesMagery)
 			{
-				var ts = !SmartAI && !(spell is DispelSpell)
-					? TimeSpan.FromSeconds(1)
-					: m_Combo > -1
-						? TimeSpan.FromSeconds(.5)
-						: TimeSpan.FromSeconds(1.5);
-				var delay = spell == null
-					? TimeSpan.FromSeconds(m_Mobile.ActiveSpeed * 2.0)
-					: spell.GetCastDelay() + spell.GetCastRecovery() + ts;
+				var ts =
+					!SmartAI && !(spell is DispelSpell) ? TimeSpan.FromSeconds(1)
+					: m_Combo > -1 ? TimeSpan.FromSeconds(.5)
+					: TimeSpan.FromSeconds(1.5);
+				var delay =
+					spell == null
+						? TimeSpan.FromSeconds(m_Mobile.ActiveSpeed * 2.0)
+						: spell.GetCastDelay() + spell.GetCastRecovery() + ts;
 
 				return DateTime.Now + delay;
 			}
 			else
 			{
-				var delay = spell == null
-					? TimeSpan.FromSeconds(m_Mobile.ActiveSpeed * 2.0)
-					: spell.GetCastDelay() + spell.GetCastRecovery() + GetDelay(spell);
+				var delay =
+					spell == null
+						? TimeSpan.FromSeconds(m_Mobile.ActiveSpeed * 2.0)
+						: spell.GetCastDelay() + spell.GetCastRecovery() + GetDelay(spell);
 				return DateTime.Now + delay;
 			}
 		}
 
 		public override bool DoActionWander()
 		{
-			if (SmartAI && m_Mobile.Skills[SkillName.Meditation].Base > 0 && m_Mobile.Mana < m_Mobile.ManaMax &&
-				!m_Mobile.Meditating)
+			if (
+				SmartAI
+				&& m_Mobile.Skills[SkillName.Meditation].Base > 0
+				&& m_Mobile.Mana < m_Mobile.ManaMax
+				&& !m_Mobile.Meditating
+			)
 			{
 				m_Mobile.DebugSay("I am going to meditate");
 
@@ -141,38 +156,48 @@ namespace Server.Mobiles
 
 		public override bool DoActionCombat()
 		{
-			if( m_Mobile == null )
+			if (m_Mobile == null)
 				return false;
 
 			var c = m_Mobile.Combatant;
 
-			if( c == null )
+			if (c == null)
 			{
 				m_Mobile.Spell = null;
 				Action = ActionType.Guard;
 				return false;
 			}
 
-			if( m_Mobile is BaseCreature )
+			if (m_Mobile is BaseCreature)
 			{
 				BaseCreature bc = m_Mobile as BaseCreature;
-				if( bc.ControlMaster == c || bc.SummonMaster == c )
+				if (bc.ControlMaster == c || bc.SummonMaster == c)
 					return false;
 			}
-			
+
 			m_Mobile.Warmode = true;
 
 			if (m_Mobile.Target != null)
 				ProcessTarget();
 
-			if (c == null || c.Deleted || !c.Alive || (c is Mobile && ((Mobile)c).IsDeadBondedPet) || !m_Mobile.CanSee(c) ||
-				!m_Mobile.CanBeHarmful(c, false) || c.Map != m_Mobile.Map)
+			if (
+				c == null
+				|| c.Deleted
+				|| !c.Alive
+				|| (c is Mobile && ((Mobile)c).IsDeadBondedPet)
+				|| !m_Mobile.CanSee(c)
+				|| !m_Mobile.CanBeHarmful(c, false)
+				|| c.Map != m_Mobile.Map
+			)
 			{
 				// Our combatant is deleted, dead, hidden, or we cannot hurt them
 				// Try to find another combatant
 				if (AcquireFocusMob(m_Mobile.RangePerception, m_Mobile.FightMode, false, false, true))
 				{
-					m_Mobile.DebugSay("Something happened to my combatant, so I am going to fight {0}", m_Mobile.FocusMob.Name);
+					m_Mobile.DebugSay(
+						"Something happened to my combatant, so I am going to fight {0}",
+						m_Mobile.FocusMob.Name
+					);
 
 					m_Mobile.Combatant = c = m_Mobile.FocusMob;
 					m_Mobile.FocusMob = null;
@@ -197,27 +222,32 @@ namespace Server.Mobiles
 				}
 			}
 
-			if (!Core.AOS && SmartAI && !m_Mobile.StunReady && m_Mobile.Skills[SkillName.Wrestling].Value >= 80.0 &&
-				m_Mobile.Skills[SkillName.Anatomy].Value >= 80.0)
+			if (
+				!Core.AOS
+				&& SmartAI
+				&& !m_Mobile.StunReady
+				&& m_Mobile.Skills[SkillName.Wrestling].Value >= 80.0
+				&& m_Mobile.Skills[SkillName.Anatomy].Value >= 80.0
+			)
 				EventSink.InvokeStunRequest(new StunRequestEventArgs(m_Mobile));
 
 			int range = 14;
-			if( m_Mobile is FireElemental || m_Mobile is WaterElemental || m_Mobile is AirElemental )
+			if (m_Mobile is FireElemental || m_Mobile is WaterElemental || m_Mobile is AirElemental)
 			{
 				m_Mobile.RangePerception = 11;
 				range = 11;
 			}
-			if( m_Mobile is PoisonElemental )
+			if (m_Mobile is PoisonElemental)
 			{
 				m_Mobile.RangePerception = 35;
 				range = 11;
 			}
-			if( m_Mobile is BloodElemental )
+			if (m_Mobile is BloodElemental)
 			{
 				m_Mobile.RangePerception = 35;
 				range = 1;
 			}
-			if( m_Mobile.Region.IsPartOf("Deceit") )
+			if (m_Mobile.Region.IsPartOf("Deceit"))
 				range = 1;
 			if (!m_Mobile.InRange(c, m_Mobile.RangePerception))
 			{
@@ -242,161 +272,181 @@ namespace Server.Mobiles
 					return true;
 				}
 			}
-			
-			int skillbonus = (int)(m_Mobile.Skills.Meditation.Value * 50 );
-			
-			double delay = Utility.RandomMinMax( 0, 18000 - skillbonus ) * 0.001 + 2.0;
+
+			int skillbonus = (int)(m_Mobile.Skills.Meditation.Value * 50);
+
+			double delay = Utility.RandomMinMax(0, 18000 - skillbonus) * 0.001 + 2.0;
 			Spell spell = null;
 
-			if( DateTime.Now > NextCastTime && m_Mobile.Spell == null )
+			if (DateTime.Now > NextCastTime && m_Mobile.Spell == null)
 			{
 				c = m_Mobile.Combatant as Mobile;
 				Mobile target = null;
-				if( c != null && c is Mobile )
+				if (c != null && c is Mobile)
 					target = c as Mobile;
-				
-				if( ( spell == null && ( m_Mobile is FireElemental || m_Mobile is WaterElemental || m_Mobile is AirElemental || m_Mobile is PoisonElemental || m_Mobile is BloodElemental ) ) )
+
+				if (
+					(
+						spell == null
+						&& (
+							m_Mobile is FireElemental
+							|| m_Mobile is WaterElemental
+							|| m_Mobile is AirElemental
+							|| m_Mobile is PoisonElemental
+							|| m_Mobile is BloodElemental
+						)
+					)
+				)
 				{
-					if( m_Mobile is FireElemental )
-						spell = new FireballSpell(m_Mobile, null );
-					else if( m_Mobile is WaterElemental )
-						spell = new HarmSpell(m_Mobile, null );
-					else if( m_Mobile is AirElemental )
-						spell = new LightningSpell(m_Mobile, null );
-					else if( m_Mobile is PoisonElemental )
-						spell = new PoisonStrikeSpell(m_Mobile, null );
-					else if( m_Mobile is BloodElemental )
+					if (m_Mobile is FireElemental)
+						spell = new FireballSpell(m_Mobile, null);
+					else if (m_Mobile is WaterElemental)
+						spell = new HarmSpell(m_Mobile, null);
+					else if (m_Mobile is AirElemental)
+						spell = new LightningSpell(m_Mobile, null);
+					else if (m_Mobile is PoisonElemental)
+						spell = new PoisonStrikeSpell(m_Mobile, null);
+					else if (m_Mobile is BloodElemental)
 					{
 						spell = new BloodOathSpell(m_Mobile, null);
 						delay /= 2;
 					}
 					m_Mobile.Mana = m_Mobile.ManaMax;
 				}
-				else if( spell == null && m_Mobile is Titan )
+				else if (spell == null && m_Mobile is Titan)
 				{
 					delay = 2.5;
-					spell = new LightningSpell(m_Mobile, null );
+					spell = new LightningSpell(m_Mobile, null);
 				}
-				else if( spell == null && m_Mobile is Wraith )
+				else if (spell == null && m_Mobile is Wraith)
 				{
 					delay = 15.0;
-					if( Utility.RandomDouble() < 0.1 )
-						spell = new FireballSpell(m_Mobile, null );
+					if (Utility.RandomDouble() < 0.1)
+						spell = new FireballSpell(m_Mobile, null);
 					else
-						spell = new MagicArrowSpell(m_Mobile, null );
+						spell = new MagicArrowSpell(m_Mobile, null);
 				}
-				else if ( spell == null && ( m_Mobile is SummonedFireElemental || m_Mobile is SummonedWaterElemental || m_Mobile is SummonedAirElemental || m_Mobile is SummonedDaemon ) )
+				else if (
+					spell == null
+					&& (
+						m_Mobile is SummonedFireElemental
+						|| m_Mobile is SummonedWaterElemental
+						|| m_Mobile is SummonedAirElemental
+						|| m_Mobile is SummonedDaemon
+					)
+				)
 				{
 					delay = 4.0;
-					if( m_Mobile is SummonedFireElemental )
-						spell = new FireballSpell(m_Mobile, null );
-					else if( m_Mobile is SummonedWaterElemental )
-						spell = new HarmSpell(m_Mobile, null );
-					else if( m_Mobile is SummonedAirElemental )
-						spell = new LightningSpell(m_Mobile, null );
-					else if( m_Mobile is SummonedDaemon )
+					if (m_Mobile is SummonedFireElemental)
+						spell = new FireballSpell(m_Mobile, null);
+					else if (m_Mobile is SummonedWaterElemental)
+						spell = new HarmSpell(m_Mobile, null);
+					else if (m_Mobile is SummonedAirElemental)
+						spell = new LightningSpell(m_Mobile, null);
+					else if (m_Mobile is SummonedDaemon)
 					{
-						spell = new PoisonStrikeSpell(m_Mobile, null );
+						spell = new PoisonStrikeSpell(m_Mobile, null);
 						delay = 2.5;
 					}
 				}
-				else if ( spell == null && ( m_Mobile is Gazer || m_Mobile is ElderGazer ) )
+				else if (spell == null && (m_Mobile is Gazer || m_Mobile is ElderGazer))
 				{
-					spell = new MindBlastSpell(m_Mobile, null );
+					spell = new MindBlastSpell(m_Mobile, null);
 
-					if( m_Mobile is ElderGazer )
+					if (m_Mobile is ElderGazer)
 						delay /= 2;
 				}
-				else if ( spell == null && m_Mobile is Beholder )
+				else if (spell == null && m_Mobile is Beholder)
 				{
-					spell = new WitherSpell(m_Mobile, null );
+					spell = new WitherSpell(m_Mobile, null);
 					delay = 2.5;
 				}
-				else if ( spell == null && m_Mobile is Reaper )
+				else if (spell == null && m_Mobile is Reaper)
 				{
-					if( Utility.RandomDouble() < 0.1 )
-						spell = new WitherSpell( m_Mobile, null );
+					if (Utility.RandomDouble() < 0.1)
+						spell = new WitherSpell(m_Mobile, null);
 					else
-						spell = new HarmSpell( m_Mobile, null );
+						spell = new HarmSpell(m_Mobile, null);
 				}
-				else if( spell == null && m_Mobile.Mana >= 4 )
+				else if (spell == null && m_Mobile.Mana >= 4)
 				{
 					double casterskillvalue = m_Mobile.Skills[CastSkill].Value;
-					if( m_Mobile.Skills[CastSkill].Value >= 100 )
+					if (m_Mobile.Skills[CastSkill].Value >= 100)
 						casterskillvalue += 30;
-					
-					int circle = 1; 
-					for ( int i = 0; i < 5; i++ )
+
+					int circle = 1;
+					for (int i = 0; i < 5; i++)
 					{
-						circle = Utility.RandomMinMax( 1, 15 + (int)casterskillvalue );
+						circle = Utility.RandomMinMax(1, 15 + (int)casterskillvalue);
 						circle /= 15;
-						if( circle < 1)
+						if (circle < 1)
 							circle = 1;
 						if (circle > 7)
 							circle = 7;
-						if( m_Mobile.Mana >= m_ManaTable[circle - 1] )
+						if (m_Mobile.Mana >= m_ManaTable[circle - 1])
 							break;
 					}
-					
+
 					//delay = circle * 0.25 + Utility.Random(1);
 
-					switch( circle )
+					switch (circle)
 					{
 						case 1:
 						{
-							spell = new MagicArrowSpell(m_Mobile, null );
+							spell = new MagicArrowSpell(m_Mobile, null);
 							break;
 						}
 						case 2:
 						{
-							spell = new HarmSpell(m_Mobile, null );
+							spell = new HarmSpell(m_Mobile, null);
 							break;
 						}
 						case 3:
 						{
-							spell = new FireballSpell(m_Mobile, null );
+							spell = new FireballSpell(m_Mobile, null);
 							break;
 						}
 						case 4:
 						{
-							spell = new LightningSpell(m_Mobile, null );
+							spell = new LightningSpell(m_Mobile, null);
 							break;
 						}
 						case 5:
 						{
-							spell = new MindBlastSpell(m_Mobile, null );
+							spell = new MindBlastSpell(m_Mobile, null);
 							break;
 						}
 						case 6:
 						{
-							spell = new EnergyBoltSpell(m_Mobile, null );
+							spell = new EnergyBoltSpell(m_Mobile, null);
 							break;
 						}
 						case 7:
 						{
-							spell = new FlameStrikeSpell(m_Mobile, null );
+							spell = new FlameStrikeSpell(m_Mobile, null);
 							break;
 						}
 					}
 				}
 				if (spell != null && !m_Mobile.Frozen)
 					spell.Cast();
-				if( delay < 0.01 )
+				if (delay < 0.01)
 					delay = 0.01;
 			}
-			else if( !m_Mobile.InRange(c, range) || m_Mobile.Mana < 5 )
+			else if (!m_Mobile.InRange(c, range) || m_Mobile.Mana < 5)
 			{
 				RunTo(c);
 			}
 
 			LastTarget = c as Mobile;
 			LastTargetLoc = c.Location;
-			if( delay > 20.0 )
+			if (delay > 20.0)
 				delay = 20.0;
-			NextCastTime = DateTime.Now + TimeSpan.FromSeconds( delay );
+			NextCastTime = DateTime.Now + TimeSpan.FromSeconds(delay);
 
 			return true;
 		}
+
 		public override bool DoActionGuard()
 		{
 			if (LastTarget != null && LastTarget.Hidden)
@@ -501,8 +551,11 @@ namespace Server.Mobiles
 
 		public virtual void OnFailedMove()
 		{
-			if (UsesMagery && !m_Mobile.DisallowAllMoves &&
-				(SmartAI ? Utility.Random(10) == 0 : ScaleByCastSkill(TeleportChance) > Utility.RandomDouble()))
+			if (
+				UsesMagery
+				&& !m_Mobile.DisallowAllMoves
+				&& (SmartAI ? Utility.Random(10) == 0 : ScaleByCastSkill(TeleportChance) > Utility.RandomDouble())
+			)
 			{
 				if (m_Mobile.Target != null)
 					m_Mobile.Target.Cancel(m_Mobile, TargetCancelType.Canceled);
@@ -526,8 +579,12 @@ namespace Server.Mobiles
 
 		public void Run(Direction d)
 		{
-			if ((m_Mobile.Spell != null && m_Mobile.Spell.IsCasting) || m_Mobile.Paralyzed || m_Mobile.Frozen ||
-				m_Mobile.DisallowAllMoves)
+			if (
+				(m_Mobile.Spell != null && m_Mobile.Spell.IsCasting)
+				|| m_Mobile.Paralyzed
+				|| m_Mobile.Frozen
+				|| m_Mobile.DisallowAllMoves
+			)
 				return;
 
 			m_Mobile.Direction = d | Direction.Running;
@@ -585,8 +642,12 @@ namespace Server.Mobiles
 			{
 				spell = DoCombo((Mobile)c);
 			}
-			else if (c is Mobile && SmartAI && (((Mobile)c).Spell is HealSpell || ((Mobile)c).Spell is GreaterHealSpell) &&
-					 !((Mobile)c).Poisoned) // They have a heal spell out
+			else if (
+				c is Mobile
+				&& SmartAI
+				&& (((Mobile)c).Spell is HealSpell || ((Mobile)c).Spell is GreaterHealSpell)
+				&& !((Mobile)c).Poisoned
+			) // They have a heal spell out
 			{
 				spell = new PoisonSpell(m_Mobile, null);
 			}
@@ -620,10 +681,13 @@ namespace Server.Mobiles
 				return null;
 			}
 
-            if (m_Mobile.Hits == m_Mobile.HitsMax || (!SmartAI && ScaleByCastSkill(HealChance) < Utility.RandomDouble()))
-            {
-                return null;
-            }
+			if (
+				m_Mobile.Hits == m_Mobile.HitsMax
+				|| (!SmartAI && ScaleByCastSkill(HealChance) < Utility.RandomDouble())
+			)
+			{
+				return null;
+			}
 
 			if (Utility.Random(0, 4 + (m_Mobile.Hits == 0 ? m_Mobile.HitsMax : (m_Mobile.HitsMax / m_Mobile.Hits))) < 3)
 			{
@@ -679,8 +743,14 @@ namespace Server.Mobiles
 
 				var comb = m_Mobile.Combatant as Mobile;
 
-				if (comb != null && !comb.Deleted && comb.Alive && !comb.IsDeadBondedPet &&
-					m_Mobile.InRange(comb, Core.ML ? 10 : 12) && CanDispel(comb))
+				if (
+					comb != null
+					&& !comb.Deleted
+					&& comb.Alive
+					&& !comb.IsDeadBondedPet
+					&& m_Mobile.InRange(comb, Core.ML ? 10 : 12)
+					&& CanDispel(comb)
+				)
 				{
 					active = comb;
 					activePrio = m_Mobile.GetDistanceToSqrt(comb);
@@ -735,8 +805,10 @@ namespace Server.Mobiles
 
 			if (map != null)
 			{
-				Mobile active = null, inactive = null;
-				double actPrio = 0.0, inactPrio = 0.0;
+				Mobile active = null,
+					inactive = null;
+				double actPrio = 0.0,
+					inactPrio = 0.0;
 
 				var comb = m_Mobile.Combatant as Mobile;
 
@@ -778,8 +850,12 @@ namespace Server.Mobiles
 
 		public bool CanDispel(Mobile m)
 		{
-			return (m is BaseCreature && ((BaseCreature)m).Summoned && m_Mobile.CanBeHarmful(m, false) &&
-					!((BaseCreature)m).IsAnimatedDead);
+			return (
+				m is BaseCreature
+				&& ((BaseCreature)m).Summoned
+				&& m_Mobile.CanBeHarmful(m, false)
+				&& !((BaseCreature)m).IsAnimatedDead
+			);
 		}
 
 		public Spell CheckCastDispelField()
@@ -816,8 +892,13 @@ namespace Server.Mobiles
 				{
 					var field = (PoisonFieldSpell.InternalItem)item;
 
-					if (field.Visible && field.Caster != null && (!Core.AOS || m_Mobile != field.Caster) &&
-						SpellHelper.ValidIndirectTarget(field.Caster, m_Mobile) && field.Caster.CanBeHarmful(m_Mobile, false))
+					if (
+						field.Visible
+						&& field.Caster != null
+						&& (!Core.AOS || m_Mobile != field.Caster)
+						&& SpellHelper.ValidIndirectTarget(field.Caster, m_Mobile)
+						&& field.Caster.CanBeHarmful(m_Mobile, false)
+					)
 					{
 						eable.Free();
 						return item;
@@ -827,8 +908,13 @@ namespace Server.Mobiles
 				{
 					var field = (ParalyzeFieldSpell.InternalItem)item;
 
-					if (field.Visible && field.Caster != null && (!Core.AOS || m_Mobile != field.Caster) &&
-						SpellHelper.ValidIndirectTarget(field.Caster, m_Mobile) && field.Caster.CanBeHarmful(m_Mobile, false))
+					if (
+						field.Visible
+						&& field.Caster != null
+						&& (!Core.AOS || m_Mobile != field.Caster)
+						&& SpellHelper.ValidIndirectTarget(field.Caster, m_Mobile)
+						&& field.Caster.CanBeHarmful(m_Mobile, false)
+					)
 					{
 						eable.Free();
 						return item;
@@ -838,8 +924,13 @@ namespace Server.Mobiles
 				{
 					var field = (FireFieldSpell.FireFieldItem)item;
 
-					if (field.Visible && field.Caster != null && (!Core.AOS || m_Mobile != field.Caster) &&
-						SpellHelper.ValidIndirectTarget(field.Caster, m_Mobile) && field.Caster.CanBeHarmful(m_Mobile, false))
+					if (
+						field.Visible
+						&& field.Caster != null
+						&& (!Core.AOS || m_Mobile != field.Caster)
+						&& SpellHelper.ValidIndirectTarget(field.Caster, m_Mobile)
+						&& field.Caster.CanBeHarmful(m_Mobile, false)
+					)
 					{
 						eable.Free();
 						return item;
@@ -880,10 +971,10 @@ namespace Server.Mobiles
 					case 3:
 					case 4:
 					case 5: // damage
-					{
-						m_Mobile.DebugSay("Just doing damage");
-						spell = GetRandomDamageSpell();
-					}
+						{
+							m_Mobile.DebugSay("Just doing damage");
+							spell = GetRandomDamageSpell();
+						}
 						break;
 				}
 
@@ -983,13 +1074,14 @@ namespace Server.Mobiles
 
 				if (spell == null && 0.05 >= Utility.RandomDouble())
 					spell = GetRandomBuffSpell();
-
-				else if (spell == null && m_Mobile.Followers + 1 < m_Mobile.FollowersMax && 0.05 >= Utility.RandomDouble())
+				else if (
+					spell == null
+					&& m_Mobile.Followers + 1 < m_Mobile.FollowersMax
+					&& 0.05 >= Utility.RandomDouble()
+				)
 					spell = GetRandomSummonSpell();
-
 				else if (spell == null && 0.05 >= Utility.RandomDouble())
 					spell = GetRandomFieldSpell();
-
 				else if (spell == null && 0.05 >= Utility.RandomDouble())
 					spell = GetRandomManaDrainSpell();
 
@@ -1050,16 +1142,16 @@ namespace Server.Mobiles
 		}
 
 		//TODO: This needs to be tested on EA
-        /// <summary>
-        ///     Obsolete. Creatures don't fizzle based on spell, but cast spells depending on mana pool
-        /// </summary>
-        /// <returns></returns>
-        public virtual int GetMaxCircle()
+		/// <summary>
+		///     Obsolete. Creatures don't fizzle based on spell, but cast spells depending on mana pool
+		/// </summary>
+		/// <returns></returns>
+		public virtual int GetMaxCircle()
 		{
 			return (int)((m_Mobile.Skills[SkillName.Magery].Value + 20.0) / (100.0 / 7.0));
 		}
 
-		private readonly int[] m_ManaTable = {4, 6, 9, 11, 14, 20, 40, 50};
+		private readonly int[] m_ManaTable = { 4, 6, 9, 11, 14, 20, 40, 50 };
 
 		public virtual bool CheckCanCastMagery(int circle)
 		{
@@ -1070,8 +1162,8 @@ namespace Server.Mobiles
 
 			var skill = (100.0 / 7.0) * circle;
 
-			return m_Mobile.Mana >= m_ManaTable[circle - 1] &&
-				   (Core.SA || m_Mobile.Skills[SkillName.Magery].Value >= skill - 20);
+			return m_Mobile.Mana >= m_ManaTable[circle - 1]
+				&& (Core.SA || m_Mobile.Skills[SkillName.Magery].Value >= skill - 20);
 		}
 
 		public virtual Spell GetRandomDamageSpell()
@@ -1282,7 +1374,7 @@ namespace Server.Mobiles
 			Exp_FB_MA_Poison,
 			Exp_FB_Poison_Light,
 			Exp_FB_MA_Light,
-			Exp_Poison_FB_Light
+			Exp_Poison_FB_Light,
 		}
 
 		public virtual Spell DoCombo(Mobile c)
@@ -1416,16 +1508,23 @@ namespace Server.Mobiles
 
 			//기본 타겟 범위
 			int range = 10;
-			
-			if( m_Mobile is FireElemental || m_Mobile is WaterElemental || m_Mobile is AirElemental || m_Mobile is PoisonElemental )
+
+			if (
+				m_Mobile is FireElemental
+				|| m_Mobile is WaterElemental
+				|| m_Mobile is AirElemental
+				|| m_Mobile is PoisonElemental
+			)
 				range = 20;
-			if ( m_Mobile is BloodElemental )
+			if (m_Mobile is BloodElemental)
 				range = 35;
 			if (targ == null)
 				return false;
 
-			var harmful = (targ.Flags & TargetFlags.Harmful) != 0 || targ is HailStormSpell.InternalTarget ||
-						  targ is WildfireSpell.InternalTarget;
+			var harmful =
+				(targ.Flags & TargetFlags.Harmful) != 0
+				|| targ is HailStormSpell.InternalTarget
+				|| targ is WildfireSpell.InternalTarget;
 			var beneficial = (targ.Flags & TargetFlags.Beneficial) != 0 || targ is ArchCureSpell.InternalTarget;
 
 			if (UsesMagery)
@@ -1433,10 +1532,16 @@ namespace Server.Mobiles
 				var isDispel = (targ is DispelSpell.InternalTarget || targ is MassDispelSpell.InternalTarget);
 				var isParalyze = (targ is ParalyzeSpell.InternalTarget);
 				var isTeleport = (targ is TeleportSpell.InternalTarget);
-				var isSummon = (targ is EnergyVortexSpell.InternalTarget || targ is BladeSpiritsSpell.InternalTarget ||
-								targ is NatureFurySpell.InternalTarget);
-				var isField = (targ is FireFieldSpell.InternalTarget || targ is PoisonFieldSpell.InternalTarget ||
-							   targ is ParalyzeFieldSpell.InternalTarget);
+				var isSummon = (
+					targ is EnergyVortexSpell.InternalTarget
+					|| targ is BladeSpiritsSpell.InternalTarget
+					|| targ is NatureFurySpell.InternalTarget
+				);
+				var isField = (
+					targ is FireFieldSpell.InternalTarget
+					|| targ is PoisonFieldSpell.InternalTarget
+					|| targ is ParalyzeFieldSpell.InternalTarget
+				);
 				var isAnimate = (targ is AnimateDeadSpell.InternalTarget);
 				var isDispelField = (targ is DispelFieldSpell.InternalTarget);
 				var teleportAway = false;
@@ -1473,7 +1578,7 @@ namespace Server.Mobiles
 				{
 					toTarget = m_Mobile.Combatant;
 
-					if (toTarget != null && ( !m_Mobile.InRange(toTarget, range) || m_Mobile.Mana < 5 ) )
+					if (toTarget != null && (!m_Mobile.InRange(toTarget, range) || m_Mobile.Mana < 5))
 						RunTo(toTarget);
 				}
 
@@ -1563,8 +1668,11 @@ namespace Server.Mobiles
 
 				if (harmful && toTarget != null)
 				{
-					if ((targ.Range == -1 || m_Mobile.InRange(toTarget, targ.Range)) && m_Mobile.CanSee(toTarget) &&
-						m_Mobile.InLOS(toTarget))
+					if (
+						(targ.Range == -1 || m_Mobile.InRange(toTarget, targ.Range))
+						&& m_Mobile.CanSee(toTarget)
+						&& m_Mobile.InLOS(toTarget)
+					)
 					{
 						targ.Invoke(m_Mobile, toTarget);
 					}
@@ -1587,7 +1695,8 @@ namespace Server.Mobiles
 						return true;
 					}
 
-					int px, py;
+					int px,
+						py;
 
 					if (teleportAway)
 					{
@@ -1607,14 +1716,19 @@ namespace Server.Mobiles
 
 					for (var i = 0; i < m_Offsets.Length; i += 2)
 					{
-						int x = m_Offsets[i], y = m_Offsets[i + 1];
+						int x = m_Offsets[i],
+							y = m_Offsets[i + 1];
 
 						var p = new Point3D(px + x, py + y, 0);
 
 						var lt = new LandTarget(p, map);
 
-						if ((targ.Range == -1 || m_Mobile.InRange(p, targ.Range)) && m_Mobile.InLOS(lt) &&
-							map.CanSpawnMobile(px + x, py + y, lt.Z) && !SpellHelper.CheckMulti(p, map))
+						if (
+							(targ.Range == -1 || m_Mobile.InRange(p, targ.Range))
+							&& m_Mobile.InLOS(lt)
+							&& map.CanSpawnMobile(px + x, py + y, lt.Z)
+							&& !SpellHelper.CheckMulti(p, map)
+						)
 						{
 							targ.Invoke(m_Mobile, lt);
 							return true;
@@ -1631,11 +1745,16 @@ namespace Server.Mobiles
 						var randomPoint = new Point3D(
 							m_Mobile.X - teleRange + Utility.Random(teleRange * 2 + 1),
 							m_Mobile.Y - teleRange + Utility.Random(teleRange * 2 + 1),
-							0);
+							0
+						);
 
 						var lt = new LandTarget(randomPoint, map);
 
-						if (m_Mobile.InLOS(lt) && map.CanSpawnMobile(lt.X, lt.Y, lt.Z) && !SpellHelper.CheckMulti(randomPoint, map))
+						if (
+							m_Mobile.InLOS(lt)
+							&& map.CanSpawnMobile(lt.X, lt.Y, lt.Z)
+							&& !SpellHelper.CheckMulti(randomPoint, map)
+						)
 						{
 							targ.Invoke(m_Mobile, new LandTarget(randomPoint, map));
 							return true;
@@ -1660,8 +1779,11 @@ namespace Server.Mobiles
 
 				if (harmful && toTarget != null)
 				{
-					if ((targ.Range == -1 || m_Mobile.InRange(toTarget, targ.Range)) && m_Mobile.CanSee(toTarget) &&
-						m_Mobile.InLOS(toTarget))
+					if (
+						(targ.Range == -1 || m_Mobile.InRange(toTarget, targ.Range))
+						&& m_Mobile.CanSee(toTarget)
+						&& m_Mobile.InLOS(toTarget)
+					)
 					{
 						targ.Invoke(m_Mobile, toTarget);
 					}
@@ -1699,8 +1821,14 @@ namespace Server.Mobiles
 
 					var owner = c.Owner as BaseCreature;
 
-					if ((c.ItemID < 0xECA || c.ItemID > 0xED5) && m_Mobile.InLOS(c) && !c.Channeled && type != typeof(PlayerMobile) &&
-						type != null && (owner == null || (!owner.Summoned && !owner.IsBonded)))
+					if (
+						(c.ItemID < 0xECA || c.ItemID > 0xED5)
+						&& m_Mobile.InLOS(c)
+						&& !c.Channeled
+						&& type != typeof(PlayerMobile)
+						&& type != null
+						&& (owner == null || (!owner.Summoned && !owner.IsBonded))
+					)
 					{
 						eable.Free();
 						return item;
@@ -1713,8 +1841,54 @@ namespace Server.Mobiles
 
 		private static readonly int[] m_Offsets =
 		{
-			-1, -1, -1, 0, -1, 1, 0, -1, 0, 1, 1, -1, 1, 0, 1, 1, -2, -2, -2, -1, -2, 0, -2, 1, -2, 2, -1, -2, -1, 2, 0, -2, 0,
-			2, 1, -2, 1, 2, 2, -2, 2, -1, 2, 0, 2, 1, 2, 2
+			-1,
+			-1,
+			-1,
+			0,
+			-1,
+			1,
+			0,
+			-1,
+			0,
+			1,
+			1,
+			-1,
+			1,
+			0,
+			1,
+			1,
+			-2,
+			-2,
+			-2,
+			-1,
+			-2,
+			0,
+			-2,
+			1,
+			-2,
+			2,
+			-1,
+			-2,
+			-1,
+			2,
+			0,
+			-2,
+			0,
+			2,
+			1,
+			-2,
+			1,
+			2,
+			2,
+			-2,
+			2,
+			-1,
+			2,
+			0,
+			2,
+			1,
+			2,
+			2,
 		};
 
 		public virtual void TryReveal()
@@ -1733,7 +1907,7 @@ namespace Server.Mobiles
 
 				NextCastTime = DateTime.Now + GetDelay(spell);
 			}
-            else if (m_Mobile.CanDetectHidden)
+			else if (m_Mobile.CanDetectHidden)
 			{
 				DetectHidden.OnUse(m_Mobile);
 

@@ -1,7 +1,6 @@
 #region References
 using System;
 using System.Collections.Generic;
-
 using Server.Engines.ArenaSystem;
 using Server.Engines.PartySystem;
 using Server.Engines.Quests;
@@ -40,7 +39,7 @@ namespace Server.Misc
 		{
 			None,
 			Peaceful,
-			Warring
+			Warring,
 		}
 
 		private static GuildStatus GetGuildStatus(Mobile m)
@@ -81,9 +80,9 @@ namespace Server.Misc
 				}
 			}
 
-            if (ViceVsVirtueSystem.Enabled && ViceVsVirtueSystem.IsEnemy(from, target))
+			if (ViceVsVirtueSystem.Enabled && ViceVsVirtueSystem.IsEnemy(from, target))
 			{
-                return false;
+				return false;
 			}
 			#endregion
 
@@ -96,12 +95,19 @@ namespace Server.Misc
 			if (target is BaseCreature && !((BaseCreature)target).Controlled)
 				return false; // Players cannot heal uncontrolled mobiles
 
-			if (from is PlayerMobile && ((PlayerMobile)from).Young && target is BaseCreature &&
-				((BaseCreature)target).Controlled)
+			if (
+				from is PlayerMobile
+				&& ((PlayerMobile)from).Young
+				&& target is BaseCreature
+				&& ((BaseCreature)target).Controlled
+			)
 				return true;
 
-			if (from is PlayerMobile && ((PlayerMobile)from).Young &&
-				(!(target is PlayerMobile) || !((PlayerMobile)target).Young))
+			if (
+				from is PlayerMobile
+				&& ((PlayerMobile)from).Young
+				&& (!(target is PlayerMobile) || !((PlayerMobile)target).Young)
+			)
 				return false; // Young players cannot perform beneficial actions towards older players
 
 			var fromGuild = from.Guild as Guild;
@@ -132,15 +138,23 @@ namespace Server.Misc
 			if (from is BaseCreature && ((BaseCreature)from).Summoned && ((BaseCreature)from).SummonMaster != null)
 				from = ((BaseCreature)from).SummonMaster;
 
-			if (target is BaseCreature && ((BaseCreature)target).Summoned && ((BaseCreature)target).SummonMaster != null)
+			if (
+				target is BaseCreature
+				&& ((BaseCreature)target).Summoned
+				&& ((BaseCreature)target).SummonMaster != null
+			)
 				target = ((BaseCreature)target).SummonMaster;
 
 			var bc = from as BaseCreature;
 
 			if (!from.Player && !(bc != null && bc.GetMaster() != null && bc.GetMaster().IsPlayer()))
 			{
-				if (!CheckAggressor(from.Aggressors, target) && !CheckAggressed(from.Aggressed, target) && target is PlayerMobile &&
-					((PlayerMobile)target).CheckYoungProtection(from))
+				if (
+					!CheckAggressor(from.Aggressors, target)
+					&& !CheckAggressed(from.Aggressed, target)
+					&& target is PlayerMobile
+					&& ((PlayerMobile)target).CheckYoungProtection(from)
+				)
 					return false;
 
 				return true; // Uncontrolled NPCs are only restricted by the young system
@@ -155,8 +169,12 @@ namespace Server.Misc
 					return true; // Guild allies or enemies can be harmful
 			}
 
-            if (ViceVsVirtueSystem.Enabled && ViceVsVirtueSystem.EnhancedRules && ViceVsVirtueSystem.IsEnemy(from, damageable))
-                return true;
+			if (
+				ViceVsVirtueSystem.Enabled
+				&& ViceVsVirtueSystem.EnhancedRules
+				&& ViceVsVirtueSystem.IsEnemy(from, damageable)
+			)
+				return true;
 
 			if (target is BaseCreature)
 			{
@@ -191,7 +209,12 @@ namespace Server.Misc
 
 				if (c.Map != null && c.Map != Map.Internal)
 				{
-					if (Core.AOS || Guild.NewGuildSystem || c.ControlOrder == OrderType.Attack || c.ControlOrder == OrderType.Guard)
+					if (
+						Core.AOS
+						|| Guild.NewGuildSystem
+						|| c.ControlOrder == OrderType.Attack
+						|| c.ControlOrder == OrderType.Guard
+					)
 						g = (Guild)(c.Guild = c.ControlMaster.Guild);
 					else if (c.Map == null || c.Map == Map.Internal || c.ControlMaster.Guild == null)
 						g = (Guild)(c.Guild = null);
@@ -237,11 +260,20 @@ namespace Server.Misc
 					var srcFaction = Faction.Find(source, true, true);
 					var trgFaction = Faction.Find(cretOwner, true, true);
 
-					if (srcFaction != null && trgFaction != null && srcFaction != trgFaction && source.Map == Faction.Facet)
+					if (
+						srcFaction != null
+						&& trgFaction != null
+						&& srcFaction != trgFaction
+						&& source.Map == Faction.Facet
+					)
 						return Notoriety.Enemy;
 				}
 
-				if (ViceVsVirtueSystem.Enabled && ViceVsVirtueSystem.IsEnemy(source, cretOwner) && (ViceVsVirtueSystem.EnhancedRules || source.Map == Faction.Facet))
+				if (
+					ViceVsVirtueSystem.Enabled
+					&& ViceVsVirtueSystem.IsEnemy(source, cretOwner)
+					&& (ViceVsVirtueSystem.EnhancedRules || source.Map == Faction.Facet)
+				)
 					return Notoriety.Enemy;
 
 				if (CheckHouseFlag(source, cretOwner, target.Location, target.Map))
@@ -263,7 +295,11 @@ namespace Server.Misc
 
 				foreach (var m in target.Aggressors)
 				{
-					if (m == source || (sourceParty != null && Party.Get(m) == sourceParty) || (sourceGuild != null && m.Guild == sourceGuild))
+					if (
+						m == source
+						|| (sourceParty != null && Party.Get(m) == sourceParty)
+						|| (sourceGuild != null && m.Guild == sourceGuild)
+					)
 						return actual;
 				}
 
@@ -425,7 +461,11 @@ namespace Server.Misc
 					return Notoriety.Enemy;
 			}
 
-			if (ViceVsVirtueSystem.Enabled && ViceVsVirtueSystem.IsEnemy(source, target) && (ViceVsVirtueSystem.EnhancedRules || source.Map == Faction.Facet))
+			if (
+				ViceVsVirtueSystem.Enabled
+				&& ViceVsVirtueSystem.IsEnemy(source, target)
+				&& (ViceVsVirtueSystem.EnhancedRules || source.Map == Faction.Facet)
+			)
 				return Notoriety.Enemy;
 
 			if (Stealing.ClassicMode && target is PlayerMobile && ((PlayerMobile)target).PermaFlags.Contains(source))
@@ -440,7 +480,12 @@ namespace Server.Misc
 			//If Target is NOT A baseCreature, OR it's a BC and the BC is initial innocent...
 			if (!(target is BaseCreature && ((BaseCreature)target).InitialInnocent))
 			{
-				if (!target.Body.IsHuman && !target.Body.IsGhost && !IsPet(target as BaseCreature) && !(target is PlayerMobile))
+				if (
+					!target.Body.IsHuman
+					&& !target.Body.IsGhost
+					&& !IsPet(target as BaseCreature)
+					&& !(target is PlayerMobile)
+				)
 					return Notoriety.CanBeAttacked;
 
 				if (!Core.ML && !target.CanBeginAction(typeof(PolymorphSpell)))
@@ -450,13 +495,13 @@ namespace Server.Misc
 			if (CheckAggressor(source.Aggressors, target))
 				return Notoriety.CanBeAttacked;
 
-			if(source is PlayerMobile && CheckPetAggressor((PlayerMobile)source, target))
+			if (source is PlayerMobile && CheckPetAggressor((PlayerMobile)source, target))
 				return Notoriety.CanBeAttacked;
 
 			if (CheckAggressed(source.Aggressed, target))
 				return Notoriety.CanBeAttacked;
 
-			if(source is PlayerMobile && CheckPetAggressed((PlayerMobile)source, target))
+			if (source is PlayerMobile && CheckPetAggressed((PlayerMobile)source, target))
 				return Notoriety.CanBeAttacked;
 
 			if (target is BaseCreature)
@@ -519,7 +564,11 @@ namespace Server.Misc
 
 		public static bool IsSummoned(BaseCreature c)
 		{
-			return (c != null && /*c.Controlled &&*/ c.Summoned);
+			return (
+				c != null
+				&& /*c.Controlled &&*/
+				c.Summoned
+			);
 		}
 
 		public static bool CheckAggressor(List<AggressorInfo> list, Mobile target)

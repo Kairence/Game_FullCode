@@ -82,7 +82,10 @@ namespace Server.ContextMenus
 		/// <summary>
 		///     Returns true if this ContextMenu requires packet version 2.
 		/// </summary>
-		public bool RequiresNewPacket { get { return Entries.Any(t => t.Number < 3000000 || t.Number > 3032767); } }
+		public bool RequiresNewPacket
+		{
+			get { return Entries.Any(t => t.Number < 3000000 || t.Number > 3032767); }
+		}
 
 		public void Dispose()
 		{
@@ -164,7 +167,7 @@ namespace Server.ContextMenus
 		}
 
 		/// <summary>
-		/// Returns the proper index of Enhanced Client Context Menu when sent from the icon on 
+		/// Returns the proper index of Enhanced Client Context Menu when sent from the icon on
 		/// the vendors status bar. Only known are Bank, Bulk Order Info and Bribe
 		/// </summary>
 		/// <param name="index">pre-described index sent by client. Must be 0x64 or higher</param>
@@ -177,85 +180,85 @@ namespace Server.ContextMenus
 			{
 				case 0x0078:
 					number = 3006105;
-					break;   // Bank
+					break; // Bank
 				case 0x0193:
 					number = 3006152;
-					break;   // Bulk Order Info
+					break; // Bulk Order Info
 				case 0x01A3:
 					number = 1152294;
-					break;   // Bribe
+					break; // Bribe
 				case 0x032A:
 					number = 3000197;
-					break;   // Add Party Member
+					break; // Add Party Member
 				case 0x032B:
 					number = 3000198;
-					break;   // Remove Party Member
+					break; // Remove Party Member
 				case 0x012D:
 					number = 3006130;
-					break;   // Tame
+					break; // Tame
 				case 0x082:
 					number = 3006107;
-					break;    // Command: Guard
+					break; // Command: Guard
 				case 0x083:
 					number = 3006108;
-					break;    // Command: Follow
+					break; // Command: Follow
 				case 0x086:
 					number = 3006111;
-					break;    // Command: Kill
+					break; // Command: Kill
 				case 0x087:
 					number = 3006114;
-					break;    // Command: Stay
+					break; // Command: Stay
 				case 0x089:
 					number = 3006112;
-					break;    // Command: Stop
+					break; // Command: Stop
 				case 0x0140:
 					number = 1113797;
-					break;   // Enable PVP Warning TODO: Not Enabled
+					break; // Enable PVP Warning TODO: Not Enabled
 				case 0x025A:
 					number = 3006205;
-					break;   // Release Co-Ownership TODO: Not Enabled
+					break; // Release Co-Ownership TODO: Not Enabled
 				case 0x025C:
 					number = 3006207;
-					break;   // Leave House
+					break; // Leave House
 				case 0x0196:
 					number = 3006156;
-					break;   // Quest Conversation
+					break; // Quest Conversation
 				case 0x0194:
 					number = 3006154;
-					break;   // View Quest Log
+					break; // View Quest Log
 				case 0x0195:
 					number = 3006155;
-					break;   // Cancel Quest
+					break; // Cancel Quest
 				case 0x0321:
 					number = 3006169;
-					break;   // Toggle Quest Item
+					break; // Toggle Quest Item
 				case 0x01A0:
 					number = 1114299;
-					break;   // Open Item Insurance Menu
+					break; // Open Item Insurance Menu
 				case 0x01A2:
 					number = 3006201;
-					break;   // Toggle Item Insurance
+					break; // Toggle Item Insurance
 				case 0x0396:
 					number = 1115022;
-					break;   // Open Titles Menu
+					break; // Open Titles Menu
 				case 0x0393:
 					number = 1049594;
-					break;   // Loyalty Rating
+					break; // Loyalty Rating
 				case 0x0134:
 					number = 3006157;
-					break;   // Cancel Protection
+					break; // Cancel Protection
 				case 0x03F2:
 					number = 1152531;
-					break;   // Void Pool
+					break; // Void Pool
 				case 0x03F5:
 					number = 1154112;
-					break;   // Allow Trades
+					break; // Allow Trades
 				case 0x03F6:
 					number = 1154113;
-					break;   // Refuse Trades
+					break; // Refuse Trades
 				case 0x0334:
 					number = 3006168;
-					break;   // Siege Bless Item
+					break; // Siege Bless Item
 			}
 
 			if (index >= 0x64)

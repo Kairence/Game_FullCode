@@ -2,39 +2,39 @@ using System;
 
 namespace Server.Items
 {
-    public class ThunderingAxe : OrnateAxe
+	public class ThunderingAxe : OrnateAxe
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public ThunderingAxe()
-        {
-            WeaponAttributes.HitLightning = 10;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public ThunderingAxe(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public ThunderingAxe()
+		{
+			WeaponAttributes.HitLightning = 10;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073547;
-            }
-        }// thundering axe
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public ThunderingAxe(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1073547; }
+		} // thundering axe
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

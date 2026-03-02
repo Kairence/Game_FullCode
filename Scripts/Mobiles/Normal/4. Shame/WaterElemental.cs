@@ -3,116 +3,106 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    [CorpseName("a water elemental corpse")]
-    public class WaterElemental : BaseCreature
-    {
-        private Boolean m_HasDecanter = true;
+	[CorpseName("a water elemental corpse")]
+	public class WaterElemental : BaseCreature
+	{
+		private Boolean m_HasDecanter = true;
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Boolean HasDecanter { get { return m_HasDecanter; } set { m_HasDecanter = value; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Boolean HasDecanter
+		{
+			get { return m_HasDecanter; }
+			set { m_HasDecanter = value; }
+		}
 
-        [Constructable]
-        public WaterElemental()
-            : base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
-        {
-            this.Name = "a water elemental";
-            this.Body = 16;
-            this.BaseSoundID = 278;
+		[Constructable]
+		public WaterElemental()
+			: base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
+		{
+			this.Name = "a water elemental";
+			this.Body = 16;
+			this.BaseSoundID = 278;
 
-            this.SetStr(536, 1045);
-            this.SetDex(1360, 1450);
-            this.SetInt(3010, 3250);
+			this.SetStr(536, 1045);
+			this.SetDex(1360, 1450);
+			this.SetInt(3010, 3250);
 
-            this.SetHits(2490, 2500);
+			this.SetHits(2490, 2500);
 			SetStam(1030, 1040);
 			SetMana(2110, 2220);
 
-			SetAttackSpeed( 10 );
+			SetAttackSpeed(10);
 
-            this.SetDamage(111, 152);
+			this.SetDamage(111, 152);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 65, 75);
-            this.SetResistance(ResistanceType.Fire, 100, 125);
-            this.SetResistance(ResistanceType.Cold, 100, 115);
-            this.SetResistance(ResistanceType.Poison, 10, 20);
-            this.SetResistance(ResistanceType.Energy, 5, 10);
+			this.SetResistance(ResistanceType.Physical, 65, 75);
+			this.SetResistance(ResistanceType.Fire, 100, 125);
+			this.SetResistance(ResistanceType.Cold, 100, 115);
+			this.SetResistance(ResistanceType.Poison, 10, 20);
+			this.SetResistance(ResistanceType.Energy, 5, 10);
 
-            SetSkill(SkillName.EvalInt, 90.1, 95.0);
-            SetSkill(SkillName.Magery, 90.1, 95.0);
-            SetSkill(SkillName.MagicResist, 190.1, 195.0);
+			SetSkill(SkillName.EvalInt, 90.1, 95.0);
+			SetSkill(SkillName.Magery, 90.1, 95.0);
+			SetSkill(SkillName.MagicResist, 190.1, 195.0);
 
-            Fame = 10000;
-            Karma = -10000;
+			Fame = 10000;
+			Karma = -10000;
 
+			this.VirtualArmor = 100;
+			this.ControlSlots = 3;
+			this.CanSwim = true;
+		}
 
-            this.VirtualArmor = 100;
-            this.ControlSlots = 3;
-            this.CanSwim = true;
-        }
+		public WaterElemental(Serial serial)
+			: base(serial) { }
 
-        public WaterElemental(Serial serial)
-            : base(serial)
-        {
-        }
+		public override double DispelDifficulty
+		{
+			get { return 117.5; }
+		}
+		public override double DispelFocus
+		{
+			get { return 45.0; }
+		}
+		public override bool BleedImmune
+		{
+			get { return true; }
+		}
+		public override int TreasureMapLevel
+		{
+			get { return 2; }
+		}
 
-        public override double DispelDifficulty
-        {
-            get
-            {
-                return 117.5;
-            }
-        }
-        public override double DispelFocus
-        {
-            get
-            {
-                return 45.0;
-            }
-        }
-        public override bool BleedImmune
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override int TreasureMapLevel
-        {
-            get
-            {
-                return 2;
-            }
-        }
-        public override void GenerateLoot()
-        {
-            this.AddLoot(LootPack.Average);
-            this.AddLoot(LootPack.Meager);
-            this.AddLoot(LootPack.Potions);
-        }
+		public override void GenerateLoot()
+		{
+			this.AddLoot(LootPack.Average);
+			this.AddLoot(LootPack.Meager);
+			this.AddLoot(LootPack.Potions);
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)1);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)1);
 
-            writer.Write(m_HasDecanter);
-        }
+			writer.Write(m_HasDecanter);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
 
-            switch (version)
-            {
-                case 0:
-                    break;
-                case 1:
-                    m_HasDecanter = reader.ReadBool();
-                    break;
-            }
-        }
-    }
+			switch (version)
+			{
+				case 0:
+					break;
+				case 1:
+					m_HasDecanter = reader.ReadBool();
+					break;
+			}
+		}
+	}
 }

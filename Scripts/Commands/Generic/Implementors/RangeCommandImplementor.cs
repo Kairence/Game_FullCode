@@ -2,85 +2,87 @@ using System;
 
 namespace Server.Commands.Generic
 {
-    public class RangeCommandImplementor : BaseCommandImplementor
-    {
-        private static RangeCommandImplementor m_Instance;
-        public RangeCommandImplementor()
-        {
-            this.Accessors = new string[] { "Range" };
-            this.SupportRequirement = CommandSupport.Area;
-            this.SupportsConditionals = true;
-            this.AccessLevel = AccessLevel.GameMaster;
-            this.Usage = "Range <range> <command> [condition]";
-            this.Description = "Invokes the command on all appropriate objects within a specified range of you. Optional condition arguments can further restrict the set of objects.";
+	public class RangeCommandImplementor : BaseCommandImplementor
+	{
+		private static RangeCommandImplementor m_Instance;
 
-            m_Instance = this;
-        }
+		public RangeCommandImplementor()
+		{
+			this.Accessors = new string[] { "Range" };
+			this.SupportRequirement = CommandSupport.Area;
+			this.SupportsConditionals = true;
+			this.AccessLevel = AccessLevel.GameMaster;
+			this.Usage = "Range <range> <command> [condition]";
+			this.Description =
+				"Invokes the command on all appropriate objects within a specified range of you. Optional condition arguments can further restrict the set of objects.";
 
-        public static RangeCommandImplementor Instance
-        {
-            get
-            {
-                return m_Instance;
-            }
-        }
-        public override void Execute(CommandEventArgs e)
-        {
-            if (e.Length >= 2)
-            {
-                int range = e.GetInt32(0);
+			m_Instance = this;
+		}
 
-                if (range < 0)
-                {
-                    e.Mobile.SendMessage("The range must not be negative.");
-                }
-                else
-                {
-                    BaseCommand command = null;
-                    this.Commands.TryGetValue(e.GetString(1), out command);
+		public static RangeCommandImplementor Instance
+		{
+			get { return m_Instance; }
+		}
 
-                    if (command == null)
-                    {
-                        e.Mobile.SendMessage("That is either an invalid command name or one that does not support this modifier.");
-                    }
-                    else if (e.Mobile.AccessLevel < command.AccessLevel)
-                    {
-                        e.Mobile.SendMessage("You do not have access to that command.");
-                    }
-                    else
-                    {
-                        string[] oldArgs = e.Arguments;
-                        string[] args = new string[oldArgs.Length - 2];
+		public override void Execute(CommandEventArgs e)
+		{
+			if (e.Length >= 2)
+			{
+				int range = e.GetInt32(0);
 
-                        for (int i = 0; i < args.Length; ++i)
-                            args[i] = oldArgs[i + 2];
+				if (range < 0)
+				{
+					e.Mobile.SendMessage("The range must not be negative.");
+				}
+				else
+				{
+					BaseCommand command = null;
+					this.Commands.TryGetValue(e.GetString(1), out command);
 
-                        this.Process(range, e.Mobile, command, args);
-                    }
-                }
-            }
-            else
-            {
-                e.Mobile.SendMessage("You must supply a range and a command name.");
-            }
-        }
+					if (command == null)
+					{
+						e.Mobile.SendMessage(
+							"That is either an invalid command name or one that does not support this modifier."
+						);
+					}
+					else if (e.Mobile.AccessLevel < command.AccessLevel)
+					{
+						e.Mobile.SendMessage("You do not have access to that command.");
+					}
+					else
+					{
+						string[] oldArgs = e.Arguments;
+						string[] args = new string[oldArgs.Length - 2];
 
-        public void Process(int range, Mobile from, BaseCommand command, string[] args)
-        {
-            AreaCommandImplementor impl = AreaCommandImplementor.Instance;
+						for (int i = 0; i < args.Length; ++i)
+							args[i] = oldArgs[i + 2];
 
-            if (impl == null)
-                return;
+						this.Process(range, e.Mobile, command, args);
+					}
+				}
+			}
+			else
+			{
+				e.Mobile.SendMessage("You must supply a range and a command name.");
+			}
+		}
 
-            Map map = from.Map;
+		public void Process(int range, Mobile from, BaseCommand command, string[] args)
+		{
+			AreaCommandImplementor impl = AreaCommandImplementor.Instance;
 
-            if (map == null || map == Map.Internal)
-                return;
+			if (impl == null)
+				return;
 
-            Point3D start = new Point3D(from.X - range, from.Y - range, from.Z);
-            Point3D end = new Point3D(from.X + range, from.Y + range, from.Z);
+			Map map = from.Map;
 
-            impl.OnTarget(from, map, start, end, new object[] { command, args });
-        }
-    }
+			if (map == null || map == Map.Internal)
+				return;
+
+			Point3D start = new Point3D(from.X - range, from.Y - range, from.Z);
+			Point3D end = new Point3D(from.X + range, from.Y + range, from.Z);
+
+			impl.OnTarget(from, map, start, end, new object[] { command, args });
+		}
+	}
 }

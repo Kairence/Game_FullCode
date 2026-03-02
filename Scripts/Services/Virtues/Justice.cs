@@ -1,6 +1,5 @@
 #region References
 using System;
-
 using Server.Gumps;
 using Server.Mobiles;
 using Server.Network;
@@ -182,8 +181,7 @@ namespace Server.Services.Virtues
 					pm.LastJusticeLoss = DateTime.UtcNow;
 				}
 			}
-			catch
-			{ }
+			catch { }
 		}
 	}
 
@@ -207,15 +205,7 @@ namespace Server.Services.Virtues
 			AddImageTiled(15, 15, 365, 190, 2624);
 			AddAlphaRegion(15, 15, 365, 190);
 
-			AddHtmlLocalized(
-				30,
-				20,
-				360,
-				25,
-				1049365,
-				0x7FFF,
-				false,
-				false); // Another player is offering you their <a href="?ForceTopic88">protection</a>: 
+			AddHtmlLocalized(30, 20, 360, 25, 1049365, 0x7FFF, false, false); // Another player is offering you their <a href="?ForceTopic88">protection</a>:
 			AddLabel(90, 55, 1153, protector.Name);
 
 			AddImage(50, 45, 9005);

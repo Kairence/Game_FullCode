@@ -3,40 +3,38 @@ using Server.Mobiles;
 
 namespace Server.Items
 {
-    public class TotalNightSightPotion : BasePotion
-    {
-        [Constructable]
-        public TotalNightSightPotion()
-            : base(0xF06, PotionEffect.NightsightTotal)
-        {
- 			Name = "최상급 방어 물약";
-        }
+	public class TotalNightSightPotion : BasePotion
+	{
+		[Constructable]
+		public TotalNightSightPotion()
+			: base(0xF06, PotionEffect.NightsightTotal)
+		{
+			Name = "최상급 방어 물약";
+		}
 
-        public TotalNightSightPotion(Serial serial)
-            : base(serial)
-        {
-        }
+		public TotalNightSightPotion(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((int)0); // version
-        }
+			writer.Write((int)0); // version
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadInt();
-        }
+			int version = reader.ReadInt();
+		}
 
-        public override void Drink(Mobile from)
-        {
-			if( from is PlayerMobile )
+		public override void Drink(Mobile from)
+		{
+			if (from is PlayerMobile)
 			{
 				PlayerMobile pm = from as PlayerMobile;
-				if( pm.TimerList[69] == 0 )
+				if (pm.TimerList[69] == 0)
 				{
 					pm.TimerList[69] = 3000;
 					from.SendMessage("5분 동안 몬스터에게 피해를 20% 감소시킵니다.");
@@ -52,7 +50,7 @@ namespace Server.Items
 				{
 					from.SendLocalizedMessage(502178); // You are already affected by this type of potion.
 				}
-            }
-        }
-    }
+			}
+		}
+	}
 }

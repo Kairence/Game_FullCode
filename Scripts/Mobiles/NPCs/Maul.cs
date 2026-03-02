@@ -1,50 +1,41 @@
 using System;
 
 namespace Server.Engines.Quests
-{ 
-    public class MaulBear : MondainQuester
-    { 
-        [Constructable]
-        public MaulBear()
-            : base("Maul")
-        { 
-        }
+{
+	public class MaulBear : MondainQuester
+	{
+		[Constructable]
+		public MaulBear()
+			: base("Maul") { }
 
-        public MaulBear(Serial serial)
-            : base(serial)
-        {
-        }
+		public MaulBear(Serial serial)
+			: base(serial) { }
 
-        public override Type[] Quests
-        {
-            get
-            {
-                return new Type[] 
-                {
-                    typeof(SeasonsQuest)
-                };
-            }
-        }
-        public override void InitBody()
-        {
-            this.InitStats(100, 100, 25);
-			
-            this.Female = false;
-            this.Body = 212;
-        }
+		public override Type[] Quests
+		{
+			get { return new Type[] { typeof(SeasonsQuest) }; }
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void InitBody()
+		{
+			this.InitStats(100, 100, 25);
 
-            writer.Write((int)0); // version
-        }
+			this.Female = false;
+			this.Body = 212;
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

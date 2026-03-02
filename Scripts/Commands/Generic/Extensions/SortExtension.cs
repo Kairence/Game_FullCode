@@ -4,102 +4,111 @@ using System.Collections.Generic;
 
 namespace Server.Commands.Generic
 {
-    public sealed class SortExtension : BaseExtension
-    {
-        public static ExtensionInfo ExtInfo = new ExtensionInfo(40, "Order", -1, delegate() { return new SortExtension(); });
-        private readonly List<OrderInfo> m_Orders;
-        private IComparer m_Comparer;
-        public SortExtension()
-        {
-            this.m_Orders = new List<OrderInfo>();
-        }
+	public sealed class SortExtension : BaseExtension
+	{
+		public static ExtensionInfo ExtInfo = new ExtensionInfo(
+			40,
+			"Order",
+			-1,
+			delegate()
+			{
+				return new SortExtension();
+			}
+		);
+		private readonly List<OrderInfo> m_Orders;
+		private IComparer m_Comparer;
 
-        public override ExtensionInfo Info
-        {
-            get
-            {
-                return ExtInfo;
-            }
-        }
-        public static void Initialize()
-        {
-            ExtensionInfo.Register(ExtInfo);
-        }
+		public SortExtension()
+		{
+			this.m_Orders = new List<OrderInfo>();
+		}
 
-        public override void Optimize(Mobile from, Type baseType, ref AssemblyEmitter assembly)
-        {
-            if (baseType == null)
-                throw new Exception("The ordering extension may only be used in combination with an object conditional.");
+		public override ExtensionInfo Info
+		{
+			get { return ExtInfo; }
+		}
 
-            foreach (OrderInfo order in this.m_Orders)
-            {
-                order.Property.BindTo(baseType, PropertyAccess.Read);
-                order.Property.CheckAccess(from);
-            }
+		public static void Initialize()
+		{
+			ExtensionInfo.Register(ExtInfo);
+		}
 
-            if (assembly == null)
-                assembly = new AssemblyEmitter("__dynamic", false);
+		public override void Optimize(Mobile from, Type baseType, ref AssemblyEmitter assembly)
+		{
+			if (baseType == null)
+				throw new Exception(
+					"The ordering extension may only be used in combination with an object conditional."
+				);
 
-            this.m_Comparer = SortCompiler.Compile(assembly, baseType, this.m_Orders.ToArray());
-        }
+			foreach (OrderInfo order in this.m_Orders)
+			{
+				order.Property.BindTo(baseType, PropertyAccess.Read);
+				order.Property.CheckAccess(from);
+			}
 
-        public override void Parse(Mobile from, string[] arguments, int offset, int size)
-        {
-            if (size < 1)
-                throw new Exception("Invalid ordering syntax.");
+			if (assembly == null)
+				assembly = new AssemblyEmitter("__dynamic", false);
 
-            if (Insensitive.Equals(arguments[offset], "by"))
-            {
-                ++offset;
-                --size;
+			this.m_Comparer = SortCompiler.Compile(assembly, baseType, this.m_Orders.ToArray());
+		}
 
-                if (size < 1)
-                    throw new Exception("Invalid ordering syntax.");
-            }
+		public override void Parse(Mobile from, string[] arguments, int offset, int size)
+		{
+			if (size < 1)
+				throw new Exception("Invalid ordering syntax.");
 
-            int end = offset + size;
+			if (Insensitive.Equals(arguments[offset], "by"))
+			{
+				++offset;
+				--size;
 
-            while (offset < end)
-            {
-                string binding = arguments[offset++];
+				if (size < 1)
+					throw new Exception("Invalid ordering syntax.");
+			}
 
-                bool isAscending = true;
+			int end = offset + size;
 
-                if (offset < end)
-                {
-                    string next = arguments[offset];
+			while (offset < end)
+			{
+				string binding = arguments[offset++];
 
-                    switch ( next.ToLower() )
-                    {
-                        case "+":
-                        case "up":
-                        case "asc":
-                        case "ascending":
-                            isAscending = true;
-                            ++offset;
-                            break;
-                        case "-":
-                        case "down":
-                        case "desc":
-                        case "descending":
-                            isAscending = false;
-                            ++offset;
-                            break;
-                    }
-                }
+				bool isAscending = true;
 
-                Property property = new Property(binding);
+				if (offset < end)
+				{
+					string next = arguments[offset];
 
-                this.m_Orders.Add(new OrderInfo(property, isAscending));
-            }
-        }
+					switch (next.ToLower())
+					{
+						case "+":
+						case "up":
+						case "asc":
+						case "ascending":
+							isAscending = true;
+							++offset;
+							break;
+						case "-":
+						case "down":
+						case "desc":
+						case "descending":
+							isAscending = false;
+							++offset;
+							break;
+					}
+				}
 
-        public override void Filter(ArrayList list)
-        {
-            if (this.m_Comparer == null)
-                throw new InvalidOperationException("The extension must first be optimized.");
+				Property property = new Property(binding);
 
-            list.Sort(this.m_Comparer);
-        }
-    }
+				this.m_Orders.Add(new OrderInfo(property, isAscending));
+			}
+		}
+
+		public override void Filter(ArrayList list)
+		{
+			if (this.m_Comparer == null)
+				throw new InvalidOperationException("The extension must first be optimized.");
+
+			list.Sort(this.m_Comparer);
+		}
+	}
 }

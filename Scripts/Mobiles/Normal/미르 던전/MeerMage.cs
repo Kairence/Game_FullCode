@@ -4,265 +4,293 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    [CorpseName("a meer's corpse")]
-    public class MeerMage : BaseCreature
-    {
-        private static readonly Hashtable m_Table = new Hashtable();
-        private DateTime m_NextAbilityTime;
-        [Constructable]
-        public MeerMage()
-            : base(AIType.AI_Spellweaving, FightMode.Aggressor, 10, 1, 0.2, 0.4)
-        {
-            Name = "a meer mage";
-            Body = 770;
+	[CorpseName("a meer's corpse")]
+	public class MeerMage : BaseCreature
+	{
+		private static readonly Hashtable m_Table = new Hashtable();
+		private DateTime m_NextAbilityTime;
 
-            SetStr(171, 200);
-            SetDex(126, 145);
-            SetInt(276, 305);
+		[Constructable]
+		public MeerMage()
+			: base(AIType.AI_Spellweaving, FightMode.Aggressor, 10, 1, 0.2, 0.4)
+		{
+			Name = "a meer mage";
+			Body = 770;
 
-            SetHits(103, 120);
+			SetStr(171, 200);
+			SetDex(126, 145);
+			SetInt(276, 305);
 
-            SetDamage(24, 26);
+			SetHits(103, 120);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			SetDamage(24, 26);
 
-            SetResistance(ResistanceType.Physical, 45, 55);
-            SetResistance(ResistanceType.Fire, 15, 25);
-            SetResistance(ResistanceType.Cold, 50);
-            SetResistance(ResistanceType.Poison, 25, 35);
-            SetResistance(ResistanceType.Energy, 25, 35);
+			SetDamageType(ResistanceType.Physical, 100);
 
-            SetSkill(SkillName.EvalInt, 100.0);
-            SetSkill(SkillName.Magery, 70.1, 80.0);
-            SetSkill(SkillName.Meditation, 85.1, 95.0);
-            SetSkill(SkillName.MagicResist, 80.1, 100.0);
-            SetSkill(SkillName.Tactics, 70.1, 90.0);
-            SetSkill(SkillName.Wrestling, 60.1, 80.0);
-            SetSkill(SkillName.Spellweaving, 70.1, 80.0);
+			SetResistance(ResistanceType.Physical, 45, 55);
+			SetResistance(ResistanceType.Fire, 15, 25);
+			SetResistance(ResistanceType.Cold, 50);
+			SetResistance(ResistanceType.Poison, 25, 35);
+			SetResistance(ResistanceType.Energy, 25, 35);
 
-            Fame = 8000;
-            Karma = 8000;
+			SetSkill(SkillName.EvalInt, 100.0);
+			SetSkill(SkillName.Magery, 70.1, 80.0);
+			SetSkill(SkillName.Meditation, 85.1, 95.0);
+			SetSkill(SkillName.MagicResist, 80.1, 100.0);
+			SetSkill(SkillName.Tactics, 70.1, 90.0);
+			SetSkill(SkillName.Wrestling, 60.1, 80.0);
+			SetSkill(SkillName.Spellweaving, 70.1, 80.0);
 
-            VirtualArmor = 16;
+			Fame = 8000;
+			Karma = 8000;
+
+			VirtualArmor = 16;
 
 			switch (Utility.Random(8))
-            {
-                case 0: PackItem(new StrangleScroll()); break;
-                case 1: PackItem(new WitherScroll()); break;
+			{
+				case 0:
+					PackItem(new StrangleScroll());
+					break;
+				case 1:
+					PackItem(new WitherScroll());
+					break;
 			}
 
-            m_NextAbilityTime = DateTime.UtcNow + TimeSpan.FromSeconds(Utility.RandomMinMax(2, 5));
-        }
+			m_NextAbilityTime = DateTime.UtcNow + TimeSpan.FromSeconds(Utility.RandomMinMax(2, 5));
+		}
 
-        public MeerMage(Serial serial)
-            : base(serial)
-        {
-        }
+		public MeerMage(Serial serial)
+			: base(serial) { }
 
-        public override bool AutoDispel
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override Poison PoisonImmune
-        {
-            get
-            {
-                return Poison.Lethal;
-            }
-        }
-        public override bool CanRummageCorpses
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override int TreasureMapLevel
-        {
-            get
-            {
-                return 3;
-            }
-        }
-        public override bool InitialInnocent
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public static bool UnderEffect(Mobile m)
-        {
-            return m_Table.Contains(m);
-        }
+		public override bool AutoDispel
+		{
+			get { return true; }
+		}
+		public override Poison PoisonImmune
+		{
+			get { return Poison.Lethal; }
+		}
+		public override bool CanRummageCorpses
+		{
+			get { return true; }
+		}
+		public override int TreasureMapLevel
+		{
+			get { return 3; }
+		}
+		public override bool InitialInnocent
+		{
+			get { return true; }
+		}
 
-        public static void StopEffect(Mobile m, bool message)
-        {
-            Timer t = (Timer)m_Table[m];
+		public static bool UnderEffect(Mobile m)
+		{
+			return m_Table.Contains(m);
+		}
 
-            if (t != null)
-            {
-                if (message)
-                    m.PublicOverheadMessage(Network.MessageType.Emote, m.SpeechHue, true, "* The open flame begins to scatter the swarm of insects *");
+		public static void StopEffect(Mobile m, bool message)
+		{
+			Timer t = (Timer)m_Table[m];
 
-                t.Stop();
-                m_Table.Remove(m);
-            }
-        }
+			if (t != null)
+			{
+				if (message)
+					m.PublicOverheadMessage(
+						Network.MessageType.Emote,
+						m.SpeechHue,
+						true,
+						"* The open flame begins to scatter the swarm of insects *"
+					);
 
-        public override void GenerateLoot()
-        {
-            AddLoot(LootPack.FilthyRich);
-            AddLoot(LootPack.MedScrolls, 2);
-            // TODO: Daemon bone ...
-        }
+				t.Stop();
+				m_Table.Remove(m);
+			}
+		}
 
-        public override int GetHurtSound()
-        {
-            return 0x14D;
-        }
+		public override void GenerateLoot()
+		{
+			AddLoot(LootPack.FilthyRich);
+			AddLoot(LootPack.MedScrolls, 2);
+			// TODO: Daemon bone ...
+		}
 
-        public override int GetDeathSound()
-        {
-            return 0x314;
-        }
+		public override int GetHurtSound()
+		{
+			return 0x14D;
+		}
 
-        public override int GetAttackSound()
-        {
-            return 0x75;
-        }
+		public override int GetDeathSound()
+		{
+			return 0x314;
+		}
 
-        public override void OnThink()
-        {
-            if (DateTime.UtcNow >= m_NextAbilityTime)
-            {
-                Mobile combatant = Combatant as Mobile;
+		public override int GetAttackSound()
+		{
+			return 0x75;
+		}
 
-                if (combatant != null && combatant.Map == Map && combatant.InRange(this, 12) && IsEnemy(combatant) && !UnderEffect(combatant))
-                {
-                    m_NextAbilityTime = DateTime.UtcNow + TimeSpan.FromSeconds(Utility.RandomMinMax(20, 30));
+		public override void OnThink()
+		{
+			if (DateTime.UtcNow >= m_NextAbilityTime)
+			{
+				Mobile combatant = Combatant as Mobile;
 
-                    if (combatant is BaseCreature)
-                    {
-                        BaseCreature bc = (BaseCreature)combatant;
+				if (
+					combatant != null
+					&& combatant.Map == Map
+					&& combatant.InRange(this, 12)
+					&& IsEnemy(combatant)
+					&& !UnderEffect(combatant)
+				)
+				{
+					m_NextAbilityTime = DateTime.UtcNow + TimeSpan.FromSeconds(Utility.RandomMinMax(20, 30));
 
-                        if (bc.Controlled && bc.ControlMaster != null && !bc.ControlMaster.Deleted && bc.ControlMaster.Alive)
-                        {
-                            if (bc.ControlMaster.Map == Map && bc.ControlMaster.InRange(this, 12) && !UnderEffect(bc.ControlMaster))
-                            {
-                                Combatant = combatant = bc.ControlMaster;
-                            }
-                        }
-                    }
+					if (combatant is BaseCreature)
+					{
+						BaseCreature bc = (BaseCreature)combatant;
 
-                    if (Utility.RandomDouble() < .1)
-                    {
-                        int[][] coord = 
-                        {
-                            new int[] { -4, -6 }, new int[] { 4, -6 }, new int[] { 0, -8 }, new int[] { -5, 5 }, new int[] { 5, 5 }
-                        };
+						if (
+							bc.Controlled
+							&& bc.ControlMaster != null
+							&& !bc.ControlMaster.Deleted
+							&& bc.ControlMaster.Alive
+						)
+						{
+							if (
+								bc.ControlMaster.Map == Map
+								&& bc.ControlMaster.InRange(this, 12)
+								&& !UnderEffect(bc.ControlMaster)
+							)
+							{
+								Combatant = combatant = bc.ControlMaster;
+							}
+						}
+					}
 
-                        BaseCreature rabid;
+					if (Utility.RandomDouble() < .1)
+					{
+						int[][] coord =
+						{
+							new int[] { -4, -6 },
+							new int[] { 4, -6 },
+							new int[] { 0, -8 },
+							new int[] { -5, 5 },
+							new int[] { 5, 5 },
+						};
 
-                        for (int i = 0; i < 5; i++)
-                        {
-                            int x = combatant.X + coord[i][0];
-                            int y = combatant.Y + coord[i][1];
+						BaseCreature rabid;
 
-                            Point3D loc = new Point3D(x, y, combatant.Map.GetAverageZ(x, y));
+						for (int i = 0; i < 5; i++)
+						{
+							int x = combatant.X + coord[i][0];
+							int y = combatant.Y + coord[i][1];
 
-                            if (!combatant.Map.CanSpawnMobile(loc))
-                                continue;
+							Point3D loc = new Point3D(x, y, combatant.Map.GetAverageZ(x, y));
 
-                            switch ( i )
-                            {
-                                case 0:
-                                    rabid = new EnragedRabbit(this);
-                                    break;
-                                case 1:
-                                    rabid = new EnragedHind(this);
-                                    break;
-                                case 2:
-                                    rabid = new EnragedHart(this);
-                                    break;
-                                case 3:
-                                    rabid = new EnragedBlackBear(this);
-                                    break;
-                                default:
-                                    rabid = new EnragedEagle(this);
-                                    break;
-                            }
+							if (!combatant.Map.CanSpawnMobile(loc))
+								continue;
 
-                            rabid.FocusMob = combatant;
-                            rabid.MoveToWorld(loc, combatant.Map);
-                        }
-                        Say(1071932); //Creatures of the forest, I call to thee!  Aid me in the fight against all that is evil!
-                    }
-                    else if (combatant.Player)
-                    {
-                        Say(true, "I call a plague of insects to sting your flesh!");
-                        m_Table[combatant] = Timer.DelayCall(TimeSpan.FromSeconds(0.5), TimeSpan.FromSeconds(7.0), new TimerStateCallback(DoEffect), new object[] { combatant, 0 });
-                    }
-                }
-            }
+							switch (i)
+							{
+								case 0:
+									rabid = new EnragedRabbit(this);
+									break;
+								case 1:
+									rabid = new EnragedHind(this);
+									break;
+								case 2:
+									rabid = new EnragedHart(this);
+									break;
+								case 3:
+									rabid = new EnragedBlackBear(this);
+									break;
+								default:
+									rabid = new EnragedEagle(this);
+									break;
+							}
 
-            base.OnThink();
-        }
+							rabid.FocusMob = combatant;
+							rabid.MoveToWorld(loc, combatant.Map);
+						}
+						Say(1071932); //Creatures of the forest, I call to thee!  Aid me in the fight against all that is evil!
+					}
+					else if (combatant.Player)
+					{
+						Say(true, "I call a plague of insects to sting your flesh!");
+						m_Table[combatant] = Timer.DelayCall(
+							TimeSpan.FromSeconds(0.5),
+							TimeSpan.FromSeconds(7.0),
+							new TimerStateCallback(DoEffect),
+							new object[] { combatant, 0 }
+						);
+					}
+				}
+			}
 
-        public void DoEffect(object state)
-        {
-            object[] states = (object[])state;
+			base.OnThink();
+		}
 
-            Mobile m = (Mobile)states[0];
-            int count = (int)states[1];
+		public void DoEffect(object state)
+		{
+			object[] states = (object[])state;
 
-            if (!m.Alive)
-            {
-                StopEffect(m, false);
-            }
-            else
-            {
-                Torch torch = m.FindItemOnLayer(Layer.TwoHanded) as Torch;
+			Mobile m = (Mobile)states[0];
+			int count = (int)states[1];
 
-                if (torch != null && torch.Burning)
-                {
-                    StopEffect(m, true);
-                }
-                else
-                {
-                    if ((count % 4) == 0)
-                    {
-                        m.LocalOverheadMessage(Network.MessageType.Emote, m.SpeechHue, true, "* The swarm of insects bites and stings your flesh! *");
-                        m.NonlocalOverheadMessage(Network.MessageType.Emote, m.SpeechHue, true, String.Format("* {0} is stung by a swarm of insects *", m.Name));
-                    }
+			if (!m.Alive)
+			{
+				StopEffect(m, false);
+			}
+			else
+			{
+				Torch torch = m.FindItemOnLayer(Layer.TwoHanded) as Torch;
 
-                    m.FixedParticles(0x91C, 10, 180, 9539, EffectLayer.Waist);
-                    m.PlaySound(0x00E);
-                    m.PlaySound(0x1BC);
+				if (torch != null && torch.Burning)
+				{
+					StopEffect(m, true);
+				}
+				else
+				{
+					if ((count % 4) == 0)
+					{
+						m.LocalOverheadMessage(
+							Network.MessageType.Emote,
+							m.SpeechHue,
+							true,
+							"* The swarm of insects bites and stings your flesh! *"
+						);
+						m.NonlocalOverheadMessage(
+							Network.MessageType.Emote,
+							m.SpeechHue,
+							true,
+							String.Format("* {0} is stung by a swarm of insects *", m.Name)
+						);
+					}
 
-                    AOS.Damage(m, this, Utility.RandomMinMax(30, 40) - (Core.AOS ? 0 : 10), 100, 0, 0, 0, 0);
+					m.FixedParticles(0x91C, 10, 180, 9539, EffectLayer.Waist);
+					m.PlaySound(0x00E);
+					m.PlaySound(0x1BC);
 
-                    states[1] = count + 1;
+					AOS.Damage(m, this, Utility.RandomMinMax(30, 40) - (Core.AOS ? 0 : 10), 100, 0, 0, 0, 0);
 
-                    if (!m.Alive)
-                        StopEffect(m, false);
-                }
-            }
-        }
+					states[1] = count + 1;
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
+					if (!m.Alive)
+						StopEffect(m, false);
+				}
+			}
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 }

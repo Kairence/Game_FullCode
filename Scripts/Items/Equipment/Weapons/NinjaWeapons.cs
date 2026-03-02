@@ -44,18 +44,28 @@ namespace Server.Items
 		{
 			if (CanUseWeapon(from, weapon))
 			{
-				from.BeginTarget(weapon.WeaponMaxRange, false, TargetFlags.Harmful, new TargetStateCallback<INinjaWeapon>(OnTarget), weapon);
+				from.BeginTarget(
+					weapon.WeaponMaxRange,
+					false,
+					TargetFlags.Harmful,
+					new TargetStateCallback<INinjaWeapon>(OnTarget),
+					weapon
+				);
 			}
 		}
 
 		public static void Shoot(Mobile from, Mobile target, INinjaWeapon weapon)
 		{
-			if (from != target && (!(from is PlayerMobile) || CanUseWeapon((PlayerMobile)from, weapon)) && from.CanBeHarmful(target))
+			if (
+				from != target
+				&& (!(from is PlayerMobile) || CanUseWeapon((PlayerMobile)from, weapon))
+				&& from.CanBeHarmful(target)
+			)
 			{
 				if (weapon.WeaponMinRange == 0 || !from.InRange(target, weapon.WeaponMinRange))
 				{
-                    if(from is PlayerMobile)
-					    ((PlayerMobile)from).NinjaWepCooldown = true;
+					if (from is PlayerMobile)
+						((PlayerMobile)from).NinjaWepCooldown = true;
 
 					from.Direction = from.GetDirectionTo(target);
 
@@ -67,11 +77,19 @@ namespace Server.Items
 
 					if (CombatCheck(from, target))
 					{
-						Timer.DelayCall(TimeSpan.FromSeconds(1.0), new TimerStateCallback<object[]>(OnHit), new object[] { from, target, weapon });
+						Timer.DelayCall(
+							TimeSpan.FromSeconds(1.0),
+							new TimerStateCallback<object[]>(OnHit),
+							new object[] { from, target, weapon }
+						);
 					}
 
-                    if(from is PlayerMobile)
-					    Timer.DelayCall(TimeSpan.FromSeconds(2.5), new TimerStateCallback<PlayerMobile>(ResetUsing), (PlayerMobile)from);
+					if (from is PlayerMobile)
+						Timer.DelayCall(
+							TimeSpan.FromSeconds(2.5),
+							new TimerStateCallback<PlayerMobile>(ResetUsing),
+							(PlayerMobile)from
+						);
 				}
 				else
 				{
@@ -89,7 +107,8 @@ namespace Server.Items
 		{
 			if (weapon.UsesRemaining > 0)
 			{
-				INinjaAmmo ammo = Activator.CreateInstance(weapon.AmmoType, new object[] { weapon.UsesRemaining }) as INinjaAmmo;
+				INinjaAmmo ammo =
+					Activator.CreateInstance(weapon.AmmoType, new object[] { weapon.UsesRemaining }) as INinjaAmmo;
 
 				ammo.Poison = weapon.Poison;
 				ammo.PoisonCharges = weapon.PoisonCharges;
@@ -118,8 +137,13 @@ namespace Server.Items
 					{
 						if (weapon.UsesRemaining > 0)
 						{
-							if ((weapon.Poison == null && ammo.Poison != null)
-								|| ((weapon.Poison != null && ammo.Poison != null) && weapon.Poison.Level != ammo.Poison.Level))
+							if (
+								(weapon.Poison == null && ammo.Poison != null)
+								|| (
+									(weapon.Poison != null && ammo.Poison != null)
+									&& weapon.Poison.Level != ammo.Poison.Level
+								)
+							)
 							{
 								Unload(from, weapon);
 								need = Math.Min(MaxUses, ammo.UsesRemaining);
@@ -221,7 +245,10 @@ namespace Server.Items
 				attackValue += 10;
 			}
 
-			if (AnimalForm.UnderTransformation(attacker, typeof(GreyWolf)) || AnimalForm.UnderTransformation(attacker, typeof(BakeKitsune)))
+			if (
+				AnimalForm.UnderTransformation(attacker, typeof(GreyWolf))
+				|| AnimalForm.UnderTransformation(attacker, typeof(BakeKitsune))
+			)
 			{
 				attackValue += 20;
 			}
@@ -250,9 +277,9 @@ namespace Server.Items
 				defenseValue -= 25;
 			}
 
-            defenseValue += Block.GetBonus(defender);
+			defenseValue += Block.GetBonus(defender);
 
-            int refBonus = 0;
+			int refBonus = 0;
 
 			if (SkillHandlers.Discordance.GetEffect(attacker, ref refBonus))
 			{
@@ -355,7 +382,13 @@ namespace Server.Items
 			{
 				if (WeaponIsValid(weapon, Owner.From))
 				{
-					Owner.From.BeginTarget(10, false, TargetFlags.Harmful, new TargetStateCallback<INinjaWeapon>(OnTarget), weapon);
+					Owner.From.BeginTarget(
+						10,
+						false,
+						TargetFlags.Harmful,
+						new TargetStateCallback<INinjaWeapon>(OnTarget),
+						weapon
+					);
 				}
 			}
 		}

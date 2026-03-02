@@ -4,45 +4,57 @@ using Server.Spells;
 
 namespace Server.Items
 {
-    public class GargishAsclepius : GargishGnarledStaff
-    {
-        public override bool IsArtifact { get { return true; } }
-		
-        [Constructable]
-        public GargishAsclepius()
-        { 
-        }
+	public class GargishAsclepius : GargishGnarledStaff
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public override bool CanFortify { get { return false; } }
+		[Constructable]
+		public GargishAsclepius() { }
 
-        public GargishAsclepius(Serial serial) : base(serial)
-        {
-        }
-        
-        public override int InitMinHits { get { return 255; } }
-        public override int InitMaxHits { get { return 255; } }
+		public override bool CanFortify
+		{
+			get { return false; }
+		}
 
-        public override int LabelNumber { get { return 1153526; } } // GargishAsclepius [Replica]
+		public GargishAsclepius(Serial serial)
+			: base(serial) { }
 
-        public override void AddNameProperties(ObjectPropertyList list)
-        {
-            base.AddNameProperties(list);
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-            list.Add(1153525); // 15% Bandage Healing Bonus 
-        }
+		public override int LabelNumber
+		{
+			get { return 1153526; }
+		} // GargishAsclepius [Replica]
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void AddNameProperties(ObjectPropertyList list)
+		{
+			base.AddNameProperties(list);
 
-            writer.Write((int)0);
-        }
+			list.Add(1153525); // 15% Bandage Healing Bonus
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

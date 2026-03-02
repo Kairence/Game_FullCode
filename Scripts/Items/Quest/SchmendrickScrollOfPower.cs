@@ -3,49 +3,45 @@ using Server.Mobiles;
 
 namespace Server.Engines.Quests.Haven
 {
-    public class SchmendrickScrollOfPower : QuestItem
-    {
-        public SchmendrickScrollOfPower()
-            : base(0xE34)
-        {
-            this.Weight = 1.0;
-            this.Hue = 0x34D;
-        }
+	public class SchmendrickScrollOfPower : QuestItem
+	{
+		public SchmendrickScrollOfPower()
+			: base(0xE34)
+		{
+			this.Weight = 1.0;
+			this.Hue = 0x34D;
+		}
 
-        public SchmendrickScrollOfPower(Serial serial)
-            : base(serial)
-        {
-        }
+		public SchmendrickScrollOfPower(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1049118;
-            }
-        }// a scroll with ancient markings
-        public override bool CanDrop(PlayerMobile player)
-        {
-            UzeraanTurmoilQuest qs = player.Quest as UzeraanTurmoilQuest;
+		public override int LabelNumber
+		{
+			get { return 1049118; }
+		} // a scroll with ancient markings
 
-            if (qs == null)
-                return true;
+		public override bool CanDrop(PlayerMobile player)
+		{
+			UzeraanTurmoilQuest qs = player.Quest as UzeraanTurmoilQuest;
 
-            return !qs.IsObjectiveInProgress(typeof(ReturnScrollOfPowerObjective));
-        }
+			if (qs == null)
+				return true;
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			return !qs.IsObjectiveInProgress(typeof(ReturnScrollOfPowerObjective));
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

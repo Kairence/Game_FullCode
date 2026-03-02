@@ -11,12 +11,10 @@ namespace CustomsFramework
 
 		private bool _Enabled;
 
-		public BaseCore()
-		{ }
+		public BaseCore() { }
 
 		public BaseCore(CustomSerial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		[CommandProperty(AccessLevel.Developer)]
 		public bool Enabled
@@ -36,24 +34,41 @@ namespace CustomsFramework
 			}
 		}
 
-		public override string Name { get { return @"Base Core"; } }
-		public virtual string Description { get { return @"Base Core, inherit from this class and override the interface items."; } }
-		public virtual string Version { get { return "1.0"; } }
-		public virtual AccessLevel EditLevel { get { return AccessLevel.Developer; } }
+		public override string Name
+		{
+			get { return @"Base Core"; }
+		}
+		public virtual string Description
+		{
+			get { return @"Base Core, inherit from this class and override the interface items."; }
+		}
+		public virtual string Version
+		{
+			get { return "1.0"; }
+		}
+		public virtual AccessLevel EditLevel
+		{
+			get { return AccessLevel.Developer; }
+		}
+
 		// TODO: Implement Custom Systems Control
-		public virtual Gump SettingsGump { get { return null; } }
-		public virtual bool ShardControlEnabled { get { return false; } }
+		public virtual Gump SettingsGump
+		{
+			get { return null; }
+		}
+		public virtual bool ShardControlEnabled
+		{
+			get { return false; }
+		}
 
 		public override string ToString()
 		{
 			return Name;
 		}
 
-		public override void Prep()
-		{ }
+		public override void Prep() { }
 
-		public override void Delete()
-		{ }
+		public override void Delete() { }
 
 		public override void Serialize(GenericWriter writer)
 		{
@@ -70,10 +85,10 @@ namespace CustomsFramework
 			switch (version)
 			{
 				case 0:
-					{
-						_Enabled = reader.ReadBool();
-						break;
-					}
+				{
+					_Enabled = reader.ReadBool();
+					break;
+				}
 			}
 		}
 	}

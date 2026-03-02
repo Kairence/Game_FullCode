@@ -1,67 +1,102 @@
 using System;
-using Server.Items;
 using Server.Gumps;
-using Server.Network;
+using Server.Items;
 using Server.Mobiles;
+using Server.Network;
 
 namespace Server.Items
 {
 	/*
-		ºê¸®Æ° : 1000
-		ºÎÄÉ´Ï¾î½º µ§ : 300
-		ÄÚºê : 200
-		ÇãÆ®¿ìµå : 300
-		Á©·Ò : 700
-		¸¶Áø½Ã¾Æ : 600
-		¹Ì³ì : 750
-		¹®±Û·Î¿ì : 700
-		´©Á©·Ò : 500
-		Çìºì : 500
-		¼­ÆæÆ® È¦µå : 400
-		½ºÄ«¶ó ºê·¹ : 650
-		Æ®¸°½Ä : 900
-		º£½ºÆÛ : 900
-		À©µå : 100
-		À¯ : 600
+		ï¿½ê¸®Æ° : 1000
+		ï¿½ï¿½ï¿½É´Ï¾î½º ï¿½ï¿½ : 300
+		ï¿½Úºï¿½ : 200
+		ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ : 300
+		ï¿½ï¿½ï¿½ï¿½ : 700
+		ï¿½ï¿½ï¿½ï¿½ï¿½Ã¾ï¿½ : 600
+		ï¿½Ì³ï¿½ : 750
+		ï¿½ï¿½ï¿½Û·Î¿ï¿½ : 700
+		ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ : 500
+		ï¿½ï¿½ï¿½ : 500
+		ï¿½ï¿½ï¿½ï¿½Æ® È¦ï¿½ï¿½ : 400
+		ï¿½ï¿½Ä«ï¿½ï¿½ ï¿½ê·¹ : 650
+		Æ®ï¿½ï¿½ï¿½ï¿½ : 900
+		ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ : 900
+		ï¿½ï¿½ï¿½ï¿½ : 100
+		ï¿½ï¿½ : 600
 	*/
-	
-	public abstract class CityEnonomyCheck : Item 
+
+	public abstract class CityEnonomyCheck : Item
 	{
-		public string[] CityName = new string[] { "ºê¸®Æ°", "ºÎÄÉ´Ï¾î½º µ§", "ÄÚºê", "ÇãÆ®¿ìµå", "Á©·Ò", "¸¶Áø½Ã¾Æ", "¹Ì³ì", "¹®±Û·Î¿ì", "´©Á©·Ò", "Çìºì", "¼­ÆæÆ® È¦µå", "½ºÄ«¶ó ºê·¹", "Æ®¸°½Ä", "º£½ºÆÛ", "À©µå", "À¯" };
-		private static int[] m_Pop = new int[] { 1000, 200, 200, 300, 700, 600, 750, 700, 500, 500, 400, 650, 900, 900, 100, 600 };
+		public string[] CityName = new string[]
+		{
+			"ï¿½ê¸®Æ°",
+			"ï¿½ï¿½ï¿½É´Ï¾î½º ï¿½ï¿½",
+			"ï¿½Úºï¿½",
+			"ï¿½ï¿½Æ®ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½Ã¾ï¿½",
+			"ï¿½Ì³ï¿½",
+			"ï¿½ï¿½ï¿½Û·Î¿ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½Æ® È¦ï¿½ï¿½",
+			"ï¿½ï¿½Ä«ï¿½ï¿½ ï¿½ê·¹",
+			"Æ®ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½",
+		};
+		private static int[] m_Pop = new int[]
+		{
+			1000,
+			200,
+			200,
+			300,
+			700,
+			600,
+			750,
+			700,
+			500,
+			500,
+			400,
+			650,
+			900,
+			900,
+			100,
+			600,
+		};
 
 		private double[] m_Gold = new double[16];
+
 		[Constructable]
-		public CityEnonomyCheck() : base( 0xED4 )
+		public CityEnonomyCheck()
+			: base(0xED4)
 		{
-		Movable = false;
-		Hue = 0x56;
-		Name = "µµ½Ã °æÁ¦ ½Ã½ºÅÛ";
+			Movable = false;
+			Hue = 0x56;
+			Name = "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã½ï¿½ï¿½ï¿½";
 		}
 
-		public CityEnonomyCheck( Serial serial ) : base( serial )
+		public CityEnonomyCheck(Serial serial)
+			: base(serial) { }
+
+		public override void Serialize(GenericWriter writer)
 		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
 		}
 
-		public override void Serialize( GenericWriter writer )
+		public override void Deserialize(GenericReader reader)
 		{
-			base.Serialize( writer );
-
-			writer.Write( (int) 0 ); // version
-
-		}
-
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
+			base.Deserialize(reader);
 
 			int version = reader.ReadInt();
 
-			switch ( version )
+			switch (version)
 			{
 				case 0:
 				{
-
 					break;
 				}
 			}

@@ -1,10 +1,10 @@
 using System;
 using Server;
+using Server.Accounting;
+using Server.Commands.Generic;
+using Server.Gumps;
 using Server.Mobiles;
 using Server.Network;
-using Server.Gumps;
-using Server.Commands.Generic;
-using Server.Accounting;
 using Server.Targeting;
 
 namespace Server.Commands
@@ -13,84 +13,83 @@ namespace Server.Commands
 	{
 		public static void Initialize()
 		{
-	      		CommandSystem.Register( "US", AccessLevel.GameMaster, new CommandEventHandler( UserStatInfo_OnCommand ) );
+			CommandSystem.Register("US", AccessLevel.GameMaster, new CommandEventHandler(UserStatInfo_OnCommand));
 		}
 
-		[Usage( "Status" )]
-		[Description( "°èÁ¤ ±Ý°í °ñµå È®ÀÎ." )]
-		public static void UserStatInfo_OnCommand( CommandEventArgs e )
+		[Usage("Status")]
+		[Description("ï¿½ï¿½ï¿½ï¿½ ï¿½Ý°ï¿½ ï¿½ï¿½ï¿½ È®ï¿½ï¿½.")]
+		public static void UserStatInfo_OnCommand(CommandEventArgs e)
 		{
 			e.Mobile.Target = new InternalTarget();
-
 		}
 
 		private class InternalTarget : Target
 		{
-			public InternalTarget() :  base ( 8, false, TargetFlags.None )
-			{
-			}
+			public InternalTarget()
+				: base(8, false, TargetFlags.None) { }
 
-			protected override void OnTarget( Mobile from, object targeted )
+			protected override void OnTarget(Mobile from, object targeted)
 			{
-				if ( targeted is PlayerMobile )
+				if (targeted is PlayerMobile)
 				{
 					PlayerMobile pm = targeted as PlayerMobile;
 					from.CloseGump(typeof(CityPointGump));
 					from.SendGump(new CityPointGump(pm));
 				}
-			}			
+			}
 		}
 	}
+
 	public class StatInfoCommand
 	{
 		public static void Initialize()
 		{
-	      		CommandSystem.Register( "Stat", AccessLevel.Player, new CommandEventHandler( StatInfo_OnCommand ) );
+			CommandSystem.Register("Stat", AccessLevel.Player, new CommandEventHandler(StatInfo_OnCommand));
 		}
 
-		[Usage( "Stat [second order]" )]
-		[Description( "´É·ÂÄ¡ ½ºÅÝÃ¢ ¿­±â." )]
-		public static void StatInfo_OnCommand( CommandEventArgs e )
+		[Usage("Stat [second order]")]
+		[Description("ï¿½É·ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½Ã¢ ï¿½ï¿½ï¿½ï¿½.")]
+		public static void StatInfo_OnCommand(CommandEventArgs e)
 		{
 			var sub = "";
-			if (e.Length > 0 )
+			if (e.Length > 0)
 				sub = e.GetString(0);
-			if( sub != "" )
+			if (sub != "")
 				sub = sub.ToLower();
-			if( e.Mobile is PlayerMobile )
+			if (e.Mobile is PlayerMobile)
 			{
 				PlayerMobile pm = e.Mobile as PlayerMobile;
-				if( sub == "" )
+				if (sub == "")
 				{
 					e.Mobile.CloseGump(typeof(CityPointGump));
 					e.Mobile.SendGump(new CityPointGump(pm));
 				}
-				else if( sub == "peace" )
+				else if (sub == "peace")
 				{
 					e.Mobile.CloseGump(typeof(GoldPointGump));
 					e.Mobile.SendGump(new GoldPointGump(pm));
 				}
-				else if( sub == "war")
+				else if (sub == "war")
 				{
 					e.Mobile.CloseGump(typeof(SilverPointGump));
 					e.Mobile.SendGump(new SilverPointGump(pm));
 				}
-				else if( sub == "action")
+				else if (sub == "action")
 				{
 					e.Mobile.CloseGump(typeof(EquipPointGump));
 					e.Mobile.SendGump(new EquipPointGump(pm));
 				}
-				else if( sub == "artifact")
+				else if (sub == "artifact")
 				{
 					e.Mobile.CloseGump(typeof(ArtifactPointGump));
 					e.Mobile.SendGump(new ArtifactPointGump(pm));
 				}
-				else if( sub == "skill")
+				else if (sub == "skill")
 				{
 					e.Mobile.CloseGump(typeof(SkillPointGump));
 					e.Mobile.SendGump(new SkillPointGump(pm));
 				}
 			}
-		}	
+		}
 	}
 }

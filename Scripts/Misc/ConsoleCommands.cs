@@ -2,12 +2,10 @@
 using System;
 using System.Linq;
 using System.Threading;
-
+using System.Threading.Tasks;
 using Server.Accounting;
 using Server.Engines.Help;
 using Server.Network;
-
-using System.Threading.Tasks;
 #endregion
 
 namespace Server.Misc
@@ -52,8 +50,7 @@ namespace Server.Misc
 						Console.WriteLine("" + args.Mobile.Name + ": " + args.Speech + "");
 					}
 				}
-				catch
-				{ }
+				catch { }
 			};
 		}
 
@@ -61,12 +58,12 @@ namespace Server.Misc
 		{
 			_PollTimer = Timer.DelayCall(TimeSpan.Zero, TimeSpan.FromMilliseconds(100), ProcessCommand);
 
-            // 수정: BeginInvoke 대신 Task.Run 사용
-            Task.Run(() => 
-            {
-                string input = _Listen();
-                ProcessInput(input);
-            });
+			// 수정: BeginInvoke 대신 Task.Run 사용
+			Task.Run(() =>
+			{
+				string input = _Listen();
+				ProcessInput(input);
+			});
 		}
 
 		private static void ProcessInput(string input)
@@ -93,12 +90,12 @@ namespace Server.Misc
 
 			Interlocked.Exchange(ref _Command, String.Empty);
 			// 수정: 루프를 돌리기 위해 다시 Task.Run 실행
-            Task.Run(() => 
-            {
-                string input = _Listen();
-                ProcessInput(input);
-            });
-			
+			Task.Run(() =>
+			{
+				string input = _Listen();
+				ProcessInput(input);
+			});
+
 			//_Listen.BeginInvoke(r => ProcessInput(_Listen.EndInvoke(r)), null);
 		}
 
@@ -152,11 +149,18 @@ namespace Server.Misc
 					return;
 				}
 
-				var ns = states.Find(o => o.Account != null && o.Mobile != null && Insensitive.StartsWith(sub, o.Mobile.RawName));
+				var ns = states.Find(o =>
+					o.Account != null && o.Mobile != null && Insensitive.StartsWith(sub, o.Mobile.RawName)
+				);
 
 				if (ns != null)
 				{
-					Console.WriteLine("[Ban]: {0}: Mobile: '{1}' Account: '{2}'", ns, ns.Mobile.RawName, ns.Account.Username);
+					Console.WriteLine(
+						"[Ban]: {0}: Mobile: '{1}' Account: '{2}'",
+						ns,
+						ns.Mobile.RawName,
+						ns.Account.Username
+					);
 
 					ns.Dispose();
 				}
@@ -176,11 +180,18 @@ namespace Server.Misc
 					return;
 				}
 
-				var ns = states.Find(o => o.Account != null && o.Mobile != null && Insensitive.StartsWith(sub, o.Mobile.RawName));
+				var ns = states.Find(o =>
+					o.Account != null && o.Mobile != null && Insensitive.StartsWith(sub, o.Mobile.RawName)
+				);
 
 				if (ns != null)
 				{
-					Console.WriteLine("[Kick]: {0}: Mobile: '{1}' Account: '{2}'", ns, ns.Mobile.RawName, ns.Account.Username);
+					Console.WriteLine(
+						"[Kick]: {0}: Mobile: '{1}' Account: '{2}'",
+						ns,
+						ns.Mobile.RawName,
+						ns.Account.Username
+					);
 
 					ns.Dispose();
 				}
@@ -192,7 +203,10 @@ namespace Server.Misc
 			{
 				case "crash":
 					{
-						Timer.DelayCall(() => { throw new Exception("Forced Crash"); });
+						Timer.DelayCall(() =>
+						{
+							throw new Exception("Forced Crash");
+						});
 					}
 					break;
 				case "shutdown":
@@ -302,8 +316,10 @@ namespace Server.Misc
 
 		private static void HandlePaging(string sub)
 		{
-			if (sub.StartsWith("help", StringComparison.OrdinalIgnoreCase) ||
-				sub.StartsWith("?", StringComparison.OrdinalIgnoreCase))
+			if (
+				sub.StartsWith("help", StringComparison.OrdinalIgnoreCase)
+				|| sub.StartsWith("?", StringComparison.OrdinalIgnoreCase)
+			)
 			{
 				DisplayPagingHelp();
 

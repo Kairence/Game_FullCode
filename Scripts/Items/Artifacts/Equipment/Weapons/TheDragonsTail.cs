@@ -2,56 +2,50 @@ using System;
 
 namespace Server.Items
 {
-    public class TheDragonsTail : NoDachi
+	public class TheDragonsTail : NoDachi
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public TheDragonsTail()
-        {
-            LootType = LootType.Blessed;
-            WeaponAttributes.HitLeechStam = 16;
-            Attributes.WeaponSpeed = 10;
-            Attributes.WeaponDamage = 25;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public TheDragonsTail(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public TheDragonsTail()
+		{
+			LootType = LootType.Blessed;
+			WeaponAttributes.HitLeechStam = 16;
+			Attributes.WeaponSpeed = 10;
+			Attributes.WeaponDamage = 25;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1078015;
-            }
-        }// The Dragon's Tail
-        public override int InitMinHits
-        {
-            get
-            {
-                return 80;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 80;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public TheDragonsTail(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1078015; }
+		} // The Dragon's Tail
+		public override int InitMinHits
+		{
+			get { return 80; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 80; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

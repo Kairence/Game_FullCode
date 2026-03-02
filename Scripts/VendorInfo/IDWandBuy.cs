@@ -3,18 +3,17 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    public class IDWandBuyInfo : GenericBuyInfo
-    {
-        private readonly int m_Content;
-        public IDWandBuyInfo(Type type, int content, int price, int amount, int itemID, int hue)
-            : this(null, type, content, price, amount, itemID, hue)
-        {
-        }
+	public class IDWandBuyInfo : GenericBuyInfo
+	{
+		private readonly int m_Content;
 
-        public IDWandBuyInfo(string name, Type type, int content, int price, int amount, int itemID, int hue)
-            : base(name, type, price, amount, itemID, hue)
-        {
-            m_Content = content;
+		public IDWandBuyInfo(Type type, int content, int price, int amount, int itemID, int hue)
+			: this(null, type, content, price, amount, itemID, hue) { }
+
+		public IDWandBuyInfo(string name, Type type, int content, int price, int amount, int itemID, int hue)
+			: base(name, type, price, amount, itemID, hue)
+		{
+			m_Content = content;
 
 			/*
 			if( type == typeof(IDWand))
@@ -38,21 +37,19 @@ namespace Server.Mobiles
 					break;
 					case 8: Name = "전설 유물 완드";
 					break;
-				}				
+				}
 			}
 			*/
-        }
+		}
 
-        public override bool CanCacheDisplay
-        {
-            get
-            {
-                return false;
-            }
-        }
-        public override IEntity GetEntity()
-        {
-            return (IEntity)Activator.CreateInstance(Type, new object[] { m_Content });
-        }
-    }
+		public override bool CanCacheDisplay
+		{
+			get { return false; }
+		}
+
+		public override IEntity GetEntity()
+		{
+			return (IEntity)Activator.CreateInstance(Type, new object[] { m_Content });
+		}
+	}
 }

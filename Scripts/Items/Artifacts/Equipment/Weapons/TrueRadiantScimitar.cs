@@ -2,39 +2,39 @@ using System;
 
 namespace Server.Items
 {
-    public class TrueRadiantScimitar : RadiantScimitar
+	public class TrueRadiantScimitar : RadiantScimitar
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public TrueRadiantScimitar()
-        {
-            Attributes.NightSight = 1;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public TrueRadiantScimitar(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public TrueRadiantScimitar()
+		{
+			Attributes.NightSight = 1;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073541;
-            }
-        }// true radiant scimitar
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public TrueRadiantScimitar(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1073541; }
+		} // true radiant scimitar
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

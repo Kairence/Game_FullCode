@@ -1,115 +1,104 @@
 using System;
 using System.Collections.Generic;
 using Server.ContextMenus;
-using Server.Spells;
 using Server.Mobiles;
+using Server.Spells;
 using Server.Targeting;
 
 namespace Server.Items
 {
-    public class SpellScroll : Item, ICommodity
-    {
-        private int m_SpellID;
-        public SpellScroll(Serial serial)
-            : base(serial)
-        {
-        }
+	public class SpellScroll : Item, ICommodity
+	{
+		private int m_SpellID;
 
-        [Constructable]
-        public SpellScroll(int spellID, int itemID)
-            : this(spellID, itemID, 1)
-        {
-        }
+		public SpellScroll(Serial serial)
+			: base(serial) { }
 
-        [Constructable]
-        public SpellScroll(int spellID, int itemID, int amount)
-            : base(itemID)
-        {
-            this.Stackable = true;
-            this.Weight = 0.1;
-            this.Amount = amount;
+		[Constructable]
+		public SpellScroll(int spellID, int itemID)
+			: this(spellID, itemID, 1) { }
 
-            this.m_SpellID = spellID;
-        }
+		[Constructable]
+		public SpellScroll(int spellID, int itemID, int amount)
+			: base(itemID)
+		{
+			this.Stackable = true;
+			this.Weight = 0.1;
+			this.Amount = amount;
 
-        public int SpellID
-        {
-            get
-            {
-                return this.m_SpellID;
-            }
-        }
-        TextDefinition ICommodity.Description
-        {
-            get
-            {
-                return this.LabelNumber;
-            }
-        }
-        bool ICommodity.IsDeedable
-        {
-            get
-            {
-                return (Core.ML);
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			this.m_SpellID = spellID;
+		}
 
-            writer.Write((int)0); // version
+		public int SpellID
+		{
+			get { return this.m_SpellID; }
+		}
+		TextDefinition ICommodity.Description
+		{
+			get { return this.LabelNumber; }
+		}
+		bool ICommodity.IsDeedable
+		{
+			get { return (Core.ML); }
+		}
 
-            writer.Write((int)this.m_SpellID);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
 
-            int version = reader.ReadInt();
+			writer.Write((int)this.m_SpellID);
+		}
 
-            switch ( version )
-            {
-                case 0:
-                    {
-                        this.m_SpellID = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-                        break;
-                    }
-            }
-        }
+			int version = reader.ReadInt();
 
-        public override void GetContextMenuEntries(Mobile from, List<ContextMenuEntry> list)
-        {
-            base.GetContextMenuEntries(from, list);
+			switch (version)
+			{
+				case 0:
+				{
+					this.m_SpellID = reader.ReadInt();
 
-            if (from.Alive && this.Movable)
-                list.Add(new ContextMenus.AddToSpellbookEntry());
-        }
+					break;
+				}
+			}
+		}
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (!Multis.DesignContext.Check(from))
-                return; // They are customizing
+		public override void GetContextMenuEntries(Mobile from, List<ContextMenuEntry> list)
+		{
+			base.GetContextMenuEntries(from, list);
 
-            if (!this.IsChildOf(from.Backpack))
-            {
-                from.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
-                return;
-            }
-            #region SA
-            else if (from.Flying && from is PlayerMobile && BaseMount.OnFlightPath(from))
-            {
-                from.SendLocalizedMessage(1113749); // You may not use that while flying over such precarious terrain.
-                return;
-            }
-            #endregion
-			
-			if( m_SpellID >= 47 && m_SpellID <= 63 )
+			if (from.Alive && this.Movable)
+				list.Add(new ContextMenus.AddToSpellbookEntry());
+		}
+
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (!Multis.DesignContext.Check(from))
+				return; // They are customizing
+
+			if (!this.IsChildOf(from.Backpack))
+			{
+				from.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
+				return;
+			}
+			#region SA
+			else if (from.Flying && from is PlayerMobile && BaseMount.OnFlightPath(from))
+			{
+				from.SendLocalizedMessage(1113749); // You may not use that while flying over such precarious terrain.
+				return;
+			}
+			#endregion
+
+			if (m_SpellID >= 47 && m_SpellID <= 63)
 			{
 				from.Target = new ScrollTarget(this, m_SpellID);
 			}
-                //from.SendLocalizedMessage(502345); // This spell has been temporarily disabled.
+			//from.SendLocalizedMessage(502345); // This spell has been temporarily disabled.
 			else
 			{
 				Spell spell = SpellRegistry.NewSpell(this.m_SpellID, from, this);
@@ -119,17 +108,21 @@ namespace Server.Items
 				else
 					from.SendLocalizedMessage(502345); // This spell has been temporarily disabled.
 			}
-        }
+		}
+
 		public class ScrollTarget : Target
 		{
 			SpellScroll m_SpellScroll;
 			private int m_SpellID;
-			public ScrollTarget(SpellScroll diamond, int spellid) : base(1, false, TargetFlags.None )
+
+			public ScrollTarget(SpellScroll diamond, int spellid)
+				: base(1, false, TargetFlags.None)
 			{
 				m_SpellScroll = diamond;
 				m_SpellID = spellid;
 			}
-			protected override void OnTarget( Mobile from, object targeted )
+
+			protected override void OnTarget(Mobile from, object targeted)
 			{
 				if (targeted is Item)
 				{
@@ -142,88 +135,102 @@ namespace Server.Items
 					}
 					else
 					{
-						if( check is IEquipOption )
+						if (check is IEquipOption)
 						{
 							IEquipOption equip = check as IEquipOption;
 							int upgrade_code = 0;
 							int upgrade_line = 0;
-							if( equip is BaseWeapon && m_SpellID >= 57 && m_SpellID <= 63 )
+							if (equip is BaseWeapon && m_SpellID >= 57 && m_SpellID <= 63)
 							{
-								if( m_SpellID == 59 )
+								if (m_SpellID == 59)
 									upgrade_code = 4;
-								else if( m_SpellID == 57 )
+								else if (m_SpellID == 57)
 									upgrade_code = 5;
-								else if( m_SpellID == 60 )
+								else if (m_SpellID == 60)
 									upgrade_code = 3;
-								else if( m_SpellID == 62 )
+								else if (m_SpellID == 62)
 									upgrade_code = 1;
-								else if( m_SpellID == 63 )
+								else if (m_SpellID == 63)
 									upgrade_code = 2;
-								else if( m_SpellID == 58 )
+								else if (m_SpellID == 58)
 									upgrade_code = 6;
-								
 							}
-							else if( equip is BaseArmor && ( m_SpellID == 49 || m_SpellID == 52 || m_SpellID == 53 ) )
+							else if (equip is BaseArmor && (m_SpellID == 49 || m_SpellID == 52 || m_SpellID == 53))
 							{
-								if( m_SpellID == 49 )
+								if (m_SpellID == 49)
 									upgrade_code = 1;
-								else if( m_SpellID == 53 )
+								else if (m_SpellID == 53)
 									upgrade_code = 2;
 								upgrade_line = 1;
 							}
-							else if(equip.PrefixOption[3 + upgrade_code] >= 20)
+							else if (equip.PrefixOption[3 + upgrade_code] >= 20)
 							{
-								from.SendMessage("최대 강화입니다!!!" );
+								from.SendMessage("최대 강화입니다!!!");
 								return;
 							}
-							else if( equip.SuffixOption[1] >= 6 || equip.PrefixOption[3 + upgrade_code] == -1)
+							else if (equip.SuffixOption[1] >= 6 || equip.PrefixOption[3 + upgrade_code] == -1)
 							{
-								from.SendMessage("버그 아이템입니다!!!" );
+								from.SendMessage("버그 아이템입니다!!!");
 								return;
 							}
 							else
 							{
 								from.SendMessage("아직 이 아이템은 강화할 수 없습니다!");
 								return;
-
 							}
-							int amount = Misc.Util.NewItemPowerUpgrade[ equip.PrefixOption[3 + upgrade_code], upgrade_line, ( equip.SuffixOption[1] + 1 ) * 2 -1 ];
-							
-							if( amount > m_SpellScroll.Amount )
+							int amount = Misc.Util.NewItemPowerUpgrade[
+								equip.PrefixOption[3 + upgrade_code],
+								upgrade_line,
+								(equip.SuffixOption[1] + 1) * 2 - 1
+							];
+
+							if (amount > m_SpellScroll.Amount)
 							{
-								from.SendMessage("강화를 하기 위해서는 {0}장의 스크롤이 필요합니다!", amount );
+								from.SendMessage("강화를 하기 위해서는 {0}장의 스크롤이 필요합니다!", amount);
 								return;
 							}
 							else
 							{
 								bool success = Misc.Util.NewItemPowerChance(equip.PrefixOption[3 + upgrade_line]);
-								if( success )
+								if (success)
 								{
-									Misc.Util.NewItemPowerMake( check, upgrade_code );
+									Misc.Util.NewItemPowerMake(check, upgrade_code);
 								}
 								else
 								{
-									if( 1 + equip.PrefixOption[3 + upgrade_code] > 9 )
+									if (1 + equip.PrefixOption[3 + upgrade_code] > 9)
 										check.Delete();
 									else
 									{
-										int lostHP = ( 1 + equip.PrefixOption[3 + upgrade_code] ) * ( 1 + equip.PrefixOption[3 + upgrade_code] );
-										if( ( 1 + equip.PrefixOption[3 + upgrade_code] ) * ( 1 + equip.PrefixOption[3 + upgrade_code] ) > amount )
-											lostHP = Utility.RandomMinMax(amount, ( 1 + equip.PrefixOption[3 + upgrade_code] ) * ( 1 + equip.PrefixOption[3 + upgrade_code] ));
+										int lostHP =
+											(1 + equip.PrefixOption[3 + upgrade_code])
+											* (1 + equip.PrefixOption[3 + upgrade_code]);
+										if (
+											(1 + equip.PrefixOption[3 + upgrade_code])
+												* (1 + equip.PrefixOption[3 + upgrade_code])
+											> amount
+										)
+											lostHP = Utility.RandomMinMax(
+												amount,
+												(1 + equip.PrefixOption[3 + upgrade_code])
+													* (1 + equip.PrefixOption[3 + upgrade_code])
+											);
 										else
-											lostHP = Utility.RandomMinMax(( 1 + equip.PrefixOption[3 + upgrade_code] ) * ( 1 + equip.PrefixOption[3 + upgrade_code] ), amount);
+											lostHP = Utility.RandomMinMax(
+												(1 + equip.PrefixOption[3 + upgrade_code])
+													* (1 + equip.PrefixOption[3 + upgrade_code]),
+												amount
+											);
 
-										if( equip.MaxHitPoints <= lostHP )
+										if (equip.MaxHitPoints <= lostHP)
 											check.Delete();
 										else
 											equip.MaxHitPoints -= lostHP;
-										if( equip.MaxHitPoints < equip.HitPoints )
+										if (equip.MaxHitPoints < equip.HitPoints)
 											equip.HitPoints = equip.MaxHitPoints;
-
 									}
-									
 								}
-								if( amount == m_SpellScroll.Amount )
+								if (amount == m_SpellScroll.Amount)
 									m_SpellScroll.Delete();
 								else
 									m_SpellScroll.Amount -= amount;
@@ -233,5 +240,5 @@ namespace Server.Items
 				}
 			}
 		}
-    }
+	}
 }

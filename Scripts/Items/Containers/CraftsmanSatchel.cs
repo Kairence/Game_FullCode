@@ -3,337 +3,323 @@ using Reward = Server.Engines.Quests.BaseReward;
 
 namespace Server.Items
 {
-    public class BaseCraftsmanSatchel : Backpack
-    {
-        public BaseCraftsmanSatchel()
-            : base()
-        {
-            Hue = Reward.SatchelHue();
-			
-            int count = 1;
-			
-            if (0.015 > Utility.RandomDouble())
-                count = 2;
-			
-            bool equipment = false;
-            bool jewlery = false;
-            bool talisman = false;
-			
-            while (Items.Count < count)
-            { 
-                if (0.33 > Utility.RandomDouble() && !talisman)
-                {
-                    DropItem(Loot.RandomTalisman());
-                    talisman = true;					
-                }
-                else if (0.4 > Utility.RandomDouble() && !equipment)
-                {
-                    DropItem(RandomItem());		
-                    equipment = true;		
-                }
-                else if (0.88 > Utility.RandomDouble() && !jewlery)
-                {
-                    DropItem(Reward.Jewlery());
-                    jewlery = true;
-                }
-            }
-        }
+	public class BaseCraftsmanSatchel : Backpack
+	{
+		public BaseCraftsmanSatchel()
+			: base()
+		{
+			Hue = Reward.SatchelHue();
 
-        public BaseCraftsmanSatchel(Serial serial)
-            : base(serial)
-        {
-        }
+			int count = 1;
 
-        public virtual Item RandomItem()
-        {
-            return null;
-        }
+			if (0.015 > Utility.RandomDouble())
+				count = 2;
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			bool equipment = false;
+			bool jewlery = false;
+			bool talisman = false;
 
-            writer.Write((int)0); // version
-        }
+			while (Items.Count < count)
+			{
+				if (0.33 > Utility.RandomDouble() && !talisman)
+				{
+					DropItem(Loot.RandomTalisman());
+					talisman = true;
+				}
+				else if (0.4 > Utility.RandomDouble() && !equipment)
+				{
+					DropItem(RandomItem());
+					equipment = true;
+				}
+				else if (0.88 > Utility.RandomDouble() && !jewlery)
+				{
+					DropItem(Reward.Jewlery());
+					jewlery = true;
+				}
+			}
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public BaseCraftsmanSatchel(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadInt();
-        }
-    }
+		public virtual Item RandomItem()
+		{
+			return null;
+		}
 
-    public class AlchemistCraftsmanSatchel : BaseCraftsmanSatchel
-    {
-        [Constructable]
-        public AlchemistCraftsmanSatchel()
-            : base()
-        {
-            if (Items.Count < 2)
-            {
-                var recipe = Reward.AlchemyRecipe();
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-                if (recipe != null)
-                {
-                    DropItem(recipe);
-                }
-            }
-        }
+			writer.Write((int)0); // version
+		}
 
-        public AlchemistCraftsmanSatchel(Serial serial)
-            : base(serial)
-        {
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override Item RandomItem()
-        {
-            return Reward.RangedWeapon();
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+	public class AlchemistCraftsmanSatchel : BaseCraftsmanSatchel
+	{
+		[Constructable]
+		public AlchemistCraftsmanSatchel()
+			: base()
+		{
+			if (Items.Count < 2)
+			{
+				var recipe = Reward.AlchemyRecipe();
 
-            writer.Write((int)0); // version
-        }
+				if (recipe != null)
+				{
+					DropItem(recipe);
+				}
+			}
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public AlchemistCraftsmanSatchel(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override Item RandomItem()
+		{
+			return Reward.RangedWeapon();
+		}
 
-    public class FletcherCraftsmanSatchel : BaseCraftsmanSatchel
-    {
-        [Constructable]
-        public FletcherCraftsmanSatchel()
-            : base()
-        {
-            if (Items.Count < 2)
-            {
-                var recipe = Reward.FletcherRecipe();
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-                if (recipe != null)
-                {
-                    DropItem(recipe);
-                }
-            }
+			writer.Write((int)0); // version
+		}
 
-            var runic = Reward.FletcherRunic();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            if (runic != null)
-            {
-                DropItem(runic);
-            }
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public FletcherCraftsmanSatchel(Serial serial)
-            : base(serial)
-        {
-        }
+	public class FletcherCraftsmanSatchel : BaseCraftsmanSatchel
+	{
+		[Constructable]
+		public FletcherCraftsmanSatchel()
+			: base()
+		{
+			if (Items.Count < 2)
+			{
+				var recipe = Reward.FletcherRecipe();
 
-        public override Item RandomItem()
-        {
-            return Reward.RangedWeapon();
-        }
+				if (recipe != null)
+				{
+					DropItem(recipe);
+				}
+			}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			var runic = Reward.FletcherRunic();
 
-            writer.Write((int)0); // version
-        }
+			if (runic != null)
+			{
+				DropItem(runic);
+			}
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public FletcherCraftsmanSatchel(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override Item RandomItem()
+		{
+			return Reward.RangedWeapon();
+		}
 
-    public class TailorsCraftsmanSatchel : BaseCraftsmanSatchel
-    {
-        [Constructable]
-        public TailorsCraftsmanSatchel()
-            : base()
-        {
-            if (Items.Count < 2)
-            {
-                var recipe = Reward.TailorRecipe();
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-                if (recipe != null)
-                {
-                    DropItem(recipe);
-                }
-            }
-        }
+			writer.Write((int)0); // version
+		}
 
-        public TailorsCraftsmanSatchel(Serial serial)
-            : base(serial)
-        {
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override Item RandomItem()
-        {
-            return Reward.Armor();
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+	public class TailorsCraftsmanSatchel : BaseCraftsmanSatchel
+	{
+		[Constructable]
+		public TailorsCraftsmanSatchel()
+			: base()
+		{
+			if (Items.Count < 2)
+			{
+				var recipe = Reward.TailorRecipe();
 
-            writer.Write((int)0); // version
-        }
+				if (recipe != null)
+				{
+					DropItem(recipe);
+				}
+			}
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public TailorsCraftsmanSatchel(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override Item RandomItem()
+		{
+			return Reward.Armor();
+		}
 
-    public class SmithsCraftsmanSatchel : BaseCraftsmanSatchel
-    {
-        [Constructable]
-        public SmithsCraftsmanSatchel()
-            : base()
-        {
-            if (Items.Count < 2)
-            {
-                var recipe = Reward.SmithRecipe();
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-                if (recipe != null)
-                {
-                    DropItem(recipe);
-                }
-            }
-        }
+			writer.Write((int)0); // version
+		}
 
-        public SmithsCraftsmanSatchel(Serial serial)
-            : base(serial)
-        {
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override Item RandomItem()
-        {
-            return Reward.Weapon();
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+	public class SmithsCraftsmanSatchel : BaseCraftsmanSatchel
+	{
+		[Constructable]
+		public SmithsCraftsmanSatchel()
+			: base()
+		{
+			if (Items.Count < 2)
+			{
+				var recipe = Reward.SmithRecipe();
 
-            writer.Write((int)0); // version
-        }
+				if (recipe != null)
+				{
+					DropItem(recipe);
+				}
+			}
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public SmithsCraftsmanSatchel(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override Item RandomItem()
+		{
+			return Reward.Weapon();
+		}
 
-    public class TinkersCraftsmanSatchel : BaseCraftsmanSatchel
-    {
-        [Constructable]
-        public TinkersCraftsmanSatchel()
-            : base()
-        {
-            if (Items.Count < 2)
-            {
-                var recipe = Reward.TinkerRecipe();
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-                if (recipe != null)
-                {
-                    DropItem(recipe);
-                }
-            }
-        }
+			writer.Write((int)0); // version
+		}
 
-        public TinkersCraftsmanSatchel(Serial serial)
-            : base(serial)
-        {
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override Item RandomItem()
-        {
-            return Reward.Weapon();
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+	public class TinkersCraftsmanSatchel : BaseCraftsmanSatchel
+	{
+		[Constructable]
+		public TinkersCraftsmanSatchel()
+			: base()
+		{
+			if (Items.Count < 2)
+			{
+				var recipe = Reward.TinkerRecipe();
 
-            writer.Write((int)0); // version
-        }
+				if (recipe != null)
+				{
+					DropItem(recipe);
+				}
+			}
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public TinkersCraftsmanSatchel(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override Item RandomItem()
+		{
+			return Reward.Weapon();
+		}
 
-    public class CarpentersCraftsmanSatchel : BaseCraftsmanSatchel
-    {
-        [Constructable]
-        public CarpentersCraftsmanSatchel()
-            : base()
-        {
-            if (Items.Count < 2)
-            {
-                var recipe = Reward.CarpentryRecipe();
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-                if (recipe != null)
-                {
-                    DropItem(recipe);
-                }
-            }
+			writer.Write((int)0); // version
+		}
 
-            var runic = Reward.CarpenterRunic();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            if (runic != null)
-            {
-                DropItem(runic);
-            }
+			int version = reader.ReadInt();
+		}
+	}
 
-            var furniture = Reward.RandomFurniture();
+	public class CarpentersCraftsmanSatchel : BaseCraftsmanSatchel
+	{
+		[Constructable]
+		public CarpentersCraftsmanSatchel()
+			: base()
+		{
+			if (Items.Count < 2)
+			{
+				var recipe = Reward.CarpentryRecipe();
 
-            if (furniture != null)
-            {
-                DropItem(furniture);
-            }
-        }
+				if (recipe != null)
+				{
+					DropItem(recipe);
+				}
+			}
 
-        public CarpentersCraftsmanSatchel(Serial serial)
-            : base(serial)
-        {
-        }
+			var runic = Reward.CarpenterRunic();
 
-        public override Item RandomItem()
-        {
-            return Reward.Weapon();
-        }
+			if (runic != null)
+			{
+				DropItem(runic);
+			}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			var furniture = Reward.RandomFurniture();
 
-            writer.Write((int)0); // version
-        }
+			if (furniture != null)
+			{
+				DropItem(furniture);
+			}
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public CarpentersCraftsmanSatchel(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override Item RandomItem()
+		{
+			return Reward.Weapon();
+		}
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

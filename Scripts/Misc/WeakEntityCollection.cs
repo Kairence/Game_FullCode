@@ -11,22 +11,32 @@ namespace Server
 	{
 		public sealed class EntityCollection : List<IEntity>
 		{
-			public IEnumerable<Item> Items { get { return this.OfType<Item>(); } }
-			public IEnumerable<Mobile> Mobiles { get { return this.OfType<Mobile>(); } }
+			public IEnumerable<Item> Items
+			{
+				get { return this.OfType<Item>(); }
+			}
+			public IEnumerable<Mobile> Mobiles
+			{
+				get { return this.OfType<Mobile>(); }
+			}
 
 			public EntityCollection()
-				: this(0x400)
-			{ }
+				: this(0x400) { }
 
 			public EntityCollection(int capacity)
-				: base(capacity)
-			{ }
+				: base(capacity) { }
 		}
 
-		private static readonly string _FilePath = Path.Combine("Saves", "WeakEntityCollection", "WeakEntityCollection.bin");
+		private static readonly string _FilePath = Path.Combine(
+			"Saves",
+			"WeakEntityCollection",
+			"WeakEntityCollection.bin"
+		);
 
-		private static readonly Dictionary<string, EntityCollection> _Collections =
-			new Dictionary<string, EntityCollection>(StringComparer.OrdinalIgnoreCase);
+		private static readonly Dictionary<string, EntityCollection> _Collections = new Dictionary<
+			string,
+			EntityCollection
+		>(StringComparer.OrdinalIgnoreCase);
 
 		public static void Configure()
 		{
@@ -67,7 +77,8 @@ namespace Server
 							writer.Write(ent.Serial);
 						}
 					}
-				});
+				}
+			);
 		}
 
 		public static void Load()
@@ -81,55 +92,56 @@ namespace Server
 					switch (version)
 					{
 						case 1:
-						{
-							var entries = reader.ReadInt();
-
-							while (--entries >= 0)
 							{
-								var key = reader.ReadString();
+								var entries = reader.ReadInt();
 
-								var ents = reader.ReadInt();
-
-								var col = new EntityCollection(ents);
-
-								IEntity ent;
-
-								while (--ents >= 0)
+								while (--entries >= 0)
 								{
-									ent = World.FindEntity(reader.ReadInt());
+									var key = reader.ReadString();
 
-									if (ent != null && !ent.Deleted)
+									var ents = reader.ReadInt();
+
+									var col = new EntityCollection(ents);
+
+									IEntity ent;
+
+									while (--ents >= 0)
 									{
-										col.Add(ent);
-									}
-								}
+										ent = World.FindEntity(reader.ReadInt());
 
-								_Collections[key] = col;
+										if (ent != null && !ent.Deleted)
+										{
+											col.Add(ent);
+										}
+									}
+
+									_Collections[key] = col;
+								}
 							}
-						}
 							break;
 						case 0:
-						{
-							var entries = reader.ReadInt();
-
-							while (--entries >= 0)
 							{
-								var key = reader.ReadString();
+								var entries = reader.ReadInt();
 
-								var items = reader.ReadStrongItemList();
-								var mobiles = reader.ReadStrongMobileList();
+								while (--entries >= 0)
+								{
+									var key = reader.ReadString();
 
-								var col = new EntityCollection(items.Count + mobiles.Count);
+									var items = reader.ReadStrongItemList();
+									var mobiles = reader.ReadStrongMobileList();
 
-								col.AddRange(items);
-								col.AddRange(mobiles);
+									var col = new EntityCollection(items.Count + mobiles.Count);
 
-								_Collections[key] = col;
+									col.AddRange(items);
+									col.AddRange(mobiles);
+
+									_Collections[key] = col;
+								}
 							}
-						}
 							break;
 					}
-				});
+				}
+			);
 		}
 
 		public static EntityCollection GetCollection(string name)
@@ -144,10 +156,10 @@ namespace Server
 			return col;
 		}
 
-        public static bool HasCollection(string name)
-        {
-            return name != null && _Collections.ContainsKey(name);
-        }
+		public static bool HasCollection(string name)
+		{
+			return name != null && _Collections.ContainsKey(name);
+		}
 
 		public static void Add(string key, IEntity entity)
 		{

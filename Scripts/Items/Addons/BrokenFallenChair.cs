@@ -2,120 +2,103 @@ using System;
 
 namespace Server.Items
 {
-    [Flipable(0xC19, 0xC1A)]
-    public class BrokenFallenChairComponent : AddonComponent
-    {
-        public BrokenFallenChairComponent()
-            : base(0xC19)
-        {
-        }
+	[Flipable(0xC19, 0xC1A)]
+	public class BrokenFallenChairComponent : AddonComponent
+	{
+		public BrokenFallenChairComponent()
+			: base(0xC19) { }
 
-        public BrokenFallenChairComponent(Serial serial)
-            : base(serial)
-        {
-        }
+		public BrokenFallenChairComponent(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1076264;
-            }
-        }// Broken Fallen Chair
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int LabelNumber
+		{
+			get { return 1076264; }
+		} // Broken Fallen Chair
 
-            writer.WriteEncodedInt(1); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(1); // version
+		}
 
-            int version = reader.ReadEncodedInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            if (version == 0)
-                ItemID = 0xC19;
-        }
-    }
+			int version = reader.ReadEncodedInt();
 
-    public class BrokenFallenChairAddon : BaseAddon
-    {
-        [Constructable]
-        public BrokenFallenChairAddon()
-            : base()
-        {
-            this.AddComponent(new BrokenFallenChairComponent(), 0, 0, 0);
-        }
+			if (version == 0)
+				ItemID = 0xC19;
+		}
+	}
 
-        public BrokenFallenChairAddon(Serial serial)
-            : base(serial)
-        {
-        }
+	public class BrokenFallenChairAddon : BaseAddon
+	{
+		[Constructable]
+		public BrokenFallenChairAddon()
+			: base()
+		{
+			this.AddComponent(new BrokenFallenChairComponent(), 0, 0, 0);
+		}
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new BrokenFallenChairDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public BrokenFallenChairAddon(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override BaseAddonDeed Deed
+		{
+			get { return new BrokenFallenChairDeed(); }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
 
-    public class BrokenFallenChairDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public BrokenFallenChairDeed()
-            : base()
-        {
-            this.LootType = LootType.Blessed;
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public BrokenFallenChairDeed(Serial serial)
-            : base(serial)
-        {
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new BrokenFallenChairAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1076264;
-            }
-        }// Broken Fallen Chair
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+	public class BrokenFallenChairDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public BrokenFallenChairDeed()
+			: base()
+		{
+			this.LootType = LootType.Blessed;
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public BrokenFallenChairDeed(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override BaseAddon Addon
+		{
+			get { return new BrokenFallenChairAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1076264; }
+		} // Broken Fallen Chair
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

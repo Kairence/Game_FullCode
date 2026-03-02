@@ -3,149 +3,158 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    /// <summary>
-    /// This is a test creature
-    /// You can set its value in game
-    /// It die after 5 minutes, so your test server stay clean
-    /// Create a macro to help your creation "[add Dummy 1 15 7 -1 0.5 2"
-    /// 
-    /// A iTeam of negative will set a faction at random
-    /// 
-    /// Say Kill if you want them to die
-    /// 
-    /// </summary>
-    public class Dummy : BaseCreature
-    {
-        public Timer	m_Timer;
-        [Constructable]
-        public Dummy(AIType iAI, FightMode iFightMode, int iRangePerception, int iRangeFight, double dActiveSpeed, double dPassiveSpeed)
-            : base(iAI, iFightMode, iRangePerception, iRangeFight, dActiveSpeed, dPassiveSpeed)
-        {
-            this.Body = 400 + Utility.Random(2);
-            this.Hue = Utility.RandomSkinHue();
+	/// <summary>
+	/// This is a test creature
+	/// You can set its value in game
+	/// It die after 5 minutes, so your test server stay clean
+	/// Create a macro to help your creation "[add Dummy 1 15 7 -1 0.5 2"
+	///
+	/// A iTeam of negative will set a faction at random
+	///
+	/// Say Kill if you want them to die
+	///
+	/// </summary>
+	public class Dummy : BaseCreature
+	{
+		public Timer m_Timer;
 
-            this.Skills[SkillName.DetectHidden].Base = 100;
-            this.Skills[SkillName.MagicResist].Base = 120;
+		[Constructable]
+		public Dummy(
+			AIType iAI,
+			FightMode iFightMode,
+			int iRangePerception,
+			int iRangeFight,
+			double dActiveSpeed,
+			double dPassiveSpeed
+		)
+			: base(iAI, iFightMode, iRangePerception, iRangeFight, dActiveSpeed, dPassiveSpeed)
+		{
+			this.Body = 400 + Utility.Random(2);
+			this.Hue = Utility.RandomSkinHue();
 
-            this.Team = Utility.Random(3);
+			this.Skills[SkillName.DetectHidden].Base = 100;
+			this.Skills[SkillName.MagicResist].Base = 120;
 
-            int iHue = 20 + this.Team * 40;
-            int jHue = 25 + this.Team * 40;
+			this.Team = Utility.Random(3);
 
-            Utility.AssignRandomHair(this, iHue);
+			int iHue = 20 + this.Team * 40;
+			int jHue = 25 + this.Team * 40;
 
-            LeatherGloves glv = new LeatherGloves();
-            glv.Hue = iHue;
-            glv.LootType = LootType.Newbied;
-            this.AddItem(glv);
+			Utility.AssignRandomHair(this, iHue);
 
-            Container pack = new Backpack();
+			LeatherGloves glv = new LeatherGloves();
+			glv.Hue = iHue;
+			glv.LootType = LootType.Newbied;
+			this.AddItem(glv);
 
-            pack.Movable = false;
+			Container pack = new Backpack();
 
-            this.AddItem(pack);
+			pack.Movable = false;
 
-            this.m_Timer = new AutokillTimer(this);
-            this.m_Timer.Start();
-        }
+			this.AddItem(pack);
 
-        public Dummy(Serial serial)
-            : base(serial)
-        {
-            this.m_Timer = new AutokillTimer(this);
-            this.m_Timer.Start();
-        }
+			this.m_Timer = new AutokillTimer(this);
+			this.m_Timer.Start();
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public Dummy(Serial serial)
+			: base(serial)
+		{
+			this.m_Timer = new AutokillTimer(this);
+			this.m_Timer.Start();
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override bool HandlesOnSpeech(Mobile from)
-        {
-            if (from.AccessLevel >= AccessLevel.GameMaster)
-                return true;
+			int version = reader.ReadInt();
+		}
 
-            return base.HandlesOnSpeech(from);
-        }
+		public override bool HandlesOnSpeech(Mobile from)
+		{
+			if (from.AccessLevel >= AccessLevel.GameMaster)
+				return true;
 
-        public override void OnSpeech(SpeechEventArgs e)
-        {
-            base.OnSpeech(e);
+			return base.HandlesOnSpeech(from);
+		}
 
-            if (e.Mobile.AccessLevel >= AccessLevel.GameMaster)
-            {
-                if (e.Speech == "kill")
-                {
-                    this.m_Timer.Stop();
-                    this.m_Timer.Delay = TimeSpan.FromSeconds(Utility.Random(1, 5));
-                    this.m_Timer.Start();
-                }
-            }
-        }
+		public override void OnSpeech(SpeechEventArgs e)
+		{
+			base.OnSpeech(e);
 
-        public override void OnTeamChange()
-        {
-            int iHue = 20 + this.Team * 40;
-            int jHue = 25 + this.Team * 40;
+			if (e.Mobile.AccessLevel >= AccessLevel.GameMaster)
+			{
+				if (e.Speech == "kill")
+				{
+					this.m_Timer.Stop();
+					this.m_Timer.Delay = TimeSpan.FromSeconds(Utility.Random(1, 5));
+					this.m_Timer.Start();
+				}
+			}
+		}
 
-            Item item = this.FindItemOnLayer(Layer.OuterTorso);
+		public override void OnTeamChange()
+		{
+			int iHue = 20 + this.Team * 40;
+			int jHue = 25 + this.Team * 40;
 
-            if (item != null)
-                item.Hue = jHue;
+			Item item = this.FindItemOnLayer(Layer.OuterTorso);
 
-            item = this.FindItemOnLayer(Layer.Helm);
+			if (item != null)
+				item.Hue = jHue;
 
-            if (item != null)
-                item.Hue = iHue;
+			item = this.FindItemOnLayer(Layer.Helm);
 
-            item = this.FindItemOnLayer(Layer.Gloves);
+			if (item != null)
+				item.Hue = iHue;
 
-            if (item != null)
-                item.Hue = iHue;
+			item = this.FindItemOnLayer(Layer.Gloves);
 
-            item = this.FindItemOnLayer(Layer.Shoes);
+			if (item != null)
+				item.Hue = iHue;
 
-            if (item != null)
-                item.Hue = iHue;
+			item = this.FindItemOnLayer(Layer.Shoes);
 
-            this.HairHue = iHue;
+			if (item != null)
+				item.Hue = iHue;
 
-            item = this.FindItemOnLayer(Layer.MiddleTorso);
+			this.HairHue = iHue;
 
-            if (item != null)
-                item.Hue = iHue;
+			item = this.FindItemOnLayer(Layer.MiddleTorso);
 
-            item = this.FindItemOnLayer(Layer.OuterLegs);
+			if (item != null)
+				item.Hue = iHue;
 
-            if (item != null)
-                item.Hue = iHue;
-        }
+			item = this.FindItemOnLayer(Layer.OuterLegs);
 
-        private class AutokillTimer : Timer
-        {
-            private readonly Dummy m_Owner;
-            public AutokillTimer(Dummy owner)
-                : base(TimeSpan.FromMinutes(5.0))
-            {
-                this.m_Owner = owner;
-                this.Priority = TimerPriority.FiveSeconds;
-            }
+			if (item != null)
+				item.Hue = iHue;
+		}
 
-            protected override void OnTick()
-            {
-                this.m_Owner.Kill();
-                this.Stop();
-            }
-        }
-    }
+		private class AutokillTimer : Timer
+		{
+			private readonly Dummy m_Owner;
+
+			public AutokillTimer(Dummy owner)
+				: base(TimeSpan.FromMinutes(5.0))
+			{
+				this.m_Owner = owner;
+				this.Priority = TimerPriority.FiveSeconds;
+			}
+
+			protected override void OnTick()
+			{
+				this.m_Owner.Kill();
+				this.Stop();
+			}
+		}
+	}
 }

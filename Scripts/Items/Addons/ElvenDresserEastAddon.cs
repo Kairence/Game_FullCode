@@ -2,201 +2,201 @@ using System;
 
 namespace Server.Items
 {
-    public class ElvenDresserAddonEast : BaseAddonContainer
-    {
-        public override BaseAddonContainerDeed Deed { get { return new ElvenDresserDeedEast(); } }
+	public class ElvenDresserAddonEast : BaseAddonContainer
+	{
+		public override BaseAddonContainerDeed Deed
+		{
+			get { return new ElvenDresserDeedEast(); }
+		}
 
-        public override int DefaultGumpID { get { return 0x51; } }
-        public override int DefaultDropSound { get { return 0x42; } }
-        public override bool RetainDeedHue { get { return true; } }
+		public override int DefaultGumpID
+		{
+			get { return 0x51; }
+		}
+		public override int DefaultDropSound
+		{
+			get { return 0x42; }
+		}
+		public override bool RetainDeedHue
+		{
+			get { return true; }
+		}
 
-        [Constructable]
-        public ElvenDresserAddonEast() : base(0x30E4)
-        {
-            AddComponent(new AddonContainerComponent(0x30E3), 0, -1, 0);
-        }
+		[Constructable]
+		public ElvenDresserAddonEast()
+			: base(0x30E4)
+		{
+			AddComponent(new AddonContainerComponent(0x30E3), 0, -1, 0);
+		}
 
-        public ElvenDresserAddonEast(Serial serial)
-            : base(serial)
-        {
-        }
+		public ElvenDresserAddonEast(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.WriteEncodedInt(0); // version
-        }
+			writer.WriteEncodedInt(0); // version
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-    public class ElvenDresserDeedEast : BaseAddonContainerDeed
-    {
-        public override BaseAddonContainer Addon { get { return new ElvenDresserAddonEast(); } }
-        public override int LabelNumber { get { return 1073388; } }
+	public class ElvenDresserDeedEast : BaseAddonContainerDeed
+	{
+		public override BaseAddonContainer Addon
+		{
+			get { return new ElvenDresserAddonEast(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1073388; }
+		}
 
-        [Constructable]
-        public ElvenDresserDeedEast()
-        {
-        }
+		[Constructable]
+		public ElvenDresserDeedEast() { }
 
-        public ElvenDresserDeedEast(Serial serial)
-            : base(serial)
-        {
-        }
+		public ElvenDresserDeedEast(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.WriteEncodedInt(0); // version
-        }
+			writer.WriteEncodedInt(0); // version
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-    public class ElvenDresserEastAddon : BaseAddon
-    {
-        [Constructable]
-        public ElvenDresserEastAddon()
-        {
-            this.AddComponent(new AddonComponent(0x30E4), 0, 0, 0);
-            this.AddComponent(new AddonComponent(0x30E3), 0, -1, 0);
-        }
+	public class ElvenDresserEastAddon : BaseAddon
+	{
+		[Constructable]
+		public ElvenDresserEastAddon()
+		{
+			this.AddComponent(new AddonComponent(0x30E4), 0, 0, 0);
+			this.AddComponent(new AddonComponent(0x30E3), 0, -1, 0);
+		}
 
-        public ElvenDresserEastAddon(Serial serial)
-            : base(serial)
-        {
-        }
+		public ElvenDresserEastAddon(Serial serial)
+			: base(serial) { }
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new ElvenDresserEastDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override BaseAddonDeed Deed
+		{
+			get { return new ElvenDresserEastDeed(); }
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            Timer.DelayCall(TimeSpan.FromSeconds(10), Replace);
-        }
+			int version = reader.ReadEncodedInt();
 
-        private void Replace()
-        {
-            Server.Multis.BaseHouse house = Server.Multis.BaseHouse.FindHouseAt(this);
+			Timer.DelayCall(TimeSpan.FromSeconds(10), Replace);
+		}
 
-            if (house != null)
-            {
-                Point3D p = this.Location;
-                Map map = this.Map;
+		private void Replace()
+		{
+			Server.Multis.BaseHouse house = Server.Multis.BaseHouse.FindHouseAt(this);
 
-                house.Addons.Remove(this);
-                Delete();
+			if (house != null)
+			{
+				Point3D p = this.Location;
+				Map map = this.Map;
 
-                var addon = new ElvenDresserAddonEast();
-                addon.MoveToWorld(p, map);
-                house.Addons[addon] = house.Owner;
-            }
-        }
-    }
+				house.Addons.Remove(this);
+				Delete();
 
-    public class ElvenDresserEastDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public ElvenDresserEastDeed()
-        {
-        }
+				var addon = new ElvenDresserAddonEast();
+				addon.MoveToWorld(p, map);
+				house.Addons[addon] = house.Owner;
+			}
+		}
+	}
 
-        public ElvenDresserEastDeed(Serial serial)
-            : base(serial)
-        {
-        }
+	public class ElvenDresserEastDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public ElvenDresserEastDeed() { }
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new ElvenDresserEastAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073388;
-            }
-        }// elven dresser (east)
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public ElvenDresserEastDeed(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override BaseAddon Addon
+		{
+			get { return new ElvenDresserEastAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1073388; }
+		} // elven dresser (east)
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
+			writer.WriteEncodedInt(0); // version
+		}
 
-            Timer.DelayCall(TimeSpan.FromSeconds(10), Replace);
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        private void Replace()
-        {
-            Container c = this.Parent as Container;
+			int version = reader.ReadEncodedInt();
 
-            if (c != null)
-            {
-                var deed = new ElvenDresserDeedEast();
-                c.DropItem(deed);
-            }
-            else if (this.Parent == null)
-            {
-                Server.Multis.BaseHouse house = Server.Multis.BaseHouse.FindHouseAt(this);
+			Timer.DelayCall(TimeSpan.FromSeconds(10), Replace);
+		}
 
-                var deed = new ElvenDresserDeedEast();
-                deed.MoveToWorld(this.Location, this.Map);
+		private void Replace()
+		{
+			Container c = this.Parent as Container;
 
-                deed.IsLockedDown = IsLockedDown;
-                deed.IsSecure = IsSecure;
-                deed.Movable = Movable;
+			if (c != null)
+			{
+				var deed = new ElvenDresserDeedEast();
+				c.DropItem(deed);
+			}
+			else if (this.Parent == null)
+			{
+				Server.Multis.BaseHouse house = Server.Multis.BaseHouse.FindHouseAt(this);
 
-                if (house != null && house.LockDowns.ContainsKey(this))
-                {
-                    house.LockDowns.Remove(this);
-                    house.LockDowns.Add(deed, house.Owner);
-                }
-                else if (house != null && house.IsSecure(this))
-                {
-                    house.ReleaseSecure(house.Owner, this);
-                    house.AddSecure(house.Owner, deed);
-                }
-            }
+				var deed = new ElvenDresserDeedEast();
+				deed.MoveToWorld(this.Location, this.Map);
 
-            Delete();
-        }
-    }
+				deed.IsLockedDown = IsLockedDown;
+				deed.IsSecure = IsSecure;
+				deed.Movable = Movable;
+
+				if (house != null && house.LockDowns.ContainsKey(this))
+				{
+					house.LockDowns.Remove(this);
+					house.LockDowns.Add(deed, house.Owner);
+				}
+				else if (house != null && house.IsSecure(this))
+				{
+					house.ReleaseSecure(house.Owner, this);
+					house.AddSecure(house.Owner, deed);
+				}
+			}
+
+			Delete();
+		}
+	}
 }

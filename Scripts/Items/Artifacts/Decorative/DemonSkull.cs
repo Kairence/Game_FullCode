@@ -2,32 +2,32 @@ using System;
 
 namespace Server.Items
 {
-    public class DemonSkull : Item
-    {
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public DemonSkull()
-            : base(0x224e + Utility.Random(4))
-        {
-        }
+	public class DemonSkull : Item
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public DemonSkull(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public DemonSkull()
+			: base(0x224e + Utility.Random(4)) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public DemonSkull(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

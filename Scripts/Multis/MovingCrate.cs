@@ -5,385 +5,362 @@ using Server.Network;
 
 namespace Server.Multis
 {
-    public class MovingCrate : Container
-    {
-        public static readonly int MaxItemsPerSubcontainer = 20;
-        public static readonly int Rows = 3;
-        public static readonly int Columns = 5;
-        public static readonly int HorizontalSpacing = 25;
-        public static readonly int VerticalSpacing = 25;
-        private BaseHouse m_House;
-        private Timer m_InternalizeTimer;
-        public MovingCrate(BaseHouse house)
-            : base(0xE3D)
-        {
-            this.Hue = 0x8A5;
-            this.Movable = false;
+	public class MovingCrate : Container
+	{
+		public static readonly int MaxItemsPerSubcontainer = 20;
+		public static readonly int Rows = 3;
+		public static readonly int Columns = 5;
+		public static readonly int HorizontalSpacing = 25;
+		public static readonly int VerticalSpacing = 25;
+		private BaseHouse m_House;
+		private Timer m_InternalizeTimer;
 
-            this.m_House = house;
-        }
+		public MovingCrate(BaseHouse house)
+			: base(0xE3D)
+		{
+			this.Hue = 0x8A5;
+			this.Movable = false;
 
-        public MovingCrate(Serial serial)
-            : base(serial)
-        {
-        }
+			this.m_House = house;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1061690;
-            }
-        }// Packing Crate
-        public BaseHouse House
-        {
-            get
-            {
-                return this.m_House;
-            }
-            set
-            {
-                this.m_House = value;
-            }
-        }
-        public override int DefaultMaxItems
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override int DefaultMaxWeight
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override bool IsDecoContainer
-        {
-            get
-            {
-                return false;
-            }
-        }
-        /*
-        public override void AddNameProperties( ObjectPropertyList list )
-        {
-        base.AddNameProperties( list );
+		public MovingCrate(Serial serial)
+			: base(serial) { }
 
-        if ( House != null && House.InternalizedVendors.Count > 0 )
-        list.Add( 1061833, House.InternalizedVendors.Count.ToString() ); // This packing crate contains ~1_COUNT~ vendors/barkeepers.
-        }
-        */
-        public override void DropItem(Item dropped)
-        {
-            // 1. Try to stack the item
-            foreach (Item item in this.Items)
-            {
-                if (item is PackingBox)
-                {
-                    List<Item> subItems = item.Items;
+		public override int LabelNumber
+		{
+			get { return 1061690; }
+		} // Packing Crate
+		public BaseHouse House
+		{
+			get { return this.m_House; }
+			set { this.m_House = value; }
+		}
+		public override int DefaultMaxItems
+		{
+			get { return 0; }
+		}
+		public override int DefaultMaxWeight
+		{
+			get { return 0; }
+		}
+		public override bool IsDecoContainer
+		{
+			get { return false; }
+		}
 
-                    for (int i = 0; i < subItems.Count; i++)
-                    {
-                        Item subItem = subItems[i];
+		/*
+		public override void AddNameProperties( ObjectPropertyList list )
+		{
+		base.AddNameProperties( list );
 
-                        if (!(subItem is Container) && subItem.StackWith(null, dropped, false))
-                            return;
-                    }
-                }
-            }
+		if ( House != null && House.InternalizedVendors.Count > 0 )
+		list.Add( 1061833, House.InternalizedVendors.Count.ToString() ); // This packing crate contains ~1_COUNT~ vendors/barkeepers.
+		}
+		*/
+		public override void DropItem(Item dropped)
+		{
+			// 1. Try to stack the item
+			foreach (Item item in this.Items)
+			{
+				if (item is PackingBox)
+				{
+					List<Item> subItems = item.Items;
 
-            // 2. Try to drop the item into an existing container
-            foreach (Item item in this.Items)
-            {
-                if (item is PackingBox)
-                {
-                    Container box = (Container)item;
-                    List<Item> subItems = box.Items;
+					for (int i = 0; i < subItems.Count; i++)
+					{
+						Item subItem = subItems[i];
 
-                    if (subItems.Count < MaxItemsPerSubcontainer)
-                    {
-                        box.DropItem(dropped);
-                        return;
-                    }
-                }
-            }
+						if (!(subItem is Container) && subItem.StackWith(null, dropped, false))
+							return;
+					}
+				}
+			}
 
-            // 3. Drop the item into a new container
-            Container subContainer = new PackingBox();
-            subContainer.DropItem(dropped);
+			// 2. Try to drop the item into an existing container
+			foreach (Item item in this.Items)
+			{
+				if (item is PackingBox)
+				{
+					Container box = (Container)item;
+					List<Item> subItems = box.Items;
 
-            Point3D location = this.GetFreeLocation();
-            if (location != Point3D.Zero)
-            {
-                this.AddItem(subContainer);
-                subContainer.Location = location;
-            }
-            else
-            {
-                base.DropItem(subContainer);
-            }
-        }
+					if (subItems.Count < MaxItemsPerSubcontainer)
+					{
+						box.DropItem(dropped);
+						return;
+					}
+				}
+			}
 
-        public override bool CheckHold(Mobile m, Item item, bool message, bool checkItems, int plusItems, int plusWeight)
-        {
-            if (m.AccessLevel < AccessLevel.GameMaster)
-            {
-                m.SendLocalizedMessage(1061145); // You cannot place items into a house moving crate.
-                return false;
-            }
+			// 3. Drop the item into a new container
+			Container subContainer = new PackingBox();
+			subContainer.DropItem(dropped);
 
-            return base.CheckHold(m, item, message, checkItems, plusItems, plusWeight);
-        }
+			Point3D location = this.GetFreeLocation();
+			if (location != Point3D.Zero)
+			{
+				this.AddItem(subContainer);
+				subContainer.Location = location;
+			}
+			else
+			{
+				base.DropItem(subContainer);
+			}
+		}
 
-        public override bool CheckLift(Mobile from, Item item, ref LRReason reject)
-        {
-            return base.CheckLift(from, item, ref reject) && this.House != null && !this.House.Deleted && this.House.IsOwner(from);
-        }
+		public override bool CheckHold(
+			Mobile m,
+			Item item,
+			bool message,
+			bool checkItems,
+			int plusItems,
+			int plusWeight
+		)
+		{
+			if (m.AccessLevel < AccessLevel.GameMaster)
+			{
+				m.SendLocalizedMessage(1061145); // You cannot place items into a house moving crate.
+				return false;
+			}
 
-        public override bool CheckItemUse(Mobile from, Item item)
-        {
-            return base.CheckItemUse(from, item) && this.House != null && !this.House.Deleted && this.House.IsOwner(from);
-        }
+			return base.CheckHold(m, item, message, checkItems, plusItems, plusWeight);
+		}
 
-        public override void OnItemRemoved(Item item)
-        {
-            base.OnItemRemoved(item);
+		public override bool CheckLift(Mobile from, Item item, ref LRReason reject)
+		{
+			return base.CheckLift(from, item, ref reject)
+				&& this.House != null
+				&& !this.House.Deleted
+				&& this.House.IsOwner(from);
+		}
 
-            if (this.TotalItems == 0)
-                this.Delete();
-        }
+		public override bool CheckItemUse(Mobile from, Item item)
+		{
+			return base.CheckItemUse(from, item)
+				&& this.House != null
+				&& !this.House.Deleted
+				&& this.House.IsOwner(from);
+		}
 
-        public void RestartTimer()
-        {
-            if (this.m_InternalizeTimer == null)
-            {
-                this.m_InternalizeTimer = new InternalizeTimer(this);
-                this.m_InternalizeTimer.Start();
-            }
-            else
-            {
-                this.m_InternalizeTimer.Stop();
-                this.m_InternalizeTimer.Start();
-            }
-        }
+		public override void OnItemRemoved(Item item)
+		{
+			base.OnItemRemoved(item);
 
-        public void Hide()
-        {
-            if (this.m_InternalizeTimer != null)
-            {
-                this.m_InternalizeTimer.Stop();
-                this.m_InternalizeTimer = null;
-            }
+			if (this.TotalItems == 0)
+				this.Delete();
+		}
 
-            List<Item> toRemove = new List<Item>();
-            foreach (Item item in this.Items)
-                if (item is PackingBox && item.Items.Count == 0)
-                    toRemove.Add(item);
+		public void RestartTimer()
+		{
+			if (this.m_InternalizeTimer == null)
+			{
+				this.m_InternalizeTimer = new InternalizeTimer(this);
+				this.m_InternalizeTimer.Start();
+			}
+			else
+			{
+				this.m_InternalizeTimer.Stop();
+				this.m_InternalizeTimer.Start();
+			}
+		}
 
-            foreach (Item item in toRemove)
-                item.Delete();
+		public void Hide()
+		{
+			if (this.m_InternalizeTimer != null)
+			{
+				this.m_InternalizeTimer.Stop();
+				this.m_InternalizeTimer = null;
+			}
 
-            if (this.TotalItems == 0)
-                this.Delete();
-            else
-                this.Internalize();
-        }
+			List<Item> toRemove = new List<Item>();
+			foreach (Item item in this.Items)
+				if (item is PackingBox && item.Items.Count == 0)
+					toRemove.Add(item);
 
-        public override void OnAfterDelete()
-        {
-            base.OnAfterDelete();
+			foreach (Item item in toRemove)
+				item.Delete();
 
-            if (this.House != null && this.House.MovingCrate == this)
-                this.House.MovingCrate = null;
+			if (this.TotalItems == 0)
+				this.Delete();
+			else
+				this.Internalize();
+		}
 
-            if (this.m_InternalizeTimer != null)
-                this.m_InternalizeTimer.Stop();
-        }
+		public override void OnAfterDelete()
+		{
+			base.OnAfterDelete();
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			if (this.House != null && this.House.MovingCrate == this)
+				this.House.MovingCrate = null;
 
-            writer.WriteEncodedInt(1);
+			if (this.m_InternalizeTimer != null)
+				this.m_InternalizeTimer.Stop();
+		}
 
-            writer.Write((Item)this.m_House);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(1);
 
-            int version = reader.ReadEncodedInt();
+			writer.Write((Item)this.m_House);
+		}
 
-            this.m_House = reader.ReadItem() as BaseHouse;
-			
-            if (this.m_House != null)
-            {
-                this.m_House.MovingCrate = this;
-                Timer.DelayCall(TimeSpan.Zero, new TimerCallback(Hide));
-            }
-            else
-            {
-                Timer.DelayCall(TimeSpan.Zero, this.Delete);
-            }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            if (version == 0)
-                this.MaxItems = -1; // reset to default
-        }
+			int version = reader.ReadEncodedInt();
 
-        private Point3D GetFreeLocation()
-        {
-            bool[,] positions = new bool[Rows, Columns];
+			this.m_House = reader.ReadItem() as BaseHouse;
 
-            foreach (Item item in this.Items)
-            {
-                if (item is PackingBox)
-                {
-                    int i = (item.Y - this.Bounds.Y) / VerticalSpacing;
-                    if (i < 0)
-                        i = 0;
-                    else if (i >= Rows)
-                        i = Rows - 1;
+			if (this.m_House != null)
+			{
+				this.m_House.MovingCrate = this;
+				Timer.DelayCall(TimeSpan.Zero, new TimerCallback(Hide));
+			}
+			else
+			{
+				Timer.DelayCall(TimeSpan.Zero, this.Delete);
+			}
 
-                    int j = (item.X - this.Bounds.X) / HorizontalSpacing;
-                    if (j < 0)
-                        j = 0;
-                    else if (j >= Columns)
-                        j = Columns - 1;
+			if (version == 0)
+				this.MaxItems = -1; // reset to default
+		}
 
-                    positions[i, j] = true;
-                }
-            }
+		private Point3D GetFreeLocation()
+		{
+			bool[,] positions = new bool[Rows, Columns];
 
-            for (int i = 0; i < Rows; i++)
-            {
-                for (int j = 0; j < Columns; j++)
-                {
-                    if (!positions[i, j])
-                    {
-                        int x = this.Bounds.X + j * HorizontalSpacing;
-                        int y = this.Bounds.Y + i * VerticalSpacing;
+			foreach (Item item in this.Items)
+			{
+				if (item is PackingBox)
+				{
+					int i = (item.Y - this.Bounds.Y) / VerticalSpacing;
+					if (i < 0)
+						i = 0;
+					else if (i >= Rows)
+						i = Rows - 1;
 
-                        return new Point3D(x, y, 0);
-                    }
-                }
-            }
+					int j = (item.X - this.Bounds.X) / HorizontalSpacing;
+					if (j < 0)
+						j = 0;
+					else if (j >= Columns)
+						j = Columns - 1;
 
-            return Point3D.Zero;
-        }
+					positions[i, j] = true;
+				}
+			}
 
-        public class InternalizeTimer : Timer
-        {
-            private readonly MovingCrate m_Crate;
-            public InternalizeTimer(MovingCrate crate)
-                : base(TimeSpan.FromMinutes(5.0))
-            {
-                this.m_Crate = crate;
+			for (int i = 0; i < Rows; i++)
+			{
+				for (int j = 0; j < Columns; j++)
+				{
+					if (!positions[i, j])
+					{
+						int x = this.Bounds.X + j * HorizontalSpacing;
+						int y = this.Bounds.Y + i * VerticalSpacing;
 
-                this.Priority = TimerPriority.FiveSeconds;
-            }
+						return new Point3D(x, y, 0);
+					}
+				}
+			}
 
-            protected override void OnTick()
-            {
-                this.m_Crate.Hide();
-            }
-        }
-    }
+			return Point3D.Zero;
+		}
 
-    public class PackingBox : BaseContainer
-    {
-        public PackingBox()
-            : base(0x9A8)
-        {
-            this.Movable = false;
-        }
+		public class InternalizeTimer : Timer
+		{
+			private readonly MovingCrate m_Crate;
 
-        public PackingBox(Serial serial)
-            : base(serial)
-        {
-        }
+			public InternalizeTimer(MovingCrate crate)
+				: base(TimeSpan.FromMinutes(5.0))
+			{
+				this.m_Crate = crate;
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1061690;
-            }
-        }// Packing Crate
-        public override int DefaultGumpID
-        {
-            get
-            {
-                return 0x4B;
-            }
-        }
-        public override int DefaultDropSound
-        {
-            get
-            {
-                return 0x42;
-            }
-        }
-        public override Rectangle2D Bounds
-        {
-            get
-            {
-                return new Rectangle2D(16, 51, 168, 73);
-            }
-        }
-        public override int DefaultMaxItems
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override int DefaultMaxWeight
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override void SendCantStoreMessage(Mobile to, Item item)
-        {
-            to.SendLocalizedMessage(1061145); // You cannot place items into a house moving crate.
-        }
+				this.Priority = TimerPriority.FiveSeconds;
+			}
 
-        public override void OnItemRemoved(Item item)
-        {
-            base.OnItemRemoved(item);
+			protected override void OnTick()
+			{
+				this.m_Crate.Hide();
+			}
+		}
+	}
 
-            if (item.GetBounce() == null && this.TotalItems == 0)
-                this.Delete();
-        }
+	public class PackingBox : BaseContainer
+	{
+		public PackingBox()
+			: base(0x9A8)
+		{
+			this.Movable = false;
+		}
 
-        public override void OnItemBounceCleared(Item item)
-        {
-            base.OnItemBounceCleared(item);
+		public PackingBox(Serial serial)
+			: base(serial) { }
 
-            if (this.TotalItems == 0)
-                this.Delete();
-        }
+		public override int LabelNumber
+		{
+			get { return 1061690; }
+		} // Packing Crate
+		public override int DefaultGumpID
+		{
+			get { return 0x4B; }
+		}
+		public override int DefaultDropSound
+		{
+			get { return 0x42; }
+		}
+		public override Rectangle2D Bounds
+		{
+			get { return new Rectangle2D(16, 51, 168, 73); }
+		}
+		public override int DefaultMaxItems
+		{
+			get { return 0; }
+		}
+		public override int DefaultMaxWeight
+		{
+			get { return 0; }
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void SendCantStoreMessage(Mobile to, Item item)
+		{
+			to.SendLocalizedMessage(1061145); // You cannot place items into a house moving crate.
+		}
 
-            writer.WriteEncodedInt(1); // version
-        }
+		public override void OnItemRemoved(Item item)
+		{
+			base.OnItemRemoved(item);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			if (item.GetBounce() == null && this.TotalItems == 0)
+				this.Delete();
+		}
 
-            int version = reader.ReadEncodedInt();
+		public override void OnItemBounceCleared(Item item)
+		{
+			base.OnItemBounceCleared(item);
 
-            if (version == 0)
-                this.MaxItems = -1; // reset to default
-        }
-    }
+			if (this.TotalItems == 0)
+				this.Delete();
+		}
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.WriteEncodedInt(1); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+
+			if (version == 0)
+				this.MaxItems = -1; // reset to default
+		}
+	}
 }

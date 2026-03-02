@@ -2,43 +2,39 @@ using System;
 
 namespace Server.Mobiles
 {
-    public class CapturedHordeMinion : HordeMinion
-    {
-        [Constructable]
-        public CapturedHordeMinion()
-        {
-            this.FightMode = FightMode.None;
-        }
+	public class CapturedHordeMinion : HordeMinion
+	{
+		[Constructable]
+		public CapturedHordeMinion()
+		{
+			this.FightMode = FightMode.None;
+		}
 
-        public CapturedHordeMinion(Serial serial)
-            : base(serial)
-        {
-        }
+		public CapturedHordeMinion(Serial serial)
+			: base(serial) { }
 
-        public override bool InitialInnocent
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override bool CanBeDamaged()
-        {
-            return false;
-        }
+		public override bool InitialInnocent
+		{
+			get { return true; }
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override bool CanBeDamaged()
+		{
+			return false;
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

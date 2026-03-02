@@ -1,94 +1,105 @@
-using Server;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using Server;
+using Server.Commands;
 using Server.Engines.Quests;
 using Server.Mobiles;
 using Server.Regions;
-using Server.Commands;
-using System.Collections.Generic;
-using System.IO;
 
 namespace Server.Items
 {
-    public class HighSeasPersistance
-    {
-        public static string FilePath = Path.Combine("Saves", "Highseas.bin");
-        public static bool DefaultRestrictBoats = true;
+	public class HighSeasPersistance
+	{
+		public static string FilePath = Path.Combine("Saves", "Highseas.bin");
+		public static bool DefaultRestrictBoats = true;
 
-        public static void Configure()
-        {
-            if (Core.HS)
-            {
-                EventSink.WorldSave += OnSave;
-                EventSink.WorldLoad += OnLoad;
+		public static void Configure()
+		{
+			if (Core.HS)
+			{
+				EventSink.WorldSave += OnSave;
+				EventSink.WorldLoad += OnLoad;
 
-                SeaMarketRegion.RestrictBoats = DefaultRestrictBoats;
+				SeaMarketRegion.RestrictBoats = DefaultRestrictBoats;
 
-                m_Instance = new HighSeasPersistance();
+				m_Instance = new HighSeasPersistance();
 
-                CommandSystem.Register("RestrictBoats", AccessLevel.GameMaster, new CommandEventHandler(SeaMarketRegion.SetRestriction_OnCommand));
-            }
-        }
+				CommandSystem.Register(
+					"RestrictBoats",
+					AccessLevel.GameMaster,
+					new CommandEventHandler(SeaMarketRegion.SetRestriction_OnCommand)
+				);
+			}
+		}
 
-        private static HighSeasPersistance m_Instance;
-        public static HighSeasPersistance Instance { get { return m_Instance; } }
+		private static HighSeasPersistance m_Instance;
+		public static HighSeasPersistance Instance
+		{
+			get { return m_Instance; }
+		}
 
-        public bool HighSeasActive { get; set; }
+		public bool HighSeasActive { get; set; }
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public CharydbisSpawner CharydbisSpawner { get { return CharydbisSpawner.SpawnInstance; } set { } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public CharydbisSpawner CharydbisSpawner
+		{
+			get { return CharydbisSpawner.SpawnInstance; }
+			set { }
+		}
 
-        public HighSeasPersistance()
-        {
-        }
+		public HighSeasPersistance() { }
 
-        public static void OnSave(WorldSaveEventArgs e)
-        {
-            Persistence.Serialize(
-                FilePath,
-                writer =>
-                {
-                    writer.Write((int)1);
+		public static void OnSave(WorldSaveEventArgs e)
+		{
+			Persistence.Serialize(
+				FilePath,
+				writer =>
+				{
+					writer.Write((int)1);
 
-                    Server.Regions.SeaMarketRegion.Save(writer);
+					Server.Regions.SeaMarketRegion.Save(writer);
 
-                    writer.Write(PlayerFishingEntry.FishingEntries.Count);
+					writer.Write(PlayerFishingEntry.FishingEntries.Count);
 
-                    foreach (PlayerFishingEntry entry in PlayerFishingEntry.FishingEntries.Values)
-                        entry.Serialize(writer);
+					foreach (PlayerFishingEntry entry in PlayerFishingEntry.FishingEntries.Values)
+						entry.Serialize(writer);
 
-                    if (CharydbisSpawner.SpawnInstance != null)
-                    {
-                        writer.Write(0);
-                        CharydbisSpawner.SpawnInstance.Serialize(writer);
-                    }
-                    else
-                        writer.Write(1);
+					if (CharydbisSpawner.SpawnInstance != null)
+					{
+						writer.Write(0);
+						CharydbisSpawner.SpawnInstance.Serialize(writer);
+					}
+					else
+						writer.Write(1);
 
-                    ForgedPardon.Save(writer);
-                });
-        }
+					ForgedPardon.Save(writer);
+				}
+			);
+		}
 
-        public static void OnLoad()
-        {
-            Persistence.Deserialize(
-                FilePath,
-                reader =>
-                {
-                    int version = reader.ReadInt();
+		public static void OnLoad()
+		{
+			Persistence.Deserialize(
+				FilePath,
+				reader =>
+				{
+					int version = reader.ReadInt();
 
-                    Server.Regions.SeaMarketRegion.Load(reader);
-                    int count = reader.ReadInt();
-                    for (int i = 0; i < count; i++)
-                        new PlayerFishingEntry(reader);
+					Server.Regions.SeaMarketRegion.Load(reader);
+					int count = reader.ReadInt();
+					for (int i = 0; i < count; i++)
+						new PlayerFishingEntry(reader);
 
-                    if (version == 0 || reader.ReadInt() == 0)
-                    {
-                        CharydbisSpawner.SpawnInstance = new CharydbisSpawner();
-                        CharydbisSpawner.SpawnInstance.Deserialize(reader);
-                    }
+					if (version == 0 || reader.ReadInt() == 0)
+					{
+						CharydbisSpawner.SpawnInstance = new CharydbisSpawner();
+						CharydbisSpawner.SpawnInstance.Deserialize(reader);
+					}
 
-                    ForgedPardon.Load(reader);
-                });
-        }
-    }
+					ForgedPardon.Load(reader);
+				}
+			);
+		}
+	}
 }

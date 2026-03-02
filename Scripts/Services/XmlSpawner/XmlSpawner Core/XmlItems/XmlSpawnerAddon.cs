@@ -1,45 +1,49 @@
 using System;
-using Server;
-using System.IO;
 using System.Collections;
-using Server.Multis;
+using System.IO;
+using Server;
 using Server.Items;
 using Server.Mobiles;
+using Server.Multis;
 
 namespace Server.Engines.XmlSpawner2
 {
 	public class XmlSpawnerAddon : BaseAddon
 	{
-
-		public override bool ShareHue { get { return false; } }
+		public override bool ShareHue
+		{
+			get { return false; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public virtual int PartialVisibility 
+		public virtual int PartialVisibility
 		{
-			get 
+			get
 			{
 				int nvisible = 0;
 				// figure out what percentage of components is visible and return that value
 				// go through the components
 				for (int i = 0; i < Components.Count; i++)
 				{
-					if (Components[i].Visible) nvisible++;
+					if (Components[i].Visible)
+						nvisible++;
 				}
 
 				return (int)(100.0 * nvisible / Components.Count + 0.5);
-			} 
-			set 
+			}
+			set
 			{
-				if (Components == null || Components.Count < 1) return;
+				if (Components == null || Components.Count < 1)
+					return;
 
 				// assign visibility to the components based upon the percentage value
 				int nvisible = value * (Components.Count - 1) / 100;
-				
+
 				// go through the components and assign visibility to the specified percentage
 				// starting at the beginning of the component list
 				for (int i = 0; i < Components.Count; i++)
 				{
-						Components[i].Visible = (i < nvisible);
+					Components[i].Visible = (i < nvisible);
 				}
 			}
 		}
@@ -49,7 +53,8 @@ namespace Server.Engines.XmlSpawner2
 		{
 			status_str = null;
 
-			if (filename == null) return null;
+			if (filename == null)
+				return null;
 
 			XmlSpawnerAddon newaddon = null;
 
@@ -79,7 +84,6 @@ namespace Server.Engines.XmlSpawner2
 					status_str += " : " + filename;
 					return null;
 				}
-
 			}
 			else
 			{
@@ -111,7 +115,6 @@ namespace Server.Engines.XmlSpawner2
 
 			if (System.IO.File.Exists(filename))
 			{
-
 				using (StreamReader sr = new StreamReader(filename))
 				{
 					string line;
@@ -126,7 +129,8 @@ namespace Server.Engines.XmlSpawner2
 						linenumber++;
 
 						// process the line
-						if (line.Length == 0) continue;
+						if (line.Length == 0)
+							continue;
 
 						// first parse out the component specification from any optional attachment specifications
 
@@ -134,7 +138,8 @@ namespace Server.Engines.XmlSpawner2
 
 						// the component spec will always be first
 
-						if (specs == null || specs.Length < 1) continue;
+						if (specs == null || specs.Length < 1)
+							continue;
 
 						string[] args = specs[0].Trim().Split(' ');
 
@@ -142,7 +147,6 @@ namespace Server.Engines.XmlSpawner2
 
 						if (args != null && args.Length >= 5)
 						{
-
 							int itemid = -1;
 							int x = 0;
 							int y = 0;
@@ -164,7 +168,10 @@ namespace Server.Engines.XmlSpawner2
 									hue = int.Parse(args[5]);
 								}
 							}
-							catch { badformat = true; }
+							catch
+							{
+								badformat = true;
+							}
 
 							if (itemid < 0 || badformat)
 							{
@@ -185,7 +192,6 @@ namespace Server.Engines.XmlSpawner2
 							newaddon.AddComponent(newcomponent, x, y, z);
 
 							ncomponents++;
-
 						}
 
 						// if a valid component was added, then check to see if any additional attachment specifications need to be processed
@@ -193,8 +199,8 @@ namespace Server.Engines.XmlSpawner2
 						{
 							for (int j = 1; j < specs.Length; j++)
 							{
-
-								if (specs[j] == null) continue;
+								if (specs[j] == null)
+									continue;
 
 								string attachstring = specs[j].Trim();
 
@@ -213,7 +219,6 @@ namespace Server.Engines.XmlSpawner2
 									{
 										// add the attachment to the target
 										XmlAttach.AttachTo(newcomponent, (XmlAttachment)newo);
-
 									}
 								}
 							}
@@ -240,20 +245,13 @@ namespace Server.Engines.XmlSpawner2
 
 		public override BaseAddonDeed Deed
 		{
-			get
-			{
-				return null;
-			}
+			get { return null; }
 		}
 
-		public XmlSpawnerAddon()
-		{
-		}
+		public XmlSpawnerAddon() { }
 
 		public XmlSpawnerAddon(Serial serial)
-			: base(serial)
-		{
-		}
+			: base(serial) { }
 
 		public override void Serialize(GenericWriter writer)
 		{

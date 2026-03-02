@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 #endregion
 
@@ -20,8 +21,7 @@ namespace Ultima
 		public static int[] Table3 { get; private set; }
 		public static int[] Table4 { get; private set; }
 
-		private BodyConverter()
-		{ }
+		private BodyConverter() { }
 
 		static BodyConverter()
 		{
@@ -40,8 +40,14 @@ namespace Ultima
 				return;
 			}
 
-			List<int> list1 = new List<int>(), list2 = new List<int>(), list3 = new List<int>(), list4 = new List<int>();
-			int max1 = 0, max2 = 0, max3 = 0, max4 = 0;
+			List<int> list1 = new List<int>(),
+				list2 = new List<int>(),
+				list3 = new List<int>(),
+				list4 = new List<int>();
+			int max1 = 0,
+				max2 = 0,
+				max3 = 0,
+				max4 = 0;
 
 			using (var ip = new StreamReader(path))
 			{
@@ -49,7 +55,7 @@ namespace Ultima
 
 				while ((line = ip.ReadLine()) != null)
 				{
-					if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
+					if ((line = line.Trim()).Length == 0 || line.StartsWith("#", StringComparison.CurrentCulture))
 					{
 						continue;
 					}
@@ -58,15 +64,15 @@ namespace Ultima
 					{
 						string[] split = line.Split('\t');
 
-						int original = System.Convert.ToInt32(split[0]);
-						int anim2 = System.Convert.ToInt32(split[1]);
+						int original = System.Convert.ToInt32(split[0], CultureInfo.CurrentCulture);
+						int anim2 = System.Convert.ToInt32(split[1], CultureInfo.CurrentCulture);
 						int anim3;
 						int anim4;
 						int anim5;
 
 						try
 						{
-							anim3 = System.Convert.ToInt32(split[2]);
+							anim3 = System.Convert.ToInt32(split[2], CultureInfo.CurrentCulture);
 						}
 						catch
 						{
@@ -75,7 +81,7 @@ namespace Ultima
 
 						try
 						{
-							anim4 = System.Convert.ToInt32(split[3]);
+							anim4 = System.Convert.ToInt32(split[3], CultureInfo.CurrentCulture);
 						}
 						catch
 						{
@@ -84,7 +90,7 @@ namespace Ultima
 
 						try
 						{
-							anim5 = System.Convert.ToInt32(split[4]);
+							anim5 = System.Convert.ToInt32(split[4], CultureInfo.CurrentCulture);
 						}
 						catch
 						{
@@ -140,8 +146,7 @@ namespace Ultima
 							list4.Add(anim5);
 						}
 					}
-					catch
-					{ }
+					catch { }
 				}
 			}
 
@@ -373,18 +378,23 @@ namespace Ultima
 	public sealed class Animations
 	{
 		private static FileIndex m_FileIndex = new FileIndex("Anim.idx", "Anim.mul", 0x40000, 6);
+
 		//public static FileIndex FileIndex{ get{ return m_FileIndex; } }
 
 		private static FileIndex m_FileIndex2 = new FileIndex("Anim2.idx", "Anim2.mul", 0x10000, -1);
+
 		//public static FileIndex FileIndex2{ get{ return m_FileIndex2; } }
 
 		private static FileIndex m_FileIndex3 = new FileIndex("Anim3.idx", "Anim3.mul", 0x20000, -1);
+
 		//public static FileIndex FileIndex3{ get{ return m_FileIndex3; } }
 
 		private static FileIndex m_FileIndex4 = new FileIndex("Anim4.idx", "Anim4.mul", 0x20000, -1);
+
 		//public static FileIndex FileIndex4{ get{ return m_FileIndex4; } }
 
 		private static FileIndex m_FileIndex5 = new FileIndex("Anim5.idx", "Anim5.mul", 0x20000, -1);
+
 		//public static FileIndex FileIndex5 { get { return m_FileIndex5; } }
 
 		private static byte[] m_StreamBuffer;
@@ -418,7 +428,13 @@ namespace Ultima
 		/// <param name="FirstFrame"></param>
 		/// <returns></returns>
 		public static Frame[] GetAnimation(
-			int body, int action, int direction, ref int hue, bool preserveHue, bool FirstFrame)
+			int body,
+			int action,
+			int direction,
+			ref int hue,
+			bool preserveHue,
+			bool FirstFrame
+		)
 		{
 			if (preserveHue)
 			{
@@ -435,7 +451,8 @@ namespace Ultima
 			int index;
 			GetFileIndex(body, action, direction, fileType, out fileIndex, out index);
 
-			int length, extra;
+			int length,
+				extra;
 			bool patched;
 			Stream stream = fileIndex.Seek(index, out length, out extra, out patched);
 
@@ -520,7 +537,8 @@ namespace Ultima
 			int index;
 			GetFileIndex(body, action, direction, fileType, out fileIndex, out index);
 
-			int length, extra;
+			int length,
+				extra;
 			bool patched;
 
 			Stream stream = fileIndex.Seek(index, out length, out extra, out patched);
@@ -654,7 +672,8 @@ namespace Ultima
 			int index;
 			GetFileIndex(body, action, direction, fileType, out fileIndex, out index);
 
-			int length, extra;
+			int length,
+				extra;
 			bool patched;
 			bool valid = fileIndex.Valid(index, out length, out extra, out patched);
 			if ((!valid) || (length < 1))
@@ -678,7 +697,8 @@ namespace Ultima
 			int index;
 			GetFileIndex(body, action, dir, fileType, out fileIndex, out index);
 
-			int length, extra;
+			int length,
+				extra;
 			bool patched;
 			Stream stream = fileIndex.Seek(index, out length, out extra, out patched);
 			bool def = true;
@@ -815,7 +835,13 @@ namespace Ultima
 		/// <param name="fileIndex"></param>
 		/// <param name="index"></param>
 		private static void GetFileIndex(
-			int body, int action, int direction, int fileType, out FileIndex fileIndex, out int index)
+			int body,
+			int action,
+			int direction,
+			int fileType,
+			out FileIndex fileIndex,
+			out int index
+		)
 		{
 			switch (fileType)
 			{
@@ -926,7 +952,7 @@ namespace Ultima
 			}
 			else
 			{
-				return String.Format("anim{0}.mul", fileType);
+				return String.Format(CultureInfo.CurrentCulture, "anim{0}.mul", fileType);
 			}
 		}
 	}
@@ -939,6 +965,7 @@ namespace Ultima
 		private const int DoubleXor = (0x200 << 22) | (0x200 << 12);
 
 		public static readonly Frame Empty = new Frame();
+
 		//public static readonly Frame[] EmptyFrames = new Frame[1] { Empty };
 
 		private Frame()
@@ -959,7 +986,10 @@ namespace Ultima
 			}
 			var bmp = new Bitmap(width, height, Settings.PixelFormat);
 			BitmapData bd = bmp.LockBits(
-				new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, Settings.PixelFormat);
+				new Rectangle(0, 0, width, height),
+				ImageLockMode.WriteOnly,
+				Settings.PixelFormat
+			);
 			var line = (ushort*)bd.Scan0;
 			int delta = bd.Stride >> 1;
 
@@ -1053,15 +1083,15 @@ namespace Ultima
 
 				while ((line = def.ReadLine()) != null)
 				{
-					if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
+					if ((line = line.Trim()).Length == 0 || line.StartsWith("#", StringComparison.CurrentCulture))
 					{
 						continue;
 					}
 
 					try
 					{
-						int index1 = line.IndexOf("{");
-						int index2 = line.IndexOf("}");
+						int index1 = line.IndexOf("{", StringComparison.CurrentCulture);
+						int index2 = line.IndexOf("}", StringComparison.CurrentCulture);
 
 						string param1 = line.Substring(0, index1);
 						string param2 = line.Substring(index1 + 1, index2 - index1 - 1);
@@ -1074,14 +1104,13 @@ namespace Ultima
 							param2 = param2.Substring(0, indexOf).Trim();
 						}
 
-						int iParam1 = Convert.ToInt32(param1.Trim());
-						int iParam2 = Convert.ToInt32(param2.Trim());
-						int iParam3 = Convert.ToInt32(param3.Trim());
+						int iParam1 = Convert.ToInt32(param1.Trim(), CultureInfo.CurrentCulture);
+						int iParam2 = Convert.ToInt32(param2.Trim(), CultureInfo.CurrentCulture);
+						int iParam3 = Convert.ToInt32(param3.Trim(), CultureInfo.CurrentCulture);
 
 						m_Entries[iParam1] = new BodyTableEntry(iParam2, iParam1, iParam3);
 					}
-					catch
-					{ }
+					catch { }
 				}
 			}
 		}

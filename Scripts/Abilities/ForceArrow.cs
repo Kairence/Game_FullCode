@@ -7,37 +7,33 @@ using Server.Spells.Necromancy;
 
 namespace Server.Items
 {
-    public class ForceArrow : WeaponAbility
-    {
-        public ForceArrow()
-        {
-        }
-        private static readonly Dictionary<Mobile, BleedTimer> m_BleedTable = new Dictionary<Mobile, BleedTimer>();
+	public class ForceArrow : WeaponAbility
+	{
+		public ForceArrow() { }
 
-        public override int BaseMana
-        {
-            get
-            {
-                return 15;
-            }
-        }
-	
-        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics )
-        {
-            if (!this.Validate(attacker) )
-                return;
-			
-			if ( defender == null )
+		private static readonly Dictionary<Mobile, BleedTimer> m_BleedTable = new Dictionary<Mobile, BleedTimer>();
+
+		public override int BaseMana
+		{
+			get { return 15; }
+		}
+
+		public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics)
+		{
+			if (!this.Validate(attacker))
 				return;
-			
+
+			if (defender == null)
+				return;
+
 			bool bonus = attacker.Skills.Tactics.Value >= 100 ? true : false;
 
-			if ( !this.CalculateStam(attacker, Misc.Util.SPMStam[1,0], Misc.Util.SPMStam[1,1], level, bonus ) )
+			if (!this.CalculateStam(attacker, Misc.Util.SPMStam[1, 0], Misc.Util.SPMStam[1, 1], level, bonus))
 				return;
-			
-			if(defender is BaseCreature && ((BaseCreature)defender).BleedImmune)
+
+			if (defender is BaseCreature && ((BaseCreature)defender).BleedImmune)
 			{
-                attacker.SendLocalizedMessage(1062052); // Your target is not affected by the bleed attack!
+				attacker.SendLocalizedMessage(1062052); // Your target is not affected by the bleed attack!
 			}
 			else
 			{
@@ -50,146 +46,162 @@ namespace Server.Items
 				}
 			}
 			int hitsPercent = 0;
-			if( defender.HitsMax != 0 )
-				hitsPercent = ( defender.Hits * 100 ) / defender.HitsMax;
-			
-			int bloodDamage = (int)( damage * ( 1 + hitsPercent * 0.02 + level * 0.025) );
-			
-			
-			if( bloodDamage < 0 )
+			if (defender.HitsMax != 0)
+				hitsPercent = (defender.Hits * 100) / defender.HitsMax;
+
+			int bloodDamage = (int)(damage * (1 + hitsPercent * 0.02 + level * 0.025));
+
+			if (bloodDamage < 0)
 			{
 				return;
 			}
-			
-            TransformContext context = TransformationSpellHelper.GetContext(defender);
 
-            if ((context != null && (context.Type == typeof(LichFormSpell) || context.Type == typeof(WraithFormSpell))) ||
-                (defender is BaseCreature && ((BaseCreature)defender).BleedImmune) || Server.Spells.Mysticism.StoneFormSpell.CheckImmunity(defender))
-            {
-                attacker.SendLocalizedMessage(1062052); // Your target is not affected by the bleed attack!
-                return;
-            }
-            defender.PlaySound(0x133);
-            defender.FixedParticles(0x377A, 244, 25, 9950, 31, 0, EffectLayer.Waist);
+			TransformContext context = TransformationSpellHelper.GetContext(defender);
+
+			if (
+				(context != null && (context.Type == typeof(LichFormSpell) || context.Type == typeof(WraithFormSpell)))
+				|| (defender is BaseCreature && ((BaseCreature)defender).BleedImmune)
+				|| Server.Spells.Mysticism.StoneFormSpell.CheckImmunity(defender)
+			)
+			{
+				attacker.SendLocalizedMessage(1062052); // Your target is not affected by the bleed attack!
+				return;
+			}
+			defender.PlaySound(0x133);
+			defender.FixedParticles(0x377A, 244, 25, 9950, 31, 0, EffectLayer.Waist);
 			Blood blood = new Blood();
 			blood.ItemID = Utility.Random(0x122A, 5);
 			blood.MoveToWorld(defender.Location, defender.Map);
 
 			//피 흡수
 			int bloodDrink = (int)tactics * 10;
-			if( defender.Hits < bloodDrink )
+			if (defender.Hits < bloodDrink)
 				bloodDrink = defender.Hits;
 			attacker.Hits += bloodDrink;
 
 			AOS.Damage(defender, attacker, bloodDamage, true, 100, 0, 0, 0, 0, 0, 0, false, false, false);
 			BeginBleed(defender, attacker, damage, level, tactics);
-		}			
-			
-		
+		}
+
 		public static bool IsBleeding(Mobile m)
-        {
-            return m_BleedTable.ContainsKey(m);
-        }
-		
-		public static void BeginBleed(Mobile m, Mobile from, int damage, int level, double tactics, bool splintering = false)
-        {
-            BleedTimer timer = null;
+		{
+			return m_BleedTable.ContainsKey(m);
+		}
 
-            if (m_BleedTable.ContainsKey(m))
-            {
-                if (splintering)
-                {
-                    timer = m_BleedTable[m];
-                    timer.Stop();
-                }
-                else
-                {
-                    return;
-                }
-            }
+		public static void BeginBleed(
+			Mobile m,
+			Mobile from,
+			int damage,
+			int level,
+			double tactics,
+			bool splintering = false
+		)
+		{
+			BleedTimer timer = null;
 
-            BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Bleed, 1075829, 1075830, TimeSpan.FromSeconds(2), m, String.Format("{0}\t{1}\t{2}", "1", "10", "2")));
+			if (m_BleedTable.ContainsKey(m))
+			{
+				if (splintering)
+				{
+					timer = m_BleedTable[m];
+					timer.Stop();
+				}
+				else
+				{
+					return;
+				}
+			}
 
-            //timer = new BleedTimer(from, m, CheckBloodDrink(from), damage, level, tactics);
+			BuffInfo.AddBuff(
+				m,
+				new BuffInfo(
+					BuffIcon.Bleed,
+					1075829,
+					1075830,
+					TimeSpan.FromSeconds(2),
+					m,
+					String.Format("{0}\t{1}\t{2}", "1", "10", "2")
+				)
+			);
+
+			//timer = new BleedTimer(from, m, CheckBloodDrink(from), damage, level, tactics);
 			timer = new BleedTimer(from, m, false, damage, level, tactics);
-			
-            m_BleedTable[m] = timer;
-            timer.Start();
 
-            from.SendLocalizedMessage(1060159); // Your target is bleeding!
-            m.SendLocalizedMessage(1060160); // You are bleeding!
+			m_BleedTable[m] = timer;
+			timer.Start();
 
-            if (m is PlayerMobile)
-            {
-                m.LocalOverheadMessage(MessageType.Regular, 0x21, 1060757); // You are bleeding profusely
-                m.NonlocalOverheadMessage(MessageType.Regular, 0x21, 1060758, m.Name); // ~1_NAME~ is bleeding profusely
-            }
+			from.SendLocalizedMessage(1060159); // Your target is bleeding!
+			m.SendLocalizedMessage(1060160); // You are bleeding!
 
-            m.PlaySound(0x133);
-            m.FixedParticles(0x377A, 244, 25, 9950, 31, 0, EffectLayer.Waist);
-			
-			
-        }
+			if (m is PlayerMobile)
+			{
+				m.LocalOverheadMessage(MessageType.Regular, 0x21, 1060757); // You are bleeding profusely
+				m.NonlocalOverheadMessage(MessageType.Regular, 0x21, 1060758, m.Name); // ~1_NAME~ is bleeding profusely
+			}
 
-        public static void DoBleed(Mobile m, Mobile from, int damage, bool blooddrinker)
-        {
-            if (m.Alive && !m.IsDeadBondedPet)
-            {
-                //if (!m.Player)
-                //    damage *= 2;
+			m.PlaySound(0x133);
+			m.FixedParticles(0x377A, 244, 25, 9950, 31, 0, EffectLayer.Waist);
+		}
 
-                m.PlaySound(0x133);
+		public static void DoBleed(Mobile m, Mobile from, int damage, bool blooddrinker)
+		{
+			if (m.Alive && !m.IsDeadBondedPet)
+			{
+				//if (!m.Player)
+				//    damage *= 2;
+
+				m.PlaySound(0x133);
 				//m.Hits -= damage;
-                AOS.Damage(m, from, damage, true, 100, 0, 0, 0, 0, 0, 0, false, false, false);
+				AOS.Damage(m, from, damage, true, 100, 0, 0, 0, 0, 0, 0, false, false, false);
 
 				/*
-                if (blooddrinker && from.Hits < from.HitsMax)
-                {
-                    from.SendLocalizedMessage(1113606); //The blood drinker effect heals you.
-                    from.Heal(damage);
-                }
+				if (blooddrinker && from.Hits < from.HitsMax)
+				{
+					from.SendLocalizedMessage(1113606); //The blood drinker effect heals you.
+					from.Heal(damage);
+				}
 				*/
-                Blood blood = new Blood();
-                blood.ItemID = Utility.Random(0x122A, 5);
-                blood.MoveToWorld(m.Location, m.Map);
-            }
-            else
-            {
-                EndBleed(m, false);
-            }
-        }
+				Blood blood = new Blood();
+				blood.ItemID = Utility.Random(0x122A, 5);
+				blood.MoveToWorld(m.Location, m.Map);
+			}
+			else
+			{
+				EndBleed(m, false);
+			}
+		}
 
-        public static void EndBleed(Mobile m, bool message)
-        {
-            Timer t = null;
+		public static void EndBleed(Mobile m, bool message)
+		{
+			Timer t = null;
 
-            if (m_BleedTable.ContainsKey(m))
-            {
-                t = m_BleedTable[m];
-                m_BleedTable.Remove(m);
-            }
+			if (m_BleedTable.ContainsKey(m))
+			{
+				t = m_BleedTable[m];
+				m_BleedTable.Remove(m);
+			}
 
-            if (t == null)
-                return;
+			if (t == null)
+				return;
 
-            t.Stop();
-            BuffInfo.RemoveBuff(m, BuffIcon.Bleed);
+			t.Stop();
+			BuffInfo.RemoveBuff(m, BuffIcon.Bleed);
 
-            if (message)
-                m.SendLocalizedMessage(1060167); // The bleeding wounds have healed, you are no longer bleeding!
-        }
-		
+			if (message)
+				m.SendLocalizedMessage(1060167); // The bleeding wounds have healed, you are no longer bleeding!
+		}
+
 		public static bool CheckBloodDrink(Mobile attacker)
 		{
-            return attacker.Weapon is BaseWeapon && ((BaseWeapon)attacker.Weapon).WeaponAttributes.BloodDrinker > 0;
+			return attacker.Weapon is BaseWeapon && ((BaseWeapon)attacker.Weapon).WeaponAttributes.BloodDrinker > 0;
 		}
 
 		/*
-        public override void BeforeAttack(Mobile attacker, Mobile defender, int damage)
-        {
+		public override void BeforeAttack(Mobile attacker, Mobile defender, int damage)
+		{
 			BaseWeapon weapon = attacker.Weapon as BaseWeapon;
-            if (!Validate(attacker) || (!attacker.InRange(defender, weapon.MaxRange)))
-                return;
+			if (!Validate(attacker) || (!attacker.InRange(defender, weapon.MaxRange)))
+				return;
 
 			if( attacker is PlayerMobile )
 			{
@@ -197,11 +209,11 @@ namespace Server.Items
 					return;
 				attacker.Stam -= 10;
 			}
-            ClearCurrentAbility(attacker);
+			ClearCurrentAbility(attacker);
 
 			if(defender is BaseCreature && ((BaseCreature)defender).BleedImmune)
 			{
-                attacker.SendLocalizedMessage(1062052); // Your target is not affected by the bleed attack!
+				attacker.SendLocalizedMessage(1062052); // Your target is not affected by the bleed attack!
 			}
 			else
 			{
@@ -213,8 +225,8 @@ namespace Server.Items
 					defender.NonlocalOverheadMessage(MessageType.Regular, 0x21, 1060758, defender.Name); // ~1_NAME~ is bleeding profusely
 				}
 			}
-            defender.PlaySound(0x133);
-            defender.FixedParticles(0x377A, 244, 25, 9950, 31, 0, EffectLayer.Waist);
+			defender.PlaySound(0x133);
+			defender.FixedParticles(0x377A, 244, 25, 9950, 31, 0, EffectLayer.Waist);
 			double hitsBonus = 0.0;
 			if( attacker is PlayerMobile )
 			{
@@ -233,79 +245,77 @@ namespace Server.Items
 			blood.MoveToWorld(defender.Location, defender.Map);
 			AOS.Damage(defender, attacker, damage, true, 100, 0, 0, 0, 0, 0, 0, false, false, false);
 			/*
-            // Necromancers under Lich or Wraith Form are immune to Bleed Attacks.
-            TransformContext context = TransformationSpellHelper.GetContext(defender);
+			// Necromancers under Lich or Wraith Form are immune to Bleed Attacks.
+			TransformContext context = TransformationSpellHelper.GetContext(defender);
 
-            if ((context != null && (context.Type == typeof(LichFormSpell) || context.Type == typeof(WraithFormSpell))) ||
-                (defender is BaseCreature && ((BaseCreature)defender).BleedImmune) || Server.Spells.Mysticism.StoneFormSpell.CheckImmunity(defender))
-            {
-                attacker.SendLocalizedMessage(1062052); // Your target is not affected by the bleed attack!
-                return;
-            }
+			if ((context != null && (context.Type == typeof(LichFormSpell) || context.Type == typeof(WraithFormSpell))) ||
+				(defender is BaseCreature && ((BaseCreature)defender).BleedImmune) || Server.Spells.Mysticism.StoneFormSpell.CheckImmunity(defender))
+			{
+				attacker.SendLocalizedMessage(1062052); // Your target is not affected by the bleed attack!
+				return;
+			}
 
 			BeginBleed(defender, attacker);
-        }
+		}
 		*/
-        private class BleedTimer : Timer
-        {
-            private readonly Mobile m_From;
-            private readonly Mobile m_Mobile;
-            private int m_Count;
-            private int m_MaxCount;
+		private class BleedTimer : Timer
+		{
+			private readonly Mobile m_From;
+			private readonly Mobile m_Mobile;
+			private int m_Count;
+			private int m_MaxCount;
 			private int m_Damage;
 			private double m_Tactics;
-            private readonly bool m_BloodDrinker;
+			private readonly bool m_BloodDrinker;
 
-            public BleedTimer(Mobile from, Mobile m, bool blooddrinker, int damage, int count, double tactics )
-                : base(TimeSpan.FromSeconds(2.0), TimeSpan.FromSeconds(2.0))
-            {
-                m_From = from;
-                m_Mobile = m;
+			public BleedTimer(Mobile from, Mobile m, bool blooddrinker, int damage, int count, double tactics)
+				: base(TimeSpan.FromSeconds(2.0), TimeSpan.FromSeconds(2.0))
+			{
+				m_From = from;
+				m_Mobile = m;
 				m_Damage = damage;
-                Priority = TimerPriority.TwoFiftyMS;
+				Priority = TimerPriority.TwoFiftyMS;
 				m_BloodDrinker = blooddrinker;
 
-                m_MaxCount = count;
+				m_MaxCount = count;
 				m_Tactics = tactics;
 			}
 
-            protected override void OnTick()
-            {
-                if (!m_Mobile.Alive || m_Mobile.Deleted)
-                {
-                    EndBleed(m_Mobile, true);
-                }
-                else
-                {
+			protected override void OnTick()
+			{
+				if (!m_Mobile.Alive || m_Mobile.Deleted)
+				{
+					EndBleed(m_Mobile, true);
+				}
+				else
+				{
 					int hitsPercent = 0;
-					if( m_Mobile.HitsMax != 0 )
-						hitsPercent = ( m_Mobile.Hits * 100 ) / m_Mobile.HitsMax;
-					
-					int bloodDamage = (int)( m_Damage * ( 1 + hitsPercent * 0.02 + m_MaxCount * 0.025) );
-					
-					
-					if( bloodDamage < 0 )
+					if (m_Mobile.HitsMax != 0)
+						hitsPercent = (m_Mobile.Hits * 100) / m_Mobile.HitsMax;
+
+					int bloodDamage = (int)(m_Damage * (1 + hitsPercent * 0.02 + m_MaxCount * 0.025));
+
+					if (bloodDamage < 0)
 					{
 						return;
 					}
-									
-					
-                    //int bloodDamage = HitsPercentDamage(m_Mobile, m_From, m_MaxCount, m_Tactics);
 
-                    //if (!Server.Spells.SkillMasteries.WhiteTigerFormSpell.HasBleedMod(m_From, out damage))
-                    //    damage = Math.Max(1, Utility.RandomMinMax(5 - m_Count, (5 - m_Count) * 2));
+					//int bloodDamage = HitsPercentDamage(m_Mobile, m_From, m_MaxCount, m_Tactics);
 
-                    DoBleed(m_Mobile, m_From, bloodDamage, m_BloodDrinker);
+					//if (!Server.Spells.SkillMasteries.WhiteTigerFormSpell.HasBleedMod(m_From, out damage))
+					//    damage = Math.Max(1, Utility.RandomMinMax(5 - m_Count, (5 - m_Count) * 2));
 
-                    if (++m_Count == 5)
-                        EndBleed(m_Mobile, true);
-                }
-            }
-        }	
-		
+					DoBleed(m_Mobile, m_From, bloodDamage, m_BloodDrinker);
+
+					if (++m_Count == 5)
+						EndBleed(m_Mobile, true);
+				}
+			}
+		}
+
 		/*
-        public override void BeforeAttack(Mobile attacker, Mobile defender, int damage)
-        {
+		public override void BeforeAttack(Mobile attacker, Mobile defender, int damage)
+		{
 			if (!Validate(attacker))
 				return;
 			if( attacker is PlayerMobile )
@@ -315,7 +325,7 @@ namespace Server.Items
 				attacker.Stam -= 10;
 			}
 			attacker.PlaySound(0x64C);
-            attacker.SendLocalizedMessage(1074381); // You fire an arrow of pure force.
+			attacker.SendLocalizedMessage(1074381); // You fire an arrow of pure force.
 			if( attacker is OgreLord )
 			{
 				int x = 0;
@@ -398,125 +408,125 @@ namespace Server.Items
 				defender.FixedParticles(0x3709, 1, 30, 9963, 13, 3, EffectLayer.Head);
 				AOS.Damage(defender, attacker, damage, true, 100, 0, 0, 0, 0, 0, 0, false, false, false);
 			}
-            ClearCurrentAbility(attacker);
+			ClearCurrentAbility(attacker);
 
 
-            //defender.SendLocalizedMessage(1074382); // You are struck by a force arrow!
-        }
+			//defender.SendLocalizedMessage(1074382); // You are struck by a force arrow!
+		}
 
-        private static Dictionary<Mobile, List<ForceArrowInfo>> m_Table = new Dictionary<Mobile, List<ForceArrowInfo>>();
+		private static Dictionary<Mobile, List<ForceArrowInfo>> m_Table = new Dictionary<Mobile, List<ForceArrowInfo>>();
 
-        public static void BeginForceArrow(Mobile attacker, Mobile defender)
-        {
-            ForceArrowInfo info = new ForceArrowInfo(attacker, defender);
-            info.Timer = new ForceArrowTimer(info);
+		public static void BeginForceArrow(Mobile attacker, Mobile defender)
+		{
+			ForceArrowInfo info = new ForceArrowInfo(attacker, defender);
+			info.Timer = new ForceArrowTimer(info);
 
-            if (!m_Table.ContainsKey(attacker))
-                m_Table[attacker] = new List<ForceArrowInfo>();
+			if (!m_Table.ContainsKey(attacker))
+				m_Table[attacker] = new List<ForceArrowInfo>();
 
-            m_Table[attacker].Add(info);
+			m_Table[attacker].Add(info);
 
-            BuffInfo.AddBuff(defender, new BuffInfo(BuffIcon.ForceArrow, 1151285, 1151286, info.DefenseChanceMalus.ToString()));
-        }
+			BuffInfo.AddBuff(defender, new BuffInfo(BuffIcon.ForceArrow, 1151285, 1151286, info.DefenseChanceMalus.ToString()));
+		}
 
-        public static void EndForceArrow(ForceArrowInfo info)
-        {
-            if (info == null)
-                return;
+		public static void EndForceArrow(ForceArrowInfo info)
+		{
+			if (info == null)
+				return;
 
-            Mobile attacker = info.Attacker;
+			Mobile attacker = info.Attacker;
 
-            if (m_Table.ContainsKey(attacker) && m_Table[attacker].Contains(info))
-            {
-                m_Table[attacker].Remove(info);
+			if (m_Table.ContainsKey(attacker) && m_Table[attacker].Contains(info))
+			{
+				m_Table[attacker].Remove(info);
 
-                if (m_Table[attacker].Count == 0)
-                    m_Table.Remove(attacker);
-            }
+				if (m_Table[attacker].Count == 0)
+					m_Table.Remove(attacker);
+			}
 
-            BuffInfo.RemoveBuff(info.Defender, BuffIcon.ForceArrow);
-        }
+			BuffInfo.RemoveBuff(info.Defender, BuffIcon.ForceArrow);
+		}
 
-        public static bool HasForceArrow(Mobile attacker, Mobile defender)
-        {
-            if (!m_Table.ContainsKey(attacker))
-                return false;
+		public static bool HasForceArrow(Mobile attacker, Mobile defender)
+		{
+			if (!m_Table.ContainsKey(attacker))
+				return false;
 
-            foreach (ForceArrowInfo info in m_Table[attacker])
-            {
-                if (info.Defender == defender)
-                    return true;
-            }
+			foreach (ForceArrowInfo info in m_Table[attacker])
+			{
+				if (info.Defender == defender)
+					return true;
+			}
 
-            return false;
-        }
+			return false;
+		}
 
-        public static ForceArrowInfo GetInfo(Mobile attacker, Mobile defender)
-        {
-            if (!m_Table.ContainsKey(attacker))
-                return null;
+		public static ForceArrowInfo GetInfo(Mobile attacker, Mobile defender)
+		{
+			if (!m_Table.ContainsKey(attacker))
+				return null;
 
-            foreach (ForceArrowInfo info in m_Table[attacker])
-            {
-                if (info.Defender == defender)
-                    return info;
-            }
+			foreach (ForceArrowInfo info in m_Table[attacker])
+			{
+				if (info.Defender == defender)
+					return info;
+			}
 
-            return null;
-        }
+			return null;
+		}
 
-        public class ForceArrowInfo
-        {
-            private Mobile m_Attacker;
-            private Mobile m_Defender;
-            private ForceArrowTimer m_Timer;
-            private int m_DefenseChanceMalus;
+		public class ForceArrowInfo
+		{
+			private Mobile m_Attacker;
+			private Mobile m_Defender;
+			private ForceArrowTimer m_Timer;
+			private int m_DefenseChanceMalus;
 
-            public Mobile Attacker { get { return m_Attacker; } }
-            public Mobile Defender { get { return m_Defender; } }
-            public ForceArrowTimer Timer { get { return m_Timer; } set { m_Timer = value; } }
-            public int DefenseChanceMalus { get { return m_DefenseChanceMalus; } set { m_DefenseChanceMalus = value; } }
+			public Mobile Attacker { get { return m_Attacker; } }
+			public Mobile Defender { get { return m_Defender; } }
+			public ForceArrowTimer Timer { get { return m_Timer; } set { m_Timer = value; } }
+			public int DefenseChanceMalus { get { return m_DefenseChanceMalus; } set { m_DefenseChanceMalus = value; } }
 
-            public ForceArrowInfo(Mobile attacker, Mobile defender)
-            {
-                m_Attacker = attacker;
-                m_Defender = defender;
-                m_DefenseChanceMalus = 10;
-            }
-        }
+			public ForceArrowInfo(Mobile attacker, Mobile defender)
+			{
+				m_Attacker = attacker;
+				m_Defender = defender;
+				m_DefenseChanceMalus = 10;
+			}
+		}
 
-        public class ForceArrowTimer : Timer
-        {
-            private ForceArrowInfo m_Info;
-            private DateTime m_Expires;
+		public class ForceArrowTimer : Timer
+		{
+			private ForceArrowInfo m_Info;
+			private DateTime m_Expires;
 
-            public ForceArrowTimer(ForceArrowInfo info)
-                : base(TimeSpan.FromSeconds(1.0), TimeSpan.FromSeconds(1))
-            {
-                m_Info = info;
-                Priority = TimerPriority.OneSecond;
+			public ForceArrowTimer(ForceArrowInfo info)
+				: base(TimeSpan.FromSeconds(1.0), TimeSpan.FromSeconds(1))
+			{
+				m_Info = info;
+				Priority = TimerPriority.OneSecond;
 
-                m_Expires = DateTime.UtcNow + TimeSpan.FromSeconds(10);
+				m_Expires = DateTime.UtcNow + TimeSpan.FromSeconds(10);
 
-                Start();
-            }
+				Start();
+			}
 
-            protected override void OnTick()
-            {
-                if (m_Expires < DateTime.UtcNow)
-                {
-                    Stop();
-                    EndForceArrow(m_Info);
-                }
-            }
+			protected override void OnTick()
+			{
+				if (m_Expires < DateTime.UtcNow)
+				{
+					Stop();
+					EndForceArrow(m_Info);
+				}
+			}
 
-            public void IncreaseExpiration()
-            {
-                m_Expires = m_Expires + TimeSpan.FromSeconds(2);
+			public void IncreaseExpiration()
+			{
+				m_Expires = m_Expires + TimeSpan.FromSeconds(2);
 
-                m_Info.DefenseChanceMalus += 5;
-            }
-        }
+				m_Info.DefenseChanceMalus += 5;
+			}
+		}
 		*/
-    }
+	}
 }

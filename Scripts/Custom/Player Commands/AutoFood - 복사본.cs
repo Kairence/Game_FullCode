@@ -1,13 +1,13 @@
 using System;
 using Server;
-using Server.Mobiles;
-using Server.Network;
-using Server.Gumps;
-using Server.Commands.Generic;
 using Server.Accounting;
-using Server.Targeting;
+using Server.Commands.Generic;
+using Server.Gumps;
 using Server.Items;
+using Server.Mobiles;
 using Server.Multis;
+using Server.Network;
+using Server.Targeting;
 
 namespace Server.Commands
 {
@@ -15,63 +15,59 @@ namespace Server.Commands
 	{
 		public static void Initialize()
 		{
-      		CommandSystem.Register( "AMI", AccessLevel.Player, new CommandEventHandler( AllMoveInfo_OnCommand ) );
+			CommandSystem.Register("AMI", AccessLevel.Player, new CommandEventHandler(AllMoveInfo_OnCommand));
 		}
 
-		[Usage( "Status" )]
-		[Description( "¾ÆÀÌÅÛ ÀÌµ¿½ÃÅ°±â" )]
-		public static void AllMoveInfo_OnCommand( CommandEventArgs e )
+		[Usage("Status")]
+		[Description("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½Å°ï¿½ï¿½")]
+		public static void AllMoveInfo_OnCommand(CommandEventArgs e)
 		{
-			e.Mobile.SendMessage("Áý, ÀÚ½ÅÀÇ °¡¹æ, ÀºÇà¿¡¼­ ¿Å±æ ¾ÆÀÌÅÛÀ» Å¬¸¯ÇÏ¼¼¿ä");
+			e.Mobile.SendMessage("ï¿½ï¿½, ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½à¿¡ï¿½ï¿½ ï¿½Å±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½");
 			e.Mobile.Target = new InternalTarget();
 		}
 
 		//List<Item> select_item = null;
 		private class InternalTarget : Target
 		{
-			public InternalTarget() :  base ( 8, false, TargetFlags.None )
-			{
-			}
+			public InternalTarget()
+				: base(8, false, TargetFlags.None) { }
 
-			protected override void OnTarget( Mobile from, object targeted )
+			protected override void OnTarget(Mobile from, object targeted)
 			{
-				if( targeted is Item )
+				if (targeted is Item)
 				{
 					Item target_item = targeted as Item;
 					BankBox box = from.FindBankNoCreate();
-					
+
 					BaseHouse house = null;
 					Container housecontainer = null;
-					if( target_item.Parent is Container )
+					if (target_item.Parent is Container)
 						housecontainer = target_item.Parent as Container;
 
-					if( housecontainer != null )
+					if (housecontainer != null)
 						house = BaseHouse.FindHouseAt(housecontainer);
 					Container pack = from.Backpack;
-					if( box != null && target_item.IsChildOf(box) ) 
+					if (box != null && target_item.IsChildOf(box))
 					{
 						//box.FindItemsByType<target_item>();
-						from.SendMessage("ÀÌ ¾ÆÀÌÅÛµéÀ» ¾îµð·Î ¿Å±â½Ã°Ú½À´Ï±î?");
-						
+						from.SendMessage("ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ûµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Å±ï¿½Ã°Ú½ï¿½ï¿½Ï±ï¿½?");
 					}
-					else if( pack != null )
+					else if (pack != null)
 					{
 						//pack.FindItemsByType<target_item>();
-						from.SendMessage("ÀÌ ¾ÆÀÌÅÛµéÀ» ¾îµð·Î ¿Å±â½Ã°Ú½À´Ï±î?");
-						
+						from.SendMessage("ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ûµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Å±ï¿½Ã°Ú½ï¿½ï¿½Ï±ï¿½?");
 					}
-					else if( house != null && house.IsOwner(from)  )
-					{}
+					else if (house != null && house.IsOwner(from)) { }
 					else
 					{
-						from.SendMessage("Áý, ÀÚ½ÅÀÇ °¡¹æ, ÀºÇà¾È¿¡ ÀÖ´Â ¾ÆÀÌÅÛ¸¸ ¼±ÅÃÇÒ ¼ö ÀÖ½À´Ï´Ù.");
+						from.SendMessage("ï¿½ï¿½, ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½È¿ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Û¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.");
 					}
 				}
 				else
 				{
-					from.SendMessage("¾ÆÀÌÅÛ¸¸ °¡´ÉÇÕ´Ï´Ù!");
+					from.SendMessage("ï¿½ï¿½ï¿½ï¿½ï¿½Û¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½!");
 				}
-			}			
+			}
 		}
 	}
 }

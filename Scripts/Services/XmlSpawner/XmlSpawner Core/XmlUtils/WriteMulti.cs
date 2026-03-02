@@ -1,15 +1,15 @@
 using System;
-using Server;
-using System.IO;
 using System.Collections;
-using Server.Multis;
-using Server.Items;
-using Server.Mobiles;
-using Server.Network;
+using System.IO;
 using System.Runtime.Serialization;
-using Server.Targeting;
+using Server;
 using Server.Commands;
 using Server.Commands.Generic;
+using Server.Items;
+using Server.Mobiles;
+using Server.Multis;
+using Server.Network;
+using Server.Targeting;
 
 namespace Server.Engines.XmlSpawner2
 {
@@ -33,15 +33,21 @@ namespace Server.Engines.XmlSpawner2
 
 		public static void Initialize()
 		{
-
-			CommandSystem.Register("WriteMulti", XmlSpawner.DiskAccessLevel, new CommandEventHandler(WriteMulti_OnCommand));
+			CommandSystem.Register(
+				"WriteMulti",
+				XmlSpawner.DiskAccessLevel,
+				new CommandEventHandler(WriteMulti_OnCommand)
+			);
 		}
 
 		[Usage("WriteMulti <MultiFile> [zmin zmax][-noitems][-nostatics][-nomultis][-noaddons][-invisible]")]
-		[Description("Creates a multi text file from the objects within the targeted area.  The min/max z range can also be specified.")]
+		[Description(
+			"Creates a multi text file from the objects within the targeted area.  The min/max z range can also be specified."
+		)]
 		public static void WriteMulti_OnCommand(CommandEventArgs e)
 		{
-			if (e == null || e.Mobile == null) return;
+			if (e == null || e.Mobile == null)
+				return;
 
 			if (e.Mobile.AccessLevel < XmlSpawner.DiskAccessLevel)
 			{
@@ -51,7 +57,10 @@ namespace Server.Engines.XmlSpawner2
 
 			if (e.Arguments != null && e.Arguments.Length < 1)
 			{
-				e.Mobile.SendMessage("Usage:  {0} <MultiFile> [zmin zmax][-noitems][-nostatics][-nomultis][-noaddons][-invisible]", e.Command);
+				e.Mobile.SendMessage(
+					"Usage:  {0} <MultiFile> [zmin zmax][-noitems][-nostatics][-nomultis][-noaddons][-invisible]",
+					e.Command
+				);
 				return;
 			}
 
@@ -112,7 +121,12 @@ namespace Server.Engines.XmlSpawner2
 			}
 
 			string dirname;
-			if (System.IO.Directory.Exists(XmlSpawner.XmlSpawnDir) && filename != null && !filename.StartsWith("/") && !filename.StartsWith("\\"))
+			if (
+				System.IO.Directory.Exists(XmlSpawner.XmlSpawnDir)
+				&& filename != null
+				&& !filename.StartsWith("/")
+				&& !filename.StartsWith("\\")
+			)
 			{
 				// put it in the defaults directory if it exists
 				dirname = String.Format("{0}/{1}", XmlSpawner.XmlSpawnDir, filename);
@@ -126,7 +140,6 @@ namespace Server.Engines.XmlSpawner2
 			// check to see if the file already exists and can be written to by the owner
 			if (System.IO.File.Exists(dirname))
 			{
-
 				// check the file
 				try
 				{
@@ -145,7 +158,6 @@ namespace Server.Engines.XmlSpawner2
 					// check the first line
 					if (line != null && line.Length > 0)
 					{
-
 						string[] args = line.Split(" ".ToCharArray(), 3);
 						if (args == null || args.Length < 3)
 						{
@@ -164,21 +176,38 @@ namespace Server.Engines.XmlSpawner2
 						e.Mobile.SendMessage("Cannot overwrite file {0} : not owner", dirname);
 						return;
 					}
-
 				}
 				catch
 				{
 					e.Mobile.SendMessage("Cannot overwrite file {0}", dirname);
 					return;
 				}
-
 			}
 
-			DefineMultiArea(e.Mobile, dirname, zmin, zmax, includeitems, includestatics, includemultis, includeinvisible, includeaddons);
+			DefineMultiArea(
+				e.Mobile,
+				dirname,
+				zmin,
+				zmax,
+				includeitems,
+				includestatics,
+				includemultis,
+				includeinvisible,
+				includeaddons
+			);
 		}
 
-		public static void DefineMultiArea(Mobile m, string dirname, int zmin, int zmax, bool includeitems, bool includestatics,
-			bool includemultis, bool includeinvisible, bool includeaddons)
+		public static void DefineMultiArea(
+			Mobile m,
+			string dirname,
+			int zmin,
+			int zmax,
+			bool includeitems,
+			bool includestatics,
+			bool includemultis,
+			bool includeinvisible,
+			bool includeaddons
+		)
 		{
 			object[] multiargs = new object[8];
 			multiargs[0] = dirname;
@@ -226,7 +255,10 @@ namespace Server.Engines.XmlSpawner2
 					foreach (Item item in eable)
 					{
 						// is it within the bounding area
-						if (item.Parent == null && (zmin == int.MinValue || (item.Location.Z >= zmin && item.Location.Z <= zmax)))
+						if (
+							item.Parent == null
+							&& (zmin == int.MinValue || (item.Location.Z >= zmin && item.Location.Z <= zmax))
+						)
 						{
 							// add the item
 							if ((includeinvisible || item.Visible) && (item.ItemID <= 16383))
@@ -241,15 +273,20 @@ namespace Server.Engines.XmlSpawner2
 					int searchrange = 100;
 
 					// make the second expanded pass to pick up addon components and multi components
-					eable = map.GetItemsInBounds(new Rectangle2D(sx - searchrange, sy - searchrange, ex - sy + searchrange * 2 + 1,
-						ey - sy + searchrange * 2 + 1));
+					eable = map.GetItemsInBounds(
+						new Rectangle2D(
+							sx - searchrange,
+							sy - searchrange,
+							ex - sy + searchrange * 2 + 1,
+							ey - sy + searchrange * 2 + 1
+						)
+					);
 
 					foreach (Item item in eable)
 					{
 						// is it within the bounding area
 						if (item.Parent == null)
 						{
-
 							if (item is BaseAddon && includeaddons)
 							{
 								// go through all of the addon components
@@ -259,8 +296,17 @@ namespace Server.Engines.XmlSpawner2
 									int y = c.Y;
 									int z = c.Z;
 
-									if ((includeinvisible || item.Visible) && (item.ItemID <= 16383 || includemultis) &&
-										(x >= sx && x <= ex && y >= sy && y <= ey && (zmin == int.MinValue || (z >= zmin && z <= zmax))))
+									if (
+										(includeinvisible || item.Visible)
+										&& (item.ItemID <= 16383 || includemultis)
+										&& (
+											x >= sx
+											&& x <= ex
+											&& y >= sy
+											&& y <= ey
+											&& (zmin == int.MinValue || (z >= zmin && z <= zmax))
+										)
+									)
 									{
 										itemlist.Add(c);
 									}
@@ -282,12 +328,17 @@ namespace Server.Engines.XmlSpawner2
 										int z = t.m_OffsetZ + item.Z;
 										int itemID = t.m_ItemID & 0x3FFF;
 
-										if (x >= sx && x <= ex && y >= sy && y <= ey && (zmin == int.MinValue || (z >= zmin && z <= zmax)))
+										if (
+											x >= sx
+											&& x <= ex
+											&& y >= sy
+											&& y <= ey
+											&& (zmin == int.MinValue || (z >= zmin && z <= zmax))
+										)
 										{
 											tilelist.Add(new TileEntry(itemID, x, y, z));
 										}
 									}
-
 								}
 							}
 						}
@@ -304,7 +355,7 @@ namespace Server.Engines.XmlSpawner2
 					{
 						for (int y = sy; y < ey; y++)
 						{
-                            StaticTile[] statics = map.Tiles.GetStaticTiles(x, y, false);
+							StaticTile[] statics = map.Tiles.GetStaticTiles(x, y, false);
 
 							for (int j = 0; j < statics.Length; j++)
 							{
@@ -361,7 +412,6 @@ namespace Server.Engines.XmlSpawner2
 						// write out the items
 						foreach (Item item in itemlist)
 						{
-
 							int x = item.X - from.X;
 							int y = item.Y - from.Y;
 							int z = item.Z - from.Z;
@@ -369,7 +419,15 @@ namespace Server.Engines.XmlSpawner2
 							if (item.Hue > 0)
 							{
 								// format is x y z visible hue
-								op.WriteLine("{0} {1} {2} {3} {4} {5}", item.ItemID, x, y, z, item.Visible ? 1 : 0, item.Hue);
+								op.WriteLine(
+									"{0} {1} {2} {3} {4} {5}",
+									item.ItemID,
+									x,
+									y,
+									z,
+									item.Visible ? 1 : 0,
+									item.Hue
+								);
 							}
 							else
 							{
@@ -443,7 +501,6 @@ namespace Server.Engines.XmlSpawner2
 					{
 						from.SendMessage(33, "Ignored addons");
 					}
-
 				}
 				else
 				{

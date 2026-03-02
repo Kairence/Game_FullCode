@@ -2,38 +2,32 @@ using System;
 
 namespace Server.Items
 {
-    public class HornAbyssalInferno : Item
-    {
-        [Constructable]
-        public HornAbyssalInferno()
-            : base(0x2dB7)
-        {
-        }
+	public class HornAbyssalInferno : Item
+	{
+		[Constructable]
+		public HornAbyssalInferno()
+			: base(0x2dB7) { }
 
-        public HornAbyssalInferno(Serial serial)
-            : base(serial)
-        {
-        }
+		public HornAbyssalInferno(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1031703;
-            }
-        }// Horn of Abyssal Infernal
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int LabelNumber
+		{
+			get { return 1031703; }
+		} // Horn of Abyssal Infernal
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

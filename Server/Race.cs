@@ -8,22 +8,40 @@ namespace Server
 	[Parsable]
 	public abstract class Race
 	{
-		public static Race DefaultRace { get { return m_Races[0]; } }
+		public static Race DefaultRace
+		{
+			get { return m_Races[0]; }
+		}
 
 		private static readonly Race[] m_Races = new Race[0x100];
 
-		public static Race[] Races { get { return m_Races; } }
+		public static Race[] Races
+		{
+			get { return m_Races; }
+		}
 
-		public static Race Human { get { return m_Races[0]; } }
-		public static Race Elf { get { return m_Races[1]; } }
+		public static Race Human
+		{
+			get { return m_Races[0]; }
+		}
+		public static Race Elf
+		{
+			get { return m_Races[1]; }
+		}
 
 		#region Stygian Abyss
-		public static Race Gargoyle { get { return m_Races[2]; } }
+		public static Race Gargoyle
+		{
+			get { return m_Races[2]; }
+		}
 		#endregion
 
 		private static readonly List<Race> m_AllRaces = new List<Race>();
 
-		public static List<Race> AllRaces { get { return m_AllRaces; } }
+		public static List<Race> AllRaces
+		{
+			get { return m_AllRaces; }
+		}
 
 		private readonly int m_RaceID;
 		private readonly int m_RaceIndex;
@@ -100,13 +118,28 @@ namespace Server
 
 		private readonly Expansion m_RequiredExpansion;
 
-		public Expansion RequiredExpansion { get { return m_RequiredExpansion; } }
+		public Expansion RequiredExpansion
+		{
+			get { return m_RequiredExpansion; }
+		}
 
-		public int MaleBody { get { return m_MaleBody; } }
-		public int MaleGhostBody { get { return m_MaleGhostBody; } }
+		public int MaleBody
+		{
+			get { return m_MaleBody; }
+		}
+		public int MaleGhostBody
+		{
+			get { return m_MaleGhostBody; }
+		}
 
-		public int FemaleBody { get { return m_FemaleBody; } }
-		public int FemaleGhostBody { get { return m_FemaleGhostBody; } }
+		public int FemaleBody
+		{
+			get { return m_FemaleBody; }
+		}
+		public int FemaleGhostBody
+		{
+			get { return m_FemaleGhostBody; }
+		}
 
 		protected Race(
 			int raceID,
@@ -117,7 +150,8 @@ namespace Server
 			int femaleBody,
 			int maleGhostBody,
 			int femaleGhostBody,
-			Expansion requiredExpansion)
+			Expansion requiredExpansion
+		)
 		{
 			m_RaceID = raceID;
 			m_RaceIndex = raceIndex;
@@ -161,29 +195,30 @@ namespace Server
 
 		public abstract int RandomFacialHair(bool female); //For the *ahem* bearded ladies
 
-        public virtual bool ValidateFace(Mobile m, int itemID)
-        {
-            return ValidateFace(m.Female, itemID);
-        }
+		public virtual bool ValidateFace(Mobile m, int itemID)
+		{
+			return ValidateFace(m.Female, itemID);
+		}
 
-        public abstract bool ValidateFace(bool female, int itemID);
+		public abstract bool ValidateFace(bool female, int itemID);
 
-        public virtual int RandomFace(Mobile m)
-        {
-            return RandomFace(m.Female);
-        }
-        public abstract int RandomFace(bool female);
+		public virtual int RandomFace(Mobile m)
+		{
+			return RandomFace(m.Female);
+		}
 
-        public abstract int ClipSkinHue(int hue);
+		public abstract int RandomFace(bool female);
+
+		public abstract int ClipSkinHue(int hue);
 		public abstract int RandomSkinHue();
 
 		public abstract int ClipHairHue(int hue);
 		public abstract int RandomHairHue();
 
-        public abstract int ClipFaceHue(int hue);
-        public abstract int RandomFaceHue();
+		public abstract int ClipFaceHue(int hue);
+		public abstract int RandomFaceHue();
 
-        public virtual int Body(Mobile m)
+		public virtual int Body(Mobile m)
 		{
 			if (m.Alive)
 			{
@@ -213,11 +248,21 @@ namespace Server
 			return (female ? m_FemaleGhostBody : m_MaleGhostBody);
 		}
 
-		public int RaceID { get { return m_RaceID; } }
+		public int RaceID
+		{
+			get { return m_RaceID; }
+		}
 
-		public int RaceIndex { get { return m_RaceIndex; } }
+		public int RaceIndex
+		{
+			get { return m_RaceIndex; }
+		}
 
-		public string Name { get { return m_Name; } set { m_Name = value; } }
+		public string Name
+		{
+			get { return m_Name; }
+			set { m_Name = value; }
+		}
 
 		public string PluralName { get; set; }
 	}

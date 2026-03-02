@@ -2,159 +2,185 @@ using System;
 
 namespace Server.Items
 {
-    [Flipable]
-    public class LeatherGloves : BaseArmor, IArcaneEquip
-    {
-        public override int InitMinHits { get { return 100; } }
-        public override int InitMaxHits { get { return 100; } }
+	[Flipable]
+	public class LeatherGloves : BaseArmor, IArcaneEquip
+	{
+		public override int InitMinHits
+		{
+			get { return 100; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 100; }
+		}
 
-        public override int AosStrReq { get { return 750; } }
-        public override int AosDexReq { get { return 100; } }
-        public override int AosIntReq { get { return 100; } }
-        public override int OldStrReq { get { return 15; } }
+		public override int AosStrReq
+		{
+			get { return 750; }
+		}
+		public override int AosDexReq
+		{
+			get { return 100; }
+		}
+		public override int AosIntReq
+		{
+			get { return 100; }
+		}
+		public override int OldStrReq
+		{
+			get { return 15; }
+		}
 
-        public override int ArmorBase { get { return 6; } }
+		public override int ArmorBase
+		{
+			get { return 6; }
+		}
 
-        public override ArmorMaterialType MaterialType { get { return ArmorMaterialType.Leather; } }
-        public override CraftResource DefaultResource { get { return CraftResource.RegularLeather; } }
+		public override ArmorMaterialType MaterialType
+		{
+			get { return ArmorMaterialType.Leather; }
+		}
+		public override CraftResource DefaultResource
+		{
+			get { return CraftResource.RegularLeather; }
+		}
 
-        public override ArmorMeditationAllowance DefMedAllowance { get { return ArmorMeditationAllowance.All; } }
+		public override ArmorMeditationAllowance DefMedAllowance
+		{
+			get { return ArmorMeditationAllowance.All; }
+		}
 
-        [Constructable]
-        public LeatherGloves()
-            : base(0x13C6)
-        {
-            Weight = 10.0;
-            PrefixOption[50] = 4;    //세트 옵션 번호
-            PrefixOption[61] = 19;   //체력 회복
-            SuffixOption[61] = 30000; //3
-            PrefixOption[62] = 20;   //기력 회복
-            SuffixOption[62] = 30000; //3
-            PrefixOption[63] = 21;   //마나 회복
-            SuffixOption[63] = 30000; //3
-        }
+		[Constructable]
+		public LeatherGloves()
+			: base(0x13C6)
+		{
+			Weight = 10.0;
+			PrefixOption[50] = 4; //세트 옵션 번호
+			PrefixOption[61] = 19; //체력 회복
+			SuffixOption[61] = 30000; //3
+			PrefixOption[62] = 20; //기력 회복
+			SuffixOption[62] = 30000; //3
+			PrefixOption[63] = 21; //마나 회복
+			SuffixOption[63] = 30000; //3
+		}
 
-        public LeatherGloves(Serial serial)
-            : base(serial)
-        {
-        }
+		public LeatherGloves(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)2); // version
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)2); // version
 
-            if (IsArcane)
-            {                
-                writer.Write(true);
-                writer.Write(TempHue);
-                writer.Write((int)m_CurArcaneCharges);
-                writer.Write((int)m_MaxArcaneCharges);
-            }
-            else
-            {
-                writer.Write(false);
-            }
-        }
+			if (IsArcane)
+			{
+				writer.Write(true);
+				writer.Write(TempHue);
+				writer.Write((int)m_CurArcaneCharges);
+				writer.Write((int)m_MaxArcaneCharges);
+			}
+			else
+			{
+				writer.Write(false);
+			}
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
 
-            switch (version)
-            {
-                case 2:
-                    {
-                        if (reader.ReadBool())
-                        {
-                            TempHue = reader.ReadInt();
-                            m_CurArcaneCharges = reader.ReadInt();
-                            m_MaxArcaneCharges = reader.ReadInt();
-                        }
+			switch (version)
+			{
+				case 2:
+				{
+					if (reader.ReadBool())
+					{
+						TempHue = reader.ReadInt();
+						m_CurArcaneCharges = reader.ReadInt();
+						m_MaxArcaneCharges = reader.ReadInt();
+					}
 
-                        break;
-                    }
-                case 1:
-                    {
-                        if (reader.ReadBool())
-                        {
-                            m_CurArcaneCharges = reader.ReadInt();
-                            m_MaxArcaneCharges = reader.ReadInt();
-                        }
+					break;
+				}
+				case 1:
+				{
+					if (reader.ReadBool())
+					{
+						m_CurArcaneCharges = reader.ReadInt();
+						m_MaxArcaneCharges = reader.ReadInt();
+					}
 
-                        break;
-                    }
-            }
-        }
+					break;
+				}
+			}
+		}
 
-        #region Arcane Impl
-        private int m_MaxArcaneCharges, m_CurArcaneCharges;
+		#region Arcane Impl
+		private int m_MaxArcaneCharges,
+			m_CurArcaneCharges;
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int MaxArcaneCharges
-        {
-            get { return m_MaxArcaneCharges; }
-            set
-            {
-                m_MaxArcaneCharges = value;
-                InvalidateProperties();
-                Update();
-            }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int MaxArcaneCharges
+		{
+			get { return m_MaxArcaneCharges; }
+			set
+			{
+				m_MaxArcaneCharges = value;
+				InvalidateProperties();
+				Update();
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int CurArcaneCharges
-        {
-            get { return m_CurArcaneCharges; }
-            set
-            {
-                m_CurArcaneCharges = value;
-                InvalidateProperties();
-                Update();
-            }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int CurArcaneCharges
+		{
+			get { return m_CurArcaneCharges; }
+			set
+			{
+				m_CurArcaneCharges = value;
+				InvalidateProperties();
+				Update();
+			}
+		}
 
-        public int TempHue { get; set; }
+		public int TempHue { get; set; }
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool IsArcane
-        {
-            get
-            {
-                return m_MaxArcaneCharges > 0 && m_CurArcaneCharges >= 0;
-            }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool IsArcane
+		{
+			get { return m_MaxArcaneCharges > 0 && m_CurArcaneCharges >= 0; }
+		}
 
-        public void Update()
-        {
-            if (IsArcane)
-                ItemID = 0x26B0;
-            else if (ItemID == 0x26B0)
-                ItemID = 0x13C6;
+		public void Update()
+		{
+			if (IsArcane)
+				ItemID = 0x26B0;
+			else if (ItemID == 0x26B0)
+				ItemID = 0x13C6;
 
-            if (IsArcane && CurArcaneCharges == 0)
-            {
-                TempHue = Hue;
-                Hue = 0;
-            }                
-        }
+			if (IsArcane && CurArcaneCharges == 0)
+			{
+				TempHue = Hue;
+				Hue = 0;
+			}
+		}
 
-        public override void AddCraftedProperties(ObjectPropertyList list)
-        {
-            base.AddCraftedProperties(list);
+		public override void AddCraftedProperties(ObjectPropertyList list)
+		{
+			base.AddCraftedProperties(list);
 
-            if (IsArcane)
-                list.Add(1061837, "{0}\t{1}", m_CurArcaneCharges, m_MaxArcaneCharges); // arcane charges: ~1_val~ / ~2_val~
-        }
+			if (IsArcane)
+				list.Add(1061837, "{0}\t{1}", m_CurArcaneCharges, m_MaxArcaneCharges); // arcane charges: ~1_val~ / ~2_val~
+		}
 
-        public void Flip()
-        {
-            if (ItemID == 0x13C6)
-                ItemID = 0x13CE;
-            else if (ItemID == 0x13CE)
-                ItemID = 0x13C6;
-        }
-        #endregion
-    }
+		public void Flip()
+		{
+			if (ItemID == 0x13C6)
+				ItemID = 0x13CE;
+			else if (ItemID == 0x13CE)
+				ItemID = 0x13C6;
+		}
+		#endregion
+	}
 }

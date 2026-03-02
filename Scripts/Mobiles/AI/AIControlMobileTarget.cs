@@ -1,6 +1,5 @@
 #region References
 using System.Collections.Generic;
-
 using Server.Gumps;
 using Server.Items;
 using Server.Mobiles;
@@ -25,7 +24,10 @@ namespace Server.Targets
 			m_Mobile = ai.m_Mobile;
 		}
 
-		public OrderType Order { get { return m_Order; } }
+		public OrderType Order
+		{
+			get { return m_Order; }
+		}
 
 		public void AddAI(BaseAI ai)
 		{

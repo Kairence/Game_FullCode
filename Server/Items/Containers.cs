@@ -1,6 +1,5 @@
 #region References
 using System;
-
 using Server.Accounting;
 using Server.Network;
 #endregion
@@ -17,13 +16,25 @@ namespace Server.Items
 		private Mobile m_Owner;
 		private bool m_Open;
 
-		public override int DefaultMaxWeight { get { return 0; } }
+		public override int DefaultMaxWeight
+		{
+			get { return 0; }
+		}
 
-		public override bool IsVirtualItem { get { return true; } }
+		public override bool IsVirtualItem
+		{
+			get { return true; }
+		}
 
-		public Mobile Owner { get { return m_Owner; } }
+		public Mobile Owner
+		{
+			get { return m_Owner; }
+		}
 
-		public bool Opened { get { return m_Open; } }
+		public bool Opened
+		{
+			get { return m_Open; }
+		}
 
 		public BankBox(Mobile owner)
 			: base(0xE7C)
@@ -35,21 +46,21 @@ namespace Server.Items
 		}
 
 		public BankBox(Serial serial)
-			: base(serial)
-		{ }
-		
+			: base(serial) { }
+
 		public void Open()
 		{
 			if (m_Owner != null && m_Owner.NetState != null)
 			{
-			m_Open = true;
+				m_Open = true;
 
 				m_Owner.PrivateOverheadMessage(
 					MessageType.Regular,
 					0x3B2,
 					true,
 					String.Format("Bank container has {0} items, {1} stones", TotalItems, TotalWeight),
-					m_Owner.NetState);
+					m_Owner.NetState
+				);
 
 				m_Owner.Send(new EquipUpdate(this));
 
@@ -67,11 +78,9 @@ namespace Server.Items
 			}
 		}
 
-		public override void OnSingleClick(Mobile from)
-		{ }
+		public override void OnSingleClick(Mobile from) { }
 
-		public override void OnDoubleClick(Mobile from)
-		{ }
+		public override void OnDoubleClick(Mobile from) { }
 
 		public override DeathMoveResult OnParentDeath(Mobile parent)
 		{
@@ -118,11 +127,23 @@ namespace Server.Items
 			return base.GetTotal(type);
 		}
 
-		public override bool CheckHold(Mobile m, Item item, bool message, bool checkItems, int plusItems, int plusWeight)
+		public override bool CheckHold(
+			Mobile m,
+			Item item,
+			bool message,
+			bool checkItems,
+			int plusItems,
+			int plusWeight
+		)
 		{
 			Type type = item.GetType();
 
-			if (AccountGold.Enabled && Owner != null && Owner.Account != null && (type.IsAssignableFrom(_GoldType) || type.IsAssignableFrom(_CheckType)))
+			if (
+				AccountGold.Enabled
+				&& Owner != null
+				&& Owner.Account != null
+				&& (type.IsAssignableFrom(_GoldType) || type.IsAssignableFrom(_CheckType))
+			)
 			{
 				return true;
 			}

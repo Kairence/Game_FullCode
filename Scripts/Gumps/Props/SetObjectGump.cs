@@ -2,7 +2,6 @@
 using System;
 using System.Collections;
 using System.Reflection;
-
 using Server.Commands;
 using Server.Commands.Generic;
 using Server.Network;
@@ -24,15 +23,18 @@ namespace Server.Gumps
 		public static readonly int BackGumpID = PropsConfig.BackGumpID;
 		public static readonly int SetGumpID = PropsConfig.SetGumpID;
 		public static readonly int SetWidth = PropsConfig.SetWidth;
-		public static readonly int SetOffsetX = PropsConfig.SetOffsetX, SetOffsetY = PropsConfig.SetOffsetY;
+		public static readonly int SetOffsetX = PropsConfig.SetOffsetX,
+			SetOffsetY = PropsConfig.SetOffsetY;
 		public static readonly int SetButtonID1 = PropsConfig.SetButtonID1;
 		public static readonly int SetButtonID2 = PropsConfig.SetButtonID2;
 		public static readonly int PrevWidth = PropsConfig.PrevWidth;
-		public static readonly int PrevOffsetX = PropsConfig.PrevOffsetX, PrevOffsetY = PropsConfig.PrevOffsetY;
+		public static readonly int PrevOffsetX = PropsConfig.PrevOffsetX,
+			PrevOffsetY = PropsConfig.PrevOffsetY;
 		public static readonly int PrevButtonID1 = PropsConfig.PrevButtonID1;
 		public static readonly int PrevButtonID2 = PropsConfig.PrevButtonID2;
 		public static readonly int NextWidth = PropsConfig.NextWidth;
-		public static readonly int NextOffsetX = PropsConfig.NextOffsetX, NextOffsetY = PropsConfig.NextOffsetY;
+		public static readonly int NextOffsetX = PropsConfig.NextOffsetX,
+			NextOffsetY = PropsConfig.NextOffsetY;
 		public static readonly int NextButtonID1 = PropsConfig.NextButtonID1;
 		public static readonly int NextButtonID2 = PropsConfig.NextButtonID2;
 		public static readonly int OffsetSize = PropsConfig.OffsetSize;
@@ -51,7 +53,15 @@ namespace Server.Gumps
 		private readonly int m_Page;
 		private readonly ArrayList m_List;
 
-		public SetObjectGump(PropertyInfo prop, Mobile mobile, object o, Stack stack, Type type, int page, ArrayList list)
+		public SetObjectGump(
+			PropertyInfo prop,
+			Mobile mobile,
+			object o,
+			Stack stack,
+			Type type,
+			int page,
+			ArrayList list
+		)
 			: base(GumpOffsetX, GumpOffsetY)
 		{
 			m_Property = prop;
@@ -72,7 +82,8 @@ namespace Server.Gumps
 				BorderSize,
 				TotalWidth - (OldStyle ? SetWidth + OffsetSize : 0),
 				TotalHeight,
-				OffsetGumpID);
+				OffsetGumpID
+			);
 
 			var x = BorderSize + OffsetSize;
 			var y = BorderSize + OffsetSize;
@@ -136,7 +147,8 @@ namespace Server.Gumps
 		public override void OnResponse(NetState sender, RelayInfo info)
 		{
 			object toSet;
-			bool shouldSet, shouldSend = true;
+			bool shouldSet,
+				shouldSend = true;
 			object viewProps = null;
 
 			switch (info.ButtonID)
@@ -153,7 +165,15 @@ namespace Server.Gumps
 				}
 				case 1: // Change by Target
 				{
-					m_Mobile.Target = new SetObjectTarget(m_Property, m_Mobile, m_Object, m_Stack, m_Type, m_Page, m_List);
+					m_Mobile.Target = new SetObjectTarget(
+						m_Property,
+						m_Mobile,
+						m_Object,
+						m_Stack,
+						m_Type,
+						m_Page,
+						m_List
+					);
 					toSet = null;
 					shouldSet = false;
 					shouldSend = false;
@@ -166,7 +186,15 @@ namespace Server.Gumps
 					shouldSend = false;
 
 					m_Mobile.SendMessage("Enter the serial you wish to find:");
-					m_Mobile.Prompt = new InternalPrompt(m_Property, m_Mobile, m_Object, m_Stack, m_Type, m_Page, m_List);
+					m_Mobile.Prompt = new InternalPrompt(
+						m_Property,
+						m_Mobile,
+						m_Object,
+						m_Stack,
+						m_Type,
+						m_Page,
+						m_List
+					);
 
 					break;
 				}
@@ -206,7 +234,12 @@ namespace Server.Gumps
 			{
 				try
 				{
-					CommandLogging.LogChangeProperty(m_Mobile, m_Object, m_Property.Name, toSet == null ? "(null)" : toSet.ToString());
+					CommandLogging.LogChangeProperty(
+						m_Mobile,
+						m_Object,
+						m_Property.Name,
+						toSet == null ? "(null)" : toSet.ToString()
+					);
 					m_Property.SetValue(m_Object, toSet, null);
 					PropertiesGump.OnValueChanged(m_Object, m_Property, m_Stack);
 				}
@@ -233,7 +266,15 @@ namespace Server.Gumps
 			private readonly int m_Page;
 			private readonly ArrayList m_List;
 
-			public InternalPrompt(PropertyInfo prop, Mobile mobile, object o, Stack stack, Type type, int page, ArrayList list)
+			public InternalPrompt(
+				PropertyInfo prop,
+				Mobile mobile,
+				object o,
+				Stack stack,
+				Type type,
+				int page,
+				ArrayList list
+			)
 			{
 				m_Property = prop;
 				m_Mobile = mobile;
@@ -271,7 +312,8 @@ namespace Server.Gumps
 						shouldSet = false;
 						m_Mobile.SendMessage(
 							"The object with that serial could not be assigned to a property of type : {0}",
-							m_Type.Name);
+							m_Type.Name
+						);
 					}
 					else
 					{
@@ -293,7 +335,8 @@ namespace Server.Gumps
 							m_Mobile,
 							m_Object,
 							m_Property.Name,
-							toSet == null ? "(null)" : toSet.ToString());
+							toSet == null ? "(null)" : toSet.ToString()
+						);
 						m_Property.SetValue(m_Object, toSet, null);
 						PropertiesGump.OnValueChanged(m_Object, m_Property, m_Stack);
 					}

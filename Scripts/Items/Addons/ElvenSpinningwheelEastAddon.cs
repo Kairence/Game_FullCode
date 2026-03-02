@@ -2,156 +2,142 @@ using System;
 
 namespace Server.Items
 {
-    public class ElvenSpinningwheelEastAddon : BaseAddon, ISpinningWheel
-    {
-        private Timer m_Timer;
-        [Constructable]
-        public ElvenSpinningwheelEastAddon()
-        {
-            this.AddComponent(new AddonComponent(0x2E3D), 0, 0, 0);
-        }
+	public class ElvenSpinningwheelEastAddon : BaseAddon, ISpinningWheel
+	{
+		private Timer m_Timer;
 
-        public ElvenSpinningwheelEastAddon(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public ElvenSpinningwheelEastAddon()
+		{
+			this.AddComponent(new AddonComponent(0x2E3D), 0, 0, 0);
+		}
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new ElvenSpinningwheelEastDeed();
-            }
-        }
-        public bool Spinning
-        {
-            get
-            {
-                return this.m_Timer != null;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public ElvenSpinningwheelEastAddon(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override BaseAddonDeed Deed
+		{
+			get { return new ElvenSpinningwheelEastDeed(); }
+		}
+		public bool Spinning
+		{
+			get { return this.m_Timer != null; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
+			writer.WriteEncodedInt(0); // version
+		}
 
-        public override void OnComponentLoaded(AddonComponent c)
-        {
-            switch ( c.ItemID )
-            {
-                case 0x2E3C:
-                    ++c.ItemID;
-                    break;
-            }
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public void BeginSpin(SpinCallback callback, Mobile from, int hue)
-        {
-            this.m_Timer = new SpinTimer(this, callback, from, hue);
-            this.m_Timer.Start();
+			int version = reader.ReadEncodedInt();
+		}
 
-            foreach (AddonComponent c in this.Components)
-            {
-                switch ( c.ItemID )
-                {
-                    case 0x2E3D:
-                        --c.ItemID;
-                        break;
-                }
-            }
-        }
+		public override void OnComponentLoaded(AddonComponent c)
+		{
+			switch (c.ItemID)
+			{
+				case 0x2E3C:
+					++c.ItemID;
+					break;
+			}
+		}
 
-        public void EndSpin(SpinCallback callback, Mobile from, int hue)
-        {
-            if (this.m_Timer != null)
-                this.m_Timer.Stop();
+		public void BeginSpin(SpinCallback callback, Mobile from, int hue)
+		{
+			this.m_Timer = new SpinTimer(this, callback, from, hue);
+			this.m_Timer.Start();
 
-            this.m_Timer = null;
+			foreach (AddonComponent c in this.Components)
+			{
+				switch (c.ItemID)
+				{
+					case 0x2E3D:
+						--c.ItemID;
+						break;
+				}
+			}
+		}
 
-            foreach (AddonComponent c in this.Components)
-            {
-                switch ( c.ItemID )
-                {
-                    case 0x2E3C:
-                        ++c.ItemID;
-                        break;
-                }
-            }
+		public void EndSpin(SpinCallback callback, Mobile from, int hue)
+		{
+			if (this.m_Timer != null)
+				this.m_Timer.Stop();
 
-            if (callback != null)
-                callback(this, from, hue);
-        }
+			this.m_Timer = null;
 
-        private class SpinTimer : Timer
-        {
-            private readonly ElvenSpinningwheelEastAddon m_Wheel;
-            private readonly SpinCallback m_Callback;
-            private readonly Mobile m_From;
-            private readonly int m_Hue;
-            public SpinTimer(ElvenSpinningwheelEastAddon wheel, SpinCallback callback, Mobile from, int hue)
-                : base(TimeSpan.FromSeconds(3.0))
-            {
-                this.m_Wheel = wheel;
-                this.m_Callback = callback;
-                this.m_From = from;
-                this.m_Hue = hue;
-                this.Priority = TimerPriority.TwoFiftyMS;
-            }
+			foreach (AddonComponent c in this.Components)
+			{
+				switch (c.ItemID)
+				{
+					case 0x2E3C:
+						++c.ItemID;
+						break;
+				}
+			}
 
-            protected override void OnTick()
-            {
-                this.m_Wheel.EndSpin(this.m_Callback, this.m_From, this.m_Hue);
-            }
-        }
-    }
+			if (callback != null)
+				callback(this, from, hue);
+		}
 
-    public class ElvenSpinningwheelEastDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public ElvenSpinningwheelEastDeed()
-        {
-        }
+		private class SpinTimer : Timer
+		{
+			private readonly ElvenSpinningwheelEastAddon m_Wheel;
+			private readonly SpinCallback m_Callback;
+			private readonly Mobile m_From;
+			private readonly int m_Hue;
 
-        public ElvenSpinningwheelEastDeed(Serial serial)
-            : base(serial)
-        {
-        }
+			public SpinTimer(ElvenSpinningwheelEastAddon wheel, SpinCallback callback, Mobile from, int hue)
+				: base(TimeSpan.FromSeconds(3.0))
+			{
+				this.m_Wheel = wheel;
+				this.m_Callback = callback;
+				this.m_From = from;
+				this.m_Hue = hue;
+				this.Priority = TimerPriority.TwoFiftyMS;
+			}
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new ElvenSpinningwheelEastAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073393;
-            }
-        }// elven spinning wheel (east)
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			protected override void OnTick()
+			{
+				this.m_Wheel.EndSpin(this.m_Callback, this.m_From, this.m_Hue);
+			}
+		}
+	}
 
-            writer.WriteEncodedInt(0); // version
-        }
+	public class ElvenSpinningwheelEastDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public ElvenSpinningwheelEastDeed() { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public ElvenSpinningwheelEastDeed(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override BaseAddon Addon
+		{
+			get { return new ElvenSpinningwheelEastAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1073393; }
+		} // elven spinning wheel (east)
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

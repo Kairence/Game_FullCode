@@ -2,55 +2,49 @@ using System;
 
 namespace Server.Items
 {
-    public class DjinnisRing : SilverRing
+	public class DjinnisRing : SilverRing
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public DjinnisRing()
-        {
-            Attributes.BonusInt = 5;
-            Attributes.SpellDamage = 10;
-            Attributes.CastSpeed = 2;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public DjinnisRing(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public DjinnisRing()
+		{
+			Attributes.BonusInt = 5;
+			Attributes.SpellDamage = 10;
+			Attributes.CastSpeed = 2;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1094927;
-            }
-        }// Djinni's Ring [Replica]
-        public override int InitMinHits
-        {
-            get
-            {
-                return 150;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 150;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public DjinnisRing(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0);
-        }
+		public override int LabelNumber
+		{
+			get { return 1094927; }
+		} // Djinni's Ring [Replica]
+		public override int InitMinHits
+		{
+			get { return 150; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 150; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

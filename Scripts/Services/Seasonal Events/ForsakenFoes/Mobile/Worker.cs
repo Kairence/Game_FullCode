@@ -1,238 +1,239 @@
 using System;
-using Server.Items;
-using Server.Gumps;
-using Server.Mobiles;
-using Server.Engines.Quests;
 using System.Collections.Generic;
 using System.IO;
+using Server.Engines.Quests;
+using Server.Gumps;
+using Server.Items;
+using Server.Mobiles;
 
 namespace Server.Engines.Fellowship
 {
-    public enum FellowshipChain
-    {
-        None,
-        One,
-        Two,
-        Three,
-        Four,
-        Five,
-        Six,
-        Seven,
-        Eight
-    }
+	public enum FellowshipChain
+	{
+		None,
+		One,
+		Two,
+		Three,
+		Four,
+		Five,
+		Six,
+		Seven,
+		Eight,
+	}
 
-    public class Worker : BaseQuester
-    {
-        public static string FilePath = Path.Combine("Saves/Misc", "FellowshipChain.bin");
-        public static Dictionary<Mobile, FellowshipChain> FellowshipChainList = new Dictionary<Mobile, FellowshipChain>();
-        
-        public static void Configure()
-        {
-            EventSink.WorldSave += OnSave;
-            EventSink.WorldLoad += OnLoad;
-        }
+	public class Worker : BaseQuester
+	{
+		public static string FilePath = Path.Combine("Saves/Misc", "FellowshipChain.bin");
+		public static Dictionary<Mobile, FellowshipChain> FellowshipChainList =
+			new Dictionary<Mobile, FellowshipChain>();
 
-        public static void OnSave(WorldSaveEventArgs e)
-        {
-            Persistence.Serialize(
-                FilePath,
-                writer =>
-                {
-                    writer.Write((int)0);
+		public static void Configure()
+		{
+			EventSink.WorldSave += OnSave;
+			EventSink.WorldLoad += OnLoad;
+		}
 
-                    writer.Write(FellowshipChainList.Count);
+		public static void OnSave(WorldSaveEventArgs e)
+		{
+			Persistence.Serialize(
+				FilePath,
+				writer =>
+				{
+					writer.Write((int)0);
 
-                    foreach (var chain in FellowshipChainList)
-                    {
-                        writer.Write(chain.Key);
-                        writer.Write((int)chain.Value);
-                    }
-                });
-        }
+					writer.Write(FellowshipChainList.Count);
 
-        public static void OnLoad()
-        {
-            Persistence.Deserialize(
-                FilePath,
-                reader =>
-                {
-                    int version = reader.ReadInt();
-                    int count = reader.ReadInt();
+					foreach (var chain in FellowshipChainList)
+					{
+						writer.Write(chain.Key);
+						writer.Write((int)chain.Value);
+					}
+				}
+			);
+		}
 
-                    for (int i = count; i > 0; i--)
-                    {
-                        Mobile m = reader.ReadMobile();
-                        FellowshipChain chain = (FellowshipChain)reader.ReadInt();
+		public static void OnLoad()
+		{
+			Persistence.Deserialize(
+				FilePath,
+				reader =>
+				{
+					int version = reader.ReadInt();
+					int count = reader.ReadInt();
 
-                        if (m != null)
-                        {
-                            FellowshipChainList[m] = chain;
-                        }
-                    }
-                });
-        }
+					for (int i = count; i > 0; i--)
+					{
+						Mobile m = reader.ReadMobile();
+						FellowshipChain chain = (FellowshipChain)reader.ReadInt();
 
-        public static Worker InstanceTram { get; set; }
-        public static Worker InstanceFel { get; set; }
+						if (m != null)
+						{
+							FellowshipChainList[m] = chain;
+						}
+					}
+				}
+			);
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public FellowshipChain Chain { get; set; }
+		public static Worker InstanceTram { get; set; }
+		public static Worker InstanceFel { get; set; }
 
-        [Constructable]
-        public Worker(FellowshipChain chain)
-            : base("the Worker")
-        {
-            Chain = chain;
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public FellowshipChain Chain { get; set; }
 
-        public override void InitBody()
-        {
-            base.InitBody();
+		[Constructable]
+		public Worker(FellowshipChain chain)
+			: base("the Worker")
+		{
+			Chain = chain;
+		}
 
-            Name = NameList.RandomName("male");
+		public override void InitBody()
+		{
+			base.InitBody();
 
-            SpeechHue = 0x3B2;
-            Hue = Utility.RandomSkinHue();
-            Body = 0x190;
-        }
+			Name = NameList.RandomName("male");
 
-        public override void InitOutfit()
-        {
-            SetWearable(new FullApron(), 902);
-            SetWearable(new HalfApron(), 946);
-            SetWearable(new Shirt(), 1513);
-            SetWearable(new LeatherGloves());
-            SetWearable(new Boots(), 2013);
-            SetWearable(new ShortPants());
-            SetWearable(new SmithHammer());
-        }
+			SpeechHue = 0x3B2;
+			Hue = Utility.RandomSkinHue();
+			Body = 0x190;
+		}
 
-        public override bool OnDragDrop(Mobile from, Item item)
-        {
-            if (item is FellowshipCoin)
-            {
-                if (FellowshipChainList.ContainsKey(from))
-                {
-                    if (Chain > FellowshipChainList[from])
-                    {
-                        FellowshipChainList[from] = Chain;
-                    }
-                    else
-                    {
-                        SayTo(from, 500607, 0x3B2); // I'm not interested in that.
-                        return false;
-                    }
+		public override void InitOutfit()
+		{
+			SetWearable(new FullApron(), 902);
+			SetWearable(new HalfApron(), 946);
+			SetWearable(new Shirt(), 1513);
+			SetWearable(new LeatherGloves());
+			SetWearable(new Boots(), 2013);
+			SetWearable(new ShortPants());
+			SetWearable(new SmithHammer());
+		}
 
-                    if (FellowshipChainList[from] == FellowshipChain.Eight)
-                    {
-                        from.AddToBackpack(new FellowshipMedallion());
-                    }
-                }
-                else
-                {
-                    FellowshipChainList.Add(from, Chain);
-                }
+		public override bool OnDragDrop(Mobile from, Item item)
+		{
+			if (item is FellowshipCoin)
+			{
+				if (FellowshipChainList.ContainsKey(from))
+				{
+					if (Chain > FellowshipChainList[from])
+					{
+						FellowshipChainList[from] = Chain;
+					}
+					else
+					{
+						SayTo(from, 500607, 0x3B2); // I'm not interested in that.
+						return false;
+					}
 
-                item.Delete();
+					if (FellowshipChainList[from] == FellowshipChain.Eight)
+					{
+						from.AddToBackpack(new FellowshipMedallion());
+					}
+				}
+				else
+				{
+					FellowshipChainList.Add(from, Chain);
+				}
 
-                return true;
-            }
-            else
-            {
-                SayTo(from, 500607, 0x3B2); // I'm not interested in that.
+				item.Delete();
 
-                return false;
-            }
-        }
+				return true;
+			}
+			else
+			{
+				SayTo(from, 500607, 0x3B2); // I'm not interested in that.
 
-        public override void OnDoubleClick(Mobile m)
-        {
-            if (m != null && InRange(m.Location, 5))
-            {
-                if (!m.HasGump(typeof(WorkerGump)))
-                {
-                    m.SendGump(new WorkerGump(m, Chain));
-                }
-            }
-        }
+				return false;
+			}
+		}
 
-        public override void OnTalk(PlayerMobile player, bool contextMenu)
-        {
-            if (!player.HasGump(typeof(WorkerGump)))
-            {
-                player.SendGump(new WorkerGump(player, Chain));
-            }
-        }
+		public override void OnDoubleClick(Mobile m)
+		{
+			if (m != null && InRange(m.Location, 5))
+			{
+				if (!m.HasGump(typeof(WorkerGump)))
+				{
+					m.SendGump(new WorkerGump(m, Chain));
+				}
+			}
+		}
 
-        public class WorkerGump : Gump
-        {
-            private static readonly int[,] clilocs = new int[,]
-            {
-                {1159238, 1159239},
-                {1159236, 1159240},
-                {1159236, 1159241},
-                {1159236, 1159242},
-                {1159236, 1159243},
-                {1159236, 1159244},
-                {1159236, 1159245},
-                {1159236, 1159246},
-            };
+		public override void OnTalk(PlayerMobile player, bool contextMenu)
+		{
+			if (!player.HasGump(typeof(WorkerGump)))
+			{
+				player.SendGump(new WorkerGump(player, Chain));
+			}
+		}
 
-            public WorkerGump(Mobile from, FellowshipChain chain)
-                : base(100, 100)
-            {
-                int cliloc;
+		public class WorkerGump : Gump
+		{
+			private static readonly int[,] clilocs = new int[,]
+			{
+				{ 1159238, 1159239 },
+				{ 1159236, 1159240 },
+				{ 1159236, 1159241 },
+				{ 1159236, 1159242 },
+				{ 1159236, 1159243 },
+				{ 1159236, 1159244 },
+				{ 1159236, 1159245 },
+				{ 1159236, 1159246 },
+			};
 
-                if (FellowshipChainList.ContainsKey(from))
-                {
-                    if (chain > FellowshipChainList[from])
-                        cliloc = clilocs[(int)(chain - 1), 0];
-                    else
-                        cliloc = clilocs[(int)(chain - 1), 1];
-                }
-                else
-                {
-                    cliloc = clilocs[(int)(chain - 1), 0];
-                }
+			public WorkerGump(Mobile from, FellowshipChain chain)
+				: base(100, 100)
+			{
+				int cliloc;
 
-                AddPage(0);
+				if (FellowshipChainList.ContainsKey(from))
+				{
+					if (chain > FellowshipChainList[from])
+						cliloc = clilocs[(int)(chain - 1), 0];
+					else
+						cliloc = clilocs[(int)(chain - 1), 1];
+				}
+				else
+				{
+					cliloc = clilocs[(int)(chain - 1), 0];
+				}
 
-                AddBackground(0, 0, 620, 328, 0x2454);
-                AddImage(0, 0, 0x61A);
-                AddHtmlLocalized(335, 14, 273, 18, 1114513, "#1159237", 0xC63, false, false); // <DIV ALIGN=CENTER>~1_TOKEN~</DIV>
-                AddHtmlLocalized(335, 51, 273, 267, cliloc, 0xC63, false, true);
-            }
-        }
+				AddPage(0);
 
-        public Worker(Serial serial)
-            : base(serial)
-        {
-        }
+				AddBackground(0, 0, 620, 328, 0x2454);
+				AddImage(0, 0, 0x61A);
+				AddHtmlLocalized(335, 14, 273, 18, 1114513, "#1159237", 0xC63, false, false); // <DIV ALIGN=CENTER>~1_TOKEN~</DIV>
+				AddHtmlLocalized(335, 51, 273, 267, cliloc, 0xC63, false, true);
+			}
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write(0);
+		public Worker(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)Chain);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write(0);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
+			writer.Write((int)Chain);
+		}
 
-            Chain = (FellowshipChain)reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
 
-            if (Map == Map.Trammel)
-            {
-                InstanceTram = this;
-            }
+			Chain = (FellowshipChain)reader.ReadInt();
 
-            if (Map == Map.Felucca)
-            {
-                InstanceFel = this;
-            }
-        }
-    }
+			if (Map == Map.Trammel)
+			{
+				InstanceTram = this;
+			}
+
+			if (Map == Map.Felucca)
+			{
+				InstanceFel = this;
+			}
+		}
+	}
 }

@@ -4,91 +4,91 @@ using Server.Mobiles;
 
 namespace Server.Mobiles
 {
-	[CorpseName( "an turkey corpse" )]
+	[CorpseName("an turkey corpse")]
 	public class SummonedTurkey : BaseCreature
 	{
 		[Constructable]
-		public SummonedTurkey() : base( AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4 )
+		public SummonedTurkey()
+			: base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
 		{
 			Name = "a turkey";
 			Body = 95;
 			BaseSoundID = 0x66A;
 
-            SetStr(360, 410);
-            SetDex(30, 75);
-            SetInt(10, 20);
+			SetStr(360, 410);
+			SetDex(30, 75);
+			SetInt(10, 20);
 
-            SetHits(150,200);
+			SetHits(150, 200);
 			SetStam(30, 50);
-            SetMana(1, 5);
+			SetMana(1, 5);
 
-			SetAttackSpeed( 2.5 );
-			
-            SetDamage(5, 9);
+			SetAttackSpeed(2.5);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			SetDamage(5, 9);
 
-            SetSkill(SkillName.MagicResist, 4.0);
-            SetSkill(SkillName.Tactics, 5.0);
-            SetSkill(SkillName.Wrestling, 5.0);
+			SetDamageType(ResistanceType.Physical, 100);
 
-            Fame = 0;
-            Karma = 0;
+			SetSkill(SkillName.MagicResist, 4.0);
+			SetSkill(SkillName.Tactics, 5.0);
+			SetSkill(SkillName.Wrestling, 5.0);
 
-            VirtualArmor = 0;
+			Fame = 0;
+			Karma = 0;
 
-            Tamable = false;
-            ControlSlots = 1;
-            MinTameSkill = -0.9;
+			VirtualArmor = 0;
 
-            m_NextGobble = DateTime.UtcNow;
-            VirtualArmor = 5;
+			Tamable = false;
+			ControlSlots = 1;
+			MinTameSkill = -0.9;
+
+			m_NextGobble = DateTime.UtcNow;
+			VirtualArmor = 5;
 		}
 
-        public override int GetIdleSound()
-        {
-            return 0x66A;
-        }
-
-        public override int GetAngerSound()
-        {
-            return 0x66A;
-        }
-
-        public override int GetHurtSound()
-        {
-            return 0x66B;
-        }
-
-        public override int GetDeathSound()
-        {
-            return 0x66B;
-        }
-
-        private DateTime m_NextGobble;
-
-        public override void OnThink()
-        {
-            base.OnThink();
-
-            if (Tamable && !Controlled && m_NextGobble < DateTime.UtcNow)
-            {
-                Say(1153511); //*gobble* *gobble*
-                PlaySound(GetIdleSound());
-
-                m_NextGobble = DateTime.UtcNow + TimeSpan.FromSeconds(Utility.RandomMinMax(20, 240));
-            }
-        }
-
-		public SummonedTurkey(Serial serial) : base(serial)
+		public override int GetIdleSound()
 		{
+			return 0x66A;
 		}
+
+		public override int GetAngerSound()
+		{
+			return 0x66A;
+		}
+
+		public override int GetHurtSound()
+		{
+			return 0x66B;
+		}
+
+		public override int GetDeathSound()
+		{
+			return 0x66B;
+		}
+
+		private DateTime m_NextGobble;
+
+		public override void OnThink()
+		{
+			base.OnThink();
+
+			if (Tamable && !Controlled && m_NextGobble < DateTime.UtcNow)
+			{
+				Say(1153511); //*gobble* *gobble*
+				PlaySound(GetIdleSound());
+
+				m_NextGobble = DateTime.UtcNow + TimeSpan.FromSeconds(Utility.RandomMinMax(20, 240));
+			}
+		}
+
+		public SummonedTurkey(Serial serial)
+			: base(serial) { }
 
 		public override void Serialize(GenericWriter writer)
 		{
 			base.Serialize(writer);
 
-			writer.Write((int) 0);
+			writer.Write((int)0);
 		}
 
 		public override void Deserialize(GenericReader reader)
@@ -97,8 +97,8 @@ namespace Server.Mobiles
 
 			int version = reader.ReadInt();
 
-            this.NoKillAwards = true;
-            m_NextGobble = DateTime.UtcNow;
+			this.NoKillAwards = true;
+			m_NextGobble = DateTime.UtcNow;
 		}
 	}
 }

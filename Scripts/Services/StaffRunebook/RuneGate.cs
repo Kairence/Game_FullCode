@@ -14,60 +14,61 @@ using Server.Items;
 
 namespace Joeku.SR
 {
-    public class SR_RuneGate : Moongate
-    {
-        public SR_RuneGate(Point3D target, Map map)
-            : base(target, map)
-        {
-            this.Map = map;
+	public class SR_RuneGate : Moongate
+	{
+		public SR_RuneGate(Point3D target, Map map)
+			: base(target, map)
+		{
+			this.Map = map;
 
-            if (this.ShowFeluccaWarning && map == Map.Felucca)
-                this.ItemID = 0xDDA;
+			if (this.ShowFeluccaWarning && map == Map.Felucca)
+				this.ItemID = 0xDDA;
 
-            this.Dispellable = false;
+			this.Dispellable = false;
 
-            InternalTimer t = new InternalTimer(this);
-            t.Start();
-        }
+			InternalTimer t = new InternalTimer(this);
+			t.Start();
+		}
 
-        public SR_RuneGate(Serial serial)
-            : base(serial)
-        {
-        }
+		public SR_RuneGate(Serial serial)
+			: base(serial) { }
 
-        public override bool ShowFeluccaWarning
-        {
-            get
-            {
-                return false/*Core.AOS*/;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-        }
+		public override bool ShowFeluccaWarning
+		{
+			get
+			{
+				return false /*Core.AOS*/
+				;
+			}
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+		}
 
-            this.Delete();
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        private class InternalTimer : Timer
-        {
-            private readonly Item m_Item;
-            public InternalTimer(Item item)
-                : base(TimeSpan.FromSeconds(30.0))
-            {
-                this.Priority = TimerPriority.OneSecond;
-                this.m_Item = item;
-            }
+			this.Delete();
+		}
 
-            protected override void OnTick()
-            {
-                this.m_Item.Delete();
-            }
-        }
-    }
+		private class InternalTimer : Timer
+		{
+			private readonly Item m_Item;
+
+			public InternalTimer(Item item)
+				: base(TimeSpan.FromSeconds(30.0))
+			{
+				this.Priority = TimerPriority.OneSecond;
+				this.m_Item = item;
+			}
+
+			protected override void OnTick()
+			{
+				this.m_Item.Delete();
+			}
+		}
+	}
 }

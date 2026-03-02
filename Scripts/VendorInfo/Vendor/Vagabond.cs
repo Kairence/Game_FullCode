@@ -1,6 +1,5 @@
 #region References
 using System.Collections.Generic;
-
 using Server.Items;
 #endregion
 
@@ -19,10 +18,12 @@ namespace Server.Mobiles
 		}
 
 		public Vagabond(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
-		protected override List<SBInfo> SBInfos { get { return m_SBInfos; } }
+		protected override List<SBInfo> SBInfos
+		{
+			get { return m_SBInfos; }
+		}
 
 		public override void InitSBInfo()
 		{

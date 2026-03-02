@@ -5,49 +5,45 @@ using Server.Regions;
 
 namespace Server.Engines.Quests
 {
-    public class QuestCompleteObjectiveRegion : BaseRegion
-    {
-        private readonly Type m_Quest;
-        private readonly Type m_Objective;
-        public QuestCompleteObjectiveRegion(XmlElement xml, Map map, Region parent)
-            : base(xml, map, parent)
-        {
-            XmlElement questEl = xml["quest"];
+	public class QuestCompleteObjectiveRegion : BaseRegion
+	{
+		private readonly Type m_Quest;
+		private readonly Type m_Objective;
 
-            ReadType(questEl, "type", ref this.m_Quest);
-            ReadType(questEl, "complete", ref this.m_Objective);
-        }
+		public QuestCompleteObjectiveRegion(XmlElement xml, Map map, Region parent)
+			: base(xml, map, parent)
+		{
+			XmlElement questEl = xml["quest"];
 
-        public Type Quest
-        {
-            get
-            {
-                return this.m_Quest ;
-            }
-        }
-        public Type Objective
-        {
-            get
-            {
-                return this.m_Objective;
-            }
-        }
-        public override void OnEnter(Mobile m)
-        {
-            base.OnEnter(m);
+			ReadType(questEl, "type", ref this.m_Quest);
+			ReadType(questEl, "complete", ref this.m_Objective);
+		}
 
-            if (this.m_Quest != null && this.m_Objective != null)
-            {
-                PlayerMobile player = m as PlayerMobile;
+		public Type Quest
+		{
+			get { return this.m_Quest; }
+		}
+		public Type Objective
+		{
+			get { return this.m_Objective; }
+		}
 
-                if (player != null && player.Quest != null && player.Quest.GetType() == this.m_Quest)
-                {
-                    QuestObjective obj = player.Quest.FindObjective(this.m_Objective);
+		public override void OnEnter(Mobile m)
+		{
+			base.OnEnter(m);
 
-                    if (obj != null && !obj.Completed)
-                        obj.Complete();
-                }
-            }
-        }
-    }
+			if (this.m_Quest != null && this.m_Objective != null)
+			{
+				PlayerMobile player = m as PlayerMobile;
+
+				if (player != null && player.Quest != null && player.Quest.GetType() == this.m_Quest)
+				{
+					QuestObjective obj = player.Quest.FindObjective(this.m_Objective);
+
+					if (obj != null && !obj.Completed)
+						obj.Complete();
+				}
+			}
+		}
+	}
 }

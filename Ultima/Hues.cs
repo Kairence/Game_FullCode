@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -169,7 +170,11 @@ namespace Ultima
 		public static Color HueToColor(short hue)
 		{
 			const int scale = 255 / 31;
-			return Color.FromArgb((((hue & 0x7c00) >> 10) * scale), (((hue & 0x3e0) >> 5) * scale), ((hue & 0x1f) * scale));
+			return Color.FromArgb(
+				(((hue & 0x7c00) >> 10) * scale),
+				(((hue & 0x3e0) >> 5) * scale),
+				((hue & 0x1f) * scale)
+			);
 		}
 
 		public static int HueToColorR(short hue)
@@ -190,7 +195,10 @@ namespace Ultima
 		public static unsafe void ApplyTo(Bitmap bmp, short[] Colors, bool onlyHueGrayPixels)
 		{
 			BitmapData bd = bmp.LockBits(
-				new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, Settings.PixelFormat);
+				new Rectangle(0, 0, bmp.Width, bmp.Height),
+				ImageLockMode.ReadWrite,
+				Settings.PixelFormat
+			);
 
 			int stride = bd.Stride >> 1;
 			int width = bd.Width;
@@ -328,7 +336,10 @@ namespace Ultima
 		public unsafe void ApplyTo(Bitmap bmp, bool onlyHueGrayPixels)
 		{
 			BitmapData bd = bmp.LockBits(
-				new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, Settings.PixelFormat);
+				new Rectangle(0, 0, bmp.Width, bmp.Height),
+				ImageLockMode.ReadWrite,
+				Settings.PixelFormat
+			);
 
 			int stride = bd.Stride >> 1;
 			int width = bd.Width;
@@ -393,14 +404,17 @@ namespace Ultima
 		{
 			using (
 				var Tex = new StreamWriter(
-					new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+					new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite),
+					Encoding.GetEncoding(1252)
+				)
+			)
 			{
 				Tex.WriteLine(Name);
-				Tex.WriteLine(((short)(TableStart ^ 0x8000)).ToString());
-				Tex.WriteLine(((short)(TableEnd ^ 0x8000)).ToString());
+				Tex.WriteLine(((short)(TableStart ^ 0x8000)).ToString(CultureInfo.CurrentCulture));
+				Tex.WriteLine(((short)(TableEnd ^ 0x8000)).ToString(CultureInfo.CurrentCulture));
 				for (int i = 0; i < Colors.Length; ++i)
 				{
-					Tex.WriteLine(((short)(Colors[i] ^ 0x8000)).ToString());
+					Tex.WriteLine(((short)(Colors[i] ^ 0x8000)).ToString(CultureInfo.CurrentCulture));
 				}
 			}
 		}
@@ -430,20 +444,19 @@ namespace Ultima
 						}
 						else if (i == -2)
 						{
-							TableStart = (short)(ushort.Parse(line) | 0x8000);
+							TableStart = (short)(ushort.Parse(line, CultureInfo.CurrentCulture) | 0x8000);
 						}
 						else if (i == -1)
 						{
-							TableEnd = (short)(ushort.Parse(line) | 0x8000);
+							TableEnd = (short)(ushort.Parse(line, CultureInfo.CurrentCulture) | 0x8000);
 						}
 						else
 						{
-							Colors[i] = (short)(ushort.Parse(line) | 0x8000);
+							Colors[i] = (short)(ushort.Parse(line, CultureInfo.CurrentCulture) | 0x8000);
 						}
 						++i;
 					}
-					catch
-					{ }
+					catch { }
 				}
 			}
 		}

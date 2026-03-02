@@ -1,8 +1,8 @@
 using System;
 using Server;
+using Server.Commands.Generic;
 using Server.Mobiles;
 using Server.Network;
-using Server.Commands.Generic;
 
 namespace Server.Commands
 {
@@ -10,52 +10,52 @@ namespace Server.Commands
 	{
 		public static void Initialize()
 		{
-	      		CommandSystem.Register( "Loop", AccessLevel.Player, new CommandEventHandler( LoopInfo_OnCommand ) );
+			CommandSystem.Register("Loop", AccessLevel.Player, new CommandEventHandler(LoopInfo_OnCommand));
 		}
 
-		[Usage( "Status" )]
-		[Description( "¹Ýº¹ ¸í·É¾î." )]
-		public static void LoopInfo_OnCommand( CommandEventArgs e )
+		[Usage("Status")]
+		[Description("ï¿½Ýºï¿½ ï¿½ï¿½ï¿½É¾ï¿½.")]
+		public static void LoopInfo_OnCommand(CommandEventArgs e)
 		{
-			if( e.Mobile is PlayerMobile )
+			if (e.Mobile is PlayerMobile)
 			{
 				PlayerMobile pm = e.Mobile as PlayerMobile;
-				if( pm.Loop )
+				if (pm.Loop)
 				{
 					pm.Loop = false;
-					e.Mobile.SendMessage("¹Ýº¹ ÀÛ¾÷À» Áß´ÜÇÕ´Ï´Ù");
+					e.Mobile.SendMessage("ï¿½Ýºï¿½ ï¿½Û¾ï¿½ï¿½ï¿½ ï¿½ß´ï¿½ï¿½Õ´Ï´ï¿½");
 				}
 				else
 				{
 					pm.Loop = true;
-					if( e.Arguments.Length == 0 )
+					if (e.Arguments.Length == 0)
 					{
-						e.Mobile.SendMessage("¹Ýº¹ ÀÛ¾÷À» ½ÃÀÛÇÕ´Ï´Ù");
+						e.Mobile.SendMessage("ï¿½Ýºï¿½ ï¿½Û¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½");
 						pm.LoopCount = 50000;
 					}
 					else
 					{
 						string index = e.Arguments[0];
 						int number;
-						bool isNum = Int32.TryParse(index, out number );
-						if( !isNum )
-							e.Mobile.SendMessage("Àß¸øµÈ ¸í·É¾î ÀÔ´Ï´Ù. [Loop ¼ýÀÚ ¸¦ ³ÖÀ¸¼¼¿ä.");
-							
-						if( number == 0 )
+						bool isNum = Int32.TryParse(index, out number);
+						if (!isNum)
+							e.Mobile.SendMessage("ï¿½ß¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½É¾ï¿½ ï¿½Ô´Ï´ï¿½. [Loop ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.");
+
+						if (number == 0)
 						{
 							pm.LastTarget = null;
-							e.Mobile.SendMessage("·çÇÁ Å¸°ÙÀ» »èÁ¦ÇÕ´Ï´Ù");
+							e.Mobile.SendMessage("ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½");
 						}
-						else if( number < 0 || number > 50000 )
-							e.Mobile.SendMessage("1 ~ 50000 »çÀÌÀÇ °ªÀ» ³Ö¾îÁÖ¼¼¿ä.");
+						else if (number < 0 || number > 50000)
+							e.Mobile.SendMessage("1 ~ 50000 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
 						else
 						{
 							pm.LoopCount = number;
-							e.Mobile.SendMessage("¹Ýº¹ ÀÛ¾÷À» {0} È¸ ½ÃÀÛÇÕ´Ï´Ù", number);
+							e.Mobile.SendMessage("ï¿½Ýºï¿½ ï¿½Û¾ï¿½ï¿½ï¿½ {0} È¸ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½", number);
 						}
 					}
 				}
 			}
-		}	
+		}
 	}
 }

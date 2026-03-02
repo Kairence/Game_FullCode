@@ -3,94 +3,87 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    public class Peasant : BaseEscortable
-    {
-        [Constructable]
-        public Peasant()
-        {
-            this.Title = "the peasant";
-        }
+	public class Peasant : BaseEscortable
+	{
+		[Constructable]
+		public Peasant()
+		{
+			this.Title = "the peasant";
+		}
 
-        public Peasant(Serial serial)
-            : base(serial)
-        {
-        }
+		public Peasant(Serial serial)
+			: base(serial) { }
 
-        public override bool CanTeach
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override bool ClickTitle
-        {
-            get
-            {
-                return false;
-            }
-        }// Do not display 'the peasant' when single-clicking
-        public override void InitOutfit()
-        {
-            if (this.Female)
-                this.AddItem(new PlainDress());
-            else
-                this.AddItem(new Shirt(GetRandomHue()));
+		public override bool CanTeach
+		{
+			get { return true; }
+		}
+		public override bool ClickTitle
+		{
+			get { return false; }
+		} // Do not display 'the peasant' when single-clicking
 
-            int lowHue = GetRandomHue();
+		public override void InitOutfit()
+		{
+			if (this.Female)
+				this.AddItem(new PlainDress());
+			else
+				this.AddItem(new Shirt(GetRandomHue()));
 
-            this.AddItem(new ShortPants(lowHue));
+			int lowHue = GetRandomHue();
 
-            if (this.Female)
-                this.AddItem(new Boots(lowHue));
-            else
-                this.AddItem(new Shoes(lowHue));
+			this.AddItem(new ShortPants(lowHue));
 
-            //if ( !Female )
-            //AddItem( new BodySash( lowHue ) );
+			if (this.Female)
+				this.AddItem(new Boots(lowHue));
+			else
+				this.AddItem(new Shoes(lowHue));
 
-            //AddItem( new Cloak( GetRandomHue() ) );
+			//if ( !Female )
+			//AddItem( new BodySash( lowHue ) );
 
-            //if ( !Female )
-            //AddItem( new Longsword() );
+			//AddItem( new Cloak( GetRandomHue() ) );
 
-            Utility.AssignRandomHair(this);
+			//if ( !Female )
+			//AddItem( new Longsword() );
 
-            this.PackGold(200, 250);
-        }
+			Utility.AssignRandomHair(this);
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			this.PackGold(200, 250);
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        private static int GetRandomHue()
-        {
-            switch ( Utility.Random(6) )
-            {
-                default:
-                case 0:
-                    return 0;
-                case 1:
-                    return Utility.RandomBlueHue();
-                case 2:
-                    return Utility.RandomGreenHue();
-                case 3:
-                    return Utility.RandomRedHue();
-                case 4:
-                    return Utility.RandomYellowHue();
-                case 5:
-                    return Utility.RandomNeutralHue();
-            }
-        }
-    }
+			int version = reader.ReadInt();
+		}
+
+		private static int GetRandomHue()
+		{
+			switch (Utility.Random(6))
+			{
+				default:
+				case 0:
+					return 0;
+				case 1:
+					return Utility.RandomBlueHue();
+				case 2:
+					return Utility.RandomGreenHue();
+				case 3:
+					return Utility.RandomRedHue();
+				case 4:
+					return Utility.RandomYellowHue();
+				case 5:
+					return Utility.RandomNeutralHue();
+			}
+		}
+	}
 }

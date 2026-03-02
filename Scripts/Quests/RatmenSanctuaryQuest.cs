@@ -5,162 +5,181 @@ using Server.Mobiles;
 
 namespace Server.Engines.Quests
 {
-    public class SpringCleaningQuest : BaseQuest
-    {
+	public class SpringCleaningQuest : BaseQuest
+	{
+		/* Spring Cleaning */
+		public override object Title
+		{
+			get { return 1072373; }
+		}
 
-        /* Spring Cleaning */
-        public override object Title { get { return 1072373; } }
+		/*Mangy, lice encrusted furballs!  Those filthy ratmen have been sneaking into camp again,
+		  the signs are obvious.  They've fouled the water stores again and stolen what they
+		  couldn't eat.  Are you up to cleaning up the rat warrens?   */
+		public override object Description
+		{
+			get { return 1072674; }
+		}
 
-        /*Mangy, lice encrusted furballs!  Those filthy ratmen have been sneaking into camp again,
-          the signs are obvious.  They've fouled the water stores again and stolen what they  
-          couldn't eat.  Are you up to cleaning up the rat warrens?   */
-        public override object Description { get { return 1072674; } }
+		/* I understand.  The stench in those tunnels is unbearable. */
+		public override object Refuse
+		{
+			get { return 1072684; }
+		}
 
-        /* I understand.  The stench in those tunnels is unbearable. */
-        public override object Refuse { get { return 1072684; } }
+		/* The ratmen have holes all over the place that lead to their warrens.  Sometimes they're
+		   loitering around on the surface too.  Either way, they're not hard to find. */
+		public override object Uncomplete
+		{
+			get { return 1072685; }
+		}
 
-        /* The ratmen have holes all over the place that lead to their warrens.  Sometimes they're 
-           loitering around on the surface too.  Either way, they're not hard to find. */
-        public override object Uncomplete { get { return 1072685; } }
+		/* Excellent! Thatï¿½s the old fighting spirit. */
+		public override object Complete
+		{
+			get { return 1075384; }
+		}
 
-        /* Excellent! That’s the old fighting spirit. */
-        public override object Complete { get { return 1075384; } }
+		public SpringCleaningQuest()
+			: base()
+		{
+			AddObjective(new SlayObjective(typeof(Ratman), "Ratmen", 15, "Sanctuary"));
 
-        public SpringCleaningQuest()
-            : base()
-        {
-            AddObjective(new SlayObjective(typeof(Ratman), "Ratmen", 15, "Sanctuary"));
+			this.AddReward(new BaseReward(typeof(TrinketBag), 1072341));
+		}
 
-            this.AddReward(new BaseReward(typeof(TrinketBag), 1072341));
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			writer.Write((int)0); // version
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 
-            int version = reader.ReadInt();
-        }
-    }
+	public class CowardsQuest : BaseQuest
+	{
+		/* Cowards! */
+		public override object Title
+		{
+			get { return 1072689; }
+		}
 
-    public class CowardsQuest : BaseQuest
-    {
+		/* When you were exterminating those untidy vermin, you must have noticed the archers amongst them?
+		   Those cowardly rats have been peppering us with arrows and then running away before we can retaliate.
+		   Can I count on you to handle this for me? */
+		public override object Description
+		{
+			get { return 1072697; }
+		}
 
-        /* Cowards! */
-        public override object Title { get { return 1072689; } }
+		/* I understand.  The stench in those tunnels is unbearable. */
+		public override object Refuse
+		{
+			get { return 1072684; }
+		}
 
-        /* When you were exterminating those untidy vermin, you must have noticed the archers amongst them? 
-           Those cowardly rats have been peppering us with arrows and then running away before we can retaliate.
-           Can I count on you to handle this for me? */
-        public override object Description { get { return 1072697; } }
+		/* The ratmen have holes all over the place that lead to their warrens.  Sometimes they're
+		   loitering around on the surface too.  Either way, they're not hard to find. */
+		public override object Uncomplete
+		{
+			get { return 1072685; }
+		}
 
-        /* I understand.  The stench in those tunnels is unbearable. */
-        public override object Refuse { get { return 1072684; } }
+		/* Hah! I knew you were up to the challenge. */
+		public override object Complete
+		{
+			get { return 1075409; }
+		}
 
-        /* The ratmen have holes all over the place that lead to their warrens.  Sometimes they're 
-           loitering around on the surface too.  Either way, they're not hard to find. */
-        public override object Uncomplete { get { return 1072685; } }
+		public CowardsQuest()
+			: base()
+		{
+			AddObjective(new SlayObjective(typeof(RatmanArcher), "Ratmen Archers", 10, "Sanctuary"));
 
-        /* Hah! I knew you were up to the challenge. */
-        public override object Complete { get { return 1075409; } }
+			this.AddReward(new BaseReward(typeof(TrinketBag), 1072341));
+		}
 
-        public CowardsQuest()
-            : base()
-        {
-            AddObjective(new SlayObjective(typeof(RatmanArcher), "Ratmen Archers", 10, "Sanctuary"));
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            this.AddReward(new BaseReward(typeof(TrinketBag), 1072341));
-        }
+			writer.Write((int)0); // version
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            writer.Write((int)0); // version
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+	public class TokenOfLoveQuest : BaseQuest
+	{
+		public override bool DoneOnce
+		{
+			get { return true; }
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public TokenOfLoveQuest()
+			: base()
+		{
+			this.AddObjective(new ObtainObjective(typeof(StolenRing), "A ring engraved: 'Beloved Ciala'", 1, 0x1F09));
 
-    public class TokenOfLoveQuest : BaseQuest
-    {
-        public override bool DoneOnce { get { return true; } }
+			this.AddReward(new BaseReward(typeof(TreasureBag), 1072583));
+		}
 
-        public TokenOfLoveQuest()
-            : base()
-        {
-            this.AddObjective(new ObtainObjective(typeof(StolenRing), "A ring engraved: 'Beloved Ciala'", 1, 0x1F09));
+		/* Token of Love */
+		public override object Title
+		{
+			get { return 1072690; }
+		}
 
-            this.AddReward(new BaseReward(typeof(TreasureBag), 1072583));
-        }
+		/* Argh!  I knew those ratmen were up to no good!  They have stolen the ring I was making for my beloved Ciala.
+		 The sparkle must have caught their greedy eyes.  Find the ring please!  I beg you.  */
+		public override object Description
+		{
+			get { return 1072698; }
+		}
 
-        /* Token of Love */
-        public override object Title
-        {
-            get
-            {
-                return 1072690;
-            }
-        }
-        /* Argh!  I knew those ratmen were up to no good!  They have stolen the ring I was making for my beloved Ciala.
-         The sparkle must have caught their greedy eyes.  Find the ring please!  I beg you.  */
-        public override object Description
-        {
-            get
-            {
-                return 1072698;
-            }
-        }
-        /* Please, I beg of you, reconsider! */
-        public override object Refuse
-        {
-            get
-            {
-                return 1072699;
-            }
-        }
-        /* The stolen ring is easy enough to recognize.  It has an inscription on it declaring my love for Ciala.
-           Please find this token of love for me! */
-        public override object Uncomplete
-        {
-            get
-            {
-                return 1072700;
-            }
-        }
-        /* Ah!  You found my property.  Thank you for your honesty in returning it to me.*/
-        public override object Complete
-        {
-            get
-            {
-                return 1074582;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		/* Please, I beg of you, reconsider! */
+		public override object Refuse
+		{
+			get { return 1072699; }
+		}
 
-            writer.Write((int)0); // version
-        }
+		/* The stolen ring is easy enough to recognize.  It has an inscription on it declaring my love for Ciala.
+		   Please find this token of love for me! */
+		public override object Uncomplete
+		{
+			get { return 1072700; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		/* Ah!  You found my property.  Thank you for your honesty in returning it to me.*/
+		public override object Complete
+		{
+			get { return 1074582; }
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }
-
-   

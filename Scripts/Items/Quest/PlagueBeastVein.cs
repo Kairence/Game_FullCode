@@ -3,85 +3,86 @@ using Server.Network;
 
 namespace Server.Items
 {
-    public class PlagueBeastVein : PlagueBeastComponent
-    {
-        private bool m_Cut;
-        private Timer m_Timer;
-        public PlagueBeastVein(int itemID, int hue)
-            : base(itemID, hue)
-        {
-            this.m_Cut = false;
-        }
+	public class PlagueBeastVein : PlagueBeastComponent
+	{
+		private bool m_Cut;
+		private Timer m_Timer;
 
-        public PlagueBeastVein(Serial serial)
-            : base(serial)
-        {
-        }
+		public PlagueBeastVein(int itemID, int hue)
+			: base(itemID, hue)
+		{
+			this.m_Cut = false;
+		}
 
-        public bool Cut
-        {
-            get
-            {
-                return this.m_Cut;
-            }
-        }
-        public override bool Scissor(Mobile from, Scissors scissors)
-        {
-            if (this.IsAccessibleTo(from))
-            {
-                if (!this.m_Cut && this.m_Timer == null)
-                {
-                    this.m_Timer = Timer.DelayCall<Mobile>(TimeSpan.FromSeconds(3), new TimerStateCallback<Mobile>(CuttingDone), from);
-                    scissors.PublicOverheadMessage(MessageType.Regular, 0x3B2, 1071899); // You begin cutting through the vein.
-                    return true;
-                }
-                else
-                    scissors.PublicOverheadMessage(MessageType.Regular, 0x3B2, 1071900); // // This vein has already been cut.
-            }
+		public PlagueBeastVein(Serial serial)
+			: base(serial) { }
 
-            return false;
-        }
+		public bool Cut
+		{
+			get { return this.m_Cut; }
+		}
 
-        public override void OnAfterDelete()
-        {
-            if (this.m_Timer != null && this.m_Timer.Running)
-                this.m_Timer.Stop();
-        }
+		public override bool Scissor(Mobile from, Scissors scissors)
+		{
+			if (this.IsAccessibleTo(from))
+			{
+				if (!this.m_Cut && this.m_Timer == null)
+				{
+					this.m_Timer = Timer.DelayCall<Mobile>(
+						TimeSpan.FromSeconds(3),
+						new TimerStateCallback<Mobile>(CuttingDone),
+						from
+					);
+					scissors.PublicOverheadMessage(MessageType.Regular, 0x3B2, 1071899); // You begin cutting through the vein.
+					return true;
+				}
+				else
+					scissors.PublicOverheadMessage(MessageType.Regular, 0x3B2, 1071900); // // This vein has already been cut.
+			}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			return false;
+		}
 
-            writer.WriteEncodedInt(0); // version
+		public override void OnAfterDelete()
+		{
+			if (this.m_Timer != null && this.m_Timer.Running)
+				this.m_Timer.Stop();
+		}
 
-            writer.Write((bool)this.m_Cut);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
 
-            int version = reader.ReadEncodedInt();
+			writer.Write((bool)this.m_Cut);
+		}
 
-            this.m_Cut = reader.ReadBool();
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        private void CuttingDone(Mobile from)
-        {
-            this.m_Cut = true;
+			int version = reader.ReadEncodedInt();
 
-            if (this.ItemID == 0x1B1C)
-                this.ItemID = 0x1B1B;
-            else
-                this.ItemID = 0x1B1C;
+			this.m_Cut = reader.ReadBool();
+		}
 
-            if (this.Owner != null)
-                this.Owner.PlaySound(0x199);
+		private void CuttingDone(Mobile from)
+		{
+			this.m_Cut = true;
 
-            PlagueBeastRubbleOrgan organ = this.Organ as PlagueBeastRubbleOrgan;
+			if (this.ItemID == 0x1B1C)
+				this.ItemID = 0x1B1B;
+			else
+				this.ItemID = 0x1B1C;
 
-            if (organ != null)
-                organ.OnVeinCut(from, this);
-        }
-    }
+			if (this.Owner != null)
+				this.Owner.PlaySound(0x199);
+
+			PlagueBeastRubbleOrgan organ = this.Organ as PlagueBeastRubbleOrgan;
+
+			if (organ != null)
+				organ.OnVeinCut(from, this);
+		}
+	}
 }

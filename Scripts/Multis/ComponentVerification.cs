@@ -32,7 +32,8 @@ namespace Server.Multis
 				"WindowE",
 				"AltWindowE",
 				"SecondAltWindowS",
-				"SecondAltWindowE");
+				"SecondAltWindowE"
+			);
 
 			LoadItems(
 				"Data/Components/teleprts.txt",
@@ -52,7 +53,8 @@ namespace Server.Multis
 				"F13",
 				"F14",
 				"F15",
-				"F16");
+				"F16"
+			);
 
 			LoadItems(
 				"Data/Components/stairs.txt",
@@ -65,7 +67,8 @@ namespace Server.Multis
 				"Squared1",
 				"Squared2",
 				"Rounded1",
-				"Rounded2");
+				"Rounded2"
+			);
 
 			LoadItems(
 				"Data/Components/roof.txt",
@@ -85,7 +88,8 @@ namespace Server.Multis
 				"STPiece",
 				"WTPiece",
 				"XPiece",
-				"Extra Piece");
+				"Extra Piece"
+			);
 
 			LoadItems(
 				"Data/Components/floors.txt",
@@ -105,7 +109,8 @@ namespace Server.Multis
 				"F13",
 				"F14",
 				"F15",
-				"F16");
+				"F16"
+			);
 
 			LoadItems(
 				"Data/Components/misc.txt",
@@ -117,7 +122,8 @@ namespace Server.Multis
 				"Piece5",
 				"Piece6",
 				"Piece7",
-				"Piece8");
+				"Piece8"
+			);
 
 			LoadItems(
 				"Data/Components/doors.txt",
@@ -129,7 +135,8 @@ namespace Server.Multis
 				"Piece5",
 				"Piece6",
 				"Piece7",
-				"Piece8");
+				"Piece8"
+			);
 
 			LoadMultis(
 				"Data/Components/stairs.txt",
@@ -137,7 +144,8 @@ namespace Server.Multis
 				"MultiNorth",
 				"MultiEast",
 				"MultiSouth",
-				"MultiWest");
+				"MultiWest"
+			);
 		}
 
 		public bool IsItemValid(int itemID)
@@ -209,7 +217,9 @@ namespace Server.Multis
 			{
 				var fid = record.GetInt32(featureCID);
 
-				foreach (var itemID in tileCIDs.Select(v => record.GetInt32(v)).Where(id => id > 0 && id < table.Length))
+				foreach (
+					var itemID in tileCIDs.Select(v => record.GetInt32(v)).Where(id => id > 0 && id < table.Length)
+				)
 				{
 					table[itemID] = fid;
 				}
@@ -266,7 +276,10 @@ namespace Server.Multis
 			}
 		}
 
-		public DataRecord[] Records { get { return m_Records; } }
+		public DataRecord[] Records
+		{
+			get { return m_Records; }
+		}
 
 		public int GetColumnID(string name)
 		{
@@ -325,9 +338,18 @@ namespace Server.Multis
 			m_Data = data;
 		}
 
-		public Spreadsheet Spreadsheet { get { return m_Spreadsheet; } }
-		public object[] Data { get { return m_Data; } }
-		public object this[string name] { get { return this[m_Spreadsheet.GetColumnID(name)]; } }
+		public Spreadsheet Spreadsheet
+		{
+			get { return m_Spreadsheet; }
+		}
+		public object[] Data
+		{
+			get { return m_Data; }
+		}
+		public object this[string name]
+		{
+			get { return this[m_Spreadsheet.GetColumnID(name)]; }
+		}
 
 		public object this[int id]
 		{

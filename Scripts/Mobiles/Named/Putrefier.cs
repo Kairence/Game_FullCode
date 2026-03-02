@@ -1,179 +1,179 @@
 using System;
-using Server.Items;
 using System.Collections.Generic;
+using Server.Items;
 
 namespace Server.Mobiles
 {
-    [CorpseName("a Putrefier corpse")]
-    public class Putrefier : Balron
-    {
-        [Constructable]
-        public Putrefier()
-        {
-            this.Name = "Putrefier";
-            this.Hue = 63;
+	[CorpseName("a Putrefier corpse")]
+	public class Putrefier : Balron
+	{
+		[Constructable]
+		public Putrefier()
+		{
+			this.Name = "Putrefier";
+			this.Hue = 63;
 
-            this.SetStr(1057, 1400);
-            this.SetDex(232, 560);
-            this.SetInt(201, 440);
+			this.SetStr(1057, 1400);
+			this.SetDex(232, 560);
+			this.SetInt(201, 440);
 
-            this.SetHits(3010, 4092);
+			this.SetHits(3010, 4092);
 
-            this.SetDamage(27, 34);
+			this.SetDamage(27, 34);
 
-            this.SetDamageType(ResistanceType.Physical, 50);
-            this.SetDamageType(ResistanceType.Fire, 0);
-            this.SetDamageType(ResistanceType.Poison, 50);
-            this.SetDamageType(ResistanceType.Energy, 0);
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Fire, 0);
+			this.SetDamageType(ResistanceType.Poison, 50);
+			this.SetDamageType(ResistanceType.Energy, 0);
 
-            this.SetResistance(ResistanceType.Physical, 65, 80);
-            this.SetResistance(ResistanceType.Fire, 65, 80);
-            this.SetResistance(ResistanceType.Cold, 50, 60);
-            this.SetResistance(ResistanceType.Poison, 100);
-            this.SetResistance(ResistanceType.Energy, 40, 50);
+			this.SetResistance(ResistanceType.Physical, 65, 80);
+			this.SetResistance(ResistanceType.Fire, 65, 80);
+			this.SetResistance(ResistanceType.Cold, 50, 60);
+			this.SetResistance(ResistanceType.Poison, 100);
+			this.SetResistance(ResistanceType.Energy, 40, 50);
 
-            this.SetSkill(SkillName.Wrestling, 111.2, 128.0);
-            this.SetSkill(SkillName.Tactics, 115.2, 125.2);
-            this.SetSkill(SkillName.MagicResist, 143.4, 170.0);
-            this.SetSkill(SkillName.Anatomy, 44.6, 67.0);
-            this.SetSkill(SkillName.Magery, 117.6, 118.8);
-            this.SetSkill(SkillName.EvalInt, 113.0, 128.8);
-            this.SetSkill(SkillName.Meditation, 41.4, 85.0);
-            this.SetSkill(SkillName.Poisoning, 45.0, 50.0);
+			this.SetSkill(SkillName.Wrestling, 111.2, 128.0);
+			this.SetSkill(SkillName.Tactics, 115.2, 125.2);
+			this.SetSkill(SkillName.MagicResist, 143.4, 170.0);
+			this.SetSkill(SkillName.Anatomy, 44.6, 67.0);
+			this.SetSkill(SkillName.Magery, 117.6, 118.8);
+			this.SetSkill(SkillName.EvalInt, 113.0, 128.8);
+			this.SetSkill(SkillName.Meditation, 41.4, 85.0);
+			this.SetSkill(SkillName.Poisoning, 45.0, 50.0);
 
-            this.Fame = 24000;
-            this.Karma = -24000;
+			this.Fame = 24000;
+			this.Karma = -24000;
 
-            for (int i = 0; i < Utility.RandomMinMax(0, 2); i++)
-            {
-                this.PackItem(Loot.RandomScroll(0, Loot.ArcanistScrollTypes.Length, SpellbookType.Arcanist));
-            }
-        }
+			for (int i = 0; i < Utility.RandomMinMax(0, 2); i++)
+			{
+				this.PackItem(Loot.RandomScroll(0, Loot.ArcanistScrollTypes.Length, SpellbookType.Arcanist));
+			}
+		}
 
-        public Putrefier(Serial serial)
-            : base(serial)
-        {
-        }
+		public Putrefier(Serial serial)
+			: base(serial) { }
 
-        public override void OnDeath( Container c )
-        {
-            base.OnDeath( c );
+		public override void OnDeath(Container c)
+		{
+			base.OnDeath(c);
 
-            c.DropItem( new SpleenOfThePutrefier() );
+			c.DropItem(new SpleenOfThePutrefier());
 
-            if ( Utility.RandomDouble() < 0.6 )
-            c.DropItem( new ParrotItem() );
+			if (Utility.RandomDouble() < 0.6)
+				c.DropItem(new ParrotItem());
 
-            if ( Paragon.ChestChance > Utility.RandomDouble() )
-            c.DropItem( new ParagonChest( Name, 5 ) );
-        }
+			if (Paragon.ChestChance > Utility.RandomDouble())
+				c.DropItem(new ParagonChest(Name, 5));
+		}
 
-        public override bool GivesMLMinorArtifact
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override Poison HitPoison
-        {
-            get
-            {
-                return Poison.Deadly;
-            }
-        }// Becomes Lethal with Paragon bonus   
-        public override void OnDamagedBySpell(Mobile attacker)
-        {
-            base.OnDamagedBySpell(attacker);
+		public override bool GivesMLMinorArtifact
+		{
+			get { return true; }
+		}
+		public override Poison HitPoison
+		{
+			get { return Poison.Deadly; }
+		} // Becomes Lethal with Paragon bonus
 
-            this.DoCounter(attacker);
-        }
+		public override void OnDamagedBySpell(Mobile attacker)
+		{
+			base.OnDamagedBySpell(attacker);
 
-        public override void OnGotMeleeAttack(Mobile attacker)
-        {
-            base.OnGotMeleeAttack(attacker);
+			this.DoCounter(attacker);
+		}
 
-            this.DoCounter(attacker);
-        }
+		public override void OnGotMeleeAttack(Mobile attacker)
+		{
+			base.OnGotMeleeAttack(attacker);
 
-        private void DoCounter(Mobile attacker)
-        {
-            if (this.Map == null || (attacker is BaseCreature && ((BaseCreature)attacker).BardProvoked))
-                return;
+			this.DoCounter(attacker);
+		}
 
-            if (0.2 > Utility.RandomDouble())
-            {
-                /* Counterattack with Hit Poison Area
-                * 20-25 damage, unresistable
-                * Lethal poison, 100% of the time
-                * Particle effect: Type: "2" From: "0x4061A107" To: "0x0" ItemId: "0x36BD" ItemIdName: "explosion" FromLocation: "(296 615, 17)" ToLocation: "(296 615, 17)" Speed: "1" Duration: "10" FixedDirection: "True" Explode: "False" Hue: "0xA6" RenderMode: "0x0" Effect: "0x1F78" ExplodeEffect: "0x1" ExplodeSound: "0x0" Serial: "0x4061A107" Layer: "255" Unknown: "0x0"
-                * Doesn't work on provoked monsters
-                */
-                Mobile target = null;
+		private void DoCounter(Mobile attacker)
+		{
+			if (this.Map == null || (attacker is BaseCreature && ((BaseCreature)attacker).BardProvoked))
+				return;
 
-                if (attacker is BaseCreature)
-                {
-                    Mobile m = ((BaseCreature)attacker).GetMaster();
+			if (0.2 > Utility.RandomDouble())
+			{
+				/* Counterattack with Hit Poison Area
+				* 20-25 damage, unresistable
+				* Lethal poison, 100% of the time
+				* Particle effect: Type: "2" From: "0x4061A107" To: "0x0" ItemId: "0x36BD" ItemIdName: "explosion" FromLocation: "(296 615, 17)" ToLocation: "(296 615, 17)" Speed: "1" Duration: "10" FixedDirection: "True" Explode: "False" Hue: "0xA6" RenderMode: "0x0" Effect: "0x1F78" ExplodeEffect: "0x1" ExplodeSound: "0x0" Serial: "0x4061A107" Layer: "255" Unknown: "0x0"
+				* Doesn't work on provoked monsters
+				*/
+				Mobile target = null;
 
-                    if (m != null)
-                        target = m;
-                }
+				if (attacker is BaseCreature)
+				{
+					Mobile m = ((BaseCreature)attacker).GetMaster();
 
-                if (target == null || !target.InRange(this, 25))
-                    target = attacker;
+					if (m != null)
+						target = m;
+				}
 
-                this.Animate(10, 4, 1, true, false, 0);
+				if (target == null || !target.InRange(this, 25))
+					target = attacker;
 
-                List<Mobile> targets = new List<Mobile>();
-                IPooledEnumerable eable = target.GetMobilesInRange(8);
+				this.Animate(10, 4, 1, true, false, 0);
 
-                foreach (Mobile m in eable)
-                {
-                    if (m == this || !this.CanBeHarmful(m))
-                        continue;
+				List<Mobile> targets = new List<Mobile>();
+				IPooledEnumerable eable = target.GetMobilesInRange(8);
 
-                    if (m is BaseCreature && (((BaseCreature)m).Controlled || ((BaseCreature)m).Summoned || ((BaseCreature)m).Team != this.Team))
-                        targets.Add(m);
-                    else if (m.Player)
-                        targets.Add(m);
-                }
-                eable.Free();
+				foreach (Mobile m in eable)
+				{
+					if (m == this || !this.CanBeHarmful(m))
+						continue;
 
-                for (int i = 0; i < targets.Count; ++i)
-                {
-                    Mobile m = (Mobile)targets[i];
+					if (
+						m is BaseCreature
+						&& (
+							((BaseCreature)m).Controlled
+							|| ((BaseCreature)m).Summoned
+							|| ((BaseCreature)m).Team != this.Team
+						)
+					)
+						targets.Add(m);
+					else if (m.Player)
+						targets.Add(m);
+				}
+				eable.Free();
 
-                    this.DoHarmful(m);
+				for (int i = 0; i < targets.Count; ++i)
+				{
+					Mobile m = (Mobile)targets[i];
 
-                    AOS.Damage(m, this, Utility.RandomMinMax(20, 25), true, 0, 0, 0, 100, 0);
+					this.DoHarmful(m);
 
-                    m.FixedParticles(0x36BD, 1, 10, 0x1F78, 0xA6, 0, (EffectLayer)255);
-                    m.ApplyPoison(this, Poison.Lethal);
-                }
+					AOS.Damage(m, this, Utility.RandomMinMax(20, 25), true, 0, 0, 0, 100, 0);
 
-                targets.Clear();
-                targets.TrimExcess();
-            }
-        }
+					m.FixedParticles(0x36BD, 1, 10, 0x1F78, 0xA6, 0, (EffectLayer)255);
+					m.ApplyPoison(this, Poison.Lethal);
+				}
 
-        public override void GenerateLoot()
-        {
-            this.AddLoot(LootPack.UltraRich, 3);
-            this.AddLoot(LootPack.MedScrolls, 2);
-        }
+				targets.Clear();
+				targets.TrimExcess();
+			}
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void GenerateLoot()
+		{
+			this.AddLoot(LootPack.UltraRich, 3);
+			this.AddLoot(LootPack.MedScrolls, 2);
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

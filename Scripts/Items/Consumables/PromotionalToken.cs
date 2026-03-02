@@ -4,11 +4,11 @@ using Server.Network;
 
 namespace Server.Items
 {
-    public interface IPromotionalToken
-    {
-        TextDefinition ItemName { get; }
-        Type GumpType { get; }
-    }
+	public interface IPromotionalToken
+	{
+		TextDefinition ItemName { get; }
+		Type GumpType { get; }
+	}
 
 	public abstract class PromotionalToken : Item, IPromotionalToken
 	{
@@ -21,24 +21,25 @@ namespace Server.Items
 		}
 
 		public PromotionalToken(Serial serial)
-			: base(serial)
-		{
-		}
+			: base(serial) { }
 
 		public abstract TextDefinition ItemName { get; }
 		public abstract TextDefinition ItemReceiveMessage { get; }
 		public abstract TextDefinition ItemGumpName { get; }
 
-        public Type GumpType { get { return typeof(PromotionalTokenGump); } }
-        public virtual bool PlaceInBank { get { return true; } }
+		public Type GumpType
+		{
+			get { return typeof(PromotionalTokenGump); }
+		}
+		public virtual bool PlaceInBank
+		{
+			get { return true; }
+		}
 
 		public override int LabelNumber
 		{
-			get
-			{
-				return 1070997;
-			}
-		}// A promotional token
+			get { return 1070997; }
+		} // A promotional token
 		public abstract Item CreateItemFor(Mobile from);
 
 		public override void GetProperties(ObjectPropertyList list)
@@ -91,6 +92,7 @@ namespace Server.Items
 		private class PromotionalTokenGump : Gump
 		{
 			private readonly PromotionalToken m_Token;
+
 			public PromotionalTokenGump(PromotionalToken token)
 				: base(10, 10)
 			{
@@ -102,8 +104,8 @@ namespace Server.Items
 				AddHtmlLocalized(15, 15, 210, 75, 1070972, 0x0, true, false); // Click "OKAY" to redeem the following promotional item:
 				TextDefinition.AddHtmlText(this, 15, 60, 210, 75, m_Token.ItemGumpName, false, false);
 
-				AddButton(160, 95, 0xF7, 0xF8, 1, GumpButtonType.Reply, 0);	//Okay
-				AddButton(90, 95, 0xF2, 0xF1, 0, GumpButtonType.Reply, 0);	//Cancel
+				AddButton(160, 95, 0xF7, 0xF8, 1, GumpButtonType.Reply, 0); //Okay
+				AddButton(90, 95, 0xF2, 0xF1, 0, GumpButtonType.Reply, 0); //Cancel
 			}
 
 			public override void OnResponse(NetState sender, RelayInfo info)
@@ -123,10 +125,10 @@ namespace Server.Items
 
 					if (i != null)
 					{
-                        if (m_Token.PlaceInBank || from.Backpack == null || !from.Backpack.TryDropItem(from, i, false))
-                        {
-                            from.BankBox.AddItem(i);
-                        }
+						if (m_Token.PlaceInBank || from.Backpack == null || !from.Backpack.TryDropItem(from, i, false))
+						{
+							from.BankBox.AddItem(i);
+						}
 
 						TextDefinition.SendMessageTo(from, m_Token.ItemReceiveMessage);
 						m_Token.Delete();

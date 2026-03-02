@@ -1,6 +1,5 @@
 #region References
 using System;
-
 using Server.Items;
 #endregion
 
@@ -11,8 +10,7 @@ namespace Server.Mobiles
 		private Item m_toDisarm;
 
 		public ThiefAI(BaseCreature m)
-			: base(m)
-		{ }
+			: base(m) { }
 
 		public override bool DoActionWander()
 		{
@@ -71,14 +69,23 @@ namespace Server.Mobiles
 					}
 				}
 
-				if (!Core.AOS && !m_Mobile.DisarmReady && m_Mobile.Skills[SkillName.Wrestling].Value >= 80.0 &&
-					m_Mobile.Skills[SkillName.ArmsLore].Value >= 80.0 && m_toDisarm != null)
+				if (
+					!Core.AOS
+					&& !m_Mobile.DisarmReady
+					&& m_Mobile.Skills[SkillName.Wrestling].Value >= 80.0
+					&& m_Mobile.Skills[SkillName.ArmsLore].Value >= 80.0
+					&& m_toDisarm != null
+				)
 				{
 					EventSink.InvokeDisarmRequest(new DisarmRequestEventArgs(m_Mobile));
 				}
 
-				if (m_toDisarm != null && m_toDisarm.IsChildOf(c.Backpack) && m_Mobile.NextSkillTime <= Core.TickCount &&
-					(m_toDisarm.LootType != LootType.Blessed && m_toDisarm.LootType != LootType.Newbied))
+				if (
+					m_toDisarm != null
+					&& m_toDisarm.IsChildOf(c.Backpack)
+					&& m_Mobile.NextSkillTime <= Core.TickCount
+					&& (m_toDisarm.LootType != LootType.Blessed && m_toDisarm.LootType != LootType.Newbied)
+				)
 				{
 					m_Mobile.DebugSay("Trying to steal from combatant.");
 					m_Mobile.UseSkill(SkillName.Stealing);

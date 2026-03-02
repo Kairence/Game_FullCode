@@ -3,124 +3,119 @@ using Server.Targeting;
 
 namespace Server.Items.MusicBox
 {
-    [Flipable(0x1053, 0x1054)]
-    public class MusicBoxGears : Item
-    {
-        private readonly MusicName m_Music;
-        [Constructable]
-        public MusicBoxGears()
-            : this(TrackInfo.RandomSong())
-        {
-        }
+	[Flipable(0x1053, 0x1054)]
+	public class MusicBoxGears : Item
+	{
+		private readonly MusicName m_Music;
 
-        [Constructable]
-        public MusicBoxGears(MusicName music)
-            : base(0x1053)
-        {
-            this.m_Music = music;
-            this.Weight = 1.0;
-        }
+		[Constructable]
+		public MusicBoxGears()
+			: this(TrackInfo.RandomSong()) { }
 
-        public MusicBoxGears(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public MusicBoxGears(MusicName music)
+			: base(0x1053)
+		{
+			this.m_Music = music;
+			this.Weight = 1.0;
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public MusicName Music
-        {
-            get
-            {
-                return this.m_Music;
-            }
-        }
-        public static MusicBoxGears RandomMusixBoxGears(TrackRarity rarity)
-        {
-            return new MusicBoxGears(TrackInfo.RandomSong(rarity));
-        }
+		public MusicBoxGears(Serial serial)
+			: base(serial) { }
 
-        public static MusicBoxGears RandomMusixBoxGears()
-        {
-            return new MusicBoxGears(TrackInfo.RandomSong());
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public MusicName Music
+		{
+			get { return this.m_Music; }
+		}
 
-        public override void AddNameProperty(ObjectPropertyList list)
-        {
-            TrackInfo ti = TrackInfo.GetInfo(this.m_Music);
-            switch( ti.Rarity )
-            {
-                case TrackRarity.Common:
-                    list.Add(1075204);
-                    break; // Gear for Dawn's Music Box (Common)
-                case TrackRarity.UnCommon:
-                    list.Add(1075205);
-                    break; // Gear for Dawn's Music Box (Uncommon)
-                case TrackRarity.Rare:
-                    list.Add(1075206);
-                    break; // Gear for Dawn's Music Box (Rare)
-            }
-        }
+		public static MusicBoxGears RandomMusixBoxGears(TrackRarity rarity)
+		{
+			return new MusicBoxGears(TrackInfo.RandomSong(rarity));
+		}
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
-			
-            TrackInfo ti = TrackInfo.GetInfo(this.m_Music);
-            list.Add(ti.Label);
-        }
+		public static MusicBoxGears RandomMusixBoxGears()
+		{
+			return new MusicBoxGears(TrackInfo.RandomSong());
+		}
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (this.IsChildOf(from.Backpack))
-            {
-                from.BeginTarget(3, false, TargetFlags.None, new TargetCallback(OnTarget));
-                from.SendMessage("Select a Dawn's music box to add this gears to.");
-            }
-            else
-            {
-                from.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
-            }
-        }
+		public override void AddNameProperty(ObjectPropertyList list)
+		{
+			TrackInfo ti = TrackInfo.GetInfo(this.m_Music);
+			switch (ti.Rarity)
+			{
+				case TrackRarity.Common:
+					list.Add(1075204);
+					break; // Gear for Dawn's Music Box (Common)
+				case TrackRarity.UnCommon:
+					list.Add(1075205);
+					break; // Gear for Dawn's Music Box (Uncommon)
+				case TrackRarity.Rare:
+					list.Add(1075206);
+					break; // Gear for Dawn's Music Box (Rare)
+			}
+		}
 
-        public virtual void OnTarget(Mobile from, object obj)
-        {
-            if (this.Deleted)
-                return;
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-            DawnsMusicBox mb = obj as DawnsMusicBox;
+			TrackInfo ti = TrackInfo.GetInfo(this.m_Music);
+			list.Add(ti.Label);
+		}
 
-            if (mb == null)
-            {
-                from.SendMessage("That is not a Dawn's music box.");
-            }
-            else
-            {
-                if (mb.AddSong(this.m_Music))
-                {
-                    from.SendMessage("You have added this gear to the music box.");
-                    this.Delete();
-                }
-                else
-                    from.SendMessage("This gear is already present in this box.");
-            }
-        }
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (this.IsChildOf(from.Backpack))
+			{
+				from.BeginTarget(3, false, TargetFlags.None, new TargetCallback(OnTarget));
+				from.SendMessage("Select a Dawn's music box to add this gears to.");
+			}
+			else
+			{
+				from.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
+			}
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            
-            writer.Write((int)0); // version
-            
-            writer.Write((int)this.m_Music);
-        }
+		public virtual void OnTarget(Mobile from, object obj)
+		{
+			if (this.Deleted)
+				return;
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            
-            int version = reader.ReadInt();
-            
-            MusicName m_Music = (MusicName)reader.ReadInt();
-        }
-    }
+			DawnsMusicBox mb = obj as DawnsMusicBox;
+
+			if (mb == null)
+			{
+				from.SendMessage("That is not a Dawn's music box.");
+			}
+			else
+			{
+				if (mb.AddSong(this.m_Music))
+				{
+					from.SendMessage("You have added this gear to the music box.");
+					this.Delete();
+				}
+				else
+					from.SendMessage("This gear is already present in this box.");
+			}
+		}
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+
+			writer.Write((int)this.m_Music);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+
+			MusicName m_Music = (MusicName)reader.ReadInt();
+		}
+	}
 }

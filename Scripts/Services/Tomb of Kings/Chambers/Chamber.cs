@@ -1,19 +1,29 @@
-﻿using Server;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Server;
 
 namespace Server.Engines.TombOfKings
 {
 	public class ChamberInfo
 	{
-		private Point3D m_BarrierLocation, m_SwitchLocation;
+		private Point3D m_BarrierLocation,
+			m_SwitchLocation;
 		private int m_SwitchId;
 
-		public Point3D BarrierLocation { get { return m_BarrierLocation; } }
-		public Point3D SwitchLocation { get { return m_SwitchLocation; } }
-		public int SwitchId { get { return m_SwitchId; } }
+		public Point3D BarrierLocation
+		{
+			get { return m_BarrierLocation; }
+		}
+		public Point3D SwitchLocation
+		{
+			get { return m_SwitchLocation; }
+		}
+		public int SwitchId
+		{
+			get { return m_SwitchId; }
+		}
 
-		public ChamberInfo( Point3D barrierLoc, Point3D switchLoc, int switchId )
+		public ChamberInfo(Point3D barrierLoc, Point3D switchLoc, int switchId)
 		{
 			m_BarrierLocation = barrierLoc;
 			m_SwitchLocation = switchLoc;
@@ -26,27 +36,27 @@ namespace Server.Engines.TombOfKings
 		public static void Initialize()
 		{
 			// we should call it after deserialize the levers
-			Timer.DelayCall( TimeSpan.Zero, new TimerCallback( Generate ) );
+			Timer.DelayCall(TimeSpan.Zero, new TimerCallback(Generate));
 		}
 
 		public static void Generate()
 		{
-			if ( ChamberLever.Levers.Count == 0 )
+			if (ChamberLever.Levers.Count == 0)
 				return;
 
-			foreach ( ChamberInfo info in m_ChamberInfos )
-				m_Chambers.Add( new Chamber( info ) );
+			foreach (ChamberInfo info in m_ChamberInfos)
+				m_Chambers.Add(new Chamber(info));
 
 			// randomize
-			List<ChamberLever> levers = new List<ChamberLever>( ChamberLever.Levers );
+			List<ChamberLever> levers = new List<ChamberLever>(ChamberLever.Levers);
 
-			foreach ( Chamber chamber in m_Chambers )
+			foreach (Chamber chamber in m_Chambers)
 			{
-				int idx = Utility.Random( levers.Count );
+				int idx = Utility.Random(levers.Count);
 
 				chamber.Lever = levers[idx];
 				levers[idx].Chamber = chamber;
-				levers.RemoveAt( idx );
+				levers.RemoveAt(idx);
 			}
 		}
 
@@ -60,20 +70,19 @@ namespace Server.Engines.TombOfKings
 		private static ChamberInfo[] m_ChamberInfos = new ChamberInfo[]
 		{
 			// left side
-			new ChamberInfo( new Point3D( 15, 200, -5 ), new Point3D( 13, 195, 7 ), 0x1091 ),
-			new ChamberInfo( new Point3D( 15, 184, -5 ), new Point3D( 13, 179, 7 ), 0x1091 ),
-			new ChamberInfo( new Point3D( 15, 168, -5 ), new Point3D( 13, 163, 7 ), 0x1091 ),
-			new ChamberInfo( new Point3D( 15, 152, -5 ), new Point3D( 13, 147, 7 ), 0x1091 ),
-			new ChamberInfo( new Point3D( 15, 136, -5 ), new Point3D( 13, 131, 7 ), 0x1091 ),
-			new ChamberInfo( new Point3D( 15, 120, -5 ), new Point3D( 13, 115, 7 ), 0x1091 ),
-
+			new ChamberInfo(new Point3D(15, 200, -5), new Point3D(13, 195, 7), 0x1091),
+			new ChamberInfo(new Point3D(15, 184, -5), new Point3D(13, 179, 7), 0x1091),
+			new ChamberInfo(new Point3D(15, 168, -5), new Point3D(13, 163, 7), 0x1091),
+			new ChamberInfo(new Point3D(15, 152, -5), new Point3D(13, 147, 7), 0x1091),
+			new ChamberInfo(new Point3D(15, 136, -5), new Point3D(13, 131, 7), 0x1091),
+			new ChamberInfo(new Point3D(15, 120, -5), new Point3D(13, 115, 7), 0x1091),
 			// right side
-			new ChamberInfo( new Point3D( 55, 200, -5 ), new Point3D( 56, 197, 7 ), 0x1090 ),
-			new ChamberInfo( new Point3D( 55, 184, -5 ), new Point3D( 56, 181, 7 ), 0x1090 ),
-			new ChamberInfo( new Point3D( 55, 168, -5 ), new Point3D( 56, 165, 7 ), 0x1090 ),
-			new ChamberInfo( new Point3D( 55, 152, -5 ), new Point3D( 56, 149, 7 ), 0x1090 ),
-			new ChamberInfo( new Point3D( 55, 136, -5 ), new Point3D( 56, 133, 7 ), 0x1090 ),
-			new ChamberInfo( new Point3D( 55, 120, -5 ), new Point3D( 56, 117, 7 ), 0x1090 ),
+			new ChamberInfo(new Point3D(55, 200, -5), new Point3D(56, 197, 7), 0x1090),
+			new ChamberInfo(new Point3D(55, 184, -5), new Point3D(56, 181, 7), 0x1090),
+			new ChamberInfo(new Point3D(55, 168, -5), new Point3D(56, 165, 7), 0x1090),
+			new ChamberInfo(new Point3D(55, 152, -5), new Point3D(56, 149, 7), 0x1090),
+			new ChamberInfo(new Point3D(55, 136, -5), new Point3D(56, 133, 7), 0x1090),
+			new ChamberInfo(new Point3D(55, 120, -5), new Point3D(56, 117, 7), 0x1090),
 		};
 
 		private ChamberSwitch m_Switch;
@@ -108,7 +117,7 @@ namespace Server.Engines.TombOfKings
 			m_Barrier.Active = false;
 			m_Lever.Switch();
 
-			Timer.DelayCall( TimeSpan.FromMinutes( Utility.RandomMinMax( 10, 15 ) ), RestoreBarrier );
+			Timer.DelayCall(TimeSpan.FromMinutes(Utility.RandomMinMax(10, 15)), RestoreBarrier);
 		}
 
 		public void RestoreBarrier()
@@ -117,10 +126,10 @@ namespace Server.Engines.TombOfKings
 			m_Lever.InvalidateProperties();
 		}
 
-		public Chamber( ChamberInfo info )
+		public Chamber(ChamberInfo info)
 		{
-			m_Switch = new ChamberSwitch( this, info.SwitchLocation, info.SwitchId );
-			m_Barrier = new ChamberBarrier( info.BarrierLocation );
+			m_Switch = new ChamberSwitch(this, info.SwitchLocation, info.SwitchId);
+			m_Barrier = new ChamberBarrier(info.BarrierLocation);
 		}
 	}
 }

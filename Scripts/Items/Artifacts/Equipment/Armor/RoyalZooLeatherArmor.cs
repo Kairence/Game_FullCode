@@ -2,543 +2,417 @@ using System;
 
 namespace Server.Items
 {
-    public class RoyalZooLeatherLegs : LeatherLegs
+	public class RoyalZooLeatherLegs : LeatherLegs
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public RoyalZooLeatherLegs()
-            : base()
-        {
-            Hue = 0x109;	
-            Attributes.BonusMana = 3;
-            Attributes.RegenStam = 3;
-            Attributes.ReflectPhysical = 10;
-            Attributes.LowerRegCost = 15;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public RoyalZooLeatherLegs(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public RoyalZooLeatherLegs()
+			: base()
+		{
+			Hue = 0x109;
+			Attributes.BonusMana = 3;
+			Attributes.RegenStam = 3;
+			Attributes.ReflectPhysical = 10;
+			Attributes.LowerRegCost = 15;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073222;
-            }
-        }// Leather Armor of the Britannia Royal Zoo
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-			
-            writer.Write((int)0); // version
-        }
+		public RoyalZooLeatherLegs(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-			
-            int version = reader.ReadInt();
-        }
-    }
+		public override int LabelNumber
+		{
+			get { return 1073222; }
+		} // Leather Armor of the Britannia Royal Zoo
+		public override int BasePhysicalResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseFireResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return 10; }
+		}
+		public override int BasePoisonResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseEnergyResistance
+		{
+			get { return 10; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-    public class RoyalZooLeatherGloves : LeatherGloves
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
+
+	public class RoyalZooLeatherGloves : LeatherGloves
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public RoyalZooLeatherGloves()
-            : base()
-        {
-            Hue = 0x109;		
-            Attributes.BonusMana = 3;
-            Attributes.RegenStam = 3;
-            Attributes.ReflectPhysical = 10;
-            Attributes.LowerRegCost = 15;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public RoyalZooLeatherGloves(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public RoyalZooLeatherGloves()
+			: base()
+		{
+			Hue = 0x109;
+			Attributes.BonusMana = 3;
+			Attributes.RegenStam = 3;
+			Attributes.ReflectPhysical = 10;
+			Attributes.LowerRegCost = 15;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073222;
-            }
-        }// Leather Armor of the Britannia Royal Zoo
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-			
-            writer.Write((int)0); // version
-        }
+		public RoyalZooLeatherGloves(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-			
-            int version = reader.ReadInt();
-        }
-    }
+		public override int LabelNumber
+		{
+			get { return 1073222; }
+		} // Leather Armor of the Britannia Royal Zoo
+		public override int BasePhysicalResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseFireResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return 10; }
+		}
+		public override int BasePoisonResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseEnergyResistance
+		{
+			get { return 10; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-    public class RoyalZooLeatherGorget : LeatherGorget
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
+
+	public class RoyalZooLeatherGorget : LeatherGorget
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public RoyalZooLeatherGorget()
-            : base()
-        {
-            Hue = 0x109;	
-            Attributes.BonusMana = 3;
-            Attributes.RegenStam = 3;
-            Attributes.ReflectPhysical = 10;
-            Attributes.LowerRegCost = 15;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public RoyalZooLeatherGorget(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public RoyalZooLeatherGorget()
+			: base()
+		{
+			Hue = 0x109;
+			Attributes.BonusMana = 3;
+			Attributes.RegenStam = 3;
+			Attributes.ReflectPhysical = 10;
+			Attributes.LowerRegCost = 15;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073222;
-            }
-        }// Leather Armor of the Britannia Royal Zoo
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-			
-            writer.Write((int)0); // version
-        }
+		public RoyalZooLeatherGorget(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-			
-            int version = reader.ReadInt();
-        }
-    }
+		public override int LabelNumber
+		{
+			get { return 1073222; }
+		} // Leather Armor of the Britannia Royal Zoo
+		public override int BasePhysicalResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseFireResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return 10; }
+		}
+		public override int BasePoisonResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseEnergyResistance
+		{
+			get { return 10; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-    public class RoyalZooLeatherArms : LeatherArms
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
+
+	public class RoyalZooLeatherArms : LeatherArms
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public RoyalZooLeatherArms()
-            : base()
-        {
-            Hue = 0x109;	
-            Attributes.BonusMana = 3;
-            Attributes.RegenStam = 3;
-            Attributes.ReflectPhysical = 10;
-            Attributes.LowerRegCost = 15;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public RoyalZooLeatherArms(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public RoyalZooLeatherArms()
+			: base()
+		{
+			Hue = 0x109;
+			Attributes.BonusMana = 3;
+			Attributes.RegenStam = 3;
+			Attributes.ReflectPhysical = 10;
+			Attributes.LowerRegCost = 15;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073222;
-            }
-        }// Leather Armor of the Britannia Royal Zoo
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-			
-            writer.Write((int)0); // version
-        }
+		public RoyalZooLeatherArms(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-			
-            int version = reader.ReadInt();
-        }
-    }
+		public override int LabelNumber
+		{
+			get { return 1073222; }
+		} // Leather Armor of the Britannia Royal Zoo
+		public override int BasePhysicalResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseFireResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return 10; }
+		}
+		public override int BasePoisonResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseEnergyResistance
+		{
+			get { return 10; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-    public class RoyalZooLeatherChest : LeatherChest
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
+
+	public class RoyalZooLeatherChest : LeatherChest
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public RoyalZooLeatherChest()
-            : base()
-        {
-            Hue = 0x109;	
-            Attributes.BonusMana = 3;
-            Attributes.RegenStam = 3;
-            Attributes.ReflectPhysical = 10;
-            Attributes.LowerRegCost = 15;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public RoyalZooLeatherChest(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public RoyalZooLeatherChest()
+			: base()
+		{
+			Hue = 0x109;
+			Attributes.BonusMana = 3;
+			Attributes.RegenStam = 3;
+			Attributes.ReflectPhysical = 10;
+			Attributes.LowerRegCost = 15;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073222;
-            }
-        }// Leather Armor of the Britannia Royal Zoo
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-			
-            writer.Write((int)0); // version
-        }
+		public RoyalZooLeatherChest(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-			
-            int version = reader.ReadInt();
-        }
-    }
+		public override int LabelNumber
+		{
+			get { return 1073222; }
+		} // Leather Armor of the Britannia Royal Zoo
+		public override int BasePhysicalResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseFireResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return 10; }
+		}
+		public override int BasePoisonResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseEnergyResistance
+		{
+			get { return 10; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-    public class RoyalZooLeatherFemaleChest : FemaleLeatherChest
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
+
+	public class RoyalZooLeatherFemaleChest : FemaleLeatherChest
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public RoyalZooLeatherFemaleChest()
-            : base()
-        {
-            Hue = 0x109;	
-            Attributes.BonusMana = 3;
-            Attributes.RegenStam = 3;
-            Attributes.ReflectPhysical = 10;
-            Attributes.LowerRegCost = 15;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public RoyalZooLeatherFemaleChest(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public RoyalZooLeatherFemaleChest()
+			: base()
+		{
+			Hue = 0x109;
+			Attributes.BonusMana = 3;
+			Attributes.RegenStam = 3;
+			Attributes.ReflectPhysical = 10;
+			Attributes.LowerRegCost = 15;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073222;
-            }
-        }// Leather Armor of the Britannia Royal Zoo
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-			
-            writer.Write((int)0); // version
-        }
+		public RoyalZooLeatherFemaleChest(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-			
-            int version = reader.ReadInt();
-        }
-    }
+		public override int LabelNumber
+		{
+			get { return 1073222; }
+		} // Leather Armor of the Britannia Royal Zoo
+		public override int BasePhysicalResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseFireResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return 10; }
+		}
+		public override int BasePoisonResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseEnergyResistance
+		{
+			get { return 10; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

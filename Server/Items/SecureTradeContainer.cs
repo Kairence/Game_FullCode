@@ -9,7 +9,10 @@ namespace Server.Items
 	{
 		private readonly SecureTrade m_Trade;
 
-		public SecureTrade Trade { get { return m_Trade; } }
+		public SecureTrade Trade
+		{
+			get { return m_Trade; }
+		}
 
 		public SecureTradeContainer(SecureTrade trade)
 			: base(0x1E5E)
@@ -17,14 +20,20 @@ namespace Server.Items
 			m_Trade = trade;
 			Movable = false;
 
-            Layer = Layer.SecureTrade;
+			Layer = Layer.SecureTrade;
 		}
 
 		public SecureTradeContainer(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
-		public override bool CheckHold(Mobile m, Item item, bool message, bool checkItems, int plusItems, int plusWeight)
+		public override bool CheckHold(
+			Mobile m,
+			Item item,
+			bool message,
+			bool checkItems,
+			int plusItems,
+			int plusWeight
+		)
 		{
 			if (item == Trade.From.VirtualCheck || item == Trade.To.VirtualCheck)
 			{

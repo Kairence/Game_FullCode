@@ -1,6 +1,5 @@
 #region References
 using System.Collections.Generic;
-
 using Server.Items;
 #endregion
 
@@ -25,11 +24,16 @@ namespace Server.Mobiles
 		}
 
 		public IronWorker(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
-		public override VendorShoeType ShoeType { get { return VendorShoeType.None; } }
-		protected override List<SBInfo> SBInfos { get { return m_SBInfos; } }
+		public override VendorShoeType ShoeType
+		{
+			get { return VendorShoeType.None; }
+		}
+		protected override List<SBInfo> SBInfos
+		{
+			get { return m_SBInfos; }
+		}
 
 		public override void InitSBInfo()
 		{
@@ -70,9 +74,9 @@ namespace Server.Mobiles
 				case 2:
 					AddItem(new Bandana(Utility.RandomBrightHue()));
 					break;
-                case 3:
-                    AddItem(new Bascinet());
-                    break;
+				case 3:
+					AddItem(new Bascinet());
+					break;
 			}
 
 			if (item == null)
@@ -82,7 +86,7 @@ namespace Server.Mobiles
 
 			AddItem(new SmithHammer());
 
-            base.InitOutfit();
+			base.InitOutfit();
 
 			item = FindItemOnLayer(Layer.Pants);
 

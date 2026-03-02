@@ -2,46 +2,39 @@ using System;
 
 namespace Server.Items
 {
-    public class TotalExplosionPotion : BaseExplosionPotion
-    {
-        [Constructable]
-        public TotalExplosionPotion()
-            : base(PotionEffect.ExplosionGreater)
-        {
+	public class TotalExplosionPotion : BaseExplosionPotion
+	{
+		[Constructable]
+		public TotalExplosionPotion()
+			: base(PotionEffect.ExplosionGreater)
+		{
 			Name = "최상급 폭발 물약";
-        }
+		}
 
-        public TotalExplosionPotion(Serial serial)
-            : base(serial)
-        {
-        }
+		public TotalExplosionPotion(Serial serial)
+			: base(serial) { }
 
-        public override int MinDamage
-        {
-            get
-            {
-                return 260;
-            }
-        }
-        public override int MaxDamage
-        {
-            get
-            {
-                return 310;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int MinDamage
+		{
+			get { return 260; }
+		}
+		public override int MaxDamage
+		{
+			get { return 310; }
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

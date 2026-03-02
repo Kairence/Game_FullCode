@@ -2,115 +2,110 @@ using System;
 
 namespace Server.Items
 {
-    public interface ICaddelliteTool
-    {
-    }
+	public interface ICaddelliteTool { }
 
-    public class CaddellitePickaxe : Pickaxe, ICaddelliteTool
-    {
-        public override int LabelNumber { get { return 1158689; } } // Caddellite Pickaxe
+	public class CaddellitePickaxe : Pickaxe, ICaddelliteTool
+	{
+		public override int LabelNumber
+		{
+			get { return 1158689; }
+		} // Caddellite Pickaxe
 
-        [Constructable]
-        public CaddellitePickaxe()
-        {
-        }
+		[Constructable]
+		public CaddellitePickaxe() { }
 
-        public CaddellitePickaxe(Serial serial)
-            : base(serial)
-        {
-        }
+		public CaddellitePickaxe(Serial serial)
+			: base(serial) { }
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-            list.Add(1158692); // * Can Harvest Caddellite Infused Resources in the Lost Lands *
-        }
-        
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			list.Add(1158692); // * Can Harvest Caddellite Infused Resources in the Lost Lands *
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class CaddelliteHatchet : Hatchet, ICaddelliteTool
-    {
-        public override int LabelNumber { get { return 1158690; } } // Caddellite Hatchet
+			int version = reader.ReadInt();
+		}
+	}
 
-        [Constructable]
-        public CaddelliteHatchet()
-        {
-        }
+	public class CaddelliteHatchet : Hatchet, ICaddelliteTool
+	{
+		public override int LabelNumber
+		{
+			get { return 1158690; }
+		} // Caddellite Hatchet
 
-        public CaddelliteHatchet(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public CaddelliteHatchet() { }
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+		public CaddelliteHatchet(Serial serial)
+			: base(serial) { }
 
-            list.Add(1158692); // * Can Harvest Caddellite Infused Resources in the Lost Lands *
-        }
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			list.Add(1158692); // * Can Harvest Caddellite Infused Resources in the Lost Lands *
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class CaddelliteFishingPole : FishingPole, ICaddelliteTool
-    {
-        public override int LabelNumber { get { return 1158691; } } // Caddellite Fishing Pole
+			int version = reader.ReadInt();
+		}
+	}
 
-        [Constructable]
-        public CaddelliteFishingPole()
-        {
-        }
+	public class CaddelliteFishingPole : FishingPole, ICaddelliteTool
+	{
+		public override int LabelNumber
+		{
+			get { return 1158691; }
+		} // Caddellite Fishing Pole
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+		[Constructable]
+		public CaddelliteFishingPole() { }
 
-            list.Add(1158692); // * Can Harvest Caddellite Infused Resources in the Lost Lands *
-        }
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-        public CaddelliteFishingPole(Serial serial)
-            : base(serial)
-        {
-        }
+			list.Add(1158692); // * Can Harvest Caddellite Infused Resources in the Lost Lands *
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public CaddelliteFishingPole(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

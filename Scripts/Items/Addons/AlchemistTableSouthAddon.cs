@@ -2,80 +2,67 @@ using System;
 
 namespace Server.Items
 {
-    public class AlchemistTableSouthAddon : BaseAddon
-    {
-        [Constructable]
-        public AlchemistTableSouthAddon()
-        {
-            AddComponent(new AddonComponent(0x3079), 0, 0, 0);
-            AddComponent(new AddonComponent(0x307A), -1, 0, 0);
-        }
+	public class AlchemistTableSouthAddon : BaseAddon
+	{
+		[Constructable]
+		public AlchemistTableSouthAddon()
+		{
+			AddComponent(new AddonComponent(0x3079), 0, 0, 0);
+			AddComponent(new AddonComponent(0x307A), -1, 0, 0);
+		}
 
-        public AlchemistTableSouthAddon(Serial serial)
-            : base(serial)
-        {
-        }
+		public AlchemistTableSouthAddon(Serial serial)
+			: base(serial) { }
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new AlchemistTableSouthDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override BaseAddonDeed Deed
+		{
+			get { return new AlchemistTableSouthDeed(); }
+		}
 
-            writer.WriteEncodedInt(1); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(1); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class AlchemistTableSouthDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public AlchemistTableSouthDeed()
-        {
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public AlchemistTableSouthDeed(Serial serial)
-            : base(serial)
-        {
-        }
+	public class AlchemistTableSouthDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public AlchemistTableSouthDeed() { }
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new AlchemistTableSouthAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073396;
-            }
-        }// alchemist table (south)
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public AlchemistTableSouthDeed(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override BaseAddon Addon
+		{
+			get { return new AlchemistTableSouthAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1073396; }
+		} // alchemist table (south)
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

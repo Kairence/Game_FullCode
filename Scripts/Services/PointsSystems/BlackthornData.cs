@@ -1,115 +1,141 @@
 using System;
-using Server;
 using System.Collections.Generic;
+using Server;
+using Server.Engines.ResortAndCasino;
 using Server.Items;
 using Server.Mobiles;
-using Server.Engines.ResortAndCasino;
 
 namespace Server.Engines.Points
 {
-    public class BlackthornData : PointsSystem
-    {
-        public override PointsType Loyalty { get { return PointsType.Blackthorn; } }
-        public override TextDefinition Name { get { return m_Name; } }
-        public override bool AutoAdd { get { return true; } }
-        public override double MaxPoints { get { return double.MaxValue; } }
-        public override bool ShowOnLoyaltyGump { get { return false; } }
+	public class BlackthornData : PointsSystem
+	{
+		public override PointsType Loyalty
+		{
+			get { return PointsType.Blackthorn; }
+		}
+		public override TextDefinition Name
+		{
+			get { return m_Name; }
+		}
+		public override bool AutoAdd
+		{
+			get { return true; }
+		}
+		public override double MaxPoints
+		{
+			get { return double.MaxValue; }
+		}
+		public override bool ShowOnLoyaltyGump
+		{
+			get { return false; }
+		}
 
-        private TextDefinition m_Name = null;
+		private TextDefinition m_Name = null;
 
-        public BlackthornData()
-        {
-            DungeonPoints = new Dictionary<Mobile, int>();
-        }
+		public BlackthornData()
+		{
+			DungeonPoints = new Dictionary<Mobile, int>();
+		}
 
-        public override void SendMessage(PlayerMobile from, double old, double points, bool quest)
-        {
-            from.SendLocalizedMessage(1154518, ((int)points).ToString()); // You have turned in ~1_COUNT~ artifacts bearing the crest of Minax.            
-        }
+		public override void SendMessage(PlayerMobile from, double old, double points, bool quest)
+		{
+			from.SendLocalizedMessage(1154518, ((int)points).ToString()); // You have turned in ~1_COUNT~ artifacts bearing the crest of Minax.
+		}
 
-        public override void ProcessKill(Mobile victim, Mobile damager)
-        {
-            var bc = victim as BaseCreature;
+		public override void ProcessKill(Mobile victim, Mobile damager)
+		{
+			var bc = victim as BaseCreature;
 
-            if (bc == null || bc.Controlled || bc.Summoned || !damager.Alive || damager.Deleted)
-                return;
-        
-            Region r = bc.Region;
+			if (bc == null || bc.Controlled || bc.Summoned || !damager.Alive || damager.Deleted)
+				return;
 
-            if (damager is PlayerMobile && r.IsPartOf("BlackthornDungeon"))
-            {
-                if (!DungeonPoints.ContainsKey(damager))
-                    DungeonPoints[damager] = 0;
+			Region r = bc.Region;
 
-                int fame = bc.Fame / 2;
-                int luck = Math.Max(0, ((PlayerMobile)damager).RealLuck);
+			if (damager is PlayerMobile && r.IsPartOf("BlackthornDungeon"))
+			{
+				if (!DungeonPoints.ContainsKey(damager))
+					DungeonPoints[damager] = 0;
 
-                DungeonPoints[damager] += (int)(fame * (1 + Math.Sqrt(luck) / 100));
+				int fame = bc.Fame / 2;
+				int luck = Math.Max(0, ((PlayerMobile)damager).RealLuck);
 
-                int x = DungeonPoints[damager];
-                const double A = 0.000863316841;
-                const double B = 0.00000425531915;
+				DungeonPoints[damager] += (int)(fame * (1 + Math.Sqrt(luck) / 100));
 
-                double chance = A * Math.Pow(10, B * x);
+				int x = DungeonPoints[damager];
+				const double A = 0.000863316841;
+				const double B = 0.00000425531915;
 
-                if (chance > Utility.RandomDouble())
-                {
-                    Item i = Loot.RandomArmorOrShieldOrWeaponOrJewelry(LootPackEntry.IsInTokuno(bc), LootPackEntry.IsMondain(bc), LootPackEntry.IsStygian(bc));
+				double chance = A * Math.Pow(10, B * x);
 
-                    if (i != null)
-                    {
-                        RunicReforging.GenerateRandomItem(i, damager, Math.Max(100, RunicReforging.GetDifficultyFor(bc)), RunicReforging.GetLuckForKiller(bc), ReforgedPrefix.None, ReforgedSuffix.Minax);
+				if (chance > Utility.RandomDouble())
+				{
+					Item i = Loot.RandomArmorOrShieldOrWeaponOrJewelry(
+						LootPackEntry.IsInTokuno(bc),
+						LootPackEntry.IsMondain(bc),
+						LootPackEntry.IsStygian(bc)
+					);
 
-                        damager.PlaySound(0x5B4);
-                        damager.SendLocalizedMessage(1062317); // For your valor in combating the fallen beast, a special artifact has been bestowed on you.
+					if (i != null)
+					{
+						RunicReforging.GenerateRandomItem(
+							i,
+							damager,
+							Math.Max(100, RunicReforging.GetDifficultyFor(bc)),
+							RunicReforging.GetLuckForKiller(bc),
+							ReforgedPrefix.None,
+							ReforgedSuffix.Minax
+						);
 
-                        if (!damager.PlaceInBackpack(i))
-                        {
-                            if (damager.BankBox != null && damager.BankBox.TryDropItem(damager, i, false))
-                                damager.SendLocalizedMessage(1079730); // The item has been placed into your bank box.
-                            else
-                            {
-                                damager.SendLocalizedMessage(1072523); // You find an artifact, but your backpack and bank are too full to hold it.
-                                i.MoveToWorld(damager.Location, damager.Map);
-                            }
-                        }
+						damager.PlaySound(0x5B4);
+						damager.SendLocalizedMessage(1062317); // For your valor in combating the fallen beast, a special artifact has been bestowed on you.
 
-                        DungeonPoints.Remove(damager);
-                    }
-                }
-            }
-        }
+						if (!damager.PlaceInBackpack(i))
+						{
+							if (damager.BankBox != null && damager.BankBox.TryDropItem(damager, i, false))
+								damager.SendLocalizedMessage(1079730); // The item has been placed into your bank box.
+							else
+							{
+								damager.SendLocalizedMessage(1072523); // You find an artifact, but your backpack and bank are too full to hold it.
+								i.MoveToWorld(damager.Location, damager.Map);
+							}
+						}
 
-        public Dictionary<Mobile, int> DungeonPoints { get; set; }
+						DungeonPoints.Remove(damager);
+					}
+				}
+			}
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write(0);
+		public Dictionary<Mobile, int> DungeonPoints { get; set; }
 
-            writer.Write(DungeonPoints.Count);
-            foreach (KeyValuePair<Mobile, int> kvp in DungeonPoints)
-            {
-                writer.Write(kvp.Key);
-                writer.Write(kvp.Value);
-            }
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write(0);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write(DungeonPoints.Count);
+			foreach (KeyValuePair<Mobile, int> kvp in DungeonPoints)
+			{
+				writer.Write(kvp.Key);
+				writer.Write(kvp.Value);
+			}
+		}
 
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int count = reader.ReadInt();
-            for (int i = 0; i < count; i++)
-            {
-                Mobile m = reader.ReadMobile();
-                int points = reader.ReadInt();
+			int version = reader.ReadInt();
 
-                if (m != null && points > 0)
-                    DungeonPoints[m] = points;
-            }
-        }
-    }
+			int count = reader.ReadInt();
+			for (int i = 0; i < count; i++)
+			{
+				Mobile m = reader.ReadMobile();
+				int points = reader.ReadInt();
+
+				if (m != null && points > 0)
+					DungeonPoints[m] = points;
+			}
+		}
+	}
 }

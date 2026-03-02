@@ -2,45 +2,39 @@ using System;
 
 namespace Server.Items
 {
-    public class AquariumMessage : MessageInABottle
-    {
-        [Constructable]
-        public AquariumMessage()
-            : base()
-        {
-        }
+	public class AquariumMessage : MessageInABottle
+	{
+		[Constructable]
+		public AquariumMessage()
+			: base() { }
 
-        public AquariumMessage(Serial serial)
-            : base(serial)
-        {
-        }
+		public AquariumMessage(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073894;
-            }
-        }// Message in a Bottle
-        public override void AddNameProperties(ObjectPropertyList list)
-        {
-            base.AddNameProperties(list);
+		public override int LabelNumber
+		{
+			get { return 1073894; }
+		} // Message in a Bottle
 
-            list.Add(1073634); // An aquarium decoration
-        }
+		public override void AddNameProperties(ObjectPropertyList list)
+		{
+			base.AddNameProperties(list);
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			list.Add(1073634); // An aquarium decoration
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

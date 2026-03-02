@@ -29,20 +29,19 @@ namespace Server.Items
 			AddComponent(new AddonComponent(0x4286), +3, +3, 0);
 		}
 
-		public RoyalSoulForge( Serial serial ) : base( serial )
+		public RoyalSoulForge(Serial serial)
+			: base(serial) { }
+
+		public override void Serialize(GenericWriter writer)
 		{
+			base.Serialize(writer);
+
+			writer.WriteEncodedInt((int)0); // version
 		}
 
-		public override void Serialize( GenericWriter writer )
+		public override void Deserialize(GenericReader reader)
 		{
-			base.Serialize( writer );
-
-			writer.WriteEncodedInt( (int) 0 ); // version
-		}
-
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
+			base.Deserialize(reader);
 
 			int version = reader.ReadEncodedInt();
 		}

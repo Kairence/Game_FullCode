@@ -9,7 +9,10 @@ namespace Server.Mobiles
 	[CorpseName("an orcish corpse")]
 	public class OrcScout : BaseCreature
 	{
-        public override double HealChance { get { return 1.0; } }
+		public override double HealChance
+		{
+			get { return 1.0; }
+		}
 
 		[Constructable]
 		public OrcScout()
@@ -27,7 +30,7 @@ namespace Server.Mobiles
 			SetStam(2000);
 			SetMana(130, 160);
 
-			SetAttackSpeed( 0.5 );
+			SetAttackSpeed(0.5);
 			SetDamage(6, 22);
 
 			SetDamageType(ResistanceType.Physical, 100);
@@ -55,18 +58,35 @@ namespace Server.Mobiles
 		}
 
 		public OrcScout(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
-		public override bool CanRummageCorpses { get { return true; } }
-        public override bool CanStealth { get { return true; } }
-		public override int Meat { get { return 1; } }
+		public override bool CanRummageCorpses
+		{
+			get { return true; }
+		}
+		public override bool CanStealth
+		{
+			get { return true; }
+		}
+		public override int Meat
+		{
+			get { return 1; }
+		}
 
-		public override InhumanSpeech SpeechType { get { return InhumanSpeech.Orc; } }
-		public override OppositionGroup OppositionGroup { get { return OppositionGroup.SavagesAndOrcs; } }
-        public override TribeType Tribe { get { return TribeType.Orc; } }
+		public override InhumanSpeech SpeechType
+		{
+			get { return InhumanSpeech.Orc; }
+		}
+		public override OppositionGroup OppositionGroup
+		{
+			get { return OppositionGroup.SavagesAndOrcs; }
+		}
+		public override TribeType Tribe
+		{
+			get { return TribeType.Orc; }
+		}
+
 		public override void GenerateLoot()
-
 		{
 			AddLoot(LootPack.Rich);
 		}
@@ -95,33 +115,39 @@ namespace Server.Mobiles
 				aggressor.PlaySound(0x307);
 			}
 		}
-        private void HideSelf()
-        {
-            if (Core.TickCount >= this.NextSkillTime)
-            {
-                Effects.SendLocationParticles(
-                    EffectItem.Create(this.Location, this.Map, EffectItem.DefaultDuration), 0x3728, 10, 10, 2023);
 
-                this.PlaySound(0x22F);
-                this.Hidden = true;
+		private void HideSelf()
+		{
+			if (Core.TickCount >= this.NextSkillTime)
+			{
+				Effects.SendLocationParticles(
+					EffectItem.Create(this.Location, this.Map, EffectItem.DefaultDuration),
+					0x3728,
+					10,
+					10,
+					2023
+				);
 
-                this.UseSkill(SkillName.Stealth);
-            }
-        }
+				this.PlaySound(0x22F);
+				this.Hidden = true;
+
+				this.UseSkill(SkillName.Stealth);
+			}
+		}
 
 		public override void OnThink()
 		{
 			TryToDetectHidden();
-            if (!this.Alive || this.Deleted)
-            {
-                return;
-            }
+			if (!this.Alive || this.Deleted)
+			{
+				return;
+			}
 
-            if (!this.Hidden)
-            {
-                HideSelf();
-                base.OnThink();
-            }
+			if (!this.Hidden)
+			{
+				HideSelf();
+				base.OnThink();
+			}
 		}
 
 		public override void Serialize(GenericWriter writer)
@@ -138,17 +164,17 @@ namespace Server.Mobiles
 
 		private Mobile FindTarget()
 		{
-            IPooledEnumerable eable = GetMobilesInRange(10);
+			IPooledEnumerable eable = GetMobilesInRange(10);
 			foreach (Mobile m in eable)
 			{
 				if (m.Player && m.Hidden && m.IsPlayer())
 				{
-                    eable.Free();
+					eable.Free();
 					return m;
 				}
 			}
 
-            eable.Free();
+			eable.Free();
 			return null;
 		}
 

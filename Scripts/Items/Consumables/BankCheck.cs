@@ -1,62 +1,60 @@
 #region References
 using System;
-
 using Server.Accounting;
 using Server.Engines.Quests.Haven;
 using Server.Engines.Quests.Necro;
 using Server.Mobiles;
 using Server.Network;
-
 using CashBankCheckObjective = Server.Engines.Quests.Necro.CashBankCheckObjective;
 #endregion
 
 namespace Server.Items
 {
-    public static class BankCheckExtensions
-    {
-        public static int GetChecksWorth(this Container cont, bool recurse)
-        {
-            int count = 0;
+	public static class BankCheckExtensions
+	{
+		public static int GetChecksWorth(this Container cont, bool recurse)
+		{
+			int count = 0;
 
-            var items = cont.FindItemsByType(typeof(BankCheck), recurse);
-            foreach (BankCheck check in items)
-            {
-                count += check.Worth;
-            }
-            return count;
-        }
-        public static int TakeFromChecks(this Container cont, int amount, bool recurse)
-        {
-            int left = amount;
+			var items = cont.FindItemsByType(typeof(BankCheck), recurse);
+			foreach (BankCheck check in items)
+			{
+				count += check.Worth;
+			}
+			return count;
+		}
 
-            var items = cont.FindItemsByType(typeof(BankCheck), recurse);
-            foreach(BankCheck check in items)
-            {
-                if(check.Worth <= left)
-                {
-                    left -= check.Worth;
-                    check.Delete();
-                }
-                else
-                {
-                    check.Worth -= left;
-                    check.InvalidateProperties();
-                    left = 0;
-                    break;
-                }
-            }
+		public static int TakeFromChecks(this Container cont, int amount, bool recurse)
+		{
+			int left = amount;
 
-            return amount - left;
-        }
-    }
+			var items = cont.FindItemsByType(typeof(BankCheck), recurse);
+			foreach (BankCheck check in items)
+			{
+				if (check.Worth <= left)
+				{
+					left -= check.Worth;
+					check.Delete();
+				}
+				else
+				{
+					check.Worth -= left;
+					check.InvalidateProperties();
+					left = 0;
+					break;
+				}
+			}
+
+			return amount - left;
+		}
+	}
 
 	public class BankCheck : Item
 	{
 		private int m_Worth;
 
 		public BankCheck(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		[Constructable]
 		public BankCheck(int worth)
@@ -80,9 +78,15 @@ namespace Server.Items
 			}
 		}
 
-		public override bool DisplayLootType { get { return Core.AOS; } }
+		public override bool DisplayLootType
+		{
+			get { return Core.AOS; }
+		}
 
-		public override int LabelNumber { get { return 1041361; } } // A bank check
+		public override int LabelNumber
+		{
+			get { return 1041361; }
+		} // A bank check
 
 		public override void Serialize(GenericWriter writer)
 		{
@@ -198,7 +202,7 @@ namespace Server.Items
 		{
 			from.Send(
 				new MessageLocalizedAffix(
-                    from.NetState,
+					from.NetState,
 					Serial,
 					ItemID,
 					MessageType.Label,
@@ -208,7 +212,9 @@ namespace Server.Items
 					"",
 					AffixType.Append,
 					String.Concat(" ", m_Worth.ToString()),
-					"")); // A bank check:
+					""
+				)
+			); // A bank check:
 		}
 
 		public override void OnDoubleClick(Mobile from)
@@ -220,7 +226,7 @@ namespace Server.Items
 
 			if (box == null || !IsChildOf(box))
 			{
-				from.SendLocalizedMessage(AccountGold.Enabled ? 1080058 : 1047026); 
+				from.SendLocalizedMessage(AccountGold.Enabled ? 1080058 : 1047026);
 				// This must be in your backpack to use it. : That must be in your bank box to use it.
 				return;
 			}

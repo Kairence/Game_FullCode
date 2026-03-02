@@ -4,97 +4,86 @@ using Server.Mobiles;
 
 namespace Server.Items
 {
-    public class CraftableFurniture : Item, IResource, IQuality
-    {
-        public virtual bool ShowCrafterName
-        {
-            get
-            {
-                return true;
-            }
-        }
+	public class CraftableFurniture : Item, IResource, IQuality
+	{
+		public virtual bool ShowCrafterName
+		{
+			get { return true; }
+		}
 
-        private Mobile m_Crafter;
-        private CraftResource m_Resource;
-        private ItemQuality m_Quality;
+		private Mobile m_Crafter;
+		private CraftResource m_Resource;
+		private ItemQuality m_Quality;
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public ItemQuality Quality
-        {
-            get
-            {
-                return this.m_Quality;
-            }
-            set
-            {
-                this.m_Quality = value;
-                this.InvalidateProperties();
-            }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public ItemQuality Quality
+		{
+			get { return this.m_Quality; }
+			set
+			{
+				this.m_Quality = value;
+				this.InvalidateProperties();
+			}
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public CraftResource Resource
-        {
-            get
-            {
-                return this.m_Resource;
-            }
-            set
-            {
-                if (this.m_Resource != value)
-                {
-                    this.m_Resource = value;
-                    this.Hue = CraftResources.GetHue(this.m_Resource);
-					
-                    this.InvalidateProperties();
-                }
-            }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public CraftResource Resource
+		{
+			get { return this.m_Resource; }
+			set
+			{
+				if (this.m_Resource != value)
+				{
+					this.m_Resource = value;
+					this.Hue = CraftResources.GetHue(this.m_Resource);
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Mobile Crafter
-        {
-            get
-            {
-                return this.m_Crafter;
-            }
-            set
-            {
-                this.m_Crafter = value;
-                this.InvalidateProperties();
-            }
-        }
+					this.InvalidateProperties();
+				}
+			}
+		}
 
-        public virtual bool PlayerConstructed { get { return true; } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Mobile Crafter
+		{
+			get { return this.m_Crafter; }
+			set
+			{
+				this.m_Crafter = value;
+				this.InvalidateProperties();
+			}
+		}
 
-        public CraftableFurniture(int itemID)
-            : base(itemID)
-        {
-        }
+		public virtual bool PlayerConstructed
+		{
+			get { return true; }
+		}
 
-        public CraftableFurniture(Serial serial)
-            : base(serial)
-        {
-        }
-		
-        public override void AddWeightProperty(ObjectPropertyList list)
-        {
-            base.AddWeightProperty(list);
+		public CraftableFurniture(int itemID)
+			: base(itemID) { }
 
-            if (this.ShowCrafterName && this.m_Crafter != null)
+		public CraftableFurniture(Serial serial)
+			: base(serial) { }
+
+		public override void AddWeightProperty(ObjectPropertyList list)
+		{
+			base.AddWeightProperty(list);
+
+			if (this.ShowCrafterName && this.m_Crafter != null)
 				list.Add(1050043, m_Crafter.TitleName); // crafted by ~1_NAME~
 
-            if (this.m_Quality == ItemQuality.Exceptional)
-                list.Add(1060636); // exceptional
-        }
+			if (this.m_Quality == ItemQuality.Exceptional)
+				list.Add(1060636); // exceptional
+		}
 
-        public override void AddCraftedProperties(ObjectPropertyList list)
-        {
-            CraftResourceInfo info = CraftResources.IsStandard(this.m_Resource) ? null : CraftResources.GetInfo(this.m_Resource);
+		public override void AddCraftedProperties(ObjectPropertyList list)
+		{
+			CraftResourceInfo info = CraftResources.IsStandard(this.m_Resource)
+				? null
+				: CraftResources.GetInfo(this.m_Resource);
 
-            if (info != null && info.Number > 0)
-                list.Add(info.Number);
-        }
+			if (info != null && info.Number > 0)
+				list.Add(info.Number);
+		}
 
 		public override void OnSingleClick(Mobile from)
 		{
@@ -105,26 +94,26 @@ namespace Server.Items
 				LabelTo(from, 1050043, m_Crafter.TitleName); // crafted by ~1_NAME~
 			}
 		}
-        
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
 			/* The jump to verison 1000 was due to needing to insert a class in the
 			   inheritence chain for some items. We need to be certain that the new
 			   version of CraftableFurniture that handles this data will not
 			   conflict with the version numbers of the child classes.
 			 */
-            writer.Write((int)1000); // version
+			writer.Write((int)1000); // version
 
-            writer.Write((Mobile)this.m_Crafter);
-            writer.Write((int)this.m_Resource);
-            writer.Write((int)this.m_Quality);
-        }
+			writer.Write((Mobile)this.m_Crafter);
+			writer.Write((int)this.m_Resource);
+			writer.Write((int)this.m_Quality);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
 			int version = reader.PeekInt();
 
@@ -138,8 +127,7 @@ namespace Server.Items
 					break;
 				case 0:
 					// Only these two items had this base class prior to the version change
-					if(this is ElvenPodium ||
-						this is GiantReplicaAcorn)
+					if (this is ElvenPodium || this is GiantReplicaAcorn)
 					{
 						reader.ReadInt();
 						this.m_Crafter = reader.ReadMobile();
@@ -157,25 +145,34 @@ namespace Server.Items
 				default:
 					throw new ArgumentException("Unhandled version number for CraftableFurniture");
 			}
-        }
+		}
 
-        #region ICraftable
-        public virtual int OnCraft(int quality, bool makersMark, Mobile from, CraftSystem craftSystem, Type typeRes, ITool tool, CraftItem craftItem, int resHue)
-        {
-            this.Quality = (ItemQuality)quality;
+		#region ICraftable
+		public virtual int OnCraft(
+			int quality,
+			bool makersMark,
+			Mobile from,
+			CraftSystem craftSystem,
+			Type typeRes,
+			ITool tool,
+			CraftItem craftItem,
+			int resHue
+		)
+		{
+			this.Quality = (ItemQuality)quality;
 
-            if (makersMark)
-                this.Crafter = from;
+			if (makersMark)
+				this.Crafter = from;
 
-            Type resourceType = typeRes;
+			Type resourceType = typeRes;
 
-            if (resourceType == null)
-                resourceType = craftItem.Resources.GetAt(0).ItemType;
+			if (resourceType == null)
+				resourceType = craftItem.Resources.GetAt(0).ItemType;
 
-            this.Resource = CraftResources.GetFromType(resourceType);
+			this.Resource = CraftResources.GetFromType(resourceType);
 
-            return quality;
-        }
-        #endregion
-    }
+			return quality;
+		}
+		#endregion
+	}
 }

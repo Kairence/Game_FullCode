@@ -3,19 +3,24 @@ using Server;
 
 namespace Server.Items
 {
-    public class WindOfCorruption : Magerybook
+	public class WindOfCorruption : Magerybook
 	{
-		public override bool IsArtifact { get { return true; } }
-        public override int LabelNumber { get { return 1150358; } } // Wind of Corruption
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+		public override int LabelNumber
+		{
+			get { return 1150358; }
+		} // Wind of Corruption
 
-
-        [Constructable]
-        public WindOfCorruption()
-        {
+		[Constructable]
+		public WindOfCorruption()
+		{
 			//마법 치명 피해 100%, 주문 피해 50%, 체력 기력 마나 -1000
 			SuffixOption[0] = 5; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
-			
+
 			PrefixOption[11] = 45; //옵션 종류
 			SuffixOption[11] = 1000000; //옵션 값
 			PrefixOption[12] = 8; //옵션 종류
@@ -26,61 +31,65 @@ namespace Server.Items
 			SuffixOption[14] = -10000000; //옵션 값
 			PrefixOption[15] = 6; //옵션 종류
 			SuffixOption[15] = -10000000; //옵션 값
+		}
 
-        }
+		public WindOfCorruption(Serial serial)
+			: base(serial) { }
 
-        public WindOfCorruption(Serial serial)
-            : base(serial)
-        {
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+	public class WindOfCorruptionHuman : Bow
+	{
+		public override int LabelNumber
+		{
+			get { return 1150358; }
+		} // Wind of Corruption
 
-    public class WindOfCorruptionHuman : Bow
-    {
-        public override int LabelNumber { get { return 1150358; } } // Wind of Corruption
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-        public override int InitMinHits { get { return 255; } }
-        public override int InitMaxHits { get { return 255; } }
+		[Constructable]
+		public WindOfCorruptionHuman()
+		{
+			WeaponAttributes.HitLeechStam = 40;
+			Attributes.WeaponSpeed = 30;
+			Attributes.WeaponDamage = 50;
+			WeaponAttributes.HitLowerDefend = 40;
+			AosElementDamages.Chaos = 100;
+			Slayer = SlayerName.Fey;
+			Hue = 1171;
+		}
 
-        [Constructable]
-        public WindOfCorruptionHuman()
-        {
-            WeaponAttributes.HitLeechStam = 40;
-            Attributes.WeaponSpeed = 30;
-            Attributes.WeaponDamage = 50;
-            WeaponAttributes.HitLowerDefend = 40;
-            AosElementDamages.Chaos = 100;
-            Slayer = SlayerName.Fey;
-            Hue = 1171;
-        }
+		public WindOfCorruptionHuman(Serial serial)
+			: base(serial) { }
 
-        public WindOfCorruptionHuman(Serial serial)
-            : base(serial)
-        {
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
-
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 }

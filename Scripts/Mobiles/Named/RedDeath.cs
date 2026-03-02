@@ -3,99 +3,96 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    [CorpseName("a Red Death corpse")]
-    public class RedDeath : SkeletalMount
-    {
-        [Constructable]
-        public RedDeath()
-            : base("Red Death")
-        {
-            Hue = 0x21;
-            BaseSoundID = 0x1C3;
+	[CorpseName("a Red Death corpse")]
+	public class RedDeath : SkeletalMount
+	{
+		[Constructable]
+		public RedDeath()
+			: base("Red Death")
+		{
+			Hue = 0x21;
+			BaseSoundID = 0x1C3;
 
-            AI = AIType.AI_Melee;
-            FightMode = FightMode.Closest;
+			AI = AIType.AI_Melee;
+			FightMode = FightMode.Closest;
 
-            SetStr(319, 324);
-            SetDex(241, 244);
-            SetInt(242, 255);
+			SetStr(319, 324);
+			SetDex(241, 244);
+			SetInt(242, 255);
 
-            SetHits(1540, 1605);
+			SetHits(1540, 1605);
 
-            SetDamage(25, 29);
+			SetDamage(25, 29);
 
-            SetDamageType(ResistanceType.Physical, 25);
-            SetDamageType(ResistanceType.Fire, 75);
-            SetDamageType(ResistanceType.Cold, 0);
+			SetDamageType(ResistanceType.Physical, 25);
+			SetDamageType(ResistanceType.Fire, 75);
+			SetDamageType(ResistanceType.Cold, 0);
 
-            SetResistance(ResistanceType.Physical, 60, 70);
-            SetResistance(ResistanceType.Fire, 90);
-            SetResistance(ResistanceType.Cold, 0);
-            SetResistance(ResistanceType.Poison, 100);
-            SetResistance(ResistanceType.Energy, 0);
+			SetResistance(ResistanceType.Physical, 60, 70);
+			SetResistance(ResistanceType.Fire, 90);
+			SetResistance(ResistanceType.Cold, 0);
+			SetResistance(ResistanceType.Poison, 100);
+			SetResistance(ResistanceType.Energy, 0);
 
-            SetSkill(SkillName.Wrestling, 121.4, 143.7);
-            SetSkill(SkillName.Tactics, 120.9, 142.2);
-            SetSkill(SkillName.MagicResist, 120.1, 142.3);
-            SetSkill(SkillName.Anatomy, 120.2, 144.0);
+			SetSkill(SkillName.Wrestling, 121.4, 143.7);
+			SetSkill(SkillName.Tactics, 120.9, 142.2);
+			SetSkill(SkillName.MagicResist, 120.1, 142.3);
+			SetSkill(SkillName.Anatomy, 120.2, 144.0);
 
-            Fame = 28000;
-            Karma = -28000;
+			Fame = 28000;
+			Karma = -28000;
 
-            for (int i = 0; i < Utility.RandomMinMax(0, 1); i++)
-            {
-                PackItem(Loot.RandomScroll(0, Loot.ArcanistScrollTypes.Length, SpellbookType.Arcanist));
-            }
+			for (int i = 0; i < Utility.RandomMinMax(0, 1); i++)
+			{
+				PackItem(Loot.RandomScroll(0, Loot.ArcanistScrollTypes.Length, SpellbookType.Arcanist));
+			}
 
-            SetWeaponAbility(WeaponAbility.WhirlwindAttack);
-            SetSpecialAbility(SpecialAbility.DragonBreath);
-        }
+			SetWeaponAbility(WeaponAbility.WhirlwindAttack);
+			SetSpecialAbility(SpecialAbility.DragonBreath);
+		}
 
-        public RedDeath(Serial serial)
-            : base(serial)
-        {
-        }
-		public override bool CanBeParagon { get { return false; } }
-        public override bool GivesMLMinorArtifact
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override bool AlwaysMurderer
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override void GenerateLoot()
-        {
-            AddLoot(LootPack.UltraRich, 3);
-            AddLoot(LootPack.MedScrolls, 2);
-            AddLoot(LootPack.HighScrolls, 2);
-        }
+		public RedDeath(Serial serial)
+			: base(serial) { }
 
-        public override void OnDeath(Container c)
-        {
-            base.OnDeath(c);
+		public override bool CanBeParagon
+		{
+			get { return false; }
+		}
+		public override bool GivesMLMinorArtifact
+		{
+			get { return true; }
+		}
+		public override bool AlwaysMurderer
+		{
+			get { return true; }
+		}
 
-            c.DropItem(new ResolvesBridle());
-        }
+		public override void GenerateLoot()
+		{
+			AddLoot(LootPack.UltraRich, 3);
+			AddLoot(LootPack.MedScrolls, 2);
+			AddLoot(LootPack.HighScrolls, 2);
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void OnDeath(Container c)
+		{
+			base.OnDeath(c);
 
-            writer.Write((int)0); // version
-        }
+			c.DropItem(new ResolvesBridle());
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

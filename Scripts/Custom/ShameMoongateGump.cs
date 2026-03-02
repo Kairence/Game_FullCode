@@ -1,18 +1,21 @@
 using System;
 using Server;
+using Server.Commands;
+using Server.Factions;
 using Server.Gumps;
 using Server.Items;
 using Server.Mobiles;
 using Server.Network;
-using Server.Commands;
-using Server.Factions;
+
 namespace Server.Gumps
 {
 	public class ShameMoongateGump : Gump
 	{
 		private PlayerMobile m_From;
 		private ShameMoongate m_SM;
-		public ShameMoongateGump(Mobile from, ShameMoongate ss) : base(0, 0)
+
+		public ShameMoongateGump(Mobile from, ShameMoongate ss)
+			: base(0, 0)
 		{
 			m_From = (PlayerMobile)from;
 			m_SM = (ShameMoongate)ss;
@@ -22,79 +25,79 @@ namespace Server.Gumps
 
 			Resizable = false;
 
-			AddBackground( 100, 95, 200, 180, 9200 );
-			AddLabel(120, 102, 0, "½¦ÀÓ ´øÀü °ÔÀÌÆ®");
+			AddBackground(100, 95, 200, 180, 9200);
+			AddLabel(120, 102, 0, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®");
 
-			AddButton( 120, 152, 2117, 2118, 0x1, GumpButtonType.Reply, 0 ); // Okay
-			AddLabel(140, 152, 0, "½¦ÀÓ ·Îºñ - ¹«·á");
-			AddButton( 120, 182, 2117, 2118, 0x2, GumpButtonType.Reply, 0 ); // Okay
-			AddLabel(140, 182, 0, "½¦ÀÓ 3Ãþ - 2000GP");
-			AddButton( 120, 212, 2117, 2118, 0x3, GumpButtonType.Reply, 0 ); // Okay
-			AddLabel(140, 212, 0, "½¦ÀÓ 4Ãþ - 5000GP");
+			AddButton(120, 152, 2117, 2118, 0x1, GumpButtonType.Reply, 0); // Okay
+			AddLabel(140, 152, 0, "ï¿½ï¿½ï¿½ï¿½ ï¿½Îºï¿½ - ï¿½ï¿½ï¿½ï¿½");
+			AddButton(120, 182, 2117, 2118, 0x2, GumpButtonType.Reply, 0); // Okay
+			AddLabel(140, 182, 0, "ï¿½ï¿½ï¿½ï¿½ 3ï¿½ï¿½ - 2000GP");
+			AddButton(120, 212, 2117, 2118, 0x3, GumpButtonType.Reply, 0); // Okay
+			AddLabel(140, 212, 0, "ï¿½ï¿½ï¿½ï¿½ 4ï¿½ï¿½ - 5000GP");
 		}
 
-		public override void OnResponse( Server.Network.NetState sender, RelayInfo info )
+		public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
 		{
-			if ( info.ButtonID == 1)
+			if (info.ButtonID == 1)
 			{
-				if( m_From.Location != new Point3D( 5507, 162, 5 ) )
+				if (m_From.Location != new Point3D(5507, 162, 5))
 				{
-					if( m_From.Location == m_SM.Location )
+					if (m_From.Location == m_SM.Location)
 					{
-						m_From.Account.WithdrawGold( 1000 );
-						BaseCreature.TeleportPets( m_From, new Point3D( 5507, 162, 5 ), Map.Trammel );
-						m_From.MoveToWorld( new Point3D( 5507, 162, 5 ), Map.Trammel );
-						Effects.PlaySound( new Point3D( 5507, 162, 5 ), Map.Trammel, 0x1FE );
+						m_From.Account.WithdrawGold(1000);
+						BaseCreature.TeleportPets(m_From, new Point3D(5507, 162, 5), Map.Trammel);
+						m_From.MoveToWorld(new Point3D(5507, 162, 5), Map.Trammel);
+						Effects.PlaySound(new Point3D(5507, 162, 5), Map.Trammel, 0x1FE);
 					}
 					else
-						m_From.SendMessage(1161, "°ÔÀÌÆ®¿¡¼­ ³Ê¹« ¶³¾îÁ® ÀÖ½À´Ï´Ù!");
+						m_From.SendMessage(1161, "ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½!");
 				}
 				else
-					m_From.SendMessage(1161, "ÇöÀç À§Ä¡ÀÔ´Ï´Ù!");
+					m_From.SendMessage(1161, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½Ô´Ï´ï¿½!");
 			}
-			if ( info.ButtonID == 2)
+			if (info.ButtonID == 2)
 			{
-				if( m_From.Account.TotalGold >= 2000 )
+				if (m_From.Account.TotalGold >= 2000)
 				{
-					if( m_From.Location != new Point3D( 5514, 147, 25 ) )
+					if (m_From.Location != new Point3D(5514, 147, 25))
 					{
-						if( m_From.Location == m_SM.Location )
+						if (m_From.Location == m_SM.Location)
 						{
-							m_From.Account.WithdrawGold( 3000 );
-							BaseCreature.TeleportPets( m_From, new Point3D( 5514, 147, 25 ), Map.Trammel );
-							m_From.MoveToWorld( new Point3D( 5514, 147, 25 ), Map.Trammel );
-							Effects.PlaySound( new Point3D( 5514, 147, 25 ), Map.Trammel, 0x1FE );
+							m_From.Account.WithdrawGold(3000);
+							BaseCreature.TeleportPets(m_From, new Point3D(5514, 147, 25), Map.Trammel);
+							m_From.MoveToWorld(new Point3D(5514, 147, 25), Map.Trammel);
+							Effects.PlaySound(new Point3D(5514, 147, 25), Map.Trammel, 0x1FE);
 						}
 						else
-							m_From.SendMessage(1161, "°ÔÀÌÆ®¿¡¼­ ³Ê¹« ¶³¾îÁ® ÀÖ½À´Ï´Ù!");
+							m_From.SendMessage(1161, "ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½!");
 					}
 					else
-						m_From.SendMessage(1161, "ÇöÀç À§Ä¡ÀÔ´Ï´Ù!");
-				}					
-				else
-					m_From.SendMessage(1161, "3ÃþÀ» °¡±â À§ÇØ¼­´Â 2000°ñµå ÀÌ»ó ÇÊ¿äÇÕ´Ï´Ù!");
-			}
-			if ( info.ButtonID == 3)
-			{
-				if( m_From.Account.TotalGold >= 5000 )
-				{
-					if( m_From.Location != new Point3D( 5875, 19, -5 ) )
-					{
-						if( m_From.Location == m_SM.Location )
-						{
-							m_From.Account.WithdrawGold( 5000 );
-							BaseCreature.TeleportPets( m_From, new Point3D( 5875, 19, -5 ), Map.Trammel );
-							m_From.MoveToWorld( new Point3D( 5875, 19, -5 ), Map.Trammel );
-							Effects.PlaySound( new Point3D( 5875, 19, -5 ), Map.Trammel, 0x1FE );
-						}
-						else
-							m_From.SendMessage(1161, "°ÔÀÌÆ®¿¡¼­ ³Ê¹« ¶³¾îÁ® ÀÖ½À´Ï´Ù!");
-					}
-					else
-						m_From.SendMessage(1161, "ÇöÀç À§Ä¡ÀÔ´Ï´Ù!");
+						m_From.SendMessage(1161, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½Ô´Ï´ï¿½!");
 				}
 				else
-					m_From.SendMessage(1161, "4ÃþÀ» °¡±â À§ÇØ¼­´Â 5000°ñµå ÀÌ»ó ÇÊ¿äÇÕ´Ï´Ù!");
+					m_From.SendMessage(1161, "3ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ï¿½ï¿½ 2000ï¿½ï¿½ï¿½ ï¿½Ì»ï¿½ ï¿½Ê¿ï¿½ï¿½Õ´Ï´ï¿½!");
+			}
+			if (info.ButtonID == 3)
+			{
+				if (m_From.Account.TotalGold >= 5000)
+				{
+					if (m_From.Location != new Point3D(5875, 19, -5))
+					{
+						if (m_From.Location == m_SM.Location)
+						{
+							m_From.Account.WithdrawGold(5000);
+							BaseCreature.TeleportPets(m_From, new Point3D(5875, 19, -5), Map.Trammel);
+							m_From.MoveToWorld(new Point3D(5875, 19, -5), Map.Trammel);
+							Effects.PlaySound(new Point3D(5875, 19, -5), Map.Trammel, 0x1FE);
+						}
+						else
+							m_From.SendMessage(1161, "ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½!");
+					}
+					else
+						m_From.SendMessage(1161, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½Ô´Ï´ï¿½!");
+				}
+				else
+					m_From.SendMessage(1161, "4ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ï¿½ï¿½ 5000ï¿½ï¿½ï¿½ ï¿½Ì»ï¿½ ï¿½Ê¿ï¿½ï¿½Õ´Ï´ï¿½!");
 			}
 		}
 	}

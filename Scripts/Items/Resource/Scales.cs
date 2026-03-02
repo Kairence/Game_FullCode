@@ -2,320 +2,284 @@ using System;
 
 namespace Server.Items
 {
-    public abstract class BaseScales : Item, ICommodity
-    {
-        protected virtual CraftResource DefaultResource { get { return CraftResource.RedScales; } }
+	public abstract class BaseScales : Item, ICommodity
+	{
+		protected virtual CraftResource DefaultResource
+		{
+			get { return CraftResource.RedScales; }
+		}
 
-        private CraftResource m_Resource;
-        public BaseScales(CraftResource resource)
-            : this(resource, 1)
-        {
-        }
+		private CraftResource m_Resource;
 
-        public BaseScales(CraftResource resource, int amount)
-            : base(0x26B4)
-        {
-            this.Stackable = true;
-            this.Amount = amount;
-            this.Hue = CraftResources.GetHue(resource);
+		public BaseScales(CraftResource resource)
+			: this(resource, 1) { }
 
-            this.m_Resource = resource;
-        }
+		public BaseScales(CraftResource resource, int amount)
+			: base(0x26B4)
+		{
+			this.Stackable = true;
+			this.Amount = amount;
+			this.Hue = CraftResources.GetHue(resource);
 
-        public BaseScales(Serial serial)
-            : base(serial)
-        {
-        }
+			this.m_Resource = resource;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1053139;
-            }
-        }// dragon scales
-        [CommandProperty(AccessLevel.GameMaster)]
-        public CraftResource Resource
-        {
-            get
-            {
-                return this.m_Resource;
-            }
-            set
-            {
-                this.m_Resource = value;
-                this.InvalidateProperties();
-            }
-        }
-        public override double DefaultWeight
-        {
-            get
-            {
-                return 0.1;
-            }
-        }
-        TextDefinition ICommodity.Description
-        {
-            get
-            {
-                return this.LabelNumber;
-            }
-        }
-        bool ICommodity.IsDeedable
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public BaseScales(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
+		public override int LabelNumber
+		{
+			get { return 1053139; }
+		} // dragon scales
 
-            writer.Write((int)this.m_Resource);
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public CraftResource Resource
+		{
+			get { return this.m_Resource; }
+			set
+			{
+				this.m_Resource = value;
+				this.InvalidateProperties();
+			}
+		}
+		public override double DefaultWeight
+		{
+			get { return 0.1; }
+		}
+		TextDefinition ICommodity.Description
+		{
+			get { return this.LabelNumber; }
+		}
+		bool ICommodity.IsDeedable
+		{
+			get { return true; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
+			writer.Write((int)0); // version
 
-            switch (version)
-            {
-                case 1: // Reset from Resource System
-                    this.m_Resource = this.DefaultResource;
-                    reader.ReadString();
-                    break;
-                case 0:
-                    {
-                        this.m_Resource = (CraftResource)reader.ReadInt();
-                        break;
-                    }
-            }
-        }
-    }
+			writer.Write((int)this.m_Resource);
+		}
 
-    public class RedScales : BaseScales
-    {
-        [Constructable]
-        public RedScales()
-            : this(1)
-        {
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        [Constructable]
-        public RedScales(int amount)
-            : base(CraftResource.RedScales, amount)
-        {
-        }
+			int version = reader.ReadInt();
 
-        public RedScales(Serial serial)
-            : base(serial)
-        {
-        }
+			switch (version)
+			{
+				case 1: // Reset from Resource System
+					this.m_Resource = this.DefaultResource;
+					reader.ReadString();
+					break;
+				case 0:
+				{
+					this.m_Resource = (CraftResource)reader.ReadInt();
+					break;
+				}
+			}
+		}
+	}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+	public class RedScales : BaseScales
+	{
+		[Constructable]
+		public RedScales()
+			: this(1) { }
 
-            writer.Write((int)0); // version
-        }
+		[Constructable]
+		public RedScales(int amount)
+			: base(CraftResource.RedScales, amount) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public RedScales(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-    public class YellowScales : BaseScales
-    {
-        protected override CraftResource DefaultResource { get { return CraftResource.YellowScales; } }
+			writer.Write((int)0); // version
+		}
 
-        [Constructable]
-        public YellowScales()
-            : this(1)
-        {
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        [Constructable]
-        public YellowScales(int amount)
-            : base(CraftResource.YellowScales, amount)
-        {
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public YellowScales(Serial serial)
-            : base(serial)
-        {
-        }
+	public class YellowScales : BaseScales
+	{
+		protected override CraftResource DefaultResource
+		{
+			get { return CraftResource.YellowScales; }
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		[Constructable]
+		public YellowScales()
+			: this(1) { }
 
-            writer.Write((int)0); // version
-        }
+		[Constructable]
+		public YellowScales(int amount)
+			: base(CraftResource.YellowScales, amount) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public YellowScales(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-    public class BlackScales : BaseScales
-    {
-        protected override CraftResource DefaultResource { get { return CraftResource.BlackScales; } }
+			writer.Write((int)0); // version
+		}
 
-        [Constructable]
-        public BlackScales()
-            : this(1)
-        {
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        [Constructable]
-        public BlackScales(int amount)
-            : base(CraftResource.BlackScales, amount)
-        {
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public BlackScales(Serial serial)
-            : base(serial)
-        {
-        }
+	public class BlackScales : BaseScales
+	{
+		protected override CraftResource DefaultResource
+		{
+			get { return CraftResource.BlackScales; }
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		[Constructable]
+		public BlackScales()
+			: this(1) { }
 
-            writer.Write((int)0); // version
-        }
+		[Constructable]
+		public BlackScales(int amount)
+			: base(CraftResource.BlackScales, amount) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public BlackScales(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-    public class GreenScales : BaseScales
-    {
-        protected override CraftResource DefaultResource { get { return CraftResource.GreenScales; } }
+			writer.Write((int)0); // version
+		}
 
-        [Constructable]
-        public GreenScales()
-            : this(1)
-        {
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        [Constructable]
-        public GreenScales(int amount)
-            : base(CraftResource.GreenScales, amount)
-        {
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public GreenScales(Serial serial)
-            : base(serial)
-        {
-        }
+	public class GreenScales : BaseScales
+	{
+		protected override CraftResource DefaultResource
+		{
+			get { return CraftResource.GreenScales; }
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		[Constructable]
+		public GreenScales()
+			: this(1) { }
 
-            writer.Write((int)0); // version
-        }
+		[Constructable]
+		public GreenScales(int amount)
+			: base(CraftResource.GreenScales, amount) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public GreenScales(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-    public class WhiteScales : BaseScales
-    {
-        protected override CraftResource DefaultResource { get { return CraftResource.WhiteScales; } }
+			writer.Write((int)0); // version
+		}
 
-        [Constructable]
-        public WhiteScales()
-            : this(1)
-        {
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        [Constructable]
-        public WhiteScales(int amount)
-            : base(CraftResource.WhiteScales, amount)
-        {
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public WhiteScales(Serial serial)
-            : base(serial)
-        {
-        }
+	public class WhiteScales : BaseScales
+	{
+		protected override CraftResource DefaultResource
+		{
+			get { return CraftResource.WhiteScales; }
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		[Constructable]
+		public WhiteScales()
+			: this(1) { }
 
-            writer.Write((int)0); // version
-        }
+		[Constructable]
+		public WhiteScales(int amount)
+			: base(CraftResource.WhiteScales, amount) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public WhiteScales(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-    public class BlueScales : BaseScales
-    {
-        protected override CraftResource DefaultResource { get { return CraftResource.BlueScales; } }
+			writer.Write((int)0); // version
+		}
 
-        [Constructable]
-        public BlueScales()
-            : this(1)
-        {
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        [Constructable]
-        public BlueScales(int amount)
-            : base(CraftResource.BlueScales, amount)
-        {
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public BlueScales(Serial serial)
-            : base(serial)
-        {
-        }
+	public class BlueScales : BaseScales
+	{
+		protected override CraftResource DefaultResource
+		{
+			get { return CraftResource.BlueScales; }
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1053140;
-            }
-        }// sea serpent scales
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		[Constructable]
+		public BlueScales()
+			: this(1) { }
 
-            writer.Write((int)0); // version
-        }
+		[Constructable]
+		public BlueScales(int amount)
+			: base(CraftResource.BlueScales, amount) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public BlueScales(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override int LabelNumber
+		{
+			get { return 1053140; }
+		} // sea serpent scales
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

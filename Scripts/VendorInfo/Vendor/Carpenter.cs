@@ -4,86 +4,85 @@ using Server.Engines.BulkOrders;
 
 namespace Server.Mobiles
 {
-    public class Carpenter : BaseVendor
-    {
-        private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
-        [Constructable]
-        public Carpenter()
-            : base("the carpenter")
-        {
-            this.SetSkill(SkillName.Carpentry, 85.0, 100.0);
-            this.SetSkill(SkillName.Lumberjacking, 60.0, 83.0);
-        }
+	public class Carpenter : BaseVendor
+	{
+		private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
 
-        public Carpenter(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public Carpenter()
+			: base("the carpenter")
+		{
+			this.SetSkill(SkillName.Carpentry, 85.0, 100.0);
+			this.SetSkill(SkillName.Lumberjacking, 60.0, 83.0);
+		}
 
-        public override NpcGuild NpcGuild
-        {
-            get
-            {
-                return NpcGuild.TinkersGuild;
-            }
-        }
-        protected override List<SBInfo> SBInfos
-        {
-            get
-            {
-                return this.m_SBInfos;
-            }
-        }
-        public override void InitSBInfo()
-        {
-            //this.m_SBInfos.Add(new SBStavesWeapon());
-            this.m_SBInfos.Add(new SBCarpenter());
-            //this.m_SBInfos.Add(new SBWoodenShields());
-			
-            //if (this.IsTokunoVendor)
-            //    this.m_SBInfos.Add(new SBSECarpenter());
-        }
+		public Carpenter(Serial serial)
+			: base(serial) { }
 
-        public override void InitOutfit()
-        {
-            base.InitOutfit();
+		public override NpcGuild NpcGuild
+		{
+			get { return NpcGuild.TinkersGuild; }
+		}
+		protected override List<SBInfo> SBInfos
+		{
+			get { return this.m_SBInfos; }
+		}
 
-            this.AddItem(new Server.Items.HalfApron());
-        }
+		public override void InitSBInfo()
+		{
+			//this.m_SBInfos.Add(new SBStavesWeapon());
+			this.m_SBInfos.Add(new SBCarpenter());
+			//this.m_SBInfos.Add(new SBWoodenShields());
 
-        #region Bulk Orders
-        public override BODType BODType { get { return BODType.Carpentry; } }
+			//if (this.IsTokunoVendor)
+			//    this.m_SBInfos.Add(new SBSECarpenter());
+		}
 
-        public override bool IsValidBulkOrder(Item item)
-        {
-            return (item is SmallCarpentryBOD || item is LargeCarpentryBOD);
-        }
+		public override void InitOutfit()
+		{
+			base.InitOutfit();
 
-        public override bool SupportsBulkOrders(Mobile from)
-        {
-            return BulkOrderSystem.NewSystemEnabled && from is PlayerMobile && from.Skills[SkillName.Carpentry].Base > 0;
-        }
+			this.AddItem(new Server.Items.HalfApron());
+		}
 
-        public override void OnSuccessfulBulkOrderReceive(Mobile from)
-        {
-            if (from is PlayerMobile)
-                ((PlayerMobile)from).NextCarpentryBulkOrder = TimeSpan.Zero;
-        }
+		#region Bulk Orders
+		public override BODType BODType
+		{
+			get { return BODType.Carpentry; }
+		}
 
-        #endregion
+		public override bool IsValidBulkOrder(Item item)
+		{
+			return (item is SmallCarpentryBOD || item is LargeCarpentryBOD);
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override bool SupportsBulkOrders(Mobile from)
+		{
+			return BulkOrderSystem.NewSystemEnabled
+				&& from is PlayerMobile
+				&& from.Skills[SkillName.Carpentry].Base > 0;
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void OnSuccessfulBulkOrderReceive(Mobile from)
+		{
+			if (from is PlayerMobile)
+				((PlayerMobile)from).NextCarpentryBulkOrder = TimeSpan.Zero;
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		#endregion
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

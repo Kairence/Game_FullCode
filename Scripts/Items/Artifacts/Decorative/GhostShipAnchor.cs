@@ -2,51 +2,51 @@ using System;
 
 namespace Server.Items
 {
-    public class GhostShipAnchor : Item
-    {
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public GhostShipAnchor()
-            : base(0x14F7)
-        {
-            this.Hue = 0x47E;
-            this.Weight = 2;
-        }
+	public class GhostShipAnchor : Item
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public GhostShipAnchor(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public GhostShipAnchor()
+			: base(0x14F7)
+		{
+			this.Hue = 0x47E;
+			this.Weight = 2;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1070816;
-            }
-        }// Ghost Ship Anchor
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public GhostShipAnchor(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)1);
-        }
+		public override int LabelNumber
+		{
+			get { return 1070816; }
+		} // Ghost Ship Anchor
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
+			writer.Write((int)1);
+		}
 
-            switch (version)
-            {
-                case 0:
-                    this.Weight = 2;
-                    break;
-            }
-            
-            if (this.ItemID == 0x1F47)
-                this.ItemID = 0x14F7;
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+
+			switch (version)
+			{
+				case 0:
+					this.Weight = 2;
+					break;
+			}
+
+			if (this.ItemID == 0x1F47)
+				this.ItemID = 0x14F7;
+		}
+	}
 }

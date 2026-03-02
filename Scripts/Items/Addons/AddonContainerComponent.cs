@@ -1,6 +1,5 @@
 #region References
 using System.Collections.Generic;
-
 using Server.ContextMenus;
 #endregion
 
@@ -18,11 +17,16 @@ namespace Server.Items
 		}
 
 		public AddonContainerComponent(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
-		public virtual bool NeedsWall { get { return false; } }
-		public virtual Point3D WallPosition { get { return Point3D.Zero; } }
+		public virtual bool NeedsWall
+		{
+			get { return false; }
+		}
+		public virtual Point3D WallPosition
+		{
+			get { return Point3D.Zero; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
 		public BaseAddonContainer Addon { get; set; }
@@ -142,8 +146,7 @@ namespace Server.Items
 		}
 
 		public LocalizedContainerComponent(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		public override int LabelNumber
 		{

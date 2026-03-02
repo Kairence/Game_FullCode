@@ -2,36 +2,37 @@ using Server;
 
 namespace Server.Items
 {
-    public class TreasuresOfDoomRewardDeed : BaseRewardTitleDeed
-    {
-        private TextDefinition _Title;
+	public class TreasuresOfDoomRewardDeed : BaseRewardTitleDeed
+	{
+		private TextDefinition _Title;
 
-        public override TextDefinition Title { get { return _Title; } }
+		public override TextDefinition Title
+		{
+			get { return _Title; }
+		}
 
-        public TreasuresOfDoomRewardDeed(int localization)
-        {
-            _Title = localization;
-        }
+		public TreasuresOfDoomRewardDeed(int localization)
+		{
+			_Title = localization;
+		}
 
-        public TreasuresOfDoomRewardDeed(Serial serial)
-            : base(serial)
-        {
-        }
+		public TreasuresOfDoomRewardDeed(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write(0);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write(0);
 
-            TextDefinition.Serialize(writer, _Title);
-        }
+			TextDefinition.Serialize(writer, _Title);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
 
-            _Title = TextDefinition.Deserialize(reader);
-        }
-    }
+			_Title = TextDefinition.Deserialize(reader);
+		}
+	}
 }

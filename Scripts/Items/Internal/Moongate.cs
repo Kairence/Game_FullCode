@@ -1,6 +1,5 @@
 #region References
 using System;
-
 using Server.Factions;
 using Server.Gumps;
 using Server.Misc;
@@ -17,13 +16,11 @@ namespace Server.Items
 	{
 		[Constructable]
 		public UserMoongate(Point3D target, Map targetMap)
-			: base(target, targetMap)
-		{ }
+			: base(target, targetMap) { }
 
 		public UserMoongate(Serial serial)
-			: base(serial)
-		{ }
-		
+			: base(serial) { }
+
 		public override void Serialize(GenericWriter writer)
 		{
 			base.Serialize(writer);
@@ -36,9 +33,9 @@ namespace Server.Items
 			base.Deserialize(reader);
 
 			var version = reader.ReadInt();
-		}		
+		}
 	}
-	
+
 	[DispellableField]
 	public class Moongate : Item
 	{
@@ -51,9 +48,15 @@ namespace Server.Items
 		[CommandProperty(AccessLevel.GameMaster)]
 		public bool Dispellable { get; set; }
 
-		public virtual bool ShowFeluccaWarning { get { return false; } }
+		public virtual bool ShowFeluccaWarning
+		{
+			get { return false; }
+		}
 
-		public virtual bool TeleportPets { get { return true; } }
+		public virtual bool TeleportPets
+		{
+			get { return true; }
+		}
 
 		[Constructable]
 		public Moongate()
@@ -81,8 +84,7 @@ namespace Server.Items
 		}
 
 		public Moongate(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		public override void OnDoubleClick(Mobile from)
 		{
@@ -106,7 +108,7 @@ namespace Server.Items
 		public virtual void CheckGate(Mobile m, int range)
 		{
 			#region Mondain's Legacy
-				
+
 			/*
 			if( m is PlayerMobile )
 			{
@@ -159,10 +161,12 @@ namespace Server.Items
 			{
 				m.SendLocalizedMessage(1049543); // You decide against traveling to Felucca while you are still young.
 			}
-            else if ((SpellHelper.RestrictRedTravel && m.Murderer && TargetMap != Map.Felucca && !Siege.SiegeShard) ||
-					 (TargetMap == Map.Tokuno && (flags & ClientFlags.Tokuno) == 0) ||
-					 (TargetMap == Map.Malas && (flags & ClientFlags.Malas) == 0) ||
-					 (TargetMap == Map.Ilshenar && (flags & ClientFlags.Ilshenar) == 0))
+			else if (
+				(SpellHelper.RestrictRedTravel && m.Murderer && TargetMap != Map.Felucca && !Siege.SiegeShard)
+				|| (TargetMap == Map.Tokuno && (flags & ClientFlags.Tokuno) == 0)
+				|| (TargetMap == Map.Malas && (flags & ClientFlags.Malas) == 0)
+				|| (TargetMap == Map.Ilshenar && (flags & ClientFlags.Ilshenar) == 0)
+			)
 			{
 				m.SendLocalizedMessage(1019004); // You are not allowed to travel there.
 			}
@@ -228,8 +232,10 @@ namespace Server.Items
 
 		public virtual void BeginConfirmation(Mobile from)
 		{
-			if (IsInTown(from.Location, from.Map) && !IsInTown(Target, TargetMap) ||
-				(from.Map != Map.Felucca && TargetMap == Map.Felucca && ShowFeluccaWarning))
+			if (
+				IsInTown(from.Location, from.Map) && !IsInTown(Target, TargetMap)
+				|| (from.Map != Map.Felucca && TargetMap == Map.Felucca && ShowFeluccaWarning)
+			)
 			{
 				if (from.IsPlayer() || !from.Hidden)
 					from.Send(new PlaySound(0x20E, from.Location));
@@ -292,7 +298,6 @@ namespace Server.Items
 		}
 	}
 
-
 	public class ConfirmationMoongate : Moongate
 	{
 		[CommandProperty(AccessLevel.GameMaster)]
@@ -321,17 +326,14 @@ namespace Server.Items
 
 		[Constructable]
 		public ConfirmationMoongate()
-			: this(Point3D.Zero, null)
-		{ }
+			: this(Point3D.Zero, null) { }
 
 		[Constructable]
 		public ConfirmationMoongate(Point3D target, Map targetMap)
-			: base(target, targetMap)
-		{ }
+			: base(target, targetMap) { }
 
 		public ConfirmationMoongate(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		public virtual void Warning_Callback(Mobile from, bool okay, object state)
 		{
@@ -341,8 +343,12 @@ namespace Server.Items
 
 		public override void BeginConfirmation(Mobile from)
 		{
-			if (GumpWidth > 0 && GumpHeight > 0 && (TitleNumber > 0 || TitleString != null) &&
-				(MessageNumber > 0 || MessageString != null))
+			if (
+				GumpWidth > 0
+				&& GumpHeight > 0
+				&& (TitleNumber > 0 || TitleString != null)
+				&& (MessageNumber > 0 || MessageString != null)
+			)
 			{
 				from.CloseGump(typeof(WarningGump));
 
@@ -355,7 +361,9 @@ namespace Server.Items
 						GumpWidth,
 						GumpHeight,
 						Warning_Callback,
-						from));
+						from
+					)
+				);
 			}
 			else
 			{
@@ -443,25 +451,9 @@ namespace Server.Items
 				AddAlphaRegion(10, 40, 400, 200);
 
 				if (from.Map != Map.Felucca && gate.TargetMap == Map.Felucca && gate.ShowFeluccaWarning)
-					AddHtmlLocalized(
-						10,
-						40,
-						400,
-						200,
-						1062050,
-						32512,
-						false,
-						true); // This Gate goes to Felucca... Continue to enter the gate, Cancel to stay here
+					AddHtmlLocalized(10, 40, 400, 200, 1062050, 32512, false, true); // This Gate goes to Felucca... Continue to enter the gate, Cancel to stay here
 				else
-					AddHtmlLocalized(
-						10,
-						40,
-						400,
-						200,
-						1062049,
-						32512,
-						false,
-						true); // Dost thou wish to step into the moongate? Continue to enter the gate, Cancel to stay here
+					AddHtmlLocalized(10, 40, 400, 200, 1062049, 32512, false, true); // Dost thou wish to step into the moongate? Continue to enter the gate, Cancel to stay here
 
 				AddImageTiled(10, 250, 400, 20, 2624);
 				AddAlphaRegion(10, 250, 400, 20);
@@ -486,7 +478,8 @@ namespace Server.Items
 					60,
 					@"Dost thou wish to step into the moongate? Continue to enter the gate, Cancel to stay here",
 					false,
-					false);
+					false
+				);
 
 				AddHtmlLocalized(55, 110, 290, 20, 1011012, false, false); // CANCEL
 				AddButton(20, 110, 4005, 4007, 0, GumpButtonType.Reply, 0);

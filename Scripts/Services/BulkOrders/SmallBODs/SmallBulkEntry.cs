@@ -5,248 +5,213 @@ using System.IO;
 
 namespace Server.Engines.BulkOrders
 {
-    public class SmallBulkEntry
-    {
-        private static Hashtable m_Cache;
-        private Type m_Type;
-        private int m_Number;
-        private int m_Graphic;
-        private int m_Hue;
+	public class SmallBulkEntry
+	{
+		private static Hashtable m_Cache;
+		private Type m_Type;
+		private int m_Number;
+		private int m_Graphic;
+		private int m_Hue;
 
-        public SmallBulkEntry(Type type, int number, int graphic, int hue)
-        {
-            m_Type = type;
-            m_Number = number;
-            m_Graphic = graphic;
-            m_Hue = hue;
-        }
+		public SmallBulkEntry(Type type, int number, int graphic, int hue)
+		{
+			m_Type = type;
+			m_Number = number;
+			m_Graphic = graphic;
+			m_Hue = hue;
+		}
 
-        public static SmallBulkEntry[] BlacksmithWeapons
-        {
-            get
-            {
-                return GetEntries("Blacksmith", "weapons");
-            }
-        }
-        public static SmallBulkEntry[] BlacksmithArmor
-        {
-            get
-            {
-                return GetEntries("Blacksmith", "armor");
-            }
-        }
-        public static SmallBulkEntry[] TailorCloth
-        {
-            get
-            {
-                return GetEntries("Tailoring", "cloth");
-            }
-        }
-        public static SmallBulkEntry[] TailorLeather
-        {
-            get
-            {
-                return GetEntries("Tailoring", "leather");
-            }
-        }
-        #region Publish 95 BODs
-        public static SmallBulkEntry[] TinkeringSmalls
-        {
-            get
-            {
-                return GetEntries("Tinkering", "smalls");
-            }
-        }
-        public static SmallBulkEntry[] TinkeringSmallsRegular
-        {
-            get
-            {
-                return GetEntries("Tinkering", "smallsregular");
-            }
-        }
-        public static SmallBulkEntry[] CarpentrySmalls
-        {
-            get
-            {
-                return GetEntries("Carpentry", "smalls");
-            }
-        }
-        public static SmallBulkEntry[] InscriptionSmalls
-        {
-            get
-            {
-                return GetEntries("Inscription", "smalls");
-            }
-        }
-        public static SmallBulkEntry[] CookingSmalls
-        {
-            get
-            {
-                return GetEntries("Cooking", "smalls");
-            }
-        }
-        public static SmallBulkEntry[] CookingSmallsRegular
-        {
-            get
-            {
-                return GetEntries("Cooking", "smallsregular");
-            }
-        }
-        public static SmallBulkEntry[] FletchingSmalls
-        {
-            get
-            {
-                return GetEntries("Fletching", "smalls");
-            }
-        }
-        public static SmallBulkEntry[] FletchingSmallsRegular
-        {
-            get
-            {
-                return GetEntries("Fletching", "smallsregular");
-            }
-        }
-        public static SmallBulkEntry[] AlchemySmalls
-        {
-            get
-            {
-                return GetEntries("Alchemy", "smalls");
-            }
-        }
-        #endregion
-        public Type Type
-        {
-            get
-            {
-                return m_Type;
-            }
-        }
-        public int Number
-        {
-            get
-            {
-                return m_Number;
-            }
-            set
-            {
-                m_Number = value;
-            }
-        }
-        public int Graphic
-        {
-            get
-            {
-                return m_Graphic;
-            }
-        }
-        public int Hue
-        {
-            get
-            {
-                return m_Hue;
-            }
-        }
-        public static SmallBulkEntry[] GetEntries(string type, string name)
-        {
-            if (m_Cache == null)
-                m_Cache = new Hashtable();
+		public static SmallBulkEntry[] BlacksmithWeapons
+		{
+			get { return GetEntries("Blacksmith", "weapons"); }
+		}
+		public static SmallBulkEntry[] BlacksmithArmor
+		{
+			get { return GetEntries("Blacksmith", "armor"); }
+		}
+		public static SmallBulkEntry[] TailorCloth
+		{
+			get { return GetEntries("Tailoring", "cloth"); }
+		}
+		public static SmallBulkEntry[] TailorLeather
+		{
+			get { return GetEntries("Tailoring", "leather"); }
+		}
+		#region Publish 95 BODs
+		public static SmallBulkEntry[] TinkeringSmalls
+		{
+			get { return GetEntries("Tinkering", "smalls"); }
+		}
+		public static SmallBulkEntry[] TinkeringSmallsRegular
+		{
+			get { return GetEntries("Tinkering", "smallsregular"); }
+		}
+		public static SmallBulkEntry[] CarpentrySmalls
+		{
+			get { return GetEntries("Carpentry", "smalls"); }
+		}
+		public static SmallBulkEntry[] InscriptionSmalls
+		{
+			get { return GetEntries("Inscription", "smalls"); }
+		}
+		public static SmallBulkEntry[] CookingSmalls
+		{
+			get { return GetEntries("Cooking", "smalls"); }
+		}
+		public static SmallBulkEntry[] CookingSmallsRegular
+		{
+			get { return GetEntries("Cooking", "smallsregular"); }
+		}
+		public static SmallBulkEntry[] FletchingSmalls
+		{
+			get { return GetEntries("Fletching", "smalls"); }
+		}
+		public static SmallBulkEntry[] FletchingSmallsRegular
+		{
+			get { return GetEntries("Fletching", "smallsregular"); }
+		}
+		public static SmallBulkEntry[] AlchemySmalls
+		{
+			get { return GetEntries("Alchemy", "smalls"); }
+		}
+		#endregion
+		public Type Type
+		{
+			get { return m_Type; }
+		}
+		public int Number
+		{
+			get { return m_Number; }
+			set { m_Number = value; }
+		}
+		public int Graphic
+		{
+			get { return m_Graphic; }
+		}
+		public int Hue
+		{
+			get { return m_Hue; }
+		}
 
-            Hashtable table = (Hashtable)m_Cache[type];
+		public static SmallBulkEntry[] GetEntries(string type, string name)
+		{
+			if (m_Cache == null)
+				m_Cache = new Hashtable();
 
-            if (table == null)
-                m_Cache[type] = table = new Hashtable();
+			Hashtable table = (Hashtable)m_Cache[type];
 
-            SmallBulkEntry[] entries = (SmallBulkEntry[])table[name];
+			if (table == null)
+				m_Cache[type] = table = new Hashtable();
 
-            if (entries == null)
-                table[name] = entries = LoadEntries(type, name);
+			SmallBulkEntry[] entries = (SmallBulkEntry[])table[name];
 
-            return entries;
-        }
+			if (entries == null)
+				table[name] = entries = LoadEntries(type, name);
 
-        public static SmallBulkEntry[] LoadEntries(string type, string name)
-        {
-            return LoadEntries(String.Format("Data/Bulk Orders/{0}/{1}.cfg", type, name));
-        }
+			return entries;
+		}
 
-        public static SmallBulkEntry[] LoadEntries(string path)
-        {
-            path = Path.Combine(Core.BaseDirectory, path);
+		public static SmallBulkEntry[] LoadEntries(string type, string name)
+		{
+			return LoadEntries(String.Format("Data/Bulk Orders/{0}/{1}.cfg", type, name));
+		}
 
-            List<SmallBulkEntry> list = new List<SmallBulkEntry>();
+		public static SmallBulkEntry[] LoadEntries(string path)
+		{
+			path = Path.Combine(Core.BaseDirectory, path);
 
-            if (File.Exists(path))
-            {
-                using (StreamReader ip = new StreamReader(path))
-                {
-                    string line;
+			List<SmallBulkEntry> list = new List<SmallBulkEntry>();
 
-                    while ((line = ip.ReadLine()) != null)
-                    {
-                        /* arg 1 - Type
-                         * arg 2 - ItemID
-                         * arg 3 - Cliloc
-                         * arg 4 - hue
-                         */
+			if (File.Exists(path))
+			{
+				using (StreamReader ip = new StreamReader(path))
+				{
+					string line;
 
-                        if (line.Length == 0 || line.StartsWith("#"))
-                            continue;
+					while ((line = ip.ReadLine()) != null)
+					{
+						/* arg 1 - Type
+						 * arg 2 - ItemID
+						 * arg 3 - Cliloc
+						 * arg 4 - hue
+						 */
 
-                        try
-                        {
-                            string[] split = line.Split(',');
+						if (line.Length == 0 || line.StartsWith("#"))
+							continue;
 
-                            if (split.Length <= 2)
-                            {
-                                Type type = ScriptCompiler.FindTypeByName(split[0]);
-                                int graphic = Utility.ToInt32(split[1]);
+						try
+						{
+							string[] split = line.Split(',');
 
-                                if (type != null && graphic > 0)
-                                {
-                                    list.Add(new SmallBulkEntry(type, graphic < 0x4000 ? 1020000 + graphic : 1078872 + graphic, graphic, 0));
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Error Loading BOD Entry at {2}, [Type: {0}], [graphic: {1}]", split[0], graphic.ToString(), path);
-                                }
-                            }
-                            else if (split.Length >= 3)
-                            {
-                                int name, hue;
+							if (split.Length <= 2)
+							{
+								Type type = ScriptCompiler.FindTypeByName(split[0]);
+								int graphic = Utility.ToInt32(split[1]);
 
-                                Type type = ScriptCompiler.FindTypeByName(split[0]);
-                                int graphic = Utility.ToInt32(split[1]);
+								if (type != null && graphic > 0)
+								{
+									list.Add(
+										new SmallBulkEntry(
+											type,
+											graphic < 0x4000 ? 1020000 + graphic : 1078872 + graphic,
+											graphic,
+											0
+										)
+									);
+								}
+								else
+								{
+									Console.WriteLine(
+										"Error Loading BOD Entry at {2}, [Type: {0}], [graphic: {1}]",
+										split[0],
+										graphic.ToString(),
+										path
+									);
+								}
+							}
+							else if (split.Length >= 3)
+							{
+								int name,
+									hue;
 
-                                name = Utility.ToInt32(split[2]);
+								Type type = ScriptCompiler.FindTypeByName(split[0]);
+								int graphic = Utility.ToInt32(split[1]);
 
-                                if (split.Length >= 4)
-                                {
-                                    hue = Utility.ToInt32(split[3]);
-                                }
-                                else
-                                {
-                                    hue = 0;
-                                }
+								name = Utility.ToInt32(split[2]);
 
-                                if (type != null && graphic > 0)
-                                {
-                                    list.Add(new SmallBulkEntry(type, name, graphic, hue));
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Error Loading BOD Entry at {2}, [Type: {0}], [graphic: {1}]", split[0], graphic.ToString(), path);
-                                }
-                            }
-                        }
-                        catch(Exception e)
-                        {
-                            Console.WriteLine(e);
-                        }
-                    }
-                }
-            }
+								if (split.Length >= 4)
+								{
+									hue = Utility.ToInt32(split[3]);
+								}
+								else
+								{
+									hue = 0;
+								}
 
-            return list.ToArray();
-        }
-    }
+								if (type != null && graphic > 0)
+								{
+									list.Add(new SmallBulkEntry(type, name, graphic, hue));
+								}
+								else
+								{
+									Console.WriteLine(
+										"Error Loading BOD Entry at {2}, [Type: {0}], [graphic: {1}]",
+										split[0],
+										graphic.ToString(),
+										path
+									);
+								}
+							}
+						}
+						catch (Exception e)
+						{
+							Console.WriteLine(e);
+						}
+					}
+				}
+			}
+
+			return list.ToArray();
+		}
+	}
 }

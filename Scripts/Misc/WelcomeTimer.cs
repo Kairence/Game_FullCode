@@ -4,15 +4,15 @@ using System;
 
 namespace Server.Misc
 {
-    /// <summary>
-    ///     This timer spouts some welcome messages to a user at a set interval. It is used on character creation and login.
-    /// </summary>
-    public class WelcomeTimer : Timer
+	/// <summary>
+	///     This timer spouts some welcome messages to a user at a set interval. It is used on character creation and login.
+	/// </summary>
+	public class WelcomeTimer : Timer
 	{
 		private static readonly string[] m_Messages =
 		{
 			"Welcome to " + ServerList.ServerName + ".", //
-			"Please enjoy your stay!"
+			"Please enjoy your stay!",
 		};
 
 		private static readonly string[] m_TCMessages =
@@ -28,7 +28,7 @@ namespace Server.Misc
 			"You will find 9000 silver pieces deposited into your bank box.  Spend it as you see fit and enjoy yourself!", //
 			"You will find 9000 gold pieces deposited into your bank box.  Spend it as you see fit and enjoy yourself!", //
 			"A bag of PowerScrolls has been placed in your bank box.", //
-			"Enjoy playing in Test Center mode!"
+			"Enjoy playing in Test Center mode!",
 		};
 
 		private readonly Mobile m_Mobile;
@@ -37,8 +37,7 @@ namespace Server.Misc
 		private int m_State;
 
 		public WelcomeTimer(Mobile m)
-			: this(m, TestCenter.Enabled ? m_TCMessages : m_Messages)
-		{ }
+			: this(m, TestCenter.Enabled ? m_TCMessages : m_Messages) { }
 
 		public WelcomeTimer(Mobile m, string[] lines)
 			: base(TimeSpan.FromSeconds(5.0), TimeSpan.FromSeconds(10.0))
@@ -50,7 +49,7 @@ namespace Server.Misc
 		protected override void OnTick()
 		{
 			if (m_State < m_Lines.Length)
-                m_Mobile.SendMessage(0x35, m_Lines[m_State++]);
+				m_Mobile.SendMessage(0x35, m_Lines[m_State++]);
 
 			if (m_State == m_Lines.Length)
 				Stop();

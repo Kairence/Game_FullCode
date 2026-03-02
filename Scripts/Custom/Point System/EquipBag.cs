@@ -1,103 +1,117 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Server.ContextMenus;
 using Server.Engines.Craft;
-using Server.Network;
-using System.Linq;
-using Server.Mobiles;
 using Server.Gumps;
+using Server.Mobiles;
+using Server.Network;
 
 namespace Server.Items
 {
-    public class EquipBag : Bag
-    {
-        private bool m_Failure;
+	public class EquipBag : Bag
+	{
+		private bool m_Failure;
 
 		private bool m_Active;
-		[CommandProperty( AccessLevel.GameMaster )]
+
+		[CommandProperty(AccessLevel.GameMaster)]
 		public bool Active
 		{
 			get { return m_Active; }
-			set { m_Active = value; InvalidateProperties(); }
-		}		
+			set
+			{
+				m_Active = value;
+				InvalidateProperties();
+			}
+		}
 
 		private bool m_Weapon;
-		[CommandProperty( AccessLevel.GameMaster )]
+
+		[CommandProperty(AccessLevel.GameMaster)]
 		public bool Weapon
 		{
 			get { return m_Weapon; }
-			set { m_Weapon = value; InvalidateProperties(); }
+			set
+			{
+				m_Weapon = value;
+				InvalidateProperties();
+			}
 		}
 
 		private bool m_Armor;
-		[CommandProperty( AccessLevel.GameMaster )]
+
+		[CommandProperty(AccessLevel.GameMaster)]
 		public bool Armor
 		{
 			get { return m_Armor; }
-			set { m_Armor = value; InvalidateProperties(); }
-		}		
+			set
+			{
+				m_Armor = value;
+				InvalidateProperties();
+			}
+		}
 
 		private bool m_Jewelry;
-		[CommandProperty( AccessLevel.GameMaster )]
+
+		[CommandProperty(AccessLevel.GameMaster)]
 		public bool Jewelry
 		{
 			get { return m_Jewelry; }
-			set { m_Jewelry = value; InvalidateProperties(); }
-		}		
-		
-		
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1079931;
-            }
-        }// Salvage Bag
+			set
+			{
+				m_Jewelry = value;
+				InvalidateProperties();
+			}
+		}
 
-        [Constructable]
-        public EquipBag()
-            : this(Utility.RandomRedHue())
-        {
-        }
+		public override int LabelNumber
+		{
+			get { return 1079931; }
+		} // Salvage Bag
 
-        [Constructable]
-        public EquipBag(int hue)
-        {
-            Weight = 2.0;
-            Hue = hue;
-            m_Failure = false;
+		[Constructable]
+		public EquipBag()
+			: this(Utility.RandomRedHue()) { }
+
+		[Constructable]
+		public EquipBag(int hue)
+		{
+			Weight = 2.0;
+			Hue = hue;
+			m_Failure = false;
 			Name = "장비 저장 가방";
-        }
+		}
 
-        public override void GetContextMenuEntries(Mobile from, List<ContextMenuEntry> list)
-        {
-            base.GetContextMenuEntries(from, list);
+		public override void GetContextMenuEntries(Mobile from, List<ContextMenuEntry> list)
+		{
+			base.GetContextMenuEntries(from, list);
 
-            if (from.Alive)
-            {
-                list.Add(new OnEntry(this, m_Active ) );
-                list.Add(new AllEntry(this, true ) );
-                list.Add(new WeaponEntry(this, m_Weapon ) );
-                list.Add(new ArmorEntry(this, m_Armor ) );
-                list.Add(new JewelryEntry(this, m_Jewelry ) );
-            }
-        }
+			if (from.Alive)
+			{
+				list.Add(new OnEntry(this, m_Active));
+				list.Add(new AllEntry(this, true));
+				list.Add(new WeaponEntry(this, m_Weapon));
+				list.Add(new ArmorEntry(this, m_Armor));
+				list.Add(new JewelryEntry(this, m_Jewelry));
+			}
+		}
 
 		//int[] rankpoint = { 1, 20, 50, 100, 200, 400, 600, 800, 1000 };
-		
+
 		/*
-        #region Salvaging
-        private void SalvageAll(Mobile from)
-        {
-            Container eBag = this;
+		#region Salvaging
+		private void SalvageAll(Mobile from)
+		{
+			Container eBag = this;
 			
-            List<Item> Smeltables = eBag.FindItemsByType<Item>();
+			List<Item> Smeltables = eBag.FindItemsByType<Item>();
 
 			bool notsmelt = false;
 			
-            for (int i = Smeltables.Count - 1; i >= 0; i--)
-            {
-                Item item = Smeltables[i];
+			for (int i = Smeltables.Count - 1; i >= 0; i--)
+			{
+				Item item = Smeltables[i];
 				
 				if( from is PlayerMobile )
 				{
@@ -238,183 +252,181 @@ namespace Server.Items
 					from.CloseGump(typeof(EquipPointGump));
 					from.SendGump(new EquipPointGump(pm));
 				}
-            }
+			}
 			if( notsmelt )
 				from.SendMessage("소유자가 없거나 본인이 소유자가 아닌 경우 분해할 수 없습니다!");
-        }
+		}
 
-        #endregion
+		#endregion
 		*/
-        #region ContextMenuEntries
-        private class OnEntry : ContextMenuEntry
-        {
-            private readonly EquipBag m_Bag;
+		#region ContextMenuEntries
+		private class OnEntry : ContextMenuEntry
+		{
+			private readonly EquipBag m_Bag;
 
-            public OnEntry(EquipBag bag, bool enabled)
-                : base(6302)
-            {
-                m_Bag = bag;
+			public OnEntry(EquipBag bag, bool enabled)
+				: base(6302)
+			{
+				m_Bag = bag;
 
-                if (!enabled)
-                    Flags |= CMEFlags.Disabled;
-            }
+				if (!enabled)
+					Flags |= CMEFlags.Disabled;
+			}
 
-            public override void OnClick()
-            {
-                if (m_Bag.Deleted)
-                    return;
+			public override void OnClick()
+			{
+				if (m_Bag.Deleted)
+					return;
 
-                Mobile from = Owner.From;
+				Mobile from = Owner.From;
 
-                if (from.CheckAlive())
-                    m_Bag.Active = !m_Bag.Active;
-            }
-        }
+				if (from.CheckAlive())
+					m_Bag.Active = !m_Bag.Active;
+			}
+		}
 
-        private class AllEntry : ContextMenuEntry
-        {
-            private readonly EquipBag m_Bag;
+		private class AllEntry : ContextMenuEntry
+		{
+			private readonly EquipBag m_Bag;
 
-            public AllEntry(EquipBag bag, bool enabled)
-                : base(6303)
-            {
-                m_Bag = bag;
+			public AllEntry(EquipBag bag, bool enabled)
+				: base(6303)
+			{
+				m_Bag = bag;
 
-                if (!enabled)
-                    Flags |= CMEFlags.Disabled;
-            }
+				if (!enabled)
+					Flags |= CMEFlags.Disabled;
+			}
 
-            public override void OnClick()
-            {
-                if (m_Bag.Deleted)
-                    return;
+			public override void OnClick()
+			{
+				if (m_Bag.Deleted)
+					return;
 
-                Mobile from = Owner.From;
+				Mobile from = Owner.From;
 
-                if (from.CheckAlive())
+				if (from.CheckAlive())
 				{
-                    m_Bag.Weapon = true;
-                    m_Bag.Armor = true;
-                    m_Bag.Jewelry = true;
+					m_Bag.Weapon = true;
+					m_Bag.Armor = true;
+					m_Bag.Jewelry = true;
 				}
-            }
-        }
+			}
+		}
 
-        private class WeaponEntry : ContextMenuEntry
-        {
-            private readonly EquipBag m_Bag;
+		private class WeaponEntry : ContextMenuEntry
+		{
+			private readonly EquipBag m_Bag;
 
-            public WeaponEntry(EquipBag bag, bool enabled)
-                : base(6304)
-            {
-                m_Bag = bag;
+			public WeaponEntry(EquipBag bag, bool enabled)
+				: base(6304)
+			{
+				m_Bag = bag;
 
-                if (!enabled)
-                    Flags |= CMEFlags.Disabled;
-            }
+				if (!enabled)
+					Flags |= CMEFlags.Disabled;
+			}
 
-            public override void OnClick()
-            {
-                if (m_Bag.Deleted)
-                    return;
+			public override void OnClick()
+			{
+				if (m_Bag.Deleted)
+					return;
 
-                Mobile from = Owner.From;
+				Mobile from = Owner.From;
 
-                if (from.CheckAlive())
+				if (from.CheckAlive())
 				{
-                    m_Bag.Weapon = !m_Bag.Weapon;
+					m_Bag.Weapon = !m_Bag.Weapon;
 				}
-            }
-        }
-		
-        private class ArmorEntry : ContextMenuEntry
-        {
-            private readonly EquipBag m_Bag;
+			}
+		}
 
-            public ArmorEntry(EquipBag bag, bool enabled)
-                : base(6305)
-            {
-                m_Bag = bag;
+		private class ArmorEntry : ContextMenuEntry
+		{
+			private readonly EquipBag m_Bag;
 
-                if (!enabled)
-                    Flags |= CMEFlags.Disabled;
-            }
+			public ArmorEntry(EquipBag bag, bool enabled)
+				: base(6305)
+			{
+				m_Bag = bag;
 
-            public override void OnClick()
-            {
-                if (m_Bag.Deleted)
-                    return;
+				if (!enabled)
+					Flags |= CMEFlags.Disabled;
+			}
 
-                Mobile from = Owner.From;
+			public override void OnClick()
+			{
+				if (m_Bag.Deleted)
+					return;
 
-                if (from.CheckAlive())
+				Mobile from = Owner.From;
+
+				if (from.CheckAlive())
 				{
-                    m_Bag.Armor = !m_Bag.Armor;
+					m_Bag.Armor = !m_Bag.Armor;
 				}
-            }
-        }
-        private class JewelryEntry : ContextMenuEntry
-        {
-            private readonly EquipBag m_Bag;
+			}
+		}
 
-            public JewelryEntry(EquipBag bag, bool enabled)
-                : base(6306)
-            {
-                m_Bag = bag;
+		private class JewelryEntry : ContextMenuEntry
+		{
+			private readonly EquipBag m_Bag;
 
-                if (!enabled)
-                    Flags |= CMEFlags.Disabled;
-            }
+			public JewelryEntry(EquipBag bag, bool enabled)
+				: base(6306)
+			{
+				m_Bag = bag;
 
-            public override void OnClick()
-            {
-                if (m_Bag.Deleted)
-                    return;
+				if (!enabled)
+					Flags |= CMEFlags.Disabled;
+			}
 
-                Mobile from = Owner.From;
+			public override void OnClick()
+			{
+				if (m_Bag.Deleted)
+					return;
 
-                if (from.CheckAlive())
+				Mobile from = Owner.From;
+
+				if (from.CheckAlive())
 				{
-                    m_Bag.Jewelry = !m_Bag.Jewelry;
+					m_Bag.Jewelry = !m_Bag.Jewelry;
 				}
-            }
-        }
+			}
+		}
 
-        #endregion
+		#endregion
 
-        #region Serialization
-        public EquipBag(Serial serial)
-            : base(serial)
-        {
-        }
+		#region Serialization
+		public EquipBag(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.WriteEncodedInt((int)1); // version
-			
+			writer.WriteEncodedInt((int)1); // version
+
 			writer.Write((bool)m_Active);
 			writer.Write((bool)m_Weapon);
 			writer.Write((bool)m_Armor);
 			writer.Write((bool)m_Jewelry);
-			
-        }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadEncodedInt();
-			
-			if( version == 1 )
+			int version = reader.ReadEncodedInt();
+
+			if (version == 1)
 			{
 				m_Active = reader.ReadBool();
 				m_Weapon = reader.ReadBool();
 				m_Armor = reader.ReadBool();
 				m_Jewelry = reader.ReadBool();
 			}
-        }
-        #endregion
-    }
+		}
+		#endregion
+	}
 }

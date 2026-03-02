@@ -1,6 +1,5 @@
 #region References
 using System;
-
 using Microsoft.Win32.SafeHandles;
 #endregion
 
@@ -10,8 +9,7 @@ namespace Ultima
 	{
 		public static ClientWindowHandle Invalid = new ClientWindowHandle(new IntPtr(-1));
 
-		public ClientWindowHandle()
-		{ }
+		public ClientWindowHandle() { }
 
 		public ClientWindowHandle(IntPtr value)
 		{
@@ -32,8 +30,7 @@ namespace Ultima
 	{
 		public static ClientProcessHandle Invalid = new ClientProcessHandle(new IntPtr(-1));
 
-		public ClientProcessHandle()
-		{ }
+		public ClientProcessHandle() { }
 
 		public ClientProcessHandle(IntPtr value)
 		{

@@ -1,80 +1,86 @@
 using System;
-using Server.Items;
 using Server.Gumps;
-using Server.Network;
+using Server.Items;
 using Server.Mobiles;
+using Server.Network;
 
 namespace Server.Items
 {
 	/*
-		ºê¸®Æ° : 1000
-		ºÎÄÉ´Ï¾î½º µ§ : 300
-		ÄÚºê : 200
-		ÇãÆ®¿ìµå : 300
-		Á©·Ò : 700
-		¸¶Áø½Ã¾Æ : 600
-		¹Ì³ì : 750
-		¹®±Û·Î¿ì : 700
-		´©Á©·Ò : 500
-		Çìºì : 500
-		¼­ÆæÆ® È¦µå : 400
-		½ºÄ«¶ó ºê·¹ : 650
-		Æ®¸°½Ä : 900
-		º£½ºÆÛ : 900
-		À©µå : 100
-		À¯ : 600
+		ï¿½ê¸®Æ° : 1000
+		ï¿½ï¿½ï¿½É´Ï¾î½º ï¿½ï¿½ : 300
+		ï¿½Úºï¿½ : 200
+		ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ : 300
+		ï¿½ï¿½ï¿½ï¿½ : 700
+		ï¿½ï¿½ï¿½ï¿½ï¿½Ã¾ï¿½ : 600
+		ï¿½Ì³ï¿½ : 750
+		ï¿½ï¿½ï¿½Û·Î¿ï¿½ : 700
+		ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ : 500
+		ï¿½ï¿½ï¿½ : 500
+		ï¿½ï¿½ï¿½ï¿½Æ® È¦ï¿½ï¿½ : 400
+		ï¿½ï¿½Ä«ï¿½ï¿½ ï¿½ê·¹ : 650
+		Æ®ï¿½ï¿½ï¿½ï¿½ : 900
+		ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ : 900
+		ï¿½ï¿½ï¿½ï¿½ : 100
+		ï¿½ï¿½ : 600
 	*/
-	
-	public class DungeonCheck : Item 
+
+	public class DungeonCheck : Item
 	{
-		//private string[] DungeonName = new string[] { "ÄÚº£Åõ½º", "µ¥½ºÆÄÀÌÁî", "½¦ÀÓ" };
+		//private string[] DungeonName = new string[] { "ï¿½Úºï¿½ï¿½ï¿½ï¿½ï¿½", "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½", "ï¿½ï¿½ï¿½ï¿½" };
 		private int[] m_Death = new int[100];
 
 		public int[] Death
 		{
-			get{ return m_Death;}
-			set{ m_Death = value; InvalidateProperties();}
+			get { return m_Death; }
+			set
+			{
+				m_Death = value;
+				InvalidateProperties();
+			}
 		}
 
 		public override string DefaultName
 		{
-			get { return "´øÀü Ã¼Å© ½Ã½ºÅÛ"; }
+			get { return "ï¿½ï¿½ï¿½ï¿½ Ã¼Å© ï¿½Ã½ï¿½ï¿½ï¿½"; }
 		}
+
 		[Constructable]
-		public DungeonCheck() : base( 0xED4 )
+		public DungeonCheck()
+			: base(0xED4)
 		{
 			Movable = false;
 			Hue = 1168;
-			Name = "´øÀü Ã¼Å© ½Ã½ºÅÛ";
-		}
-		public override void OnDoubleClick( Mobile from )
-		{
-			from.CloseGump( typeof( DungeonCheckGump ) );
-			from.SendGump( new DungeonCheckGump( from, this ) );
+			Name = "ï¿½ï¿½ï¿½ï¿½ Ã¼Å© ï¿½Ã½ï¿½ï¿½ï¿½";
 		}
 
-		public DungeonCheck( Serial serial ) : base( serial )
+		public override void OnDoubleClick(Mobile from)
 		{
+			from.CloseGump(typeof(DungeonCheckGump));
+			from.SendGump(new DungeonCheckGump(from, this));
 		}
 
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
+		public DungeonCheck(Serial serial)
+			: base(serial) { }
 
-			writer.Write( (int) 0 ); // version
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
 			for (int i = 0; i < 100; i++)
 			{
-				writer.Write( (int) m_Death[i] );
+				writer.Write((int)m_Death[i]);
 			}
 		}
 
-		public override void Deserialize( GenericReader reader )
+		public override void Deserialize(GenericReader reader)
 		{
-			base.Deserialize( reader );
+			base.Deserialize(reader);
 
 			int version = reader.ReadInt();
 
-			switch ( version )
+			switch (version)
 			{
 				case 0:
 				{

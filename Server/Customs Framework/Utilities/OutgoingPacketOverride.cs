@@ -1,7 +1,6 @@
 ﻿#region References
 using System;
 using System.Collections.Generic;
-
 using Server;
 using Server.Network;
 #endregion
@@ -9,12 +8,16 @@ using Server.Network;
 namespace CustomsFramework
 {
 	public delegate void OutgoingPacketOverrideHandler(
-		NetState to, PacketReader reader, ref byte[] packetBuffer, ref int packetLength);
+		NetState to,
+		PacketReader reader,
+		ref byte[] packetBuffer,
+		ref int packetLength
+	);
 
 	public static class OutgoingPacketOverrides
 	{
 		public const int CallPriority = ((byte)'r') << 16 + ((byte)'a') << 8 + ((byte)'d');
-		
+
 		private static readonly OutgoingPacketOverrideHandler[] _Handlers;
 		private static readonly OutgoingPacketOverrideHandler[] _ExtendedHandlersLow;
 		private static readonly Dictionary<int, OutgoingPacketOverrideHandler> _ExtendedHandlersHigh;

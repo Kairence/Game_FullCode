@@ -2,40 +2,35 @@ using System;
 
 namespace Server.Items
 {
-    public class PhoenixGorget : StuddedGorget
-    {
-        [Constructable]
-        public PhoenixGorget()
-        {
-            Hue = 0x8E;
-			LootType = LootType.Blessed;     
-        }
+	public class PhoenixGorget : StuddedGorget
+	{
+		[Constructable]
+		public PhoenixGorget()
+		{
+			Hue = 0x8E;
+			LootType = LootType.Blessed;
+		}
 
-        public PhoenixGorget(Serial serial)
-            : base(serial)
-        {
-        }
+		public PhoenixGorget(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1041604;
-            }
-        }// studded gorget of the phoenix
-        
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int LabelNumber
+		{
+			get { return 1041604; }
+		} // studded gorget of the phoenix
 
-            writer.Write((int)0);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0);
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

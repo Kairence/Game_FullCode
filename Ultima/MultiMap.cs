@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 #endregion
 
@@ -24,17 +25,22 @@ namespace Ultima
 				{
 					using (var bin = new BinaryReader(fs))
 					{
-						int width, height;
+						int width,
+							height;
 						byte pixel;
 						int count;
-						int x, i;
+						int x,
+							i;
 						x = 0;
 						ushort c = 0;
 						width = bin.ReadInt32();
 						height = bin.ReadInt32();
 						var multimap = new Bitmap(width, height, Settings.PixelFormat);
 						BitmapData bd = multimap.LockBits(
-							new Rectangle(0, 0, multimap.Width, multimap.Height), ImageLockMode.WriteOnly, Settings.PixelFormat);
+							new Rectangle(0, 0, multimap.Width, multimap.Height),
+							ImageLockMode.WriteOnly,
+							Settings.PixelFormat
+						);
 						var line = (ushort*)bd.Scan0;
 						int delta = bd.Stride >> 1;
 
@@ -90,7 +96,10 @@ namespace Ultima
 			byte mask = 0x0;
 			ushort curcolor = 0;
 			BitmapData bd = image.LockBits(
-				new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, Settings.PixelFormat);
+				new Rectangle(0, 0, image.Width, image.Height),
+				ImageLockMode.ReadOnly,
+				Settings.PixelFormat
+			);
 			var line = (ushort*)bd.Scan0;
 			int delta = bd.Stride >> 1;
 			ushort* cur = line;
@@ -158,17 +167,22 @@ namespace Ultima
 		public static unsafe Bitmap GetFacetImage(int id)
 		{
 			Bitmap bmp;
-			string path = Files.GetFilePath(String.Format("facet0{0}.mul", id));
+			string path = Files.GetFilePath(String.Format(CultureInfo.CurrentCulture, "facet0{0}.mul", id));
 			if (path != null)
 			{
-				using (var reader = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)))
+				using (
+					var reader = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+				)
 				{
 					int width = reader.ReadInt16();
 					int height = reader.ReadInt16();
 
 					bmp = new Bitmap(width, height);
 					BitmapData bd = bmp.LockBits(
-						new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, Settings.PixelFormat);
+						new Rectangle(0, 0, bmp.Width, bmp.Height),
+						ImageLockMode.WriteOnly,
+						Settings.PixelFormat
+					);
 					var line = (ushort*)bd.Scan0;
 					int delta = bd.Stride >> 1;
 
@@ -211,12 +225,18 @@ namespace Ultima
 			int height = sourceBitmap.Height;
 
 			using (
-				var writer = new BinaryWriter(new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite)))
+				var writer = new BinaryWriter(
+					new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite)
+				)
+			)
 			{
 				writer.Write((short)width);
 				writer.Write((short)height);
 				BitmapData bd = sourceBitmap.LockBits(
-					new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, Settings.PixelFormat);
+					new Rectangle(0, 0, width, height),
+					ImageLockMode.ReadOnly,
+					Settings.PixelFormat
+				);
 				var line = (ushort*)bd.Scan0;
 				int delta = bd.Stride >> 1;
 				for (int y = 0; y < height; y++, line += delta)

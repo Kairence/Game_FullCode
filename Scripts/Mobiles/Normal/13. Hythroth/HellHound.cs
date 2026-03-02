@@ -3,96 +3,86 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    [CorpseName("a hell hound corpse")]
-    public class HellHound : BaseCreature
-    {
-        [Constructable]
-        public HellHound()
-            : base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
-        {
-            Name = "a hell hound";
-            Body = 98;
-            BaseSoundID = 229;
+	[CorpseName("a hell hound corpse")]
+	public class HellHound : BaseCreature
+	{
+		[Constructable]
+		public HellHound()
+			: base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
+		{
+			Name = "a hell hound";
+			Body = 98;
+			BaseSoundID = 229;
 
-            SetStr(800, 950);
-            SetDex(800, 1000);
-            SetInt(100, 180);
+			SetStr(800, 950);
+			SetDex(800, 1000);
+			SetInt(100, 180);
 
-            SetHits(1130, 1300);
+			SetHits(1130, 1300);
 
-			SetAttackSpeed( 5.0 );
-            SetDamage(11, 117);
+			SetAttackSpeed(5.0);
+			SetDamage(11, 117);
 
-            SetDamageType(ResistanceType.Physical, 20);
-            SetDamageType(ResistanceType.Fire, 80);
+			SetDamageType(ResistanceType.Physical, 20);
+			SetDamageType(ResistanceType.Fire, 80);
 
-            SetResistance(ResistanceType.Physical, 0, 56);
-            SetResistance(ResistanceType.Fire, 30, 40);
-            SetResistance(ResistanceType.Poison, 10, 20);
-            SetResistance(ResistanceType.Energy, 10, 20);
+			SetResistance(ResistanceType.Physical, 0, 56);
+			SetResistance(ResistanceType.Fire, 30, 40);
+			SetResistance(ResistanceType.Poison, 10, 20);
+			SetResistance(ResistanceType.Energy, 10, 20);
 
-            SetSkill(SkillName.Anatomy, 0, 5);
-            SetSkill(SkillName.MagicResist, 0, 75);
-            SetSkill(SkillName.Tactics, 0, 80);
-            SetSkill(SkillName.Wrestling, 0, 80);
-            SetSkill(SkillName.Necromancy, 18);
-            SetSkill(SkillName.SpiritSpeak, 18);
+			SetSkill(SkillName.Anatomy, 0, 5);
+			SetSkill(SkillName.MagicResist, 0, 75);
+			SetSkill(SkillName.Tactics, 0, 80);
+			SetSkill(SkillName.Wrestling, 0, 80);
+			SetSkill(SkillName.Necromancy, 18);
+			SetSkill(SkillName.SpiritSpeak, 18);
 
-            Fame = 4000;
-            Karma = -4000;
+			Fame = 4000;
+			Karma = -4000;
 
-            VirtualArmor = 30;
+			VirtualArmor = 30;
 
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 85.5;
+			Tamable = true;
+			ControlSlots = 1;
+			MinTameSkill = 85.5;
 
-            PackItem(new SulfurousAsh(5));
-            //SetSpecialAbility(SpecialAbility.DragonBreath);
-        }
+			PackItem(new SulfurousAsh(5));
+			//SetSpecialAbility(SpecialAbility.DragonBreath);
+		}
 
-        public HellHound(Serial serial)
-            : base(serial)
-        {
-        }
+		public HellHound(Serial serial)
+			: base(serial) { }
 
-        public override int Meat
-        {
-            get
-            {
-                return 1;
-            }
-        }
-        public override FoodType FavoriteFood
-        {
-            get
-            {
-                return FoodType.Meat;
-            }
-        }
-        public override PackInstinct PackInstinct
-        {
-            get
-            {
-                return PackInstinct.Canine;
-            }
-        }
-        public override void GenerateLoot()
-        {
-            AddLoot(LootPack.Average);
-            AddLoot(LootPack.Meager);
-        }
+		public override int Meat
+		{
+			get { return 1; }
+		}
+		public override FoodType FavoriteFood
+		{
+			get { return FoodType.Meat; }
+		}
+		public override PackInstinct PackInstinct
+		{
+			get { return PackInstinct.Canine; }
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
+		public override void GenerateLoot()
+		{
+			AddLoot(LootPack.Average);
+			AddLoot(LootPack.Meager);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 }

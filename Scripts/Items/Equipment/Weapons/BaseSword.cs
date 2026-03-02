@@ -3,73 +3,61 @@ using Server.Targets;
 
 namespace Server.Items
 {
-    public abstract class BaseSword : BaseMeleeWeapon
-    {
-        public BaseSword(int itemID)
-            : base(itemID)
-        {
-        }
+	public abstract class BaseSword : BaseMeleeWeapon
+	{
+		public BaseSword(int itemID)
+			: base(itemID) { }
 
-        public BaseSword(Serial serial)
-            : base(serial)
-        {
-        }
+		public BaseSword(Serial serial)
+			: base(serial) { }
 
-        public override SkillName DefSkill
-        {
-            get
-            {
-                return SkillName.Swords;
-            }
-        }
-        public override WeaponType DefType
-        {
-            get
-            {
-                return WeaponType.Slashing;
-            }
-        }
-        public override WeaponAnimation DefAnimation
-        {
-            get
-            {
-                return WeaponAnimation.Slash1H;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override SkillName DefSkill
+		{
+			get { return SkillName.Swords; }
+		}
+		public override WeaponType DefType
+		{
+			get { return WeaponType.Slashing; }
+		}
+		public override WeaponAnimation DefAnimation
+		{
+			get { return WeaponAnimation.Slash1H; }
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            from.SendLocalizedMessage(1010018); // What do you want to use this item on?
+			int version = reader.ReadInt();
+		}
 
-            from.Target = new BladedItemTarget(this);
-        }
+		public override void OnDoubleClick(Mobile from)
+		{
+			from.SendLocalizedMessage(1010018); // What do you want to use this item on?
+
+			from.Target = new BladedItemTarget(this);
+		}
 
 		/*
-        public override void OnHit(Mobile attacker, IDamageable damageable, double damageBonus)
-        {
-            base.OnHit(attacker, damageable, damageBonus);
+		public override void OnHit(Mobile attacker, IDamageable damageable, double damageBonus)
+		{
+			base.OnHit(attacker, damageable, damageBonus);
 
-            if (!Core.AOS && this.Poison != null && this.PoisonCharges > 0 && damageable is Mobile)
-            {
-                --this.PoisonCharges;
+			if (!Core.AOS && this.Poison != null && this.PoisonCharges > 0 && damageable is Mobile)
+			{
+				--this.PoisonCharges;
 
-                if (Utility.RandomDouble() >= 0.5) // 50% chance to poison
-                    ((Mobile)damageable).ApplyPoison(attacker, this.Poison);
-            }
-        }
+				if (Utility.RandomDouble() >= 0.5) // 50% chance to poison
+					((Mobile)damageable).ApplyPoison(attacker, this.Poison);
+			}
+		}
 		*/
-    }
+	}
 }

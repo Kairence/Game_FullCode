@@ -3,80 +3,80 @@ using Server.Mobiles;
 
 namespace Server.Engines.Quests.Hag
 {
-    public class MagicFlute : Item
-    {
-        [Constructable]
-        public MagicFlute()
-            : base(0x1421)
-        {
-            this.Hue = 0x8AB;
-        }
+	public class MagicFlute : Item
+	{
+		[Constructable]
+		public MagicFlute()
+			: base(0x1421)
+		{
+			this.Hue = 0x8AB;
+		}
 
-        public MagicFlute(Serial serial)
-            : base(serial)
-        {
-        }
+		public MagicFlute(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1055051;
-            }
-        }// magic flute
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (!this.IsChildOf(from.Backpack))
-            {
-                this.SendLocalizedMessageTo(from, 1042292); // You must have the object in your backpack to use it.
-                return;
-            }
+		public override int LabelNumber
+		{
+			get { return 1055051; }
+		} // magic flute
 
-            from.PlaySound(0x3D);
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (!this.IsChildOf(from.Backpack))
+			{
+				this.SendLocalizedMessageTo(from, 1042292); // You must have the object in your backpack to use it.
+				return;
+			}
 
-            PlayerMobile player = from as PlayerMobile;
+			from.PlaySound(0x3D);
 
-            if (player != null)
-            {
-                QuestSystem qs = player.Quest;
+			PlayerMobile player = from as PlayerMobile;
 
-                if (qs is WitchApprenticeQuest)
-                {
-                    FindZeefzorpulObjective obj = qs.FindObjective(typeof(FindZeefzorpulObjective)) as FindZeefzorpulObjective;
+			if (player != null)
+			{
+				QuestSystem qs = player.Quest;
 
-                    if (obj != null && !obj.Completed)
-                    {
-                        if ((player.Map != Map.Trammel && player.Map != Map.Felucca) || !player.InRange(obj.ImpLocation, 8))
-                        {
-                            player.SendLocalizedMessage(1055053); // Nothing happens. Zeefzorpul must not be hiding in this area.
-                        }
-                        else if (player.InRange(obj.ImpLocation, 4))
-                        {
-                            this.Delete();
+				if (qs is WitchApprenticeQuest)
+				{
+					FindZeefzorpulObjective obj =
+						qs.FindObjective(typeof(FindZeefzorpulObjective)) as FindZeefzorpulObjective;
 
-                            obj.Complete();
-                        }
-                        else
-                        {
-                            player.SendLocalizedMessage(1055052); // The flute sparkles. Zeefzorpul must be in a good hiding place nearby.
-                        }
-                    }
-                }
-            }
-        }
+					if (obj != null && !obj.Completed)
+					{
+						if (
+							(player.Map != Map.Trammel && player.Map != Map.Felucca)
+							|| !player.InRange(obj.ImpLocation, 8)
+						)
+						{
+							player.SendLocalizedMessage(1055053); // Nothing happens. Zeefzorpul must not be hiding in this area.
+						}
+						else if (player.InRange(obj.ImpLocation, 4))
+						{
+							this.Delete();
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+							obj.Complete();
+						}
+						else
+						{
+							player.SendLocalizedMessage(1055052); // The flute sparkles. Zeefzorpul must be in a good hiding place nearby.
+						}
+					}
+				}
+			}
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

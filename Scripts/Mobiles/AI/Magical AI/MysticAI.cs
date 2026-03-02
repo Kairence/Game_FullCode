@@ -7,7 +7,10 @@ namespace Server.Mobiles
 {
 	public class MysticAI : MageAI
 	{
-		public override SkillName CastSkill { get { return SkillName.Mysticism; } }
+		public override SkillName CastSkill
+		{
+			get { return SkillName.Mysticism; }
+		}
 
 		public override bool UsesMagery
 		{
@@ -15,8 +18,7 @@ namespace Server.Mobiles
 		}
 
 		public MysticAI(BaseCreature m)
-			: base(m)
-		{ }
+			: base(m) { }
 
 		public override Spell GetRandomDamageSpell()
 		{
@@ -97,15 +99,15 @@ namespace Server.Mobiles
 			return null;
 		}
 
-        public override Spell GetCureSpell()
-        {
-            if (UsesMagery)
-            {
-                return base.GetCureSpell();
-            }
+		public override Spell GetCureSpell()
+		{
+			if (UsesMagery)
+			{
+				return base.GetCureSpell();
+			}
 
-            return null;
-        }
+			return null;
+		}
 
 		public override Spell GetRandomBuffSpell()
 		{
@@ -137,10 +139,10 @@ namespace Server.Mobiles
 				case 3:
 				case 4:
 				case 5: // damage
-				{
-					m_Mobile.DebugSay("Just doing damage");
-					spell = GetRandomDamageSpell();
-				}
+					{
+						m_Mobile.DebugSay("Just doing damage");
+						spell = GetRandomDamageSpell();
+					}
 					break;
 			}
 

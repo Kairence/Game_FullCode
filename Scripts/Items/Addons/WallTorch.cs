@@ -3,142 +3,125 @@ using Server.Network;
 
 namespace Server.Items
 {
-    [Flipable(0x3D98, 0x3D94)]
-    public class WallTorchComponent : AddonComponent
-    {
-        public WallTorchComponent()
-            : base(0x3D98)
-        {
-        }
+	[Flipable(0x3D98, 0x3D94)]
+	public class WallTorchComponent : AddonComponent
+	{
+		public WallTorchComponent()
+			: base(0x3D98) { }
 
-        public WallTorchComponent(Serial serial)
-            : base(serial)
-        {
-        }
+		public WallTorchComponent(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1076282;
-            }
-        }// Wall Torch
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (from.InRange(this.Location, 2))
-            {
-                switch ( this.ItemID )
-                {
-                    case 0x3D98:
-                        this.ItemID = 0x3D9B;
-                        break;
-                    case 0x3D9B:
-                        this.ItemID = 0x3D98;
-                        break;
-                    case 0x3D94:
-                        this.ItemID = 0x3D97;
-                        break;
-                    case 0x3D97:
-                        this.ItemID = 0x3D94;
-                        break;
-                }
+		public override int LabelNumber
+		{
+			get { return 1076282; }
+		} // Wall Torch
 
-                Effects.PlaySound(this.Location, this.Map, 0x3BE);
-            }
-            else
-                from.LocalOverheadMessage(MessageType.Regular, 0x3B2, 1019045); // I can't reach that.
-        }
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (from.InRange(this.Location, 2))
+			{
+				switch (this.ItemID)
+				{
+					case 0x3D98:
+						this.ItemID = 0x3D9B;
+						break;
+					case 0x3D9B:
+						this.ItemID = 0x3D98;
+						break;
+					case 0x3D94:
+						this.ItemID = 0x3D97;
+						break;
+					case 0x3D97:
+						this.ItemID = 0x3D94;
+						break;
+				}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+				Effects.PlaySound(this.Location, this.Map, 0x3BE);
+			}
+			else
+				from.LocalOverheadMessage(MessageType.Regular, 0x3B2, 1019045); // I can't reach that.
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class WallTorchAddon : BaseAddon
-    {
-        public WallTorchAddon()
-            : base()
-        {
-            this.AddComponent(new WallTorchComponent(), 0, 0, 0);
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public WallTorchAddon(Serial serial)
-            : base(serial)
-        {
-        }
+	public class WallTorchAddon : BaseAddon
+	{
+		public WallTorchAddon()
+			: base()
+		{
+			this.AddComponent(new WallTorchComponent(), 0, 0, 0);
+		}
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new WallTorchDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public WallTorchAddon(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override BaseAddonDeed Deed
+		{
+			get { return new WallTorchDeed(); }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
 
-    public class WallTorchDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public WallTorchDeed()
-            : base()
-        {
-            this.LootType = LootType.Blessed;
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public WallTorchDeed(Serial serial)
-            : base(serial)
-        {
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new WallTorchAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1076282;
-            }
-        }// Wall Torch
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+	public class WallTorchDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public WallTorchDeed()
+			: base()
+		{
+			this.LootType = LootType.Blessed;
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public WallTorchDeed(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override BaseAddon Addon
+		{
+			get { return new WallTorchAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1076282; }
+		} // Wall Torch
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

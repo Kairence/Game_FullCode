@@ -1,258 +1,293 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Server.Mobiles;
 
 namespace Server.Engines.Quests
 {
-    public interface ITierQuest
-    {
-        TierQuestInfo TierInfo { get; }
-        TimeSpan RestartDelay { get; }
-    }
+	public interface ITierQuest
+	{
+		TierQuestInfo TierInfo { get; }
+		TimeSpan RestartDelay { get; }
+	}
 
-    public interface ITierQuester
-    {
-        TierQuestInfo TierInfo { get; }
-    }
+	public interface ITierQuester
+	{
+		TierQuestInfo TierInfo { get; }
+	}
 
-    public class TierQuestInfo
-    {
-        public Type Quester { get; set; }
-        public TierInfo[] Tiers { get; set; }
+	public class TierQuestInfo
+	{
+		public Type Quester { get; set; }
+		public TierInfo[] Tiers { get; set; }
 
-        public TierQuestInfo(Type quester, params TierInfo[] tiers)
-        {
-            Quester = quester;
-            Tiers = tiers;
-        }
-
-        public static TierQuestInfo Percolem { get; set; }
-        public static TierQuestInfo Thepem { get; set; }
-        public static TierQuestInfo Zosilem { get; set; }
-        public static TierQuestInfo Cain { get; set; }
-        public static TierQuestInfo Andy { get; set; }
-        public static TierQuestInfo Maloth { get; set; }
-        public static TierQuestInfo Steve { get; set; }
-        public static TierQuestInfo Jaina { get; set; }
-
-        static TierQuestInfo()
-        {
-            Percolem = new TierQuestInfo(typeof(Percolem),
-                new TierInfo(0, TimeSpan.FromMinutes(30), typeof(BouraBouraQuest), typeof(RaptorliciousQuest), typeof(TheSlithWarsQuest)),
-                new TierInfo(5, TimeSpan.FromMinutes(120), typeof(AmbushingTheAmbushersQuest), typeof(BouraBouraAndMoreBouraQuest), typeof(RevengeOfTheSlithQuest), typeof(WeveGotAnAntProblemQuest)),
-                new TierInfo(10, TimeSpan.FromMinutes(1440), typeof(ItMakesMeSickQuest), typeof(ItsAMadMadWorldQuest), typeof(TheDreamersQuest)));
-
-            Thepem = new TierQuestInfo(typeof(Thepem),
-                new TierInfo(0, TimeSpan.FromMinutes(30), typeof(AllThatGlitters), typeof(TastyTreats)),
-                new TierInfo(5, TimeSpan.FromMinutes(120), typeof(MetalHead), typeof(PinkistheNewBlack)));
-
-            Zosilem = new TierQuestInfo(typeof(Zosilem),
-                new TierInfo(0, TimeSpan.FromMinutes(30), typeof(DabblingontheDarkSide), typeof(TheBrainyAlchemist)),
-                new TierInfo(5, TimeSpan.FromMinutes(120), typeof(ArmorUp), typeof(ToTurnBaseMetalIntoVerite)),
-                new TierInfo(10, TimeSpan.FromMinutes(1440), typeof(PureValorite), typeof(TheForbiddenFruit)));
-
-			Cain = new TierQuestInfo(typeof(Cain),
-                new TierInfo(0, TimeSpan.FromMinutes(0), typeof(CovetousTierQuest1)),
-                new TierInfo(20, TimeSpan.FromMinutes(0), typeof(CovetousTierQuest2)),
-                new TierInfo(50, TimeSpan.FromMinutes(0), typeof(CovetousTierQuest3)));
-
-			Andy = new TierQuestInfo(typeof(Andy),
-                new TierInfo(0, TimeSpan.FromMinutes(0), typeof(DespiseTierQuest1)),
-                new TierInfo(20, TimeSpan.FromMinutes(0), typeof(DespiseTierQuest2)),
-                new TierInfo(50, TimeSpan.FromMinutes(0), typeof(DespiseTierQuest3)));
-
-			Maloth = new TierQuestInfo(typeof(Maloth),
-                new TierInfo(0, TimeSpan.FromMinutes(0), typeof(DeceitTierQuest1)),
-                new TierInfo(20, TimeSpan.FromMinutes(0), typeof(DeceitTierQuest2)),
-                new TierInfo(50, TimeSpan.FromMinutes(0), typeof(DeceitTierQuest3)));
-
-			Steve = new TierQuestInfo(typeof(Steve),
-                new TierInfo(0, TimeSpan.FromMinutes(0), typeof(ShameTierQuest1)),
-                new TierInfo(20, TimeSpan.FromMinutes(0), typeof(ShameTierQuest2)),
-                new TierInfo(50, TimeSpan.FromMinutes(0), typeof(ShameTierQuest3)));
-
-			Jaina = new TierQuestInfo(typeof(Steve),
-                new TierInfo(0, TimeSpan.FromMinutes(0), typeof(OrcCaveTierQuest1)),
-                new TierInfo(20, TimeSpan.FromMinutes(0), typeof(OrcCaveTierQuest2)),
-                new TierInfo(50, TimeSpan.FromMinutes(0), typeof(OrcCaveTierQuest3)));
+		public TierQuestInfo(Type quester, params TierInfo[] tiers)
+		{
+			Quester = quester;
+			Tiers = tiers;
 		}
 
-        public static TimeSpan GetCooldown(TierQuestInfo tierInfo, Type questType)
-        {
-            var info = tierInfo.Tiers.FirstOrDefault(i => i.Quests.Any(q => q == questType));
+		public static TierQuestInfo Percolem { get; set; }
+		public static TierQuestInfo Thepem { get; set; }
+		public static TierQuestInfo Zosilem { get; set; }
+		public static TierQuestInfo Cain { get; set; }
+		public static TierQuestInfo Andy { get; set; }
+		public static TierQuestInfo Maloth { get; set; }
+		public static TierQuestInfo Steve { get; set; }
+		public static TierQuestInfo Jaina { get; set; }
 
-            if (info != null)
-            {
-                return info.Cooldown;
-            }
+		static TierQuestInfo()
+		{
+			Percolem = new TierQuestInfo(
+				typeof(Percolem),
+				new TierInfo(
+					0,
+					TimeSpan.FromMinutes(30),
+					typeof(BouraBouraQuest),
+					typeof(RaptorliciousQuest),
+					typeof(TheSlithWarsQuest)
+				),
+				new TierInfo(
+					5,
+					TimeSpan.FromMinutes(120),
+					typeof(AmbushingTheAmbushersQuest),
+					typeof(BouraBouraAndMoreBouraQuest),
+					typeof(RevengeOfTheSlithQuest),
+					typeof(WeveGotAnAntProblemQuest)
+				),
+				new TierInfo(
+					10,
+					TimeSpan.FromMinutes(1440),
+					typeof(ItMakesMeSickQuest),
+					typeof(ItsAMadMadWorldQuest),
+					typeof(TheDreamersQuest)
+				)
+			);
 
-            return TimeSpan.Zero;
-        }
+			Thepem = new TierQuestInfo(
+				typeof(Thepem),
+				new TierInfo(0, TimeSpan.FromMinutes(30), typeof(AllThatGlitters), typeof(TastyTreats)),
+				new TierInfo(5, TimeSpan.FromMinutes(120), typeof(MetalHead), typeof(PinkistheNewBlack))
+			);
 
-        public static int GetCompleteReq(TierQuestInfo tierInfo, Type questType)
-        {
-            var info = tierInfo.Tiers.FirstOrDefault(i => i.Quests.Any(q => q == questType));
+			Zosilem = new TierQuestInfo(
+				typeof(Zosilem),
+				new TierInfo(0, TimeSpan.FromMinutes(30), typeof(DabblingontheDarkSide), typeof(TheBrainyAlchemist)),
+				new TierInfo(5, TimeSpan.FromMinutes(120), typeof(ArmorUp), typeof(ToTurnBaseMetalIntoVerite)),
+				new TierInfo(10, TimeSpan.FromMinutes(1440), typeof(PureValorite), typeof(TheForbiddenFruit))
+			);
 
-            if (info != null)
-            {
-                return info.ToComplete;
-            }
+			Cain = new TierQuestInfo(
+				typeof(Cain),
+				new TierInfo(0, TimeSpan.FromMinutes(0), typeof(CovetousTierQuest1)),
+				new TierInfo(20, TimeSpan.FromMinutes(0), typeof(CovetousTierQuest2)),
+				new TierInfo(50, TimeSpan.FromMinutes(0), typeof(CovetousTierQuest3))
+			);
 
-            return 0;
-        }
+			Andy = new TierQuestInfo(
+				typeof(Andy),
+				new TierInfo(0, TimeSpan.FromMinutes(0), typeof(DespiseTierQuest1)),
+				new TierInfo(20, TimeSpan.FromMinutes(0), typeof(DespiseTierQuest2)),
+				new TierInfo(50, TimeSpan.FromMinutes(0), typeof(DespiseTierQuest3))
+			);
 
-        public static Dictionary<PlayerMobile, Dictionary<Type, int>> PlayerTierInfo { get; set; } = new Dictionary<PlayerMobile, Dictionary<Type, int>>();
+			Maloth = new TierQuestInfo(
+				typeof(Maloth),
+				new TierInfo(0, TimeSpan.FromMinutes(0), typeof(DeceitTierQuest1)),
+				new TierInfo(20, TimeSpan.FromMinutes(0), typeof(DeceitTierQuest2)),
+				new TierInfo(50, TimeSpan.FromMinutes(0), typeof(DeceitTierQuest3))
+			);
 
-        public static void CompleteQuest(PlayerMobile pm, ITierQuest quest)
-        {
-            var type = quest.GetType();
+			Steve = new TierQuestInfo(
+				typeof(Steve),
+				new TierInfo(0, TimeSpan.FromMinutes(0), typeof(ShameTierQuest1)),
+				new TierInfo(20, TimeSpan.FromMinutes(0), typeof(ShameTierQuest2)),
+				new TierInfo(50, TimeSpan.FromMinutes(0), typeof(ShameTierQuest3))
+			);
 
-            if (!PlayerTierInfo.ContainsKey(pm))
-            {
-                PlayerTierInfo[pm] = new Dictionary<Type, int>();
-            }
+			Jaina = new TierQuestInfo(
+				typeof(Steve),
+				new TierInfo(0, TimeSpan.FromMinutes(0), typeof(OrcCaveTierQuest1)),
+				new TierInfo(20, TimeSpan.FromMinutes(0), typeof(OrcCaveTierQuest2)),
+				new TierInfo(50, TimeSpan.FromMinutes(0), typeof(OrcCaveTierQuest3))
+			);
+		}
 
-            if (PlayerTierInfo[pm].ContainsKey(type))
-            {
-                PlayerTierInfo[pm][type]++;
-            }
-            else
-            {
-                PlayerTierInfo[pm][type] = 1;
-            }
-        }
+		public static TimeSpan GetCooldown(TierQuestInfo tierInfo, Type questType)
+		{
+			var info = tierInfo.Tiers.FirstOrDefault(i => i.Quests.Any(q => q == questType));
 
-        public static int HasCompleted(PlayerMobile pm, Type questType, TierQuestInfo info)
-        {
-            if (!PlayerTierInfo.ContainsKey(pm))
-            {
-                return 0;
-            }
+			if (info != null)
+			{
+				return info.Cooldown;
+			}
 
-            int completed = 0;
+			return TimeSpan.Zero;
+		}
 
-            foreach (var kvp in PlayerTierInfo[pm])
-            {
-                if (questType == kvp.Key)
-                {
-                    completed += kvp.Value;
-                }
-            }
-            /*foreach (var tier in info.Tiers)
-            {
-                if (tier.Quests.Any(q => q == questType))
-                {
-                    foreach (var q in tier.Quests)
-                    {
-                        foreach (var kvp in PlayerTierInfo[pm])
-                        {
-                            if (q == kvp.Key)
-                            {
-                                completed += kvp.Value;
-                            }
-                        }
-                    }
-                }
-            }*/
+		public static int GetCompleteReq(TierQuestInfo tierInfo, Type questType)
+		{
+			var info = tierInfo.Tiers.FirstOrDefault(i => i.Quests.Any(q => q == questType));
 
-            return completed;
-        }
+			if (info != null)
+			{
+				return info.ToComplete;
+			}
 
-        public static BaseQuest RandomQuest(PlayerMobile pm, ITierQuester quester)
-        {
-            var info = quester.TierInfo;
+			return 0;
+		}
 
-            if (info != null)
-            {
-                var list = new List<Type>();
-                int lastTierComplete = 0;
+		public static Dictionary<PlayerMobile, Dictionary<Type, int>> PlayerTierInfo { get; set; } =
+			new Dictionary<PlayerMobile, Dictionary<Type, int>>();
 
-                for(int i = 0; i < info.Tiers.Length; i++)
-                {
-                    var tier = info.Tiers[i];
+		public static void CompleteQuest(PlayerMobile pm, ITierQuest quest)
+		{
+			var type = quest.GetType();
 
-                    if (lastTierComplete >= tier.ToComplete)
-                    {
-                        list.AddRange(tier.Quests);
-                    }
+			if (!PlayerTierInfo.ContainsKey(pm))
+			{
+				PlayerTierInfo[pm] = new Dictionary<Type, int>();
+			}
 
-                    lastTierComplete = 0;
+			if (PlayerTierInfo[pm].ContainsKey(type))
+			{
+				PlayerTierInfo[pm][type]++;
+			}
+			else
+			{
+				PlayerTierInfo[pm][type] = 1;
+			}
+		}
 
-                    foreach (var quest in tier.Quests)
-                    {
-                        lastTierComplete += HasCompleted(pm, quest, info);
-                    }
-                }
+		public static int HasCompleted(PlayerMobile pm, Type questType, TierQuestInfo info)
+		{
+			if (!PlayerTierInfo.ContainsKey(pm))
+			{
+				return 0;
+			}
 
-                if (list.Count > 0)
-                {
-                    return QuestHelper.Construct(list[Utility.Random(list.Count)]) as BaseQuest;
-                }
-            }
+			int completed = 0;
 
-            return null;
-        }
+			foreach (var kvp in PlayerTierInfo[pm])
+			{
+				if (questType == kvp.Key)
+				{
+					completed += kvp.Value;
+				}
+			}
+			/*foreach (var tier in info.Tiers)
+			{
+				if (tier.Quests.Any(q => q == questType))
+				{
+					foreach (var q in tier.Quests)
+					{
+						foreach (var kvp in PlayerTierInfo[pm])
+						{
+							if (q == kvp.Key)
+							{
+								completed += kvp.Value;
+							}
+						}
+					}
+				}
+			}*/
 
-        public static void Save(GenericWriter writer)
-        {
-            writer.Write(0);
+			return completed;
+		}
 
-            writer.Write(PlayerTierInfo.Count);
+		public static BaseQuest RandomQuest(PlayerMobile pm, ITierQuester quester)
+		{
+			var info = quester.TierInfo;
 
-            foreach (var kvp in PlayerTierInfo)
-            {
-                writer.WriteMobile(kvp.Key);
-                writer.Write(kvp.Value.Count);
+			if (info != null)
+			{
+				var list = new List<Type>();
+				int lastTierComplete = 0;
 
-                foreach (var kvp2 in kvp.Value)
-                {
-                    writer.Write(kvp2.Key.FullName);
-                    writer.Write(kvp2.Value);
-                }
-            }
-        }
+				for (int i = 0; i < info.Tiers.Length; i++)
+				{
+					var tier = info.Tiers[i];
 
-        public static void Load(GenericReader reader)
-        {
-            reader.ReadInt();
+					if (lastTierComplete >= tier.ToComplete)
+					{
+						list.AddRange(tier.Quests);
+					}
 
-            var count = reader.ReadInt();
+					lastTierComplete = 0;
 
-            for (int i = 0; i < count; i++)
-            {
-                var pm = reader.ReadMobile<PlayerMobile>();
-                var c = reader.ReadInt();
-                var list = new Dictionary<Type, int>();
+					foreach (var quest in tier.Quests)
+					{
+						lastTierComplete += HasCompleted(pm, quest, info);
+					}
+				}
 
-                for (int j = 0; j < c; j++)
-                {
-                    var type = ScriptCompiler.FindTypeByFullName(reader.ReadString());
-                    var completed = reader.ReadInt();
+				if (list.Count > 0)
+				{
+					return QuestHelper.Construct(list[Utility.Random(list.Count)]) as BaseQuest;
+				}
+			}
 
-                    list[type] = completed;
-                }
+			return null;
+		}
 
-                if (pm != null)
-                {
-                    PlayerTierInfo[pm] = list;
-                }
-            }
-        }
-    }
+		public static void Save(GenericWriter writer)
+		{
+			writer.Write(0);
 
-    public class TierInfo
-    {
-        public Type[] Quests { get; set; }
-        public TimeSpan Cooldown { get; set; }
-        public int ToComplete { get; set; }
+			writer.Write(PlayerTierInfo.Count);
 
-        public TierInfo(int toComplete, TimeSpan cooldown, params Type[] quests)
-        {
-            Quests = quests;
-            Cooldown = cooldown;
-            ToComplete = toComplete;
-        }
-    }
+			foreach (var kvp in PlayerTierInfo)
+			{
+				writer.WriteMobile(kvp.Key);
+				writer.Write(kvp.Value.Count);
+
+				foreach (var kvp2 in kvp.Value)
+				{
+					writer.Write(kvp2.Key.FullName);
+					writer.Write(kvp2.Value);
+				}
+			}
+		}
+
+		public static void Load(GenericReader reader)
+		{
+			reader.ReadInt();
+
+			var count = reader.ReadInt();
+
+			for (int i = 0; i < count; i++)
+			{
+				var pm = reader.ReadMobile<PlayerMobile>();
+				var c = reader.ReadInt();
+				var list = new Dictionary<Type, int>();
+
+				for (int j = 0; j < c; j++)
+				{
+					var type = ScriptCompiler.FindTypeByFullName(reader.ReadString());
+					var completed = reader.ReadInt();
+
+					list[type] = completed;
+				}
+
+				if (pm != null)
+				{
+					PlayerTierInfo[pm] = list;
+				}
+			}
+		}
+	}
+
+	public class TierInfo
+	{
+		public Type[] Quests { get; set; }
+		public TimeSpan Cooldown { get; set; }
+		public int ToComplete { get; set; }
+
+		public TierInfo(int toComplete, TimeSpan cooldown, params Type[] quests)
+		{
+			Quests = quests;
+			Cooldown = cooldown;
+			ToComplete = toComplete;
+		}
+	}
 }

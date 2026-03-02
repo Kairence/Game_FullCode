@@ -1,6 +1,5 @@
 #region References
 using System;
-
 using Server.Accounting;
 using Server.Items;
 using Server.Network;
@@ -57,7 +56,13 @@ namespace Server
 			if (from.Account != null && from704565)
 			{
 				from.Send(
-					new UpdateSecureTrade(m_From.Container, TradeFlag.UpdateLedger, from.Account.TotalGold, from.Account.TotalPlat));
+					new UpdateSecureTrade(
+						m_From.Container,
+						TradeFlag.UpdateLedger,
+						from.Account.TotalGold,
+						from.Account.TotalPlat
+					)
+				);
 			}
 
 			to.Send(new MobileStatus(to, from));
@@ -88,14 +93,30 @@ namespace Server
 
 			if (to.Account != null && to704565)
 			{
-				to.Send(new UpdateSecureTrade(m_To.Container, TradeFlag.UpdateLedger, to.Account.TotalGold, to.Account.TotalPlat));
+				to.Send(
+					new UpdateSecureTrade(
+						m_To.Container,
+						TradeFlag.UpdateLedger,
+						to.Account.TotalGold,
+						to.Account.TotalPlat
+					)
+				);
 			}
 		}
 
-		public SecureTradeInfo From { get { return m_From; } }
-		public SecureTradeInfo To { get { return m_To; } }
+		public SecureTradeInfo From
+		{
+			get { return m_From; }
+		}
+		public SecureTradeInfo To
+		{
+			get { return m_To; }
+		}
 
-		public bool Valid { get { return m_Valid; } }
+		public bool Valid
+		{
+			get { return m_Valid; }
+		}
 
 		public void Cancel()
 		{
@@ -193,8 +214,8 @@ namespace Server
 
 		private static void UpdateCurrency(SecureTradeInfo left, SecureTradeInfo right)
 		{
-            var ls = left.Mobile != null ? left.Mobile.NetState : null;
-            var rs = right.Mobile != null ? right.Mobile.NetState : null;
+			var ls = left.Mobile != null ? left.Mobile.NetState : null;
+			var rs = right.Mobile != null ? right.Mobile.NetState : null;
 
 			if (ls != null && ls.NewSecureTrading)
 			{
@@ -359,8 +380,14 @@ namespace Server
 
 		private void HandleAccountGoldTrade()
 		{
-			int fromPlatSend = 0, fromGoldSend = 0, fromPlatRecv = 0, fromGoldRecv = 0;
-			int toPlatSend = 0, toGoldSend = 0, toPlatRecv = 0, toGoldRecv = 0;
+			int fromPlatSend = 0,
+				fromGoldSend = 0,
+				fromPlatRecv = 0,
+				fromGoldRecv = 0;
+			int toPlatSend = 0,
+				toGoldSend = 0,
+				toPlatRecv = 0,
+				toGoldRecv = 0;
 
 			if (m_From.Plat > 0 & m_From.Mobile.Account.WithdrawPlat(m_From.Plat))
 			{
@@ -412,13 +439,19 @@ namespace Server
 			int platSend,
 			int goldSend,
 			int platRecv,
-			int goldRecv)
+			int goldRecv
+		)
 		{
 			if (platSend > 0 || goldSend > 0)
 			{
 				if (platSend > 0 && goldSend > 0)
 				{
-					left.SendMessage("You traded {0:#,0} platinum and {1:#,0} gold to {2}.", platSend, goldSend, right.RawName);
+					left.SendMessage(
+						"You traded {0:#,0} platinum and {1:#,0} gold to {2}.",
+						platSend,
+						goldSend,
+						right.RawName
+					);
 				}
 				else if (platSend > 0)
 				{
@@ -434,7 +467,12 @@ namespace Server
 			{
 				if (platRecv > 0 && goldRecv > 0)
 				{
-					left.SendMessage("You received {0:#,0} platinum and {1:#,0} gold from {2}.", platRecv, goldRecv, right.RawName);
+					left.SendMessage(
+						"You received {0:#,0} platinum and {1:#,0} gold from {2}.",
+						platRecv,
+						goldRecv,
+						right.RawName
+					);
 				}
 				else if (platRecv > 0)
 				{
@@ -455,8 +493,16 @@ namespace Server
 		public SecureTradeContainer Container { get; private set; }
 		public VirtualCheck VirtualCheck { get; private set; }
 
-		public int Gold { get { return VirtualCheck.Gold; } set { VirtualCheck.Gold = value; } }
-		public int Plat { get { return VirtualCheck.Plat; } set { VirtualCheck.Plat = value; } }
+		public int Gold
+		{
+			get { return VirtualCheck.Gold; }
+			set { VirtualCheck.Gold = value; }
+		}
+		public int Plat
+		{
+			get { return VirtualCheck.Plat; }
+			set { VirtualCheck.Plat = value; }
+		}
 
 		public bool Accepted { get; set; }
 

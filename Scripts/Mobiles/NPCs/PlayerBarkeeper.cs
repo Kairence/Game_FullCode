@@ -1,7 +1,6 @@
 #region References
 using System;
 using System.Collections.Generic;
-
 using Server.ContextMenus;
 using Server.Gumps;
 using Server.Items;
@@ -102,8 +101,16 @@ namespace Server.Mobiles
 			m_Keyword = keyword;
 		}
 
-		public string Message { get { return m_Message; } set { m_Message = value; } }
-		public string Keyword { get { return m_Keyword; } set { m_Keyword = value; } }
+		public string Message
+		{
+			get { return m_Message; }
+			set { m_Message = value; }
+		}
+		public string Keyword
+		{
+			get { return m_Keyword; }
+			set { m_Keyword = value; }
+		}
 
 		public static BarkeeperRumor Deserialize(GenericReader reader)
 		{
@@ -168,11 +175,14 @@ namespace Server.Mobiles
 		}
 
 		public PlayerBarkeeper(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public Mobile Owner { get { return m_Owner; } set { m_Owner = value; } }
+		public Mobile Owner
+		{
+			get { return m_Owner; }
+			set { m_Owner = value; }
+		}
 
 		public BaseHouse House
 		{
@@ -194,15 +204,40 @@ namespace Server.Mobiles
 		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public string TipMessage { get { return m_TipMessage; } set { m_TipMessage = value; } }
+		public string TipMessage
+		{
+			get { return m_TipMessage; }
+			set { m_TipMessage = value; }
+		}
 
-		public override bool IsActiveBuyer { get { return false; } }
-		public override bool IsActiveSeller { get { return (m_SBInfos.Count > 0); } }
-		public override bool DisallowAllMoves { get { return true; } }
-		public override bool NoHouseRestrictions { get { return true; } }
-		public BarkeeperRumor[] Rumors { get { return m_Rumors; } }
-		public override VendorShoeType ShoeType { get { return Utility.RandomBool() ? VendorShoeType.ThighBoots : VendorShoeType.Boots; } }
-		protected override List<SBInfo> SBInfos { get { return m_SBInfos; } }
+		public override bool IsActiveBuyer
+		{
+			get { return false; }
+		}
+		public override bool IsActiveSeller
+		{
+			get { return (m_SBInfos.Count > 0); }
+		}
+		public override bool DisallowAllMoves
+		{
+			get { return true; }
+		}
+		public override bool NoHouseRestrictions
+		{
+			get { return true; }
+		}
+		public BarkeeperRumor[] Rumors
+		{
+			get { return m_Rumors; }
+		}
+		public override VendorShoeType ShoeType
+		{
+			get { return Utility.RandomBool() ? VendorShoeType.ThighBoots : VendorShoeType.Boots; }
+		}
+		protected override List<SBInfo> SBInfos
+		{
+			get { return m_SBInfos; }
+		}
 
 		public override bool GetGender()
 		{
@@ -298,7 +333,8 @@ namespace Server.Mobiles
 							TimeSpan.FromSeconds(1.0),
 							TimeSpan.FromSeconds(3.0),
 							new TimerStateCallback(ShoutNews_Callback),
-							new object[] {tce, 0});
+							new object[] { tce, 0 }
+						);
 
 						PublicOverheadMessage(MessageType.Regular, 0x3B2, 502978); // Some of the latest news!
 					}
@@ -343,7 +379,13 @@ namespace Server.Mobiles
 
 				if (g.Amount > 50)
 				{
-					PrivateOverheadMessage(MessageType.Regular, 0x3B2, false, "I cannot accept so large a tip!", from.NetState);
+					PrivateOverheadMessage(
+						MessageType.Regular,
+						0x3B2,
+						false,
+						"I cannot accept so large a tip!",
+						from.NetState
+					);
 				}
 				else
 				{
@@ -356,7 +398,8 @@ namespace Server.Mobiles
 							0x3B2,
 							false,
 							"It would not be fair of me to take your money and not offer you information in return.",
-							from.NetState);
+							from.NetState
+						);
 					}
 					else
 					{
@@ -421,7 +464,12 @@ namespace Server.Mobiles
 
 			from.Prompt = new ChangeRumorMessagePrompt(this, index);
 			PrivateOverheadMessage(
-				MessageType.Regular, 0x3B2, false, "Say what news you would like me to tell our guests.", from.NetState);
+				MessageType.Regular,
+				0x3B2,
+				false,
+				"Say what news you would like me to tell our guests.",
+				from.NetState
+			);
 		}
 
 		public void EndChangeRumor(Mobile from, int index, string text)
@@ -442,7 +490,12 @@ namespace Server.Mobiles
 
 			from.Prompt = new ChangeRumorKeywordPrompt(this, index);
 			PrivateOverheadMessage(
-				MessageType.Regular, 0x3B2, false, "What keyword should a guest say to me to get this news?", from.NetState);
+				MessageType.Regular,
+				0x3B2,
+				false,
+				"What keyword should a guest say to me to get this news?",
+				from.NetState
+			);
 		}
 
 		public void EndChangeKeyword(Mobile from, int index, string text)
@@ -482,14 +535,20 @@ namespace Server.Mobiles
 				0x3B2,
 				false,
 				"Say what you want me to tell guests when they give me a good tip.",
-				from.NetState);
+				from.NetState
+			);
 		}
 
 		public void EndChangeTip(Mobile from, string text)
 		{
 			m_TipMessage = text;
 			PrivateOverheadMessage(
-				MessageType.Regular, 0x3B2, false, "I'll say that to anyone who gives me a good tip.", from.NetState);
+				MessageType.Regular,
+				0x3B2,
+				false,
+				"I'll say that to anyone who gives me a good tip.",
+				from.NetState
+			);
 		}
 
 		public void RemoveTip(Mobile from)
@@ -540,8 +599,13 @@ namespace Server.Mobiles
 
 		public override void InitSBInfo()
 		{
-			if (Title == "the waiter" || Title == "the barkeeper" || Title == "the baker" || Title == "the innkeeper" ||
-				Title == "the chef")
+			if (
+				Title == "the waiter"
+				|| Title == "the barkeeper"
+				|| Title == "the baker"
+				|| Title == "the innkeeper"
+				|| Title == "the chef"
+			)
 			{
 				if (m_SBInfos.Count == 0)
 				{
@@ -583,26 +647,26 @@ namespace Server.Mobiles
 			switch (version)
 			{
 				case 1:
-					{
-						House = (BaseHouse)reader.ReadItem();
+				{
+					House = (BaseHouse)reader.ReadItem();
 
-						goto case 0;
-					}
+					goto case 0;
+				}
 				case 0:
+				{
+					m_Owner = reader.ReadMobile();
+
+					m_Rumors = new BarkeeperRumor[reader.ReadEncodedInt()];
+
+					for (int i = 0; i < m_Rumors.Length; ++i)
 					{
-						m_Owner = reader.ReadMobile();
-
-						m_Rumors = new BarkeeperRumor[reader.ReadEncodedInt()];
-
-						for (int i = 0; i < m_Rumors.Length; ++i)
-						{
-							m_Rumors[i] = BarkeeperRumor.Deserialize(reader);
-						}
-
-						m_TipMessage = reader.ReadString();
-
-						break;
+						m_Rumors[i] = BarkeeperRumor.Deserialize(reader);
 					}
+
+					m_TipMessage = reader.ReadString();
+
+					break;
+				}
 			}
 
 			if (version < 1)
@@ -643,19 +707,66 @@ namespace Server.Mobiles
 	{
 		private static readonly Entry[] m_Entries = new[]
 		{
-			new Entry("Alchemist"), new Entry("Animal Tamer"), new Entry("Apothecary"), new Entry("Artist"),
-			new Entry("Baker", true), new Entry("Bard"), new Entry("Barkeep", "the barkeeper", true), new Entry("Beggar"),
-			new Entry("Blacksmith"), new Entry("Bounty Hunter"), new Entry("Brigand"), new Entry("Butler"),
-			new Entry("Carpenter"), new Entry("Chef", true), new Entry("Commander"), new Entry("Curator"), new Entry("Drunkard"),
-			new Entry("Farmer"), new Entry("Fisherman"), new Entry("Gambler"), new Entry("Gypsy"), new Entry("Herald"),
-			new Entry("Herbalist"), new Entry("Hermit"), new Entry("Innkeeper", true), new Entry("Jailor"), new Entry("Jester"),
-			new Entry("Librarian"), new Entry("Mage"), new Entry("Mercenary"), new Entry("Merchant"), new Entry("Messenger"),
-			new Entry("Miner"), new Entry("Monk"), new Entry("Noble"), new Entry("Paladin"), new Entry("Peasant"),
-			new Entry("Pirate"), new Entry("Prisoner"), new Entry("Prophet"), new Entry("Ranger"), new Entry("Sage"),
-			new Entry("Sailor"), new Entry("Scholar"), new Entry("Scribe"), new Entry("Sentry"), new Entry("Servant"),
-			new Entry("Shepherd"), new Entry("Soothsayer"), new Entry("Stoic"), new Entry("Storyteller"), new Entry("Tailor"),
-			new Entry("Thief"), new Entry("Tinker"), new Entry("Town Crier"), new Entry("Treasure Hunter"),
-			new Entry("Waiter", true), new Entry("Warrior"), new Entry("Watchman"), new Entry("No Title", null, false)
+			new Entry("Alchemist"),
+			new Entry("Animal Tamer"),
+			new Entry("Apothecary"),
+			new Entry("Artist"),
+			new Entry("Baker", true),
+			new Entry("Bard"),
+			new Entry("Barkeep", "the barkeeper", true),
+			new Entry("Beggar"),
+			new Entry("Blacksmith"),
+			new Entry("Bounty Hunter"),
+			new Entry("Brigand"),
+			new Entry("Butler"),
+			new Entry("Carpenter"),
+			new Entry("Chef", true),
+			new Entry("Commander"),
+			new Entry("Curator"),
+			new Entry("Drunkard"),
+			new Entry("Farmer"),
+			new Entry("Fisherman"),
+			new Entry("Gambler"),
+			new Entry("Gypsy"),
+			new Entry("Herald"),
+			new Entry("Herbalist"),
+			new Entry("Hermit"),
+			new Entry("Innkeeper", true),
+			new Entry("Jailor"),
+			new Entry("Jester"),
+			new Entry("Librarian"),
+			new Entry("Mage"),
+			new Entry("Mercenary"),
+			new Entry("Merchant"),
+			new Entry("Messenger"),
+			new Entry("Miner"),
+			new Entry("Monk"),
+			new Entry("Noble"),
+			new Entry("Paladin"),
+			new Entry("Peasant"),
+			new Entry("Pirate"),
+			new Entry("Prisoner"),
+			new Entry("Prophet"),
+			new Entry("Ranger"),
+			new Entry("Sage"),
+			new Entry("Sailor"),
+			new Entry("Scholar"),
+			new Entry("Scribe"),
+			new Entry("Sentry"),
+			new Entry("Servant"),
+			new Entry("Shepherd"),
+			new Entry("Soothsayer"),
+			new Entry("Stoic"),
+			new Entry("Storyteller"),
+			new Entry("Tailor"),
+			new Entry("Thief"),
+			new Entry("Tinker"),
+			new Entry("Town Crier"),
+			new Entry("Treasure Hunter"),
+			new Entry("Waiter", true),
+			new Entry("Warrior"),
+			new Entry("Watchman"),
+			new Entry("No Title", null, false),
 		};
 
 		private readonly Mobile m_From;
@@ -758,13 +869,29 @@ namespace Server.Mobiles
 		{
 			AddPage(1 + page);
 
-			AddHtml(430, 70, 180, 25, String.Format("Page {0} of {1}", page + 1, (entries.Length + 19) / 20), false, false);
+			AddHtml(
+				430,
+				70,
+				180,
+				25,
+				String.Format("Page {0} of {1}", page + 1, (entries.Length + 19) / 20),
+				false,
+				false
+			);
 
 			for (int count = 0, i = (page * 20); count < 20 && i < entries.Length; ++count, ++i)
 			{
 				Entry entry = entries[i];
 
-				AddButton(80 + ((count / 10) * 260), 100 + ((count % 10) * 30), 4005, 4007, 2 + i, GumpButtonType.Reply, 0);
+				AddButton(
+					80 + ((count / 10) * 260),
+					100 + ((count % 10) * 30),
+					4005,
+					4007,
+					2 + i,
+					GumpButtonType.Reply,
+					0
+				);
 				AddHtml(
 					120 + ((count / 10) * 260),
 					100 + ((count % 10) * 30),
@@ -772,7 +899,8 @@ namespace Server.Mobiles
 					25,
 					entry.m_Description,
 					true,
-					false);
+					false
+				);
 
 				if (entry.m_Vendor)
 				{
@@ -795,12 +923,10 @@ namespace Server.Mobiles
 			public readonly bool m_Vendor;
 
 			public Entry(string desc)
-				: this(desc, String.Format("the {0}", desc.ToLower()), false)
-			{ }
+				: this(desc, String.Format("the {0}", desc.ToLower()), false) { }
 
 			public Entry(string desc, bool vendor)
-				: this(desc, String.Format("the {0}", desc.ToLower()), vendor)
-			{ }
+				: this(desc, String.Format("the {0}", desc.ToLower()), vendor) { }
 
 			public Entry(string desc, string title, bool vendor)
 			{
@@ -950,7 +1076,15 @@ namespace Server.Mobiles
 				BarkeeperRumor rumor = rumors[i];
 
 				AddHtml(100, 70 + (i * 120), 50, 20, "Message", false, false);
-				AddHtml(100, 90 + (i * 120), 450, 40, rumor == null ? "No current message" : rumor.Message, true, false);
+				AddHtml(
+					100,
+					90 + (i * 120),
+					450,
+					40,
+					rumor == null ? "No current message" : rumor.Message,
+					true,
+					false
+				);
 				AddHtml(100, 130 + (i * 120), 50, 20, "Keyword", false, false);
 				AddHtml(100, 150 + (i * 120), 450, 40, rumor == null ? "None" : rumor.Keyword, true, false);
 
@@ -976,7 +1110,15 @@ namespace Server.Mobiles
 				BarkeeperRumor rumor = rumors[i];
 
 				AddHtml(100, 70 + (i * 120), 50, 20, "Message", false, false);
-				AddHtml(100, 90 + (i * 120), 450, 40, rumor == null ? "No current message" : rumor.Message, true, false);
+				AddHtml(
+					100,
+					90 + (i * 120),
+					450,
+					40,
+					rumor == null ? "No current message" : rumor.Message,
+					true,
+					false
+				);
 				AddHtml(100, 130 + (i * 120), 50, 20, "Keyword", false, false);
 				AddHtml(100, 150 + (i * 120), 450, 40, rumor == null ? "None" : rumor.Keyword, true, false);
 
@@ -1009,55 +1151,55 @@ namespace Server.Mobiles
 			switch (type)
 			{
 				case 0: // Controls
+				{
+					switch (index)
 					{
-						switch (index)
+						case 0: // Dismiss
 						{
-							case 0: // Dismiss
-								{
-									m_Barkeeper.Dismiss();
-									break;
-								}
+							m_Barkeeper.Dismiss();
+							break;
 						}
-
-						break;
 					}
+
+					break;
+				}
 				case 1: // Change message
-					{
-						m_Barkeeper.BeginChangeRumor(m_From, index);
-						break;
-					}
+				{
+					m_Barkeeper.BeginChangeRumor(m_From, index);
+					break;
+				}
 				case 2: // Remove message
-					{
-						m_Barkeeper.RemoveRumor(m_From, index);
-						break;
-					}
+				{
+					m_Barkeeper.RemoveRumor(m_From, index);
+					break;
+				}
 				case 3: // Change tip
-					{
-						m_Barkeeper.BeginChangeTip(m_From);
-						break;
-					}
+				{
+					m_Barkeeper.BeginChangeTip(m_From);
+					break;
+				}
 				case 4: // Remove tip
-					{
-						m_Barkeeper.RemoveTip(m_From);
-						break;
-					}
+				{
+					m_Barkeeper.RemoveTip(m_From);
+					break;
+				}
 				case 5: // Appearance category selection
+				{
+					switch (index)
 					{
-						switch (index)
-						{
-							case 0:
-								m_Barkeeper.BeginChangeTitle(m_From);
-								break;
-							case 1:
-								m_Barkeeper.BeginChangeAppearance(m_From);
-								break;
-							case 2:
-								m_Barkeeper.ChangeGender(m_From);
-								break;
-						}
-
-						break;
+						case 0:
+							m_Barkeeper.BeginChangeTitle(m_From);
+							break;
+						case 1:
+							m_Barkeeper.BeginChangeAppearance(m_From);
+							break;
+						case 2:
+							m_Barkeeper.ChangeGender(m_From);
+							break;
 					}
+
+					break;
+				}
 			}
 		}
 
@@ -1073,7 +1215,14 @@ namespace Server.Mobiles
 			AddHtml(250, 95, 500, 20, "Change this tip message", false, false);
 			AddHtml(100, 190, 50, 20, "Message", false, false);
 			AddHtml(
-				100, 210, 450, 40, m_Barkeeper.TipMessage == null ? "No current message" : m_Barkeeper.TipMessage, true, false);
+				100,
+				210,
+				450,
+				40,
+				m_Barkeeper.TipMessage == null ? "No current message" : m_Barkeeper.TipMessage,
+				true,
+				false
+			);
 
 			AddButton(60, 210, 4005, 4007, GetButtonID(3, 0), GumpButtonType.Reply, 0);
 
@@ -1090,7 +1239,14 @@ namespace Server.Mobiles
 			AddHtml(250, 95, 500, 20, "Remove this tip message", false, false);
 			AddHtml(100, 190, 50, 20, "Message", false, false);
 			AddHtml(
-				100, 210, 450, 40, m_Barkeeper.TipMessage == null ? "No current message" : m_Barkeeper.TipMessage, true, false);
+				100,
+				210,
+				450,
+				40,
+				m_Barkeeper.TipMessage == null ? "No current message" : m_Barkeeper.TipMessage,
+				true,
+				false
+			);
 
 			AddButton(60, 210, 4005, 4007, GetButtonID(4, 0), GumpButtonType.Reply, 0);
 

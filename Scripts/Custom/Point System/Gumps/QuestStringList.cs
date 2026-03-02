@@ -1,58 +1,54 @@
 using System;
 using Server.Mobiles;
+
 namespace Server
 {
 	public class QuestStringList
 	{
-		public string TownPoint( PlayerMobile pm )
+		public string TownPoint(PlayerMobile pm)
 		{
 			string town = "";
-			//ºê¸®Æ° : 
-			if( pm.Map == Map.Trammel && pm.Location.X == 1479 && pm.Location.Y >= 1611 && pm.Location.Y <= 1612 )
-				town = "ºê¸®Æ° Ä¡·á¼Ò";
-			else if( pm.Map == Map.Trammel && pm.Location.X == 1419 && pm.Location.Y >= 1596 && pm.Location.Y <= 1597 )
-				town = "ºê¸®Æ° °ø°ø µµ¼­°ü";
-			else if( pm.Map == Map.Trammel && pm.Location.X == 1419 && pm.Location.Y >= 1596 && pm.Location.Y <= 1597 )
-				town = "¸ÁÄ¡¿Í ¸ð·ç";
-			else if( pm.Map == Map.Trammel && pm.Location.X >= 1455 && pm.Location.X <= 1456 && pm.Location.Y == 1560 )
-				town = "ºê¸®Æ° ºê¸®Æ¼½Ã ¿ÕÀÇ À½¾Ç ´ëÇÐ";
-			
-			
+			//ï¿½ê¸®Æ° :
+			if (pm.Map == Map.Trammel && pm.Location.X == 1479 && pm.Location.Y >= 1611 && pm.Location.Y <= 1612)
+				town = "ï¿½ê¸®Æ° Ä¡ï¿½ï¿½ï¿½";
+			else if (pm.Map == Map.Trammel && pm.Location.X == 1419 && pm.Location.Y >= 1596 && pm.Location.Y <= 1597)
+				town = "ï¿½ê¸®Æ° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½";
+			else if (pm.Map == Map.Trammel && pm.Location.X == 1419 && pm.Location.Y >= 1596 && pm.Location.Y <= 1597)
+				town = "ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½";
+			else if (pm.Map == Map.Trammel && pm.Location.X >= 1455 && pm.Location.X <= 1456 && pm.Location.Y == 1560)
+				town = "ï¿½ê¸®Æ° ï¿½ê¸®Æ¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½";
+
 			return town;
-			
 		}
-		
-		public bool MoveCheck( PlayerMobile pm, int list )
+
+		public bool MoveCheck(PlayerMobile pm, int list)
 		{
 			bool success = false;
 			//switch(list)
 			//{
 			//	if( pm.Map == Map.Trammel && pm.Location.X == 1479
-			//	
-			//	
+			//
+			//
 			//}
 			return success;
-			
 		}
-		public string MoveString( int list )
+
+		public string MoveString(int list)
 		{
 			string talk = "";
-			switch(list)
+			switch (list)
 			{
-				case 1: talk = "ÀÚ³× È¤½Ã 'ºê¸®Æ° Ä¡·á¼Ò'·Î °¡¼­\n ÀÌ ºØ´ë¸¦ °Ç³»ÁÙ ¼ö ÀÖ°Ú³ª? ¹«»çÈ÷ µµÂøÇÏ¸é Áï½Ã º¸»óÀ» ¹ÞÀ» ¼ö ÀÖÀ»°Å¾ß";
-								break;
-				
-				case 2: talk = "±ÞÇÑµ¥... ¾îÂ¾´Ù. °Å±â ÀÚ³× ½Ã°£ÀÌ ÀÖ³ª? 'ºê¸®Æ° °ø°ø µµ¼­°ü' ¹«»çÈ÷ µµÂøÇÏ¸é Áï½Ã º¸»óÀ» ¹ÞÀ» ¼ö ÀÖÀ»°Å¾ß";
-								break;
-				
-				
-				
-				
-				
+				case 1:
+					talk =
+						"ï¿½Ú³ï¿½ È¤ï¿½ï¿½ 'ï¿½ê¸®Æ° Ä¡ï¿½ï¿½ï¿½'ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½\n ï¿½ï¿½ ï¿½Ø´ë¸¦ ï¿½Ç³ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö°Ú³ï¿½? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Å¾ï¿½";
+					break;
+
+				case 2:
+					talk =
+						"ï¿½ï¿½ï¿½Ñµï¿½... ï¿½ï¿½Â¾ï¿½ï¿½. ï¿½Å±ï¿½ ï¿½Ú³ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½Ö³ï¿½? 'ï¿½ê¸®Æ° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½' ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Å¾ï¿½";
+					break;
 			}
 			return talk;
-			
 		}
-		
 	}
 }

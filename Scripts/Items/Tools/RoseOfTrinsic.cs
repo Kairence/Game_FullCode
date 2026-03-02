@@ -7,235 +7,226 @@ using Server.Network;
 
 namespace Server.Items
 {
-    [FlipableAttribute(0x234C, 0x234D)]
-    public class RoseOfTrinsic : Item, ISecurable, ICommodity
-    {
-        private static readonly TimeSpan m_SpawnTime = TimeSpan.FromHours(4.0);
-        private int m_Petals;
-        private DateTime m_NextSpawnTime;
-        private SpawnTimer m_SpawnTimer;
-        private SecureLevel m_Level;
-        [Constructable]
-        public RoseOfTrinsic()
-            : base(0x234D)
-        {
-            this.Weight = 1.0;
-            this.LootType = LootType.Blessed;
+	[FlipableAttribute(0x234C, 0x234D)]
+	public class RoseOfTrinsic : Item, ISecurable, ICommodity
+	{
+		private static readonly TimeSpan m_SpawnTime = TimeSpan.FromHours(4.0);
+		private int m_Petals;
+		private DateTime m_NextSpawnTime;
+		private SpawnTimer m_SpawnTimer;
+		private SecureLevel m_Level;
 
-            this.m_Petals = 0;
-            this.StartSpawnTimer(TimeSpan.FromMinutes(1.0));
-        }
+		[Constructable]
+		public RoseOfTrinsic()
+			: base(0x234D)
+		{
+			this.Weight = 1.0;
+			this.LootType = LootType.Blessed;
 
-        public RoseOfTrinsic(Serial serial)
-            : base(serial)
-        {
-        }
+			this.m_Petals = 0;
+			this.StartSpawnTimer(TimeSpan.FromMinutes(1.0));
+		}
 
-        TextDefinition ICommodity.Description { get { return LabelNumber; } }
-        bool ICommodity.IsDeedable { get { return true; } }
+		public RoseOfTrinsic(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1062913;
-            }
-        }// Rose of Trinsic
-        [CommandProperty(AccessLevel.GameMaster)]
-        public SecureLevel Level
-        {
-            get
-            {
-                return this.m_Level;
-            }
-            set
-            {
-                this.m_Level = value;
-            }
-        }
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int Petals
-        {
-            get
-            {
-                return this.m_Petals;
-            }
-            set
-            {
-                if (value >= 10)
-                {
-                    this.m_Petals = 10;
+		TextDefinition ICommodity.Description
+		{
+			get { return LabelNumber; }
+		}
+		bool ICommodity.IsDeedable
+		{
+			get { return true; }
+		}
 
-                    this.StopSpawnTimer();
-                }
-                else
-                {
-                    if (value <= 0)
-                        this.m_Petals = 0;
-                    else
-                        this.m_Petals = value;
+		public override int LabelNumber
+		{
+			get { return 1062913; }
+		} // Rose of Trinsic
 
-                    this.StartSpawnTimer(m_SpawnTime);
-                }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public SecureLevel Level
+		{
+			get { return this.m_Level; }
+			set { this.m_Level = value; }
+		}
 
-                this.InvalidateProperties();
-            }
-        }
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int Petals
+		{
+			get { return this.m_Petals; }
+			set
+			{
+				if (value >= 10)
+				{
+					this.m_Petals = 10;
 
-            list.Add(1062925, this.Petals.ToString()); // Petals:  ~1_COUNT~
-        }
+					this.StopSpawnTimer();
+				}
+				else
+				{
+					if (value <= 0)
+						this.m_Petals = 0;
+					else
+						this.m_Petals = value;
 
-        public override void GetContextMenuEntries(Mobile from, List<ContextMenuEntry> list)
-        {
-            base.GetContextMenuEntries(from, list);
+					this.StartSpawnTimer(m_SpawnTime);
+				}
 
-            SetSecureLevelEntry.AddTo(from, this, list);
-        }
+				this.InvalidateProperties();
+			}
+		}
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (!from.InRange(this.GetWorldLocation(), 2))
-            {
-                from.LocalOverheadMessage(MessageType.Regular, 0x3B2, 1019045); // I can't reach that.
-            }
-            else if (this.Petals > 0)
-            {
-                from.AddToBackpack(new RoseOfTrinsicPetal(this.Petals));
-                this.Petals = 0;
-            }
-        }
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			list.Add(1062925, this.Petals.ToString()); // Petals:  ~1_COUNT~
+		}
 
-            writer.WriteEncodedInt((int)0); // version
+		public override void GetContextMenuEntries(Mobile from, List<ContextMenuEntry> list)
+		{
+			base.GetContextMenuEntries(from, list);
 
-            writer.WriteEncodedInt((int)this.m_Petals);
-            writer.WriteDeltaTime((DateTime)this.m_NextSpawnTime);
-            writer.WriteEncodedInt((int)this.m_Level);
-        }
+			SetSecureLevelEntry.AddTo(from, this, list);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (!from.InRange(this.GetWorldLocation(), 2))
+			{
+				from.LocalOverheadMessage(MessageType.Regular, 0x3B2, 1019045); // I can't reach that.
+			}
+			else if (this.Petals > 0)
+			{
+				from.AddToBackpack(new RoseOfTrinsicPetal(this.Petals));
+				this.Petals = 0;
+			}
+		}
 
-            int version = reader.ReadEncodedInt();
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            this.m_Petals = reader.ReadEncodedInt();
-            this.m_NextSpawnTime = reader.ReadDeltaTime();
-            this.m_Level = (SecureLevel)reader.ReadEncodedInt();
+			writer.WriteEncodedInt((int)0); // version
 
-            if (this.m_Petals < 10)
-                this.StartSpawnTimer(this.m_NextSpawnTime - DateTime.UtcNow);
-        }
+			writer.WriteEncodedInt((int)this.m_Petals);
+			writer.WriteDeltaTime((DateTime)this.m_NextSpawnTime);
+			writer.WriteEncodedInt((int)this.m_Level);
+		}
 
-        private void StartSpawnTimer(TimeSpan delay)
-        {
-            this.StopSpawnTimer();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            this.m_SpawnTimer = new SpawnTimer(this, delay);
-            this.m_SpawnTimer.Start();
+			int version = reader.ReadEncodedInt();
 
-            this.m_NextSpawnTime = DateTime.UtcNow + delay;
-        }
+			this.m_Petals = reader.ReadEncodedInt();
+			this.m_NextSpawnTime = reader.ReadDeltaTime();
+			this.m_Level = (SecureLevel)reader.ReadEncodedInt();
 
-        private void StopSpawnTimer()
-        {
-            if (this.m_SpawnTimer != null)
-            {
-                this.m_SpawnTimer.Stop();
-                this.m_SpawnTimer = null;
-            }
-        }
+			if (this.m_Petals < 10)
+				this.StartSpawnTimer(this.m_NextSpawnTime - DateTime.UtcNow);
+		}
 
-        private class SpawnTimer : Timer
-        {
-            private readonly RoseOfTrinsic m_Rose;
-            public SpawnTimer(RoseOfTrinsic rose, TimeSpan delay)
-                : base(delay)
-            {
-                this.m_Rose = rose;
+		private void StartSpawnTimer(TimeSpan delay)
+		{
+			this.StopSpawnTimer();
 
-                this.Priority = TimerPriority.OneMinute;
-            }
+			this.m_SpawnTimer = new SpawnTimer(this, delay);
+			this.m_SpawnTimer.Start();
 
-            protected override void OnTick()
-            {
-                if (this.m_Rose.Deleted)
-                    return;
+			this.m_NextSpawnTime = DateTime.UtcNow + delay;
+		}
 
-                this.m_Rose.m_SpawnTimer = null;
-                this.m_Rose.Petals++;
-            }
-        }
-    }
+		private void StopSpawnTimer()
+		{
+			if (this.m_SpawnTimer != null)
+			{
+				this.m_SpawnTimer.Stop();
+				this.m_SpawnTimer = null;
+			}
+		}
 
-    public class RoseOfTrinsicPetal : Item
-    {
-        [Constructable]
-        public RoseOfTrinsicPetal()
-            : this(1)
-        {
-        }
+		private class SpawnTimer : Timer
+		{
+			private readonly RoseOfTrinsic m_Rose;
 
-        [Constructable]
-        public RoseOfTrinsicPetal(int amount)
-            : base(0x1021)
-        {
-            this.Stackable = true;
-            this.Amount = amount;
+			public SpawnTimer(RoseOfTrinsic rose, TimeSpan delay)
+				: base(delay)
+			{
+				this.m_Rose = rose;
 
-            this.Weight = 1.0;
-            this.Hue = 0xE;
-        }
+				this.Priority = TimerPriority.OneMinute;
+			}
 
-        public RoseOfTrinsicPetal(Serial serial)
-            : base(serial)
-        {
-        }
+			protected override void OnTick()
+			{
+				if (this.m_Rose.Deleted)
+					return;
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1062926;
-            }
-        }// Petal of the Rose of Trinsic
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (!this.IsChildOf(from.Backpack))
-            {
-                from.SendLocalizedMessage(1042038); // You must have the object in your backpack to use it.
-            }
-            else if (from.GetStatMod("RoseOfTrinsicPetal") != null)
-            {
-                from.SendLocalizedMessage(1062927); // You have eaten one of these recently and eating another would provide no benefit.
-            }
-            else
-            {
-                from.PlaySound(0x1EE);
-                from.AddStatMod(new StatMod(StatType.Str, "RoseOfTrinsicPetal", 5, TimeSpan.FromMinutes(5.0)));
+				this.m_Rose.m_SpawnTimer = null;
+				this.m_Rose.Petals++;
+			}
+		}
+	}
 
-                this.Consume();
-            }
-        }
+	public class RoseOfTrinsicPetal : Item
+	{
+		[Constructable]
+		public RoseOfTrinsicPetal()
+			: this(1) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		[Constructable]
+		public RoseOfTrinsicPetal(int amount)
+			: base(0x1021)
+		{
+			this.Stackable = true;
+			this.Amount = amount;
 
-            writer.WriteEncodedInt((int)0); // version
-        }
+			this.Weight = 1.0;
+			this.Hue = 0xE;
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public RoseOfTrinsicPetal(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override int LabelNumber
+		{
+			get { return 1062926; }
+		} // Petal of the Rose of Trinsic
+
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (!this.IsChildOf(from.Backpack))
+			{
+				from.SendLocalizedMessage(1042038); // You must have the object in your backpack to use it.
+			}
+			else if (from.GetStatMod("RoseOfTrinsicPetal") != null)
+			{
+				from.SendLocalizedMessage(1062927); // You have eaten one of these recently and eating another would provide no benefit.
+			}
+			else
+			{
+				from.PlaySound(0x1EE);
+				from.AddStatMod(new StatMod(StatType.Str, "RoseOfTrinsicPetal", 5, TimeSpan.FromMinutes(5.0)));
+
+				this.Consume();
+			}
+		}
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.WriteEncodedInt((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

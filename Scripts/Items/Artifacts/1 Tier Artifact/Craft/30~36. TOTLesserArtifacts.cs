@@ -2,321 +2,298 @@ using System;
 
 namespace Server.Items
 {
-    public enum LesserPigmentType
-    {
-        None,
-        PaleOrange,
-        FreshRose,
-        ChaosBlue,
-        Silver,
-        NobleGold,
-        LightGreen,
-        PaleBlue,
-        FreshPlum,
-        DeepBrown,
-        BurntBrown
-    }
+	public enum LesserPigmentType
+	{
+		None,
+		PaleOrange,
+		FreshRose,
+		ChaosBlue,
+		Silver,
+		NobleGold,
+		LightGreen,
+		PaleBlue,
+		FreshPlum,
+		DeepBrown,
+		BurntBrown,
+	}
 
-    public class AncientFarmersKasa : StrawHat
-    {
-		public override bool IsArtifact { get { return true; } }
-        public override int ArtifactRarity
-        {
-            get
-            {
-                return 1;
-            }
-        }
-        [Constructable]
-        public AncientFarmersKasa()
-            : base()
-        {
+	public class AncientFarmersKasa : StrawHat
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+		public override int ArtifactRarity
+		{
+			get { return 1; }
+		}
+
+		[Constructable]
+		public AncientFarmersKasa()
+			: base()
+		{
 			PrefixOption[80] = 1;
 			PrefixOption[81] = 72;
-        }
+		}
 
-        public AncientFarmersKasa(Serial serial)
-            : base(serial)
-        {
-        }
+		public AncientFarmersKasa(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1070922;
-            }
-        }// Ancient Farmer's Kasa
+		public override int LabelNumber
+		{
+			get { return 1070922; }
+		} // Ancient Farmer's Kasa
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((int)0);
-        }
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadInt();
-        }
-    }
+			int version = reader.ReadInt();
+		}
+	}
 
-    public class AncientSamuraiDo : PlateChest
-    {
-		public override bool IsArtifact { get { return true; } }
-        public override int ArtifactRarity
-        {
-            get
-            {
-                return 1;
-            }
-        }
-        [Constructable]
-        public AncientSamuraiDo()
-            : base()
-        {
+	public class AncientSamuraiDo : PlateChest
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+		public override int ArtifactRarity
+		{
+			get { return 1; }
+		}
+
+		[Constructable]
+		public AncientSamuraiDo()
+			: base()
+		{
 			PrefixOption[80] = 1;
 			PrefixOption[81] = 65;
-        }
+		}
 
-        public AncientSamuraiDo(Serial serial)
-            : base(serial)
-        {
-        }
+		public AncientSamuraiDo(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1070926;
-            }
-        }// Ancient Samurai Do
+		public override int LabelNumber
+		{
+			get { return 1070926; }
+		} // Ancient Samurai Do
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((int)0);
-        }
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadInt();
-        }
-    }
+			int version = reader.ReadInt();
+		}
+	}
 
-    public class ArmsOfTacticalExcellence : RingmailArms
-    {
-		public override bool IsArtifact { get { return true; } }
-        public override int ArtifactRarity
-        {
-            get
-            {
-                return 1;
-            }
-        }
-        [Constructable]
-        public ArmsOfTacticalExcellence()
-            : base()
-        {
+	public class ArmsOfTacticalExcellence : RingmailArms
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+		public override int ArtifactRarity
+		{
+			get { return 1; }
+		}
+
+		[Constructable]
+		public ArmsOfTacticalExcellence()
+			: base()
+		{
 			PrefixOption[80] = 1;
 			PrefixOption[81] = 77;
-        }
+		}
 
-        public ArmsOfTacticalExcellence(Serial serial)
-            : base(serial)
-        {
-        }
+		public ArmsOfTacticalExcellence(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1070921;
-            }
-        }// Arms of Tactical Excellence
+		public override int LabelNumber
+		{
+			get { return 1070921; }
+		} // Arms of Tactical Excellence
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((int)0);
-        }
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadInt();
-        }
-    }
+			int version = reader.ReadInt();
+		}
+	}
 
-    public class BlackLotusHood : SkullCap
-    {
-		public override bool IsArtifact { get { return true; } }
-        public override int ArtifactRarity
-        {
-            get
-            {
-                return 1;
-            }
-        }
-        [Constructable]
-        public BlackLotusHood()
-            : base()
-        {
+	public class BlackLotusHood : SkullCap
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+		public override int ArtifactRarity
+		{
+			get { return 1; }
+		}
+
+		[Constructable]
+		public BlackLotusHood()
+			: base()
+		{
 			PrefixOption[80] = 1;
 			PrefixOption[81] = 96;
-        }
+		}
 
-        public BlackLotusHood(Serial serial)
-            : base(serial)
-        {
-        }
+		public BlackLotusHood(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1070919;
-            }
-        }// Black Lotus Hood
+		public override int LabelNumber
+		{
+			get { return 1070919; }
+		} // Black Lotus Hood
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((int)0);
-        }
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadInt();
-        }
-    }
+			int version = reader.ReadInt();
+		}
+	}
 
-    public class DaimyosHelm : Helmet
-    {
-		public override bool IsArtifact { get { return true; } }
-        public override int ArtifactRarity
-        {
-            get
-            {
-                return 1;
-            }
-        }
-        [Constructable]
-        public DaimyosHelm()
-            : base()
-        {
+	public class DaimyosHelm : Helmet
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+		public override int ArtifactRarity
+		{
+			get { return 1; }
+		}
+
+		[Constructable]
+		public DaimyosHelm()
+			: base()
+		{
 			PrefixOption[80] = 1;
 			PrefixOption[81] = 40;
-        }
+		}
 
-        public DaimyosHelm(Serial serial)
-            : base(serial)
-        {
-        }
+		public DaimyosHelm(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1070920;
-            }
-        }// Daimyo's Helm
+		public override int LabelNumber
+		{
+			get { return 1070920; }
+		} // Daimyo's Helm
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((int)0);
-        }
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadInt();
-        }
-    }
+			int version = reader.ReadInt();
+		}
+	}
 
-    public class DemonForks : Kryss //30번 악마사냥 크리스
-    {
-		public override bool IsArtifact { get { return true; } }
-        public override int ArtifactRarity
-        {
-            get
-            {
-                return 1;
-            }
-        }
-        [Constructable]
-        public DemonForks()
-            : base()
-        {
+	public class DemonForks : Kryss //30번 악마사냥 크리스
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+		public override int ArtifactRarity
+		{
+			get { return 1; }
+		}
+
+		[Constructable]
+		public DemonForks()
+			: base()
+		{
 			//데몬슬 75%, 공속 20%
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
-			
+
 			PrefixOption[11] = 61; //옵션 종류
 			SuffixOption[11] = 750000; //옵션 값
 			PrefixOption[12] = 40; //옵션 종류
 			SuffixOption[12] = 200000; //옵션 값
-        }
+		}
 
-        public DemonForks(Serial serial)
-            : base(serial)
-        {
-        }
+		public DemonForks(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1070917;
-            }
-        }// Demon Forks
+		public override int LabelNumber
+		{
+			get { return 1070917; }
+		} // Demon Forks
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((int)0);
-        }
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadInt();
-        }
-    }
+			int version = reader.ReadInt();
+		}
+	}
 
-    public class DragonNunchaku : Club //31. 용 조각 몽둥이
-    {
-		public override bool IsArtifact { get { return true; } }
-        public override int ArtifactRarity
-        {
-            get
-            {
-                return 1;
-            }
-        }
-        [Constructable]
-        public DragonNunchaku()
-            : base()
-        {
+	public class DragonNunchaku : Club //31. 용 조각 몽둥이
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+		public override int ArtifactRarity
+		{
+			get { return 1; }
+		}
+
+		[Constructable]
+		public DragonNunchaku()
+			: base()
+		{
 			//금화 획득 20%, 체력 500, 기력 500, 무기 피해 50%
 			SuffixOption[0] = 4; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
-			
+
 			PrefixOption[11] = 51; //옵션 종류
 			SuffixOption[11] = 200000; //옵션 값
 			PrefixOption[12] = 4; //옵션 종류
@@ -325,978 +302,953 @@ namespace Server.Items
 			SuffixOption[13] = 5000000; //옵션 값
 			PrefixOption[14] = 7; //옵션 종류
 			SuffixOption[14] = 500000; //옵션 값
-        }
+		}
 
-        public DragonNunchaku(Serial serial)
-            : base(serial)
-        {
-        }
+		public DragonNunchaku(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1070914;
-            }
-        }// Dragon Nunchaku
+		public override int LabelNumber
+		{
+			get { return 1070914; }
+		} // Dragon Nunchaku
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((int)0);
-        }
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadInt();
-        }
-    }
+			int version = reader.ReadInt();
+		}
+	}
 
+	public class PeasantsBokuto : BlackStaff //58. 농민의 검은 지팡이
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+		public override int ArtifactRarity
+		{
+			get { return 1; }
+		}
 
-    public class PeasantsBokuto : BlackStaff //58. 농민의 검은 지팡이
-    {
-		public override bool IsArtifact { get { return true; } }
-        public override int ArtifactRarity
-        {
-            get
-            {
-                return 1;
-            }
-        }
-        [Constructable]
-        public PeasantsBokuto()
-            : base()
-        {
+		[Constructable]
+		public PeasantsBokuto()
+			: base()
+		{
 			//혼돈 속성 25%, 기력 1000
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
-			
+
 			PrefixOption[11] = 157; //옵션 종류
 			SuffixOption[11] = 250000; //옵션 값
 			PrefixOption[12] = 5; //옵션 종류
 			SuffixOption[12] = 13000000; //옵션 값
-        }
+		}
 
-        public PeasantsBokuto(Serial serial)
-            : base(serial)
-        {
-        }
+		public PeasantsBokuto(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1070912;
-            }
-        }// Peasant's Bokuto
+		public override int LabelNumber
+		{
+			get { return 1070912; }
+		} // Peasant's Bokuto
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((int)0);
-        }
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadInt();
-        }
-    }
+			int version = reader.ReadInt();
+		}
+	}
 
-    public class PilferedDancerFans : ExecutionersAxe //32. 도난당한 사형집행인의 도끼
-    {
-		public override bool IsArtifact { get { return true; } }
-        public override int ArtifactRarity
-        {
-            get
-            {
-                return 1;
-            }
-        }
-        [Constructable]
-        public PilferedDancerFans()
-            : base()
-        {
+	public class PilferedDancerFans : ExecutionersAxe //32. 도난당한 사형집행인의 도끼
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+		public override int ArtifactRarity
+		{
+			get { return 1; }
+		}
+
+		[Constructable]
+		public PilferedDancerFans()
+			: base()
+		{
 			//물리치명피해 50%, 공속 50%
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
-			
+
 			PrefixOption[11] = 44; //옵션 종류
 			SuffixOption[11] = 500000; //옵션 값
 			PrefixOption[12] = 40; //옵션 종류
 			SuffixOption[12] = 500000; //옵션 값
-        }
+		}
 
-        public PilferedDancerFans(Serial serial)
-            : base(serial)
-        {
-        }
+		public PilferedDancerFans(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1070916;
-            }
-        }// Pilfered Dancer Fans
+		public override int LabelNumber
+		{
+			get { return 1070916; }
+		} // Pilfered Dancer Fans
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((int)0);
-        }
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadInt();
-        }
-    }
+			int version = reader.ReadInt();
+		}
+	}
 
+	public class TomeOfEnlightenment : Magerybook //33. 깨우침의 고서
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+		public override int ArtifactRarity
+		{
+			get { return 1; }
+		}
 
-    public class TomeOfEnlightenment : Magerybook //33. 깨우침의 고서
-    {
-		public override bool IsArtifact { get { return true; } }
-        public override int ArtifactRarity
-        {
-            get
-            {
-                return 1;
-            }
-        }
-        [Constructable]
-        public TomeOfEnlightenment()
-            : base()
-        {
-            LootType = LootType.Regular;
+		[Constructable]
+		public TomeOfEnlightenment()
+			: base()
+		{
+			LootType = LootType.Regular;
 
 			//지능 2000, 마나 500
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
-			
+
 			PrefixOption[11] = 2; //옵션 종류
 			SuffixOption[11] = 2000; //옵션 값
 			PrefixOption[12] = 6; //옵션 종류
 			SuffixOption[12] = 5000000; //옵션 값
-        }
+		}
 
-        public TomeOfEnlightenment(Serial serial)
-            : base(serial)
-        {
-        }
+		public TomeOfEnlightenment(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1070934;
-            }
-        }// Tome of Enlightenment
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int LabelNumber
+		{
+			get { return 1070934; }
+		} // Tome of Enlightenment
 
-            writer.Write((int)0);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0);
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class LeurociansMempoOfFortune : LeatherMempo
-    {
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public LeurociansMempoOfFortune()
-            : base()
-        {
-            LootType = LootType.Regular;
-            Hue = 0x501;
+			int version = reader.ReadInt();
+		}
+	}
 
-            Attributes.Luck = 300;
-            Attributes.RegenMana = 1;
-        }
+	public class LeurociansMempoOfFortune : LeatherMempo
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public LeurociansMempoOfFortune(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public LeurociansMempoOfFortune()
+			: base()
+		{
+			LootType = LootType.Regular;
+			Hue = 0x501;
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1071460;
-            }
-        }// Leurocian's mempo of fortune
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 15;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 15;
-            }
-        }
+			Attributes.Luck = 300;
+			Attributes.RegenMana = 1;
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public LeurociansMempoOfFortune(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0);
-        }
+		public override int LabelNumber
+		{
+			get { return 1071460; }
+		} // Leurocian's mempo of fortune
+		public override int BasePhysicalResistance
+		{
+			get { return 15; }
+		}
+		public override int BaseFireResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return 10; }
+		}
+		public override int BasePoisonResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseEnergyResistance
+		{
+			get { return 15; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
-	
+			writer.Write((int)0);
+		}
 
-    public class TheDestroyer : Halberd  //34. 파괴의 할버드
-    {
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public TheDestroyer()
-            : base()
-        {
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
+
+	public class TheDestroyer : Halberd //34. 파괴의 할버드
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+
+		[Constructable]
+		public TheDestroyer()
+			: base()
+		{
 			//물리 치명 확률 50%, 체력 -500
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
-			
+
 			PrefixOption[11] = 26; //옵션 종류
 			SuffixOption[11] = 500000; //옵션 값
 			PrefixOption[12] = 4; //옵션 종류
 			SuffixOption[12] = -5000000; //옵션 값
-        }
+		}
 
-        public TheDestroyer(Serial serial)
-            : base(serial)
-        {
-        }
+		public TheDestroyer(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1070915;
-            }
-        }// The Destroyer
+		public override int LabelNumber
+		{
+			get { return 1070915; }
+		} // The Destroyer
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((int)0);
-        }
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadInt();
-        }
-    }	
+			int version = reader.ReadInt();
+		}
+	}
+
 	public class GlovesOfTheSun : LeatherGloves
-    {
-		public override bool IsArtifact { get { return true; } }
-        public override int ArtifactRarity
-        {
-            get
-            {
-                return 1;
-            }
-        }
-        [Constructable]
-        public GlovesOfTheSun()
-            : base()
-        {
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+		public override int ArtifactRarity
+		{
+			get { return 1; }
+		}
+
+		[Constructable]
+		public GlovesOfTheSun()
+			: base()
+		{
 			PrefixOption[80] = 1;
 			PrefixOption[81] = 13;
-        }
+		}
 
-        public GlovesOfTheSun(Serial serial)
-            : base(serial)
-        {
-        }
+		public GlovesOfTheSun(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1070924;
-            }
-        }// Gloves of the Sun
+		public override int LabelNumber
+		{
+			get { return 1070924; }
+		} // Gloves of the Sun
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((int)0);
-        }
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadInt();
-        }
-    }
+			int version = reader.ReadInt();
+		}
+	}
 
-    public class LegsOfStability : PlateLegs
-    {
-		public override bool IsArtifact { get { return true; } }
-        public override int ArtifactRarity
-        {
-            get
-            {
-                return 1;
-            }
-        }
-        [Constructable]
-        public LegsOfStability()
-            : base()
-        {
-            Attributes.BonusStam = 5;
+	public class LegsOfStability : PlateLegs
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+		public override int ArtifactRarity
+		{
+			get { return 1; }
+		}
 
-            ArmorAttributes.SelfRepair = 3;
-            ArmorAttributes.LowerStatReq = 100;
-            ArmorAttributes.MageArmor = 1;
-        }
+		[Constructable]
+		public LegsOfStability()
+			: base()
+		{
+			Attributes.BonusStam = 5;
 
-        public LegsOfStability(Serial serial)
-            : base(serial)
-        {
-        }
+			ArmorAttributes.SelfRepair = 3;
+			ArmorAttributes.LowerStatReq = 100;
+			ArmorAttributes.MageArmor = 1;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1070925;
-            }
-        }// Legs of Stability
+		public LegsOfStability(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int LabelNumber
+		{
+			get { return 1070925; }
+		} // Legs of Stability
 
-            writer.Write((int)0);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0);
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class HanzosBow : Yumi //35. 한조의 유미
-    {
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public HanzosBow()
-            : base()
-        {
+			int version = reader.ReadInt();
+		}
+	}
+
+	public class HanzosBow : Yumi //35. 한조의 유미
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+
+		[Constructable]
+		public HanzosBow()
+			: base()
+		{
 			//파충류슬 75%, 공속 20%
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
-			
+
 			PrefixOption[11] = 60; //옵션 종류
 			SuffixOption[11] = 750000; //옵션 값
 			PrefixOption[12] = 40; //옵션 종류
 			SuffixOption[12] = 200000; //옵션 값
-        }
+		}
 
-        public HanzosBow(Serial serial)
-            : base(serial)
-        {
-        }
+		public HanzosBow(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1070918;
-            }
-        }// Hanzo's Bow
+		public override int LabelNumber
+		{
+			get { return 1070918; }
+		} // Hanzo's Bow
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((int)0);
-        }
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadInt();
-        }
-    }
-    //Non weapon/armor ones:
-    public class AncientUrn : Item
-    {
-		public override bool IsArtifact { get { return true; } }
-        private static readonly string[] m_Names = new string[]
-        {
-            "Akira",
-            "Avaniaga",
-            "Aya",
-            "Chie",
-            "Emiko",
-            "Fumiyo",
-            "Gennai",
-            "Gennosuke",
-            "Genjo",
-            "Hamato",
-            "Harumi",
-            "Ikuyo",
-            "Juri",
-            "Kaori",
-            "Kaoru",
-            "Kiyomori",
-            "Mayako",
-            "Motoki",
-            "Musashi",
-            "Nami",
-            "Nobukazu",
-            "Roku",
-            "Romi",
-            "Ryo",
-            "Sanzo",
-            "Sakamae",
-            "Satoshi",
-            "Takamori",
-            "Takuro",
-            "Teruyo",
-            "Toshiro",
-            "Yago",
-            "Yeijiro",
-            "Yoshi",
-            "Zeshin"
-        };
-        private string m_UrnName;
-        [Constructable]
-        public AncientUrn(string urnName)
-            : base(0x241D)
-        {
-            m_UrnName = urnName;
-            Weight = 1.0;
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        [Constructable]
-        public AncientUrn()
-            : this(m_Names[Utility.Random(m_Names.Length)])
-        {
-        }
+	//Non weapon/armor ones:
+	public class AncientUrn : Item
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+		private static readonly string[] m_Names = new string[]
+		{
+			"Akira",
+			"Avaniaga",
+			"Aya",
+			"Chie",
+			"Emiko",
+			"Fumiyo",
+			"Gennai",
+			"Gennosuke",
+			"Genjo",
+			"Hamato",
+			"Harumi",
+			"Ikuyo",
+			"Juri",
+			"Kaori",
+			"Kaoru",
+			"Kiyomori",
+			"Mayako",
+			"Motoki",
+			"Musashi",
+			"Nami",
+			"Nobukazu",
+			"Roku",
+			"Romi",
+			"Ryo",
+			"Sanzo",
+			"Sakamae",
+			"Satoshi",
+			"Takamori",
+			"Takuro",
+			"Teruyo",
+			"Toshiro",
+			"Yago",
+			"Yeijiro",
+			"Yoshi",
+			"Zeshin",
+		};
+		private string m_UrnName;
 
-        public AncientUrn(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public AncientUrn(string urnName)
+			: base(0x241D)
+		{
+			m_UrnName = urnName;
+			Weight = 1.0;
+		}
 
-        public static string[] Names
-        {
-            get
-            {
-                return m_Names;
-            }
-        }
-        [CommandProperty(AccessLevel.GameMaster)]
-        public string UrnName
-        {
-            get
-            {
-                return m_UrnName;
-            }
-            set
-            {
-                m_UrnName = value;
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1071014;
-            }
-        }// Ancient Urn
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		[Constructable]
+		public AncientUrn()
+			: this(m_Names[Utility.Random(m_Names.Length)]) { }
 
-            writer.Write((int)0);
-            writer.Write(m_UrnName);
-        }
+		public AncientUrn(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public static string[] Names
+		{
+			get { return m_Names; }
+		}
 
-            int version = reader.ReadInt();
-            m_UrnName = reader.ReadString();
+		[CommandProperty(AccessLevel.GameMaster)]
+		public string UrnName
+		{
+			get { return m_UrnName; }
+			set { m_UrnName = value; }
+		}
+		public override int LabelNumber
+		{
+			get { return 1071014; }
+		} // Ancient Urn
 
-            Utility.Intern(ref m_UrnName);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void AddNameProperty(ObjectPropertyList list)
-        {
-            list.Add(1070935, m_UrnName); // Ancient Urn of ~1_name~
-        }
+			writer.Write((int)0);
+			writer.Write(m_UrnName);
+		}
 
-        public override void OnSingleClick(Mobile from)
-        {
-            LabelTo(from, 1070935, m_UrnName); // Ancient Urn of ~1_name~
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class HonorableSwords : Item
-    {
-		public override bool IsArtifact { get { return true; } }
-        private string m_SwordsName;
-        [Constructable]
-        public HonorableSwords(string swordsName)
-            : base(0x2853)
-        {
-            m_SwordsName = swordsName;
+			int version = reader.ReadInt();
+			m_UrnName = reader.ReadString();
 
-            Weight = 5.0;
-        }
+			Utility.Intern(ref m_UrnName);
+		}
 
-        [Constructable]
-        public HonorableSwords()
-            : this(AncientUrn.Names[Utility.Random(AncientUrn.Names.Length)])
-        {
-        }
+		public override void AddNameProperty(ObjectPropertyList list)
+		{
+			list.Add(1070935, m_UrnName); // Ancient Urn of ~1_name~
+		}
 
-        public HonorableSwords(Serial serial)
-            : base(serial)
-        {
-        }
+		public override void OnSingleClick(Mobile from)
+		{
+			LabelTo(from, 1070935, m_UrnName); // Ancient Urn of ~1_name~
+		}
+	}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public string SwordsName
-        {
-            get
-            {
-                return m_SwordsName;
-            }
-            set
-            {
-                m_SwordsName = value;
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1071015;
-            }
-        }// Honorable Swords
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+	public class HonorableSwords : Item
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+		private string m_SwordsName;
 
-            writer.Write((int)0);
-            writer.Write(m_SwordsName);
-        }
+		[Constructable]
+		public HonorableSwords(string swordsName)
+			: base(0x2853)
+		{
+			m_SwordsName = swordsName;
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			Weight = 5.0;
+		}
 
-            int version = reader.ReadInt();
-            m_SwordsName = reader.ReadString();
+		[Constructable]
+		public HonorableSwords()
+			: this(AncientUrn.Names[Utility.Random(AncientUrn.Names.Length)]) { }
 
-            Utility.Intern(ref m_SwordsName);
-        }
+		public HonorableSwords(Serial serial)
+			: base(serial) { }
 
-        public override void AddNameProperty(ObjectPropertyList list)
-        {
-            list.Add(1070936, m_SwordsName); // Honorable Swords of ~1_name~
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public string SwordsName
+		{
+			get { return m_SwordsName; }
+			set { m_SwordsName = value; }
+		}
+		public override int LabelNumber
+		{
+			get { return 1071015; }
+		} // Honorable Swords
 
-        public override void OnSingleClick(Mobile from)
-        {
-            LabelTo(from, 1070936, m_SwordsName); // Honorable Swords of ~1_name~
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-    [Furniture]
-    [Flipable(0x2811, 0x2812)]
-    public class ChestOfHeirlooms : LockableContainer
-    {
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public ChestOfHeirlooms()
-            : base(0x2811)
-        {
-            Locked = true;
-            LockLevel = 95;
-            MaxLockLevel = 140;
-            RequiredSkill = 95;
-			
-            TrapType = TrapType.ExplosionTrap;
-            TrapLevel = 10;
-            TrapPower = 100;
-			
-            GumpID = 0x10B;
-			
-            for (int i = 0; i < 10; ++i)
-            {
-                Item item = Loot.ChestOfHeirloomsContains();
-				
-                int attributeCount = Utility.RandomMinMax(1, 5);
-                int min = 20;
-                int max = 80;
-				
-                if (item is BaseWeapon)
-                {
-                    BaseWeapon weapon = (BaseWeapon)item;
+			writer.Write((int)0);
+			writer.Write(m_SwordsName);
+		}
 
-                    if (Core.AOS)
-                        BaseRunicTool.ApplyAttributesTo(weapon, attributeCount, min, max);
-                    else
-                    {
-                        weapon.DamageLevel = (WeaponDamageLevel)Utility.Random(6);
-                        weapon.AccuracyLevel = (WeaponAccuracyLevel)Utility.Random(6);
-                        weapon.DurabilityLevel = (WeaponDurabilityLevel)Utility.Random(6);
-                    }
-                }
-                else if (item is BaseArmor)
-                {
-                    BaseArmor armor = (BaseArmor)item;
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-                    if (Core.AOS)
-                        BaseRunicTool.ApplyAttributesTo(armor, attributeCount, min, max);
-                    else
-                    {
-                        armor.ProtectionLevel = (ArmorProtectionLevel)Utility.Random(6);
-                        armor.Durability = (ArmorDurabilityLevel)Utility.Random(6);
-                    }
-                }
-                else if (item is BaseHat && Core.AOS)
-                    BaseRunicTool.ApplyAttributesTo((BaseHat)item, attributeCount, min, max);
-                else if (item is BaseJewel && Core.AOS)
-                    BaseRunicTool.ApplyAttributesTo((BaseJewel)item, attributeCount, min, max);
-				
-                DropItem(item);
-            }
-        }
+			int version = reader.ReadInt();
+			m_SwordsName = reader.ReadString();
 
-        public ChestOfHeirlooms(Serial serial)
-            : base(serial)
-        {
-        }
+			Utility.Intern(ref m_SwordsName);
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1070937;
-            }
-        }// Chest of heirlooms
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void AddNameProperty(ObjectPropertyList list)
+		{
+			list.Add(1070936, m_SwordsName); // Honorable Swords of ~1_name~
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void OnSingleClick(Mobile from)
+		{
+			LabelTo(from, 1070936, m_SwordsName); // Honorable Swords of ~1_name~
+		}
+	}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+	[Furniture]
+	[Flipable(0x2811, 0x2812)]
+	public class ChestOfHeirlooms : LockableContainer
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		[Constructable]
+		public ChestOfHeirlooms()
+			: base(0x2811)
+		{
+			Locked = true;
+			LockLevel = 95;
+			MaxLockLevel = 140;
+			RequiredSkill = 95;
 
-    public class FluteOfRenewal : BambooFlute
-    {
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public FluteOfRenewal()
-            : base()
-        {
-            Slayer = SlayerGroup.RandomSuperSlayerAOS();
+			TrapType = TrapType.ExplosionTrap;
+			TrapLevel = 10;
+			TrapPower = 100;
 
-            ReplenishesCharges = true;
-        }
+			GumpID = 0x10B;
 
-        public FluteOfRenewal(Serial serial)
-            : base(serial)
-        {
-        }
+			for (int i = 0; i < 10; ++i)
+			{
+				Item item = Loot.ChestOfHeirloomsContains();
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1070927;
-            }
-        }// Flute of Renewal
-        public override int InitMinUses
-        {
-            get
-            {
-                return 300;
-            }
-        }
-        public override int InitMaxUses
-        {
-            get
-            {
-                return 300;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+				int attributeCount = Utility.RandomMinMax(1, 5);
+				int min = 20;
+				int max = 80;
 
-            writer.Write((int)1); // version
-        }
+				if (item is BaseWeapon)
+				{
+					BaseWeapon weapon = (BaseWeapon)item;
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+					if (Core.AOS)
+						BaseRunicTool.ApplyAttributesTo(weapon, attributeCount, min, max);
+					else
+					{
+						weapon.DamageLevel = (WeaponDamageLevel)Utility.Random(6);
+						weapon.AccuracyLevel = (WeaponAccuracyLevel)Utility.Random(6);
+						weapon.DurabilityLevel = (WeaponDurabilityLevel)Utility.Random(6);
+					}
+				}
+				else if (item is BaseArmor)
+				{
+					BaseArmor armor = (BaseArmor)item;
 
-            int version = reader.ReadInt();
+					if (Core.AOS)
+						BaseRunicTool.ApplyAttributesTo(armor, attributeCount, min, max);
+					else
+					{
+						armor.ProtectionLevel = (ArmorProtectionLevel)Utility.Random(6);
+						armor.Durability = (ArmorDurabilityLevel)Utility.Random(6);
+					}
+				}
+				else if (item is BaseHat && Core.AOS)
+					BaseRunicTool.ApplyAttributesTo((BaseHat)item, attributeCount, min, max);
+				else if (item is BaseJewel && Core.AOS)
+					BaseRunicTool.ApplyAttributesTo((BaseJewel)item, attributeCount, min, max);
 
-            if (version == 0 && Slayer == SlayerName.Fey)
-                Slayer = SlayerGroup.Groups[Utility.Random(SlayerGroup.Groups.Length - 1)].Super.Name;
-        }
-    }
-    public class Exiler : ElvenCompositeLongbow //37. 은색의 엘프 합성 장궁
-    {
-		public override bool IsArtifact { get { return true; } }
-        public override int ArtifactRarity
-        {
-            get
-            {
-                return 1;
-            }
-        }
-        [Constructable]
-        public Exiler()
-            : base()
-        {
+				DropItem(item);
+			}
+		}
+
+		public ChestOfHeirlooms(Serial serial)
+			: base(serial) { }
+
+		public override int LabelNumber
+		{
+			get { return 1070937; }
+		} // Chest of heirlooms
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
+
+	public class FluteOfRenewal : BambooFlute
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+
+		[Constructable]
+		public FluteOfRenewal()
+			: base()
+		{
+			Slayer = SlayerGroup.RandomSuperSlayerAOS();
+
+			ReplenishesCharges = true;
+		}
+
+		public FluteOfRenewal(Serial serial)
+			: base(serial) { }
+
+		public override int LabelNumber
+		{
+			get { return 1070927; }
+		} // Flute of Renewal
+		public override int InitMinUses
+		{
+			get { return 300; }
+		}
+		public override int InitMaxUses
+		{
+			get { return 300; }
+		}
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)1); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+
+			if (version == 0 && Slayer == SlayerName.Fey)
+				Slayer = SlayerGroup.Groups[Utility.Random(SlayerGroup.Groups.Length - 1)].Super.Name;
+		}
+	}
+
+	public class Exiler : ElvenCompositeLongbow //37. 은색의 엘프 합성 장궁
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+		public override int ArtifactRarity
+		{
+			get { return 1; }
+		}
+
+		[Constructable]
+		public Exiler()
+			: base()
+		{
 			//악마슬 20%, 무피 30%, 공속 20%
 			SuffixOption[0] = 3; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
-			
+
 			PrefixOption[11] = 61; //옵션 종류
 			SuffixOption[11] = 200000; //옵션 값
 			PrefixOption[12] = 7; //옵션 종류
 			SuffixOption[12] = 300000; //옵션 값
 			PrefixOption[13] = 40; //옵션 종류
 			SuffixOption[13] = 600000; //옵션 값
-        }
+		}
 
-        public Exiler(Serial serial)
-            : base(serial)
-        {
-        }
+		public Exiler(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1070913;
-            }
-        }// Exiler
+		public override int LabelNumber
+		{
+			get { return 1070913; }
+		} // Exiler
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((int)0);
-        }
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadInt();
-        }
-    }
-    public class LesserPigmentsOfTokuno : BasePigmentsOfTokuno
-    {
-		public override bool IsArtifact { get { return true; } }
-        private static readonly int[][] m_Table = new int[][]
-        {
-            // Hue, Label
-            new int[] { /*PigmentType.None,*/ 0, -1 },
-            new int[] { /*PigmentType.PaleOrange,*/ 0x02E, 1071458 },
-            new int[] { /*PigmentType.FreshRose,*/ 0x4B9, 1071455 },
-            new int[] { /*PigmentType.ChaosBlue,*/ 0x005, 1071459 },
-            new int[] { /*PigmentType.Silver,*/ 0x3E9, 1071451 },
-            new int[] { /*PigmentType.NobleGold,*/ 0x227, 1071457 },
-            new int[] { /*PigmentType.LightGreen,*/ 0x1C8, 1071454 },
-            new int[] { /*PigmentType.PaleBlue,*/ 0x24F, 1071456 },
-            new int[] { /*PigmentType.FreshPlum,*/ 0x145, 1071450 },
-            new int[] { /*PigmentType.DeepBrown,*/ 0x3F0, 1071452 },
-            new int[] { /*PigmentType.BurntBrown,*/ 0x41A, 1071453 }
-        };
-        private LesserPigmentType m_Type;
-        [Constructable]
-        public LesserPigmentsOfTokuno()
-            : this((LesserPigmentType)Utility.Random(0, 11))
-        {
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        [Constructable]
-        public LesserPigmentsOfTokuno(LesserPigmentType type)
-            : base(1)
-        {
-            Weight = 1.0;
-            Type = type;
-        }
+	public class LesserPigmentsOfTokuno : BasePigmentsOfTokuno
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+		private static readonly int[][] m_Table = new int[][]
+		{
+			// Hue, Label
+			new int[]
+			{ /*PigmentType.None,*/
+				0,
+				-1,
+			},
+			new int[]
+			{ /*PigmentType.PaleOrange,*/
+				0x02E,
+				1071458,
+			},
+			new int[]
+			{ /*PigmentType.FreshRose,*/
+				0x4B9,
+				1071455,
+			},
+			new int[]
+			{ /*PigmentType.ChaosBlue,*/
+				0x005,
+				1071459,
+			},
+			new int[]
+			{ /*PigmentType.Silver,*/
+				0x3E9,
+				1071451,
+			},
+			new int[]
+			{ /*PigmentType.NobleGold,*/
+				0x227,
+				1071457,
+			},
+			new int[]
+			{ /*PigmentType.LightGreen,*/
+				0x1C8,
+				1071454,
+			},
+			new int[]
+			{ /*PigmentType.PaleBlue,*/
+				0x24F,
+				1071456,
+			},
+			new int[]
+			{ /*PigmentType.FreshPlum,*/
+				0x145,
+				1071450,
+			},
+			new int[]
+			{ /*PigmentType.DeepBrown,*/
+				0x3F0,
+				1071452,
+			},
+			new int[]
+			{ /*PigmentType.BurntBrown,*/
+				0x41A,
+				1071453,
+			},
+		};
+		private LesserPigmentType m_Type;
 
-        public LesserPigmentsOfTokuno(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public LesserPigmentsOfTokuno()
+			: this((LesserPigmentType)Utility.Random(0, 11)) { }
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public LesserPigmentType Type
-        {
-            get
-            {
-                return m_Type;
-            }
-            set
-            {
-                m_Type = value;
-				
-                int v = (int)m_Type;
+		[Constructable]
+		public LesserPigmentsOfTokuno(LesserPigmentType type)
+			: base(1)
+		{
+			Weight = 1.0;
+			Type = type;
+		}
 
-                if (v >= 0 && v < m_Table.Length)
-                {
-                    Hue = m_Table[v][0];
-                    Label = m_Table[v][1];
-                }
-                else
-                {
-                    Hue = 0;
-                    Label = -1;
-                }
-            }
-        }
-        public static int[] GetInfo(LesserPigmentType type)
-        {
-            int v = (int)type;
+		public LesserPigmentsOfTokuno(Serial serial)
+			: base(serial) { }
 
-            if (v < 0 || v >= m_Table.Length)
-                v = 0;
-			
-            return m_Table[v];
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public LesserPigmentType Type
+		{
+			get { return m_Type; }
+			set
+			{
+				m_Type = value;
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+				int v = (int)m_Type;
 
-            writer.Write((int)1);
+				if (v >= 0 && v < m_Table.Length)
+				{
+					Hue = m_Table[v][0];
+					Label = m_Table[v][1];
+				}
+				else
+				{
+					Hue = 0;
+					Label = -1;
+				}
+			}
+		}
 
-            writer.WriteEncodedInt((int)m_Type);
-        }
+		public static int[] GetInfo(LesserPigmentType type)
+		{
+			int v = (int)type;
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			if (v < 0 || v >= m_Table.Length)
+				v = 0;
 
-            int version = (InheritsItem ? 0 : reader.ReadInt()); // Required for BasePigmentsOfTokuno insertion
-			
-            switch ( version )
-            {
-                case 1:
-                    Type = (LesserPigmentType)reader.ReadEncodedInt();
-                    break;
-                case 0:
-                    break;
-            }
-        }
-    }
+			return m_Table[v];
+		}
 
-    public class MetalPigmentsOfTokuno : BasePigmentsOfTokuno
-    {
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public MetalPigmentsOfTokuno()
-            : base(1)
-        {
-            RandomHue();
-            Label = -1;
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public MetalPigmentsOfTokuno(Serial serial)
-            : base(serial)
-        {
-        }
+			writer.Write((int)1);
 
-        public void RandomHue()
-        {
-            int a = Utility.Random(0, 30);
-            if (a != 0)
-                Hue = a + 0x960;
-            else
-                Hue = 0;
-        }
+			writer.WriteEncodedInt((int)m_Type);
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            writer.Write((int)0);
-        }
+			int version = (InheritsItem ? 0 : reader.ReadInt()); // Required for BasePigmentsOfTokuno insertion
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			switch (version)
+			{
+				case 1:
+					Type = (LesserPigmentType)reader.ReadEncodedInt();
+					break;
+				case 0:
+					break;
+			}
+		}
+	}
 
-            int version = (InheritsItem ? 0 : reader.ReadInt()); // Required for BasePigmentsOfTokuno insertion
-        }
-    }
+	public class MetalPigmentsOfTokuno : BasePigmentsOfTokuno
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+
+		[Constructable]
+		public MetalPigmentsOfTokuno()
+			: base(1)
+		{
+			RandomHue();
+			Label = -1;
+		}
+
+		public MetalPigmentsOfTokuno(Serial serial)
+			: base(serial) { }
+
+		public void RandomHue()
+		{
+			int a = Utility.Random(0, 30);
+			if (a != 0)
+				Hue = a + 0x960;
+			else
+				Hue = 0;
+		}
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = (InheritsItem ? 0 : reader.ReadInt()); // Required for BasePigmentsOfTokuno insertion
+		}
+	}
 }

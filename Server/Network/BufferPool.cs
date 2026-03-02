@@ -37,7 +37,8 @@ namespace Server.Network
 			out int initialCapacity,
 			out int currentCapacity,
 			out int bufferSize,
-			out int misses)
+			out int misses
+		)
 		{
 			lock (this)
 			{

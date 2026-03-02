@@ -6,44 +6,43 @@ namespace Server.Items
 	public abstract class Artifact : Item, IArtifact
 	{
 		[Constructable]
-		public Artifact(int itemID) : base(itemID)
-		{
-		}
+		public Artifact(int itemID)
+			: base(itemID) { }
 
-		public Artifact( Serial serial ) : base( serial )
-		{
-		}
+		public Artifact(Serial serial)
+			: base(serial) { }
 
-		[CommandProperty( AccessLevel.GameMaster )]
+		[CommandProperty(AccessLevel.GameMaster)]
 		public virtual int ArtifactRarity
-		{ 
-			get{ return 0; }
-			set {}
+		{
+			get { return 0; }
+			set { }
 		}
 
-		public override bool ForceShowProperties{ get{ return true; } }
-            
-		public override void GetProperties( ObjectPropertyList list )
+		public override bool ForceShowProperties
 		{
-			base.GetProperties( list );
-			if(ArtifactRarity > 0)
-				list.Add( 1061078, ArtifactRarity.ToString() );
+			get { return true; }
 		}
 
-		public override void Serialize( GenericWriter writer )
+		public override void GetProperties(ObjectPropertyList list)
 		{
-			base.Serialize( writer );
-
-			writer.Write( (int) 0 ); // version
-
+			base.GetProperties(list);
+			if (ArtifactRarity > 0)
+				list.Add(1061078, ArtifactRarity.ToString());
 		}
 
-		public override void Deserialize( GenericReader reader )
+		public override void Serialize(GenericWriter writer)
 		{
-			base.Deserialize( reader );
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
 			int version = reader.ReadInt();
-
 		}
 	}
 }

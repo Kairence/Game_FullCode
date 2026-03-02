@@ -1,6 +1,5 @@
 #region References
 using System;
-
 using Server.Mobiles;
 #endregion
 
@@ -39,8 +38,7 @@ namespace Server.Services.Virtues
 					pm.LastCompassionLoss = DateTime.UtcNow;
 				}
 			}
-			catch
-			{ }
+			catch { }
 		}
 	}
 }

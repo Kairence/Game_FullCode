@@ -12,7 +12,11 @@ namespace Server
 
 		private static bool m_Enabled = true;
 
-		public static bool Enabled { get { return m_Enabled; } set { m_Enabled = value; } }
+		public static bool Enabled
+		{
+			get { return m_Enabled; }
+			set { m_Enabled = value; }
+		}
 
 		public int LandBlocks
 		{
@@ -102,7 +106,9 @@ namespace Server
 			{
 				using (FileStream fsIndex = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read))
 				{
-					using (FileStream fsLookup = new FileStream(lookupPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+					using (
+						FileStream fsLookup = new FileStream(lookupPath, FileMode.Open, FileAccess.Read, FileShare.Read)
+					)
 					{
 						BinaryReader indexReader = new BinaryReader(fsIndex);
 						BinaryReader lookupReader = new BinaryReader(fsLookup);
@@ -151,8 +157,9 @@ namespace Server
 							fixed (StaticTile* pTiles = staTiles)
 							{
 								NativeReader.Read(fsData.SafeFileHandle.DangerousGetHandle(), pTiles, length);
-								
-								StaticTile* pCur = pTiles, pEnd = pTiles + tileCount;
+
+								StaticTile* pCur = pTiles,
+									pEnd = pTiles + tileCount;
 
 								while (pCur < pEnd)
 								{

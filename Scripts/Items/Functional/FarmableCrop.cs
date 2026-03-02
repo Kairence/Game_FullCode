@@ -3,91 +3,97 @@ using Server.Network;
 
 namespace Server.Items
 {
-    public abstract class FarmableCrop : Item
-    {
-        private bool m_Picked;
-        public FarmableCrop(int itemID)
-            : base(itemID)
-        {
-            this.Movable = false;
-        }
+	public abstract class FarmableCrop : Item
+	{
+		private bool m_Picked;
 
-        public FarmableCrop(Serial serial)
-            : base(serial)
-        {
-        }
+		public FarmableCrop(int itemID)
+			: base(itemID)
+		{
+			this.Movable = false;
+		}
 
-        public abstract Item GetCropObject();
+		public FarmableCrop(Serial serial)
+			: base(serial) { }
 
-        public abstract int GetPickedID();
+		public abstract Item GetCropObject();
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            Map map = this.Map;
-            Point3D loc = this.Location;
+		public abstract int GetPickedID();
 
-            if (this.Parent != null || this.Movable || this.IsLockedDown || this.IsSecure || map == null || map == Map.Internal)
-                return;
+		public override void OnDoubleClick(Mobile from)
+		{
+			Map map = this.Map;
+			Point3D loc = this.Location;
 
-            if (!from.InRange(loc, 2) || !from.InLOS(this))
-                from.LocalOverheadMessage(MessageType.Regular, 0x3B2, 1019045); // I can't reach that.
-            else if (!this.m_Picked)
-                this.OnPicked(from, loc, map);
-        }
+			if (
+				this.Parent != null
+				|| this.Movable
+				|| this.IsLockedDown
+				|| this.IsSecure
+				|| map == null
+				|| map == Map.Internal
+			)
+				return;
 
-        public virtual void OnPicked(Mobile from, Point3D loc, Map map)
-        {
-            this.ItemID = this.GetPickedID();
+			if (!from.InRange(loc, 2) || !from.InLOS(this))
+				from.LocalOverheadMessage(MessageType.Regular, 0x3B2, 1019045); // I can't reach that.
+			else if (!this.m_Picked)
+				this.OnPicked(from, loc, map);
+		}
 
-            Item spawn = this.GetCropObject();
+		public virtual void OnPicked(Mobile from, Point3D loc, Map map)
+		{
+			this.ItemID = this.GetPickedID();
 
-            if (spawn != null)
-                spawn.MoveToWorld(loc, map);
+			Item spawn = this.GetCropObject();
 
-            this.m_Picked = true;
+			if (spawn != null)
+				spawn.MoveToWorld(loc, map);
 
-            this.Unlink();
+			this.m_Picked = true;
 
-            Timer.DelayCall(TimeSpan.FromMinutes(5.0), new TimerCallback(Delete));
-        }
+			this.Unlink();
 
-        public void Unlink()
-        {
-            ISpawner se = this.Spawner;
+			Timer.DelayCall(TimeSpan.FromMinutes(5.0), new TimerCallback(Delete));
+		}
 
-            if (se != null)
-            {
-                this.Spawner.Remove(this);
-                this.Spawner = null;
-            }
-        }
+		public void Unlink()
+		{
+			ISpawner se = this.Spawner;
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			if (se != null)
+			{
+				this.Spawner.Remove(this);
+				this.Spawner = null;
+			}
+		}
 
-            writer.WriteEncodedInt(0); // version
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write(this.m_Picked);
-        }
+			writer.WriteEncodedInt(0); // version
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write(this.m_Picked);
+		}
 
-            int version = reader.ReadEncodedInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            switch ( version )
-            {
-                case 0:
-                    this.m_Picked = reader.ReadBool();
-                    break;
-            }
-            if (this.m_Picked)
-            {
-                this.Unlink();
-                this.Delete();
-            }
-        }
-    }
+			int version = reader.ReadEncodedInt();
+
+			switch (version)
+			{
+				case 0:
+					this.m_Picked = reader.ReadBool();
+					break;
+			}
+			if (this.m_Picked)
+			{
+				this.Unlink();
+				this.Delete();
+			}
+		}
+	}
 }

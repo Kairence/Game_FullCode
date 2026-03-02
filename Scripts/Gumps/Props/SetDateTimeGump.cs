@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.Reflection;
-
 using Server.Commands;
 using Server.Network;
 #endregion
@@ -35,17 +34,20 @@ namespace Server.Gumps
 		public static readonly int SetGumpID = PropsConfig.SetGumpID;
 
 		public static readonly int SetWidth = PropsConfig.SetWidth;
-		public static readonly int SetOffsetX = PropsConfig.SetOffsetX, SetOffsetY = PropsConfig.SetOffsetY;
+		public static readonly int SetOffsetX = PropsConfig.SetOffsetX,
+			SetOffsetY = PropsConfig.SetOffsetY;
 		public static readonly int SetButtonID1 = PropsConfig.SetButtonID1;
 		public static readonly int SetButtonID2 = PropsConfig.SetButtonID2;
 
 		public static readonly int PrevWidth = PropsConfig.PrevWidth;
-		public static readonly int PrevOffsetX = PropsConfig.PrevOffsetX, PrevOffsetY = PropsConfig.PrevOffsetY;
+		public static readonly int PrevOffsetX = PropsConfig.PrevOffsetX,
+			PrevOffsetY = PropsConfig.PrevOffsetY;
 		public static readonly int PrevButtonID1 = PropsConfig.PrevButtonID1;
 		public static readonly int PrevButtonID2 = PropsConfig.PrevButtonID2;
 
 		public static readonly int NextWidth = PropsConfig.NextWidth;
-		public static readonly int NextOffsetX = PropsConfig.NextOffsetX, NextOffsetY = PropsConfig.NextOffsetY;
+		public static readonly int NextOffsetX = PropsConfig.NextOffsetX,
+			NextOffsetY = PropsConfig.NextOffsetY;
 		public static readonly int NextButtonID1 = PropsConfig.NextButtonID1;
 		public static readonly int NextButtonID2 = PropsConfig.NextButtonID2;
 
@@ -82,7 +84,8 @@ namespace Server.Gumps
 				BorderSize,
 				TotalWidth - (OldStyle ? SetWidth + OffsetSize : 0),
 				TotalHeight,
-				OffsetGumpID);
+				OffsetGumpID
+			);
 
 			AddRect(0, prop.Name, 0, -1);
 			AddRect(1, String.Format("{0:u}", m_OldDT), 0, -1);
@@ -127,7 +130,8 @@ namespace Server.Gumps
 		public override void OnResponse(NetState sender, RelayInfo info)
 		{
 			DateTime toSet;
-			bool shouldSet, shouldSend;
+			bool shouldSet,
+				shouldSend;
 
 			var year = "";
 
@@ -183,7 +187,8 @@ namespace Server.Gumps
 						(month != string.Empty ? month : String.Format("{0:MM}", m_OldDT)),
 						(day != string.Empty ? day : String.Format("{0:dd}", m_OldDT)),
 						(hour != string.Empty ? hour : String.Format("{0:HH}", m_OldDT)),
-						(min != string.Empty ? min : String.Format("{0:mm}", m_OldDT)));
+						(min != string.Empty ? min : String.Format("{0:mm}", m_OldDT))
+					);
 					successfulParse = DateTime.TryParse(toapply, out toSet);
 
 					shouldSet = shouldSend = successfulParse;
@@ -224,7 +229,8 @@ namespace Server.Gumps
 						m_Mobile,
 						m_Object,
 						m_Property.Name,
-						toSet.ToString(CultureInfo.InvariantCulture));
+						toSet.ToString(CultureInfo.InvariantCulture)
+					);
 					m_Property.SetValue(m_Object, toSet, null);
 					PropertiesGump.OnValueChanged(m_Object, m_Property, m_Stack);
 				}

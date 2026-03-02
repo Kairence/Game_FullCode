@@ -6,120 +6,118 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    public class Tinker : BaseVendor
-    {
-        private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
+	public class Tinker : BaseVendor
+	{
+		private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
 
-        [Constructable]
-        public Tinker()
-            : base("the tinker")
-        {
-            SetSkill(SkillName.Lockpicking, 60.0, 83.0);
-            SetSkill(SkillName.RemoveTrap, 75.0, 98.0);
-            SetSkill(SkillName.Tinkering, 64.0, 100.0);
-        }
+		[Constructable]
+		public Tinker()
+			: base("the tinker")
+		{
+			SetSkill(SkillName.Lockpicking, 60.0, 83.0);
+			SetSkill(SkillName.RemoveTrap, 75.0, 98.0);
+			SetSkill(SkillName.Tinkering, 64.0, 100.0);
+		}
 
-        public Tinker(Serial serial)
-            : base(serial)
-        {
-        }
+		public Tinker(Serial serial)
+			: base(serial) { }
 
-        public override NpcGuild NpcGuild
-        {
-            get
-            {
-                return NpcGuild.TinkersGuild;
-            }
-        }
-        protected override List<SBInfo> SBInfos
-        {
-            get
-            {
-                return m_SBInfos;
-            }
-        }
-        public override void InitSBInfo()
-        {
-            m_SBInfos.Add(new SBTinker(this));
-        }
+		public override NpcGuild NpcGuild
+		{
+			get { return NpcGuild.TinkersGuild; }
+		}
+		protected override List<SBInfo> SBInfos
+		{
+			get { return m_SBInfos; }
+		}
 
-        #region Bulk Orders
-        public override BODType BODType { get { return BODType.Tinkering; } }
+		public override void InitSBInfo()
+		{
+			m_SBInfos.Add(new SBTinker(this));
+		}
 
-        public override bool IsValidBulkOrder(Item item)
-        {
-            return (item is SmallTinkerBOD || item is LargeTinkerBOD);
-        }
+		#region Bulk Orders
+		public override BODType BODType
+		{
+			get { return BODType.Tinkering; }
+		}
 
-        public override bool SupportsBulkOrders(Mobile from)
-        {
-            return BulkOrderSystem.NewSystemEnabled && from is PlayerMobile && from.Skills[SkillName.Tinkering].Base > 0;
-        }
+		public override bool IsValidBulkOrder(Item item)
+		{
+			return (item is SmallTinkerBOD || item is LargeTinkerBOD);
+		}
 
-        public override void OnSuccessfulBulkOrderReceive(Mobile from)
-        {
-            if (from is PlayerMobile)
-                ((PlayerMobile)from).NextTinkeringBulkOrder = TimeSpan.Zero;
-        }
+		public override bool SupportsBulkOrders(Mobile from)
+		{
+			return BulkOrderSystem.NewSystemEnabled
+				&& from is PlayerMobile
+				&& from.Skills[SkillName.Tinkering].Base > 0;
+		}
 
-        #endregion
+		public override void OnSuccessfulBulkOrderReceive(Mobile from)
+		{
+			if (from is PlayerMobile)
+				((PlayerMobile)from).NextTinkeringBulkOrder = TimeSpan.Zero;
+		}
 
-        public override void AddCustomContextEntries(Mobile from, List<ContextMenuEntry> list)
-        {
-            base.AddCustomContextEntries(from, list);
+		#endregion
 
-            if (Core.ML && from.Alive)
-            {
-                list.Add(new RechargeEntry(from, this));
-            }
-        }
+		public override void AddCustomContextEntries(Mobile from, List<ContextMenuEntry> list)
+		{
+			base.AddCustomContextEntries(from, list);
 
-        private class RechargeEntry : ContextMenuEntry
-        {
-            private readonly Mobile m_From;
-            private readonly Mobile m_Vendor;
-            private readonly BaseEngravingTool Tool;
+			if (Core.ML && from.Alive)
+			{
+				list.Add(new RechargeEntry(from, this));
+			}
+		}
 
-            public RechargeEntry(Mobile from, Mobile vendor)
-                : base(6271, 6)
-            {
-                m_From = from;
-                m_Vendor = vendor;
+		private class RechargeEntry : ContextMenuEntry
+		{
+			private readonly Mobile m_From;
+			private readonly Mobile m_Vendor;
+			private readonly BaseEngravingTool Tool;
 
-                Tool = BaseEngravingTool.Find(from);
+			public RechargeEntry(Mobile from, Mobile vendor)
+				: base(6271, 6)
+			{
+				m_From = from;
+				m_Vendor = vendor;
 
-                Enabled = Tool != null;
-            }
+				Tool = BaseEngravingTool.Find(from);
 
-            public override void OnClick()
-            {
-                if (!Core.ML || m_Vendor == null || m_Vendor.Deleted)
-                    return;
+				Enabled = Tool != null;
+			}
 
-                if (Tool != null)
-                {
-                    if (Banker.GetBalance(m_From) >= 100000)
-                        m_From.SendGump(new BaseEngravingTool.ConfirmGump(Tool, m_Vendor));
-                    else
-                        m_Vendor.Say(1076167); // You need a 100,000 gold and a blue diamond to recharge the weapon engraver.
-                }
-                else
-                    m_Vendor.Say(1076164); // I can only help with this if you are carrying an engraving tool that needs repair.
-            }
-        }
+			public override void OnClick()
+			{
+				if (!Core.ML || m_Vendor == null || m_Vendor.Deleted)
+					return;
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+				if (Tool != null)
+				{
+					if (Banker.GetBalance(m_From) >= 100000)
+						m_From.SendGump(new BaseEngravingTool.ConfirmGump(Tool, m_Vendor));
+					else
+						m_Vendor.Say(1076167); // You need a 100,000 gold and a blue diamond to recharge the weapon engraver.
+				}
+				else
+					m_Vendor.Say(1076164); // I can only help with this if you are carrying an engraving tool that needs repair.
+			}
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

@@ -14,144 +14,143 @@ using Server;
 
 namespace Joeku.SR
 {
-    public class SR_Rune
-    {
-        public string Name;
-        public bool IsRunebook = false;
-        public List<SR_Rune> Runes;
-        public int RunebookCount, RuneCount;
-        public int PageIndex = -1;
-        public SR_Rune ParentRune;
-        public Map TargetMap = Map.Felucca;
-        public Point3D TargetLoc = new Point3D(0, 0, 0);
-        public SR_Rune(string name, Map map, Point3D loc)
-            : this(name, false)
-        {
-            this.TargetMap = map;
-            this.TargetLoc = loc;
-        }
+	public class SR_Rune
+	{
+		public string Name;
+		public bool IsRunebook = false;
+		public List<SR_Rune> Runes;
+		public int RunebookCount,
+			RuneCount;
+		public int PageIndex = -1;
+		public SR_Rune ParentRune;
+		public Map TargetMap = Map.Felucca;
+		public Point3D TargetLoc = new Point3D(0, 0, 0);
 
-        public SR_Rune(string name, bool isRunebook)
-            : this(name, isRunebook, new List<SR_Rune>())
-        {
-        }
+		public SR_Rune(string name, Map map, Point3D loc)
+			: this(name, false)
+		{
+			this.TargetMap = map;
+			this.TargetLoc = loc;
+		}
 
-        public SR_Rune(string name, bool isRunebook, List<SR_Rune> runes)
-        {
-            this.Name = name;
-            this.IsRunebook = isRunebook;
-            this.Runes = runes;
-            this.FindCounts();
-        }
+		public SR_Rune(string name, bool isRunebook)
+			: this(name, isRunebook, new List<SR_Rune>()) { }
 
-        public int Count
-        {
-            get
-            {
-                return this.Runes.Count;
-            }
-        }
-        public int Tier
-        {
-            get
-            {
-                if (this.ParentRune != null)
-                    return this.ParentRune.Tier + 1;
+		public SR_Rune(string name, bool isRunebook, List<SR_Rune> runes)
+		{
+			this.Name = name;
+			this.IsRunebook = isRunebook;
+			this.Runes = runes;
+			this.FindCounts();
+		}
 
-                return 0;
-            }
-        }
-        // Legacy... binary serialization only used in v1.00, deserialization preserved to migrate data.
-        public static SR_Rune Deserialize(GenericReader reader, int version)
-        {
-            SR_Rune rune = null;
+		public int Count
+		{
+			get { return this.Runes.Count; }
+		}
+		public int Tier
+		{
+			get
+			{
+				if (this.ParentRune != null)
+					return this.ParentRune.Tier + 1;
 
-            string name = reader.ReadString();
-            bool isRunebook = reader.ReadBool();
+				return 0;
+			}
+		}
 
-            Map targetMap = reader.ReadMap();
-            Point3D targetLoc = reader.ReadPoint3D();
+		// Legacy... binary serialization only used in v1.00, deserialization preserved to migrate data.
+		public static SR_Rune Deserialize(GenericReader reader, int version)
+		{
+			SR_Rune rune = null;
 
-            if (isRunebook)
-                rune = new SR_Rune(name, isRunebook);
-            else
-                rune = new SR_Rune(name, targetMap, targetLoc);
+			string name = reader.ReadString();
+			bool isRunebook = reader.ReadBool();
 
-            int count = reader.ReadInt();
-            for (int i = 0; i < count; i++)
-                rune.AddRune(SR_Rune.Deserialize(reader, version));
+			Map targetMap = reader.ReadMap();
+			Point3D targetLoc = reader.ReadPoint3D();
 
-            return rune;
-        }
+			if (isRunebook)
+				rune = new SR_Rune(name, isRunebook);
+			else
+				rune = new SR_Rune(name, targetMap, targetLoc);
 
-        public void ResetPageIndex()
-        {
-            if (!this.IsRunebook || this.PageIndex == -1)
-                return;
+			int count = reader.ReadInt();
+			for (int i = 0; i < count; i++)
+				rune.AddRune(SR_Rune.Deserialize(reader, version));
 
-            if (this.Runes[this.PageIndex] != null)
-                this.Runes[this.PageIndex].ResetPageIndex();
+			return rune;
+		}
 
-            this.PageIndex = -1;
-        }
+		public void ResetPageIndex()
+		{
+			if (!this.IsRunebook || this.PageIndex == -1)
+				return;
 
-        public void Clear()
-        {
-            this.Runes.Clear();
-            this.RunebookCount = 0;
-            this.RuneCount = 0;
-            this.PageIndex = -1;
-        }
+			if (this.Runes[this.PageIndex] != null)
+				this.Runes[this.PageIndex].ResetPageIndex();
 
-        public void AddRune(SR_Rune rune)
-        {
-            for (int i = 0; i < this.Count; i++)
-                if (this.Runes[i] == rune)
-                    this.Runes.RemoveAt(i);
+			this.PageIndex = -1;
+		}
 
-            if (rune.IsRunebook)
-            {
-                this.Runes.Insert(this.RunebookCount, rune);
-                this.RunebookCount++;
-            }
-            else
-            {
-                this.Runes.Add(rune);
-                this.RuneCount++;
-            }
+		public void Clear()
+		{
+			this.Runes.Clear();
+			this.RunebookCount = 0;
+			this.RuneCount = 0;
+			this.PageIndex = -1;
+		}
 
-            rune.ParentRune = this;
-        }
+		public void AddRune(SR_Rune rune)
+		{
+			for (int i = 0; i < this.Count; i++)
+				if (this.Runes[i] == rune)
+					this.Runes.RemoveAt(i);
 
-        public void RemoveRune(int index)
-        {
-            this.RemoveRune(index, false);
-        }
+			if (rune.IsRunebook)
+			{
+				this.Runes.Insert(this.RunebookCount, rune);
+				this.RunebookCount++;
+			}
+			else
+			{
+				this.Runes.Add(rune);
+				this.RuneCount++;
+			}
 
-        public void RemoveRune(int index, bool pageIndex)
-        {
-            if (this.Runes[index].IsRunebook)
-                this.RunebookCount--;
-            else
-                this.RuneCount--;
+			rune.ParentRune = this;
+		}
 
-            if (pageIndex && this.PageIndex == index)
-                this.PageIndex = -1;
+		public void RemoveRune(int index)
+		{
+			this.RemoveRune(index, false);
+		}
 
-            this.Runes.RemoveAt(index);
-        }
+		public void RemoveRune(int index, bool pageIndex)
+		{
+			if (this.Runes[index].IsRunebook)
+				this.RunebookCount--;
+			else
+				this.RuneCount--;
 
-        public void FindCounts()
-        {
-            int runebookCount = 0, runeCount = 0;
-            for (int i = 0; i < this.Runes.Count; i++)
-                if (this.Runes[i].IsRunebook)
-                    runebookCount++;
-                else
-                    runeCount++;
+			if (pageIndex && this.PageIndex == index)
+				this.PageIndex = -1;
 
-            this.RunebookCount = runebookCount;
-            this.RuneCount = runeCount;
-        }
-    }
+			this.Runes.RemoveAt(index);
+		}
+
+		public void FindCounts()
+		{
+			int runebookCount = 0,
+				runeCount = 0;
+			for (int i = 0; i < this.Runes.Count; i++)
+				if (this.Runes[i].IsRunebook)
+					runebookCount++;
+				else
+					runeCount++;
+
+			this.RunebookCount = runebookCount;
+			this.RuneCount = runeCount;
+		}
+	}
 }

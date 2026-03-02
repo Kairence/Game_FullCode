@@ -1,178 +1,170 @@
 using System;
 using System.Collections.Generic;
-
 using Server;
-using Server.Targeting;
 using Server.Spells.SkillMasteries;
+using Server.Targeting;
 
 namespace Server.Spells.Necromancy
 {
-    public class PainSpikeSpell : NecromancerSpell
-    {
-        private static readonly SpellInfo m_Info = new SpellInfo(
-            "Pain Spike", "In Sar",
-            203,
-            9031,
-            Reagent.GraveDust,
-            Reagent.PigIron);
+	public class PainSpikeSpell : NecromancerSpell
+	{
+		private static readonly SpellInfo m_Info = new SpellInfo(
+			"Pain Spike",
+			"In Sar",
+			203,
+			9031,
+			Reagent.GraveDust,
+			Reagent.PigIron
+		);
 
-        private static readonly Dictionary<Mobile, InternalTimer> m_Table = new Dictionary<Mobile, InternalTimer>();
+		private static readonly Dictionary<Mobile, InternalTimer> m_Table = new Dictionary<Mobile, InternalTimer>();
 
-        public PainSpikeSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+		public PainSpikeSpell(Mobile caster, Item scroll)
+			: base(caster, scroll, m_Info) { }
 
-        public override TimeSpan CastDelayBase
-        {
-            get
-            {
-                return TimeSpan.FromSeconds(1.25);
-            }
-        }
-        public override double RequiredSkill
-        {
-            get
-            {
-                return 20.0;
-            }
-        }
-        public override int RequiredMana
-        {
-            get
-            {
-                return 5;
-            }
-        }
-        public override bool DelayedDamage
-        {
-            get
-            {
-                return false;
-            }
-        }
-        public override void OnCast()
-        {
-            Caster.Target = new InternalTarget(this);
-        }
+		public override TimeSpan CastDelayBase
+		{
+			get { return TimeSpan.FromSeconds(1.25); }
+		}
+		public override double RequiredSkill
+		{
+			get { return 20.0; }
+		}
+		public override int RequiredMana
+		{
+			get { return 5; }
+		}
+		public override bool DelayedDamage
+		{
+			get { return false; }
+		}
 
-        public void Target(Mobile m)
-        {
-            if (CheckHSequence(m))
-            {
-                SpellHelper.Turn(Caster, m);
+		public override void OnCast()
+		{
+			Caster.Target = new InternalTarget(this);
+		}
 
-                ApplyEffects(m);
-                ConduitSpell.CheckAffected(Caster, m, ApplyEffects);
-            }
+		public void Target(Mobile m)
+		{
+			if (CheckHSequence(m))
+			{
+				SpellHelper.Turn(Caster, m);
 
-            FinishSequence();
-        }
+				ApplyEffects(m);
+				ConduitSpell.CheckAffected(Caster, m, ApplyEffects);
+			}
 
-        public void ApplyEffects(Mobile m, double strength = 1.0)
-        {
-            //SpellHelper.CheckReflect( (int)Circle, Caster, ref m ); //Irrelevent asfter AoS
+			FinishSequence();
+		}
 
-            /* Temporarily causes intense physical pain to the target, dealing direct damage.
-             * After 10 seconds the spell wears off, and if the target is still alive, 
-             * some of the Hit Points lost through Pain Spike are restored.
-             */
+		public void ApplyEffects(Mobile m, double strength = 1.0)
+		{
+			//SpellHelper.CheckReflect( (int)Circle, Caster, ref m ); //Irrelevent asfter AoS
 
-            m.FixedParticles(0x37C4, 1, 8, 9916, 39, 3, EffectLayer.Head);
-            m.FixedParticles(0x37C4, 1, 8, 9502, 39, 4, EffectLayer.Head);
-            m.PlaySound(0x210);
+			/* Temporarily causes intense physical pain to the target, dealing direct damage.
+			 * After 10 seconds the spell wears off, and if the target is still alive,
+			 * some of the Hit Points lost through Pain Spike are restored.
+			 */
 
-            double damage = (((GetDamageSkill(Caster) - GetResistSkill(m)) / 10) + (m.Player ? 18 : 30)) * strength;
-            m.CheckSkill(SkillName.MagicResist, 0.0, 120.0);	//Skill check for gain
+			m.FixedParticles(0x37C4, 1, 8, 9916, 39, 3, EffectLayer.Head);
+			m.FixedParticles(0x37C4, 1, 8, 9502, 39, 4, EffectLayer.Head);
+			m.PlaySound(0x210);
 
-            if (damage < 1)
-                damage = 1;
+			double damage = (((GetDamageSkill(Caster) - GetResistSkill(m)) / 10) + (m.Player ? 18 : 30)) * strength;
+			m.CheckSkill(SkillName.MagicResist, 0.0, 120.0); //Skill check for gain
 
-            TimeSpan buffTime = TimeSpan.FromSeconds(10.0 * strength);
-            InternalTimer t;
+			if (damage < 1)
+				damage = 1;
 
-            if (m_Table.ContainsKey(m))
-            {
-                damage = Utility.RandomMinMax(3, 7);
-                t = m_Table[m];
+			TimeSpan buffTime = TimeSpan.FromSeconds(10.0 * strength);
+			InternalTimer t;
 
-                if (t != null)
-                {
-                    t.Expires += TimeSpan.FromSeconds(2);
-                }
-            }
-            else
-            {
-                t = new InternalTimer(m, damage);
-                t.Start();
-            }
+			if (m_Table.ContainsKey(m))
+			{
+				damage = Utility.RandomMinMax(3, 7);
+				t = m_Table[m];
 
-            BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.PainSpike, 1075667, t.Expires - DateTime.UtcNow, m, Convert.ToString((int)damage)));
+				if (t != null)
+				{
+					t.Expires += TimeSpan.FromSeconds(2);
+				}
+			}
+			else
+			{
+				t = new InternalTimer(m, damage);
+				t.Start();
+			}
 
-            m.DFA = DFAlgorithm.PainSpike;
-            AOS.Damage(m, Caster, (int)damage, 0, 0, 0, 0, 0, 0, 100);
-            AOS.DoLeech((int)damage, Caster, m);
-            m.DFA = DFAlgorithm.Standard;
+			BuffInfo.AddBuff(
+				m,
+				new BuffInfo(BuffIcon.PainSpike, 1075667, t.Expires - DateTime.UtcNow, m, Convert.ToString((int)damage))
+			);
 
-            HarmfulSpell(m);
-        }
+			m.DFA = DFAlgorithm.PainSpike;
+			AOS.Damage(m, Caster, (int)damage, 0, 0, 0, 0, 0, 0, 100);
+			AOS.DoLeech((int)damage, Caster, m);
+			m.DFA = DFAlgorithm.Standard;
 
-        private class InternalTimer : Timer
-        {
-            private readonly Mobile m_Mobile;
-            private readonly int m_ToRestore;
+			HarmfulSpell(m);
+		}
 
-            public DateTime Expires { get; set; }
+		private class InternalTimer : Timer
+		{
+			private readonly Mobile m_Mobile;
+			private readonly int m_ToRestore;
 
-            public InternalTimer(Mobile m, double toRestore)
-                : base(TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(250))
-            {
-                Priority = TimerPriority.FiftyMS;
+			public DateTime Expires { get; set; }
 
-                m_Mobile = m;
-                m_ToRestore = (int)toRestore;
+			public InternalTimer(Mobile m, double toRestore)
+				: base(TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(250))
+			{
+				Priority = TimerPriority.FiftyMS;
 
-                Expires = DateTime.UtcNow + TimeSpan.FromSeconds(10);
+				m_Mobile = m;
+				m_ToRestore = (int)toRestore;
 
-                m_Table[m] = this;
-            }
+				Expires = DateTime.UtcNow + TimeSpan.FromSeconds(10);
 
-            protected override void OnTick()
-            {
-                if (DateTime.UtcNow >= Expires)
-                {
-                    if (m_Table.ContainsKey(m_Mobile))
-                        m_Table.Remove(m_Mobile);
+				m_Table[m] = this;
+			}
 
-                    if (m_Mobile.Alive && !m_Mobile.IsDeadBondedPet)
-                        m_Mobile.Hits += m_ToRestore;
+			protected override void OnTick()
+			{
+				if (DateTime.UtcNow >= Expires)
+				{
+					if (m_Table.ContainsKey(m_Mobile))
+						m_Table.Remove(m_Mobile);
 
-                    BuffInfo.RemoveBuff(m_Mobile, BuffIcon.PainSpike);
-                    
-                    Stop();
-                }
-            }
-        }
+					if (m_Mobile.Alive && !m_Mobile.IsDeadBondedPet)
+						m_Mobile.Hits += m_ToRestore;
 
-        private class InternalTarget : Target
-        {
-            private readonly PainSpikeSpell m_Owner;
-            public InternalTarget(PainSpikeSpell owner)
-                : base(Core.ML ? 10 : 12, false, TargetFlags.Harmful)
-            {
-                m_Owner = owner;
-            }
+					BuffInfo.RemoveBuff(m_Mobile, BuffIcon.PainSpike);
 
-            protected override void OnTarget(Mobile from, object o)
-            {
-                if (o is Mobile)
-                    m_Owner.Target((Mobile)o);
-            }
+					Stop();
+				}
+			}
+		}
 
-            protected override void OnTargetFinish(Mobile from)
-            {
-                m_Owner.FinishSequence();
-            }
-        }
-    }
+		private class InternalTarget : Target
+		{
+			private readonly PainSpikeSpell m_Owner;
+
+			public InternalTarget(PainSpikeSpell owner)
+				: base(Core.ML ? 10 : 12, false, TargetFlags.Harmful)
+			{
+				m_Owner = owner;
+			}
+
+			protected override void OnTarget(Mobile from, object o)
+			{
+				if (o is Mobile)
+					m_Owner.Target((Mobile)o);
+			}
+
+			protected override void OnTargetFinish(Mobile from)
+			{
+				m_Owner.FinishSequence();
+			}
+		}
+	}
 }

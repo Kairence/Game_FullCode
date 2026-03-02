@@ -1,9 +1,9 @@
 ﻿#region References
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
-
 using Microsoft.Win32;
 #endregion
 
@@ -31,7 +31,11 @@ namespace Ultima
 		/// <summary>
 		///     Should loaded Data be cached
 		/// </summary>
-		public static bool CacheData { get { return m_CacheData; } set { m_CacheData = value; } }
+		public static bool CacheData
+		{
+			get { return m_CacheData; }
+			set { m_CacheData = value; }
+		}
 
 		/// <summary>
 		///     Should a Hashfile be used to speed up loading
@@ -41,36 +45,147 @@ namespace Ultima
 		/// <summary>
 		///     Contains the path infos
 		/// </summary>
-		public static Dictionary<string, string> MulPath { get { return m_MulPath; } set { m_MulPath = value; } }
+		public static Dictionary<string, string> MulPath
+		{
+			get { return m_MulPath; }
+			set { m_MulPath = value; }
+		}
 
 		/// <summary>
 		///     Gets a list of paths to the Client's data files.
 		/// </summary>
-		public static string Directory { get { return m_Directory; } }
+		public static string Directory
+		{
+			get { return m_Directory; }
+		}
 
 		/// <summary>
 		///     Contains the rootDir (so relative values are possible for <see cref="MulPath" />
 		/// </summary>
-		public static string RootDir { get { return m_RootDir; } set { m_RootDir = value; } }
+		public static string RootDir
+		{
+			get { return m_RootDir; }
+			set { m_RootDir = value; }
+		}
 
 		private static readonly string[] m_Files = new[]
 		{
-			"anim.idx", "anim.mul", "anim2.idx", "anim2.mul", "anim3.idx", "anim3.mul", "anim4.idx", "anim4.mul", "anim5.idx",
-			"anim5.mul", "animdata.mul", "art.mul", "artidx.mul", "artlegacymul.uop", "body.def", "bodyconv.def", "client.exe",
-			"cliloc.custom1", "cliloc.custom2", "cliloc.deu", "cliloc.enu", "equipconv.def", "facet00.mul", "facet01.mul",
-			"facet02.mul", "facet03.mul", "facet04.mul", "facet05.mul", "fonts.mul", "gump.def", "gumpart.mul", "gumpidx.mul",
-			"gumpartlegacymul.uop", "hues.mul", "light.mul", "lightidx.mul", "map0.mul", "map1.mul", "map2.mul", "map3.mul",
-			"map4.mul", "map5.mul", "map0legacymul.uop", "map1legacymul.uop", "map2legacymul.uop", "map3legacymul.uop",
-			"map4legacymul.uop", "map5legacymul.uop", "mapdif0.mul", "mapdif1.mul", "mapdif2.mul", "mapdif3.mul", "mapdif4.mul",
-			"mapdifl0.mul", "mapdifl1.mul", "mapdifl2.mul", "mapdifl3.mul", "mapdifl4.mul", "mobtypes.txt", "multi.idx",
-			"multi.mul", "multimap.rle", "radarcol.mul", "skillgrp.mul", "skills.idx", "skills.mul", "sound.def", "sound.mul",
-			"soundidx.mul", "soundlegacymul.uop", "speech.mul", "stadif0.mul", "stadif1.mul", "stadif2.mul", "stadif3.mul",
-			"stadif4.mul", "stadifi0.mul", "stadifi1.mul", "stadifi2.mul", "stadifi3.mul", "stadifi4.mul", "stadifl0.mul",
-			"stadifl1.mul", "stadifl2.mul", "stadifl3.mul", "stadifl4.mul", "staidx0.mul", "staidx1.mul", "staidx2.mul",
-			"staidx3.mul", "staidx4.mul", "staidx5.mul", "statics0.mul", "statics1.mul", "statics2.mul", "statics3.mul",
-			"statics4.mul", "statics5.mul", "texidx.mul", "texmaps.mul", "tiledata.mul", "unifont.mul", "unifont1.mul",
-			"unifont2.mul", "unifont3.mul", "unifont4.mul", "unifont5.mul", "unifont6.mul", "unifont7.mul", "unifont8.mul",
-			"unifont9.mul", "unifont10.mul", "unifont11.mul", "unifont12.mul", "uotd.exe", "verdata.mul"
+			"anim.idx",
+			"anim.mul",
+			"anim2.idx",
+			"anim2.mul",
+			"anim3.idx",
+			"anim3.mul",
+			"anim4.idx",
+			"anim4.mul",
+			"anim5.idx",
+			"anim5.mul",
+			"animdata.mul",
+			"art.mul",
+			"artidx.mul",
+			"artlegacymul.uop",
+			"body.def",
+			"bodyconv.def",
+			"client.exe",
+			"cliloc.custom1",
+			"cliloc.custom2",
+			"cliloc.deu",
+			"cliloc.enu",
+			"equipconv.def",
+			"facet00.mul",
+			"facet01.mul",
+			"facet02.mul",
+			"facet03.mul",
+			"facet04.mul",
+			"facet05.mul",
+			"fonts.mul",
+			"gump.def",
+			"gumpart.mul",
+			"gumpidx.mul",
+			"gumpartlegacymul.uop",
+			"hues.mul",
+			"light.mul",
+			"lightidx.mul",
+			"map0.mul",
+			"map1.mul",
+			"map2.mul",
+			"map3.mul",
+			"map4.mul",
+			"map5.mul",
+			"map0legacymul.uop",
+			"map1legacymul.uop",
+			"map2legacymul.uop",
+			"map3legacymul.uop",
+			"map4legacymul.uop",
+			"map5legacymul.uop",
+			"mapdif0.mul",
+			"mapdif1.mul",
+			"mapdif2.mul",
+			"mapdif3.mul",
+			"mapdif4.mul",
+			"mapdifl0.mul",
+			"mapdifl1.mul",
+			"mapdifl2.mul",
+			"mapdifl3.mul",
+			"mapdifl4.mul",
+			"mobtypes.txt",
+			"multi.idx",
+			"multi.mul",
+			"multimap.rle",
+			"radarcol.mul",
+			"skillgrp.mul",
+			"skills.idx",
+			"skills.mul",
+			"sound.def",
+			"sound.mul",
+			"soundidx.mul",
+			"soundlegacymul.uop",
+			"speech.mul",
+			"stadif0.mul",
+			"stadif1.mul",
+			"stadif2.mul",
+			"stadif3.mul",
+			"stadif4.mul",
+			"stadifi0.mul",
+			"stadifi1.mul",
+			"stadifi2.mul",
+			"stadifi3.mul",
+			"stadifi4.mul",
+			"stadifl0.mul",
+			"stadifl1.mul",
+			"stadifl2.mul",
+			"stadifl3.mul",
+			"stadifl4.mul",
+			"staidx0.mul",
+			"staidx1.mul",
+			"staidx2.mul",
+			"staidx3.mul",
+			"staidx4.mul",
+			"staidx5.mul",
+			"statics0.mul",
+			"statics1.mul",
+			"statics2.mul",
+			"statics3.mul",
+			"statics4.mul",
+			"statics5.mul",
+			"texidx.mul",
+			"texmaps.mul",
+			"tiledata.mul",
+			"unifont.mul",
+			"unifont1.mul",
+			"unifont2.mul",
+			"unifont3.mul",
+			"unifont4.mul",
+			"unifont5.mul",
+			"unifont6.mul",
+			"unifont7.mul",
+			"unifont8.mul",
+			"unifont9.mul",
+			"unifont10.mul",
+			"unifont11.mul",
+			"unifont12.mul",
+			"uotd.exe",
+			"verdata.mul",
 		};
 
 		static Files()
@@ -171,9 +286,9 @@ namespace Ultima
 			if (MulPath.Count > 0)
 			{
 				string path = "";
-				if (MulPath.ContainsKey(file.ToLower()))
+				if (MulPath.ContainsKey(file.ToLower(CultureInfo.CurrentCulture)))
 				{
-					path = MulPath[file.ToLower()];
+					path = MulPath[file.ToLower(CultureInfo.CurrentCulture)];
 				}
 				if (String.IsNullOrEmpty(path))
 				{
@@ -194,24 +309,31 @@ namespace Ultima
 
 		internal static string GetFilePath(string format, params object[] args)
 		{
-			return GetFilePath(String.Format(format, args));
+			return GetFilePath(String.Format(CultureInfo.CurrentCulture, format, args));
 		}
 
 		private static readonly string[] knownRegkeys = new[]
 		{
-			@"Electronic Arts\EA Games\Ultima Online Classic", @"Electronic Arts\EA Games\Ultima Online Stygian Abyss Classic",
-			@"Origin Worlds Online\Ultima Online\KR Legacy Beta", @"Origin Worlds Online\Ultima Online Samurai Empire\3d\1.0",
+			@"Electronic Arts\EA Games\Ultima Online Classic",
+			@"Electronic Arts\EA Games\Ultima Online Stygian Abyss Classic",
+			@"Origin Worlds Online\Ultima Online\KR Legacy Beta",
+			@"Origin Worlds Online\Ultima Online Samurai Empire\3d\1.0",
 			@"Origin Worlds Online\Ultima Online Samurai Empire\2d\1.0",
 			@"Origin Worlds Online\Ultima Online Samurai Empire BETA\3d\1.0",
 			@"Origin Worlds Online\Ultima Online Samurai Empire BETA\2d\1.0",
-			@"EA Games\Ultima Online: Mondain's Legacy\1.0", @"EA Games\Ultima Online: Mondain's Legacy\1.00.0000",
-			@"EA GAMES\Ultima Online: Samurai Empire\1.00.0000", @"EA Games\Ultima Online: Mondain's Legacy",
-			@"EA GAMES\Ultima Online Samurai Empire\1.00.0000", @"EA GAMES\Ultima Online: Samurai Empire\1.0",
-			@"EA GAMES\Ultima Online Samurai Empire", @"EA GAMES\Ultima Online Samurai Empire\1.0",
-			@"Origin Worlds Online\Ultima Online\1.0", @"Origin Worlds Online\Ultima Online Third Dawn\1.0",
+			@"EA Games\Ultima Online: Mondain's Legacy\1.0",
+			@"EA Games\Ultima Online: Mondain's Legacy\1.00.0000",
+			@"EA GAMES\Ultima Online: Samurai Empire\1.00.0000",
+			@"EA Games\Ultima Online: Mondain's Legacy",
+			@"EA GAMES\Ultima Online Samurai Empire\1.00.0000",
+			@"EA GAMES\Ultima Online: Samurai Empire\1.0",
+			@"EA GAMES\Ultima Online Samurai Empire",
+			@"EA GAMES\Ultima Online Samurai Empire\1.0",
+			@"Origin Worlds Online\Ultima Online\1.0",
+			@"Origin Worlds Online\Ultima Online Third Dawn\1.0",
 		};
 
-		private static readonly string[] knownRegPathkeys = new[] {"ExePath", "Install Dir", "InstallDir"};
+		private static readonly string[] knownRegPathkeys = new[] { "ExePath", "Install Dir", "InstallDir" };
 
 		public static string LoadDirectory()
 		{
@@ -222,7 +344,7 @@ namespace Ultima
 
 				if (Environment.Is64BitOperatingSystem)
 				{
-					exePath = GetPath(string.Format(@"Wow6432Node\{0}", knownRegkeys[i]));
+					exePath = GetPath(string.Format(CultureInfo.CurrentCulture, @"Wow6432Node\{0}", knownRegkeys[i]));
 				}
 				else
 				{
@@ -242,11 +364,15 @@ namespace Ultima
 		{
 			try
 			{
-				RegistryKey key = Registry.LocalMachine.OpenSubKey(string.Format(@"SOFTWARE\{0}", regkey));
+				RegistryKey key = Registry.LocalMachine.OpenSubKey(
+					string.Format(CultureInfo.CurrentCulture, @"SOFTWARE\{0}", regkey)
+				);
 
 				if (key == null)
 				{
-					key = Registry.CurrentUser.OpenSubKey(string.Format(@"SOFTWARE\{0}", regkey));
+					key = Registry.CurrentUser.OpenSubKey(
+						string.Format(CultureInfo.CurrentCulture, @"SOFTWARE\{0}", regkey)
+					);
 
 					if (key == null)
 					{
@@ -313,11 +439,12 @@ namespace Ultima
 				return false;
 			}
 			FileStream FileCheck = File.OpenRead(file);
+#pragma warning disable CA5351 // MD5 is required for UOFiddler hash-file compatibility.
 			using (MD5 md5 = new MD5CryptoServiceProvider())
 			{
 				byte[] md5Hash = md5.ComputeHash(FileCheck);
 				FileCheck.Close();
-				string md5string = BitConverter.ToString(md5Hash).Replace("-", "").ToLower();
+				string md5string = BitConverter.ToString(md5Hash).Replace("-", "").ToLower(CultureInfo.CurrentCulture);
 				if (md5string == hash)
 				{
 					return true;
@@ -327,6 +454,7 @@ namespace Ultima
 					return false;
 				}
 			}
+#pragma warning restore CA5351
 		}
 
 		/// <summary>
@@ -341,12 +469,14 @@ namespace Ultima
 				return null;
 			}
 			FileStream FileCheck = File.OpenRead(file);
+#pragma warning disable CA5351 // MD5 is required for UOFiddler hash-file compatibility.
 			using (MD5 md5 = new MD5CryptoServiceProvider())
 			{
 				byte[] md5Hash = md5.ComputeHash(FileCheck);
 				FileCheck.Close();
 				return md5Hash;
 			}
+#pragma warning restore CA5351
 		}
 
 		/// <summary>
@@ -356,18 +486,28 @@ namespace Ultima
 		/// <returns></returns>
 		public static bool CompareHashFile(string what, string path)
 		{
-			string FileName = Path.Combine(path, String.Format("UOFiddler{0}.hash", what));
+			string FileName = Path.Combine(path, String.Format(CultureInfo.CurrentCulture, "UOFiddler{0}.hash", what));
 			if (File.Exists(FileName))
 			{
 				try
 				{
-					using (var bin = new BinaryReader(new FileStream(FileName, FileMode.Open, FileAccess.Read, FileShare.Read)))
+					using (
+						var bin = new BinaryReader(
+							new FileStream(FileName, FileMode.Open, FileAccess.Read, FileShare.Read)
+						)
+					)
 					{
 						int length = bin.ReadInt32();
 						var buffer = new byte[length];
 						bin.Read(buffer, 0, length);
-						string hashold = BitConverter.ToString(buffer).Replace("-", "").ToLower();
-						return CompareMD5(GetFilePath(String.Format("{0}.mul", what)), hashold);
+						string hashold = BitConverter
+							.ToString(buffer)
+							.Replace("-", "")
+							.ToLower(CultureInfo.CurrentCulture);
+						return CompareMD5(
+							GetFilePath(String.Format(CultureInfo.CurrentCulture, "{0}.mul", what)),
+							hashold
+						);
 					}
 				}
 				catch

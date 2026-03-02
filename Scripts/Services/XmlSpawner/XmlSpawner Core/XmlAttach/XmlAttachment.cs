@@ -1,12 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using Server;
 using Server.Commands;
-using Server.Network;
-using System.Collections.Generic;
-using Server.Mobiles;
-using Server.Targeting;
 using Server.Items;
+using Server.Mobiles;
+using Server.Network;
+using Server.Targeting;
 
 namespace Server.Engines.XmlSpawner2
 {
@@ -126,26 +126,47 @@ namespace Server.Engines.XmlSpawner2
 
 		private AttachmentTimer m_ExpirationTimer;
 
-		private TimeSpan m_Expiration = TimeSpan.Zero;     // no expiration by default
+		private TimeSpan m_Expiration = TimeSpan.Zero; // no expiration by default
 
 		private DateTime m_ExpirationEnd;
 
-		private DateTime m_CreationTime;                   // when the attachment was made
+		private DateTime m_CreationTime; // when the attachment was made
 
 		// ----------------------------------------------
 		// Public properties
 		// ----------------------------------------------
 		[CommandProperty(AccessLevel.GameMaster)]
-		public DateTime CreationTime { get { return m_CreationTime; } }
+		public DateTime CreationTime
+		{
+			get { return m_CreationTime; }
+		}
 
-		public bool Deleted { get { return m_Deleted; } }
+		public bool Deleted
+		{
+			get { return m_Deleted; }
+		}
 
-		public bool DoDelete { get { return false; } set { if (value == true) Delete(); } }
+		public bool DoDelete
+		{
+			get { return false; }
+			set
+			{
+				if (value == true)
+					Delete();
+			}
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public int SerialValue { get { return m_Serial.Value; } }
+		public int SerialValue
+		{
+			get { return m_Serial.Value; }
+		}
 
-		public ASerial Serial { get { return m_Serial; } set { m_Serial = value; } }
+		public ASerial Serial
+		{
+			get { return m_Serial; }
+			set { m_Serial = value; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
 		public TimeSpan Expiration
@@ -177,25 +198,46 @@ namespace Server.Engines.XmlSpawner2
 		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public virtual bool CanActivateInBackpack { get { return true; } }
+		public virtual bool CanActivateInBackpack
+		{
+			get { return true; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public virtual bool CanActivateEquipped { get { return true; } }
+		public virtual bool CanActivateEquipped
+		{
+			get { return true; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public virtual bool CanActivateInWorld { get { return true; } }
+		public virtual bool CanActivateInWorld
+		{
+			get { return true; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public virtual bool HandlesOnSpeech { get { return false; } }
+		public virtual bool HandlesOnSpeech
+		{
+			get { return false; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public virtual bool HandlesOnMovement { get { return false; } }
+		public virtual bool HandlesOnMovement
+		{
+			get { return false; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public virtual bool HandlesOnKill { get { return false; } }
+		public virtual bool HandlesOnKill
+		{
+			get { return false; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public virtual bool HandlesOnKilled { get { return false; } }
+		public virtual bool HandlesOnKilled
+		{
+			get { return false; }
+		}
 
 		/*
 		[CommandProperty( AccessLevel.GameMaster )]
@@ -203,20 +245,41 @@ namespace Server.Engines.XmlSpawner2
 		*/
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public virtual string Name { get { return m_Name; } set { m_Name = value; } }
+		public virtual string Name
+		{
+			get { return m_Name; }
+			set { m_Name = value; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public virtual object Attached { get { return m_AttachedTo; } }
+		public virtual object Attached
+		{
+			get { return m_AttachedTo; }
+		}
 
-		public virtual object AttachedTo { get { return m_AttachedTo; } set { m_AttachedTo = value; } }
+		public virtual object AttachedTo
+		{
+			get { return m_AttachedTo; }
+			set { m_AttachedTo = value; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public virtual string AttachedBy { get { return m_AttachedBy; } }
+		public virtual string AttachedBy
+		{
+			get { return m_AttachedBy; }
+		}
 
-		public virtual object OwnedBy { get { return m_OwnedBy; } set { m_OwnedBy = value; } }
+		public virtual object OwnedBy
+		{
+			get { return m_OwnedBy; }
+			set { m_OwnedBy = value; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public virtual object Owner { get { return m_OwnedBy; } }
+		public virtual object Owner
+		{
+			get { return m_OwnedBy; }
+		}
 
 		// ----------------------------------------------
 		// Private methods
@@ -285,13 +348,9 @@ namespace Server.Engines.XmlSpawner2
 			return true;
 		}
 
-		public virtual void OnEquip(Mobile from)
-		{
-		}
+		public virtual void OnEquip(Mobile from) { }
 
-		public virtual void OnRemoved(object parent)
-		{
-		}
+		public virtual void OnRemoved(object parent) { }
 
 		public virtual void OnAttach()
 		{
@@ -300,17 +359,11 @@ namespace Server.Engines.XmlSpawner2
 				DoTimer(m_Expiration);
 		}
 
-		public virtual void OnReattach()
-		{
-		}
+		public virtual void OnReattach() { }
 
-		public virtual void OnUse(Mobile from)
-		{
-		}
+		public virtual void OnUse(Mobile from) { }
 
-		public virtual void OnUser(object target)
-		{
-		}
+		public virtual void OnUser(object target) { }
 
 		public virtual bool BlockDefaultOnUse(Mobile from, object target)
 		{
@@ -327,29 +380,17 @@ namespace Server.Engines.XmlSpawner2
 			m_AttachedBy = name;
 		}
 
-		public virtual void OnSpeech(SpeechEventArgs args)
-		{
-		}
+		public virtual void OnSpeech(SpeechEventArgs args) { }
 
-		public virtual void OnMovement(MovementEventArgs args)
-		{
-		}
+		public virtual void OnMovement(MovementEventArgs args) { }
 
-		public virtual void OnKill(Mobile killed, Mobile killer)
-		{
-		}
+		public virtual void OnKill(Mobile killed, Mobile killer) { }
 
-		public virtual void OnBeforeKill(Mobile killed, Mobile killer)
-		{
-		}
+		public virtual void OnBeforeKill(Mobile killed, Mobile killer) { }
 
-		public virtual void OnKilled(Mobile killed, Mobile killer)
-		{
-		}
+		public virtual void OnKilled(Mobile killed, Mobile killer) { }
 
-		public virtual void OnBeforeKilled(Mobile killed, Mobile killer)
-		{
-		}
+		public virtual void OnBeforeKilled(Mobile killed, Mobile killer) { }
 
 		/*
 		public virtual void OnSkillUse( Mobile m, Skill skill, bool success)
@@ -357,15 +398,13 @@ namespace Server.Engines.XmlSpawner2
 		}
 		*/
 
-		public virtual void OnWeaponHit(Mobile attacker, Mobile defender, BaseWeapon weapon, int damageGiven)
-		{
-		}
+		public virtual void OnWeaponHit(Mobile attacker, Mobile defender, BaseWeapon weapon, int damageGiven) { }
 
 		public virtual int OnArmorHit(Mobile attacker, Mobile defender, Item armor, BaseWeapon weapon, int damageGiven)
 		{
 			return 0;
 		}
-		
+
 		public virtual string OnIdentify(Mobile from)
 		{
 			return null;
@@ -376,10 +415,7 @@ namespace Server.Engines.XmlSpawner2
 			return OnIdentify(from);
 		}
 
-
-		public virtual void AddProperties(ObjectPropertyList list)
-		{
-		}
+		public virtual void AddProperties(ObjectPropertyList list) { }
 
 		public void InvalidateParentProperties()
 		{
@@ -392,7 +428,6 @@ namespace Server.Engines.XmlSpawner2
 		public void SafeItemDelete(Item item)
 		{
 			Timer.DelayCall(TimeSpan.Zero, new TimerStateCallback(DeleteItemCallback), new object[] { item });
-
 		}
 
 		public void DeleteItemCallback(object state)
@@ -411,7 +446,6 @@ namespace Server.Engines.XmlSpawner2
 		public void SafeMobileDelete(Mobile mob)
 		{
 			Timer.DelayCall(TimeSpan.Zero, new TimerStateCallback(DeleteMobileCallback), new object[] { mob });
-
 		}
 
 		public void DeleteMobileCallback(object state)
@@ -429,7 +463,8 @@ namespace Server.Engines.XmlSpawner2
 
 		public void Delete()
 		{
-			if (m_Deleted) return;
+			if (m_Deleted)
+				return;
 
 			m_Deleted = true;
 
@@ -443,13 +478,9 @@ namespace Server.Engines.XmlSpawner2
 			OwnedBy = null;
 		}
 
-		public virtual void OnDelete()
-		{
-		}
+		public virtual void OnDelete() { }
 
-		public virtual void OnTrigger(object activator, Mobile from)
-		{
-		}
+		public virtual void OnTrigger(object activator, Mobile from) { }
 
 		public virtual void Serialize(GenericWriter writer)
 		{
@@ -462,14 +493,13 @@ namespace Server.Engines.XmlSpawner2
 				writer.Write((int)0);
 				writer.Write((Item)OwnedBy);
 			}
+			else if (OwnedBy is Mobile)
+			{
+				writer.Write((int)1);
+				writer.Write((Mobile)OwnedBy);
+			}
 			else
-				if (OwnedBy is Mobile)
-				{
-					writer.Write((int)1);
-					writer.Write((Mobile)OwnedBy);
-				}
-				else
-					writer.Write((int)-1);
+				writer.Write((int)-1);
 
 			// version 0
 			writer.Write(Name);
@@ -501,13 +531,12 @@ namespace Server.Engines.XmlSpawner2
 					{
 						OwnedBy = reader.ReadItem();
 					}
+					else if (owned == 1)
+					{
+						OwnedBy = reader.ReadMobile();
+					}
 					else
-						if (owned == 1)
-						{
-							OwnedBy = reader.ReadMobile();
-						}
-						else
-							OwnedBy = null;
+						OwnedBy = null;
 
 					goto case 0;
 				case 0:

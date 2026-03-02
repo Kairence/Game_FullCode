@@ -19,9 +19,15 @@ namespace Server.Network
 			m_Index = fixedSize ? 1 : 3;
 		}
 
-		public byte[] Buffer { get { return m_Data; } }
+		public byte[] Buffer
+		{
+			get { return m_Data; }
+		}
 
-		public int Size { get { return m_Size; } }
+		public int Size
+		{
+			get { return m_Size; }
+		}
 
 		public void Trace(NetState state)
 		{
@@ -45,8 +51,7 @@ namespace Server.Network
 					sw.WriteLine();
 				}
 			}
-			catch
-			{ }
+			catch { }
 		}
 
 		public int Seek(int offset, SeekOrigin origin)
@@ -104,7 +109,9 @@ namespace Server.Network
 				return 0;
 			}
 
-			return (uint)((m_Data[m_Index++] << 24) | (m_Data[m_Index++] << 16) | (m_Data[m_Index++] << 8) | m_Data[m_Index++]);
+			return (uint)(
+				(m_Data[m_Index++] << 24) | (m_Data[m_Index++] << 16) | (m_Data[m_Index++] << 8) | m_Data[m_Index++]
+			);
 		}
 
 		public ushort ReadUInt16()

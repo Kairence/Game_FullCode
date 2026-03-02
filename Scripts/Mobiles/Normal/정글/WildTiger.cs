@@ -1,213 +1,245 @@
 using System;
+using Server.Items;
 using Server.Mobiles;
 using Server.Network;
-using Server.Items;
 
 namespace Server.Mobiles
 {
-    [TypeAlias("Server.Mobiles.Tiger")]
-    [CorpseName("a tiger corpse")]
-    public class WildTiger : BaseMount
-    {
-        public override double HealChance { get { return .167; } }
-        public virtual Item GetPelt { get { return new TigerPelt(4); } }
+	[TypeAlias("Server.Mobiles.Tiger")]
+	[CorpseName("a tiger corpse")]
+	public class WildTiger : BaseMount
+	{
+		public override double HealChance
+		{
+			get { return .167; }
+		}
+		public virtual Item GetPelt
+		{
+			get { return new TigerPelt(4); }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public virtual bool CanRide { get; set; }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public virtual bool CanRide { get; set; }
 
-        [Constructable]
-        public WildTiger()
-            : this("a wild tiger")
-        {
-            CanRide = false;
-        }
+		[Constructable]
+		public WildTiger()
+			: this("a wild tiger")
+		{
+			CanRide = false;
+		}
 
-        [Constructable]
-        public WildTiger(string name)
-            : base(name, Utility.RandomBool() ? 1254 : 1255, 16071, AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
-        {
-            if (Body == 1255)
-                ItemID = 16072;
+		[Constructable]
+		public WildTiger(string name)
+			: base(name, Utility.RandomBool() ? 1254 : 1255, 16071, AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
+		{
+			if (Body == 1255)
+				ItemID = 16072;
 
-            SetStr(496, 554);
-            SetDex(88, 124);
-            SetInt(94, 163);
+			SetStr(496, 554);
+			SetDex(88, 124);
+			SetInt(94, 163);
 
-            SetHits(352, 450);
+			SetHits(352, 450);
 
-            SetDamage(18, 24);
+			SetDamage(18, 24);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 56, 75);
-            SetResistance(ResistanceType.Fire, 21, 40);
-            SetResistance(ResistanceType.Cold, 55, 64);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 25, 35);
+			SetResistance(ResistanceType.Physical, 56, 75);
+			SetResistance(ResistanceType.Fire, 21, 40);
+			SetResistance(ResistanceType.Cold, 55, 64);
+			SetResistance(ResistanceType.Poison, 30, 40);
+			SetResistance(ResistanceType.Energy, 25, 35);
 
-            SetSkill(SkillName.MagicResist, 90.8, 97.5);
-            SetSkill(SkillName.Anatomy, 0);
-            SetSkill(SkillName.Tactics, 100.2, 102.5);
-            SetSkill(SkillName.Wrestling, 90.1, 94.4);
+			SetSkill(SkillName.MagicResist, 90.8, 97.5);
+			SetSkill(SkillName.Anatomy, 0);
+			SetSkill(SkillName.Tactics, 100.2, 102.5);
+			SetSkill(SkillName.Wrestling, 90.1, 94.4);
 
-            Fame = 11000;
-            Karma = -11000;
+			Fame = 11000;
+			Karma = -11000;
 
-            if (Core.ML && Utility.RandomDouble() < .33)
-                PackItem(Engines.Plants.Seed.RandomPeculiarSeed(Utility.RandomList(1, 1, 1, 1, 2, 2, 2, 3, 3, 4)));
+			if (Core.ML && Utility.RandomDouble() < .33)
+				PackItem(Engines.Plants.Seed.RandomPeculiarSeed(Utility.RandomList(1, 1, 1, 1, 2, 2, 2, 3, 3, 4)));
 
-            Tamable = true;
-            ControlSlots = 19;
-            MinTameSkill = 95.1;
+			Tamable = true;
+			ControlSlots = 19;
+			MinTameSkill = 95.1;
 
-            SetWeaponAbility(WeaponAbility.BleedAttack);
-            SetSpecialAbility(SpecialAbility.GraspingClaw);
-        }
+			SetWeaponAbility(WeaponAbility.BleedAttack);
+			SetSpecialAbility(SpecialAbility.GraspingClaw);
+		}
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (CanRide)
-                base.OnDoubleClick(from);
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (CanRide)
+				base.OnDoubleClick(from);
+			else if (from.AccessLevel >= AccessLevel.GameMaster && !Body.IsHuman)
+			{
+				Container pack = Backpack;
 
-            else if (from.AccessLevel >= AccessLevel.GameMaster && !Body.IsHuman)
-            {
-                Container pack = Backpack;
+				if (pack != null)
+				{
+					pack.DisplayTo(from);
+				}
+			}
+		}
 
-                if (pack != null)
-                {
-                    pack.DisplayTo(from);
-                }
-            }
-        }
+		public override int GetIdleSound()
+		{
+			return 0x673;
+		}
 
-        public override int GetIdleSound() { return 0x673; }
-        public override int GetAngerSound() { return 0x670; }
-        public override int GetHurtSound() { return 0x672; }
-        public override int GetDeathSound() { return 0x671; }
+		public override int GetAngerSound()
+		{
+			return 0x670;
+		}
 
-        public override double WeaponAbilityChance { get { return 0.5; } }
+		public override int GetHurtSound()
+		{
+			return 0x672;
+		}
 
-        public override int Meat { get { return 2; } }
-        public override FoodType FavoriteFood { get { return FoodType.Meat; } }	
-		public override int TreasureMapLevel { get { return 1; } }
+		public override int GetDeathSound()
+		{
+			return 0x671;
+		}
 
-        public override void GenerateLoot()
-        {
-            AddLoot(LootPack.Rich, 1);
-        }
+		public override double WeaponAbilityChance
+		{
+			get { return 0.5; }
+		}
 
-        public override void OnCarve(Mobile from, Corpse corpse, Item with)
-        {
-            if (!Controlled && corpse != null && !corpse.Carved)
-            {
-                from.SendLocalizedMessage(1156197); // You cut away some pelts, but they remain on the corpse.
-                corpse.DropItem(GetPelt);
-            }
+		public override int Meat
+		{
+			get { return 2; }
+		}
+		public override FoodType FavoriteFood
+		{
+			get { return FoodType.Meat; }
+		}
+		public override int TreasureMapLevel
+		{
+			get { return 1; }
+		}
 
-            base.OnCarve(from, corpse, with);
-        }
+		public override void GenerateLoot()
+		{
+			AddLoot(LootPack.Rich, 1);
+		}
 
-        public WildTiger(Serial serial)
-            : base(serial)
-        {
-        }
+		public override void OnCarve(Mobile from, Corpse corpse, Item with)
+		{
+			if (!Controlled && corpse != null && !corpse.Carved)
+			{
+				from.SendLocalizedMessage(1156197); // You cut away some pelts, but they remain on the corpse.
+				corpse.DropItem(GetPelt);
+			}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			base.OnCarve(from, corpse, with);
+		}
 
-            writer.Write((int)2); // version
+		public WildTiger(Serial serial)
+			: base(serial) { }
 
-            writer.Write(CanRide);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)2); // version
 
-            int version = reader.ReadInt();
+			writer.Write(CanRide);
+		}
 
-            switch (version)
-            {
-                case 2:
-                case 1:
-                    CanRide = reader.ReadBool();
-                    break;
-                case 0:
-                    break;
-            }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            if (version == 0 && Rider != null)
-                Rider = null;
+			int version = reader.ReadInt();
 
-            if (version == 1)
-            {
-                SetWeaponAbility(WeaponAbility.BleedAttack);
-            }
-        }
-    }
+			switch (version)
+			{
+				case 2:
+				case 1:
+					CanRide = reader.ReadBool();
+					break;
+				case 0:
+					break;
+			}
 
-    [CorpseName("a tiger corpse")]
-    public class WildWhiteTiger : WildTiger
-    {
-        public override Item GetPelt { get { return new WhiteTigerPelt(4); } }
+			if (version == 0 && Rider != null)
+				Rider = null;
 
-        [Constructable]
-        public WildWhiteTiger()
-            : base("a wild white tiger")
-        {
-            Hue = 2500;
-        }
+			if (version == 1)
+			{
+				SetWeaponAbility(WeaponAbility.BleedAttack);
+			}
+		}
+	}
 
-        public WildWhiteTiger(Serial serial)
-            : base(serial)
-        {
-        }
+	[CorpseName("a tiger corpse")]
+	public class WildWhiteTiger : WildTiger
+	{
+		public override Item GetPelt
+		{
+			get { return new WhiteTigerPelt(4); }
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		[Constructable]
+		public WildWhiteTiger()
+			: base("a wild white tiger")
+		{
+			Hue = 2500;
+		}
 
-            writer.Write((int)0); // version
-        }
+		public WildWhiteTiger(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
 
-    [CorpseName("a tiger corpse")]
-    public class WildBlackTiger : WildTiger
-    {
-        public override Item GetPelt { get { return new BlackTigerPelt(4); } }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        [Constructable]
-        public WildBlackTiger()
-            : base("a wild black tiger")
-        {
-            Hue = 1175;
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public WildBlackTiger(Serial serial)
-            : base(serial)
-        {
-        }
+	[CorpseName("a tiger corpse")]
+	public class WildBlackTiger : WildTiger
+	{
+		public override Item GetPelt
+		{
+			get { return new BlackTigerPelt(4); }
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		[Constructable]
+		public WildBlackTiger()
+			: base("a wild black tiger")
+		{
+			Hue = 1175;
+		}
 
-            writer.Write((int)0); // version
-        }
+		public WildBlackTiger(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

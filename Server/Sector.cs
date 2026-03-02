@@ -1,7 +1,6 @@
 #region References
 using System;
 using System.Collections.Generic;
-
 using Server.Items;
 using Server.Network;
 #endregion
@@ -13,8 +12,14 @@ namespace Server
 		private readonly Region m_Region;
 		private Rectangle3D m_Rect;
 
-		public Region Region { get { return m_Region; } }
-		public Rectangle3D Rect { get { return m_Rect; } }
+		public Region Region
+		{
+			get { return m_Region; }
+		}
+		public Rectangle3D Rect
+		{
+			get { return m_Rect; }
+		}
 
 		public RegionRect(Region region, Rectangle3D rect)
 		{
@@ -357,12 +362,24 @@ namespace Server
 			}
 		}
 
-		public bool Active { get { return (m_Active && m_Owner != Map.Internal); } }
+		public bool Active
+		{
+			get { return (m_Active && m_Owner != Map.Internal); }
+		}
 
-		public Map Owner { get { return m_Owner; } }
+		public Map Owner
+		{
+			get { return m_Owner; }
+		}
 
-		public int X { get { return m_X; } }
+		public int X
+		{
+			get { return m_X; }
+		}
 
-		public int Y { get { return m_Y; } }
+		public int Y
+		{
+			get { return m_Y; }
+		}
 	}
 }

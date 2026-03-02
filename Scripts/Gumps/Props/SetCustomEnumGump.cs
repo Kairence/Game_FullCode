@@ -2,7 +2,6 @@
 using System;
 using System.Collections;
 using System.Reflection;
-
 using Server.Commands;
 using Server.Network;
 #endregion
@@ -22,7 +21,8 @@ namespace Server.Gumps
 			Stack stack,
 			int propspage,
 			ArrayList list,
-			string[] names)
+			string[] names
+		)
 			: base(prop, mobile, o, stack, propspage, list, names, null)
 		{
 			_Names = names;
@@ -36,7 +36,7 @@ namespace Server.Gumps
 			{
 				try
 				{
-					var info = m_Property.PropertyType.GetMethod("Parse", new[] {typeof(string)});
+					var info = m_Property.PropertyType.GetMethod("Parse", new[] { typeof(string) });
 
 					var result = "";
 
@@ -48,10 +48,14 @@ namespace Server.Gumps
 							m_Object,
 							m_Property,
 							m_Property.Name,
-							info.Invoke(null, new object[] {_Names[index]}),
-							true);
+							info.Invoke(null, new object[] { _Names[index] }),
+							true
+						);
 					}
-					else if (m_Property.PropertyType == typeof(Enum) || m_Property.PropertyType.IsSubclassOf(typeof(Enum)))
+					else if (
+						m_Property.PropertyType == typeof(Enum)
+						|| m_Property.PropertyType.IsSubclassOf(typeof(Enum))
+					)
 					{
 						result = Properties.SetDirect(
 							m_Mobile,
@@ -60,7 +64,8 @@ namespace Server.Gumps
 							m_Property,
 							m_Property.Name,
 							Enum.Parse(m_Property.PropertyType, _Names[index], false),
-							true);
+							true
+						);
 					}
 					else if (typeofIDynamicEnum.IsAssignableFrom(m_Property.PropertyType))
 					{
@@ -71,7 +76,15 @@ namespace Server.Gumps
 							ienum.Value = _Names[index];
 						}
 
-						result = Properties.SetDirect(m_Mobile, m_Object, m_Object, m_Property, m_Property.Name, ienum, true);
+						result = Properties.SetDirect(
+							m_Mobile,
+							m_Object,
+							m_Object,
+							m_Property,
+							m_Property.Name,
+							ienum,
+							true
+						);
 					}
 
 					m_Mobile.SendMessage(result);

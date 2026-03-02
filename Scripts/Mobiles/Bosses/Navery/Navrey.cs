@@ -5,181 +5,190 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    [CorpseName("a navrey corpse")]
-    public class Navrey : BaseCreature
-    {
-        private NavreysController m_Spawner;
+	[CorpseName("a navrey corpse")]
+	public class Navrey : BaseCreature
+	{
+		private NavreysController m_Spawner;
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool UsedPillars { get; set; }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool UsedPillars { get; set; }
 
-        private static readonly Type[] m_Artifact = new Type[]
-        {
-            typeof(NightEyes),
-            typeof(Tangle1)
-        };		
-        
-        [Constructable]
-        public Navrey(NavreysController spawner)
-            : base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
-        {
-            m_Spawner = spawner;
+		private static readonly Type[] m_Artifact = new Type[] { typeof(NightEyes), typeof(Tangle1) };
 
-            Name = "Navrey Night-Eyes";
-            Body = 735;
-            BaseSoundID = 389;
+		[Constructable]
+		public Navrey(NavreysController spawner)
+			: base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
+		{
+			m_Spawner = spawner;
 
-            SetStr(1000, 1500);
-            SetDex(200, 250);
-            SetInt(150, 200);
+			Name = "Navrey Night-Eyes";
+			Body = 735;
+			BaseSoundID = 389;
 
-            SetHits(30000, 35000);
+			SetStr(1000, 1500);
+			SetDex(200, 250);
+			SetInt(150, 200);
 
-            SetDamage(25, 40);
+			SetHits(30000, 35000);
 
-            SetDamageType(ResistanceType.Physical, 50);
-            SetDamageType(ResistanceType.Fire, 25);
-            SetDamageType(ResistanceType.Energy, 25);
+			SetDamage(25, 40);
 
-            SetResistance(ResistanceType.Physical, 55, 65);
-            SetResistance(ResistanceType.Fire, 45, 55);
-            SetResistance(ResistanceType.Cold, 60, 70);
-            SetResistance(ResistanceType.Poison, 100);
-            SetResistance(ResistanceType.Energy, 65, 80);
+			SetDamageType(ResistanceType.Physical, 50);
+			SetDamageType(ResistanceType.Fire, 25);
+			SetDamageType(ResistanceType.Energy, 25);
 
-            SetSkill(SkillName.Anatomy, 50.0, 80.0);
-            SetSkill(SkillName.EvalInt, 90.0, 100.0);
-            SetSkill(SkillName.Magery, 90.0, 100.0);
-            SetSkill(SkillName.MagicResist, 100.0, 130.0);
-            SetSkill(SkillName.Meditation, 80.0, 100.0);
-            SetSkill(SkillName.Poisoning, 100.0);
-            SetSkill(SkillName.Tactics, 90.0, 100.0);
-            SetSkill(SkillName.Wrestling, 91.6, 98.2);
+			SetResistance(ResistanceType.Physical, 55, 65);
+			SetResistance(ResistanceType.Fire, 45, 55);
+			SetResistance(ResistanceType.Cold, 60, 70);
+			SetResistance(ResistanceType.Poison, 100);
+			SetResistance(ResistanceType.Energy, 65, 80);
 
-            Fame = 24000;
-            Karma = -24000;
+			SetSkill(SkillName.Anatomy, 50.0, 80.0);
+			SetSkill(SkillName.EvalInt, 90.0, 100.0);
+			SetSkill(SkillName.Magery, 90.0, 100.0);
+			SetSkill(SkillName.MagicResist, 100.0, 130.0);
+			SetSkill(SkillName.Meditation, 80.0, 100.0);
+			SetSkill(SkillName.Poisoning, 100.0);
+			SetSkill(SkillName.Tactics, 90.0, 100.0);
+			SetSkill(SkillName.Wrestling, 91.6, 98.2);
 
-            VirtualArmor = 90;
+			Fame = 24000;
+			Karma = -24000;
 
-            for (int i = 0; i < Utility.RandomMinMax(1, 3); i++)
-            {
-                PackItem(Loot.RandomScroll(0, Loot.MysticismScrollTypes.Length, SpellbookType.Mystic));
-            }
+			VirtualArmor = 90;
 
-            SetSpecialAbility(SpecialAbility.Webbing);
-        }
+			for (int i = 0; i < Utility.RandomMinMax(1, 3); i++)
+			{
+				PackItem(Loot.RandomScroll(0, Loot.MysticismScrollTypes.Length, SpellbookType.Mystic));
+			}
 
-        public Navrey(Serial serial)
-            : base(serial)
-        {
-        }
- 
-        public override double TeleportChance { get { return 0; } }
-	    public override bool AlwaysMurderer { get { return true; } }
-        public override Poison PoisonImmune { get { return Poison.Parasitic; } }
-        public override Poison HitPoison { get { return Poison.Lethal; } }
-        public override int Meat { get { return 1; } }
+			SetSpecialAbility(SpecialAbility.Webbing);
+		}
 
-        public static void DistributeRandomArtifact(BaseCreature bc, Type[] typelist)
-        {
-            int random = Utility.Random(typelist.Length);
-            Item item = Loot.Construct(typelist[random]);
-            DistributeArtifact(DemonKnight.FindRandomPlayer(bc), item);
-        }
+		public Navrey(Serial serial)
+			: base(serial) { }
 
-        public static void DistributeArtifact(Mobile to, Item artifact)
-        {
-            if (artifact == null)
-                return;
+		public override double TeleportChance
+		{
+			get { return 0; }
+		}
+		public override bool AlwaysMurderer
+		{
+			get { return true; }
+		}
+		public override Poison PoisonImmune
+		{
+			get { return Poison.Parasitic; }
+		}
+		public override Poison HitPoison
+		{
+			get { return Poison.Lethal; }
+		}
+		public override int Meat
+		{
+			get { return 1; }
+		}
 
-            if (to != null)
-            {
-                Container pack = to.Backpack;
+		public static void DistributeRandomArtifact(BaseCreature bc, Type[] typelist)
+		{
+			int random = Utility.Random(typelist.Length);
+			Item item = Loot.Construct(typelist[random]);
+			DistributeArtifact(DemonKnight.FindRandomPlayer(bc), item);
+		}
 
-                if (pack == null || !pack.TryDropItem(to, artifact, false))
-                    to.BankBox.DropItem(artifact);
+		public static void DistributeArtifact(Mobile to, Item artifact)
+		{
+			if (artifact == null)
+				return;
 
-                to.SendLocalizedMessage(502088); // A special gift has been placed in your backpack.
-            }
-            else
-            {
-                artifact.Delete();
-            }
-        }
+			if (to != null)
+			{
+				Container pack = to.Backpack;
 
-        public override void GenerateLoot()
-        {
-            AddLoot(LootPack.AosSuperBoss, 3);
-        }
+				if (pack == null || !pack.TryDropItem(to, artifact, false))
+					to.BankBox.DropItem(artifact);
 
-        public override void OnDeath(Container c)
-        {
-            base.OnDeath(c);
+				to.SendLocalizedMessage(502088); // A special gift has been placed in your backpack.
+			}
+			else
+			{
+				artifact.Delete();
+			}
+		}
 
-            if (m_Spawner != null)
-                m_Spawner.OnNavreyKilled();
+		public override void GenerateLoot()
+		{
+			AddLoot(LootPack.AosSuperBoss, 3);
+		}
 
-            if (Utility.RandomBool())
-                c.AddItem(new UntranslatedAncientTome());
+		public override void OnDeath(Container c)
+		{
+			base.OnDeath(c);
 
-            if (0.1 >= Utility.RandomDouble())
-                c.AddItem(ScrollOfTranscendence.CreateRandom(30, 30));
+			if (m_Spawner != null)
+				m_Spawner.OnNavreyKilled();
 
-            if (0.1 >= Utility.RandomDouble())
-                c.AddItem(new TatteredAncientScroll());
+			if (Utility.RandomBool())
+				c.AddItem(new UntranslatedAncientTome());
 
-            if (Utility.RandomDouble() < 0.10)
-                c.DropItem(new LuckyCoin());
+			if (0.1 >= Utility.RandomDouble())
+				c.AddItem(ScrollOfTranscendence.CreateRandom(30, 30));
 
-            if (Utility.RandomDouble() < 0.025)
-                DistributeRandomArtifact(this, m_Artifact);
+			if (0.1 >= Utility.RandomDouble())
+				c.AddItem(new TatteredAncientScroll());
 
-            // distribute quest items for the 'Green with Envy' quest given by Vernix
-            List<DamageStore> rights = GetLootingRights();
-            for (int i = rights.Count - 1; i >= 0; --i)
-            {
-                DamageStore ds = rights[i];
-                if (!ds.m_HasRight)
-                    rights.RemoveAt(i);
-            }
+			if (Utility.RandomDouble() < 0.10)
+				c.DropItem(new LuckyCoin());
 
-            // for each with looting rights... give an eye of navrey if they have the quest
-            foreach (DamageStore d in rights)
-            {
-                PlayerMobile pm = d.m_Mobile as PlayerMobile;
-                if (null != pm)
-                {
-                    foreach (BaseQuest quest in pm.Quests)
-                    {
-                        if (quest is GreenWithEnvyQuest)
-                        {
-                            Container pack = pm.Backpack;
-                            Item item = new EyeOfNavrey();
-                            if (pack == null || !pack.TryDropItem(pm, item, false))
-                                pm.BankBox.DropItem(item);
-                            pm.SendLocalizedMessage(1095155); // As Navrey Night-Eyes dies, you find and claim one of her eyes as proof of her demise.
-                            break;
-                        }
-                    }
-                }
-            }
-        }
+			if (Utility.RandomDouble() < 0.025)
+				DistributeRandomArtifact(this, m_Artifact);
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)1);
+			// distribute quest items for the 'Green with Envy' quest given by Vernix
+			List<DamageStore> rights = GetLootingRights();
+			for (int i = rights.Count - 1; i >= 0; --i)
+			{
+				DamageStore ds = rights[i];
+				if (!ds.m_HasRight)
+					rights.RemoveAt(i);
+			}
 
-            writer.Write((Item)m_Spawner);
-        }
+			// for each with looting rights... give an eye of navrey if they have the quest
+			foreach (DamageStore d in rights)
+			{
+				PlayerMobile pm = d.m_Mobile as PlayerMobile;
+				if (null != pm)
+				{
+					foreach (BaseQuest quest in pm.Quests)
+					{
+						if (quest is GreenWithEnvyQuest)
+						{
+							Container pack = pm.Backpack;
+							Item item = new EyeOfNavrey();
+							if (pack == null || !pack.TryDropItem(pm, item, false))
+								pm.BankBox.DropItem(item);
+							pm.SendLocalizedMessage(1095155); // As Navrey Night-Eyes dies, you find and claim one of her eyes as proof of her demise.
+							break;
+						}
+					}
+				}
+			}
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)1);
 
-            if (version >= 1)
-                m_Spawner = reader.ReadItem() as NavreysController;
-        }
-    }
+			writer.Write((Item)m_Spawner);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+
+			if (version >= 1)
+				m_Spawner = reader.ReadItem() as NavreysController;
+		}
+	}
 }

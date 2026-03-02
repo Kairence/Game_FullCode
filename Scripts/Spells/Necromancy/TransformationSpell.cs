@@ -2,95 +2,64 @@ using System;
 
 namespace Server.Spells.Necromancy
 {
-    public abstract class TransformationSpell : NecromancerSpell, ITransformationSpell
-    {
-        public TransformationSpell(Mobile caster, Item scroll, SpellInfo info)
-            : base(caster, scroll, info)
-        {
-        }
+	public abstract class TransformationSpell : NecromancerSpell, ITransformationSpell
+	{
+		public TransformationSpell(Mobile caster, Item scroll, SpellInfo info)
+			: base(caster, scroll, info) { }
 
-        public abstract int Body { get; }
-        public virtual int Hue
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public virtual int PhysResistOffset
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public virtual int FireResistOffset
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public virtual int ColdResistOffset
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public virtual int PoisResistOffset
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public virtual int NrgyResistOffset
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override bool BlockedByHorrificBeast
-        {
-            get
-            {
-                return false;
-            }
-        }
-        public virtual double TickRate
-        {
-            get
-            {
-                return 1.0;
-            }
-        }
-        public override bool CheckCast()
-        {
-            if (!TransformationSpellHelper.CheckCast(this.Caster, this))
-                return false;
+		public abstract int Body { get; }
+		public virtual int Hue
+		{
+			get { return 0; }
+		}
+		public virtual int PhysResistOffset
+		{
+			get { return 0; }
+		}
+		public virtual int FireResistOffset
+		{
+			get { return 0; }
+		}
+		public virtual int ColdResistOffset
+		{
+			get { return 0; }
+		}
+		public virtual int PoisResistOffset
+		{
+			get { return 0; }
+		}
+		public virtual int NrgyResistOffset
+		{
+			get { return 0; }
+		}
+		public override bool BlockedByHorrificBeast
+		{
+			get { return false; }
+		}
+		public virtual double TickRate
+		{
+			get { return 1.0; }
+		}
 
-            return base.CheckCast();
-        }
+		public override bool CheckCast()
+		{
+			if (!TransformationSpellHelper.CheckCast(this.Caster, this))
+				return false;
 
-        public override void OnCast()
-        {
-            TransformationSpellHelper.OnCast(this.Caster, this);
+			return base.CheckCast();
+		}
 
-            this.FinishSequence();
-        }
+		public override void OnCast()
+		{
+			TransformationSpellHelper.OnCast(this.Caster, this);
 
-        public virtual void OnTick(Mobile m)
-        {
-        }
+			this.FinishSequence();
+		}
 
-        public virtual void DoEffect(Mobile m)
-        {
-        }
+		public virtual void OnTick(Mobile m) { }
 
-        public virtual void RemoveEffect(Mobile m)
-        {
-        }
-    }
+		public virtual void DoEffect(Mobile m) { }
+
+		public virtual void RemoveEffect(Mobile m) { }
+	}
 }

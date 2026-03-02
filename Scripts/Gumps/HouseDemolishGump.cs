@@ -35,14 +35,14 @@ namespace Server.Gumps
 			AddImageTiled(10, 40, 400, 200, 2624);
 			AddAlphaRegion(10, 40, 400, 200);
 
-			AddHtmlLocalized(10, 40, 400, 200, 1061795, 32512, false, true); 
+			AddHtmlLocalized(10, 40, 400, 200, 1061795, 32512, false, true);
 			/* You are about to demolish your house.
-            * You will be refunded the house's value directly to your bank box.
-            * All items in the house will remain behind and can be freely picked up by anyone.
-            * Once the house is demolished, anyone can attempt to place a new house on the vacant land.
-            * This action will not un-condemn any other houses on your account, nor will it end your 7-day waiting period (if it applies to you).
-            * Are you sure you wish to continue?
-            */
+			* You will be refunded the house's value directly to your bank box.
+			* All items in the house will remain behind and can be freely picked up by anyone.
+			* Once the house is demolished, anyone can attempt to place a new house on the vacant land.
+			* This action will not un-condemn any other houses on your account, nor will it end your 7-day waiting period (if it applies to you).
+			* Are you sure you wish to continue?
+			*/
 
 			AddImageTiled(10, 250, 400, 20, 2624);
 			AddAlphaRegion(10, 250, 400, 20);
@@ -72,10 +72,10 @@ namespace Server.Gumps
 					}
 					/*
 					if (m_House.PlayerVendors.Count > 0)
-                    {
+					{
 						m_Mobile.SendLocalizedMessage(503236); // You need to collect your vendor's belongings before moving.
 						return;
-                    }
+					}
 					*/
 					if (m_House.HasRentedVendors && m_House.VendorInventories.Count > 0)
 					{
@@ -97,13 +97,12 @@ namespace Server.Gumps
 						// You cannot do that that while you still have unclaimed contract vendor inventory in your house.
 						return;
 					}
-
-                    else if (m_House.HasActiveAuction)
-                    {
-                        m_Mobile.SendLocalizedMessage(1156453); 
-                        // You cannot currently take this action because you have auction safes locked down in your home. You must remove them first.
-                        return;
-                    }
+					else if (m_House.HasActiveAuction)
+					{
+						m_Mobile.SendLocalizedMessage(1156453);
+						// You cannot currently take this action because you have auction safes locked down in your home. You must remove them first.
+						return;
+					}
 
 					if (m_Mobile.AccessLevel >= AccessLevel.GameMaster)
 					{

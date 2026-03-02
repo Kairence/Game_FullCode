@@ -4,128 +4,132 @@ using Server.Targeting;
 
 namespace Server.Spells.Fourth
 {
-    public class ManaDrainSpell : MagerySpell
-    {
-        private static readonly SpellInfo m_Info = new SpellInfo(
-            "Mana Drain", "Ort Rel",
-            215,
-            9031,
-            Reagent.BlackPearl,
-            Reagent.MandrakeRoot,
-            Reagent.SpidersSilk);
-        private static readonly Dictionary<Mobile, Timer> m_Table = new Dictionary<Mobile, Timer>();
-        public ManaDrainSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+	public class ManaDrainSpell : MagerySpell
+	{
+		private static readonly SpellInfo m_Info = new SpellInfo(
+			"Mana Drain",
+			"Ort Rel",
+			215,
+			9031,
+			Reagent.BlackPearl,
+			Reagent.MandrakeRoot,
+			Reagent.SpidersSilk
+		);
+		private static readonly Dictionary<Mobile, Timer> m_Table = new Dictionary<Mobile, Timer>();
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Fourth;
-            }
-        }
-        public override void OnCast()
-        {
-            this.Caster.Target = new InternalTarget(this);
-        }
+		public ManaDrainSpell(Mobile caster, Item scroll)
+			: base(caster, scroll, m_Info) { }
 
-        public void Target(Mobile m)
-        {
-            if (!this.Caster.CanSee(m))
-            {
-                this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
-            }
-            else if (this.CheckHSequence(m))
-            {
-                SpellHelper.Turn(this.Caster, m);
+		public override SpellCircle Circle
+		{
+			get { return SpellCircle.Fourth; }
+		}
 
-                SpellHelper.CheckReflect((int)this.Circle, this.Caster, ref m);
+		public override void OnCast()
+		{
+			this.Caster.Target = new InternalTarget(this);
+		}
 
-                if (m.Spell != null)
-                    m.Spell.OnCasterHurt();
+		public void Target(Mobile m)
+		{
+			if (!this.Caster.CanSee(m))
+			{
+				this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
+			}
+			else if (this.CheckHSequence(m))
+			{
+				SpellHelper.Turn(this.Caster, m);
 
-                m.Paralyzed = false;
+				SpellHelper.CheckReflect((int)this.Circle, this.Caster, ref m);
 
-                if (Core.AOS)
-                {
-                    int toDrain = (int)( m.Mana * 0.1 + Caster.Skills.Magery.Value * 0.0001 );
+				if (m.Spell != null)
+					m.Spell.OnCasterHurt();
 
-                    if (m_Table.ContainsKey(m))
-                        toDrain = 0;
+				m.Paralyzed = false;
 
-                    m.FixedParticles(0x3789, 10, 25, 5032, EffectLayer.Head);
-                    m.PlaySound(0x1F8);
+				if (Core.AOS)
+				{
+					int toDrain = (int)(m.Mana * 0.1 + Caster.Skills.Magery.Value * 0.0001);
 
-                    if (toDrain > 0)
-                    {
-                        m.Mana -= toDrain;
+					if (m_Table.ContainsKey(m))
+						toDrain = 0;
 
-                        m_Table[m] = Timer.DelayCall(TimeSpan.FromSeconds(60.0), new TimerStateCallback(AosDelay_Callback), new object[] { m, toDrain });
-                    }
-                }
-                else
-                {
-                    if (this.CheckResisted(m))
-                        m.SendLocalizedMessage(501783); // You feel yourself resisting magical energy.
-                    else if (m.Mana >= 100)
-                        m.Mana -= Utility.Random(1, 100);
-                    else
-                        m.Mana -= Utility.Random(1, m.Mana);
+					m.FixedParticles(0x3789, 10, 25, 5032, EffectLayer.Head);
+					m.PlaySound(0x1F8);
 
-                    m.FixedParticles(0x374A, 10, 15, 5032, EffectLayer.Head);
-                    m.PlaySound(0x1F8);
-                }
+					if (toDrain > 0)
+					{
+						m.Mana -= toDrain;
 
-                this.HarmfulSpell(m);
-            }
+						m_Table[m] = Timer.DelayCall(
+							TimeSpan.FromSeconds(60.0),
+							new TimerStateCallback(AosDelay_Callback),
+							new object[] { m, toDrain }
+						);
+					}
+				}
+				else
+				{
+					if (this.CheckResisted(m))
+						m.SendLocalizedMessage(501783); // You feel yourself resisting magical energy.
+					else if (m.Mana >= 100)
+						m.Mana -= Utility.Random(1, 100);
+					else
+						m.Mana -= Utility.Random(1, m.Mana);
 
-            this.FinishSequence();
-        }
+					m.FixedParticles(0x374A, 10, 15, 5032, EffectLayer.Head);
+					m.PlaySound(0x1F8);
+				}
 
-        public override double GetResistPercent(Mobile target)
-        {
-            return 99.0;
-        }
+				this.HarmfulSpell(m);
+			}
 
-        private void AosDelay_Callback(object state)
-        {
-            object[] states = (object[])state;
+			this.FinishSequence();
+		}
 
-            Mobile m = (Mobile)states[0];
-            int mana = (int)states[1];
+		public override double GetResistPercent(Mobile target)
+		{
+			return 99.0;
+		}
 
-            if (m.Alive && !m.IsDeadBondedPet)
-            {
-                m.Mana += mana;
+		private void AosDelay_Callback(object state)
+		{
+			object[] states = (object[])state;
 
-                m.FixedEffect(0x3779, 10, 25);
-                m.PlaySound(0x28E);
-            }
+			Mobile m = (Mobile)states[0];
+			int mana = (int)states[1];
 
-            m_Table.Remove(m);
-        }
+			if (m.Alive && !m.IsDeadBondedPet)
+			{
+				m.Mana += mana;
 
-        private class InternalTarget : Target
-        {
-            private readonly ManaDrainSpell m_Owner;
-            public InternalTarget(ManaDrainSpell owner)
-                : base(Core.ML ? 10 : 12, false, TargetFlags.Harmful)
-            {
-                this.m_Owner = owner;
-            }
+				m.FixedEffect(0x3779, 10, 25);
+				m.PlaySound(0x28E);
+			}
 
-            protected override void OnTarget(Mobile from, object o)
-            {
-                if (o is Mobile)
-                    this.m_Owner.Target((Mobile)o);
-            }
+			m_Table.Remove(m);
+		}
 
-            protected override void OnTargetFinish(Mobile from)
-            {
-                this.m_Owner.FinishSequence();
-            }
-        }
-    }
+		private class InternalTarget : Target
+		{
+			private readonly ManaDrainSpell m_Owner;
+
+			public InternalTarget(ManaDrainSpell owner)
+				: base(Core.ML ? 10 : 12, false, TargetFlags.Harmful)
+			{
+				this.m_Owner = owner;
+			}
+
+			protected override void OnTarget(Mobile from, object o)
+			{
+				if (o is Mobile)
+					this.m_Owner.Target((Mobile)o);
+			}
+
+			protected override void OnTargetFinish(Mobile from)
+			{
+				this.m_Owner.FinishSequence();
+			}
+		}
+	}
 }

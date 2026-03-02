@@ -18,11 +18,13 @@ namespace Server.Mobiles
 			set { m_Animated = value; }
 		}*/
 
-		public override SkillName CastSkill { get { return SkillName.Magery; } }
+		public override SkillName CastSkill
+		{
+			get { return SkillName.Magery; }
+		}
 
 		public NecroMageAI(BaseCreature m)
-			: base(m)
-		{ }
+			: base(m) { }
 
 		public override Spell GetRandomDamageSpell()
 		{
@@ -151,8 +153,10 @@ namespace Server.Mobiles
 				}
 				else if (!m_Mobile.Summoned)
 				{
-					if (ScaleBySkill(HealChance, SkillName.Necromancy) > Utility.RandomDouble() &&
-						m_Mobile.Hits < m_Mobile.HitsMax - 30)
+					if (
+						ScaleBySkill(HealChance, SkillName.Necromancy) > Utility.RandomDouble()
+						&& m_Mobile.Hits < m_Mobile.HitsMax - 30
+					)
 					{
 						m_Mobile.UseSkill(SkillName.SpiritSpeak);
 					}

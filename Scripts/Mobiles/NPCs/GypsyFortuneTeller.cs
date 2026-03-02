@@ -14,17 +14,13 @@ namespace Server.Mobiles
 		}
 
 		public GypsyFortuneTeller(Serial serial)
-			: base(serial)
-		{ }
-		
+			: base(serial) { }
+
 		public override bool IsInvulnerable
-        {
-            get
-            {
-                return true;
-            }
-        }
-		
+		{
+			get { return true; }
+		}
+
 		public override void InitOutfit()
 		{
 			base.InitOutfit();

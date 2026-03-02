@@ -2,90 +2,72 @@ using System;
 
 namespace Server.Items
 {
-    public class WaterTroughSouthAddon : BaseAddon, IWaterSource
-    {
-        [Constructable]
-        public WaterTroughSouthAddon()
-        {
-            this.AddComponent(new AddonComponent(0xB43), 0, 0, 0);
-            this.AddComponent(new AddonComponent(0xB44), 1, 0, 0);
-        }
+	public class WaterTroughSouthAddon : BaseAddon, IWaterSource
+	{
+		[Constructable]
+		public WaterTroughSouthAddon()
+		{
+			this.AddComponent(new AddonComponent(0xB43), 0, 0, 0);
+			this.AddComponent(new AddonComponent(0xB44), 1, 0, 0);
+		}
 
-        public WaterTroughSouthAddon(Serial serial)
-            : base(serial)
-        {
-        }
+		public WaterTroughSouthAddon(Serial serial)
+			: base(serial) { }
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new WaterTroughSouthDeed();
-            }
-        }
-        public int Quantity
-        {
-            get
-            {
-                return 500;
-            }
-            set
-            {
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override BaseAddonDeed Deed
+		{
+			get { return new WaterTroughSouthDeed(); }
+		}
+		public int Quantity
+		{
+			get { return 500; }
+			set { }
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class WaterTroughSouthDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public WaterTroughSouthDeed()
-        {
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public WaterTroughSouthDeed(Serial serial)
-            : base(serial)
-        {
-        }
+	public class WaterTroughSouthDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public WaterTroughSouthDeed() { }
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new WaterTroughSouthAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1044350;
-            }
-        }// water trough (south)
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public WaterTroughSouthDeed(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override BaseAddon Addon
+		{
+			get { return new WaterTroughSouthAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1044350; }
+		} // water trough (south)
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

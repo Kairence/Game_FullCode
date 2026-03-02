@@ -2,60 +2,51 @@ using System;
 
 namespace Server.Items
 {
-    public class FireRubyBracelet : GoldBracelet
-    {
-        [Constructable]
-        public FireRubyBracelet()
-            : base()
-        {
-            this.Weight = 1.0;
+	public class FireRubyBracelet : GoldBracelet
+	{
+		[Constructable]
+		public FireRubyBracelet()
+			: base()
+		{
+			this.Weight = 1.0;
 
-            BaseRunicTool.ApplyAttributesTo(this, true, 0, Utility.RandomMinMax(1, 4), 0, 100);
-			
-            if (Utility.Random(100) < 10)
-                this.Attributes.RegenHits += 2;
-            else
-                this.Resistances.Fire += 10;		
-        }
+			BaseRunicTool.ApplyAttributesTo(this, true, 0, Utility.RandomMinMax(1, 4), 0, 100);
 
-        public FireRubyBracelet(Serial serial)
-            : base(serial)
-        {
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 25;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 30;
-            }
-        }
+			if (Utility.Random(100) < 10)
+				this.Attributes.RegenHits += 2;
+			else
+				this.Resistances.Fire += 10;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073454;
-            }
-        }// fire ruby bracelet
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public FireRubyBracelet(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override int InitMinHits
+		{
+			get { return 25; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 30; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override int LabelNumber
+		{
+			get { return 1073454; }
+		} // fire ruby bracelet
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

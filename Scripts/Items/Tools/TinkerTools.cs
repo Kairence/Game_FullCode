@@ -1,163 +1,155 @@
 using System;
-using Server.Engines.Craft;
 using Server.ContextMenus;
+using Server.Engines.Craft;
 
 namespace Server.Items
 {
-    [Flipable(0x1EB8, 0x1EB9)]
-    public class TinkerTools : BaseTool
-    {
-        [Constructable]
-        public TinkerTools()
-            : base(0x1EB8)
-        {
-            this.Weight = 1.0;
-        }
+	[Flipable(0x1EB8, 0x1EB9)]
+	public class TinkerTools : BaseTool
+	{
+		[Constructable]
+		public TinkerTools()
+			: base(0x1EB8)
+		{
+			this.Weight = 1.0;
+		}
 
-        [Constructable]
-        public TinkerTools(int uses)
-            : base(uses, 0x1EB8)
-        {
-            this.Weight = 1.0;
-        }
+		[Constructable]
+		public TinkerTools(int uses)
+			: base(uses, 0x1EB8)
+		{
+			this.Weight = 1.0;
+		}
 
-        public TinkerTools(Serial serial)
-            : base(serial)
-        {
-        }
+		public TinkerTools(Serial serial)
+			: base(serial) { }
 
-        public override CraftSystem CraftSystem
-        {
-            get
-            {
-                return DefTinkering.CraftSystem;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override CraftSystem CraftSystem
+		{
+			get { return DefTinkering.CraftSystem; }
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override void GetContextMenuEntries(Mobile from, System.Collections.Generic.List<ContextMenuEntry> list)
-        {
-            base.GetContextMenuEntries(from, list);
+			int version = reader.ReadInt();
+		}
 
-            if (Core.TOL)
-                list.Add(new ToggleRepairContextMenuEntry(from, this));
-        }
+		public override void GetContextMenuEntries(Mobile from, System.Collections.Generic.List<ContextMenuEntry> list)
+		{
+			base.GetContextMenuEntries(from, list);
 
-        public class ToggleRepairContextMenuEntry : ContextMenuEntry
-        {
-            private Mobile _From;
-            private BaseTool _Tool;
+			if (Core.TOL)
+				list.Add(new ToggleRepairContextMenuEntry(from, this));
+		}
 
-            public ToggleRepairContextMenuEntry(Mobile from, BaseTool tool)
-                : base(1157040) // Toggle Repair Mode
-            {
-                _From = from;
-                _Tool = tool;
-            }
+		public class ToggleRepairContextMenuEntry : ContextMenuEntry
+		{
+			private Mobile _From;
+			private BaseTool _Tool;
 
-            public override void OnClick()
-            {
-                if (_Tool.RepairMode)
-                {
-                    _From.SendLocalizedMessage(1157042); // This tool is fully functional. 
-                    _Tool.RepairMode = false;
-                }
-                else
-                {
-                    _From.SendLocalizedMessage(1157041); // This tool will only repair items in this mode.
-                    _Tool.RepairMode = true;
-                }
-            }
-        }
-    }
+			public ToggleRepairContextMenuEntry(Mobile from, BaseTool tool)
+				: base(1157040) // Toggle Repair Mode
+			{
+				_From = from;
+				_Tool = tool;
+			}
 
-    public class TinkersTools : BaseTool
-    {
-        [Constructable]
-        public TinkersTools()
-            : base(0x1EBC)
-        {
-            this.Weight = 1.0;
-        }
+			public override void OnClick()
+			{
+				if (_Tool.RepairMode)
+				{
+					_From.SendLocalizedMessage(1157042); // This tool is fully functional.
+					_Tool.RepairMode = false;
+				}
+				else
+				{
+					_From.SendLocalizedMessage(1157041); // This tool will only repair items in this mode.
+					_Tool.RepairMode = true;
+				}
+			}
+		}
+	}
 
-        [Constructable]
-        public TinkersTools(int uses)
-            : base(uses, 0x1EBC)
-        {
-            this.Weight = 1.0;
-        }
+	public class TinkersTools : BaseTool
+	{
+		[Constructable]
+		public TinkersTools()
+			: base(0x1EBC)
+		{
+			this.Weight = 1.0;
+		}
 
-        public TinkersTools(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public TinkersTools(int uses)
+			: base(uses, 0x1EBC)
+		{
+			this.Weight = 1.0;
+		}
 
-        public override CraftSystem CraftSystem
-        {
-            get
-            {
-                return DefTinkering.CraftSystem;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public TinkersTools(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override CraftSystem CraftSystem
+		{
+			get { return DefTinkering.CraftSystem; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
+			writer.Write((int)0); // version
+		}
 
-        public override void GetContextMenuEntries(Mobile from, System.Collections.Generic.List<ContextMenuEntry> list)
-        {
-            base.GetContextMenuEntries(from, list);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            if (Core.TOL)
-                list.Add(new ToggleRepairContextMenuEntry(from, this));
-        }
+			int version = reader.ReadInt();
+		}
 
-        public class ToggleRepairContextMenuEntry : ContextMenuEntry
-        {
-            private Mobile _From;
-            private BaseTool _Tool;
+		public override void GetContextMenuEntries(Mobile from, System.Collections.Generic.List<ContextMenuEntry> list)
+		{
+			base.GetContextMenuEntries(from, list);
 
-            public ToggleRepairContextMenuEntry(Mobile from, BaseTool tool)
-                : base(1157040) // Toggle Repair Mode
-            {
-                _From = from;
-                _Tool = tool;
-            }
+			if (Core.TOL)
+				list.Add(new ToggleRepairContextMenuEntry(from, this));
+		}
 
-            public override void OnClick()
-            {
-                if (_Tool.RepairMode)
-                {
-                    _From.SendLocalizedMessage(1157042); // This tool is fully functional. 
-                    _Tool.RepairMode = false;
-                }
-                else
-                {
-                    _From.SendLocalizedMessage(1157041); // This tool will only repair items in this mode.
-                    _Tool.RepairMode = true;
-                }
-            }
-        }
-    }
+		public class ToggleRepairContextMenuEntry : ContextMenuEntry
+		{
+			private Mobile _From;
+			private BaseTool _Tool;
+
+			public ToggleRepairContextMenuEntry(Mobile from, BaseTool tool)
+				: base(1157040) // Toggle Repair Mode
+			{
+				_From = from;
+				_Tool = tool;
+			}
+
+			public override void OnClick()
+			{
+				if (_Tool.RepairMode)
+				{
+					_From.SendLocalizedMessage(1157042); // This tool is fully functional.
+					_Tool.RepairMode = false;
+				}
+				else
+				{
+					_From.SendLocalizedMessage(1157041); // This tool will only repair items in this mode.
+					_Tool.RepairMode = true;
+				}
+			}
+		}
+	}
 }

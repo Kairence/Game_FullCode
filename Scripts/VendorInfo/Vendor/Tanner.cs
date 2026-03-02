@@ -3,63 +3,60 @@ using System.Collections.Generic;
 
 namespace Server.Mobiles
 {
-    public class Tanner : BaseVendor
-    {
-        private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
-        [Constructable]
-        public Tanner()
-            : base("the tanner")
-        {
-            this.SetSkill(SkillName.Tailoring, 36.0, 68.0);
-        }
+	public class Tanner : BaseVendor
+	{
+		private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
 
-        public Tanner(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public Tanner()
+			: base("the tanner")
+		{
+			this.SetSkill(SkillName.Tailoring, 36.0, 68.0);
+		}
 
-        protected override List<SBInfo> SBInfos
-        {
-            get
-            {
-                return this.m_SBInfos;
-            }
-        }
-        public override void InitSBInfo()
-        {
-            if (!this.IsStygianVendor)
-            {
-                this.m_SBInfos.Add(new SBTanner());
-            }
-            else
-            {
-                this.m_SBInfos.Add(new SBSATanner());
-            }
-        }
+		public Tanner(Serial serial)
+			: base(serial) { }
 
-        public override bool ValidateBought(Mobile buyer, Item item)
-        {
-            if (item is Server.Items.TaxidermyKit && buyer.Skills[SkillName.Carpentry].Value < 90.1)
-            {
-                this.SayTo(buyer, 1042603, 0x3B2); // You would not understand how to use the kit.
-                return false;
-            }
+		protected override List<SBInfo> SBInfos
+		{
+			get { return this.m_SBInfos; }
+		}
 
-            return true;
-        }
+		public override void InitSBInfo()
+		{
+			if (!this.IsStygianVendor)
+			{
+				this.m_SBInfos.Add(new SBTanner());
+			}
+			else
+			{
+				this.m_SBInfos.Add(new SBSATanner());
+			}
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override bool ValidateBought(Mobile buyer, Item item)
+		{
+			if (item is Server.Items.TaxidermyKit && buyer.Skills[SkillName.Carpentry].Value < 90.1)
+			{
+				this.SayTo(buyer, 1042603, 0x3B2); // You would not understand how to use the kit.
+				return false;
+			}
 
-            writer.Write((int)0); // version
-        }
+			return true;
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

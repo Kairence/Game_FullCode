@@ -4,84 +4,81 @@ using Server.Engines.BulkOrders;
 
 namespace Server.Mobiles
 {
-    public class Cook : BaseVendor
-    {
-        private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
-        [Constructable]
-        public Cook()
-            : base("the cook")
-        {
-            this.SetSkill(SkillName.Cooking, 90.0, 100.0);
-            this.SetSkill(SkillName.TasteID, 75.0, 98.0);
-        }
+	public class Cook : BaseVendor
+	{
+		private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
 
-        public Cook(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public Cook()
+			: base("the cook")
+		{
+			this.SetSkill(SkillName.Cooking, 90.0, 100.0);
+			this.SetSkill(SkillName.TasteID, 75.0, 98.0);
+		}
 
-        public override VendorShoeType ShoeType
-        {
-            get
-            {
-                return Utility.RandomBool() ? VendorShoeType.Sandals : VendorShoeType.Shoes;
-            }
-        }
-        protected override List<SBInfo> SBInfos
-        {
-            get
-            {
-                return this.m_SBInfos;
-            }
-        }
-        public override void InitSBInfo()
-        {
-            this.m_SBInfos.Add(new SBCook());
+		public Cook(Serial serial)
+			: base(serial) { }
 
-            if (this.IsTokunoVendor)
-                this.m_SBInfos.Add(new SBSECook());
-        }
+		public override VendorShoeType ShoeType
+		{
+			get { return Utility.RandomBool() ? VendorShoeType.Sandals : VendorShoeType.Shoes; }
+		}
+		protected override List<SBInfo> SBInfos
+		{
+			get { return this.m_SBInfos; }
+		}
 
-        public override void InitOutfit()
-        {
-            base.InitOutfit();
+		public override void InitSBInfo()
+		{
+			this.m_SBInfos.Add(new SBCook());
 
-            this.AddItem(new Server.Items.HalfApron());
-        }
+			if (this.IsTokunoVendor)
+				this.m_SBInfos.Add(new SBSECook());
+		}
 
-        #region Bulk Orders
-        public override BODType BODType { get { return BODType.Cooking; } }
+		public override void InitOutfit()
+		{
+			base.InitOutfit();
 
-        public override bool IsValidBulkOrder(Item item)
-        {
-            return (item is SmallCookingBOD || item is LargeCookingBOD);
-        }
+			this.AddItem(new Server.Items.HalfApron());
+		}
 
-        public override bool SupportsBulkOrders(Mobile from)
-        {
-            return BulkOrderSystem.NewSystemEnabled && from is PlayerMobile && from.Skills[SkillName.Cooking].Base > 0;
-        }
+		#region Bulk Orders
+		public override BODType BODType
+		{
+			get { return BODType.Cooking; }
+		}
 
-        public override void OnSuccessfulBulkOrderReceive(Mobile from)
-        {
-            if (from is PlayerMobile)
-                ((PlayerMobile)from).NextCookingBulkOrder = TimeSpan.Zero;
-        }
+		public override bool IsValidBulkOrder(Item item)
+		{
+			return (item is SmallCookingBOD || item is LargeCookingBOD);
+		}
 
-        #endregion
+		public override bool SupportsBulkOrders(Mobile from)
+		{
+			return BulkOrderSystem.NewSystemEnabled && from is PlayerMobile && from.Skills[SkillName.Cooking].Base > 0;
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void OnSuccessfulBulkOrderReceive(Mobile from)
+		{
+			if (from is PlayerMobile)
+				((PlayerMobile)from).NextCookingBulkOrder = TimeSpan.Zero;
+		}
 
-            writer.Write((int)0); // version
-        }
+		#endregion
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

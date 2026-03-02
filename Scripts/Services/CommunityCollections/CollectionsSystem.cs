@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Server.Engines.Quests;
 using Server.Mobiles;
-using System.IO;
 
 namespace Server.Services.Community_Collections
 {
 	public class CollectionsSystem
 	{
-		private static Dictionary<Collection, CollectionData> m_Collections = new Dictionary<Collection, CollectionData>();
+		private static Dictionary<Collection, CollectionData> m_Collections =
+			new Dictionary<Collection, CollectionData>();
 		private static List<BaseCollectionMobile> m_Mobiles = new List<BaseCollectionMobile>();
 		private static string m_Path = Path.Combine("Saves", "CommunityCollections.bin");
 
@@ -52,14 +53,15 @@ namespace Server.Services.Community_Collections
 				{
 					writer.WriteMobileList(m_Mobiles);
 					writer.Write(m_Mobiles.Count);
-					foreach(BaseCollectionMobile mob in m_Mobiles)
+					foreach (BaseCollectionMobile mob in m_Mobiles)
 					{
 						writer.Write((int)mob.CollectionID);
 						CollectionData data = mob.GetData();
 						data.Write(writer);
 						m_Collections[mob.CollectionID] = data;
 					}
-				});
+				}
+			);
 		}
 
 		private static void EventSink_WorldLoad()
@@ -73,7 +75,7 @@ namespace Server.Services.Community_Collections
 					mobs.AddRange(m_Mobiles);
 
 					int count = reader.ReadInt();
-					for(int i = 0; i < count; ++i)
+					for (int i = 0; i < count; ++i)
 					{
 						int collection = reader.ReadInt();
 						CollectionData data = new CollectionData();
@@ -81,7 +83,7 @@ namespace Server.Services.Community_Collections
 						int toRemove = -1;
 						foreach (BaseCollectionMobile mob in mobs)
 						{
-							if(mob.CollectionID == (Collection)collection)
+							if (mob.CollectionID == (Collection)collection)
 							{
 								mob.SetData(data);
 								toRemove = mobs.IndexOf(mob);
@@ -91,8 +93,8 @@ namespace Server.Services.Community_Collections
 						if (toRemove >= 0)
 							mobs.RemoveAt(toRemove);
 					}
-				});
-
+				}
+			);
 		}
 	}
 

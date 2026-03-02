@@ -1,32 +1,38 @@
 using System;
+using System.Collections;
 using Server;
 using Server.Items;
-using Server.Network;
 using Server.Mobiles;
-using System.Collections;
+using Server.Network;
 
 namespace Server.Engines.XmlSpawner2
 {
 	public class XmlDeathAction : XmlAttachment
 	{
-		private string m_Action;    // action string
-		private string m_Condition;    // condition string
+		private string m_Action; // action string
+		private string m_Condition; // condition string
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public string Action { get { return m_Action; } set { m_Action = value; } }
+		public string Action
+		{
+			get { return m_Action; }
+			set { m_Action = value; }
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public string Condition { get { return m_Condition; } set { m_Condition = value; } }
+		public string Condition
+		{
+			get { return m_Condition; }
+			set { m_Condition = value; }
+		}
 
-		// These are the various ways in which the message attachment can be constructed.  
+		// These are the various ways in which the message attachment can be constructed.
 		// These can be called via the [addatt interface, via scripts, via the spawner ATTACH keyword.
 		// Other overloads could be defined to handle other types of arguments
 
 		// a serial constructor is REQUIRED
 		public XmlDeathAction(ASerial serial)
-			: base(serial)
-		{
-		}
+			: base(serial) { }
 
 		[Attachable]
 		public XmlDeathAction(string action)
@@ -35,10 +41,7 @@ namespace Server.Engines.XmlSpawner2
 		}
 
 		[Attachable]
-		public XmlDeathAction()
-		{
-		}
-
+		public XmlDeathAction() { }
 
 		public override void Serialize(GenericWriter writer)
 		{
@@ -49,7 +52,6 @@ namespace Server.Engines.XmlSpawner2
 			writer.Write(m_Condition);
 			// version 0
 			writer.Write(m_Action);
-
 		}
 
 		public override void Deserialize(GenericReader reader)
@@ -66,7 +68,6 @@ namespace Server.Engines.XmlSpawner2
 					m_Action = reader.ReadString();
 					break;
 			}
-
 		}
 
 		public override void OnAttach()
@@ -78,16 +79,19 @@ namespace Server.Engines.XmlSpawner2
 				// dont allow item attachments
 				Delete();
 			}
-
 		}
 
-		public override bool HandlesOnKilled { get { return true; } }
+		public override bool HandlesOnKilled
+		{
+			get { return true; }
+		}
 
 		public override void OnKilled(Mobile killed, Mobile killer)
 		{
 			base.OnKilled(killed, killer);
 
-			if (killed == null) return;
+			if (killed == null)
+				return;
 
 			// now check for any conditions as well
 			// check for any condition that must be met for this entry to be processed
@@ -106,7 +110,8 @@ namespace Server.Engines.XmlSpawner2
 
 		private void ExecuteDeathActions(Item corpse, Mobile killer, string actions)
 		{
-			if (actions == null || actions.Length <= 0) return;
+			if (actions == null || actions.Length <= 0)
+				return;
 			// execute any action associated with it
 			// allow for multiple action strings on a single line separated by a semicolon
 
@@ -116,12 +121,12 @@ namespace Server.Engines.XmlSpawner2
 			{
 				ExecuteDeathAction(corpse, killer, args[j]);
 			}
-
 		}
 
 		private static void ExecuteDeathAction(Item corpse, Mobile killer, string action)
 		{
-			if (action == null || action.Length <= 0 || corpse == null) return;
+			if (action == null || action.Length <= 0 || corpse == null)
+				return;
 
 			string status_str = null;
 			Server.Mobiles.XmlSpawner.SpawnObject TheSpawn = new Server.Mobiles.XmlSpawner.SpawnObject(null, 0);
@@ -135,7 +140,17 @@ namespace Server.Engines.XmlSpawner2
 
 			if (BaseXmlSpawner.IsTypeOrItemKeyword(typeName))
 			{
-				BaseXmlSpawner.SpawnTypeKeyword(corpse, TheSpawn, typeName, substitutedtypeName, true, killer, loc, map, out status_str);
+				BaseXmlSpawner.SpawnTypeKeyword(
+					corpse,
+					TheSpawn,
+					typeName,
+					substitutedtypeName,
+					true,
+					killer,
+					loc,
+					map,
+					out status_str
+				);
 			}
 			else
 			{
@@ -150,31 +165,46 @@ namespace Server.Engines.XmlSpawner2
 					{
 						status_str = "invalid type specification: " + arglist[0];
 					}
-					else
-						if (o is Mobile)
+					else if (o is Mobile)
+					{
+						Mobile m = (Mobile)o;
+						if (m is BaseCreature)
 						{
-							Mobile m = (Mobile)o;
-							if (m is BaseCreature)
-							{
-								BaseCreature c = (BaseCreature)m;
-								c.Home = loc; // Spawners location is the home point
-							}
-
-							m.Location = loc;
-							m.Map = map;
-
-							BaseXmlSpawner.ApplyObjectStringProperties(null, substitutedtypeName, m, killer, corpse, out status_str);
+							BaseCreature c = (BaseCreature)m;
+							c.Home = loc; // Spawners location is the home point
 						}
-						else
-							if (o is Item)
-							{
-								Item item = (Item)o;
-								BaseXmlSpawner.AddSpawnItem(null, corpse, TheSpawn, item, loc, map, killer, false, substitutedtypeName, out status_str);
-							}
+
+						m.Location = loc;
+						m.Map = map;
+
+						BaseXmlSpawner.ApplyObjectStringProperties(
+							null,
+							substitutedtypeName,
+							m,
+							killer,
+							corpse,
+							out status_str
+						);
+					}
+					else if (o is Item)
+					{
+						Item item = (Item)o;
+						BaseXmlSpawner.AddSpawnItem(
+							null,
+							corpse,
+							TheSpawn,
+							item,
+							loc,
+							map,
+							killer,
+							false,
+							substitutedtypeName,
+							out status_str
+						);
+					}
 				}
 				catch { }
 			}
 		}
-
 	}
 }

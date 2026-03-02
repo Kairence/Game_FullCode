@@ -3,8 +3,7 @@ namespace Server.Mobiles
 	public class BerserkAI : BaseAI
 	{
 		public BerserkAI(BaseCreature m)
-			: base(m)
-		{ }
+			: base(m) { }
 
 		public override bool DoActionWander()
 		{

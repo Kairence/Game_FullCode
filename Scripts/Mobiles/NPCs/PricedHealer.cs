@@ -3,98 +3,82 @@ using Server.Gumps;
 
 namespace Server.Mobiles
 {
-    public class PricedHealer : BaseHealer
-    {
-        private int m_Price;
-        [Constructable]
-        public PricedHealer()
-            : this(5000)
-        {
-        }
+	public class PricedHealer : BaseHealer
+	{
+		private int m_Price;
 
-        [Constructable]
-        public PricedHealer(int price)
-        {
-            this.m_Price = price;
+		[Constructable]
+		public PricedHealer()
+			: this(5000) { }
 
-            if (!Core.AOS)
-                this.NameHue = 0x35;
-        }
+		[Constructable]
+		public PricedHealer(int price)
+		{
+			this.m_Price = price;
 
-        public PricedHealer(Serial serial)
-            : base(serial)
-        {
-        }
+			if (!Core.AOS)
+				this.NameHue = 0x35;
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int Price
-        {
-            get
-            {
-                return this.m_Price;
-            }
-            set
-            {
-                this.m_Price = value;
-            }
-        }
-        public override bool IsInvulnerable
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override bool HealsYoungPlayers
-        {
-            get
-            {
-                return false;
-            }
-        }
-        public override void InitSBInfo()
-        {
-        }
+		public PricedHealer(Serial serial)
+			: base(serial) { }
 
-        public override void OfferResurrection(Mobile m)
-        {
-            this.Direction = this.GetDirectionTo(m);
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int Price
+		{
+			get { return this.m_Price; }
+			set { this.m_Price = value; }
+		}
+		public override bool IsInvulnerable
+		{
+			get { return true; }
+		}
+		public override bool HealsYoungPlayers
+		{
+			get { return false; }
+		}
 
-            m.PlaySound(0x214);
-            m.FixedEffect(0x376A, 10, 16);
+		public override void InitSBInfo() { }
 
-            m.CloseGump(typeof(ResurrectGump));
-            m.SendGump(new ResurrectGump(m, this, this.m_Price));
-        }
+		public override void OfferResurrection(Mobile m)
+		{
+			this.Direction = this.GetDirectionTo(m);
 
-        public override bool CheckResurrect(Mobile m)
-        {
-            return true;
-        }
+			m.PlaySound(0x214);
+			m.FixedEffect(0x376A, 10, 16);
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			m.CloseGump(typeof(ResurrectGump));
+			m.SendGump(new ResurrectGump(m, this, this.m_Price));
+		}
 
-            writer.Write((int)0); // version
+		public override bool CheckResurrect(Mobile m)
+		{
+			return true;
+		}
 
-            writer.Write((int)this.m_Price);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
 
-            int version = reader.ReadInt();
+			writer.Write((int)this.m_Price);
+		}
 
-            switch ( version )
-            {
-                case 0:
-                    {
-                        this.m_Price = reader.ReadInt();
-                        break;
-                    }
-            }
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+
+			switch (version)
+			{
+				case 0:
+				{
+					this.m_Price = reader.ReadInt();
+					break;
+				}
+			}
+		}
+	}
 }

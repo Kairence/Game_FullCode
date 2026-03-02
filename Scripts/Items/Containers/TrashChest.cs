@@ -1,133 +1,129 @@
-using Server.ContextMenus;
-using Server.Engines.Points;
-using Server.Mobiles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Server.ContextMenus;
+using Server.Engines.Points;
+using Server.Mobiles;
 
 namespace Server.Items
 {
-    [FlipableAttribute(0xE41, 0xE40)]
-    public class TrashChest : BaseTrash
-    {
-        [Constructable]
-        public TrashChest()
-            : base(0xE41)
-        {
-            Movable = false;
-            m_Cleanup = new List<CleanupArray>();
-        }
+	[FlipableAttribute(0xE41, 0xE40)]
+	public class TrashChest : BaseTrash
+	{
+		[Constructable]
+		public TrashChest()
+			: base(0xE41)
+		{
+			Movable = false;
+			m_Cleanup = new List<CleanupArray>();
+		}
 
-        public TrashChest(Serial serial)
-            : base(serial)
-        {
-        }
+		public TrashChest(Serial serial)
+			: base(serial) { }
 
-        public override int DefaultMaxWeight
-        {
-            get
-            {
-                return 0;
-            }
-        }// A value of 0 signals unlimited weight
-        public override bool IsDecoContainer
-        {
-            get
-            {
-                return false;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int DefaultMaxWeight
+		{
+			get { return 0; }
+		} // A value of 0 signals unlimited weight
+		public override bool IsDecoContainer
+		{
+			get { return false; }
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            m_Cleanup = new List<CleanupArray>();
-        }
+			int version = reader.ReadInt();
 
-        public override bool OnDragDrop(Mobile from, Item dropped)
-        {
-            if (!base.OnDragDrop(from, dropped))
-                return false;
+			m_Cleanup = new List<CleanupArray>();
+		}
 
-            if (CleanUpBritanniaData.Enabled && !AddCleanupItem(from, dropped))
-            {
-                if (dropped.LootType == LootType.Blessed)
-                {
-                    from.SendLocalizedMessage(1075256); // That is blessed; you cannot throw it away.
-                    return false;
-                }
-            }
+		public override bool OnDragDrop(Mobile from, Item dropped)
+		{
+			if (!base.OnDragDrop(from, dropped))
+				return false;
 
-            PublicOverheadMessage(Network.MessageType.Regular, 0x3B2, Utility.Random(1042891, 8));
-            Empty();
+			if (CleanUpBritanniaData.Enabled && !AddCleanupItem(from, dropped))
+			{
+				if (dropped.LootType == LootType.Blessed)
+				{
+					from.SendLocalizedMessage(1075256); // That is blessed; you cannot throw it away.
+					return false;
+				}
+			}
 
-            return true;
-        }
+			PublicOverheadMessage(Network.MessageType.Regular, 0x3B2, Utility.Random(1042891, 8));
+			Empty();
 
-        public override bool OnDragDropInto(Mobile from, Item item, Point3D p)
-        {
-            if (!base.OnDragDropInto(from, item, p))
-                return false;
+			return true;
+		}
 
-            if (CleanUpBritanniaData.Enabled && !AddCleanupItem(from, item))
-            {
-                if (item.LootType == LootType.Blessed)
-                {
-                    from.SendLocalizedMessage(1075256); // That is blessed; you cannot throw it away.
-                    return false;
-                }
-            }
+		public override bool OnDragDropInto(Mobile from, Item item, Point3D p)
+		{
+			if (!base.OnDragDropInto(from, item, p))
+				return false;
 
-            PublicOverheadMessage(Network.MessageType.Regular, 0x3B2, Utility.Random(1042891, 8));
-            Empty();
+			if (CleanUpBritanniaData.Enabled && !AddCleanupItem(from, item))
+			{
+				if (item.LootType == LootType.Blessed)
+				{
+					from.SendLocalizedMessage(1075256); // That is blessed; you cannot throw it away.
+					return false;
+				}
+			}
 
-            return true;
-        }
+			PublicOverheadMessage(Network.MessageType.Regular, 0x3B2, Utility.Random(1042891, 8));
+			Empty();
 
-        public void Empty()
-        {
-            List<Item> items = Items;
+			return true;
+		}
 
-            if (items.Count > 0)
-            {
-                for (int i = items.Count - 1; i >= 0; --i)
-                {
-                    if (i >= items.Count)
-                        continue;
+		public void Empty()
+		{
+			List<Item> items = Items;
 
-                    ConfirmCleanupItem(items[i]);
+			if (items.Count > 0)
+			{
+				for (int i = items.Count - 1; i >= 0; --i)
+				{
+					if (i >= items.Count)
+						continue;
 
-                    #region SA
-                    if (Core.SA && .01 > Utility.RandomDouble())
-                        TrashBarrel.DropToCavernOfDiscarded(items[i]);
-                    else
-                        items[i].Delete();
-                    #endregion
-                }
+					ConfirmCleanupItem(items[i]);
 
-                if (m_Cleanup.Any(x => x.mobiles != null))
-                {
-                    foreach (var m in m_Cleanup.Select(x => x.mobiles).Distinct())
-                    {
-                        if (m_Cleanup.Find(x => x.mobiles == m && x.confirm) != null)
-                        {
-                            double point = m_Cleanup.Where(x => x.mobiles == m && x.confirm).Sum(x => x.points);
-                            m.SendLocalizedMessage(1151280, String.Format("{0}\t{1}", point.ToString(), m_Cleanup.Count(r => r.mobiles == m))); // You have received approximately ~1_VALUE~points for turning in ~2_COUNT~items for Clean Up Britannia.
-                            PointsSystem.CleanUpBritannia.AwardPoints(m, point);
-                        }
-                    }
-                    m_Cleanup.Clear();
-                }
-            }
-        }
-    }
+					#region SA
+					if (Core.SA && .01 > Utility.RandomDouble())
+						TrashBarrel.DropToCavernOfDiscarded(items[i]);
+					else
+						items[i].Delete();
+					#endregion
+				}
+
+				if (m_Cleanup.Any(x => x.mobiles != null))
+				{
+					foreach (var m in m_Cleanup.Select(x => x.mobiles).Distinct())
+					{
+						if (m_Cleanup.Find(x => x.mobiles == m && x.confirm) != null)
+						{
+							double point = m_Cleanup.Where(x => x.mobiles == m && x.confirm).Sum(x => x.points);
+							m.SendLocalizedMessage(
+								1151280,
+								String.Format("{0}\t{1}", point.ToString(), m_Cleanup.Count(r => r.mobiles == m))
+							); // You have received approximately ~1_VALUE~points for turning in ~2_COUNT~items for Clean Up Britannia.
+							PointsSystem.CleanUpBritannia.AwardPoints(m, point);
+						}
+					}
+					m_Cleanup.Clear();
+				}
+			}
+		}
+	}
 }

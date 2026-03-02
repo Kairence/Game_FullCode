@@ -7,9 +7,13 @@ namespace Server.Items
 {
 	public abstract class BaseSweet : Food
 	{
-		private static readonly Dictionary<Mobile, ToothAcheTimer> _ToothAches = new Dictionary<Mobile, ToothAcheTimer>();
+		private static readonly Dictionary<Mobile, ToothAcheTimer> _ToothAches =
+			new Dictionary<Mobile, ToothAcheTimer>();
 
-		public static Dictionary<Mobile, ToothAcheTimer> ToothAches { get { return _ToothAches; } }
+		public static Dictionary<Mobile, ToothAcheTimer> ToothAches
+		{
+			get { return _ToothAches; }
+		}
 
 		private static ToothAcheTimer EnsureTimer(Mobile m, int acidity)
 		{
@@ -30,7 +34,7 @@ namespace Server.Items
 		public static void SetToothAche(Mobile from, int acidity, bool direct)
 		{
 			ToothAcheTimer t = EnsureTimer(from, acidity);
-		
+
 			if (direct)
 			{
 				t.Acidity = acidity;
@@ -49,20 +53,23 @@ namespace Server.Items
 			return m != null && _ToothAches.Remove(m);
 		}
 
-		public virtual bool GivesToothAche { get { return true; } }
-		public virtual int Acidity { get { return 32; } }
+		public virtual bool GivesToothAche
+		{
+			get { return true; }
+		}
+		public virtual int Acidity
+		{
+			get { return 32; }
+		}
 
 		public BaseSweet(int itemID)
-			: base(itemID)
-		{ }
+			: base(itemID) { }
 
 		public BaseSweet(int amount, int itemID)
-			: base(amount, itemID)
-		{ }
+			: base(amount, itemID) { }
 
 		public BaseSweet(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		public override int CheckHunger(Mobile from, bool alleat = false)
 		{
@@ -107,8 +114,13 @@ namespace Server.Items
 
 			private bool Invalidate()
 			{
-				return ConsumedBy != null && _ToothAches.ContainsKey(ConsumedBy) && !ConsumedBy.Deleted && Acidity > 0 &&
-					   ConsumedBy.Map != null && ConsumedBy.Map != Map.Internal && ConsumedBy.Alive;
+				return ConsumedBy != null
+					&& _ToothAches.ContainsKey(ConsumedBy)
+					&& !ConsumedBy.Deleted
+					&& Acidity > 0
+					&& ConsumedBy.Map != null
+					&& ConsumedBy.Map != Map.Internal
+					&& ConsumedBy.Alive;
 			}
 
 			protected override void OnTick()
@@ -126,7 +138,7 @@ namespace Server.Items
 
 					return;
 				}
-				
+
 				if (Acidity == 60)
 				{
 					ConsumedBy.SendLocalizedMessage(1077393); // The extreme pain in your teeth subsides.
@@ -138,7 +150,7 @@ namespace Server.Items
 					return;
 				}
 
-				/* 
+				/*
 				* ARRGH! My tooth hurts sooo much!
 				* You just can't find a good Britannian dentist these days...
 				* My teeth!
@@ -159,8 +171,7 @@ namespace Server.Items
 	{
 		[Constructable]
 		public CandyCane()
-			: this(0x2bdd + Utility.Random(4))
-		{ }
+			: this(0x2bdd + Utility.Random(4)) { }
 
 		public CandyCane(int itemID)
 			: base(itemID)
@@ -170,8 +181,7 @@ namespace Server.Items
 		}
 
 		public CandyCane(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		public override void Serialize(GenericWriter writer)
 		{
@@ -183,7 +193,7 @@ namespace Server.Items
 		public override void Deserialize(GenericReader reader)
 		{
 			base.Deserialize(reader);
-			
+
 			reader.ReadInt();
 		}
 	}
@@ -192,13 +202,14 @@ namespace Server.Items
 	{
 		private readonly int[] m_Messages =
 		{
-			0, 1077396, // Noooo!
+			0,
+			1077396, // Noooo!
 			1077397, // Please don't eat me... *whimper*
 			1077405, // Not the face!
-			1077406, // Ahhhhhh! My foot’s gone!
+			1077406, // Ahhhhhh! My footï¿½s gone!
 			1077407, // Please. No! I have gingerkids!
-			1077408, // No, no! I’m really made of poison. Really.
-			1077409 // Run, run as fast as you can! You can't catch me! I'm the gingerbread man!
+			1077408, // No, no! Iï¿½m really made of poison. Really.
+			1077409, // Run, run as fast as you can! You can't catch me! I'm the gingerbread man!
 		};
 
 		[Constructable]
@@ -210,8 +221,7 @@ namespace Server.Items
 		}
 
 		public GingerBreadCookie(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		public override bool Eat(Mobile from, bool alleat = false)
 		{
@@ -229,14 +239,14 @@ namespace Server.Items
 		public override void Serialize(GenericWriter writer)
 		{
 			base.Serialize(writer);
-			
+
 			writer.Write(0); // version
 		}
 
 		public override void Deserialize(GenericReader reader)
 		{
 			base.Deserialize(reader);
-			
+
 			reader.ReadInt();
 		}
 	}

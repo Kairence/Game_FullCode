@@ -3,8 +3,7 @@ namespace Server.Mobiles
 	public class VendorAI : BaseAI
 	{
 		public VendorAI(BaseCreature m)
-			: base(m)
-		{ }
+			: base(m) { }
 
 		public override bool DoActionWander()
 		{
@@ -102,7 +101,7 @@ namespace Server.Mobiles
 			return base.HandlesOnSpeech(from);
 		}
 
-		// Temporary 
+		// Temporary
 		public override void OnSpeech(SpeechEventArgs e)
 		{
 			base.OnSpeech(e);

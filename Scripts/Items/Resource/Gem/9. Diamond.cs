@@ -1,25 +1,24 @@
 using System;
-using Server.Targeting;
 using Server.Items;
 using Server.Mobiles;
+using Server.Targeting;
 
 namespace Server.Items
 {
-    public class Diamond : Item, IGem
-    {
-        [Constructable]
-        public Diamond()
-            : this(1)
-        {
-        }
+	public class Diamond : Item, IGem
+	{
+		[Constructable]
+		public Diamond()
+			: this(1) { }
 
-        [Constructable]
-        public Diamond(int amount)
-            : base(0xF26)
-        {
-            this.Stackable = true;
-            this.Amount = amount;
-        }
+		[Constructable]
+		public Diamond(int amount)
+			: base(0xF26)
+		{
+			this.Stackable = true;
+			this.Amount = amount;
+		}
+
 		/*
 		public override void GetProperties( ObjectPropertyList list )
 		{
@@ -31,33 +30,36 @@ namespace Server.Items
 		}
 		
 		*/
-		public override void OnDoubleClick( Mobile from )
+		public override void OnDoubleClick(Mobile from)
 		{
-			if ( !IsChildOf( from.Backpack ) ) // Make sure its in their pack
+			if (!IsChildOf(from.Backpack)) // Make sure its in their pack
 			{
-				 from.SendLocalizedMessage( 1042001 ); // That must be in your pack for you to use it.
+				from.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
 			}
-			else if( Amount < 100 )
+			else if (Amount < 100)
 			{
 				from.SendMessage("다이아몬드가 부족합니다.");
 				return;
 			}
 			else
 			{
-				from.SendMessage( "다이아몬드를 어느 아이템에 사용하시겠습니까?" );
+				from.SendMessage("다이아몬드를 어느 아이템에 사용하시겠습니까?");
 				from.Target = new GemTarget(this);
 			}
-			
 		}
+
 		public class GemTarget : Target
 		{
 			Diamond m_Gem;
 			int m_Amount;
-			public GemTarget(Diamond diamond) : base(1, false, TargetFlags.None )
+
+			public GemTarget(Diamond diamond)
+				: base(1, false, TargetFlags.None)
 			{
 				m_Gem = diamond;
 			}
-			protected override void OnTarget( Mobile from, object targeted )
+
+			protected override void OnTarget(Mobile from, object targeted)
 			{
 				if (targeted is Item)
 				{
@@ -70,14 +72,14 @@ namespace Server.Items
 					}
 					else
 					{
-						if( check is IEquipOption )
+						if (check is IEquipOption)
 						{
 							IEquipOption equip = check as IEquipOption;
-							if( equip.PrefixOption[0] != 100 )
+							if (equip.PrefixOption[0] != 100)
 							{
 								from.SendMessage("아티펙트 혹은 구 아이템은 제련이 불가능합니다!!");
 							}
-							else if( equip.SuffixOption[2] <= 0 )
+							else if (equip.SuffixOption[2] <= 0)
 							{
 								from.SendMessage("이 아이템은 더 이상 제련이 불가능합니다!");
 							}
@@ -85,7 +87,7 @@ namespace Server.Items
 							{
 								Misc.Util.NewUseGem(check, 8);
 								from.SendMessage("제련이 완료되었습니다!");
-								if( m_Gem.Amount == 100 )
+								if (m_Gem.Amount == 100)
 									m_Gem.Delete();
 								else
 									m_Gem.Amount -= 100;
@@ -95,31 +97,27 @@ namespace Server.Items
 				}
 			}
 		}
-		
-        public Diamond(Serial serial)
-            : base(serial)
-        {
-        }
 
-        public override double DefaultWeight
-        {
-            get
-            {
-                return 0.1;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public Diamond(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override double DefaultWeight
+		{
+			get { return 0.1; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

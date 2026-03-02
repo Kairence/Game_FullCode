@@ -1,211 +1,215 @@
 using System;
-using Server.Items;
 using System.Collections;
-using Server.Engines.Quests;
 using System.Collections.Generic;
 using System.Linq;
+using Server.Engines.Quests;
+using Server.Items;
 
 namespace Server.Mobiles
 {
-    [CorpseName("a djinn corpse")]
-    public class Djinn : BaseCreature
-    {
-        public static List<Djinn> Instances { get; set; }
-        private SummonEfreetTimer m_Timer;
+	[CorpseName("a djinn corpse")]
+	public class Djinn : BaseCreature
+	{
+		public static List<Djinn> Instances { get; set; }
+		private SummonEfreetTimer m_Timer;
 
-        [Constructable]
-        public Djinn()
-            : base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
-        {
-            Body = 0x311;
+		[Constructable]
+		public Djinn()
+			: base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
+		{
+			Body = 0x311;
 			Hue = 33072;
-            Name = "Djinn";
+			Name = "Djinn";
 
-            SetStr(320, 500);
-            SetDex(200, 300);
-            SetInt(600, 700);
+			SetStr(320, 500);
+			SetDex(200, 300);
+			SetInt(600, 700);
 
-            SetHits(2003);
+			SetHits(2003);
 
-            SetDamage(11, 13);
+			SetDamage(11, 13);
 
-            SetDamageType(ResistanceType.Physical, 0);
-            SetDamageType(ResistanceType.Fire, 50);
-            SetDamageType(ResistanceType.Energy, 50);
+			SetDamageType(ResistanceType.Physical, 0);
+			SetDamageType(ResistanceType.Fire, 50);
+			SetDamageType(ResistanceType.Energy, 50);
 
-            SetResistance(ResistanceType.Physical, 50, 60);
-            SetResistance(ResistanceType.Fire, 60, 70);
-            SetResistance(ResistanceType.Cold, 30, 40);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 80, 90);
+			SetResistance(ResistanceType.Physical, 50, 60);
+			SetResistance(ResistanceType.Fire, 60, 70);
+			SetResistance(ResistanceType.Cold, 30, 40);
+			SetResistance(ResistanceType.Poison, 30, 40);
+			SetResistance(ResistanceType.Energy, 80, 90);
 
-            SetSkill(SkillName.Wrestling, 60.0, 80.0);
-            SetSkill(SkillName.Tactics, 60.0, 80.0);
-            SetSkill(SkillName.MagicResist, 60.0, 80.0);
-            SetSkill(SkillName.Magery, 100.0, 120.0);
-            SetSkill(SkillName.EvalInt, 60.0, 110.0);
+			SetSkill(SkillName.Wrestling, 60.0, 80.0);
+			SetSkill(SkillName.Tactics, 60.0, 80.0);
+			SetSkill(SkillName.MagicResist, 60.0, 80.0);
+			SetSkill(SkillName.Magery, 100.0, 120.0);
+			SetSkill(SkillName.EvalInt, 60.0, 110.0);
 			SetSkill(SkillName.DetectHidden, 55.0);
 
-            Fame = 15000;
-            Karma = -15000;
+			Fame = 15000;
+			Karma = -15000;
 
-            if (Instances == null)
-                Instances = new List<Djinn>();
+			if (Instances == null)
+				Instances = new List<Djinn>();
 
-            Instances.Add(this);
+			Instances.Add(this);
 
-            Timer SelfDeleteTimer = new InternalSelfDeleteTimer(this);
-            SelfDeleteTimer.Start();
+			Timer SelfDeleteTimer = new InternalSelfDeleteTimer(this);
+			SelfDeleteTimer.Start();
 
-            m_Timer = new SummonEfreetTimer(this);
-            m_Timer.Start();
-        }
-		
+			m_Timer = new SummonEfreetTimer(this);
+			m_Timer.Start();
+		}
+
 		public override void GenerateLoot()
-        {
-            AddLoot(LootPack.FilthyRich);
-        }
-		
-		public override int TreasureMapLevel { get { return 4; } }
+		{
+			AddLoot(LootPack.FilthyRich);
+		}
 
-        public override void OnDeath(Container c)
-        {
-            List<DamageStore> rights = GetLootingRights();            
+		public override int TreasureMapLevel
+		{
+			get { return 4; }
+		}
 
-            foreach (Mobile m in rights.Select(x => x.m_Mobile).Distinct())
-            {
-                if (m is PlayerMobile)
-                {
-                    PlayerMobile pm = m as PlayerMobile;
+		public override void OnDeath(Container c)
+		{
+			List<DamageStore> rights = GetLootingRights();
 
-                    if (pm.ExploringTheDeepQuest == ExploringTheDeepQuestChain.CollectTheComponent)
-                    {
+			foreach (Mobile m in rights.Select(x => x.m_Mobile).Distinct())
+			{
+				if (m is PlayerMobile)
+				{
+					PlayerMobile pm = m as PlayerMobile;
+
+					if (pm.ExploringTheDeepQuest == ExploringTheDeepQuestChain.CollectTheComponent)
+					{
 						Item item = new AquaGem();
-						
-                        if (m.Backpack == null || !m.Backpack.TryDropItem(m, item, false))
-                        {
-                            m.BankBox.DropItem(item);
-                        }
 
-                        m.SendLocalizedMessage(1154489); // You received a Quest Item!
-                    }
-                }
-            }
+						if (m.Backpack == null || !m.Backpack.TryDropItem(m, item, false))
+						{
+							m.BankBox.DropItem(item);
+						}
 
-            if (Instances != null && Instances.Contains(this))
-                Instances.Remove(this);
+						m.SendLocalizedMessage(1154489); // You received a Quest Item!
+					}
+				}
+			}
 
-            base.OnDeath(c);
-        }
+			if (Instances != null && Instances.Contains(this))
+				Instances.Remove(this);
 
-        public static Djinn Spawn(Point3D platLoc, Map platMap)
-        {
-            if (Instances != null && Instances.Count > 0)
-                return null;
+			base.OnDeath(c);
+		}
 
-            Djinn creature = new Djinn();
-            creature.Home = platLoc;
-            creature.RangeHome = 4;
-            creature.MoveToWorld(platLoc, platMap);
+		public static Djinn Spawn(Point3D platLoc, Map platMap)
+		{
+			if (Instances != null && Instances.Count > 0)
+				return null;
 
-            return creature;
-        }
+			Djinn creature = new Djinn();
+			creature.Home = platLoc;
+			creature.RangeHome = 4;
+			creature.MoveToWorld(platLoc, platMap);
 
-        public class InternalSelfDeleteTimer : Timer
-        {
-            private Djinn Mare;
+			return creature;
+		}
 
-            public InternalSelfDeleteTimer(Mobile p) : base(TimeSpan.FromMinutes(60))
-            {
-                Priority = TimerPriority.FiveSeconds;
-                Mare = ((Djinn)p);
-            }
-            protected override void OnTick()
-            {
-                if (Mare.Map != Map.Internal)
-                {
-                    Mare.Delete();
-                    Stop();
-                }
-            }
-        }
+		public class InternalSelfDeleteTimer : Timer
+		{
+			private Djinn Mare;
 
-        public Djinn(Serial serial)
-            : base(serial)
-        {
-        }
+			public InternalSelfDeleteTimer(Mobile p)
+				: base(TimeSpan.FromMinutes(60))
+			{
+				Priority = TimerPriority.FiveSeconds;
+				Mare = ((Djinn)p);
+			}
 
-        public override void OnAfterDelete()
-        {
-            Instances.Remove(this);
+			protected override void OnTick()
+			{
+				if (Mare.Map != Map.Internal)
+				{
+					Mare.Delete();
+					Stop();
+				}
+			}
+		}
 
-            if (m_Timer != null)
-                m_Timer.Stop();
+		public Djinn(Serial serial)
+			: base(serial) { }
 
-            m_Timer = null;
+		public override void OnAfterDelete()
+		{
+			Instances.Remove(this);
 
-            base.OnAfterDelete();
-        }
+			if (m_Timer != null)
+				m_Timer.Stop();
 
-        private class SummonEfreetTimer : Timer
-        {
-            //private static readonly ArrayList m_ToDrain = new ArrayList();
-            private readonly Djinn m_Owner;
+			m_Timer = null;
 
-            public SummonEfreetTimer(Djinn owner)
-                : base(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
-            {
-                m_Owner = owner;
-                Priority = TimerPriority.TwoFiftyMS;
-            }
-            //Type type = m_Owner.GetType();
-            protected override void OnTick()
-            {
-                if (m_Owner.Deleted)
-                {
-                    Stop();
-                    return;
-                }
+			base.OnAfterDelete();
+		}
 
-                IPooledEnumerable eable = m_Owner.GetMobilesInRange(10);
+		private class SummonEfreetTimer : Timer
+		{
+			//private static readonly ArrayList m_ToDrain = new ArrayList();
+			private readonly Djinn m_Owner;
 
-                foreach (Mobile m in eable)
-                {
-                    if (m == null || !(m is PlayerMobile))
-                        continue;
+			public SummonEfreetTimer(Djinn owner)
+				: base(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
+			{
+				m_Owner = owner;
+				Priority = TimerPriority.TwoFiftyMS;
+			}
 
-                    if (m_Owner.CanBeHarmful(m) && m_Owner.Mana >= 100)
-                    {
-                        m_Owner.Mana -= 50;
-                        int ownerlocX = m_Owner.Location.X + Utility.RandomMinMax(-5, 5);
-                        int ownerlocY = m_Owner.Location.Y + Utility.RandomMinMax(-5, 5);
-                        int ownerlocZ = m_Owner.Location.Z;
-                        Efreet NewMobile = new Efreet();
-                        NewMobile.MoveToWorld(new Point3D(ownerlocX, ownerlocY, ownerlocZ), m_Owner.Map);
-                        NewMobile.Combatant = m;
-                    }
-                }
+			//Type type = m_Owner.GetType();
+			protected override void OnTick()
+			{
+				if (m_Owner.Deleted)
+				{
+					Stop();
+					return;
+				}
 
-                eable.Free();
-            }
-        }
+				IPooledEnumerable eable = m_Owner.GetMobilesInRange(10);
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
+				foreach (Mobile m in eable)
+				{
+					if (m == null || !(m is PlayerMobile))
+						continue;
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
+					if (m_Owner.CanBeHarmful(m) && m_Owner.Mana >= 100)
+					{
+						m_Owner.Mana -= 50;
+						int ownerlocX = m_Owner.Location.X + Utility.RandomMinMax(-5, 5);
+						int ownerlocY = m_Owner.Location.Y + Utility.RandomMinMax(-5, 5);
+						int ownerlocZ = m_Owner.Location.Z;
+						Efreet NewMobile = new Efreet();
+						NewMobile.MoveToWorld(new Point3D(ownerlocX, ownerlocY, ownerlocZ), m_Owner.Map);
+						NewMobile.Combatant = m;
+					}
+				}
 
-            Instances = new List<Djinn>();
-            Instances.Add(this);
+				eable.Free();
+			}
+		}
 
-            Timer SelfDeleteTimer = new InternalSelfDeleteTimer(this);
-            SelfDeleteTimer.Start();            
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+
+			Instances = new List<Djinn>();
+			Instances.Add(this);
+
+			Timer SelfDeleteTimer = new InternalSelfDeleteTimer(this);
+			SelfDeleteTimer.Start();
+		}
+	}
 }

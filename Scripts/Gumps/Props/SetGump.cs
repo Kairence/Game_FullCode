@@ -1,7 +1,6 @@
 #region References
 using System.Collections;
 using System.Reflection;
-
 using Server.Commands;
 using Server.HuePickers;
 using Server.Network;
@@ -22,15 +21,18 @@ namespace Server.Gumps
 		public static readonly int BackGumpID = PropsConfig.BackGumpID;
 		public static readonly int SetGumpID = PropsConfig.SetGumpID;
 		public static readonly int SetWidth = PropsConfig.SetWidth;
-		public static readonly int SetOffsetX = PropsConfig.SetOffsetX, SetOffsetY = PropsConfig.SetOffsetY;
+		public static readonly int SetOffsetX = PropsConfig.SetOffsetX,
+			SetOffsetY = PropsConfig.SetOffsetY;
 		public static readonly int SetButtonID1 = PropsConfig.SetButtonID1;
 		public static readonly int SetButtonID2 = PropsConfig.SetButtonID2;
 		public static readonly int PrevWidth = PropsConfig.PrevWidth;
-		public static readonly int PrevOffsetX = PropsConfig.PrevOffsetX, PrevOffsetY = PropsConfig.PrevOffsetY;
+		public static readonly int PrevOffsetX = PropsConfig.PrevOffsetX,
+			PrevOffsetY = PropsConfig.PrevOffsetY;
 		public static readonly int PrevButtonID1 = PropsConfig.PrevButtonID1;
 		public static readonly int PrevButtonID2 = PropsConfig.PrevButtonID2;
 		public static readonly int NextWidth = PropsConfig.NextWidth;
-		public static readonly int NextOffsetX = PropsConfig.NextOffsetX, NextOffsetY = PropsConfig.NextOffsetY;
+		public static readonly int NextOffsetX = PropsConfig.NextOffsetX,
+			NextOffsetY = PropsConfig.NextOffsetY;
 		public static readonly int NextButtonID1 = PropsConfig.NextButtonID1;
 		public static readonly int NextButtonID2 = PropsConfig.NextButtonID2;
 		public static readonly int OffsetSize = PropsConfig.OffsetSize;
@@ -78,16 +80,22 @@ namespace Server.Gumps
 				0,
 				0,
 				BackWidth,
-				BackHeight + (canNull ? (EntryHeight + OffsetSize) : 0) + (canDye ? (EntryHeight + OffsetSize) : 0) +
-				(isBody ? (EntryHeight + OffsetSize) : 0),
-				BackGumpID);
+				BackHeight
+					+ (canNull ? (EntryHeight + OffsetSize) : 0)
+					+ (canDye ? (EntryHeight + OffsetSize) : 0)
+					+ (isBody ? (EntryHeight + OffsetSize) : 0),
+				BackGumpID
+			);
 			AddImageTiled(
 				BorderSize,
 				BorderSize,
 				TotalWidth - (OldStyle ? SetWidth + OffsetSize : 0),
-				TotalHeight + (canNull ? (EntryHeight + OffsetSize) : 0) + (canDye ? (EntryHeight + OffsetSize) : 0) +
-				(isBody ? (EntryHeight + OffsetSize) : 0),
-				OffsetGumpID);
+				TotalHeight
+					+ (canNull ? (EntryHeight + OffsetSize) : 0)
+					+ (canDye ? (EntryHeight + OffsetSize) : 0)
+					+ (isBody ? (EntryHeight + OffsetSize) : 0),
+				OffsetGumpID
+			);
 
 			var x = BorderSize + OffsetSize;
 			var y = BorderSize + OffsetSize;
@@ -160,7 +168,8 @@ namespace Server.Gumps
 		public override void OnResponse(NetState sender, RelayInfo info)
 		{
 			object toSet;
-			bool shouldSet, shouldSend = true;
+			bool shouldSet,
+				shouldSend = true;
 
 			switch (info.ButtonID)
 			{
@@ -230,7 +239,12 @@ namespace Server.Gumps
 			{
 				try
 				{
-					CommandLogging.LogChangeProperty(m_Mobile, m_Object, m_Property.Name, toSet == null ? "(null)" : toSet.ToString());
+					CommandLogging.LogChangeProperty(
+						m_Mobile,
+						m_Object,
+						m_Property.Name,
+						toSet == null ? "(null)" : toSet.ToString()
+					);
 					m_Property.SetValue(m_Object, toSet, null);
 					PropertiesGump.OnValueChanged(m_Object, m_Property, m_Stack);
 				}

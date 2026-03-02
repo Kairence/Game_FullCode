@@ -4,203 +4,186 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    public class KhaldunRevenant : BaseCreature
-    {
-        private static readonly Hashtable m_Table = new Hashtable();
-        private readonly Mobile m_Target;
-        private readonly DateTime m_ExpireTime;
-        public KhaldunRevenant(Mobile target)
-            : base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.18, 0.36)
-        {
-            this.Name = "a revenant";
-            this.Body = 0x3CA;
-            this.Hue = 0x41CE;
+	public class KhaldunRevenant : BaseCreature
+	{
+		private static readonly Hashtable m_Table = new Hashtable();
+		private readonly Mobile m_Target;
+		private readonly DateTime m_ExpireTime;
 
-            this.m_Target = target;
-            this.m_ExpireTime = DateTime.UtcNow + TimeSpan.FromMinutes(10.0);
+		public KhaldunRevenant(Mobile target)
+			: base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.18, 0.36)
+		{
+			this.Name = "a revenant";
+			this.Body = 0x3CA;
+			this.Hue = 0x41CE;
 
-            this.SetStr(401, 500);
-            this.SetDex(296, 315);
-            this.SetInt(101, 200);
+			this.m_Target = target;
+			this.m_ExpireTime = DateTime.UtcNow + TimeSpan.FromMinutes(10.0);
 
-            this.SetHits(241, 300);
-            this.SetStam(242, 280);
+			this.SetStr(401, 500);
+			this.SetDex(296, 315);
+			this.SetInt(101, 200);
 
-            this.SetDamage(20, 30);
+			this.SetHits(241, 300);
+			this.SetStam(242, 280);
 
-            this.SetDamageType(ResistanceType.Physical, 50);
-            this.SetDamageType(ResistanceType.Cold, 50);
+			this.SetDamage(20, 30);
 
-            this.SetSkill(SkillName.MagicResist, 100.1, 150.0);
-            this.SetSkill(SkillName.Tactics, 90.1, 100.0);
-            this.SetSkill(SkillName.Swords, 140.1, 150.0);
-            this.SetSkill(SkillName.Wrestling, 90.1, 100.0);
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Cold, 50);
 
-            this.SetResistance(ResistanceType.Physical, 55, 65);
-            this.SetResistance(ResistanceType.Fire, 30, 40);
-            this.SetResistance(ResistanceType.Cold, 60, 70);
-            this.SetResistance(ResistanceType.Poison, 20, 30);
-            this.SetResistance(ResistanceType.Energy, 20, 30);
+			this.SetSkill(SkillName.MagicResist, 100.1, 150.0);
+			this.SetSkill(SkillName.Tactics, 90.1, 100.0);
+			this.SetSkill(SkillName.Swords, 140.1, 150.0);
+			this.SetSkill(SkillName.Wrestling, 90.1, 100.0);
 
-            this.Fame = 0;
-            this.Karma = 0;
+			this.SetResistance(ResistanceType.Physical, 55, 65);
+			this.SetResistance(ResistanceType.Fire, 30, 40);
+			this.SetResistance(ResistanceType.Cold, 60, 70);
+			this.SetResistance(ResistanceType.Poison, 20, 30);
+			this.SetResistance(ResistanceType.Energy, 20, 30);
 
-            this.VirtualArmor = 60;
+			this.Fame = 0;
+			this.Karma = 0;
 
-            Halberd weapon = new Halberd();
-            weapon.Hue = 0x41CE;
-            weapon.Movable = false;
+			this.VirtualArmor = 60;
 
-            this.AddItem(weapon);
-        }
+			Halberd weapon = new Halberd();
+			weapon.Hue = 0x41CE;
+			weapon.Movable = false;
 
-        public KhaldunRevenant(Serial serial)
-            : base(serial)
-        {
-        }
+			this.AddItem(weapon);
+		}
 
-        public override bool DeleteCorpseOnDeath
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override Mobile ConstantFocus
-        {
-            get
-            {
-                return this.m_Target;
-            }
-        }
-        public override bool AlwaysAttackable
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override bool BardImmune
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override Poison PoisonImmune
-        {
-            get
-            {
-                return Poison.Lethal;
-            }
-        }
-        public static void Initialize()
-        {
-            EventSink.PlayerDeath += new PlayerDeathEventHandler(EventSink_PlayerDeath);
-        }
+		public KhaldunRevenant(Serial serial)
+			: base(serial) { }
 
-        public static void EventSink_PlayerDeath(PlayerDeathEventArgs e)
-        {
-            Mobile m = e.Mobile;
-            Mobile lastKiller = m.LastKiller;
+		public override bool DeleteCorpseOnDeath
+		{
+			get { return true; }
+		}
+		public override Mobile ConstantFocus
+		{
+			get { return this.m_Target; }
+		}
+		public override bool AlwaysAttackable
+		{
+			get { return true; }
+		}
+		public override bool BardImmune
+		{
+			get { return true; }
+		}
+		public override Poison PoisonImmune
+		{
+			get { return Poison.Lethal; }
+		}
 
-            if (lastKiller is BaseCreature)
-                lastKiller = ((BaseCreature)lastKiller).GetMaster();
+		public static void Initialize()
+		{
+			EventSink.PlayerDeath += new PlayerDeathEventHandler(EventSink_PlayerDeath);
+		}
 
-            if (IsInsideKhaldun(m) && IsInsideKhaldun(lastKiller) && lastKiller.Player && !m_Table.Contains(lastKiller))
-            {
-                foreach (AggressorInfo ai in m.Aggressors)
-                {
-                    if (ai.Attacker == lastKiller && ai.CanReportMurder)
-                    {
-                        SummonRevenant(m, lastKiller);
-                        break;
-                    }
-                }
-            }
-        }
+		public static void EventSink_PlayerDeath(PlayerDeathEventArgs e)
+		{
+			Mobile m = e.Mobile;
+			Mobile lastKiller = m.LastKiller;
 
-        public static void SummonRevenant(Mobile victim, Mobile killer)
-        {
-            KhaldunRevenant revenant = new KhaldunRevenant(killer);
+			if (lastKiller is BaseCreature)
+				lastKiller = ((BaseCreature)lastKiller).GetMaster();
 
-            revenant.MoveToWorld(victim.Location, victim.Map);
-            revenant.Combatant = killer;
-            revenant.FixedParticles(0, 0, 0, 0x13A7, EffectLayer.Waist);
-            Effects.PlaySound(revenant.Location, revenant.Map, 0x29);
+			if (IsInsideKhaldun(m) && IsInsideKhaldun(lastKiller) && lastKiller.Player && !m_Table.Contains(lastKiller))
+			{
+				foreach (AggressorInfo ai in m.Aggressors)
+				{
+					if (ai.Attacker == lastKiller && ai.CanReportMurder)
+					{
+						SummonRevenant(m, lastKiller);
+						break;
+					}
+				}
+			}
+		}
 
-            m_Table.Add(killer, null);
-        }
+		public static void SummonRevenant(Mobile victim, Mobile killer)
+		{
+			KhaldunRevenant revenant = new KhaldunRevenant(killer);
 
-        public static bool IsInsideKhaldun(Mobile from)
-        {
-            return from != null && from.Region != null && from.Region.IsPartOf("Khaldun");
-        }
+			revenant.MoveToWorld(victim.Location, victim.Map);
+			revenant.Combatant = killer;
+			revenant.FixedParticles(0, 0, 0, 0x13A7, EffectLayer.Waist);
+			Effects.PlaySound(revenant.Location, revenant.Map, 0x29);
 
-        public override void DisplayPaperdollTo(Mobile to)
-        {
-        }
+			m_Table.Add(killer, null);
+		}
 
-        public override int GetIdleSound()
-        {
-            return 0x1BF;
-        }
+		public static bool IsInsideKhaldun(Mobile from)
+		{
+			return from != null && from.Region != null && from.Region.IsPartOf("Khaldun");
+		}
 
-        public override int GetAngerSound()
-        {
-            return 0x107;
-        }
+		public override void DisplayPaperdollTo(Mobile to) { }
 
-        public override int GetDeathSound()
-        {
-            return 0xFD;
-        }
+		public override int GetIdleSound()
+		{
+			return 0x1BF;
+		}
 
-        public override void OnThink()
-        {
-            if (!this.m_Target.Alive || DateTime.UtcNow > this.m_ExpireTime)
-            {
-                this.Delete();
-                return;
-            }
+		public override int GetAngerSound()
+		{
+			return 0x107;
+		}
 
-            //Combatant = m_Target;
-            //FocusMob = m_Target;
+		public override int GetDeathSound()
+		{
+			return 0xFD;
+		}
 
-            if (this.AIObject != null)
-                this.AIObject.Action = ActionType.Combat;
+		public override void OnThink()
+		{
+			if (!this.m_Target.Alive || DateTime.UtcNow > this.m_ExpireTime)
+			{
+				this.Delete();
+				return;
+			}
 
-            base.OnThink();
-        }
+			//Combatant = m_Target;
+			//FocusMob = m_Target;
 
-        public override bool OnBeforeDeath()
-        {
-            Effects.SendLocationEffect(this.Location, this.Map, 0x376A, 10, 1);
-            return true;
-        }
+			if (this.AIObject != null)
+				this.AIObject.Action = ActionType.Combat;
 
-        public override void OnDelete()
-        {
-            if (this.m_Target != null)
-                m_Table.Remove(this.m_Target);
+			base.OnThink();
+		}
 
-            base.OnDelete();
-        }
+		public override bool OnBeforeDeath()
+		{
+			Effects.SendLocationEffect(this.Location, this.Map, 0x376A, 10, 1);
+			return true;
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void OnDelete()
+		{
+			if (this.m_Target != null)
+				m_Table.Remove(this.m_Target);
 
-            writer.Write((int)0);
-        }
+			base.OnDelete();
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
+			writer.Write((int)0);
+		}
 
-            this.Delete();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+
+			this.Delete();
+		}
+	}
 }

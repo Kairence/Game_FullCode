@@ -2,7 +2,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
 using Server.Accounting;
 using Server.Engines.Help;
 using Server.Factions;
@@ -20,7 +19,10 @@ namespace Server.Commands.Generic
 	{
 		private static readonly List<BaseCommand> m_AllCommands = new List<BaseCommand>();
 
-		public static List<BaseCommand> AllCommands { get { return m_AllCommands; } }
+		public static List<BaseCommand> AllCommands
+		{
+			get { return m_AllCommands; }
+		}
 
 		public static void Initialize()
 		{
@@ -37,11 +39,25 @@ namespace Server.Commands.Generic
 			Register(new AliasedSetCommand(AccessLevel.GameMaster, "Invul", "blessed", "true", ObjectTypes.Mobiles));
 			Register(new AliasedSetCommand(AccessLevel.GameMaster, "Mortal", "blessed", "false", ObjectTypes.Mobiles));
 			Register(new AliasedSetCommand(AccessLevel.GameMaster, "NoInvul", "blessed", "false", ObjectTypes.Mobiles));
-			Register(new AliasedSetCommand(AccessLevel.GameMaster, "Squelch", "squelched", "true", ObjectTypes.Mobiles));
-			Register(new AliasedSetCommand(AccessLevel.GameMaster, "Unsquelch", "squelched", "false", ObjectTypes.Mobiles));
+			Register(
+				new AliasedSetCommand(AccessLevel.GameMaster, "Squelch", "squelched", "true", ObjectTypes.Mobiles)
+			);
+			Register(
+				new AliasedSetCommand(AccessLevel.GameMaster, "Unsquelch", "squelched", "false", ObjectTypes.Mobiles)
+			);
 
-			Register(new AliasedSetCommand(AccessLevel.GameMaster, "ShaveHair", "HairItemID", "0", ObjectTypes.Mobiles));
-			Register(new AliasedSetCommand(AccessLevel.GameMaster, "ShaveBeard", "FacialHairItemID", "0", ObjectTypes.Mobiles));
+			Register(
+				new AliasedSetCommand(AccessLevel.GameMaster, "ShaveHair", "HairItemID", "0", ObjectTypes.Mobiles)
+			);
+			Register(
+				new AliasedSetCommand(
+					AccessLevel.GameMaster,
+					"ShaveBeard",
+					"FacialHairItemID",
+					"0",
+					ObjectTypes.Mobiles
+				)
+			);
 
 			Register(new GetCommand());
 			Register(new GetTypeCommand());
@@ -88,7 +104,7 @@ namespace Server.Commands.Generic
 		{
 			AccessLevel = AccessLevel.GameMaster;
 			Supports = CommandSupport.Simple | CommandSupport.Complex | CommandSupport.Self;
-			Commands = new[] {"Condition"};
+			Commands = new[] { "Condition" };
 			ObjectTypes = ObjectTypes.All;
 			Usage = "Condition <condition>";
 			Description = "Checks that the given condition matches a targeted object.";
@@ -123,7 +139,7 @@ namespace Server.Commands.Generic
 		{
 			AccessLevel = AccessLevel.GameMaster;
 			Supports = CommandSupport.AllItems;
-			Commands = new[] {"BringToPack"};
+			Commands = new[] { "BringToPack" };
 			ObjectTypes = ObjectTypes.Items;
 			Usage = "BringToPack";
 			Description = "Brings a targeted item to your backpack.";
@@ -149,7 +165,7 @@ namespace Server.Commands.Generic
 		{
 			AccessLevel = AccessLevel.GameMaster;
 			Supports = CommandSupport.Simple;
-			Commands = new[] {"RefreshHouse"};
+			Commands = new[] { "RefreshHouse" };
 			ObjectTypes = ObjectTypes.Items;
 			Usage = "RefreshHouse";
 			Description = "Refreshes a targeted house sign.";
@@ -184,7 +200,7 @@ namespace Server.Commands.Generic
 		{
 			AccessLevel = AccessLevel.GameMaster;
 			Supports = CommandSupport.Complex;
-			Commands = new[] {"Count"};
+			Commands = new[] { "Count" };
 			ObjectTypes = ObjectTypes.All;
 			Usage = "Count";
 			Description =
@@ -207,7 +223,7 @@ namespace Server.Commands.Generic
 		{
 			AccessLevel = AccessLevel.GameMaster;
 			Supports = CommandSupport.AllMobiles;
-			Commands = new[] {"OpenBrowser", "OB"};
+			Commands = new[] { "OpenBrowser", "OB" };
 			ObjectTypes = ObjectTypes.Mobiles;
 			Usage = "OpenBrowser <url>";
 			Description = "Opens the web browser of a targeted player to a specified url.";
@@ -261,7 +277,8 @@ namespace Server.Commands.Generic
 							from.AccessLevel,
 							CommandLogging.Format(from),
 							CommandLogging.Format(mob),
-							url);
+							url
+						);
 
 						if (echo)
 							AddResponse("Awaiting user confirmation...");
@@ -272,12 +289,17 @@ namespace Server.Commands.Generic
 							new WarningGump(
 								1060637,
 								30720,
-								String.Format("A game master is requesting to open your web browser to the following URL:<br>{0}", url),
+								String.Format(
+									"A game master is requesting to open your web browser to the following URL:<br>{0}",
+									url
+								),
 								0xFFC000,
 								320,
 								240,
 								OpenBrowser_Callback,
-								new object[] {from, url, echo}));
+								new object[] { from, url, echo }
+							)
+						);
 					}
 				}
 				else
@@ -309,7 +331,7 @@ namespace Server.Commands.Generic
 		{
 			AccessLevel = AccessLevel.Counselor;
 			Supports = CommandSupport.All;
-			Commands = new[] {"Increase", "Inc"};
+			Commands = new[] { "Increase", "Inc" };
 			ObjectTypes = ObjectTypes.Both;
 			Usage = "Increase {<propertyName> <offset> ...}";
 			Description = "Increases the value of a specified property by the specified offset.";
@@ -325,9 +347,13 @@ namespace Server.Commands.Generic
 			{
 				var result = Properties.IncreaseValue(e.Mobile, obj, e.Arguments);
 
-				if (result == "The property has been increased." || result == "The properties have been increased." ||
-					result == "The property has been decreased." || result == "The properties have been decreased." ||
-					result == "The properties have been changed.")
+				if (
+					result == "The property has been increased."
+					|| result == "The properties have been increased."
+					|| result == "The property has been decreased."
+					|| result == "The properties have been decreased."
+					|| result == "The properties have been changed."
+				)
 					AddResponse(result);
 				else
 					LogFailure(result);
@@ -345,7 +371,7 @@ namespace Server.Commands.Generic
 		{
 			AccessLevel = AccessLevel.GameMaster;
 			Supports = CommandSupport.AllMobiles;
-			Commands = new[] {"PrivSound"};
+			Commands = new[] { "PrivSound" };
 			ObjectTypes = ObjectTypes.Mobiles;
 			Usage = "PrivSound <index>";
 			Description = "Plays a sound to a given target.";
@@ -366,7 +392,8 @@ namespace Server.Commands.Generic
 					from.AccessLevel,
 					CommandLogging.Format(from),
 					index,
-					CommandLogging.Format(mob));
+					CommandLogging.Format(mob)
+				);
 				mob.Send(new PlaySound(index, mob.Location));
 			}
 			else
@@ -390,13 +417,13 @@ namespace Server.Commands.Generic
 
 			if (inGump)
 			{
-				Commands = new[] {"Message", "Msg"};
+				Commands = new[] { "Message", "Msg" };
 				Usage = "Message \"text\"";
 				Description = "Sends a message to a targeted player.";
 			}
 			else
 			{
-				Commands = new[] {"Tell"};
+				Commands = new[] { "Tell" };
 				Usage = "Tell \"text\"";
 				Description = "Sends a system message to a targeted player.";
 			}
@@ -414,7 +441,8 @@ namespace Server.Commands.Generic
 				CommandLogging.Format(from),
 				m_InGump ? "messaging" : "telling",
 				CommandLogging.Format(mob),
-				e.ArgString);
+				e.ArgString
+			);
 
 			if (m_InGump)
 				mob.SendGump(new MessageSentGump(mob, from.Name, e.ArgString));
@@ -429,7 +457,7 @@ namespace Server.Commands.Generic
 		{
 			AccessLevel = AccessLevel.GameMaster;
 			Supports = CommandSupport.All;
-			Commands = new[] {"AddToPack", "AddToCont"};
+			Commands = new[] { "AddToPack", "AddToCont" };
 			ObjectTypes = ObjectTypes.Both;
 			ListOptimized = true;
 			Usage = "AddToPack <name> [params] [set {<propertyName> <value> ...}]";
@@ -470,7 +498,7 @@ namespace Server.Commands.Generic
 		{
 			AccessLevel = AccessLevel.GameMaster;
 			Supports = CommandSupport.Simple | CommandSupport.Self;
-			Commands = new[] {"Add"};
+			Commands = new[] { "Add" };
 			ObjectTypes = ObjectTypes.All;
 			Usage = "Add [<name> [params] [set {<propertyName> <value> ...}]]";
 			Description =
@@ -534,7 +562,7 @@ namespace Server.Commands.Generic
 		{
 			AccessLevel = AccessLevel.Counselor;
 			Supports = CommandSupport.Simple;
-			Commands = new[] {"Teleport", "Tele"};
+			Commands = new[] { "Teleport", "Tele" };
 			ObjectTypes = ObjectTypes.All;
 			Usage = "Teleport";
 			Description = "Teleports your character to a targeted location.";
@@ -566,8 +594,15 @@ namespace Server.Commands.Generic
 					0x3728,
 					10,
 					10,
-					2023);
-				Effects.SendLocationParticles(EffectItem.Create(toLoc, from.Map, EffectItem.DefaultDuration), 0x3728, 10, 10, 5023);
+					2023
+				);
+				Effects.SendLocationParticles(
+					EffectItem.Create(toLoc, from.Map, EffectItem.DefaultDuration),
+					0x3728,
+					10,
+					10,
+					5023
+				);
 
 				from.PlaySound(0x1FE);
 			}
@@ -580,7 +615,7 @@ namespace Server.Commands.Generic
 		{
 			AccessLevel = AccessLevel.GameMaster;
 			Supports = CommandSupport.AllMobiles;
-			Commands = new[] {"Dismount"};
+			Commands = new[] { "Dismount" };
 			ObjectTypes = ObjectTypes.Mobiles;
 			Usage = "Dismount";
 			Description = "Forcefully dismounts a given target.";
@@ -596,7 +631,8 @@ namespace Server.Commands.Generic
 				"{0} {1} dismounting {2}",
 				from.AccessLevel,
 				CommandLogging.Format(from),
-				CommandLogging.Format(mob));
+				CommandLogging.Format(mob)
+			);
 
 			var takenAction = false;
 
@@ -644,7 +680,7 @@ namespace Server.Commands.Generic
 		{
 			AccessLevel = AccessLevel.GameMaster;
 			Supports = CommandSupport.AllNPCs;
-			Commands = new[] {"Restock"};
+			Commands = new[] { "Restock" };
 			ObjectTypes = ObjectTypes.Mobiles;
 			Usage = "Restock";
 			Description =
@@ -660,7 +696,8 @@ namespace Server.Commands.Generic
 					"{0} {1} restocking {2}",
 					e.Mobile.AccessLevel,
 					CommandLogging.Format(e.Mobile),
-					CommandLogging.Format(obj));
+					CommandLogging.Format(obj)
+				);
 
 				((BaseVendor)obj).Restock();
 				AddResponse("The vendor has been restocked.");
@@ -678,7 +715,7 @@ namespace Server.Commands.Generic
 		{
 			AccessLevel = AccessLevel.Counselor;
 			Supports = CommandSupport.All;
-			Commands = new[] {"GetType"};
+			Commands = new[] { "GetType" };
 			ObjectTypes = ObjectTypes.All;
 			Usage = "GetType";
 			Description = "Gets the type name of a targeted object.";
@@ -708,7 +745,7 @@ namespace Server.Commands.Generic
 		{
 			AccessLevel = AccessLevel.Counselor;
 			Supports = CommandSupport.All;
-			Commands = new[] {"Get"};
+			Commands = new[] { "Get" };
 			ObjectTypes = ObjectTypes.All;
 			Usage = "Get <propertyName>";
 			Description = "Gets one or more property values by name of a targeted object.";
@@ -722,8 +759,11 @@ namespace Server.Commands.Generic
 				{
 					var result = Properties.GetValue(e.Mobile, obj, e.GetString(i));
 
-					if (result == "Property not found." || result == "Property is write only." ||
-						result.StartsWith("Getting this property"))
+					if (
+						result == "Property not found."
+						|| result == "Property is write only."
+						|| result.StartsWith("Getting this property")
+					)
 						LogFailure(result);
 					else
 						AddResponse(result);
@@ -755,7 +795,7 @@ namespace Server.Commands.Generic
 			else
 				Supports = CommandSupport.All;
 
-			Commands = new[] {command};
+			Commands = new[] { command };
 			ObjectTypes = objects;
 			Usage = command;
 			Description = String.Format("Sets the {0} property to {1}.", name, value);
@@ -778,7 +818,7 @@ namespace Server.Commands.Generic
 		{
 			AccessLevel = AccessLevel.Counselor;
 			Supports = CommandSupport.All;
-			Commands = new[] {"Set"};
+			Commands = new[] { "Set" };
 			ObjectTypes = ObjectTypes.Both;
 			Usage = "Set <propertyName> <value> [...]";
 			Description = "Sets one or more property values by name of a targeted object.";
@@ -813,7 +853,7 @@ namespace Server.Commands.Generic
 		{
 			AccessLevel = AccessLevel.GameMaster;
 			Supports = CommandSupport.AllNPCs | CommandSupport.AllItems;
-			Commands = new[] {"Delete", "Remove"};
+			Commands = new[] { "Delete", "Remove" };
 			ObjectTypes = ObjectTypes.Both;
 			Usage = "Delete";
 			Description = "Deletes a targeted item or mobile. Does not delete players.";
@@ -869,11 +909,23 @@ namespace Server.Commands.Generic
 			if (list.Count > 1)
 			{
 				var message = String.Format(
-					"You are about to delete {0} objects. " + "This cannot be undone without a full server revert.<br><br>Continue?",
-					list.Count);
+					"You are about to delete {0} objects. "
+						+ "This cannot be undone without a full server revert.<br><br>Continue?",
+					list.Count
+				);
 
 				e.Mobile.SendGump(
-					new WarningGump(1060637, 30720, message, 0xFFC000, 420, 280, OnConfirmCallback, new object[] {e, list}));
+					new WarningGump(
+						1060637,
+						30720,
+						message,
+						0xFFC000,
+						420,
+						280,
+						OnConfirmCallback,
+						new object[] { e, list }
+					)
+				);
 
 				AddResponse("Awaiting confirmation...");
 				return;
@@ -895,7 +947,17 @@ namespace Server.Commands.Generic
 						}
 
 						e.Mobile.SendGump(
-							new WarningGump(1060637, 30720, message, 0xFFC000, 420, 280, OnConfirmCallback, new object[] {e, list}));
+							new WarningGump(
+								1060637,
+								30720,
+								message,
+								0xFFC000,
+								420,
+								280,
+								OnConfirmCallback,
+								new object[] { e, list }
+							)
+						);
 
 						AddResponse("Awaiting confirmation...");
 						return;
@@ -919,13 +981,20 @@ namespace Server.Commands.Generic
 						message = String.Format("Confirm deletion of {0}", obj);
 					}
 
-					var list = new ArrayList
-					{
-						obj
-					};
+					var list = new ArrayList { obj };
 
 					e.Mobile.SendGump(
-						new WarningGump(1060637, 30720, message, 0xFFC000, 420, 280, OnConfirmCallback, new object[] {e, list}));
+						new WarningGump(
+							1060637,
+							30720,
+							message,
+							0xFFC000,
+							420,
+							280,
+							OnConfirmCallback,
+							new object[] { e, list }
+						)
+					);
 
 					AddResponse("Awaiting confirmation...");
 					return;
@@ -939,7 +1008,8 @@ namespace Server.Commands.Generic
 					"{0} {1} deleting {2}",
 					e.Mobile.AccessLevel,
 					CommandLogging.Format(e.Mobile),
-					CommandLogging.Format(obj));
+					CommandLogging.Format(obj)
+				);
 				((Item)obj).Delete();
 				AddResponse("The item has been deleted.");
 			}
@@ -950,7 +1020,8 @@ namespace Server.Commands.Generic
 					"{0} {1} deleting {2}",
 					e.Mobile.AccessLevel,
 					CommandLogging.Format(e.Mobile),
-					CommandLogging.Format(obj));
+					CommandLogging.Format(obj)
+				);
 				((Mobile)obj).Delete();
 				AddResponse("The mobile has been deleted.");
 			}
@@ -973,7 +1044,7 @@ namespace Server.Commands.Generic
 
 			AccessLevel = AccessLevel.GameMaster;
 			Supports = CommandSupport.AllMobiles;
-			Commands = value ? new[] {"Kill"} : new[] {"Resurrect", "Res"};
+			Commands = value ? new[] { "Kill" } : new[] { "Resurrect", "Res" };
 			ObjectTypes = ObjectTypes.Mobiles;
 
 			if (value)
@@ -1010,7 +1081,8 @@ namespace Server.Commands.Generic
 						"{0} {1} killing {2}",
 						from.AccessLevel,
 						CommandLogging.Format(from),
-						CommandLogging.Format(mob));
+						CommandLogging.Format(mob)
+					);
 					mob.Kill();
 
 					AddResponse("They have been killed.");
@@ -1029,7 +1101,8 @@ namespace Server.Commands.Generic
 							"{0} {1} resurrecting {2}",
 							from.AccessLevel,
 							CommandLogging.Format(from),
-							CommandLogging.Format(mob));
+							CommandLogging.Format(mob)
+						);
 
 						bc.PlaySound(0x214);
 						bc.FixedEffect(0x376A, 10, 16);
@@ -1046,7 +1119,8 @@ namespace Server.Commands.Generic
 						"{0} {1} resurrecting {2}",
 						from.AccessLevel,
 						CommandLogging.Format(from),
-						CommandLogging.Format(mob));
+						CommandLogging.Format(mob)
+					);
 
 					mob.PlaySound(0x214);
 					mob.FixedEffect(0x376A, 10, 16);
@@ -1073,7 +1147,7 @@ namespace Server.Commands.Generic
 
 			AccessLevel = AccessLevel.Counselor;
 			Supports = CommandSupport.AllMobiles;
-			Commands = new[] {value ? "Hide" : "Unhide"};
+			Commands = new[] { value ? "Hide" : "Unhide" };
 			ObjectTypes = ObjectTypes.Mobiles;
 
 			if (value)
@@ -1098,7 +1172,8 @@ namespace Server.Commands.Generic
 				e.Mobile.AccessLevel,
 				CommandLogging.Format(e.Mobile),
 				m_Value ? "hiding" : "unhiding",
-				CommandLogging.Format(m));
+				CommandLogging.Format(m)
+			);
 
 			Effects.SendLocationEffect(new Point3D(m.X + 1, m.Y, m.Z + 4), m.Map, 0x3728, 13);
 			Effects.SendLocationEffect(new Point3D(m.X + 1, m.Y, m.Z), m.Map, 0x3728, 13);
@@ -1128,7 +1203,7 @@ namespace Server.Commands.Generic
 		{
 			AccessLevel = AccessLevel.Administrator;
 			Supports = CommandSupport.AllMobiles;
-			Commands = new[] {"Firewall"};
+			Commands = new[] { "Firewall" };
 			ObjectTypes = ObjectTypes.Mobiles;
 			Usage = "Firewall";
 			Description =
@@ -1148,7 +1223,8 @@ namespace Server.Commands.Generic
 					"{0} {1} firewalling {2}",
 					from.AccessLevel,
 					CommandLogging.Format(from),
-					CommandLogging.Format(targ));
+					CommandLogging.Format(targ)
+				);
 
 				try
 				{
@@ -1177,7 +1253,7 @@ namespace Server.Commands.Generic
 
 			AccessLevel = (ban ? AccessLevel.Administrator : AccessLevel.GameMaster);
 			Supports = CommandSupport.AllMobiles;
-			Commands = new[] {ban ? "Ban" : "Kick"};
+			Commands = new[] { ban ? "Ban" : "Kick" };
 			ObjectTypes = ObjectTypes.Mobiles;
 
 			if (ban)
@@ -1199,7 +1275,8 @@ namespace Server.Commands.Generic
 
 			if (from.AccessLevel > targ.AccessLevel)
 			{
-				NetState fromState = from.NetState, targState = targ.NetState;
+				NetState fromState = from.NetState,
+					targState = targ.NetState;
 
 				if (fromState != null && targState != null)
 				{
@@ -1214,7 +1291,8 @@ namespace Server.Commands.Generic
 							from.AccessLevel,
 							CommandLogging.Format(from),
 							m_Ban ? "banning" : "kicking",
-							CommandLogging.Format(targ));
+							CommandLogging.Format(targ)
+						);
 
 						targ.Say("I've been {0}!", m_Ban ? "banned" : "kicked");
 
@@ -1248,7 +1326,7 @@ namespace Server.Commands.Generic
 		{
 			AccessLevel = AccessLevel.Administrator;
 			Supports = CommandSupport.Simple;
-			Commands = new[] {"TraceLockdown"};
+			Commands = new[] { "TraceLockdown" };
 			ObjectTypes = ObjectTypes.Items;
 			Usage = "TraceLockdown";
 			Description = "Finds the BaseHouse for which a targeted item is locked down or secured.";

@@ -1,26 +1,26 @@
 using System;
+using System.Reflection;
 using Server;
 using Server.Items;
-using Server.Network;
 using Server.Mobiles;
-using System.Reflection;
+using Server.Network;
 
 namespace Server.Engines.XmlSpawner2
 {
 	public class XmlWeaponAbility : XmlAttachment
 	{
-		private WeaponAbility m_Ability = null;    // default data
+		private WeaponAbility m_Ability = null; // default data
 
 		public WeaponAbility WeaponAbility
 		{
-			get { return m_Ability;  }
-			set { m_Ability = value;  }
+			get { return m_Ability; }
+			set { m_Ability = value; }
 		}
 
-		[CommandProperty( AccessLevel.GameMaster )]
-		public string Ability 
-		{ 
-			get 
+		[CommandProperty(AccessLevel.GameMaster)]
+		public string Ability
+		{
+			get
 			{
 				if (m_Ability != null)
 				{
@@ -30,8 +30,8 @@ namespace Server.Engines.XmlSpawner2
 				{
 					return null;
 				}
-			} 
-			set 
+			}
+			set
 			{
 				if (value != null)
 				{
@@ -49,18 +49,16 @@ namespace Server.Engines.XmlSpawner2
 				{
 					m_Ability = null;
 				}
-			} 
+			}
 		}
 
-
-		// These are the various ways in which the message attachment can be constructed.  
+		// These are the various ways in which the message attachment can be constructed.
 		// These can be called via the [addatt interface, via scripts, via the spawner ATTACH keyword.
 		// Other overloads could be defined to handle other types of arguments
-       
+
 		// a serial constructor is REQUIRED
-		public XmlWeaponAbility(ASerial serial) : base(serial)
-		{
-		}
+		public XmlWeaponAbility(ASerial serial)
+			: base(serial) { }
 
 		[Attachable]
 		public XmlWeaponAbility(string weaponability)
@@ -81,14 +79,13 @@ namespace Server.Engines.XmlSpawner2
 			Name = name;
 			Ability = weaponability;
 			Expiration = TimeSpan.FromMinutes(expiresin);
-
 		}
 
-		public override void Serialize( GenericWriter writer )
+		public override void Serialize(GenericWriter writer)
 		{
 			base.Serialize(writer);
 
-			writer.Write( (int) 0 );
+			writer.Write((int)0);
 			// version 0
 			writer.Write(Ability);
 		}
@@ -104,12 +101,18 @@ namespace Server.Engines.XmlSpawner2
 
 		public override string OnIdentify(Mobile from)
 		{
-			if(from == null || from.AccessLevel == AccessLevel.Player) return null;
+			if (from == null || from.AccessLevel == AccessLevel.Player)
+				return null;
 
-			if(Expiration > TimeSpan.Zero)
+			if (Expiration > TimeSpan.Zero)
 			{
-				return String.Format("{2}: Weapon ability {0} expires in {1} mins", Ability, Expiration.TotalMinutes, Name);
-			} 
+				return String.Format(
+					"{2}: Weapon ability {0} expires in {1} mins",
+					Ability,
+					Expiration.TotalMinutes,
+					Name
+				);
+			}
 			else
 			{
 				return String.Format("{1}: Weapon ability {0}", Ability, Name);

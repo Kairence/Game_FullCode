@@ -3,183 +3,211 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    public class Paragon
-    {
-        public static double ChestChance = .0;// Chance that a paragon will carry a paragon chest
-        public static double ChocolateIngredientChance = .0;// Chance that a paragon will drop a chocolatiering ingredient
-        public static Map[] Maps = new Map[]                   // Maps that paragons will spawn on
-        {
-            Map.Ilshenar
-        };
-        public static Type[] Artifacts = new Type[]
-        {
-            typeof(GoldBricks), typeof(PhillipsWoodenSteed),
-            typeof(AlchemistsBauble), typeof(ArcticDeathDealer),
-            typeof(BlazeOfDeath), typeof(BowOfTheJukaKing),
-            typeof(BurglarsBandana), typeof(CavortingClub),
-            typeof(EnchantedTitanLegBone), typeof(GwennosHarp),
-            typeof(IolosLute), typeof(LunaLance),
-            typeof(NightsKiss), typeof(NoxRangersHeavyCrossbow),
-            typeof(OrcishVisage), typeof(PolarBearMask),
-            typeof(ShieldOfInvulnerability), typeof(StaffOfPower),
-            typeof(VioletCourage), typeof(HeartOfTheLion),
-            typeof(WrathOfTheDryad), typeof(PixieSwatter),
-            typeof(GlovesOfThePugilist)
-        };
-        public static int Hue = 0x501;// Paragon hue
+	public class Paragon
+	{
+		public static double ChestChance = .0; // Chance that a paragon will carry a paragon chest
+		public static double ChocolateIngredientChance = .0; // Chance that a paragon will drop a chocolatiering ingredient
+		public static Map[] Maps = new Map[] // Maps that paragons will spawn on
+		{
+			Map.Ilshenar,
+		};
+		public static Type[] Artifacts = new Type[]
+		{
+			typeof(GoldBricks),
+			typeof(PhillipsWoodenSteed),
+			typeof(AlchemistsBauble),
+			typeof(ArcticDeathDealer),
+			typeof(BlazeOfDeath),
+			typeof(BowOfTheJukaKing),
+			typeof(BurglarsBandana),
+			typeof(CavortingClub),
+			typeof(EnchantedTitanLegBone),
+			typeof(GwennosHarp),
+			typeof(IolosLute),
+			typeof(LunaLance),
+			typeof(NightsKiss),
+			typeof(NoxRangersHeavyCrossbow),
+			typeof(OrcishVisage),
+			typeof(PolarBearMask),
+			typeof(ShieldOfInvulnerability),
+			typeof(StaffOfPower),
+			typeof(VioletCourage),
+			typeof(HeartOfTheLion),
+			typeof(WrathOfTheDryad),
+			typeof(PixieSwatter),
+			typeof(GlovesOfThePugilist),
+		};
+		public static int Hue = 0x501; // Paragon hue
 
-        // Buffs
-        public static double HitsBuff = 5.0;
-        public static double StrBuff = 1.05;
-        public static double IntBuff = 1.20;
-        public static double DexBuff = 1.20;
-        public static double SkillsBuff = 1.20;
-        public static double SpeedBuff = 1.20;
-        public static double FameBuff = 1.40;
-        public static double KarmaBuff = 1.40;
-        public static int DamageBuff = 5;
-        public static void Convert(BaseCreature bc)
-        {
-            if (bc.IsParagon ||
-				!bc.CanBeParagon)
-                return;
+		// Buffs
+		public static double HitsBuff = 5.0;
+		public static double StrBuff = 1.05;
+		public static double IntBuff = 1.20;
+		public static double DexBuff = 1.20;
+		public static double SkillsBuff = 1.20;
+		public static double SpeedBuff = 1.20;
+		public static double FameBuff = 1.40;
+		public static double KarmaBuff = 1.40;
+		public static int DamageBuff = 5;
 
-            bc.Hue = Hue;
+		public static void Convert(BaseCreature bc)
+		{
+			if (bc.IsParagon || !bc.CanBeParagon)
+				return;
 
-            if (bc.HitsMaxSeed >= 0)
-                bc.HitsMaxSeed = (int)(bc.HitsMaxSeed * HitsBuff);
+			bc.Hue = Hue;
 
-            bc.RawStr = (int)(bc.RawStr * StrBuff);
-            bc.RawInt = (int)(bc.RawInt * IntBuff);
-            bc.RawDex = (int)(bc.RawDex * DexBuff);
+			if (bc.HitsMaxSeed >= 0)
+				bc.HitsMaxSeed = (int)(bc.HitsMaxSeed * HitsBuff);
 
-            bc.Hits = bc.HitsMax;
-            bc.Mana = bc.ManaMax;
-            bc.Stam = bc.StamMax;
+			bc.RawStr = (int)(bc.RawStr * StrBuff);
+			bc.RawInt = (int)(bc.RawInt * IntBuff);
+			bc.RawDex = (int)(bc.RawDex * DexBuff);
 
-            for (int i = 0; i < bc.Skills.Length; i++)
-            {
-                Skill skill = (Skill)bc.Skills[i];
+			bc.Hits = bc.HitsMax;
+			bc.Mana = bc.ManaMax;
+			bc.Stam = bc.StamMax;
 
-                if (skill.Base > 0.0)
-                    skill.Base *= SkillsBuff;
-            }
+			for (int i = 0; i < bc.Skills.Length; i++)
+			{
+				Skill skill = (Skill)bc.Skills[i];
 
-            bc.PassiveSpeed /= SpeedBuff;
-            bc.ActiveSpeed /= SpeedBuff;
-            bc.CurrentSpeed = bc.PassiveSpeed;
+				if (skill.Base > 0.0)
+					skill.Base *= SkillsBuff;
+			}
 
-            bc.DamageMin += DamageBuff;
-            bc.DamageMax += DamageBuff;
+			bc.PassiveSpeed /= SpeedBuff;
+			bc.ActiveSpeed /= SpeedBuff;
+			bc.CurrentSpeed = bc.PassiveSpeed;
 
-            if (bc.Fame > 0)
-                bc.Fame = (int)(bc.Fame * FameBuff);
+			bc.DamageMin += DamageBuff;
+			bc.DamageMax += DamageBuff;
 
-            if (bc.Fame > 32000)
-                bc.Fame = 32000;
+			if (bc.Fame > 0)
+				bc.Fame = (int)(bc.Fame * FameBuff);
 
-            // TODO: Mana regeneration rate = Sqrt( buffedFame ) / 4
+			if (bc.Fame > 32000)
+				bc.Fame = 32000;
 
-            if (bc.Karma != 0)
-            {
-                bc.Karma = (int)(bc.Karma * KarmaBuff);
+			// TODO: Mana regeneration rate = Sqrt( buffedFame ) / 4
 
-                if (Math.Abs(bc.Karma) > 32000)
-                    bc.Karma = 32000 * Math.Sign(bc.Karma);
-            }
-        }
+			if (bc.Karma != 0)
+			{
+				bc.Karma = (int)(bc.Karma * KarmaBuff);
 
-        public static void UnConvert(BaseCreature bc)
-        {
-            if (!bc.IsParagon)
-                return;
+				if (Math.Abs(bc.Karma) > 32000)
+					bc.Karma = 32000 * Math.Sign(bc.Karma);
+			}
+		}
 
-            bc.Hue = 0;
+		public static void UnConvert(BaseCreature bc)
+		{
+			if (!bc.IsParagon)
+				return;
 
-            if (bc.HitsMaxSeed >= 0)
-                bc.HitsMaxSeed = (int)(bc.HitsMaxSeed / HitsBuff);
+			bc.Hue = 0;
 
-            bc.RawStr = (int)(bc.RawStr / StrBuff);
-            bc.RawInt = (int)(bc.RawInt / IntBuff);
-            bc.RawDex = (int)(bc.RawDex / DexBuff);
+			if (bc.HitsMaxSeed >= 0)
+				bc.HitsMaxSeed = (int)(bc.HitsMaxSeed / HitsBuff);
 
-            bc.Hits = bc.HitsMax;
-            bc.Mana = bc.ManaMax;
-            bc.Stam = bc.StamMax;
+			bc.RawStr = (int)(bc.RawStr / StrBuff);
+			bc.RawInt = (int)(bc.RawInt / IntBuff);
+			bc.RawDex = (int)(bc.RawDex / DexBuff);
 
-            for (int i = 0; i < bc.Skills.Length; i++)
-            {
-                Skill skill = (Skill)bc.Skills[i];
+			bc.Hits = bc.HitsMax;
+			bc.Mana = bc.ManaMax;
+			bc.Stam = bc.StamMax;
 
-                if (skill.Base > 0.0)
-                    skill.Base /= SkillsBuff;
-            }
+			for (int i = 0; i < bc.Skills.Length; i++)
+			{
+				Skill skill = (Skill)bc.Skills[i];
 
-            bc.PassiveSpeed *= SpeedBuff;
-            bc.ActiveSpeed *= SpeedBuff;
-            bc.CurrentSpeed = bc.PassiveSpeed;
+				if (skill.Base > 0.0)
+					skill.Base /= SkillsBuff;
+			}
 
-            bc.DamageMin -= DamageBuff;
-            bc.DamageMax -= DamageBuff;
+			bc.PassiveSpeed *= SpeedBuff;
+			bc.ActiveSpeed *= SpeedBuff;
+			bc.CurrentSpeed = bc.PassiveSpeed;
 
-            if (bc.Fame > 0)
-                bc.Fame = (int)(bc.Fame / FameBuff);
-            if (bc.Karma != 0)
-                bc.Karma = (int)(bc.Karma / KarmaBuff);
-        }
+			bc.DamageMin -= DamageBuff;
+			bc.DamageMax -= DamageBuff;
 
-        public static bool CheckConvert(BaseCreature bc)
-        {
-            return CheckConvert(bc, bc.Location, bc.Map);
-        }
+			if (bc.Fame > 0)
+				bc.Fame = (int)(bc.Fame / FameBuff);
+			if (bc.Karma != 0)
+				bc.Karma = (int)(bc.Karma / KarmaBuff);
+		}
 
-        public static bool CheckConvert(BaseCreature bc, Point3D location, Map m)
-        {
+		public static bool CheckConvert(BaseCreature bc)
+		{
+			return CheckConvert(bc, bc.Location, bc.Map);
+		}
+
+		public static bool CheckConvert(BaseCreature bc, Point3D location, Map m)
+		{
 			return false;
-            if (!Core.AOS)
-                return false;
+			if (!Core.AOS)
+				return false;
 
-            if (Array.IndexOf(Maps, m) == -1)
-                return false;
+			if (Array.IndexOf(Maps, m) == -1)
+				return false;
 
-            if (bc is BaseChampion || bc is Harrower || bc is BaseVendor || bc is BaseEscortable || bc is Clone || bc.IsParagon)
-                return false;
+			if (
+				bc is BaseChampion
+				|| bc is Harrower
+				|| bc is BaseVendor
+				|| bc is BaseEscortable
+				|| bc is Clone
+				|| bc.IsParagon
+			)
+				return false;
 
-            int fame = bc.Fame;
+			int fame = bc.Fame;
 
-            if (fame > 32000)
-                fame = 32000;
+			if (fame > 32000)
+				fame = 32000;
 
-            double chance = 1 / Math.Round(20.0 - (fame / 3200));
+			double chance = 1 / Math.Round(20.0 - (fame / 3200));
 
-            return (chance > Utility.RandomDouble());
-        }
+			return (chance > Utility.RandomDouble());
+		}
 
-        public static bool CheckArtifactChance(Mobile m, BaseCreature bc)
-        {
-            if (!Core.AOS)
-                return false;
+		public static bool CheckArtifactChance(Mobile m, BaseCreature bc)
+		{
+			if (!Core.AOS)
+				return false;
 
-            double fame = (double)bc.Fame;
+			double fame = (double)bc.Fame;
 
-            if (fame > 32000)
-                fame = 32000;
+			if (fame > 32000)
+				fame = 32000;
 
-            int luck = m is PlayerMobile ? ((PlayerMobile)m).RealLuck : m.Luck;
+			int luck = m is PlayerMobile ? ((PlayerMobile)m).RealLuck : m.Luck;
 
-            double chance = 1 / (Math.Max(10, 100 * (0.83 - Math.Round(Math.Log(Math.Round(fame / 6000, 3) + 0.001, 10), 3))) * (100 - Math.Sqrt(luck)) / 100.0);
+			double chance =
+				1
+				/ (
+					Math.Max(10, 100 * (0.83 - Math.Round(Math.Log(Math.Round(fame / 6000, 3) + 0.001, 10), 3)))
+					* (100 - Math.Sqrt(luck))
+					/ 100.0
+				);
 
-            return chance > Utility.RandomDouble();
-        }
+			return chance > Utility.RandomDouble();
+		}
 
-        public static void GiveArtifactTo(Mobile m)
-        {
-            Item item = (Item)Activator.CreateInstance(Artifacts[Utility.Random(Artifacts.Length)]);
+		public static void GiveArtifactTo(Mobile m)
+		{
+			Item item = (Item)Activator.CreateInstance(Artifacts[Utility.Random(Artifacts.Length)]);
 
-            if (m.AddToBackpack(item))
-                m.SendMessage("As a reward for slaying the mighty paragon, an artifact has been placed in your backpack.");
-            else
-                m.SendMessage("As your backpack is full, your reward for destroying the legendary paragon has been placed at your feet.");
-        }
-    }
+			if (m.AddToBackpack(item))
+				m.SendMessage(
+					"As a reward for slaying the mighty paragon, an artifact has been placed in your backpack."
+				);
+			else
+				m.SendMessage(
+					"As your backpack is full, your reward for destroying the legendary paragon has been placed at your feet."
+				);
+		}
+	}
 }

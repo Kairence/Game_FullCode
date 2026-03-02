@@ -16,7 +16,10 @@ namespace Ultima
 		}
 
 		private static short[] m_Colors;
-		public static short[] Colors { get { return m_Colors; } }
+		public static short[] Colors
+		{
+			get { return m_Colors; }
+		}
 
 		public static short GetItemColor(int index)
 		{
@@ -85,13 +88,16 @@ namespace Ultima
 		{
 			using (
 				var Tex = new StreamWriter(
-					new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+					new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite),
+					Encoding.GetEncoding(1252)
+				)
+			)
 			{
 				Tex.WriteLine("ID;Color");
 
 				for (int i = 0; i < m_Colors.Length; ++i)
 				{
-					Tex.WriteLine(String.Format("0x{0:X4};{1}", i, m_Colors[i]));
+					Tex.WriteLine(String.Format(CultureInfo.CurrentCulture, "0x{0:X4};{1}", i, m_Colors[i]));
 				}
 			}
 		}
@@ -108,11 +114,11 @@ namespace Ultima
 				int count = 0;
 				while ((line = sr.ReadLine()) != null)
 				{
-					if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
+					if ((line = line.Trim()).Length == 0 || line.StartsWith("#", StringComparison.CurrentCulture))
 					{
 						continue;
 					}
-					if (line.StartsWith("ID;"))
+					if (line.StartsWith("ID;", StringComparison.CurrentCulture))
 					{
 						continue;
 					}
@@ -125,11 +131,11 @@ namespace Ultima
 				string line;
 				while ((line = sr.ReadLine()) != null)
 				{
-					if ((line = line.Trim()).Length == 0 || line.StartsWith("#"))
+					if ((line = line.Trim()).Length == 0 || line.StartsWith("#", StringComparison.CurrentCulture))
 					{
 						continue;
 					}
-					if (line.StartsWith("ID;"))
+					if (line.StartsWith("ID;", StringComparison.CurrentCulture))
 					{
 						continue;
 					}
@@ -145,8 +151,7 @@ namespace Ultima
 						int color = ConvertStringToInt(split[1]);
 						m_Colors[id] = (short)color;
 					}
-					catch
-					{ }
+					catch { }
 				}
 			}
 		}

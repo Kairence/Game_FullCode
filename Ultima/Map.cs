@@ -2,13 +2,14 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Text;
 #endregion
 
 namespace Ultima
 {
-	public sealed class Map
+	public sealed class Map : IDisposable
 	{
 		private TileMatrix m_Tiles;
 		private readonly int m_FileIndex;
@@ -60,6 +61,14 @@ namespace Ultima
 			m_path = path;
 		}
 
+		public void Dispose()
+		{
+			if (m_Tiles != null)
+			{
+				m_Tiles.Dispose();
+			}
+		}
+
 		/// <summary>
 		///     Sets cache-vars to null
 		/// </summary>
@@ -77,18 +86,41 @@ namespace Ultima
 			Malas.Tiles.StaticIndexInit = false;
 			Tokuno.Tiles.StaticIndexInit = false;
 			TerMur.Tiles.StaticIndexInit = false;
-			Felucca.m_Cache = Trammel.m_Cache = Ilshenar.m_Cache = Malas.m_Cache = Tokuno.m_Cache = TerMur.m_Cache = null;
-			Felucca.m_Tiles = Trammel.m_Tiles = Ilshenar.m_Tiles = Malas.m_Tiles = Tokuno.m_Tiles = TerMur.m_Tiles = null;
+			Felucca.m_Cache =
+				Trammel.m_Cache =
+				Ilshenar.m_Cache =
+				Malas.m_Cache =
+				Tokuno.m_Cache =
+				TerMur.m_Cache =
+					null;
+			Felucca.m_Tiles =
+				Trammel.m_Tiles =
+				Ilshenar.m_Tiles =
+				Malas.m_Tiles =
+				Tokuno.m_Tiles =
+				TerMur.m_Tiles =
+					null;
 			Felucca.m_Cache_NoStatics =
 				Trammel.m_Cache_NoStatics =
-				Ilshenar.m_Cache_NoStatics = Malas.m_Cache_NoStatics = Tokuno.m_Cache_NoStatics = TerMur.m_Cache_NoStatics = null;
+				Ilshenar.m_Cache_NoStatics =
+				Malas.m_Cache_NoStatics =
+				Tokuno.m_Cache_NoStatics =
+				TerMur.m_Cache_NoStatics =
+					null;
 			Felucca.m_Cache_NoPatch =
 				Trammel.m_Cache_NoPatch =
-				Ilshenar.m_Cache_NoPatch = Malas.m_Cache_NoPatch = Tokuno.m_Cache_NoPatch = TerMur.m_Cache_NoPatch = null;
+				Ilshenar.m_Cache_NoPatch =
+				Malas.m_Cache_NoPatch =
+				Tokuno.m_Cache_NoPatch =
+				TerMur.m_Cache_NoPatch =
+					null;
 			Felucca.m_Cache_NoStatics_NoPatch =
 				Trammel.m_Cache_NoStatics_NoPatch =
 				Ilshenar.m_Cache_NoStatics_NoPatch =
-				Malas.m_Cache_NoStatics_NoPatch = Tokuno.m_Cache_NoStatics_NoPatch = TerMur.m_Cache_NoStatics_NoPatch = null;
+				Malas.m_Cache_NoStatics_NoPatch =
+				Tokuno.m_Cache_NoStatics_NoPatch =
+				TerMur.m_Cache_NoStatics_NoPatch =
+					null;
 		}
 
 		public void ResetCache()
@@ -103,7 +135,10 @@ namespace Ultima
 			IsCached_NoStatics_NoPatch = false;
 		}
 
-		public bool LoadedMatrix { get { return (m_Tiles != null); } }
+		public bool LoadedMatrix
+		{
+			get { return (m_Tiles != null); }
+		}
 
 		public TileMatrix Tiles
 		{
@@ -118,11 +153,21 @@ namespace Ultima
 			}
 		}
 
-		public int Width { get { return m_Width; } set { m_Width = value; } }
+		public int Width
+		{
+			get { return m_Width; }
+			set { m_Width = value; }
+		}
 
-		public int Height { get { return m_Height; } }
+		public int Height
+		{
+			get { return m_Height; }
+		}
 
-		public int FileIndex { get { return m_FileIndex; } }
+		public int FileIndex
+		{
+			get { return m_FileIndex; }
+		}
 
 		/// <summary>
 		///     Returns Bitmap with Statics
@@ -365,7 +410,8 @@ namespace Ultima
 										int highZ = -255;
 										int highID = 0;
 										int highHue = 0;
-										int z, top;
+										int z,
+											top;
 										bool highstatic = false;
 
 										HuedTile[] curStatics = statics[p][k];
@@ -442,12 +488,13 @@ namespace Ultima
 													*pvData++ = pColors[highID];
 												}
 											}
-											catch
-											{ }
+											catch { }
 										}
 										else
 										{
-											*pvData++ = Hues.GetHue(highHue - 1).Colors[(pColors[highID + 0x4000] >> 10) & 0x1F];
+											*pvData++ = Hues.GetHue(highHue - 1).Colors[
+												(pColors[highID + 0x4000] >> 10) & 0x1F
+											];
 										}
 
 										++pTiles;
@@ -496,7 +543,10 @@ namespace Ultima
 		public unsafe void GetImage(int x, int y, int width, int height, Bitmap bmp, bool statics)
 		{
 			BitmapData bd = bmp.LockBits(
-				new Rectangle(0, 0, width << 3, height << 3), ImageLockMode.WriteOnly, PixelFormat.Format16bppRgb555);
+				new Rectangle(0, 0, width << 3, height << 3),
+				ImageLockMode.WriteOnly,
+				PixelFormat.Format16bppRgb555
+			);
 			int stride = bd.Stride;
 			int blockStride = stride << 3;
 
@@ -600,15 +650,19 @@ namespace Ultima
 			int blockx = width >> 3;
 			int blocky = height >> 3;
 
-			string idx = Path.Combine(path, String.Format("staidx{0}.mul", map.FileIndex));
-			string mul = Path.Combine(path, String.Format("statics{0}.mul", map.FileIndex));
+			string idx = Path.Combine(path, String.Format(CultureInfo.CurrentCulture, "staidx{0}.mul", map.FileIndex));
+			string mul = Path.Combine(path, String.Format(CultureInfo.CurrentCulture, "statics{0}.mul", map.FileIndex));
 			using (
 				FileStream fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
-						   fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
+					fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write)
+			)
 			{
 				var memidx = new MemoryStream();
 				var memmul = new MemoryStream();
-				using (BinaryWriter binidx = new BinaryWriter(memidx), binmul = new BinaryWriter(memmul))
+				using (
+					BinaryWriter binidx = new BinaryWriter(memidx),
+						binmul = new BinaryWriter(memmul)
+				)
 				{
 					for (int x = 0; x < blockx; ++x)
 					{
@@ -621,7 +675,10 @@ namespace Ultima
 								int length = m_IndexReader.ReadInt32();
 								int extra = m_IndexReader.ReadInt32();
 
-								if (((lookup < 0 || length <= 0) && (!map.Tiles.PendingStatic(x, y))) || (map.Tiles.IsStaticBlockRemoved(x, y)))
+								if (
+									((lookup < 0 || length <= 0) && (!map.Tiles.PendingStatic(x, y)))
+									|| (map.Tiles.IsStaticBlockRemoved(x, y))
+								)
 								{
 									binidx.Write(-1); // lookup
 									binidx.Write(-1); // length
@@ -711,8 +768,15 @@ namespace Ultima
 												bool first = true;
 												for (int k = 0; k < j; ++k)
 												{
-													if ((tilelist[k].m_ID == tile.m_ID) && ((tilelist[k].m_X == tile.m_X) && (tilelist[k].m_Y == tile.m_Y)) &&
-														(tilelist[k].m_Z == tile.m_Z) && (tilelist[k].m_Hue == tile.m_Hue))
+													if (
+														(tilelist[k].m_ID == tile.m_ID)
+														&& (
+															(tilelist[k].m_X == tile.m_X)
+															&& (tilelist[k].m_Y == tile.m_Y)
+														)
+														&& (tilelist[k].m_Z == tile.m_Z)
+														&& (tilelist[k].m_Hue == tile.m_Hue)
+													)
 													{
 														first = false;
 														break;
@@ -742,9 +806,15 @@ namespace Ultima
 													bool first = true;
 													for (int k = 0; k < j; ++k)
 													{
-														if ((tilelist[k].m_ID == pending[i].m_ID) &&
-															((tilelist[k].m_X == pending[i].m_X) && (tilelist[k].m_Y == pending[i].m_Y)) &&
-															(tilelist[k].m_Z == pending[i].m_Z) && (tilelist[k].m_Hue == pending[i].m_Hue))
+														if (
+															(tilelist[k].m_ID == pending[i].m_ID)
+															&& (
+																(tilelist[k].m_X == pending[i].m_X)
+																&& (tilelist[k].m_Y == pending[i].m_Y)
+															)
+															&& (tilelist[k].m_Z == pending[i].m_Z)
+															&& (tilelist[k].m_Hue == pending[i].m_Hue)
+														)
 														{
 															first = false;
 															break;
@@ -831,7 +901,7 @@ namespace Ultima
 			int blockx = width >> 3;
 			int blocky = height >> 3;
 
-			string mul = Path.Combine(path, String.Format("map{0}.mul", map));
+			string mul = Path.Combine(path, String.Format(CultureInfo.CurrentCulture, "map{0}.mul", map));
 			using (var fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
 			{
 				var memmul = new MemoryStream();
@@ -893,10 +963,16 @@ namespace Ultima
 
 		public void ReportInvisStatics(string reportfile)
 		{
-			reportfile = Path.Combine(reportfile, String.Format("staticReport-{0}.csv", m_MapID));
+			reportfile = Path.Combine(
+				reportfile,
+				String.Format(CultureInfo.CurrentCulture, "staticReport-{0}.csv", m_MapID)
+			);
 			using (
 				var Tex = new StreamWriter(
-					new FileStream(reportfile, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+					new FileStream(reportfile, FileMode.Create, FileAccess.ReadWrite),
+					Encoding.GetEncoding(1252)
+				)
+			)
 			{
 				Tex.WriteLine("x;y;z;Static");
 				for (int x = 0; x < m_Width; ++x)
@@ -910,7 +986,16 @@ namespace Ultima
 							{
 								if (TileData.ItemTable[currstatic.ID].Height + currstatic.Z < currtile.Z)
 								{
-									Tex.WriteLine(String.Format("{0};{1};{2};0x{3:X}", x, y, currstatic.Z, currstatic.ID));
+									Tex.WriteLine(
+										String.Format(
+											CultureInfo.CurrentCulture,
+											"{0};{1};{2};0x{3:X}",
+											x,
+											y,
+											currstatic.Z,
+											currstatic.ID
+										)
+									);
 								}
 							}
 						}
@@ -921,10 +1006,16 @@ namespace Ultima
 
 		public void ReportInvalidMapIDs(string reportfile)
 		{
-			reportfile = Path.Combine(reportfile, String.Format("ReportInvalidMapIDs-{0}.csv", m_MapID));
+			reportfile = Path.Combine(
+				reportfile,
+				String.Format(CultureInfo.CurrentCulture, "ReportInvalidMapIDs-{0}.csv", m_MapID)
+			);
 			using (
 				var Tex = new StreamWriter(
-					new FileStream(reportfile, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+					new FileStream(reportfile, FileMode.Create, FileAccess.ReadWrite),
+					Encoding.GetEncoding(1252)
+				)
+			)
 			{
 				Tex.WriteLine("x;y;z;Static;LandTile");
 				for (int x = 0; x < m_Width; ++x)
@@ -934,13 +1025,31 @@ namespace Ultima
 						Tile currtile = Tiles.GetLandTile(x, y);
 						if (!Art.IsValidLand(currtile.ID))
 						{
-							Tex.WriteLine(String.Format("{0};{1};{2};0;0x{3:X}", x, y, currtile.Z, currtile.ID));
+							Tex.WriteLine(
+								String.Format(
+									CultureInfo.CurrentCulture,
+									"{0};{1};{2};0;0x{3:X}",
+									x,
+									y,
+									currtile.Z,
+									currtile.ID
+								)
+							);
 						}
 						foreach (HuedTile currstatic in Tiles.GetStaticTiles(x, y))
 						{
 							if (!Art.IsValidStatic(currstatic.ID))
 							{
-								Tex.WriteLine(String.Format("{0};{1};{2};0x{3:X};0", x, y, currstatic.Z, currstatic.ID));
+								Tex.WriteLine(
+									String.Format(
+										CultureInfo.CurrentCulture,
+										"{0};{1};{2};0x{3:X};0",
+										x,
+										y,
+										currstatic.Z,
+										currstatic.ID
+									)
+								);
 							}
 						}
 					}

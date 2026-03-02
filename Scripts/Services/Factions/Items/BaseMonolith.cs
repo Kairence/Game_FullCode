@@ -3,145 +3,138 @@ using System.Collections.Generic;
 
 namespace Server.Factions
 {
-    public abstract class BaseMonolith : BaseSystemController
-    {
-        private static List<BaseMonolith> m_Monoliths = new List<BaseMonolith>();
-        private Town m_Town;
-        private Faction m_Faction;
-        private Sigil m_Sigil;
-        public BaseMonolith(Town town, Faction faction)
-            : base(0x1183)
-        {
-            this.Movable = false;
-            this.Town = town;
-            this.Faction = faction;
-            m_Monoliths.Add(this);
-        }
+	public abstract class BaseMonolith : BaseSystemController
+	{
+		private static List<BaseMonolith> m_Monoliths = new List<BaseMonolith>();
+		private Town m_Town;
+		private Faction m_Faction;
+		private Sigil m_Sigil;
 
-        public BaseMonolith(Serial serial)
-            : base(serial)
-        {
-            m_Monoliths.Add(this);
-        }
+		public BaseMonolith(Town town, Faction faction)
+			: base(0x1183)
+		{
+			this.Movable = false;
+			this.Town = town;
+			this.Faction = faction;
+			m_Monoliths.Add(this);
+		}
 
-        public static List<BaseMonolith> Monoliths
-        {
-            get
-            {
-                return m_Monoliths;
-            }
-            set
-            {
-                m_Monoliths = value;
-            }
-        }
-        [CommandProperty(AccessLevel.Counselor, AccessLevel.Administrator)]
-        public Sigil Sigil
-        {
-            get
-            {
-                return this.m_Sigil;
-            }
-            set
-            {
-                if (this.m_Sigil == value)
-                    return;
+		public BaseMonolith(Serial serial)
+			: base(serial)
+		{
+			m_Monoliths.Add(this);
+		}
 
-                this.m_Sigil = value;
+		public static List<BaseMonolith> Monoliths
+		{
+			get { return m_Monoliths; }
+			set { m_Monoliths = value; }
+		}
 
-                if (this.m_Sigil != null && this.m_Sigil.LastMonolith != null && this.m_Sigil.LastMonolith != this && this.m_Sigil.LastMonolith.Sigil == this.m_Sigil)
-                    this.m_Sigil.LastMonolith.Sigil = null;
+		[CommandProperty(AccessLevel.Counselor, AccessLevel.Administrator)]
+		public Sigil Sigil
+		{
+			get { return this.m_Sigil; }
+			set
+			{
+				if (this.m_Sigil == value)
+					return;
 
-                if (this.m_Sigil != null)
-                    this.m_Sigil.LastMonolith = this;
+				this.m_Sigil = value;
 
-                this.UpdateSigil();
-            }
-        }
-        [CommandProperty(AccessLevel.Counselor, AccessLevel.Administrator)]
-        public Town Town
-        {
-            get
-            {
-                return this.m_Town;
-            }
-            set
-            {
-                this.m_Town = value;
-                this.OnTownChanged();
-            }
-        }
-        [CommandProperty(AccessLevel.Counselor, AccessLevel.Administrator)]
-        public Faction Faction
-        {
-            get
-            {
-                return this.m_Faction;
-            }
-            set
-            {
-                this.m_Faction = value;
-                this.Hue = (this.m_Faction == null ? 0 : this.m_Faction.Definition.HuePrimary);
-            }
-        }
-        public override void OnLocationChange(Point3D oldLocation)
-        {
-            base.OnLocationChange(oldLocation);
-            this.UpdateSigil();
-        }
+				if (
+					this.m_Sigil != null
+					&& this.m_Sigil.LastMonolith != null
+					&& this.m_Sigil.LastMonolith != this
+					&& this.m_Sigil.LastMonolith.Sigil == this.m_Sigil
+				)
+					this.m_Sigil.LastMonolith.Sigil = null;
 
-        public override void OnMapChange()
-        {
-            base.OnMapChange();
-            this.UpdateSigil();
-        }
+				if (this.m_Sigil != null)
+					this.m_Sigil.LastMonolith = this;
 
-        public virtual void UpdateSigil()
-        {
-            if (this.m_Sigil == null || this.m_Sigil.Deleted)
-                return;
+				this.UpdateSigil();
+			}
+		}
 
-            this.m_Sigil.MoveToWorld(new Point3D(this.X, this.Y, this.Z + 18), this.Map);
-        }
+		[CommandProperty(AccessLevel.Counselor, AccessLevel.Administrator)]
+		public Town Town
+		{
+			get { return this.m_Town; }
+			set
+			{
+				this.m_Town = value;
+				this.OnTownChanged();
+			}
+		}
 
-        public virtual void OnTownChanged()
-        {
-        }
+		[CommandProperty(AccessLevel.Counselor, AccessLevel.Administrator)]
+		public Faction Faction
+		{
+			get { return this.m_Faction; }
+			set
+			{
+				this.m_Faction = value;
+				this.Hue = (this.m_Faction == null ? 0 : this.m_Faction.Definition.HuePrimary);
+			}
+		}
 
-        public override void OnAfterDelete()
-        {
-            base.OnAfterDelete();
-            m_Monoliths.Remove(this);
-        }
+		public override void OnLocationChange(Point3D oldLocation)
+		{
+			base.OnLocationChange(oldLocation);
+			this.UpdateSigil();
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void OnMapChange()
+		{
+			base.OnMapChange();
+			this.UpdateSigil();
+		}
 
-            writer.Write((int)0); // version
+		public virtual void UpdateSigil()
+		{
+			if (this.m_Sigil == null || this.m_Sigil.Deleted)
+				return;
 
-            Town.WriteReference(writer, this.m_Town);
-            Faction.WriteReference(writer, this.m_Faction);
+			this.m_Sigil.MoveToWorld(new Point3D(this.X, this.Y, this.Z + 18), this.Map);
+		}
 
-            writer.Write((Item)this.m_Sigil);
-        }
+		public virtual void OnTownChanged() { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void OnAfterDelete()
+		{
+			base.OnAfterDelete();
+			m_Monoliths.Remove(this);
+		}
 
-            int version = reader.ReadInt();
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            switch ( version )
-            {
-                case 0:
-                    {
-                        this.Town = Town.ReadReference(reader);
-                        this.Faction = Faction.ReadReference(reader);
-                        this.m_Sigil = reader.ReadItem() as Sigil;
-                        break;
-                    }
-            }
-        }
-    }
+			writer.Write((int)0); // version
+
+			Town.WriteReference(writer, this.m_Town);
+			Faction.WriteReference(writer, this.m_Faction);
+
+			writer.Write((Item)this.m_Sigil);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+
+			switch (version)
+			{
+				case 0:
+				{
+					this.Town = Town.ReadReference(reader);
+					this.Faction = Faction.ReadReference(reader);
+					this.m_Sigil = reader.ReadItem() as Sigil;
+					break;
+				}
+			}
+		}
+	}
 }

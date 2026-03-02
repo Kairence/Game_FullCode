@@ -5,137 +5,134 @@ using Server.Services;
 
 namespace Server.Mobiles
 {
-    [CorpseName("a daemon corpse")]
-    public class Daemon : BaseCreature
-    {
-        [Constructable]
-        public Daemon()
-            : base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
-        {
-            Name = NameList.RandomName("daemon");
-            Body = 10;
-            BaseSoundID = 357;
+	[CorpseName("a daemon corpse")]
+	public class Daemon : BaseCreature
+	{
+		[Constructable]
+		public Daemon()
+			: base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
+		{
+			Name = NameList.RandomName("daemon");
+			Body = 10;
+			BaseSoundID = 357;
 
-            SetStr(7476, 10505);
-            SetDex(7600, 9500);
-            SetInt(6301, 9325);
+			SetStr(7476, 10505);
+			SetDex(7600, 9500);
+			SetInt(6301, 9325);
 
-            SetHits(5206, 6303);
+			SetHits(5206, 6303);
 			SetStam(3100, 3120);
 			SetMana(3100, 3120);
 
-			SetAttackSpeed( 5.0 );
-            SetDamage(170, 324);
+			SetAttackSpeed(5.0);
+			SetDamage(170, 324);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 45, 60);
-            SetResistance(ResistanceType.Fire, 50, 60);
-            SetResistance(ResistanceType.Cold, 30, 40);
-            SetResistance(ResistanceType.Poison, 20, 30);
-            SetResistance(ResistanceType.Energy, 30, 40);
+			SetResistance(ResistanceType.Physical, 45, 60);
+			SetResistance(ResistanceType.Fire, 50, 60);
+			SetResistance(ResistanceType.Cold, 30, 40);
+			SetResistance(ResistanceType.Poison, 20, 30);
+			SetResistance(ResistanceType.Energy, 30, 40);
 
-            SetSkill(SkillName.EvalInt, 70.1, 75.0);
-            SetSkill(SkillName.Magery, 70.1, 75.0);
-            SetSkill(SkillName.MagicResist, 65.1, 75.0);
-            SetSkill(SkillName.Tactics, 70.1, 75.0);
-            SetSkill(SkillName.Wrestling, 70.1, 75.0);
+			SetSkill(SkillName.EvalInt, 70.1, 75.0);
+			SetSkill(SkillName.Magery, 70.1, 75.0);
+			SetSkill(SkillName.MagicResist, 65.1, 75.0);
+			SetSkill(SkillName.Tactics, 70.1, 75.0);
+			SetSkill(SkillName.Wrestling, 70.1, 75.0);
 
-            Fame = 15000;
-            Karma = -15000;
+			Fame = 15000;
+			Karma = -15000;
 
-            VirtualArmor = 58;
+			VirtualArmor = 58;
 
-            switch (Utility.Random(20))
-            {
-                case 0:
-                    PackItem(new LichFormScroll());
-                    break;
-                case 1:
-                    PackItem(new PoisonStrikeScroll());
-                    break;
-                case 2:
-                    PackItem(new StrangleScroll());
-                    break;
-                case 3:
-                    PackItem(new VengefulSpiritScroll());
-                    break;
-                case 4:
-                    PackItem(new WitherScroll());
-                    break;
-            }
+			switch (Utility.Random(20))
+			{
+				case 0:
+					PackItem(new LichFormScroll());
+					break;
+				case 1:
+					PackItem(new PoisonStrikeScroll());
+					break;
+				case 2:
+					PackItem(new StrangleScroll());
+					break;
+				case 3:
+					PackItem(new VengefulSpiritScroll());
+					break;
+				case 4:
+					PackItem(new WitherScroll());
+					break;
+			}
 
+			ControlSlots = Core.SE ? 4 : 5;
+		}
 
-            ControlSlots = Core.SE ? 4 : 5;
-        }
+		public Daemon(Serial serial)
+			: base(serial) { }
 
-        public Daemon(Serial serial)
-            : base(serial)
-        {
-        }
+		public override double DispelDifficulty
+		{
+			get { return 125.0; }
+		}
 
-        public override double DispelDifficulty
-        {
-            get { return 125.0; }
-        }
+		public override double DispelFocus
+		{
+			get { return 45.0; }
+		}
 
-        public override double DispelFocus
-        {
-            get { return 45.0; }
-        }
+		public override Faction FactionAllegiance
+		{
+			get { return Shadowlords.Instance; }
+		}
 
-        public override Faction FactionAllegiance
-        {
-            get { return Shadowlords.Instance; }
-        }
+		public override Ethic EthicAllegiance
+		{
+			get { return Ethic.Evil; }
+		}
 
-        public override Ethic EthicAllegiance
-        {
-            get { return Ethic.Evil; }
-        }
+		public override bool CanRummageCorpses
+		{
+			get { return true; }
+		}
 
-        public override bool CanRummageCorpses
-        {
-            get { return true; }
-        }
+		public override Poison PoisonImmune
+		{
+			get { return Poison.Regular; }
+		}
 
-        public override Poison PoisonImmune
-        {
-            get { return Poison.Regular; }
-        }
+		public override int TreasureMapLevel
+		{
+			get { return 4; }
+		}
 
-        public override int TreasureMapLevel
-        {
-            get { return 4; }
-        }
+		public override int Meat
+		{
+			get { return 1; }
+		}
 
-        public override int Meat
-        {
-            get { return 1; }
-        }
+		public override bool CanFly
+		{
+			get { return true; }
+		}
 
-        public override bool CanFly
-        {
-            get { return true; }
-        }
+		public override void GenerateLoot()
+		{
+			AddLoot(LootPack.Rich);
+			AddLoot(LootPack.Average, 2);
+			AddLoot(LootPack.MedScrolls, 2);
+		}
 
-        public override void GenerateLoot()
-        {
-            AddLoot(LootPack.Rich);
-            AddLoot(LootPack.Average, 2);
-            AddLoot(LootPack.MedScrolls, 2);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write(0);
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write(0);
-        }
-
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            var version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			var version = reader.ReadInt();
+		}
+	}
 }

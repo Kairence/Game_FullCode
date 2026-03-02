@@ -1,12 +1,11 @@
 #region References
 using System;
 using System.Collections;
-using Server.Regions;
-
 using Server.Engines.XmlSpawner2;
 using Server.Factions;
 using Server.Mobiles;
 using Server.Network;
+using Server.Regions;
 using Server.Spells;
 using Server.Spells.Spellweaving;
 using Server.Targeting;
@@ -31,7 +30,7 @@ namespace Server.SkillHandlers
 		{
 			SkillInfo.Table[(int)SkillName.AnimalTaming].Callback = OnUse;
 		}
-		
+
 		public static TimeSpan OnUse(Mobile m)
 		{
 			m.RevealingAction();
@@ -66,15 +65,22 @@ namespace Server.SkillHandlers
 		{
 			// 강인함 1당 0.1% 보정 (400이면 1.4배, -400이면 0.6배)
 			double scalar = 1.0 + (bc.Loyalty / 1000.0);
-			if (scalar < 0.1) scalar = 0.1; // 최소치 방어
+			if (scalar < 0.1)
+				scalar = 0.1; // 최소치 방어
 
-			if (bc.RawStr > 0) bc.RawStr = (int)Math.Max(1, bc.RawStr * scalar);
-			if (bc.RawDex > 0) bc.RawDex = (int)Math.Max(1, bc.RawDex * scalar);
-			if (bc.RawInt > 0) bc.RawInt = (int)Math.Max(1, bc.RawInt * scalar);
-			
-			if (bc.HitsMaxSeed > 0) bc.HitsMaxSeed = (int)Math.Max(1, bc.HitsMaxSeed * scalar);
-			if (bc.StamMaxSeed > 0) bc.StamMaxSeed = (int)Math.Max(1, bc.StamMaxSeed * scalar);
-			if (bc.ManaMaxSeed > 0) bc.ManaMaxSeed = (int)Math.Max(1, bc.ManaMaxSeed * scalar);
+			if (bc.RawStr > 0)
+				bc.RawStr = (int)Math.Max(1, bc.RawStr * scalar);
+			if (bc.RawDex > 0)
+				bc.RawDex = (int)Math.Max(1, bc.RawDex * scalar);
+			if (bc.RawInt > 0)
+				bc.RawInt = (int)Math.Max(1, bc.RawInt * scalar);
+
+			if (bc.HitsMaxSeed > 0)
+				bc.HitsMaxSeed = (int)Math.Max(1, bc.HitsMaxSeed * scalar);
+			if (bc.StamMaxSeed > 0)
+				bc.StamMaxSeed = (int)Math.Max(1, bc.StamMaxSeed * scalar);
+			if (bc.ManaMaxSeed > 0)
+				bc.ManaMaxSeed = (int)Math.Max(1, bc.ManaMaxSeed * scalar);
 
 			bc.Hits = bc.HitsMax;
 			bc.Stam = bc.StamMax;
@@ -87,9 +93,9 @@ namespace Server.SkillHandlers
 			// 기획에 따라 스킬은 성장 및 변동이 없으므로 아무 작업도 하지 않음
 			return;
 		}
+
 		public static void ScaleSkills(BaseCreature bc, double scalar, double capScalar, bool firstTame)
 		{
-			
 			// 기획에 따라 스킬은 성장 및 변동이 없으므로 아무 작업도 하지 않음
 			return;
 			for (int i = 0; i < bc.Skills.Length; ++i)
@@ -133,7 +139,7 @@ namespace Server.SkillHandlers
 					if (targeted is BaseCreature)
 					{
 						BaseCreature creature = (BaseCreature)targeted;
-						
+
 						if (!creature.Tamable || creature.Region is DungeonRegion)
 						{
 							creature.PrivateOverheadMessage(MessageType.Regular, 0x3B2, 1049655, from.NetState);
@@ -154,7 +160,10 @@ namespace Server.SkillHandlers
 						{
 							creature.PrivateOverheadMessage(MessageType.Regular, 0x3B2, 1054025, from.NetState);
 						}
-						else if (DarkWolfFamiliar.CheckMastery(from, creature) || from.Skills[SkillName.AnimalTaming].Value >= creature.CurrentTameSkill)
+						else if (
+							DarkWolfFamiliar.CheckMastery(from, creature)
+							|| from.Skills[SkillName.AnimalTaming].Value >= creature.CurrentTameSkill
+						)
 						{
 							if (m_BeingTamed.Contains(targeted))
 							{
@@ -165,7 +174,8 @@ namespace Server.SkillHandlers
 								creature.PrivateOverheadMessage(MessageType.Regular, 0x3B2, 502805, from.NetState);
 								creature.PlaySound(creature.GetAngerSound());
 								creature.Direction = creature.GetDirectionTo(from);
-								if (from is PlayerMobile) creature.Combatant = from;
+								if (from is PlayerMobile)
+									creature.Combatant = from;
 							}
 							else
 							{
@@ -173,7 +183,7 @@ namespace Server.SkillHandlers
 								m_BeingTamed[targeted] = from;
 
 								from.LocalOverheadMessage(MessageType.Emote, 0x59, 1010597); // You start to tame...
-								
+
 								new InternalTimer(from, creature).Start();
 							}
 						}
@@ -190,12 +200,12 @@ namespace Server.SkillHandlers
 				private readonly Mobile m_Tamer;
 				private readonly BaseCreature m_Creature;
 				private readonly DateTime m_StartTime;
-				private readonly int m_MaxSuccessRequired; 
+				private readonly int m_MaxSuccessRequired;
 				private int m_CurrentSuccessCount = 0;
 				private bool m_Paralyzed;
 
 				public InternalTimer(Mobile tamer, BaseCreature creature)
-					: base(TimeSpan.FromSeconds(3.0), TimeSpan.FromSeconds(3.0)) 
+					: base(TimeSpan.FromSeconds(3.0), TimeSpan.FromSeconds(3.0))
 				{
 					m_Tamer = tamer;
 					m_Creature = creature;
@@ -276,12 +286,13 @@ namespace Server.SkillHandlers
 
 						// 경험치 획득 로직
 						double expGain = minSkill * (1.1 - (currentChance * 0.01));
-						m_Tamer.CheckSkill(SkillName.AnimalTaming, expGain); 
+						m_Tamer.CheckSkill(SkillName.AnimalTaming, expGain);
 
 						if (!alreadyOwned)
 							m_Tamer.CheckTargetSkill(SkillName.AnimalLore, m_Creature, 0.0, 200.0);
 
-						if (m_Creature.Paralyzed) m_Paralyzed = true;
+						if (m_Creature.Paralyzed)
+							m_Paralyzed = true;
 
 						if (m_CurrentSuccessCount >= m_MaxSuccessRequired)
 						{
@@ -321,7 +332,7 @@ namespace Server.SkillHandlers
 					m_Creature.PrivateOverheadMessage(MessageType.Regular, 0x3B2, 1080913, m_Tamer.NetState);
 
 					m_Creature.SetControlMaster(m_Tamer);
-					
+
 					// [스킬 보너스 100레벨 고려] 50레벨 이상이면 즉시 본디드 (유저님 기획)
 					if (m_Tamer.Skills[SkillName.AnimalTaming].Value >= 100.0)
 						m_Creature.IsBonded = true;
@@ -348,8 +359,10 @@ namespace Server.SkillHandlers
 				private bool CanPath()
 				{
 					IPoint3D p = m_Tamer;
-					if (p == null) return false;
-					if (m_Creature.InRange(new Point3D(p), 1)) return true;
+					if (p == null)
+						return false;
+					if (m_Creature.InRange(new Point3D(p), 1))
+						return true;
 					MovementPath path = new MovementPath(m_Creature, new Point3D(p));
 					return path.Success;
 				}

@@ -7,8 +7,7 @@ namespace Server.Mobiles
 	public class MeleeAI : BaseAI
 	{
 		public MeleeAI(BaseCreature m)
-			: base(m)
-		{ }
+			: base(m) { }
 
 		public override bool DoActionWander()
 		{
@@ -33,7 +32,13 @@ namespace Server.Mobiles
 		{
 			var c = m_Mobile.Combatant;
 
-			if (c == null || c.Deleted || c.Map != m_Mobile.Map || !c.Alive || (c is Mobile && ((Mobile)c).IsDeadBondedPet))
+			if (
+				c == null
+				|| c.Deleted
+				|| c.Map != m_Mobile.Map
+				|| !c.Alive
+				|| (c is Mobile && ((Mobile)c).IsDeadBondedPet)
+			)
 			{
 				m_Mobile.DebugSay("My combatant is gone, so my guard is up");
 

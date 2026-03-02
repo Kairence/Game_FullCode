@@ -4,62 +4,54 @@ using Server.Mobiles;
 
 namespace Server.Engines.Quests.Ninja
 {
-    public class JedahEntille : BaseQuester
-    {
-        [Constructable]
-        public JedahEntille()
-            : base("the Silent")
-        {
-        }
+	public class JedahEntille : BaseQuester
+	{
+		[Constructable]
+		public JedahEntille()
+			: base("the Silent") { }
 
-        public JedahEntille(Serial serial)
-            : base(serial)
-        {
-        }
+		public JedahEntille(Serial serial)
+			: base(serial) { }
 
-        public override int TalkNumber
-        {
-            get
-            {
-                return -1;
-            }
-        }
-        public override void InitBody()
-        {
-            this.InitStats(100, 100, 25);
+		public override int TalkNumber
+		{
+			get { return -1; }
+		}
 
-            this.Hue = 0x83FE;
-            this.Female = true;
-            this.Body = 0x191;
-            this.Name = "Jedah Entille";
-        }
+		public override void InitBody()
+		{
+			this.InitStats(100, 100, 25);
 
-        public override void InitOutfit()
-        {
-            this.HairItemID = 0x203C;
-            this.HairHue = 0x6BE;
+			this.Hue = 0x83FE;
+			this.Female = true;
+			this.Body = 0x191;
+			this.Name = "Jedah Entille";
+		}
 
-            this.AddItem(new PlainDress(0x528));
-            this.AddItem(new ThighBoots());
-            this.AddItem(new FloppyHat());
-        }
+		public override void InitOutfit()
+		{
+			this.HairItemID = 0x203C;
+			this.HairHue = 0x6BE;
 
-        public override void OnTalk(PlayerMobile player, bool contextMenu)
-        {
-        }
+			this.AddItem(new PlainDress(0x528));
+			this.AddItem(new ThighBoots());
+			this.AddItem(new FloppyHat());
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void OnTalk(PlayerMobile player, bool contextMenu) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

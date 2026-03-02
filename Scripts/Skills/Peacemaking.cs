@@ -1,10 +1,10 @@
 #region References
 using System;
+using Server.Engines.Quests;
 using Server.Engines.XmlSpawner2;
 using Server.Items;
 using Server.Mobiles;
 using Server.Targeting;
-using Server.Engines.Quests;
 #endregion
 
 namespace Server.SkillHandlers
@@ -33,10 +33,10 @@ namespace Server.SkillHandlers
 			from.NextSkillTime = Core.TickCount + 21600000;
 		}
 
-        public static bool UnderEffects(Mobile m)
-        {
-            return m is BaseCreature && ((BaseCreature)m).BardPacified;
-        }
+		public static bool UnderEffects(Mobile m)
+		{
+			return m is BaseCreature && ((BaseCreature)m).BardPacified;
+		}
 
 		public class InternalTarget : Target
 		{
@@ -73,21 +73,24 @@ namespace Server.SkillHandlers
 				{
 					m_SetSkillTime = false;
 
-                    int masteryBonus = 0;
+					int masteryBonus = 0;
 
-                    if (from is PlayerMobile)
-                        masteryBonus = Spells.SkillMasteries.BardSpell.GetMasteryBonus((PlayerMobile)from, SkillName.Peacemaking);
+					if (from is PlayerMobile)
+						masteryBonus = Spells.SkillMasteries.BardSpell.GetMasteryBonus(
+							(PlayerMobile)from,
+							SkillName.Peacemaking
+						);
 
 					if (targeted == from)
 					{
 						// Standard mode : reset combatants for everyone in the area
-                        if (from.Player && !BaseInstrument.CheckMusicianship(from))
+						if (from.Player && !BaseInstrument.CheckMusicianship(from))
 						{
 							from.SendLocalizedMessage(500612); // You play poorly, and there is no effect.
 							m_Instrument.PlayInstrumentBadly(from);
 							m_Instrument.ConsumeUse(from);
 
-                            from.NextSkillTime = Core.TickCount + (10000 - ((masteryBonus / 5) * 1000));
+							from.NextSkillTime = Core.TickCount + (10000 - ((masteryBonus / 5) * 1000));
 						}
 						else if (!from.CheckSkill(SkillName.Peacemaking, 0.0, 120.0))
 						{
@@ -95,7 +98,7 @@ namespace Server.SkillHandlers
 							m_Instrument.PlayInstrumentBadly(from);
 							m_Instrument.ConsumeUse(from);
 
-                            from.NextSkillTime = Core.TickCount + (10000 - ((masteryBonus / 5) * 1000));
+							from.NextSkillTime = Core.TickCount + (10000 - ((masteryBonus / 5) * 1000));
 						}
 						else
 						{
@@ -110,12 +113,16 @@ namespace Server.SkillHandlers
 								int range = BaseInstrument.GetBardRange(from, SkillName.Peacemaking);
 
 								bool calmed = false;
-                                IPooledEnumerable eable = from.GetMobilesInRange(range);
+								IPooledEnumerable eable = from.GetMobilesInRange(range);
 
 								foreach (Mobile m in eable)
 								{
-									if ((m is BaseCreature && ((BaseCreature)m).Uncalmable) ||
-										(m is BaseCreature && ((BaseCreature)m).AreaPeaceImmune) || m == from || !from.CanBeHarmful(m, false))
+									if (
+										(m is BaseCreature && ((BaseCreature)m).Uncalmable)
+										|| (m is BaseCreature && ((BaseCreature)m).AreaPeaceImmune)
+										|| m == from
+										|| !from.CanBeHarmful(m, false)
+									)
 									{
 										continue;
 									}
@@ -131,7 +138,7 @@ namespace Server.SkillHandlers
 										((BaseCreature)m).Pacify(from, DateTime.UtcNow + TimeSpan.FromSeconds(1.0));
 									}
 								}
-                                eable.Free();
+								eable.Free();
 
 								if (!calmed)
 								{
@@ -164,7 +171,7 @@ namespace Server.SkillHandlers
 							from.SendLocalizedMessage(1049527); // That creature is already being calmed.
 							m_SetSkillTime = true;
 						}
-                        else if (from.Player && !BaseInstrument.CheckMusicianship(from))
+						else if (from.Player && !BaseInstrument.CheckMusicianship(from))
 						{
 							from.SendLocalizedMessage(500612); // You play poorly, and there is no effect.
 							from.NextSkillTime = Core.TickCount + 5000;
@@ -181,8 +188,8 @@ namespace Server.SkillHandlers
 								diff -= (music - 100.0) * 0.5;
 							}
 
-                            if (masteryBonus > 0)
-                                diff -= (diff * ((double)masteryBonus / 100));
+							if (masteryBonus > 0)
+								diff -= (diff * ((double)masteryBonus / 100));
 
 							if (!from.CheckTargetSkill(SkillName.Peacemaking, targ, diff - 25.0, diff + 25.0))
 							{
@@ -190,14 +197,14 @@ namespace Server.SkillHandlers
 								m_Instrument.PlayInstrumentBadly(from);
 								m_Instrument.ConsumeUse(from);
 
-                                from.NextSkillTime = Core.TickCount + (10000 - ((masteryBonus / 5) * 1000));
+								from.NextSkillTime = Core.TickCount + (10000 - ((masteryBonus / 5) * 1000));
 							}
 							else
 							{
 								m_Instrument.PlayInstrumentWell(from);
 								m_Instrument.ConsumeUse(from);
 
-                                from.NextSkillTime = Core.TickCount + (5000 - ((masteryBonus / 5) * 1000));
+								from.NextSkillTime = Core.TickCount + (5000 - ((masteryBonus / 5) * 1000));
 
 								if (targ is BaseCreature)
 								{
@@ -221,18 +228,21 @@ namespace Server.SkillHandlers
 
 									bc.Pacify(from, DateTime.UtcNow + TimeSpan.FromSeconds(seconds));
 
-                                    #region Bard Mastery Quest
-                                    if (from is PlayerMobile)
-                                    {
-                                        BaseQuest quest = QuestHelper.GetQuest((PlayerMobile)from, typeof(TheBeaconOfHarmonyQuest));
+									#region Bard Mastery Quest
+									if (from is PlayerMobile)
+									{
+										BaseQuest quest = QuestHelper.GetQuest(
+											(PlayerMobile)from,
+											typeof(TheBeaconOfHarmonyQuest)
+										);
 
-                                        if (quest != null)
-                                        {
-                                            foreach (BaseObjective objective in quest.Objectives)
-                                                objective.Update(bc);
-                                        }
-                                    }
-                                    #endregion
+										if (quest != null)
+										{
+											foreach (BaseObjective objective in quest.Objectives)
+												objective.Update(bc);
+										}
+									}
+									#endregion
 								}
 								else
 								{

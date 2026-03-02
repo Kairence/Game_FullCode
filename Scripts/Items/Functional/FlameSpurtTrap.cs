@@ -2,183 +2,186 @@ using System;
 
 namespace Server.Items
 {
-    public class FlameSpurtTrap : BaseTrap
-    {
-        private Item m_Spurt;
-        private Timer m_Timer;
-        [Constructable]
-        public FlameSpurtTrap()
-            : base(0x1B71)
-        {
-            this.Visible = false;
-        }
+	public class FlameSpurtTrap : BaseTrap
+	{
+		private Item m_Spurt;
+		private Timer m_Timer;
 
-        public FlameSpurtTrap(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public FlameSpurtTrap()
+			: base(0x1B71)
+		{
+			this.Visible = false;
+		}
 
-        public virtual void StartTimer()
-        {
-            if (this.m_Timer == null)
-                this.m_Timer = Timer.DelayCall(TimeSpan.FromSeconds(1.0), TimeSpan.FromSeconds(1.0), new TimerCallback(Refresh));
-        }
+		public FlameSpurtTrap(Serial serial)
+			: base(serial) { }
 
-        public virtual void StopTimer()
-        {
-            if (this.m_Timer != null)
-                this.m_Timer.Stop();
+		public virtual void StartTimer()
+		{
+			if (this.m_Timer == null)
+				this.m_Timer = Timer.DelayCall(
+					TimeSpan.FromSeconds(1.0),
+					TimeSpan.FromSeconds(1.0),
+					new TimerCallback(Refresh)
+				);
+		}
 
-            this.m_Timer = null;
-        }
+		public virtual void StopTimer()
+		{
+			if (this.m_Timer != null)
+				this.m_Timer.Stop();
 
-        public virtual void CheckTimer()
-        {
-            Map map = this.Map;
+			this.m_Timer = null;
+		}
 
-            if (map != null && map.GetSector(this.GetWorldLocation()).Active)
-                this.StartTimer();
-            else
-                this.StopTimer();
-        }
+		public virtual void CheckTimer()
+		{
+			Map map = this.Map;
 
-        public override void OnLocationChange(Point3D oldLocation)
-        {
-            base.OnLocationChange(oldLocation);
+			if (map != null && map.GetSector(this.GetWorldLocation()).Active)
+				this.StartTimer();
+			else
+				this.StopTimer();
+		}
 
-            this.CheckTimer();
-        }
+		public override void OnLocationChange(Point3D oldLocation)
+		{
+			base.OnLocationChange(oldLocation);
 
-        public override void OnMapChange()
-        {
-            base.OnMapChange();
+			this.CheckTimer();
+		}
 
-            this.CheckTimer();
-        }
+		public override void OnMapChange()
+		{
+			base.OnMapChange();
 
-        public override void OnSectorActivate()
-        {
-            base.OnSectorActivate();
+			this.CheckTimer();
+		}
 
-            this.StartTimer();
-        }
+		public override void OnSectorActivate()
+		{
+			base.OnSectorActivate();
 
-        public override void OnSectorDeactivate()
-        {
-            base.OnSectorDeactivate();
+			this.StartTimer();
+		}
 
-            this.StopTimer();
-        }
+		public override void OnSectorDeactivate()
+		{
+			base.OnSectorDeactivate();
 
-        public override void OnDelete()
-        {
-            base.OnDelete();
+			this.StopTimer();
+		}
 
-            if (this.m_Spurt != null)
-                this.m_Spurt.Delete();
-        }
+		public override void OnDelete()
+		{
+			base.OnDelete();
 
-        public virtual void Refresh()
-        {
-            if (this.Deleted)
-                return;
+			if (this.m_Spurt != null)
+				this.m_Spurt.Delete();
+		}
 
-            bool foundPlayer = false;
-            IPooledEnumerable eable = GetMobilesInRange(3);
+		public virtual void Refresh()
+		{
+			if (this.Deleted)
+				return;
 
-            foreach (Mobile mob in eable)
-            {
-                if (!mob.Player || !mob.Alive || mob.IsStaff())
-                    continue;
+			bool foundPlayer = false;
+			IPooledEnumerable eable = GetMobilesInRange(3);
 
-                if (((this.Z + 8) >= mob.Z && (mob.Z + 16) > this.Z))
-                {
-                    foundPlayer = true;
-                    break;
-                }
-            }
-            eable.Free();
+			foreach (Mobile mob in eable)
+			{
+				if (!mob.Player || !mob.Alive || mob.IsStaff())
+					continue;
 
-            if (!foundPlayer)
-            {
-                if (this.m_Spurt != null)
-                    this.m_Spurt.Delete();
+				if (((this.Z + 8) >= mob.Z && (mob.Z + 16) > this.Z))
+				{
+					foundPlayer = true;
+					break;
+				}
+			}
+			eable.Free();
 
-                this.m_Spurt = null;
-            }
-            else if (this.m_Spurt == null || this.m_Spurt.Deleted)
-            {
-                this.m_Spurt = new Static(0x3709);
-                this.m_Spurt.MoveToWorld(this.Location, this.Map);
+			if (!foundPlayer)
+			{
+				if (this.m_Spurt != null)
+					this.m_Spurt.Delete();
 
-                Effects.PlaySound(this.GetWorldLocation(), this.Map, 0x309);
-            }
-        }
+				this.m_Spurt = null;
+			}
+			else if (this.m_Spurt == null || this.m_Spurt.Deleted)
+			{
+				this.m_Spurt = new Static(0x3709);
+				this.m_Spurt.MoveToWorld(this.Location, this.Map);
 
-        public override bool OnMoveOver(Mobile m)
-        {
-            if (m.IsPlayer())
-                return true;
+				Effects.PlaySound(this.GetWorldLocation(), this.Map, 0x309);
+			}
+		}
 
-            if (m.Player && m.Alive)
-            {
-                this.CheckTimer();
+		public override bool OnMoveOver(Mobile m)
+		{
+			if (m.IsPlayer())
+				return true;
 
-                Spells.SpellHelper.Damage(TimeSpan.FromTicks(1), m, m, Utility.RandomMinMax(1, 30));
-                m.PlaySound(m.Female ? 0x327 : 0x437);
-            }
+			if (m.Player && m.Alive)
+			{
+				this.CheckTimer();
 
-            return false;
-        }
+				Spells.SpellHelper.Damage(TimeSpan.FromTicks(1), m, m, Utility.RandomMinMax(1, 30));
+				m.PlaySound(m.Female ? 0x327 : 0x437);
+			}
 
-        public override void OnMovement(Mobile m, Point3D oldLocation)
-        {
-            base.OnMovement(m, oldLocation);
+			return false;
+		}
 
-            if (m.Location == oldLocation || !m.Player || !m.Alive || m.IsStaff())
-                return;
+		public override void OnMovement(Mobile m, Point3D oldLocation)
+		{
+			base.OnMovement(m, oldLocation);
 
-            if (this.CheckRange(m.Location, oldLocation, 1))
-            {
-                this.CheckTimer();
+			if (m.Location == oldLocation || !m.Player || !m.Alive || m.IsStaff())
+				return;
 
-                Spells.SpellHelper.Damage(TimeSpan.FromTicks(1), m, m, Utility.RandomMinMax(1, 10));
-                m.PlaySound(m.Female ? 0x327 : 0x437);
+			if (this.CheckRange(m.Location, oldLocation, 1))
+			{
+				this.CheckTimer();
 
-                if (m.Body.IsHuman)
-                    m.Animate(20, 1, 1, true, false, 0);
-            }
-        }
+				Spells.SpellHelper.Damage(TimeSpan.FromTicks(1), m, m, Utility.RandomMinMax(1, 10));
+				m.PlaySound(m.Female ? 0x327 : 0x437);
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+				if (m.Body.IsHuman)
+					m.Animate(20, 1, 1, true, false, 0);
+			}
+		}
 
-            writer.Write((int)0); // version
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((Item)this.m_Spurt);
-        }
+			writer.Write((int)0); // version
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((Item)this.m_Spurt);
+		}
 
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            switch ( version )
-            {
-                case 0:
-                    {
-                        Item item = reader.ReadItem();
+			int version = reader.ReadInt();
 
-                        if (item != null)
-                            item.Delete();
+			switch (version)
+			{
+				case 0:
+				{
+					Item item = reader.ReadItem();
 
-                        this.CheckTimer();
+					if (item != null)
+						item.Delete();
 
-                        break;
-                    }
-            }
-        }
-    }
+					this.CheckTimer();
+
+					break;
+				}
+			}
+		}
+	}
 }

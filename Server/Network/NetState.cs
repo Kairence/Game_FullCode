@@ -6,7 +6,6 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-
 using Server.Accounting;
 using Server.Diagnostics;
 using Server.Gumps;
@@ -44,7 +43,8 @@ namespace Server.Network
 		private readonly SendQueue m_SendQueue;
 		private bool m_Running;
 
-		private AsyncCallback m_OnReceive, m_OnSend;
+		private AsyncCallback m_OnReceive,
+			m_OnSend;
 
 		private readonly MessagePump m_MessagePump;
 		private List<Gump> m_Gumps;
@@ -57,10 +57,16 @@ namespace Server.Network
 		private readonly DateTime m_ConnectedOn;
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-        public DateTime ConnectedOn { get { return m_ConnectedOn; } }
+		public DateTime ConnectedOn
+		{
+			get { return m_ConnectedOn; }
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public TimeSpan ConnectedFor { get { return (DateTime.UtcNow - m_ConnectedOn); } }
+		public TimeSpan ConnectedFor
+		{
+			get { return (DateTime.UtcNow - m_ConnectedOn); }
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
 		public uint AuthID { get; set; }
@@ -69,7 +75,10 @@ namespace Server.Network
 		public uint Seed { get; set; }
 
 		[CommandProperty(AccessLevel.Administrator)]
-		public IPAddress Address { get { return m_Address; } }
+		public IPAddress Address
+		{
+			get { return m_Address; }
+		}
 
 		private static bool m_Paused;
 
@@ -77,7 +86,7 @@ namespace Server.Network
 		private enum AsyncState
 		{
 			Pending = 0x01,
-			Paused = 0x02
+			Paused = 0x02,
 		}
 
 		private AsyncState m_AsyncState;
@@ -226,67 +235,130 @@ namespace Server.Network
 			Version70331 = Version70300 | NewMobileIncoming,
 			Version704565 = Version70331 | NewSecureTrading,
 			Version70500 = Version704565 | UltimaStore,
-			Version70610 = Version70500 | EndlessJourney
+			Version70610 = Version70500 | EndlessJourney,
 		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public bool NewSpellbook { get { return ((_ProtocolChanges & ProtocolChanges.NewSpellbook) != 0); } }
+		public bool NewSpellbook
+		{
+			get { return ((_ProtocolChanges & ProtocolChanges.NewSpellbook) != 0); }
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public bool DamagePacket { get { return ((_ProtocolChanges & ProtocolChanges.DamagePacket) != 0); } }
+		public bool DamagePacket
+		{
+			get { return ((_ProtocolChanges & ProtocolChanges.DamagePacket) != 0); }
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public bool Unpack { get { return ((_ProtocolChanges & ProtocolChanges.Unpack) != 0); } }
+		public bool Unpack
+		{
+			get { return ((_ProtocolChanges & ProtocolChanges.Unpack) != 0); }
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public bool BuffIcon { get { return ((_ProtocolChanges & ProtocolChanges.BuffIcon) != 0); } }
+		public bool BuffIcon
+		{
+			get { return ((_ProtocolChanges & ProtocolChanges.BuffIcon) != 0); }
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public bool NewHaven { get { return ((_ProtocolChanges & ProtocolChanges.NewHaven) != 0); } }
+		public bool NewHaven
+		{
+			get { return ((_ProtocolChanges & ProtocolChanges.NewHaven) != 0); }
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public bool ContainerGridLines { get { return ((_ProtocolChanges & ProtocolChanges.ContainerGridLines) != 0); } }
+		public bool ContainerGridLines
+		{
+			get { return ((_ProtocolChanges & ProtocolChanges.ContainerGridLines) != 0); }
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public bool ExtendedSupportedFeatures { get { return ((_ProtocolChanges & ProtocolChanges.ExtendedSupportedFeatures) != 0); } }
+		public bool ExtendedSupportedFeatures
+		{
+			get { return ((_ProtocolChanges & ProtocolChanges.ExtendedSupportedFeatures) != 0); }
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public bool StygianAbyss { get { return ((_ProtocolChanges & ProtocolChanges.StygianAbyss) != 0); } }
+		public bool StygianAbyss
+		{
+			get { return ((_ProtocolChanges & ProtocolChanges.StygianAbyss) != 0); }
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public bool HighSeas { get { return ((_ProtocolChanges & ProtocolChanges.HighSeas) != 0); } }
+		public bool HighSeas
+		{
+			get { return ((_ProtocolChanges & ProtocolChanges.HighSeas) != 0); }
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public bool NewCharacterList { get { return ((_ProtocolChanges & ProtocolChanges.NewCharacterList) != 0); } }
+		public bool NewCharacterList
+		{
+			get { return ((_ProtocolChanges & ProtocolChanges.NewCharacterList) != 0); }
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public bool NewCharacterCreation { get { return ((_ProtocolChanges & ProtocolChanges.NewCharacterCreation) != 0); } }
+		public bool NewCharacterCreation
+		{
+			get { return ((_ProtocolChanges & ProtocolChanges.NewCharacterCreation) != 0); }
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public bool ExtendedStatus { get { return ((_ProtocolChanges & ProtocolChanges.ExtendedStatus) != 0); } }
+		public bool ExtendedStatus
+		{
+			get { return ((_ProtocolChanges & ProtocolChanges.ExtendedStatus) != 0); }
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public bool NewMobileIncoming { get { return ((_ProtocolChanges & ProtocolChanges.NewMobileIncoming) != 0); } }
+		public bool NewMobileIncoming
+		{
+			get { return ((_ProtocolChanges & ProtocolChanges.NewMobileIncoming) != 0); }
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public bool NewSecureTrading { get { return ((_ProtocolChanges & ProtocolChanges.NewSecureTrading) != 0); } }
+		public bool NewSecureTrading
+		{
+			get { return ((_ProtocolChanges & ProtocolChanges.NewSecureTrading) != 0); }
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public bool UltimaStore { get { return ((_ProtocolChanges & ProtocolChanges.UltimaStore) != 0); } }
+		public bool UltimaStore
+		{
+			get { return ((_ProtocolChanges & ProtocolChanges.UltimaStore) != 0); }
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public bool EndlessJourney { get { return ((_ProtocolChanges & ProtocolChanges.EndlessJourney) != 0); } }
+		public bool EndlessJourney
+		{
+			get { return ((_ProtocolChanges & ProtocolChanges.EndlessJourney) != 0); }
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public bool IsUOTDClient { get { return ((Flags & ClientFlags.UOTD) != 0 || (m_Version != null && m_Version.Type == ClientType.UOTD)); } }
+		public bool IsUOTDClient
+		{
+			get
+			{
+				return ((Flags & ClientFlags.UOTD) != 0 || (m_Version != null && m_Version.Type == ClientType.UOTD));
+			}
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public bool IsSAClient { get { return (m_Version != null && m_Version.Type == ClientType.SA); } }
+		public bool IsSAClient
+		{
+			get { return (m_Version != null && m_Version.Type == ClientType.SA); }
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-        public bool IsEnhancedClient { get { return IsUOTDClient || (m_Version != null && m_Version.Major >= 67); } }
+		public bool IsEnhancedClient
+		{
+			get { return IsUOTDClient || (m_Version != null && m_Version.Major >= 67); }
+		}
 
-        public List<SecureTrade> Trades { get { return m_Trades; } }
+		public List<SecureTrade> Trades
+		{
+			get { return m_Trades; }
+		}
 
 		public void ValidateAllTrades()
 		{
@@ -304,8 +376,14 @@ namespace Server.Network
 
 				var trade = m_Trades[i];
 
-				if (trade.From.Mobile.Deleted || trade.To.Mobile.Deleted || !trade.From.Mobile.Alive || !trade.To.Mobile.Alive ||
-					!trade.From.Mobile.InRange(trade.To.Mobile, 2) || trade.From.Mobile.Map != trade.To.Mobile.Map)
+				if (
+					trade.From.Mobile.Deleted
+					|| trade.To.Mobile.Deleted
+					|| !trade.From.Mobile.Alive
+					|| !trade.To.Mobile.Alive
+					|| !trade.From.Mobile.InRange(trade.To.Mobile, 2)
+					|| trade.From.Mobile.Map != trade.To.Mobile.Map
+				)
 				{
 					trade.Cancel();
 				}
@@ -394,25 +472,48 @@ namespace Server.Network
 
 			return newTrade.From.Container;
 		}
-		
+
 		[CommandProperty(AccessLevel.Administrator, true)]
 		public bool CompressionEnabled { get; set; }
 
 		[CommandProperty(AccessLevel.Administrator, true)]
 		public int Sequence { get; set; }
 
-		public List<Gump> Gumps { get { return m_Gumps; } }
-		public List<HuePicker> HuePickers { get { return m_HuePickers; } }
-		public List<IMenu> Menus { get { return m_Menus; } }
+		public List<Gump> Gumps
+		{
+			get { return m_Gumps; }
+		}
+		public List<HuePicker> HuePickers
+		{
+			get { return m_HuePickers; }
+		}
+		public List<IMenu> Menus
+		{
+			get { return m_Menus; }
+		}
 
-		private static int m_GumpCap = 512, m_HuePickerCap = 512, m_MenuCap = 512;
+		private static int m_GumpCap = 512,
+			m_HuePickerCap = 512,
+			m_MenuCap = 512;
 
-		public static int GumpCap { get { return m_GumpCap; } set { m_GumpCap = value; } }
-		public static int HuePickerCap { get { return m_HuePickerCap; } set { m_HuePickerCap = value; } }
-		public static int MenuCap { get { return m_MenuCap; } set { m_MenuCap = value; } }
-		
+		public static int GumpCap
+		{
+			get { return m_GumpCap; }
+			set { m_GumpCap = value; }
+		}
+		public static int HuePickerCap
+		{
+			get { return m_HuePickerCap; }
+			set { m_HuePickerCap = value; }
+		}
+		public static int MenuCap
+		{
+			get { return m_MenuCap; }
+			set { m_MenuCap = value; }
+		}
+
 		[CommandProperty(AccessLevel.Administrator, true)]
-        public int UpdateRange { get; set; }
+		public int UpdateRange { get; set; }
 
 		public void WriteConsole(string text)
 		{
@@ -568,7 +669,7 @@ namespace Server.Network
 		public Mobile Mobile { get; set; }
 
 		public ServerInfo[] ServerInfo { get; set; }
-		
+
 		[CommandProperty(AccessLevel.Administrator)]
 		public IAccount Account { get; set; }
 
@@ -579,16 +680,35 @@ namespace Server.Network
 
 		private static readonly List<NetState> m_Instances = new List<NetState>();
 
-		public static List<NetState> Instances { get { return m_Instances; } }
+		public static List<NetState> Instances
+		{
+			get { return m_Instances; }
+		}
 
-		public const int SendBufferCapacity = 1024, SendBufferSize = 8092;
-		public const int ReceiveBufferCapacity = 1024, ReceiveBufferSize = 2048;
+		public const int SendBufferCapacity = 1024,
+			SendBufferSize = 8092;
+		public const int ReceiveBufferCapacity = 1024,
+			ReceiveBufferSize = 2048;
 
-		private static readonly BufferPool m_SendBufferPool = new BufferPool("Send", SendBufferCapacity, SendBufferSize);
-		private static readonly BufferPool m_ReceiveBufferPool = new BufferPool("Receive", ReceiveBufferCapacity, ReceiveBufferSize);
+		private static readonly BufferPool m_SendBufferPool = new BufferPool(
+			"Send",
+			SendBufferCapacity,
+			SendBufferSize
+		);
+		private static readonly BufferPool m_ReceiveBufferPool = new BufferPool(
+			"Receive",
+			ReceiveBufferCapacity,
+			ReceiveBufferSize
+		);
 
-		public static BufferPool SendBuffers { get { return m_SendBufferPool; } }
-		public static BufferPool ReceiveBuffers { get { return m_ReceiveBufferPool; } }
+		public static BufferPool SendBuffers
+		{
+			get { return m_SendBufferPool; }
+		}
+		public static BufferPool ReceiveBuffers
+		{
+			get { return m_ReceiveBufferPool; }
+		}
 
 		public NetState(Socket socket, MessagePump messagePump)
 		{
@@ -623,7 +743,7 @@ namespace Server.Network
 
 			m_ConnectedOn = DateTime.UtcNow;
 
-            UpdateRange = Core.GlobalUpdateRange;
+			UpdateRange = Core.GlobalUpdateRange;
 
 			if (CreatedCallback != null)
 			{
@@ -1035,7 +1155,11 @@ namespace Server.Network
 
 		private static int m_CoalesceSleep = -1;
 
-		public static int CoalesceSleep { get { return m_CoalesceSleep; } set { m_CoalesceSleep = value; } }
+		public static int CoalesceSleep
+		{
+			get { return m_CoalesceSleep; }
+			set { m_CoalesceSleep = value; }
+		}
 
 		private long m_NextCheckActivity;
 
@@ -1077,21 +1201,22 @@ namespace Server.Network
 					op.WriteLine();
 				}
 			}
-			catch
-			{ }
+			catch { }
 
 			try
 			{
 				Console.WriteLine(ex);
 			}
-			catch
-			{ }
+			catch { }
 		}
 
 		private bool m_Disposing;
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public bool IsDisposing { get { return m_Disposing; } }
+		public bool IsDisposing
+		{
+			get { return m_Disposing; }
+		}
 
 		public void Dispose()
 		{
@@ -1111,7 +1236,7 @@ namespace Server.Network
 			{
 				Flush();
 			}
-			
+
 			try
 			{
 				Socket.Shutdown(SocketShutdown.Both);
@@ -1209,7 +1334,7 @@ namespace Server.Network
 
 					if (m != null)
 					{
-                        m.CloseAllGumps();
+						m.CloseAllGumps();
 
 						m.NetState = null;
 						ns.Mobile = null;
@@ -1230,7 +1355,7 @@ namespace Server.Network
 					{
 						ns.WriteConsole("Disconnected. [{0} Online] [{1}]", m_Instances.Count, a);
 					}
-                    else if (MessagePump.Display(ns))
+					else if (MessagePump.Display(ns))
 					{
 						ns.WriteConsole("Disconnected. [{0} Online]", m_Instances.Count);
 					}
@@ -1241,14 +1366,20 @@ namespace Server.Network
 		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public bool Running { get { return m_Running; } }
+		public bool Running
+		{
+			get { return m_Running; }
+		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
 		public bool Seeded { get; set; }
 
 		public Socket Socket { get; private set; }
 
-		public ByteQueue Buffer { get { return m_Buffer; } }
+		public ByteQueue Buffer
+		{
+			get { return m_Buffer; }
+		}
 
 		public ExpansionInfo ExpansionInfo
 		{
@@ -1258,7 +1389,10 @@ namespace Server.Network
 				{
 					var info = ExpansionInfo.Table[i];
 
-					if ((info.RequiredClient != null && Version >= info.RequiredClient) || ((Flags & info.ClientFlags) != 0))
+					if (
+						(info.RequiredClient != null && Version >= info.RequiredClient)
+						|| ((Flags & info.ClientFlags) != 0)
+					)
 					{
 						return info;
 					}
@@ -1269,7 +1403,10 @@ namespace Server.Network
 		}
 
 		[CommandProperty(AccessLevel.Administrator, true)]
-		public Expansion Expansion { get { return (Expansion)ExpansionInfo.ID; } }
+		public Expansion Expansion
+		{
+			get { return (Expansion)ExpansionInfo.ID; }
+		}
 
 		public bool SupportsExpansion(ExpansionInfo info, bool checkCoreExpansion)
 		{
@@ -1279,11 +1416,11 @@ namespace Server.Network
 			}
 
 			if (info.RequiredClient != null)
-            {
-				return ( IsEnhancedClient || Version >= info.RequiredClient );
-		    }
-	
-            return ((Flags & info.ClientFlags) != 0);
+			{
+				return (IsEnhancedClient || Version >= info.RequiredClient);
+			}
+
+			return ((Flags & info.ClientFlags) != 0);
 		}
 
 		public bool SupportsExpansion(Expansion ex, bool checkCoreExpansion)

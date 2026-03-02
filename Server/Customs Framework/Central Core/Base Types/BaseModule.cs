@@ -1,6 +1,5 @@
 ﻿#region References
 using System;
-
 using Server;
 using Server.Gumps;
 #endregion
@@ -14,8 +13,7 @@ namespace CustomsFramework
 		private DateTime _CreatedTime;
 		private DateTime _LastEditedTime;
 
-		public BaseModule()
-		{ }
+		public BaseModule() { }
 
 		public BaseModule(Mobile from)
 		{
@@ -28,38 +26,65 @@ namespace CustomsFramework
 		}
 
 		public BaseModule(CustomSerial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
-		public override string Name { get { return @"Base Module"; } }
+		public override string Name
+		{
+			get { return @"Base Module"; }
+		}
 
-		public virtual string Description { get { return "Base Module, inherit from this class and override all interface items."; } }
+		public virtual string Description
+		{
+			get { return "Base Module, inherit from this class and override all interface items."; }
+		}
 
-		public virtual string Version { get { return "1.0"; } }
+		public virtual string Version
+		{
+			get { return "1.0"; }
+		}
 
-		public virtual AccessLevel EditLevel { get { return AccessLevel.Developer; } }
+		public virtual AccessLevel EditLevel
+		{
+			get { return AccessLevel.Developer; }
+		}
 
-		public virtual Gump SettingsGump { get { return null; } }
+		public virtual Gump SettingsGump
+		{
+			get { return null; }
+		}
 
 		[CommandProperty(AccessLevel.Administrator)]
-		public Mobile LinkedMobile { get { return _LinkedMobile; } set { LinkMobile(value); } }
+		public Mobile LinkedMobile
+		{
+			get { return _LinkedMobile; }
+			set { LinkMobile(value); }
+		}
 
 		[CommandProperty(AccessLevel.Administrator)]
-		public Item LinkedItem { get { return _LinkedItem; } set { LinkItem(value); } }
+		public Item LinkedItem
+		{
+			get { return _LinkedItem; }
+			set { LinkItem(value); }
+		}
 
 		[CommandProperty(AccessLevel.Administrator)]
-		public DateTime CreatedTime { get { return _CreatedTime; } }
+		public DateTime CreatedTime
+		{
+			get { return _CreatedTime; }
+		}
 
 		[CommandProperty(AccessLevel.Administrator)]
-		public DateTime LastEditedTime { get { return _LastEditedTime; } }
+		public DateTime LastEditedTime
+		{
+			get { return _LastEditedTime; }
+		}
 
 		public override string ToString()
 		{
 			return Name;
 		}
 
-		public override void Prep()
-		{ }
+		public override void Prep() { }
 
 		public override void Delete()
 		{
@@ -175,13 +200,13 @@ namespace CustomsFramework
 			switch (version)
 			{
 				case 0:
-					{
-						LinkedMobile = reader.ReadMobile();
-						LinkedItem = reader.ReadItem();
-						_CreatedTime = reader.ReadDateTime();
-						_LastEditedTime = reader.ReadDateTime();
-						break;
-					}
+				{
+					LinkedMobile = reader.ReadMobile();
+					LinkedItem = reader.ReadItem();
+					_CreatedTime = reader.ReadDateTime();
+					_LastEditedTime = reader.ReadDateTime();
+					break;
+				}
 			}
 		}
 	}

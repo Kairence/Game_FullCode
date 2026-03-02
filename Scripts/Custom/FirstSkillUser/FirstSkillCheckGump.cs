@@ -1,58 +1,122 @@
 using System;
 using Server;
 using Server.Items;
-using Server.Network;
 using Server.Mobiles;
+using Server.Network;
 using Server.Targeting;
+
 //using Server.Engines.CityLoyalty;
 
 namespace Server.Gumps
 {
-    public class FirstSkillCheckGump : Gump
-    {
+	public class FirstSkillCheckGump : Gump
+	{
 		//private const int LabelColor = 0x7FFF;
-        //private const int LabelHue = 0x481;
+		//private const int LabelHue = 0x481;
 
-		private string[] Name = { "¿¬±Ý¼ú", "ÇØºÎÇÐ", "µ¿¹°Áö½Ä", "¾ÆÀÌÅÛ °¨Á¤", "ÀåºñÇÐ", "¹æÆÐ¼ú", "±¸°É", "´ëÀåÀåÀÌ", "È°Á¦ÀÛ¼ú", "ÆòÈ­À¯Áö", "¾ß¿µ¼ú", "¸ñ°ø¼ú", "ÁöµµÁ¦ÀÛ¼ú", "¿ä¸®", "Àº½Å°¨Áö", "ºÒÇùÈ­À½", "Áö´ÉÆò°¡", "Ä¡·á¼ú", "³¬½Ã", "¹ýÀÇÇÐ", "Çãµù", "Àº½ÅÇÏ±â", "µµ¹ß¿¬ÁÖ", "±â·Ï¼ú", "ÀÚ¹°¼è µû±â", "¸¶¹ýÇÐ", "¸¶¹ý ÀúÇ×", "Àü¼ú", "ÈÉÃÄº¸±â", "À½¾Ç¿¬ÁÖ", "Áßµ¶¼ú", "±Ã¼ú", "¿µÈ¥´ëÈ­", "ÈÉÄ¡±â", "ÀçºÀ¼ú", "±æµéÀÌ±â", "¸À °¨Á¤", "±â°è°ø ±â¼ú", "ÃßÀû¼ú", "¼öÀÇÇÐ", "°Ë¼ú", "µÐ±â¼ú", "Ææ½Ì", "·¹½½¸µ", "¹ú¸ñ¼ú", "Ã¤±¤", "¸í»ó", "Àº½ÅÀÌµ¿", "ÇÔÁ¤Á¦°Å", "°­·É¼ú", "ÁýÁß", "±â»çµµ", "¹«»çµµ", "´ÑÀÚ¼ú", "ÁÖ¹®Á¶ÇÕ", "½Åºñ¼ú", "ÀÓºäÀ×", "¾²·ÎÀ×" };
+		private string[] Name =
+		{
+			"ï¿½ï¿½ï¿½Ý¼ï¿½",
+			"ï¿½Øºï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½Ð¼ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",
+			"È°ï¿½ï¿½ï¿½Û¼ï¿½",
+			"ï¿½ï¿½È­ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ß¿ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Û¼ï¿½",
+			"ï¿½ä¸®",
+			"ï¿½ï¿½ï¿½Å°ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½È­ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",
+			"Ä¡ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½",
+			"ï¿½ï¿½ï¿½ß¿ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½Ï¼ï¿½",
+			"ï¿½Ú¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½Äºï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½",
+			"ï¿½ßµï¿½ï¿½ï¿½",
+			"ï¿½Ã¼ï¿½",
+			"ï¿½ï¿½È¥ï¿½ï¿½È­",
+			"ï¿½ï¿½Ä¡ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½Ì±ï¿½",
+			"ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½Ë¼ï¿½",
+			"ï¿½Ð±ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½",
+			"Ã¤ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½É¼ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½ï¿½çµµ",
+			"ï¿½ï¿½ï¿½çµµ",
+			"ï¿½ï¿½ï¿½Ú¼ï¿½",
+			"ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½",
+			"ï¿½Åºï¿½ï¿½",
+			"ï¿½Óºï¿½ï¿½ï¿½",
+			"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",
+		};
 
 		private FirstSkillCheck m_firstskill = null;
 		private Mobile m_From = null;
-        public FirstSkillCheckGump(Mobile from, FirstSkillCheck firstskill) : base(50, 50)
-        {
+
+		public FirstSkillCheckGump(Mobile from, FirstSkillCheck firstskill)
+			: base(50, 50)
+		{
 			m_From = from;
 			m_firstskill = firstskill;
 			from.CloseGump(typeof(FirstSkillCheckGump));
 
-            AddBackground(0, 0, 500, 480, 5054);
+			AddBackground(0, 0, 500, 480, 5054);
 
-            AddHtml(10, 10, 250, 20, "½ºÅ³ Ã¼Å© ½Ã½ºÅÛ", false, false); // <CENTER>HOUSE 			
+			AddHtml(10, 10, 250, 20, "ï¿½ï¿½Å³ Ã¼Å© ï¿½Ã½ï¿½ï¿½ï¿½", false, false); // <CENTER>HOUSE
 			//AddHtml(130, 10, 200, 16, String.Format("{0:#,###}", dungeon.Death[0]), false, false);
 
-            AddHtml(50, 40, 225, 20, "½ºÅ³", false, false); // House Description
-            AddHtml(275, 40, 75, 20, "À¯Àú", false, false); // Storage
-            //AddHtml(350, 40, 150, 20, "»ç¸Á", false, false); // Lockdowns			
+			AddHtml(50, 40, 225, 20, "ï¿½ï¿½Å³", false, false); // House Description
+			AddHtml(275, 40, 75, 20, "ï¿½ï¿½ï¿½ï¿½", false, false); // Storage
+			//AddHtml(350, 40, 150, 20, "ï¿½ï¿½ï¿½", false, false); // Lockdowns
 			int y = 60;
-			for ( int i = 0; i < Name.Length; i++ )
+			for (int i = 0; i < Name.Length; i++)
 			{
-				//ÀÌ¸§
-				AddHtml( 50, y + i * 20, 225, 20, Name[i], false, false);
-				//À¯Àú
-				string name = "¾øÀ½";
-				if( firstskill.Skill[i] )
+				//ï¿½Ì¸ï¿½
+				AddHtml(50, y + i * 20, 225, 20, Name[i], false, false);
+				//ï¿½ï¿½ï¿½ï¿½
+				string name = "ï¿½ï¿½ï¿½ï¿½";
+				if (firstskill.Skill[i])
 				{
 					name = firstskill.User[i];
 					AddButton(10, y + i * 20, 4005, 4007, i + 1, GumpButtonType.Reply, 0);
 				}
 				AddHtml(350, y + i * 20, 200, 16, name, false, false);
-				//»ç¸Á
+				//ï¿½ï¿½ï¿½
 				//AddHtml(350, y + i * 20, 200, 16, String.Format("{0:#,###}", dungeon.Death[i + 1]), false, false);
 			}
 		}
-        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
-        {
-            if (!m_From.CheckAlive() || info.ButtonID == 0)
-                return;
-			
+
+		public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+		{
+			if (!m_From.CheckAlive() || info.ButtonID == 0)
+				return;
+
 			m_firstskill.Skill[info.ButtonID - 1] = false;
 		}
 	}

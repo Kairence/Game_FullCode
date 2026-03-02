@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
 using Server.Commands;
 using Server.Items;
 using Server.Mobiles;
@@ -151,7 +150,8 @@ namespace Server
 						LastReset = DateTime.Now;
 
 						e.Mobile.SendMessage("Rate over Time reset!");
-					});
+					}
+				);
 
 				CommandSystem.Register(
 					"GetROTInfo",
@@ -161,7 +161,7 @@ namespace Server
 						foreach (var kvp in ROTTable)
 						{
 							Console.WriteLine("Player: {0}", kvp.Key.Name);
-							
+
 							var stats = 0;
 
 							if (StatsTable.ContainsKey(kvp.Key))
@@ -172,23 +172,25 @@ namespace Server
 							Console.WriteLine("Stats gained today: {0} of {1}", stats, StatsPerDay.ToString());
 
 							Utility.PushColor(ConsoleColor.Magenta);
-							
+
 							foreach (var kvp2 in kvp.Value)
 							{
 								var pergain = MinutesPerGain(kvp.Key, kvp.Key.Skills[kvp2.Key]);
 								var last = kvp2.Value;
 								var next = last.AddMinutes(pergain);
 
-								var nextg = next < DateTime.Now
-									? "now"
-									: "in " + ((int)(next - DateTime.Now).TotalMinutes).ToString() + " minutes";
+								var nextg =
+									next < DateTime.Now
+										? "now"
+										: "in " + ((int)(next - DateTime.Now).TotalMinutes).ToString() + " minutes";
 
 								Console.WriteLine(
 									"   {0}: last gained {1}, can gain {2} (every {3} minutes)",
 									kvp2.Key.ToString(),
 									last.ToShortTimeString(),
 									nextg,
-									pergain.ToString());
+									pergain.ToString()
+								);
 							}
 
 							Utility.PopColor();
@@ -197,8 +199,10 @@ namespace Server
 						Console.WriteLine("---");
 						Console.WriteLine(
 							"Next Reset: {0} minutes",
-							((LastReset + TimeSpan.FromHours(24) - DateTime.Now)).TotalMinutes.ToString());
-					});
+							((LastReset + TimeSpan.FromHours(24) - DateTime.Now)).TotalMinutes.ToString()
+						);
+					}
+				);
 
 				Utility.PushColor(ConsoleColor.Red);
 				Console.Write("Initializing Siege Perilous Shard...");
@@ -207,7 +211,9 @@ namespace Server
 
 				var toReset = new List<XmlSpawner>();
 
-				foreach (var item in World.Items.Values.OfType<XmlSpawner>().Where(sp => sp.Map == Map.Trammel && sp.Running))
+				foreach (
+					var item in World.Items.Values.OfType<XmlSpawner>().Where(sp => sp.Map == Map.Trammel && sp.Running)
+				)
 				{
 					toReset.Add(item);
 				}
@@ -217,45 +223,57 @@ namespace Server
 					item.DoReset = true;
 				}
 
-				Console.WriteLine("Reset {1} trammel spawners in {0} milliseconds!", Core.TickCount - tick, toReset.Count);
+				Console.WriteLine(
+					"Reset {1} trammel spawners in {0} milliseconds!",
+					Core.TickCount - tick,
+					toReset.Count
+				);
 				Utility.PopColor();
 
 				ColUtility.Free(toReset);
 
-                EventSink.ContainerDroppedTo += OnDropped;
-            }
+				EventSink.ContainerDroppedTo += OnDropped;
+			}
 		}
 
-        public static void OnDropped(ContainerDroppedToEventArgs e)
-        {
-            if (!SiegeShard)
-                return;
+		public static void OnDropped(ContainerDroppedToEventArgs e)
+		{
+			if (!SiegeShard)
+				return;
 
-            var item = e.Dropped;
-            var from = e.Mobile;
-            var cont = e.Container;
+			var item = e.Dropped;
+			var from = e.Mobile;
+			var cont = e.Container;
 
-            if (item != null)
-            {
-                if (cont != from.Backpack && from is PlayerMobile && ((PlayerMobile)from).BlessedItem != null && ((PlayerMobile)from).BlessedItem == item)
-                {
-                    ((PlayerMobile)from).BlessedItem = null;
-                    item.LootType = LootType.Regular;
+			if (item != null)
+			{
+				if (
+					cont != from.Backpack
+					&& from is PlayerMobile
+					&& ((PlayerMobile)from).BlessedItem != null
+					&& ((PlayerMobile)from).BlessedItem == item
+				)
+				{
+					((PlayerMobile)from).BlessedItem = null;
+					item.LootType = LootType.Regular;
 
-                    from.SendLocalizedMessage(1075292, item.Name != null ? item.Name : "#" + item.LabelNumber.ToString()); // ~1_NAME~ has been unblessed.
-                }
-            }
-        }
+					from.SendLocalizedMessage(
+						1075292,
+						item.Name != null ? item.Name : "#" + item.LabelNumber.ToString()
+					); // ~1_NAME~ has been unblessed.
+				}
+			}
+		}
 
-        /// <summary>
-        ///     Called in SpellHelper.cs CheckTravel method
-        /// </summary>
-        /// <param name="m"></param>
+		/// <summary>
+		///     Called in SpellHelper.cs CheckTravel method
+		/// </summary>
+		/// <param name="m"></param>
 		/// <param name="p"></param>
 		/// <param name="map"></param>
-        /// <param name="type"></param>
-        /// <returns>False fails travel check. True must pass other travel checks in SpellHelper.cs</returns>
-        public static bool CheckTravel(Mobile m, Point3D p, Map map, TravelCheckType type)
+		/// <param name="type"></param>
+		/// <returns>False fails travel check. True must pass other travel checks in SpellHelper.cs</returns>
+		public static bool CheckTravel(Mobile m, Point3D p, Map map, TravelCheckType type)
 		{
 			if (m.AccessLevel > AccessLevel.Player)
 				return true;
@@ -285,7 +303,9 @@ namespace Server
 
 		public static bool CanTravelTo(Mobile m, Point3D p, Map map)
 		{
-			return !(Region.Find(p, map) is DungeonRegion) && !SpellHelper.IsAnyT2A(map, p) && !SpellHelper.IsIlshenar(map, p);
+			return !(Region.Find(p, map) is DungeonRegion)
+				&& !SpellHelper.IsAnyT2A(map, p)
+				&& !SpellHelper.IsIlshenar(map, p);
 		}
 
 		public static void OnAfterSave(AfterWorldSaveEventArgs e)
@@ -420,9 +440,22 @@ namespace Server
 
 		private static readonly Type[] _NoSellList =
 		{
-			typeof(BaseIngot), typeof(BaseWoodBoard), typeof(BaseLog), typeof(BaseLeather), typeof(BaseHides), typeof(Cloth),
-			typeof(BoltOfCloth), typeof(UncutCloth), typeof(Wool), typeof(Cotton), typeof(Flax), typeof(SpoolOfThread),
-			typeof(Feather), typeof(Shaft), typeof(Arrow), typeof(Bolt)
+			typeof(BaseIngot),
+			typeof(BaseWoodBoard),
+			typeof(BaseLog),
+			typeof(BaseLeather),
+			typeof(BaseHides),
+			typeof(Cloth),
+			typeof(BoltOfCloth),
+			typeof(UncutCloth),
+			typeof(Wool),
+			typeof(Cotton),
+			typeof(Flax),
+			typeof(SpoolOfThread),
+			typeof(Feather),
+			typeof(Shaft),
+			typeof(Arrow),
+			typeof(Bolt),
 		};
 
 		public static void TryBlessItem(PlayerMobile pm, object targeted)
@@ -437,9 +470,7 @@ namespace Server
 					{
 						pm.BlessedItem.LootType = LootType.Regular;
 
-						pm.SendLocalizedMessage(
-							1075292,
-							pm.BlessedItem.Name ?? "#" + pm.BlessedItem.LabelNumber); // ~1_NAME~ has been unblessed.
+						pm.SendLocalizedMessage(1075292, pm.BlessedItem.Name ?? "#" + pm.BlessedItem.LabelNumber); // ~1_NAME~ has been unblessed.
 
 						pm.BlessedItem = null;
 					}
@@ -450,9 +481,7 @@ namespace Server
 						pm.BlessedItem = item;
 						pm.BlessedItem.LootType = LootType.Blessed;
 
-						pm.SendLocalizedMessage(
-							1075293,
-							pm.BlessedItem.Name ?? "#" + pm.BlessedItem.LabelNumber); // ~1_NAME~ has been blessed.
+						pm.SendLocalizedMessage(1075293, pm.BlessedItem.Name ?? "#" + pm.BlessedItem.LabelNumber); // ~1_NAME~ has been blessed.
 
 						if (old != null)
 						{
@@ -471,8 +500,12 @@ namespace Server
 
 		public static bool CanBlessItem(PlayerMobile pm, Item item)
 		{
-			return (pm.Items.Contains(item) || (pm.Backpack != null && pm.Backpack.Items.Contains(item)) && !item.Stackable &&
-					(item is BaseArmor || item is BaseJewel || item is BaseClothing || item is BaseWeapon));
+			return (
+				pm.Items.Contains(item)
+				|| (pm.Backpack != null && pm.Backpack.Items.Contains(item))
+					&& !item.Stackable
+					&& (item is BaseArmor || item is BaseJewel || item is BaseClothing || item is BaseWeapon)
+			);
 		}
 
 		public static void CheckUsesRemaining(Mobile from, Item item)
@@ -493,12 +526,12 @@ namespace Server
 			}
 			else
 			{
-				if( item is BaseHarvestTool )
+				if (item is BaseHarvestTool)
 				{
 					BaseHarvestTool bht = item as BaseHarvestTool;
 					bht.UsesRemaining--;
-					if( bht.UsesRemaining <= 0 )
-					item.Delete();
+					if (bht.UsesRemaining <= 0)
+						item.Delete();
 
 					from.SendLocalizedMessage(1044038); // You have worn out your tool!
 				}

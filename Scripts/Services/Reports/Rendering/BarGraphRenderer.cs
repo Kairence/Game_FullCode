@@ -5,413 +5,398 @@ using System.Drawing.Imaging;
 
 namespace Server.Engines.Reports
 {
-    // Modified from MS sample
-    //*********************************************************************
-    //
-    // BarGraph Class
-    //
-    // This class uses GDI+ to render Bar Chart.
-    //
-    //*********************************************************************
-    public class BarRegion
-    {
-        public int m_RangeFrom, m_RangeTo;
-        public string m_Name;
-        public BarRegion(int rangeFrom, int rangeTo, string name)
-        {
-            this.m_RangeFrom = rangeFrom;
-            this.m_RangeTo = rangeTo;
-            this.m_Name = name;
-        }
-    }
+	// Modified from MS sample
+	//*********************************************************************
+	//
+	// BarGraph Class
+	//
+	// This class uses GDI+ to render Bar Chart.
+	//
+	//*********************************************************************
+	public class BarRegion
+	{
+		public int m_RangeFrom,
+			m_RangeTo;
+		public string m_Name;
 
-    public class BarGraphRenderer : ChartRenderer
-    {
-        public BarRegion[] _regions;
-        //*********************************************************************
-        //
-        // This method draws all the bars for the graph.
-        //
-        //*********************************************************************
-        public int _interval;
-        private const float _graphLegendSpacer = 15F;
-        private const float	_labelFontSize = 7f;
-        private const int	_legendFontSize = 9;
-        private const float _legendRectangleSize = 10F;
-        private const float _spacer = 5F;
-        private BarGraphRenderMode _renderMode;
-        // Overall related members
-        private Color	_backColor;
-        private string	_fontFamily;
-        private string	_longestTickValue = string.Empty;// Used to calculate max value width
-        private float	_maxTickValueWidth;// Used to calculate left offset of bar graph
-        private float	_totalHeight;
-        private float	_totalWidth;
-        // Graph related members
-        private float	_barWidth;
-        private float	_bottomBuffer;// Space from bottom to x axis
-        private bool	_displayBarData;
-        private Color	_fontColor;
-        private float	_graphHeight;
-        private float	_graphWidth;
-        private float	_maxValue = 0.0f;// = final tick value * tick count
-        private float	_scaleFactor;// = _maxValue / _graphHeight
-        private float	_spaceBtwBars;// For now same as _barWidth
-        private float	_topBuffer;// Space from top to the top of y axis
-        private float	_xOrigin;// x position where graph starts drawing
-        private float	_yOrigin;// y position where graph starts drawing
-        private string	_yLabel;
-        private int _yTickCount;
-        private float	_yTickValue;// Value for each tick = _maxValue/_yTickCount
+		public BarRegion(int rangeFrom, int rangeTo, string name)
+		{
+			this.m_RangeFrom = rangeFrom;
+			this.m_RangeTo = rangeTo;
+			this.m_Name = name;
+		}
+	}
 
-        // Legend related members
-        private bool	_displayLegend;
-        private float	_legendWidth;
-        private string	_longestLabel = string.Empty;// Used to calculate legend width
-        private float	_maxLabelWidth = 0.0f;
-        private string _xTitle, _yTitle;
-        public BarGraphRenderer()
-        {
-            this.AssignDefaultSettings();
-        }
+	public class BarGraphRenderer : ChartRenderer
+	{
+		public BarRegion[] _regions;
 
-        public BarGraphRenderer(Color bgColor)
-        {
-            this.AssignDefaultSettings();
-            this.BackgroundColor = bgColor;
-        }
+		//*********************************************************************
+		//
+		// This method draws all the bars for the graph.
+		//
+		//*********************************************************************
+		public int _interval;
+		private const float _graphLegendSpacer = 15F;
+		private const float _labelFontSize = 7f;
+		private const int _legendFontSize = 9;
+		private const float _legendRectangleSize = 10F;
+		private const float _spacer = 5F;
+		private BarGraphRenderMode _renderMode;
 
-        public string FontFamily 
-        {
-            get
-            {
-                return this._fontFamily;
-            }
-            set
-            {
-                this._fontFamily = value;
-            }
-        }
-        public BarGraphRenderMode RenderMode
-        {
-            get
-            {
-                return this._renderMode;
-            }
-            set
-            {
-                this._renderMode = value;
-            }
-        }
-        public Color BackgroundColor 
-        {
-            set
-            {
-                this._backColor = value;
-            }
-        }
-        public int BottomBuffer 
-        {
-            set
-            {
-                this._bottomBuffer = Convert.ToSingle(value);
-            }
-        }
-        public Color FontColor 
-        {
-            set
-            {
-                this._fontColor = value;
-            }
-        }
-        public int Height 
-        {
-            get
-            {
-                return Convert.ToInt32(this._totalHeight);
-            }
-            set
-            {
-                this._totalHeight = Convert.ToSingle(value);
-            }
-        }
-        public int Width 
-        {
-            get
-            {
-                return Convert.ToInt32(this._totalWidth);
-            }
-            set
-            {
-                this._totalWidth = Convert.ToSingle(value);
-            }
-        }
-        public bool ShowLegend 
-        {
-            get
-            {
-                return this._displayLegend;
-            }
-            set
-            {
-                this._displayLegend = value;
-            }
-        }
-        public bool ShowData 
-        {
-            get
-            {
-                return this._displayBarData;
-            }
-            set
-            {
-                this._displayBarData = value;
-            }
-        }
-        public int TopBuffer 
-        {
-            set
-            {
-                this._topBuffer = Convert.ToSingle(value);
-            }
-        }
-        public string VerticalLabel 
-        {
-            get
-            {
-                return this._yLabel;
-            }
-            set
-            {
-                this._yLabel = value;
-            }
-        }
-        public int VerticalTickCount 
-        {
-            get
-            {
-                return this._yTickCount;
-            }
-            set
-            {
-                this._yTickCount = value;
-            }
-        }
-        public void SetTitles(string xTitle, string yTitle)
-        {
-            this._xTitle = xTitle;
-            this._yTitle = yTitle;
-        }
+		// Overall related members
+		private Color _backColor;
+		private string _fontFamily;
+		private string _longestTickValue = string.Empty; // Used to calculate max value width
+		private float _maxTickValueWidth; // Used to calculate left offset of bar graph
+		private float _totalHeight;
+		private float _totalWidth;
 
-        //*********************************************************************
-        //
-        // This method collects all data points and calculate all the necessary dimensions 
-        // to draw the bar graph.  It is the method called before invoking the Draw() method.
-        // labels is the x values.
-        // values is the y values.
-        //
-        //*********************************************************************
-        public void CollectDataPoints(string[] labels, string[] values)
-        {
-            if (labels.Length == values.Length) 
-            {
-                for (int i = 0; i < labels.Length; i++)
-                {
-                    float temp = Convert.ToSingle(values[i]);
-                    string shortLbl = this.MakeShortLabel(labels[i]);
+		// Graph related members
+		private float _barWidth;
+		private float _bottomBuffer; // Space from bottom to x axis
+		private bool _displayBarData;
+		private Color _fontColor;
+		private float _graphHeight;
+		private float _graphWidth;
+		private float _maxValue = 0.0f; // = final tick value * tick count
+		private float _scaleFactor; // = _maxValue / _graphHeight
+		private float _spaceBtwBars; // For now same as _barWidth
+		private float _topBuffer; // Space from top to the top of y axis
+		private float _xOrigin; // x position where graph starts drawing
+		private float _yOrigin; // y position where graph starts drawing
+		private string _yLabel;
+		private int _yTickCount;
+		private float _yTickValue; // Value for each tick = _maxValue/_yTickCount
 
-                    // For now put 0.0 for start position and sweep size
-                    this.DataPoints.Add(new DataItem(shortLbl, labels[i], temp, 0.0f, 0.0f, this.GetColor(i)));
-				
-                    // Find max value from data; this is only temporary _maxValue
-                    if (this._maxValue < temp)
-                        this._maxValue = temp;
+		// Legend related members
+		private bool _displayLegend;
+		private float _legendWidth;
+		private string _longestLabel = string.Empty; // Used to calculate legend width
+		private float _maxLabelWidth = 0.0f;
+		private string _xTitle,
+			_yTitle;
 
-                    // Find the longest description
-                    if (this._displayLegend) 
-                    {
-                        string currentLbl = labels[i] + " (" + shortLbl + ")";
-                        float currentWidth = this.CalculateImgFontWidth(currentLbl, _legendFontSize, this.FontFamily);
-                        if (this._maxLabelWidth < currentWidth)
-                        {
-                            this._longestLabel = currentLbl;
-                            this._maxLabelWidth = currentWidth;
-                        }
-                    }
-                }
+		public BarGraphRenderer()
+		{
+			this.AssignDefaultSettings();
+		}
 
-                this.CalculateTickAndMax();
-                this.CalculateGraphDimension();
-                this.CalculateBarWidth(this.DataPoints.Count, this._graphWidth);
-                this.CalculateSweepValues();
-            }
-            else
-                throw new Exception("X data count is different from Y data count");
-        }
+		public BarGraphRenderer(Color bgColor)
+		{
+			this.AssignDefaultSettings();
+			this.BackgroundColor = bgColor;
+		}
 
-        //*********************************************************************
-        //
-        // Same as above; called when user doesn't care about the x values
-        //
-        //*********************************************************************
-        public void CollectDataPoints(string[] values)
-        {
-            string[] labels = values;
-            this.CollectDataPoints(labels, values);
-        }
+		public string FontFamily
+		{
+			get { return this._fontFamily; }
+			set { this._fontFamily = value; }
+		}
+		public BarGraphRenderMode RenderMode
+		{
+			get { return this._renderMode; }
+			set { this._renderMode = value; }
+		}
+		public Color BackgroundColor
+		{
+			set { this._backColor = value; }
+		}
+		public int BottomBuffer
+		{
+			set { this._bottomBuffer = Convert.ToSingle(value); }
+		}
+		public Color FontColor
+		{
+			set { this._fontColor = value; }
+		}
+		public int Height
+		{
+			get { return Convert.ToInt32(this._totalHeight); }
+			set { this._totalHeight = Convert.ToSingle(value); }
+		}
+		public int Width
+		{
+			get { return Convert.ToInt32(this._totalWidth); }
+			set { this._totalWidth = Convert.ToSingle(value); }
+		}
+		public bool ShowLegend
+		{
+			get { return this._displayLegend; }
+			set { this._displayLegend = value; }
+		}
+		public bool ShowData
+		{
+			get { return this._displayBarData; }
+			set { this._displayBarData = value; }
+		}
+		public int TopBuffer
+		{
+			set { this._topBuffer = Convert.ToSingle(value); }
+		}
+		public string VerticalLabel
+		{
+			get { return this._yLabel; }
+			set { this._yLabel = value; }
+		}
+		public int VerticalTickCount
+		{
+			get { return this._yTickCount; }
+			set { this._yTickCount = value; }
+		}
 
-        public void DrawRegions(Graphics gfx)
-        {
-            if (this._regions == null)
-                return;
+		public void SetTitles(string xTitle, string yTitle)
+		{
+			this._xTitle = xTitle;
+			this._yTitle = yTitle;
+		}
 
-            using (StringFormat textFormat = new StringFormat())
-            {
-                textFormat.Alignment = StringAlignment.Center;
-                textFormat.LineAlignment = StringAlignment.Center;
+		//*********************************************************************
+		//
+		// This method collects all data points and calculate all the necessary dimensions
+		// to draw the bar graph.  It is the method called before invoking the Draw() method.
+		// labels is the x values.
+		// values is the y values.
+		//
+		//*********************************************************************
+		public void CollectDataPoints(string[] labels, string[] values)
+		{
+			if (labels.Length == values.Length)
+			{
+				for (int i = 0; i < labels.Length; i++)
+				{
+					float temp = Convert.ToSingle(values[i]);
+					string shortLbl = this.MakeShortLabel(labels[i]);
 
-                using (Font font = new Font(this._fontFamily, _labelFontSize))
-                {
-                    using (Brush textBrush = new SolidBrush(this._fontColor))
-                    {
-                        using (Pen solidPen = new Pen(this._fontColor))
-                        {
-                            using (Pen lightPen = new Pen(Color.FromArgb(128, this._fontColor)))
-                            {
-                                float labelWidth = this._barWidth + this._spaceBtwBars;
+					// For now put 0.0 for start position and sweep size
+					this.DataPoints.Add(new DataItem(shortLbl, labels[i], temp, 0.0f, 0.0f, this.GetColor(i)));
 
-                                for (int i = 0; i < this._regions.Length; ++i)
-                                {
-                                    BarRegion reg = this._regions[i];
+					// Find max value from data; this is only temporary _maxValue
+					if (this._maxValue < temp)
+						this._maxValue = temp;
 
-                                    RectangleF rc = new RectangleF(this._xOrigin + (reg.m_RangeFrom * labelWidth), this._yOrigin, (reg.m_RangeTo - reg.m_RangeFrom + 1) * labelWidth, this._graphHeight);
+					// Find the longest description
+					if (this._displayLegend)
+					{
+						string currentLbl = labels[i] + " (" + shortLbl + ")";
+						float currentWidth = this.CalculateImgFontWidth(currentLbl, _legendFontSize, this.FontFamily);
+						if (this._maxLabelWidth < currentWidth)
+						{
+							this._longestLabel = currentLbl;
+							this._maxLabelWidth = currentWidth;
+						}
+					}
+				}
 
-                                    if (rc.X + rc.Width > this._xOrigin + this._graphWidth)
-                                        rc.Width = this._xOrigin + this._graphWidth - rc.X;
+				this.CalculateTickAndMax();
+				this.CalculateGraphDimension();
+				this.CalculateBarWidth(this.DataPoints.Count, this._graphWidth);
+				this.CalculateSweepValues();
+			}
+			else
+				throw new Exception("X data count is different from Y data count");
+		}
 
-                                    using (SolidBrush brsh = new SolidBrush(Color.FromArgb(48, this.GetColor(i))))
-                                        gfx.FillRectangle(brsh, rc);
+		//*********************************************************************
+		//
+		// Same as above; called when user doesn't care about the x values
+		//
+		//*********************************************************************
+		public void CollectDataPoints(string[] values)
+		{
+			string[] labels = values;
+			this.CollectDataPoints(labels, values);
+		}
 
-                                    rc.Offset((rc.Width - 200.0f) * 0.5f, -16.0f);
-                                    rc.Width = 200.0f;
-                                    rc.Height = 20.0f;
+		public void DrawRegions(Graphics gfx)
+		{
+			if (this._regions == null)
+				return;
 
-                                    gfx.DrawString(reg.m_Name, font, textBrush, rc, textFormat);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+			using (StringFormat textFormat = new StringFormat())
+			{
+				textFormat.Alignment = StringAlignment.Center;
+				textFormat.LineAlignment = StringAlignment.Center;
 
-        //*********************************************************************
-        //
-        // This method returns a bar graph bitmap to the calling function.  It is called after 
-        // all dimensions and data points are calculated.
-        //
-        //*********************************************************************
-        public override Bitmap Draw()
-        {
-            int height = Convert.ToInt32(this._totalHeight);
-            int width = Convert.ToInt32(this._totalWidth);
+				using (Font font = new Font(this._fontFamily, _labelFontSize))
+				{
+					using (Brush textBrush = new SolidBrush(this._fontColor))
+					{
+						using (Pen solidPen = new Pen(this._fontColor))
+						{
+							using (Pen lightPen = new Pen(Color.FromArgb(128, this._fontColor)))
+							{
+								float labelWidth = this._barWidth + this._spaceBtwBars;
 
-            Bitmap bmp = new Bitmap(width, height);
-			
-            using (Graphics graph = Graphics.FromImage(bmp))
-            {
-                graph.CompositingQuality = CompositingQuality.HighQuality;
-                graph.SmoothingMode = SmoothingMode.AntiAlias;
+								for (int i = 0; i < this._regions.Length; ++i)
+								{
+									BarRegion reg = this._regions[i];
 
-                using (SolidBrush brsh = new SolidBrush(this._backColor))
-                    graph.FillRectangle(brsh, -1, -1, bmp.Width + 1, bmp.Height + 1);
+									RectangleF rc = new RectangleF(
+										this._xOrigin + (reg.m_RangeFrom * labelWidth),
+										this._yOrigin,
+										(reg.m_RangeTo - reg.m_RangeFrom + 1) * labelWidth,
+										this._graphHeight
+									);
 
-                this.DrawRegions(graph);
-                this.DrawVerticalLabelArea(graph);
-                this.DrawXLabelBack(graph);
-                this.DrawBars(graph);
-                this.DrawXLabelArea(graph);
+									if (rc.X + rc.Width > this._xOrigin + this._graphWidth)
+										rc.Width = this._xOrigin + this._graphWidth - rc.X;
 
-                if (this._displayLegend)
-                    this.DrawLegend(graph);
-            }
+									using (SolidBrush brsh = new SolidBrush(Color.FromArgb(48, this.GetColor(i))))
+										gfx.FillRectangle(brsh, rc);
 
-            return bmp;
-        }
+									rc.Offset((rc.Width - 200.0f) * 0.5f, -16.0f);
+									rc.Width = 200.0f;
+									rc.Height = 20.0f;
 
-        private void DrawBars(Graphics graph)
-        {
-            SolidBrush brsFont = null;
-            Font valFont = null;
-            StringFormat sfFormat = null;
+									gfx.DrawString(reg.m_Name, font, textBrush, rc, textFormat);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 
-            try 
-            {
-                brsFont = new SolidBrush(this._fontColor);
-                valFont = new Font(this._fontFamily, _labelFontSize);
-                sfFormat = new StringFormat();
-                sfFormat.Alignment = StringAlignment.Center;
+		//*********************************************************************
+		//
+		// This method returns a bar graph bitmap to the calling function.  It is called after
+		// all dimensions and data points are calculated.
+		//
+		//*********************************************************************
+		public override Bitmap Draw()
+		{
+			int height = Convert.ToInt32(this._totalHeight);
+			int width = Convert.ToInt32(this._totalWidth);
 
-                PointF[] linePoints = null;
+			Bitmap bmp = new Bitmap(width, height);
 
-                if (this._renderMode == BarGraphRenderMode.Lines)
-                    linePoints = new PointF[this.DataPoints.Count];
+			using (Graphics graph = Graphics.FromImage(bmp))
+			{
+				graph.CompositingQuality = CompositingQuality.HighQuality;
+				graph.SmoothingMode = SmoothingMode.AntiAlias;
 
-                // Draw bars and the value above each bar
-                using (Pen pen = new Pen(this._fontColor, 0.15f))
-                {
-                    using (SolidBrush whiteBrsh = new SolidBrush(Color.FromArgb(128, Color.White)))
-                    {
-                        // 1. 데이터 포인트 좌표 계산 및 막대 그리기
-                        for (int j = 0; j < this.DataPoints.Count; j++)
-                        {
-                            DataItem item = this.DataPoints[j];
-                            float itemY = this._yOrigin + this._graphHeight - item.SweepSize;
-                            float centerX = this._xOrigin + item.StartPos + (this._barWidth / 2);
+				using (SolidBrush brsh = new SolidBrush(this._backColor))
+					graph.FillRectangle(brsh, -1, -1, bmp.Width + 1, bmp.Height + 1);
 
-                            if (this._renderMode == BarGraphRenderMode.Lines)
-                            {
-                                linePoints[j] = new PointF(centerX, itemY);
-                            }
-                            else if (this._renderMode == BarGraphRenderMode.Bars)
-                            {
-                                // 폰트와 포맷 인자를 추가로 전달합니다.
-                                Draw3DBar(graph, item, itemY, pen, whiteBrsh, j, valFont, brsFont, sfFormat);
-                            }
-                        }
+				this.DrawRegions(graph);
+				this.DrawVerticalLabelArea(graph);
+				this.DrawXLabelBack(graph);
+				this.DrawBars(graph);
+				this.DrawXLabelArea(graph);
 
-                        // 2. 라인 모드일 경우 곡선 및 포인트 그리기
-                        if (this._renderMode == BarGraphRenderMode.Lines && linePoints != null && linePoints.Length >= 2)
-                        {
-                            using (Pen linePen = new Pen(Color.FromArgb(220, Color.Red), 2.5f))
-                                graph.DrawCurve(linePen, linePoints, 0.5f);
+				if (this._displayLegend)
+					this.DrawLegend(graph);
+			}
 
-                            using (Pen connectorPen = new Pen(Color.FromArgb(40, this._fontColor), 0.8f))
-                            {
-                                for (int j = 0; j < linePoints.Length; j++)
-                                {
-                                    graph.DrawLine(connectorPen, linePoints[j], new PointF(linePoints[j].X, this._yOrigin + this._graphHeight));
-                                    
-                                    if (this._displayBarData && (j % this._interval) == 0)
-                                    {
-                                        graph.FillEllipse(brsFont, linePoints[j].X - 2f, linePoints[j].Y - 2f, 4f, 4f);
-                                        // 폰트와 포맷 인자를 추가로 전달합니다.
-                                        DrawDataValue(graph, this.DataPoints[j], linePoints[j].X, linePoints[j].Y, whiteBrsh, j, valFont, brsFont, sfFormat);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            finally 
-            {
-                if (brsFont != null) brsFont.Dispose();
-                if (valFont != null) valFont.Dispose();
-                if (sfFormat != null) sfFormat.Dispose();
-            }
-        }
-		private void Draw3DBar(Graphics g, DataItem item, float itemY, Pen outlinePen, Brush whiteBrsh, int index, Font valFont, Brush brsFont, StringFormat sfFormat)
+			return bmp;
+		}
+
+		private void DrawBars(Graphics graph)
+		{
+			SolidBrush brsFont = null;
+			Font valFont = null;
+			StringFormat sfFormat = null;
+
+			try
+			{
+				brsFont = new SolidBrush(this._fontColor);
+				valFont = new Font(this._fontFamily, _labelFontSize);
+				sfFormat = new StringFormat();
+				sfFormat.Alignment = StringAlignment.Center;
+
+				PointF[] linePoints = null;
+
+				if (this._renderMode == BarGraphRenderMode.Lines)
+					linePoints = new PointF[this.DataPoints.Count];
+
+				// Draw bars and the value above each bar
+				using (Pen pen = new Pen(this._fontColor, 0.15f))
+				{
+					using (SolidBrush whiteBrsh = new SolidBrush(Color.FromArgb(128, Color.White)))
+					{
+						// 1. 데이터 포인트 좌표 계산 및 막대 그리기
+						for (int j = 0; j < this.DataPoints.Count; j++)
+						{
+							DataItem item = this.DataPoints[j];
+							float itemY = this._yOrigin + this._graphHeight - item.SweepSize;
+							float centerX = this._xOrigin + item.StartPos + (this._barWidth / 2);
+
+							if (this._renderMode == BarGraphRenderMode.Lines)
+							{
+								linePoints[j] = new PointF(centerX, itemY);
+							}
+							else if (this._renderMode == BarGraphRenderMode.Bars)
+							{
+								// 폰트와 포맷 인자를 추가로 전달합니다.
+								Draw3DBar(graph, item, itemY, pen, whiteBrsh, j, valFont, brsFont, sfFormat);
+							}
+						}
+
+						// 2. 라인 모드일 경우 곡선 및 포인트 그리기
+						if (
+							this._renderMode == BarGraphRenderMode.Lines
+							&& linePoints != null
+							&& linePoints.Length >= 2
+						)
+						{
+							using (Pen linePen = new Pen(Color.FromArgb(220, Color.Red), 2.5f))
+								graph.DrawCurve(linePen, linePoints, 0.5f);
+
+							using (Pen connectorPen = new Pen(Color.FromArgb(40, this._fontColor), 0.8f))
+							{
+								for (int j = 0; j < linePoints.Length; j++)
+								{
+									graph.DrawLine(
+										connectorPen,
+										linePoints[j],
+										new PointF(linePoints[j].X, this._yOrigin + this._graphHeight)
+									);
+
+									if (this._displayBarData && (j % this._interval) == 0)
+									{
+										graph.FillEllipse(brsFont, linePoints[j].X - 2f, linePoints[j].Y - 2f, 4f, 4f);
+										// 폰트와 포맷 인자를 추가로 전달합니다.
+										DrawDataValue(
+											graph,
+											this.DataPoints[j],
+											linePoints[j].X,
+											linePoints[j].Y,
+											whiteBrsh,
+											j,
+											valFont,
+											brsFont,
+											sfFormat
+										);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			finally
+			{
+				if (brsFont != null)
+					brsFont.Dispose();
+				if (valFont != null)
+					valFont.Dispose();
+				if (sfFormat != null)
+					sfFormat.Dispose();
+			}
+		}
+
+		private void Draw3DBar(
+			Graphics g,
+			DataItem item,
+			float itemY,
+			Pen outlinePen,
+			Brush whiteBrsh,
+			int index,
+			Font valFont,
+			Brush brsFont,
+			StringFormat sfFormat
+		)
 		{
 			float ox = this._xOrigin + item.StartPos;
 			float oy = itemY;
@@ -419,14 +404,15 @@ namespace Server.Engines.Reports
 			float oh = item.SweepSize;
 			float of = 9.5f; // 3D 깊이 오프셋
 
-			PointF[] pts = {
-				new PointF(ox, oy),                    // 0: 정면 좌상
-				new PointF(ox + ow, oy),               // 1: 정면 우상
-				new PointF(ox + of, oy + of),          // 2: 뒷면 좌상
-				new PointF(ox + of + ow, oy + of),     // 3: 뒷면 우상
-				new PointF(ox, oy + oh),               // 4: 정면 좌하
-				new PointF(ox + of, oy + of + oh),     // 5: 뒷면 좌하
-				new PointF(ox + of + ow, oy + of + oh) // 6: 뒷면 우하
+			PointF[] pts =
+			{
+				new PointF(ox, oy), // 0: 정면 좌상
+				new PointF(ox + ow, oy), // 1: 정면 우상
+				new PointF(ox + of, oy + of), // 2: 뒷면 좌상
+				new PointF(ox + of + ow, oy + of), // 3: 뒷면 우상
+				new PointF(ox, oy + oh), // 4: 정면 좌하
+				new PointF(ox + of, oy + of + oh), // 5: 뒷면 좌하
+				new PointF(ox + of + ow, oy + of + oh), // 6: 뒷면 우하
 			};
 
 			// 직접 계산한 색상을 사용하여 브러시 생성
@@ -436,7 +422,7 @@ namespace Server.Engines.Reports
 			{
 				// 3D 면 채우기 (정면, 측면, 윗면 순서)
 				g.FillPolygon(barBrush, new[] { pts[2], pts[3], pts[6], pts[5] }); // 뒷/우측면
-				g.FillPolygon(ltBrush, new[] { pts[0], pts[2], pts[5], pts[4] });  // 좌측면
+				g.FillPolygon(ltBrush, new[] { pts[0], pts[2], pts[5], pts[4] }); // 좌측면
 				g.FillPolygon(drkBrush, new[] { pts[0], pts[1], pts[3], pts[2] }); // 윗면
 			}
 
@@ -457,498 +443,596 @@ namespace Server.Engines.Reports
 				DrawDataValue(g, item, ox + (ow / 2), oy, whiteBrsh, index, valFont, brsFont, sfFormat);
 			}
 		}
+
 		private Color GetLightColor(Color color, float factor)
 		{
-			return Color.FromArgb(color.A,
+			return Color.FromArgb(
+				color.A,
 				(int)(color.R + (255 - color.R) * factor),
 				(int)(color.G + (255 - color.G) * factor),
-				(int)(color.B + (255 - color.B) * factor));
+				(int)(color.B + (255 - color.B) * factor)
+			);
 		}
 
 		private Color GetDarkColor(Color color, float factor)
 		{
-			return Color.FromArgb(color.A,
+			return Color.FromArgb(
+				color.A,
 				(int)(color.R * (1 - factor)),
 				(int)(color.G * (1 - factor)),
-				(int)(color.B * (1 - factor)));
+				(int)(color.B * (1 - factor))
+			);
 		}
-        private void DrawDataValue(Graphics g, DataItem item, float x, float y, Brush outlineBrsh, int index, Font valFont, Brush brsFont, StringFormat sfFormat)
-        {
-            string valStr = item.Value.ToString("#,###.##");
-            float sectionWidth = (this._barWidth + this._spaceBtwBars);
-            float startY = y - 2f - valFont.Height;
 
-            RectangleF recVal = new RectangleF(x - ((sectionWidth * this._interval) / 2), startY, sectionWidth * this._interval, valFont.Height);
+		private void DrawDataValue(
+			Graphics g,
+			DataItem item,
+			float x,
+			float y,
+			Brush outlineBrsh,
+			int index,
+			Font valFont,
+			Brush brsFont,
+			StringFormat sfFormat
+		)
+		{
+			string valStr = item.Value.ToString("#,###.##");
+			float sectionWidth = (this._barWidth + this._spaceBtwBars);
+			float startY = y - 2f - valFont.Height;
 
-            for (int ox = -1; ox <= 1; ox++)
-            {
-                for (int oy = -1; oy <= 1; oy++)
-                {
-                    if (ox == 0 && oy == 0) continue;
-                    g.DrawString(valStr, valFont, outlineBrsh, new RectangleF(recVal.X + ox, recVal.Y + oy, recVal.Width, recVal.Height), sfFormat);
-                }
-            }
-            g.DrawString(valStr, valFont, brsFont, recVal, sfFormat);
-        }
-        //*********************************************************************
-        //
-        // This method draws the y label, tick marks, tick values, and the y axis.
-        //
-        //*********************************************************************
-        private void DrawVerticalLabelArea(Graphics graph)
-        {
-            Font lblFont = null;
-            SolidBrush brs = null;
-            StringFormat lblFormat = null;
-            Pen pen = null;
-            StringFormat sfVLabel = null;
+			RectangleF recVal = new RectangleF(
+				x - ((sectionWidth * this._interval) / 2),
+				startY,
+				sectionWidth * this._interval,
+				valFont.Height
+			);
 
-            float fo = (this._yTitle == null ? 0.0f : 20.0f);
-			
-            try
-            {
-                brs = new SolidBrush(this._fontColor);
-                lblFormat = new StringFormat();
-                pen = new Pen(this._fontColor);
+			for (int ox = -1; ox <= 1; ox++)
+			{
+				for (int oy = -1; oy <= 1; oy++)
+				{
+					if (ox == 0 && oy == 0)
+						continue;
+					g.DrawString(
+						valStr,
+						valFont,
+						outlineBrsh,
+						new RectangleF(recVal.X + ox, recVal.Y + oy, recVal.Width, recVal.Height),
+						sfFormat
+					);
+				}
+			}
+			g.DrawString(valStr, valFont, brsFont, recVal, sfFormat);
+		}
 
-                if (this._yTitle != null)
-                {
-                    sfVLabel = new StringFormat();
-                    sfVLabel.Alignment = StringAlignment.Center;
-                    sfVLabel.LineAlignment = StringAlignment.Center;
-                    sfVLabel.FormatFlags = StringFormatFlags.DirectionVertical;
+		//*********************************************************************
+		//
+		// This method draws the y label, tick marks, tick values, and the y axis.
+		//
+		//*********************************************************************
+		private void DrawVerticalLabelArea(Graphics graph)
+		{
+			Font lblFont = null;
+			SolidBrush brs = null;
+			StringFormat lblFormat = null;
+			Pen pen = null;
+			StringFormat sfVLabel = null;
 
-                    lblFont = new Font(this._fontFamily, _labelFontSize + 4.0f);
-                    graph.DrawString(this._yTitle, lblFont, brs, new RectangleF(0.0f, this._yOrigin, 20.0f, this._graphHeight), sfVLabel);
-                    lblFont.Dispose();
-                }
+			float fo = (this._yTitle == null ? 0.0f : 20.0f);
 
-                sfVLabel = new StringFormat();
-                lblFormat.Alignment = StringAlignment.Far;
-                lblFormat.FormatFlags |= StringFormatFlags.NoClip;
+			try
+			{
+				brs = new SolidBrush(this._fontColor);
+				lblFormat = new StringFormat();
+				pen = new Pen(this._fontColor);
 
-                // Draw vertical label at the top of y-axis and place it in the middle top of y-axis
-                lblFont = new Font(this._fontFamily, _labelFontSize + 2.0f,FontStyle.Bold);
-                RectangleF recVLabel = new RectangleF(0, this._yOrigin - 2 * _spacer - lblFont.Height, this._xOrigin * 2, lblFont.Height);
-                sfVLabel.Alignment = StringAlignment.Center;
-                sfVLabel.FormatFlags |= StringFormatFlags.NoClip;
-                //graph.DrawRectangle(Pens.Black,Rectangle.Truncate(recVLabel));
-                graph.DrawString(this._yLabel, lblFont, brs, recVLabel, sfVLabel);
-                lblFont.Dispose();
+				if (this._yTitle != null)
+				{
+					sfVLabel = new StringFormat();
+					sfVLabel.Alignment = StringAlignment.Center;
+					sfVLabel.LineAlignment = StringAlignment.Center;
+					sfVLabel.FormatFlags = StringFormatFlags.DirectionVertical;
 
-                lblFont = new Font(this._fontFamily, _labelFontSize);
-                // Draw all tick values and tick marks
-                using (Pen smallPen = new Pen(Color.FromArgb(96, this._fontColor),0.8f))
-                {
-                    for (int i = 0; i < this._yTickCount; i++)
-                    {
-                        float currentY = this._topBuffer + (i * this._yTickValue / this._scaleFactor);	// Position for tick mark
-                        float labelY = currentY - lblFont.Height / 2;						// Place label in the middle of tick
-                        RectangleF lblRec = new RectangleF(_spacer + fo - 6, labelY, this._maxTickValueWidth, lblFont.Height);
-				
-                        float currentTick = this._maxValue - i * this._yTickValue;					// Calculate tick value from top to bottom
-                        graph.DrawString(currentTick.ToString("#,###.##"), lblFont, brs, lblRec, lblFormat);	// Draw tick value  
-                        graph.DrawLine(pen, this._xOrigin, currentY, this._xOrigin - 4.0f, currentY);						// Draw tick mark
+					lblFont = new Font(this._fontFamily, _labelFontSize + 4.0f);
+					graph.DrawString(
+						this._yTitle,
+						lblFont,
+						brs,
+						new RectangleF(0.0f, this._yOrigin, 20.0f, this._graphHeight),
+						sfVLabel
+					);
+					lblFont.Dispose();
+				}
 
-                        graph.DrawLine(smallPen, this._xOrigin, currentY, this._xOrigin + this._graphWidth, currentY);
-                    }
-                }
+				sfVLabel = new StringFormat();
+				lblFormat.Alignment = StringAlignment.Far;
+				lblFormat.FormatFlags |= StringFormatFlags.NoClip;
 
-                // Draw y axis
-                graph.DrawLine(pen, this._xOrigin, this._yOrigin, this._xOrigin, this._yOrigin + this._graphHeight);
-            }
-            finally
-            {
-                if (lblFont != null)
-                    lblFont.Dispose();
-                if (brs != null)
-                    brs.Dispose();
-                if (lblFormat != null)
-                    lblFormat.Dispose();
-                if (pen != null)
-                    pen.Dispose();
-                if (sfVLabel != null)
-                    sfVLabel.Dispose();
-            }
-        }
+				// Draw vertical label at the top of y-axis and place it in the middle top of y-axis
+				lblFont = new Font(this._fontFamily, _labelFontSize + 2.0f, FontStyle.Bold);
+				RectangleF recVLabel = new RectangleF(
+					0,
+					this._yOrigin - 2 * _spacer - lblFont.Height,
+					this._xOrigin * 2,
+					lblFont.Height
+				);
+				sfVLabel.Alignment = StringAlignment.Center;
+				sfVLabel.FormatFlags |= StringFormatFlags.NoClip;
+				//graph.DrawRectangle(Pens.Black,Rectangle.Truncate(recVLabel));
+				graph.DrawString(this._yLabel, lblFont, brs, recVLabel, sfVLabel);
+				lblFont.Dispose();
 
-        //*********************************************************************
-        //
-        // This method draws x axis and all x labels
-        //
-        //*********************************************************************
-        private void DrawXLabelBack(Graphics graph)
-        {
-            Font lblFont = null;
-            SolidBrush brs = null;
-            StringFormat lblFormat = null;
-            Pen pen = null;
+				lblFont = new Font(this._fontFamily, _labelFontSize);
+				// Draw all tick values and tick marks
+				using (Pen smallPen = new Pen(Color.FromArgb(96, this._fontColor), 0.8f))
+				{
+					for (int i = 0; i < this._yTickCount; i++)
+					{
+						float currentY = this._topBuffer + (i * this._yTickValue / this._scaleFactor); // Position for tick mark
+						float labelY = currentY - lblFont.Height / 2; // Place label in the middle of tick
+						RectangleF lblRec = new RectangleF(
+							_spacer + fo - 6,
+							labelY,
+							this._maxTickValueWidth,
+							lblFont.Height
+						);
 
-            try
-            {
-                lblFont = new Font(this._fontFamily, _labelFontSize);
-                brs = new SolidBrush(this._fontColor);
-                lblFormat = new StringFormat();
-                pen = new Pen(this._fontColor);
+						float currentTick = this._maxValue - i * this._yTickValue; // Calculate tick value from top to bottom
+						graph.DrawString(currentTick.ToString("#,###.##"), lblFont, brs, lblRec, lblFormat); // Draw tick value
+						graph.DrawLine(pen, this._xOrigin, currentY, this._xOrigin - 4.0f, currentY); // Draw tick mark
 
-                lblFormat.Alignment = StringAlignment.Center;
+						graph.DrawLine(smallPen, this._xOrigin, currentY, this._xOrigin + this._graphWidth, currentY);
+					}
+				}
 
-                // Draw x axis
-                graph.DrawLine(pen, this._xOrigin, this._yOrigin + this._graphHeight, this._xOrigin + this._graphWidth, this._yOrigin + this._graphHeight);
-            }
-            finally
-            {
-                if (lblFont != null)
-                    lblFont.Dispose();
-                if (brs != null)
-                    brs.Dispose();
-                if (lblFormat != null)
-                    lblFormat.Dispose();
-                if (pen != null)
-                    pen.Dispose();
-            }
-        }
+				// Draw y axis
+				graph.DrawLine(pen, this._xOrigin, this._yOrigin, this._xOrigin, this._yOrigin + this._graphHeight);
+			}
+			finally
+			{
+				if (lblFont != null)
+					lblFont.Dispose();
+				if (brs != null)
+					brs.Dispose();
+				if (lblFormat != null)
+					lblFormat.Dispose();
+				if (pen != null)
+					pen.Dispose();
+				if (sfVLabel != null)
+					sfVLabel.Dispose();
+			}
+		}
 
-        private void DrawXLabelArea(Graphics graph)
-        {
-            Font lblFont = null;
-            SolidBrush brs = null;
-            StringFormat lblFormat = null;
-            Pen pen = null;
+		//*********************************************************************
+		//
+		// This method draws x axis and all x labels
+		//
+		//*********************************************************************
+		private void DrawXLabelBack(Graphics graph)
+		{
+			Font lblFont = null;
+			SolidBrush brs = null;
+			StringFormat lblFormat = null;
+			Pen pen = null;
 
-            try
-            {
-                brs = new SolidBrush(this._fontColor);
-                pen = new Pen(this._fontColor);
+			try
+			{
+				lblFont = new Font(this._fontFamily, _labelFontSize);
+				brs = new SolidBrush(this._fontColor);
+				lblFormat = new StringFormat();
+				pen = new Pen(this._fontColor);
 
-                if (this._xTitle != null)
-                {
-                    lblFormat = new StringFormat();
-                    lblFormat.Alignment = StringAlignment.Center;
-                    lblFormat.LineAlignment = StringAlignment.Center;
-                    //					sfVLabel.FormatFlags=StringFormatFlags.DirectionVertical;
+				lblFormat.Alignment = StringAlignment.Center;
 
-                    lblFont = new Font(this._fontFamily, _labelFontSize + 2.0f, FontStyle.Bold);
-                    graph.DrawString(this._xTitle, lblFont, brs, new RectangleF(this._xOrigin, this._yOrigin + this._graphHeight + 14.0f + (this._renderMode == BarGraphRenderMode.Bars ? 10.0f : 0.0f) + ((this.DataPoints.Count / this._interval) > 24 ? 16.0f : 0.0f), this._graphWidth, 20.0f), lblFormat);
-                }
+				// Draw x axis
+				graph.DrawLine(
+					pen,
+					this._xOrigin,
+					this._yOrigin + this._graphHeight,
+					this._xOrigin + this._graphWidth,
+					this._yOrigin + this._graphHeight
+				);
+			}
+			finally
+			{
+				if (lblFont != null)
+					lblFont.Dispose();
+				if (brs != null)
+					brs.Dispose();
+				if (lblFormat != null)
+					lblFormat.Dispose();
+				if (pen != null)
+					pen.Dispose();
+			}
+		}
 
-                lblFont = new Font(this._fontFamily, _labelFontSize);
-                lblFormat = new StringFormat();
-                lblFormat.Alignment = StringAlignment.Center;
-                lblFormat.FormatFlags |= StringFormatFlags.NoClip;
-                lblFormat.Trimming = StringTrimming.None;
-                //lblFormat.FormatFlags |= StringFormatFlags.NoWrap;
+		private void DrawXLabelArea(Graphics graph)
+		{
+			Font lblFont = null;
+			SolidBrush brs = null;
+			StringFormat lblFormat = null;
+			Pen pen = null;
 
-                float of = 0.0f;
+			try
+			{
+				brs = new SolidBrush(this._fontColor);
+				pen = new Pen(this._fontColor);
 
-                if (this._renderMode == BarGraphRenderMode.Bars)
-                {
-                    of = 10.0f;
+				if (this._xTitle != null)
+				{
+					lblFormat = new StringFormat();
+					lblFormat.Alignment = StringAlignment.Center;
+					lblFormat.LineAlignment = StringAlignment.Center;
+					//					sfVLabel.FormatFlags=StringFormatFlags.DirectionVertical;
 
-                    // Draw x axis
-                    graph.DrawLine(pen, this._xOrigin + of, this._yOrigin + this._graphHeight + of, this._xOrigin + this._graphWidth + of, this._yOrigin + this._graphHeight + of);
+					lblFont = new Font(this._fontFamily, _labelFontSize + 2.0f, FontStyle.Bold);
+					graph.DrawString(
+						this._xTitle,
+						lblFont,
+						brs,
+						new RectangleF(
+							this._xOrigin,
+							this._yOrigin
+								+ this._graphHeight
+								+ 14.0f
+								+ (this._renderMode == BarGraphRenderMode.Bars ? 10.0f : 0.0f)
+								+ ((this.DataPoints.Count / this._interval) > 24 ? 16.0f : 0.0f),
+							this._graphWidth,
+							20.0f
+						),
+						lblFormat
+					);
+				}
 
-                    graph.DrawLine(pen, this._xOrigin, this._yOrigin + this._graphHeight, this._xOrigin + of, this._yOrigin + this._graphHeight + of);
-                    graph.DrawLine(pen, this._xOrigin + this._graphWidth, this._yOrigin + this._graphHeight, this._xOrigin + of + this._graphWidth, this._yOrigin + this._graphHeight + of);
-                }
+				lblFont = new Font(this._fontFamily, _labelFontSize);
+				lblFormat = new StringFormat();
+				lblFormat.Alignment = StringAlignment.Center;
+				lblFormat.FormatFlags |= StringFormatFlags.NoClip;
+				lblFormat.Trimming = StringTrimming.None;
+				//lblFormat.FormatFlags |= StringFormatFlags.NoWrap;
 
-                float currentX;
-                float currentY = this._yOrigin + this._graphHeight + 2.0f;	// All x labels are drawn 2 pixels below x-axis
-                float labelWidth = this._barWidth + this._spaceBtwBars;		// Fits exactly below the bar
-                int i = 0;
+				float of = 0.0f;
 
-                // Draw x labels
-                foreach (DataItem item in this.DataPoints)
-                {
-                    if ((i % this._interval) == 0)
-                    {
-                        currentX = this._xOrigin + (i * labelWidth) + of + (labelWidth / 2);
-                        RectangleF recLbl = new RectangleF(currentX - ((labelWidth * this._interval) / 2), currentY + of, labelWidth * this._interval, lblFont.Height * 2);
-                        string lblString = this._displayLegend ? item.Label : item.Description;	// Decide what to show: short or long
+				if (this._renderMode == BarGraphRenderMode.Bars)
+				{
+					of = 10.0f;
 
-                        graph.DrawString(lblString, lblFont, brs, recLbl, lblFormat);
-                    }
-                    i++;
-                }
-            }
-            finally
-            {
-                if (lblFont != null)
-                    lblFont.Dispose();
-                if (brs != null)
-                    brs.Dispose();
-                if (lblFormat != null)
-                    lblFormat.Dispose();
-                if (pen != null)
-                    pen.Dispose();
-            }
-        }
+					// Draw x axis
+					graph.DrawLine(
+						pen,
+						this._xOrigin + of,
+						this._yOrigin + this._graphHeight + of,
+						this._xOrigin + this._graphWidth + of,
+						this._yOrigin + this._graphHeight + of
+					);
 
-        //*********************************************************************
-        //
-        // This method determines where to place the legend box.
-        // It draws the legend border, legend description, and legend color code.
-        //
-        //*********************************************************************
-        private void DrawLegend(Graphics graph)
-        {
-            Font lblFont = null;
-            SolidBrush brs = null;
-            StringFormat lblFormat = null;
-            Pen pen = null;
+					graph.DrawLine(
+						pen,
+						this._xOrigin,
+						this._yOrigin + this._graphHeight,
+						this._xOrigin + of,
+						this._yOrigin + this._graphHeight + of
+					);
+					graph.DrawLine(
+						pen,
+						this._xOrigin + this._graphWidth,
+						this._yOrigin + this._graphHeight,
+						this._xOrigin + of + this._graphWidth,
+						this._yOrigin + this._graphHeight + of
+					);
+				}
 
-            try
-            {
-                lblFont = new Font(this._fontFamily, _legendFontSize);
-                brs = new SolidBrush(this._fontColor);
-                lblFormat = new StringFormat();
-                pen = new Pen(this._fontColor);
-                lblFormat.Alignment = StringAlignment.Near;
+				float currentX;
+				float currentY = this._yOrigin + this._graphHeight + 2.0f; // All x labels are drawn 2 pixels below x-axis
+				float labelWidth = this._barWidth + this._spaceBtwBars; // Fits exactly below the bar
+				int i = 0;
 
-                // Calculate Legend drawing start point
-                float startX = this._xOrigin + this._graphWidth + _graphLegendSpacer;
-                float startY = this._yOrigin;
+				// Draw x labels
+				foreach (DataItem item in this.DataPoints)
+				{
+					if ((i % this._interval) == 0)
+					{
+						currentX = this._xOrigin + (i * labelWidth) + of + (labelWidth / 2);
+						RectangleF recLbl = new RectangleF(
+							currentX - ((labelWidth * this._interval) / 2),
+							currentY + of,
+							labelWidth * this._interval,
+							lblFont.Height * 2
+						);
+						string lblString = this._displayLegend ? item.Label : item.Description; // Decide what to show: short or long
 
-                float xColorCode = startX + _spacer;
-                float xLegendText = xColorCode + _legendRectangleSize + _spacer;
-                float legendHeight = 0.0f;
-                for (int i = 0; i < this.DataPoints.Count; i++)
-                {
-                    DataItem point = this.DataPoints[i];
-                    string text = point.Description + " (" + point.Label + ")";
-                    float currentY = startY + _spacer + (i * (lblFont.Height + _spacer));
-                    legendHeight += lblFont.Height + _spacer;
+						graph.DrawString(lblString, lblFont, brs, recLbl, lblFormat);
+					}
+					i++;
+				}
+			}
+			finally
+			{
+				if (lblFont != null)
+					lblFont.Dispose();
+				if (brs != null)
+					brs.Dispose();
+				if (lblFormat != null)
+					lblFormat.Dispose();
+				if (pen != null)
+					pen.Dispose();
+			}
+		}
 
-                    // Draw legend description
-                    graph.DrawString(text, lblFont, brs, xLegendText, currentY, lblFormat);
+		//*********************************************************************
+		//
+		// This method determines where to place the legend box.
+		// It draws the legend border, legend description, and legend color code.
+		//
+		//*********************************************************************
+		private void DrawLegend(Graphics graph)
+		{
+			Font lblFont = null;
+			SolidBrush brs = null;
+			StringFormat lblFormat = null;
+			Pen pen = null;
 
-                    // Draw color code
-                    using (SolidBrush brsh = new SolidBrush(this.DataPoints[i].ItemColor))
-                        graph.FillRectangle(brsh, xColorCode, currentY + 3f, _legendRectangleSize, _legendRectangleSize);
-                }
+			try
+			{
+				lblFont = new Font(this._fontFamily, _legendFontSize);
+				brs = new SolidBrush(this._fontColor);
+				lblFormat = new StringFormat();
+				pen = new Pen(this._fontColor);
+				lblFormat.Alignment = StringAlignment.Near;
 
-                // Draw legend border
-                graph.DrawRectangle(pen, startX, startY, this._legendWidth, legendHeight + _spacer);
-            }
-            finally
-            {
-                if (lblFont != null)
-                    lblFont.Dispose();
-                if (brs != null)
-                    brs.Dispose();
-                if (lblFormat != null)
-                    lblFormat.Dispose();
-                if (pen != null)
-                    pen.Dispose();
-            }
-        }
+				// Calculate Legend drawing start point
+				float startX = this._xOrigin + this._graphWidth + _graphLegendSpacer;
+				float startY = this._yOrigin;
 
-        //*********************************************************************
-        //
-        // This method calculates all measurement aspects of the bar graph from the given data points
-        //
-        //*********************************************************************
-        private void CalculateGraphDimension() 
-        {
-            this.FindLongestTickValue();
-			
-            // Need to add another character for spacing; this is not used for drawing, just for calculation
-            this._longestTickValue += "0";		
-            //_maxTickValueWidth = CalculateImgFontWidth(_longestTickValue, _labelFontSize, FontFamily);
-            this._maxTickValueWidth = 0.0f;
+				float xColorCode = startX + _spacer;
+				float xLegendText = xColorCode + _legendRectangleSize + _spacer;
+				float legendHeight = 0.0f;
+				for (int i = 0; i < this.DataPoints.Count; i++)
+				{
+					DataItem point = this.DataPoints[i];
+					string text = point.Description + " (" + point.Label + ")";
+					float currentY = startY + _spacer + (i * (lblFont.Height + _spacer));
+					legendHeight += lblFont.Height + _spacer;
 
-            float currentTick;
-            string tickString;
-            for (int i = 0; i < this._yTickCount; i++)
-            {
-                currentTick = this._maxValue - i * this._yTickValue;	
-                tickString = currentTick.ToString("#,###.##");
+					// Draw legend description
+					graph.DrawString(text, lblFont, brs, xLegendText, currentY, lblFormat);
 
-                float measured = this.CalculateImgFontWidth(tickString, _labelFontSize, this.FontFamily);
+					// Draw color code
+					using (SolidBrush brsh = new SolidBrush(this.DataPoints[i].ItemColor))
+						graph.FillRectangle(
+							brsh,
+							xColorCode,
+							currentY + 3f,
+							_legendRectangleSize,
+							_legendRectangleSize
+						);
+				}
 
-                if (measured > this._maxTickValueWidth)
-                    this._maxTickValueWidth = measured;
-            }
+				// Draw legend border
+				graph.DrawRectangle(pen, startX, startY, this._legendWidth, legendHeight + _spacer);
+			}
+			finally
+			{
+				if (lblFont != null)
+					lblFont.Dispose();
+				if (brs != null)
+					brs.Dispose();
+				if (lblFormat != null)
+					lblFormat.Dispose();
+				if (pen != null)
+					pen.Dispose();
+			}
+		}
 
-            float leftOffset = _spacer + this._maxTickValueWidth + (this._yTitle == null ? 0.0f : 20.0f);
-            float rtOffset = 0.0f;
+		//*********************************************************************
+		//
+		// This method calculates all measurement aspects of the bar graph from the given data points
+		//
+		//*********************************************************************
+		private void CalculateGraphDimension()
+		{
+			this.FindLongestTickValue();
 
-            if (this._displayLegend) 
-            {
-                this._legendWidth = _spacer + _legendRectangleSize + _spacer + this._maxLabelWidth + _spacer;
-                rtOffset = _graphLegendSpacer + this._legendWidth + _spacer;
-            }
-            else
-                rtOffset = _spacer;		// Make graph in the middle
+			// Need to add another character for spacing; this is not used for drawing, just for calculation
+			this._longestTickValue += "0";
+			//_maxTickValueWidth = CalculateImgFontWidth(_longestTickValue, _labelFontSize, FontFamily);
+			this._maxTickValueWidth = 0.0f;
 
-            if (this._renderMode == BarGraphRenderMode.Bars)
-                rtOffset += 10.0f;
+			float currentTick;
+			string tickString;
+			for (int i = 0; i < this._yTickCount; i++)
+			{
+				currentTick = this._maxValue - i * this._yTickValue;
+				tickString = currentTick.ToString("#,###.##");
 
-            rtOffset += 10.0f;
+				float measured = this.CalculateImgFontWidth(tickString, _labelFontSize, this.FontFamily);
 
-            this._graphHeight = this._totalHeight - this._topBuffer - this._bottomBuffer - (this._xTitle == null ? 0.0f : 20.0f);	// Buffer spaces are used to print labels
-            this._graphWidth = this._totalWidth - leftOffset - rtOffset;
-            this._xOrigin = leftOffset;
-            this._yOrigin = this._topBuffer;
+				if (measured > this._maxTickValueWidth)
+					this._maxTickValueWidth = measured;
+			}
 
-            // Once the correct _maxValue is determined, then calculate _scaleFactor
-            this._scaleFactor = this._maxValue / this._graphHeight;
-        }
+			float leftOffset = _spacer + this._maxTickValueWidth + (this._yTitle == null ? 0.0f : 20.0f);
+			float rtOffset = 0.0f;
 
-        //*********************************************************************
-        //
-        // This method determines the longest tick value from the given data points.
-        // The result is needed to calculate the correct graph dimension.
-        //
-        //*********************************************************************
-        private void FindLongestTickValue()
-        {
-            float currentTick;
-            string tickString;
-            for (int i = 0; i < this._yTickCount; i++)
-            {
-                currentTick = this._maxValue - i * this._yTickValue;	
-                tickString = currentTick.ToString("#,###.##");
-                if (this._longestTickValue.Length < tickString.Length)
-                    this._longestTickValue = tickString;
-            }
-        }
+			if (this._displayLegend)
+			{
+				this._legendWidth = _spacer + _legendRectangleSize + _spacer + this._maxLabelWidth + _spacer;
+				rtOffset = _graphLegendSpacer + this._legendWidth + _spacer;
+			}
+			else
+				rtOffset = _spacer; // Make graph in the middle
 
-        //*********************************************************************
-        //
-        // This method calculates the image width in pixel for a given text
-        //
-        //*********************************************************************
-        private float CalculateImgFontWidth(string text, float size, string family)
-        {
-            Bitmap bmp = null;
-            Graphics graph = null;
-            Font font = null;
+			if (this._renderMode == BarGraphRenderMode.Bars)
+				rtOffset += 10.0f;
 
-            try
-            {
-                font = new Font(family, size);
+			rtOffset += 10.0f;
 
-                // Calculate the size of the string.
-                bmp = new Bitmap(1,1,PixelFormat.Format32bppArgb);
-                graph = Graphics.FromImage(bmp);
-                SizeF oSize = graph.MeasureString(text, font);
-                oSize.Width = 4 + (float)Math.Ceiling(oSize.Width);
-			
-                return oSize.Width;
-            }
-            finally
-            {
-                if (graph != null)
-                    graph.Dispose();
-                if (bmp != null)
-                    bmp.Dispose();
-                if (font != null)
-                    font.Dispose();
-            }
-        }
+			this._graphHeight =
+				this._totalHeight - this._topBuffer - this._bottomBuffer - (this._xTitle == null ? 0.0f : 20.0f); // Buffer spaces are used to print labels
+			this._graphWidth = this._totalWidth - leftOffset - rtOffset;
+			this._xOrigin = leftOffset;
+			this._yOrigin = this._topBuffer;
 
-        //*********************************************************************
-        //
-        // This method creates abbreviation from long description; used for making legend
-        //
-        //*********************************************************************
-        private string MakeShortLabel(string text)
-        {
-            string label = text;
-            if (text.Length > 2) 
-            {
-                int midPostition = Convert.ToInt32(Math.Floor(text.Length / 2.0));
-                label = text.Substring(0, 1) + text.Substring(midPostition, 1) + text.Substring(text.Length - 1, 1);
-            }
-            return label;
-        }
+			// Once the correct _maxValue is determined, then calculate _scaleFactor
+			this._scaleFactor = this._maxValue / this._graphHeight;
+		}
 
-        //*********************************************************************
-        //
-        // This method calculates the max value and each tick mark value for the bar graph.
-        //
-        //*********************************************************************
-        private void CalculateTickAndMax()
-        {
-            float tempMax = 0.0f;
+		//*********************************************************************
+		//
+		// This method determines the longest tick value from the given data points.
+		// The result is needed to calculate the correct graph dimension.
+		//
+		//*********************************************************************
+		private void FindLongestTickValue()
+		{
+			float currentTick;
+			string tickString;
+			for (int i = 0; i < this._yTickCount; i++)
+			{
+				currentTick = this._maxValue - i * this._yTickValue;
+				tickString = currentTick.ToString("#,###.##");
+				if (this._longestTickValue.Length < tickString.Length)
+					this._longestTickValue = tickString;
+			}
+		}
 
-            // Give graph some head room first about 10% of current max
-            this._maxValue *= 1.1f;
+		//*********************************************************************
+		//
+		// This method calculates the image width in pixel for a given text
+		//
+		//*********************************************************************
+		private float CalculateImgFontWidth(string text, float size, string family)
+		{
+			Bitmap bmp = null;
+			Graphics graph = null;
+			Font font = null;
 
-            if (this._maxValue != 0.0f)
-            {
-                // Find a rounded value nearest to the current max value
-                // Calculate this max first to give enough space to draw value on each bar
-                double exp = Convert.ToDouble(Math.Floor(Math.Log10(this._maxValue)));
-                tempMax = Convert.ToSingle(Math.Ceiling(this._maxValue / Math.Pow(10, exp)) * Math.Pow(10, exp));
-            }
-            else
-                tempMax = 1.0f;
+			try
+			{
+				font = new Font(family, size);
 
-            // Once max value is calculated, tick value can be determined; tick value should be a whole number
-            this._yTickValue = tempMax / this._yTickCount;
-            double expTick = Convert.ToDouble(Math.Floor(Math.Log10(this._yTickValue)));
-            this._yTickValue = Convert.ToSingle(Math.Ceiling(this._yTickValue / Math.Pow(10, expTick)) * Math.Pow(10, expTick));
+				// Calculate the size of the string.
+				bmp = new Bitmap(1, 1, PixelFormat.Format32bppArgb);
+				graph = Graphics.FromImage(bmp);
+				SizeF oSize = graph.MeasureString(text, font);
+				oSize.Width = 4 + (float)Math.Ceiling(oSize.Width);
 
-            // Re-calculate the max value with the new tick value
-            this._maxValue = this._yTickValue * this._yTickCount;
-        }
+				return oSize.Width;
+			}
+			finally
+			{
+				if (graph != null)
+					graph.Dispose();
+				if (bmp != null)
+					bmp.Dispose();
+				if (font != null)
+					font.Dispose();
+			}
+		}
 
-        //*********************************************************************
-        //
-        // This method calculates the height for each bar in the graph
-        //
-        //*********************************************************************
-        private void CalculateSweepValues()
-        {
-            // Called when all values and scale factor are known
-            // All values calculated here are relative from (_xOrigin, _yOrigin)
-            int i = 0;
-            foreach (DataItem item in this.DataPoints)
-            {
-                // This implementation does not support negative value
-                if (item.Value >= 0)
-                    item.SweepSize = item.Value / this._scaleFactor;
-				
-                // (_spaceBtwBars/2) makes half white space for the first bar
-                item.StartPos = (this._spaceBtwBars / 2) + i * (this._barWidth + this._spaceBtwBars);
-                i++;
-            }
-        }
+		//*********************************************************************
+		//
+		// This method creates abbreviation from long description; used for making legend
+		//
+		//*********************************************************************
+		private string MakeShortLabel(string text)
+		{
+			string label = text;
+			if (text.Length > 2)
+			{
+				int midPostition = Convert.ToInt32(Math.Floor(text.Length / 2.0));
+				label = text.Substring(0, 1) + text.Substring(midPostition, 1) + text.Substring(text.Length - 1, 1);
+			}
+			return label;
+		}
 
-        //*********************************************************************
-        //
-        // This method calculates the width for each bar in the graph
-        //
-        //*********************************************************************
-        private void CalculateBarWidth(int dataCount, float barGraphWidth)
-        {
-            // White space between each bar is the same as bar width itself
-            this._barWidth = barGraphWidth / (dataCount * 2);  // Each bar has 1 white space 
-            //_barWidth =/* (float)Math.Floor(*/_barWidth/*)*/;
-            this._spaceBtwBars = this._barWidth;
-        }
+		//*********************************************************************
+		//
+		// This method calculates the max value and each tick mark value for the bar graph.
+		//
+		//*********************************************************************
+		private void CalculateTickAndMax()
+		{
+			float tempMax = 0.0f;
 
-        //*********************************************************************
-        //
-        // This method assigns default value to the bar graph properties and is only 
-        // called from BarGraph constructors
-        //
-        //*********************************************************************
-        private void AssignDefaultSettings()
-        {
-            // default values
-            this._totalWidth = 680f;
-            this._totalHeight = 450f;
-            this._fontFamily = "Verdana";
-            this._backColor = Color.White;
-            this._fontColor = Color.Black;
-            this._topBuffer = 30f;
-            this._bottomBuffer = 30f;
-            this._yTickCount = 2;
-            this._displayLegend = false;
-            this._displayBarData = false;
-        }
-    }
+			// Give graph some head room first about 10% of current max
+			this._maxValue *= 1.1f;
+
+			if (this._maxValue != 0.0f)
+			{
+				// Find a rounded value nearest to the current max value
+				// Calculate this max first to give enough space to draw value on each bar
+				double exp = Convert.ToDouble(Math.Floor(Math.Log10(this._maxValue)));
+				tempMax = Convert.ToSingle(Math.Ceiling(this._maxValue / Math.Pow(10, exp)) * Math.Pow(10, exp));
+			}
+			else
+				tempMax = 1.0f;
+
+			// Once max value is calculated, tick value can be determined; tick value should be a whole number
+			this._yTickValue = tempMax / this._yTickCount;
+			double expTick = Convert.ToDouble(Math.Floor(Math.Log10(this._yTickValue)));
+			this._yTickValue = Convert.ToSingle(
+				Math.Ceiling(this._yTickValue / Math.Pow(10, expTick)) * Math.Pow(10, expTick)
+			);
+
+			// Re-calculate the max value with the new tick value
+			this._maxValue = this._yTickValue * this._yTickCount;
+		}
+
+		//*********************************************************************
+		//
+		// This method calculates the height for each bar in the graph
+		//
+		//*********************************************************************
+		private void CalculateSweepValues()
+		{
+			// Called when all values and scale factor are known
+			// All values calculated here are relative from (_xOrigin, _yOrigin)
+			int i = 0;
+			foreach (DataItem item in this.DataPoints)
+			{
+				// This implementation does not support negative value
+				if (item.Value >= 0)
+					item.SweepSize = item.Value / this._scaleFactor;
+
+				// (_spaceBtwBars/2) makes half white space for the first bar
+				item.StartPos = (this._spaceBtwBars / 2) + i * (this._barWidth + this._spaceBtwBars);
+				i++;
+			}
+		}
+
+		//*********************************************************************
+		//
+		// This method calculates the width for each bar in the graph
+		//
+		//*********************************************************************
+		private void CalculateBarWidth(int dataCount, float barGraphWidth)
+		{
+			// White space between each bar is the same as bar width itself
+			this._barWidth = barGraphWidth / (dataCount * 2); // Each bar has 1 white space
+			//_barWidth =/* (float)Math.Floor(*/_barWidth/*)*/;
+			this._spaceBtwBars = this._barWidth;
+		}
+
+		//*********************************************************************
+		//
+		// This method assigns default value to the bar graph properties and is only
+		// called from BarGraph constructors
+		//
+		//*********************************************************************
+		private void AssignDefaultSettings()
+		{
+			// default values
+			this._totalWidth = 680f;
+			this._totalHeight = 450f;
+			this._fontFamily = "Verdana";
+			this._backColor = Color.White;
+			this._fontColor = Color.Black;
+			this._topBuffer = 30f;
+			this._bottomBuffer = 30f;
+			this._yTickCount = 2;
+			this._displayLegend = false;
+			this._displayBarData = false;
+		}
+	}
 }

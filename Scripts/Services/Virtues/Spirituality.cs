@@ -1,7 +1,6 @@
 #region References
 using System;
 using System.Collections.Generic;
-
 using Server.Mobiles;
 using Server.Targeting;
 #endregion
@@ -58,8 +57,7 @@ namespace Server.Services.Virtues
 							}
 							else if (m.MeleeDamageAbsorb > 0)
 							{
-								from.SendLocalizedMessage(
-									1156039); // You may not use the Spirituality Virtue while the Attunement spell is active.
+								from.SendLocalizedMessage(1156039); // You may not use the Spirituality Virtue while the Attunement spell is active.
 							}
 							else if (m is BaseCreature || m is PlayerMobile)
 							{
@@ -76,10 +74,9 @@ namespace Server.Services.Virtues
 										BuffIcon.Spirituality,
 										1155824,
 										1155825,
-										String.Format(
-											"{0}\t{1}",
-											context.Reduction.ToString(),
-											context.Pool.ToString()))); // ~1_VAL~% Reduction to Incoming Damage<br>~2_VAL~ Shield HP Remaining
+										String.Format("{0}\t{1}", context.Reduction.ToString(), context.Pool.ToString())
+									)
+								); // ~1_VAL~% Reduction to Incoming Damage<br>~2_VAL~ Shield HP Remaining
 
 								VirtueHelper.Atrophy(from, VirtueName.Spirituality, 3200);
 
@@ -95,12 +92,14 @@ namespace Server.Services.Virtues
 
 											BuffInfo.RemoveBuff(m, BuffIcon.Spirituality);
 										}
-									});
+									}
+								);
 							}
 						}
 						else
 							from.SendLocalizedMessage(1155837); // You can only embrace players and pets with Spirituality.
-					});
+					}
+				);
 			}
 		}
 
@@ -168,10 +167,9 @@ namespace Server.Services.Virtues
 							BuffIcon.Spirituality,
 							1155824,
 							1155825,
-							String.Format(
-								"{0}\t{1}",
-								context.Reduction,
-								context.Pool))); // ~1_VAL~% Reduction to Incoming Damage<br>~2_VAL~ Shield HP Remaining
+							String.Format("{0}\t{1}", context.Reduction, context.Pool)
+						)
+					); // ~1_VAL~% Reduction to Incoming Damage<br>~2_VAL~ Shield HP Remaining
 			}
 		}
 

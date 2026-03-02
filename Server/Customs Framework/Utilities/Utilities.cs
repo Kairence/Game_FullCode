@@ -1,7 +1,6 @@
 ﻿#region References
 using System;
 using System.IO;
-
 using Server;
 using Server.Items;
 #endregion
@@ -13,7 +12,7 @@ namespace CustomsFramework
 		StandardSaveStrategy,
 		DualSaveStrategy,
 		DynamicSaveStrategy,
-		ParallelSaveStrategy
+		ParallelSaveStrategy,
 	}
 
 	public enum OldClientResponse
@@ -22,7 +21,7 @@ namespace CustomsFramework
 		Warn,
 		Annoy,
 		LenientKick,
-		Kick
+		Kick,
 	}
 
 	public static class Utilities

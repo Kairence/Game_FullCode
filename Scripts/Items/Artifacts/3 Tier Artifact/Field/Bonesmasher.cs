@@ -2,56 +2,50 @@ using System;
 
 namespace Server.Items
 {
-    public class Bonesmasher : DiamondMace
+	public class Bonesmasher : DiamondMace
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public Bonesmasher()
-        {
-            Hue = 0x482;
-            SkillBonuses.SetValues(0, SkillName.Macing, 10.0);
-            WeaponAttributes.HitLeechMana = 40;
-            WeaponAttributes.SelfRepair = 2;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public Bonesmasher(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public Bonesmasher()
+		{
+			Hue = 0x482;
+			SkillBonuses.SetValues(0, SkillName.Macing, 10.0);
+			WeaponAttributes.HitLeechMana = 40;
+			WeaponAttributes.SelfRepair = 2;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1075030;
-            }
-        }// Bonesmasher
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public Bonesmasher(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1075030; }
+		} // Bonesmasher
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

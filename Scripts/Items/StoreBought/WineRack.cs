@@ -4,214 +4,232 @@ using Server.Network;
 
 namespace Server.Items
 {
-    public class WineRack : LockableContainer, IFlipable, IDyable
-    {
-        public override string DefaultName { get { return "Wine Rack"; } }
+	public class WineRack : LockableContainer, IFlipable, IDyable
+	{
+		public override string DefaultName
+		{
+			get { return "Wine Rack"; }
+		}
 
-        public override int DefaultGumpID { get { return 0x44; } }
+		public override int DefaultGumpID
+		{
+			get { return 0x44; }
+		}
 
-        public virtual int SouthID { get { return 0xA568; } }
-        public virtual int SouthEmptyID { get { return 0xA567; } }
-        public virtual int EastID { get { return 0xA56A; } }
-        public virtual int EastEmptyID { get { return 0xA569; } }
-        
-        public bool IsEmpty { get { return Items.Count == 0; } }
+		public virtual int SouthID
+		{
+			get { return 0xA568; }
+		}
+		public virtual int SouthEmptyID
+		{
+			get { return 0xA567; }
+		}
+		public virtual int EastID
+		{
+			get { return 0xA56A; }
+		}
+		public virtual int EastEmptyID
+		{
+			get { return 0xA569; }
+		}
 
-        public bool Dye(Mobile from, DyeTub sender)
-        {
-            if (Deleted)
-                return false;
+		public bool IsEmpty
+		{
+			get { return Items.Count == 0; }
+		}
 
-            Hue = sender.DyedHue;
+		public bool Dye(Mobile from, DyeTub sender)
+		{
+			if (Deleted)
+				return false;
 
-            return true;
-        }
+			Hue = sender.DyedHue;
 
-        [CommandProperty(AccessLevel.Decorator)]
-        public override int ItemID
-        {
-            get { return base.ItemID; }
-            set
-            {
-                base.ItemID = value;
+			return true;
+		}
 
-                CheckWineRack();
-            }
-        }
+		[CommandProperty(AccessLevel.Decorator)]
+		public override int ItemID
+		{
+			get { return base.ItemID; }
+			set
+			{
+				base.ItemID = value;
 
-        public void CheckWineRack()
-        {
-            if (IsEmpty)
-            {
-                if (ItemID == SouthID)
-                {
-                    base.ItemID = SouthEmptyID;
-                }
-                else if (ItemID == EastID)
-                {
-                    base.ItemID = EastEmptyID;
-                }
-            }
-            else
-            {
-                if (ItemID == SouthEmptyID)
-                {
-                    base.ItemID = SouthID;
-                }
-                else if (ItemID == EastEmptyID)
-                {
-                    base.ItemID = EastID;
-                }
-            }
-        }
+				CheckWineRack();
+			}
+		}
 
-        [Constructable]
-        public WineRack()
-            : this(0xA567)
-        {
-        }
+		public void CheckWineRack()
+		{
+			if (IsEmpty)
+			{
+				if (ItemID == SouthID)
+				{
+					base.ItemID = SouthEmptyID;
+				}
+				else if (ItemID == EastID)
+				{
+					base.ItemID = EastEmptyID;
+				}
+			}
+			else
+			{
+				if (ItemID == SouthEmptyID)
+				{
+					base.ItemID = SouthID;
+				}
+				else if (ItemID == EastEmptyID)
+				{
+					base.ItemID = EastID;
+				}
+			}
+		}
 
-        [Constructable]
-        public WineRack(int id)
-            : base(id)
-        {
-        }
+		[Constructable]
+		public WineRack()
+			: this(0xA567) { }
 
-        public virtual void OnFlip(Mobile from)
-        {
-            if (ItemID == SouthID)
-            {
-                base.ItemID = EastID;
-            }
-            else if (ItemID == EastID)
-            {
-                base.ItemID = SouthID;
-            }
-            else if (ItemID == SouthEmptyID)
-            {
-                base.ItemID = EastEmptyID;
-            }
-            else if (ItemID == EastEmptyID)
-            {
-                base.ItemID = SouthEmptyID;
-            }
-        }
+		[Constructable]
+		public WineRack(int id)
+			: base(id) { }
 
-        public override bool DisplaysContent { get { return false; } }
+		public virtual void OnFlip(Mobile from)
+		{
+			if (ItemID == SouthID)
+			{
+				base.ItemID = EastID;
+			}
+			else if (ItemID == EastID)
+			{
+				base.ItemID = SouthID;
+			}
+			else if (ItemID == SouthEmptyID)
+			{
+				base.ItemID = EastEmptyID;
+			}
+			else if (ItemID == EastEmptyID)
+			{
+				base.ItemID = SouthEmptyID;
+			}
+		}
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+		public override bool DisplaysContent
+		{
+			get { return false; }
+		}
 
-            list.Add(1072241, "{0}\t{1}\t{2}\t{3}", TotalItems, MaxItems, TotalWeight, MaxWeight);
-            // Contents: ~1_COUNT~/~2_MAXCOUNT~ items, ~3_WEIGHT~/~4_MAXWEIGHT~ stones
-        }
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-        public override bool OnDragDropInto(Mobile from, Item item, Point3D p)
-        {
-            bool dropped = base.OnDragDropInto(from, item, p);
-            BaseHouse house = BaseHouse.FindHouseAt(this);
+			list.Add(1072241, "{0}\t{1}\t{2}\t{3}", TotalItems, MaxItems, TotalWeight, MaxWeight);
+			// Contents: ~1_COUNT~/~2_MAXCOUNT~ items, ~3_WEIGHT~/~4_MAXWEIGHT~ stones
+		}
 
-            if (house != null && dropped)
-            {
-                OnItemDropped(from, item, house);
-            }
+		public override bool OnDragDropInto(Mobile from, Item item, Point3D p)
+		{
+			bool dropped = base.OnDragDropInto(from, item, p);
+			BaseHouse house = BaseHouse.FindHouseAt(this);
 
-            return dropped;
-        }
+			if (house != null && dropped)
+			{
+				OnItemDropped(from, item, house);
+			}
 
-        public override bool TryDropItem(Mobile from, Item dropped, bool sendFullMessage)
-        {
-            if (!CheckHold(from, dropped, true, true))
-            {
-                return false;
-            }
+			return dropped;
+		}
 
-            BaseHouse house = BaseHouse.FindHouseAt(this);
+		public override bool TryDropItem(Mobile from, Item dropped, bool sendFullMessage)
+		{
+			if (!CheckHold(from, dropped, true, true))
+			{
+				return false;
+			}
 
-            if (house != null && IsLockedDown)
-            {
-                if (!house.CheckAccessibility(this, from))
-                {
-                    PrivateOverheadMessage(MessageType.Regular, 0x21, 1061637, from.NetState); // You are not allowed to access this!
-                    from.SendLocalizedMessage(501727); // You cannot lock that down!
-                    return false;
-                }
-            }
+			BaseHouse house = BaseHouse.FindHouseAt(this);
 
-            DropItem(dropped);
+			if (house != null && IsLockedDown)
+			{
+				if (!house.CheckAccessibility(this, from))
+				{
+					PrivateOverheadMessage(MessageType.Regular, 0x21, 1061637, from.NetState); // You are not allowed to access this!
+					from.SendLocalizedMessage(501727); // You cannot lock that down!
+					return false;
+				}
+			}
 
-            if (house != null && !IsLockedDown)
-            {
-                OnItemDropped(from, dropped, house);
-            }
+			DropItem(dropped);
 
-            return true;
-        }
+			if (house != null && !IsLockedDown)
+			{
+				OnItemDropped(from, dropped, house);
+			}
 
-        public override bool IsAccessibleTo(Mobile m)
-        {
-            return true;
-        }
+			return true;
+		}
 
-        public override bool CheckLift(Mobile from, Item item, ref LRReason reject)
-        {
-            if (item == this)
-            {
-                return base.CheckLift(from, item, ref reject);
-            }
+		public override bool IsAccessibleTo(Mobile m)
+		{
+			return true;
+		}
 
-            BaseHouse house = BaseHouse.FindHouseAt(this);
+		public override bool CheckLift(Mobile from, Item item, ref LRReason reject)
+		{
+			if (item == this)
+			{
+				return base.CheckLift(from, item, ref reject);
+			}
 
-            if (house != null && IsSecure)
-            {
-                var secure = house.GetSecureInfoFor(this);
+			BaseHouse house = BaseHouse.FindHouseAt(this);
 
-                return secure != null && house.HasSecureAccess(from, secure);
-            }
+			if (house != null && IsSecure)
+			{
+				var secure = house.GetSecureInfoFor(this);
 
-            return base.CheckLift(from, item, ref reject);
-        }
+				return secure != null && house.HasSecureAccess(from, secure);
+			}
 
-        public virtual void OnItemDropped(Mobile from, Item item, BaseHouse house)
-        {
-            var secure = house.GetSecureInfoFor(this);
+			return base.CheckLift(from, item, ref reject);
+		}
 
-            if (secure != null && !house.HasSecureAccess(from, secure))
-            {
-                item.InvalidateProperties();
-            }
-        }
+		public virtual void OnItemDropped(Mobile from, Item item, BaseHouse house)
+		{
+			var secure = house.GetSecureInfoFor(this);
 
-        public override void OnItemAdded(Item item)
-        {
-            base.OnItemAdded(item);
+			if (secure != null && !house.HasSecureAccess(from, secure))
+			{
+				item.InvalidateProperties();
+			}
+		}
 
-            CheckWineRack();
-        }
+		public override void OnItemAdded(Item item)
+		{
+			base.OnItemAdded(item);
 
-        public override void OnItemRemoved(Item item)
-        {
-            base.OnItemRemoved(item);
+			CheckWineRack();
+		}
 
-            CheckWineRack();
-        }
+		public override void OnItemRemoved(Item item)
+		{
+			base.OnItemRemoved(item);
 
-        public WineRack(Serial serial)
-            : base(serial)
-        {
-        }
+			CheckWineRack();
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
+		public WineRack(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 }

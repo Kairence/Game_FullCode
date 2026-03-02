@@ -2,86 +2,70 @@ using System;
 
 namespace Server.Items
 {
-    public class StoneAnvilSouthAddon : BaseAddon
-    {
-        [Constructable]
-        public StoneAnvilSouthAddon()
-        {
-            this.AddComponent(new AnvilComponent(0x2DD5), 0, 0, 0);
-        }
+	public class StoneAnvilSouthAddon : BaseAddon
+	{
+		[Constructable]
+		public StoneAnvilSouthAddon()
+		{
+			this.AddComponent(new AnvilComponent(0x2DD5), 0, 0, 0);
+		}
 
-        public StoneAnvilSouthAddon(Serial serial)
-            : base(serial)
-        {
-        }
+		public StoneAnvilSouthAddon(Serial serial)
+			: base(serial) { }
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new StoneAnvilSouthDeed();
-            }
-        }
-        public override bool RetainDeedHue
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override BaseAddonDeed Deed
+		{
+			get { return new StoneAnvilSouthDeed(); }
+		}
+		public override bool RetainDeedHue
+		{
+			get { return true; }
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class StoneAnvilSouthDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public StoneAnvilSouthDeed()
-        {
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public StoneAnvilSouthDeed(Serial serial)
-            : base(serial)
-        {
-        }
+	public class StoneAnvilSouthDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public StoneAnvilSouthDeed() { }
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new StoneAnvilSouthAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1072876;
-            }
-        }// stone anvil (south)
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public StoneAnvilSouthDeed(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override BaseAddon Addon
+		{
+			get { return new StoneAnvilSouthAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1072876; }
+		} // stone anvil (south)
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

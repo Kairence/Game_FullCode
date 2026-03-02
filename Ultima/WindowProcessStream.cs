@@ -5,7 +5,11 @@ namespace Ultima
 		private ClientWindowHandle m_Window;
 		private ClientProcessHandle m_ProcessID;
 
-		public ClientWindowHandle Window { get { return m_Window; } set { m_Window = value; } }
+		public ClientWindowHandle Window
+		{
+			get { return m_Window; }
+			set { m_Window = value; }
+		}
 
 		public WindowProcessStream(ClientWindowHandle window)
 		{
@@ -22,7 +26,8 @@ namespace Ultima
 					return m_ProcessID;
 				}
 
-				NativeMethods.GetWindowThreadProcessId(m_Window, ref m_ProcessID);
+				int getWindowThreadProcessIdResult = NativeMethods.GetWindowThreadProcessId(m_Window, ref m_ProcessID);
+				_ = getWindowThreadProcessIdResult;
 
 				return m_ProcessID;
 			}

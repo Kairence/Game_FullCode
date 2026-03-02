@@ -1,5 +1,5 @@
-using Server.Items;
 using System;
+using Server.Items;
 using Server.Mobiles;
 
 /*
@@ -43,7 +43,7 @@ using Server.Mobiles;
 38 악마 로드 Demon Lord
 39 몽벳 Mongbat
 40 없음
-41 
+41
 
 
 
@@ -53,11 +53,23 @@ namespace Server.Lists
 {
 	public class Monsters
 	{
-        public static readonly Type[] Standard_A = new[]
-        {
-            typeof(AcidElemental), typeof(AirElemental), typeof(AntLion), typeof(Archmage), 
-			typeof(Wraith), typeof(SkeletalDragon), typeof(LichLord), typeof(FleshGolem), typeof(Lich), typeof(SkeletalKnight),
-            typeof(BoneKnight), typeof(Mummy), typeof(SkeletalMage), typeof(BoneMagi), typeof(PatchworkSkeleton)
-        };
+		public static readonly Type[] Standard_A = new[]
+		{
+			typeof(AcidElemental),
+			typeof(AirElemental),
+			typeof(AntLion),
+			typeof(Archmage),
+			typeof(Wraith),
+			typeof(SkeletalDragon),
+			typeof(LichLord),
+			typeof(FleshGolem),
+			typeof(Lich),
+			typeof(SkeletalKnight),
+			typeof(BoneKnight),
+			typeof(Mummy),
+			typeof(SkeletalMage),
+			typeof(BoneMagi),
+			typeof(PatchworkSkeleton),
+		};
 	}
 }

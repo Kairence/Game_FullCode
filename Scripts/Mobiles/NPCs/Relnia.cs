@@ -4,97 +4,89 @@ using Server.Mobiles;
 
 namespace Server.Engines.Quests.Samurai
 {
-    public class Relnia : BaseQuester
-    {
-        [Constructable]
-        public Relnia()
-            : base("the Gypsy")
-        {
-        }
+	public class Relnia : BaseQuester
+	{
+		[Constructable]
+		public Relnia()
+			: base("the Gypsy") { }
 
-        public Relnia(Serial serial)
-            : base(serial)
-        {
-        }
+		public Relnia(Serial serial)
+			: base(serial) { }
 
-        public override int TalkNumber
-        {
-            get
-            {
-                return -1;
-            }
-        }
-        public override void InitBody()
-        {
-            this.InitStats(100, 100, 25);
+		public override int TalkNumber
+		{
+			get { return -1; }
+		}
 
-            this.Hue = 0x83FF;
+		public override void InitBody()
+		{
+			this.InitStats(100, 100, 25);
 
-            this.Female = true;
-            this.Body = 0x191;
-            this.Name = "Disheveled Relnia";
-        }
+			this.Hue = 0x83FF;
 
-        public override void InitOutfit()
-        {
-            this.HairItemID = 0x203C;
-            this.HairHue = 0x654;
+			this.Female = true;
+			this.Body = 0x191;
+			this.Name = "Disheveled Relnia";
+		}
 
-            this.AddItem(new ThighBoots(0x901));
-            this.AddItem(new FancyShirt(0x5F3));
-            this.AddItem(new SkullCap(0x6A7));
-            this.AddItem(new Skirt(0x544));
-        }
+		public override void InitOutfit()
+		{
+			this.HairItemID = 0x203C;
+			this.HairHue = 0x654;
 
-        public override void OnTalk(PlayerMobile player, bool contextMenu)
-        {
-        }
+			this.AddItem(new ThighBoots(0x901));
+			this.AddItem(new FancyShirt(0x5F3));
+			this.AddItem(new SkullCap(0x6A7));
+			this.AddItem(new Skirt(0x544));
+		}
 
-        public override bool OnDragDrop(Mobile from, Item dropped)
-        {
-            PlayerMobile player = from as PlayerMobile;
+		public override void OnTalk(PlayerMobile player, bool contextMenu) { }
 
-            if (player != null)
-            {
-                QuestSystem qs = player.Quest;
+		public override bool OnDragDrop(Mobile from, Item dropped)
+		{
+			PlayerMobile player = from as PlayerMobile;
 
-                if (qs is HaochisTrialsQuest)
-                {
-                    QuestObjective obj = qs.FindObjective(typeof(FourthTrialCatsObjective));
+			if (player != null)
+			{
+				QuestSystem qs = player.Quest;
 
-                    if (obj != null && !obj.Completed)
-                    {
-                        Gold gold = dropped as Gold;
+				if (qs is HaochisTrialsQuest)
+				{
+					QuestObjective obj = qs.FindObjective(typeof(FourthTrialCatsObjective));
 
-                        if (gold != null)
-                        {
-                            obj.Complete();
-                            qs.AddObjective(new FourthTrialReturnObjective(false));
+					if (obj != null && !obj.Completed)
+					{
+						Gold gold = dropped as Gold;
 
-                            this.SayTo(from, 1063241); // I thank thee.  This gold will be a great help to me and mine!
+						if (gold != null)
+						{
+							obj.Complete();
+							qs.AddObjective(new FourthTrialReturnObjective(false));
 
-                            gold.Consume(); // Intentional difference from OSI: don't take all the gold of poor newbies!
-                            return gold.Deleted;
-                        }
-                    }
-                }
-            }
+							this.SayTo(from, 1063241); // I thank thee.  This gold will be a great help to me and mine!
 
-            return base.OnDragDrop(from, dropped);
-        }
+							gold.Consume(); // Intentional difference from OSI: don't take all the gold of poor newbies!
+							return gold.Deleted;
+						}
+					}
+				}
+			}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			return base.OnDragDrop(from, dropped);
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

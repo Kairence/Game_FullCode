@@ -1,14 +1,17 @@
-﻿using Server;
-using System;
+﻿using System;
+using Server;
 
 namespace Server.Items
 {
-    public class CorgulsHandbookOnMysticism : MysticBook
+	public class CorgulsHandbookOnMysticism : MysticBook
 	{
-        public override int LabelNumber { get { return 1149779; } }
+		public override int LabelNumber
+		{
+			get { return 1149779; }
+		}
 
 		[Constructable]
-		public CorgulsHandbookOnMysticism ()
+		public CorgulsHandbookOnMysticism()
 		{
 			Hue = 1159;
 			Attributes.RegenMana = 3;
@@ -17,20 +20,18 @@ namespace Server.Items
 			Attributes.LowerRegCost = 20;
 		}
 
-        public CorgulsHandbookOnMysticism(Serial serial)
-            : base(serial)
-		{
-		}
+		public CorgulsHandbookOnMysticism(Serial serial)
+			: base(serial) { }
 
 		public override void Serialize(GenericWriter writer)
-		{	
+		{
 			base.Serialize(writer);
-            writer.Write((int)0);	
+			writer.Write((int)0);
 		}
-	
+
 		public override void Deserialize(GenericReader reader)
 		{
-		 	base.Deserialize(reader);
+			base.Deserialize(reader);
 			int version = reader.ReadInt();
 		}
 	}

@@ -4,384 +4,337 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    public class Neira : BaseChampion
-    {
-        private const double SpeedBoostScalar = 1.2;
-        private bool m_SpeedBoost;
-        [Constructable]
-        public Neira()
-            : base(AIType.AI_Mage)
-        {
-            Name = "Neira";
-            Title = "the necromancer";
-            Body = 401;
-            Hue = 0x83EC;
+	public class Neira : BaseChampion
+	{
+		private const double SpeedBoostScalar = 1.2;
+		private bool m_SpeedBoost;
 
-            SetStr(305, 425);
-            SetDex(72, 150);
-            SetInt(505, 750);
+		[Constructable]
+		public Neira()
+			: base(AIType.AI_Mage)
+		{
+			Name = "Neira";
+			Title = "the necromancer";
+			Body = 401;
+			Hue = 0x83EC;
 
-            SetHits(4800);
-            SetStam(102, 300);
+			SetStr(305, 425);
+			SetDex(72, 150);
+			SetInt(505, 750);
 
-            SetDamage(25, 35);
+			SetHits(4800);
+			SetStam(102, 300);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			SetDamage(25, 35);
 
-            SetResistance(ResistanceType.Physical, 25, 30);
-            SetResistance(ResistanceType.Fire, 35, 45);
-            SetResistance(ResistanceType.Cold, 50, 60);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 20, 30);
+			SetDamageType(ResistanceType.Physical, 100);
 
-            SetSkill(SkillName.EvalInt, 120.0);
-            SetSkill(SkillName.Magery, 120.0);
-            SetSkill(SkillName.Meditation, 120.0);
-            SetSkill(SkillName.MagicResist, 150.0);
-            SetSkill(SkillName.Tactics, 97.6, 100.0);
-            SetSkill(SkillName.Wrestling, 97.6, 100.0);
+			SetResistance(ResistanceType.Physical, 25, 30);
+			SetResistance(ResistanceType.Fire, 35, 45);
+			SetResistance(ResistanceType.Cold, 50, 60);
+			SetResistance(ResistanceType.Poison, 30, 40);
+			SetResistance(ResistanceType.Energy, 20, 30);
 
-            Fame = 22500;
-            Karma = -22500;
+			SetSkill(SkillName.EvalInt, 120.0);
+			SetSkill(SkillName.Magery, 120.0);
+			SetSkill(SkillName.Meditation, 120.0);
+			SetSkill(SkillName.MagicResist, 150.0);
+			SetSkill(SkillName.Tactics, 97.6, 100.0);
+			SetSkill(SkillName.Wrestling, 97.6, 100.0);
 
-            VirtualArmor = 30;
-            Female = true;
+			Fame = 22500;
+			Karma = -22500;
 
-            Item shroud = new HoodedShroudOfShadows();
+			VirtualArmor = 30;
+			Female = true;
 
-            shroud.Movable = false;
+			Item shroud = new HoodedShroudOfShadows();
 
-            AddItem(shroud);
+			shroud.Movable = false;
 
-            Scimitar weapon = new Scimitar();
+			AddItem(shroud);
 
-            weapon.Skill = SkillName.Wrestling;
-            weapon.Hue = 38;
-            weapon.Movable = false;
+			Scimitar weapon = new Scimitar();
 
-            AddItem(weapon);
+			weapon.Skill = SkillName.Wrestling;
+			weapon.Hue = 38;
+			weapon.Movable = false;
 
-            //new SkeletalMount().Rider = this;
-            AddItem(new VirtualMountItem(this));
-        }
+			AddItem(weapon);
 
-        public Neira(Serial serial)
-            : base(serial)
-        {
-        }
+			//new SkeletalMount().Rider = this;
+			AddItem(new VirtualMountItem(this));
+		}
 
-        public override ChampionSkullType SkullType
-        {
-            get
-            {
-                return ChampionSkullType.Death;
-            }
-        }
-        public override Type[] UniqueList
-        {
-            get
-            {
-                return new Type[] { typeof(ShroudOfDeceit) };
-            }
-        }
-        public override Type[] SharedList
-        {
-            get
-            {
-                return new Type[]
-                {
-                    typeof(ANecromancerShroud),
-                    typeof(CaptainJohnsHat),
-                    typeof(DetectiveBoots)
-                };
-            }
-        }
-        public override Type[] DecorativeList
-        {
-            get
-            {
-                return new Type[] { typeof(WallBlood), typeof(TatteredAncientMummyWrapping) };
-            }
-        }
-        public override MonsterStatuetteType[] StatueTypes
-        {
-            get
-            {
-                return new MonsterStatuetteType[] { };
-            }
-        }
-        public override bool AlwaysMurderer
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override bool BardImmune
-        {
-            get
-            {
-                return !Core.SE;
-            }
-        }
-        public override bool Unprovokable
-        {
-            get
-            {
-                return Core.SE;
-            }
-        }
-        public override bool Uncalmable
-        {
-            get
-            {
-                return Core.SE;
-            }
-        }
-        public override Poison PoisonImmune
-        {
-            get
-            {
-                return Poison.Deadly;
-            }
-        }
-        public override bool ShowFameTitle
-        {
-            get
-            {
-                return false;
-            }
-        }
-        public override bool ClickTitle
-        {
-            get
-            {
-                return false;
-            }
-        }
+		public Neira(Serial serial)
+			: base(serial) { }
 
-        public override bool ForceStayHome { get { return true; } }
+		public override ChampionSkullType SkullType
+		{
+			get { return ChampionSkullType.Death; }
+		}
+		public override Type[] UniqueList
+		{
+			get { return new Type[] { typeof(ShroudOfDeceit) }; }
+		}
+		public override Type[] SharedList
+		{
+			get { return new Type[] { typeof(ANecromancerShroud), typeof(CaptainJohnsHat), typeof(DetectiveBoots) }; }
+		}
+		public override Type[] DecorativeList
+		{
+			get { return new Type[] { typeof(WallBlood), typeof(TatteredAncientMummyWrapping) }; }
+		}
+		public override MonsterStatuetteType[] StatueTypes
+		{
+			get { return new MonsterStatuetteType[] { }; }
+		}
+		public override bool AlwaysMurderer
+		{
+			get { return true; }
+		}
+		public override bool BardImmune
+		{
+			get { return !Core.SE; }
+		}
+		public override bool Unprovokable
+		{
+			get { return Core.SE; }
+		}
+		public override bool Uncalmable
+		{
+			get { return Core.SE; }
+		}
+		public override Poison PoisonImmune
+		{
+			get { return Poison.Deadly; }
+		}
+		public override bool ShowFameTitle
+		{
+			get { return false; }
+		}
+		public override bool ClickTitle
+		{
+			get { return false; }
+		}
 
-        public override void GenerateLoot()
-        {
-            AddLoot(LootPack.UltraRich, 3);
-            AddLoot(LootPack.Meager);
-        }
+		public override bool ForceStayHome
+		{
+			get { return true; }
+		}
 
-        public override bool OnBeforeDeath()
-        {
-            IMount mount = Mount;
+		public override void GenerateLoot()
+		{
+			AddLoot(LootPack.UltraRich, 3);
+			AddLoot(LootPack.Meager);
+		}
 
-            if (mount != null)
-                mount.Rider = null;
+		public override bool OnBeforeDeath()
+		{
+			IMount mount = Mount;
 
-            if (mount is Mobile)
-                ((Mobile)mount).Delete();
+			if (mount != null)
+				mount.Rider = null;
 
-            return base.OnBeforeDeath();
-        }
+			if (mount is Mobile)
+				((Mobile)mount).Delete();
 
-        public override void OnDeath(Container c)
-        {
-            base.OnDeath(c);
+			return base.OnBeforeDeath();
+		}
 
-            NecromancerSpellbook book = new NecromancerSpellbook();
-            book.Content = (1ul << book.BookCount) - 1;
-            c.DropItem(book);
-        }
+		public override void OnDeath(Container c)
+		{
+			base.OnDeath(c);
 
-        public override void OnDamage(int amount, Mobile from, bool willKill)
-        {
-            CheckSpeedBoost();
-            base.OnDamage(amount, from, willKill);
-        }
+			NecromancerSpellbook book = new NecromancerSpellbook();
+			book.Content = (1ul << book.BookCount) - 1;
+			c.DropItem(book);
+		}
 
-        public override void OnGaveMeleeAttack(Mobile defender)
-        {
-            base.OnGaveMeleeAttack(defender);
+		public override void OnDamage(int amount, Mobile from, bool willKill)
+		{
+			CheckSpeedBoost();
+			base.OnDamage(amount, from, willKill);
+		}
 
-            if (0.1 >= Utility.RandomDouble()) // 10% chance to drop or throw an unholy bone
-                AddUnholyBone(defender, 0.25);
-				
-            CheckSpeedBoost();
-        }
+		public override void OnGaveMeleeAttack(Mobile defender)
+		{
+			base.OnGaveMeleeAttack(defender);
 
-        public override void OnGotMeleeAttack(Mobile attacker)
-        {
-            base.OnGotMeleeAttack(attacker);
+			if (0.1 >= Utility.RandomDouble()) // 10% chance to drop or throw an unholy bone
+				AddUnholyBone(defender, 0.25);
 
-            if (0.1 >= Utility.RandomDouble()) // 10% chance to drop or throw an unholy bone
-                AddUnholyBone(attacker, 0.25);
-        }
+			CheckSpeedBoost();
+		}
 
-        public override void AlterDamageScalarFrom(Mobile caster, ref double scalar)
-        {
-            base.AlterDamageScalarFrom(caster, ref scalar);
+		public override void OnGotMeleeAttack(Mobile attacker)
+		{
+			base.OnGotMeleeAttack(attacker);
 
-            if (0.1 >= Utility.RandomDouble()) // 10% chance to throw an unholy bone
-                AddUnholyBone(caster, 1.0);
-        }
+			if (0.1 >= Utility.RandomDouble()) // 10% chance to drop or throw an unholy bone
+				AddUnholyBone(attacker, 0.25);
+		}
 
-        public void AddUnholyBone(Mobile target, double chanceToThrow)
-        {
-            if (Map == null)
-                return;
+		public override void AlterDamageScalarFrom(Mobile caster, ref double scalar)
+		{
+			base.AlterDamageScalarFrom(caster, ref scalar);
 
-            if (chanceToThrow >= Utility.RandomDouble())
-            {
-                Direction = GetDirectionTo(target);
-                MovingEffect(target, 0xF7E, 10, 1, true, false, 0x496, 0);
-                new DelayTimer(this, target).Start();
-            }
-            else
-            {
-                new UnholyBone().MoveToWorld(Location, Map);
-            }
-        }
+			if (0.1 >= Utility.RandomDouble()) // 10% chance to throw an unholy bone
+				AddUnholyBone(caster, 1.0);
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public void AddUnholyBone(Mobile target, double chanceToThrow)
+		{
+			if (Map == null)
+				return;
 
-            writer.Write((int)1); // version
-            writer.Write(m_SpeedBoost);
-        }
+			if (chanceToThrow >= Utility.RandomDouble())
+			{
+				Direction = GetDirectionTo(target);
+				MovingEffect(target, 0xF7E, 10, 1, true, false, 0x496, 0);
+				new DelayTimer(this, target).Start();
+			}
+			else
+			{
+				new UnholyBone().MoveToWorld(Location, Map);
+			}
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-			
-            switch( version )
-            {
-                case 1:
-                    {
-                        m_SpeedBoost = reader.ReadBool();
-                        break;
-                    }
-            }
-        }
+			writer.Write((int)1); // version
+			writer.Write(m_SpeedBoost);
+		}
 
-        private void CheckSpeedBoost()
-        {
-            if (Hits < (HitsMax / 4))
-            {
-                if (!m_SpeedBoost)
-                {
-                    ActiveSpeed /= SpeedBoostScalar;
-                    PassiveSpeed /= SpeedBoostScalar;
-                    m_SpeedBoost = true;
-                }
-            }
-            else if (m_SpeedBoost)
-            {
-                ActiveSpeed *= SpeedBoostScalar;
-                PassiveSpeed *= SpeedBoostScalar;
-                m_SpeedBoost = false;
-            }
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        private class VirtualMount : IMount
-        {
-            private readonly VirtualMountItem m_Item;
-            public VirtualMount(VirtualMountItem item)
-            {
-                m_Item = item;
-            }
+			int version = reader.ReadInt();
 
-            public Mobile Rider
-            {
-                get
-                {
-                    return m_Item.Rider;
-                }
-                set
-                {
-                }
-            }
-            public virtual void OnRiderDamaged(Mobile from, ref int amount, bool willKill)
-            {
-            }
-        }
+			switch (version)
+			{
+				case 1:
+				{
+					m_SpeedBoost = reader.ReadBool();
+					break;
+				}
+			}
+		}
 
-        private class VirtualMountItem : Item, IMountItem
-        {
-            private readonly VirtualMount m_Mount;
-            private Mobile m_Rider;
-            public VirtualMountItem(Mobile mob)
-                : base(0x3EBB)
-            {
-                Layer = Layer.Mount;
+		private void CheckSpeedBoost()
+		{
+			if (Hits < (HitsMax / 4))
+			{
+				if (!m_SpeedBoost)
+				{
+					ActiveSpeed /= SpeedBoostScalar;
+					PassiveSpeed /= SpeedBoostScalar;
+					m_SpeedBoost = true;
+				}
+			}
+			else if (m_SpeedBoost)
+			{
+				ActiveSpeed *= SpeedBoostScalar;
+				PassiveSpeed *= SpeedBoostScalar;
+				m_SpeedBoost = false;
+			}
+		}
 
-                Movable = false;
+		private class VirtualMount : IMount
+		{
+			private readonly VirtualMountItem m_Item;
 
-                m_Rider = mob;
-                m_Mount = new VirtualMount(this);
-            }
+			public VirtualMount(VirtualMountItem item)
+			{
+				m_Item = item;
+			}
 
-            public VirtualMountItem(Serial serial)
-                : base(serial)
-            {
-                m_Mount = new VirtualMount(this);
-            }
+			public Mobile Rider
+			{
+				get { return m_Item.Rider; }
+				set { }
+			}
 
-            public Mobile Rider
-            {
-                get
-                {
-                    return m_Rider;
-                }
-            }
-            public IMount Mount
-            {
-                get
-                {
-                    return m_Mount;
-                }
-            }
-            public override void Serialize(GenericWriter writer)
-            {
-                base.Serialize(writer);
+			public virtual void OnRiderDamaged(Mobile from, ref int amount, bool willKill) { }
+		}
 
-                writer.Write((int)0); // version
+		private class VirtualMountItem : Item, IMountItem
+		{
+			private readonly VirtualMount m_Mount;
+			private Mobile m_Rider;
 
-                writer.Write((Mobile)m_Rider);
-            }
+			public VirtualMountItem(Mobile mob)
+				: base(0x3EBB)
+			{
+				Layer = Layer.Mount;
 
-            public override void Deserialize(GenericReader reader)
-            {
-                base.Deserialize(reader);
+				Movable = false;
 
-                int version = reader.ReadInt();
+				m_Rider = mob;
+				m_Mount = new VirtualMount(this);
+			}
 
-                m_Rider = reader.ReadMobile();
+			public VirtualMountItem(Serial serial)
+				: base(serial)
+			{
+				m_Mount = new VirtualMount(this);
+			}
 
-                if (m_Rider == null)
-                    Delete();
-            }
-        }
+			public Mobile Rider
+			{
+				get { return m_Rider; }
+			}
+			public IMount Mount
+			{
+				get { return m_Mount; }
+			}
 
-        private class DelayTimer : Timer
-        {
-            private readonly Mobile m_Mobile;
-            private readonly Mobile m_Target;
-            public DelayTimer(Mobile m, Mobile target)
-                : base(TimeSpan.FromSeconds(1.0))
-            {
-                m_Mobile = m;
-                m_Target = target;
-            }
+			public override void Serialize(GenericWriter writer)
+			{
+				base.Serialize(writer);
 
-            protected override void OnTick()
-            {
-                if (m_Mobile.CanBeHarmful(m_Target))
-                {
-                    m_Mobile.DoHarmful(m_Target);
-                    AOS.Damage(m_Target, m_Mobile, Utility.RandomMinMax(10, 20), 100, 0, 0, 0, 0);
-                    new UnholyBone().MoveToWorld(m_Target.Location, m_Target.Map);
-                }
-            }
-        }
-    }
+				writer.Write((int)0); // version
+
+				writer.Write((Mobile)m_Rider);
+			}
+
+			public override void Deserialize(GenericReader reader)
+			{
+				base.Deserialize(reader);
+
+				int version = reader.ReadInt();
+
+				m_Rider = reader.ReadMobile();
+
+				if (m_Rider == null)
+					Delete();
+			}
+		}
+
+		private class DelayTimer : Timer
+		{
+			private readonly Mobile m_Mobile;
+			private readonly Mobile m_Target;
+
+			public DelayTimer(Mobile m, Mobile target)
+				: base(TimeSpan.FromSeconds(1.0))
+			{
+				m_Mobile = m;
+				m_Target = target;
+			}
+
+			protected override void OnTick()
+			{
+				if (m_Mobile.CanBeHarmful(m_Target))
+				{
+					m_Mobile.DoHarmful(m_Target);
+					AOS.Damage(m_Target, m_Mobile, Utility.RandomMinMax(10, 20), 100, 0, 0, 0, 0);
+					new UnholyBone().MoveToWorld(m_Target.Location, m_Target.Map);
+				}
+			}
+		}
+	}
 }

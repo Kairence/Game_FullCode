@@ -3,82 +3,84 @@ using Server.Network;
 
 namespace Server.Items
 {
-    [FlipableAttribute(0xF95, 0xF96, 0xF97, 0xF98, 0xF99, 0xF9A, 0xF9B, 0xF9C)]
-    public class BoltOfCloth : Item, IScissorable, IDyable, ICommodity
-    {
-        [Constructable]
-        public BoltOfCloth()
-            : this(1)
-        {
-        }
+	[FlipableAttribute(0xF95, 0xF96, 0xF97, 0xF98, 0xF99, 0xF9A, 0xF9B, 0xF9C)]
+	public class BoltOfCloth : Item, IScissorable, IDyable, ICommodity
+	{
+		[Constructable]
+		public BoltOfCloth()
+			: this(1) { }
 
-        [Constructable]
-        public BoltOfCloth(int amount)
-            : base(0xF95)
-        {
-            this.Stackable = true;
-            this.Weight = 5.0;
-            this.Amount = amount;
-        }
+		[Constructable]
+		public BoltOfCloth(int amount)
+			: base(0xF95)
+		{
+			this.Stackable = true;
+			this.Weight = 5.0;
+			this.Amount = amount;
+		}
 
-        public BoltOfCloth(Serial serial)
-            : base(serial)
-        {
-        }
+		public BoltOfCloth(Serial serial)
+			: base(serial) { }
 
-        TextDefinition ICommodity.Description
-        {
-            get
-            {
-                return this.LabelNumber;
-            }
-        }
-        bool ICommodity.IsDeedable
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public bool Dye(Mobile from, DyeTub sender)
-        {
-            if (this.Deleted)
-                return false;
+		TextDefinition ICommodity.Description
+		{
+			get { return this.LabelNumber; }
+		}
+		bool ICommodity.IsDeedable
+		{
+			get { return true; }
+		}
 
-            this.Hue = sender.DyedHue;
+		public bool Dye(Mobile from, DyeTub sender)
+		{
+			if (this.Deleted)
+				return false;
 
-            return true;
-        }
+			this.Hue = sender.DyedHue;
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			return true;
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public bool Scissor(Mobile from, Scissors scissors)
-        {
-            if (this.Deleted || !from.CanSee(this))
-                return false;
+			int version = reader.ReadInt();
+		}
 
-            base.ScissorHelper(from, new Cloth(), 50);
+		public bool Scissor(Mobile from, Scissors scissors)
+		{
+			if (this.Deleted || !from.CanSee(this))
+				return false;
 
-            return true;
-        }
+			base.ScissorHelper(from, new Cloth(), 50);
 
-        public override void OnSingleClick(Mobile from)
-        {
-            int number = (this.Amount == 1) ? 1049122 : 1049121;
+			return true;
+		}
 
-            from.Send(new MessageLocalized(this.Serial, this.ItemID, MessageType.Label, 0x3B2, 3, number, "", (this.Amount * 50).ToString()));
-        }
-    }
+		public override void OnSingleClick(Mobile from)
+		{
+			int number = (this.Amount == 1) ? 1049122 : 1049121;
+
+			from.Send(
+				new MessageLocalized(
+					this.Serial,
+					this.ItemID,
+					MessageType.Label,
+					0x3B2,
+					3,
+					number,
+					"",
+					(this.Amount * 50).ToString()
+				)
+			);
+		}
+	}
 }

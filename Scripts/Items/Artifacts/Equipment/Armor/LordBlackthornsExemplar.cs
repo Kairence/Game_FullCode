@@ -2,101 +2,77 @@ using System;
 
 namespace Server.Items
 {
-    public class LordBlackthornsExemplar : ChaosShield
+	public class LordBlackthornsExemplar : ChaosShield
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public LordBlackthornsExemplar()
-            : base()
-        {
-            Hue = 0x501;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public LordBlackthornsExemplar(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public LordBlackthornsExemplar()
+			: base()
+		{
+			Hue = 0x501;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1079793;
-            }
-        }// Lord Blackthorn's Exemplar
-        public override int ArtifactRarity
-        {
-            get
-            {
-                return 11;
-            }
-        }
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 6;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 15;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 150;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 150;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public LordBlackthornsExemplar(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)1);
-        }
+		public override int LabelNumber
+		{
+			get { return 1079793; }
+		} // Lord Blackthorn's Exemplar
+		public override int ArtifactRarity
+		{
+			get { return 11; }
+		}
+		public override int BasePhysicalResistance
+		{
+			get { return 6; }
+		}
+		public override int BaseFireResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return 10; }
+		}
+		public override int BasePoisonResistance
+		{
+			get { return 15; }
+		}
+		public override int BaseEnergyResistance
+		{
+			get { return 10; }
+		}
+		public override int InitMinHits
+		{
+			get { return 150; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 150; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
+			writer.Write((int)1);
+		}
 
-            if (version == 0)
-            {
-                NegativeAttributes.NoRepair = 0;
-            }
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+
+			if (version == 0)
+			{
+				NegativeAttributes.NoRepair = 0;
+			}
+		}
+	}
 }

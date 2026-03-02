@@ -3,52 +3,48 @@ using Server.Mobiles;
 
 namespace Server.Engines.Quests.Ninja
 {
-    public class EminosKatana : QuestItem
-    {
-        [Constructable]
-        public EminosKatana()
-            : base(0x13FF)
-        {
-            this.Weight = 1.0;
-        }
+	public class EminosKatana : QuestItem
+	{
+		[Constructable]
+		public EminosKatana()
+			: base(0x13FF)
+		{
+			this.Weight = 1.0;
+		}
 
-        public EminosKatana(Serial serial)
-            : base(serial)
-        {
-        }
+		public EminosKatana(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1063214;
-            }
-        }// Daimyo Emino's Katana
-        public override bool CanDrop(PlayerMobile player)
-        {
-            EminosUndertakingQuest qs = player.Quest as EminosUndertakingQuest;
+		public override int LabelNumber
+		{
+			get { return 1063214; }
+		} // Daimyo Emino's Katana
 
-            if (qs == null)
-                return true;
+		public override bool CanDrop(PlayerMobile player)
+		{
+			EminosUndertakingQuest qs = player.Quest as EminosUndertakingQuest;
 
-            /*return !qs.IsObjectiveInProgress( typeof( ReturnSwordObjective ) )
-            && !qs.IsObjectiveInProgress( typeof( SlayHenchmenObjective ) )
-            && !qs.IsObjectiveInProgress( typeof( GiveEminoSwordObjective ) );*/
-            return false;
-        }
+			if (qs == null)
+				return true;
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			/*return !qs.IsObjectiveInProgress( typeof( ReturnSwordObjective ) )
+			&& !qs.IsObjectiveInProgress( typeof( SlayHenchmenObjective ) )
+			&& !qs.IsObjectiveInProgress( typeof( GiveEminoSwordObjective ) );*/
+			return false;
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

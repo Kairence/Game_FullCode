@@ -4,103 +4,94 @@ using Server.Misc;
 
 namespace Server.Mobiles
 {
-    [CorpseName("a wisp corpse")]
-    public class DarkWisp : BaseCreature
-    {
-        [Constructable]
-        public DarkWisp()
-            : base(AIType.AI_NecroMage, FightMode.Closest, 10, 1, 0.2, 0.4)
-        {
-            Name = "a wisp";
-            Body = 165;
-            BaseSoundID = 466;
+	[CorpseName("a wisp corpse")]
+	public class DarkWisp : BaseCreature
+	{
+		[Constructable]
+		public DarkWisp()
+			: base(AIType.AI_NecroMage, FightMode.Closest, 10, 1, 0.2, 0.4)
+		{
+			Name = "a wisp";
+			Body = 165;
+			BaseSoundID = 466;
 
-            SetStr(5000, 7225);
-            SetDex(5996, 7225);
-            SetInt(5996, 7225);
+			SetStr(5000, 7225);
+			SetDex(5996, 7225);
+			SetInt(5996, 7225);
 
-            SetHits(11800, 13500);
-            SetStam(4500, 4750);
-            SetMana(3500, 4000);
+			SetHits(11800, 13500);
+			SetStam(4500, 4750);
+			SetMana(3500, 4000);
 
 			SetAttackSpeed(1.0);
-			
-            SetDamage(52, 75);
 
-            SetDamageType(ResistanceType.Physical, 0);
-            SetDamageType(ResistanceType.Chaos, 100);
+			SetDamage(52, 75);
 
-            SetResistance(ResistanceType.Physical, 35, 45);
-            SetResistance(ResistanceType.Fire, 20, 40);
-            SetResistance(ResistanceType.Cold, 10, 30);
-            SetResistance(ResistanceType.Poison, 5, 10);
-            SetResistance(ResistanceType.Energy, 45, 50);
+			SetDamageType(ResistanceType.Physical, 0);
+			SetDamageType(ResistanceType.Chaos, 100);
 
-            SetSkill(SkillName.EvalInt, 160.0);
-            SetSkill(SkillName.Magery, 160.0);
-            SetSkill(SkillName.MagicResist, 160.0);
-            SetSkill(SkillName.Tactics, 160.0);
-            SetSkill(SkillName.Wrestling, 160.0);
-            SetSkill(SkillName.Necromancy, 160.0);
-            SetSkill(SkillName.SpiritSpeak, 160.0);
+			SetResistance(ResistanceType.Physical, 35, 45);
+			SetResistance(ResistanceType.Fire, 20, 40);
+			SetResistance(ResistanceType.Cold, 10, 30);
+			SetResistance(ResistanceType.Poison, 5, 10);
+			SetResistance(ResistanceType.Energy, 45, 50);
 
-            Fame = 20000;
-            Karma = -20000;
+			SetSkill(SkillName.EvalInt, 160.0);
+			SetSkill(SkillName.Magery, 160.0);
+			SetSkill(SkillName.MagicResist, 160.0);
+			SetSkill(SkillName.Tactics, 160.0);
+			SetSkill(SkillName.Wrestling, 160.0);
+			SetSkill(SkillName.Necromancy, 160.0);
+			SetSkill(SkillName.SpiritSpeak, 160.0);
 
-            VirtualArmor = 10;
+			Fame = 20000;
+			Karma = -20000;
 
-            //AddItem(new LightSource());
-        }
+			VirtualArmor = 10;
 
-        public DarkWisp(Serial serial)
-            : base(serial)
-        {
-        }
+			//AddItem(new LightSource());
+		}
 
-        public override InhumanSpeech SpeechType
-        {
-            get
-            {
-                return InhumanSpeech.Wisp;
-            }
-        }
-        /*public override Ethics.Ethic EthicAllegiance
-        {
-            get
-            {
-                return Ethics.Ethic.Evil;
-            }
-        }*/
-        public override TimeSpan ReacquireDelay
-        {
-            get
-            {
-                return TimeSpan.FromSeconds(1.0);
-            }
-        }
-        public override OppositionGroup OppositionGroup
-        {
-            get
-            {
-                return OppositionGroup.FeyAndUndead;
-            }
-        }
-        public override void GenerateLoot()
-        {
-            AddLoot(LootPack.Rich);
-            AddLoot(LootPack.Average);
-        }
+		public DarkWisp(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
+		public override InhumanSpeech SpeechType
+		{
+			get { return InhumanSpeech.Wisp; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+		/*public override Ethics.Ethic EthicAllegiance
+		{
+			get
+			{
+				return Ethics.Ethic.Evil;
+			}
+		}*/
+		public override TimeSpan ReacquireDelay
+		{
+			get { return TimeSpan.FromSeconds(1.0); }
+		}
+		public override OppositionGroup OppositionGroup
+		{
+			get { return OppositionGroup.FeyAndUndead; }
+		}
+
+		public override void GenerateLoot()
+		{
+			AddLoot(LootPack.Rich);
+			AddLoot(LootPack.Average);
+		}
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 }

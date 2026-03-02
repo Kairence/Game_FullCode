@@ -1,5 +1,6 @@
 #region References
 using System;
+using System.Globalization;
 using System.IO;
 #endregion
 
@@ -17,10 +18,9 @@ namespace Ultima
 		private static WindowProcessStream m_ProcStream;
 		private static LocationPointer m_LocationPointer;
 
-		private static bool m_Is_Iris2;
+		private static bool m_IsIris2;
 
-		private Client()
-		{ }
+		private Client() { }
 
 		/// <summary>
 		///     Gets a <see cref="ProcessStream" /> instance which can be used to read the memory. Null is returned if the Client is not running.
@@ -129,7 +129,7 @@ namespace Ultima
 		{
 			if (mask.Length != vals.Length)
 			{
-				throw new Exception();
+				throw new ArgumentException("Mask and values must have the same length.", nameof(vals));
 			}
 
 			const int chunkSize = 4096;
@@ -139,7 +139,7 @@ namespace Ultima
 
 			var read = new byte[readSize];
 
-			for (int i = 0;; ++i)
+			for (int i = 0; ; ++i)
 			{
 				pc.Seek(0x400000 + (i * chunkSize), SeekOrigin.Begin);
 				int count = pc.Read(read, 0, readSize);
@@ -179,7 +179,7 @@ namespace Ultima
 
 			var read = new byte[readSize];
 
-			for (int i = 0;; ++i)
+			for (int i = 0; ; ++i)
 			{
 				pc.Seek(0x400000 + (i * chunkSize), SeekOrigin.Begin);
 				int count = pc.Read(read, 0, readSize);
@@ -281,10 +281,14 @@ namespace Ultima
 				return;
 			}
 
-			int ptrX = 0, sizeX = 0;
-			int ptrY = 0, sizeY = 0;
-			int ptrZ = 0, sizeZ = 0;
-			int ptrF = 0, sizeF = 0;
+			int ptrX = 0,
+				sizeX = 0;
+			int ptrY = 0,
+				sizeY = 0;
+			int ptrZ = 0,
+				sizeZ = 0;
+			int ptrF = 0,
+				sizeF = 0;
 
 			for (int i = 0; i < info.Length; ++i)
 			{
@@ -329,7 +333,13 @@ namespace Ultima
 			}
 		}
 
-		private static void GetCoordDetails(ProcessStream pc, int ptr, byte[] dets, out int coordPointer, out int coordSize)
+		private static void GetCoordDetails(
+			ProcessStream pc,
+			int ptr,
+			byte[] dets,
+			out int coordPointer,
+			out int coordSize
+		)
 		{
 			pc.Seek(ptr + dets[0], SeekOrigin.Begin);
 			coordPointer = Read(pc, dets[1]);
@@ -350,15 +360,15 @@ namespace Ultima
 			 * arul:
 			 *	The variable 'dets[6]' represents an offset into the struct that holds an info about players current location.
 			 *	Added not to break functionality with the older clients (I hope).
-			 * 
-			 * The struct looks as follows: 
-			 * 
-			 *  DWORD fLoggedIn; 
+			 *
+			 * The struct looks as follows:
+			 *
+			 *  DWORD fLoggedIn;
 			 *	DWORD Z;
 			 *  DWORD Y;
 			 *	DWORD X;
-			 *	DWORD Facet;  
-			 *  
+			 *	DWORD Facet;
+			 *
 			 */
 			if (dets.Length == 7 && dets[6] < 0xFF)
 			{
@@ -372,7 +382,11 @@ namespace Ultima
 		///     <seealso cref="FindLocation" />
 		///     <seealso cref="Calibrate" />
 		/// </summary>
-		public static LocationPointer LocationPointer { get { return m_LocationPointer; } set { m_LocationPointer = value; } }
+		public static LocationPointer LocationPointer
+		{
+			get { return m_LocationPointer; }
+			set { m_LocationPointer = value; }
+		}
 
 		/// <summary>
 		///     Gets the current window handle. A value of <c>ClientHandle.Invalid</c> is returned if the Client is not currently running.
@@ -395,12 +409,19 @@ namespace Ultima
 		///     Whether or not the Client is currently running.
 		///     <seealso cref="ClientHandle" />
 		/// </summary>
-		public static bool Running { get { return (!Handle.IsInvalid); } }
+		public static bool Running
+		{
+			get { return (!Handle.IsInvalid); }
+		}
 
 		/// <summary>
 		///     Is Client Iris2
 		/// </summary>
-		public static bool Is_Iris2 { get { return m_Is_Iris2; } set { m_Is_Iris2 = value; } }
+		public static bool IsIris2
+		{
+			get { return m_IsIris2; }
+			set { m_IsIris2 = value; }
+		}
 
 		private static void SendChar(ClientWindowHandle hWnd, char c)
 		{
@@ -420,7 +441,8 @@ namespace Ultima
 
 			if (!hWnd.IsInvalid)
 			{
-				NativeMethods.SetForegroundWindow(hWnd);
+				int setForegroundWindowResult = NativeMethods.SetForegroundWindow(hWnd);
+				_ = setForegroundWindowResult;
 
 				return true;
 			}
@@ -467,7 +489,7 @@ namespace Ultima
 		/// <returns>True if the Client is running, false if not.</returns>
 		public static bool SendText(string format, params object[] args)
 		{
-			return SendText(String.Format(format, args));
+			return SendText(String.Format(CultureInfo.CurrentCulture, format, args));
 		}
 
 		private static ClientWindowHandle FindHandle()
@@ -485,7 +507,7 @@ namespace Ultima
 			}
 			if (NativeMethods.IsWindow(hWnd = NativeMethods.FindWindowA("OgreGLWindow", null)) != 0)
 			{
-				m_Is_Iris2 = true;
+				m_IsIris2 = true;
 				return hWnd;
 			}
 

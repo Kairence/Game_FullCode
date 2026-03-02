@@ -2,58 +2,52 @@ using System;
 
 namespace Server.Items
 {
-    public class ShaminoCrossbow : RepeatingCrossbow
+	public class ShaminoCrossbow : RepeatingCrossbow
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public ShaminoCrossbow()
-        {
-            Hue = 0x504;
-            LootType = LootType.Blessed;
-            Attributes.AttackChance = 15;
-            Attributes.WeaponDamage = 40;
-            WeaponAttributes.SelfRepair = 10;
-            WeaponAttributes.LowerStatReq = 100;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public ShaminoCrossbow(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public ShaminoCrossbow()
+		{
+			Hue = 0x504;
+			LootType = LootType.Blessed;
+			Attributes.AttackChance = 15;
+			Attributes.WeaponDamage = 40;
+			WeaponAttributes.SelfRepair = 10;
+			WeaponAttributes.LowerStatReq = 100;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1062915;
-            }
-        }// Shamino’s Best Crossbow
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public ShaminoCrossbow(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt((int)0); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1062915; }
+		} // Shaminoï¿½s Best Crossbow
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

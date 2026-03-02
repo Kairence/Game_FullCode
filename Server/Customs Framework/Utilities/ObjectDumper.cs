@@ -87,7 +87,8 @@ namespace CustomsFramework
 						}
 
 						var type = fieldInfo != null ? fieldInfo.FieldType : propertyInfo.PropertyType;
-						object value = fieldInfo != null ? fieldInfo.GetValue(element) : propertyInfo.GetValue(element, null);
+						object value =
+							fieldInfo != null ? fieldInfo.GetValue(element) : propertyInfo.GetValue(element, null);
 
 						if (type.IsValueType || type == typeof(string))
 						{

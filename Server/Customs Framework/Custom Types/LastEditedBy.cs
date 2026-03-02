@@ -1,6 +1,5 @@
 ﻿#region References
 using System;
-
 using CustomsFramework;
 #endregion
 
@@ -23,10 +22,18 @@ namespace Server
 		}
 
 		[CommandProperty(AccessLevel.Decorator)]
-		public Mobile Mobile { get { return _Mobile; } set { _Mobile = value; } }
+		public Mobile Mobile
+		{
+			get { return _Mobile; }
+			set { _Mobile = value; }
+		}
 
 		[CommandProperty(AccessLevel.Decorator)]
-		public DateTime Time { get { return _Time; } set { _Time = value; } }
+		public DateTime Time
+		{
+			get { return _Time; }
+			set { _Time = value; }
+		}
 
 		public void Serialize(GenericWriter writer)
 		{
@@ -44,11 +51,11 @@ namespace Server
 			switch (version)
 			{
 				case 0:
-					{
-						_Mobile = reader.ReadMobile();
-						_Time = reader.ReadDateTime();
-						break;
-					}
+				{
+					_Mobile = reader.ReadMobile();
+					_Time = reader.ReadDateTime();
+					break;
+				}
 			}
 		}
 	}

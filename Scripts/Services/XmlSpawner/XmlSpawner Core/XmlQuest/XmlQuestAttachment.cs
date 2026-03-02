@@ -1,9 +1,9 @@
 using System;
+using System.IO;
 using Server;
 using Server.Items;
-using Server.Network;
 using Server.Mobiles;
-using System.IO;
+using Server.Network;
 
 namespace Server.Engines.XmlSpawner2
 {
@@ -11,17 +11,19 @@ namespace Server.Engines.XmlSpawner2
 	{
 		private DateTime m_DataValue;
 
-		public DateTime Date { get { return m_DataValue; } set { m_DataValue = value; } }
+		public DateTime Date
+		{
+			get { return m_DataValue; }
+			set { m_DataValue = value; }
+		}
 
-		// These are the various ways in which the message attachment can be constructed.  
+		// These are the various ways in which the message attachment can be constructed.
 		// These can be called via the [addatt interface, via scripts, via the spawner ATTACH keyword.
 		// Other overloads could be defined to handle other types of arguments
 
 		// a serial constructor is REQUIRED
 		public XmlQuestAttachment(ASerial serial)
-			: base(serial)
-		{
-		}
+			: base(serial) { }
 
 		[Attachable]
 		public XmlQuestAttachment(string name)
@@ -36,7 +38,6 @@ namespace Server.Engines.XmlSpawner2
 			Name = name;
 			Date = DateTime.UtcNow;
 			Expiration = TimeSpan.FromMinutes(expiresin);
-
 		}
 
 		[Attachable]
@@ -45,9 +46,7 @@ namespace Server.Engines.XmlSpawner2
 			Name = name;
 			Date = value;
 			Expiration = TimeSpan.FromMinutes(expiresin);
-
 		}
-
 
 		public override void Serialize(GenericWriter writer)
 		{
@@ -56,7 +55,6 @@ namespace Server.Engines.XmlSpawner2
 			writer.Write((int)0);
 			// version 0
 			writer.Write(m_DataValue);
-
 		}
 
 		public override void Deserialize(GenericReader reader)
@@ -70,11 +68,17 @@ namespace Server.Engines.XmlSpawner2
 
 		public override string OnIdentify(Mobile from)
 		{
-			if (from.AccessLevel == AccessLevel.Player) return null;
+			if (from.AccessLevel == AccessLevel.Player)
+				return null;
 
 			if (Expiration > TimeSpan.Zero)
 			{
-				return String.Format("Quest '{2}' Completed {0} expires in {1} mins", Date, Expiration.TotalMinutes, Name);
+				return String.Format(
+					"Quest '{2}' Completed {0} expires in {1} mins",
+					Date,
+					Expiration.TotalMinutes,
+					Name
+				);
 			}
 			else
 			{

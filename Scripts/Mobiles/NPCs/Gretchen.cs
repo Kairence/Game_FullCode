@@ -4,123 +4,136 @@ using Server.Items;
 using Server.Mobiles;
 
 namespace Server.Engines.Quests
-{				
+{
 	public class Curiosities : BaseQuest
-	{							
-	/* Curiosities */
-		public override object Title{ get{ return "Curiosities"; } }
-                
-		
-		public override object Description{ get{ return 1094978; } }
-		public override object Refuse{ get{ return "You are Scared from this Task !! Muahahah"; } }
-		
-		public override object Uncomplete{ get{ return "I am sorry that you have not accepted!"; } }
-
-                public override object Complete{ get{ return 1094981; } }
-	
-		public Curiosities () : base()
-		{			
-			AddObjective( new ObtainObjective( typeof( FertileDirt ), "Fertil Dirt", 3, 0xF81 ) );
-                        AddObjective( new ObtainObjective( typeof( Bone ), "Bone", 3, 0xF7e ) );
-
-                        AddReward( new BaseReward( typeof( ExplodingTarPotion ),"Exploding Tar Potion") );
-		}
-										
-		public override void Serialize( GenericWriter writer )
+	{
+		/* Curiosities */
+		public override object Title
 		{
-			base.Serialize( writer );
-
-			writer.Write( (int) 0 ); // version
+			get { return "Curiosities"; }
 		}
-		
-		public override void Deserialize( GenericReader reader )
+
+		public override object Description
 		{
-			base.Deserialize( reader );
+			get { return 1094978; }
+		}
+		public override object Refuse
+		{
+			get { return "You are Scared from this Task !! Muahahah"; }
+		}
+
+		public override object Uncomplete
+		{
+			get { return "I am sorry that you have not accepted!"; }
+		}
+
+		public override object Complete
+		{
+			get { return 1094981; }
+		}
+
+		public Curiosities()
+			: base()
+		{
+			AddObjective(new ObtainObjective(typeof(FertileDirt), "Fertil Dirt", 3, 0xF81));
+			AddObjective(new ObtainObjective(typeof(Bone), "Bone", 3, 0xF7e));
+
+			AddReward(new BaseReward(typeof(ExplodingTarPotion), "Exploding Tar Potion"));
+		}
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
 			int version = reader.ReadInt();
-		}		
+		}
 	}
-	
+
 	public class Gretchen : MondainQuester
 	{
-		public override Type[] Quests{ get{ return new Type[] 
-		{ 
-			typeof( Curiosities )
-		}; } }
-		
-		[Constructable]
-		public Gretchen() : base( "Gretchen", "the Alchemist" )
-		{			
-		}
-		
-		public Gretchen( Serial serial ) : base( serial )
+		public override Type[] Quests
 		{
+			get { return new Type[] { typeof(Curiosities) }; }
 		}
 
-        public override void InitBody()
-        {
-            InitStats(100, 100, 25);
+		[Constructable]
+		public Gretchen()
+			: base("Gretchen", "the Alchemist") { }
 
-            Female = true;
-            Race = Race.Elf;
+		public Gretchen(Serial serial)
+			: base(serial) { }
 
-            Hue = 33767;
-            HairItemID = 0x2047;
-            HairHue = 0x465;
+		public override void InitBody()
+		{
+			InitStats(100, 100, 25);
 
-            CantWalk = true;
-            Direction = Direction.East;
-        }
-		
+			Female = true;
+			Race = Race.Elf;
+
+			Hue = 33767;
+			HairItemID = 0x2047;
+			HairHue = 0x465;
+
+			CantWalk = true;
+			Direction = Direction.East;
+		}
+
 		public override void InitOutfit()
 		{
-			SetWearable( new Backpack() );
-            SetWearable(new Shoes(1886));
-            SetWearable(new FemaleElvenRobe(443));
+			SetWearable(new Backpack());
+			SetWearable(new Shoes(1886));
+			SetWearable(new FemaleElvenRobe(443));
 
-            SetWearable(new QuarterStaff());
+			SetWearable(new QuarterStaff());
 		}
-				
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
 
-			writer.Write( (int)1 ); // version
-		}
-		
-		public override void Deserialize( GenericReader reader )
+		public override void Serialize(GenericWriter writer)
 		{
-			base.Deserialize( reader );
+			base.Serialize(writer);
+
+			writer.Write((int)1); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
 			int version = reader.ReadInt();
 
-            if (version == 0)
-            {
-                Female = true;
-                Race = Race.Elf;
+			if (version == 0)
+			{
+				Female = true;
+				Race = Race.Elf;
 
-                Hue = 33767;
-                HairItemID = 0x2047;
-                HairHue = 0x465;
+				Hue = 33767;
+				HairItemID = 0x2047;
+				HairHue = 0x465;
 
-                CantWalk = true;
-                Direction = Direction.East;
+				CantWalk = true;
+				Direction = Direction.East;
 
-                Item item = FindItemOnLayer(Layer.Cloak);
-                if (item != null)
-                    item.Delete();
+				Item item = FindItemOnLayer(Layer.Cloak);
+				if (item != null)
+					item.Delete();
 
-                item = FindItemOnLayer(Layer.MiddleTorso);
-                if (item != null)
-                    item.Delete();
+				item = FindItemOnLayer(Layer.MiddleTorso);
+				if (item != null)
+					item.Delete();
 
-                item = FindItemOnLayer(Layer.MiddleTorso);
-                if (item != null)
-                    item.Hue = 1886;
+				item = FindItemOnLayer(Layer.MiddleTorso);
+				if (item != null)
+					item.Hue = 1886;
 
-                SetWearable(new FemaleElvenRobe(443));
-                SetWearable(new QuarterStaff());
-            }
+				SetWearable(new FemaleElvenRobe(443));
+				SetWearable(new QuarterStaff());
+			}
 		}
 	}
 }

@@ -3,60 +3,57 @@ using System.Collections.Generic;
 
 namespace Server.Mobiles
 {
-    public class Ranger : BaseVendor
-    {
-        private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
-        [Constructable]
-        public Ranger()
-            : base("the ranger")
-        {
-            this.SetSkill(SkillName.Camping, 55.0, 78.0);
-            this.SetSkill(SkillName.DetectHidden, 65.0, 88.0);
-            this.SetSkill(SkillName.Hiding, 45.0, 68.0);
-            this.SetSkill(SkillName.Archery, 65.0, 88.0);
-            this.SetSkill(SkillName.Tracking, 65.0, 88.0);
-            this.SetSkill(SkillName.Veterinary, 60.0, 83.0);
-        }
+	public class Ranger : BaseVendor
+	{
+		private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
 
-        public Ranger(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public Ranger()
+			: base("the ranger")
+		{
+			this.SetSkill(SkillName.Camping, 55.0, 78.0);
+			this.SetSkill(SkillName.DetectHidden, 65.0, 88.0);
+			this.SetSkill(SkillName.Hiding, 45.0, 68.0);
+			this.SetSkill(SkillName.Archery, 65.0, 88.0);
+			this.SetSkill(SkillName.Tracking, 65.0, 88.0);
+			this.SetSkill(SkillName.Veterinary, 60.0, 83.0);
+		}
 
-        protected override List<SBInfo> SBInfos
-        {
-            get
-            {
-                return this.m_SBInfos;
-            }
-        }
-        public override void InitSBInfo()
-        {
-            this.m_SBInfos.Add(new SBRanger());
-        }
+		public Ranger(Serial serial)
+			: base(serial) { }
 
-        public override void InitOutfit()
-        {
-            base.InitOutfit();
+		protected override List<SBInfo> SBInfos
+		{
+			get { return this.m_SBInfos; }
+		}
 
-            this.AddItem(new Server.Items.Shirt(Utility.RandomNeutralHue()));
-            this.AddItem(new Server.Items.LongPants(Utility.RandomNeutralHue()));
-            this.AddItem(new Server.Items.Bow());
-            this.AddItem(new Server.Items.ThighBoots(Utility.RandomNeutralHue()));
-        }
+		public override void InitSBInfo()
+		{
+			this.m_SBInfos.Add(new SBRanger());
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void InitOutfit()
+		{
+			base.InitOutfit();
 
-            writer.Write((int)0); // version
-        }
+			this.AddItem(new Server.Items.Shirt(Utility.RandomNeutralHue()));
+			this.AddItem(new Server.Items.LongPants(Utility.RandomNeutralHue()));
+			this.AddItem(new Server.Items.Bow());
+			this.AddItem(new Server.Items.ThighBoots(Utility.RandomNeutralHue()));
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

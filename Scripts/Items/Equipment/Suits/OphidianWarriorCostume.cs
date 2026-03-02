@@ -5,36 +5,36 @@ namespace Server.Items
 {
 	public class OphidianWarriorCostume : BaseCostume
 	{
-        public override string CreatureName { get { return "ophidian warrior"; } }
-
-        [Constructable]
-		public OphidianWarriorCostume() : base( )
+		public override string CreatureName
 		{
-            this.CostumeBody = 86;
+			get { return "ophidian warrior"; }
 		}
 
-		public OphidianWarriorCostume( Serial serial ) : base( serial )
+		[Constructable]
+		public OphidianWarriorCostume()
+			: base()
 		{
+			this.CostumeBody = 86;
 		}
-		
+
+		public OphidianWarriorCostume(Serial serial)
+			: base(serial) { }
+
 		public override int LabelNumber
-        {
-            get
-            {
-                return 1114229;
-            }
-        }// ophidian warrior costume
-
-		public override void Serialize( GenericWriter writer )
 		{
-			base.Serialize( writer );
+			get { return 1114229; }
+		} // ophidian warrior costume
 
-			writer.Write( (int) 0 );
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0);
 		}
-		
+
 		public override void Deserialize(GenericReader reader)
 		{
-			base.Deserialize( reader );
+			base.Deserialize(reader);
 
 			int version = reader.ReadInt();
 		}

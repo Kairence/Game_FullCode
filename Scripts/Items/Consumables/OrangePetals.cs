@@ -4,162 +4,162 @@ using Server.Network;
 
 namespace Server.Items
 {
-    public class OrangePetals : Item, ICommodity
-    {
-        private static readonly Hashtable m_Table = new Hashtable();
-        [Constructable]
-        public OrangePetals()
-            : this(1)
-        {
-        }
+	public class OrangePetals : Item, ICommodity
+	{
+		private static readonly Hashtable m_Table = new Hashtable();
 
-        [Constructable]
-        public OrangePetals(int amount)
-            : base(0x1021)
-        {
-            Stackable = true;
-            Hue = 0x2B;
-            Amount = amount;
-        }
+		[Constructable]
+		public OrangePetals()
+			: this(1) { }
 
-        public OrangePetals(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public OrangePetals(int amount)
+			: base(0x1021)
+		{
+			Stackable = true;
+			Hue = 0x2B;
+			Amount = amount;
+		}
 
-        TextDefinition ICommodity.Description { get { return LabelNumber; } }
-        bool ICommodity.IsDeedable { get { return true; } }
+		public OrangePetals(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1053122;
-            }
-        }// orange petals
-        public override double DefaultWeight
-        {
-            get
-            {
-                return 0.1;
-            }
-        }
-        public static void RemoveContext(Mobile m)
-        {
-            OrangePetalsContext context = GetContext(m);
+		TextDefinition ICommodity.Description
+		{
+			get { return LabelNumber; }
+		}
+		bool ICommodity.IsDeedable
+		{
+			get { return true; }
+		}
 
-            if (context != null)
-                RemoveContext(m, context);
-        }
+		public override int LabelNumber
+		{
+			get { return 1053122; }
+		} // orange petals
+		public override double DefaultWeight
+		{
+			get { return 0.1; }
+		}
 
-        public static bool UnderEffect(Mobile m)
-        {
-            return (GetContext(m) != null);
-        }
+		public static void RemoveContext(Mobile m)
+		{
+			OrangePetalsContext context = GetContext(m);
 
-        public override bool CheckItemUse(Mobile from, Item item) 
-        { 
-            if (item != this)
-                return base.CheckItemUse(from, item);
+			if (context != null)
+				RemoveContext(m, context);
+		}
 
-            if (from != RootParent)
-            {
-                from.SendLocalizedMessage(1042038); // You must have the object in your backpack to use it.
-                return false;
-            }
+		public static bool UnderEffect(Mobile m)
+		{
+			return (GetContext(m) != null);
+		}
 
-            return base.CheckItemUse(from, item);
-        }
+		public override bool CheckItemUse(Mobile from, Item item)
+		{
+			if (item != this)
+				return base.CheckItemUse(from, item);
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            OrangePetalsContext context = GetContext(from);
+			if (from != RootParent)
+			{
+				from.SendLocalizedMessage(1042038); // You must have the object in your backpack to use it.
+				return false;
+			}
 
-            if (context != null)
-            {
-                from.LocalOverheadMessage(MessageType.Regular, 0x3B2, 1061904); // * You already feel resilient! You decide to save the petal for later *
-                return;
-            }
+			return base.CheckItemUse(from, item);
+		}
 
-            from.LocalOverheadMessage(MessageType.Regular, 0x3B2, 1061905); // * You eat the orange petal.  You feel more resilient! *
-            from.PlaySound(0x3B);
+		public override void OnDoubleClick(Mobile from)
+		{
+			OrangePetalsContext context = GetContext(from);
 
-            Timer timer = new OrangePetalsTimer(from);
-            timer.Start();
-            
-            BuffInfo.AddBuff(from, new BuffInfo(BuffIcon.OrangePetals, 1153785, 1153814, TimeSpan.FromMinutes(5.0), from));
+			if (context != null)
+			{
+				from.LocalOverheadMessage(MessageType.Regular, 0x3B2, 1061904); // * You already feel resilient! You decide to save the petal for later *
+				return;
+			}
 
-            AddContext(from, new OrangePetalsContext(timer));
+			from.LocalOverheadMessage(MessageType.Regular, 0x3B2, 1061905); // * You eat the orange petal.  You feel more resilient! *
+			from.PlaySound(0x3B);
 
-            Consume();
-        }
+			Timer timer = new OrangePetalsTimer(from);
+			timer.Start();
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			BuffInfo.AddBuff(
+				from,
+				new BuffInfo(BuffIcon.OrangePetals, 1153785, 1153814, TimeSpan.FromMinutes(5.0), from)
+			);
 
-            writer.Write((int)0); // version
-        }
+			AddContext(from, new OrangePetalsContext(timer));
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			Consume();
+		}
 
-            int version = reader.ReadInt();
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        private static void AddContext(Mobile m, OrangePetalsContext context)
-        {
-            m_Table[m] = context;
-        }
+			writer.Write((int)0); // version
+		}
 
-        private static void RemoveContext(Mobile m, OrangePetalsContext context)
-        {
-            m_Table.Remove(m);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            context.Timer.Stop();
-        }
+			int version = reader.ReadInt();
+		}
 
-        private static OrangePetalsContext GetContext(Mobile m)
-        {
-            return (m_Table[m] as OrangePetalsContext);
-        }
+		private static void AddContext(Mobile m, OrangePetalsContext context)
+		{
+			m_Table[m] = context;
+		}
 
-        private class OrangePetalsTimer : Timer
-        {
-            private readonly Mobile m_Mobile;
-            public OrangePetalsTimer(Mobile from)
-                : base(TimeSpan.FromMinutes(5.0))
-            {
-                m_Mobile = from;
-            }
+		private static void RemoveContext(Mobile m, OrangePetalsContext context)
+		{
+			m_Table.Remove(m);
 
-            protected override void OnTick()
-            {
-                if (!m_Mobile.Deleted)
-                {
-                    m_Mobile.LocalOverheadMessage(MessageType.Regular, 0x3F, 1053091); // * You feel the effects of your poison resistance wearing off *
-                }
+			context.Timer.Stop();
+		}
 
-                RemoveContext(m_Mobile);
-            }
-        }
+		private static OrangePetalsContext GetContext(Mobile m)
+		{
+			return (m_Table[m] as OrangePetalsContext);
+		}
 
-        private class OrangePetalsContext
-        {
-            private readonly Timer m_Timer;
-            public OrangePetalsContext(Timer timer)
-            {
-                m_Timer = timer;
-            }
+		private class OrangePetalsTimer : Timer
+		{
+			private readonly Mobile m_Mobile;
 
-            public Timer Timer
-            {
-                get
-                {
-                    return m_Timer;
-                }
-            }
-        }
-    }
+			public OrangePetalsTimer(Mobile from)
+				: base(TimeSpan.FromMinutes(5.0))
+			{
+				m_Mobile = from;
+			}
+
+			protected override void OnTick()
+			{
+				if (!m_Mobile.Deleted)
+				{
+					m_Mobile.LocalOverheadMessage(MessageType.Regular, 0x3F, 1053091); // * You feel the effects of your poison resistance wearing off *
+				}
+
+				RemoveContext(m_Mobile);
+			}
+		}
+
+		private class OrangePetalsContext
+		{
+			private readonly Timer m_Timer;
+
+			public OrangePetalsContext(Timer timer)
+			{
+				m_Timer = timer;
+			}
+
+			public Timer Timer
+			{
+				get { return m_Timer; }
+			}
+		}
+	}
 }

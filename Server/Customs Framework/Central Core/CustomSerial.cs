@@ -1,6 +1,5 @@
 ﻿#region References
 using System;
-
 using Server;
 #endregion
 
@@ -18,21 +17,29 @@ namespace CustomsFramework
 			_Serial = serial;
 		}
 
-		public static CustomSerial LastCore { get { return _LastCustom; } }
+		public static CustomSerial LastCore
+		{
+			get { return _LastCustom; }
+		}
 
 		public static CustomSerial NewCustom
 		{
 			get
 			{
-				while (World.GetData(_LastCustom = (_LastCustom + 1)) != null)
-				{ }
+				while (World.GetData(_LastCustom = (_LastCustom + 1)) != null) { }
 
 				return _LastCustom;
 			}
 		}
 
-		public int Value { get { return _Serial; } }
-		public bool IsValid { get { return (_Serial > 0); } }
+		public int Value
+		{
+			get { return _Serial; }
+		}
+		public bool IsValid
+		{
+			get { return (_Serial > 0); }
+		}
 
 		public override int GetHashCode()
 		{

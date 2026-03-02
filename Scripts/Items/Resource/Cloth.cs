@@ -3,222 +3,219 @@ using Server.Network;
 
 namespace Server.Items
 {
-    [FlipableAttribute(0x1766, 0x1768)]
-    public class Cloth : Item, IScissorable, IDyable, ICommodity
-    {
-        [Constructable]
-        public Cloth()
-            : this(1)
-        {
-        }
+	[FlipableAttribute(0x1766, 0x1768)]
+	public class Cloth : Item, IScissorable, IDyable, ICommodity
+	{
+		[Constructable]
+		public Cloth()
+			: this(1) { }
 
-        [Constructable]
-        public Cloth(int amount)
-            : base(0x1766)
-        {
-            this.Stackable = true;
-            this.Amount = amount;
-        }
+		[Constructable]
+		public Cloth(int amount)
+			: base(0x1766)
+		{
+			this.Stackable = true;
+			this.Amount = amount;
+		}
 
-        public Cloth(Serial serial)
-            : base(serial)
-        {
-        }
+		public Cloth(Serial serial)
+			: base(serial) { }
 
-        public override double DefaultWeight
-        {
-            get
-            {
-                return 0.1;
-            }
-        }
-        TextDefinition ICommodity.Description
-        {
-            get
-            {
-                return this.LabelNumber;
-            }
-        }
-        bool ICommodity.IsDeedable
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public bool Dye(Mobile from, DyeTub sender)
-        {
-            if (this.Deleted)
-                return false;
+		public override double DefaultWeight
+		{
+			get { return 0.1; }
+		}
+		TextDefinition ICommodity.Description
+		{
+			get { return this.LabelNumber; }
+		}
+		bool ICommodity.IsDeedable
+		{
+			get { return true; }
+		}
 
-            this.Hue = sender.DyedHue;
+		public bool Dye(Mobile from, DyeTub sender)
+		{
+			if (this.Deleted)
+				return false;
 
-            return true;
-        }
+			this.Hue = sender.DyedHue;
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			return true;
+		}
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override void OnSingleClick(Mobile from)
-        {
-            int number = (this.Amount == 1) ? 1049124 : 1049123;
+			int version = reader.ReadInt();
+		}
 
-            from.Send(new MessageLocalized(this.Serial, this.ItemID, MessageType.Regular, 0x3B2, 3, number, "", this.Amount.ToString()));
-        }
+		public override void OnSingleClick(Mobile from)
+		{
+			int number = (this.Amount == 1) ? 1049124 : 1049123;
 
-        public bool Scissor(Mobile from, Scissors scissors)
-        {
-            if (this.Deleted || !from.CanSee(this))
-                return false;
+			from.Send(
+				new MessageLocalized(
+					this.Serial,
+					this.ItemID,
+					MessageType.Regular,
+					0x3B2,
+					3,
+					number,
+					"",
+					this.Amount.ToString()
+				)
+			);
+		}
 
-            base.ScissorHelper(from, new Bandage(), 1);
+		public bool Scissor(Mobile from, Scissors scissors)
+		{
+			if (this.Deleted || !from.CanSee(this))
+				return false;
 
-            return true;
-        }
-    }
+			base.ScissorHelper(from, new Bandage(), 1);
 
-    public class CutUpCloth : Item
-    {
-        public override int LabelNumber { get { return 1044458; } } // cut-up cloth
+			return true;
+		}
+	}
 
-        [Constructable]
-        public CutUpCloth()
-            : base(0x1767)
-        {
-        }
+	public class CutUpCloth : Item
+	{
+		public override int LabelNumber
+		{
+			get { return 1044458; }
+		} // cut-up cloth
 
-        public CutUpCloth(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public CutUpCloth()
+			: base(0x1767) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public CutUpCloth(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public void CutUp(Mobile from, Item[] items)
-        {
-            //Container backpack = from.Backpack;
+			int version = reader.ReadInt();
+		}
 
-            for (int i = 0; i < items.Length; i++)
-            {
-                BoltOfCloth boc = items[i] as BoltOfCloth;
+		public void CutUp(Mobile from, Item[] items)
+		{
+			//Container backpack = from.Backpack;
 
-                if (boc != null)
-                    boc.Scissor(from, null);
-            }
-        }
-    }
+			for (int i = 0; i < items.Length; i++)
+			{
+				BoltOfCloth boc = items[i] as BoltOfCloth;
 
-    public class CombineCloth : Item
-    {
-        public override int LabelNumber { get { return 1044459; } } // combine cloth
+				if (boc != null)
+					boc.Scissor(from, null);
+			}
+		}
+	}
 
-        [Constructable]
-        public CombineCloth()
-            : base(0x1767)
-        {
-        }
+	public class CombineCloth : Item
+	{
+		public override int LabelNumber
+		{
+			get { return 1044459; }
+		} // combine cloth
 
-        public CombineCloth(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public CombineCloth()
+			: base(0x1767) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public CombineCloth(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public static bool CheckHue(int hue, int[] hues, out int count)
-        {
-            int result = 0;
-            bool success = true;
+			int version = reader.ReadInt();
+		}
 
-            for (int i = 0; i < hues.Length; i++)
-            {
-                if (hues[i] == hue)
-                {
-                    result = i;
-                    success = false;
-                }
-            }
+		public static bool CheckHue(int hue, int[] hues, out int count)
+		{
+			int result = 0;
+			bool success = true;
 
-            count = result;
+			for (int i = 0; i < hues.Length; i++)
+			{
+				if (hues[i] == hue)
+				{
+					result = i;
+					success = false;
+				}
+			}
 
-            return success;
-        }
+			count = result;
 
-        public void Combine(Mobile from, Item[] items)
-        {
-            Container backpack = from.Backpack;
+			return success;
+		}
 
-            int[] hues = new int[backpack.Items.Count];
-            int[] amounts = new int[backpack.Items.Count];
+		public void Combine(Mobile from, Item[] items)
+		{
+			Container backpack = from.Backpack;
 
-            for (int i = 0; i < items.Length; i++)
-            {
-                Cloth c = items[i] as Cloth;
+			int[] hues = new int[backpack.Items.Count];
+			int[] amounts = new int[backpack.Items.Count];
 
-                if (c != null)
-                {
-                    int count;
+			for (int i = 0; i < items.Length; i++)
+			{
+				Cloth c = items[i] as Cloth;
 
-                    if (CheckHue(c.Hue, hues, out count))
-                    {
-                        hues[i] = c.Hue;
-                        amounts[i] = c.Amount;
-                    }
-                    else
-                    {
-                        amounts[count] += c.Amount;
-                    }
+				if (c != null)
+				{
+					int count;
 
-                    c.Delete();
-                }
-            }
+					if (CheckHue(c.Hue, hues, out count))
+					{
+						hues[i] = c.Hue;
+						amounts[i] = c.Amount;
+					}
+					else
+					{
+						amounts[count] += c.Amount;
+					}
 
-            for (int i = 0; i < hues.Length; i++)
-            {
-                Cloth cloth = new Cloth();
-                cloth.Hue = hues[i];
-                cloth.Amount = amounts[i];
+					c.Delete();
+				}
+			}
 
-                if (cloth.Amount > 0)
-                    backpack.DropItem(cloth);
-                else
-                    cloth.Delete();
-            }
-        }
-    }
+			for (int i = 0; i < hues.Length; i++)
+			{
+				Cloth cloth = new Cloth();
+				cloth.Hue = hues[i];
+				cloth.Amount = amounts[i];
+
+				if (cloth.Amount > 0)
+					backpack.DropItem(cloth);
+				else
+					cloth.Delete();
+			}
+		}
+	}
 }

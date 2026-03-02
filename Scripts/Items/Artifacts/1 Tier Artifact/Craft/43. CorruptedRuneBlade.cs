@@ -2,46 +2,46 @@ using System;
 
 namespace Server.Items
 {
-    public class CorruptedRuneBlade : BaseWand
+	public class CorruptedRuneBlade : BaseWand
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public CorruptedRuneBlade()
-        {
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+
+		[Constructable]
+		public CorruptedRuneBlade()
+		{
 			//시전 100%, 공격 속도 50%
 			SuffixOption[0] = 2; //옵션 갯수
 			SuffixOption[1] = 1; //유물 레벨
-			
+
 			PrefixOption[11] = 41; //옵션 종류
 			SuffixOption[11] = 1000000; //옵션 값
 			PrefixOption[12] = 40; //옵션 종류
 			SuffixOption[12] = 500000; //옵션 값
-        }
+		}
 
-        public CorruptedRuneBlade(Serial serial)
-            : base(serial)
-        {
-        }
+		public CorruptedRuneBlade(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073540;
-            }
-        }// Corrupted Rune Blade
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int LabelNumber
+		{
+			get { return 1073540; }
+		} // Corrupted Rune Blade
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

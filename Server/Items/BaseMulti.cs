@@ -1,6 +1,6 @@
 #region References
-using Server.Network;
 using System;
+using Server.Network;
 #endregion
 
 namespace Server.Items
@@ -15,8 +15,7 @@ namespace Server.Items
 		}
 
 		public BaseMulti(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		[CommandProperty(AccessLevel.GameMaster)]
 		public override int ItemID
@@ -58,7 +57,7 @@ namespace Server.Items
 			}
 		}
 
-        public override int LabelNumber
+		public override int LabelNumber
 		{
 			get
 			{
@@ -82,26 +81,32 @@ namespace Server.Items
 			}
 		}
 
-		public virtual bool AllowsRelativeDrop { get { return false; } }
-	
-		public override int GetUpdateRange(Mobile m)
+		public virtual bool AllowsRelativeDrop
 		{
-            int min = m.NetState != null ? m.NetState.UpdateRange : Core.GlobalUpdateRange;
-            int max = Core.GlobalRadarRange - 1;
-
-            int w = Components.Width;
-            int h = Components.Height - 1;
-            int v = min + ((w > h ? w : h) / 2);
-
-            if (v > max)
-                v = max;
-            else if (v < min)
-                v = min;
-
-            return v;
+			get { return false; }
 		}
 
-		public virtual MultiComponentList Components { get { return MultiData.GetComponents(ItemID); } }
+		public override int GetUpdateRange(Mobile m)
+		{
+			int min = m.NetState != null ? m.NetState.UpdateRange : Core.GlobalUpdateRange;
+			int max = Core.GlobalRadarRange - 1;
+
+			int w = Components.Width;
+			int h = Components.Height - 1;
+			int v = min + ((w > h ? w : h) / 2);
+
+			if (v > max)
+				v = max;
+			else if (v < min)
+				v = min;
+
+			return v;
+		}
+
+		public virtual MultiComponentList Components
+		{
+			get { return MultiData.GetComponents(ItemID); }
+		}
 
 		public virtual bool Contains(Point2D p)
 		{

@@ -2,40 +2,40 @@ using System;
 
 namespace Server.Items
 {
-    public class FrozenLongbow : ElvenCompositeLongbow
+	public class FrozenLongbow : ElvenCompositeLongbow
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public FrozenLongbow()
-        {
-            Attributes.WeaponSpeed = -5;
-            Attributes.DefendChance = 10;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public FrozenLongbow(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public FrozenLongbow()
+		{
+			Attributes.WeaponSpeed = -5;
+			Attributes.DefendChance = 10;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073507;
-            }
-        }// frozen longbow
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public FrozenLongbow(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1073507; }
+		} // frozen longbow
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

@@ -3,9 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Mail;
 using System.Linq;
-
+using System.Net.Mail;
 using Server.Accounting;
 using Server.Commands;
 using Server.Engines.Reports;
@@ -26,31 +25,37 @@ namespace Server.Engines.Help
 		Suggestion,
 		Other,
 		VerbalHarassment,
-		PhysicalHarassment
+		PhysicalHarassment,
 	}
 
 	public class PageEntry
 	{
 		// What page types should have a speech log as attachment?
-		public static readonly PageType[] SpeechLogAttachment = new[] {PageType.VerbalHarassment};
+		public static readonly PageType[] SpeechLogAttachment = new[] { PageType.VerbalHarassment };
 
 		private readonly Mobile m_Sender;
 		private Mobile m_Handler;
-		private  DateTime m_Sent;
-		private  string m_Message;
-		private  PageType m_Type;
-		private  Point3D m_PageLocation;
-		private  Map m_PageMap;
-		private  List<SpeechLogEntry> m_SpeechLog;
-		
+		private DateTime m_Sent;
+		private string m_Message;
+		private PageType m_Type;
+		private Point3D m_PageLocation;
+		private Map m_PageMap;
+		private List<SpeechLogEntry> m_SpeechLog;
+
 		public static readonly string SupportEmail = Config.Get("General.SupportEmail", default(string));
 		public static readonly string SupportWebsite = Config.Get("General.SupportWebsite", default(string));
 
 		private readonly PageInfo m_PageInfo;
 
-		public PageInfo PageInfo { get { return m_PageInfo; } }
+		public PageInfo PageInfo
+		{
+			get { return m_PageInfo; }
+		}
 
-		public Mobile Sender { get { return m_Sender; } }
+		public Mobile Sender
+		{
+			get { return m_Sender; }
+		}
 
 		public Mobile Handler
 		{
@@ -92,7 +97,10 @@ namespace Server.Engines.Help
 			set { m_PageMap = value; }
 		}
 
-		public List<SpeechLogEntry> SpeechLog { get { return m_SpeechLog; } }
+		public List<SpeechLogEntry> SpeechLog
+		{
+			get { return m_SpeechLog; }
+		}
 
 		private Timer m_Timer;
 
@@ -167,15 +175,21 @@ namespace Server.Engines.Help
 				if (m_Entry.Sender.NetState != null && index != -1)
 				{
 					m_Entry.Sender.SendLocalizedMessage(1008077, true, (index + 1).ToString());
-						// Thank you for paging. Queue status : 
-					if(SupportEmail == null || SupportWebsite == null)
+					// Thank you for paging. Queue status :
+					if (SupportEmail == null || SupportWebsite == null)
 					{
 						m_Entry.Sender.SendLocalizedMessage(1008084);
-							// You can reference our website at www.uo.com or contact us at support@uo.com. To cancel your page, please select the help button again and select cancel.
+						// You can reference our website at www.uo.com or contact us at support@uo.com. To cancel your page, please select the help button again and select cancel.
 					}
 					else
 					{
-						m_Entry.Sender.SendMessage("You can reference our website at " + SupportWebsite + " or contact us at " + SupportEmail + ". To cancel your page, please select the help button again and select cancel.");
+						m_Entry.Sender.SendMessage(
+							"You can reference our website at "
+								+ SupportWebsite
+								+ " or contact us at "
+								+ SupportEmail
+								+ ". To cancel your page, please select the help button again and select cancel."
+						);
 					}
 
 					if (m_Entry.Handler != null && m_Entry.Handler.NetState == null)
@@ -196,115 +210,121 @@ namespace Server.Engines.Help
 		}
 	}
 
-    public class ResponseEntry
-    {
-        public static readonly TimeSpan ExpirationPeriod = TimeSpan.FromDays(7);
+	public class ResponseEntry
+	{
+		public static readonly TimeSpan ExpirationPeriod = TimeSpan.FromDays(7);
 
-        public static List<ResponseEntry> Entries { get; set; }
+		public static List<ResponseEntry> Entries { get; set; }
 
-        public static void Configure()
-        {
-            Entries = new List<ResponseEntry>();
+		public static void Configure()
+		{
+			Entries = new List<ResponseEntry>();
 
-            EventSink.Login += new LoginEventHandler(Login);
-            EventSink.BeforeWorldSave += new BeforeWorldSaveEventHandler(BeforeSave);
-        }
+			EventSink.Login += new LoginEventHandler(Login);
+			EventSink.BeforeWorldSave += new BeforeWorldSaveEventHandler(BeforeSave);
+		}
 
-        public static void Login(LoginEventArgs args)
-        {
-            Mobile m = args.Mobile;
+		public static void Login(LoginEventArgs args)
+		{
+			Mobile m = args.Mobile;
 
-            Timer.DelayCall(TimeSpan.FromSeconds(2.0), () =>
-            {
-                List<ResponseEntry> entries = Entries.Where(e => e.Sender == m).ToList();
+			Timer.DelayCall(
+				TimeSpan.FromSeconds(2.0),
+				() =>
+				{
+					List<ResponseEntry> entries = Entries.Where(e => e.Sender == m).ToList();
 
-                foreach (var entry in entries)
-                {
-                    entry.SendGump();
-                }
+					foreach (var entry in entries)
+					{
+						entry.SendGump();
+					}
 
-                ColUtility.Free(entries);
-            });
-        }
+					ColUtility.Free(entries);
+				}
+			);
+		}
 
-        public static void BeforeSave(BeforeWorldSaveEventArgs args)
-        {
-            var list = Entries.Where(e => e.Expired).ToList();
+		public static void BeforeSave(BeforeWorldSaveEventArgs args)
+		{
+			var list = Entries.Where(e => e.Expired).ToList();
 
-            foreach (var entry in list)
-            {
-                Entries.Remove(entry);
-            }
-        }
+			foreach (var entry in list)
+			{
+				Entries.Remove(entry);
+			}
+		}
 
-        public static void AddEntry(ResponseEntry entry)
-        {
-            if (!Entries.Contains(entry))
-            {
-                Entries.Add(entry);
-            }
-        }
+		public static void AddEntry(ResponseEntry entry)
+		{
+			if (!Entries.Contains(entry))
+			{
+				Entries.Add(entry);
+			}
+		}
 
-        public Mobile Sender { get; set; }
-        public Mobile Handler { get; set; }
-        public string Message { get; set; }
+		public Mobile Sender { get; set; }
+		public Mobile Handler { get; set; }
+		public string Message { get; set; }
 
-        public DateTime Expires { get; set; }
+		public DateTime Expires { get; set; }
 
-        public bool Expired { get { return Expires < DateTime.UtcNow; } }
+		public bool Expired
+		{
+			get { return Expires < DateTime.UtcNow; }
+		}
 
-        public ResponseEntry(Mobile sender, Mobile handler, string message)
-        {
-            Sender = sender;
-            Handler = handler;
-            Message = message;
+		public ResponseEntry(Mobile sender, Mobile handler, string message)
+		{
+			Sender = sender;
+			Handler = handler;
+			Message = message;
 
-            Expires = DateTime.UtcNow + ExpirationPeriod;
+			Expires = DateTime.UtcNow + ExpirationPeriod;
 
-            AddEntry(this);
-        }
+			AddEntry(this);
+		}
 
-        public void SendGump()
-        {
-            if (Sender.NetState != null)
-            {
-                Sender.SendGump(new MessageSentGump(Sender, Handler != null ? Handler.Name : "Staff", Message));
-                Entries.Remove(this);
-            }
-        }
+		public void SendGump()
+		{
+			if (Sender.NetState != null)
+			{
+				Sender.SendGump(new MessageSentGump(Sender, Handler != null ? Handler.Name : "Staff", Message));
+				Entries.Remove(this);
+			}
+		}
 
-        public ResponseEntry(GenericReader reader)
-        {
-            int version = reader.ReadInt();
+		public ResponseEntry(GenericReader reader)
+		{
+			int version = reader.ReadInt();
 
-            Sender = reader.ReadMobile();
-            Handler = reader.ReadMobile();
-            Message = reader.ReadString();
-            Expires = reader.ReadDateTime();
+			Sender = reader.ReadMobile();
+			Handler = reader.ReadMobile();
+			Message = reader.ReadString();
+			Expires = reader.ReadDateTime();
 
-            if (Sender != null && !Expired)
-            {
-                AddEntry(this);
-            }
-        }
+			if (Sender != null && !Expired)
+			{
+				AddEntry(this);
+			}
+		}
 
-        public void Serialize(GenericWriter writer)
-        {
-            writer.Write(0);
+		public void Serialize(GenericWriter writer)
+		{
+			writer.Write(0);
 
-            writer.Write(Sender);
-            writer.Write(Handler);
-            writer.Write(Message);
-            writer.Write(Expires);
-        }
-    }
+			writer.Write(Sender);
+			writer.Write(Handler);
+			writer.Write(Message);
+			writer.Write(Expires);
+		}
+	}
 
 	public class PageQueue
 	{
 		private static readonly ArrayList m_List = new ArrayList();
 		private static readonly Hashtable m_KeyedByHandler = new Hashtable();
 		private static readonly Hashtable m_KeyedBySender = new Hashtable();
-		
+
 		public static readonly bool ShowStaffOffline = Config.Get("General.ShowStaffOffline", true);
 
 		public static void Initialize()
@@ -376,7 +396,7 @@ namespace Server.Engines.Help
 			}
 			else if (m_List.Count > 0)
 			{
-                e.Mobile.SendGump(new PageQueueGump(e.Mobile));
+				e.Mobile.SendGump(new PageQueueGump(e.Mobile));
 			}
 			else
 			{
@@ -395,7 +415,7 @@ namespace Server.Engines.Help
 			}
 			else if (m_List.Count > 0)
 			{
-                from.SendGump(new PageQueueGump(from));
+				from.SendGump(new PageQueueGump(from));
 			}
 			else
 			{
@@ -452,7 +472,10 @@ namespace Server.Engines.Help
 			Remove(GetEntry(sender));
 		}
 
-		public static ArrayList List { get { return m_List; } }
+		public static ArrayList List
+		{
+			get { return m_List; }
+		}
 
 		public static void Enqueue(PageEntry entry)
 		{
@@ -465,7 +488,7 @@ namespace Server.Engines.Help
 			{
 				Mobile m = ns.Mobile;
 
-				#region Page In Queue Gump 
+				#region Page In Queue Gump
 				if (m != null && m.IsStaff() && m.AutoPageNotify && !IsHandling(m))
 				{
 					m.CloseGump(typeof(PageInQueueGump));
@@ -484,7 +507,8 @@ namespace Server.Engines.Help
 			if (!isStaffOnline && ShowStaffOffline)
 			{
 				entry.Sender.SendMessage(
-					"We are sorry, but no staff members are currently available to assist you.  Your page will remain in the queue until one becomes available, or until you cancel it manually.");
+					"We are sorry, but no staff members are currently available to assist you.  Your page will remain in the queue until one becomes available, or until you cancel it manually."
+				);
 			}
 
 			if (Email.FromAddress != null && Email.SpeechLogPageAddresses != null && entry.SpeechLog != null)
@@ -508,7 +532,10 @@ namespace Server.Engines.Help
 				writer.WriteLine();
 
 				writer.WriteLine(
-					"From: '{0}', Account: '{1}'", sender.RawName, sender.Account is Account ? sender.Account.Username : "???");
+					"From: '{0}', Account: '{1}'",
+					sender.RawName,
+					sender.Account is Account ? sender.Account.Username : "???"
+				);
 				writer.WriteLine("Location: {0} [{1}]", sender.Location, sender.Map);
 				writer.WriteLine(
 					"Sent on: {0}/{1:00}/{2:00} {3}:{4:00}:{5:00}",
@@ -517,7 +544,8 @@ namespace Server.Engines.Help
 					time.Day,
 					time.Hour,
 					time.Minute,
-					time.Second);
+					time.Second
+				);
 				writer.WriteLine();
 
 				writer.WriteLine("Message:");
@@ -542,7 +570,8 @@ namespace Server.Engines.Help
 						created.Second,
 						fromName,
 						fromAccount,
-						speech);
+						speech
+					);
 				}
 
 				mail.Body = writer.ToString();
@@ -580,7 +609,7 @@ namespace Server.Engines.Help
 				case 0:
 					break;
 				case 1:
-                    from.SendGump(new PageQueueGump(from));
+					from.SendGump(new PageQueueGump(from));
 					break;
 			}
 		}

@@ -2,147 +2,127 @@ using System;
 
 namespace Server.Items
 {
-    [Flipable(0x2A7B, 0x2A7D)]
-    public class HaunterMirrorComponent : AddonComponent
-    {
-        public HaunterMirrorComponent()
-            : base(0x2A7B)
-        {
-        }
+	[Flipable(0x2A7B, 0x2A7D)]
+	public class HaunterMirrorComponent : AddonComponent
+	{
+		public HaunterMirrorComponent()
+			: base(0x2A7B) { }
 
-        public HaunterMirrorComponent(Serial serial)
-            : base(serial)
-        {
-        }
+		public HaunterMirrorComponent(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1074800;
-            }
-        }// Haunted Mirror
-        public override bool HandlesOnMovement
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override void OnMovement(Mobile m, Point3D old)
-        {
-            base.OnMovement(m, old);
+		public override int LabelNumber
+		{
+			get { return 1074800; }
+		} // Haunted Mirror
+		public override bool HandlesOnMovement
+		{
+			get { return true; }
+		}
 
-            if (m.Alive && m.Player && (m.IsPlayer() || !m.Hidden))
-            {
-                if (!Utility.InRange(old, this.Location, 2) && Utility.InRange(m.Location, this.Location, 2))
-                {
-                    if (this.ItemID == 0x2A7B || this.ItemID == 0x2A7D)
-                    {
-                        Effects.PlaySound(this.Location, this.Map, Utility.RandomMinMax(0x551, 0x553));
-                        this.ItemID += 1;
-                    }
-                }
-                else if (Utility.InRange(old, this.Location, 2) && !Utility.InRange(m.Location, this.Location, 2))
-                {
-                    if (this.ItemID == 0x2A7C || this.ItemID == 0x2A7E)
-                        this.ItemID -= 1;
-                }
-            }
-        }
+		public override void OnMovement(Mobile m, Point3D old)
+		{
+			base.OnMovement(m, old);
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			if (m.Alive && m.Player && (m.IsPlayer() || !m.Hidden))
+			{
+				if (!Utility.InRange(old, this.Location, 2) && Utility.InRange(m.Location, this.Location, 2))
+				{
+					if (this.ItemID == 0x2A7B || this.ItemID == 0x2A7D)
+					{
+						Effects.PlaySound(this.Location, this.Map, Utility.RandomMinMax(0x551, 0x553));
+						this.ItemID += 1;
+					}
+				}
+				else if (Utility.InRange(old, this.Location, 2) && !Utility.InRange(m.Location, this.Location, 2))
+				{
+					if (this.ItemID == 0x2A7C || this.ItemID == 0x2A7E)
+						this.ItemID -= 1;
+				}
+			}
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class HaunterMirrorAddon : BaseAddon
-    {
-        [Constructable]
-        public HaunterMirrorAddon()
-            : base()
-        {
-            this.AddComponent(new HaunterMirrorComponent(), 0, 0, 0);
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public HaunterMirrorAddon(Serial serial)
-            : base(serial)
-        {
-        }
+	public class HaunterMirrorAddon : BaseAddon
+	{
+		[Constructable]
+		public HaunterMirrorAddon()
+			: base()
+		{
+			this.AddComponent(new HaunterMirrorComponent(), 0, 0, 0);
+		}
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new HauntedMirrorDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public HaunterMirrorAddon(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override BaseAddonDeed Deed
+		{
+			get { return new HauntedMirrorDeed(); }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
 
-    [TypeAlias("Server.Items.HaunterMirrorDeed")]
-    public class HauntedMirrorDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public HauntedMirrorDeed()
-            : base()
-        {
-            this.LootType = LootType.Blessed;
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public HauntedMirrorDeed(Serial serial)
-            : base(serial)
-        {
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new HaunterMirrorAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1074800;
-            }
-        }// Haunted Mirror
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+	[TypeAlias("Server.Items.HaunterMirrorDeed")]
+	public class HauntedMirrorDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public HauntedMirrorDeed()
+			: base()
+		{
+			this.LootType = LootType.Blessed;
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public HauntedMirrorDeed(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override BaseAddon Addon
+		{
+			get { return new HaunterMirrorAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1074800; }
+		} // Haunted Mirror
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

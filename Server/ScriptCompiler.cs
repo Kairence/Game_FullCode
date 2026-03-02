@@ -8,11 +8,10 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
-
-using Microsoft.CSharp;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
+using Microsoft.CSharp;
 
 #endregion
 
@@ -22,13 +21,26 @@ namespace Server
 	{
 		public static Assembly[] Assemblies { get; set; }
 
+		private static ScriptCompilerPaths Paths
+		{
+			get { return ScriptCompilerPaths.Current; }
+		}
+
+		private static readonly bool IsCaseSensitivePathPlatform = Path.DirectorySeparatorChar == '/';
+		private static readonly StringComparer ScriptPathComparer = IsCaseSensitivePathPlatform
+			? StringComparer.Ordinal
+			: StringComparer.OrdinalIgnoreCase;
+		private static readonly StringComparison ScriptPathComparison = IsCaseSensitivePathPlatform
+			? StringComparison.Ordinal
+			: StringComparison.OrdinalIgnoreCase;
+
 		private static readonly List<string> m_AdditionalReferences = new List<string>();
 
 		public static string[] GetReferenceAssemblies()
 		{
 			var list = new List<string>();
 
-			var path = Path.Combine(Core.BaseDirectory, "Data/Assemblies.cfg");
+			var path = Paths.AssembliesConfigPath;
 
 			if (File.Exists(path))
 			{
@@ -73,7 +85,7 @@ namespace Server
 			}
 
 #if MONO
-			AppendCompilerOption( ref sb, "/d:MONO" );
+			AppendCompilerOption(ref sb, "/d:MONO");
 #endif
 
 			if (Core.Is64Bit)
@@ -158,6 +170,15 @@ namespace Server
 			{
 				Utility.PushColor(ConsoleColor.Red);
 				Console.WriteLine("no files found.");
+
+				if (
+					Paths.SourceRootMode == ScriptSourceRootMode.NewOnly
+					&& String.IsNullOrWhiteSpace(Paths.NewScriptSourceRoot)
+				)
+				{
+					Console.WriteLine("Hint: Paths.SourceRootMode is NewOnly but Paths.NewSourceRoot is empty.");
+				}
+
 				Utility.PopColor();
 				assembly = null;
 				return true;
@@ -194,63 +215,57 @@ namespace Server
 
 				// (C) 핵심 라이브러리 직접 보강
 				var coreDir = Path.GetDirectoryName(typeof(object).Assembly.Location);
-				string[] coreLibs = { 
-				// [Core Runtime]
-				"mscorlib.dll", 
-				"System.Runtime.dll", 
-				"netstandard.dll",
-				"System.Private.CoreLib.dll",
-				"System.Runtime.Extensions.dll",
-				"System.Runtime.Loader.dll",
-
-				// [Collections & Data]
-				"System.Collections.dll", 
-				"System.Collections.NonGeneric.dll", 
-				"System.Collections.Specialized.dll",
-				"System.Linq.dll",
-				"System.Data.dll",
-				"System.Data.Common.dll",
-				"System.Data.DataSetExtensions.dll",
-
-				// [IO & Compression]
-				"System.IO.dll", 
-				"System.IO.Compression.dll",
-				"System.IO.Compression.FileSystem.dll",
-
-				// [XML]
-				"System.Xml.dll", 
-				"System.Xml.ReaderWriter.dll", 
-				"System.Xml.XmlDocument.dll", 
-				"System.Xml.XDocument.dll", 
-				"System.Private.Xml.dll",
-
-				// [Network & Web]
-				"System.Net.Primitives.dll", 
-				"System.Net.Requests.dll", 
-				"System.Net.Mail.dll",
-				"System.Net.WebClient.dll",
-				"System.Net.HttpListener.dll",
-				"System.Net.NetworkInformation.dll",
-				"System.Net.Sockets.dll",
-				"System.Net.NameResolution.dll",
-				"System.Private.Uri.dll",
-
-				// [Drawing & Graphics] - 핵심 에러 해결 포인트
-				"System.Drawing.dll",
-				"System.Drawing.Common.dll", 
-				"System.Drawing.Primitives.dll",
-				"System.Drawing.Common.dll", // .NET 8에서는 이 파일이 핵심입니다.
-
-				// [Text & Parallel]
-				"System.Text.RegularExpressions.dll",
-				"System.Threading.Tasks.Parallel.dll",
-				"System.Console.dll",
-
-				// [OS Services]
-				"Microsoft.Win32.Registry.dll",
-				"System.Diagnostics.FileVersionInfo.dll",
-				"System.ComponentModel.TypeConverter.dll"
-			};
+				string[] coreLibs =
+				{
+					// [Core Runtime]
+					"mscorlib.dll",
+					"System.Runtime.dll",
+					"netstandard.dll",
+					"System.Private.CoreLib.dll",
+					"System.Runtime.Extensions.dll",
+					"System.Runtime.Loader.dll",
+					// [Collections & Data]
+					"System.Collections.dll",
+					"System.Collections.NonGeneric.dll",
+					"System.Collections.Specialized.dll",
+					"System.Linq.dll",
+					"System.Data.dll",
+					"System.Data.Common.dll",
+					"System.Data.DataSetExtensions.dll",
+					// [IO & Compression]
+					"System.IO.dll",
+					"System.IO.Compression.dll",
+					"System.IO.Compression.FileSystem.dll",
+					// [XML]
+					"System.Xml.dll",
+					"System.Xml.ReaderWriter.dll",
+					"System.Xml.XmlDocument.dll",
+					"System.Xml.XDocument.dll",
+					"System.Private.Xml.dll",
+					// [Network & Web]
+					"System.Net.Primitives.dll",
+					"System.Net.Requests.dll",
+					"System.Net.Mail.dll",
+					"System.Net.WebClient.dll",
+					"System.Net.HttpListener.dll",
+					"System.Net.NetworkInformation.dll",
+					"System.Net.Sockets.dll",
+					"System.Net.NameResolution.dll",
+					"System.Private.Uri.dll",
+					// [Drawing & Graphics] - 핵심 에러 해결 포인트
+					"System.Drawing.dll",
+					"System.Drawing.Common.dll",
+					"System.Drawing.Primitives.dll",
+					"System.Drawing.Common.dll", // .NET 8에서는 이 파일이 핵심입니다.
+					// [Text & Parallel]
+					"System.Text.RegularExpressions.dll",
+					"System.Threading.Tasks.Parallel.dll",
+					"System.Console.dll",
+					// [OS Services]
+					"Microsoft.Win32.Registry.dll",
+					"System.Diagnostics.FileVersionInfo.dll",
+					"System.ComponentModel.TypeConverter.dll",
+				};
 				foreach (var lib in coreLibs)
 				{
 					var path = Path.Combine(coreDir, lib);
@@ -258,20 +273,31 @@ namespace Server
 						references.Add(MetadataReference.CreateFromFile(path));
 				}
 
-				try 
+				try
 				{
 					// .NET 8 런타임에 이미 로드된 Drawing 및 Compression 라이브러리를 직접 참조에 추가
 					var drawingRef = MetadataReference.CreateFromFile(typeof(System.Drawing.Bitmap).Assembly.Location);
-					if (!references.Any(r => r.Display == drawingRef.Display)) references.Add(drawingRef);
+					if (!references.Any(r => r.Display == drawingRef.Display))
+						references.Add(drawingRef);
 
-					var zipRef = MetadataReference.CreateFromFile(typeof(System.IO.Compression.ZipFile).Assembly.Location);
-					if (!references.Any(r => r.Display == zipRef.Display)) references.Add(zipRef);
-					
+					var zipRef = MetadataReference.CreateFromFile(
+						typeof(System.IO.Compression.ZipFile).Assembly.Location
+					);
+					if (!references.Any(r => r.Display == zipRef.Display))
+						references.Add(zipRef);
+
 					// 추가적인 Drawing Primitives 대응
-					var drawingPrimRef = MetadataReference.CreateFromFile(AppDomain.CurrentDomain.GetAssemblies().First(a => a.GetName().Name == "System.Drawing.Primitives").Location);
-					if (!references.Any(r => r.Display == drawingPrimRef.Display)) references.Add(drawingPrimRef);
+					var drawingPrimRef = MetadataReference.CreateFromFile(
+						AppDomain
+							.CurrentDomain.GetAssemblies()
+							.First(a => a.GetName().Name == "System.Drawing.Primitives")
+							.Location
+					);
+					if (!references.Any(r => r.Display == drawingPrimRef.Display))
+						references.Add(drawingPrimRef);
 				}
-				catch { 
+				catch
+				{
 					// 로드 실패 시 무시 (안정성 확보)
 				}
 
@@ -285,11 +311,12 @@ namespace Server
 					"Scripts.CS.dll",
 					syntaxTrees,
 					references,
-					compilationOptions);
+					compilationOptions
+				);
 
 				// 5. DLL 파일 생성
 				var outputPath = GetUnusedPath("Scripts.CS");
-				EnsureDirectory("Scripts/Output/");
+				EnsureDirectory(Paths.ScriptOutputRoot);
 
 				using (var ms = new FileStream(outputPath, FileMode.Create))
 				{
@@ -302,18 +329,23 @@ namespace Server
 						Console.WriteLine("Failed!");
 
 						// 파일을 경로별로 그룹화하여 출력
-						var groupedDiagnostics = result.Diagnostics
-							.Where(d => d.Severity == DiagnosticSeverity.Error)
+						var groupedDiagnostics = result
+							.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error)
 							.GroupBy(d => d.Location.SourceTree?.FilePath ?? "Unknown File");
 
 						foreach (var group in groupedDiagnostics)
 						{
 							Console.WriteLine(" File: {0}", Path.GetFullPath(group.Key));
-							
+
 							foreach (var diagnostic in group)
 							{
 								var line = diagnostic.Location.GetLineSpan().StartLinePosition.Line + 1;
-								Console.WriteLine("  + Line {0}: {1} ({2})", line, diagnostic.GetMessage(), diagnostic.Id);
+								Console.WriteLine(
+									"  + Line {0}: {1} ({2})",
+									line,
+									diagnostic.GetMessage(),
+									diagnostic.Id
+								);
 							}
 						}
 
@@ -343,8 +375,14 @@ namespace Server
 		{
 			if (results.Errors.Count > 0)
 			{
-				var errors = new Dictionary<string, List<CompilerError>>(results.Errors.Count, StringComparer.OrdinalIgnoreCase);
-				var warnings = new Dictionary<string, List<CompilerError>>(results.Errors.Count, StringComparer.OrdinalIgnoreCase);
+				var errors = new Dictionary<string, List<CompilerError>>(
+					results.Errors.Count,
+					StringComparer.OrdinalIgnoreCase
+				);
+				var warnings = new Dictionary<string, List<CompilerError>>(
+					results.Errors.Count,
+					StringComparer.OrdinalIgnoreCase
+				);
 
 				foreach (CompilerError e in results.Errors)
 				{
@@ -383,9 +421,6 @@ namespace Server
 					Utility.PopColor();
 				}
 
-				var scriptRoot = Path.GetFullPath(Path.Combine(Core.BaseDirectory, "Scripts" + Path.DirectorySeparatorChar));
-				var scriptRootUri = new Uri(scriptRoot);
-
 				Utility.PushColor(ConsoleColor.Yellow);
 
 				if (warnings.Count > 0)
@@ -398,8 +433,7 @@ namespace Server
 					var fileName = kvp.Key;
 					var list = kvp.Value;
 
-					var fullPath = Path.GetFullPath(fileName);
-					var usedPath = Uri.UnescapeDataString(scriptRootUri.MakeRelativeUri(new Uri(fullPath)).OriginalString);
+					var usedPath = GetScriptDisplayPath(fileName);
 
 					Console.WriteLine(" + {0}:", usedPath);
 
@@ -427,8 +461,7 @@ namespace Server
 					var fileName = kvp.Key;
 					var list = kvp.Value;
 
-					var fullPath = Path.GetFullPath(fileName);
-					var usedPath = Uri.UnescapeDataString(scriptRootUri.MakeRelativeUri(new Uri(fullPath)).OriginalString);
+					var usedPath = GetScriptDisplayPath(fileName);
 
 					Console.WriteLine(" + {0}:", usedPath);
 
@@ -452,13 +485,63 @@ namespace Server
 			}
 		}
 
+		private static string GetScriptDisplayPath(string fileName)
+		{
+			if (String.IsNullOrWhiteSpace(fileName))
+			{
+				return fileName;
+			}
+
+			string fullPath = Path.GetFullPath(fileName);
+			string bestRelative = null;
+			int bestRootLength = -1;
+
+			string[] roots = Paths.ScriptSourceRoots;
+
+			for (int i = 0; i < roots.Length; i++)
+			{
+				string root = roots[i];
+
+				if (String.IsNullOrWhiteSpace(root))
+				{
+					continue;
+				}
+
+				string fullRoot = Path.GetFullPath(root);
+
+				if (!fullRoot.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
+				{
+					fullRoot += Path.DirectorySeparatorChar;
+				}
+
+				if (fullPath.Length < fullRoot.Length)
+				{
+					continue;
+				}
+
+				if (String.Compare(fullPath, 0, fullRoot, 0, fullRoot.Length, ScriptPathComparison) == 0)
+				{
+					string relative = fullPath.Substring(fullRoot.Length);
+
+					if (fullRoot.Length > bestRootLength)
+					{
+						bestRootLength = fullRoot.Length;
+						bestRelative = relative;
+					}
+				}
+			}
+
+			return bestRelative ?? fullPath;
+		}
+
 		public static string GetUnusedPath(string name)
 		{
-			var path = Path.Combine(Core.BaseDirectory, String.Format("Scripts/Output/{0}.dll", name));
+			string outputRoot = Paths.ScriptOutputRoot;
+			string path = Path.Combine(outputRoot, String.Format("{0}.dll", name));
 
 			for (var i = 2; File.Exists(path) && i <= 1000; ++i)
 			{
-				path = Path.Combine(Core.BaseDirectory, String.Format("Scripts/Output/{0}.{1}.dll", name, i));
+				path = Path.Combine(outputRoot, String.Format("{0}.{1}.dll", name, i));
 			}
 
 			return path;
@@ -468,7 +551,7 @@ namespace Server
 		{
 			try
 			{
-				var files = Directory.GetFiles(Path.Combine(Core.BaseDirectory, "Scripts/Output"), mask);
+				var files = Directory.GetFiles(Paths.ScriptOutputRoot, mask);
 
 				foreach (var file in files)
 				{
@@ -476,12 +559,10 @@ namespace Server
 					{
 						File.Delete(file);
 					}
-					catch
-					{ }
+					catch { }
 				}
 			}
-			catch
-			{ }
+			catch { }
 		}
 
 		private delegate CompilerResults Compiler(bool debug);
@@ -498,8 +579,14 @@ namespace Server
 
 		public static bool Compile(bool debug, bool cache)
 		{
-			EnsureDirectory("Scripts/");
-			EnsureDirectory("Scripts/Output/");
+			string[] scriptRoots = Paths.ScriptSourceRoots;
+
+			for (int i = 0; i < scriptRoots.Length; i++)
+			{
+				EnsureDirectory(scriptRoots[i]);
+			}
+
+			EnsureDirectory(Paths.ScriptOutputRoot);
 
 			if (m_AdditionalReferences.Count > 0)
 			{
@@ -545,7 +632,8 @@ namespace Server
 				Core.ScriptItems,
 				Core.ScriptMobiles,
 				Core.ScriptCustoms,
-				watch.Elapsed.TotalSeconds);
+				watch.Elapsed.TotalSeconds
+			);
 			Utility.PopColor();
 
 			return true;
@@ -648,7 +736,7 @@ namespace Server
 			}
 		}
 
-        public static Type FindTypeByName(string name)
+		public static Type FindTypeByName(string name)
 		{
 			return FindTypeByName(name, true);
 		}
@@ -679,14 +767,14 @@ namespace Server
 		{
 			if (string.IsNullOrWhiteSpace(name))
 			{
-                yield break;
+				yield break;
 			}
 
 			for (var i = 0; i < Assemblies.Length; ++i)
 			{
 				foreach (var t in GetTypeCache(Assemblies[i]).GetTypesByName(name, ignoreCase))
 				{
-                    yield return t;
+					yield return t;
 				}
 			}
 
@@ -694,11 +782,16 @@ namespace Server
 			{
 				yield return t;
 			}
-        }
+		}
 
 		public static void EnsureDirectory(string dir)
 		{
-			var path = Path.Combine(Core.BaseDirectory, dir);
+			var path = dir;
+
+			if (!Path.IsPathRooted(path))
+			{
+				path = Path.Combine(Core.BaseDirectory, path);
+			}
 
 			if (!Directory.Exists(path))
 			{
@@ -709,20 +802,62 @@ namespace Server
 		public static string[] GetScripts(string filter)
 		{
 			var list = new List<string>();
+			HashSet<string> seen = new HashSet<string>(ScriptPathComparer);
+			HashSet<string> excludedDirs = Paths.ExcludedScriptDirectoryNames;
 
-			GetScripts(list, Path.Combine(Core.BaseDirectory, "Scripts"), filter);
+			foreach (var root in Paths.ScriptSourceRoots)
+			{
+				GetScripts(list, seen, excludedDirs, root, filter);
+			}
 
 			return list.ToArray();
 		}
 
-		public static void GetScripts(List<string> list, string path, string filter)
+		public static void GetScripts(
+			List<string> list,
+			HashSet<string> seen,
+			HashSet<string> excludedDirs,
+			string path,
+			string filter
+		)
 		{
-			foreach (var dir in Directory.GetDirectories(path))
+			if (!Directory.Exists(path))
 			{
-				GetScripts(list, dir, filter);
+				return;
 			}
 
-			list.AddRange(Directory.GetFiles(path, filter));
+			foreach (var dir in Directory.GetDirectories(path))
+			{
+				string directoryName = Path.GetFileName(dir);
+
+				if (excludedDirs.Contains(directoryName))
+				{
+					continue;
+				}
+
+				GetScripts(list, seen, excludedDirs, dir, filter);
+			}
+
+			foreach (var file in Directory.GetFiles(path, filter))
+			{
+				string fullPath = Path.GetFullPath(file);
+
+				if (seen.Add(fullPath))
+				{
+					list.Add(fullPath);
+				}
+			}
+		}
+
+		public static void GetScripts(List<string> list, string path, string filter)
+		{
+			GetScripts(
+				list,
+				new HashSet<string>(ScriptPathComparer),
+				new HashSet<string>(StringComparer.OrdinalIgnoreCase),
+				path,
+				filter
+			);
 		}
 	}
 
@@ -732,9 +867,18 @@ namespace Server
 		private readonly TypeTable m_Names;
 		private readonly TypeTable m_FullNames;
 
-		public Type[] Types { get { return m_Types; } }
-		public TypeTable Names { get { return m_Names; } }
-		public TypeTable FullNames { get { return m_FullNames; } }
+		public Type[] Types
+		{
+			get { return m_Types; }
+		}
+		public TypeTable Names
+		{
+			get { return m_Names; }
+		}
+		public TypeTable FullNames
+		{
+			get { return m_FullNames; }
+		}
 
 		public Type GetTypeByName(string name, bool ignoreCase)
 		{
@@ -773,7 +917,7 @@ namespace Server
 			foreach (var g in m_Types.ToLookup(t => t.Name))
 			{
 				m_Names.Add(g.Key, g);
-				
+
 				foreach (var type in g)
 				{
 					m_FullNames.Add(type.FullName, type);
@@ -813,11 +957,11 @@ namespace Server
 		{
 			var buffer = new List<Type>();
 
-            foreach (var list in types.Values)
+			foreach (var list in types.Values)
 			{
 				if (list.Count == 1)
 				{
-                    continue;
+					continue;
 				}
 
 				buffer.AddRange(list.Distinct());
@@ -835,7 +979,7 @@ namespace Server
 		{
 			Sort(m_Sensitive);
 			Sort(m_Insensitive);
-        }
+		}
 
 		private static void Sort(Dictionary<string, List<Type>> types)
 		{
@@ -880,10 +1024,14 @@ namespace Server
 					return 1;
 				}
 
-				return x > y ? -1 : x < y ? 1 : 0;
+				return x > y ? -1
+					: x < y ? 1
+					: 0;
 			}
 
-			return a ? -1 : b ? 1 : 0;
+			return a ? -1
+				: b ? 1
+				: 0;
 		}
 
 		private static bool IsEntity(Type type)
@@ -920,9 +1068,9 @@ namespace Server
 		{
 			if (string.IsNullOrWhiteSpace(key) || types == null || types.Length == 0)
 			{
-                return;
+				return;
 			}
-			
+
 			if (!m_Sensitive.TryGetValue(key, out var sensitive) || sensitive == null)
 			{
 				m_Sensitive[key] = new List<Type>(types);
@@ -936,7 +1084,7 @@ namespace Server
 				sensitive.AddRange(types);
 			}
 
-            if (!m_Insensitive.TryGetValue(key, out var insensitive) || insensitive == null)
+			if (!m_Insensitive.TryGetValue(key, out var insensitive) || insensitive == null)
 			{
 				m_Insensitive[key] = new List<Type>(types);
 			}

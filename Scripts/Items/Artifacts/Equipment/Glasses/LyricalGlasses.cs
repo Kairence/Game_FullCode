@@ -2,92 +2,71 @@ using System;
 
 namespace Server.Items
 {
-    public class LyricalGlasses : ElvenGlasses
+	public class LyricalGlasses : ElvenGlasses
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public LyricalGlasses()
-        {
-            WeaponAttributes.HitLowerDefend = 20;
-            Attributes.NightSight = 1;
-            Attributes.ReflectPhysical = 15;
-            Hue = 0x47F;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public LyricalGlasses(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public LyricalGlasses()
+		{
+			WeaponAttributes.HitLowerDefend = 20;
+			Attributes.NightSight = 1;
+			Attributes.ReflectPhysical = 15;
+			Hue = 0x47F;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073382;
-            }
-        }//Lyrical Reading Glasses
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)1);
-        }
+		public LyricalGlasses(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
+		public override int LabelNumber
+		{
+			get { return 1073382; }
+		} //Lyrical Reading Glasses
+		public override int BasePhysicalResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseFireResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return 10; }
+		}
+		public override int BasePoisonResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseEnergyResistance
+		{
+			get { return 10; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-            if (version == 0 && this.Hue == 0)
-                this.Hue = 0x47F;
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)1);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+
+			if (version == 0 && this.Hue == 0)
+				this.Hue = 0x47F;
+		}
+	}
 }

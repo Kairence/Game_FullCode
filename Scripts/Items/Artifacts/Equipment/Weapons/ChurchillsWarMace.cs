@@ -2,43 +2,43 @@ using System;
 
 namespace Server.Items
 {
-    public class ChurchillsWarMace : WarMace
+	public class ChurchillsWarMace : WarMace
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public ChurchillsWarMace()
-        {
-            LootType = LootType.Blessed;
-            Attributes.AttackChance = 5;
-            Attributes.WeaponSpeed = 10;
-            Attributes.WeaponDamage = 25;
-            WeaponAttributes.LowerStatReq = 70;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public ChurchillsWarMace(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public ChurchillsWarMace()
+		{
+			LootType = LootType.Blessed;
+			Attributes.AttackChance = 5;
+			Attributes.WeaponSpeed = 10;
+			Attributes.WeaponDamage = 25;
+			WeaponAttributes.LowerStatReq = 70;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1078062;
-            }
-        }// Churchill's War Mace
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public ChurchillsWarMace(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1078062; }
+		} // Churchill's War Mace
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

@@ -9,23 +9,27 @@ namespace Server.Commands
 	{
 		public static void Initialize()
 		{
-	      		CommandSystem.Register( "EffectCheck", AccessLevel.GameMaster, new CommandEventHandler( EffectCheckInfo_OnCommand ) );
+			CommandSystem.Register(
+				"EffectCheck",
+				AccessLevel.GameMaster,
+				new CommandEventHandler(EffectCheckInfo_OnCommand)
+			);
 		}
 
-		[Usage( "Effect string" )]
-		[Description( "ÀÌÆåÆ® Ã¼Å©" )]
-		public static void EffectCheckInfo_OnCommand( CommandEventArgs e )
+		[Usage("Effect string")]
+		[Description("ï¿½ï¿½ï¿½ï¿½Æ® Ã¼Å©")]
+		public static void EffectCheckInfo_OnCommand(CommandEventArgs e)
 		{
 			string index = "";
-			if( e.Arguments.Length == 0 )
-				e.Mobile.SendMessage( String.Format("ÀÌÆåÆ® ¹øÈ£¸¦ ³Ö¾î¾ßÇÕ´Ï´Ù.") ); // Thy current bank balance is ~1_AMOUNT~ platinum and ~2_AMOUNT~ gold.
+			if (e.Arguments.Length == 0)
+				e.Mobile.SendMessage(String.Format("ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½È£ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½Õ´Ï´ï¿½.")); // Thy current bank balance is ~1_AMOUNT~ platinum and ~2_AMOUNT~ gold.
 			else
 			{
 				index = e.Arguments[0];
-				int number = Convert.ToInt32( index );
-				e.Mobile.FixedParticles( 0, 10, 5, number, EffectLayer.LeftHand );
-				e.Mobile.FixedParticles( 0, 10, 5, number, EffectLayer.RightHand );
+				int number = Convert.ToInt32(index);
+				e.Mobile.FixedParticles(0, 10, 5, number, EffectLayer.LeftHand);
+				e.Mobile.FixedParticles(0, 10, 5, number, EffectLayer.RightHand);
 			}
-		}	
+		}
 	}
 }

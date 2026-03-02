@@ -2,46 +2,42 @@ using System;
 
 namespace Server.Items
 {
-    public class DarkSapphireBracelet : GoldBracelet
-    {
-        [Constructable]
-        public DarkSapphireBracelet()
-            : base()
-        {
-            this.Weight = 1.0;
+	public class DarkSapphireBracelet : GoldBracelet
+	{
+		[Constructable]
+		public DarkSapphireBracelet()
+			: base()
+		{
+			this.Weight = 1.0;
 
-            BaseRunicTool.ApplyAttributesTo(this, true, 0, Utility.RandomMinMax(1, 4), 0, 100);
-			
-            if (Utility.Random(100) < 10)
-                this.Attributes.RegenMana += 2;
-            else
-                this.Resistances.Cold += 10;		
-        }
+			BaseRunicTool.ApplyAttributesTo(this, true, 0, Utility.RandomMinMax(1, 4), 0, 100);
 
-        public DarkSapphireBracelet(Serial serial)
-            : base(serial)
-        {
-        }
+			if (Utility.Random(100) < 10)
+				this.Attributes.RegenMana += 2;
+			else
+				this.Resistances.Cold += 10;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073455;
-            }
-        }// dark sapphire bracelet
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public DarkSapphireBracelet(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1073455; }
+		} // dark sapphire bracelet
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

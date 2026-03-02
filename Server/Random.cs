@@ -51,9 +51,15 @@ namespace Server
 			}
 		}
 
-		public static bool IsHardwareRNG { get { return _Random is IHardwareRNG; } }
+		public static bool IsHardwareRNG
+		{
+			get { return _Random is IHardwareRNG; }
+		}
 
-		public static Type Type { get { return _Random.GetType(); } }
+		public static Type Type
+		{
+			get { return _Random.GetType(); }
+		}
 
 		public static int Next(int c)
 		{
@@ -95,9 +101,9 @@ namespace Server
 
 		public int Next(int c)
 		{
-            if(c <= 0)
-                return 0;
-            
+			if (c <= 0)
+				return 0;
+
 			int r;
 			lock (m_Random)
 				r = m_Random.Next(c);
@@ -126,7 +132,7 @@ namespace Server
 
 	public sealed class CSPRandom : IRandomImpl
 	{
-		private readonly RNGCryptoServiceProvider _CSP = new RNGCryptoServiceProvider();
+		private readonly RandomNumberGenerator _CSP = RandomNumberGenerator.Create();
 
 		private static int BUFFER_SIZE = 0x4000;
 		private static int LARGE_REQUEST = 0x40;

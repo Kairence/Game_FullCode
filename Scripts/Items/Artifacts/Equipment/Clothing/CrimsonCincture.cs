@@ -3,85 +3,84 @@ using Server.Engines.Craft;
 
 namespace Server.Items
 {
-    [Alterable(typeof(DefTailoring), typeof(GargishCrimsonCincture))]
-    public class CrimsonCincture : HalfApron
+	[Alterable(typeof(DefTailoring), typeof(GargishCrimsonCincture))]
+	public class CrimsonCincture : HalfApron
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public CrimsonCincture()
-            : base()
-        {
-            Hue = 0x485;		
-            Attributes.BonusDex = 5;
-            Attributes.BonusHits = 10;
-            Attributes.RegenHits = 2;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public CrimsonCincture(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public CrimsonCincture()
+			: base()
+		{
+			Hue = 0x485;
+			Attributes.BonusDex = 5;
+			Attributes.BonusHits = 10;
+			Attributes.RegenHits = 2;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1075043;
-            }
-        }// Crimson Cincture
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-			
-            writer.Write((int)0); // version
-        }
+		public CrimsonCincture(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-			
-            int version = reader.ReadInt();
-        }
-    }
+		public override int LabelNumber
+		{
+			get { return 1075043; }
+		} // Crimson Cincture
 
-    public class GargishCrimsonCincture : GargoyleHalfApron
-    {
-        public override bool IsArtifact { get { return true; } }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        [Constructable]
-        public GargishCrimsonCincture()
-            : base()
-        {
-            Hue = 0x485;
-            Attributes.BonusDex = 5;
-            Attributes.BonusHits = 10;
-            Attributes.RegenHits = 2;
-        }
+			writer.Write((int)0); // version
+		}
 
-        public GargishCrimsonCincture(Serial serial)
-            : base(serial)
-        {
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1075043;
-            }
-        }// Crimson Cincture
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			int version = reader.ReadInt();
+		}
+	}
 
-            writer.Write((int)0); // version
-        }
+	public class GargishCrimsonCincture : GargoyleHalfApron
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		[Constructable]
+		public GargishCrimsonCincture()
+			: base()
+		{
+			Hue = 0x485;
+			Attributes.BonusDex = 5;
+			Attributes.BonusHits = 10;
+			Attributes.RegenHits = 2;
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public GargishCrimsonCincture(Serial serial)
+			: base(serial) { }
+
+		public override int LabelNumber
+		{
+			get { return 1075043; }
+		} // Crimson Cincture
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

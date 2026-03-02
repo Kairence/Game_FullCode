@@ -2,95 +2,77 @@ using System;
 
 namespace Server.Items
 {
-    public class LargeStoneTableSouthAddon : BaseAddon
-    {
-        [Constructable]
-        public LargeStoneTableSouthAddon()
-            : this(0)
-        {
-        }
+	public class LargeStoneTableSouthAddon : BaseAddon
+	{
+		[Constructable]
+		public LargeStoneTableSouthAddon()
+			: this(0) { }
 
-        [Constructable]
-        public LargeStoneTableSouthAddon(int hue)
-        {
-            this.AddComponent(new AddonComponent(0x1205), 0, 0, 0);
-            this.AddComponent(new AddonComponent(0x1206), 1, 0, 0);
-            this.AddComponent(new AddonComponent(0x1204), 2, 0, 0);
-            this.Hue = hue;
-        }
+		[Constructable]
+		public LargeStoneTableSouthAddon(int hue)
+		{
+			this.AddComponent(new AddonComponent(0x1205), 0, 0, 0);
+			this.AddComponent(new AddonComponent(0x1206), 1, 0, 0);
+			this.AddComponent(new AddonComponent(0x1204), 2, 0, 0);
+			this.Hue = hue;
+		}
 
-        public LargeStoneTableSouthAddon(Serial serial)
-            : base(serial)
-        {
-        }
+		public LargeStoneTableSouthAddon(Serial serial)
+			: base(serial) { }
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new LargeStoneTableSouthDeed();
-            }
-        }
-        public override bool RetainDeedHue
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override BaseAddonDeed Deed
+		{
+			get { return new LargeStoneTableSouthDeed(); }
+		}
+		public override bool RetainDeedHue
+		{
+			get { return true; }
+		}
 
-            writer.Write((int)1); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)1); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class LargeStoneTableSouthDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public LargeStoneTableSouthDeed()
-        {
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public LargeStoneTableSouthDeed(Serial serial)
-            : base(serial)
-        {
-        }
+	public class LargeStoneTableSouthDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public LargeStoneTableSouthDeed() { }
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new LargeStoneTableSouthAddon(this.Hue);
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1044512;
-            }
-        }// large stone table (South)
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public LargeStoneTableSouthDeed(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override BaseAddon Addon
+		{
+			get { return new LargeStoneTableSouthAddon(this.Hue); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1044512; }
+		} // large stone table (South)
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

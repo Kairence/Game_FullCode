@@ -1,98 +1,105 @@
 using System;
-using Server.Items;
-using Server.Gumps;
-using Server.Network;
-using Server.Mobiles;
 using Server.Accounting;
+using Server.Gumps;
+using Server.Items;
+using Server.Mobiles;
+using Server.Network;
 
 namespace Server.Items
 {
 	/*
-		ÃÖÃÊ 100 À¯Àú
+		ï¿½ï¿½ï¿½ï¿½ 100 ï¿½ï¿½ï¿½ï¿½
 	*/
-	
-	public class DonationCheck : Item 
+
+	public class DonationCheck : Item
 	{
 		private DateTime m_RespawnTime = DateTime.Now;
-		
+
 		public DateTime RespawnTime
 		{
-			get{ return m_RespawnTime;}
-			set{ m_RespawnTime = value; InvalidateProperties();}
+			get { return m_RespawnTime; }
+			set
+			{
+				m_RespawnTime = value;
+				InvalidateProperties();
+			}
 		}
-		
+
 		private string[] m_DonationList = new string[1000];
 		public string[] DonationList
 		{
-			get{ return m_DonationList;}
-			set{ m_DonationList = value; InvalidateProperties();}
+			get { return m_DonationList; }
+			set
+			{
+				m_DonationList = value;
+				InvalidateProperties();
+			}
 		}
 
 		public override string DefaultName
 		{
-			get { return "±âºÎ Ã¼Å© ½Ã½ºÅÛ"; }
+			get { return "ï¿½ï¿½ï¿½ Ã¼Å© ï¿½Ã½ï¿½ï¿½ï¿½"; }
 		}
+
 		[Constructable]
-		public DonationCheck() : base( 0xED4 )
+		public DonationCheck()
+			: base(0xED4)
 		{
 			Movable = false;
 			Hue = 1121;
-			Name = "±âºÎ Ã¼Å© ½Ã½ºÅÛ";
+			Name = "ï¿½ï¿½ï¿½ Ã¼Å© ï¿½Ã½ï¿½ï¿½ï¿½";
 		}
-		
-		public override void OnDoubleClick( Mobile from )
+
+		public override void OnDoubleClick(Mobile from)
 		{
-			from.SendMessage( "´ÙÀ½ ±âºÎ ½Ã°£ : {0}", m_RespawnTime.ToString());
+			from.SendMessage("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ : {0}", m_RespawnTime.ToString());
 			try
 			{
-				for( int i = 0; i < 10; i++ )
+				for (int i = 0; i < 10; i++)
 				{
-					if( DonationList[i] == "" || DonationList[i] == null )
+					if (DonationList[i] == "" || DonationList[i] == null)
 						break;
 					else
 					{
 						foreach (Account a in Accounts.GetAccounts())
 						{
-							if( DonationList[i] == a.Username )
+							if (DonationList[i] == a.Username)
 							{
-								from.SendMessage( "{0}ÀÇ ±âºÎ Æ÷ÀÎÆ® {1}", DonationList[i], a.DonationPoint);
+								from.SendMessage("{0}ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® {1}", DonationList[i], a.DonationPoint);
 							}
 						}
 					}
 				}
 			}
-			catch
+			catch { }
+		}
+
+		public DonationCheck(Serial serial)
+			: base(serial) { }
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+
+			writer.Write((DateTime)m_RespawnTime);
+
+			for (int i = 0; i < 1000; i++)
 			{
+				writer.Write((string)m_DonationList[i]);
 			}
 		}
 
-		public DonationCheck( Serial serial ) : base( serial )
+		public override void Deserialize(GenericReader reader)
 		{
-		}
-
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
-
-			writer.Write( (int) 0 ); // version
-
-			writer.Write( (DateTime) m_RespawnTime );
-			
-			for( int i = 0; i < 1000; i++ )
-			{
-				writer.Write( (string) m_DonationList[i] );
-			}
-		}
-
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
+			base.Deserialize(reader);
 
 			int version = reader.ReadInt();
 
 			m_RespawnTime = reader.ReadDateTime();
-			
-			for( int i = 0; i < 1000; i++ )
+
+			for (int i = 0; i < 1000; i++)
 			{
 				m_DonationList[i] = reader.ReadString();
 			}

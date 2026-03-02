@@ -1,7 +1,6 @@
 #region References
 using System;
 using System.Globalization;
-
 using Server.Items;
 using Server.Mobiles;
 using Server.Spells.SkillMasteries;
@@ -14,15 +13,26 @@ namespace Server.Spells.Spellweaving
 		private int m_CastTimeFocusLevel;
 
 		public ArcanistSpell(Mobile caster, Item scroll, SpellInfo info)
-			: base(caster, scroll, info)
-		{ }
+			: base(caster, scroll, info) { }
 
 		public abstract double RequiredSkill { get; }
 		public abstract int RequiredMana { get; }
-		public override SkillName CastSkill { get { return SkillName.Spellweaving; } }
-		public override SkillName DamageSkill { get { return SkillName.Spellweaving; } }
-		public override bool ClearHandsOnCast { get { return false; } }
-		public virtual int FocusLevel { get { return m_CastTimeFocusLevel; } }
+		public override SkillName CastSkill
+		{
+			get { return SkillName.Spellweaving; }
+		}
+		public override SkillName DamageSkill
+		{
+			get { return SkillName.Spellweaving; }
+		}
+		public override bool ClearHandsOnCast
+		{
+			get { return false; }
+		}
+		public virtual int FocusLevel
+		{
+			get { return m_CastTimeFocusLevel; }
+		}
 
 		public static int GetFocusLevel(Mobile from)
 		{
@@ -30,31 +40,31 @@ namespace Server.Spells.Spellweaving
 
 			if (focus == null || focus.Deleted)
 			{
-                if (Core.TOL && from is BaseCreature && from.Skills[SkillName.Spellweaving].Value > 0)
-                {
-                    return (int)Math.Max(1, Math.Min(6, from.Skills[SkillName.Spellweaving].Value / 20));
-                }
+				if (Core.TOL && from is BaseCreature && from.Skills[SkillName.Spellweaving].Value > 0)
+				{
+					return (int)Math.Max(1, Math.Min(6, from.Skills[SkillName.Spellweaving].Value / 20));
+				}
 
 				return Math.Max(GetMasteryFocusLevel(from), 0);
 			}
 
-            return Math.Max(GetMasteryFocusLevel(from), focus.StrengthBonus);
+			return Math.Max(GetMasteryFocusLevel(from), focus.StrengthBonus);
 		}
 
-        public static int GetMasteryFocusLevel(Mobile from)
-        {
-            if (!Core.TOL)
-            {
-                return 0;
-            }
+		public static int GetMasteryFocusLevel(Mobile from)
+		{
+			if (!Core.TOL)
+			{
+				return 0;
+			}
 
-            if (from.Skills.CurrentMastery == SkillName.Spellweaving)
-            {
-                return Math.Max(1, MasteryInfo.GetMasteryLevel(from, SkillName.Spellweaving));
-            }
+			if (from.Skills.CurrentMastery == SkillName.Spellweaving)
+			{
+				return Math.Max(1, MasteryInfo.GetMasteryLevel(from, SkillName.Spellweaving));
+			}
 
-            return 0;
-        }
+			return 0;
+		}
 
 		public static ArcaneFocus FindArcaneFocus(Mobile from)
 		{
@@ -96,7 +106,7 @@ namespace Server.Spells.Spellweaving
 			if (!CheckExpansion(Caster))
 			{
 				Caster.SendLocalizedMessage(1072176);
-					// You must upgrade to the Mondain's Legacy Expansion Pack before using that ability
+				// You must upgrade to the Mondain's Legacy Expansion Pack before using that ability
 				return false;
 			}
 
@@ -118,14 +128,17 @@ namespace Server.Spells.Spellweaving
 			if (Caster.Mana < mana)
 			{
 				Caster.SendLocalizedMessage(1060174, mana.ToString(CultureInfo.InvariantCulture));
-					// You must have at least ~1_MANA_REQUIREMENT~ Mana to use this ability.
+				// You must have at least ~1_MANA_REQUIREMENT~ Mana to use this ability.
 				return false;
 			}
-			
+
 			if (Caster.Skills[CastSkill].Value < RequiredSkill)
 			{
-				Caster.SendLocalizedMessage(1063013, String.Format("{0}\t{1}", RequiredSkill.ToString("F1"), "#1044114"));
-					// You need at least ~1_SKILL_REQUIREMENT~ ~2_SKILL_NAME~ skill to use that ability.
+				Caster.SendLocalizedMessage(
+					1063013,
+					String.Format("{0}\t{1}", RequiredSkill.ToString("F1"), "#1044114")
+				);
+				// You need at least ~1_SKILL_REQUIREMENT~ ~2_SKILL_NAME~ skill to use that ability.
 				return false;
 			}
 
@@ -173,14 +186,14 @@ namespace Server.Spells.Spellweaving
 
 		public override void SendCastEffect()
 		{
-            if(Caster.Player)
-			    Caster.FixedEffect(0x37C4, 87, (int)(GetCastDelay().TotalSeconds * 28), 4, 3);
+			if (Caster.Player)
+				Caster.FixedEffect(0x37C4, 87, (int)(GetCastDelay().TotalSeconds * 28), 4, 3);
 		}
 
 		public virtual bool CheckResisted(Mobile m)
 		{
 			double percent = (50 + 2 * (GetResistSkill(m) - GetDamageSkill(Caster))) / 100;
-				//TODO: According to the guide this is it.. but.. is it correct per OSI?
+			//TODO: According to the guide this is it.. but.. is it correct per OSI?
 
 			if (percent <= 0)
 			{

@@ -2,48 +2,56 @@ using System;
 
 namespace Server.Items
 {
-    public class QuiverOfRage : BaseQuiver
+	public class QuiverOfRage : BaseQuiver
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public QuiverOfRage()
-            : base()
-        {
-            Hue = 0x24C;
-            WeightReduction = 25;
-            DamageIncrease = 10;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public QuiverOfRage(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public QuiverOfRage()
+			: base()
+		{
+			Hue = 0x24C;
+			WeightReduction = 25;
+			DamageIncrease = 10;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1075038;
-            }
-        }// Quiver of Rage
-        public override void AlterBowDamage(ref int phys, ref int fire, ref int cold, ref int pois, ref int nrgy, ref int chaos, ref int direct)
-        {
-            chaos = direct = 0;
-            phys = fire = cold = pois = nrgy = 20;
-        }
+		public QuiverOfRage(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override int LabelNumber
+		{
+			get { return 1075038; }
+		} // Quiver of Rage
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void AlterBowDamage(
+			ref int phys,
+			ref int fire,
+			ref int cold,
+			ref int pois,
+			ref int nrgy,
+			ref int chaos,
+			ref int direct
+		)
+		{
+			chaos = direct = 0;
+			phys = fire = cold = pois = nrgy = 20;
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

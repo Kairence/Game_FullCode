@@ -2,63 +2,60 @@ using System;
 
 namespace Server.Items
 {
-    public class HarrowerGate : Moongate
-    {
-        private Mobile m_Harrower;
-        public HarrowerGate(Mobile harrower, Point3D loc, Map map, Point3D targLoc, Map targMap)
-            : base(targLoc, targMap)
-        {
-            this.m_Harrower = harrower;
+	public class HarrowerGate : Moongate
+	{
+		private Mobile m_Harrower;
 
-            this.Dispellable = false;
-            this.ItemID = 0x1FD4;
-            this.Light = LightType.Circle300;
+		public HarrowerGate(Mobile harrower, Point3D loc, Map map, Point3D targLoc, Map targMap)
+			: base(targLoc, targMap)
+		{
+			this.m_Harrower = harrower;
 
-            this.MoveToWorld(loc, map);
-        }
+			this.Dispellable = false;
+			this.ItemID = 0x1FD4;
+			this.Light = LightType.Circle300;
 
-        public HarrowerGate(Serial serial)
-            : base(serial)
-        {
-        }
+			this.MoveToWorld(loc, map);
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1049498;
-            }
-        }// dark moongate
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public HarrowerGate(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
+		public override int LabelNumber
+		{
+			get { return 1049498; }
+		} // dark moongate
 
-            writer.Write(this.m_Harrower);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
 
-            int version = reader.ReadInt();
+			writer.Write(this.m_Harrower);
+		}
 
-            switch ( version )
-            {
-                case 0:
-                    {
-                        this.m_Harrower = reader.ReadMobile();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-                        if (this.m_Harrower == null)
-                            this.Delete();
+			int version = reader.ReadInt();
 
-                        break;
-                    }
-            }
+			switch (version)
+			{
+				case 0:
+				{
+					this.m_Harrower = reader.ReadMobile();
 
-            if (this.Light != LightType.Circle300)
-                this.Light = LightType.Circle300;
-        }
-    }
+					if (this.m_Harrower == null)
+						this.Delete();
+
+					break;
+				}
+			}
+
+			if (this.Light != LightType.Circle300)
+				this.Light = LightType.Circle300;
+		}
+	}
 }

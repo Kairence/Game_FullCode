@@ -4,17 +4,20 @@ namespace Server.Mobiles
 {
 	public class WanderingShaman : WanderingHealer
 	{
-        public override bool ChangeRace { get { return false; } }
+		public override bool ChangeRace
+		{
+			get { return false; }
+		}
 
 		[Constructable]
 		public WanderingShaman()
 		{
-            Name = NameList.RandomName("savage");
+			Name = NameList.RandomName("savage");
 			Title = "the wandering shaman";
-            Hue = 0;
+			Hue = 0;
 
-            HairItemID = 0;
-            FacialHairItemID = 0;
+			HairItemID = 0;
+			FacialHairItemID = 0;
 
 			var i = Items.Count;
 
@@ -24,25 +27,24 @@ namespace Server.Mobiles
 					Items[i].Delete();
 			}
 
-			SetWearable( new TribalMask(), 2500 );
-            SetWearable( new BoneArms() );
-            SetWearable( new BoneLegs() );
+			SetWearable(new TribalMask(), 2500);
+			SetWearable(new BoneArms());
+			SetWearable(new BoneLegs());
 		}
 
-		public WanderingShaman( Serial serial ) : base( serial )
+		public WanderingShaman(Serial serial)
+			: base(serial) { }
+
+		public override void Serialize(GenericWriter writer)
 		{
+			base.Serialize(writer);
+
+			writer.Write(1); // version
 		}
 
-		public override void Serialize( GenericWriter writer )
+		public override void Deserialize(GenericReader reader)
 		{
-			base.Serialize( writer );
-
-			writer.Write( 1 ); // version
-		}
-
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
+			base.Deserialize(reader);
 
 			var v = reader.ReadInt();
 

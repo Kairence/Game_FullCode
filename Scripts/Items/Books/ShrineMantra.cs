@@ -2,43 +2,41 @@ using System;
 
 namespace Server.Items
 {
-    public class ShrineMantra : BrownBook
-    {
-        public static readonly BookContent Content = new BookContent(
-            "Shrine of Singularity Mantra", "Naxatillor",
-            new BookPageInfo(
-                "unorus"));
-        [Constructable]
-        public ShrineMantra()
-            : base(false)
-        {
-            this.Hue = 2210;
-        }
+	public class ShrineMantra : BrownBook
+	{
+		public static readonly BookContent Content = new BookContent(
+			"Shrine of Singularity Mantra",
+			"Naxatillor",
+			new BookPageInfo("unorus")
+		);
 
-        public ShrineMantra(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public ShrineMantra()
+			: base(false)
+		{
+			this.Hue = 2210;
+		}
 
-        public override BookContent DefaultContent
-        {
-            get
-            {
-                return Content;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public ShrineMantra(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt((int)0); // version
-        }
+		public override BookContent DefaultContent
+		{
+			get { return Content; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

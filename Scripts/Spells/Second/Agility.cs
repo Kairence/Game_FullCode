@@ -3,84 +3,83 @@ using Server.Targeting;
 
 namespace Server.Spells.Second
 {
-    public class AgilitySpell : MagerySpell
-    {
-        private static readonly SpellInfo m_Info = new SpellInfo(
-            "Agility", "Ex Uus",
-            212,
-            9061,
-            Reagent.Bloodmoss,
-            Reagent.MandrakeRoot);
-        public AgilitySpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+	public class AgilitySpell : MagerySpell
+	{
+		private static readonly SpellInfo m_Info = new SpellInfo(
+			"Agility",
+			"Ex Uus",
+			212,
+			9061,
+			Reagent.Bloodmoss,
+			Reagent.MandrakeRoot
+		);
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Second;
-            }
-        }
-        
-        public override void OnCast()
-        {
-            this.Caster.Target = new InternalTarget(this);
-        }
+		public AgilitySpell(Mobile caster, Item scroll)
+			: base(caster, scroll, m_Info) { }
 
-        public void Target(Mobile m)
-        {
-            if (!this.Caster.CanSee(m))
-            {
-                this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
-            }
-            else if (this.CheckBSequence(m))
-            {
-                int oldDex = SpellHelper.GetBuffOffset(m, StatType.Dex);
-                int newDex = SpellHelper.GetOffset(Caster, m, StatType.Dex, false, true);
+		public override SpellCircle Circle
+		{
+			get { return SpellCircle.Second; }
+		}
 
-                if (newDex < oldDex || newDex == 0)
-                {
-                    DoHurtFizzle();
-                }
-                else
-                {
-                    SpellHelper.Turn(this.Caster, m);
+		public override void OnCast()
+		{
+			this.Caster.Target = new InternalTarget(this);
+		}
+
+		public void Target(Mobile m)
+		{
+			if (!this.Caster.CanSee(m))
+			{
+				this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
+			}
+			else if (this.CheckBSequence(m))
+			{
+				int oldDex = SpellHelper.GetBuffOffset(m, StatType.Dex);
+				int newDex = SpellHelper.GetOffset(Caster, m, StatType.Dex, false, true);
+
+				if (newDex < oldDex || newDex == 0)
+				{
+					DoHurtFizzle();
+				}
+				else
+				{
+					SpellHelper.Turn(this.Caster, m);
 
 					double percentage = 10 + Caster.Skills.Magery.Value * 0.01;
 					TimeSpan length = TimeSpan.FromSeconds(30.0);
-                    BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Agility, 1075841, length, m, percentage.ToString()));
+					BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Agility, 1075841, length, m, percentage.ToString()));
 
-                    m.FixedParticles(0x375A, 10, 15, 5010, EffectLayer.Waist);
-                    m.PlaySound(0x1e7);
-                }
-            }
+					m.FixedParticles(0x375A, 10, 15, 5010, EffectLayer.Waist);
+					m.PlaySound(0x1e7);
+				}
+			}
 
-            this.FinishSequence();
-        }
+			this.FinishSequence();
+		}
 
-        private class InternalTarget : Target
-        {
-            private readonly AgilitySpell m_Owner;
-            public InternalTarget(AgilitySpell owner)
-                : base(Core.ML ? 10 : 12, false, TargetFlags.Beneficial)
-            {
-                this.m_Owner = owner;
-            }
+		private class InternalTarget : Target
+		{
+			private readonly AgilitySpell m_Owner;
 
-            protected override void OnTarget(Mobile from, object o)
-            {
-                if (o is Mobile)
-                {
-                    this.m_Owner.Target((Mobile)o);
-                }
-            }
+			public InternalTarget(AgilitySpell owner)
+				: base(Core.ML ? 10 : 12, false, TargetFlags.Beneficial)
+			{
+				this.m_Owner = owner;
+			}
 
-            protected override void OnTargetFinish(Mobile from)
-            {
-                this.m_Owner.FinishSequence();
-            }
-        }
-    }
+			protected override void OnTarget(Mobile from, object o)
+			{
+				if (o is Mobile)
+				{
+					this.m_Owner.Target((Mobile)o);
+				}
+			}
+
+			protected override void OnTargetFinish(Mobile from)
+			{
+				this.m_Owner.FinishSequence();
+			}
+		}
+	}
 }

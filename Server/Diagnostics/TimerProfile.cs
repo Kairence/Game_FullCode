@@ -9,7 +9,10 @@ namespace Server.Diagnostics
 	{
 		private static readonly Dictionary<string, TimerProfile> _profiles = new Dictionary<string, TimerProfile>();
 
-		public static IEnumerable<TimerProfile> Profiles { get { return _profiles.Values; } }
+		public static IEnumerable<TimerProfile> Profiles
+		{
+			get { return _profiles.Values; }
+		}
 
 		public static TimerProfile Acquire(string name)
 		{
@@ -28,17 +31,30 @@ namespace Server.Diagnostics
 			return prof;
 		}
 
-		private long _created, _started, _stopped;
+		private long _created,
+			_started,
+			_stopped;
 
-		public long Created { get { return _created; } set { _created = value; } }
+		public long Created
+		{
+			get { return _created; }
+			set { _created = value; }
+		}
 
-		public long Started { get { return _started; } set { _started = value; } }
+		public long Started
+		{
+			get { return _started; }
+			set { _started = value; }
+		}
 
-		public long Stopped { get { return _stopped; } set { _stopped = value; } }
+		public long Stopped
+		{
+			get { return _stopped; }
+			set { _stopped = value; }
+		}
 
 		public TimerProfile(string name)
-			: base(name)
-		{ }
+			: base(name) { }
 
 		public override void WriteTo(TextWriter op)
 		{

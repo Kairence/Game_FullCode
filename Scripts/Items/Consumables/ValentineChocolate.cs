@@ -2,11 +2,11 @@ using System;
 
 namespace Server.Items
 {
-    public class ValentineChocolate : Food
-    {
-        private static readonly int[] m_Labels = new int[]
-        {
-            1114827, // "Someone Likes You"
+	public class ValentineChocolate : Food
+	{
+		private static readonly int[] m_Labels = new int[]
+		{
+			1114827, // "Someone Likes You"
 			1114834, // "You’re Sexy"
 			1114836, // "You’re The Best"
 			1114822, // "Be Mine"
@@ -30,64 +30,66 @@ namespace Server.Items
 			1114828, // "True Love"
 		};
 
-        public override int LabelNumber { get { return m_Title; } }
+		public override int LabelNumber
+		{
+			get { return m_Title; }
+		}
 
-        private int m_Title, m_Label;
+		private int m_Title,
+			m_Label;
 
-        [Constructable]
-        public ValentineChocolate()
-            : base(2538)
-        {
-            Weight = 1.0;
-            LootType = LootType.Blessed;
+		[Constructable]
+		public ValentineChocolate()
+			: base(2538)
+		{
+			Weight = 1.0;
+			LootType = LootType.Blessed;
 
-            switch (Utility.Random(3))
-            {
-                case 0:
-                    Hue = 1125;
-                    m_Title = 1079994; // Dark chocolate
-                    break;
-                case 1:
-                    Hue = 1121;
-                    m_Title = 1079995; // Milk chocolate
-                    break;
-                case 2:
-                    Hue = 1150;
-                    m_Title = 1079996; // White Chocolate
-                    break;
-            }
+			switch (Utility.Random(3))
+			{
+				case 0:
+					Hue = 1125;
+					m_Title = 1079994; // Dark chocolate
+					break;
+				case 1:
+					Hue = 1121;
+					m_Title = 1079995; // Milk chocolate
+					break;
+				case 2:
+					Hue = 1150;
+					m_Title = 1079996; // White Chocolate
+					break;
+			}
 
-            m_Label = m_Labels[Utility.Random(m_Labels.Length)];
-        }
+			m_Label = m_Labels[Utility.Random(m_Labels.Length)];
+		}
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-            list.Add(m_Label);
-        }
+			list.Add(m_Label);
+		}
 
-        public ValentineChocolate(Serial serial)
-            : base(serial)
-        {
-        }
+		public ValentineChocolate(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0); // version
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0); // version
 
-            writer.Write((int)m_Title);
-            writer.Write((int)m_Label);
-        }
+			writer.Write((int)m_Title);
+			writer.Write((int)m_Label);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
 
-            m_Title = reader.ReadInt();
-            m_Label = reader.ReadInt();
-        }
-    }
+			m_Title = reader.ReadInt();
+			m_Label = reader.ReadInt();
+		}
+	}
 }

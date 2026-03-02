@@ -2,40 +2,36 @@ using System;
 
 namespace Server.Items
 {
-    [FlipableAttribute(0x403F, 0x4040)]
-    public class GargishSculpture : Item
-    {
-        [Constructable]
-        public GargishSculpture()
-            : base(0x403F)
-        {
-            this.Weight = 1.0;
-        }
+	[FlipableAttribute(0x403F, 0x4040)]
+	public class GargishSculpture : Item
+	{
+		[Constructable]
+		public GargishSculpture()
+			: base(0x403F)
+		{
+			this.Weight = 1.0;
+		}
 
-        public GargishSculpture(Serial serial)
-            : base(serial)
-        {
-        }
+		public GargishSculpture(Serial serial)
+			: base(serial) { }
 
-        public override bool ForceShowProperties
-        {
-            get
-            {
-                return ObjectPropertyList.Enabled;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override bool ForceShowProperties
+		{
+			get { return ObjectPropertyList.Enabled; }
+		}
 
-            writer.Write((int)0);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0);
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

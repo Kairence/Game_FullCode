@@ -3,226 +3,211 @@ using Server.Items;
 
 namespace Server.Engines.Quests
 {
-    public class HornOfRetreat : Item
-    {
-        private Point3D m_DestLoc;
-        private Map m_DestMap;
-        private int m_Charges;
-        private Timer m_PlayTimer;
-        [Constructable]
-        public HornOfRetreat()
-            : base(0xFC4)
-        {
-            this.Hue = 0x482;
-            this.Weight = 1.0;
-            this.Charges = 10;
-        }
+	public class HornOfRetreat : Item
+	{
+		private Point3D m_DestLoc;
+		private Map m_DestMap;
+		private int m_Charges;
+		private Timer m_PlayTimer;
 
-        public HornOfRetreat(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public HornOfRetreat()
+			: base(0xFC4)
+		{
+			this.Hue = 0x482;
+			this.Weight = 1.0;
+			this.Charges = 10;
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Point3D DestLoc
-        {
-            get
-            {
-                return this.m_DestLoc;
-            }
-            set
-            {
-                this.m_DestLoc = value;
-            }
-        }
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Map DestMap
-        {
-            get
-            {
-                return this.m_DestMap;
-            }
-            set
-            {
-                this.m_DestMap = value;
-            }
-        }
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int Charges
-        {
-            get
-            {
-                return this.m_Charges;
-            }
-            set
-            {
-                this.m_Charges = value;
-                this.InvalidateProperties();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1049117;
-            }
-        }// Horn of Retreat
-        public virtual bool ValidateUse(Mobile from)
-        {
-            return true;
-        }
+		public HornOfRetreat(Serial serial)
+			: base(serial) { }
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Point3D DestLoc
+		{
+			get { return this.m_DestLoc; }
+			set { this.m_DestLoc = value; }
+		}
 
-            list.Add(1060741, this.m_Charges.ToString()); // charges: ~1_val~
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Map DestMap
+		{
+			get { return this.m_DestMap; }
+			set { this.m_DestMap = value; }
+		}
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (this.IsChildOf(from.Backpack))
-            {
-                if (!this.ValidateUse(from))
-                {
-                    this.SendLocalizedMessageTo(from, 500309); // Nothing Happens.
-                }
-                else if (Core.ML && from.Map != Map.Trammel && from.Map != Map.Malas)
-                {
-                    from.SendLocalizedMessage(1076154); // You can only use this in Trammel and Malas.
-                }
-                else if (this.m_PlayTimer != null)
-                {
-                    this.SendLocalizedMessageTo(from, 1042144); // This is currently in use.
-                }
-                else if (this.Charges > 0)
-                {
-                    from.Animate(34, 7, 1, true, false, 0);
-                    from.PlaySound(0xFF);
-                    from.SendLocalizedMessage(1049115); // You play the horn and a sense of peace overcomes you...
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int Charges
+		{
+			get { return this.m_Charges; }
+			set
+			{
+				this.m_Charges = value;
+				this.InvalidateProperties();
+			}
+		}
+		public override int LabelNumber
+		{
+			get { return 1049117; }
+		} // Horn of Retreat
 
-                    --this.Charges;
+		public virtual bool ValidateUse(Mobile from)
+		{
+			return true;
+		}
 
-                    this.m_PlayTimer = Timer.DelayCall(TimeSpan.FromSeconds(5.0), new TimerStateCallback(PlayTimer_Callback), from);
-                }
-                else
-                {
-                    this.SendLocalizedMessageTo(from, 1042544); // This item is out of charges.
-                }
-            }
-            else
-            {
-                this.SendLocalizedMessageTo(from, 1042001); // That must be in your pack for you to use it.
-            }
-        }
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-        public virtual void PlayTimer_Callback(object state)
-        {
-            Mobile from = (Mobile)state;
+			list.Add(1060741, this.m_Charges.ToString()); // charges: ~1_val~
+		}
 
-            this.m_PlayTimer = null;
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (this.IsChildOf(from.Backpack))
+			{
+				if (!this.ValidateUse(from))
+				{
+					this.SendLocalizedMessageTo(from, 500309); // Nothing Happens.
+				}
+				else if (Core.ML && from.Map != Map.Trammel && from.Map != Map.Malas)
+				{
+					from.SendLocalizedMessage(1076154); // You can only use this in Trammel and Malas.
+				}
+				else if (this.m_PlayTimer != null)
+				{
+					this.SendLocalizedMessageTo(from, 1042144); // This is currently in use.
+				}
+				else if (this.Charges > 0)
+				{
+					from.Animate(34, 7, 1, true, false, 0);
+					from.PlaySound(0xFF);
+					from.SendLocalizedMessage(1049115); // You play the horn and a sense of peace overcomes you...
 
-            HornOfRetreatMoongate gate = new HornOfRetreatMoongate(this.DestLoc, this.DestMap, from, this.Hue);
+					--this.Charges;
 
-            gate.MoveToWorld(from.Location, from.Map);
+					this.m_PlayTimer = Timer.DelayCall(
+						TimeSpan.FromSeconds(5.0),
+						new TimerStateCallback(PlayTimer_Callback),
+						from
+					);
+				}
+				else
+				{
+					this.SendLocalizedMessageTo(from, 1042544); // This item is out of charges.
+				}
+			}
+			else
+			{
+				this.SendLocalizedMessageTo(from, 1042001); // That must be in your pack for you to use it.
+			}
+		}
 
-            from.PlaySound(0x20E);
+		public virtual void PlayTimer_Callback(object state)
+		{
+			Mobile from = (Mobile)state;
 
-            gate.SendLocalizedMessageTo(from, 1049102, from.Name); // Quickly ~1_NAME~! Onward through the gate!
-        }
+			this.m_PlayTimer = null;
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			HornOfRetreatMoongate gate = new HornOfRetreatMoongate(this.DestLoc, this.DestMap, from, this.Hue);
 
-            writer.Write((int)0); // version
+			gate.MoveToWorld(from.Location, from.Map);
 
-            writer.Write(this.m_DestLoc);
-            writer.Write(this.m_DestMap);
-            writer.Write(this.m_Charges);
-        }
+			from.PlaySound(0x20E);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			gate.SendLocalizedMessageTo(from, 1049102, from.Name); // Quickly ~1_NAME~! Onward through the gate!
+		}
 
-            int version = reader.ReadInt();
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            switch ( version )
-            {
-                case 0:
-                    {
-                        this.m_DestLoc = reader.ReadPoint3D();
-                        this.m_DestMap = reader.ReadMap();
-                        this.m_Charges = reader.ReadInt();
-                        break;
-                    }
-            }
-        }
-    }
+			writer.Write((int)0); // version
 
-    public class HornOfRetreatMoongate : Moongate
-    {
-        private readonly Mobile m_Caster;
-        public HornOfRetreatMoongate(Point3D destLoc, Map destMap, Mobile caster, int hue)
-        {
-            this.m_Caster = caster;
+			writer.Write(this.m_DestLoc);
+			writer.Write(this.m_DestMap);
+			writer.Write(this.m_Charges);
+		}
 
-            this.Target = destLoc;
-            this.TargetMap = destMap;
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            this.Hue = hue;
-            this.Light = LightType.Circle300;
+			int version = reader.ReadInt();
 
-            this.Dispellable = false;
+			switch (version)
+			{
+				case 0:
+				{
+					this.m_DestLoc = reader.ReadPoint3D();
+					this.m_DestMap = reader.ReadMap();
+					this.m_Charges = reader.ReadInt();
+					break;
+				}
+			}
+		}
+	}
 
-            Timer.DelayCall(TimeSpan.FromSeconds(10.0), new TimerCallback(Delete));
-        }
+	public class HornOfRetreatMoongate : Moongate
+	{
+		private readonly Mobile m_Caster;
 
-        public HornOfRetreatMoongate(Serial serial)
-            : base(serial)
-        {
-        }
+		public HornOfRetreatMoongate(Point3D destLoc, Map destMap, Mobile caster, int hue)
+		{
+			this.m_Caster = caster;
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1049114;
-            }
-        }// Sanctuary Gate
-        public override void BeginConfirmation(Mobile from)
-        {
-            this.EndConfirmation(from);
-        }
+			this.Target = destLoc;
+			this.TargetMap = destMap;
 
-        public override void UseGate(Mobile m)
-        {
-            if (m.Region.IsPartOf<Regions.Jail>())
-            {
-                m.SendLocalizedMessage(1114345); // You'll need a better jailbreak plan than that!
-            }
-            else if (m == this.m_Caster)
-            {
-                base.UseGate(m);
-                this.Delete();
-            }
-        }
+			this.Hue = hue;
+			this.Light = LightType.Circle300;
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			this.Dispellable = false;
 
-            writer.Write((int)0); // version
-        }
+			Timer.DelayCall(TimeSpan.FromSeconds(10.0), new TimerCallback(Delete));
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public HornOfRetreatMoongate(Serial serial)
+			: base(serial) { }
 
-            int version = reader.ReadInt();
+		public override int LabelNumber
+		{
+			get { return 1049114; }
+		} // Sanctuary Gate
 
-            this.Delete();
-        }
-    }
+		public override void BeginConfirmation(Mobile from)
+		{
+			this.EndConfirmation(from);
+		}
+
+		public override void UseGate(Mobile m)
+		{
+			if (m.Region.IsPartOf<Regions.Jail>())
+			{
+				m.SendLocalizedMessage(1114345); // You'll need a better jailbreak plan than that!
+			}
+			else if (m == this.m_Caster)
+			{
+				base.UseGate(m);
+				this.Delete();
+			}
+		}
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+
+			this.Delete();
+		}
+	}
 }

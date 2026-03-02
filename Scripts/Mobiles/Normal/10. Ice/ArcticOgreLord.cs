@@ -3,80 +3,78 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    [CorpseName("a frozen ogre corpse")]
-    [TypeAlias("Server.Mobiles.ArticOgreLord")]
-    public class ArcticOgreLord : BaseCreature
-    {
-        [Constructable]
-        public ArcticOgreLord()
-            : base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
-        {
-            Name = "an arctic ogre";
-            Body = 135;
-            BaseSoundID = 427;
+	[CorpseName("a frozen ogre corpse")]
+	[TypeAlias("Server.Mobiles.ArticOgreLord")]
+	public class ArcticOgreLord : BaseCreature
+	{
+		[Constructable]
+		public ArcticOgreLord()
+			: base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
+		{
+			Name = "an arctic ogre";
+			Body = 135;
+			BaseSoundID = 427;
 
-            SetStr(3767, 3945);
-            SetDex(2066, 2750);
-            SetInt(460, 700);
+			SetStr(3767, 3945);
+			SetDex(2066, 2750);
+			SetInt(460, 700);
 
-            SetHits(8476, 9952);
+			SetHits(8476, 9952);
 			SetStam(7000, 9000);
 			SetMana(1000, 2000);
 
-			SetAttackSpeed( 10.0 );
-            SetDamage(350, 650);
+			SetAttackSpeed(10.0);
+			SetDamage(350, 650);
 
-            SetDamageType(ResistanceType.Physical, 30);
-            SetDamageType(ResistanceType.Cold, 70);
+			SetDamageType(ResistanceType.Physical, 30);
+			SetDamageType(ResistanceType.Cold, 70);
 
-            SetResistance(ResistanceType.Physical, 45, 55);
-            SetResistance(ResistanceType.Cold, 60, 70);
-            SetResistance(ResistanceType.Poison, 100);
-            SetResistance(ResistanceType.Energy, 40, 50);
+			SetResistance(ResistanceType.Physical, 45, 55);
+			SetResistance(ResistanceType.Cold, 60, 70);
+			SetResistance(ResistanceType.Poison, 100);
+			SetResistance(ResistanceType.Energy, 40, 50);
 
-            SetSkill(SkillName.MagicResist, 125.1, 140.0);
-            SetSkill(SkillName.Tactics, 90.1, 100.0);
-            SetSkill(SkillName.Wrestling, 90.1, 100.0);
+			SetSkill(SkillName.MagicResist, 125.1, 140.0);
+			SetSkill(SkillName.Tactics, 90.1, 100.0);
+			SetSkill(SkillName.Wrestling, 90.1, 100.0);
 
-            Fame = 15000;
-            Karma = -15000;
+			Fame = 15000;
+			Karma = -15000;
 
-            this.VirtualArmor = Utility.RandomMinMax(55, 120);
+			this.VirtualArmor = Utility.RandomMinMax(55, 120);
 
-            PackItem(new Club());
-        }
+			PackItem(new Club());
+		}
 
-        public ArcticOgreLord(Serial serial)
-            : base(serial)
-        {
-        }
+		public ArcticOgreLord(Serial serial)
+			: base(serial) { }
 
-        public override Poison PoisonImmune
-        {
-            get
-            {
-                return Poison.Regular;
-            }
-        }
-        
-		public override int TreasureMapLevel { get { return 3; } }
-		
-        public override void GenerateLoot()
-        {
-            AddLoot(LootPack.FilthyRich);
-            AddLoot(LootPack.Rich);
-        }
+		public override Poison PoisonImmune
+		{
+			get { return Poison.Regular; }
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
+		public override int TreasureMapLevel
+		{
+			get { return 3; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+		public override void GenerateLoot()
+		{
+			AddLoot(LootPack.FilthyRich);
+			AddLoot(LootPack.Rich);
+		}
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 }

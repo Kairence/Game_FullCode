@@ -1,6 +1,7 @@
 #region References
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -10,15 +11,15 @@ namespace Ultima
 {
 	public sealed class UOSound
 	{
-		public string Name;
-		public int ID;
-		public byte[] buffer;
+		public string Name { get; private set; }
+		public int ID { get; private set; }
+		public byte[] Buffer { get; private set; }
 
 		public UOSound(string name, int id, byte[] buff)
 		{
 			Name = name;
 			ID = id;
-			buffer = buff;
+			Buffer = buff;
 		}
 	};
 
@@ -56,13 +57,16 @@ namespace Ultima
 			{
 				while ((line = reader.ReadLine()) != null)
 				{
-					if (((line = line.Trim()).Length != 0) && !line.StartsWith("#"))
+					if (((line = line.Trim()).Length != 0) && !line.StartsWith("#", StringComparison.CurrentCulture))
 					{
 						Match match = reg.Match(line);
 
 						if (match.Success)
 						{
-							m_Translations.Add(int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value));
+							m_Translations.Add(
+								int.Parse(match.Groups[1].Value, CultureInfo.CurrentCulture),
+								int.Parse(match.Groups[2].Value, CultureInfo.CurrentCulture)
+							);
 						}
 					}
 				}
@@ -98,7 +102,8 @@ namespace Ultima
 				return m_Cache[soundID];
 			}
 
-			int length, extra;
+			int length,
+				extra;
 			bool patched;
 			Stream stream = m_FileIndex.Seek(soundID, out length, out extra, out patched);
 
@@ -134,7 +139,7 @@ namespace Ultima
 			Buffer.BlockCopy(buffer, 0, resultBuffer, (waveHeader.Length << 2), buffer.Length);
 
 			string str = Encoding.ASCII.GetString(stringBuffer);
-				// seems that the null terminator's not being properly recognized :/
+			// seems that the null terminator's not being properly recognized :/
 			if (str.IndexOf('\0') > 0)
 			{
 				str = str.Substring(0, str.IndexOf('\0'));
@@ -174,7 +179,19 @@ namespace Ultima
 			 * ====================
 			 * */
 			return new[]
-			{0x46464952, (length + 36), 0x45564157, 0x20746D66, 0x10, 0x010001, 0x5622, 0xAC44, 0x100002, 0x61746164, length};
+			{
+				0x46464952,
+				(length + 36),
+				0x45564157,
+				0x20746D66,
+				0x10,
+				0x010001,
+				0x5622,
+				0xAC44,
+				0x100002,
+				0x61746164,
+				length,
+			};
 		}
 
 		/// <summary>
@@ -189,7 +206,8 @@ namespace Ultima
 			{
 				return false;
 			}
-			int length, extra;
+			int length,
+				extra;
 			bool patched;
 			Stream stream = m_FileIndex.Seek(soundID, out length, out extra, out patched);
 
@@ -232,12 +250,13 @@ namespace Ultima
 			double len;
 			if (m_Cache[soundID] != null)
 			{
-				len = m_Cache[soundID].buffer.Length;
+				len = m_Cache[soundID].Buffer.Length;
 				len -= 44; //wavheaderlength
 			}
 			else
 			{
-				int length, extra;
+				int length,
+					extra;
 				bool patched;
 				Stream stream = m_FileIndex.Seek(soundID, out length, out extra, out patched);
 				if ((m_FileIndex.Index[soundID].lookup < 0) || (length <= 0))
@@ -289,9 +308,13 @@ namespace Ultima
 			int Headerlength = 44;
 			using (
 				FileStream fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write),
-						   fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
+					fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write)
+			)
 			{
-				using (BinaryWriter binidx = new BinaryWriter(fsidx), binmul = new BinaryWriter(fsmul))
+				using (
+					BinaryWriter binidx = new BinaryWriter(fsidx),
+						binmul = new BinaryWriter(fsmul)
+				)
 				{
 					for (int i = 0; i < m_Cache.Length; ++i)
 					{
@@ -331,7 +354,7 @@ namespace Ultima
 								bb.CopyTo(b, 0);
 							}
 							binmul.Write(b);
-							using (var m = new MemoryStream(sound.buffer))
+							using (var m = new MemoryStream(sound.Buffer))
 							{
 								m.Seek(Headerlength, SeekOrigin.Begin);
 								var resultBuffer = new byte[m.Length - Headerlength];
@@ -352,7 +375,10 @@ namespace Ultima
 		{
 			using (
 				var Tex = new StreamWriter(
-					new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+					new FileStream(FileName, FileMode.Create, FileAccess.ReadWrite),
+					Encoding.GetEncoding(1252)
+				)
+			)
 			{
 				Tex.WriteLine("ID;Name;Length");
 				string name = "";
@@ -360,9 +386,9 @@ namespace Ultima
 				{
 					if (IsValidSound(i - 1, out name))
 					{
-						Tex.Write(String.Format("0x{0:X3}", i));
-						Tex.Write(String.Format(";{0}", name));
-						Tex.WriteLine(String.Format(";{0:f}", GetSoundLength(i - 1)));
+						Tex.Write(String.Format(CultureInfo.CurrentCulture, "0x{0:X3}", i));
+						Tex.Write(String.Format(CultureInfo.CurrentCulture, ";{0}", name));
+						Tex.WriteLine(String.Format(CultureInfo.CurrentCulture, ";{0:f}", GetSoundLength(i - 1)));
 					}
 				}
 			}

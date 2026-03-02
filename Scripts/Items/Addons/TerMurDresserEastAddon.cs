@@ -2,80 +2,67 @@ using System;
 
 namespace Server.Items
 {
-    public class TerMurDresserEastAddon : BaseAddon
-    {
-        [Constructable]
-        public TerMurDresserEastAddon()
-        {
-            this.AddComponent(new AddonComponent(0x402E), 0, 0, 0);
-            this.AddComponent(new AddonComponent(0x402D), 0, -1, 0);
-        }
+	public class TerMurDresserEastAddon : BaseAddon
+	{
+		[Constructable]
+		public TerMurDresserEastAddon()
+		{
+			this.AddComponent(new AddonComponent(0x402E), 0, 0, 0);
+			this.AddComponent(new AddonComponent(0x402D), 0, -1, 0);
+		}
 
-        public TerMurDresserEastAddon(Serial serial)
-            : base(serial)
-        {
-        }
+		public TerMurDresserEastAddon(Serial serial)
+			: base(serial) { }
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new TerMurDresserEastDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override BaseAddonDeed Deed
+		{
+			get { return new TerMurDresserEastDeed(); }
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class TerMurDresserEastDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public TerMurDresserEastDeed()
-        {
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public TerMurDresserEastDeed(Serial serial)
-            : base(serial)
-        {
-        }
+	public class TerMurDresserEastDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public TerMurDresserEastDeed() { }
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new TerMurDresserEastAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1111784;
-            }
-        }// Ter-Mur style dresser (east)
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public TerMurDresserEastDeed(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override BaseAddon Addon
+		{
+			get { return new TerMurDresserEastAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1111784; }
+		} // Ter-Mur style dresser (east)
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

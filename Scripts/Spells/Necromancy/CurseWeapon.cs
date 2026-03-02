@@ -4,132 +4,124 @@ using Server.Items;
 
 namespace Server.Spells.Necromancy
 {
-    public class CurseWeaponSpell : NecromancerSpell
-    {
-        private static readonly SpellInfo m_Info = new SpellInfo(
-            "Curse Weapon", "An Sanct Gra Char",
-            203,
-            9031,
-            Reagent.PigIron);
+	public class CurseWeaponSpell : NecromancerSpell
+	{
+		private static readonly SpellInfo m_Info = new SpellInfo(
+			"Curse Weapon",
+			"An Sanct Gra Char",
+			203,
+			9031,
+			Reagent.PigIron
+		);
 
-        private static readonly Dictionary<Mobile, ExpireTimer> m_Table = new Dictionary<Mobile, ExpireTimer>();
+		private static readonly Dictionary<Mobile, ExpireTimer> m_Table = new Dictionary<Mobile, ExpireTimer>();
 
-        public CurseWeaponSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+		public CurseWeaponSpell(Mobile caster, Item scroll)
+			: base(caster, scroll, m_Info) { }
 
-        public override TimeSpan CastDelayBase
-        {
-            get
-            {
-                return TimeSpan.FromSeconds(1.0);
-            }
-        }
-        public override double RequiredSkill
-        {
-            get
-            {
-                return 0.0;
-            }
-        }
-        public override int RequiredMana
-        {
-            get
-            {
-                return 7;
-            }
-        }
-        public override void OnCast()
-        {
-            BaseWeapon weapon = Caster.Weapon as BaseWeapon;
+		public override TimeSpan CastDelayBase
+		{
+			get { return TimeSpan.FromSeconds(1.0); }
+		}
+		public override double RequiredSkill
+		{
+			get { return 0.0; }
+		}
+		public override int RequiredMana
+		{
+			get { return 7; }
+		}
 
-            if (Caster.Player && (weapon == null || weapon is Fists))
-            {
-                Caster.SendLocalizedMessage(501078); // You must be holding a weapon.
-            }
-            else if (CheckSequence())
-            {
-                /* Temporarily imbues a weapon with a life draining effect.
-                * Half the damage that the weapon inflicts is added to the necromancer's health.
-                * The effects lasts for (Spirit Speak skill level / 34) + 1 seconds.
-                * 
-                * NOTE: Above algorithm is fixed point, should be :
-                * (Spirit Speak skill level / 3.4) + 1
-                * 
-                * TODO: What happens if you curse a weapon then give it to someone else? Should they get the drain effect?
-                */
-                Caster.PlaySound(0x387);
-                Caster.FixedParticles(0x3779, 1, 15, 9905, 32, 2, EffectLayer.Head);
-                Caster.FixedParticles(0x37B9, 1, 14, 9502, 32, 5, (EffectLayer)255);
-                new SoundEffectTimer(Caster).Start();
+		public override void OnCast()
+		{
+			BaseWeapon weapon = Caster.Weapon as BaseWeapon;
 
-                TimeSpan duration = TimeSpan.FromSeconds((Caster.Skills[SkillName.SpiritSpeak].Value / 3.4) + 1.0);
+			if (Caster.Player && (weapon == null || weapon is Fists))
+			{
+				Caster.SendLocalizedMessage(501078); // You must be holding a weapon.
+			}
+			else if (CheckSequence())
+			{
+				/* Temporarily imbues a weapon with a life draining effect.
+				* Half the damage that the weapon inflicts is added to the necromancer's health.
+				* The effects lasts for (Spirit Speak skill level / 34) + 1 seconds.
+				*
+				* NOTE: Above algorithm is fixed point, should be :
+				* (Spirit Speak skill level / 3.4) + 1
+				*
+				* TODO: What happens if you curse a weapon then give it to someone else? Should they get the drain effect?
+				*/
+				Caster.PlaySound(0x387);
+				Caster.FixedParticles(0x3779, 1, 15, 9905, 32, 2, EffectLayer.Head);
+				Caster.FixedParticles(0x37B9, 1, 14, 9502, 32, 5, (EffectLayer)255);
+				new SoundEffectTimer(Caster).Start();
 
-                ExpireTimer t = null;
+				TimeSpan duration = TimeSpan.FromSeconds((Caster.Skills[SkillName.SpiritSpeak].Value / 3.4) + 1.0);
 
-                if (m_Table.ContainsKey(Caster))
-                {
-                    t = m_Table[Caster];
-                }
+				ExpireTimer t = null;
 
-                if (t != null)
-                    t.Stop();
+				if (m_Table.ContainsKey(Caster))
+				{
+					t = m_Table[Caster];
+				}
 
-                m_Table[Caster] = t = new ExpireTimer(weapon, Caster, duration);
+				if (t != null)
+					t.Stop();
 
-                t.Start();
+				m_Table[Caster] = t = new ExpireTimer(weapon, Caster, duration);
 
-                BuffInfo.AddBuff(Caster, new BuffInfo(BuffIcon.CurseWeapon, 1060512, 1153780, duration, Caster));
-            }
+				t.Start();
 
-            FinishSequence();
-        }
+				BuffInfo.AddBuff(Caster, new BuffInfo(BuffIcon.CurseWeapon, 1060512, 1153780, duration, Caster));
+			}
 
-        public static bool IsCursed(Mobile attacker, BaseWeapon wep)
-        {
-            return m_Table.ContainsKey(attacker) && m_Table[attacker].Weapon == wep;
-        }
+			FinishSequence();
+		}
 
-        public class ExpireTimer : Timer
-        {
-            public BaseWeapon Weapon { get; private set; }
-            public Mobile Owner { get; private set; }
+		public static bool IsCursed(Mobile attacker, BaseWeapon wep)
+		{
+			return m_Table.ContainsKey(attacker) && m_Table[attacker].Weapon == wep;
+		}
 
-            public ExpireTimer(BaseWeapon weapon, Mobile owner, TimeSpan delay)
-                : base(delay)
-            {
-                Weapon = weapon;
-                Owner = owner;
-                Priority = TimerPriority.OneSecond;
-            }
+		public class ExpireTimer : Timer
+		{
+			public BaseWeapon Weapon { get; private set; }
+			public Mobile Owner { get; private set; }
 
-            protected override void OnTick()
-            {
-                Effects.PlaySound(Weapon.GetWorldLocation(), Weapon.Map, 0xFA);
+			public ExpireTimer(BaseWeapon weapon, Mobile owner, TimeSpan delay)
+				: base(delay)
+			{
+				Weapon = weapon;
+				Owner = owner;
+				Priority = TimerPriority.OneSecond;
+			}
 
-                if (m_Table.ContainsKey(Owner))
-                {
-                    m_Table.Remove(Owner);
-                }
-            }
-        }
+			protected override void OnTick()
+			{
+				Effects.PlaySound(Weapon.GetWorldLocation(), Weapon.Map, 0xFA);
 
-        private class SoundEffectTimer : Timer
-        {
-            private readonly Mobile m_Mobile;
+				if (m_Table.ContainsKey(Owner))
+				{
+					m_Table.Remove(Owner);
+				}
+			}
+		}
 
-            public SoundEffectTimer(Mobile m)
-                : base(TimeSpan.FromSeconds(0.75))
-            {
-                m_Mobile = m;
-                Priority = TimerPriority.FiftyMS;
-            }
+		private class SoundEffectTimer : Timer
+		{
+			private readonly Mobile m_Mobile;
 
-            protected override void OnTick()
-            {
-                m_Mobile.PlaySound(0xFA);
-            }
-        }
-    }
+			public SoundEffectTimer(Mobile m)
+				: base(TimeSpan.FromSeconds(0.75))
+			{
+				m_Mobile = m;
+				Priority = TimerPriority.FiftyMS;
+			}
+
+			protected override void OnTick()
+			{
+				m_Mobile.PlaySound(0xFA);
+			}
+		}
+	}
 }

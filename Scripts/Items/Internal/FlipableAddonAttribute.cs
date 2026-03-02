@@ -4,125 +4,119 @@ using Server.Multis;
 
 namespace Server.Items
 {
-    [AttributeUsage(AttributeTargets.Class)]
-    public class FlipableAddonAttribute : Attribute
-    {
-        private static readonly string m_MethodName = "Flip";
-        private static readonly Type[] m_Params = new Type[]
-        {
-            typeof(Mobile), typeof(Direction)
-        };
-        private readonly Direction[] m_Directions;
-        public FlipableAddonAttribute(params Direction[] directions)
-        {
-            this.m_Directions = directions;
-        }
+	[AttributeUsage(AttributeTargets.Class)]
+	public class FlipableAddonAttribute : Attribute
+	{
+		private static readonly string m_MethodName = "Flip";
+		private static readonly Type[] m_Params = new Type[] { typeof(Mobile), typeof(Direction) };
+		private readonly Direction[] m_Directions;
 
-        public Direction[] Directions
-        {
-            get
-            {
-                return this.m_Directions;
-            }
-        }
-        public virtual void Flip(Mobile from, Item addon)
-        {
-            if (this.m_Directions != null && this.m_Directions.Length > 1)
-            {
-                try
-                {
-                    MethodInfo flipMethod = addon.GetType().GetMethod(m_MethodName, m_Params);
+		public FlipableAddonAttribute(params Direction[] directions)
+		{
+			this.m_Directions = directions;
+		}
 
-                    if (flipMethod != null)
-                    {
-                        int index = 0;
+		public Direction[] Directions
+		{
+			get { return this.m_Directions; }
+		}
 
-                        for (int i = 0; i < this.m_Directions.Length; i++)
-                        {
-                            if (addon.Direction == this.m_Directions[i])
-                            {
-                                index = i + 1;
-                                break;
-                            }
-                        }
+		public virtual void Flip(Mobile from, Item addon)
+		{
+			if (this.m_Directions != null && this.m_Directions.Length > 1)
+			{
+				try
+				{
+					MethodInfo flipMethod = addon.GetType().GetMethod(m_MethodName, m_Params);
 
-                        if (index >= this.m_Directions.Length)
-                            index = 0;
+					if (flipMethod != null)
+					{
+						int index = 0;
 
-                        this.ClearComponents(addon);
+						for (int i = 0; i < this.m_Directions.Length; i++)
+						{
+							if (addon.Direction == this.m_Directions[i])
+							{
+								index = i + 1;
+								break;
+							}
+						}
 
-                        flipMethod.Invoke(addon, new object[2] { from, this.m_Directions[index] });
+						if (index >= this.m_Directions.Length)
+							index = 0;
 
-                        BaseHouse house = null;
-                        AddonFitResult result = AddonFitResult.Valid;
+						this.ClearComponents(addon);
 
-                        addon.Map = Map.Internal;
+						flipMethod.Invoke(addon, new object[2] { from, this.m_Directions[index] });
 
-                        if (addon is BaseAddon)
-                            result = ((BaseAddon)addon).CouldFit(addon.Location, from.Map, from, ref house);
-                        else if (addon is BaseAddonContainer)
-                            result = ((BaseAddonContainer)addon).CouldFit(addon.Location, from.Map, from, ref house);
+						BaseHouse house = null;
+						AddonFitResult result = AddonFitResult.Valid;
 
-                        addon.Map = from.Map;
+						addon.Map = Map.Internal;
 
-                        if (result != AddonFitResult.Valid)
-                        {
-                            if (index == 0)
-                                index = this.m_Directions.Length - 1;
-                            else
-                                index -= 1;
+						if (addon is BaseAddon)
+							result = ((BaseAddon)addon).CouldFit(addon.Location, from.Map, from, ref house);
+						else if (addon is BaseAddonContainer)
+							result = ((BaseAddonContainer)addon).CouldFit(addon.Location, from.Map, from, ref house);
 
-                            this.ClearComponents(addon);
+						addon.Map = from.Map;
 
-                            flipMethod.Invoke(addon, new object[2] { from, this.m_Directions[index] });
+						if (result != AddonFitResult.Valid)
+						{
+							if (index == 0)
+								index = this.m_Directions.Length - 1;
+							else
+								index -= 1;
 
-                            if (result == AddonFitResult.Blocked)
-                                from.SendLocalizedMessage(500269); // You cannot build that there.
-                            else if (result == AddonFitResult.NotInHouse)
-                                from.SendLocalizedMessage(500274); // You can only place this in a house that you own!
-                            else if (result == AddonFitResult.DoorsNotClosed)
-                                from.SendMessage("You must close all house doors before placing this.");
-                            else if (result == AddonFitResult.DoorTooClose)
-                                from.SendLocalizedMessage(500271); // You cannot build near the door.
-                            else if (result == AddonFitResult.NoWall)
-                                from.SendLocalizedMessage(500268); // This object needs to be mounted on something.
-                        }
+							this.ClearComponents(addon);
 
-                        addon.Direction = this.m_Directions[index];
-                    }
-                }
-                catch
-                {
-                }
-            }
-        }
+							flipMethod.Invoke(addon, new object[2] { from, this.m_Directions[index] });
 
-        private void ClearComponents(Item item)
-        {
-            if (item is BaseAddon)
-            {
-                BaseAddon addon = (BaseAddon)item;
+							if (result == AddonFitResult.Blocked)
+								from.SendLocalizedMessage(500269); // You cannot build that there.
+							else if (result == AddonFitResult.NotInHouse)
+								from.SendLocalizedMessage(500274); // You can only place this in a house that you own!
+							else if (result == AddonFitResult.DoorsNotClosed)
+								from.SendMessage("You must close all house doors before placing this.");
+							else if (result == AddonFitResult.DoorTooClose)
+								from.SendLocalizedMessage(500271); // You cannot build near the door.
+							else if (result == AddonFitResult.NoWall)
+								from.SendLocalizedMessage(500268); // This object needs to be mounted on something.
+						}
 
-                foreach (AddonComponent c in addon.Components)
-                {
-                    c.Addon = null;
-                    c.Delete();
-                }
+						addon.Direction = this.m_Directions[index];
+					}
+				}
+				catch { }
+			}
+		}
 
-                addon.Components.Clear();
-            }
-            else if (item is BaseAddonContainer)
-            {
-                BaseAddonContainer addon = (BaseAddonContainer)item;
+		private void ClearComponents(Item item)
+		{
+			if (item is BaseAddon)
+			{
+				BaseAddon addon = (BaseAddon)item;
 
-                foreach (AddonContainerComponent c in addon.Components)
-                {
-                    c.Addon = null;
-                    c.Delete();
-                }
+				foreach (AddonComponent c in addon.Components)
+				{
+					c.Addon = null;
+					c.Delete();
+				}
 
-                addon.Components.Clear();
-            }
-        }
-    }
+				addon.Components.Clear();
+			}
+			else if (item is BaseAddonContainer)
+			{
+				BaseAddonContainer addon = (BaseAddonContainer)item;
+
+				foreach (AddonContainerComponent c in addon.Components)
+				{
+					c.Addon = null;
+					c.Delete();
+				}
+
+				addon.Components.Clear();
+			}
+		}
+	}
 }

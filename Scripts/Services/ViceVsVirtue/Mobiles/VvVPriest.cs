@@ -1,100 +1,127 @@
 using System;
+using System.Collections.Generic;
 using Server;
+using Server.Guilds;
+using Server.Gumps;
 using Server.Items;
 using Server.Mobiles;
-using Server.Gumps;
-using Server.Guilds;
-using System.Collections.Generic;
 
 namespace Server.Engines.VvV
 {
-    public class VvVPriest : BaseVendor
-    {
-        public override bool IsActiveVendor { get { return false; } }
-        public override bool DisallowAllMoves { get { return true; } }
-        public override bool ClickTitle { get { return true; } }
-        public override bool CanTeach { get { return false; } }
+	public class VvVPriest : BaseVendor
+	{
+		public override bool IsActiveVendor
+		{
+			get { return false; }
+		}
+		public override bool DisallowAllMoves
+		{
+			get { return true; }
+		}
+		public override bool ClickTitle
+		{
+			get { return true; }
+		}
+		public override bool CanTeach
+		{
+			get { return false; }
+		}
 
-        protected List<SBInfo> m_SBInfos = new List<SBInfo>();
-        protected override List<SBInfo> SBInfos { get { return this.m_SBInfos; } }
-        public override void InitSBInfo() { }
+		protected List<SBInfo> m_SBInfos = new List<SBInfo>();
+		protected override List<SBInfo> SBInfos
+		{
+			get { return this.m_SBInfos; }
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public VvVType VvVType { get; set; }
+		public override void InitSBInfo() { }
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public VvVBattle Battle { get; set; }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public VvVType VvVType { get; set; }
 
-        [Constructable]
-        public VvVPriest(VvVType type, VvVBattle battle) : base(type == VvVType.Vice ? "the Priest of Vice" : "the Priest of Virtue")
-        {
-            this.VvVType = type;
-            Battle = battle;
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public VvVBattle Battle { get; set; }
 
-        public override void InitBody()
-        {
-            base.InitBody();
+		[Constructable]
+		public VvVPriest(VvVType type, VvVBattle battle)
+			: base(type == VvVType.Vice ? "the Priest of Vice" : "the Priest of Virtue")
+		{
+			this.VvVType = type;
+			Battle = battle;
+		}
 
-            Name = NameList.RandomName("male");
+		public override void InitBody()
+		{
+			base.InitBody();
 
-            SpeechHue = 0x3B2;
-            Hue = Utility.RandomSkinHue();
-            Body = 0x190;
-        }
+			Name = NameList.RandomName("male");
 
-        public override bool OnDragDrop(Mobile from, Item dropped)
-        {
-            if(ViceVsVirtueSystem.Instance == null || Battle == null)
-                return false;
+			SpeechHue = 0x3B2;
+			Hue = Utility.RandomSkinHue();
+			Body = 0x190;
+		}
 
-            VvVPlayerEntry entry = ViceVsVirtueSystem.Instance.GetPlayerEntry<VvVPlayerEntry>(from);
+		public override bool OnDragDrop(Mobile from, Item dropped)
+		{
+			if (ViceVsVirtueSystem.Instance == null || Battle == null)
+				return false;
 
-            if (from.InRange(Location, 2) && entry != null && ViceVsVirtueSystem.IsVvV(from) && dropped is VvVSigil)
-            {
-                VvVSigil sigil = dropped as VvVSigil;
-                Battle.Update(null, entry, this.VvVType == VvVType.Vice ? UpdateType.TurnInVice : UpdateType.TurnInVirtue);
+			VvVPlayerEntry entry = ViceVsVirtueSystem.Instance.GetPlayerEntry<VvVPlayerEntry>(from);
 
-                sigil.Delete();
-                Battle.Sigil = null;
-            }
+			if (from.InRange(Location, 2) && entry != null && ViceVsVirtueSystem.IsVvV(from) && dropped is VvVSigil)
+			{
+				VvVSigil sigil = dropped as VvVSigil;
+				Battle.Update(
+					null,
+					entry,
+					this.VvVType == VvVType.Vice ? UpdateType.TurnInVice : UpdateType.TurnInVirtue
+				);
 
-            return false;
-        }
+				sigil.Delete();
+				Battle.Sigil = null;
+			}
 
-        public override void InitOutfit()
-        {
-            Robe robe = new Robe();
-            robe.ItemID = 19357;
-            robe.Name = this.VvVType == VvVType.Virtue ? "Robe of Virtue" : "Robe of Vice";
+			return false;
+		}
 
-            Timer.DelayCall<Item>(TimeSpan.FromSeconds(1), item =>
-                {
-                    item.Hue = this.VvVType == VvVType.Virtue ? ViceVsVirtueSystem.VirtueHue : ViceVsVirtueSystem.ViceHue;
-                }, robe);
+		public override void InitOutfit()
+		{
+			Robe robe = new Robe();
+			robe.ItemID = 19357;
+			robe.Name = this.VvVType == VvVType.Virtue ? "Robe of Virtue" : "Robe of Vice";
 
-            SetWearable(robe, this.VvVType == VvVType.Virtue ? ViceVsVirtueSystem.VirtueHue : ViceVsVirtueSystem.ViceHue); // TODO: Get Hues
-        }
+			Timer.DelayCall<Item>(
+				TimeSpan.FromSeconds(1),
+				item =>
+				{
+					item.Hue =
+						this.VvVType == VvVType.Virtue ? ViceVsVirtueSystem.VirtueHue : ViceVsVirtueSystem.ViceHue;
+				},
+				robe
+			);
 
-        public VvVPriest(Serial serial)
-            : base(serial)
-        {
-        }
+			SetWearable(
+				robe,
+				this.VvVType == VvVType.Virtue ? ViceVsVirtueSystem.VirtueHue : ViceVsVirtueSystem.ViceHue
+			); // TODO: Get Hues
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write(0);
+		public VvVPriest(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)VvVType);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write(0);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
+			writer.Write((int)VvVType);
+		}
 
-            this.VvVType = (VvVType)reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+
+			this.VvVType = (VvVType)reader.ReadInt();
+		}
+	}
 }

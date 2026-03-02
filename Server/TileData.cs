@@ -17,9 +17,17 @@ namespace Server
 			m_Flags = flags;
 		}
 
-		public string Name { get { return m_Name; } set { m_Name = value; } }
+		public string Name
+		{
+			get { return m_Name; }
+			set { m_Name = value; }
+		}
 
-		public TileFlag Flags { get { return m_Flags; } set { m_Flags = value; } }
+		public TileFlag Flags
+		{
+			get { return m_Flags; }
+			set { m_Flags = value; }
+		}
 	}
 
 	public struct ItemData
@@ -33,8 +41,7 @@ namespace Server
 		private byte m_Height;
 
 		public ItemData(ItemData d)
-			: this(d.Name, d.Flags, d.Weight, d.Quality, d.Quantity, d.Value, d.Height)
-		{ }
+			: this(d.Name, d.Flags, d.Weight, d.Quality, d.Quantity, d.Value, d.Height) { }
 
 		public ItemData(string name, TileFlag flags, int weight, int quality, int quantity, int value, int height)
 		{
@@ -47,9 +54,17 @@ namespace Server
 			m_Height = (byte)height;
 		}
 
-		public string Name { get { return m_Name; } set { m_Name = value; } }
+		public string Name
+		{
+			get { return m_Name; }
+			set { m_Name = value; }
+		}
 
-		public TileFlag Flags { get { return m_Flags; } set { m_Flags = value; } }
+		public TileFlag Flags
+		{
+			get { return m_Flags; }
+			set { m_Flags = value; }
+		}
 
 		public bool Bridge
 		{
@@ -99,15 +114,35 @@ namespace Server
 			}
 		}
 
-		public int Weight { get { return m_Weight; } set { m_Weight = (byte)value; } }
+		public int Weight
+		{
+			get { return m_Weight; }
+			set { m_Weight = (byte)value; }
+		}
 
-		public int Quality { get { return m_Quality; } set { m_Quality = (byte)value; } }
+		public int Quality
+		{
+			get { return m_Quality; }
+			set { m_Quality = (byte)value; }
+		}
 
-		public int Quantity { get { return m_Quantity; } set { m_Quantity = (byte)value; } }
+		public int Quantity
+		{
+			get { return m_Quantity; }
+			set { m_Quantity = (byte)value; }
+		}
 
-		public int Value { get { return m_Value; } set { m_Value = (byte)value; } }
+		public int Value
+		{
+			get { return m_Value; }
+			set { m_Value = (byte)value; }
+		}
 
-		public int Height { get { return m_Height; } set { m_Height = (byte)value; } }
+		public int Height
+		{
+			get { return m_Height; }
+			set { m_Height = (byte)value; }
+		}
 
 		public int CalcHeight
 		{
@@ -154,13 +189,13 @@ namespace Server
 		Wearable = 0x00400000,
 		LightSource = 0x00800000,
 		Animation = 0x01000000,
-        HoverOver = 0x02000000,
+		HoverOver = 0x02000000,
 		Unknown3 = 0x04000000,
 		Armor = 0x08000000,
 		Roof = 0x10000000,
 		Door = 0x20000000,
 		StairBack = 0x40000000,
-		StairRight = 0x80000000
+		StairRight = 0x80000000,
 	}
 
 	public static class TileData
@@ -168,14 +203,26 @@ namespace Server
 		private static readonly LandData[] m_LandData;
 		private static readonly ItemData[] m_ItemData;
 
-		public static LandData[] LandTable { get { return m_LandData; } }
-		public static ItemData[] ItemTable { get { return m_ItemData; } }
+		public static LandData[] LandTable
+		{
+			get { return m_LandData; }
+		}
+		public static ItemData[] ItemTable
+		{
+			get { return m_ItemData; }
+		}
 
 		private static readonly int m_MaxLandValue;
 		private static readonly int m_MaxItemValue;
 
-		public static int MaxLandValue { get { return m_MaxLandValue; } }
-		public static int MaxItemValue { get { return m_MaxItemValue; } }
+		public static int MaxLandValue
+		{
+			get { return m_MaxLandValue; }
+		}
+		public static int MaxItemValue
+		{
+			get { return m_MaxItemValue; }
+		}
 
 		private static readonly byte[] m_StringBuffer = new byte[20];
 
@@ -185,7 +232,7 @@ namespace Server
 
 			int count = 0;
 
-			while(count < 20 && m_StringBuffer[count] != 0)
+			while (count < 20 && m_StringBuffer[count] != 0)
 			{
 				++count;
 			}
@@ -241,7 +288,15 @@ namespace Server
 							int value = bin.ReadByte();
 							int height = bin.ReadByte();
 
-							m_ItemData[i] = new ItemData(ReadNameString(bin), flags, weight, quality, quantity, value, height);
+							m_ItemData[i] = new ItemData(
+								ReadNameString(bin),
+								flags,
+								weight,
+								quality,
+								quantity,
+								value,
+								height
+							);
 						}
 					}
 					else
@@ -284,7 +339,15 @@ namespace Server
 								int value = bin.ReadByte();
 								int height = bin.ReadByte();
 
-								m_ItemData[i] = new ItemData(ReadNameString(bin), flags, weight, quality, quantity, value, height);
+								m_ItemData[i] = new ItemData(
+									ReadNameString(bin),
+									flags,
+									weight,
+									quality,
+									quantity,
+									value,
+									height
+								);
 							}
 						}
 						else
@@ -309,7 +372,15 @@ namespace Server
 								int value = bin.ReadByte();
 								int height = bin.ReadByte();
 
-								m_ItemData[i] = new ItemData(ReadNameString(bin), flags, weight, quality, quantity, value, height);
+								m_ItemData[i] = new ItemData(
+									ReadNameString(bin),
+									flags,
+									weight,
+									quality,
+									quantity,
+									value,
+									height
+								);
 							}
 						}
 					}

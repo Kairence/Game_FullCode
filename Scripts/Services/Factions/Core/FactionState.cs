@@ -3,387 +3,340 @@ using System.Collections.Generic;
 
 namespace Server.Factions
 {
-    public class FactionState
-    {
-        private static readonly TimeSpan BroadcastPeriod = TimeSpan.FromHours(1.0);
-        private const int BroadcastsPerPeriod = 2;
-        private readonly Faction m_Faction;
-        private readonly DateTime[] m_LastBroadcasts = new DateTime[BroadcastsPerPeriod];
-        private Mobile m_Commander;
-        private int m_Tithe;
-        private int m_Silver;
-        private List<PlayerState> m_Members;
-        private Election m_Election;
-        private List<FactionItem> m_FactionItems;
-        private List<BaseFactionTrap> m_FactionTraps;
-        private DateTime m_LastAtrophy;
+	public class FactionState
+	{
+		private static readonly TimeSpan BroadcastPeriod = TimeSpan.FromHours(1.0);
+		private const int BroadcastsPerPeriod = 2;
+		private readonly Faction m_Faction;
+		private readonly DateTime[] m_LastBroadcasts = new DateTime[BroadcastsPerPeriod];
+		private Mobile m_Commander;
+		private int m_Tithe;
+		private int m_Silver;
+		private List<PlayerState> m_Members;
+		private Election m_Election;
+		private List<FactionItem> m_FactionItems;
+		private List<BaseFactionTrap> m_FactionTraps;
+		private DateTime m_LastAtrophy;
 
-        public FactionState(Faction faction)
-        {
-            m_Faction = faction;
-            m_Tithe = 50;
-            m_Members = new List<PlayerState>();
-            m_Election = new Election(faction);
-            m_FactionItems = new List<FactionItem>();
-            m_FactionTraps = new List<BaseFactionTrap>();
-        }
+		public FactionState(Faction faction)
+		{
+			m_Faction = faction;
+			m_Tithe = 50;
+			m_Members = new List<PlayerState>();
+			m_Election = new Election(faction);
+			m_FactionItems = new List<FactionItem>();
+			m_FactionTraps = new List<BaseFactionTrap>();
+		}
 
-        public FactionState(GenericReader reader)
-        {
-            int version = reader.ReadEncodedInt();
+		public FactionState(GenericReader reader)
+		{
+			int version = reader.ReadEncodedInt();
 
-            switch ( version )
-            {
-                case 6:
-                case 5:
-                    {
-                        m_LastAtrophy = reader.ReadDateTime();
-                        goto case 4;
-                    }
-                case 4:
-                    {
-                        int count = reader.ReadEncodedInt();
+			switch (version)
+			{
+				case 6:
+				case 5:
+				{
+					m_LastAtrophy = reader.ReadDateTime();
+					goto case 4;
+				}
+				case 4:
+				{
+					int count = reader.ReadEncodedInt();
 
-                        for (int i = 0; i < count; ++i)
-                        {
-                            DateTime time = reader.ReadDateTime();
+					for (int i = 0; i < count; ++i)
+					{
+						DateTime time = reader.ReadDateTime();
 
-                            if (i < m_LastBroadcasts.Length)
-                                m_LastBroadcasts[i] = time;
-                        }
+						if (i < m_LastBroadcasts.Length)
+							m_LastBroadcasts[i] = time;
+					}
 
-                        goto case 3;
-                    }
-                case 3:
-                case 2:
-                case 1:
-                    {
-                        Election ele = new Election(reader);
+					goto case 3;
+				}
+				case 3:
+				case 2:
+				case 1:
+				{
+					Election ele = new Election(reader);
 
-                        if (Settings.Enabled)
-                            m_Election = ele;
-                        else
-                            m_Election = new Election(m_Faction);
+					if (Settings.Enabled)
+						m_Election = ele;
+					else
+						m_Election = new Election(m_Faction);
 
-                        goto case 0;
-                    }
-                case 0:
-                    {
-                        m_Faction = Faction.ReadReference(reader);
+					goto case 0;
+				}
+				case 0:
+				{
+					m_Faction = Faction.ReadReference(reader);
 
-                        if (m_Election.Faction == null)
-                        {
-                            m_Election.Faction = m_Faction;
-                        }
+					if (m_Election.Faction == null)
+					{
+						m_Election.Faction = m_Faction;
+					}
 
-                        m_Commander = reader.ReadMobile();
+					m_Commander = reader.ReadMobile();
 
-                        if (version < 5)
-                            m_LastAtrophy = DateTime.UtcNow;
+					if (version < 5)
+						m_LastAtrophy = DateTime.UtcNow;
 
-                        if (version < 4)
-                        {
-                            DateTime time = reader.ReadDateTime();
+					if (version < 4)
+					{
+						DateTime time = reader.ReadDateTime();
 
-                            if (m_LastBroadcasts.Length > 0)
-                                m_LastBroadcasts[0] = time;
-                        }
+						if (m_LastBroadcasts.Length > 0)
+							m_LastBroadcasts[0] = time;
+					}
 
-                        m_Tithe = reader.ReadEncodedInt();
-                        m_Silver = reader.ReadEncodedInt();
+					m_Tithe = reader.ReadEncodedInt();
+					m_Silver = reader.ReadEncodedInt();
 
-                        int memberCount = reader.ReadEncodedInt();
+					int memberCount = reader.ReadEncodedInt();
 
-                        m_Members = new List<PlayerState>();
+					m_Members = new List<PlayerState>();
 
-                        for (int i = 0; i < memberCount; ++i)
-                        {
-                            PlayerState pl = new PlayerState(reader, m_Faction, m_Members);
+					for (int i = 0; i < memberCount; ++i)
+					{
+						PlayerState pl = new PlayerState(reader, m_Faction, m_Members);
 
-                            if (pl.Mobile != null)
-                            {
-                                if (Settings.Enabled)
-                                {
-                                    m_Members.Add(pl);
-                                }
-                                else
-                                {
-                                    Settings.AddDisabledNotice(pl.Mobile);
-                                }
-                            }
-                        }
+						if (pl.Mobile != null)
+						{
+							if (Settings.Enabled)
+							{
+								m_Members.Add(pl);
+							}
+							else
+							{
+								Settings.AddDisabledNotice(pl.Mobile);
+							}
+						}
+					}
 
-                        m_Faction.State = this;
-					
-                        m_Faction.ZeroRankOffset = m_Members.Count;
-                        m_Members.Sort();
+					m_Faction.State = this;
 
-                        for (int i = m_Members.Count - 1; i >= 0; i--)
-                        {
-                            PlayerState player = m_Members[i];
+					m_Faction.ZeroRankOffset = m_Members.Count;
+					m_Members.Sort();
 
-                            if (player.KillPoints <= 0)
-                                m_Faction.ZeroRankOffset = i;
-                            else
-                                player.RankIndex = i;
-                        }
+					for (int i = m_Members.Count - 1; i >= 0; i--)
+					{
+						PlayerState player = m_Members[i];
 
-                        m_FactionItems = new List<FactionItem>();
+						if (player.KillPoints <= 0)
+							m_Faction.ZeroRankOffset = i;
+						else
+							player.RankIndex = i;
+					}
 
-                        if (version >= 2)
-                        {
-                            int factionItemCount = reader.ReadEncodedInt();
+					m_FactionItems = new List<FactionItem>();
 
-                            for (int i = 0; i < factionItemCount; ++i)
-                            {
-                                FactionItem factionItem = new FactionItem(reader, m_Faction);
+					if (version >= 2)
+					{
+						int factionItemCount = reader.ReadEncodedInt();
 
-                                if(Settings.Enabled)
-                                    Timer.DelayCall(TimeSpan.Zero, new TimerCallback(factionItem.CheckAttach)); // sandbox attachment
-                            }
-                        }
+						for (int i = 0; i < factionItemCount; ++i)
+						{
+							FactionItem factionItem = new FactionItem(reader, m_Faction);
 
-                        m_FactionTraps = new List<BaseFactionTrap>();
+							if (Settings.Enabled)
+								Timer.DelayCall(TimeSpan.Zero, new TimerCallback(factionItem.CheckAttach)); // sandbox attachment
+						}
+					}
 
-                        if (version >= 3)
-                        {
-                            int factionTrapCount = reader.ReadEncodedInt();
+					m_FactionTraps = new List<BaseFactionTrap>();
 
-                            for (int i = 0; i < factionTrapCount; ++i)
-                            {
-                                BaseFactionTrap trap = reader.ReadItem() as BaseFactionTrap;
+					if (version >= 3)
+					{
+						int factionTrapCount = reader.ReadEncodedInt();
 
-                                if (trap != null && !trap.CheckDecay())
-                                {
-                                    if (Settings.Enabled)
-                                        m_FactionTraps.Add(trap);
-                                    else
-                                        trap.Delete();
-                                }
-                            }
-                        }
+						for (int i = 0; i < factionTrapCount; ++i)
+						{
+							BaseFactionTrap trap = reader.ReadItem() as BaseFactionTrap;
 
-                        break;
-                    }
-            }
+							if (trap != null && !trap.CheckDecay())
+							{
+								if (Settings.Enabled)
+									m_FactionTraps.Add(trap);
+								else
+									trap.Delete();
+							}
+						}
+					}
 
-            if (version < 6 && Settings.Enabled && Core.ML)
-            {
-                FactionCollectionBox box = new FactionCollectionBox(m_Faction);
-                WeakEntityCollection.Add("factions", box);
-                box.MoveToWorld(m_Faction.Definition.Stronghold.CollectionBox, Faction.Facet);
-            }
+					break;
+				}
+			}
 
-            if (version < 1)
-                m_Election = new Election(m_Faction);
-        }
+			if (version < 6 && Settings.Enabled && Core.ML)
+			{
+				FactionCollectionBox box = new FactionCollectionBox(m_Faction);
+				WeakEntityCollection.Add("factions", box);
+				box.MoveToWorld(m_Faction.Definition.Stronghold.CollectionBox, Faction.Facet);
+			}
 
-        public DateTime LastAtrophy
-        {
-            get
-            {
-                return m_LastAtrophy;
-            }
-            set
-            {
-                m_LastAtrophy = value;
-            }
-        }
-        public bool FactionMessageReady
-        {
-            get
-            {
-                for (int i = 0; i < m_LastBroadcasts.Length; ++i)
-                {
-                    if (DateTime.UtcNow >= (m_LastBroadcasts[i] + BroadcastPeriod))
-                        return true;
-                }
+			if (version < 1)
+				m_Election = new Election(m_Faction);
+		}
 
-                return false;
-            }
-        }
-        public bool IsAtrophyReady
-        {
-            get
-            {
-                return DateTime.UtcNow >= (m_LastAtrophy + TimeSpan.FromHours(47.0));
-            }
-        }
-        public List<FactionItem> FactionItems
-        {
-            get
-            {
-                return m_FactionItems;
-            }
-            set
-            {
-                m_FactionItems = value;
-            }
-        }
-        public List<BaseFactionTrap> Traps
-        {
-            get
-            {
-                return m_FactionTraps;
-            }
-            set
-            {
-                m_FactionTraps = value;
-            }
-        }
-        public Election Election
-        {
-            get
-            {
-                return m_Election;
-            }
-            set
-            {
-                m_Election = value;
-            }
-        }
-        public Mobile Commander
-        {
-            get
-            {
-                return m_Commander;
-            }
-            set
-            {
-                if (m_Commander != null)
-                    m_Commander.InvalidateProperties();
+		public DateTime LastAtrophy
+		{
+			get { return m_LastAtrophy; }
+			set { m_LastAtrophy = value; }
+		}
+		public bool FactionMessageReady
+		{
+			get
+			{
+				for (int i = 0; i < m_LastBroadcasts.Length; ++i)
+				{
+					if (DateTime.UtcNow >= (m_LastBroadcasts[i] + BroadcastPeriod))
+						return true;
+				}
 
-                m_Commander = value;
+				return false;
+			}
+		}
+		public bool IsAtrophyReady
+		{
+			get { return DateTime.UtcNow >= (m_LastAtrophy + TimeSpan.FromHours(47.0)); }
+		}
+		public List<FactionItem> FactionItems
+		{
+			get { return m_FactionItems; }
+			set { m_FactionItems = value; }
+		}
+		public List<BaseFactionTrap> Traps
+		{
+			get { return m_FactionTraps; }
+			set { m_FactionTraps = value; }
+		}
+		public Election Election
+		{
+			get { return m_Election; }
+			set { m_Election = value; }
+		}
+		public Mobile Commander
+		{
+			get { return m_Commander; }
+			set
+			{
+				if (m_Commander != null)
+					m_Commander.InvalidateProperties();
 
-                if (m_Commander != null)
-                {
-                    m_Commander.SendLocalizedMessage(1042227); // You have been elected Commander of your faction
+				m_Commander = value;
 
-                    m_Commander.InvalidateProperties();
+				if (m_Commander != null)
+				{
+					m_Commander.SendLocalizedMessage(1042227); // You have been elected Commander of your faction
 
-                    PlayerState pl = PlayerState.Find(m_Commander);
+					m_Commander.InvalidateProperties();
 
-                    if (pl != null && pl.Finance != null)
-                        pl.Finance.Finance = null;
+					PlayerState pl = PlayerState.Find(m_Commander);
 
-                    if (pl != null && pl.Sheriff != null)
-                        pl.Sheriff.Sheriff = null;
-                }
-            }
-        }
-        public int Tithe
-        {
-            get
-            {
-                return m_Tithe;
-            }
-            set
-            {
-                m_Tithe = value;
-            }
-        }
-        public int Silver
-        {
-            get
-            {
-                return m_Silver;
-            }
-            set
-            {
-                m_Silver = value;
-            }
-        }
-        public List<PlayerState> Members
-        {
-            get
-            {
-                return m_Members;
-            }
-            set
-            {
-                m_Members = value;
-            }
-        }
-        public int CheckAtrophy()
-        {
-            if (DateTime.UtcNow < (m_LastAtrophy + TimeSpan.FromHours(47.0)))
-                return 0;
+					if (pl != null && pl.Finance != null)
+						pl.Finance.Finance = null;
 
-            int distrib = 0;
-            m_LastAtrophy = DateTime.UtcNow;
+					if (pl != null && pl.Sheriff != null)
+						pl.Sheriff.Sheriff = null;
+				}
+			}
+		}
+		public int Tithe
+		{
+			get { return m_Tithe; }
+			set { m_Tithe = value; }
+		}
+		public int Silver
+		{
+			get { return m_Silver; }
+			set { m_Silver = value; }
+		}
+		public List<PlayerState> Members
+		{
+			get { return m_Members; }
+			set { m_Members = value; }
+		}
 
-            List<PlayerState> members = new List<PlayerState>(m_Members);
+		public int CheckAtrophy()
+		{
+			if (DateTime.UtcNow < (m_LastAtrophy + TimeSpan.FromHours(47.0)))
+				return 0;
 
-            for (int i = 0; i < members.Count; ++i)
-            {
-                PlayerState ps = members[i];
-					
-                if (ps.IsActive)
-                {
-                    ps.IsActive = false;
-                    continue;
-                }
-                else if (ps.KillPoints > 0)
-                {
-                    int atrophy = (ps.KillPoints + 9) / 10;
-                    ps.KillPoints -= atrophy;
-                    distrib += atrophy;
-                }
-            }
+			int distrib = 0;
+			m_LastAtrophy = DateTime.UtcNow;
 
-            return distrib;
-        }
+			List<PlayerState> members = new List<PlayerState>(m_Members);
 
-        public void RegisterBroadcast()
-        {
-            for (int i = 0; i < m_LastBroadcasts.Length; ++i)
-            {
-                if (DateTime.UtcNow >= (m_LastBroadcasts[i] + BroadcastPeriod))
-                {
-                    m_LastBroadcasts[i] = DateTime.UtcNow;
-                    break;
-                }
-            }
-        }
+			for (int i = 0; i < members.Count; ++i)
+			{
+				PlayerState ps = members[i];
 
-        public void Serialize(GenericWriter writer)
-        {
-            writer.WriteEncodedInt((int)6); // version
+				if (ps.IsActive)
+				{
+					ps.IsActive = false;
+					continue;
+				}
+				else if (ps.KillPoints > 0)
+				{
+					int atrophy = (ps.KillPoints + 9) / 10;
+					ps.KillPoints -= atrophy;
+					distrib += atrophy;
+				}
+			}
 
-            writer.Write(m_LastAtrophy);
+			return distrib;
+		}
 
-            writer.WriteEncodedInt((int)m_LastBroadcasts.Length);
+		public void RegisterBroadcast()
+		{
+			for (int i = 0; i < m_LastBroadcasts.Length; ++i)
+			{
+				if (DateTime.UtcNow >= (m_LastBroadcasts[i] + BroadcastPeriod))
+				{
+					m_LastBroadcasts[i] = DateTime.UtcNow;
+					break;
+				}
+			}
+		}
 
-            for (int i = 0; i < m_LastBroadcasts.Length; ++i)
-                writer.Write((DateTime)m_LastBroadcasts[i]);
+		public void Serialize(GenericWriter writer)
+		{
+			writer.WriteEncodedInt((int)6); // version
 
-            m_Election.Serialize(writer);
+			writer.Write(m_LastAtrophy);
 
-            Faction.WriteReference(writer, m_Faction);
+			writer.WriteEncodedInt((int)m_LastBroadcasts.Length);
 
-            writer.Write((Mobile)m_Commander);
+			for (int i = 0; i < m_LastBroadcasts.Length; ++i)
+				writer.Write((DateTime)m_LastBroadcasts[i]);
 
-            writer.WriteEncodedInt((int)m_Tithe);
-            writer.WriteEncodedInt((int)m_Silver);
+			m_Election.Serialize(writer);
 
-            writer.WriteEncodedInt((int)m_Members.Count);
+			Faction.WriteReference(writer, m_Faction);
 
-            for (int i = 0; i < m_Members.Count; ++i)
-            {
-                PlayerState pl = (PlayerState)m_Members[i];
+			writer.Write((Mobile)m_Commander);
 
-                pl.Serialize(writer);
-            }
+			writer.WriteEncodedInt((int)m_Tithe);
+			writer.WriteEncodedInt((int)m_Silver);
 
-            writer.WriteEncodedInt((int)m_FactionItems.Count);
+			writer.WriteEncodedInt((int)m_Members.Count);
 
-            for (int i = 0; i < m_FactionItems.Count; ++i)
-                m_FactionItems[i].Serialize(writer);
+			for (int i = 0; i < m_Members.Count; ++i)
+			{
+				PlayerState pl = (PlayerState)m_Members[i];
 
-            writer.WriteEncodedInt((int)m_FactionTraps.Count);
+				pl.Serialize(writer);
+			}
 
-            for (int i = 0; i < m_FactionTraps.Count; ++i)
-                writer.Write((Item)m_FactionTraps[i]);
-        }
-    }
+			writer.WriteEncodedInt((int)m_FactionItems.Count);
+
+			for (int i = 0; i < m_FactionItems.Count; ++i)
+				m_FactionItems[i].Serialize(writer);
+
+			writer.WriteEncodedInt((int)m_FactionTraps.Count);
+
+			for (int i = 0; i < m_FactionTraps.Count; ++i)
+				writer.Write((Item)m_FactionTraps[i]);
+		}
+	}
 }

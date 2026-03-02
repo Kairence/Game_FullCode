@@ -2,94 +2,76 @@ using System;
 
 namespace Server.Items
 {
-    public class MediumStoneTableSouthAddon : BaseAddon
-    {
-        [Constructable]
-        public MediumStoneTableSouthAddon()
-            : this(0)
-        {
-        }
+	public class MediumStoneTableSouthAddon : BaseAddon
+	{
+		[Constructable]
+		public MediumStoneTableSouthAddon()
+			: this(0) { }
 
-        [Constructable]
-        public MediumStoneTableSouthAddon(int hue)
-        {
-            this.AddComponent(new AddonComponent(0x1205), 0, 0, 0);
-            this.AddComponent(new AddonComponent(0x1204), 1, 0, 0);
-            this.Hue = hue;
-        }
+		[Constructable]
+		public MediumStoneTableSouthAddon(int hue)
+		{
+			this.AddComponent(new AddonComponent(0x1205), 0, 0, 0);
+			this.AddComponent(new AddonComponent(0x1204), 1, 0, 0);
+			this.Hue = hue;
+		}
 
-        public MediumStoneTableSouthAddon(Serial serial)
-            : base(serial)
-        {
-        }
+		public MediumStoneTableSouthAddon(Serial serial)
+			: base(serial) { }
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new MediumStoneTableSouthDeed();
-            }
-        }
-        public override bool RetainDeedHue
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override BaseAddonDeed Deed
+		{
+			get { return new MediumStoneTableSouthDeed(); }
+		}
+		public override bool RetainDeedHue
+		{
+			get { return true; }
+		}
 
-            writer.Write((int)1); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)1); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class MediumStoneTableSouthDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public MediumStoneTableSouthDeed()
-        {
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public MediumStoneTableSouthDeed(Serial serial)
-            : base(serial)
-        {
-        }
+	public class MediumStoneTableSouthDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public MediumStoneTableSouthDeed() { }
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new MediumStoneTableSouthAddon(this.Hue);
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1044509;
-            }
-        }// stone table (South)
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public MediumStoneTableSouthDeed(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override BaseAddon Addon
+		{
+			get { return new MediumStoneTableSouthAddon(this.Hue); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1044509; }
+		} // stone table (South)
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

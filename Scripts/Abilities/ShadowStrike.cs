@@ -3,33 +3,37 @@ using Server.Mobiles;
 
 namespace Server.Items
 {
-    public class ShadowStrike : WeaponAbility
-    {
-        public ShadowStrike()
-        {
-        }
+	public class ShadowStrike : WeaponAbility
+	{
+		public ShadowStrike() { }
 
-        // ¸¶³ª ¼Ò¸ð ¾øÀ½
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½Ò¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-        public override void OnHit(Mobile attacker, Mobile defender, int damage)
-        {
-            if (attacker == null || defender == null || !defender.Alive)
-                return;
+		public override void OnHit(Mobile attacker, Mobile defender, int damage)
+		{
+			if (attacker == null || defender == null || !defender.Alive)
+				return;
 
-            // 1. È¿°ú ¾Ë¸² ¹× ½Ã°¢ È¿°ú
-            attacker.SendLocalizedMessage(1060078); // You strike and hide in the shadows!
-            defender.SendLocalizedMessage(1060166); // You feel disoriented!
+			// 1. È¿ï¿½ï¿½ ï¿½Ë¸ï¿½ ï¿½ï¿½ ï¿½Ã°ï¿½ È¿ï¿½ï¿½
+			attacker.SendLocalizedMessage(1060078); // You strike and hide in the shadows!
+			defender.SendLocalizedMessage(1060166); // You feel disoriented!
 
-            Effects.SendLocationParticles(EffectItem.Create(attacker.Location, attacker.Map, EffectItem.DefaultDuration), 0x376A, 8, 12, 9943);
-            attacker.PlaySound(0x482);
-            defender.FixedEffect(0x37BE, 20, 25);
+			Effects.SendLocationParticles(
+				EffectItem.Create(attacker.Location, attacker.Map, EffectItem.DefaultDuration),
+				0x376A,
+				8,
+				12,
+				9943
+			);
+			attacker.PlaySound(0x482);
+			defender.FixedEffect(0x37BE, 20, 25);
 
-            // 2. ÇÙ½É ·ÎÁ÷: ¹«±â ÇÇÇØÀÇ 200% Ãß°¡ (ÃÑ 300% ÇÇÇØ)
-            int finalDamage = damage * 3;
+			// 2. ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 200% ï¿½ß°ï¿½ (ï¿½ï¿½ 300% ï¿½ï¿½ï¿½ï¿½)
+			int finalDamage = damage * 3;
 
-            // 3. AOS.Damage ¾ç½Ä¿¡ ¸ÂÃá ¾î±×·Î 0 °ø°Ý
-            // ÀÎÀÚ ¼ø¼­: target, from, damage, ignoreArmor, phys, fire, cold, pois, nrgy, chaos, direct, keepAlive, type, aggro
+			// 3. AOS.Damage ï¿½ï¿½Ä¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½×·ï¿½ 0 ï¿½ï¿½ï¿½ï¿½
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: target, from, damage, ignoreArmor, phys, fire, cold, pois, nrgy, chaos, direct, keepAlive, type, aggro
 			AOS.Damage(defender, attacker, finalDamage, false, 100, 0, 0, 0, 0, 0, 0, false, 0, 100);
-        }
-    }
+		}
+	}
 }

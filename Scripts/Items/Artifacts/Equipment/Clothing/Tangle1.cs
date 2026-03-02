@@ -3,74 +3,82 @@ using Server.Engines.Craft;
 
 namespace Server.Items
 {
-    [Alterable(typeof(DefTailoring), typeof(GargishTangle1))]
-    public class Tangle1 : HalfApron
+	[Alterable(typeof(DefTailoring), typeof(GargishTangle1))]
+	public class Tangle1 : HalfApron
 	{
-        public override int LabelNumber { get { return 1114784; } } // Tangle
-		public override bool IsArtifact { get { return true; } }
+		public override int LabelNumber
+		{
+			get { return 1114784; }
+		} // Tangle
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        [Constructable]
-        public Tangle1()
-            : base()
-        {
-            Hue = 506;		
-            Attributes.BonusInt = 10;
-            Attributes.DefendChance = 5;
-            Attributes.RegenMana = 2;
-        }
+		[Constructable]
+		public Tangle1()
+			: base()
+		{
+			Hue = 506;
+			Attributes.BonusInt = 10;
+			Attributes.DefendChance = 5;
+			Attributes.RegenMana = 2;
+		}
 
-        public Tangle1(Serial serial)
-            : base(serial)
-        {
-        }
+		public Tangle1(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-			
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-			
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
 
-    public class GargishTangle1 : GargoyleHalfApron
-    {
-        public override int LabelNumber { get { return 1114784; } } // Tangle
-        public override bool IsArtifact { get { return true; } }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        [Constructable]
-        public GargishTangle1()
-            : base()
-        {
-            Hue = 506;
-            Attributes.BonusInt = 10;
-            Attributes.DefendChance = 5;
-            Attributes.RegenMana = 2;
-        }
+			int version = reader.ReadInt();
+		}
+	}
 
-        public GargishTangle1(Serial serial)
-            : base(serial)
-        {
-        }
+	public class GargishTangle1 : GargoyleHalfApron
+	{
+		public override int LabelNumber
+		{
+			get { return 1114784; }
+		} // Tangle
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		[Constructable]
+		public GargishTangle1()
+			: base()
+		{
+			Hue = 506;
+			Attributes.BonusInt = 10;
+			Attributes.DefendChance = 5;
+			Attributes.RegenMana = 2;
+		}
 
-            writer.Write((int)0); // version
-        }
+		public GargishTangle1(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
-        }
-    }
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

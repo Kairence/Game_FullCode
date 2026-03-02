@@ -3,211 +3,211 @@ using System.Collections.Generic;
 
 namespace Server.Spells.Bushido
 {
-    public class Confidence : SamuraiSpell
-    {
-        private static readonly SpellInfo m_Info = new SpellInfo(
-            "Confidence", null,
-            -1,
-            9002);
+	public class Confidence : SamuraiSpell
+	{
+		private static readonly SpellInfo m_Info = new SpellInfo("Confidence", null, -1, 9002);
 
-        private static Dictionary<Mobile, Timer> m_Table = new Dictionary<Mobile, Timer>();
-        private static Dictionary<Mobile, Timer> m_RegenTable = new Dictionary<Mobile, Timer>();
+		private static Dictionary<Mobile, Timer> m_Table = new Dictionary<Mobile, Timer>();
+		private static Dictionary<Mobile, Timer> m_RegenTable = new Dictionary<Mobile, Timer>();
 
-        public Confidence(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+		public Confidence(Mobile caster, Item scroll)
+			: base(caster, scroll, m_Info) { }
 
-        public override TimeSpan CastDelayBase
-        {
-            get
-            {
-                return TimeSpan.FromSeconds(0);
-            }
-        }
-        public override double RequiredSkill
-        {
-            get
-            {
-                return 0.0;
-            }
-        }
-        public override int RequiredMana
-        {
-            get
-            {
-                return 0;
-            }
-        }
+		public override TimeSpan CastDelayBase
+		{
+			get { return TimeSpan.FromSeconds(0); }
+		}
+		public override double RequiredSkill
+		{
+			get { return 0.0; }
+		}
+		public override int RequiredMana
+		{
+			get { return 0; }
+		}
 
-        public static bool IsConfident(Mobile m)
-        {
-            return m_Table.ContainsKey(m);
-        }
+		public static bool IsConfident(Mobile m)
+		{
+			return m_Table.ContainsKey(m);
+		}
 
-        public static void BeginConfidence(Mobile m)
-        {
-            Timer t;
+		public static void BeginConfidence(Mobile m)
+		{
+			Timer t;
 
-            if (m_Table.TryGetValue(m, out t))
-                t.Stop();
+			if (m_Table.TryGetValue(m, out t))
+				t.Stop();
 
-            t = new InternalTimer(m);
+			t = new InternalTimer(m);
 
-            m_Table[m] = t;
+			m_Table[m] = t;
 
-            t.Start();
+			t.Start();
 
-            //double bushido = m.Skills[SkillName.Bushido].Value;
-            BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Confidence, 1060596, 1153809, TimeSpan.FromSeconds(30), m, String.Format("{0}\t{1}\t{2}", ((int)(5)).ToString(), ((int)(5)).ToString(), "100"))); // Successful parry will heal for 1-~1_HEAL~ hit points and refresh for 1-~2_STAM~ stamina points.<br>+~3_HP~ hit point regeneration (4 second duration).
+			//double bushido = m.Skills[SkillName.Bushido].Value;
+			BuffInfo.AddBuff(
+				m,
+				new BuffInfo(
+					BuffIcon.Confidence,
+					1060596,
+					1153809,
+					TimeSpan.FromSeconds(30),
+					m,
+					String.Format("{0}\t{1}\t{2}", ((int)(5)).ToString(), ((int)(5)).ToString(), "100")
+				)
+			); // Successful parry will heal for 1-~1_HEAL~ hit points and refresh for 1-~2_STAM~ stamina points.<br>+~3_HP~ hit point regeneration (4 second duration).
 
 			/*
-            int anticipateHitBonus = SkillMasteries.MasteryInfo.AnticipateHitBonus(m);
+			int anticipateHitBonus = SkillMasteries.MasteryInfo.AnticipateHitBonus(m);
 
-            if (anticipateHitBonus > 0)
-                BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.AnticipateHit, 1155905, 1156057, TimeSpan.FromSeconds(4), m, String.Format("{0}\t{1}", anticipateHitBonus.ToString(), "75"))); // ~1_CHANCE~% chance to reduce Confidence heal by ~2_REDUCE~% when hit. 
+			if (anticipateHitBonus > 0)
+				BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.AnticipateHit, 1155905, 1156057, TimeSpan.FromSeconds(4), m, String.Format("{0}\t{1}", anticipateHitBonus.ToString(), "75"))); // ~1_CHANCE~% chance to reduce Confidence heal by ~2_REDUCE~% when hit.
 			*/
-        }
+		}
 
-        public static void EndConfidence(Mobile m)
-        {
-            if (!m_Table.ContainsKey(m))
-                return;
+		public static void EndConfidence(Mobile m)
+		{
+			if (!m_Table.ContainsKey(m))
+				return;
 
-            Timer t = m_Table[m];
+			Timer t = m_Table[m];
 
-            t.Stop();
-            m_Table.Remove(m);
+			t.Stop();
+			m_Table.Remove(m);
 
-            OnEffectEnd(m, typeof(Confidence));
+			OnEffectEnd(m, typeof(Confidence));
 
-            BuffInfo.RemoveBuff(m, BuffIcon.Confidence);
-            BuffInfo.RemoveBuff(m, BuffIcon.AnticipateHit);
-        }
+			BuffInfo.RemoveBuff(m, BuffIcon.Confidence);
+			BuffInfo.RemoveBuff(m, BuffIcon.AnticipateHit);
+		}
 
-        public static bool IsRegenerating(Mobile m)
-        {
-            return m_RegenTable.ContainsKey(m);
-        }
+		public static bool IsRegenerating(Mobile m)
+		{
+			return m_RegenTable.ContainsKey(m);
+		}
 
-        public static void BeginRegenerating(Mobile m)
-        {
-            Timer t;
+		public static void BeginRegenerating(Mobile m)
+		{
+			Timer t;
 
-            if (m_RegenTable.TryGetValue(m, out t))
-                t.Stop();
+			if (m_RegenTable.TryGetValue(m, out t))
+				t.Stop();
 
-            t = new RegenTimer(m);
+			t = new RegenTimer(m);
 
-            m_RegenTable[m] = t;
+			m_RegenTable[m] = t;
 
-            t.Start();
-        }
+			t.Start();
+		}
 
-        public static void StopRegenerating(Mobile m)
-        {
-            Timer t;
+		public static void StopRegenerating(Mobile m)
+		{
+			Timer t;
 
-            int anticipateHitBonus = SkillMasteries.MasteryInfo.AnticipateHitBonus(m);
+			int anticipateHitBonus = SkillMasteries.MasteryInfo.AnticipateHitBonus(m);
 
-            if (anticipateHitBonus >= Utility.Random(100) && m_RegenTable.TryGetValue(m, out t))
-            {
-                if (t is RegenTimer)
-                    ((RegenTimer)t).Hits /= 2;
+			if (anticipateHitBonus >= Utility.Random(100) && m_RegenTable.TryGetValue(m, out t))
+			{
+				if (t is RegenTimer)
+					((RegenTimer)t).Hits /= 2;
 
-                return;
-            }
+				return;
+			}
 
-            if (m_RegenTable.TryGetValue(m, out t))
-                t.Stop();
+			if (m_RegenTable.TryGetValue(m, out t))
+				t.Stop();
 
-            if (m_RegenTable.ContainsKey(m))
-                m_RegenTable.Remove(m);
+			if (m_RegenTable.ContainsKey(m))
+				m_RegenTable.Remove(m);
 
-            BuffInfo.RemoveBuff(m, BuffIcon.AnticipateHit);
-        }
+			BuffInfo.RemoveBuff(m, BuffIcon.AnticipateHit);
+		}
 
-        public override void OnBeginCast()
-        {
-            base.OnBeginCast();
+		public override void OnBeginCast()
+		{
+			base.OnBeginCast();
 
-            Caster.FixedEffect(0x37C4, 10, 7, 4, 3);
-        }
+			Caster.FixedEffect(0x37C4, 10, 7, 4, 3);
+		}
 
-        public override void OnCast()
-        {
-            if (CheckSequence())
-            {
-                Caster.SendLocalizedMessage(1063115); // You exude confidence.
+		public override void OnCast()
+		{
+			if (CheckSequence())
+			{
+				Caster.SendLocalizedMessage(1063115); // You exude confidence.
 
-                Caster.FixedParticles(0x375A, 1, 17, 0x7DA, 0x960, 0x3, EffectLayer.Waist);
-                Caster.PlaySound(0x51A);
+				Caster.FixedParticles(0x375A, 1, 17, 0x7DA, 0x960, 0x3, EffectLayer.Waist);
+				Caster.PlaySound(0x51A);
 
-                OnCastSuccessful(Caster);
+				OnCastSuccessful(Caster);
 
-                BeginConfidence(Caster);
-                BeginRegenerating(Caster);
-            }
+				BeginConfidence(Caster);
+				BeginRegenerating(Caster);
+			}
 
-            FinishSequence();
-        }
+			FinishSequence();
+		}
 
-        private class InternalTimer : Timer
-        {
-            private readonly Mobile m_Mobile;
-            public InternalTimer(Mobile m)
-                : base(TimeSpan.FromSeconds(30.0))
-            {
-                m_Mobile = m;
-                Priority = TimerPriority.TwoFiftyMS;
-            }
+		private class InternalTimer : Timer
+		{
+			private readonly Mobile m_Mobile;
 
-            protected override void OnTick()
-            {
-                EndConfidence(m_Mobile);
-                m_Mobile.SendLocalizedMessage(1063116); // Your confidence wanes.
-            }
-        }
+			public InternalTimer(Mobile m)
+				: base(TimeSpan.FromSeconds(30.0))
+			{
+				m_Mobile = m;
+				Priority = TimerPriority.TwoFiftyMS;
+			}
 
-        private class RegenTimer : Timer
-        {
-            private Mobile m_Mobile;
-            private int m_Ticks;
-            private int m_Hits;
+			protected override void OnTick()
+			{
+				EndConfidence(m_Mobile);
+				m_Mobile.SendLocalizedMessage(1063116); // Your confidence wanes.
+			}
+		}
 
-            public int Hits { get { return m_Hits; } set { m_Hits = value; } }
+		private class RegenTimer : Timer
+		{
+			private Mobile m_Mobile;
+			private int m_Ticks;
+			private int m_Hits;
 
-            public RegenTimer(Mobile m)
-                : base(TimeSpan.FromSeconds(10.0), TimeSpan.FromSeconds(10.0))
-            {
-                m_Mobile = m;
-                //m_Hits = 15 + (m.Skills.Bushido.Fixed * m.Skills.Bushido.Fixed / 57600);
+			public int Hits
+			{
+				get { return m_Hits; }
+				set { m_Hits = value; }
+			}
+
+			public RegenTimer(Mobile m)
+				: base(TimeSpan.FromSeconds(10.0), TimeSpan.FromSeconds(10.0))
+			{
+				m_Mobile = m;
+				//m_Hits = 15 + (m.Skills.Bushido.Fixed * m.Skills.Bushido.Fixed / 57600);
 				double anatomy = m.Skills.Anatomy.Value * 0.15;
-				if( anatomy >= 100 )
+				if (anatomy >= 100)
 					anatomy += 2;
-				
+
 				m_Hits = 5 + (int)anatomy;
-				
-                Priority = TimerPriority.TwoFiftyMS;
-            }
 
-            protected override void OnTick()
-            {
-                //m_Mobile.Hits += m_Mobile.HitsMax / 10;
-                //StopRegenerating(m_Mobile);
-				
-                m_Mobile.Hits += m_Hits;
-				m_Mobile.Stam += m_Hits; 
-				m_Mobile.Mana += m_Hits; 
+				Priority = TimerPriority.TwoFiftyMS;
+			}
 
-                ++m_Ticks;
+			protected override void OnTick()
+			{
+				//m_Mobile.Hits += m_Mobile.HitsMax / 10;
+				//StopRegenerating(m_Mobile);
 
-                if (m_Ticks >= 1)
-                {
-                    StopRegenerating(m_Mobile);
-                }
+				m_Mobile.Hits += m_Hits;
+				m_Mobile.Stam += m_Hits;
+				m_Mobile.Mana += m_Hits;
 
-            }
-        }
-    }
+				++m_Ticks;
+
+				if (m_Ticks >= 1)
+				{
+					StopRegenerating(m_Mobile);
+				}
+			}
+		}
+	}
 }

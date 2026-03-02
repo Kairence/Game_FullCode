@@ -4,36 +4,37 @@ using Server.Network;
 
 namespace Server.Engines.VeteranRewards
 {
-    public class RewardNoticeGump : Gump
-    {
-        private readonly Mobile m_From;
-        public RewardNoticeGump(Mobile from)
-            : base(0, 0)
-        {
-            this.m_From = from;
+	public class RewardNoticeGump : Gump
+	{
+		private readonly Mobile m_From;
 
-            from.CloseGump(typeof(RewardNoticeGump));
+		public RewardNoticeGump(Mobile from)
+			: base(0, 0)
+		{
+			this.m_From = from;
 
-            this.AddPage(0);
+			from.CloseGump(typeof(RewardNoticeGump));
 
-            this.AddBackground(10, 10, 500, 135, 2600);
+			this.AddPage(0);
 
-            /* You have reward items available.
-            * Click 'ok' below to get the selection menu or 'cancel' to be prompted upon your next login.
-            */
-            this.AddHtmlLocalized(52, 35, 420, 55, 1006046, true, true);
+			this.AddBackground(10, 10, 500, 135, 2600);
 
-            this.AddButton(60, 95, 4005, 4007, 1, GumpButtonType.Reply, 0);
-            this.AddHtmlLocalized(95, 96, 150, 35, 1006044, false, false); // Ok
+			/* You have reward items available.
+			* Click 'ok' below to get the selection menu or 'cancel' to be prompted upon your next login.
+			*/
+			this.AddHtmlLocalized(52, 35, 420, 55, 1006046, true, true);
 
-            this.AddButton(285, 95, 4017, 4019, 0, GumpButtonType.Reply, 0);
-            this.AddHtmlLocalized(320, 96, 150, 35, 1006045, false, false); // Cancel
-        }
+			this.AddButton(60, 95, 4005, 4007, 1, GumpButtonType.Reply, 0);
+			this.AddHtmlLocalized(95, 96, 150, 35, 1006044, false, false); // Ok
 
-        public override void OnResponse(NetState sender, RelayInfo info)
-        {
-            if (info.ButtonID == 1)
-                this.m_From.SendGump(new RewardChoiceGump(this.m_From));
-        }
-    }
+			this.AddButton(285, 95, 4017, 4019, 0, GumpButtonType.Reply, 0);
+			this.AddHtmlLocalized(320, 96, 150, 35, 1006045, false, false); // Cancel
+		}
+
+		public override void OnResponse(NetState sender, RelayInfo info)
+		{
+			if (info.ButtonID == 1)
+				this.m_From.SendGump(new RewardChoiceGump(this.m_From));
+		}
+	}
 }

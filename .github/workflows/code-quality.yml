@@ -1,0 +1,368 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [main, project-setup]
+    paths: ['**/*.cs', '**/*.csproj', 'Directory.Build.props', '.github/workflows/code-quality.yml']
+  pull_request:
+    branches: [main]
+    paths: ['**/*.cs', '**/*.csproj', 'Directory.Build.props', '.github/workflows/code-quality.yml']
+  workflow_dispatch:
+    inputs:
+      run_full_data:
+        description: Run stage2 full-data validation
+        required: false
+        type: boolean
+        default: false
+      full_data_path:
+        description: Optional override for full data directory
+        required: false
+        type: string
+        default: ''
+  schedule:
+    - cron: '0 2 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  code-quality:
+    name: CSharpier + Format Check
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dotnet tools
+        run: dotnet tool restore
+
+      - name: Build Ultima SDK
+        run: dotnet build Ultima/Ultima.csproj -c Release
+
+      - name: Build Server
+        run: dotnet build Server/Server.csproj -c Release -o .
+
+      - name: Check CSharpier formatting
+        run: dotnet tool run dotnet-csharpier --check .
+
+      - name: Check dotnet analyzers
+        run: dotnet format analyzers --verify-no-changes --no-restore --severity error
+
+  windows-smoke:
+    name: Windows Startup Smoke
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build Ultima SDK
+        run: dotnet build Ultima/Ultima.csproj -c Release
+
+      - name: Build Server
+        run: dotnet build Server/Server.csproj -c Release -o .
+
+      - name: Smoke test server startup
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+
+          $ciDataPath = Join-Path $env:RUNNER_TEMP 'uo-data'
+          New-Item -Path $ciDataPath -ItemType Directory -Force | Out-Null
+
+          $tileDataPath = Join-Path $ciDataPath 'tiledata.mul'
+          $tileDataLengthBytes = 3188736 # Server.TileData threshold for 0x10000 item table.
+          $tileStream = [System.IO.File]::Open($tileDataPath, [System.IO.FileMode]::Create, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
+          $tileStream.SetLength($tileDataLengthBytes)
+          $tileStream.Dispose()
+
+          $binaryDataPath = Join-Path $PWD 'Data/Binary'
+          New-Item -Path $binaryDataPath -ItemType Directory -Force | Out-Null
+
+          $boundsPath = Join-Path $binaryDataPath 'Bounds.bin'
+          $boundsEntryCount = 65536
+          $boundsStream = [System.IO.File]::Open($boundsPath, [System.IO.FileMode]::Create, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
+          $boundsStream.SetLength($boundsEntryCount * 8)
+          $boundsStream.Dispose()
+
+          $dataPathConfig = Join-Path $PWD 'Config/DataPath.cfg'
+          Set-Content -Path $dataPathConfig -Encoding Ascii -Value @(
+            '# CI override for Windows smoke test',
+            "CustomPath=$ciDataPath"
+          )
+
+          $logPath = Join-Path $PWD 'Logs/Console.log'
+          if (Test-Path $logPath) {
+            Remove-Item $logPath -Force
+          }
+
+          $proc = Start-Process -FilePath '.\ServUO.exe' -ArgumentList '-service' -PassThru -WorkingDirectory $PWD
+          $deadline = (Get-Date).AddSeconds(420)
+          $ready = $false
+
+          while ((Get-Date) -lt $deadline) {
+            Start-Sleep -Seconds 3
+
+            if ($proc.HasExited) {
+              break
+            }
+
+            if (Test-Path $logPath) {
+              $log = Get-Content $logPath -Raw
+
+              if ($log -match 'Listening:\s') {
+                $ready = $true
+                break
+              }
+
+              if ($log -match 'Scripts: One or more scripts failed to compile|Critical Compiler Error|tiledata\.mul was not found|Warning: Data/Binary/Bounds\.bin does not exist|Listener Failed') {
+                break
+              }
+            }
+
+            $tcpReady = $false
+            $tcpClient = [System.Net.Sockets.TcpClient]::new()
+            try {
+              $tcpClient.Connect('127.0.0.1', 2593)
+              $tcpReady = $true
+            }
+            catch { }
+            finally {
+              $tcpClient.Dispose()
+            }
+
+            if ($tcpReady) {
+              $ready = $true
+              break
+            }
+          }
+
+          Get-Process -Name ServUO -ErrorAction SilentlyContinue | Stop-Process -Force
+
+          if (-not $proc.HasExited) {
+            Stop-Process -Id $proc.Id -Force
+            $proc.WaitForExit()
+          }
+
+          if (Test-Path $logPath) {
+            Get-Content $logPath -Tail 200
+          }
+
+          if (-not $ready) {
+            throw 'Server did not reach listening state within timeout.'
+          }
+
+      - name: Upload smoke log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-smoke-console-log
+          path: Logs/Console.log
+          if-no-files-found: ignore
+
+  windows-full-data:
+    name: Windows Full-Data Validation
+    runs-on: [self-hosted, windows, x64]
+    needs: windows-smoke
+    timeout-minutes: 60
+    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.run_full_data == true) || (github.event_name == 'schedule' && vars.CI_STAGE2_MODE == 'nightly') }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build Ultima SDK
+        run: dotnet build Ultima/Ultima.csproj -c Release
+
+      - name: Build Server
+        run: dotnet build Server/Server.csproj -c Release -o .
+
+      - name: Resolve and validate full data path
+        shell: pwsh
+        env:
+          DISPATCH_FULL_DATA_PATH: ${{ github.event.inputs.full_data_path }}
+          VAR_FULL_DATA_PATH: ${{ vars.CI_UO_DATA_PATH }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+
+          $resolvedPath = ([string]$env:DISPATCH_FULL_DATA_PATH).Trim()
+          if ([string]::IsNullOrWhiteSpace($resolvedPath)) {
+            $resolvedPath = ([string]$env:VAR_FULL_DATA_PATH).Trim()
+          }
+
+          if ([string]::IsNullOrWhiteSpace($resolvedPath)) {
+            throw 'Full data path is empty. Provide workflow_dispatch input full_data_path or set vars.CI_UO_DATA_PATH.'
+          }
+
+          if (-not [System.IO.Path]::IsPathRooted($resolvedPath)) {
+            throw "Full data path must be absolute: $resolvedPath"
+          }
+
+          $fullDataPath = [System.IO.Path]::GetFullPath($resolvedPath)
+          $workspacePath = [System.IO.Path]::GetFullPath($env:GITHUB_WORKSPACE)
+          $workspacePrefix = $workspacePath.TrimEnd('\\') + '\\'
+
+          if ($fullDataPath.Equals($workspacePath, [System.StringComparison]::OrdinalIgnoreCase) -or
+              $fullDataPath.StartsWith($workspacePrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+            throw "Full data path must be outside GITHUB_WORKSPACE: $fullDataPath"
+          }
+
+          if (-not (Test-Path -LiteralPath $fullDataPath -PathType Container)) {
+            throw "Full data directory does not exist: $fullDataPath"
+          }
+
+          $requiredFiles = @('tiledata.mul', 'staidx0.mul', 'statics0.mul')
+          foreach ($requiredFile in $requiredFiles) {
+            $requiredPath = Join-Path $fullDataPath $requiredFile
+            if (-not (Test-Path -LiteralPath $requiredPath -PathType Leaf)) {
+              throw "Missing required data file: $requiredPath"
+            }
+          }
+
+          $mapMul = Join-Path $fullDataPath 'map0.mul'
+          $mapUop = Join-Path $fullDataPath 'map0LegacyMUL.uop'
+          if (-not ((Test-Path -LiteralPath $mapMul -PathType Leaf) -or (Test-Path -LiteralPath $mapUop -PathType Leaf))) {
+            throw "Missing required map file. Expected either $mapMul or $mapUop"
+          }
+
+          $dataPathConfig = Join-Path $PWD 'Config/DataPath.cfg'
+          Set-Content -Path $dataPathConfig -Encoding Ascii -Value @(
+            '# CI override for Windows full-data validation',
+            "CustomPath=$fullDataPath"
+          )
+
+      - name: Run full-data startup cycles
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+
+          $workspacePath = [System.IO.Path]::GetFullPath($env:GITHUB_WORKSPACE)
+          $workspacePrefix = $workspacePath.TrimEnd('\\') + '\\'
+
+          $portAllocator = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 0)
+          $portAllocator.Start()
+          $allocatedPort = ([System.Net.IPEndPoint]$portAllocator.LocalEndpoint).Port
+          $portAllocator.Stop()
+
+          $serverConfigPath = Join-Path $PWD 'Config/Server.cfg'
+          Add-Content -Path $serverConfigPath -Encoding Ascii -Value @(
+            '',
+            '# CI override for Windows full-data validation',
+            "Port=$allocatedPort"
+          )
+
+          function Stop-ServUO {
+            Get-CimInstance Win32_Process -Filter "Name = 'ServUO.exe'" -ErrorAction SilentlyContinue |
+              Where-Object {
+                $exePath = $_.ExecutablePath
+                if ([string]::IsNullOrWhiteSpace($exePath)) {
+                  return $false
+                }
+
+                $fullExePath = [System.IO.Path]::GetFullPath($exePath)
+                $fullExePath.StartsWith($workspacePrefix, [System.StringComparison]::OrdinalIgnoreCase)
+              } |
+              ForEach-Object {
+                Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue
+              }
+          }
+
+          function Invoke-StartupCycle {
+            param([int]$Cycle)
+
+            $logDir = Join-Path $PWD 'Logs'
+            New-Item -Path $logDir -ItemType Directory -Force | Out-Null
+            $logPath = Join-Path $logDir 'Console.log'
+            $archivePath = Join-Path $logDir ("Console-cycle$Cycle.log")
+            $failurePattern = 'Scripts: One or more scripts failed to compile|Critical Compiler Error|tiledata\.mul was not found|Listener failed'
+            $proc = $null
+
+            try {
+              if (Test-Path $logPath) {
+                Remove-Item $logPath -Force
+              }
+
+              Stop-ServUO
+              $proc = Start-Process -FilePath '.\ServUO.exe' -ArgumentList '-service' -PassThru -WorkingDirectory $PWD
+
+              $deadline = (Get-Date).AddSeconds(480)
+              $ready = $false
+
+              while ((Get-Date) -lt $deadline) {
+                Start-Sleep -Seconds 3
+
+                if ($proc.HasExited) {
+                  break
+                }
+
+                if (Test-Path $logPath) {
+                  $log = [System.IO.File]::ReadAllText($logPath)
+
+                  if ($log -match $failurePattern) {
+                    throw "Startup cycle $Cycle hit failure pattern."
+                  }
+
+                  if ($log -match 'Listening:\s') {
+                    $ready = $true
+                    break
+                  }
+                }
+              }
+
+              if (-not $ready) {
+                if (Test-Path $logPath) {
+                  Get-Content $logPath -Tail 200
+                }
+                throw "Startup cycle $Cycle did not reach listening state within timeout."
+              }
+
+              $tcpClient = [System.Net.Sockets.TcpClient]::new()
+              try {
+                $tcpClient.Connect('127.0.0.1', $allocatedPort)
+              }
+              catch {
+                throw "Startup cycle $Cycle reached listening state but TCP connect to 127.0.0.1:$allocatedPort failed."
+              }
+              finally {
+                $tcpClient.Dispose()
+              }
+            }
+            finally {
+              if (Test-Path $logPath) {
+                Copy-Item -Path $logPath -Destination $archivePath -Force
+              }
+
+              Stop-ServUO
+
+              if ($null -ne $proc -and -not $proc.HasExited) {
+                Stop-Process -Id $proc.Id -Force
+                $proc.WaitForExit()
+              }
+            }
+          }
+
+          Invoke-StartupCycle -Cycle 1
+          Invoke-StartupCycle -Cycle 2
+
+      - name: Upload full-data logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-full-data-logs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            Logs/Console.log
+            Logs/Console-cycle*.log
+          if-no-files-found: ignore

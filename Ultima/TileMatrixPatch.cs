@@ -1,5 +1,6 @@
 #region References
 using System;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 #endregion
@@ -96,7 +97,8 @@ namespace Ultima
 			BlockHeight = matrix.BlockWidth;
 
 			LandBlocksCount = StaticBlocksCount = 0;
-			string mapDataPath, mapIndexPath;
+			string mapDataPath,
+				mapIndexPath;
 			if (path == null)
 			{
 				mapDataPath = Files.GetFilePath("mapdif{0}.mul", index);
@@ -104,12 +106,12 @@ namespace Ultima
 			}
 			else
 			{
-				mapDataPath = Path.Combine(path, String.Format("mapdif{0}.mul", index));
+				mapDataPath = Path.Combine(path, String.Format(CultureInfo.CurrentCulture, "mapdif{0}.mul", index));
 				if (!File.Exists(mapDataPath))
 				{
 					mapDataPath = null;
 				}
-				mapIndexPath = Path.Combine(path, String.Format("mapdifl{0}.mul", index));
+				mapIndexPath = Path.Combine(path, String.Format(CultureInfo.CurrentCulture, "mapdifl{0}.mul", index));
 				if (!File.Exists(mapIndexPath))
 				{
 					mapIndexPath = null;
@@ -122,7 +124,9 @@ namespace Ultima
 				LandBlocksCount = PatchLand(matrix, mapDataPath, mapIndexPath);
 			}
 
-			string staDataPath, staIndexPath, staLookupPath;
+			string staDataPath,
+				staIndexPath,
+				staLookupPath;
 			if (path == null)
 			{
 				staDataPath = Files.GetFilePath("stadif{0}.mul", index);
@@ -131,17 +135,17 @@ namespace Ultima
 			}
 			else
 			{
-				staDataPath = Path.Combine(path, String.Format("stadif{0}.mul", index));
+				staDataPath = Path.Combine(path, String.Format(CultureInfo.CurrentCulture, "stadif{0}.mul", index));
 				if (!File.Exists(staDataPath))
 				{
 					staDataPath = null;
 				}
-				staIndexPath = Path.Combine(path, String.Format("stadifl{0}.mul", index));
+				staIndexPath = Path.Combine(path, String.Format(CultureInfo.CurrentCulture, "stadifl{0}.mul", index));
 				if (!File.Exists(staIndexPath))
 				{
 					staIndexPath = null;
 				}
-				staLookupPath = Path.Combine(path, String.Format("stadifi{0}.mul", index));
+				staLookupPath = Path.Combine(path, String.Format(CultureInfo.CurrentCulture, "stadifi{0}.mul", index));
 				if (!File.Exists(staLookupPath))
 				{
 					staLookupPath = null;
@@ -159,7 +163,8 @@ namespace Ultima
 		{
 			using (
 				FileStream fsData = new FileStream(dataPath, FileMode.Open, FileAccess.Read, FileShare.Read),
-						   fsIndex = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+					fsIndex = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read)
+			)
 			{
 				using (var indexReader = new BinaryReader(fsIndex))
 				{
@@ -206,12 +211,19 @@ namespace Ultima
 		{
 			using (
 				FileStream fsData = new FileStream(dataPath, FileMode.Open, FileAccess.Read, FileShare.Read),
-						   fsIndex = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read),
-						   fsLookup = new FileStream(lookupPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+					fsIndex = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read),
+					fsLookup = new FileStream(lookupPath, FileMode.Open, FileAccess.Read, FileShare.Read)
+			)
 			{
-				using (BinaryReader indexReader = new BinaryReader(fsIndex), lookupReader = new BinaryReader(fsLookup))
+				using (
+					BinaryReader indexReader = new BinaryReader(fsIndex),
+						lookupReader = new BinaryReader(fsLookup)
+				)
 				{
-					int count = Math.Min((int)(indexReader.BaseStream.Length / 4), (int)(lookupReader.BaseStream.Length / 12));
+					int count = Math.Min(
+						(int)(indexReader.BaseStream.Length / 4),
+						(int)(lookupReader.BaseStream.Length / 12)
+					);
 
 					var lists = new HuedTileList[8][];
 
@@ -272,7 +284,9 @@ namespace Ultima
 							for (int j = 0; j < tileCount; ++j)
 							{
 								StaticTile cur = staTiles[j];
-								lists[cur.m_X & 0x7][cur.m_Y & 0x7].Add(Art.GetLegalItemID(cur.m_ID), cur.m_Hue, cur.m_Z);
+								lists[cur.m_X & 0x7]
+									[cur.m_Y & 0x7]
+									.Add(Art.GetLegalItemID(cur.m_ID), cur.m_Hue, cur.m_Z);
 							}
 
 							var tiles = new HuedTile[8][][];

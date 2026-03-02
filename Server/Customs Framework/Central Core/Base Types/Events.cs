@@ -17,7 +17,10 @@ namespace CustomsFramework
 			m_Core = core;
 		}
 
-		public BaseCore Core { get { return m_Core; } }
+		public BaseCore Core
+		{
+			get { return m_Core; }
+		}
 	}
 
 	public class BaseModuleEventArgs : EventArgs
@@ -29,6 +32,9 @@ namespace CustomsFramework
 			m_Module = module;
 		}
 
-		public BaseModule Module { get { return m_Module; } }
+		public BaseModule Module
+		{
+			get { return m_Module; }
+		}
 	}
 }

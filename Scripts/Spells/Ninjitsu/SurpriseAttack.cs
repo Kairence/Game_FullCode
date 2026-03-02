@@ -1,138 +1,133 @@
 using System;
 using System.Collections;
-using Server.SkillHandlers;
 using Server.Items;
+using Server.SkillHandlers;
 
 namespace Server.Spells.Ninjitsu
 {
-    public class SurpriseAttack : NinjaMove
-    {
-        private static readonly Hashtable m_Table = new Hashtable();
-        public SurpriseAttack()
-        {
-        }
+	public class SurpriseAttack : NinjaMove
+	{
+		private static readonly Hashtable m_Table = new Hashtable();
 
-        public override int BaseMana
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override double RequiredSkill
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override TextDefinition AbilityMessage
-        {
-            get
-            {
-                return new TextDefinition(1063128);
-            }
-        }// You prepare to surprise your prey.
-        public override bool ValidatesDuringHit
-        {
-            get
-            {
-                return false;
-            }
-        }
-        public static bool GetMalus(Mobile target, ref int malus)
-        {
-            SurpriseAttackInfo info = m_Table[target] as SurpriseAttackInfo;
+		public SurpriseAttack() { }
 
-            if (info == null)
-                return false;
+		public override int BaseMana
+		{
+			get { return 0; }
+		}
+		public override double RequiredSkill
+		{
+			get { return 0; }
+		}
+		public override TextDefinition AbilityMessage
+		{
+			get { return new TextDefinition(1063128); }
+		} // You prepare to surprise your prey.
+		public override bool ValidatesDuringHit
+		{
+			get { return false; }
+		}
 
-            malus = info.m_Malus;
-            return true;
-        }
+		public static bool GetMalus(Mobile target, ref int malus)
+		{
+			SurpriseAttackInfo info = m_Table[target] as SurpriseAttackInfo;
 
-        public override bool OnBeforeSwing(Mobile attacker, Mobile defender)
-        {
-            bool valid = this.Validate(attacker) && this.CheckMana(attacker, true);
+			if (info == null)
+				return false;
 
-            if (valid)
-            {
-                attacker.BeginAction(typeof(Stealth));
-                Timer.DelayCall(TimeSpan.FromSeconds(5.0), delegate { attacker.EndAction(typeof(Stealth)); });
-            }
+			malus = info.m_Malus;
+			return true;
+		}
 
-            return valid;
-        }
+		public override bool OnBeforeSwing(Mobile attacker, Mobile defender)
+		{
+			bool valid = this.Validate(attacker) && this.CheckMana(attacker, true);
 
-        public override void OnHit(Mobile attacker, Mobile defender, int damage)
-        {
-            //Validates before swing
-            ClearCurrentMove(attacker);
+			if (valid)
+			{
+				attacker.BeginAction(typeof(Stealth));
+				Timer.DelayCall(
+					TimeSpan.FromSeconds(5.0),
+					delegate
+					{
+						attacker.EndAction(typeof(Stealth));
+					}
+				);
+			}
 
-            attacker.SendLocalizedMessage(1063129); // You catch your opponent off guard with your Surprise Attack!
-            defender.SendLocalizedMessage(1063130); // Your defenses are lowered as your opponent surprises you!
+			return valid;
+		}
 
-            defender.FixedParticles(0x37B9, 1, 5, 0x26DA, 0, 3, EffectLayer.Head);
+		public override void OnHit(Mobile attacker, Mobile defender, int damage)
+		{
+			//Validates before swing
+			ClearCurrentMove(attacker);
 
-            attacker.RevealingAction();
+			attacker.SendLocalizedMessage(1063129); // You catch your opponent off guard with your Surprise Attack!
+			defender.SendLocalizedMessage(1063130); // Your defenses are lowered as your opponent surprises you!
 
-            SurpriseAttackInfo info;
+			defender.FixedParticles(0x37B9, 1, 5, 0x26DA, 0, 3, EffectLayer.Head);
 
-            if (m_Table.Contains(defender))
-            {
-                info = (SurpriseAttackInfo)m_Table[defender];
+			attacker.RevealingAction();
 
-                if (info.m_Timer != null)
-                    info.m_Timer.Stop();
+			SurpriseAttackInfo info;
 
-                m_Table.Remove(defender);
-            }
+			if (m_Table.Contains(defender))
+			{
+				info = (SurpriseAttackInfo)m_Table[defender];
 
-            int ninjitsu = attacker.Skills[SkillName.Ninjitsu].Fixed;
+				if (info.m_Timer != null)
+					info.m_Timer.Stop();
 
-            //int malus = ninjitsu / 60 + (int)Tracking.GetStalkingBonus(attacker, defender);
+				m_Table.Remove(defender);
+			}
+
+			int ninjitsu = attacker.Skills[SkillName.Ninjitsu].Fixed;
+
+			//int malus = ninjitsu / 60 + (int)Tracking.GetStalkingBonus(attacker, defender);
 
 			BaseWeapon weapon = attacker.Weapon as BaseWeapon;
 			double seconds = (double)weapon.Speed;
-            info = new SurpriseAttackInfo(defender, 25);
-            info.m_Timer = Timer.DelayCall(TimeSpan.FromSeconds(seconds), new TimerStateCallback(EndSurprise), info);
+			info = new SurpriseAttackInfo(defender, 25);
+			info.m_Timer = Timer.DelayCall(TimeSpan.FromSeconds(seconds), new TimerStateCallback(EndSurprise), info);
 
-            m_Table[defender] = info;
+			m_Table[defender] = info;
 
-            this.CheckGain(attacker);
-        }
+			this.CheckGain(attacker);
+		}
 
-        public override void OnMiss(Mobile attacker, Mobile defender)
-        {
-            ClearCurrentMove(attacker);
+		public override void OnMiss(Mobile attacker, Mobile defender)
+		{
+			ClearCurrentMove(attacker);
 
-            attacker.SendLocalizedMessage(1063161); // You failed to properly use the element of surprise.
+			attacker.SendLocalizedMessage(1063161); // You failed to properly use the element of surprise.
 
-            attacker.RevealingAction();
-        }
+			attacker.RevealingAction();
+		}
 
-        private static void EndSurprise(object state)
-        {
-            SurpriseAttackInfo info = (SurpriseAttackInfo)state;
+		private static void EndSurprise(object state)
+		{
+			SurpriseAttackInfo info = (SurpriseAttackInfo)state;
 
-            if (info.m_Timer != null)
-                info.m_Timer.Stop();
+			if (info.m_Timer != null)
+				info.m_Timer.Stop();
 
-            info.m_Target.SendLocalizedMessage(1063131); // Your defenses have returned to normal.
+			info.m_Target.SendLocalizedMessage(1063131); // Your defenses have returned to normal.
 
-            m_Table.Remove(info.m_Target);
-        }
+			m_Table.Remove(info.m_Target);
+		}
 
-        private class SurpriseAttackInfo
-        {
-            public readonly Mobile m_Target;
-            public readonly int m_Malus;
-            public Timer m_Timer;
-            public SurpriseAttackInfo(Mobile target, int effect)
-            {
-                this.m_Target = target;
-                this.m_Malus = effect;
-            }
-        }
-    }
+		private class SurpriseAttackInfo
+		{
+			public readonly Mobile m_Target;
+			public readonly int m_Malus;
+			public Timer m_Timer;
+
+			public SurpriseAttackInfo(Mobile target, int effect)
+			{
+				this.m_Target = target;
+				this.m_Malus = effect;
+			}
+		}
+	}
 }

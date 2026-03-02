@@ -11,13 +11,22 @@ namespace Server.Menus.Questions
 		private readonly int m_Serial;
 		private static int m_NextSerial;
 
-		int IMenu.Serial { get { return m_Serial; } }
+		int IMenu.Serial
+		{
+			get { return m_Serial; }
+		}
 
-		int IMenu.EntryLength { get { return m_Answers.Length; } }
+		int IMenu.EntryLength
+		{
+			get { return m_Answers.Length; }
+		}
 
 		public string Question { get; set; }
 
-		public string[] Answers { get { return m_Answers; } }
+		public string[] Answers
+		{
+			get { return m_Answers; }
+		}
 
 		public QuestionMenu(string question, string[] answers)
 		{
@@ -28,15 +37,12 @@ namespace Server.Menus.Questions
 			{
 				m_Serial = ++m_NextSerial;
 				m_Serial &= 0x7FFFFFFF;
-			}
-			while (m_Serial == 0);
+			} while (m_Serial == 0);
 		}
 
-		public virtual void OnCancel(NetState state)
-		{ }
+		public virtual void OnCancel(NetState state) { }
 
-		public virtual void OnResponse(NetState state, int index)
-		{ }
+		public virtual void OnResponse(NetState state, int index) { }
 
 		public void SendTo(NetState state)
 		{

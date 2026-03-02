@@ -2,13 +2,13 @@ using System;
 
 namespace Server.Spells
 {
-    public enum DisturbType
-    {
-        Unspecified,
-        EquipRequest,
-        UseRequest,
-        Hurt,
-        Kill,
-        NewCast
-    }
+	public enum DisturbType
+	{
+		Unspecified,
+		EquipRequest,
+		UseRequest,
+		Hurt,
+		Kill,
+		NewCast,
+	}
 }

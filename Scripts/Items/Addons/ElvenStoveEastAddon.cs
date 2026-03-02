@@ -2,79 +2,66 @@ using System;
 
 namespace Server.Items
 {
-    public class ElvenStoveEastAddon : BaseAddon
-    {
-        [Constructable]
-        public ElvenStoveEastAddon()
-        {
-            this.AddComponent(new AddonComponent(0x2DDB), 0, 0, 0);
-        }
+	public class ElvenStoveEastAddon : BaseAddon
+	{
+		[Constructable]
+		public ElvenStoveEastAddon()
+		{
+			this.AddComponent(new AddonComponent(0x2DDB), 0, 0, 0);
+		}
 
-        public ElvenStoveEastAddon(Serial serial)
-            : base(serial)
-        {
-        }
+		public ElvenStoveEastAddon(Serial serial)
+			: base(serial) { }
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new ElvenStoveEastDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override BaseAddonDeed Deed
+		{
+			get { return new ElvenStoveEastDeed(); }
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class ElvenStoveEastDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public ElvenStoveEastDeed()
-        {
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public ElvenStoveEastDeed(Serial serial)
-            : base(serial)
-        {
-        }
+	public class ElvenStoveEastDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public ElvenStoveEastDeed() { }
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new ElvenStoveEastAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073395;
-            }
-        }// elven oven (east)
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public ElvenStoveEastDeed(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override BaseAddon Addon
+		{
+			get { return new ElvenStoveEastAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1073395; }
+		} // elven oven (east)
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

@@ -2,79 +2,67 @@ using System;
 
 namespace Server.Items
 {
-    public class PolarBearMask : BearMask
+	public class PolarBearMask : BearMask
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public PolarBearMask()
-        {
-            Hue = Utility.RandomBool() ? 0x481 : 0x47E;
-            ArmorAttributes.SelfRepair = 3;
-            Attributes.RegenHits = 2;
-            Attributes.NightSight = 1;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public PolarBearMask(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public PolarBearMask()
+		{
+			Hue = Utility.RandomBool() ? 0x481 : 0x47E;
+			ArmorAttributes.SelfRepair = 3;
+			Attributes.RegenHits = 2;
+			Attributes.NightSight = 1;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1070637;
-            }
-        }
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 15;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 21;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public PolarBearMask(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)2);
-        }
+		public override int LabelNumber
+		{
+			get { return 1070637; }
+		}
+		public override int BasePhysicalResistance
+		{
+			get { return 15; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return 21; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
+			writer.Write((int)2);
+		}
 
-            if (version < 2)
-            {
-                this.Resistances.Physical = 0;
-                this.Resistances.Cold = 0;
-            }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            if (this.Attributes.NightSight == 0)
-                this.Attributes.NightSight = 1;
-        }
-    }
+			int version = reader.ReadInt();
+
+			if (version < 2)
+			{
+				this.Resistances.Physical = 0;
+				this.Resistances.Cold = 0;
+			}
+
+			if (this.Attributes.NightSight == 0)
+				this.Attributes.NightSight = 1;
+		}
+	}
 }

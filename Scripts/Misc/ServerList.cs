@@ -13,33 +13,33 @@ namespace Server.Misc
 {
 	public class ServerList
 	{
-		/* 
-        * The default setting for Address, a value of 'null', will use your local IP address. If all of your local IP addresses
-        * are private network addresses and AutoDetect is 'true' then ServUO will attempt to discover your public IP address
-        * for you automatically.
-        *
-        * If you do not plan on allowing clients outside of your LAN to connect, you can set AutoDetect to 'false' and leave
-        * Address set to 'null'.
-        * 
-        * If your public IP address cannot be determined, you must change the value of Address to your public IP address
-        * manually to allow clients outside of your LAN to connect to your server. Address can be either an IP address or
-        * a hostname that will be resolved when ServUO starts.
-        * 
-        * If you want players outside your LAN to be able to connect to your server and you are behind a router, you must also
-        * forward TCP port 2593 to your private IP address. The procedure for doing this varies by manufacturer but generally
-        * involves configuration of the router through your web browser.
-        *
-        * ServerList will direct connecting clients depending on both the address they are connecting from and the address and
-        * port they are connecting to. If it is determined that both ends of a connection are private IP addresses, ServerList
-        * will direct the client to the local private IP address. If a client is connecting to a local public IP address, they
-        * will be directed to whichever address and port they initially connected to. This allows multihomed servers to function
-        * properly and fully supports listening on multiple ports. If a client with a public IP address is connecting to a
-        * locally private address, the server will direct the client to either the AutoDetected IP address or the manually entered
-        * IP address or hostname, whichever is applicable. Loopback clients will be directed to loopback.
-        * 
-        * If you would like to listen on additional ports (i.e. 22, 23, 80, for clients behind highly restrictive egress
-        * firewalls) or specific IP adddresses you can do so by modifying the file SocketOptions.cs found in this directory.
-        */
+		/*
+		* The default setting for Address, a value of 'null', will use your local IP address. If all of your local IP addresses
+		* are private network addresses and AutoDetect is 'true' then ServUO will attempt to discover your public IP address
+		* for you automatically.
+		*
+		* If you do not plan on allowing clients outside of your LAN to connect, you can set AutoDetect to 'false' and leave
+		* Address set to 'null'.
+		*
+		* If your public IP address cannot be determined, you must change the value of Address to your public IP address
+		* manually to allow clients outside of your LAN to connect to your server. Address can be either an IP address or
+		* a hostname that will be resolved when ServUO starts.
+		*
+		* If you want players outside your LAN to be able to connect to your server and you are behind a router, you must also
+		* forward TCP port 2593 to your private IP address. The procedure for doing this varies by manufacturer but generally
+		* involves configuration of the router through your web browser.
+		*
+		* ServerList will direct connecting clients depending on both the address they are connecting from and the address and
+		* port they are connecting to. If it is determined that both ends of a connection are private IP addresses, ServerList
+		* will direct the client to the local private IP address. If a client is connecting to a local public IP address, they
+		* will be directed to whichever address and port they initially connected to. This allows multihomed servers to function
+		* properly and fully supports listening on multiple ports. If a client with a public IP address is connecting to a
+		* locally private address, the server will direct the client to either the AutoDetected IP address or the manually entered
+		* IP address or hostname, whichever is applicable. Loopback clients will be directed to loopback.
+		*
+		* If you would like to listen on additional ports (i.e. 22, 23, 80, for clients behind highly restrictive egress
+		* firewalls) or specific IP adddresses you can do so by modifying the file SocketOptions.cs found in this directory.
+		*/
 
 		public static readonly string Address = Config.Get("Server.Address", default(string));
 
@@ -100,8 +100,9 @@ namespace Server.Misc
 
 		public static string[] IPServices =
 		{
-			"http://services.servuo.com/ip.php", "http://api.ipify.org",
-			"http://checkip.dyndns.org/"
+			"http://services.servuo.com/ip.php",
+			"http://api.ipify.org",
+			"http://checkip.dyndns.org/",
 		};
 
 		private static void AutoDetection()
@@ -110,7 +111,7 @@ namespace Server.Misc
 			{
 				Utility.PushColor(ConsoleColor.Yellow);
 				Console.WriteLine("ServerList: Auto-detecting public IP address...");
-				
+
 				_PublicAddress = FindPublicAddress(IPServices);
 
 				if (_PublicAddress != null)
@@ -144,19 +145,19 @@ namespace Server.Misc
 					outValue = iphe.AddressList[iphe.AddressList.Length - 1];
 				}
 			}
-			catch
-			{ }
+			catch { }
 		}
 
 		private static bool HasPublicIPAddress()
 		{
 			var adapters = NetworkInterface.GetAllNetworkInterfaces();
-			var uips = adapters.Select(a => a.GetIPProperties())
-							   .SelectMany(p => p.UnicastAddresses.Cast<IPAddressInformation>(), (p, u) => u.Address);
+			var uips = adapters
+				.Select(a => a.GetIPProperties())
+				.SelectMany(p => p.UnicastAddresses.Cast<IPAddressInformation>(), (p, u) => u.Address);
 
-			return
-				uips.Any(
-					ip => !IPAddress.IsLoopback(ip) && ip.AddressFamily != AddressFamily.InterNetworkV6 && !IsPrivateNetwork(ip));
+			return uips.Any(ip =>
+				!IPAddress.IsLoopback(ip) && ip.AddressFamily != AddressFamily.InterNetworkV6 && !IsPrivateNetwork(ip)
+			);
 		}
 
 		private static bool IsPrivateNetwork(IPAddress ip)

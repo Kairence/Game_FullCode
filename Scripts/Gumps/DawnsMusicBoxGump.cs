@@ -26,7 +26,8 @@ namespace Server.Gumps
 			AddHtmlLocalized(14, 12, 273, 20, 1075130, 0x7FFF, false, false); // Choose a track to play
 
 			int page = 1;
-			int i, y = 49;
+			int i,
+				y = 49;
 
 			AddPage(page);
 

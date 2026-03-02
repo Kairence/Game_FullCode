@@ -3,123 +3,123 @@ using Server.Targeting;
 
 namespace Server.Spells.Seventh
 {
-    public class ManaVampireSpell : MagerySpell
-    {
-        private static readonly SpellInfo m_Info = new SpellInfo(
-            "Mana Vampire", "Ort Sanct",
-            221,
-            9032,
-            Reagent.BlackPearl,
-            Reagent.Bloodmoss,
-            Reagent.MandrakeRoot,
-            Reagent.SpidersSilk);
-        public ManaVampireSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+	public class ManaVampireSpell : MagerySpell
+	{
+		private static readonly SpellInfo m_Info = new SpellInfo(
+			"Mana Vampire",
+			"Ort Sanct",
+			221,
+			9032,
+			Reagent.BlackPearl,
+			Reagent.Bloodmoss,
+			Reagent.MandrakeRoot,
+			Reagent.SpidersSilk
+		);
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Seventh;
-            }
-        }
-        public override void OnCast()
-        {
-            this.Caster.Target = new InternalTarget(this);
-        }
+		public ManaVampireSpell(Mobile caster, Item scroll)
+			: base(caster, scroll, m_Info) { }
 
-        public void Target(Mobile m)
-        {
-            if (!this.Caster.CanSee(m))
-            {
-                this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
-            }
-            else if (this.CheckHSequence(m))
-            {
-                SpellHelper.Turn(this.Caster, m);
+		public override SpellCircle Circle
+		{
+			get { return SpellCircle.Seventh; }
+		}
 
-                SpellHelper.CheckReflect((int)this.Circle, this.Caster, ref m);
+		public override void OnCast()
+		{
+			this.Caster.Target = new InternalTarget(this);
+		}
 
-                if (m.Spell != null)
-                    m.Spell.OnCasterHurt();
+		public void Target(Mobile m)
+		{
+			if (!this.Caster.CanSee(m))
+			{
+				this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
+			}
+			else if (this.CheckHSequence(m))
+			{
+				SpellHelper.Turn(this.Caster, m);
 
-                m.Paralyzed = false;
+				SpellHelper.CheckReflect((int)this.Circle, this.Caster, ref m);
 
-                int toDrain = 0;
+				if (m.Spell != null)
+					m.Spell.OnCasterHurt();
 
-                if (Core.AOS)
-                {
-                    toDrain = (int)(this.GetDamageSkill(this.Caster) - this.GetResistSkill(m));
+				m.Paralyzed = false;
 
-                    if (!m.Player)
-                        toDrain /= 2;
+				int toDrain = 0;
 
-                    if (toDrain < 0)
-                        toDrain = 0;
-                    else if (toDrain > m.Mana)
-                        toDrain = m.Mana;
-                }
-                else
-                {
-                    if (this.CheckResisted(m))
-                        m.SendLocalizedMessage(501783); // You feel yourself resisting magical energy.
-                    else
-                        toDrain = m.Mana;
-                }
+				if (Core.AOS)
+				{
+					toDrain = (int)(this.GetDamageSkill(this.Caster) - this.GetResistSkill(m));
 
-                if (toDrain > (this.Caster.ManaMax - this.Caster.Mana))
-                    toDrain = this.Caster.ManaMax - this.Caster.Mana;
+					if (!m.Player)
+						toDrain /= 2;
 
-                m.Mana -= toDrain;
-                this.Caster.Mana += toDrain;
+					if (toDrain < 0)
+						toDrain = 0;
+					else if (toDrain > m.Mana)
+						toDrain = m.Mana;
+				}
+				else
+				{
+					if (this.CheckResisted(m))
+						m.SendLocalizedMessage(501783); // You feel yourself resisting magical energy.
+					else
+						toDrain = m.Mana;
+				}
 
-                if (Core.AOS)
-                {
-                    m.FixedParticles(0x374A, 1, 15, 5054, 23, 7, EffectLayer.Head);
-                    m.PlaySound(0x1F9);
+				if (toDrain > (this.Caster.ManaMax - this.Caster.Mana))
+					toDrain = this.Caster.ManaMax - this.Caster.Mana;
 
-                    this.Caster.FixedParticles(0x0000, 10, 5, 2054, EffectLayer.Head);
-                }
-                else
-                {
-                    m.FixedParticles(0x374A, 10, 15, 5054, EffectLayer.Head);
-                    m.PlaySound(0x1F9);
-                }
+				m.Mana -= toDrain;
+				this.Caster.Mana += toDrain;
 
-                this.HarmfulSpell(m);
-            }
+				if (Core.AOS)
+				{
+					m.FixedParticles(0x374A, 1, 15, 5054, 23, 7, EffectLayer.Head);
+					m.PlaySound(0x1F9);
 
-            this.FinishSequence();
-        }
+					this.Caster.FixedParticles(0x0000, 10, 5, 2054, EffectLayer.Head);
+				}
+				else
+				{
+					m.FixedParticles(0x374A, 10, 15, 5054, EffectLayer.Head);
+					m.PlaySound(0x1F9);
+				}
 
-        public override double GetResistPercent(Mobile target)
-        {
-            return 98.0;
-        }
+				this.HarmfulSpell(m);
+			}
 
-        private class InternalTarget : Target
-        {
-            private readonly ManaVampireSpell m_Owner;
-            public InternalTarget(ManaVampireSpell owner)
-                : base(Core.ML ? 10 : 12, false, TargetFlags.Harmful)
-            {
-                this.m_Owner = owner;
-            }
+			this.FinishSequence();
+		}
 
-            protected override void OnTarget(Mobile from, object o)
-            {
-                if (o is Mobile)
-                {
-                    this.m_Owner.Target((Mobile)o);
-                }
-            }
+		public override double GetResistPercent(Mobile target)
+		{
+			return 98.0;
+		}
 
-            protected override void OnTargetFinish(Mobile from)
-            {
-                this.m_Owner.FinishSequence();
-            }
-        }
-    }
+		private class InternalTarget : Target
+		{
+			private readonly ManaVampireSpell m_Owner;
+
+			public InternalTarget(ManaVampireSpell owner)
+				: base(Core.ML ? 10 : 12, false, TargetFlags.Harmful)
+			{
+				this.m_Owner = owner;
+			}
+
+			protected override void OnTarget(Mobile from, object o)
+			{
+				if (o is Mobile)
+				{
+					this.m_Owner.Target((Mobile)o);
+				}
+			}
+
+			protected override void OnTargetFinish(Mobile from)
+			{
+				this.m_Owner.FinishSequence();
+			}
+		}
+	}
 }

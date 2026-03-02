@@ -5,36 +5,36 @@ namespace Server.Items
 {
 	public class TerathanWarriorCostume : BaseCostume
 	{
-        public override string CreatureName { get { return "terathan warrior"; } }
-
-        [Constructable]
-		public TerathanWarriorCostume() : base( )
+		public override string CreatureName
 		{
-            this.CostumeBody = 70;
+			get { return "terathan warrior"; }
 		}
-		
+
+		[Constructable]
+		public TerathanWarriorCostume()
+			: base()
+		{
+			this.CostumeBody = 70;
+		}
+
 		public override int LabelNumber
-        {
-            get
-            {
-                return 1114228;
-            }
-        }// terathan warrior costume
-
-		public TerathanWarriorCostume( Serial serial ) : base( serial )
 		{
+			get { return 1114228; }
+		} // terathan warrior costume
+
+		public TerathanWarriorCostume(Serial serial)
+			: base(serial) { }
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0);
 		}
 
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
-
-			writer.Write( (int) 0 );
-		}
-		
 		public override void Deserialize(GenericReader reader)
 		{
-			base.Deserialize( reader );
+			base.Deserialize(reader);
 
 			int version = reader.ReadInt();
 		}

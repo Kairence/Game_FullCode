@@ -2,82 +2,71 @@ using System;
 
 namespace Server.Items
 {
-    public class PeachTrunkAddon : BaseAddon
-    {
-        [Constructable]
-        public PeachTrunkAddon()
-            : base()
-        {
-            this.AddComponent(new LocalizedAddonComponent(0xD9C, 1076786), 0, 0, 0);
-        }
+	public class PeachTrunkAddon : BaseAddon
+	{
+		[Constructable]
+		public PeachTrunkAddon()
+			: base()
+		{
+			this.AddComponent(new LocalizedAddonComponent(0xD9C, 1076786), 0, 0, 0);
+		}
 
-        public PeachTrunkAddon(Serial serial)
-            : base(serial)
-        {
-        }
+		public PeachTrunkAddon(Serial serial)
+			: base(serial) { }
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new PeachTrunkDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override BaseAddonDeed Deed
+		{
+			get { return new PeachTrunkDeed(); }
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class PeachTrunkDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public PeachTrunkDeed()
-            : base()
-        {
-            this.LootType = LootType.Blessed;
-        }
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-        public PeachTrunkDeed(Serial serial)
-            : base(serial)
-        {
-        }
+	public class PeachTrunkDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public PeachTrunkDeed()
+			: base()
+		{
+			this.LootType = LootType.Blessed;
+		}
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new PeachTrunkAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1076786;
-            }
-        }// Peach Trunk
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public PeachTrunkDeed(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override BaseAddon Addon
+		{
+			get { return new PeachTrunkAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1076786; }
+		} // Peach Trunk
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

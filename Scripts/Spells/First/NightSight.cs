@@ -3,31 +3,29 @@ using Server.Targeting;
 
 namespace Server.Spells.First
 {
-    public class NightSightSpell : MagerySpell
-    {
-        private static readonly SpellInfo m_Info = new SpellInfo(
-            "Night Sight", "In Lor",
-            236,
-            9031,
-            Reagent.SulfurousAsh,
-            Reagent.SpidersSilk);
-        public NightSightSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+	public class NightSightSpell : MagerySpell
+	{
+		private static readonly SpellInfo m_Info = new SpellInfo(
+			"Night Sight",
+			"In Lor",
+			236,
+			9031,
+			Reagent.SulfurousAsh,
+			Reagent.SpidersSilk
+		);
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.First;
-            }
-        }
+		public NightSightSpell(Mobile caster, Item scroll)
+			: base(caster, scroll, m_Info) { }
 
-        public override void OnCast()
-        {
+		public override SpellCircle Circle
+		{
+			get { return SpellCircle.First; }
+		}
+
+		public override void OnCast()
+		{
 			int level = SpellLevel(Caster, 4);
-			
+
 			TimeSpan length = TimeSpan.FromSeconds(300.0 + level * 60 + Caster.Skills.Magery.Value * 1.5);
 
 			int criBonus = level >= 5 ? 10 : 5;
@@ -35,55 +33,55 @@ namespace Server.Spells.First
 			BuffInfo.AddBuff(Caster, new BuffInfo(BuffIcon.NightSight, 1075833, length, Caster, criBonus.ToString()));
 			Caster.FixedParticles(0x376A, 9, 32, 5007, EffectLayer.Waist);
 			Caster.PlaySound(0x1E3);
-        }
+		}
 
 		/*
-        public void Target(Mobile targ)
-        {
-            SpellHelper.Turn(Caster, targ);
+		public void Target(Mobile targ)
+		{
+			SpellHelper.Turn(Caster, targ);
 
-            if (targ.BeginAction(typeof(LightCycle)))
-            {
-                new LightCycle.NightSightTimer(targ).Start();
+			if (targ.BeginAction(typeof(LightCycle)))
+			{
+				new LightCycle.NightSightTimer(targ).Start();
 				
-                targ.LightLevel = LightCycle.DungeonLevel * 100;
-                targ.FixedParticles(0x376A, 9, 32, 5007, EffectLayer.Waist);
-                targ.PlaySound(0x1E3);
+				targ.LightLevel = LightCycle.DungeonLevel * 100;
+				targ.FixedParticles(0x376A, 9, 32, 5007, EffectLayer.Waist);
+				targ.PlaySound(0x1E3);
 
 
-                BuffInfo.AddBuff(targ, new BuffInfo(BuffIcon.NightSight, 1075643));	//Night Sight/You ignore lighting effects
-            }
-            else
-            {
-                Caster.SendMessage("{0} already have nightsight.", Caster == targ ? "You" : "They");
-            }
-        }
+				BuffInfo.AddBuff(targ, new BuffInfo(BuffIcon.NightSight, 1075643));	//Night Sight/You ignore lighting effects
+			}
+			else
+			{
+				Caster.SendMessage("{0} already have nightsight.", Caster == targ ? "You" : "They");
+			}
+		}
 
-        private class NightSightTarget : Target
-        {
-            private readonly NightSightSpell m_Spell;
+		private class NightSightTarget : Target
+		{
+			private readonly NightSightSpell m_Spell;
 
-            public NightSightTarget(NightSightSpell spell)
-                : base(12, false, TargetFlags.Beneficial)
-            {
-                m_Spell = spell;
-            }
+			public NightSightTarget(NightSightSpell spell)
+				: base(12, false, TargetFlags.Beneficial)
+			{
+				m_Spell = spell;
+			}
 
-            protected override void OnTarget(Mobile from, object targeted)
-            {
-                if (targeted is Mobile && m_Spell.CheckBSequence((Mobile)targeted))
-                {
-                    m_Spell.Target((Mobile)targeted);
-                }
+			protected override void OnTarget(Mobile from, object targeted)
+			{
+				if (targeted is Mobile && m_Spell.CheckBSequence((Mobile)targeted))
+				{
+					m_Spell.Target((Mobile)targeted);
+				}
 
-                m_Spell.FinishSequence();
-            }
+				m_Spell.FinishSequence();
+			}
 
-            protected override void OnTargetFinish(Mobile from)
-            {
-                m_Spell.FinishSequence();
-            }
-        }
+			protected override void OnTargetFinish(Mobile from)
+			{
+				m_Spell.FinishSequence();
+			}
+		}
 		*/
-    }
+	}
 }

@@ -1,171 +1,220 @@
 using System;
-using Server;
-using Server.Spells;
-using Server.Network;
-using Server.Mobiles;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Server;
 using Server.Items;
+using Server.Mobiles;
+using Server.Network;
+using Server.Spells;
 
 namespace Server.Spells.SkillMasteries
 {
 	public class ConduitSpell : SkillMasterySpell
 	{
 		private static SpellInfo m_Info = new SpellInfo(
-				"Conduit", "Uus Corp Grav",
-				204,
-				9061,
-                Reagent.NoxCrystal,
-                Reagent.BatWing,
-                Reagent.GraveDust
-			);
+			"Conduit",
+			"Uus Corp Grav",
+			204,
+			9061,
+			Reagent.NoxCrystal,
+			Reagent.BatWing,
+			Reagent.GraveDust
+		);
 
-		public override double RequiredSkill{ get { return 90; } }
-		public override double UpKeep { get { return 0; } }
-		public override int RequiredMana{ get { return 40; } }
-		public override bool PartyEffects { get { return false; } }
-
-        public override SkillName CastSkill { get { return SkillName.Necromancy; } }
-        public override SkillName DamageSkill { get { return SkillName.SpiritSpeak; } }
-
-        public int Strength { get; set; }
-        public List<Item> Skulls { get; set; }
-        public Rectangle2D Zone { get; set; }
-
-        public ConduitSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
+		public override double RequiredSkill
 		{
+			get { return 90; }
+		}
+		public override double UpKeep
+		{
+			get { return 0; }
+		}
+		public override int RequiredMana
+		{
+			get { return 40; }
+		}
+		public override bool PartyEffects
+		{
+			get { return false; }
 		}
 
-        public override void OnBeginCast()
-        {
-            base.OnBeginCast();
+		public override SkillName CastSkill
+		{
+			get { return SkillName.Necromancy; }
+		}
+		public override SkillName DamageSkill
+		{
+			get { return SkillName.SpiritSpeak; }
+		}
 
-            Effects.SendLocationParticles(EffectItem.Create(Caster.Location, Caster.Map, EffectItem.DefaultDuration), 0x36CB, 1, 14, 0x55C, 7, 9915, 0);
-        }
+		public int Strength { get; set; }
+		public List<Item> Skulls { get; set; }
+		public Rectangle2D Zone { get; set; }
+
+		public ConduitSpell(Mobile caster, Item scroll)
+			: base(caster, scroll, m_Info) { }
+
+		public override void OnBeginCast()
+		{
+			base.OnBeginCast();
+
+			Effects.SendLocationParticles(
+				EffectItem.Create(Caster.Location, Caster.Map, EffectItem.DefaultDuration),
+				0x36CB,
+				1,
+				14,
+				0x55C,
+				7,
+				9915,
+				0
+			);
+		}
 
 		public override void OnCast()
 		{
-            Caster.Target = new MasteryTarget(this, 10, true, Server.Targeting.TargetFlags.None);
+			Caster.Target = new MasteryTarget(this, 10, true, Server.Targeting.TargetFlags.None);
 		}
 
-        protected override void OnTarget(object o)
-        {
-            IPoint3D p = o as IPoint3D;
+		protected override void OnTarget(object o)
+		{
+			IPoint3D p = o as IPoint3D;
 
-            if (p != null && CheckSequence())
-            {
-                Rectangle2D rec = new Rectangle2D(p.X - 3, p.Y - 3, 6, 6);
-                Skulls = new List<Item>();
+			if (p != null && CheckSequence())
+			{
+				Rectangle2D rec = new Rectangle2D(p.X - 3, p.Y - 3, 6, 6);
+				Skulls = new List<Item>();
 
-                Item skull = new InternalItem();
-                skull.MoveToWorld(new Point3D(rec.X, rec.Y, Caster.Map.GetAverageZ(rec.X, rec.Y)), Caster.Map);
-                Skulls.Add(skull);
+				Item skull = new InternalItem();
+				skull.MoveToWorld(new Point3D(rec.X, rec.Y, Caster.Map.GetAverageZ(rec.X, rec.Y)), Caster.Map);
+				Skulls.Add(skull);
 
-                skull = new InternalItem();
-                skull.MoveToWorld(new Point3D(rec.X + rec.Width, rec.Y + rec.Height, Caster.Map.GetAverageZ(rec.X + rec.Width, rec.Y + rec.Height)), Caster.Map);
-                Skulls.Add(skull);
+				skull = new InternalItem();
+				skull.MoveToWorld(
+					new Point3D(
+						rec.X + rec.Width,
+						rec.Y + rec.Height,
+						Caster.Map.GetAverageZ(rec.X + rec.Width, rec.Y + rec.Height)
+					),
+					Caster.Map
+				);
+				Skulls.Add(skull);
 
-                skull = new InternalItem();
-                skull.MoveToWorld(new Point3D(rec.X + rec.Width, rec.Y, Caster.Map.GetAverageZ(rec.X + rec.Width, rec.Y)), Caster.Map);
-                Skulls.Add(skull);
+				skull = new InternalItem();
+				skull.MoveToWorld(
+					new Point3D(rec.X + rec.Width, rec.Y, Caster.Map.GetAverageZ(rec.X + rec.Width, rec.Y)),
+					Caster.Map
+				);
+				Skulls.Add(skull);
 
-                skull = new InternalItem();
-                skull.MoveToWorld(new Point3D(rec.X, rec.Y + rec.Height, Caster.Map.GetAverageZ(rec.X, rec.Y + rec.Height)), Caster.Map);
-                Skulls.Add(skull);
+				skull = new InternalItem();
+				skull.MoveToWorld(
+					new Point3D(rec.X, rec.Y + rec.Height, Caster.Map.GetAverageZ(rec.X, rec.Y + rec.Height)),
+					Caster.Map
+				);
+				Skulls.Add(skull);
 
-                skull = new InternalItem();
-                skull.MoveToWorld(new Point3D(rec.X + (rec.Width / 2), rec.Y + (rec.Height / 2), Caster.Map.GetAverageZ(rec.X + (rec.Width / 2), rec.Y + (rec.Height / 2))), Caster.Map);
-                Skulls.Add(skull);
+				skull = new InternalItem();
+				skull.MoveToWorld(
+					new Point3D(
+						rec.X + (rec.Width / 2),
+						rec.Y + (rec.Height / 2),
+						Caster.Map.GetAverageZ(rec.X + (rec.Width / 2), rec.Y + (rec.Height / 2))
+					),
+					Caster.Map
+				);
+				Skulls.Add(skull);
 
-                Zone = rec;
-                Strength = (int)((Caster.Skills[CastSkill].Value + Caster.Skills[DamageSkill].Value + (GetMasteryLevel() * 20)) / 3.75);
-                Expires = DateTime.UtcNow + TimeSpan.FromSeconds(Core.TOL ? 6 : 4 + (Caster.Skills[CastSkill].Value + Caster.Skills[DamageSkill].Value) / 36);
+				Zone = rec;
+				Strength = (int)(
+					(Caster.Skills[CastSkill].Value + Caster.Skills[DamageSkill].Value + (GetMasteryLevel() * 20))
+					/ 3.75
+				);
+				Expires =
+					DateTime.UtcNow
+					+ TimeSpan.FromSeconds(
+						Core.TOL ? 6 : 4 + (Caster.Skills[CastSkill].Value + Caster.Skills[DamageSkill].Value) / 36
+					);
 
-                BuffInfo.AddBuff(Caster, new BuffInfo(BuffIcon.Conduit, 1155901, 1156053, Strength.ToString())); //Targeted Necromancy spells used on a target within the Conduit field will affect all valid targets within the field at ~1_PERCT~% strength. 
+				BuffInfo.AddBuff(Caster, new BuffInfo(BuffIcon.Conduit, 1155901, 1156053, Strength.ToString())); //Targeted Necromancy spells used on a target within the Conduit field will affect all valid targets within the field at ~1_PERCT~% strength.
 
-                BeginTimer();
-            }
-        }
+				BeginTimer();
+			}
+		}
 
-        public override void EndEffects()
-        {
-            ColUtility.ForEach(Skulls.Where(i => i != null && !i.Deleted), i => i.Delete());
-            ColUtility.Free(Skulls);
+		public override void EndEffects()
+		{
+			ColUtility.ForEach(Skulls.Where(i => i != null && !i.Deleted), i => i.Delete());
+			ColUtility.Free(Skulls);
 
-            BuffInfo.RemoveBuff(Caster, BuffIcon.Conduit);
-        }
+			BuffInfo.RemoveBuff(Caster, BuffIcon.Conduit);
+		}
 
-        public static bool CheckAffected(Mobile caster, IDamageable victim, Action<Mobile, double> callback)
-        {
-            if (victim == null || victim.Map == null)
-                return false;
+		public static bool CheckAffected(Mobile caster, IDamageable victim, Action<Mobile, double> callback)
+		{
+			if (victim == null || victim.Map == null)
+				return false;
 
-            foreach (SkillMasterySpell spell in EnumerateSpells(caster, typeof(ConduitSpell)))
-            {
-                ConduitSpell conduit = spell as ConduitSpell;
+			foreach (SkillMasterySpell spell in EnumerateSpells(caster, typeof(ConduitSpell)))
+			{
+				ConduitSpell conduit = spell as ConduitSpell;
 
-                if (conduit == null)
-                    continue;
+				if (conduit == null)
+					continue;
 
-                if (conduit.Zone.Contains(victim))
-                {
-                    IPooledEnumerable eable = victim.Map.GetMobilesInBounds(conduit.Zone);
-                    List<Mobile> toAffect = null;
+				if (conduit.Zone.Contains(victim))
+				{
+					IPooledEnumerable eable = victim.Map.GetMobilesInBounds(conduit.Zone);
+					List<Mobile> toAffect = null;
 
-                    foreach (Mobile m in eable)
-                    {
-                        if (m != victim && conduit.Caster.CanBeHarmful(m))
-                        {
-                            if (toAffect == null)
-                                toAffect = new List<Mobile>();
+					foreach (Mobile m in eable)
+					{
+						if (m != victim && conduit.Caster.CanBeHarmful(m))
+						{
+							if (toAffect == null)
+								toAffect = new List<Mobile>();
 
-                            toAffect.Add(m);
-                        }
-                    }
+							toAffect.Add(m);
+						}
+					}
 
-                    eable.Free();
+					eable.Free();
 
-                    if (toAffect != null && callback != null)
-                    {
-                        toAffect.ForEach(m => callback(m, (double)conduit.Strength / 100.0));
-                        ColUtility.Free(toAffect);
-                        return true;
-                    }
-                }
-            }
+					if (toAffect != null && callback != null)
+					{
+						toAffect.ForEach(m => callback(m, (double)conduit.Strength / 100.0));
+						ColUtility.Free(toAffect);
+						return true;
+					}
+				}
+			}
 
-            return false;
-        }
+			return false;
+		}
 
-        private class InternalItem : Item
-        {
-            public InternalItem()
-                : base(Utility.RandomList(0x1853, 0x1858))
-            {
-            }
+		private class InternalItem : Item
+		{
+			public InternalItem()
+				: base(Utility.RandomList(0x1853, 0x1858)) { }
 
-            public InternalItem(Serial serial)
-                : base(serial)
-            {
-            }
+			public InternalItem(Serial serial)
+				: base(serial) { }
 
-            public override void Serialize(GenericWriter writer)
-            {
-                base.Serialize(writer);
+			public override void Serialize(GenericWriter writer)
+			{
+				base.Serialize(writer);
 
-                writer.Write((int)0); // version
-            }
+				writer.Write((int)0); // version
+			}
 
-            public override void Deserialize(GenericReader reader)
-            {
-                base.Deserialize(reader);
+			public override void Deserialize(GenericReader reader)
+			{
+				base.Deserialize(reader);
 
-                int version = reader.ReadInt();
+				int version = reader.ReadInt();
 
-                Delete();
-            }
-        }
+				Delete();
+			}
+		}
 	}
 }

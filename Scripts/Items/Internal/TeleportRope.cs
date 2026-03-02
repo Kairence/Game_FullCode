@@ -8,7 +8,10 @@ namespace Server.Items
 {
 	public class TeleportRope : Static
 	{
-        public virtual bool AllowDead { get { return true; } }
+		public virtual bool AllowDead
+		{
+			get { return true; }
+		}
 
 		[CommandProperty(AccessLevel.Administrator)]
 		public Point3D ToLocation { get; set; }
@@ -25,32 +28,30 @@ namespace Server.Items
 		}
 
 		public TeleportRope(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		public override void OnDoubleClick(Mobile from)
 		{
 			base.OnDoubleClick(from);
 
-			if (ToLocation == Point3D.Zero ||
-				ToMap == Map.Internal)
+			if (ToLocation == Point3D.Zero || ToMap == Map.Internal)
 				return;
-				
+
 			if (from.InRange(GetWorldLocation(), 1))
 				from.MoveToWorld(ToLocation, ToMap);
 		}
 
-        public override void OnDoubleClickDead(Mobile from)
-        {
-            if (AllowDead)
-            {
-                OnDoubleClick(from);
-            }
-            else
-            {
-                base.OnDoubleClickDead(from);
-            }
-        }
+		public override void OnDoubleClickDead(Mobile from)
+		{
+			if (AllowDead)
+			{
+				OnDoubleClick(from);
+			}
+			else
+			{
+				base.OnDoubleClickDead(from);
+			}
+		}
 
 		public override void Serialize(GenericWriter writer)
 		{

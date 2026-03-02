@@ -27,10 +27,18 @@ namespace Server
 		}
 
 		[CommandProperty(AccessLevel.Decorator)]
-		public Map Map { get { return _Map; } set { _Map = value; } }
+		public Map Map
+		{
+			get { return _Map; }
+			set { _Map = value; }
+		}
 
 		[CommandProperty(AccessLevel.Decorator)]
-		public Point3D Location { get { return _Location; } set { _Location = value; } }
+		public Point3D Location
+		{
+			get { return _Location; }
+			set { _Location = value; }
+		}
 
 		public void Serialize(GenericWriter writer)
 		{
@@ -48,11 +56,11 @@ namespace Server
 			switch (version)
 			{
 				case 0:
-					{
-						_Map = reader.ReadMap();
-						_Location = reader.ReadPoint3D();
-						break;
-					}
+				{
+					_Map = reader.ReadMap();
+					_Location = reader.ReadPoint3D();
+					break;
+				}
 			}
 		}
 	}

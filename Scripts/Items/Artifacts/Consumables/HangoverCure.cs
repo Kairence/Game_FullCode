@@ -2,100 +2,95 @@ using System;
 
 namespace Server.Engines.Quests.Hag
 {
-    public class HangoverCure : Item
-    {
-		public override bool IsArtifact { get { return true; } }
-        private int m_Uses;
-        [Constructable]
-        public HangoverCure()
-            : base(0xE2B)
-        {
-            Weight = 1.0;
-            Hue = 0x2D;
+	public class HangoverCure : Item
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
+		private int m_Uses;
 
-            m_Uses = 20;
-        }
+		[Constructable]
+		public HangoverCure()
+			: base(0xE2B)
+		{
+			Weight = 1.0;
+			Hue = 0x2D;
 
-        public HangoverCure(Serial serial)
-            : base(serial)
-        {
-        }
+			m_Uses = 20;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1055060;
-            }
-        }// Grizelda's Extra Strength Hangover Cure
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int Uses
-        {
-            get
-            {
-                return this.m_Uses;
-            }
-            set
-            {
-                this.m_Uses = value;
-            }
-        }
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (!this.IsChildOf(from.Backpack))
-            {
-                this.SendLocalizedMessageTo(from, 1042038); // You must have the object in your backpack to use it.
-                return;
-            }
+		public HangoverCure(Serial serial)
+			: base(serial) { }
 
-            if (this.m_Uses > 0)
-            {
-                from.PlaySound(0x2D6);
-                from.SendLocalizedMessage(501206); // An awful taste fills your mouth.
+		public override int LabelNumber
+		{
+			get { return 1055060; }
+		} // Grizelda's Extra Strength Hangover Cure
 
-                if (from.BAC > 0)
-                {
-                    from.BAC = 0;
-                    from.SendLocalizedMessage(501204); // You are now sober!
-                }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int Uses
+		{
+			get { return this.m_Uses; }
+			set { this.m_Uses = value; }
+		}
 
-                this.m_Uses--;
-            }
-            else
-            {
-                this.Delete();
-                from.SendLocalizedMessage(501201); // There wasn't enough left to have any effect.
-            }
-        }
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (!this.IsChildOf(from.Backpack))
+			{
+				this.SendLocalizedMessageTo(from, 1042038); // You must have the object in your backpack to use it.
+				return;
+			}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			if (this.m_Uses > 0)
+			{
+				from.PlaySound(0x2D6);
+				from.SendLocalizedMessage(501206); // An awful taste fills your mouth.
 
-            writer.Write((int)1); // version
+				if (from.BAC > 0)
+				{
+					from.BAC = 0;
+					from.SendLocalizedMessage(501204); // You are now sober!
+				}
 
-            writer.WriteEncodedInt(this.m_Uses);
-        }
+				this.m_Uses--;
+			}
+			else
+			{
+				this.Delete();
+				from.SendLocalizedMessage(501201); // There wasn't enough left to have any effect.
+			}
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
+			writer.Write((int)1); // version
 
-            switch ( version )
-            {
-                case 1:
-                    {
-                        this.m_Uses = reader.ReadEncodedInt();
-                        break;
-                    }
-                case 0:
-                    {
-                        this.m_Uses = 20;
-                        break;
-                    }
-            }
-        }
-    }
+			writer.WriteEncodedInt(this.m_Uses);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+
+			switch (version)
+			{
+				case 1:
+				{
+					this.m_Uses = reader.ReadEncodedInt();
+					break;
+				}
+				case 0:
+				{
+					this.m_Uses = 20;
+					break;
+				}
+			}
+		}
+	}
 }

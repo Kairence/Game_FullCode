@@ -4,63 +4,69 @@ using System.Text;
 
 namespace System
 {
-    public class ConsoleHook : TextWriter
-    {
+	public class ConsoleHook : TextWriter
+	{
 #if DEBUG
-        private static readonly bool _Enabled = false;
+		private static readonly bool _Enabled = false;
 #else
-        private static readonly bool _Enabled = true;
+		private static readonly bool _Enabled = true;
 #endif
 
-        private static Stream m_OldOutput;
-        private static bool m_Newline;
-        public override Encoding Encoding
-        {
-            get
-            {
-                return Encoding.ASCII;
-            }
-        }
-        private string Timestamp
-        {
-            get
-            {
-                return String.Format("{0:D4}-{1:D2}-{2:D2} {3:D2}:{4:D2}:{5:D2} ", DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
-            }
-        }
-        public static void Initialize()
-        {
-            if (_Enabled)
-            {
-                m_OldOutput = Console.OpenStandardOutput();
-                Console.SetOut(new ConsoleHook());
-                m_Newline = true;
-            }
-        }
+		private static Stream m_OldOutput;
+		private static bool m_Newline;
+		public override Encoding Encoding
+		{
+			get { return Encoding.ASCII; }
+		}
+		private string Timestamp
+		{
+			get
+			{
+				return String.Format(
+					"{0:D4}-{1:D2}-{2:D2} {3:D2}:{4:D2}:{5:D2} ",
+					DateTime.Now.Year,
+					DateTime.Now.Month,
+					DateTime.Now.Day,
+					DateTime.Now.Hour,
+					DateTime.Now.Minute,
+					DateTime.Now.Second
+				);
+			}
+		}
 
-        public override void WriteLine(string value)
-        {
-            if (m_Newline)
-            {
-                value = this.Timestamp + value;
-            }
+		public static void Initialize()
+		{
+			if (_Enabled)
+			{
+				m_OldOutput = Console.OpenStandardOutput();
+				Console.SetOut(new ConsoleHook());
+				m_Newline = true;
+			}
+		}
 
-            byte[] data = this.Encoding.GetBytes(value);
-            m_OldOutput.Write(data, 0, data.Length);
-            m_OldOutput.WriteByte(10);
-            m_Newline = true;
-        }
+		public override void WriteLine(string value)
+		{
+			if (m_Newline)
+			{
+				value = this.Timestamp + value;
+			}
 
-        public override void Write(string value)
-        {
-            if (m_Newline)
-            {
-                value = this.Timestamp + value;
-            }
+			byte[] data = this.Encoding.GetBytes(value);
+			m_OldOutput.Write(data, 0, data.Length);
+			m_OldOutput.WriteByte(10);
+			m_Newline = true;
+		}
 
-            byte[] data = this.Encoding.GetBytes(value);
-            m_OldOutput.Write(data, 0, data.Length);
-            m_Newline = false;
-        }
-    }
+		public override void Write(string value)
+		{
+			if (m_Newline)
+			{
+				value = this.Timestamp + value;
+			}
+
+			byte[] data = this.Encoding.GetBytes(value);
+			m_OldOutput.Write(data, 0, data.Length);
+			m_Newline = false;
+		}
+	}
 }

@@ -1,6 +1,5 @@
 #region References
 using System;
-
 using Server.Items;
 using Server.Targeting;
 #endregion
@@ -54,7 +53,7 @@ namespace Server.Mobiles
 			VirtualArmor = 32;
 
 			Item shroud = new Robe();
-            shroud.ItemID = 0x2683;
+			shroud.ItemID = 0x2683;
 			shroud.Hue = 0x455;
 			shroud.Movable = false;
 			SetWearable(shroud);
@@ -62,21 +61,44 @@ namespace Server.Mobiles
 			Halberd weapon = new Halberd();
 			weapon.Hue = 1;
 			weapon.Movable = false;
-            SetWearable(weapon);
+			SetWearable(weapon);
 		}
 
 		public Revenant(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
-		public override Mobile ConstantFocus { get { return m_Target; } }
-		public override bool NoHouseRestrictions { get { return true; } }
-		public override double DispelDifficulty { get { return 80.0; } }
-		public override double DispelFocus { get { return 20.0; } }
-		public override bool AlwaysMurderer { get { return true; } }
-		public override bool BleedImmune { get { return true; } }
-		public override bool BardImmune { get { return true; } }
-		public override Poison PoisonImmune { get { return Poison.Lethal; } }
+		public override Mobile ConstantFocus
+		{
+			get { return m_Target; }
+		}
+		public override bool NoHouseRestrictions
+		{
+			get { return true; }
+		}
+		public override double DispelDifficulty
+		{
+			get { return 80.0; }
+		}
+		public override double DispelFocus
+		{
+			get { return 20.0; }
+		}
+		public override bool AlwaysMurderer
+		{
+			get { return true; }
+		}
+		public override bool BleedImmune
+		{
+			get { return true; }
+		}
+		public override bool BardImmune
+		{
+			get { return true; }
+		}
+		public override Poison PoisonImmune
+		{
+			get { return Poison.Lethal; }
+		}
 
 		public override void DisplayPaperdollTo(Mobile to)
 		{
@@ -128,13 +150,26 @@ namespace Server.Mobiles
 				ProcessDelta();
 
 				Effects.SendLocationParticles(
-					EffectItem.Create(from, fromMap, EffectItem.DefaultDuration), 0x3728, 1, 13, 37, 7, 5023, 0);
+					EffectItem.Create(from, fromMap, EffectItem.DefaultDuration),
+					0x3728,
+					1,
+					13,
+					37,
+					7,
+					5023,
+					0
+				);
 				FixedParticles(0x3728, 1, 13, 5023, 37, 7, EffectLayer.Waist);
 
 				PlaySound(0x37D);
 			}
 
-			if (m_Target.Hidden && InRange(m_Target, 3) && Core.TickCount >= NextSkillTime && UseSkill(SkillName.DetectHidden))
+			if (
+				m_Target.Hidden
+				&& InRange(m_Target, 3)
+				&& Core.TickCount >= NextSkillTime
+				&& UseSkill(SkillName.DetectHidden)
+			)
 			{
 				Target targ = Target;
 
@@ -159,7 +194,15 @@ namespace Server.Mobiles
 		{
 			Effects.PlaySound(Location, Map, 0x10B);
 			Effects.SendLocationParticles(
-				EffectItem.Create(Location, Map, TimeSpan.FromSeconds(10.0)), 0x37CC, 1, 50, 2101, 7, 9909, 0);
+				EffectItem.Create(Location, Map, TimeSpan.FromSeconds(10.0)),
+				0x37CC,
+				1,
+				50,
+				2101,
+				7,
+				9909,
+				0
+			);
 
 			Delete();
 			return false;

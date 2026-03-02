@@ -2,39 +2,39 @@ using System;
 
 namespace Server.Items
 {
-    public class SapphireMace : DiamondMace
+	public class SapphireMace : DiamondMace
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public SapphireMace()
-        {
-            WeaponAttributes.ResistEnergyBonus = 5;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public SapphireMace(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public SapphireMace()
+		{
+			WeaponAttributes.ResistEnergyBonus = 5;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073531;
-            }
-        }// sapphire mace
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public SapphireMace(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1073531; }
+		} // sapphire mace
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

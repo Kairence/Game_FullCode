@@ -2,129 +2,108 @@ using System;
 
 namespace Server.Items
 {
-    public class KhaldunPitTeleporter : Item
-    {
-        private bool m_Active;
-        private Point3D m_PointDest;
-        private Map m_MapDest;
-        [Constructable]
-        public KhaldunPitTeleporter()
-            : this(new Point3D(5451, 1374, 0), Map.Felucca)
-        {
-        }
+	public class KhaldunPitTeleporter : Item
+	{
+		private bool m_Active;
+		private Point3D m_PointDest;
+		private Map m_MapDest;
 
-        [Constructable]
-        public KhaldunPitTeleporter(Point3D pointDest, Map mapDest)
-            : base(0x053B)
-        {
-            this.Movable = false;
-            this.Hue = 1;
+		[Constructable]
+		public KhaldunPitTeleporter()
+			: this(new Point3D(5451, 1374, 0), Map.Felucca) { }
 
-            this.m_Active = true;
-            this.m_PointDest = pointDest;
-            this.m_MapDest = mapDest;
-        }
+		[Constructable]
+		public KhaldunPitTeleporter(Point3D pointDest, Map mapDest)
+			: base(0x053B)
+		{
+			this.Movable = false;
+			this.Hue = 1;
 
-        public KhaldunPitTeleporter(Serial serial)
-            : base(serial)
-        {
-        }
+			this.m_Active = true;
+			this.m_PointDest = pointDest;
+			this.m_MapDest = mapDest;
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool Active
-        {
-            get
-            {
-                return this.m_Active;
-            }
-            set
-            {
-                this.m_Active = value;
-            }
-        }
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Point3D PointDest
-        {
-            get
-            {
-                return this.m_PointDest;
-            }
-            set
-            {
-                this.m_PointDest = value;
-            }
-        }
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Map MapDest
-        {
-            get
-            {
-                return this.m_MapDest;
-            }
-            set
-            {
-                this.m_MapDest = value;
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1016511;
-            }
-        }// the floor of the cavern seems to have collapsed here - a faint light is visible at the bottom of the pit
-        public override void OnDoubleClick(Mobile m)
-        {
-            if (!this.m_Active)
-                return;
+		public KhaldunPitTeleporter(Serial serial)
+			: base(serial) { }
 
-            Map map = this.m_MapDest;
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool Active
+		{
+			get { return this.m_Active; }
+			set { this.m_Active = value; }
+		}
 
-            if (map == null || map == Map.Internal)
-                map = m.Map;
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Point3D PointDest
+		{
+			get { return this.m_PointDest; }
+			set { this.m_PointDest = value; }
+		}
 
-            Point3D p = this.m_PointDest;
+		[CommandProperty(AccessLevel.GameMaster)]
+		public Map MapDest
+		{
+			get { return this.m_MapDest; }
+			set { this.m_MapDest = value; }
+		}
+		public override int LabelNumber
+		{
+			get { return 1016511; }
+		} // the floor of the cavern seems to have collapsed here - a faint light is visible at the bottom of the pit
 
-            if (p == Point3D.Zero)
-                p = m.Location;
+		public override void OnDoubleClick(Mobile m)
+		{
+			if (!this.m_Active)
+				return;
 
-            if (m.InRange(this, 3))
-            {
-                Server.Mobiles.BaseCreature.TeleportPets(m, this.m_PointDest, this.m_MapDest);
+			Map map = this.m_MapDest;
 
-                m.MoveToWorld(this.m_PointDest, this.m_MapDest);
-            }
-            else
-            {
-                m.SendLocalizedMessage(1019045); // I can't reach that.
-            }
-        }
+			if (map == null || map == Map.Internal)
+				map = m.Map;
 
-        public override void OnDoubleClickDead(Mobile m)
-        {
-            this.OnDoubleClick(m);
-        }
+			Point3D p = this.m_PointDest;
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			if (p == Point3D.Zero)
+				p = m.Location;
 
-            writer.Write((int)0); // version
+			if (m.InRange(this, 3))
+			{
+				Server.Mobiles.BaseCreature.TeleportPets(m, this.m_PointDest, this.m_MapDest);
 
-            writer.Write(this.m_Active);
-            writer.Write(this.m_PointDest);
-            writer.Write(this.m_MapDest);
-        }
+				m.MoveToWorld(this.m_PointDest, this.m_MapDest);
+			}
+			else
+			{
+				m.SendLocalizedMessage(1019045); // I can't reach that.
+			}
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void OnDoubleClickDead(Mobile m)
+		{
+			this.OnDoubleClick(m);
+		}
 
-            int version = reader.ReadInt();
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            this.m_Active = reader.ReadBool();
-            this.m_PointDest = reader.ReadPoint3D();
-            this.m_MapDest = reader.ReadMap();
-        }
-    }
+			writer.Write((int)0); // version
+
+			writer.Write(this.m_Active);
+			writer.Write(this.m_PointDest);
+			writer.Write(this.m_MapDest);
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+
+			this.m_Active = reader.ReadBool();
+			this.m_PointDest = reader.ReadPoint3D();
+			this.m_MapDest = reader.ReadMap();
+		}
+	}
 }

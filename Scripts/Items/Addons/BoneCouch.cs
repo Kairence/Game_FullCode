@@ -2,145 +2,128 @@ using System;
 
 namespace Server.Items
 {
-    public class BoneCouchComponent : AddonComponent
-    {
-        public BoneCouchComponent(int itemID)
-            : base(itemID)
-        {
-        }
+	public class BoneCouchComponent : AddonComponent
+	{
+		public BoneCouchComponent(int itemID)
+			: base(itemID) { }
 
-        public BoneCouchComponent(Serial serial)
-            : base(serial)
-        {
-        }
+		public BoneCouchComponent(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1074477;
-            }
-        }// Bone couch
-        public override bool OnMoveOver(Mobile m)
-        {
-            bool allow = base.OnMoveOver(m);
+		public override int LabelNumber
+		{
+			get { return 1074477; }
+		} // Bone couch
 
-            if (allow && m.Alive && m.Player && (m.IsPlayer() || !m.Hidden))
-                Effects.PlaySound(this.Location, this.Map, Utility.RandomMinMax(0x547, 0x54A));
+		public override bool OnMoveOver(Mobile m)
+		{
+			bool allow = base.OnMoveOver(m);
 
-            return allow;
-        }
+			if (allow && m.Alive && m.Player && (m.IsPlayer() || !m.Hidden))
+				Effects.PlaySound(this.Location, this.Map, Utility.RandomMinMax(0x547, 0x54A));
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			return allow;
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    [FlipableAddon(Direction.South, Direction.East)]
-    public class BoneCouchAddon : BaseAddon
-    {
-        [Constructable]
-        public BoneCouchAddon()
-            : base()
-        {
-            this.Direction = Direction.South;
+			int version = reader.ReadEncodedInt();
+		}
+	}
 
-            this.AddComponent(new BoneCouchComponent(0x2A5A), 0, 0, 0);
-            this.AddComponent(new BoneCouchComponent(0x2A5B), -1, 0, 0);
-        }
+	[FlipableAddon(Direction.South, Direction.East)]
+	public class BoneCouchAddon : BaseAddon
+	{
+		[Constructable]
+		public BoneCouchAddon()
+			: base()
+		{
+			this.Direction = Direction.South;
 
-        public BoneCouchAddon(Serial serial)
-            : base(serial)
-        {
-        }
+			this.AddComponent(new BoneCouchComponent(0x2A5A), 0, 0, 0);
+			this.AddComponent(new BoneCouchComponent(0x2A5B), -1, 0, 0);
+		}
 
-        public override BaseAddonDeed Deed
-        {
-            get
-            {
-                return new BoneCouchDeed();
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public BoneCouchAddon(Serial serial)
+			: base(serial) { }
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override BaseAddonDeed Deed
+		{
+			get { return new BoneCouchDeed(); }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
-        }
+			writer.WriteEncodedInt(0); // version
+		}
 
-        public virtual void Flip(Mobile from, Direction direction)
-        {
-            switch ( direction )
-            {
-                case Direction.East:
-                    this.AddComponent(new BoneCouchComponent(0x2A80), 0, 0, 0);
-                    this.AddComponent(new BoneCouchComponent(0x2A7F), 0, 1, 0);
-                    break;
-                case Direction.South:
-                    this.AddComponent(new BoneCouchComponent(0x2A5A), 0, 0, 0);
-                    this.AddComponent(new BoneCouchComponent(0x2A5B), -1, 0, 0);
-                    break;
-            }
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-    public class BoneCouchDeed : BaseAddonDeed
-    {
-        [Constructable]
-        public BoneCouchDeed()
-            : base()
-        {
-            this.LootType = LootType.Blessed;
-        }
+			int version = reader.ReadEncodedInt();
+		}
 
-        public BoneCouchDeed(Serial serial)
-            : base(serial)
-        {
-        }
+		public virtual void Flip(Mobile from, Direction direction)
+		{
+			switch (direction)
+			{
+				case Direction.East:
+					this.AddComponent(new BoneCouchComponent(0x2A80), 0, 0, 0);
+					this.AddComponent(new BoneCouchComponent(0x2A7F), 0, 1, 0);
+					break;
+				case Direction.South:
+					this.AddComponent(new BoneCouchComponent(0x2A5A), 0, 0, 0);
+					this.AddComponent(new BoneCouchComponent(0x2A5B), -1, 0, 0);
+					break;
+			}
+		}
+	}
 
-        public override BaseAddon Addon
-        {
-            get
-            {
-                return new BoneCouchAddon();
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1074477;
-            }
-        }// Bone couch
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+	public class BoneCouchDeed : BaseAddonDeed
+	{
+		[Constructable]
+		public BoneCouchDeed()
+			: base()
+		{
+			this.LootType = LootType.Blessed;
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public BoneCouchDeed(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override BaseAddon Addon
+		{
+			get { return new BoneCouchAddon(); }
+		}
+		public override int LabelNumber
+		{
+			get { return 1074477; }
+		} // Bone couch
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.WriteEncodedInt(0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

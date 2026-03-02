@@ -3,156 +3,148 @@ using Server.Mobiles;
 
 namespace Server.Engines.XmlSpawner2
 {
-    public class XmlSpawnTime : XmlAttachment
-    {
-        private TimeSpan m_MinDelay = TimeSpan.MinValue;
-        private TimeSpan m_MaxDelay = TimeSpan.MinValue;
-        // a serial constructor is REQUIRED
-        public XmlSpawnTime(ASerial serial)
-            : base(serial)
-        {
-        }
+	public class XmlSpawnTime : XmlAttachment
+	{
+		private TimeSpan m_MinDelay = TimeSpan.MinValue;
+		private TimeSpan m_MaxDelay = TimeSpan.MinValue;
 
-        [Attachable]
-        public XmlSpawnTime(double mindelay, double maxdelay)
-        {
-            this.MinDelay = TimeSpan.FromMinutes(mindelay);
-            this.MaxDelay = TimeSpan.FromMinutes(maxdelay);
-        }
+		// a serial constructor is REQUIRED
+		public XmlSpawnTime(ASerial serial)
+			: base(serial) { }
 
-        [Attachable]
-        public XmlSpawnTime()
-        {
-            // min/maxdelay values will be taken from the spawner 
-        }
+		[Attachable]
+		public XmlSpawnTime(double mindelay, double maxdelay)
+		{
+			this.MinDelay = TimeSpan.FromMinutes(mindelay);
+			this.MaxDelay = TimeSpan.FromMinutes(maxdelay);
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public TimeSpan MinDelay
-        {
-            get
-            {
-                XmlSpawner spawner = this.MySpawner;
+		[Attachable]
+		public XmlSpawnTime()
+		{
+			// min/maxdelay values will be taken from the spawner
+		}
 
-                // try to get the min/maxdelay based on spawner values if not specified on the attachment.
-                if (spawner != null && this.m_MinDelay < TimeSpan.Zero)
-                {
-                    return spawner.MinDelay;
-                }
-                return this.m_MinDelay;
-            }
-            set
-            {
-                this.m_MinDelay = value;
-            }
-        }
-        [CommandProperty(AccessLevel.GameMaster)]
-        public TimeSpan MaxDelay
-        {
-            get
-            {
-                XmlSpawner spawner = this.MySpawner;
+		[CommandProperty(AccessLevel.GameMaster)]
+		public TimeSpan MinDelay
+		{
+			get
+			{
+				XmlSpawner spawner = this.MySpawner;
 
-                // try to get the min/maxdelay based on spawner values if not specified on the attachment.
-                if (spawner != null && this.m_MaxDelay < TimeSpan.Zero)
-                {
-                    return spawner.MaxDelay;
-                }
+				// try to get the min/maxdelay based on spawner values if not specified on the attachment.
+				if (spawner != null && this.m_MinDelay < TimeSpan.Zero)
+				{
+					return spawner.MinDelay;
+				}
+				return this.m_MinDelay;
+			}
+			set { this.m_MinDelay = value; }
+		}
 
-                return this.m_MaxDelay;
-            }
-            set
-            {
-                this.m_MaxDelay = value;
-            }
-        }
-        public override bool HandlesOnKilled
-        {
-            get
-            {
-                return true;
-            }
-        }
-        private XmlSpawner MySpawner
-        {
-            get
-            {
-                // figure out the spawner that spawned the object
-                if (this.AttachedTo is Item)
-                {
-                    return ((Item)this.AttachedTo).Spawner as XmlSpawner;
-                }
-                else if (this.AttachedTo is Mobile)
-                {
-                    return ((Mobile)this.AttachedTo).Spawner as XmlSpawner;
-                }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public TimeSpan MaxDelay
+		{
+			get
+			{
+				XmlSpawner spawner = this.MySpawner;
 
-                return null;
-            }
-        }
-        // These are the various ways in which the message attachment can be constructed.  
-        // These can be called via the [addatt interface, via scripts, via the spawner ATTACH keyword.
-        // Other overloads could be defined to handle other types of arguments
-        public static void ResetXmlSpawnTime(Mobile killed)
-        {
-            if (killed == null)
-                return;
+				// try to get the min/maxdelay based on spawner values if not specified on the attachment.
+				if (spawner != null && this.m_MaxDelay < TimeSpan.Zero)
+				{
+					return spawner.MaxDelay;
+				}
 
-            // set the spawner's NextSpawn time based on min/maxdelay
-            XmlSpawner spawner = killed.Spawner as XmlSpawner;
+				return this.m_MaxDelay;
+			}
+			set { this.m_MaxDelay = value; }
+		}
+		public override bool HandlesOnKilled
+		{
+			get { return true; }
+		}
+		private XmlSpawner MySpawner
+		{
+			get
+			{
+				// figure out the spawner that spawned the object
+				if (this.AttachedTo is Item)
+				{
+					return ((Item)this.AttachedTo).Spawner as XmlSpawner;
+				}
+				else if (this.AttachedTo is Mobile)
+				{
+					return ((Mobile)this.AttachedTo).Spawner as XmlSpawner;
+				}
 
-            if (spawner != null)
-            {
-                int mind = (int)spawner.MinDelay.TotalSeconds;
-                int maxd = (int)spawner.MaxDelay.TotalSeconds;
+				return null;
+			}
+		}
 
-                if (mind >= 0 && maxd >= 0)
-                {
-                    spawner.NextSpawn = TimeSpan.FromSeconds(Utility.RandomMinMax(mind, maxd));
-                }
-            }
-        }
+		// These are the various ways in which the message attachment can be constructed.
+		// These can be called via the [addatt interface, via scripts, via the spawner ATTACH keyword.
+		// Other overloads could be defined to handle other types of arguments
+		public static void ResetXmlSpawnTime(Mobile killed)
+		{
+			if (killed == null)
+				return;
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			// set the spawner's NextSpawn time based on min/maxdelay
+			XmlSpawner spawner = killed.Spawner as XmlSpawner;
 
-            writer.Write((int)0);
-            // version 0
-            writer.Write(this.m_MinDelay);
-            writer.Write(this.m_MaxDelay);
-        }
+			if (spawner != null)
+			{
+				int mind = (int)spawner.MinDelay.TotalSeconds;
+				int maxd = (int)spawner.MaxDelay.TotalSeconds;
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+				if (mind >= 0 && maxd >= 0)
+				{
+					spawner.NextSpawn = TimeSpan.FromSeconds(Utility.RandomMinMax(mind, maxd));
+				}
+			}
+		}
 
-            int version = reader.ReadInt();
-            switch (version)
-            {
-                case 0:
-                    this.m_MinDelay = reader.ReadTimeSpan();
-                    this.m_MaxDelay = reader.ReadTimeSpan();
-                    break;
-            }
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void OnKilled(Mobile killed, Mobile killer)
-        {
-            base.OnKilled(killed, killer);
+			writer.Write((int)0);
+			// version 0
+			writer.Write(this.m_MinDelay);
+			writer.Write(this.m_MaxDelay);
+		}
 
-            if (killed == null)
-                return;
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            // set the spawner's NextSpawn time based on min/maxdelay
-            XmlSpawner spawner = this.MySpawner;
+			int version = reader.ReadInt();
+			switch (version)
+			{
+				case 0:
+					this.m_MinDelay = reader.ReadTimeSpan();
+					this.m_MaxDelay = reader.ReadTimeSpan();
+					break;
+			}
+		}
 
-            int mind = (int)this.MinDelay.TotalSeconds;
-            int maxd = (int)this.MaxDelay.TotalSeconds;
+		public override void OnKilled(Mobile killed, Mobile killer)
+		{
+			base.OnKilled(killed, killer);
 
-            if (spawner != null && mind >= 0 && maxd >= 0)
-            {
-                spawner.NextSpawn = TimeSpan.FromSeconds(Utility.RandomMinMax(mind, maxd));
-            }
-        }
-    }
+			if (killed == null)
+				return;
+
+			// set the spawner's NextSpawn time based on min/maxdelay
+			XmlSpawner spawner = this.MySpawner;
+
+			int mind = (int)this.MinDelay.TotalSeconds;
+			int maxd = (int)this.MaxDelay.TotalSeconds;
+
+			if (spawner != null && mind >= 0 && maxd >= 0)
+			{
+				spawner.NextSpawn = TimeSpan.FromSeconds(Utility.RandomMinMax(mind, maxd));
+			}
+		}
+	}
 }

@@ -4,114 +4,106 @@ using Server.Mobiles;
 
 namespace Server.Engines.Quests.Haven
 {
-    public class MilitiaCanoneer : BaseQuester
-    {
-        private bool m_Active;
-        [Constructable]
-        public MilitiaCanoneer()
-            : base("the Militia Cannoneer")
-        {
-            m_Active = true;
-        }
+	public class MilitiaCanoneer : BaseQuester
+	{
+		private bool m_Active;
 
-        public MilitiaCanoneer(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public MilitiaCanoneer()
+			: base("the Militia Cannoneer")
+		{
+			m_Active = true;
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool Active
-        {
-            get
-            {
-                return m_Active;
-            }
-            set
-            {
-                m_Active = value;
-            }
-        }
-        public override void InitBody()
-        {
-            InitStats(100, 125, 25);
+		public MilitiaCanoneer(Serial serial)
+			: base(serial) { }
 
-            Hue = Utility.RandomSkinHue();
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool Active
+		{
+			get { return m_Active; }
+			set { m_Active = value; }
+		}
 
-            Female = false;
-            Body = 0x190;
-            Name = NameList.RandomName("male");
-        }
+		public override void InitBody()
+		{
+			InitStats(100, 125, 25);
 
-        public override void InitOutfit()
-        {
-            Utility.AssignRandomHair(this);
-            Utility.AssignRandomFacialHair(this, HairHue);
+			Hue = Utility.RandomSkinHue();
 
-            AddItem(new PlateChest());
-            AddItem(new PlateArms());
-            AddItem(new PlateGloves());
-            AddItem(new PlateLegs());
+			Female = false;
+			Body = 0x190;
+			Name = NameList.RandomName("male");
+		}
 
-            Torch torch = new Torch();
-            torch.Movable = false;
-            AddItem(torch);
-            torch.Ignite();
-        }
+		public override void InitOutfit()
+		{
+			Utility.AssignRandomHair(this);
+			Utility.AssignRandomFacialHair(this, HairHue);
 
-        public override bool CanTalkTo(PlayerMobile to)
-        {
-            return false;
-        }
+			AddItem(new PlateChest());
+			AddItem(new PlateArms());
+			AddItem(new PlateGloves());
+			AddItem(new PlateLegs());
 
-        public override void OnTalk(PlayerMobile player, bool contextMenu)
-        {
-        }
+			Torch torch = new Torch();
+			torch.Movable = false;
+			AddItem(torch);
+			torch.Ignite();
+		}
 
-        public override bool IsEnemy(Mobile m)
-        {
-            if (m.Player || m is BaseVendor)
-                return false;
+		public override bool CanTalkTo(PlayerMobile to)
+		{
+			return false;
+		}
 
-            if (m is BaseCreature)
-            {
-                BaseCreature bc = (BaseCreature)m;
+		public override void OnTalk(PlayerMobile player, bool contextMenu) { }
 
-                Mobile master = bc.GetMaster();
-                if (master != null)
-                    return IsEnemy(master);
-            }
+		public override bool IsEnemy(Mobile m)
+		{
+			if (m.Player || m is BaseVendor)
+				return false;
 
-            return m.Karma < 0;
-        }
+			if (m is BaseCreature)
+			{
+				BaseCreature bc = (BaseCreature)m;
 
-        public bool WillFire(Cannon cannon, Mobile target)
-        {
-            if (m_Active && IsEnemy(target))
-            {
-                Direction = GetDirectionTo(target);
-                Say(Utility.RandomList(500651, 1049098, 1049320, 1043149));
-                return true;
-            }
+				Mobile master = bc.GetMaster();
+				if (master != null)
+					return IsEnemy(master);
+			}
 
-            return false;
-        }
+			return m.Karma < 0;
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public bool WillFire(Cannon cannon, Mobile target)
+		{
+			if (m_Active && IsEnemy(target))
+			{
+				Direction = GetDirectionTo(target);
+				Say(Utility.RandomList(500651, 1049098, 1049320, 1043149));
+				return true;
+			}
 
-            writer.Write((int)0); // version
+			return false;
+		}
 
-            writer.Write((bool)m_Active);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
 
-            int version = reader.ReadInt();
+			writer.Write((bool)m_Active);
+		}
 
-            m_Active = reader.ReadBool();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+
+			m_Active = reader.ReadBool();
+		}
+	}
 }

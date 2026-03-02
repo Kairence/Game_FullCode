@@ -1,76 +1,80 @@
 using System;
 using Server;
 using Server.Items;
-using Server.Network;
 using Server.Mobiles;
+using Server.Network;
 using Server.Targeting;
+
 //using Server.Engines.CityLoyalty;
 
 namespace Server.Gumps
 {
-    public class DungeonCheckGump : Gump
-    {
-		private string[] Name = { "ÄÚº£Åõ½º", "µ¥½ºÆÄÀÌÁî", "µð½Ë", "½¦ÀÓ", "¿ÀÅ© ´øÀü", "·Õ", "´ÙÃ¤·Î¿î µ¿±¼" };
+	public class DungeonCheckGump : Gump
+	{
+		private string[] Name = { "ï¿½Úºï¿½ï¿½ï¿½ï¿½ï¿½", "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½", "ï¿½ï¿½ï¿½", "ï¿½ï¿½ï¿½ï¿½", "ï¿½ï¿½Å© ï¿½ï¿½ï¿½ï¿½", "ï¿½ï¿½", "ï¿½ï¿½Ã¤ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½" };
 		private DungeonCheck m_dungeon;
 		private Mobile m_from;
-        public DungeonCheckGump(Mobile from, DungeonCheck dungeon) : base(50, 50)
-        {
+
+		public DungeonCheckGump(Mobile from, DungeonCheck dungeon)
+			: base(50, 50)
+		{
 			from.CloseGump(typeof(DungeonCheckGump));
 
-            AddBackground(0, 0, 500, 480, 5054);
-			
+			AddBackground(0, 0, 500, 480, 5054);
+
 			m_dungeon = dungeon;
 			m_from = from;
 
-            AddHtml(10, 10, 250, 20, "´øÀü ½Ã½ºÅÛ", false, false); // <CENTER>HOUSE 			
+			AddHtml(10, 10, 250, 20, "ï¿½ï¿½ï¿½ï¿½ ï¿½Ã½ï¿½ï¿½ï¿½", false, false); // <CENTER>HOUSE
 			//AddHtml(130, 10, 200, 16, String.Format("{0:#,###}", dungeon.Death[0]), false, false);
 
-            AddHtml(50, 40, 225, 20, "ÀÌ¸§", false, false); // House Description
-            AddHtml(275, 40, 75, 20, "º¸»ó", false, false); // Storage
-            //AddHtml(350, 40, 150, 20, "»ç¸Á", false, false); // Lockdowns			
+			AddHtml(50, 40, 225, 20, "ï¿½Ì¸ï¿½", false, false); // House Description
+			AddHtml(275, 40, 75, 20, "ï¿½ï¿½ï¿½ï¿½", false, false); // Storage
+			//AddHtml(350, 40, 150, 20, "ï¿½ï¿½ï¿½", false, false); // Lockdowns
 			int y = 60;
-			for ( int i = 0; i < Name.Length; i++ )
+			for (int i = 0; i < Name.Length; i++)
 			{
-				//ÀÌ¸§
-				AddHtml( 50, y + i * 20, 225, 20, Name[i], false, false);
-				//º¸»ó
+				//ï¿½Ì¸ï¿½
+				AddHtml(50, y + i * 20, 225, 20, Name[i], false, false);
+				//ï¿½ï¿½ï¿½ï¿½
 				AddHtml(350, y + i * 20, 200, 16, String.Format("{0:#,###}", dungeon.Death[i]), false, false);
-				//¹öÆ°
-				AddButton( 10, y + i * 20, 4005, 4007, i + 1, GumpButtonType.Reply, 0);
-				//»ç¸Á
+				//ï¿½ï¿½Æ°
+				AddButton(10, y + i * 20, 4005, 4007, i + 1, GumpButtonType.Reply, 0);
+				//ï¿½ï¿½ï¿½
 				//AddHtml(350, y + i * 20, 200, 16, String.Format("{0:#,###}", dungeon.Death[i + 1]), false, false);
 			}
-			if( from.Str >= 100 )
-				AddButton( 10, 260, 20992, 20992, 7, GumpButtonType.Reply, 0); 
+			if (from.Str >= 100)
+				AddButton(10, 260, 20992, 20992, 7, GumpButtonType.Reply, 0);
 			else
 				AddImage(10, 260, 20998);
-			//AddButton( 10, 260, 20998, 20998, 7, GumpButtonType.Reply, 0); 
-				
-			AddButton( 60, 260, 20993, 20993, 8, GumpButtonType.Reply, 0); 
-			AddButton( 118, 260, 20994, 20994, 9, GumpButtonType.Reply, 0); 
-			AddButton( 172, 260, 20995, 20995, 10, GumpButtonType.Reply, 0); 
-			AddButton( 226, 260, 20996, 20996, 11, GumpButtonType.Reply, 0); 
-			AddButton( 280, 260, 20997, 20997, 12, GumpButtonType.Reply, 0); 
+			//AddButton( 10, 260, 20998, 20998, 7, GumpButtonType.Reply, 0);
+
+			AddButton(60, 260, 20993, 20993, 8, GumpButtonType.Reply, 0);
+			AddButton(118, 260, 20994, 20994, 9, GumpButtonType.Reply, 0);
+			AddButton(172, 260, 20995, 20995, 10, GumpButtonType.Reply, 0);
+			AddButton(226, 260, 20996, 20996, 11, GumpButtonType.Reply, 0);
+			AddButton(280, 260, 20997, 20997, 12, GumpButtonType.Reply, 0);
 		}
 
-        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
-        {
-            if (!m_from.CheckAlive() || info.ButtonID == 0)
-                return;
-
-			if( info.ButtonID >= 7 )
+		public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+		{
+			if (!m_from.CheckAlive() || info.ButtonID == 0)
 				return;
-			
-			m_from.SendMessage("´øÀü Á¡¼ö¸¦ ÀûÀ¸½Ã¿À");
+
+			if (info.ButtonID >= 7)
+				return;
+
+			m_from.SendMessage("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½");
 			m_from.BeginPrompt(
-			(from, text ) =>
-			{
-				int amount = Utility.ToInt32(text);
-				if( amount >= 0 )
+				(from, text) =>
 				{
-					m_dungeon.Death[ info.ButtonID - 1 ] = amount;
+					int amount = Utility.ToInt32(text);
+					if (amount >= 0)
+					{
+						m_dungeon.Death[info.ButtonID - 1] = amount;
+					}
 				}
-			});
-        }		
+			);
+		}
 	}
 }

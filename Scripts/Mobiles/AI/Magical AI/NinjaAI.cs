@@ -1,7 +1,6 @@
 #region References
 using System;
 using System.Collections.Generic;
-
 using Server.Items;
 using Server.Spells;
 using Server.Spells.Ninjitsu;
@@ -47,7 +46,8 @@ namespace Server.Mobiles
 				0x3728,
 				10,
 				10,
-				2023);
+				2023
+			);
 
 			m_Mobile.PlaySound(0x22F);
 			m_Mobile.Hidden = true;
@@ -65,7 +65,9 @@ namespace Server.Mobiles
 			if (skill >= 60)
 			{
 				//return .5 > Utility.RandomDouble() ? new SupriseAttack() : new Backstab();
-				return .5 > Utility.RandomDouble() ? SpellRegistry.GetSpecialMove(504) : SpellRegistry.GetSpecialMove(505);
+				return .5 > Utility.RandomDouble()
+					? SpellRegistry.GetSpecialMove(504)
+					: SpellRegistry.GetSpecialMove(505);
 			}
 
 			return SpellRegistry.GetSpecialMove(505); //new Backstab();
@@ -109,15 +111,23 @@ namespace Server.Mobiles
 			var d = (int)m_Mobile.GetDistanceToSqrt(c.Location);
 
 			foreach (var item in m_Mobile.Items)
-				if (item is INinjaWeapon && ((INinjaWeapon)item).UsesRemaining > 0 && d >= ((INinjaWeapon)item).WeaponMinRange &&
-					d <= ((INinjaWeapon)item).WeaponMaxRange)
+				if (
+					item is INinjaWeapon
+					&& ((INinjaWeapon)item).UsesRemaining > 0
+					&& d >= ((INinjaWeapon)item).WeaponMinRange
+					&& d <= ((INinjaWeapon)item).WeaponMaxRange
+				)
 					list.Add(item as INinjaWeapon);
 
 			if (m_Mobile.Backpack != null)
 			{
 				foreach (var item in m_Mobile.Backpack.Items)
-					if (item is INinjaWeapon && ((INinjaWeapon)item).UsesRemaining > 0 && d >= ((INinjaWeapon)item).WeaponMinRange &&
-						d <= ((INinjaWeapon)item).WeaponMaxRange)
+					if (
+						item is INinjaWeapon
+						&& ((INinjaWeapon)item).UsesRemaining > 0
+						&& d >= ((INinjaWeapon)item).WeaponMinRange
+						&& d <= ((INinjaWeapon)item).WeaponMaxRange
+					)
 						list.Add(item as INinjaWeapon);
 			}
 
@@ -129,7 +139,7 @@ namespace Server.Mobiles
 					NinjaWeapon.Shoot(m_Mobile, c, toUse);
 			}
 
-            ColUtility.Free(list);
+			ColUtility.Free(list);
 
 			m_NextRanged = DateTime.UtcNow + TimeSpan.FromSeconds(Utility.RandomMinMax(30, 120));
 		}
@@ -155,23 +165,23 @@ namespace Server.Mobiles
 
 			if (special == null && m_NextCastTime < DateTime.UtcNow && 0.05 > Utility.RandomDouble())
 			{
-                if (0.05 > Utility.RandomDouble())
-                {
-                    new MirrorImage(m_Mobile, null).Cast();
-                }
-                else
-                {
-                    if (m_Mobile.Hidden)
-                        special = GetHiddenSpecialMove();
-                    else
-                        special = GetSpecialMove();
+				if (0.05 > Utility.RandomDouble())
+				{
+					new MirrorImage(m_Mobile, null).Cast();
+				}
+				else
+				{
+					if (m_Mobile.Hidden)
+						special = GetHiddenSpecialMove();
+					else
+						special = GetSpecialMove();
 
-                    if (special != null)
-                    {
-                        SpecialMove.SetCurrentMove(m_Mobile, special);
-                        m_NextCastTime = DateTime.UtcNow + GetCastDelay();
-                    }
-                }
+					if (special != null)
+					{
+						SpecialMove.SetCurrentMove(m_Mobile, special);
+						m_NextCastTime = DateTime.UtcNow + GetCastDelay();
+					}
+				}
 			}
 
 			if (m_NextRanged < DateTime.UtcNow && 0.08 > Utility.RandomDouble())

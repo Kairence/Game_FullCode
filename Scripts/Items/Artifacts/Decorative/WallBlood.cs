@@ -2,32 +2,32 @@ using System;
 
 namespace Server.Items
 {
-    public class WallBlood : Item
-    {
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public WallBlood()
-            : base(Utility.RandomBool() ? 0x1D95 : 0x1D94)
-        {
-        }
+	public class WallBlood : Item
+	{
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public WallBlood(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public WallBlood()
+			: base(Utility.RandomBool() ? 0x1D95 : 0x1D94) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public WallBlood(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.Write((int)0); // version
+		}
 
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

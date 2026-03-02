@@ -3,113 +3,111 @@ using Server.Targeting;
 
 namespace Server.Items
 {
-    public class ItemBlessTarget : Target // Create our targeting class (which we derive from the base target class)
-    {
-        private readonly ItemBlessDeed m_Deed;
-        public ItemBlessTarget(ItemBlessDeed deed)
-            : base(1, false, TargetFlags.None)
-        {
-            this.m_Deed = deed;
-        }
+	public class ItemBlessTarget : Target // Create our targeting class (which we derive from the base target class)
+	{
+		private readonly ItemBlessDeed m_Deed;
 
-        protected override void OnTarget(Mobile from, object target) // Override the protected OnTarget() for our feature
-        {
-            if (this.m_Deed.Deleted || this.m_Deed.RootParent != from)
-                return;
+		public ItemBlessTarget(ItemBlessDeed deed)
+			: base(1, false, TargetFlags.None)
+		{
+			this.m_Deed = deed;
+		}
 
-            if (target is Item)
-            {
-                Item item = (Item)target;
+		protected override void OnTarget(Mobile from, object target) // Override the protected OnTarget() for our feature
+		{
+			if (this.m_Deed.Deleted || this.m_Deed.RootParent != from)
+				return;
 
-                if (item.RootParent != from) // Make sure its in their pack or they are wearing it
-                    from.SendLocalizedMessage(500508); // You may only bless objects that you are carrying.
-                else if (item.Stackable == true)
-                {
-                    from.SendLocalizedMessage(500509); // You cannot bless that object
-                }
-                else if (item is Key || item is BaseContainer)
-                {
-                    from.SendLocalizedMessage(500509); // You cannot bless that object
-                }
-                else if (item.LootType == LootType.Blessed || item.BlessedFor == from || (Mobile.InsuranceEnabled && item.Insured)) // Check if its already newbied (blessed)
-                {
-                    from.SendLocalizedMessage(1045113); // That item is already blessed
-                }
-                else if (item.LootType != LootType.Regular)
-                {
-                    from.SendLocalizedMessage(1045114); // You can not bless that item
-                }
-                else
-                {
-                    item.LootType = LootType.Blessed;
-                    from.SendLocalizedMessage(1075281); // Your item has been blessed
+			if (target is Item)
+			{
+				Item item = (Item)target;
 
-                    this.m_Deed.Delete(); // Delete the bless deed
-                }
-            }
-            else
-            {
-                from.SendLocalizedMessage(500509); // You cannot bless that object
-            }
-        }
-    }
+				if (item.RootParent != from) // Make sure its in their pack or they are wearing it
+					from.SendLocalizedMessage(500508); // You may only bless objects that you are carrying.
+				else if (item.Stackable == true)
+				{
+					from.SendLocalizedMessage(500509); // You cannot bless that object
+				}
+				else if (item is Key || item is BaseContainer)
+				{
+					from.SendLocalizedMessage(500509); // You cannot bless that object
+				}
+				else if (
+					item.LootType == LootType.Blessed
+					|| item.BlessedFor == from
+					|| (Mobile.InsuranceEnabled && item.Insured)
+				) // Check if its already newbied (blessed)
+				{
+					from.SendLocalizedMessage(1045113); // That item is already blessed
+				}
+				else if (item.LootType != LootType.Regular)
+				{
+					from.SendLocalizedMessage(1045114); // You can not bless that item
+				}
+				else
+				{
+					item.LootType = LootType.Blessed;
+					from.SendLocalizedMessage(1075281); // Your item has been blessed
 
-    public class ItemBlessDeed : Item // Create the item class which is derived from the base item class
-    {
-        [Constructable]
-        public ItemBlessDeed()
-            : base(0x14F0)
-        {
-            this.Weight = 1.0;
-            this.LootType = LootType.Blessed;
-        }
+					this.m_Deed.Delete(); // Delete the bless deed
+				}
+			}
+			else
+			{
+				from.SendLocalizedMessage(500509); // You cannot bless that object
+			}
+		}
+	}
 
-        public ItemBlessDeed(Serial serial)
-            : base(serial)
-        {
-        }
+	public class ItemBlessDeed : Item // Create the item class which is derived from the base item class
+	{
+		[Constructable]
+		public ItemBlessDeed()
+			: base(0x14F0)
+		{
+			this.Weight = 1.0;
+			this.LootType = LootType.Blessed;
+		}
 
-        public override string DefaultName
-        {
-            get
-            {
-                return "a item bless deed";
-            }
-        }
-        public override bool DisplayLootType
-        {
-            get
-            {
-				return Core.ML;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public ItemBlessDeed(Serial serial)
+			: base(serial) { }
 
-            writer.Write((int)0); // version
-        }
+		public override string DefaultName
+		{
+			get { return "a item bless deed"; }
+		}
+		public override bool DisplayLootType
+		{
+			get { return Core.ML; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
+			writer.Write((int)0); // version
+		}
 
-            this.LootType = LootType.Blessed;
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override void OnDoubleClick(Mobile from) // Override double click of the deed to call our target
-        {
-            if (!this.IsChildOf(from.Backpack)) // Make sure its in their pack
-            {
-                from.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
-            }
-            else
-            {
-                from.SendLocalizedMessage(500506); // Which item do you wish to bless?
-                from.Target = new ItemBlessTarget(this); // Call our target
-            }
-        }
-    }
+			int version = reader.ReadInt();
+
+			this.LootType = LootType.Blessed;
+		}
+
+		public override void OnDoubleClick(Mobile from) // Override double click of the deed to call our target
+		{
+			if (!this.IsChildOf(from.Backpack)) // Make sure its in their pack
+			{
+				from.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
+			}
+			else
+			{
+				from.SendLocalizedMessage(500506); // Which item do you wish to bless?
+				from.Target = new ItemBlessTarget(this); // Call our target
+			}
+		}
+	}
 }

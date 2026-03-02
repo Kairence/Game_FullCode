@@ -1,111 +1,92 @@
 using System;
-using Server.Guilds;
 using Server.Engines.Craft;
+using Server.Guilds;
 
 namespace Server.Items
 {
-    [Alterable(typeof(DefBlacksmithy), typeof(GargishChaosShield))]
-    public class ChaosShield : BaseShield
-    {
-        [Constructable]
-        public ChaosShield()
-            : base(0x1BC3)
-        {
-            Weight = 40.0;
+	[Alterable(typeof(DefBlacksmithy), typeof(GargishChaosShield))]
+	public class ChaosShield : BaseShield
+	{
+		[Constructable]
+		public ChaosShield()
+			: base(0x1BC3)
+		{
+			Weight = 40.0;
 			ShieldMinDamage = 3;
 			ShieldMaxDamage = 5;
 			PrefixOption[61] = 104; //시전 속도
 			SuffixOption[61] = 100000;
-        }
+		}
 
-        public ChaosShield(Serial serial)
-            : base(serial)
-        {
-        }
+		public ChaosShield(Serial serial)
+			: base(serial) { }
 
-        public override int InitMinHits
-        {
-            get
-            {
-                return 100;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 100;
-            }
-        }
-        public override int AosStrReq
-        {
-            get
-            {
-                return 3500;
-            }
-        }
-        public override int AosDexReq
-        {
-            get
-            {
-                return 1000;
-            }
-        }
-        public override int AosIntReq
-        {
-            get
-            {
-                return 1000;
-            }
-        }
-        public override int ArmorBase
-        {
-            get
-            {
-                return 4;
-            }
-        }
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override int InitMinHits
+		{
+			get { return 100; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 100; }
+		}
+		public override int AosStrReq
+		{
+			get { return 3500; }
+		}
+		public override int AosDexReq
+		{
+			get { return 1000; }
+		}
+		public override int AosIntReq
+		{
+			get { return 1000; }
+		}
+		public override int ArmorBase
+		{
+			get { return 4; }
+		}
 
-            int version = reader.ReadInt();
-        }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			int version = reader.ReadInt();
+		}
 
-            writer.Write((int)0);//version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override bool OnEquip(Mobile from)
-        {
-            return this.Validate(from) && base.OnEquip(from);
-        }
+			writer.Write((int)0); //version
+		}
 
-        public override void OnSingleClick(Mobile from)
-        {
-            if (this.Validate(this.Parent as Mobile))
-                base.OnSingleClick(from);
-        }
+		public override bool OnEquip(Mobile from)
+		{
+			return this.Validate(from) && base.OnEquip(from);
+		}
 
-        public virtual bool Validate(Mobile m)
-        {
-            if (m == null || !m.Player || m.IsStaff() || Core.AOS)
-                return true;
+		public override void OnSingleClick(Mobile from)
+		{
+			if (this.Validate(this.Parent as Mobile))
+				base.OnSingleClick(from);
+		}
 
-            Guild g = m.Guild as Guild;
+		public virtual bool Validate(Mobile m)
+		{
+			if (m == null || !m.Player || m.IsStaff() || Core.AOS)
+				return true;
 
-            if (g == null || g.Type != GuildType.Chaos)
-            {
-                m.FixedEffect(0x3728, 10, 13);
-                this.Delete();
+			Guild g = m.Guild as Guild;
 
-                return false;
-            }
+			if (g == null || g.Type != GuildType.Chaos)
+			{
+				m.FixedEffect(0x3728, 10, 13);
+				this.Delete();
 
-            return true;
-        }
-    }
+				return false;
+			}
+
+			return true;
+		}
+	}
 }

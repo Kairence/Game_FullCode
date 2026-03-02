@@ -1,48 +1,49 @@
 ﻿using System;
-using Server.Mobiles; 
-using Server; 
+using Server;
+using Server.Mobiles;
 
 namespace Server.Items
 {
-    [TypeAlias("drNO.ThieveItems.StoneSkinLotion")]
-    public class StoneSkinLotion : BaseBalmOrLotion
-    {
-        protected override void ApplyEffect(PlayerMobile pm)
-        {
-            pm.AddResistanceMod(new ResistanceMod(ResistanceType.Cold, -5));
-            pm.AddResistanceMod(new ResistanceMod(ResistanceType.Fire, -5));
+	[TypeAlias("drNO.ThieveItems.StoneSkinLotion")]
+	public class StoneSkinLotion : BaseBalmOrLotion
+	{
+		protected override void ApplyEffect(PlayerMobile pm)
+		{
+			pm.AddResistanceMod(new ResistanceMod(ResistanceType.Cold, -5));
+			pm.AddResistanceMod(new ResistanceMod(ResistanceType.Fire, -5));
 
-            pm.AddResistanceMod(new ResistanceMod(ResistanceType.Physical, 30)); 
+			pm.AddResistanceMod(new ResistanceMod(ResistanceType.Physical, 30));
 
-            base.ApplyEffect(pm);
-        }
+			base.ApplyEffect(pm);
+		}
 
-        public override int LabelNumber { get { return 1094944; } } // Stone Skin Lotion
+		public override int LabelNumber
+		{
+			get { return 1094944; }
+		} // Stone Skin Lotion
 
-        [Constructable] 
-        public StoneSkinLotion()
-            : base(0xEFD)
-        {
-            m_EffectType = ThieveConsumableEffect.StoneSkinLotionEffect; 
-        }
+		[Constructable]
+		public StoneSkinLotion()
+			: base(0xEFD)
+		{
+			m_EffectType = ThieveConsumableEffect.StoneSkinLotionEffect;
+		}
 
-        public StoneSkinLotion(Serial serial)
-            : base(serial)
-        {
-        }
+		public StoneSkinLotion(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            writer.Write((int)0); // version
-        }
+			writer.Write((int)0); // version
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-            int version = reader.ReadInt();
-        }
-    }
+			int version = reader.ReadInt();
+		}
+	}
 }

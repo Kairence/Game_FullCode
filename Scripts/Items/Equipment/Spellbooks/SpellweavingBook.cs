@@ -2,78 +2,69 @@ using System;
 
 namespace Server.Items
 {
-    public class SpellweavingBook : Spellbook
-    {
-        [Constructable]
-        public SpellweavingBook()
-            : this((ulong)0)
-        {
-        }
+	public class SpellweavingBook : Spellbook
+	{
+		[Constructable]
+		public SpellweavingBook()
+			: this((ulong)0) { }
 
-        [Constructable]
-        public SpellweavingBook(ulong content)
-            : base(content, 0x2D50)
-        {
-            //this.Hue = 0x8A2;
+		[Constructable]
+		public SpellweavingBook(ulong content)
+			: base(content, 0x2D50)
+		{
+			//this.Hue = 0x8A2;
 
-            //this.Layer = Layer.OneHanded;
+			//this.Layer = Layer.OneHanded;
 			Weight = 3.0;
 			//Attributes.CastSpeed += 50;
 			//Attributes.CastRecovery += 50;
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1039018;
-            }
-        }
-        public SpellweavingBook(Serial serial)
-            : base(serial)
-        {
-        }
-        public override int InitMinHits { get { return 31; } }
-        public override int InitMaxHits { get { return 50; } }
+		}
+
+		public override int LabelNumber
+		{
+			get { return 1039018; }
+		}
+
+		public SpellweavingBook(Serial serial)
+			: base(serial) { }
+
+		public override int InitMinHits
+		{
+			get { return 31; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 50; }
+		}
 		public override int AosIntelligenceReq
 		{
-			get
-			{
-				return 500;
-			}
+			get { return 500; }
 		}
-        public override SpellbookType SpellbookType
-        {
-            get
-            {
-                return SpellbookType.Arcanist;
-            }
-        }
-        public override int BookOffset
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override int BookCount
-        {
-            get
-            {
-                return 0;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public override SpellbookType SpellbookType
+		{
+			get { return SpellbookType.Arcanist; }
+		}
+		public override int BookOffset
+		{
+			get { return 0; }
+		}
+		public override int BookCount
+		{
+			get { return 0; }
+		}
 
-            writer.WriteEncodedInt(0); // version
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+			writer.WriteEncodedInt(0); // version
+		}
 
-            int version = reader.ReadEncodedInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+		}
+	}
 }

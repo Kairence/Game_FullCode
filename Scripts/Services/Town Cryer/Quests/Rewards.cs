@@ -1,194 +1,187 @@
-using Server;
 using System;
+using Server;
 
 namespace Server.Items
 {
-    public class HuntmastersQuestRewardTitleDeed : BaseRewardTitleDeed
-    {
-        public override TextDefinition Title { get { return new TextDefinition(1158140); } } // Hunter
+	public class HuntmastersQuestRewardTitleDeed : BaseRewardTitleDeed
+	{
+		public override TextDefinition Title
+		{
+			get { return new TextDefinition(1158140); }
+		} // Hunter
 
-        [Constructable]
-        public HuntmastersQuestRewardTitleDeed()
-        {
-        }
+		[Constructable]
+		public HuntmastersQuestRewardTitleDeed() { }
 
-        public HuntmastersQuestRewardTitleDeed(Serial serial)
-            : base(serial)
-        {
-        }
+		public HuntmastersQuestRewardTitleDeed(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int v = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int v = reader.ReadInt();
+		}
+	}
 
-    public class PaladinOfTrinsicRewardTitleDeed : BaseRewardTitleDeed
-    {
-        public override TextDefinition Title { get { return new TextDefinition(1158090); } } // Paladin of Trinsic
+	public class PaladinOfTrinsicRewardTitleDeed : BaseRewardTitleDeed
+	{
+		public override TextDefinition Title
+		{
+			get { return new TextDefinition(1158090); }
+		} // Paladin of Trinsic
 
-        [Constructable]
-        public PaladinOfTrinsicRewardTitleDeed()
-        {
-        }
+		[Constructable]
+		public PaladinOfTrinsicRewardTitleDeed() { }
 
-        public PaladinOfTrinsicRewardTitleDeed(Serial serial)
-            : base(serial)
-        {
-        }
+		public PaladinOfTrinsicRewardTitleDeed(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int v = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int v = reader.ReadInt();
+		}
+	}
 
-    public class RightingWrongRewardTitleDeed : BaseRewardTitleDeed
-    {
-        public override TextDefinition Title { get { return new TextDefinition(1158161); } } // Warden of Wrong
+	public class RightingWrongRewardTitleDeed : BaseRewardTitleDeed
+	{
+		public override TextDefinition Title
+		{
+			get { return new TextDefinition(1158161); }
+		} // Warden of Wrong
 
-        [Constructable]
-        public RightingWrongRewardTitleDeed()
-        {
-        }
+		[Constructable]
+		public RightingWrongRewardTitleDeed() { }
 
-        public RightingWrongRewardTitleDeed(Serial serial)
-            : base(serial)
-        {
-        }
+		public RightingWrongRewardTitleDeed(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int v = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int v = reader.ReadInt();
+		}
+	}
 
-    public class TreasureHunterRewardTitleDeed : BaseRewardTitleDeed
-    {
-        public override TextDefinition Title { get { return new TextDefinition(1158389); } } // Treasure Hunter
+	public class TreasureHunterRewardTitleDeed : BaseRewardTitleDeed
+	{
+		public override TextDefinition Title
+		{
+			get { return new TextDefinition(1158389); }
+		} // Treasure Hunter
 
-        [Constructable]
-        public TreasureHunterRewardTitleDeed()
-        {
-        }
+		[Constructable]
+		public TreasureHunterRewardTitleDeed() { }
 
-        public TreasureHunterRewardTitleDeed(Serial serial)
-            : base(serial)
-        {
-        }
+		public TreasureHunterRewardTitleDeed(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int v = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int v = reader.ReadInt();
+		}
+	}
 
-    public class HeroOfMincRewardTitleDeed : BaseRewardTitleDeed
-    {
-        public override TextDefinition Title { get { return new TextDefinition(1158278); } } // Hero of Minoc
+	public class HeroOfMincRewardTitleDeed : BaseRewardTitleDeed
+	{
+		public override TextDefinition Title
+		{
+			get { return new TextDefinition(1158278); }
+		} // Hero of Minoc
 
-        [Constructable]
-        public HeroOfMincRewardTitleDeed()
-        {
-        }
+		[Constructable]
+		public HeroOfMincRewardTitleDeed() { }
 
-        public HeroOfMincRewardTitleDeed(Serial serial)
-            : base(serial)
-        {
-        }
+		public HeroOfMincRewardTitleDeed(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int v = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int v = reader.ReadInt();
+		}
+	}
 
-    public class DespiseTitleDeed : BaseRewardTitleDeed
-    {
-        public override TextDefinition Title { get { return new TextDefinition(1158303); } } // The Battle of Wisps TODO: Correct cliloc
+	public class DespiseTitleDeed : BaseRewardTitleDeed
+	{
+		public override TextDefinition Title
+		{
+			get { return new TextDefinition(1158303); }
+		} // The Battle of Wisps TODO: Correct cliloc
 
-        [Constructable]
-        public DespiseTitleDeed()
-        {
-        }
+		[Constructable]
+		public DespiseTitleDeed() { }
 
-        public DespiseTitleDeed(Serial serial)
-            : base(serial)
-        {
-        }
+		public DespiseTitleDeed(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int v = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int v = reader.ReadInt();
+		}
+	}
 
-    public class ExploringTheDeedTitleDeed : BaseRewardTitleDeed
-    {
-        public override TextDefinition Title { get { return new TextDefinition(1154505); } } // Salvager of the Deep
+	public class ExploringTheDeedTitleDeed : BaseRewardTitleDeed
+	{
+		public override TextDefinition Title
+		{
+			get { return new TextDefinition(1154505); }
+		} // Salvager of the Deep
 
-        [Constructable]
-        public ExploringTheDeedTitleDeed()
-        {
-        }
+		[Constructable]
+		public ExploringTheDeedTitleDeed() { }
 
-        public ExploringTheDeedTitleDeed(Serial serial)
-            : base(serial)
-        {
-        }
+		public ExploringTheDeedTitleDeed(Serial serial)
+			: base(serial) { }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0);
-        }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0);
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int v = reader.ReadInt();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int v = reader.ReadInt();
+		}
+	}
 }

@@ -7,9 +7,7 @@ namespace Server.Targets
 	public class PickMoveTarget : Target
 	{
 		public PickMoveTarget()
-			: base(-1, false, TargetFlags.None)
-		{
-		}
+			: base(-1, false, TargetFlags.None) { }
 
 		protected override void OnTarget(Mobile from, object o)
 		{

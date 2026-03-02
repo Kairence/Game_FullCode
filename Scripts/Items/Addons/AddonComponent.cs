@@ -1,7 +1,6 @@
 #region References
 using System;
 using System.Collections.Generic;
-
 using Server.ContextMenus;
 using Server.Engines.Craft;
 using Server.Network;
@@ -14,12 +13,10 @@ namespace Server.Items
 	{
 		[Constructable]
 		public AnvilComponent(int itemID)
-			: base(itemID)
-		{ }
+			: base(itemID) { }
 
 		public AnvilComponent(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		public override void Serialize(GenericWriter writer)
 		{
@@ -41,12 +38,10 @@ namespace Server.Items
 	{
 		[Constructable]
 		public ForgeComponent(int itemID)
-			: base(itemID)
-		{ }
+			: base(itemID) { }
 
 		public ForgeComponent(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		public override void Serialize(GenericWriter writer)
 		{
@@ -75,8 +70,7 @@ namespace Server.Items
 		}
 
 		public LocalizedAddonComponent(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		[CommandProperty(AccessLevel.GameMaster)]
 		public int Number
@@ -89,7 +83,10 @@ namespace Server.Items
 			}
 		}
 
-		public override int LabelNumber { get { return m_LabelNumber; } }
+		public override int LabelNumber
+		{
+			get { return m_LabelNumber; }
+		}
 
 		public override void Serialize(GenericWriter writer)
 		{
@@ -119,7 +116,10 @@ namespace Server.Items
 
 	public class AddonComponent : Item, IChopable
 	{
-		public override bool ForceShowProperties { get { return Addon != null && Addon.ForceShowProperties; } }
+		public override bool ForceShowProperties
+		{
+			get { return Addon != null && Addon.ForceShowProperties; }
+		}
 
 		private static readonly LightEntry[] m_Entries =
 		{
@@ -146,7 +146,8 @@ namespace Server.Items
 				2389,
 				2390,
 				2391,
-				2392),
+				2392
+			),
 			new LightEntry(
 				LightType.NorthSmall,
 				1131,
@@ -170,8 +171,10 @@ namespace Server.Items
 				2403,
 				2404,
 				2405,
-				2406),
-			new LightEntry(LightType.Circle300, 6526, 6538, 6571), new LightEntry(LightType.Circle150, 5703, 6587)
+				2406
+			),
+			new LightEntry(LightType.Circle300, 6526, 6538, 6571),
+			new LightEntry(LightType.Circle150, 5703, 6587),
 		};
 
 		[Constructable]
@@ -183,8 +186,7 @@ namespace Server.Items
 		}
 
 		public AddonComponent(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		[CommandProperty(AccessLevel.GameMaster)]
 		public BaseAddon Addon { get; set; }
@@ -205,8 +207,14 @@ namespace Server.Items
 			}
 		}
 
-		public virtual bool NeedsWall { get { return false; } }
-		public virtual Point3D WallPosition { get { return Point3D.Zero; } }
+		public virtual bool NeedsWall
+		{
+			get { return false; }
+		}
+		public virtual Point3D WallPosition
+		{
+			get { return Point3D.Zero; }
+		}
 
 		public static void ApplyLightTo(Item item)
 		{
@@ -309,15 +317,15 @@ namespace Server.Items
 					Addon = reader.ReadItem() as BaseAddon;
 					Offset = reader.ReadPoint3D();
 
-                    if (Addon != null)
-                    {
-                        Addon.OnComponentLoaded(this);
-                        ApplyLightTo(this);
-                    }
-                    else
-                    {
-                        Delete();
-                    }
+					if (Addon != null)
+					{
+						Addon.OnComponentLoaded(this);
+						ApplyLightTo(this);
+					}
+					else
+					{
+						Delete();
+					}
 
 					break;
 				}
@@ -360,10 +368,13 @@ namespace Server.Items
 			}
 			else if (from.BeginAction(typeof(InstrumentedAddonComponent)))
 			{
-                Timer.DelayCall(TimeSpan.FromMilliseconds(1000), () =>
-                {
-                    from.EndAction(typeof(InstrumentedAddonComponent));
-                });
+				Timer.DelayCall(
+					TimeSpan.FromMilliseconds(1000),
+					() =>
+					{
+						from.EndAction(typeof(InstrumentedAddonComponent));
+					}
+				);
 
 				from.PlaySound(SuccessSound);
 			}
@@ -374,8 +385,7 @@ namespace Server.Items
 		}
 
 		public InstrumentedAddonComponent(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
 		public override void Serialize(GenericWriter writer)
 		{

@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Server;
 using Server.Items;
-using System.Collections.Generic;
 
 namespace Server.Engines.Plants
 {
@@ -11,7 +11,7 @@ namespace Server.Engines.Plants
 		Dying,
 		Wilted,
 		Healthy,
-		Vibrant
+		Vibrant,
 	}
 
 	public enum PlantGrowthIndicator
@@ -21,14 +21,14 @@ namespace Server.Engines.Plants
 		NotHealthy,
 		Delay,
 		Grown,
-		DoubleGrown
+		DoubleGrown,
 	}
 
 	public class PlantSystem
 	{
-		public static readonly TimeSpan CheckDelay = TimeSpan.FromHours( 23.0 );
+		public static readonly TimeSpan CheckDelay = TimeSpan.FromHours(23.0);
 
-        private int m_Water;
+		private int m_Water;
 		private int m_Hits;
 		private int m_Infestation;
 		private int m_Fungus;
@@ -38,7 +38,7 @@ namespace Server.Engines.Plants
 		private int m_CurePotion;
 		private int m_HealPotion;
 		private int m_StrengthPotion;
-        private PlantType m_SeedType;
+		private PlantType m_SeedType;
 		private PlantHue m_SeedHue;
 		private int m_AvailableSeeds;
 		private int m_LeftSeeds;
@@ -46,23 +46,26 @@ namespace Server.Engines.Plants
 		private int m_AvailableResources;
 		private int m_LeftResources;
 
-        public PlantItem Plant { get; }
+		public PlantItem Plant { get; }
 
-        public bool FertileDirt { get; set; }
+		public bool FertileDirt { get; set; }
 
-        public DateTime NextGrowth { get; set; }
+		public DateTime NextGrowth { get; set; }
 
-        public PlantGrowthIndicator GrowthIndicator { get; private set; }
+		public PlantGrowthIndicator GrowthIndicator { get; private set; }
 
-        public bool IsFullWater { get { return m_Water >= 4; } }
+		public bool IsFullWater
+		{
+			get { return m_Water >= 4; }
+		}
 		public int Water
 		{
 			get { return m_Water; }
 			set
 			{
-				if ( value < 0 )
+				if (value < 0)
 					m_Water = 0;
-				else if ( value > 4 )
+				else if (value > 4)
 					m_Water = 4;
 				else
 					m_Water = value;
@@ -76,17 +79,17 @@ namespace Server.Engines.Plants
 			get { return m_Hits; }
 			set
 			{
-				if ( m_Hits == value )
+				if (m_Hits == value)
 					return;
 
-				if ( value < 0 )
+				if (value < 0)
 					m_Hits = 0;
-				else if ( value > MaxHits )
+				else if (value > MaxHits)
 					m_Hits = MaxHits;
 				else
 					m_Hits = value;
 
-				if ( m_Hits == 0 )
+				if (m_Hits == 0)
 					Plant.Die();
 
 				Plant.InvalidateProperties();
@@ -95,7 +98,7 @@ namespace Server.Engines.Plants
 
 		public int MaxHits
 		{
-			get	{ return 10 + (int)Plant.PlantStatus * 2; }
+			get { return 10 + (int)Plant.PlantStatus * 2; }
 		}
 
 		public PlantHealth Health
@@ -104,11 +107,11 @@ namespace Server.Engines.Plants
 			{
 				int perc = m_Hits * 100 / MaxHits;
 
-				if ( perc < 33 )
+				if (perc < 33)
 					return PlantHealth.Dying;
-				else if ( perc < 66 )
+				else if (perc < 66)
 					return PlantHealth.Wilted;
-				else if ( perc < 100 )
+				else if (perc < 100)
 					return PlantHealth.Healthy;
 				else
 					return PlantHealth.Vibrant;
@@ -120,9 +123,9 @@ namespace Server.Engines.Plants
 			get { return m_Infestation; }
 			set
 			{
-				if ( value < 0 )
+				if (value < 0)
 					m_Infestation = 0;
-				else if ( value > 2 )
+				else if (value > 2)
 					m_Infestation = 2;
 				else
 					m_Infestation = value;
@@ -134,9 +137,9 @@ namespace Server.Engines.Plants
 			get { return m_Fungus; }
 			set
 			{
-				if ( value < 0 )
+				if (value < 0)
 					m_Fungus = 0;
-				else if ( value > 2 )
+				else if (value > 2)
 					m_Fungus = 2;
 				else
 					m_Fungus = value;
@@ -148,9 +151,9 @@ namespace Server.Engines.Plants
 			get { return m_Poison; }
 			set
 			{
-				if ( value < 0 )
+				if (value < 0)
 					m_Poison = 0;
-				else if ( value > 2 )
+				else if (value > 2)
 					m_Poison = 2;
 				else
 					m_Poison = value;
@@ -162,69 +165,81 @@ namespace Server.Engines.Plants
 			get { return m_Disease; }
 			set
 			{
-				if ( value < 0 )
+				if (value < 0)
 					m_Disease = 0;
-				else if ( value > 2 )
+				else if (value > 2)
 					m_Disease = 2;
 				else
 					m_Disease = value;
 			}
 		}
 
-		public bool IsFullPoisonPotion { get { return m_PoisonPotion >= 2; } }
+		public bool IsFullPoisonPotion
+		{
+			get { return m_PoisonPotion >= 2; }
+		}
 		public int PoisonPotion
 		{
 			get { return m_PoisonPotion; }
 			set
 			{
-				if ( value < 0 )
+				if (value < 0)
 					m_PoisonPotion = 0;
-				else if ( value > 2 )
+				else if (value > 2)
 					m_PoisonPotion = 2;
 				else
 					m_PoisonPotion = value;
 			}
 		}
 
-		public bool IsFullCurePotion { get { return m_CurePotion >= 2; } }
+		public bool IsFullCurePotion
+		{
+			get { return m_CurePotion >= 2; }
+		}
 		public int CurePotion
 		{
 			get { return m_CurePotion; }
 			set
 			{
-				if ( value < 0 )
+				if (value < 0)
 					m_CurePotion = 0;
-				else if ( value > 2 )
+				else if (value > 2)
 					m_CurePotion = 2;
 				else
 					m_CurePotion = value;
 			}
 		}
 
-		public bool IsFullHealPotion { get { return m_HealPotion >= 2; } }
+		public bool IsFullHealPotion
+		{
+			get { return m_HealPotion >= 2; }
+		}
 		public int HealPotion
 		{
 			get { return m_HealPotion; }
 			set
 			{
-				if ( value < 0 )
+				if (value < 0)
 					m_HealPotion = 0;
-				else if ( value > 2 )
+				else if (value > 2)
 					m_HealPotion = 2;
 				else
 					m_HealPotion = value;
 			}
 		}
 
-		public bool IsFullStrengthPotion { get { return m_StrengthPotion >= 2; } }
+		public bool IsFullStrengthPotion
+		{
+			get { return m_StrengthPotion >= 2; }
+		}
 		public int StrengthPotion
 		{
 			get { return m_StrengthPotion; }
 			set
 			{
-				if ( value < 0 )
+				if (value < 0)
 					m_StrengthPotion = 0;
-				else if ( value > 2 )
+				else if (value > 2)
 					m_StrengthPotion = 2;
 				else
 					m_StrengthPotion = value;
@@ -241,13 +256,13 @@ namespace Server.Engines.Plants
 			get { return Plant.IsCrossable && Plant.PlantStatus >= PlantStatus.FullGrownPlant; }
 		}
 
-        public bool Pollinated { get; set; }
+		public bool Pollinated { get; set; }
 
-        public PlantType SeedType
+		public PlantType SeedType
 		{
 			get
 			{
-				if ( Pollinated )
+				if (Pollinated)
 					return m_SeedType;
 				else
 					return Plant.PlantType;
@@ -259,7 +274,7 @@ namespace Server.Engines.Plants
 		{
 			get
 			{
-				if ( Pollinated )
+				if (Pollinated)
 					return m_SeedHue;
 				else
 					return Plant.PlantHue;
@@ -270,28 +285,44 @@ namespace Server.Engines.Plants
 		public int AvailableSeeds
 		{
 			get { return m_AvailableSeeds; }
-			set { if ( value >= 0 ) m_AvailableSeeds = value; }
+			set
+			{
+				if (value >= 0)
+					m_AvailableSeeds = value;
+			}
 		}
 
 		public int LeftSeeds
 		{
 			get { return m_LeftSeeds; }
-			set { if ( value >= 0 ) m_LeftSeeds = value; }
+			set
+			{
+				if (value >= 0)
+					m_LeftSeeds = value;
+			}
 		}
 
 		public int AvailableResources
 		{
 			get { return m_AvailableResources; }
-			set { if ( value >= 0 ) m_AvailableResources = value; }
+			set
+			{
+				if (value >= 0)
+					m_AvailableResources = value;
+			}
 		}
 
 		public int LeftResources
 		{
 			get { return m_LeftResources; }
-			set { if ( value >= 0 ) m_LeftResources = value; }
+			set
+			{
+				if (value >= 0)
+					m_LeftResources = value;
+			}
 		}
 
-		public PlantSystem( PlantItem plant, bool fertileDirt )
+		public PlantSystem(PlantItem plant, bool fertileDirt)
 		{
 			Plant = plant;
 			FertileDirt = fertileDirt;
@@ -303,7 +334,7 @@ namespace Server.Engines.Plants
 			m_LeftResources = 8;
 		}
 
-		public void Reset( bool potions )
+		public void Reset(bool potions)
 		{
 			NextGrowth = DateTime.UtcNow + CheckDelay;
 			GrowthIndicator = PlantGrowthIndicator.None;
@@ -314,7 +345,7 @@ namespace Server.Engines.Plants
 			m_Poison = 0;
 			m_Disease = 0;
 
-			if ( potions )
+			if (potions)
 			{
 				m_PoisonPotion = 0;
 				m_CurePotion = 0;
@@ -332,14 +363,14 @@ namespace Server.Engines.Plants
 
 		public int GetLocalizedDirtStatus()
 		{
-            if(!Plant.RequiresUpkeep)
-                return 1060827; // soft
-
-			if ( Water <= 1 )
-				return 1060826; // hard
-			else if ( Water <= 2 )
+			if (!Plant.RequiresUpkeep)
 				return 1060827; // soft
-			else if ( Water <= 3 )
+
+			if (Water <= 1)
+				return 1060826; // hard
+			else if (Water <= 2)
+				return 1060827; // soft
+			else if (Water <= 3)
 				return 1060828; // squishy
 			else
 				return 1060829; // sopping wet
@@ -347,49 +378,53 @@ namespace Server.Engines.Plants
 
 		public int GetLocalizedHealth()
 		{
-			switch ( Health )
+			switch (Health)
 			{
-				case PlantHealth.Dying:	return 1060825; // dying
-				case PlantHealth.Wilted: return 1060824; // wilted
-				case PlantHealth.Healthy: return 1060823; // healthy
-				default: return 1060822; // vibrant
+				case PlantHealth.Dying:
+					return 1060825; // dying
+				case PlantHealth.Wilted:
+					return 1060824; // wilted
+				case PlantHealth.Healthy:
+					return 1060823; // healthy
+				default:
+					return 1060822; // vibrant
 			}
 		}
 
 		public static void Configure()
 		{
-			EventSink.WorldLoad += new WorldLoadEventHandler( EventSink_WorldLoad );
+			EventSink.WorldLoad += new WorldLoadEventHandler(EventSink_WorldLoad);
 
-			if ( !Misc.AutoRestart.Enabled )
-				EventSink.WorldSave += new WorldSaveEventHandler( EventSink_WorldSave );
+			if (!Misc.AutoRestart.Enabled)
+				EventSink.WorldSave += new WorldSaveEventHandler(EventSink_WorldSave);
 
-			EventSink.Login += new LoginEventHandler( EventSink_Login );
+			EventSink.Login += new LoginEventHandler(EventSink_Login);
 		}
 
-		private static void EventSink_Login( LoginEventArgs args )
+		private static void EventSink_Login(LoginEventArgs args)
 		{
 			Mobile from = args.Mobile;
 
-			if ( from.Backpack != null )
+			if (from.Backpack != null)
 			{
 				List<PlantItem> plants = from.Backpack.FindItemsByType<PlantItem>();
 
-				foreach ( PlantItem plant in plants )
+				foreach (PlantItem plant in plants)
 				{
-					if ( plant.IsGrowable )
+					if (plant.IsGrowable)
 						plant.PlantSystem.DoGrowthCheck();
 				}
 			}
 
 			BankBox bank = from.FindBankNoCreate();
 
-			if ( bank != null )
+			if (bank != null)
 			{
 				List<PlantItem> plants = bank.FindItemsByType<PlantItem>();
 
-				foreach ( PlantItem plant in plants )
+				foreach (PlantItem plant in plants)
 				{
-					if ( plant.IsGrowable )
+					if (plant.IsGrowable)
 						plant.PlantSystem.DoGrowthCheck();
 				}
 			}
@@ -400,11 +435,11 @@ namespace Server.Engines.Plants
 			ArrayList plants = PlantItem.Plants;
 			DateTime now = DateTime.UtcNow;
 
-			for ( int i = plants.Count - 1; i >= 0; --i )
+			for (int i = plants.Count - 1; i >= 0; --i)
 			{
-				PlantItem plant = (PlantItem) plants[i];
+				PlantItem plant = (PlantItem)plants[i];
 
-				if ( plant.IsGrowable && (plant.RootParent as Mobile) == null && now >= plant.PlantSystem.NextGrowth )
+				if (plant.IsGrowable && (plant.RootParent as Mobile) == null && now >= plant.PlantSystem.NextGrowth)
 					plant.PlantSystem.DoGrowthCheck();
 			}
 		}
@@ -414,19 +449,19 @@ namespace Server.Engines.Plants
 			GrowAll();
 		}
 
-		private static void EventSink_WorldSave( WorldSaveEventArgs args)
+		private static void EventSink_WorldSave(WorldSaveEventArgs args)
 		{
 			GrowAll();
 		}
 
-        public bool MaginciaPlantContract => Plant.MaginciaPlant && ((MaginciaPlantItem)Plant).IsContract;
+		public bool MaginciaPlantContract => Plant.MaginciaPlant && ((MaginciaPlantItem)Plant).IsContract;
 
-        public void DoGrowthCheck()
+		public void DoGrowthCheck()
 		{
 			if (!Plant.IsGrowable)
 				return;
 
-			if ( DateTime.UtcNow < NextGrowth )
+			if (DateTime.UtcNow < NextGrowth)
 			{
 				GrowthIndicator = PlantGrowthIndicator.Delay;
 				return;
@@ -438,32 +473,32 @@ namespace Server.Engines.Plants
 			{
 				GrowthIndicator = PlantGrowthIndicator.InvalidLocation;
 				return;
-			}			
+			}
 
-            if (!MaginciaPlantContract)
-            {
-                if (Plant.PlantStatus == PlantStatus.BowlOfDirt)
-                {
-                    if (Water > 2 || Utility.RandomDouble() < 0.9)
-                        Water--;
-                    return;
-                }
+			if (!MaginciaPlantContract)
+			{
+				if (Plant.PlantStatus == PlantStatus.BowlOfDirt)
+				{
+					if (Water > 2 || Utility.RandomDouble() < 0.9)
+						Water--;
+					return;
+				}
 
-                ApplyBeneficEffects();
+				ApplyBeneficEffects();
 
-                if (!ApplyMaladiesEffects()) // Dead
-                    return;
-            }
+				if (!ApplyMaladiesEffects()) // Dead
+					return;
+			}
 
 			Grow();
 
-            if (!MaginciaPlantContract)
-                UpdateMaladies();
+			if (!MaginciaPlantContract)
+				UpdateMaladies();
 		}
 
 		private void ApplyBeneficEffects()
 		{
-			if ( PoisonPotion >= Infestation )
+			if (PoisonPotion >= Infestation)
 			{
 				PoisonPotion -= Infestation;
 				Infestation = 0;
@@ -474,7 +509,7 @@ namespace Server.Engines.Plants
 				PoisonPotion = 0;
 			}
 
-			if ( CurePotion >= Fungus )
+			if (CurePotion >= Fungus)
 			{
 				CurePotion -= Fungus;
 				Fungus = 0;
@@ -485,7 +520,7 @@ namespace Server.Engines.Plants
 				CurePotion = 0;
 			}
 
-			if ( HealPotion >= Poison )
+			if (HealPotion >= Poison)
 			{
 				HealPotion -= Poison;
 				Poison = 0;
@@ -496,7 +531,7 @@ namespace Server.Engines.Plants
 				HealPotion = 0;
 			}
 
-			if ( HealPotion >= Disease )
+			if (HealPotion >= Disease)
 			{
 				HealPotion -= Disease;
 				Disease = 0;
@@ -507,9 +542,9 @@ namespace Server.Engines.Plants
 				HealPotion = 0;
 			}
 
-			if ( !HasMaladies )
+			if (!HasMaladies)
 			{
-				if ( HealPotion > 0 )
+				if (HealPotion > 0)
 					Hits += HealPotion * 7;
 				else
 					Hits += 2;
@@ -520,27 +555,27 @@ namespace Server.Engines.Plants
 
 		private bool ApplyMaladiesEffects()
 		{
-            if ( !Plant.RequiresUpkeep )
-                return true;
+			if (!Plant.RequiresUpkeep)
+				return true;
 
 			int damage = 0;
 
-			if ( Infestation > 0 )
-				damage += Infestation * Utility.RandomMinMax( 3, 6 );
+			if (Infestation > 0)
+				damage += Infestation * Utility.RandomMinMax(3, 6);
 
-			if ( Fungus > 0 )
-				damage += Fungus * Utility.RandomMinMax( 3, 6 );
+			if (Fungus > 0)
+				damage += Fungus * Utility.RandomMinMax(3, 6);
 
-			if ( Poison > 0 )
-				damage += Poison * Utility.RandomMinMax( 3, 6 );
+			if (Poison > 0)
+				damage += Poison * Utility.RandomMinMax(3, 6);
 
-			if ( Disease > 0 )
-				damage += Disease * Utility.RandomMinMax( 3, 6 );
+			if (Disease > 0)
+				damage += Disease * Utility.RandomMinMax(3, 6);
 
-			if ( Water > 2 )
-				damage += ( Water - 2 ) * Utility.RandomMinMax( 3, 6 );
-			else if ( Water < 2 )
-				damage += ( 2 - Water ) * Utility.RandomMinMax( 3, 6 );
+			if (Water > 2)
+				damage += (Water - 2) * Utility.RandomMinMax(3, 6);
+			else if (Water < 2)
+				damage += (2 - Water) * Utility.RandomMinMax(3, 6);
 
 			Hits -= damage;
 
@@ -549,33 +584,37 @@ namespace Server.Engines.Plants
 
 		private void Grow()
 		{
-			if ( Health < PlantHealth.Healthy )
+			if (Health < PlantHealth.Healthy)
 			{
 				GrowthIndicator = PlantGrowthIndicator.NotHealthy;
 			}
-			else if ( FertileDirt && Plant.PlantStatus <= PlantStatus.Stage2 )
+			else if (FertileDirt && Plant.PlantStatus <= PlantStatus.Stage2)
 			{
 				int curStage = (int)Plant.PlantStatus;
-				Plant.PlantStatus = (PlantStatus)( curStage + 2 );
+				Plant.PlantStatus = (PlantStatus)(curStage + 2);
 
 				GrowthIndicator = PlantGrowthIndicator.DoubleGrown;
 			}
-			else if ( Plant.PlantStatus < PlantStatus.Stage6 )
+			else if (Plant.PlantStatus < PlantStatus.Stage6)
 			{
 				int curStage = (int)Plant.PlantStatus;
-				Plant.PlantStatus = (PlantStatus)( curStage + 1 );
+				Plant.PlantStatus = (PlantStatus)(curStage + 1);
 
 				GrowthIndicator = PlantGrowthIndicator.Grown;
 			}
 			else
 			{
-				if ( Pollinated && LeftSeeds > 0 && Plant.Reproduces )
+				if (Pollinated && LeftSeeds > 0 && Plant.Reproduces)
 				{
 					LeftSeeds--;
 					AvailableSeeds++;
 				}
 
-				if ( !Plant.MaginciaPlant && LeftResources > 0 && PlantResourceInfo.GetInfo( Plant.PlantType, Plant.PlantHue ) != null )
+				if (
+					!Plant.MaginciaPlant
+					&& LeftResources > 0
+					&& PlantResourceInfo.GetInfo(Plant.PlantType, Plant.PlantHue) != null
+				)
 				{
 					LeftResources--;
 					AvailableResources++;
@@ -584,7 +623,7 @@ namespace Server.Engines.Plants
 				GrowthIndicator = PlantGrowthIndicator.Grown;
 			}
 
-			if ( Plant.PlantStatus >= PlantStatus.Stage6 && !Pollinated && !Plant.MaginciaPlant )
+			if (Plant.PlantStatus >= PlantStatus.Stage6 && !Pollinated && !Plant.MaginciaPlant)
 			{
 				Pollinated = true;
 				SeedType = Plant.PlantType;
@@ -594,37 +633,36 @@ namespace Server.Engines.Plants
 
 		private void UpdateMaladies()
 		{
-            if ( !Plant.RequiresUpkeep )
-                return;
+			if (!Plant.RequiresUpkeep)
+				return;
 
-			double infestationChance = 0.30 - StrengthPotion * 0.075 + ( Water - 2 ) * 0.10;
+			double infestationChance = 0.30 - StrengthPotion * 0.075 + (Water - 2) * 0.10;
 
-			PlantTypeInfo typeInfo = PlantTypeInfo.GetInfo( Plant.PlantType );
-			if ( typeInfo.Flowery )
+			PlantTypeInfo typeInfo = PlantTypeInfo.GetInfo(Plant.PlantType);
+			if (typeInfo.Flowery)
 				infestationChance += 0.10;
 
-			if ( PlantHueInfo.IsBright( Plant.PlantHue ) )
+			if (PlantHueInfo.IsBright(Plant.PlantHue))
 				infestationChance += 0.10;
 
-			if ( Utility.RandomDouble() < infestationChance )
+			if (Utility.RandomDouble() < infestationChance)
 				Infestation++;
 
+			double fungusChance = 0.15 - StrengthPotion * 0.075 + (Water - 2) * 0.10;
 
-			double fungusChance = 0.15 - StrengthPotion * 0.075 + ( Water - 2 ) * 0.10;
-
-			if ( Utility.RandomDouble() < fungusChance )
+			if (Utility.RandomDouble() < fungusChance)
 				Fungus++;
 
-			if ( Water > 2 || Utility.RandomDouble() < 0.9 )
+			if (Water > 2 || Utility.RandomDouble() < 0.9)
 				Water--;
 
-			if ( PoisonPotion > 0 )
+			if (PoisonPotion > 0)
 			{
 				Poison += PoisonPotion;
 				PoisonPotion = 0;
 			}
 
-			if ( CurePotion > 0 )
+			if (CurePotion > 0)
 			{
 				Disease += CurePotion;
 				CurePotion = 0;
@@ -633,38 +671,38 @@ namespace Server.Engines.Plants
 			StrengthPotion = 0;
 		}
 
-		public void Save( GenericWriter writer )
+		public void Save(GenericWriter writer)
 		{
-			writer.Write( (int) 2 ); // version
+			writer.Write((int)2); // version
 
-			writer.Write( (bool) FertileDirt );
+			writer.Write((bool)FertileDirt);
 
-			writer.Write( (DateTime) NextGrowth );
-			writer.Write( (int) GrowthIndicator );
+			writer.Write((DateTime)NextGrowth);
+			writer.Write((int)GrowthIndicator);
 
-			writer.Write( (int) m_Water );
+			writer.Write((int)m_Water);
 
-			writer.Write( (int) m_Hits );
-			writer.Write( (int) m_Infestation );
-			writer.Write( (int) m_Fungus );
-			writer.Write( (int) m_Poison );
-			writer.Write( (int) m_Disease );
-			writer.Write( (int) m_PoisonPotion );
-			writer.Write( (int) m_CurePotion );
-			writer.Write( (int) m_HealPotion );
-			writer.Write( (int) m_StrengthPotion );
+			writer.Write((int)m_Hits);
+			writer.Write((int)m_Infestation);
+			writer.Write((int)m_Fungus);
+			writer.Write((int)m_Poison);
+			writer.Write((int)m_Disease);
+			writer.Write((int)m_PoisonPotion);
+			writer.Write((int)m_CurePotion);
+			writer.Write((int)m_HealPotion);
+			writer.Write((int)m_StrengthPotion);
 
-			writer.Write( (bool) Pollinated );
-			writer.Write( (int) m_SeedType );
-			writer.Write( (int) m_SeedHue );
-			writer.Write( (int) m_AvailableSeeds );
-			writer.Write( (int) m_LeftSeeds );
+			writer.Write((bool)Pollinated);
+			writer.Write((int)m_SeedType);
+			writer.Write((int)m_SeedHue);
+			writer.Write((int)m_AvailableSeeds);
+			writer.Write((int)m_LeftSeeds);
 
-			writer.Write( (int) m_AvailableResources );
-			writer.Write( (int) m_LeftResources );
+			writer.Write((int)m_AvailableResources);
+			writer.Write((int)m_LeftResources);
 		}
 
-		public PlantSystem( PlantItem plant, GenericReader reader )
+		public PlantSystem(PlantItem plant, GenericReader reader)
 		{
 			Plant = plant;
 
@@ -672,7 +710,7 @@ namespace Server.Engines.Plants
 
 			FertileDirt = reader.ReadBool();
 
-			if ( version >= 1 )
+			if (version >= 1)
 				NextGrowth = reader.ReadDateTime();
 			else
 				NextGrowth = reader.ReadDeltaTime();
@@ -700,7 +738,7 @@ namespace Server.Engines.Plants
 			m_AvailableResources = reader.ReadInt();
 			m_LeftResources = reader.ReadInt();
 
-			if ( version < 2 && PlantHueInfo.IsCrossable( m_SeedHue ) )
+			if (version < 2 && PlantHueInfo.IsCrossable(m_SeedHue))
 				m_SeedHue |= PlantHue.Reproduces;
 		}
 	}

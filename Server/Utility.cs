@@ -4,19 +4,20 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using System.Linq;
 #endregion
 
 namespace Server
 {
 	public static class Utility
 	{
-		private static Encoding m_UTF8, m_UTF8WithEncoding;
+		private static Encoding m_UTF8,
+			m_UTF8WithEncoding;
 
 		public static Encoding UTF8
 		{
@@ -158,37 +159,37 @@ namespace Server
 			}
 
 			/*
-            string[] str = cidr.Split( '/' );
+			string[] str = cidr.Split( '/' );
 
-            if ( str.Length != 2 )
-            return false;
+			if ( str.Length != 2 )
+			return false;
 
-            /* **************************************************
-            IPAddress cidrPrefix;
+			/* **************************************************
+			IPAddress cidrPrefix;
 
-            if ( !IPAddress.TryParse( str[0], out cidrPrefix ) )
-            return false;
-            * */
+			if ( !IPAddress.TryParse( str[0], out cidrPrefix ) )
+			return false;
+			* */
 
 			/*
-            string[] dotSplit = str[0].Split( '.' );
+			string[] dotSplit = str[0].Split( '.' );
 
-            if ( dotSplit.Length != 4 )		//At this point and time, and for speed sake, we'll only worry about IPv4
-            return false;
+			if ( dotSplit.Length != 4 )		//At this point and time, and for speed sake, we'll only worry about IPv4
+			return false;
 
-            byte[] bytes = new byte[4];
+			byte[] bytes = new byte[4];
 
-            for ( int i = 0; i < 4; i++ )
-            {
-            byte.TryParse( dotSplit[i], out bytes[i] );
-            }
+			for ( int i = 0; i < 4; i++ )
+			{
+			byte.TryParse( dotSplit[i], out bytes[i] );
+			}
 
-            uint cidrPrefix = OrderedAddressValue( bytes );
+			uint cidrPrefix = OrderedAddressValue( bytes );
 
-            int cidrLength = Utility.ToInt32( str[1] );
-            //The below solution is the fastest solution of the three
+			int cidrLength = Utility.ToInt32( str[1] );
+			//The below solution is the fastest solution of the three
 
-            */
+			*/
 
 			var bytes = new byte[4];
 			var split = cidr.Split('.');
@@ -283,7 +284,7 @@ namespace Server
 		public static bool IPMatchCIDR(IPAddress cidrPrefix, IPAddress ip, int cidrLength)
 		{
 			if (cidrPrefix == null || ip == null || cidrPrefix.AddressFamily == AddressFamily.InterNetworkV6)
-				//Ignore IPv6 for now
+			//Ignore IPv6 for now
 			{
 				return false;
 			}
@@ -330,8 +331,14 @@ namespace Server
 
 		private static uint SwapUnsignedInt(uint source)
 		{
-			return ((((source & 0x000000FF) << 0x18) | ((source & 0x0000FF00) << 8) | ((source & 0x00FF0000) >> 8) |
-					 ((source & 0xFF000000) >> 0x18)));
+			return (
+				(
+					((source & 0x000000FF) << 0x18)
+					| ((source & 0x0000FF00) << 8)
+					| ((source & 0x00FF0000) >> 8)
+					| ((source & 0xFF000000) >> 0x18)
+				)
+			);
 		}
 
 		public static bool TryConvertIPv6toIPv4(ref IPAddress address)
@@ -379,7 +386,8 @@ namespace Server
 
 			for (int i = 0; i < 4; ++i)
 			{
-				int lowPart, highPart;
+				int lowPart,
+					highPart;
 
 				if (i >= split.Length)
 				{
@@ -543,17 +551,17 @@ namespace Server
 			return i;
 		}
 
-        public static long ToInt64(string value)
-        {
-            long i;
+		public static long ToInt64(string value)
+		{
+			long i;
 
-            if (value.StartsWith("0x"))
-                long.TryParse(value.Substring(2), NumberStyles.HexNumber, null, out i);
-            else
-                long.TryParse(value, out i);
+			if (value.StartsWith("0x"))
+				long.TryParse(value.Substring(2), NumberStyles.HexNumber, null, out i);
+			else
+				long.TryParse(value, out i);
 
-            return i;
-        }
+			return i;
+		}
 		#endregion
 
 		#region Get[Something]
@@ -693,24 +701,30 @@ namespace Server
 		#region In[...]Range
 		public static bool InRange(Point3D p1, Point3D p2, int range)
 		{
-			return (p1.m_X >= (p2.m_X - range)) && (p1.m_X <= (p2.m_X + range)) && (p1.m_Y >= (p2.m_Y - range)) &&
-				   (p1.m_Y <= (p2.m_Y + range));
+			return (p1.m_X >= (p2.m_X - range))
+				&& (p1.m_X <= (p2.m_X + range))
+				&& (p1.m_Y >= (p2.m_Y - range))
+				&& (p1.m_Y <= (p2.m_Y + range));
 		}
 
 		public static bool InUpdateRange(Point3D p1, Point3D p2)
 		{
-            int range = Core.GlobalUpdateRange;
+			int range = Core.GlobalUpdateRange;
 
-            return (p1.m_X >= (p2.m_X - range)) && (p1.m_X <= (p2.m_X + range)) && (p1.m_Y >= (p2.m_Y - range)) &&
-                   (p1.m_Y <= (p2.m_Y + range));
+			return (p1.m_X >= (p2.m_X - range))
+				&& (p1.m_X <= (p2.m_X + range))
+				&& (p1.m_Y >= (p2.m_Y - range))
+				&& (p1.m_Y <= (p2.m_Y + range));
 		}
 
 		public static bool InUpdateRange(Point2D p1, Point2D p2)
 		{
-            int range = Core.GlobalUpdateRange;
+			int range = Core.GlobalUpdateRange;
 
-            return (p1.m_X >= (p2.m_X - range)) && (p1.m_X <= (p2.m_X + range)) && (p1.m_Y >= (p2.m_Y - range)) &&
-                   (p1.m_Y <= (p2.m_Y + range));
+			return (p1.m_X >= (p2.m_X - range))
+				&& (p1.m_X <= (p2.m_X + range))
+				&& (p1.m_Y >= (p2.m_Y - range))
+				&& (p1.m_Y <= (p2.m_Y + range));
 		}
 
 		public static bool InUpdateRange(Mobile m, IPoint3D p)
@@ -737,8 +751,11 @@ namespace Server
 				p2 = ((Item)p2).GetWorldLocation();
 			}
 
-			return (p1.X >= (p2.X - range)) && (p1.X <= (p2.X + range)) && (p1.Y >= (p2.Y - range)) && (p1.Y <= (p2.Y + range));
-        }
+			return (p1.X >= (p2.X - range))
+				&& (p1.X <= (p2.X + range))
+				&& (p1.Y >= (p2.Y - range))
+				&& (p1.Y <= (p2.Y + range));
+		}
 		#endregion
 
 		public static Direction GetDirection(IPoint2D from, IPoint2D to)
@@ -822,11 +839,11 @@ namespace Server
 		}
 
 		#region Random
-        /// <summary>
-        /// Enables or disables floating dice. 
-        /// Floating dice uses a double to obtain a lower average value range.
-        /// Consistent average values for [1,000,000 x 1d6+0] rolls: [Integral: 3.50]  [Floating: 2.25]
-        /// </summary>
+		/// <summary>
+		/// Enables or disables floating dice.
+		/// Floating dice uses a double to obtain a lower average value range.
+		/// Consistent average values for [1,000,000 x 1d6+0] rolls: [Integral: 3.50]  [Floating: 2.25]
+		/// </summary>
 		public static bool FloatingDice = false;
 
 		//4d6+8 would be: Utility.Dice( 4, 6, 8 )
@@ -839,7 +856,8 @@ namespace Server
 		{
 			if (floating)
 			{
-				double min = numDice, max = min;
+				double min = numDice,
+					max = min;
 
 				for (int i = 0; i < numDice; ++i)
 				{
@@ -931,51 +949,51 @@ namespace Server
 		{
 			return RandomImpl.NextDouble();
 		}
-        #endregion
+		#endregion
 
-        #region FixValues
-        public static void FixMin(ref int value, int min)
-        {
-            if (value < min)
-                value = min;
-        }
+		#region FixValues
+		public static void FixMin(ref int value, int min)
+		{
+			if (value < min)
+				value = min;
+		}
 
-        public static void FixMin(ref double value, double min)
-        {
-            if (value < min)
-                value = min;
-        }
+		public static void FixMin(ref double value, double min)
+		{
+			if (value < min)
+				value = min;
+		}
 
-        public static void FixMax(ref int value, int max)
-        {
-            if (value > max)
-                value = max;
-        }
+		public static void FixMax(ref int value, int max)
+		{
+			if (value > max)
+				value = max;
+		}
 
-        public static void FixMax(ref double value, double max)
-        {
-            if (value > max)
-                value = max;
-        }
+		public static void FixMax(ref double value, double max)
+		{
+			if (value > max)
+				value = max;
+		}
 
-        public static void FixMinMax(ref int value, int min, int max)
-        {
-            FixMin(ref value, min);
-            FixMax(ref value, max);
-        }
+		public static void FixMinMax(ref int value, int min, int max)
+		{
+			FixMin(ref value, min);
+			FixMax(ref value, max);
+		}
 
-        public static void FixMinMax(ref double value, double min, double max)
-        {
-            FixMin(ref value, min);
-            FixMax(ref value, max);
-        }
-        #endregion
+		public static void FixMinMax(ref double value, double min, double max)
+		{
+			FixMin(ref value, min);
+			FixMax(ref value, max);
+		}
+		#endregion
 
-        #region Random Hues
-        /// <summary>
-        ///     Random pink, blue, green, orange, red or yellow hue
-        /// </summary>
-        public static int RandomNondyedHue()
+		#region Random Hues
+		/// <summary>
+		///     Random pink, blue, green, orange, red or yellow hue
+		/// </summary>
+		public static int RandomNondyedHue()
 		{
 			switch (Random(6))
 			{
@@ -1178,31 +1196,101 @@ namespace Server
 
 		private static readonly SkillName[] m_AllSkills = new[]
 		{
-			SkillName.Alchemy, SkillName.Anatomy, SkillName.AnimalLore, SkillName.ItemID, SkillName.ArmsLore, SkillName.Parry,
-			SkillName.Begging, SkillName.Blacksmith, SkillName.Fletching, SkillName.Peacemaking, SkillName.Camping,
-			SkillName.Carpentry, SkillName.Cartography, SkillName.Cooking, SkillName.DetectHidden, SkillName.Discordance,
-			SkillName.EvalInt, SkillName.Healing, SkillName.Fishing, SkillName.Forensics, SkillName.Herding, SkillName.Hiding,
-			SkillName.Provocation, SkillName.Inscribe, SkillName.Lockpicking, SkillName.Magery, SkillName.MagicResist,
-			SkillName.Tactics, SkillName.Snooping, SkillName.Musicianship, SkillName.Poisoning, SkillName.Archery,
-			SkillName.SpiritSpeak, SkillName.Stealing, SkillName.Tailoring, SkillName.AnimalTaming, SkillName.TasteID,
-			SkillName.Tinkering, SkillName.Tracking, SkillName.Veterinary, SkillName.Swords, SkillName.Macing, SkillName.Fencing,
-			SkillName.Wrestling, SkillName.Lumberjacking, SkillName.Mining, SkillName.Meditation, SkillName.Stealth,
-			SkillName.RemoveTrap, SkillName.Necromancy, SkillName.Focus, SkillName.Chivalry, SkillName.Bushido,
-			SkillName.Ninjitsu, SkillName.Spellweaving, SkillName.Mysticism, SkillName.Imbuing, SkillName.Throwing
+			SkillName.Alchemy,
+			SkillName.Anatomy,
+			SkillName.AnimalLore,
+			SkillName.ItemID,
+			SkillName.ArmsLore,
+			SkillName.Parry,
+			SkillName.Begging,
+			SkillName.Blacksmith,
+			SkillName.Fletching,
+			SkillName.Peacemaking,
+			SkillName.Camping,
+			SkillName.Carpentry,
+			SkillName.Cartography,
+			SkillName.Cooking,
+			SkillName.DetectHidden,
+			SkillName.Discordance,
+			SkillName.EvalInt,
+			SkillName.Healing,
+			SkillName.Fishing,
+			SkillName.Forensics,
+			SkillName.Herding,
+			SkillName.Hiding,
+			SkillName.Provocation,
+			SkillName.Inscribe,
+			SkillName.Lockpicking,
+			SkillName.Magery,
+			SkillName.MagicResist,
+			SkillName.Tactics,
+			SkillName.Snooping,
+			SkillName.Musicianship,
+			SkillName.Poisoning,
+			SkillName.Archery,
+			SkillName.SpiritSpeak,
+			SkillName.Stealing,
+			SkillName.Tailoring,
+			SkillName.AnimalTaming,
+			SkillName.TasteID,
+			SkillName.Tinkering,
+			SkillName.Tracking,
+			SkillName.Veterinary,
+			SkillName.Swords,
+			SkillName.Macing,
+			SkillName.Fencing,
+			SkillName.Wrestling,
+			SkillName.Lumberjacking,
+			SkillName.Mining,
+			SkillName.Meditation,
+			SkillName.Stealth,
+			SkillName.RemoveTrap,
+			SkillName.Necromancy,
+			SkillName.Focus,
+			SkillName.Chivalry,
+			SkillName.Bushido,
+			SkillName.Ninjitsu,
+			SkillName.Spellweaving,
+			SkillName.Mysticism,
+			SkillName.Imbuing,
+			SkillName.Throwing,
 		};
 
 		private static readonly SkillName[] m_CombatSkills = new[]
-		{SkillName.Archery, SkillName.Swords, SkillName.Macing, SkillName.Fencing, SkillName.Wrestling};
+		{
+			SkillName.Archery,
+			SkillName.Swords,
+			SkillName.Macing,
+			SkillName.Fencing,
+			SkillName.Wrestling,
+		};
 
 		private static readonly SkillName[] m_CraftSkills = new[]
 		{
-			SkillName.Alchemy, SkillName.Blacksmith, SkillName.Fletching, SkillName.Carpentry, SkillName.Cartography,
-			SkillName.Cooking, SkillName.Inscribe, SkillName.Tailoring, SkillName.Tinkering
+			SkillName.Alchemy,
+			SkillName.Blacksmith,
+			SkillName.Fletching,
+			SkillName.Carpentry,
+			SkillName.Cartography,
+			SkillName.Cooking,
+			SkillName.Inscribe,
+			SkillName.Tailoring,
+			SkillName.Tinkering,
 		};
 
 		public static SkillName RandomSkill()
 		{
-			return m_AllSkills[Random(m_AllSkills.Length - (Core.ML ? 0 : Core.SE ? 1 : Core.AOS ? 3 : 6))];
+			return m_AllSkills[
+				Random(
+					m_AllSkills.Length
+						- (
+							Core.ML ? 0
+							: Core.SE ? 1
+							: Core.AOS ? 3
+							: 6
+						)
+				)
+			];
 		}
 
 		public static SkillName RandomCombatSkill()
@@ -1255,7 +1343,10 @@ namespace Server
 
 		public static bool RangeCheck(IPoint2D p1, IPoint2D p2, int range)
 		{
-			return (p1.X >= (p2.X - range)) && (p1.X <= (p2.X + range)) && (p1.Y >= (p2.Y - range)) && (p2.Y <= (p2.Y + range));
+			return (p1.X >= (p2.X - range))
+				&& (p1.X <= (p2.X + range))
+				&& (p1.Y >= (p2.Y - range))
+				&& (p2.Y <= (p2.Y + range));
 		}
 
 		public static void FormatBuffer(TextWriter output, Stream input, int length)
@@ -1377,8 +1468,8 @@ namespace Server
 			}
 		}
 
-        public static void WriteConsoleColor(ConsoleColor color, string str)
-        {
+		public static void WriteConsoleColor(ConsoleColor color, string str)
+		{
 			lock (((ICollection)m_ConsoleColors).SyncRoot)
 			{
 				PushColor(color);
@@ -1398,8 +1489,7 @@ namespace Server
 					Console.ForegroundColor = color;
 				}
 			}
-			catch
-			{ }
+			catch { }
 		}
 
 		public static void PopColor()
@@ -1411,8 +1501,7 @@ namespace Server
 					Console.ForegroundColor = m_ConsoleColors.Pop();
 				}
 			}
-			catch
-			{ }
+			catch { }
 		}
 
 		public static bool NumberBetween(double num, int bound1, int bound2, double allowance)
@@ -1427,15 +1516,15 @@ namespace Server
 			return (num < bound2 + allowance && num > bound1 - allowance);
 		}
 
-        public static double GetDistanceToSqrt(Point3D p1, Point3D p2)
-        {
-            int xDelta = p1.X - p2.X;
-            int yDelta = p1.Y - p2.Y;
+		public static double GetDistanceToSqrt(Point3D p1, Point3D p2)
+		{
+			int xDelta = p1.X - p2.X;
+			int yDelta = p1.Y - p2.Y;
 
-            return Math.Sqrt((xDelta * xDelta) + (yDelta * yDelta));
-        }
+			return Math.Sqrt((xDelta * xDelta) + (yDelta * yDelta));
+		}
 
-        public static void AssignRandomHair(Mobile m)
+		public static void AssignRandomHair(Mobile m)
 		{
 			AssignRandomHair(m, true);
 		}
@@ -1477,12 +1566,19 @@ namespace Server
 			}
 		}
 
-		public static List<TOutput> CastConvertList<TInput, TOutput>(List<TInput> list) where TOutput : TInput
+		public static List<TOutput> CastConvertList<TInput, TOutput>(List<TInput> list)
+			where TOutput : TInput
 		{
-			return list.ConvertAll(delegate(TInput value) { return (TOutput)value; });
+			return list.ConvertAll(
+				delegate(TInput value)
+				{
+					return (TOutput)value;
+				}
+			);
 		}
 
-		public static List<TOutput> SafeConvertList<TInput, TOutput>(List<TInput> list) where TOutput : class
+		public static List<TOutput> SafeConvertList<TInput, TOutput>(List<TInput> list)
+			where TOutput : class
 		{
 			var output = new List<TOutput>(list.Capacity);
 
@@ -1499,201 +1595,203 @@ namespace Server
 			return output;
 		}
 
-        public static String RemoveHtml(String str)
-        {
-            return str.Replace("<", "").Replace(">", "").Trim();
-        }
+		public static String RemoveHtml(String str)
+		{
+			return str.Replace("<", "").Replace(">", "").Trim();
+		}
 
-        public static bool IsNumeric(String str)
-        {
-            return !Regex.IsMatch(str, "[^0-9]");
-        }
+		public static bool IsNumeric(String str)
+		{
+			return !Regex.IsMatch(str, "[^0-9]");
+		}
 
-        public static bool IsAlpha(String str)
-        {
-            return !Regex.IsMatch(str, "[^a-z]", RegexOptions.IgnoreCase);
-        }
+		public static bool IsAlpha(String str)
+		{
+			return !Regex.IsMatch(str, "[^a-z]", RegexOptions.IgnoreCase);
+		}
 
-        public static bool IsAlphaNumeric(String str)
-        {
-            return !Regex.IsMatch(str, "[^a-z0-9]", RegexOptions.IgnoreCase);
-        }
-    }
+		public static bool IsAlphaNumeric(String str)
+		{
+			return !Regex.IsMatch(str, "[^a-z0-9]", RegexOptions.IgnoreCase);
+		}
+	}
 
-    public static class ColUtility
-    {
-        public static void Free<T>(List<T> l)
-        {
-            if (l == null)
-                return;
+	public static class ColUtility
+	{
+		public static void Free<T>(List<T> l)
+		{
+			if (l == null)
+				return;
 
-            l.Clear();
-            l.TrimExcess();
-        }
+			l.Clear();
+			l.TrimExcess();
+		}
 
-        public static void ForEach<T>(IEnumerable<T> list, Action<T> action)
-        {
-            if (list == null || action == null)
-                return;
+		public static void ForEach<T>(IEnumerable<T> list, Action<T> action)
+		{
+			if (list == null || action == null)
+				return;
 
-            List<T> l = list.ToList();
+			List<T> l = list.ToList();
 
-            foreach (T o in l)
-                action(o);
+			foreach (T o in l)
+				action(o);
 
-            Free(l);
-        }
+			Free(l);
+		}
 
-        public static void ForEach<TKey, TValue>(
-            IDictionary<TKey, TValue> dictionary, Action<KeyValuePair<TKey, TValue>> action)
-        {
-            if (dictionary == null || dictionary.Count == 0 || action == null)
-                return;
+		public static void ForEach<TKey, TValue>(
+			IDictionary<TKey, TValue> dictionary,
+			Action<KeyValuePair<TKey, TValue>> action
+		)
+		{
+			if (dictionary == null || dictionary.Count == 0 || action == null)
+				return;
 
-            List<KeyValuePair<TKey, TValue>> l = dictionary.ToList();
+			List<KeyValuePair<TKey, TValue>> l = dictionary.ToList();
 
-            foreach (KeyValuePair<TKey, TValue> kvp in l)
-                action(kvp);
+			foreach (KeyValuePair<TKey, TValue> kvp in l)
+				action(kvp);
 
-            Free(l);
-        }
+			Free(l);
+		}
 
-        public static void ForEach<TKey, TValue>(IDictionary<TKey, TValue> dictionary, Action<TKey, TValue> action)
-        {
-            if (dictionary == null || dictionary.Count == 0 || action == null)
-                return;
+		public static void ForEach<TKey, TValue>(IDictionary<TKey, TValue> dictionary, Action<TKey, TValue> action)
+		{
+			if (dictionary == null || dictionary.Count == 0 || action == null)
+				return;
 
-            List<KeyValuePair<TKey, TValue>> l = dictionary.ToList();
+			List<KeyValuePair<TKey, TValue>> l = dictionary.ToList();
 
-            foreach (KeyValuePair<TKey, TValue> kvp in l)
-                action(kvp.Key, kvp.Value);
+			foreach (KeyValuePair<TKey, TValue> kvp in l)
+				action(kvp.Key, kvp.Value);
 
-            Free(l);
-        }
+			Free(l);
+		}
 
-        public static void For<T>(IEnumerable<T> list, Action<int, T> action)
-        {
-            if (list == null || action == null)
-                return;
+		public static void For<T>(IEnumerable<T> list, Action<int, T> action)
+		{
+			if (list == null || action == null)
+				return;
 
-            List<T> l = list.ToList();
+			List<T> l = list.ToList();
 
-            for (int i = 0; i < l.Count; i++)
-                action(i, l[i]);
+			for (int i = 0; i < l.Count; i++)
+				action(i, l[i]);
 
-            Free(l);
-        }
+			Free(l);
+		}
 
-        public static void For<TKey, TValue>(IDictionary<TKey, TValue> list, Action<int, TKey, TValue> action)
-        {
-            if (list == null || action == null)
-                return;
+		public static void For<TKey, TValue>(IDictionary<TKey, TValue> list, Action<int, TKey, TValue> action)
+		{
+			if (list == null || action == null)
+				return;
 
-            List<KeyValuePair<TKey, TValue>> l = list.ToList();
+			List<KeyValuePair<TKey, TValue>> l = list.ToList();
 
-            for (int i = 0; i < l.Count; i++)
-                action(i, l[i].Key, l[i].Value);
+			for (int i = 0; i < l.Count; i++)
+				action(i, l[i].Key, l[i].Value);
 
-            Free(l);
-        }
+			Free(l);
+		}
 
-        public static void IterateReverse<T>(this T[] list, Action<T> action)
-        {
-            if (list == null || action == null)
-            {
-                return;
-            }
+		public static void IterateReverse<T>(this T[] list, Action<T> action)
+		{
+			if (list == null || action == null)
+			{
+				return;
+			}
 
-            int i = list.Length;
+			int i = list.Length;
 
-            while (--i >= 0)
-            {
-                if (i < list.Length)
-                {
-                    action(list[i]);
-                }
-            }
-        }
+			while (--i >= 0)
+			{
+				if (i < list.Length)
+				{
+					action(list[i]);
+				}
+			}
+		}
 
-        public static void IterateReverse<T>(this List<T> list, Action<T> action)
-        {
-            if (list == null || action == null)
-            {
-                return;
-            }
+		public static void IterateReverse<T>(this List<T> list, Action<T> action)
+		{
+			if (list == null || action == null)
+			{
+				return;
+			}
 
-            int i = list.Count;
+			int i = list.Count;
 
-            while (--i >= 0)
-            {
-                if (i < list.Count)
-                {
-                    action(list[i]);
-                }
-            }
-        }
+			while (--i >= 0)
+			{
+				if (i < list.Count)
+				{
+					action(list[i]);
+				}
+			}
+		}
 
-        public static void IterateReverse<T>(this IEnumerable<T> list, Action<T> action)
-        {
-            if (list == null || action == null)
-            {
-                return;
-            }
+		public static void IterateReverse<T>(this IEnumerable<T> list, Action<T> action)
+		{
+			if (list == null || action == null)
+			{
+				return;
+			}
 
-            if (list is T[])
-            {
-                IterateReverse((T[])list, action);
-                return;
-            }
+			if (list is T[])
+			{
+				IterateReverse((T[])list, action);
+				return;
+			}
 
-            if (list is List<T>)
-            {
-                IterateReverse((List<T>)list, action);
-                return;
-            }
+			if (list is List<T>)
+			{
+				IterateReverse((List<T>)list, action);
+				return;
+			}
 
-            var toList = list.ToList();
+			var toList = list.ToList();
 
-            foreach (var o in toList)
-            {
-                action(o);
-            }
+			foreach (var o in toList)
+			{
+				action(o);
+			}
 
-            Free(toList);
-        }
+			Free(toList);
+		}
 
-        public static void SafeDelete<T>(List<T> list)
-        {
-            SafeDelete(list, null);
-        }
+		public static void SafeDelete<T>(List<T> list)
+		{
+			SafeDelete(list, null);
+		}
 
-        /// <summary>
-        /// Safely deletes any entities based on predicate from a list that by deleting such entity would cause the collection to be modified.
-        /// ie item.Items or mobile.Items. Omitting the predicate will delete all items in the collection.
-        /// </summary>
-        /// <param name="list"></param>
-        /// <param name="predicate"></param>
-        public static void SafeDelete<T>(List<T> list, Func<T, bool> predicate)
-        {
-            if (list == null)
-            {
-                return;
-            }
+		/// <summary>
+		/// Safely deletes any entities based on predicate from a list that by deleting such entity would cause the collection to be modified.
+		/// ie item.Items or mobile.Items. Omitting the predicate will delete all items in the collection.
+		/// </summary>
+		/// <param name="list"></param>
+		/// <param name="predicate"></param>
+		public static void SafeDelete<T>(List<T> list, Func<T, bool> predicate)
+		{
+			if (list == null)
+			{
+				return;
+			}
 
-            int i = list.Count;
+			int i = list.Count;
 
-            while (--i >= 0)
-            {
-                if (i < list.Count)
-                {
-                    var entity = list[i] as IEntity;
+			while (--i >= 0)
+			{
+				if (i < list.Count)
+				{
+					var entity = list[i] as IEntity;
 
-                    if (entity != null && !entity.Deleted && (predicate == null || predicate((T)entity)))
-                    {
-                        entity.Delete();
-                    }
-                }
-            }
-        }
-    }
+					if (entity != null && !entity.Deleted && (predicate == null || predicate((T)entity)))
+					{
+						entity.Delete();
+					}
+				}
+			}
+		}
+	}
 }

@@ -4,81 +4,81 @@ using Server.Network;
 
 namespace Server.Items
 {
-    public class PlagueBeastMutationCore : Item, IScissorable
-    {
-        private bool m_Cut;
-		
-		public override int LabelNumber { get { return 1153760; } } // a plague beast mutation core
-		
-        [Constructable]
-        public PlagueBeastMutationCore()
-            : base(0x1CF0)
-        {                     
-            Weight = 1.0;
-            Hue = 0x480;
-			m_Cut = true; 
-        }
+	public class PlagueBeastMutationCore : Item, IScissorable
+	{
+		private bool m_Cut;
 
-        public PlagueBeastMutationCore(Serial serial)
-            : base(serial)
-        {
-        }
+		public override int LabelNumber
+		{
+			get { return 1153760; }
+		} // a plague beast mutation core
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool Cut
-        {
-            get
-            {
-                return this.m_Cut;
-            }
-            set
-            {
-                this.m_Cut = value;
-            }
-        }
-        public virtual bool Scissor(Mobile from, Scissors scissors)
-        {
-            if (!this.m_Cut)
-            {
-                PlagueBeastLord owner = this.RootParent as PlagueBeastLord;
+		[Constructable]
+		public PlagueBeastMutationCore()
+			: base(0x1CF0)
+		{
+			Weight = 1.0;
+			Hue = 0x480;
+			m_Cut = true;
+		}
 
-                this.m_Cut = true;
-                this.Movable = true;
+		public PlagueBeastMutationCore(Serial serial)
+			: base(serial) { }
 
-                from.AddToBackpack(this);
-                from.LocalOverheadMessage(MessageType.Regular, 0x34, 1071906); // * You remove the plague mutation core from the plague beast, causing it to dissolve into a pile of goo *				
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool Cut
+		{
+			get { return this.m_Cut; }
+			set { this.m_Cut = value; }
+		}
 
-                if (owner != null)
-                    Timer.DelayCall<PlagueBeastLord>(TimeSpan.FromSeconds(1), new TimerStateCallback<PlagueBeastLord>(KillParent), owner);
+		public virtual bool Scissor(Mobile from, Scissors scissors)
+		{
+			if (!this.m_Cut)
+			{
+				PlagueBeastLord owner = this.RootParent as PlagueBeastLord;
 
-                return true;
-            }
+				this.m_Cut = true;
+				this.Movable = true;
 
-            return false;
-        }
+				from.AddToBackpack(this);
+				from.LocalOverheadMessage(MessageType.Regular, 0x34, 1071906); // * You remove the plague mutation core from the plague beast, causing it to dissolve into a pile of goo *
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+				if (owner != null)
+					Timer.DelayCall<PlagueBeastLord>(
+						TimeSpan.FromSeconds(1),
+						new TimerStateCallback<PlagueBeastLord>(KillParent),
+						owner
+					);
 
-            writer.WriteEncodedInt(0); // version
+				return true;
+			}
 
-            writer.Write((bool)this.m_Cut);
-        }
+			return false;
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadEncodedInt();
+			writer.WriteEncodedInt(0); // version
 
-            this.m_Cut = reader.ReadBool();
-        }
+			writer.Write((bool)this.m_Cut);
+		}
 
-        private void KillParent(PlagueBeastLord parent)
-        {
-            parent.Unfreeze();
-            parent.Kill();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadEncodedInt();
+
+			this.m_Cut = reader.ReadBool();
+		}
+
+		private void KillParent(PlagueBeastLord parent)
+		{
+			parent.Unfreeze();
+			parent.Kill();
+		}
+	}
 }

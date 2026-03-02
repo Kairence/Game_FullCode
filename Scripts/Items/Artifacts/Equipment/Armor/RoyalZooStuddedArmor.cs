@@ -2,543 +2,417 @@ using System;
 
 namespace Server.Items
 {
-    public class RoyalZooStuddedLegs : StuddedLegs
+	public class RoyalZooStuddedLegs : StuddedLegs
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public RoyalZooStuddedLegs()
-            : base()
-        {
-            Hue = 0x109;	
-            Attributes.BonusHits = 2;
-            Attributes.BonusMana = 3;
-            Attributes.LowerManaCost = 10;
-            ArmorAttributes.MageArmor = 1;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public RoyalZooStuddedLegs(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public RoyalZooStuddedLegs()
+			: base()
+		{
+			Hue = 0x109;
+			Attributes.BonusHits = 2;
+			Attributes.BonusMana = 3;
+			Attributes.LowerManaCost = 10;
+			ArmorAttributes.MageArmor = 1;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073223;
-            }
-        }// Studded Armor of the Britannia Royal Zoo
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-			
-            writer.Write((int)0); // version
-        }
+		public RoyalZooStuddedLegs(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-			
-            int version = reader.ReadInt();
-        }
-    }
+		public override int LabelNumber
+		{
+			get { return 1073223; }
+		} // Studded Armor of the Britannia Royal Zoo
+		public override int BasePhysicalResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseFireResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return 10; }
+		}
+		public override int BasePoisonResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseEnergyResistance
+		{
+			get { return 10; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-    public class RoyalZooStuddedGloves : StuddedGloves
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
+
+	public class RoyalZooStuddedGloves : StuddedGloves
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public RoyalZooStuddedGloves()
-            : base()
-        {
-            Hue = 0x109;	
-            Attributes.BonusHits = 2;
-            Attributes.BonusMana = 3;
-            Attributes.LowerManaCost = 10;
-            ArmorAttributes.MageArmor = 1;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public RoyalZooStuddedGloves(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public RoyalZooStuddedGloves()
+			: base()
+		{
+			Hue = 0x109;
+			Attributes.BonusHits = 2;
+			Attributes.BonusMana = 3;
+			Attributes.LowerManaCost = 10;
+			ArmorAttributes.MageArmor = 1;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073223;
-            }
-        }// Studded Armor of the Britannia Royal Zoo
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-			
-            writer.Write((int)0); // version
-        }
+		public RoyalZooStuddedGloves(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-			
-            int version = reader.ReadInt();
-        }
-    }
+		public override int LabelNumber
+		{
+			get { return 1073223; }
+		} // Studded Armor of the Britannia Royal Zoo
+		public override int BasePhysicalResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseFireResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return 10; }
+		}
+		public override int BasePoisonResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseEnergyResistance
+		{
+			get { return 10; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-    public class RoyalZooStuddedGorget : StuddedGorget
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
+
+	public class RoyalZooStuddedGorget : StuddedGorget
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public RoyalZooStuddedGorget()
-            : base()
-        {
-            Hue = 0x109;	
-            Attributes.BonusHits = 2;
-            Attributes.BonusMana = 3;
-            Attributes.LowerManaCost = 10;
-            ArmorAttributes.MageArmor = 1;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public RoyalZooStuddedGorget(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public RoyalZooStuddedGorget()
+			: base()
+		{
+			Hue = 0x109;
+			Attributes.BonusHits = 2;
+			Attributes.BonusMana = 3;
+			Attributes.LowerManaCost = 10;
+			ArmorAttributes.MageArmor = 1;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073223;
-            }
-        }// Studded Armor of the Britannia Royal Zoo
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-			
-            writer.Write((int)0); // version
-        }
+		public RoyalZooStuddedGorget(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-			
-            int version = reader.ReadInt();
-        }
-    }
+		public override int LabelNumber
+		{
+			get { return 1073223; }
+		} // Studded Armor of the Britannia Royal Zoo
+		public override int BasePhysicalResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseFireResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return 10; }
+		}
+		public override int BasePoisonResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseEnergyResistance
+		{
+			get { return 10; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-    public class RoyalZooStuddedArms : StuddedArms
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
+
+	public class RoyalZooStuddedArms : StuddedArms
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public RoyalZooStuddedArms()
-            : base()
-        {
-            Hue = 0x109;	
-            Attributes.BonusHits = 2;
-            Attributes.BonusMana = 3;
-            Attributes.LowerManaCost = 10;
-            ArmorAttributes.MageArmor = 1;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public RoyalZooStuddedArms(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public RoyalZooStuddedArms()
+			: base()
+		{
+			Hue = 0x109;
+			Attributes.BonusHits = 2;
+			Attributes.BonusMana = 3;
+			Attributes.LowerManaCost = 10;
+			ArmorAttributes.MageArmor = 1;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073223;
-            }
-        }// Studded Armor of the Britannia Royal Zoo
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-			
-            writer.Write((int)0); // version
-        }
+		public RoyalZooStuddedArms(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-			
-            int version = reader.ReadInt();
-        }
-    }
+		public override int LabelNumber
+		{
+			get { return 1073223; }
+		} // Studded Armor of the Britannia Royal Zoo
+		public override int BasePhysicalResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseFireResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return 10; }
+		}
+		public override int BasePoisonResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseEnergyResistance
+		{
+			get { return 10; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-    public class RoyalZooStuddedChest : StuddedChest
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
+
+	public class RoyalZooStuddedChest : StuddedChest
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public RoyalZooStuddedChest()
-            : base()
-        {
-            Hue = 0x109;	
-            Attributes.BonusHits = 2;
-            Attributes.BonusMana = 3;
-            Attributes.LowerManaCost = 10;
-            ArmorAttributes.MageArmor = 1;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public RoyalZooStuddedChest(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public RoyalZooStuddedChest()
+			: base()
+		{
+			Hue = 0x109;
+			Attributes.BonusHits = 2;
+			Attributes.BonusMana = 3;
+			Attributes.LowerManaCost = 10;
+			ArmorAttributes.MageArmor = 1;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073223;
-            }
-        }// Studded Armor of the Britannia Royal Zoo
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-			
-            writer.Write((int)0); // version
-        }
+		public RoyalZooStuddedChest(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-			
-            int version = reader.ReadInt();
-        }
-    }
+		public override int LabelNumber
+		{
+			get { return 1073223; }
+		} // Studded Armor of the Britannia Royal Zoo
+		public override int BasePhysicalResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseFireResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return 10; }
+		}
+		public override int BasePoisonResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseEnergyResistance
+		{
+			get { return 10; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
 
-    public class RoyalZooStuddedFemaleChest : FemaleStuddedChest
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
+
+	public class RoyalZooStuddedFemaleChest : FemaleStuddedChest
 	{
-		public override bool IsArtifact { get { return true; } }
-        [Constructable]
-        public RoyalZooStuddedFemaleChest()
-            : base()
-        {
-            Hue = 0x109;
-            Attributes.BonusHits = 2;
-            Attributes.BonusMana = 3;
-            Attributes.LowerManaCost = 10;
-            ArmorAttributes.MageArmor = 1;
-        }
+		public override bool IsArtifact
+		{
+			get { return true; }
+		}
 
-        public RoyalZooStuddedFemaleChest(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public RoyalZooStuddedFemaleChest()
+			: base()
+		{
+			Hue = 0x109;
+			Attributes.BonusHits = 2;
+			Attributes.BonusMana = 3;
+			Attributes.LowerManaCost = 10;
+			ArmorAttributes.MageArmor = 1;
+		}
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1073223;
-            }
-        }// Studded Armor of the Britannia Royal Zoo
-        public override int BasePhysicalResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseFireResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseColdResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BasePoisonResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int BaseEnergyResistance
-        {
-            get
-            {
-                return 10;
-            }
-        }
-        public override int InitMinHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override int InitMaxHits
-        {
-            get
-            {
-                return 255;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-			
-            writer.Write((int)0); // version
-        }
+		public RoyalZooStuddedFemaleChest(Serial serial)
+			: base(serial) { }
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-			
-            int version = reader.ReadInt();
-        }
-    }
+		public override int LabelNumber
+		{
+			get { return 1073223; }
+		} // Studded Armor of the Britannia Royal Zoo
+		public override int BasePhysicalResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseFireResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseColdResistance
+		{
+			get { return 10; }
+		}
+		public override int BasePoisonResistance
+		{
+			get { return 10; }
+		}
+		public override int BaseEnergyResistance
+		{
+			get { return 10; }
+		}
+		public override int InitMinHits
+		{
+			get { return 255; }
+		}
+		public override int InitMaxHits
+		{
+			get { return 255; }
+		}
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+		}
+	}
 }

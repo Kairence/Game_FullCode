@@ -1,329 +1,289 @@
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using Server.Engines.Plants;
 
 namespace Server.Engines.Craft
 {
-    public enum CraftMarkOption
-    {
-        MarkItem,
-        DoNotMark,
-        PromptForMark
-    }
+	public enum CraftMarkOption
+	{
+		MarkItem,
+		DoNotMark,
+		PromptForMark,
+	}
 
-    #region SA
-    public enum CraftQuestOption
-    {
-        QuestItem,
-        NonQuestItem
-    }
-    #endregion
-	
-    public class CraftContext
-    {
-        public Mobile Owner { get; private set; }
-        public CraftSystem System { get; private set; }
+	#region SA
+	public enum CraftQuestOption
+	{
+		QuestItem,
+		NonQuestItem,
+	}
+	#endregion
 
-        private readonly List<CraftItem> m_Items;
-        private int m_LastResourceIndex;
-        private int m_LastResourceIndex2;
-        private int m_LastGroupIndex;
-        private bool m_DoNotColor;
-        private CraftMarkOption m_MarkOption;
-        private CraftQuestOption m_QuestOption;
-        private int m_MakeTotal;
-        private PlantHue m_RequiredPlantHue;
+	public class CraftContext
+	{
+		public Mobile Owner { get; private set; }
+		public CraftSystem System { get; private set; }
 
-        #region Hue State Vars
-        /*private bool m_CheckedHues;
-        private List<int> m_Hues;
-        private Item m_CompareHueTo;
+		private readonly List<CraftItem> m_Items;
+		private int m_LastResourceIndex;
+		private int m_LastResourceIndex2;
+		private int m_LastGroupIndex;
+		private bool m_DoNotColor;
+		private CraftMarkOption m_MarkOption;
+		private CraftQuestOption m_QuestOption;
+		private int m_MakeTotal;
+		private PlantHue m_RequiredPlantHue;
 
-        public bool CheckedHues
-        {
-            get
-            {
-                return m_CheckedHues;
-            }
-            set
-            {
-                m_CheckedHues = value;
-            }
-        }
-        public List<int> Hues
-        {
-            get
-            {
-                return m_Hues;
-            }
-            set
-            {
-                m_Hues = value;
-            }
-        }
-        public Item CompareHueTo
-        {
-            get
-            {
-                return m_CompareHueTo;
-            }
-            set
-            {
-                m_CompareHueTo = value;
-            }
-        }*/
-        #endregion
+		#region Hue State Vars
+		/*private bool m_CheckedHues;
+		private List<int> m_Hues;
+		private Item m_CompareHueTo;
 
-        public List<CraftItem> Items
-        {
-            get
-            {
-                return m_Items;
-            }
-        }
-        public int LastResourceIndex
-        {
-            get
-            {
-                return m_LastResourceIndex;
-            }
-            set
-            {
-                m_LastResourceIndex = value;
-            }
-        }
-        public int LastResourceIndex2
-        {
-            get
-            {
-                return m_LastResourceIndex2;
-            }
-            set
-            {
-                m_LastResourceIndex2 = value;
-            }
-        }
-        public int LastGroupIndex
-        {
-            get
-            {
-                return m_LastGroupIndex;
-            }
-            set
-            {
-                m_LastGroupIndex = value;
-            }
-        }
-        public bool DoNotColor
-        {
-            get
-            {
-                return m_DoNotColor;
-            }
-            set
-            {
-                m_DoNotColor = value;
-            }
-        }
-        public CraftMarkOption MarkOption
-        {
-            get
-            {
-                return m_MarkOption;
-            }
-            set
-            {
-                m_MarkOption = value;
-            }
-        }
-        #region SA
-        public CraftQuestOption QuestOption
-        {
-            get
-            {
-                return m_QuestOption;
-            }
-            set
-            {
-                m_QuestOption = value;
-            }
-        }
+		public bool CheckedHues
+		{
+			get
+			{
+				return m_CheckedHues;
+			}
+			set
+			{
+				m_CheckedHues = value;
+			}
+		}
+		public List<int> Hues
+		{
+			get
+			{
+				return m_Hues;
+			}
+			set
+			{
+				m_Hues = value;
+			}
+		}
+		public Item CompareHueTo
+		{
+			get
+			{
+				return m_CompareHueTo;
+			}
+			set
+			{
+				m_CompareHueTo = value;
+			}
+		}*/
+		#endregion
 
-        public int MakeTotal 
-        { 
-            get
-            {
-                return m_MakeTotal;
-            } 
-            set 
-            {
-                m_MakeTotal = value;
-            } 
-        }
+		public List<CraftItem> Items
+		{
+			get { return m_Items; }
+		}
+		public int LastResourceIndex
+		{
+			get { return m_LastResourceIndex; }
+			set { m_LastResourceIndex = value; }
+		}
+		public int LastResourceIndex2
+		{
+			get { return m_LastResourceIndex2; }
+			set { m_LastResourceIndex2 = value; }
+		}
+		public int LastGroupIndex
+		{
+			get { return m_LastGroupIndex; }
+			set { m_LastGroupIndex = value; }
+		}
+		public bool DoNotColor
+		{
+			get { return m_DoNotColor; }
+			set { m_DoNotColor = value; }
+		}
+		public CraftMarkOption MarkOption
+		{
+			get { return m_MarkOption; }
+			set { m_MarkOption = value; }
+		}
+		#region SA
+		public CraftQuestOption QuestOption
+		{
+			get { return m_QuestOption; }
+			set { m_QuestOption = value; }
+		}
 
-        public PlantHue RequiredPlantHue
-        { 
-            get { return m_RequiredPlantHue; } 
-            set { m_RequiredPlantHue = value; } 
-        }
+		public int MakeTotal
+		{
+			get { return m_MakeTotal; }
+			set { m_MakeTotal = value; }
+		}
 
-        public PlantPigmentHue RequiredPigmentHue { get; set; }
-        #endregion
+		public PlantHue RequiredPlantHue
+		{
+			get { return m_RequiredPlantHue; }
+			set { m_RequiredPlantHue = value; }
+		}
 
-        public CraftContext(Mobile owner, CraftSystem system)
-        {
-            Owner = owner;
-            System = system;
+		public PlantPigmentHue RequiredPigmentHue { get; set; }
+		#endregion
 
-            m_Items = new List<CraftItem>();
-            m_LastResourceIndex = -1;
-            m_LastResourceIndex2 = -1;
-            m_LastGroupIndex = -1;
+		public CraftContext(Mobile owner, CraftSystem system)
+		{
+			Owner = owner;
+			System = system;
 
-            m_QuestOption = CraftQuestOption.NonQuestItem;
-            m_RequiredPlantHue = PlantHue.None;
-            RequiredPigmentHue = PlantPigmentHue.None;
+			m_Items = new List<CraftItem>();
+			m_LastResourceIndex = -1;
+			m_LastResourceIndex2 = -1;
+			m_LastGroupIndex = -1;
 
-            Contexts.Add(this);
-        }
+			m_QuestOption = CraftQuestOption.NonQuestItem;
+			m_RequiredPlantHue = PlantHue.None;
+			RequiredPigmentHue = PlantPigmentHue.None;
 
-        public CraftItem LastMade
-        {
-            get
-            {
-                if (m_Items.Count > 0)
-                    return m_Items[0];
+			Contexts.Add(this);
+		}
 
-                return null;
-            }
-        }
+		public CraftItem LastMade
+		{
+			get
+			{
+				if (m_Items.Count > 0)
+					return m_Items[0];
 
-        public void OnMade(CraftItem item)
-        {
-            m_Items.Remove(item);
+				return null;
+			}
+		}
 
-            if (m_Items.Count == 10)
-                m_Items.RemoveAt(9);
+		public void OnMade(CraftItem item)
+		{
+			m_Items.Remove(item);
 
-            m_Items.Insert(0, item);
-        }
+			if (m_Items.Count == 10)
+				m_Items.RemoveAt(9);
 
-        public virtual void Serialize(GenericWriter writer)
-        {
-            writer.Write((int)0);
+			m_Items.Insert(0, item);
+		}
 
-            writer.Write(Owner);
-            writer.Write(GetSystemIndex(System));
-            writer.Write(m_LastResourceIndex);
-            writer.Write(m_LastResourceIndex2);
-            writer.Write(m_LastGroupIndex);
-            writer.Write(m_DoNotColor);
-            writer.Write((int)m_MarkOption);
-            writer.Write((int)m_QuestOption);
+		public virtual void Serialize(GenericWriter writer)
+		{
+			writer.Write((int)0);
 
-            writer.Write(m_MakeTotal);
-        }
+			writer.Write(Owner);
+			writer.Write(GetSystemIndex(System));
+			writer.Write(m_LastResourceIndex);
+			writer.Write(m_LastResourceIndex2);
+			writer.Write(m_LastGroupIndex);
+			writer.Write(m_DoNotColor);
+			writer.Write((int)m_MarkOption);
+			writer.Write((int)m_QuestOption);
 
-        public CraftContext(GenericReader reader)
-        {
-            int version = reader.ReadInt();
+			writer.Write(m_MakeTotal);
+		}
 
-            m_Items = new List<CraftItem>();
+		public CraftContext(GenericReader reader)
+		{
+			int version = reader.ReadInt();
 
-            Owner = reader.ReadMobile();
-            int sysIndex = reader.ReadInt();
-            m_LastResourceIndex = reader.ReadInt();
-            m_LastResourceIndex2 = reader.ReadInt();
-            m_LastGroupIndex = reader.ReadInt();
-            m_DoNotColor = reader.ReadBool();
-            m_MarkOption = (CraftMarkOption)reader.ReadInt();
-            m_QuestOption = (CraftQuestOption)reader.ReadInt();
+			m_Items = new List<CraftItem>();
 
-            m_MakeTotal = reader.ReadInt();
+			Owner = reader.ReadMobile();
+			int sysIndex = reader.ReadInt();
+			m_LastResourceIndex = reader.ReadInt();
+			m_LastResourceIndex2 = reader.ReadInt();
+			m_LastGroupIndex = reader.ReadInt();
+			m_DoNotColor = reader.ReadBool();
+			m_MarkOption = (CraftMarkOption)reader.ReadInt();
+			m_QuestOption = (CraftQuestOption)reader.ReadInt();
 
-            System = GetCraftSystem(sysIndex);
+			m_MakeTotal = reader.ReadInt();
 
-            if (System != null && Owner != null)
-            {
-                System.AddContext(Owner, this);
-                Contexts.Add(this);
-            }
-        }
+			System = GetCraftSystem(sysIndex);
 
-        public int GetSystemIndex(CraftSystem system)
-        {
-            for (int i = 0; i < _Systems.Length; i++)
-            {
-                if (_Systems[i] == system)
-                    return i;
-            }
+			if (System != null && Owner != null)
+			{
+				System.AddContext(Owner, this);
+				Contexts.Add(this);
+			}
+		}
 
-            return -1;
-        }
+		public int GetSystemIndex(CraftSystem system)
+		{
+			for (int i = 0; i < _Systems.Length; i++)
+			{
+				if (_Systems[i] == system)
+					return i;
+			}
 
-        public CraftSystem GetCraftSystem(int i)
-        {
-            if (i >= 0 && i < _Systems.Length)
-                return _Systems[i];
+			return -1;
+		}
 
-            return null;
-        }
+		public CraftSystem GetCraftSystem(int i)
+		{
+			if (i >= 0 && i < _Systems.Length)
+				return _Systems[i];
 
-        #region Serialize/Deserialize Persistence
-        private static string FilePath = Path.Combine("Saves", "CraftContext", "Contexts.bin");
+			return null;
+		}
 
-        private static List<CraftContext> Contexts = new List<CraftContext>();
+		#region Serialize/Deserialize Persistence
+		private static string FilePath = Path.Combine("Saves", "CraftContext", "Contexts.bin");
 
-        public static CraftSystem[] Systems { get { return _Systems; } }
-        private static CraftSystem[] _Systems = new CraftSystem[11];
+		private static List<CraftContext> Contexts = new List<CraftContext>();
 
-        public static void Configure()
-        {
-            _Systems[0] = DefAlchemy.CraftSystem;
-            _Systems[1] = DefBlacksmithy.CraftSystem;
-            _Systems[2] = DefBowFletching.CraftSystem;
-            _Systems[3] = DefCarpentry.CraftSystem;
-            _Systems[4] = DefCartography.CraftSystem;
-            _Systems[5] = DefCooking.CraftSystem;
-            _Systems[6] = DefGlassblowing.CraftSystem;
-            _Systems[7] = DefInscription.CraftSystem;
-            _Systems[8] = DefMasonry.CraftSystem;
-            _Systems[9] = DefTailoring.CraftSystem;
-            _Systems[10] = DefTinkering.CraftSystem;
+		public static CraftSystem[] Systems
+		{
+			get { return _Systems; }
+		}
+		private static CraftSystem[] _Systems = new CraftSystem[11];
 
-            EventSink.WorldSave += OnSave;
-            EventSink.WorldLoad += OnLoad;
-        }
+		public static void Configure()
+		{
+			_Systems[0] = DefAlchemy.CraftSystem;
+			_Systems[1] = DefBlacksmithy.CraftSystem;
+			_Systems[2] = DefBowFletching.CraftSystem;
+			_Systems[3] = DefCarpentry.CraftSystem;
+			_Systems[4] = DefCartography.CraftSystem;
+			_Systems[5] = DefCooking.CraftSystem;
+			_Systems[6] = DefGlassblowing.CraftSystem;
+			_Systems[7] = DefInscription.CraftSystem;
+			_Systems[8] = DefMasonry.CraftSystem;
+			_Systems[9] = DefTailoring.CraftSystem;
+			_Systems[10] = DefTinkering.CraftSystem;
 
-        public static void OnSave(WorldSaveEventArgs e)
-        {
-            Persistence.Serialize(
-                FilePath,
-                writer =>
-                {
-                    writer.Write(0); // version
+			EventSink.WorldSave += OnSave;
+			EventSink.WorldLoad += OnLoad;
+		}
 
-                    writer.Write(Contexts.Count);
-                    Contexts.ForEach(c => c.Serialize(writer));
-                });
-        }
+		public static void OnSave(WorldSaveEventArgs e)
+		{
+			Persistence.Serialize(
+				FilePath,
+				writer =>
+				{
+					writer.Write(0); // version
 
-        public static void OnLoad()
-        {
-            Persistence.Deserialize(
-                FilePath,
-                reader =>
-                {
-                    int version = reader.ReadInt();
+					writer.Write(Contexts.Count);
+					Contexts.ForEach(c => c.Serialize(writer));
+				}
+			);
+		}
 
-                    int count = reader.ReadInt();
-                    for (int i = 0; i < count; i++)
-                    {
-                        new CraftContext(reader);
-                    }
-                });
-        }
-        #endregion
-    }
+		public static void OnLoad()
+		{
+			Persistence.Deserialize(
+				FilePath,
+				reader =>
+				{
+					int version = reader.ReadInt();
+
+					int count = reader.ReadInt();
+					for (int i = 0; i < count; i++)
+					{
+						new CraftContext(reader);
+					}
+				}
+			);
+		}
+		#endregion
+	}
 }

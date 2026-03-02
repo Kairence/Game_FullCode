@@ -14,12 +14,20 @@ namespace Server.Mobiles
 		}
 
 		public GypsyBanker(Serial serial)
-			: base(serial)
-		{ }
+			: base(serial) { }
 
-		public override bool IsActiveVendor { get { return false; } }
-		public override NpcGuild NpcGuild { get { return NpcGuild.None; } }
-		public override bool ClickTitle { get { return false; } }
+		public override bool IsActiveVendor
+		{
+			get { return false; }
+		}
+		public override NpcGuild NpcGuild
+		{
+			get { return NpcGuild.None; }
+		}
+		public override bool ClickTitle
+		{
+			get { return false; }
+		}
 
 		public override void InitOutfit()
 		{

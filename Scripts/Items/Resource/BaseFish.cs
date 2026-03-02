@@ -2,99 +2,96 @@ using System;
 
 namespace Server.Items
 {
-    public class BaseFish : Item
-    {
-        private static readonly TimeSpan DeathDelay = TimeSpan.FromMinutes(5);
-        private Timer m_Timer;
-        [Constructable]
-        public BaseFish(int itemID)
-            : base(itemID)
-        {
-            this.StartTimer();
-        }
+	public class BaseFish : Item
+	{
+		private static readonly TimeSpan DeathDelay = TimeSpan.FromMinutes(5);
+		private Timer m_Timer;
 
-        public BaseFish(Serial serial)
-            : base(serial)
-        {
-        }
+		[Constructable]
+		public BaseFish(int itemID)
+			: base(itemID)
+		{
+			this.StartTimer();
+		}
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool Dead
-        {
-            get
-            {
-                return (this.ItemID == 0x3B0C);
-            }
-        }
-        public virtual void StartTimer()
-        {
-            if (this.m_Timer != null)
-                this.m_Timer.Stop();
+		public BaseFish(Serial serial)
+			: base(serial) { }
 
-            this.m_Timer = Timer.DelayCall(DeathDelay, new TimerCallback(Kill));
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool Dead
+		{
+			get { return (this.ItemID == 0x3B0C); }
+		}
 
-            this.InvalidateProperties();
-        }
+		public virtual void StartTimer()
+		{
+			if (this.m_Timer != null)
+				this.m_Timer.Stop();
 
-        public virtual void StopTimer()
-        {
-            if (this.m_Timer != null)
-                this.m_Timer.Stop();
+			this.m_Timer = Timer.DelayCall(DeathDelay, new TimerCallback(Kill));
 
-            this.m_Timer = null;
+			this.InvalidateProperties();
+		}
 
-            this.InvalidateProperties();
-        }
+		public virtual void StopTimer()
+		{
+			if (this.m_Timer != null)
+				this.m_Timer.Stop();
 
-        public override void OnDelete()
-        {
-            this.StopTimer();
-        }
+			this.m_Timer = null;
 
-        public virtual void Kill()
-        {
-            this.ItemID = 0x3B0C;
-            this.StopTimer();
+			this.InvalidateProperties();
+		}
 
-            this.InvalidateProperties();
-        }
+		public override void OnDelete()
+		{
+			this.StopTimer();
+		}
 
-        public int GetDescription()
-        {
-            // TODO: This will never return "very unusual dead aquarium creature" due to the way it is killed
-            if (this.ItemID > 0x3B0F)
-                return this.Dead ? 1074424 : 1074422; // A very unusual [dead/live] aquarium creature
-            else if (this.Hue != 0)
-                return this.Dead ? 1074425 : 1074423; // A [dead/live] aquarium creature of unusual color
+		public virtual void Kill()
+		{
+			this.ItemID = 0x3B0C;
+			this.StopTimer();
 
-            return this.Dead ? 1073623 : 1073622; // A [dead/live] aquarium creature
-        }
+			this.InvalidateProperties();
+		}
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+		public int GetDescription()
+		{
+			// TODO: This will never return "very unusual dead aquarium creature" due to the way it is killed
+			if (this.ItemID > 0x3B0F)
+				return this.Dead ? 1074424 : 1074422; // A very unusual [dead/live] aquarium creature
+			else if (this.Hue != 0)
+				return this.Dead ? 1074425 : 1074423; // A [dead/live] aquarium creature of unusual color
 
-            list.Add(this.GetDescription());
+			return this.Dead ? 1073623 : 1073622; // A [dead/live] aquarium creature
+		}
 
-            if (!this.Dead && this.m_Timer != null)
-                list.Add(1074507); // Gasping for air
-        }
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+			list.Add(this.GetDescription());
 
-            writer.Write((int)0); // version
-        }
+			if (!this.Dead && this.m_Timer != null)
+				list.Add(1074507); // Gasping for air
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
+			writer.Write((int)0); // version
+		}
 
-            if (!(this.Parent is Aquarium) && !(this.Parent is FishBowl))
-                this.StartTimer();
-        }
-    }
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+
+			int version = reader.ReadInt();
+
+			if (!(this.Parent is Aquarium) && !(this.Parent is FishBowl))
+				this.StartTimer();
+		}
+	}
 }

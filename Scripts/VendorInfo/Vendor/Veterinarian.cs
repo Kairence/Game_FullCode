@@ -2,18 +2,21 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Server;
+using Server.ContextMenus;
 using Server.Gumps;
 using Server.Items;
 using Server.Network;
 using Server.Targeting;
-using Server.ContextMenus;
 
 namespace Server.Mobiles
 {
 	public class Veterinarian : BaseVendor
 	{
 		private List<SBInfo> m_SBInfos = new List<SBInfo>();
-		protected override List<SBInfo> SBInfos { get { return m_SBInfos; } }
+		protected override List<SBInfo> SBInfos
+		{
+			get { return m_SBInfos; }
+		}
 
 		[Constructable]
 		public Veterinarian()
@@ -33,7 +36,7 @@ namespace Server.Mobiles
 		public static BaseCreature[] GetDeadPets(Mobile from)
 		{
 			List<BaseCreature> pets = new List<BaseCreature>();
-            IPooledEnumerable eable = from.GetMobilesInRange(12);
+			IPooledEnumerable eable = from.GetMobilesInRange(12);
 
 			foreach (Mobile m in eable)
 			{
@@ -42,23 +45,24 @@ namespace Server.Mobiles
 				if (bc != null && bc.IsDeadBondedPet && bc.ControlMaster == from && from.InLOS(bc))
 					pets.Add(bc);
 			}
-            eable.Free();
+			eable.Free();
 
-            if (from.Backpack != null)
-            {
-                BrokenAutomatonHead head = from.Backpack.FindItemByType(typeof(BrokenAutomatonHead)) as BrokenAutomatonHead;
+			if (from.Backpack != null)
+			{
+				BrokenAutomatonHead head =
+					from.Backpack.FindItemByType(typeof(BrokenAutomatonHead)) as BrokenAutomatonHead;
 
-                if (head != null && head.Automaton != null && !head.Automaton.Deleted)
-                    pets.Add(head.Automaton);
-            }
+				if (head != null && head.Automaton != null && !head.Automaton.Deleted)
+					pets.Add(head.Automaton);
+			}
 
 			return pets.ToArray();
 		}
 
 		public static int GetResurrectionFee(BaseCreature bc)
 		{
-            if (bc is KotlAutomaton)
-                return 0;
+			if (bc is KotlAutomaton)
+				return 0;
 
 			int fee = (int)(100 + Math.Pow(1.1041, bc.MinTameSkill));
 
@@ -80,7 +84,11 @@ namespace Server.Mobiles
 				{
 					m.Frozen = true;
 
-					m_ExpireTable[m] = Timer.DelayCall(TimeSpan.FromMinutes(1.0), new TimerStateCallback<Mobile>(ResetExpire), m);
+					m_ExpireTable[m] = Timer.DelayCall(
+						TimeSpan.FromMinutes(1.0),
+						new TimerStateCallback<Mobile>(ResetExpire),
+						m
+					);
 
 					m.CloseGump(typeof(VetResurrectGump));
 					m.SendGump(new VetResurrectGump(this, pets));
@@ -105,9 +113,7 @@ namespace Server.Mobiles
 		}
 
 		public Veterinarian(Serial serial)
-			: base(serial)
-		{
-		}
+			: base(serial) { }
 
 		public override void Serialize(GenericWriter writer)
 		{
@@ -128,7 +134,7 @@ namespace Server.Mobiles
 	public class VetResurrectGump : Gump
 	{
 		//public override int TypeID { get { return 0xF3E96; } }
-		
+
 
 		private Veterinarian m_Vet;
 		private BaseCreature[] m_Pets;
@@ -176,7 +182,12 @@ namespace Server.Mobiles
 				BaseCreature pet = m_Pets[i];
 
 				AddRadio(30, 102 + yOffset, 0x25FF, 0x2602, (i == 0), i);
-				AddLabel(70, 107 + yOffset, 0x47E, String.Format("{0}  {1}", pet.Name, Veterinarian.GetResurrectionFee(pet).ToString()));
+				AddLabel(
+					70,
+					107 + yOffset,
+					0x47E,
+					String.Format("{0}  {1}", pet.Name, Veterinarian.GetResurrectionFee(pet).ToString())
+				);
 			}
 		}
 
@@ -189,55 +200,55 @@ namespace Server.Mobiles
 			switch (info.ButtonID)
 			{
 				case -1:
-					{
-						// You decide against paying the Veterinarian, and the ghost of your pet looks at you sadly...
-						from.SendLocalizedMessage(1113197);
+				{
+					// You decide against paying the Veterinarian, and the ghost of your pet looks at you sadly...
+					from.SendLocalizedMessage(1113197);
 
-						break;
-					}
+					break;
+				}
 				case 1:
+				{
+					for (int i = 0; i < m_Pets.Length; i++)
 					{
-						for (int i = 0; i < m_Pets.Length; i++)
+						BaseCreature pet = m_Pets[i];
+
+						if (info.IsSwitched(i))
 						{
-							BaseCreature pet = m_Pets[i];
+							int fee = Veterinarian.GetResurrectionFee(pet);
 
-							if (info.IsSwitched(i))
+							if (!pet.IsDeadBondedPet)
+								from.SendLocalizedMessage(501041); // Target is not dead.
+							else if (!from.CanSee(pet) || !from.InLOS(pet))
+								from.SendLocalizedMessage(503376); // Target cannot be seen.
+							else if (!from.InRange(pet, 12))
+								from.SendLocalizedMessage(500643); // Target is too far away.
+							else if (pet.ControlMaster != from)
+								from.SendLocalizedMessage(1113200); // You must be the owner of that pet to have it resurrected.
+							else if (pet.Corpse != null && !pet.Corpse.Deleted)
+								from.SendLocalizedMessage(1113279); // That creature's spirit lacks cohesion. Try again in a few minutes.
+							else if (Banker.Withdraw(from, fee))
 							{
-								int fee = Veterinarian.GetResurrectionFee(pet);
+								pet.PlaySound(0x214);
+								pet.ResurrectPet();
 
-								if (!pet.IsDeadBondedPet)
-									from.SendLocalizedMessage(501041); // Target is not dead.
-								else if (!from.CanSee(pet) || !from.InLOS(pet))
-									from.SendLocalizedMessage(503376); // Target cannot be seen.
-								else if (!from.InRange(pet, 12))
-									from.SendLocalizedMessage(500643); // Target is too far away.
-								else if (pet.ControlMaster != from)
-									from.SendLocalizedMessage(1113200); // You must be the owner of that pet to have it resurrected.
-								else if (pet.Corpse != null && !pet.Corpse.Deleted)
-									from.SendLocalizedMessage(1113279); // That creature's spirit lacks cohesion. Try again in a few minutes.
-								else if (Banker.Withdraw(from, fee))
-								{
-									pet.PlaySound(0x214);
-									pet.ResurrectPet();
+								for (int j = 0; j < pet.Skills.Length; ++j) // Decrease all skills on pet.
+									pet.Skills[j].Base -= 0.2;
 
-									for (int j = 0; j < pet.Skills.Length; ++j) // Decrease all skills on pet.
-										pet.Skills[j].Base -= 0.2;
+								if (pet.Map == Map.Internal)
+									pet.MoveToWorld(from.Location, from.Map);
 
-                                    if (pet.Map == Map.Internal)
-                                        pet.MoveToWorld(from.Location, from.Map);
-
-									from.SendLocalizedMessage(1060398, fee.ToString()); // ~1_AMOUNT~ gold has been withdrawn from your bank box.
-									from.SendLocalizedMessage(1060022, Banker.GetBalance(from).ToString(), 0x16); // You have ~1_AMOUNT~ gold in cash remaining in your bank box.
-								}
-								else
-									from.SendLocalizedMessage(1060020); // Unfortunately, you do not have enough cash in your bank to cover the cost of the healing.
-
-								break;
+								from.SendLocalizedMessage(1060398, fee.ToString()); // ~1_AMOUNT~ gold has been withdrawn from your bank box.
+								from.SendLocalizedMessage(1060022, Banker.GetBalance(from).ToString(), 0x16); // You have ~1_AMOUNT~ gold in cash remaining in your bank box.
 							}
-						}
+							else
+								from.SendLocalizedMessage(1060020); // Unfortunately, you do not have enough cash in your bank to cover the cost of the healing.
 
-						break;
+							break;
+						}
 					}
+
+					break;
+				}
 			}
 		}
 	}

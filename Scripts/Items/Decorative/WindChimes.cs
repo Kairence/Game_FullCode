@@ -5,210 +5,195 @@ using Server.Network;
 
 namespace Server.Items
 {
-    public abstract class BaseWindChimes : Item
-    {
-        private static readonly int[] m_Sounds = new int[] { 0x505, 0x506, 0x507 };
-        private bool m_TurnedOn;
-        public BaseWindChimes(int itemID)
-            : base(itemID)
-        {
-        }
+	public abstract class BaseWindChimes : Item
+	{
+		private static readonly int[] m_Sounds = new int[] { 0x505, 0x506, 0x507 };
+		private bool m_TurnedOn;
 
-        public BaseWindChimes(Serial serial)
-            : base(serial)
-        {
-        }
+		public BaseWindChimes(int itemID)
+			: base(itemID) { }
 
-        public static int[] Sounds
-        {
-            get
-            {
-                return m_Sounds;
-            }
-        }
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool TurnedOn
-        {
-            get
-            {
-                return this.m_TurnedOn;
-            }
-            set
-            {
-                this.m_TurnedOn = value;
-                this.InvalidateProperties();
-            }
-        }
-        public override bool HandlesOnMovement
-        {
-            get
-            {
-                return this.m_TurnedOn && this.IsLockedDown;
-            }
-        }
-        public override void OnMovement(Mobile m, Point3D oldLocation)
-        {
-            if (this.m_TurnedOn && this.IsLockedDown && (!m.Hidden || m.IsPlayer()) && Utility.InRange(m.Location, this.Location, 2) && !Utility.InRange(oldLocation, this.Location, 2))
-                Effects.PlaySound(this.Location, this.Map, m_Sounds[Utility.Random(m_Sounds.Length)]);
+		public BaseWindChimes(Serial serial)
+			: base(serial) { }
 
-            base.OnMovement(m, oldLocation);
-        }
+		public static int[] Sounds
+		{
+			get { return m_Sounds; }
+		}
 
-        public override void GetProperties(ObjectPropertyList list)
-        {
-            base.GetProperties(list);
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool TurnedOn
+		{
+			get { return this.m_TurnedOn; }
+			set
+			{
+				this.m_TurnedOn = value;
+				this.InvalidateProperties();
+			}
+		}
+		public override bool HandlesOnMovement
+		{
+			get { return this.m_TurnedOn && this.IsLockedDown; }
+		}
 
-            if (this.m_TurnedOn)
-                list.Add(502695); // turned on
-            else
-                list.Add(502696); // turned off
-        }
+		public override void OnMovement(Mobile m, Point3D oldLocation)
+		{
+			if (
+				this.m_TurnedOn
+				&& this.IsLockedDown
+				&& (!m.Hidden || m.IsPlayer())
+				&& Utility.InRange(m.Location, this.Location, 2)
+				&& !Utility.InRange(oldLocation, this.Location, 2)
+			)
+				Effects.PlaySound(this.Location, this.Map, m_Sounds[Utility.Random(m_Sounds.Length)]);
 
-        public bool IsOwner(Mobile mob)
-        {
-            BaseHouse house = BaseHouse.FindHouseAt(this);
+			base.OnMovement(m, oldLocation);
+		}
 
-            return (house != null && house.IsOwner(mob));
-        }
+		public override void GetProperties(ObjectPropertyList list)
+		{
+			base.GetProperties(list);
 
-        public override void OnDoubleClick(Mobile from)
-        {
-            if (this.IsOwner(from))
-            {
-                OnOffGump onOffGump = new OnOffGump(this);
-                from.SendGump(onOffGump);
-            }
-            else
-            {
-                from.SendLocalizedMessage(502691); // You must be the owner to use this.
-            }
-        }
+			if (this.m_TurnedOn)
+				list.Add(502695); // turned on
+			else
+				list.Add(502696); // turned off
+		}
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+		public bool IsOwner(Mobile mob)
+		{
+			BaseHouse house = BaseHouse.FindHouseAt(this);
 
-            writer.Write((int)0); // version
+			return (house != null && house.IsOwner(mob));
+		}
 
-            writer.Write((bool)this.m_TurnedOn);
-        }
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (this.IsOwner(from))
+			{
+				OnOffGump onOffGump = new OnOffGump(this);
+				from.SendGump(onOffGump);
+			}
+			else
+			{
+				from.SendLocalizedMessage(502691); // You must be the owner to use this.
+			}
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
 
-            int version = reader.ReadInt();
+			writer.Write((int)0); // version
 
-            switch ( version )
-            {
-                case 0:
-                    {
-                        this.m_TurnedOn = reader.ReadBool();
-                        break;
-                    }
-            }
-        }
+			writer.Write((bool)this.m_TurnedOn);
+		}
 
-        private class OnOffGump : Gump
-        {
-            private readonly BaseWindChimes m_Chimes;
-            public OnOffGump(BaseWindChimes chimes)
-                : base(150, 200)
-            {
-                this.m_Chimes = chimes;
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
 
-                this.AddBackground(0, 0, 300, 150, 0xA28);
-                this.AddHtmlLocalized(45, 20, 300, 35, chimes.TurnedOn ? 1011035 : 1011034, false, false); // [De]Activate this item
-                this.AddButton(40, 53, 0xFA5, 0xFA7, 1, GumpButtonType.Reply, 0);
-                this.AddHtmlLocalized(80, 55, 65, 35, 1011036, false, false); // OKAY
-                this.AddButton(150, 53, 0xFA5, 0xFA7, 0, GumpButtonType.Reply, 0);
-                this.AddHtmlLocalized(190, 55, 100, 35, 1011012, false, false); // CANCEL
-            }
+			int version = reader.ReadInt();
 
-            public override void OnResponse(NetState sender, RelayInfo info)
-            {
-                Mobile from = sender.Mobile;
+			switch (version)
+			{
+				case 0:
+				{
+					this.m_TurnedOn = reader.ReadBool();
+					break;
+				}
+			}
+		}
 
-                if (info.ButtonID == 1)
-                {
-                    bool newValue = !this.m_Chimes.TurnedOn;
+		private class OnOffGump : Gump
+		{
+			private readonly BaseWindChimes m_Chimes;
 
-                    this.m_Chimes.TurnedOn = newValue;
+			public OnOffGump(BaseWindChimes chimes)
+				: base(150, 200)
+			{
+				this.m_Chimes = chimes;
 
-                    if (newValue && !this.m_Chimes.IsLockedDown)
-                        from.SendLocalizedMessage(502693); // Remember, this only works when locked down.
-                }
-                else
-                {
-                    from.SendLocalizedMessage(502694); // Cancelled action.
-                }
-            }
-        }
-    }
+				this.AddBackground(0, 0, 300, 150, 0xA28);
+				this.AddHtmlLocalized(45, 20, 300, 35, chimes.TurnedOn ? 1011035 : 1011034, false, false); // [De]Activate this item
+				this.AddButton(40, 53, 0xFA5, 0xFA7, 1, GumpButtonType.Reply, 0);
+				this.AddHtmlLocalized(80, 55, 65, 35, 1011036, false, false); // OKAY
+				this.AddButton(150, 53, 0xFA5, 0xFA7, 0, GumpButtonType.Reply, 0);
+				this.AddHtmlLocalized(190, 55, 100, 35, 1011012, false, false); // CANCEL
+			}
 
-    public class WindChimes : BaseWindChimes
-    {
-        [Constructable]
-        public WindChimes()
-            : base(0x2832)
-        {
-        }
+			public override void OnResponse(NetState sender, RelayInfo info)
+			{
+				Mobile from = sender.Mobile;
 
-        public WindChimes(Serial serial)
-            : base(serial)
-        {
-        }
+				if (info.ButtonID == 1)
+				{
+					bool newValue = !this.m_Chimes.TurnedOn;
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1030290;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0); // version
-        }
+					this.m_Chimes.TurnedOn = newValue;
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+					if (newValue && !this.m_Chimes.IsLockedDown)
+						from.SendLocalizedMessage(502693); // Remember, this only works when locked down.
+				}
+				else
+				{
+					from.SendLocalizedMessage(502694); // Cancelled action.
+				}
+			}
+		}
+	}
 
-    public class FancyWindChimes : BaseWindChimes
-    {
-        [Constructable]
-        public FancyWindChimes()
-            : base(0x2833)
-        {
-        }
+	public class WindChimes : BaseWindChimes
+	{
+		[Constructable]
+		public WindChimes()
+			: base(0x2832) { }
 
-        public FancyWindChimes(Serial serial)
-            : base(serial)
-        {
-        }
+		public WindChimes(Serial serial)
+			: base(serial) { }
 
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1030291;
-            }
-        }
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-            writer.Write((int)0); // version
-        }
+		public override int LabelNumber
+		{
+			get { return 1030290; }
+		}
 
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-            int version = reader.ReadInt();
-        }
-    }
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
+
+	public class FancyWindChimes : BaseWindChimes
+	{
+		[Constructable]
+		public FancyWindChimes()
+			: base(0x2833) { }
+
+		public FancyWindChimes(Serial serial)
+			: base(serial) { }
+
+		public override int LabelNumber
+		{
+			get { return 1030291; }
+		}
+
+		public override void Serialize(GenericWriter writer)
+		{
+			base.Serialize(writer);
+			writer.Write((int)0); // version
+		}
+
+		public override void Deserialize(GenericReader reader)
+		{
+			base.Deserialize(reader);
+			int version = reader.ReadInt();
+		}
+	}
 }
