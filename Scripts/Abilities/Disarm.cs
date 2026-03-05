@@ -29,13 +29,13 @@ namespace Server.Items
             // 1. 면역 체크
             if (IsDisarmImmune(defender))
             {
-                attacker.SendMessage("상대가 아직 무장 해제에 면역 상태입니다."); 
+                //attacker.SendMessage("상대가 아직 무장 해제에 면역 상태입니다."); 
                 return;
             }
 
             // 2. 효과 알림 및 시각 효과
-            attacker.SendLocalizedMessage(1060157); // You disarm your opponent!
-            defender.SendLocalizedMessage(1060158); // Your weapon has been disarmed!
+            attacker.SendLocalizedMessage(1004006); // You disarm your opponent!
+            defender.SendLocalizedMessage(1004007); // Your weapon has been disarmed!
 
             defender.PlaySound(0x3B9);
             defender.FixedParticles(0x37BE, 232, 25, 9948, EffectLayer.LeftHand);

@@ -2,11 +2,13 @@ using System;
 using Server;
 using Server.Items;
 using Server.Mobiles;
+using Server.Engines.XmlSpawner2;
 
 namespace Server.Misc
 {
     public class NewOptionOPL
     {
+		// 1. 메인 엔트리 포인트 (중복 제거됨)
         public static void Append(ObjectPropertyList list, Item item)
         {
             if (item == null || item.Deleted) return;
@@ -14,49 +16,149 @@ namespace Server.Misc
             IEquipOption eqItem = item as IEquipOption;
             if (eqItem == null) return;
 
-            // 모든 메서드에 list와 eqItem만 전달합니다.
+            // 1단계: 기본 능력치 및 기초 속성
+            AppendBaseStats(list, item, eqItem);
+            
+            // 2단계: 마법 옵션 및 제작 옵션
             AppendMagicOptions(list, eqItem);
             AppendMaterialOptions(list, eqItem);
             AppendRefineOptions(list, eqItem);
             AppendEnhanceOptions(list, eqItem);
             AppendSetOptions(list, eqItem);
             AppendUniqueOptions(list, eqItem);
+
+            // 3단계: XML 스포너 부가 속성
+            XmlAttach.AddAttachmentProperties(item, list);
         }
 
-		// 루프를 돌 때 skilluse를 반환값으로 넘겨서 연속성을 유지합니다.
-		private static int ProcessOptionLoop(ObjectPropertyList list, IEquipOption eq, int startIdx, int count, int skillBase, int optBase, int skilluse)
-		{
-			for (int i = 0; i < count; i++)
-			{
-				int optID = eq.PrefixOption[i + startIdx];
-				int optVal = eq.SuffixOption[i + startIdx];
-				
-				if (optID == 0 && optVal == 0) break;
+        private static void AppendBaseStats(ObjectPropertyList list, Item item, IEquipOption eqItem)
+        {
+            // 아티팩트 레어리티
+            int rarity = 0;
+            if (item is BaseWeapon bw) rarity = bw.ArtifactRarity;
+            else if (item is BaseArmor ba) rarity = ba.ArtifactRarity;
+            else if (item is BaseJewel bj) rarity = bj.ArtifactRarity;
+            else if (item is BaseClothing bc) rarity = bc.ArtifactRarity;
 
-				int realOptID = Misc.ItemOptionCreator.EquipRandomOption[optID, 0];
+            if (rarity > 0) list.Add(1061078, rarity.ToString());
 
-				if (realOptID < 60) // 스킬 옵션인 경우
-				{
-					SkillName skill = (SkillName)realOptID;
-					// 기존 방식대로 m_AosSkillBonuses를 통해 정확한 이름 Cliloc을 가져옵니다.
-					// (참고: m_AosSkillBonuses가 static이 아니라면 인자로 전달받아야 합니다)
-					int skillCliloc = eq.SkillBonuses.GetSkillName(skill);
+            // 무기 전용 (독)
+            if (item is BaseWeapon weapon)
+            {
+                if (weapon.Poison != null && weapon.PoisonCharges > 0 && weapon.CanShowPoisonCharges())
+                    list.Add(weapon.Poison.LabelNumber, weapon.PoisonCharges.ToString());
+            }
 
-					if (skillCliloc > 0)
-					{
-						// 1080641 + 5, 6, 7... 순차 증가
-						list.Add(skillBase + skilluse, "#{0}\t{1}", skillCliloc, (optVal * 0.0001).ToString("0.##"));
-						skilluse++;
-					}
-				}
-				else // 일반 마법 옵션인 경우
-				{
-					int optionpercentcheck = optBase + Misc.Util.OPLPercentCheck(realOptID);
-					list.Add(optionpercentcheck, "#{0}\t{1}", realOptID, (optVal * Misc.Util.PercentCalc(optID)).ToString("0.##"));
-				}
+            // 레벨 제한
+            if (eqItem.PrefixOption[99] > 0)
+            {
+                int levelcheck = 40;
+                PlayerMobile pm = item.RootParent as PlayerMobile;
+                int lowerReq = 0; 
+                if (item is BaseWeapon) lowerReq = ((BaseWeapon)item).WeaponAttributes.LowerStatReq;
+                else if (item is BaseArmor) lowerReq = ((BaseArmor)item).ArmorAttributes.LowerStatReq;
+
+                double equippercent = (1000.0 - lowerReq) / 1000.0;
+                int requiredLevel = (int)(levelcheck * equippercent * eqItem.PrefixOption[99]);
+
+                if (pm != null && Misc.Util.Level(pm.SilverPoint[0]) < requiredLevel)
+                    list.Add(1063525, requiredLevel.ToString());
+                else
+                    list.Add(1063520, requiredLevel.ToString());
+            }
+
+			// --- [방어력 및 저항력 출력 로직 수정] ---
+			int aBase = 0;
+			double aRating = 0;
+
+			if (item is BaseArmor baObj) 
+			{ 
+				aBase = baObj.ArmorBase; 
+				aRating = baObj.ArmorRating; 
 			}
-			return skilluse; // 증가된 skilluse를 반환하여 다음 루프에서 사용하게 함
-		}
+			else if (item is BaseClothing bcObj) 
+			{ 
+				// [수정] 의류는 ArmorBase가 없으므로 aRating만 설정합니다.
+				aRating = bcObj.BaseArmorRating; 
+			}
+
+			// 1. 방어력 출력 (ArmorBase가 있는 갑옷/방패만 해당)
+			if (aBase > 0)
+			{
+				list.Add(1063577, aBase.ToString()); // 방어력: ~1_val~
+			}
+
+			// 2. 저항력 출력 (ArmorRating 또는 의류의 BaseArmorRating)
+			if (aRating > 0)
+			{
+				list.Add(1063782, aRating.ToString()); // 저항력: +~1_val~
+			}
+
+            // 장비 요구치
+            AppendRequirements(list, item, eqItem);
+
+            // 내구도
+            int hp = 0, maxHp = 0;
+            if (item is BaseWeapon bwHp) { hp = bwHp.HitPoints; maxHp = bwHp.MaxHitPoints; }
+            else if (item is BaseArmor baHp) { hp = baHp.HitPoints; maxHp = baHp.MaxHitPoints; }
+            else if (item is BaseClothing bcHp) { hp = bcHp.HitPoints; maxHp = bcHp.MaxHitPoints; }
+
+            if (hp >= 0 && maxHp > 0) list.Add(1060639, "{0}\t{1}", hp, maxHp);
+        }
+
+        private static void AppendRequirements(ObjectPropertyList list, Item item, IEquipOption eq)
+        {
+            int lower = 0;
+            if (item is BaseWeapon bw) lower = bw.WeaponAttributes.LowerStatReq;
+            else if (item is BaseArmor ba) lower = ba.ArmorAttributes.LowerStatReq;
+
+            int sR = 0, dR = 0, iR = 0;
+            if (item is BaseWeapon w) { sR = w.StrRequirement; dR = w.DexRequirement; iR = w.IntRequirement; }
+            else if (item is BaseArmor a) { sR = a.StrRequirement; dR = a.DexRequirement; iR = a.IntRequirement; }
+            else if (item is BaseClothing c) { sR = c.StrRequirement; dR = c.DexRequirement; iR = c.IntRequirement; }
+
+            Action<int, int, int, int, string> check = (reqVal, normal, fail, success, type) => {
+                int scaled = AOS.Scale2(reqVal, 1000 - lower);
+                if (scaled <= 0) return;
+                PlayerMobile pm = item.RootParent as PlayerMobile;
+                int curStat = (pm == null) ? 0 : (type == "Str" ? pm.Str : type == "Dex" ? pm.Dex : pm.Int);
+                if (lower > 0) {
+                    list.Add((pm != null && curStat >= scaled) ? success : fail, "{0}\t{1}\t{2}", scaled, reqVal, reqVal - scaled);
+                } else list.Add(normal, scaled.ToString());
+            };
+
+            check(sR, 1061170, 1063558, 1063557, "Str");
+            check(dR, 1005008, 1063560, 1063559, "Dex");
+            check(iR, 1005009, 1063562, 1063561, "Int");
+        }
+
+        private static int ProcessOptionLoop(ObjectPropertyList list, IEquipOption eq, int startIdx, int count, int skillBase, int optBase, int skilluse)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                int optID = eq.PrefixOption[i + startIdx];
+                int optVal = eq.SuffixOption[i + startIdx];
+                if (optID == 0 && optVal == 0) break;
+
+                int realOptID = Misc.ItemOptionCreator.EquipRandomOption[optID, 0];
+                if (realOptID < 60) // 스킬 옵션
+                {
+                    SkillName skill = (SkillName)realOptID;
+                    int skillCliloc = eq.SkillBonuses.GetSkillName(skill);
+                    if (skillCliloc > 0)
+                    {
+                        list.Add(skillBase + skilluse, "#{0}\t{1}", skillCliloc, (optVal * 0.0001).ToString("0.##"));
+                        skilluse++;
+                    }
+                }
+                else // 마법 옵션
+                {
+                    int optionpercentcheck = optBase + Misc.Util.OPLPercentCheck(realOptID);
+                    list.Add(optionpercentcheck, "#{0}\t{1}", realOptID, (optVal * Misc.Util.PercentCalc(optID)).ToString("0.##"));
+                }
+            }
+            return skilluse;
+        }
 
 		#region 1. 마법 옵션
 		private static void AppendMagicOptions(ObjectPropertyList list, IEquipOption eqItem)

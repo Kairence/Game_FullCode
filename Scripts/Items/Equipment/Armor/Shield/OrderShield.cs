@@ -14,8 +14,6 @@ namespace Server.Items
             Weight = 50.0;
 			ShieldMinDamage = 6;
 			ShieldMaxDamage = 10;
-			PrefixOption[61] = 103; //시전 속도
-			SuffixOption[61] = 100000;
         }
 
         public OrderShield(Serial serial)
@@ -40,30 +38,30 @@ namespace Server.Items
         {
             get
             {
-                return 5000;
+                return 3000;
             }
         }
         public override int AosDexReq
         {
             get
             {
-                return 1000;
+                return 3000;
             }
         }
         public override int AosIntReq
         {
             get
             {
-                return 1000;
+                return 3000;
             }
         }
-        public override int ArmorBase
-        {
-            get
-            {
-                return 5;
-            }
-        }
+		public override double ArmorRating
+		{
+			get
+			{
+				return 18.0; // 원하는 감소 수치를 입력하세요.
+			}
+		}	
 		
 		public override void Serialize(GenericWriter writer)
         {

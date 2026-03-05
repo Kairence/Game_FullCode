@@ -38,7 +38,7 @@ namespace Server.Items
         {
             get
             {
-                return 3500;
+                return 5000;
             }
         }
         public override int AosDexReq
@@ -55,13 +55,13 @@ namespace Server.Items
                 return 100;
             }
         }
-        public override int ArmorBase
-        {
-            get
-            {
-                return 12;
-            }
-        }
+		public override double ArmorRating
+		{
+			get
+			{
+				return 20.0; // 원하는 감소 수치를 입력하세요.
+			}
+		}	
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);

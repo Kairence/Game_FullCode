@@ -1,140 +1,70 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Server.Spells;
 using Server.Mobiles;
+using Server.Network;
+
 namespace Server.Items
 {
-    /// <summary>
-    /// This devastating strike is most effective against those who are in good health and whose reserves of mana are low, or vice versa.
-    /// </summary>
     public class ConcussionBlow : WeaponAbility
     {
         public ConcussionBlow()
         {
         }
 
-        public override int BaseMana
+        public override void OnHit(Mobile attacker, Mobile defender, int damage)
         {
-            get
+
+            // 1. 광역 타격 대상 수집 (방어자 기준 2타일 내 모든 적)
+            List<Mobile> targets = new List<Mobile>();
+            IPooledEnumerable eable = defender.GetMobilesInRange(2);
+
+            foreach (Mobile m in eable)
             {
-                return 10;
+                if (m != attacker && m.Alive && attacker.CanBeHarmful(m, false) && attacker.InLOS(m))
+                {
+                    targets.Add(m);
+                }
             }
+            eable.Free();
+
+            // 2. 타겟별 계산 및 적용
+            foreach (Mobile m in targets)
+            {
+                bool isBoss = (m is BaseCreature bc && (bc.Grade >= 8));
+
+                if (isBoss)
+                {
+                    // [보스/네임드] 250% 추가 공격
+                    damage = (int)(damage * 2.5);
+                }
+                else
+                {
+                    // [일반 대상] 100% 추가 공격 (총 200%)
+
+                    // [핵심] 현재 체력의 3%를 계산하여 데미지에 합산
+                    int hpBonus = (int)(m.Hits * 0.03);
+                    damage += Math.Max(1, hpBonus);
+
+                    // [핵심] 기력과 마나는 수치에서 즉시 3% 감소
+                    m.Stam -= (int)(m.Stam * 0.03);
+                    m.Mana -= (int)(m.Mana * 0.03);
+                }
+
+                // 시각 및 사운드 효과
+                m.PlaySound(0x1E1);
+                m.FixedParticles(0x3049, 1, 0, 9946, EffectLayer.Head);
+                m.SendLocalizedMessage(1060091); // You feel disoriented!
+
+                // 3. 최종 통합 데미지 적용
+                AOS.Damage(m, attacker, damage, 100, 0, 0, 0, 0, 0, 0);
+            }
+
+            attacker.SendLocalizedMessage(1060165); // You have delivered a concussion!
         }
-        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics )
+
+        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double bonus)
         {
-            if (!this.Validate(attacker) )
-                return;
-			
-			if ( defender == null )
-				return;
-			
-			bool bonus = attacker.Skills.Tactics.Value >= 100 ? true : false;
-			//int levelAreaBonus = level >= 5 ? 2 : 0;
-			//double levelStunBonus = level >= 5 ? 5 : 0;
-			
-			
-			if ( !this.CalculateStam(attacker, Misc.Util.SPMStam[2,0], Misc.Util.SPMStam[2,1], level, bonus ) )
-				return;
-			
-			//double bonusDamage = 5.0 + level * 2.0;
-
-			attacker.SendLocalizedMessage(1060165); // You have delivered a concussion!
-
-			//int x = 0;
-			//int y = 0;
-			int line = 1;//3 + (int)( tactics / 100 ) + levelAreaBonus;
-			double duration = 10.0 + tactics * 0.1;
-			
-			/*
-			if( attacker.Direction == Direction.East || (int)attacker.Direction == 130 ) // x = 1
-			{
-				x = 1;
-			}
-			else if( attacker.Direction == Direction.West || (int)attacker.Direction == 134 ) // x= -1
-			{
-				x = -1;
-			}
-			else if( attacker.Direction == Direction.South || (int)attacker.Direction == 132 ) // y = 1;
-			{
-				y = 1;
-			}
-			else if( attacker.Direction == Direction.North || (int)attacker.Direction == 128 ) // y= -1
-			{
-				y = -1;
-			}
-			else if( attacker.Direction == Direction.Mask || attacker.Direction == Direction.Up || (int)attacker.Direction == 134 ) //x = -1, y = -1
-			{
-				x = -1;
-				y = -1;
-			}
-			else if( attacker.Direction == Direction.Down || (int)attacker.Direction == 131 ) // x = 1, y = 1
-			{
-				x = 1;
-				y = 1;
-			}
-			else if( attacker.Direction == Direction.Left || (int)attacker.Direction == 133 ) // x = -1, y = 1
-			{
-				x = -1;
-				y = 1;
-			}
-			else if( attacker.Direction == Direction.Right || (int)attacker.Direction == 129 ) // x = 1, y = -1
-			{
-				x = 1;
-				y = -1;
-			}
-			if( attacker is PlayerMobile )
-			{
-				PlayerMobile pm = attacker as PlayerMobile;
-				//line += pm.SilverPoint[4] / 4;
-				//duration += pm.SilverPoint[4] * 0.4;
-			}
-			*/
-			if( attacker is OgreLord )
-			{
-				line += 9;
-				duration = 5;
-			}
-			//계산
-			damage = (int)( damage * ( 4 + level * 0.1 ) );
-			
-			List<Mobile> targets = new List<Mobile>();
-			IPooledEnumerable eable = attacker.GetMobilesInRange(line);//weapon.MaxRange);
-
-			foreach (Mobile m in eable)
-			{
-				if (m != defender && m != attacker && m.CanBeHarmful(attacker, false) && attacker.InLOS(m) && 
-					Server.Spells.SpellHelper.ValidIndirectTarget(attacker, m))
-				{
-					targets.Add(m);
-				}
-			}
-			eable.Free();
-			if (targets.Count > 0)
-			{
-				for (int i = 0; i < targets.Count; ++i)
-				{
-					Mobile m = targets[i];
-					if ( m != attacker )
-					{
-						m.SendLocalizedMessage(1060091); // You feel disoriented!
-						m.PlaySound(0x1E1);
-						m.FixedParticles(0, 1, 0, 9946, EffectLayer.Head);
-						if( Utility.RandomDouble() < 0.2 + level * 0.005 )
-						{
-							if( m is BaseCreature )
-							{
-								BaseCreature bc = m as BaseCreature;
-								duration *= Misc.Util.MonsterTierCrowdControlRecovery(bc);
-							}
-							m.Freeze(TimeSpan.FromSeconds( duration ));
-						}
-						AOS.Damage(m, attacker, damage, false, 100, 0, 0, 0, 0, 0, 0, false, false, false);
-					}
-				}
-				ColUtility.Free(targets);
-			}			
-            ClearCurrentAbility(attacker);
+            OnHit(attacker, defender, damage);
         }
     }
 }

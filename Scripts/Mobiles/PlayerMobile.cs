@@ -4039,35 +4039,6 @@ namespace Server.Mobiles
 			}
 		}
 
-		public override double ArmorRating
-		{
-			get
-			{
-				//BaseArmor ar;
-				double rating = 0.0;
-
-				AddArmorRating(ref rating, NeckArmor);
-				AddArmorRating(ref rating, HandArmor);
-				AddArmorRating(ref rating, HeadArmor);
-				AddArmorRating(ref rating, ArmsArmor);
-				AddArmorRating(ref rating, LegsArmor);
-				AddArmorRating(ref rating, ChestArmor);
-				AddArmorRating(ref rating, ShieldArmor);
-
-				return VirtualArmor + VirtualArmorMod + rating;
-			}
-		}
-
-		private void AddArmorRating(ref double rating, Item armor)
-		{
-			BaseArmor ar = armor as BaseArmor;
-
-			if (ar != null && (!Core.AOS || ar.ArmorAttributes.MageArmor == 0))
-			{
-				rating += ar.ArmorRatingScaled;
-			}
-		}
-
 		//스텟 설정
 		#region [Stats]Max
 		[CommandProperty(AccessLevel.GameMaster)]
@@ -9080,6 +9051,12 @@ namespace Server.Mobiles
 			}
 
 			bool running = ((dir & Direction.Running) != 0);
+			
+			// [추가] NerveStrike 상태라면 강제로 running을 false로 취급함
+			if (running && Server.Items.NerveStrike.IsCripple(this))
+			{
+				running = false; 
+			}
 
 			bool onHorse = Mount != null || Flying;
 

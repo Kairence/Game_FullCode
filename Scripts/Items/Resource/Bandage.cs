@@ -368,7 +368,7 @@ namespace Server.Items
 						if( pm.Coma )
 							healing = 0;
 
-						healing = Misc.Util.HealCheck(m_Healer, m_Patient, healing);
+						healing = Mobiles.AggroControl.HealCheck(m_Healer, m_Patient, healing);
 						
 						m_Patient.Heal(healing, m_Healer, false);
 						m_Healer.CheckSkill( healingskill, healing * 5 );
@@ -427,7 +427,7 @@ namespace Server.Items
 					{
 						//체력 회복
 						int healing = Utility.RandomMinMax(120, 200);
-						healing = Misc.Util.HealCheck(m_Healer, m_Patient, healing);
+						healing = Mobiles.AggroControl.HealCheck(m_Healer, m_Patient, healing);
 
 						bc.Heal(healing, m_Healer, false);
 						m_Healer.CheckSkill( veteryskill, healing );

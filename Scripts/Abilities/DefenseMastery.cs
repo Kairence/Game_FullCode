@@ -1,100 +1,43 @@
 using System;
 using System.Collections;
+using Server.Mobiles;
 
 namespace Server.Items
 {
-    /// <summary>
-    /// Raises your physical resistance for a short time while lowering your ability to inflict damage. Requires Bushido or Ninjitsu skill.
-    /// </summary>
     public class DefenseMastery : WeaponAbility
     {
         private static readonly Hashtable m_Table = new Hashtable();
-        public DefenseMastery()
+
+        public DefenseMastery() { }
+
+        // 외부에서 참조할 수 있도록 static 메서드 제공
+        public static bool IsPerfectDefense(Mobile m)
         {
-        }
-
-        public override int BaseMana
-        {
-            get
-            {
-                return 20;
-            }
-        }
-
-        public override SkillName GetSecondarySkill(Mobile from)
-        {
-            return from.Skills[SkillName.Ninjitsu].Base > from.Skills[SkillName.Bushido].Base ? SkillName.Ninjitsu : SkillName.Bushido;
-        }
-
-        public static bool GetMalus(Mobile targ, ref int damageMalus)
-        {
-            DefenseMasteryInfo info = m_Table[targ] as DefenseMasteryInfo;
-
-            if (info == null)
-                return false;
-
-            damageMalus = info.m_DamageMalus;
-            return true;
+            return m != null && m_Table.Contains(m);
         }
 
         public override void OnHit(Mobile attacker, Mobile defender, int damage)
         {
-            if (!Validate(attacker) || !CheckMana(attacker, true))
-                return;
-
-            ClearCurrentAbility(attacker);
-
-            attacker.SendLocalizedMessage(1063353); // You perform a masterful defense!
-
+            // 시각 효과 및 메시지
             attacker.FixedParticles(0x375A, 1, 17, 0x7F2, 0x3E8, 0x3, EffectLayer.Waist);
+            attacker.PlaySound(0x1F2);
+            //attacker.SendMessage("완전 방어 자세를 취합니다! (3초간 피해 1 고정)");
 
-            int modifier = (int)(30.0 * ((Math.Max(attacker.Skills[SkillName.Bushido].Value, attacker.Skills[SkillName.Ninjitsu].Value) - 50.0) / 70.0));
-
-            DefenseMasteryInfo info = m_Table[attacker] as DefenseMasteryInfo;
-
-            if (info != null)
-                EndDefense((object)info);
-
-            ResistanceMod mod = new ResistanceMod(ResistanceType.Physical, 50 + modifier);
-            attacker.AddResistanceMod(mod);
-
-            info = new DefenseMasteryInfo(attacker, 80 - modifier, mod);
-            info.m_Timer = Timer.DelayCall(TimeSpan.FromSeconds(3.0), new TimerStateCallback(EndDefense), info);
-
-            m_Table[attacker] = info;
-
-            attacker.Delta(MobileDelta.WeaponDamage);
-        }
-
-        private static void EndDefense(object state)
-        {
-            DefenseMasteryInfo info = (DefenseMasteryInfo)state;
-
-            if (info.m_Mod != null)
-                info.m_From.RemoveResistanceMod(info.m_Mod);
-
-            if (info.m_Timer != null)
-                info.m_Timer.Stop();
-
-            // No message is sent to the player.
-
-            m_Table.Remove(info.m_From);
-
-            info.m_From.Delta(MobileDelta.WeaponDamage);
-        }
-
-        private class DefenseMasteryInfo
-        {
-            public readonly Mobile m_From;
-            public readonly int m_DamageMalus;
-            public readonly ResistanceMod m_Mod;
-            public Timer m_Timer;
-            public DefenseMasteryInfo(Mobile from, int damageMalus, ResistanceMod mod)
+            // 기존 타이머가 있다면 중단 (중첩 방지)
+            if (m_Table.Contains(attacker))
             {
-                m_From = from;
-                m_DamageMalus = damageMalus;
-                m_Mod = mod;
+                Timer t = m_Table[attacker] as Timer;
+                if (t != null) t.Stop();
             }
+
+            // 3초 후 테이블에서 제거하는 타이머 등록
+            Timer timer = Timer.DelayCall(TimeSpan.FromSeconds(3.0), () => 
+            {
+                m_Table.Remove(attacker);
+                //attacker.SendMessage("완전 방어 상태가 해제되었습니다.");
+            });
+
+            m_Table[attacker] = timer;
         }
     }
 }

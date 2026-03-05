@@ -17,7 +17,7 @@ namespace Server.Items
                 return;
 
             // 1. 시각 효과 및 알림
-            attacker.SendMessage("연쇄 연속 공격을 시전합니다!");
+            //attacker.SendMessage("연쇄 연속 공격을 시전합니다!");
             attacker.SendLocalizedMessage(1060084); // You attack with lightning speed!
             
             defender.PlaySound(0x3BB);

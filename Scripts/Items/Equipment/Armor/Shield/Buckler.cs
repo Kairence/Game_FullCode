@@ -41,21 +41,21 @@ namespace Server.Items
                 return 1000;
             }
         }
-        public override int ArmorBase
-        {
-            get
-            {
-                return 7;
-            }
-        }
+		public override double ArmorRating
+		{
+			get
+			{
+				return 13.0; // 원하는 감소 수치를 입력하세요.
+			}
+		}	
 		
         [Constructable]
         public Buckler()
             : base(0x1B73)
         {
             this.Weight = 25.0;
-			ShieldMinDamage = 5;
-			ShieldMaxDamage = 10;
+			ShieldMinDamage = 2;
+			ShieldMaxDamage = 4;
 
 		}
 

@@ -5,7 +5,7 @@ namespace Server.Spells
 {
     public abstract class MagerySpell : Spell
     {
-        private static readonly int[] m_ManaTable = new int[] { 3, 5, 7, 10, 15, 20, 25, 50 };
+        private static readonly int[] m_ManaTable = new int[] { 275, 300, 350, 450, 600, 750, 1000, 2250 };
         private const double ChanceOffset = 20.0, ChanceLength = 100.0 / 7.0;
         public MagerySpell(Mobile caster, Item scroll, SpellInfo info)
             : base(caster, scroll, info)

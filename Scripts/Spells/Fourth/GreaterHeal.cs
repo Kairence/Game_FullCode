@@ -60,7 +60,7 @@ namespace Server.Spells.Fourth
             else if (this.CheckBSequence(m))
             {
 				int toHeal = Utility.RandomMinMax(100, 150);
-				Misc.Util.HealCheck(Caster, m, (int)(Caster.Skills.Magery.Value * 10 ));
+				toHeal = Mobiles.AggroControl.HealCheck(Caster, m, toHeal + (int)(Caster.Skills.Magery.Value * 10 ));
 
                 //m.Heal( toHeal, Caster );
                 SpellHelper.Heal(toHeal, m, this.Caster);

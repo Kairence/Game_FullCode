@@ -38,10 +38,10 @@ namespace Server.Misc
 			}
 
 			switch (bc.Grade) {
-				case 1: bc.Loyalty = Utility.RandomMinMax(0, 100); break;
-				case 2: bc.Loyalty = Utility.RandomMinMax(200, 350); break;
-				case 6: bc.Loyalty = Utility.RandomMinMax(500, 750); break;
-				case 7: bc.Loyalty = Utility.RandomMinMax(800, 900); break;
+				case 1: bc.Loyalty = Utility.RandomMinMax(0, 1000); break;
+				case 2: bc.Loyalty = Utility.RandomMinMax(2000, 3500); break;
+				case 6: bc.Loyalty = Utility.RandomMinMax(5000, 7500); break;
+				case 7: bc.Loyalty = Utility.RandomMinMax(8000, 9000); break;
 				default: bc.Loyalty = 0; break;
 			}
 
@@ -67,17 +67,21 @@ namespace Server.Misc
 
 		public static void RefreshStats(BaseCreature bc)
 		{
-			// 호환성 체크 제거: 배열이 반드시 존재한다는 전제
+			if (bc.originalStats == null || bc.originalStats[0] == 0) return;
+
 			double fame = Math.Min(30000, (double)bc.Fame);
-			double scalar = 1.0 + (bc.Loyalty / 1000.0);
+			
+			// [변경] 1당 0.01%이므로 10000.0으로 나눕니다. (최대치 10000일 때 100% 보너스)
+			double scalar = 1.0 + (bc.Loyalty * 0.0001); 
+			
 			double sM = scalar, dM = scalar, iM = scalar, hM = scalar, stM = scalar, maM = scalar;
 
-			// AI 타입별 가중치 보정
+			// AI 타입별 가중치 보정 (기존 유지)
 			if (bc.AI == AIType.AI_Mage || bc.AI == AIType.AI_Necro) { iM *= 1.2; maM *= 1.2; }
 			else if (bc.AI == AIType.AI_Archer) { dM *= 1.2; stM *= 1.2; }
 			else { sM *= 1.1; hM *= 1.1; }
 
-			// 스탯 적용: [원본 + 명성보너스] * 최종배율
+			// 스탯 적용 로직 (기존 유지)
 			bc.RawStr = (int)Math.Min(100000, (bc.originalStats[0] + (fame * 0.075 + Math.Pow(fame, 2) / 400000.0)) * sM);
 			bc.RawDex = (int)Math.Min(100000, (bc.originalStats[1] + (fame * 0.015 + Math.Pow(fame, 2) / 2000000.0)) * dM);
 			bc.RawInt = (int)Math.Min(100000, (bc.originalStats[2] + (fame * 0.015 + Math.Pow(fame, 2) / 2000000.0)) * iM);

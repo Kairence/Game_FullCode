@@ -45,7 +45,7 @@ namespace Server.Items
                     bc.disarmweak = 50;
                 }
 
-                attacker.SendMessage("상대를 낙마시키고 10초간 취약 상태(피해 50% 증가)로 만들었습니다!");
+                attacker.SendLocalizedMessage(1060083); // You disarm your opponent!
             }
             
             // 기본 공격 데미지는 BaseWeapon에서 처리되므로 여기선 추가 Damage 호출 없음

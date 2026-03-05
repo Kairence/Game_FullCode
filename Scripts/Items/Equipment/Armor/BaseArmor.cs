@@ -435,22 +435,23 @@ namespace Server.Items
             }
         }
 
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int BaseArmorRating
-        {
-            get
-            {
-                if (m_ArmorBase == -1)
-                    return ArmorBase;
-                else
-                    return m_ArmorBase;
-            }
-            set
-            { 
-                m_ArmorBase = value;
-                Invalidate(); 
-            }
-        }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int BaseArmorRating
+		{
+			get
+			{
+				// m_ArmorBase가 설정되어 있지 않으면 기본 ArmorBase 반환
+				if (m_ArmorBase == -1)
+					return ArmorBase; 
+				else
+					return m_ArmorBase;
+			}
+			set
+			{ 
+				m_ArmorBase = value;
+				Invalidate(); 
+			}
+		}
 
         public double BaseArmorRatingScaled
         {
@@ -460,62 +461,23 @@ namespace Server.Items
             }
         }
 
+		[CommandProperty(AccessLevel.GameMaster)]
         public virtual double ArmorRating
         {
             get
             {
-                int ar = BaseArmorRating;
+                // [수정] 외부 연산 없이 설정된 값을 우선 반환하거나, -1일 때 기본 연산을 수행합니다.
+                if (m_ArmorRating != -1)
+                    return m_ArmorRating;
 
-                if (m_Protection != ArmorProtectionLevel.Regular)
-                    ar += 10 + (5 * (int)m_Protection);
-
-                switch ( m_Resource )
-                {
-                    case CraftResource.DullCopper:
-                        ar += 2;
-                        break;
-                    case CraftResource.ShadowIron:
-                        ar += 4;
-                        break;
-                    case CraftResource.Copper:
-                        ar += 6;
-                        break;
-                    case CraftResource.Bronze:
-                        ar += 8;
-                        break;
-                    case CraftResource.Gold:
-                        ar += 10;
-                        break;
-                    case CraftResource.Agapite:
-                        ar += 12;
-                        break;
-                    case CraftResource.Verite:
-                        ar += 14;
-                        break;
-                    case CraftResource.Valorite:
-                        ar += 16;
-                        break;
-                    case CraftResource.SpinedLeather:
-                        ar += 10;
-                        break;
-                    case CraftResource.HornedLeather:
-                        ar += 13;
-                        break;
-                    case CraftResource.BarbedLeather:
-                        ar += 16;
-                        break;
-                }
-
-                ar += -8 + (8 * (int)m_Quality);
-                return ScaleArmorByDurability(ar);
+                // 기본값이 -1일 때만 재질/품질 로직이 작동하게 하려면 아래를 유지, 
+                // 아예 수동으로만 관리하시려면 return 0; 등으로 처리하시면 됩니다.
+                return 0; 
             }
-        }
-
-        public double ArmorRatingScaled
-        {
-            get
+            set
             {
-                return (ArmorRating * ArmorScalar);
+                m_ArmorRating = (int)value;
+                Invalidate();
             }
         }
 
@@ -525,7 +487,7 @@ namespace Server.Items
         private int m_RefinedCold;
         private int m_RefinedPoison;
         private int m_RefinedEnergy;
-
+		private int m_ArmorRating = -1; // [이 라인을 추가하세요]
         [CommandProperty(AccessLevel.GameMaster)]
         public int RefinedPhysical { get { return m_RefinedPhysical; } set { m_RefinedPhysical = value; InvalidateProperties(); } }
 
@@ -2574,19 +2536,6 @@ namespace Server.Items
                     }
                 }
 
-                if (IsVvVItem && !Engines.VvV.ViceVsVirtueSystem.IsVvV(from))
-                {
-                    from.SendLocalizedMessage(1155496); // This item can only be used by VvV participants!
-                    return false;
-                }
-				/*
-				if( SpellHelper.CheckCombat(from) )
-				{
-					from.SendMessage("전투 중에는 장비를 착용할 수 없습니다!");
-					return false;
-				}
-				*/
-
                 bool morph = from.FindItemOnLayer(Layer.Earrings) is MorphEarrings;
 
                 if (!AllowMaleWearer && !from.Female)
@@ -2645,6 +2594,60 @@ namespace Server.Items
 					*/
                 }
             }
+			
+			double parry = from.Skills[SkillName.Parry].Value;
+			double chiv = from.Skills[SkillName.Chivalry].Value;
+			double necro = from.Skills[SkillName.Necromancy].Value;
+
+			// 오더 방패 (기사도 150)
+			if (this is OrderShield)
+			{
+				if (chiv >= 150.0) return true;
+				from.SendLocalizedMessage(503422); // 기사도 150 필요 메시지
+				return false;
+			}
+
+			// 혼돈 방패 (강령술 150)
+			if (this is ChaosShield)
+			{
+				if (necro >= 150.0) return true;
+				from.SendLocalizedMessage(503434); // 강령술 150 필요 메시지
+				return false;
+			}
+
+			// --- [일반 방패 체크: 방패술(Parry) 단계별] ---
+
+			// 200 스킬: 히터 방패 (HeaterShield)
+			if (this is HeaterShield)
+			{
+				if (parry >= 200.0) return true;
+				from.SendLocalizedMessage(503421); // 방패술 200 필요 메시지 (503418 + 3)
+				return false;
+			}
+
+			// 150 스킬: 카이트류 방패 (KiteShield)
+			if (this is WoodenKiteShield || this is MetalKiteShield)
+			{
+				if (parry >= 150.0) return true;
+				from.SendLocalizedMessage(503420); // 방패술 150 필요 메시지 (503418 + 2)
+				return false;
+			}
+
+			// 100 스킬: 금속류 방패 (MetalShield, MetalKiteShield)
+			if (this is MetalShield || this is BronzeShield)
+			{
+				if (parry >= 100.0) return true;
+				from.SendLocalizedMessage(503419); // 방패술 100 필요 메시지 (503418 + 1)
+				return false;
+			}
+
+			// 50 스킬: 둥근 방패 (BronzeShield 등)
+			if (this is Buckler)
+			{
+				if (parry >= 50.0) return true;
+				from.SendLocalizedMessage(503418); // 방패술 50 필요 메시지
+				return false;
+			}			
 
             if (!Server.Engines.XmlSpawner2.XmlAttach.CheckCanEquip(this, from))
                 return false;

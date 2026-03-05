@@ -68,7 +68,7 @@ namespace Server.Spells.First
 					int level = SpellLevel(Caster, 3);
                     toHeal = Utility.RandomMinMax(90 + level * 15, 130 + level * 30) + (int)(Caster.Skills.Magery.Value * 0.15 + Caster.Skills.Chivalry.Value * 0.15);
 					
-					Misc.Util.HealCheck(Caster, m, (int)(Caster.Skills.Magery.Value * 10 ));
+					toHeal = Mobiles.AggroControl.HealCheck(Caster, m, toHeal + (int)(Caster.Skills.Magery.Value * 10 ));
 					if( level >= 5 )
 					{
 						SpellHelper.Heal(toHeal / 5, this.Caster, this.Caster);

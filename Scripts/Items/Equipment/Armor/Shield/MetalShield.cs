@@ -11,8 +11,8 @@ namespace Server.Items
             : base(0x1B7B)
         {
             this.Weight = 40.0;
-			ShieldMinDamage = 4;
-			ShieldMaxDamage = 7;
+			ShieldMinDamage = 3;
+			ShieldMaxDamage = 5;
 
         }
 
@@ -39,7 +39,7 @@ namespace Server.Items
         {
             get
             {
-                return 2500;
+                return 3000;
             }
         }
         public override int AosDexReq
@@ -56,13 +56,13 @@ namespace Server.Items
                 return 100;
             }
         }
-        public override int ArmorBase
-        {
-            get
-            {
-                return 10;
-            }
-        }
+		public override double ArmorRating
+		{
+			get
+			{
+				return 15.0; // 원하는 감소 수치를 입력하세요.
+			}
+		}	
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);

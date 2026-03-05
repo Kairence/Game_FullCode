@@ -12,10 +12,6 @@ namespace Server.Items
             : base(0x1BC3)
         {
             Weight = 40.0;
-			ShieldMinDamage = 3;
-			ShieldMaxDamage = 5;
-			PrefixOption[61] = 104; //시전 속도
-			SuffixOption[61] = 100000;
         }
 
         public ChaosShield(Serial serial)
@@ -41,30 +37,30 @@ namespace Server.Items
         {
             get
             {
-                return 3500;
+                return 3000;
             }
         }
         public override int AosDexReq
         {
             get
             {
-                return 1000;
+                return 3000;
             }
         }
         public override int AosIntReq
         {
             get
             {
-                return 1000;
+                return 3000;
             }
         }
-        public override int ArmorBase
-        {
-            get
-            {
-                return 4;
-            }
-        }
+		public override double ArmorRating
+		{
+			get
+			{
+				return 17.0; // 원하는 감소 수치를 입력하세요.
+			}
+		}	
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);

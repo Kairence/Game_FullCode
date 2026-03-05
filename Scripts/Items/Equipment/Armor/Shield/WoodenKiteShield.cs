@@ -11,8 +11,6 @@ namespace Server.Items
             Weight = 20.0;
 			ShieldMinDamage = 2;
 			ShieldMaxDamage = 4;
-			PrefixOption[61] = 41; //시전 속도
-			SuffixOption[61] = 100000;
         }
 
         public WoodenKiteShield(Serial serial)
@@ -38,7 +36,7 @@ namespace Server.Items
         {
             get
             {
-                return 2000;
+                return 1000;
             }
         }
         public override int AosDexReq
@@ -52,16 +50,16 @@ namespace Server.Items
         {
             get
             {
-                return 1000;
+                return 3000;
             }
         }
-        public override int ArmorBase
-        {
-            get
-            {
-                return 3;
-            }
-        }
+		public override double ArmorRating
+		{
+			get
+			{
+				return 16.0; // 원하는 감소 수치를 입력하세요.
+			}
+		}	
 		
 		public override void Serialize(GenericWriter writer)
         {

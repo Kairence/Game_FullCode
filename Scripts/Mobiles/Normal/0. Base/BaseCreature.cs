@@ -1869,29 +1869,6 @@ namespace Server.Mobiles
             return base.ApplyNameSuffix(suffix);
         }
 
-        public virtual bool CheckControlChance(Mobile m)
-        {
-            if (GetControlChance(m) > Utility.RandomDouble())
-            {
-                Loyalty += 1;
-                return true;
-            }
-
-            PlaySound(GetAngerSound());
-
-            if (Core.SA)
-            {
-                Animate(AnimationType.Alert, 0);
-            }
-            else
-            {
-                Animate(Body.IsAnimal ? 10 : 18, 5, 1, true, false, 0);
-            }
-
-            Loyalty -= 3;
-            return false;
-        }
-
         public virtual bool CanBeControlledBy(Mobile m)
         {
             return (GetControlChance(m) > 0.0);
@@ -1905,73 +1882,6 @@ namespace Server.Mobiles
         public virtual double GetControlChance(Mobile m, bool useBaseSkill)
         {
 			return 1.0;
-            if (m_CurrentTameSkill <= 29.1 || m_bSummoned || m.AccessLevel >= AccessLevel.GameMaster)
-            {
-                return 1.0;
-            }
-
-            double dMinTameSkill = m_CurrentTameSkill;
-
-            if (dMinTameSkill > -24.9 && DarkWolfFamiliar.CheckMastery(m, this))
-            {
-                dMinTameSkill = -24.9;
-            }
-
-            int taming = (int)((useBaseSkill ? m.Skills[SkillName.AnimalTaming].Base : m.Skills[SkillName.AnimalTaming].Value) * 10);
-            int lore =   (int)((useBaseSkill ? m.Skills[SkillName.AnimalLore].Base : m.Skills[SkillName.AnimalLore].Value) * 10);
-            int bonus = 0, chance = 700;
-
-            if (Core.ML)
-            {
-                int SkillBonus = taming - (int)(dMinTameSkill * 10);
-                int LoreBonus = lore - (int)(dMinTameSkill * 10);
-
-                int SkillMod = 6, LoreMod = 6;
-
-                if (SkillBonus < 0)
-                {
-                    SkillMod = 28;
-                }
-                if (LoreBonus < 0)
-                {
-                    LoreMod = 14;
-                }
-
-                SkillBonus *= SkillMod;
-                LoreBonus *= LoreMod;
-
-                bonus = (SkillBonus + LoreBonus) / 2;
-            }
-            else
-            {
-                int difficulty = (int)(dMinTameSkill * 10);
-                int weighted = ((taming * 4) + lore) / 5;
-                bonus = weighted - difficulty;
-
-                if (bonus <= 0)
-                {
-                    bonus *= 14;
-                }
-                else
-                {
-                    bonus *= 6;
-                }
-            }
-
-            chance += bonus;
-
-            if (chance >= 0 && chance < 200)
-            {
-                chance = 200;
-            }
-            else if (chance > 990)
-            {
-                chance = 990;
-            }
-
-            //chance -= (MaxLoyalty - m_Loyalty) * 10;
-
-            return ((double)chance / 1000);
         }
 
         public virtual bool CanTransfer(Mobile m)
@@ -2120,10 +2030,10 @@ namespace Server.Mobiles
 			set
 			{
 				// 1. 상한선: 테이밍 상태면 지식*5, 아니면 1000 고정
-				int limit = (Controlled && m_ControlMaster != null) ? (int)m_ControlMaster.Skills[SkillName.AnimalLore].Value * 5 : 1000;
+				int limit = (Controlled && m_ControlMaster != null) ? (int)m_ControlMaster.Skills[SkillName.AnimalLore].Value * 50 : 10000;
 
 				// 2. 값 보정 및 실제 변경 여부 확인
-				value = Math.Max(-1000, Math.Min(value, limit));
+				value = Math.Max(-10000, Math.Min(value, limit));
 
 				if (m_Loyalty != value)
 				{
@@ -3951,31 +3861,79 @@ namespace Server.Mobiles
             return contains;
         }
 
+		public virtual bool CheckControlChance(Mobile m)
+		{
+			return true;
+			// GM이거나 주인이라면 확률 계산 시작
+			if (m.AccessLevel >= AccessLevel.GameMaster || m == m_ControlMaster)
+			{
+				// 1. 기본 확률: (테이밍 + 지식) / 200.0 (0.0~1.0 범위를 위해 200으로 나눔)
+				double taming = m.Skills[SkillName.AnimalTaming].Value;
+				double lore = m.Skills[SkillName.AnimalLore].Value;
+				double baseChance = (taming + lore) / 200.0;
+
+				// 2. 충성도 가중치 (10,000 기준)
+				// 충성도 5,000일 때 1.0배(기본), 10,000일 때 1.5배(보너스)
+				double loyaltyFactor = 0.5 + (m_Loyalty * 0.0001); 
+				
+				// 3. 최종 확률 산출 (최소 5% ~ 최대 100%)
+				double finalChance = Math.Max(0.05, Math.Min(1.0, baseChance * loyaltyFactor));
+
+				// 4. [핵심] 확률 판정 (0.0~1.0 사이의 난수가 확률보다 낮으면 성공)
+				return finalChance >= Utility.RandomDouble();
+			}
+
+			return false; // 주인이 아니면 무조건 실패
+		}
+
 		public virtual bool CheckFeed(Mobile from, Item dropped)
 		{
+			// 기본 예외 처리 및 음식 선호도 체크
 			if (IsDeadPet || !Controlled || (ControlMaster != from && !IsPetFriend(from)) || !CheckFoodPreference(dropped))
 				return false;
+
+			// 1. 음식 영양가(FillFactor)와 음식 전용 상한선 계산
+			int foodValue = (dropped is Food) ? ((Food)dropped).FillFactor : 1;
+			int foodLimit = (int)from.Skills[SkillName.AnimalLore].Value * 10;
+			
+			// 이미 음식으로 올릴 수 있는 최대치에 도달했다면 즉시 반환
+			if (Loyalty >= foodLimit)
+			{
+				SayTo(from, 500867); // 배부름
+				return false;
+			}
 
 			int amount = dropped.Amount;
 			if (amount <= 0) return false;
 
-			// 1. 충성도(Loyalty) 로직 압축 (변수 최소화)
-			int gain = dropped is Gold ? amount / 100 : amount;
+			// 2. 필요한 소모량 계산 (스마트 소비)
+			int neededLoyalty = foodLimit - Loyalty;
+			// 필요한 로얄티를 채우기 위해 최소 몇 개의 음식이 필요한지 계산 (올림 처리)
+			int amountNeeded = (int)Math.Ceiling((double)neededLoyalty / foodValue);
+			int amountToConsume = Math.Min(amount, amountNeeded);
 
-			if (gain > 0)
+			// 3. 충성도 상승 및 반영
+			if (amountToConsume > 0)
 			{
-				if (m_Loyalty < 0) 
-					m_Loyalty += Math.Min(gain, Math.Abs(m_Loyalty));
-				else if (m_Loyalty < from.Skills[SkillName.AnimalLore].Value) 
-					m_Loyalty = Math.Min((int)from.Skills[SkillName.AnimalLore].Value, m_Loyalty + gain);
-
+				Loyalty += (amountToConsume * foodValue); // 프로퍼티를 통해 상한선 자동 제어 및 스탯 갱신
 				SayTo(from, 502060); // Your pet looks happier.
+				
+				// 애니메이션 효과
+				Animate(Core.SA ? (int)AnimationType.Eat : (Body.IsAnimal ? 3 : Body.IsHuman ? 34 : 17), 5, 1, true, false, 0);
 			}
 
-			// 2. 애니메이션 및 본딩 로직
-			// 양쪽 결과값을 모두 int로 형변환하여 타입 불일치 해결
-			Animate(Core.SA ? (int)AnimationType.Eat : (Body.IsAnimal ? 3 : Body.IsHuman ? 34 : 17), 5, 1, true, false, 0);
+			// 4. [핵심] 소모 및 남은 수량 반환 로직
+			if (amountToConsume < amount)
+			{
+				dropped.Amount -= amountToConsume;
+				from.AddToBackpack(dropped); // 남은 뭉치를 유저 가방으로 반환
+			}
+			else
+			{
+				dropped.Delete(); // 전부 소모했다면 삭제
+			}
 
+			// 5. 본딩 로직 (기존 유지)
 			if (IsBondable && !IsBonded && m_ControlMaster == from)
 			{
 				if (m_CurrentTameSkill <= 29.1 || from.Skills[SkillName.AnimalTaming].Value >= m_CurrentTameSkill || OverrideBondingReqs())
@@ -3990,7 +3948,6 @@ namespace Server.Mobiles
 				}
 			}
 
-			dropped.Delete();
 			return true;
 		}
         #endregion
@@ -4818,9 +4775,23 @@ namespace Server.Mobiles
         *
         */
 
-		public double[] AggroScore = new double[10000];
-		public Mobile[] AggroMobile = new Mobile[10000];
-		
+		// 1. 내부에서 사용할 필드 선언
+		private AggroControl _aggroControl;
+
+		// 2. 외부에서 접근할 프로퍼티 선언
+		// 이 프로퍼티를 통해 bc.Aggro.Update() 처럼 호출할 수 있습니다.
+		public AggroControl Aggro
+		{
+			get
+			{
+				// 널 조건부 연산자를 사용하여 필요할 때 인스턴스를 생성합니다 (Lazy Loading)
+				if (_aggroControl == null)
+				{
+					_aggroControl = new AggroControl(this);
+				}
+				return _aggroControl;
+			}
+		}		
         public virtual double GetFightModeRanking(Mobile m, FightMode acqType, bool bPlayerOnly)
         {
             if ((bPlayerOnly && m.Player) || !bPlayerOnly)
@@ -6688,7 +6659,7 @@ namespace Server.Mobiles
             }
 
 			int[] Kin = new int[2];
-			Kin = Util.SlayerCheck(this);
+			Kin = CombatEngine.SlayerCheck(this);
 			bool slaying = false;
 			string SlayingIndex = "";
 			if( Kin[0] != -1 )
@@ -8782,6 +8753,7 @@ namespace Server.Mobiles
 				}
 				eable.Free();
 
+				/*
 				if( AggroCheck.Count > 0 )
 				{
 					double BestAggroScore = 0.0;
@@ -8801,6 +8773,7 @@ namespace Server.Mobiles
 						}
 					}
 				}
+				*/
 			}
 			if( ControlMaster == null && SummonMaster == null && !(this is BaseVendor ) && !Blessed && Karma < 0 && CreationTime + TimeSpan.FromDays( 2 ) < DateTime.UtcNow )
 			{
@@ -8829,17 +8802,21 @@ namespace Server.Mobiles
 			//if ( PaintedCavesArea( Location.X, Location.Y ) && ControlMaster == null && SummonMaster == null && !Blessed && Karma < 0 )
 			if ( ControlMaster == null && SummonMaster == null && Combatant != null && !InRange(Home, RangeHome))
 			{
+				// A. 어그로 테이블 완전 초기화
+				this.Aggro.Clear();
+
+				// B. 현재 싸우고 있는 대상 해제
+				this.Combatant = null;
+				this.FocusMob = null;
+
+				// C. 집으로 강제 이동 명령 (AI가 집으로 걸어가게 함)
+				this.Warmode = false;
+				this.MoveToWorld(this.Home, this.Map); // 즉시 이동(텔레포트)하거나 걸어가게 유도			
+			
 				Warmode = false;
-				Combatant = null;
-				MoveToWorld( Home, Map );
 				Hits = HitsMax;
 				Mana = ManaMax;
 				Stam = StamMax;
-				for( int i = 0; i < 10000; i++ )
-				{
-					AggroMobile[i] = null;
-					AggroScore[i] = 0;
-				}
 			}
         }
 		

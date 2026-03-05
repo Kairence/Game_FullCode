@@ -10,15 +10,9 @@ namespace Server.Items
         public WoodenShield()
             : base(0x1B7A)
         {
-			ShieldMinDamage = 3;
-			ShieldMaxDamage = 7;
+			ShieldMinDamage = 1;
+			ShieldMaxDamage = 2;
             this.Weight = 20.0;
-			//PrefixOption[61] = 41; //시전 속도
-			//SuffixOption[61] = -500000;
-			//PrefixOption[62] = 109; //방패 방어 확률
-			//SuffixOption[62] = 500000;
-			//PrefixOption[63] = 110; //모든 피격 데미지 감소
-			//SuffixOption[63] = 100000;
         }
 
         public WoodenShield(Serial serial)
@@ -65,9 +59,17 @@ namespace Server.Items
         {
             get
             {
-                return 6;
+                return 0;
             }
         }
+		
+		public override double ArmorRating
+		{
+			get
+			{
+				return 12.0; // 원하는 감소 수치를 입력하세요.
+			}
+		}		
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);

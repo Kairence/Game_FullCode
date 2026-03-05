@@ -187,7 +187,7 @@ namespace Server.SkillHandlers
 				else 
 				{
 					// 2. 정상 범위 체크 (불안 ~ 완벽)
-					int limit = (int)c.ControlMaster.Skills[SkillName.AnimalLore].Value * 5;
+					int limit = (int)c.ControlMaster.Skills[SkillName.AnimalLore].Value * 50;
 					
 					// 분모가 0이 되는 것을 방지하며 비율 계산 (스킬 0이면 per는 0.0이 됨)
 					double per = (limit > 0) ? (double)c.Loyalty / limit : 0.0;

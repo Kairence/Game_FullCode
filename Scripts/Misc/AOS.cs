@@ -255,93 +255,8 @@ namespace Server
 				m.Combatant = from;
 			}
 			
-			// 1. 공격자가 크리쳐인 경우 (from)
-			if (from is BaseCreature)
-			{
-				BaseCreature bc = from as BaseCreature;
-				if (bc.ControlMaster == null && bc.SummonMaster == null) // 야생 몬스터
-				{
-					if (!bc.Boss && bc.attackcharge >= 300) totalDamage *= 10;
-
-					// 몬스터 성장 로직 압축
-					if (Utility.RandomDouble() < 0.1 * CreatureBalancer.MonsterGrade(bc.Grade))
-					{
-						int g = CreatureBalancer.MonsterGrade(bc.Grade);
-						bc.RawDex += g; bc.RawStr += g; bc.RawInt += g;
-						bc.HitsMaxSeed += g; bc.Hits += g; bc.StamMaxSeed += g;
-						bc.Stam++; bc.ManaMaxSeed++; bc.Mana++;
-						if (bc.Fame > 0 && from.Fame < bc.Fame && bc.Fame < 17500 + g * 2500) bc.Fame++;
-					}
-
-					// 어그로 대상 업데이트 (루프 최적화 필요하나 기존 유지 시 압축)
-					if (m != null && aggro > 0)
-					{
-						for (int i = 0; i < bc.AggroMobile.Length; i++) // 10000 대신 실제 길이 사용
-						{
-							if (bc.AggroMobile[i] == m || bc.AggroMobile[i] == null)
-							{
-								bc.AggroMobile[i] = m;
-								int dcal = (m.FindItemOnLayer(Layer.TwoHanded) is BaseShield) ? 4 : 2;
-								bc.AggroScore[i] += Misc.Util.AggroCalc(m, totalDamage) * dcal;
-								break;
-							}
-						}
-					}
-				}
-				else if (bc.ControlMaster != null && m is BaseCreature monster && monster.ControlMaster == null && bc.ControlSlots > 0) // 펫이 공격 시
-				{
-					// 펫 스탯 한계치 계산 및 성장 압축
-					double lore = bc.ControlMaster.Skills.AnimalLore.Value;
-					int mStat = (int)((50 + lore) * bc.ControlSlots);
-					int mHits = (int)(lore * 20 + bc.ControlSlots * 1000);
-
-					if (mStat < bc.RawStr && Misc.Util.PetStat(bc, bc.StatExp[0], bc.RawStr, monster.RawStr)) bc.RawStr++;
-					if (mStat < bc.RawDex && Misc.Util.PetStat(bc, bc.StatExp[1], bc.RawDex, monster.RawDex)) bc.RawDex++;
-					if (mStat < bc.RawInt && Misc.Util.PetStat(bc, bc.StatExp[2], bc.RawInt, monster.RawInt)) bc.RawInt++;
-					if (mHits < bc.HitsMaxSeed && Misc.Util.PetStat(bc, bc.StatExp[3], bc.HitsMaxSeed, monster.HitsMaxSeed)) bc.HitsMaxSeed++;
-					if (mHits / 10 < bc.StamMaxSeed && Misc.Util.PetStat(bc, bc.StatExp[4], bc.StamMaxSeed, monster.StamMaxSeed)) bc.StamMaxSeed++;
-					if (mHits / 10 < bc.ManaMaxSeed && Misc.Util.PetStat(bc, bc.StatExp[5], bc.ManaMaxSeed, monster.ManaMaxSeed)) bc.ManaMaxSeed++;
-				}
-			}
-
-			// 2. 피격자가 크리쳐인 경우 (m)
-			if (m is BaseCreature mb && mb.ControlMaster == null && mb.SummonMaster == null)
-			{
-				if (mb is GolemController && totalDamage > 200) totalDamage = 200 + totalDamage / 50;
-				
-				if (mb is OrcBrute ob && ob.Hits < 2000 && !ob.regenBonus)
-				{
-					Util.Good_Effect(ob); ob.regenBonus = true; ob.Say("전투는 지금부터다!");
-					ob.Hits = ob.HitsMaxSeed; ob.Stam = ob.StamMaxSeed;
-				}
-
-				mb.attackcharge++;
-
-				// 피격 시 성장 로직 압축
-				if (Utility.RandomDouble() < 0.05 * CreatureBalancer.MonsterGrade(mb.Grade))
-				{
-					int g = CreatureBalancer.MonsterGrade(mb.Grade);
-					mb.RawDex += g; mb.RawStr += g; mb.RawInt += g;
-					mb.HitsMaxSeed += g; mb.Hits += g; mb.StamMaxSeed += g;
-					mb.Stam++; mb.ManaMaxSeed++; mb.Mana++;
-					if (mb.Fame > 0 && from.Fame < mb.Fame && mb.Fame < 17500 + g * 2500) mb.Fame += g;
-				}
-
-				// 피격 어그로 업데이트
-				if (from != null && aggro > 0)
-				{
-					for (int i = 0; i < mb.AggroMobile.Length; i++)
-					{
-						if (mb.AggroMobile[i] == from || mb.AggroMobile[i] == null)
-						{
-							mb.AggroMobile[i] = from;
-							int dcal = (from.FindItemOnLayer(Layer.TwoHanded) is BaseShield) ? 2 : 1;
-							mb.AggroScore[i] += Misc.Util.AggroCalc(m, totalDamage) * dcal;
-							break;
-						}
-					}
-				}
-			}
+			BaseCreature bc = from as BaseCreature;
+			BaseCreature bm = m as BaseCreature;			
 
 			if( from is BloodElemental )
 			{
@@ -375,10 +290,8 @@ namespace Server
             }
             #endregion
 
-			if( from is BaseCreature )
+			if( bc != null )
 			{
-				BaseCreature bc = from as BaseCreature;
-
 				List<Mobile> list = new List<Mobile>();
 				IPooledEnumerable eable = bc.GetMobilesInRange(10);
 				int targetcount = 0;
@@ -481,6 +394,42 @@ namespace Server
 			if( totalDamage > 60000 )
 				totalDamage = 60000;
 
+			// --- 데미지 계산 및 차감 완료 후, bc와 bm이 이미 정의된 시점 ---
+
+			// 1. 공격자(bc) 로직: 성장 + 상대방에 대한 어그로 적립
+            if (bc != null)
+            {
+                // [성장] 야생 혹은 펫 공격 성장
+                if (!bc.Controlled) 
+                    UpdateWildGrowth(bc, 0.1); 
+                else if (bc is { ControlMaster: not null } && m is BaseCreature)
+                {
+                    if (Utility.RandomDouble() < bc.ControlMaster.Skills[SkillName.AnimalLore].Value * 0.0001)
+                        bc.Loyalty++;
+                }
+
+                // [어그로] 공격자 bc의 입장에서 피격자 m에 대한 위협 수치 기록
+				if( aggro > 0 )
+					bc.Aggro.Update(m, totalDamage, aggro);
+            }
+
+            // 2. 피격자(bm) 로직: 성장 + 나를 때린 놈에 대한 어그로 적립
+            if (bm != null)
+            {
+                // [성장] 야생 혹은 펫 피격 성장
+                if (!bm.Controlled) 
+                    UpdateWildGrowth(bm, 0.05);
+                else if (bm is { ControlMaster: not null } && from is BaseCreature)
+                {
+                    if (Utility.RandomDouble() < bm.ControlMaster.Skills[SkillName.Veterinary].Value * 0.00001)
+                        bm.Loyalty++;
+                }
+
+                // [어그로] 피격자 bm의 입장에서 공격자 from에 대한 위협 수치 기록
+				if( aggro > 0 )
+					bm.Aggro.Update(from, totalDamage, aggro);
+            }
+
             if (from != null && m != null)
             {
                 DoLeech(totalDamage, from, m);
@@ -526,7 +475,24 @@ namespace Server
             return totalDamage;
         }
 
+		// 1. 공통 로직을 처리할 로컬 함수 정의 (메서드 최상단이나 사용 직전에 선언)
+		private static void UpdateWildGrowth(BaseCreature critter, double chanceFactor)
+		{
+			if (critter is not { Controlled: false, SummonMaster: null, Grade: < 8 }) return;
 
+			int maxLoyalty = critter.Grade switch
+			{
+				1 => 1999,
+				<= 5 => 4999,
+				6 => 7999,
+				_ => 9999
+			};
+
+			if (critter.Loyalty < maxLoyalty && Utility.RandomDouble() < chanceFactor * CreatureBalancer.MonsterGrade(critter.Grade))
+			{
+				critter.Loyalty++;
+			}
+		}
         public static void Fix(ref int val)
         {
             if (val < 0)
@@ -870,10 +836,6 @@ namespace Server
 
                 int defenseMasteryMalus = 0;
                 int discordanceEffect = 0;
-
-                // Defense Mastery gives a -50%/-80% malus to damage.
-                if (Server.Items.DefenseMastery.GetMalus(m, ref defenseMasteryMalus))
-                    value -= defenseMasteryMalus;
 
                 // Discordance gives a -2%/-48% malus to damage.
                 if (SkillHandlers.Discordance.GetEffect(m, ref discordanceEffect))

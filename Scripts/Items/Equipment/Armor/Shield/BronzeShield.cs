@@ -38,16 +38,16 @@ namespace Server.Items
         {
             get
             {
-                return 1000;
+                return 2000;
             }
         }
-        public override int ArmorBase
-        {
-            get
-            {
-                return 2;
-            }
-        }
+		public override double ArmorRating
+		{
+			get
+			{
+				return 14.0; // 원하는 감소 수치를 입력하세요.
+			}
+		}	
 		
 		
         [Constructable]
@@ -57,8 +57,6 @@ namespace Server.Items
             Weight = 15.0;
 			ShieldMinDamage = 1;
 			ShieldMaxDamage = 3;			
-			PrefixOption[61] = 6; //마나
-			SuffixOption[61] = 1000000;
 		}
 
         public BronzeShield(Serial serial)

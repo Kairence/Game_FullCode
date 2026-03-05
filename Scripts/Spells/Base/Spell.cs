@@ -405,6 +405,7 @@ namespace Server.Spells
 			
 			damageBonus = (int)( damageBonus * ( 1 + Caster.Int * 0.001 ) );
 			
+			/*
 			if( Caster is PlayerMobile )
 			{
 				PlayerMobile pm = Caster as PlayerMobile;
@@ -441,63 +442,6 @@ namespace Server.Spells
 						pm.MagicDefenseTime = DateTime.Now + TimeSpan.FromSeconds(2.0);
 				}
 			}
-			
-			
-			/*
-			double attackchance = Caster.Skills.Mysticism.Value * 0.003;
-			if( Caster.Skills.Mysticism.Value >= 100 )
-				attackchance += 0.04;
-
-			target.CheckSkill(SkillName.Mysticism, skillUp(Caster, target, Caster.Skills.Mysticism.Value));			
-			*/
-
-			//슬레이어 데미지
-			double exdamage = Misc.Util.GetSlayerDamageScalar(Caster, target);
-			
-			double totalBonus = ( 1 + damageBonus * 0.01 ) + ( 1 + exdamage * 0.01 );
-			
-			if( totalBonus < 0 )
-				totalBonus = 0;
-
-			damage = (int) ( damage * totalBonus );
-			
-			damage -= target.Int / 10;
-			
-			if( damage < 1 )
-				damage = 1;
-			
-			Caster.CheckSkill(SkillName.Magery, skillUp(Caster, target, damage * 2));
-			target.CheckSkill(SkillName.MagicResist, skillUp(target, Caster, damage * 2 ));
-			Caster.CheckSkill(SkillName.Spellweaving, skillUp(Caster, target, damage * 2 ));
-			Caster.CheckSkill(SkillName.EvalInt, skillUp(Caster, target, target.Skills.EvalInt.Value) * 2);
-			
-			//치명타 데미지
-			double criticalPercent = Caster.Luck * 0.001 + AosAttributes.GetValue(Caster, AosAttribute.CastRecovery);  //Caster.Skills.Mysticism.Value * 0.001 + AosAttributes.GetValue(Caster, AosAttribute.CastRecovery) * 0.001;
-			//크리 데미지
-			double criticalDamage = 50 + Caster.Int * 0.01 + AosAttributes.GetValue(Caster, AosAttribute.SpellChanneling);//Caster.Skills.EvalInt.Value * 0.005 + AosAttributes.GetValue(Caster, AosAttribute.SpellChanneling) * 0.001;
-			
-			if( Caster is PlayerMobile )
-			{
-				PlayerMobile pm = Caster as PlayerMobile;
-				//criticalDamage += pm.SilverPoint[20] * 0.025;
-				//criticalPercent += pm.SilverPoint[18] * 0.005;
-				if( pm.Region.Name == "Wrong" )
-					criticalPercent -= 50;
-			}
-			//방어 확인
-			//if( target is BaseCreature )
-			//{
-			//	BaseCreature bc = target as BaseCreature;
-				/*
-				if( bc.Grade >= 2 || bc.Boss )
-				{
-					exdamage += AosWeaponAttributes.GetValue(Caster, AosWeaponAttribute.MageWeapon) * 0.001;
-				}
-				*/
-				//exreducedamage = bc.VirtualArmor;
-				//if( bc.AI == AIType.AI_Mage && bc.Fame > 10 )
-				//	exreducedamage += bc.Fame / 10;
-			//}			
 
 			BaseShield shield = Caster.FindItemOnLayer(Layer.TwoHanded) as BaseShield;
 			if( shield == null )
@@ -595,10 +539,10 @@ namespace Server.Spells
 			int extotaldamage = (int)( damage * exdamage ) - damage;
 			//if( exreducedamage < extotaldamage )
 			//	damage += extotaldamage - exreducedamage;
-
 			damage *= 100 - (int)parryBonus;
 			damage /= 100;
 
+			*/
 			return damage;
 		}
 
