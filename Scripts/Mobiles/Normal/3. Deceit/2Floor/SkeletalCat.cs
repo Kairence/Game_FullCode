@@ -56,37 +56,29 @@ namespace Server.Mobiles
         {
             BaseSoundID = 229;
 
-            SetStr(400, 450);
-            SetDex(200, 250);
-            SetInt(150, 200);
+            /* Skeletal Cat - Fame 5,000 */
+			this.Fame = 5000;
+			this.Karma = -5000;
 
-            SetHits(1700, 1900);
-			SetStam(250, 350);
-            SetMana(100, 150);
+			this.SetDex(300, 400);    // 매우 빠른 움직임
+			this.SetHits(500, 800);   // 최종 Hits 약 15,000
+			this.SetStam(500, 800);
 
-			SetAttackSpeed( 2.5 );
+			this.SetAttackSpeed(1.5);
+			SetDamage(10, 15);
 
-            SetDamage(27, 53);
+			this.SetSkill(SkillName.Wrestling, 140.0, 155.0); // 작아서 맞추기 힘듦 설정
+			this.SetSkill(SkillName.Tactics, 100.0, 110.0);
 
-            SetDamageType(ResistanceType.Physical, 100);
-
-            SetResistance(ResistanceType.Physical, 10, 20);
-            SetResistance(ResistanceType.Fire, 40, 50);
-            SetResistance(ResistanceType.Cold, 40, 50);
-            SetResistance(ResistanceType.Poison, 90, 110);
-            SetResistance(ResistanceType.Energy, 10, 20);
-
-            SetSkill(SkillName.MagicResist, 85.0, 90.0);
-            SetSkill(SkillName.Tactics, 90.0, 100.0);
-            SetSkill(SkillName.Wrestling, 90.0, 95.0);
-
-            Fame = 5500;
-            Karma = -5500;
-
-            VirtualArmor = 10;
-            this.Tamable = true;
-            this.ControlSlots = 3;
-            this.MinTameSkill = 235.1;
+			this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetResistance(ResistanceType.Physical, 20, 30);
+			this.VirtualArmor = 5;
+			
+			// 테이밍 관련 설정
+			this.Tamable = true; 
+			this.ControlSlots = 1;      // 1슬롯으로 효율 극대화 (최대 5마리 운용 가능)
+			this.MinTameSkill = 95.1;			
+			
         }
 
         public SkeletalCat(Serial serial)

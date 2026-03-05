@@ -13,35 +13,30 @@ namespace Server.Mobiles
             this.Body = 317;
             this.BaseSoundID = 0x270;
 
-            this.SetStr(270, 290);
-            this.SetDex(150, 200);
-            this.SetInt(35, 80);
+            /* Vampire Bat - Fame 3,500 */
+			this.SetStr(50, 70);      // 최종 Str 약 860
+			this.SetDex(150, 200);     
+			this.SetHits(100, 150);    // 최종 Hits 약 7,200
+			this.SetStam(150, 200);
 
-            this.SetHits(450, 550);
-			SetStam(350, 500);
-			SetMana(10, 20);
+			this.SetAttackSpeed(1.2);  // 초고속 공격 (흡혈 컨셉)
+			SetDamage(5, 10);        
+
+			this.SetSkill(SkillName.Wrestling, 110.0); // 최종 약 120.4
+			this.SetSkill(SkillName.Tactics, 110.0);
+
+			this.SetDamageType(ResistanceType.Physical, 100);
+
+			// 저항 패널티: 박쥐답게 내구력은 종잇장
+			this.SetResistance(ResistanceType.Physical, -30, -20);
+			this.SetResistance(ResistanceType.Fire, -50, -40);
+			this.VirtualArmor = 0;
+
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 75.1;
 			
-            this.SetDamage(15, 19);
-
-			SetAttackSpeed( 2.0 );
-			
-            this.SetDamageType(ResistanceType.Physical, 80);
-            this.SetDamageType(ResistanceType.Poison, 20);
-
-            this.SetResistance(ResistanceType.Physical, 35, 45);
-            this.SetResistance(ResistanceType.Fire, 15, 25);
-            this.SetResistance(ResistanceType.Cold, 15, 25);
-            this.SetResistance(ResistanceType.Poison, 60, 85);
-            this.SetResistance(ResistanceType.Energy, 20, 25);
-
-            this.SetSkill(SkillName.MagicResist, 20.1, 25.0);
-            this.SetSkill(SkillName.Tactics, 25.1, 30.0);
-            this.SetSkill(SkillName.Wrestling, 20.1, 25.0);
-
-            this.Fame = 1750;
-            this.Karma = -1750;
-
-            this.VirtualArmor = 6;
+			SetSpecialAbility(SpecialAbility.LifeDrain);
         }
 
         public VampireBat(Serial serial)

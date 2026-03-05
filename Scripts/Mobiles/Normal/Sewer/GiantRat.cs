@@ -14,33 +14,47 @@ namespace Server.Mobiles
             this.Body = 0xD7;
             this.BaseSoundID = 0x188;
 
-            this.SetStr(32, 74);
-            this.SetDex(46, 65);
-            this.SetInt(16, 30);
+			/* [Giant Rat - Fame 1,200 / Sewer / Weight 1.15]
+			   - 스킬 200 마스터 서버용 '초급 정예' 밸런스 적용
+			   - 가상 방어력(VirtualArmor): (1,200/1000) + 0.8 = 2
+			   - 테이밍 난이도: 25.0 ~ 35.0 (Sewerrat 다음 단계)
+			   -------------------------------------------------- */
 
-            this.SetHits(26, 39);
-            this.SetMana(0);
+			// [Attributes] 명성 1,200 보너스 + 가중치 1.15 반영
+			this.SetStr(12, 18); 
+			this.SetHits(250, 350); 
+			this.SetDex(2, 4);
+			this.SetInt(2, 4);
 
-            this.SetDamage(4, 8);
+			// [Combat Options]
+			this.SetDamage(5, 12);
+			this.SetAttackSpeed(2.2);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			// [Damage Types] 100% 물리
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 15, 20);
-            this.SetResistance(ResistanceType.Fire, 5, 10);
-            this.SetResistance(ResistanceType.Poison, 25, 35);
+			// [Resistances] 하수구 생물 특성 (독 저항 우세)
+			this.SetResistance(ResistanceType.Physical, 10, 15); 
+			this.SetResistance(ResistanceType.Fire, 5, 10);
+			this.SetResistance(ResistanceType.Cold, 5, 10);
+			this.SetResistance(ResistanceType.Poison, 30, 45); 
+			this.SetResistance(ResistanceType.Energy, 5, 10);
 
-            this.SetSkill(SkillName.MagicResist, 25.1, 30.0);
-            this.SetSkill(SkillName.Tactics, 29.3, 44.0);
-            this.SetSkill(SkillName.Wrestling, 29.3, 44.0);
+			// [Skills] 유저 스킬 30 ~ 50 구간 수련 최적화
+			this.SetSkill(SkillName.Wrestling, 35.0, 50.0); 
+			this.SetSkill(SkillName.Tactics, 35.0, 50.0);
+			this.SetSkill(SkillName.MagicResist, 20.0, 30.0);
 
-            this.Fame = 300;
-            this.Karma = -300;
+			// [Taming & Food] ★ 가상 방어구 상단 배치
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 25.0; // 테이밍 숙련자용 다음 관문
 
-            this.VirtualArmor = 18;
+			// [Misc]
+			this.VirtualArmor = 2;
 
-            this.Tamable = true;
-            this.ControlSlots = 5;
-            this.MinTameSkill = 29.1;
+			this.Fame = 1200;
+			this.Karma = -1200;
         }
 
         public GiantRat(Serial serial)

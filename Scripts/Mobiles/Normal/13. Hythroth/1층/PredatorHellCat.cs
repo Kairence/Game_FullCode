@@ -14,40 +14,44 @@ namespace Server.Mobiles
             Body = 127;
             BaseSoundID = 0xBA;
 
-            SetStr(2161, 3185);
-            SetDex(1096, 2115);
-            SetInt(2076, 3100);
+            /* Predator Hell Cat - Fame 7,000 / Karma -7,000 */
+			/* [HP Calculation]
+			   - Target HP: ~18,000
+			   - Fame Bonus (7,000): ~16,400
+			   - SetHits Required: 1,600 (Target - Bonus)
+			*/
+			this.SetStr(350, 450);       
+			this.SetDex(200, 300);       // 표범 특유의 빠른 속도
+			this.SetInt(100, 150);       
 
-            SetHits(2097, 2131);
-			SetStam(1310, 2312);
-			SetMana(1310, 2312);
+			// [Hits] 최종 약 17,000 ~ 19,000 타겟
+			this.SetHits(600, 2600); 
+			this.SetStam(200, 300);      
 
-			SetAttackSpeed( 5.0 );
-            SetDamage(25, 175);
+			this.SetAttackSpeed(1.8);    // 매우 빠른 연격
+			this.SetDamage(20, 32);      
 
-            SetDamageType(ResistanceType.Physical, 75);
-            SetDamageType(ResistanceType.Fire, 25);
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Fire, 50);
 
-            SetResistance(ResistanceType.Physical, 25, 35);
-            SetResistance(ResistanceType.Fire, 30, 40);
-            SetResistance(ResistanceType.Energy, 5, 15);
+			this.SetResistance(ResistanceType.Physical, 45, 55);
+			this.SetResistance(ResistanceType.Fire, 70, 75);     
+			this.SetResistance(ResistanceType.Cold, 15, 30);     
+			this.SetResistance(ResistanceType.Poison, 40, 55);
 
-            SetSkill(SkillName.MagicResist, 75.1, 90.0);
-            SetSkill(SkillName.Tactics, 50.1, 65.0);
-            SetSkill(SkillName.Wrestling, 50.1, 65.0);
-            SetSkill(SkillName.Necromancy, 20.0);
-            SetSkill(SkillName.SpiritSpeak, 20.0);
-            SetSkill(SkillName.Wrestling, 50.1, 65.0);
-            SetSkill(SkillName.DetectHidden, 41.2);
+			this.SetSkill(SkillName.Wrestling, 100.0, 115.0);
+			this.SetSkill(SkillName.Tactics, 100.0, 115.0);
+			this.SetSkill(SkillName.Anatomy, 100.0, 115.0);
 
-            Fame = 6000;
-            Karma = -6000;
+			this.VirtualArmor = 8;       
 
-            VirtualArmor = 6;
+			// [Taming Settings]
+			this.Tamable = true;         
+			this.ControlSlots = 2;       
+			this.MinTameSkill = 140.0;   // 200 상한 대비 중급 숙련도
 
-            Tamable = true;
-            ControlSlots = 2;
-            MinTameSkill = 90.0;
+			this.Fame = 7000;           
+			this.Karma = -7000;
 
             //SetSpecialAbility(SpecialAbility.DragonBreath);
         }

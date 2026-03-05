@@ -10,44 +10,57 @@ namespace Server.Mobiles
         public Balron()
             : base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
         {
-            Name = "Boss " + NameList.RandomName("balron");
+            Name = NameList.RandomName("balron");
 			
 			Body = Utility.RandomBool() ? 38 : 41;
             BaseSoundID = 357;
 
-            SetStr(15986, 21185);
-            SetDex(17700, 18255);
-            SetInt(15100, 17250);
+			Boss = true;
 
-            SetHits(359200, 371100);
-			SetStam(310000, 312000);
-			SetMana(310000, 312000);
+			/* [Hythloth Boss - Balron - Fame 30,000 / Weight 1.30]
+			   - 컨셉: 지옥의 지배자, 서버 최종장 보스
+			   - VirtualArmor: (30,000/1000) + 0 = 30 (상한치 30 준수)
+			   - 편차 수정: 체력 5만 이상 룰 적용 (편차 2,000 이내)
+			   -------------------------------------------------- */
 
-			SetAttackSpeed( 5.0 );
-            SetDamage(1220, 2429);
+			// 최종 Str 약 29,250 (스치기만 해도 치명타)
+			this.SetStr(24500, 25000); 
 
-            SetDamageType(ResistanceType.Physical, 50);
-            SetDamageType(ResistanceType.Fire, 25);
-            SetDamageType(ResistanceType.Energy, 25);
+			// 최종 Hits 약 648,000 (공포스러운 맷집)
+			this.SetHits(547900, 549900); 
 
-            SetResistance(ResistanceType.Physical, 65, 80);
-            SetResistance(ResistanceType.Fire, 60, 80);
-            SetResistance(ResistanceType.Cold, 50, 60);
-            SetResistance(ResistanceType.Poison, 100);
-            SetResistance(ResistanceType.Energy, 40, 50);
+			// 최종 Dex/Int 약 5,850 (번개 같은 속도와 지능)
+			this.SetDex(4900, 5000);
+			this.SetInt(4900, 5000);
 
-            SetSkill(SkillName.Anatomy, 25.1, 50.0);
-            SetSkill(SkillName.EvalInt, 90.1, 100.0);
-            SetSkill(SkillName.Magery, 95.5, 100.0);
-            SetSkill(SkillName.Meditation, 25.1, 50.0);
-            SetSkill(SkillName.MagicResist, 100.5, 150.0);
-            SetSkill(SkillName.Tactics, 90.1, 100.0);
-            SetSkill(SkillName.Wrestling, 90.1, 100.0);
+			// 최종 Stam/Mana 약 6,175
+			this.SetStam(5150, 5300);
+			this.SetMana(5150, 5300);
 
-            Fame = 30000;
-            Karma = -30000;
+			// [Combat Options]
+			this.SetDamage(120, 180);
+			this.SetAttackSpeed(3.0);
 
-            VirtualArmor = 90;
+			// [Resistances] 최고 저항 75 이하 엄격 준수
+			this.SetResistance(ResistanceType.Physical, 70, 75);
+			this.SetResistance(ResistanceType.Fire, 75);         // 화염 면역 컨셉 (Max 75)
+			this.SetResistance(ResistanceType.Cold, 40, 50);     // 약점: 냉기
+			this.SetResistance(ResistanceType.Poison, 65, 75);
+			this.SetResistance(ResistanceType.Energy, 60, 70);
+
+			// [Skills] 최종 390.0 부근 (엔진 150.0 + 설계분 240.0)
+			this.SetSkill(SkillName.Wrestling, 238.0, 242.0);
+			this.SetSkill(SkillName.Tactics, 238.0, 242.0);
+			this.SetSkill(SkillName.Anatomy, 238.0, 242.0);
+			this.SetSkill(SkillName.Magery, 238.0, 242.0);
+			this.SetSkill(SkillName.EvalInt, 238.0, 242.0);
+			this.SetSkill(SkillName.MagicResist, 238.0, 242.0);
+
+			// 가방 방어력: (30,000/1000) + 0 = 30
+			this.VirtualArmor = 30;
+
+			this.Fame = 30000;
+			this.Karma = -30000;
 
             PackItem(new Longsword());
         }

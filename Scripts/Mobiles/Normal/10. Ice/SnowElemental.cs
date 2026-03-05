@@ -14,35 +14,42 @@ namespace Server.Mobiles
             Body = 163;
             BaseSoundID = 263;
 
-            SetStr(1326, 1755);
-            SetDex(166, 185);
-            SetInt(171, 195);
+            /* Snow Elemental - Fame 12,000 / Karma -12,000 */
+			/* [HP Calculation]
+			   - Target HP: ~35,000
+			   - Fame Bonus (12,000): ~28,650
+			   - SetHits Required: 6,350 (Target - Bonus)
+			*/
+			this.SetStr(450, 600);       
+			this.SetDex(180, 250);       
+			this.SetInt(600, 800);       
 
-            SetHits(1460, 1613);
-            SetStam(1000, 1500);
-            SetMana(1000, 1500);
+			// [Hits] 최종 약 32,000 ~ 38,000 타겟
+			this.SetHits(3350, 9350); 
+			this.SetStam(180, 250);      
+			this.SetMana(600, 800);      
 
-			SetAttackSpeed( 10.0 );
+			this.SetAttackSpeed(2.4);    
+			this.SetDamage(20, 32);      
 
-            SetDamage(55, 79);
+			this.SetDamageType(ResistanceType.Cold, 100);
 
-            SetDamageType(ResistanceType.Physical, 20);
-            SetDamageType(ResistanceType.Cold, 80);
+			this.SetResistance(ResistanceType.Physical, 55, 65);
+			this.SetResistance(ResistanceType.Fire, -5, 10);    
+			this.SetResistance(ResistanceType.Cold, 75, 75);    // Max 75%
+			this.SetResistance(ResistanceType.Poison, 65, 75);  // Max 75%
+			this.SetResistance(ResistanceType.Energy, 45, 60);
 
-            SetResistance(ResistanceType.Physical, 45, 55);
-            SetResistance(ResistanceType.Fire, 10, 15);
-            SetResistance(ResistanceType.Cold, 60, 70);
-            SetResistance(ResistanceType.Poison, 25, 35);
-            SetResistance(ResistanceType.Energy, 25, 35);
+			this.SetSkill(SkillName.Magery, 105.0, 120.0);
+			this.SetSkill(SkillName.EvalInt, 105.0, 120.0);
+			this.SetSkill(SkillName.MagicResist, 110.0, 125.0);
+			this.SetSkill(SkillName.Wrestling, 100.0, 115.0);
 
-            SetSkill(SkillName.MagicResist, 50.1, 65.0);
-            SetSkill(SkillName.Tactics, 80.1, 100.0);
-            SetSkill(SkillName.Wrestling, 80.1, 100.0);
+			this.VirtualArmor = 8;       
+			this.Tamable = false;
 
-            Fame = 5000;
-            Karma = -5000;
-
-            VirtualArmor = 25;
+			this.Fame = 12000;           
+			this.Karma = -12000;
 
             PackItem(new BlackPearl(3));
             Item ore = new IronOre(3);

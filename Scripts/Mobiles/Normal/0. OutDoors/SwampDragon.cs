@@ -24,34 +24,33 @@ namespace Server.Mobiles
         {
             BaseSoundID = 0x16A;
 
-            SetStr(201, 300);
-            SetDex(66, 85);
-            SetInt(61, 100);
+			this.Fame = 2000;
+			this.Karma = -2000;
 
-            SetHits(121, 180);
-            SetStam(20, 30);
-            SetMana(20, 30);
+			// [역산] 보너스: Str+656, Hits+3,898, Skill+5.4
+			this.SetStr(144, 194);  // 최종 Str 800~850
+			this.SetDex(66, 116);   
+			this.SetHits(1102, 1602); // 최종 Hits 5,000~5,500
+			this.SetStam(66, 116);
 
-			SetAttackSpeed(30.0);
-            SetDamage(3, 4);
+			SetAttackSpeed(3.0);
+			SetDamage(15, 25);
 
-            SetDamageType(ResistanceType.Physical, 75);
-            SetDamageType(ResistanceType.Poison, 25);
+			// 공격 속성: 묵직한 타격과 부식성 독
+			this.SetDamageType(ResistanceType.Physical, 75);
+			this.SetDamageType(ResistanceType.Poison, 25);
 
-            SetResistance(ResistanceType.Physical, 35, 40);
-            SetResistance(ResistanceType.Fire, 20, 30);
-            SetResistance(ResistanceType.Cold, 20, 40);
-            SetResistance(ResistanceType.Poison, 20, 30);
-            SetResistance(ResistanceType.Energy, 30, 40);
+			this.SetResistance(ResistanceType.Physical, 35, 45);
+			this.SetResistance(ResistanceType.Poison, 40, 50);
 
-            Fame = 2000;
-            Karma = -2000;
+			// 최종 Skill 105.0 내외 (숙련된 야수)
+			this.SetSkill(SkillName.Wrestling, 99.6, 109.6);
+
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 93.1;
 
             Hue = 0x966;
-
-            Tamable = true;
-            ControlSlots = 2;
-            MinTameSkill = 93.9;
         }
 
         public SwampDragon(Serial serial)

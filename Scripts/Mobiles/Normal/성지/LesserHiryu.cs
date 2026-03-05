@@ -13,34 +13,45 @@ namespace Server.Mobiles
         {
             Hue = GetHue();
 
-            SetStr(301, 410);
-            SetDex(171, 270);
-            SetInt(301, 325);
+			/* [Lesser Hiryu - Google Keep Formula: Mid-Tier Balance]
+			   - 명성: 6,000 / 카르마: -6,000
+			   - 슬롯: 2 (조합형 주력 펫)
+			   - 저항: 75% 같은 사태 방지, 30-40%대의 쾌적한 타격감 확보
+			   -------------------------------------------------- */
 
-            SetHits(401, 600);
-            SetMana(60);
+			// [Attributes] 공식 가중치 1.15 적용
+			this.SetStr(300, 400); 
+			this.SetHits(2500, 3500); // 저항 대신 체력으로 중급 맷집 보정
+			this.SetDex(110, 160); 
+			this.SetInt(100, 150);
 
-            SetDamage(18, 23);
+			// [Combat Options] 
+			this.SetDamage(25, 45); 
+			this.SetAttackSpeed(2.2);
+			this.SetDamageType(ResistanceType.Physical, 80);
+			this.SetDamageType(ResistanceType.Energy, 20);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] ★ 형님 지침 반영: 유저 대미지가 시원하게 박히는 저항
+			this.SetResistance(ResistanceType.Physical, 30, 45); // 뎀감 40% 내외
+			this.SetResistance(ResistanceType.Fire, 10, 20);      // 화염 약점 확실히 노출
+			this.SetResistance(ResistanceType.Cold, 25, 35);    
+			this.SetResistance(ResistanceType.Poison, 25, 35); 
+			this.SetResistance(ResistanceType.Energy, 30, 45);   
 
-            SetResistance(ResistanceType.Physical, 45, 70);
-            SetResistance(ResistanceType.Fire, 60, 80);
-            SetResistance(ResistanceType.Cold, 5, 15);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 30, 40);
+			// [Skills]
+			this.SetSkill(SkillName.Wrestling, 100.0, 115.0); 
+			this.SetSkill(SkillName.Tactics, 100.0, 115.0);
+			this.SetSkill(SkillName.Anatomy, 90.0, 110.0);
+			this.SetSkill(SkillName.MagicResist, 85.0, 105.0);
 
-            SetSkill(SkillName.Anatomy, 75.1, 80.0);
-            SetSkill(SkillName.MagicResist, 85.1, 100.0);
-            SetSkill(SkillName.Tactics, 100.1, 110.0);
-            SetSkill(SkillName.Wrestling, 100.1, 120.0);
+			// [Misc]
+			this.Tamable = true; 
+			this.ControlSlots = 2; 
+			this.MinTameSkill = 110.1; // 스킬 200 서버 기준 입문/중급 펫
+			this.VirtualArmor = 8;
 
-            Fame = 10000;
-            Karma = -10000;
-
-            Tamable = true;
-            ControlSlots = 19;
-            MinTameSkill = 98.7;
+			this.Fame = 6000;
+			this.Karma = -6000;
 
             if (Utility.RandomDouble() < .33)
                 PackItem(Engines.Plants.Seed.RandomBonsaiSeed());

@@ -31,35 +31,41 @@ namespace Server.Mobiles
             Body = 264;
             Hue = DefaultHue;
 
-            SetStr(36, 105);
-            SetDex(212, 262);
-            SetInt(317, 399);
+			/* [Changeling - Normal - Fame 10,000 / Weight 1.22]
+			   - 정글 던전의 환각 복제사 / 일반 몬스터 공식
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 10 (명성/1000 보정 0)
+			   -------------------------------------------------- */
 
-            SetHits(201, 211);
-            SetStam(212, 262);
-            SetMana(317, 399);
+			// [Attributes] 역산된 Set 값 정밀 적용
+			this.SetStr(210, 230); 
+			this.SetHits(4800, 4950); 
+			this.SetDex(40, 50);
+			this.SetInt(40, 50);
 
-            SetDamage(9, 15);
+			// [Combat Options] 물리 100% (복제 대상에 따라 가변적이나 기본 물리)
+			this.SetDamage(25, 45);
+			this.SetAttackSpeed(2.0); // 변신술사다운 빠른 반응 속도
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] 최고 저항 75 이하 준수 / 에너지 약점 설정
+			this.SetResistance(ResistanceType.Physical, 40, 50); 
+			this.SetResistance(ResistanceType.Fire, 40, 50);      
+			this.SetResistance(ResistanceType.Cold, 40, 50);    
+			this.SetResistance(ResistanceType.Poison, 40, 50); 
+			this.SetResistance(ResistanceType.Energy, 20, 30);   // ★ 변신 해제 유도 약점
 
-            SetResistance(ResistanceType.Physical, 81, 90);
-            SetResistance(ResistanceType.Fire, 40, 50);
-            SetResistance(ResistanceType.Cold, 40, 49);
-            SetResistance(ResistanceType.Poison, 40, 50);
-            SetResistance(ResistanceType.Energy, 43, 50);
+			// [Skills] 기본 100~110에 역산 보너스(7.3) 가산
+			this.SetSkill(SkillName.Wrestling, 107.0, 117.0); 
+			this.SetSkill(SkillName.Tactics, 107.0, 117.0);
+			this.SetSkill(SkillName.Magery, 100.0, 115.0);       
+			this.SetSkill(SkillName.EvalInt, 100.0, 115.0);
+			this.SetSkill(SkillName.MagicResist, 100.0, 115.0);
 
-            SetSkill(SkillName.Wrestling, 10.4, 12.5);
-            SetSkill(SkillName.Tactics, 101.1, 108.3);
-            SetSkill(SkillName.MagicResist, 121.6, 132.2);
-            SetSkill(SkillName.Magery, 91.6, 99.5);
-            SetSkill(SkillName.EvalInt, 91.5, 98.8);
-            SetSkill(SkillName.Meditation, 91.7, 98.5);
-
-            SetSkill(SkillName.Spellweaving, 91.6, 99.5);
-
-            Fame = 15000;
-            Karma = -15000;
+			this.Tamable = false;
+			this.VirtualArmor = 10;
+			this.Fame = 10000;
+			this.Karma = -10000;
 
             PackItem(new Arrow(35));
             PackItem(new Bolt(25));

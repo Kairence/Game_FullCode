@@ -20,29 +20,45 @@ namespace Server.Mobiles
             this.AddItem(new ShortPants(Utility.RandomNeutralHue()));
             this.AddItem(new Shirt(Utility.RandomNeutralHue()));
 
-            this.SetStr(91, 100);
-            this.SetDex(86, 95);
-            this.SetInt(61, 70);
+			/* [Khaldun Cursed - Fame 8,500 / Khaldun / Weight 1.21]
+			   - 스킬 200 마스터 서버용 '중상급 정예' 밸런스 적용
+			   - 카르마 보정: 명성(8,500) + 1,500 보정 = -10,000
+			   - 가상 방어력(VirtualArmor): (8,500/1000) - 1.5 = 7
+			   -------------------------------------------------- */
 
-            this.SetHits(91, 120);
+			// [Attributes] 명성 8,500 보너스 + 가중치 1.21 반영
+			this.SetStr(150, 180); 
+			this.SetHits(3500, 4000); 
+			this.SetDex(30, 45);
+			this.SetInt(30, 45);
 
-            this.SetDamage(5, 13);
+			// [Combat Options] 칼둔 특유의 서늘한 기운
+			this.SetDamage(35, 50);
+			this.SetAttackSpeed(2.2);
 
-            this.SetResistance(ResistanceType.Physical, 15, 25);
-            this.SetResistance(ResistanceType.Fire, 5, 10);
-            this.SetResistance(ResistanceType.Cold, 25, 35);
-            this.SetResistance(ResistanceType.Poison, 5, 10);
-            this.SetResistance(ResistanceType.Energy, 5, 10);
+			// [Damage Types] 영체의 저주 (냉기/에너지 중심)
+			this.SetDamageType(ResistanceType.Physical, 20);
+			this.SetDamageType(ResistanceType.Cold, 40);
+			this.SetDamageType(ResistanceType.Energy, 40);
 
-            this.SetSkill(SkillName.Fencing, 46.0, 77.5);
-            this.SetSkill(SkillName.Macing, 35.0, 57.5);
-            this.SetSkill(SkillName.MagicResist, 53.5, 62.5);
-            this.SetSkill(SkillName.Swords, 55.0, 77.5);
-            this.SetSkill(SkillName.Tactics, 60.0, 82.5);
-            this.SetSkill(SkillName.Poisoning, 60.0, 82.5);
+			// [Resistances] 칼둔의 어둠 (냉기/에너지 특화)
+			this.SetResistance(ResistanceType.Physical, 30, 40);
+			this.SetResistance(ResistanceType.Fire, 10, 20);      // 신성한 불에 매우 취약
+			this.SetResistance(ResistanceType.Cold, 65, 75);     // 극한의 냉기 내성
+			this.SetResistance(ResistanceType.Poison, 50, 60);
+			this.SetResistance(ResistanceType.Energy, 60, 75);    // 에너지 저항 우수
 
-            this.Fame = 1000;
-            this.Karma = -2000;
+			// [Skills] ★ 스킬 200 서버 기준 - 마스터(200)로 가는 중반부 관문
+			this.SetSkill(SkillName.Wrestling, 90.0, 105.0); 
+			this.SetSkill(SkillName.Tactics, 90.0, 105.0);
+			this.SetSkill(SkillName.Anatomy, 90.0, 105.0);
+			this.SetSkill(SkillName.MagicResist, 110.0, 130.0); // 칼둔 몬스터는 마법 저항이 더욱 강력
+
+			// [Misc] 
+			this.VirtualArmor = 7;
+
+			this.Fame = 8500;
+			this.Karma = -10000; // 칼둔 보정 적용 (-8,500 - 1,500)
 
             BaseWeapon weapon = Loot.RandomWeapon();
             weapon.Movable = false;

@@ -14,40 +14,42 @@ namespace Server.Mobiles
             Body = 0x190;
             Hue = Utility.RandomSkinHue();
 
-            SetStr(2760, 3250);
-            SetDex(3081, 4950);
-            SetInt(1061, 2085);
+            /* Chaos Dragoon - Fame 7,000 / Karma -7,000 */
+			/* [HP Calculation]
+			   - Target HP: ~18,000
+			   - Fame Bonus (7,000): ~16,625
+			   - SetHits Required: 1,375 (Target - Bonus)
+			*/
+			this.SetStr(350, 450);       
+			this.SetDex(150, 200);       
+			this.SetInt(100, 150);       
 
-            SetHits( 9760, 10225 );
-			SetStam( 4000, 5000 );
-			SetMana( 4000, 5000 );
-            SetDamage( 124, 128 );
+			// [Hits] 최종 약 17,000 ~ 19,000 타겟
+			this.SetHits(875, 1875); 
+			this.SetStam(150, 200);      
+			this.SetMana(100, 150);      
 
-			SetAttackSpeed( 2.5 );
-			
-            SetDamageType(ResistanceType.Physical, 25);
-            SetDamageType(ResistanceType.Fire, 25);
-            SetDamageType(ResistanceType.Cold, 25);
-            SetDamageType(ResistanceType.Energy, 25);
+			this.SetAttackSpeed(2.4);    // 기사의 숙련된 공속
+			this.SetDamage(18, 28);      
 
-			SetResistance(ResistanceType.Physical, 80, 89);
-			SetResistance(ResistanceType.Fire, 50, 59);
-			SetResistance(ResistanceType.Cold, 50, 59);
-			SetResistance(ResistanceType.Poison, 50, 59);
-			SetResistance(ResistanceType.Energy, 50, 59);
-			
-            SetSkill(SkillName.Fencing, 177.6, 192.5);
-            SetSkill(SkillName.Healing, 160.3, 190.0);
-            SetSkill(SkillName.Macing, 177.6, 192.5);
-            SetSkill(SkillName.Anatomy, 177.6, 187.5);
-            SetSkill(SkillName.MagicResist, 177.6, 197.5);
-            SetSkill(SkillName.Swords, 177.6, 192.5);
-            SetSkill(SkillName.Tactics, 177.6, 187.5);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            Fame = 16000;
-            Karma = -16000;
-			
-            VirtualArmor = 55;
+			this.SetResistance(ResistanceType.Physical, 45, 55);
+			this.SetResistance(ResistanceType.Fire, 30, 40);
+			this.SetResistance(ResistanceType.Cold, 30, 40);
+			this.SetResistance(ResistanceType.Poison, 30, 40);
+			this.SetResistance(ResistanceType.Energy, 30, 40);
+
+			this.SetSkill(SkillName.Swords, 95.0, 110.0);
+			this.SetSkill(SkillName.Tactics, 95.0, 110.0);
+			this.SetSkill(SkillName.Anatomy, 90.0, 105.0);
+			this.SetSkill(SkillName.MagicResist, 85.0, 100.0);
+
+			this.VirtualArmor = 8;       // 중장갑 비주얼이지만 타격감을 위해 낮춤
+			this.Tamable = false;
+
+			this.Fame = 7000;           
+			this.Karma = -7000;
 
             CraftResource res = CraftResource.None;
 

@@ -15,39 +15,40 @@ namespace Server.Mobiles
             this.Body = 9;
             this.BaseSoundID = 357;
 
-            this.SetStr(5986, 6185);
-            this.SetDex(4177, 5255);
-            this.SetInt(5151, 6250);
+            /* Arch Daemon - Fame 22,000 / Karma -22,000 */
+			/* [HP Calculation]
+			   - Target HP: ~95,000
+			   - Fame Bonus (22,000): ~64,250
+			   - SetHits Required: 30,750 (Target - Bonus)
+			*/
+			this.SetStr(800, 1000);      
+			this.SetDex(200, 300);       
+			this.SetInt(900, 1200);      
 
-            this.SetHits(17592, 17711);
-			SetStam(10000, 12000);
-			SetMana(10000, 12000);
+			// [Hits] 최종 약 90,000 ~ 100,000 타겟
+			this.SetHits(25750, 35750); 
+			this.SetStam(200, 300);      
+			this.SetMana(900, 1200);      
 
-			SetAttackSpeed( 5.0 );
-            this.SetDamage(220, 490);
+			this.SetAttackSpeed(2.0);    
+			this.SetDamage(40, 65);      
 
-            this.SetDamageType(ResistanceType.Physical, 50);
-            this.SetDamageType(ResistanceType.Fire, 25);
-            this.SetDamageType(ResistanceType.Energy, 25);
+			this.SetResistance(ResistanceType.Physical, 65, 75); 
+			this.SetResistance(ResistanceType.Fire, 75, 75);     
+			this.SetResistance(ResistanceType.Cold, 50, 65);     
+			this.SetResistance(ResistanceType.Poison, 65, 75);
+			this.SetResistance(ResistanceType.Energy, 65, 75);
 
-            this.SetResistance(ResistanceType.Physical, 65, 80);
-            this.SetResistance(ResistanceType.Fire, 60, 80);
-            this.SetResistance(ResistanceType.Cold, 50, 60);
-            this.SetResistance(ResistanceType.Poison, 100);
-            this.SetResistance(ResistanceType.Energy, 40, 50);
+			this.SetSkill(SkillName.Magery, 120.0, 135.0);
+			this.SetSkill(SkillName.EvalInt, 120.0, 135.0);
+			this.SetSkill(SkillName.MagicResist, 120.0, 140.0);
+			this.SetSkill(SkillName.Wrestling, 110.0, 125.0);
 
-            this.SetSkill(SkillName.Anatomy, 225.1, 250.0);
-            this.SetSkill(SkillName.EvalInt, 290.1, 300.0);
-            this.SetSkill(SkillName.Magery, 295.5, 300.0);
-            this.SetSkill(SkillName.Meditation, 225.1, 250.0);
-            this.SetSkill(SkillName.MagicResist, 300.5, 350.0);
-            this.SetSkill(SkillName.Tactics, 290.1, 300.0);
-            this.SetSkill(SkillName.Wrestling, 290.1, 300.0);
+			this.VirtualArmor = 15;      
+			this.Tamable = false;
 
-            this.Fame = 24000;
-            this.Karma = -24000;
-
-            this.VirtualArmor = 33;
+			this.Fame = 22000;           
+			this.Karma = -22000;
         }
 
         public ArchDaemon(Serial serial)

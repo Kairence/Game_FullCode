@@ -16,40 +16,53 @@ namespace Server.Mobiles
         public BloodWorm()
             : base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
         {
-            Name = "Boss a bloodworm";
+            Name = "a bloodworm";
             Body = 287;
-
-            SetStr(10010, 12473);
-            SetDex(7280, 9290);
-            SetInt(1800, 1900);
-
-            SetHits(100000, 123220);
-			SetStam(13000, 15000);
-			SetMana(1000, 2500);
-
-			SetAttackSpeed( 2.5 );
-
-            SetDamage(460, 900);
-
-            SetDamageType(ResistanceType.Physical, 60);
-            SetDamageType(ResistanceType.Poison, 40);
-				
-            SetResistance(ResistanceType.Physical, 52, 55);
-            SetResistance(ResistanceType.Fire, 42, 50);
-            SetResistance(ResistanceType.Cold, 29, 31);
-            SetResistance(ResistanceType.Poison, 69, 75);
-            SetResistance(ResistanceType.Energy, 26, 27);
-
-            SetSkill(SkillName.MagicResist, 205.0);
-            SetSkill(SkillName.Tactics, 300.0);
-            SetSkill(SkillName.Wrestling, 300.0);
-
-            Fame = 19000;
-            Karma = -19000;
-
-			Boss = true;
 			
-            VirtualArmor = 5;
+			Boss = true;
+
+            /* [Despise Level 2 Boss - Blood Worm - Fame 12,000 / Weight 1.24]
+			   - 컨셉: 흡혈 거대 벌레 (생명력 강화형)
+			   - VirtualArmor: (12,000/1000) - 4 = 8 (물렁한 외피, 보정 -4)
+			   - 편차 수정: 체력 5만 이상 룰 적용 (편차 2,000 이내)
+			   -------------------------------------------------- */
+
+			// 최종 Str 약 7,800
+			this.SetStr(6400, 6700); 
+
+			// 최종 Hits 약 154,000 (민맥 편차 2,000 고정)
+			this.SetHits(128700, 130700); 
+
+			// 최종 Dex/Int 약 1,550
+			this.SetDex(1250, 1350);
+			this.SetInt(1250, 1350);
+
+			// 최종 Stam/Mana 약 1,450
+			this.SetStam(1150, 1250);
+			this.SetMana(1150, 1250);
+
+			// [Combat Options]
+			this.SetDamage(45, 65);
+			this.SetAttackSpeed(1.6);
+
+			// [Resistances] 최고 저항 75 이하 엄격 준수
+			this.SetResistance(ResistanceType.Physical, 35, 45); // 물리 방어는 낮음
+			this.SetResistance(ResistanceType.Fire, 60, 70);     // 뜨거운 피를 가져 불에 강함
+			this.SetResistance(ResistanceType.Cold, 20, 30);     // 약점: 냉기 (피가 굳음)
+			this.SetResistance(ResistanceType.Poison, 70, 75);   // 독 면역 수준
+			this.SetResistance(ResistanceType.Energy, 40, 50);
+
+			// [Skills] 최종 104.1 부근
+			this.SetSkill(SkillName.Wrestling, 58.0, 63.0);
+			this.SetSkill(SkillName.Tactics, 58.0, 63.0);
+			this.SetSkill(SkillName.Anatomy, 58.0, 63.0);
+			this.SetSkill(SkillName.MagicResist, 70.0, 80.0);
+
+			// 가방 방어력: (12,000/1000) - 4 = 8
+			this.VirtualArmor = 8;
+
+			this.Fame = 12000;
+			this.Karma = -12000;
 			
             SetSpecialAbility(SpecialAbility.Anemia);
         }

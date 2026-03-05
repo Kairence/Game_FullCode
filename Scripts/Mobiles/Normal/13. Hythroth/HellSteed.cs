@@ -17,30 +17,45 @@ namespace Server.Mobiles
         public HellSteed(string name)
             : base(name, 793, 0x3EBB, AIType.AI_Animal, FightMode.Aggressor, 10, 1, 0.2, 0.4)
         {
-            SetStr(201, 210);
-            SetDex(101, 110);
-            SetInt(101, 115);
+            /* Hell Steed - Fame 17,000 / Karma -17,000 */
+			/* [HP Calculation]
+			   - Target HP: ~65,000
+			   - Fame Bonus (17,000): ~43,813
+			   - SetHits Required: 21,187 (Target - Bonus)
+			*/
+			this.SetStr(700, 900);       
+			this.SetDex(200, 300);       
+			this.SetInt(300, 500);       
 
-            SetHits(201, 220);
-            SetDamage(20, 24);
+			// [Hits] 최종 약 60,000 ~ 70,000 타겟
+			this.SetHits(16187, 26187); 
+			this.SetStam(200, 300);      
+			this.SetMana(300, 500);      
 
-            SetDamageType(ResistanceType.Physical, 25);
-            SetDamageType(ResistanceType.Fire, 75);
+			this.SetAttackSpeed(1.8);    
+			this.SetDamage(30, 45);      
 
-            SetResistance(ResistanceType.Physical, 60, 70);
-            SetResistance(ResistanceType.Fire, 90);
-            SetResistance(ResistanceType.Poison, 100);
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Fire, 50);
 
-            SetSkill(SkillName.MagicResist, 90.1, 110.0);
-            SetSkill(SkillName.Tactics, 50.0);
-            SetSkill(SkillName.Wrestling, 90.1, 110.0);
+			this.SetResistance(ResistanceType.Physical, 55, 70); 
+			this.SetResistance(ResistanceType.Fire, 75, 75);     
+			this.SetResistance(ResistanceType.Cold, 30, 45);     
+			this.SetResistance(ResistanceType.Poison, 75, 75);   // 언데드 성질 (Max 75%)
 
-            Fame = 0;
-            Karma = 0;
+			this.SetSkill(SkillName.Wrestling, 115.0, 130.0);
+			this.SetSkill(SkillName.Tactics, 115.0, 130.0);
+			this.SetSkill(SkillName.MagicResist, 110.0, 125.0);
 
-            Tamable = true;
-            ControlSlots = 4;
-            MinTameSkill = 171.1;
+			this.VirtualArmor = 12;      
+
+			// [Taming Settings]
+			this.Tamable = true;         
+			this.ControlSlots = 2;       
+			this.MinTameSkill = 190.0;   // 200 상한 서버의 초핵심 타겟 (매우 높음)
+
+			this.Fame = 17000;           
+			this.Karma = -17000;
             //SetSpecialAbility(SpecialAbility.DragonBreath);
         }
 

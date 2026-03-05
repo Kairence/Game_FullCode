@@ -16,34 +16,49 @@ namespace Server.Mobiles
             Name = "a meer mage";
             Body = 770;
 
-            SetStr(171, 200);
-            SetDex(126, 145);
-            SetInt(276, 305);
+			/* [MeerMage - Fame 6,000 / Normal / Weight 1.20]
+			   - 미어 종족의 일반 마법사 (선족 설정)
+			   - 지능형 아인종: 테이밍 불가 (200 숙련도 고려)
+			   - 종족 특성: 에너지/화염 저항 취약
+			   -------------------------------------------------- */
+			// Boss = true 삭제 (일반 몬스터)
 
-            SetHits(103, 120);
+			// [Attributes] (기본 보너스 * 1배 * 1.20) - 기본 보너스
+			// Str: 보너스 약 540 -> 최종 Set 약 100-120
+			this.SetStr(100, 120); 
 
-            SetDamage(24, 26);
+			// Hits: 보너스 약 11,980 -> 최종 Set 약 2200-2600
+			this.SetHits(2200, 2600); 
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetDex(100, 120); 
+			this.SetInt(250, 350); // 일반 마법사다운 높은 마나 통
 
-            SetResistance(ResistanceType.Physical, 45, 55);
-            SetResistance(ResistanceType.Fire, 15, 25);
-            SetResistance(ResistanceType.Cold, 50);
-            SetResistance(ResistanceType.Poison, 25, 35);
-            SetResistance(ResistanceType.Energy, 25, 35);
+			// [Combat Options] 마법 위주의 설계
+			this.SetDamage(15, 25);
+			this.SetAttackSpeed(2.4);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetSkill(SkillName.EvalInt, 100.0);
-            SetSkill(SkillName.Magery, 70.1, 80.0);
-            SetSkill(SkillName.Meditation, 85.1, 95.0);
-            SetSkill(SkillName.MagicResist, 80.1, 100.0);
-            SetSkill(SkillName.Tactics, 70.1, 90.0);
-            SetSkill(SkillName.Wrestling, 60.1, 80.0);
-            SetSkill(SkillName.Spellweaving, 70.1, 80.0);
+			// [Resistances] 종족 약점(화염/에너지) 반영 및 공략 재미
+			this.SetResistance(ResistanceType.Physical, 35, 45); 
+			this.SetResistance(ResistanceType.Fire, 15, 25);      // ★ 화염 취약점
+			this.SetResistance(ResistanceType.Cold, 40, 50);    
+			this.SetResistance(ResistanceType.Poison, 40, 50); 
+			this.SetResistance(ResistanceType.Energy, 20, 30);   // 에너지 저항 낮음
 
-            Fame = 8000;
-            Karma = 8000;
+			// [Skills] 마법사다운 스킬 구성
+			this.SetSkill(SkillName.Wrestling, 90.0, 105.0); 
+			this.SetSkill(SkillName.Tactics, 80.0, 95.0);
+			this.SetSkill(SkillName.MagicResist, 100.0, 120.0);
+			this.SetSkill(SkillName.Magery, 100.0, 115.0);      // 6~7서클 마법 주력
+			this.SetSkill(SkillName.EvalInt, 100.0, 115.0);
+			this.SetSkill(SkillName.Meditation, 100.0, 120.0);
 
-            VirtualArmor = 16;
+			// [Misc]
+			this.Tamable = false; // 지능형 아인종
+			this.VirtualArmor = 6;
+
+			this.Fame = 6000;
+			this.Karma = 6000; // 선족 설정
 
 			switch (Utility.Random(8))
             {

@@ -15,32 +15,48 @@ namespace Server.Mobiles
             Name = "a yamandon";
             Body = 249;
 
-            SetStr(786, 930);
-            SetDex(251, 365);
-            SetInt(101, 115);
+			/* [Yamandon - World Boss - Fame 29,000 / Weight 1.30]
+			   - 성지 던전의 전설적 맹독수 / 보스급 배수 적용
+			   - Attributes: x5 / Skills: x2 (Keep Formula)
+			   - VirtualArmor: 30 (공식 34이나 최대치 30 준수)
+			   -------------------------------------------------- */
 
-            SetHits(1601, 1800);
+			Boss = true;
 
-            SetDamage(19, 35);
+			// 최종 Str 약 27,803 (보너스 포함)
+			this.SetStr(23300, 23700); 
 
-            SetDamageType(ResistanceType.Physical, 70);
-            SetDamageType(ResistanceType.Poison, 20);
-            SetDamageType(ResistanceType.Energy, 10);
+			// 최종 Hits 약 616,655 (민맥 편차 2,000 고정 룰)
+			this.SetHits(520700, 522700); 
 
-            SetResistance(ResistanceType.Physical, 65, 85);
-            SetResistance(ResistanceType.Fire, 70, 90);
-            SetResistance(ResistanceType.Cold, 50, 70);
-            SetResistance(ResistanceType.Poison, 50, 70);
-            SetResistance(ResistanceType.Energy, 50, 70);
+			// 최종 Dex/Int 약 5,560
+			this.SetDex(4700, 4800);
+			this.SetInt(4700, 4800);
 
-            SetSkill(SkillName.Anatomy, 115.1, 130.0);
-            SetSkill(SkillName.MagicResist, 117.6, 132.5);
-            SetSkill(SkillName.Poisoning, 120.1, 140.0);
-            SetSkill(SkillName.Tactics, 117.1, 132.0);
-            SetSkill(SkillName.Wrestling, 112.6, 132.5);
+			// [Combat Options] 물리 40% / 독 60% (치명적인 맹독 타격)
+			this.SetDamage(100, 150);
+			this.SetAttackSpeed(2.5);
+			this.SetDamageType(ResistanceType.Physical, 40);
+			this.SetDamageType(ResistanceType.Poison, 60);
 
-            Fame = 22000;
-            Karma = -22000;
+			// [Resistances] 최고 저항 75 이하 엄격 준수 (형님 지침)
+			this.SetResistance(ResistanceType.Physical, 65, 75); 
+			this.SetResistance(ResistanceType.Fire, 50, 60);      
+			this.SetResistance(ResistanceType.Cold, 35, 45);    // ★ 명확한 약점 (변온 동물 컨셉)
+			this.SetResistance(ResistanceType.Poison, 75, 75);   // 독의 지배자 (Max 75)
+			this.SetResistance(ResistanceType.Energy, 55, 65);   
+
+			// [Skills] 최종 숙련도 약 370 (서버 캡 200.0에 맞춰 설정)
+			this.SetSkill(SkillName.Wrestling, 195.0, 200.0); 
+			this.SetSkill(SkillName.Tactics, 195.0, 200.0);
+			this.SetSkill(SkillName.Anatomy, 195.0, 200.0);
+			this.SetSkill(SkillName.Poisoning, 195.0, 200.0);     // 전설적인 독술
+			this.SetSkill(SkillName.MagicResist, 185.0, 200.0);
+
+			this.Tamable = false;
+			this.VirtualArmor = 30;
+			this.Fame = 29000;
+			this.Karma = -29000;
 
             if (Utility.RandomDouble() < .50)
                 PackItem(Engines.Plants.Seed.RandomBonsaiSeed());

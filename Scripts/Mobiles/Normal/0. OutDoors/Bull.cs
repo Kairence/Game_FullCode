@@ -13,46 +13,61 @@ namespace Server.Mobiles
             this.Body = Utility.RandomList(0xE8, 0xE9);
             this.BaseSoundID = 0x64;
 
-			if(0.001 >= Utility.RandomDouble())
-			{
-                this.Hue = 0x901;
-				this.SetStr(2000, 4444);
-				SetHits(3333, 4888);
-				SetAttackSpeed(1.0);
-				this.Fame = 10000;
-			}
-			else
-			{
-				this.SetStr(300, 464);
-				SetHits(333, 388);
-				SetAttackSpeed(10.0);
-				this.Fame = 1000;
-			}
-            this.SetDex(256, 275);
-            this.SetInt(147, 175);
+			// 0.1% 확률로 등장하는 미친 황소 (Mad Bull)
+            if (0.001 >= Utility.RandomDouble())
+            {
+                this.Hue = 0x901;         
+                
+                // [역산] 명성 3,000 보너스(Str+747, Hits+5689, Stam+102, Skill+8.2) 반영
+				// 최종 Str 900~950 목표 (근력이 매우 강력함)
+				this.SetStr(153, 203);
+				this.SetDex(50, 70); // 최종 Dex ~220 도달 (덩치에 비해 빠름)
+				this.SetInt(30, 50);
 
-            SetStam(240, 260);
-            SetMana(40, 50);
-			
-			
-            this.SetDamage(30, 40);
+				// 최종 Hits 10,000~10,500 목표 (전사 체력 4,000의 2.5배)
+				this.SetHits(4311, 4811);
+				this.SetStam(98, 110); // 최종 Stam 200~212
+				this.SetMana(0);
+
+				// [컨셉] 육중한 무게로 들이받기 (공속 3.5)
+				SetAttackSpeed(3.5);
+				SetDamage(35, 55); // 평균 45.0
+
+				// 최종 Skill 25.0~30.0 목표
+				this.SetSkill(SkillName.Wrestling, 16.8, 21.8);
+				this.SetSkill(SkillName.Tactics, 16.8, 21.8);
+				this.SetSkill(SkillName.MagicResist, 15.0, 20.0);
+
+				this.Fame = 3000;
+				this.Karma = -3000; // 엘리트급은 공격적인 성향
+				this.VirtualArmor = 8; // 풀플레이트(10)에 육박하는 단단한 가죽
+            }
+            else
+            {
+                // [역산] 보너스(Str+546, Hits+1220, Stam+61, Skill+1.5) 제외 설정
+				this.SetStr(104, 120); 
+				this.SetDex(19, 29); // 최종 Dex ~130
+				this.SetInt(19, 29);
+
+				this.SetHits(1280, 1300); // 최종 Hits 2,500~2,520
+				this.SetStam(19, 29);    
+				this.SetMana(0);
+
+				SetAttackSpeed(4.0);
+				SetDamage(10, 18); // 평균 14.0
+
+				this.SetSkill(SkillName.Wrestling, 3.5, 4.5); 
+
+				this.Fame = 600;
+				this.VirtualArmor = 4;
+            }
+
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 71.1;    
 
             this.SetDamageType(ResistanceType.Physical, 100);
-
             this.SetResistance(ResistanceType.Physical, 25, 30);
-            this.SetResistance(ResistanceType.Cold, 10, 15);
-
-            this.SetSkill(SkillName.Wrestling, 66.2, 86.4);
-            this.SetSkill(SkillName.Tactics, 64.0, 66.0);
-            this.SetSkill(SkillName.MagicResist, 44.0, 45.0);			
-			
-            this.Karma = 0;
-
-            this.VirtualArmor = 2;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 71.1;
         }
 
         public Bull(Serial serial)

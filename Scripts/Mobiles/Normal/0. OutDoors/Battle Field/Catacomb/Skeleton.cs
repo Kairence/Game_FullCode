@@ -14,34 +14,30 @@ namespace Server.Mobiles
             this.Body = 50; //Utility.RandomList(50, 56);
             this.BaseSoundID = 0x48D;
 
-            this.SetStr(30, 50);
-            this.SetDex(30, 50);
-            this.SetInt(10, 20);
+            this.SetStr(20, 40);     
+			this.SetDex(50, 80);     
+			this.SetInt(10, 20);     
 
-            this.SetHits(200, 325);
-			SetStam(20, 30);
-			SetMana(1, 5);
+			this.SetHits(172, 372);  // 최종 Hits 2,500~2,700
+			this.SetStam(40, 70);
 
-			SetAttackSpeed( 5.0 );
+			SetAttackSpeed(2.5);
+			SetDamage(12, 18);
+
+			this.SetDamageType(ResistanceType.Physical, 100);
+
+			this.SetResistance(ResistanceType.Physical, 5, 10);
+			this.SetResistance(ResistanceType.Poison, 45, 50);
+
+			// 최종 Skill 35.0~45.0 목표 (45.0 - 3.1 = 41.9)
+			this.SetSkill(SkillName.Wrestling, 31.9, 41.9);
+			this.SetSkill(SkillName.Tactics, 31.9, 41.9);
+
+			this.VirtualArmor = 2;
+
+			this.Fame = 1200;
+			this.Karma = -1200;
 			
-            this.SetDamage(1, 6);
-
-            this.SetDamageType(ResistanceType.Physical, 100);
-
-            this.SetResistance(ResistanceType.Physical, 15, 20);
-            this.SetResistance(ResistanceType.Fire, 5, 10);
-            this.SetResistance(ResistanceType.Cold, 25, 40);
-            this.SetResistance(ResistanceType.Poison, 25, 35);
-            this.SetResistance(ResistanceType.Energy, 5, 15);		
-			
-            SetSkill(SkillName.Tactics, 2.1, 5.0);
-            SetSkill(SkillName.Wrestling, 5.1, 7.0);
-
-            this.Fame = 1000;
-            this.Karma = -1000;
-
-            this.VirtualArmor = 1;
-
 			PackItem(new Bone(Utility.RandomMinMax(2, 5)));
         }
 

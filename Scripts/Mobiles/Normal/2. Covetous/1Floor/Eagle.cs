@@ -13,27 +13,29 @@ namespace Server.Mobiles
             this.Body = 5;
             this.BaseSoundID = 0x2EE;
 
-            this.SetStr(300, 407);
-            this.SetDex(106, 120);
-            this.SetInt(58, 70);
+            this.SetStr(1, 10);      // 최종 Str 547~556
+			this.SetDex(35, 55);     
+			this.SetInt(1, 10);      // 최종 Int 56~65
 
-            this.SetHits(520, 725);
-            this.SetMana(40, 60);
-			this.SetStam(100, 120);
+			this.SetHits(80, 180);   // 최종 Hits 1,300~1,400
+			this.SetStam(35, 55);
 
-			SetAttackSpeed( 1.0 );
+			SetAttackSpeed(2.0);     
+			SetDamage(3, 7); 
 
-            this.SetDamage(3, 10);
+			this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetResistance(ResistanceType.Physical, 10, 15);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetSkill(SkillName.Wrestling, 18.5, 28.5);
+			this.SetSkill(SkillName.Tactics, 18.5, 28.5);
 
-            this.Fame = 2000;
-            this.Karma = -2000;
+			// 테이밍 설정
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 15.1;
 
-            this.Tamable = true;
-            this.ControlSlots = 3;
-            this.MinTameSkill = 17.1;
-            VirtualArmor = 6;
+			this.Fame = 600;
+			this.Karma = 0;
 		}
 
         public Eagle(Serial serial)

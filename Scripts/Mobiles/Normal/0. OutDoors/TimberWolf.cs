@@ -14,36 +14,28 @@ namespace Server.Mobiles
             this.Body = 225;
             this.BaseSoundID = 0xE5;
 
-            this.SetStr(456, 780);
-            this.SetDex(366, 385);
-            this.SetInt(26, 50);
+            this.Fame = 500;
+			this.Karma = -500;
 
-            this.SetHits(434, 488);
-            SetStam(212, 215);
-            SetMana(10, 11);
-			
-			SetAttackSpeed(3.5);
-            this.SetDamage(8, 14);
+			// [역산] 보너스: Str+538, Hits+984, Skill+1.2
+			this.SetStr(1, 10);     // 최종 Str 540~550
+			this.SetDex(30, 60);    
+			this.SetHits(16, 116);  // 최종 Hits 1,000~1,100
+			this.SetStam(20, 50);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			SetAttackSpeed(2.5);
+			SetDamage(3, 8);
 
-            this.SetResistance(ResistanceType.Physical, 20, 25);
-            this.SetResistance(ResistanceType.Fire, 5, 10);
-            this.SetResistance(ResistanceType.Cold, 10, 15);
-            this.SetResistance(ResistanceType.Poison, 5, 10);
+			// 공격 속성: 순수 물리
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetSkill(SkillName.MagicResist, 45.1, 50.0);
-            this.SetSkill(SkillName.Tactics, 75.1, 90.0);
-            this.SetSkill(SkillName.Wrestling, 75.1, 90.0);
+			this.SetResistance(ResistanceType.Physical, 5, 10);
 
-            this.Fame = 2150;
-            this.Karma = 0;
+			// 최종 Skill 35.0 내외 (초반 수련용)
+			this.SetSkill(SkillName.Wrestling, 33.8, 43.8);
 
-            this.VirtualArmor = 1;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 41.1;
+			this.Tamable = true;
+			this.MinTameSkill = 35.1;
         }
 
         public TimberWolf(Serial serial)

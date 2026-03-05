@@ -31,35 +31,40 @@ namespace Server.Mobiles
 
 			Hue = 1172;
 			
-            SetStr(1281, 1305);
-            SetDex(991, 1150);
-            SetInt(2296, 3200);
+            /* Evil Mage - Fame 6,000 / Karma -6,000 */
+			/* [HP Calculation]
+			   - Target HP: ~12,000
+			   - Fame Bonus (6,000): ~13,850
+			   - SetHits Required: 100~200 (Bonus already covers target)
+			*/
+			this.SetStr(100, 150);       
+			this.SetDex(100, 150);       
+			this.SetInt(500, 650);       
 
-            SetHits(2490, 2630);
-			SetStam(300, 400);
-			SetMana(2100, 2520);
+			this.SetHits(100, 200); 
+			this.SetStam(100, 150);      
+			this.SetMana(500, 650);      
 
-			SetAttackSpeed( 50.0 );
+			this.SetAttackSpeed(2.8);    
+			this.SetDamage(8, 14);       
 
-            SetDamage(50, 100);
+			this.SetDamageType(ResistanceType.Energy, 100);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetResistance(ResistanceType.Physical, 25, 35);
+			this.SetResistance(ResistanceType.Fire, 30, 45);
+			this.SetResistance(ResistanceType.Cold, 30, 45);
+			this.SetResistance(ResistanceType.Poison, 30, 45);
+			this.SetResistance(ResistanceType.Energy, 50, 65);
 
-            SetResistance(ResistanceType.Physical, 15, 20);
-            SetResistance(ResistanceType.Fire, 5, 10);
-            SetResistance(ResistanceType.Poison, 5, 10);
-            SetResistance(ResistanceType.Energy, 5, 10);
+			this.SetSkill(SkillName.Magery, 95.0, 105.0);
+			this.SetSkill(SkillName.EvalInt, 95.0, 105.0);
+			this.SetSkill(SkillName.MagicResist, 90.0, 105.0);
 
-            SetSkill(SkillName.EvalInt, 175.1, 200.0);
-            SetSkill(SkillName.Magery, 175.1, 200.0);
-            SetSkill(SkillName.MagicResist, 175.0, 197.5);
-            SetSkill(SkillName.Tactics, 165.0, 187.5);
-            SetSkill(SkillName.Wrestling, 20.2, 60.0);
+			this.VirtualArmor = 4;       // 천 옷을 입은 마법사 (낮은 방어력)
+			this.Tamable = false;
 
-            Fame = 10000;
-            Karma = -10000;
-
-            VirtualArmor = 16;
+			this.Fame = 6000;           
+			this.Karma = -6000;
             PackReg(6);
         }
 

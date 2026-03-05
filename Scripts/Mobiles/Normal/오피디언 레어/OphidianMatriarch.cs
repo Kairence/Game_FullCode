@@ -13,33 +13,43 @@ namespace Server.Mobiles
             this.Body = 87;
             this.BaseSoundID = 644;
 
-            this.SetStr(416, 505);
-            this.SetDex(96, 115);
-            this.SetInt(366, 455);
+			/* [Ophidian Matriarch - Normal - Fame 13,500 / Weight 1.25]
+			   - 오피디언 고위 여군주 / 일반 던전
+			   - 배수: 1x (일반 몬스터)
+			   - VirtualArmor: 14 (기본 13 + 보정 1)
+			   -------------------------------------------------- */
 
-            this.SetHits(250, 303);
+			// [Attributes] 역산된 Set 값 정밀 적용
+			this.SetStr(355, 380); 
+			this.SetHits(8000, 8300); 
+			this.SetDex(70, 80);
+			this.SetInt(70, 80);
 
-            this.SetDamage(11, 13);
+			// [Combat Options] 물리 50% / 독 50% (치명적인 꼬리 타격)
+			this.SetDamage(40, 65);
+			this.SetAttackSpeed(2.4);
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Poison, 50);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] 최고 저항 75 이하 준수 및 약점 설정
+			this.SetResistance(ResistanceType.Physical, 50, 60); 
+			this.SetResistance(ResistanceType.Fire, 30, 40);      // ★ 명확한 약점
+			this.SetResistance(ResistanceType.Cold, 45, 55);    
+			this.SetResistance(ResistanceType.Poison, 70, 75);   // 여왕다운 극독 내성
+			this.SetResistance(ResistanceType.Energy, 50, 60);   
 
-            this.SetResistance(ResistanceType.Physical, 45, 55);
-            this.SetResistance(ResistanceType.Fire, 30, 40);
-            this.SetResistance(ResistanceType.Cold, 35, 45);
-            this.SetResistance(ResistanceType.Poison, 40, 50);
-            this.SetResistance(ResistanceType.Energy, 35, 45);
+			// [Skills] 기본 115~125에 역산 보너스(12.2) 가산
+			this.SetSkill(SkillName.Wrestling, 125.0, 135.0); 
+			this.SetSkill(SkillName.Tactics, 125.0, 135.0);
+			this.SetSkill(SkillName.Anatomy, 125.0, 135.0);
+			this.SetSkill(SkillName.Magery, 120.0, 135.0);       // 상급 마법 구사
+			this.SetSkill(SkillName.EvalInt, 120.0, 135.0);
+			this.SetSkill(SkillName.MagicResist, 120.0, 135.0);
 
-            this.SetSkill(SkillName.EvalInt, 90.1, 100.0);
-            this.SetSkill(SkillName.Magery, 90.1, 100.0);
-            this.SetSkill(SkillName.Meditation, 5.4, 25.0);
-            this.SetSkill(SkillName.MagicResist, 90.1, 100.0);
-            this.SetSkill(SkillName.Tactics, 50.1, 70.0);
-            this.SetSkill(SkillName.Wrestling, 60.1, 80.0);
-
-            this.Fame = 16000;
-            this.Karma = -16000;
-
-            this.VirtualArmor = 50;
+			this.Tamable = false;
+			this.VirtualArmor = 14;
+			this.Fame = 13500;
+			this.Karma = -13500;
         }
 
         public OphidianMatriarch(Serial serial)

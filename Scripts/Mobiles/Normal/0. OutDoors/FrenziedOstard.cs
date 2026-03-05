@@ -19,31 +19,29 @@ namespace Server.Mobiles
 
             this.BaseSoundID = 0x275;
 
-            SetStr(596, 1020);
-            SetDex(281, 305);
-            SetInt(136, 160);
+			// [역산] 명성 1200 보너스(Str+592, Hits+2298, Skill+3.1) 반영
+			this.SetStr(108, 158); // 최종 Str 700~750
+			this.SetDex(182, 232); // 최종 Dex ~450 (폭주하는 속도)
 
-            SetHits(1236, 1260);
-            SetStam(200, 300);
-            SetMana(5, 10);
-			SetAttackSpeed(2.0);
+			this.SetHits(702, 902); // 최종 Hits 3,000~3,200
+			this.SetStam(132, 182); // 최종 Stam 200~250
+			this.SetMana(0);
 
-            SetDamage(22, 37);
+			SetAttackSpeed(2.0); // 타조 중 가장 빠름
+			SetDamage(15, 25); // 평균 20.0
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 20, 25);
-            SetResistance(ResistanceType.Fire, 10, 20);
-            SetResistance(ResistanceType.Cold, 5, 10);
-            SetResistance(ResistanceType.Poison, 5, 10);
-            SetResistance(ResistanceType.Energy, 10, 15);
+			this.SetResistance(ResistanceType.Physical, 25, 35);
+			this.SetResistance(ResistanceType.Fire, 10, 20);
 
-            Fame = 3500;
-            Karma = -3500;
+			this.Fame = 1200;
+			this.Karma = -1200;
+			this.VirtualArmor = 4;
 
-            Tamable = true;
-            ControlSlots = 2;
-            MinTameSkill = 83.1;
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 91.1; // 전투용 펫으로 인기 높음
         }
 
         public FrenziedOstard(Serial serial)

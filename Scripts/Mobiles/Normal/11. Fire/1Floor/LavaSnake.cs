@@ -16,30 +16,37 @@ namespace Server.Mobiles
             Hue = Utility.RandomList(0x647, 0x650, 0x659, 0x662, 0x66B, 0x674);
             BaseSoundID = 0xDB;
 
-            SetStr(43, 55);
-            SetDex(16, 25);
-            SetInt(6, 10);
+            /* Lava Snake - Fame 800 / Karma -800 */
+			/* [HP Calculation]
+			   - Target HP: ~2,200
+			   - Fame Bonus (800): ~1,250
+			   - SetHits Required: 950 (Target - Bonus)
+			*/
+			this.SetStr(80, 120);       
+			this.SetDex(120, 180);       
 
-            SetHits(28, 32);
-            SetMana(0);
+			this.SetHits(550, 1250); 
+			this.SetStam(120, 180);      
 
-            SetDamage(1, 8);
+			this.SetAttackSpeed(2.0);    
+			this.SetDamage(8, 14);       
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Fire, 100);
 
-            SetResistance(ResistanceType.Physical, 20, 25);
-            SetResistance(ResistanceType.Fire, 30, 40);
-            SetResistance(ResistanceType.Poison, 20, 30);
-            SetResistance(ResistanceType.Energy, 10, 20);
+			this.SetResistance(ResistanceType.Physical, 15, 25);
+			this.SetResistance(ResistanceType.Fire, 70, 75);     
+			this.SetResistance(ResistanceType.Cold, -20, 0);    // 불뱀답게 추위에 극히 약함
 
-            SetSkill(SkillName.MagicResist, 15.1, 20.0);
-            SetSkill(SkillName.Tactics, 19.3, 34.0);
-            SetSkill(SkillName.Wrestling, 19.3, 34.0);
+			this.SetSkill(SkillName.Wrestling, 65.0, 80.0);
+			this.SetSkill(SkillName.Poisoning, 70.0, 90.0);    // 화염 독 테마
 
-            Fame = 600;
-            Karma = -600;
+			this.VirtualArmor = 2;       
+			this.Tamable = true;         
+			this.ControlSlots = 1;       
+			this.MinTameSkill = 65.0;    
 
-            VirtualArmor = 24;
+			this.Fame = 800;           
+			this.Karma = -800;
 
             PackItem(new SulfurousAsh());
 

@@ -14,27 +14,41 @@ namespace Server.Mobiles
             this.Name = "exodus minion";
             this.Body = 0x2F5;
 
-            this.SetStr(851, 950);
-            this.SetDex(71, 80);
-            this.SetInt(61, 90);
+			/* [Exodus Minion - Normal - Fame 10,000 / Weight 1.25]
+			   - 기계 마법 융합체 / 일반 던전 사양
+			   - 배수: 1x (일반 몬스터)
+			   - VirtualArmor: 15 (기본 10 + 강철 보정 5)
+			   -------------------------------------------------- */
 
-            this.SetHits(511, 570);
+			// [Attributes] 역산된 Set 값 적용
+			this.SetStr(240, 260); 
+			this.SetHits(5400, 5600); 
+			this.SetDex(45, 55);
+			this.SetInt(45, 55);
 
-            this.SetDamage(16, 22);
+			// [Combat Options] 물리/에너지 복합 대미지
+			this.SetDamage(35, 65);
+			this.SetAttackSpeed(2.5);
+			this.SetDamageType(ResistanceType.Physical, 60);
+			this.SetDamageType(ResistanceType.Energy, 40);
 
-            this.SetResistance(ResistanceType.Physical, 60, 70);
-            this.SetResistance(ResistanceType.Fire, 40, 50);
-            this.SetResistance(ResistanceType.Cold, 15, 25);
-            this.SetResistance(ResistanceType.Poison, 15, 25);
-            this.SetResistance(ResistanceType.Energy, 15, 25);
+			// [Resistances] 최고 저항 75 이하 준수
+			this.SetResistance(ResistanceType.Physical, 50, 65); 
+			this.SetResistance(ResistanceType.Fire, 45, 55);      
+			this.SetResistance(ResistanceType.Cold, 45, 55);    
+			this.SetResistance(ResistanceType.Poison, 45, 55); 
+			this.SetResistance(ResistanceType.Energy, 60, 75);   // 에너지 저항 특화
 
-            this.SetSkill(SkillName.MagicResist, 90.1, 100.0);
-            this.SetSkill(SkillName.Tactics, 90.1, 100.0);
-            this.SetSkill(SkillName.Wrestling, 90.1, 100.0);
+			// [Skills] 기본 90~110에 역산 보너스(8.3) 가산
+			this.SetSkill(SkillName.Wrestling, 100.0, 115.0); 
+			this.SetSkill(SkillName.Tactics, 100.0, 115.0);
+			this.SetSkill(SkillName.Anatomy, 100.0, 115.0);
+			this.SetSkill(SkillName.MagicResist, 100.0, 115.0);
 
-            this.Fame = 18000;
-            this.Karma = -18000;
-            this.VirtualArmor = 65;
+			this.Tamable = false;
+			this.VirtualArmor = 15;
+			this.Fame = 10000;
+			this.Karma = -10000; // 일반 던전이므로 명성치와 동일
 
             this.PackItem(new PowerCrystal());
             this.PackItem(new ArcaneGem());

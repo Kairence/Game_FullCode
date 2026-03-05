@@ -24,34 +24,34 @@ namespace Server.Mobiles
         {
             BaseSoundID = 0x16A;
 
-            SetStr(201, 300);
-            SetDex(66, 85);
-            SetInt(61, 100);
+            /* Shadow Dragon - Fame 4,500 / Karma -4,500 */
+			/* [HP Calculation]
+			   - Target HP: ~12,000
+			   - Fame Bonus (4,500): ~9,843
+			   - SetHits Required: 2,157 (Target - Bonus)
+			*/
+			this.Body = 52;              
+			this.Hue = 1109;             
+			this.SetStr(400, 550);       
+			this.SetDex(150, 200);       
 
-            SetHits(121, 180);
-            SetStam(20, 30);
-            SetMana(20, 30);
+			// [Hits] 최종 약 11,000 ~ 13,000 타겟
+			this.SetHits(1150, 3150); 
+			this.SetStam(150, 200);      
 
-			SetAttackSpeed(30.0);
-            SetDamage(3, 44);
+			this.SetAttackSpeed(2.6);    
+			this.SetDamage(15, 25);      
 
-            SetDamageType(ResistanceType.Physical, 75);
-            SetDamageType(ResistanceType.Poison, 25);
+			this.SetResistance(ResistanceType.Physical, 45, 55);
+			this.SetResistance(ResistanceType.Poison, 60, 75); // Max 75%
 
-            SetResistance(ResistanceType.Physical, 35, 40);
-            SetResistance(ResistanceType.Fire, 20, 30);
-            SetResistance(ResistanceType.Cold, 20, 40);
-            SetResistance(ResistanceType.Poison, 20, 30);
-            SetResistance(ResistanceType.Energy, 30, 40);
+			this.VirtualArmor = 10;      // 타격감 확보
+			this.Tamable = true;         
+			this.MinTameSkill = 125.0;    // 명성이 낮아진 만큼 요구 스킬도 하향
+			this.ControlSlots = 2; 
 
-            Fame = 2000;
-            Karma = -2000;
-
-            Hue = 0x966;
-
-            Tamable = true;
-            ControlSlots = 2;
-            MinTameSkill = 123.9;
+			this.Fame = 4500;           
+			this.Karma = -4500;
         }
 
         public ShadowDragon(Serial serial)

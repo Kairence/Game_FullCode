@@ -13,36 +13,43 @@ namespace Server.Mobiles
             Body = 0x591;
             Female = true;
 
-            SetStr(300, 400);
-            SetDex(80, 100);
-            SetInt(100, 120);
+			/* [Ossein Ram - Normal - Fame 18,000 / Weight 1.25]
+			   - 정글 던전의 언데드 돌진수 / 일반 몬스터 공식
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 23 (명성/1000 + 5 보정)
+			   -------------------------------------------------- */
 
-            SetHits(450, 550);
+			// [Attributes] 역산된 Set 값 정밀 적용 (Hits 1.2만 대)
+			this.SetStr(530, 550); 
+			this.SetHits(11800, 12100); 
+			this.SetDex(100, 115);
+			this.SetInt(100, 115);
 
-            SetDamage(18, 23);
+			// [Combat Options] 물리 100% (뼈 뿔을 이용한 강력한 들이받기)
+			this.SetDamage(45, 75);
+			this.SetAttackSpeed(2.6); // 돌진형이라 공속은 다소 느리지만 강력함
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetDamageType(ResistanceType.Physical, 50);
-            SetDamageType(ResistanceType.Cold, 25);
-            SetDamageType(ResistanceType.Energy, 25);
+			// [Resistances] 최고 저항 75 이하 준수 / 에너지 및 화염 약점 설정
+			this.SetResistance(ResistanceType.Physical, 60, 75); // 단단한 뼈의 저항
+			this.SetResistance(ResistanceType.Fire, 25, 35);      // ★ 확실한 약점 1
+			this.SetResistance(ResistanceType.Cold, 70, 75);     // 냉기에 강함
+			this.SetResistance(ResistanceType.Poison, 70, 75);   // 언데드 특효 내성
+			this.SetResistance(ResistanceType.Energy, 30, 40);   // ★ 확실한 약점 2 (전격에 바스러짐)
 
-            SetResistance(ResistanceType.Physical, 50, 60);
-            SetResistance(ResistanceType.Fire, 10, 20);
-            SetResistance(ResistanceType.Cold, 40, 50);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 40, 50);
+			// [Skills] 기본 115~125에 역산 보너스(18) 가산
+			this.SetSkill(SkillName.Wrestling, 133.0, 143.0); 
+			this.SetSkill(SkillName.Tactics, 133.0, 143.0);
+			this.SetSkill(SkillName.Anatomy, 133.0, 143.0);
+			this.SetSkill(SkillName.MagicResist, 115.0, 130.0);
 
-            SetSkill(SkillName.MagicResist, 70.0, 80.0);
-            SetSkill(SkillName.Tactics, 80.0, 90.0);
-            SetSkill(SkillName.Wrestling, 90.0, 100.0);
-            SetSkill(SkillName.DetectHidden, 40.0, 50.0);
-            SetSkill(SkillName.Anatomy, 75.0, 85.0);
-            SetSkill(SkillName.Necromancy, 20.0);
-            SetSkill(SkillName.SpiritSpeak, 20.0);
-
-            Tamable = true;
-            ControlSlots = 14;
-            MinTameSkill = 72.0;
-
+			// [Misc]
+			this.Tamable = true; 
+			this.ControlSlots = 2; // 200 숙련도 시대의 단단한 2슬롯 언데드 펫
+			this.MinTameSkill = 155.4; // 정예급 난이도
+			this.VirtualArmor = 23;
+			this.Fame = 18000;
+			this.Karma = -18000;
             SetMagicalAbility(MagicalAbility.BattleDefense);
             SetWeaponAbility(WeaponAbility.MortalStrike);
             SetSpecialAbility(SpecialAbility.LifeLeech);

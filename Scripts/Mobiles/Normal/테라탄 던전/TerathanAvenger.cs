@@ -13,35 +13,44 @@ namespace Server.Mobiles
             this.Body = 152;
             this.BaseSoundID = 0x24D;
 
-            this.SetStr(467, 645);
-            this.SetDex(77, 95);
-            this.SetInt(126, 150);
+			/* [Terathan Avenger - Normal - Fame 16,000 / Weight 1.28]
+			   - 테라탄 던전의 정예 복수자 / 일반 몬스터 공식
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 20 (명성/1000 + 4 보정)
+			   - 특이사항: 높은 공격력과 체력, 치명적인 독 공격
+			   -------------------------------------------------- */
 
-            this.SetHits(296, 372);
-            this.SetMana(46, 70);
+			// [Attributes] 역산된 Set 값 정밀 적용 (Hits 약 1.1만 대)
+			this.SetStr(510, 520); 
+			this.SetHits(11400, 11500); 
+			this.SetDex(100, 110); 
+			this.SetInt(100, 110);
 
-            this.SetDamage(18, 22);
+			// [Combat Options] 물리 60% / 독 40% (맹독이 흐르는 발톱)
+			this.SetDamage(45, 75);
+			this.SetAttackSpeed(2.0); // 복수자다운 빠른 공격 템포
+			this.SetDamageType(ResistanceType.Physical, 60);
+			this.SetDamageType(ResistanceType.Poison, 40);
 
-            this.SetDamageType(ResistanceType.Physical, 50);
-            this.SetDamageType(ResistanceType.Poison, 50);
+			// [Resistances] 최고 저항 75 이하 준수 / 화염 약점 설정
+			this.SetResistance(ResistanceType.Physical, 60, 75); 
+			this.SetResistance(ResistanceType.Fire, 20, 35);     // ★ 확실한 약점 (불에 취약)
+			this.SetResistance(ResistanceType.Cold, 45, 55);    
+			this.SetResistance(ResistanceType.Poison, 75, 75);  // 독성 저항 Max (완전 면역 수준)
+			this.SetResistance(ResistanceType.Energy, 40, 50);   
 
-            this.SetResistance(ResistanceType.Physical, 40, 50);
-            this.SetResistance(ResistanceType.Fire, 30, 40);
-            this.SetResistance(ResistanceType.Cold, 35, 45);
-            this.SetResistance(ResistanceType.Poison, 90, 100);
-            this.SetResistance(ResistanceType.Energy, 35, 45);
+			// [Skills] 기본 115~125에 역산 보너스(17.2) 가산
+			// 최종 숙련도 약 130~140대의 최정예 전사
+			this.SetSkill(SkillName.Wrestling, 132.2, 142.2); 
+			this.SetSkill(SkillName.Tactics, 132.2, 142.2);
+			this.SetSkill(SkillName.Anatomy, 132.2, 142.2);
+			this.SetSkill(SkillName.MagicResist, 110.0, 125.0);
+			this.SetSkill(SkillName.Poisoning, 120.0, 140.0); // 치명적인 레벨의 독 주입
 
-            this.SetSkill(SkillName.EvalInt, 70.3, 100.0);
-            this.SetSkill(SkillName.Magery, 70.3, 100.0);
-            this.SetSkill(SkillName.Poisoning, 60.1, 80.0);
-            this.SetSkill(SkillName.MagicResist, 65.1, 80.0);
-            this.SetSkill(SkillName.Tactics, 90.1, 100.0);
-            this.SetSkill(SkillName.Wrestling, 90.1, 100.0);
-
-            this.Fame = 15000;
-            this.Karma = -15000;
-
-            this.VirtualArmor = 50;
+			this.Tamable = false;
+			this.VirtualArmor = 20;
+			this.Fame = 16000;
+			this.Karma = -16000;
         }
 
         public TerathanAvenger(Serial serial)

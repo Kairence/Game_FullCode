@@ -14,36 +14,39 @@ namespace Server.Mobiles
             Name = "a clockwork scorpion";
             Body = 717;
 
-            SetStr(250, 335);
-            SetDex(80, 100);
-            SetInt(130, 140);
+            /* Clockwork Scorpion - Fame 1,000 / Weak Mechanical Insect */
+			this.SetStr(100, 150);       // 힘
+			this.SetDex(150, 250);       // 민첩
+			this.SetInt(30, 50);         // 지능
 
-            SetHits(151, 210);
-			SetStam(10, 20);
-			SetMana(10, 20);
+			// [Hits] 최종 약 2,000 ~ 2,500 타겟 (보너스 약 1,750 제외)
+			this.SetHits(250, 750); 
+			this.SetStam(150, 250);      // 기력
+			this.SetMana(30, 50);        // 마나
 
-            SetDamage(5, 10);
+			this.SetAttackSpeed(2.5);    // 공속
+			this.SetDamage(5, 12);       // 데미지
 
-			SetAttackSpeed( 2.0 );
+			// [Damage Type] 속성 타입
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Energy, 50);
 
-            SetDamageType(ResistanceType.Physical, 60);
-            SetDamageType(ResistanceType.Poison, 40);
+			// [Resistance] 저항
+			this.SetResistance(ResistanceType.Physical, 15, 25);
+			this.SetResistance(ResistanceType.Fire, 10, 20);
+			this.SetResistance(ResistanceType.Cold, 5, 15);
+			this.SetResistance(ResistanceType.Poison, 100); // 기계라 독 면역
+			this.SetResistance(ResistanceType.Energy, 5, 10);
 
-            SetResistance(ResistanceType.Physical, 8, 10);
-            SetResistance(ResistanceType.Fire, 20, 30);
-            SetResistance(ResistanceType.Cold, 60, 80);
-            SetResistance(ResistanceType.Poison, 100);
-            SetResistance(ResistanceType.Energy, 10, 25);
+			// [Skills] 스킬
+			this.SetSkill(SkillName.Wrestling, 50.0, 60.0);
+			this.SetSkill(SkillName.Tactics, 50.0, 60.0);
 
-            SetSkill(SkillName.MagicResist, 30.1, 50.0);
-            SetSkill(SkillName.Poisoning, 95.1, 100.0);
-            SetSkill(SkillName.Tactics, 70.1, 90.0);
-            SetSkill(SkillName.Wrestling, 50.1, 80.0);
+			this.VirtualArmor = 10;      // 가상 방어력
+			this.Tamable = false;        // 테이밍 불가 (기계)
 
-            Fame = 1000;
-            Karma = -1000;
-
-            this.VirtualArmor = 5;
+			this.Fame = 1000;            // 명성
+			this.Karma = -1000;          // 카르마
         }
 
         public ClockworkScorpion(Serial serial)

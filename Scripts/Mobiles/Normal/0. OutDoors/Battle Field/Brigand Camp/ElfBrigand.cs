@@ -26,33 +26,36 @@ namespace Server.Mobiles
             Title = "the brigand";
             Hue = Race.RandomSkinHue();
 
-            SetStr(1236, 1240);
-            SetDex(1321, 1335);
-            SetInt(1131, 1135);
+            this.SetStr(13, 33);    // 최종 Str 590~610
+			this.SetDex(83, 113);   // 최종 Dex ~400
+			this.SetInt(23, 43);    // 최종 Int 90~110
 
-			SetHits(1560, 1580);
-			SetMana(150);
-			SetStam(1365, 1370);			
-			
-            SetDamage(35, 54);
-            this.VirtualArmor = 5;
+			this.SetHits(134, 234); // 최종 Hits 2,000~2,100
+			this.SetStam(83, 113);
+			this.SetMana(90, 110);
 
-			SetAttackSpeed( 2.5 );
+			SetAttackSpeed(3.0);    // 활 공격 속도
+			SetDamage(10, 15);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// 공격 속성: 엘프 화살 (물리 70% / 에너지 30%)
+			this.SetDamageType(ResistanceType.Physical, 70);
+			this.SetDamageType(ResistanceType.Energy, 30);
 
-            SetResistance(ResistanceType.Physical, 10, 15);
-            SetResistance(ResistanceType.Fire, 10, 15);
-            SetResistance(ResistanceType.Cold, 10, 15);
-            SetResistance(ResistanceType.Poison, 10, 15);
-            SetResistance(ResistanceType.Energy, 10, 15);
+			// 저항: 엘프 가죽 옷 (낮은 명성에 맞춰 하향)
+			this.SetResistance(ResistanceType.Physical, 5, 12);
+			this.SetResistance(ResistanceType.Energy, 10, 20);
+			this.SetResistance(ResistanceType.Fire, 5, 10);
 
-            SetSkill(SkillName.MagicResist, 115.0, 117.5);
-            SetSkill(SkillName.Archery, 115.0, 117.5);
-            SetSkill(SkillName.Tactics, 115.0, 117.5);
+			// 최종 Skill 45.0 내외 (궁술 특화)
+			// 45.0 - 2.5 = 42.5
+			this.SetSkill(SkillName.Archery, 42.5, 52.5);
+			this.SetSkill(SkillName.Tactics, 37.5, 47.5);
+			this.SetSkill(SkillName.MagicResist, 37.5, 47.5);
 
-            Fame = 6000;
-            Karma = -6000;
+			this.VirtualArmor = 2;
+
+			this.Fame = 1000;
+			this.Karma = -1000;
 
             // outfit
             AddItem(new Shirt(Utility.RandomNeutralHue()));

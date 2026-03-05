@@ -15,34 +15,42 @@ namespace Server.Mobiles
             this.Body = 138;
             this.BaseSoundID = 0x45A;
 
-            this.SetStr(4700, 5000);
-            this.SetDex(2591, 3615);
-            this.SetInt(2161, 3185);
+            /* Orcish Lord - Fame 12,000 / Karma -12,000 */
+			/* [HP Calculation]
+			   - Target HP: ~45,000
+			   - Fame Bonus (12,000): ~28,650
+			   - SetHits Required: 16,350 (Target - Bonus)
+			*/
+			this.SetStr(600, 800);       
+			this.SetDex(150, 250);       
+			this.SetInt(150, 250);       
 
-            this.SetHits(8535, 9538);
-			this.SetStam(4000, 6000);
-			this.SetMana(2000, 3000);
-			
-			SetAttackSpeed( 10.0 );
+			// [Hits] 최종 약 42,000 ~ 48,000 타겟
+			this.SetHits(13350, 19350); 
+			this.SetStam(150, 250);      
+			this.SetMana(150, 250);      
 
-            this.SetDamage(313, 533);
+			this.SetAttackSpeed(2.2);    // 숙련된 전사의 공속
+			this.SetDamage(30, 45);      
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 45, 55);
-            this.SetResistance(ResistanceType.Fire, 30, 40);
-            this.SetResistance(ResistanceType.Cold, 20, 30);
-            this.SetResistance(ResistanceType.Poison, 30, 40);
-            this.SetResistance(ResistanceType.Energy, 30, 40);
+			this.SetResistance(ResistanceType.Physical, 55, 65);
+			this.SetResistance(ResistanceType.Fire, 35, 45);
+			this.SetResistance(ResistanceType.Cold, 35, 45);
+			this.SetResistance(ResistanceType.Poison, 35, 45);
+			this.SetResistance(ResistanceType.Energy, 35, 45);
 
-            this.SetSkill(SkillName.MagicResist, 150.1, 155.0);
-            this.SetSkill(SkillName.Swords, 150.1, 155.0);
-            this.SetSkill(SkillName.Tactics, 145.1, 150.0);
-            this.SetSkill(SkillName.Wrestling, 150.1, 155.0);
+			this.SetSkill(SkillName.Swords, 110.0, 125.0);
+			this.SetSkill(SkillName.Tactics, 110.0, 125.0);
+			this.SetSkill(SkillName.MagicResist, 100.0, 115.0);
+			this.SetSkill(SkillName.Anatomy, 100.0, 115.0);
 
-            this.Fame = 15500;
-            this.Karma = -15500;
-            this.VirtualArmor = 55;
+			this.VirtualArmor = 15;      // 정예 갑옷을 입었으나 타격감은 유지
+			this.Tamable = false;
+
+			this.Fame = 12000;           
+			this.Karma = -12000;
         }
 
         public OrcishLord(Serial serial)

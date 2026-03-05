@@ -15,32 +15,39 @@ namespace Server.Mobiles
             Body = 11;
             BaseSoundID = 1170;
 
-            SetStr(1550, 2275);
-            SetDex(2100, 2150);
-            SetInt(1250, 1300);
+            /* Dread Spider - Fame 8,500 */
+			this.SetStr(250, 300);  // 보너스(+1,298) 합산 시 약 1,600
+			this.SetDex(140, 160);   
+			this.SetInt(234, 250);   
 
-            SetHits(2000, 2450);
-			SetMana(850, 1000);
-			SetStam(2050, 2480);
+			this.SetHits(400, 600);  // 보너스(+17,232) 합산 시 약 17,800
+			this.SetStam(140, 160);
+			this.SetMana(1000, 1500);
 
-            SetDamage(115, 165);
-			SetAttackSpeed( 5.0 );
+			this.SetAttackSpeed(2.0);   
+			SetDamage(30, 40);
 
-            SetDamageType(ResistanceType.Poison, 100);
+			this.SetSkill(SkillName.Wrestling, 132.0); // 보너스 +27.0 반영
+			this.SetSkill(SkillName.Tactics, 132.0);
+			this.SetSkill(SkillName.Magery, 110.0, 120.0);
+			this.SetSkill(SkillName.Poisoning, 100.0, 115.0);
 
-            Fame = 9000;
-            Karma = -9000;
+			this.SetDamageType(ResistanceType.Physical, 40);
+			this.SetDamageType(ResistanceType.Cold, 30);
+			this.SetDamageType(ResistanceType.Poison, 30);
 
-            PackItem(new SpidersSilk(30));
+			// 저항 패널티: 극단적인 저항 하향으로 사냥 효율 증대
+			this.SetResistance(ResistanceType.Physical, -70, -60);
+			this.SetResistance(ResistanceType.Fire, -70, -60);
+			this.SetResistance(ResistanceType.Cold, 20, 30); 
+			this.VirtualArmor = 5;
 
-			AcidTime = 4.0;
-			AcidBreath = true;
-			
-			
-            Tamable = true;
-            ControlSlots = 2;
-            MinTameSkill = 96.0;
-            VirtualArmor = 15;
+			this.Tamable = true;
+			this.ControlSlots = 3;
+			this.MinTameSkill = 105.1;
+
+			this.Fame = 8500;
+			this.Karma = -8500;
         }
 
         public DreadSpider(Serial serial)

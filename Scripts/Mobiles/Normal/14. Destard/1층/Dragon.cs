@@ -13,40 +13,47 @@ namespace Server.Mobiles
             Body = 12;//Utility.RandomList(12, 59);
             BaseSoundID = 362;
 
-            SetStr(5796, 5825);
-            SetDex(6086, 6105);
-            SetInt(6436, 6475);
+            /* Dragon - Fame 18,000 / Karma -18,000 */
+			/* [HP Calculation]
+			   - Target HP: ~90,000
+			   - Fame Bonus (18,000): ~46,725
+			   - SetHits Required: 43,275 (Target - Bonus)
+			*/
+			this.SetStr(800, 1000);      
+			this.SetDex(150, 250);       
+			this.SetInt(500, 700);       
 
-            SetHits(14780, 14950);
-			SetStam( 10000, 12000 );
-			SetMana( 10000, 11500 );
+			// [Hits] 최종 약 85,000 ~ 95,000 타겟
+			this.SetHits(38275, 48275); 
+			this.SetStam(150, 250);      
+			this.SetMana(500, 700);      
 
-			SetAttackSpeed( 5.0 );
+			this.SetAttackSpeed(2.2);    
+			this.SetDamage(35, 60);      
 
-            SetDamage(240, 406);
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Fire, 50);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetResistance(ResistanceType.Physical, 60, 75); 
+			this.SetResistance(ResistanceType.Fire, 75, 75);     
+			this.SetResistance(ResistanceType.Cold, 35, 50);     
+			this.SetResistance(ResistanceType.Poison, 50, 65);
 
-            SetResistance(ResistanceType.Physical, 55, 65);
-            SetResistance(ResistanceType.Fire, 60, 70);
-            SetResistance(ResistanceType.Cold, 30, 40);
-            SetResistance(ResistanceType.Poison, 25, 35);
-            SetResistance(ResistanceType.Energy, 35, 45);
+			this.SetSkill(SkillName.Magery, 110.0, 125.0);
+			this.SetSkill(SkillName.EvalInt, 110.0, 125.0);
+			this.SetSkill(SkillName.MagicResist, 110.0, 125.0);
+			this.SetSkill(SkillName.Wrestling, 110.0, 125.0);
+			this.SetSkill(SkillName.Tactics, 115.0, 130.0);
 
-            SetSkill(SkillName.EvalInt, 200.1, 205.0);
-            SetSkill(SkillName.Magery, 200.1, 205.0);
-            SetSkill(SkillName.MagicResist, 199.1, 200.0);
-            SetSkill(SkillName.Tactics, 197.6, 200.0);
-            SetSkill(SkillName.Wrestling, 190.1, 192.5);
+			this.VirtualArmor = 15;      
 
-            Fame = 21000;
-            Karma = -21000;
+			// [Taming Settings]
+			this.Tamable = true;         
+			this.ControlSlots = 3;       
+			this.MinTameSkill = 175.0;   // 200 상한 서버의 강력한 전력
 
-            VirtualArmor = 26;
-
-            Tamable = true;
-            ControlSlots = 3;
-            MinTameSkill = 143.9;
+			this.Fame = 18000;           
+			this.Karma = -18000;
 
             SetSpecialAbility(SpecialAbility.DragonBreath);
         }

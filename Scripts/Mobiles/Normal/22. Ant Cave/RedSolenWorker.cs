@@ -14,30 +14,45 @@ namespace Server.Mobiles
             this.Body = 781;
             this.BaseSoundID = 959;
 
-            this.SetStr(96, 120);
-            this.SetDex(81, 105);
-            this.SetInt(36, 60);
+			/* [Red Solen Worker - Fame 3,000 / General / Weight 1.15]
+			   - 스킬 200 마스터 서버용 '초급' 밸런스 적용
+			   - 가상 방어력(VirtualArmor): (3,000/1000) - 2 = 1 (경량 갑각)
+			   - 흑개미 일꾼보다 높은 체력과 화염 속성 공격 미량 가미
+			   -------------------------------------------------- */
 
-            this.SetHits(58, 72);
+			// [Attributes] 명성 3,000 보너스 + 가중치 1.15 반영
+			this.SetStr(30, 40); 
+			this.SetHits(750, 900); 
+			this.SetDex(5, 10);
+			this.SetInt(5, 10);
 
-            this.SetDamage(5, 7);
+			// [Combat Options]
+			this.SetDamage(12, 22); // 흑개미 일꾼(10, 20)보다 살짝 매콤함
+			this.SetAttackSpeed(2.0);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			// [Damage Types] 90% 물리 + 10% 화염 속성 (붉은 솔렌의 미열)
+			this.SetDamageType(ResistanceType.Physical, 90);
+			this.SetDamageType(ResistanceType.Fire, 10);
 
-            this.SetResistance(ResistanceType.Physical, 25, 30);
-            this.SetResistance(ResistanceType.Fire, 20, 30);
-            this.SetResistance(ResistanceType.Cold, 10, 20);
-            this.SetResistance(ResistanceType.Poison, 10, 20);
-            this.SetResistance(ResistanceType.Energy, 20, 30);
+			// [Resistances] 총합 약 155 (Max 75 준수)
+			this.SetResistance(ResistanceType.Physical, 30, 40);
+			this.SetResistance(ResistanceType.Fire, 50, 60);      // 일꾼치고 높은 화염 저항
+			this.SetResistance(ResistanceType.Cold, 10, 20);      // 냉기에 매우 취약
+			this.SetResistance(ResistanceType.Poison, 30, 40);
+			this.SetResistance(ResistanceType.Energy, 15, 25);
 
-            this.SetSkill(SkillName.MagicResist, 60.0);
-            this.SetSkill(SkillName.Tactics, 65.0);
-            this.SetSkill(SkillName.Wrestling, 60.0);
+			// [Skills] ★ 스킬 200 서버 기준 - 초중반 수련용 (재설계)
+			// 유저 스킬 40 ~ 60 구간에서 전투하기 적합한 수치
+			this.SetSkill(SkillName.Wrestling, 35.0, 45.0); 
+			this.SetSkill(SkillName.Tactics, 35.0, 45.0);
+			this.SetSkill(SkillName.Anatomy, 35.0, 45.0); // 흑개미보다 높은 공격 효율
+			this.SetSkill(SkillName.MagicResist, 20.0, 30.0);
 
-            this.Fame = 1500;
-            this.Karma = -1500;
+			// [Misc] 가상 방어력(Virtual Armor): (3,000/1000) - 2 = 1
+			this.VirtualArmor = 1;
 
-            this.VirtualArmor = 28;
+			this.Fame = 3000;
+			this.Karma = -3000;
 
             this.PackGold(Utility.Random(100, 180));
 

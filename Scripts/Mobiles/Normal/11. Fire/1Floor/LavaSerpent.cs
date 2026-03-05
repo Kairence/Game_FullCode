@@ -18,36 +18,42 @@ namespace Server.Mobiles
 			if( 0.000001 > Utility.RandomDouble() )
 				Hue = 1174;
 
-            SetStr(386, 415);
-            SetDex(356, 480);
-            SetInt(366, 385);
+            /* Lava Serpent - Fame 10,000 / Karma -10,000 */
+				/* [HP Calculation]
+			   - Target HP: ~28,000
+			   - Fame Bonus (10,000): ~24,150
+			   - SetHits Required: 3,850 (Target - Bonus)
+			*/
+			this.SetStr(400, 600);       
+			this.SetDex(150, 250);       
 
-            SetHits(832, 1249);
-            SetMana(0);
+			// [Hits] 최종 약 26,000 ~ 30,000 타겟
+			this.SetHits(1850, 5850); 
+			this.SetStam(150, 250);      
 
-			SetAttackSpeed( 5.0 );
-            SetDamage(30, 52);
+			this.SetAttackSpeed(2.2);    
+			this.SetDamage(25, 40);      
 
-            SetDamageType(ResistanceType.Physical, 20);
-            SetDamageType(ResistanceType.Fire, 80);
+			this.SetDamageType(ResistanceType.Physical, 30);
+			this.SetDamageType(ResistanceType.Fire, 70);
 
-            SetResistance(ResistanceType.Physical, 35, 45);
-            SetResistance(ResistanceType.Fire, 70, 80);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 10, 20);
+			this.SetResistance(ResistanceType.Physical, 45, 60);
+			this.SetResistance(ResistanceType.Fire, 75, 75);     // Max 75%
+			this.SetResistance(ResistanceType.Cold, -5, 10);     
+			this.SetResistance(ResistanceType.Poison, 40, 55);
 
-            SetSkill(SkillName.MagicResist, 25.3, 70.0);
-            SetSkill(SkillName.Tactics, 65.1, 70.0);
-            SetSkill(SkillName.Wrestling, 60.1, 80.0);
+			this.SetSkill(SkillName.Wrestling, 100.0, 115.0);
+			this.SetSkill(SkillName.Tactics, 100.0, 115.0);
 
-            Fame = 2500;
-            Karma = -2500;
+			this.VirtualArmor = 10;      
 
-            VirtualArmor = 40;
-			
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 100.7;
+			// [Taming Settings]
+			this.Tamable = true;         
+			this.ControlSlots = 2;       
+			this.MinTameSkill = 135.0;   // 200 상한 대비 중상급 숙련도 요구
+
+			this.Fame = 10000;           
+			this.Karma = -10000;
         }
 
         public LavaSerpent(Serial serial)

@@ -13,33 +13,28 @@ namespace Server.Mobiles
             this.Body = 88;
             this.BaseSoundID = 0x99;
 
-            this.SetStr(250, 300);
-            this.SetDex(25, 30);
-            this.SetInt(12, 18);
+            // [역산] 명성 400 보너스 반영
+			this.SetStr(20, 40); 
+			this.SetDex(100, 150); // 최종 Dex ~350
 
-            SetHits(230, 280);
-            SetStam(25, 30);
-            SetMana(5, 10);
-			
-			SetAttackSpeed(10.0);
+			this.SetHits(176, 250); // 최종 Hits 1,000~1,074
+			this.SetStam(44, 94);   // 최종 Stam 100~150
+			this.SetMana(0);
 
-            this.SetDamage(7, 11);
+			SetAttackSpeed(3.0);
+			SetDamage(5, 12); 
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 10, 15);
-            this.SetResistance(ResistanceType.Fire, 5, 10);
-            this.SetResistance(ResistanceType.Poison, 5, 10);
+			this.SetResistance(ResistanceType.Physical, 15, 25);
+			this.SetResistance(ResistanceType.Cold, 20, 30);
 
-            this.Fame = 300;
-            this.Karma = 0;
+			this.Fame = 400;
+			this.VirtualArmor = 3;
+			this.Tamable = true;
+			this.MinTameSkill = 35.1;
 
-            this.VirtualArmor = 1;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 29.1;
-
+            
             if (Core.AOS && Utility.Random(1000) == 0) // 0.1% chance to have mad cows
                 FightMode = FightMode.Closest;
         }

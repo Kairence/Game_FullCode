@@ -14,37 +14,36 @@ namespace Server.Mobiles
             Body = 155;
             BaseSoundID = 471;
 
-            SetStr(6010, 6500);
-            SetDex(250, 300);
-            SetInt(101, 200);
+            this.Fame = 14000;
+			this.Karma = -14000;
 
-			SetAttackSpeed( 10.0 );
+			// [역산] 최종 Str 2,500 / Dex 1,200 목표
+			this.SetStr(390, 450);    
+			this.SetDex(350, 400);    
+			this.SetInt(200, 300);
 
-            SetHits(8059, 9122);
-            SetStam(100, 150);
-            SetMana(150, 175);
+			// [역산] 최종 Hits 약 50,000 목표 (기초 7,120 + 보너스 42,880)
+			this.SetHits(7120, 7500); 
 
-            SetDamage(220, 1156);
+			// [역산] 최종 Stam/Mana 약 1,200 목표 (기초 145 + 보너스 1,055)
+			this.SetStam(140, 150);
+			this.SetMana(140, 150);
 
-            SetDamageType(ResistanceType.Physical, 0);
-            SetDamageType(ResistanceType.Cold, 50);
-            SetDamageType(ResistanceType.Poison, 50);
+			this.SetAttackSpeed(1.8);  // 부패한 몸치고는 상당히 빠른 연사력
+			SetDamage(55, 75);        // 한 방이 뼈를 부수는 파괴력
 
-            SetResistance(ResistanceType.Physical, 65, 85);
-            SetResistance(ResistanceType.Fire, 20, 30);
-            SetResistance(ResistanceType.Cold, 50, 70);
-            SetResistance(ResistanceType.Poison, 110, 125);
-            SetResistance(ResistanceType.Energy, 20, 30);
+			// [Skill] 최종 180.0(±10.0) 목표 (기초 131.9 + 보너스 48.1)
+			this.SetSkill(SkillName.Wrestling, 122.0, 142.0); 
+			this.SetSkill(SkillName.Tactics, 122.0, 142.0);
+			this.SetSkill(SkillName.Poisoning, 150.0); // 1층 최고의 맹독
 
-            SetSkill(SkillName.Poisoning, 320.0);
-            SetSkill(SkillName.MagicResist, 350.0);
-            SetSkill(SkillName.Tactics, 1700.0);
-            SetSkill(SkillName.Wrestling, 190.1, 200.0);
+			this.SetDamageType(ResistanceType.Physical, 30);
+			this.SetDamageType(ResistanceType.Poison, 70);
 
-            Fame = 18500;
-            Karma = -18500;
-
-            VirtualArmor = 100;
+			this.SetResistance(ResistanceType.Physical, 35, 50);
+			this.SetResistance(ResistanceType.Poison, 100); 
+			this.SetResistance(ResistanceType.Fire, -20, -10); // 여전히 불에 취약
+			this.VirtualArmor = 20;
         }
 
         public RottingCorpse(Serial serial)

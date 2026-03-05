@@ -53,26 +53,31 @@ namespace Server.Mobiles
             Name = "a plague beast";
             Body = 775;
 
-            SetStr(200, 250);
-            SetDex(80, 100);
-            SetInt(16, 20);
+            // [역산] 명성 5000 보너스 반영
+			this.SetStr(63, 163); // 최종 Str 1,000~1,100
+			this.SetDex(58, 108); // 최종 Dex ~350
 
-            SetHits(1318, 1404);
-            SetStam(135, 150);
-            SetMana(10, 15);
+			this.SetHits(4896, 5896); // 최종 Hits 15,000~16,000
+			this.SetStam(58, 108); 
+			this.SetMana(0);
 
-			SetAttackSpeed(15.0);
+			SetAttackSpeed(3.0);
+			SetDamage(25, 45); 
 
-            SetDamage(45, 60);
+			// 공격 속성: 부패한 독기
+			this.SetDamageType(ResistanceType.Physical, 0);
+			this.SetDamageType(ResistanceType.Poison, 100);
 
-            SetSkill(SkillName.MagicResist, 35.0);
-            SetSkill(SkillName.Tactics, 200.0);
-            SetSkill(SkillName.Wrestling, 200.0);
+			this.SetResistance(ResistanceType.Physical, 35, 45);
+			this.SetResistance(ResistanceType.Poison, 48, 50); // 독 면역
+			this.SetResistance(ResistanceType.Fire, 10, 20);  // 불에 취약
 
-            Fame = 3000;
-            Karma = -3000;
+			// 최종 Skill 130.0~140.0 목표
+			this.SetSkill(SkillName.Wrestling, 115.5, 125.5);
 
-            VirtualArmor = 3;
+			this.Fame = 5000;
+			this.Karma = -5000;
+			this.VirtualArmor = 8;
             if (Utility.RandomDouble() < 0.80)
                 PackItem(new PlagueBeastGland());
 

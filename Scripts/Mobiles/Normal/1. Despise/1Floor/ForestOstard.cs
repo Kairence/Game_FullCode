@@ -17,27 +17,30 @@ namespace Server.Mobiles
         {
             this.BaseSoundID = 0x270;
 
-            this.SetStr(294, 370);
-            this.SetDex(56, 75);
-            this.SetInt(6, 10);
+            this.SetStr(1, 10);      // 최종 Str 578~587
+			this.SetDex(83, 113);    // 최종 Dex ~400 (빠름)
+			this.SetInt(1, 10);      
 
-            this.SetHits(71, 88);
-			SetAttackSpeed( 30.0 );
-			SetStam(10, 15);
-            this.SetMana(10, 15);
+			this.SetHits(134, 234);  // 최종 Hits 2,000~2,100
+			this.SetStam(83, 113);
 
-            this.SetDamage(8, 14);
+			SetAttackSpeed(2.5);
+			SetDamage(6, 12); 
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 15, 20);
+			this.SetResistance(ResistanceType.Physical, 10, 15);
+			this.SetResistance(ResistanceType.Fire, 10, 15);
 
-            this.Fame = 0;
-            this.Karma = 450;
+			// 최종 Skill 35.0~45.0 (45.0 - 2.5 = 42.5)
+			this.SetSkill(SkillName.Wrestling, 32.5, 42.5);
 
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 29.1;
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 29.1; // 길들이기 쉬운 탈것
+
+			this.Fame = 1000;
+			this.Karma = 0;
         }
 
         public ForestOstard(Serial serial)

@@ -23,38 +23,18 @@ namespace Server.Mobiles
             Hue = 0x515; 
             BaseSoundID = 471; 
 
-            SetStr(4910, 5400);
-            SetDex(441, 480);
-            SetInt(251, 280);
+            /* Pestilent Bandage - Fame 6,500 */
+			this.Fame = 6500;
+			this.Karma = -6500;
 
-            SetHits(6015, 7045);
-            SetStam(2300, 2500);
-			SetMana(10, 20);
+			this.SetHits(2000, 2500);  // 최종 Hits 약 20,000
+			this.SetSkill(SkillName.Poisoning, 120.0);
 
-            SetDamage(290, 1050);
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Poison, 50); // 독 속성 공격
 
-			SetAttackSpeed( 15 );
-
-            SetDamageType(ResistanceType.Physical, 40);
-            SetDamageType(ResistanceType.Cold, 20);
-            SetDamageType(ResistanceType.Poison, 40);
-
-            SetResistance(ResistanceType.Physical, 25, 35);
-            SetResistance(ResistanceType.Fire, 10, 20);
-            SetResistance(ResistanceType.Cold, 50, 60);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 20, 30);
-
-            SetSkill(SkillName.Poisoning, 100.0, 150.0);
-            SetSkill(SkillName.Anatomy, 100, 110);
-            SetSkill(SkillName.MagicResist, 105.0, 110.0);
-            SetSkill(SkillName.Tactics, 130.0, 135.0);
-            SetSkill(SkillName.Wrestling, 120.0, 125.0);
-
-            Fame = 14000;
-            Karma = -14000;
-
-             VirtualArmor = 58; // Don't know what it should be
+			this.SetResistance(ResistanceType.Poison, 60, 80); // 독 면역 수준
+			this.VirtualArmor = 10;
 
             PackItem(new Bandage(5));  // How many?
 

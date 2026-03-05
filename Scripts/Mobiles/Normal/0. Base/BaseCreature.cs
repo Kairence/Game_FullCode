@@ -407,6 +407,13 @@ namespace Server.Mobiles
         /* Do not serialize this till the code is finalized */
 
 		//변수 지정
+		private int[] m_originalStats = new int[6];
+		public int[] originalStats
+		{
+			get{ return m_originalStats; }
+			set{ m_originalStats = value;}
+		}
+		
 		private static int[] m_DefaultExps = new int[]
 		{
 			0,
@@ -2109,23 +2116,26 @@ namespace Server.Mobiles
 		[CommandProperty(AccessLevel.GameMaster)]
 		public int Loyalty
 		{
-			get { return m_Loyalty; }
-			set 
-			{ 
-				int limit = 1000; // 기본 상한선 (야생 몬스터 등급 보너스 수용)
+			get => m_Loyalty;
+			set
+			{
+				// 1. 상한선: 테이밍 상태면 지식*5, 아니면 1000 고정
+				int limit = (Controlled && m_ControlMaster != null) ? (int)m_ControlMaster.Skills[SkillName.AnimalLore].Value * 5 : 1000;
 
-				// [핵심] 테이밍된 상태라면 주인의 Animal Lore 스킬로 상한선 결정
-				if (Controlled && ControlMaster != null)
+				// 2. 값 보정 및 실제 변경 여부 확인
+				value = Math.Max(-1000, Math.Min(value, limit));
+
+				if (m_Loyalty != value)
 				{
-					// 예: Lore 100.0 이면 상한선 100 (스탯 1.1배 보너스 지점)
-					limit = (int)ControlMaster.Skills[SkillName.AnimalLore].Value * 5;
+					m_Loyalty = value;
+					
+					if (!IsDeadPet)
+					{
+						CreatureBalancer.RefreshStats(this);
+						InvalidateProperties();
+						Delta(MobileDelta.Attributes);
+					}
 				}
-
-				// 값의 범위를 강제 (-1000 ~ 계산된 limit)
-				if (value < -1000) value = -1000;
-				else if (value > limit) value = limit;
-
-				m_Loyalty = value; 
 			}
 		}
         [CommandProperty(AccessLevel.GameMaster)]
@@ -3076,10 +3086,13 @@ namespace Server.Mobiles
         {
             base.Serialize(writer);
 
-            writer.Write(38); // version
+            writer.Write(39); // version
 
             int i = 0;
-			
+			for( i = 0; i < m_originalStats.Length; ++i )
+			{
+				writer.Write( m_originalStats[i] );
+			}
 			for( i = 0; i < m_PassiveSkills.Length; ++i )
 			{
 				writer.Write( m_PassiveSkills[i] );
@@ -3312,6 +3325,14 @@ namespace Server.Mobiles
 
             switch (version)
             {
+				case 39:
+				{
+					for( int i = 0; i < m_originalStats.Length; ++i )
+					{
+						m_originalStats[i] = reader.ReadInt();
+					}
+					goto case 38;
+				}
 				case 38:
 				{
 					for( int i = 0; i < m_PassiveSkills.Length; ++i )
@@ -3930,115 +3951,48 @@ namespace Server.Mobiles
             return contains;
         }
 
-        public virtual bool CheckFeed(Mobile from, Item dropped)
-        {
-            if (!IsDeadPet && Controlled && (ControlMaster == from || IsPetFriend(from))) /*&&
-                (dropped is Food || dropped is Gold || dropped is CookableFood || dropped is Head || dropped is LeftArm ||
-                 dropped is LeftLeg || dropped is Torso || dropped is RightArm || dropped is RightLeg || dropped is IronIngot ||
-                 dropped is DullCopperIngot || dropped is ShadowIronIngot || dropped is CopperIngot || dropped is BronzeIngot ||
-                 dropped is GoldIngot || dropped is AgapiteIngot || dropped is VeriteIngot || dropped is ValoriteIngot))*/
-                // Why do we need all this crap, when its checked in CheckFootPreference?
-            {
-                Item f = dropped;
+		public virtual bool CheckFeed(Mobile from, Item dropped)
+		{
+			if (IsDeadPet || !Controlled || (ControlMaster != from && !IsPetFriend(from)) || !CheckFoodPreference(dropped))
+				return false;
 
-                if (CheckFoodPreference(f))
-                {
-                    int amount = f.Amount;
+			int amount = dropped.Amount;
+			if (amount <= 0) return false;
 
-                    if (amount > 0)
-                    {
-                        bool happier = false;
+			// 1. 충성도(Loyalty) 로직 압축 (변수 최소화)
+			int gain = dropped is Gold ? amount / 100 : amount;
 
-                        int stamGain;
+			if (gain > 0)
+			{
+				if (m_Loyalty < 0) 
+					m_Loyalty += Math.Min(gain, Math.Abs(m_Loyalty));
+				else if (m_Loyalty < from.Skills[SkillName.AnimalLore].Value) 
+					m_Loyalty = Math.Min((int)from.Skills[SkillName.AnimalLore].Value, m_Loyalty + gain);
 
-                        if (f is Gold)
-                        {
-                            stamGain = amount - 50;
-                        }
-                        else
-                        {
-                            stamGain = (amount * 15) - 50;
-                        }
+				SayTo(from, 502060); // Your pet looks happier.
+			}
 
-                        if (stamGain > 0)
-                        {
-                            Stam += stamGain;
-                        }
+			// 2. 애니메이션 및 본딩 로직
+			// 양쪽 결과값을 모두 int로 형변환하여 타입 불일치 해결
+			Animate(Core.SA ? (int)AnimationType.Eat : (Body.IsAnimal ? 3 : Body.IsHuman ? 34 : 17), 5, 1, true, false, 0);
 
-                        if (Core.SE)
-                        {
-							/*
-                            if (m_Loyalty < MaxLoyalty)
-                            {
-                                m_Loyalty = MaxLoyalty;
-                                happier = true;
-                            }
-							*/
-                        }
-                        else
-                        {
-                            for (int i = 0; i < amount; ++i)
-                            {
-								/*
-                                if (m_Loyalty < MaxLoyalty && 0.5 >= Utility.RandomDouble())
-                                {
-                                    m_Loyalty += 10;
-                                    happier = true;
-                                }
-								*/
-                            }
-                        }
+			if (IsBondable && !IsBonded && m_ControlMaster == from)
+			{
+				if (m_CurrentTameSkill <= 29.1 || from.Skills[SkillName.AnimalTaming].Value >= m_CurrentTameSkill || OverrideBondingReqs())
+				{
+					if (BondingBegin == DateTime.MinValue) BondingBegin = DateTime.UtcNow;
+					else if (BondingBegin + BondingDelay <= DateTime.UtcNow)
+					{
+						IsBonded = true;
+						BondingBegin = DateTime.MinValue;
+						from.SendLocalizedMessage(1049666);
+					}
+				}
+			}
 
-                        if (happier)
-                        {
-                            SayTo(from, 502060); // Your pet looks happier.
-                        }
-
-                        if (Core.SA)
-                        {
-                            Animate(AnimationType.Eat, 0);
-                        }
-                        else
-                        {
-                            Animate(Body.IsAnimal ? 3 : Body.IsHuman ? 34 : 17, 5, 1, true, false, 0);
-                        }
-
-                        if (IsBondable && !IsBonded)
-                        {
-                            Mobile master = m_ControlMaster;
-
-                            if (master != null && master == from) //So friends can't start the bonding process
-                            {
-                                if (m_CurrentTameSkill <= 29.1 || master.Skills[SkillName.AnimalTaming].Base >= m_CurrentTameSkill ||
-                                    OverrideBondingReqs() || (Core.ML && master.Skills[SkillName.AnimalTaming].Value >= m_CurrentTameSkill))
-                                {
-                                    if (BondingBegin == DateTime.MinValue)
-                                    {
-                                        BondingBegin = DateTime.UtcNow;
-                                    }
-                                    else if ((BondingBegin + BondingDelay) <= DateTime.UtcNow)
-                                    {
-                                        IsBonded = true;
-                                        BondingBegin = DateTime.MinValue;
-                                        from.SendLocalizedMessage(1049666); // Your pet has bonded with you!
-                                    }
-                                }
-                                else if (Core.ML)
-                                {
-                                    from.SendLocalizedMessage(1075268);
-                                    // Your pet cannot form a bond with you until your animal taming ability has risen.
-                                }
-                            }
-                        }
-
-                        dropped.Delete();
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
+			dropped.Delete();
+			return true;
+		}
         #endregion
 
         public virtual bool OverrideBondingReqs()

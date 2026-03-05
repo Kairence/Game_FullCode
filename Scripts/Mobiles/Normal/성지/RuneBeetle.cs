@@ -16,33 +16,45 @@ namespace Server.Mobiles
             Name = "a rune beetle";
             Body = 244;
 
-            SetStr(401, 460);
-            SetDex(121, 170);
-            SetInt(376, 450);
+			/* [Rune Beetle - Holy City Dungeon / Original Wiki & Keep Formula]
+			   - 명성: 12,000 / 카르마: -12,000
+			   - 슬롯: 3 (마법/중독 특화 펫)
+			   - 가방 방어력: 17 (외골격 보정 +5)
+			   -------------------------------------------------- */
 
-            SetHits(301, 360);
+			// [Attributes] 공식 가중치 1.25 적용
+			this.SetStr(400, 500); 
+			this.SetHits(8500, 10000); // 3슬롯 중 최상위권 체력
+			this.SetDex(125, 175); 
+			this.SetInt(350, 450);    // 위키 고증: 매우 높은 지능 (강력한 마법)
 
-            SetDamage(15, 22);
+			// [Combat Options] 물리 100% (독 속성 공격은 스킬로 구현)
+			this.SetDamage(45, 80); 
+			this.SetAttackSpeed(2.2); 
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetDamageType(ResistanceType.Physical, 20);
-            SetDamageType(ResistanceType.Poison, 10);
-            SetDamageType(ResistanceType.Energy, 70);
+			// [Resistances] ★ 형님 지침 반영: 75%를 넘지 않는 상식적 저항
+			this.SetResistance(ResistanceType.Physical, 45, 60); // 유저 대미지 절반 이상 박힘
+			this.SetResistance(ResistanceType.Fire, 35, 50);     
+			this.SetResistance(ResistanceType.Cold, 35, 50);    
+			this.SetResistance(ResistanceType.Poison, 70, 75);  // ★ 독 저항은 컨셉상 높게 (75% 캡)
+			this.SetResistance(ResistanceType.Energy, 60, 70);   // 에너지 저항 (75% 미만 유지)
 
-            SetResistance(ResistanceType.Physical, 40, 65);
-            SetResistance(ResistanceType.Fire, 35, 50);
-            SetResistance(ResistanceType.Cold, 35, 50);
-            SetResistance(ResistanceType.Poison, 75, 95);
-            SetResistance(ResistanceType.Energy, 40, 60);
+			// [Skills] 강력한 마법과 독 기술
+			this.SetSkill(SkillName.Wrestling, 110.0, 125.0); 
+			this.SetSkill(SkillName.Tactics, 110.0, 125.0);
+			this.SetSkill(SkillName.MagicResist, 110.0, 125.0);
+			this.SetSkill(SkillName.Magery, 105.0, 120.0);    // 위키 고증: 상급 마법 사용
+			this.SetSkill(SkillName.Poisoning, 110.0, 125.0); // 위키 고증: 치명적 중독
 
-            SetSkill(SkillName.EvalInt, 100.1, 125.0);
-            SetSkill(SkillName.Magery, 100.1, 110.0);
-            SetSkill(SkillName.Poisoning, 120.1, 140.0);
-            SetSkill(SkillName.MagicResist, 95.1, 110.0);
-            SetSkill(SkillName.Tactics, 78.1, 93.0);
-            SetSkill(SkillName.Wrestling, 70.1, 77.5);
+			// [Misc]
+			this.Tamable = true; 
+			this.ControlSlots = 3; 
+			this.MinTameSkill = 150.1; // 스킬 200 서버 기준 고숙련 테이머용
+			this.VirtualArmor = 17;    // 공식: (12000/1000) + 5
 
-            Fame = 15000;
-            Karma = -15000;
+			this.Fame = 12000;
+			this.Karma = -12000;
 
             if (Utility.RandomDouble() < .25)
                 PackItem(Engines.Plants.Seed.RandomBonsaiSeed());

@@ -13,37 +13,45 @@ namespace Server.Mobiles
             Name = "a Revenant Lion";
             Body = 251;
 
-            SetStr(276, 325);
-            SetDex(156, 175);
-            SetInt(76, 105);
+			/* [Revenant Lion - Normal - Fame 17,500 / Weight 1.30]
+			   - 파록시스무스 던전의 상급 언데드 야수 / 일반 몬스터 공식
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 20 (명성/1000 + 3 보정)
+			   - 특이사항: 압도적인 물리 공격력과 빠른 추격 속도
+			   -------------------------------------------------- */
 
-            SetHits(251, 280);
+			// [Attributes] 역산된 Set 값 정밀 적용 (Hits 약 1.3만 대)
+			this.SetStr(615, 635); 
+			this.SetHits(13700, 14000); 
+			this.SetDex(140, 160); 
+			this.SetInt(140, 160);
 
-            SetDamage(18, 24);
+			// [Combat Options] 물리 40% / 냉기 30% / 에너지 30% (저주받은 발톱)
+			this.SetDamage(50, 85);
+			this.SetAttackSpeed(1.8); // 맹수다운 날카로운 공속
+			this.SetDamageType(ResistanceType.Physical, 40);
+			this.SetDamageType(ResistanceType.Cold, 30);
+			this.SetDamageType(ResistanceType.Energy, 30);
 
-            SetDamageType(ResistanceType.Physical, 30);
-            SetDamageType(ResistanceType.Cold, 30);
-            SetDamageType(ResistanceType.Poison, 10);
-            SetDamageType(ResistanceType.Energy, 30);
+			// [Resistances] 최고 저항 75 이하 준수 / 화염 약점 설정
+			this.SetResistance(ResistanceType.Physical, 55, 65); 
+			this.SetResistance(ResistanceType.Fire, 20, 30);     // ★ 확실한 약점 (불에 취약)
+			this.SetResistance(ResistanceType.Cold, 70, 75);    // 언데드의 한기 (Max 75)
+			this.SetResistance(ResistanceType.Poison, 70, 75);  // 부패 면역 (Max 75)
+			this.SetResistance(ResistanceType.Energy, 40, 50);   
 
-            SetResistance(ResistanceType.Physical, 40, 60);
-            SetResistance(ResistanceType.Fire, 20, 30);
-            SetResistance(ResistanceType.Cold, 50, 60);
-            SetResistance(ResistanceType.Poison, 55, 65);
-            SetResistance(ResistanceType.Energy, 40, 50);
+			// [Skills] 기본 115~125에 역산 보너스(20.8) 가산
+			// 최종 숙련도 약 135~145대의 정예 맹수
+			this.SetSkill(SkillName.Wrestling, 135.8, 145.8); 
+			this.SetSkill(SkillName.Tactics, 135.8, 145.8);
+			this.SetSkill(SkillName.Anatomy, 135.8, 145.8);
+			this.SetSkill(SkillName.MagicResist, 120.0, 135.0);
+			this.SetSkill(SkillName.Magery, 110.0, 125.0);       // 네크로맨틱 마력 보유
 
-            SetSkill(SkillName.EvalInt, 80.1, 90.0);
-            SetSkill(SkillName.Magery, 80.1, 90.0);
-            SetSkill(SkillName.Poisoning, 120.1, 130.0);
-            SetSkill(SkillName.MagicResist, 70.1, 90.0);
-            SetSkill(SkillName.Tactics, 60.1, 80.0);
-            SetSkill(SkillName.Wrestling, 80.1, 88.0);
-
-            Fame = 4000;
-            Karma = -4000;
-            PackNecroReg(6, 8);
-
-            PackBodyPartOrBones();
+			this.Tamable = false;
+			this.VirtualArmor = 20;
+			this.Fame = 17500;
+			this.Karma = -17500;
 
             SetWeaponAbility(WeaponAbility.BleedAttack);
         }

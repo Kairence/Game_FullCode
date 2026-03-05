@@ -17,29 +17,46 @@ namespace Server.Mobiles
             Name = "a rotworm";
             Body = 732;
 
-            SetStr(200, 300);
-            SetDex(80);
-            SetInt(15, 20);
+			/* [Rotworm - Normal - Fame 3,000 / Weight 1.18]
+			   - 파록시스무스 던전의 하급 청소부 / 일반 몬스터 공식
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 1 (명성/1000 - 2 보정)
+			   - 특이사항: 낮은 방어력이지만 끈질긴 체력과 독 저항
+			   -------------------------------------------------- */
 
-            SetHits(200, 250);
-            SetStam(50);
+			// [Attributes] 역산된 Set 값 정밀 적용
+			this.SetStr(40, 48); 
+			this.SetHits(980, 1000); 
+			this.SetDex(50, 60); 
+			this.SetInt(15, 25);
 
-            SetDamage(1, 5);
+			// [Combat Options] 물리 50% / 독 50% (오염된 점액 타격)
+			this.SetDamage(12, 22);
+			this.SetAttackSpeed(2.5); 
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Poison, 50);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] 최고 저항 75 이하 준수 / 냉기 약점 설정
+			this.SetResistance(ResistanceType.Physical, 15, 25); 
+			this.SetResistance(ResistanceType.Fire, 20, 30);      
+			this.SetResistance(ResistanceType.Cold, 5, 15);     // ★ 확실한 약점 (냉기에 취약)
+			this.SetResistance(ResistanceType.Poison, 70, 75);  // 독성 내성 특화
+			this.SetResistance(ResistanceType.Energy, 20, 30);   
 
-            SetResistance(ResistanceType.Physical, 35, 45);
-            SetResistance(ResistanceType.Fire, 30, 40);
-            SetResistance(ResistanceType.Cold, 25, 35);
-            SetResistance(ResistanceType.Poison, 65, 75);
-            SetResistance(ResistanceType.Energy, 25, 35);
+			// [Skills] 기본 85~95에 역산 보너스(1.5) 가산
+			this.SetSkill(SkillName.Wrestling, 86.5, 96.5); 
+			this.SetSkill(SkillName.Tactics, 86.5, 96.5);
+			this.SetSkill(SkillName.Anatomy, 86.5, 96.5);
+			this.SetSkill(SkillName.MagicResist, 65.0, 80.0);
+			this.SetSkill(SkillName.Poisoning, 80.0, 100.0);
 
-            SetSkill(SkillName.MagicResist, 25.0);
-            SetSkill(SkillName.Tactics, 25.0);
-            SetSkill(SkillName.Wrestling, 50.0);
-
-            Fame = 500;
-            Karma = -500;
+			// [Misc]
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 75.0; // 기초 테이밍 펫
+			this.VirtualArmor = 1;
+			this.Fame = 3000;
+			this.Karma = -3000;
 
             PackBodyPartOrBones();
 

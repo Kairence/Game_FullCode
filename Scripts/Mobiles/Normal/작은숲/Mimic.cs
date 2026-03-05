@@ -13,32 +13,42 @@ namespace Server.Mobiles
             this.Name = "a mimic";
             this.Body = 729;
 
-            this.SetStr(281);
-            this.SetDex(140);
-            this.SetInt(261);
+			/* [Mimic - Normal - Fame 15,000 / Weight 1.25]
+			   - 작은 숲 던전 기습형 몬스터 / 일반 몬스터 공식
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 20 (기본 15 + 상자 보정 5)
+			   -------------------------------------------------- */
 
-            this.SetHits(543);
+			// [Attributes] 역산된 Set 값 정밀 적용
+			this.SetStr(410, 435); 
+			this.SetHits(9200, 9500); 
+			this.SetDex(80, 90);
+			this.SetInt(80, 90);
 
-            this.SetDamage(13, 20);
+			// [Combat Options] 물리 60% / 독 40% (깨물기 및 중독)
+			this.SetDamage(40, 70);
+			this.SetAttackSpeed(2.2); // 기습적으로 매우 빠른 공격
+			this.SetDamageType(ResistanceType.Physical, 60);
+			this.SetDamageType(ResistanceType.Poison, 40);
 
-            this.SetDamageType(ResistanceType.Physical, 20);
-            this.SetDamageType(ResistanceType.Fire, 20);
-            this.SetDamageType(ResistanceType.Cold, 20);
-            this.SetDamageType(ResistanceType.Poison, 20);
-            this.SetDamageType(ResistanceType.Energy, 20);
+			// [Resistances] 최고 저항 75 이하 준수 / 화염 약점 설정
+			this.SetResistance(ResistanceType.Physical, 60, 75); // 단단한 외피
+			this.SetResistance(ResistanceType.Fire, 20, 30);     // ★ 명확한 약점 (불타는 상자)
+			this.SetResistance(ResistanceType.Cold, 45, 55);    
+			this.SetResistance(ResistanceType.Poison, 60, 75); 
+			this.SetResistance(ResistanceType.Energy, 40, 50);   
 
-            this.SetResistance(ResistanceType.Physical, 63);
-            this.SetResistance(ResistanceType.Fire, 43);
-            this.SetResistance(ResistanceType.Cold, 36);
-            this.SetResistance(ResistanceType.Poison, 37);
-            this.SetResistance(ResistanceType.Energy, 42);
+			// [Skills] 기본 110~120에 역산 보너스(14) 가산
+			this.SetSkill(SkillName.Wrestling, 124.0, 134.0); 
+			this.SetSkill(SkillName.Tactics, 124.0, 134.0);
+			this.SetSkill(SkillName.Anatomy, 124.0, 134.0);
+			this.SetSkill(SkillName.MagicResist, 110.0, 125.0);
+			this.SetSkill(SkillName.Poisoning, 120.0, 130.0); // 상자의 독니
 
-            this.SetSkill(SkillName.EvalInt, 100.0);
-            this.SetSkill(SkillName.Magery, 107.5);
-            this.SetSkill(SkillName.Meditation, 100.0);
-            this.SetSkill(SkillName.MagicResist, 126.5);
-            this.SetSkill(SkillName.Tactics, 98.5);
-            this.SetSkill(SkillName.Wrestling, 92.2);
+			this.Tamable = false;
+			this.VirtualArmor = 20;
+			this.Fame = 15000;
+			this.Karma = -15000;
 
             this.PackReg(20);
         }

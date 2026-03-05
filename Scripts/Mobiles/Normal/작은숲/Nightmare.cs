@@ -18,38 +18,47 @@ namespace Server.Mobiles
         {
             BaseSoundID = Core.AOS ? 0xA8 : 0x16A;
 
-            SetStr(496, 525);
-            SetDex(86, 105);
-            SetInt(86, 125);
+			/* [Nightmare - Normal - Fame 22,000 / Weight 1.25]
+			   - 작은 숲 던전 심연의 기사 / 일반 몬스터 공식 (상급 사양)
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 27 (기본 22 + 보정 5)
+			   -------------------------------------------------- */
 
-            SetHits(298, 315);
+			// [Attributes] 역산된 Set 값 정밀 적용
+			this.SetStr(700, 730); 
+			this.SetHits(15700, 16000); 
+			this.SetDex(140, 150);
+			this.SetInt(140, 150);
 
-            SetDamage(16, 22);
+			// [Combat Options] 물리 40% / 화염 40% / 에너지 20%
+			this.SetDamage(55, 85);
+			this.SetAttackSpeed(2.0); // 매우 신속한 공격
+			this.SetDamageType(ResistanceType.Physical, 40);
+			this.SetDamageType(ResistanceType.Fire, 40);
+			this.SetDamageType(ResistanceType.Energy, 20);
 
-            SetDamageType(ResistanceType.Physical, 40);
-            SetDamageType(ResistanceType.Fire, 40);
-            SetDamageType(ResistanceType.Energy, 20);
+			// [Resistances] 최고 저항 75 이하 준수 / 에너지 약점 설정
+			this.SetResistance(ResistanceType.Physical, 60, 75); 
+			this.SetResistance(ResistanceType.Fire, 60, 75);      
+			this.SetResistance(ResistanceType.Cold, 40, 50);    
+			this.SetResistance(ResistanceType.Poison, 50, 60); 
+			this.SetResistance(ResistanceType.Energy, 30, 40);   // ★ 빛과 번개(에너지)에 취약
 
-            SetResistance(ResistanceType.Physical, 55, 65);
-            SetResistance(ResistanceType.Fire, 30, 40);
-            SetResistance(ResistanceType.Cold, 30, 40);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 20, 30);
+			// [Skills] 기본 115~125에 역산 보너스(23.8) 가산
+			this.SetSkill(SkillName.Wrestling, 138.0, 148.0); 
+			this.SetSkill(SkillName.Tactics, 138.0, 148.0);
+			this.SetSkill(SkillName.Anatomy, 138.0, 148.0);
+			this.SetSkill(SkillName.Magery, 130.0, 145.0);       // 강력한 마법 구사
+			this.SetSkill(SkillName.EvalInt, 130.0, 145.0);
+			this.SetSkill(SkillName.MagicResist, 130.0, 145.0);
 
-            SetSkill(SkillName.EvalInt, 10.4, 50.0);
-            SetSkill(SkillName.Magery, 10.4, 50.0);
-            SetSkill(SkillName.MagicResist, 85.3, 100.0);
-            SetSkill(SkillName.Tactics, 97.6, 100.0);
-            SetSkill(SkillName.Wrestling, 80.5, 92.5);
-
-            Fame = 14000;
-            Karma = -14000;
-
-            VirtualArmor = 60;
-
-            Tamable = true;
-            ControlSlots = 19;
-            MinTameSkill = 95.1;
+			// [Misc]
+			this.Tamable = true; 
+			this.ControlSlots = 2; // 200 숙련도 시대에도 인기 있는 2슬롯 펫
+			this.MinTameSkill = 118.0; 
+			this.VirtualArmor = 27;
+			this.Fame = 22000;
+			this.Karma = -22000;
 
 			switch (Utility.Random(12))
             {

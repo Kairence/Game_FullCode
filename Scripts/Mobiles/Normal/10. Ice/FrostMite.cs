@@ -17,36 +17,46 @@ namespace Server.Mobiles
 			if( 0.000001 > Utility.RandomDouble() )
 				Hue = 1152;
 
-            SetStr(1017, 2222);
-            SetDex(164, 234);
-            SetInt(283, 358);
+            /* Frost Mite - Fame 5,000 / Karma -5,000 */
+			/* [HP Calculation]
+			   - Target HP: ~12,000
+			   - Fame Bonus (5,000): ~11,250
+			   - SetHits Required: 750 (Target - Bonus)
+			*/
+			this.SetStr(250, 350);       
+			this.SetDex(200, 300);       // 매우 빠른 기동력
+			this.SetInt(50, 100);        
 
-            SetHits(800, 1000);
+			// [Hits] 최종 약 11,000 ~ 13,000 타겟
+			this.SetHits(250, 1250); 
+			this.SetStam(200, 300);      
+			this.SetMana(50, 100);       
 
-			SetAttackSpeed( 10.0 );
-            SetDamage(21, 180);
+			this.SetAttackSpeed(2.0);    // 민첩한 공격 속도
+			this.SetDamage(12, 22);      
 
-            SetDamageType(ResistanceType.Physical, 0);
-            SetDamageType(ResistanceType.Cold, 100);
+			this.SetDamageType(ResistanceType.Cold, 100); // 100% 냉기 공격
 
-            SetResistance(ResistanceType.Physical, 60, 70);
-            SetResistance(ResistanceType.Fire, 15, 25);
-            SetResistance(ResistanceType.Cold, 90, 100);
-            SetResistance(ResistanceType.Poison, 50, 70);
-            SetResistance(ResistanceType.Energy, 40, 45);
+			// [Resistance] 저항 캡 75% 준수 / 화염에 극도로 취약
+			this.SetResistance(ResistanceType.Physical, 35, 45);
+			this.SetResistance(ResistanceType.Fire, 5, 15);      // 화염 약점
+			this.SetResistance(ResistanceType.Cold, 70, 75);     // 냉기 저항 상한 (Max 75%)
+			this.SetResistance(ResistanceType.Poison, 30, 40);
+			this.SetResistance(ResistanceType.Energy, 30, 40);
 
-            SetSkill(SkillName.MagicResist, 50.0, 85.0);
-            SetSkill(SkillName.Tactics, 70.0, 105.0);
-            SetSkill(SkillName.Wrestling, 70.0, 110.0);
-            SetSkill(SkillName.DetectHidden, 60.0, 80.0);
-            SetSkill(SkillName.Focus, 100.0, 115.0);
+			this.SetSkill(SkillName.Wrestling, 85.0, 100.0);
+			this.SetSkill(SkillName.Tactics, 85.0, 100.0);
+			this.SetSkill(SkillName.MagicResist, 80.0, 95.0);
 
-            Fame = 3500;
-            Karma = -3500;
+			this.VirtualArmor = 8;       // 결정 껍질이지만 타격감을 위해 낮춤
 
-            Tamable = true;
-            ControlSlots = 3;
-            MinTameSkill = 122.0;
+			// [Taming Settings]
+			this.Tamable = true;         
+			this.ControlSlots = 2;       // 컨트롤 슬롯: 2 (낮은 슬롯 소모로 범용성 높음)
+			this.MinTameSkill = 90.0;    // 최소 테이밍 스킬 요구치
+
+			this.Fame = 5000;           
+			this.Karma = -5000;
         }
 
         public override int GetAngerSound()

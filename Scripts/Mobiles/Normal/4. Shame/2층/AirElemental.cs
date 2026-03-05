@@ -15,35 +15,37 @@ namespace Server.Mobiles
             Hue = 0x4001;
             BaseSoundID = 655;
 
-            this.SetStr(1236, 1345);
-            this.SetDex(2136, 2145);
-            this.SetInt(1321, 1345);
+            /* Air Elemental - Fame 6,000 / Fast Spirit */
+			this.SetStr(200, 300);       
+			this.SetDex(350, 450);       // 민첩 가중치
+			this.SetInt(300, 450);       
 
-            this.SetHits(1807, 2413);
-			SetStam(1300, 1400);
-			SetMana(1000);
+			// [Hits] 최종 약 14,000 ~ 16,000 타겟
+			this.SetHits(150, 2150); 
+			this.SetStam(350, 450);      
+			this.SetMana(300, 450);      
 
-			SetAttackSpeed( 2.5 );
-            SetDamage(11, 111);
+			this.SetAttackSpeed(1.8);    // 매우 빠른 공속
+			this.SetDamage(12, 18);      
 
-            SetDamageType(ResistanceType.Physical, 20);
-            SetDamageType(ResistanceType.Cold, 40);
-            SetDamageType(ResistanceType.Energy, 40);
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Energy, 50);
 
-            SetResistance(ResistanceType.Physical, 65, 75);
-            SetResistance(ResistanceType.Fire, 15, 25);
-            SetResistance(ResistanceType.Cold, 10, 20);
-            SetResistance(ResistanceType.Poison, 80, 90);
-            SetResistance(ResistanceType.Energy, 105, 125);
+			this.SetResistance(ResistanceType.Physical, 30, 40);
+			this.SetResistance(ResistanceType.Fire, 15, 25);
+			this.SetResistance(ResistanceType.Cold, 15, 25);
+			this.SetResistance(ResistanceType.Poison, 20, 30);
+			this.SetResistance(ResistanceType.Energy, 60, 75);
 
-            SetSkill(SkillName.EvalInt, 90.1, 95.0);
-            SetSkill(SkillName.Magery, 90.1, 95.0);
-            SetSkill(SkillName.MagicResist, 190.1, 195.0);
+			this.SetSkill(SkillName.Wrestling, 80.0, 95.0);
+			this.SetSkill(SkillName.Tactics, 80.0, 95.0);
+			this.SetSkill(SkillName.Magery, 80.0, 90.0);
 
-            Fame = 8500;
-            Karma = -8500;
+			this.VirtualArmor = 15;      
+			this.Tamable = false;
 
-            this.VirtualArmor = 100;
+			this.Fame = 6000;           
+			this.Karma = -6000;
 
             //this.PackItem(new SulfurousAsh(4));
 

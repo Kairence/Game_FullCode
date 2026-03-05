@@ -13,29 +13,43 @@ namespace Server.Mobiles
             this.Name = "a gaman";
             this.Body = 248;
 
-            this.SetStr(146, 175);
-            this.SetDex(111, 150);
-            this.SetInt(46, 60);
+			/* [Gaman - Google Keep Formula: Starter Balance]
+			   - 명성: 1,500 / 카르마: -1,500
+			   - 슬롯: 1 (초보자용 1슬롯 펫)
+			   - 저항: 저레벨 유저의 대미지 체감을 위해 20-30%대로 유지
+			   -------------------------------------------------- */
 
-            this.SetHits(131, 160);
-            this.SetMana(0);
+			// [Attributes] 가중치 1.10 적용
+			this.SetStr(150, 200); 
+			this.SetHits(500, 750); // 명성 대비 든든한 체력 (맷집 컨셉)
+			this.SetDex(40, 60); 
+			this.SetInt(30, 50);
 
-            this.SetDamage(6, 11);
+			// [Combat Options] 
+			this.SetDamage(12, 22); 
+			this.SetAttackSpeed(3.0);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] ★ 형님 말씀대로 저항은 낮게, 사냥은 즐겁게
+			this.SetResistance(ResistanceType.Physical, 25, 35); // 뎀감 30% 내외
+			this.SetResistance(ResistanceType.Fire, 15, 25);     
+			this.SetResistance(ResistanceType.Cold, 10, 20);    
+			this.SetResistance(ResistanceType.Poison, 10, 20); 
+			this.SetResistance(ResistanceType.Energy, 10, 20);   
 
-            this.SetResistance(ResistanceType.Physical, 50, 70);
-            this.SetResistance(ResistanceType.Fire, 30, 50);
-            this.SetResistance(ResistanceType.Cold, 30, 50);
-            this.SetResistance(ResistanceType.Poison, 40, 60);
-            this.SetResistance(ResistanceType.Energy, 30, 50);
+			// [Skills] 입문용 스킬셋
+			this.SetSkill(SkillName.Wrestling, 55.0, 70.0); 
+			this.SetSkill(SkillName.Tactics, 55.0, 70.0);
+			this.SetSkill(SkillName.MagicResist, 35.0, 50.0);
 
-            this.Fame = 2000;
-            this.Karma = -2000;
+			// [Misc]
+			this.Tamable = true; 
+			this.ControlSlots = 1; 
+			this.MinTameSkill = 65.1; // 스킬 200 서버의 기초 테이밍 펫
+			this.VirtualArmor = 3;
 
-            this.Tamable = true;
-            this.ControlSlots = 13;
-            this.MinTameSkill = 68.7;
+			this.Fame = 1500;
+			this.Karma = -1500;
         }
 
         public Gaman(Serial serial)

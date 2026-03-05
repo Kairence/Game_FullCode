@@ -13,35 +13,37 @@ namespace Server.Mobiles
             this.Body = 73;
             this.BaseSoundID = 402;
 
-            this.SetStr(3400, 4500);
-            this.SetDex(1050, 2100);
-            this.SetInt(1050, 2100);
+            /* Stone Harpy - Fame 9,000 */
+			this.Fame = 9000;
+			this.Karma = -9000;
 
-            this.SetHits(4350, 4500);
-			SetStam(3450, 4100);
-            this.SetMana(1000, 2000);
+			this.SetStr(300, 400);    // 최종 Str 약 1,700
+			this.SetDex(100, 120);     
+			this.SetInt(50, 80);      
 
-			SetAttackSpeed( 15.0 );
+			// 최종 Hits 약 19,000 (보너스 +18,245 포함)
+			this.SetHits(700, 800);    
+			this.SetStam(100, 120);
 
-            this.SetDamage(410, 600);
+			this.SetAttackSpeed(2.4);  // 묵직한 타격
+			SetDamage(35, 50);        
 
-            this.SetDamageType(ResistanceType.Physical, 75);
-            this.SetDamageType(ResistanceType.Poison, 25);
+			// 스킬: 기초 150 + 보너스 28.8 = 최종 178.8
+			this.SetSkill(SkillName.Wrestling, 150.0); 
+			this.SetSkill(SkillName.Tactics, 150.0);
+			this.SetSkill(SkillName.Anatomy, 120.0);
 
-            this.SetResistance(ResistanceType.Physical, 80, 100);
-            this.SetResistance(ResistanceType.Fire, 40, 60);
-            this.SetResistance(ResistanceType.Cold, 10, 20);
-            this.SetResistance(ResistanceType.Poison, 80, 100);
-            this.SetResistance(ResistanceType.Energy, 20, 30);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetSkill(SkillName.MagicResist, 95.1, 99.5);
-            this.SetSkill(SkillName.Tactics, 95.1, 100.0);
-            this.SetSkill(SkillName.Wrestling, 95.1, 100.0);
+			// 저항: 스톤 계열답게 물리 저항은 양수 유지, 속성 마법에 취약
+			this.SetResistance(ResistanceType.Physical, 35, 50);
+			this.SetResistance(ResistanceType.Fire, -30, -20);
+			this.SetResistance(ResistanceType.Energy, -50, -40);
+			this.VirtualArmor = 25;
 
-            this.Fame = 11500;
-            this.Karma = -11500;
-
-            this.VirtualArmor = 35;
+			this.Tamable = false;
+			
+			SetSpecialAbility(SpecialAbility.LifeDrain);
         }
 
         public StoneHarpy(Serial serial)

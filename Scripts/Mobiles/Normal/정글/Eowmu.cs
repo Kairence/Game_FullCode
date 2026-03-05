@@ -56,33 +56,47 @@ namespace Server.Mobiles
         {
             BaseSoundID = 0xA8;
 
-            SetStr(400);
-            SetDex(125);
-            SetInt(50, 55);
+			/* [Eowmu - Normal - Fame 24,000 / Karma +24,000 / Weight 1.30]
+			   - 정글 던전의 전설적 거대 공작 / 최상급 탈것
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 29 (기본 24 + 보정 5)
+			   - 테이밍 가능: 5슬롯 (종결급 전투 탈것)
+			   -------------------------------------------------- */
 
-            SetHits(240);
-            SetMana(0);
+			// [Attributes] 역산된 Set 값 정밀 적용
+			this.SetStr(950, 980); 
+			this.SetHits(21400, 21700); 
+			this.SetDex(190, 200);
+			this.SetInt(190, 200);
 
-            SetDamage(1, 4);
+			// [Combat Options] 물리 20% / 냉기 40% / 에너지 40% (신비로운 깃털 타격)
+			this.SetDamage(60, 95);
+			this.SetAttackSpeed(2.0); // 공작다운 우아하고 빠른 연타
+			this.SetDamageType(ResistanceType.Physical, 20);
+			this.SetDamageType(ResistanceType.Cold, 40);
+			this.SetDamageType(ResistanceType.Energy, 40);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] 최고 저항 75 이하 준수 / 화염 약점 설정
+			this.SetResistance(ResistanceType.Physical, 65, 75); 
+			this.SetResistance(ResistanceType.Fire, 35, 45);      // ★ 확실한 약점 (깃털 생물)
+			this.SetResistance(ResistanceType.Cold, 65, 75);    
+			this.SetResistance(ResistanceType.Poison, 55, 65); 
+			this.SetResistance(ResistanceType.Energy, 60, 70);   
 
-            SetResistance(ResistanceType.Physical, 40, 50);
-            SetResistance(ResistanceType.Fire, 30, 40);
-            SetResistance(ResistanceType.Cold, 30, 40);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 30, 40);
+			// [Skills] 기본 120~130에 역산 보너스(32.4) 가산
+			this.SetSkill(SkillName.Wrestling, 152.0, 162.0); 
+			this.SetSkill(SkillName.Tactics, 152.0, 162.0);
+			this.SetSkill(SkillName.Anatomy, 152.0, 162.0);
+			this.SetSkill(SkillName.MagicResist, 140.0, 155.0);
+			this.SetSkill(SkillName.Magery, 130.0, 145.0);       // 신비로운 마법 구사
 
-            SetSkill(SkillName.MagicResist, 25.0, 30.0);
-            SetSkill(SkillName.Tactics, 30.0, 40.0);
-            SetSkill(SkillName.Wrestling, 30.0, 35.0);
-
-            Fame = 300;
-            Karma = 300;
-
-            Tamable = true;
-            ControlSlots = 6;
-            MinTameSkill = 30.0;
+			// [Misc]
+			this.Tamable = true; 
+			this.ControlSlots = 5; // 200 숙련도 시대의 최강 5슬롯 탈것
+			this.MinTameSkill = 165.5; 
+			this.VirtualArmor = 29;
+			this.Fame = 24000;
+			this.Karma = 24000; // 영물 (선 성향)
         }
 
         public Eowmu(Serial serial)

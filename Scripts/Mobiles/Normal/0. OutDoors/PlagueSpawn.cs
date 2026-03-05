@@ -52,24 +52,24 @@ namespace Server.Mobiles
                     break;
             }
 
-            this.SetStr(201, 300);
-            this.SetDex(80);
-            this.SetInt(16, 20);
+            this.SetStr(82, 132); // 최종 Str 700~750
+			this.SetDex(127, 177); // 최종 Dex ~350
 
-            this.SetHits(121, 180);
+			this.SetHits(1134, 1634); // 최종 Hits 4,000~4,500
+			this.SetStam(77, 127); 
+			this.SetMana(0);
 
-            this.SetDamage(22, 37);
+			SetAttackSpeed(2.5);
+			SetDamage(15, 25); 
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Poison, 100);
 
-            this.SetSkill(SkillName.MagicResist, 25.0);
-            this.SetSkill(SkillName.Tactics, 25.0);
-            this.SetSkill(SkillName.Wrestling, 50.0);
+			this.SetResistance(ResistanceType.Physical, 20, 30);
+			this.SetResistance(ResistanceType.Poison, 45, 50);
 
-            this.Fame = 1000;
-            this.Karma = -1000;
-
-            this.VirtualArmor = 2;
+			this.Fame = 1500;
+			this.Karma = -1500;
+			this.VirtualArmor = 3;
         }
 
         public PlagueSpawn(Serial serial)

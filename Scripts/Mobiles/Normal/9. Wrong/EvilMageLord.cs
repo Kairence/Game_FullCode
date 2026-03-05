@@ -33,37 +33,42 @@ namespace Server.Mobiles
             Hue = Race.RandomSkinHue();
 			
 			
-            SetStr(2381, 2505);
-            SetDex(2191, 2215);
-            SetInt(3526, 4550);
+            /* Evil Mage Lord - Fame 15,000 / Karma -15,000 */
+			/* [HP Calculation]
+			   - Target HP: ~60,000
+			   - Fame Bonus (15,000): ~37,200
+			   - SetHits Required: 22,800 (Target - Bonus)
+			*/
+			this.SetStr(300, 450);       
+			this.SetDex(150, 250);       
+			this.SetInt(900, 1200);      
 
-            SetHits(5090, 5263);
-			SetStam(1300, 1400);
-			SetMana(4100, 5110);
+			// [Hits] 최종 약 55,000 ~ 65,000 타겟
+			this.SetHits(17800, 27800); 
+			this.SetStam(150, 250);      
+			this.SetMana(900, 1200);     
 
-			SetAttackSpeed( 50.0 );
+			this.SetAttackSpeed(2.4);    
+			this.SetDamage(15, 25);      
 
-            SetDamage(150, 310);
+			this.SetDamageType(ResistanceType.Energy, 100);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetResistance(ResistanceType.Physical, 40, 50);
+			this.SetResistance(ResistanceType.Fire, 45, 60);
+			this.SetResistance(ResistanceType.Cold, 45, 60);
+			this.SetResistance(ResistanceType.Poison, 45, 60);
+			this.SetResistance(ResistanceType.Energy, 65, 75); // Max 75%
 
-            SetResistance(ResistanceType.Physical, 35, 40);
-            SetResistance(ResistanceType.Fire, 30, 40);
-            SetResistance(ResistanceType.Cold, 30, 40);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 30, 40);
+			this.SetSkill(SkillName.Magery, 115.0, 130.0);
+			this.SetSkill(SkillName.EvalInt, 115.0, 130.0);
+			this.SetSkill(SkillName.Meditation, 100.0, 120.0);
+			this.SetSkill(SkillName.MagicResist, 115.0, 130.0);
 
-            SetSkill(SkillName.EvalInt, 180.2, 250.0);
-            SetSkill(SkillName.Magery, 195.1, 250.0);
-            SetSkill(SkillName.Meditation, 177.5, 200.0);
-            SetSkill(SkillName.MagicResist, 177.5, 250.0);
-            SetSkill(SkillName.Tactics, 195.0, 227.5);
-            SetSkill(SkillName.Wrestling, 120.3, 130.0);
+			this.VirtualArmor = 8;       
+			this.Tamable = false;
 
-            Fame = 14000;
-            Karma = -14000;
-
-            VirtualArmor = 22;
+			this.Fame = 15000;           
+			this.Karma = -15000;
         }
 
         public override int GetDeathSound()

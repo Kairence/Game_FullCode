@@ -13,44 +13,45 @@ namespace Server.Mobiles
             Body = 106;
             BaseSoundID = 362;
 
-            SetStr(6898, 7030);
-            SetDex(6800, 7200);
-            SetInt(7488, 7620);
+            /* Shadow Wyrm - Fame 25,000 / Karma -25,000 */
+			/* [HP Calculation]
+			   - Target HP: ~155,000
+			   - Fame Bonus (25,000): ~76,850
+			   - SetHits Required: 78,150 (Target - Bonus)
+			*/
+			this.SetStr(1000, 1200);     
+			this.SetDex(220, 320);       
+			this.SetInt(950, 1250);      
 
-            SetHits(17558, 18599);
-			SetStam( 10000, 12000 );
-			SetMana( 10000, 11500 );
+			// [Hits] 명성 보너스 포함 최종 약 150,000 ~ 160,000 타겟
+			this.SetHits(73150, 83150); 
+			this.SetStam(220, 320);      
+			this.SetMana(950, 1250);      
 
-			SetAttackSpeed( 1.0 );   
-            SetDamage(40, 120);
+			this.SetAttackSpeed(1.9);    
+			this.SetDamage(55, 85);      
 
-            SetDamageType(ResistanceType.Physical, 75);
-            SetDamageType(ResistanceType.Cold, 25);
+			this.SetDamageType(ResistanceType.Energy, 50);
+			this.SetDamageType(ResistanceType.Cold, 50);
 
-            SetResistance(ResistanceType.Physical, 65, 75);
-            SetResistance(ResistanceType.Fire, 50, 60);
-            SetResistance(ResistanceType.Cold, 45, 55);
-            SetResistance(ResistanceType.Poison, 20, 30);
-            SetResistance(ResistanceType.Energy, 50, 60);
+			this.SetResistance(ResistanceType.Physical, 65, 75); 
+			this.SetResistance(ResistanceType.Fire, 55, 70);     
+			this.SetResistance(ResistanceType.Cold, 75, 75);     
+			this.SetResistance(ResistanceType.Energy, 75, 75);
 
-            SetSkill(SkillName.EvalInt, 280.1, 300.0);
-            SetSkill(SkillName.Magery, 280.1, 300.0);
-            SetSkill(SkillName.Meditation, 252.5, 275.0);
-            SetSkill(SkillName.MagicResist, 300.3, 330.0);
-            SetSkill(SkillName.Tactics, 297.6, 300.0);
-            SetSkill(SkillName.Wrestling, 297.6, 300.0);
-            SetSkill(SkillName.DetectHidden, 290.0, 300.0);
-            SetSkill(SkillName.Necromancy, 280.0, 290.0);
-            SetSkill(SkillName.SpiritSpeak, 200.0, 305.0);
+			this.SetSkill(SkillName.Magery, 130.0, 150.0);
+			this.SetSkill(SkillName.EvalInt, 130.0, 150.0);
+			this.SetSkill(SkillName.MagicResist, 140.0, 160.0);
 
-            Fame = 25000;
-            Karma = -25000;
+			this.VirtualArmor = 15;      
 
-            VirtualArmor = 35;
+			// [Taming Settings]
+			this.Tamable = true;         
+			this.ControlSlots = 5;       
+			this.MinTameSkill = 190.0;   
 
-            Tamable = true;
-            ControlSlots = 3;
-            MinTameSkill = 176.0;
+			this.Fame = 25000;           
+			this.Karma = -25000;
 
             SetSpecialAbility(SpecialAbility.DragonBreath);
         }

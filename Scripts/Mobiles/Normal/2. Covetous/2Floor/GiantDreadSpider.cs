@@ -11,37 +11,56 @@ namespace Server.Mobiles
         public GiantDreadSpider()
             : base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
         {
-            Name = "Boss a giant dread spider";
+            Name = "a giant dread spider";
             Body = 173;
 
             BaseSoundID = 389;
 
-            SetStr(6550, 8500);
-            SetDex(7200, 9250);
-            SetInt(3650, 5900);
-
-            SetHits(55000, 60000);
-            SetStam(25000, 30000);
-			SetMana(14000, 20000);
-            SetDamage(1000, 2900);
-
-			SetAttackSpeed( 10.0 );
-
 			Boss = true;
-			
-            SetDamageType(ResistanceType.Physical, 50);
-            SetDamageType(ResistanceType.Poison, 50);
 
-            SetResistance(ResistanceType.Physical, 65, 90);
-            SetResistance(ResistanceType.Fire, 10, 20);
-            SetResistance(ResistanceType.Cold, 10, 20);
-            SetResistance(ResistanceType.Poison, 50);
-            SetResistance(ResistanceType.Energy, 10, 20);
+            /* [Hythloth Level 2 Boss - Giant Dread Spider - Fame 15,000 / Weight 1.28]
+			   - 컨셉: 초고속 맹독 거미 (기동성 특화)
+			   - VirtualArmor: (15,000/1000) - 2 = 13 (부드러운 외피 보정)
+			   - 편차 수정: 체력 5만 이상 룰 적용 (편차 2,000 이내)
+			   -------------------------------------------------- */
 
-            Fame = 15000;
-            Karma = -15000;
-			
-            VirtualArmor = 25;
+			// 최종 Str 약 10,800
+			this.SetStr(8900, 9300); 
+
+			// 최종 Hits 약 213,000 (민맥 편차 2,000 고정)
+			this.SetHits(178500, 180500); 
+
+			// 최종 Dex/Int 약 2,150 (순식간에 거리를 좁히는 속도)
+			this.SetDex(1750, 1850);
+			this.SetInt(1750, 1850);
+
+			// 최종 Stam/Mana 약 2,270 (끊임없는 거미줄과 공격)
+			this.SetStam(1850, 1950);
+			this.SetMana(1850, 1950);
+
+			// [Combat Options]
+			this.SetDamage(60, 90);
+			this.SetAttackSpeed(1.0); // 매우 빠른 공속 (거미의 연타)
+
+			// [Resistances] 최고 저항 75 이하 엄격 준수
+			this.SetResistance(ResistanceType.Physical, 45, 55);
+			this.SetResistance(ResistanceType.Fire, 30, 40);      // 거미줄과 털은 불에 약함
+			this.SetResistance(ResistanceType.Cold, 45, 55);
+			this.SetResistance(ResistanceType.Poison, 75);       // 독 면역 (Max 75)
+			this.SetResistance(ResistanceType.Energy, 40, 50);
+
+			// [Skills] 최종 143.8 부근
+			this.SetSkill(SkillName.Wrestling, 85.0, 90.0);
+			this.SetSkill(SkillName.Tactics, 85.0, 90.0);
+			this.SetSkill(SkillName.Anatomy, 85.0, 90.0);
+			this.SetSkill(SkillName.Poisoning, 100.0, 120.0);    // 독 거미 특화
+			this.SetSkill(SkillName.MagicResist, 90.0, 100.0);
+
+			// 가방 방어력: (15,000/1000) - 2 = 13
+			this.VirtualArmor = 13;
+
+			this.Fame = 15000;
+			this.Karma = -15000;
 			m_Word = DateTime.Now;
 			
         }

@@ -20,40 +20,49 @@ namespace Server.Mobiles
 
             //Hue = Utility.RandomMinMax(1319, 1327);
 
-            SetStr(6100, 6200);
-            SetDex(4130, 4160);
-            SetInt(5150, 5190);
+            /* Cold Drake - Fame 10,000 / Karma -10,000 */
+			/* [HP Calculation]
+			   - Target HP: ~35,000
+			   - Fame Bonus (10,000): ~24,150
+			   - SetHits Required: 10,850 (Target - Bonus)
+			*/
+			this.SetStr(500, 650);       
+			this.SetDex(180, 280);       
+			this.SetInt(350, 500);       
 
-            SetHits(11450, 12500);
-			SetStam(8000, 10000);
-			SetMana(4000, 5000);
-			
-			SetAttackSpeed( 10.0 );
-            SetDamage(617, 800);
+			// [Hits] 최종 약 32,000 ~ 38,000 타겟
+			this.SetHits(7850, 13850); 
+			this.SetStam(180, 280);      
+			this.SetMana(350, 500);      
 
-            SetDamageType(ResistanceType.Physical, 50);
-            SetDamageType(ResistanceType.Cold, 50);
+			this.SetAttackSpeed(2.2);    // 드래곤보다 빠른 공속
+			this.SetDamage(20, 35);      
 
-            SetResistance(ResistanceType.Physical, 50, 65);
-            SetResistance(ResistanceType.Fire, 30, 40);
-            SetResistance(ResistanceType.Cold, 75, 90);
-            SetResistance(ResistanceType.Poison, 40, 50);
-            SetResistance(ResistanceType.Energy, 40, 50);
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Cold, 50);
 
-            SetSkill(SkillName.MagicResist, 95.0, 110.0);
-            SetSkill(SkillName.Tactics, 115.0, 140.0);
-            SetSkill(SkillName.Wrestling, 115.0, 126.0);
-            SetSkill(SkillName.Parry, 70.0, 80.0);
-            SetSkill(SkillName.DetectHidden, 40.0, 50.0);
+			// [Resistance] 냉기 면역 수준, 화염에 매우 취약
+			this.SetResistance(ResistanceType.Physical, 45, 55);
+			this.SetResistance(ResistanceType.Fire, 10, 25);     // 화염 약점
+			this.SetResistance(ResistanceType.Cold, 75, 75);     // 냉기 저항 상한 (Max 75%)
+			this.SetResistance(ResistanceType.Poison, 35, 45);
+			this.SetResistance(ResistanceType.Energy, 35, 45);
 
-            Fame = 20000;
-            Karma = -20000;
+			this.SetSkill(SkillName.Wrestling, 100.0, 115.0);
+			this.SetSkill(SkillName.Tactics, 100.0, 115.0);
+			this.SetSkill(SkillName.Magery, 100.0, 110.0);
+			this.SetSkill(SkillName.EvalInt, 100.0, 110.0);
+			this.SetSkill(SkillName.MagicResist, 100.0, 115.0);
 
-            VirtualArmor = 20;
+			this.VirtualArmor = 12;      // 가죽 외피 (낮은 방어력으로 타격감 유지)
 
-            Tamable = true;
-            ControlSlots = 3;
-            MinTameSkill = 126.0;
+			// [Taming Settings]
+			this.Tamable = true;         
+			this.ControlSlots = 3;       // 컨트롤 슬롯: 3
+			this.MinTameSkill = 145.0;   // 최소 테이밍 스킬 요구치
+
+			this.Fame = 10000;           
+			this.Karma = -10000;
 
             SetSpecialAbility(SpecialAbility.DragonBreath);
             SetAreaEffect(AreaEffect.AuraDamage);

@@ -14,36 +14,34 @@ namespace Server.Mobiles
             Body = 101;
             BaseSoundID = 679;
 
-            SetStr(2020, 3000);
-            SetDex(2604, 2660);
-            SetInt(1910, 2000);
+            this.SetStr(255, 355);   // 최종 Str 1,500~1,600
+			this.SetDex(175, 225);   // 최종 Dex ~500 (매우 빠름)
+			this.SetInt(34, 84);     // 최종 Int 250~300
 
-            SetHits(2130, 2172);
-			SetStam(1330, 1372);
-			SetMana(100, 150);
-			
-            SetDamage(64, 80);
+			this.SetHits(112, 1112); // 최종 Hits 15,000~16,000
+			this.SetStam(175, 225);
 
-			SetAttackSpeed( 2.5 );
-			
-            SetDamageType(ResistanceType.Physical, 100);
+			SetAttackSpeed(3.0);     
+			SetDamage(25, 40); 
 
-            SetResistance(ResistanceType.Physical, 45, 55);
-            SetResistance(ResistanceType.Fire, 35, 45);
-            SetResistance(ResistanceType.Cold, 25, 35);
-            SetResistance(ResistanceType.Poison, 45, 55);
-            SetResistance(ResistanceType.Energy, 35, 45);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetSkill(SkillName.Anatomy, 105.1, 125.0);
-            SetSkill(SkillName.Archery, 105.1, 100.0);
-            SetSkill(SkillName.MagicResist, 110.3, 120.0);
-            SetSkill(SkillName.Tactics, 100.1, 110.0);
-            SetSkill(SkillName.Wrestling, 105.1, 110.0);
+			// 저항: 3층 몹이지만 가죽 방어구 수준 유지 (35% 미만)
+			this.SetResistance(ResistanceType.Physical, 30, 35);
+			this.SetResistance(ResistanceType.Cold, 25, 30);
+			this.SetResistance(ResistanceType.Energy, 25, 30);
 
-            Fame = 9000;
-            Karma = -9000;
+			// 최종 Skill 110.0~120.0 (120.0 - 25.3 = 94.7)
+			this.SetSkill(SkillName.Archery, 89.7, 99.7);
+			this.SetSkill(SkillName.Tactics, 94.7, 104.7);
+			this.SetSkill(SkillName.Anatomy, 94.7, 104.7);
+			this.SetSkill(SkillName.MagicResist, 84.7, 94.7);
 
-            VirtualArmor = 5;
+			this.VirtualArmor = 10;
+
+			this.Fame = 8000;
+			this.Karma = -8000;
+
 			RepeatingCrossbow rcb = new RepeatingCrossbow();
 			rcb.MaxRange = 15;
             AddItem(rcb);

@@ -20,37 +20,42 @@ namespace Server.Mobiles
 				Hue = Utility.RandomList(0x647, 0x650, 0x659, 0x662, 0x66B, 0x674);
             BaseSoundID = 0x5A;
 
-            SetStr(826, 1250);
-            SetDex(1056, 1750);
-            SetInt(1100, 1200);
+            /* Lava Lizard - Fame 3,500 / Karma -3,500 */
+			/* [HP Calculation]
+			   - Target HP: ~8,500
+			   - Fame Bonus (3,500): ~6,560
+			   - SetHits Required: 1,940 (Target - Bonus)
+			*/
+			this.SetStr(200, 300);       
+			this.SetDex(100, 150);       
 
-            SetHits(1776, 1890);
-			SetStam(1000, 2000);
-            SetMana(1000);
+			// [Hits] 최종 약 8,000 ~ 9,000 타겟
+			this.SetHits(1440, 2440); 
+			this.SetStam(100, 150);      
 
-			SetAttackSpeed( 5.0 );
+			this.SetAttackSpeed(2.5);    
+			this.SetDamage(12, 22);      
 
-            SetDamage(66, 124);
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Fire, 50);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetResistance(ResistanceType.Physical, 40, 50);
+			this.SetResistance(ResistanceType.Fire, 75, 75);     // 화염 면역 (Max 75%)
+			this.SetResistance(ResistanceType.Cold, -10, 5);     // 냉기 약점
+			this.SetResistance(ResistanceType.Poison, 30, 45);
 
-            SetResistance(ResistanceType.Physical, 35, 45);
-            SetResistance(ResistanceType.Fire, 30, 45);
-            SetResistance(ResistanceType.Poison, 25, 35);
-            SetResistance(ResistanceType.Energy, 25, 35);
+			this.SetSkill(SkillName.Wrestling, 80.0, 95.0);
+			this.SetSkill(SkillName.Tactics, 80.0, 95.0);
 
-            SetSkill(SkillName.MagicResist, 55.1, 70.0);
-            SetSkill(SkillName.Tactics, 60.1, 80.0);
-            SetSkill(SkillName.Wrestling, 60.1, 80.0);
+			this.VirtualArmor = 8;       
 
-            Fame = 6000;
-            Karma = -6000;
+			// [Taming Settings]
+			this.Tamable = true;         
+			this.ControlSlots = 1;       
+			this.MinTameSkill = 95.0;    // 200 상한 대비 초중반용 숙련도
 
-            VirtualArmor = 40;
-
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 80.7;
+			this.Fame = 3500;           
+			this.Karma = -3500;
 
         }
 

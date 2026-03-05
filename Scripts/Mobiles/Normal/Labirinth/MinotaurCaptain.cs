@@ -13,35 +13,46 @@ namespace Server.Mobiles
             Name = "a minotaur captain";
             Body = 280;
 
-            SetStr(401, 425);
-            SetDex(91, 110);
-            SetInt(31, 50);
+			/* [Minotaur Captain - Fame 21,000 / General / Weight 1.30]
+			   - 스킬 200 마스터 서버용 '준 보스급' 밸런스 적용
+			   - 가상 방어력(VirtualArmor): (21,000/1000) + 5 = 26
+			   - 미노타우르스(140~160)를 지휘하는 최상위 포식자
+			   -------------------------------------------------- */
 
-            SetHits(401, 440);
+			// [Attributes] 명성 21,000 보너스 + 가중치 1.30 반영
+			this.SetStr(750, 850); 
+			this.SetHits(16000, 18500); 
+			this.SetDex(150, 180);
+			this.SetInt(150, 180);
 
-            SetDamage(11, 20);
+			// [Combat Options] 전장을 파괴하는 대장의 도끼질
+			this.SetDamage(75, 110);
+			this.SetAttackSpeed(2.6); // 일반 미노타우르스보다 약간 더 숙련된 속도
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Damage Types] 90% 물리 + 10% 에너지 (지휘관의 기세)
+			this.SetDamageType(ResistanceType.Physical, 90);
+			this.SetDamageType(ResistanceType.Energy, 10);
 
-            SetResistance(ResistanceType.Physical, 65, 75);
-            SetResistance(ResistanceType.Fire, 35, 45);
-            SetResistance(ResistanceType.Cold, 40, 50);
-            SetResistance(ResistanceType.Poison, 40, 50);
-            SetResistance(ResistanceType.Energy, 40, 50);
+			// [Resistances] 견고한 사령관의 갑주 (밸런스 조정)
+			this.SetResistance(ResistanceType.Physical, 70, 75); 
+			this.SetResistance(ResistanceType.Fire, 45, 55);
+			this.SetResistance(ResistanceType.Cold, 45, 55);
+			this.SetResistance(ResistanceType.Poison, 55, 65);
+			this.SetResistance(ResistanceType.Energy, 40, 50);
 
-            SetSkill(SkillName.Meditation, 0);
-            SetSkill(SkillName.EvalInt, 0);
-            SetSkill(SkillName.Magery, 0);
-            SetSkill(SkillName.Poisoning, 0);
-            SetSkill(SkillName.Anatomy, 0, 6.3);
-            SetSkill(SkillName.MagicResist, 66.1, 73.6);
-            SetSkill(SkillName.Tactics, 93.0, 109.9);
-            SetSkill(SkillName.Wrestling, 92.6, 107.2);
+			// [Skills] ★ 스킬 200 서버 기준 - 마스터들의 한계 도전 (재설계)
+			// 유저 스킬 170 ~ 200 구간 최상급 유저용
+			this.SetSkill(SkillName.Wrestling, 160.0, 185.0); 
+			this.SetSkill(SkillName.Tactics, 160.0, 185.0);
+			this.SetSkill(SkillName.Anatomy, 150.0, 175.0);
+			this.SetSkill(SkillName.MagicResist, 130.0, 150.0);
+			this.SetSkill(SkillName.Parry, 120.0, 140.0); // 지휘관다운 방어 숙련도
 
-            Fame = 7000;
-            Karma = -7000;
+			// [Misc] 가상 방어력(Virtual Armor): 26
+			this.VirtualArmor = 26;
 
-            VirtualArmor = 28; // Don't know what it should be
+			this.Fame = 21000;
+			this.Karma = -21000;
 
             for (int i = 0; i < Utility.RandomMinMax(0, 1); i++)
             {

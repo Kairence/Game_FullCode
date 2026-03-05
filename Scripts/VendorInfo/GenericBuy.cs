@@ -11,12 +11,12 @@ namespace Server.Mobiles
         private Type m_Type;
         private string m_Name;
         private int m_Price;
+		private int m_PriceScalar; // 이 변수가 0이면 패킷이 깨집니다.
         private int m_MaxAmount, m_Amount;
         private int m_ItemID;
         private int m_Hue;
         private object[] m_Args;
         private IEntity m_DisplayEntity;
-        private int m_PriceScalar;
         private bool m_Stackable;
         private int m_TotalBought;
         private int m_TotalSold;
@@ -43,6 +43,7 @@ namespace Server.Mobiles
 
             m_Type = type;
             m_Price = price;
+			m_PriceScalar = price; // 추가: 혹시 모를 내부 참조를 위해 scalar에도 가격을 넣습니다.
             m_ItemID = itemID;
             m_Hue = hue;
             m_Args = args;
@@ -63,9 +64,13 @@ namespace Server.Mobiles
             }
 
             if (name == null)
-                m_Name = itemID < 0x4000 ? (1020000 + itemID).ToString() : (1078872 + itemID).ToString();
+            {
+                m_Name = (itemID < 0x4000 ? (1020000 + itemID).ToString() : (1078872 + itemID).ToString());
+            }
             else
+            {
                 m_Name = name;
+            }
         }
 
         public virtual int ControlSlots
@@ -95,34 +100,38 @@ namespace Server.Mobiles
         }
         public string Name
         {
-            get
-            {
-                return m_Name;
-            }
-            set
-            {
-                m_Name = value;
-            }
+            get { return m_Name; }
+            set { m_Name = value; }
         }
-        public int DefaultPrice
-        {
-            get
-            {
-                return m_PriceScalar;
-            }
-        }
+		// 핵심: 클라이언트 상점 창의 '가격' 열에 숫자를 띄우는 속성
         public int PriceScalar
         {
-            get
-            {
-                return m_PriceScalar;
-            }
-            set
-            {
-                m_PriceScalar = value;
-            }
+            get { return Price; } // 계산된 Price를 패킷에 그대로 실어 보냄
+            set { m_Price = value; m_PriceScalar = value; }
         }
 
+        // IBuyItemInfo 인터페이스 구현 (동물 상인과 동일하게 맞춤)
+        int IBuyItemInfo.PriceScalar
+        {
+            get { return this.Price; }
+            set { this.Price = value; }
+        }
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int Price
+        {
+            get
+            {
+                int price = m_Price;
+                if (EconomyItem)
+                {
+                    int nowPrice = price * (100 + (m_TotalBought / 100)) / 100;
+                    price = (nowPrice < 1) ? 1 : nowPrice;
+                }
+                return price;
+            }
+            set { m_Price = value; m_PriceScalar = value; }
+        }
         [CommandProperty(AccessLevel.GameMaster)]
         public int TotalBought
         {
@@ -152,22 +161,6 @@ namespace Server.Mobiles
 
         public bool EconomyItem { get { return BaseVendor.UseVendorEconomy; } }
 
-        public int Price
-        {
-            get
-            {
-                if (EconomyItem)
-                {
-					int nowPrice = m_Price * ( 100 + ( m_TotalBought / 100 ) ) / 100;
-					return (nowPrice < 1 ) ? 1 : nowPrice;
-                }
-				return m_Price;
-            }
-            set
-            {
-                m_Price = value;
-            }
-        }
         public int ItemID
         {
             get
@@ -192,23 +185,24 @@ namespace Server.Mobiles
         }
         public int Amount
         {
-            get
-            {
-                return m_Amount;
+            get 
+            { 
+                return m_Amount; 
             }
             set
             {
-                // Amount is ALWAYS 500
                 if (EconomyItem)
                 {
-					m_Amount = BaseVendor.EconomyStockAmount;
+                    // [수정] 무조건 EconomyStockAmount로 덮어쓰지 않고, 
+                    // 초기화 시에만 최대치를 설정하거나 현재 수량을 유지하도록 합니다.
+                    if (m_Amount <= 0 && value > 0) 
+                        m_Amount = value;
+                    else if (value >= 0)
+                        m_Amount = value;
                 }
                 else
                 {
-                    if (value < 0)
-                        value = 0;
-
-                    m_Amount = value;
+                    m_Amount = (value < 0) ? 0 : value;
                 }
             }
         }

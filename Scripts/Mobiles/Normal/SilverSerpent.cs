@@ -17,33 +17,47 @@ namespace Server.Mobiles
             BaseSoundID = 219;
             Hue = 1150;
 
-            SetStr(451, 460);
-            SetDex(591, 600);
-            SetInt(221, 240);
+			/* [Silver Serpent - Fame 20,000 / General / Weight 1.30]
+			   - 스킬 200 마스터 서버용 '레전더리' 밸런스 적용
+			   - 가상 방어력(VirtualArmor): (20,000/1000) + 5 = 25 (전설적인 은빛 비늘)
+			   - 검은 솔렌 여왕(125~140)을 능가하는 필드 최강자 급
+			   -------------------------------------------------- */
 
-            SetHits(5000, 5056);
+			// [Attributes] 명성 20,000 보너스 + 가중치 1.30 반영
+			this.SetStr(700, 850); 
+			this.SetHits(15000, 18000); 
+			this.SetDex(120, 160);
+			this.SetInt(120, 160);
 
-            SetDamage(33, 66);
+			// [Combat Options]
+			this.SetDamage(60, 90); // 한 방 한 방이 치명적
+			this.SetAttackSpeed(1.4); // 전광석화보다 빠른 초고속 연타
 
-            SetDamageType(ResistanceType.Physical, 50);
-            SetDamageType(ResistanceType.Poison, 50);
+			// [Damage Types] 40% 물리 + 60% 독 속성 (독기가 비늘을 뚫고 나옴)
+			this.SetDamageType(ResistanceType.Physical, 40);
+			this.SetDamageType(ResistanceType.Poison, 60);
 
-            SetResistance(ResistanceType.Physical, 35, 45);
-            SetResistance(ResistanceType.Fire, 5, 10);
-            SetResistance(ResistanceType.Cold, 5, 10);
-            SetResistance(ResistanceType.Poison, 100);
-            SetResistance(ResistanceType.Energy, 5, 10);
+			// [Resistances] 총합 약 280 (최상위 정예 저항)
+			this.SetResistance(ResistanceType.Physical, 70, 75); // 물리 완전 방어에 가까움
+			this.SetResistance(ResistanceType.Fire, 40, 50);
+			this.SetResistance(ResistanceType.Cold, 50, 60);
+			this.SetResistance(ResistanceType.Poison, 75);      // 독 면역 (Max 75)
+			this.SetResistance(ResistanceType.Energy, 40, 50);
 
-            SetSkill(SkillName.Poisoning, 90.1, 100.0);
-            SetSkill(SkillName.MagicResist, 95.1, 100.0);
-            SetSkill(SkillName.Tactics, 80.1, 95.0);
-            SetSkill(SkillName.Wrestling, 85.1, 100.0);
-            SetSkill(SkillName.DetectHidden, 50.0, 55.0);
+			// [Skills] ★ 스킬 200 서버 기준 - 진정한 마스터(200)를 위한 도전 (재설계)
+			// 유저 스킬 160 ~ 200 구간의 최종 사냥 타겟
+			this.SetSkill(SkillName.Wrestling, 150.0, 180.0); 
+			this.SetSkill(SkillName.Tactics, 150.0, 180.0);
+			this.SetSkill(SkillName.Anatomy, 160.0, 190.0); // 급소 공격의 정점
+			this.SetSkill(SkillName.MagicResist, 140.0, 160.0);
+			this.SetSkill(SkillName.Poisoning, 150.0, 200.0); // 스킬 200 서버의 정점 독
 
-            Fame = 20000;
-            Karma = -20000;
+			// [Misc] 가상 방어력(Virtual Armor): (20,000/1000) + 5 = 25
+			this.VirtualArmor = 25;
 
-            VirtualArmor = 40;
+			this.Fame = 20000;
+			this.Karma = -20000;
+
         }
 
         public SilverSerpent(Serial serial)

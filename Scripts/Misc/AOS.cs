@@ -255,181 +255,88 @@ namespace Server
 				m.Combatant = from;
 			}
 			
-			//몬스터가 공격 시 준 피해의 2배 어그로 잡음. 방패 착용 시 어그로 4배 적용. 이후 어그로 계산 다시 처리
-			if( from is BaseCreature )
+			// 1. 공격자가 크리쳐인 경우 (from)
+			if (from is BaseCreature)
 			{
 				BaseCreature bc = from as BaseCreature;
-				if( bc.ControlMaster == null && bc.SummonMaster == null )
+				if (bc.ControlMaster == null && bc.SummonMaster == null) // 야생 몬스터
 				{
-					if( !bc.Boss && bc.attackcharge >= 300 )
-						totalDamage *= 10;
+					if (!bc.Boss && bc.attackcharge >= 300) totalDamage *= 10;
 
-					if( Utility.RandomDouble() < 0.1 * CreatureBalancer.MonsterGrade(bc.Grade) )
+					// 몬스터 성장 로직 압축
+					if (Utility.RandomDouble() < 0.1 * CreatureBalancer.MonsterGrade(bc.Grade))
 					{
-						bc.RawDex += CreatureBalancer.MonsterGrade(bc.Grade);
-						bc.RawStr += CreatureBalancer.MonsterGrade(bc.Grade);
-						bc.RawInt += CreatureBalancer.MonsterGrade(bc.Grade);
-						bc.HitsMaxSeed += CreatureBalancer.MonsterGrade(bc.Grade);
-						bc.Hits += CreatureBalancer.MonsterGrade(bc.Grade);
-						bc.StamMaxSeed += CreatureBalancer.MonsterGrade(bc.Grade);
-						bc.Stam++;
-						bc.ManaMaxSeed++;
-						bc.Mana++;
-						if( bc.Fame > 0 && from.Fame < bc.Fame && bc.Fame < 17500 + CreatureBalancer.MonsterGrade(bc.Grade) * 2500 )
-							bc.Fame++;
+						int g = CreatureBalancer.MonsterGrade(bc.Grade);
+						bc.RawDex += g; bc.RawStr += g; bc.RawInt += g;
+						bc.HitsMaxSeed += g; bc.Hits += g; bc.StamMaxSeed += g;
+						bc.Stam++; bc.ManaMaxSeed++; bc.Mana++;
+						if (bc.Fame > 0 && from.Fame < bc.Fame && bc.Fame < 17500 + g * 2500) bc.Fame++;
 					}
-				
-					for( int i = 0; i < 10000; i++ )
-					{
-						if( m != null && ( bc.AggroMobile[i] == m || bc.AggroMobile[i] == null ) )
-						{
-							int doublecal = 2;
-							bc.AggroMobile[i] = m;
-							BaseShield shield = m.FindItemOnLayer(Layer.TwoHanded) as BaseShield;
-							if( shield != null )
-								doublecal = 4;
 
-							if( aggro > 0 )
+					// 어그로 대상 업데이트 (루프 최적화 필요하나 기존 유지 시 압축)
+					if (m != null && aggro > 0)
+					{
+						for (int i = 0; i < bc.AggroMobile.Length; i++) // 10000 대신 실제 길이 사용
+						{
+							if (bc.AggroMobile[i] == m || bc.AggroMobile[i] == null)
 							{
-								/*
-								if( m is PlayerMobile )
-								{
-									PlayerMobile pm = m as PlayerMobile;
-									aggrobonus += pm.SilverPoint[3] * 0.004;
-									aggrominus -= pm.SilverPoint[4] * 0.0015;
-									if( aggrominus == 0 )
-										aggrominus = 0.0025;
-								}
-								*/
-								bc.AggroScore[i] += Misc.Util.AggroCalc(m, totalDamage ) * doublecal;
+								bc.AggroMobile[i] = m;
+								int dcal = (m.FindItemOnLayer(Layer.TwoHanded) is BaseShield) ? 4 : 2;
+								bc.AggroScore[i] += Misc.Util.AggroCalc(m, totalDamage) * dcal;
+								break;
 							}
-							break;
 						}
 					}
 				}
-				else if ( bc.ControlMaster != null )
+				else if (bc.ControlMaster != null && m is BaseCreature monster && monster.ControlMaster == null && bc.ControlSlots > 0) // 펫이 공격 시
 				{
-					if( m is BaseCreature )
-					{
-						BaseCreature monster = m as BaseCreature;
-						if( monster.ControlMaster == null && monster.SummonMaster == null )
-						{
-							if( bc.ControlSlots > 0 )
-							{
-								int maxStat = (int)( ( 50 + bc.ControlMaster.Skills.AnimalLore.Value ) * bc.ControlSlots );
-								int maxHits = (int)( bc.ControlMaster.Skills.AnimalLore.Value * 20 + bc.ControlSlots * 1000 );
-								int maxStamMana = maxHits / 10;
-								if( maxStat < bc.RawStr )
-								{
-									if( Misc.Util.PetStat( bc, bc.StatExp[0], bc.RawStr, monster.RawStr ) )
-										bc.RawStr++;
-								}
-								if( maxStat < bc.RawDex )
-								{
-									if( Misc.Util.PetStat( bc, bc.StatExp[1], bc.RawDex, monster.RawDex ) )
-										bc.RawDex++;
-								}
-								if( maxStat < bc.RawInt )
-								{
-									if( Misc.Util.PetStat( bc, bc.StatExp[2], bc.RawInt, monster.RawInt ) )
-										bc.RawInt++;
-								}
-								if( maxHits < bc.HitsMaxSeed )
-								{
-									if( Misc.Util.PetStat( bc, bc.StatExp[3], bc.HitsMaxSeed, monster.HitsMaxSeed ) )
-										bc.HitsMaxSeed++;
-								}
-								if( maxStamMana < bc.StamMaxSeed )
-								{
-									if( Misc.Util.PetStat( bc, bc.StatExp[4], bc.StamMaxSeed, monster.StamMaxSeed ) )
-										bc.StamMaxSeed++;
-								}
-								if( maxStamMana < bc.ManaMaxSeed )
-								{
-									if( Misc.Util.PetStat( bc, bc.StatExp[5], bc.ManaMaxSeed, monster.ManaMaxSeed ) )
-										bc.ManaMaxSeed++;
-								}
-							}
-								
-						}
-						
-					}
-					
+					// 펫 스탯 한계치 계산 및 성장 압축
+					double lore = bc.ControlMaster.Skills.AnimalLore.Value;
+					int mStat = (int)((50 + lore) * bc.ControlSlots);
+					int mHits = (int)(lore * 20 + bc.ControlSlots * 1000);
+
+					if (mStat < bc.RawStr && Misc.Util.PetStat(bc, bc.StatExp[0], bc.RawStr, monster.RawStr)) bc.RawStr++;
+					if (mStat < bc.RawDex && Misc.Util.PetStat(bc, bc.StatExp[1], bc.RawDex, monster.RawDex)) bc.RawDex++;
+					if (mStat < bc.RawInt && Misc.Util.PetStat(bc, bc.StatExp[2], bc.RawInt, monster.RawInt)) bc.RawInt++;
+					if (mHits < bc.HitsMaxSeed && Misc.Util.PetStat(bc, bc.StatExp[3], bc.HitsMaxSeed, monster.HitsMaxSeed)) bc.HitsMaxSeed++;
+					if (mHits / 10 < bc.StamMaxSeed && Misc.Util.PetStat(bc, bc.StatExp[4], bc.StamMaxSeed, monster.StamMaxSeed)) bc.StamMaxSeed++;
+					if (mHits / 10 < bc.ManaMaxSeed && Misc.Util.PetStat(bc, bc.StatExp[5], bc.ManaMaxSeed, monster.ManaMaxSeed)) bc.ManaMaxSeed++;
 				}
 			}
 
-			//몬스터가 피격 시 준 피해만큼 어그르. 방패 착용 시 어그로 2배 적용. 이후 어그로 계산 다시 처리
-			if( m is BaseCreature )
+			// 2. 피격자가 크리쳐인 경우 (m)
+			if (m is BaseCreature mb && mb.ControlMaster == null && mb.SummonMaster == null)
 			{
-				BaseCreature bc = m as BaseCreature;
+				if (mb is GolemController && totalDamage > 200) totalDamage = 200 + totalDamage / 50;
 				
-				if( bc.ControlMaster == null && bc.SummonMaster == null )
+				if (mb is OrcBrute ob && ob.Hits < 2000 && !ob.regenBonus)
 				{
-					//totalDamage -= bc.VirtualArmor;
-					
-					if( bc is GolemController )
-					{
-						if ( totalDamage > 200 )
-						{
-							totalDamage = 200 + totalDamage / 50;
-						}
-					}
-					
-					if( bc is OrcBrute )
-					{
-						OrcBrute ob = bc as OrcBrute;
-						if( ob.Hits < 2000 && !ob.regenBonus )
-						{
-							Util.Good_Effect( ob );
-							ob.regenBonus = true;
-							ob.Say("전투는 지금부터다!");
-							ob.Hits = ob.HitsMaxSeed;
-							ob.Stam = ob.StamMaxSeed;
-						}
-					}
-					bc.attackcharge++;
-					if( Utility.RandomDouble() < 0.05 * CreatureBalancer.MonsterGrade(bc.Grade) )
-					{
-						bc.RawDex += CreatureBalancer.MonsterGrade(bc.Grade);
-						bc.RawStr += CreatureBalancer.MonsterGrade(bc.Grade);
-						bc.RawInt += CreatureBalancer.MonsterGrade(bc.Grade);
-						bc.HitsMaxSeed += CreatureBalancer.MonsterGrade(bc.Grade);
-						bc.Hits += CreatureBalancer.MonsterGrade(bc.Grade);
-						bc.StamMaxSeed += CreatureBalancer.MonsterGrade(bc.Grade);
-						bc.Stam++;
-						bc.ManaMaxSeed++;
-						bc.Mana++;
-						if( bc.Fame > 0 && from.Fame < bc.Fame && bc.Fame < 17500 + CreatureBalancer.MonsterGrade(bc.Grade) * 2500 )
-							bc.Fame += CreatureBalancer.MonsterGrade(bc.Grade);
-					}
-					for( int i = 0; i < 10000; i++ )
-					{
-						if( (from != null ) && ( bc.AggroMobile[i] == from || bc.AggroMobile[i] == null ) )
-						{
-							bc.AggroMobile[i] = from;
+					Util.Good_Effect(ob); ob.regenBonus = true; ob.Say("전투는 지금부터다!");
+					ob.Hits = ob.HitsMaxSeed; ob.Stam = ob.StamMaxSeed;
+				}
 
-							int doublecal = 1;
-							
-							BaseShield shield = from.FindItemOnLayer(Layer.TwoHanded) as BaseShield;
-							if( shield != null )
-								doublecal = 2;
-							
-							if( aggro > 0 )
-							{
-								double aggrobonus = 1;
-								double aggrominus = 1;
-								/*
-								if( from is PlayerMobile )
-								{
-									PlayerMobile pm = from as PlayerMobile;
-									aggrobonus += pm.SilverPoint[3] * 0.005;
-									aggrominus -= pm.SilverPoint[4] * 0.0025;
-									if( aggrominus == 0 )
-										aggrominus = 0.0025;
-								}
-								*/
-								bc.AggroScore[i] += Misc.Util.AggroCalc(m, totalDamage ) * doublecal;
-							}
+				mb.attackcharge++;
+
+				// 피격 시 성장 로직 압축
+				if (Utility.RandomDouble() < 0.05 * CreatureBalancer.MonsterGrade(mb.Grade))
+				{
+					int g = CreatureBalancer.MonsterGrade(mb.Grade);
+					mb.RawDex += g; mb.RawStr += g; mb.RawInt += g;
+					mb.HitsMaxSeed += g; mb.Hits += g; mb.StamMaxSeed += g;
+					mb.Stam++; mb.ManaMaxSeed++; mb.Mana++;
+					if (mb.Fame > 0 && from.Fame < mb.Fame && mb.Fame < 17500 + g * 2500) mb.Fame += g;
+				}
+
+				// 피격 어그로 업데이트
+				if (from != null && aggro > 0)
+				{
+					for (int i = 0; i < mb.AggroMobile.Length; i++)
+					{
+						if (mb.AggroMobile[i] == from || mb.AggroMobile[i] == null)
+						{
+							mb.AggroMobile[i] = from;
+							int dcal = (from.FindItemOnLayer(Layer.TwoHanded) is BaseShield) ? 2 : 1;
+							mb.AggroScore[i] += Misc.Util.AggroCalc(m, totalDamage) * dcal;
 							break;
 						}
 					}

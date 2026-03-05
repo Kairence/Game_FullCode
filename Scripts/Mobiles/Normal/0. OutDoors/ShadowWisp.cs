@@ -14,19 +14,24 @@ namespace Server.Mobiles
             Body = 165;
             BaseSoundID = 466;
 
-            SetStr(316, 540);
-            SetDex(16, 45);
-            SetInt(11, 25);
+            this.SetStr(1, 10);
+			this.SetDex(141, 191); // 최종 Dex ~400 (빠름)
 
-            SetHits(140, 145);
+			this.SetHits(16, 116); // 최종 Hits 1,000~1,100
+			this.SetStam(41, 91);
+			this.SetMana(500, 800);
 
-            SetDamage(15, 20);
+			SetAttackSpeed(2.0);
+			SetDamage(5, 10); 
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 0);
+			this.SetDamageType(ResistanceType.Energy, 100);
 
-            Fame = 500;
+			this.SetResistance(ResistanceType.Physical, 5, 10);
+			this.SetResistance(ResistanceType.Energy, 45, 50);
 
-
+			this.Fame = 500;
+			this.Karma = -500;
             AddItem(new LightSource());
 
             PackBones();

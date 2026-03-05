@@ -21,37 +21,36 @@ namespace Server.Mobiles
             AddArcane(new LeatherGloves());
             AddArcane(new Cloak());
 
-            SetStr(3260, 5500);
-            SetDex(1096, 2120);
-            SetInt(5351, 6375);
+            /* Golem Controller - Fame 8,000 / Karma -8,000 */
+			/* [HP Calculation]
+			   - Target HP: ~15,000
+			   - Fame Bonus (8,000): ~19,540
+			   - SetHits Required: 100~500 (Bonus already covers target)
+			*/
+			this.SetStr(200, 300);       
+			this.SetDex(150, 200);       
+			this.SetInt(600, 800);       
 
-            SetHits(7676, 8690);
-			SetStam( 4100, 6150 );
-			SetMana( 5100, 7150 );
+			this.SetHits(100, 500); 
+			this.SetStam(150, 200);      
+			this.SetMana(600, 800);      
 
-			SetAttackSpeed( 50 );
+			this.SetAttackSpeed(2.6);    
+			this.SetDamage(12, 22);      
 
-            SetDamage(66, 512);
+			this.SetResistance(ResistanceType.Physical, 35, 45);
+			this.SetResistance(ResistanceType.Fire, 35, 45);
+			this.SetResistance(ResistanceType.Energy, 50, 65);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetSkill(SkillName.Magery, 100.0, 115.0);
+			this.SetSkill(SkillName.EvalInt, 100.0, 115.0);
+			this.SetSkill(SkillName.MagicResist, 100.0, 115.0);
 
-            SetResistance(ResistanceType.Physical, 30, 40);
-            SetResistance(ResistanceType.Fire, 25, 35);
-            SetResistance(ResistanceType.Cold, 35, 45);
-            SetResistance(ResistanceType.Poison, 5, 15);
-            SetResistance(ResistanceType.Energy, 15, 25);
+			this.VirtualArmor = 8;       
+			this.Tamable = false;
 
-            SetSkill(SkillName.EvalInt, 185.1, 200.0);
-            SetSkill(SkillName.Magery, 185.1, 200.0);
-            SetSkill(SkillName.Meditation, 185.1, 200.0);
-            SetSkill(SkillName.MagicResist, 192.5, 215.0);
-            SetSkill(SkillName.Tactics, 185.0, 197.5);
-            SetSkill(SkillName.Wrestling, 185.0, 197.5);
-
-            Fame = 20000;
-            Karma = -20000;
-
-            VirtualArmor = 16;
+			this.Fame = 8000;           
+			this.Karma = -8000;
         }
 
         public GolemController(Serial serial)

@@ -14,30 +14,25 @@ namespace Server.Mobiles
             Hue = Utility.RandomAnimalHue();
             BaseSoundID = 0x85;
 
-            this.SetStr(240, 415);
-            this.SetDex(125, 135);
-            this.SetInt(10, 15);
+            // [역산] 명성 150 보너스(Str+511, Hits+450, Stam+52, Skill+0.3) 반영
+			this.SetStr(4, 9);
+			this.SetDex(10, 20);
+			this.SetInt(10, 20);
 
-            SetHits(250, 280);
-            SetStam(140, 150);
-            SetMana(10, 11);
-			
-			SetAttackSpeed(4.0);
+			this.SetHits(50, 70); // 최종 Hits 500~520
+			this.SetStam(8, 18);  // 최종 Stam 60~70
+			this.SetMana(0);
 
-            this.SetDamage(4, 8);
+			SetAttackSpeed(2.5);
+			SetDamage(1, 4); // 평균 2.5
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetSkill(SkillName.Wrestling, 0.7, 1.7);
 
-            this.SetResistance(ResistanceType.Physical, 5, 10);
-
-            this.Fame = 600;
-            this.Karma = 600;
-
-            this.VirtualArmor = 0;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 9.9;
+			this.Fame = 150;
+			this.VirtualArmor = 0;
+			this.Tamable = true;
+			this.MinTameSkill = -18.9;
+			this.SetDamageType(ResistanceType.Physical, 100);
         }
 
         public Dog(Serial serial)

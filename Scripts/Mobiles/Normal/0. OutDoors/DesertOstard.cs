@@ -17,25 +17,26 @@ namespace Server.Mobiles
         {
             this.BaseSoundID = 0x270;
 
-            this.SetStr(294, 270);
-            this.SetDex(156, 175);
-            this.SetInt(16, 20);
+			// [역산] 명성 450 보너스(Str+533, Hits+878, Stam+58, Skill+1.1) 반영
+			this.SetStr(17, 27);
+			this.SetDex(92, 112); // 최종 Dex ~260 (매우 빠름)
+			this.SetInt(10, 20);
 
-            this.SetHits(171, 188);
-			this.SetStam(100, 120);
-            this.SetMana(1, 5);
+			this.SetHits(322, 350); // 최종 Hits 1,200~1,228
+			this.SetStam(92, 112);  // 최종 Stam 150~170
+			this.SetMana(0);
 
-            this.SetDamage(1, 4);
-			SetAttackSpeed(20.0);
+			SetAttackSpeed(2.5);
+			SetDamage(5, 12); // 평균 8.5
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetSkill(SkillName.Wrestling, 3.9, 5.9); // 최종 5.0~7.0
 
-            this.Fame = 450;
-            this.Karma = 0;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 29.1;
+			this.Fame = 450;
+			this.VirtualArmor = 1;
+			this.Tamable = true;
+			this.MinTameSkill = 29.1;
+			
+			SetDamageType(ResistanceType.Physical, 100);
         }
 
         public DesertOstard(Serial serial)

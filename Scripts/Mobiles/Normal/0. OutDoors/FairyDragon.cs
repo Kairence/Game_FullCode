@@ -23,32 +23,37 @@ namespace Server.Mobiles
             Body = 718;
             BaseSoundID = 362;
 
-            SetStr(2512, 2558);
-            SetDex(2095, 2105);
-            SetInt(4550, 5010);
+            // [역산] 명성 5000 보너스(Str+937, Hits+10104, Skill+14.5) 반영
+			this.SetStr(63, 113); 
+			this.SetDex(158, 258); // 최종 Dex ~500 (매우 날렵함)
 
-            SetHits(7800, 10300);
-            SetStam(5000, 10000);
-            SetMana(5000, 10000);
-			SetAttackSpeed(5.0);
+			// 저항이 강력하므로 추가 Hits는 억제
+			this.SetHits(896, 1396); // 최종 Hits 11,000~11,500
+			this.SetStam(58, 108); 
+			this.SetMana(1500, 2500);
 
-            SetDamage(188, 355);
+			SetAttackSpeed(2.0); 
+			SetDamage(15, 25); 
 
-            SetDamageType(ResistanceType.Direct, 100);
+			// 공격 속성: 신비로운 마력 타격
+			this.SetDamageType(ResistanceType.Physical, 20);
+			this.SetDamageType(ResistanceType.Cold, 40);
+			this.SetDamageType(ResistanceType.Energy, 40);
 
-            SetResistance(ResistanceType.Physical, 16, 30);
-            SetResistance(ResistanceType.Fire, 41, 44);
-            SetResistance(ResistanceType.Cold, 40, 49);
-            SetResistance(ResistanceType.Poison, 40, 49);
-            SetResistance(ResistanceType.Energy, 45, 47);
+			// 저항 설정 (전 속성 고루 높음)
+			this.SetResistance(ResistanceType.Physical, 35, 45);
+			this.SetResistance(ResistanceType.Fire, 40, 50);
+			this.SetResistance(ResistanceType.Cold, 40, 50);
+			this.SetResistance(ResistanceType.Poison, 40, 50);
+			this.SetResistance(ResistanceType.Energy, 40, 50);
 
-            SetSkill(SkillName.MagicResist, 199.1, 200.0);
-            SetSkill(SkillName.Tactics, 260.6, 268.2);
-            SetSkill(SkillName.Wrestling, 290.1, 292.5);
+			this.Fame = 5000;
+			this.Karma = 0; // 중립적인 환상 생물
+			this.VirtualArmor = 5;
 
-
-            Fame = 15000;
-            Karma = -15000;
+			this.Tamable = true;
+			this.ControlSlots = 2;
+			this.MinTameSkill = 155.1; // 스킬 200 서버 기준 상급 난이도
         }
 
         public FairyDragon(Serial serial)

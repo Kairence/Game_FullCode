@@ -15,30 +15,23 @@ namespace Server.Mobiles
             if (0.5 >= Utility.RandomDouble())
                 Hue = Utility.RandomAnimalHue();
 
-            this.SetStr(200, 250);
-            this.SetDex(25, 35);
-            this.SetInt(10, 15);
+            this.SetStr(1, 5);
+			this.SetDex(38, 58); // 최종 Dex ~150 (도망)
 
-            SetHits(150, 180);
-            SetStam(40, 50);
-            SetMana(10, 11);
-			
-			SetAttackSpeed(10.0);
+			this.SetHits(50, 80); // 최종 Hits 500~530
+			this.SetStam(48, 68);
+			this.SetMana(0);
 
-            SetDamage(5, 9);
+			SetAttackSpeed(2.0);
+			SetDamage(1, 1);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetSkill(SkillName.Wrestling, 4.2, 6.4);
-            this.SetSkill(SkillName.Tactics, 4.0, 6.0);
-            this.SetSkill(SkillName.MagicResist, 4.0, 5.0);
+			this.SetResistance(ResistanceType.Physical, 0, 5);
 
-            this.Fame = 150;
-            this.Karma = 0;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = -6.9;
+			this.Fame = 150;
+			this.Tamable = true;
+			this.MinTameSkill = -18.9;
         }
 
         public Rabbit(Serial serial)

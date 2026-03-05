@@ -22,33 +22,41 @@ namespace Server.Mobiles
 			
             this.BaseSoundID = 0xDB;
 
-            this.SetStr(242, 254);
-            this.SetDex(36, 45);
-            this.SetInt(26, 30);
+            /* Ice Snake - Fame 1,000 / Karma -1,000 */
+			/* [HP Calculation]
+			   - Target HP: ~2,500
+			   - Fame Bonus (1,000): ~1,563
+			   - SetHits Required: 937 (Target - Bonus)
+			*/
+			this.SetStr(50, 80);       
+			this.SetDex(150, 200);       
+			this.SetInt(20, 50);         
 
-			this.SetHits(200, 300);
-            this.SetMana(0);
+			// [Hits] 최종 약 2,000 ~ 3,000 타겟
+			this.SetHits(437, 1437); 
+			this.SetStam(150, 200);      
 
-            this.SetDamage(4, 12);
-			SetAttackSpeed( 10.0 );
+			this.SetAttackSpeed(2.2);    
+			this.SetDamage(6, 12);       
 
-            this.SetDamageType(ResistanceType.Physical, 25);
-            this.SetDamageType(ResistanceType.Cold, 25);
-            this.SetDamageType(ResistanceType.Poison, 50);
+			this.SetDamageType(ResistanceType.Cold, 100);
 
-            this.SetResistance(ResistanceType.Physical, 20, 25);
-            this.SetResistance(ResistanceType.Cold, 80, 90);
-            this.SetResistance(ResistanceType.Poison, 60, 70);
-            this.SetResistance(ResistanceType.Energy, 30, 40);
+			this.SetResistance(ResistanceType.Physical, 10, 20);
+			this.SetResistance(ResistanceType.Fire, -10, 5);    
+			this.SetResistance(ResistanceType.Cold, 75, 75);    // Max 75%
+			this.SetResistance(ResistanceType.Poison, 50, 65);
 
-            this.SetSkill(SkillName.MagicResist, 15.1, 20.0);
-            this.SetSkill(SkillName.Tactics, 39.3, 54.0);
-            this.SetSkill(SkillName.Wrestling, 39.3, 54.0);
+			this.SetSkill(SkillName.Wrestling, 60.0, 75.0);
+			this.SetSkill(SkillName.Tactics, 60.0, 75.0);
+			this.SetSkill(SkillName.Poisoning, 60.0, 80.0);
 
-            this.Fame = 900;
-            this.Karma = -900;
+			this.VirtualArmor = 2;       
+			this.Tamable = true;         
+			this.ControlSlots = 1;       
+			this.MinTameSkill = 50.0;    
 
-            this.VirtualArmor = 30;
+			this.Fame = 1000;           
+			this.Karma = -1000;
         }
 
         public IceSnake(Serial serial)

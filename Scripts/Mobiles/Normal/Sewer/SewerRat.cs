@@ -13,33 +13,41 @@ namespace Server.Mobiles
             this.Body = 238;
             this.BaseSoundID = 0xCC;
 
-            this.SetStr(9);
-            this.SetDex(25);
-            this.SetInt(6, 10);
+			/* [Sewerrat - Fame 500 / Sewer / Weight 1.12]
+			   - 테이밍 코드 추가 (초보 테이머용)
+			   - 먹이 설정: 고기, 곡물 등 잡식성
+			   -------------------------------------------------- */
 
-            this.SetHits(6);
-            this.SetMana(0);
+			// [Attributes] 명성 500 보너스 + 가중치 1.12 반영
+			this.SetStr(4, 8); 
+			this.SetHits(100, 130); 
+			this.SetDex(1, 2);
+			this.SetInt(1, 2);
 
-            this.SetDamage(1, 2);
+			// [Taming & AI] ★ 초보 테이머용 핵심 코드
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 5.0; // 0~30 구간 유저를 위한 입문 난이도
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			// [Combat Options]
+			this.SetDamage(1, 5);
+			this.SetAttackSpeed(2.0);
 
-            this.SetResistance(ResistanceType.Physical, 5, 10);
-            this.SetResistance(ResistanceType.Poison, 15, 25);
-            this.SetResistance(ResistanceType.Energy, 5, 10);
+			// [Damage Types] 100% 물리
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetSkill(SkillName.MagicResist, 5.0);
-            this.SetSkill(SkillName.Tactics, 5.0);
-            this.SetSkill(SkillName.Wrestling, 5.0);
+			// [Resistances]
+			this.SetResistance(ResistanceType.Physical, 5, 10); 
+			this.SetResistance(ResistanceType.Poison, 20, 30); // 하수구 보정
 
-            this.Fame = 300;
-            this.Karma = -300;
+			// [Skills] 유저 스킬 0 ~ 30 구간 수련 최적화
+			this.SetSkill(SkillName.Wrestling, 15.0, 25.0); 
+			this.SetSkill(SkillName.Tactics, 15.0, 25.0);
+			this.SetSkill(SkillName.MagicResist, 5.0, 10.0);
 
-            this.VirtualArmor = 6;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = -0.9;
+			this.VirtualArmor = 1;
+			this.Fame = 500;
+			this.Karma = -500;
         }
 
         public Sewerrat(Serial serial)

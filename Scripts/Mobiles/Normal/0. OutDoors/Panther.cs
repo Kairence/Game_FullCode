@@ -14,36 +14,25 @@ namespace Server.Mobiles
             Hue = 0x901;
             BaseSoundID = 0x462;
 
-            this.SetStr(456, 680);
-            this.SetDex(366, 385);
-            this.SetInt(26, 50);
+            this.SetStr(89, 139); // 최종 Str 650~700
+			this.SetDex(137, 187); // 최종 Dex ~350
 
-            this.SetHits(434, 488);
-            SetStam(212, 215);
-            SetMana(10, 11);
-			
-			SetAttackSpeed(3.5);
-            this.SetDamage(8, 14);
+			this.SetHits(434, 634); // 최종 Hits 2,000~2,200
+			this.SetStam(87, 137); 
+			this.SetMana(0);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			SetAttackSpeed(2.0); // 매우 빠름
+			SetDamage(12, 18); 
 
-            this.SetResistance(ResistanceType.Physical, 20, 25);
-            this.SetResistance(ResistanceType.Fire, 5, 10);
-            this.SetResistance(ResistanceType.Cold, 10, 15);
-            this.SetResistance(ResistanceType.Poison, 5, 10);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetSkill(SkillName.MagicResist, 45.1, 50.0);
-            this.SetSkill(SkillName.Tactics, 75.1, 90.0);
-            this.SetSkill(SkillName.Wrestling, 75.1, 90.0);
+			this.SetResistance(ResistanceType.Physical, 20, 30);
+			this.SetResistance(ResistanceType.Cold, 20, 30);
 
-            this.Fame = 1150;
-            this.Karma = 0;
-
-            this.VirtualArmor = 1;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 41.1;
+			this.Fame = 800;
+			this.VirtualArmor = 4;
+			this.Tamable = true;
+			this.MinTameSkill = 85.1;
         }
 
         public Panther(Serial serial)

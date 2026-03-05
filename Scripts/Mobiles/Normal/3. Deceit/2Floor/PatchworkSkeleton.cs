@@ -14,35 +14,25 @@ namespace Server.Mobiles
             Body = 309;
             BaseSoundID = 0x48D;
 
-            SetStr(2500, 4255);
-            SetDex(3000, 4310);
-            SetInt(2500, 4255);
+            /* Patchwork Skeleton - Fame 8,500 */
+			this.Fame = 8500;
+			this.Karma = -8500;
 
-            SetHits(8850, 9860);
-			SetStam(5520, 6630);
-			SetMana(200, 300);
-			
-			SetAttackSpeed( 20.0 );
+			// [역산] 보너스: Str +1,245 / Hits +25,100 / Skill +31.3
+			this.SetStr(300, 400);    // 최종 Str 약 1,600
+			this.SetHits(4000, 5000);  // 최종 Hits 약 30,000
+			this.SetDex(80, 120);
 
-            SetDamage(330, 590);
+			this.SetAttackSpeed(2.5);
+			SetDamage(35, 50);
 
-            SetDamageType(ResistanceType.Physical, 85);
-            SetDamageType(ResistanceType.Cold, 15);
+			this.SetSkill(SkillName.Wrestling, 110.0, 125.0); 
+			this.SetSkill(SkillName.Tactics, 110.0, 125.0);
 
-            SetResistance(ResistanceType.Physical, 75, 85);
-            SetResistance(ResistanceType.Fire, 50, 60);
-            SetResistance(ResistanceType.Cold, 70, 80);
-            SetResistance(ResistanceType.Poison, 100);
-            SetResistance(ResistanceType.Energy, 40, 50);
-
-            SetSkill(SkillName.MagicResist, 155.1, 160.0);
-            SetSkill(SkillName.Tactics, 155.1, 160.0);
-            SetSkill(SkillName.Wrestling, 185.1, 190.0);
-
-            Fame = 15000;
-            Karma = -15000;
-
-            VirtualArmor = 75;
+			this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetResistance(ResistanceType.Physical, 45, 55);
+			this.SetResistance(ResistanceType.Fire, -10, 0);
+			this.VirtualArmor = 25;
 
             //SetWeaponAbility(WeaponAbility.Dismount);
         }

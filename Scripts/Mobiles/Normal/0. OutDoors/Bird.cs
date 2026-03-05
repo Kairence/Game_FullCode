@@ -35,30 +35,35 @@ namespace Server.Mobiles
             this.Body = 6;
             this.BaseSoundID = 0x1B;
 
-            this.SetStr(100, 250);
-            this.SetDex(25, 35);
-            this.SetInt(10, 15);
+			// [역산] 명성 150 보너스(Str+511, Hits+450, Stam+52, Skill+0.3) 반영
+			// 최종 Str 520~530 목표
+			this.SetStr(9, 19);
+			this.SetDex(10, 20); // 최종 Dex 약 162~172 도달
+			this.SetInt(10, 20);
 
-            SetHits(150, 180);
-            SetStam(40, 50);
-            SetMana(10, 11);
-			
-			SetAttackSpeed(10.0);
+			// 최종 Hits 460~480 목표
+			this.SetHits(10, 30);
+			this.SetStam(5, 10);  // 최종 Stam 약 57~62 도달
+			this.SetMana(0);
 
-            SetDamage(1, 5);
+			// [컨셉] 부리로 빠르게 쪼는 공격 (공속 2.5)
+			SetAttackSpeed(2.5);
+			SetDamage(1, 2);
+
+			// 최종 Skill 1.0~2.0 목표
+			this.SetSkill(SkillName.Wrestling, 0.7, 1.7);
+			this.SetSkill(SkillName.Tactics, 0.7, 1.7);
+			this.SetSkill(SkillName.MagicResist, 0.5, 1.0);
+
+			this.Fame = 150;
+			this.Karma = 0;
+			this.VirtualArmor = 0; // 방어구 없음
+
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = -18.9;
 
             this.SetDamageType(ResistanceType.Physical, 100);
-
-            this.SetSkill(SkillName.Wrestling, 4.2, 6.4);
-            this.SetSkill(SkillName.Tactics, 4.0, 6.0);
-            this.SetSkill(SkillName.MagicResist, 4.0, 5.0);
-
-            this.Fame = 150;
-            this.Karma = 0;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = -6.9;
         }
 
         public Bird(Serial serial)

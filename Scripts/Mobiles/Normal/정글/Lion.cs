@@ -17,33 +17,43 @@ namespace Server.Mobiles
             Female = true;
             BaseSoundID = 0x3EF;
 
-            SetStr(710, 720);
-            SetDex(200, 220);
-            SetInt(120, 140);
+			/* [Lion - Normal - Fame 11,000 / Weight 1.25]
+			   - 정글 던전의 상위 포식자 / 일반 몬스터 공식
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 11 (명성/1000 공식 준수)
+			   -------------------------------------------------- */
 
-            SetHits(350, 370);
+			// [Attributes] 역산된 Set 값 정밀 적용
+			this.SetStr(275, 290); 
+			this.SetHits(6200, 6400); 
+			this.SetDex(80, 100);
+			this.SetInt(80, 100);
 
-            SetDamage(16, 22);
+			// [Combat Options] 물리 100% (강력한 앞발과 물어뜯기)
+			this.SetDamage(35, 50);
+			this.SetAttackSpeed(2.4); 
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] 최고 저항 75 이하 준수 / 에너지 약점 설정
+			this.SetResistance(ResistanceType.Physical, 50, 65); 
+			this.SetResistance(ResistanceType.Fire, 40, 50);      
+			this.SetResistance(ResistanceType.Cold, 40, 50);    
+			this.SetResistance(ResistanceType.Poison, 40, 50); 
+			this.SetResistance(ResistanceType.Energy, 25, 35);   // ★ 확실한 약점
 
-            SetResistance(ResistanceType.Physical, 40, 50);
-            SetResistance(ResistanceType.Fire, 35, 45);
-            SetResistance(ResistanceType.Cold, 30, 40);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 20, 40);
+			// [Skills] 기본 110~120에 역산 보너스(9.4) 가산
+			this.SetSkill(SkillName.Wrestling, 119.0, 129.0); 
+			this.SetSkill(SkillName.Tactics, 119.0, 129.0);
+			this.SetSkill(SkillName.Anatomy, 119.0, 129.0);
+			this.SetSkill(SkillName.MagicResist, 90.0, 105.0);
 
-            SetSkill(SkillName.Parry, 90.0, 100.0);
-            SetSkill(SkillName.Tactics, 100.0, 110.0);
-            SetSkill(SkillName.Wrestling, 100.0, 110.0);
-            SetSkill(SkillName.DetectHidden, 80.0);
-
-            Fame = 11000;
-            Karma = -11000;
-            
-            Tamable = true;
-            ControlSlots = 19;
-            MinTameSkill = 96.0;
+			// [Misc]
+			this.Tamable = true; 
+			this.ControlSlots = 1; // 200 숙련도 시대의 기초적인 1슬롯 펫
+			this.MinTameSkill = 105.0; 
+			this.VirtualArmor = 11;
+			this.Fame = 11000;
+			this.Karma = -11000;
 
             SetMagicalAbility(MagicalAbility.Piercing);
         }

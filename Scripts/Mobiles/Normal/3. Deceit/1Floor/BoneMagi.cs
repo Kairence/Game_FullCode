@@ -14,36 +14,28 @@ namespace Server.Mobiles
             Body = 148;
             BaseSoundID = 451;
 
-            SetStr(270, 285);
-            SetDex(225, 235);
-            SetInt(2495, 2500);
+            /* Bone Magi - Fame 4,000 */
+			this.Fame = 4000;
+			this.Karma = -4000;
 
-            SetHits(1850, 2060);
-			SetStam(50, 60);
-			SetMana(20, 30);
+			this.SetStr(100, 120);
+			this.SetInt(200, 250);     // 최종 Int 약 1,200
+			this.SetHits(100, 150);    // 최종 Hits 약 11,000
+			this.SetMana(500, 600);    
 
-            SetDamage(5, 9);
+			this.SetAttackSpeed(2.8);  // 마법사치고는 준수한 견제 속도
+			SetDamage(12, 18);        // 물리 데미지는 낮으나 마법과 병행
 
-			SetAttackSpeed( 60 );
+			this.SetSkill(SkillName.Magery, 100.0, 115.0); 
+			this.SetSkill(SkillName.EvalInt, 100.0, 110.0);
+			this.SetSkill(SkillName.Meditation, 120.0);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 20);
+			this.SetDamageType(ResistanceType.Energy, 80);
 
-            SetResistance(ResistanceType.Physical, 35, 40);
-            SetResistance(ResistanceType.Fire, 30, 40);
-            SetResistance(ResistanceType.Cold, 0, 10);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 30, 40);
-
-            SetSkill(SkillName.EvalInt, 60.1, 65.0);
-            SetSkill(SkillName.Magery, 60.1, 65.0);
-            SetSkill(SkillName.MagicResist, 65.1, 67.5);
-            SetSkill(SkillName.Tactics, 60.1, 65.0);
-            SetSkill(SkillName.Wrestling, 50.1, 64.0);
-
-            Fame = 9000;
-            Karma = -9000;
-
-            VirtualArmor = 1;
+			this.SetResistance(ResistanceType.Physical, 10, 20);
+			this.SetResistance(ResistanceType.Energy, 30, 40);
+			this.VirtualArmor = 5;
         }
 
         public BoneMagi(Serial serial)

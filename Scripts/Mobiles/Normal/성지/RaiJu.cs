@@ -15,35 +15,47 @@ namespace Server.Mobiles
             this.Body = 199;
             this.BaseSoundID = 0x346;
 
-            this.SetStr(151, 225);
-            this.SetDex(81, 135);
-            this.SetInt(176, 180);
+			/* [Rai-Ju - Holy City Dungeon / Original Wiki & Keep Formula]
+			   - 명성: 7,000 / 카르마: -7,000 (칼둔 아님)
+			   - 슬롯: 2 (조합형 펫)
+			   - 가방 방어력: 5 (VA 공식 적용)
+			   -------------------------------------------------- */
 
-            this.SetHits(201, 280);
+			// [Attributes] 가중치 1.15 적용
+			this.SetStr(200, 300); 
+			this.SetHits(3500, 4500); // 저항이 낮은 대신 체력으로 승부
+			this.SetDex(175, 250);    // 위키 고증: 매우 높은 민첩성
+			this.SetInt(150, 250);
 
-            this.SetDamage(12, 15);
+			// [Combat Options] 물리 50% / 에너지 50% (위키 고증)
+			this.SetDamage(30, 50); 
+			this.SetAttackSpeed(2.0); 
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Energy, 50);
 
-            this.SetDamageType(ResistanceType.Physical, 10);
-            this.SetDamageType(ResistanceType.Fire, 10);
-            this.SetDamageType(ResistanceType.Cold, 10);
-            this.SetDamageType(ResistanceType.Poison, 10);
-            this.SetDamageType(ResistanceType.Energy, 60);
+			// [Resistances] 위키 기반 + 형님표 75% 상한선 준수
+			this.SetResistance(ResistanceType.Physical, 35, 50); // 사냥 타격감 확보
+			this.SetResistance(ResistanceType.Fire, 30, 40);     
+			this.SetResistance(ResistanceType.Cold, 10, 20);      // 위키 고증: 냉기 취약
+			this.SetResistance(ResistanceType.Poison, 30, 40); 
+			this.SetResistance(ResistanceType.Energy, 60, 70);    // 에너지 특화 (70% 미만 유지)
 
-            this.SetResistance(ResistanceType.Physical, 45, 65);
-            this.SetResistance(ResistanceType.Fire, 70, 85);
-            this.SetResistance(ResistanceType.Cold, 30, 60);
-            this.SetResistance(ResistanceType.Poison, 50, 70);
-            this.SetResistance(ResistanceType.Energy, 60, 80);
+			// [Skills]
+			this.SetSkill(SkillName.Wrestling, 105.0, 120.0); 
+			this.SetSkill(SkillName.Tactics, 105.0, 120.0);
+			this.SetSkill(SkillName.Anatomy, 100.0, 115.0);
+			this.SetSkill(SkillName.MagicResist, 110.0, 125.0);
+			this.SetSkill(SkillName.Magery, 90.0, 105.0); // 번개 마법 시전
 
-            this.SetSkill(SkillName.Wrestling, 85.1, 95.0);
-            this.SetSkill(SkillName.Tactics, 55.1, 65.0);
-            this.SetSkill(SkillName.MagicResist, 110.1, 125.0);
-            this.SetSkill(SkillName.Anatomy, 25.1, 35.0);
-		
-            this.Fame = 8000;
-            this.Karma = -8000;
-        }
+			// [Misc]
+			this.Tamable = true; 
+			this.ControlSlots = 2; 
+			this.MinTameSkill = 125.1; 
+			this.VirtualArmor = 5; // 공식: (7000/1000) - 2
 
+			this.Fame = 7000;
+			this.Karma = -7000;
+		}
         public RaiJu(Serial serial)
             : base(serial)
         {

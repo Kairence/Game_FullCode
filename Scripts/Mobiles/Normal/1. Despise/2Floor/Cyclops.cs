@@ -15,34 +15,33 @@ namespace Server.Mobiles
             this.Body = 75;
             this.BaseSoundID = 604;
 
-            this.SetStr(5006, 5715);
-            this.SetDex(4296, 4305);
-            this.SetInt(1210, 1250);
+            this.SetStr(124, 224);   // 최종 Str 1,000~1,100 (압도적 힘)
+			this.SetDex(94, 114);    // 최종 Dex ~400
+			this.SetInt(4, 54);      // 최종 Int 150~200
 
-            this.SetHits(10000, 10250);
-            this.SetMana(140, 150);
-			SetStam(7500, 8000);
-			
-			SetAttackSpeed( 20.0 );
-			
-            this.SetDamage(921, 1150);
+			this.SetHits(345, 1345); // 최종 Hits 9,000~10,000
+			this.SetStam(94, 114);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			SetAttackSpeed(3.8);     // 거대한 몽둥이 휘두르기 (느리지만 한 방)
+			SetDamage(30, 50); 
 
-            this.SetResistance(ResistanceType.Physical, 45, 50);
-            this.SetResistance(ResistanceType.Fire, 30, 40);
-            this.SetResistance(ResistanceType.Cold, 25, 35);
-            this.SetResistance(ResistanceType.Poison, 30, 40);
-            this.SetResistance(ResistanceType.Energy, 30, 40);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetSkill(SkillName.MagicResist, 140.1, 145.0);
-            this.SetSkill(SkillName.Tactics, 140.1, 142.5);
-            this.SetSkill(SkillName.Wrestling, 140.1, 142.5);
+			// 저항: 거인의 가죽 (최대 40% 미만)
+			this.SetResistance(ResistanceType.Physical, 35, 40);
+			this.SetResistance(ResistanceType.Energy, 25, 30);
+			this.SetResistance(ResistanceType.Cold, 25, 30);
 
-            this.Fame = 17000;
-            this.Karma = -17000;
+			// 최종 Skill 90.0~100.0 (100.0 - 12.7 = 87.3)
+			this.SetSkill(SkillName.Wrestling, 77.3, 87.3);
+			this.SetSkill(SkillName.Tactics, 77.3, 87.3);
+			this.SetSkill(SkillName.MagicResist, 77.3, 87.3);
 
-            this.VirtualArmor = 20;
+			this.VirtualArmor = 15;
+
+			this.Fame = 4500;
+			this.Karma = -4500;
+
 
 			m_NextAbilityTime = DateTime.Now + TimeSpan.FromSeconds( 60 );
 
@@ -74,11 +73,11 @@ namespace Server.Mobiles
 					if( range < Math.Abs( Location.Y - defender.Location.Y ) )
 						range = Math.Abs( Location.Y - defender.Location.Y );
 						
-					int damage = Utility.RandomMinMax( 150 , 250 );
+					int damage = Utility.RandomMinMax( 100 , 150 ) + range * 25;
 					this.MovingEffect( defender, 0x1367, 10, 0, false, false );
 					this.DoHarmful( defender );
 					defender.Animate( 21, 6, 1, true, false, 0 );
-					defender.Paralyze(TimeSpan.FromSeconds( range + 5.0 ));
+					//defender.Paralyze(TimeSpan.FromSeconds( range + 5.0 ));
 					AOS.Damage(defender, this, (int)damage, 100, 0, 0, 0, 0);
 					m_NextAbilityTime = DateTime.Now + TimeSpan.FromSeconds( 60 );
 					Timer.DelayCall( TimeSpan.FromSeconds( 5 ), new TimerCallback( OnThink ) );

@@ -13,30 +13,47 @@ namespace Server.Mobiles
             this.Name = "a meer warrior";
             this.Body = 771;
 
-            this.SetStr(86, 100);
-            this.SetDex(186, 200);
-            this.SetInt(86, 100);
+			/* [MeerWarrior - Fame 5,000 / Normal / Weight 1.15]
+			   - 미어 종족의 근접 보병 전사 (선족 설정)
+			   - 지능형 아인종: 테이밍 불가 (200 숙련도 고려)
+			   - 종족 특성: 에너지/화염 저항 취약
+			   -------------------------------------------------- */
+			// Boss = true 삭제 (일반 몬스터)
 
-            this.SetHits(52, 60);
+			// [Attributes] (기본 보너스 * 1배 * 1.15) - 기본 보너스
+			// Str: 보너스 약 437 -> 최종 Set 약 150-180
+			this.SetStr(150, 180); 
 
-            this.SetDamage(12, 19);
+			// Hits: 보너스 약 9,700 -> 최종 Set 약 1400-1600
+			this.SetHits(1400, 1600); 
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDex(100, 120); 
+			this.SetInt(50, 70); // 전사 계급으로 마법 능력은 낮음
 
-            this.SetResistance(ResistanceType.Physical, 35, 45);
-            this.SetResistance(ResistanceType.Fire, 5, 15);
-            this.SetResistance(ResistanceType.Cold, 30, 40);
-            this.SetResistance(ResistanceType.Poison, 25, 35);
-            this.SetResistance(ResistanceType.Energy, 25, 35);
+			// [Combat Options] 물리 위주의 강력한 타격
+			this.SetDamage(25, 40);
+			this.SetAttackSpeed(2.4);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetSkill(SkillName.MagicResist, 91.0, 100.0);
-            this.SetSkill(SkillName.Tactics, 91.0, 100.0);
-            this.SetSkill(SkillName.Wrestling, 91.0, 100.0);
+			// [Resistances] 종족 약점 반영 및 전사다운 물리 저항
+			this.SetResistance(ResistanceType.Physical, 45, 55); 
+			this.SetResistance(ResistanceType.Fire, 15, 25);      // ★ 화염 취약점
+			this.SetResistance(ResistanceType.Cold, 40, 50);    
+			this.SetResistance(ResistanceType.Poison, 40, 50); 
+			this.SetResistance(ResistanceType.Energy, 20, 30);   // 에너지 저항 낮음
 
-            this.VirtualArmor = 22;
+			// [Skills] 전사다운 높은 근접 전투 숙련도
+			this.SetSkill(SkillName.Wrestling, 95.0, 110.0); 
+			this.SetSkill(SkillName.Tactics, 95.0, 110.0);
+			this.SetSkill(SkillName.Anatomy, 90.0, 105.0);
+			this.SetSkill(SkillName.MagicResist, 80.0, 95.0);
 
-            this.Fame = 2000;
-            this.Karma = 5000;
+			// [Misc]
+			this.Tamable = false; // 지능형 아인종
+			this.VirtualArmor = 5;
+
+			this.Fame = 5000;
+			this.Karma = 5000; // 선족 설정
         }
 
         public MeerWarrior(Serial serial)

@@ -13,36 +13,29 @@ namespace Server.Mobiles
             this.Body = 30;
             this.BaseSoundID = 402;
 
-            this.SetStr(650, 700);
-            this.SetDex(1250, 1300);
-            this.SetInt(100, 500);
+            /* Harpy - Fame 5,000 */
+			this.Fame = 5000;
+			this.Karma = -5000;
 
-            this.SetHits(1410, 1600);
-			SetStam(1000, 1200);
-			SetMana(40, 80);
+			this.SetStr(100, 130);    // 최종 Str 약 1,050
+			this.SetDex(100, 120);     
+			this.SetHits(200, 300);    // 최종 Hits 약 10,400
+
+			this.SetAttackSpeed(2.0);  
+			SetDamage(15, 25);        
+
+			this.SetSkill(SkillName.Wrestling, 130.0); // 최종 약 145.2
+			this.SetSkill(SkillName.Tactics, 130.0);
+
+			this.SetDamageType(ResistanceType.Physical, 100);
+
+			this.SetResistance(ResistanceType.Physical, -20, -10);
+			this.SetResistance(ResistanceType.Energy, -40, -30);
+			this.VirtualArmor = 5;
+
+			this.Tamable = false; // 테이밍 불가
 			
-            this.SetDamage(25, 47);
-
-			SetAttackSpeed( 2.5 );
-			
-			
-            this.SetDamageType(ResistanceType.Physical, 80);
-            this.SetDamageType(ResistanceType.Poison, 20);
-
-            this.SetResistance(ResistanceType.Physical, 25, 30);
-            this.SetResistance(ResistanceType.Fire, 10, 20);
-            this.SetResistance(ResistanceType.Cold, 10, 30);
-            this.SetResistance(ResistanceType.Poison, 20, 30);
-            this.SetResistance(ResistanceType.Energy, 10, 20);
-
-            this.SetSkill(SkillName.MagicResist, 55.1, 57.5);
-			this.SetSkill(SkillName.Tactics, 56.1, 60.0);
-            this.SetSkill(SkillName.Wrestling, 56.1, 60.0);
-
-            this.Fame = 5000;
-            this.Karma = -5000;
-
-            this.VirtualArmor = 17;
+			SetSpecialAbility(SpecialAbility.LifeDrain);
         }
 
         public Harpy(Serial serial)

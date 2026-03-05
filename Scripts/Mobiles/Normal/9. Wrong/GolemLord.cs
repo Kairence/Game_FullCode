@@ -3,7 +3,7 @@ using Server.Items;
 
 namespace Server.Mobiles 
 { 
-    [CorpseName("an evil mage lord corpse")] 
+    [CorpseName("a golem lord corpse")] 
     public class GolemLord : BaseCreature 
     { 
         [Constructable] 
@@ -11,7 +11,7 @@ namespace Server.Mobiles
             : base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
         { 
             //Name = NameList.RandomName("golem lord");
-            Name = "Boss a golem lord";
+            Name = "a golem lord";
             Body = Utility.RandomList(125, 126);
 
             //PackItem(new Robe(Utility.RandomMetalHue())); 
@@ -19,39 +19,50 @@ namespace Server.Mobiles
 
 			Boss = true;
 
-            SetStr(6810, 7050);
-            SetDex(10910, 12150);
-            SetInt(526, 550);
+            /* [Wrong Boss - Golem Lord - Fame 25,000 / Weight 1.26]
+			   - 컨셉: 무너지지 않는 기계 군주 (물리/마법 복합 방어)
+			   - VirtualArmor: (25,000/1000) + 5 = 30 (Max 30 준수)
+			   - 편차 수정: 체력 5만 이상 룰 적용 (편차 2,000 이내)
+			   -------------------------------------------------- */
 
-            SetHits(240900, 262630);
-			SetStam(213000, 241400);
-			SetMana(100000, 110000);
+			// 최종 Str 약 21,600 (강철 주먹의 위력)
+			this.SetStr(18100, 18400); 
 
-			SetAttackSpeed( 10.0 );
+			// 최종 Hits 약 480,000 (안정적인 기계적 맷집)
+			this.SetHits(403000, 405000); 
 
-            SetDamage(1258, 4000);
+			// 최종 Dex/Int 약 4,300
+			this.SetDex(3600, 3700);
+			this.SetInt(3600, 3700);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// 최종 Stam/Mana 약 4,550
+			this.SetStam(3800, 3900);
+			this.SetMana(3800, 3900);
 
-            SetResistance(ResistanceType.Physical, 35, 40);
-            SetResistance(ResistanceType.Fire, 30, 40);
-            SetResistance(ResistanceType.Cold, 30, 40);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 30, 40);
+			// [Combat Options]
+			this.SetDamage(80, 120);
+			this.SetAttackSpeed(2.4);
 
-            SetSkill(SkillName.EvalInt, 230.2, 250.0);
-            SetSkill(SkillName.Magery, 245.1, 250.0);
-            SetSkill(SkillName.Meditation, 227.5, 300.0);
-            SetSkill(SkillName.MagicResist, 227.5, 350.0);
-            SetSkill(SkillName.Tactics, 235.0, 327.5);
-            SetSkill(SkillName.Wrestling, 320.3, 330.0);
+			// [Resistances] 최고 저항 75 이하 엄격 준수 (골렘 특화 저항)
+			this.SetResistance(ResistanceType.Physical, 70, 75); // 강철 외피
+			this.SetResistance(ResistanceType.Fire, 50, 60);
+			this.SetResistance(ResistanceType.Cold, 50, 60);
+			this.SetResistance(ResistanceType.Poison, 75);       // 독 면역 (Max 75)
+			this.SetResistance(ResistanceType.Energy, 65, 75);   // 마법 에너지 저항 우수
 
-            Fame = 25000;
-            Karma = -25000;
+			// [Skills] 최종 288.5 부근
+			this.SetSkill(SkillName.Wrestling, 172.0, 176.0);
+			this.SetSkill(SkillName.Tactics, 172.0, 176.0);
+			this.SetSkill(SkillName.Anatomy, 172.0, 176.0);
+			this.SetSkill(SkillName.MagicResist, 170.0, 180.0);
+
+			// 가방 방어력: (25,000/1000) + 5 = 30
+			this.VirtualArmor = 30;
+
+			this.Fame = 25000;
+			this.Karma = -25000;
 
             SetSpecialAbility(SpecialAbility.ColossalBlow);
-
-            VirtualArmor = 55;
         }
 
         public override int GetAngerSound()

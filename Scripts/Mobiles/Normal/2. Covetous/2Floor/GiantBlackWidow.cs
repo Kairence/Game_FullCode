@@ -14,31 +14,38 @@ namespace Server.Mobiles
             this.Body = 0x9D;
             this.BaseSoundID = 0x388; // TODO: validate
 
-            this.SetStr(1220, 1580);
-            this.SetDex(1250, 1350);
-            this.SetInt(100, 500);
+            /* Giant Black Widow - Fame 3,500 */
+			this.SetStr(60, 80);    // 보너스(+804) 합산 시 약 880
+			this.SetDex(96, 115);    
+			this.SetInt(36, 60);     
 
-            this.SetHits(1425, 1650);
-			SetStam(1250, 1300);
-			SetMana(100, 500);
+			this.SetHits(100, 200);  // 보너스(+7,095) 합산 시 약 7,200
+			this.SetStam(96, 115);
 
-            this.SetDamage(18, 20);
-			SetAttackSpeed( 1.0 );
+			this.SetAttackSpeed(1.8);   
+			SetDamage(12, 18);
 
-            this.SetDamageType(ResistanceType.Poison, 100);
-            this.SetResistance(ResistanceType.Physical, 20, 30);
-            this.SetResistance(ResistanceType.Fire, 10, 20);
-            this.SetResistance(ResistanceType.Cold, 10, 20);
-            this.SetResistance(ResistanceType.Poison, 50, 60);
-            this.SetResistance(ResistanceType.Energy, 10, 20);
-			
-            this.Fame = 6000;
-            this.Karma = -6000;
+			this.SetSkill(SkillName.Wrestling, 90.4); // 보너스 +10.4 반영
+			this.SetSkill(SkillName.Tactics, 90.4);
+			this.SetSkill(SkillName.Poisoning, 95.0, 105.0);
 
-            this.VirtualArmor = 0;
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Poison, 50);
+
+			// 저항 패널티: 물리 타격에 약함
+			this.SetResistance(ResistanceType.Physical, -20, -10);
+			this.SetResistance(ResistanceType.Fire, -40, -30);
+			this.SetResistance(ResistanceType.Poison, 50, 60); 
+			this.VirtualArmor = 0;
+
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 75.1;
+
+			this.Fame = 3500;
+			this.Karma = -3500;
 
             this.PackItem(new SpidersSilk(15));
-            VirtualArmor = 10;
         }
 
         public GiantBlackWidow(Serial serial)

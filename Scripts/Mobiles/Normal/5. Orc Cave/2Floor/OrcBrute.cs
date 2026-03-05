@@ -12,40 +12,53 @@ namespace Server.Mobiles
         {
             Body = 189;
 
-            Name = "Boss an orc brute";
+            Name = "an orc brute";
             BaseSoundID = 0x45A;
 
-            SetStr(13750, 18500);
-            SetDex(5366, 5375);
-            SetInt(2600, 2700);
-
-			SetHits(252085, 268888);
-			SetStam(204000, 242000);
-			SetMana(100000, 150000);
-
-			SetAttackSpeed( 5.0 );
-            SetDamage(1050, 1750);
-
-            SetDamageType(ResistanceType.Physical, 100);
-
-            SetResistance(ResistanceType.Physical, 65, 75);
-            SetResistance(ResistanceType.Fire, 40, 50);
-            SetResistance(ResistanceType.Cold, 25, 35);
-            SetResistance(ResistanceType.Poison, 45, 55);
-            SetResistance(ResistanceType.Energy, 65, 75);
-
-            SetSkill(SkillName.Macing, 225.1, 230.0);
-            SetSkill(SkillName.MagicResist, 245.1, 260.0);
-            SetSkill(SkillName.Tactics, 225.1, 230.0);
-            SetSkill(SkillName.Wrestling, 225.1, 230.0);
-
-            Fame = 24000;
-            Karma = -24000;
-
 			Boss = true;
-			
-            VirtualArmor = 150;
- 
+
+			/* [Orc Dungeon Level 2 Boss - Orc Brute - Fame 24,000 / Weight 1.28]
+			   - 컨셉: 무식한 힘의 상징 (물리 파괴형)
+			   - VirtualArmor: (24,000/1000) + 1 = 25 (단단한 피부 보정)
+			   - 편차 수정: 체력 5만 이상 룰 적용 (편차 2,000 이내)
+			   -------------------------------------------------- */
+
+			// 최종 Str 약 20,700 (오우거 로드에 버금가는 파워)
+			this.SetStr(17300, 17700); 
+
+			// 최종 Hits 약 460,000 (민맥 편차 2,000 고정)
+			this.SetHits(387000, 389000); 
+
+			// 최종 Dex/Int 약 4,100
+			this.SetDex(3450, 3550);
+			this.SetInt(3450, 3550);
+
+			// 최종 Stam/Mana 약 4,350
+			this.SetStam(3650, 3750);
+			this.SetMana(3650, 3750);
+
+			// [Combat Options]
+			this.SetDamage(90, 130);
+			this.SetAttackSpeed(2.2);
+
+			// [Resistances] 최고 저항 75 이하 엄격 준수
+			this.SetResistance(ResistanceType.Physical, 65, 75); // 강철 같은 육체
+			this.SetResistance(ResistanceType.Fire, 40, 50);
+			this.SetResistance(ResistanceType.Cold, 40, 50);
+			this.SetResistance(ResistanceType.Poison, 50, 60);
+			this.SetResistance(ResistanceType.Energy, 30, 40);    // 마법 저항력은 상대적 취약
+
+			// [Skills] 최종 276.4 부근
+			this.SetSkill(SkillName.Wrestling, 166.0, 171.0);
+			this.SetSkill(SkillName.Tactics, 166.0, 171.0);
+			this.SetSkill(SkillName.Anatomy, 166.0, 171.0);
+			this.SetSkill(SkillName.MagicResist, 140.0, 150.0);
+
+			// 가방 방어력: (24,000/1000) + 1 = 25
+			this.VirtualArmor = 25;
+
+			this.Fame = 24000;
+			this.Karma = -24000;
         }
 
         public OrcBrute(Serial serial)

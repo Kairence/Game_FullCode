@@ -17,31 +17,45 @@ namespace Server.Mobiles
             this.BaseSoundID = 959;
             this.Hue = 0x453;
 
-            this.SetStr(196, 220);
-            this.SetDex(101, 125);
-            this.SetInt(36, 60);
+			/* [Black Solen Warrior - Fame 8,000 / General / Weight 1.16]
+			   - 스킬 200 마스터 서버용 '중급' 밸런스 적용
+			   - 가상 방어력(VirtualArmor): (8,000/1000) + 2 = 10
+			   - 저항 밸런스: 최대 75 상한 엄격 준수
+			   -------------------------------------------------- */
 
-            this.SetHits(96, 107);
+			// [Attributes] 명성 8,000 보너스 + 가중치 1.16 반영
+			this.SetStr(110, 135); 
+			this.SetHits(2500, 2800); 
+			this.SetDex(20, 30);
+			this.SetInt(20, 30);
 
-            this.SetDamage(5, 15);
+			// [Combat Options]
+			this.SetDamage(25, 40);
+			this.SetAttackSpeed(2.0);
 
-            this.SetDamageType(ResistanceType.Physical, 80);
-            this.SetDamageType(ResistanceType.Poison, 20);
+			// [Damage Types] 80% 물리 + 20% 독 속성
+			this.SetDamageType(ResistanceType.Physical, 80);
+			this.SetDamageType(ResistanceType.Poison, 20);
 
-            this.SetResistance(ResistanceType.Physical, 20, 35);
-            this.SetResistance(ResistanceType.Fire, 20, 35);
-            this.SetResistance(ResistanceType.Cold, 10, 25);
-            this.SetResistance(ResistanceType.Poison, 20, 35);
-            this.SetResistance(ResistanceType.Energy, 10, 25);
+			// [Resistances] 총합 약 205 (Max 75 준수)
+			this.SetResistance(ResistanceType.Physical, 50, 60);
+			this.SetResistance(ResistanceType.Fire, 20, 30);
+			this.SetResistance(ResistanceType.Cold, 25, 35);
+			this.SetResistance(ResistanceType.Poison, 60, 70);
+			this.SetResistance(ResistanceType.Energy, 20, 30);
 
-            this.SetSkill(SkillName.MagicResist, 60.0);
-            this.SetSkill(SkillName.Tactics, 80.0);
-            this.SetSkill(SkillName.Wrestling, 80.0);
+			// [Skills] ★ 스킬 200 서버 기준 - 중반부 핵심 사냥용 (재설계)
+			// 유저 스킬 80 ~ 100(그랜드 마스터) 구간 수련에 최적화
+			this.SetSkill(SkillName.Wrestling, 75.0, 85.0); 
+			this.SetSkill(SkillName.Tactics, 75.0, 85.0);
+			this.SetSkill(SkillName.Anatomy, 70.0, 80.0);
+			this.SetSkill(SkillName.MagicResist, 65.0, 75.0);
 
-            this.Fame = 3000;
-            this.Karma = -3000;
+			// [Misc] 가상 방어력(Virtual Armor): (8,000/1000) + 2 = 10
+			this.VirtualArmor = 10;
 
-            this.VirtualArmor = 35;
+			this.Fame = 8000;
+			this.Karma = -8000;
 
             SolenHelper.PackPicnicBasket(this);
 

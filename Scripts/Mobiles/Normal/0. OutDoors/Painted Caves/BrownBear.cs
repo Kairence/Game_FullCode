@@ -13,31 +13,28 @@ namespace Server.Mobiles
             this.Body = 167;
             this.BaseSoundID = 0xA3;
 
-            this.SetStr(676, 1000);
-            this.SetDex(1026, 1045);
-            this.SetInt(123, 147);
+            this.SetStr(43, 93);     
+			this.SetDex(35, 55);     
+			this.SetInt(10, 20);     
 
-            this.SetHits(1460, 1600);
-            this.SetStam(46, 60);
-            this.SetMana(0);
+			this.SetHits(134, 334);  // 최종 Hits 2,000~2,200
+			this.SetStam(35, 55);
 
-            this.SetDamage(60, 82);
+			SetAttackSpeed(3.2);
+			SetDamage(10, 16); 
 
-			SetAttackSpeed( 5.0 );
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetResistance(ResistanceType.Physical, 10, 15);
+			this.SetResistance(ResistanceType.Cold, 15, 20);
 
-            this.SetResistance(ResistanceType.Physical, 20, 30);
-            this.SetResistance(ResistanceType.Cold, 15, 20);
-            this.SetResistance(ResistanceType.Poison, 10, 15);
+			this.SetSkill(SkillName.Wrestling, 37.5, 47.5);
+			this.SetSkill(SkillName.Tactics, 37.5, 47.5);
 
-            this.Fame = 5000;
-            this.Karma = 0;
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 47.1;
 
-            this.VirtualArmor = 2;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 41.1;
+			this.Fame = 1000;
+			this.Karma = 0;
         }
 
         public BrownBear(Serial serial)

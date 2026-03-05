@@ -15,36 +15,45 @@ namespace Server.Mobiles
             this.Body = 140;
             this.BaseSoundID = 0x45A;
 
-            this.SetStr(206, 415);
-            this.SetDex(121, 130);
-            this.SetInt(2761, 2785);
+            /* Orcish Mage - Fame 6,000 / Karma -6,000 */
+			/* [HP Calculation]
+			   - Target HP: ~15,000
+			   - Fame Bonus (6,000): ~13,850
+			   - SetHits Required: 1,150 (Target - Bonus)
+			*/
+			this.SetStr(150, 200);       
+			this.SetDex(120, 150);       
+			this.SetInt(550, 750);       // 강력한 마력 기반
 
-            this.SetHits(2170, 2790);
-			this.SetStam(1000, 1500);
-			this.SetMana(2100, 2150);
-			
-			SetAttackSpeed( 60.0 );
+			// [Hits] 최종 약 14,000 ~ 16,000 타격을 목표로 설정
+			this.SetHits(500, 1800); 
+			this.SetStam(120, 150);      
+			this.SetMana(550, 750);      
 
-            this.SetDamage(1, 5);
+			this.SetAttackSpeed(2.8);    
+			this.SetDamage(10, 18);      // 근접 지팡이 타격
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Energy, 100);
 
-            this.SetResistance(ResistanceType.Physical, 25, 35);
-            this.SetResistance(ResistanceType.Fire, 30, 40);
-            this.SetResistance(ResistanceType.Cold, 20, 30);
-            this.SetResistance(ResistanceType.Poison, 30, 40);
-            this.SetResistance(ResistanceType.Energy, 30, 40);
+			// [Resistance] 명성이 높지만 오크 특성상 방어구는 허술함
+			this.SetResistance(ResistanceType.Physical, 25, 35);
+			this.SetResistance(ResistanceType.Fire, 30, 45);
+			this.SetResistance(ResistanceType.Cold, 30, 45);
+			this.SetResistance(ResistanceType.Poison, 30, 45);
+			this.SetResistance(ResistanceType.Energy, 50, 65); // 에너지 저항 가중치
 
-            this.SetSkill(SkillName.EvalInt, 126.1, 127.5);
-            this.SetSkill(SkillName.Magery, 126.1, 127.5);
-            this.SetSkill(SkillName.MagicResist, 116.1, 127.0);
-            this.SetSkill(SkillName.Tactics, 125.1, 126.0);
-            this.SetSkill(SkillName.Wrestling, 124.1, 125.0);
+			// [Skills] 고위 마법사 수준의 스킬셋
+			this.SetSkill(SkillName.Magery, 100.0, 115.0);
+			this.SetSkill(SkillName.EvalInt, 100.0, 115.0);
+			this.SetSkill(SkillName.Meditation, 90.0, 110.0);
+			this.SetSkill(SkillName.MagicResist, 100.0, 115.0);
+			this.SetSkill(SkillName.Wrestling, 80.0, 95.0);
 
-            this.Fame = 8500;
-            this.Karma = -8500;
+			this.VirtualArmor = 6;       // 가운만 걸친 수준의 낮은 방어력
+			this.Tamable = false;
 
-            this.VirtualArmor = 5;
+			this.Fame = 6000;           
+			this.Karma = -6000;
         }
 
         public OrcishMage(Serial serial)

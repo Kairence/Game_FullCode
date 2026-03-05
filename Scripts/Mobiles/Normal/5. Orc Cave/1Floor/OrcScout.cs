@@ -19,39 +19,43 @@ namespace Server.Mobiles
 			Body = 0xB5;
 			BaseSoundID = 0x45A;
 
-			SetStr(1326, 1530);
-			SetDex(2401, 2430);
-			SetInt(116, 120);
+			/* Orc Scout - Fame 2,500 / Karma -2,500 */
+			/* [HP Calculation]
+			   - Target HP: ~4,500
+			   - Fame Bonus (2,500): ~4,375
+			   - SetHits Required: 125 (Target - Bonus)
+			*/
+			this.SetStr(120, 150);       
+			this.SetDex(200, 250);       
+			this.SetInt(60, 100);        
 
-			SetHits(2158, 2572);
-			SetStam(2000);
-			SetMana(130, 160);
+			// [Hits] 최종 약 4,000 ~ 5,000 타겟
+			this.SetHits(50, 600); 
+			this.SetStam(200, 250);      
+			this.SetMana(60, 100);       
 
-			SetAttackSpeed( 0.5 );
-			SetDamage(6, 22);
+			this.SetAttackSpeed(1.8);    // 빠른 사격 속도
+			this.SetDamage(12, 18);      
 
-			SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-			SetResistance(ResistanceType.Physical, 45, 55);
-			SetResistance(ResistanceType.Fire, 30, 40);
-			SetResistance(ResistanceType.Cold, 15, 25);
-			SetResistance(ResistanceType.Poison, 15, 20);
-			SetResistance(ResistanceType.Energy, 55, 60);
+			this.SetResistance(ResistanceType.Physical, 15, 25);
+			this.SetResistance(ResistanceType.Fire, 15, 25);
+			this.SetResistance(ResistanceType.Cold, 15, 25);
+			this.SetResistance(ResistanceType.Poison, 15, 25);
+			this.SetResistance(ResistanceType.Energy, 15, 25);
 
-			SetSkill(SkillName.MagicResist, 150.1, 155.0);
-			SetSkill(SkillName.Tactics, 155.1, 158.0);
+			// [Skills] 은신 및 잠입 특화
+			this.SetSkill(SkillName.Archery, 85.0, 100.0);
+			this.SetSkill(SkillName.Tactics, 80.0, 95.0);
+			this.SetSkill(SkillName.Hiding, 90.0, 100.0);   // 은신
+			this.SetSkill(SkillName.Stealth, 90.0, 100.0);  // 잠입
 
-			SetSkill(SkillName.Fencing, 155.1, 157.0);
-			SetSkill(SkillName.Archery, 157.1, 158.0);
-			SetSkill(SkillName.Parry, 154.1, 156.0);
-			SetSkill(SkillName.Healing, 148.1, 150.0);
-			SetSkill(SkillName.Anatomy, 145.1, 159.0);
-			SetSkill(SkillName.DetectHidden, 140.1, 160.0);
-			SetSkill(SkillName.Hiding, 140.0, 150.0);
-			SetSkill(SkillName.Stealth, 170.1, 220.0);
+			this.VirtualArmor = 3;       
+			this.Tamable = false;
 
-			Fame = 9000;
-			Karma = -9000;
+			this.Fame = 2500;           
+			this.Karma = -2500;
 		}
 
 		public OrcScout(Serial serial)

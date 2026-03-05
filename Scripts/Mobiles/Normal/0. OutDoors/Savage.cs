@@ -17,20 +17,28 @@ namespace Server.Mobiles
             else
                 this.Body = 183;
 
-            this.SetStr(336, 645);
-            this.SetDex(126, 135);
-            this.SetInt(121, 135);
-			SetHits(282, 300);
-            SetStam(126, 235);
-            SetMana(121, 135);
+            this.SetStr(108, 158); // 최종 Str 700~750
+			this.SetDex(132, 182); // 최종 Dex ~350
+
+			this.SetHits(1202, 1702); // 최종 Hits 3,500~4,000
+			this.SetStam(32, 82); 
+			this.SetMana(100, 200);
 
 			SetAttackSpeed(2.5);
-            this.SetDamage(12,25);
+			SetDamage(15, 25); 
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.Fame = 1000;
-            this.Karma = -1000;
+			this.SetResistance(ResistanceType.Physical, 25, 35);
+			this.SetResistance(ResistanceType.Cold, 15, 25);
+
+			// 최종 스킬 120.0 목표 (유저 200 환경의 숙련병)
+			this.SetSkill(SkillName.Wrestling, 116.9, 136.9);
+			this.SetSkill(SkillName.Tactics, 116.9, 136.9);
+
+			this.Fame = 1200;
+			this.Karma = -1200;
+			this.VirtualArmor = 5;
 
             this.PackItem(new Bandage(Utility.RandomMinMax(1, 15)));
 

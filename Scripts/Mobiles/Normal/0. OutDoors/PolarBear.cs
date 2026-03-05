@@ -14,31 +14,29 @@ namespace Server.Mobiles
             this.Body = 213;
             this.BaseSoundID = 0xA3;
 
-            this.SetStr(4116, 4410);
-            this.SetDex(810, 2050);
-            this.SetInt(260, 500);
+            this.SetStr(282, 332); // 최종 Str 900~950
+			this.SetDex(77, 127);  // 최종 Dex ~350
 
-            this.SetHits(9000, 10400);
-            SetStam(1000, 2000);
-            SetMana(10, 20);
+			this.SetHits(3134, 4134); // 최종 Hits 6,000~7,000
+			this.SetStam(77, 127);
+			this.SetMana(0);
 
-			SetAttackSpeed(5.0);
+			SetAttackSpeed(3.5);
+			SetDamage(30, 45);
 
-            this.SetDamage(177, 320);
+			this.SetDamageType(ResistanceType.Physical, 80);
+			this.SetDamageType(ResistanceType.Cold, 20);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetResistance(ResistanceType.Physical, 35, 45);
+			this.SetResistance(ResistanceType.Cold, 45, 50);
+			this.SetResistance(ResistanceType.Fire, 5, 10);
 
-            this.SetResistance(ResistanceType.Physical, 25, 35);
-            this.SetResistance(ResistanceType.Cold, 60, 80);
-            this.SetResistance(ResistanceType.Poison, 15, 25);
-            this.SetResistance(ResistanceType.Energy, 10, 15);
+			this.SetSkill(SkillName.Wrestling, 116.1, 126.1); // 최종 120.0~
 
-            this.Fame = 14000;
-            this.Karma = 0;
-
-            this.Tamable = true;
-            this.ControlSlots = 2;
-            this.MinTameSkill = 135.1;
+			this.Fame = 1500;
+			this.VirtualArmor = 7;
+			this.Tamable = true;
+			this.MinTameSkill = 95.1;
         }
 
         public PolarBear(Serial serial)

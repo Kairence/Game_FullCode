@@ -14,29 +14,37 @@ namespace Server.Mobiles
             Body = 0x2F1;
             BaseSoundID = 0x174;
 
-            SetStr(302, 360);
-            SetDex(76, 95);
-            SetInt(81, 105);
+            /* Enslaved Gargoyle - Fame 2,500 / Karma -2,500 */
+			/* [HP Calculation]
+			   - Target HP: ~5,500
+			   - Fame Bonus (2,500): ~4,375
+			   - SetHits Required: 1,125 (Target - Bonus)
+			*/
+			this.SetStr(200, 300);       
+			this.SetDex(100, 150);       
 
-            SetHits(386, 512);
+			// [Hits] 최종 약 5,000 ~ 6,000 타겟
+			this.SetHits(625, 1625); 
+			this.SetStam(100, 150);      
 
-			SetAttackSpeed( 5.0 );
-            SetDamage(37, 74);
+			this.SetAttackSpeed(2.6);    
+			this.SetDamage(12, 18);      
 
-            SetResistance(ResistanceType.Physical, 30, 40);
-            SetResistance(ResistanceType.Fire, 50, 70);
-            SetResistance(ResistanceType.Cold, 15, 25);
-            SetResistance(ResistanceType.Poison, 25, 30);
-            SetResistance(ResistanceType.Energy, 25, 30);
+			this.SetDamageType(ResistanceType.Physical, 70);
+			this.SetDamageType(ResistanceType.Fire, 30);
 
-            SetSkill(SkillName.MagicResist, 70.1, 85.0);
-            SetSkill(SkillName.Tactics, 50.1, 70.0);
-            SetSkill(SkillName.Wrestling, 40.1, 80.0);
+			this.SetResistance(ResistanceType.Physical, 25, 35);
+			this.SetResistance(ResistanceType.Fire, 50, 60);     
+			this.SetResistance(ResistanceType.Cold, 0, 10);      // 냉기 속성에 매우 취약
 
-            Fame = 3500;
-            Karma = 0;
+			this.SetSkill(SkillName.Wrestling, 70.0, 85.0);
+			this.SetSkill(SkillName.Tactics, 70.0, 85.0);
 
-            VirtualArmor = 35;
+			this.VirtualArmor = 5;       
+			this.Tamable = false;
+
+			this.Fame = 2500;           
+			this.Karma = -2500;
             //SetSpecialAbility(SpecialAbility.AngryFire);
         }
 

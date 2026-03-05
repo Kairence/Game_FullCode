@@ -20,23 +20,32 @@ namespace Server.Mobiles
 			Female = true;
 			Body = 186;
 
-			SetStr(226, 227);
-			SetDex(111, 120);
-			SetInt(341, 355);
-			SetHits(377, 388);
-            SetStam(100, 150);
-            SetMana(495, 550);
+			this.SetStr(1, 51);    // 최종 Str 700~750
+			this.SetDex(104, 154); // 최종 Dex ~350
 
-			SetAttackSpeed(25.0);			
-			SetDamage(8, 16);
+			this.SetHits(3051, 4051); // 최종 Hits 8,000~9,000
+			this.SetStam(54, 104);
+			this.SetMana(1500, 2500);
 
-			SetDamageType(ResistanceType.Physical, 100);
+			SetAttackSpeed(2.8);
+			SetDamage(15, 25); 
 
-			SetSkill(SkillName.EvalInt, 27.5, 30.0);
-			SetSkill(SkillName.Magery, 28.5, 35.0);
+			// 공격 속성: 주술적 타격
+			this.SetDamageType(ResistanceType.Poison, 50);
+			this.SetDamageType(ResistanceType.Energy, 50);
 
-			Fame = 2000;
-			Karma = -2000;
+			this.SetResistance(ResistanceType.Physical, 20, 30);
+			this.SetResistance(ResistanceType.Poison, 45, 50);
+			this.SetResistance(ResistanceType.Energy, 40, 50);
+
+			// 최종 스킬 160.0~180.0 목표 (200 서버 기준 고위 마법사)
+			this.SetSkill(SkillName.Magery, 153.2, 173.2);
+			this.SetSkill(SkillName.EvalInt, 153.2, 173.2);
+			this.SetSkill(SkillName.MagicResist, 173.2, 193.2); // 저항 매우 높음
+
+			this.Fame = 2500;
+			this.Karma = -2500;
+			this.VirtualArmor = 3;
 
 			PackItem(new Bandage(Utility.RandomMinMax(1, 5)));
 

@@ -13,32 +13,24 @@ namespace Server.Mobiles
             this.Body = 0xCB;
             this.BaseSoundID = 0xC4;
 
-            this.SetStr(250, 300);
-            this.SetDex(25, 30);
-            this.SetInt(12, 18);
+            this.SetStr(5, 15);
+			this.SetDex(17, 47); // 최종 Dex ~100
 
-            SetHits(230, 280);
-            SetStam(25, 30);
-            SetMana(5, 10);
-			
-			SetAttackSpeed(10.0);
+			this.SetHits(66, 116); // 최종 Hits 600~650
+			this.SetStam(47, 97); 
+			this.SetMana(0);
 
-            this.SetDamage(7, 11);
+			SetAttackSpeed(3.5);
+			SetDamage(2, 4); 
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 10, 15);
-            this.SetResistance(ResistanceType.Fire, 5, 10);
-            this.SetResistance(ResistanceType.Poison, 5, 10);
+			this.SetResistance(ResistanceType.Physical, 5, 10);
 
-            this.Fame = 300;
-            this.Karma = 0;
-
-            this.VirtualArmor = 1;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 29.1;
+			this.Fame = 200;
+			this.VirtualArmor = 0;
+			this.Tamable = true;
+			this.MinTameSkill = -18.9;
 
             if (Core.AOS && Utility.Random(1000) == 0) // 0.1% chance to have mad cows
                 FightMode = FightMode.Closest;

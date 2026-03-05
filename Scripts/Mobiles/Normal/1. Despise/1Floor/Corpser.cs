@@ -14,33 +14,31 @@ namespace Server.Mobiles
             this.Body = 8;
             this.BaseSoundID = 684;
 
-            this.SetStr(260, 330);
-            this.SetDex(116, 125);
-            this.SetInt(126, 130);
+            this.SetStr(57, 107);    // 최종 Str 650~700
+			this.SetDex(1, 10);      // 이동 불가/느림
+			this.SetInt(1, 5);       
 
-            this.SetHits(550, 774);
-			SetMana(10, 15);
-			SetStam(130, 135);
-			SetAttackSpeed( 7.5 );
+			this.SetHits(172, 372);  // 최종 Hits 2,500~2,700
+			this.SetStam(1, 10);
 
-            this.SetDamage(8, 24);
+			SetAttackSpeed(3.0);
+			SetDamage(12, 18); 
 
-            this.SetDamageType(ResistanceType.Physical, 60);
-            this.SetDamageType(ResistanceType.Poison, 40);
+			// 공격 속성: 묵직한 물리 타격
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 15, 20);
-            this.SetResistance(ResistanceType.Fire, 15, 25);
-            this.SetResistance(ResistanceType.Cold, 10, 20);
-            this.SetResistance(ResistanceType.Poison, 20, 30);
+			// 저항: 가짜 시체 껍질 (물리 저항 15% 수준)
+			this.SetResistance(ResistanceType.Physical, 15, 20);
+			this.SetResistance(ResistanceType.Fire, 0); // 불에 취약
 
-            this.SetSkill(SkillName.MagicResist, 12.1, 15.0);
-            this.SetSkill(SkillName.Tactics, 12.1, 15.0);
-            this.SetSkill(SkillName.Wrestling, 12.1, 15.0);
+			// 최종 Skill 45.0 내외 (45.0 - 3.1 = 41.9)
+			this.SetSkill(SkillName.Wrestling, 36.9, 46.9);
+			this.SetSkill(SkillName.Tactics, 36.9, 46.9);
 
-            this.Fame = 2500;
-            this.Karma = -2500;
+			this.VirtualArmor = 5;
 
-            this.VirtualArmor = 4;
+			this.Fame = 1200;
+			this.Karma = -1200;
 
             this.PackItem(new ParasiticPlant(10));
 

@@ -25,7 +25,7 @@ public class IDWand : BaseWand
     {
         m_Grade = grade;
         Name = "아이템 감정 완드";
-        Hue = GetGradeHue(grade); // 등급별 색상 추가 (선택사항)
+        //Hue = GetGradeHue(grade); // 등급별 색상 추가 (선택사항)
     }
 
     // [중요] 서버 재시작 시 아이템을 불러오는 핵심 생성자
@@ -39,17 +39,6 @@ public class IDWand : BaseWand
         string name = (m_Grade >= 0 && m_Grade < GradeNames.Length) ? GradeNames[m_Grade] : "알 수 없음";
         list.Add(1060659, $"감정 가능 한계\t{name} 등급");
     }
-
-    // 등급에 따른 색상 (서버 껐다 켜도 유지됨)
-    private static int GetGradeHue(int grade) => grade switch
-    {
-        1 => 2129, // 희귀 (하늘색 계열)
-        2 => 2117, // 영웅 (보라색 계열)
-        3 => 2127, // 서사 (분홍색 계열)
-        4 => 2500, // 전설 (주황색 계열)
-        5 => 1161, // 신화 (하얀색/금색 계열)
-        _ => 0     // 일반
-    };
 
     public override bool OnWandTarget(Mobile from, object o)
     {

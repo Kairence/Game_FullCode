@@ -14,39 +14,41 @@ namespace Server.Mobiles
             Body = 24;
             BaseSoundID = 0x3E9;
 
-            SetStr(2371, 3440);
-            SetDex(3236, 3245);
-            SetInt(3476, 3505);
+            /* Lich - Fame 14,000 / Undead Mage */
+			this.SetStr(550, 650);       
+			this.SetDex(250, 350);       
+			this.SetInt(900, 1050);      
 
-            SetHits(5553, 5600);
-			SetStam(5100, 5150);
-			SetMana(5200, 5250);
+			// [Hits] 최종 약 49,000 ~ 51,000 타겟
+			this.SetHits(15300, 17300); 
+			this.SetStam(250, 350);      
+			this.SetMana(900, 1050);     
 
-			SetAttackSpeed( 10.0 );
+			this.SetAttackSpeed(2.4);    
+			this.SetDamage(18, 28);      
 
-            SetDamage(310, 575);
+			this.SetDamageType(ResistanceType.Physical, 40);
+			this.SetDamageType(ResistanceType.Cold, 30);
+			this.SetDamageType(ResistanceType.Energy, 30);
 
-            SetDamageType(ResistanceType.Physical, 10);
-            SetDamageType(ResistanceType.Cold, 40);
-            SetDamageType(ResistanceType.Energy, 50);
+			this.SetResistance(ResistanceType.Physical, 40, 50);
+			this.SetResistance(ResistanceType.Fire, 15, 25);
+			this.SetResistance(ResistanceType.Cold, 45, 55);
+			this.SetResistance(ResistanceType.Energy, 40, 50);
+			this.SetResistance(ResistanceType.Poison, 45, 55);
 
-            SetResistance(ResistanceType.Physical, 50, 60);
-            SetResistance(ResistanceType.Fire, 20, 30);
-            SetResistance(ResistanceType.Cold, 50, 60);
-            SetResistance(ResistanceType.Poison, 85, 95);
-            SetResistance(ResistanceType.Energy, 40, 50);
+			this.SetSkill(SkillName.Magery, 100.0, 110.0);
+			this.SetSkill(SkillName.EvalInt, 100.0, 110.0);
+			this.SetSkill(SkillName.Meditation, 90.0, 100.0);
+			this.SetSkill(SkillName.MagicResist, 100.0, 110.0);
+			this.SetSkill(SkillName.Wrestling, 100.0, 110.0);
+			this.SetSkill(SkillName.Tactics, 90.0, 100.0);
 
-            SetSkill(SkillName.EvalInt, 200.0, 215.0);
-            SetSkill(SkillName.Magery, 215.1, 220.0);
-            SetSkill(SkillName.Meditation, 215.1, 220.0);
-            SetSkill(SkillName.MagicResist, 215.1, 220.0);
-            SetSkill(SkillName.Tactics, 195.1, 200.0);
-            SetSkill(SkillName.Wrestling, 290.1, 300.0);
+			this.VirtualArmor = 25;      
+			this.Tamable = false;
 
-            Fame = 14000;
-            Karma = -14000;
-
-            VirtualArmor = 50;
+			this.Fame = 14000;           
+			this.Karma = -14000;
         }
 
         public Lich(Serial serial)

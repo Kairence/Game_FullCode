@@ -16,35 +16,41 @@ namespace Server.Mobiles
             Body = 10;
             BaseSoundID = 357;
 
-            SetStr(7476, 10505);
-            SetDex(7600, 9500);
-            SetInt(6301, 9325);
+            /* Daemon - Fame 15,000 / Karma -15,000 */
+			/* [HP Calculation]
+			   - Target HP: ~45,000
+			   - Fame Bonus (15,000): ~37,200
+			   - SetHits Required: 7,800 (Target - Bonus)
+			*/
+			this.SetStr(500, 700);       
+			this.SetDex(150, 250);       
+			this.SetInt(500, 700);       
 
-            SetHits(5206, 6303);
-			SetStam(3100, 3120);
-			SetMana(3100, 3120);
+			// [Hits] 최종 약 42,000 ~ 48,000 타겟
+			this.SetHits(4800, 10800); 
+			this.SetStam(150, 250);      
+			this.SetMana(500, 700);      
 
-			SetAttackSpeed( 5.0 );
-            SetDamage(170, 324);
+			this.SetAttackSpeed(2.2);    
+			this.SetDamage(25, 45);      
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Fire, 50);
 
-            SetResistance(ResistanceType.Physical, 45, 60);
-            SetResistance(ResistanceType.Fire, 50, 60);
-            SetResistance(ResistanceType.Cold, 30, 40);
-            SetResistance(ResistanceType.Poison, 20, 30);
-            SetResistance(ResistanceType.Energy, 30, 40);
+			this.SetResistance(ResistanceType.Physical, 50, 65);
+			this.SetResistance(ResistanceType.Fire, 65, 75);     
+			this.SetResistance(ResistanceType.Cold, 35, 50);     
+			this.SetResistance(ResistanceType.Poison, 50, 65);
 
-            SetSkill(SkillName.EvalInt, 70.1, 75.0);
-            SetSkill(SkillName.Magery, 70.1, 75.0);
-            SetSkill(SkillName.MagicResist, 65.1, 75.0);
-            SetSkill(SkillName.Tactics, 70.1, 75.0);
-            SetSkill(SkillName.Wrestling, 70.1, 75.0);
+			this.SetSkill(SkillName.Magery, 105.0, 120.0);
+			this.SetSkill(SkillName.EvalInt, 105.0, 120.0);
+			this.SetSkill(SkillName.Wrestling, 100.0, 115.0);
 
-            Fame = 15000;
-            Karma = -15000;
+			this.VirtualArmor = 10;      
+			this.Tamable = false;
 
-            VirtualArmor = 58;
+			this.Fame = 15000;           
+			this.Karma = -15000;
 
             switch (Utility.Random(20))
             {

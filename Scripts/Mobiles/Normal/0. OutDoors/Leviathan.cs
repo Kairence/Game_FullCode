@@ -52,7 +52,7 @@ namespace Server.Mobiles
             m_NextWaterBall = DateTime.Now;
 
             // May not be OSI accurate; mostly copied from krakens
-            Name = "Champion a leviathan";
+            Name = "a leviathan";
             Body = 77;
             BaseSoundID = 353;
 
@@ -60,35 +60,51 @@ namespace Server.Mobiles
 
             Hue = 0x481;
 
-            SetStr(66666, 77777);
-            SetDex(35010, 45200);
-            SetInt(35010, 45150);
-
-            SetHits(1771500, 1782222);
-            SetStam(100000, 120000);
-            SetMana(10000, 12000);
-			SetAttackSpeed(5.0);
+            // 시스템 보너스 Base: Str/Dex/Int +2,979 | Hits/Stam/Mana +50,683 | Skill +90.4
+    
+			// 기초 505~605 + 보너스 2,979
+			this.SetStr(3484, 3584);   
 			
-            SetDamage(5555, 9999);
+			// 기초 501~601 + 보너스 2,979
+			this.SetDex(3480, 3580);   
+			
+			// 기초 501~601 + (보너스 2,979 * 1.8) = 최종 약 5,900
+			this.SetInt(5863, 5963);   
 
-            SetDamageType(ResistanceType.Physical, 0);
-            SetDamageType(ResistanceType.Cold, 100);
+			// Hits: 기초 1,512~2,512 + (보너스 50,683 * 4.5) = 최종 약 23만
+			this.SetHits(229585, 230585); 
+			
+			// Stam: 기초 501~601 + 보너스 50,683
+			this.SetStam(51184, 51284);
+			
+			// Mana: 기초 1,512~2,512 + (보너스 50,683 * 1.5) = 최종 약 7.8만
+			this.SetMana(77536, 78536);
 
-            SetResistance(ResistanceType.Physical, 55, 65);
-            SetResistance(ResistanceType.Fire, 45, 55);
-            SetResistance(ResistanceType.Cold, 45, 55);
-            SetResistance(ResistanceType.Poison, 35, 45);
-            SetResistance(ResistanceType.Energy, 25, 35);
+			SetAttackSpeed(2.5);
+			SetDamage(55, 85); // 마법형 보스이므로 물리 데미지는 오우거로드보다 낮게 설정
 
-            SetSkill(SkillName.EvalInt, 317.6, 324.5);
-            SetSkill(SkillName.Magery, 317.6, 324.5);
-            SetSkill(SkillName.MagicResist, 317.6, 324.5);
-            SetSkill(SkillName.Meditation, 317.6, 324.5);
-            SetSkill(SkillName.Tactics, 317.6, 324.5);
-            SetSkill(SkillName.Wrestling, 317.6, 324.5);
+			this.SetDamageType(ResistanceType.Physical, 20);
+			this.SetDamageType(ResistanceType.Cold, 80); // 심해의 냉기 공격
 
-            Fame = 25000;
-            Karma = -25000;
+			// 저항: 보스 가이드라인 준수 (50% 내외)
+			this.SetResistance(ResistanceType.Physical, 45, 55);
+			this.SetResistance(ResistanceType.Fire, 45, 55);
+			this.SetResistance(ResistanceType.Cold, 65, 75); // 바다 생물 특유의 냉기 저항
+			this.SetResistance(ResistanceType.Poison, 45, 55);
+			this.SetResistance(ResistanceType.Energy, 45, 55);
+
+			// 스킬: 최종 약 190.0 ~ 200.0 (기본 100 + 보너스 90.4)
+			this.SetSkill(SkillName.Magery, 100.0, 110.0);
+			this.SetSkill(SkillName.EvalInt, 100.0, 110.0);
+			this.SetSkill(SkillName.MagicResist, 110.0, 120.0);
+			this.SetSkill(SkillName.Wrestling, 100.0, 110.0);
+			this.SetSkill(SkillName.Tactics, 100.0, 110.0);
+
+			this.Fame = 25000;
+			this.Karma = -25000;
+			this.VirtualArmor = 25; 
+
+			this.Tamable = false;
 
             CanSwim = true;
             CantWalk = true;

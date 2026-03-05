@@ -15,34 +15,43 @@ namespace Server.Mobiles
             Name = "a juka lord";
             Body = 766;
 
-            SetStr(401, 500);
-            SetDex(81, 100);
-            SetInt(151, 200);
+			/* [Juka Lord - Normal - Fame 14,000 / Weight 1.25]
+			   - 정글 던전의 정예 쥬카 전사 / 일반 몬스터 공식
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 18 (명성/1000 + 4 보정)
+			   - 특이사항: 높은 물리 저항과 강력한 검술 능력
+			   -------------------------------------------------- */
 
-            SetHits(241, 300);
+			// [Attributes] 역산된 Set 값 정밀 적용 (Hits 약 8,500대)
+			this.SetStr(380, 400); 
+			this.SetHits(8500, 8700); 
+			this.SetDex(110, 125);
+			this.SetInt(110, 125);
 
-            SetDamage(10, 12);
+			// [Combat Options] 물리 100% (정예 쥬카의 대검 타격)
+			this.SetDamage(40, 65);
+			this.SetAttackSpeed(2.2); 
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] 최고 저항 75 이하 준수 / 독 약점 설정
+			this.SetResistance(ResistanceType.Physical, 65, 75); // ★ 매우 단단한 갑옷과 비늘
+			this.SetResistance(ResistanceType.Fire, 45, 55);      
+			this.SetResistance(ResistanceType.Cold, 45, 55);    
+			this.SetResistance(ResistanceType.Poison, 20, 35);   // ★ 확실한 약점 (독소에 취약)
+			this.SetResistance(ResistanceType.Energy, 40, 50);   
 
-            SetResistance(ResistanceType.Physical, 40, 50);
-            SetResistance(ResistanceType.Fire, 45, 50);
-            SetResistance(ResistanceType.Cold, 40, 50);
-            SetResistance(ResistanceType.Poison, 20, 25);
-            SetResistance(ResistanceType.Energy, 40, 50);
+			// [Skills] 기본 115~125에 역산 보너스(12.8) 가산
+			// 최종 숙련도 약 130~140대의 노련한 전사
+			this.SetSkill(SkillName.Wrestling, 127.0, 137.0); 
+			this.SetSkill(SkillName.Tactics, 127.0, 137.0);
+			this.SetSkill(SkillName.Anatomy, 127.0, 137.0);
+			this.SetSkill(SkillName.MagicResist, 110.0, 125.0);
+			this.SetSkill(SkillName.Parry, 120.0, 135.0);
 
-            SetSkill(SkillName.Anatomy, 90.1, 100.0);
-            SetSkill(SkillName.Archery, 95.1, 100.0);
-            SetSkill(SkillName.Healing, 80.1, 100.0);
-            SetSkill(SkillName.MagicResist, 120.1, 130.0);
-            SetSkill(SkillName.Swords, 90.1, 100.0);
-            SetSkill(SkillName.Tactics, 95.1, 100.0);
-            SetSkill(SkillName.Wrestling, 90.1, 100.0);
-
-            Fame = 15000;
-            Karma = -15000;
-
-            VirtualArmor = 28;
+			this.Tamable = false;
+			this.VirtualArmor = 18;
+			this.Fame = 14000;
+			this.Karma = -14000;
 
             Container pack = new Backpack();
 

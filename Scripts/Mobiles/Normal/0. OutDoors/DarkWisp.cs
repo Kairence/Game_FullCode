@@ -15,39 +15,23 @@ namespace Server.Mobiles
             Body = 165;
             BaseSoundID = 466;
 
-            SetStr(5000, 7225);
-            SetDex(5996, 7225);
-            SetInt(5996, 7225);
+            // [역산] 명성 3,500 보너스(Str+793, Hits+6702, Stam+113, Skill+11.3) 반영
+			this.SetStr(7, 15); 
+			this.SetDex(87, 100); // 최종 Dex ~300 (매우 빠름)
+			this.SetInt(300, 500); 
 
-            SetHits(11800, 13500);
-            SetStam(4500, 4750);
-            SetMana(3500, 4000);
+			this.SetHits(3298, 3500); // 최종 Hits 10,000~10,202
+			this.SetStam(37, 50);
+			this.SetMana(500, 800);
 
-			SetAttackSpeed(1.0);
-			
-            SetDamage(52, 75);
+			SetAttackSpeed(2.5);
+			SetDamage(15, 25); // 평균 20.0
 
-            SetDamageType(ResistanceType.Physical, 0);
-            SetDamageType(ResistanceType.Chaos, 100);
+			this.SetSkill(SkillName.Magery, 8.7, 13.7); // 최종 20.0~25.0
+			this.SetSkill(SkillName.MagicResist, 18.7, 23.7); // 마법 저항 특화
 
-            SetResistance(ResistanceType.Physical, 35, 45);
-            SetResistance(ResistanceType.Fire, 20, 40);
-            SetResistance(ResistanceType.Cold, 10, 30);
-            SetResistance(ResistanceType.Poison, 5, 10);
-            SetResistance(ResistanceType.Energy, 45, 50);
-
-            SetSkill(SkillName.EvalInt, 160.0);
-            SetSkill(SkillName.Magery, 160.0);
-            SetSkill(SkillName.MagicResist, 160.0);
-            SetSkill(SkillName.Tactics, 160.0);
-            SetSkill(SkillName.Wrestling, 160.0);
-            SetSkill(SkillName.Necromancy, 160.0);
-            SetSkill(SkillName.SpiritSpeak, 160.0);
-
-            Fame = 20000;
-            Karma = -20000;
-
-            VirtualArmor = 10;
+			this.Fame = 3500;
+			this.VirtualArmor = 3;
 
             //AddItem(new LightSource());
         }

@@ -16,34 +16,44 @@ namespace Server.Mobiles
             Name = "a juka mage";
             Body = 765;
 
-            SetStr(201, 300);
-            SetDex(71, 90);
-            SetInt(451, 500);
+			/* [Juka Mage - Normal - Fame 12,000 / Weight 1.22]
+			   - 정글 던전의 쥬카 술사 / 일반 몬스터 공식
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 10 (명성/1000 - 2 보정)
+			   - 특이사항: 강력한 원거리 마법 및 높은 마나 회복력
+			   -------------------------------------------------- */
 
-            SetHits(121, 180);
+			// [Attributes] 역산된 Set 값 정밀 적용
+			this.SetStr(270, 285); 
+			this.SetHits(6100, 6200); 
+			this.SetDex(60, 75);
+			this.SetInt(250, 270); // 높은 지능으로 인한 강력한 마법 데미지
 
-            SetDamage(4, 10);
+			// [Combat Options] 물리 20% / 에너지 80% (마력 깃든 지팡이)
+			this.SetDamage(25, 45);
+			this.SetAttackSpeed(2.5); 
+			this.SetDamageType(ResistanceType.Physical, 20);
+			this.SetDamageType(ResistanceType.Energy, 80);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] 최고 저항 75 이하 준수 / 물리 약점 설정
+			this.SetResistance(ResistanceType.Physical, 25, 35); // ★ 확실한 약점 (근접전에 취약)
+			this.SetResistance(ResistanceType.Fire, 50, 65);      
+			this.SetResistance(ResistanceType.Cold, 50, 65);    
+			this.SetResistance(ResistanceType.Poison, 50, 65); 
+			this.SetResistance(ResistanceType.Energy, 70, 75);  // 마법 에너지 내성 특화
 
-            SetResistance(ResistanceType.Physical, 20, 30);
-            SetResistance(ResistanceType.Fire, 35, 45);
-            SetResistance(ResistanceType.Cold, 30, 40);
-            SetResistance(ResistanceType.Poison, 10, 20);
-            SetResistance(ResistanceType.Energy, 35, 45);
+			// [Skills] 기본 110~120에 역산 보너스(9.2) 가산
+			// 최종 숙련도 약 120~130대의 숙련된 술사
+			this.SetSkill(SkillName.Wrestling, 119.0, 129.0); 
+			this.SetSkill(SkillName.Tactics, 119.0, 129.0);
+			this.SetSkill(SkillName.Magery, 125.0, 140.0);      // 상급 마법 구사
+			this.SetSkill(SkillName.EvalInt, 125.0, 140.0);
+			this.SetSkill(SkillName.MagicResist, 130.0, 145.0); // 높은 마법 저항력
 
-            SetSkill(SkillName.Anatomy, 80.1, 90.0);
-            SetSkill(SkillName.EvalInt, 80.2, 100.0);
-            SetSkill(SkillName.Magery, 99.1, 100.0);
-            SetSkill(SkillName.Meditation, 80.2, 100.0);
-            SetSkill(SkillName.MagicResist, 140.1, 150.0);
-            SetSkill(SkillName.Tactics, 80.1, 90.0);
-            SetSkill(SkillName.Wrestling, 80.1, 90.0);
-
-            Fame = 15000;
-            Karma = -15000;
-
-            VirtualArmor = 16;
+			this.Tamable = false;
+			this.VirtualArmor = 10;
+			this.Fame = 12000;
+			this.Karma = -12000;
 
             Container bag = new Bag();
 

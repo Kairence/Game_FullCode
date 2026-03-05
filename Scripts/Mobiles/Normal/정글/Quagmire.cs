@@ -13,31 +13,42 @@ namespace Server.Mobiles
             this.Body = 789;
             this.BaseSoundID = 352;
 
-            this.SetStr(101, 130);
-            this.SetDex(66, 85);
-            this.SetInt(31, 55);
+			/* [Quagmire - Normal - Fame 15,000 / Weight 1.25]
+			   - 정글 던전의 독성 진흙 정령 / 일반 몬스터 공식
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 15 (명성/1000 공식 준수)
+			   -------------------------------------------------- */
 
-            this.SetHits(91, 105);
+			// [Attributes] 역산된 Set 값 정밀 적용 (Hits 9,000대)
+			this.SetStr(415, 430); 
+			this.SetHits(9200, 9500); 
+			this.SetDex(80, 90);
+			this.SetInt(80, 90);
 
-            this.SetDamage(10, 14);
+			// [Combat Options] 물리 50% / 독 50% (오염된 진흙 타격)
+			this.SetDamage(35, 60);
+			this.SetAttackSpeed(2.8); // 끈적이는 몸체로 인한 다소 느린 공격
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Poison, 50);
 
-            this.SetDamageType(ResistanceType.Physical, 60);
-            this.SetDamageType(ResistanceType.Poison, 40);
+			// [Resistances] 최고 저항 75 이하 준수 / 화염 약점 설정
+			this.SetResistance(ResistanceType.Physical, 60, 75); // 타격이 흡수되는 몸체
+			this.SetResistance(ResistanceType.Fire, 15, 25);      // ★ 확실한 약점 (말라붙음)
+			this.SetResistance(ResistanceType.Cold, 65, 75);    
+			this.SetResistance(ResistanceType.Poison, 70, 75);  // 독성 그 자체 (Max 75)
+			this.SetResistance(ResistanceType.Energy, 35, 45);   
 
-            this.SetResistance(ResistanceType.Physical, 50, 60);
-            this.SetResistance(ResistanceType.Fire, 10, 20);
-            this.SetResistance(ResistanceType.Cold, 10, 20);
-            this.SetResistance(ResistanceType.Poison, 100);
-            this.SetResistance(ResistanceType.Energy, 20, 30);
+			// [Skills] 기본 110~120에 역산 보너스(14) 가산
+			this.SetSkill(SkillName.Wrestling, 124.0, 134.0); 
+			this.SetSkill(SkillName.Tactics, 124.0, 134.0);
+			this.SetSkill(SkillName.Anatomy, 124.0, 134.0);
+			this.SetSkill(SkillName.MagicResist, 110.0, 125.0);
+			this.SetSkill(SkillName.Poisoning, 125.0, 140.0); // 치명적인 정글의 역병 독
 
-            this.SetSkill(SkillName.MagicResist, 65.1, 75.0);
-            this.SetSkill(SkillName.Tactics, 50.1, 60.0);
-            this.SetSkill(SkillName.Wrestling, 60.1, 80.0);
-
-            this.Fame = 1500;
-            this.Karma = -1500;
-
-            this.VirtualArmor = 32;
+			this.Tamable = false;
+			this.VirtualArmor = 15;
+			this.Fame = 15000;
+			this.Karma = -15000;
         }
 
         public Quagmire(Serial serial)

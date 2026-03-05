@@ -23,38 +23,49 @@ namespace Server.Mobiles
 
 			Body = ( this.Female = Utility.RandomBool() ) ? 0x191 : 0x190;
 
-			SetHits( 251, 350 );
+			/* [Elite Ninja - Holy City Boss - Fame 26,000 / Weight 1.20]
+			   - 닌자 보스 공식 정밀 적용 버전
+			   - Boss Multiplier: Attributes x5 / Skills x2
+			   - 가속도 보너스 기반 역산 완료
+			   -------------------------------------------------- */
 
-			SetStr( 126, 225 );
-			SetDex( 81, 95 );
-			SetInt( 151, 165 );
+			Boss = true;
 
-			SetDamage( 12, 20 );
+			// 최종 Str 약 21,840 (보너스 포함)
+			this.SetStr(18000, 18400); 
 
-			SetDamageType( ResistanceType.Physical, 65 );
-			SetDamageType( ResistanceType.Fire, 15 );
-			SetDamageType( ResistanceType.Poison, 15 );
-			SetDamageType( ResistanceType.Energy, 5 );
+			// 최종 Hits 약 484,380 (민맥 편차 2,000 룰 준수)
+			this.SetHits(402600, 404600); 
 
-			SetResistance( ResistanceType.Physical, 35, 65 );
-			SetResistance( ResistanceType.Fire, 40, 60 );
-			SetResistance( ResistanceType.Cold, 25, 45 );
-			SetResistance( ResistanceType.Poison, 40, 60 );
-			SetResistance( ResistanceType.Energy, 35, 55 );
+			// 최종 Dex/Int 약 4,368
+			this.SetDex(3600, 3700);
+			this.SetInt(3600, 3700);
 
-			SetSkill( SkillName.Anatomy, 105.0, 120.0 );
-			SetSkill( SkillName.MagicResist, 80.0, 100.0 );
-			SetSkill( SkillName.Tactics, 115.0, 130.0 );
-			SetSkill( SkillName.Wrestling, 95.0, 120.0 );
-			SetSkill( SkillName.Fencing, 95.0, 120.0 );
-			SetSkill( SkillName.Macing, 95.0, 120.0 );
-			SetSkill( SkillName.Swords, 95.0, 120.0 );
+			// [Combat Options] 닌자 특유의 물리 연타
+			this.SetDamage(75, 110);
+			this.SetAttackSpeed(1.8);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-			SetSkill( SkillName.Ninjitsu, 95.0, 120.0 );
-            SetSkill( SkillName.Hiding, 100.0);
-            SetSkill( SkillName.Stealth, 120.0 );
+			// [Resistances] 최고 저항 75 이하 엄격 준수 및 약점 설정
+			this.SetResistance(ResistanceType.Physical, 65, 75); 
+			this.SetResistance(ResistanceType.Fire, 40, 50);      // 화염 약점 (화약 사용 컨셉)
+			this.SetResistance(ResistanceType.Cold, 55, 65);    
+			this.SetResistance(ResistanceType.Poison, 65, 75); 
+			this.SetResistance(ResistanceType.Energy, 55, 65);   
 
-			Fame = 8500;
+			// [Skills] 최종 숙련도 약 291.1 (보충 필요 시 상한선 조절)
+			// 기본 세팅값은 역산된 169.8 근처로 설정
+			this.SetSkill(SkillName.Swords, 165.0, 175.0); 
+			this.SetSkill(SkillName.Tactics, 165.0, 175.0);
+			this.SetSkill(SkillName.Anatomy, 165.0, 175.0);
+			this.SetSkill(SkillName.Ninjitsu, 180.0, 190.0);
+			this.SetSkill(SkillName.Bushido, 165.0, 175.0);
+			this.SetSkill(SkillName.MagicResist, 150.0, 160.0);
+
+			this.Tamable = false;
+			this.VirtualArmor = 21;
+			this.Fame = 26000;
+			this.Karma = -26000; // 성지 일반 보정
 			Karma = -8500;
 
             LeatherNinjaBelt belt = new LeatherNinjaBelt();

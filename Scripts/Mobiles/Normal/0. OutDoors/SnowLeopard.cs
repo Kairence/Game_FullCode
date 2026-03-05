@@ -14,36 +14,31 @@ namespace Server.Mobiles
             this.Body = Utility.RandomList(64, 65);
             this.BaseSoundID = 0x73;
 
-            this.SetStr(456, 680);
-            this.SetDex(366, 385);
-            this.SetInt(26, 50);
+            this.Fame = 800;
+			this.Karma = -800;
 
-            this.SetHits(434, 488);
-            SetStam(212, 215);
-            SetMana(10, 11);
-			
-			SetAttackSpeed(3.5);
-            this.SetDamage(8, 14);
+			// [역산] 보너스: Str+561, Hits+1,566, Skill+2.0
+			this.SetStr(10, 20);    // 최종 Str 571~581
+			this.SetDex(50, 80);    
+			this.SetHits(34, 134);  // 최종 Hits 1,600~1,700
+			this.SetStam(37, 87);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			SetAttackSpeed(2.5);
+			SetDamage(8, 14);
 
-            this.SetResistance(ResistanceType.Physical, 20, 25);
-            this.SetResistance(ResistanceType.Fire, 5, 10);
-            this.SetResistance(ResistanceType.Cold, 10, 15);
-            this.SetResistance(ResistanceType.Poison, 5, 10);
+			// 공격 속성: 차가운 발톱
+			this.SetDamageType(ResistanceType.Physical, 70);
+			this.SetDamageType(ResistanceType.Cold, 30);
 
-            this.SetSkill(SkillName.MagicResist, 45.1, 50.0);
-            this.SetSkill(SkillName.Tactics, 75.1, 90.0);
-            this.SetSkill(SkillName.Wrestling, 75.1, 90.0);
+			this.SetResistance(ResistanceType.Physical, 15, 20);
+			this.SetResistance(ResistanceType.Cold, 35, 45);
 
-            this.Fame = 2150;
-            this.Karma = 0;
+			// 최종 Skill 55.0 내외 (중하급 사냥꾼)
+			this.SetSkill(SkillName.Wrestling, 53.0, 63.0);
 
-            this.VirtualArmor = 3;
+			this.Tamable = true;
+			this.MinTameSkill = 53.1;
 
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 41.1;
         }
 
         public SnowLeopard(Serial serial)

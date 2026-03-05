@@ -16,26 +16,6 @@ namespace Server.Mobiles
             }
         }
 
-        public double Scalar(Mobile m)
-        {
-            double scalar;
-
-            double skill = m.Skills[SkillName.Tinkering].Value;
-
-            if (skill >= 200.0)
-                scalar = 1.0;
-            else if (skill >= 150.0)
-                scalar = 0.9;
-            else if (skill >= 100.0)
-                scalar = 0.8;
-            else if (skill >= 50.0)
-                scalar = 0.7;
-            else
-                scalar = 0.6;
-
-            return scalar;
-        }
-
         [Constructable]
         public Golem()
             : this(false, 1)
@@ -52,52 +32,79 @@ namespace Server.Mobiles
 
             if (summoned)
             {
-				SetStr((int)(3251 * scalar), (int)(3350 * scalar));
-				SetDex((int)(2076 * scalar), (int)(3100 * scalar));
-				SetInt((int)(1010 * scalar), (int)(1500 * scalar));
                 Hue = 2101;               
 
-                SetHits(5151, 6210);
-				this.SetMana(1000, 1500);
-				SetStam(5750, 6800);
+                /* Summoned Golem - Fame 6,000 / Karma 0 (Neutral) */
+				/* [HP Calculation]
+				   - Target HP: ~15,000
+				   - Fame Bonus (6,000): ~13,850
+				   - SetHits Required: 1,150 (Target - Bonus)
+				*/
+				this.SetStr(400, 500);       
+				this.SetDex(100, 150);       
+				this.SetInt(10, 50);         
 
-				SetAttackSpeed( 5.0 );
-                SetResistance(ResistanceType.Fire, 50, 65);
-                SetResistance(ResistanceType.Poison, 75, 85);
+				// [Hits] 최종 약 14,000 ~ 16,000 타겟
+				this.SetHits(150, 2150); 
+				this.SetStam(100, 150);      
+				this.SetMana(10, 50);        
 
-                SetSkill(SkillName.MagicResist, (150.1 * scalar), (190.0 * scalar));
-                SetSkill(SkillName.Tactics, (60.1 * scalar), (100.0 * scalar));
-                SetSkill(SkillName.Wrestling, (60.1 * scalar), (100.0 * scalar));
+				this.SetAttackSpeed(3.0);    
+				this.SetDamage(18, 32);      
 
-                Fame = 10;
-                Karma = 10;
-				SetDamage(130, 240);
+				this.SetResistance(ResistanceType.Physical, 60, 75); // Max 75%
+				this.SetResistance(ResistanceType.Fire, 20, 30);
+				this.SetResistance(ResistanceType.Cold, 40, 50);
+				this.SetResistance(ResistanceType.Poison, 75, 75);   // 독 면역 (Max 75%)
+				this.SetResistance(ResistanceType.Energy, 30, 40);
+
+				this.SetSkill(SkillName.Wrestling, 90.0, 105.0);
+				this.SetSkill(SkillName.Tactics, 90.0, 105.0);
+				this.SetSkill(SkillName.MagicResist, 100.0, 100.0);
+
+				this.VirtualArmor = 12;      
+				this.ControlSlots = 3;       // 소환수 슬롯 설정
+
+				this.Fame = 100;           
+				this.Karma = 100;
             }
             else
             {
-				SetStr(3251, 3350);
-				SetDex(2076, 3100);
-				SetInt(1010, 1500);
+				/* Golem - Fame 10,000 / Karma -10,000 */
+				/* [HP Calculation]
+				   - Target HP: ~35,000
+				   - Fame Bonus (10,000): ~24,150
+				   - SetHits Required: 10,850 (Target - Bonus)
+				*/
+				this.SetStr(500, 700);       
+				this.SetDex(100, 150);       
+				this.SetInt(10, 50);         
 
-                SetHits(7500, 7610);
-				this.SetMana(1400, 2150);
-				SetStam(7500, 7800);
+				// [Hits] 최종 약 33,000 ~ 37,000 타겟
+				this.SetHits(8850, 12850); 
+				this.SetStam(100, 150);      
+				this.SetMana(10, 50);        
 
-				SetAttackSpeed( 5.0 );
-				SetResistance(ResistanceType.Physical, 90, 99);
-                SetResistance(ResistanceType.Fire, 70, 90);
-                SetResistance(ResistanceType.Poison, 10, 25);
+				this.SetAttackSpeed(3.0);    
+				this.SetDamage(25, 45);      
 
-                SetSkill(SkillName.MagicResist, 140.0, 150.0);
-                SetSkill(SkillName.Tactics, 140.0, 150.0);
-                SetSkill(SkillName.Wrestling, 250.0, 290.0);
-                SetSkill(SkillName.DetectHidden, 145.0, 150.0);
+				this.SetDamageType(ResistanceType.Physical, 100);
 
-                Fame = 13500;
-                Karma = -13500;
+				this.SetResistance(ResistanceType.Physical, 65, 75); // Max 75%
+				this.SetResistance(ResistanceType.Fire, 25, 35);
+				this.SetResistance(ResistanceType.Cold, 45, 55);
+				this.SetResistance(ResistanceType.Poison, 75, 75);   // 독 면역 (Max 75%)
+				this.SetResistance(ResistanceType.Energy, 30, 45);
 
-				SetDamage(130, 240);
-				this.VirtualArmor = 80;
+				this.SetSkill(SkillName.Wrestling, 100.0, 115.0);
+				this.SetSkill(SkillName.Tactics, 100.0, 115.0);
+				this.SetSkill(SkillName.MagicResist, 120.0, 120.0); // 마법 저항 최상
+
+				this.VirtualArmor = 15;      // 금속 몸체이나 타격감을 위해 15 제한
+				this.Tamable = false;
+
+				this.Fame = 10000;           
+				this.Karma = -10000;
             }
 
 			SetAttackSpeed( 20.0 );

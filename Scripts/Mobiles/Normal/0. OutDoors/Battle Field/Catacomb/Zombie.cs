@@ -13,32 +13,31 @@ namespace Server.Mobiles
             Name = "a zombie";
             Body = 3;
             BaseSoundID = 471;
+  
+			this.SetStr(1, 10);      
+			this.SetDex(1, 10);      
+			this.SetInt(1, 5);       
 
-            SetStr(86, 130);
-            SetDex(46, 98);
-            SetInt(36, 54);
+			this.SetHits(34, 134);   // 최종 Hits 1,600~1,700
+			this.SetStam(1, 10);
 
-			SetAttackSpeed( 15.0 );
+			SetAttackSpeed(4.5);
+			SetDamage(6, 12);        
 
-            SetHits(300, 445);
-			SetStam(50, 100);
-			SetMana(10, 30);
-            SetDamage(4, 12);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetResistance(ResistanceType.Physical, 0, 5);
+			this.SetResistance(ResistanceType.Poison, 45, 50);
 
-            SetResistance(ResistanceType.Physical, 15, 20);
-            SetResistance(ResistanceType.Cold, 20, 30);
-            SetResistance(ResistanceType.Poison, 5, 10);
-			
-            SetSkill(SkillName.Tactics, 1.1, 3.0);
-            SetSkill(SkillName.Wrestling, 1.1, 3.0);
+			// 최종 Skill 15.0~20.0 목표 (20.0 - 2.0 = 18.0)
+			this.SetSkill(SkillName.Wrestling, 13.0, 18.0);
+			this.SetSkill(SkillName.Tactics, 13.0, 18.0);
 
-            Fame = 1000;
-            Karma = -1000;
+			this.VirtualArmor = 0;
 
-            VirtualArmor = 2;
-        }
+			this.Fame = 800;
+			this.Karma = -800;
+		}
 
         public Zombie(Serial serial)
             : base(serial)

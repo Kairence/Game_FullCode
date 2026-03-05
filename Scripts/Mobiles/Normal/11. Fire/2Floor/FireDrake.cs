@@ -20,43 +20,44 @@ namespace Server.Mobiles
 
             //Hue = Utility.RandomMinMax(1319, 1327);
 
-            SetStr(6100, 6200);
-            SetDex(4130, 4160);
-            SetInt(5150, 5190);
+            /* Fire Drake - Fame 10,000 / Karma -10,000 */
+			/* [HP Calculation]
+			   - Target HP: ~35,000
+			   - Fame Bonus (10,000): ~24,150
+			   - SetHits Required: 10,850 (Target - Bonus)
+			*/
+			this.SetStr(500, 650);       
+			this.SetDex(180, 280);       
+			this.SetInt(350, 500);       
 
-            SetHits(11450, 12500);
-			SetStam(8000, 10000);
-			SetMana(4000, 5000);
-			
-			SetAttackSpeed( 10.0 );
-            SetDamage(617, 800);
+			// [Hits] 최종 약 32,000 ~ 38,000 타겟
+			this.SetHits(7850, 13850); 
+			this.SetStam(180, 280);      
+			this.SetMana(350, 500);      
 
-			SetAttackSpeed( 10.0 );
-            SetDamage(17, 20);
+			this.SetAttackSpeed(2.2);    
+			this.SetDamage(20, 35);      
 
-            SetDamageType(ResistanceType.Physical, 50);
-            SetDamageType(ResistanceType.Fire, 50);
+			this.SetDamageType(ResistanceType.Fire, 100);
 
-            SetResistance(ResistanceType.Physical, 50, 65);
-            SetResistance(ResistanceType.Fire, 75, 90);
-            SetResistance(ResistanceType.Cold, 30, 40);
-            SetResistance(ResistanceType.Poison, 40, 50);
-            SetResistance(ResistanceType.Energy, 40, 50);
+			this.SetResistance(ResistanceType.Physical, 45, 55);
+			this.SetResistance(ResistanceType.Fire, 75, 75);     // 화염 면역 (Max 75%)
+			this.SetResistance(ResistanceType.Cold, 0, 15);      // 냉기 취약
+			this.SetResistance(ResistanceType.Poison, 35, 45);
 
-            SetSkill(SkillName.MagicResist, 95.0, 110.0);
-            SetSkill(SkillName.Tactics, 115.0, 140.0);
-            SetSkill(SkillName.Wrestling, 115.0, 126.0);
-            SetSkill(SkillName.Parry, 70.0, 80.0);
-            SetSkill(SkillName.DetectHidden, 40.0, 50.0);
- 
-            Fame = 20000;
-            Karma = -20000;
+			this.SetSkill(SkillName.Wrestling, 100.0, 115.0);
+			this.SetSkill(SkillName.Tactics, 100.0, 115.0);
+			this.SetSkill(SkillName.Magery, 100.0, 110.0);
 
-            VirtualArmor = 20;
+			this.VirtualArmor = 12;      
 
-            Tamable = true;
-            ControlSlots = 3;
-            MinTameSkill = 126.0;
+			// [Taming Settings]
+			this.Tamable = true;         
+			this.ControlSlots = 3;       
+			this.MinTameSkill = 145.0;   // 200 상한 대비 중급 이상의 숙련도
+
+			this.Fame = 10000;           
+			this.Karma = -10000;
 
             SetSpecialAbility(SpecialAbility.DragonBreath);
             SetAreaEffect(AreaEffect.AuraDamage);

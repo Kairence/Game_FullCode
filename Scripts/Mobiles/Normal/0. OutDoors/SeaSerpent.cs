@@ -17,33 +17,28 @@ namespace Server.Mobiles
 
             Hue = Utility.Random(0x530, 9);
 
-            SetStr(451, 825);
-            SetDex(487, 535);
-            SetInt(1287, 1355);
+            this.SetStr(101, 201); // 최종 Str 800~900
+			this.SetDex(54, 104);  // 최종 Dex ~350
 
-            SetHits(1160, 1300);
-            SetStam(100, 150);
-            SetMana(50, 100);
+			this.SetHits(3051, 4051); // 최종 Hits 8,000~9,000
+			this.SetStam(54, 104);
+			this.SetMana(0);
 
-			SetAttackSpeed(20.0);
-            SetDamage(366, 400);
+			SetAttackSpeed(3.0);
+			SetDamage(20, 35); 
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 60);
+			this.SetDamageType(ResistanceType.Cold, 40);
 
-            SetResistance(ResistanceType.Physical, 25, 35);
-            SetResistance(ResistanceType.Fire, 40, 45);
-            SetResistance(ResistanceType.Cold, 30, 35);
-            SetResistance(ResistanceType.Poison, 25, 30);
-            SetResistance(ResistanceType.Energy, 10, 15);
+			this.SetResistance(ResistanceType.Physical, 30, 40);
+			this.SetResistance(ResistanceType.Cold, 40, 50);
 
-            SetSkill(SkillName.MagicResist, 30.1, 35.0);
-            SetSkill(SkillName.Tactics, 30.1, 40.0);
-            SetSkill(SkillName.Wrestling, 30.1, 40.0);
+			// 최종 스킬 120.0~130.0 목표
+			this.SetSkill(SkillName.Wrestling, 113.2, 123.2);
 
-            Fame = 6000;
-            Karma = -6000;
+			this.Fame = 2500;
+			this.VirtualArmor = 6;
 
-            VirtualArmor = 3;
             CanSwim = true;
             CantWalk = true;
 

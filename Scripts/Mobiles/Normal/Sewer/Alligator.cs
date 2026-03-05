@@ -13,32 +13,47 @@ namespace Server.Mobiles
             Body = 0xCA;
             BaseSoundID = 660;
 
-            SetStr(43, 50);
-            SetDex(6, 25);
-            SetInt(11, 20);
+			/* [Alligator - Fame 2,200 / Sewer / Weight 1.19]
+			   - 스킬 200 마스터 서버용 '중급 공격형' 밸런스 적용
+			   - 가상 방어력(VirtualArmor): (2,200/1000) + 2.8 = 5
+			   - 테이밍 난이도: 45.0 ~ 55.0 (불프로그 다음 단계)
+			   -------------------------------------------------- */
 
-            SetHits(46, 60);
-            SetStam(46, 65);
-            SetMana(10, 15);
-			
-			SetAttackSpeed(5.0);
+			// [Attributes] 명성 2,200 보너스 + 가중치 1.19 반영
+			this.SetStr(30, 40); 
+			this.SetHits(650, 850); 
+			this.SetDex(6, 8);
+			this.SetInt(6, 8);
 
-            SetDamage(5, 10);
+			// [Combat Options] 날카로운 이빨의 대미지
+			this.SetDamage(12, 22);
+			this.SetAttackSpeed(2.2); // 두꺼비보다 약간 더 빠름
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Damage Types] 100% 물리
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 25, 35);
-            SetResistance(ResistanceType.Fire, 5, 10);
-            SetResistance(ResistanceType.Poison, 5, 10);
+			// [Resistances] 파충류의 질긴 가죽
+			this.SetResistance(ResistanceType.Physical, 25, 35); 
+			this.SetResistance(ResistanceType.Fire, 5, 15);
+			this.SetResistance(ResistanceType.Cold, 25, 35);    
+			this.SetResistance(ResistanceType.Poison, 40, 50); 
+			this.SetResistance(ResistanceType.Energy, 10, 20);
 
-            Fame = 600;
-            Karma = -600;
+			// [Skills] 유저 스킬 50 ~ 70 구간 수련 최적화
+			this.SetSkill(SkillName.Wrestling, 55.0, 70.0); 
+			this.SetSkill(SkillName.Tactics, 55.0, 70.0);
+			this.SetSkill(SkillName.MagicResist, 35.0, 50.0);
 
-            VirtualArmor = 0;
+			// [Taming & Food] ★ 가상 방어구 상단 배치
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 45.0; // 불프로그(35.0)를 졸업한 테이머의 표적
 
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 47.1;
+			// [Misc]
+			this.VirtualArmor = 5;
+
+			this.Fame = 2200;
+			this.Karma = -2200;
         }
 
         public Alligator(Serial serial)

@@ -15,35 +15,47 @@ namespace Server.Mobiles
             this.Body = 271;
             this.BaseSoundID = 0x586;
 
-            this.SetStr(177, 195);
-            this.SetDex(251, 269);
-            this.SetInt(153, 170);
+			/* [Satyr - Normal - Fame 15,000 / Weight 1.25]
+			   - 정글 던전의 불협화음 연주자 / 일반 몬스터 공식
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 15 (명성/1000 공식 준수)
+			   - 특이사항: 강력한 피리 연주(Discordance)로 유저 약화
+			   -------------------------------------------------- */
 
-            this.SetHits(350, 400);
+			// [Attributes] 역산된 Set 값 정밀 적용 (Hits 9,300대)
+			this.SetStr(415, 430); 
+			this.SetHits(9200, 9500); 
+			this.SetDex(80, 100);
+			this.SetInt(120, 140); // 높은 지능과 마나 확보
 
-            this.SetDamage(13, 24);
+			// [Combat Options] 물리 100% (지팡이 타격)
+			this.SetDamage(25, 45);
+			this.SetAttackSpeed(2.0); 
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] 최고 저항 75 이하 준수 / 물리 약점 설정
+			this.SetResistance(ResistanceType.Physical, 35, 45); // ★ 약점 (근접전에 취약)
+			this.SetResistance(ResistanceType.Fire, 45, 55);      
+			this.SetResistance(ResistanceType.Cold, 45, 55);    
+			this.SetResistance(ResistanceType.Poison, 55, 65); 
+			this.SetResistance(ResistanceType.Energy, 55, 65);   
 
-            this.SetResistance(ResistanceType.Physical, 55, 60);
-            this.SetResistance(ResistanceType.Fire, 25, 35);
-            this.SetResistance(ResistanceType.Cold, 30, 40);
-            this.SetResistance(ResistanceType.Poison, 30, 40);
-            this.SetResistance(ResistanceType.Energy, 30, 40);
+			// [Skills] 기본 110~120에 역산 보너스(14) 가산
+			this.SetSkill(SkillName.Wrestling, 124.0, 134.0); 
+			this.SetSkill(SkillName.Tactics, 124.0, 134.0);
+			this.SetSkill(SkillName.MagicResist, 120.0, 135.0);
+			this.SetSkill(SkillName.Magery, 115.0, 130.0);       
+			this.SetSkill(SkillName.EvalInt, 115.0, 130.0);
 
-            this.SetSkill(SkillName.MagicResist, 55.0, 65.0);
-            this.SetSkill(SkillName.Tactics, 80.0, 100.0);
-            this.SetSkill(SkillName.Wrestling, 80.0, 100.0);
+			// [Bard Skills] 사티로스의 핵심 기믹
+			this.SetSkill(SkillName.Musicianship, 130.0, 150.0);
+			this.SetSkill(SkillName.Discordance, 130.0, 150.0); // 유저를 무력화시키는 불협화음
+			this.SetSkill(SkillName.Peacemaking, 120.0, 140.0);
 
-            this.SetSkill(SkillName.Musicianship, 100);
-            this.SetSkill(SkillName.Discordance, 100);
-            this.SetSkill(SkillName.Provocation, 100);
-            this.SetSkill(SkillName.Peacemaking, 100);
-
-            this.Fame = 5000;
-            this.Karma = 0;
-
-            this.VirtualArmor = 28; // Don't know what it should be
+			this.Tamable = false;
+			this.VirtualArmor = 15;
+			this.Fame = 15000;
+			this.Karma = -15000;
 
             for (int i = 0; i < Utility.RandomMinMax(0, 1); i++)
             {

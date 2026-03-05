@@ -11,40 +11,53 @@ namespace Server.Mobiles
         public BogThing()
             : base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.6, 1.2)
         {
-            this.Name = "Boss a bog thing";
+            this.Name = "a bog thing";
             this.Body = 780;
 
-            this.SetStr(12351, 13360);
-            this.SetDex(10256, 12265);
-            this.SetInt(12000);
-
-            this.SetHits(175100, 175500);
-			SetStam(150000, 162000);
-            this.SetMana(100000, 150000);
-
-            this.SetDamage(1420, 4000);
-
-			SetAttackSpeed( 10.0 );
-
 			Boss = true;
-			
-            this.SetDamageType(ResistanceType.Physical, 60);
-            this.SetDamageType(ResistanceType.Poison, 40);
 
-            this.SetResistance(ResistanceType.Physical, 30, 40);
-            this.SetResistance(ResistanceType.Fire, 20, 25);
-            this.SetResistance(ResistanceType.Cold, 40, 55);
-            this.SetResistance(ResistanceType.Poison, 40, 50);
-            this.SetResistance(ResistanceType.Energy, 70, 85);
+			/* [Orc Dungeon Level 1 Boss - Bog Thing - Fame 12,500 / Weight 1.22]
+			   - 컨셉: 늪지의 파수꾼 (생명력/방어 특화)
+			   - VirtualArmor: (12,500/1000) + 3 = 15 (진흙 껍질 보정 +3)
+			   - 편차 수정: 체력 5만 이상 룰 적용 (편차 2,000 이내)
+			   -------------------------------------------------- */
 
-            this.SetSkill(SkillName.MagicResist, 209.1, 210.0);
-            this.SetSkill(SkillName.Tactics, 209.1, 210.0);
-            this.SetSkill(SkillName.Wrestling, 209.1, 210.0);
+			// 최종 Str 약 8,100
+			this.SetStr(6600, 6900); 
 
-            this.Fame = 22000;
-            this.Karma = -22000;
+			// 최종 Hits 약 160,000 (민맥 편차 2,000 고정)
+			this.SetHits(132600, 134600); 
 
-            this.VirtualArmor = 18;
+			// 최종 Dex/Int 약 1,600 (느리지만 묵직한 움직임)
+			this.SetDex(1300, 1400);
+			this.SetInt(1300, 1400);
+
+			// 최종 Stam/Mana 약 1,500
+			this.SetStam(1200, 1300);
+			this.SetMana(1200, 1300);
+
+			// [Combat Options]
+			this.SetDamage(50, 75);
+			this.SetAttackSpeed(2.0);
+
+			// [Resistances] 최고 저항 75 이하 엄격 준수
+			this.SetResistance(ResistanceType.Physical, 60, 70); // 진흙과 이끼로 덮인 외피
+			this.SetResistance(ResistanceType.Fire, 15, 25);      // 약점: 화염 (수분이 증발하며 타격)
+			this.SetResistance(ResistanceType.Cold, 50, 60);
+			this.SetResistance(ResistanceType.Poison, 75);       // 늪지 생물 (독 면역 Max 75)
+			this.SetResistance(ResistanceType.Energy, 30, 40);
+
+			// [Skills] 최종 107.8 부근
+			this.SetSkill(SkillName.Wrestling, 61.0, 66.0);
+			this.SetSkill(SkillName.Tactics, 61.0, 66.0);
+			this.SetSkill(SkillName.Anatomy, 61.0, 66.0);
+			this.SetSkill(SkillName.MagicResist, 75.0, 85.0);
+
+			// 가방 방어력: (12,500/1000) + 3 = 15
+			this.VirtualArmor = 15;
+
+			this.Fame = 12500;
+			this.Karma = -12500;
         }
 
         public BogThing(Serial serial)

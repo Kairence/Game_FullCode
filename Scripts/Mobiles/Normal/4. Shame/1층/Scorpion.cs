@@ -14,40 +14,39 @@ namespace Server.Mobiles
             Body = 48;
             BaseSoundID = 397;
 
-            SetStr(233, 245);
-            SetDex(136, 145);
-            SetInt(116, 130);
+            /* Scorpion - Fame 2,000 / Basic Insect */
+			this.SetStr(150, 200);       
+			this.SetDex(150, 200);       
+			this.SetInt(50, 80);         
 
-            SetHits(200, 230);
-			SetStam(10, 20);
-            SetMana(10, 20);
+			// [Hits] 명성 보석(3,500) 포함 최종 4천 내외
+			this.SetHits(400, 600); 
+			this.SetStam(150, 200);      
+			this.SetMana(50, 80);        
 
-            SetDamage(7, 11);
+			this.SetAttackSpeed(2.8);    
+			this.SetDamage(5, 10);       
 
-            SetDamageType(ResistanceType.Physical, 60);
-            SetDamageType(ResistanceType.Poison, 40);
+			this.SetDamageType(ResistanceType.Physical, 60);
+			this.SetDamageType(ResistanceType.Poison, 40);
 
-            SetResistance(ResistanceType.Physical, 20, 25);
-            SetResistance(ResistanceType.Fire, 10, 15);
-            SetResistance(ResistanceType.Cold, 20, 25);
-            SetResistance(ResistanceType.Poison, 40, 50);
-            SetResistance(ResistanceType.Energy, 10, 15);
+			this.SetResistance(ResistanceType.Physical, 15, 20);
+			this.SetResistance(ResistanceType.Fire, 5, 10);
+			this.SetResistance(ResistanceType.Cold, 5, 10);
+			this.SetResistance(ResistanceType.Poison, 40, 50);
+			this.SetResistance(ResistanceType.Energy, 5, 10);
 
-            SetSkill(SkillName.Poisoning, 45.1, 50.0);
-            SetSkill(SkillName.MagicResist, 43.1, 45.0);
-            SetSkill(SkillName.Tactics, 46.3, 47.0);
-            SetSkill(SkillName.Wrestling, 45.3, 46.0);
+			this.SetSkill(SkillName.Wrestling, 50.0, 60.0);
+			this.SetSkill(SkillName.Tactics, 50.0, 60.0);
+			this.SetSkill(SkillName.Poisoning, 60.0, 80.0);
 
-			SetAttackSpeed( 2.5 );
+			this.VirtualArmor = 5;      
+			this.Tamable = true;
+			this.MinTameSkill = 45.0;    // 테이밍 요구치
+			this.ControlSlots = 1;       // 추종자 수
 
-            Fame = 1000;
-            Karma = -1000;
-
-            VirtualArmor = 10;
-
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 47.1;
+			this.Fame = 2000;           
+			this.Karma = -2000;
 
             //PackItem(new LesserPoisonPotion());
         }

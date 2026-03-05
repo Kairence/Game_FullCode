@@ -19,46 +19,53 @@ namespace Server.Mobiles
             : base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
         {
             //Name = NameList.RandomName("ancient lich");
-			Name = "Boss an ancient lich";
+			Name = "an ancient lich";
             Body = 830;
+			Boss = true;
             //BaseSoundID = 412;
 
-            SetStr(14160, 15050);
-            SetDex(15960, 16150);
-            SetInt(15766, 15845);
+            /* [Ancient Lich - Fame 26,000 / Boss / Weight 1.21]
+			   - 편차 수정: 체력 5만 이상 룰 적용 (편차 극소화)
+			   - VirtualArmor: (26,000/1000) - 1 = 25
+			   -------------------------------------------------- */
 
-            SetHits(193060, 235509);
-			SetStam(100300, 199999);
-			SetMana(100000, 150000);
+			// 최종 Str 약 22,000 (민맥 차이 500 내외)
+			this.SetStr(18100, 18600); 
 
-            this.SetDamage(2800, 4444);
+			// 최종 Hits 약 488,000 (편차 2,000 이내로 고정)
+			this.SetHits(406500, 408500); 
 
-			SetAttackSpeed( 20.0 );
+			// 최종 Dex/Int 약 4,400 
+			this.SetDex(3600, 3750);
+			this.SetInt(3600, 3750);
 
-            SetDamageType(ResistanceType.Physical, 20);
-            SetDamageType(ResistanceType.Cold, 40);
-            SetDamageType(ResistanceType.Energy, 40);
+			// 최종 Stam/Mana 약 4,600
+			this.SetStam(3800, 3950);
+			this.SetMana(3800, 3950);
 
-            SetResistance(ResistanceType.Physical, 85, 95);
-            SetResistance(ResistanceType.Fire, 25, 30);
-            SetResistance(ResistanceType.Cold, 50, 60);
-            SetResistance(ResistanceType.Poison, 80, 90);
-            SetResistance(ResistanceType.Energy, 25, 30);
+			// [Combat Options]
+			this.SetDamage(50, 80);
+			this.SetAttackSpeed(1.8);
 
-            SetSkill(SkillName.EvalInt, 310.1, 325.0);
-            SetSkill(SkillName.Magery, 310.1, 325.0);
-            SetSkill(SkillName.Meditation, 310.1, 321.0);
-            SetSkill(SkillName.Poisoning, 310.1, 321.0);
-            SetSkill(SkillName.MagicResist, 310.2, 325.0);
-            SetSkill(SkillName.Tactics, 310.1, 325.0);
-            SetSkill(SkillName.Wrestling, 380.1, 400.0);
+			// [Resistances] 최고 저항 75 이하 준수
+			this.SetResistance(ResistanceType.Physical, 45, 55);
+			this.SetResistance(ResistanceType.Fire, 50, 60);
+			this.SetResistance(ResistanceType.Cold, 70, 75);
+			this.SetResistance(ResistanceType.Poison, 60, 70);
+			this.SetResistance(ResistanceType.Energy, 65, 75);
 
-            Fame = 28000;
-            Karma = -28000;
+			// [Skills] 최종 293.5 부근 (편차 축소)
+			this.SetSkill(SkillName.Wrestling, 170.0, 175.0);
+			this.SetSkill(SkillName.Magery, 170.0, 175.0);
+			this.SetSkill(SkillName.EvalInt, 170.0, 175.0);
+			this.SetSkill(SkillName.Meditation, 170.0, 175.0);
+			this.SetSkill(SkillName.MagicResist, 170.0, 175.0);
 
-			Boss = true;
-			
-            VirtualArmor = 260;
+			// 가방 방어력: (26,000/1000) - 1 = 25
+			this.VirtualArmor = 25;
+
+			this.Fame = 26000;
+			this.Karma = -26000;       
         }
         public override int GetAttackSound() { return 0x61E; }
         public override int GetDeathSound() { return 0x61F; }

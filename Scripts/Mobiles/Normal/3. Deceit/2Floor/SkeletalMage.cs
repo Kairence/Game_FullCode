@@ -14,37 +14,25 @@ namespace Server.Mobiles
             Body = 148;
             BaseSoundID = 451;
 
-            SetStr(276, 400);
-            SetDex(1056, 1075);
-            SetInt(2586, 2610);
+            /* Skeletal Mage - Fame 10,500 */
+			this.Fame = 10500;
+			this.Karma = -10500;
 
-            SetHits(2460, 3000);
-			SetStam(550, 600);
-			SetMana(1000, 1500);
+			this.SetInt(400, 500);
+			this.SetHits(1500, 2000); // 최종 Hits 약 36,000
+			this.SetMana(800, 1000);
 
-            SetDamage(33, 57);
+			this.SetAttackSpeed(2.5);
+			SetDamage(15, 25);
 
-			SetAttackSpeed( 60 );
+			this.SetSkill(SkillName.Magery, 140.0, 155.0); 
+			this.SetSkill(SkillName.EvalInt, 140.0, 155.0);
+			this.SetSkill(SkillName.Meditation, 120.0);
 
-            SetDamageType(ResistanceType.Physical, 100);
-
-            SetResistance(ResistanceType.Physical, 65, 80);
-            SetResistance(ResistanceType.Fire, 20, 30);
-            SetResistance(ResistanceType.Cold, 50, 60);
-            SetResistance(ResistanceType.Poison, 20, 30);
-            SetResistance(ResistanceType.Energy, 30, 40);
-
-            SetSkill(SkillName.EvalInt, 130.1, 140.0);
-            SetSkill(SkillName.Magery, 130.1, 140.0);
-            SetSkill(SkillName.MagicResist, 145.1, 170.0);
-            SetSkill(SkillName.Tactics, 135.1, 140.0);
-            SetSkill(SkillName.Wrestling, 135.1, 145.0);
-
-            Fame = 9500;
-            Karma = -9500;
-
-            VirtualArmor = 38;
-
+			this.SetDamageType(ResistanceType.Energy, 100);
+			this.SetResistance(ResistanceType.Physical, 20, 30);
+			this.SetResistance(ResistanceType.Energy, 50, 60);
+			this.VirtualArmor = 10;
         }
 
         public SkeletalMage(Serial serial)

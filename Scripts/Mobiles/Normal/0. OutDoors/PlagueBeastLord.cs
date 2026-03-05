@@ -18,31 +18,33 @@ namespace Server.Mobiles
             this.BaseSoundID = 679;
             this.SpeechHue = 0x3B2;
 
-            this.SetStr(500);
-            this.SetDex(100);
-            this.SetInt(30);
+            // [역산] 명성 10,000 보너스 반영
+			this.SetStr(1050, 1250); // 최종 Str 2,500~2,700
+			this.SetDex(150, 250);   // 최종 Dex ~800
 
-            this.SetHits(1800);
+			this.SetHits(17850, 22850); // 최종 Hits 40,000~45,000
+			this.SetStam(196, 296);     // 최종 Stam ~500
+			this.SetMana(500, 1000);
 
-            this.SetDamage(20, 25);
+			SetAttackSpeed(3.0);
+			SetDamage(40, 60); // 평균 50.0
 
-            this.SetDamageType(ResistanceType.Physical, 50);
-            this.SetDamageType(ResistanceType.Fire, 25);
-            this.SetDamageType(ResistanceType.Poison, 25);
+			// 공격 속성
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Poison, 50);
 
-            this.SetResistance(ResistanceType.Physical, 45, 55);
-            this.SetResistance(ResistanceType.Fire, 40, 50);
-            this.SetResistance(ResistanceType.Cold, 25, 35);
-            this.SetResistance(ResistanceType.Poison, 75, 85);
-            this.SetResistance(ResistanceType.Energy, 25, 35);
+			// 저항 설정
+			this.SetResistance(ResistanceType.Physical, 40, 50);
+			this.SetResistance(ResistanceType.Poison, 48, 50);
+			this.SetResistance(ResistanceType.Fire, 10, 20);
 
-            this.SetSkill(SkillName.Tactics, 100);
-            this.SetSkill(SkillName.Wrestling, 100);
+			// 최종 스킬 150.0 목표 (150.0 - 31.6 = 118.4)
+			this.SetSkill(SkillName.Wrestling, 118.4, 138.4);
+			this.SetSkill(SkillName.Tactics, 118.4, 138.4);
 
-            this.Fame = 2000;
-            this.Karma = -2000;
-
-            this.VirtualArmor = 5;
+			this.Fame = 10000;
+			this.Karma = -10000;
+			this.VirtualArmor = 12;
         }
 
         public PlagueBeastLord(Serial serial)

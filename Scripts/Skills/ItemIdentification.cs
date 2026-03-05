@@ -72,6 +72,14 @@ public class ItemIdentification
             // 타겟팅한 대상이 장비 아이템(IEquipOption)일 때만 실행
             if (o is Item item && item.RootParent == from && item is IEquipOption equip)
             {
+				// [추가] 저주받은 장비는 강화 시도 불가
+				if (item.LootType == LootType.Cursed)
+				{
+					from.SendMessage(0x22, "저주받은 장비는 사용할 수 없습니다.");
+					from.EndAction(typeof(ItemIdentification));
+					return;
+				}			
+			
                 int grade = equip.SuffixOption[1];
 
                 if (from.Skills.ItemID.Value < GradeSkillTable[grade])
@@ -185,15 +193,13 @@ public class ItemIdentification
         }
         else
         {
-            int damage = Utility.RandomMinMax(1, grade + 1) + currentStep;
-            equip.MaxHitPoints -= damage;
-            if (equip.HitPoints > equip.MaxHitPoints) equip.HitPoints = equip.MaxHitPoints;
-
             if (currentStep >= 7)
             {
                 string args = $"{from.Name}\t{itemName}\t{currentStep}";
                 Misc.Util.BroadcastLocalized(1083502, args, 1166);
                 from.FixedParticles(0x36BD, 20, 10, 5044, EffectLayer.Head);
+				// 저주 부여
+				item.LootType = LootType.Cursed;
             }
             else
             {

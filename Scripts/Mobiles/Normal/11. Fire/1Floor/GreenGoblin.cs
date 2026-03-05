@@ -14,35 +14,31 @@ namespace Server.Mobiles
             Body = 723;
             BaseSoundID = 0x600;
 
-            SetStr(352, 443);
-            SetDex(60, 74);
-            SetInt(117, 148);
+            /* Green Goblin - Fame 1,800 / Karma -1,800 */
+			this.SetStr(120, 160);       
+			this.SetDex(150, 200);       
 
-            SetHits(562, 708);
-            SetStam(60, 74);
-            SetMana(117, 148);
+			this.SetHits(850, 1850); 
+			this.SetStam(150, 200);      
 
-			SetAttackSpeed( 5.0 );
+			this.SetAttackSpeed(2.4);    
+			this.SetDamage(8, 14);       
 
-            SetDamage(15, 27);
+			this.SetDamageType(ResistanceType.Physical, 70);
+			this.SetDamageType(ResistanceType.Poison, 30);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetResistance(ResistanceType.Physical, 25, 35);
+			this.SetResistance(ResistanceType.Fire, 50, 60);     
+			this.SetResistance(ResistanceType.Poison, 75, 75);   // 독 면역 (Max 75%)
 
-            SetResistance(ResistanceType.Physical, 40, 50);
-            SetResistance(ResistanceType.Fire, 30, 39);
-            SetResistance(ResistanceType.Cold, 27, 35);
-            SetResistance(ResistanceType.Poison, 11, 20);
-            SetResistance(ResistanceType.Energy, 10, 20);
+			this.SetSkill(SkillName.Wrestling, 75.0, 90.0);
+			this.SetSkill(SkillName.Poisoning, 85.0, 105.0); // 수준 높은 독 공격
 
-            SetSkill(SkillName.MagicResist, 120.5, 128.8);
-            SetSkill(SkillName.Tactics, 80.9, 89.9);
-            SetSkill(SkillName.Anatomy, 83.1, 89.6);
-            SetSkill(SkillName.Wrestling, 93.0, 108.3);
+			this.VirtualArmor = 4;       
+			this.Tamable = false;
 
-            Fame = 1500;
-            Karma = -1500;
-
-            VirtualArmor = 28;
+			this.Fame = 1800;           
+			this.Karma = -1800;
         }
 
         public GreenGoblin(Serial serial)

@@ -17,33 +17,35 @@ namespace Server.Mobiles
             this.Hue = Utility.RandomSnakeHue();
             this.BaseSoundID = 219;
 
-            this.SetStr(1186, 1215);
-            this.SetDex(1256, 1280);
-            this.SetInt(166, 185);
+			// [역산] 명성 2500 보너스(Str+699, Hits+4949, Skill+6.8) 반영
+			this.SetStr(101, 201); // 최종 Str 800~900
+			this.SetDex(54, 84);   // 최종 Dex ~250
 
-            this.SetHits(1120, 1290);
-            SetStam(166, 232);
-            SetMana(66, 132);
-			SetAttackSpeed(7.5);
+			// 맷집 강화 (최종 Hits 10,000 목표)
+			this.SetHits(5051, 5551); 
+			this.SetStam(54, 84);  // 최종 Stam 150~180
+			this.SetMana(0);
 
+			SetAttackSpeed(3.5);
+			SetDamage(20, 40); // 평균 30.0
 
-            this.SetDamage(37, 57);
+			// 공격 속성: 살을 뚫고 퍼지는 맹독
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Poison, 50);
 
-            this.SetDamageType(ResistanceType.Physical, 0);
-            this.SetDamageType(ResistanceType.Poison, 100);
+			// 저항 설정
+			this.SetResistance(ResistanceType.Physical, 30, 40);
+			this.SetResistance(ResistanceType.Poison, 45, 50); // 독 면역 수준
+			this.SetResistance(ResistanceType.Cold, 10, 20);  // 파충류라 냉기에 취약
 
-            this.SetResistance(ResistanceType.Physical, 30, 35);
-            this.SetResistance(ResistanceType.Fire, 5, 10);
-            this.SetResistance(ResistanceType.Cold, 10, 20);
-            this.SetResistance(ResistanceType.Poison, 45, 50);
-            this.SetResistance(ResistanceType.Energy, 10, 20);
+			this.Fame = 2500;
+			this.Karma = -2500;
+			this.VirtualArmor = 6;
 
-            this.Fame = 3500;
-            this.Karma = -3500;
-
-            Tamable = true;
+			this.Tamable = true;
+			this.MinTameSkill = 115.1;
             ControlSlots = 2;
-            MinTameSkill = 67.5;			
+		
 			
             this.PackItem(new Bone());
             // TODO: Body parts

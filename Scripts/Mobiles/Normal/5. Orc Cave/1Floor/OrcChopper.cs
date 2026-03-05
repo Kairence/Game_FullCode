@@ -16,34 +16,40 @@ namespace Server.Mobiles
             BaseSoundID = 0x45A;
             Hue = 0x96D;
 
-            SetStr(507, 1315);
-            SetDex(1261, 1265);
-            SetInt(110, 200);
+            /* Orc Chopper - Fame 3,000 / Karma -3,000 */
+			/* [HP Calculation]
+			   - Target HP: ~6,000
+			   - Fame Bonus (3,000): ~5,625
+			   - SetHits Required: 375 (Target - Bonus)
+			*/
+			this.SetStr(200, 250);       
+			this.SetDex(100, 150);       
+			this.SetInt(40, 60);         
 
-            SetHits(1057, 1459);
-			SetStam(320, 444);
-			SetMana(200, 300);
-			
-			SetAttackSpeed( 5.0 );
+			// [Hits] 최종 약 5,500 ~ 6,500 타겟
+			this.SetHits(100, 1000); 
+			this.SetStam(100, 150);      
+			this.SetMana(40, 60);        
 
-            SetDamage(4, 120);
+			this.SetAttackSpeed(3.2);    // 느리지만 묵직한 도끼질
+			this.SetDamage(25, 35);      // 높은 물리 데미지
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 55, 65);
-            SetResistance(ResistanceType.Fire, 30, 40);
-            SetResistance(ResistanceType.Cold, 25, 35);
-            SetResistance(ResistanceType.Poison, 25, 35);
-            SetResistance(ResistanceType.Energy, 45, 50);
+			this.SetResistance(ResistanceType.Physical, 20, 30);
+			this.SetResistance(ResistanceType.Fire, 10, 20);
+			this.SetResistance(ResistanceType.Cold, 10, 20);
+			this.SetResistance(ResistanceType.Poison, 10, 20);
+			this.SetResistance(ResistanceType.Energy, 10, 20);
 
-            SetSkill(SkillName.MagicResist, 70.1, 78.0);
-            SetSkill(SkillName.Tactics, 75.1, 78.0);
-            SetSkill(SkillName.Wrestling, 70.1, 78.0);
+			this.SetSkill(SkillName.Swords, 80.0, 95.0);
+			this.SetSkill(SkillName.Tactics, 80.0, 95.0);
 
-            Fame = 4000;
-            Karma = -4000;
+			this.VirtualArmor = 5;       // 공격 집중형이라 낮음
+			this.Tamable = false;
 
-            VirtualArmor = 14;
+			this.Fame = 3000;           
+			this.Karma = -3000;
         }
 
         public OrcChopper(Serial serial)

@@ -13,37 +13,44 @@ namespace Server.Mobiles
             Body = 719;
             BaseSoundID = 0x5ED;
 
-            SetStr(2150, 2250);
-            SetDex(2860, 2875);
-            SetInt(1350, 1355);
+            /* Dragon Wolf - Fame 9,000 / Karma -9,000 */
+			/* [HP Calculation]
+			   - Target HP: ~25,000
+			   - Fame Bonus (9,000): ~21,850
+			   - SetHits Required: 3,150 (Target - Bonus)
+			*/
+			this.SetStr(450, 600);       
+			this.SetDex(200, 300);       
+			this.SetInt(100, 200);       
 
-            SetHits( 2800, 3860 );
-			SetStam( 1000, 2000 );
-			SetMana( 1000, 1500 );
+			// [Hits] 최종 약 23,000 ~ 27,000 타겟
+			this.SetHits(2150, 4150); 
+			this.SetStam(200, 300);      
 
-			SetAttackSpeed( 5.0 );
-            SetDamage(120, 155);
+			this.SetAttackSpeed(1.8);    // 늑대 특유의 매우 빠른 공속
+			this.SetDamage(18, 30);      
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 70);
+			this.SetDamageType(ResistanceType.Fire, 30);
 
-            SetResistance(ResistanceType.Physical, 45, 55);
-            SetResistance(ResistanceType.Fire, 30, 40);
-            SetResistance(ResistanceType.Cold, 30, 40);
-            SetResistance(ResistanceType.Poison, 40, 50);
-            SetResistance(ResistanceType.Energy, 40, 50);
+			this.SetResistance(ResistanceType.Physical, 55, 70); 
+			this.SetResistance(ResistanceType.Fire, 45, 60);     
+			this.SetResistance(ResistanceType.Cold, 30, 45);     
+			this.SetResistance(ResistanceType.Poison, 40, 55);
 
-            SetSkill(SkillName.Anatomy, 60.0, 70.0);
-            SetSkill(SkillName.MagicResist, 125.0, 140.0);
-            SetSkill(SkillName.Tactics, 95.0, 110.0);
-            SetSkill(SkillName.Wrestling, 90.0, 105.0);
-            SetSkill(SkillName.DetectHidden, 60.0);
+			this.SetSkill(SkillName.Wrestling, 100.0, 115.0);
+			this.SetSkill(SkillName.Tactics, 100.0, 115.0);
+			this.SetSkill(SkillName.Anatomy, 100.0, 115.0);
 
-            Fame = 9000;
-            Karma = -9000;
-            
-            Tamable = true;
-            ControlSlots = 2;
-            MinTameSkill = 102.0;
+			this.VirtualArmor = 12;      
+
+			// [Taming Settings]
+			this.Tamable = true;         
+			this.ControlSlots = 2;       
+			this.MinTameSkill = 145.0;   // 200 상한 대비 중상급
+
+			this.Fame = 9000;           
+			this.Karma = -9000;
 
             //SetSpecialAbility(SpecialAbility.DragonBreath);
         }

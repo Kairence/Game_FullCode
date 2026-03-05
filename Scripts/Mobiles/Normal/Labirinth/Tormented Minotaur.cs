@@ -13,28 +13,47 @@ namespace Server.Mobiles
             Name = "Tormented Minotaur";
             Body = 262;
 
-            SetStr(822, 930);
-            SetDex(401, 415);
-            SetInt(128, 138);
+			/* [Tormented Minotaur - Fame 19,000 / General / Weight 1.29]
+			   - 스킬 200 마스터 서버용 '최상급 광전사' 밸런스 적용
+			   - 가상 방어력(VirtualArmor): (19,000/1000) + 5 = 24
+			   - 고통으로 인해 방어보다는 공격과 저항에 치중된 개체
+			   -------------------------------------------------- */
 
-            SetHits(4000, 4200);
+			// [Attributes] 명성 19,000 보너스 + 가중치 1.29 반영
+			this.SetStr(600, 720); 
+			this.SetHits(14000, 16000); 
+			this.SetDex(120, 150);
+			this.SetInt(120, 150);
 
-            SetDamage(16, 30);
+			// [Combat Options] 고통을 유저에게 전이시키는 타격
+			this.SetDamage(65, 95);
+			this.SetAttackSpeed(2.2); // 광기 어린 속도
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Damage Types] 50% 물리 + 25% 화염 + 25% 에너지 (고통의 낙인)
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Fire, 25);
+			this.SetDamageType(ResistanceType.Energy, 25);
 
-            SetResistance(ResistanceType.Physical, 62);
-            SetResistance(ResistanceType.Fire, 74);
-            SetResistance(ResistanceType.Cold, 54);
-            SetResistance(ResistanceType.Poison, 56);
-            SetResistance(ResistanceType.Energy, 54);
+			// [Resistances] 고통에 익숙해진 신체 (중상급 저항)
+			this.SetResistance(ResistanceType.Physical, 60, 70); 
+			this.SetResistance(ResistanceType.Fire, 50, 60);
+			this.SetResistance(ResistanceType.Cold, 30, 40);     // 냉기에는 여전히 취약
+			this.SetResistance(ResistanceType.Poison, 70, 75);  // 극심한 독 저항
+			this.SetResistance(ResistanceType.Energy, 50, 60);
 
-            SetSkill(SkillName.Wrestling, 110.1, 111.0);
-            SetSkill(SkillName.Tactics, 100.7, 102.8);
-            SetSkill(SkillName.MagicResist, 104.3, 116.3);
+			// [Skills] ★ 스킬 200 서버 기준 - 마스터로 가는 최종 관문
+			// 유저 스킬 165 ~ 185 구간의 핵심 사냥감
+			this.SetSkill(SkillName.Wrestling, 155.0, 175.0); 
+			this.SetSkill(SkillName.Tactics, 155.0, 175.0);
+			this.SetSkill(SkillName.Anatomy, 160.0, 180.0);
+			this.SetSkill(SkillName.MagicResist, 140.0, 160.0);
+			this.SetSkill(SkillName.Healing, 100.0, 120.0);    // 고통을 견디며 스스로 치유
 
-            Fame = 20000;
-            Karma = -20000;
+			// [Misc] 가상 방어력(Virtual Armor): 24
+			this.VirtualArmor = 24;
+
+			this.Fame = 19000;
+			this.Karma = -19000;
 
             SetWeaponAbility(WeaponAbility.Dismount);
         }

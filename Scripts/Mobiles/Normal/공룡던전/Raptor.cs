@@ -28,32 +28,52 @@ namespace Server.Mobiles
 			Name = "a raptor";
 			Body = 730;
 
-			SetStr(404, 471);
-			SetDex(132, 155);
-			SetInt(105, 145);
+			/* [Raptor - Fame 5,500 / Dinosaur / Weight 1.24]
+			   - 스킬 200 마스터 서버용 '중상급 민첩형' 밸런스 적용
+			   - 가상 방어력(VirtualArmor): (5,500/1000) + 2.5 = 8
+			   - 테이밍 난이도: 80.0 ~ 90.0 (공룡 테이머의 주력 유닛)
+			   -------------------------------------------------- */
 
-			SetHits(343, 400);
+			// [Attributes] 명성 5,500 보너스 + 가중치 1.24 반영
+			this.SetStr(100, 130); 
+			this.SetHits(2200, 2800); 
+			this.SetDex(20, 30);
+			this.SetInt(20, 30);
 
-			SetDamage(11, 17);
+			// [Combat Options] 찢고 발기는 갈고리 발톱
+			this.SetDamage(25, 40);
+			this.SetAttackSpeed(1.8); // 매우 빠른 공격 속도 (연타 컨셉)
 
-			SetDamageType(ResistanceType.Physical, 100);
+			// [Damage Types] 90% 물리 + 10% 출혈(Energy 속성 대체)
+			this.SetDamageType(ResistanceType.Physical, 90);
+			this.SetDamageType(ResistanceType.Energy, 10);
 
-			SetResistance(ResistanceType.Physical, 45, 50);
-			SetResistance(ResistanceType.Fire, 50, 60);
-			SetResistance(ResistanceType.Cold, 40, 50);
-			SetResistance(ResistanceType.Poison, 20, 30);
-			SetResistance(ResistanceType.Energy, 30, 40);
+			// [Resistances] 질긴 가죽과 야성 (최대 저항 75% 캡 준수)
+			this.SetResistance(ResistanceType.Physical, 45, 55); 
+			this.SetResistance(ResistanceType.Fire, 30, 40);      
+			this.SetResistance(ResistanceType.Cold, 30, 40);    
+			this.SetResistance(ResistanceType.Poison, 40, 50); 
+			this.SetResistance(ResistanceType.Energy, 30, 40);
 
-			SetSkill(SkillName.MagicResist, 75.1, 90.0);
-			SetSkill(SkillName.Tactics, 75.1, 100.0);
-			SetSkill(SkillName.Wrestling, 70.1, 95.1);
+			// [Skills] 유저 스킬 90 ~ 120 구간 (GM 이상 유저용)
+			this.SetSkill(SkillName.Wrestling, 90.0, 110.0); 
+			this.SetSkill(SkillName.Tactics, 90.0, 110.0);
+			this.SetSkill(SkillName.Anatomy, 100.0, 120.0);    // 치명타 유도
+			this.SetSkill(SkillName.MagicResist, 80.0, 100.0);
 
-			Fame = 7500;
-			Karma = -7500;
+			// [Taming & Food] ★ 가상 방어구 상단 배치
+
+			this.ControlSlots = 2; // 강력한 개체이므로 2슬롯 점유
+			this.MinTameSkill = 80.0; // 랩터 군단을 부리기 위한 숙련된 테이머의 기준
+
+			// [Misc]
+			this.VirtualArmor = 8;
+
+			this.Fame = 5500;
+			this.Karma = -5500;
 
 			Tamable = !isFriend;
-			MinTameSkill = 107.1;
-			ControlSlots = 27;
+
 
             SetWeaponAbility(WeaponAbility.BleedAttack);
 		}

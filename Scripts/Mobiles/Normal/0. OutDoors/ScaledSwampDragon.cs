@@ -15,25 +15,31 @@ namespace Server.Mobiles
         public ScaledSwampDragon(string name)
             : base(name, 0x31F, 0x3EBE, AIType.AI_Melee, FightMode.Aggressor, 10, 1, 0.2, 0.4)
         {
-            this.SetStr(200, 270);
-            this.SetDex(156, 175);
-            this.SetInt(16, 20);
+            // [역산] 최종 Str 1000 / Hits 6000~7000 목표
+			this.SetStr(244, 344); 
+			this.SetDex(66, 116);  // 최종 Dex ~350
 
-            this.SetHits(271, 288);
-			this.SetStam(100, 120);
-            this.SetMana(1, 5);
+			this.SetHits(2102, 3102); 
+			this.SetStam(66, 116);
+			this.SetMana(0);
 
-            this.SetDamage(1, 4);
-			SetAttackSpeed(20.0);
+			SetAttackSpeed(3.0);
+			SetDamage(15, 25); 
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            Fame = 2000;
-            Karma = -2000;
+			// 저항 설정 (비늘 갑옷)
+			this.SetResistance(ResistanceType.Physical, 40, 50);
+			this.SetResistance(ResistanceType.Poison, 30, 40);
 
-            Tamable = true;
-            ControlSlots = 5;
-            MinTameSkill = 113.9;
+			// 최종 스킬 110.0~120.0 목표
+			this.SetSkill(SkillName.Wrestling, 104.6, 114.6);
+
+			this.Fame = 2000;
+			this.VirtualArmor = 12;
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 93.1;
         }
 
         public ScaledSwampDragon(Serial serial)

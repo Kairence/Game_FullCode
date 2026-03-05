@@ -14,37 +14,41 @@ namespace Server.Mobiles
             Body = 130;
             BaseSoundID = 0x174;
 
-            SetStr(351, 400);
-            SetDex(126, 145);
-            SetInt(326, 450);
+            /* Fire Gargoyle - Fame 5,000 / Karma -5,000 */
+			/* [HP Calculation]
+			   - Target HP: ~12,000
+			   - Fame Bonus (5,000): ~11,250
+			   - SetHits Required: 750 (Target - Bonus)
+			*/
+			this.SetStr(300, 400);       
+			this.SetDex(150, 200);       
+			this.SetInt(250, 350);       
 
-            SetHits(811, 940);
-			SetStam(100, 200);
-			SetMana(340, 480);
+			// [Hits] 최종 약 11,000 ~ 13,000 타겟
+			this.SetHits(250, 1250); 
+			this.SetStam(150, 200);      
+			this.SetMana(250, 350);      
 
-			SetAttackSpeed( 5.0 );
-            SetDamage(77, 124);
+			this.SetAttackSpeed(2.4);    
+			this.SetDamage(15, 25);      
 
-            SetDamageType(ResistanceType.Physical, 20);
-            SetDamageType(ResistanceType.Fire, 80);
+			this.SetDamageType(ResistanceType.Fire, 100);
 
-            SetResistance(ResistanceType.Physical, 30, 35);
-            SetResistance(ResistanceType.Fire, 50, 60);
-            SetResistance(ResistanceType.Poison, 20, 30);
-            SetResistance(ResistanceType.Energy, 20, 30);
+			this.SetResistance(ResistanceType.Physical, 35, 45);
+			this.SetResistance(ResistanceType.Fire, 65, 75);     // 화염 저항 상한 (Max 75%)
+			this.SetResistance(ResistanceType.Cold, 5, 15);      // 냉기 취약
+			this.SetResistance(ResistanceType.Poison, 40, 50);
 
-            SetSkill(SkillName.Anatomy, 75.1, 85.0);
-            SetSkill(SkillName.EvalInt, 90.1, 105.0);
-            SetSkill(SkillName.Magery, 90.1, 105.0);
-            SetSkill(SkillName.Meditation, 90.1, 105.0);
-            SetSkill(SkillName.MagicResist, 90.1, 105.0);
-            SetSkill(SkillName.Tactics, 80.1, 100.0);
-            SetSkill(SkillName.Wrestling, 40.1, 80.0);
+			this.SetSkill(SkillName.Magery, 85.0, 100.0);
+			this.SetSkill(SkillName.EvalInt, 80.0, 95.0);
+			this.SetSkill(SkillName.Wrestling, 85.0, 100.0);
+			this.SetSkill(SkillName.Tactics, 85.0, 100.0);
 
-            Fame = 5000;
-            Karma = -5000;
+			this.VirtualArmor = 8;       
+			this.Tamable = false;
 
-            VirtualArmor = 32;
+			this.Fame = 5000;           
+			this.Karma = -5000;
         }
 
         public FireGargoyle(Serial serial)

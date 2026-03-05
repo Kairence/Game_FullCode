@@ -16,31 +16,45 @@ namespace Server.Mobiles
             this.Body = 782;
             this.BaseSoundID = 959;
 
-            this.SetStr(196, 220);
-            this.SetDex(101, 125);
-            this.SetInt(36, 60);
+			/* [Red Solen Warrior - Fame 8,000 / General / Weight 1.22]
+			   - 스킬 200 마스터 서버용 '중급' 밸런스 적용
+			   - 가상 방어력(VirtualArmor): (8,000/1000) - 3 = 5 (경량 공격형 갑각)
+			   - 흑개미 전사보다 높은 Str와 화염 속성 공격 가미
+			   -------------------------------------------------- */
 
-            this.SetHits(96, 107);
+			// [Attributes] 명성 8,000 보너스 + 가중치 1.22 반영
+			this.SetStr(150, 180); 
+			this.SetHits(3500, 3800); 
+			this.SetDex(30, 40);
+			this.SetInt(30, 40);
 
-            this.SetDamage(5, 15);
+			// [Combat Options]
+			this.SetDamage(30, 45); // 흑개미 전사(25, 40)보다 매서운 타격
+			this.SetAttackSpeed(2.0);
 
-            this.SetDamageType(ResistanceType.Physical, 80);
-            this.SetDamageType(ResistanceType.Poison, 20);
+			// [Damage Types] 70% 물리 + 30% 화염 속성 (붉은 솔렌의 호전성)
+			this.SetDamageType(ResistanceType.Physical, 70);
+			this.SetDamageType(ResistanceType.Fire, 30);
 
-            this.SetResistance(ResistanceType.Physical, 20, 35);
-            this.SetResistance(ResistanceType.Fire, 20, 35);
-            this.SetResistance(ResistanceType.Cold, 10, 25);
-            this.SetResistance(ResistanceType.Poison, 20, 35);
-            this.SetResistance(ResistanceType.Energy, 10, 25);
+			// [Resistances] 총합 약 200 (Max 75 준수)
+			this.SetResistance(ResistanceType.Physical, 40, 50);
+			this.SetResistance(ResistanceType.Fire, 60, 70);      // 화염 저항 우수
+			this.SetResistance(ResistanceType.Cold, 15, 25);      // 냉기 약점 확실
+			this.SetResistance(ResistanceType.Poison, 40, 50);
+			this.SetResistance(ResistanceType.Energy, 25, 35);
 
-            this.SetSkill(SkillName.MagicResist, 60.0);
-            this.SetSkill(SkillName.Tactics, 80.0);
-            this.SetSkill(SkillName.Wrestling, 80.0);
+			// [Skills] ★ 스킬 200 서버 기준 - 중반부 핵심 사냥용 (재설계)
+			// 유저 스킬 80 ~ 100(그마) 구간 수련에 최적화
+			this.SetSkill(SkillName.Wrestling, 75.0, 85.0); 
+			this.SetSkill(SkillName.Tactics, 75.0, 85.0);
+			this.SetSkill(SkillName.Anatomy, 80.0, 95.0); // 공격적 성향 반영
+			this.SetSkill(SkillName.MagicResist, 60.0, 70.0);
 
-            this.Fame = 3000;
-            this.Karma = -3000;
+			// [Misc] 가상 방어력(Virtual Armor): (8,000/1000) - 3 = 5
+			this.VirtualArmor = 5;
 
-            this.VirtualArmor = 35;
+			this.Fame = 8000;
+			this.Karma = -8000;
 
             SolenHelper.PackPicnicBasket(this);
             this.PackItem(new ZoogiFungus((0.05 < Utility.RandomDouble()) ? 3 : 13));

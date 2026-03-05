@@ -17,40 +17,49 @@ namespace Server.Mobiles
             Name = "a white wyrm";
             BaseSoundID = 362;
 
-            SetStr(7721, 9760);
-            SetDex(6101, 9130);
-            SetInt(8860, 9250);
+            /* White Wyrm - Fame 22,000 / Karma -22,000 */
+			/* [HP Calculation]
+			   - Target HP: ~130,000
+			   - Fame Bonus (22,000): ~64,250
+			   - SetHits Required: 65,750 (Target - Bonus)
+			*/
+			this.SetStr(900, 1100);      
+			this.SetDex(180, 280);       
+			this.SetInt(700, 900);       
 
-            SetHits(34300, 38600);
-			SetStam(30000, 35000);
-			SetMana(34000, 38000);
+			// [Hits] 최종 약 125,000 ~ 135,000 타겟
+			this.SetHits(60750, 70750); 
+			this.SetStam(180, 280);      
+			this.SetMana(700, 900);      
 
-            SetDamage(570, 1650);
-			SetAttackSpeed( 10.0 );
+			this.SetAttackSpeed(2.2);    
+			this.SetDamage(45, 65);      
 
-            SetDamageType(ResistanceType.Physical, 50);
-            SetDamageType(ResistanceType.Cold, 50);
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Cold, 50);
 
-            SetResistance(ResistanceType.Physical, 55, 70);
-            SetResistance(ResistanceType.Fire, 15, 25);
-            SetResistance(ResistanceType.Cold, 80, 90);
-            SetResistance(ResistanceType.Poison, 40, 50);
-            SetResistance(ResistanceType.Energy, 40, 50);
+			// [Resistance] 냉기 면역 수준, 화염 취약
+			this.SetResistance(ResistanceType.Physical, 60, 75); // Max 75%
+			this.SetResistance(ResistanceType.Fire, 15, 30);     
+			this.SetResistance(ResistanceType.Cold, 75, 75);    // Max 75%
+			this.SetResistance(ResistanceType.Poison, 55, 70);
+			this.SetResistance(ResistanceType.Energy, 55, 70);
 
-            SetSkill(SkillName.EvalInt, 199.1, 250.0);
-            SetSkill(SkillName.Magery, 199.1, 250.0);
-            SetSkill(SkillName.MagicResist, 199.1, 250.0);
-            SetSkill(SkillName.Tactics, 197.6, 250.0);
-            SetSkill(SkillName.Wrestling, 190.1, 250.0);
+			this.SetSkill(SkillName.Magery, 115.0, 130.0);
+			this.SetSkill(SkillName.EvalInt, 115.0, 130.0);
+			this.SetSkill(SkillName.Wrestling, 110.0, 125.0);
+			this.SetSkill(SkillName.Tactics, 110.0, 125.0);
+			this.SetSkill(SkillName.MagicResist, 120.0, 135.0);
 
-            Fame = 29000;
-            Karma = -29000;
+			this.VirtualArmor = 15;      
 
-            VirtualArmor = 44;
+			// [Taming Settings]
+			this.Tamable = true;         
+			this.ControlSlots = 4;       // 4슬롯 (강력한 주력 펫)
+			this.MinTameSkill = 180.0;   // 상한 200 서버의 핵심 타겟 (매우 높음)
 
-            Tamable = true;
-            ControlSlots = 4;
-            MinTameSkill = 176.3;
+			this.Fame = 22000;           
+			this.Karma = -22000;
             SetAreaEffect(AreaEffect.AuraDamage);
 		}
 

@@ -16,32 +16,48 @@ namespace Server.Mobiles
             Body = 0x587;
             Female = true;
 
-            SetStr(1100, 1300);
-            SetDex(150, 170);
-            SetInt(280, 310);
+			/* [Triceratops - Fame 8,500 / Dinosaur / Weight 1.26]
+			   - 스킬 200 마스터 서버용 '상급 하드 탱커' 밸런스 적용
+			   - 가상 방어력(VirtualArmor): (8,500/1000) + 6.5 = 15
+			   - 테이밍 난이도: 95.0 ~ 105.0 (상급 테이머의 든든한 방패)
+			   -------------------------------------------------- */
 
-            SetHits(1100 , 1200);
+			// [Attributes] 명성 8,500 보너스 + 가중치 1.26 반영
+			this.SetStr(180, 230); 
+			this.SetHits(4200, 5200); 
+			this.SetDex(35, 50);
+			this.SetInt(35, 50);
 
-            SetDamage(21, 28);
+			// [Combat Options] 세 개의 뿔을 이용한 돌진
+			this.SetDamage(35, 55);
+			this.SetAttackSpeed(2.8); // 묵직하고 느린 한 방
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Damage Types] 100% 물리
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 70, 80);
-            SetResistance(ResistanceType.Fire, 40, 50);
-            SetResistance(ResistanceType.Cold, 40, 50);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 40, 50);
+			// [Resistances] 천연 장갑판 (물리 저항 75% 캡 근접)
+			this.SetResistance(ResistanceType.Physical, 65, 75); 
+			this.SetResistance(ResistanceType.Fire, 40, 50);      
+			this.SetResistance(ResistanceType.Cold, 40, 50);    
+			this.SetResistance(ResistanceType.Poison, 50, 60); 
+			this.SetResistance(ResistanceType.Energy, 35, 45);
 
-            SetSkill(SkillName.Anatomy, 65.0, 75.0);
-            SetSkill(SkillName.Tactics, 90.0, 100.0);
-            SetSkill(SkillName.Wrestling, 95.0, 105.0);
-            SetSkill(SkillName.DetectHidden, 75.0);
-            SetSkill(SkillName.Focus, 95.0, 105.0);
-            SetSkill(SkillName.Parry, 0.0, 105.0);
+			// [Skills] 유저 스킬 110 ~ 140 구간 최적화
+			this.SetSkill(SkillName.Wrestling, 110.0, 130.0); 
+			this.SetSkill(SkillName.Tactics, 110.0, 130.0);
+			this.SetSkill(SkillName.MagicResist, 90.0, 110.0);
+			this.SetSkill(SkillName.Parry, 80.0, 100.0); // 프릴을 이용한 방어 효과
 
-            Tamable = true;
-            ControlSlots = 22;
-            MinTameSkill = 102.0;
+			// [Taming] ★ 테이밍 가능 (음식 설정 제외)
+			this.Tamable = true;
+			this.ControlSlots = 3; // 압도적인 맷집으로 인해 3슬롯 점유
+			this.MinTameSkill = 95.0; // 숙련된 테이머만이 다룰 수 있는 거수
+
+			// [Misc]
+			this.VirtualArmor = 15;
+
+			this.Fame = 8500;
+			this.Karma = -8500;
 
             SetMagicalAbility(MagicalAbility.Piercing);
         }

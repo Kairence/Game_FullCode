@@ -13,30 +13,28 @@ namespace Server.Mobiles
             this.Body = 0xDC;
             this.BaseSoundID = 0x3F3;
 
-            this.SetStr(210, 490);
-            this.SetDex(36, 55);
-            this.SetInt(16, 30);
+            this.SetStr(1, 5);       // 최종 Str 530~534
+			this.SetDex(35, 55);     
+			this.SetInt(1, 5);       
 
-			SetAttackSpeed( 3.0 );
+			this.SetHits(50, 100);   // 최종 Hits 860~910
+			this.SetStam(35, 55);
 
-			SetStam(10, 15);
-            this.SetHits(15, 27);
-            this.SetMana(10, 15);
+			SetAttackSpeed(3.0);
+			SetDamage(2, 6); 
 
-            this.SetDamage(3, 5);
+			this.SetResistance(ResistanceType.Physical, 5, 10);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetSkill(SkillName.Wrestling, 9.0, 19.0);
 
-            this.SetResistance(ResistanceType.Physical, 15, 20);
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 11.1;
 
-            this.Fame = 0;
-            this.Karma = 300;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 35.1;
-        }
-
+			this.Fame = 400;
+			this.Karma = 0;
+		}
+		
         public Llama(Serial serial)
             : base(serial)
         {

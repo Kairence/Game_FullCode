@@ -14,29 +14,43 @@ namespace Server.Mobiles
             Body = 255;
             BaseSoundID = 0x452;
 
-            SetStr(686, 830);
-            SetDex(251, 365);
-            SetInt(17, 31);
+			/* [Yomotsu Elder - Normal - Fame 15,000 / Weight 1.30]
+			   - 요모츠 광산의 지배자 / 일반 던전 최상위
+			   - 배수: 1x (일반 몬스터)
+			   - VirtualArmor: 20 (기본 15 + 노련함 보정 5)
+			   -------------------------------------------------- */
 
-            SetHits(801, 900);
+			// [Attributes] 역산된 Set 값 정밀 적용
+			this.SetStr(490, 520); 
+			this.SetHits(11000, 11500); 
+			this.SetDex(95, 110);
+			this.SetInt(95, 110);
 
-            SetDamage(19, 27);
+			// [Combat Options] 물리 50% / 화염 50% (강력한 근접전 및 마법)
+			this.SetDamage(50, 85);
+			this.SetAttackSpeed(2.2); 
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Fire, 50);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] 최고 저항 75 이하 준수 및 명확한 약점(냉기) 설정
+			this.SetResistance(ResistanceType.Physical, 60, 75); // 75% 캡 준수
+			this.SetResistance(ResistanceType.Fire, 60, 70);      
+			this.SetResistance(ResistanceType.Cold, 25, 35);    // ★ 종족적 취약점
+			this.SetResistance(ResistanceType.Poison, 50, 65); 
+			this.SetResistance(ResistanceType.Energy, 50, 65);   
 
-            SetResistance(ResistanceType.Physical, 65, 85);
-            SetResistance(ResistanceType.Fire, 30, 50);
-            SetResistance(ResistanceType.Cold, 45, 65);
-            SetResistance(ResistanceType.Poison, 35, 55);
-            SetResistance(ResistanceType.Energy, 25, 50);
+			// [Skills] 기본 110~120에 역산 보너스(16.8) 가산
+			this.SetSkill(SkillName.Wrestling, 125.0, 140.0); 
+			this.SetSkill(SkillName.Tactics, 125.0, 140.0);
+			this.SetSkill(SkillName.Anatomy, 125.0, 140.0);
+			this.SetSkill(SkillName.Magery, 115.0, 130.0);       // 노련한 주술 구사
+			this.SetSkill(SkillName.EvalInt, 115.0, 130.0);
+			this.SetSkill(SkillName.MagicResist, 120.0, 135.0);
 
-            SetSkill(SkillName.Anatomy, 115.1, 130.0);
-            SetSkill(SkillName.MagicResist, 100.1, 120.0);
-            SetSkill(SkillName.Tactics, 115.1, 130.0);
-            SetSkill(SkillName.Wrestling, 110.1, 130.0);
-
-            Fame = 12000;
-            Karma = -12000;
+			this.Tamable = false;
+			this.VirtualArmor = 20;
+			this.Fame = 15000;
+			this.Karma = -15000;
 
             PackItem(new GreenGourd());
             PackItem(new ExecutionersAxe());

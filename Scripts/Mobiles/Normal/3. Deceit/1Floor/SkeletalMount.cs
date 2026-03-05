@@ -7,7 +7,7 @@ namespace Server.Mobiles
     {
         [Constructable] 
         public SkeletalMount()
-            : this("Boss a skeletal steed")
+            : this("a skeletal steed")
         {
         }
 
@@ -15,35 +15,53 @@ namespace Server.Mobiles
         public SkeletalMount(string name)
             : base(name, 793, 0x3EBB, AIType.AI_Melee, FightMode.Aggressor, 10, 1, 0.2, 0.4)
         {
-            this.SetStr(10491, 15000);
-            this.SetDex(6460, 8550);
-            this.SetInt(1460, 1600);
-
-			SetHits(149302, 194979);
-			SetMana(11000, 11500);
-			SetStam(136000, 150000);
-
-            this.SetDamage(128, 1200);
-			SetAttackSpeed( 2.5 );
-
-			Boss = true;
+            /* Skeletal Mount - Fame 16,000 (1F Named Boss) */
+			this.BaseSoundID = 0x1C0;
 			
-            this.SetDamageType(ResistanceType.Physical, 50);
-            this.SetDamageType(ResistanceType.Cold, 50);
+			Boss = true;
 
-            this.SetResistance(ResistanceType.Physical, 60, 80);
-            this.SetResistance(ResistanceType.Cold, 90, 95);
-            this.SetResistance(ResistanceType.Poison, 100);
-            this.SetResistance(ResistanceType.Energy, 10, 15);
+			/* [Skeletal Mount - Fame 16,000 / Boss / Weight 1.22]
+			   - 컨셉: 뼈만 남은 언데드 기마수 (고속 돌격형)
+			   - VirtualArmor: (16,000/1000) + 2 = 18 (단단한 뼈 보정)
+			   - 편차 수정: 체력 5만 이상 룰 적용 (편차 2,000 이내)
+			   -------------------------------------------------- */
 
-            this.SetSkill(SkillName.MagicResist, 235.1, 240.0);
-            this.SetSkill(SkillName.Tactics, 250.0);
-            this.SetSkill(SkillName.Wrestling, 220.1, 230.0);
+			// 최종 Str 약 11,200 (명성 대비 강력한 힘)
+			this.SetStr(9200, 9500); 
 
-            VirtualArmor = 77;
+			// 최종 Hits 약 249,000 (민맥 편차 2,000 고정)
+			this.SetHits(207000, 209000); 
 
-            this.Fame = 22000;
-            this.Karma = -22000;
+			// 최종 Dex/Int 약 2,200
+			this.SetDex(1850, 1950);
+			this.SetInt(1850, 1950);
+
+			// 최종 Stam/Mana 약 2,300 (높은 기력으로 연속 공격)
+			this.SetStam(1950, 2050);
+			this.SetMana(1950, 2050);
+
+			// [Combat Options]
+			this.SetDamage(50, 75);
+			this.SetAttackSpeed(2.2);
+
+			// [Resistances] 최고 저항 75 이하 엄격 준수
+			this.SetResistance(ResistanceType.Physical, 55, 65);
+			this.SetResistance(ResistanceType.Fire, 20, 30);      // 뼈 괴물 공통 약점: 화염
+			this.SetResistance(ResistanceType.Cold, 50, 60);
+			this.SetResistance(ResistanceType.Poison, 70, 75);   // 언데드 독 내성
+			this.SetResistance(ResistanceType.Energy, 30, 40);
+
+			// [Skills] 최종 149.5 부근
+			this.SetSkill(SkillName.Wrestling, 86.0, 91.0);
+			this.SetSkill(SkillName.Tactics, 86.0, 91.0);
+			this.SetSkill(SkillName.Anatomy, 86.0, 91.0);
+			this.SetSkill(SkillName.MagicResist, 90.0, 100.0);
+
+			// 가방 방어력: (16,000/1000) + 2 = 18
+			this.VirtualArmor = 18;
+
+			this.Fame = 16000;
+			this.Karma = -16000;
         }
 
         public SkeletalMount(Serial serial)

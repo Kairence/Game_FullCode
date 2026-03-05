@@ -326,30 +326,33 @@ namespace Server
 
 			if (restart)
 			{
-				ProcessStartInfo psi = new ProcessStartInfo
-				{
-					// Use 'dotnet' as the process for .NET 8 compatibility
-					FileName = "dotnet", 
-					// Pass the DLL path as an argument to the dotnet command
-					Arguments = $"\"{ExePath}\" {Arguments}",
-					WorkingDirectory = Environment.CurrentDirectory,
-					UseShellExecute = true,
-					WindowStyle = ProcessWindowStyle.Normal
-				};
-
 				try
 				{
+					// 1. Get the full path of the DLL
+					string dllPath = Path.GetFullPath(ExePath);
+
+					// 2. Optimized StartInfo for .NET 8
+					ProcessStartInfo psi = new ProcessStartInfo
+					{
+						FileName = "dotnet",
+						Arguments = $"\"{dllPath}\" {Arguments}",
+						WorkingDirectory = Environment.CurrentDirectory,
+						UseShellExecute = true, // Required for launching a new window
+						WindowStyle = ProcessWindowStyle.Normal
+					};
+
+					// 3. Start the new process
 					Process.Start(psi);
 				}
 				catch (Exception ex)
 				{
-					Console.WriteLine("Restart Error: {0}", ex.Message);
-					// Fallback: If 'dotnet' command fails, try running the ExePath directly
+					// Fallback: Try starting without 'dotnet' prefix if it fails
 					try { Process.Start(new ProcessStartInfo(ExePath, Arguments) { UseShellExecute = true }); }
-					catch { }
+					catch { Console.WriteLine("Restart Failed: " + ex.Message); }
 				}
 			}
 
+			// 4. Terminate the current process
 			Process.GetCurrentProcess().Kill();
 		}
 		private static void HandleClosed()
@@ -502,7 +505,7 @@ namespace Server
 
             // 2. Display all info: Custom Version, Assembly Version, and Time
             Console.WriteLine(
-                "Kairence Server - Version: {0} (Build {1}) | Assembly: 8.0 | Build on: {2} - Release",
+                "Kairence Server - Version: {0} (Build {1}) | Assembly: 8.0.418 | Build on: {2} - Release",
                 myVersion,
                 myBuild,
                 currentBuildDate.ToString("yyyy-MM-dd tt hh:mm:ss"));

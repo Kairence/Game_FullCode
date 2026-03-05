@@ -18,36 +18,46 @@ namespace Server.Mobiles
         {
             BaseSoundID = 0x4BC;
 
-            SetStr(296, 325);
-            SetDex(96, 115);
-            SetInt(186, 225);
+			/* [Unicorn - Normal - Fame 18,000 / Karma +18,000 / Weight 1.25]
+			   - 정글 던전의 신성한 일각수 / 상급 지원형 탈것
+			   - Taming 200 시대를 반영한 2슬롯 상급 사양
+			   - VirtualArmor: 20 (명성/1000 + 2 보정)
+			   -------------------------------------------------- */
 
-            SetHits(191, 210);
+			// [Attributes] 역산된 Set 값 정밀 적용 (Hits 1.2만 대)
+			this.SetStr(530, 550); 
+			this.SetHits(11800, 12100); 
+			this.SetDex(100, 120); 
+			this.SetInt(100, 120);
 
-            SetDamage(16, 22);
+			// [Combat Options] 물리 50% / 에너지 50% (신성한 마력 타격)
+			this.SetDamage(40, 65);
+			this.SetAttackSpeed(1.8); // 유니콘 특유의 민첩한 공격속도
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Energy, 50);
 
-            SetDamageType(ResistanceType.Physical, 75);
-            SetDamageType(ResistanceType.Energy, 25);
+			// [Resistances] 최고 저항 75 이하 준수 / 화염 약점 설정
+			this.SetResistance(ResistanceType.Physical, 55, 65); 
+			this.SetResistance(ResistanceType.Fire, 25, 35);      // ★ 확실한 약점 (열기에 취약)
+			this.SetResistance(ResistanceType.Cold, 45, 55);    
+			this.SetResistance(ResistanceType.Poison, 70, 75);   // 독 정화 능력 특화 (Max 75)
+			this.SetResistance(ResistanceType.Energy, 60, 70);   
 
-            SetResistance(ResistanceType.Physical, 55, 65);
-            SetResistance(ResistanceType.Fire, 25, 40);
-            SetResistance(ResistanceType.Cold, 25, 40);
-            SetResistance(ResistanceType.Poison, 55, 65);
-            SetResistance(ResistanceType.Energy, 25, 40);
+			// [Skills] 기본 115~125에 역산 보너스(18.0) 가산
+			this.SetSkill(SkillName.Wrestling, 133.0, 143.0); 
+			this.SetSkill(SkillName.Tactics, 133.0, 143.0);
+			this.SetSkill(SkillName.Anatomy, 133.0, 143.0);
+			this.SetSkill(SkillName.Magery, 120.0, 135.0);       // 신성한 마법과 치유
+			this.SetSkill(SkillName.MagicResist, 120.0, 135.0);
+			this.SetSkill(SkillName.Poisoning, 120.0, 135.0);   // (내부적으로 독 해제 기믹과 연동)
 
-            SetSkill(SkillName.EvalInt, 80.1, 90.0);
-            SetSkill(SkillName.Magery, 60.2, 80.0);
-            SetSkill(SkillName.Meditation, 50.1, 60.0);
-            SetSkill(SkillName.MagicResist, 75.3, 90.0);
-            SetSkill(SkillName.Tactics, 20.1, 22.5);
-            SetSkill(SkillName.Wrestling, 80.5, 92.5);
-
-            Fame = 9000;
-            Karma = 9000;
-
-            Tamable = true;
-            ControlSlots = 19;
-            MinTameSkill = 95.1;
+			// [Misc]
+			this.Tamable = true; 
+			this.ControlSlots = 2; 
+			this.MinTameSkill = 148.5; // 200 시대에 걸맞은 전설적인 난이도 초입
+			this.VirtualArmor = 20;
+			this.Fame = 18000;
+			this.Karma = 18000;
 
             SetWeaponAbility(WeaponAbility.ArmorIgnore);
         }

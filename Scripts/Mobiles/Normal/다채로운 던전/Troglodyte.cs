@@ -16,32 +16,46 @@ namespace Server.Mobiles
             Body = 267;
             BaseSoundID = 0x59F; 
 
-            SetStr(148, 217);
-            SetDex(91, 120);
-            SetInt(51, 70);
+			/* [Troglodyte - Fame 4,800 / Diverse / Weight 1.22]
+			   - 스킬 200 마스터 서버용 '중상급 딜탱형' 밸런스 적용
+			   - 가상 방어력(VirtualArmor): (4,800/1000) + 2.2 = 7
+			   - 테이밍 불가능 (야만적인 지성체)
+			   -------------------------------------------------- */
 
-            SetHits(302, 340);
+			// [Attributes] 명성 4,800 보너스 + 가중치 1.22 반영
+			this.SetStr(80, 110); 
+			this.SetHits(1800, 2200); 
+			this.SetDex(15, 20);
+			this.SetInt(15, 20);
 
-            SetDamage(11, 14);
+			// [Combat Options] 무식한 돌도끼 타격
+			this.SetDamage(20, 35);
+			this.SetAttackSpeed(2.4);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Damage Types] 100% 물리
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 30, 35);
-            SetResistance(ResistanceType.Fire, 20, 30);
-            SetResistance(ResistanceType.Cold, 35, 40);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 30, 40);
+			// [Resistances] 거친 피부 (최대 저항 75% 캡 준수)
+			this.SetResistance(ResistanceType.Physical, 40, 50); 
+			this.SetResistance(ResistanceType.Fire, 20, 30);      
+			this.SetResistance(ResistanceType.Cold, 40, 50);    
+			this.SetResistance(ResistanceType.Poison, 40, 50); 
+			this.SetResistance(ResistanceType.Energy, 25, 35);
 
-            SetSkill(SkillName.Anatomy, 70.5, 94.8);
-            SetSkill(SkillName.MagicResist, 51.8, 65.0);
-            SetSkill(SkillName.Tactics, 80.4, 94.7);
-            SetSkill(SkillName.Wrestling, 70.2, 93.5);
-            SetSkill(SkillName.Healing, 70.0, 95.0);
+			// [Skills] 유저 스킬 80 ~ 110 구간 수련 최적화
+			this.SetSkill(SkillName.Wrestling, 85.0, 100.0); 
+			this.SetSkill(SkillName.Tactics, 85.0, 100.0);
+			this.SetSkill(SkillName.MagicResist, 65.0, 85.0);
+			this.SetSkill(SkillName.Anatomy, 90.0, 110.0);    // 단순하지만 치명적인 공격
 
-            Fame = 5000;
-            Karma = -5000;
+			// [Taming] ★ 테이밍 불가능
+			this.Tamable = false;
 
-            VirtualArmor = 28; // Don't know what it should be
+			// [Misc]
+			this.VirtualArmor = 7;
+
+			this.Fame = 4800;
+			this.Karma = -4800;
         }
 
         public Troglodyte(Serial serial)

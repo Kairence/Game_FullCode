@@ -19,37 +19,42 @@ namespace Server.Mobiles
             else if (Utility.RandomBool())
                 Hue = 1154;
 
-            SetStr(276, 300);
-            SetDex(126, 145);
-            SetInt(36, 60);
+            /* Frost Spider - Fame 2,500 / Karma -2,500 */
+			/* [HP Calculation]
+			   - Target HP: ~5,000
+			   - Fame Bonus (2,500): ~4,375
+			   - SetHits Required: 625 (Target - Bonus)
+			*/
+			this.SetStr(100, 150);       
+			this.SetDex(150, 200);       // 거미 특유의 빠른 속도
+			this.SetInt(50, 80);        
 
-            SetHits(246, 360);
-            SetMana(0);
+			// [Hits] 최종 약 4,500 ~ 5,500 타겟
+			this.SetHits(125, 1125); 
+			this.SetStam(150, 200);      
 
-			SetAttackSpeed( 10.0 );
-            SetDamage(6, 16);
+			this.SetAttackSpeed(2.2);    
+			this.SetDamage(10, 18);      
 
-            SetDamageType(ResistanceType.Physical, 20);
-            SetDamageType(ResistanceType.Cold, 80);
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Cold, 50);
 
-            SetResistance(ResistanceType.Physical, 25, 30);
-            SetResistance(ResistanceType.Fire, 5, 10);
-            SetResistance(ResistanceType.Cold, 40, 50);
-            SetResistance(ResistanceType.Poison, 20, 30);
-            SetResistance(ResistanceType.Energy, 10, 20);
+			this.SetResistance(ResistanceType.Physical, 20, 30);
+			this.SetResistance(ResistanceType.Fire, 5, 15);      
+			this.SetResistance(ResistanceType.Cold, 65, 75);    // Max 75%
+			this.SetResistance(ResistanceType.Poison, 40, 50);
 
-            SetSkill(SkillName.MagicResist, 25.1, 40.0);
-            SetSkill(SkillName.Tactics, 35.1, 50.0);
-            SetSkill(SkillName.Wrestling, 50.1, 65.0);
+			this.SetSkill(SkillName.Wrestling, 75.0, 90.0);
+			this.SetSkill(SkillName.Tactics, 75.0, 90.0);
+			this.SetSkill(SkillName.Poisoning, 60.0, 80.0);    // 독 공격 가능
 
-            Fame = 775;
-            Karma = -775;
+			this.VirtualArmor = 5;       // 얇은 외골격
+			this.Tamable = true;         
+			this.ControlSlots = 1;       
+			this.MinTameSkill = 75.0;    
 
-            VirtualArmor = 28; 
-
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 74.7;
+			this.Fame = 2500;           
+			this.Karma = -2500;
         }
 
         public FrostSpider(Serial serial)

@@ -14,43 +14,42 @@ namespace Server.Mobiles
             Body = 74;
             BaseSoundID = 422;
 
-            SetStr(91, 115);
-            SetDex(61, 80);
-            SetInt(86, 105);
+            /* Imp - Fame 1,000 / Karma -1,000 */
+			/* [HP Calculation]
+			   - Target HP: ~2,200
+			   - Fame Bonus (1,000): ~1,563
+			   - SetHits Required: 637 (Target - Bonus)
+			*/
+			this.SetStr(80, 110);       
+			this.SetDex(100, 150);       
+			this.SetInt(150, 200);       
 
-            SetHits(855, 1070);
-			SetStam(310, 312);
-			SetMana(310, 312);
+			// [Hits] 최종 약 2,000 ~ 2,500 타겟
+			this.SetHits(437, 937); 
+			this.SetMana(150, 200);      
 
-			SetAttackSpeed( 5.0 );
-            SetDamage(50, 104);
+			this.SetAttackSpeed(2.4);    
+			this.SetDamage(8, 14);       
 
-            SetDamageType(ResistanceType.Physical, 0);
-            SetDamageType(ResistanceType.Fire, 50);
-            SetDamageType(ResistanceType.Poison, 50);
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Fire, 50);
 
-            SetResistance(ResistanceType.Physical, 25, 35);
-            SetResistance(ResistanceType.Fire, 40, 50);
-            SetResistance(ResistanceType.Cold, 20, 30);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 30, 40);
+			this.SetResistance(ResistanceType.Physical, 20, 30);
+			this.SetResistance(ResistanceType.Fire, 50, 65);     
+			this.SetResistance(ResistanceType.Cold, 10, 25);     
+			this.SetResistance(ResistanceType.Poison, 30, 45);
 
-            SetSkill(SkillName.EvalInt, 20.1, 30.0);
-            SetSkill(SkillName.Magery, 90.1, 100.0);
-            SetSkill(SkillName.MagicResist, 30.1, 50.0);
-            SetSkill(SkillName.Tactics, 42.1, 50.0);
-            SetSkill(SkillName.Wrestling, 40.1, 44.0);
-            SetSkill(SkillName.Necromancy, 20);
-            SetSkill(SkillName.SpiritSpeak, 20);
+			this.SetSkill(SkillName.Magery, 80.0, 95.0);
+			this.SetSkill(SkillName.EvalInt, 80.0, 95.0);
+			this.SetSkill(SkillName.Wrestling, 70.0, 85.0);
 
-            Fame = 5000;
-            Karma = -5000;
+			this.VirtualArmor = 4;       
+			this.Tamable = true;         
+			this.ControlSlots = 1;       
+			this.MinTameSkill = 75.0;    // 200 상한 대비 초보용
 
-            VirtualArmor = 30;
-
-            Tamable = true;
-            ControlSlots = 2;
-            MinTameSkill = 83.1;
+			this.Fame = 1000;           
+			this.Karma = -1000;
         }
 
         public Imp(Serial serial)

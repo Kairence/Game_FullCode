@@ -13,30 +13,38 @@ namespace Server.Mobiles
             this.Body = 94;
             this.BaseSoundID = 456;
 
-            this.SetStr(218, 300);
-            this.SetDex(16, 21);
-            this.SetInt(16, 20);
+            /* Frost Ooze - Fame 1,500 / Karma -1,500 */
+			/* [HP Calculation]
+			   - Target HP: ~3,500
+			   - Fame Bonus (1,500): ~2,625
+			   - SetHits Required: 875 (Target - Bonus)
+			*/
+			this.SetStr(80, 100);       
+			this.SetDex(50, 70);        
+			this.SetInt(20, 40);         
 
-            this.SetHits(130, 170);
+			// [Hits] 최종 약 3,000 ~ 4,000 타겟
+			this.SetHits(375, 1375); 
+			this.SetStam(50, 70);      
 
-			SetAttackSpeed( 10.0 );
-            this.SetDamage(3, 9);
+			this.SetAttackSpeed(3.5);    // 매우 느린 공격
+			this.SetDamage(8, 14);       
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Cold, 100);
 
-            this.SetResistance(ResistanceType.Physical, 15, 20);
-            this.SetResistance(ResistanceType.Cold, 40, 50);
-            this.SetResistance(ResistanceType.Poison, 20, 30);
-            this.SetResistance(ResistanceType.Energy, 10, 20);
+			this.SetResistance(ResistanceType.Physical, 10, 20);
+			this.SetResistance(ResistanceType.Fire, -20, 0);    // 불에 매우 약함
+			this.SetResistance(ResistanceType.Cold, 75, 75);    // 냉기 면역 (Max 75%)
+			this.SetResistance(ResistanceType.Poison, 75, 75);  // 독 면역 (Max 75%)
 
-            this.SetSkill(SkillName.MagicResist, 5.1, 10.0);
-            this.SetSkill(SkillName.Tactics, 19.3, 34.0);
-            this.SetSkill(SkillName.Wrestling, 25.3, 40.0);
+			this.SetSkill(SkillName.Wrestling, 50.0, 65.0);
+			this.SetSkill(SkillName.Tactics, 50.0, 65.0);
 
-            this.Fame = 450;
-            this.Karma = -450;
+			this.VirtualArmor = 2;       // 점액질이라 방어력 거의 없음
+			this.Tamable = false;
 
-            this.VirtualArmor = 38;
+			this.Fame = 1500;           
+			this.Karma = -1500;
         }
 
         public FrostOoze(Serial serial)

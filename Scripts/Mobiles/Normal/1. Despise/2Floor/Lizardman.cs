@@ -14,33 +14,31 @@ namespace Server.Mobiles
             Body = 36; //Utility.RandomList(35, 36);
             BaseSoundID = 417;
 
-            SetStr(332, 535);
-            SetDex(125, 130);
-            SetInt(112, 115);
+            this.SetStr(32, 82);     // 최종 Str 650~700
+			this.SetDex(66, 116);    // 최종 Dex ~400 (빠름)
+			this.SetInt(16, 26);     // 최종 Int 100~110
 
-            SetHits(575, 680);
-			SetMana(100, 105);
-			SetStam(130, 135);
-			
-			SetAttackSpeed( 5.0 );
+			this.SetHits(134, 334);  // 최종 Hits 3,000~3,200
+			this.SetStam(66, 116);
 
-            SetDamage(26, 39);
+			SetAttackSpeed(2.2);     // 빠른 공격
+			SetDamage(12, 18); 
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 25, 30);
-            SetResistance(ResistanceType.Fire, 5, 10);
-            SetResistance(ResistanceType.Cold, 5, 10);
-            SetResistance(ResistanceType.Poison, 10, 20);			
-			
-            SetSkill(SkillName.MagicResist, 44.1, 45.0);
-            SetSkill(SkillName.Tactics, 45.1, 50.0);
-            SetSkill(SkillName.Wrestling, 45.1, 50.0);
+			// 저항: 비늘 피부 (20~25%)
+			this.SetResistance(ResistanceType.Physical, 20, 25);
+			this.SetResistance(ResistanceType.Cold, 25, 30);
 
-            Fame = 2000;
-            Karma = -2000;
+			// 최종 Skill 55.0~65.0 (65.0 - 3.9 = 61.1)
+			this.SetSkill(SkillName.Wrestling, 51.1, 61.1);
+			this.SetSkill(SkillName.Tactics, 51.1, 61.1);
+			this.SetSkill(SkillName.Anatomy, 51.1, 61.1);
 
-            VirtualArmor = 4;
+			this.VirtualArmor = 5;
+
+			this.Fame = 1500;
+			this.Karma = -1500;
         }
 
         public Lizardman(Serial serial)

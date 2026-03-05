@@ -14,38 +14,33 @@ namespace Server.Mobiles
             Body = 779;
             BaseSoundID = 422;
 
-            SetStr(206, 550);
-            SetDex(10, 15);
-            SetInt(20, 25);
+            this.SetStr(1, 10);      // 최종 Str 562~571
+			this.SetDex(50, 80);     // 최종 Dex ~300 (작아서 빠름)
+			this.SetInt(15, 25);     // 최종 Int 75~85
 
-            //SetHits(45, 47);
-			SetHits(400, 410);
-			SetStam(105, 125);
-			SetMana(11, 15);
-            //SetDamage(2, 4);
-			SetDamage(3, 16);
+			this.SetHits(34, 134);   // 최종 Hits 1,600~1,700
+			this.SetStam(50, 80);
+			this.SetMana(0);
 
-			SetAttackSpeed( 20.0 );
-			
-            SetResistance(ResistanceType.Physical, 20, 25);
-            SetResistance(ResistanceType.Fire, 10, 20);
-            SetResistance(ResistanceType.Cold, 15, 25);
-            SetResistance(ResistanceType.Poison, 15, 25);
-            SetResistance(ResistanceType.Energy, 15, 25);			
-			
-            SetDamageType(ResistanceType.Physical, 100);
+			SetAttackSpeed(2.0);     // 공격 속도가 매우 빠름
+			SetDamage(3, 7);         // 데미지는 약함
 
-            SetSkill(SkillName.MagicResist, 1.1, 2.0);
-            SetSkill(SkillName.Tactics, 1.1, 2.0);
-            SetSkill(SkillName.Wrestling, 1.1, 2.0);
+			// 공격 속성: 물리 60% / 독 40% (습지 독기)
+			this.SetDamageType(ResistanceType.Physical, 60);
+			this.SetDamageType(ResistanceType.Poison, 40);
 
-            Fame = 2000;
-            Karma = -2000;
+			// 저항: 피부가 약함
+			this.SetResistance(ResistanceType.Physical, 5, 10);
+			this.SetResistance(ResistanceType.Poison, 30, 40);
 
-            VirtualArmor = 1;
+			// 최종 Skill 25.0~35.0 (35.0 - 2.0 = 33.0)
+			this.SetSkill(SkillName.Wrestling, 23.0, 33.0);
+			this.SetSkill(SkillName.Tactics, 23.0, 33.0);
 
-            PackItem(new BarkFragment(4));
-            //PackItem(new Engines.Plants.Seed());
+			this.VirtualArmor = 0;
+
+			this.Fame = 800;
+			this.Karma = -800;
         }
 
         public Bogling(Serial serial)

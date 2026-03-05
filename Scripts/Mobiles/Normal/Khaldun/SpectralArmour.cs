@@ -26,31 +26,39 @@ namespace Server.Mobiles
             this.AddItem(coif);
             this.AddItem(gloves);
 
-            this.SetStr(101, 110); 
-            this.SetDex(101, 110); 
-            this.SetInt(101, 110);
+			/* [Khaldun Spectral Armour - Revised]
+			   - 명성 11,000 / 가중치 1.24 / 카르마 -13,000
+			   - 너무 높은 면역을 하향하여 '공략 가능한 상급 몬스터'로 재조정
+			   -------------------------------------------------- */
 
-            this.SetHits(178, 201);
-            this.SetStam(191, 200);
+			this.SetStr(250, 290); 
+			this.SetHits(5500, 6500); 
+			this.SetDex(45, 60);
+			this.SetInt(45, 60);
 
-            this.SetDamage(10, 22);
+			this.SetDamage(35, 55); // 대미지 살짝 하향
+			this.SetAttackSpeed(2.4);
 
-            this.SetDamageType(ResistanceType.Physical, 75);
-            this.SetDamageType(ResistanceType.Cold, 25);
+			// 속성 분배 (유저의 저항 세팅 유도)
+			this.SetDamageType(ResistanceType.Physical, 60);
+			this.SetDamageType(ResistanceType.Cold, 40);
 
-            this.SetResistance(ResistanceType.Physical, 35, 45);
-            this.SetResistance(ResistanceType.Fire, 20, 30);
-            this.SetResistance(ResistanceType.Cold, 30, 40);
-            this.SetResistance(ResistanceType.Poison, 20, 30);
-            this.SetResistance(ResistanceType.Energy, 20, 30);
+			// [Resistances] ★ 면역 하향 조정
+			this.SetResistance(ResistanceType.Physical, 55, 65); // 판금의 단단함 유지
+			this.SetResistance(ResistanceType.Fire, 25, 35);    // 약점 명확화
+			this.SetResistance(ResistanceType.Cold, 50, 60);
+			this.SetResistance(ResistanceType.Poison, 60, 75);  // 면역 제거, 높은 저항으로 대체
+			this.SetResistance(ResistanceType.Energy, 35, 45);
 
-            this.SetSkill(SkillName.Wrestling, 75.1, 100.0); 
-            this.SetSkill(SkillName.Tactics, 90.1, 100.0); 
-            this.SetSkill(SkillName.MagicResist, 90.1, 100); 
+			// [Skills] 유저 스킬 110 ~ 130 구간용
+			this.SetSkill(SkillName.Wrestling, 110.0, 125.0); 
+			this.SetSkill(SkillName.Tactics, 110.0, 125.0);
+			this.SetSkill(SkillName.MagicResist, 100.0, 115.0); // 마법 저항 하향
 
-            this.VirtualArmor = 40; 
-            this.Fame = 7000; 
-            this.Karma = -7000;             
+			this.VirtualArmor = 18; // 가상 방어력 하향 (30이하 가이드 준수)
+
+			this.Fame = 11000;
+			this.Karma = -13000;        
         }
 
         public SpectralArmour(Serial serial)

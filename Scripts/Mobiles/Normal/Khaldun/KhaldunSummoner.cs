@@ -13,33 +13,48 @@ namespace Server.Mobiles
             this.Name = "Zealot of Khaldun";
             this.Title = "the Summoner";
 
-            this.SetStr(351, 400);
-            this.SetDex(101, 150);
-            this.SetInt(502, 700);
+			/* [Khaldun Summoner - Fame 14,000 / Khaldun / Weight 1.28]
+			   - 스킬 200 마스터 서버용 '정통 마법사' 밸런스 적용
+			   - 카르마 보정: 명성(14,000) + 1,500 보정 = -15,500
+			   - 공속 보정: 10.0 (긴 영창 시간 반영)
+			   - 가상 방어력(VirtualArmor): (14,000/1000) + 1.0 = 15
+			   -------------------------------------------------- */
 
-            this.SetHits(421, 480);
+			// [Attributes] 명성 14,000 보너스 + 가중치 1.28 반영
+			this.SetStr(400, 450); 
+			this.SetHits(9000, 10000); 
+			this.SetDex(80, 100);
+			this.SetInt(80, 100);
 
-            this.SetDamage(5, 15);
+			// [Combat Options] 
+			// 직접 타격은 매우 느리지만(10초), 마법 위력으로 승부함
+			this.SetDamage(30, 45);
+			this.SetAttackSpeed(10.0); // 10초당 1회 공격 (의식 영창 컨셉)
 
-            this.SetDamageType(ResistanceType.Physical, 75);
-            this.SetDamageType(ResistanceType.Cold, 25);
+			// [Damage Types] 20% 물리 + 80% 에너지
+			this.SetDamageType(ResistanceType.Physical, 20);
+			this.SetDamageType(ResistanceType.Energy, 80);
 
-            this.SetResistance(ResistanceType.Physical, 35, 40);
-            this.SetResistance(ResistanceType.Fire, 25, 30);
-            this.SetResistance(ResistanceType.Cold, 50, 60);
-            this.SetResistance(ResistanceType.Poison, 25, 35);
-            this.SetResistance(ResistanceType.Energy, 25, 35);
+			// [Resistances] 마법사형 저항
+			this.SetResistance(ResistanceType.Physical, 45, 55);
+			this.SetResistance(ResistanceType.Fire, 40, 50);
+			this.SetResistance(ResistanceType.Cold, 50, 60);
+			this.SetResistance(ResistanceType.Poison, 50, 60);
+			this.SetResistance(ResistanceType.Energy, 75);      
 
-            this.SetSkill(SkillName.Wrestling, 90.1, 100.0);
-            this.SetSkill(SkillName.Tactics, 90.1, 100.0);
-            this.SetSkill(SkillName.MagicResist, 90.1, 100.0);
-            this.SetSkill(SkillName.Magery, 90.1, 100.0);
-            this.SetSkill(SkillName.EvalInt, 100.0);
-            this.SetSkill(SkillName.Meditation, 120.1, 130.0);
+			// [Skills] ★ 스킬 200 서버 기준 - 최상위 술사 (재설계)
+			this.SetSkill(SkillName.Wrestling, 130.0, 150.0); 
+			this.SetSkill(SkillName.Tactics, 130.0, 150.0);
+			this.SetSkill(SkillName.Magery, 160.0, 180.0);      // 영창이 느린 대신 마법 숙련도 극대화
+			this.SetSkill(SkillName.EvalInt, 160.0, 180.0);     // 한 방 마법 대미지가 파멸적임
+			this.SetSkill(SkillName.Meditation, 180.0, 200.0);   // 마나 회복 속도 최상급
+			this.SetSkill(SkillName.MagicResist, 150.0, 175.0); 
 
-            this.VirtualArmor = 36;
-            this.Fame = 10000;
-            this.Karma = -10000;
+			// [Misc]
+			this.VirtualArmor = 15;
+
+			this.Fame = 14000;
+			this.Karma = -15500;
 
             LeatherGloves gloves = new LeatherGloves();
             gloves.Hue = 0x66D;

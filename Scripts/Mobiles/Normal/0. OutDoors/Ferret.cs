@@ -20,30 +20,27 @@ namespace Server.Mobiles
             this.Name = "a ferret";
             this.Body = 0x117;
 
-            this.SetStr(200, 250);
-            this.SetDex(25, 35);
-            this.SetInt(10, 15);
 
-            SetHits(150, 180);
-            SetStam(40, 50);
-            SetMana(10, 11);
-			
-			SetAttackSpeed(10.0);
+			this.SetStr(5, 10);
+			this.SetDex(100, 150); 
 
-            SetDamage(1, 5);
+			this.SetHits(66, 100); // 최종 Hits 600~634
+			this.SetStam(97, 127); // 최종 Stam 150~180 (지치지 않음)
+			this.SetMana(0);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			SetAttackSpeed(2.0);
+			SetDamage(1, 2); 
 
-            this.SetSkill(SkillName.Wrestling, 4.2, 6.4);
-            this.SetSkill(SkillName.Tactics, 4.0, 6.0);
-            this.SetSkill(SkillName.MagicResist, 4.0, 5.0);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.Fame = 150;
-            this.Karma = 0;
+			this.SetResistance(ResistanceType.Physical, 5, 10);
+			this.SetResistance(ResistanceType.Energy, 10, 20);
 
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = -6.9;
+			this.Fame = 200;
+			this.VirtualArmor = 0;
+
+			this.Tamable = true;
+			this.MinTameSkill = -18.9;
             this.m_CanTalk = true;
         }
 

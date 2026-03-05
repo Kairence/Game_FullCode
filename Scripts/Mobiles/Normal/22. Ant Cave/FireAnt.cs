@@ -13,27 +13,43 @@ namespace Server.Mobiles
             Name = "a fire ant";
             Body = 738;
 
-            SetStr(225);
-            SetDex(108);
-            SetInt(25);
+            /* [Fire Ant - Fame 500 / General / Weight 1.11]
+			   - 스킬 200 마스터 서버의 '입문용' 밸런스 적용
+			   - 가상 방어력(VirtualArmor): 0
+			   -------------------------------------------------- */
 
-            SetHits(299);
+			// [Attributes] 명성 500 보너스(Hits +845) + 가중치 1.11 반영
+			this.SetStr(4, 6); 
+			this.SetHits(80, 100); 
+			this.SetDex(1, 2);
+			this.SetInt(1, 2);
 
-            SetDamage(15, 18);
+			// [Combat Options]
+			this.SetDamage(4, 8);
+			this.SetAttackSpeed(2.0);
 
-            SetDamageType(ResistanceType.Physical, 40);
-            SetDamageType(ResistanceType.Fire, 60);
+			// [Damage Types] 80% 물리 + 20% 화염
+			this.SetDamageType(ResistanceType.Physical, 80);
+			this.SetDamageType(ResistanceType.Fire, 20);
 
-            SetResistance(ResistanceType.Physical, 52);
-            SetResistance(ResistanceType.Fire, 96);
-            SetResistance(ResistanceType.Cold, 36);
-            SetResistance(ResistanceType.Poison, 40);
-            SetResistance(ResistanceType.Energy, 36);
+			// [Resistances] 저레벨용 저항 (총합 약 100 내외)
+			this.SetResistance(ResistanceType.Physical, 10, 15);
+			this.SetResistance(ResistanceType.Fire, 40, 50);      // 불개미 정체성 유지
+			this.SetResistance(ResistanceType.Cold, 0);          // 냉기에 매우 취약
+			this.SetResistance(ResistanceType.Poison, 10, 15);
+			this.SetResistance(ResistanceType.Energy, 10, 15);
 
-            SetSkill(SkillName.Anatomy, 8.7);
-            SetSkill(SkillName.MagicResist, 53.1);
-            SetSkill(SkillName.Tactics, 77.2);
-            SetSkill(SkillName.Wrestling, 75.4);
+			// [Skills] ★ 스킬 200 서버 기준 - 초보자 사냥용 (대폭 하향)
+			// 유저 스킬 20~40 단계에서 수련하기 적합한 수치
+			this.SetSkill(SkillName.Wrestling, 15.0, 25.0); 
+			this.SetSkill(SkillName.Tactics, 15.0, 25.0);
+			this.SetSkill(SkillName.Anatomy, 10.0, 20.0);
+			this.SetSkill(SkillName.MagicResist, 10.0, 20.0);
+
+			// [Misc]
+			this.VirtualArmor = 0;
+			this.Fame = 500;
+			this.Karma = -500;
 
             SetAreaEffect(AreaEffect.ExplosiveGoo);
         }

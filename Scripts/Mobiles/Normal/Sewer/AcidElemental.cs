@@ -18,35 +18,44 @@ namespace Server.Mobiles
             Body = 158;
             BaseSoundID = 263;
 
-            SetStr(326, 355);
-            SetDex(66, 85);
-            SetInt(271, 295);
+			/* [Acid Elemental - Fame 6,500 / Sewer / Weight 1.22]
+			   - 스킬 200 마스터 서버용 '하수구 정예' 밸런스 적용
+			   - 가상 방어력(VirtualArmor): (6,500/1000) - 0.5 = 6
+			   - 테이밍 난이도: 85.0 ~ 95.0 (하수구 테이머의 최종 목표)
+			   -------------------------------------------------- */
 
-            SetHits(196, 213);
+			// [Attributes] 명성 6,500 보너스 + 가중치 1.22 반영
+			this.SetStr(110, 150); 
+			this.SetHits(2500, 3200); 
+			this.SetDex(20, 30);
+			this.SetInt(20, 30);
 
-            SetDamage(9, 15);
+			// [Combat Options] 장비를 녹여버리는 산성 타격
+			this.SetDamage(22, 35);
+			this.SetAttackSpeed(2.4);
 
-            SetDamageType(ResistanceType.Physical, 10);
-            SetDamageType(ResistanceType.Poison, 90);
+			// [Damage Types] 40% 물리 + 60% 독 (부식성 대미지)
+			this.SetDamageType(ResistanceType.Physical, 40);
+			this.SetDamageType(ResistanceType.Poison, 60);
 
-            SetResistance(ResistanceType.Physical, 60, 70);
-            SetResistance(ResistanceType.Fire, 20, 30);
-            SetResistance(ResistanceType.Cold, 20, 30);
-            SetResistance(ResistanceType.Poison, 100);
-            SetResistance(ResistanceType.Energy, 40, 50);
+			// [Resistances] 독 면역 수준의 저항과 불에 취약한 산성 성분
+			this.SetResistance(ResistanceType.Physical, 35, 45); 
+			this.SetResistance(ResistanceType.Fire, 10, 20);      // 가연성 물질 컨셉
+			this.SetResistance(ResistanceType.Cold, 40, 50);    
+			this.SetResistance(ResistanceType.Poison, 50, 75);  // 산 그 자체이므로 독 면역급
+			this.SetResistance(ResistanceType.Energy, 30, 40);
 
-            SetSkill(SkillName.Anatomy, 30.3, 60.0);
-            SetSkill(SkillName.EvalInt, 80.1, 95.0);
-            SetSkill(SkillName.Magery, 70.1, 85.0);
-            SetSkill(SkillName.Meditation, 0.0, 0.0);
-            SetSkill(SkillName.MagicResist, 60.1, 85.0);
-            SetSkill(SkillName.Tactics, 80.1, 90.0);
-            SetSkill(SkillName.Wrestling, 70.1, 90.0);
+			// [Skills] 유저 스킬 80 ~ 110 구간 (GM 진입로)
+			this.SetSkill(SkillName.Wrestling, 85.0, 105.0); 
+			this.SetSkill(SkillName.Tactics, 85.0, 105.0);
+			this.SetSkill(SkillName.MagicResist, 70.0, 90.0);
+			this.SetSkill(SkillName.Poisoning, 100.0, 120.0); // 타격 시 강력한 독 효과
 
-            Fame = 10000;
-            Karma = -10000;
+			// [Misc]
+			this.VirtualArmor = 6;
 
-            VirtualArmor = 70;
+			this.Fame = 6500;
+			this.Karma = -6500;
 
             PackItem(new Nightshade(4));
         }

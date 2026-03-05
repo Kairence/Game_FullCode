@@ -14,35 +14,24 @@ namespace Server.Mobiles
             Body = 154;
             BaseSoundID = 471;
 
-            SetStr(2446, 3470);
-            SetDex(171, 190);
-            SetInt(126, 140);
+            /* Mummy - Fame 5,500 */
+			this.Fame = 5500;
+			this.Karma = -5500;
 
-            SetHits(4118, 5120);
-            SetStam(230, 250);
-			SetMana(10, 20);
+			// [역산] 보너스: Str +783 / Hits +15,315 / Skill +20.3
+			this.SetStr(200, 250);    
+			this.SetHits(1500, 2000);  // 최종 Hits 약 17,000
+			this.SetDex(50, 70);       // 매우 느림
 
-			SetAttackSpeed( 10.0 );
+			this.SetAttackSpeed(3.0);
+			SetDamage(30, 45);        
 
-            SetDamage(200, 541);
+			this.SetSkill(SkillName.Wrestling, 110.0, 120.0); 
+			this.SetSkill(SkillName.Tactics, 110.0, 120.0);
 
-            SetDamageType(ResistanceType.Physical, 40);
-            SetDamageType(ResistanceType.Cold, 60);
-
-            SetResistance(ResistanceType.Physical, 45, 55);
-            SetResistance(ResistanceType.Fire, 10, 20);
-            SetResistance(ResistanceType.Cold, 50, 60);
-            SetResistance(ResistanceType.Poison, 50, 60);
-            SetResistance(ResistanceType.Energy, 20, 30);
-
-            SetSkill(SkillName.MagicResist, 105.1, 140.0);
-            SetSkill(SkillName.Tactics, 105.1, 120.0);
-            SetSkill(SkillName.Wrestling, 105.1, 120.0);
-
-            Fame = 12000;
-            Karma = -12000;
-
-            VirtualArmor = 50;
+			this.SetResistance(ResistanceType.Physical, 40, 50);
+			this.SetResistance(ResistanceType.Fire, -50, -40); // 붕대는 불에 잘 탑니다
+			this.VirtualArmor = 10;
         }
 
         public Mummy(Serial serial)

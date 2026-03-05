@@ -10,40 +10,55 @@ namespace Server.Mobiles
         public Lilith()
             : base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
         {
-            Name = "Champion Lilith";
+            Name = "Lilith";
             Body = 174;
             BaseSoundID = 0x4B0;
-
-            SetStr(42582, 43600);
-            SetDex(57820, 68000);
-            SetInt(73100, 75000);
-
-            SetHits(1900000, 2177777);
-            SetStam(150000, 155000);
-			SetMana(200000, 215000);
 			
-			SetAttackSpeed( 10.0 );
-			
-            SetDamage(12310, 18000);
+			Boss = true;
 
-            SetDamageType(ResistanceType.Physical, 75);
-            SetDamageType(ResistanceType.Fire, 25);
+			/* [Covetous Boss - Lilith - Fame 24,000 / Weight 1.25]
+			   - 컨셉: 매혹적인 서큐버스 퀸 (하이브리드형)
+			   - VirtualArmor: (24,000/1000) + 3 = 27 (악마의 피부 보정)
+			   - 편차 수정: 체력 5만 이상 룰 적용 (편차 2,000 이내)
+			   -------------------------------------------------- */
 
-            SetResistance(ResistanceType.Physical, 75, 90);
-            SetResistance(ResistanceType.Fire, 65, 75);
-            SetResistance(ResistanceType.Cold, 60, 70);
-            SetResistance(ResistanceType.Poison, 65, 75);
-            SetResistance(ResistanceType.Energy, 65, 75);
+			// 최종 Str 약 20,250
+			this.SetStr(16800, 17200); 
 
-            SetSkill(SkillName.MagicResist, 240.2, 250.0);
-            SetSkill(SkillName.Tactics, 280.1, 285.0);
-            SetSkill(SkillName.Wrestling, 280.1, 285.0);
+			// 최종 Hits 약 449,000 (민맥 편차 2,000 고정)
+			this.SetHits(376300, 378300); 
 
-            Fame = 27000;
-            Karma = -27000;
+			// 최종 Dex/Int 약 4,050 (매우 빠른 공격과 캐스팅)
+			this.SetDex(3350, 3450);
+			this.SetInt(3350, 3450);
 
-            VirtualArmor = 66;
-            //SetSpecialAbility(SpecialAbility.LifeDrain);
+			// 최종 Stam/Mana 약 4,275
+			this.SetStam(3550, 3650);
+			this.SetMana(3550, 3650);
+
+			// [Combat Options]
+			this.SetDamage(70, 110);
+			this.SetAttackSpeed(1.2); // 매우 빠른 공격 속도
+
+			// [Resistances] 최고 저항 75 이하 엄격 준수
+			this.SetResistance(ResistanceType.Physical, 55, 65);
+			this.SetResistance(ResistanceType.Fire, 60, 70);
+			this.SetResistance(ResistanceType.Cold, 40, 50);      // 약점: 냉기
+			this.SetResistance(ResistanceType.Poison, 70, 75);
+			this.SetResistance(ResistanceType.Energy, 65, 75);
+
+			// [Skills] 최종 270.0 부근
+			this.SetSkill(SkillName.Wrestling, 160.0, 164.0);
+			this.SetSkill(SkillName.Tactics, 160.0, 164.0);
+			this.SetSkill(SkillName.Magery, 160.0, 164.0);
+			this.SetSkill(SkillName.EvalInt, 160.0, 164.0);
+			this.SetSkill(SkillName.MagicResist, 160.0, 164.0);
+
+			// 가방 방어력: (24,000/1000) + 3 = 27
+			this.VirtualArmor = 27;
+
+			this.Fame = 24000;
+			this.Karma = -24000;
 			m_Aura = DateTime.Now;
 		}
 

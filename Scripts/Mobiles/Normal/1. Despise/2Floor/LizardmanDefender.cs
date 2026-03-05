@@ -15,33 +15,33 @@ namespace Server.Mobiles
             this.Body = 35;//Utility.RandomList(35, 36);
             this.BaseSoundID = 417;
 
-            SetStr(1250, 1360);
-            SetDex(155, 165);
-            SetInt(112, 120);
+            this.SetStr(51, 101);    // 최종 Str 750~800
+			this.SetDex(101, 151);   // 최종 Dex ~450
+			this.SetInt(42, 92);     // 최종 Int 150~200
 
-            SetHits(1250, 1360);
-			SetMana(110, 115);
-			SetStam(250, 255);
-			
-			SetAttackSpeed( 5.0 );
+			this.SetHits(51, 551);   // 최종 Hits 5,000~5,500
+			this.SetStam(101, 151);
 
-            SetDamage(40, 56);
+			SetAttackSpeed(2.2);     
+			SetDamage(15, 22); 
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 10, 20);
-            SetResistance(ResistanceType.Fire, 10, 20);
-            SetResistance(ResistanceType.Cold, 10, 20);
-            SetResistance(ResistanceType.Poison, 10, 20);			
-			
-            SetSkill(SkillName.MagicResist, 56.1, 60.0);
-            SetSkill(SkillName.Tactics, 56.1, 60.0);
-            SetSkill(SkillName.Wrestling, 56.1, 60.0);
+			// 저항: 갑옷을 입어 일반 리자드맨보다 높지만 30%대 유지
+			this.SetResistance(ResistanceType.Physical, 30, 35);
+			this.SetResistance(ResistanceType.Cold, 25, 30);
 
-            Fame = 4000;
-            Karma = -4000;
+			// 최종 Skill 75.0~85.0 (85.0 - 6.8 = 78.2)
+			this.SetSkill(SkillName.Wrestling, 68.2, 78.2);
+			this.SetSkill(SkillName.Tactics, 78.2, 88.2);
+			this.SetSkill(SkillName.Anatomy, 78.2, 88.2);
+			this.SetSkill(SkillName.MagicResist, 68.2, 78.2);
 
-            VirtualArmor = 25;
+			this.VirtualArmor = 15;
+
+			this.Fame = 2500;
+			this.Karma = -2500;		
+
         }
 
         public LizardmanDefender(Serial serial)

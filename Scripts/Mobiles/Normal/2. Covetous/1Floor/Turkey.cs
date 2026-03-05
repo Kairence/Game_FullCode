@@ -19,35 +19,32 @@ namespace Server.Mobiles
 			Body = 95;
 			BaseSoundID = 0x66A;
 
-            SetStr(360, 410);
-            SetDex(30, 75);
-            SetInt(10, 20);
+            this.SetStr(32, 82);     // 최종 Str 650~700
+			this.SetDex(11, 21);     
+			this.SetInt(16, 26);     // 최종 Int 100~110
 
-            SetHits(150,200);
-			SetStam(30, 50);
-            SetMana(1, 5);
+			this.SetHits(459, 959);  // 최종 Hits 3,500~4,000
+			this.SetStam(11, 21);
 
-			SetAttackSpeed( 2.5 );
-			
-            SetDamage(5, 9);
+			SetAttackSpeed(3.5);     
+			SetDamage(8, 15); 
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetResistance(ResistanceType.Physical, 15, 20);
+			this.SetResistance(ResistanceType.Fire, 5, 10);
 
-            SetSkill(SkillName.MagicResist, 4.0);
-            SetSkill(SkillName.Tactics, 5.0);
-            SetSkill(SkillName.Wrestling, 5.0);
+			this.SetSkill(SkillName.Wrestling, 46.1, 56.1);
+			this.SetSkill(SkillName.Tactics, 46.1, 56.1);
 
-            Fame = 1000;
-            Karma = -1000;
+			// 테이밍 설정
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 55.1;
 
-            VirtualArmor = 0;
+			this.Fame = 1500;
+			this.Karma = 0;
 
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = -0.9;
-
-            m_NextGobble = DateTime.UtcNow;
-            VirtualArmor = 5;
+            m_NextGobble = DateTime.Now;
 		}
 
         public override int Meat { get { return 4; } }

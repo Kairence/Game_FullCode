@@ -14,35 +14,41 @@ namespace Server.Mobiles
             this.Body = 67;
             this.BaseSoundID = 0x174;
 
-            this.SetStr(4246, 4275);
-            this.SetDex(1076, 1095);
-            this.SetInt(810, 1050);
+            /* Stone Gargoyle - Fame 11,000 / Karma -11,000 */
+			/* [HP Calculation]
+			   - Target HP: ~32,000
+			   - Fame Bonus (11,000): ~26,450
+			   - SetHits Required: 5,550 (Target - Bonus)
+			*/
+			this.SetStr(500, 650);       
+			this.SetDex(120, 170);       
+			this.SetInt(100, 150);       
 
-            this.SetHits(8148, 8165);
-			SetStam(3100, 3120);
-			SetMana(3100, 3120);
+			// [Hits] 최종 약 30,000 ~ 34,000 타겟
+			this.SetHits(4550, 6550); 
+			this.SetStam(120, 170);      
 
-			SetAttackSpeed( 10.0 );
-            this.SetDamage(211, 1007);
+			this.SetAttackSpeed(3.0);    // 느리지만 묵직한 공격
+			this.SetDamage(28, 48);      // 일반 가고일보다 훨씬 강력한 한 방
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 45, 55);
-            this.SetResistance(ResistanceType.Fire, 20, 30);
-            this.SetResistance(ResistanceType.Cold, 10, 20);
-            this.SetResistance(ResistanceType.Poison, 30, 40);
-            this.SetResistance(ResistanceType.Energy, 30, 40);
+			// [Resistance] 물리와 독에 특화된 저항
+			this.SetResistance(ResistanceType.Physical, 65, 75); // 돌 피부 (Max 75%)
+			this.SetResistance(ResistanceType.Fire, 40, 55);     
+			this.SetResistance(ResistanceType.Cold, 25, 40);     
+			this.SetResistance(ResistanceType.Poison, 75, 75);   // 독 면역 (Max 75%)
+			this.SetResistance(ResistanceType.Energy, 35, 50);
 
-            this.SetSkill(SkillName.MagicResist, 85.1, 200.0);
-            this.SetSkill(SkillName.Tactics, 80.1, 200.0);
-            this.SetSkill(SkillName.Wrestling, 60.1, 200.0);
+			this.SetSkill(SkillName.Wrestling, 105.0, 120.0);
+			this.SetSkill(SkillName.Tactics, 105.0, 120.0);
+			this.SetSkill(SkillName.Anatomy, 100.0, 115.0);
 
-            this.Fame = 14000;
-            this.Karma = -14000;
+			this.VirtualArmor = 15;      // 단단한 석재 질감
+			this.Tamable = false;
 
-            this.VirtualArmor = 50;
-
-            this.PackItem(new IronIngot(12));
+			this.Fame = 11000;           
+			this.Karma = -11000;
 
             if (0.05 > Utility.RandomDouble())
                 this.PackItem(new GargoylesPickaxe());

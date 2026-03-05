@@ -14,32 +14,46 @@ namespace Server.Mobiles
             this.Title = "the Knight";
             this.Hue = 0;
 
-            this.SetStr(351, 400);
-            this.SetDex(151, 165);
-            this.SetInt(76, 100);
+			/* [Khaldun Zealot - Fame 9,500 / Khaldun / Weight 1.23]
+			   - 스킬 200 마스터 서버용 '중상급 가디언' 밸런스 적용
+			   - 카르마 보정: 명성(9,500) + 1,500 보정 = -11,000
+			   - 가상 방어력(VirtualArmor): (9,500/1000) + 1.5 = 11 (광신도의 판금)
+			   -------------------------------------------------- */
 
-            this.SetHits(448, 470);
+			// [Attributes] 명성 9,500 보너스 + 가중치 1.23 반영
+			this.SetStr(180, 230); 
+			this.SetHits(4500, 5000); 
+			this.SetDex(35, 50);
+			this.SetInt(35, 50);
 
-            this.SetDamage(15, 25);
+			// [Combat Options]
+			this.SetDamage(40, 55);
+			this.SetAttackSpeed(2.0); // 묵직하고 저돌적인 타격
 
-            this.SetDamageType(ResistanceType.Physical, 75);
-            this.SetDamageType(ResistanceType.Cold, 25);
+			// [Damage Types] 80% 물리 + 20% 에너지 (광기의 타격)
+			this.SetDamageType(ResistanceType.Physical, 80);
+			this.SetDamageType(ResistanceType.Energy, 20);
 
-            this.SetResistance(ResistanceType.Physical, 35, 45);
-            this.SetResistance(ResistanceType.Fire, 25, 30);
-            this.SetResistance(ResistanceType.Cold, 50, 60);
-            this.SetResistance(ResistanceType.Poison, 25, 35);
-            this.SetResistance(ResistanceType.Energy, 25, 35);
+			// [Resistances] 전사형 저항 (물리/불 특화)
+			this.SetResistance(ResistanceType.Physical, 60, 70); // 판금 갑옷급 방어력
+			this.SetResistance(ResistanceType.Fire, 50, 60);
+			this.SetResistance(ResistanceType.Cold, 20, 30);     // 냉기에 취약
+			this.SetResistance(ResistanceType.Poison, 40, 50);
+			this.SetResistance(ResistanceType.Energy, 30, 40);
 
-            this.SetSkill(SkillName.Wrestling, 70.1, 80.0);
-            this.SetSkill(SkillName.Swords, 120.1, 130.0);
-            this.SetSkill(SkillName.Anatomy, 120.1, 130.0);
-            this.SetSkill(SkillName.MagicResist, 90.1, 100.0);
-            this.SetSkill(SkillName.Tactics, 90.1, 100.0);
+			// [Skills] ★ 스킬 200 서버 기준 - 숙련된 전사의 라이벌 (재설계)
+			// 유저 스킬 110 ~ 130 구간에서 상대하기 적합
+			this.SetSkill(SkillName.Wrestling, 105.0, 125.0); 
+			this.SetSkill(SkillName.Tactics, 105.0, 125.0);
+			this.SetSkill(SkillName.Anatomy, 110.0, 130.0);   // 급소를 노리는 광기
+			this.SetSkill(SkillName.MagicResist, 90.0, 110.0);
+			this.SetSkill(SkillName.Healing, 80.0, 100.0);    // 자가 치유를 통한 끈질김
 
-            this.Fame = 10000;
-            this.Karma = -10000;
-            this.VirtualArmor = 40;
+			// [Misc]
+			this.VirtualArmor = 11;
+
+			this.Fame = 9500;
+			this.Karma = -11000; // 칼둔 보정 적용 (-9,500 - 1,500)
 
             VikingSword weapon = new VikingSword();
             weapon.Hue = 0x835;

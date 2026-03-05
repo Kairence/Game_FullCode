@@ -14,36 +14,42 @@ namespace Server.Mobiles
             this.Body = 131;
             this.BaseSoundID = 768;
 
-            this.SetStr(3260, 3550);
-            this.SetDex(2660, 2850);
-            this.SetInt(3171, 3195);
+            /* Efreet - Fame 12,000 / Karma -12,000 */
+			/* [HP Calculation]
+			   - Target HP: ~45,000
+			   - Fame Bonus (12,000): ~28,650
+			   - SetHits Required: 16,350 (Target - Bonus)
+			*/
+			this.SetStr(450, 600);       
+			this.SetDex(200, 300);       
+			this.SetInt(600, 800);       
 
-            this.SetHits(1960, 2213);
-			SetStam(1000, 2000);
-			SetMana(1000, 2000);
+			// [Hits] 최종 약 42,000 ~ 48,000 타겟
+			this.SetHits(13350, 19350); 
+			this.SetStam(200, 300);      
+			this.SetMana(600, 800);      
 
-			SetAttackSpeed(1.0);
-            this.SetDamage(20, 60);
+			this.SetAttackSpeed(2.2);    
+			this.SetDamage(20, 35);      
 
-            this.SetDamageType(ResistanceType.Physical, 0);
-            this.SetDamageType(ResistanceType.Fire, 50);
-            this.SetDamageType(ResistanceType.Energy, 50);
+			this.SetDamageType(ResistanceType.Fire, 100);
 
-            this.SetResistance(ResistanceType.Physical, 50, 60);
-            this.SetResistance(ResistanceType.Fire, 60, 70);
-            this.SetResistance(ResistanceType.Poison, 30, 40);
-            this.SetResistance(ResistanceType.Energy, 40, 50);
+			this.SetResistance(ResistanceType.Physical, 45, 55);
+			this.SetResistance(ResistanceType.Fire, 75, 75);     // 화염 면역 (Max 75%)
+			this.SetResistance(ResistanceType.Cold, -10, 5);     // 매우 취약
+			this.SetResistance(ResistanceType.Poison, 50, 65);
+			this.SetResistance(ResistanceType.Energy, 50, 65);
 
-            this.SetSkill(SkillName.EvalInt, 60.1, 75.0);
-            this.SetSkill(SkillName.Magery, 60.1, 75.0);
-            this.SetSkill(SkillName.MagicResist, 60.1, 75.0);
-            this.SetSkill(SkillName.Tactics, 60.1, 80.0);
-            this.SetSkill(SkillName.Wrestling, 60.1, 80.0);
+			this.SetSkill(SkillName.Magery, 110.0, 125.0);
+			this.SetSkill(SkillName.EvalInt, 110.0, 125.0);
+			this.SetSkill(SkillName.MagicResist, 110.0, 125.0);
+			this.SetSkill(SkillName.Wrestling, 100.0, 115.0);
 
-            this.Fame = 10000;
-            this.Karma = -10000;
+			this.VirtualArmor = 10;      
+			this.Tamable = false;
 
-            this.VirtualArmor = 16;
+			this.Fame = 12000;           
+			this.Karma = -12000;
         }
 
         public Efreet(Serial serial)

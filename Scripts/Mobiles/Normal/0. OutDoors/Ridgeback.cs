@@ -17,29 +17,29 @@ namespace Server.Mobiles
         {
             BaseSoundID = 0x3F3;
 
-            SetStr(200, 250);
-            SetDex(56, 75);
-            SetInt(16, 30);
+            // [역산] 명성 600 보너스 반영
+			this.SetStr(54, 104);  // 최종 Str 600~650
+			this.SetDex(139, 189); // 최종 Dex ~350 (돌진력)
 
-            SetHits(41, 54);
-            SetMana(0);
+			this.SetHits(780, 1280); // 최종 Hits 2,000~2,500
+			this.SetStam(39, 89);   
+			this.SetMana(0);
 
-            SetDamage(3, 5);
+			SetAttackSpeed(2.5);
+			SetDamage(10, 18); 
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 15, 25);
-            SetResistance(ResistanceType.Fire, 5, 10);
-            SetResistance(ResistanceType.Cold, 5, 10);
-            SetResistance(ResistanceType.Poison, 5, 10);
-            SetResistance(ResistanceType.Energy, 5, 10);
+			// 저항 설정 (갑각)
+			this.SetResistance(ResistanceType.Physical, 35, 45);
+			this.SetResistance(ResistanceType.Fire, 10, 20);
+			this.SetResistance(ResistanceType.Energy, 20, 30);
 
-            Fame = 300;
-            Karma = 0;
-
-            Tamable = true;
-            ControlSlots = 16;
-            MinTameSkill = 83.1;
+			this.Fame = 600;
+			this.VirtualArmor = 8;
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 83.1;
         }
 
         public Ridgeback(Serial serial)

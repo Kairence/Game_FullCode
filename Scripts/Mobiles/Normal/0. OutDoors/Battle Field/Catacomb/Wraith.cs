@@ -15,31 +15,34 @@ namespace Server.Mobiles
             this.Hue = 0x4001;
             this.BaseSoundID = 0x482;
 
-            this.SetStr(126, 130);
-            this.SetDex(126, 138);
-            this.SetInt(106, 114);
+            this.SetStr(24, 74);     
+			this.SetDex(100, 150);   
+			this.SetInt(154, 254);   
 
-            this.SetHits(280, 320);
-            this.SetStam(150, 180);
-			this.SetMana(20, 30);
-			
-            this.SetDamage(2, 11);
-			SetAttackSpeed( 60.0 );
+			this.SetHits(345, 1345); // 최종 Hits 9,000~10,000
+			this.SetMana(1000, 2000);
 
-            this.SetDamageType(ResistanceType.Physical, 50);
-            this.SetDamageType(ResistanceType.Cold, 50);
+			SetAttackSpeed(3.5);     // 근접 공격 속도를 늦춰 물리 DPS 하락
+			SetDamage(15, 25);       // 명성 대비 낮은 물리 데미지
 
-            this.SetResistance(ResistanceType.Physical, 25, 30);
-            this.SetResistance(ResistanceType.Cold, 15, 25);
-            this.SetResistance(ResistanceType.Poison, 10, 20);
+			this.SetDamageType(ResistanceType.Physical, 20);
+			this.SetDamageType(ResistanceType.Cold, 40);
+			this.SetDamageType(ResistanceType.Energy, 40);
 
-            this.SetSkill(SkillName.EvalInt, 3.1, 6.0);
-            this.SetSkill(SkillName.Magery, 3.1, 6.0);
+			this.SetResistance(ResistanceType.Physical, 20, 25);
+			this.SetResistance(ResistanceType.Cold, 20, 25);
+			this.SetResistance(ResistanceType.Energy, 15, 20);
+			this.SetResistance(ResistanceType.Poison, 45, 50);
 
-            this.Fame = 2000;
-            this.Karma = -2000;
+			// 최종 Skill 85.0~95.0 목표 (95.0 - 12.7 = 82.3)
+			this.SetSkill(SkillName.Magery, 72.3, 82.3);
+			this.SetSkill(SkillName.EvalInt, 72.3, 82.3);
+			this.SetSkill(SkillName.MagicResist, 72.3, 82.3);
 
-            this.VirtualArmor = 0;
+			this.VirtualArmor = 0;
+
+			this.Fame = 4500;
+			this.Karma = -4500;
         }
 
         public Wraith(Serial serial)

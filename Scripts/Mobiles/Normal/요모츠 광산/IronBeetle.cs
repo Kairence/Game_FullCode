@@ -18,38 +18,45 @@ namespace Server.Mobiles
             Body = 714;
             BaseSoundID = 397;
 
-            SetStr(816, 883);
-            SetDex(68, 73);
-            SetInt(40, 49);
+			/* [Iron Beetle - Normal - Fame 4,000 / Weight 1.15]
+			   - 요모츠 광산 강철 벌레 / 일반 던전
+			   - 배수: 1x (일반 몬스터)
+			   - VirtualArmor: 9 (기본 4 + 강철 보정 5)
+			   - 테이밍 가능: 2슬롯 (채광 보조 및 전투용)
+			   -------------------------------------------------- */
 
-            SetHits(762, 830);
+			// [Attributes] 역산된 Set 값 정밀 적용
+			this.SetStr(45, 55); 
+			this.SetHits(1100, 1200); 
+			this.SetDex(10, 15);
+			this.SetInt(10, 15);
 
-            SetDamage(15, 20);
+			// [Combat Options] 100% 물리 대미지
+			this.SetDamage(15, 25);
+			this.SetAttackSpeed(2.0);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] 최고 저항 75 이하 준수 및 명확한 약점(에너지) 설정
+			this.SetResistance(ResistanceType.Physical, 55, 65); // 물리 방어 특화
+			this.SetResistance(ResistanceType.Fire, 30, 40);      
+			this.SetResistance(ResistanceType.Cold, 30, 40);    
+			this.SetResistance(ResistanceType.Poison, 40, 50); 
+			this.SetResistance(ResistanceType.Energy, 10, 20);   // ★ 확실한 약점 (전도성)
 
-            SetResistance(ResistanceType.Physical, 55, 60);
-            SetResistance(ResistanceType.Fire, 20, 30);
-            SetResistance(ResistanceType.Cold, 20, 30);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 45, 55);
+			// [Skills] 기본 80~90에 역산 보너스(1.7) 가산
+			this.SetSkill(SkillName.Wrestling, 82.0, 92.0); 
+			this.SetSkill(SkillName.Tactics, 82.0, 92.0);
+			this.SetSkill(SkillName.Anatomy, 82.0, 92.0);
+			this.SetSkill(SkillName.MagicResist, 70.0, 85.0);
+			this.SetSkill(SkillName.Mining, 100.0, 120.0); // 채광 능력 고증
 
-            SetSkill(SkillName.Anatomy, 80.1, 85.0);
-            SetSkill(SkillName.MagicResist, 125.1, 130.0);
-            SetSkill(SkillName.Tactics, 90.1, 100.0);
-            SetSkill(SkillName.Wrestling, 90.1, 110.0);
-            SetSkill(SkillName.Mining, 50.1, 70.0);
-
-            Skills.Mining.Cap = 120;
-
-            Fame = 15000;
-            Karma = -15000;
-
-            Tamable = false;
-            MinTameSkill = 701.1;
-            ControlSlots = 1;
-
-            VirtualArmor = 38;
+			// [Misc]
+			this.Tamable = true; 
+			this.ControlSlots = 4; 
+			this.MinTameSkill = 105.1; // 200 숙련도 기준 초급 펫
+			this.VirtualArmor = 9;
+			this.Fame = 4000;
+			this.Karma = -4000;
 
             m_MiningTimer = Timer.DelayCall(MiningInterval, MiningInterval, DoMining);
         }

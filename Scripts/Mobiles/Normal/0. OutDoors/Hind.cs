@@ -12,32 +12,25 @@ namespace Server.Mobiles
             this.Name = "a hind";
             this.Body = 0xED;
 
-            this.SetStr(25, 30);
-            this.SetDex(25, 30);
-            this.SetInt(12, 18);
+            this.SetStr(1, 10); 
+			this.SetDex(100, 150);
 
-            SetHits(230, 280);
-            SetStam(25, 30);
-            SetMana(5, 10);
-			
-			SetAttackSpeed(10.0);
+			this.SetHits(31, 50); // 최종 Hits 650~669
+			this.SetStam(46, 66);
+			this.SetMana(0);
 
-            this.SetDamage(7, 11);
+			SetAttackSpeed(3.0);
+			SetDamage(2, 4); 
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 10, 15);
-            this.SetResistance(ResistanceType.Fire, 5, 10);
-            this.SetResistance(ResistanceType.Poison, 5, 10);
+			this.SetResistance(ResistanceType.Physical, 5, 10);
 
-            this.Fame = 300;
-            this.Karma = 0;
+			this.Fame = 250;
+			this.VirtualArmor = 1;
+			this.Tamable = true;
+			this.MinTameSkill = 15.1;
 
-            this.VirtualArmor = 1;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 29.1;
         }
 
         public Hind(Serial serial)

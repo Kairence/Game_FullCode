@@ -15,31 +15,43 @@ namespace Server.Mobiles
             Name = "a lowland boura";
             Body = 715;
 
-            SetStr(337, 411);
-            SetDex(82, 93);
-            SetInt(23, 25);
+			/* [Lowland Boura - Normal - Fame 12,000 / Weight 1.25]
+			   - 정글 던전의 거대 초식수 / 일반 몬스터 공식
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 15 (명성/1000 + 3 보정)
+			   -------------------------------------------------- */
 
-            SetHits(438, 553);
+			// [Attributes] 역산된 Set 값 정밀 적용
+			this.SetStr(310, 325); 
+			this.SetHits(6900, 7100); 
+			this.SetDex(60, 75);
+			this.SetInt(60, 75);
 
-            SetDamage(18, 23);
+			// [Combat Options] 물리 100% (거대한 뿔과 몸통 박치기)
+			this.SetDamage(40, 65);
+			this.SetAttackSpeed(3.0); // 묵직하고 느린 공격
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] 최고 저항 75 이하 준수 / 에너지 및 냉기 약점 설정
+			this.SetResistance(ResistanceType.Physical, 60, 75); // 매우 단단한 가죽
+			this.SetResistance(ResistanceType.Fire, 40, 50);      
+			this.SetResistance(ResistanceType.Cold, 25, 35);    // ★ 약점 1
+			this.SetResistance(ResistanceType.Poison, 40, 55); 
+			this.SetResistance(ResistanceType.Energy, 20, 30);  // ★ 약점 2 (전격에 취약)
 
-            SetResistance(ResistanceType.Physical, 50, 60);
-            SetResistance(ResistanceType.Fire, 35, 40);
-            SetResistance(ResistanceType.Cold, 10, 20);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 30, 40);
+			// [Skills] 기본 110~120에 역산 보너스(10.5) 가산
+			this.SetSkill(SkillName.Wrestling, 120.5, 130.5); 
+			this.SetSkill(SkillName.Tactics, 120.5, 130.5);
+			this.SetSkill(SkillName.Anatomy, 120.5, 130.5);
+			this.SetSkill(SkillName.MagicResist, 95.0, 110.0);
 
-
-            Tamable = true;
-            ControlSlots = 3;
-            MinTameSkill = 19.1;
-
-            Fame = 5000;
-            Karma = -3500;
-
-            VirtualArmor = 6;
+			// [Misc]
+			this.Tamable = true; 
+			this.ControlSlots = 2; // 200 숙련도 시대의 든든한 2슬롯 탱커 펫
+			this.MinTameSkill = 115.0; 
+			this.VirtualArmor = 15;
+			this.Fame = 12000;
+			this.Karma = -12000;
         }
 
         public LowlandBoura(Serial serial) : base(serial)

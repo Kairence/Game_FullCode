@@ -13,31 +13,47 @@ namespace Server.Mobiles
             Name = "a minotaur scout";
             Body = 281;
 		   
-            SetStr(353, 375);
-            SetDex(111, 130);
-            SetInt(34, 50);
+			/* [Minotaur Scout - Fame 12,500 / General / Weight 1.22]
+			   - 스킬 200 마스터 서버용 '상급 기민형' 밸런스 적용
+			   - 가상 방어력(VirtualArmor): (12,500/1000) + 1.5 = 14
+			   - 빠른 공격 속도와 높은 회피로 유저의 진입을 방해
+			   -------------------------------------------------- */
 
-            SetHits(354, 383);
+			// [Attributes] 명성 12,500 보너스 + 가중치 1.22 반영
+			this.SetStr(260, 320); 
+			this.SetHits(6000, 7000); 
+			this.SetDex(50, 75);
+			this.SetInt(50, 75);
 
-            SetDamage(11, 20);
+			// [Combat Options]
+			this.SetDamage(35, 50);
+			this.SetAttackSpeed(1.8); // 정찰병다운 매우 빠른 연타 속도
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Damage Types] 70% 물리 + 30% 독 (독 바른 단검/화살 컨셉)
+			this.SetDamageType(ResistanceType.Physical, 70);
+			this.SetDamageType(ResistanceType.Poison, 30);
 
-            SetResistance(ResistanceType.Physical, 55, 65);
-            SetResistance(ResistanceType.Fire, 25, 35);
-            SetResistance(ResistanceType.Cold, 30, 40);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 30, 40);
+			// [Resistances] 가벼운 무장 (에너지와 독에 강점)
+			this.SetResistance(ResistanceType.Physical, 45, 55); 
+			this.SetResistance(ResistanceType.Fire, 30, 40);
+			this.SetResistance(ResistanceType.Cold, 30, 40);
+			this.SetResistance(ResistanceType.Poison, 60, 70);
+			this.SetResistance(ResistanceType.Energy, 50, 60);
 
-            SetSkill(SkillName.Anatomy, 0);
-            SetSkill(SkillName.MagicResist, 60.6, 67.5);
-            SetSkill(SkillName.Tactics, 86.9, 103.6);
-            SetSkill(SkillName.Wrestling, 85.6, 104.5);
+			// [Skills] ★ 스킬 200 서버 기준 - 상급 유저를 위한 추격자 (재설계)
+			// 유저 스킬 115 ~ 140 구간 전투에 최적화
+			this.SetSkill(SkillName.Wrestling, 110.0, 130.0); 
+			this.SetSkill(SkillName.Tactics, 110.0, 130.0);
+			this.SetSkill(SkillName.Anatomy, 120.0, 140.0);
+			this.SetSkill(SkillName.MagicResist, 100.0, 120.0);
+			this.SetSkill(SkillName.Poisoning, 80.0, 100.0); // 치명적이지는 않지만 성가신 독
+			this.SetSkill(SkillName.DetectHidden, 150.0);   // 정찰병답게 은신 유저를 잘 찾아냄
 
-            Fame = 5000;
-            Karma = -5000;
+			// [Misc] 가상 방어력(Virtual Armor): 14
+			this.VirtualArmor = 14;
 
-            VirtualArmor = 28; // Don't know what it should be
+			this.Fame = 12500;
+			this.Karma = -12500;
 
             for (int i = 0; i < Utility.RandomMinMax(0, 1); i++)
             {

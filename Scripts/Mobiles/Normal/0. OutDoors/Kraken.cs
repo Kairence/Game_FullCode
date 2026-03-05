@@ -11,39 +11,45 @@ namespace Server.Mobiles
         public Kraken()
             : base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
         {
-            this.m_NextWaterBall = DateTime.UtcNow;
+            this.m_NextWaterBall = DateTime.Now;
 
             this.Name = "a kraken";
             this.Body = 77;
             this.BaseSoundID = 353;
 
-            this.SetStr(4560, 4800);
-            this.SetDex(4260, 4450);
-            this.SetInt(4260, 4400);
+            // [역산] 명성 15,000 보너스(Str+2187, Hits+37824, Stam+417, Skill+56.2) 반영
+			// 최종 Str 3,500~3,800 목표 (함선을 부수는 힘)
+			this.SetStr(1313, 1613);
+			this.SetDex(83, 133); // 최종 Dex ~600 도달
 
-            this.SetHits(21254, 24268);
-            SetStam(10000, 12000);
-            SetMana(1000, 1200);
-			
-			SetAttackSpeed(10.0);
+			// 최종 Hits 80,000~85,000 목표 (전사 4000 기준 약 20배 맷집)
+			this.SetHits(42176, 47176);
+			this.SetStam(183, 283); // 최종 Stam 600~700
+			this.SetMana(500, 1000);
 
-            this.SetDamage(360, 1040);
+			SetAttackSpeed(4.0);
+			SetDamage(60, 95); // 평균 77.5
 
-            this.SetDamageType(ResistanceType.Physical, 0);
-            this.SetDamageType(ResistanceType.Cold, 100);
+			// 공격 속성: 차가운 심해의 타격
+			this.SetDamageType(ResistanceType.Physical, 60);
+			this.SetDamageType(ResistanceType.Cold, 40);
 
-            this.SetResistance(ResistanceType.Physical, 65, 75);
-            this.SetResistance(ResistanceType.Fire, 50, 60);
-            this.SetResistance(ResistanceType.Cold, 50, 60);
-            this.SetResistance(ResistanceType.Poison, 40, 50);
-            this.SetResistance(ResistanceType.Energy, 10, 20);
+			// 저항 설정 (심해 생물 특성)
+			this.SetResistance(ResistanceType.Physical, 40, 50);
+			this.SetResistance(ResistanceType.Fire, 10, 20); // 불에 취약
+			this.SetResistance(ResistanceType.Cold, 45, 50); // 냉기 면역 수준
+			this.SetResistance(ResistanceType.Poison, 30, 40);
+			this.SetResistance(ResistanceType.Energy, 40, 50);
 
-            this.SetSkill(SkillName.MagicResist, 265.1, 270.0);
-            this.SetSkill(SkillName.Tactics, 265.1, 270.0);
-            this.SetSkill(SkillName.Wrestling, 265.1, 270.0);
+			// 스킬 역산 (최종 스킬 150.0 목표)
+			this.SetSkill(SkillName.Wrestling, 93.8, 103.8);
+			this.SetSkill(SkillName.Tactics, 93.8, 103.8);
 
-            this.Fame = 21000;
-            this.Karma = -21000;
+			this.Fame = 15000;
+			this.Karma = -15000;
+			this.VirtualArmor = 15;
+
+			this.Tamable = false; // 길들일 수 없는 공포
 
             this.CanSwim = true;
             this.CantWalk = true;

@@ -15,31 +15,35 @@ namespace Server.Mobiles
             Body = 737;
             Hidden = true; 
 
-            SetStr(200, 400);
-            SetDex(1010, 1500);
-            SetInt(100, 500);
+            /* Trapdoor Spider - Fame 5,000 */
+			this.SetStr(100, 150);  
+			this.SetDex(140, 160);   
+			this.SetInt(40, 60);     
 
-            SetHits(800, 1210);
-			SetStam(100, 200);
-			SetMana(50, 90);
+			this.SetHits(200, 400);  // 최종 Hits 약 10,500
+			this.SetStam(140, 160);
 
-            SetDamage(10, 600);
-			SetAttackSpeed( 30.0 );
+			this.SetAttackSpeed(1.6); 
+			SetDamage(18, 28);
 
-            SetDamageType(ResistanceType.Poison, 100);
+			this.SetSkill(SkillName.Wrestling, 105.2);
+			this.SetSkill(SkillName.Tactics, 105.2);
+			this.SetSkill(SkillName.Hiding, 100.0);
+			this.SetSkill(SkillName.Stealth, 100.0); // 스텔스 추가
 
-            SetResistance(ResistanceType.Physical, 0);
-            SetResistance(ResistanceType.Fire, 10, 15);
-            SetResistance(ResistanceType.Cold, 10, 15);
-            SetResistance(ResistanceType.Poison, 20, 25);
-            SetResistance(ResistanceType.Energy, 25, 30);
-			
-            SetSkill(SkillName.Hiding, 50.3, 59.9);
-            SetSkill(SkillName.Stealth, 50.5, 59.6);
+			this.SetDamageType(ResistanceType.Physical, 70);
+			this.SetDamageType(ResistanceType.Cold, 30); 
 
-            Fame = 5000;
-            Karma = -5000;
-            VirtualArmor = 10;
+			this.SetResistance(ResistanceType.Physical, -40, -30);
+			this.SetResistance(ResistanceType.Fire, -60, -50);
+			this.VirtualArmor = 2;
+
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 85.1;
+
+			this.Fame = 5000;
+			this.Karma = -5000;
 		}
 
         public TrapdoorSpider(Serial serial)

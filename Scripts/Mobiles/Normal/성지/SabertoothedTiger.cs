@@ -16,34 +16,44 @@ namespace Server.Mobiles
             Body = 0x588;
             Female = true;
 
-            SetStr(496, 523);
-            SetDex(386, 403);
-            SetInt(443, 469);
+			/* [Sabertoothed Tiger - Holy City Dungeon / Original Wiki & Keep Formula]
+			   - 명성: 6,000 / 카르마: -6,000
+			   - 슬롯: 2 (민첩형 딜러 펫)
+			   - 가방 방어력: 5 (날렵한 가죽 보정 -1)
+			   -------------------------------------------------- */
 
-            SetHits(362, 423);
+			// [Attributes] 공식 가중치 1.15 적용
+			this.SetStr(300, 400); 
+			this.SetHits(2500, 3500); // 저항이 낮은 대신 준수한 체력
+			this.SetDex(150, 200);    // 위키 고증: 매우 빠른 민첩성
+			this.SetInt(80, 120);
 
-            SetDamage(21, 28);
+			// [Combat Options] 100% 물리 대미지 (출혈 공격 특화)
+			this.SetDamage(30, 50); 
+			this.SetAttackSpeed(2.0); // 빠른 연타 속도
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] ★ 형님 지침 반영: 75%를 넘지 않는 상식적 저항
+			this.SetResistance(ResistanceType.Physical, 40, 55); // 유저 대미지 50% 이상 박힘
+			this.SetResistance(ResistanceType.Fire, 15, 25);      // ★ 확실한 약점 (불에 약한 털)
+			this.SetResistance(ResistanceType.Cold, 50, 65);     // 고산지대 적응 컨셉
+			this.SetResistance(ResistanceType.Poison, 30, 40); 
+			this.SetResistance(ResistanceType.Energy, 30, 40);   
 
-            SetResistance(ResistanceType.Physical, 40, 50);
-            SetResistance(ResistanceType.Fire, 30, 40);
-            SetResistance(ResistanceType.Cold, 50, 60);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 40, 50);
+			// [Skills] 포식자의 전투 기술
+			this.SetSkill(SkillName.Wrestling, 105.0, 120.0); 
+			this.SetSkill(SkillName.Tactics, 105.0, 120.0);
+			this.SetSkill(SkillName.Anatomy, 110.0, 125.0);   // 위키 고증: 높은 해부학 (출혈 대미지)
+			this.SetSkill(SkillName.MagicResist, 85.0, 100.0);
 
-            SetSkill(SkillName.Parry, 105.0, 110.0);
-            SetSkill(SkillName.Tactics, 90.0, 100.0);
-            SetSkill(SkillName.Wrestling, 100.0, 105.0);
-            SetSkill(SkillName.DetectHidden, 75.0);
-            SetSkill(SkillName.Focus, 95.0, 105.0);
+			// [Misc]
+			this.Tamable = true; 
+			this.ControlSlots = 2; 
+			this.MinTameSkill = 115.1; // 스킬 200 서버 기준 중급 펫
+			this.VirtualArmor = 5;    // 공식: (6000/1000) - 1
 
-            Fame = 11000;
-            Karma = -11000;
-            
-            Tamable = true;
-            ControlSlots = 22;
-            MinTameSkill = 102.0;
+			this.Fame = 6000;
+			this.Karma = -6000;
 
             SetMagicalAbility(MagicalAbility.Slashing);
         }

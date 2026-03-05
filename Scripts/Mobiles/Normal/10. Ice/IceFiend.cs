@@ -13,34 +13,43 @@ namespace Server.Mobiles
             Body = 43;
             BaseSoundID = 357;
 
-            SetStr(5376, 6405);
-            SetDex(4176, 4195);
-            SetInt(6201, 7225);
+            /* Ice Fiend - Fame 18,000 / Karma -18,000 */
+			/* [HP Calculation]
+			   - Target HP: ~90,000
+			   - Fame Bonus (18,000): ~47,420
+			   - SetHits Required: 42,580 (Target - Bonus)
+			*/
+			this.SetStr(600, 800);       
+			this.SetDex(180, 280);       
+			this.SetInt(700, 900);       
 
-            SetHits(16600, 20300);
-			SetStam(8000, 10000);
-			SetMana(14000, 20000);
+			// [Hits] 최종 약 85,000 ~ 95,000 타겟
+			this.SetHits(37580, 47580); 
+			this.SetStam(180, 280);      
+			this.SetMana(700, 900);      
 
-            SetDamage(400, 839);
+			this.SetAttackSpeed(2.2);    
+			this.SetDamage(35, 55);      
 
-			SetAttackSpeed(30.0);
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Cold, 50);
 
-            SetSkill(SkillName.EvalInt, 180.1, 190.0);
-            SetSkill(SkillName.Magery, 180.1, 190.0);
-            SetSkill(SkillName.MagicResist, 175.1, 185.0);
-            SetSkill(SkillName.Tactics, 180.1, 190.0);
-            SetSkill(SkillName.Wrestling, 180.1, 200.0);
+			this.SetResistance(ResistanceType.Physical, 60, 75); // Max 75%
+			this.SetResistance(ResistanceType.Fire, 20, 35);     
+			this.SetResistance(ResistanceType.Cold, 75, 75);    // Max 75%
+			this.SetResistance(ResistanceType.Poison, 55, 65);
+			this.SetResistance(ResistanceType.Energy, 55, 65);
 
-            SetResistance(ResistanceType.Physical, 55, 65);
-            SetResistance(ResistanceType.Fire, 10, 20);
-            SetResistance(ResistanceType.Cold, 60, 70);
-            SetResistance(ResistanceType.Poison, 20, 30);
-            SetResistance(ResistanceType.Energy, 30, 40);
+			this.SetSkill(SkillName.Magery, 110.0, 125.0);
+			this.SetSkill(SkillName.EvalInt, 110.0, 125.0);
+			this.SetSkill(SkillName.MagicResist, 110.0, 125.0);
+			this.SetSkill(SkillName.Wrestling, 100.0, 115.0);
 
-            Fame = 25000;
-            Karma = -25000;
+			this.VirtualArmor = 12;      
+			this.Tamable = false;
 
-            VirtualArmor = 60;
+			this.Fame = 18000;           
+			this.Karma = -18000;
 
             SetAreaEffect(AreaEffect.AuraDamage);
         }

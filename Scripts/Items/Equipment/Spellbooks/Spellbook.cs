@@ -1381,7 +1381,9 @@ namespace Server.Items
 			//list.Add(Util.ItemRank((int)ItemPower ));
 			//if( !Identified )
 			//	list.Add( 1060659, "<basefont color=#FF0000>아이템 감정\t안됨<basefont color=#FFFFFF>" );
-
+			//OPL 장비 통합으로 변경			
+			Server.Misc.NewOptionOPL.Append(list, this);
+			/*
 			if( PrefixOption[0] >= 100 )
 			{
 				bool skillcheck = false;
@@ -1506,7 +1508,8 @@ namespace Server.Items
 					//Console.WriteLine("second optionpercentcheck : {0}", optionpercentcheck );
 					list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[equipoption, 0, 0], (((double)equipvalue )* Misc.Util.PercentCalc(equipoption)).ToString() );
 				}
-			}			
+			}
+			*/
 		}
         public override void GetContextMenuEntries(Mobile from, List<ContextMenuEntry> list)
         {

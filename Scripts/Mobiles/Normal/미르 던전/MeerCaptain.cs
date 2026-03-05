@@ -16,32 +16,43 @@ namespace Server.Mobiles
             this.Name = "a meer captain";
             this.Body = 773;
 
-            this.SetStr(96, 110);
-            this.SetDex(186, 200);
-            this.SetInt(96, 110);
+		/* [MeerCaptain - Fame 8,500 / Normal / Weight 1.25]
+		   - Meer 종족의 선한 지휘관 (선족 설정)
+		   - 지능형 아인종: 테이밍 불가 (200 숙련도 고려)
+		   - 종족 특성: 에너지/화염 저항 취약
+		   -------------------------------------------------- */
+		// Boss = true 삭제
 
-            this.SetHits(58, 66);
+		// [Attributes] (기본 보너스 * 1배 * 1.25) - 기본 보너스
+		this.SetStr(200, 250); 
+		this.SetHits(4500, 5000); 
+		this.SetDex(120, 140);
+		this.SetInt(100, 120);
 
-            this.SetDamage(5, 15);
+		// [Combat Options]
+		this.SetDamage(35, 55);
+		this.SetAttackSpeed(2.2);
+		this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+		// [Resistances] 약점 속성 설정 (공략 재미 요소)
+		this.SetResistance(ResistanceType.Physical, 50, 60); 
+		this.SetResistance(ResistanceType.Fire, 25, 35);      // 화염 취약
+		this.SetResistance(ResistanceType.Cold, 45, 55);    
+		this.SetResistance(ResistanceType.Poison, 45, 55); 
+		this.SetResistance(ResistanceType.Energy, 20, 30);   // 에너지 취약
 
-            this.SetResistance(ResistanceType.Physical, 45, 55);
-            this.SetResistance(ResistanceType.Fire, 10, 20);
-            this.SetResistance(ResistanceType.Cold, 40, 50);
-            this.SetResistance(ResistanceType.Poison, 35, 45);
-            this.SetResistance(ResistanceType.Energy, 35, 45);
+		// [Skills]
+		this.SetSkill(SkillName.Wrestling, 115.0, 125.0); 
+		this.SetSkill(SkillName.Tactics, 120.0, 130.0);
+		this.SetSkill(SkillName.Anatomy, 115.0, 125.0);
+		this.SetSkill(SkillName.MagicResist, 100.0, 115.0);
 
-            this.SetSkill(SkillName.Archery, 90.1, 100.0);
-            this.SetSkill(SkillName.MagicResist, 91.0, 100.0);
-            this.SetSkill(SkillName.Swords, 90.1, 100.0);
-            this.SetSkill(SkillName.Tactics, 91.0, 100.0);
-            this.SetSkill(SkillName.Wrestling, 80.9, 89.9);
+		// [Misc]
+		this.Tamable = false; // 지능형 아인종
+		this.VirtualArmor = 10;
 
-            this.Fame = 2000;
-            this.Karma = 5000;
-
-            this.VirtualArmor = 28;
+		this.Fame = 8500;
+		this.Karma = 8500; // ★ 선족 설정: 양수(+) 값 적용
 
             Container pack = new Backpack();
 

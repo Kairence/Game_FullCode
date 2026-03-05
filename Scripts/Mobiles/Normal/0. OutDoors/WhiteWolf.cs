@@ -14,31 +14,29 @@ namespace Server.Mobiles
             this.Body = Utility.RandomList(34, 37);
             this.BaseSoundID = 0xE5;
 
-            SetStr(396, 520);
-            SetDex(281, 305);
-            SetInt(136, 160);
+            this.Fame = 800;
+			this.Karma = -800;
 
-            SetHits(1236, 1260);
-            SetStam(200, 300);
-            SetMana(5, 10);
-			SetAttackSpeed(2.0);
+			// [역산] 보너스: Str+561, Hits+1,566, Skill+2.0
+			this.SetStr(10, 20);
+			this.SetDex(50, 80);
+			this.SetHits(34, 134);  // 최종 Hits 1,600~1,700
 
-            SetDamage(22, 37);
+			SetAttackSpeed(2.5);
+			SetDamage(10, 16);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// 공격 속성: 혹한의 이빨
+			this.SetDamageType(ResistanceType.Physical, 60);
+			this.SetDamageType(ResistanceType.Cold, 40);
 
-            SetResistance(ResistanceType.Physical, 20, 25);
-            SetResistance(ResistanceType.Fire, 10, 20);
-            SetResistance(ResistanceType.Cold, 5, 10);
-            SetResistance(ResistanceType.Poison, 5, 10);
-            SetResistance(ResistanceType.Energy, 10, 15);
+			this.SetResistance(ResistanceType.Physical, 10, 15);
+			this.SetResistance(ResistanceType.Cold, 45, 50);
 
-            Fame = 4000;
-            Karma = -4000;
+			// 최종 Skill 55.0 내외
+			this.SetSkill(SkillName.Wrestling, 53.0, 63.0);
 
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 83.1;
+			this.Tamable = true;
+			this.MinTameSkill = 65.1;
         }
 
         public WhiteWolf(Serial serial)

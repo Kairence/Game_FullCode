@@ -16,17 +16,26 @@ namespace Server.Mobiles
 
             Hue = Utility.Random(0x8A0, 5);
 
-            SetStr(4251, 5425);
-            SetDex(3870, 4350);
-            SetInt(7870, 8550);
+            // [역산] 명성 12,000 보너스(Str+1760, Hits+28141, Stam+365, Skill+42.0) 반영
+			this.SetStr(740, 840); 
+			this.SetDex(35, 85); // 최종 Dex ~500
+			this.SetInt(740, 840);
 
-            SetHits(4700, 6000);
-            SetStam(1000, 1200);
-            SetMana(1000, 1200);
+			this.SetHits(31859, 33000); // 최종 Hits 60,000~61,141
+			this.SetStam(135, 185);
+			this.SetMana(500, 1000);
+
+			SetAttackSpeed(4.5);
+			SetDamage(50, 90); // 평균 70.0
+
+			this.SetSkill(SkillName.Wrestling, 18.0, 28.0); // 최종 60.0~70.0
+			this.SetSkill(SkillName.Tactics, 18.0, 28.0);
+
+			this.Fame = 12000;
+			this.VirtualArmor = 9; // 풀플레이트급 방어력
 			
-			SetAttackSpeed(10.0);
-			
-            SetDamage(426, 490);
+            CanSwim = true;
+            CantWalk = true;
 
             SetDamageType(ResistanceType.Physical, 100);
 
@@ -35,17 +44,6 @@ namespace Server.Mobiles
             SetResistance(ResistanceType.Cold, 40, 50);
             SetResistance(ResistanceType.Poison, 30, 40);
             SetResistance(ResistanceType.Energy, 15, 20);
-
-            SetSkill(SkillName.MagicResist, 160.1, 180.0);
-            SetSkill(SkillName.Tactics, 160.1, 180.0);
-            SetSkill(SkillName.Wrestling, 160.1, 180.0);
-
-            Fame = 14000;
-            Karma = -14000;
-
-            VirtualArmor = 10;
-            CanSwim = true;
-            CantWalk = true;
 
             if (Utility.RandomBool())
                 PackItem(new SulfurousAsh(20));

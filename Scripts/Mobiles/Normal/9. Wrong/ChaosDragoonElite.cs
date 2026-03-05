@@ -14,41 +14,42 @@ namespace Server.Mobiles
             Body = 0x190;
             Hue = Utility.RandomSkinHue();
 
-            SetStr(4760, 5500);
-            SetDex(3666, 4990);
-            SetInt(1260, 1500);
+            /* Chaos Dragoon Elite - Fame 14,000 / Karma -14,000 */
+			/* [HP Calculation]
+			   - Target HP: ~55,000
+			   - Fame Bonus (14,000): ~34,200
+			   - SetHits Required: 20,800 (Target - Bonus)
+			*/
+			this.SetStr(600, 800);       
+			this.SetDex(200, 300);       
+			this.SetInt(200, 300);       
 
-            SetHits( 20276, 30350 );
-			SetStam( 10000, 15000 );
-			SetMana( 10000, 15000 );
-			
-			SetAttackSpeed( 2.5 );
+			// [Hits] 최종 약 50,000 ~ 60,000 타겟
+			this.SetHits(15800, 25800); 
+			this.SetStam(200, 300);      
+			this.SetMana(200, 300);      
 
-            SetDamage(129, 239);
+			this.SetAttackSpeed(2.0);    // 정예 기사다운 빠른 공속
+			this.SetDamage(28, 42);      
 
-            SetDamageType(ResistanceType.Physical, 25);
-            SetDamageType(ResistanceType.Fire, 25);
-            SetDamageType(ResistanceType.Cold, 25);
-            SetDamageType(ResistanceType.Energy, 25);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 85, 95);
-            SetResistance(ResistanceType.Fire, 65, 75);
-            SetResistance(ResistanceType.Cold, 65, 75);
-            SetResistance(ResistanceType.Poison, 65, 75);
-            SetResistance(ResistanceType.Energy, 65, 75);
+			this.SetResistance(ResistanceType.Physical, 60, 75); // Max 75%
+			this.SetResistance(ResistanceType.Fire, 45, 55);
+			this.SetResistance(ResistanceType.Cold, 45, 55);
+			this.SetResistance(ResistanceType.Poison, 45, 55);
+			this.SetResistance(ResistanceType.Energy, 45, 55);
 
-            SetSkill(SkillName.Tactics, 240.1, 250.0);
-            SetSkill(SkillName.MagicResist, 250.1, 260.0);
-            SetSkill(SkillName.Anatomy, 240.1, 250.0);
-            SetSkill(SkillName.Magery, 245.1, 250.0);
-            SetSkill(SkillName.EvalInt, 245.1, 250.0);
-            SetSkill(SkillName.Swords, 242.5, 245.0);
-            SetSkill(SkillName.Fencing, 245.1, 250);
-            SetSkill(SkillName.Macing, 245.1, 250);
+			this.SetSkill(SkillName.Swords, 115.0, 130.0);
+			this.SetSkill(SkillName.Tactics, 115.0, 130.0);
+			this.SetSkill(SkillName.Anatomy, 110.0, 125.0);
+			this.SetSkill(SkillName.MagicResist, 100.0, 120.0);
 
-            Fame = 23000;
-            Karma = -23000;
-            VirtualArmor = 105;
+			this.VirtualArmor = 15;      // 정예 기사다운 갑옷 효율
+			this.Tamable = false;
+
+			this.Fame = 14000;           
+			this.Karma = -14000;
 
             CraftResource res = CraftResource.None;
 

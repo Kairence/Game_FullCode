@@ -14,34 +14,36 @@ namespace Server.Mobiles
             this.Body = 14;
             this.BaseSoundID = 268;
 
-            this.SetStr(2826, 3355);
-            this.SetDex(1176, 1185);
-            this.SetInt(111, 112);
+            /* Earth Elemental - Fame 4,500 / Common Spirit */
+			this.SetStr(250, 350);       
+			this.SetDex(60, 100);       
+			this.SetInt(60, 100);       
 
-            this.SetHits(2279, 2383);
-			SetStam(1030, 2040);
-			SetMana(100, 200);
+			// [Hits] 명성 보석(9,800) 포함 최종 1.1만 내외
+			this.SetHits(1000, 1400); 
+			this.SetStam(60, 100);      
+			this.SetMana(60, 100);      
 
-			SetAttackSpeed( 10.0 );
-			
-            this.SetDamage(122, 341);
+			this.SetAttackSpeed(3.0);    
+			this.SetDamage(12, 20);      
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 60, 65);
-            this.SetResistance(ResistanceType.Fire, 70, 80);
-            this.SetResistance(ResistanceType.Cold, 70, 80);
-            this.SetResistance(ResistanceType.Poison, 15, 25);
-            this.SetResistance(ResistanceType.Energy, 15, 25);
+			this.SetResistance(ResistanceType.Physical, 30, 40);
+			this.SetResistance(ResistanceType.Fire, 5, 10);
+			this.SetResistance(ResistanceType.Cold, 5, 10);
+			this.SetResistance(ResistanceType.Poison, 15, 25);
+			this.SetResistance(ResistanceType.Energy, 10, 20);
 
-            this.SetSkill(SkillName.MagicResist, 170.1, 175.0);
-            this.SetSkill(SkillName.Tactics, 77.1, 80.0);
-            this.SetSkill(SkillName.Wrestling, 80.1, 82.0);
+			this.SetSkill(SkillName.Wrestling, 70.0, 80.0);
+			this.SetSkill(SkillName.Tactics, 70.0, 80.0);
+			this.SetSkill(SkillName.MagicResist, 40.0, 60.0);
 
-            this.Fame = 6000;
-            this.Karma = -6000;
+			this.VirtualArmor = 15;      
+			this.Tamable = false;
 
-            this.VirtualArmor = 25;
+			this.Fame = 4500;           
+			this.Karma = -4500;
             this.ControlSlots = 2;
         }
 

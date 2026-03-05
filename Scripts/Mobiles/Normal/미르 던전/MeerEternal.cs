@@ -15,34 +15,50 @@ namespace Server.Mobiles
             this.Name = "a meer eternal";
             this.Body = 772;
 
-            this.SetStr(416, 505);
-            this.SetDex(146, 165);
-            this.SetInt(566, 655);
+			/* [MeerEternal - Fame 12,000 / Normal / Weight 1.28]
+			   - 미어 종족의 고위 대마법사 (선족 설정)
+			   - 지능형 아인종: 테이밍 불가 (200 숙련도 고려)
+			   - 종족 특성: 에너지/화염 저항 취약 (마법 방어력은 높음)
+			   -------------------------------------------------- */
+			// Boss = true 삭제 (일반 정예 몬스터)
 
-            this.SetHits(250, 303);
+			// [Attributes] (기본 보너스 * 1배 * 1.28) - 기본 보너스
+			// Str: 보너스 약 1,130 -> 최종 Set 약 300-350
+			this.SetStr(300, 350); 
 
-            this.SetDamage(11, 13);
+			// Hits: 보너스 약 27,950 -> 최종 Set 약 7500-8500
+			this.SetHits(7500, 8500); 
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDex(150, 180); // 영적인 존재다운 빠른 캐스팅 속도
+			this.SetInt(350, 450); // 대마법사 컨셉 (높은 마나 통)
 
-            this.SetResistance(ResistanceType.Physical, 45, 55);
-            this.SetResistance(ResistanceType.Fire, 15, 25);
-            this.SetResistance(ResistanceType.Cold, 45, 55);
-            this.SetResistance(ResistanceType.Poison, 30, 40);
-            this.SetResistance(ResistanceType.Energy, 30, 40);
+			// [Combat Options] 물리 공격보다는 마법 위주의 설계
+			this.SetDamage(25, 40);
+			this.SetAttackSpeed(2.2);
+			this.SetDamageType(ResistanceType.Physical, 20); // 물리 대미지는 낮음
+			this.SetDamageType(ResistanceType.Energy, 80);   // 영적인 에너지 타격
 
-            this.SetSkill(SkillName.EvalInt, 90.1, 100.0);
-            this.SetSkill(SkillName.Magery, 90.1, 100.0);
-            this.SetSkill(SkillName.Meditation, 90.1, 100.0);
-            this.SetSkill(SkillName.MagicResist, 150.5, 200.0);
-            this.SetSkill(SkillName.Tactics, 50.1, 70.0);
-            this.SetSkill(SkillName.Wrestling, 60.1, 80.0);
-            this.SetSkill(SkillName.Spellweaving, 90.1, 100.0);
+			// [Resistances] 마법 저항은 높으나 종족 약점(화염/에너지) 유지
+			this.SetResistance(ResistanceType.Physical, 45, 55); 
+			this.SetResistance(ResistanceType.Fire, 30, 40);      // ★ 화염 취약점
+			this.SetResistance(ResistanceType.Cold, 50, 60);    
+			this.SetResistance(ResistanceType.Poison, 50, 60); 
+			this.SetResistance(ResistanceType.Energy, 35, 45);   // 에너지 저항 보강(영적 존재)
 
-            this.Fame = 18000;
-            this.Karma = 18000;
+			// [Skills] 대마법사다운 높은 마법 관련 스킬
+			this.SetSkill(SkillName.Wrestling, 110.0, 120.0); 
+			this.SetSkill(SkillName.Tactics, 100.0, 110.0);
+			this.SetSkill(SkillName.MagicResist, 130.0, 145.0); // 마법 저항력 극대화
+			this.SetSkill(SkillName.Magery, 130.0, 140.0);      // 강력한 8서클 마법 구사
+			this.SetSkill(SkillName.EvalInt, 125.0, 135.0);
+			this.SetSkill(SkillName.Meditation, 120.0, 140.0);
 
-            this.VirtualArmor = 34;
+			// [Misc]
+			this.Tamable = false; // 고지능 지도자급 (200 기준 불가)
+			this.VirtualArmor = 15;
+
+			this.Fame = 12000;
+			this.Karma = 12000; // 선족 설정
 
 			switch (Utility.Random(12))
             {

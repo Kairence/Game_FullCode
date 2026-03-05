@@ -15,34 +15,49 @@ namespace Server.Mobiles
             this.Name = NameList.RandomName("ethereal warrior");
             this.Body = 123;
 
-            this.SetStr(586, 785);
-            this.SetDex(177, 255);
-            this.SetInt(351, 450);
+			/* [Ethereal Warrior - Fame 16,000 / Normal / Weight 1.25]
+			   - 빛의 프리즘 던전 영적 수호자
+			   - 영체 컨셉: 물리 저항 극대화, 정교한 무술, 독/에너지에 취약
+			   - 지능형 영혼: 테이밍 불가 (200 숙련도 고려)
+			   -------------------------------------------------- */
+			// Boss = true 삭제 (일반 정예)
 
-            this.SetHits(352, 471);
+			// [Attributes] (기본 보너스 * 1배 * 1.25) - 기본 보너스
+			// Str: 보너스 약 1,530 -> 최종 Set 약 380-450
+			this.SetStr(380, 450); 
 
-            this.SetDamage(13, 19);
+			// Hits: 보너스 약 40,500 -> 최종 Set 약 10,000-11,500
+			this.SetHits(10000, 11500); 
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDex(180, 220); // 영체다운 매우 빠른 반응 속도
+			this.SetInt(200, 300); 
 
-            this.SetResistance(ResistanceType.Physical, 80, 90);
-            this.SetResistance(ResistanceType.Fire, 40, 50);
-            this.SetResistance(ResistanceType.Cold, 40, 50);
-            this.SetResistance(ResistanceType.Poison, 40, 50);
-            this.SetResistance(ResistanceType.Energy, 40, 50);
+			// [Combat Options] 영적 에너지가 실린 정교한 타격
+			this.SetDamage(45, 70);
+			this.SetAttackSpeed(2.1);
+			this.SetDamageType(ResistanceType.Physical, 20);
+			this.SetDamageType(ResistanceType.Energy, 80); // 영적인 에너지 타격
 
-            this.SetSkill(SkillName.Anatomy, 50.1, 75.0);
-            this.SetSkill(SkillName.EvalInt, 90.1, 100.0);
-            this.SetSkill(SkillName.Magery, 99.1, 100.0);
-            this.SetSkill(SkillName.Meditation, 90.1, 100.0);
-            this.SetSkill(SkillName.MagicResist, 90.1, 100.0);
-            this.SetSkill(SkillName.Tactics, 90.1, 100.0);
-            this.SetSkill(SkillName.Wrestling, 97.6, 100.0);
+			// [Resistances] 영체 컨셉 (물리/냉기 특화, 독/에너지 약점)
+			this.SetResistance(ResistanceType.Physical, 70, 75); // ★ 실체가 없어 물리 공격을 흘림
+			this.SetResistance(ResistanceType.Fire, 40, 50);      
+			this.SetResistance(ResistanceType.Cold, 65, 75);    // 영적인 차가움
+			this.SetResistance(ResistanceType.Poison, 15, 25);    // ★ 영적 결합을 해치는 부식/독에 매우 취약
+			this.SetResistance(ResistanceType.Energy, 30, 45);   // ★ 순수 에너지 간섭에 의한 불안정화(약점)
 
-            this.Fame = 7000;
-            this.Karma = 7000;
+			// [Skills] 고대 무술의 달인
+			this.SetSkill(SkillName.Wrestling, 120.0, 135.0); 
+			this.SetSkill(SkillName.Tactics, 120.0, 135.0);
+			this.SetSkill(SkillName.Anatomy, 120.0, 135.0);
+			this.SetSkill(SkillName.MagicResist, 110.0, 125.0);
+			this.SetSkill(SkillName.Parry, 100.0, 120.0); // 영적인 방어술
 
-            this.VirtualArmor = 120;
+			// [Misc]
+			this.Tamable = false; 
+			this.VirtualArmor = 14;
+
+			this.Fame = 16000;
+			this.Karma = 0; // 중립적인 수호령 설정
         }
 
         public EtherealWarrior(Serial serial)

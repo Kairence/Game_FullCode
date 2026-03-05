@@ -988,7 +988,7 @@ namespace Server.Mobiles
 			List<ObjectPropertyList> opls = null;
 
 			for (int idx = 0; idx < buyInfo.Length; idx++)
-			{
+            {
 				IBuyItemInfo buyItem = buyInfo[idx];
 
 				if (buyItem.Amount <= 0 || list.Count >= 250)
@@ -1004,7 +1004,7 @@ namespace Server.Mobiles
                 {
                     continue;
                 }
-				list.Add(
+					list.Add(
 					new BuyItemState(
 						buyItem.Name,
 						cont.Serial,
@@ -1013,6 +1013,8 @@ namespace Server.Mobiles
 						buyItem.Amount,
 						buyItem.ItemID,
 						buyItem.Hue));
+						
+				
 				count++;
 
 				if (opls == null)
@@ -1028,6 +1030,7 @@ namespace Server.Mobiles
 				{
 					opls.Add(((Mobile)disp).PropertyList);
 				}
+				
 			}
 
 			var playerItems = cont.Items;
@@ -1129,7 +1132,7 @@ namespace Server.Mobiles
                 SayTo(from, 500186, 0x3B2); // Greetings.  Have a look around.
 			}
 		}
-
+		
 		public virtual void SendPacksTo(Mobile from)
 		{
 			Item pack = FindItemOnLayer(Layer.ShopBuy);

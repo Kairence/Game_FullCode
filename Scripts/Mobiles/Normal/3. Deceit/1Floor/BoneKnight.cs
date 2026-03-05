@@ -14,34 +14,27 @@ namespace Server.Mobiles
             this.Body = 57;
             this.BaseSoundID = 451;
 
-            this.SetStr(2460, 2580);
-            this.SetDex(2260, 2280);
-            this.SetInt(260, 280);
+            /* Bone Knight - Fame 4,500 */
+			this.Fame = 4500;
+			this.Karma = -4500;
 
-            this.SetHits(2380, 3800);
-			SetStam(1000, 15000);
-			SetMana(100, 200);
-            this.SetDamage(5, 115);
+			// [역산] 보너스: Str +622 / Hits +12,230 / Skill +16.3
+			this.SetStr(180, 220);    // 최종 Str 약 800
+			this.SetHits(200, 300);    // 최종 Hits 약 12,500
+			this.SetDex(80, 100);      
+			this.SetStam(80, 100);
 
- 			SetAttackSpeed( 2.5 );
+			this.SetAttackSpeed(2.5);  
+			SetDamage(15, 25);        
 
-			this.SetDamageType(ResistanceType.Physical, 40);
-            this.SetDamageType(ResistanceType.Cold, 60);
+			this.SetSkill(SkillName.Wrestling, 100.0, 110.0); // 최종 약 121
+			this.SetSkill(SkillName.Tactics, 100.0, 110.0);
 
-            this.SetResistance(ResistanceType.Physical, 35, 55);
-            this.SetResistance(ResistanceType.Fire, 30, 40);
-            this.SetResistance(ResistanceType.Cold, 0, 20);
-            this.SetResistance(ResistanceType.Poison, 30, 50);
-            this.SetResistance(ResistanceType.Energy, 30, 40);
+			this.SetDamageType(ResistanceType.Physical, 100); // 순수 물리 공격
 
-            this.SetSkill(SkillName.MagicResist, 75.1, 77.5);
-            this.SetSkill(SkillName.Tactics, 80.1, 85.0);
-            this.SetSkill(SkillName.Wrestling, 75.1, 80.0);
-
-            this.Fame = 8000;
-            this.Karma = -8000;
-
-            this.VirtualArmor = 15;
+			this.SetResistance(ResistanceType.Physical, 35, 45);
+			this.SetResistance(ResistanceType.Fire, -30, -20); // 불에 취약
+			this.VirtualArmor = 15;
         }
 
         public BoneKnight(Serial serial)

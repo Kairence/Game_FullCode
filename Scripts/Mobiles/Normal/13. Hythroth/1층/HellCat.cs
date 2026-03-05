@@ -16,36 +16,40 @@ namespace Server.Mobiles
             Hue = Utility.RandomList(0x647, 0x650, 0x659, 0x662, 0x66B, 0x674);
             BaseSoundID = 0x69;
 
-            SetStr(51, 100);
-            SetDex(52, 150);
-            SetInt(13, 85);
+            /* Hell Cat - Fame 1,500 / Karma -1,500 */
+			/* [HP Calculation]
+			   - Target HP: ~4,000
+			   - Fame Bonus (1,500): ~2,625
+			   - SetHits Required: 1,375 (Target - Bonus)
+			*/
+			this.SetStr(120, 160);       
+			this.SetDex(150, 200);       
 
-			SetAttackSpeed( 5.0 );
-            SetHits(348, 367);
+			// [Hits] 최종 약 3,500 ~ 4,500 타겟
+			this.SetHits(875, 1875); 
+			this.SetStam(150, 200);      
 
-            SetDamage(6, 22);
+			this.SetAttackSpeed(2.0);    
+			this.SetDamage(10, 16);      
 
-            SetDamageType(ResistanceType.Physical, 40);
-            SetDamageType(ResistanceType.Fire, 60);
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Fire, 50);
 
-            SetResistance(ResistanceType.Physical, 25, 35);
-            SetResistance(ResistanceType.Fire, 80, 90);
-            SetResistance(ResistanceType.Energy, 15, 20);
+			this.SetResistance(ResistanceType.Physical, 25, 35);
+			this.SetResistance(ResistanceType.Fire, 55, 70);     
 
-            SetSkill(SkillName.MagicResist, 45.1, 60.0);
-            SetSkill(SkillName.Tactics, 40.1, 55.0);
-            SetSkill(SkillName.Wrestling, 30.1, 40.0);
-            SetSkill(SkillName.Necromancy, 18.0);
-            SetSkill(SkillName.SpiritSpeak, 18.0);
+			this.SetSkill(SkillName.Wrestling, 75.0, 90.0);
+			this.SetSkill(SkillName.Tactics, 75.0, 90.0);
 
-            Fame = 1000;
-            Karma = -1000;
+			this.VirtualArmor = 4;       
 
-            VirtualArmor = 3;
+			// [Taming Settings]
+			this.Tamable = true;         
+			this.ControlSlots = 1;       
+			this.MinTameSkill = 70.0;    
 
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 71.1;
+			this.Fame = 1500;           
+			this.Karma = -1500;
 
             //SetSpecialAbility(SpecialAbility.DragonBreath);
         }

@@ -13,39 +13,44 @@ namespace Server.Mobiles
             Body = 102;
             BaseSoundID = 0x47D;
 
-            SetStr(5376, 6405);
-            SetDex(4176, 4195);
-            SetInt(6201, 7225);
+            /* Fire Daemon - Fame 20,000 / Karma -20,000 */
+			/* [HP Calculation]
+			   - Target HP: ~110,000
+			   - Fame Bonus (20,000): ~55,550
+			   - SetHits Required: 54,450 (Target - Bonus)
+			*/
+			this.SetStr(800, 1000);      
+			this.SetDex(200, 300);       
+			this.SetInt(800, 1000);      
 
-            SetHits(16600, 20300);
-			SetStam(8000, 10000);
-			SetMana(14000, 20000);
+			// [Hits] 최종 약 105,000 ~ 115,000 타겟
+			this.SetHits(49450, 59450); 
+			this.SetStam(200, 300);      
+			this.SetMana(800, 1000);      
 
-			SetAttackSpeed(5.0);
-            SetDamage(277, 474);
+			this.SetAttackSpeed(2.0);    // 매우 빠른 연격
+			this.SetDamage(40, 60);      
 
-            SetDamageType(ResistanceType.Physical, 20);
-            SetDamageType(ResistanceType.Fire, 80);
+			this.SetDamageType(ResistanceType.Physical, 40);
+			this.SetDamageType(ResistanceType.Fire, 60);
 
-            SetResistance(ResistanceType.Physical, 45, 60);
-            SetResistance(ResistanceType.Fire, 90);
-            SetResistance(ResistanceType.Cold, -10, 0);
-            SetResistance(ResistanceType.Poison, 20, 30);
-            SetResistance(ResistanceType.Energy, 30, 40);
+			this.SetResistance(ResistanceType.Physical, 65, 75); // Max 75%
+			this.SetResistance(ResistanceType.Fire, 75, 75);     // Max 75%
+			this.SetResistance(ResistanceType.Cold, 15, 30);     
+			this.SetResistance(ResistanceType.Poison, 60, 75);
+			this.SetResistance(ResistanceType.Energy, 60, 75);
 
-            SetSkill(SkillName.Anatomy, 175.5, 184.9);
-            SetSkill(SkillName.MagicResist, 195.7, 209.8);
-            SetSkill(SkillName.Tactics, 181.0, 198.6);
-            SetSkill(SkillName.Wrestling, 140.2, 178.7);
-            SetSkill(SkillName.EvalInt, 191.1, 204.5);
-            SetSkill(SkillName.Magery, 191.3, 205.0);
-            SetSkill(SkillName.Meditation, 190.1, 203.7);
-            SetSkill(SkillName.DetectHidden, 166.0);
+			this.SetSkill(SkillName.Magery, 115.0, 130.0);
+			this.SetSkill(SkillName.EvalInt, 115.0, 130.0);
+			this.SetSkill(SkillName.MagicResist, 120.0, 135.0);
+			this.SetSkill(SkillName.Wrestling, 110.0, 125.0);
+			this.SetSkill(SkillName.Anatomy, 110.0, 125.0);
 
-            Fame = 25000;
-            Karma = -25000;
+			this.VirtualArmor = 15;      
+			this.Tamable = false;
 
-            VirtualArmor = 38;
+			this.Fame = 20000;           
+			this.Karma = -20000;
 
             //SetSpecialAbility(SpecialAbility.DragonBreath);
             SetAreaEffect(AreaEffect.AuraDamage);

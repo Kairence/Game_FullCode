@@ -27,34 +27,37 @@ namespace Server.Mobiles
                 AddItem(new ShortPants(Utility.RandomNeutralHue()));
             }
 
-            SetStr(260, 280);
-            SetDex(161, 175);
-            SetInt(121, 125);
+            this.SetStr(1, 5);      // 최종 Str 547~551
+			this.SetDex(44, 64);    // 최종 Dex ~300
+			this.SetInt(5, 15);     // 최종 Int 60~70
 
-			SetHits(770, 780);
-			SetStam(145, 150);
-			SetMana(120, 125);
+			this.SetHits(80, 130);  // 최종 Hits 1,300~1,350
+			this.SetStam(44, 64);
+			this.SetMana(60, 70);
 
-			SetAttackSpeed( 2.5 );
-            SetDamage(12, 35);
+			SetAttackSpeed(2.5);
+			SetDamage(5, 10);
 
-            this.VirtualArmor = 12;
-			
-            SetResistance(ResistanceType.Physical, 10, 15);
-            SetResistance(ResistanceType.Fire, 10, 15);
-            SetResistance(ResistanceType.Cold, 10, 15);
-            SetResistance(ResistanceType.Poison, 10, 15);
-            SetResistance(ResistanceType.Energy, 10, 15);
+			// 공격 속성: 녹슨 칼 (물리 100%)
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetSkill(SkillName.Fencing, 118.0, 119.5);
-            SetSkill(SkillName.Macing, 118.0, 119.5);
-            SetSkill(SkillName.MagicResist, 118.0, 119.5);
-            SetSkill(SkillName.Swords, 118.0, 119.5);
-            SetSkill(SkillName.Tactics, 118.0, 119.5);
-            SetSkill(SkillName.Wrestling, 112.0, 115.5);
+			// 저항: 초보자가 때리면 다 박히도록 낮춤 (가상방어력 0)
+			this.SetResistance(ResistanceType.Physical, 0, 8);
+			this.SetResistance(ResistanceType.Fire, 0, 5);
+			this.SetResistance(ResistanceType.Cold, 0, 5);
 
-            Fame = 2500;
-            Karma = -2500;
+			// 최종 Skill 30.0 미만 (유저가 때리기 쉬운 샌드백)
+			// 30.0 - 1.5 = 28.5
+			this.SetSkill(SkillName.Wrestling, 18.5, 28.5);
+			this.SetSkill(SkillName.Fencing, 18.5, 28.5);
+			this.SetSkill(SkillName.Tactics, 18.5, 28.5);
+			this.SetSkill(SkillName.Anatomy, 18.5, 28.5);
+
+			this.VirtualArmor = 0;
+
+			this.Fame = 600;
+			this.Karma = -600;
+
 
             AddItem(new Boots(Utility.RandomNeutralHue()));
             AddItem(new FancyShirt());

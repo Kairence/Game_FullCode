@@ -19,33 +19,45 @@ namespace Server.Mobiles
             this.m_Target = target;
             this.m_ExpireTime = DateTime.UtcNow + TimeSpan.FromMinutes(10.0);
 
-            this.SetStr(401, 500);
-            this.SetDex(296, 315);
-            this.SetInt(101, 200);
+			/* [Khaldun Revenant - Fame 12,000 / Khaldun / Weight 1.25]
+			   - 스킬 200 마스터 서버용 '상급 추격자' 밸런스 적용
+			   - 카르마 보정: 명성(12,000) + 2,000 보정 = -14,000
+			   - 가상 방어력(VirtualArmor): (12,000/1000) + 3.0 = 15 (강화된 원혼의 외피)
+			   -------------------------------------------------- */
 
-            this.SetHits(241, 300);
-            this.SetStam(242, 280);
+			// [Attributes] 명성 12,000 보너스 + 가중치 1.25 반영
+			this.SetStr(280, 350); 
+			this.SetHits(6500, 7500); 
+			this.SetDex(50, 70);
+			this.SetInt(50, 70);
 
-            this.SetDamage(20, 30);
+			// [Combat Options]
+			this.SetDamage(45, 65);
+			this.SetAttackSpeed(1.8); // 추격자답게 매우 빠른 연타
 
-            this.SetDamageType(ResistanceType.Physical, 50);
-            this.SetDamageType(ResistanceType.Cold, 50);
+			// [Damage Types] 40% 물리 + 60% 냉기 (죽음의 한기)
+			this.SetDamageType(ResistanceType.Physical, 40);
+			this.SetDamageType(ResistanceType.Cold, 60);
 
-            this.SetSkill(SkillName.MagicResist, 100.1, 150.0);
-            this.SetSkill(SkillName.Tactics, 90.1, 100.0);
-            this.SetSkill(SkillName.Swords, 140.1, 150.0);
-            this.SetSkill(SkillName.Wrestling, 90.1, 100.0);
+			// [Resistances] 언데드 상위 저항 (불에 타지 않는 원한)
+			this.SetResistance(ResistanceType.Physical, 55, 65);
+			this.SetResistance(ResistanceType.Fire, 30, 40);      // 칼둔 리벤넌트는 불에도 잘 안 탐
+			this.SetResistance(ResistanceType.Cold, 75);         // 냉기 완전 면역 (Max 75)
+			this.SetResistance(ResistanceType.Poison, 75);      // 독 면역
+			this.SetResistance(ResistanceType.Energy, 50, 60);
 
-            this.SetResistance(ResistanceType.Physical, 55, 65);
-            this.SetResistance(ResistanceType.Fire, 30, 40);
-            this.SetResistance(ResistanceType.Cold, 60, 70);
-            this.SetResistance(ResistanceType.Poison, 20, 30);
-            this.SetResistance(ResistanceType.Energy, 20, 30);
+			// [Skills] ★ 스킬 200 서버 기준 - 상급 유저를 위협하는 추격자 (재설계)
+			// 유저 스킬 120 ~ 150 구간 사냥에 최적화
+			this.SetSkill(SkillName.Wrestling, 115.0, 135.0); 
+			this.SetSkill(SkillName.Tactics, 115.0, 135.0);
+			this.SetSkill(SkillName.Anatomy, 120.0, 140.0);    // 치명적인 추격 공격
+			this.SetSkill(SkillName.MagicResist, 130.0, 150.0); // 마법으로 떨쳐내기 불가능급
 
-            this.Fame = 0;
-            this.Karma = 0;
+			// [Misc]
+			this.VirtualArmor = 15;
 
-            this.VirtualArmor = 60;
+			this.Fame = 12000;
+			this.Karma = -14000; // 칼둔 최대 보정 적용 (-12,000 - 2,000)
 
             Halberd weapon = new Halberd();
             weapon.Hue = 0x41CE;

@@ -18,35 +18,41 @@ namespace Server.Mobiles
             Body = 149;
             BaseSoundID = 0x4B0;
 
-            SetStr(3820, 4350);
-            SetDex(2220, 3250);
-            SetInt(3200, 3500);
+            /* Succubus - Fame 13,500 */
+			this.Fame = 13500;
+			this.Karma = -13500;
 
-            SetHits(4820, 5888);
-			SetStam(3000, 5000);
-            this.SetMana(666,999);
+			this.SetStr(300, 400);    // 최종 Str 약 2,000
+			this.SetDex(180, 220);     
+			this.SetInt(600, 700);    // 최종 Int 약 2,300
 
- 			SetAttackSpeed( 5.0 );
+			// 최종 Hits 약 26,000 (보너스 +24,533 포함)
+			this.SetHits(1500, 2000);  
+			this.SetStam(180, 220);
+			this.SetMana(3000, 4000);
 
-			SetDamage(127, 270);
+			this.SetAttackSpeed(1.8);  
+			SetDamage(45, 65);        
 
-            SetDamageType(ResistanceType.Physical, 75);
-            SetDamageType(ResistanceType.Poison, 25);
+			// 스킬: 기초 157 + 보너스 43.3 = 최종 200.3
+			// 유저 스킬 200과 소수점까지 대등한 '완벽한 라이벌' 스펙
+			this.SetSkill(SkillName.Wrestling, 157.0); 
+			this.SetSkill(SkillName.Tactics, 157.0);
+			this.SetSkill(SkillName.Magery, 157.0);    
+			this.SetSkill(SkillName.EvalInt, 150.0);
+			this.SetSkill(SkillName.Meditation, 150.0);
 
-            SetResistance(ResistanceType.Physical, 40, 55);
-            SetResistance(ResistanceType.Fire, 30, 40);
-            SetResistance(ResistanceType.Cold, 20, 30);
-            SetResistance(ResistanceType.Poison, 40, 50);
-            SetResistance(ResistanceType.Energy, 40, 50);
+			this.SetDamageType(ResistanceType.Physical, 20);
+			this.SetDamageType(ResistanceType.Energy, 40);
+			this.SetDamageType(ResistanceType.Poison, 40);
 
-            SetSkill(SkillName.MagicResist, 150.5, 155.0);
-            SetSkill(SkillName.Tactics, 130.1, 135.0);
-            SetSkill(SkillName.Wrestling, 120.1, 125.0);
+			// 저항 패널티: 물리 타격에는 약하지만 지옥의 열기에는 면역
+			this.SetResistance(ResistanceType.Physical, -20, -10);
+			this.SetResistance(ResistanceType.Fire, 50, 60);
+			this.SetResistance(ResistanceType.Cold, -40, -30);
+			this.VirtualArmor = 10;
 
-            Fame = 13500;
-            Karma = -13500;
-
-            VirtualArmor = 66;
+			this.Tamable = false;
 
             SetSpecialAbility(SpecialAbility.LifeDrain);
         }

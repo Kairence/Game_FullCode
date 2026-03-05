@@ -18,31 +18,40 @@ namespace Server.Mobiles
             this.Body = 86;
             this.BaseSoundID = 634;
 
-            this.SetStr(150, 320);
-            this.SetDex(94, 190);
-            this.SetInt(64, 160);
+			/* [Ophidian Warrior - Normal - Fame 4,500 / Weight 1.15]
+			   - 오피디언 일반 보병 / 일반 던전
+			   - 배수: 1x (일반 몬스터)
+			   - VirtualArmor: 5 (기본 4 + 보정 1)
+			   -------------------------------------------------- */
 
-            this.SetHits(128, 155);
-            this.SetMana(0);
+			// [Attributes] 역산된 Set 값 정밀 적용
+			this.SetStr(55, 65); 
+			this.SetHits(1200, 1350); 
+			this.SetDex(10, 15);
+			this.SetInt(10, 15);
 
-            this.SetDamage(5, 11);
+			// [Combat Options] 100% 물리 대미지
+			this.SetDamage(15, 30);
+			this.SetAttackSpeed(2.2);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] 초중급 사냥터에 맞게 쾌적한 저항 설정
+			this.SetResistance(ResistanceType.Physical, 35, 45); 
+			this.SetResistance(ResistanceType.Fire, 20, 30);      // ★ 사막 생물 약점
+			this.SetResistance(ResistanceType.Cold, 25, 35);    
+			this.SetResistance(ResistanceType.Poison, 40, 50);   // 종족 기본 내성
+			this.SetResistance(ResistanceType.Energy, 20, 30);   
 
-            this.SetResistance(ResistanceType.Physical, 35, 40);
-            this.SetResistance(ResistanceType.Fire, 20, 30);
-            this.SetResistance(ResistanceType.Cold, 25, 35);
-            this.SetResistance(ResistanceType.Poison, 30, 40);
-            this.SetResistance(ResistanceType.Energy, 25, 35);
+			// [Skills] 기본 80~90에 역산 보너스(1.9) 가산
+			this.SetSkill(SkillName.Wrestling, 82.0, 92.0); 
+			this.SetSkill(SkillName.Tactics, 82.0, 92.0);
+			this.SetSkill(SkillName.Anatomy, 82.0, 92.0);
+			this.SetSkill(SkillName.MagicResist, 75.0, 85.0);
 
-            this.SetSkill(SkillName.MagicResist, 70.1, 85.0);
-            this.SetSkill(SkillName.Swords, 60.1, 85.0);
-            this.SetSkill(SkillName.Tactics, 75.1, 90.0);
-
-            this.Fame = 4500;
-            this.Karma = -4500;
-
-            this.VirtualArmor = 36;
+			this.Tamable = false;
+			this.VirtualArmor = 5;
+			this.Fame = 4500;
+			this.Karma = -4500;
         }
 
         public OphidianWarrior(Serial serial)

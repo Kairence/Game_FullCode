@@ -14,35 +14,45 @@ namespace Server.Mobiles
             this.Body = 62;
             this.BaseSoundID = 362;
 
-            this.SetStr(9202, 9240);
-            this.SetDex(1530, 1720);
-            this.SetInt(510, 900);
+            /* Wyvern - Fame 12,000 / Karma -12,000 */
+			/* [HP Calculation]
+			   - Target HP: ~40,000
+			   - Fame Bonus (12,000): ~28,650
+			   - SetHits Required: 11,350 (Target - Bonus)
+			*/
+			this.SetStr(500, 650);       
+			this.SetDex(180, 280);       
+			this.SetInt(100, 150);       
 
-            this.SetHits(125, 141);
-			SetStam( 1000, 2000 );
-			SetMana( 1000, 1500 );
+			// [Hits] 최종 약 38,000 ~ 42,000 타겟
+			this.SetHits(9350, 13350); 
+			this.SetStam(180, 280);      
 
-			SetAttackSpeed( 5.0 );
-            this.SetDamage(208, 319);
+			this.SetAttackSpeed(2.0);    
+			this.SetDamage(24, 38);      
 
-            this.SetDamageType(ResistanceType.Physical, 50);
-            this.SetDamageType(ResistanceType.Poison, 50);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 35, 45);
-            this.SetResistance(ResistanceType.Fire, 30, 40);
-            this.SetResistance(ResistanceType.Cold, 20, 30);
-            this.SetResistance(ResistanceType.Poison, 90, 100);
-            this.SetResistance(ResistanceType.Energy, 30, 40);
+			// [Resistance] 비늘 덕분에 물리 저항이 우수함
+			this.SetResistance(ResistanceType.Physical, 55, 65);
+			this.SetResistance(ResistanceType.Fire, 45, 60);     
+			this.SetResistance(ResistanceType.Cold, 30, 45);     
+			this.SetResistance(ResistanceType.Poison, 75, 75);   // 치명독 사용자답게 독 면역 (Max 75%)
+			this.SetResistance(ResistanceType.Energy, 35, 50);
 
-            this.SetSkill(SkillName.Poisoning, 160.1, 180.0);
-            this.SetSkill(SkillName.MagicResist, 165.1, 180.0);
-            this.SetSkill(SkillName.Tactics, 165.1, 190.0);
-            this.SetSkill(SkillName.Wrestling, 165.1, 180.0);
+			this.SetSkill(SkillName.Wrestling, 105.0, 120.0);
+			this.SetSkill(SkillName.Tactics, 105.0, 120.0);
+			this.SetSkill(SkillName.Poisoning, 120.0, 140.0);    // 최상급 독(Level 5+) 숙련도
 
-            this.Fame = 16000;
-            this.Karma = -16000;
+			this.VirtualArmor = 10;      
 
-            this.VirtualArmor = 40;
+			// [Taming Settings]
+			this.Tamable = true;         
+			this.ControlSlots = 2;       
+			this.MinTameSkill = 135.0;   // 200 상한 대비 중급 이상의 핵심 타겟
+
+			this.Fame = 12000;           
+			this.Karma = -12000;
 			
             this.PackItem(new LesserPoisonPotion());
         }

@@ -19,38 +19,47 @@ namespace Server.Mobiles
         {
             this.BaseSoundID = 0x3C5;
 
-            this.SetStr(296, 325);
-            this.SetDex(86, 105);
-            this.SetInt(186, 225);
+			/* [Kirin - Normal - Fame 22,000 / Karma +22,000 / Weight 1.25]
+			   - 정글 던전의 성스러운 기린 / 최상급 탈것
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 25 (기본 22 + 보정 3)
+			   - 테이밍 가능: 2슬롯 (전략적 고효율 펫)
+			   -------------------------------------------------- */
 
-            this.SetHits(191, 210);
+			// [Attributes] 역산된 Set 값 정밀 적용
+			this.SetStr(700, 730); 
+			this.SetHits(15700, 16000); 
+			this.SetDex(140, 160); // 매우 뛰어난 기동성
+			this.SetInt(140, 160);
 
-            this.SetDamage(16, 22);
+			// [Combat Options] 물리 30% / 에너지 70% (천둥의 일격)
+			this.SetDamage(50, 80);
+			this.SetAttackSpeed(1.8); // 정령급의 빠른 공격
+			this.SetDamageType(ResistanceType.Physical, 30);
+			this.SetDamageType(ResistanceType.Energy, 70);
 
-            this.SetDamageType(ResistanceType.Physical, 70);
-            this.SetDamageType(ResistanceType.Fire, 10);
-            this.SetDamageType(ResistanceType.Cold, 10);
-            this.SetDamageType(ResistanceType.Energy, 10);
+			// [Resistances] 최고 저항 75 이하 준수 / 독 약점 설정
+			this.SetResistance(ResistanceType.Physical, 55, 65); 
+			this.SetResistance(ResistanceType.Fire, 55, 65);      
+			this.SetResistance(ResistanceType.Cold, 55, 65);    
+			this.SetResistance(ResistanceType.Poison, 30, 45);   // ★ 확실한 약점 (오염에 취약)
+			this.SetResistance(ResistanceType.Energy, 70, 75);  // 번개의 화신 (Max 75)
 
-            this.SetResistance(ResistanceType.Physical, 55, 65);
-            this.SetResistance(ResistanceType.Fire, 35, 45);
-            this.SetResistance(ResistanceType.Cold, 25, 35);
-            this.SetResistance(ResistanceType.Poison, 25, 35);
-            this.SetResistance(ResistanceType.Energy, 25, 35);
+			// [Skills] 기본 120~130에 역산 보너스(23.8) 가산
+			this.SetSkill(SkillName.Wrestling, 143.0, 153.0); 
+			this.SetSkill(SkillName.Tactics, 143.0, 153.0);
+			this.SetSkill(SkillName.Anatomy, 143.0, 153.0);
+			this.SetSkill(SkillName.MagicResist, 130.0, 145.0);
+			this.SetSkill(SkillName.Magery, 140.0, 155.0);       // 상급 번개 마법 구사
+			this.SetSkill(SkillName.EvalInt, 140.0, 155.0);
 
-            this.SetSkill(SkillName.EvalInt, 80.1, 90.0);
-            this.SetSkill(SkillName.Magery, 60.4, 100.0);
-            this.SetSkill(SkillName.Meditation, 90.1, 100.0);
-            this.SetSkill(SkillName.MagicResist, 85.3, 100.0);
-            this.SetSkill(SkillName.Tactics, 20.1, 22.5);
-            this.SetSkill(SkillName.Wrestling, 80.5, 92.5);
-
-            this.Fame = 9000;
-            this.Karma = 9000;
-
-            this.Tamable = true;
-            this.ControlSlots = 19;
-            this.MinTameSkill = 95.1;
+			// [Misc]
+			this.Tamable = true; 
+			this.ControlSlots = 2; // 숙련도 시대의 고효율 2슬롯 펫
+			this.MinTameSkill = 158.2; // 200 시대의 상징적 난이도
+			this.VirtualArmor = 25;
+			this.Fame = 22000;
+			this.Karma = 22000; // 영물 (선 성향)
         }
 
         public Kirin(Serial serial)

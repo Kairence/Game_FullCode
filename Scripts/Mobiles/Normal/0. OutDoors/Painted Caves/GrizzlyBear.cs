@@ -14,33 +14,30 @@ namespace Server.Mobiles
             this.Body = 212;
             this.BaseSoundID = 0xA3;
 
-            this.SetStr(1626, 2155);
-            this.SetDex(1810, 2050);
-            this.SetInt(160, 240);
+            this.SetStr(144, 194);   
+			this.SetDex(56, 86);     
+			this.SetInt(19, 39);     
 
-            this.SetHits(2760, 2930);
-            this.SetStam(2760, 2930);
-            this.SetMana(0);
+			this.SetHits(1102, 1602); // 최종 Hits 5,000~5,500
+			this.SetStam(56, 86);
 
-			SetAttackSpeed( 10.0 );
+			SetAttackSpeed(3.5);     
+			SetDamage(25, 35); 
 
-            this.SetDamage(180, 260);
+			this.SetResistance(ResistanceType.Physical, 20, 25);
+			this.SetResistance(ResistanceType.Cold, 20, 25);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetSkill(SkillName.Wrestling, 64.6, 74.6);
+			this.SetSkill(SkillName.Tactics, 64.6, 74.6);
 
-            this.SetResistance(ResistanceType.Physical, 25, 35);
-            this.SetResistance(ResistanceType.Cold, 15, 25);
-            this.SetResistance(ResistanceType.Poison, 5, 10);
-            this.SetResistance(ResistanceType.Energy, 5, 10);
+			this.VirtualArmor = 5;
 
-            this.Fame = 7500;
-            this.Karma = 0;
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 59.1; // 중급 테이머의 주력 펫
 
-            this.VirtualArmor = 2;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 69.1;
+			this.Fame = 2000;
+			this.Karma = 0;
         }
 
         public GrizzlyBear(Serial serial)

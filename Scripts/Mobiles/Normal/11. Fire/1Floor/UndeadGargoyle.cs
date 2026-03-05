@@ -15,37 +15,42 @@ namespace Server.Mobiles
             Body = 722;
             BaseSoundID = 372;
 
-            SetStr(1250, 1350);
-            SetDex(120, 140);
-            SetInt(250, 350);
+            /* Undead Gargoyle - Fame 12,000 / Karma -12,000 */
+			/* [HP Calculation]
+			   - Target HP: ~35,000
+			   - Fame Bonus (12,000): ~28,650
+			   - SetHits Required: 6,350 (Target - Bonus)
+			*/
+			this.SetStr(450, 600);       
+			this.SetDex(150, 200);       
+			this.SetInt(150, 250);       
 
-            SetHits(1400, 1500);
+			// [Hits] 최종 약 32,000 ~ 38,000 타겟
+			this.SetHits(3350, 9350); 
+			this.SetStam(150, 200);      
+			this.SetMana(150, 250);      
 
-			SetAttackSpeed( 3.5 );
-            SetDamage(35, 67);
+			this.SetAttackSpeed(2.2);    
+			this.SetDamage(22, 38);      
 
-            SetDamageType(ResistanceType.Physical, 10);
-            SetDamageType(ResistanceType.Cold, 50);
-            SetDamageType(ResistanceType.Energy, 40);
+			this.SetDamageType(ResistanceType.Physical, 40);
+			this.SetDamageType(ResistanceType.Fire, 30);
+			this.SetDamageType(ResistanceType.Poison, 30);    // 언데드 부패 독
 
-            SetResistance(ResistanceType.Physical, 45, 55);
-            SetResistance(ResistanceType.Fire, 30, 40);
-            SetResistance(ResistanceType.Cold, 40, 55);
-            SetResistance(ResistanceType.Poison, 55, 65);
-            SetResistance(ResistanceType.Energy, 40, 50);
+			this.SetResistance(ResistanceType.Physical, 50, 65);
+			this.SetResistance(ResistanceType.Fire, 60, 75);     
+			this.SetResistance(ResistanceType.Cold, 20, 35);     // 언데드라 일반 불생물보다는 냉기에 강함
+			this.SetResistance(ResistanceType.Poison, 75, 75);   // 독 면역 (Max 75%)
 
-            SetSkill(SkillName.EvalInt, 90.1, 110.0);
-            SetSkill(SkillName.Magery, 120);
-            SetSkill(SkillName.MagicResist, 100.1, 120.0);
-            SetSkill(SkillName.Tactics, 60.1, 70.0);
-            SetSkill(SkillName.Wrestling, 60.1, 70.0);
-            SetSkill(SkillName.Necromancy, 70, 120);
-            SetSkill(SkillName.SpiritSpeak, 62.9, 113.7);
+			this.SetSkill(SkillName.Wrestling, 110.0, 125.0);
+			this.SetSkill(SkillName.Tactics, 110.0, 125.0);
+			this.SetSkill(SkillName.MagicResist, 100.0, 115.0);
 
-            Fame = 5000;
-            Karma = -5000;
+			this.VirtualArmor = 12;      
+			this.Tamable = false;
 
-            VirtualArmor = 32;
+			this.Fame = 12000;           
+			this.Karma = -12000;
         }
 
         public UndeadGargoyle(Serial serial)

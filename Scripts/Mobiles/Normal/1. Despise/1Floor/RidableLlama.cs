@@ -17,31 +17,28 @@ namespace Server.Mobiles
         {
             this.BaseSoundID = 0x3F3;
 
-            this.SetStr(210, 490);
-            this.SetDex(56, 75);
-            this.SetInt(16, 30);
+            this.SetStr(1, 10);      
+			this.SetDex(35, 55);     
+			this.SetInt(1, 10);      
 
-			SetAttackSpeed( 30.0 );
-            this.SetHits(15, 27);
-			SetStam(10, 15);
-            this.SetMana(10, 15);
+			this.SetHits(80, 180);   // 최종 Hits 1,300~1,400
+			this.SetStam(35, 55);
 
-            this.SetDamage(3, 5);
+			SetAttackSpeed(3.0);
+			SetDamage(3, 7); 
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 10, 15);
-            this.SetResistance(ResistanceType.Fire, 5, 10);
-            this.SetResistance(ResistanceType.Cold, 5, 10);
-            this.SetResistance(ResistanceType.Poison, 5, 10);
-            this.SetResistance(ResistanceType.Energy, 5, 10);
+			this.SetResistance(ResistanceType.Physical, 5, 10);
 
-            this.Fame = 0;
-            this.Karma = 300;
+			this.SetSkill(SkillName.Wrestling, 18.5, 28.5);
 
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 35.1;
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 29.1;
+
+			this.Fame = 600;
+			this.Karma = 0;
         }
 
         public RidableLlama(Serial serial)

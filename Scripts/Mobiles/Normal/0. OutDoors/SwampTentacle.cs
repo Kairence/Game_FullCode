@@ -13,24 +13,28 @@ namespace Server.Mobiles
             this.Body = 66;
             this.BaseSoundID = 352;
 
-            SetStr(252, 400);
-            SetDex(80, 100);
-            SetInt(16, 20);
+            this.Fame = 1500;
+			this.Karma = -1500;
 
-            SetHits(818, 1004);
-            SetStam(135, 150);
-            SetMana(10, 15);
+			// [역산] 보너스: Str+618, Hits+2,866, Skill+3.9
+			this.SetStr(1, 50);     // 최종 Str 620~670
+			this.SetDex(10, 30);    
+			this.SetHits(1134, 1634); // 최종 Hits 4,000~4,500
+			this.SetStam(10, 30);
 
-			SetAttackSpeed(15.0);
+			SetAttackSpeed(3.5);
+			SetDamage(15, 30);
 
-            SetDamage(125, 180);
+			// 공격 속성: 치명적인 독 촉수
+			this.SetDamageType(ResistanceType.Physical, 60);
+			this.SetDamageType(ResistanceType.Poison, 40);
 
-            SetSkill(SkillName.MagicResist, 35.0);
-            SetSkill(SkillName.Tactics, 100.0);
-            SetSkill(SkillName.Wrestling, 100.0);
+			this.SetResistance(ResistanceType.Physical, 30, 40);
+			this.SetResistance(ResistanceType.Poison, 45, 50);
+			this.SetResistance(ResistanceType.Fire, 0, 5); // 식물형 취약점
 
-            Fame = 3000;
-            Karma = -3000;
+			// 최종 Skill 85.0 내외
+			this.SetSkill(SkillName.Wrestling, 81.1, 91.1);
 
             this.PackReg(3);
         }

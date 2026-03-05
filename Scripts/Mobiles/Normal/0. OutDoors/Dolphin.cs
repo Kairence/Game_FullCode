@@ -13,23 +13,20 @@ namespace Server.Mobiles
             this.Body = 0x97;
             this.BaseSoundID = 0x8A;
 
-            this.SetStr(1000, 1500);
-            this.SetDex(125, 135);
-            this.SetInt(10, 15);
+            this.SetStr(21, 40);
+            this.SetDex(66, 85);
+            this.SetInt(31, 50);
+            this.SetHits(20, 35);
 
-            SetHits(250, 280);
-            SetStam(140, 150);
-            SetMana(10, 11);
-			
-			SetAttackSpeed(4.0);
+            // 공격 간격: 10.0초
+            SetAttackSpeed(10.0);
+            SetDamage(1, 3);
 
-            this.SetDamage(14, 18);
+            this.SetSkill(SkillName.Wrestling, 5.0, 10.0);
+            this.SetSkill(SkillName.Tactics, 5.0, 10.0);
+            this.SetSkill(SkillName.MagicResist, 5.0, 10.0);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
-
-            this.SetResistance(ResistanceType.Physical, 5, 10);
-
-            this.Fame = 600;
+            this.Fame = 400; // 방어력 0 (생략)
             this.Karma = 600;
 
             this.VirtualArmor = 0;
@@ -40,6 +37,7 @@ namespace Server.Mobiles
 
             this.CanSwim = true;
             this.CantWalk = true;
+			SetDamageType(ResistanceType.Physical, 100);
         }
 
         public Dolphin(Serial serial)

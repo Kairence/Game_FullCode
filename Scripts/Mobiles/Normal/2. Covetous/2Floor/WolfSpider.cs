@@ -14,32 +14,35 @@ namespace Server.Mobiles
             Body = 736;
             Hue = 0;
 
-            SetStr(300, 510);
-            SetDex(756, 965);
-            SetInt(106, 110);
+            /* Wolf Spider - Fame 6,500 */
+			this.SetStr(200, 250);  // 보너스(+1,085) 합산 시 약 1,300
+			this.SetDex(120, 140);   
+			this.SetInt(50, 70);     
 
-            SetHits(533, 644);
-			SetStam(150, 200);
-            SetMana(40, 50);
+			this.SetHits(300, 500);  // 보너스(+13,177) 합산 시 약 13,600
+			this.SetStam(120, 140);
 
-            SetDamage(1, 50);
-			SetAttackSpeed( 2.5 );
+			this.SetAttackSpeed(2.2);   
+			SetDamage(25, 35);
 
-            SetDamageType(ResistanceType.Physical, 0);
-            SetDamageType(ResistanceType.Poison, 100);
+			this.SetSkill(SkillName.Wrestling, 115.1); // 보너스 +20.1 반영
+			this.SetSkill(SkillName.Tactics, 115.1);
+			this.SetSkill(SkillName.Anatomy, 100.0);
 
-            SetResistance(ResistanceType.Physical, 15, 20);
-            SetResistance(ResistanceType.Poison, 25, 35);
+			this.SetDamageType(ResistanceType.Physical, 80);
+			this.SetDamageType(ResistanceType.Cold, 20);
 
-            Fame = 3000;
-            Karma = -3000;
+			// 저항 패널티: 물리 데미지가 1.5배로 박힘
+			this.SetResistance(ResistanceType.Physical, -50, -40);
+			this.SetResistance(ResistanceType.Energy, -40, -30);
+			this.VirtualArmor = 5;
 
-            PackItem(new SpidersSilk(5));
+			this.Tamable = true;
+			this.ControlSlots = 2;
+			this.MinTameSkill = 95.1;
 
-            //Tamable = true;
-            //ControlSlots = 1;
-            //MinTameSkill = 59.1;
-            VirtualArmor = 10;
+			this.Fame = 6500;
+			this.Karma = -6500;
 			
         }
 		

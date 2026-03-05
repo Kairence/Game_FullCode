@@ -14,36 +14,40 @@ namespace Server.Mobiles
             Body = 0x2F2;
             BaseSoundID = 0x174;
 
-            SetStr(1760, 2850);
-            SetDex(1020, 1500);
-            SetInt(5152, 5200);
+            /* Gargoyle Enforcer - Fame 14,000 / Karma -14,000 */
+			/* [HP Calculation]
+			   - Target HP: ~55,000
+			   - Fame Bonus (14,000): ~33,680
+			   - SetHits Required: 21,320 (Target - Bonus)
+			*/
+			this.SetStr(700, 900);       
+			this.SetDex(150, 200);       
+			this.SetInt(150, 250);       
 
-            SetHits(6820, 7850);
-			SetStam(1000, 2000);
-			SetMana(4340, 5480);
+			// [Hits] 최종 약 52,000 ~ 58,000 타겟
+			this.SetHits(18320, 24320); 
+			this.SetStam(150, 200);      
 
-			SetAttackSpeed( 5.0 );
-            SetDamage(77, 144);
+			this.SetAttackSpeed(3.2);    // 묵직한 타격
+			this.SetDamage(35, 55);      
 
-            SetResistance(ResistanceType.Physical, 40, 60);
-            SetResistance(ResistanceType.Fire, 50, 60);
-            SetResistance(ResistanceType.Cold, 20, 30);
-            SetResistance(ResistanceType.Poison, 25, 35);
-            SetResistance(ResistanceType.Energy, 15, 25);
+			this.SetDamageType(ResistanceType.Physical, 70);
+			this.SetDamageType(ResistanceType.Fire, 30);
 
-            SetSkill(SkillName.MagicResist, 120.1, 130.0);
-            SetSkill(SkillName.Tactics, 70.1, 80.0);
-            SetSkill(SkillName.Wrestling, 80.1, 90.0);
-            SetSkill(SkillName.Swords, 80.1, 90.0);
-            SetSkill(SkillName.Anatomy, 70.1, 80.0);
-            SetSkill(SkillName.Magery, 80.1, 90.0);
-            SetSkill(SkillName.EvalInt, 70.3, 100.0);
-            SetSkill(SkillName.Meditation, 70.3, 100.0);
+			this.SetResistance(ResistanceType.Physical, 60, 75); // Max 75%
+			this.SetResistance(ResistanceType.Fire, 75, 75);     
+			this.SetResistance(ResistanceType.Cold, 20, 35);     
+			this.SetResistance(ResistanceType.Poison, 45, 60);
 
-            Fame = 17000;
-            Karma = -17000;
+			this.SetSkill(SkillName.Macing, 115.0, 130.0);       // 둔기 숙련
+			this.SetSkill(SkillName.Tactics, 115.0, 130.0);
+			this.SetSkill(SkillName.Anatomy, 110.0, 125.0);
 
-            VirtualArmor = 15;
+			this.VirtualArmor = 15;      
+			this.Tamable = false;
+
+			this.Fame = 14000;           
+			this.Karma = -14000;
         }
 
         public GargoyleEnforcer(Serial serial)

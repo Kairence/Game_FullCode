@@ -14,36 +14,37 @@ namespace Server.Mobiles
             this.Body = 15;
             this.BaseSoundID = 838;
 
-            this.SetStr(336, 445);
-            this.SetDex(136, 145);
-            this.SetInt(2311, 2335);
+            /* Fire Elemental - Fame 7,000 / Fire Spirit */
+			this.SetStr(300, 400);       
+			this.SetDex(200, 300);       
+			this.SetInt(500, 650);       // 지능/마력 가중치
 
-            this.SetHits(1896, 2103);
-			SetStam(300, 400);
-			SetMana(1000, 2000);
+			// [Hits] 최종 약 17,000 ~ 19,000 타겟
+			this.SetHits(400, 2400); 
+			this.SetStam(200, 300);      
+			this.SetMana(500, 650);      
 
-			SetAttackSpeed( 5 );
+			this.SetAttackSpeed(2.5);    
+			this.SetDamage(15, 25);      
 
-            this.SetDamage(18, 22);
+			this.SetDamageType(ResistanceType.Fire, 100);
 
-            this.SetDamageType(ResistanceType.Physical, 25);
-            this.SetDamageType(ResistanceType.Fire, 75);
+			this.SetResistance(ResistanceType.Physical, 35, 45);
+			this.SetResistance(ResistanceType.Fire, 70, 75); // 화염 면역 수준
+			this.SetResistance(ResistanceType.Cold, -10, 5);  // 냉기 약점
+			this.SetResistance(ResistanceType.Poison, 30, 40);
+			this.SetResistance(ResistanceType.Energy, 30, 40);
 
-            this.SetResistance(ResistanceType.Physical, 35, 45);
-            this.SetResistance(ResistanceType.Fire, 100, 110);
-            this.SetResistance(ResistanceType.Cold, 5, 10);
-            this.SetResistance(ResistanceType.Poison, 50, 60);
-            this.SetResistance(ResistanceType.Energy, 110, 120);
+			this.SetSkill(SkillName.Wrestling, 90.0, 105.0);
+			this.SetSkill(SkillName.Tactics, 90.0, 105.0);
+			this.SetSkill(SkillName.Magery, 95.0, 105.0);
+			this.SetSkill(SkillName.EvalInt, 90.0, 100.0);
 
-            SetSkill(SkillName.EvalInt, 90.1, 95.0);
-            SetSkill(SkillName.Magery, 90.1, 95.0);
-            SetSkill(SkillName.MagicResist, 190.1, 195.0);
+			this.VirtualArmor = 20;      
+			this.Tamable = false;
 
-            Fame = 8500;
-            Karma = -8500;
-
-
-            this.VirtualArmor = 110;
+			this.Fame = 7000;           
+			this.Karma = -7000;
             this.ControlSlots = 4;
 
             this.PackItem(new SulfurousAsh(4));

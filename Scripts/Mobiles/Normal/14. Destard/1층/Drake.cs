@@ -14,36 +14,45 @@ namespace Server.Mobiles
             Body = 60; //Utility.RandomList(60, 61);
             BaseSoundID = 362;
 
-            SetStr(4010, 4030);
-            SetDex(3133, 3152);
-            SetInt(3101, 3140);
+            /* Drake - Fame 11,000 / Karma -11,000 */
+			/* [HP Calculation]
+			   - Target HP: ~35,000
+			   - Fame Bonus (11,000): ~26,450
+			   - SetHits Required: 8,550 (Target - Bonus)
+			*/
+			this.SetStr(400, 550);       
+			this.SetDex(150, 250);       
+			this.SetInt(150, 250);       
 
-            SetHits(4410, 4580);
-			SetStam( 1000, 2000 );
-			SetMana( 1000, 1500 );
+			// [Hits] 최종 약 32,000 ~ 38,000 타겟
+			this.SetHits(5550, 11550); 
+			this.SetStam(150, 250);      
+			this.SetMana(150, 250);      
 
-			SetAttackSpeed( 5.0 );
-            SetDamage(115, 270);
+			this.SetAttackSpeed(2.4);    
+			this.SetDamage(18, 32);      
 
-            SetDamageType(ResistanceType.Physical, 80);
-            SetDamageType(ResistanceType.Fire, 20);
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Fire, 50);
 
-            SetResistance(ResistanceType.Physical, 45, 50);
-            SetResistance(ResistanceType.Fire, 50, 60);
-            SetResistance(ResistanceType.Cold, 40, 50);
-            SetResistance(ResistanceType.Poison, 20, 30);
-            SetResistance(ResistanceType.Energy, 30, 40);
+			this.SetResistance(ResistanceType.Physical, 45, 55);
+			this.SetResistance(ResistanceType.Fire, 60, 75);     
+			this.SetResistance(ResistanceType.Cold, 30, 45);     
+			this.SetResistance(ResistanceType.Poison, 40, 55);
 
-            SetSkill(SkillName.MagicResist, 120.1, 135.0);
-            SetSkill(SkillName.Tactics, 120.1, 135.0);
-            SetSkill(SkillName.Wrestling, 120.1, 135.0);
+			this.SetSkill(SkillName.Wrestling, 100.0, 115.0);
+			this.SetSkill(SkillName.Tactics, 100.0, 115.0);
+			this.SetSkill(SkillName.Magery, 90.0, 105.0);
 
-            Fame = 13000;
-            Karma = -13000;
+			this.VirtualArmor = 12;      
 
-            VirtualArmor = 26;
-            ControlSlots = 2;
-            MinTameSkill = 104.3;
+			// [Taming Settings]
+			this.Tamable = true;         
+			this.ControlSlots = 2;       
+			this.MinTameSkill = 135.0;   // 200 상한 대비 중급용
+
+			this.Fame = 11000;           
+			this.Karma = -11000;
 
             PackReg(3);
 

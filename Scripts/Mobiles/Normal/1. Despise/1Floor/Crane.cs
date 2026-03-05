@@ -13,25 +13,31 @@ namespace Server.Mobiles
             this.Body = 254;
             this.BaseSoundID = 0x4D7;
 
-            this.SetStr(260, 350);
-            this.SetDex(16, 25);
-            this.SetInt(11, 15);
+            this.SetStr(5, 15);      // 최종 Str 551~561
+			this.SetDex(60, 80);     
+			this.SetInt(5, 15);      
 
-            this.SetHits(26, 35);
-			SetAttackSpeed( 3.0 );
-			SetStam(10, 15);
-            this.SetMana(10, 15);
+			this.SetHits(30, 80);    // 최종 Hits 1,250~1,300
+			this.SetStam(60, 80);
 
-            this.SetDamage(1, 2);
+			SetAttackSpeed(2.5);
+			SetDamage(4, 8); 
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
+
+			this.SetResistance(ResistanceType.Physical, 5, 10);
+			this.SetResistance(ResistanceType.Cold, 10, 15);
+
+			this.SetSkill(SkillName.Wrestling, 18.5, 28.5);
+
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 29.1;
+
+			this.Fame = 600;
+			this.Karma = 0;
 
             this.SetResistance(ResistanceType.Physical, 5, 5);
-
-            this.Fame = 0;
-            this.Karma = 200;
-
-            this.VirtualArmor = 1;
         }
 
         public Crane(Serial serial)

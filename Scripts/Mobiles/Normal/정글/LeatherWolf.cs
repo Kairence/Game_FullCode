@@ -22,31 +22,44 @@ namespace Server.Mobiles
             Name = "a leather wolf";
             Body = 739;
             BaseSoundID = 0xE5;
+			
+			/* [Leather Wolf - Normal - Fame 13,000 / Weight 1.25]
+			   - 정글 던전의 가죽 외골격 늑대 / 일반 몬스터 공식
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 13 (명성/1000 공식 준수)
+			   -------------------------------------------------- */
 
-            SetStr(104, 125);
-            SetDex(102, 125);
-            SetInt(20, 34);
+			// [Attributes] 역산된 Set 값 정밀 적용
+			this.SetStr(340, 360); 
+			this.SetHits(7600, 7850); 
+			this.SetDex(110, 130);
+			this.SetInt(110, 130);
 
-            SetHits(291, 329);
+			// [Combat Options] 물리 100% (날카로운 발톱과 이빨)
+			this.SetDamage(30, 50);
+			this.SetAttackSpeed(2.2); // 늑대 특유의 빠른 공속
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetDamage(12, 23);
+			// [Resistances] 최고 저항 75 이하 준수 / 화염 약점 설정
+			this.SetResistance(ResistanceType.Physical, 55, 65); 
+			this.SetResistance(ResistanceType.Fire, 15, 25);      // ★ 확실한 약점 (잘 타는 가죽)
+			this.SetResistance(ResistanceType.Cold, 40, 50);    
+			this.SetResistance(ResistanceType.Poison, 40, 50); 
+			this.SetResistance(ResistanceType.Energy, 40, 50);   
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Skills] 기본 110~120에 역산 보너스(11.6) 가산
+			this.SetSkill(SkillName.Wrestling, 121.0, 131.0); 
+			this.SetSkill(SkillName.Tactics, 121.0, 131.0);
+			this.SetSkill(SkillName.Anatomy, 121.0, 131.0);
+			this.SetSkill(SkillName.MagicResist, 100.0, 115.0);
 
-            SetResistance(ResistanceType.Physical, 40, 49);
-            SetResistance(ResistanceType.Fire, 20, 29);
-            SetResistance(ResistanceType.Cold, 30, 40);
-            SetResistance(ResistanceType.Poison, 21, 29);
-            SetResistance(ResistanceType.Energy, 20, 25);
-
-            SetSkill(SkillName.MagicResist, 79.5, 94.9);
-            SetSkill(SkillName.Tactics, 80.6, 89.4);
-            SetSkill(SkillName.Wrestling, 70.9, 88.4);
-
-            Fame = 4500;
-            Karma = -4500;
-
-            Tamable = false;
+			// [Misc]
+			this.Tamable = true; 
+			this.ControlSlots = 1; // 200 숙련도 시대의 초반 주력 1슬롯 펫
+			this.MinTameSkill = 110.5; 
+			this.VirtualArmor = 13;
+			this.Fame = 13000;
+			this.Karma = -13000;
             SetWeaponAbility(WeaponAbility.BleedAttack);
         }
 

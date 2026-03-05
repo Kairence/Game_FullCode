@@ -29,36 +29,47 @@ namespace Server.Mobiles
             if (Body == 1255)
                 ItemID = 16072;
 
-            SetStr(496, 554);
-            SetDex(88, 124);
-            SetInt(94, 163);
+			/* [Wild Tiger - Holy City Dungeon / Original Wiki & Keep Formula]
+			   - 명성: 5,000 / 카르마: -5,000
+			   - 슬롯: 2 (초중급 민첩형 펫)
+			   - 가방 방어력: 3 (부드러운 가죽 보정 -2)
+			   -------------------------------------------------- */
 
-            SetHits(352, 450);
+			// [Attributes] 공식 가중치 1.15 적용
+			this.SetStr(250, 350); 
+			this.SetHits(2000, 3000); // 저항이 낮은 대신 명성 대비 준수한 체력
+			this.SetDex(160, 220);    // 위키 고증: 매우 빠른 몸놀림
+			this.SetInt(100, 150);
 
-            SetDamage(18, 24);
+			// [Combat Options] 100% 물리 대미지 (방어력 감소 특화)
+			this.SetDamage(25, 45); 
+			this.SetAttackSpeed(2.0); // 빠른 연타 속도
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] ★ 형님 지침 반영: 75% 절대 금지, 낮은 저항으로 타격감 확보
+			this.SetResistance(ResistanceType.Physical, 35, 50); // 대미지 50% 이상 시원하게 박힘
+			this.SetResistance(ResistanceType.Fire, 20, 30);      
+			this.SetResistance(ResistanceType.Cold, 35, 45);    
+			this.SetResistance(ResistanceType.Poison, 35, 45); 
+			this.SetResistance(ResistanceType.Energy, 35, 45);   
 
-            SetResistance(ResistanceType.Physical, 56, 75);
-            SetResistance(ResistanceType.Fire, 21, 40);
-            SetResistance(ResistanceType.Cold, 55, 64);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 25, 35);
+			// [Skills] 포식자의 사냥 기술
+			this.SetSkill(SkillName.Wrestling, 100.0, 115.0); 
+			this.SetSkill(SkillName.Tactics, 100.0, 115.0);
+			this.SetSkill(SkillName.Anatomy, 105.0, 120.0);   
+			this.SetSkill(SkillName.MagicResist, 85.0, 100.0);
 
-            SetSkill(SkillName.MagicResist, 90.8, 97.5);
-            SetSkill(SkillName.Anatomy, 0);
-            SetSkill(SkillName.Tactics, 100.2, 102.5);
-            SetSkill(SkillName.Wrestling, 90.1, 94.4);
+			// [Misc]
+			this.Tamable = true; 
+			this.ControlSlots = 2; 
+			this.MinTameSkill = 105.1; // 스킬 200 서버 기준 초급-중급 사이 펫
+			this.VirtualArmor = 3;    // 공식: (5000/1000) - 2
 
-            Fame = 11000;
-            Karma = -11000;
+			this.Fame = 5000;
+			this.Karma = -5000;
 
             if (Core.ML && Utility.RandomDouble() < .33)
                 PackItem(Engines.Plants.Seed.RandomPeculiarSeed(Utility.RandomList(1, 1, 1, 1, 2, 2, 2, 3, 3, 4)));
-
-            Tamable = true;
-            ControlSlots = 19;
-            MinTameSkill = 95.1;
 
             SetWeaponAbility(WeaponAbility.BleedAttack);
             SetSpecialAbility(SpecialAbility.GraspingClaw);

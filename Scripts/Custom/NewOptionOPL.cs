@@ -23,33 +23,74 @@ namespace Server.Misc
             AppendUniqueOptions(list, eqItem);
         }
 
-        #region 1. 마법 옵션
-        private static void AppendMagicOptions(ObjectPropertyList list, IEquipOption eqItem)
-        {
-            if (eqItem.PrefixOption[0] < 1000) return;
+		// 루프를 돌 때 skilluse를 반환값으로 넘겨서 연속성을 유지합니다.
+		private static int ProcessOptionLoop(ObjectPropertyList list, IEquipOption eq, int startIdx, int count, int skillBase, int optBase, int skilluse)
+		{
+			for (int i = 0; i < count; i++)
+			{
+				int optID = eq.PrefixOption[i + startIdx];
+				int optVal = eq.SuffixOption[i + startIdx];
+				
+				if (optID == 0 && optVal == 0) break;
 
-            Item item = eqItem as Item; // 필요한 경우 내부에서 캐스팅
-            if (item == null) return;
+				int realOptID = Misc.ItemOptionCreator.EquipRandomOption[optID, 0];
 
-            // 아티팩트 레어리티 체크
-            int rarity = 0;
-            if (item is BaseWeapon) rarity = ((BaseWeapon)item).ArtifactRarity;
-            else if (item is BaseArmor) rarity = ((BaseArmor)item).ArtifactRarity;
-            else if (item is BaseJewel) rarity = ((BaseJewel)item).ArtifactRarity;
+				if (realOptID < 60) // 스킬 옵션인 경우
+				{
+					SkillName skill = (SkillName)realOptID;
+					// 기존 방식대로 m_AosSkillBonuses를 통해 정확한 이름 Cliloc을 가져옵니다.
+					// (참고: m_AosSkillBonuses가 static이 아니라면 인자로 전달받아야 합니다)
+					int skillCliloc = eq.SkillBonuses.GetSkillName(skill);
 
-            if (rarity > 0) list.Add(1061078, rarity.ToString());
+					if (skillCliloc > 0)
+					{
+						// 1080641 + 5, 6, 7... 순차 증가
+						list.Add(skillBase + skilluse, "#{0}\t{1}", skillCliloc, (optVal * 0.0001).ToString("0.##"));
+						skilluse++;
+					}
+				}
+				else // 일반 마법 옵션인 경우
+				{
+					int optionpercentcheck = optBase + Misc.Util.OPLPercentCheck(realOptID);
+					list.Add(optionpercentcheck, "#{0}\t{1}", realOptID, (optVal * Misc.Util.PercentCalc(optID)).ToString("0.##"));
+				}
+			}
+			return skilluse; // 증가된 skilluse를 반환하여 다음 루프에서 사용하게 함
+		}
 
-            list.Add(1063512); // [마법 옵션]
+		#region 1. 마법 옵션
+		private static void AppendMagicOptions(ObjectPropertyList list, IEquipOption eqItem)
+		{
+			if (eqItem.PrefixOption[0] < 1000) return;
 
-            // 신규 옵션 및 마법 옵션 루프
-            ProcessOptionLoop(list, eqItem, 61, 10, 1080641, 1081997);
-            ProcessOptionLoop(list, eqItem, 11, eqItem.SuffixOption[0], 1080641, 1081999);
-        }
-        #endregion
+			// 아티팩트 레어리티 출력
+			if (eqItem is Item item)
+			{
+				int rarity = 0;
+				if (item is BaseWeapon bw) rarity = bw.ArtifactRarity;
+				else if (item is BaseArmor ba) rarity = ba.ArtifactRarity;
+				else if (item is BaseJewel bj) rarity = bj.ArtifactRarity;
+
+				if (rarity > 0) list.Add(1061078, rarity.ToString());
+			}
+
+			list.Add(1063512); // [마법 옵션] 헤더
+
+			// 중요: skilluse의 연속성을 위해 반환값을 다시 대입합니다.
+			int currentSkillUse = 5;
+			
+			// 1. 신규 옵션 루프 (인덱스 61부터 10개)
+			currentSkillUse = ProcessOptionLoop(list, eqItem, 61, 10, 1080641, 1081997, currentSkillUse);
+			
+			// 2. 마법 옵션 루프 (인덱스 11부터 SuffixOption[0] 개수만큼)
+			ProcessOptionLoop(list, eqItem, 11, eqItem.SuffixOption[0], 1080641, 1081999, currentSkillUse);
+		}
+		#endregion
 
         #region 2. 재료 옵션
         private static void AppendMaterialOptions(ObjectPropertyList list, IEquipOption eqItem)
         {
+			return; //재료 옵션은 사용하지 않음
             Item item = eqItem as Item;
             if (item == null) return;
 
@@ -63,6 +104,7 @@ namespace Server.Misc
         #region 3. 제련 옵션
         private static void AppendRefineOptions(ObjectPropertyList list, IEquipOption eqItem)
         {
+			return; //제련 옵션은 현재 사용하지 않음
             if (eqItem.PrefixOption[0] != 100) return;
 
             list.Add(1082001); // [제련 옵션]
@@ -192,29 +234,5 @@ namespace Server.Misc
             }
         }
         #endregion
-
-        private static void ProcessOptionLoop(ObjectPropertyList list, IEquipOption eq, int startIdx, int count, int skillBase, int optBase)
-        {
-            int skilluse = 5;
-            for (int i = 0; i < count; i++)
-            {
-                int optID = eq.PrefixOption[i + startIdx];
-                int optVal = eq.SuffixOption[i + startIdx];
-                if (optID == 0 && optVal == 0) break;
-
-                int realOptID = Misc.Util.NewEquipOption[optID, 0, 0];
-
-                if (realOptID < 60) // 스킬
-                {
-                    list.Add(skillBase + skilluse, "#{0}\t{1}", 1044060 + realOptID, (optVal * 0.0001).ToString());
-                    skilluse++;
-                }
-                else // 일반
-                {
-                    int cliloc = optBase + Misc.Util.OPLPercentCheck(realOptID);
-                    list.Add(cliloc, "#{0}\t{1}", realOptID, (optVal * Misc.Util.PercentCalc(optID)).ToString());
-                }
-            }
-        }
     }
 }

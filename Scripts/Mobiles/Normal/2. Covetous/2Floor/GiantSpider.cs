@@ -14,39 +14,39 @@ namespace Server.Mobiles
             Body = 28;
             BaseSoundID = 0x388;
 
-            SetStr(326, 530);
-            SetDex(760, 950);
-            SetInt(116, 120);
+            /* Giant Spider - Fame 2,500 */
+			/* Giant Spider - Fame 2,500 */
+			this.SetStr(50, 60);    // 시스템 보너스(+711) 합산 시 약 770
+			this.SetDex(76, 95);     
+			this.SetInt(36, 60);     
 
-            SetHits(750, 1000);
-			SetStam(50, 100);
-            SetMana(20, 30);
+			this.SetHits(100, 200);  // 보너스(+5,068) 합산 시 약 5,200
+			this.SetStam(76, 95);
 
-			SetAttackSpeed( 10.0 );
+			this.SetAttackSpeed(2.0);   
+			SetDamage(8, 14);
 
-            SetDamage(48, 90);
+			this.SetSkill(SkillName.Wrestling, 82.2); // 보너스 +7.2 반영
+			this.SetSkill(SkillName.Tactics, 82.2);
+			this.SetSkill(SkillName.Poisoning, 75.0, 85.0);
 
-            SetDamageType(ResistanceType.Poison, 100);
+			this.SetDamageType(ResistanceType.Physical, 80);
+			this.SetDamageType(ResistanceType.Poison, 20);
 
-            SetResistance(ResistanceType.Physical, 15, 20);
-            SetResistance(ResistanceType.Poison, 25, 35);
+			// 저항 패널티: 물리와 불에 매우 취약 (데미지 약 1.3배 증폭)
+			this.SetResistance(ResistanceType.Physical, -30, -20);
+			this.SetResistance(ResistanceType.Fire, -50, -40); 
+			this.VirtualArmor = 0;
 
-            SetSkill(SkillName.Poisoning, 10.1, 12.0);
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 65.1;
 
-            Fame = 3000;
-            Karma = -3000;
-
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 59.1;
-
-			SetAttackSpeed( 20.0 );
-			AcidTime = 20.0;
+			this.Fame = 2500;
+			this.Karma = -2500;
 			AcidBreath = true;
 
             PackItem(new SpidersSilk(8));
-            VirtualArmor = 10;
-			
        }
 
         public GiantSpider(Serial serial)

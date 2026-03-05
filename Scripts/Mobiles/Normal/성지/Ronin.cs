@@ -21,37 +21,43 @@ namespace Server.Mobiles
 			
 			Hue = Utility.RandomSkinHue();
 
-			SetStr( 326, 375 );
-			SetDex( 31, 45 );
-			SetInt( 101, 110 );
+			/* [Ronin - Holy City Dungeon / Original Wiki & Keep Formula]
+			   - 명성: 5,000 / 카르마: -5,000
+			   - 인간형: 테이밍 불가 (Non-Tamable)
+			   - 가방 방어력: 7 (경갑 보정 +2)
+			   -------------------------------------------------- */
 
-	        SetHits( 301, 400 );
-			SetMana( 101, 110 );
+			// [Attributes] 공식 가중치 1.10 적용
+			this.SetStr(150, 250); 
+			this.SetHits(1500, 2200); // 인간형치고는 끈질긴 체력
+			this.SetDex(150, 200);    // 검객다운 빠른 몸놀림
+			this.SetInt(100, 150);
 
-			SetDamage( 17, 25 );
+			// [Combat Options] 날카로운 가타나 공격
+			this.SetDamage(25, 45); 
+			this.SetAttackSpeed(2.0); // 매우 빠른 공격 속도
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-			SetDamageType( ResistanceType.Physical, 90 );
-			SetDamageType( ResistanceType.Poison, 10 );
+			// [Resistances] 형님 지침 반영: 75% 절대 금지, 쾌적한 사냥 밸런스
+			this.SetResistance(ResistanceType.Physical, 40, 55); 
+			this.SetResistance(ResistanceType.Fire, 30, 45);     
+			this.SetResistance(ResistanceType.Cold, 30, 45);    
+			this.SetResistance(ResistanceType.Poison, 30, 45); 
+			this.SetResistance(ResistanceType.Energy, 30, 45);   
 
-			SetResistance( ResistanceType.Physical, 55, 75 );
-			SetResistance( ResistanceType.Fire, 40, 60 );
-			SetResistance( ResistanceType.Cold, 35, 55 );
-			SetResistance( ResistanceType.Poison, 50, 70 );
-			SetResistance( ResistanceType.Energy, 55, 75 );
+			// [Skills] 달인의 무술 (스킬 200 서버 기준 강력한 전투력)
+			this.SetSkill(SkillName.Swords, 110.0, 125.0); 
+			this.SetSkill(SkillName.Tactics, 110.0, 125.0);
+			this.SetSkill(SkillName.Anatomy, 110.0, 125.0);
+			this.SetSkill(SkillName.Bushido, 100.0, 120.0); // 위키 고증: 무사도 사용
+			this.SetSkill(SkillName.MagicResist, 90.0, 110.0);
 
-			SetSkill( SkillName.MagicResist, 42.6, 57.5 );
-			SetSkill( SkillName.Tactics, 115.1, 130.0 );
-			SetSkill( SkillName.Wrestling, 92.6, 107.5 );
-			SetSkill( SkillName.Anatomy, 110.1, 125.0 );
+			// [Misc]
+			this.Tamable = false; 
+			this.VirtualArmor = 7; // 공식: (5000/1000) + 2
 
-			SetSkill( SkillName.Fencing, 92.6, 107.5 );
-			SetSkill( SkillName.Macing, 92.6, 107.5 );
-			SetSkill( SkillName.Swords, 92.6, 107.5 );
-
-            SetSkill(SkillName.Bushido, 95.0, 120.0);
-
-			Fame = 8500;
-			Karma = -8500;
+			this.Fame = 5000;
+			this.Karma = -5000;
 
 			AddItem( new SamuraiTabi() );
 			AddItem( new LeatherHiroSode());

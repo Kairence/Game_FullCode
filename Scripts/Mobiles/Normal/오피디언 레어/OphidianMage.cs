@@ -20,30 +20,42 @@ namespace Server.Mobiles
             this.Body = 85;
             this.BaseSoundID = 639;
 
-            this.SetStr(181, 205);
-            this.SetDex(191, 215);
-            this.SetInt(96, 120);
+			/* [Ophidian Mage - Normal - Fame 6,000 / Weight 1.20]
+			   - 오피디언 중급 마법사 / 일반 던전
+			   - 배수: 1x (일반 몬스터)
+			   - VirtualArmor: 3 (기본 6 + 로브 보정 -3)
+			   -------------------------------------------------- */
 
-            this.SetHits(109, 123);
+			// [Attributes] 역산된 Set 값 정밀 적용
+			this.SetStr(100, 115); 
+			this.SetHits(2300, 2500); 
+			this.SetDex(20, 25);
+			this.SetInt(20, 25);
 
-            this.SetDamage(5, 10);
+			// [Combat Options] 물리 20% / 에너지 80% (마법 위주)
+			this.SetDamage(20, 40);
+			this.SetAttackSpeed(2.5);
+			this.SetDamageType(ResistanceType.Physical, 20);
+			this.SetDamageType(ResistanceType.Energy, 80);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] 최고 저항 75 이하 준수 및 명확한 약점(물리/냉기) 설정
+			this.SetResistance(ResistanceType.Physical, 25, 35); // 전사가 붙으면 순삭 가능
+			this.SetResistance(ResistanceType.Fire, 30, 40);      
+			this.SetResistance(ResistanceType.Cold, 35, 45);    
+			this.SetResistance(ResistanceType.Poison, 60, 75);   // 독 저항 특화
+			this.SetResistance(ResistanceType.Energy, 40, 50);   
 
-            this.SetResistance(ResistanceType.Physical, 25, 35);
-            this.SetResistance(ResistanceType.Fire, 30, 40);
-            this.SetResistance(ResistanceType.Cold, 35, 45);
-            this.SetResistance(ResistanceType.Poison, 40, 50);
-            this.SetResistance(ResistanceType.Energy, 35, 45);
+			// [Skills] 기본 90~100에 역산 보너스(3.6) 가산
+			this.SetSkill(SkillName.Wrestling, 95.0, 105.0); 
+			this.SetSkill(SkillName.Tactics, 95.0, 105.0);
+			this.SetSkill(SkillName.Magery, 95.0, 105.0);
+			this.SetSkill(SkillName.EvalInt, 95.0, 105.0);
+			this.SetSkill(SkillName.MagicResist, 90.0, 100.0);
 
-            this.SetSkill(SkillName.EvalInt, 85.1, 100.0);
-            this.SetSkill(SkillName.Magery, 85.1, 100.0);
-            this.SetSkill(SkillName.MagicResist, 75.0, 97.5);
-            this.SetSkill(SkillName.Tactics, 65.0, 87.5);
-            this.SetSkill(SkillName.Wrestling, 20.2, 60.0);
-
-            this.Fame = 4000;
-            this.Karma = -4000;
+			this.Tamable = false;
+			this.VirtualArmor = 3;
+			this.Fame = 6000;
+			this.Karma = -6000;
 
             this.VirtualArmor = 30;
 

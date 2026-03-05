@@ -3118,12 +3118,16 @@ namespace Server.Items
 
 			Server.Engines.XmlSpawner2.XmlAttach.AddAttachmentProperties(this, list);
 
+			/*
 			if (IsSetItem && !m_SetEquipped)
 			{
 				list.Add(1072378); // <br>Only when full set is present:				
 				GetSetProperties(list);
-			}			
-
+			}
+			*/
+			//OPL 장비 통합으로 변경			
+			Server.Misc.NewOptionOPL.Append(list, this);
+			/*
 			if( PrefixOption[0] >= 100 )
 			{
 				//신규 옵션 정리
@@ -3257,7 +3261,7 @@ namespace Server.Items
 					list.Add(1111709); // Gargoyles Only
 				if (this is SurgeShield && ((SurgeShield)this).Surge > SurgeType.None)
 					list.Add(1116176 + ((int)((SurgeShield)this).Surge));
-				*/
+				
 				
 
 			}
@@ -3294,6 +3298,7 @@ namespace Server.Items
 					list.Add( optionpercentcheck, "#{0}\t{1}", Misc.Util.NewEquipOption[equipoption, 0, 0], (((double)equipvalue )* Misc.Util.PercentCalc(equipoption)).ToString() );
 				}
 			}
+			*/
 		}
 
         public override void AddItemPowerProperties(ObjectPropertyList list)

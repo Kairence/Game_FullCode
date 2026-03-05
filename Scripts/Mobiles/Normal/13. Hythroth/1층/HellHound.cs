@@ -14,38 +14,40 @@ namespace Server.Mobiles
             Body = 98;
             BaseSoundID = 229;
 
-            SetStr(800, 950);
-            SetDex(800, 1000);
-            SetInt(100, 180);
+            /* Hell Hound - Fame 3,000 / Karma -3,000 */
+			/* [HP Calculation]
+			   - Target HP: ~6,500
+			   - Fame Bonus (3,000): ~5,625
+			   - SetHits Required: 875 (Target - Bonus)
+			*/
+			this.SetStr(180, 240);       
+			this.SetDex(150, 200);       
 
-            SetHits(1130, 1300);
+			// [Hits] 최종 약 6,000 ~ 7,000 타겟
+			this.SetHits(375, 1375); 
+			this.SetStam(150, 200);      
 
-			SetAttackSpeed( 5.0 );
-            SetDamage(11, 117);
+			this.SetAttackSpeed(2.2);    
+			this.SetDamage(14, 24);      
 
-            SetDamageType(ResistanceType.Physical, 20);
-            SetDamageType(ResistanceType.Fire, 80);
+			this.SetDamageType(ResistanceType.Fire, 100);
 
-            SetResistance(ResistanceType.Physical, 0, 56);
-            SetResistance(ResistanceType.Fire, 30, 40);
-            SetResistance(ResistanceType.Poison, 10, 20);
-            SetResistance(ResistanceType.Energy, 10, 20);
+			this.SetResistance(ResistanceType.Physical, 30, 40);
+			this.SetResistance(ResistanceType.Fire, 65, 75);     
+			this.SetResistance(ResistanceType.Cold, 5, 20);      
 
-            SetSkill(SkillName.Anatomy, 0, 5);
-            SetSkill(SkillName.MagicResist, 0, 75);
-            SetSkill(SkillName.Tactics, 0, 80);
-            SetSkill(SkillName.Wrestling, 0, 80);
-            SetSkill(SkillName.Necromancy, 18);
-            SetSkill(SkillName.SpiritSpeak, 18);
+			this.SetSkill(SkillName.Wrestling, 85.0, 100.0);
+			this.SetSkill(SkillName.Tactics, 85.0, 100.0);
 
-            Fame = 4000;
-            Karma = -4000;
+			this.VirtualArmor = 6;       
 
-            VirtualArmor = 30;
+			// [Taming Settings]
+			this.Tamable = true;         
+			this.ControlSlots = 1;       
+			this.MinTameSkill = 90.0;    
 
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 85.5;
+			this.Fame = 3000;           
+			this.Karma = -3000;
 
             PackItem(new SulfurousAsh(5));
             //SetSpecialAbility(SpecialAbility.DragonBreath);

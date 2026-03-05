@@ -16,31 +16,44 @@ namespace Server.Mobiles
             Name = "a kepetch";
             Body = 726;
 
-            SetStr(337, 380);
-            SetDex(184, 194);
-            SetInt(30, 50);
+			/* [Kepetch - Fame 3,500 / General / Weight 1.16]
+			   - 스킬 200 마스터 서버용 '중하급' 밸런스 적용
+			   - 가상 방어력(VirtualArmor): (3,500/1000) + 0.5 = 4
+			   - 카파(30~40)와 비틀(45~55) 사이의 징검다리
+			   -------------------------------------------------- */
 
-            SetHits(300, 400);
+			// [Attributes] 명성 3,500 보너스 + 가중치 1.16 반영
+			this.SetStr(35, 50); 
+			this.SetHits(850, 1000); 
+			this.SetDex(8, 12);
+			this.SetInt(8, 12);
 
-            SetDamage(7, 17);
+			// [Combat Options]
+			this.SetDamage(15, 25);
+			this.SetAttackSpeed(1.8); // 야수 특유의 빠른 연타
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Damage Types] 100% 물리 공격 (날카로운 발톱)
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 55, 75);
-            SetResistance(ResistanceType.Fire, 40, 60);
-            SetResistance(ResistanceType.Cold, 40, 50);
-            SetResistance(ResistanceType.Poison, 50, 70);
-            SetResistance(ResistanceType.Energy, 60, 70);
+			// [Resistances] 총합 약 145 (초급 상위 저항)
+			this.SetResistance(ResistanceType.Physical, 30, 40);
+			this.SetResistance(ResistanceType.Fire, 20, 30);
+			this.SetResistance(ResistanceType.Cold, 30, 40);      // 설산 적응력
+			this.SetResistance(ResistanceType.Poison, 10, 20);
+			this.SetResistance(ResistanceType.Energy, 15, 25);
 
-            SetSkill(SkillName.Anatomy, 119.7, 124.1);
-            SetSkill(SkillName.MagicResist, 89.9, 97.4);
-            SetSkill(SkillName.Tactics, 117.4, 123.5);
-            SetSkill(SkillName.Wrestling, 107.7, 113.9);
-            SetSkill(SkillName.DetectHidden, 25.0);
-            SetSkill(SkillName.Parry, 60.0, 70.0);
+			// [Skills] ★ 스킬 200 서버 기준 - 본격적인 전투 훈련용 (재설계)
+			// 유저 스킬 45 ~ 65 구간 사냥에 최적화
+			this.SetSkill(SkillName.Wrestling, 40.0, 55.0); 
+			this.SetSkill(SkillName.Tactics, 40.0, 55.0);
+			this.SetSkill(SkillName.Anatomy, 40.0, 55.0);
+			this.SetSkill(SkillName.MagicResist, 35.0, 50.0);
 
-            Fame = 6000;
-            Karma = -6000;
+			// [Misc] 가상 방어력(Virtual Armor): (3,500/1000) + 0.5 = 4
+			this.VirtualArmor = 4;
+
+			this.Fame = 3500;
+			this.Karma = -3500;
 
             SetSpecialAbility(SpecialAbility.ViciousBite);
         }

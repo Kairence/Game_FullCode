@@ -11,41 +11,54 @@ namespace Server.Mobiles
         public OgreLord()
             : base(AIType.AI_Melee, FightMode.Closest, 10, 1, 0.2, 0.4)
         {
-            this.Name = "Boss an ogre lord";
+            this.Name = "an ogre lord";
             this.Body = 2;
             this.BaseSoundID = 427;
 
-            this.SetStr(12570, 15000);
-            this.SetDex(10000, 12000);
-            this.SetInt(1200, 2500);
-			
-            this.SetHits(165000, 200000);
-            this.SetMana(10000, 15000);
-			SetStam(50000, 70000);
+			Boss = true;
 
-            this.SetDamage(4820, 7350);
+            /* [Despise Level 3 Boss - Ogre Lord - Fame 24,000 / Weight 1.30]
+			   - 컨셉: 순수 물리 파괴자 (압도적 파워)
+			   - VirtualArmor: (24,000/1000) + 5 = 29 (단단한 피부 보정, Max 30 준수)
+			   - 편차 수정: 체력 5만 이상 룰 적용 (편차 2,000 이내)
+			   -------------------------------------------------- */
 
-			SetAttackSpeed( 20.0 );
+			// 최종 Str 약 21,000 (맞으면 골로 가는 수준)
+			this.SetStr(17500, 18200); 
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			// 최종 Hits 약 467,000 (민맥 편차 2,000 고정)
+			this.SetHits(394000, 396000); 
 
-            this.SetResistance(ResistanceType.Physical, 45, 55);
-            this.SetResistance(ResistanceType.Fire, 30, 40);
-            this.SetResistance(ResistanceType.Cold, 30, 40);
-            this.SetResistance(ResistanceType.Poison, 40, 50);
-            this.SetResistance(ResistanceType.Energy, 40, 50);
+			// 최종 Dex/Int 약 4,200
+			this.SetDex(3500, 3650);
+			this.SetInt(3500, 3650);
 
-            this.SetSkill(SkillName.Anatomy, 295.1, 300.0);
-            this.SetSkill(SkillName.MagicResist, 295.1, 300.0);
-            this.SetSkill(SkillName.Tactics, 295.1, 300.0);
-            this.SetSkill(SkillName.Wrestling, 295.1, 300.0);
+			// 최종 Stam/Mana 약 4,400
+			this.SetStam(3700, 3850);
+			this.SetMana(3700, 3850);
 
-            this.Fame = 24000;
-            this.Karma = -24000;
+			// [Combat Options]
+			this.SetDamage(110, 160); // 몽둥이 한 방의 위엄
+			this.SetAttackSpeed(2.5);
 
-			this.Boss = true;
-			
-            this.VirtualArmor = Utility.RandomMinMax(175, 350);
+			// [Resistances] 최고 저항 75 이하 엄격 준수
+			this.SetResistance(ResistanceType.Physical, 70, 75); // 가죽이 매우 질김
+			this.SetResistance(ResistanceType.Fire, 40, 50);
+			this.SetResistance(ResistanceType.Cold, 40, 50);
+			this.SetResistance(ResistanceType.Poison, 60, 70);
+			this.SetResistance(ResistanceType.Energy, 30, 40);    // 멍청해서 지능형 마법에 취약
+
+			// [Skills] 최종 280.8 부근
+			this.SetSkill(SkillName.Wrestling, 170.0, 175.0);
+			this.SetSkill(SkillName.Tactics, 170.0, 175.0);
+			this.SetSkill(SkillName.Anatomy, 170.0, 175.0);
+			this.SetSkill(SkillName.MagicResist, 150.0, 160.0);
+
+			// 가방 방어력: (24,000/1000) + 5 = 29
+			this.VirtualArmor = 29;
+
+			this.Fame = 24000;
+			this.Karma = -24000;
 
             this.PackItem(new Club());
 			//m_NextAbilityTime = DateTime.Now + TimeSpan.FromSeconds( 20 );

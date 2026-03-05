@@ -14,32 +14,28 @@ namespace Server.Mobiles
             this.Body = 211;
             this.BaseSoundID = 0xA3;
 
-            this.SetStr(560, 900);
-            this.SetDex(1056, 1075);
-            this.SetInt(11, 14);
+            this.SetStr(24, 44);     
+			this.SetDex(35, 55);     
+			this.SetInt(5, 15);      
 
-            this.SetHits(1160, 1300);
-            this.SetStam(46, 60);
-            this.SetMana(0);
+			this.SetHits(80, 180);   // 최종 Hits 1,300~1,400
+			this.SetStam(35, 55);
 
-            this.SetDamage(60, 80);
+			SetAttackSpeed(3.0);
+			SetDamage(5, 10); 
 
-			SetAttackSpeed( 5.0 );
+			this.SetResistance(ResistanceType.Physical, 5, 10);
+			this.SetResistance(ResistanceType.Cold, 10, 15);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetSkill(SkillName.Wrestling, 23.5, 33.5);
+			this.SetSkill(SkillName.Tactics, 23.5, 33.5);
 
-            this.SetResistance(ResistanceType.Physical, 20, 25);
-            this.SetResistance(ResistanceType.Cold, 10, 15);
-            this.SetResistance(ResistanceType.Poison, 5, 10);
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 35.1; // 초보 테이머용
 
-            this.Fame = 4500;
-            this.Karma = 0;
-
-            this.VirtualArmor = 2;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 35.1;
+			this.Fame = 600;
+			this.Karma = 0;
         }
 
         public BlackBear(Serial serial)

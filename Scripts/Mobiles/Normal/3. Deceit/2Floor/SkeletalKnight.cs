@@ -14,35 +14,25 @@ namespace Server.Mobiles
             Body = 147;
             BaseSoundID = 451;
 
-            SetStr(3496, 3950);
-            SetDex(3576, 3595);
-            SetInt(1236, 1260);
+            /* Skeletal Knight - Fame 11,000 */
+			this.Fame = 11000;
+			this.Karma = -11000;
 
-            SetHits(4180, 5350);
-            this.SetMana(100, 150);
-			SetStam(2500, 3450);
+			// [역산] 보너스: Str +1,571 / Hits +36,180 / Skill +41.1
+			this.SetStr(400, 500);    // 최종 Str 약 2,000
+			this.SetHits(3000, 4000);  // 최종 Hits 약 40,000
 
-			SetAttackSpeed( 2.5 );
+			this.SetAttackSpeed(2.0);
+			SetDamage(40, 55);
 
-            SetDamage(20, 181);
+			this.SetSkill(SkillName.Wrestling, 130.0, 145.0); 
+			this.SetSkill(SkillName.Tactics, 130.0, 145.0);
+			this.SetSkill(SkillName.MagicResist, 130.0, 145.0);
 
-            SetDamageType(ResistanceType.Physical, 40);
-            SetDamageType(ResistanceType.Cold, 60);
-
-            SetResistance(ResistanceType.Physical, 35, 45);
-            SetResistance(ResistanceType.Fire, 20, 30);
-            SetResistance(ResistanceType.Cold, 50, 60);
-            SetResistance(ResistanceType.Poison, 20, 30);
-            SetResistance(ResistanceType.Energy, 30, 40);
-
-            SetSkill(SkillName.MagicResist, 105.1, 110.0);
-            SetSkill(SkillName.Tactics, 185.1, 200.0);
-            SetSkill(SkillName.Wrestling, 185.1, 195.0);
-
-            Fame = 13000;
-            Karma = -13000;
-
-            VirtualArmor = 30;
+			this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetResistance(ResistanceType.Physical, 55, 65);
+			this.SetResistance(ResistanceType.Fire, 10, 20);
+			this.VirtualArmor = 30;
         }
 
         public SkeletalKnight(Serial serial)

@@ -13,38 +13,42 @@ namespace Server.Mobiles
             Name = "a lava elemental";
             Body = 720; 
 
-            SetStr(1446, 1510);
-            SetDex(1600, 1900);
-            SetInt(2360, 3430);
+            /* Lava Elemental - Fame 9,500 / Karma -9,500 */
+			/* [HP Calculation]
+			   - Target HP: ~30,000
+			   - Fame Bonus (9,500): ~22,950
+			   - SetHits Required: 7,050 (Target - Bonus)
+			*/
+			this.SetStr(500, 650);       
+			this.SetDex(120, 180);       
+			this.SetInt(300, 450);       
 
-            SetHits(2700, 2900);
+			// [Hits] 최종 약 28,000 ~ 32,000 타겟
+			this.SetHits(5050, 9050); 
+			this.SetStam(120, 180);      
 
-			SetAttackSpeed( 5.0 );
-            SetDamage(120, 220);
+			this.SetAttackSpeed(2.8);    // 묵직하고 느린 공격
+			this.SetDamage(22, 36);      
 
-            SetDamageType(ResistanceType.Physical, 10);
-            SetDamageType(ResistanceType.Fire, 90);
+			this.SetDamageType(ResistanceType.Fire, 100);
 
-            SetResistance(ResistanceType.Physical, 60, 70);
-            SetResistance(ResistanceType.Fire, 20, 30);
-            SetResistance(ResistanceType.Cold, 20, 30);
-            SetResistance(ResistanceType.Poison, 100);
-            SetResistance(ResistanceType.Energy, 40, 50);
+			this.SetResistance(ResistanceType.Physical, 60, 70);
+			this.SetResistance(ResistanceType.Fire, 75, 75);     // Max 75%
+			this.SetResistance(ResistanceType.Cold, -15, 0);     // 냉기에 극도로 취약
+			this.SetResistance(ResistanceType.Poison, 75, 75);   // 독 면역 (Max 75%)
+			this.SetResistance(ResistanceType.Energy, 30, 45);
 
-            SetSkill(SkillName.EvalInt, 84.8, 92.6);
-            SetSkill(SkillName.Magery, 80.0, 92.7);
-            SetSkill(SkillName.Meditation, 97.8, 120.0);
-            SetSkill(SkillName.MagicResist, 101.9, 106.2);
-            SetSkill(SkillName.Tactics, 80.3, 94.0);
-            SetSkill(SkillName.Wrestling, 71.7, 85.4);
-            SetSkill(SkillName.Poisoning, 90.0, 100.0);
-            SetSkill(SkillName.DetectHidden, 75.1);
+			this.SetSkill(SkillName.Wrestling, 95.0, 110.0);
+			this.SetSkill(SkillName.Tactics, 95.0, 110.0);
+			this.SetSkill(SkillName.Magery, 90.0, 105.0);
 
-            Fame = 11000;
-            Karma = -11000;
+			this.VirtualArmor = 12;      
+			this.Tamable = false;
+
+			this.Fame = 9500;           
+			this.Karma = -9500;
 
             SetAreaEffect(AreaEffect.AuraDamage);
-            VirtualArmor = 14;
         }
         public void AuraEffect(Mobile m)
         {

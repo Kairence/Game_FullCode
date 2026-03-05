@@ -14,31 +14,41 @@ namespace Server.Mobiles
             Body = 128;
             BaseSoundID = 0x467;
 
-            SetStr(21, 30);
-            SetDex(301, 400);
-            SetInt(201, 250);
+			/* [Pixie - Normal - Fame 7,000 / Karma +7,000 / Weight 1.15]
+			   - 작은 숲 던전 상급 정령 / 일반 몬스터 공식
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 0 (가방 방어력 없음, 명성/1000 - 7 보정)
+			   -------------------------------------------------- */
 
-            SetHits(13, 18);
+			// [Attributes] 역산된 Set 값 정밀 적용
+			this.SetStr(90, 105); 
+			this.SetHits(2100, 2250); 
+			this.SetDex(15, 25);
+			this.SetInt(15, 25);
 
-            SetDamage(9, 15);
+			// [Combat Options] 100% 에너지 대미지 (순수 마력 공격)
+			this.SetDamage(15, 30);
+			this.SetAttackSpeed(1.8); // 상급 정령다운 매우 빠른 기동성
+			this.SetDamageType(ResistanceType.Energy, 100);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] 최고 저항 75 이하 준수 / 화염 약점 설정
+			this.SetResistance(ResistanceType.Physical, 15, 25); 
+			this.SetResistance(ResistanceType.Fire, 10, 20);      // ★ 명확한 약점
+			this.SetResistance(ResistanceType.Cold, 45, 55);    
+			this.SetResistance(ResistanceType.Poison, 65, 75);   // 요정의 정화 결계
+			this.SetResistance(ResistanceType.Energy, 60, 70);   
 
-            SetResistance(ResistanceType.Physical, 80, 90);
-            SetResistance(ResistanceType.Fire, 40, 50);
-            SetResistance(ResistanceType.Cold, 40, 50);
-            SetResistance(ResistanceType.Poison, 40, 50);
-            SetResistance(ResistanceType.Energy, 40, 50);
+			// [Skills] 기본 95~105에 역산 보너스(3.2) 가산
+			this.SetSkill(SkillName.Wrestling, 98.0, 108.0); 
+			this.SetSkill(SkillName.Tactics, 98.0, 108.0);
+			this.SetSkill(SkillName.Magery, 105.0, 120.0);       // 상급 요정의 강력한 마법
+			this.SetSkill(SkillName.EvalInt, 105.0, 120.0);
+			this.SetSkill(SkillName.MagicResist, 110.0, 125.0);
 
-            SetSkill(SkillName.EvalInt, 90.1, 100.0);
-            SetSkill(SkillName.Magery, 90.1, 100.0);
-            SetSkill(SkillName.Meditation, 90.1, 100.0);
-            SetSkill(SkillName.MagicResist, 100.5, 150.0);
-            SetSkill(SkillName.Tactics, 10.1, 20.0);
-            SetSkill(SkillName.Wrestling, 10.1, 12.5);
-
-            Fame = 7000;
-            Karma = 7000;
+			this.Tamable = false;
+			this.VirtualArmor = 0;
+			this.Fame = 7000;
+			this.Karma = 7000; // 선 성향 수치 상향
 
             VirtualArmor = 100;
             if (0.02 > Utility.RandomDouble())

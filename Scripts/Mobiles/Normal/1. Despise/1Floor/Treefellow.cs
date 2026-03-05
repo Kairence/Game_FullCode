@@ -13,29 +13,30 @@ namespace Server.Mobiles
             Name = "a treefellow";
             Body = 301;
 
-            SetStr(1300, 1825);
-            SetDex(1066, 1780);
-            SetInt(1020, 1600);
+            this.SetStr(51, 101);    // 최종 Str 750~800
+			this.SetDex(32, 52);     // 느릿함
+			this.SetInt(42, 92);     // 최종 Int 150~200
 
-            SetHits(1266, 1677);
-			SetMana(1050, 1075);
-			SetStam(1200, 1250);
-			
-            SetDamage(118, 240);
-			
-			SetAttackSpeed( 10.0 );
+			this.SetHits(51, 551);   // 최종 Hits 5,000~5,500
+			this.SetStam(32, 52);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			SetAttackSpeed(3.5);     
+			SetDamage(18, 28); 
 
-            SetResistance(ResistanceType.Physical, 20, 25);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetSkill(SkillName.MagicResist, 52.1, 53.0);
-            SetSkill(SkillName.Tactics, 52.1, 53.0);
-            SetSkill(SkillName.Wrestling, 52.1, 53.0);
-            Fame = 5000;  //Unknown
-            Karma = -5000;  //Unknown
+			// 저항: 나무 껍질 방어(30%) / 화염 취약(-20%)
+			this.SetResistance(ResistanceType.Physical, 25, 30);
+			this.SetResistance(ResistanceType.Fire, -20, -10);
+			this.SetResistance(ResistanceType.Poison, 20, 25);
 
-            VirtualArmor = 5;
+			this.SetSkill(SkillName.Wrestling, 53.2, 63.2);
+			this.SetSkill(SkillName.Tactics, 53.2, 63.2);
+
+			this.VirtualArmor = 10;
+
+			this.Fame = 2500;
+			this.Karma = 0;
 
             PackItem(new BarkFragment(6));
         }

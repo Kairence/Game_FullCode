@@ -17,25 +17,23 @@ namespace Server.Mobiles
         {
             BaseSoundID = 0x3F3;
 
-            this.SetStr(200, 270);
-            this.SetDex(156, 175);
-            this.SetInt(16, 20);
+            this.SetStr(89, 139); // 최종 Str 650~700
+			this.SetDex(137, 187); // 최종 Dex ~350
 
-            this.SetHits(271, 288);
-			this.SetStam(100, 120);
-            this.SetMana(1, 5);
+			this.SetHits(934, 1434); // 최종 Hits 2,500~3,000
+			this.SetStam(87, 137); 
+			this.SetMana(0);
 
-            this.SetDamage(1, 4);
-			SetAttackSpeed(20.0);
+			SetAttackSpeed(2.5);
+			SetDamage(12, 20); 
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.Fame = 450;
-            this.Karma = 0;
+			this.SetResistance(ResistanceType.Physical, 40, 50); // 장갑 강화
+			this.SetResistance(ResistanceType.Fire, 15, 25);
 
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 29.1;
+			this.Fame = 800;
+			this.VirtualArmor = 10; // 전용 방어구 착용 컨셉
         }
 
         public SavageRidgeback(Serial serial)

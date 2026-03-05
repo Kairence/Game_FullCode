@@ -13,33 +13,28 @@ namespace Server.Mobiles
             this.Body = 0x1D;
             this.BaseSoundID = 0x9E;
 
-            this.SetStr(530, 950);
-            this.SetDex(36, 55);
-            this.SetInt(36, 60);
+            this.SetStr(57, 107);    
+			this.SetDex(77, 127);    
+			this.SetInt(37, 67);     
 
-            this.SetHits(380, 510);
-			this.SetStam(44, 67);
-            this.SetMana(100);
+			this.SetHits(172, 372);  // 최종 Hits 2,500~2,700
+			this.SetStam(77, 127);
 
-			SetAttackSpeed( 4.5 );
-			
-            this.SetDamage(4, 10);
+			SetAttackSpeed(2.5);
+			SetDamage(12, 18); 
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetResistance(ResistanceType.Physical, 10, 15);
+			this.SetResistance(ResistanceType.Energy, 15, 20);
 
-            this.SetResistance(ResistanceType.Physical, 20, 25);
-            this.SetResistance(ResistanceType.Fire, 5, 10);
-            this.SetResistance(ResistanceType.Cold, 10, 15);
+			this.SetSkill(SkillName.Wrestling, 46.9, 56.9);
+			this.SetSkill(SkillName.Tactics, 46.9, 56.9);
 
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 53.1;
 
-            this.Fame = 450;
-            this.Karma = 0;
-
-            this.VirtualArmor = 2;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = -18.9;
+			this.Fame = 1200;
+			this.Karma = 0;
         }
 
         public Gorilla(Serial serial)

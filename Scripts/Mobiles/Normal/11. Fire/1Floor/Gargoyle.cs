@@ -14,35 +14,36 @@ namespace Server.Mobiles
             this.Body = 4;
             this.BaseSoundID = 372;
 
-            this.SetStr(566, 775);
-            this.SetDex(566, 775);
-            this.SetInt(1031, 1145);
+            /* Gargoyle - Fame 2,800 / Karma -2,800 */
+			/* [HP Calculation]
+			   - Target HP: ~6,000
+			   - Fame Bonus (2,800): ~4,900
+			   - SetHits Required: 1,100 (Target - Bonus)
+			*/
+			this.SetStr(250, 350);       
+			this.SetDex(120, 180);       
 
-            this.SetHits(688, 805);
-			SetStam(100, 200);
-			SetMana(240, 380);
+			// [Hits] 최종 약 5,500 ~ 6,500 타겟
+			this.SetHits(600, 1600); 
+			this.SetStam(120, 180);      
 
-			SetAttackSpeed( 5.0 );
+			this.SetAttackSpeed(2.6);    
+			this.SetDamage(12, 20);      
 
-            this.SetDamage(47, 84);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetResistance(ResistanceType.Physical, 30, 40);
+			this.SetResistance(ResistanceType.Fire, 45, 55);     
+			this.SetResistance(ResistanceType.Cold, 10, 20);     
 
-            this.SetResistance(ResistanceType.Physical, 30, 35);
-            this.SetResistance(ResistanceType.Fire, 25, 35);
-            this.SetResistance(ResistanceType.Cold, 5, 10);
-            this.SetResistance(ResistanceType.Poison, 15, 25);
+			this.SetSkill(SkillName.Wrestling, 80.0, 95.0);
+			this.SetSkill(SkillName.Tactics, 80.0, 95.0);
 
-            this.SetSkill(SkillName.EvalInt, 80.1, 108.0);
-            this.SetSkill(SkillName.Magery, 80.1, 108.0);
-            this.SetSkill(SkillName.MagicResist, 80.1, 108.0);
-            this.SetSkill(SkillName.Tactics, 80.1, 107.0);
-            this.SetSkill(SkillName.Wrestling, 84.1, 108.0);
+			this.VirtualArmor = 6;       
+			this.Tamable = false;
 
-            this.Fame = 4000;
-            this.Karma = -4000;
-
-            this.VirtualArmor = 22;
+			this.Fame = 2800;           
+			this.Karma = -2800;
         }
 
         public Gargoyle(Serial serial)

@@ -16,35 +16,34 @@ namespace Server.Mobiles
             Hue = 1900;
             BaseSoundID = 0x600;
 
-            SetStr(358, 427);
-            SetDex(62, 80);
-            SetInt(103, 150);
+            /* Gray Goblin - Fame 1,800 / Karma -1,800 */
+			/* [HP Calculation]
+			   - Target HP: ~4,500
+			   - Fame Bonus (1,800): ~3,150
+			   - SetHits Required: 1,350 (Target - Bonus)
+			*/
+			this.SetStr(120, 160);       
+			this.SetDex(150, 200);       
 
-            SetHits(559, 794);
-            SetStam(62, 80);
-            SetMana(103, 150);
+			// [Hits] 최종 약 4,000 ~ 5,000 타겟
+			this.SetHits(850, 1850); 
+			this.SetStam(150, 200);      
 
-			SetAttackSpeed( 5.0 );
+			this.SetAttackSpeed(2.2);    
+			this.SetDamage(10, 15);      
 
-            SetDamage(20, 22);
+			this.SetResistance(ResistanceType.Physical, 25, 35);
+			this.SetResistance(ResistanceType.Fire, 50, 60);     
+			this.SetResistance(ResistanceType.Cold, 0, 10);      
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetSkill(SkillName.Fencing, 75.0, 90.0);
+			this.SetSkill(SkillName.Tactics, 75.0, 90.0);
 
-            SetResistance(ResistanceType.Physical, 40, 50);
-            SetResistance(ResistanceType.Fire, 30, 40);
-            SetResistance(ResistanceType.Cold, 25, 32);
-            SetResistance(ResistanceType.Poison, 10, 19);
-            SetResistance(ResistanceType.Energy, 10, 20);
+			this.VirtualArmor = 4;       
+			this.Tamable = false;
 
-            SetSkill(SkillName.MagicResist, 120.9, 129.1);
-            SetSkill(SkillName.Tactics, 80.6, 89.4);
-            SetSkill(SkillName.Anatomy, 80.3, 89.4);
-            SetSkill(SkillName.Wrestling, 96.1, 105.5);
-
-            Fame = 1500;
-            Karma = -1500;
-
-            VirtualArmor = 28;
+			this.Fame = 1800;           
+			this.Karma = -1800;
         }
 
         public GrayGoblin(Serial serial)

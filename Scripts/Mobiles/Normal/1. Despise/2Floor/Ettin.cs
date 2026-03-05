@@ -13,35 +13,31 @@ namespace Server.Mobiles
             this.Body = 18;
             this.BaseSoundID = 367;
 
-            this.SetStr(1306, 1815);
-            this.SetDex(1246, 1255);
-            this.SetInt(111, 115);
+            this.SetStr(57, 107);    // 최종 Str 800~850
+			this.SetDex(51, 71);     // 최종 Dex ~250
+			this.SetInt(1, 10);      // 최종 Int 121~130
 
-            //this.SetHits(132, 139);
-			SetHits(1132, 1379);
-			SetMana(1100, 1150);
-			SetStam(136, 150);
+			this.SetHits(112, 612);  // 최종 Hits 6,000~6,500
+			this.SetStam(51, 71);
 
-            //this.SetDamage(7, 13);
-			SetDamage(68, 80);
-			SetAttackSpeed( 5.0 );
+			SetAttackSpeed(3.5);
+			SetDamage(20, 35); 
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 35, 40);
-            this.SetResistance(ResistanceType.Fire, 15, 25);
-            this.SetResistance(ResistanceType.Cold, 40, 50);
-            this.SetResistance(ResistanceType.Poison, 15, 25);
-            this.SetResistance(ResistanceType.Energy, 15, 25);			
-			
-            this.SetSkill(SkillName.MagicResist, 80.1, 82.5);
-            this.SetSkill(SkillName.Tactics, 80.1, 82.5);
-            this.SetSkill(SkillName.Wrestling, 80.1, 82.5);
+			// 저항: 명성 3,000급의 방어력 (30% 미만)
+			this.SetResistance(ResistanceType.Physical, 25, 30);
+			this.SetResistance(ResistanceType.Fire, 10, 15);
 
-            this.Fame = 5000;
-            this.Karma = -5000;
+			// 최종 Skill 70.0~80.0 (80.0 - 8.4 = 71.6)
+			this.SetSkill(SkillName.Wrestling, 61.6, 71.6);
+			this.SetSkill(SkillName.Tactics, 61.6, 71.6);
 
-            this.VirtualArmor = 8;
+			this.VirtualArmor = 10;
+
+			this.Fame = 3000;
+			this.Karma = -3000;		
+
         }
 
         public Ettin(Serial serial)

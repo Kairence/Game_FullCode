@@ -11,36 +11,30 @@ namespace Server.Mobiles
         public Cow()
             : base(AIType.AI_Animal, FightMode.Aggressor, 10, 1, 0.2, 0.4)
         {
-            Name = "a cow";
-            Body = Utility.RandomList(0xD8, 0xE7);
-            BaseSoundID = 0x78;
+            this.Name = "a cow";
+            this.Body = 0xE7;
+            this.BaseSoundID = 0x78;
 
-            this.SetStr(450, 800);
-            this.SetDex(25, 30);
-            this.SetInt(12, 18);
+            // [역산] 명성 300 보너스(Str+523, Hits+704, Stam+55, Skill+0.7) 반영
+			this.SetStr(7, 12); 
+			this.SetDex(5, 15); // 최종 Dex ~120
+			this.SetInt(5, 10);
 
-            SetHits(230, 280);
-            SetStam(25, 30);
-            SetMana(5, 10);
-			
+			this.SetHits(146, 160); // 최종 Hits 850~864
+			this.SetStam(5, 10);
+			this.SetMana(0);
+
 			SetAttackSpeed(10.0);
+			SetDamage(1, 4); 
 
-            this.SetDamage(4, 6);
+			this.SetSkill(SkillName.Wrestling, 0.3, 1.3); // 최종 1.0~2.0
+
+			this.Fame = 300;
+			this.VirtualArmor = 0;
+			this.Tamable = true;
+			this.MinTameSkill = 11.1;
 
             this.SetDamageType(ResistanceType.Physical, 100);
-
-            this.SetResistance(ResistanceType.Physical, 10, 15);
-            this.SetResistance(ResistanceType.Fire, 5, 10);
-            this.SetResistance(ResistanceType.Poison, 5, 10);
-
-            this.Fame = 300;
-            this.Karma = 0;
-
-            this.VirtualArmor = 1;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 29.1;
 
             if (Core.AOS && Utility.Random(1000) == 0) // 0.1% chance to have mad cows
                 FightMode = FightMode.Closest;

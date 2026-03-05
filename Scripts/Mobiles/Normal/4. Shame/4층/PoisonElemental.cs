@@ -14,37 +14,43 @@ namespace Server.Mobiles
             this.Body = 162;
             this.BaseSoundID = 263;
 
-            this.SetStr(5500, 5910);
-            this.SetDex(5710, 5999);
-            this.SetInt(6610, 6750);
+            /* Poison Elemental - Fame 18,000 / Karma -18,000 */
+			/* [HP Calculation]
+			   - Target HP: ~90,000
+			   - Fame Bonus (18,000): ~47,400
+			   - SetHits Required: 42,600 (Target - Bonus)
+			*/
+			this.SetStr(600, 750);       
+			this.SetDex(300, 450);       
+			this.SetInt(1000, 1200);     
 
-            this.SetHits(14600, 18999);
-			SetStam(10240, 13245);
-			SetMana(10000, 12150);
-			
-			SetAttackSpeed( 5.0 );
+			// [Hits] 최종 약 85,000 ~ 95,000 타겟
+			this.SetHits(37600, 47600); 
+			this.SetStam(300, 450);      
+			this.SetMana(1000, 1200);    
 
-            this.SetDamage(205, 435);
+			this.SetAttackSpeed(2.2);    
+			this.SetDamage(25, 40);      
 
-            this.SetDamageType(ResistanceType.Physical, 10);
-            this.SetDamageType(ResistanceType.Poison, 90);
+			this.SetDamageType(ResistanceType.Poison, 100);
 
-            this.SetResistance(ResistanceType.Physical, 60, 70);
-            this.SetResistance(ResistanceType.Fire, 40, 60);
-            this.SetResistance(ResistanceType.Cold, 20, 30);
-            this.SetResistance(ResistanceType.Poison, 100);
-            this.SetResistance(ResistanceType.Energy, 60, 80);
+			this.SetResistance(ResistanceType.Physical, 45, 55);
+			this.SetResistance(ResistanceType.Fire, 30, 40);
+			this.SetResistance(ResistanceType.Cold, 30, 40);
+			this.SetResistance(ResistanceType.Poison, 70, 75); // Max 75%
+			this.SetResistance(ResistanceType.Energy, 50, 60);
 
-            SetSkill(SkillName.EvalInt, 260.1, 265.0);
-            SetSkill(SkillName.Magery, 260.1, 265.0);
-            SetSkill(SkillName.MagicResist, 260.1, 265.0);
-            SetSkill(SkillName.Wrestling, 325.1, 330.0);
-			SetSkill(SkillName.Poisoning, 360.1, 365.0);
-			
-            this.Fame = 22000;
-            this.Karma = -22000;
+			this.SetSkill(SkillName.Magery, 115.0, 125.0);
+			this.SetSkill(SkillName.EvalInt, 115.0, 125.0);
+			this.SetSkill(SkillName.Poisoning, 120.0, 130.0);
+			this.SetSkill(SkillName.MagicResist, 110.0, 125.0);
+			this.SetSkill(SkillName.Wrestling, 110.0, 120.0);
 
-            this.VirtualArmor = 300;
+			this.VirtualArmor = 20;      
+			this.Tamable = false;
+
+			this.Fame = 18000;           
+			this.Karma = -18000;
 
             //this.PackItem(new LesserPoisonPotion());
         }

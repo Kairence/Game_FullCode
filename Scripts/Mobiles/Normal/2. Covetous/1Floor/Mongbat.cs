@@ -13,29 +13,29 @@ namespace Server.Mobiles
             Body = 39;
             BaseSoundID = 422;
 
-            SetStr(286, 430);
-            SetDex(46, 98);
-            SetInt(36, 54);
+            this.SetStr(6, 16);      // 최종 Str 568~578
+			this.SetDex(26, 46);     
+			this.SetInt(6, 16);      // 최종 Int 67~77
 
-			SetAttackSpeed( 5.0 );
+			this.SetHits(78, 178);   // 최종 Hits 1,700~1,800
+			this.SetStam(26, 46);
 
-            SetHits(500, 545);
-			SetStam(50, 100);
-            SetMana(10, 30);
+			SetAttackSpeed(2.5);
+			SetDamage(4, 9); 
 
-            SetDamage(30, 35);
+			this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetResistance(ResistanceType.Physical, 5, 10);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetSkill(SkillName.Wrestling, 22.9, 32.9);
+			this.SetSkill(SkillName.Tactics, 22.9, 32.9);
 
-            SetResistance(ResistanceType.Physical, 5, 10);
+			// 테이밍 설정
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 35.1;
 
-            Fame = 1750;
-            Karma = -1750;
-
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = -18.9;
-            VirtualArmor = 7;
+			this.Fame = 800;
+			this.Karma = -800;
         }
 
         public Mongbat(Serial serial)

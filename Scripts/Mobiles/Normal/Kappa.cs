@@ -14,30 +14,45 @@ namespace Server.Mobiles
             Name = "a kappa";
             Body = 240;
 
-            SetStr(186, 230);
-            SetDex(51, 75);
-            SetInt(41, 55);
+			/* [Kappa - Fame 2,000 / General / Weight 1.12]
+			   - 스킬 200 마스터 서버용 '초중급' 밸런스 적용
+			   - 가상 방어력(VirtualArmor): (2,000/1000) + 3 = 5 (등각 보정)
+			   - 그렘린(25~35)과 솔렌 일꾼(35~45) 사이의 징검다리
+			   -------------------------------------------------- */
 
-            SetMana(30);
+			// [Attributes] 명성 2,000 보너스 + 가중치 1.12 반영
+			this.SetStr(15, 25); 
+			this.SetHits(380, 450); 
+			this.SetDex(3, 5);
+			this.SetInt(3, 5);
 
-            SetHits(151, 180);
+			// [Combat Options]
+			this.SetDamage(8, 15);
+			this.SetAttackSpeed(2.0);
 
-            SetDamage(6, 12);
+			// [Damage Types] 80% 물리 + 20% 냉기 (습기 가득한 공격)
+			this.SetDamageType(ResistanceType.Physical, 80);
+			this.SetDamageType(ResistanceType.Cold, 20);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] 총합 약 130 (초보자용 저항)
+			this.SetResistance(ResistanceType.Physical, 35, 45); // 등껍질로 인한 물리 저항
+			this.SetResistance(ResistanceType.Fire, 0, 10);      // 불에 매우 취약
+			this.SetResistance(ResistanceType.Cold, 40, 50);     // 냉기에 강함
+			this.SetResistance(ResistanceType.Poison, 15, 25);
+			this.SetResistance(ResistanceType.Energy, 10, 20);
 
-            SetResistance(ResistanceType.Physical, 35, 50);
-            SetResistance(ResistanceType.Fire, 35, 50);
-            SetResistance(ResistanceType.Cold, 25, 50);
-            SetResistance(ResistanceType.Poison, 35, 50);
-            SetResistance(ResistanceType.Energy, 20, 30);
+			// [Skills] ★ 스킬 200 서버 기준 - 입문을 막 벗어난 유저용 (재설계)
+			// 유저 스킬 35 ~ 55 구간 사냥에 최적화
+			this.SetSkill(SkillName.Wrestling, 30.0, 40.0); 
+			this.SetSkill(SkillName.Tactics, 30.0, 40.0);
+			this.SetSkill(SkillName.Anatomy, 25.0, 35.0);
+			this.SetSkill(SkillName.MagicResist, 25.0, 35.0);
 
-            SetSkill(SkillName.MagicResist, 60.1, 70.0);
-            SetSkill(SkillName.Tactics, 79.1, 89.0);
-            SetSkill(SkillName.Wrestling, 60.1, 70.0);
+			// [Misc] 가상 방어력(Virtual Armor): (2,000/1000) + 3 = 5
+			this.VirtualArmor = 5;
 
-            Fame = 1700;
-            Karma = -1700;
+			this.Fame = 2000;
+			this.Karma = -2000;
 
             PackItem(new RawFishSteak(3));
             for (int i = 0; i < 2; i++)

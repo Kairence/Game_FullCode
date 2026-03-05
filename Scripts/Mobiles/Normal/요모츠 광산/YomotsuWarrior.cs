@@ -14,30 +14,40 @@ namespace Server.Mobiles
             Body = 245;
             BaseSoundID = 0x452;
 
-            SetStr(486, 530);
-            SetDex(151, 165);
-            SetInt(17, 31);
+			/* [Yomotsu Warrior - Normal - Fame 8,500 / Weight 1.25]
+			   - 요모츠 광산 정예 보병 / 일반 던전
+			   - 배수: 1x (일반 몬스터)
+			   - VirtualArmor: 6 (기본 8 + 보정 -2)
+			   -------------------------------------------------- */
 
-            SetHits(486, 530);
-            SetMana(17, 31);
+			// [Attributes] 역산된 Set 값 정밀 적용
+			this.SetStr(200, 215); 
+			this.SetHits(4500, 4600); 
+			this.SetDex(35, 45);
+			this.SetInt(35, 45);
 
-            SetDamage(8, 10);
+			// [Combat Options] 100% 물리 대미지 (마비 타격 위협)
+			this.SetDamage(30, 50);
+			this.SetAttackSpeed(2.0); // 작지만 매우 빠른 공격
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] 최고 저항 75 이하 준수 및 명확한 약점(냉기) 설정
+			this.SetResistance(ResistanceType.Physical, 45, 55); 
+			this.SetResistance(ResistanceType.Fire, 55, 65);     // 광산 내 열기 적응
+			this.SetResistance(ResistanceType.Cold, 15, 25);    // ★ 확실한 약점 (냉기 취약)
+			this.SetResistance(ResistanceType.Poison, 40, 50); 
+			this.SetResistance(ResistanceType.Energy, 35, 45);   
 
-            SetResistance(ResistanceType.Physical, 65, 85);
-            SetResistance(ResistanceType.Fire, 30, 50);
-            SetResistance(ResistanceType.Cold, 45, 65);
-            SetResistance(ResistanceType.Poison, 35, 55);
-            SetResistance(ResistanceType.Energy, 25, 50);
+			// [Skills] 기본 95~110에 역산 보너스(6.82) 가산
+			this.SetSkill(SkillName.Wrestling, 100.0, 115.0); 
+			this.SetSkill(SkillName.Tactics, 100.0, 115.0);
+			this.SetSkill(SkillName.Anatomy, 100.0, 115.0);
+			this.SetSkill(SkillName.MagicResist, 85.0, 100.0);
 
-            SetSkill(SkillName.Anatomy, 85.1, 95.0);
-            SetSkill(SkillName.MagicResist, 82.6, 90.5);
-            SetSkill(SkillName.Tactics, 95.1, 105.0);
-            SetSkill(SkillName.Wrestling, 97.6, 107.5);
-
-            Fame = 4200;	
-            Karma = -4200;
+			this.Tamable = false;
+			this.VirtualArmor = 6;
+			this.Fame = 8500;
+			this.Karma = -8500;
 
             PackItem(new GreenGourd());
             PackItem(new ExecutionersAxe());

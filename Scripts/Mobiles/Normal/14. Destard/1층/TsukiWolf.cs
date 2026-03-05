@@ -22,49 +22,52 @@ namespace Server.Mobiles
                     break; //No, this really isn't accurate ;->
             }
 
-            SetStr(2401, 3450);
-            SetDex(2151, 3200);
-            SetInt(3066, 3076);
+            /* Tsuki Wolf - Fame 14,000 / Karma -14,000 */
+			/* [HP Calculation]
+			   - Target HP: ~45,000
+			   - Fame Bonus (14,000): ~33,680
+			   - SetHits Required: 11,320 (Target - Bonus)
+			*/
+			this.SetStr(600, 800);       
+			this.SetDex(220, 320);       
+			this.SetInt(300, 500);       
 
-            SetHits(3376, 4450);
-			SetStam( 1000, 1200 );
-			SetMana( 1000, 1150 );
+			// [Hits] 최종 약 42,000 ~ 48,000 타겟
+			this.SetHits(8320, 14320); 
+			this.SetStam(220, 320);      
+			this.SetMana(300, 500);      
 
-			SetAttackSpeed( 5.0 );  
-            SetDamage(104, 180);
+			this.SetAttackSpeed(1.6);    // 광속에 가까운 연격
+			this.SetDamage(25, 42);      
 
-            SetDamageType(ResistanceType.Physical, 90);
-            SetDamageType(ResistanceType.Cold, 5);
-            SetDamageType(ResistanceType.Energy, 5);
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Energy, 50);
 
-            SetResistance(ResistanceType.Physical, 40, 60);
-            SetResistance(ResistanceType.Fire, 50, 70);
-            SetResistance(ResistanceType.Cold, 50, 70);
-            SetResistance(ResistanceType.Poison, 50, 70);
-            SetResistance(ResistanceType.Energy, 50, 70);
+			this.SetResistance(ResistanceType.Physical, 60, 75); 
+			this.SetResistance(ResistanceType.Fire, 40, 55);     
+			this.SetResistance(ResistanceType.Cold, 40, 55);     
+			this.SetResistance(ResistanceType.Energy, 65, 75);   // 에너지 저항 특화
 
-            SetSkill(SkillName.Anatomy, 65.1, 72.0);
-            SetSkill(SkillName.MagicResist, 65.1, 70.0);
-            SetSkill(SkillName.Tactics, 95.1, 110.0);
-            SetSkill(SkillName.Wrestling, 97.6, 107.5);
-            SetSkill(SkillName.Necromancy, 20.0);
-            SetSkill(SkillName.SpiritSpeak, 20.0);
-            SetSkill(SkillName.Anatomy, 40.0, 50.0);
-            SetSkill(SkillName.DetectHidden, 100.0);
-            SetSkill(SkillName.Parry, 90.0, 100.0);
+			this.SetSkill(SkillName.Wrestling, 110.0, 125.0);
+			this.SetSkill(SkillName.Tactics, 110.0, 125.0);
+			this.SetSkill(SkillName.Anatomy, 110.0, 125.0);
+			this.SetSkill(SkillName.Magery, 90.0, 110.0);
 
-            Fame = 10000;
-            Karma = -10000;
+			this.VirtualArmor = 10;      
+
+			// [Taming Settings]
+			this.Tamable = true;         
+			this.ControlSlots = 3;       
+			this.MinTameSkill = 165.0;   // 200 상한 대비 상급 숙련도
+
+			this.Fame = 14000;           
+			this.Karma = -14000;
 
             
             if (Core.ML && Utility.RandomDouble() < .33)
                 PackItem(Engines.Plants.Seed.RandomPeculiarSeed(1));
 
             PackBodyPartOrBones();
-            
-            Tamable = true;
-            ControlSlots = 19;
-            MinTameSkill = 96.0;
 
             SetSpecialAbility(SpecialAbility.Rage);
         }

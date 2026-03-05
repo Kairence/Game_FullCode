@@ -19,31 +19,44 @@ namespace Server.Mobiles
             Body = 787;
             BaseSoundID = 1006;
 
-            SetStr(296, 320);
-            SetDex(81, 105);
-            SetInt(36, 60);
+			/* [Ant Lion - Fame 4,500 / General / Weight 1.18]
+			   - 스킬 200 마스터 서버용 '중급 암살자' 밸런스 적용
+			   - 가상 방어력(VirtualArmor): (4,500/1000) + 3 = 7 (매몰형 갑각 보정 +3)
+			   - 저항 밸런스: 최대 75 상한 엄격 준수
+			   -------------------------------------------------- */
 
-            SetHits(151, 162);
+			// [Attributes] 명성 4,500 보너스 + 가중치 1.18 반영
+			this.SetStr(60, 80); 
+			this.SetHits(1400, 1650); 
+			this.SetDex(10, 20);
+			this.SetInt(10, 20);
 
-            SetDamage(7, 21);
+			// [Combat Options]
+			this.SetDamage(18, 28);
+			this.SetAttackSpeed(2.3);
 
-            SetDamageType(ResistanceType.Physical, 70);
-            SetDamageType(ResistanceType.Poison, 30);
+			// [Damage Types] 100% 물리 공격 (묵직한 턱 힘)
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 45, 60);
-            SetResistance(ResistanceType.Fire, 25, 35);
-            SetResistance(ResistanceType.Cold, 30, 40);
-            SetResistance(ResistanceType.Poison, 40, 50);
-            SetResistance(ResistanceType.Energy, 30, 35);
+			// [Resistances] 총합 약 215 (Max 75 준수)
+			this.SetResistance(ResistanceType.Physical, 55, 65);
+			this.SetResistance(ResistanceType.Fire, 25, 35);
+			this.SetResistance(ResistanceType.Cold, 30, 40);
+			this.SetResistance(ResistanceType.Poison, 55, 65);
+			this.SetResistance(ResistanceType.Energy, 20, 30);
 
-            SetSkill(SkillName.MagicResist, 70.0);
-            SetSkill(SkillName.Tactics, 90.0);
-            SetSkill(SkillName.Wrestling, 90.0);
+			// [Skills] ★ 스킬 200 서버 기준 - 중급자용 핵심 타겟 (재설계)
+			// 유저 스킬 70 ~ 90 구간 수련 및 전투에 적합
+			this.SetSkill(SkillName.Wrestling, 60.0, 75.0); 
+			this.SetSkill(SkillName.Tactics, 60.0, 75.0);
+			this.SetSkill(SkillName.Anatomy, 55.0, 70.0);
+			this.SetSkill(SkillName.MagicResist, 50.0, 65.0);
 
-            Fame = 4500;
-            Karma = -4500;
+			// [Misc] 가상 방어력(Virtual Armor): (4,500/1000) + 3 = 7
+			this.VirtualArmor = 7;
 
-            VirtualArmor = 45;
+			this.Fame = 4500;
+			this.Karma = -4500;
 
             PackItem(new Bone(3));
             PackItem(new FertileDirt(Utility.RandomMinMax(1, 5)));

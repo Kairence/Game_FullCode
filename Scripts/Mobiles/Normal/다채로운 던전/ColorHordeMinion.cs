@@ -13,38 +13,57 @@ namespace Server.Mobiles
            this.Name = "a color horde minion";
             this.Body = 999;
             this.BaseSoundID = 357;
-
-            this.SetStr(316, 340);
-            this.SetDex(331, 360);
-            this.SetInt(3311, 3325);
-
-            this.SetHits(18010, 18024);
-            this.SetStam(910, 924);
-            this.SetMana(1000);
 			
-            this.SetDamage(1);
-
-            this.SetDamageType(ResistanceType.Physical, 100);
-
-            this.SetResistance(ResistanceType.Physical, 5, 10);
-            this.SetResistance(ResistanceType.Fire, 95, 100);
-            this.SetResistance(ResistanceType.Cold, 95, 100);
-            this.SetResistance(ResistanceType.Poison, 95, 100);
-            this.SetResistance(ResistanceType.Energy, 95, 100);
-
-            SetSkill(SkillName.EvalInt, 120.0);
-            SetSkill(SkillName.Magery, 115.1, 120.0);
-            SetSkill(SkillName.Meditation, 115.1, 120.0);
-			SetSkill(SkillName.Spellweaving, 115.1, 120.0);
-			SetSkill(SkillName.Mysticism, 115.1, 120.0);
-            this.SetSkill(SkillName.MagicResist, 150.0);
-
 			Boss = true;
-			
-            this.Fame = 20000;
-            this.Karma = -20000;
 
-            this.VirtualArmor = 5;
+			/* [Color Horde Minion - World Boss - Fame 20,000 / Weight 1.30]
+			   - 컨셉: 모든 원소의 지배자 (무지개빛 파괴신)
+			   - VirtualArmor: (20,000 / 1000) + 5 = 25 (마법적 외피 보정)
+			   - 체력 5만 이상 룰 적용: 민맥 편차 2,000 이내 고정
+			   -------------------------------------------------- */
+
+			// 최종 Str 약 16,000 (공식 보너스 2,500 포함)
+			this.SetStr(13500, 13800); 
+
+			// 최종 Hits 약 360,000 (민맥 편차 2,000 고정)
+			this.SetHits(304000, 306000); 
+
+			// 최종 Dex/Int 약 3,200 (마법 위력 극대화)
+			this.SetDex(2700, 2800);
+			this.SetInt(2700, 2800);
+
+			// [Combat Options] 5속성 복합 타격 (각 속성 20% 분배)
+			this.SetDamage(80, 120);
+			this.SetAttackSpeed(2.0);
+
+			this.SetDamageType(ResistanceType.Physical, 20);
+			this.SetDamageType(ResistanceType.Fire, 20);
+			this.SetDamageType(ResistanceType.Cold, 20);
+			this.SetDamageType(ResistanceType.Poison, 20);
+			this.SetDamageType(ResistanceType.Energy, 20);
+
+			// [Resistances] 최고 저항 75 이하 엄격 준수
+			this.SetResistance(ResistanceType.Physical, 65, 75); 
+			this.SetResistance(ResistanceType.Fire, 65, 75);      
+			this.SetResistance(ResistanceType.Cold, 65, 75);    
+			this.SetResistance(ResistanceType.Poison, 65, 75); 
+			this.SetResistance(ResistanceType.Energy, 65, 75);
+
+			// [Skills] 최종 약 216.5 (공식 보너스 83.3 포함)
+			this.SetSkill(SkillName.Wrestling, 130.0, 135.0); 
+			this.SetSkill(SkillName.Tactics, 130.0, 135.0);
+			this.SetSkill(SkillName.MagicResist, 150.0, 160.0);
+			this.SetSkill(SkillName.Magery, 130.0, 135.0);
+			this.SetSkill(SkillName.EvalInt, 130.0, 135.0);
+
+			// [Taming] ★ 월드 보스 테이밍 불가
+			this.Tamable = false;
+
+			// 가상 방어력: (20,000/1000) + 5 = 25
+			this.VirtualArmor = 25;
+
+			this.Fame = 20000;
+			this.Karma = -20000; 
             // TODO: Body parts
         }
 

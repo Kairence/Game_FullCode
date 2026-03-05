@@ -13,32 +13,44 @@ namespace Server.Mobiles
             this.Body = 70;
             this.BaseSoundID = 589;
 
-            this.SetStr(166, 215);
-            this.SetDex(96, 145);
-            this.SetInt(41, 65);
+			/* [Terathan Warrior - Normal - Fame 8,500 / Weight 1.20]
+			   - 테라탄 던전의 주력 전투병 / 일반 몬스터 공식
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 9 (명성/1000 + 1 보정)
+			   - 특이사항: 중급 수준의 체력과 강력한 독 공격
+			   -------------------------------------------------- */
 
-            this.SetHits(100, 129);
-            this.SetMana(0);
+			// [Attributes] 역산된 Set 값 정밀 적용
+			this.SetStr(160, 170); 
+			this.SetHits(3600, 3700); 
+			this.SetDex(30, 40); 
+			this.SetInt(30, 40);
 
-            this.SetDamage(7, 17);
+			// [Combat Options] 물리 80% / 독 20% (독이 발린 창)
+			this.SetDamage(25, 45);
+			this.SetAttackSpeed(2.3); 
+			this.SetDamageType(ResistanceType.Physical, 80);
+			this.SetDamageType(ResistanceType.Poison, 20);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] 최고 저항 75 이하 준수 / 화염 약점 설정
+			this.SetResistance(ResistanceType.Physical, 40, 55); 
+			this.SetResistance(ResistanceType.Fire, 10, 25);     // ★ 확실한 약점 (불에 취약)
+			this.SetResistance(ResistanceType.Cold, 35, 45);    
+			this.SetResistance(ResistanceType.Poison, 70, 75);  // 독성 저항 Max 근접
+			this.SetResistance(ResistanceType.Energy, 30, 40);   
 
-            this.SetResistance(ResistanceType.Physical, 30, 35);
-            this.SetResistance(ResistanceType.Fire, 20, 30);
-            this.SetResistance(ResistanceType.Cold, 25, 35);
-            this.SetResistance(ResistanceType.Poison, 30, 40);
-            this.SetResistance(ResistanceType.Energy, 25, 35);
+			// [Skills] 기본 100~110에 역산 보너스(5.5) 가산
+			// 최종 숙련도 약 105~115대의 중급 전사
+			this.SetSkill(SkillName.Wrestling, 105.5, 115.5); 
+			this.SetSkill(SkillName.Tactics, 105.5, 115.5);
+			this.SetSkill(SkillName.Anatomy, 105.5, 115.5);
+			this.SetSkill(SkillName.MagicResist, 85.0, 100.0);
+			this.SetSkill(SkillName.Poisoning, 90.0, 110.0); // 상대를 중독시키는 능력
 
-            this.SetSkill(SkillName.Poisoning, 60.1, 80.0);
-            this.SetSkill(SkillName.MagicResist, 60.1, 75.0);
-            this.SetSkill(SkillName.Tactics, 80.1, 100.0);
-            this.SetSkill(SkillName.Wrestling, 80.1, 90.0);
-
-            this.Fame = 4000;
-            this.Karma = -4000;
-
-            this.VirtualArmor = 30;
+			this.Tamable = false;
+			this.VirtualArmor = 9;
+			this.Fame = 8500;
+			this.Karma = -8500;
 
             if (Core.ML && Utility.RandomDouble() < .33)
                 this.PackItem(Engines.Plants.Seed.RandomPeculiarSeed(4));

@@ -28,30 +28,15 @@ namespace Server.SkillHandlers
             return TimeSpan.FromSeconds(1.0);
         }
 
-        private class InternalTarget : Target
+		private class InternalTarget : Target
         {
             private static void SendGump(Mobile from, BaseCreature c)
             {
-                if (PetTrainingHelper.Enabled && from is PlayerMobile)
-                {
-                    Timer.DelayCall(TimeSpan.FromSeconds(1), () =>
-                    {
-                        BaseGump.SendGump(new NewAnimalLoreGump((PlayerMobile)from, c));
-                    });
-                }
-                else
+                if (from is PlayerMobile)
                 {
                     from.CloseGump(typeof(AnimalLoreGump));
                     from.SendGump(new AnimalLoreGump(c));
                 }
-            }
-
-            private static void Check(Mobile from, BaseCreature c, double min)
-            {
-                if (from.CheckTargetSkill(SkillName.AnimalLore, c, min, 120.0))
-                    SendGump(from, c);
-                else
-                    from.SendLocalizedMessage(500334); // You can't think of anything you know offhand.
             }
 
             public InternalTarget() : base(8, false, TargetFlags.None) { }
@@ -60,30 +45,48 @@ namespace Server.SkillHandlers
             {
                 if (!from.Alive)
                 {
-                    from.SendLocalizedMessage(500331);
+                    from.SendLocalizedMessage(500331); // You are dead, so you cannot do that.
+                    return;
                 }
-                else if (targeted is BaseCreature)
+
+                if (targeted is BaseCreature)
                 {
                     BaseCreature c = (BaseCreature)targeted;
-                    
-                    // 자신의 펫이거나 길들여진 동물인 경우 처리 (기존 로직 유지)
-                    if (( c.Controlled && c.ControlMaster == from) || from.Skills[SkillName.AnimalLore].Value >= c.MinTameSkill )
+
+                    // 1. 보스 등급 체크 (Grade 8 이상 차단)
+                    if (c.Grade >= 8)
                     {
-                        SendGump(from, c);
+                        from.SendLocalizedMessage(503407); //이 생물은 너무 강력해서 파악할 수 없습니다!
+                        return;
                     }
-                    else
+
+                    // 2. 명성에 따른 스킬 체크 (스킬 0.1당 명성 15 -> 명성 / 150)
+                    if (from.Skills[SkillName.AnimalLore].Value < c.Fame / 150.0)
                     {
-                        from.SendLocalizedMessage(1049674); // At your skill level, you can only lore tamed creatures.
+                        from.SendLocalizedMessage(503408); //아직 이 동물을 파악할 능력이 안됩니다.
+                        return;
                     }
+
+                    // 3. 테이밍 가능 생물인 경우 요구 슬롯 체크 (스킬 50당 1슬롯)
+                    if (c.Tamable)
+                    {
+                        if (c.ControlSlots > (int)(from.Skills[SkillName.AnimalLore].Value / 50.0))
+                        {
+                            from.SendLocalizedMessage(503409); //이 동물의 추종 능력은 내 동물지식을 넘어섰습니다.
+                            return;
+                        }
+                    }
+
+                    // 모든 조건을 통과했으므로 즉시 정보창 출력
+                    SendGump(from, c);
                 }
                 else
                 {
                     from.SendLocalizedMessage(500329); // That's not an animal!
                 }
             }
-        }
-    }
-
+		}
+	}
     public class AnimalLoreGump : Gump
     {
         #region Format Methods
@@ -172,7 +175,36 @@ namespace Server.SkillHandlers
                 AddImage(128, y + 2, 2086);
                 AddHtmlLocalized(147, y, 160, 18, 1049594, 200, false, false); 
                 y += 18;
-                AddHtmlLocalized(153, y, 160, 18, (!c.Controlled || c.Loyalty == 0) ? 1061643 : 1049595 + (c.Loyalty / 10), LabelColor, false, false);
+                //AddHtmlLocalized(153, y, 160, 18, (!c.Controlled || c.Loyalty == 0) ? 1061643 : 1049595 + (c.Loyalty / 10), LabelColor, false, false);
+				// [Gump 내 로열티 표시부]
+				int loyaltyLoc;
+
+				// 1. 야생 상태 체크: 길들여지지 않았거나, 주인이 없거나, 로열티가 음수인 경우
+				if (!c.Controlled || c.ControlMaster == null || c.Loyalty < 0) 
+				{
+					loyaltyLoc = 503409; // 야생 상태
+				}
+				else 
+				{
+					// 2. 정상 범위 체크 (불안 ~ 완벽)
+					int limit = (int)c.ControlMaster.Skills[SkillName.AnimalLore].Value * 5;
+					
+					// 분모가 0이 되는 것을 방지하며 비율 계산 (스킬 0이면 per는 0.0이 됨)
+					double per = (limit > 0) ? (double)c.Loyalty / limit : 0.0;
+
+					// 기획된 규칙성에 따른 Cliloc 할당
+					loyaltyLoc = per >= 1.0  ? 503417 : // 완벽 상태
+								 per >= 0.8  ? 503416 : // 신뢰 상태
+								 per >= 0.65 ? 503415 : // 친밀 상태
+								 per >= 0.5  ? 503414 : // 우호 상태
+								 per >= 0.35 ? 503413 : // 안정 상태
+								 per >= 0.2  ? 503412 : // 순응 상태
+								 per >= 0.1  ? 503411 : // 경계 상태
+											   503410;   // 불안 상태
+				}
+
+				AddHtmlLocalized(153, y, 160, 18, loyaltyLoc, LabelColor, false, false);				
+				
             } else {
                 AddImage(128, 278, 2086);
                 AddHtmlLocalized(147, 276, 160, 18, 3001016, 200, false, false);

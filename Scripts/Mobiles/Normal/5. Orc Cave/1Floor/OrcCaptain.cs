@@ -15,34 +15,41 @@ namespace Server.Mobiles
             this.Body = 7;
             this.BaseSoundID = 0x45A;
 
-            this.SetStr(2311, 3345);
-            this.SetDex(1281, 2305);
-            this.SetInt(1260, 1300);
+            /* Orc Captain - Fame 4,500 / Karma -4,500 */
+			/* [HP Calculation]
+			   - Target HP: ~12,000
+			   - Fame Bonus (4,500): ~9,843
+			   - SetHits Required: 2,157 (Target - Bonus)
+			*/
+			this.SetStr(350, 500);       
+			this.SetDex(150, 200);       
+			this.SetInt(100, 150);       
 
-            this.SetHits(3967, 5177);
-			this.SetStam(3000, 4000);
-			this.SetMana(1000, 2000);
-			
-			SetAttackSpeed( 10.0 );
+			// [Hits] 최종 약 11,000 ~ 13,000 타겟
+			this.SetHits(1150, 3150); 
+			this.SetStam(150, 200);      
+			this.SetMana(100, 150);      
 
-            this.SetDamage(290, 451);
+			this.SetAttackSpeed(2.2);    // 공속 (상급 전사)
+			this.SetDamage(20, 35);      // 데미지
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 50, 65);
-            this.SetResistance(ResistanceType.Fire, 40, 60);
-            this.SetResistance(ResistanceType.Cold, 25, 45);
-            this.SetResistance(ResistanceType.Poison, 25, 30);
-            this.SetResistance(ResistanceType.Energy, 25, 30);
+			this.SetResistance(ResistanceType.Physical, 45, 55);
+			this.SetResistance(ResistanceType.Fire, 25, 35);
+			this.SetResistance(ResistanceType.Cold, 25, 35);
+			this.SetResistance(ResistanceType.Poison, 25, 35);
+			this.SetResistance(ResistanceType.Energy, 25, 35);
 
-            this.SetSkill(SkillName.MagicResist, 170.1, 175.0);
-            this.SetSkill(SkillName.Swords, 180.1, 185.0);
-            this.SetSkill(SkillName.Tactics, 175.1, 180.0);
+			this.SetSkill(SkillName.Wrestling, 95.0, 110.0);
+			this.SetSkill(SkillName.Tactics, 95.0, 110.0);
+			this.SetSkill(SkillName.MagicResist, 80.0, 95.0);
 
-            this.Fame = 12500;
-            this.Karma = -12500;
+			this.VirtualArmor = 10;      
+			this.Tamable = false;
 
-            this.VirtualArmor = 34;
+			this.Fame = 4500;            
+			this.Karma = -4500;
         }
 
         public OrcCaptain(Serial serial)

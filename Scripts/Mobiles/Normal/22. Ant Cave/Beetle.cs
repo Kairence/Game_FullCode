@@ -41,33 +41,49 @@ namespace Server.Mobiles
         public Beetle(string name)
             : base(name, 0x317, 0x3EBC, AIType.AI_Melee, FightMode.Closest, 10, 1, 0.25, 0.5) //791, 16060
         {
-            SetStr(300);
-            SetDex(100);
-            SetInt(500);
+			/* [Beetle - Fame 4,000 / General / Weight 1.14]
+			   - 스킬 200 마스터 서버용 '중하급' 밸런스 적용
+			   - 가상 방어력(VirtualArmor): (4,000/1000) + 2 = 6 (컨셉 보정 +2)
+			   - 저항 밸런스: 최대 75 상한 엄격 준수
+			   -------------------------------------------------- */
 
-            SetHits(200);
+			// [Attributes] 명성 4,000 보너스 + 가중치 1.14 반영
+			this.SetStr(40, 55); 
+			this.SetHits(1000, 1150); 
+			this.SetDex(8, 12);
+			this.SetInt(8, 12);
 
-            SetDamage(7, 20);
+			// [Combat Options]
+			this.SetDamage(12, 18);
+			this.SetAttackSpeed(2.0);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Damage Types] 100% 물리 공격
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 30, 40);
-            SetResistance(ResistanceType.Fire, 20, 30);
-            SetResistance(ResistanceType.Cold, 20, 30);
-            SetResistance(ResistanceType.Poison, 20, 30);
-            SetResistance(ResistanceType.Energy, 20, 30);
+			// [Resistances] 총합 약 190 (Max 75 준수)
+			this.SetResistance(ResistanceType.Physical, 55, 65);
+			this.SetResistance(ResistanceType.Fire, 20, 30);
+			this.SetResistance(ResistanceType.Cold, 30, 40);
+			this.SetResistance(ResistanceType.Poison, 40, 50);
+			this.SetResistance(ResistanceType.Energy, 25, 35);
 
-            SetSkill(SkillName.MagicResist, 80.0);
-            SetSkill(SkillName.Tactics, 100.0);
-            SetSkill(SkillName.Wrestling, 100.0);
+			// [Skills] ★ 스킬 200 서버 기준 - 중급자 진입용 (재설계)
+			// 유저 스킬 50 ~ 70 구간 수련 및 테이밍 타겟
+			this.SetSkill(SkillName.Wrestling, 45.0, 55.0); 
+			this.SetSkill(SkillName.Tactics, 45.0, 55.0);
+			this.SetSkill(SkillName.Anatomy, 40.0, 50.0);
+			this.SetSkill(SkillName.MagicResist, 35.0, 45.0);
 
-            Fame = 4000;
-            Karma = -4000;
+			// [Taming Code] 스킬 200 서버용 테이밍 난이도
+			this.Tamable = true;
+			this.ControlSlots = 1;
+			this.MinTameSkill = 85.0; // 서버 특성상 테이밍은 숙련 필요
 
-            Tamable = true;
-            ControlSlots = 5;
-            MinTameSkill = 29.1;
+			// [Misc] 가상 방어력(Virtual Armor): (4,000/1000) + 2 = 6
+			this.VirtualArmor = 6;
 
+			this.Fame = 4000;
+			this.Karma = -4000;
             Container pack = Backpack;
 
             if (pack != null)

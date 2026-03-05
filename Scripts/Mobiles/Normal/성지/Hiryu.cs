@@ -13,35 +13,43 @@ namespace Server.Mobiles
         {
             Hue = GetHue();
 
-            SetStr(1201, 1410);
-            SetDex(171, 270);
-            SetInt(301, 325);
+			/* [Hiryu - Google Keep Formula: Balanced Resistance]
+			   - 명성: 12,000 / 카르마: -12,000
+			   - 저항: 유저의 대미지 체감을 고려하여 과도한 뎀감 억제
+			   -------------------------------------------------- */
 
-            SetHits(901, 1100);
-            SetMana(60);
+			// [Attributes] 가중치 1.25 적용
+			this.SetStr(550, 650); 
+			this.SetHits(9000, 11000); // 맷집은 체력으로 승부 (저항 대신)
+			this.SetDex(130, 170); 
+			this.SetInt(150, 250);
 
-            SetDamage(20, 30);
+			// [Combat Options] 
+			this.SetDamage(45, 75); 
+			this.SetAttackSpeed(2.2);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] ★ 형님 말씀대로 저항 하향 조정 (사냥하는 맛 강조)
+			this.SetResistance(ResistanceType.Physical, 45, 60); // 뎀감 50% 내외 유지
+			this.SetResistance(ResistanceType.Fire, 15, 25);      // 화염엔 살살 녹음
+			this.SetResistance(ResistanceType.Cold, 35, 45);    
+			this.SetResistance(ResistanceType.Poison, 35, 45); 
+			this.SetResistance(ResistanceType.Energy, 40, 55);   
 
-            SetResistance(ResistanceType.Physical, 55, 70);
-            SetResistance(ResistanceType.Fire, 70, 90);
-            SetResistance(ResistanceType.Cold, 15, 25);
-            SetResistance(ResistanceType.Poison, 40, 50);
-            SetResistance(ResistanceType.Energy, 40, 50);
+			// [Skills]
+			this.SetSkill(SkillName.Wrestling, 115.0, 130.0); 
+			this.SetSkill(SkillName.Tactics, 115.0, 130.0);
+			this.SetSkill(SkillName.Anatomy, 115.0, 130.0);
+			this.SetSkill(SkillName.MagicResist, 100.0, 115.0);
 
-            SetSkill(SkillName.Anatomy, 75.1, 80.0);
-            SetSkill(SkillName.MagicResist, 85.1, 100.0);
-            SetSkill(SkillName.Tactics, 100.1, 110.0);
-            SetSkill(SkillName.Wrestling, 100.1, 120.0);
+			// [Misc]
+			this.Tamable = true; 
+			this.ControlSlots = 3; 
+			this.MinTameSkill = 155.1; 
+			this.VirtualArmor = 15;
 
-            Fame = 18000;
-            Karma = -18000;
-
-            Tamable = true;
-            ControlSlots = 19;
-            MinTameSkill = 98.7;
-
+			this.Fame = 12000;
+			this.Karma = -12000;
             if (Utility.RandomDouble() < .33)
                 PackItem(Engines.Plants.Seed.RandomBonsaiSeed());
 

@@ -27,38 +27,46 @@ namespace Server.Mobiles
             else if (chance < 500)
                 Hue = Utility.RandomList(0x97A, 0x978, 0x901, 0x8AC, 0x5A7, 0x527);
 
-            SetStr(1200, 1225);
-            SetDex(150, 170);
-            SetInt(250, 285);
+			/* [Cu Sidhe - Normal - Fame 20,000 / Karma +20,000 / Weight 1.25]
+			   - 정글 던전의 성스러운 수호견 / 일반 몬스터 공식 (상급 펫)
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 25 (기본 20 + 보정 5)
+			   - 테이밍 가능: 4슬롯 (최상급 전투 펫)
+			   -------------------------------------------------- */
 
-            SetHits(1010, 1275);
+			// [Attributes] 역산된 Set 값 정밀 적용
+			this.SetStr(610, 640); 
+			this.SetHits(13700, 14000); 
+			this.SetDex(120, 130);
+			this.SetInt(120, 130);
 
-            SetDamage(21, 28);
+			// [Combat Options] 물리 40% / 냉기 60% (성스러운 냉기 타격)
+			this.SetDamage(50, 80);
+			this.SetAttackSpeed(2.0); // 거구임에도 민첩한 공격
+			this.SetDamageType(ResistanceType.Physical, 40);
+			this.SetDamageType(ResistanceType.Cold, 60);
 
-            SetDamageType(ResistanceType.Physical, 0);
-            SetDamageType(ResistanceType.Cold, 50);
-            SetDamageType(ResistanceType.Energy, 50);
+			// [Resistances] 최고 저항 75 이하 준수 / 에너지 및 화염 약점 설정
+			this.SetResistance(ResistanceType.Physical, 60, 75); 
+			this.SetResistance(ResistanceType.Fire, 30, 45);      // ★ 확실한 약점 (열기에 취약)
+			this.SetResistance(ResistanceType.Cold, 70, 75);    // 냉기 내성 특화
+			this.SetResistance(ResistanceType.Poison, 50, 65); 
+			this.SetResistance(ResistanceType.Energy, 40, 50);   
 
-            SetResistance(ResistanceType.Physical, 50, 65);
-            SetResistance(ResistanceType.Fire, 25, 45);
-            SetResistance(ResistanceType.Cold, 70, 85);
-            SetResistance(ResistanceType.Poison, 30, 50);
-            SetResistance(ResistanceType.Energy, 70, 85);
+			// [Skills] 기본 115~125에 역산 보너스(20.8) 가산
+			this.SetSkill(SkillName.Wrestling, 135.0, 145.0); 
+			this.SetSkill(SkillName.Tactics, 135.0, 145.0);
+			this.SetSkill(SkillName.Anatomy, 135.0, 145.0);
+			this.SetSkill(SkillName.MagicResist, 120.0, 135.0);
+			this.SetSkill(SkillName.Healing, 120.0, 135.0);    // 자가 및 주인 치유 (붕대)
 
-            SetSkill(SkillName.Wrestling, 90.1, 96.8);
-            SetSkill(SkillName.Tactics, 90.3, 99.3);
-            SetSkill(SkillName.MagicResist, 75.3, 90.0);
-            SetSkill(SkillName.Anatomy, 65.5, 69.4);
-            SetSkill(SkillName.Healing, 72.2, 98.9);
-
-            Fame = 5000;  //Guessing here
-            Karma = 5000;  //Guessing here
-
-            Tamable = true;
-            ControlSlots = 21;
-            MinTameSkill = 101.1;
-
-            PackGold(500, 800);
+			// [Misc]
+			this.Tamable = true; 
+			this.ControlSlots = 4; // 200 숙련도 시대의 강력한 4슬롯 펫
+			this.MinTameSkill = 150.0; // 숙련된 테이머만 가능
+			this.VirtualArmor = 25;
+			this.Fame = 20000;
+			this.Karma = 20000; // 영물 (선 성향)
 
             SetWeaponAbility(WeaponAbility.BleedAttack);
         }

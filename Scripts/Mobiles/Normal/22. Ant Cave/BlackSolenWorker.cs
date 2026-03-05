@@ -15,30 +15,44 @@ namespace Server.Mobiles
             this.BaseSoundID = 959;
             this.Hue = 0x453;
 
-            this.SetStr(96, 120);
-            this.SetDex(81, 105);
-            this.SetInt(36, 60);
+            /* [Black Solen Worker - Fame 3,000 / General / Weight 1.12]
+			   - 스킬 200 마스터 서버용 '중하급' 밸런스 적용
+			   - 가상 방어력(VirtualArmor): (3,000/1000) + 0 = 3
+			   - 저항 밸런스: 최대 75 상한 엄격 준수
+			   -------------------------------------------------- */
 
-            this.SetHits(58, 72);
+			// [Attributes] 명성 3,000 보너스 + 가중치 1.12 반영
+			this.SetStr(25, 35); 
+			this.SetHits(600, 750); 
+			this.SetDex(5, 10);
+			this.SetInt(5, 10);
 
-            this.SetDamage(5, 7);
+			// [Combat Options]
+			this.SetDamage(10, 20);
+			this.SetAttackSpeed(2.0);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			// [Damage Types] 100% 물리 공격 (노동용 턱)
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 25, 30);
-            this.SetResistance(ResistanceType.Fire, 20, 30);
-            this.SetResistance(ResistanceType.Cold, 10, 20);
-            this.SetResistance(ResistanceType.Poison, 10, 20);
-            this.SetResistance(ResistanceType.Energy, 20, 30);
+			// [Resistances] 총합 약 160 (Max 75 준수)
+			this.SetResistance(ResistanceType.Physical, 35, 45);
+			this.SetResistance(ResistanceType.Fire, 15, 25);
+			this.SetResistance(ResistanceType.Cold, 20, 30);
+			this.SetResistance(ResistanceType.Poison, 40, 50);
+			this.SetResistance(ResistanceType.Energy, 15, 25);
 
-            this.SetSkill(SkillName.MagicResist, 60.0);
-            this.SetSkill(SkillName.Tactics, 65.0);
-            this.SetSkill(SkillName.Wrestling, 60.0);
+			// [Skills] ★ 스킬 200 서버 기준 - 초중반 수련용 (재설계)
+			// 유저 스킬 40~60 구간에서 전투하기 적합한 수치
+			this.SetSkill(SkillName.Wrestling, 35.0, 45.0); 
+			this.SetSkill(SkillName.Tactics, 35.0, 45.0);
+			this.SetSkill(SkillName.Anatomy, 30.0, 40.0);
+			this.SetSkill(SkillName.MagicResist, 25.0, 35.0);
 
-            this.Fame = 1500;
-            this.Karma = -1500;
+			// [Misc] 가상 방어력(Virtual Armor): (3,000/1000) + 0 = 3
+			this.VirtualArmor = 3;
 
-            this.VirtualArmor = 28;
+			this.Fame = 3000;
+			this.Karma = -3000;
 
             this.PackGold(Utility.Random(100, 180));
 

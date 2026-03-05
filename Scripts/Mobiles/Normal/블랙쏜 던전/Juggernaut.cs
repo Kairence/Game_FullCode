@@ -14,33 +14,47 @@ namespace Server.Mobiles
             Name = "a blackthorn juggernaut";
             Body = 768;
 
-            SetStr(301, 400);
-            SetDex(51, 70);
-            SetInt(51, 100);
+			/* [Juggernaut - Fame 15,000 / Normal / Weight 1.30]
+			   - 파괴 불가능한 거대 중장갑 병기 (일반 정예)
+			   - 기계/구조물: 테이밍 불가 (200 숙련도 고려)
+			   - 특징: 압도적인 물리 저항, 느린 공속/이속, 강력한 한방
+			   -------------------------------------------------- */
+			// Boss = true 삭제
 
-            SetHits(181, 240);
+			// [Attributes] (기본 보너스 * 1배 * 1.30) - 기본 보너스
+			// Str: 보너칭 약 1,400 -> 최종 Set 약 450-550
+			this.SetStr(450, 550); 
 
-            SetDamage(12, 19);
+			// Hits: 보너스 약 37,500 -> 최종 Set 약 11,000-12,500
+			this.SetHits(11000, 12500); 
 
-            SetDamageType(ResistanceType.Physical, 50);
-            SetDamageType(ResistanceType.Fire, 25);
-            SetDamageType(ResistanceType.Energy, 25);
+			this.SetDex(50, 70);   // 중장갑으로 인해 매우 느림
+			this.SetInt(10, 30);   // 지능 낮음
 
-            SetResistance(ResistanceType.Physical, 65, 75);
-            SetResistance(ResistanceType.Fire, 35, 45);
-            SetResistance(ResistanceType.Cold, 35, 45);
-            SetResistance(ResistanceType.Poison, 15, 25);
-            SetResistance(ResistanceType.Energy, 10, 20);
+			// [Combat Options] 묵직한 물리 타격
+			this.SetDamage(55, 85);
+			this.SetAttackSpeed(3.0); // 매우 느린 공격 속도
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetSkill(SkillName.Anatomy, 90.1, 100.0);
-            SetSkill(SkillName.MagicResist, 140.1, 150.0);
-            SetSkill(SkillName.Tactics, 90.1, 100.0);
-            SetSkill(SkillName.Wrestling, 90.1, 100.0);
+			// [Resistances] 금속 장갑 컨셉 (물리 극대화, 에너지/부식 취약)
+			this.SetResistance(ResistanceType.Physical, 70, 75); // ★ 물리 저항 극대화 (캡 준수)
+			this.SetResistance(ResistanceType.Fire, 40, 50);      
+			this.SetResistance(ResistanceType.Cold, 40, 50);    
+			this.SetResistance(ResistanceType.Poison, 60, 70);   // 금속이라 독에 강함
+			this.SetResistance(ResistanceType.Energy, 20, 30);   // ★ 기계 장치 특성상 전기에 매우 취약
 
-            Fame = 12000;
-            Karma = -12000;
+			// [Skills] 파괴적인 근접 기술
+			this.SetSkill(SkillName.Wrestling, 110.0, 125.0); 
+			this.SetSkill(SkillName.Tactics, 120.0, 130.0);
+			this.SetSkill(SkillName.Anatomy, 110.0, 125.0);
+			this.SetSkill(SkillName.MagicResist, 100.0, 115.0);
 
-            VirtualArmor = 70;
+			// [Misc]
+			this.Tamable = false; 
+			this.VirtualArmor = 20;
+
+			this.Fame = 15000;
+			this.Karma = -15000;
 
             if (0.1 > Utility.RandomDouble())
                 PackItem(new PowerCrystal());

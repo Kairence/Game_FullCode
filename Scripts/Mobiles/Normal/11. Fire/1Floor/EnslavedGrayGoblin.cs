@@ -14,34 +14,34 @@ namespace Server.Mobiles
             Body = 334;
             BaseSoundID = 0x600;
 
-            SetStr(321, 321);
-            SetDex(64, 64);
-            SetInt(147, 147);
+            /* Enslaved Gray Goblin - Fame 800 / Karma -800 */
+			/* [HP Calculation]
+			   - Target HP: ~2,200
+			   - Fame Bonus (800): ~1,250
+			   - SetHits Required: 950 (Target - Bonus)
+			*/
+			this.SetStr(80, 120);       
+			this.SetDex(100, 150);       
 
-            SetHits(279, 379);
-            SetStam(64, 64);
-            SetMana(147, 147);
+			// [Hits] 최종 약 1,800 ~ 2,500 타겟
+			this.SetHits(550, 1250); 
+			this.SetStam(100, 150);      
 
-			SetAttackSpeed( 5.0 );
-            SetDamage(15, 27);
+			this.SetAttackSpeed(2.2);    
+			this.SetDamage(6, 10);       
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetResistance(ResistanceType.Physical, 15, 25);
+			this.SetResistance(ResistanceType.Fire, 40, 50);     
+			this.SetResistance(ResistanceType.Cold, -10, 5);     
 
-            SetResistance(ResistanceType.Physical, 50, 50);
-            SetResistance(ResistanceType.Fire, 38, 38);
-            SetResistance(ResistanceType.Cold, 32, 32);
-            SetResistance(ResistanceType.Poison, 12, 12);
-            SetResistance(ResistanceType.Energy, 11, 11);
+			this.SetSkill(SkillName.Fencing, 60.0, 75.0);
+			this.SetSkill(SkillName.Tactics, 60.0, 75.0);
 
-            SetSkill(SkillName.MagicResist, 121.6, 121.6);
-            SetSkill(SkillName.Tactics, 90.0, 90.0);
-            SetSkill(SkillName.Anatomy, 82.0, 82.0);
-            SetSkill(SkillName.Wrestling, 99.2, 99.2);
+			this.VirtualArmor = 2;       
+			this.Tamable = false;
 
-            Fame = 1500;
-            Karma = -1500;
-
-            VirtualArmor = 28;
+			this.Fame = 800;           
+			this.Karma = -800;
         }
 
         public EnslavedGrayGoblin(Serial serial)

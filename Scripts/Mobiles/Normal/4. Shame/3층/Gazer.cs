@@ -14,35 +14,42 @@ namespace Server.Mobiles
             this.Body = 22;
             this.BaseSoundID = 377;
 
-            this.SetStr(696, 1025);
-            this.SetDex(186, 205);
-            this.SetInt(1341, 1365);
+            /* Gazer - Fame 5,000 / Karma -5,000 */
+			/* [HP Calculation]
+			   - Target HP: ~13,000
+			   - Fame Bonus (5,000): ~11,200
+			   - SetHits Required: 1,800 (Target - Bonus)
+			*/
+			this.SetStr(100, 150);       
+			this.SetDex(150, 250);       
+			this.SetInt(400, 550);       
 
-            this.SetHits(1626, 1733);
-			SetStam(300, 400);
-			SetMana(1000, 1200);
+			// [Hits] 최종 약 12,000 ~ 14,000 타겟
+			this.SetHits(800, 2800); 
+			this.SetStam(150, 250);      
+			this.SetMana(400, 550);      
 
-			SetAttackSpeed( 50.0 );
-			
-            this.SetDamage(40, 60);
+			this.SetAttackSpeed(2.8);    
+			this.SetDamage(10, 15);      
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Energy, 100);
 
-            this.SetResistance(ResistanceType.Physical, 65, 70);
-            this.SetResistance(ResistanceType.Fire, 40, 50);
-            this.SetResistance(ResistanceType.Cold, 20, 30);
-            this.SetResistance(ResistanceType.Poison, 10, 20);
-            this.SetResistance(ResistanceType.Energy, 20, 30);
+			this.SetResistance(ResistanceType.Physical, 30, 40);
+			this.SetResistance(ResistanceType.Fire, 30, 40);
+			this.SetResistance(ResistanceType.Cold, 30, 40);
+			this.SetResistance(ResistanceType.Poison, 30, 40);
+			this.SetResistance(ResistanceType.Energy, 65, 75); // Max 75%
 
-            SetSkill(SkillName.EvalInt, 175.1, 180.0);
-            SetSkill(SkillName.Magery, 170.1, 175.0);
-            SetSkill(SkillName.MagicResist, 175.1, 180.0);
-            this.SetSkill(SkillName.Wrestling, 170.0, 175.0);
+			this.SetSkill(SkillName.Magery, 90.0, 100.0);
+			this.SetSkill(SkillName.EvalInt, 90.0, 100.0);
+			this.SetSkill(SkillName.MagicResist, 80.0, 95.0);
+			this.SetSkill(SkillName.Wrestling, 80.0, 90.0);
 
-            this.Fame = 6500;
-            this.Karma = -6500;
+			this.VirtualArmor = 10;      
+			this.Tamable = false;
 
-            this.VirtualArmor = 120;
+			this.Fame = 5000;           
+			this.Karma = -5000;
 
         }
 

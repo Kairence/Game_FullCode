@@ -19,31 +19,45 @@ namespace Server.Mobiles
             this.Body = 783;
             this.BaseSoundID = 959;
 
-            this.SetStr(296, 320);
-            this.SetDex(121, 145);
-            this.SetInt(76, 100);
+			/* [Red Solen Queen - Fame 15,000 / General / Weight 1.30]
+			   - 스킬 200 마스터 서버용 '상급' 밸런스 적용
+			   - 가상 방어력(VirtualArmor): (15,000/1000) - 5 = 10 (공격 특화 경량화)
+			   - 흑개미 여왕보다 높은 데미지와 화염 속성 폭발력
+			   -------------------------------------------------- */
 
-            this.SetHits(151, 162);
+			// [Attributes] 명성 15,000 보너스 + 가중치 1.30 반영
+			this.SetStr(450, 550); 
+			this.SetHits(10000, 12500); 
+			this.SetDex(90, 120);
+			this.SetInt(90, 120);
 
-            this.SetDamage(10, 15);
+			// [Combat Options]
+			this.SetDamage(50, 75); // 흑개미 여왕(40, 65)보다 치명적인 공격력
+			this.SetAttackSpeed(2.5);
 
-            this.SetDamageType(ResistanceType.Physical, 70);
-            this.SetDamageType(ResistanceType.Poison, 30);
+			// [Damage Types] 50% 물리 + 50% 화염 (붉은 여왕의 분노)
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Fire, 50);
 
-            this.SetResistance(ResistanceType.Physical, 30, 40);
-            this.SetResistance(ResistanceType.Fire, 30, 35);
-            this.SetResistance(ResistanceType.Cold, 25, 35);
-            this.SetResistance(ResistanceType.Poison, 35, 40);
-            this.SetResistance(ResistanceType.Energy, 25, 30);
+			// [Resistances] 총합 약 245 (Max 75 준수)
+			this.SetResistance(ResistanceType.Physical, 50, 60);
+			this.SetResistance(ResistanceType.Fire, 75);         // 화염 완전 내성 (Max 75)
+			this.SetResistance(ResistanceType.Cold, 15, 25);     // 치명적 약점: 냉기
+			this.SetResistance(ResistanceType.Poison, 45, 55);
+			this.SetResistance(ResistanceType.Energy, 40, 50);
 
-            this.SetSkill(SkillName.MagicResist, 70.0);
-            this.SetSkill(SkillName.Tactics, 90.0);
-            this.SetSkill(SkillName.Wrestling, 90.0);
+			// [Skills] ★ 스킬 200 서버 기준 - 상급자용 핵심 타겟 (재설계)
+			// 유저 스킬 130 ~ 170 구간에서 도전하기 적절한 수치
+			this.SetSkill(SkillName.Wrestling, 125.0, 140.0); 
+			this.SetSkill(SkillName.Tactics, 125.0, 140.0);
+			this.SetSkill(SkillName.Anatomy, 130.0, 145.0); // 공격 효율 극대화
+			this.SetSkill(SkillName.MagicResist, 115.0, 130.0);
 
-            this.Fame = 4500;
-            this.Karma = -4500;
+			// [Misc] 가상 방어력(Virtual Armor): (15,000/1000) - 5 = 10
+			this.VirtualArmor = 10;
 
-            this.VirtualArmor = 45;
+			this.Fame = 15000;
+			this.Karma = -15000;
 
             SolenHelper.PackPicnicBasket(this);
 

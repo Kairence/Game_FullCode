@@ -17,33 +17,45 @@ namespace Server.Mobiles
             Body = 196;
             BaseSoundID = 655;
 
-            SetStr(201, 275);
-            SetDex(101, 155);
-            SetInt(101, 105);
+			/* [Kaze Kemono - Normal - Fame 16,000 / Weight 1.25]
+			   - 정글 던전의 바람 정령 / 일반 몬스터 공식
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 10 (명성/1000 보정 -6)
+			   -------------------------------------------------- */
 
-            SetHits(251, 330);
+			// [Attributes] 역산된 Set 값 정밀 적용
+			this.SetStr(450, 470); 
+			this.SetHits(10000, 10400); 
+			this.SetDex(220, 250); // 바람처럼 빠른 민첩성
+			this.SetInt(100, 120);
 
-            SetDamage(15, 20);
+			// [Combat Options] 냉기 50% / 에너지 50% (날카로운 돌풍 타격)
+			this.SetDamage(35, 60);
+			this.SetAttackSpeed(1.6); // 몰아치는 바람의 연타
+			this.SetDamageType(ResistanceType.Cold, 50);
+			this.SetDamageType(ResistanceType.Energy, 50);
 
-            SetDamageType(ResistanceType.Physical, 70);
-            SetDamageType(ResistanceType.Fire, 10);
-            SetDamageType(ResistanceType.Cold, 10);
-            SetDamageType(ResistanceType.Poison, 10);
+			// [Resistances] 최고 저항 75 이하 준수 / 물리 약점 설정
+			this.SetResistance(ResistanceType.Physical, 25, 35); // ★ 확실한 약점 (실체가 약함)
+			this.SetResistance(ResistanceType.Fire, 40, 50);      
+			this.SetResistance(ResistanceType.Cold, 65, 75);    
+			this.SetResistance(ResistanceType.Poison, 50, 60); 
+			this.SetResistance(ResistanceType.Energy, 70, 75);  // 에너지 내성 특화
 
-            SetResistance(ResistanceType.Physical, 50, 70);
-            SetResistance(ResistanceType.Fire, 30, 60);
-            SetResistance(ResistanceType.Cold, 30, 60);
-            SetResistance(ResistanceType.Poison, 50, 70);
-            SetResistance(ResistanceType.Energy, 60, 80);
+			// [Skills] 기본 110~120에 역산 보너스(15.3) 가산
+			this.SetSkill(SkillName.Wrestling, 125.0, 135.0); 
+			this.SetSkill(SkillName.Tactics, 125.0, 135.0);
+			this.SetSkill(SkillName.Magery, 115.0, 130.0);       // 바람의 마법
+			this.SetSkill(SkillName.EvalInt, 115.0, 130.0);
+			this.SetSkill(SkillName.MagicResist, 120.0, 135.0);
 
-            SetSkill(SkillName.MagicResist, 110.1, 125.0);
-            SetSkill(SkillName.Tactics, 55.1, 65.0);
-            SetSkill(SkillName.Wrestling, 85.1, 95.0);
-            SetSkill(SkillName.Anatomy, 25.1, 35.0);
-            SetSkill(SkillName.Magery, 95.1, 105.0);
-
-            Fame = 8000;
-            Karma = -8000;
+			// [Misc]
+			this.Tamable = true; 
+			this.ControlSlots = 3; 
+			this.MinTameSkill = 145.5; // 200 숙련도 시대의 중상급 펫
+			this.VirtualArmor = 10;
+			this.Fame = 16000;
+			this.Karma = -16000;
 
             SetSpecialAbility(SpecialAbility.ConductiveBlast);
             SetSpecialAbility(SpecialAbility.FlurryForce);

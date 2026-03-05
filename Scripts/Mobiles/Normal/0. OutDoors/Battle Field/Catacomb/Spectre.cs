@@ -14,30 +14,31 @@ namespace Server.Mobiles
             this.Body = 26;
             this.BaseSoundID = 0x482;
 
-            this.SetStr(100, 107);
-            this.SetDex(106, 120);
-            this.SetInt(58, 70);
+            this.SetStr(1, 10);      
+			this.SetDex(80, 110);    
+			this.SetInt(42, 92);     
 
-            this.SetHits(220, 225);
-			SetStam(100, 120);
-			this.SetMana(40, 60);
-			
-            this.SetDamage(3, 7);
-			SetAttackSpeed( 10.0 );
-            this.SetDamageType(ResistanceType.Physical, 50);
-            this.SetDamageType(ResistanceType.Cold, 50);
+			this.SetHits(51, 551);   // 최종 Hits 5,000~5,500
+			this.SetStam(80, 110);
 
-            this.SetResistance(ResistanceType.Physical, 25, 30);
-            this.SetResistance(ResistanceType.Cold, 15, 25);
-            this.SetResistance(ResistanceType.Poison, 10, 20);
+			SetAttackSpeed(2.5);
+			SetDamage(18, 25);
 
-            this.SetSkill(SkillName.EvalInt, 1.1, 2.0);
-            this.SetSkill(SkillName.Magery, 1.1, 2.0);
+			this.SetDamageType(ResistanceType.Physical, 0);
+			this.SetDamageType(ResistanceType.Cold, 100);
 
-            this.Fame = 1000;
-            this.Karma = -1000;
+			this.SetResistance(ResistanceType.Physical, 10, 15); 
+			this.SetResistance(ResistanceType.Cold, 15, 20);
+			this.SetResistance(ResistanceType.Poison, 45, 50);
 
-            this.VirtualArmor = 0;
+			// 최종 Skill 60.0~70.0 목표 (70.0 - 6.8 = 63.2)
+			this.SetSkill(SkillName.Wrestling, 53.2, 63.2);
+			this.SetSkill(SkillName.Tactics, 53.2, 63.2);
+
+			this.VirtualArmor = 0;
+
+			this.Fame = 2500;
+			this.Karma = -2500;
         }
 
         public Spectre(Serial serial)

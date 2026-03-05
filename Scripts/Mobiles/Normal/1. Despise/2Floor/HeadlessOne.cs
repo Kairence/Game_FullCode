@@ -14,29 +14,29 @@ namespace Server.Mobiles
             this.Hue = Utility.RandomSkinHue() & 0x7FFF;
             this.BaseSoundID = 0x39D;
 
-            this.SetStr(226, 430);
-            this.SetDex(136, 140);
-            this.SetInt(116, 120);
+            this.SetStr(23, 73);     // 최종 Str 600~650
+			this.SetDex(33, 53);     
+			this.SetInt(1, 5);       
 
-            this.SetHits(180, 190);
-			SetMana(510, 515);
-			SetStam(125, 130);
-			
-            this.SetDamage(5, 10);
-			SetAttackSpeed( 25.0 );
+			this.SetHits(134, 334);  // 최종 Hits 2,000~2,200
+			this.SetStam(33, 53);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			SetAttackSpeed(2.5);
+			SetDamage(8, 14); 
 
-            this.SetResistance(ResistanceType.Physical, 15, 20);
-			
-            this.SetSkill(SkillName.MagicResist, 35.1, 37.5);
-            this.SetSkill(SkillName.Tactics, 35.1, 37.5);
-            this.SetSkill(SkillName.Wrestling, 35.1, 37.5);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.Fame = 500;
-            this.Karma = -500;
+			// 저항: 매우 낮음 (15% 미만)
+			this.SetResistance(ResistanceType.Physical, 10, 15);
+			this.SetResistance(ResistanceType.Poison, 30, 40);
 
-            this.VirtualArmor = 1;
+			// 최종 Skill 45.0 내외 (45.0 - 2.5 = 42.5)
+			this.SetSkill(SkillName.Wrestling, 37.5, 47.5);
+			this.SetSkill(SkillName.Tactics, 37.5, 47.5);
+
+			this.Fame = 1000;
+			this.Karma = -1000;
+
         }
 
         public HeadlessOne(Serial serial)

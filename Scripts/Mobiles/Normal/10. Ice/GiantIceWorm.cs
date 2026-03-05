@@ -20,37 +20,47 @@ namespace Server.Mobiles
 			else
 				this.Hue = 1154;
 			
-            SetStr(216, 445);
-            SetDex(76, 100);
-            SetInt(66, 85);
+            /* Giant Ice Worm - Fame 5,500 / Karma -5,500 */
+			/* [HP Calculation]
+			   - Target HP: ~12,500
+			   - Fame Bonus (5,500): ~12,500
+			   - SetHits Required: 100~500 (보너스만으로도 목표 체력 도달 가능)
+			*/
+			this.SetStr(450, 600);       
+			this.SetDex(100, 150);       
+			this.SetInt(50, 100);        
 
-            SetHits(330, 447);
+			// [Hits] 최종 약 12,000 ~ 13,000 타겟
+			this.SetHits(100, 500); 
+			this.SetStam(100, 150);      
+			this.SetMana(50, 100);       
 
-			SetAttackSpeed( 10.0 );
-            SetDamage(17, 77);
+			this.SetAttackSpeed(2.8);    
+			this.SetDamage(25, 45);      
 
-            SetDamageType(ResistanceType.Physical, 10);
-            SetDamageType(ResistanceType.Cold, 90);
+			this.SetDamageType(ResistanceType.Physical, 60);
+			this.SetDamageType(ResistanceType.Cold, 40);
 
-            SetResistance(ResistanceType.Physical, 30, 35);
-            SetResistance(ResistanceType.Fire, 0);
-            SetResistance(ResistanceType.Cold, 80, 90);
-            SetResistance(ResistanceType.Poison, 15, 25);
-            SetResistance(ResistanceType.Energy, 10, 20);
+			// [Resistance] 냉기 저항 상한 준수, 화염에 취약
+			this.SetResistance(ResistanceType.Physical, 40, 55);
+			this.SetResistance(ResistanceType.Fire, 10, 20);      
+			this.SetResistance(ResistanceType.Cold, 75, 75);    // 냉기 저항 상한 (Max 75%)
+			this.SetResistance(ResistanceType.Poison, 40, 55);
+			this.SetResistance(ResistanceType.Energy, 30, 45);
 
-            SetSkill(SkillName.Poisoning, 75.1, 95.0);
-            SetSkill(SkillName.MagicResist, 45.1, 60.0);
-            SetSkill(SkillName.Tactics, 75.1, 80.0);
-            SetSkill(SkillName.Wrestling, 60.1, 80.0);
+			this.SetSkill(SkillName.Wrestling, 90.0, 105.0);
+			this.SetSkill(SkillName.Tactics, 90.0, 105.0);
+			this.SetSkill(SkillName.MagicResist, 80.0, 95.0);
 
-            Fame = 2000;
-            Karma = -2000;
+			this.VirtualArmor = 10;      // 두꺼운 외피를 가졌으나 타격감을 위해 낮춤
 
-            VirtualArmor = 40;
+			// [Taming Settings]
+			this.Tamable = true;         
+			this.ControlSlots = 2;       // 컨트롤 슬롯: 2
+			this.MinTameSkill = 125.0;   // 상한 200 대비 중급 숙련도 요구
 
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 91.1;
+			this.Fame = 5500;           
+			this.Karma = -5500;
         }
 
         public GiantIceWorm(Serial serial)

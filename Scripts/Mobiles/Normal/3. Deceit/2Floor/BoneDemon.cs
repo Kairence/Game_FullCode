@@ -16,45 +16,53 @@ namespace Server.Mobiles
         public BoneDemon()
             : base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
         {
-            Name = "Boss a bone demon";
+            Name = "a bone demon";
             Body = 308;
             BaseSoundID = 0x48D;
 
-            SetStr(10000, 15000);
-            SetDex(10251, 10375);
-            SetInt(1001, 1020);
-
-            SetHits(183100, 195200);
-			SetStam(175000, 200000);
-			SetMana(1000, 2500);
-			
 			Boss = true;
-			
-            SetDamage(420, 1100);
 
-			SetAttackSpeed( 2.5 );
+            /* [Bone Demon - Fame 20,000 / Boss / Weight 1.26]
+			   - 편차 수정: 체력 5만 이상 룰 적용 (편차 2,000 이내)
+			   - VirtualArmor: (20,000/1000) + 5 = 25
+			   -------------------------------------------------- */
 
-            SetDamageType(ResistanceType.Physical, 50);
-            SetDamageType(ResistanceType.Cold, 50);
+			// 최종 Str 약 15,750 (민맥 편차 축소)
+			this.SetStr(13100, 13400); 
 
-            SetResistance(ResistanceType.Physical, 75);
-            SetResistance(ResistanceType.Fire, 60);
-            SetResistance(ResistanceType.Cold, 90);
-            SetResistance(ResistanceType.Poison, 100);
-            SetResistance(ResistanceType.Energy, 60);
+			// 최종 Hits 약 349,000 (안정적인 탱킹 체력 확보)
+			this.SetHits(292800, 294800); 
 
-            SetSkill(SkillName.Wrestling, 250.0, 320.0);
-            SetSkill(SkillName.Tactics, 275.0, 285.0);
-            SetSkill(SkillName.MagicResist, 270.1, 275.0);
-            SetSkill(SkillName.DetectHidden, 275.0, 285.0);
-            SetSkill(SkillName.Magery, 270.6, 275.5);
-            SetSkill(SkillName.EvalInt, 270.6, 275.5);
-            SetSkill(SkillName.Meditation, 270.0, 275.0);
+			// 최종 Dex/Int 약 3,150
+			this.SetDex(2600, 2700);
+			this.SetInt(2600, 2700);
 
-            Fame = 25500;
-            Karma = -25500;
+			// 최종 Stam/Mana 약 3,320
+			this.SetStam(2750, 2850);
+			this.SetMana(2750, 2850);
 
-            VirtualArmor = 24;
+			// [Combat Options]
+			this.SetDamage(80, 120);
+			this.SetAttackSpeed(2.0);
+
+			// [Resistances] 최고 저항 75 이하 엄격 준수
+			this.SetResistance(ResistanceType.Physical, 60, 70);
+			this.SetResistance(ResistanceType.Fire, 25, 35);
+			this.SetResistance(ResistanceType.Cold, 50, 60);
+			this.SetResistance(ResistanceType.Poison, 70, 75);
+			this.SetResistance(ResistanceType.Energy, 35, 45);
+
+			// [Skills] 최종 210.0 부근 (편차 축소)
+			this.SetSkill(SkillName.Wrestling, 125.0, 130.0);
+			this.SetSkill(SkillName.Tactics, 125.0, 130.0);
+			this.SetSkill(SkillName.Anatomy, 125.0, 130.0);
+			this.SetSkill(SkillName.MagicResist, 130.0, 140.0);
+
+			// 가방 방어력: (20,000/1000) + 5 = 25
+			this.VirtualArmor = 25;
+
+			this.Fame = 20000;
+			this.Karma = -20000;
         }
         public override void OnGaveMeleeAttack(Mobile defender)
         {

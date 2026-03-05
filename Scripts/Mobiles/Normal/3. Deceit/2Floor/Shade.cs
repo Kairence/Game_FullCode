@@ -15,34 +15,27 @@ namespace Server.Mobiles
             this.Hue = 0x4001;
             this.BaseSoundID = 0x482;
 
-            this.SetStr(276, 300);
-            this.SetDex(276, 295);
-            this.SetInt(3060, 3600);
+            /* Shade - Fame 9,500 */
+			this.Fame = 9500;
+			this.Karma = -9500;
 
-            this.SetHits(2846, 2860);
-			this.SetStam(400, 500);
-			this.SetMana(2000, 2300);
-			
-            this.SetDamage(49, 130);
+			this.SetInt(500, 600);    // 최종 Int 약 2,000
+			this.SetHits(2000, 3000);  // 최종 Hits 약 32,000
+			this.SetMana(1000, 1500);
 
-			SetAttackSpeed( 120 );
+			this.SetAttackSpeed(2.0);
+			SetDamage(20, 30);
 
-            this.SetDamageType(ResistanceType.Cold, 100);
+			this.SetSkill(SkillName.Magery, 130.0, 145.0); 
+			this.SetSkill(SkillName.EvalInt, 130.0, 145.0);
+			this.SetSkill(SkillName.Meditation, 150.0);
 
-            this.SetResistance(ResistanceType.Physical, 25, 30);
-            this.SetResistance(ResistanceType.Cold, 15, 25);
-            this.SetResistance(ResistanceType.Poison, 10, 20);
+			this.SetDamageType(ResistanceType.Cold, 50);
+			this.SetDamageType(ResistanceType.Energy, 50);
 
-            this.SetSkill(SkillName.EvalInt, 145.1, 150.0);
-            this.SetSkill(SkillName.Magery, 145.1, 150.0);
-            this.SetSkill(SkillName.MagicResist, 145.1, 150.0);
-            this.SetSkill(SkillName.Tactics, 145.1, 150.0);
-            this.SetSkill(SkillName.Wrestling, 215.1, 226.0);
-
-            this.Fame = 11000;
-            this.Karma = -11000;
-
-            this.VirtualArmor = 22;
+			this.SetResistance(ResistanceType.Physical, 70, 75); // 영체 보정: 물리 저항 매우 높음
+			this.SetResistance(ResistanceType.Energy, 50, 65);
+			this.VirtualArmor = 0; // 살점이 없어 가상 방어력 의미 없음
 
             //this.PackReg(10);
         }

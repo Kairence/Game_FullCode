@@ -13,32 +13,25 @@ namespace Server.Mobiles
             this.Body = 0xD1;
             this.BaseSoundID = 0x99;
 
-            this.SetStr(250, 430);
-            this.SetDex(25, 30);
-            this.SetInt(12, 18);
+			// [역산] 명성 150 보너스 반영
+			this.SetStr(4, 9); // 최종 Str 515~520
+			this.SetDex(10, 20); // 최종 Dex ~170
 
-            SetHits(230, 280);
-            SetStam(25, 30);
-            SetMana(5, 10);
-			
-			SetAttackSpeed(10.0);
+			this.SetHits(50, 70); // 최종 Hits 500~520
+			this.SetStam(8, 18);
+			this.SetMana(0);
 
-            this.SetDamage(4, 6);
+			SetAttackSpeed(3.5);
+			SetDamage(1, 3); 
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetResistance(ResistanceType.Physical, 10, 15);
-            this.SetResistance(ResistanceType.Fire, 5, 10);
-            this.SetResistance(ResistanceType.Poison, 5, 10);
+			this.SetResistance(ResistanceType.Physical, 5, 10);
 
-            this.Fame = 300;
-            this.Karma = 0;
-
-            this.VirtualArmor = 1;
-
-            this.Tamable = true;
-            this.ControlSlots = 1;
-            this.MinTameSkill = 29.1;
+			this.Fame = 150;
+			this.VirtualArmor = 0;
+			this.Tamable = true;
+			this.MinTameSkill = -18.9;
         }
 
         public Goat(Serial serial)

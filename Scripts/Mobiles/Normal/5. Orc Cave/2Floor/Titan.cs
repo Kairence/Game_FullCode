@@ -13,36 +13,44 @@ namespace Server.Mobiles
             this.Body = 76;
             this.BaseSoundID = 609;
 
-            this.SetStr(2360, 2850);
-            this.SetDex(2600, 4500);
-            this.SetInt(4810, 5050);
+            /* Titan - Fame 20,000 / Karma -20,000 */
+			/* [HP Calculation]
+			   - Target HP: ~120,000
+			   - Fame Bonus (20,000): ~55,833
+			   - SetHits Required: 64,167 (Target - Bonus)
+			*/
+			this.SetStr(1000, 1200);     
+			this.SetDex(150, 250);       
+			this.SetInt(600, 800);       
 
-            this.SetHits(13232, 15351);
-			this.SetStam(8000, 8500);
-			this.SetMana(13200, 15000);
-			
-            this.SetDamage(282, 1020);
+			// [Hits] 최종 약 115,000 ~ 125,000 타겟
+			this.SetHits(59167, 69167); 
+			this.SetStam(150, 250);      
+			this.SetMana(600, 800);      
 
-			SetAttackSpeed( 10.0 );
+			this.SetAttackSpeed(3.0);    // 거대한 만큼 느리지만 치명적임
+			this.SetDamage(45, 65);      
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Energy, 50);
 
-            this.SetResistance(ResistanceType.Physical, 65, 75);
-            this.SetResistance(ResistanceType.Fire, 40, 50);
-            this.SetResistance(ResistanceType.Cold, 65, 75);
-            this.SetResistance(ResistanceType.Poison, 50, 60);
-            this.SetResistance(ResistanceType.Energy, 60, 70);
+			this.SetResistance(ResistanceType.Physical, 60, 75); // Max 75%
+			this.SetResistance(ResistanceType.Fire, 40, 55);
+			this.SetResistance(ResistanceType.Cold, 40, 55);
+			this.SetResistance(ResistanceType.Poison, 40, 55);
+			this.SetResistance(ResistanceType.Energy, 65, 75); // Max 75%
 
-            this.SetSkill(SkillName.EvalInt, 185.1, 200.0);
-            this.SetSkill(SkillName.Magery, 185.1, 200.0);
-            this.SetSkill(SkillName.MagicResist, 180.2, 210.0);
-            this.SetSkill(SkillName.Tactics, 160.1, 180.0);
-            this.SetSkill(SkillName.Wrestling, 140.1, 150.0);
+			this.SetSkill(SkillName.Wrestling, 115.0, 130.0);
+			this.SetSkill(SkillName.Tactics, 115.0, 130.0);
+			this.SetSkill(SkillName.Magery, 100.0, 115.0);
+			this.SetSkill(SkillName.EvalInt, 100.0, 115.0);
+			this.SetSkill(SkillName.MagicResist, 110.0, 125.0);
 
-            this.Fame = 21000;
-            this.Karma = -21000;
+			this.VirtualArmor = 20;      
+			this.Tamable = false;
 
-            this.VirtualArmor = 100;
+			this.Fame = 20000;           
+			this.Karma = -20000;
 		
         }
 

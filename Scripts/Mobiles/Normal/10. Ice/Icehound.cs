@@ -20,33 +20,40 @@ namespace Server.Mobiles
 			else
 				this.Hue = 1154;
 			
-            SetStr(402, 650);
-            SetDex(81, 105);
-            SetInt(36, 60);
+            /* Ice Hound - Fame 3,000 / Karma -3,000 */
+			/* [HP Calculation]
+			   - Target HP: ~6,500
+			   - Fame Bonus (3,000): ~5,625
+			   - SetHits Required: 875 (Target - Bonus)
+			*/
+			this.SetStr(150, 200);       
+			this.SetDex(180, 250);       // 개답게 빠른 공속
+			this.SetInt(50, 100);        
 
-            SetHits(366, 525);
+			// [Hits] 최종 약 6,000 ~ 7,000 타겟
+			this.SetHits(375, 1375); 
+			this.SetStam(180, 250);      
 
-			SetAttackSpeed( 10.0 );
-            SetDamage(30, 77);
+			this.SetAttackSpeed(1.8);    
+			this.SetDamage(12, 22);      
 
-            SetDamageType(ResistanceType.Physical, 20);
-            SetDamageType(ResistanceType.Cold, 80);
+			this.SetDamageType(ResistanceType.Cold, 100);
 
-            SetResistance(ResistanceType.Physical, 25, 35);
-            SetResistance(ResistanceType.Cold, 40, 50);
-            SetResistance(ResistanceType.Poison, 10, 20);
-            SetResistance(ResistanceType.Energy, 10, 20);
-			
-            SetSkill(SkillName.Wrestling, 99.0);
+			this.SetResistance(ResistanceType.Physical, 25, 35);
+			this.SetResistance(ResistanceType.Fire, 5, 15);      
+			this.SetResistance(ResistanceType.Cold, 70, 75);    // Max 75%
+			this.SetResistance(ResistanceType.Poison, 30, 45);
 
-            Fame = 2400;
-            Karma = -2400;
+			this.SetSkill(SkillName.Wrestling, 85.0, 100.0);
+			this.SetSkill(SkillName.Tactics, 85.0, 100.0);
 
-            VirtualArmor = 30;
+			this.VirtualArmor = 6;       
+			this.Tamable = true;         
+			this.ControlSlots = 1;       // 컨트롤 슬롯: 1
+			this.MinTameSkill = 85.0;    
 
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 85.5;
+			this.Fame = 3000;           
+			this.Karma = -3000;
 
         }
 

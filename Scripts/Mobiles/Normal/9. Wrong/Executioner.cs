@@ -26,38 +26,42 @@ namespace Server.Mobiles
                 AddItem(new ShortPants(Utility.RandomRedHue())); 
             }
 
-            SetStr(2386, 4400);
-            SetDex(3651, 5665);
-            SetInt(2361, 3375);
+            /* Executioner - Fame 18,000 / Karma -18,000 */
+			/* [HP Calculation]
+			   - Target HP: ~85,000
+			   - Fame Bonus (18,000): ~47,400
+			   - SetHits Required: 37,600 (Target - Bonus)
+			*/
+			this.SetStr(800, 1000);      
+			this.SetDex(250, 350);       // 집행자다운 민첩한 움직임
+			this.SetInt(100, 200);       
 
-            SetHits(9000, 11263);
-			SetStam(9130, 10040);
-			SetMana(1000, 1100);
+			// [Hits] 최종 약 80,000 ~ 90,000 타겟
+			this.SetHits(32600, 42600); 
+			this.SetStam(250, 350);      
+			this.SetMana(100, 200);      
 
-            SetDamage(158, 380);
-			SetAttackSpeed( 5.0 );
+			this.SetAttackSpeed(2.2);    
+			this.SetDamage(55, 85);      // '집행'급 물리 데미지
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            SetResistance(ResistanceType.Physical, 95, 105);
-            SetResistance(ResistanceType.Fire, 25, 30);
-            SetResistance(ResistanceType.Cold, 25, 30);
-            SetResistance(ResistanceType.Poison, 10, 20);
-            SetResistance(ResistanceType.Energy, 10, 20);
+			this.SetResistance(ResistanceType.Physical, 60, 75); // Max 75%
+			this.SetResistance(ResistanceType.Fire, 35, 45);
+			this.SetResistance(ResistanceType.Cold, 35, 45);
+			this.SetResistance(ResistanceType.Poison, 35, 45);
+			this.SetResistance(ResistanceType.Energy, 35, 45);
 
-            SetSkill(SkillName.Anatomy, 225.0);
-            SetSkill(SkillName.Fencing, 146.0, 177.5);
-            SetSkill(SkillName.Macing, 135.0, 157.5);
-            SetSkill(SkillName.Poisoning, 160.0, 182.5);
-            SetSkill(SkillName.MagicResist, 183.5, 192.5);
-            SetSkill(SkillName.Swords, 225.0);
-            SetSkill(SkillName.Tactics, 225.0);
-            SetSkill(SkillName.Lumberjacking, 425.0);
+			this.SetSkill(SkillName.Swords, 125.0, 145.0); // 도끼 숙련도 최상급
+			this.SetSkill(SkillName.Tactics, 120.0, 140.0);
+			this.SetSkill(SkillName.Anatomy, 120.0, 140.0);
+			this.SetSkill(SkillName.MagicResist, 100.0, 115.0);
 
-            Fame = 19000;
-            Karma = -19000;
+			this.VirtualArmor = 12;      // 노출된 가슴과 가죽 보호구 (낮은 수치 유지)
+			this.Tamable = false;
 
-            VirtualArmor = 40;
+			this.Fame = 18000;           
+			this.Karma = -18000;
 
             AddItem(new ThighBoots(Utility.RandomRedHue())); 
             AddItem(new Surcoat(Utility.RandomRedHue()));    

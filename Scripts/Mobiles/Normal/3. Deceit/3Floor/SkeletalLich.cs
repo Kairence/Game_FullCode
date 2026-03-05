@@ -16,39 +16,41 @@ namespace Server.Mobiles
 			Hue = 1345;
 			BaseSoundID = 0x48D;
 
-			SetStr( 1301, 1350 );
-			SetDex( 1075, 1100 );
-			SetInt( 4151, 4200 );
+			/* Skeletal Lich - Fame 13,000 / Undead Mage */
+			this.SetStr(500, 600);       
+			this.SetDex(200, 300);       
+			this.SetInt(800, 950);       
 
-			SetHits( 4800, 5000);
-			SetStam( 2750, 2800 );
-			SetMana( 4250, 4750 );
+			// [Hits] 최종 약 44,000 ~ 46,000 타겟
+			this.SetHits(13500, 15500); 
+			this.SetStam(200, 300);      
+			this.SetMana(800, 950);      
 
-			SetAttackSpeed( 2.5 );
+			this.SetAttackSpeed(2.5);    
+			this.SetDamage(15, 25);      
 
-			SetDamage( 70, 140 );
+			this.SetDamageType(ResistanceType.Physical, 30);
+			this.SetDamageType(ResistanceType.Cold, 40);
+			this.SetDamageType(ResistanceType.Energy, 30);
 
-			SetDamageType( ResistanceType.Physical, 0 );
-			SetDamageType( ResistanceType.Cold, 50 );
-			SetDamageType( ResistanceType.Poison, 50 );
+			this.SetResistance(ResistanceType.Physical, 35, 45);
+			this.SetResistance(ResistanceType.Fire, 10, 20);
+			this.SetResistance(ResistanceType.Cold, 50, 60);
+			this.SetResistance(ResistanceType.Energy, 40, 50);
+			this.SetResistance(ResistanceType.Poison, 50, 60);
 
-			SetResistance( ResistanceType.Physical, 35, 45 );
-			SetResistance( ResistanceType.Fire, 20, 30 );
-			SetResistance( ResistanceType.Cold, 50, 70 );
-			SetResistance( ResistanceType.Poison, 40, 50 );
-			SetResistance( ResistanceType.Energy, 20, 30 );
+			this.SetSkill(SkillName.Magery, 90.0, 100.0);
+			this.SetSkill(SkillName.EvalInt, 90.0, 100.0);
+			this.SetSkill(SkillName.Meditation, 80.0, 90.0);
+			this.SetSkill(SkillName.MagicResist, 90.0, 100.0);
+			this.SetSkill(SkillName.Wrestling, 90.0, 100.0);
+			this.SetSkill(SkillName.Tactics, 80.0, 90.0);
 
-			SetSkill( SkillName.EvalInt, 127.2, 130 );
-			SetSkill( SkillName.Magery, 127.2, 130 );
-			SetSkill( SkillName.Necromancy, 100.0, 120.0 );
-			SetSkill( SkillName.MagicResist, 187.1, 200 );
-			SetSkill( SkillName.Tactics, 91.7, 100 );
-			SetSkill( SkillName.Wrestling, 98.5, 105 );
+			this.VirtualArmor = 20;      
+			this.Tamable = false;
 
-			Fame = 13500;
-			Karma = -13500;
-
-            VirtualArmor = 40; 
+			this.Fame = 13000;           
+			this.Karma = -13000;
             //SetWeaponAbility(WeaponAbility.Dismount);
 		}
 

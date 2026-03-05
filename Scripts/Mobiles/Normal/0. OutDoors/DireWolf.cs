@@ -14,31 +14,25 @@ namespace Server.Mobiles
             Body = 23;
             BaseSoundID = 0xE5;
 
-            SetStr(396, 920);
-            SetDex(281, 305);
-            SetInt(136, 160);
+            // [역산] 명성 1,200 보너스(Str+592, Hits+2298, Stam+68, Skill+3.1) 반영
+			this.SetStr(108, 128);
+			this.SetDex(82, 102); // 최종 Dex ~260
+			this.SetInt(10, 20);
 
-            SetHits(736, 800);
-            SetStam(200, 300);
-            SetMana(5, 10);
-			SetAttackSpeed(2.5);
+			this.SetHits(1702, 1800); // 최종 Hits 4,000~4,098
+			this.SetStam(32, 52);    // 최종 Stam 100~120
+			this.SetMana(0);
 
-            SetDamage(22, 30);
+			SetAttackSpeed(2.2); // 늑대의 빠른 공격
+			SetDamage(12, 20); // 평균 16.0
 
-            SetDamageType(ResistanceType.Physical, 100);
+			this.SetSkill(SkillName.Wrestling, 6.9, 8.9); // 최종 10.0~12.0
 
-            SetResistance(ResistanceType.Physical, 20, 25);
-            SetResistance(ResistanceType.Fire, 10, 20);
-            SetResistance(ResistanceType.Cold, 5, 10);
-            SetResistance(ResistanceType.Poison, 5, 10);
-            SetResistance(ResistanceType.Energy, 10, 15);
-
-            Fame = 2500;
-            Karma = -2500;
-
-            Tamable = true;
-            ControlSlots = 2;
-            MinTameSkill = 83.1;
+			this.Fame = 1200;
+			this.VirtualArmor = 3;
+			this.Tamable = true;
+			this.MinTameSkill = 83.1;
+			SetDamageType(ResistanceType.Physical, 100);
         }
 
         public DireWolf(Serial serial)

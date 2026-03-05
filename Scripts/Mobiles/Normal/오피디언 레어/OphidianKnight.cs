@@ -20,33 +20,40 @@ namespace Server.Mobiles
             this.Body = 86;
             this.BaseSoundID = 634;
 
-            this.SetStr(417, 595);
-            this.SetDex(166, 175);
-            this.SetInt(46, 70);
+			/* [Ophidian Knight - Normal - Fame 9,000 / Weight 1.28]
+			   - 오피디언 정예 창병 / 일반 던전
+			   - 배수: 1x (일반 몬스터)
+			   - VirtualArmor: 14 (기본 9 + 판금 보정 5)
+			   -------------------------------------------------- */
 
-            this.SetHits(266, 342);
-            this.SetMana(0);
+			// [Attributes] 역산된 Set 값 정밀 적용 (중갑 전사 컨셉)
+			this.SetStr(240, 255); 
+			this.SetHits(5400, 5600); 
+			this.SetDex(45, 55);
+			this.SetInt(45, 55);
 
-            this.SetDamage(16, 19);
+			// [Combat Options] 100% 물리 대미지 (강력한 찌르기)
+			this.SetDamage(35, 55);
+			this.SetAttackSpeed(2.3);
+			this.SetDamageType(ResistanceType.Physical, 100);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] 최고 저항 75 이하 준수 및 명확한 약점(냉기) 설정
+			this.SetResistance(ResistanceType.Physical, 50, 60); 
+			this.SetResistance(ResistanceType.Fire, 35, 45);      
+			this.SetResistance(ResistanceType.Cold, 15, 25);     // ★ 확실한 약점 (냉혈 동물)
+			this.SetResistance(ResistanceType.Poison, 65, 75);   // 독 저항 특화
+			this.SetResistance(ResistanceType.Energy, 35, 45);   
 
-            this.SetResistance(ResistanceType.Physical, 35, 40);
-            this.SetResistance(ResistanceType.Fire, 30, 40);
-            this.SetResistance(ResistanceType.Cold, 35, 45);
-            this.SetResistance(ResistanceType.Poison, 90, 100);
-            this.SetResistance(ResistanceType.Energy, 35, 45);
+			// [Skills] 기본 95~110에 역산 보너스(8.19) 가산
+			this.SetSkill(SkillName.Wrestling, 105.0, 115.0); 
+			this.SetSkill(SkillName.Tactics, 105.0, 115.0);
+			this.SetSkill(SkillName.Anatomy, 105.0, 115.0);
+			this.SetSkill(SkillName.MagicResist, 90.0, 105.0);
 
-            this.SetSkill(SkillName.Poisoning, 60.1, 80.0);
-            this.SetSkill(SkillName.MagicResist, 65.1, 80.0);
-            this.SetSkill(SkillName.Tactics, 90.1, 100.0);
-            this.SetSkill(SkillName.Wrestling, 90.1, 100.0);
-
-            this.Fame = 10000;
-            this.Karma = -10000;
-
-            this.VirtualArmor = 40;
-
+			this.Tamable = false;
+			this.VirtualArmor = 14;
+			this.Fame = 9000;
+			this.Karma = -9000;
             this.PackItem(new LesserPoisonPotion());
         }
 

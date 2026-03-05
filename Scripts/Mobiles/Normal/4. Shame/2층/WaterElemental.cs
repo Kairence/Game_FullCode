@@ -19,34 +19,38 @@ namespace Server.Mobiles
             this.Body = 16;
             this.BaseSoundID = 278;
 
-            this.SetStr(536, 1045);
-            this.SetDex(1360, 1450);
-            this.SetInt(3010, 3250);
+            /* Water Elemental - Fame 8,000 / Water Spirit */
+			this.SetStr(350, 450);       
+			this.SetDex(150, 250);       
+			this.SetInt(600, 800);       
 
-            this.SetHits(2490, 2500);
-			SetStam(1030, 1040);
-			SetMana(2110, 2220);
+			// [Hits] 최종 약 21,000 ~ 23,000 타겟
+			this.SetHits(1500, 3500); 
+			this.SetStam(150, 250);      
+			this.SetMana(600, 800);      
 
-			SetAttackSpeed( 10 );
+			this.SetAttackSpeed(2.8);    
+			this.SetDamage(18, 28);      
 
-            this.SetDamage(111, 152);
+			this.SetDamageType(ResistanceType.Physical, 20);
+			this.SetDamageType(ResistanceType.Cold, 80);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			this.SetResistance(ResistanceType.Physical, 40, 50);
+			this.SetResistance(ResistanceType.Fire, -10, 10); // 화염 약점
+			this.SetResistance(ResistanceType.Cold, 70, 75); // 냉기 면역 수준
+			this.SetResistance(ResistanceType.Poison, 40, 50);
+			this.SetResistance(ResistanceType.Energy, 35, 45);
 
-            this.SetResistance(ResistanceType.Physical, 65, 75);
-            this.SetResistance(ResistanceType.Fire, 100, 125);
-            this.SetResistance(ResistanceType.Cold, 100, 115);
-            this.SetResistance(ResistanceType.Poison, 10, 20);
-            this.SetResistance(ResistanceType.Energy, 5, 10);
+			this.SetSkill(SkillName.Wrestling, 100.0, 115.0);
+			this.SetSkill(SkillName.Tactics, 100.0, 115.0);
+			this.SetSkill(SkillName.Magery, 105.0, 115.0);
+			this.SetSkill(SkillName.EvalInt, 100.0, 110.0);
 
-            SetSkill(SkillName.EvalInt, 90.1, 95.0);
-            SetSkill(SkillName.Magery, 90.1, 95.0);
-            SetSkill(SkillName.MagicResist, 190.1, 195.0);
+			this.VirtualArmor = 25;      
+			this.Tamable = false;
 
-            Fame = 10000;
-            Karma = -10000;
-
-
+			this.Fame = 8000;           
+			this.Karma = -8000;
             this.VirtualArmor = 100;
             this.ControlSlots = 3;
             this.CanSwim = true;

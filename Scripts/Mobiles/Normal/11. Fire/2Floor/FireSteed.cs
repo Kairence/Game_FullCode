@@ -19,36 +19,44 @@ namespace Server.Mobiles
             BaseSoundID = 0xA8;
             Hue = 1161;
 
-            SetStr(376, 400);
-            SetDex(91, 120);
-            SetInt(291, 300);
+            /* Fire Steed - Fame 15,000 / Karma -15,000 */
+			/* [HP Calculation]
+			   - Target HP: ~55,000
+			   - Fame Bonus (15,000): ~37,200
+			   - SetHits Required: 17,800 (Target - Bonus)
+			*/
+			this.SetStr(600, 800);       
+			this.SetDex(250, 350);       // 압도적인 기동성
+			this.SetInt(300, 450);       
 
-            SetHits(226, 240);
+			// [Hits] 최종 약 50,000 ~ 60,000 타겟
+			this.SetHits(12800, 22800); 
+			this.SetStam(250, 350);      
+			this.SetMana(300, 450);      
 
-            SetDamage(11, 30);
+			this.SetAttackSpeed(1.8);    // 매우 빠른 공격 속도
+			this.SetDamage(25, 40);      
 
-            SetDamageType(ResistanceType.Physical, 20);
-            SetDamageType(ResistanceType.Fire, 80);
+			this.SetDamageType(ResistanceType.Fire, 100);
 
-            SetResistance(ResistanceType.Physical, 30, 40);
-            SetResistance(ResistanceType.Fire, 70, 80);
-            SetResistance(ResistanceType.Cold, 20, 30);
-            SetResistance(ResistanceType.Poison, 30, 40);
-            SetResistance(ResistanceType.Energy, 30, 40);
+			this.SetResistance(ResistanceType.Physical, 50, 65);
+			this.SetResistance(ResistanceType.Fire, 75, 75);     // Max 75%
+			this.SetResistance(ResistanceType.Cold, 5, 20);      
+			this.SetResistance(ResistanceType.Poison, 40, 55);
 
-            SetSkill(SkillName.MagicResist, 100.0, 120.0);
-            SetSkill(SkillName.Tactics, 100.0);
-            SetSkill(SkillName.Wrestling, 100.0);
+			this.SetSkill(SkillName.Wrestling, 110.0, 125.0);
+			this.SetSkill(SkillName.Tactics, 110.0, 125.0);
+			this.SetSkill(SkillName.MagicResist, 100.0, 115.0);
 
-            Fame = 2000;
-            Karma = -2000;
+			this.VirtualArmor = 10;      
 
-            Tamable = true;
-            ControlSlots = 2;
-            MinTameSkill = 186.0;
+			// [Taming Settings]
+			this.Tamable = true;         
+			this.ControlSlots = 2;       // 기동성을 위해 2슬롯 유지 (테이머의 강력한 동반자)
+			this.MinTameSkill = 185.0;   // 200 상한 서버의 최상위 타겟
 
-            PackItem(new SulfurousAsh(Utility.RandomMinMax(151, 300)));
-            PackItem(new Ruby(Utility.RandomMinMax(16, 30)));
+			this.Fame = 15000;           
+			this.Karma = -15000;
 
             SetSpecialAbility(SpecialAbility.DragonBreath);
         }

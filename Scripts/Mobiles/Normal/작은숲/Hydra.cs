@@ -14,33 +14,47 @@ namespace Server.Mobiles
             Body = 0x109;
             BaseSoundID = 0x16A;
 
-            SetStr(801, 828);
-            SetDex(105, 118);
-            SetInt(102, 120);
+			/* [Hydra - Normal - Fame 18,000 / Weight 1.25]
+			   - 작은 숲 던전 상급 포식자 / 일반 몬스터 상향 버전
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 23 (기본 18 + 보정 5)
+			   -------------------------------------------------- */
 
-            SetHits(1484, 1500);
+			// [Attributes] 역산된 Set 값 정밀 적용 (중상급 던전 사양)
+			this.SetStr(530, 560); 
+			this.SetHits(11800, 12200); 
+			this.SetDex(100, 120);
+			this.SetInt(100, 120);
 
-            SetDamage(21, 26);
+			// [Combat Options] 5속성 복합 대미지 (전방위 압박)
+			this.SetDamage(45, 75);
+			this.SetAttackSpeed(2.4);
+			this.SetDamageType(ResistanceType.Physical, 20);
+			this.SetDamageType(ResistanceType.Fire, 20);
+			this.SetDamageType(ResistanceType.Cold, 20);
+			this.SetDamageType(ResistanceType.Poison, 20);
+			this.SetDamageType(ResistanceType.Energy, 20);
 
-            SetDamageType(ResistanceType.Physical, 60);
-            SetDamageType(ResistanceType.Fire, 10);
-            SetDamageType(ResistanceType.Cold, 10);
-            SetDamageType(ResistanceType.Poison, 10);
-            SetDamageType(ResistanceType.Energy, 10);
+			// [Resistances] 최고 저항 75 이하 준수 / 냉기 약점 유지
+			this.SetResistance(ResistanceType.Physical, 55, 65); 
+			this.SetResistance(ResistanceType.Fire, 55, 65);      
+			this.SetResistance(ResistanceType.Cold, 30, 40);    // ★ 확실한 공략 포인트
+			this.SetResistance(ResistanceType.Poison, 60, 70); 
+			this.SetResistance(ResistanceType.Energy, 50, 60);   
 
-            SetResistance(ResistanceType.Physical, 65, 75);
-            SetResistance(ResistanceType.Fire, 70, 81);
-            SetResistance(ResistanceType.Cold, 25, 35);
-            SetResistance(ResistanceType.Poison, 35, 43);
-            SetResistance(ResistanceType.Energy, 36, 45);
+			// [Skills] 기본 115~125에 역산 보너스(18) 가산
+			this.SetSkill(SkillName.Wrestling, 133.0, 143.0); 
+			this.SetSkill(SkillName.Tactics, 133.0, 143.0);
+			this.SetSkill(SkillName.Anatomy, 133.0, 143.0);
+			this.SetSkill(SkillName.MagicResist, 120.0, 135.0);
 
-            SetSkill(SkillName.Wrestling, 103.5, 117.4);
-            SetSkill(SkillName.Tactics, 100.1, 109.8);
-            SetSkill(SkillName.MagicResist, 85.5, 96.4);
-            SetSkill(SkillName.Anatomy, 75.4, 79.8);
-
-            Fame = 22000;
-            Karma = -22000;
+			// [Misc]
+			this.Tamable = true; 
+			this.ControlSlots = 4; // 명성 18000에 걸맞은 위력
+			this.MinTameSkill = 120.0; // 테이밍 200 시대의 준고급 펫
+			this.VirtualArmor = 23;
+			this.Fame = 18000;
+			this.Karma = -18000;
 
             for (int i = 0; i < Utility.RandomMinMax(0, 1); i++)
             {

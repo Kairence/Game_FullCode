@@ -14,25 +14,29 @@ namespace Server.Mobiles
             this.Hue = Utility.RandomSnakeHue();
             this.BaseSoundID = 0xDB;
 
-            SetStr(222, 434);
-            SetDex(116, 121);
-            SetInt(16, 20);
+            this.SetStr(1, 5);      // 최종 Str 524~528
+			this.SetDex(1, 5);      // 최종 Dex ~150 (작고 빠름)
 
-            SetHits(650, 690);
-            SetStam(10, 15);
-            SetMana(10, 15);
+			this.SetHits(1, 9);     // 최종 Hits 712~720 (슬라임과 동급)
+			this.SetStam(1, 5);     
+			this.SetMana(0);
 
-			SetAttackSpeed(20.0);
-            SetDamage(5, 12);
+			SetAttackSpeed(3.0);
+			SetDamage(1, 2);        // 물리 100%
+			
+			this.SetDamageType(ResistanceType.Physical, 80);
+			this.SetDamageType(ResistanceType.Poison, 20); // 초보용이라 독 비중을 낮춤			
 
-            SetDamageType(ResistanceType.Poison, 100);
+			this.SetResistance(ResistanceType.Physical, 0, 5);
+			this.SetResistance(ResistanceType.Poison, 5, 10); // 독 저항 최소화
 
-            Fame = 1000;
-            Karma = -1000;
+			// 최종 Skill 10.0 미만 목표 (10.0 - 0.7 = 9.3)
+			this.SetSkill(SkillName.Wrestling, 4.3, 9.3);
+			this.SetSkill(SkillName.Poisoning, 4.3, 9.3);
 
-            Tamable = true;
-            ControlSlots = 1;
-            MinTameSkill = 23.1;
+			this.Fame = 300;
+			this.Tamable = true;
+			this.MinTameSkill = 15.1;
         }
 
         public Snake(Serial serial)

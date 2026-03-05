@@ -14,30 +14,46 @@ namespace Server.Mobiles
             this.Body = 72;
             this.BaseSoundID = 599;
 
-            this.SetStr(316, 405);
-            this.SetDex(96, 115);
-            this.SetInt(366, 455);
+			/* [Terathan Matriarch - Normal - Fame 14,500 / Weight 1.24]
+			   - 테라탄 던전의 고위 술사 / 일반 몬스터 공식
+			   - 배수: 1x (Normal)
+			   - VirtualArmor: 12 (명성/1000 - 2 보정)
+			   - 특이사항: 강력한 마법 및 커즈(Curse) 위주의 디버프
+			   -------------------------------------------------- */
 
-            this.SetHits(190, 243);
+			// [Attributes] 역산된 Set 값 정밀 적용 (Hits 약 8,500대)
+			this.SetStr(380, 395); 
+			this.SetHits(8550, 8700); 
+			this.SetDex(75, 85); 
+			this.SetInt(390, 410); // 매우 높은 지능으로 인한 마법 위력 극대화
 
-            this.SetDamage(11, 14);
+			// [Combat Options] 물리 20% / 독 40% / 에너지 40% (마력 깃든 독니)
+			this.SetDamage(35, 60);
+			this.SetAttackSpeed(2.5); 
+			this.SetDamageType(ResistanceType.Physical, 20);
+			this.SetDamageType(ResistanceType.Poison, 40);
+			this.SetDamageType(ResistanceType.Energy, 40);
 
-            this.SetDamageType(ResistanceType.Physical, 100);
+			// [Resistances] 최고 저항 75 이하 준수 / 물리 및 화염 약점 설정
+			this.SetResistance(ResistanceType.Physical, 30, 40); // ★ 약점 (근접전에 취약)
+			this.SetResistance(ResistanceType.Fire, 15, 25);     // ★ 확실한 약점 (불에 취약)
+			this.SetResistance(ResistanceType.Cold, 45, 55);    
+			this.SetResistance(ResistanceType.Poison, 75, 75);  // 독성 저항 Max (면역)
+			this.SetResistance(ResistanceType.Energy, 65, 75);  // 높은 마법 내성
 
-            this.SetResistance(ResistanceType.Physical, 45, 55);
-            this.SetResistance(ResistanceType.Fire, 30, 40);
-            this.SetResistance(ResistanceType.Cold, 35, 45);
-            this.SetResistance(ResistanceType.Poison, 40, 50);
-            this.SetResistance(ResistanceType.Energy, 35, 45);
+			// [Skills] 기본 115~125에 역산 보너스(12.9) 가산
+			// 최종 숙련도 약 130~140대의 고위 술사
+			this.SetSkill(SkillName.Wrestling, 127.9, 137.9); 
+			this.SetSkill(SkillName.Tactics, 127.9, 137.9);
+			this.SetSkill(SkillName.Magery, 130.0, 145.0);      // 상급 마법 및 소환
+			this.SetSkill(SkillName.EvalInt, 130.0, 145.0);
+			this.SetSkill(SkillName.MagicResist, 130.0, 145.0);
+			this.SetSkill(SkillName.Poisoning, 120.0, 135.0);
 
-            this.SetSkill(SkillName.EvalInt, 90.1, 100.0);
-            this.SetSkill(SkillName.Magery, 90.1, 100.0);
-            this.SetSkill(SkillName.MagicResist, 90.1, 100.0);
-            this.SetSkill(SkillName.Tactics, 50.1, 70.0);
-            this.SetSkill(SkillName.Wrestling, 60.1, 80.0);
-
-            this.Fame = 10000;
-            this.Karma = -10000;
+			this.Tamable = false;
+			this.VirtualArmor = 12;
+			this.Fame = 14500;
+			this.Karma = -14500;
 
             this.PackItem(new SpidersSilk(5));
             this.PackNecroReg(Utility.RandomMinMax(4, 10));

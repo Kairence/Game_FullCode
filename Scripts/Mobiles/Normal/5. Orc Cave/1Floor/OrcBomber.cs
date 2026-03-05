@@ -18,35 +18,41 @@ namespace Server.Mobiles
             this.Name = "an orc bomber";
             this.BaseSoundID = 0x45A;
 
-            this.SetStr(1257, 1265);
-            this.SetDex(1251, 1255);
-            this.SetInt(1241, 1245);
+            /* Orc Bomber - Fame 2,500 / Karma -2,500 */
+			/* [HP Calculation]
+			   - Target HP: ~5,500
+			   - Fame Bonus (2,500): ~4,375
+			   - SetHits Required: 1,125 (Target - Bonus)
+			*/
+			this.SetStr(150, 200);       
+			this.SetDex(130, 160);       
+			this.SetInt(80, 120);        
 
-            this.SetHits(1165, 1173);
-			SetMana(1000);
-			SetStam(1000);
+			// [Hits] 최종 약 5,000 ~ 6,000 타겟
+			this.SetHits(625, 1625); 
+			this.SetStam(130, 160);      
+			this.SetMana(80, 120);       
 
-            this.SetDamage(1, 5);
-			SetAttackSpeed( 60.0 );
+			this.SetAttackSpeed(2.6);    // 공속
+			this.SetDamage(15, 25);      // 데미지 (폭탄 위력 반영)
 
-            this.SetDamageType(ResistanceType.Physical, 75);
-            this.SetDamageType(ResistanceType.Fire, 25);
+			this.SetDamageType(ResistanceType.Physical, 50);
+			this.SetDamageType(ResistanceType.Fire, 50);
 
-            this.SetResistance(ResistanceType.Physical, 25, 35);
-            this.SetResistance(ResistanceType.Fire, 30, 40);
-            this.SetResistance(ResistanceType.Cold, 15, 25);
-            this.SetResistance(ResistanceType.Poison, 15, 20);
-            this.SetResistance(ResistanceType.Energy, 25, 30);
+			this.SetResistance(ResistanceType.Physical, 25, 35);
+			this.SetResistance(ResistanceType.Fire, 40, 55); // 화염 저항 가중치
+			this.SetResistance(ResistanceType.Cold, 10, 20);
+			this.SetResistance(ResistanceType.Poison, 10, 20);
+			this.SetResistance(ResistanceType.Energy, 20, 30);
 
-            this.SetSkill(SkillName.MagicResist, 10.1, 15.0);
-            this.SetSkill(SkillName.Swords, 10.1, 15.0);
-            this.SetSkill(SkillName.Tactics, 5.1, 10.0);
-            this.SetSkill(SkillName.Wrestling, 10.1, 15.0);
+			this.SetSkill(SkillName.Wrestling, 70.0, 85.0);
+			this.SetSkill(SkillName.Tactics, 70.0, 85.0);
 
-            this.Fame = 5500;
-            this.Karma = -5500;
+			this.VirtualArmor = 5;      
+			this.Tamable = false;
 
-            this.VirtualArmor = 8;
+			this.Fame = 2500;            
+			this.Karma = -2500;
         }
 
         public OrcBomber(Serial serial)
