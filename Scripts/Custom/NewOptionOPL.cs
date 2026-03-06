@@ -153,19 +153,44 @@ namespace Server.Misc
                 }
                 else // 마법 옵션
                 {
-                    int optionpercentcheck = optBase + Misc.Util.OPLPercentCheck(realOptID);
+                    int optionpercentcheck = optBase + OPLPercentCheck(realOptID);
                     list.Add(optionpercentcheck, "#{0}\t{1}", realOptID, (optVal * Misc.Util.PercentCalc(optID)).ToString("0.##"));
                 }
             }
             return skilluse;
         }
 
+		public static int OPLPercentCheck(int number, int step = 1)
+		{
+			//스텝일 시 퍼센트 처리
+			int check = 0;
+			if( number >= 1080585 && number <= 1080596 )
+				check = step;
+			else if( number >= 1080600 && number <= 1080609 )
+				check = step;
+			else if( number >= 1080615 && number <= 1080624 )
+				check = step;
+			else if( number >= 1080629 && number <= 1080640 )
+				check = step;
+			else if( number >= 1080651 && number <= 1080654 )
+				check = step;
+			else if( number >= 1080661 && number <= 1080662 )
+				check = step;
+			else if( number >= 1080664 && number <= 1080670 )
+				check = step;
+			return check;
+		}
+
 		#region 1. 마법 옵션
 		private static void AppendMagicOptions(ObjectPropertyList list, IEquipOption eqItem)
 		{
-			if (eqItem.PrefixOption[0] < 1000) return;
+			// 1. OPL 헤더 표시 조건 완화
+			// 만약 PrefixOption[0]이 1000이 맞는데도 안 나온다면, 
+			// 생성 시점과 OPL 패킷 전송 시점 사이의 데이터 동기화 문제일 수 있습니다.
+			if (eqItem.PrefixOption[0] <= 0) return; 
 
-			// 아티팩트 레어리티 출력
+			// 2. 아티팩트 레어리티 출력 (BaseStats에서 이미 출력했다면 여기서는 생략 가능)
+			// 중복 출력을 피하기 위해 상단에서 처리했다면 이 블록은 지워도 됩니다.
 			if (eqItem is Item item)
 			{
 				int rarity = 0;
@@ -176,15 +201,21 @@ namespace Server.Misc
 				if (rarity > 0) list.Add(1061078, rarity.ToString());
 			}
 
-			list.Add(1063512); // [마법 옵션] 헤더
+			// 3. 마법 옵션 헤더 출력 (반드시 이 아래 로직들이 실행되어야 함)
+			list.Add(1063512); // [마법 옵션]
 
-			// 중요: skilluse의 연속성을 위해 반환값을 다시 대입합니다.
 			int currentSkillUse = 5;
 			
-			// 1. 신규 옵션 루프 (인덱스 61부터 10개)
+			// 1. 랭크 옵션 루프 (인덱스 9) - SuffixOption[1] (랭크 레벨)이 있을 때만
+			if (eqItem.SuffixOption[1] > 0)
+			{
+				currentSkillUse = ProcessOptionLoop(list, eqItem, 9, 1, 1080641, 1081999, currentSkillUse);
+			}
+
+			// 2. 신규 옵션 루프 (인덱스 61~70)
 			currentSkillUse = ProcessOptionLoop(list, eqItem, 61, 10, 1080641, 1081997, currentSkillUse);
-			
-			// 2. 마법 옵션 루프 (인덱스 11부터 SuffixOption[0] 개수만큼)
+
+			// 3. 일반 마법 옵션 루프 (인덱스 11~30)
 			ProcessOptionLoop(list, eqItem, 11, eqItem.SuffixOption[0], 1080641, 1081999, currentSkillUse);
 		}
 		#endregion
@@ -218,8 +249,8 @@ namespace Server.Misc
                 int pIdx = i + 31;
                 if (eqItem.PrefixOption[pIdx] == -1) break;
 
-                int realOptID = Misc.Util.NewEquipOption[eqItem.PrefixOption[pIdx], 0, 0];
-                int cliloc = 1082003 + i + Misc.Util.OPLPercentCheck(realOptID, 5);
+                int realOptID = Misc.ItemOptionCreator.EquipRandomOption[eqItem.PrefixOption[pIdx], 0];
+                int cliloc = 1082003 + i + OPLPercentCheck(realOptID, 5);
 
                 list.Add(cliloc, "#{0}\t{1}", realOptID, (eqItem.SuffixOption[pIdx] * Misc.Util.PercentCalc(eqItem.PrefixOption[pIdx])).ToString());
             }
@@ -288,11 +319,11 @@ namespace Server.Misc
             {
                 int equipoption = Misc.SetItem.SetItemList[setID][i * 2];
                 int equipvalue = Misc.SetItem.SetItemList[setID][i * 2 + 1];
-                int cliloc = 1084011 + i + Misc.Util.OPLPercentCheck(Misc.Util.NewEquipOption[equipoption, 0, 0], maxset);
+                int cliloc = 1084011 + i + OPLPercentCheck(Misc.ItemOptionCreator.EquipRandomOption[equipoption,0], maxset);
 
                 if (i < setcount - 1) cliloc += maxset * 2;
 
-                list.Add(cliloc, "#{0}\t{1}", Misc.Util.NewEquipOption[equipoption, 0, 0], (equipvalue * Misc.Util.PercentCalc(equipoption)).ToString());
+                list.Add(cliloc, "#{0}\t{1}", Misc.ItemOptionCreator.EquipRandomOption[equipoption, 0], (equipvalue * Misc.Util.PercentCalc(equipoption)).ToString());
             }
         }
         #endregion

@@ -1386,7 +1386,15 @@ namespace Server.Misc
 			int selectValue = (int)calculatedValue;
 			if (step > 0)
 			{
-				selectValue = (selectValue / step) * step;
+				// 계산된 값이 step보다 작으면 최소한 1단계(step)는 보장
+				if (selectValue < step)
+				{
+					selectValue = step; 
+				}
+				else
+				{
+					selectValue = (selectValue / step) * step;
+				}
 			}
 
 			return selectValue;
@@ -1473,114 +1481,118 @@ namespace Server.Misc
 		
 		public static void ItemOptionSelect(Item item)
 		{
-			if (item is IEquipOption)
+			if (!(item is IEquipOption equip)) return;
+
+			int rank = equip.SuffixOption[1]; // 접미 1: 랭크 레벨
+			if (rank <= 0) return;
+
+			int selectLine = NewEquipNumber(item);
+			if (selectLine < 0 || selectLine >= EquipOptionType.Length) return;
+
+			// 1. 아티팩트가 아닐 때만 랜덤 옵션 생성
+			if (equip.SuffixOption[0] == 0)
 			{
-				IEquipOption equip = item as IEquipOption;
-				int rank = equip.SuffixOption[1]; // 접미 1: 랭크 레벨 (0:일반 ~ 5:신화)
-				
-				// 1. 일반 등급은 옵션이 붙지 않음
-				if (rank <= 0) return;
+				List<int> normalPool = new List<int>();
+				List<int> skillPool = new List<int>();
 
-				// 2. 장비 종류 컬럼 결정
-				int selectLine = NewEquipNumber(item);
-				if (selectLine <= -1) return;
-
-				// 3. 등급별 옵션 수량 및 스킬 제한 설정
-				int totalOptionCount = rank; 
-				int skillLimit = (totalOptionCount - 1) / 2; // 서사(3)부터 1개 가능
-				
-				// 아티팩트가 아닐 때만 옵션 생성
-				if (equip.SuffixOption[0] == 0)
+				// 풀 분류
+				foreach (int id in EquipOptionType[selectLine])
 				{
-					// --- [개선] 옵션 풀 분리 및 셔플 ---
-					List<int> normalPool = new List<int>();
-					List<int> skillPool = new List<int>();
-
-					foreach (int id in EquipOptionType[selectLine])
-					{
-						if (id >= 63 && id <= 99) skillPool.Add(id);
-						else normalPool.Add(id);
-					}
-
-					// OrderBy와 Utility.Random을 사용한 셔플
-					var shuffledNormal = normalPool.OrderBy(x => Utility.Random(normalPool.Count)).ToList();
-					var shuffledSkill = skillPool.OrderBy(x => Utility.Random(skillPool.Count)).ToList();
-
-					List<int> finalOptions = new List<int>();
-
-					// --- [기획] 스킬 옵션 확률 결정 로직 ---
-					if (skillLimit > 0 && shuffledSkill.Count > 0)
-					{
-						int skillToAttach = 0;
-						int dice = Utility.RandomMinMax(1, 100);
-
-						if (rank == 5) // 신화 (최대 2개)
-						{
-							if (dice == 1) skillToAttach = 2;       // 1% 확률로 2개
-							else if (dice <= 5) skillToAttach = 1; // 5% 확률로 1개
-						}
-						else // 서사(3), 전설(4) (최대 1개)
-						{
-							if (dice <= 5) skillToAttach = 1;      // 5% 확률로 1개
-						}
-
-						// 결정된 개수만큼 스킬 옵션 추가
-						for (int i = 0; i < skillToAttach && i < shuffledSkill.Count; i++)
-						{
-							finalOptions.Add(shuffledSkill[i]);
-						}
-					}
-
-					// --- 남은 자리를 일반 옵션으로 채우기 ---
-					for (int i = 0; i < shuffledNormal.Count && finalOptions.Count < totalOptionCount; i++)
-					{
-						finalOptions.Add(shuffledNormal[i]);
-					}
-
-					// --- 실제 장비에 데이터 저장 ---
-					for (int i = 0; i < finalOptions.Count; i++)
-					{
-						int optionID = finalOptions[i];
-						equip.PrefixOption[11 + i] = optionID;
-						// OptionValueSelect 내부는 RankValue[rank]를 사용하여 30~100%, 85~100% 등으로 처리됨
-						equip.SuffixOption[11 + i] = OptionValueSelect(rank, optionID, selectLine + 3);
-
-						Console.WriteLine($"{i}번째 옵션: {optionID}, 값: {equip.SuffixOption[11 + i]}");
-					}
-
-					// 생성된 총 옵션 개수 저장
-					equip.SuffixOption[0] = finalOptions.Count;
+					if (id >= 63 && id <= 99) skillPool.Add(id);
+					else normalPool.Add(id);
 				}
-				
-				// 4. 랭크 고정 옵션 처리
-				if (equip.SuffixOption[1] > 0)
+
+				// Fisher-Yates 셔플 (OrderBy 방식보다 훨씬 안전하고 메모리 오염 없음)
+				ShuffleList(normalPool);
+				ShuffleList(skillPool);
+
+				List<int> finalOptions = new List<int>();
+				int totalOptionCount = rank; 
+				int skillLimit = (totalOptionCount - 1) / 2;
+
+				// 스킬 옵션 결정
+				if (skillLimit > 0 && skillPool.Count > 0)
 				{
-					int rankLv = equip.SuffixOption[1];
-					// 무기
-					if (selectLine >= 0 && selectLine <= 8)
+					int skillToAttach = 0;
+					int dice = Utility.RandomMinMax(1, 100);
+
+					if (rank == 5) // 신화
 					{
-						equip.PrefixOption[9] = 123;
-						equip.SuffixOption[9] = EquipStaticOption[0, rankLv];
+						if (dice == 1) skillToAttach = 2;
+						else if (dice <= 5) skillToAttach = 1;
 					}
-					// 방어구
-					else if (selectLine >= 10 && selectLine <= 18)
+					else if (dice <= 5) skillToAttach = 1;
+
+					for (int i = 0; i < skillToAttach && i < skillPool.Count; i++)
+						finalOptions.Add(skillPool[i]);
+				}
+
+				// 일반 옵션 채우기
+				for (int i = 0; i < normalPool.Count && finalOptions.Count < totalOptionCount; i++)
+					finalOptions.Add(normalPool[i]);
+
+				// 데이터 저장 (ID 149 같은 유령 데이터를 방어하기 위해 범위 체크 추가)
+				for (int i = 0; i < finalOptions.Count; i++)
+				{
+					int optionID = finalOptions[i];
+					
+					// 0~158 범위를 벗어나는 데이터는 절대 저장하지 않음
+					if (optionID < 0 || optionID >= EquipRandomOption.GetLength(0)) continue;
+
+					equip.PrefixOption[11 + i] = optionID;
+					equip.SuffixOption[11 + i] = OptionValueSelect(rank, optionID, selectLine);
+
+				}
+
+				equip.SuffixOption[0] = finalOptions.Count;
+			}
+
+			// 2. 랭크 고정 옵션 처리 (selectLine 수치 대신 실제 타입 체크 병행)
+			if (rank > 0)
+			{
+				int rankLv = rank;
+
+				// 무기 판정
+				if (item is BaseWeapon || item is Spellbook)
+				{
+					equip.PrefixOption[9] = 123; // 전체 피해
+					equip.SuffixOption[9] = EquipStaticOption[0, rankLv];
+				}
+				// 방어구 판정 (링 갑옷 포함)
+				else if (item is BaseArmor)
+				{
+					equip.PrefixOption[9] = 4; // 체력 증가
+					equip.SuffixOption[9] = EquipStaticOption[1, rankLv];
+				}
+				// 악세사리 판정
+				else if (item is BaseJewel)
+				{
+					// JewelList에서 전투(19~22)/마법(23~26) 구분한 결과 활용
+					if (selectLine >= 19 && selectLine <= 22)
 					{
-						equip.PrefixOption[9] = 4;
-						equip.SuffixOption[9] = EquipStaticOption[1, rankLv];
-					}
-					// 전투 악세사리
-					else if (selectLine >= 19 && selectLine <= 22)
-					{
-						equip.PrefixOption[9] = 5;
+						equip.PrefixOption[9] = 5; // 기력 증가
 						equip.SuffixOption[9] = EquipStaticOption[2, rankLv];
 					}
-					// 마법 악세사리
-					else if (selectLine >= 23 && selectLine <= 26)
+					else
 					{
-						equip.PrefixOption[9] = 6;
+						equip.PrefixOption[9] = 6; // 마나 증가
 						equip.SuffixOption[9] = EquipStaticOption[3, rankLv];
 					}
 				}
+			}
+		}
+
+		// 안전한 리스트 셔플 도우미 함수
+		private static void ShuffleList(List<int> list)
+		{
+			int n = list.Count;
+			while (n > 1)
+			{
+				n--;
+				int k = Utility.Random(n + 1);
+				int value = list[k];
+				list[k] = list[n];
+				list[n] = value;
 			}
 		}
 		
@@ -1784,7 +1796,10 @@ namespace Server.Misc
 				if( item.SuffixOption[0] > 0 )
 				{
 					for( int i = 0; i < item.SuffixOption[0]; ++i )
+					{
 						skilluse = NewEquipOptionList( equip, item.PrefixOption[i + 11], item.SuffixOption[i + 11], skilluse);
+						Console.WriteLine("Magic {0} - PrefixOption :{1} SuffixOption{2}", i, item.PrefixOption[i + 11], item.SuffixOption[i + 11] );
+					}
 				}
 				
 				/*
@@ -1810,6 +1825,18 @@ namespace Server.Misc
 				#endregion
 				*/
 				
+				#region 랭크 옵션
+				
+				if (item.SuffixOption[1] > 0)
+				{
+					// 기존 skilluse에 이어서 붙이거나, 랭크 전용 위치가 있다면 조정 가능합니다.
+					// 여기서는 기존 옵션들 뒤에 이어서 붙도록 처리합니다.
+					skilluse = NewEquipOptionList(equip, item.PrefixOption[9], item.SuffixOption[9], skilluse);
+					Console.WriteLine("PrefixOption :{0} SuffixOption{1}", item.PrefixOption[9], item.SuffixOption[9] );
+				}				
+				
+				#endregion				
+				
 				#region 기본 옵션
 				//접두 61 ~ 70, 접미 61 ~ 70 구현 코드
 				skilluse = 5;
@@ -1829,6 +1856,7 @@ namespace Server.Misc
 				item.SuffixOption[10] = 0;
 
 				#endregion
+
 			}
 		}
 		#endregion

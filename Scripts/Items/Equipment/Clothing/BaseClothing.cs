@@ -1256,9 +1256,9 @@ namespace Server.Items
             {
 				if (oreType != 0)
 				{
-					if( !Identified )
-						list.Add(1028266, "<basefont color=#AAAAAA>{0}\t#{1}\t{2}<basefont color=#FFFFFF>", "", oreType, GetNameString());
-					else if( (int)ItemPower == 0 || (int)ItemPower >= 4 )
+					//if( !Identified )
+					//	list.Add(1028266, "<basefont color=#AAAAAA>{0}\t#{1}\t{2}<basefont color=#FFFFFF>", "", oreType, GetNameString());
+					if( (int)ItemPower == 0 || (int)ItemPower >= 4 )
 					{
 						if (m_ReforgedPrefix != ReforgedPrefix.None && m_ReforgedSuffix != ReforgedSuffix.None )
 						{
@@ -1283,16 +1283,22 @@ namespace Server.Items
 				}
 				else if( SuffixOption[99] > 0 )
 				{
-					if( !Identified )
-						list.Add(1028266, "<basefont color=#AAAAAA>{0}\t#{1}\t{2}<basefont color=#FFFFFF>", "", 1052084 + SuffixOption[99], GetNameString());
-					else
+					//if( !Identified )
+					//	list.Add(1028266, "<basefont color=#AAAAAA>{0}\t#{1}\t{2}<basefont color=#FFFFFF>", "", 1052084 + SuffixOption[99], GetNameString());
+					//else
+					if( SuffixOption[10] < 1 )
 						list.Add(1028264, String.Format(Util.OreItemRank( (int)ItemPower), "", 1052084 + SuffixOption[99], GetNameString()));
+					else
+					{
+						string upgrade = "+" + SuffixOption[10].ToString();
+						list.Add(1028263, String.Format(Util.OreItemRank( (int)ItemPower), "", upgrade, 1052084 + SuffixOption[99], GetNameString()));
+					}
 				}
 				else
 				{
-					if( !Identified )
-						list.Add(1028265, "<basefont color=#AAAAAA>{0}\t{1}<basefont color=#FFFFFF>", "", GetNameString());
-					else if( (int)ItemPower == 0 || (int)ItemPower >= 4 )
+					//if( !Identified )
+					//	list.Add(1028265, "<basefont color=#AAAAAA>{0}\t{1}<basefont color=#FFFFFF>", "", GetNameString());
+					if( (int)ItemPower == 0 || (int)ItemPower >= 4 )
 					{
 						if (m_ReforgedPrefix != ReforgedPrefix.None && m_ReforgedSuffix != ReforgedSuffix.None )
 						{
@@ -1305,15 +1311,19 @@ namespace Server.Items
 						else if ( m_ReforgedSuffix != ReforgedSuffix.None )
 						{
 							list.Add(1028260, String.Format(Util.OneItemRank( (int)ItemPower), "", RunicReforging.GetSuffixName(m_ReforgedSuffix), GetNameString()));
-							
+						}
+						else if( SuffixOption[10] > 0 )
+						{
+							list.Add(1028260, String.Format(Util.OneItemRank( (int)ItemPower), "", 1083700 + SuffixOption[10], GetNameString()));
 						}
 						else
 						{
 							list.Add(1053099, Util.ItemRank( (int)ItemPower), "", GetNameString());
 						}
+
 					}
 					else
-						list.Add(1053099, "{0}\t{1}", "", GetNameString());						
+						list.Add(1053099, "{0}\t{1}", "", GetNameString());				
 				}
             }
             else
@@ -2332,7 +2342,6 @@ namespace Server.Items
 			if( from is PlayerMobile )
 			{
 				double maxValue = 0.8;
-				double bonus = 1;
 				if (Quality == ItemQuality.Exceptional)
 				{
 					maxValue = 1.0;
@@ -2359,16 +2368,25 @@ namespace Server.Items
 				}
 				*/
 				//int rank = Util.ItemRankMaker( from.Skills[craftSystem.MainSkill].Value );
-				int rank = Util.ItemRankMaker( from.Skills.ArmsLore.Value, maxValue, bonus );				
+		
 				
 				//int tier = Util.ItemTierMaker( arms, rank, Misc.Util.ResourceNumberToNumber((int)Resource ), from );
 				PlayerMobile pm = from as PlayerMobile;
-				Util.NewItemCreate(this, rank, pm );
-				//암즈로어 스킬 상승 보너스
-				if (Quality == ItemQuality.Exceptional)
-					pm.CheckSkill(SkillName.ArmsLore, 1500 + rank * 250);						
-				else
-					pm.CheckSkill(SkillName.ArmsLore, 500 + rank * 250);						
+					//아이템 제작 및 암즈로어 스킬 상승 보너스
+					/*
+						제작술 스킬 1당 옵션 기대치 1로 계산
+						장비학 스킬 1당 옵션 기대치 0.2로 계산
+						고급일 시 옵션 기대치 값 50 증가					
+					*/
+					double bonus = from.Skills[craftSystem.MainSkill].Value + from.Skills.ArmsLore.Value * 0.2;
+					if (Quality == ItemQuality.Exceptional)
+						bonus += 50;
+					
+					int rank = ItemOptionCreator.ItemCreator(this, bonus, pm);
+					if (Quality == ItemQuality.Exceptional)
+						pm.CheckSkill(SkillName.ArmsLore, 1500 + rank * 250);
+					else
+						pm.CheckSkill(SkillName.ArmsLore, 500 + rank * 250);
 			}				
 		
 

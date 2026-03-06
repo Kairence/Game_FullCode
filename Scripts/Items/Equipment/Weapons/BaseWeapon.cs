@@ -5306,9 +5306,6 @@ namespace Server.Items
 
 		public override void AddNameProperty(ObjectPropertyList list)
 		{
-		// SuffixOption[10]이 강화 수치라고 하셨으니 직접 접근합니다.
-			int step = this.SuffixOption[10];
-
             if (m_ExtendedWeaponAttributes.AssassinHoned > 0)
             {
                 list.Add(1152207); // Assassin's Edge

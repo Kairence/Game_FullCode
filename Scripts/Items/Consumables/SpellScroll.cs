@@ -129,6 +129,7 @@ namespace Server.Items
 				m_SpellScroll = diamond;
 				m_SpellID = spellid;
 			}
+			/*
 			protected override void OnTarget( Mobile from, object targeted )
 			{
 				if (targeted is Item)
@@ -232,6 +233,7 @@ namespace Server.Items
 					}
 				}
 			}
+			*/
 		}
     }
 }

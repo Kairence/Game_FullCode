@@ -504,39 +504,24 @@ namespace Server.Items
 			if( from is PlayerMobile )
 			{
 				double maxValue = 0.8;
-				double bonus = 1;
 				if (Quality == ItemQuality.Exceptional)
 				{
-					maxValue = 0.9;
-					bonus = 2;
+					maxValue = 1.0;
+					this.MaxHitPoints += 20;
+					this.HitPoints += 20;
 				}
-				
-				if( from.Skills.ArmsLore.Value >= 150 )
-				{
-					maxValue = 1;
-					bonus += 1;
-				}
-				if( from.Skills.ArmsLore.Value >= 200 )
-				{
-					bonus += 2;
-					this.MaxHitPoints = 120;
-					this.HitPoints = 120;
-					if(Quality == ItemQuality.Exceptional)
-					{
-						this.MaxHitPoints = 140;
-						this.HitPoints = 140;
-					}
-				}
-				
-				//int rank = Util.ItemRankMaker( from.Skills[craftSystem.MainSkill].Value );
-				int rank = Misc.Util.ItemRankMaker( from.Skills.ArmsLore.Value, maxValue, bonus );				
-				
-				//int tier = Util.ItemTierMaker( arms, rank, Misc.Util.ResourceNumberToNumber((int)Resource ), from );
+
 				PlayerMobile pm = from as PlayerMobile;
-				Misc.Util.NewItemCreate(this, rank, pm );
-				//암즈로어 스킬 상승 보너스
-				pm.CheckSkill(SkillName.ArmsLore, 500 + rank * 250);						
-			}				
+				double bonus = from.Skills[craftSystem.MainSkill].Value + from.Skills.ArmsLore.Value * 0.2;
+				if (Quality == ItemQuality.Exceptional)
+					bonus += 50;
+				
+				int rank = Misc.ItemOptionCreator.ItemCreator(this, bonus, pm);
+				if (Quality == ItemQuality.Exceptional)
+					pm.CheckSkill(SkillName.ArmsLore, 1500 + rank * 250);
+				else
+					pm.CheckSkill(SkillName.ArmsLore, 500 + rank * 250);
+			}					
             return quality;			
         }
     }
