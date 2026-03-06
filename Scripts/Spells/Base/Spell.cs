@@ -338,214 +338,95 @@ namespace Server.Spells
 					return 0;
 			}
 
-			/*
-			if( target is BaseCreature )
-			{
-				BaseCreature bc = target as BaseCreature;
-				if( bc.ControlMaster == target || bc.SummonMaster == target )
-					return 0;
-				if( bc.ControlMaster != null || bc.SummonMaster != null )
-					return 0;
-			}
-			if( Caster is BaseCreature || target is BaseCreature )
-				return point * 10;
-			*/
 			return point;
 		}
-		
+				
 		public virtual int GetNewAosDamage(int bonus, int min, int max, bool playerVsPlayer, double scalar, IDamageable damageable, bool scroll = false)
 		{
-            Mobile target = damageable as Mobile;
+			Mobile target = damageable as Mobile;
+			if (target == null) return 0;
 
-            int damage = Utility.RandomMinMax( min, max ); //Utility.Dice(dice, sides, bonus) * 100;
-			
-			int	bonus_damage = max - min;
-			
-			double chance_dice = Caster.Skills.Magery.Value - target.Skills.MagicResist.Value;
-			
-			if( scroll )
-				chance_dice += Caster.Skills.Inscribe.Value - target.Skills.Inscribe.Value;
+			// 1. [기본 데미지 처리]
+			int hitLocation = CheckParry(target) ? 0 : -1;
+			var (calculatedDamage, finalLoc) = CombatEngine.CalculateFinalDamage(Caster, target, min, max, hitLocation, true, false);
+			int damage = CombatEngine.OnCombatAction(Caster, target, calculatedDamage, finalLoc, true);
 
-			if( Caster is BaseCreature )
+			// 2. [스펠위빙 연쇄 발동 체크]
+			double swSkill = Caster.Skills[SkillName.Spellweaving].Value;
+			
+			if (!m_IsExtraCast && swSkill * 0.001 > Utility.RandomDouble() && target.Alive)
 			{
-				damage /= 5;
-				chance_dice += Caster.Skills.Meditation.Value;
-			}
-			if( chance_dice > 100 )
-				chance_dice = 100;
-			else if( chance_dice < -100 )
-				chance_dice = -100;
+				int spellNum = SpellRegistry.GetRegistryNumber(this);
+				int[] swAllowedSpells = { 0, 4, 11, 17, 29, 36, 41, 42, 50 };
 
-			bonus_damage = (int)( chance_dice * bonus_damage );
-			bonus_damage /= 100;
-			
-			damage += bonus_damage;
-			
-			if( damage > max )
-				damage = max;
-			else if( damage < min )
-				damage = min;
-			
-			/*
-			if( Caster is PlayerMobile )
-			{
-				PlayerMobile pm = Caster as PlayerMobile;
-				if( pm.EvalCast )
+				if (Array.Exists(swAllowedSpells, id => id == spellNum))
 				{
-					pm.EvalCast = false;
-					success = true;
-				}
-			}
-			*/
-			//기본 데미지
-			//double statBonus = Caster.Skills.EvalInt.Value * 0.4;
-			//double skillBonus = Caster.Skills.Spellweaving.Value * 0.2;
-			
-			int damageBonus = AosAttributes.GetValue(Caster, AosAttribute.SpellDamage) + AosWeaponAttributes.GetValue(Caster, AosWeaponAttribute.UseBestSkill);
-			
-			damageBonus = (int)( damageBonus * ( 1 + Caster.Int * 0.001 ) );
-			
-			/*
-			if( Caster is PlayerMobile )
-			{
-				PlayerMobile pm = Caster as PlayerMobile;
-				damageBonus += pm.SilverPoint[7] * 100;
-				if( pm.TimerList[70] != 0 )
-					damageBonus += pm.PotionPower;
-				
-				damageBonus += (int)Caster.Skills.EvalInt.Value;
-				if( Caster.Skills.EvalInt.Value >= 200 )
-					damageBonus += 100;
-				else if( Caster.Skills.EvalInt.Value >= 100 )
-					damageBonus += 30;
-			}
+					Caster.FixedParticles(0x373A, 10, 30, 5052, 0x482, 0, EffectLayer.Waist);
+					Caster.PlaySound(0x5C0);
 
-			
-			if( target is PlayerMobile )
-			{
-				PlayerMobile pm = target as PlayerMobile;
-				if( target.Skills.EvalInt.Value > 0 && pm.MagicDefenseTime < DateTime.Now )
-				{
-					double magicdamagereduce = target.Skills.EvalInt.Value * 0.2;
-					if( target.Skills.EvalInt.Value >= 200 )
-						damageBonus += 20;
-					else if( target.Skills.EvalInt.Value >= 150 )
-						damageBonus += 10;
+					// 200 레벨이면 총 2회 추가 발동
+					int extraCount = (swSkill >= 200.0) ? 2 : 1;
 
-					if( magicdamagereduce > 0 )
+					for (int i = 1; i <= extraCount; i++)
 					{
-						damageBonus = (int)( damageBonus * (100 - magicdamagereduce ) );
-					}
-					if( target.Skills.EvalInt.Value >= 150 )
-						pm.MagicDefenseTime = DateTime.Now + TimeSpan.FromSeconds(5.0);
-					else
-						pm.MagicDefenseTime = DateTime.Now + TimeSpan.FromSeconds(2.0);
-				}
-			}
-
-			BaseShield shield = Caster.FindItemOnLayer(Layer.TwoHanded) as BaseShield;
-			if( shield == null )
-				criticalPercent += Caster.Skills.Mysticism.Value * 0.001;
-		
-			if( target.Paralyzed || criticalPercent * 0.01 >= Utility.RandomDouble() )
-			{
-				if( criticalDamage < 0 )
-					criticalDamage = 0;
-
-				else
-				{
-					//치명타 이펙트
-					Caster.FixedParticles(0x3779, 10, 20, 0x0, EffectLayer.Waist);
-					Caster.PlaySound(0x64B);
-					Caster.CheckSkill(SkillName.Mysticism, skillUp(Caster, target, damage * 2));
-					//exdamage += criticalDamage;
-				}
-			}
-			//방어 체크
-			BaseShield target_shield = target.FindItemOnLayer(Layer.TwoHanded) as BaseShield;
-			
-			double parryBonus = 0;
-			
-			if( target is PlayerMobile )
-			{
-				PlayerMobile pm = target as PlayerMobile;
-
-				if( pm.TimerList[69] != 0 )
-					parryBonus += pm.PotionDefense * 0.1;				
-
-
-				if( pm.ParryTime < DateTime.Now && target.Stam >= 1 )
-				{
-					if( target_shield != null )
-					{
-						//damage = target_shield.OnHit(target_shield, damage);
-						double parrychance = target.Skills.Parry.Value * 0.01;
-						bool stamcheck = true;
-						if( Utility.RandomDouble() < parrychance )
+						Timer.DelayCall(TimeSpan.FromSeconds(0.5 * i), () => 
 						{
-							parryBonus += target.Skills.Parry.Value * 0.2;
-							if( target_shield is WoodenShield )
+							if (Caster != null && target != null && target.Alive)
 							{
-								parryBonus += 30;
-								stamcheck = false;
-								pm.ParryTime = DateTime.Now + TimeSpan.FromSeconds(0.5);
+								// 150 레벨 이상 보너스: 적 5초 영창 불가 (NextSpellTime)
+								// 200 레벨일 경우 마법이 2번 터지면서 5초씩 두 번 갱신되어 결과적으로 약 10초 효과
+								if (swSkill >= 150.0)
+								{
+									target.NextSpellTime = (DateTime.Now + TimeSpan.FromSeconds(5.0)).Ticks;
+									
+									target.FixedParticles(0x37B9, 1, 30, 9502, 0x4E9, 0, EffectLayer.Waist);
+									target.PlaySound(0x5C3);
+									target.SendLocalizedMessage(1075124); 
+								}
+
+								// [재발동 실행]
+								this.m_IsExtraCast = true;
+								var method = this.GetType().GetMethod("Target", new Type[] { typeof(IDamageable) });
+								if (method != null) method.Invoke(this, new object[] { target });
+								this.m_IsExtraCast = false;
 							}
-							else if( target_shield is Buckler )
-							{
-								parryBonus += 35;
-								pm.ParryTime = DateTime.Now + TimeSpan.FromSeconds(1.0);
-							}
-							else if( target_shield is BronzeShield || target_shield is MediumPlateShield )
-							{
-								parryBonus += 10;
-								pm.ParryTime = DateTime.Now + TimeSpan.FromSeconds(2.5);
-							}
-							else if( target_shield is MetalShield || target_shield is LargeStoneShield )
-							{
-								parryBonus += 35;
-								pm.ParryTime = DateTime.Now + TimeSpan.FromSeconds(1.5);
-							}
-							else if( target_shield is WoodenKiteShield )
-							{
-								parryBonus += 20;
-								pm.ParryTime = DateTime.Now + TimeSpan.FromSeconds(0.5);
-							}
-							else if( target_shield is MetalKiteShield || target_shield is GargishKiteShield )
-							{
-								parryBonus += 40;
-								pm.ParryTime = DateTime.Now + TimeSpan.FromSeconds(2.0);
-							}
-							else if( target_shield is HeaterShield || target_shield is LargePlateShield )
-							{
-								parryBonus += 50;
-								pm.ParryTime = DateTime.Now + TimeSpan.FromSeconds(2.5);
-							}
-							else if( target_shield is OrderShield || target_shield is ChaosShield )
-							{
-								parryBonus += 10;
-								pm.ParryTime = DateTime.Now + TimeSpan.FromSeconds(5.5);
-							}
-							if( stamcheck )
-								target.Stam -= 1;
-							//마법 저항 이펙트
-							target.PlaySound(0x64A);
-							//target.FixedParticles(0x3709, 1, 30, 0x26ED, 5, 2, EffectLayer.Waist);
-							target.FixedParticles(0x376A, 1, 30, 0x251E, 5, 3, EffectLayer.Waist);
-						}
+						});
 					}
 				}
 			}
 
-			int extotaldamage = (int)( damage * exdamage ) - damage;
-			//if( exreducedamage < extotaldamage )
-			//	damage += extotaldamage - exreducedamage;
-			damage *= 100 - (int)parryBonus;
-			damage /= 100;
-
-			*/
-			return damage;
+			return damage; 
 		}
+		// --- [패링 로직 메서드 분리] ---
+		public virtual bool CheckParry(Mobile defender)
+		{
+			BaseShield shield = defender.FindItemOnLayer(Layer.TwoHanded) as BaseShield;
+			if (shield == null) return false;
 
+			double parryChance = 0.0;
+			double chiv = defender.Skills[SkillName.Chivalry].Value;
+			double necro = defender.Skills[SkillName.Necromancy].Value;
+
+			if (shield.ItemID == 0x1BC4 && chiv >= 150.0)
+				parryChance = chiv * 0.0005;
+			else if (shield.ItemID == 0x1BC3 && necro >= 150.0)
+				parryChance = necro * 0.0005;
+			else
+				parryChance = defender.Skills[SkillName.Parry].Value * 0.0005;
+
+			if (parryChance > Utility.RandomDouble())
+			{
+				defender.FixedEffect(0x37B9, 10, 16);
+				defender.Animate(AnimationType.Parry, 0);
+				defender.PlaySound(0x1F7);
+
+				Caster.SendLocalizedMessage(1061128); // 공격 튕겨나감
+				defender.SendLocalizedMessage(1061127); // 공격 막아냄
+				return true;
+			}
+
+			return false;
+		}
 		public virtual bool IsCasting { get { return m_State == SpellState.Casting; } }
 
         public virtual void OnCasterHurt()
@@ -643,22 +524,21 @@ namespace Server.Spells
         /// </summary>
         /// <param name="caster"></param>
         /// <returns></returns>
-        public virtual bool CheckMovement(Mobile caster)
-        {
-			Spellbook book = Caster.FindItemOnLayer(Layer.OneHanded) as Spellbook;
-			if( book != null )
+		public virtual bool CheckMovement(Mobile caster)
+		{
+			if (IsCasting && BlocksMovement && (!(m_Caster is BaseCreature) || ((BaseCreature)m_Caster).FreezeOnCast))
 			{
-				//m_Caster.CheckSkill( SkillName.Meditation );
-				return true;
+				// [에러 수정] .Running 대신 Direction 비트 연산 사용 (서버 표준 방식)
+				bool isRunning = (caster.Direction & Direction.Running) != 0;
+
+				if (!isRunning && caster.Skills[SkillName.EvalInt].Value >= 150.0)
+					return true;
+
+				return false;
 			}
-            if (IsCasting && BlocksMovement && (!(m_Caster is BaseCreature) || ((BaseCreature)m_Caster).FreezeOnCast))
-            {
-                return false;
-            }
 
-            return true;
-        }
-
+			return true;
+		}
 		public virtual bool OnCasterEquiping(Item item)
 		{
             if (IsCasting)
@@ -1654,9 +1534,22 @@ namespace Server.Spells
 				return false;
 			}
 		}
-
+		private bool m_IsExtraCast = false;
 		public bool CheckHSequence(IDamageable target)
 		{
+			// 1. [스펠위빙 패스권 체크] 
+			// m_IsExtraCast가 true라면 마나/기력/영창 체크(CheckSequence)를 생략하고 즉시 통과
+			if (m_IsExtraCast)
+			{
+				if (target.Alive)
+				{
+					Caster.DoHarmful(target); // 해로운 행동 기록은 남김
+					return true;
+				}
+				return false;
+			}
+
+			// --- 기존 로직 ---
 			if (!target.Alive || (target is IDamageableItem && !((IDamageableItem)target).CanDamage))
 			{
 				m_Caster.SendLocalizedMessage(501857); // This spell won't work on that!

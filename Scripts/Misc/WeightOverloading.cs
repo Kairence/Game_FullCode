@@ -182,11 +182,12 @@ namespace Server.Misc
 					pm.SaveTown = 14;
 				
 			}			
-			
-			BandageContext c = BandageContext.GetContext( from );
-			if ( c != null )
-				c.Slip();
-			
+			if( from.Skills.Healing.Value < 150.0 )
+			{
+				BandageContext c = BandageContext.GetContext( from );
+				if ( c != null )
+					c.Slip();
+			}			
             int maxWeight = from.MaxWeight + OverloadAllowance;
             int overWeight = (Mobile.BodyWeight + from.TotalWeight) - maxWeight;
 

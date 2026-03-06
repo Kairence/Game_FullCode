@@ -93,11 +93,6 @@ namespace Server.Factions
 
                                     healer.SendLocalizedMessage(500956); // You begin applying the bandages.
 
-                                    if (healer.NetState != null && healer.NetState.IsEnhancedClient)
-                                    {
-                                        healer.NetState.Send(new BandageTimerPacket((int)(seconds)));
-                                    }
-
                                     Consume();
                                 }
                             }

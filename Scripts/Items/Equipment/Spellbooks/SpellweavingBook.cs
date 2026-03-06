@@ -15,7 +15,7 @@ namespace Server.Items
             : base(content, 0x2D50)
         {
             //this.Hue = 0x8A2;
-
+			this.Layer = Layer.Invalid;
             //this.Layer = Layer.OneHanded;
 			Weight = 3.0;
 			//Attributes.CastSpeed += 50;

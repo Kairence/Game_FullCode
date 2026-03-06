@@ -52,7 +52,6 @@ namespace Server.Spells.First
             }
             else if (CheckHSequence(d))
             {
-				int level = SpellLevel(Caster, 4);
                 IDamageable source = Caster;
                 IDamageable target = d;
 
@@ -69,8 +68,8 @@ namespace Server.Spells.First
 				
                 if (Core.AOS)
                 {
-					int min = 10 + level * 2;
-					int max = 30 + level * 2;
+					int min = 10;
+					int max = 30;
 
                     damage = GetNewAosDamage(0, min, max, d);
 					
@@ -88,8 +87,6 @@ namespace Server.Spells.First
                     Caster.PlaySound(0x1E5);
 					
 					SpellHelper.Damage(this, target, damage, 0, 100, 0, 0, 0);
-					if( level >= 5 )
-						SpellHelper.Damage(this, target, damage, 100, 0, 0, 0, 0);
 				}
             }
 

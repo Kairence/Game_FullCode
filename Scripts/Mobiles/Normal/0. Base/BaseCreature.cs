@@ -390,6 +390,13 @@ namespace Server.Mobiles
         public virtual bool CanBeParagon { get { return false; } }
 
 		//몬스터 변수 지정
+		private int m_VASave;
+		public int VASave
+		{
+			get{ return m_VASave; }
+			set{ m_VASave = value;}
+		}
+
 		private DateTime m_WeaponDefenseTime;
 		public DateTime WeaponDefenseTime
 		{
@@ -2996,9 +3003,12 @@ namespace Server.Mobiles
         {
             base.Serialize(writer);
 
-            writer.Write(39); // version
+            writer.Write(40); // version
 
             int i = 0;
+			
+			writer.Write( m_VASave );
+			
 			for( i = 0; i < m_originalStats.Length; ++i )
 			{
 				writer.Write( m_originalStats[i] );
@@ -3235,6 +3245,17 @@ namespace Server.Mobiles
 
             switch (version)
             {
+				case 40:
+				{
+					m_VASave = reader.ReadInt();
+					// [안전 코드] 서버 리부팅 시 붕대 버프 제거
+					if (this.m_VASave > 0)
+					{
+						this.VirtualArmor -= this.m_VASave;
+						this.m_VASave = 0; // 초기화하여 중복 차감 방지
+					}
+					goto case 39;
+				}
 				case 39:
 				{
 					for( int i = 0; i < m_originalStats.Length; ++i )

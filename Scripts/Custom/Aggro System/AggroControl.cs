@@ -29,9 +29,18 @@ namespace Server.Mobiles
 				multiplier = (m.FindItemOnLayer(Layer.TwoHanded) is BaseShield) ? 2.0 : 1.0;
 			}
 
-			// 3. AOS.Damage에서 전달받은 aggro 인자 적용 (100 기준 배율)
-			// 예: aggro가 150이면 1.5배 추가, 50이면 0.5배로 감소
-			double finalAggro = damage * multiplier * (aggroModifier / 100.0);
+			double strBonus = 1.0;
+			if (m is PlayerMobile)
+			{
+				// 힘이 1000이면 multiplier가 1.0이 되어 최종적으로 1.0배가 됨
+				// 힘이 9999이면 multiplier가 9.9이 되어 약 9.9배가 됨
+				strBonus = m.Str * 0.001;
+			}
+			// ---------------------------------------------------------
+
+			// 3. AOS.Damage에서 전달받은 aggro 인자 및 힘 보너스 적용
+			// multiplier(방패) * strBonus(힘) * aggroModifier(스킬보정) 적용
+			double finalAggro = damage * multiplier * strBonus * (aggroModifier / 100.0);
 
 			// 4. 테이블 갱신
 			if (_table.TryGetValue(m, out double current))

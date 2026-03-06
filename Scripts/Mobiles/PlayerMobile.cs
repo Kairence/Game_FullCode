@@ -3110,6 +3110,132 @@ namespace Server.Mobiles
 			return totalregen;
 		}
 		
+		
+		private void PlayerCount()
+		{
+			// 1. [0.1초 주기] 최소한의 타이머 감소 로직만 수행
+			for (int i = 0; i < m_TimerList.Length; i++)
+			{
+				if (m_TimerList[i] >= 1)
+					m_TimerList[i] -= 1;
+			}
+
+			// 2. [1.0초 주기] 0.1초 타이머가 10번 돌 때 1번만 실행 (성능 대폭 개선)
+			// m_TimerList[73]은 리젠/회복 체크용 (10틱 = 1초)
+			if (m_TimerList[73] == 0)
+			{
+				ExecuteEverySecond();
+				m_TimerList[73] = 10; 
+			}
+
+			// 다음 0.1초 호출
+			Timer.DelayCall(TimeSpan.FromSeconds(0.1), new TimerCallback(PlayerCount));
+		}		
+		
+		private void ExecuteEverySecond()
+		{
+			if (Deleted || !Alive) return;
+
+			// A. [회복 및 소환수 체크] - World.Mobiles 전체 순회 제거
+			// 소환수 리스트는 생성 시 별도 List<Mobile>로 관리하는 것이 좋으나, 
+			// 여기서는 기존 로직을 유지하되 1초에 한 번만 실행되도록 격리함.
+			CheckRegenerationAndSummons();
+
+			// B. [스탯 변환] - 값이 바뀔 때만 실행하도록 조건 강화
+			if (SkillsTotal_Check != SkillsTotal)
+			{
+				//UpdateSkillByStats();
+			}
+
+			// C. [음식/시즌 체크] - 1초에 한 번이면 충분함
+			//CheckAutoFood();
+			//CheckSeasonLocation();
+
+			// D. [코마 체크]
+			if (m_Coma)
+			{
+				UpdateComaState();
+			}
+		}
+		
+		private List<Mobile> m_MySummons = new List<Mobile>();
+		public List<Mobile> MySummons => m_MySummons;
+		
+		private void CheckRegenerationAndSummons()
+		{
+			// 1. [회복 로직] (생략: 기존의 Hits, Stam, Mana 회복 코드 위치)
+
+			// 2. [소환수 마나 소모 최적화]
+			if (m_MySummons.Count > 0)
+			{
+				int totalManaDrain = 0;
+
+				// 리스트를 역순으로 순회 (삭제 시 안전을 위함)
+				for (int i = m_MySummons.Count - 1; i >= 0; i--)
+				{
+					Mobile s = m_MySummons[i];
+
+					// 소환수가 사라졌거나 죽었다면 리스트에서 제거
+					if (s == null || s.Deleted || !s.Alive)
+					{
+						m_MySummons.RemoveAt(i);
+						continue;
+					}
+
+					// 소환수 한 마리당 마나 1 소모 (기획에 맞게 수치 조정 가능)
+					totalManaDrain += 1;
+				}
+
+				// 마나가 부족하면 소환수 전부 해제
+				if (this.Mana < totalManaDrain)
+				{
+					this.Mana = 0;
+					ClearSummons(); // 마나 부족 시 소환 해제 메서드 호출
+				}
+				else
+				{
+					this.Mana -= totalManaDrain;
+				}
+			}
+		}
+
+		private void ClearSummons()
+		{
+			for (int i = m_MySummons.Count - 1; i >= 0; i--)
+			{
+				Mobile s = m_MySummons[i];
+				if (s != null && !s.Deleted)
+				{
+					// 소환 해제 이펙트 및 삭제
+					Effects.SendLocationEffect(s.Location, s.Map, 0x3728, 10, 10, 0, 0);
+					s.Delete();
+				}
+			}
+			m_MySummons.Clear();
+		}		
+		
+		private void UpdateComaState()
+		{
+			// 1초 주기로 이펙트 출력 (itemID: 0x376A)
+			// 1초마다 한 번씩 캐릭터 발밑에 연기 효과를 보여줍니다.
+			Effects.SendLocationEffect(this.Location, this.Map, 0x376A, 10, 1, 0, 0);
+
+			// 몬스터 타겟팅 강제 해제 (보조 안전장치)
+			if (this.Combatant != null) 
+				this.Combatant = null;
+
+			// 코마 타이머(m_TimerList[67])가 0이 되었는지 확인
+			// 0.1초 틱에서 10씩 깎였으므로, 여기서 최종 0 여부를 판단합니다.
+			if (m_TimerList[67] <= 0)
+			{
+				// 프로퍼티를 통해 상태 해제 (Frozen/Blessed 해제 로직 자동 실행)
+				this.Coma = false; 
+				
+				// 지정된 마을로 강제 이동
+				this.DeathMove(); 
+			}
+		}		
+		/*
 		private void PlayerCount()
 		{
 			//0~63 : 마법 스킬트리
@@ -3129,32 +3255,7 @@ namespace Server.Mobiles
 				if( m_TimerList[i] >= 1 )
 					m_TimerList[i] -= 1;
 			}
-			
-			//메크로 체크
-			MacroCheck--;
-			if( MacroCheck < 0 )
-				MacroCheck = 0;
-			if( MacroCheck > 250 )
-				DeathMove();
 			/*
-			if( m_TimerList[66] >= m_StamTimeUp)
-			{
-				int timediv = m_TimerList[66] % m_StamTimeUp;
-				m_TimerList[66] -= m_StamTimeUp * timediv;
-				Stam += timediv;
-				if( StamMax == Stam )
-					m_TimerList[66] = 0;
-				else
-				m_TimerList[66] += 1;
-			}
-			*/
-
-			//던전 체크
-			//m_Tired += Util.DungeonTried( Location.X, Location.Y );
-			//if( Hunger <= 0 )
-			//	m_Tired += Util.DungeonTried( Location.X, Location.Y );
-
-			
 			//집, 마을 체크
 			BaseHouse house = BaseHouse.FindHouseAt(this);
 			if( !IsStaff() && ( Poisoned || ( this.Hidden && !( house != null && house.IsOwner(this) ) ) ) )
@@ -3162,7 +3263,7 @@ namespace Server.Mobiles
 				m_TimerList[64] = 60;
 				//m_TimerList[65] = 300;
 			}
-
+			
 			if ( m_Coma )
 			{
 				this.Frozen = true;
@@ -3276,94 +3377,6 @@ namespace Server.Mobiles
 						Loop = false;
 				}
 			}
-
-			if( m_ShipCheck != 0 && m_TimerList[68] <= 0 )
-			{
-				Point3D p = new Point3D( 3045, 829, -2 );
-				m_SaveTown = 12;
-				switch ( m_ShipCheck )
-				{
-					case 1:
-					{
-						p = new Point3D( 1451, 1766, -2 );
-						m_SaveTown = 1;
-						break;
-					}
-					case 2:
-					{
-						p = new Point3D( 1495, 1761, -2 );
-						m_SaveTown = 1;
-						break;
-					}
-					case 3:
-					{
-						p = new Point3D( 2751, 2156, -2 );
-						m_SaveTown = 2;
-						break;
-					}
-					case 4:
-					{
-						p = new Point3D( 1134, 3695, -2 );
-						m_SaveTown = 4;
-						break;
-					}
-					case 5:
-					{
-						p = new Point3D( 1521, 3990, -2 );
-						m_SaveTown = 4;
-						break;
-					}
-					case 6:
-					{
-						p = new Point3D( 1504, 3710, -2 );
-						m_SaveTown = 4;
-						break;
-					}
-					case 7:
-					{
-						p = new Point3D( 3709, 2297, -2 );
-						m_SaveTown = 5;
-						break;
-					}
-					case 8:
-					{
-						p = new Point3D( 4428, 1026, -2 );
-						m_SaveTown = 7;
-						break;
-					}
-					case 9:
-					{
-						p = new Point3D( 3522, 2593, 1 );
-						m_SaveTown = 14;
-						break;
-					}
-					case 10:
-					{
-						p = new Point3D( 2937, 3414, 1 );
-						m_SaveTown = 9;
-						break;
-					}
-					case 11:
-					{
-						p = new Point3D( 645, 2245, -2 );
-						m_SaveTown = 10;
-						break;
-					}
-					case 12:
-					{
-						p = new Point3D( 2086, 2856, -2 );
-						m_SaveTown = 11;
-						break;
-					}
-				}
-				m_ShipCheck = 0;
-				BaseCreature.TeleportPets(this, p, Map.Trammel, true);
-				this.MoveToWorld( p, Map.Trammel );
-			}
-
-			//스킬 최대치
-			//SkillsCap = 1000000;
-			FollowersMax = 5; /* Fame / 1000 + */ //ArtifactPoint[12]; //+ GoldPoint[14] + SilverPoint[41];
 			
 			//스킬을 스텟으로 변환
 			if( SkillsTotal_Check != SkillsTotal )
@@ -3372,7 +3385,7 @@ namespace Server.Mobiles
 				SkillsTotalbonus = SkillsTotal_Bonus();
 				if( SkillsTotalbonus >= 70 )
 					SkillsTotalbonus = 70;
-				*/
+				
 				for( int i = 0; i < m_StatUp.GetLength(1); i++)
 				{
 					for( int j = 0; j < m_StatUp.GetLength(0); j++)
@@ -3383,16 +3396,7 @@ namespace Server.Mobiles
 						}
 					}
 				}	
-				/*
-				for( int i = 0; i < m_SkillbyStat.Length; i++)
-				{
-					if( m_SkillbyStat[i] < StatUpMax )
-					{
-						SkillFull = false;
-						break;
-					}
-				}
-				*/
+
 				Delta(MobileDelta.Stat);
 				ProcessDelta();
 				if( Hits > HitsMax )
@@ -3464,6 +3468,7 @@ namespace Server.Mobiles
 			
 			Timer.DelayCall( TimeSpan.FromSeconds( 0.1 ), new TimerCallback( PlayerCount ) );
 		}
+			*/
 
 		public CraftSystem m_CraftSystem = null;
 		//public CraftItem m_CraftItem = null;
@@ -5683,11 +5688,12 @@ namespace Server.Mobiles
 		public override void OnDamage(int amount, Mobile from, bool willKill)
 		{
 			/*
-			BandageContext c = BandageContext.GetContext( this );
-			if ( c != null )
-				c.Slip();
-			*/
-			/*
+			if( from.Skills.Healing.Value < 100 )
+			{
+				BandageContext c = BandageContext.GetContext( this );
+				if ( c != null )
+					c.Slip();
+			}
 			int disruptThreshold;
 
 			if (!Core.AOS)
@@ -6636,14 +6642,52 @@ namespace Server.Mobiles
 			set{ m_FirstSkill = value;}
 		}
 
-
 		private bool m_Coma;
-		[CommandProperty( AccessLevel.GameMaster )]
+
+		[CommandProperty(AccessLevel.GameMaster)]
 		public bool Coma
 		{
-			get{ return m_Coma; }
-			set{ m_Coma = value;}
-		}
+			get { return m_Coma; }
+			set
+			{
+				if (m_Coma != value)
+				{
+					m_Coma = value;
+
+					if (m_Coma) // 코마 돌입 시 (죽었을 때)
+					{
+						this.Frozen = true;
+						this.Blessed = true;
+						this.Warmode = false;
+						this.Combatant = null;
+						m_TimerList[67] = 600; // 60초
+
+						// [수정] Cliloc 503410 적용 (혼수상태 메세지)
+						this.SendLocalizedMessage(503410); 
+						
+						// [추가] 시각적 효과: 유저 머리 위에 빨간색 글씨로 상태 표시
+						//this.PublicOverheadMessage(MessageType.Regular, 0x22, false, "[혼수상태]");
+						
+						// [추가] 이펙트: 캐릭터 위치에 연기 또는 마법 효과 (정기적으로 출력하려면 PlayerCount 활용)
+						Effects.SendLocationEffect(this.Location, this.Map, 0x376A, 10, 1, 0, 0); 
+					}
+					else // 코마 해제 시 (회복)
+					{
+						this.Frozen = false;
+						this.Blessed = false;
+						m_TimerList[67] = 0;
+
+						// [수정] Cliloc 503411 적용 (회복 메세지)
+						this.SendLocalizedMessage(503411);
+						
+						// [추가] 회복 시각 효과: 반짝이는 푸른 빛 이펙트와 사운드
+						this.FixedParticles(0x376A, 9, 32, 5005, EffectLayer.Waist);
+						this.PlaySound(0x1F2); // 마법 회복 사운드
+						this.PublicOverheadMessage(MessageType.Regular, 0x42, false, "[회복됨]");
+					}
+				}
+			}
+}
 		/*
 		private int m_ComaTime;
 		[CommandProperty( AccessLevel.GameMaster )]

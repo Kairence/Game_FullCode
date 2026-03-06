@@ -1478,7 +1478,7 @@ namespace Server.Items
 		{
 			Container pack = from.Backpack;
 
-			if ( SpellbookType == SpellbookType.Regular && (Parent == from || (pack != null && Parent == pack)) )
+			if ( SpellbookType == SpellbookType.Paladin || ( SpellbookType == SpellbookType.Regular && (Parent == from || (pack != null && Parent == pack)) ) )
 			{
 				DisplayTo(from);
 			}

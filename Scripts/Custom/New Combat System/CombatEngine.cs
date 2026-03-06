@@ -53,60 +53,95 @@ namespace Server.Misc
             return Math.Max(1, damage);
         }
 
-        // --- [데미지 계산 엔진: .NET 8.0 튜플 반환] ---
+		// --- [데미지 계산 엔진: .NET 8.0 튜플 반환] ---
 		public static (int damage, int hitLocation) CalculateFinalDamage(Mobile attacker, Mobile defender, int min, int max, int target, bool isMagic, bool forceArrow)
 		{
-           int currentTarget = target;
+			int currentTarget = target;
 
-            // 1. 숙련도 가중치 랜덤 데미지 (Math.Pow)
-            double factor = 0.5;
-            if (isMagic) factor += (attacker.Skills.Magery.Value - defender.Skills.MagicResist.Value) * 0.000001;
-            else factor += (AosAttributes.GetValue(attacker, AosAttribute.AttackChance) - AosAttributes.GetValue(defender, AosAttribute.DefendChance)) * 0.000001;
-            
-            factor = Math.Max(0.01, Math.Min(1.0, factor));
-            int damage = min + (int)((max - min) * Math.Pow(Utility.RandomDouble(), 0.5 / factor));
+			double factor = 0.5;
 
-            // 2. 방어 부위 결정 (마법 시 랜덤 장신구)
-            if (isMagic && currentTarget < 0)
-            {
-                int[] magicLocs = { 2, 7, 8, 9 }; 
-                currentTarget = magicLocs[Utility.Random(magicLocs.Length)];
-            }
+			if (isMagic)
+			{
+				// [마법 설계: 지능 격차 시스템]
+				// 1. 지능 격차 산출 (1당 0.1% = 0.001)
+				double intFactor = (double)(attacker.Int - defender.Int) * 0.001;
 
-            // 3. 방어력 감쇄 (AbsorbDamage)
-            damage = AbsorbDamage(attacker, defender, damage, currentTarget, isMagic);
+				// 2. 지능 평가 스킬 보너스 체크
+				double evalInt = attacker.Skills[SkillName.EvalInt].Value;
 
-            // 4. 스칼라 증폭 적용
-            double scalar = 1.0;
-            if (isMagic)
-            {
-                scalar += (attacker.Skills[SkillName.EvalInt].Value * 0.003);
-                scalar += (AosAttributes.GetValue(attacker, AosAttribute.SpellDamage) * 0.000001);
-            }
-            else
-            {
-                scalar += (attacker.Skills[SkillName.Tactics].Value * 0.002);
-                scalar += (attacker.Dex * 0.0001);
-                
+				// [기획 변경] 50 보너스 : 내 명중(가중치) 10% 증가
+				if (evalInt >= 50.0)
+				{
+					intFactor += 0.1; 
+				}
+
+				// 최종 가중치 합산
+				factor += intFactor;
+
+				// [기획 변경] 100 보너스 : 최종 가중치가 0.5 미만일 경우 0.5로 고정
+				if (evalInt >= 100.0 && factor < 0.5)
+				{
+					factor = 0.5;
+				}
+			}
+			else
+			{
+				// [물리 설계: 명중/방어 격차 시스템]
+				factor += (AosAttributes.GetValue(attacker, AosAttribute.AttackChance) - AosAttributes.GetValue(defender, AosAttribute.DefendChance)) * 0.000001; // %단위 보정 10000 당 1%임
+			}
+
+			// 가중치 안전 범위 (0.01 ~ 1.0)
+			factor = Math.Max(0.01, Math.Min(1.0, factor));
+
+			// [최종 Min~Max 결정] factor가 높을수록 Max에 가까운 값이 나옴
+			int damage = min + (int)((max - min) * Math.Pow(Utility.RandomDouble(), 0.5 / factor));
+
+			// 2. 방어 부위 결정 (마법 시 랜덤 장신구)
+			if (isMagic && currentTarget < 0)
+			{
+				int[] magicLocs = { 2, 7, 8, 9 }; 
+				currentTarget = magicLocs[Utility.Random(magicLocs.Length)];
+			}
+
+			// 3. 방어력 감쇄 (AbsorbDamage)
+			damage = AbsorbDamage(attacker, defender, damage, currentTarget, isMagic);
+
+			// 4. 스칼라 증폭 적용
+			double scalar = 1.0;
+			if (isMagic)
+			{
+				// EvalInt 및 Int에 따른 스칼라 증가
+				scalar += (attacker.Skills[SkillName.Magery].Value * 0.005 + attacker.Int * 0.0001);
+				if( attacker.Skills[SkillName.Spellweaving].Value >= 50 )
+					scalar += 0.25;
+				scalar += (AosAttributes.GetValue(attacker, AosAttribute.SpellDamage) * 0.000001); //마법 피해
+			}
+			else
+			{
+				// Tactics 및 Dex에 따른 스칼라 증가
+				scalar += (attacker.Skills[SkillName.Tactics].Value * 0.002 + attacker.Dex * 0.0001);
+				
 				if (attacker.Weapon is BaseWeapon bw)
-                {
-                    Skill weaponSkill = attacker.Skills[bw.Skill];
-                    scalar += (weaponSkill.Value * 0.003);
-                    if (weaponSkill.Value >= 100.0) scalar += 0.4; 
-                }
-            }
+				{
+					Skill weaponSkill = attacker.Skills[bw.Skill];
+					scalar += (weaponSkill.Value * 0.003);
+					if (weaponSkill.Value >= 100.0) scalar += 0.4; 
+				}
+				scalar += (AosAttributes.GetValue(attacker, AosAttribute.WeaponDamage) * 0.000001); //무기 피해
+			}
+			// 공통 속성: UseBestSkill 적용 (모든 피해 가중치 증가)
+			factor += AosWeaponAttributes.GetValue(attacker, AosWeaponAttribute.UseBestSkill) * 0.000001;
 
-            // 5. 슬레이어 배율 통합 계산
-            scalar *= GetSlayerDamageScalar(attacker, defender);
+			// 5. 슬레이어 배율 통합 계산
+			scalar *= GetSlayerDamageScalar(attacker, defender);
 
-            damage = (int)(damage * scalar);
+			damage = (int)(damage * scalar);
 
-            // 6. 치명타 판정
-            damage = ApplyCritical(attacker, defender, damage, currentTarget, isMagic, forceArrow);
+			// 6. 치명타 판정
+			damage = ApplyCritical(attacker, defender, damage, currentTarget, isMagic, forceArrow);
 
-            return (Math.Max(1, damage), currentTarget);
-        }
-
+			return (Math.Max(1, damage), currentTarget);
+		}
         // --- [슬레이어 관련 최적화 로직] ---
         public static double GetSlayerDamageScalar(Mobile attacker, Mobile defender)
         {
@@ -208,44 +243,80 @@ namespace Server.Misc
 
 		private static int ApplyCritical(Mobile attacker, Mobile defender, int damage, int target, bool isMagic, bool forceArrow)
 		{
-            double critChance = isMagic 
-                ? (attacker.Luck * 0.001) + AosAttributes.GetValue(attacker, AosAttribute.CastRecovery)
-                : (attacker.Luck * 0.0001) + AosAttributes.GetValue(attacker, AosAttribute.WeaponCritical) * 0.000001;
+			// 1. [치명타 확률] 유저/몬스터 공통: 운 1당 0.01% (0.0001)
+			double critChance = (attacker.Luck * 0.0001);
 
-            double critDamageMult = 1.5;
+			// [추가 보정] 마법은 캐스트 리커버리, 물리인 무기 크리티컬 속성 참조
+			if (isMagic) 
+				critChance += AosAttributes.GetValue(attacker, AosAttribute.CastRecovery) * 0.01;
+			else 
+				critChance += AosAttributes.GetValue(attacker, AosAttribute.WeaponCritical) * 0.01;
 
+			// 2. [치명타 데미지 배율] 기본 1.5배 (150%)
+			double critDamageMult = 1.5;
+
+			// 3. [몬스터 전용 보정] 티어 및 기력/마나 보너스
+			if (attacker is BaseCreature bc)
+			{
+				// 티어(Grade)별 치명타 데미지 보너스
+				double tierBonus = 0.0;
+				switch (bc.Grade)
+				{
+					case 2: case 3: case 4: case 5: tierBonus = 0.20; break; // 레어
+					case 6: tierBonus = 0.50; break; // 엘리트
+					case 7: tierBonus = 0.75; break; // 치프
+					case 8: tierBonus = 1.00; break; // 보스
+					case 9: tierBonus = 1.50; break; // 네임드
+				}
+				critDamageMult += tierBonus;
+
+				// 몬스터 기력/마나당 치명 피해 0.001% (0.00001배) 증가
+				if (isMagic) 
+				{
+					critDamageMult += (bc.Mana * 0.00001);
+					if( attacker.Skills[SkillName.Spellweaving].Value >= 100 )
+						critDamageMult += 0.1;
+				}
+				else critDamageMult += (bc.Stam * 0.00001);
+			}
+			critDamageMult += (attacker.Skills[SkillName.Tactics].Value * 0.001);
+
+			// 5. [피격자 보정] 방어 부위별 크리 확률/데미지 보너스 (PlayerMobile 대상일 때)
+			if (defender is PlayerMobile)
+			{
+				critChance += HitLocationManager.GetCritChanceBonus(target);
+				critDamageMult += HitLocationManager.GetCritDamageBonus(target);
+			}
+
+			// 6. [치명타 성공 판정]
 			bool isCritSuccess = (critChance > Utility.RandomDouble());
 
+			// [포스 애로우 특수 처리]
 			if (forceArrow)
 			{
 				if (!isCritSuccess)
 				{
-					isCritSuccess = true; // 치명타가 아니면 강제 치명타로 전환
+					isCritSuccess = true; // 강제 치명타
 				}
 				else
 				{
-					critDamageMult += 0.1; // 이미 치명타라면 배율 10% 증폭
+					critDamageMult += 0.1; // 중첩 시 배율 10% 추가
 				}
 			}
 
-            if (defender is PlayerMobile)
-            {
-                critChance += HitLocationManager.GetCritChanceBonus(target);
-                critDamageMult += HitLocationManager.GetCritDamageBonus(target);
-            }
+			// 7. [결과 적용]
+			if (isCritSuccess)
+			{
+				damage = (int)(damage * critDamageMult);
 
-            critDamageMult += (attacker.Skills[SkillName.Tactics].Value * 0.001);
-            if (isMagic) critDamageMult += (attacker.Int * 0.01);
+				// 시각 및 청각 효과
+				attacker.PlaySound(0x20C);
+				attacker.FixedParticles(0x3779, 1, 30, 9964, 3, 3, EffectLayer.Waist);
+				if (!isMagic) PlayPhysicalCritEffect(attacker);
+			}
 
-            if (isCritSuccess)
-            {
-                damage = (int)(damage * critDamageMult);
-                attacker.PlaySound(0x20C);
-                attacker.FixedParticles(0x3779, 1, 30, 9964, 3, 3, EffectLayer.Waist);
-                if (!isMagic) PlayPhysicalCritEffect(attacker);
-            }
-            return damage;
-        }
+			return damage;
+		}
 
         private static void PlayPhysicalCritEffect(Mobile attacker)
         {

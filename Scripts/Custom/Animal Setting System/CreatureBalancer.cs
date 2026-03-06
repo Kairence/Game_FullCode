@@ -61,11 +61,11 @@ namespace Server.Misc
 			};
 
 			// 4. 실시간 충성도 수치 적용
-			RefreshStats(bc);
+			RefreshStats(bc, true);
 			bc.Hits = bc.HitsMax; bc.Stam = bc.StamMax; bc.Mana = bc.ManaMax;
 		}
 
-		public static void RefreshStats(BaseCreature bc)
+		public static void RefreshStats(BaseCreature bc, bool first = false)
 		{
 			if (bc.originalStats == null || bc.originalStats[0] == 0) return;
 
@@ -90,7 +90,8 @@ namespace Server.Misc
 			bc.StamMaxSeed = (int)Math.Min(100000000, (bc.originalStats[4] + (fame * 0.01584 + Math.Pow(fame, 2) / 1894736.0)) * stM);
 			bc.ManaMaxSeed = (int)Math.Min(100000000, (bc.originalStats[5] + (fame * 0.01584 + Math.Pow(fame, 2) / 1894736.0)) * maM);
 
-			bc.Hits = bc.HitsMax; bc.Stam = bc.StamMax; bc.Mana = bc.ManaMax;
+			if( first )
+				bc.Hits = bc.HitsMax; bc.Stam = bc.StamMax; bc.Mana = bc.ManaMax;
 		}
 
 		private static void ApplySlayerBonus(BaseCreature bc)

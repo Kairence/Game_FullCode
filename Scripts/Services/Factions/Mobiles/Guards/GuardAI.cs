@@ -131,7 +131,7 @@ namespace Server.Factions
 		{
 			get
 			{
-				if (m_Bandage != null && m_Bandage.Timer == null)
+				if (m_Bandage != null)
 				{
 					m_Bandage = null;
 				}
@@ -141,7 +141,7 @@ namespace Server.Factions
 					return TimeSpan.MaxValue;
 				}
 
-				TimeSpan ts = (m_BandageStart + m_Bandage.Timer.Delay) - DateTime.UtcNow;
+				TimeSpan ts = m_BandageStart - DateTime.UtcNow;
 
 				if (ts < TimeSpan.FromSeconds(-1.0))
 				{
