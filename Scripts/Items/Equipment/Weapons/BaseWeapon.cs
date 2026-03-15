@@ -2606,37 +2606,6 @@ namespace Server.Items
 
                 return;
             }
-			
-			/*
-			//패시브 특수기 설정
-			if( attacker is PlayerMobile )
-			{
-				PlayerMobile pm = attacker as PlayerMobile;
-				if( pm.FuryActive )
-				{
-					BaseWeapon two = attacker.FindItemOnLayer(Layer.TwoHanded) as BaseWeapon;
-					if( atkWeapon.Skill is SkillName.Archery )
-					{
-						//spell.OnBeforeDamage(attacker, defender);
-						double anatomy = defender.Skills.Anatomy.Value * 1.2;
-						if( anatomy >= 100 )
-							anatomy += 16;
-						
-						damage *= 140 + (int)anatomy;
-						damage /= 100;
-						Server.Spells.Bushido.MomentumStrike spell = new Server.Spells.Bushido.MomentumStrike();
-						spell.OnHit(attacker, defender, damage);
-						pm.FuryActive = false;
-					}
-					else
-					{
-						defender.Freeze(TimeSpan.FromSeconds( 6.0 ) );
-						pm.FuryActive = false;
-					}
-				}
-			}
-			*/
-
 		
 			if( defender != null )
 			{
@@ -2686,16 +2655,6 @@ namespace Server.Items
 				false,
 				ranged ? Server.DamageType.Ranged : Server.DamageType.Melee);
 
-				//DualWield.DoHit(attacker, defender, damage);
-
-				/*
-				if (sparks)
-				{
-					int mana = attacker.Mana + damageGiven;
-					if (!defender.Player) mana *= 2;
-					attacker.Mana = Math.Min(attacker.ManaMax, attacker.Mana + mana);
-				}
-				*/
 				if (Core.AOS)
 				{
 					int maChance = (int)(AosWeaponAttributes.GetValue(attacker, AosWeaponAttribute.HitMagicArrow));
