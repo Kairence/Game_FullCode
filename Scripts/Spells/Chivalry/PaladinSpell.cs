@@ -19,19 +19,7 @@ namespace Server.Spells.Chivalry
 		public override SkillName CastSkill { get { return SkillName.Chivalry; } }
 		public override SkillName DamageSkill { get { return SkillName.Chivalry; } }
 		public override bool ClearHandsOnCast { get { return false; } }
-		public override int CastRecoveryBase { get { return 7; } }
-
-		public static int ComputePowerValue(Mobile from, int div)
-		{
-			if (from == null)
-			{
-				return 0;
-			}
-
-			int v = (int)Math.Sqrt(from.Karma + 20000 + (from.Skills.Chivalry.Fixed * 10));
-
-			return v / div;
-		}
+		public override int CastRecoveryBase { get { return 0; } }
 
 		public override bool CheckCast()
 		{
@@ -42,20 +30,6 @@ namespace Server.Spells.Chivalry
 				return false;
 			}
 
-			/*
-			if (Caster.Player && Caster.TithingPoints < RequiredTithing)
-			{
-				Caster.SendLocalizedMessage(1060173, RequiredTithing.ToString());
-					// You must have at least ~1_TITHE_REQUIREMENT~ Tithing Points to use this ability,
-				return false;
-			}
-			else if (Caster.Mana < mana)
-			{
-				Caster.SendLocalizedMessage(1060174, mana.ToString());
-					// You must have at least ~1_MANA_REQUIREMENT~ Mana to use this ability.
-				return false;
-			}
-			*/
 			return true;
 		}
 
@@ -67,32 +41,6 @@ namespace Server.Spells.Chivalry
 			{
 				requiredTithing = 0;
 			}
-
-			/*
-			int mana = ScaleMana(RequiredMana);
-
-			if (Caster.TithingPoints < requiredTithing)
-			{
-				Caster.SendLocalizedMessage(1060173, RequiredTithing.ToString());
-					// You must have at least ~1_TITHE_REQUIREMENT~ Tithing Points to use this ability,
-				return false;
-			}
-			else if (Caster.Mana < mana)
-			{
-				Caster.SendLocalizedMessage(1060174, mana.ToString());
-					// You must have at least ~1_MANA_REQUIREMENT~ Mana to use this ability.
-				return false;
-			}
-
-			Caster.TithingPoints -= requiredTithing;
-
-			if (!base.CheckFizzle())
-			{
-				return false;
-			}
-
-			Caster.Mana -= mana;
-			*/
 			return true;
 		}
 
@@ -138,9 +86,5 @@ namespace Server.Spells.Chivalry
 			return 0;
 		}
 
-		public int ComputePowerValue(int div)
-		{
-			return ComputePowerValue(Caster, div);
-		}
 	}
 }

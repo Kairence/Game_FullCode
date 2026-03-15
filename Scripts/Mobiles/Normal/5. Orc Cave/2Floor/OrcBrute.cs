@@ -37,9 +37,8 @@ namespace Server.Mobiles
 			this.SetStam(3650, 3750);
 			this.SetMana(3650, 3750);
 
-			// [Combat Options]
-			this.SetDamage(90, 130);
-			this.SetAttackSpeed(2.2);
+			SetAttackSpeed(3.0);
+			SetDamage(90, 130);
 
 			// [Resistances] 최고 저항 75 이하 엄격 준수
 			this.SetResistance(ResistanceType.Physical, 65, 75); // 강철 같은 육체

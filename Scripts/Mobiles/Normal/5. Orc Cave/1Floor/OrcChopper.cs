@@ -31,8 +31,8 @@ namespace Server.Mobiles
 			this.SetStam(100, 150);      
 			this.SetMana(40, 60);        
 
-			this.SetAttackSpeed(3.2);    // 느리지만 묵직한 도끼질
-			this.SetDamage(25, 35);      // 높은 물리 데미지
+			SetAttackSpeed(3.5);
+			SetDamage(25, 35);
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 
@@ -50,6 +50,8 @@ namespace Server.Mobiles
 
 			this.Fame = 3000;           
 			this.Karma = -3000;
+			this.SpecialType2 = 2;
+			this.SpecialChance2 = 0.15;				
         }
 
         public OrcChopper(Serial serial)

@@ -19,17 +19,16 @@ namespace Server.Mobiles
             this.Name = "a blade spirit";
             this.Body = 574;
 
-            bool weak = summoned && Siege.SiegeShard;
-
-            this.SetStr(weak ? 100 : 200);
-            this.SetDex(weak ? 100 : 200);
+            this.SetStr(300, 400);
+            this.SetDex(300, 400);
             this.SetInt(100);
 
-            this.SetHits(150);
-            this.SetStam(250);
+            this.SetHits(500, 1000);
+            this.SetStam(250, 350);
             this.SetMana(100);
 
-            this.SetDamage(10, 14);
+            this.SetDamage(40, 60);
+			this.SetAttackSpeed(5.0);
 
             this.SetDamageType(ResistanceType.Physical, 60);
             this.SetDamageType(ResistanceType.Poison, 20);
@@ -38,7 +37,7 @@ namespace Server.Mobiles
             this.SetResistance(ResistanceType.Physical, 30, 40);
             this.SetResistance(ResistanceType.Fire, 40, 50);
             this.SetResistance(ResistanceType.Cold, 30, 40);
-            this.SetResistance(ResistanceType.Poison, 100);
+            this.SetResistance(ResistanceType.Poison, 50);
             this.SetResistance(ResistanceType.Energy, 20, 30);
 
             this.SetSkill(SkillName.MagicResist, 70.0);
@@ -48,7 +47,8 @@ namespace Server.Mobiles
             this.Fame = 0;
             this.Karma = 0;
 
-            this.VirtualArmor = 2;
+            this.VirtualArmor = 5;
+			this.ControlSlots = 1;
         }
 
         public BladeSpirits(Serial serial)

@@ -30,9 +30,10 @@ namespace Server.Mobiles
 			this.SetResistance(ResistanceType.Cold, 20, 30);
 
 			this.SetSkill(SkillName.Wrestling, 124.6, 144.6); // 최종 130~150
+			this.SetSkill(SkillName.Tactics, 40.0, 50.0);
 
-			this.Fame = 2000;
-			this.Karma = -2000;
+			SetAttackSpeed(2.8);
+			SetDamage(25, 38); // 기동성을 이용한 강력한 찌르기
 			this.VirtualArmor = 8;
 
             this.PackItem(new Bandage(Utility.RandomMinMax(1, 15)));
@@ -46,6 +47,9 @@ namespace Server.Mobiles
             this.AddItem(new BearMask());
 
             new SavageRidgeback().Rider = this;
+			
+			this.SpecialType2 = 6;
+			this.SpecialChance2 = 0.1;
         }
 
         public SavageRider(Serial serial)

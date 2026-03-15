@@ -11,10 +11,7 @@ namespace Server.Items
         public VikingSword()
             : base(0x13B9)
         {
-			PrefixOption[61] = 77;
-			SuffixOption[61] = 500;
-			//SkillBonuses.SetValues(5, SkillName.Tactics, 15.0);
-            this.Weight = 6.0;
+            this.Weight = 26.0;
         }
 
         public VikingSword(Serial serial)
@@ -54,21 +51,21 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
         public override int AosMinDamage
         {
             get
             {
-                return 5;
+                return 1;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 10;
+                return 13;
             }
         }
         public override int AosSpeed
@@ -82,7 +79,7 @@ namespace Server.Items
         {
             get
             {
-                return 5.00f;
+                return 3.00f;
             }
         }
         public override int OldStrengthReq

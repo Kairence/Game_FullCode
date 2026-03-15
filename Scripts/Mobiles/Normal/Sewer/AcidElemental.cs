@@ -30,9 +30,8 @@ namespace Server.Mobiles
 			this.SetDex(20, 30);
 			this.SetInt(20, 30);
 
-			// [Combat Options] 장비를 녹여버리는 산성 타격
-			this.SetDamage(22, 35);
-			this.SetAttackSpeed(2.4);
+			SetAttackSpeed(10.0);
+			SetDamage(15, 25);
 
 			// [Damage Types] 40% 물리 + 60% 독 (부식성 대미지)
 			this.SetDamageType(ResistanceType.Physical, 40);

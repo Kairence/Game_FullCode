@@ -11,11 +11,8 @@ namespace Server.Items
         public HammerPick()
             : base(0x143D)
         {
-            Weight = 9.0;
+            Weight = 19.0;
             this.Layer = Layer.TwoHanded;
-			PrefixOption[61] = 42;
-			SuffixOption[61] = 50000;			
-			
 		}
 
 
@@ -56,14 +53,14 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }		
         public override int AosMinDamage
         {
             get
             {
-                return 5;
+                return 6;
             }
         }
         public override int AosMaxDamage
@@ -84,7 +81,7 @@ namespace Server.Items
         {
             get
             {
-                return 2.50f;
+                return 3.00f;
             }
         }
         public override int OldStrengthReq

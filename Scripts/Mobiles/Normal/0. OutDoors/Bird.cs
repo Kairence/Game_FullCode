@@ -46,9 +46,8 @@ namespace Server.Mobiles
 			this.SetStam(5, 10);  // 최종 Stam 약 57~62 도달
 			this.SetMana(0);
 
-			// [컨셉] 부리로 빠르게 쪼는 공격 (공속 2.5)
-			SetAttackSpeed(2.5);
-			SetDamage(1, 2);
+			this.SetAttackSpeed(3.0);  // 1.5초 -> 3.0초 (유저 평균 공속과 일치시켜 대응 가능하게 수정)
+			this.SetDamage(12, 18);    // 방어 10인 유저에게 확정적으로 2~8의 데미지 전달.
 
 			// 최종 Skill 1.0~2.0 목표
 			this.SetSkill(SkillName.Wrestling, 0.7, 1.7);
@@ -129,14 +128,12 @@ namespace Server.Mobiles
             this.SetDex(25, 35);
             this.SetInt(10, 15);
 
-            SetHits(150, 180);
+            SetHits(20, 40);
             SetStam(40, 50);
             SetMana(10, 11);
 			
-			SetAttackSpeed(10.0);
-
-            SetDamage(5, 9);
-
+			this.SetAttackSpeed(5.0);  // 일반 새보다 확연히 느린 속도 (여유로운 회피/포션 타이밍 제공)
+			this.SetDamage(20, 30);    // 방어 10인 유저에게 10~20의 데미지 전달. (체력 1000 유저 기준 약 1~2% 타격)
             this.SetDamageType(ResistanceType.Physical, 100);
 
             this.SetSkill(SkillName.Wrestling, 4.2, 6.4);

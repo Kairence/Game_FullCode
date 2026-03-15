@@ -25,9 +25,8 @@ namespace Server.Mobiles
 			this.SetDex(70, 80);
 			this.SetInt(70, 80);
 
-			// [Combat Options] 물리 50% / 독 50% (치명적인 꼬리 타격)
-			this.SetDamage(40, 65);
-			this.SetAttackSpeed(2.4);
+			SetAttackSpeed(10.0);
+			SetDamage(18, 28);
 			this.SetDamageType(ResistanceType.Physical, 50);
 			this.SetDamageType(ResistanceType.Poison, 50);
 

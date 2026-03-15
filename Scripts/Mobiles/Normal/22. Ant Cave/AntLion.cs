@@ -31,9 +31,8 @@ namespace Server.Mobiles
 			this.SetDex(10, 20);
 			this.SetInt(10, 20);
 
-			// [Combat Options]
-			this.SetDamage(18, 28);
-			this.SetAttackSpeed(2.3);
+			SetAttackSpeed(3.0);
+			SetDamage(30, 45);
 
 			// [Damage Types] 100% 물리 공격 (묵직한 턱 힘)
 			this.SetDamageType(ResistanceType.Physical, 100);

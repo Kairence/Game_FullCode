@@ -22,8 +22,8 @@ namespace Server.Mobiles
 			this.SetStam(43, 53);   // 최종 Stam 100~110
 			this.SetMana(0);
 
-			SetAttackSpeed(3.0);
-			SetDamage(3, 7); // 평균 5.0
+			this.SetAttackSpeed(4.0);  // 유저(2.5~3.0)보다 느리게 설정. 맷돼지가 들이받기 위해 거리를 두거나 준비하는 느낌.
+			this.SetDamage(18, 26);    // 방어 10인 유저에게 최종 8~16의 데미지 전달.
 
 			this.SetSkill(SkillName.Wrestling, 2.1, 3.1); 
 			this.SetSkill(SkillName.Tactics, 2.1, 3.1);

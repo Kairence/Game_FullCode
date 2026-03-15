@@ -2,7 +2,6 @@ using System;
 using Server.Gumps;
 using Server.Targeting;
 using Server.Mobiles;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Server.Spells.Eighth
@@ -11,130 +10,105 @@ namespace Server.Spells.Eighth
     {
         private static readonly SpellInfo m_Info = new SpellInfo(
             "Resurrection", "An Corp",
-            245,
-            9062,
-            Reagent.Bloodmoss,
-            Reagent.Garlic,
-            Reagent.Ginseng);
-        public ResurrectionSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+            245, 9062,
+            Reagent.Bloodmoss, Reagent.Garlic, Reagent.Ginseng);
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Eighth;
-            }
-        }
-        
+        public ResurrectionSpell(Mobile caster, Item scroll) : base(caster, scroll, m_Info) { }
+
+        public override SpellCircle Circle => SpellCircle.Eighth;
+
         public override void OnCast()
         {
-			if (this.CheckSequence())
-			{
-				List<Mobile> targets = new List<Mobile>();
-
-				Map map = this.Caster.Map;
-
-				if (map != null)
-				{
-					var list = new List<Mobile>();
-					foreach ( Mobile m in World.Mobiles.Values )
-					{
-						if (!this.Caster.CanSee(m) && m == this.Caster && !this.Caster.Alive && !m.Player && m.Region != null && m.Region.IsPartOf("Khaldun") )
-							targets.Add(m);
-					}
-
-					if (targets.Count > 0)
-					{
-						for (int i = 0; i < targets.Count; ++i)
-						{
-							Mobile m = targets[i];
-							if( m is PlayerMobile )
-							{
-								PlayerMobile pm = m as PlayerMobile;
-								if( pm.Coma )
-									pm.Coma = false;
-							}
-						}
-					}
-				}
-			}
-            this.FinishSequence();
-		
-            //this.Caster.Target = new InternalTarget(this);
+            Caster.Target = new InternalTarget(this);
         }
 
         public void Target(Mobile m)
         {
-            if (!this.Caster.CanSee(m))
+            if (!Caster.CanSee(m))
             {
-                this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
+                Caster.SendLocalizedMessage(500237);
             }
-            else if (m == this.Caster)
+            else if (m == Caster)
             {
-                this.Caster.SendLocalizedMessage(501039); // Thou can not resurrect thyself.
+                Caster.SendLocalizedMessage(501039);
             }
-            else if (!this.Caster.Alive)
+            else if (!Caster.Alive)
             {
-                this.Caster.SendLocalizedMessage(501040); // The resurrecter must be alive.
+                Caster.SendLocalizedMessage(501040);
             }
-            else if (m.Alive)
+            else if (!Caster.InRange(m, 2))
             {
-                this.Caster.SendLocalizedMessage(501041); // Target is not dead.
+                Caster.SendLocalizedMessage(501042);
             }
-            else if (!this.Caster.InRange(m, 1))
+            // 기획 반영: 플레이어(코마 체크) 또는 본디드 펫(사망 체크)만 대상 가능
+            else if (m.Alive && (!(m is PlayerMobile) || !((PlayerMobile)m).Coma))
             {
-                this.Caster.SendLocalizedMessage(501042); // Target is not close enough.
+                Caster.SendLocalizedMessage(501041);
             }
-            else if (!m.Player)
+            else if (m is BaseCreature && !((BaseCreature)m).IsDeadBondedPet)
             {
-                this.Caster.SendLocalizedMessage(501043); // Target is not a being.
-            }
-            else if (m.Map == null || !m.Map.CanFit(m.Location, 16, false, false))
-            {
-                this.Caster.SendLocalizedMessage(501042); // Target can not be resurrected at that location.
-                m.SendLocalizedMessage(502391); // Thou can not be resurrected there!
-            }
-            else if (m.Region != null && m.Region.IsPartOf("Khaldun"))
-            {
-                this.Caster.SendLocalizedMessage(1010395); // The veil of death in this area is too strong and resists thy efforts to restore life.
+                Caster.SendLocalizedMessage(501043);
             }
             else if (this.CheckBSequence(m, true))
             {
-                SpellHelper.Turn(this.Caster, m);
+                SpellHelper.Turn(Caster, m);
+
+                // --- 기획: 회복량 계산 (700 ~ 1300 + 보너스 * 0.2) ---
+                double bonus = SpellHelper.GetMagicValue(Caster, 0.2);
+                int healAmount = Utility.RandomMinMax(700, 1300) + (int)bonus;
+
+                if (m is PlayerMobile)
+                {
+                    PlayerMobile pm = (PlayerMobile)m;
+                    if (pm.Coma)
+                    {
+                        pm.Coma = false;
+                        // pm.SendMessage("코마 상태가 해제되었습니다.");
+                    }
+                    
+                    if (!pm.Alive)
+                    {
+                        pm.CloseGump(typeof(ResurrectGump));
+                        pm.SendGump(new ResurrectGump(pm, Caster));
+                    }
+                }
+                else if (m is BaseCreature)
+                {
+                    BaseCreature pet = (BaseCreature)m;
+                    if (pet.IsDeadBondedPet)
+                    {
+                        pet.ResurrectPet();
+                    }
+                }
+
+                // --- [수정] SpellHelper를 통한 힐 처리 ---
+                // 부활 후 즉시 체력을 채워주며, 힐 관련 이펙트와 시스템 로직을 통합 관리합니다.
+                SpellHelper.Heal(healAmount, m, Caster);
 
                 m.PlaySound(0x214);
                 m.FixedEffect(0x376A, 10, 16);
-
-                m.CloseGump(typeof(ResurrectGump));
-                m.SendGump(new ResurrectGump(m, this.Caster));
             }
 
-            this.FinishSequence();
+            FinishSequence();
         }
 
         private class InternalTarget : Target
         {
             private readonly ResurrectionSpell m_Owner;
-            public InternalTarget(ResurrectionSpell owner)
-                : base(1, false, TargetFlags.Beneficial)
+            public InternalTarget(ResurrectionSpell owner) : base(2, false, TargetFlags.Beneficial)
             {
-                this.m_Owner = owner;
+                m_Owner = owner;
             }
 
             protected override void OnTarget(Mobile from, object o)
             {
                 if (o is Mobile)
-                {
-                    this.m_Owner.Target((Mobile)o);
-                }
+                    m_Owner.Target((Mobile)o);
             }
 
             protected override void OnTargetFinish(Mobile from)
             {
-                this.m_Owner.FinishSequence();
+                m_Owner.FinishSequence();
             }
         }
     }

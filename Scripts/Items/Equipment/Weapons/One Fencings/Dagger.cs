@@ -11,10 +11,6 @@ namespace Server.Items
         public Dagger()
             : base(0xF52)
         {
-			PrefixOption[61] = 4;
-			SuffixOption[61] = 5000000;
-			
-			//Attributes.BonusStam += 25000;
             this.Weight = 4.0;
 		}
 
@@ -55,7 +51,7 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }		
         public override int AosMinDamage
@@ -69,7 +65,7 @@ namespace Server.Items
         {
             get
             {
-                return 2;
+                return 5;
             }
         }
         public override int AosSpeed

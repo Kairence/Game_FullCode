@@ -5,15 +5,55 @@ namespace Server.Items
 {
     public class DragonTurtleHideHelm : BaseArmor
     {
-        public override int InitMinHits { get { return 100; } }
-        public override int InitMaxHits { get { return 100; } }
-
-        public override int AosStrReq { get { return 2000; } }
-        public override int AosDexReq { get { return 100; } }
-        public override int AosIntReq { get { return 100; } }
-        public override int OldStrReq { get { return 15; } }
-
-        public override int ArmorBase { get { return 6; } }
+        public override int InitMinHits
+        {
+            get
+            {
+                return 100;
+            }
+        }
+        public override int InitMaxHits
+        {
+            get
+            {
+                return 100;
+            }
+        }
+        public override int AosStrReq
+        {
+            get
+            {
+                return 2000;
+            }
+        }
+        public override int AosDexReq
+        {
+            get
+            {
+                return 1000;
+            }
+        }
+        public override int AosIntReq
+        {
+            get
+            {
+                return 1000;
+            }
+        }
+        public override int ArmorBase
+        {
+            get
+            {
+                return 8;
+            }
+        }
+		public override double ArmorRating
+		{
+			get
+			{
+				return 7.0; // 원하는 감소 수치를 입력하세요.
+			}
+		}
 
         public override ArmorMaterialType MaterialType { get { return ArmorMaterialType.Leather; } }
         public override CraftResource DefaultResource { get { return CraftResource.RegularLeather; } }

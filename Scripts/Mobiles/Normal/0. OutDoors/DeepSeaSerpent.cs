@@ -25,8 +25,10 @@ namespace Server.Mobiles
 			this.SetStam(135, 185);
 			this.SetMana(500, 1000);
 
-			SetAttackSpeed(4.5);
-			SetDamage(50, 90); // 평균 70.0
+			this.SetAttackSpeed(5.0);  // 5.5초에서 5.0초로 소폭 조정 (조금 더 리드미컬하게)
+
+			this.SetDamage(60, 95);    // [조정] 120-180에서 대폭 하향
+									   // 평균 데미지: 77.5
 
 			this.SetSkill(SkillName.Wrestling, 18.0, 28.0); // 최종 60.0~70.0
 			this.SetSkill(SkillName.Tactics, 18.0, 28.0);

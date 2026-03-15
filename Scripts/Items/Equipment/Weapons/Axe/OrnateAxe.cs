@@ -11,11 +11,8 @@ namespace Server.Items
         public OrnateAxe()
             : base(0x2D28)
         {
-            this.Weight = 12.0;
+            this.Weight = 32.0;
             this.Layer = Layer.TwoHanded;
-			//Attributes.Luck += 100;
-			PrefixOption[61] = 3;
-			SuffixOption[61] = 1000000;
       }
 
         public OrnateAxe(Serial serial)
@@ -55,7 +52,7 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
 		

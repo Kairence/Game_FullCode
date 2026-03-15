@@ -24,8 +24,8 @@ namespace Server.Mobiles
 			this.SetStam(45, 75); 
 			this.SetMana(0);
 
-			SetAttackSpeed(2.5);
-			SetDamage(3, 6); 
+			SetAttackSpeed(3.0);
+			SetDamage(12, 18); // 말(14-22)보다 약간 약한 해상 가축 
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 			this.SetResistance(ResistanceType.Physical, 10, 20);

@@ -30,6 +30,9 @@ namespace Server.Mobiles
 			this.SetHits(2000, 2500);  // 최종 Hits 약 20,000
 			this.SetSkill(SkillName.Poisoning, 120.0);
 
+			SetAttackSpeed(3.5);
+			SetDamage(45, 65);
+
 			this.SetDamageType(ResistanceType.Physical, 50);
 			this.SetDamageType(ResistanceType.Poison, 50); // 독 속성 공격
 

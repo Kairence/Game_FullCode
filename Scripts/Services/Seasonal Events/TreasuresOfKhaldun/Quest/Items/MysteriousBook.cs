@@ -12,7 +12,7 @@ using Server.Engines.Quests;
 
 namespace Server.Engines.Khaldun
 {
-    public class MysteriousBook : Item, IForensicTarget
+    public class MysteriousBook : Item
     {
         public override int LabelNumber { get { return 1158583; } } // mysterious book
         public static readonly Point3D SpawnLocation = new Point3D(6240, 2885, 7);
@@ -26,35 +26,6 @@ namespace Server.Engines.Khaldun
             Movable = false;
             Door = door;
             Hue = 1950;
-        }
-
-        public void OnForensicEval(Mobile m)
-        {
-            if (!m.Player)
-                return;
-
-            var quest = QuestHelper.GetQuest<GoingGumshoeQuest2>((PlayerMobile)m);
-
-            if (quest != null)
-            {
-                if (HasFoundClue1(quest))
-                {
-                    m.SendLocalizedMessage(1158613); // You have already documented this clue.
-                }
-                else
-                {
-                    m.PrivateOverheadMessage(MessageType.Regular, 0x47E, 1157722, "Forensics", m.NetState); // *Your proficiency in ~1_SKILL~ reveals more about the item*
-                    m.SendLocalizedMessage(1158612, null, 0x23); // You have identified a clue! This item seems pertinent to the investigation!
-
-                    m.SendSound(quest.UpdateSound);
-                    m.SendSound(m.Female ? 0x30B : 0x41A);
-
-                    m.CloseGump(typeof(GumshoeItemGump));
-                    m.SendGump(new GumshoeItemGump(m, ItemID, Hue, "book", 1158577, null));
-
-                    SetFoundClue1(quest);
-                }
-            }
         }
 
         public void OnInscribeTarget(Mobile m)

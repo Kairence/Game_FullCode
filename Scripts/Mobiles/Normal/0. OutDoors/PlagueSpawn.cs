@@ -59,8 +59,8 @@ namespace Server.Mobiles
 			this.SetStam(77, 127); 
 			this.SetMana(0);
 
-			SetAttackSpeed(2.5);
-			SetDamage(15, 25); 
+			this.SetAttackSpeed(2.8);
+			this.SetDamage(24, 34); // 명성 1200 다이어 울프(20-28)의 명확한 상위 호환
 
 			this.SetDamageType(ResistanceType.Poison, 100);
 

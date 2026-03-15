@@ -29,8 +29,8 @@ namespace Server.Mobiles
 			this.SetStam(150, 200);      
 			this.SetMana(100, 150);      
 
-			this.SetAttackSpeed(2.4);    // 기사의 숙련된 공속
-			this.SetDamage(18, 28);      
+			SetAttackSpeed(2.5);
+			SetDamage(40, 55);     
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 

@@ -80,8 +80,10 @@ namespace Server.Mobiles
 			// Mana: 기초 1,512~2,512 + (보너스 50,683 * 1.5) = 최종 약 7.8만
 			this.SetMana(77536, 78536);
 
-			SetAttackSpeed(2.5);
-			SetDamage(55, 85); // 마법형 보스이므로 물리 데미지는 오우거로드보다 낮게 설정
+			this.SetAttackSpeed(4.0);  // 2.5초보다는 느리지만 보스로서의 위압감을 유지하는 속도.
+
+			this.SetDamage(90, 135);   // [상향] 55-85에서 크라켄(65-105)을 상회하는 수준으로 조정.
+									   // 평균 데미지: 112.5 (크라켄 대비 약 30% 강력함)
 
 			this.SetDamageType(ResistanceType.Physical, 20);
 			this.SetDamageType(ResistanceType.Cold, 80); // 심해의 냉기 공격

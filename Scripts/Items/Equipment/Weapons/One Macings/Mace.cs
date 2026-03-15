@@ -11,10 +11,6 @@ namespace Server.Items
         public Mace()
             : base(0xF5C)
         {
-			PrefixOption[61] = 5;
-			SuffixOption[61] = 5000000;
-			
-			//Attributes.BonusStam += 25000;
             this.Weight = 14.0;
         }
 
@@ -55,7 +51,7 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
 		
@@ -63,14 +59,14 @@ namespace Server.Items
         {
             get
             {
-                return 5;
+                return 2;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 15;
+                return 12;
             }
         }
         public override int AosSpeed
@@ -84,7 +80,7 @@ namespace Server.Items
         {
             get
             {
-                return 4.00f;
+                return 3.00f;
             }
         }
         public override int OldStrengthReq

@@ -11,15 +11,8 @@ namespace Server.Items
         public BattleAxe()
             : base(0xF47)
         {
-            this.Weight = 14.0;
+            this.Weight = 34.0;
             this.Layer = Layer.TwoHanded;
-			PrefixOption[61] = 77;
-			PrefixOption[62] = 87;
-			SuffixOption[61] = 1000;
-			SuffixOption[62] = 1000;
-			
-			//SkillBonuses.SetValues(5, SkillName.Tactics, 10.0);
-			//SkillBonuses.SetValues(6, SkillName.Swords, 10.0);
 		}
 
         public BattleAxe(Serial serial)
@@ -59,21 +52,21 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }		
         public override int AosMinDamage
         {
             get
             {
-                return 5;
+                return 8;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 10;
+                return 9;
             }
         }
         public override int AosSpeed

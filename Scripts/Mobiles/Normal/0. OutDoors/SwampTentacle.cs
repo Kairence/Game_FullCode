@@ -23,7 +23,7 @@ namespace Server.Mobiles
 			this.SetStam(10, 30);
 
 			SetAttackSpeed(3.5);
-			SetDamage(15, 30);
+			SetDamage(25, 40); // 폴라 베어(30-42)와 대등한 묵직한 한 방
 
 			// 공격 속성: 치명적인 독 촉수
 			this.SetDamageType(ResistanceType.Physical, 60);

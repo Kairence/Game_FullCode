@@ -34,8 +34,8 @@ namespace Server.Mobiles
 			this.SetStam(83, 113);
 			this.SetMana(90, 110);
 
-			SetAttackSpeed(3.0);    // 활 공격 속도
-			SetDamage(10, 15);
+			SetAttackSpeed(3.0);
+			SetDamage(8, 14);
 
 			// 공격 속성: 엘프 화살 (물리 70% / 에너지 30%)
 			this.SetDamageType(ResistanceType.Physical, 70);

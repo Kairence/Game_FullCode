@@ -5,7 +5,7 @@ namespace Server.Spells
 {
     public abstract class MagerySpell : Spell
     {
-        private static readonly int[] m_ManaTable = new int[] { 275, 300, 350, 450, 600, 750, 1000, 2250 };
+        private static readonly int[] m_ManaTable = new int[] { 100, 150, 225, 275, 350, 500, 1000, 1250 };
         private const double ChanceOffset = 20.0, ChanceLength = 100.0 / 7.0;
         public MagerySpell(Mobile caster, Item scroll, SpellInfo info)
             : base(caster, scroll, info)
@@ -97,5 +97,40 @@ namespace Server.Spells
 
             return base.GetCastDelay();
         }
+		// Scripts/Spells/Base/MagerySpell.cs 내부에 추가
+
+		public static void CastDirect<T>(Mobile caster, IDamageable target) where T : MagerySpell
+		{
+			if (caster == null || target == null)
+				return;
+
+			try
+			{
+				// 1. 해당 마법 인스턴스 생성 (FireballSpell 등)
+				T spell = Activator.CreateInstance(typeof(T), new object[] { caster, null }) as T;
+
+				if (spell != null)
+				{
+					// 2. [리플렉션 활용] 해당 클래스에 정의된 "Target" 메서드를 찾음
+					// Mobile 타입을 인자로 받는 Target 메서드를 우선적으로 찾습니다.
+					var method = typeof(T).GetMethod("Target", new Type[] { typeof(Mobile) });
+
+					// 만약 Mobile 인자가 없다면 IDamageable 인자를 찾음
+					if (method == null)
+						method = typeof(T).GetMethod("Target", new Type[] { typeof(IDamageable) });
+
+					// 3. 메서드가 존재하면 즉시 실행
+					if (method != null)
+					{
+						method.Invoke(spell, new object[] { target });
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				// 디버깅용 (필요 시 콘솔 출력)
+				// Console.WriteLine("CastDirect Error: " + ex.Message);
+			}
+		}
     }
 }

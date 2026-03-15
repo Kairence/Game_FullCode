@@ -23,8 +23,9 @@ namespace Server.Mobiles
 			this.SetStam(8, 18);  // 최종 Stam 60~70
 			this.SetMana(0);
 
-			SetAttackSpeed(2.5);
-			SetDamage(1, 4); // 평균 2.5
+			this.SetAttackSpeed(3.5);  // [조정] 2.5초 -> 3.5초. 
+									   // 고양이(2.5s)보다는 느리게 설정하여 덩치와 성격에 맞게 조정했습니다.
+			this.SetDamage(10, 14);    // [방어구 효능 반영]
 
 			this.SetSkill(SkillName.Wrestling, 0.7, 1.7);
 

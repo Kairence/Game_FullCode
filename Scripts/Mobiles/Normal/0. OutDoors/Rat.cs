@@ -20,8 +20,8 @@ namespace Server.Mobiles
 			this.SetStam(28, 48);
 			this.SetMana(0);
 
-			SetAttackSpeed(2.0);
-			SetDamage(1, 2);
+			this.SetAttackSpeed(2.5); // 쥐의 잽싼 특징
+			this.SetDamage(8, 12); // 빠른 공속 대신 닭과 같은 데미지 풀 공유
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 

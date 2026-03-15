@@ -21,8 +21,11 @@ namespace Server.Mobiles
 			this.SetStam(94, 144);  // 최종 Stam 150~200
 			this.SetMana(0);
 
-			SetAttackSpeed(2.5);
-			SetDamage(4, 10); 
+			this.SetAttackSpeed(3.5);  // [조정] 2.5초 -> 3.5초. 
+									   // 고양이(2.5s)나 쿠거(2.0s)보다는 느리게 설정하여
+									   // 초보자가 "대응할 수 있는 빠른 몹"의 기준을 잡았습니다.
+
+			this.SetDamage(16, 24);    // [방어구 가치 존중] 돌고래(16-24)와 동급.
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 

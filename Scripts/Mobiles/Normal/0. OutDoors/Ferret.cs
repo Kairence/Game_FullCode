@@ -28,8 +28,11 @@ namespace Server.Mobiles
 			this.SetStam(97, 127); // 최종 Stam 150~180 (지치지 않음)
 			this.SetMana(0);
 
-			SetAttackSpeed(2.0);
-			SetDamage(1, 2); 
+			this.SetAttackSpeed(3.0);  // [조정] 2.0초 -> 3.0초.
+									   // 유저 평균 공속과 일치시켜 대응 리듬을 제공합니다.
+									   // "매우 빠르다"는 느낌은 높은 Dex를 통한 회피율로 보여줍니다.
+
+			this.SetDamage(10, 14);    // [방어구 효능 반영] 개(Dog)와 동일한 수준.
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 

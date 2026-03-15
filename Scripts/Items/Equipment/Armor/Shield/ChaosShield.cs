@@ -58,9 +58,16 @@ namespace Server.Items
 		{
 			get
 			{
-				return 17.0; // 원하는 감소 수치를 입력하세요.
+				return 16.0; // 원하는 감소 수치를 입력하세요.
 			}
-		}	
+		}
+        public override int ArmorBase
+        {
+            get
+            {
+                return 11;
+            }
+        }		
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);

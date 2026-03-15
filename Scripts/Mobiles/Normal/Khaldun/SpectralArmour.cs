@@ -36,8 +36,8 @@ namespace Server.Mobiles
 			this.SetDex(45, 60);
 			this.SetInt(45, 60);
 
-			this.SetDamage(35, 55); // 대미지 살짝 하향
-			this.SetAttackSpeed(2.4);
+			SetAttackSpeed(2.6);
+			SetDamage(50, 75);
 
 			// 속성 분배 (유저의 저항 세팅 유도)
 			this.SetDamageType(ResistanceType.Physical, 60);

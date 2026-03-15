@@ -24,9 +24,9 @@ namespace Server.Mobiles
 			this.SetStam(54, 104);
 			this.SetMana(0);
 
-			SetAttackSpeed(3.0);
-			SetDamage(20, 35); 
-
+			SetAttackSpeed(10.0);
+			SetDamage(8, 12);     // 물리 데미지는 최소화
+			
 			this.SetDamageType(ResistanceType.Physical, 60);
 			this.SetDamageType(ResistanceType.Cold, 40);
 

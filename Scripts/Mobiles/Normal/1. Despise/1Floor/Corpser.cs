@@ -21,8 +21,8 @@ namespace Server.Mobiles
 			this.SetHits(172, 372);  // 최종 Hits 2,500~2,700
 			this.SetStam(1, 10);
 
-			SetAttackSpeed(3.0);
-			SetDamage(12, 18); 
+			SetAttackSpeed(5.0);
+			SetDamage(25, 38);
 
 			// 공격 속성: 묵직한 물리 타격
 			this.SetDamageType(ResistanceType.Physical, 100);

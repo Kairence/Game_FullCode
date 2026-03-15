@@ -23,8 +23,8 @@ namespace Server.Mobiles
 			this.SetHits(100, 150);    // 최종 Hits 약 11,000
 			this.SetMana(500, 600);    
 
-			this.SetAttackSpeed(2.8);  // 마법사치고는 준수한 견제 속도
-			SetDamage(12, 18);        // 물리 데미지는 낮으나 마법과 병행
+			SetAttackSpeed(10.0);
+			SetDamage(12, 18);       // 물리 데미지는 낮으나 마법과 병행
 
 			this.SetSkill(SkillName.Magery, 100.0, 115.0); 
 			this.SetSkill(SkillName.EvalInt, 100.0, 110.0);

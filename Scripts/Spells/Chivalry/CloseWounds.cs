@@ -2,6 +2,7 @@ using System;
 using Server.Mobiles;
 using Server.Network;
 using Server.Targeting;
+using Server.Spells;
 
 namespace Server.Spells.Chivalry
 {
@@ -92,13 +93,7 @@ namespace Server.Spells.Chivalry
                 * The caster's Karma affects the amount of damage healed.
                 */
 
-                int toHeal = this.ComputePowerValue(6) + Utility.RandomMinMax(0, 2);
-
-                // TODO: Should caps be applied?
-                if (toHeal < 7)
-                    toHeal = 7;
-                else if (toHeal > 39)
-                    toHeal = 39;
+                int toHeal = (int)GetKarmaScaler(39, true) + Utility.RandomMinMax(0, 2);
 
                 if ((m.Hits + toHeal) > m.HitsMax)
                     toHeal = m.HitsMax - m.Hits;

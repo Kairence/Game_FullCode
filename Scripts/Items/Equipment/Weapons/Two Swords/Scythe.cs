@@ -12,11 +12,7 @@ namespace Server.Items
         public Scythe()
             : base(0x26BA)
         {
-			PrefixOption[61] = 92;
-			SuffixOption[61] = 2000;
-			
-			//SkillBonuses.SetValues(5, SkillName.Necromancy, 20.0);
-            Weight = 25.0;
+            Weight = 35.0;
 		}
 
         public Scythe(Serial serial)
@@ -56,21 +52,21 @@ namespace Server.Items
         {
             get
             {
-                return 4000;
+                return 1000;
             }
         }		
         public override int AosMinDamage
         {
             get
             {
-                return 5;
+                return 10;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 20;
+                return 22;
             }
         }
         public override int AosSpeed
@@ -84,7 +80,7 @@ namespace Server.Items
         {
             get
             {
-                return 5.00f;
+                return 4.50f;
             }
         }
         public override int OldStrengthReq

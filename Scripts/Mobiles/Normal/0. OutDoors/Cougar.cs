@@ -20,9 +20,8 @@ namespace Server.Mobiles
             this.SetHits(90, 120);
             this.SetStam(85, 105);
 
-            // 공격 간격: 2.5초 (서버 최상위권 공속)
-            SetAttackSpeed(2.5);
-            SetDamage(8, 14);
+			this.SetAttackSpeed(2.0);  // 서버 최상위권 공속 유지. 고양이(2.5s)보다 더 빠르고 위협적임.
+			this.SetDamage(16, 24);    // 방어 10인 유저에게 최종 6~14 데미지 전달.
 
             this.SetSkill(SkillName.Wrestling, 12.0, 15.0); // 기술도 일반 동물보다 높음
             this.SetSkill(SkillName.Tactics, 12.0, 15.0);

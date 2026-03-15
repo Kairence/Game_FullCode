@@ -11,12 +11,11 @@ namespace Server.Items
         public GnarledStaff()
             : base(0x13F8)
         {
-            this.Weight = 3.0;
+            this.Weight = 13.0;
 			PrefixOption[61] = 41;
 			SuffixOption[61] = 500000;
 			PrefixOption[62] = 8;
 			SuffixOption[62] = 500000;
-			//Attributes.SpellDamage += 3750;
 		}
 
 
@@ -64,14 +63,14 @@ namespace Server.Items
         {
             get
             {
-                return 1;
+                return 3;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 2;
+                return 6;
             }
         }
         public override int AosSpeed

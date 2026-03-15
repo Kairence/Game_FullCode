@@ -38,8 +38,8 @@ namespace Server.Mobiles
 			this.SetMana(680, 730);
 
 			// [Combat Options]
-			this.SetDamage(35, 55);
-			this.SetAttackSpeed(1.2); // 부리로 쪼는 속도가 매우 빠름
+			SetAttackSpeed(3.5);
+			SetDamage(45, 65);
 
 			// [Resistances] 최고 저항 75 이하 엄격 준수
 			this.SetResistance(ResistanceType.Physical, 50, 60);

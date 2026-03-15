@@ -24,8 +24,10 @@ namespace Server.Mobiles
 			this.SetStam(37, 50);
 			this.SetMana(500, 800);
 
-			SetAttackSpeed(2.5);
-			SetDamage(15, 25); // 평균 20.0
+			this.SetAttackSpeed(2.0);  // 쿠거와 동급의 최상위권 공속. 영체 특유의 날렵함 강조.
+			this.SetDamage(20, 30);    // [마전사 밸런싱] 평타 자체는 명성 대비 낮게 측정.
+									   // 하지만 마법 데미지가 추가로 들어오는 점을 고려하면 
+									   // 실질적인 체감 데미지는 황소(Bull)급 혹은 그 이상입니다.
 
 			this.SetSkill(SkillName.Magery, 8.7, 13.7); // 최종 20.0~25.0
 			this.SetSkill(SkillName.MagicResist, 18.7, 23.7); // 마법 저항 특화

@@ -343,10 +343,10 @@ namespace Server.Misc
 					return Notoriety.Invulnerable;
 			}
 
-			var context = EnemyOfOneSpell.GetContext(source);
+			//var context = EnemyOfOneSpell.GetContext(source);
 
-			if (context != null && context.IsEnemy(target))
-				return Notoriety.Enemy;
+			//if (context != null && context.IsEnemy(target))
+			//	return Notoriety.Enemy;
 
 			if (PVPArenaSystem.IsEnemy(source, target))
 				return Notoriety.Enemy;

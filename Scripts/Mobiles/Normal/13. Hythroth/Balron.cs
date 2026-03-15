@@ -38,8 +38,8 @@ namespace Server.Mobiles
 			this.SetMana(5150, 5300);
 
 			// [Combat Options]
-			this.SetDamage(120, 180);
-			this.SetAttackSpeed(3.0);
+			SetAttackSpeed(2.5);
+			SetDamage(90, 130);
 
 			// [Resistances] 최고 저항 75 이하 엄격 준수
 			this.SetResistance(ResistanceType.Physical, 70, 75);

@@ -59,9 +59,16 @@ namespace Server.Items
 		{
 			get
 			{
-				return 19.0; // 원하는 감소 수치를 입력하세요.
+				return 18.0; // 원하는 감소 수치를 입력하세요.
 			}
-		}	
+		}
+        public override int ArmorBase
+        {
+            get
+            {
+                return 11;
+            }
+        }		
         public bool Dye(Mobile from, DyeTub sender)
         {
             if (this.Deleted)

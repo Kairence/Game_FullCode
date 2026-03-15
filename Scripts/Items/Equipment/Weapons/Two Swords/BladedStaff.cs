@@ -11,9 +11,7 @@ namespace Server.Items
         public BladedStaff()
             : base(0x26BD)
         {
-			PrefixOption[61] = 42;
-			SuffixOption[61] = 150000;			
-            this.Weight = 9.0;
+            this.Weight = 29.0;
         }
 
         public BladedStaff(Serial serial)
@@ -53,21 +51,21 @@ namespace Server.Items
         {
             get
             {
-                return 400;
+                return 1000;
             }
         }		
         public override int AosMinDamage
         {
             get
             {
-                return 5;
+                return 7;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 10;
+                return 11;
             }
         }
         public override int AosSpeed

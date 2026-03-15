@@ -26,8 +26,8 @@ namespace Server.Mobiles
 			this.SetStam(200, 300);      
 			this.SetMana(800, 950);      
 
-			this.SetAttackSpeed(2.5);    
-			this.SetDamage(15, 25);      
+			SetAttackSpeed(5.5);
+			SetDamage(35, 50);      
 
 			this.SetDamageType(ResistanceType.Physical, 30);
 			this.SetDamageType(ResistanceType.Cold, 40);
@@ -52,6 +52,8 @@ namespace Server.Mobiles
 			this.Fame = 13000;           
 			this.Karma = -13000;
             //SetWeaponAbility(WeaponAbility.Dismount);
+			this.SpecialType2 = 4;
+			this.SpecialChance2 = 0.10;	
 		}
 
 		public override void GenerateLoot()

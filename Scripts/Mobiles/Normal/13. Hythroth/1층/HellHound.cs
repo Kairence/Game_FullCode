@@ -27,8 +27,8 @@ namespace Server.Mobiles
 			this.SetHits(375, 1375); 
 			this.SetStam(150, 200);      
 
-			this.SetAttackSpeed(2.2);    
-			this.SetDamage(14, 24);      
+			SetAttackSpeed(2.0);
+			SetDamage(20, 30);   
 
 			this.SetDamageType(ResistanceType.Fire, 100);
 

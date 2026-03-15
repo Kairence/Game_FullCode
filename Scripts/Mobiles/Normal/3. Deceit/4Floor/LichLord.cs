@@ -24,8 +24,8 @@ namespace Server.Mobiles
 			this.SetStam(350, 450);      // 기력
 			this.SetMana(1200, 1400);    // 마나
 
-			this.SetAttackSpeed(2.2);    // 공속 (빠른 캐스팅과 타격)
-			this.SetDamage(30, 45);      // 데미지
+			SetAttackSpeed(6.0);
+			SetDamage(55, 80);      // 데미지
 
 			// [Damage Type] 냉기와 에너지 중심의 속성 공격
 			this.SetDamageType(ResistanceType.Physical, 20);
@@ -52,6 +52,9 @@ namespace Server.Mobiles
 
 			this.Fame = 18000;           // 명성
 			this.Karma = -18000;         // 카르마
+			this.SpecialType2 = 4;
+			this.SpecialChance2 = 0.25;	
+			
         }
 
         public LichLord(Serial serial)

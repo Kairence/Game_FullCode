@@ -28,9 +28,8 @@ namespace Server.Mobiles
 			this.SetDex(4650, 4750);
 			this.SetInt(4650, 4750);
 
-			// [Combat Options] 화염 100% (태양의 불꽃)
-			this.SetDamage(120, 180);
-			this.SetAttackSpeed(1.5);
+			SetAttackSpeed(12.0);
+			SetDamage(35, 50);
 			this.SetDamageType(ResistanceType.Fire, 100);
 
 			// [Resistances] 최고 저항 75 이하 엄격 준수 / 냉기 약점

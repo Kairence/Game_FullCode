@@ -28,9 +28,8 @@ namespace Server.Mobiles
 			this.SetDex(30, 40);
 			this.SetInt(30, 40);
 
-			// [Combat Options]
-			this.SetDamage(30, 45); // 흑개미 전사(25, 40)보다 매서운 타격
-			this.SetAttackSpeed(2.0);
+			SetAttackSpeed(2.2);
+			SetDamage(38, 55);
 
 			// [Damage Types] 70% 물리 + 30% 화염 속성 (붉은 솔렌의 호전성)
 			this.SetDamageType(ResistanceType.Physical, 70);

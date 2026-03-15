@@ -45,10 +45,16 @@ namespace Server.Items
 		{
 			get
 			{
-				return 14.0; // 원하는 감소 수치를 입력하세요.
+				return 13.0; // 원하는 감소 수치를 입력하세요.
 			}
 		}	
-		
+        public override int ArmorBase
+        {
+            get
+            {
+                return 11;
+            }
+        }		
 		
         [Constructable]
         public BronzeShield()

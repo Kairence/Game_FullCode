@@ -30,8 +30,8 @@ namespace Server.Mobiles
 			this.SetStam(150, 250);      
 			this.SetMana(150, 250);      
 
-			this.SetAttackSpeed(2.2);    // 숙련된 전사의 공속
-			this.SetDamage(30, 45);      
+			SetAttackSpeed(3.5);
+			SetDamage(55, 85);    
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 

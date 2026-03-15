@@ -77,7 +77,6 @@ namespace Server.Spells.Seventh
 
             return SpellHelper.CheckTravel(Caster, TravelCheckType.GateFrom);
         }
-
         public void Effect(BaseGalleon galleon)
         {
             if (galleon == null)
@@ -154,7 +153,11 @@ namespace Server.Spells.Seventh
 
                     Effects.PlaySound(Caster.Location, Caster.Map, 0x20E);
 
-                    InternalItem firstGate = new InternalItem(Caster.Location, Caster.Map);
+                    double bonusDur = SpellHelper.GetMagicValue(Caster, 0.012);
+                    TimeSpan duration = TimeSpan.FromSeconds(60.0 + bonusDur);
+
+                    InternalItem firstGate = new InternalItem(Caster.Location, Caster.Map, duration);
+
                     firstGate.MoveToWorld(loc, map);
 
                     //Effects.PlaySound(loc, map, 0x20E);
@@ -170,34 +173,22 @@ namespace Server.Spells.Seventh
 					
 					int MoveCal = 0;
 					if( Caster.Map != map )
-						MoveCal = 50000;
+						MoveCal = 0;
 					else
 					{
 						MoveCal = Math.Abs( Caster.Location.X - loc.X );
 						MoveCal += Math.Abs( Caster.Location.Y - loc.Y );
 						
 					}
-					if( MoveCal > 50000 )
-						MoveCal = 50000;
+					if( MoveCal > 0 )
+						MoveCal = 0;
 					
 					if( Caster is PlayerMobile )
 					{
 						PlayerMobile pm = Caster as PlayerMobile;
-						if( pm.Hunger < MoveCal )
+						if( pm.Hunger < -1 )
 						{
 							pm.SendMessage("이 곳은 허기로 인해 갈 수 없을 것 같습니다.");
-						}
-						else
-						{
-							pm.Hunger -= MoveCal;
-							if( MoveCal >= 40000 )
-								pm.SendMessage("몸을 가누기 힘듭니다!");
-							else if( MoveCal >= 10000 )
-								pm.SendMessage("엄청난 배고픔을 느낍니다.");
-							else if( MoveCal >= 5000 )
-								pm.SendMessage("배고픔을 느낍니다.");
-							else if( MoveCal >= 1000 )
-								pm.SendMessage("조금 배고픔을 느낍니다.");
 						}
 					}
                 });
@@ -233,7 +224,7 @@ namespace Server.Spells.Seventh
             [CommandProperty(AccessLevel.GameMaster)]
             public bool BoatGate { get; set; }
 
-            public InternalItem(Point3D target, Map map)
+            public InternalItem(Point3D target, Map map, TimeSpan duration)
                 : base(target, map)
             {
                 Map = map;
@@ -243,7 +234,7 @@ namespace Server.Spells.Seventh
 
                 Dispellable = true;
 
-                InternalTimer t = new InternalTimer(this);
+                InternalTimer t = new InternalTimer(this, duration); // 타이머에 전달
                 t.Start();
             }
 
@@ -314,8 +305,8 @@ namespace Server.Spells.Seventh
             {
                 private readonly Item m_Item;
 
-                public InternalTimer(Item item)
-                    : base(TimeSpan.FromSeconds(30.0))
+                public InternalTimer(Item item, TimeSpan duration)
+                    : base(duration)
                 {
                     Priority = TimerPriority.OneSecond;
                     m_Item = item;

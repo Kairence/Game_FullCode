@@ -23,17 +23,55 @@ namespace Server.Items
         }
 
  		public override int LabelNumber { get { return 1029795; } }
-		public override int AosStrReq { get { return 2000; } }
-        public override int AosDexReq { get { return 2000; } }
-        public override int AosIntReq { get { return 2000; } }
-        public override int OldStrReq { get { return 15; } }
+        public override int InitMinHits
+        {
+            get
+            {
+                return 100;
+            }
+        }
+        public override int InitMaxHits
+        {
+            get
+            {
+                return 100;
+            }
+        }
+        public override int AosStrReq
+        {
+            get
+            {
+                return 2000;
+            }
+        }
+        public override int AosDexReq
+        {
+            get
+            {
+                return 2000;
+            }
+        }
+        public override int AosIntReq
+        {
+            get
+            {
+                return 2000;
+            }
+        }
         public override int ArmorBase
         {
             get
             {
-                return 5;
+                return 7;
             }
         }
+		public override double ArmorRating
+		{
+			get
+			{
+				return 10.0; // 원하는 감소 수치를 입력하세요.
+			}
+		}
         public override ArmorMaterialType MaterialType
         {
             get

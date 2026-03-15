@@ -12,16 +12,6 @@ namespace Server.Items
             : base(0x26C0)
         {
             this.Weight = 25.0;
-			PrefixOption[61] = 77;
-			PrefixOption[62] = 89;
-			PrefixOption[63] = 93;
-			SuffixOption[61] = 2000;
-			SuffixOption[62] = 2000;
-			SuffixOption[63] = 1000;
-			
-			//SkillBonuses.SetValues(5, SkillName.Tactics, 20.0);
-			//SkillBonuses.SetValues(6, SkillName.Fencing, 20.0);
-			//SkillBonuses.SetValues(7, SkillName.Focus, 10.0);
 		}
 
         public Lance(Serial serial)
@@ -54,28 +44,28 @@ namespace Server.Items
         {
             get
             {
-                return 3500;
+                return 3000;
             }
         }
         public override int AosIntelligenceReq
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }		
         public override int AosMinDamage
         {
             get
             {
-                return 1;
+                return 8;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 24;
+                return 18;
             }
         }
         public override int AosSpeed

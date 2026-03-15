@@ -15,19 +15,14 @@ namespace Server.Spells.Fourth
             Reagent.Ginseng,
             Reagent.MandrakeRoot,
             Reagent.SpidersSilk);
+
         public GreaterHealSpell(Mobile caster, Item scroll)
             : base(caster, scroll, m_Info)
         {
         }
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Fourth;
-            }
-        }
-        
+        public override SpellCircle Circle => SpellCircle.Fourth;
+
         public override void OnCast()
         {
             this.Caster.Target = new InternalTarget(this);
@@ -51,20 +46,18 @@ namespace Server.Spells.Fourth
             {
                 this.Caster.LocalOverheadMessage(MessageType.Regular, 0x3B2, 500951); // You cannot heal that.
             }
-			/*
-            else if (m.Poisoned || Server.Items.MortalStrike.IsWounded(m))
-            {
-                this.Caster.LocalOverheadMessage(MessageType.Regular, 0x22, (this.Caster == m) ? 1005000 : 1010398);
-            }
-			*/
             else if (this.CheckBSequence(m))
             {
-				int toHeal = Utility.RandomMinMax(100, 150);
-				toHeal = Mobiles.AggroControl.HealCheck(Caster, m, toHeal + (int)(Caster.Skills.Magery.Value * 10 ));
+                SpellHelper.Turn(this.Caster, m);
 
-                //m.Heal( toHeal, Caster );
+                // --- 1. 회복량 계산 (150 ~ 250 + 보너스 * 0.04) ---
+                double bonus = SpellHelper.GetMagicValue(Caster, 0.04);
+                int toHeal = Utility.RandomMinMax(150, 250) + (int)bonus;
+
+                // --- 2. 최종 회복 적용 (SpellHelper 내부에서 어그로 등 모든 로직 처리) ---
                 SpellHelper.Heal(toHeal, m, this.Caster);
 
+                // 연출 및 사운드
                 m.FixedParticles(0x376A, 9, 32, 5030, EffectLayer.Waist);
                 m.PlaySound(0x202);
             }

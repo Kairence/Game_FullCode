@@ -27,8 +27,8 @@ namespace Server.Mobiles
 			this.SetHits(2150, 4150); 
 			this.SetStam(200, 300);      
 
-			this.SetAttackSpeed(1.8);    // 늑대 특유의 매우 빠른 공속
-			this.SetDamage(18, 30);      
+			SetAttackSpeed(1.8);
+			SetDamage(45, 65);     
 
 			this.SetDamageType(ResistanceType.Physical, 70);
 			this.SetDamageType(ResistanceType.Fire, 30);

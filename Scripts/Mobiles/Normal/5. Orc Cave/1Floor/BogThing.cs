@@ -37,8 +37,8 @@ namespace Server.Mobiles
 			this.SetMana(1200, 1300);
 
 			// [Combat Options]
-			this.SetDamage(50, 75);
-			this.SetAttackSpeed(2.0);
+			SetAttackSpeed(4.5);
+			SetDamage(60, 90);
 
 			// [Resistances] 최고 저항 75 이하 엄격 준수
 			this.SetResistance(ResistanceType.Physical, 60, 70); // 진흙과 이끼로 덮인 외피

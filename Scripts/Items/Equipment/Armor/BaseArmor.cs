@@ -1332,7 +1332,7 @@ namespace Server.Items
         {
             get
             {
-                return BaseFireResistance + GetProtOffset() + m_FireBonus + m_AosWeaponAttributes.ResistFireBonus / 10000 + m_AosArmorAttributes.ElementalResist / 100 + m_AosArmorAttributes.AllResist / 10000;
+                return BaseFireResistance + GetProtOffset() + m_FireBonus + m_AosWeaponAttributes.ResistFireBonus / 10000 + m_AosArmorAttributes.ElementalResist / 10000 + m_AosArmorAttributes.AllResist / 10000;
             }
         }
 
@@ -1356,7 +1356,7 @@ namespace Server.Items
         {
             get
             {
-                return BaseEnergyResistance + GetProtOffset() + m_EnergyBonus + m_AosWeaponAttributes.ResistEnergyBonus / 10000 + m_AosArmorAttributes.ElementalResist / 1000 + m_AosArmorAttributes.AllResist / 10000;
+                return BaseEnergyResistance + GetProtOffset() + m_EnergyBonus + m_AosWeaponAttributes.ResistEnergyBonus / 10000 + m_AosArmorAttributes.ElementalResist / 10000 + m_AosArmorAttributes.AllResist / 10000;
             }
         }
 
@@ -2737,6 +2737,7 @@ namespace Server.Items
                         SetHelper.AddSetBonus(from, SetID);
                     }
                 }
+				/*
 				//세트 아이템 체크 코드
 				if( PrefixOption[50] > 0 )
 				{
@@ -2747,7 +2748,7 @@ namespace Server.Items
 						Misc.SetItem.SetOption(pm, false);
 					}					
 				}
-
+				*/
                 #endregion
 				InvalidateProperties();
                 from.Delta(MobileDelta.Armor); // Tell them armor rating has changed
@@ -2775,7 +2776,7 @@ namespace Server.Items
                 if (IsSetItem && m_SetEquipped)
                     SetHelper.RemoveSetBonus(m, SetID, this);
                 #endregion
-				
+				/*
 				//세트 아이템 해제 코드
 				if( PrefixOption[50] > 0 )
 				{
@@ -2787,6 +2788,7 @@ namespace Server.Items
 
 					}					
 				}
+				*/
             }
 
             Server.Engines.XmlSpawner2.XmlAttach.CheckOnRemoved(this, parent);

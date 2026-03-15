@@ -11,10 +11,7 @@ namespace Server.Items
         public Axe()
             : base(0xF49)
         {
-			PrefixOption[61] = 56;
-			SuffixOption[61] = 500000;
-			//AbsorptionAttributes.HumanoidDamage += 500;
-            this.Weight = 7.0;
+            this.Weight = 27.0;
         }
 
         public Axe(Serial serial)
@@ -54,21 +51,21 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
         public override int AosMinDamage
         {
             get
             {
-                return 5;
+                return 10;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 13;
+                return 11;
             }
         }
         public override int AosSpeed

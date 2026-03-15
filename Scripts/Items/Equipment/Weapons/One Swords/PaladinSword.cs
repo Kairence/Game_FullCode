@@ -9,13 +9,7 @@ namespace Server.Items
         public PaladinSword()
             : base(0x26CE)
         {
-			PrefixOption[61] = 57;
-			PrefixOption[62] = 61;
-			SuffixOption[61] = 50000;
-			SuffixOption[62] = 50000;
-			//AbsorptionAttributes.UndeadDamage += 500;
-			//AbsorptionAttributes.AbyssDamage += 500;
-            this.Weight = 6.0;
+            this.Weight = 26.0;
        }
 
         public PaladinSword(Serial serial)
@@ -62,14 +56,14 @@ namespace Server.Items
         {
             get
             {
-                return 1;
+                return 7;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 2;
+                return 8;
             }
         }
         public override float MlSpeed

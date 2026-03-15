@@ -26,8 +26,8 @@ namespace Server.Mobiles
 			this.SetStam(196, 296);     // 최종 Stam ~500
 			this.SetMana(500, 1000);
 
-			SetAttackSpeed(3.0);
-			SetDamage(40, 60); // 평균 50.0
+			this.SetAttackSpeed(3.5);
+			this.SetDamage(50, 75); // 명성 15000 크라켄(65-105) 선을 넘지 않는 준보스 딜
 
 			// 공격 속성
 			this.SetDamageType(ResistanceType.Physical, 50);

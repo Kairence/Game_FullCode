@@ -24,8 +24,8 @@ namespace Server.Mobiles
 			this.SetStam(250, 350);      
 			this.SetMana(900, 1050);     
 
-			this.SetAttackSpeed(2.4);    
-			this.SetDamage(18, 28);      
+			SetAttackSpeed(5.5);
+			SetDamage(40, 55);      
 
 			this.SetDamageType(ResistanceType.Physical, 40);
 			this.SetDamageType(ResistanceType.Cold, 30);
@@ -49,6 +49,9 @@ namespace Server.Mobiles
 
 			this.Fame = 14000;           
 			this.Karma = -14000;
+			this.SpecialType2 = 4;
+			this.SpecialChance2 = 0.15;	
+			
         }
 
         public Lich(Serial serial)

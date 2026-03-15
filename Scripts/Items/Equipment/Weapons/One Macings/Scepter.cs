@@ -11,9 +11,9 @@ namespace Server.Items
         public Scepter()
             : base(0x26BC)
         {
-            this.Weight = 8.0;
+            this.Weight = 18.0;
 			PrefixOption[61] = 46;
-			SuffixOption[61] = 250000;
+			SuffixOption[61] = 300000;
 		}
 
         public Scepter(Serial serial)
@@ -60,14 +60,14 @@ namespace Server.Items
         {
             get
             {
-                return 1;
+                return 3;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 4;
+                return 5;
             }
         }
         public override int AosSpeed

@@ -1039,7 +1039,13 @@ namespace Server.Engines.Craft
 						if( from is PlayerMobile )
 						{
 							PlayerMobile pm = from as PlayerMobile;
-							int max_craft_amount = 100 + pm.GoldPoint[15] * 9;
+							int max_craft_amount = 5 + (int)(from.Skills[craftSystem.MainSkill].Value / 10 );
+							
+							if (from.Skills[craftSystem.MainSkill].Value >= 150.0 && 
+							   (craftSystem.MainSkill == SkillName.Alchemy || craftSystem.MainSkill == SkillName.Cooking))
+							{
+								max_craft_amount *= 2; // 한도를 2배로 증가 (25 -> 50)
+							}							
 							if( tempAmount > max_craft_amount )
 								maxAmount = max_craft_amount;
 						}
@@ -1313,88 +1319,26 @@ namespace Server.Engines.Craft
 
 		public double GetExceptionalChance(CraftSystem system, double chance, Mobile from)
 		{
-			if (ForceNonExceptional)
+			if (ForceNonExceptional) return 0.0;
+
+			// 1. 변수 선언 및 100 미만 즉시 차단 (가장 큰 최적화)
+			double v = from.Skills[system.MainSkill].Value;
+			if (v < 100.0) return 0.0;
+
+			if (ForceExceptional)
 			{
-				return 0.0;
+				bool allReq = false;
+				GetSuccessChance(from, null, system, false, ref allReq);
+				if (allReq) return 1.0;
 			}
 
-            if (ForceExceptional)
-            {
-                bool allRequiredSkills = false;
-                GetSuccessChance(from, null, system, false, ref allRequiredSkills);
+			// 2. 등급 보너스 결정 + 스킬 비례 가산 (0.1% * v)
+			double finalChance = (v >= 150.0 ? 0.20 : 0.10) + (v * 0.001);
 
-                if (allRequiredSkills)
-                    return 100.0;
-            }
-
-            double bonus = 0.0;
-			
-			if( from is PlayerMobile )
-			{
-				PlayerMobile pm = from as PlayerMobile;
-				bonus += pm.GoldPoint[14] * 0.0025;
-			}
-			
-			chance = 0.5;
-
-			/*
-			if (from.Talisman is BaseTalisman)
-			{
-				BaseTalisman talisman = (BaseTalisman)from.Talisman;
-
-				if (talisman.CheckSkill(system))
-				{
-					bonus = talisman.ExceptionalBonus / 100.0;
-				}
-			}
-
-            MasterChefsApron apron = from.FindItemOnLayer(Layer.MiddleTorso) as MasterChefsApron;
-
-            if (apron != null)
-            {
-                bonus += apron.Bonus / 100.0;
-            }
-
-            if (WoodworkersBench.HasBonus(from, system.MainSkill))
-            {
-                bonus += .3;
-            }
-
-			switch (system.ECA)
-			{
-				default:
-				case CraftECA.ChanceMinusSixty:
-					chance -= 0.6;
-					break;
-				case CraftECA.FiftyPercentChanceMinusTenPercent:
-					chance = chance * 0.5 - 0.1;
-					break;
-				case CraftECA.ChanceMinusSixtyToFourtyFive:
-					{
-						double offset = 0.60 - ((from.Skills[system.MainSkill].Value - 95.0) * 0.03);
-
-						if (offset < 0.45)
-						{
-							offset = 0.45;
-						}
-						else if (offset > 0.60)
-						{
-							offset = 0.60;
-						}
-
-						chance -= offset;
-						break;
-					}
-			}
-			*/
-			if (chance > 0)
-			{
-				return chance + bonus;
-			}
-
-			return chance;
+			// 3. 범위 제한 후 리턴 (0.0 ~ 1.0)
+			return Math.Min(Math.Max(finalChance, 0.0), 1.0);
 		}
-
+		
 		public bool CheckSkills(
 			Mobile from, Type typeRes, CraftSystem craftSystem, ref int quality, ref bool allRequiredSkills, int maxAmount)
 		{
@@ -1451,127 +1395,40 @@ namespace Server.Engines.Craft
                     maxMainSkill = maxSkill;
                     valMainSkill = valSkill;
                 }
-
-				//생산 경험치
-                if (gainSkills && !UseAllRes) // This is a passive check. Success chance is entirely dependant on the main skill
-                {
-                    from.CheckSkill(craftSkill.SkillToMake, ( maxSkill * 10 ) + ResAmount );
-					if( from is PlayerMobile )
-					{
-						int getgoldpoint = (int)(maxSkill * ResAmount * 0.5);
-						PlayerMobile pm = from as PlayerMobile;
-						if( getgoldpoint > 0 )
-						{
-							pm.Getgoldpoint(getgoldpoint, false);
-
-							if( craftSkill.SkillToMake is SkillName.Alchemy )
-								Server.Misc.Util.SavingAccountPoint(pm, 31, 1);
-							else if( craftSkill.SkillToMake is SkillName.Blacksmith )
-								Server.Misc.Util.SavingAccountPoint(pm, 32, 1);
-							else if( craftSkill.SkillToMake is SkillName.Fletching )
-								Server.Misc.Util.SavingAccountPoint(pm, 33, 1);
-							else if( craftSkill.SkillToMake is SkillName.Carpentry )
-								Server.Misc.Util.SavingAccountPoint(pm, 34, 1);
-							else if( craftSkill.SkillToMake is SkillName.Cartography )
-								Server.Misc.Util.SavingAccountPoint(pm, 35, 1);
-							else if( craftSkill.SkillToMake is SkillName.Cooking )
-								Server.Misc.Util.SavingAccountPoint(pm, 36, 1);
-							else if( craftSkill.SkillToMake is SkillName.Inscribe )
-								Server.Misc.Util.SavingAccountPoint(pm, 37, 1);
-							else if( craftSkill.SkillToMake is SkillName.Tailoring )
-								Server.Misc.Util.SavingAccountPoint(pm, 38, 1);
-							else if( craftSkill.SkillToMake is SkillName.Tinkering )
-								Server.Misc.Util.SavingAccountPoint(pm, 39, 1);
-							else if( craftSkill.SkillToMake is SkillName.Imbuing )
-								Server.Misc.Util.SavingAccountPoint(pm, 40, 1);
-						}
-					}
-				}
             }
 
 			double chance;
 
 			if (allRequiredSkills)
 			{
-				/*
-				chance = craftSystem.GetChanceAtMin(this) +
-						 ((valMainSkill - minMainSkill) / (maxMainSkill - minMainSkill) * (1.0 - craftSystem.GetChanceAtMin(this)));
-				*/
-				if( IsEquip(this.ItemType) ) // || this is BaseArmor || this is BaseClothing || this is BaseJewel || this is Spellbook || this is BaseTalisman )
-					chance = 0.1 + ( valMainSkill - minMainSkill ) * 0.001;
+				// 1. 기본 확률 설정
+				// 장비: 10% 시작, 0.1%씩 증가 / 비장비: 25% 시작, 0.25%씩 증가
+				if (IsEquip(this.ItemType))
+					chance = 0.1 + (valMainSkill - minMainSkill) * 0.001;
 				else
-					chance = 0.5 + ( valMainSkill - minMainSkill ) * 0.005;
-				
-				// 색자원 확률 감소
-				var types = new Type[Resources.Count][];
+					chance = 0.25 + (valMainSkill - minMainSkill) * 0.0025;
 
-				CraftSubResCol resCol = (UseSubRes2 ? craftSystem.CraftSubRes2 : craftSystem.CraftSubRes);
-
-				for (int i = 0; i < types.Length; ++i)
+				// 2. 제작 숙련 보너스: 스킬 50.0 이상 시 10% 가산
+				if (valMainSkill >= 500)
 				{
-					CraftRes craftRes = Resources.GetAt(i);
-					Type baseType = craftRes.ItemType;
-
-					if (typeRes != null && ForceTypeRes)
-					{
-						Type outType;
-						if (m_ResourceConversionTable.TryGetValue(typeRes, out outType))
-							baseType = outType;
-					}
-
-					// Resource Mutation
-					if ((baseType == resCol.ResType) && (typeRes != null))
-					{
-						baseType = typeRes;
-
-						CraftSubRes subResource = resCol.SearchFor(baseType);
-
-						/*
-						if (subResource != null )
-						{
-							chance -= subResource.RequiredSkill * 0.0025;
-						}
-						*/
-					}
+					chance += 0.1; 
 				}
+
+				// 3. 연금술 및 요리 마스터 최소 확률 보장 (100.0 이상일 때)
+				// 계산된 확률이 50%(0.5)보다 낮더라도 최소 50%로 고정합니다.
+				if (valMainSkill >= 1000 && (craftSystem.MainSkill == SkillName.Alchemy || craftSystem.MainSkill == SkillName.Cooking))
+				{
+					if (chance < 0.5)
+						chance = 0.5;
+				}
+
+				// 4. 하우징 보너스: 집 주인이라면 5% 가산
 				BaseHouse house = BaseHouse.FindHouseAt(from);
-				if( house != null && house.IsOwner(from))
+				if (house != null && house.IsOwner(from))
 					chance += 0.05;
-				
-				if( from is PlayerMobile )
-				{
-					PlayerMobile pm = from as PlayerMobile;
-					chance += pm.GoldPoint[13] * 0.0025;
 
-				}					
-				//if( valMainSkill >= 100 )
-				//	chance += 0.15;
-				//buffbonus = 0;
-				/*
-				if( from is PlayerMobile )
-				{
-					PlayerMobile pm = from as PlayerMobile;
-
-					for( int i = 6; i <= 10; i++ )
-					{
-						if( pm.BuffCheck[i] )
-						{
-							if( pm.GoldPoint[0] >= buffpoint[i - 6] )
-							{
-								buffbonus = i - 5;
-							}
-							else
-							{
-								pm.BuffCheck[i] = false;
-								pm.SendMessage("당신은 해당 버프를 적용받기에는 포인트가 낮습니다.");
-							}
-						}
-					}
-					//피로도
-					//chance += (double)( buffbonus * 0.01 );
-				}
-				*/
-				if( chance < 0 )
+				// 5. 하한선 보정 (0 미만 방지)
+				if (chance < 0)
 					chance = 0;
 			}
 			else
@@ -1579,6 +1436,7 @@ namespace Server.Engines.Craft
 				chance = 0.0;
 			}
 
+			// 6. 탈리스만 보너스 (기존 로직 유지)
 			if (allRequiredSkills && from.Talisman is BaseTalisman)
 			{
 				BaseTalisman talisman = (BaseTalisman)from.Talisman;
@@ -1588,6 +1446,10 @@ namespace Server.Engines.Craft
 					chance += talisman.SuccessBonus / 100.0;
 				}
 			}
+
+			// 최종 100% 캡 보정
+			if (chance > 1.0) chance = 1.0;
+
 			return chance;
 		}
 		//private int buffbonus = 0;
@@ -1598,38 +1460,10 @@ namespace Server.Engines.Craft
             {
                 CraftSkill craftSkill = Skills.GetAt(i);
 
+
                 //from.CheckSkill(craftSkill.SkillToMake, ( craftSkill.MaxSkill * 2 + ResAmount * amount * 5) * 10 ) ;
 				//생산 경험치
 				from.CheckSkill(craftSkill.SkillToMake, ( ( 10 * craftSkill.MaxSkill ) + ( amount * ResAmount )));
-				if( from is PlayerMobile )
-				{
-					int getgoldpoint = (int)(craftSkill.MaxSkill * ResAmount * amount * 0.5 );
-					PlayerMobile pm = from as PlayerMobile;
-					if( getgoldpoint > 0 )
-					{
-						pm.Getgoldpoint(getgoldpoint, false);
-						if( craftSkill.SkillToMake is SkillName.Alchemy )
-							Server.Misc.Util.SavingAccountPoint(pm, 31, 1);
-						else if( craftSkill.SkillToMake is SkillName.Blacksmith )
-							Server.Misc.Util.SavingAccountPoint(pm, 32, 1);
-						else if( craftSkill.SkillToMake is SkillName.Fletching )
-							Server.Misc.Util.SavingAccountPoint(pm, 33, 1);
-						else if( craftSkill.SkillToMake is SkillName.Carpentry )
-							Server.Misc.Util.SavingAccountPoint(pm, 34, 1);
-						else if( craftSkill.SkillToMake is SkillName.Cartography )
-							Server.Misc.Util.SavingAccountPoint(pm, 35, 1);
-						else if( craftSkill.SkillToMake is SkillName.Cooking )
-							Server.Misc.Util.SavingAccountPoint(pm, 36, 1);
-						else if( craftSkill.SkillToMake is SkillName.Inscribe )
-							Server.Misc.Util.SavingAccountPoint(pm, 37, 1);
-						else if( craftSkill.SkillToMake is SkillName.Tailoring )
-							Server.Misc.Util.SavingAccountPoint(pm, 38, 1);
-						else if( craftSkill.SkillToMake is SkillName.Tinkering )
-							Server.Misc.Util.SavingAccountPoint(pm, 39, 1);
-						else if( craftSkill.SkillToMake is SkillName.Imbuing )
-							Server.Misc.Util.SavingAccountPoint(pm, 40, 1);
-					}
-				}				
             }
         }
 
@@ -1641,16 +1475,6 @@ namespace Server.Engines.Craft
 				if (RequiredExpansion == Expansion.None ||
 					(from.NetState != null && from.NetState.SupportsExpansion(RequiredExpansion)))
 				{
-					/*
-					if ( from is PlayerMobile )
-					{
-						PlayerMobile pm = from as PlayerMobile;
-						if( buffbonus > 0 )
-						{
-							pm.GoldPoint[0] -= buffpoint[buffbonus - 1];
-						}
-					}
-					*/
 					bool allRequiredSkills = true;
 					double chance = GetSuccessChance(from, typeRes, craftSystem, false, ref allRequiredSkills);
 					if (allRequiredSkills && chance >= 0.0)
@@ -1689,16 +1513,75 @@ namespace Server.Engines.Craft
                                                     context.OnMade(this);
                                                 }
 
+												/*
                                                 int iMin = craftSystem.MinCraftEffect;
                                                 int iMax = (craftSystem.MaxCraftEffect - iMin) + 1;
                                                 int iRandom = Utility.Random(iMax);
                                                 iRandom += iMin + 1;
+												*/
 												
-												//제작 스킬이 200인 경우 1번만에 제작
-												if( from.Skills[craftSystem.MainSkill].Value >= 200 )
+												//iRandom - 1당 애니메이션(0.5초) 증가. iRandom이 1이면 버그 있음(에니메이션 발동 안하고 즉시 만들어짐). 만약 3회 제작을 시키려면 iRandom 4를 넣으면 됨.
+												/*
+													제작 기획
+													장비 제작 : 제작 4회. 재료 등급이 오르면 제작 수 1씩 증가. 제작술이 200이면 제작 수 3 감소. 장비학 50당 제작 수 1씩 감소(200이면 4 감소). 최소 제작 1회는 필요(iRandom = 1)
+													그외 제작 : 제작 2회. 제작술이 200이면 제작 1회
+												*/
+												//예시. 제작 스킬이 200인 경우 1번만에 제작
+												//if( from.Skills[craftSystem.MainSkill].Value >= 200 )
 												//if( ( craftSystem.MainSkill is SkillName.Blacksmith || craftSystem.MainSkill is SkillName.Fletching || craftSystem.MainSkill is SkillName.Carpentry || craftSystem.MainSkill is SkillName.Tinkering || 
 												//craftSystem.MainSkill is SkillName.Tailoring || craftSystem.MainSkill is SkillName.Inscribe ) && from.Skills[craftSystem.MainSkill].Value >= 200 )
+												
+												// 1. 기본 변수 설정
+												int iRandom = 2; 
+												SkillName mainSkill = craftSystem.MainSkill;
+
+												// 2. 이미 구현된 IsEquip 메서드 활용 (m_Type은 CraftItem의 멤버 변수)
+												// 이 메서드는 m_EquipTable을 순회하며 장비 여부를 판별합니다.
+												bool isEquipmentItem = this.IsEquip(ItemType);
+
+												if (isEquipmentItem)
+												{
+													// [장비 제작] 기본 애니메이션 3회 (iRandom 4)
+													iRandom = 4;
+
+													// 3. 자원 등급 가산 (인덱스 기반)
+													if (typeRes != null)
+													{
+														CraftSubResCol resCol = (UseSubRes2 ? craftSystem.CraftSubRes2 : craftSystem.CraftSubRes);
+														
+														for (int i = 0; i < resCol.Count; ++i)
+														{
+															CraftSubRes subRes = resCol.GetAt(i);
+															
+															if (subRes.ItemType == typeRes)
+															{
+																// Dull Copper 등이 삭제되었어도 현재 리스트 순서(i)만큼 정직하게 가산됩니다.
+																iRandom += i;
+																break;
+															}
+														}
+													}
+
+													// 4. 숙련도 보너스 차감
+													if (from.Skills[mainSkill].Value >= 200.0)
+														iRandom -= 3;
+
+													double armsLore = from.Skills[SkillName.ArmsLore].Value;
+													iRandom -= (int)(armsLore / 50.0);
+												}
+												else
+												{
+													// [일반 제작] 기본 애니메이션 1회 (iRandom 2)
 													iRandom = 2;
+
+													if (from.Skills[mainSkill].Value >= 200.0)
+														iRandom -= 1;
+												}
+
+												// 5. 최종 보정 (최소 2 유지 - 애니메이션 버그 방지)
+												if (iRandom < 2)
+													iRandom = 2;
+											
 												timecheck = iRandom * 5;
 												if( from is PlayerMobile )
 												{
@@ -2339,7 +2222,7 @@ namespace Server.Engines.Craft
             }
 		}
 		
-		private class InternalTimer : Timer
+private class InternalTimer : Timer
 		{
 			private readonly Mobile m_From;
 			private int m_iCount;
@@ -2348,7 +2231,10 @@ namespace Server.Engines.Craft
 			private readonly CraftSystem m_CraftSystem;
 			private readonly Type ItemTypeRes;
 			private readonly ITool m_Tool;
-            private bool m_AutoCraft;
+			private bool m_AutoCraft;
+
+			// 위치 체크를 위한 변수 추가
+			private readonly Point3D m_StartLocation;
 
 			public InternalTimer(
 				Mobile from, CraftSystem craftSystem, CraftItem craftItem, Type typeRes, ITool tool, int iCountMax)
@@ -2361,11 +2247,29 @@ namespace Server.Engines.Craft
 				m_CraftSystem = craftSystem;
 				ItemTypeRes = typeRes;
 				m_Tool = tool;
-                m_AutoCraft = AutoCraftTimer.HasTimer(from);
+				m_AutoCraft = AutoCraftTimer.HasTimer(from);
+
+				// 타이머 시작 위치 저장
+				m_StartLocation = from.Location;
 			}
 
 			protected override void OnTick()
 			{
+				// 1. 이동 체크: 현재 위치가 시작 위치와 다르면 즉시 취소
+				if (m_From.Location != m_StartLocation)
+				{
+					int badCraft = m_CraftSystem.CanCraft(m_From, m_Tool, m_CraftItem.ItemType);
+					m_From.EndAction(typeof(CraftSystem));
+					m_From.SendGump(new CraftGump(m_From, m_CraftSystem, m_Tool, badCraft));
+
+					// 자동 제작 중이라면 자동 제작 타이머도 종료
+					if (m_AutoCraft)
+						AutoCraftTimer.EndTimer(m_From);
+
+					Stop();
+					return;
+				}
+
 				m_iCount++;
 
 				m_From.DisruptiveAction();
@@ -2391,7 +2295,7 @@ namespace Server.Engines.Craft
 							m_From.SendLocalizedMessage(badCraft);
 						}
 
-                        AutoCraftTimer.EndTimer(m_From);
+						AutoCraftTimer.EndTimer(m_From);
 
 						return;
 					}

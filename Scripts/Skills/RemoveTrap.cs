@@ -1,10 +1,8 @@
 using System;
-using Server.Factions;
 using Server.Items;
 using Server.Network;
 using Server.Targeting;
-using Server.Engines.VvV;
-using Server.Guilds;
+using Server.Mobiles;
 
 namespace Server.SkillHandlers
 {
@@ -17,175 +15,118 @@ namespace Server.SkillHandlers
 
         public static TimeSpan OnUse(Mobile m)
         {
-            if (m.Skills[SkillName.Lockpicking].Value < 50)
-            {
-                m.SendLocalizedMessage(502366); // You do not know enough about locks.  Become better at picking locks.
-            }
-            else if (m.Skills[SkillName.DetectHidden].Value < 50)
-            {
-                m.SendLocalizedMessage(502367); // You are not perceptive enough.  Become better at detect hidden.
-            }
-            else
-            {
-                m.Target = new InternalTarget();
+            double skill = m.Skills[SkillName.RemoveTrap].Value;
+            m.Target = new InternalTarget();
+            m.SendLocalizedMessage(502368); // Which trap will you attempt to disarm?
 
-                m.SendLocalizedMessage(502368); // Wich trap will you attempt to disarm?
-            }
+            if (skill >= 200.0)
+                return TimeSpan.FromSeconds(10.0);
 
-            return TimeSpan.FromSeconds(10.0); // 10 second delay before beign able to re-use a skill
+            return TimeSpan.FromSeconds(30.0);
         }
 
-        private class InternalTarget : Target
+        // --- [설계 변경: 공용 함정 해제 메서드] ---
+        public static void OnRemove(Mobile from, object targeted, bool isMagic, double magicPower)
         {
-            public InternalTarget()
-                : base(2, false, TargetFlags.None)
-            {
-            }
+            double srcSkill = from.Skills[SkillName.RemoveTrap].Value;
 
-            protected override void OnTarget(Mobile from, object targeted)
+            if (targeted is TrapableContainer)
             {
-                if (targeted is Mobile)
+                TrapableContainer targ = (TrapableContainer)targeted;
+                if (targ.TrapType == TrapType.None)
                 {
-                    from.SendLocalizedMessage(502816); // You feel that such an action would be inappropriate
+                    from.SendLocalizedMessage(502373); // That doesn't appear to be trapped
+                    return;
                 }
-                else if (targeted is TrapableContainer)
+
+                // 마법 시전 시 물리 함정(Dart, Poison, Explosion)은 해제 불가
+                if (isMagic && targ.TrapType != TrapType.MagicTrap)
                 {
-                    TrapableContainer targ = (TrapableContainer)targeted;
+                    from.SendMessage("마법으로는 물리적인 함정을 해제할 수 없습니다.");
+                    return;
+                }
 
-                    from.Direction = from.GetDirectionTo(targ);
-
-                    if (targ.TrapType == Server.Items.TrapType.None)
+                if (isMagic)
+                {
+                    // 마법 해제 로직
+                    if (magicPower >= targ.TrapPower)
                     {
-                        from.SendLocalizedMessage(502373); // That doesn't appear to be trapped
-                        return;
-                    }
-
-                    from.PlaySound(0x241);
-					
-                    if (from.Skills.RemoveTrap.Value >= Utility.RandomMinMax( targ.TrapPower - 40, targ.TrapPower + 10))
-                    {
-						from.CheckSkill(SkillName.RemoveTrap, targ.TrapPower * 10 );
                         targ.TrapPower = 0;
                         targ.TrapLevel = 0;
-                        targ.TrapType = Server.Items.TrapType.None;
-                        targ.InvalidateProperties();
-                        from.SendLocalizedMessage(502377); // You successfully render the trap harmless
+                        targ.TrapType = TrapType.None;
+                        from.SendLocalizedMessage(502377);
                     }
                     else
                     {
-						if( from.Skills.RemoveTrap.Value >= targ.TrapPower - 40 )
-							from.CheckSkill(SkillName.RemoveTrap, targ.TrapPower * 5 );
-                        from.SendLocalizedMessage(502372); // You fail to disarm the trap... but you don't set it off
-                    }
-                }
-                else if (targeted is BaseFactionTrap)
-                {
-                    BaseFactionTrap trap = (BaseFactionTrap)targeted;
-                    Faction faction = Faction.Find(from);
-
-                    FactionTrapRemovalKit kit = (from.Backpack == null ? null : from.Backpack.FindItemByType(typeof(FactionTrapRemovalKit)) as FactionTrapRemovalKit);
-
-                    bool isOwner = (trap.Placer == from || (trap.Faction != null && trap.Faction.IsCommander(from)));
-
-                    if (faction == null)
-                    {
-                        from.SendLocalizedMessage(1010538); // You may not disarm faction traps unless you are in an opposing faction
-                    }
-                    else if (faction == trap.Faction && trap.Faction != null && !isOwner)
-                    {
-                        from.SendLocalizedMessage(1010537); // You may not disarm traps set by your own faction!
-                    }
-                    else if (!isOwner && kit == null)
-                    {
-                        from.SendLocalizedMessage(1042530); // You must have a trap removal kit at the base level of your pack to disarm a faction trap.
-                    }
-                    else
-                    {
-                        if ((Core.ML && isOwner) || (from.CheckTargetSkill(SkillName.RemoveTrap, trap, 80.0, 100.0) && from.CheckTargetSkill(SkillName.Tinkering, trap, 80.0, 100.0)))
-                        {
-                            from.PrivateOverheadMessage(MessageType.Regular, trap.MessageHue, trap.DisarmMessage, from.NetState);
-
-                            if (!isOwner)
-                            {
-                                int silver = faction.AwardSilver(from, trap.SilverFromDisarm);
-
-                                if (silver > 0)
-                                    from.SendLocalizedMessage(1008113, true, silver.ToString("N0")); // You have been granted faction silver for removing the enemy trap :
-                            }
-
-                            trap.Delete();
-                        }
-                        else
-                        {
-                            from.SendLocalizedMessage(502372); // You fail to disarm the trap... but you don't set it off
-                        }
-
-                        if (!isOwner && kit != null)
-                            kit.ConsumeCharge(from);
-                    }
-                }
-                else if (targeted is VvVTrap)
-                {
-                    VvVTrap trap = targeted as VvVTrap;
-
-                    if (!ViceVsVirtueSystem.IsVvV(from))
-                    {
-                        from.SendLocalizedMessage(1155496); // This item can only be used by VvV participants!
-                    }
-                    else
-                    {
-                        if (from == trap.Owner || ((from.Skills[SkillName.RemoveTrap].Value - 80.0) / 20.0) > Utility.RandomDouble())
-                        {
-                            VvVTrapKit kit = new VvVTrapKit(trap.TrapType);
-                            trap.Delete();
-
-                            if (!from.AddToBackpack(kit))
-                                kit.MoveToWorld(from.Location, from.Map);
-
-                            if (trap.Owner != null && from != trap.Owner)
-                            {
-                                Guild fromG = from.Guild as Guild;
-                                Guild ownerG = trap.Owner.Guild as Guild;
-
-                                if (fromG != null && fromG != ownerG && !fromG.IsAlly(ownerG) && ViceVsVirtueSystem.Instance != null 
-                                    && ViceVsVirtueSystem.Instance.Battle != null && ViceVsVirtueSystem.Instance.Battle.OnGoing)
-                                {
-                                    ViceVsVirtueSystem.Instance.Battle.Update(from, UpdateType.Disarm);
-                                }
-                            }
-
-                            from.PrivateOverheadMessage(Server.Network.MessageType.Regular, 1154, 1155413, from.NetState);
-                        }
-                        else if (.1 > Utility.RandomDouble())
-                        {
-                            trap.Detonate(from);
-                        }
-                    }
-                }
-                else if (targeted is GoblinFloorTrap)
-                {
-                    GoblinFloorTrap targ = (GoblinFloorTrap)targeted;
-
-                    if (from.InRange(targ.Location, 3))
-                    {
-                        from.Direction = from.GetDirectionTo(targ);
-
-                        if (targ.Owner == null)
-                        {
-                            Item item = new FloorTrapComponent();
-
-                            if (from.Backpack == null || !from.Backpack.TryDropItem(from, item, false))
-                                item.MoveToWorld(from.Location, from.Map);
-                        }
-
-                        targ.Delete();
-                        from.SendLocalizedMessage(502377); // You successfully render the trap harmless
+                        targ.TrapPower -= (int)magicPower;
+                        from.SendMessage("함정의 위력이 약화되었습니다.");
                     }
                 }
                 else
                 {
-                    from.SendLocalizedMessage(502373); // That does'nt appear to be trapped
+                    // 스킬 해제 로직 (기존 기획 반영)
+                    double dice = Misc.SkillCheck.GetSuccessChance(srcSkill, (double)targ.TrapPower);
+                    if (srcSkill >= 50.0) dice += 0.10;
+                    if (srcSkill >= 150.0 && dice < 1.0) dice = 1.0 - ((1.0 - dice) * 0.5);
+
+                    if (Utility.RandomDouble() < dice)
+                    {
+                        targ.TrapType = TrapType.None;
+                        from.SendLocalizedMessage(502377);
+                    }
+                    else
+                    {
+                        if (Utility.RandomDouble() < 0.20) targ.OnSnoop(from);
+                        else from.SendLocalizedMessage(502372);
+                    }
+                    from.CheckSkill(SkillName.RemoveTrap, (double)targ.TrapPower);
                 }
+            }
+            else if (targeted is BaseTrap || targeted is TrapTrigger)
+            {
+                BaseTrap trap = (targeted is TrapTrigger) ? ((TrapTrigger)targeted).ParentTrap : (BaseTrap)targeted;
+
+                if (trap == null || trap.Deleted || !trap.Detected)
+                {
+                    from.SendLocalizedMessage(502373);
+                    return;
+                }
+
+                if (!isMagic && srcSkill < 100.0)
+                {
+                    from.SendLocalizedMessage(503429); // 실력이 부족하여 던전 함정은 손댈 수 없습니다.
+                    return;
+                }
+
+                double difficulty = trap.Difficulty;
+
+                if (isMagic)
+                {
+                    if (magicPower >= difficulty) { from.SendLocalizedMessage(502377); trap.Delete(); }
+                }
+                else
+                {
+                    double dice = Misc.SkillCheck.GetSuccessChance(srcSkill, difficulty);
+                    if (srcSkill >= 50.0) dice += 0.10;
+                    if (srcSkill >= 150.0 && dice < 1.0) dice = 1.0 - ((1.0 - dice) * 0.5);
+
+                    if (Utility.RandomDouble() < dice) { from.SendLocalizedMessage(502377); trap.Delete(); }
+                    else
+                    {
+                        if (Utility.RandomDouble() < 0.20) { from.SendLocalizedMessage(502375); trap.CheckAndTrigger(from); }
+                        else from.SendLocalizedMessage(502372);
+                    }
+                    from.CheckSkill(SkillName.RemoveTrap, difficulty);
+                }
+            }
+        }
+
+        private class InternalTarget : Target
+        {
+            public InternalTarget() : base(2, false, TargetFlags.None) { }
+            protected override void OnTarget(Mobile from, object targeted)
+            {
+                OnRemove(from, targeted, false, 0);
             }
         }
     }

@@ -9,9 +9,6 @@ namespace Server.Items
         public Club()
             : base(0x13B4)
         {
-			PrefixOption[61] = 4;
-			SuffixOption[61] = 5000000;
-			//Attributes.BonusHits += 25000;
             this.Weight = 9.0;
         }
 
@@ -59,14 +56,14 @@ namespace Server.Items
         {
             get
             {
-                return 2;
+                return 1;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 8;
+                return 7;
             }
         }
         public override int AosSpeed

@@ -33,8 +33,8 @@ namespace Server.Mobiles
 			this.SetStam(180, 280);      
 			this.SetMana(600, 850);      
 
-			this.SetAttackSpeed(2.0);    // 기승 상태에서의 민첩함 반영
-			this.SetDamage(45, 70);      
+			SetAttackSpeed(2.5);
+			SetDamage(85, 125);      
 
 			this.SetResistance(ResistanceType.Physical, 65, 75); 
 			this.SetResistance(ResistanceType.Fire, 75, 75);     

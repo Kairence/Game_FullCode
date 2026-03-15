@@ -32,9 +32,8 @@ namespace Server.Mobiles
 			this.SetDex(2700, 2800);
 			this.SetInt(2700, 2800);
 
-			// [Combat Options] 5속성 복합 타격 (각 속성 20% 분배)
-			this.SetDamage(80, 120);
-			this.SetAttackSpeed(2.0);
+			SetAttackSpeed(12.0);
+			SetDamage(25, 40);
 
 			this.SetDamageType(ResistanceType.Physical, 20);
 			this.SetDamageType(ResistanceType.Fire, 20);

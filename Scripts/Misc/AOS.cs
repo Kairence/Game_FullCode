@@ -153,36 +153,77 @@ namespace Server
 
             int totalDamage;
 
-			int physDamage = damage * phys + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterDamage ) / 100;
-			int fireDamage = damage * fire + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterFire ) / 100;
-			int coldDamage = damage * cold + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterCold ) / 100;
-			int poisonDamage = damage * pois + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterPoison ) / 100;
-			int energyDamage = damage * nrgy + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterEnergy ) / 100;
-			int chaosDamage = damage * chaos;
-			int directDamage = damage * direct;
+			// 1. 기초 분배 (damage는 전체 데미지, phys/fire 등은 각 속성 비중 0~100)
+			int physDamage = (damage * phys) / 100;
+			int fireDamage = (damage * fire) / 100;
+			int coldDamage = (damage * cold) / 100;
+			int poisonDamage = (damage * pois) / 100;
+			int energyDamage = (damage * nrgy) / 100;
+			int chaosDamage = (damage * chaos) / 100;
+			int directDamage = (damage * direct) / 100;
+
+			// 2. 속성별 피해 증폭 및 최종 추가 데미지 합산
+			// 공식: 기초데미지 * (1 + 증폭값/10000) + 최종추뎀/100 (Eater 등)
+
+			// --- 물리 (BalancedWeapon 피증 -> EaterDamage 추뎀) ---
+			if (physDamage > 0)
+			{
+				physDamage = (int)(physDamage * (1.0 + (AosAttributes.GetValue(from, AosAttribute.BalancedWeapon) / 10000.0)));
+				physDamage += SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterDamage) / 10000;
+			}
+
+			// --- 화염 (ResonanceFire 피증 -> EaterFire 추뎀) ---
+			if (fireDamage > 0)
+			{
+				fireDamage = (int)(fireDamage * (1.0 + (SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.ResonanceFire) / 10000.0)));
+				fireDamage += SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterFire) / 10000;
+			}
+
+			// --- 냉기 (ResonanceCold 피증 -> EaterCold 추뎀) ---
+			if (coldDamage > 0)
+			{
+				coldDamage = (int)(coldDamage * (1.0 + (SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.ResonanceCold) / 10000.0)));
+				coldDamage += SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterCold) / 10000;
+			}
+
+			// --- 독 (ResonancePoison 피증 -> EaterPoison 추뎀) ---
+			if (poisonDamage > 0)
+			{
+				poisonDamage = (int)(poisonDamage * (1.0 + (SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.ResonancePoison) / 10000.0)));
+				poisonDamage += SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterPoison) / 10000;
+			}
+
+			// --- 에너지 (ResonanceEnergy 피증 -> EaterEnergy 추뎀) ---
+			if (energyDamage > 0)
+			{
+				energyDamage = (int)(energyDamage * (1.0 + (SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.ResonanceEnergy) / 10000.0)));
+				energyDamage += SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterEnergy) / 10000;
+			}
+
+			// --- 카오스 (ChaosDamage 피증 -> ChaosPlus 추뎀) ---
+			if (chaosDamage > 0)
+			{
+				chaosDamage = (int)(chaosDamage * (1.0 + (ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.ChaosDamage) / 10000.0)));
+				chaosDamage += ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.ChaosPlus) / 10000;
+			}
+
+			// --- 다이렉트 (DirectDamage 피증 -> DirectPlus 추뎀) ---
+			if (directDamage > 0)
+			{
+				directDamage = (int)(directDamage * (1.0 + (ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.DirectDamage) / 10000.0)));
+				directDamage += ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.DirectPlus) / 10000;
+			}
 			
             if (!ignoreArmor)
             {
 				//옵션 계산
 				int physicalResist = damageable.PhysicalResistance;
-				if( from.Skills.Tactics.Value >= 200 && damageable.PhysicalResistance >= 75 )
-					physicalResist = 75;
+
 
 				int fireResist = damageable.FireResistance;
 				int coldResist = damageable.ColdResistance;
 				int energyResist = damageable.EnergyResistance;
-				if( from.Skills.Spellweaving.Value >= 200 )
-				{
-					if( damageable.FireResistance >= 75 )
-						fireResist = 75;
-					if( damageable.ColdResistance >= 75 )
-						coldResist = 75;
-					if( damageable.EnergyResistance >= 75 )
-						energyResist = 75;
-				}
 				int poisonResist = damageable.PoisonResistance;
-				if( from.Skills.Poisoning.Value >= 200 && damageable.PoisonResistance >= 75 )
-					poisonResist = 75;
 				
 				physDamage =  physDamage * (100 - physicalResist);
 				fireDamage =  fireDamage * (100 - fireResist);
@@ -192,14 +233,6 @@ namespace Server
 				chaosDamage = damage * chaos * (100 - damageable.ChaosResistance );
 				directDamage = damage * direct * (100 - damageable.DirectResistance );
 
-				if( from is PlayerMobile )
-				{
-					PlayerMobile pm = from as PlayerMobile;
-					fireDamage = (int)( fireDamage * ( 1 + pm.SilverPoint[11] * 0.1 + SAAbsorptionAttributes.GetValue(pm, SAAbsorptionAttribute.ResonanceFire ) * 0.001 ));
-					coldDamage = (int)( coldDamage * ( 1 + pm.SilverPoint[12] * 0.1 + SAAbsorptionAttributes.GetValue(pm, SAAbsorptionAttribute.ResonanceCold ) * 0.001 ));
-					poisonDamage = (int)( poisonDamage * ( 1 + pm.SilverPoint[13] * 0.1 + SAAbsorptionAttributes.GetValue(pm, SAAbsorptionAttribute.ResonancePoison ) * 0.001 ));
-					energyDamage = (int)( energyDamage * ( 1 + pm.SilverPoint[14] * 0.1 + SAAbsorptionAttributes.GetValue(pm, SAAbsorptionAttribute.ResonanceEnergy ) * 0.001 ));
-				}
 				
 				//totalDamage = physDamage + fireDamage + coldDamage + poisonDamage + energyDamage + chaosDamage + directDamage;
 				//totalDamage /= 10000;
@@ -318,13 +351,7 @@ namespace Server
 			}
 			if ( m.Spell != null && m.Spell.IsCasting )
 			{
-				if ( m.MeleeDamageAbsorb == 1 || m.MeleeDamageAbsorb == 3 )
-				{
-					totalDamage *= 150;
-					totalDamage /= 100;
-				}
-				else
-					totalDamage *= 2;
+				totalDamage *= 2;
 			}
 			totalDamage *= 2;
 			
@@ -386,6 +413,16 @@ namespace Server
                 ((BaseCreature)m).OnBeforeDamage(from, ref totalDamage, type);
             }
 
+            if ( from != null )
+            {
+                Server.Spells.Seventh.PolymorphSpell.EndPolymorph( from );
+            }
+
+            // 2. 피격자(m)의 폴리모프 해제 (피해를 받을 경우)
+            if ( m != null )
+            {
+                Server.Spells.Seventh.PolymorphSpell.EndPolymorph( m );
+            }
 			
             if (totalDamage <= 0)
             {
@@ -393,6 +430,7 @@ namespace Server
             }
 			if( totalDamage > 60000 )
 				totalDamage = 60000;
+
 
 			// --- 데미지 계산 및 차감 완료 후, bc와 bm이 이미 정의된 시점 ---
 
@@ -443,7 +481,6 @@ namespace Server
                 from.RegisterDamage(totalDamage / 4, m);
             }
 			*/
-            SpiritSpeak.CheckDisrupt(m);
 
             #region Stygian Abyss
             if (m.Spell != null)
@@ -533,41 +570,6 @@ namespace Server
 			{
 				from.PlaySound(0x44D);
 			}
-			
-			/*
-            TransformContext context = TransformationSpellHelper.GetContext(from);
-
-            if (context != null)
-            {
-                if (context.Type == typeof(WraithFormSpell))
-                {
-                    int manaLeech = AOS.Scale(damageGiven, Math.Min(target.Mana, (int)from.Skills.SpiritSpeak.Value / 5)); // Wraith form gives 5-20% mana leech
-
-                    if (manaLeech != 0)
-                    {
-                        from.Mana += manaLeech;
-                        from.PlaySound(0x44D);
-
-                        target.Mana -= manaLeech;
-                    }
-                }
-                else if (context.Type == typeof(VampiricEmbraceSpell))
-                {
-                    #region High Seas
-                    if (target is BaseCreature && ((BaseCreature)target).TaintedLifeAura)
-                    {
-                        AOS.Damage(from, target, AOS.Scale(damageGiven, 20), false, 0, 0, 0, 0, 0, 0, 100, false, false, false);
-                        from.SendLocalizedMessage(1116778); //The tainted life force energy damages you as your body tries to absorb it.
-                    }
-                    #endregion
-                    else
-                    {
-                        from.Hits += AOS.Scale(damageGiven, 20);
-                        from.PlaySound(0x44D);
-                    }
-                }
-            }
-			*/
         }
 
         #region AOS Status Bar
@@ -682,6 +684,7 @@ namespace Server
             return attributes.Select(a => GetValue(m, a));
         }
 
+		/*
 		private static bool IdentifiedCheck( Item checkitem )
 		{
 			if( checkitem is BaseWeapon )
@@ -711,7 +714,7 @@ namespace Server
 			}
 			return false;
 		}
-		
+		*/
         public static int GetValue(Mobile m, AosAttribute attribute)
         {
             if (World.Loading || !IsValid(attribute))
@@ -734,7 +737,7 @@ namespace Server
 
                 AosAttributes attrs = RunicReforging.GetAosAttributes(obj);
 				
-                if (attrs != null && IdentifiedCheck( obj ) )
+                if (attrs != null ) //&& IdentifiedCheck( obj ) )
                     value += attrs[attribute];
 
                 if (attribute == AosAttribute.Luck)
@@ -823,6 +826,9 @@ namespace Server
 
             if (attribute == AosAttribute.WeaponDamage)
             {
+				if (Server.Spells.Chivalry.EnemyOfOneSpell.UnderAura(m))
+					value += 200000;			
+				/*
                 if (BaseMagicalFood.IsUnderInfluence(m, MagicalFood.GrapesOfWrath))
                     value += 35;
 
@@ -855,6 +861,7 @@ namespace Server
                 if (BaseFishPie.IsUnderEffects(m, FishPieEffect.WeaponDam))
                     value += 5;
                 #endregion
+				*/
             }
             else if (attribute == AosAttribute.SpellDamage)
             {
@@ -920,136 +927,36 @@ namespace Server
                 if (Spells.Mysticism.SleepSpell.IsUnderSleepEffects(m))
                     value -= 3;
                 #endregion
+				if (!m.CanBeginAction(typeof(Server.Spells.First.NightSightSpell)))
+				{
+					value += 50000; 
+				}
             }
             else if (attribute == AosAttribute.WeaponSpeed)
             {
-                if (HowlOfCacophony.IsUnderEffects(m) || AuraOfNausea.UnderNausea(m))
-                    value -= 60;
+                //if (HowlOfCacophony.IsUnderEffects(m) || AuraOfNausea.UnderNausea(m))
+                //    value -= 60;
 
-                if (DivineFurySpell.UnderEffect(m))
-                    value += DivineFurySpell.GetWeaponSpeedBonus(m);
+                //if (DivineFurySpell.UnderEffect(m))
+                 //   value += DivineFurySpell.GetWeaponSpeedBonus(m);
 
-                value += HonorableExecution.GetSwingBonus(m);
-
-                TransformContext context = TransformationSpellHelper.GetContext(m);
-
-                if (context != null && context.Spell is ReaperFormSpell)
-                    value += ((ReaperFormSpell)context.Spell).SwingSpeedBonus;
-
-                int discordanceEffect = 0;
-
-                // Discordance gives a malus of -0/-28% to swing speed.
-                if (SkillHandlers.Discordance.GetEffect(m, ref discordanceEffect))
-                    value -= discordanceEffect;
-
-                if (EssenceOfWindSpell.IsDebuffed(m))
-                    value -= EssenceOfWindSpell.GetSSIMalus(m);
-
-                #region City Loyalty
-                if (CityLoyaltySystem.HasTradeDeal(m, TradeDeal.GuildOfAssassins))
-                    value += 5;
-                #endregion
-
-                #region SA
-                if (Spells.Mysticism.SleepSpell.IsUnderSleepEffects(m))
-                    value -= 45;
-
-                if (TransformationSpellHelper.UnderTransformation(m, typeof(Spells.Mysticism.StoneFormSpell)))
-                    value -= 10;
-
-                if (StickySkin.IsUnderEffects(m))
-                    value -= 30;
-                #endregion
+				// [추가] Enemy of One 오오라 체크: 공격 속도 +10
+				if (Server.Spells.Chivalry.EnemyOfOneSpell.UnderAura(m))
+					value += 100000;
             }
             else if (attribute == AosAttribute.AttackChance)
             {
-                if (AuraOfNausea.UnderNausea(m))
-                    value -= 60;
-
-                if (DivineFurySpell.UnderEffect(m))
-                    value += DivineFurySpell.GetAttackBonus(m);                   
-
-                if (BaseWeapon.CheckAnimal(m, typeof(GreyWolf)) || BaseWeapon.CheckAnimal(m, typeof(BakeKitsune)))
-                    value += 20; // attacker gets 20% bonus when under Wolf or Bake Kitsune form
-
-                if (HitLower.IsUnderAttackEffect(m))
-                    value -= 25; // Under Hit Lower Attack effect -> 25% malus
-
-                WeaponAbility ability = WeaponAbility.GetCurrentAbility(m);
-
-                if (ability != null)
-                    value += ability.AccuracyBonus;
-
-                SpecialMove move = SpecialMove.GetCurrentMove(m);
-
-                if (move != null)
-                    value += move.GetAccuracyBonus(m);
-
-                #region City Loyalty
-                if (CityLoyaltySystem.HasTradeDeal(m, TradeDeal.WarriorsGuild))
-                    value += 5;
-                #endregion
-
-                #region SA
-                if (Spells.Mysticism.SleepSpell.IsUnderSleepEffects(m))
-                    value -= 45;
-
-                if (m.Race == Race.Gargoyle)
-                    value += 5;  //Gargoyles get a +5 HCI
-                #endregion
-
-                #region High Seas
-                if (BaseFishPie.IsUnderEffects(m, FishPieEffect.HitChance))
-                    value += 8;
-                #endregion
+				if (Server.Spells.Chivalry.ConsecrateWeaponSpell.UnderAura(m))			
+					value += 100000;
+				
             }
             else if (attribute == AosAttribute.DefendChance)
             {
-                if (AuraOfNausea.UnderNausea(m))
-                    value -= 60;
-
-                if (DivineFurySpell.UnderEffect(m))
-                    value -= DivineFurySpell.GetDefendMalus(m);
-
-                value -= HitLower.GetDefenseMalus(m);
-
-                int discordanceEffect = 0;
-                int surpriseMalus = 0;
-
-                value += Block.GetBonus(m);
-
-                if (SurpriseAttack.GetMalus(m, ref surpriseMalus))
-                    value -= surpriseMalus;
-
-                // Defender loses -0/-28% if under the effect of Discordance.
-                if (SkillHandlers.Discordance.GetEffect(m, ref discordanceEffect))
-                    value -= discordanceEffect;
-
-                #region High Seas
-                if (BaseFishPie.IsUnderEffects(m, FishPieEffect.DefChance))
-                    value += 8;
-                #endregion
+				
             }
             else if (attribute == AosAttribute.RegenHits)
             {
-                #region City Loyalty
-                if (CityLoyaltySystem.HasTradeDeal(m, TradeDeal.MaritimeGuild))
-                    value += 2;
-                #endregion
-
-                #region High Seas
-                if (m is PlayerMobile && BaseFishPie.IsUnderEffects(m, FishPieEffect.HitsRegen))
-                    value += 3;
-
-                if (SurgeShield.IsUnderEffects(m, SurgeType.Hits))
-                    value += 10;
-
-                if (SearingWeaponContext.HasContext(m))
-                    value -= m is PlayerMobile ? 20 : 60;
-                #endregion
-
-                //Virtue Artifacts
-                value += AnkhPendant.GetHitsRegenModifier(m);
+				
             }
             else if (attribute == AosAttribute.RegenStam)
             {
@@ -2748,11 +2655,12 @@ namespace Server
                 return false;
             }
 
+			/*
             if (!Core.SA && attribute >= AosArmorAttribute.ReactiveParalyze)
             {
                 return false;
             }
-
+			*/
             return true;
         }
 
@@ -2787,7 +2695,6 @@ namespace Server
                 if (attrs != null)
                     value += attrs[attribute];
             }
-
 			//세트 옵션
 			if( m is PlayerMobile )
 			{
@@ -2808,8 +2715,14 @@ namespace Server
 					value += pm.ItemSetSaveValue[114];
 				else if( attribute == AosArmorAttribute.DefenseStam )
 					value += pm.ItemSetSaveValue[115];
-
+					
 			}			
+			if( attribute == AosArmorAttribute.AllDefenseBonus )
+			{
+				if (Server.Spells.Chivalry.HolyLightSpell.UnderAura(m))
+					value += 30000;
+			}
+
 			value /= 100;
             return value;
         }
@@ -3909,6 +3822,15 @@ namespace Server
 					value += pm.ItemSetSaveValue[62];
 				else if( attribute == SAAbsorptionAttribute.CastingFocus )
 					value += pm.ItemSetSaveValue[116];
+					
+				if( attribute == SAAbsorptionAttribute.UndeadDamage )
+				{
+					// BaseWeapon.cs의 GetDamageScalar 또는 유사한 보너스 합산 메서드
+					if (Server.Spells.Chivalry.CleanseByFireSpell.UnderAura(m))
+					{
+						value += 200000; // 20% 증가
+					}				
+				}
 
 			}					
 

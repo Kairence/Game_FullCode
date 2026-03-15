@@ -23,7 +23,7 @@ namespace Server.Mobiles
 			this.SetHits(4000, 5000);  // 최종 Hits 약 30,000
 			this.SetDex(80, 120);
 
-			this.SetAttackSpeed(2.5);
+			SetAttackSpeed(3.0);
 			SetDamage(35, 50);
 
 			this.SetSkill(SkillName.Wrestling, 110.0, 125.0); 

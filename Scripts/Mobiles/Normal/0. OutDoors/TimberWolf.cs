@@ -24,7 +24,7 @@ namespace Server.Mobiles
 			this.SetStam(20, 50);
 
 			SetAttackSpeed(2.5);
-			SetDamage(3, 8);
+			SetDamage(14, 20); // 섀도우 위습(14-20)과 동급, 초반 유저의 경계 대상
 
 			// 공격 속성: 순수 물리
 			this.SetDamageType(ResistanceType.Physical, 100);

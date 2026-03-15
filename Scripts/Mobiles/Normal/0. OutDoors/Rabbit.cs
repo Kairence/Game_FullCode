@@ -22,8 +22,8 @@ namespace Server.Mobiles
 			this.SetStam(48, 68);
 			this.SetMana(0);
 
-			SetAttackSpeed(2.0);
-			SetDamage(1, 1);
+			this.SetAttackSpeed(3.5); 
+			this.SetDamage(6, 10); // 닭(8-12)보다 약간 약한, 생태계 최하위 정상화
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 

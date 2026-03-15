@@ -26,9 +26,8 @@ namespace Server.Mobiles
 			this.SetDex(15, 25);
 			this.SetInt(15, 25);
 
-			// [Combat Options] 100% 에너지 대미지 (순수 마력 공격)
-			this.SetDamage(15, 30);
-			this.SetAttackSpeed(1.8); // 상급 정령다운 매우 빠른 기동성
+			SetAttackSpeed(10.0);
+			SetDamage(10, 20);
 			this.SetDamageType(ResistanceType.Energy, 100);
 
 			// [Resistances] 최고 저항 75 이하 준수 / 화염 약점 설정

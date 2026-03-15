@@ -10,7 +10,7 @@ using Server.Engines.Quests;
 
 namespace Server.Engines.Khaldun
 {
-    public class BaseGumshoeForensicItem : Item, IForensicTarget
+    public class BaseGumshoeForensicItem : Item
     {
         public virtual string ItemName { get { return null; } }
         public virtual int Cliloc { get { return 0; } }
@@ -21,26 +21,6 @@ namespace Server.Engines.Khaldun
             : base(itemID)
         {
             Movable = false;
-        }
-
-        public void OnForensicEval(Mobile m)
-        {
-            if (!m.Player)
-                return;
-
-            var quest = QuestHelper.GetQuest<GoingGumshoeQuest2>((PlayerMobile)m);
-
-            if (quest != null)
-            {
-                m.PrivateOverheadMessage(MessageType.Regular, 0x47E, 1157722, "Forensics", m.NetState); // *Your proficiency in ~1_SKILL~ reveals more about the item*
-                m.SendLocalizedMessage(1158612, null, 0x23); // You have identified a clue! This item seems pertinent to the investigation!
-
-                m.SendSound(quest.UpdateSound);
-                m.SendSound(m.Female ? 0x30B : 0x41A);
-
-                m.CloseGump(typeof(GumshoeItemGump));
-                m.SendGump(new GumshoeItemGump(m, ItemID, Hue, ItemName, Cliloc, null));
-            }
         }
 
         public BaseGumshoeForensicItem(Serial serial)

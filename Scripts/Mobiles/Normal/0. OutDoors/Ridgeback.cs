@@ -25,8 +25,8 @@ namespace Server.Mobiles
 			this.SetStam(39, 89);   
 			this.SetMana(0);
 
-			SetAttackSpeed(2.5);
-			SetDamage(10, 18); 
+			this.SetAttackSpeed(3.0);
+			this.SetDamage(18, 26); // 늑대(16-24)보다 묵직하게 들이받음
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 

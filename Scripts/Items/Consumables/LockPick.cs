@@ -57,14 +57,8 @@ namespace Server.Items
 
         public override void OnDoubleClick(Mobile from)
         {
-			if( from.Hunger < 100 )
-				from.SendMessage("락픽을 하기 위해서는 최소 만복도가 1% 이상이어야 합니다.");
-			else
-			{
-				from.Hunger -= 100;
-				from.SendLocalizedMessage(502068); // What do you want to pick?
-				from.Target = new InternalTarget(this);
-			}
+			from.SendLocalizedMessage(502068); // What do you want to pick?
+			from.Target = new InternalTarget(this);
         }
 
         public virtual void OnUse()

@@ -1,8 +1,6 @@
 using System;
 using Server.Mobiles;
-using Server.Spells.Chivalry;
 using Server.Targeting;
-using System.Collections.Generic;
 
 namespace Server.Spells.Fifth
 {
@@ -15,67 +13,56 @@ namespace Server.Spells.Fifth
             Reagent.Garlic,
             Reagent.MandrakeRoot,
             Reagent.SpidersSilk);
+
         public ParalyzeSpell(Mobile caster, Item scroll)
             : base(caster, scroll, m_Info)
         {
         }
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Fifth;
-            }
-        }
+        public override SpellCircle Circle => SpellCircle.Fifth;
+
         public override void OnCast()
         {
             this.Caster.Target = new InternalTarget(this);
         }
 
-        private static readonly Dictionary<Mobile, Timer> m_Table = new Dictionary<Mobile, Timer>();
         public void Target(Mobile m)
         {
             if (!this.Caster.CanSee(m))
             {
                 this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
             }
-            else if (m_Table.ContainsKey(m))
+            // --- 1. 중복 마비 방지: 이미 마비되거나 굳은 적에게는 적용 불가 (메시지 출력 안함) ---
+            else if (m.Paralyzed || m.Frozen)
             {
-                this.Caster.SendMessage("1분 안에 같은 타겟을 마비시킬 수 없습니다."); // Target can not be seen.
+                // 아무 처리 없이 넘어감으로써 마나/시퀀스 소모를 방지
             }
-			/*
-            else if (Core.AOS && (m.Frozen || m.Paralyzed || (m.Spell != null && m.Spell.IsCasting && !(m.Spell is PaladinSpell))))
-            {
-                this.Caster.SendLocalizedMessage(1061923); // The target is already frozen.
-            }
-			*/
             else if (this.CheckHSequence(m))
             {
                 SpellHelper.Turn(this.Caster, m);
+                SpellHelper.CheckReflect((int)this.Circle, this.Caster, ref m);
 
-                //SpellHelper.CheckReflect((int)this.Circle, this.Caster, ref m);
+                if (m.Spell != null)
+                    m.Spell.OnCasterHurt();
 
-                double duration;
-				
-                if (Core.AOS)
-                {
-                    duration = 5;
-                }
-                else
-                {
-                    // Algorithm: ((20% of magery) + 7) seconds [- 50% if resisted]
-                    duration = 10.0 + (this.Caster.Skills[SkillName.Magery].Value * 0.01);
-                }
+                // 대상의 마비를 풀기 위해 기존 마비 상태 해제 후 재적용하는 엔진 대응 (필요 시)
+                m.Paralyzed = false;
 
+                // --- 2. 지속 시간 계산 (10초 + 보너스 * 0.002) ---
+                double bonus = SpellHelper.GetMagicValue(this.Caster, 0.002);
+                double duration = 10.0 + bonus;
+
+                // 특수 몬스터 예외 처리
                 if (m is PlagueBeastLord)
                 {
                     ((PlagueBeastLord)m).OnParalyzed(this.Caster);
-                    duration = 120;
+                    duration = 120.0;
                 }
 
+                // 마비 적용
                 m.Paralyze(TimeSpan.FromSeconds(duration));
-                m_Table[m] = Timer.DelayCall(TimeSpan.FromSeconds(60.0), new TimerStateCallback(AosDelay_Callback), new object[] { m });
 
+                // 연출 및 사운드
                 m.PlaySound(0x204);
                 m.FixedEffect(0x376A, 6, 1);
 
@@ -83,13 +70,6 @@ namespace Server.Spells.Fifth
             }
 
             this.FinishSequence();
-        }
-        private void AosDelay_Callback(object state)
-        {
-            object[] states = (object[])state;
-
-            Mobile m = (Mobile)states[0];
-            m_Table.Remove(m);
         }
 
         public class InternalTarget : Target

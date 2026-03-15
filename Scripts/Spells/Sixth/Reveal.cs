@@ -1,6 +1,7 @@
 using System;
-using System.Collections.Generic;
 using Server.Targeting;
+using Server.Mobiles;
+using Server.SkillHandlers;
 
 namespace Server.Spells.Sixth
 {
@@ -8,22 +9,22 @@ namespace Server.Spells.Sixth
     {
         private static readonly SpellInfo m_Info = new SpellInfo(
             "Reveal", "Wis Quas",
-            206,
-            9002,
-            Reagent.Bloodmoss,
-            Reagent.SulfurousAsh);
-        public RevealSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
+            206, 9002,
+            Reagent.Bloodmoss, Reagent.SulfurousAsh);
+
+        public RevealSpell(Mobile caster, Item scroll) : base(caster, scroll, m_Info) { }
+
+        public override SpellCircle Circle => SpellCircle.Sixth;
+
+        public override bool CheckCast()
         {
+            // 기획: 은신찾기 스킬 쿨타임 체크
+            if (!Caster.CanBeginAction(typeof(DetectHidden)))
+                return false;
+
+            return base.CheckCast();
         }
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Sixth;
-            }
-        }
         public override void OnCast()
         {
             Caster.Target = new InternalTarget(this);
@@ -33,94 +34,33 @@ namespace Server.Spells.Sixth
         {
             if (!Caster.CanSee(p))
             {
-                Caster.SendLocalizedMessage(500237); // Target can not be seen.
+                Caster.SendLocalizedMessage(500237);
             }
             else if (CheckSequence())
             {
                 SpellHelper.Turn(Caster, p);
+                Point3D loc = new Point3D(p);
 
-                SpellHelper.GetSurfaceTop(ref p);
+                // --- 기획 범위 적용 (30 + 보너스 * 0.006) ---
+                double bonus = SpellHelper.GetMagicValue(Caster, 0.006);
+                int range = (int)(30.0 + bonus);
 
-                List<Mobile> targets = new List<Mobile>();
-
-                Map map = Caster.Map;
-
-                if (map != null)
+                // DetectHidden의 공용 메서드를 사용하여 광역 탐지
+                if (DetectHidden.OnDetect(Caster, loc, range))
                 {
-                    IPooledEnumerable eable = map.GetMobilesInRange(new Point3D(p), 1 + (int)(Caster.Skills[SkillName.Magery].Value / 20.0));
-
-                    foreach (Mobile m in eable)
-                    {
-                        if ((m is Mobiles.ShadowKnight && (m.X != p.X || m.Y != p.Y)) || !SkillHandlers.DetectHidden.CanDetect(Caster, m))
-                            continue;
-
-                        if (m.Hidden && (m.IsPlayer() || Caster.AccessLevel > m.AccessLevel) && CheckDifficulty(Caster, m))
-                            targets.Add(m);
-                    }
-
-                    eable.Free();
+                    // 마법 성공 연출
+                    Effects.PlaySound(loc, Caster.Map, 0x1FD);
                 }
-
-                for (int i = 0; i < targets.Count; ++i)
-                {
-                    Mobile m = targets[i];
-
-                    m.RevealingAction();
-
-                    m.FixedParticles(0x375A, 9, 20, 5049, EffectLayer.Head);
-                    m.PlaySound(0x1FD);
-                }
-
-                ColUtility.Free(targets);
             }
-
             FinishSequence();
-        }
-
-        // Reveal uses magery and detect hidden vs. hide and stealth 
-        private static bool CheckDifficulty(Mobile from, Mobile m)
-        {
-            // Reveal always reveals vs. invisibility spell 
-            if (!Core.AOS || InvisibilitySpell.HasTimer(m))
-                return true;
-
-            int magery = from.Skills[SkillName.Magery].Fixed;
-            int detectHidden = from.Skills[SkillName.DetectHidden].Fixed;
-
-            int hiding = m.Skills[SkillName.Hiding].Fixed;
-            int stealth = m.Skills[SkillName.Stealth].Fixed;
-            int divisor = hiding + stealth;
-
-            int chance;
-            if (divisor > 0)
-                chance = 50 * (magery + detectHidden) / divisor;
-            else
-                chance = 100;
-
-            return chance > Utility.Random(100);
         }
 
         public class InternalTarget : Target
         {
             private readonly RevealSpell m_Owner;
-            public InternalTarget(RevealSpell owner)
-                : base(Core.ML ? 10 : 12, true, TargetFlags.None)
-            {
-                m_Owner = owner;
-            }
-
-            protected override void OnTarget(Mobile from, object o)
-            {
-                IPoint3D p = o as IPoint3D;
-
-                if (p != null)
-                    m_Owner.Target(p);
-            }
-
-            protected override void OnTargetFinish(Mobile from)
-            {
-                m_Owner.FinishSequence();
-            }
+            public InternalTarget(RevealSpell owner) : base(12, true, TargetFlags.None) { m_Owner = owner; }
+            protected override void OnTarget(Mobile from, object o) { if (o is IPoint3D) m_Owner.Target((IPoint3D)o); }
+            protected override void OnTargetFinish(Mobile from) { m_Owner.FinishSequence(); }
         }
     }
 }

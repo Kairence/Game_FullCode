@@ -37,9 +37,10 @@ namespace Server.Mobiles
 			this.SetStam(780, 830);
 			this.SetMana(780, 830);
 
-			// [Combat Options]
-			this.SetDamage(40, 60);
-			this.SetAttackSpeed(1.4);
+			// 사용자님의 마법사 원칙(10s+)에 따라 공속을 12.0초로 대폭 하향했습니다.
+			// 평타 데미지는 보스급 위엄을 위해 최소한의 수치(20-30)만 남겼습니다.
+			SetAttackSpeed(12.0); 
+			SetDamage(20, 30);
 
 			// [Resistances] 최고 저항 75 이하 엄격 준수
 			this.SetResistance(ResistanceType.Physical, 60, 70); // 나무라 물리 방어 우수

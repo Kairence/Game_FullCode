@@ -22,7 +22,7 @@ namespace Server.Mobiles
 			this.SetStam(33, 53);
 
 			SetAttackSpeed(2.5);
-			SetDamage(8, 14); 
+			SetDamage(14, 22);
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 

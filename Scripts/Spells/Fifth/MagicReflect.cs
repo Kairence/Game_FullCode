@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using Server.Targeting;
 
 namespace Server.Spells.Fifth
 {
@@ -7,124 +7,49 @@ namespace Server.Spells.Fifth
     {
         private static readonly SpellInfo m_Info = new SpellInfo(
             "Magic Reflection", "In Jux Sanct",
-            242,
-            9012,
-            Reagent.Garlic,
-            Reagent.MandrakeRoot,
-            Reagent.SpidersSilk);
-        private static readonly Hashtable m_Table = new Hashtable();
-        public MagicReflectSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+            242, 9012, Reagent.Garlic, Reagent.MandrakeRoot, Reagent.SpidersSilk);
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Fifth;
-            }
-        }
-        public static void EndReflect(Mobile m)
-        {
-            if (m_Table.Contains(m))
-            {
-                ResistanceMod[] mods = (ResistanceMod[])m_Table[m];
+        public MagicReflectSpell(Mobile caster, Item scroll) : base(caster, scroll, m_Info) { }
 
-                if (mods != null)
-                {
-                    for (int i = 0; i < mods.Length; ++i)
-                        m.RemoveResistanceMod(mods[i]);
-                }
-
-                m_Table.Remove(m);
-                BuffInfo.RemoveBuff(m, BuffIcon.MagicReflection);
-            }
-        }
-
-        public override bool CheckCast()
-        {
-            if (Core.AOS)
-                return true;
-
-            if (this.Caster.MagicDamageAbsorb > 0)
-            {
-                this.Caster.SendLocalizedMessage(1005559); // This spell is already in effect.
-                return false;
-            }
-            else if (!this.Caster.CanBeginAction(typeof(DefensiveSpell)))
-            {
-                this.Caster.SendLocalizedMessage(1005385); // The spell will not adhere to you at this time.
-                return false;
-            }
-
-            return true;
-        }
+        public override SpellCircle Circle => SpellCircle.Fifth;
 
         public override void OnCast()
         {
-            if (Core.AOS)
+            if (CheckSequence())
             {
-                if (this.CheckSequence())
+                Mobile caster = Caster;
+
+                // 기획 4번: 기록소에서 저장된 스펠이 있는지 확인
+                if (Spell.ReflectTable.TryGetValue(caster, out Spell.ReflectEntry entry))
                 {
-					if( this.Caster.MagicDamageAbsorb == 0 )
-					{
-						this.Caster.MagicDamageAbsorb = 1;
-                        Caster.PlaySound(0x1E9);
-                        Caster.FixedParticles(0x375A, 10, 15, 5037, EffectLayer.Waist);
-                        string buffFormat = String.Format("{0}\t+{1}\t+{1}\t+{1}\t+{1}", 0, 0);
+                    // 시간 제한 체크 (20초 + 보너스)
+                    double bonus = SpellHelper.GetMagicValue(caster, 0.004);
+                    TimeSpan duration = TimeSpan.FromSeconds(20.0 + bonus);
 
-                        BuffInfo.AddBuff(Caster, new BuffInfo(BuffIcon.MagicReflection, 1075817, buffFormat, true));
-					}
-                    else
+                    if (DateTime.Now > entry.HitTime + duration)
                     {
-						this.Caster.MagicDamageAbsorb = 0;
-                        Caster.PlaySound(0x1ED);
-                        Caster.FixedParticles(0x375A, 10, 15, 5037, EffectLayer.Waist);
-
-                        BuffInfo.RemoveBuff(Caster, BuffIcon.MagicReflection);
+                        Spell.ReflectTable.Remove(caster);
                     }
-                }
-
-                this.FinishSequence();
-            }
-            else
-            {
-                if (this.Caster.MagicDamageAbsorb > 0)
-                {
-                    this.Caster.SendLocalizedMessage(1005559); // This spell is already in effect.
-                }
-                else if (!this.Caster.CanBeginAction(typeof(DefensiveSpell)))
-                {
-                    this.Caster.SendLocalizedMessage(1005385); // The spell will not adhere to you at this time.
-                }
-                else if (this.CheckSequence())
-                {
-                    if (this.Caster.BeginAction(typeof(DefensiveSpell)))
+                    else if (entry.Attacker != null && entry.Attacker.Alive)
                     {
-                        int value = (int)(this.Caster.Skills[SkillName.Magery].Value + this.Caster.Skills[SkillName.Inscribe].Value);
-                        value = (int)(8 + (value / 200) * 7.0);//absorb from 8 to 15 "circles"
+                        caster.FixedParticles(0x375A, 10, 15, 5037, EffectLayer.Waist);
+                        caster.PlaySound(0x1E9);
 
-                        this.Caster.MagicDamageAbsorb = value;
-
-                        this.Caster.FixedParticles(0x375A, 10, 15, 5037, EffectLayer.Waist);
-                        this.Caster.PlaySound(0x1E9);
+                        // 저장된 보너스 데미지(entry.Damage)를 그대로 타겟에게 입힘
+                        // (이미 모든 보너스가 계산된 값이므로 그대로 Damage 메서드 호출)
+                        entry.Attacker.Damage(entry.Damage, caster);
+                        
+                        // 사용 후 기록 삭제
+                        Spell.ReflectTable.Remove(caster);
                     }
                     else
                     {
-                        this.Caster.SendLocalizedMessage(1005385); // The spell will not adhere to you at this time.
+                        Spell.ReflectTable.Remove(caster);
                     }
                 }
-
-                this.FinishSequence();
             }
-        }
 
-        #region SA
-        public static bool HasReflect(Mobile m)
-        {
-            return m_Table.ContainsKey(m);
+            FinishSequence();
         }
-        #endregion
     }
 }

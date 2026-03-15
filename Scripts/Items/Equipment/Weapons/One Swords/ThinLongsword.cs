@@ -9,7 +9,7 @@ namespace Server.Items
         public ThinLongsword()
             : base(0x13B8)
         {
-            this.Weight = 7.0;
+            this.Weight = 17.0;
 		}
 
         public ThinLongsword(Serial serial)
@@ -48,21 +48,21 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
         public override int AosMinDamage
         {
             get
             {
-                return 3;
+                return 2;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 6;
+                return 5;
             }
         }
         public override int AosSpeed

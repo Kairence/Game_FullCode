@@ -40,13 +40,13 @@ namespace Server.Items
         {
             get
             {
-                return TimeSpan.FromSeconds(0.0);
+                return TimeSpan.FromSeconds(.0);
             }
         }
         public override void OnTrigger(Mobile from)
         {
-            if (from.IsStaff())
-                return;
+            //if (from.IsStaff())
+            //    return;
 
             Effects.SendLocationEffect(this.Location, this.Map, 0x1D99, 48, 2, this.GetEffectHue(), 0);
 

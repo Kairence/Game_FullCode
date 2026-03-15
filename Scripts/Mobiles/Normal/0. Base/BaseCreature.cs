@@ -413,116 +413,44 @@ namespace Server.Mobiles
 
         /* Do not serialize this till the code is finalized */
 
-		//변수 지정
 		private int[] m_originalStats = new int[6];
 		public int[] originalStats
 		{
 			get{ return m_originalStats; }
 			set{ m_originalStats = value;}
 		}
-		
+
+		// [BaseCreature.cs] 내부 추가
+		private int m_SpecialType1 = -1;
+		private double m_SpecialChance1 = 0.0;
+		private int m_SpecialType2 = -1;
+		private double m_SpecialChance2 = 0.0;
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int SpecialType1 { get => m_SpecialType1; set => m_SpecialType1 = value; }
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public double SpecialChance1 { get => m_SpecialChance1; set => m_SpecialChance1 = value; }
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int SpecialType2 { get => m_SpecialType2; set => m_SpecialType2 = value; }
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public double SpecialChance2 { get => m_SpecialChance2; set => m_SpecialChance2 = value; }
+
+		// Serialize/Deserialize 과정에서 기존 버전 다음에 아래를 추가하세요.
 		private static int[] m_DefaultExps = new int[]
 		{
-			0,
-			10,
-			12,
-			15,
-			19,
-			24,
-			30,
-			38,
-			47,
-			57,
-			69,
-			81,
-			94,
-			108,
-			123,
-			140,
-			159,
-			179,
-			200,
-			223,
-			247,
-			271,
-			295,
-			320,
-			347,
-			375,
-			405,
-			436,
-			468,
-			502,
-			536,
-			571,
-			606,
-			642,
-			679,
-			717,
-			756,
-			797,
-			839,
-			881,
-			923,
-			966,
-			1010,
-			1055,
-			1101,
-			1148,
-			1196,
-			1246,
-			1297,
-			1349,
-			1401,
-			1453,
-			1506,
-			1560,
-			1615,
-			1671,
-			1728,
-			1786,
-			1846,
-			1907,
-			1969,
-			2031,
-			2094,
-			2158,
-			2223,
-			2289,
-			2356,
-			2424,
-			2493,
-			2563,
-			2635,
-			2707,
-			2780,
-			2855,
-			2931,
-			3008,
-			3086,
-			3165,
-			3245,
-			3326,
-			3408,
-			3491,
-			3575,
-			3660,
-			3746,
-			3833,
-			3921,
-			4010,
-			4100,
-			4190,
-			4280,
-			4368,
-			4454,
-			4538,
-			4620,
-			4700,
-			4770,
-			4835,
-			4895,
-			4950,
+			0, 10, 12, 15, 19, 24, 30, 38, 47, 57,
+			69, 81, 94, 108, 123, 140, 159, 179, 200, 223,
+			247, 271, 295, 320, 347, 375, 405, 436, 468, 502,
+			536, 571, 606, 642, 679, 717, 756, 797, 839, 881,
+			923, 966, 1010, 1055, 1101, 1148, 1196, 1246, 1297, 1349,
+			1401, 1453, 1506, 1560, 1615, 1671, 1728, 1786, 1846, 1907,
+			1969, 2031, 2094, 2158, 2223, 2289, 2356, 2424, 2493, 2563,
+			2635, 2707, 2780, 2855, 2931, 3008, 3086, 3165, 3245, 3326,
+			3408, 3491, 3575, 3660, 3746, 3833, 3921, 4010, 4100, 4190,
+			4280, 4368, 4454, 4538, 4620, 4700, 4770, 4835, 4895, 4950,
 			5000
 		};
         public void SetExp(int val)
@@ -1196,10 +1124,10 @@ namespace Server.Mobiles
 
         #region Elemental Resistance/Damage
         public override int BasePhysicalResistance { get { return m_PhysicalResistance; } }
-        public override int BaseFireResistance { get { return m_FireResistance; } }
-        public override int BaseColdResistance { get { return m_ColdResistance; } }
-        public override int BasePoisonResistance { get { return m_PoisonResistance; } }
-        public override int BaseEnergyResistance { get { return m_EnergyResistance; } }
+		public override int BaseFireResistance     { get { return m_FireResistance     + (Server.Spells.Chivalry.HolyLightSpell.UnderAura(this) ? 10 : 0); } }
+		public override int BaseColdResistance     { get { return m_ColdResistance     + (Server.Spells.Chivalry.HolyLightSpell.UnderAura(this) ? 10 : 0); } }
+		public override int BasePoisonResistance   { get { return m_PoisonResistance   + (Server.Spells.Chivalry.HolyLightSpell.UnderAura(this) ? 10 : 0); } }
+		public override int BaseEnergyResistance   { get { return m_EnergyResistance   + (Server.Spells.Chivalry.HolyLightSpell.UnderAura(this) ? 10 : 0); } }
         public override int BaseChaosResistance { get { return m_ChaosResistance; } }
         public override int BaseDirectResistance { get { return m_DirectResistance; } }
 
@@ -3003,9 +2931,15 @@ namespace Server.Mobiles
         {
             base.Serialize(writer);
 
-            writer.Write(40); // version
+            writer.Write(41); // version
 
             int i = 0;
+
+			writer.Write( m_SpecialType1 );
+			writer.Write( (double)m_SpecialChance1 );
+			writer.Write( m_SpecialType2 );
+			writer.Write( (double)m_SpecialChance2 );
+
 			
 			writer.Write( m_VASave );
 			
@@ -3245,6 +3179,20 @@ namespace Server.Mobiles
 
             switch (version)
             {
+				case 41:
+				{
+					m_SpecialType1 = reader.ReadInt();
+					m_SpecialChance1 = reader.ReadDouble();
+					m_SpecialType2 = reader.ReadInt();
+					m_SpecialChance2 = reader.ReadDouble();
+					// [안전 코드] 서버 리부팅 시 붕대 버프 제거
+					if (this.m_VASave > 0)
+					{
+						this.VirtualArmor -= this.m_VASave;
+						this.m_VASave = 0; // 초기화하여 중복 차감 방지
+					}
+					goto case 40;
+				}
 				case 40:
 				{
 					m_VASave = reader.ReadInt();
@@ -7592,6 +7540,20 @@ namespace Server.Mobiles
 				}
 				eable.Free();
 			}
+		}
+		public override bool CanSee(Mobile m)
+		{
+			// 기획 반영: 플레이어가 폴리모프(PolymorphSpell) 액션을 점유 중이라면(변신 중) 선공 몬스터가 인식하지 못함
+			if (m is PlayerMobile && !m.CanBeginAction(typeof(Server.Spells.Seventh.PolymorphSpell)))
+			{
+				if( this.Combatant == m )
+				{
+					this.Combatant = null;
+					return false;
+				}
+			}
+
+			return base.CanSee(m);
 		}
 
 		public override void OnStamChange(int oldValue)

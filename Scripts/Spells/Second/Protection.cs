@@ -1,11 +1,10 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace Server.Spells.Second
 {
     public class ProtectionSpell : MagerySpell
     {
-        private static readonly Hashtable m_Registry = new Hashtable();
         private static readonly SpellInfo m_Info = new SpellInfo(
             "Protection", "Uus Sanct",
             236,
@@ -13,161 +12,89 @@ namespace Server.Spells.Second
             Reagent.Garlic,
             Reagent.Ginseng,
             Reagent.SulfurousAsh);
-        private static readonly Hashtable m_Table = new Hashtable();
+
         public ProtectionSpell(Mobile caster, Item scroll)
             : base(caster, scroll, m_Info)
         {
         }
 
-        public static Hashtable Registry
-        {
-            get
-            {
-                return m_Registry;
-            }
-        }
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Second;
-            }
-        }
-        public static void Toggle(Mobile caster, Mobile target, bool archprotection)
-        {
-            /* Players under the protection spell effect can no longer have their spells "disrupted" when hit.
-            * Players under the protection spell have decreased physical resistance stat value (-15 + (Inscription/20),
-            * a decreased "resisting spells" skill value by -35 + (Inscription/20),
-            * and a slower casting speed modifier (technically, a negative "faster cast speed") of 2 points.
-            * The protection spell has an indefinite duration, becoming active when cast, and deactivated when re-cast.
-            * Reactive Armor, Protection, and Magic Reflection will stay on—even after logging out,
-            * even after dying—until you “turn them off” by casting them again.
-            */
+        // 단일/광역 통합 관리 테이블
+        private static Dictionary<Mobile, Timer> m_Table = new Dictionary<Mobile, Timer>();
 
-			if( target.MeleeDamageAbsorb == 0 || target.MeleeDamageAbsorb == 1 )
-			{
-                target.PlaySound(0x1E9);
-                target.FixedParticles(0x375A, 9, 20, 5016, EffectLayer.Waist);
-				target.MeleeDamageAbsorb += 2;
-                string args = String.Format("{0}\t{1}", 0, 0);
-                BuffInfo.AddBuff(target, new BuffInfo(archprotection ? BuffIcon.ArchProtection : BuffIcon.Protection, archprotection ? 1075816 : 1075814, 1075815, args.ToString()));
-            }
-            else
-            {
-				target.MeleeDamageAbsorb -= 2;
-                target.PlaySound(0x1ED);
-                target.FixedParticles(0x375A, 9, 20, 5016, EffectLayer.Waist);
+        public override SpellCircle Circle => SpellCircle.Second;
 
-                BuffInfo.RemoveBuff(target, BuffIcon.Protection);
-                BuffInfo.RemoveBuff(target, BuffIcon.ArchProtection);
+        public override void OnCast()
+        {
+            if (CheckSequence())
+            {
+                Mobile caster = Caster;
+
+                double bonus = SpellHelper.GetMagicValue(caster, 0.012);
+                TimeSpan length = TimeSpan.FromSeconds(60.0 + bonus);
+
+                // 효과 적용 (공용 메서드 호출)
+                ApplyEffect(caster, length, false);
             }
+
+            FinishSequence();
+        }
+
+        // Protection과 ArchProtection 모두가 사용하는 핵심 로직
+        public static void ApplyEffect(Mobile m, TimeSpan length, bool isArch)
+        {
+            if (m == null) return;
+
+            // 1. 기존에 걸린 모든 프로텍션 계열 효과 제거 (중첩 방지)
+            StopTimer(m);
+
+            // 2. 방어력 추가
+            m.MeleeDamageAbsorb += 1;
+            m.MagicDamageAbsorb += 1;
+
+            // 3. 연출
+            m.PlaySound(0x1E9);
+            m.FixedParticles(0x375A, 9, 20, 5016, EffectLayer.Waist);
+
+            // 4. 버프 아이콘 (광역 여부에 따라 아이콘 구분)
+            BuffIcon icon = isArch ? BuffIcon.ArchProtection : BuffIcon.Protection;
+            int nameNum = isArch ? 1075816 : 1075814;
+            BuffInfo.AddBuff(m, new BuffInfo(icon, nameNum, length, m, "1"));
+
+            // 5. 타이머 등록
+            m_Table[m] = Timer.DelayCall(length, () => EndProtection(m));
         }
 
         public static void EndProtection(Mobile m)
         {
-            if (m_Table.Contains(m))
-            {
-                object[] mods = (object[])m_Table[m];
+            if (m == null) return;
 
+            if (m_Table.ContainsKey(m))
+            {
+                m_Table[m].Stop();
                 m_Table.Remove(m);
-                Registry.Remove(m);
 
-                m.RemoveResistanceMod((ResistanceMod)mods[0]);
-                m.RemoveSkillMod((SkillMod)mods[1]);
+                // 수치 차감
+                m.MeleeDamageAbsorb -= 1;
+                m.MagicDamageAbsorb -= 1;
 
-                BuffInfo.RemoveBuff(m, BuffIcon.Protection);
-                BuffInfo.RemoveBuff(m, BuffIcon.ArchProtection);
+                if (m.MeleeDamageAbsorb < 0) m.MeleeDamageAbsorb = 0;
+                if (m.MagicDamageAbsorb < 0) m.MagicDamageAbsorb = 0;
             }
+
+            BuffInfo.RemoveBuff(m, BuffIcon.Protection);
+            BuffInfo.RemoveBuff(m, BuffIcon.ArchProtection);
         }
 
-        public override bool CheckCast()
+        public static void StopTimer(Mobile m)
         {
-            if (Core.AOS)
-                return true;
-
-            if (m_Registry.ContainsKey(this.Caster))
+            // 테이블에 존재한다면 이미 효과가 적용 중인 상태이므로 수치를 먼저 원복시킴
+            if (m_Table.ContainsKey(m))
             {
-                this.Caster.SendLocalizedMessage(1005559); // This spell is already in effect.
-                return false;
-            }
-            else if (!this.Caster.CanBeginAction(typeof(DefensiveSpell)))
-            {
-                this.Caster.SendLocalizedMessage(1005385); // The spell will not adhere to you at this time.
-                return false;
-            }
+                m_Table[m].Stop();
+                m_Table.Remove(m);
 
-            return true;
-        }
-
-        public override void OnCast()
-        {
-            if (Core.AOS)
-            {
-                if (this.CheckSequence())
-                    Toggle(this.Caster, this.Caster, false);
-
-                this.FinishSequence();
-            }
-            else
-            {
-                if (m_Registry.ContainsKey(this.Caster))
-                {
-                    this.Caster.SendLocalizedMessage(1005559); // This spell is already in effect.
-                }
-                else if (!this.Caster.CanBeginAction(typeof(DefensiveSpell)))
-                {
-                    this.Caster.SendLocalizedMessage(1005385); // The spell will not adhere to you at this time.
-                }
-                else if (this.CheckSequence())
-                {
-                    if (this.Caster.BeginAction(typeof(DefensiveSpell)))
-                    {
-                        double value = (int)(this.Caster.Skills[SkillName.EvalInt].Value + this.Caster.Skills[SkillName.Meditation].Value + this.Caster.Skills[SkillName.Inscribe].Value);
-                        value /= 4;
-
-                        if (value < 0)
-                            value = 0;
-                        else if (value > 75)
-                            value = 75.0;
-
-                        Registry.Add(this.Caster, value);
-                        new InternalTimer(this.Caster).Start();
-
-                        this.Caster.FixedParticles(0x375A, 9, 20, 5016, EffectLayer.Waist);
-                        this.Caster.PlaySound(0x1ED);
-                    }
-                    else
-                    {
-                        this.Caster.SendLocalizedMessage(1005385); // The spell will not adhere to you at this time.
-                    }
-                }
-
-                this.FinishSequence();
-            }
-        }
-
-        #region SA
-        public static bool HasProtection(Mobile m)
-        {
-            return m_Table.ContainsKey(m);
-        }
-        #endregion
-
-        private class InternalTimer : Timer
-        {
-            private readonly Mobile m_Caster;
-            public InternalTimer(Mobile caster)
-                : base(TimeSpan.FromSeconds(0))
-            {
-                this.m_Caster = caster;
-                this.Delay = TimeSpan.FromSeconds(20);
-                this.Priority = TimerPriority.OneSecond;
-            }
-
-            protected override void OnTick()
-            {
-                ProtectionSpell.Registry.Remove(this.m_Caster);
-                DefensiveSpell.Nullify(this.m_Caster);
+                m.MeleeDamageAbsorb -= 1;
+                m.MagicDamageAbsorb -= 1;
             }
         }
     }

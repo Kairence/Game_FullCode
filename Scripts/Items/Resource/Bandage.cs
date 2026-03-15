@@ -152,13 +152,14 @@ namespace Server.Items
                 int heal = Utility.RandomMinMax(50, 100) + (int)(Utility.RandomMinMax(1, 2) * (subSkill / 10.0));
 
                 // [기획] 중독/200레벨 보정
-                if (m_Patient.Poisoned)
-                    heal = (int)(heal * (mainSkill >= 200.0 ? 0.75 : 0.5));
+				bool skillBonus = false;
+				if (m_Patient.Poisoned && mainSkill >= 200.0)
+					skillBonus = true;
 
                 // [기획] 펫 2배 회복
                 if (isPet) heal *= 2;
 
-                m_Patient.Heal(heal, m_Healer, false);
+				Spells.SpellHelper.Heal(heal, m_Patient, m_Healer, false, skillBonus );
                 m_RemainingTicks--;
             }
 

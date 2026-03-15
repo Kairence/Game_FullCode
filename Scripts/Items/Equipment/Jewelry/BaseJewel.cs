@@ -927,6 +927,7 @@ namespace Server.Items
                     }
                 }
                 #endregion
+				/*
 				//세트 아이템 체크 코드
 				if( PrefixOption[50] > 0 )
 				{
@@ -936,7 +937,8 @@ namespace Server.Items
 						pm.ItemSetValue[PrefixOption[50]]++;
 						Misc.SetItem.SetOption(pm, false);
 					}					
-				}			
+				}
+				*/
             }
 
             if (parent is Mobile)
@@ -968,6 +970,7 @@ namespace Server.Items
                 if (IsSetItem && m_SetEquipped)
                     SetHelper.RemoveSetBonus(from, SetID, this);
                 #endregion
+				/*
 				//세트 아이템 해제 코드
 				if( PrefixOption[50] > 0 )
 				{
@@ -977,7 +980,8 @@ namespace Server.Items
 						pm.ItemSetValue[PrefixOption[50]]--;
 						Misc.SetItem.SetOption(pm, false);
 					}					
-				}				
+				}
+				*/
             }
 
             Server.Engines.XmlSpawner2.XmlAttach.CheckOnRemoved(this, parent);

@@ -14,10 +14,6 @@ namespace Server.Items
             Weight = 20.0;
 
 			PrefixOption[50] = 7;    //세트 옵션 번호
-			PrefixOption[61] = 4;    //체력
-			SuffixOption[61] = 5000000; //500
-			PrefixOption[62] = 19;   //체력 회복
-			SuffixOption[62] = 160000; //16
         }
 
         public OrcHelm(Serial serial)
@@ -25,17 +21,55 @@ namespace Server.Items
         {
         }
 
-		public override int AosStrReq { get { return 1500; } }
-        public override int AosDexReq { get { return 100; } }
-        public override int AosIntReq { get { return 100; } }
-        public override int OldStrReq { get { return 15; } }
+        public override int InitMinHits
+        {
+            get
+            {
+                return 100;
+            }
+        }
+        public override int InitMaxHits
+        {
+            get
+            {
+                return 100;
+            }
+        }
+        public override int AosStrReq
+        {
+            get
+            {
+                return 1500;
+            }
+        }
+        public override int AosDexReq
+        {
+            get
+            {
+                return 1000;
+            }
+        }
+        public override int AosIntReq
+        {
+            get
+            {
+                return 1000;
+            }
+        }
         public override int ArmorBase
         {
             get
             {
-                return 3;
+                return 6;
             }
         }
+		public override double ArmorRating
+		{
+			get
+			{
+				return 1.0; // 원하는 감소 수치를 입력하세요.
+			}
+		}
         public override double DefaultWeight
         {
             get

@@ -27,8 +27,8 @@ namespace Server.Mobiles
 			this.SetHits(375, 1375); 
 			this.SetStam(50, 70);      
 
-			this.SetAttackSpeed(3.5);    // 매우 느린 공격
-			this.SetDamage(8, 14);       
+			SetAttackSpeed(4.0);
+			SetDamage(18, 28);    
 
 			this.SetDamageType(ResistanceType.Cold, 100);
 

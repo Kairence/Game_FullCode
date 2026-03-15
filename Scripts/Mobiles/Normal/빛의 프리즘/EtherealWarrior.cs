@@ -32,9 +32,8 @@ namespace Server.Mobiles
 			this.SetDex(180, 220); // 영체다운 매우 빠른 반응 속도
 			this.SetInt(200, 300); 
 
-			// [Combat Options] 영적 에너지가 실린 정교한 타격
-			this.SetDamage(45, 70);
-			this.SetAttackSpeed(2.1);
+			SetAttackSpeed(10.0);
+			SetDamage(18, 28);
 			this.SetDamageType(ResistanceType.Physical, 20);
 			this.SetDamageType(ResistanceType.Energy, 80); // 영적인 에너지 타격
 

@@ -18,8 +18,8 @@ namespace Server.Mobiles
 			this.SetStam(8, 18);
 			this.SetMana(0);
 
-			SetAttackSpeed(3.0);
-			SetDamage(1, 1); // 고정 1 데미지
+			this.SetAttackSpeed(4.0);  // 새(3.0s)보다 느린 4초. 가끔 툭툭 쪼는 수준.
+			this.SetDamage(8, 12);     // 방어 10인 유저에게는 0~2 데미지 (사실상 노 데미지)
 
 			this.SetSkill(SkillName.Wrestling, 0.7, 1.2); 
 

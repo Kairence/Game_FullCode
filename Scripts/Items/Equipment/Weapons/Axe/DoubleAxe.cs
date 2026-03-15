@@ -11,11 +11,7 @@ namespace Server.Items
         public DoubleAxe()
             : base(0xF4B)
         {
-            this.Weight = 8.0;
-			PrefixOption[61] = 5;
-			SuffixOption[61] = 3750000;
-			
-			//Attributes.BonusStam += 37500;			
+            this.Weight = 28.0;
         }
 
         public DoubleAxe(Serial serial)
@@ -55,21 +51,21 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }		
         public override int AosMinDamage
         {
             get
             {
-                return 2;
+                return 7;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 12;
+                return 8;
             }
         }
         public override int AosSpeed

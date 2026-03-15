@@ -22,8 +22,8 @@ namespace Server.Mobiles
 			this.SetHits(1500, 2000); // 최종 Hits 약 36,000
 			this.SetMana(800, 1000);
 
-			this.SetAttackSpeed(2.5);
-			SetDamage(15, 25);
+			SetAttackSpeed(10.0);
+			SetDamage(12, 18);
 
 			this.SetSkill(SkillName.Magery, 140.0, 155.0); 
 			this.SetSkill(SkillName.EvalInt, 140.0, 155.0);

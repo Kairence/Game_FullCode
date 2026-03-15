@@ -21,8 +21,11 @@ namespace Server.Mobiles
 			this.SetStam(87, 137); 
 			this.SetMana(0);
 
-			SetAttackSpeed(2.0); // 매우 빠름
-			SetDamage(12, 18); 
+			this.SetAttackSpeed(2.5);  // [조정] 2.0초 -> 2.5초. 
+									   // 유저 평균(3.0s)보다 확실히 빠르며 고양이(2.5s)와 같은 속도입니다.
+									   // "빠르게 연타를 날린다"는 인상을 충분히 줍니다.
+
+			this.SetDamage(18, 26);    // [방어구 가치 존중] 멧돼지(18-26)와 동일한 데미지 수준.
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 

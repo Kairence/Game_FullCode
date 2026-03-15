@@ -24,8 +24,8 @@ namespace Server.Mobiles
 			this.SetStam(8, 18);
 			this.SetMana(0);
 
-			SetAttackSpeed(3.0);
-			SetDamage(1, 2); 
+			SetAttackSpeed(4.0);
+			SetDamage(8, 12); // 닭(8-12)과 동일한 최하위 밸런스
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 			this.SetResistance(ResistanceType.Physical, 0, 5);

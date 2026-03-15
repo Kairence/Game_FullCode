@@ -23,7 +23,7 @@ namespace Server.Mobiles
 			this.SetStam(1, 10);
 
 			SetAttackSpeed(4.0);
-			SetDamage(3, 6);
+			SetDamage(16, 24); // 큰뿔사슴(16-24)과 동급이나 공속으로 난이도 조절
 
 			// 공격 속성: 들이받기와 냉기
 			this.SetDamageType(ResistanceType.Physical, 80);

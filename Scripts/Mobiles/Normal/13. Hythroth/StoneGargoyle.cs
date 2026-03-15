@@ -28,8 +28,8 @@ namespace Server.Mobiles
 			this.SetHits(4550, 6550); 
 			this.SetStam(120, 170);      
 
-			this.SetAttackSpeed(3.0);    // 느리지만 묵직한 공격
-			this.SetDamage(28, 48);      // 일반 가고일보다 훨씬 강력한 한 방
+			SetAttackSpeed(4.0);
+			SetDamage(35, 50);     // 일반 가고일보다 훨씬 강력한 한 방
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 

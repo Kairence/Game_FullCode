@@ -32,9 +32,8 @@ namespace Server.Mobiles
 			this.SetDex(250, 300); // ★ 광속 추격: 매우 높은 이동/캐스팅 속도
 			this.SetInt(500, 650); // 고차원 격자 구조에 담긴 압도적 마력
 
-			// [Combat Options] 100% 순수 에너지 마력 타격
-			this.SetDamage(65, 95);
-			this.SetAttackSpeed(1.8); // 매우 빠른 공격 속도
+			SetAttackSpeed(12.0);
+			SetDamage(25, 40);
 			this.SetDamageType(ResistanceType.Physical, 0);
 			this.SetDamageType(ResistanceType.Energy, 100);
 

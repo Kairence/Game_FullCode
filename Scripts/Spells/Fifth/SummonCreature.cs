@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using Server.Mobiles;
+using Server.Targeting;
+using AutoUserConnect; // SummonEntry와 SummonPool이 있는 네임스페이스
 
 namespace Server.Spells.Fifth
 {
@@ -7,92 +10,42 @@ namespace Server.Spells.Fifth
     {
         private static readonly SpellInfo m_Info = new SpellInfo(
             "Summon Creature", "Kal Xen",
-            16,
-            false,
-            Reagent.Bloodmoss,
-            Reagent.MandrakeRoot,
-            Reagent.SpidersSilk);
-        // NOTE: Creature list based on 1hr of summon/release on OSI.
-        private static readonly Type[] m_Types = new Type[]
-        {
-            typeof(PolarBear),
-            typeof(GrizzlyBear),
-            typeof(BlackBear),
-            typeof(Horse),
-            typeof(Walrus),
-            typeof(Chicken),
-            typeof(Scorpion),
-            typeof(GiantSerpent),
-            typeof(Llama),
-            typeof(Alligator),
-            typeof(GreyWolf),
-            typeof(Slime),
-            typeof(Eagle),
-            typeof(Gorilla),
-            typeof(SnowLeopard),
-            typeof(Pig),
-            typeof(Hind),
-            typeof(Rabbit)
-        };
-        public SummonCreatureSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+            215, 9002, false,
+            Reagent.Bloodmoss, Reagent.MandrakeRoot, Reagent.SpidersSilk);
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Fifth;
-            }
-        }
+        public SummonCreatureSpell(Mobile caster, Item scroll) : base(caster, scroll, m_Info) { }
+
+        public override SpellCircle Circle => SpellCircle.Fifth;
+
         public override bool CheckCast()
         {
-            if (!base.CheckCast())
-                return false;
+            if (!base.CheckCast()) return false;
 
-            if ((this.Caster.Followers + 2) > this.Caster.FollowersMax)
+            if ((Caster.Followers + 1) > Caster.FollowersMax)
             {
-                this.Caster.SendLocalizedMessage(1049645); // You have too many followers to summon that creature.
+                Caster.SendLocalizedMessage(1049645); // You have too many followers...
                 return false;
             }
-
             return true;
         }
 
         public override void OnCast()
-        {
-            if (this.CheckSequence())
-            {
-                try
-                {
-                    BaseCreature creature = (BaseCreature)Activator.CreateInstance(m_Types[Utility.Random(m_Types.Length)]);
+{		
+			if (CheckSequence())
+			{
+				// 매니저에게 조건에 맞는 랜덤 타입 하나를 받아옵니다.
+				Type chosen = SummonPoolManager.GetEligibleAnimal(Caster);
+				BaseCreature summon = Activator.CreateInstance(chosen) as BaseCreature;
 
-                    //creature.ControlSlots = 2;
+				if (summon != null)
+				{
+					summon.ControlSlots = 1;
+					SpellHelper.Summon(summon, Caster, 0x215, TimeSpan.FromMinutes(1.0), false, false);
+				}
+			}
+			FinishSequence();
+		}
 
-                    TimeSpan duration;
-					SpellHelper.SummonCheck(Caster);
-                    if (Core.AOS)
-                        duration = TimeSpan.FromSeconds(600);
-                    else
-                        duration = TimeSpan.FromSeconds(4.0 * this.Caster.Skills[SkillName.Magery].Value);
-
-                    SpellHelper.Summon(creature, this.Caster, 0x215, duration, false, false);
-                }
-                catch
-                {
-                }
-            }
-
-            this.FinishSequence();
-        }
-
-        public override TimeSpan GetCastDelay()
-        {
-            if (Core.AOS)
-                return TimeSpan.FromTicks(base.GetCastDelay().Ticks * 5);
-
-            return base.GetCastDelay() + TimeSpan.FromSeconds(6.0);
-        }
+        public override TimeSpan GetCastDelay() => base.GetCastDelay();
     }
 }

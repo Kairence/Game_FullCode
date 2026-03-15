@@ -9,10 +9,8 @@ namespace Server.Items
         public Yumi()
             : base(0x27A5)
         {
-            Weight = 8.0;
+            Weight = 18.0;
             Layer = Layer.TwoHanded;
-			PrefixOption[61] = 42;
-			SuffixOption[61] = 200000;			
 		}
 
         public Yumi(Serial serial)
@@ -73,7 +71,7 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
 		
@@ -81,14 +79,14 @@ namespace Server.Items
         {
             get
             {
-                return 1;
+                return 4;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 9;
+                return 23;
             }
         }
         public override int AosSpeed
@@ -102,7 +100,7 @@ namespace Server.Items
         {
             get
             {
-                return 2.00f;
+                return 3.50f;
             }
         }
         public override int OldStrengthReq

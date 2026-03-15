@@ -11,9 +11,7 @@ namespace Server.Items
         public CrescentBlade()
             : base(0x26C1)
         {
-            this.Weight = 1.0;
-			PrefixOption[61] = 55;
-			SuffixOption[61] = 75000;
+            this.Weight = 21.0;
 			
 			//WeaponAttributes.HitLightning += 2000;
         }
@@ -55,14 +53,14 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }		
         public override int AosMinDamage
         {
             get
             {
-                return 2;
+                return 5;
             }
         }
         public override int AosMaxDamage

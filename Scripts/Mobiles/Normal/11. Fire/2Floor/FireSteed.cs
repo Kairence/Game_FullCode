@@ -34,8 +34,8 @@ namespace Server.Mobiles
 			this.SetStam(250, 350);      
 			this.SetMana(300, 450);      
 
-			this.SetAttackSpeed(1.8);    // 매우 빠른 공격 속도
-			this.SetDamage(25, 40);      
+			SetAttackSpeed(2.0);
+			SetDamage(60, 80);     
 
 			this.SetDamageType(ResistanceType.Fire, 100);
 

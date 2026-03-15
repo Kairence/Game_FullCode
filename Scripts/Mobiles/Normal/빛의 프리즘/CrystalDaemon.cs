@@ -32,9 +32,8 @@ namespace Server.Mobiles
 			this.SetDex(120, 150); 
 			this.SetInt(300, 400); // 강력한 마법 구사 가능
 
-			// [Combat Options] 냉기와 에너지 기반의 날카로운 타격
-			this.SetDamage(45, 75);
-			this.SetAttackSpeed(2.4);
+			SetAttackSpeed(2.5);
+			SetDamage(70, 100);
 			this.SetDamageType(ResistanceType.Physical, 30);
 			this.SetDamageType(ResistanceType.Cold, 40);
 			this.SetDamageType(ResistanceType.Energy, 30);

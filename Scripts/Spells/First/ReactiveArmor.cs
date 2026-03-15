@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace Server.Spells.First
 {
@@ -12,184 +12,76 @@ namespace Server.Spells.First
             Reagent.Garlic,
             Reagent.SpidersSilk,
             Reagent.SulfurousAsh);
-        private static readonly Hashtable m_Table = new Hashtable();
+
         public ReactiveArmorSpell(Mobile caster, Item scroll)
             : base(caster, scroll, m_Info)
         {
         }
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.First;
-            }
-        }
-        public static void EndArmor(Mobile m)
-        {
-            if (m_Table.Contains(m))
-            {
-                ResistanceMod[] mods = (ResistanceMod[])m_Table[m];
+        // Áö¼Ó ½Ã°£ Á¾·á ½Ã ¿øº¹À» À§ÇÑ Å¸ÀÌ¸Ó °ü¸® Å×ÀÌºí
+        private static Dictionary<Mobile, Timer> m_Table = new Dictionary<Mobile, Timer>();
 
-                if (mods != null)
-                {
-                    for (int i = 0; i < mods.Length; ++i)
-                        m.RemoveResistanceMod(mods[i]);
-                }
-
-                m_Table.Remove(m);
-                BuffInfo.RemoveBuff(m, BuffIcon.ReactiveArmor);
-            }
-        }
-
-        public override bool CheckCast()
-        {
-            if (Core.AOS)
-                return true;
-
-            if (this.Caster.MeleeDamageAbsorb > 0)
-            {
-                this.Caster.SendLocalizedMessage(1005559); // This spell is already in effect.
-                return false;
-            }
-            else if (!this.Caster.CanBeginAction(typeof(DefensiveSpell)))
-            {
-                this.Caster.SendLocalizedMessage(1005385); // The spell will not adhere to you at this time.
-                return false;
-            }
-
-            return true;
-        }
+        public override SpellCircle Circle => SpellCircle.First;
 
         public override void OnCast()
         {
-            if (Core.AOS)
+            if (CheckSequence())
             {
-                /* The reactive armor spell increases the caster's physical resistance, while lowering the caster's elemental resistances.
-                * 15 + (Inscription/20) Physcial bonus
-                * -5 Elemental
-                * The reactive armor spell has an indefinite duration, becoming active when cast, and deactivated when re-cast. 
-                * Reactive Armor, Protection, and Magic Reflection will stay on—even after logging out, even after dying—until you “turn them off” by casting them again. 
-                * (+20 physical -5 elemental at 100 Inscription)
-                */
-                if (this.CheckSequence())
+                Mobile caster = Caster;
+
+                // 1. Áö¼Ó ½Ã°£ °è»ê: 60ÃÊ + º¸³Ê½º * 0.012
+                double bonus = SpellHelper.GetMagicValue(caster, 0.012);
+                TimeSpan length = TimeSpan.FromSeconds(60.0 + bonus);
+
+                // 2. È¿°ú Àû¿ë (ÀÌ¹Ì ÄÑÁ® ÀÖ´Ù¸é °»½Å)
+                StopTimer(caster);
+
+                // [ÇÙ½É] MeleeDamageAbsorb¸¦ 1·Î ¼³Á¤ (¹æ¾î·Â +1 È¿°ú)
+                caster.MeleeDamageAbsorb += 1;
+
+                // 3. ¿¬Ãâ ¹× ¹öÇÁ ¾ÆÀÌÄÜ
+                caster.PlaySound(0x1E9);
+                caster.FixedParticles(0x376A, 9, 32, 5008, EffectLayer.Waist);
+
+                // ¹öÇÁ Á¤º¸Ã¢¿¡ "¹æ¾î·Â 1 Áõ°¡" Ç¥½Ã
+                BuffInfo.AddBuff(caster, new BuffInfo(BuffIcon.ReactiveArmor, 1075812, length, caster, "1"));
+                caster.SendMessage("¸®¾×Æ¼ºê ¾Æ¸Ó·Î ÀÎÇØ ¹°¸® ¹æ¾î·ÂÀÌ 1 Áõ°¡Çß½À´Ï´Ù.");
+
+                // 4. Å¸ÀÌ¸Ó ¼³Á¤ (Á¾·á ½Ã 0À¸·Î ¿øº¹)
+                m_Table[caster] = Timer.DelayCall(length, () =>
                 {
-					if( Caster.MeleeDamageAbsorb > 0 )
-					{
-                        Caster.PlaySound(0x1ED);
-                        Caster.FixedParticles(0x376A, 9, 32, 5008, EffectLayer.Waist);
-						Caster.MeleeDamageAbsorb -= 1;
-                        //m_Table.Remove(targ);
-
-                        //for (int i = 0; i < mods.Length; ++i)
-                        //   targ.RemoveResistanceMod(mods[i]);
-
-						Caster.MeleeDamageAbsorb = 0;
-                        BuffInfo.RemoveBuff(this.Caster, BuffIcon.ReactiveArmor);
-					}
-					else
-					{
-						int level = SpellLevel(Caster, 6);
-					
-                        Caster.PlaySound(0x1E9);
-                        Caster.FixedParticles(0x376A, 9, 32, 5008, EffectLayer.Waist);
-						Caster.MeleeDamageAbsorb = 20 + (int)( Caster.Skills.Magery.Value * 0.05 + Caster.Skills.Chivalry.Value * 0.05) + level * 5;
-						if( level >= 5 )
-							Caster.MeleeDamageAbsorb += 15;
-
-                        BuffInfo.AddBuff(this.Caster, new BuffInfo(BuffIcon.ReactiveArmor, 1075812, 1075813, Caster.MeleeDamageAbsorb.ToString()));
-					}
-					
-					
-                    Mobile targ = this.Caster;
-
-                    //ResistanceMod[] mods = (ResistanceMod[])m_Table[targ];
-
-
-                    if (Caster.MeleeDamageAbsorb == 0 || Caster.MeleeDamageAbsorb == 2)
-                    {
-                        targ.PlaySound(0x1E9);
-                        targ.FixedParticles(0x376A, 9, 32, 5008, EffectLayer.Waist);
-						Caster.MeleeDamageAbsorb += 1;
-						/*
-                        mods = new ResistanceMod[5]
-                        {
-                            new ResistanceMod(ResistanceType.Physical, 0 ),
-                            new ResistanceMod(ResistanceType.Fire, 0),
-                            new ResistanceMod(ResistanceType.Cold, 0),
-                            new ResistanceMod(ResistanceType.Poison, 0),
-                            new ResistanceMod(ResistanceType.Energy, 0)
-                        };
-
-                        m_Table[targ] = mods;
-
-                        for (int i = 0; i < mods.Length; ++i)
-                            targ.AddResistanceMod(mods[i]);
-
-                        int physresist = 0;
-						*/
-                        string args = String.Format("{0}\t{1}\t{2}\t{3}\t{4}", 0, 0, 0, 0, 0);
-
-                        BuffInfo.AddBuff(this.Caster, new BuffInfo(BuffIcon.ReactiveArmor, 1075812, 1075813, args.ToString()));
-                    }
-                    else
-                    {
-                        targ.PlaySound(0x1ED);
-                        targ.FixedParticles(0x376A, 9, 32, 5008, EffectLayer.Waist);
-						Caster.MeleeDamageAbsorb -= 1;
-                        //m_Table.Remove(targ);
-
-                        //for (int i = 0; i < mods.Length; ++i)
-                        //   targ.RemoveResistanceMod(mods[i]);
-
-                        BuffInfo.RemoveBuff(this.Caster, BuffIcon.ReactiveArmor);
-                    }
-                }
-
-                this.FinishSequence();
+                    EndArmor(caster);
+                });
             }
-            else
+
+            FinishSequence();
+        }
+
+        public static void EndArmor(Mobile m)
+        {
+            if (m == null) return;
+
+            StopTimer(m);
+            
+            // ¹æ¾î·Â ¿øº¹
+            m.MeleeDamageAbsorb -= 1;
+            BuffInfo.RemoveBuff(m, BuffIcon.ReactiveArmor);
+        }
+
+        private static void StopTimer(Mobile m)
+        {
+            if (m_Table.ContainsKey(m))
             {
-                if (this.Caster.MeleeDamageAbsorb > 0)
-                {
-                    this.Caster.SendLocalizedMessage(1005559); // This spell is already in effect.
-                }
-                else if (!this.Caster.CanBeginAction(typeof(DefensiveSpell)))
-                {
-                    this.Caster.SendLocalizedMessage(1005385); // The spell will not adhere to you at this time.
-                }
-                else if (this.CheckSequence())
-                {
-                    if (this.Caster.BeginAction(typeof(DefensiveSpell)))
-                    {
-                        int value = (int)(this.Caster.Skills[SkillName.Magery].Value + this.Caster.Skills[SkillName.Meditation].Value + this.Caster.Skills[SkillName.Inscribe].Value);
-                        value /= 3;
-
-                        if (value < 0)
-                            value = 1;
-                        else if (value > 75)
-                            value = 75;
-
-                        this.Caster.MeleeDamageAbsorb = value;
-
-                        this.Caster.FixedParticles(0x376A, 9, 32, 5008, EffectLayer.Waist);
-                        this.Caster.PlaySound(0x1F2);
-                    }
-                    else
-                    {
-                        this.Caster.SendLocalizedMessage(1005385); // The spell will not adhere to you at this time.
-                    }
-                }
-
-                this.FinishSequence();
+                Timer t = m_Table[m];
+                if (t != null) t.Stop();
+                m_Table.Remove(m);
             }
         }
 
-        #region SA
-        public static bool HasArmor(Mobile m)
+        // ¿ÜºÎ(¿¹: µ¥¹ÌÁö ÇÚµé·¯)¿¡¼­ Ã¼Å©ÇÒ ¼ö ÀÖ´Â ¸Þ¼­µå
+        public static bool IsUnderEffects(Mobile m)
         {
             return m_Table.ContainsKey(m);
         }
-        #endregion
     }
 }

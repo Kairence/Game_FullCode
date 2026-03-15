@@ -57,65 +57,33 @@ namespace Server.Spells.First
             this.Caster.Target = new InternalTarget(this);
         }
 
-        public void Target(Mobile m)
-        {
-            if (!this.Caster.CanSee(m))
-            {
-                this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
-            }
-            else if (this.CheckHSequence(m))
-            {
-                SpellHelper.Turn(this.Caster, m);
-                SpellHelper.CheckReflect((int)this.Circle, this.Caster, ref m);
+		public void Target(Mobile m)
+		{
+			if (!this.Caster.CanSee(m))
+			{
+				this.Caster.SendLocalizedMessage(500237);
+			}
+			else if (this.CheckHSequence(m))
+			{
+				SpellHelper.Turn(this.Caster, m);
 
+				int totalReduction = 500 + (int)SpellHelper.GetMagicValue(this.Caster, 0.1);
+				
+				TimeSpan length = TimeSpan.FromSeconds(60.0); // 1분
 
-                if (Mysticism.StoneFormSpell.CheckImmunity(m))
-                {
-                    Caster.SendLocalizedMessage(1080192); // Your target resists your ability reduction magic.
-                    return;
-                }
+				SpellHelper.AddStatCurse(this.Caster, m, StatType.Dex, totalReduction, length);
 
-                int oldOffset = SpellHelper.GetCurseOffset(m, StatType.Dex);
-                int newOffset = SpellHelper.GetOffset(Caster, m, StatType.Dex, true, false);
+				m.FixedParticles(0x3779, 10, 15, 5002, EffectLayer.Head);
+				m.PlaySound(0x1DF);
+				HarmfulSpell(m);
+				BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Clumsy, 1075831, length, m, totalReduction.ToString()));
 
-                if (-newOffset > oldOffset || newOffset == 0)
-                {
-                    DoHurtFizzle();
-                }
-                else
-                {
-                    if (m.Spell != null)
-                        m.Spell.OnCasterHurt();
+				if (m_Table.ContainsKey(m)) m_Table[m].Stop();
+				m_Table[m] = Timer.DelayCall(length, () => { RemoveEffects(m); });
+			}
 
-                    m.FixedParticles(0x3779, 10, 15, 5002, EffectLayer.Head);
-                    m.PlaySound(0x1DF);
-
-                    HarmfulSpell(m);
-
-                    if (-newOffset < oldOffset)
-                    {
-                        SpellHelper.AddStatCurse(this.Caster, m, StatType.Dex, false, newOffset);
-
-						int level = SpellLevel(Caster, 0);
-						int debuff = level >= 15 ? m.Dex / 10 : 0;
-						
-                        double percentage = 200 + Caster.Skills.Magery.Value + Caster.Skills.Necromancy.Value + level * 100 + debuff;
-                        TimeSpan length = TimeSpan.FromSeconds(600.0 + level * 300);
-                        BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Clumsy, 1075831, length, m, percentage.ToString()));
-
-                        if (m_Table.ContainsKey(m))
-                            m_Table[m].Stop();
-
-                        m_Table[m] = Timer.DelayCall(length, () =>
-                            {
-                                RemoveEffects(m);
-                            });
-                    }
-                }
-            }
-
-            this.FinishSequence();
-        }
+			this.FinishSequence();
+		}
 
         private class InternalTarget : Target
         {

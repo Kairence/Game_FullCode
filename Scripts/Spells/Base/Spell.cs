@@ -340,7 +340,62 @@ namespace Server.Spells
 
 			return point;
 		}
-				
+
+		// 1. [기록소 제작]
+		private static Dictionary<Mobile, ReflectEntry> m_ReflectTable = new Dictionary<Mobile, ReflectEntry>();
+
+		public static Dictionary<Mobile, ReflectEntry> ReflectTable => m_ReflectTable;
+
+		public class ReflectEntry
+		{
+			public Type SpellType { get; set; }
+			public Mobile Attacker { get; set; }
+			public int Damage { get; set; } // 보너스가 모두 합산된 최종 데미지
+			public DateTime HitTime { get; set; }
+
+			public ReflectEntry(Type type, Mobile attacker, int damage)
+			{
+				SpellType = type;
+				Attacker = attacker;
+				Damage = damage;
+				HitTime = DateTime.Now;
+			}
+		}
+
+		private Timer m_ChannelTimer;
+
+		// 하위 클래스에서 접근 가능하도록 public 선언
+		public void StopChanneling()
+		{
+			if (m_ChannelTimer != null)
+			{
+				m_ChannelTimer.Stop();
+				m_ChannelTimer = null;
+			}
+		}
+
+		// StartChanneling 메서드 정의 (인자 4개)
+		public void StartChanneling(TimeSpan interval, int totalTicks, bool breakOnMove, Action<int> onTick)
+		{
+			StopChanneling(); // 기존 타이머 중지
+
+			Point3D castLoc = Caster.Location;
+			int currentTick = 0;
+
+			m_ChannelTimer = Timer.DelayCall(TimeSpan.Zero, interval, () =>
+			{
+				if (Caster == null || !Caster.Alive || (breakOnMove && Caster.Location != castLoc))
+				{
+					StopChanneling();
+					return;
+				}
+
+				onTick?.Invoke(currentTick);
+
+				if (++currentTick >= totalTicks)
+					StopChanneling();
+			});
+		}	
 		public virtual int GetNewAosDamage(int bonus, int min, int max, bool playerVsPlayer, double scalar, IDamageable damageable, bool scroll = false)
 		{
 			Mobile target = damageable as Mobile;
@@ -354,40 +409,44 @@ namespace Server.Spells
 			// 2. [스펠위빙 연쇄 발동 체크]
 			double swSkill = Caster.Skills[SkillName.Spellweaving].Value;
 			
+			// 이미 재발동 중이거나, 대상이 죽었으면 무시
 			if (!m_IsExtraCast && swSkill * 0.001 > Utility.RandomDouble() && target.Alive)
 			{
+				// --- [누락되었던 배열 체크 로직 복구] ---
 				int spellNum = SpellRegistry.GetRegistryNumber(this);
-				int[] swAllowedSpells = { 0, 4, 11, 17, 29, 36, 41, 42, 50 };
+				// 연쇄 발동을 허용할 마법 번호 (예: 라이트닝, 파이어볼, 메테오, 체인라이트닝 등)
+				int[] swAllowedSpells = { 0, 4, 11, 17, 29, 36, 41, 42, 50 }; // 55번은 메테오 등 서버마다 다를 수 있음
 
 				if (Array.Exists(swAllowedSpells, id => id == spellNum))
 				{
 					Caster.FixedParticles(0x373A, 10, 30, 5052, 0x482, 0, EffectLayer.Waist);
 					Caster.PlaySound(0x5C0);
 
-					// 200 레벨이면 총 2회 추가 발동
 					int extraCount = (swSkill >= 200.0) ? 2 : 1;
 
+					// [중요] 메테오 본체의 StartChanneling 타이머를 덮어쓰지 않기 위해 
+					// 연쇄 발동은 독립적인 DelayCall로 처리합니다.
 					for (int i = 1; i <= extraCount; i++)
 					{
 						Timer.DelayCall(TimeSpan.FromSeconds(0.5 * i), () => 
 						{
 							if (Caster != null && target != null && target.Alive)
 							{
-								// 150 레벨 이상 보너스: 적 5초 영창 불가 (NextSpellTime)
-								// 200 레벨일 경우 마법이 2번 터지면서 5초씩 두 번 갱신되어 결과적으로 약 10초 효과
+								// 150 레벨 보너스: 5초간 영창 방해
 								if (swSkill >= 150.0)
 								{
 									target.NextSpellTime = (DateTime.Now + TimeSpan.FromSeconds(5.0)).Ticks;
-									
 									target.FixedParticles(0x37B9, 1, 30, 9502, 0x4E9, 0, EffectLayer.Waist);
 									target.PlaySound(0x5C3);
-									target.SendLocalizedMessage(1075124); 
 								}
 
 								// [재발동 실행]
 								this.m_IsExtraCast = true;
+								// Target(IDamageable) 메서드를 찾아 강제 실행
 								var method = this.GetType().GetMethod("Target", new Type[] { typeof(IDamageable) });
-								if (method != null) method.Invoke(this, new object[] { target });
+								if (method != null) 
+									method.Invoke(this, new object[] { target });
+								
 								this.m_IsExtraCast = false;
 							}
 						});
@@ -395,7 +454,10 @@ namespace Server.Spells
 				}
 			}
 
-			return damage; 
+			if (m_ReflectTable != null)
+				m_ReflectTable[target] = new ReflectEntry(this.GetType(), Caster, damage);
+
+			return damage;
 		}
 		// --- [패링 로직 메서드 분리] ---
 		public virtual bool CheckParry(Mobile defender)
@@ -427,6 +489,21 @@ namespace Server.Spells
 
 			return false;
 		}
+				
+		// Spell 클래스 내부 멤버로 추가
+		public double GetKarmaScaler(double val, bool chiv)
+		{
+			// 클래스 내부이므로 Caster(m_Caster)에 즉시 접근 가능
+			if (Caster == null) 
+				return 0;
+
+			// 1. 카르마 보충율 계산 (기획: 1당 0.01%, 최대 1.5)
+			double bonus = Math.Min(1.5, Math.Max(0, (chiv ? Caster.Karma : -Caster.Karma) * 0.0001));
+
+			// 2. 기준값(val)에 (1 + 보너스) 배율 적용
+			// 예: 60 * (1.0 + 1.5) = 150
+			return val * (1.0 + bonus);
+		}		
 		public virtual bool IsCasting { get { return m_State == SpellState.Casting; } }
 
         public virtual void OnCasterHurt()
@@ -880,7 +957,7 @@ namespace Server.Spells
 			{
 				m_Caster.SendLocalizedMessage(502643); // You can not cast a spell while frozen.
 			}
-            else if (SkillHandlers.SpiritSpeak.IsInSpiritSpeak(m_Caster) || (m_Caster.Spell != null && m_Caster.Spell.IsCasting))
+            else if (m_Caster.Spell != null && m_Caster.Spell.IsCasting)
 			{
 				m_Caster.SendLocalizedMessage(502642); // You are already casting a spell.
 			}

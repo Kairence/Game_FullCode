@@ -83,7 +83,7 @@ namespace Server.Spells.Sixth
             private readonly Mobile m_Attacker;
 
             public InternalTimer(MagerySpell spell, Mobile attacker, IDamageable target)
-                : base(TimeSpan.FromSeconds(Core.AOS ? 3.0 : 2.5))
+                : base(TimeSpan.FromSeconds(Core.AOS ? 4.0 : 2.5))
             {
                 m_Spell = spell;
                 m_Attacker = attacker;
@@ -104,8 +104,8 @@ namespace Server.Spells.Sixth
                     double damage = 0;
                     if (Core.AOS)
                     {
-						int min = 80;
-						int max = 130;
+						int min = 100;
+						int max = 300;
 					
 						damage = m_Spell.GetNewAosDamage(0, min, max, m_Target);
                     }

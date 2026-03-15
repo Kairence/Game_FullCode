@@ -57,8 +57,8 @@ namespace Server.Spells.Sixth
                 if (Core.AOS)
                 {
                     Mobile mob = m as Mobile;
-					int min = 30;
-					int max = 180;
+					int min = 200;
+					int max = 400;
 
                     damage = GetNewAosDamage(0, min, max, mob);
                 }

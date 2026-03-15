@@ -39,7 +39,21 @@ namespace Server.Spells.Sixth
 
             return SpellHelper.CheckTravel(Caster, TravelCheckType.Mark);
         }
+		// --- 기획: 시전 속도 보너스 적용 (보너스 * 0.0025초 감소) ---
+        public override TimeSpan GetCastDelay()
+        {
+            // 기본 시전 시간 가져오기
+            TimeSpan baseDelay = base.GetCastDelay();
+            
+            // 보너스 수치에 따른 감소분 계산 (예: 보너스 1000점이면 1.0초 감소)
+            double bonusReduction = SpellHelper.GetMagicValue(Caster, 0.0025);
+            
+            // 최소 시전 시간 보장 (예: 최소 0.5초는 걸리도록 설정, 엔진 상황에 맞춰 조절 가능)
+            double minDelay = 0.5;
+            double finalSeconds = Math.Max(minDelay, baseDelay.TotalSeconds - bonusReduction);
 
+            return TimeSpan.FromSeconds(finalSeconds);
+        }
         public void Target(RecallRune rune)
         {
             BaseBoat boat = BaseBoat.FindBoatAt(Caster.Location, Caster.Map);

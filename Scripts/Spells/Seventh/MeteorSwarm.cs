@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Server.Targeting;
 using Server.Mobiles;
 using Server.Items;
@@ -10,201 +9,103 @@ namespace Server.Spells.Seventh
 {
     public class MeteorSwarmSpell : MagerySpell
     {
-        public override DamageType SpellDamageType { get { return DamageType.SpellAOE; } }
-        public Item Item { get; set; }
+        public override DamageType SpellDamageType => DamageType.SpellAOE;
 
         private static readonly SpellInfo m_Info = new SpellInfo(
             "Meteor Swarm", "Flam Kal Des Ylem",
-            233,
-            9042,
-            false,
-            Reagent.Bloodmoss,
-            Reagent.MandrakeRoot,
-            Reagent.SulfurousAsh,
-            Reagent.SpidersSilk);
+            233, 9042, false,
+            Reagent.Bloodmoss, Reagent.MandrakeRoot, Reagent.SulfurousAsh, Reagent.SpidersSilk);
 
-        public MeteorSwarmSpell(Mobile caster, Item scroll, Item item)
-            : base(caster, scroll, m_Info)
-        {
-            Item = item;
-        }
+        public MeteorSwarmSpell(Mobile caster, Item scroll) : base(caster, scroll, m_Info) { }
 
-        public MeteorSwarmSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+        public override SpellCircle Circle => SpellCircle.Seventh;
 
-        public override int GetMana()
-        {
-            if (Item != null)
-                return 0;
+        // [성공 보장] 매저리 수치와 상관없이 시전 허용
+        public override bool CheckCast() { return true; }
 
-            return base.GetMana();
-        }
-
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Seventh;
-            }
-        }
-        public override bool DelayedDamage
-        {
-            get
-            {
-                return true;
-            }
-        }
         public override void OnCast()
         {
-			if ( CheckSequence() )
-			{
-                Map map = this.Caster.Map;
-
-				int range = 6;
-                double damage;
-                if (map != null)
-                {
-                    foreach (var id in AcquireIndirectTargets(Caster.Location, range))
-                    {
-                        Mobile m = id as Mobile;
-
-                        this.Caster.DoHarmful(id);
-
-						Caster.MovingParticles(id, 0x36D4, 7, 0, false, true, 9501, 1, 0, 0x100);
-
-						if (Core.AOS)
-							damage = GetNewAosDamage(0, 45, 75, id is PlayerMobile, id);
-						else
-							damage = Utility.Random(27, 22);
-						
-						damage *= 1000 + AosWeaponAttributes.GetValue(Caster, AosWeaponAttribute.HitFireArea );
-						damage /= 1000;
-
-						SpellHelper.Damage(this, id, damage, 0, 100, 0, 0, 0);	
-					}
-				}
-			}
-            this.FinishSequence();
-			//Caster.Target = new InternalTarget(this, Item);
-        }
-
-        public void Target(IPoint3D p, Item item)
-        {
-            if (!Caster.CanSee(p))
+            // 1. 수동 마나 및 시약 소모 체크 (피즐 방지용)
+            if (Caster.Mana < GetMana())
             {
-                Caster.SendLocalizedMessage(500237); // Target can not be seen.
-            }
-            else if (SpellHelper.CheckTown(p, Caster) && (item != null || CheckSequence()))
-            {
-                if (item != null)
-                {
-                    if (item is MaskOfKhalAnkur)
-                    {
-                        ((MaskOfKhalAnkur)item).Charges--;
-                    }
-
-                    if (item is PendantOfKhalAnkur)
-                    {
-                        ((PendantOfKhalAnkur)item).Charges--;
-                    }
-                }
-
-                SpellHelper.Turn(Caster, p);
-
-                if (p is Item)
-                    p = ((Item)p).GetWorldLocation();
-
-				int range = 2;
-				if( Caster is PlayerMobile )
-				{
-					PlayerMobile pm = Caster as PlayerMobile;
-					//range += ( pm.SilverPoint[20] / 7 );
-				}
-				
-                var targets = AcquireIndirectTargets(p, range).ToList();
-                var count = Math.Max(1, targets.Count);
-
-                if (count > 0)
-                {
-                    Effects.PlaySound(p, Caster.Map, 0x160);
-                }
-
-                foreach (var id in targets)
-                {
-                    Mobile m = id as Mobile;
-                    double damage;
-
-                    if (Core.AOS)
-                        damage = GetNewAosDamage(0, 51, 55, id is PlayerMobile, id);
-                    else
-                        damage = Utility.Random(27, 22);
-
-                    if (Core.AOS && count > 2)
-                        damage = (damage * 2) / count;
-                    else if (!Core.AOS)
-                        damage /= count;
-
-                    if (!Core.AOS && m != null && CheckResisted(m))
-                    {
-                        damage *= 0.5;
-
-                        m.SendLocalizedMessage(501783); // You feel yourself resisting magical energy.
-                    }
-
-                    IDamageable source = Caster;
-                    IDamageable target = id;
-
-                    if (SpellHelper.CheckReflect((int)Circle, ref source, ref target, SpellDamageType))
-                    {
-                        Timer.DelayCall(TimeSpan.FromSeconds(.5), () =>
-                        {
-                            source.MovingParticles(target, item != null ? 0xA1ED : 0x36D4, 7, 0, false, true, 9501, 1, 0, 0x100);
-                        });
-                    }
-
-                    if (m != null)
-                    {
-                        damage *= GetDamageScalar(m);
-                    }
-
-                    Caster.DoHarmful(id);
-                    SpellHelper.Damage(this, target, damage, 0, 100, 0, 0, 0);
-
-                    Caster.MovingParticles(id, item != null ? 0xA1ED : 0x36D4, 7, 0, false, true, 9501, 1, 0, 0x100);
-                }
-
-                ColUtility.Free(targets);
+                Caster.SendLocalizedMessage(500613); // 마나 부족
+                return;
             }
 
+            if (!ConsumeReagents())
+            {
+                Caster.SendLocalizedMessage(500612); // 시약 부족
+                return;
+            }
+
+            // 시전 성공 확정
+            Caster.Mana -= GetMana();
+            Caster.PlaySound(Caster.Female ? 0x338 : 0x44B);
+
+            // 주문 완료 처리 (채널링 시작 전 호출하여 시전 프로세스 종결)
             FinishSequence();
+
+            // 2. Spell.cs의 범용 채널링 시스템 시작
+            // 1초 간격으로 20번 발사 (총 20초), 움직이면 취소(true)
+            StartChanneling(TimeSpan.FromSeconds(1.0), 20, true, (tick) =>
+            {
+                // 주변 5타일 내 유효한 적 탐색
+                List<Mobile> targets = new List<Mobile>();
+                IPooledEnumerable eable = Caster.Map.GetMobilesInRange(Caster.Location, 5);
+                
+                foreach (Mobile m in eable)
+                {
+                    if (m != Caster && SpellHelper.ValidIndirectTarget(Caster, m) && Caster.CanBeHarmful(m, false))
+                    {
+                        targets.Add(m);
+                    }
+                }
+                eable.Free();
+
+                if (targets.Count > 0)
+                {
+                    // 무작위 대상 선정
+                    Mobile randomTarget = targets[Utility.Random(targets.Count)];
+
+                    // 실제 타격 시 가시거리(LOS) 체크
+                    if (Caster.CanSee(randomTarget))
+                    {
+                        Caster.DoHarmful(randomTarget);
+                        Caster.MovingParticles(randomTarget, 0x36D4, 7, 0, false, true, 9502, 4019, 0x160);
+                        Caster.PlaySound(Core.AOS ? 0x15E : 0x44B);
+
+                        // [핵심] GetNewAosDamage 호출로 데미지 처리 및 스펠위빙 연쇄 발동 유도
+                        // Spell.cs에서 Timer.DelayCall로 연쇄 발동을 처리하므로 채널링이 끊기지 않습니다.
+						int damage = this.GetNewAosDamage(0, 80, 160, randomTarget is PlayerMobile, 1.0, randomTarget);
+                        SpellHelper.Damage(this, randomTarget, damage, 0, 100, 0, 0, 0);
+					}
+                    else
+                    {
+                        // 적이 리스트에는 있으나 지형에 가려진 경우 주변 랜덤 낙하 연출
+                        DropRandomMeteor(Caster.Location);
+                    }
+                }
+                else
+                {
+                    // 주변에 적이 아예 없을 때 지면 폭발 연출 (유지 체감용)
+                    DropRandomMeteor(Caster.Location);
+                }
+            });
         }
 
-        private class InternalTarget : Target
+        // 주변 지면에 무작위로 메테오를 떨어뜨리는 헬퍼 메서드
+        private void DropRandomMeteor(Point3D center)
         {
-            private readonly MeteorSwarmSpell m_Owner;
-            private readonly Item m_Item;
+            int x = center.X + Utility.RandomMinMax(-4, 4);
+            int y = center.Y + Utility.RandomMinMax(-4, 4);
+            int z = center.Z;
 
-            public InternalTarget(MeteorSwarmSpell owner, Item item)
-                : base(Core.ML ? 10 : 12, true, TargetFlags.None)
-            {
-                m_Owner = owner;
-                m_Item = item;
-            }
+            IPoint3D p = new Point3D(x, y, z);
+            SpellHelper.GetSurfaceTop(ref p);
 
-            protected override void OnTarget(Mobile from, object o)
-            {
-                IPoint3D p = o as IPoint3D;
-
-                if (p != null)
-                    m_Owner.Target(p, m_Item);
-            }
-
-            protected override void OnTargetFinish(Mobile from)
-            {
-                m_Owner.FinishSequence();
-            }
+            Point3D loc = new Point3D(p);
+            Effects.SendLocationEffect(loc, Caster.Map, 0x36BD, 20, 10);
+            Caster.PlaySound(0x11D);
         }
     }
 }

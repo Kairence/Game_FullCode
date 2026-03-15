@@ -37,8 +37,8 @@ namespace Server.Mobiles
 			this.SetStam(220, 320);      
 			this.SetMana(300, 500);      
 
-			this.SetAttackSpeed(1.6);    // 광속에 가까운 연격
-			this.SetDamage(25, 42);      
+			SetAttackSpeed(2.0);
+			SetDamage(65, 95);     
 
 			this.SetDamageType(ResistanceType.Physical, 50);
 			this.SetDamageType(ResistanceType.Energy, 50);

@@ -25,8 +25,8 @@ namespace Server.Mobiles
 			this.SetHits(700, 800);    
 			this.SetStam(100, 120);
 
-			this.SetAttackSpeed(2.4);  // 묵직한 타격
-			SetDamage(35, 50);        
+			SetAttackSpeed(2.4);
+			SetDamage(35, 50);      
 
 			// 스킬: 기초 150 + 보너스 28.8 = 최종 178.8
 			this.SetSkill(SkillName.Wrestling, 150.0); 

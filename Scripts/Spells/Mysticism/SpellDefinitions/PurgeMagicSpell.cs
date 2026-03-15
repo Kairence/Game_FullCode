@@ -89,23 +89,7 @@ namespace Server.Spells.Mysticism
 
                         switch (type)
                         {
-                            case BuffType.MagicReflect:
-                                MagicReflectSpell.EndReflect(target);
-                                arg = "magic reflect";
-                                break;
-                            case BuffType.ReactiveArmor:
-                                ReactiveArmorSpell.EndArmor(target);
-                                arg = "reactive armor";
-                                break;
-                            case BuffType.Protection:
-                                ProtectionSpell.EndProtection(target);
-                                arg = "protection";
-                                break;
-                            case BuffType.Transformation:
-                                TransformationSpellHelper.RemoveContext(target, true);
-                                arg = "transformation spell";
-                                break;
-                            case BuffType.StrBonus:
+                             case BuffType.StrBonus:
                                 arg = "strength bonus";
                                 target.RemoveStatMod("[Magic] Str Buff");
                                 BuffInfo.RemoveBuff(target, BuffIcon.Strength);
@@ -119,22 +103,6 @@ namespace Server.Spells.Mysticism
                                 arg = "intelligence bonus";
                                 target.RemoveStatMod("[Magic] Int Buff");
                                 BuffInfo.RemoveBuff(target, BuffIcon.Cunning);
-                                break;
-                            case BuffType.BarrabHemolymph:
-                                arg = "Barrab hemolymph";
-                                EodonianPotion.RemoveEffects(target, PotionEffect.Barrab);
-                                break;
-                            case BuffType.UraliTrance:
-                                arg = "Urali Trance";
-                                EodonianPotion.RemoveEffects(target, PotionEffect.Urali);
-                                break;
-                            case BuffType.Bless:
-                                arg = "bless";
-                                target.RemoveStatMod("[Magic] Str Buff");
-                                target.RemoveStatMod("[Magic] Dex Buff");
-                                target.RemoveStatMod("[Magic] Int Buff");
-                                BuffInfo.RemoveBuff(target, BuffIcon.Bless);
-                                BlessSpell.RemoveBless(target);
                                 break;
                         }
 
@@ -169,26 +137,7 @@ namespace Server.Spells.Mysticism
         {
             List<BuffType> buffs = new List<BuffType>();
 
-            if (MagicReflectSpell.HasReflect(target))
-                buffs.Add(BuffType.MagicReflect);
 
-            if (ReactiveArmorSpell.HasArmor(target))
-                buffs.Add(BuffType.ReactiveArmor);
-
-            if (ProtectionSpell.HasProtection(target))
-                buffs.Add(BuffType.Protection);
-
-            TransformContext context = TransformationSpellHelper.GetContext(target);
-
-            if (context != null && context.Type != typeof(AnimalForm))
-                buffs.Add(BuffType.Transformation);
-
-            if (BlessSpell.IsBlessed(target))
-            {
-                buffs.Add(BuffType.Bless);
-            }
-            else
-            {
                 StatMod mod = target.GetStatMod("[Magic] Str Buff");
                 if (mod != null)
                     buffs.Add(BuffType.StrBonus);
@@ -200,8 +149,6 @@ namespace Server.Spells.Mysticism
                 mod = target.GetStatMod("[Magic] Int Buff");
                 if (mod != null)
                     buffs.Add(BuffType.IntBonus);
-            }
-
             if (EodonianPotion.IsUnderEffects(target, PotionEffect.Barrab))
                 buffs.Add(BuffType.BarrabHemolymph);
 

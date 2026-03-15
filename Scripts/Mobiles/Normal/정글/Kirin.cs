@@ -32,9 +32,8 @@ namespace Server.Mobiles
 			this.SetDex(140, 160); // 매우 뛰어난 기동성
 			this.SetInt(140, 160);
 
-			// [Combat Options] 물리 30% / 에너지 70% (천둥의 일격)
-			this.SetDamage(50, 80);
-			this.SetAttackSpeed(1.8); // 정령급의 빠른 공격
+			SetAttackSpeed(12.0);
+			SetDamage(25, 40);
 			this.SetDamageType(ResistanceType.Physical, 30);
 			this.SetDamageType(ResistanceType.Energy, 70);
 

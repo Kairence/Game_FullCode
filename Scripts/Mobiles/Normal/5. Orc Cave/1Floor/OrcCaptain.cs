@@ -30,8 +30,8 @@ namespace Server.Mobiles
 			this.SetStam(150, 200);      
 			this.SetMana(100, 150);      
 
-			this.SetAttackSpeed(2.2);    // 공속 (상급 전사)
-			this.SetDamage(20, 35);      // 데미지
+			SetAttackSpeed(3.0);
+			SetDamage(35, 50);      // 데미지
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 
@@ -50,6 +50,8 @@ namespace Server.Mobiles
 
 			this.Fame = 4500;            
 			this.Karma = -4500;
+			this.SpecialType2 = 2;
+			this.SpecialChance2 = 0.10;	
         }
 
         public OrcCaptain(Serial serial)

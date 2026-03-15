@@ -26,9 +26,8 @@ namespace Server.Mobiles
 			this.SetDex(140, 160); 
 			this.SetInt(140, 160);
 
-			// [Combat Options] 물리 40% / 냉기 30% / 에너지 30% (저주받은 발톱)
-			this.SetDamage(50, 85);
-			this.SetAttackSpeed(1.8); // 맹수다운 날카로운 공속
+			SetAttackSpeed(10.0);
+			SetDamage(20, 30);
 			this.SetDamageType(ResistanceType.Physical, 40);
 			this.SetDamageType(ResistanceType.Cold, 30);
 			this.SetDamageType(ResistanceType.Energy, 30);

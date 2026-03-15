@@ -35,7 +35,7 @@ namespace Server.Spells.Third
         {
 			int range = 10;
 			if ( Caster is FireElemental )
-				range = 20;
+				range = 4;
 
             Caster.Target = new InternalTarget(this, range);
         }
@@ -60,32 +60,22 @@ namespace Server.Spells.Third
                             source.PlaySound(Core.AOS ? 0x15E : 0x44B);
                         });
                 }
-				/*
-                if (SpellHelper.CheckReflect((int)Circle, ref source, ref target))
-                {
-                    Timer.DelayCall(TimeSpan.FromSeconds(.5), () =>
-                        {
-                            source.MovingParticles(target, 0x36D4, 7, 0, false, true, 9502, 4019, 0x160);
-                            source.PlaySound(Core.AOS ? 0x15E : 0x44B);
-                        });
-                }
-				*/
                 double damage = 0;
 
 
                 if (Core.AOS)
                 {
-					int min = 30;
-					int max = 70;
+					int min = 80;
+					int max = 160;
 					
 					if( Caster is SummonedFireElemental )
 					{
-						min = 40;
-						max = 60;
+						min = 70;
+						max = 135;
 					}
 
                     damage = GetNewAosDamage(0, min, max, m);
-               }
+                }
 
                 if (damage > 0)
                 {

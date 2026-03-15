@@ -32,9 +32,8 @@ namespace Server.Mobiles
 			this.SetDex(150, 180); // 영적인 존재다운 빠른 캐스팅 속도
 			this.SetInt(350, 450); // 대마법사 컨셉 (높은 마나 통)
 
-			// [Combat Options] 물리 공격보다는 마법 위주의 설계
-			this.SetDamage(25, 40);
-			this.SetAttackSpeed(2.2);
+			SetAttackSpeed(10.0);
+			SetDamage(18, 28);
 			this.SetDamageType(ResistanceType.Physical, 20); // 물리 대미지는 낮음
 			this.SetDamageType(ResistanceType.Energy, 80);   // 영적인 에너지 타격
 

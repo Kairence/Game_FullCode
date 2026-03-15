@@ -14,26 +14,14 @@ namespace Server.Spells.Fourth
             Reagent.Garlic,
             Reagent.Ginseng,
             Reagent.MandrakeRoot);
+
         public ArchCureSpell(Mobile caster, Item scroll)
             : base(caster, scroll, m_Info)
         {
         }
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Fourth;
-            }
-        }
-        // Arch cure is now 1/4th of a second faster
-        public override TimeSpan CastDelayBase
-        {
-            get
-            {
-                return base.CastDelayBase - TimeSpan.FromSeconds(0.25);
-            }
-        }
+        public override SpellCircle Circle => SpellCircle.Fourth;
+
         public override void OnCast()
         {
             this.Caster.Target = new InternalTarget(this);
@@ -48,29 +36,20 @@ namespace Server.Spells.Fourth
             else if (this.CheckSequence())
             {
                 SpellHelper.Turn(this.Caster, p);
-
                 SpellHelper.GetSurfaceTop(ref p);
 
                 List<Mobile> targets = new List<Mobile>();
-
                 Map map = this.Caster.Map;
-                Mobile directTarget = p as Mobile;
 
                 if (map != null)
                 {
                     bool feluccaRules = (map.Rules == MapRules.FeluccaRules);
 
-                    // You can target any living mobile directly, beneficial checks apply
-                    if (directTarget != null && this.Caster.CanBeBeneficial(directTarget, false))
-                        targets.Add(directTarget);
-
-                    IPooledEnumerable eable = map.GetMobilesInRange(new Point3D(p), 1 + (int)Caster.Skills.Magery.Value / 50);
+                    // 기획: 3타일 내의 모든 대상 (중심점 포함)
+                    IPooledEnumerable eable = map.GetMobilesInRange(new Point3D(p), 3);
 
                     foreach (Mobile m in eable)
                     {
-                        if (m == directTarget)
-                            continue;
-
                         if (this.AreaCanTarget(m, feluccaRules))
                             targets.Add(m);
                     }
@@ -80,41 +59,38 @@ namespace Server.Spells.Fourth
 
                 Effects.PlaySound(p, this.Caster.Map, 0x299);
 
-                if (targets.Count > 0)
+                // --- 보너스 수치 계산 (보너스 * 0.02) ---
+                double bonus = SpellHelper.GetMagicValue(this.Caster, 0.02);
+
+                for (int i = 0; i < targets.Count; ++i)
                 {
-                    int cured = 0;
+                    Mobile m = targets[i];
 
-                    for (int i = 0; i < targets.Count; ++i)
+                    this.Caster.DoBeneficial(m);
+
+                    // 1. 독 레벨 1단계 감소 로직
+                    Poison poison = m.Poison;
+                    if (poison != null)
                     {
-                        Mobile m = targets[i];
+                        int currentLevel = poison.RealLevel;
 
-                        this.Caster.DoBeneficial(m);
-
-                        Poison poison = m.Poison;
-
-                        if (poison != null)
+                        if (currentLevel <= 0)
                         {
-							int CureCheck = (int)(this.Caster.Skills[SkillName.Magery].Value / 75 );
-							
-							if( poison.RealLevel <= CureCheck )
-							{
-								if (m.CurePoison(this.Caster))
-								{
-									if (this.Caster != m)
-										this.Caster.SendLocalizedMessage(1010058); // You have cured the target of all poisons!
-									
-									m.SendLocalizedMessage(1010059); // You have been cured of all poisons.
-								}
-							}
-							else
-							{
-								m.SendLocalizedMessage(1010060); // You have failed to cure your target!
-							}
+                            m.CurePoison(this.Caster);
                         }
-
-                        m.FixedParticles(0x373A, 10, 15, 5012, EffectLayer.Waist);
-                        m.PlaySound(0x1E0);
+                        else
+                        {
+                            int nextLevel = Math.Max(0, currentLevel - 1);
+                            m.ApplyPoison(this.Caster, Poison.GetPoison(nextLevel));
+                        }
                     }
+
+                    // 2. 체력 회복 로직 (80 ~ 120 + 보너스)
+                    int healAmount = Utility.RandomMinMax(80, 120) + (int)bonus;
+                    SpellHelper.Heal(healAmount, m, this.Caster);
+
+                    m.FixedParticles(0x373A, 10, 15, 5012, EffectLayer.Waist);
+                    m.PlaySound(0x1E0);
                 }
             }
 
@@ -133,10 +109,6 @@ namespace Server.Spells.Fourth
 
         private bool AreaCanTarget(Mobile target, bool feluccaRules)
         {
-            /* Arch cure area effect won't cure aggressors, victims, murderers, criminals or monsters.
-            * In Felucca, it will also not cure summons and pets.
-            * For red players it will only cure themselves and guild members.
-            */
             if (!this.Caster.CanBeBeneficial(target, false))
                 return false;
 
@@ -181,7 +153,7 @@ namespace Server.Spells.Fourth
         {
             private readonly ArchCureSpell m_Owner;
             public InternalTarget(ArchCureSpell owner)
-                : base(Core.ML ? 10 : 12, true, TargetFlags.None)
+                : base(12, true, TargetFlags.None)
             {
                 this.m_Owner = owner;
             }

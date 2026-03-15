@@ -534,9 +534,9 @@ namespace Server.Items
         public override int InitMinHits { get { return 100; } }
         public override int InitMaxHits { get { return 100; } }
 
-        public override int AosStrReq { get { return 1350; } }
-        public override int AosDexReq { get { return 100; } }
-        public override int AosIntReq { get { return 100; } }
+        public override int AosStrReq { get { return 1750; } }
+        public override int AosDexReq { get { return 1000; } }
+        public override int AosIntReq { get { return 1000; } }
         public override int OldStrReq { get { return 15; } }
 		
         [Constructable]
@@ -549,16 +549,10 @@ namespace Server.Items
         public Kasa(int hue)
             : base(0x2798, hue)
         {
-			BaseArmorRating = 11;
+			BaseArmorRating = 4;
+			ArmorBase = 5;
             Weight = 15.0;
 			PrefixOption[50] = 6;
-			PrefixOption[61] = 12;
-			SuffixOption[61] = 40000;
-			PrefixOption[62] = 3;
-			SuffixOption[62] = 500000;
-			PrefixOption[63] = 5;
-			SuffixOption[63] = 2500000;
-
         }
 
         public Kasa(Serial serial)
@@ -949,9 +943,9 @@ namespace Server.Items
         public override int InitMinHits { get { return 100; } }
         public override int InitMaxHits { get { return 100; } }
 
-        public override int AosStrReq { get { return 1200; } }
-        public override int AosDexReq { get { return 100; } }
-        public override int AosIntReq { get { return 100; } }
+        public override int AosStrReq { get { return 1000; } }
+        public override int AosDexReq { get { return 1000; } }
+        public override int AosIntReq { get { return 1000; } }
         public override int OldStrReq { get { return 15; } }
 
         [Constructable]
@@ -965,12 +959,11 @@ namespace Server.Items
         public BearMask(int hue)
             : base(0x1545, hue)
         {
-			BaseArmorRating = 5;
+			BaseArmorRating = 2;
+			ArmorBase = 2;
 			PrefixOption[50] = 4;    //세트 옵션 번호
-			PrefixOption[61] = 19;   //체력 회복
-			SuffixOption[61] = 50000; //5
-			PrefixOption[62] = 4;    //체력
-			SuffixOption[62] = 2500000; //250
+			PrefixOption[61] = 4;   //기력 회복
+			SuffixOption[61] = 5000000; //5
 		}
 
         public override bool Dye(Mobile from, DyeTub sender)
@@ -1006,9 +999,9 @@ namespace Server.Items
         public override int InitMinHits { get { return 100; } }
         public override int InitMaxHits { get { return 100; } }
 
-        public override int AosStrReq { get { return 900; } }
-        public override int AosDexReq { get { return 100; } }
-        public override int AosIntReq { get { return 100; } }
+        public override int AosStrReq { get { return 1000; } }
+        public override int AosDexReq { get { return 1000; } }
+        public override int AosIntReq { get { return 1000; } }
         public override int OldStrReq { get { return 15; } }
 
         [Constructable]
@@ -1022,12 +1015,11 @@ namespace Server.Items
         public DeerMask(int hue)
             : base(0x1547, hue)
         {
-			BaseArmorRating = 3;
+			BaseArmorRating = 2;
+			ArmorBase = 2;
 			PrefixOption[50] = 4;    //세트 옵션 번호
-			PrefixOption[61] = 20;   //기력 회복
-			SuffixOption[61] = 50000; //5
-			PrefixOption[62] = 5;    //기력
-			SuffixOption[62] = 2500000; //250			
+			PrefixOption[61] = 5;   //기력 회복
+			SuffixOption[61] = 5000000; //5
         }
 
         public override bool Dye(Mobile from, DyeTub sender)

@@ -23,8 +23,8 @@ namespace Server.Mobiles
 			this.SetStam(66, 116);
 			this.SetMana(0);
 
-			SetAttackSpeed(3.0);
-			SetDamage(15, 25); 
+			SetAttackSpeed(3.5);
+			SetDamage(24, 36); // 리지백보다 상위 단계의 묵직한 공격
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 

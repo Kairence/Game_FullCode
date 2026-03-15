@@ -11,9 +11,7 @@ namespace Server.Items
         public Halberd()
             : base(0x143E)
         {
-            this.Weight = 20.0;
-			PrefixOption[61] = 42;
-			SuffixOption[61] = 50000;			
+            this.Weight = 30.0;
        }
 
         public Halberd(Serial serial)
@@ -53,21 +51,21 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }		
         public override int AosMinDamage
         {
             get
             {
-                return 9;
+                return 2;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 19;
+                return 28;
             }
         }
         public override int AosSpeed
@@ -81,7 +79,7 @@ namespace Server.Items
         {
             get
             {
-                return 4.00f;
+                return 3.75f;
             }
         }
         public override int OldStrengthReq

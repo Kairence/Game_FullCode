@@ -9,14 +9,7 @@ namespace Server.Items
         public BlackStaff()
             : base(0xDF0)
         {
-			PrefixOption[61] = 17; //명중률
-			SuffixOption[61] = 50000;
-			PrefixOption[62] = 92; //
-			SuffixOption[62] = 1000;
-			PrefixOption[63] = 82; //
-			SuffixOption[63] = 1000;
-			
-            this.Weight = 6.0;
+            this.Weight = 16.0;
 		}
 
 
@@ -57,7 +50,7 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
 		
@@ -65,14 +58,14 @@ namespace Server.Items
         {
             get
             {
-                return 1;
+                return 4;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 5;
+                return 11;
             }
         }
         public override int AosSpeed
@@ -86,7 +79,7 @@ namespace Server.Items
         {
             get
             {
-                return 2.00f;
+                return 3.75f;
             }
         }
         public override int OldStrengthReq

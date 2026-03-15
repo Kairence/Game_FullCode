@@ -41,31 +41,13 @@ namespace Server.Spells.First
         {
             if (this.CheckSequence())
             {
-				int level = SpellLevel(Caster, 1);
-				Caster.Hunger += 5000 + (int)( Caster.Skills.Magery.Value * 10) + level * 1000;
-				Caster.Stam += (int)( Caster.Skills.Mysticism.Value * 0.4);
-				if( level >= 5 )
-				{
-					Caster.Hunger += 4000;
-					Caster.Stam += 20;
-				}
+				int totalReduction = 10 + (int)SpellHelper.GetMagicValue(this.Caster, 0.002);
+				Caster.Hits += totalReduction;
+				Caster.Stam += totalReduction;
+				Caster.Mana += totalReduction;
+				
 				this.Caster.FixedParticles(0, 10, 5, 2003, EffectLayer.RightHand);
 				this.Caster.PlaySound(0x1E2);
-				/*
-                FoodInfo foodInfo = m_Food[Utility.Random(m_Food.Length)];
-                Item food = foodInfo.Create();
-
-                if (food != null)
-                {
-                    this.Caster.AddToBackpack(food);
-
-                    // You magically create food in your backpack:
-                    this.Caster.SendLocalizedMessage(1042695, true, " " + foodInfo.Name);
-
-                    this.Caster.FixedParticles(0, 10, 5, 2003, EffectLayer.RightHand);
-                    this.Caster.PlaySound(0x1E2);
-                }
-				*/
             }
 
             this.FinishSequence();

@@ -30,9 +30,8 @@ namespace Server.Mobiles
 			this.SetDex(160, 200); 
 			this.SetInt(500, 600); // ★ 거대한 마나 통과 지능
 
-			// [Combat Options] 순수 에너지 마력 타격
-			this.SetDamage(35, 55);
-			this.SetAttackSpeed(2.2);
+			SetAttackSpeed(10.0);
+			SetDamage(18, 28);
 			this.SetDamageType(ResistanceType.Physical, 0);
 			this.SetDamageType(ResistanceType.Energy, 100);
 

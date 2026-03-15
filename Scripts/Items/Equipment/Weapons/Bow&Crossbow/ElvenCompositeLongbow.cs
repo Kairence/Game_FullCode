@@ -9,14 +9,7 @@ namespace Server.Items
         public ElvenCompositeLongbow()
             : base(0x2D1E)
         {
-			PrefixOption[61] = 81;
-			PrefixOption[62] = 93;
-			SuffixOption[61] = 2000;
-			SuffixOption[62] = 1000;
-			
-			//SkillBonuses.SetValues(5, SkillName.Archery, 20.0);
-			//SkillBonuses.SetValues(6, SkillName.Focus, 10.0);			
-            this.Weight = 8.0;
+            this.Weight = 18.0;
 		}
 
         public ElvenCompositeLongbow(Serial serial)
@@ -85,14 +78,14 @@ namespace Server.Items
         {
             get
             {
-                return 8;
+                return 7;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 20;
+                return 18;
             }
         }
         public override int AosSpeed

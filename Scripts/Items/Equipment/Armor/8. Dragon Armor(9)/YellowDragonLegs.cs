@@ -10,10 +10,6 @@ namespace Server.Items
             : base(0x2647)
         {
 			PrefixOption[50] = 11;   //세트 옵션 번호
-			PrefixOption[61] = 16;   //에너지 저항력
-			SuffixOption[61] = 250000; //25%
-			PrefixOption[62] = 26;   //에너지 피해 증가
-			SuffixOption[62] = 200000; //20
             this.Weight = 20.0;
         }
 
@@ -23,17 +19,55 @@ namespace Server.Items
         }
 
  		public override int LabelNumber { get { return 1029799; } }
-		public override int AosStrReq { get { return 3500; } }
-        public override int AosDexReq { get { return 3500; } }
-        public override int AosIntReq { get { return 3500; } }
-        public override int OldStrReq { get { return 15; } }
+        public override int InitMinHits
+        {
+            get
+            {
+                return 100;
+            }
+        }
+        public override int InitMaxHits
+        {
+            get
+            {
+                return 100;
+            }
+        }
+        public override int AosStrReq
+        {
+            get
+            {
+                return 3000;
+            }
+        }
+        public override int AosDexReq
+        {
+            get
+            {
+                return 3000;
+            }
+        }
+        public override int AosIntReq
+        {
+            get
+            {
+                return 3000;
+            }
+        }
         public override int ArmorBase
         {
             get
             {
-                return 5;
+                return 7;
             }
         }
+		public override double ArmorRating
+		{
+			get
+			{
+				return 10.0; // 원하는 감소 수치를 입력하세요.
+			}
+		}
         public override ArmorMaterialType MaterialType
         {
             get

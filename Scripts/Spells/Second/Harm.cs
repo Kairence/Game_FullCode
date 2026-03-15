@@ -34,7 +34,7 @@ namespace Server.Spells.Second
         }
         public override void OnCast()
         {
-			int range = 10;
+			int range = 2;
 			if ( Caster is WaterElemental )
 				range = 20;
 			else if ( Caster is Reaper )
@@ -61,20 +61,21 @@ namespace Server.Spells.Second
                 double damage = 0;
                 if (Core.AOS)
                 {
-					int min = 40;
-					int max = 50;
+					int min = 50;
+					int max = 100;
+
 					if( Caster is Reaper )
 					{
 						min = 120;
 						max = 160;
 					}
-                    damage = GetNewAosDamage(0, min, max, m);
 					if( Caster is SummonedWaterElemental )
 					{
-						min = 40;
-						max = 60;
+						min = 90;
+						max = 140;
 					}
    
+                    damage = GetNewAosDamage(0, min, max, m);
                     if (mob != null)
                     {
                         mob.FixedParticles(0x374A, 10, 30, 5013, 1153, 2, EffectLayer.Waist);

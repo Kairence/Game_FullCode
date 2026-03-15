@@ -19,8 +19,8 @@ namespace Server.Mobiles
 			this.SetHits(100, 150);    // 최종 Hits 약 7,200
 			this.SetStam(150, 200);
 
-			this.SetAttackSpeed(1.2);  // 초고속 공격 (흡혈 컨셉)
-			SetDamage(5, 10);        
+			SetAttackSpeed(1.2);
+			SetDamage(8, 14);     
 
 			this.SetSkill(SkillName.Wrestling, 110.0); // 최종 약 120.4
 			this.SetSkill(SkillName.Tactics, 110.0);

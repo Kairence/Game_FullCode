@@ -50,12 +50,6 @@ namespace Server.Spells.First
             {
                 this.Caster.LocalOverheadMessage(MessageType.Regular, 0x3B2, 500951); // You cannot heal that.
             }
-			/*
-            else if (m.Poisoned || Server.Items.MortalStrike.IsWounded(m))
-            {
-                this.Caster.LocalOverheadMessage(MessageType.Regular, 0x22, (this.Caster == m) ? 1005000 : 1010398);
-            }
-			*/
             else if (this.CheckBSequence(m))
             {
                 SpellHelper.Turn(this.Caster, m);
@@ -64,18 +58,8 @@ namespace Server.Spells.First
 
                 if (Core.AOS)
                 {
-                    //toHeal = this.Caster.Skills.Magery.Fixed / 120;
-					int level = SpellLevel(Caster, 3);
-                    toHeal = Utility.RandomMinMax(90 + level * 15, 130 + level * 30) + (int)(Caster.Skills.Magery.Value * 0.15 + Caster.Skills.Chivalry.Value * 0.15);
-					
-					toHeal = Mobiles.AggroControl.HealCheck(Caster, m, toHeal + (int)(Caster.Skills.Magery.Value * 10 ));
-					if( level >= 5 )
-					{
-						SpellHelper.Heal(toHeal / 5, this.Caster, this.Caster);
-						//Caster.CheckSkill( SkillName.Mysticism, toHeal * 5 );
-						Caster.FixedParticles(0x376A, 9, 32, 5005, EffectLayer.Waist);
-						Caster.PlaySound(0x1F2);
-					}
+					int totalReduction = 10 + (int)SpellHelper.GetMagicValue(this.Caster, 0.01);
+                    toHeal = Utility.RandomMinMax(40, 60) + totalReduction;
                 }
                 else
                 {

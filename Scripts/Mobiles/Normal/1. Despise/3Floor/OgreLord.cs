@@ -38,8 +38,8 @@ namespace Server.Mobiles
 			this.SetMana(3700, 3850);
 
 			// [Combat Options]
-			this.SetDamage(110, 160); // 몽둥이 한 방의 위엄
-			this.SetAttackSpeed(2.5);
+			SetAttackSpeed(2.5);
+			SetDamage(90, 130);
 
 			// [Resistances] 최고 저항 75 이하 엄격 준수
 			this.SetResistance(ResistanceType.Physical, 70, 75); // 가죽이 매우 질김
@@ -62,6 +62,8 @@ namespace Server.Mobiles
 
             this.PackItem(new Club());
 			//m_NextAbilityTime = DateTime.Now + TimeSpan.FromSeconds( 20 );
+			this.SpecialType2 = 3;
+			this.SpecialChance2 = 0.5;	
         }
 		/*
 		private DateTime m_NextAbilityTime;

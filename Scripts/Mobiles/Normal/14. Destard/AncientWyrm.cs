@@ -36,8 +36,8 @@ namespace Server.Mobiles
 			this.SetMana(5130, 5230);
 
 			// [Combat Options]
-			this.SetDamage(130, 190); // 발론보다 살짝 더 강력한 한방
-			this.SetAttackSpeed(2.8);
+			SetAttackSpeed(2.5);
+			SetDamage(110, 150);
 
 			// [Resistances] 최고 저항 75 이하 엄격 준수
 			this.SetResistance(ResistanceType.Physical, 70, 75);

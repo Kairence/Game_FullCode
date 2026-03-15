@@ -32,9 +32,8 @@ namespace Server.Mobiles
 			this.SetDex(4400, 4500);
 			this.SetInt(4400, 4500);
 
-			// [Combat Options] 물리 70% / 화염 30% (지옥의 일격)
-			this.SetDamage(95, 135);
-			this.SetAttackSpeed(2.0);
+			SetAttackSpeed(2.5);
+			SetDamage(95, 135);
 			this.SetDamageType(ResistanceType.Physical, 70);
 			this.SetDamageType(ResistanceType.Fire, 30);
 

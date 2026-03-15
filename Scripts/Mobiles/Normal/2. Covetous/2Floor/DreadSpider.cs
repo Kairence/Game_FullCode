@@ -24,8 +24,8 @@ namespace Server.Mobiles
 			this.SetStam(140, 160);
 			this.SetMana(1000, 1500);
 
-			this.SetAttackSpeed(2.0);   
-			SetDamage(30, 40);
+			SetAttackSpeed(2.0);
+			SetDamage(40, 55);
 
 			this.SetSkill(SkillName.Wrestling, 132.0); // 보너스 +27.0 반영
 			this.SetSkill(SkillName.Tactics, 132.0);

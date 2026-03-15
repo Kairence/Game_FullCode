@@ -11,10 +11,7 @@ namespace Server.Items
         public Kryss()
             : base(0x1401)
         {
-			PrefixOption[61] = 35;
-			SuffixOption[61] = 500000;
-			//AbsorptionAttributes.EaterPoison += 5000;
-            Weight = 6.0;
+            Weight = 8.0;
 		}
 
         public Kryss(Serial serial)
@@ -54,7 +51,7 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }		
         public override int AosMinDamage
@@ -68,7 +65,7 @@ namespace Server.Items
         {
             get
             {
-                return 6;
+                return 10;
             }
         }
         public override int AosSpeed
@@ -82,7 +79,7 @@ namespace Server.Items
         {
             get
             {
-                return 2.50f;
+                return 2.25f;
             }
         }
         public override int OldStrengthReq

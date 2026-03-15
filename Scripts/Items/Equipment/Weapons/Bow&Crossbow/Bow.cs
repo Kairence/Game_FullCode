@@ -9,9 +9,7 @@ namespace Server.Items
         public Bow()
             : base(0x13B2)
         {
-            Weight = 6.0;
-			PrefixOption[61] = 5;
-			SuffixOption[61] = 5000000;
+            Weight = 16.0;
 			
 			//Attributes.BonusStam += 37500;
             Layer = Layer.TwoHanded;
@@ -75,7 +73,7 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
 		
@@ -83,14 +81,14 @@ namespace Server.Items
         {
             get
             {
-                return 3;
+                return 4;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 18;
+                return 14;
             }
         }
         public override int AosSpeed

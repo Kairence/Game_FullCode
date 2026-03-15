@@ -37,8 +37,8 @@ namespace Server.Mobiles
 			this.SetMana(3550, 3650);
 
 			// [Combat Options]
-			this.SetDamage(70, 110);
-			this.SetAttackSpeed(1.2); // 매우 빠른 공격 속도
+			SetAttackSpeed(7.0);
+			SetDamage(80, 120);
 
 			// [Resistances] 최고 저항 75 이하 엄격 준수
 			this.SetResistance(ResistanceType.Physical, 55, 65);

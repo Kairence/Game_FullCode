@@ -61,8 +61,8 @@ namespace Server.Mobiles
 			this.SetStam(58, 108); 
 			this.SetMana(0);
 
-			SetAttackSpeed(3.0);
-			SetDamage(25, 45); 
+			this.SetAttackSpeed(3.5);
+			this.SetDamage(40, 55); // 명성 5000 드래곤(2.5s/30-45)과 맞춘 묵직한 타격
 
 			// 공격 속성: 부패한 독기
 			this.SetDamageType(ResistanceType.Physical, 0);

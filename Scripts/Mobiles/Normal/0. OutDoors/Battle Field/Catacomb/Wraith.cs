@@ -22,8 +22,8 @@ namespace Server.Mobiles
 			this.SetHits(345, 1345); // 최종 Hits 9,000~10,000
 			this.SetMana(1000, 2000);
 
-			SetAttackSpeed(3.5);     // 근접 공격 속도를 늦춰 물리 DPS 하락
-			SetDamage(15, 25);       // 명성 대비 낮은 물리 데미지
+			SetAttackSpeed(12.0); // 10초 이상의 긴 빈틈
+			SetDamage(10, 15);    // 근접전 무력화
 
 			this.SetDamageType(ResistanceType.Physical, 20);
 			this.SetDamageType(ResistanceType.Cold, 40);

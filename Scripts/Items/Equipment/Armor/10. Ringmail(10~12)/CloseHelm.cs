@@ -9,10 +9,7 @@ namespace Server.Items
             : base(0x1408)
         {
 			PrefixOption[50] = 15;	 //세트 옵션 번호
-			PrefixOption[61] = 42;	 //물리 치명 확률%
-			SuffixOption[61] = 50000; //5%
-			PrefixOption[62] = 44;	 //물리 치명 피해%
-			SuffixOption[62] = 50000; //5%
+
 			Weight = 25.0;
         }
 
@@ -20,17 +17,55 @@ namespace Server.Items
             : base(serial)
         {
         }
-		public override int AosStrReq { get { return 2500; } }
-        public override int AosDexReq { get { return 100; } }
-        public override int AosIntReq { get { return 100; } }
-        public override int OldStrReq { get { return 15; } }
+        public override int InitMinHits
+        {
+            get
+            {
+                return 100;
+            }
+        }
+        public override int InitMaxHits
+        {
+            get
+            {
+                return 100;
+            }
+        }
+        public override int AosStrReq
+        {
+            get
+            {
+                return 2000;
+            }
+        }
+        public override int AosDexReq
+        {
+            get
+            {
+                return 1000;
+            }
+        }
+        public override int AosIntReq
+        {
+            get
+            {
+                return 1000;
+            }
+        }
         public override int ArmorBase
         {
             get
             {
-                return 8;
+                return 10;
             }
         }
+		public override double ArmorRating
+		{
+			get
+			{
+				return 5.0; // 원하는 감소 수치를 입력하세요.
+			}
+		}
         public override ArmorMaterialType MaterialType
         {
             get

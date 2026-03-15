@@ -11,10 +11,7 @@ namespace Server.Items
         public BoneHarvester()
             : base(0x26BB)
         {
-            this.Weight = 3.0;
-			//PrefixOption[61] = 82;
-			//SuffixOption[61] = 1000;
-			//SkillBonuses.SetValues(5, SkillName.SpiritSpeak, 10.0);
+            this.Weight = 13.0;
         }
 
         public BoneHarvester(Serial serial)
@@ -54,21 +51,21 @@ namespace Server.Items
         {
             get
             {
-                return 500;
+                return 1000;
             }
         }
         public override int AosMinDamage
         {
             get
             {
-                return 2;
+                return 3;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 6;
+                return 10;
             }
         }
         public override int AosSpeed
@@ -82,7 +79,7 @@ namespace Server.Items
         {
             get
             {
-                return 2.00f;
+                return 3.00f;
             }
         }
         public override int OldStrengthReq

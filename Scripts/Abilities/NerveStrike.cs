@@ -12,8 +12,6 @@ namespace Server.Items
 
         public NerveStrike() { }
 
-        public override int BaseMana => 30;
-
         public static bool IsCripple(Mobile m) => m != null && m_Table.Contains(m);
 
         public override void OnHit(Mobile attacker, Mobile defender, int damage)

@@ -11,13 +11,8 @@ namespace Server.Items
             : base(0x2B6D)
         {
 			PrefixOption[50] = 18;	 //세트 옵션 번호
-			PrefixOption[61] = 4;	 //체력
-			SuffixOption[61] = 2000000; //200
-			PrefixOption[62] = 5;	 //기력
-			SuffixOption[62] = 2000000; //200
-			PrefixOption[63] = 6;	 //마나
-			SuffixOption[63] = 2000000; //200
-            this.Weight = 40.0;
+
+            this.Weight = 50.0;
         }
 
         public FemaleElvenPlateChest(Serial serial)
@@ -25,17 +20,55 @@ namespace Server.Items
         {
         }
 
-		public override int AosStrReq { get { return 4000; } }
-        public override int AosDexReq { get { return 100; } }
-        public override int AosIntReq { get { return 100; } }
-        public override int OldStrReq { get { return 15; } }
+        public override int InitMinHits
+        {
+            get
+            {
+                return 100;
+            }
+        }
+        public override int InitMaxHits
+        {
+            get
+            {
+                return 100;
+            }
+        }
+        public override int AosStrReq
+        {
+            get
+            {
+                return 4500;
+            }
+        }
+        public override int AosDexReq
+        {
+            get
+            {
+                return 1000;
+            }
+        }
+        public override int AosIntReq
+        {
+            get
+            {
+                return 1000;
+            }
+        }
         public override int ArmorBase
         {
             get
             {
-                return 6;
+                return 10;
             }
         }
+		public override double ArmorRating
+		{
+			get
+			{
+				return 7.0; // 원하는 감소 수치를 입력하세요.
+			}
+		}
         public override ArmorMaterialType MaterialType
         {
             get

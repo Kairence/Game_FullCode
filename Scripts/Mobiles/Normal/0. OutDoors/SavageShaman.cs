@@ -27,9 +27,8 @@ namespace Server.Mobiles
 			this.SetStam(54, 104);
 			this.SetMana(1500, 2500);
 
-			SetAttackSpeed(2.8);
-			SetDamage(15, 25); 
-
+			SetAttackSpeed(10.0);
+			SetDamage(8, 12);
 			// 공격 속성: 주술적 타격
 			this.SetDamageType(ResistanceType.Poison, 50);
 			this.SetDamageType(ResistanceType.Energy, 50);

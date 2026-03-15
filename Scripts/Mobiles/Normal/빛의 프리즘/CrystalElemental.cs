@@ -31,9 +31,8 @@ namespace Server.Mobiles
 			this.SetDex(140, 160); // 수정 조각처럼 빠른 움직임
 			this.SetInt(150, 250); 
 
-			// [Combat Options] 물리와 에너지의 날카로운 복합 타격
-			this.SetDamage(40, 65);
-			this.SetAttackSpeed(2.2);
+			SetAttackSpeed(10.0);
+			SetDamage(18, 28);
 			this.SetDamageType(ResistanceType.Physical, 50);
 			this.SetDamageType(ResistanceType.Energy, 50); // 빛의 에너지를 방출
 

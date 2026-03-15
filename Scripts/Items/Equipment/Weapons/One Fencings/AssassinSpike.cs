@@ -11,11 +11,7 @@ namespace Server.Items
         public AssassinSpike()
             : base(0x2D21)
         {
-			PrefixOption[61] = 91;
-			SuffixOption[61] = 2000;
-			
-			//SkillBonuses.SetValues(5, SkillName.Stealth, 5.0);			
-            this.Weight = 4.0;
+            this.Weight = 6.0;
 		}
 
         public AssassinSpike(Serial serial)
@@ -55,21 +51,21 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }		
         public override int AosMinDamage
         {
             get
             {
-                return 1;
+                return 3;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 3;
+                return 6;
             }
         }
         public override int AosSpeed

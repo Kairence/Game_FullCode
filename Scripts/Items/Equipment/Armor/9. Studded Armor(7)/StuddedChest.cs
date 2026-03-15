@@ -11,10 +11,6 @@ namespace Server.Items
         {
             Weight = 26.0;
 			PrefixOption[50] = 6;    //세트 옵션 번호
-			PrefixOption[61] = 118;  //모든 속도%
-			SuffixOption[61] = 50000; //5%
-			PrefixOption[62] = 117;  //모든 피해%
-			SuffixOption[62] = 50000; //5%
         }
 
         public StuddedChest(Serial serial)
@@ -22,13 +18,41 @@ namespace Server.Items
         {
         }
 
-        public override int InitMinHits { get { return 100; } }
-        public override int InitMaxHits { get { return 100; } }
-
-        public override int AosStrReq { get { return 3250; } }
-        public override int AosDexReq { get { return 100; } }
-        public override int AosIntReq { get { return 100; } }
-        public override int OldStrReq { get { return 15; } }
+        public override int InitMinHits
+        {
+            get
+            {
+                return 100;
+            }
+        }
+        public override int InitMaxHits
+        {
+            get
+            {
+                return 100;
+            }
+        }
+        public override int AosStrReq
+        {
+            get
+            {
+                return 2550;
+            }
+        }
+        public override int AosDexReq
+        {
+            get
+            {
+                return 1000;
+            }
+        }
+        public override int AosIntReq
+        {
+            get
+            {
+                return 1000;
+            }
+        }
         public override int ArmorBase
         {
             get
@@ -36,6 +60,13 @@ namespace Server.Items
                 return 5;
             }
         }
+		public override double ArmorRating
+		{
+			get
+			{
+				return 4.0; // 원하는 감소 수치를 입력하세요.
+			}
+		}
         public override ArmorMaterialType MaterialType
         {
             get

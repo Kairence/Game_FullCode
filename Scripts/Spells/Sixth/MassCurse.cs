@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Server.Targeting;
-using Server.Spells.Fourth;
+using Server.Spells.Fourth; // CurseSpell 참조를 위해 추가
+using Server.Mobiles;
 
 namespace Server.Spells.Sixth
 {
@@ -11,25 +11,13 @@ namespace Server.Spells.Sixth
     {
         private static readonly SpellInfo m_Info = new SpellInfo(
             "Mass Curse", "Vas Des Sanct",
-            218,
-            9031,
-            false,
-            Reagent.Garlic,
-            Reagent.Nightshade,
-            Reagent.MandrakeRoot,
-            Reagent.SulfurousAsh);
-        public MassCurseSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+            218, 9031, false,
+            Reagent.Garlic, Reagent.Nightshade, Reagent.MandrakeRoot, Reagent.SulfurousAsh);
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Sixth;
-            }
-        }
+        public MassCurseSpell(Mobile caster, Item scroll) : base(caster, scroll, m_Info) { }
+
+        public override SpellCircle Circle => SpellCircle.Sixth;
+
         public override void OnCast()
         {
             this.Caster.Target = new InternalTarget(this);
@@ -46,9 +34,14 @@ namespace Server.Spells.Sixth
                 SpellHelper.Turn(this.Caster, p);
                 SpellHelper.GetSurfaceTop(ref p);
 
-                foreach (var m in AcquireIndirectTargets(p, 2).OfType<Mobile>())
+                // --- 1. 3타일 범위 내 모든 적군 포착 (AcquireIndirectTargets) ---
+                // AcquireIndirectTargets(지점, 범위)
+                List<Mobile> targets = AcquireIndirectTargets(p, 3).OfType<Mobile>().ToList();
+
+                foreach (Mobile m in targets)
                 {
-                    CurseSpell.DoCurse(this.Caster, m, true);
+                    // 2. 이미 CurseSpell에 설계된 로직을 그대로 사용
+                    MagerySpell.CastDirect<CurseSpell>(Caster, m);
                 }
             }
 
@@ -59,7 +52,7 @@ namespace Server.Spells.Sixth
         {
             private readonly MassCurseSpell m_Owner;
             public InternalTarget(MassCurseSpell owner)
-                : base(Core.ML ? 10 : 12, true, TargetFlags.None)
+                : base(12, true, TargetFlags.None)
             {
                 this.m_Owner = owner;
             }
@@ -67,7 +60,6 @@ namespace Server.Spells.Sixth
             protected override void OnTarget(Mobile from, object o)
             {
                 IPoint3D p = o as IPoint3D;
-
                 if (p != null)
                     this.m_Owner.Target(p);
             }

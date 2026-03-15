@@ -30,8 +30,8 @@ namespace Server.Mobiles
 			this.SetStam(150, 250);      
 			this.SetMana(100, 150);      
 
-			this.SetAttackSpeed(2.4);    // 묵직하고 위협적인 타격
-			this.SetDamage(35, 55);      
+			SetAttackSpeed(4.5);
+			SetDamage(70, 100);      
 
 			this.SetDamageType(ResistanceType.Physical, 70);
 			this.SetDamageType(ResistanceType.Cold, 30);

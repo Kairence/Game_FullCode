@@ -32,8 +32,11 @@ namespace Server.Mobiles
 			this.SetStam(58, 108); 
 			this.SetMana(1500, 2500);
 
-			SetAttackSpeed(2.0); 
-			SetDamage(15, 25); 
+			this.SetAttackSpeed(2.5);  // [조정] 2.0초 -> 2.5초. 
+									   // 쿠거(2.0s)보다는 느리지만, 유저(3.0s)보다는 확실히 빠릅니다.
+									   // 날렵한 날갯짓과 함께 쉴 새 없이 몰아치는 리듬을 유지합니다.
+
+			this.SetDamage(30, 45);    // [방어구 및 저항 가치 고려]
 
 			// 공격 속성: 신비로운 마력 타격
 			this.SetDamageType(ResistanceType.Physical, 20);

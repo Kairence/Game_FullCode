@@ -320,6 +320,39 @@ namespace Server.Spells
             return false;
         }
 
+		//필드 마법 연속 피해 방지 코드
+		private static Dictionary<Mobile, Dictionary<Type, DateTime>> m_FieldDamageTable = new Dictionary<Mobile, Dictionary<Type, DateTime>>();
+
+		public static bool CheckFieldDamage(Mobile target, Type spellType, TimeSpan interval)
+		{
+			if (target == null || spellType == null)
+				return false;
+
+			if (!m_FieldDamageTable.ContainsKey(target))
+				m_FieldDamageTable[target] = new Dictionary<Type, DateTime>();
+
+			DateTime nextDamageTime;
+			if (m_FieldDamageTable[target].TryGetValue(spellType, out nextDamageTime))
+			{
+				if (DateTime.UtcNow < nextDamageTime)
+					return false;
+			}
+
+			m_FieldDamageTable[target][spellType] = DateTime.UtcNow + interval;
+			return true;
+		}
+
+		// SpellHelper.cs 내부
+		public static double GetMagicValue(Mobile caster, double scale)
+		{
+			if (caster == null)
+				return 0.0; // originalValue 변수가 없으므로 기본값 0.0 혹은 1.0 반환
+
+			// 유저님 공식: (지능 * 지능평가 * 0.01 * scale)
+			// caster.Int와 스킬 Value는 double 연산을 위해 명시적 형변환이 안전합니다.
+			return (double)caster.Int * caster.Skills[SkillName.EvalInt].Value * 0.01 * scale;
+		}
+
         public static void GetSurfaceTop(ref IPoint3D p)
         {
             if (p is Item)
@@ -403,21 +436,29 @@ namespace Server.Spells
             return AddStatCurse(caster, target, type, offset, TimeSpan.Zero);
         }
 
-        public static bool AddStatCurse(Mobile caster, Mobile target, StatType type, int curse, TimeSpan duration)
-        {
-            int offset = curse;
-            string name = String.Format("[Magic] {0} Curse", type);
+		// SpellHelper.cs 내부에 추가 또는 수정
 
-            StatMod mod = target.GetStatMod(name);
+		public static bool AddStatCurse(Mobile caster, Mobile target, StatType type, int absoluteOffset, TimeSpan duration)
+		{
+			// absoluteOffset에 유저님이 계산한 '700' 같은 절대치가 들어옵니다.
+			string name = String.Format("[Magic] {0} Curse", type);
 
+			StatMod mod = target.GetStatMod(name);
+
+			// 중첩 체크: 기존에 걸린 저주보다 지금 거는 저주가 더 강력(절대값이 더 큼)할 때만 갱신
 			if (mod != null)
-				offset = Math.Max(mod.Offset, offset);
+			{
+				int currentAbsolute = Math.Abs(mod.Offset);
+				if (absoluteOffset <= currentAbsolute)
+					return false; // 기존 저주가 더 강하면 무시
+			}
 
-			offset *= -1;
-
-            target.AddStatMod(new StatMod(type, name, offset, TimeSpan.Zero));
+			// [핵심] 퍼센트 계산 없이 인자로 받은 absoluteOffset을 음수로 바꿔서 바로 적용
+			target.AddStatMod(new StatMod(type, name, -absoluteOffset, duration));
+			
 			return true;
-        }
+		}		
+		
 
         public static TimeSpan GetDuration(Mobile caster, Mobile target)
         {
@@ -1581,24 +1622,23 @@ namespace Server.Spells
             Heal(amount, target, from, true);
         }
 
-        public static void Heal(int amount, Mobile target, Mobile from, bool message)
+        public static void Heal(int amount, Mobile target, Mobile from, bool message, bool healingSkillBonus = false)
         {
-            Spellweaving.ArcaneEmpowermentSpell.AddHealBonus(from, ref amount);
-
-            if (amount > 0 && target != from && from is PlayerMobile && target is PlayerMobile)
-            {
-                if (SearingWounds.IsUnderEffects(target))
-                {
-                    amount /= 2;
-                    target.SendLocalizedMessage(1151178); // The cauterized wound resists some of your healing.
-                }
-
-                int realAmount = Math.Min(amount, target.HitsMax - target.Hits);
-
-                if (realAmount > 0 && target != from)
-                    SpiritualityVirtue.OnHeal(from, realAmount);
-            }
-
+			//독 걸린 상대에겐 힐 절반. 신경 쇠약에 걸린 상대는 힐 불가
+			if(NerveStrike.IsCripple(target) )
+				amount = 0;
+			else if (target.Poisoned)
+			{
+				amount /= 2;
+				if( healingSkillBonus )
+				{
+					amount /= 2;
+					amount *= 3;
+				}
+			}
+			//힐 어그로 체크
+			AggroControl.HealCheck(from, target, amount);
+			
             target.Heal(amount, from, message);
         }
 

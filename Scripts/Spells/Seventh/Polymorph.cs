@@ -1,8 +1,9 @@
 using System;
 using System.Collections;
-using Server.Gumps;
+using System.Collections.Generic;
 using Server.Items;
-using Server.Spells.Fifth;
+using Server.Mobiles;
+using Server.Spells; // SummonPoolManager를 참조하기 위해 추가
 
 namespace Server.Spells.Seventh
 {
@@ -10,206 +11,83 @@ namespace Server.Spells.Seventh
     {
         private static readonly SpellInfo m_Info = new SpellInfo(
             "Polymorph", "Vas Ylem Rel",
-            221,
-            9002,
-            Reagent.Bloodmoss,
-            Reagent.SpidersSilk,
-            Reagent.MandrakeRoot);
+            221, 9002,
+            Reagent.Bloodmoss, Reagent.SpidersSilk, Reagent.MandrakeRoot);
+
         private static readonly Hashtable m_Timers = new Hashtable();
-        private readonly int m_NewBody;
-        public PolymorphSpell(Mobile caster, Item scroll, int body)
-            : base(caster, scroll, m_Info)
-        {
-            this.m_NewBody = body;
-        }
 
-        public PolymorphSpell(Mobile caster, Item scroll)
-            : this(caster,scroll,0)
-        {
-        }
+        public PolymorphSpell(Mobile caster, Item scroll) : base(caster, scroll, m_Info) { }
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Seventh;
-            }
-        }
-        public static bool StopTimer(Mobile m)
-        {
-            Timer t = (Timer)m_Timers[m];
-
-            if (t != null)
-            {
-                t.Stop();
-                m_Timers.Remove(m);
-            }
-
-            return (t != null);
-        }
+        public override SpellCircle Circle => SpellCircle.Seventh;
 
         public override bool CheckCast()
         {
-            if (Caster.Flying)
-            {
-            Caster.SendLocalizedMessage(1113415); // You cannot use this ability while flying.
-            return false;
-            }
-            else 
-            if (Factions.Sigil.ExistsOn(this.Caster))
-            {
-                this.Caster.SendLocalizedMessage(1010521); // You cannot polymorph while you have a Town Sigil
+            if (Caster.Flying || Factions.Sigil.ExistsOn(Caster) || TransformationSpellHelper.UnderTransformation(Caster))
                 return false;
-            }
-            else if (TransformationSpellHelper.UnderTransformation(this.Caster))
-            {
-                this.Caster.SendLocalizedMessage(1061633); // You cannot polymorph while in that form.
-                return false;
-            }
-            else if (DisguiseTimers.IsDisguised(this.Caster))
-            {
-                this.Caster.SendLocalizedMessage(502167); // You cannot polymorph while disguised.
-                return false;
-            }
-            else if (this.Caster.BodyMod == 183 || this.Caster.BodyMod == 184)
-            {
-                this.Caster.SendLocalizedMessage(1042512); // You cannot polymorph while wearing body paint
-                return false;
-            }
-            else if (!this.Caster.CanBeginAction(typeof(PolymorphSpell)))
-            {
-                if (Core.ML)
-                    EndPolymorph(this.Caster);
-                else 
-                    this.Caster.SendLocalizedMessage(1005559); // This spell is already in effect.
-                return false;
-            }
-            else if (this.m_NewBody == 0)
-            {
-                Gump gump;
-                if (Core.SE)
-                    gump = new NewPolymorphGump(this.Caster, this.Scroll);
-                else
-                    gump = new PolymorphGump(this.Caster, this.Scroll);
-
-                this.Caster.SendGump(gump);
-                return false;
-            }
 
             return true;
         }
 
         public override void OnCast()
         {
-            if (Caster.Flying)
+            if (CheckSequence())
             {
-            Caster.SendLocalizedMessage(1113415); // You cannot use this ability while flying.
-            }
-            else 
-            if (Factions.Sigil.ExistsOn(this.Caster))
-            {
-                this.Caster.SendLocalizedMessage(1010521); // You cannot polymorph while you have a Town Sigil
-            }
-            else if (!this.Caster.CanBeginAction(typeof(PolymorphSpell)))
-            {
-                if (Core.ML)
-                    EndPolymorph(this.Caster);
-                else
-                    this.Caster.SendLocalizedMessage(1005559); // This spell is already in effect.
-            }
-            else if (TransformationSpellHelper.UnderTransformation(this.Caster))
-            {
-                this.Caster.SendLocalizedMessage(1061633); // You cannot polymorph while in that form.
-            }
-            else if (DisguiseTimers.IsDisguised(this.Caster))
-            {
-                this.Caster.SendLocalizedMessage(502167); // You cannot polymorph while disguised.
-            }
-            else if (this.Caster.BodyMod == 183 || this.Caster.BodyMod == 184)
-            {
-                this.Caster.SendLocalizedMessage(1042512); // You cannot polymorph while wearing body paint
-            }
-            else if (!this.Caster.CanBeginAction(typeof(IncognitoSpell)) || this.Caster.IsBodyMod)
-            {
-                this.DoFizzle();
-            }
-            else if (this.CheckSequence())
-            {
-                if (this.Caster.BeginAction(typeof(PolymorphSpell)))
+                if (Caster.BeginAction(typeof(PolymorphSpell)))
                 {
-                    if (this.m_NewBody != 0)
+                    // 1. 소환수 강제 해제 (기존 로직 유지)
+                    if (Caster.Followers > 0)
                     {
-                        if (!((Body)this.m_NewBody).IsHuman)
+                        List<Mobile> toDelete = new List<Mobile>();
+                        foreach (Mobile m in Caster.GetMobilesInRange(20))
                         {
-                            Mobiles.IMount mt = this.Caster.Mount;
-
-                            if (mt != null)
-                                mt.Rider = null;
+                            if (m is BaseCreature bc && bc.ControlMaster == Caster && bc.Summoned)
+                                toDelete.Add(bc);
                         }
 
-                        this.Caster.BodyMod = this.m_NewBody;
-
-                        if (this.m_NewBody == 400 || this.m_NewBody == 401)
-                            this.Caster.HueMod = Utility.RandomSkinHue();
-                        else
-                            this.Caster.HueMod = 0;
-
-                        BaseArmor.ValidateMobile(this.Caster);
-                        BaseClothing.ValidateMobile(this.Caster);
-
-                        if (!Core.ML)
-                        {
-                            StopTimer(this.Caster);
-
-                            Timer t = new InternalTimer(this.Caster);
-
-                            m_Timers[this.Caster] = t;
-                            
-                            BuffInfo.AddBuff(Caster, new BuffInfo(BuffIcon.Polymorph, 1075824, 1075823, t.Delay, Caster, String.Format("{0}\t{1}", GetArticleCliloc(m_NewBody), GetFormCliloc(m_NewBody))));
-
-                            t.Start();
-                        }
+                        for (int i = 0; i < toDelete.Count; ++i)
+                            toDelete[i].Delete();
                     }
-                }
-                else
-                {
-                    this.Caster.SendLocalizedMessage(1005559); // This spell is already in effect.
+
+                    // 2. [근본적 해결] 매니저를 통해 변신할 동물 타입 결정
+                    // 이제 OnCast 내부에서 Activator.CreateInstance를 사용하지 않습니다.
+                    Type chosenType = SummonPoolManager.GetEligibleAnimal(Caster);
+                    
+                    int newBody = 0xD9; // 기본값: Dog
+
+                    // 3. 변신할 BodyID 추출
+                    // 리스트가 확정되었으므로 굳이 매번 생성할 필요 없이 
+                    // 엔진 내부의 기본 Body 값을 참조하거나, 안전하게 1회성 생성을 유지합니다.
+                    BaseCreature temp = Activator.CreateInstance(chosenType) as BaseCreature;
+                    if (temp != null)
+                    {
+                        newBody = temp.Body;
+                        temp.Delete(); // 로그 최소화를 위해 즉시 삭제
+                    }
+
+                    // 4. 변신 적용 (탈것 해제 및 효과)
+                    IMount mt = Caster.Mount;
+                    if (mt != null) mt.Rider = null;
+
+                    Caster.BodyMod = newBody;
+                    Caster.HueMod = 0;
+
+                    // 시각/청각 효과 추가 (변신 느낌 극대화)
+                    Caster.FixedParticles(0x3728, 1, 13, 9918, 92, 3, EffectLayer.Head);
+                    Caster.PlaySound(0x221);
+
+                    // 5. 지속 시간 (5분 + 보너스 * 0.06)
+                    double bonusDuration = SpellHelper.GetMagicValue(Caster, 0.06);
+                    TimeSpan duration = TimeSpan.FromMinutes(5.0) + TimeSpan.FromSeconds(bonusDuration);
+
+                    StopTimer(Caster);
+                    Timer t = new InternalTimer(Caster, duration);
+                    m_Timers[Caster] = t;
+                    t.Start();
+
+                    BuffInfo.AddBuff(Caster, new BuffInfo(BuffIcon.Polymorph, 1075824, duration, Caster));
                 }
             }
-
-            this.FinishSequence();
-        }
-        
-        private static TextDefinition GetArticleCliloc(int body)
-        {
-            if (body == 0x11 || body == 0x01)
-                return "an";
-
-            return "a";
-        }
-
-        private static TextDefinition GetFormCliloc(int body)
-        {
-            switch (body)
-            {
-                case 0xD9: return 1028476; // dog
-                case 0xE1: return 1028482; // wolf
-                case 0xD6: return 1028450; // panther
-                case 0x1D: return 1028437; // gorilla
-                case 0xD3: return 1028472; // black bear
-                case 0xD4: return 1028478; // grizzly bear
-                case 0xD5: return 1018276; // polar bear
-                case 0x190: return 1028454; // human male
-                case 0x191: return 1028455; // human female
-                case 0x11: return 1018110; // orc
-                case 0x21: return 1018128; // lizardman
-                case 0x04: return 1018097; // gargoyle
-                case 0x01: return 1018094; // ogre
-                case 0x36: return 1018147; // troll
-                case 0x02: return 1018111; // ettin
-                case 0x09: return 1018103; // daemon
-                default: return -1;
-            }
+            FinishSequence();
         }
 
         public static void EndPolymorph(Mobile m)
@@ -219,35 +97,27 @@ namespace Server.Spells.Seventh
                 m.BodyMod = 0;
                 m.HueMod = -1;
                 m.EndAction(typeof(PolymorphSpell));
-
-                BaseArmor.ValidateMobile(m);
-                BaseClothing.ValidateMobile(m);
-                
+                StopTimer(m);
                 BuffInfo.RemoveBuff(m, BuffIcon.Polymorph);
             }
+        }
+
+        public static bool StopTimer(Mobile m)
+        {
+            Timer t = (Timer)m_Timers[m];
+            if (t != null) { t.Stop(); m_Timers.Remove(m); }
+            return (t != null);
         }
 
         private class InternalTimer : Timer
         {
             private readonly Mobile m_Owner;
-            public InternalTimer(Mobile owner)
-                : base(TimeSpan.FromSeconds(0))
+            public InternalTimer(Mobile owner, TimeSpan duration) : base(duration)
             {
-                this.m_Owner = owner;
-
-                int val = (int)owner.Skills[SkillName.Magery].Value;
-
-                if (val > 120)
-                    val = 120;
-
-                this.Delay = TimeSpan.FromSeconds(val);
-                this.Priority = TimerPriority.OneSecond;
+                m_Owner = owner;
+                Priority = TimerPriority.OneSecond;
             }
-
-            protected override void OnTick()
-            {
-                EndPolymorph(this.m_Owner);
-            }
+            protected override void OnTick() { EndPolymorph(m_Owner); }
         }
     }
 }

@@ -22,8 +22,8 @@ namespace Server.Mobiles
 			this.SetStam(50, 80);
 			this.SetMana(0);
 
-			SetAttackSpeed(2.0);     // 공격 속도가 매우 빠름
-			SetDamage(3, 7);         // 데미지는 약함
+			SetAttackSpeed(2.0);
+			SetDamage(8, 14);
 
 			// 공격 속성: 물리 60% / 독 40% (습지 독기)
 			this.SetDamageType(ResistanceType.Physical, 60);

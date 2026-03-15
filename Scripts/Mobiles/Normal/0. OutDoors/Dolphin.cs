@@ -19,8 +19,11 @@ namespace Server.Mobiles
             this.SetHits(20, 35);
 
             // 공격 간격: 10.0초
-            SetAttackSpeed(10.0);
-            SetDamage(1, 3);
+			this.SetAttackSpeed(6.0);  // [조정] 10.0초 -> 6.0초. 
+									   // 소(8.0s)보다는 빠르지만 여전히 매우 느린 편입니다.
+									   // 바다에서 평화롭게 유영하다 가끔 툭 치는 느낌을 줍니다.
+
+			this.SetDamage(16, 24);    // [방어구 가치 존중]
 
             this.SetSkill(SkillName.Wrestling, 5.0, 10.0);
             this.SetSkill(SkillName.Tactics, 5.0, 10.0);

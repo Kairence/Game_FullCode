@@ -24,8 +24,8 @@ namespace Server.Mobiles
 			this.SetStam(32, 82); 
 			this.SetMana(100, 200);
 
-			SetAttackSpeed(2.5);
-			SetDamage(15, 25); 
+			SetAttackSpeed(3.0);
+			SetDamage(22, 32); // 다이어 울프(20-28)보다 강력한 인간형 전사
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 

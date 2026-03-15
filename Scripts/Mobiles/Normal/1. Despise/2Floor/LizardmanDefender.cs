@@ -22,8 +22,8 @@ namespace Server.Mobiles
 			this.SetHits(51, 551);   // 최종 Hits 5,000~5,500
 			this.SetStam(101, 151);
 
-			SetAttackSpeed(2.2);     
-			SetDamage(15, 22); 
+			SetAttackSpeed(2.5);
+			SetDamage(22, 32); 
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 
@@ -41,7 +41,8 @@ namespace Server.Mobiles
 
 			this.Fame = 2500;
 			this.Karma = -2500;		
-
+			this.SpecialType2 = 5;
+			this.SpecialChance2 = 0.1;	
         }
 
         public LizardmanDefender(Serial serial)

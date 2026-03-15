@@ -1,5 +1,6 @@
 using System;
 using Server.Targeting;
+using Server.Mobiles;
 
 namespace Server.Spells.Third
 {
@@ -11,18 +12,9 @@ namespace Server.Spells.Third
             9051,
             Reagent.Nightshade);
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Third;
-            }
-        }
+        public PoisonSpell(Mobile caster, Item scroll) : base(caster, scroll, m_Info) { }
 
-        public PoisonSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+        public override SpellCircle Circle => SpellCircle.Third;
 
         public override void OnCast()
         {
@@ -33,12 +25,11 @@ namespace Server.Spells.Third
         {
             if (!Caster.CanSee(m))
             {
-                Caster.SendLocalizedMessage(500237); // Target can not be seen.
+                Caster.SendLocalizedMessage(500237);
             }
             else if (CheckHSequence(m))
             {
                 SpellHelper.Turn(Caster, m);
-
                 SpellHelper.CheckReflect((int)Circle, Caster, ref m);
 
                 if (m.Spell != null)
@@ -46,20 +37,44 @@ namespace Server.Spells.Third
 
                 m.Paralyzed = false;
 
-                if (CheckResisted(m) || Server.Spells.Mysticism.StoneFormSpell.CheckImmunity(m))
+                // --- 1. 즉각적인 독 데미지 로직 ---
+                // 기획: 30 ~ 90 데미지 기반, 엔진의 GetNewAosDamage를 통해 최종 데미지 산출
+                int min = 30;
+                int max = 90;
+                int damage = GetNewAosDamage(0, min, max, m);
+
+                if (damage > 0)
                 {
-                    m.SendLocalizedMessage(501783); // You feel yourself resisting magical energy.
+                    // 독 속성 100% 데미지
+                    SpellHelper.Damage(this, m, damage, 0, 0, 0, 100, 0);
                 }
-                else
+
+                // --- 2. 중독 확률 판정 (20% + 보너스 * 0.004%) ---
+                double bonus = SpellHelper.GetMagicValue(Caster, 0.004);
+                double applyChance = 0.20 + (bonus * 0.01);
+
+                if (Utility.RandomDouble() < applyChance)
                 {
-                    int level = 0;
-
-                    if (Core.AOS)
+                    // --- 3. 독 레벨 결정 (중독술 보너스 계산) ---
+                    // 기획: 스킬 30당 1레벨 확정 + (50% + 1.5% * 남은스킬) 확률로 레벨+1
+                    double poisoningSkill = Caster.Skills[SkillName.Poisoning].Value;
+                    
+                    int baseLevel = (int)(poisoningSkill / 30.0); // 60스킬이면 2레벨 확정
+                    double remainder = poisoningSkill % 30.0;
+                    
+                    // 상승 확률: 50% + (남은 스킬 * 1.5%)
+                    double upgradeChance = (50.0 + (remainder * 1.5)) * 0.01;
+                    
+                    int finalLevel = baseLevel;
+                    if (Utility.RandomDouble() < upgradeChance)
                     {
-                        level = Caster.Skills.Magery.Fixed / 500;
-					}
+                        finalLevel++;
+                    }
 
-                    m.ApplyPoison(Caster, Poison.GetPoison(level));
+                    if (finalLevel >= 0)
+                    {
+                        m.ApplyPoison(Caster, Poison.GetPoison(finalLevel));
+                    }
                 }
 
                 m.FixedParticles(0x374A, 10, 15, 5021, EffectLayer.Waist);
@@ -74,25 +89,9 @@ namespace Server.Spells.Third
         private class InternalTarget : Target
         {
             private readonly PoisonSpell m_Owner;
-
-            public InternalTarget(PoisonSpell owner)
-                : base(Core.ML ? 10 : 12, false, TargetFlags.Harmful)
-            {
-                m_Owner = owner;
-            }
-
-            protected override void OnTarget(Mobile from, object o)
-            {
-                if (o is Mobile)
-                {
-                    m_Owner.Target((Mobile)o);
-                }
-            }
-
-            protected override void OnTargetFinish(Mobile from)
-            {
-                m_Owner.FinishSequence();
-            }
+            public InternalTarget(PoisonSpell owner) : base(Core.ML ? 10 : 12, false, TargetFlags.Harmful) { m_Owner = owner; }
+            protected override void OnTarget(Mobile from, object o) { if (o is Mobile) m_Owner.Target((Mobile)o); }
+            protected override void OnTargetFinish(Mobile from) { m_Owner.FinishSequence(); }
         }
     }
 }

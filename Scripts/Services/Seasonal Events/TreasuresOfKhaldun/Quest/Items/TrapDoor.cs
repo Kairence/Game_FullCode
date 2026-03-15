@@ -11,7 +11,7 @@ using Server.Engines.Quests;
 
 namespace Server.Engines.Khaldun
 {
-    public class TrapDoor : Item, IRevealableItem, IForensicTarget
+    public class TrapDoor : Item, IRevealableItem
     {
         //public static readonly Point3D TeleportDestination1 = new Point3D(6242, 2892, 17);
 
@@ -103,33 +103,6 @@ namespace Server.Engines.Khaldun
         {
             m.PrivateOverheadMessage(MessageType.Regular, 0x47E, 1158556, m.NetState); // *You notice something hidden in the floor...*
             Visible = true;
-        }
-
-        public void OnForensicEval(Mobile m)
-        {
-            if (!m.Player)
-                return;
-
-            var quest = QuestHelper.GetQuest<GoingGumshoeQuest2>((PlayerMobile)m);
-
-            if (quest != null && CheckPrerequisite(quest))
-            {
-                m.PrivateOverheadMessage(MessageType.Regular, 0x47E, 1158559, m.NetState); // *You discover a hidden trap door!*
-                m.SendLocalizedMessage(1158611, null, 0x23); // It seems a trap door has been hidden in some false pavers. The heavy wooden door is secured with a rotating combination lock that accepts alpha-numeric characters. You'll need to figure out the passcode to unlock it...
-
-                m.SendSound(quest.UpdateSound);
-
-                HasBeenExamined = true;
-                ItemID = 0xA1CC;
-
-                if (HideTimer != null)
-                {
-                    HideTimer.Stop();
-                    HideTimer = null;
-
-                    HideTimer = Timer.DelayCall(TimeSpan.FromMinutes(20), () => Hide());
-                }
-            }
         }
 
         private bool CheckPrerequisite(GoingGumshoeQuest2 quest)

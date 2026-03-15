@@ -30,9 +30,8 @@ namespace Server.Mobiles
 			this.SetDex(140, 160); // 흐물거리는 유연한 움직임
 			this.SetInt(250, 350); 
 
-			// [Combat Options] 독과 부식 에너지 타격
-			this.SetDamage(40, 60);
-			this.SetAttackSpeed(2.4);
+			SetAttackSpeed(10.0);
+			SetDamage(18, 28);
 			this.SetDamageType(ResistanceType.Poison, 80); // ★ 주 대미지원이 독
 			this.SetDamageType(ResistanceType.Energy, 20);
 

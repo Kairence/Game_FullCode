@@ -21,8 +21,11 @@ namespace Server.Mobiles
 			this.SetStam(44, 94);   // 최종 Stam 100~150
 			this.SetMana(0);
 
-			SetAttackSpeed(3.0);
-			SetDamage(5, 12); 
+			this.SetAttackSpeed(3.5);  // [조정] 3.0초 -> 3.5초.
+									   // 큰뿔사슴(3.5s)과 동급의 공속을 부여하여 
+									   // 초급 유저가 대응하기 편한 리듬을 유지합니다.
+
+			this.SetDamage(16, 24);    // [방어구 가치 존중]
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 

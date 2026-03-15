@@ -24,8 +24,8 @@ namespace Server.Mobiles
 			this.SetDex(80, 100);      
 			this.SetStam(80, 100);
 
-			this.SetAttackSpeed(2.5);  
-			SetDamage(15, 25);        
+			SetAttackSpeed(3.0);
+			SetDamage(35, 50);       
 
 			this.SetSkill(SkillName.Wrestling, 100.0, 110.0); // 최종 약 121
 			this.SetSkill(SkillName.Tactics, 100.0, 110.0);
@@ -34,7 +34,10 @@ namespace Server.Mobiles
 
 			this.SetResistance(ResistanceType.Physical, 35, 45);
 			this.SetResistance(ResistanceType.Fire, -30, -20); // 불에 취약
-			this.VirtualArmor = 15;
+			this.VirtualArmor = 9;
+			this.SpecialType2 = 0;
+			this.SpecialChance2 = 0.05;	
+			
         }
 
         public BoneKnight(Serial serial)

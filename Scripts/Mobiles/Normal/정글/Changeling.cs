@@ -43,9 +43,8 @@ namespace Server.Mobiles
 			this.SetDex(40, 50);
 			this.SetInt(40, 50);
 
-			// [Combat Options] 물리 100% (복제 대상에 따라 가변적이나 기본 물리)
-			this.SetDamage(25, 45);
-			this.SetAttackSpeed(2.0); // 변신술사다운 빠른 반응 속도
+			SetAttackSpeed(10.0);
+			SetDamage(18, 28);
 			this.SetDamageType(ResistanceType.Physical, 100);
 
 			// [Resistances] 최고 저항 75 이하 준수 / 에너지 약점 설정

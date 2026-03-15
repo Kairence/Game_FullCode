@@ -27,8 +27,11 @@ namespace Server.Mobiles
 			this.SetStam(132, 182); // 최종 Stam 200~250
 			this.SetMana(0);
 
-			SetAttackSpeed(2.0); // 타조 중 가장 빠름
-			SetDamage(15, 25); // 평균 20.0
+			this.SetAttackSpeed(2.5);  // [조정] 2.0초 -> 2.5초. 
+									   // 쿠거(2.0s)보다는 느리지만, 유저(3.0s)보다는 확실히 빠름.
+									   // "폭주"라는 이름에 걸맞게 유저보다 반 박자 빠르게 몰아칩니다.
+
+			this.SetDamage(22, 32);    // [방어구 가치 존중] 다이어 울프(20-28)보다 약간 더 강력함.
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 

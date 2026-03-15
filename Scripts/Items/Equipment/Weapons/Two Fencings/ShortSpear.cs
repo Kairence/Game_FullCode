@@ -11,10 +11,6 @@ namespace Server.Items
         public ShortSpear()
             : base(0x1403)
         {
-			PrefixOption[61] = 89;
-			SuffixOption[61] = 2000;
-			
-			//SkillBonuses.SetValues(5, SkillName.Fencing, 20.0);
             this.Weight = 14.0;
 		}
 
@@ -55,7 +51,7 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
 		
@@ -84,7 +80,7 @@ namespace Server.Items
         {
             get
             {
-                return 2.00f;
+                return 3.75f;
             }
         }
         public override int OldStrengthReq

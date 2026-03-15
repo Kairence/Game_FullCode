@@ -35,8 +35,8 @@ namespace Server.Mobiles
 			this.SetStam(44, 64);
 			this.SetMana(60, 70);
 
-			SetAttackSpeed(2.5);
-			SetDamage(5, 10);
+			SetAttackSpeed(3.0);
+			SetDamage(16, 24);
 
 			// 공격 속성: 녹슨 칼 (물리 100%)
 			this.SetDamageType(ResistanceType.Physical, 100);
@@ -49,8 +49,9 @@ namespace Server.Mobiles
 			// 최종 Skill 30.0 미만 (유저가 때리기 쉬운 샌드백)
 			// 30.0 - 1.5 = 28.5
 			this.SetSkill(SkillName.Wrestling, 18.5, 28.5);
-			this.SetSkill(SkillName.Fencing, 18.5, 28.5);
-			this.SetSkill(SkillName.Tactics, 18.5, 28.5);
+			this.SetSkill(SkillName.Macing, 18.5, 28.5);
+			this.SetSkill(SkillName.Swords, 18.5, 28.5);
+			this.SetSkill(SkillName.Tactics, 18.5, 48.5);
 			this.SetSkill(SkillName.Anatomy, 18.5, 28.5);
 
 			this.VirtualArmor = 0;
@@ -58,6 +59,9 @@ namespace Server.Mobiles
 			this.Fame = 600;
 			this.Karma = -600;
 
+
+			this.SpecialType2 = 0; // 도끼 타입
+			this.SpecialChance2 = 0.01; // 추가 확률 10%
 
             AddItem(new Boots(Utility.RandomNeutralHue()));
             AddItem(new FancyShirt());

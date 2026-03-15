@@ -24,8 +24,9 @@ namespace Server.Mobiles
 			this.SetStam(5, 10);
 			this.SetMana(0);
 
-			SetAttackSpeed(10.0);
-			SetDamage(1, 4); 
+			this.SetAttackSpeed(8.0);  // 10초보다는 약간 당겼지만, 여전히 매우 느린 속도. 
+									   // 유저가 무기를 3번 휘두를 때 소는 딱 한 번 들이받습니다.
+			this.SetDamage(15, 22);    // 방어 10인 유저에게 최종 5~12 데미지 전달.
 
 			this.SetSkill(SkillName.Wrestling, 0.3, 1.3); // 최종 1.0~2.0
 

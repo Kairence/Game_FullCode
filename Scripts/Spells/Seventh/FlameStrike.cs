@@ -53,8 +53,8 @@ namespace Server.Spells.Seventh
 
                 double damage = 0;
 
-				int min = 75;
-				int max = 165;
+				int min = 425;
+				int max = 600;
 				
                 if (Core.AOS)
                 {

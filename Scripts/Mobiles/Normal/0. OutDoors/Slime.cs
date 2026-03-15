@@ -25,8 +25,8 @@ namespace Server.Mobiles
 			this.SetStam(1, 5);     // 최종 Stam ~60
 			this.SetMana(0);
 
-			SetAttackSpeed(4.0);    // 매우 느린 공격
-			SetDamage(1, 2);        // 유저가 죽지 않는 수준
+			SetAttackSpeed(4.0);
+			SetDamage(10, 16); // 매우 느리지만 방어구의 필요성을 알게 하는 데미지
 
 			// 공격 속성: 물리 100% (초보자에게 속성 데미지는 가혹함)
 			this.SetDamageType(ResistanceType.Physical, 100);

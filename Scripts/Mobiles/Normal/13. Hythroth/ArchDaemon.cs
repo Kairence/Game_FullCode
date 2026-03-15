@@ -30,8 +30,8 @@ namespace Server.Mobiles
 			this.SetStam(200, 300);      
 			this.SetMana(900, 1200);      
 
-			this.SetAttackSpeed(2.0);    
-			this.SetDamage(40, 65);      
+			SetAttackSpeed(2.5);
+			SetDamage(75, 110);     
 
 			this.SetResistance(ResistanceType.Physical, 65, 75); 
 			this.SetResistance(ResistanceType.Fire, 75, 75);     

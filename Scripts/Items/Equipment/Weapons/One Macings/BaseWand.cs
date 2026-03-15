@@ -37,11 +37,11 @@ namespace Server.Items
         public BaseWand(WandEffect effect, int minCharges, int maxCharges)
             : base(Utility.RandomList(0xDF2, 0xDF3, 0xDF4, 0xDF5))
         {
-            this.Weight = 1.0;
+            this.Weight = 7.0;
             this.Effect = effect;
             this.Charges = Utility.RandomMinMax(minCharges, maxCharges);
 			PrefixOption[61] = 41;
-			SuffixOption[61] = 1000000;
+			SuffixOption[61] = 500000;
 			
 			//Attributes.CastSpeed += 500;
         }
@@ -90,14 +90,14 @@ namespace Server.Items
         {
             get
             {
-                return 1;
+                return 2;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 5;
+                return 4;
             }
         }
         public override int AosSpeed

@@ -54,11 +54,6 @@ namespace Server.Items
             {
                 from.SendLocalizedMessage(1074882, ChargeTime.ToString()); // You must wait ~1_val~ seconds for this to recharge.
             }
-            else if (SpellHelper.CheckTown(from.Location, from))
-            {
-                MeteorSwarmSpell spell = new MeteorSwarmSpell(from, null, this);
-                spell.Cast();
-            }
         }
 
         public override void OnAdded(object parent)

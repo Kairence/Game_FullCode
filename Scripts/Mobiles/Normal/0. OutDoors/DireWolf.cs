@@ -23,8 +23,11 @@ namespace Server.Mobiles
 			this.SetStam(32, 52);    // 최종 Stam 100~120
 			this.SetMana(0);
 
-			SetAttackSpeed(2.2); // 늑대의 빠른 공격
-			SetDamage(12, 20); // 평균 16.0
+			this.SetAttackSpeed(2.8);  // [조정] 2.2초 -> 2.8초 
+									   // 쿠거(2.0s)보다는 느리지만 유저 평균(3.0s)보다 살짝 빠르게 설정하여
+									   // "공격적이고 날렵하다"는 인상을 유지합니다.
+
+			this.SetDamage(20, 28);    // [방어구 가치 고려]
 
 			this.SetSkill(SkillName.Wrestling, 6.9, 8.9); // 최종 10.0~12.0
 

@@ -26,10 +26,8 @@ namespace Server.Mobiles
 			this.SetDex(80, 100);
 			this.SetInt(80, 100);
 
-			// [Combat Options] 
-			// 직접 타격은 매우 느리지만(10초), 마법 위력으로 승부함
-			this.SetDamage(30, 45);
-			this.SetAttackSpeed(10.0); // 10초당 1회 공격 (의식 영창 컨셉)
+			SetAttackSpeed(10.0);
+			SetDamage(18, 28);
 
 			// [Damage Types] 20% 물리 + 80% 에너지
 			this.SetDamageType(ResistanceType.Physical, 20);

@@ -21,8 +21,8 @@ namespace Server.Mobiles
 			this.SetStam(41, 91);
 			this.SetMana(500, 800);
 
-			SetAttackSpeed(2.0);
-			SetDamage(5, 10); 
+			SetAttackSpeed(2.5); // 정령 특유의 빠른 리듬
+			SetDamage(14, 20); // 에너지 저항이 낮으면 초보 법사에게 치명적
 
 			this.SetDamageType(ResistanceType.Physical, 0);
 			this.SetDamageType(ResistanceType.Energy, 100);

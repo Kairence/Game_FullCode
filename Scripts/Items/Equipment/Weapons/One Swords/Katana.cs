@@ -11,11 +11,7 @@ namespace Server.Items
         public Katana()
             : base(0x13FF)
         {
-			PrefixOption[61] = 96;
-			SuffixOption[61] = 1000;
-			
-			//SkillBonuses.SetValues(5, SkillName.Ninjitsu, 10.0);
-            this.Weight = 6.0;
+            this.Weight = 16.0;
         }
 
         public Katana(Serial serial)
@@ -55,7 +51,7 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
         public override int AosMinDamage
@@ -69,7 +65,7 @@ namespace Server.Items
         {
             get
             {
-                return 7;
+                return 6;
             }
         }
         public override int AosSpeed

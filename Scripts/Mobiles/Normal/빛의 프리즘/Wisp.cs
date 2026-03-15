@@ -33,9 +33,8 @@ namespace Server.Mobiles
 			this.SetDex(150, 180); // 정령다운 빠른 움직임
 			this.SetInt(300, 400); // 높은 지능과 마나
 
-			// [Combat Options] 에너지 기반의 가벼운 타격
-			this.SetDamage(10, 20);
-			this.SetAttackSpeed(2.0);
+			SetAttackSpeed(10.0);
+			SetDamage(10, 20);
 			this.SetDamageType(ResistanceType.Energy, 100);
 
 			// [Resistances] 빛의 정령 컨셉 (에너지 극대화, 물리/독 취약)

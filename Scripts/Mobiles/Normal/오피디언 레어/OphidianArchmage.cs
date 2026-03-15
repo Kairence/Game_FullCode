@@ -31,9 +31,8 @@ namespace Server.Mobiles
 			this.SetDex(55, 65);
 			this.SetInt(55, 65);
 
-			// [Combat Options] 물리 50% / 마법 50% (에너지)
-			this.SetDamage(35, 60);
-			this.SetAttackSpeed(2.5);
+			SetAttackSpeed(10.0);
+			SetDamage(18, 28);
 			this.SetDamageType(ResistanceType.Physical, 50);
 			this.SetDamageType(ResistanceType.Energy, 50);
 

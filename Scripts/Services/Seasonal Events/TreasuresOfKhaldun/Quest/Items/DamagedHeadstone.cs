@@ -15,7 +15,7 @@ using Server.Engines.Quests;
 
 namespace Server.Engines.Khaldun
 {
-    public class DamagedHeadstone : Item, IForensicTarget
+    public class DamagedHeadstone : Item
     {
         public override int LabelNumber { get { return 1158561; } } // damaged headstone
 
@@ -27,35 +27,6 @@ namespace Server.Engines.Khaldun
         {
             GumpLocalization = gumpLoc;
             Movable = false;
-        }
-
-        public void OnForensicEval(Mobile m)
-        {
-            if (!m.Player)
-                return;
-
-            var quest = QuestHelper.GetQuest<GoingGumshoeQuest2>((PlayerMobile)m);
-
-            if (quest != null)
-            {
-                m.PrivateOverheadMessage(MessageType.Regular, 0x47E, 1158571, m.NetState); // *You examine the headstone...*
-                m.SendLocalizedMessage(1158562, null, 0x23); // The damage to the epitaph seems deliberate.  Using your training from Inspector Jasper you have found a hidden message among the scratches. You recreate the original epitaph in your mind's eye...
-
-                m.SendSound(quest.UpdateSound);
-
-                var gump = new Gump(50, 50);
-
-                gump.AddImage(0, 0, 0x66);
-                gump.AddHtmlLocalized(47, 60, 146, 160, GumpLocalization, false, false);
-
-                m.SendGump(gump);
-
-                SetPrerequisite(quest);
-            }
-            else
-            {
-                m.PrivateOverheadMessage(MessageType.Regular, 0x47E, 1158563, m.NetState); // *It appears to be a normal, yet oddly damaged, headstone. The epitaph is illegible..*
-            }
         }
 
         public override void OnDoubleClick(Mobile m)

@@ -26,9 +26,8 @@ namespace Server.Mobiles
 			this.SetDex(100, 110); 
 			this.SetInt(100, 110);
 
-			// [Combat Options] 물리 60% / 독 40% (맹독이 흐르는 발톱)
-			this.SetDamage(45, 75);
-			this.SetAttackSpeed(2.0); // 복수자다운 빠른 공격 템포
+			SetAttackSpeed(10.0);
+			SetDamage(18, 28);
 			this.SetDamageType(ResistanceType.Physical, 60);
 			this.SetDamageType(ResistanceType.Poison, 40);
 

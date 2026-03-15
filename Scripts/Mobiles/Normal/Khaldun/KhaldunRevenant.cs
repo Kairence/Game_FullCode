@@ -31,9 +31,8 @@ namespace Server.Mobiles
 			this.SetDex(50, 70);
 			this.SetInt(50, 70);
 
-			// [Combat Options]
-			this.SetDamage(45, 65);
-			this.SetAttackSpeed(1.8); // 추격자답게 매우 빠른 연타
+			SetAttackSpeed(1.8);
+			SetDamage(55, 85);
 
 			// [Damage Types] 40% 물리 + 60% 냉기 (죽음의 한기)
 			this.SetDamageType(ResistanceType.Physical, 40);

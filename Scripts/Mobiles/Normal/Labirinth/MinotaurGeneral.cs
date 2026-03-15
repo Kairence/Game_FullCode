@@ -25,9 +25,8 @@ namespace Server.Mobiles
 			this.SetDex(220, 260);
 			this.SetInt(220, 260);
 
-			// [Combat Options] 대륙을 뒤흔드는 일격
-			this.SetDamage(100, 150); // 한 방에 빈사 상태 유도
-			this.SetAttackSpeed(2.4); // 장군다운 노련하고 묵직한 속도
+			SetAttackSpeed(2.4);
+			SetDamage(100, 150);
 
 			// [Damage Types] 80% 물리 + 20% 화염 (전쟁의 불길)
 			this.SetDamageType(ResistanceType.Physical, 80);

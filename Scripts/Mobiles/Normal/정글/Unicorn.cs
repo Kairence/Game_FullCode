@@ -30,9 +30,8 @@ namespace Server.Mobiles
 			this.SetDex(100, 120); 
 			this.SetInt(100, 120);
 
-			// [Combat Options] 물리 50% / 에너지 50% (신성한 마력 타격)
-			this.SetDamage(40, 65);
-			this.SetAttackSpeed(1.8); // 유니콘 특유의 민첩한 공격속도
+			SetAttackSpeed(10.0);
+			SetDamage(18, 28);
 			this.SetDamageType(ResistanceType.Physical, 50);
 			this.SetDamageType(ResistanceType.Energy, 50);
 

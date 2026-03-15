@@ -28,9 +28,8 @@ namespace Server.Mobiles
 			this.SetDex(125, 175); 
 			this.SetInt(350, 450);    // 위키 고증: 매우 높은 지능 (강력한 마법)
 
-			// [Combat Options] 물리 100% (독 속성 공격은 스킬로 구현)
-			this.SetDamage(45, 80); 
-			this.SetAttackSpeed(2.2); 
+			SetAttackSpeed(10.0);
+			SetDamage(18, 28);
 			this.SetDamageType(ResistanceType.Physical, 100);
 
 			// [Resistances] ★ 형님 지침 반영: 75%를 넘지 않는 상식적 저항

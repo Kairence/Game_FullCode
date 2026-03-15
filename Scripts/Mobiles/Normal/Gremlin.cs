@@ -25,9 +25,8 @@ namespace Server.Mobiles
 			this.SetDex(2, 5);
 			this.SetInt(2, 5);
 
-			// [Combat Options]
-			this.SetDamage(5, 12);
-			this.SetAttackSpeed(1.8); // 몸집이 작아 공격 속도는 다소 빠름
+			SetAttackSpeed(1.8); // 몸집이 작아 공격 속도는 빠름
+			SetDamage(4, 9);
 
 			// [Damage Types] 100% 물리 공격 (할퀴기/물어뜯기)
 			this.SetDamageType(ResistanceType.Physical, 100);

@@ -23,8 +23,8 @@ namespace Server.Mobiles
 			this.SetHits(100, 200);  // 보너스(+5,068) 합산 시 약 5,200
 			this.SetStam(76, 95);
 
-			this.SetAttackSpeed(2.0);   
-			SetDamage(8, 14);
+			SetAttackSpeed(2.0);
+			SetDamage(22, 32);
 
 			this.SetSkill(SkillName.Wrestling, 82.2); // 보너스 +7.2 반영
 			this.SetSkill(SkillName.Tactics, 82.2);

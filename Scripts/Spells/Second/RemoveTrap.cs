@@ -1,6 +1,7 @@
 using System;
 using Server.Items;
 using Server.Targeting;
+using Server.SkillHandlers; // 추가
 
 namespace Server.Spells.Second
 {
@@ -8,49 +9,38 @@ namespace Server.Spells.Second
     {
         private static readonly SpellInfo m_Info = new SpellInfo(
             "Remove Trap", "An Jux",
-            212,
-            9001,
-            Reagent.Bloodmoss,
-            Reagent.SulfurousAsh);
-        public RemoveTrapSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+            212, 9001, Reagent.Bloodmoss, Reagent.SulfurousAsh);
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Second;
-            }
-        }
+        public RemoveTrapSpell(Mobile caster, Item scroll) : base(caster, scroll, m_Info) { }
+
+        public override SpellCircle Circle => SpellCircle.Second;
+
         public override void OnCast()
         {
             this.Caster.Target = new InternalTarget(this);
         }
 
-        public void Target(TrapableContainer item)
+        public void Target(object targeted)
         {
-            if (!this.Caster.CanSee(item))
+            if (targeted is Item && !this.Caster.CanSee((Item)targeted))
             {
-                this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
+                this.Caster.SendLocalizedMessage(500237);
+                return;
             }
-            else if (item.TrapType != TrapType.None && item.TrapType != TrapType.MagicTrap)
+
+            // 기획 반영: 20 + 보너스 * 0.004
+            double bonus = SpellHelper.GetMagicValue(this.Caster, 0.004);
+            double power = 20.0 + bonus;
+
+            if (this.CheckSequence())
             {
-                base.DoFizzle();
-            }
-            else if (this.CheckSequence())
-            {
-                SpellHelper.Turn(this.Caster, item);
+                // 시각 효과 연출
+                Point3D loc = (targeted is IPoint3D) ? new Point3D((IPoint3D)targeted) : Caster.Location;
+                Effects.SendLocationParticles(EffectItem.Create(loc, Caster.Map, EffectItem.DefaultDuration), 0x376A, 9, 32, 5015);
+                Effects.PlaySound(loc, Caster.Map, 0x1F0);
 
-                Point3D loc = item.GetWorldLocation();
-
-                Effects.SendLocationParticles(EffectItem.Create(loc, item.Map, EffectItem.DefaultDuration), 0x376A, 9, 32, 5015);
-                Effects.PlaySound(loc, item.Map, 0x1F0);
-
-                item.TrapType = TrapType.None;
-                item.TrapPower = 0;
-                item.TrapLevel = 0;
+                // [설계 변경] 스킬 핸들러의 공용 로직 호출
+                RemoveTrap.OnRemove(Caster, targeted, true, power);
             }
 
             this.FinishSequence();
@@ -59,28 +49,9 @@ namespace Server.Spells.Second
         private class InternalTarget : Target
         {
             private readonly RemoveTrapSpell m_Owner;
-            public InternalTarget(RemoveTrapSpell owner)
-                : base(Core.ML ? 10 : 12, false, TargetFlags.None)
-            {
-                this.m_Owner = owner;
-            }
-
-            protected override void OnTarget(Mobile from, object o)
-            {
-                if (o is TrapableContainer)
-                {
-                    this.m_Owner.Target((TrapableContainer)o);
-                }
-                else
-                {
-                    from.SendLocalizedMessage(501856); // That isn't trapped.
-                }
-            }
-
-            protected override void OnTargetFinish(Mobile from)
-            {
-                this.m_Owner.FinishSequence();
-            }
+            public InternalTarget(RemoveTrapSpell owner) : base(12, false, TargetFlags.None) { m_Owner = owner; }
+            protected override void OnTarget(Mobile from, object o) { m_Owner.Target(o); }
+            protected override void OnTargetFinish(Mobile from) { this.m_Owner.FinishSequence(); }
         }
     }
 }

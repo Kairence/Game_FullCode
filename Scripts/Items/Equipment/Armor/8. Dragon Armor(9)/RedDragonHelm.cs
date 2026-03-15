@@ -11,10 +11,6 @@ namespace Server.Items
         {
             Weight = 12.0;
 			PrefixOption[50] = 8;    //세트 옵션 번호
-			PrefixOption[61] = 13;   //화염 저항
-			SuffixOption[61] = 250000; //25%
-			PrefixOption[62] = 23;   //불 피해 증가
-			SuffixOption[62] = 200000; //20
         }
 
         public RedDragonHelm(Serial serial)
@@ -23,17 +19,55 @@ namespace Server.Items
         }
 
  		public override int LabelNumber { get { return 1029797; } }
-		public override int AosStrReq { get { return 2500; } }
-        public override int AosDexReq { get { return 2500; } }
-        public override int AosIntReq { get { return 2500; } }
-        public override int OldStrReq { get { return 6; } }
+        public override int InitMinHits
+        {
+            get
+            {
+                return 100;
+            }
+        }
+        public override int InitMaxHits
+        {
+            get
+            {
+                return 100;
+            }
+        }
+        public override int AosStrReq
+        {
+            get
+            {
+                return 2500;
+            }
+        }
+        public override int AosDexReq
+        {
+            get
+            {
+                return 2500;
+            }
+        }
+        public override int AosIntReq
+        {
+            get
+            {
+                return 2500;
+            }
+        }
         public override int ArmorBase
         {
             get
             {
-                return 9;
+                return 7;
             }
         }
+		public override double ArmorRating
+		{
+			get
+			{
+				return 10.0; // 원하는 감소 수치를 입력하세요.
+			}
+		}
         public override ArmorMaterialType MaterialType
         {
             get

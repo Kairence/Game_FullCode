@@ -6,7 +6,7 @@ namespace Server.Items
     {
         [Constructable]
         public BookOfChivalry()
-            : this((ulong)0)
+            : this((ulong)509)
         {
         }
 
@@ -22,7 +22,6 @@ namespace Server.Items
             : base(serial)
         {
         }
-
         public override SpellbookType SpellbookType
         {
             get
@@ -34,14 +33,14 @@ namespace Server.Items
         {
             get
             {
-                return 0;
+                return 200;
             }
         }
         public override int BookCount
         {
             get
             {
-                return 0;
+                return 10;
             }
         }
         public override void Serialize(GenericWriter writer)

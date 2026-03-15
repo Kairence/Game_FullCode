@@ -39,8 +39,8 @@ namespace Server.Mobiles
 			this.SetHits(1150, 3150); 
 			this.SetStam(150, 200);      
 
-			this.SetAttackSpeed(2.6);    
-			this.SetDamage(15, 25);      
+			SetAttackSpeed(2.5);
+			SetDamage(35, 50);    
 
 			this.SetResistance(ResistanceType.Physical, 45, 55);
 			this.SetResistance(ResistanceType.Poison, 60, 75); // Max 75%

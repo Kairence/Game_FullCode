@@ -11,9 +11,7 @@ namespace Server.Items
         public Broadsword()
             : base(0xF5E)
         {
-			PrefixOption[61] = 42;
-			SuffixOption[61] = 150000;
-            this.Weight = 6.0;
+            this.Weight = 16.0;
         }
 
         public Broadsword(Serial serial)
@@ -53,21 +51,21 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
         public override int AosMinDamage
         {
             get
             {
-                return 3;
+                return 6;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 6;
+                return 8;
             }
         }
         public override int AosSpeed

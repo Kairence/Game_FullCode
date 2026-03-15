@@ -3,6 +3,7 @@ using Server;
 using Server.Items;
 using Server.Mobiles;
 using Server.Engines.XmlSpawner2;
+using System.Collections.Generic;
 
 namespace Server.Misc
 {
@@ -104,6 +105,10 @@ namespace Server.Misc
             else if (item is BaseClothing bcHp) { hp = bcHp.HitPoints; maxHp = bcHp.MaxHitPoints; }
 
             if (hp >= 0 && maxHp > 0) list.Add(1060639, "{0}\t{1}", hp, maxHp);
+			
+			int currentSkillUse = 5;
+			// 1. 신규 옵션 루프 (인덱스 61~70)
+			currentSkillUse = ProcessOptionLoop(list, eqItem, 61, 10, 1080641, 1081997, currentSkillUse);
         }
 
         private static void AppendRequirements(ObjectPropertyList list, Item item, IEquipOption eq)
@@ -204,7 +209,7 @@ namespace Server.Misc
 			// 3. 마법 옵션 헤더 출력 (반드시 이 아래 로직들이 실행되어야 함)
 			list.Add(1063512); // [마법 옵션]
 
-			int currentSkillUse = 5;
+			int currentSkillUse = 0;
 			
 			// 1. 랭크 옵션 루프 (인덱스 9) - SuffixOption[1] (랭크 레벨)이 있을 때만
 			if (eqItem.SuffixOption[1] > 0)
@@ -212,10 +217,8 @@ namespace Server.Misc
 				currentSkillUse = ProcessOptionLoop(list, eqItem, 9, 1, 1080641, 1081999, currentSkillUse);
 			}
 
-			// 2. 신규 옵션 루프 (인덱스 61~70)
-			currentSkillUse = ProcessOptionLoop(list, eqItem, 61, 10, 1080641, 1081997, currentSkillUse);
 
-			// 3. 일반 마법 옵션 루프 (인덱스 11~30)
+			// 2. 일반 마법 옵션 루프 (인덱스 11~30)
 			ProcessOptionLoop(list, eqItem, 11, eqItem.SuffixOption[0], 1080641, 1081999, currentSkillUse);
 		}
 		#endregion
@@ -300,32 +303,61 @@ namespace Server.Misc
         #endregion
 
         #region 5. 세트 옵션
-        private static void AppendSetOptions(ObjectPropertyList list, IEquipOption eqItem)
-        {
-            int setID = eqItem.PrefixOption[50];
-            if (setID <= 0) return;
+		private static void AppendSetOptions(ObjectPropertyList list, IEquipOption eqItem)
+		{
+			if (eqItem.PrefixOption[50] is not (var setID and > 0)) return;
+			if (eqItem is not Item item || item.RootParent is not Mobile from) return;
 
-            Item item = eqItem as Item;
-            if (item == null) return;
+			int setcount = (from is PlayerMobile pm) ? pm.ItemSetValue[setID] : 0;
+			list.Add(1084100 + setID); // 세트 명칭 [가죽 갑옷 세트]
 
-            Mobile from = item.RootParent as Mobile;
-            int setcount = (from is PlayerMobile) ? ((PlayerMobile)from).ItemSetValue[setID] : 0;
+			int[][] setSteps = Misc.SetItem.GetSetData(setID);
 
-            list.Add(1084100 + setID); // 세트 명칭
+			for (int i = 0; i < setSteps.Length; i++)
+			{
+				int[] currentStep = setSteps[i];
+				if (currentStep is null or { Length: 0 }) continue;
 
-            int totalset = Misc.SetItem.SetItemList[setID].GetLength(0) / 2;
-            int maxset = 8;
-            for (int i = 0; i < totalset; i++)
-            {
-                int equipoption = Misc.SetItem.SetItemList[setID][i * 2];
-                int equipvalue = Misc.SetItem.SetItemList[setID][i * 2 + 1];
-                int cliloc = 1084011 + i + OPLPercentCheck(Misc.ItemOptionCreator.EquipRandomOption[equipoption,0], maxset);
+				int currentStepGoal = i + 2; 
+				int optionCount = currentStep.Length / 2; // 이 단계의 옵션 개수
+				
+				// [자동 매칭] 옵션이 2개면 1084002 틀을 부릅니다.
+				int clilocTemplate = 1084000 + optionCount;
 
-                if (i < setcount - 1) cliloc += maxset * 2;
+				List<string> args = [];
 
-                list.Add(cliloc, "#{0}\t{1}", Misc.ItemOptionCreator.EquipRandomOption[equipoption, 0], (equipvalue * Misc.Util.PercentCalc(equipoption)).ToString());
-            }
-        }
+				// --- 1번 빈칸(~1_val~) : 색상 태그 + 세트 단계 ---
+				if (setcount >= currentStepGoal)
+				{
+					// 입은 개수가 목표치 이상이면 기획하신 초록색 적용!
+					args.Add($"<BASEFONT COLOR=#2DDC1B>{currentStepGoal}세트 :");
+				}
+				else
+				{
+					// 목표치 미달이면 비활성 회색
+					args.Add($"<BASEFONT COLOR=#808080>{currentStepGoal}세트 :");
+				}
+
+				// --- 2번 빈칸부터 : 실제 Cliloc 명칭과 수치 ---
+				for (int k = 0; k < currentStep.Length; k += 2)
+				{
+					int optID = currentStep[k];
+					int optVal = currentStep[k + 1];
+
+					int optCliloc = Misc.ItemOptionCreator.EquipRandomOption[optID, 0];
+					string valStr = (optVal * Misc.Util.PercentCalc(optID)).ToString();
+
+					if (OPLPercentCheck(optCliloc, 0) > 0)
+						valStr += "%";
+
+					args.Add($"#{optCliloc}"); // ~2_val~ : 옵션 이름 (예: #1080590)
+					args.Add(valStr);          // ~3_val~ : 수치 (예: 15)
+				}
+
+				// 완성된 인자들을 탭(\t)으로 묶어서 전송!
+				list.Add(clilocTemplate, string.Join("\t", args));
+			}
+		}
         #endregion
 
         #region 6. 고유 옵션

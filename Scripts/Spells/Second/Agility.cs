@@ -1,5 +1,6 @@
 using System;
 using Server.Targeting;
+using Server.Mobiles;
 
 namespace Server.Spells.Second
 {
@@ -11,19 +12,14 @@ namespace Server.Spells.Second
             9061,
             Reagent.Bloodmoss,
             Reagent.MandrakeRoot);
+
         public AgilitySpell(Mobile caster, Item scroll)
             : base(caster, scroll, m_Info)
         {
         }
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Second;
-            }
-        }
-        
+        public override SpellCircle Circle => SpellCircle.Second;
+
         public override void OnCast()
         {
             this.Caster.Target = new InternalTarget(this);
@@ -37,24 +33,19 @@ namespace Server.Spells.Second
             }
             else if (this.CheckBSequence(m))
             {
-                int oldDex = SpellHelper.GetBuffOffset(m, StatType.Dex);
-                int newDex = SpellHelper.GetOffset(Caster, m, StatType.Dex, false, true);
+                SpellHelper.Turn(this.Caster, m);
 
-                if (newDex < oldDex || newDex == 0)
-                {
-                    DoHurtFizzle();
-                }
-                else
-                {
-                    SpellHelper.Turn(this.Caster, m);
+                int totalBonus = 500 + (int)SpellHelper.GetMagicValue(this.Caster, 0.01);
 
-					double percentage = 10 + Caster.Skills.Magery.Value * 0.01;
-					TimeSpan length = TimeSpan.FromSeconds(30.0);
-                    BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Agility, 1075841, length, m, percentage.ToString()));
+                TimeSpan length = TimeSpan.FromSeconds(60.0); // 기본 1분
 
-                    m.FixedParticles(0x375A, 10, 15, 5010, EffectLayer.Waist);
-                    m.PlaySound(0x1e7);
-                }
+                SpellHelper.AddStatBonus(this.Caster, m, StatType.Dex, totalBonus, length);
+
+                // 4. 연출 및 버프 알림
+                m.FixedParticles(0x375A, 10, 15, 5010, EffectLayer.Waist);
+                m.PlaySound(0x1e7);
+
+                BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Agility, 1075841, length, m, totalBonus.ToString()));
             }
 
             this.FinishSequence();

@@ -17,7 +17,7 @@ namespace Server.Mobiles
             this.SetDex(100);
             this.SetInt(500);
 
-            this.SetHits(100);
+            this.SetHits(3000);
 			this.SetStam(1000);
 			this.SetMana(100);
 
@@ -39,6 +39,7 @@ namespace Server.Mobiles
 
             this.VirtualArmor = 5;
             this.CanSwim = true;
+			ControlSlots = 3;
         }
 
         public SummonedWaterElemental(Serial serial)

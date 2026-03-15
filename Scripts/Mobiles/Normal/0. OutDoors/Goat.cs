@@ -21,8 +21,9 @@ namespace Server.Mobiles
 			this.SetStam(8, 18);
 			this.SetMana(0);
 
-			SetAttackSpeed(3.5);
-			SetDamage(1, 3); 
+			this.SetAttackSpeed(4.0);  // [조정] 3.5초 -> 4.0초. 
+									   // 개(3.5s)보다 느리게 설정하여 초식 동물의 여유를 표현합니다.
+			this.SetDamage(12, 16);    // [방어구 효능 반영]
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 

@@ -11,9 +11,6 @@ namespace Server.Items
         public TwoHandedAxe()
             : base(0x1443)
         {
-			PrefixOption[61] = 20;
-			SuffixOption[61] = 750000;
-			//Attributes.RegenStam += 75;
             this.Weight = 28.0;
         }
 
@@ -54,7 +51,7 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
 		
@@ -62,14 +59,14 @@ namespace Server.Items
         {
             get
             {
-                return 1;
+                return 6;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 13;
+                return 8;
             }
         }
         public override int AosSpeed

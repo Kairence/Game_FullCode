@@ -27,9 +27,8 @@ namespace Server.Engines.Quests.Samurai
 			this.SetDex(15, 25);
 			this.SetInt(15, 25);
 
-			// [Combat Options]
-			this.SetDamage(20, 35);
-			this.SetAttackSpeed(2.0);
+			SetAttackSpeed(2.0);
+			SetDamage(20, 35);
 
 			// [Damage Types] 100% 에너지 (순수한 원한의 파동)
 			this.SetDamageType(ResistanceType.Physical, 0);

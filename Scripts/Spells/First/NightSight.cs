@@ -7,83 +7,44 @@ namespace Server.Spells.First
     {
         private static readonly SpellInfo m_Info = new SpellInfo(
             "Night Sight", "In Lor",
-            236,
-            9031,
-            Reagent.SulfurousAsh,
-            Reagent.SpidersSilk);
-        public NightSightSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+            236, 9031,
+            Reagent.SulfurousAsh, Reagent.SpidersSilk);
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.First;
-            }
-        }
+        public NightSightSpell(Mobile caster, Item scroll) : base(caster, scroll, m_Info) { }
+
+        public override SpellCircle Circle => SpellCircle.First;
 
         public override void OnCast()
         {
-			int level = SpellLevel(Caster, 4);
-			
-			TimeSpan length = TimeSpan.FromSeconds(300.0 + level * 60 + Caster.Skills.Magery.Value * 1.5);
-
-			int criBonus = level >= 5 ? 10 : 5;
-
-			BuffInfo.AddBuff(Caster, new BuffInfo(BuffIcon.NightSight, 1075833, length, Caster, criBonus.ToString()));
-			Caster.FixedParticles(0x376A, 9, 32, 5007, EffectLayer.Waist);
-			Caster.PlaySound(0x1E3);
-        }
-
-		/*
-        public void Target(Mobile targ)
-        {
-            SpellHelper.Turn(Caster, targ);
-
-            if (targ.BeginAction(typeof(LightCycle)))
+            if (CheckSequence())
             {
-                new LightCycle.NightSightTimer(targ).Start();
-				
-                targ.LightLevel = LightCycle.DungeonLevel * 100;
-                targ.FixedParticles(0x376A, 9, 32, 5007, EffectLayer.Waist);
-                targ.PlaySound(0x1E3);
+                Mobile caster = Caster;
 
+                // 1. 지속 시간 계산
+                double bonus = SpellHelper.GetMagicValue(caster, 0.012);
+                TimeSpan length = TimeSpan.FromSeconds(60.0 + bonus);
 
-                BuffInfo.AddBuff(targ, new BuffInfo(BuffIcon.NightSight, 1075643));	//Night Sight/You ignore lighting effects
-            }
-            else
-            {
-                Caster.SendMessage("{0} already have nightsight.", Caster == targ ? "You" : "They");
-            }
-        }
-
-        private class NightSightTarget : Target
-        {
-            private readonly NightSightSpell m_Spell;
-
-            public NightSightTarget(NightSightSpell spell)
-                : base(12, false, TargetFlags.Beneficial)
-            {
-                m_Spell = spell;
-            }
-
-            protected override void OnTarget(Mobile from, object targeted)
-            {
-                if (targeted is Mobile && m_Spell.CheckBSequence((Mobile)targeted))
+                // 2. 효과 적용 (중복 방지 체크)
+                if (caster.BeginAction(typeof(NightSightSpell)))
                 {
-                    m_Spell.Target((Mobile)targeted);
+                    // 연출 및 시야
+                    caster.FixedParticles(0x376A, 9, 32, 5007, EffectLayer.Waist);
+                    caster.PlaySound(0x1E3);
+                    caster.LightLevel = 100;
+
+                    // 버프 아이콘 추가 (수치는 5%로 표시)
+                    BuffInfo.AddBuff(caster, new BuffInfo(BuffIcon.NightSight, 1075643, length, caster, "5"));
+
+                    // 3. 종료 타이머 (수치 원복은 AosAttributes가 자동으로 처리함)
+                    Timer.DelayCall(length, () => 
+                    {
+                        caster.EndAction(typeof(NightSightSpell));
+                        caster.LightLevel = 0;
+                        BuffInfo.RemoveBuff(caster, BuffIcon.NightSight);
+                    });
                 }
-
-                m_Spell.FinishSequence();
             }
-
-            protected override void OnTargetFinish(Mobile from)
-            {
-                m_Spell.FinishSequence();
-            }
+            FinishSequence();
         }
-		*/
     }
 }

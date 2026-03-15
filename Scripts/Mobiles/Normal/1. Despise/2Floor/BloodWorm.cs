@@ -41,9 +41,8 @@ namespace Server.Mobiles
 			this.SetStam(1150, 1250);
 			this.SetMana(1150, 1250);
 
-			// [Combat Options]
-			this.SetDamage(45, 65);
-			this.SetAttackSpeed(1.6);
+			SetAttackSpeed(5.0);
+			SetDamage(55, 85);			// BloodWorm.cs
 
 			// [Resistances] 최고 저항 75 이하 엄격 준수
 			this.SetResistance(ResistanceType.Physical, 35, 45); // 물리 방어는 낮음

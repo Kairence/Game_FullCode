@@ -293,7 +293,26 @@ namespace Server.Items
 				InvalidateProperties();
 			}
 		}
+		public override bool CheckConflictingLayer(Mobile m, Item item, Layer layer)
+		{
+			if (base.CheckConflictingLayer(m, item, layer))
+			{
+				return true;
+			}
 
+			if (Layer == Layer.TwoHanded && layer == Layer.OneHanded)
+			{
+                m.LocalOverheadMessage(MessageType.Regular, 0x3B2, 500214); // You already have something in both hands.
+                return true;
+			}
+			else if (Layer == Layer.OneHanded && layer == Layer.TwoHanded && !(item is BaseShield) && !(item is BaseEquipableLight))
+			{
+                m.LocalOverheadMessage(MessageType.Regular, 0x3B2, 500215); // // You can only wield one weapon at a time.
+				return true;
+			}
+
+			return false;
+		}
         #region IVvVItem / IOwnerRestricted
         private bool _VvVItem;
         private Mobile _Owner;
@@ -826,18 +845,6 @@ namespace Server.Items
                 from.SendLocalizedMessage(501023); // You must be the owner to use this item.
                 return false;
             }
-			/*
-			else if( from is PlayerMobile && !Util.EquipCheck( ((PlayerMobile)from), this ) )
-			{
-				from.SendLocalizedMessage(1071936); // You cannot equip that.
-				return false;
-			}
-			*/
-            else if (IsVvVItem && !Engines.VvV.ViceVsVirtueSystem.IsVvV(from))
-            {
-                from.SendLocalizedMessage(1155496); // This item can only be used by VvV participants!
-                return false;
-            }
 			else if( SpellbookType == SpellbookType.Regular )
 			{
 				from.SendLocalizedMessage(1071936); // You cannot equip that.
@@ -993,6 +1000,7 @@ namespace Server.Items
 				if( Owner == null && ( PrefixOption[0] == 200 || PrefixOption[0] == 300 ) )
 					Owner = from;
 
+				/*
 				//세트 아이템 체크 코드
 				if( PrefixOption[50] > 0 )
 				{
@@ -1003,7 +1011,7 @@ namespace Server.Items
 						Misc.SetItem.SetOption(pm, false);
 					}					
 				}				
-				
+				*/
                 if (HasSocket<Caddellite>())
                 {
                     Caddellite.UpdateBuff(from);
@@ -1026,6 +1034,7 @@ namespace Server.Items
                     Caddellite.UpdateBuff(from);
                 }
 
+				/*
 				//세트 아이템 해제 코드
 				if( PrefixOption[50] > 0 )
 				{
@@ -1036,7 +1045,7 @@ namespace Server.Items
 						Misc.SetItem.SetOption(pm, false);
 					}					
 				}
-
+				*/
 				string modName = Serial.ToString();
 
 				from.RemoveStatMod(modName + "Str");

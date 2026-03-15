@@ -11,10 +11,6 @@ namespace Server.Items
         {
             Weight = 4.0;
 			PrefixOption[50] = 1;    //세트 옵션 번호
-			PrefixOption[61] = 41;   //시전 속도%
-			SuffixOption[61] = 50000; //5%
-			PrefixOption[62] = 6;    //마나
-			SuffixOption[62] = 1000000; //100
         }
 
         public Circlet(Serial serial)
@@ -46,22 +42,29 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
         public override int AosIntReq
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
         public override int ArmorBase
         {
             get
             {
-                return 1;
+                return 2;
             }
+        }
+		public override double ArmorRating
+		{
+			get
+			{
+				return 1.0; // 원하는 감소 수치를 입력하세요.
+			}
         }
         public override ArmorMaterialType MaterialType
         {

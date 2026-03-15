@@ -26,8 +26,10 @@ namespace Server.Mobiles
 			this.SetStam(92, 112);  // 최종 Stam 150~170
 			this.SetMana(0);
 
-			SetAttackSpeed(2.5);
-			SetDamage(5, 12); // 평균 8.5
+			this.SetAttackSpeed(3.0);  // 쿠거(2.0s)보다는 느리지만, 유저의 평균 공속과 대등함.
+									   // 맷돼지(4.0s)를 잡던 유저가 "오, 얘는 좀 빠르네?"라고 느낄 정도.
+
+			this.SetDamage(14, 20);    // [방어구 효능 극대화]
 
 			this.SetSkill(SkillName.Wrestling, 3.9, 5.9); // 최종 5.0~7.0
 

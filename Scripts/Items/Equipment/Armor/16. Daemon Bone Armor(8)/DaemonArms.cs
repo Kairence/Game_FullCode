@@ -12,23 +12,47 @@ namespace Server.Items
             this.Weight = 10.0;
             this.Hue = 0x648;
 			PrefixOption[50] = 14;	 //세트 옵션 번호
-			PrefixOption[61] = 113;	 //모든 저항력%
-			SuffixOption[61] = 60000; //6%
-			PrefixOption[62] = 123;	 //요정 피해%
-			SuffixOption[62] = 250000; //25%
-			PrefixOption[63] = 118;	 //모든 속도%
-			SuffixOption[63] = 100000; //10%
-
         }
 
         public DaemonArms(Serial serial)
             : base(serial)
         {
         }
-		public override int AosStrReq { get { return 1416; } }
-        public override int AosDexReq { get { return 1416; } }
-        public override int AosIntReq { get { return 1416; } }
-        public override int OldStrReq { get { return 15; } }
+        public override int InitMinHits
+        {
+            get
+            {
+                return 100;
+            }
+        }
+        public override int InitMaxHits
+        {
+            get
+            {
+                return 100;
+            }
+        }
+        public override int AosStrReq
+        {
+            get
+            {
+                return 4444;
+            }
+        }
+        public override int AosDexReq
+        {
+            get
+            {
+                return 4444;
+            }
+        }
+        public override int AosIntReq
+        {
+            get
+            {
+                return 4444;
+            }
+        }
         public override int ArmorBase
         {
             get
@@ -36,6 +60,13 @@ namespace Server.Items
                 return 6;
             }
         }
+		public override double ArmorRating
+		{
+			get
+			{
+				return 10.0; // 원하는 감소 수치를 입력하세요.
+			}
+		}
         public override ArmorMaterialType MaterialType
         {
             get

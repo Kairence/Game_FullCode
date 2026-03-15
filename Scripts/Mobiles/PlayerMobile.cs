@@ -1406,14 +1406,6 @@ namespace Server.Mobiles
                 {
                     continue;
                 }
-
-				//Resistances[0] += ( AosWeaponAttributes.GetValue(this, AosWeaponAttribute.ResistPhysicalBonus ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.AllResist ) ) / 100; // + SilverPoint[27];
-				//Resistances[1] += ( AosWeaponAttributes.GetValue(this, AosWeaponAttribute.ResistFireBonus ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.AllResist ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.ElementalResist ) ) / 100; // + SilverPoint[27];
-				//Resistances[2] += ( AosWeaponAttributes.GetValue(this, AosWeaponAttribute.ResistColdBonus ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.AllResist ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.ElementalResist ) ) / 100; // + SilverPoint[27];
-				//Resistances[3] += ( AosWeaponAttributes.GetValue(this, AosWeaponAttribute.ResistPoisonBonus ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.AllResist ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.ElementalResist ) ) / 100; // + SilverPoint[27];
-				//Resistances[4] += ( AosWeaponAttributes.GetValue(this, AosWeaponAttribute.ResistEnergyBonus ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.AllResist ) + AosArmorAttributes.GetValue(this, AosArmorAttribute.ElementalResist ) ) / 100; // + SilverPoint[27];
-				//Resistances[5] += BaseChaosResistance;
-				//Resistances[6] += BaseDirectResistance;
                 ISetItem setItem = item as ISetItem;
 
                 Resistances[0] += setItem != null && setItem.SetEquipped ? setItem.SetResistBonus(ResistanceType.Physical) : item.PhysicalResistance;
@@ -1422,7 +1414,14 @@ namespace Server.Mobiles
                 Resistances[3] += setItem != null && setItem.SetEquipped ? setItem.SetResistBonus(ResistanceType.Poison) : item.PoisonResistance;
                 Resistances[4] += setItem != null && setItem.SetEquipped ? setItem.SetResistBonus(ResistanceType.Energy) : item.EnergyResistance;
             }
-
+			if (Server.Spells.Chivalry.HolyLightSpell.UnderAura(this))
+			{
+				// 0:물리, 1:화염, 2:냉기, 3:독, 4:에너지
+				for (int i = 1; i <= 4; ++i) 
+				{
+					Resistances[i] += 10; // 화염~에너지 저항 10씩 증가
+				}
+			}
             for (int i = 0; i < Resistances.Length; ++i)
             {
                 int min = GetMinResistance((ResistanceType)i);
@@ -2770,6 +2769,29 @@ namespace Server.Mobiles
 				WeaponAbility.ClearCurrentAbility(pm);
 		}
 
+		// 세트 아이템 통합 관리 메서드
+		private void CheckSetItemChange(Item item, bool added)
+		{
+			// 인터페이스 확인 및 세트 번호(PrefixOption[50]) 존재 확인
+			if (item is IEquipOption equip && equip.PrefixOption != null && equip.PrefixOption[50] > 0)
+			{
+				int setID = equip.PrefixOption[50];
+
+				if (added)
+				{
+					this.ItemSetValue[setID]++;
+				}
+				else
+				{
+					if (this.ItemSetValue[setID] > 0)
+						this.ItemSetValue[setID]--;
+				}
+
+				// 세트 옵션 재계산 호출 (reroad: false로 하여 루프 최소화)
+				Misc.SetItem.SetOption(this, false);
+			}
+		}
+
 		public int[] SilverPointScore = { 0, 1, 3, 6, 11, 18, 28, 43, 68, 108, 168, 268, 418, 668, 1068, 1668, 2668, 4168, 6668, 11668, 21668 };
 
 		public int[] SilverPointRealScore = { 0, 1, 2, 3, 5, 7, 10, 15, 25, 40, 60, 100, 150, 250, 400, 600, 1000, 1500, 2500, 5000, 10000 };
@@ -2835,7 +2857,7 @@ namespace Server.Mobiles
 		public void PlayerMove(bool cityteleporter)
 		{
 			Point3D loc = new Point3D( 2499, 924, 0 );
-			UnEquipCheck();
+			//UnEquipCheck();
 
 			// 1. SaveTown에 따른 좌표 설정
 			switch ( m_SaveTown )
@@ -2901,7 +2923,6 @@ namespace Server.Mobiles
 			SavagePaintExpiration = TimeSpan.Zero;
 
 			PolymorphSpell.StopTimer(this);
-			IncognitoSpell.StopTimer(this);
 			DisguiseTimers.RemoveTimer(this);
 
             WeakenSpell.RemoveEffects(this);
@@ -3095,22 +3116,6 @@ namespace Server.Mobiles
 			Timer.DelayCall( TimeSpan.FromSeconds( 30.0 ), new TimerCallback( BuffCount ) );
 		}
 		
-		private int[] sub_regen = { 0, 0, 0 };
-		
-		private int RegenCalc( int regen, int number )
-		{
-			int totalregen = 0;
-			sub_regen[number] += regen;
-
-			if( sub_regen[number] >= 10000 )
-			{
-				totalregen = sub_regen[number] / 10000;
-				sub_regen[number] -= totalregen * 10000;
-			}
-			return totalregen;
-		}
-		
-		
 		private void PlayerCount()
 		{
 			// 1. [0.1초 주기] 최소한의 타이머 감소 로직만 수행
@@ -3161,41 +3166,98 @@ namespace Server.Mobiles
 		private List<Mobile> m_MySummons = new List<Mobile>();
 		public List<Mobile> MySummons => m_MySummons;
 		
+		private int[] sub_regen = { 0, 0, 0 };
+		
+		private int RegenCalc( int regen, int number )
+		{
+			int totalregen = 0;
+			sub_regen[number] += regen;
+
+			if( sub_regen[number] >= 10000 )
+			{
+				totalregen = sub_regen[number] / 10000;
+				sub_regen[number] -= totalregen * 10000;
+			}
+			return totalregen;
+		}
+		
 		private void CheckRegenerationAndSummons()
 		{
-			// 1. [회복 로직] (생략: 기존의 Hits, Stam, Mana 회복 코드 위치)
+			if (Deleted || !Alive) return;
 
-			// 2. [소환수 마나 소모 최적화]
-			if (m_MySummons.Count > 0)
+			// 1. 던전 주기 및 자연회복 가능 여부 체크
+			bool isDungeon = (Region != null && Region.IsPartOf(typeof(Regions.DungeonRegion)));
+			bool canRegenNow = true;
+
+			if (isDungeon)
 			{
-				int totalManaDrain = 0;
+				// 던전은 재생 시간이 1초에서 10초로 느려짐 (10초에 한 번만 canRegenNow가 true)
+				if (m_TimerList[74] > 0) { m_TimerList[74]--; canRegenNow = false; }
+				else m_TimerList[74] = 9;
+			}
+			else m_TimerList[74] = 0;
 
-				// 리스트를 역순으로 순회 (삭제 시 안전을 위함)
+			// 2. 재생 로직 수행 (던전이라면 10초에 한 번만 실행됨)
+			if (canRegenNow)
+			{
+				double foc = Skills.Focus.Value;
+				double med = Skills.Meditation.Value;
+				bool isCombat = (m_TimerList[64] != 0 || m_TimerList[65] != 0);
+
+				// [전체 재생 효율 계산] - (기본 1.0 - 추종자 패널티 + 스킬 보너스) / Max 1.0
+				double hSRate = Math.Min(1.0, 1.0 - (Followers * 0.2) + (foc / 500.0));
+				double mRate = Math.Min(1.0, 1.0 - (Followers * 0.2) + (med / 250.0));
+
+				// 3. 재생 수치 계산 (고정 포인트 합산)
+				int hPt = 0, sPt = 0, mPt = 0;
+
+				// [전투 여부 체크]
+				if (m_TimerList[64] == 0 && m_TimerList[65] == 0)
+				{
+					// A. 자연 회복 (비전투 & 비던전 시 최대치의 1% 회복)
+					// 최대치가 100일 때 10,000 포인트가 되어야 하므로 * 100
+					if (!isDungeon)
+					{
+						hPt += HitsMax * 100;
+						sPt += StamMax * 100;
+						mPt += ManaMax * 100;
+					}
+					else if( Meditating )
+						mPt += ManaMax * 100;
+					
+					// B. 재생 옵션 (1당 0.0001 회복 = 1 포인트)
+					hPt += AosAttributes.GetValue(this, AosAttribute.RegenHits);
+					sPt += AosAttributes.GetValue(this, AosAttribute.RegenStam);
+					mPt += AosAttributes.GetValue(this, AosAttribute.RegenMana);
+
+					// C. 스킬 고정 재생 (집중 1당 0.1 회복 = 1,000 포인트 / 명상 1당 0.2 회복 = 2,000 포인트)
+					hPt += (int)(foc * 1000);
+					sPt += (int)(foc * 1000);
+					mPt += (int)(med * 2000);
+				}
+
+				// C. 실제 회복 적용 (계산 합계 * 전체 재생 효율)
+				int h = RegenCalc((int)(hPt * hSRate), 0);
+				int s = RegenCalc((int)(sPt * hSRate), 1);
+				int m = RegenCalc((int)(mPt * mRate), 2);
+
+				if (h > 0 && Hits < HitsMax) Hits += h;
+				if (s > 0 && Stam < StamMax) Stam += s;
+				if (m > 0 && Mana < ManaMax) Mana += m;
+			}
+
+			// 3. 소환수 마나 소모 (던전 패널티와 상관없이 매초 실행)
+			if (m_MySummons != null && m_MySummons.Count > 0)
+			{
+				int drain = 0;
 				for (int i = m_MySummons.Count - 1; i >= 0; i--)
 				{
 					Mobile s = m_MySummons[i];
-
-					// 소환수가 사라졌거나 죽었다면 리스트에서 제거
-					if (s == null || s.Deleted || !s.Alive)
-					{
-						m_MySummons.RemoveAt(i);
-						continue;
-					}
-
-					// 소환수 한 마리당 마나 1 소모 (기획에 맞게 수치 조정 가능)
-					totalManaDrain += 1;
+					if (s == null || s.Deleted || !s.Alive) m_MySummons.RemoveAt(i);
+					else drain++;
 				}
-
-				// 마나가 부족하면 소환수 전부 해제
-				if (this.Mana < totalManaDrain)
-				{
-					this.Mana = 0;
-					ClearSummons(); // 마나 부족 시 소환 해제 메서드 호출
-				}
-				else
-				{
-					this.Mana -= totalManaDrain;
-				}
+				if (Mana < drain) { Mana = 0; ClearSummons(); }
+				else Mana -= drain;
 			}
 		}
 
@@ -3249,6 +3311,7 @@ namespace Server.Mobiles
 			//71 : 일 대기 시간
 			//72 : 침대 사용 시간
 			//73 : 리젠 체크
+			//74 : 던전 체크
 
 			for( int i = 0; i < m_TimerList.Length; i++)
 			{
@@ -4007,6 +4070,7 @@ namespace Server.Mobiles
 			{
 				CheckLightLevels(false);
 			}
+			CheckSetItemChange(item, true);
 		}
 
         private BaseWeapon m_LastWeapon;
@@ -4042,18 +4106,19 @@ namespace Server.Mobiles
 			{
 				CheckLightLevels(false);
 			}
+			CheckSetItemChange(item, false);
 		}
 
 		//스텟 설정
 		#region [Stats]Max
 		[CommandProperty(AccessLevel.GameMaster)]
-		public override int HitsMax { get {	return Math.Min( 1000 + Math.Min(AosAttributes.GetValue(this, AosAttribute.BonusHits) / 10000, 4000) + SkillbyStat[4] / 1000 , 9999 ); } }
+		public override int HitsMax { get {	return Math.Min( 1000 + Math.Min(AosAttributes.GetValue(this, AosAttribute.BonusHits) / 100, 4000) + SkillbyStat[4] / 1000 , 9999 ); } }
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public override int StamMax { get { return Math.Min( 1000 + Math.Min(AosAttributes.GetValue(this, AosAttribute.BonusStam) / 10000, 4000) + SkillbyStat[5] / 1000, 9999 ); } }
+		public override int StamMax { get { return Math.Min( 1000 + Math.Min(AosAttributes.GetValue(this, AosAttribute.BonusStam) / 100, 4000) + SkillbyStat[5] / 1000, 9999 ); } }
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public override int ManaMax { get { return Math.Min( 1000 + Math.Min(AosAttributes.GetValue(this, AosAttribute.BonusMana) / 10000, 4000) + SkillbyStat[6] / 1000, 9999 ); } }
+		public override int ManaMax { get { return Math.Min( 1000 + Math.Min(AosAttributes.GetValue(this, AosAttribute.BonusMana) / 100, 4000) + SkillbyStat[6] / 1000, 9999 ); } }
 		#endregion
 		
 		#region Stat Getters/Setters
@@ -5912,18 +5977,7 @@ namespace Server.Mobiles
             return base.OnBeforeDeath();
         }
 		
-		public void UnEquipCheck()
-		{
-			Fury = 0;
-			FuryActive = false;
-			Server.Spells.Bushido.Evasion.EndEvasion(this);
-			Server.Spells.Chivalry.DivineFurySpell.RemoveEffects(this);
-			Server.Spells.Chivalry.ConsecrateWeaponSpell.RemoveEffects(this);
-			Server.Spells.Bushido.Confidence.EndConfidence(this);
-			Server.Spells.Bushido.CounterAttack.StopCountering(this);
-			Server.Spells.Chivalry.EnemyOfOneSpell.RemoveEffect(this);
-		}
-		
+	
 		private bool CheckInsuranceOnDeath(Item item)
 		{
             if (Young)
@@ -6039,7 +6093,6 @@ namespace Server.Mobiles
 			SetHairMods(-1, -1);
 
 			PolymorphSpell.StopTimer(this);
-			IncognitoSpell.StopTimer(this);
 			DisguiseTimers.RemoveTimer(this);
 
             WeakenSpell.RemoveEffects(this);
@@ -6515,7 +6568,7 @@ namespace Server.Mobiles
 
 		public List<Mobile> PermaFlags { get { return m_PermaFlags; } }
 
-        public override int Luck { get { return Math.Min( Math.Min(AosAttributes.GetValue(this, AosAttribute.Luck) / 10000, 4000) + TenthAnniversarySculpture.GetLuckBonus(this) + SkillbyStat[3] / 1000, 10000 ); } }
+        public override int Luck { get { return Math.Min( Math.Min(AosAttributes.GetValue(this, AosAttribute.Luck) / 100, 4000) + TenthAnniversarySculpture.GetLuckBonus(this) + SkillbyStat[3] / 1000, 10000 ); } }
 
         public int RealLuck
 		{ 
@@ -6577,7 +6630,7 @@ namespace Server.Mobiles
 			CountAndTimeStamp count = (CountAndTimeStamp)tbl[obj];
 			if (count != null)
 			{
-				if (count.TimeStamp + SkillCheck.AntiMacroExpire <= DateTime.UtcNow)
+				if (count.TimeStamp <= DateTime.Now)
 				{
 					count.Count = 1;
 					return true;
@@ -6931,22 +6984,6 @@ namespace Server.Mobiles
 		{ 
 			get { return m_TodayLogin; } 
 			set { m_TodayLogin = value; InvalidateProperties(); } 
-		}
-		
-		public bool SkillUpCheck(double skillvalue, int skill, double gain)
-		{
-			m_SkillList[skill] += gain;
-			
-			if( m_SkillList[skill] < 0 )
-				m_SkillList[skill] = 0;
-
-			if( m_SkillList[skill] >= Misc.Util.SkillExp_Calc(this, skill) )
-			{
-				m_SkillList[skill] = 0;
-
-				return true;
-			}
-			return false;
 		}
 		
 		//포인트 정의
@@ -7814,7 +7851,7 @@ namespace Server.Mobiles
 				ArrayList remove = new ArrayList();
 				foreach (CountAndTimeStamp time in t.Values)
 				{
-					if (time.TimeStamp + SkillCheck.AntiMacroExpire <= DateTime.UtcNow)
+					if (time.TimeStamp  <= DateTime.Now)
 					{
 						remove.Add(time);
 					}

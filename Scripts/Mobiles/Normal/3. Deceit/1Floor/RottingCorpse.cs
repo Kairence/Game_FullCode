@@ -29,8 +29,8 @@ namespace Server.Mobiles
 			this.SetStam(140, 150);
 			this.SetMana(140, 150);
 
-			this.SetAttackSpeed(1.8);  // 부패한 몸치고는 상당히 빠른 연사력
-			SetDamage(55, 75);        // 한 방이 뼈를 부수는 파괴력
+			SetAttackSpeed(4.5);
+			SetDamage(65, 95);      // 한 방이 뼈를 부수는 파괴력
 
 			// [Skill] 최종 180.0(±10.0) 목표 (기초 131.9 + 보너스 48.1)
 			this.SetSkill(SkillName.Wrestling, 122.0, 142.0); 

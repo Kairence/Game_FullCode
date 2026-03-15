@@ -28,8 +28,8 @@ namespace Server.Mobiles
 			this.SetHits(18320, 24320); 
 			this.SetStam(150, 200);      
 
-			this.SetAttackSpeed(3.2);    // 묵직한 타격
-			this.SetDamage(35, 55);      
+			SetAttackSpeed(10.0);
+			SetDamage(18, 28);     
 
 			this.SetDamageType(ResistanceType.Physical, 70);
 			this.SetDamageType(ResistanceType.Fire, 30);

@@ -31,9 +31,8 @@ namespace Server.Mobiles
 			this.SetDex(90, 120);
 			this.SetInt(90, 120);
 
-			// [Combat Options]
-			this.SetDamage(50, 75); // 흑개미 여왕(40, 65)보다 치명적인 공격력
-			this.SetAttackSpeed(2.5);
+			SetAttackSpeed(2.5);
+			SetDamage(75, 105);
 
 			// [Damage Types] 50% 물리 + 50% 화염 (붉은 여왕의 분노)
 			this.SetDamageType(ResistanceType.Physical, 50);

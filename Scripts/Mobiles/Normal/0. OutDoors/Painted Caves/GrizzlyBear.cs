@@ -21,8 +21,8 @@ namespace Server.Mobiles
 			this.SetHits(1102, 1602); // 최종 Hits 5,000~5,500
 			this.SetStam(56, 86);
 
-			SetAttackSpeed(3.5);     
-			SetDamage(25, 35); 
+			SetAttackSpeed(6.5);
+			SetDamage(45, 65);
 
 			this.SetResistance(ResistanceType.Physical, 20, 25);
 			this.SetResistance(ResistanceType.Cold, 20, 25);

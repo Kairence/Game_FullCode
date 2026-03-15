@@ -18,7 +18,7 @@ namespace Server.Mobiles
             this.SetDex(800);
             this.SetInt(100);
 
-            this.SetHits(550);
+            this.SetHits(2550);
             this.SetStam(550);
 			this.SetMana(100);
 
@@ -39,6 +39,7 @@ namespace Server.Mobiles
             this.SetSkill(SkillName.MagicResist, 60.0);
 
             this.VirtualArmor = 5;
+			ControlSlots = 3;
         }
 
         public SummonedAirElemental(Serial serial)

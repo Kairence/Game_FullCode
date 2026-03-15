@@ -28,9 +28,8 @@ namespace Server.Mobiles
 			this.SetDex(110, 125);
 			this.SetInt(110, 125);
 
-			// [Combat Options] 물리 100% (정예 쥬카의 대검 타격)
-			this.SetDamage(40, 65);
-			this.SetAttackSpeed(2.2); 
+			SetAttackSpeed(2.2);    
+			SetDamage(30, 50);
 			this.SetDamageType(ResistanceType.Physical, 100);
 
 			// [Resistances] 최고 저항 75 이하 준수 / 독 약점 설정

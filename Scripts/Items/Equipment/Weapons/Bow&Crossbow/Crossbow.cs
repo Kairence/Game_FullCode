@@ -9,10 +9,8 @@ namespace Server.Items
         public Crossbow()
             : base(0xF50)
         {
-            this.Weight = 7.0;
+            this.Weight = 17.0;
             this.Layer = Layer.TwoHanded;
-			PrefixOption[61] = 81;
-			SuffixOption[61] = 1000;
 			
 			//SkillBonuses.SetValues(5, SkillName.Archery, 10.0);
 
@@ -76,7 +74,7 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
 		
@@ -84,14 +82,14 @@ namespace Server.Items
         {
             get
             {
-                return 12;
+                return 4;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 16;
+                return 17;
             }
         }
         public override int AosSpeed
@@ -105,7 +103,7 @@ namespace Server.Items
         {
             get
             {
-                return 3.50f;
+                return 3.00f;
             }
         }
         public override int OldStrengthReq

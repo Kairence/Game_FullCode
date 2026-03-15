@@ -14,19 +14,16 @@ namespace Server.Spells.Sixth
             9002,
             Reagent.Bloodmoss,
             Reagent.Nightshade);
+
         private static readonly Hashtable m_Table = new Hashtable();
+
         public InvisibilitySpell(Mobile caster, Item scroll)
             : base(caster, scroll, m_Info)
         {
         }
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Sixth;
-            }
-        }
+        public override SpellCircle Circle => SpellCircle.Sixth;
+
         public static bool HasTimer(Mobile m)
         {
             return m_Table[m] != null;
@@ -43,6 +40,18 @@ namespace Server.Spells.Sixth
             }
         }
 
+        public override bool CheckCast()
+        {
+            // 기획: 은신(Hiding) 스킬이 대기상태(Cooldown)인 경우 시전 불가
+            if (!Caster.CanBeginAction(typeof(Server.SkillHandlers.Hiding)))
+            {
+                // 메시지가 필요 없다면 삭제 가능합니다.
+                return false;
+            }
+
+            return base.CheckCast();
+        }
+
         public override void OnCast()
         {
             this.Caster.Target = new InternalTarget(this);
@@ -54,7 +63,7 @@ namespace Server.Spells.Sixth
             {
                 this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
             }
-            else if (m is Mobiles.BaseVendor || m is Mobiles.PlayerVendor || m is Mobiles.PlayerBarkeeper || m.AccessLevel > this.Caster.AccessLevel)
+            else if (m is BaseVendor || m is PlayerVendor || m is PlayerBarkeeper || m.AccessLevel > this.Caster.AccessLevel)
             {
                 this.Caster.SendLocalizedMessage(501857); // This spell won't work on that!
             }
@@ -68,23 +77,28 @@ namespace Server.Spells.Sixth
                 m.Hidden = true;
                 m.Combatant = null;
                 m.Warmode = false;
-				if( Caster is PlayerMobile )
-				{
-					PlayerMobile pm = Caster as PlayerMobile;
-					pm.realHidden = false;
-				}
+
+                if (Caster is PlayerMobile)
+                {
+                    PlayerMobile pm = Caster as PlayerMobile;
+                    pm.realHidden = false;
+                }
 
                 RemoveTimer(m);
 
-                TimeSpan duration = TimeSpan.FromSeconds(5 + this.Caster.Skills.Magery.Fixed * 0.005);
+                // --- 기획: 지속 시간 계산 (30초 + 보너스 * 0.006) ---
+                // 예: 보너스가 5000점이면 30 + 30 = 60초 유지
+                double bonus = SpellHelper.GetMagicValue(Caster, 0.006);
+                double seconds = 30.0 + bonus;
+
+                TimeSpan duration = TimeSpan.FromSeconds(seconds);
 
                 Timer t = new InternalTimer(m, duration);
 
                 BuffInfo.RemoveBuff(m, BuffIcon.HidingAndOrStealth);
-                BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Invisibility, 1075825, duration, m));	//Invisibility/Invisible
+                BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Invisibility, 1075825, duration, m));
 
                 m_Table[m] = t;
-
                 t.Start();
             }
 
@@ -95,7 +109,7 @@ namespace Server.Spells.Sixth
         {
             private readonly InvisibilitySpell m_Owner;
             public InternalTarget(InvisibilitySpell owner)
-                : base(Core.ML ? 10 : 12, false, TargetFlags.Beneficial)
+                : base(12, false, TargetFlags.Beneficial)
             {
                 this.m_Owner = owner;
             }
@@ -103,9 +117,7 @@ namespace Server.Spells.Sixth
             protected override void OnTarget(Mobile from, object o)
             {
                 if (o is Mobile)
-                {
                     this.m_Owner.Target((Mobile)o);
-                }
             }
 
             protected override void OnTargetFinish(Mobile from)

@@ -9,7 +9,7 @@ namespace Server.Items
         public RepeatingCrossbow()
             : base(0x26C3)
         {
-            this.Weight = 6.0;
+            this.Weight = 16.0;
 		}
 
         public RepeatingCrossbow(Serial serial)
@@ -70,7 +70,7 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
 		
@@ -78,14 +78,14 @@ namespace Server.Items
         {
             get
             {
-                return 4;
+                return 3;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 5;
+                return 12;
             }
         }
         public override int AosSpeed
@@ -99,7 +99,7 @@ namespace Server.Items
         {
             get
             {
-                return 1.00f;
+                return 2.00f;
             }
         }
         public override int OldStrengthReq

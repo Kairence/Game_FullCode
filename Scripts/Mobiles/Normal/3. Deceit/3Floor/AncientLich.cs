@@ -44,8 +44,8 @@ namespace Server.Mobiles
 			this.SetMana(3800, 3950);
 
 			// [Combat Options]
-			this.SetDamage(50, 80);
-			this.SetAttackSpeed(1.8);
+			SetAttackSpeed(7.0);
+			SetDamage(75, 110);
 
 			// [Resistances] 최고 저항 75 이하 준수
 			this.SetResistance(ResistanceType.Physical, 45, 55);
@@ -65,7 +65,10 @@ namespace Server.Mobiles
 			this.VirtualArmor = 25;
 
 			this.Fame = 26000;
-			this.Karma = -26000;       
+			this.Karma = -26000;      
+			this.SpecialType2 = 4;
+			this.SpecialChance2 = 0.30;	
+			
         }
         public override int GetAttackSound() { return 0x61E; }
         public override int GetDeathSound() { return 0x61F; }

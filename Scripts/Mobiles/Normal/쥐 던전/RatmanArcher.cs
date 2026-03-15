@@ -28,9 +28,8 @@ namespace Server.Mobiles
 			this.SetDex(140, 160); // 궁수다운 빠른 사격 속도
 			this.SetInt(60, 75);
 
-			// [Combat Options] 물리 100% (조잡한 화살 사격)
-			this.SetDamage(20, 35);
-			this.SetAttackSpeed(2.8); // 활의 기본 속도 반영
+			SetAttackSpeed(2.8);    
+			SetDamage(15, 26);
 			this.SetDamageType(ResistanceType.Physical, 100);
 
 			// [Resistances] 최고 저항 75 이하 준수 / 에너지 약점 설정

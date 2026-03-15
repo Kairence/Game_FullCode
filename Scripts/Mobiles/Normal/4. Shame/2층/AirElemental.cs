@@ -25,8 +25,8 @@ namespace Server.Mobiles
 			this.SetStam(350, 450);      
 			this.SetMana(300, 450);      
 
-			this.SetAttackSpeed(1.8);    // 매우 빠른 공속
-			this.SetDamage(12, 18);      
+			SetAttackSpeed(10.0);
+			SetDamage(18, 28);      
 
 			this.SetDamageType(ResistanceType.Physical, 50);
 			this.SetDamageType(ResistanceType.Energy, 50);
@@ -59,7 +59,7 @@ namespace Server.Mobiles
 			}
 			*/
 
-            ControlSlots = 2;
+            ControlSlots = 3;
         }
 
         public AirElemental(Serial serial)

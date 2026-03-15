@@ -823,17 +823,6 @@ namespace Server.Mobiles
 						return item;
 					}
 				}
-				else if (item is ParalyzeFieldSpell.InternalItem)
-				{
-					var field = (ParalyzeFieldSpell.InternalItem)item;
-
-					if (field.Visible && field.Caster != null && (!Core.AOS || m_Mobile != field.Caster) &&
-						SpellHelper.ValidIndirectTarget(field.Caster, m_Mobile) && field.Caster.CanBeHarmful(m_Mobile, false))
-					{
-						eable.Free();
-						return item;
-					}
-				}
 				else if (item is FireFieldSpell.FireFieldItem)
 				{
 					var field = (FireFieldSpell.FireFieldItem)item;

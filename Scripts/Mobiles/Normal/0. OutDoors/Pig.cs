@@ -20,8 +20,11 @@ namespace Server.Mobiles
 			this.SetStam(47, 97); 
 			this.SetMana(0);
 
-			SetAttackSpeed(3.5);
-			SetDamage(2, 4); 
+			this.SetAttackSpeed(4.0);  // [조정] 3.5초 -> 4.0초.
+									   // 멧돼지(4.0s)와 같은 리듬을 공유하여 '돼지류'의 공통 속도 부여.
+									   // 개(3.5s)보다는 확실히 둔한 느낌을 줍니다.
+
+			this.SetDamage(10, 15);    // [방어구 효능 반영] 개(10-14)와 비슷한 수준.
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 

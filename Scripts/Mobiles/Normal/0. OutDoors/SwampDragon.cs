@@ -34,7 +34,7 @@ namespace Server.Mobiles
 			this.SetStam(66, 116);
 
 			SetAttackSpeed(3.0);
-			SetDamage(15, 25);
+			SetDamage(24, 36); // 중상급 전투 탈것의 위력
 
 			// 공격 속성: 묵직한 타격과 부식성 독
 			this.SetDamageType(ResistanceType.Physical, 75);

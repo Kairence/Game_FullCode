@@ -9,14 +9,7 @@ namespace Server.Items
         public Scimitar()
             : base(0x13B6)
         {
-			PrefixOption[61] = 19;
-			PrefixOption[62] = 20;
-			SuffixOption[61] = 500000;
-			SuffixOption[62] = 500000;
-
-			//Attributes.RegenHits += 50;
-			//Attributes.RegenStam += 50;
-            this.Weight = 5.0;
+            this.Weight = 15.0;
 		}
 
         public Scimitar(Serial serial)
@@ -56,7 +49,7 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
         public override int AosMinDamage

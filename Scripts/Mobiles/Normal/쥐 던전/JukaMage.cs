@@ -29,9 +29,8 @@ namespace Server.Mobiles
 			this.SetDex(60, 75);
 			this.SetInt(250, 270); // 높은 지능으로 인한 강력한 마법 데미지
 
-			// [Combat Options] 물리 20% / 에너지 80% (마력 깃든 지팡이)
-			this.SetDamage(25, 45);
-			this.SetAttackSpeed(2.5); 
+			SetAttackSpeed(10.0);
+			SetDamage(25, 45);
 			this.SetDamageType(ResistanceType.Physical, 20);
 			this.SetDamageType(ResistanceType.Energy, 80);
 

@@ -37,25 +37,19 @@ namespace Server.Spells.Second
             }
             else if (this.CheckBSequence(m))
             {
-                int oldInt = SpellHelper.GetBuffOffset(m, StatType.Int);
-                int newInt = SpellHelper.GetOffset(Caster, m, StatType.Int, false, true);
+                SpellHelper.Turn(this.Caster, m);
 
-                if (newInt < oldInt || newInt == 0)
-                {
-                    DoHurtFizzle();
-                }
-                else
-                {
-                    SpellHelper.Turn(this.Caster, m);
+                int totalBonus = 500 + (int)SpellHelper.GetMagicValue(this.Caster, 0.01);
 
-                    SpellHelper.AddStatBonus(this.Caster, m, false, StatType.Int);
-					double percentage = 10 + Caster.Skills.Magery.Value * 0.01;
-					TimeSpan length = TimeSpan.FromSeconds(30.0);
-                    BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Cunning, 1075843, length, m, percentage.ToString()));
+                TimeSpan length = TimeSpan.FromSeconds(60.0); // 기본 1분
 
-                    m.FixedParticles(0x375A, 10, 15, 5011, EffectLayer.Head);
-                    m.PlaySound(0x1EB);
-                }
+                SpellHelper.AddStatBonus(this.Caster, m, StatType.Int, totalBonus, length);
+
+                // 4. 연출 및 버프 알림
+                m.FixedParticles(0x375A, 10, 15, 5010, EffectLayer.Waist);
+                m.PlaySound(0x1e7);
+
+                BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Agility, 1075841, length, m, totalBonus.ToString()));
             }
 
             this.FinishSequence();

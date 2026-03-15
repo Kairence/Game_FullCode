@@ -24,7 +24,7 @@ namespace Server.Mobiles
 			this.SetStam(37, 87);
 
 			SetAttackSpeed(2.5);
-			SetDamage(8, 14);
+			SetDamage(18, 26); // 팬서(18-26)와 동일한 명성 800급 포식자
 
 			// 공격 속성: 차가운 발톱
 			this.SetDamageType(ResistanceType.Physical, 70);

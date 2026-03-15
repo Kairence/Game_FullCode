@@ -1,5 +1,6 @@
 using System;
 using Server.Targeting;
+using Server.Mobiles;
 
 namespace Server.Spells.Seventh
 {
@@ -13,85 +14,66 @@ namespace Server.Spells.Seventh
             Reagent.Bloodmoss,
             Reagent.MandrakeRoot,
             Reagent.SpidersSilk);
+
         public ManaVampireSpell(Mobile caster, Item scroll)
             : base(caster, scroll, m_Info)
         {
         }
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Seventh;
-            }
-        }
+        public override SpellCircle Circle => SpellCircle.Seventh;
+
         public override void OnCast()
         {
-            this.Caster.Target = new InternalTarget(this);
+            Caster.Target = new InternalTarget(this);
         }
 
         public void Target(Mobile m)
         {
-            if (!this.Caster.CanSee(m))
+            if (!Caster.CanSee(m))
             {
-                this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
+                Caster.SendLocalizedMessage(500237);
             }
-            else if (this.CheckHSequence(m))
+            else if (CheckHSequence(m))
             {
-                SpellHelper.Turn(this.Caster, m);
+                SpellHelper.Turn(Caster, m);
 
-                SpellHelper.CheckReflect((int)this.Circle, this.Caster, ref m);
+                SpellHelper.CheckReflect((int)Circle, Caster, ref m);
 
                 if (m.Spell != null)
                     m.Spell.OnCasterHurt();
 
                 m.Paralyzed = false;
 
-                int toDrain = 0;
+                // --- 기획: 흡혈량 계산 (500 + 보너스 * 0.1) ---
+                double bonus = SpellHelper.GetMagicValue(Caster, 0.1);
+                int toDrain = (int)(500 + bonus);
 
-                if (Core.AOS)
-                {
-                    toDrain = (int)(this.GetDamageSkill(this.Caster) - this.GetResistSkill(m));
+                // --- 기획: 상대 마나의 50%까지만 흡혈 가능 ---
+                int maxDrainable = m.Mana / 2;
 
-                    if (!m.Player)
-                        toDrain /= 2;
+                if (toDrain > maxDrainable)
+                    toDrain = maxDrainable;
 
-                    if (toDrain < 0)
-                        toDrain = 0;
-                    else if (toDrain > m.Mana)
-                        toDrain = m.Mana;
-                }
-                else
-                {
-                    if (this.CheckResisted(m))
-                        m.SendLocalizedMessage(501783); // You feel yourself resisting magical energy.
-                    else
-                        toDrain = m.Mana;
-                }
+                if (toDrain < 0)
+                    toDrain = 0;
 
-                if (toDrain > (this.Caster.ManaMax - this.Caster.Mana))
-                    toDrain = this.Caster.ManaMax - this.Caster.Mana;
+                // 내 마나 최대치까지만 회복
+                int casterRecovery = toDrain;
+                if (casterRecovery > (Caster.ManaMax - Caster.Mana))
+                    casterRecovery = Caster.ManaMax - Caster.Mana;
 
                 m.Mana -= toDrain;
-                this.Caster.Mana += toDrain;
+                Caster.Mana += casterRecovery;
 
-                if (Core.AOS)
-                {
-                    m.FixedParticles(0x374A, 1, 15, 5054, 23, 7, EffectLayer.Head);
-                    m.PlaySound(0x1F9);
+                // 시각 및 사운드 효과
+                m.FixedParticles(0x374A, 1, 15, 5054, 23, 7, EffectLayer.Head);
+                m.PlaySound(0x1F9);
+                Caster.FixedParticles(0x0000, 10, 5, 2054, EffectLayer.Head);
 
-                    this.Caster.FixedParticles(0x0000, 10, 5, 2054, EffectLayer.Head);
-                }
-                else
-                {
-                    m.FixedParticles(0x374A, 10, 15, 5054, EffectLayer.Head);
-                    m.PlaySound(0x1F9);
-                }
-
-                this.HarmfulSpell(m);
+                HarmfulSpell(m);
             }
 
-            this.FinishSequence();
+            FinishSequence();
         }
 
         public override double GetResistPercent(Mobile target)
@@ -103,22 +85,20 @@ namespace Server.Spells.Seventh
         {
             private readonly ManaVampireSpell m_Owner;
             public InternalTarget(ManaVampireSpell owner)
-                : base(Core.ML ? 10 : 12, false, TargetFlags.Harmful)
+                : base(12, false, TargetFlags.Harmful)
             {
-                this.m_Owner = owner;
+                m_Owner = owner;
             }
 
             protected override void OnTarget(Mobile from, object o)
             {
                 if (o is Mobile)
-                {
-                    this.m_Owner.Target((Mobile)o);
-                }
+                    m_Owner.Target((Mobile)o);
             }
 
             protected override void OnTargetFinish(Mobile from)
             {
-                this.m_Owner.FinishSequence();
+                m_Owner.FinishSequence();
             }
         }
     }

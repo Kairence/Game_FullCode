@@ -32,8 +32,8 @@ namespace Server.Mobiles
 			this.SetStam(200, 300);      
 			this.SetMana(50, 100);       
 
-			this.SetAttackSpeed(2.0);    // 민첩한 공격 속도
-			this.SetDamage(12, 22);      
+			SetAttackSpeed(2.2);
+			SetDamage(35, 50);    
 
 			this.SetDamageType(ResistanceType.Cold, 100); // 100% 냉기 공격
 

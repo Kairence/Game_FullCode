@@ -22,8 +22,8 @@ namespace Server.Mobiles
 			this.SetHits(345, 1345); // 최종 Hits 9,000~10,000
 			this.SetStam(94, 114);
 
-			SetAttackSpeed(3.8);     // 거대한 몽둥이 휘두르기 (느리지만 한 방)
-			SetDamage(30, 50); 
+			SetAttackSpeed(5.5);
+			SetDamage(45, 65);			// Cyclops.cs
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 
@@ -41,6 +41,9 @@ namespace Server.Mobiles
 
 			this.Fame = 4500;
 			this.Karma = -4500;
+
+			this.SpecialType2 = 4;
+			this.SpecialChance2 = 0.15;			
 
 
 			m_NextAbilityTime = DateTime.Now + TimeSpan.FromSeconds( 60 );

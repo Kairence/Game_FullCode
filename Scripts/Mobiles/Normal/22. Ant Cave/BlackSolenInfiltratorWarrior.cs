@@ -27,9 +27,8 @@ namespace Server.Mobiles
 			this.SetDex(30, 45);
 			this.SetInt(30, 45);
 
-			// [Combat Options]
-			this.SetDamage(30, 50);
-			this.SetAttackSpeed(2.2); // 여왕보다 약간 더 빠름
+			SetAttackSpeed(2.0);
+			SetDamage(40, 55);
 
 			// [Damage Types] 70% 물리 + 30% 독 속성
 			this.SetDamageType(ResistanceType.Physical, 70);

@@ -30,8 +30,8 @@ namespace Server.Mobiles
 				this.SetMana(0);
 
 				// [컨셉] 육중한 무게로 들이받기 (공속 3.5)
-				SetAttackSpeed(3.5);
-				SetDamage(35, 55); // 평균 45.0
+				this.SetAttackSpeed(3.0);  // 일반 황소보다 훨씬 빠름. 쉴 새 없이 몰아치는 돌진.
+				this.SetDamage(55, 85);    // [강력] 방어 10 유저에게 최종 45~75 데미지.
 
 				// 최종 Skill 25.0~30.0 목표
 				this.SetSkill(SkillName.Wrestling, 16.8, 21.8);
@@ -53,8 +53,8 @@ namespace Server.Mobiles
 				this.SetStam(19, 29);    
 				this.SetMana(0);
 
-				SetAttackSpeed(4.0);
-				SetDamage(10, 18); // 평균 14.0
+				this.SetAttackSpeed(5.0);  // 멧돼지보다 느린 5초. 뿔을 치켜들고 돌진하는 위압감.
+				this.SetDamage(25, 35);    // 방어 10인 유저에게 최종 15~25 데미지.
 
 				this.SetSkill(SkillName.Wrestling, 3.5, 4.5); 
 

@@ -25,9 +25,8 @@ namespace Server.Mobiles
 			this.SetDex(80, 90);
 			this.SetInt(80, 90);
 
-			// [Combat Options] 물리 60% / 독 40% (깨물기 및 중독)
-			this.SetDamage(40, 70);
-			this.SetAttackSpeed(2.2); // 기습적으로 매우 빠른 공격
+			SetAttackSpeed(10.0);
+			SetDamage(18, 28);
 			this.SetDamageType(ResistanceType.Physical, 60);
 			this.SetDamageType(ResistanceType.Poison, 40);
 

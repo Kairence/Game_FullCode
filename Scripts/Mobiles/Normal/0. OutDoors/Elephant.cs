@@ -29,8 +29,11 @@ namespace Server.Mobiles
 			this.SetMana(1000, 1500);
 
 			// [컨셉] 산이 무너지는 듯한 일격
-			SetAttackSpeed(4.5);
-			SetDamage(120, 180); // 평균 150.0 (전사 체력 4,000의 약 4%를 한 방에 삭감)
+			this.SetAttackSpeed(6.5);  // [조정] 4.5초 -> 6.5초. 
+                           // 딥 씨 서펀트(5.0s)보다 더 육중하고 느린 공속.
+                           // 공격이 빗나가거나 맞았을 때 유저가 재정비할 시간을 충분히 줍니다.
+
+			this.SetDamage(80, 130);   // [조정] 120-180 -> 80-130 하향 조정.
 
 			// [역산] 최종 Skill 160.0~175.0 목표 (상한 200 대비 준마스터 등급)
 			this.SetSkill(SkillName.Wrestling, 76.7, 91.7);

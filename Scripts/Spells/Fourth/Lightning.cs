@@ -34,7 +34,7 @@ namespace Server.Spells.Fourth
         }
         public override void OnCast()
         {
-			int range = 10;
+			int range = 8;
 			if ( Caster is AirElemental )
 				range = 20;
 			if ( Caster is Titan )
@@ -56,15 +56,13 @@ namespace Server.Spells.Fourth
                 Mobile source = Caster;
                 SpellHelper.Turn(Caster, m.Location);
 
-                SpellHelper.CheckReflect((int)Circle, ref source, ref m);
-
 				double damage = 0;
-				int min = 20;
+				int min = 80;
 				int max = 120;
 				if( Caster is SummonedAirElemental )
 				{
 					min = 40;
-					max = 60;
+					max = 90;
 				}
 				if( Caster is Titan )
 				{

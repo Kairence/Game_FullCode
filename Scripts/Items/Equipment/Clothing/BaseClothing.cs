@@ -165,7 +165,13 @@ namespace Server.Items
 			get { return m_BaseArmorRating; }
 			set { m_BaseArmorRating = value;}
         }
-
+		private int m_ArmorBase;
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int ArmorBase
+        {
+			get { return m_ArmorBase; }
+			set { m_ArmorBase = value;}
+        }
 		[CommandProperty(AccessLevel.GameMaster)]
 		public int StrRequirement
 		{
@@ -941,6 +947,7 @@ namespace Server.Items
                     }
                 }
                 #endregion
+				/*
 				//세트 아이템 체크 코드
 				if( PrefixOption[50] > 0 )
 				{
@@ -951,7 +958,7 @@ namespace Server.Items
 						Misc.SetItem.SetOption(pm, false);
 					}					
 				}
-
+				*/
                 AddStatBonuses(mob);
                 mob.CheckStatTimers();
             }
@@ -981,6 +988,7 @@ namespace Server.Items
 
                 mob.CheckStatTimers();
 				
+				/*
 				//세트 아이템 해제 코드
 				if( PrefixOption[50] > 0 )
 				{
@@ -990,7 +998,8 @@ namespace Server.Items
 						pm.ItemSetValue[PrefixOption[50]]--;
 						Misc.SetItem.SetOption(pm, false);
 					}					
-				}				
+				}
+				*/				
             }
             base.OnRemoved(parent);
         }
@@ -1732,7 +1741,9 @@ namespace Server.Items
         {
             base.Serialize(writer);
 
-            writer.Write(16); // version
+            writer.Write(17); // version
+			
+			writer.Write(m_ArmorBase);
 			
  			m_ExtendedWeaponAttributes.Serialize(writer);
 
@@ -1920,6 +1931,8 @@ namespace Server.Items
 
             switch ( version )
             {
+				case 17: m_ArmorBase = reader.ReadInt();
+						goto case 16;
 				case 16: m_ExtendedWeaponAttributes = new ExtendedWeaponAttributes(this, reader);
 						goto case 15;
 				case 15:

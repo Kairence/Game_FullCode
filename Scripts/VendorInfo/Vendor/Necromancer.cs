@@ -42,9 +42,9 @@ namespace Server.Mobiles
 		public override void InitOutfit()
 		{
 			base.InitOutfit();
-			AddItem( new Server.Items.Shoes( 0x151 ) );
+			//AddItem( new Server.Items.Shoes( 0x151 ) );
 			AddItem( new Server.Items.Robe( 0x455 ) );
-			AddItem( new Server.Items.FancyShirt( 0x455 ) );
+			//AddItem( new Server.Items.FancyShirt( 0x455 ) );
 
 			Item hair = new Item( Utility.RandomList( 0x203B, 0x2049, 0x2048, 0x204A ) ); 
 			hair.Hue = 0x3c6; 

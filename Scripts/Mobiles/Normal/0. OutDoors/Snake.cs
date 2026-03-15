@@ -22,7 +22,7 @@ namespace Server.Mobiles
 			this.SetMana(0);
 
 			SetAttackSpeed(3.0);
-			SetDamage(1, 2);        // 물리 100%
+			SetDamage(12, 16); // 슬라임(10-16)과 동급 밸런스
 			
 			this.SetDamageType(ResistanceType.Physical, 80);
 			this.SetDamageType(ResistanceType.Poison, 20); // 초보용이라 독 비중을 낮춤			

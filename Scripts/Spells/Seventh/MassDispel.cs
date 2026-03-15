@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Server.Items;
 using Server.Mobiles;
 using Server.Targeting;
+using Server.Spells.Sixth;
 
 namespace Server.Spells.Seventh
 {
@@ -10,24 +12,13 @@ namespace Server.Spells.Seventh
     {
         private static readonly SpellInfo m_Info = new SpellInfo(
             "Mass Dispel", "Vas An Ort",
-            263,
-            9002,
-            Reagent.Garlic,
-            Reagent.MandrakeRoot,
-            Reagent.BlackPearl,
-            Reagent.SulfurousAsh);
-        public MassDispelSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
+            263, 9002,
+            Reagent.Garlic, Reagent.MandrakeRoot, Reagent.BlackPearl, Reagent.SulfurousAsh);
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Seventh;
-            }
-        }
+        public MassDispelSpell(Mobile caster, Item scroll) : base(caster, scroll, m_Info) { }
+
+        public override SpellCircle Circle => SpellCircle.Seventh;
+
         public override void OnCast()
         {
             this.Caster.Target = new InternalTarget(this);
@@ -37,57 +28,26 @@ namespace Server.Spells.Seventh
         {
             if (!this.Caster.CanSee(p))
             {
-                this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
+                this.Caster.SendLocalizedMessage(500237);
             }
             else if (this.CheckSequence())
             {
                 SpellHelper.Turn(this.Caster, p);
-
                 SpellHelper.GetSurfaceTop(ref p);
 
-                List<Mobile> targets = new List<Mobile>();
+                Point3D loc = (p is Item) ? ((Item)p).GetWorldLocation() : new Point3D(p);
 
-                Map map = this.Caster.Map;
+                // --- 기획: 4타일 범위 내 모든 적군 타겟팅 ---
+                List<Mobile> targets = AcquireIndirectTargets(loc, 4).OfType<Mobile>().ToList();
 
-                if (map != null)
+                foreach (Mobile m in targets)
                 {
-                    IPooledEnumerable eable = map.GetMobilesInRange(new Point3D(p), 8);
-
-                    foreach (Mobile m in eable)
-                        if (m is BaseCreature && (m as BaseCreature).IsDispellable && (((BaseCreature)m).SummonMaster == this.Caster || this.Caster.CanBeHarmful(m, false)))
-                            targets.Add(m);
-
-                    eable.Free();
+                    // 6서클 디스펠에 이미 구현된 [정령/소환수 판별 및 화염 타격] 로직 호출
+                    // DispelSpell 클래스에 Target(Mobile) 메서드가 public으로 선언되어 있어야 합니다.
+                    new DispelSpell(Caster, null).Target(m);
                 }
 
-                for (int i = 0; i < targets.Count; ++i)
-                {
-                    Mobile m = targets[i];
-
-                    BaseCreature bc = m as BaseCreature;
-
-                    if (bc == null)
-                        continue;
-
-                    double dispelChance = (50.0 + ((100 * (this.Caster.Skills.Magery.Value - bc.GetDispelDifficulty())) / (bc.DispelFocus * 2))) / 100;
-                    
-                    // Skill Masteries
-                    dispelChance -= ((double)SkillMasteries.MasteryInfo.EnchantedSummoningBonus(bc) / 100);
-
-                    if (dispelChance > Utility.RandomDouble())
-                    {
-                        Effects.SendLocationParticles(EffectItem.Create(m.Location, m.Map, EffectItem.DefaultDuration), 0x3728, 8, 20, 5042);
-                        Effects.PlaySound(m, m.Map, 0x201);
-
-                        m.Delete();
-                    }
-                    else
-                    {
-                        this.Caster.DoHarmful(m);
-
-                        m.FixedEffect(0x3779, 10, 20);
-                    }
-                }
+                ColUtility.Free(targets);
             }
 
             this.FinishSequence();
@@ -96,24 +56,15 @@ namespace Server.Spells.Seventh
         public class InternalTarget : Target
         {
             private readonly MassDispelSpell m_Owner;
-            public InternalTarget(MassDispelSpell owner)
-                : base(Core.ML ? 10 : 12, true, TargetFlags.None)
-            {
-                this.m_Owner = owner;
-            }
+            public InternalTarget(MassDispelSpell owner) : base(12, true, TargetFlags.None) { m_Owner = owner; }
 
             protected override void OnTarget(Mobile from, object o)
             {
                 IPoint3D p = o as IPoint3D;
-
-                if (p != null)
-                    this.m_Owner.Target(p);
+                if (p != null) m_Owner.Target(p);
             }
 
-            protected override void OnTargetFinish(Mobile from)
-            {
-                this.m_Owner.FinishSequence();
-            }
+            protected override void OnTargetFinish(Mobile from) { m_Owner.FinishSequence(); }
         }
     }
 }

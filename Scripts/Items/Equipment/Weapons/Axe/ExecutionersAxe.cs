@@ -11,14 +11,7 @@ namespace Server.Items
         public ExecutionersAxe()
             : base(0xF45)
         {
-			PrefixOption[61] = 63;
-			PrefixOption[62] = 87;
-			SuffixOption[61] = 2000;
-			SuffixOption[62] = 2000;
-			
-			//SkillBonuses.SetValues(5, SkillName.Anatomy, 20.0);
-			//SkillBonuses.SetValues(6, SkillName.Swords, 20.0);
-            this.Weight = 18.0;
+            this.Weight = 28.0;
         }
 
         public ExecutionersAxe(Serial serial)
@@ -58,7 +51,7 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
 
@@ -66,14 +59,14 @@ namespace Server.Items
         {
             get
             {
-                return 1;
+                return 2;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 15;
+                return 26;
             }
         }
         public override int AosSpeed

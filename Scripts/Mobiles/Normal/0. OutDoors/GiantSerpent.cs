@@ -26,8 +26,10 @@ namespace Server.Mobiles
 			this.SetStam(54, 84);  // 최종 Stam 150~180
 			this.SetMana(0);
 
-			SetAttackSpeed(3.5);
-			SetDamage(20, 40); // 평균 30.0
+			this.SetAttackSpeed(4.0);  // [조정] 3.5초 -> 4.0초. 
+									   // 뱀 특유의 똬리를 틀고 기회를 엿보다 덮치는 느린 리듬감 부여.
+
+			this.SetDamage(35, 55);    // [방어구 및 독 저항 가치 존중]
 
 			// 공격 속성: 살을 뚫고 퍼지는 맹독
 			this.SetDamageType(ResistanceType.Physical, 50);

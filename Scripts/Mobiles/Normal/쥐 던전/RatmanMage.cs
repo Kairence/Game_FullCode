@@ -28,9 +28,8 @@ namespace Server.Mobiles
 			this.SetDex(80, 100); 
 			this.SetInt(120, 140); // 랫맨 중 가장 높은 지능
 
-			// [Combat Options] 물리 20% / 에너지 80% (마력 깃든 지팡이)
-			this.SetDamage(18, 32);
-			this.SetAttackSpeed(2.5); 
+			SetAttackSpeed(10.0);
+			SetDamage(18, 32);
 			this.SetDamageType(ResistanceType.Physical, 20);
 			this.SetDamageType(ResistanceType.Energy, 80);
 

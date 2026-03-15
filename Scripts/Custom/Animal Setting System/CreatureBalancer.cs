@@ -60,10 +60,65 @@ namespace Server.Misc
 				bc.HitsMaxSeed, bc.StamMaxSeed, bc.ManaMaxSeed 
 			};
 
+			// --- [신규] 몬스터 등급 및 Slayer 기반 특수기 자동 설정 ---
+			ApplySpecialAbility(bc);
+
 			// 4. 실시간 충성도 수치 적용
 			RefreshStats(bc, true);
 			bc.Hits = bc.HitsMax; bc.Stam = bc.StamMax; bc.Mana = bc.ManaMax;
 		}
+
+		private static void ApplySpecialAbility(BaseCreature bc)
+        {
+            // 1. 등급(Grade)에 따른 SpecialChance1 설정
+            bc.SpecialChance1 = bc.Grade switch
+            {
+                9 => 0.25, // 네임드
+                8 => 0.20, // 보스
+                7 => 0.15, // 치프
+                6 => 0.10, // 엘리트
+                >= 2 => 0.05, // 레어 (2~5)
+                _ => 0.00
+            };
+
+            // 2. Slayer 및 AI 기반 SpecialType1 결정 (비중이 높은 순서)
+            bc.SpecialType1 = DetermineInnateStyle(bc);
+        }
+
+        private static int DetermineInnateStyle(BaseCreature bc)
+        {
+            // A. AI 기반 강제 고정 (궁수)
+            if (bc.AI == AIType.AI_Archer) return 7; // 활
+
+            // B. Slayer 타입 기반 스타일링
+            if (IsSlayer(bc, SlayerName.Silver) || IsSlayer(bc, SlayerName.Exorcism)) 
+                return 0; // 언데드/악마 -> 한손 검
+            
+			if (IsSlayer(bc, SlayerName.Repond))
+				return 1; //인간류 -> 양손 검
+
+            if (IsSlayer(bc, SlayerName.ElementalBan)) 
+                return 2; // 엘리멘탈 -> 도끼(자연의 힘)
+
+            if (IsSlayer(bc, SlayerName.ReptilianDeath)) 
+                return 5; // 파충류/용 -> 한손 펜싱(날카로운 관통)
+
+            if (IsSlayer(bc, SlayerName.ArachnidDoom)) 
+                return 8; // 거미 -> 석궁
+				
+            if (IsSlayer(bc, SlayerName.Fey)) 
+                return 9; // 요정 -> 맨손
+		
+
+            // C. AI 타입 기반 스타일링 (Slayer가 없는 경우)
+            return bc.AI switch
+            {
+                AIType.AI_Mage or AIType.AI_Necro => 3, // 법사 계열 -> 한손 둔기(지팡이)
+                AIType.AI_Animal => 6, // 동물 -> 양손 펜싱
+				AIType.AI_Melee => 4, //근접 -> 양손 둔기
+                _ => 9 //기타 맨손
+            };
+        }
 
 		public static void RefreshStats(BaseCreature bc, bool first = false)
 		{

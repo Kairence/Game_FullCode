@@ -24,9 +24,8 @@ namespace Server.Mobiles
 			this.SetDex(1, 2);
 			this.SetInt(1, 2);
 
-			// [Combat Options]
-			this.SetDamage(4, 8);
-			this.SetAttackSpeed(2.0);
+			SetAttackSpeed(1.8);
+			SetDamage(6, 10);
 
 			// [Damage Types] 80% 물리 + 20% 화염
 			this.SetDamageType(ResistanceType.Physical, 80);

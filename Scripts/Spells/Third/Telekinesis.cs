@@ -1,7 +1,6 @@
 using System;
-using Server.Items;
 using Server.Targeting;
-using Server.Multis;
+using Server.Network;
 
 namespace Server.Spells.Third
 {
@@ -13,145 +12,81 @@ namespace Server.Spells.Third
             9031,
             Reagent.Bloodmoss,
             Reagent.MandrakeRoot);
-        public TelekinesisSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Third;
-            }
-        }
+        public TelekinesisSpell(Mobile caster, Item scroll) : base(caster, scroll, m_Info) { }
+
+        public override SpellCircle Circle => SpellCircle.Third;
+
         public override void OnCast()
         {
-            this.Caster.Target = new InternalFirstTarget(this);
+            this.Caster.Target = new InternalTarget(this);
         }
 
-        public void Target(ITelekinesisable obj)
+        public void Target(Mobile m)
         {
-            if (this.CheckSequence())
+            if (!Caster.CanSee(m))
             {
-                SpellHelper.Turn(this.Caster, obj);
+                Caster.SendLocalizedMessage(500237);
+            }
+            else if (CheckHSequence(m))
+            {
+                SpellHelper.Turn(Caster, m);
+                SpellHelper.CheckReflect((int)Circle, Caster, ref m);
 
-                obj.OnTelekinesis(this.Caster);
+                // --- 1. 에너지 데미지 계산 (DPS 60 기반: 30 ~ 150) ---
+                int min = 30;
+                int max = 150;
+                int damage = GetNewAosDamage(0, min, max, m);
+
+                if (damage > 0)
+                {
+                    // 에너지 속성 100% 데미지
+                    SpellHelper.Damage(this, m, damage, 0, 0, 0, 0, 100);
+                }
+
+                // --- 2. 마비 확률 판정 (5% + 보너스 * 0.001%) ---
+                // 예: 보너스 2000일 때 5% + 2% = 7% 확률로 5초 마비
+                double bonus = SpellHelper.GetMagicValue(Caster, 0.001);
+                double chance = 0.05 + (bonus * 0.01); 
+
+                if (Utility.RandomDouble() < chance)
+                {
+                    m.Paralyze(TimeSpan.FromSeconds(5.0)); // 성공 시 5초
+                }
+
+                // 에너지 공격 연출 (번개 혹은 염동력 이펙트)
+                Effects.SendTargetParticles(m, 0x3779, 1, 32, 0x13BA, EffectLayer.Head);
+                m.PlaySound(0x1F5);
+
+                HarmfulSpell(m);
             }
 
             this.FinishSequence();
         }
-		
-        public class InternalFirstTarget : Target
+
+        private class InternalTarget : Target
         {
             private readonly TelekinesisSpell m_Owner;
-            public InternalFirstTarget(TelekinesisSpell owner)
-                : base(Core.ML ? 10 : 12, false, TargetFlags.None)
-            {
-                this.m_Owner = owner;
-            }
+            public InternalTarget(TelekinesisSpell owner) : base(Core.ML ? 10 : 12, false, TargetFlags.Harmful) { m_Owner = owner; }
 
             protected override void OnTarget(Mobile from, object o)
             {
-				BaseHouse house = BaseHouse.FindHouseAt(from);
-				if( house != null && house.IsOwner(from) )
-				{
-					if( o is HouseSign )
-					{
-						from.SendMessage("집 간판은 이동시킬 수 없습니다.");
-					}
-					else if( o is Item )
-					{
-						from.SendMessage("이 아이템을 어디로 옮기시겠습니까?");
-						from.Target = new InternalSecondTarget(m_Owner, o);
-					}
-					else if( o is Mobile )
-					{
-						from.SendMessage("이 생명체를 어디로 옮기시겠습니까?");
-						from.Target = new InternalSecondTarget(m_Owner, o);
-					}
-					else
-					{
-						from.SendMessage("이것은 옮길 수 없습니다.");
-					}
-				}
+                if (o is Mobile)
+                {
+                    m_Owner.Target((Mobile)o);
+                }
+                else if (o is ITelekinesisable)
+                {
+                    // 기존의 아이템 조작 기능도 유지 (스위치 등 작동용)
+                    if (m_Owner.CheckSequence())
+                    {
+                        ((ITelekinesisable)o).OnTelekinesis(from);
+                    }
+                }
             }
+
+            protected override void OnTargetFinish(Mobile from) { m_Owner.FinishSequence(); }
         }
-		
-        public class InternalSecondTarget : Target
-        {
-			private readonly object m_Object;
-            private readonly TelekinesisSpell m_Owner;
-			public InternalSecondTarget(TelekinesisSpell owner, object o)
-				: base(-1, true, TargetFlags.None)
-			{
-				this.m_Owner = owner;
-				this.m_Object = o;
-			}
-            protected override void OnTargetFinish(Mobile from)
-            {
-                this.m_Owner.FinishSequence();
-            }
-
-			protected override void OnTarget(Mobile from, object o)
-			{
-				IPoint3D p = o as IPoint3D;
-
-				//SpellHelper.GetSurfaceTop(ref p);
-				//Point3D to = new Point3D(p);
-
-				if ( p != null )
-				{
-					if( p is Item )
-						p = ((Item)p).GetWorldTop();
-
-					Point3D to = new Point3D(p);
-					if ( m_Object is Item )
-					{
-						Item item = (Item)this.m_Object;
-
-						BaseHouse house = BaseHouse.FindHouseAt(to, from.Map, item.ItemData.Height);
-						if( house == null )
-						{
-							from.SendLocalizedMessage(500447); // That is not accessible.
-							return;
-						}
-						else if (!item.Deleted)
-						{
-							from.SendMessage("아이템을 이동합니다.");
-							item.MoveToWorld(new Point3D(p), from.Map);
-						}
-						else
-						{
-							from.SendLocalizedMessage(1154965); // Invalid item.
-						}
-					}
-					else if ( m_Object is Mobile )
-					{
-						Mobile m = (Mobile)this.m_Object;
-
-						BaseHouse house = BaseHouse.FindHouseAt(to, from.Map, 16);
-						if( house == null )
-						{
-							from.SendLocalizedMessage(500447); // That is not accessible.
-							return;
-						}
-						else if (!m.Deleted)
-						{
-							from.SendMessage("생명체를 이동합니다.");
-							m.MoveToWorld(new Point3D(p), from.Map);
-						}
-						else
-						{
-							from.SendMessage("그건 이동할 수 없습니다.");
-						}
-					}					
-				}
-				else
-					from.SendMessage("타겟이 없습니다.");
-				m_Owner.FinishSequence();
-			}
-		}		
     }
 }
 
@@ -162,3 +97,4 @@ namespace Server
         void OnTelekinesis(Mobile from);
     }
 }
+

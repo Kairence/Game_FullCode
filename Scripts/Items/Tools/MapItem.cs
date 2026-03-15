@@ -114,7 +114,7 @@ namespace Server.Items
 
 			Bounds = new Rectangle2D( x1, y1, x2-x1, y2-y1 );
 		}
-
+		
 		public MapItem( Serial serial ) : base( serial )
 		{
 		}

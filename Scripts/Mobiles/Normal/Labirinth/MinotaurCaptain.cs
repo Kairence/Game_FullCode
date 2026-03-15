@@ -25,9 +25,8 @@ namespace Server.Mobiles
 			this.SetDex(150, 180);
 			this.SetInt(150, 180);
 
-			// [Combat Options] 전장을 파괴하는 대장의 도끼질
-			this.SetDamage(75, 110);
-			this.SetAttackSpeed(2.6); // 일반 미노타우르스보다 약간 더 숙련된 속도
+			SetAttackSpeed(2.6);
+			SetDamage(75, 110);
 
 			// [Damage Types] 90% 물리 + 10% 에너지 (지휘관의 기세)
 			this.SetDamageType(ResistanceType.Physical, 90);

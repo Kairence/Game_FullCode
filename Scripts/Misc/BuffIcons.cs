@@ -137,7 +137,7 @@ namespace Server
             : this(iconID, titleCliloc, secondaryCliloc)
         {
             m_TimeLength = length;
-            m_TimeStart = DateTime.UtcNow;
+            m_TimeStart = DateTime.Now;
 
             m_Timer = Timer.DelayCall(length, new TimerCallback(
                 delegate
@@ -376,8 +376,8 @@ namespace Server
         Toughness,
         Thrust,
         Pierce,   // Debuff
-        PlayingTheOdds,
-        FocusedEye,
+        PlayingTheOdds, //0x46F?
+        FocusedEye,		//0x470?
         Onslaught, // Debuff
         ElementalFury,
         ElementalFuryDebuff, // Debuff
@@ -393,7 +393,7 @@ namespace Server
         Shadow,
         WhiteTigerForm,
         Bodyguard,
-        HeightenedSenses,
+        HeightenedSenses, //0x480?
         Tolerance,			//해골 금지
         DeathRay,
         DeathRayDebuff,
@@ -404,7 +404,7 @@ namespace Server
         CombatTraining,
         InjectedStrikeDebuff,
         InjectedStrike,
-        UnknownTomato, //음식 버프
+        UnknownTomato, //음식 버프 //0x48B?
         PlayingTheOddsDebuff,
         DragonTurtleDebuff,
         Boarding,
@@ -436,7 +436,7 @@ namespace Server
     public sealed class AddBuffPacket : Packet
     {
         public AddBuffPacket(Mobile m, BuffInfo info)
-            : this(m, info.ID, info.TitleCliloc, info.SecondaryCliloc, info.Args, info.NoTimer ? TimeSpan.Zero :(info.TimeStart != DateTime.MinValue) ? ((info.TimeStart + info.TimeLength) - DateTime.UtcNow) : TimeSpan.Zero)
+            : this(m, info.ID, info.TitleCliloc, info.SecondaryCliloc, info.Args, info.NoTimer ? TimeSpan.Zero :(info.TimeStart != DateTime.MinValue) ? ((info.TimeStart + info.TimeLength) - DateTime.Now) : TimeSpan.Zero)
         {
         }
 

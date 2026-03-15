@@ -12,14 +12,7 @@ namespace Server.Items
         public WarAxe()
             : base(0x13B0)
         {
-			PrefixOption[61] = 88;
-			PrefixOption[62] = 77;
-			SuffixOption[61] = 500;
-			SuffixOption[62] = 500;
-			
-			//SkillBonuses.SetValues(5, SkillName.Macing, 5.0);
-			//SkillBonuses.SetValues(6, SkillName.Tactics, 5.0);
-			this.Weight = 8.0;
+			this.Weight = 18.0;
         }
 
         public WarAxe(Serial serial)
@@ -59,7 +52,7 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
 		
@@ -67,14 +60,14 @@ namespace Server.Items
         {
             get
             {
-                return 4;
+                return 5;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 6;
+                return 9;
             }
         }
         public override int AosSpeed
@@ -88,7 +81,7 @@ namespace Server.Items
         {
             get
             {
-                return 2.50f;
+                return 2.25f;
             }
         }
         public override int OldStrengthReq

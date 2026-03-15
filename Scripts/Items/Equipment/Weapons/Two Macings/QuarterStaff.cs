@@ -9,11 +9,7 @@ namespace Server.Items
         public QuarterStaff()
             : base(0xE89)
         {
-			PrefixOption[61] = 55;
-			SuffixOption[61] = 50000;
-			
-			//WeaponAttributes.HitLightning += 2000;
-			this.Weight = 8.0;
+			this.Weight = 18.0;
 		}
 
         public QuarterStaff(Serial serial)
@@ -53,21 +49,21 @@ namespace Server.Items
         {
             get
             {
-                return 750;
+                return 1000;
             }
         }		
         public override int AosMinDamage
         {
             get
             {
-                return 2;
+                return 5;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 8;
+                return 10;
             }
         }
         public override int AosSpeed
@@ -81,7 +77,7 @@ namespace Server.Items
         {
             get
             {
-                return 2.00f;
+                return 3.75f;
             }
         }
         public override int OldStrengthReq

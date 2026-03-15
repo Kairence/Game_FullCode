@@ -59,7 +59,7 @@ namespace Server.Items
         {
             get
             {
-                return 0;
+                return 11;
             }
         }
 		
@@ -67,7 +67,7 @@ namespace Server.Items
 		{
 			get
 			{
-				return 12.0; // 원하는 감소 수치를 입력하세요.
+				return 11.0; // 원하는 감소 수치를 입력하세요.
 			}
 		}		
         public override void Deserialize(GenericReader reader)

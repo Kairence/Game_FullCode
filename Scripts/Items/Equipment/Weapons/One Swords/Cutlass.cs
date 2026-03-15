@@ -9,11 +9,7 @@ namespace Server.Items
         public Cutlass()
             : base(0x1441)
         {
-			//SkillBonuses.SetValues(5, SkillName.Anatomy, 10.0);
-			PrefixOption[61] = 63;
-			SuffixOption[61] = 1000;
-
-            this.Weight = 8.0;
+            this.Weight = 18.0;
         }
 
         public Cutlass(Serial serial)
@@ -53,14 +49,14 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
         public override int AosMinDamage
         {
             get
             {
-                return 3;
+                return 4;
             }
         }
         public override int AosMaxDamage

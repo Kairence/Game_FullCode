@@ -57,6 +57,19 @@ namespace Server.Spells.Fourth
                 return SpellCircle.Fourth;
             }
         }
+		// --- 1. 시전 속도 커스텀 (4서클 기본 지연 시간 - 보너스 * 0.001초) ---
+        public override TimeSpan GetCastDelay()
+        {
+            // 4서클 기본 시전 시간(약 1.5초 ~ 2.0초 사이 엔진 설정)에서 보너스 수치만큼 차감
+            double bonus = SpellHelper.GetMagicValue(Caster, 0.0015);
+            TimeSpan baseDelay = base.GetCastDelay();
+            
+            double finalDelay = baseDelay.TotalSeconds - bonus;
+
+            if (finalDelay < 0.5) finalDelay = 0.5; // 최소 시전 시간 0.5초 제한
+
+            return TimeSpan.FromSeconds(finalDelay);
+        }		
         public override void GetCastSkills(out double min, out double max)
         {
             if (NoSkillRequirement)	//recall using Runebook charge, wraith form or using vendor search map
@@ -208,6 +221,7 @@ namespace Server.Spells.Fourth
             }
             else if (CheckSequence())
             {
+				/*
 				int MoveCal = 0;
 				if( Caster.Map != map )
 					MoveCal = 50000;
@@ -219,16 +233,17 @@ namespace Server.Spells.Fourth
 				}
 				if( MoveCal > 50000 )
 					MoveCal = 50000;
-				
+				*/
 				if( Caster is PlayerMobile )
 				{
 					PlayerMobile pm = Caster as PlayerMobile;
-					if( pm.Hunger < MoveCal )
+					if( pm.Hunger < -1 )
 					{
 						pm.SendMessage("이 곳은 허기로 인해 갈 수 없을 것 같습니다.");
 					}
 					else
 					{
+						/*
 						pm.Hunger -= MoveCal;
 						if( MoveCal >= 40000 )
 							pm.SendMessage("몸을 가누기 힘듭니다!");
@@ -238,7 +253,7 @@ namespace Server.Spells.Fourth
 							pm.SendMessage("배고픔을 느낍니다.");
 						else if( MoveCal >= 1000 )
 							pm.SendMessage("조금 배고픔을 느낍니다.");
-
+						*/
 						if (m_Book != null)
 							--m_Book.CurCharges;
 
@@ -331,11 +346,44 @@ namespace Server.Spells.Fourth
                     else
                         from.Send(new MessageLocalized(from.Serial, from.Body, MessageType.Regular, 0x3B2, 3, 502357, from.Name, "")); // I can not recall from that object.
                 }
-
-                else
+				//여기에 코드 작성
+				else if (o is PresetMap)
                 {
-                    from.Send(new MessageLocalized(from.Serial, from.Body, MessageType.Regular, 0x3B2, 3, 502357, from.Name, "")); // I can not recall from that object.
+                    PresetMap pm = (PresetMap)o;
+
+                    // 정밀 기록 완료 여부 및 좌표 유효성 체크
+                    if (pm.IsScouted && pm.RecallLoc != Point3D.Zero)
+                    {
+                        // PresetMap에 저장된 좌표와 맵 정보를 Effect 메서드에 전달
+                        // 세 번째 인자 true는 Multi(집 등) 체크를 수행함을 의미합니다.
+                        m_Owner.Effect(pm.RecallLoc, pm.Facet, true);
+						pm.Delete();
+                    }
+                    else
+                    {
+                        // 기록되지 않은 지도일 경우 메시지 출력
+                        from.Send(new MessageLocalized(from.Serial, from.Body, MessageType.Regular, 0x3B2, 3, 502357, from.Name, "")); // I can not recall from that object.
+                    }
                 }
+				else if (o is TreasureMap tm && from.Skills.Cartography.Value >= 50.0)
+                {
+                    // 본인이 해독했고 좌표가 유효한 경우만 실행
+                    if (tm.ChestLocation != Point2D.Zero && tm.Map != null)
+                    {
+                        Point3D loc = new Point3D(tm.ChestLocation.X, tm.ChestLocation.Y, tm.Map.GetAverageZ(tm.ChestLocation.X, tm.ChestLocation.Y));
+                        
+                        m_Owner.Effect(loc, tm.Map, true);
+                        //tm.Delete();
+                    }
+                    else
+                    {
+                        from.SendLocalizedMessage(502357); // I can not recall from that object.
+                    }
+                }
+				else
+				{
+					from.SendLocalizedMessage(502357); // I can not recall from that object.
+				}
             }
 
             protected override void OnNonlocalTarget(Mobile from, object o)

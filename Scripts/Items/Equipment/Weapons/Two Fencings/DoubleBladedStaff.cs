@@ -12,8 +12,6 @@ namespace Server.Items
             : base(0x26BF)
         {
             this.Weight = 12.0;
-			PrefixOption[61] = 42;
-			SuffixOption[61] = 250000;			
 		}
 
         public DoubleBladedStaff(Serial serial)
@@ -53,21 +51,21 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }		
         public override int AosMinDamage
         {
             get
             {
-                return 2;
+                return 6;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 10;
+                return 9;
             }
         }
         public override int AosSpeed
@@ -81,7 +79,7 @@ namespace Server.Items
         {
             get
             {
-                return 1.50f;
+                return 2.00f;
             }
         }
         public override int OldStrengthReq

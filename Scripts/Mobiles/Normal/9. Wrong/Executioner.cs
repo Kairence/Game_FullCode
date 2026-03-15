@@ -41,8 +41,8 @@ namespace Server.Mobiles
 			this.SetStam(250, 350);      
 			this.SetMana(100, 200);      
 
-			this.SetAttackSpeed(2.2);    
-			this.SetDamage(55, 85);      // '집행'급 물리 데미지
+			SetAttackSpeed(4.5);
+			SetDamage(70, 100);     // '집행'급 물리 데미지
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 

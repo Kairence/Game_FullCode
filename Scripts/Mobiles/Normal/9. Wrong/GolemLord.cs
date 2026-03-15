@@ -40,8 +40,8 @@ namespace Server.Mobiles
 			this.SetMana(3800, 3900);
 
 			// [Combat Options]
-			this.SetDamage(80, 120);
-			this.SetAttackSpeed(2.4);
+			SetAttackSpeed(4.0);
+			SetDamage(90, 130);
 
 			// [Resistances] 최고 저항 75 이하 엄격 준수 (골렘 특화 저항)
 			this.SetResistance(ResistanceType.Physical, 70, 75); // 강철 외피

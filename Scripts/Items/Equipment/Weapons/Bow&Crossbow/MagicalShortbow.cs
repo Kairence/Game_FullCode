@@ -9,13 +9,11 @@ namespace Server.Items
         public MagicalShortbow()
             : base(0x2D2B)
         {
-			PrefixOption[61] = 36;
+			PrefixOption[61] = 41;
 			SuffixOption[61] = 500000;
-			PrefixOption[62] = 41;
-			SuffixOption[62] = 500000;
 			
 			//AbsorptionAttributes.ResonanceEnergy += 7500;
-            this.Weight = 6.0;
+            this.Weight = 16.0;
 		}
 
         public MagicalShortbow(Serial serial)
@@ -62,7 +60,7 @@ namespace Server.Items
         {
             get
             {
-                return 1000;
+                return 2500;
             }
         }
         public override int AosDexterityReq
@@ -83,14 +81,14 @@ namespace Server.Items
         {
             get
             {
-                return 1;
+                return 3;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 2;
+                return 10;
             }
         }
         public override int AosSpeed
@@ -104,7 +102,7 @@ namespace Server.Items
         {
             get
             {
-                return 3.00f;
+                return 2.25f;
             }
         }
         public override int OldStrengthReq

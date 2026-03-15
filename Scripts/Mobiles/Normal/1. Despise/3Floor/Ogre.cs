@@ -21,8 +21,8 @@ namespace Server.Mobiles
 			this.SetHits(551, 1551); // 최종 Hits 20,000~21,000
 			this.SetStam(66, 86);
 
-			SetAttackSpeed(4.0);     
-			SetDamage(45, 70); 
+			SetAttackSpeed(4.0);
+			SetDamage(50, 75); 
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 
@@ -40,6 +40,9 @@ namespace Server.Mobiles
 
 			this.Fame = 10000;
 			this.Karma = -10000;
+
+			this.SpecialType2 = 3;
+			this.SpecialChance2 = 0.2;	
 
             this.PackItem(new Club());
         }

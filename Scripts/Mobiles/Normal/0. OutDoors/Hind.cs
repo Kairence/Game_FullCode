@@ -19,8 +19,9 @@ namespace Server.Mobiles
 			this.SetStam(46, 66);
 			this.SetMana(0);
 
-			SetAttackSpeed(3.0);
-			SetDamage(2, 4); 
+			this.SetAttackSpeed(4.0);  // [조정] 3.0초 -> 4.0초. 
+									   // 초식 동물이자 최하위 개체답게 느린 공격 속도를 부여했습니다.
+			this.SetDamage(10, 14);    // [방어구 효능 반영] 개(Dog), 페릿(Ferret)과 동급.
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 

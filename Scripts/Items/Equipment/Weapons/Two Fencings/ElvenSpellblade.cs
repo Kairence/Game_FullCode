@@ -11,12 +11,8 @@ namespace Server.Items
         public ElvenSpellblade()
             : base(0x2D20)
         {
-			PrefixOption[61] = 58;
-			PrefixOption[62] = 62;
-			SuffixOption[61] = 250000;
-			SuffixOption[62] = 250000;
-			PrefixOption[63] = 41;
-			SuffixOption[63] = 500000;
+			PrefixOption[61] = 41;
+			SuffixOption[61] = 500000;
 			
 			//AbsorptionAttributes.ElementalDamage += 750;
 			//AbsorptionAttributes.FeyDamage += 750;
@@ -67,14 +63,14 @@ namespace Server.Items
         {
             get
             {
-                return 1;
+                return 5;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 2;
+                return 10;
             }
         }
         public override int AosSpeed

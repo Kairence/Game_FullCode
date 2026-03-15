@@ -31,8 +31,8 @@ namespace Server.Mobiles
 			this.SetStam(180, 220);
 			this.SetMana(3000, 4000);
 
-			this.SetAttackSpeed(1.8);  
-			SetDamage(45, 65);        
+			SetAttackSpeed(5.5);
+			SetDamage(45, 65);      
 
 			// 스킬: 기초 157 + 보너스 43.3 = 최종 200.3
 			// 유저 스킬 200과 소수점까지 대등한 '완벽한 라이벌' 스펙

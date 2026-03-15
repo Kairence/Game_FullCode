@@ -14,7 +14,7 @@ namespace Server.Mobiles
             this.Body = 15;
             this.BaseSoundID = 838;
 
-            this.SetStr(500);
+            this.SetStr(2500);
             this.SetDex(100);
             this.SetInt(500);
 			
@@ -40,8 +40,8 @@ namespace Server.Mobiles
             this.SetSkill(SkillName.Tactics, 0.0);
             this.SetSkill(SkillName.Wrestling, 0.0);
 
-            this.VirtualArmor = 0;
-            this.ControlSlots = 0;
+            this.VirtualArmor = 2;
+            this.ControlSlots = 3;
 
             //this.AddItem(new LightSource());
         }

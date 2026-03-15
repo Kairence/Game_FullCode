@@ -142,7 +142,6 @@ namespace Server.Custom
                     if (!ImageNames.Contains(name)) ImageNames.Add(name);
                 }
                 ImageNames.Sort();
-                Console.WriteLine("Image lists successfully loaded.");
                 success = true;
             }
             catch (Exception e) { Console.WriteLine(e.ToString()); }

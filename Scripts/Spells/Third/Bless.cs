@@ -8,53 +8,22 @@ namespace Server.Spells.Third
     {
         private static readonly SpellInfo m_Info = new SpellInfo(
             "Bless", "Rel Sanct",
-            203,
-            9061,
-            Reagent.Garlic,
-            Reagent.MandrakeRoot);
+            203, 9061,
+            Reagent.Garlic, Reagent.MandrakeRoot);
 
-        private static Dictionary<Mobile, InternalTimer> _Table;
+        public BlessSpell(Mobile caster, Item scroll) : base(caster, scroll, m_Info) { }
 
+        public override SpellCircle Circle => SpellCircle.Third;
+
+        // --- [Line 1215 에러 해결: IsBlessed 메서드 추가] ---
+        // 대상이 이미 블레스 효과(스탯 보너스)를 받고 있는지 확인합니다.
         public static bool IsBlessed(Mobile m)
         {
-            return _Table != null && _Table.ContainsKey(m);
-        }
-
-        public static void AddBless(Mobile m, TimeSpan duration)
-        {
-            if (_Table == null)
-                _Table = new Dictionary<Mobile, InternalTimer>();
-
-            if (_Table.ContainsKey(m))
-            {
-                _Table[m].Stop();
-            }
-
-            _Table[m] = new InternalTimer(m, duration);
-        }
-
-        public static void RemoveBless(Mobile m, bool early = false)
-        {
-            if (_Table != null && _Table.ContainsKey(m))
-            {
-                _Table[m].Stop();
-                m.Delta(MobileDelta.Stat);
-
-                _Table.Remove(m);
-            }
-        }
-
-        public BlessSpell(Mobile caster, Item scroll)
-            : base(caster, scroll, m_Info)
-        {
-        }
-
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Third;
-            }
+            if (m == null) return false;
+            
+            // SpellHelper의 보너스 액션 점유 여부로 판단하거나 
+            // 블레스 전용 버프 아이콘 유무로 판단합니다.
+            return !m.CanBeginAction(typeof(BlessSpell));
         }
 
         public override void OnCast()
@@ -66,84 +35,61 @@ namespace Server.Spells.Third
         {
             if (!this.Caster.CanSee(m))
             {
-                this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
+                this.Caster.SendLocalizedMessage(500237);
             }
             else if (this.CheckBSequence(m))
             {
                 SpellHelper.Turn(this.Caster, m);
 
-                int oldStr = SpellHelper.GetBuffOffset(m, StatType.Str);
-                int oldDex = SpellHelper.GetBuffOffset(m, StatType.Dex);
-                int oldInt = SpellHelper.GetBuffOffset(m, StatType.Int);
+                // 1. 유저님 기획 보너스 계산 (500 + 보너스 * 0.1)
+                int totalBonus = 500 + (int)SpellHelper.GetMagicValue(this.Caster, 0.1);
 
-                int newStr = SpellHelper.GetOffset(Caster, m, StatType.Str, false, true);
-                int newDex = SpellHelper.GetOffset(Caster, m, StatType.Dex, false, true);
-                int newInt = SpellHelper.GetOffset(Caster, m, StatType.Int, false, true);
+                // 2. 지속 시간 계산 (1분 고정 + 지능 보너스 반영)
+                double timeBonus = SpellHelper.GetMagicValue(this.Caster, 0.012);
+                TimeSpan length = TimeSpan.FromSeconds(60.0 + timeBonus);
 
-                if ((newStr < oldStr && newDex < oldDex && newInt < oldInt) || 
-                    (newStr == 0 && newDex == 0 && newInt == 0))
+                // 중복 시전 방지 액션 시작
+                if (m.BeginAction(typeof(BlessSpell)))
                 {
-                    DoHurtFizzle();
-                }
-                else
-                {
-                    SpellHelper.AddStatBonus(this.Caster, m, false, StatType.Str);
-                    SpellHelper.AddStatBonus(this.Caster, m, true, StatType.Dex);
-                    SpellHelper.AddStatBonus(this.Caster, m, true, StatType.Int);
+                    // 3. 3대 능력치 절대치 적용
+                    SpellHelper.AddStatBonus(this.Caster, m, StatType.Str, totalBonus, length);
+                    SpellHelper.AddStatBonus(this.Caster, m, StatType.Dex, totalBonus, length);
+                    SpellHelper.AddStatBonus(this.Caster, m, StatType.Int, totalBonus, length);
 
-                    int percentage = (int)(SpellHelper.GetOffsetScalar(this.Caster, m, false) * 100);
-                    TimeSpan length = SpellHelper.GetDuration(this.Caster, m);
-                    string args = String.Format("{0}\t{1}\t{2}", percentage, percentage, percentage);
-                    BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Bless, 1075847, 1075848, length, m, args.ToString()));
-
+                    // 4. 연출 및 버프 아이콘
                     m.FixedParticles(0x373A, 10, 15, 5018, EffectLayer.Waist);
                     m.PlaySound(0x1EA);
 
-                    AddBless(Caster, length + TimeSpan.FromMilliseconds(50));
+                    string args = String.Format("{0}\t{1}\t{2}", totalBonus, totalBonus, totalBonus);
+                    BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Bless, 1075847, 1075848, length, m, args));
+                    
+                    // 타이머 종료 시 액션을 해제하기 위한 딜레이 콜
+                    Timer.DelayCall(length, new TimerStateCallback(RemoveEffect), m);
                 }
             }
 
             this.FinishSequence();
         }
 
+        // 효과 만료 시 호출되는 메서드
+        public static void RemoveEffect(object state)
+        {
+            Mobile m = (Mobile)state;
+            m.EndAction(typeof(BlessSpell));
+            BuffInfo.RemoveBuff(m, BuffIcon.Bless);
+        }
+
         private class InternalTarget : Target
         {
             private readonly BlessSpell m_Owner;
-            public InternalTarget(BlessSpell owner)
-                : base(Core.ML ? 10 : 12, false, TargetFlags.Beneficial)
-            {
-                this.m_Owner = owner;
-            }
+            public InternalTarget(BlessSpell owner) : base(12, false, TargetFlags.Beneficial) { m_Owner = owner; }
 
             protected override void OnTarget(Mobile from, object o)
             {
-                if (o is Mobile)
-                {
-                    this.m_Owner.Target((Mobile)o);
-                }
+                if (o is Mobile) m_Owner.Target((Mobile)o);
             }
 
-            protected override void OnTargetFinish(Mobile from)
-            {
-                this.m_Owner.FinishSequence();
-            }
-        }
-
-        private class InternalTimer : Timer
-        {
-            public Mobile Mobile { get; set; }
-
-            public InternalTimer(Mobile m, TimeSpan duration)
-                : base(duration)
-            {
-                Mobile = m;
-                Start();
-            }
-
-            protected override void OnTick()
-            {
-                BlessSpell.RemoveBless(Mobile);
-            }
+            protected override void OnTargetFinish(Mobile from) { m_Owner.FinishSequence(); }
         }
     }
 }

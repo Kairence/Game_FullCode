@@ -22,8 +22,8 @@ namespace Server.Mobiles
 			this.SetStr(400, 500);    // 최종 Str 약 2,000
 			this.SetHits(3000, 4000);  // 최종 Hits 약 40,000
 
-			this.SetAttackSpeed(2.0);
-			SetDamage(40, 55);
+			SetAttackSpeed(2.5);
+			SetDamage(50, 75);
 
 			this.SetSkill(SkillName.Wrestling, 130.0, 145.0); 
 			this.SetSkill(SkillName.Tactics, 130.0, 145.0);
@@ -32,7 +32,10 @@ namespace Server.Mobiles
 			this.SetDamageType(ResistanceType.Physical, 100);
 			this.SetResistance(ResistanceType.Physical, 55, 65);
 			this.SetResistance(ResistanceType.Fire, 10, 20);
-			this.VirtualArmor = 30;
+			this.VirtualArmor = 15;
+			this.SpecialType2 = 0;
+			this.SpecialChance2 = 0.1;	
+			
         }
 
         public SkeletalKnight(Serial serial)

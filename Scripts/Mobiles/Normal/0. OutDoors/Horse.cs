@@ -36,8 +36,10 @@ namespace Server.Mobiles
 			this.SetStam(93, 143); // 최종 Stam 150~200
 			this.SetMana(0);
 
-			SetAttackSpeed(3.0);
-			SetDamage(3, 6); 
+			this.SetAttackSpeed(3.0);  // [조정] 기존 3.0초 유지. 
+									   // 유저의 무기 공속(2.5~3.0s)과 가장 잘 맞는 정직한 리듬입니다.
+
+			this.SetDamage(14, 22);    // [방어구 효능 반영]
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 

@@ -28,8 +28,8 @@ namespace Server.Mobiles
 			this.SetStam(450, 600);      
 			this.SetMana(1200, 1500);    
 
-			this.SetAttackSpeed(1.9);    
-			this.SetDamage(40, 60);      
+			SetAttackSpeed(6.5);
+			SetDamage(65, 95);    
 
 			this.SetDamageType(ResistanceType.Physical, 50);
 			this.SetDamageType(ResistanceType.Cold, 50);
@@ -51,6 +51,10 @@ namespace Server.Mobiles
 
 			this.Fame = 22000;           
 			this.Karma = -22000;
+			
+			this.SpecialType2 = 9;
+			this.SpecialChance2 = 0.40;	
+			
         }
 
         public BloodElemental(Serial serial)

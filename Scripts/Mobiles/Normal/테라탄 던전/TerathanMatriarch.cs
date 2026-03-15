@@ -27,9 +27,8 @@ namespace Server.Mobiles
 			this.SetDex(75, 85); 
 			this.SetInt(390, 410); // 매우 높은 지능으로 인한 마법 위력 극대화
 
-			// [Combat Options] 물리 20% / 독 40% / 에너지 40% (마력 깃든 독니)
-			this.SetDamage(35, 60);
-			this.SetAttackSpeed(2.5); 
+			SetAttackSpeed(10.0);
+			SetDamage(18, 28);
 			this.SetDamageType(ResistanceType.Physical, 20);
 			this.SetDamageType(ResistanceType.Poison, 40);
 			this.SetDamageType(ResistanceType.Energy, 40);

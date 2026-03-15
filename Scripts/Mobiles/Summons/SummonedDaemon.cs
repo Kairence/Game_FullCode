@@ -16,14 +16,15 @@ namespace Server.Mobiles
             this.SetStr(666);
             this.SetDex(666);
             this.SetInt(666);
-			this.SetHits(666);
+			this.SetHits(6666);
 			this.SetStam(666);
 			this.SetMana(666);
 
-            this.SetDamage(6, 16);
+            this.SetDamage(66, 166);
+			SetAttackSpeed(1.6);
 
             this.SetDamageType(ResistanceType.Physical, 0);
-            this.SetDamageType(ResistanceType.Poison, 100);
+            this.SetDamageType(ResistanceType.Chaos, 100);
 
             this.SetResistance(ResistanceType.Physical, 45, 55);
             this.SetResistance(ResistanceType.Fire, 50, 60);
@@ -38,7 +39,8 @@ namespace Server.Mobiles
             this.SetSkill(SkillName.Tactics, 100.0);
             this.SetSkill(SkillName.Wrestling, 98.1, 99.0);
 
-            this.VirtualArmor = 8;
+            this.VirtualArmor = 16;
+			ControlSlots = 4;
         }
 
         public SummonedDaemon(Serial serial)

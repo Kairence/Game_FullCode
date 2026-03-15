@@ -80,11 +80,6 @@ namespace Server.Spells.Mysticism
                 Caster.SendLocalizedMessage(501775); // This spell is already in effect.
                 return false;
             }
-            else if (ImmolatingWeaponSpell.IsImmolating(Caster, Weapon) || Weapon.ConsecratedContext != null)
-            {
-                Caster.SendLocalizedMessage(1080128); //You cannot use this ability while your weapon is enchanted.
-                return false;
-            }
             else if (Weapon.FocusWeilder != null)
             {
                 Caster.SendLocalizedMessage(1080446); // You cannot enchant an item that is under the effects of the ninjitsu focus attack ability.
@@ -110,10 +105,6 @@ namespace Server.Spells.Mysticism
             else if (IsUnderSpellEffects(Caster, Weapon))
             {
                 Caster.SendLocalizedMessage(501775); // This spell is already in effect.
-            }
-            else if (ImmolatingWeaponSpell.IsImmolating(Caster, Weapon) || Weapon.ConsecratedContext != null)
-            {
-                Caster.SendLocalizedMessage(1080128); //You cannot use this ability while your weapon is enchanted.
             }
             else if (Weapon.FocusWeilder != null)
             {

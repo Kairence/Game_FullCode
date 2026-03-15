@@ -706,8 +706,8 @@ namespace Server.Engines.Doom
                 trap = new SawTrap(Utility.RandomBool() ? SawTrapType.WestFloor : SawTrapType.NorthFloor);
             else if (44 > random)
                 trap = new SpikeTrap(Utility.RandomBool() ? SpikeTrapType.WestFloor : SpikeTrapType.NorthFloor);
-            else if (66 > random)
-                trap = new GasTrap(Utility.RandomBool() ? GasTrapType.NorthWall : GasTrapType.WestWall);
+            //else if (66 > random)
+            //    trap = new GasTrap(Utility.RandomBool() ? GasTrapType.NorthWall : GasTrapType.WestWall);
             else if (88 > random)
                 trap = new FireColumnTrap();
             else

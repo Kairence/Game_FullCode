@@ -32,9 +32,8 @@ namespace Server.Mobiles
 			this.SetDex(30, 45);
 			this.SetInt(30, 45);
 
-			// [Combat Options] 칼둔 특유의 서늘한 기운
-			this.SetDamage(35, 50);
-			this.SetAttackSpeed(2.2);
+			SetAttackSpeed(2.2);
+			SetDamage(35, 50);
 
 			// [Damage Types] 영체의 저주 (냉기/에너지 중심)
 			this.SetDamageType(ResistanceType.Physical, 20);

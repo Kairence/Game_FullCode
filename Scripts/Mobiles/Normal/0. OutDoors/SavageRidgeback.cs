@@ -24,8 +24,8 @@ namespace Server.Mobiles
 			this.SetStam(87, 137); 
 			this.SetMana(0);
 
-			SetAttackSpeed(2.5);
-			SetDamage(12, 20); 
+			SetAttackSpeed(3.0);
+			SetDamage(18, 26); // 명성 800 팬서(18-26)와 동급의 파워
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 

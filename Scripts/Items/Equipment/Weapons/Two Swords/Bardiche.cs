@@ -11,11 +11,7 @@ namespace Server.Items
         public Bardiche()
             : base(0xF4D)
         {
-			PrefixOption[61] = 87;
-			SuffixOption[61] = 2000;
-
-			//SkillBonuses.SetValues(5, SkillName.Swords, 20.0);
-            this.Weight = 9.0;
+            this.Weight = 29.0;
         }
 
         public Bardiche(Serial serial)
@@ -55,21 +51,21 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }		
         public override int AosMinDamage
         {
             get
             {
-                return 5;
+                return 9;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 10;
+                return 12;
             }
         }
         public override int AosSpeed

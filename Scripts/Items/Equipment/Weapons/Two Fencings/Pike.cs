@@ -11,10 +11,7 @@ namespace Server.Items
         public Pike()
             : base(0x26BE)
         {
-			PrefixOption[61] = 77;
-			SuffixOption[61] = 1000;
-			//SkillBonuses.SetValues(5, SkillName.Tactics, 10.0);			
-            this.Weight = 8.0;
+            this.Weight = 18.0;
 		}
 
         public Pike(Serial serial)
@@ -47,14 +44,14 @@ namespace Server.Items
         {
             get
             {
-                return 3000;
+                return 3500;
             }
         }
         public override int AosIntelligenceReq
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
 		
@@ -62,14 +59,14 @@ namespace Server.Items
         {
             get
             {
-                return 5;
+                return 9;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 15;
+                return 12;
             }
         }
         public override int AosSpeed
@@ -83,7 +80,7 @@ namespace Server.Items
         {
             get
             {
-                return 2.50f;
+                return 2.00f;
             }
         }
         public override int OldStrengthReq

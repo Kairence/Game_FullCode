@@ -11,26 +11,7 @@ namespace Server.Items
         public Longsword()
             : base(0xF61)
         {
-			PrefixOption[61] = 12;
-			PrefixOption[62] = 13;
-			PrefixOption[63] = 14;
-			PrefixOption[64] = 15;
-			PrefixOption[65] = 16;
-			PrefixOption[66] = 111;
-			SuffixOption[61] = 100000;
-			SuffixOption[62] = 100000;
-			SuffixOption[63] = 100000;
-			SuffixOption[64] = 100000;
-			SuffixOption[65] = 100000;
-			SuffixOption[66] = 250000;
-			
-			//WeaponAttributes.ResistPhysicalBonus += 1000;
-			//WeaponAttributes.ResistFireBonus += 1000;
-			//WeaponAttributes.ResistColdBonus += 1000;
-			//WeaponAttributes.ResistPoisonBonus += 1000;
-			//WeaponAttributes.ResistEnergyBonus += 1000;
-			//ExtendedWeaponAttributes.AssassinHoned -= 2500;
-            this.Weight = 7.0;
+            this.Weight = 17.0;
         }
 
         public Longsword(Serial serial)
@@ -70,21 +51,21 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }
         public override int AosMinDamage
         {
             get
             {
-                return 2;
+                return 4;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 4;
+                return 9;
             }
         }
         public override int AosSpeed

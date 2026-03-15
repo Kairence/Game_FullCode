@@ -20,8 +20,8 @@ namespace Server.Mobiles
 			this.SetHits(112, 612);  // 최종 Hits 6,000~6,500
 			this.SetStam(51, 71);
 
-			SetAttackSpeed(3.5);
-			SetDamage(20, 35); 
+			SetAttackSpeed(4.0);
+			SetDamage(25, 35);			// Ettin.cs; 
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 
@@ -37,6 +37,9 @@ namespace Server.Mobiles
 
 			this.Fame = 3000;
 			this.Karma = -3000;		
+			this.SpecialType2 = 4;
+			this.SpecialChance2 = 0.05;			
+			
 
         }
 

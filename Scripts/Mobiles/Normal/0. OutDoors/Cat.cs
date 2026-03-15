@@ -23,8 +23,9 @@ namespace Server.Mobiles
 			this.SetStam(66, 76);
 			this.SetMana(0);
 
-			SetAttackSpeed(2.0); // 매우 빠름
-			SetDamage(1, 3); // 평균 2.0
+			this.SetAttackSpeed(2.5);  // 유저(2.5~3.0)보다 살짝 빠르거나 대등한 속도. 
+									   // 2.0보다는 아주 조금 늦춰서 초보자의 불쾌감을 줄였습니다.
+			this.SetDamage(12, 16);    // 방어 10인 유저에게 최종 2~6 데미지 전달.
 
 			this.SetSkill(SkillName.Wrestling, 1.4, 2.4); 
 

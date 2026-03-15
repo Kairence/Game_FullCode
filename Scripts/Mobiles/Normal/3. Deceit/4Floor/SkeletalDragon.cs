@@ -35,8 +35,8 @@ namespace Server.Mobiles
 			this.SetMana(4520, 4720);
 
 			// [Combat Options]
-			this.SetDamage(100, 150);
-			this.SetAttackSpeed(2.5);
+			SetAttackSpeed(2.5);
+			SetDamage(90, 130);
 
 			// [Resistances] 최고 저항 75 이하
 			this.SetResistance(ResistanceType.Physical, 70, 75);
@@ -56,6 +56,9 @@ namespace Server.Mobiles
 
 			this.Fame = 28000;
 			this.Karma = -28000;
+
+			this.SpecialType2 = 5;
+			this.SpecialChance2 = 0.45;	
 
             SetSpecialAbility(SpecialAbility.DragonBreath);
         }

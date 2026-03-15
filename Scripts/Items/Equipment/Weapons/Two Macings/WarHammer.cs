@@ -11,11 +11,8 @@ namespace Server.Items
         public WarHammer()
             : base(0x1439)
         {
-            this.Weight = 10.0;
+            this.Weight = 20.0;
             this.Layer = Layer.TwoHanded;
-			PrefixOption[61] = 42;
-			SuffixOption[61] = 100000;			
-			
 		}
 
         public WarHammer(Serial serial)
@@ -55,21 +52,21 @@ namespace Server.Items
         {
             get
             {
-                return 100;
+                return 1000;
             }
         }		
         public override int AosMinDamage
         {
             get
             {
-                return 1;
+                return 2;
             }
         }
         public override int AosMaxDamage
         {
             get
             {
-                return 20;
+                return 21;
             }
         }
         public override int AosSpeed

@@ -33,9 +33,8 @@ namespace Server.Mobiles
 			this.SetDex(100, 120); 
 			this.SetInt(250, 350); // 일반 마법사다운 높은 마나 통
 
-			// [Combat Options] 마법 위주의 설계
-			this.SetDamage(15, 25);
-			this.SetAttackSpeed(2.4);
+			SetAttackSpeed(10.0);
+			SetDamage(15, 25);
 			this.SetDamageType(ResistanceType.Physical, 100);
 
 			// [Resistances] 종족 약점(화염/에너지) 반영 및 공략 재미

@@ -26,7 +26,7 @@ namespace Server.Misc
 		/// <summary>
 		///     How long do we remember targets/locations?
 		/// </summary>
-		public static TimeSpan AntiMacroExpire = TimeSpan.FromMinutes(5.0);
+		//public static TimeSpan AntiMacroExpire = TimeSpan.FromMinutes(5.0);
 
 		/// <summary>
 		///     How many times may we use the same location/target for gain
@@ -132,32 +132,19 @@ namespace Server.Misc
 			Mobile.SkillCheckDirectTargetHandler = XmlSpawnerSkillCheck.Mobile_SkillCheckDirectTarget;
 		}
 
-		public static bool Mobile_SkillCheckLocation(Mobile from, SkillName skillName, double minSkill, double maxSkill)
+		public static bool Mobile_SkillCheckLocation(Mobile from, SkillName skillName, double fromValue, double targetValue)
 		{
-			var skill = from.Skills[skillName];
+			if (from.Skills[skillName] == null) return false;
 
-			if (skill == null)
-				return false;
+			// 공용 함수 호출하여 성공 확률 판정
+			bool success = Utility.RandomDouble() < GetSuccessChance(fromValue, targetValue);
 
-			var value = skill.Value;
+			// 경험치는 무조건 지급 (난이도 * 5)
+			CheckSkill(from, from.Skills[skillName], targetValue * 5.0);
 
-			//TODO: Is there any other place this can go?
-			if (skillName == SkillName.Fishing && BaseGalleon.FindGalleonAt(from, from.Map) is TokunoGalleon)
-				value += 1;
-
-			if (value < minSkill)
-				return false; // Too difficult
-
-			if (value >= maxSkill)
-				return true; // No challenge
-
-			var chance = (value - minSkill) / (maxSkill - minSkill);
-
-			CrystalBallOfKnowledge.TellSkillDifficulty(from, skillName, chance);
-
-			return CheckSkill(from, skill, new Point2D(from.Location.X / LocationSize, from.Location.Y / LocationSize), chance);
+			return success;
 		}
-
+		
 		public static bool Mobile_SkillCheckDirectLocation(Mobile from, SkillName skillName, double chance)
 		{
 			var skill = from.Skills[skillName];
@@ -165,159 +152,116 @@ namespace Server.Misc
 			if (skill == null)
 				return false;
 
-			CrystalBallOfKnowledge.TellSkillDifficulty(from, skillName, chance);
+			//CrystalBallOfKnowledge.TellSkillDifficulty(from, skillName, chance);
 
-			return CheckSkill(from, skill, new Point2D(from.Location.X / LocationSize, from.Location.Y / LocationSize), chance);
+			return CheckSkill(from, skill, chance);
 		}
 
-        /// <summary>
-        /// This should be a successful skill check, where a system can register several skill gains at once. Only system
-        /// using this currently is UseAllRes for CraftItem.cs
-        /// </summary>
-        /// <param name="from"></param>
-        /// <param name="skill"></param>
-        /// <param name="amount"></param>
-        /// <returns></returns>
-        public static bool CheckSkill(Mobile from, SkillName sk, double minSkill, double maxSkill, int amount)
-        {
-            if (from.Skills.Cap == 0)
-                return false;
-
-            var skill = from.Skills[sk];
-            var gains = 0;
-
-            for (int i = 0; i < amount; i++)
-            {
-                var gc = GetGainChance(from, skill, (skill.Value - minSkill) / (maxSkill - minSkill), true);
-
-                if (AllowGain(from, skill, new Point2D(from.Location.X / LocationSize, from.Location.Y / LocationSize)))
-                {
-                    if (from.Alive && (skill.Base < 10.0 || Utility.RandomDouble() <= gc || CheckGGS(from, skill)))
-                    {
-                        gains++;
-                    }
-                }
-
-            }
-
-            if (gains > 0)
-            {
-                Gain(from, skill, gains);
-                EventSink.InvokeSkillCheck(new SkillCheckEventArgs(from, skill, true));
-                return true;
-            }
-
-            return false;
-        }
-
-		public static bool CheckSkill(Mobile from, Skill skill, object obj, double chance)
+		public static double GetSuccessChance(double fromValue, double targetValue)
 		{
-			if (from.Skills.Cap == 0)
+			// [유저님 공식] 변수 생성 없이 즉시 연산 및 클램핑(Clamping)
+			double chance = (fromValue - targetValue) * 0.01;
+
+			if (chance <= 0) return 0.0;      // 내 스킬이 낮으면 확률 없음
+			if (chance >= 1.0) return 1.0;    // 내 스킬이 100 이상 높으면 100% 성공
+			
+			return chance; // 0.22 같은 소수점 확률 반환
+		}
+
+		// [추가] 1. 경험치 테이블 데이터
+		private static readonly double[] BaseExp = { 1000, 2000, 4000, 7000, 12000, 20000, 30000, 45000, 67500, 100000, 150000, 220000, 320000, 470000, 685000, 985000, 1385000, 1935000, 2685000, 3685000, 5185000, 10185000, 25185000, 75185000, 275185000 };
+		private static readonly double[] StepExp = { 100, 200, 300, 500, 800, 1000, 1500, 2250, 3250, 5000, 7000, 10000, 15000, 21500, 30000, 40000, 55000, 75000, 100000, 150000, 500000, 1500000, 5000000, 20000000, 100000000 };
+
+		// [추가] 2. 경험치 요구량 계산 (최적화 버전)
+		public static double SkillExp_Calc(PlayerMobile pm, int skillIndex)
+		{
+			double skillValue = pm.Skills[skillIndex].Base;
+			int idx = (int)(skillValue / 10.0);
+
+			if (idx < 0) idx = 0;
+			if (idx >= BaseExp.Length) idx = BaseExp.Length - 1;
+
+			return BaseExp[idx] + (skillValue % 10.0) * StepExp[idx];
+		}
+
+		// [추가] 3. 경험치 누적 및 0.1 상승 여부 확인
+		public static bool SkillUpCheck(PlayerMobile pm, int skillIndex, double gain)
+		{
+			if (pm.SkillList == null || skillIndex < 0 || skillIndex >= pm.SkillList.Length)
 				return false;
 
-			if ( from is BaseCreature && ((BaseCreature)from).Controlled )
-			{
-				if ( from is IronBeetle )
-					chance *= 0.2;
-				else
-					chance *= 2;
-			}
-			else if ( from is BaseCreature && !((BaseCreature)from).Controlled )
-				chance *= ( CreatureBalancer.MonsterGrade(((BaseCreature)from).Grade) * 2.5 );
+			pm.SkillList[skillIndex] += gain;
 
-			//event
+			if (pm.SkillList[skillIndex] < 0)
+				pm.SkillList[skillIndex] = 0;
+
+			if (pm.SkillList[skillIndex] >= SkillExp_Calc(pm, skillIndex))
+			{
+				pm.SkillList[skillIndex] = 0;
+				return true;
+			}
+
+			return false;
+		}
+
+		// [추가된 1번 함수] 난이도 비교 후 CheckSkill로 토스 (전통적인 호출 대응)
+		public static bool ChancePoint(PlayerMobile pm, SkillName sk, double targetDifficulty)
+		{
+			if (pm == null || pm.Deleted) return false;
+
+			double srcSkill = pm.Skills[sk].Value;
+
+			// 실패 확률(%) = (타겟 난이도 - 시전자 스킬) * 1%
+			double failChance = (targetDifficulty - srcSkill) * 0.01;
+
+			// 결과 판정
+			bool success;
+			if (failChance <= 0) success = true;
+			else if (failChance >= 1.0) success = false;
+			else success = Utility.RandomDouble() > failChance;
+
+			// 판정 직후, 아래 정의된 2번 함수(CheckSkill)를 호출하여 경험치를 절대적으로 쌓음
+			// 기획하신 대로 targetDifficulty * 5.0 점수를 포인트로 전달
+			CheckSkill(pm, pm.Skills[sk], targetDifficulty * 5.0);
+
+			return success;
+		}
+
+		// [추가된 2번 함수] 확률 없이 절대적으로 포인트를 지급하고 상승 체크
+		public static bool CheckSkill(Mobile from, Skill skill, double skillPoint)
+		{
+			if (from == null || from.Deleted || from.Skills.Cap == 0)
+				return false;
+
+			// 1. 이벤트 및 서버 보너스 적용
 			double chancebonus = 0;
 			Event ev = new Event();
+			if (ev.TGEvent) chancebonus += 0.15;
+			if (ev.ServerEvent == 1) chancebonus += 0.5;
 
-			if ( ev.TGEvent )
-				chancebonus += 0.15;
-			if ( ev.ServerEvent == 1 )
-				chancebonus += 0.5;
+			skillPoint *= (1 + chancebonus);
+			if (skillPoint < 0) skillPoint = 0;
 
-			chance *= ( 1 + chancebonus );
-			
-			if( skill.Value < 200 )
-				chance *= 5;
-
-			if ( from.Combatant is BaseCreature )
+			// 2. 플레이어 전용 로직 (경험치 시스템)
+			if (from is PlayerMobile pm)
 			{
-				BaseCreature ownerbc = from.Combatant as BaseCreature;
-				if ( ownerbc.Controlled )
-					chance = 0;
-			}
-
-			if ( from is BaseCreature )
-			{
-				BaseCreature bc = from as BaseCreature;
-	
-				if ( bc.ControlMaster != null )
+				// 경험치 누적 및 상승 체크 (메크로 체크 없이 바로 수행)
+				if (from.Alive && skill.Lock == SkillLock.Up)
 				{
-
-					if ( !bc.ControlMaster.Alive )
-						chance = 0;
-
-					double petSkillMax = 100 + ( bc.MinTameSkill < 0 ? 0 : bc.MinTameSkill ) / 2 + bc.ControlMaster.Skills.AnimalLore.Value / 4; 					
-					
-					if( petSkillMax <= skill.Value )
-						chance = 0;
-					
-					bool mastercheck = false;
-					foreach ( Mobile m in from.GetMobilesInRange( 10 ) )
+					if (SkillUpCheck(pm, skill.SkillID, skillPoint))
 					{
-						if ( m == bc.ControlMaster )
-						{
-							mastercheck = true;
-							break;
-						}
+						Gain(from, skill); // 실제 스킬 0.1 상승 및 관련 이벤트 처리
 					}
-					if ( !mastercheck )
-						chance = 0;
 				}
+				
+				// 시도할 때마다 스탯 상승 기회 부여 (엔진 기본 기능 유지)
+				LevelStatGain(pm);
 			}
 
-			if( chance < 0 )
-				chance = 0;
-			
-			
-			chance *= 5;
-			if ( from is PlayerMobile )
-			{
-				PlayerMobile pm = from as PlayerMobile;
-				double totalbonus = 1.0;
-				Account acc = pm.Account as Account;
-				if( acc.TeachingBonus > 0 )
-					totalbonus += acc.TeachingBonus * 0.01;
-				if( pm.Followers > pm.FollowersMax )
-					return false;
-				
-				//if( pm.GoldPoint[14] > 0 )
-				//	chance *= 1 + pm.GoldPoint[14] * 0.01;
+			// 시스템 이벤트 알림 (다른 모듈과의 연동을 위해 유지)
+			EventSink.InvokeSkillCheck(new SkillCheckEventArgs(from, skill, true));
 
-				if( pm.Hunger >= 50000 )
-					totalbonus += 0.15;
-				else if( pm.Hunger >= 10000 )
-					totalbonus += 0.1;
-				
-				chance *= totalbonus;
-
-				if ( from.Alive && skill.Lock == SkillLock.Up && pm.SkillUpCheck( skill.Base, skill.SkillID, chance ) )
-					Gain( from, skill );
-				if( pm.HasGump(typeof(SkillPointGump)) )
-					pm.SendGump(new SkillPointGump(pm));
-				
-			}
-			if( from is BaseCreature )
-			{
-				BaseCreature bc = from as BaseCreature;
-				if ( from.Alive && bc.SkillUpCheck( skill.Base, skill.SkillID, chance ) )
-				{
-					Gain( from, skill );
-				}
-			}
-
-            EventSink.InvokeSkillCheck(new SkillCheckEventArgs(from, skill, true));
-
-            return true;
+			return true;
 		}
 
         private static double GetGainChance(Mobile from, Skill skill, double chance, bool success)
@@ -369,7 +313,7 @@ namespace Server.Misc
 
 			CrystalBallOfKnowledge.TellSkillDifficulty(from, skillName, chance);
 
-			return CheckSkill(from, skill, target, chance);
+			return CheckSkill(from, skill, chance);
 		}
 
 		public static bool Mobile_SkillCheckDirectTarget(Mobile from, SkillName skillName, object target, double chance)
@@ -381,7 +325,7 @@ namespace Server.Misc
 
 			CrystalBallOfKnowledge.TellSkillDifficulty(from, skillName, chance);
 
-			return CheckSkill(from, skill, target, chance);
+			return CheckSkill(from, skill, chance);
 		}
 
 		private static bool AllowGain(Mobile from, Skill skill, object obj)
@@ -519,74 +463,6 @@ namespace Server.Misc
 			}
 		}
 
-		/*
-		public static void TryStatGain(SkillInfo info, Mobile from)
-		{
-			// Chance roll
-			double chance;
-
-            if (from is BaseCreature && ((BaseCreature)from).Controlled)
-            {
-                chance = _PetChanceToGainStats / 100.0;
-            }
-            else
-            {
-                chance = _PlayerChanceToGainStats / 100.0;
-            }
-
-			if (Utility.RandomDouble() >= chance)
-			{
-				return;
-			}
-
-			// Selection
-			var primaryLock = StatLockType.Locked;
-			var secondaryLock = StatLockType.Locked;
-
-			switch (info.Primary)
-			{
-				case StatCode.Str:
-					primaryLock = from.StrLock;
-					break;
-				case StatCode.Dex:
-					primaryLock = from.DexLock;
-					break;
-				case StatCode.Int:
-					primaryLock = from.IntLock;
-					break;
-			}
-
-			switch (info.Secondary)
-			{
-				case StatCode.Str:
-					secondaryLock = from.StrLock;
-					break;
-				case StatCode.Dex:
-					secondaryLock = from.DexLock;
-					break;
-				case StatCode.Int:
-					secondaryLock = from.IntLock;
-					break;
-			}
-
-			// Gain
-			// Decision block of both are selected to gain
-			if (primaryLock == StatLockType.Up && secondaryLock == StatLockType.Up)
-			{
-				if (Utility.Random(4) == 0)
-					GainStat(from, (Stat)info.Secondary);
-				else
-					GainStat(from, (Stat)info.Primary);
-			}
-			else // Will not do anything if neither are selected to gain
-			{
-				if (primaryLock == StatLockType.Up)
-					GainStat(from, (Stat)info.Primary);
-				else if (secondaryLock == StatLockType.Up)
-					GainStat(from, (Stat)info.Secondary);
-			}
-		}
-		*/
 		public static bool CanLower(Mobile from, Stat stat)
 		{
 			switch (stat)

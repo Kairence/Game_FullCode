@@ -13,19 +13,14 @@ namespace Server.Spells.Fourth
             Reagent.BlackPearl,
             Reagent.MandrakeRoot,
             Reagent.SpidersSilk);
-        private static readonly Dictionary<Mobile, Timer> m_Table = new Dictionary<Mobile, Timer>();
+
         public ManaDrainSpell(Mobile caster, Item scroll)
             : base(caster, scroll, m_Info)
         {
         }
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Fourth;
-            }
-        }
+        public override SpellCircle Circle => SpellCircle.Fourth;
+
         public override void OnCast()
         {
             this.Caster.Target = new InternalTarget(this);
@@ -40,7 +35,6 @@ namespace Server.Spells.Fourth
             else if (this.CheckHSequence(m))
             {
                 SpellHelper.Turn(this.Caster, m);
-
                 SpellHelper.CheckReflect((int)this.Circle, this.Caster, ref m);
 
                 if (m.Spell != null)
@@ -48,33 +42,32 @@ namespace Server.Spells.Fourth
 
                 m.Paralyzed = false;
 
-                if (Core.AOS)
+                // --- 1. 마나 하한선 계산 (최대 마나의 50%) ---
+                int manaThreshold = (int)(m.ManaMax * 0.5);
+
+                if (m.Mana <= manaThreshold)
                 {
-                    int toDrain = (int)( m.Mana * 0.1 + Caster.Skills.Magery.Value * 0.0001 );
-
-                    if (m_Table.ContainsKey(m))
-                        toDrain = 0;
-
-                    m.FixedParticles(0x3789, 10, 25, 5032, EffectLayer.Head);
-                    m.PlaySound(0x1F8);
-
-                    if (toDrain > 0)
-                    {
-                        m.Mana -= toDrain;
-
-                        m_Table[m] = Timer.DelayCall(TimeSpan.FromSeconds(60.0), new TimerStateCallback(AosDelay_Callback), new object[] { m, toDrain });
-                    }
+                    // 이미 마나가 50% 이하인 경우 효과 없음
+                    m.PlaySound(0x1DF); 
                 }
                 else
                 {
-                    if (this.CheckResisted(m))
-                        m.SendLocalizedMessage(501783); // You feel yourself resisting magical energy.
-                    else if (m.Mana >= 100)
-                        m.Mana -= Utility.Random(1, 100);
-                    else
-                        m.Mana -= Utility.Random(1, m.Mana);
+                    // --- 2. 마나 제거량 계산 (500 + 보너스 * 0.1) ---
+                    double bonus = SpellHelper.GetMagicValue(Caster, 0.1);
+                    int toDrain = 500 + (int)bonus;
 
-                    m.FixedParticles(0x374A, 10, 15, 5032, EffectLayer.Head);
+                    // --- 3. 최종 마나 적용 (하한선 밑으로는 내려가지 않도록 차단) ---
+                    int newMana = m.Mana - toDrain;
+
+                    if (newMana < manaThreshold)
+                    {
+                        newMana = manaThreshold; // 50% 미만으로 내려가면 50%로 고정
+                    }
+
+                    m.Mana = newMana;
+
+                    // 연출 및 사운드
+                    m.FixedParticles(0x3789, 10, 25, 5032, EffectLayer.Head);
                     m.PlaySound(0x1F8);
                 }
 
@@ -82,29 +75,6 @@ namespace Server.Spells.Fourth
             }
 
             this.FinishSequence();
-        }
-
-        public override double GetResistPercent(Mobile target)
-        {
-            return 99.0;
-        }
-
-        private void AosDelay_Callback(object state)
-        {
-            object[] states = (object[])state;
-
-            Mobile m = (Mobile)states[0];
-            int mana = (int)states[1];
-
-            if (m.Alive && !m.IsDeadBondedPet)
-            {
-                m.Mana += mana;
-
-                m.FixedEffect(0x3779, 10, 25);
-                m.PlaySound(0x28E);
-            }
-
-            m_Table.Remove(m);
         }
 
         private class InternalTarget : Target

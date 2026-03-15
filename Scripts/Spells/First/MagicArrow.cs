@@ -56,7 +56,6 @@ namespace Server.Spells.First
                 IDamageable target = d;
 
                 SpellHelper.Turn(Caster, d);
-				SpellHelper.CheckReflect( (int)this.Circle, ref source, ref d );
                 
 				if (Core.SA && HasDelayContext(d))
                 {
@@ -68,8 +67,8 @@ namespace Server.Spells.First
 				
                 if (Core.AOS)
                 {
-					int min = 10;
-					int max = 30;
+					int min = 40;
+					int max = 60;
 
                     damage = GetNewAosDamage(0, min, max, d);
 					

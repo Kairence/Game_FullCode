@@ -64,8 +64,8 @@ namespace Server.Mobiles
 			this.SetHits(500, 800);   // 최종 Hits 약 15,000
 			this.SetStam(500, 800);
 
-			this.SetAttackSpeed(1.5);
-			SetDamage(10, 15);
+			SetAttackSpeed(1.5);
+			SetDamage(15, 25);
 
 			this.SetSkill(SkillName.Wrestling, 140.0, 155.0); // 작아서 맞추기 힘듦 설정
 			this.SetSkill(SkillName.Tactics, 100.0, 110.0);

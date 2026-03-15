@@ -29,9 +29,8 @@ namespace Server.Mobiles
 			this.SetDex(220, 250); // 바람처럼 빠른 민첩성
 			this.SetInt(100, 120);
 
-			// [Combat Options] 냉기 50% / 에너지 50% (날카로운 돌풍 타격)
-			this.SetDamage(35, 60);
-			this.SetAttackSpeed(1.6); // 몰아치는 바람의 연타
+			SetAttackSpeed(10.0);
+			SetDamage(18, 28);
 			this.SetDamageType(ResistanceType.Cold, 50);
 			this.SetDamageType(ResistanceType.Energy, 50);
 

@@ -119,7 +119,10 @@ namespace Server.Misc
 			else
 			{
 				// Tactics 및 Dex에 따른 스칼라 증가
-				scalar += (attacker.Skills[SkillName.Tactics].Value * 0.002 + attacker.Dex * 0.0001);
+				int statBonus = attacker.Dex;
+				if( attacker is BaseCreature )
+					statBonus = attacker.Str;
+				scalar += (attacker.Skills[SkillName.Tactics].Value * 0.002 + statBonus * 0.0001);
 				
 				if (attacker.Weapon is BaseWeapon bw)
 				{
@@ -215,19 +218,20 @@ namespace Server.Misc
 					else if (armorItem is BaseClothing bc)
 					{
 						baseAR = bc.BaseArmorRating;
+						armorBase = bc.ArmorBase;
 					}
 
 					if (isMagic)
 					{
 						// [마법 데미지 감쇄] 스탯 제외, 아이템 수치로만 계산
 						// 마법 방어력(MagicDefense) + 기본 AR
-						reducedDamage = (int)(baseAR + (ieo.ArmorAttributes.MagicDefense * 0000.1));
+						reducedDamage = (int)(baseAR + (ieo.ArmorAttributes.MagicDefense * 0000.1)) + defender.MagicDamageAbsorb;
 					}
 					else
 					{
 						// [물리 데미지 감쇄] 스탯 제외, 아이템 수치로만 계산
 						// 무기 방어력(WeaponDefense) + 기본 AR + ArmorBase
-						reducedDamage = (int)(baseAR + armorBase + (ieo.ArmorAttributes.WeaponDefense * 0000.1));
+						reducedDamage = (int)(baseAR + armorBase + (ieo.ArmorAttributes.WeaponDefense * 0000.1)) + defender.MeleeDamageAbsorb;
 					}
 				}
 			}
@@ -315,6 +319,54 @@ namespace Server.Misc
 				if (!isMagic) PlayPhysicalCritEffect(attacker);
 			}
 
+			// BaseWeapon.cs의 OnHit 내부 혹은 데미지 처리 로직
+			if (Server.Spells.Chivalry.CleanseByFireSpell.UnderAura(attacker))
+			{
+				// 최종 대미지의 10%를 화염 속성으로 추가 (추뎀)
+
+				// 타겟에게 화염 대미지 적용
+				AOS.Damage(defender, attacker, damage, 0, 10, 0, 0, 0);
+				// 1258: 화염을 상징하는 진한 주황색 Hue
+				defender.FixedParticles(0x37C4, 1, 20, 9962, 1258, 0, EffectLayer.Waist);
+				
+				// 추가로 짧고 강렬한 타격음 (0x208: 팔라딘 전용 불꽃 소리)
+				defender.PlaySound(0x208);
+			}
+			
+			if( !isMagic )
+			{
+				double chivaryChanceBonus = 0.0;
+				double chivaryDamageBonus = 0.0;
+				// 1. 가장 기본적인 확인 방법 (true/false 반환)
+				if ( Server.Spells.Chivalry.DivineFurySpell.UnderEffect( attacker ) )
+				{
+					chivaryChanceBonus += 0.15;
+					chivaryDamageBonus += 35;
+				}
+				// 스킬 1당 0.05% 확률 (100 기준 5%, 120 기준 6%)
+				if ((attacker.Skills.Chivalry.Value * 0.0005 + chivaryChanceBonus) > Utility.RandomDouble())
+				{
+					chivaryDamageBonus += attacker.Skills.Forensics.Value;
+					int chivaryTotalDamage = (int)(damage * chivaryDamageBonus );
+					// 총 피해량(damage)의 20%를 추가 피해로 계산
+					AOS.Damage(defender, attacker, chivaryTotalDamage, 0, 0, 0, 0, 0, 0, 100);
+					// 신성 공격 이펙트 및 사운드
+					defender.FixedParticles(0x377A, 1, 32, 9502, 67, 3, EffectLayer.Waist);
+					attacker.PlaySound(0x1F1);
+				}
+				// 스킬 1당 0.05% 확률 (100 기준 5%, 120 기준 6%)
+			}
+			if (attacker.Skills.Necromancy.Value * 0.0005 > Utility.RandomDouble())
+			{
+				// 총 피해량(damage)의 20%를 추가 피해로 계산
+				AOS.Damage(defender, attacker, damage, 0, 0, 0, 0, 0, 20, 0);
+
+				// 네크로맨시 스타일 이펙트 (영혼이 빠져나가는 듯한 푸른/어두운 효과)
+				defender.FixedParticles(0x374B, 1, 15, 9502, 97, 3, EffectLayer.Waist); // 어두운 불꽃 효과
+				attacker.PlaySound(0x1FB); // 영혼의 울음소리/냉기 사운드
+			}
+			
+			
 			return damage;
 		}
 

@@ -27,8 +27,11 @@ namespace Server.Mobiles
 			this.SetStam(183, 283); // 최종 Stam 600~700
 			this.SetMana(500, 1000);
 
-			SetAttackSpeed(4.0);
-			SetDamage(60, 95); // 평균 77.5
+			this.SetAttackSpeed(4.5);  // [조정] 4.0초 -> 4.5초.
+									   // 촉수를 휘두르는 궤적을 고려하여 유저보다 훨씬 느리게 설정.
+									   // 6.5초인 코끼리보다는 빨라 해양 생물의 위협을 유지합니다.
+
+			this.SetDamage(65, 105);   // [방어구 및 냉기 저항 가치 존중]
 
 			// 공격 속성: 차가운 심해의 타격
 			this.SetDamageType(ResistanceType.Physical, 60);

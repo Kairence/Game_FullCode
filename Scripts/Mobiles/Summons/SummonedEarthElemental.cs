@@ -17,11 +17,12 @@ namespace Server.Mobiles
             this.SetDex(100);
             this.SetInt(100);
 
-            this.SetHits(1000);
+            this.SetHits(3500);
 			this.SetStam(1000);
 			this.SetMana(100);
 
-            this.SetDamage(4, 5);
+            this.SetDamage(30, 60);
+			SetAttackSpeed(5.0);
 
             this.SetDamageType(ResistanceType.Physical, 100);
 
@@ -36,7 +37,8 @@ namespace Server.Mobiles
             this.SetSkill(SkillName.Wrestling, 90.0);
 
             this.VirtualArmor = 15;
-			m_NextAbilityTime = DateTime.Now + TimeSpan.FromSeconds( 4 );
+			m_NextAbilityTime = DateTime.Now + TimeSpan.FromSeconds( 10 );
+			ControlSlots = 2;
         }
 		private DateTime m_NextAbilityTime;
 		public override void OnThink()

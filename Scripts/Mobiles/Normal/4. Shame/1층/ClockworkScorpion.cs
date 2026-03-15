@@ -24,8 +24,8 @@ namespace Server.Mobiles
 			this.SetStam(150, 250);      // 기력
 			this.SetMana(30, 50);        // 마나
 
-			this.SetAttackSpeed(2.5);    // 공속
-			this.SetDamage(5, 12);       // 데미지
+			SetAttackSpeed(2.5);
+			SetDamage(14, 22);      // 데미지
 
 			// [Damage Type] 속성 타입
 			this.SetDamageType(ResistanceType.Physical, 50);

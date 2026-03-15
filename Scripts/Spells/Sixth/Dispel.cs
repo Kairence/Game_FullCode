@@ -14,28 +14,69 @@ namespace Server.Spells.Sixth
             Reagent.Garlic,
             Reagent.MandrakeRoot,
             Reagent.SulfurousAsh);
+
         public DispelSpell(Mobile caster, Item scroll)
             : base(caster, scroll, m_Info)
         {
         }
 
-        public override SpellCircle Circle
-        {
-            get
-            {
-                return SpellCircle.Sixth;
-            }
-        }
+        public override SpellCircle Circle => SpellCircle.Sixth;
+
         public override void OnCast()
         {
             this.Caster.Target = new InternalTarget(this);
         }
 
+        public void Target(Mobile m)
+        {
+            if (!Caster.CanSee(m))
+            {
+                Caster.SendLocalizedMessage(500237); // Target can not be seen.
+            }
+            else
+            {
+                BaseCreature bc = m as BaseCreature;
+
+                // 1. 소환수 여부 확인
+                bool isSummoned = (bc != null && bc.Summoned);
+                
+                // 2. 정령 여부 확인 (ElementalBan 슬레이어 그룹 활용)
+                // SlayerGroup.GetEntryByName을 통해 ElementalBan 그룹에 속한 몹인지 체크합니다.
+                SlayerEntry entry = SlayerGroup.GetEntryByName(SlayerName.ElementalBan);
+                bool isElemental = (entry != null && entry.Slays(m));
+
+                // 소환수도 아니고 정령도 아니면 종료
+                if (!isSummoned && !isElemental)
+                {
+                    return;
+                }
+                else if (CheckHSequence(m))
+                {
+                    SpellHelper.Turn(Caster, m);
+
+                    // 데미지 계산 (250 ~ 500 + 보너스)
+                    int damage = this.GetNewAosDamage(150, 250, 500, m);
+
+                    // 기존 디스펠 이펙트 연출
+                    Effects.SendLocationParticles(EffectItem.Create(m.Location, m.Map, EffectItem.DefaultDuration), 0x3728, 8, 20, 5042);
+                    Effects.PlaySound(m, m.Map, 0x201);
+
+                    // 화염 속성 데미지 적용 (100% Fire)
+                    SpellHelper.Damage(this, m, damage, 0, 100, 0, 0, 0);
+
+                    this.HarmfulSpell(m);
+                }
+            }
+
+            this.FinishSequence();
+        }
+
         public class InternalTarget : Target
         {
             private readonly DispelSpell m_Owner;
+
             public InternalTarget(DispelSpell owner)
-                : base(Core.ML ? 10 : 12, false, TargetFlags.Harmful)
+                : base(12, false, TargetFlags.Harmful)
             {
                 this.m_Owner = owner;
             }
@@ -44,39 +85,7 @@ namespace Server.Spells.Sixth
             {
                 if (o is Mobile)
                 {
-                    Mobile m = (Mobile)o;
-                    BaseCreature bc = m as BaseCreature;
-
-                    if (!from.CanSee(m))
-                    {
-                        from.SendLocalizedMessage(500237); // Target can not be seen.
-                    }
-                    else if (bc == null || !bc.IsDispellable)
-                    {
-                        from.SendLocalizedMessage(1005049); // That cannot be dispelled.
-                    }
-                    else if (bc.SummonMaster == from || m_Owner.CheckHSequence(m))
-                    {
-                        SpellHelper.Turn(from, m);
-
-                        double dispelChance = (50.0 + ((100 * (from.Skills.Magery.Value - bc.GetDispelDifficulty())) / (bc.DispelFocus * 2))) / 100;
-                        
-                        //Skill Masteries
-                        dispelChance -= ((double)SkillMasteries.MasteryInfo.EnchantedSummoningBonus(bc) / 100);
-
-                        if (dispelChance > Utility.RandomDouble())
-                        {
-                            Effects.SendLocationParticles(EffectItem.Create(m.Location, m.Map, EffectItem.DefaultDuration), 0x3728, 8, 20, 5042);
-                            Effects.PlaySound(m, m.Map, 0x201);
-
-                            m.Delete();
-                        }
-                        else
-                        {
-                            m.FixedEffect(0x3779, 10, 20);
-                            from.SendLocalizedMessage(1010084); // The creature resisted the attempt to dispel it!
-                        }
-                    }
+                    this.m_Owner.Target((Mobile)o);
                 }
             }
 

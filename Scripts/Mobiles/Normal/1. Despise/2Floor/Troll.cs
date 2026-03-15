@@ -20,8 +20,8 @@ namespace Server.Mobiles
 			this.SetHits(251, 751);  // 최종 Hits 7,000~7,500
 			this.SetStam(64, 94);
 
-			SetAttackSpeed(2.8);
-			SetDamage(20, 35); 
+			SetAttackSpeed(4.5);
+			SetDamage(35, 50);
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 
@@ -37,6 +37,9 @@ namespace Server.Mobiles
 
 			this.Fame = 3500;
 			this.Karma = -3500;	
+			
+			this.SpecialType2 = 4;
+			this.SpecialChance2 = 0.1;			
         }
 
         public Troll(Serial serial)

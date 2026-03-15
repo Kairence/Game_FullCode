@@ -26,9 +26,8 @@ namespace Server.Mobiles
 			this.SetDex(40, 50);
 			this.SetInt(40, 50);
 
-			// [Combat Options] 물리 40% / 화염 60% (주술적 타격)
-			this.SetDamage(35, 55);
-			this.SetAttackSpeed(2.4);
+			SetAttackSpeed(10.0);
+			SetDamage(18, 28);
 			this.SetDamageType(ResistanceType.Physical, 40);
 			this.SetDamageType(ResistanceType.Fire, 60);
 

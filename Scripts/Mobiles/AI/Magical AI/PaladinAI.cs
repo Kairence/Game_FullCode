@@ -39,9 +39,6 @@ namespace Server.Mobiles
 			if (mana >= 15)
 				select = 3;
 
-			if (mana >= 20 && !EnemyOfOneSpell.UnderEffect(m_Mobile))
-				select = 4;
-
 			switch (Utility.Random(select))
 			{
 				case 0:

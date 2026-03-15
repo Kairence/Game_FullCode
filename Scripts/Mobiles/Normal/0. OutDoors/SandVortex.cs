@@ -23,8 +23,8 @@ namespace Server.Mobiles
 			this.SetStam(54, 104);
 			this.SetMana(0);
 
-			SetAttackSpeed(2.0); // 폭풍다운 빠른 타격
-			SetDamage(20, 35); 
+			this.SetAttackSpeed(2.5);
+			this.SetDamage(25, 35); // 명성 2500 뱀(4.0s/35-55)과 맞춘 초고속 DPS 밸런스
 
 			// 공격 속성: 살을 찢는 모래와 바람
 			this.SetDamageType(ResistanceType.Physical, 100);

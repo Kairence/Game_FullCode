@@ -35,8 +35,8 @@ namespace Server.Mobiles
 			this.SetStam(180, 280);      
 			this.SetMana(350, 500);      
 
-			this.SetAttackSpeed(2.2);    // 드래곤보다 빠른 공속
-			this.SetDamage(20, 35);      
+			SetAttackSpeed(2.5);
+			SetDamage(50, 75);    
 
 			this.SetDamageType(ResistanceType.Physical, 50);
 			this.SetDamageType(ResistanceType.Cold, 50);

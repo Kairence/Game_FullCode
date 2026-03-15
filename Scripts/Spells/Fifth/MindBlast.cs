@@ -56,9 +56,9 @@ namespace Server.Spells.Fifth
                     SpellHelper.Turn(from, target);
                     //SpellHelper.CheckReflect((int)Circle, ref from, ref target);
 
-					int min = 70;
-					int max = 100;
-					double duration = 1.0;
+					int min = 200;
+					int max = 250;
+					double duration = 2.0;
 					double damage = GetNewAosDamage(0, min, max, m);
 
                     Timer.DelayCall(TimeSpan.FromSeconds(duration),

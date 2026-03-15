@@ -22,8 +22,11 @@ namespace Server.Mobiles
 			this.SetStam(39, 89);  // 최종 Stam 100~150
 			this.SetMana(0);
 
-			SetAttackSpeed(2.2);
-			SetDamage(8, 14); // 평균 11.0
+			this.SetAttackSpeed(2.8);  // [조정] 2.2초 -> 2.8초. 
+									   // 유저 평균(3.0s)보다 반 박자 빨라 "민첩하다"는 인상을 줍니다.
+									   // 동시에 초보 유저가 물약을 마실 타이밍은 충분히 확보했습니다.
+
+			this.SetDamage(16, 24);    // [방어구 가치 존중]
 
 			this.SetDamageType(ResistanceType.Physical, 100);
 
