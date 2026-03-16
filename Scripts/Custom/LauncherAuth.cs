@@ -37,7 +37,7 @@ namespace Server.Custom
             if (File.Exists(configPath))
             {
                 SecretToken = File.ReadAllText(configPath).Trim();
-                Console.WriteLine("[Kairence] 런처 인증 토큰을 파일에서 성공적으로 불러왔습니다.");
+                Console.WriteLine("[Kairence] Connected!.");
             }
             else
             {
@@ -47,7 +47,7 @@ namespace Server.Custom
                 
                 SecretToken = "CHANGE_THIS_TOKEN_TO_YOUR_SECRET";
                 File.WriteAllText(configPath, SecretToken);
-                Console.WriteLine("[Kairence] 경고: Config/LauncherToken.txt 파일이 없어 임시 생성했습니다. 반드시 텍스트 파일을 열어 토큰을 변경해 주세요!");
+                Console.WriteLine("[Kairence] Waring: Config/LauncherToken.txt not found.");
             }
         }
 
@@ -59,11 +59,11 @@ namespace Server.Custom
                 m_Listener.Bind(new IPEndPoint(IPAddress.Any, AuthPort));
                 m_Listener.Listen(10);
                 m_Listener.BeginAccept(new AsyncCallback(OnAccept), null);
-                Console.WriteLine($"[Kairence] 런처 전용 인증 서버 가동 중 (포트 {AuthPort})");
+                Console.WriteLine($"[Kairence] Server Check (Port {AuthPort})");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[Kairence] 인증 서버 가동 실패: {ex.Message}");
+                Console.WriteLine($"[Kairence] Auth Server failed: {ex.Message}");
             }
         }
 
@@ -83,11 +83,11 @@ namespace Server.Custom
                 if (!string.IsNullOrEmpty(SecretToken) && receivedToken == SecretToken)
                 {
                     m_AuthorizedIPs[clientIP] = DateTime.UtcNow.AddSeconds(10);
-                    Console.WriteLine($"[Kairence] 런처 인증 성공: {clientIP} (10초 내 게임 접속 허용)");
+                    Console.WriteLine($"[Kairence] Auth Success: {clientIP}");
                 }
                 else
                 {
-                    Console.WriteLine($"[Kairence] 런처 인증 실패 (잘못된 토큰): {clientIP}");
+                    Console.WriteLine($"[Kairence] Auth Failed (token error): {clientIP}");
                 }
 
                 client.Close();
@@ -105,7 +105,7 @@ namespace Server.Custom
 
             if (!m_AuthorizedIPs.ContainsKey(ip) || m_AuthorizedIPs[ip] < DateTime.UtcNow)
             {
-                Console.WriteLine($"[Kairence] 런처 미사용 접속 차단됨: {ip}");
+                Console.WriteLine($"[Kairence] Auth not found: {ip}");
                 e.RejectReason = ALRReason.BadComm; 
                 e.Accepted = false; 
             }
