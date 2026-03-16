@@ -13,41 +13,35 @@ namespace Server.Custom
     public class LauncherAuth
     {
         public static readonly int AuthPort = 2594; 
-        
-        // 하드코딩 제거! 외부 파일에서 읽어올 토큰 변수
         private static string SecretToken = ""; 
-        
         private static Dictionary<IPAddress, DateTime> m_AuthorizedIPs = new Dictionary<IPAddress, DateTime>();
         private static Socket m_Listener;
 
         public static void Initialize()
         {
-            // 1. 서버 시작 시 가장 먼저 설정 파일에서 토큰을 읽어옵니다.
             LoadConfig();
-
             EventSink.AccountLogin += new AccountLoginEventHandler(OnAccountLogin);
             StartAuthServer();
+
+            // [추가] 10초마다 인증 만료자를 찾아 추방하는 타이머 가동
+            Timer.DelayCall(TimeSpan.FromSeconds(10.0), TimeSpan.FromSeconds(10.0), new TimerCallback(CheckAuthorizedUsers));
         }
 
         private static void LoadConfig()
         {
-            // ServUO의 기본 폴더 내 Config/LauncherToken.txt 경로 지정
             string configPath = Path.Combine(Core.BaseDirectory, "Config", "LauncherToken.txt");
-            
             if (File.Exists(configPath))
             {
                 SecretToken = File.ReadAllText(configPath).Trim();
-                Console.WriteLine("[Kairence] Connected!.");
+                Console.WriteLine("[Kairence] Auth Token Loaded.");
             }
             else
             {
-                // 파일이 없다면 서버 운영자가 알 수 있게 기본 파일을 생성해 줍니다.
                 string directory = Path.GetDirectoryName(configPath);
                 if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
-                
                 SecretToken = "CHANGE_THIS_TOKEN_TO_YOUR_SECRET";
                 File.WriteAllText(configPath, SecretToken);
-                Console.WriteLine("[Kairence] Waring: Config/LauncherToken.txt not found.");
+                Console.WriteLine("[Kairence] Warning: Config file created. Please set your token.");
             }
         }
 
@@ -59,7 +53,7 @@ namespace Server.Custom
                 m_Listener.Bind(new IPEndPoint(IPAddress.Any, AuthPort));
                 m_Listener.Listen(10);
                 m_Listener.BeginAccept(new AsyncCallback(OnAccept), null);
-                Console.WriteLine($"[Kairence] Server Check (Port {AuthPort})");
+                Console.WriteLine($"[Kairence] Auth Listener started on port {AuthPort}");
             }
             catch (Exception ex)
             {
@@ -72,22 +66,18 @@ namespace Server.Custom
             try
             {
                 Socket client = m_Listener.EndAccept(ar);
-                
                 byte[] buffer = new byte[256];
                 int bytesRead = client.Receive(buffer);
-                string receivedToken = Encoding.ASCII.GetString(buffer, 0, bytesRead).Trim();
+                string receivedData = Encoding.UTF8.GetString(buffer, 0, bytesRead).Trim();
 
                 IPAddress clientIP = ((IPEndPoint)client.RemoteEndPoint).Address;
 
-                // 읽어온 SecretToken과 클라이언트가 보낸 토큰 비교
-                if (!string.IsNullOrEmpty(SecretToken) && receivedToken == SecretToken)
+                string tokenOnly = receivedData.Contains("|") ? receivedData.Split('|')[0] : receivedData;
+
+                if (!string.IsNullOrEmpty(SecretToken) && tokenOnly == SecretToken)
                 {
+                    // 런처가 5초마다 쏘므로, 10초 정도 유효기간을 주면 안정적입니다.
                     m_AuthorizedIPs[clientIP] = DateTime.UtcNow.AddSeconds(10);
-                    Console.WriteLine($"[Kairence] Auth Success: {clientIP}");
-                }
-                else
-                {
-                    Console.WriteLine($"[Kairence] Auth Failed (token error): {clientIP}");
                 }
 
                 client.Close();
@@ -96,23 +86,40 @@ namespace Server.Custom
             catch { }
         }
 
+        // [핵심 추가] 실시간 핸드쉐이크 감시 로직
+        private static void CheckAuthorizedUsers()
+        {
+            List<NetState> states = NetState.Instances;
+
+            for (int i = 0; i < states.Count; ++i)
+            {
+                NetState ns = states[i];
+                if (ns == null || ns.Account == null) continue;
+
+                IPAddress ip = ns.Address;
+
+                // 인증 리스트에 없거나, 인증 시간이 현재 시간(UtcNow)보다 과거라면 런처가 꺼진 것임
+                if (!m_AuthorizedIPs.ContainsKey(ip) || m_AuthorizedIPs[ip] < DateTime.UtcNow)
+                {
+                    Console.WriteLine($"[Kairence] Kick: Launcher not running for {ns.Account.Username} ({ip})");
+                    
+                    // 유저에게 알림을 보내고 연결 종료
+                    ns.Dispose(); 
+                }
+            }
+        }
+
         private static void OnAccountLogin(AccountLoginEventArgs e)
         {
-            NetState state = e.State;
-            if (state == null) return;
-
-            IPAddress ip = state.Address;
+            IPAddress ip = e.State.Address;
 
             if (!m_AuthorizedIPs.ContainsKey(ip) || m_AuthorizedIPs[ip] < DateTime.UtcNow)
             {
-                Console.WriteLine($"[Kairence] Auth not found: {ip}");
-                e.RejectReason = ALRReason.BadComm; 
-                e.Accepted = false; 
+                e.RejectReason = ALRReason.BadComm;
+                e.Accepted = false;
+                Console.WriteLine($"[Kairence] Login Blocked: No launcher signal from {ip}");
             }
-            else
-            {
-                m_AuthorizedIPs.Remove(ip);
-            }
+            // 주의: 여기서 Remove(ip)를 하면 안 됩니다! 런처가 계속 갱신해야 하니까요.
         }
     }
 }
