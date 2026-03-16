@@ -42,5 +42,8 @@
 
 git_upload.bat
 
+# [추가됨] 런처 인증 토큰 파일 제외 (보안)
+/Config/LauncherToken.txt
+
 !/Data/*
 !/bin/rosyln/*
