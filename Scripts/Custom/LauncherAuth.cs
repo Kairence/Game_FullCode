@@ -77,7 +77,7 @@ namespace Server.Custom
                 if (!string.IsNullOrEmpty(SecretToken) && tokenOnly == SecretToken)
                 {
                     // 런처가 5초마다 쏘므로, 60초 정도 유효기간을 주면 안정적입니다.
-                    m_AuthorizedIPs[clientIP] = DateTime.UtcNow.AddSeconds(60);
+                    m_AuthorizedIPs[clientIP] = DateTime.Now.AddSeconds(60);
                 }
 
                 client.Close();
