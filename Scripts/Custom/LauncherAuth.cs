@@ -76,8 +76,8 @@ namespace Server.Custom
 
                 if (!string.IsNullOrEmpty(SecretToken) && tokenOnly == SecretToken)
                 {
-                    // 런처가 5초마다 쏘므로, 10초 정도 유효기간을 주면 안정적입니다.
-                    m_AuthorizedIPs[clientIP] = DateTime.UtcNow.AddSeconds(10);
+                    // 런처가 5초마다 쏘므로, 60초 정도 유효기간을 주면 안정적입니다.
+                    m_AuthorizedIPs[clientIP] = DateTime.UtcNow.AddSeconds(60);
                 }
 
                 client.Close();
@@ -98,8 +98,8 @@ namespace Server.Custom
 
                 IPAddress ip = ns.Address;
 
-                // 인증 리스트에 없거나, 인증 시간이 현재 시간(UtcNow)보다 과거라면 런처가 꺼진 것임
-                if (!m_AuthorizedIPs.ContainsKey(ip) || m_AuthorizedIPs[ip] < DateTime.UtcNow)
+                // 인증 리스트에 없거나, 인증 시간이 현재 시간(Now)보다 과거라면 런처가 꺼진 것임
+                if (!m_AuthorizedIPs.ContainsKey(ip) || m_AuthorizedIPs[ip] < DateTime.Now)
                 {
                     Console.WriteLine($"[Kairence] Kick: Launcher not running for {ns.Account.Username} ({ip})");
                     
@@ -113,7 +113,7 @@ namespace Server.Custom
         {
             IPAddress ip = e.State.Address;
 
-            if (!m_AuthorizedIPs.ContainsKey(ip) || m_AuthorizedIPs[ip] < DateTime.UtcNow)
+            if (!m_AuthorizedIPs.ContainsKey(ip) || m_AuthorizedIPs[ip] < DateTime.Now)
             {
                 e.RejectReason = ALRReason.BadComm;
                 e.Accepted = false;
