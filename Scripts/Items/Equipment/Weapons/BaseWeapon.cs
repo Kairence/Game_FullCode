@@ -1669,135 +1669,44 @@ namespace Server.Items
 
 		public virtual TimeSpan GetDelay(Mobile m)
 		{
-			double speed = Speed;
+			double speed = Speed; // 무기 기본 속도 (예: 3.0)
 
 			if (speed == 0)
-			{
 				return TimeSpan.FromHours(1.0);
-			}
 
-			double delayInSeconds;
+			// 1. 보너스 합산 (단위: 1당 0.01% 효율 기준)
+			// 아이템 옵션이 100이면 1% 효율 증가입니다.
+			int bonus = AosAttributes.GetValue(m, AosAttribute.WeaponSpeed) + 
+						AosWeaponAttributes.GetValue(m, AosWeaponAttribute.MageWeapon);
 
-			if (Core.SE)
+			// 몬스터 예외 처리
+			if (m is BaseCreature)
 			{
-				/*
-                * This is likely true for Core.AOS as well... both guides report the same
-                * formula, and both are wrong.
-                * The old formula left in for AOS for legacy & because we aren't quite 100%
-                * Sure that AOS has THIS formula
-                */
-				int bonus = Math.Min(AosAttributes.GetValue(m, AosAttribute.WeaponSpeed) / 100 
-				+ AosWeaponAttributes.GetValue(m, AosWeaponAttribute.MageWeapon) / 100, 25000);
-				if( m is BaseCreature )
-				{
-					BaseCreature bc = m as BaseCreature;
-					speed = bc.AttackSpeed;
-					if( bc.AttackSpeed == 0 )
-						speed = 5.0;
-					//bonus = m.Dex / 1000;
-				}
-				//레슬링 200 보너스
-				if( this is Fists && m.Skills[SkillName.Wrestling].Value >= 200 )
-					speed /= 2;
-				
-				/*
-				if (bonus > 1000)
-				{
-					bonus = 1000;
-				}
-				*/
-				double ticks = speed / 0.25;
-
-				if (Core.ML)
-				{
-					//delayInSeconds = Math.Truncate( ( speed * 10000 / ( 1000 + bonus ) ) ) * 0.1;
-					//if( delayInSeconds < 0.5 )
-					//	delayInSeconds = 0.5;
-					return TimeSpan.FromSeconds(Misc.Util.AttackSpeedTicks(speed, bonus)); 
-				}
-				else
-				{
-					speed = Math.Floor(speed * (bonus + 1000.0) / 1000.0);
-
-					if (speed <= 0)
-					{
-						speed = 1;
-					}
-
-					ticks = Math.Floor((80000.0 / ((m.Stam + 100) * speed)) - 2);
-				}
-
-				// Swing speed currently capped at one swing every 1.25 seconds (5 ticks).
-				if (ticks < 2)
-				{
-					ticks = 2;
-				}
-
-
-				delayInSeconds = ticks * 0.25;
-				/*
-				if( m.Region.IsPartOf("Covetous") && ( m is VampireBat || m is Harpy || m is StoneHarpy || m is Succubus ) )
-					delayInSeconds = 0.5;
-				*/
+				BaseCreature bc = m as BaseCreature;
+				if (bc.AttackSpeed != 0) speed = bc.AttackSpeed;
 			}
-			else if (Core.AOS)
-			{
-				int v = (m.Stam + 100) * (int)speed;
 
-				int bonus = AosAttributes.GetValue(m, AosAttribute.WeaponSpeed);
+			// 레슬링 200 보너스 (기존 로직 유지)
+			if (this is Fists && m.Skills[SkillName.Wrestling].Value >= 200)
+				speed /= 2;
 
-				v += AOS.Scale(v, bonus);
+			// 2. [신규 정밀 공식 적용] - Spell.cs와 동일한 1당 0.01% 공식
+			// (speed * 1,000,000 / (10,000 + bonus)) * 0.01
+			double rawDelay = Math.Truncate((speed * 1000000 / (10000 + bonus))) * 0.01;
 
-				if (v <= 0)
-				{
-					v = 1;
-				}
+			// 3. [0.1초 정밀 틱 정규화]
+			// 이제 무기도 0.5초 단위가 아닌 0.1초 단위로 세밀하게 끊깁니다.
+			double tickUnit = 0.1;
+			double delayInSeconds = Math.Ceiling(rawDelay / tickUnit) * tickUnit;
 
-				delayInSeconds = Math.Floor(40000.0 / v) * 0.5;
-
-				// Maximum swing rate capped at one swing per second
-				// OSI dev said that it has and is supposed to be 1.25
-				if (delayInSeconds < 1.25)
-				{
-					delayInSeconds = 1.25;
-				}
-			}
-			else
-			{
-				int v = (m.Stam + 100) * (int)speed;
-
-				if (v <= 0)
-				{
-					v = 1;
-				}
-
-				delayInSeconds = 15000.0 / v;
-			}
+			// 4. 최소 공속 방어 (0.1초)
+			// 서버 처리 한계에 맞춰 0.1초까지 허용하거나, 밸런스상 0.5초로 두셔도 됩니다.
+			if (delayInSeconds < 0.1)
+				delayInSeconds = 0.1;
 
 			return TimeSpan.FromSeconds(delayInSeconds);
 		}
 
-		/*
-		//특수기 레벨
-		private int WeaponAbilityLevel(Mobile from, bool first)
-		{
-			BaseWeapon usedWeapon = from.Weapon as BaseWeapon;
-			int level = ( first ? ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.SPMFirstBonus ) : ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.SPMSecondBonus ) ) + ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.SPMAllBonus );
-			
-			if( usedWeapon.Skill is SkillName.Swords )
-				level += ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.SPMSwordBonus ); //검		
-			else if( usedWeapon.Skill is SkillName.Macing )	
-				level += ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.SPMMaceBonus ); //둔기		
-			else if( usedWeapon.Skill is SkillName.Fencing )	
-				level += ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.SPMFancingBonus ); //펜싱		
-			else if( usedWeapon.Skill is BaseRanged )	
-				level += ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.SPMBowBonus ); //활&보우		
-			else
-				level += ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.SPMWrestling ); //맨손	
-
-			return level / 100;
-		}
-		*/
 		public virtual void OnBeforeSwing(Mobile attacker, IDamageable damageable)
 		{
             Mobile defender = damageable as Mobile;
@@ -5167,212 +5076,7 @@ namespace Server.Items
                 return;
             }
 
-			int oreType;
-
-			switch (m_Resource)
-			{
-				case CraftResource.DullCopper:
-					oreType = 1053108;
-					break; // dull copper
-				case CraftResource.ShadowIron:
-					oreType = 1053107;
-					break; // shadow iron
-				case CraftResource.Copper:
-					oreType = 1053106;
-					break; // copper
-				case CraftResource.Bronze:
-					oreType = 1053105;
-					break; // bronze
-				case CraftResource.Gold:
-					oreType = 1053104;
-					break; // golden
-				case CraftResource.Agapite:
-					oreType = 1053103;
-					break; // agapite
-				case CraftResource.Verite:
-					oreType = 1053102;
-					break; // verite
-				case CraftResource.Valorite:
-					oreType = 1053101;
-					break; // valorite
-				case CraftResource.DernedLeather: oreType = 1051901; break; // 거친 가죽
-				case CraftResource.RatnedLeather: oreType = 1051902; break; // 질긴 가죽
-				case CraftResource.SernedLeather: oreType = 1051903; break; // 경화 가죽				case CraftResource.SpinedLeather:
-					oreType = 1061118;
-					break; // spined
-				case CraftResource.HornedLeather:
-					oreType = 1061117;
-					break; // horned
-				case CraftResource.BarbedLeather:
-					oreType = 1061116;
-					break; // barbed
-				case CraftResource.RedScales:
-					oreType = 1060814;
-					break; // red
-				case CraftResource.YellowScales:
-					oreType = 1060818;
-					break; // yellow
-				case CraftResource.BlackScales:
-					oreType = 1060820;
-					break; // black
-				case CraftResource.GreenScales:
-					oreType = 1060819;
-					break; // green
-				case CraftResource.WhiteScales:
-					oreType = 1060821;
-					break; // white
-				case CraftResource.BlueScales:
-					oreType = 1060815;
-					break; // blue
-
-					#region Mondain's Legacy
-				case CraftResource.OakWood:
-					oreType = 1072533;
-					break; // oak
-				case CraftResource.AshWood:
-					oreType = 1072534;
-					break; // ash
-				case CraftResource.YewWood:
-					oreType = 1072535;
-					break; // yew
-				case CraftResource.Heartwood:
-					oreType = 1072536;
-					break; // heartwood
-				case CraftResource.Bloodwood:
-					oreType = 1072538;
-					break; // bloodwood
-				case CraftResource.Frostwood:
-					oreType = 1072539;
-					break; // frostwood
-					#endregion
-
-				default:
-					oreType = 0;
-					break;
-			}
-			//아이템 이름 설정
-            if (Name == null)
-            {
-				if (oreType != 0)
-				{
-					//if( !Identified )
-					//	list.Add(1028266, "<basefont color=#AAAAAA>{0}\t#{1}\t{2}<basefont color=#FFFFFF>", "", oreType, GetNameString());
-					if( (int)ItemPower == 0 || (int)ItemPower >= 4 )
-					{
-						if (m_ReforgedPrefix != ReforgedPrefix.None && m_ReforgedSuffix != ReforgedSuffix.None )
-						{
-							list.Add(1028261, String.Format(Util.OreAllItemRank( (int)ItemPower), "",  RunicReforging.GetPrefixName(m_ReforgedPrefix), RunicReforging.GetSuffixName(m_ReforgedSuffix), oreType,GetNameString()));
-						}
-						else if ( m_ReforgedPrefix != ReforgedPrefix.None )
-						{
-							list.Add(1028262, String.Format(Util.OreOneItemRank( (int)ItemPower), "",  RunicReforging.GetPrefixName(m_ReforgedPrefix), oreType, GetNameString()));
-						}
-						else if ( m_ReforgedSuffix != ReforgedSuffix.None )
-						{
-							list.Add(1028263, String.Format(Util.OreOneItemRank( (int)ItemPower), "",  RunicReforging.GetSuffixName(m_ReforgedSuffix), oreType, GetNameString()));
-							
-						}
-						else
-						{
-							list.Add(1028264, String.Format(Util.OreItemRank( (int)ItemPower), "", oreType, GetNameString()));
-						}
-					}
-					else
-						list.Add(1053099, "#{0}\t{1}", oreType, GetNameString());
-				}
-				else if( SuffixOption[99] > 0 )
-				{
-					//if( !Identified )
-					//	list.Add(1028266, "<basefont color=#AAAAAA>{0}\t#{1}\t{2}<basefont color=#FFFFFF>", "", 1052084 + SuffixOption[99], GetNameString());
-					//else
-					if( SuffixOption[10] < 1 )
-						list.Add(1028264, String.Format(Util.OreItemRank( (int)ItemPower), "", 1052084 + SuffixOption[99], GetNameString()));
-					else
-					{
-						string upgrade = "+" + SuffixOption[10].ToString();
-						list.Add(1028263, String.Format(Util.OreItemRank( (int)ItemPower), "", upgrade, 1052084 + SuffixOption[99], GetNameString()));
-					}
-				}
-				else
-				{
-					//if( !Identified )
-					//	list.Add(1028265, "<basefont color=#AAAAAA>{0}\t{1}<basefont color=#FFFFFF>", "", GetNameString());
-					if( (int)ItemPower == 0 || (int)ItemPower >= 4 )
-					{
-						if (m_ReforgedPrefix != ReforgedPrefix.None && m_ReforgedSuffix != ReforgedSuffix.None )
-						{
-							list.Add(1028258, String.Format(Util.AllItemRank( (int)ItemPower), "", RunicReforging.GetPrefixName(m_ReforgedPrefix), RunicReforging.GetSuffixName(m_ReforgedSuffix), GetNameString()));
-						}
-						else if ( m_ReforgedPrefix != ReforgedPrefix.None )
-						{
-							list.Add(1028259, String.Format(Util.OneItemRank( (int)ItemPower), "", RunicReforging.GetPrefixName(m_ReforgedPrefix), GetNameString()));
-						}
-						else if ( m_ReforgedSuffix != ReforgedSuffix.None )
-						{
-							list.Add(1028260, String.Format(Util.OneItemRank( (int)ItemPower), "", RunicReforging.GetSuffixName(m_ReforgedSuffix), GetNameString()));
-						}
-						else if( SuffixOption[10] > 0 )
-						{
-							list.Add(1028260, String.Format(Util.OneItemRank( (int)ItemPower), "", 1083700 + SuffixOption[10], GetNameString()));
-						}
-						else
-						{
-							list.Add(1053099, Util.ItemRank( (int)ItemPower), "", GetNameString());
-						}
-
-					}
-					else
-						list.Add(1053099, "{0}\t{1}", "", GetNameString());				
-				}
-				
-				//list.Add(1053099, Util.ItemRank( (int)ItemPower), "", GetNameString());
-				
-				/*
-				if( (int)ItemPower == 4 )
-					list.Add(1053099, "<basefont color=#B36BFF>{0}\t{1}<basefont color=#FFFFFF>", "", GetNameString());
-				else if( (int)ItemPower == 5 )
-					list.Add(1053099, "<basefont color=#FF0090>{0}\t{1}<basefont color=#FFFFFF>", "", GetNameString());
-				else if( (int)ItemPower == 6 )
-					list.Add(1053099, "<basefont color=#FF7800>{0}\t{1}<basefont color=#FFFFFF>", "", GetNameString());
-				else if( (int)ItemPower == 7 )
-					list.Add(1053099, "<basefont color=#FFB400>{0}\t{1}<basefont color=#FFFFFF>", "", GetNameString());
-				else if( (int)ItemPower == 8 )
-					list.Add(1053099, "<basefont color=#DC143C>{0}\t{1}<basefont color=#FFFFFF>", "", GetNameString());
-				else
-					list.Add(LabelNumber);
-				*/
-            }
-            else
-            {
-				list.Add(Name);
-            }
-			
-			
-			/*
-			else if (oreType != 0)
-			{
-				list.Add(1053099, "#{0}\t{1}", oreType, GetNameString()); // ~1_oretype~ ~2_armortype~
-            }
-            #region High Seas
-            else if (SearingWeapon)
-            {
-                list.Add(1151318, String.Format("#{0}", LabelNumber));
-            }
-            #endregion
-			*/
-
-			/*
-            * Want to move this to the engraving tool, let the non-harmful
-            * formatting show, and remove CLILOCs embedded: more like OSI
-            * did with the books that had markup, etc.
-            *
-            * This will have a negative effect on a few event things imgame
-            * as is.
-            *
-            * If we cant find a more OSI-ish way to clean it up, we can
-            * easily put this back, and use it in the deserialize
-            * method and engraving tool, to make it perm cleaned up.
-            */
+			Misc.NewOptionOPL.AppendName(list, this);
 
 			if (!String.IsNullOrEmpty(m_EngravedText))
 			{

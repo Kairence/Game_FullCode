@@ -2036,7 +2036,7 @@ namespace Server.Multis
             return true;
         }
 
-        public bool CanFit(Point3D p, Map map, int itemID)
+		public bool CanFit(Point3D p, Map map, int itemID)
         {
             if (map == null || map == Map.Internal || Deleted || CheckDecay())
                 return false;
@@ -2050,7 +2050,7 @@ namespace Server.Multis
                     int tx = p.X + newComponents.Min.X + x;
                     int ty = p.Y + newComponents.Min.Y + y;
 
-                    if (newComponents.Tiles[x][y].Length == 0 || Contains(tx, ty) || IsExcludedTile(newComponents.Tiles[x][y]))
+                    if (newComponents.Tiles[x][y].Length == 0 || Contains(tx, ty))
                         continue;
 
                     LandTile landTile = map.Tiles.GetLandTile(tx, ty);
@@ -2059,10 +2059,10 @@ namespace Server.Multis
                     bool hasWater = false;
                     int dif = Math.Abs(landTile.Z - p.Z);
 
-                    if (dif >= 0 && dif <= 1 && ((landTile.ID >= 168 && landTile.ID <= 171) || (landTile.ID >= 310 && landTile.ID <= 311)))
+                    // [수정 4] 물 타일 판정 완화
+                    bool isWetLand = (TileData.LandTable[landTile.ID & TileData.MaxLandValue].Flags & TileFlag.Wet) != 0;
+                    if (dif >= 0 && dif <= 1 && (isWetLand || (landTile.ID >= 168 && landTile.ID <= 171) || (landTile.ID >= 310 && landTile.ID <= 311)))
                         hasWater = true;
-
-                    int z = p.Z;
 
                     for (int i = 0; i < tiles.Length; ++i)
                     {
@@ -2071,19 +2071,16 @@ namespace Server.Multis
                         if (IsExcludedTile(tile))
                             continue;
 
-                        bool isWater = tile.ID >= 0x1796 && tile.ID <= 0x17B2;
+                        bool isWetStatic = (TileData.ItemTable[tile.ID & TileData.MaxItemValue].Flags & TileFlag.Wet) != 0;
+                        bool isWater = isWetStatic || (tile.ID >= 0x1796 && tile.ID <= 0x17B2);
 
                         if (tile.Z == p.Z && isWater)
                         {
                             hasWater = true;
                         }
-                        else if (tile.Z >= p.Z && !isWater)
+                        // [수정 5] 지형 높이 억까 판정 방지 (p.Z + 5)
+                        else if (tile.Z > p.Z + 5 && !isWater)
                         {
-                            if (Owner is BaseShipCaptain && !Owner.Deleted && Order == BoatOrder.Course)
-                            {
-                                ((BaseShipCaptain)Owner).CheckBlock(tile, new Point3D(tx, ty, tile.Z));
-                            }
-
                             return false;
                         }
                     }
@@ -2097,10 +2094,10 @@ namespace Server.Multis
 
             foreach (IEntity e in eable)
             {
-                int x = e.X - p.X + newComponents.Min.X;
-                int y = e.Y - p.Y + newComponents.Min.Y;
+                // [수정 6] 치명적 배열 인덱스 버그 수정 (+ 를 - 로 변경)
+                int x = e.X - p.X - newComponents.Min.X;
+                int y = e.Y - p.Y - newComponents.Min.Y;
 
-                // No multi tiles on that point -or- mast/sail tiles
                 if (x >= 0 && x < newComponents.Width && y >= 0 && y < newComponents.Height)
                 {
                     if (newComponents.Tiles[x][y].Length == 0 || IsExcludedTile(newComponents.Tiles[x][y]))
@@ -2114,7 +2111,6 @@ namespace Server.Multis
                     if ((item is BaseAddon || item is AddonComponent) && CheckAddon(item))
                         continue;
 
-                    // Special item, we're good
                     if (CheckItem(itemID, item, p) || CanMoveOver(item) || item.Z < p.Z || ExemptOverheadComponent(p, itemID, item.X, item.Y, item.Z + item.ItemData.Height))
                         continue;
                 }
@@ -2521,7 +2517,7 @@ namespace Server.Multis
             Location = new Point3D(X + xOffset, Y + yOffset, Z + zOffset);
         }
 
-        public virtual bool SetFacing(Direction facing)
+		public virtual bool SetFacing(Direction facing)
         {
             if (Parent != null || Map == null)
                 return false;
@@ -2531,16 +2527,37 @@ namespace Server.Multis
 
             if (Map != Map.Internal)
             {
+                int checkID = 0;
                 switch (facing)
                 {
                     default:
-                    case Direction.North: if (!CanFit(Location, Map, NorthID)) return false; break;
-                    case Direction.East: if (!CanFit(Location, Map, EastID)) return false; break;
-                    case Direction.South: if (!CanFit(Location, Map, SouthID)) return false; break;
-                    case Direction.West: if (!CanFit(Location, Map, WestID)) return false; break;
+                    case Direction.North: checkID = NorthID; break;
+                    case Direction.East:  checkID = EastID;  break;
+                    case Direction.South: checkID = SouthID; break;
+                    case Direction.West:  checkID = WestID;  break;
+                }
+
+                // [최종 로직] 
+                // 1. 일단 충돌 체크 시도
+                if (!CanFit(Location, Map, checkID))
+                {
+                    // 2. 만약 실패하더라도 '현재 내 배 아래가 물'이라면 강제로 돌려줌 (억까 방지)
+                    LandTile landTile = Map.Tiles.GetLandTile(X, Y);
+                    bool isWater = (TileData.LandTable[landTile.ID & TileData.MaxLandValue].Flags & TileFlag.Wet) != 0 || 
+                                   (landTile.ID >= 168 && landTile.ID <= 171);
+
+                    if (!isWater) 
+                    {
+                        // 진짜 육지인 경우만 회전을 막고 틸러맨이 대답함
+                        TillerManSay(501423); // Ar, can't turn sir.
+                        return false; 
+                    }
+                    
+                    // 물 위라면 충돌 감지 무시하고 진행 (로그만 남기려면 GM 체크 추가 가능)
                 }
             }
 
+            // --- 이 아래부터는 기존 회전 처리 로직 ---
             Map.OnLeave(this);
 
             Direction old = m_Facing;

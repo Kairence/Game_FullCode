@@ -34,7 +34,7 @@ namespace Server.Spells.Chivalry
         protected override void ApplyEffect(Mobile target)
         {
             base.ApplyEffect(target);
-            target.PlaySound(0x20C);
+            //target.PlaySound(0x20C);
         }
 
         protected override string GetBuffArgs()

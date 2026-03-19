@@ -146,7 +146,11 @@ namespace Server.Misc
                 {
                     char c = name[i];
 
-                    if (c >= 'a' && c <= 'z')
+                    // 한글 판별 변수 추가 (가~힣, 자음/모음)
+                    bool isKorean = (c >= 0xAC00 && c <= 0xD7A3) || (c >= 0x3131 && c <= 0x318E);
+
+                    // 영문 소문자이거나 한글이면 정상적인 '문자(Letter)'로 취급
+                    if ((c >= 'a' && c <= 'z') || isKorean)
                     {
                         if (!allowLetters)
                             return false;

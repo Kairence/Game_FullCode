@@ -186,6 +186,36 @@ namespace Server.Misc
 			return check;
 		}
 
+		#region 0. 이름 및 등급 출력 (Ultra-Lightweight)
+		public static void AppendName(ObjectPropertyList list, Item item)
+		{
+			// 패턴 매칭: item이 IEquipOption을 구현하고 있으며, 이름이 null이고, 4등급 이상(SuffixOption[1] > 0)일 때
+			if (item is IEquipOption eq && item.Name is null && eq.SuffixOption[1] > 0)
+			{
+				int ore = (int)eq.Resource;
+				
+				// 특수 재질 여부 (Pattern matching)
+				bool isSpecial = ore is not (0 or (int)CraftResource.Iron or (int)CraftResource.RegularLeather or (int)CraftResource.RegularWood);
+
+				// Cliloc 번호 계산 (isSpecial ? 광석용 : 일반용) + 오프셋
+				int cliloc = (isSpecial ? 503436 : 503430) + (int)eq.SuffixOption[1] - 1;
+
+				if (isSpecial)
+					list.Add(cliloc, "#{0}\t#{1}", Misc.Util.UseResourceNumber(ore), item.LabelNumber);
+				else
+					list.Add(cliloc, "#{0}", item.LabelNumber);
+			}
+			else
+			{
+				// 4등급 미만이거나 고유 이름이 있는 경우
+				if (item.Name is not null)
+					list.Add(item.Name);
+				else
+					list.Add(item.LabelNumber);
+			}
+		}
+		#endregion
+
 		#region 1. 마법 옵션
 		private static void AppendMagicOptions(ObjectPropertyList list, IEquipOption eqItem)
 		{

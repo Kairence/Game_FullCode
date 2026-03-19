@@ -7461,7 +7461,7 @@ namespace Server.Mobiles
 			}	
 
 			DungeonRegion dungeon = Region.GetRegion(typeof(DungeonRegion)) as DungeonRegion;
-
+			Server.Misc.DungeonManager.OnCreatureKilled(this);
 			if (dungeon != null || DeleteCorpseOnDeath)
 			{
 				c.Delete();

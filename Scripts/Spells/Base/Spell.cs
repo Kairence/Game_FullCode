@@ -395,7 +395,7 @@ namespace Server.Spells
 				if (++currentTick >= totalTicks)
 					StopChanneling();
 			});
-		}	
+		}
 		public virtual int GetNewAosDamage(int bonus, int min, int max, bool playerVsPlayer, double scalar, IDamageable damageable, bool scroll = false)
 		{
 			Mobile target = damageable as Mobile;
@@ -1352,7 +1352,7 @@ namespace Server.Spells
 		public virtual double CastDelaySecondsPerTick { get { return 0.25; } }
 		public virtual TimeSpan CastDelayMinimum { get { return TimeSpan.FromSeconds(0.25); } }
 
-		private double[] MagerySpeed = { 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0 };
+		private double[] MagerySpeed = { 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5 };
 		
 		public virtual TimeSpan GetCastDelay()
 		{
@@ -1379,21 +1379,29 @@ namespace Server.Spells
 				*/
 				double speed = 3.0;
 				double delayInSeconds = 10.0;
-				//메저리 케스팅
+
 				if( this is MagerySpell )
 				{
 					speed = MagerySpeed[(int)((MagerySpell)this).Circle];
-					delayInSeconds = Math.Truncate( ( speed * 100000 / ( 1000 + bonus ) ) ) * 0.01;
+					
+					// 1. 기본 공식 (1당 0.01%)
+					double rawDelay = Math.Truncate( ( speed * 1000000 / ( 10000 + bonus ) ) ) * 0.01;
+					
+					// 2. [0.1초 정밀 틱 정규화]
+					// 예: 1.13초 -> 1.2초, 1.27초 -> 1.3초
+					double tickUnit = 0.1;
+					delayInSeconds = Math.Ceiling(rawDelay / tickUnit) * tickUnit;
+
+					// 최소 시간을 서버 처리 한계인 0.1초로 방어
 					if( delayInSeconds < 0.1 )
 						delayInSeconds = 0.1;
-				}				
+				}               
 				else if( this is ArcaneCircleSpell )
 					delayInSeconds = 3.0;
 				else
 					return CastDelayBase; 
 					
-				return TimeSpan.FromSeconds(delayInSeconds); 
-				/*
+				return TimeSpan.FromSeconds(delayInSeconds);				/*
 				double ticks = speed / 0.25;
 				ticks = Math.Floor((ticks) * (100.0 / (100 + bonus)));
 

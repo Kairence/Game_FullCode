@@ -180,7 +180,7 @@ namespace Server.Network
 		}
 
 		/// <summary>
-		///     Writes a fixed-length ASCII-encoded string value to the underlying stream. To fit (size), the string content is either truncated or padded with null characters.
+		///     Writes a fixed-length UTF8-encoded string value to the underlying stream. 
 		/// </summary>
 		public void WriteAsciiFixed(string value, int size)
 		{
@@ -190,35 +190,22 @@ namespace Server.Network
 				value = String.Empty;
 			}
 
-			int length = value.Length;
+			// [수정] ASCII 대신 UTF-8 바이트 배열로 변환
+			byte[] buffer = Encoding.UTF8.GetBytes(value);
 
-			m_Stream.SetLength(m_Stream.Length + size);
-
-			if (length >= size)
+			if (buffer.Length >= size)
 			{
-				m_Stream.Position += Encoding.ASCII.GetBytes(value, 0, size, m_Stream.GetBuffer(), (int)m_Stream.Position);
+				m_Stream.Write(buffer, 0, size);
 			}
 			else
 			{
-				Encoding.ASCII.GetBytes(value, 0, length, m_Stream.GetBuffer(), (int)m_Stream.Position);
-				m_Stream.Position += size;
+				m_Stream.Write(buffer, 0, buffer.Length);
+				Fill(size - buffer.Length); // 남은 공간을 0(Null)으로 채움
 			}
-
-			/*byte[] buffer = Encoding.ASCII.GetBytes( value );
-
-			if ( buffer.Length >= size )
-			{
-				m_Stream.Write( buffer, 0, size );
-			}
-			else
-			{
-				m_Stream.Write( buffer, 0, buffer.Length );
-				Fill( size - buffer.Length );
-			}*/
 		}
 
 		/// <summary>
-		///     Writes a dynamic-length ASCII-encoded string value to the underlying stream, followed by a 1-byte null character.
+		///     Writes a dynamic-length UTF8-encoded string value to the underlying stream, followed by a 1-byte null character.
 		/// </summary>
 		public void WriteAsciiNull(string value)
 		{
@@ -228,17 +215,11 @@ namespace Server.Network
 				value = String.Empty;
 			}
 
-			int length = value.Length;
+			// [수정] UTF-8 적용 및 안전한 스트림 쓰기 방식 적용
+			byte[] buffer = Encoding.UTF8.GetBytes(value);
 
-			m_Stream.SetLength(m_Stream.Length + length + 1);
-
-			Encoding.ASCII.GetBytes(value, 0, length, m_Stream.GetBuffer(), (int)m_Stream.Position);
-			m_Stream.Position += length + 1;
-
-			/*byte[] buffer = Encoding.ASCII.GetBytes( value );
-
-			m_Stream.Write( buffer, 0, buffer.Length );
-			m_Stream.WriteByte( 0 );*/
+			m_Stream.Write(buffer, 0, buffer.Length);
+			m_Stream.WriteByte(0); // 1-byte null character 추가
 		}
 
 		/// <summary>

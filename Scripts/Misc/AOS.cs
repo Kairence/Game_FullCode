@@ -262,7 +262,7 @@ namespace Server
 			*/
 
 			totalDamage = physDamage + fireDamage + coldDamage + poisonDamage + energyDamage + chaosDamage + directDamage;
-			totalDamage /= 10000;
+			totalDamage /= 100;
 			//Console.WriteLine("damage : " + damage + "   totalDamage : " + totalDamage );  
 
             // object being damaged is not a mobile, so we will end here

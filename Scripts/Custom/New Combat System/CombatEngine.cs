@@ -87,7 +87,7 @@ namespace Server.Misc
 			else
 			{
 				// [물리 설계: 명중/방어 격차 시스템]
-				factor += (AosAttributes.GetValue(attacker, AosAttribute.AttackChance) - AosAttributes.GetValue(defender, AosAttribute.DefendChance)) * 0.000001; // %단위 보정 10000 당 1%임
+				factor += (AosAttributes.GetValue(attacker, AosAttribute.AttackChance) - AosAttributes.GetValue(defender, AosAttribute.DefendChance)) * 0.0001; // %단위 보정 10000 당 1%임
 			}
 
 			// 가중치 안전 범위 (0.01 ~ 1.0)
@@ -114,14 +114,18 @@ namespace Server.Misc
 				scalar += (attacker.Skills[SkillName.Magery].Value * 0.005 + attacker.Int * 0.0001);
 				if( attacker.Skills[SkillName.Spellweaving].Value >= 50 )
 					scalar += 0.25;
-				scalar += (AosAttributes.GetValue(attacker, AosAttribute.SpellDamage) * 0.000001); //마법 피해
+				scalar += (AosAttributes.GetValue(attacker, AosAttribute.SpellDamage) * 0.0001); //마법 피해
 			}
 			else
 			{
 				// Tactics 및 Dex에 따른 스칼라 증가
 				int statBonus = attacker.Dex;
-				if( attacker is BaseCreature )
+				if( attacker is BaseCreature bc)
+				{
 					statBonus = attacker.Str;
+					if( bc.Controlled && bc.ControlMaster.Skills[SkillName.Veterinary].Value >= 50)
+						scalar += 0.25;
+				}
 				scalar += (attacker.Skills[SkillName.Tactics].Value * 0.002 + statBonus * 0.0001);
 				
 				if (attacker.Weapon is BaseWeapon bw)
@@ -130,10 +134,10 @@ namespace Server.Misc
 					scalar += (weaponSkill.Value * 0.003);
 					if (weaponSkill.Value >= 100.0) scalar += 0.4; 
 				}
-				scalar += (AosAttributes.GetValue(attacker, AosAttribute.WeaponDamage) * 0.000001); //무기 피해
+				scalar += (AosAttributes.GetValue(attacker, AosAttribute.WeaponDamage) * 0.0001); //무기 피해
 			}
 			// 공통 속성: UseBestSkill 적용 (모든 피해 가중치 증가)
-			factor += AosWeaponAttributes.GetValue(attacker, AosWeaponAttribute.UseBestSkill) * 0.000001;
+			factor += AosWeaponAttributes.GetValue(attacker, AosWeaponAttribute.UseBestSkill) * 0.0001;
 
 			// 5. 슬레이어 배율 통합 계산
 			scalar *= GetSlayerDamageScalar(attacker, defender);
@@ -239,6 +243,12 @@ namespace Server.Misc
 			{
 				// 몬스터는 설정된 VirtualArmor 수치만큼 고정 감쇄
 				reducedDamage = bc.VirtualArmor;
+				if( isMagic)
+				{
+					reducedDamage += defender.MagicDamageAbsorb;
+				}
+				else
+					reducedDamage += defender.MeleeDamageAbsorb;
 			}
 
 			// 최종 데미지는 0 미만으로 떨어지지 않게 처리
@@ -252,9 +262,9 @@ namespace Server.Misc
 
 			// [추가 보정] 마법은 캐스트 리커버리, 물리인 무기 크리티컬 속성 참조
 			if (isMagic) 
-				critChance += AosAttributes.GetValue(attacker, AosAttribute.CastRecovery) * 0.01;
+				critChance += AosAttributes.GetValue(attacker, AosAttribute.CastRecovery) * 0.0001;
 			else 
-				critChance += AosAttributes.GetValue(attacker, AosAttribute.WeaponCritical) * 0.01;
+				critChance += AosAttributes.GetValue(attacker, AosAttribute.WeaponCritical) * 0.0001;
 
 			// 2. [치명타 데미지 배율] 기본 1.5배 (150%)
 			double critDamageMult = 1.5;
