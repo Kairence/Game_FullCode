@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 using Server.Mobiles;
 
@@ -17,19 +17,6 @@ namespace Server.Misc
             Mobile targ = e.Target;
             string name = e.Name;
 			
-			// ==========================================
-            // [디버그용] 서버가 받은 문자열과 헥스(Hex) 코드 출력
-            Console.WriteLine("\n=== [Rename Debug] ===");
-            Console.WriteLine($"받은 이름(String): {name}");
-            Console.WriteLine($"문자열 길이: {name.Length}");
-            Console.Write("글자별 Hex 코드: ");
-            foreach (char c in name)
-            {
-                Console.Write($"{(int)c:X4} ");
-            }
-            Console.WriteLine("\n======================\n");
-            // ==========================================
-
             if (from.CanSee(targ) && from.InRange(targ, 12) && targ.CanBeRenamedBy(from))
             {
                 name = name.Trim();

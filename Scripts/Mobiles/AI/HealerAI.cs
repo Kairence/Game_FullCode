@@ -1,4 +1,4 @@
-#region References
+﻿#region References
 using Server.Spells.First;
 using Server.Spells.Fourth;
 using Server.Spells.Second;

@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using Server;
 using Server.Items;
@@ -10,7 +10,7 @@ namespace Server.Mobiles
         private readonly BaseCreature _owner;
         private readonly Dictionary<Mobile, double> _table = new();
 
-		// ÀÌ ÁÙÀ» Ãß°¡ÇÏ¼¼¿ä
+		// ì´ ì¤„ì„ ì¶”ê°€í•˜ì„¸ìš”
 		public Dictionary<Mobile, double> Table => _table;
 
         public AggroControl(BaseCreature owner) => _owner = owner;
@@ -19,30 +19,30 @@ namespace Server.Mobiles
 		{
 			if (m == null || m.Deleted || !m.Alive || m == _owner) return;
 
-			// 1. ±âº» ¹èÀ² ¼³Á¤
+			// 1. ê¸°ë³¸ ë°°ìœ¨ ì„¤ì •
 			double multiplier = 1.0;
 
-			// 2. Èú¸µÀÌ ¾Æ´Ñ ÀÏ¹İ ÇÇÇØ »óÈ²ÀÏ ¶§ ¹æÆĞ º¸³Ê½º Ã¼Å©
+			// 2. íë§ì´ ì•„ë‹Œ ì¼ë°˜ í”¼í•´ ìƒí™©ì¼ ë•Œ ë°©íŒ¨ ë³´ë„ˆìŠ¤ ì²´í¬
 			if (!isHealing)
 			{
-				// ¹æÆĞ Âø¿ëÀÚ(ÅÊÄ¿)´Â 2.0¹è, ÀÏ¹İÀº 1.0¹è
+				// ë°©íŒ¨ ì°©ìš©ì(íƒ±ì»¤)ëŠ” 2.0ë°°, ì¼ë°˜ì€ 1.0ë°°
 				multiplier = (m.FindItemOnLayer(Layer.TwoHanded) is BaseShield) ? 2.0 : 1.0;
 			}
 
 			double strBonus = 1.0;
 			if (m is PlayerMobile)
 			{
-				// ÈûÀÌ 1000ÀÌ¸é multiplier°¡ 1.0ÀÌ µÇ¾î ÃÖÁ¾ÀûÀ¸·Î 1.0¹è°¡ µÊ
-				// ÈûÀÌ 9999ÀÌ¸é multiplier°¡ 9.9ÀÌ µÇ¾î ¾à 9.9¹è°¡ µÊ
+				// í˜ì´ 1000ì´ë©´ multiplierê°€ 1.0ì´ ë˜ì–´ ìµœì¢…ì ìœ¼ë¡œ 1.0ë°°ê°€ ë¨
+				// í˜ì´ 9999ì´ë©´ multiplierê°€ 9.9ì´ ë˜ì–´ ì•½ 9.9ë°°ê°€ ë¨
 				strBonus = m.Str * 0.001;
 			}
 			// ---------------------------------------------------------
 
-			// 3. AOS.Damage¿¡¼­ Àü´Ş¹ŞÀº aggro ÀÎÀÚ ¹× Èû º¸³Ê½º Àû¿ë
-			// multiplier(¹æÆĞ) * strBonus(Èû) * aggroModifier(½ºÅ³º¸Á¤) Àû¿ë
+			// 3. AOS.Damageì—ì„œ ì „ë‹¬ë°›ì€ aggro ì¸ì ë° í˜ ë³´ë„ˆìŠ¤ ì ìš©
+			// multiplier(ë°©íŒ¨) * strBonus(í˜) * aggroModifier(ìŠ¤í‚¬ë³´ì •) ì ìš©
 			double finalAggro = damage * multiplier * strBonus * (aggroModifier / 100.0);
 
-			// 4. Å×ÀÌºí °»½Å
+			// 4. í…Œì´ë¸” ê°±ì‹ 
 			if (_table.TryGetValue(m, out double current))
 				_table[m] = current + finalAggro;
 			else
@@ -61,36 +61,36 @@ namespace Server.Mobiles
             }
             return top;
         }
-		// AggroControl.cs ³»ºÎ
+		// AggroControl.cs ë‚´ë¶€
 		public void Clear()
 		{
 			_table.Clear();
 		}		
 		public static int HealCheck(Mobile from, Mobile to, int heal)
 		{
-			// 1. Ä¡À¯·® º¸Á¤ ¹× ÇÕ»ê
+			// 1. ì¹˜ìœ ëŸ‰ ë³´ì • ë° í•©ì‚°
 			int percent = AosAttributes.GetValue(from, AosAttribute.EnhancePotions);
 			int plus = AosAttributes.GetValue(from, AosAttribute.HealBonus);
 
 			heal = (heal * (100 + percent)) / 100 + plus;
 			
-			// 2. ¿À¹öÈú ¹æÁö (½ÇÁ¦ È¸º¹µÈ HP °è»ê)
+			// 2. ì˜¤ë²„í ë°©ì§€ (ì‹¤ì œ íšŒë³µëœ HP ê³„ì‚°)
 			if (to.Hits + heal > to.HitsMax)
 				heal = to.HitsMax - to.Hits;
 
 			if (heal <= 0) return 0;
 
-			// 3. ÁÖº¯ ¸ó½ºÅÍ ¾î±×·Î ¾÷µ¥ÀÌÆ®
+			// 3. ì£¼ë³€ ëª¬ìŠ¤í„° ì–´ê·¸ë¡œ ì—…ë°ì´íŠ¸
 			IPooledEnumerable eable = to.Map.GetMobilesInRange(to.Location, 20);
 
 			foreach (Mobile m in eable)
 			{
 				if (m is BaseCreature bc && !bc.Controlled && bc.SummonMaster == null)
 				{
-					// ¸ó½ºÅÍ°¡ Èú ´ë»óÀ» Àû´ëÇÏ°í ÀÖ´Â »óÅÂÀÎÁö È®ÀÎ
+					// ëª¬ìŠ¤í„°ê°€ í ëŒ€ìƒì„ ì ëŒ€í•˜ê³  ìˆëŠ” ìƒíƒœì¸ì§€ í™•ì¸
 					if (bc.Combatant == to || bc.Aggro.Table.ContainsKey(to))
 					{
-						// isHealing: true¸¦ Àü´ŞÇÏ¿© ¹æÆĞ º¸³Ê½º(2¹è) Á¦¿Ü
+						// isHealing: trueë¥¼ ì „ë‹¬í•˜ì—¬ ë°©íŒ¨ ë³´ë„ˆìŠ¤(2ë°°) ì œì™¸
 						bc.Aggro.Update(from, heal, 50, true);
 					}
 				}

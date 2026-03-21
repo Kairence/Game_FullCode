@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 /*
 * This script adds four attachments that will allow dynamic enhancment of Aos attributes

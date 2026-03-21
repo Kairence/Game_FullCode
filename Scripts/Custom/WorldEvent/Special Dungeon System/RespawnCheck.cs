@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Items;
 using Server.Gumps;
 using Server.Network;
@@ -7,7 +7,7 @@ using Server.Mobiles;
 namespace Server.Items
 {
 	/*
-		ÃÖÃÊ 100 À¯Àú
+		ìµœì´ˆ 100 ìœ ì €
 	*/
 	
 	public class RespawnCheck : Item 
@@ -22,14 +22,14 @@ namespace Server.Items
 		
 		public override string DefaultName
 		{
-			get { return "´øÀü º¸»ó Ã¼Å© ½Ã½ºÅÛ"; }
+			get { return "ë˜ì „ ë³´ìƒ ì²´í¬ ì‹œìŠ¤í…œ"; }
 		}
 		[Constructable]
 		public RespawnCheck() : base( 0xED4 )
 		{
 			Movable = false;
 			Hue = 1168;
-			Name = "´øÀü º¸»ó Ã¼Å© ½Ã½ºÅÛ";
+			Name = "ë˜ì „ ë³´ìƒ ì²´í¬ ì‹œìŠ¤í…œ";
 		}
 		
 		public override void OnDoubleClick( Mobile from )

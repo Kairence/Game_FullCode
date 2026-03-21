@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.Items;
 using Server.Mobiles;
 
@@ -413,7 +413,7 @@ namespace Server.Engines.Quests.Samurai
         {
             get
             {
-                // Retrieve Daimyo Haochi�s katana from the treasure room.
+                // Retrieve Daimyo Haochi뭩 katana from the treasure room.
                 return 1063072;
             }
         }

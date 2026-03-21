@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.Mobiles;
 using CalcMoves = Server.Movement.Movement;
 using MoveImpl = Server.Movement.MovementImpl;

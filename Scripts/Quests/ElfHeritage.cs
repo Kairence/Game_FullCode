@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Items;
 using Server.Mobiles;
 
@@ -183,8 +183,8 @@ namespace Server.Engines.Quests
             }
         }
         /* Hrrrrr.  Hurrrr.  Huuuman.  *creaking branches*  Suuun on baaark, roooooots diiig deeeeeep, wiiind caaaresses 
-        leeeaves … Hrrrrr.  Saaap of Sooosaria feeeeeeds us.  Hrrrrr.  Huuuman leeearn.  Caaaretaker of plaaants … teeend 
-        … prooove.<br> */
+        leeeaves ?Hrrrrr.  Saaap of Sooosaria feeeeeeds us.  Hrrrrr.  Huuuman leeearn.  Caaaretaker of plaaants ?teeend 
+        ?prooove.<br> */
         public override object Description
         {
             get

@@ -1,4 +1,4 @@
-// By Neon
+﻿// By Neon
 // Improved By Dddie
 
 using System; 

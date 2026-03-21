@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using Server.Mobiles;
 using Server.Network;
@@ -8,7 +8,7 @@ namespace Server.Misc
 {
     public class SpecialAbilityManager
     {
-        // ¸ğµç Æ¯¼ö±â Ç® (½Å±Ô ±ØÀÇ 5Á¾ Æ÷ÇÔ 20¹ø±îÁö È®Àå)
+        // ëª¨ë“  íŠ¹ìˆ˜ê¸° í’€ (ì‹ ê·œ ê·¹ì˜ 5ì¢… í¬í•¨ 20ë²ˆê¹Œì§€ í™•ì¥)
         public static WeaponAbility[] AbilityPool = new WeaponAbility[]
         {
             WeaponAbility.ArmorIgnore,      // 0
@@ -27,34 +27,34 @@ namespace Server.Misc
             WeaponAbility.MovingShot,       // 13
             WeaponAbility.LightningArrow,   // 14
             WeaponAbility.MortalStrike,     // 15
-            /* ½Å±Ô ¹«±¸ÀÇ ±ØÀÇ 5Á¾ */
-            WeaponAbility.NerveStrike,      // 16 (½Å°æ °ø°İ - °Ë/µµ³¢)
-            WeaponAbility.ConcussionBlow, // 17 (³úÁøÅÁ ÀÏ°İ - µĞ±â)
-            WeaponAbility.TalonStrike,      // 18 (°¥Äû ¹ßÅé - Ææ½Ì)
-            WeaponAbility.ForceArrow,       // 19 (ÈûÀÇ È­»ì - ±Ã¼ú)
-            WeaponAbility.DefenseMastery  // 20 (¿ÏÀü ¹æ¾î - ¸Ç¼Õ)
+            /* ì‹ ê·œ ë¬´êµ¬ì˜ ê·¹ì˜ 5ì¢… */
+            WeaponAbility.NerveStrike,      // 16 (ì‹ ê²½ ê³µê²© - ê²€/ë„ë¼)
+            WeaponAbility.ConcussionBlow, // 17 (ë‡Œì§„íƒ• ì¼ê²© - ë‘”ê¸°)
+            WeaponAbility.TalonStrike,      // 18 (ê°ˆí€´ ë°œí†± - íœì‹±)
+            WeaponAbility.ForceArrow,       // 19 (í˜ì˜ í™”ì‚´ - ê¶ìˆ )
+            WeaponAbility.DefenseMastery  // 20 (ì™„ì „ ë°©ì–´ - ë§¨ì†)
         };
 
-        // Àü¼ú ¸ÅÇÎ (Row: ¹«±âID, Col: Àü¼ú Æ¼¾î 50, 100, 150, 200)
+        // ì „ìˆ  ë§¤í•‘ (Row: ë¬´ê¸°ID, Col: ì „ìˆ  í‹°ì–´ 50, 100, 150, 200)
         private static readonly int[,] _AbilityMap = new int[,]
         {
-            /* 0: ÇÑ¼Õ °Ë   */ { 0, 1, 2, 3 },
-            /* 1: ¾ç¼Õ °Ë   */ { 0, 4, 5, 6 },
-            /* 2: µµ³¢      */ { 4, 1, 7, 6 },
-            /* 3: ÇÑ¼Õ µĞ±â */ { 8, 5, 9, 2 },
-            /* 4: ¾ç¼Õ µĞ±â */ { 4, 8, 7, 6 },
-            /* 5: ÇÑ¼Õ Ææ½Ì */ { 0, 10, 11, 12 },
-            /* 6: ¾ç¼Õ Ææ½Ì */ { 0, 5, 1, 12 },
-            /* 7: È°        */ { 1, 10, 12, 14 },
-            /* 8: ¼®±Ã      */ { 0, 4, 5, 15 },
-            /* 9: ¸Ç¼Õ      */ { 8, 5, 2, 9 }
+            /* 0: í•œì† ê²€   */ { 0, 1, 2, 3 },
+            /* 1: ì–‘ì† ê²€   */ { 0, 4, 5, 6 },
+            /* 2: ë„ë¼      */ { 4, 1, 7, 6 },
+            /* 3: í•œì† ë‘”ê¸° */ { 8, 5, 9, 2 },
+            /* 4: ì–‘ì† ë‘”ê¸° */ { 4, 8, 7, 6 },
+            /* 5: í•œì† íœì‹± */ { 0, 10, 11, 12 },
+            /* 6: ì–‘ì† íœì‹± */ { 0, 5, 1, 12 },
+            /* 7: í™œ        */ { 1, 10, 12, 14 },
+            /* 8: ì„ê¶      */ { 0, 4, 5, 15 },
+            /* 9: ë§¨ì†      */ { 8, 5, 2, 9 }
         };
 
         public static void ExecuteChainAbilities(int typeID, Mobile attacker, Mobile defender, int damage)
         {
             if (typeID < 0 || typeID > 9) return;
 
-            // 1. [Àü¼ú 50~200] ±âÁ¸ 4´Ü°è ¿¬¼â ½ÃÀü
+            // 1. [ì „ìˆ  50~200] ê¸°ì¡´ 4ë‹¨ê³„ ì—°ì‡„ ì‹œì „
             double tactics = attacker.Skills.Tactics.Value;
             int maxTier = (tactics >= 200) ? 3 : (tactics >= 150) ? 2 : (tactics >= 100) ? 1 : (tactics >= 50) ? 0 : -1;
 
@@ -68,7 +68,7 @@ namespace Server.Misc
                 }
             }
 
-            // 2. [¹«±â¼ú 200] º°µµ Ã¼Å©ÇÏ¿© º¸³Ê½º ±ØÀÇ ½ÃÀü
+            // 2. [ë¬´ê¸°ìˆ  200] ë³„ë„ ì²´í¬í•˜ì—¬ ë³´ë„ˆìŠ¤ ê·¹ì˜ ì‹œì „
             BaseWeapon atkWeapon = attacker.Weapon as BaseWeapon;
             if (atkWeapon != null && attacker.Skills[atkWeapon.Skill].Value >= 200.0)
             {
@@ -84,11 +84,11 @@ namespace Server.Misc
 
         private static int GetUltimateIndex(int typeID)
         {
-            if (typeID <= 2) return 16;      // °Ë/µµ³¢ -> ½Å°æ °ø°İ
-            if (typeID <= 4) return 17;      // µĞ±â -> ³úÁøÅÁ ÀÏ°İ
-            if (typeID <= 6) return 18;      // Ææ½Ì -> °¥Äû ¹ßÅé
-            if (typeID <= 8) return 19;      // ±Ã¼ú -> ÈûÀÇ È­»ì
-            if (typeID == 9) return 20;      // ¸Ç¼Õ -> ¿ÏÀü ¹æ¾î
+            if (typeID <= 2) return 16;      // ê²€/ë„ë¼ -> ì‹ ê²½ ê³µê²©
+            if (typeID <= 4) return 17;      // ë‘”ê¸° -> ë‡Œì§„íƒ• ì¼ê²©
+            if (typeID <= 6) return 18;      // íœì‹± -> ê°ˆí€´ ë°œí†±
+            if (typeID <= 8) return 19;      // ê¶ìˆ  -> í˜ì˜ í™”ì‚´
+            if (typeID == 9) return 20;      // ë§¨ì† -> ì™„ì „ ë°©ì–´
             return -1;
         }
     }

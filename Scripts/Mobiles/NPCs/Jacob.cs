@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Items;
 using Server.Mobiles;
 
@@ -14,7 +14,7 @@ namespace Server.Engines.Quests
             }
         }
 		
-        /* The Delucian’s Lost Mine */
+        /* The Delucianë­© Lost Mine */
         public override object Title
         {
             get
@@ -44,9 +44,9 @@ namespace Server.Engines.Quests
             }
         }
 		
-        /* Couldn’t find my iron mine, could ya? Well, neither can I!<br><br>*Jacob laughs*<br><br>Oh, ya don’t wanna find it? 
+        /* Couldnë­ª find my iron mine, could ya? Well, neither can I!<br><br>*Jacob laughs*<br><br>Oh, ya donë­ª wanna find it? 
         Well, allrighty then, ya might as well head on back down to town then and stop cluttering up my camp. Come back and 
-        talk to me if you’re interested in learnin’ ‘bout minin’. */
+        talk to me if youë­¨e interested in learnin?ë©³out minin? */
         public override object Refuse
         {
             get
@@ -55,8 +55,8 @@ namespace Server.Engines.Quests
             }
         }
 		
-        /* Where ya been off a gallivantin’ all day, pilgrim? You ain’t seen no hard work yet! Get yer arse back out there to 
-        my mine and dig up some more iron. Don’t forget to take a pickaxe or shovel, and if you’re so inclined, a packhorse too. */
+        /* Where ya been off a gallivantin?all day, pilgrim? You ainë­ª seen no hard work yet! Get yer arse back out there to 
+        my mine and dig up some more iron. Donë­ª forget to take a pickaxe or shovel, and if youë­¨e so inclined, a packhorse too. */
         public override object Uncomplete
         {
             get
@@ -65,11 +65,11 @@ namespace Server.Engines.Quests
             }
         }
 		
-        /* Dang gun it! If that don't beat all! Ya went and did it, didn’t ya? What we got ourselves here is a mighty fine brand 
-        spankin’ new Apprentice Miner!<br><br>I can see ya put some meat on them bones too while you were at it!<br><br>Here’s 
-        that little somethin’ I told ya I had for ya. It’s a pickaxe with some high falutin’ magic inside that’ll help you find 
-        the good stuff when you’re off minin’. It wears out fast, though, so you can only use it a few times a day.<br><br>Welp, 
-        I’ve got some smeltin’ to do, so off with ya. Good luck, pilgrim! */
+        /* Dang gun it! If that don't beat all! Ya went and did it, didnë­ª ya? What we got ourselves here is a mighty fine brand 
+        spankin?new Apprentice Miner!<br><br>I can see ya put some meat on them bones too while you were at it!<br><br>Hereë­© 
+        that little somethin?I told ya I had for ya. Itë­© a pickaxe with some high falutin?magic inside thatë­ l help you find 
+        the good stuff when youë­¨e off minin? It wears out fast, though, so you can only use it a few times a day.<br><br>Welp, 
+        Ië­­e got some smeltin?to do, so off with ya. Good luck, pilgrim! */
         public override object Complete
         {
             get
@@ -84,7 +84,7 @@ namespace Server.Engines.Quests
             this.AddObjective(new ApprenticeObjective(SkillName.Mining, 50, "Haven Mountains", 1077751, 1077752));
 			
             // 1077751 You can almost smell the ore in the rocks here! Your ability to improve your Mining skill is enhanced in this area.
-            // 1077752 So many rocks, so little ore… Your potential to increase your Mining skill is no longer enhanced.
+            // 1077752 So many rocks, so little ore?Your potential to increase your Mining skill is no longer enhanced.
 		
             this.AddReward(new BaseReward(typeof(JacobsPickaxe), 1077758));
         }

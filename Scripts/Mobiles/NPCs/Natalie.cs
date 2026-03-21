@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Items;
 using Server.Mobiles;
 
@@ -29,10 +29,10 @@ namespace Server.Engines.Quests
                 return 1075311;
             }
         }
-        /* I was born and raised in Buc’s Den. Have you been there? Then you know what a lawless place it is. Five years 
+        /* I was born and raised in Bucë­© Den. Have you been there? Then you know what a lawless place it is. Five years 
         ago, my mother and father were killed by brigands there. I was only a child, and so I was sent here to live with 
-        my uncle.<br>Recently, a man moved into town, and I’m sure this man is the one who killed my parents. The sheriff 
-        will do nothing, he doesn’t believe me. What can I do? I’m no warrior. I can’t use magic. I don’t have the courage 
+        my uncle.<br>Recently, a man moved into town, and Ië­¢ sure this man is the one who killed my parents. The sheriff 
+        will do nothing, he doesnë­ª believe me. What can I do? Ië­¢ no warrior. I canë­ª use magic. I donë­ª have the courage 
         to avenge my family. Please, if you have any love at all for justice, I beg of you, seek out and slay this criminal! */
         public override object Description
         {

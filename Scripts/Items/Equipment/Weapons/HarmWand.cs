@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.Spells.Second;
 
 namespace Server.Items

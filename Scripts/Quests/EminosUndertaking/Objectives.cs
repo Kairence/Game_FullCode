@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.Items;
 using Server.Mobiles;
 
@@ -208,7 +208,7 @@ namespace Server.Engines.Quests.Ninja
         {
             get
             {
-                // Go back through the blue teleporter and tell Daimyo Emino what you�ve overheard.
+                // Go back through the blue teleporter and tell Daimyo Emino what you뭭e overheard.
                 return 1063197;
             }
         }

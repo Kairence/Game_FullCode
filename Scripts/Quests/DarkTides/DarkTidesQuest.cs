@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Items;
 using Server.Mobiles;
 
@@ -83,7 +83,7 @@ namespace Server.Engines.Quests.Necro
                 * Hmm. What's this?  Another budding Necromancer to join the
                 * ranks of Evil?  Here... let me take a look at you...  Ah
                 * yes...  Very Good! I sense the forces of evil are strong
-                * within you, child – but you need training so that you can
+                * within you, child ?but you need training so that you can
                 * learn to focus your skills against those aligned against
                 * our cause.  You are destined to become a legendary
                 * Necromancer - with the proper training, that only I can
@@ -99,7 +99,7 @@ namespace Server.Engines.Quests.Necro
                 * easy one.  Only the most evil and the most dedicated can
                 * hope to master the sinister art of death.<BR><BR>
                 * 
-                * I can lend you training and help supply you with equipment –
+                * I can lend you training and help supply you with equipment ?
                 * in exchange for a few services rendered by you, of course.
                 * Nothing major, just a little death and destruction here and
                 * there - the tasks should be easy as a tasty meat pie for one

@@ -1,4 +1,4 @@
-/*
+﻿/*
 snicker7
 Released: 03/26/06
 */

@@ -1,4 +1,4 @@
-using System; // TimeSpan을 위해 필수!
+﻿using System; // TimeSpan을 위해 필수!
 using Server.Items;
 using Server.Mobiles;
 using Server.Targeting;

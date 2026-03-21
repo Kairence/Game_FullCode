@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Items;
 
 namespace Server.Engines.Quests
@@ -40,7 +40,7 @@ namespace Server.Engines.Quests
                 return 1075531;
             }
         }
-        /* Hmmm… we need some more Ore. Try finding a mountain or cave, and give it a whack. */
+        /* Hmmm?we need some more Ore. Try finding a mountain or cave, and give it a whack. */
         public override object Uncomplete
         {
             get

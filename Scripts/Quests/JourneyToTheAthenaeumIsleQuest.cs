@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,7 +28,7 @@ namespace Server.Engines.Quests
                                                                          * <br><br>	I have received word that the isle which houses the daemon, Athenaeum
                                                                          * Isle, is once again swarming with daemons. Based on the description provided to 
                                                                          * me, I believe these are the minions of the Defiler himself. They have no doubt 
-                                                                         * crawled out of the dark in anticipation of their master�s return. In truth, the
+                                                                         * crawled out of the dark in anticipation of their master뭩 return. In truth, the
                                                                          * prison I placed him within will not last forever.<br><br>	I ask that you journey
                                                                          * to the southwestern flight tower, adventurer, and head further southwest towards
                                                                          * the shore. Near the water's edge, you will find an ancient teleport site which 

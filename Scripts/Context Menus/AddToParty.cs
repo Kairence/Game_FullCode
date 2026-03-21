@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.Engines.PartySystem;
 
 namespace Server.ContextMenus

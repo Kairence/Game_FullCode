@@ -1,4 +1,4 @@
-#region References
+﻿#region References
 using Server.Items;
 using Server.Misc;
 using Server.Targeting;

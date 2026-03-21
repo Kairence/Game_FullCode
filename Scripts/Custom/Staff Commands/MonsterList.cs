@@ -1,7 +1,7 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Commands;
-using Server.Misc; // MonsterDropHandler¿Í Gump°¡ ÀÖ´Â ³×ÀÓ½ºÆäÀÌ½º
+using Server.Misc; // MonsterDropHandlerì™€ Gumpê°€ ìˆëŠ” ë„¤ì„ìŠ¤í˜ì´ìŠ¤
 
 namespace Server.Commands
 {
@@ -9,21 +9,21 @@ namespace Server.Commands
     {
         public static void Initialize()
         {
-            // [mlt ¸í·É¾î µî·Ï: °ÔÀÓ¸¶½ºÅÍ(GameMaster) ±ÇÇÑ ÇÊ¿ä
+            // [mlt ëª…ë ¹ì–´ ë“±ë¡: ê²Œì„ë§ˆìŠ¤í„°(GameMaster) ê¶Œí•œ í•„ìš”
             CommandSystem.Register("mlt", AccessLevel.GameMaster, new CommandEventHandler(MLT_OnCommand));
         }
 
         [Usage("mlt")]
-        [Description("MonsterDropHandler¿¡ µî·ÏµÈ µå¶ø Å×ÀÌºí ¸ó½ºÅÍ ¸ñ·ÏÀ» °ËÇÁ·Î È®ÀÎÇÕ´Ï´Ù.")]
+        [Description("MonsterDropHandlerì— ë“±ë¡ëœ ë“œë í…Œì´ë¸” ëª¬ìŠ¤í„° ëª©ë¡ì„ ê²€í”„ë¡œ í™•ì¸í•©ë‹ˆë‹¤.")]
         private static void MLT_OnCommand(CommandEventArgs e)
         {
             Mobile from = e.Mobile;
 
             if (from != null && !from.Deleted)
             {
-                // Ã¹ ¹øÂ° ÆäÀÌÁö(0)ºÎÅÍ °ËÇÁ¸¦ º¸³À´Ï´Ù.
+                // ì²« ë²ˆì§¸ í˜ì´ì§€(0)ë¶€í„° ê²€í”„ë¥¼ ë³´ëƒ…ë‹ˆë‹¤.
                 from.SendGump(new MonsterDropHandlerGump(from, 0));
-                from.SendMessage(0x482, "¸ó½ºÅÍ µå¶ø ÇÚµé·¯ ¸®½ºÆ®¸¦ ºÒ·¯¿Ô½À´Ï´Ù.");
+                from.SendMessage(0x482, "ëª¬ìŠ¤í„° ë“œë í•¸ë“¤ëŸ¬ ë¦¬ìŠ¤íŠ¸ë¥¼ ë¶ˆëŸ¬ì™”ìŠµë‹ˆë‹¤.");
             }
         }
     }

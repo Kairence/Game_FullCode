@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Server.Mobiles;
@@ -15,11 +15,11 @@ namespace Server.Commands
         }
 
         [Usage("Aggro")]
-        [Description("Å¸°ÙÆÃÇÑ ¸ó½ºÅÍÀÇ ¾î±×·Î ¼øÀ§ TOP 10À» È®ÀÎÇÕ´Ï´Ù.")]
+        [Description("íƒ€ê²ŸíŒ…í•œ ëª¬ìŠ¤í„°ì˜ ì–´ê·¸ë¡œ ìˆœìœ„ TOP 10ì„ í™•ì¸í•©ë‹ˆë‹¤.")]
         public static void Aggro_OnCommand(CommandEventArgs e)
         {
             e.Mobile.BeginTarget(-1, false, TargetFlags.None, new TargetCallback(Aggro_OnTarget));
-            e.Mobile.SendMessage("¾î±×·Î¸¦ È®ÀÎÇÒ ¸ó½ºÅÍ¸¦ ¼±ÅÃÇÏ¼¼¿ä.");
+            e.Mobile.SendMessage("ì–´ê·¸ë¡œë¥¼ í™•ì¸í•  ëª¬ìŠ¤í„°ë¥¼ ì„ íƒí•˜ì„¸ìš”.");
         }
 
         public static void Aggro_OnTarget(Mobile from, object targeted)
@@ -28,16 +28,16 @@ namespace Server.Commands
             {
                 if (bc.Aggro == null || bc.Aggro.Table.Count == 0)
                 {
-                    from.SendMessage("ÇØ´ç ¸ó½ºÅÍÀÇ ¾î±×·Î Å×ÀÌºíÀÌ ºñ¾î ÀÖ½À´Ï´Ù.");
+                    from.SendMessage("í•´ë‹¹ ëª¬ìŠ¤í„°ì˜ ì–´ê·¸ë¡œ í…Œì´ë¸”ì´ ë¹„ì–´ ìˆìŠµë‹ˆë‹¤.");
                     return;
                 }
 
-                // Á¡¼ö ³»¸²Â÷¼ø Á¤·Ä ÈÄ »óÀ§ 10°³ ÃßÃâ
+                // ì ìˆ˜ ë‚´ë¦¼ì°¨ìˆœ ì •ë ¬ í›„ ìƒìœ„ 10ê°œ ì¶”ì¶œ
                 var topList = bc.Aggro.Table
                     .OrderByDescending(x => x.Value)
                     .Take(10);
 
-                from.SendMessage(0x481, "=== {0} ¾î±×·Î TOP 10 ===", bc.Name);
+                from.SendMessage(0x481, "=== {0} ì–´ê·¸ë¡œ TOP 10 ===", bc.Name);
 
                 int rank = 1;
                 foreach (var entry in topList)
@@ -45,17 +45,17 @@ namespace Server.Commands
                     Mobile m = entry.Key;
                     double score = entry.Value;
 
-                    // ¼øÀ§. ÀÌ¸§ - Á¡¼ö (¼Ò¼öÁ¡ ¾øÀÌ ¼¼ ÀÚ¸´¼ö ÄŞ¸¶ Àû¿ë)
-                    string info = string.Format("{0}. {1} - Á¡¼ö: {2:N0}", rank, m.Name, score);
+                    // ìˆœìœ„. ì´ë¦„ - ì ìˆ˜ (ì†Œìˆ˜ì  ì—†ì´ ì„¸ ìë¦¿ìˆ˜ ì½¤ë§ˆ ì ìš©)
+                    string info = string.Format("{0}. {1} - ì ìˆ˜: {2:N0}", rank, m.Name, score);
 
-                    // 1À§´Â ³ì»ö, ³ª¸ÓÁö´Â ±âº»»ö Ãâ·Â
+                    // 1ìœ„ëŠ” ë…¹ìƒ‰, ë‚˜ë¨¸ì§€ëŠ” ê¸°ë³¸ìƒ‰ ì¶œë ¥
                     from.SendMessage(rank == 1 ? 0x42 : 0x3B, info);
                     rank++;
                 }
             }
             else
             {
-                from.SendMessage("´ë»óÀº ¸ó½ºÅÍ(BaseCreature)¿©¾ß ÇÕ´Ï´Ù.");
+                from.SendMessage("ëŒ€ìƒì€ ëª¬ìŠ¤í„°(BaseCreature)ì—¬ì•¼ í•©ë‹ˆë‹¤.");
             }
         }
     }

@@ -1,4 +1,4 @@
-//
+﻿//
 //  X-RunUO - Ultima Online Server Emulator
 //  Copyright (C) 2015 Pedro Pardal
 //

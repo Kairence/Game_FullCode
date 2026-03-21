@@ -1,4 +1,4 @@
-/*
+﻿/*
 Script Name: GMHidingStone.cs
 Author: Marchenzio
 Version: 1.0

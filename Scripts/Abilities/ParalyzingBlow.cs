@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic; // Dictionary 사용을 위해 추가
 using Server;
 using Server.Mobiles;

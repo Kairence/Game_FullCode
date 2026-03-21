@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.Items.MusicBox;
 
 namespace Server.Items

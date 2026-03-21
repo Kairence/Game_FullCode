@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 
 namespace Server.Engines.Quests.Ninja
 {
@@ -124,7 +124,7 @@ namespace Server.Engines.Quests.Ninja
                 * Daimyo Emino has sent another already? The stains from the 
                 * last have not yet dried! <BR><BR>
                 * 
-                * No matter, we’ll finish you off and clean it all at once, eh? <BR><BR>
+                * No matter, weë­ l finish you off and clean it all at once, eh? <BR><BR>
                 * 
                 * Now to the point, your only task is to survive in the abandoned inn.<BR><BR>
                 * 
@@ -161,7 +161,7 @@ namespace Server.Engines.Quests.Ninja
                 * To either side of its frame are mounted demon heads, 
                 * breathing fire and watching your every move. <BR><BR>
                 * 
-                * To pass through, you must first vanish from the demons’ 
+                * To pass through, you must first vanish from the demons?
                 * sight. Only then can you slowly traverse the entryway.
                 */
                 return 1063180;
@@ -183,7 +183,7 @@ namespace Server.Engines.Quests.Ninja
         {
             get
             {
-                /* You’ll need to hide in order to pass through the door. <BR><BR>
+                /* Youë­ l need to hide in order to pass through the door. <BR><BR>
                 * 
                 * To find out how to use active skills, visit the 
                 * <a href = "?ForceTopic73">Codex of Wisdom</a>. 
@@ -236,7 +236,7 @@ namespace Server.Engines.Quests.Ninja
             {
                 /* <I>Daimyo Emino smiles as you approach him:</I> <BR><BR>
                 * 
-                * I see that you have survived both the first trial and Zoel’s temper. <BR><BR>
+                * I see that you have survived both the first trial and Zoelë­© temper. <BR><BR>
                 * 
                 * For that you have been rewarded with Leggings and Gloves
                 * befitting your occupation. The material is the only armor
@@ -291,7 +291,7 @@ namespace Server.Engines.Quests.Ninja
                 /* <I>Zoel quickly grabs the scroll from your
                 * hand and reads the note:</i> <BR><BR>
                 * 
-                * Still alive then? You’ll have to impress me 
+                * Still alive then? Youë­ l have to impress me 
                 * further before I will give my approval of 
                 * you to Daimyo Emino. <BR><BR>
                 * 
@@ -304,7 +304,7 @@ namespace Server.Engines.Quests.Ninja
                 * to Daimyo Emino with the news. And be careful
                 * not to lose your head.<BR><BR>
                 * 
-                * The Blue Teleporter Tile in Daimyo Emino’s
+                * The Blue Teleporter Tile in Daimyo Eminoë­©
                 * residence will lead you to your fate. 
                 * I suggest you hurry. <BR><BR>
                 * 
@@ -337,12 +337,12 @@ namespace Server.Engines.Quests.Ninja
                 * the conversation. Fortunately, your 
                 * entrance did not alert the preoccupied party. <BR><BR>
                 * 
-                * Jedah’s brash voice permeates the air:<I><BR><BR> 
+                * Jedahë­© brash voice permeates the air:<I><BR><BR> 
                 * 
-                * Now that it is hidden, we’ll hide out here 
+                * Now that it is hidden, weë­ l hide out here 
                 * until Daimyo Emino forgets about us. 
                 * Once he realizes his beloved sword is missing, 
-                * he’ll surely start looking for the thieves. 
+                * heë­ l surely start looking for the thieves. 
                 * We will be long gone by that time. </I><BR><BR>
                 * 
                 * After overhearing the conversation, 
@@ -378,19 +378,19 @@ namespace Server.Engines.Quests.Ninja
                 * I will send one of my disciples to deal with her later. 
                 * It is more important to get that sword back first. <BR><BR>
                 * 
-                * I’m counting on you to find it. She would have kept it 
+                * Ië­¢ counting on you to find it. She would have kept it 
                 * close to her. Take the White Teleporter, located in my 
                 * backyard, and check inside boxes and chests around the 
                 * treasure room of the inn and return it to me when you 
                 * find it.<BR><BR>
                 * 
                 * Be very careful. Jedah was an expert with traps and no 
-                * doubt she’s protecting the sword with them. <BR><BR>
+                * doubt sheë­© protecting the sword with them. <BR><BR>
                 * 
                 * If you find a trap, try timing it and you may be able 
                 * to avoid damage. <BR><BR>
                 * 
-                * I’ve provided you with several heal potions in case you 
+                * Ië­­e provided you with several heal potions in case you 
                 * become injured. <BR><BR>
                 * 
                 * In the bag you will also find more clothing appropriate 
@@ -472,7 +472,7 @@ namespace Server.Engines.Quests.Ninja
             get
             {
                 /* Screams echo through the chamber as you walk 
-                * away from the chest. Jedah’s Henchmen have 
+                * away from the chest. Jedahë­© Henchmen have 
                 * become cognizant of your presence. <BR><BR>
                 * 
                 * It is time for your Ninja Spirit to come alive. 

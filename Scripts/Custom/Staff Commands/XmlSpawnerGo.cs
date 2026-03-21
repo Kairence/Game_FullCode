@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Mobiles;
 using Server.Commands.Generic;
@@ -14,13 +14,13 @@ namespace Server.Commands
 		}
 
 		[Usage( "XmlSpawnerGo Outdoorsnumber" )]
-		[Description( "½ºÆ÷³Ê »èÁ¦ ÄÚµå." )]
+		[Description( "ìŠ¤í¬ë„ˆ ì‚­ì œ ì½”ë“œ." )]
 		public static void XmlSpawnerGoInfo_OnCommand( CommandEventArgs e )
 		{
-			//e.Mobile.SendMessage("½ºÆ÷³Ê »èÁ¦¸¦ ½ÃÀÛÇÕ´Ï´Ù!");
+			//e.Mobile.SendMessage("ìŠ¤í¬ë„ˆ ì‚­ì œë¥¼ ì‹œì‘í•©ë‹ˆë‹¤!");
 			string index = "Outdoors#";
 			if( e.Arguments.Length == 0 )
-				e.Mobile.SendMessage( String.Format("½ºÆ÷³Ê ÀÌ¸§À» ³Ö¾î¾ßÇÕ´Ï´Ù.") ); // Thy current bank balance is ~1_AMOUNT~ platinum and ~2_AMOUNT~ gold.
+				e.Mobile.SendMessage( String.Format("ìŠ¤í¬ë„ˆ ì´ë¦„ì„ ë„£ì–´ì•¼í•©ë‹ˆë‹¤.") ); // Thy current bank balance is ~1_AMOUNT~ platinum and ~2_AMOUNT~ gold.
 			else
 			{
 				index += e.Arguments[0];
@@ -38,7 +38,7 @@ namespace Server.Commands
 					}
 				}
 				if( !count )
-					e.Mobile.SendMessage("ÇØ´ç ÀÌ¸§ÀÇ ½ºÆ÷³Ê°¡ ¾ø½À´Ï´Ù!");
+					e.Mobile.SendMessage("í•´ë‹¹ ì´ë¦„ì˜ ìŠ¤í¬ë„ˆê°€ ì—†ìŠµë‹ˆë‹¤!");
 			}
 		}
 	}

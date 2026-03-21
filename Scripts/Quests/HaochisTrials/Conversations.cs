@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 
 namespace Server.Engines.Quests.Samurai
 {
@@ -89,7 +89,7 @@ namespace Server.Engines.Quests.Samurai
                 * 
                 * Since you are here at my side, you must wish to learn the ways of the Samurai.<BR><BR>
                 * 
-                * Wielding a blade is easy, anyone can grasp a sword’s hilt. Learning how to
+                * Wielding a blade is easy, anyone can grasp a swordë­© hilt. Learning how to
                 * fight properly and skillfully is to become an Armsman.<BR><BR>
                 * 
                 * Learning how to master weapons, and even more importantly when not to use
@@ -283,7 +283,7 @@ namespace Server.Engines.Quests.Samurai
                 * one beyond the courtyard doors. <BR><BR>
                 * 
                 * The imp entered the courtyard unaware of its surroundings. The dragon came
-                * knowingly, hunting for the flesh of humans – A feast for the beast. <BR><BR>
+                * knowingly, hunting for the flesh of humans ?A feast for the beast. <BR><BR>
                 * 
                 * You must rid the courtyard of these beasts but you may only choose one to
                 * attack. Go and choose wisely.
@@ -438,7 +438,7 @@ namespace Server.Engines.Quests.Samurai
                 * You sense that she has not eaten nor bathed in quite some time. <BR><BR>
                 * 
                 * Around her is a large colony of mangy and diseased cats. It appears
-                * she has spent what little money she’s earned to feed the cats instead
+                * she has spent what little money sheë­© earned to feed the cats instead
                 * of herself. <BR><BR>
                 * 
                 * You have a decision to make. You can give her gold so she can buy some
@@ -446,7 +446,7 @@ namespace Server.Engines.Quests.Samurai
                 * of the extra mouths to feed so she may concentrate on saving herself.</i><br><br>
                 * 
                 * If you elect to give the gypsy money, you can do so by clicking your stack
-                * of gold and selecting ‘1’. Then dragging it and dropping it on the Gypsy.
+                * of gold and selecting ?? Then dragging it and dropping it on the Gypsy.
                 */
                 return 1063067;
             }
@@ -493,7 +493,7 @@ namespace Server.Engines.Quests.Samurai
                     * Now she will be able to feed herself and gain enough energy to walk
                     * to her camp. <BR><BR>
                     * 
-                    * The cats are her family members– cursed by an evil mage. <BR><BR>
+                    * The cats are her family members?cursed by an evil mage. <BR><BR>
                     * 
                     * Once she has enough strength to walk back to the camp, she will be
                     * able to undo the spell. <BR><BR>

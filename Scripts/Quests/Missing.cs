@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.Items;
 
 namespace Server.Engines.Quests
@@ -57,7 +57,7 @@ namespace Server.Engines.Quests
         This is a great setback to our society as they were each great friends to me and an asset to the society.
         'Tis strange that there were only four bodies.... 
         There was a fifth member of the party, Neville Brightwhistle, but he was the youngest and least experienced of the party so if his elder brothers are lost, 
-        surely young Neville met a similar fate. �Tis a tragedy, surely.
+        surely young Neville met a similar fate. 멦is a tragedy, surely.
         Please take this torch with my thanks.  It may not seem like much, but it is magic and will never burn out.  
         You will find that rotworms fear fire so it will protect you from them as you venture further into these cursed halls.
         Tread carefully traveller, each member of the party had one of these so I suspect that the rotworms are not what ended their lives.*/

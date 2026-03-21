@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Items;
 using Server.Gumps;
 using Server.Network;
@@ -7,27 +7,27 @@ using Server.Mobiles;
 namespace Server.Items
 {
 	/*
-		ºê¸®Æ° : 1000
-		ºÎÄÉ´Ï¾î½º µ§ : 300
-		ÄÚºê : 200
-		ÇãÆ®¿ìµå : 300
-		Á©·Ò : 700
-		¸¶Áø½Ã¾Æ : 600
-		¹Ì³ì : 750
-		¹®±Û·Î¿ì : 700
-		´©Á©·Ò : 500
-		Çìºì : 500
-		¼­ÆæÆ® È¦µå : 400
-		½ºÄ«¶ó ºê·¹ : 650
-		Æ®¸°½Ä : 900
-		º£½ºÆÛ : 900
-		À©µå : 100
-		À¯ : 600
+		ë¸Œë¦¬íŠ¼ : 1000
+		ë¶€ì¼€ë‹ˆì–´ìŠ¤ ë´ : 300
+		ì½”ë¸Œ : 200
+		í—ˆíŠ¸ìš°ë“œ : 300
+		ì ¤ë¡¬ : 700
+		ë§ˆì§„ì‹œì•„ : 600
+		ë¯¸ë…¹ : 750
+		ë¬¸ê¸€ë¡œìš° : 700
+		ëˆ„ì ¤ë¡¬ : 500
+		í—¤ë¸ : 500
+		ì„œíœíŠ¸ í™€ë“œ : 400
+		ìŠ¤ì¹´ë¼ ë¸Œë ˆ : 650
+		íŠ¸ë¦°ì‹ : 900
+		ë² ìŠ¤í¼ : 900
+		ìœˆë“œ : 100
+		ìœ  : 600
 	*/
 	
 	public class DungeonCheck : Item 
 	{
-		//private string[] DungeonName = new string[] { "ÄÚº£Åõ½º", "µ¥½ºÆÄÀÌÁî", "½¦ÀÓ" };
+		//private string[] DungeonName = new string[] { "ì½”ë² íˆ¬ìŠ¤", "ë°ìŠ¤íŒŒì´ì¦ˆ", "ì‰ì„" };
 		private int[] m_Death = new int[100];
 
 		public int[] Death
@@ -38,14 +38,14 @@ namespace Server.Items
 
 		public override string DefaultName
 		{
-			get { return "´øÀü Ã¼Å© ½Ã½ºÅÛ"; }
+			get { return "ë˜ì „ ì²´í¬ ì‹œìŠ¤í…œ"; }
 		}
 		[Constructable]
 		public DungeonCheck() : base( 0xED4 )
 		{
 			Movable = false;
 			Hue = 1168;
-			Name = "´øÀü Ã¼Å© ½Ã½ºÅÛ";
+			Name = "ë˜ì „ ì²´í¬ ì‹œìŠ¤í…œ";
 		}
 		public override void OnDoubleClick( Mobile from )
 		{

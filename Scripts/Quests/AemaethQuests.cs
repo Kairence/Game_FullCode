@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Items;
 
 namespace Server.Engines.Quests
@@ -55,7 +55,7 @@ namespace Server.Engines.Quests
                 return 1075322;
             }
         }
-        /* Oh! Alright then. I hope someone comes along soon who can help me, or I don’t know what will become of us. */
+        /* Oh! Alright then. I hope someone comes along soon who can help me, or I donë­ª know what will become of us. */
         public override object Refuse
         {
             get
@@ -137,7 +137,7 @@ namespace Server.Engines.Quests
                 return 1075328;
             }
         }
-        /* You won’t take this back to my daughter? Please, I cannot leave until she knows I am at peace. */
+        /* You wonë­ª take this back to my daughter? Please, I cannot leave until she knows I am at peace. */
         public override object Refuse
         {
             get

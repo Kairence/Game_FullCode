@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Mobiles;
 using Server.Network;
@@ -19,10 +19,10 @@ namespace Server.Commands
 		}
 
 		[Usage( "Status" )]
-		[Description( "¾ÆÀÌÅÛ ÀÌµ¿½ÃÅ°±â" )]
+		[Description( "ì•„ì´í…œ ì´ë™ì‹œí‚¤ê¸°" )]
 		public static void AllMoveInfo_OnCommand( CommandEventArgs e )
 		{
-			e.Mobile.SendMessage("Áı, ÀÚ½ÅÀÇ °¡¹æ, ÀºÇà¿¡¼­ ¿Å±æ ¾ÆÀÌÅÛÀ» Å¬¸¯ÇÏ¼¼¿ä");
+			e.Mobile.SendMessage("ì§‘, ìì‹ ì˜ ê°€ë°©, ì€í–‰ì—ì„œ ì˜®ê¸¸ ì•„ì´í…œì„ í´ë¦­í•˜ì„¸ìš”");
 			e.Mobile.Target = new InternalTarget();
 		}
 
@@ -51,25 +51,25 @@ namespace Server.Commands
 					if( box != null && target_item.IsChildOf(box) ) 
 					{
 						//box.FindItemsByType<target_item>();
-						from.SendMessage("ÀÌ ¾ÆÀÌÅÛµéÀ» ¾îµğ·Î ¿Å±â½Ã°Ú½À´Ï±î?");
+						from.SendMessage("ì´ ì•„ì´í…œë“¤ì„ ì–´ë””ë¡œ ì˜®ê¸°ì‹œê² ìŠµë‹ˆê¹Œ?");
 						
 					}
 					else if( pack != null )
 					{
 						//pack.FindItemsByType<target_item>();
-						from.SendMessage("ÀÌ ¾ÆÀÌÅÛµéÀ» ¾îµğ·Î ¿Å±â½Ã°Ú½À´Ï±î?");
+						from.SendMessage("ì´ ì•„ì´í…œë“¤ì„ ì–´ë””ë¡œ ì˜®ê¸°ì‹œê² ìŠµë‹ˆê¹Œ?");
 						
 					}
 					else if( house != null && house.IsOwner(from)  )
 					{}
 					else
 					{
-						from.SendMessage("Áı, ÀÚ½ÅÀÇ °¡¹æ, ÀºÇà¾È¿¡ ÀÖ´Â ¾ÆÀÌÅÛ¸¸ ¼±ÅÃÇÒ ¼ö ÀÖ½À´Ï´Ù.");
+						from.SendMessage("ì§‘, ìì‹ ì˜ ê°€ë°©, ì€í–‰ì•ˆì— ìˆëŠ” ì•„ì´í…œë§Œ ì„ íƒí•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.");
 					}
 				}
 				else
 				{
-					from.SendMessage("¾ÆÀÌÅÛ¸¸ °¡´ÉÇÕ´Ï´Ù!");
+					from.SendMessage("ì•„ì´í…œë§Œ ê°€ëŠ¥í•©ë‹ˆë‹¤!");
 				}
 			}			
 		}

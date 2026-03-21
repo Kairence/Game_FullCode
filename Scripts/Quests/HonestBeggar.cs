@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Items;
 
 namespace Server.Engines.Quests
@@ -10,7 +10,7 @@ namespace Server.Engines.Quests
         { 
             this.AddObjective(new DeliverObjective(typeof(ReginasRing), "regina's ring", 1, typeof(Regina), "Regina"));		
 							
-            this.AddReward(new BaseReward(1075394)); // Find the ring’s owner.
+            this.AddReward(new BaseReward(1075394)); // Find the ringë­© owner.
         }
 
         public override QuestChain ChainID
@@ -62,7 +62,7 @@ namespace Server.Engines.Quests
             }
         }
         /* A jewel like this must be worth a lot, so it must belong to some noble or another. I would show it around the castle. 
-        Someone’s bound to recognize it. */
+        Someoneë­© bound to recognize it. */
         public override object Uncomplete
         {
             get
@@ -118,7 +118,7 @@ namespace Server.Engines.Quests
                 return true;
             }
         }
-        /* Regina’s Thanks */
+        /* Reginaë­© Thanks */
         public override object Title
         {
             get
@@ -126,7 +126,7 @@ namespace Server.Engines.Quests
                 return 1075398;
             }
         }
-        /* What’s that you say? It was a humble beggar that found my ring? Such honesty must be rewarded. Here, take this packet 
+        /* Whatë­© that you say? It was a humble beggar that found my ring? Such honesty must be rewarded. Here, take this packet 
         and return it to him, and I will be in your debt. */
         public override object Description
         {

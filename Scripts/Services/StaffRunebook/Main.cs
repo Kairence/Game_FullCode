@@ -1,4 +1,4 @@
-/**************************************
+﻿/**************************************
 *Script Name: Staff Runebook          *
 *Author: Joeku                        *
 *For use with RunUO 2.0 RC2           *

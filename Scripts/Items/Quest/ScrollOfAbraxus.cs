@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Gumps;
 using Server.Mobiles;
 
@@ -140,7 +140,7 @@ namespace Server.Engines.Quests.Necro
             * 
             * Do not speak this password anywhere except when seeking passage
             * into the Crystal Cave, as our adversaries are lurking in the
-            * shadows – they are everywhere.<BR><BR>Go with the light, friend.<BR><BR>
+            * shadows ?they are everywhere.<BR><BR>Go with the light, friend.<BR><BR>
             * 
             * <I>- Frater Melkeer</I>
             */

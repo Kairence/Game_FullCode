@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Server.ContextMenus;
 using Server.Engines.VeteranRewards;
@@ -41,7 +41,7 @@ namespace Server.Items.MusicBox
             {
                 return 1075198;
             }
-        }// Dawn�s Music Box
+        }// Dawn뭩 Music Box
         [CommandProperty(AccessLevel.GameMaster, AccessLevel.Developer)]
         public bool IsPlaying
         {

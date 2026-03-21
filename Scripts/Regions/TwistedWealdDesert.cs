@@ -1,4 +1,4 @@
-using System.Xml;
+﻿using System.Xml;
 using Server.Network;
 using Server.Spells;
 using Server.Spells.Ninjitsu;

@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Items;
 
 namespace Server.Engines.Quests
@@ -181,7 +181,7 @@ namespace Server.Engines.Quests
                 return 1074722;
             }
         }
-        /* Do you have it?  *gasp* What a tooth!  Here … I must get right to work. */
+        /* Do you have it?  *gasp* What a tooth!  Here ?I must get right to work. */
         public override object Complete
         {
             get

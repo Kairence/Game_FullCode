@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Server.Items
 {
@@ -27,7 +27,7 @@ namespace Server.Items
             {
                 return 1075196;
             }
-        }// Dupre�s Shield
+        }// Dupre뭩 Shield
         public override int BasePhysicalResistance
         {
             get

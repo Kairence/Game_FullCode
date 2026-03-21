@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server;
 using Server.Mobiles;
 using Server.Items;
@@ -23,20 +23,31 @@ namespace Server.Misc
 
 		public static void Apply(BaseCreature bc)
 		{
-			if (bc == null || bc.Deleted || bc.Grade > 0) return;
+			// Safety check: Avoid null or already processed creatures
+			if (bc == null || bc.Deleted) return;
+			if (bc.Name == null) return; // Wait for the name to be assigned
+			if (bc.Grade > 0) return;    // Already balanced
 
+			// Check Map: [add] might have a null/internal map for a brief moment
+			Map map = bc.Map;
+			if (map == null || map == Map.Internal) return; 
+
+			// Exception targets (Vendors, Guards, Pets, etc.)
 			if (bc is BaseVendor || bc is BaseGuard || bc.Controlled || bc.Blessed || bc.NoKillAwards)
 			{
-				bc.Grade = 1; bc.Loyalty = 0; return;
+				bc.Grade = 1; 
+				bc.Loyalty = 0;
+
+				return;
 			}
 
-			Map map = bc.Map ?? Map.Trammel;
-			if (bc.Grade <= 0)
-			{
-				int dice = Utility.RandomMinMax(1, 1000), land = (map == Map.Felucca) ? 1 : (map == Map.Ilshenar ? 2 : 0);
-				bc.Grade = bc.Boss ? 8 : (dice >= MonsterLandTier[land, 2] ? 7 : dice >= MonsterLandTier[land, 1] ? 6 : dice >= MonsterLandTier[land, 0] ? 2 : 1);
-			}
+			// Determine Grade based on Map
+			int dice = Utility.RandomMinMax(1, 1000);
+			int land = (map == Map.Felucca) ? 1 : (map == Map.Ilshenar ? 2 : 0);
+			
+			bc.Grade = bc.Boss ? 8 : (dice >= MonsterLandTier[land, 2] ? 7 : dice >= MonsterLandTier[land, 1] ? 6 : dice >= MonsterLandTier[land, 0] ? 2 : 1);
 
+			// Apply Stats and Skills
 			switch (bc.Grade) {
 				case 1: bc.Loyalty = Utility.RandomMinMax(0, 1000); break;
 				case 2: bc.Loyalty = Utility.RandomMinMax(2000, 3500); break;
@@ -45,27 +56,15 @@ namespace Server.Misc
 				default: bc.Loyalty = 0; break;
 			}
 
-			// 1. 스킬 보너스 적용 (기본 scalar 1.0)
 			ApplyFameSkills(bc, (bc.Fame / 400.0) + (Math.Pow(bc.Fame, 2) / 12000000.0), 1.0);
-			
-			// 2. 슬레이어 보너스 적용 (ref 없이 bc 내부 수치를 직접 수정하는 방식)
 			ApplySlayerBonus(bc); 
-			
 			ApplyAppearance(bc);
 			AnimalPassiveSkillHandler.OnSpawn(bc);
 
-			// 3. 슬레이어까지 모두 적용된 현재 상태를 '불변의 원본'으로 배열에 백업
-			bc.originalStats = new int[] { 
-				bc.RawStr, bc.RawDex, bc.RawInt, 
-				bc.HitsMaxSeed, bc.StamMaxSeed, bc.ManaMaxSeed 
-			};
+			bc.originalStats = new int[] { bc.RawStr, bc.RawDex, bc.RawInt, bc.HitsMaxSeed, bc.StamMaxSeed, bc.ManaMaxSeed };
 
-			// --- [신규] 몬스터 등급 및 Slayer 기반 특수기 자동 설정 ---
 			ApplySpecialAbility(bc);
-
-			// 4. 실시간 충성도 수치 적용
 			RefreshStats(bc, true);
-			bc.Hits = bc.HitsMax; bc.Stam = bc.StamMax; bc.Mana = bc.ManaMax;
 		}
 
 		private static void ApplySpecialAbility(BaseCreature bc)
@@ -164,8 +163,9 @@ namespace Server.Misc
 
         private static void ApplyFameSkills(BaseCreature bc, double skillBase, double scalar)
         {
+			if (bc.Skills == null) return; // 스킬 객체가 없으면 중단
             double final = Math.Min(150.0, skillBase * scalar);
-            bc.Skills[SkillName.MagicResist].Base += final;
+            SetSkill(bc, SkillName.MagicResist, final);
 
             switch (bc.AI)
             {
@@ -180,9 +180,16 @@ namespace Server.Misc
                     bc.Skills[SkillName.Anatomy].Base += final; bc.Skills[SkillName.Tactics].Base += final; bc.Skills[SkillName.Wrestling].Base += final; break;
             }
         }
-
+		// 스킬 설정을 위한 헬퍼 함수
+		private static void SetSkill(BaseCreature bc, SkillName sk, double val)
+		{
+			Skill s = bc.Skills[sk];
+			if (s != null) s.Base += val;
+		}
         private static void ApplyAppearance(BaseCreature bc)
         {
+			// 이름이나 객체가 없으면 중단
+			if (bc == null || bc.Deleted || bc.NoKillAwards || bc.Name == null) return;
             if (bc.NoKillAwards) return;
             if (bc.Grade == 2 && !bc.Name.StartsWith("Rare ")) { bc.Name = "Rare " + bc.Name; bc.Fame += 500; }
             else if (bc.Grade == 6 && !bc.Name.StartsWith("Elite ")) { bc.Name = "Elite " + bc.Name; bc.Hue = 1272; bc.Fame += 1500; }

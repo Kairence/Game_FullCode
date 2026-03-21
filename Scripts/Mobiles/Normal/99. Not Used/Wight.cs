@@ -1,4 +1,4 @@
-/* Based on Wailing Banshee, still no infos on Wight, including correct body ID */
+﻿/* Based on Wailing Banshee, still no infos on Wight, including correct body ID */
 using System;
 using Server.Items;
 

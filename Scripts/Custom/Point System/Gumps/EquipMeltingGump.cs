@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Items;
 using Server.Network;
@@ -21,10 +21,10 @@ namespace Server.Gumps
             AddBackground(0, 0, 200, 90, 5054);
             AddImageTiled(10, 10, 180, 70, 2624);
 			
-			AddHtml(50, 20, 150, 20, CenterGray("¾ÆÀÌÅÛ ÇØÃ¼"), false, false); // <CENTER>HOUSE
+			AddHtml(50, 20, 150, 20, CenterGray("ì•„ì´í…œ í•´ì²´"), false, false); // <CENTER>HOUSE
 			AddButton(10, 20, 4005, 4007, 1, GumpButtonType.Reply, 0);
 
-			AddHtml(50, 50, 150, 20, CenterGray("¿É¼Ç ¿­±â"), false, false); // <CENTER>HOUSE
+			AddHtml(50, 50, 150, 20, CenterGray("ì˜µì…˜ ì—´ê¸°"), false, false); // <CENTER>HOUSE
 			AddButton(10, 50, 4005, 4007, 2, GumpButtonType.Reply, 0);
 			
 			m_pm = pm;
@@ -62,10 +62,10 @@ namespace Server.Gumps
     {
 		PlayerMobile m_pm;
 
-		string[] rank = {"ÀÏ¹İ", "Èñ±Í", "¿µ¿õ", "¼­»ç", "Àü¼³", "½ÅÈ­", "¸ğµÎ" };
-		string[] tier = {"0", "40", "80", "120", "160", "200", "240", "¸ğµÎ" };
-		string[] named = {"Á¦ÀÛ", "¸ó½ºÅÍ", "¸ğµÎ" };
-		string[] bag = {"Àåºñ °¡¹æ", "¸ğµÎ" };
+		string[] rank = {"ì¼ë°˜", "í¬ê·€", "ì˜ì›…", "ì„œì‚¬", "ì „ì„¤", "ì‹ í™”", "ëª¨ë‘" };
+		string[] tier = {"0", "40", "80", "120", "160", "200", "240", "ëª¨ë‘" };
+		string[] named = {"ì œì‘", "ëª¬ìŠ¤í„°", "ëª¨ë‘" };
+		string[] bag = {"ì¥ë¹„ ê°€ë°©", "ëª¨ë‘" };
 		
         public EquipMeltingOptionGump(PlayerMobile pm) : base(50, 50)
         {
@@ -73,7 +73,7 @@ namespace Server.Gumps
             AddBackground(0, 0, 820, 215, 5054);
             AddImageTiled(10, 10, 800, 195, 2624);
 			
-			AddHtml(0, 20, 800, 20, CenterGray("¿É¼Ç ¼³Á¤"), false, false); // <CENTER>HOUSE
+			AddHtml(0, 20, 800, 20, CenterGray("ì˜µì…˜ ì„¤ì •"), false, false); // <CENTER>HOUSE
 			
 			m_pm = pm;
 			
@@ -87,7 +87,7 @@ namespace Server.Gumps
 			for( int i = 1; i < 6; ++i)
 			{
 				AddHtml(50 + step * (i -1), y, 50, 20, LeftGreen(rank[i]), false, false); // <DIV 
-				AddHtml(150 + step * (i -1), y, 100, 20, LeftGreen(String.Format("{0:#,###}", acc.Point[860 + i] > 0 ? acc.Point[860 + i].ToString() : "0" ) + "Á¡"), false, false);
+				AddHtml(150 + step * (i -1), y, 100, 20, LeftGreen(String.Format("{0:#,###}", acc.Point[860 + i] > 0 ? acc.Point[860 + i].ToString() : "0" ) + "ì "), false, false);
 			}
 			
 			int index = 1;

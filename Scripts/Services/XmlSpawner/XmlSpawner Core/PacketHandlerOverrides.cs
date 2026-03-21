@@ -1,4 +1,4 @@
-#define CLIENT6017
+﻿#define CLIENT6017
 
 using System;
 using System.IO;

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Reward = Server.Engines.Quests.BaseReward;
 
 namespace Server.Items

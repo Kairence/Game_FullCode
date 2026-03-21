@@ -1,4 +1,4 @@
-// by henry_r
+﻿// by henry_r
 // 12/28/07
 // Made using Arya's Addon Generator
 //

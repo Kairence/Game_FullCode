@@ -1,4 +1,4 @@
-#if false
+﻿#if false
 using System;
 using Server.Network;
 using Server.Commands;

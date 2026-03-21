@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Mobiles;
 
 namespace Server.Items
@@ -9,14 +9,14 @@ namespace Server.Items
         {
         }
 
-        // ¸¶³ª ¼Ò¸ğ ¾øÀ½
+        // ë§ˆë‚˜ ì†Œëª¨ ì—†ìŒ
 
         public override void OnHit(Mobile attacker, Mobile defender, int damage)
         {
             if (attacker == null || defender == null || !defender.Alive)
                 return;
 
-            // 1. È¿°ú ¾Ë¸² ¹× ½Ã°¢ È¿°ú
+            // 1. íš¨ê³¼ ì•Œë¦¼ ë° ì‹œê° íš¨ê³¼
             attacker.SendLocalizedMessage(1060078); // You strike and hide in the shadows!
             defender.SendLocalizedMessage(1060166); // You feel disoriented!
 
@@ -24,11 +24,11 @@ namespace Server.Items
             attacker.PlaySound(0x482);
             defender.FixedEffect(0x37BE, 20, 25);
 
-            // 2. ÇÙ½É ·ÎÁ÷: ¹«±â ÇÇÇØÀÇ 200% Ãß°¡ (ÃÑ 300% ÇÇÇØ)
+            // 2. í•µì‹¬ ë¡œì§: ë¬´ê¸° í”¼í•´ì˜ 200% ì¶”ê°€ (ì´ 300% í”¼í•´)
             int finalDamage = damage * 3;
 
-            // 3. AOS.Damage ¾ç½Ä¿¡ ¸ÂÃá ¾î±×·Î 0 °ø°İ
-            // ÀÎÀÚ ¼ø¼­: target, from, damage, ignoreArmor, phys, fire, cold, pois, nrgy, chaos, direct, keepAlive, type, aggro
+            // 3. AOS.Damage ì–‘ì‹ì— ë§ì¶˜ ì–´ê·¸ë¡œ 0 ê³µê²©
+            // ì¸ì ìˆœì„œ: target, from, damage, ignoreArmor, phys, fire, cold, pois, nrgy, chaos, direct, keepAlive, type, aggro
 			AOS.Damage(defender, attacker, finalDamage, false, 100, 0, 0, 0, 0, 0, 0, false, 0, 100);
         }
     }

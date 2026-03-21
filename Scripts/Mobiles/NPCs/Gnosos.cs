@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Items;
 using Server.Mobiles;
 
@@ -51,7 +51,7 @@ namespace Server.Engines.Quests
                 return 1074858;
             }
         }
-        /* You look a bit worse for wear!  He put up a good fight did he?  Hah!  That's the spirit … a Master 
+        /* You look a bit worse for wear!  He put up a good fight did he?  Hah!  That's the spirit ?a Master 
         of Bedlam is a match for most. */
         public override object Complete
         {

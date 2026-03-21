@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.Mobiles;
 
 namespace Server.Items
@@ -39,7 +39,7 @@ namespace Server.Items
                 {
                     /*
                      * Each weapon has a base and max range available to it, where the base
-                     * range is modified by the player�s strength to determine the actual range.
+                     * range is modified by the player뭩 strength to determine the actual range.
                      *
                      * Determining the maximum range of each weapon while in use:
                      * - Range = BaseRange + ((PlayerStrength - MinWeaponStrReq) / ((150 - MinWeaponStrReq) / 3))

@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Mobiles;
 using Server.Items;
@@ -8,66 +8,66 @@ namespace Server.Misc
 	public class HitLocationManager
 	{
 		/// <summary>
-		/// ÇÃ·¹ÀÌ¾î ÇÇ°İ ½Ã °¢ ºÎÀ§º° È®·ü¿¡ µû¶ó ÇÇ°İ ÁöÁ¡À» °áÁ¤ÇÕ´Ï´Ù.
-		/// (¼Õ: 10%, ¸Ó¸®: 10%, ¸ñ: 5%, ¾î±ú: 15%, ÇÏÀÇ: 25%, »óÀÇ: 35%)
+		/// í”Œë ˆì´ì–´ í”¼ê²© ì‹œ ê° ë¶€ìœ„ë³„ í™•ë¥ ì— ë”°ë¼ í”¼ê²© ì§€ì ì„ ê²°ì •í•©ë‹ˆë‹¤.
+		/// (ì†: 10%, ë¨¸ë¦¬: 10%, ëª©: 5%, ì–´ê¹¨: 15%, í•˜ì˜: 25%, ìƒì˜: 35%)
 		/// </summary>
 		public static int GetRandomLocation()
 		{
 			double roll = Utility.RandomDouble();
 
-			if (roll < 0.10) return 1;      // ¼Õ (10%)
-			else if (roll < 0.20) return 2; // ¸Ó¸® (10%)
-			else if (roll < 0.25) return 3; // ¸ñ (5%)
-			else if (roll < 0.40) return 4; // ¾î±ú (15%)
-			else if (roll < 0.65) return 5; // ÇÏÀÇ (25%)
-			else return 6;                 // »óÀÇ (35%)
+			if (roll < 0.10) return 1;      // ì† (10%)
+			else if (roll < 0.20) return 2; // ë¨¸ë¦¬ (10%)
+			else if (roll < 0.25) return 3; // ëª© (5%)
+			else if (roll < 0.40) return 4; // ì–´ê¹¨ (15%)
+			else if (roll < 0.65) return 5; // í•˜ì˜ (25%)
+			else return 6;                 // ìƒì˜ (35%)
 		}
 
 		/// <summary>
-		/// ºÎÀ§º° Ä¡¸íÅ¸ È®·ü º¸³Ê½º¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+		/// ë¶€ìœ„ë³„ ì¹˜ëª…íƒ€ í™•ë¥  ë³´ë„ˆìŠ¤ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 		/// </summary>
 		public static double GetCritChanceBonus(int location)
 		{
 			switch (location)
 			{
-				case 1: return 0.10; // ¼Õ 10%
-				case 2: return 0.25; // ¸Ó¸® 25%
-				case 3: return 0.50; // ¸ñ 50%
-				case 4: return 0.15; // ¾î±ú 15%
-				case 5: return 0.20; // ÇÏÀÇ 20%
-				case 6: return 0.20; // »óÀÇ 20%
+				case 1: return 0.10; // ì† 10%
+				case 2: return 0.25; // ë¨¸ë¦¬ 25%
+				case 3: return 0.50; // ëª© 50%
+				case 4: return 0.15; // ì–´ê¹¨ 15%
+				case 5: return 0.20; // í•˜ì˜ 20%
+				case 6: return 0.20; // ìƒì˜ 20%
 				default: return 0.0;
 			}
 		}
 
 		/// <summary>
-		/// ºÎÀ§º° Ä¡¸íÅ¸ Ãß°¡ µ¥¹ÌÁö º¸³Ê½º¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+		/// ë¶€ìœ„ë³„ ì¹˜ëª…íƒ€ ì¶”ê°€ ë°ë¯¸ì§€ ë³´ë„ˆìŠ¤ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 		/// </summary>
 		public static double GetCritDamageBonus(int location)
 		{
 			switch (location)
 			{
-				case 2: return 0.50; // ¸Ó¸® +50%
-				case 3: return 1.50; // ¸ñ +150%
-				default: return 0.0; // ³ª¸ÓÁö 0%
+				case 2: return 0.50; // ë¨¸ë¦¬ +50%
+				case 3: return 1.50; // ëª© +150%
+				default: return 0.0; // ë‚˜ë¨¸ì§€ 0%
 			}
 		}
 		
 		/// <summary>
-		/// ºÎÀ§ ¹øÈ£¸¦ ¹®ÀÚ¿­·Î º¯È¯ÇÕ´Ï´Ù. (µğ¹ö±ë/¸Ş½ÃÁö¿ë)
+		/// ë¶€ìœ„ ë²ˆí˜¸ë¥¼ ë¬¸ìì—´ë¡œ ë³€í™˜í•©ë‹ˆë‹¤. (ë””ë²„ê¹…/ë©”ì‹œì§€ìš©)
 		/// </summary>
 		public static string GetLocationName(int location)
 		{
 			switch (location)
 			{
-				case 0: return "¹æÆĞ";
-				case 1: return "¼Õ";
-				case 2: return "¸Ó¸®";
-				case 3: return "¸ñ";
-				case 4: return "¾î±ú";
-				case 5: return "ÇÏÀÇ";
-				case 6: return "»óÀÇ";
-				default: return "¾Ë ¼ö ¾øÀ½";
+				case 0: return "ë°©íŒ¨";
+				case 1: return "ì†";
+				case 2: return "ë¨¸ë¦¬";
+				case 3: return "ëª©";
+				case 4: return "ì–´ê¹¨";
+				case 5: return "í•˜ì˜";
+				case 6: return "ìƒì˜";
+				default: return "ì•Œ ìˆ˜ ì—†ìŒ";
 			}
 		}
 	}

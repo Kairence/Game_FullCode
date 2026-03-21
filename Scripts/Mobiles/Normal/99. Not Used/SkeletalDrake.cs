@@ -1,4 +1,4 @@
-/* Based on Skeletal Dragon, still have to get detailed info on Skeletal Drake
+﻿/* Based on Skeletal Dragon, still have to get detailed info on Skeletal Drake
     2017/4/09 update: brought more into line with the one extant data point*/
 using System;
 

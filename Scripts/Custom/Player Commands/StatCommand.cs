@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Mobiles;
 using Server.Network;
@@ -17,7 +17,7 @@ namespace Server.Commands
 		}
 
 		[Usage( "Status" )]
-		[Description( "°èÁ¤ ±İ°í °ñµå È®ÀÎ." )]
+		[Description( "ê³„ì • ê¸ˆê³  ê³¨ë“œ í™•ì¸." )]
 		public static void UserStatInfo_OnCommand( CommandEventArgs e )
 		{
 			e.Mobile.Target = new InternalTarget();
@@ -49,7 +49,7 @@ namespace Server.Commands
 		}
 
 		[Usage( "Stat [second order]" )]
-		[Description( "´É·ÂÄ¡ ½ºÅİÃ¢ ¿­±â." )]
+		[Description( "ëŠ¥ë ¥ì¹˜ ìŠ¤í…Ÿì°½ ì—´ê¸°." )]
 		public static void StatInfo_OnCommand( CommandEventArgs e )
 		{
 			var sub = "";

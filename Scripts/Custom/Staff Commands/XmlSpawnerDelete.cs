@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Mobiles;
 using Server.Commands.Generic;
@@ -14,10 +14,10 @@ namespace Server.Commands
 		}
 
 		[Usage( "XmlSpawnerDelete" )]
-		[Description( "½ºÆ÷³Ê »èÁ¦ ÄÚµå." )]
+		[Description( "ìŠ¤í¬ë„ˆ ì‚­ì œ ì½”ë“œ." )]
 		public static void XmlSpawnerDeleteInfo_OnCommand( CommandEventArgs e )
 		{
-			e.Mobile.SendMessage("½ºÆ÷³Ê »èÁ¦¸¦ ½ÃÀÛÇÕ´Ï´Ù!");
+			e.Mobile.SendMessage("ìŠ¤í¬ë„ˆ ì‚­ì œë¥¼ ì‹œì‘í•©ë‹ˆë‹¤!");
 			int count = 0;
 			var list = new List<Item>();
 			foreach ( Item i in World.Items.Values )
@@ -33,7 +33,7 @@ namespace Server.Commands
 				Item tar = (Item)list[i];
 				tar.Delete();
 			}
-			e.Mobile.SendMessage("ÃÑ {0}°³ÀÇ ½ºÆ÷³Ê¸¦ »èÁ¦Çß½À´Ï´Ù.", count);
+			e.Mobile.SendMessage("ì´ {0}ê°œì˜ ìŠ¤í¬ë„ˆë¥¼ ì‚­ì œí–ˆìŠµë‹ˆë‹¤.", count);
 		}
 	}
 }

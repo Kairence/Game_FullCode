@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Mobiles;
 using Server.Network;
@@ -17,7 +17,7 @@ namespace Server.Commands
 		}
 
 		[Usage( "Status" )]
-		[Description( "º¸È£ »óÅÂ ¼³Á¤" )]
+		[Description( "ë³´í˜¸ ìƒíƒœ ì„¤ì •" )]
 		public static void LeaderRewardTimeInfo_OnCommand( CommandEventArgs e )
 		{
 			if( Server.Event.fsc == null )
@@ -47,7 +47,7 @@ namespace Server.Commands
 		}
 
 		[Usage( "Status" )]
-		[Description( "º¸È£ »óÅÂ ¼³Á¤" )]
+		[Description( "ë³´í˜¸ ìƒíƒœ ì„¤ì •" )]
 		public static void LeaderRewardTimeResetInfo_OnCommand( CommandEventArgs e )
 		{
 			if( Server.Event.fsc == null )

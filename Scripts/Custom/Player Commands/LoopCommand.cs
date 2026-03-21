@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Mobiles;
 using Server.Network;
@@ -14,7 +14,7 @@ namespace Server.Commands
 		}
 
 		[Usage( "Status" )]
-		[Description( "¹İº¹ ¸í·É¾î." )]
+		[Description( "ë°˜ë³µ ëª…ë ¹ì–´." )]
 		public static void LoopInfo_OnCommand( CommandEventArgs e )
 		{
 			if( e.Mobile is PlayerMobile )
@@ -23,14 +23,14 @@ namespace Server.Commands
 				if( pm.Loop )
 				{
 					pm.Loop = false;
-					e.Mobile.SendMessage("¹İº¹ ÀÛ¾÷À» Áß´ÜÇÕ´Ï´Ù");
+					e.Mobile.SendMessage("ë°˜ë³µ ì‘ì—…ì„ ì¤‘ë‹¨í•©ë‹ˆë‹¤");
 				}
 				else
 				{
 					pm.Loop = true;
 					if( e.Arguments.Length == 0 )
 					{
-						e.Mobile.SendMessage("¹İº¹ ÀÛ¾÷À» ½ÃÀÛÇÕ´Ï´Ù");
+						e.Mobile.SendMessage("ë°˜ë³µ ì‘ì—…ì„ ì‹œì‘í•©ë‹ˆë‹¤");
 						pm.LoopCount = 50000;
 					}
 					else
@@ -39,19 +39,19 @@ namespace Server.Commands
 						int number;
 						bool isNum = Int32.TryParse(index, out number );
 						if( !isNum )
-							e.Mobile.SendMessage("Àß¸øµÈ ¸í·É¾î ÀÔ´Ï´Ù. [Loop ¼ıÀÚ ¸¦ ³ÖÀ¸¼¼¿ä.");
+							e.Mobile.SendMessage("ì˜ëª»ëœ ëª…ë ¹ì–´ ì…ë‹ˆë‹¤. [Loop ìˆ«ì ë¥¼ ë„£ìœ¼ì„¸ìš”.");
 							
 						if( number == 0 )
 						{
 							pm.LastTarget = null;
-							e.Mobile.SendMessage("·çÇÁ Å¸°ÙÀ» »èÁ¦ÇÕ´Ï´Ù");
+							e.Mobile.SendMessage("ë£¨í”„ íƒ€ê²Ÿì„ ì‚­ì œí•©ë‹ˆë‹¤");
 						}
 						else if( number < 0 || number > 50000 )
-							e.Mobile.SendMessage("1 ~ 50000 »çÀÌÀÇ °ªÀ» ³Ö¾îÁÖ¼¼¿ä.");
+							e.Mobile.SendMessage("1 ~ 50000 ì‚¬ì´ì˜ ê°’ì„ ë„£ì–´ì£¼ì„¸ìš”.");
 						else
 						{
 							pm.LoopCount = number;
-							e.Mobile.SendMessage("¹İº¹ ÀÛ¾÷À» {0} È¸ ½ÃÀÛÇÕ´Ï´Ù", number);
+							e.Mobile.SendMessage("ë°˜ë³µ ì‘ì—…ì„ {0} íšŒ ì‹œì‘í•©ë‹ˆë‹¤", number);
 						}
 					}
 				}

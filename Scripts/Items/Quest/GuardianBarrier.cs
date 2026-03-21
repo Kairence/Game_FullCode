@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.Mobiles;
 
 namespace Server.Engines.Quests.Ninja

@@ -1,4 +1,4 @@
-#region References
+﻿#region References
 using Server.Accounting;
 using Server.Guilds;
 using Server.Items;

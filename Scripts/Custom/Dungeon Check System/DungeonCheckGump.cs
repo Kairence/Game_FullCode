@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Items;
 using Server.Network;
@@ -10,7 +10,7 @@ namespace Server.Gumps
 {
     public class DungeonCheckGump : Gump
     {
-		private string[] Name = { "ÄÚº£Åõ½º", "µ¥½ºÆÄÀÌÁî", "µğ½Ë", "½¦ÀÓ", "¿ÀÅ© ´øÀü", "·Õ", "´ÙÃ¤·Î¿î µ¿±¼" };
+		private string[] Name = { "ì½”ë² íˆ¬ìŠ¤", "ë°ìŠ¤íŒŒì´ì¦ˆ", "ë””ì‹¯", "ì‰ì„", "ì˜¤í¬ ë˜ì „", "ë¡±", "ë‹¤ì±„ë¡œìš´ ë™êµ´" };
 		private DungeonCheck m_dungeon;
 		private Mobile m_from;
         public DungeonCheckGump(Mobile from, DungeonCheck dungeon) : base(50, 50)
@@ -22,22 +22,22 @@ namespace Server.Gumps
 			m_dungeon = dungeon;
 			m_from = from;
 
-            AddHtml(10, 10, 250, 20, "´øÀü ½Ã½ºÅÛ", false, false); // <CENTER>HOUSE 			
+            AddHtml(10, 10, 250, 20, "ë˜ì „ ì‹œìŠ¤í…œ", false, false); // <CENTER>HOUSE 			
 			//AddHtml(130, 10, 200, 16, String.Format("{0:#,###}", dungeon.Death[0]), false, false);
 
-            AddHtml(50, 40, 225, 20, "ÀÌ¸§", false, false); // House Description
-            AddHtml(275, 40, 75, 20, "º¸»ó", false, false); // Storage
-            //AddHtml(350, 40, 150, 20, "»ç¸Á", false, false); // Lockdowns			
+            AddHtml(50, 40, 225, 20, "ì´ë¦„", false, false); // House Description
+            AddHtml(275, 40, 75, 20, "ë³´ìƒ", false, false); // Storage
+            //AddHtml(350, 40, 150, 20, "ì‚¬ë§", false, false); // Lockdowns			
 			int y = 60;
 			for ( int i = 0; i < Name.Length; i++ )
 			{
-				//ÀÌ¸§
+				//ì´ë¦„
 				AddHtml( 50, y + i * 20, 225, 20, Name[i], false, false);
-				//º¸»ó
+				//ë³´ìƒ
 				AddHtml(350, y + i * 20, 200, 16, String.Format("{0:#,###}", dungeon.Death[i]), false, false);
-				//¹öÆ°
+				//ë²„íŠ¼
 				AddButton( 10, y + i * 20, 4005, 4007, i + 1, GumpButtonType.Reply, 0);
-				//»ç¸Á
+				//ì‚¬ë§
 				//AddHtml(350, y + i * 20, 200, 16, String.Format("{0:#,###}", dungeon.Death[i + 1]), false, false);
 			}
 			if( from.Str >= 100 )
@@ -61,7 +61,7 @@ namespace Server.Gumps
 			if( info.ButtonID >= 7 )
 				return;
 			
-			m_from.SendMessage("´øÀü Á¡¼ö¸¦ ÀûÀ¸½Ã¿À");
+			m_from.SendMessage("ë˜ì „ ì ìˆ˜ë¥¼ ì ìœ¼ì‹œì˜¤");
 			m_from.BeginPrompt(
 			(from, text ) =>
 			{

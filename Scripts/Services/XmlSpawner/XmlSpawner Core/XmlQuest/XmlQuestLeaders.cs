@@ -1,4 +1,4 @@
-#define FACTIONS
+﻿#define FACTIONS
 using System;
 using System.IO;
 using System.Xml;

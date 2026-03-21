@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CalcMoves = Server.Movement.Movement;
 
 namespace Server

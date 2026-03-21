@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server;
 using Server.Spells.Mysticism;
 using Server.Items;

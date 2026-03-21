@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -346,7 +346,7 @@ namespace Server.Items
             bool xEast = false, ySouth = false;
 
             if (Sextant.Format(loc, map, ref xLong, ref yLat, ref xMins, ref yMins, ref xEast, ref ySouth))
-                result.AppendFormat("{0}°{1}'{2},{3}°{4}'{5}", yLat, yMins, ySouth ? "S" : "N", xLong, xMins, xEast ? "E" : "W");
+                result.AppendFormat("{0}?1}'{2},{3}?4}'{5}", yLat, yMins, ySouth ? "S" : "N", xLong, xMins, xEast ? "E" : "W");
             else
                 result.AppendFormat("{0},{1}", loc.X, loc.Y);
 

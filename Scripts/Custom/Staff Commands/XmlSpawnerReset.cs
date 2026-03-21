@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Mobiles;
 using Server.Commands.Generic;
@@ -15,7 +15,7 @@ namespace Server.Commands
 		}
 
 		[Usage( "XmlSpawnerReset" )]
-		[Description( "½ºÆ÷³Ê ¸®¼Â." )]
+		[Description( "ìŠ¤í¬ë„ˆ ë¦¬ì…‹." )]
 		public static void XmlSpawnerResetInfo_OnCommand( CommandEventArgs e )
 		{
 			var list = new List<Item>();
@@ -25,9 +25,9 @@ namespace Server.Commands
 				{
 					XmlSpawner xs = i as XmlSpawner;
 					
-					if( xs.X >= 1752 && xs.Y >= 952 && xs.X <= 1864 && xs.Y <= 1000 ) //½ºÆÄÀÌ´õ ´øÀü 1Ãş
+					if( xs.X >= 1752 && xs.Y >= 952 && xs.X <= 1864 && xs.Y <= 1000 ) //ìŠ¤íŒŒì´ë” ë˜ì „ 1ì¸µ
 						list.Add( i );
-					if( xs.X >= 1480 && xs.Y >= 864 && xs.X <= 1528 && xs.Y <= 896 ) //½ºÆÄÀÌ´õ ´øÀü 2Ãş
+					if( xs.X >= 1480 && xs.Y >= 864 && xs.X <= 1528 && xs.Y <= 896 ) //ìŠ¤íŒŒì´ë” ë˜ì „ 2ì¸µ
 						list.Add( i );
 				}
 			}
@@ -41,10 +41,10 @@ namespace Server.Commands
 					targeted.Reset();
 					targeted.Respawn();
 				}
-				e.Mobile.SendMessage("ÃÑ {0}°³ÀÇ ½ºÆ÷³Ê¸¦ ¼öÁ¤Çß½À´Ï´Ù.", list.Count);
+				e.Mobile.SendMessage("ì´ {0}ê°œì˜ ìŠ¤í¬ë„ˆë¥¼ ìˆ˜ì •í–ˆìŠµë‹ˆë‹¤.", list.Count);
 			}
 			else
-				e.Mobile.SendMessage("¼öÁ¤ÇÒ ³»¿ªÀÌ ¾ø½À´Ï´Ù.");
+				e.Mobile.SendMessage("ìˆ˜ì •í•  ë‚´ì—­ì´ ì—†ìŠµë‹ˆë‹¤.");
 		}
 	}
 }

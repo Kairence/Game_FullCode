@@ -1,4 +1,4 @@
-#region References
+﻿#region References
 using Server.Gumps;
 using Server.Network;
 #endregion

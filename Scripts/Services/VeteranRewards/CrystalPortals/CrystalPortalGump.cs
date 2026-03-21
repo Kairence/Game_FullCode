@@ -1,4 +1,4 @@
-namespace Server.Gumps
+﻿namespace Server.Gumps
 {
 	public class CrystalPortalGump : Gump
 	{

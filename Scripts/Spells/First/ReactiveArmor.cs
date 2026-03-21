@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 
 namespace Server.Spells.First
@@ -18,7 +18,7 @@ namespace Server.Spells.First
         {
         }
 
-        // Áö¼Ó ½Ã°£ Á¾·á ½Ã ¿øº¹À» À§ÇÑ Å¸ÀÌ¸Ó °ü¸® Å×ÀÌºí
+        // ì§€ì† ì‹œê°„ ì¢…ë£Œ ì‹œ ì›ë³µì„ ìœ„í•œ íƒ€ì´ë¨¸ ê´€ë¦¬ í…Œì´ë¸”
         private static Dictionary<Mobile, Timer> m_Table = new Dictionary<Mobile, Timer>();
 
         public override SpellCircle Circle => SpellCircle.First;
@@ -29,25 +29,25 @@ namespace Server.Spells.First
             {
                 Mobile caster = Caster;
 
-                // 1. Áö¼Ó ½Ã°£ °è»ê: 60ÃÊ + º¸³Ê½º * 0.012
+                // 1. ì§€ì† ì‹œê°„ ê³„ì‚°: 60ì´ˆ + ë³´ë„ˆìŠ¤ * 0.012
                 double bonus = SpellHelper.GetMagicValue(caster, 0.012);
                 TimeSpan length = TimeSpan.FromSeconds(60.0 + bonus);
 
-                // 2. È¿°ú Àû¿ë (ÀÌ¹Ì ÄÑÁ® ÀÖ´Ù¸é °»½Å)
+                // 2. íš¨ê³¼ ì ìš© (ì´ë¯¸ ì¼œì ¸ ìˆë‹¤ë©´ ê°±ì‹ )
                 StopTimer(caster);
 
-                // [ÇÙ½É] MeleeDamageAbsorb¸¦ 1·Î ¼³Á¤ (¹æ¾î·Â +1 È¿°ú)
+                // [í•µì‹¬] MeleeDamageAbsorbë¥¼ 1ë¡œ ì„¤ì • (ë°©ì–´ë ¥ +1 íš¨ê³¼)
                 caster.MeleeDamageAbsorb += 1;
 
-                // 3. ¿¬Ãâ ¹× ¹öÇÁ ¾ÆÀÌÄÜ
+                // 3. ì—°ì¶œ ë° ë²„í”„ ì•„ì´ì½˜
                 caster.PlaySound(0x1E9);
                 caster.FixedParticles(0x376A, 9, 32, 5008, EffectLayer.Waist);
 
-                // ¹öÇÁ Á¤º¸Ã¢¿¡ "¹æ¾î·Â 1 Áõ°¡" Ç¥½Ã
+                // ë²„í”„ ì •ë³´ì°½ì— "ë°©ì–´ë ¥ 1 ì¦ê°€" í‘œì‹œ
                 BuffInfo.AddBuff(caster, new BuffInfo(BuffIcon.ReactiveArmor, 1075812, length, caster, "1"));
-                caster.SendMessage("¸®¾×Æ¼ºê ¾Æ¸Ó·Î ÀÎÇØ ¹°¸® ¹æ¾î·ÂÀÌ 1 Áõ°¡Çß½À´Ï´Ù.");
+                caster.SendMessage("ë¦¬ì•¡í‹°ë¸Œ ì•„ë¨¸ë¡œ ì¸í•´ ë¬¼ë¦¬ ë°©ì–´ë ¥ì´ 1 ì¦ê°€í–ˆìŠµë‹ˆë‹¤.");
 
-                // 4. Å¸ÀÌ¸Ó ¼³Á¤ (Á¾·á ½Ã 0À¸·Î ¿øº¹)
+                // 4. íƒ€ì´ë¨¸ ì„¤ì • (ì¢…ë£Œ ì‹œ 0ìœ¼ë¡œ ì›ë³µ)
                 m_Table[caster] = Timer.DelayCall(length, () =>
                 {
                     EndArmor(caster);
@@ -63,7 +63,7 @@ namespace Server.Spells.First
 
             StopTimer(m);
             
-            // ¹æ¾î·Â ¿øº¹
+            // ë°©ì–´ë ¥ ì›ë³µ
             m.MeleeDamageAbsorb -= 1;
             BuffInfo.RemoveBuff(m, BuffIcon.ReactiveArmor);
         }
@@ -78,7 +78,7 @@ namespace Server.Spells.First
             }
         }
 
-        // ¿ÜºÎ(¿¹: µ¥¹ÌÁö ÇÚµé·¯)¿¡¼­ Ã¼Å©ÇÒ ¼ö ÀÖ´Â ¸Ş¼­µå
+        // ì™¸ë¶€(ì˜ˆ: ë°ë¯¸ì§€ í•¸ë“¤ëŸ¬)ì—ì„œ ì²´í¬í•  ìˆ˜ ìˆëŠ” ë©”ì„œë“œ
         public static bool IsUnderEffects(Mobile m)
         {
             return m_Table.ContainsKey(m);

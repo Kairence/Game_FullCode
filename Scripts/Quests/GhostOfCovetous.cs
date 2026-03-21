@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Items;
 
 namespace Server.Engines.Quests
@@ -134,7 +134,7 @@ namespace Server.Engines.Quests
         }
         /* My father, Andros, is a smith in Minoc. Last week his forge overturned and he was splashed by molten steel. He was horribly burned, 
         and we feared he would die. An alchemist in Vesper promised to make a bandage that could heal him, but he needed the silk of a dread 
-        spider. I came here to get some, but I was careless, and succumbed to their poison. Please, won’t you help my father? */
+        spider. I came here to get some, but I was careless, and succumbed to their poison. Please, wonë­ª you help my father? */
         public override object Description
         {
             get
@@ -142,7 +142,7 @@ namespace Server.Engines.Quests
                 return 1075338;
             }
         }
-        /* Oh . . . that’s your decision . . . OooOoooOOoo . . . */
+        /* Oh . . . thatë­© your decision . . . OooOoooOOoo . . . */
         public override object Refuse
         {
             get
@@ -189,7 +189,7 @@ namespace Server.Engines.Quests
         { 
             this.AddObjective(new DeliverObjective(typeof(AlchemistsBandage), "alchemist's bandage", 1, typeof(Andros), "Andros"));		
 							
-            this.AddReward(new BaseReward(typeof(AndrosGratitude), 1075345)); // Andros’ Gratitude
+            this.AddReward(new BaseReward(typeof(AndrosGratitude), 1075345)); // Andros?Gratitude
         }
 
         public override QuestChain ChainID
@@ -206,7 +206,7 @@ namespace Server.Engines.Quests
                 return true;
             }
         }
-        /* A Father’s Gratitude */
+        /* A Fatherë­© Gratitude */
         public override object Title
         {
             get
@@ -214,8 +214,8 @@ namespace Server.Engines.Quests
                 return 1075343;
             }
         }
-        /* That is simply terrible. First Andros, and now his son. Well, let’s make sure Frederic’s sacrifice wasn’t in vain. Will you take 
-        the bandages to his father? You can probably deliver them faster than I can, can’t you? */
+        /* That is simply terrible. First Andros, and now his son. Well, letë­© make sure Fredericë­© sacrifice wasnë­ª in vain. Will you take 
+        the bandages to his father? You can probably deliver them faster than I can, canë­ª you? */
         public override object Description
         {
             get
@@ -223,7 +223,7 @@ namespace Server.Engines.Quests
                 return 1075344;
             }
         }
-        /* Well I’m sorry to hear you say that. Without your help, I don’t know if I can get these to Andros quickly enough to help him. */
+        /* Well Ië­¢ sorry to hear you say that. Without your help, I donë­ª know if I can get these to Andros quickly enough to help him. */
         public override object Refuse
         {
             get
@@ -231,7 +231,7 @@ namespace Server.Engines.Quests
                 return 1075346;
             }
         }
-        /* I don’t know how much longer Andros will survive. You’d better get this to him as quick as you can. Every second counts! */
+        /* I donë­ª know how much longer Andros will survive. Youë­— better get this to him as quick as you can. Every second counts! */
         public override object Uncomplete
         {
             get
@@ -239,7 +239,7 @@ namespace Server.Engines.Quests
                 return 1075347;
             }
         }
-        /* Sorry, I’m not accepting commissions at the moment. What? You have the bandage I need from Leon? Thank you so much! But why didn’t 
+        /* Sorry, Ië­¢ not accepting commissions at the moment. What? You have the bandage I need from Leon? Thank you so much! But why didnë­ª 
         my son bring this to me himself? . . . Oh, no! You can't be serious! *sag* My Freddie, my son! Thank you for carrying out his last wish. 
         Here -- I made this for my son, to give to him when he became a journeyman. I want you to have it. */
         public override object Complete

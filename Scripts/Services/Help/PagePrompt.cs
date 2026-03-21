@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.Prompts;
 
 namespace Server.Engines.Help

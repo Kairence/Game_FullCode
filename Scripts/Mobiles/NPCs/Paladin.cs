@@ -1,4 +1,4 @@
-#region Header
+﻿#region Header
 // **********
 // ServUO - Paladin.cs
 // **********

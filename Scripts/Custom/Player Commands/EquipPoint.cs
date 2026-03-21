@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Mobiles;
 using Server.Network;
@@ -18,7 +18,7 @@ namespace Server.Commands
 		}
 
 		[Usage( "Status" )]
-		[Description( "¾ÆÀÌÅÛ °¥°¥." )]
+		[Description( "ì•„ì´í…œ ê°ˆê°ˆ." )]
 		public static void EquipPointInfo_OnCommand( CommandEventArgs e )
 		{
 			if( e.Mobile is PlayerMobile )

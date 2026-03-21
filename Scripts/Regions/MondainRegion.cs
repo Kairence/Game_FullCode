@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Xml;
 using Server.Spells.Chivalry;
 using Server.Spells.Fourth;

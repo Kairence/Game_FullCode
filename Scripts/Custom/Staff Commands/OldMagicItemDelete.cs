@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Mobiles;
 using Server.Commands.Generic;
@@ -15,10 +15,10 @@ namespace Server.Commands
 		}
 
 		[Usage( "OldMagicItemDelete" )]
-		[Description( "¿¹Àü ¾ÆÀÌÅÛ »èÁ¦ ÄÚµå." )]
+		[Description( "ì˜ˆì „ ì•„ì´í…œ ì‚­ì œ ì½”ë“œ." )]
 		public static void OldMagicItemDeleteInfo_OnCommand( CommandEventArgs e )
 		{
-			e.Mobile.SendMessage("¿¹Àü ¾ÆÀÌÅÛ »èÁ¦¸¦ ½ÃÀÛÇÕ´Ï´Ù!");
+			e.Mobile.SendMessage("ì˜ˆì „ ì•„ì´í…œ ì‚­ì œë¥¼ ì‹œì‘í•©ë‹ˆë‹¤!");
 			int count = 0;
 			var list = new List<Item>();
 			foreach ( Item i in World.Items.Values )
@@ -86,7 +86,7 @@ namespace Server.Commands
 					}
 				}
 			}
-			e.Mobile.SendMessage("ÃÑ {0}°³ÀÇ ¾ÆÀÌÅÛÀ» »èÁ¦Çß½À´Ï´Ù.", count);
+			e.Mobile.SendMessage("ì´ {0}ê°œì˜ ì•„ì´í…œì„ ì‚­ì œí–ˆìŠµë‹ˆë‹¤.", count);
 		}
 	}
 }

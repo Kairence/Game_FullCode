@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.Accounting;
 using Server.Engines.VeteranRewards;
 using Server.Gumps;

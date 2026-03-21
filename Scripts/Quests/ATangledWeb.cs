@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.Items;
 using Server.Mobiles;
 
@@ -83,7 +83,7 @@ namespace Server.Engines.Quests
                 base.OnKill(killed);
 
                 if (!this.Completed)
-                    this.Quest.Owner.SendLocalizedMessage(1095037); // Blood from the creature goes into Jaacar�s barrel.
+                    this.Quest.Owner.SendLocalizedMessage(1095037); // Blood from the creature goes into Jaacar뭩 barrel.
             }
 
             public override void Serialize(GenericWriter writer)

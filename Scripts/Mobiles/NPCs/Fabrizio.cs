@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.Items;
 using Server.Mobiles;
 
@@ -30,7 +30,7 @@ namespace Server.Engines.Quests
                 return 1075361;
             }
         }
-        /* I came to this place looking for a cure for my wife. But I�m getting ahead of myself -- my wife was attacked by a 
+        /* I came to this place looking for a cure for my wife. But I뭢 getting ahead of myself -- my wife was attacked by a 
         werewolf, and survived. Now she has become a werewolf herself. My research has turned up nothing that would cure her 
         affliction. *Sob* She begged me to end her suffering, but I cannot. She has removed herself to a remote part of Ice 
         Island so that she does not endanger others. If I give you the means, will you go there, find her, and give her the 

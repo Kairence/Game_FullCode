@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Items;
 using Server.Network;
 using Server.Engines.Quests;
@@ -224,7 +224,7 @@ namespace Server.Gumps
             AddHtmlLocalized(140, 45, 250, 24, 1154327, 0x7FFF, false, false); // Exploring the Deep
 
             AddPage(1);
-            AddHtmlLocalized(107, 140, 300, 150, 1154294, 0x7FFF, false, true); // Hello there...what’s this? *reads the note* Look at these lenses! Cousteau drew these up did she...hrmm…well in any case I might be able to craft these lenses if you would be willing to assist me...
+            AddHtmlLocalized(107, 140, 300, 150, 1154294, 0x7FFF, false, true); // Hello there...whatë­© this? *reads the note* Look at these lenses! Cousteau drew these up did she...hrmmê¿¾ell in any case I might be able to craft these lenses if you would be willing to assist me...
 
             AddHtmlLocalized(145, 300, 250, 24, 1154295, 0x7FFF, false, false); // What do you need assistance with?
             AddButton(115, 300, 0x26B0, 0x26B1, 0, GumpButtonType.Page, 2);
@@ -232,7 +232,7 @@ namespace Server.Gumps
             AddButton(345, 440, 0xF7, 0xF8, 0, GumpButtonType.Reply, 0);//OK
 
             AddPage(2);
-            AddHtmlLocalized(107, 140, 300, 150, 1154296, 0x7FFF, false, true); // I’m looking to expand my operation here, before I can do that though I need a more reliable source of raw ore.  Rumor has it the Orcs have a new machine they are using to drill huge quantities of ore!
+            AddHtmlLocalized(107, 140, 300, 150, 1154296, 0x7FFF, false, true); // Ië­¢ looking to expand my operation here, before I can do that though I need a more reliable source of raw ore.  Rumor has it the Orcs have a new machine they are using to drill huge quantities of ore!
 
             AddHtmlLocalized(145, 300, 250, 24, 1154297, 0x7FFF, false, false); // An orcish machine?
             AddButton(115, 300, 0x26B0, 0x26B1, 0, GumpButtonType.Page, 3);
@@ -240,7 +240,7 @@ namespace Server.Gumps
             AddButton(345, 440, 0xF7, 0xF8, 0, GumpButtonType.Reply, 0);//OK
 
             AddPage(3);
-            AddHtmlLocalized(107, 140, 300, 150, 1154298, 0x7FFF, false, true); // Yes! That’s exactly what I’m talking about! Drill baby drill! You get me some schematics to make that machine and I’ll strike your lenses for you...I bet those Orcs are holed up in their cave outside Yew.
+            AddHtmlLocalized(107, 140, 300, 150, 1154298, 0x7FFF, false, true); // Yes! Thatë­© exactly what Ië­¢ talking about! Drill baby drill! You get me some schematics to make that machine and Ië­ l strike your lenses for you...I bet those Orcs are holed up in their cave outside Yew.
 
             AddButton(345, 440, 0xF7, 0xF8, 0, GumpButtonType.Reply, 0);//OK
         }

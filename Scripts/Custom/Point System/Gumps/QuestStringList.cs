@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Mobiles;
 namespace Server
 {
@@ -7,15 +7,15 @@ namespace Server
 		public string TownPoint( PlayerMobile pm )
 		{
 			string town = "";
-			//ºê¸®Æ° : 
+			//ë¸Œë¦¬íŠ¼ : 
 			if( pm.Map == Map.Trammel && pm.Location.X == 1479 && pm.Location.Y >= 1611 && pm.Location.Y <= 1612 )
-				town = "ºê¸®Æ° Ä¡·á¼Ò";
+				town = "ë¸Œë¦¬íŠ¼ ì¹˜ë£Œì†Œ";
 			else if( pm.Map == Map.Trammel && pm.Location.X == 1419 && pm.Location.Y >= 1596 && pm.Location.Y <= 1597 )
-				town = "ºê¸®Æ° °ø°ø µµ¼­°ü";
+				town = "ë¸Œë¦¬íŠ¼ ê³µê³µ ë„ì„œê´€";
 			else if( pm.Map == Map.Trammel && pm.Location.X == 1419 && pm.Location.Y >= 1596 && pm.Location.Y <= 1597 )
-				town = "¸ÁÄ¡¿Í ¸ð·ç";
+				town = "ë§ì¹˜ì™€ ëª¨ë£¨";
 			else if( pm.Map == Map.Trammel && pm.Location.X >= 1455 && pm.Location.X <= 1456 && pm.Location.Y == 1560 )
-				town = "ºê¸®Æ° ºê¸®Æ¼½Ã ¿ÕÀÇ À½¾Ç ´ëÇÐ";
+				town = "ë¸Œë¦¬íŠ¼ ë¸Œë¦¬í‹°ì‹œ ì™•ì˜ ìŒì•… ëŒ€í•™";
 			
 			
 			return town;
@@ -39,10 +39,10 @@ namespace Server
 			string talk = "";
 			switch(list)
 			{
-				case 1: talk = "ÀÚ³× È¤½Ã 'ºê¸®Æ° Ä¡·á¼Ò'·Î °¡¼­\n ÀÌ ºØ´ë¸¦ °Ç³»ÁÙ ¼ö ÀÖ°Ú³ª? ¹«»çÈ÷ µµÂøÇÏ¸é Áï½Ã º¸»óÀ» ¹ÞÀ» ¼ö ÀÖÀ»°Å¾ß";
+				case 1: talk = "ìžë„¤ í˜¹ì‹œ 'ë¸Œë¦¬íŠ¼ ì¹˜ë£Œì†Œ'ë¡œ ê°€ì„œ\n ì´ ë¶•ëŒ€ë¥¼ ê±´ë‚´ì¤„ ìˆ˜ ìžˆê² ë‚˜? ë¬´ì‚¬ížˆ ë„ì°©í•˜ë©´ ì¦‰ì‹œ ë³´ìƒì„ ë°›ì„ ìˆ˜ ìžˆì„ê±°ì•¼";
 								break;
 				
-				case 2: talk = "±ÞÇÑµ¥... ¾îÂ¾´Ù. °Å±â ÀÚ³× ½Ã°£ÀÌ ÀÖ³ª? 'ºê¸®Æ° °ø°ø µµ¼­°ü' ¹«»çÈ÷ µµÂøÇÏ¸é Áï½Ã º¸»óÀ» ¹ÞÀ» ¼ö ÀÖÀ»°Å¾ß";
+				case 2: talk = "ê¸‰í•œë°... ì–´ì©ë‹¤. ê±°ê¸° ìžë„¤ ì‹œê°„ì´ ìžˆë‚˜? 'ë¸Œë¦¬íŠ¼ ê³µê³µ ë„ì„œê´€' ë¬´ì‚¬ížˆ ë„ì°©í•˜ë©´ ì¦‰ì‹œ ë³´ìƒì„ ë°›ì„ ìˆ˜ ìžˆì„ê±°ì•¼";
 								break;
 				
 				

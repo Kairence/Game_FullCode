@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.ContextMenus;
 using Server.Mobiles;
 using Server.Spells.Necromancy;

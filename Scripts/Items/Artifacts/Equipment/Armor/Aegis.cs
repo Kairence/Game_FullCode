@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 
 namespace Server.Items
 {
@@ -26,7 +26,7 @@ namespace Server.Items
             {
                 return 1061602;
             }
-        }// Ægis
+        }// ?is
         public override int ArtifactRarity
         {
             get

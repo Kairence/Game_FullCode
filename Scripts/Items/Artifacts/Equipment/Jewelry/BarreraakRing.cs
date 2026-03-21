@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.Mobiles;
 
 namespace Server.Items
@@ -7,7 +7,7 @@ namespace Server.Items
     public class BarreraaksRing : GoldRing
     {
         public override bool IsArtifact { get { return true; } }
-        public override int LabelNumber { get { return 1095049; } } // Barreraak�s Old Beat Up Ring
+        public override int LabelNumber { get { return 1095049; } } // Barreraak뭩 Old Beat Up Ring
 		
         [Constructable]
 		public BarreraaksRing() 

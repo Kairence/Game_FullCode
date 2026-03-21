@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Mobiles;
 using Server.Network;
@@ -11,46 +11,46 @@ namespace Server.Commands
     {
         public static void Initialize()
         {
-            // ¸í·É¾î¸¦ ´©±¸³ª »ç¿ëÇÒ ¼ö ÀÖµµ·Ï Player ±ÇÇÑÀ¸·Î µî·ÏÇÏµÇ, ³»ºÎ¿¡¼­ ·ÎÁ÷À» ºĞ¸®ÇÕ´Ï´Ù.
+            // ëª…ë ¹ì–´ë¥¼ ëˆ„êµ¬ë‚˜ ì‚¬ìš©í•  ìˆ˜ ìˆë„ë¡ Player ê¶Œí•œìœ¼ë¡œ ë“±ë¡í•˜ë˜, ë‚´ë¶€ì—ì„œ ë¡œì§ì„ ë¶„ë¦¬í•©ë‹ˆë‹¤.
             CommandSystem.Register("Young", AccessLevel.Player, new CommandEventHandler(YoungInfo_OnCommand));
         }
 
         [Usage("Young")]
-        [Description("½ÃÁğ Ä³¸¯ÅÍ »óÅÂ¸¦ °ü¸®ÇÏ°Å³ª Æ÷±âÇÕ´Ï´Ù.")]
+        [Description("ì‹œì¦Œ ìºë¦­í„° ìƒíƒœë¥¼ ê´€ë¦¬í•˜ê±°ë‚˜ í¬ê¸°í•©ë‹ˆë‹¤.")]
         public static void YoungInfo_OnCommand(CommandEventArgs e)
         {
             PlayerMobile from = e.Mobile as PlayerMobile;
             if (from == null) return;
 
-            // 1. °ü¸®ÀÚ(GameMaster ÀÌ»ó)°¡ »ç¿ëÇÑ °æ¿ì -> Å¸°ÙÆÃ ¸ğµå
+            // 1. ê´€ë¦¬ì(GameMaster ì´ìƒ)ê°€ ì‚¬ìš©í•œ ê²½ìš° -> íƒ€ê²ŸíŒ… ëª¨ë“œ
             if (from.AccessLevel >= AccessLevel.GameMaster)
             {
-                from.SendMessage("½ÃÁğ(Young) »óÅÂ¸¦ º¯°æÇÒ Ä³¸¯ÅÍ¸¦ ¼±ÅÃÇÏ¼¼¿ä.");
+                from.SendMessage("ì‹œì¦Œ(Young) ìƒíƒœë¥¼ ë³€ê²½í•  ìºë¦­í„°ë¥¼ ì„ íƒí•˜ì„¸ìš”.");
                 from.Target = new YoungTarget();
             }
-            // 2. ÀÏ¹İ ÇÃ·¹ÀÌ¾î°¡ »ç¿ëÇÑ °æ¿ì -> º»ÀÎ ½ÃÁğ Æ÷±â ¸ğµå
+            // 2. ì¼ë°˜ í”Œë ˆì´ì–´ê°€ ì‚¬ìš©í•œ ê²½ìš° -> ë³¸ì¸ ì‹œì¦Œ í¬ê¸° ëª¨ë“œ
 			else
 			{
 				if (!from.Young)
 				{
-					from.SendMessage(0x22, "´ç½ÅÀº ½ÃÁğ Ä³¸¯ÅÍ »óÅÂ°¡ ¾Æ´Õ´Ï´Ù.");
+					from.SendMessage(0x22, "ë‹¹ì‹ ì€ ì‹œì¦Œ ìºë¦­í„° ìƒíƒœê°€ ì•„ë‹™ë‹ˆë‹¤.");
 					return;
 				}
 
 				from.Young = false;
-				from.SendMessage(0x481, "½ÃÁğ Ä³¸¯ÅÍ »óÅÂ¸¦ Æ÷±âÇÏ¼Ì½À´Ï´Ù.");
+				from.SendMessage(0x481, "ì‹œì¦Œ ìºë¦­í„° ìƒíƒœë¥¼ í¬ê¸°í•˜ì…¨ìŠµë‹ˆë‹¤.");
 
 				if (SeasonController.IsSeasonActive())
 				{
-					// ´ºÇìºì ÁÂÇ¥ ´ë½Å pm.PlayerMove¸¦ È£ÃâÇÏ¿© 
-					// º»ÀÎÀÌ ¼³Á¤ÇÑ SaveTown À§Ä¡ÀÇ Æ®¶ó¸á ¸ÊÀ¸·Î ÀÌµ¿½ÃÅµ´Ï´Ù.
+					// ë‰´í—¤ë¸ ì¢Œí‘œ ëŒ€ì‹  pm.PlayerMoveë¥¼ í˜¸ì¶œí•˜ì—¬ 
+					// ë³¸ì¸ì´ ì„¤ì •í•œ SaveTown ìœ„ì¹˜ì˜ íŠ¸ë¼ë©œ ë§µìœ¼ë¡œ ì´ë™ì‹œí‚µë‹ˆë‹¤.
 					from.PlayerMove(false);
-					from.SendMessage(0x22, "½ÃÁğ Æ÷±â·Î ÀÎÇØ º»ÀÎÀÇ °íÇâ ¸¶À»(Æ®¶ó¸á)·Î ÀÌ¼ÛµÇ¾ú½À´Ï´Ù.");
+					from.SendMessage(0x22, "ì‹œì¦Œ í¬ê¸°ë¡œ ì¸í•´ ë³¸ì¸ì˜ ê³ í–¥ ë§ˆì„(íŠ¸ë¼ë©œ)ë¡œ ì´ì†¡ë˜ì—ˆìŠµë‹ˆë‹¤.");
 				}
 			}
         }
 
-        // °ü¸®ÀÚ Àü¿ë Å¸°Ù Å¬·¡½º
+        // ê´€ë¦¬ì ì „ìš© íƒ€ê²Ÿ í´ë˜ìŠ¤
         private class YoungTarget : Target
         {
             public YoungTarget() : base(12, false, TargetFlags.None) { }
@@ -59,17 +59,17 @@ namespace Server.Commands
             {
                 if (targeted is PlayerMobile pm)
                 {
-                    pm.Young = !pm.Young; // »óÅÂ ¹İÀü (ON/OFF)
+                    pm.Young = !pm.Young; // ìƒíƒœ ë°˜ì „ (ON/OFF)
                     
-                    from.SendMessage(0x481, "{0} Ä³¸¯ÅÍÀÇ ½ÃÁğ(Young) »óÅÂ¸¦ {1}·Î º¯°æÇß½À´Ï´Ù.", 
+                    from.SendMessage(0x481, "{0} ìºë¦­í„°ì˜ ì‹œì¦Œ(Young) ìƒíƒœë¥¼ {1}ë¡œ ë³€ê²½í–ˆìŠµë‹ˆë‹¤.", 
                         pm.Name, pm.Young ? "ON" : "OFF");
                     
-                    pm.SendMessage(0x481, "°ü¸®ÀÚ¿¡ ÀÇÇØ ½ÃÁğ Ä³¸¯ÅÍ »óÅÂ°¡ {0} µÇ¾ú½À´Ï´Ù.", 
-                        pm.Young ? "È°¼ºÈ­" : "ÇØÁ¦");
+                    pm.SendMessage(0x481, "ê´€ë¦¬ìì— ì˜í•´ ì‹œì¦Œ ìºë¦­í„° ìƒíƒœê°€ {0} ë˜ì—ˆìŠµë‹ˆë‹¤.", 
+                        pm.Young ? "í™œì„±í™”" : "í•´ì œ");
                 }
                 else
                 {
-                    from.SendMessage("ÇÃ·¹ÀÌ¾î Ä³¸¯ÅÍ¸¸ ¼±ÅÃ °¡´ÉÇÕ´Ï´Ù.");
+                    from.SendMessage("í”Œë ˆì´ì–´ ìºë¦­í„°ë§Œ ì„ íƒ ê°€ëŠ¥í•©ë‹ˆë‹¤.");
                 }
             }
         }

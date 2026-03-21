@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Server.ContextMenus;
 using Server.Gumps;
@@ -78,7 +78,7 @@ namespace Server.Items
             {
                 return 1075198;
             }
-        }// Dawn�s Music Box
+        }// Dawn뭩 Music Box
         public List<MusicName> Tracks
         {
             get

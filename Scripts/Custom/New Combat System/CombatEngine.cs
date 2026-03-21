@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Items;
 using Server.Mobiles;
@@ -8,7 +8,7 @@ namespace Server.Misc
 {
     public static class CombatEngine
     {
-        // ½½·¹ÀÌ¾î ¼Ó¼º°ú ¸íÄª ¸ÅÇÎ Å×ÀÌºí (ÃÖÀûÈ­¿ë)
+        // ìŠ¬ë ˆì´ì–´ ì†ì„±ê³¼ ëª…ì¹­ ë§¤í•‘ í…Œì´ë¸” (ìµœì í™”ìš©)
         private static readonly (SAAbsorptionAttribute Attr, SlayerName Name)[] SlayerTable = 
         {
             (SAAbsorptionAttribute.HumanoidDamage, SlayerName.Repond),
@@ -20,14 +20,14 @@ namespace Server.Misc
             (SAAbsorptionAttribute.FeyDamage, SlayerName.Fey)
         };
 
-        // --- [ÇÙ½É: ÀüÅõ ¾×¼Ç ½Ã ³»±¸µµ ¹× µ¥¹ÌÁö ¹İÈ¯] ---
+        // --- [í•µì‹¬: ì „íˆ¬ ì•¡ì…˜ ì‹œ ë‚´êµ¬ë„ ë° ë°ë¯¸ì§€ ë°˜í™˜] ---
         public static int OnCombatAction(Mobile attacker, Mobile defender, int damage, int hitLocation, bool isMagic)
         {
             if (attacker == null || defender == null) return damage;
 
             int wearAmount = Utility.RandomMinMax(100, 500);
 
-            // °ø°İÀÚ ¹«±â/Ã¥ ³»±¸µµ Â÷°¨
+            // ê³µê²©ì ë¬´ê¸°/ì±… ë‚´êµ¬ë„ ì°¨ê°
             Item handItem = null;
             if (isMagic)
             {
@@ -35,7 +35,7 @@ namespace Server.Misc
             }
             else
             {
-                // attacker.WeaponÀº IWeaponÀÌ¹Ç·Î ItemÀ¸·Î Ä³½ºÆÃÇÏ¿© Layer È®ÀÎ
+                // attacker.Weaponì€ IWeaponì´ë¯€ë¡œ Itemìœ¼ë¡œ ìºìŠ¤íŒ…í•˜ì—¬ Layer í™•ì¸
                 if (attacker.Weapon is Item weaponItem)
                     handItem = weaponItem;
             }
@@ -44,7 +44,7 @@ namespace Server.Misc
 
             NewDurabilityManager.OnAttackerWear(attacker);
 
-            // ÇÇ°İÀÚ ³»±¸µµ Ã³¸® (Å»¸®½º¸¸ 10¹ø Á¦¿Ü)
+            // í”¼ê²©ì ë‚´êµ¬ë„ ì²˜ë¦¬ (íƒˆë¦¬ìŠ¤ë§Œ 10ë²ˆ ì œì™¸)
             if (hitLocation != -1 && hitLocation != 10) 
                 NewDurabilityManager.OnWeaponHit(defender, damage, hitLocation);
 
@@ -53,7 +53,7 @@ namespace Server.Misc
             return Math.Max(1, damage);
         }
 
-		// --- [µ¥¹ÌÁö °è»ê ¿£Áø: .NET 8.0 Æ©ÇÃ ¹İÈ¯] ---
+		// --- [ë°ë¯¸ì§€ ê³„ì‚° ì—”ì§„: .NET 8.0 íŠœí”Œ ë°˜í™˜] ---
 		public static (int damage, int hitLocation) CalculateFinalDamage(Mobile attacker, Mobile defender, int min, int max, int target, bool isMagic, bool forceArrow)
 		{
 			int currentTarget = target;
@@ -62,23 +62,23 @@ namespace Server.Misc
 
 			if (isMagic)
 			{
-				// [¸¶¹ı ¼³°è: Áö´É °İÂ÷ ½Ã½ºÅÛ]
-				// 1. Áö´É °İÂ÷ »êÃâ (1´ç 0.1% = 0.001)
+				// [ë§ˆë²• ì„¤ê³„: ì§€ëŠ¥ ê²©ì°¨ ì‹œìŠ¤í…œ]
+				// 1. ì§€ëŠ¥ ê²©ì°¨ ì‚°ì¶œ (1ë‹¹ 0.1% = 0.001)
 				double intFactor = (double)(attacker.Int - defender.Int) * 0.001;
 
-				// 2. Áö´É Æò°¡ ½ºÅ³ º¸³Ê½º Ã¼Å©
+				// 2. ì§€ëŠ¥ í‰ê°€ ìŠ¤í‚¬ ë³´ë„ˆìŠ¤ ì²´í¬
 				double evalInt = attacker.Skills[SkillName.EvalInt].Value;
 
-				// [±âÈ¹ º¯°æ] 50 º¸³Ê½º : ³» ¸íÁß(°¡ÁßÄ¡) 10% Áõ°¡
+				// [ê¸°íš ë³€ê²½] 50 ë³´ë„ˆìŠ¤ : ë‚´ ëª…ì¤‘(ê°€ì¤‘ì¹˜) 10% ì¦ê°€
 				if (evalInt >= 50.0)
 				{
 					intFactor += 0.1; 
 				}
 
-				// ÃÖÁ¾ °¡ÁßÄ¡ ÇÕ»ê
+				// ìµœì¢… ê°€ì¤‘ì¹˜ í•©ì‚°
 				factor += intFactor;
 
-				// [±âÈ¹ º¯°æ] 100 º¸³Ê½º : ÃÖÁ¾ °¡ÁßÄ¡°¡ 0.5 ¹Ì¸¸ÀÏ °æ¿ì 0.5·Î °íÁ¤
+				// [ê¸°íš ë³€ê²½] 100 ë³´ë„ˆìŠ¤ : ìµœì¢… ê°€ì¤‘ì¹˜ê°€ 0.5 ë¯¸ë§Œì¼ ê²½ìš° 0.5ë¡œ ê³ ì •
 				if (evalInt >= 100.0 && factor < 0.5)
 				{
 					factor = 0.5;
@@ -86,39 +86,39 @@ namespace Server.Misc
 			}
 			else
 			{
-				// [¹°¸® ¼³°è: ¸íÁß/¹æ¾î °İÂ÷ ½Ã½ºÅÛ]
-				factor += (AosAttributes.GetValue(attacker, AosAttribute.AttackChance) - AosAttributes.GetValue(defender, AosAttribute.DefendChance)) * 0.0001; // %´ÜÀ§ º¸Á¤ 10000 ´ç 1%ÀÓ
+				// [ë¬¼ë¦¬ ì„¤ê³„: ëª…ì¤‘/ë°©ì–´ ê²©ì°¨ ì‹œìŠ¤í…œ]
+				factor += (AosAttributes.GetValue(attacker, AosAttribute.AttackChance) - AosAttributes.GetValue(defender, AosAttribute.DefendChance)) * 0.0001; // %ë‹¨ìœ„ ë³´ì • 10000 ë‹¹ 1%ì„
 			}
 
-			// °¡ÁßÄ¡ ¾ÈÀü ¹üÀ§ (0.01 ~ 1.0)
+			// ê°€ì¤‘ì¹˜ ì•ˆì „ ë²”ìœ„ (0.01 ~ 1.0)
 			factor = Math.Max(0.01, Math.Min(1.0, factor));
 
-			// [ÃÖÁ¾ Min~Max °áÁ¤] factor°¡ ³ôÀ»¼ö·Ï Max¿¡ °¡±î¿î °ªÀÌ ³ª¿È
+			// [ìµœì¢… Min~Max ê²°ì •] factorê°€ ë†’ì„ìˆ˜ë¡ Maxì— ê°€ê¹Œìš´ ê°’ì´ ë‚˜ì˜´
 			int damage = min + (int)((max - min) * Math.Pow(Utility.RandomDouble(), 0.5 / factor));
 
-			// 2. ¹æ¾î ºÎÀ§ °áÁ¤ (¸¶¹ı ½Ã ·£´ı Àå½Å±¸)
+			// 2. ë°©ì–´ ë¶€ìœ„ ê²°ì • (ë§ˆë²• ì‹œ ëœë¤ ì¥ì‹ êµ¬)
 			if (isMagic && currentTarget < 0)
 			{
 				int[] magicLocs = { 2, 7, 8, 9 }; 
 				currentTarget = magicLocs[Utility.Random(magicLocs.Length)];
 			}
 
-			// 3. ¹æ¾î·Â °¨¼â (AbsorbDamage)
+			// 3. ë°©ì–´ë ¥ ê°ì‡„ (AbsorbDamage)
 			damage = AbsorbDamage(attacker, defender, damage, currentTarget, isMagic);
 
-			// 4. ½ºÄ®¶ó ÁõÆø Àû¿ë
+			// 4. ìŠ¤ì¹¼ë¼ ì¦í­ ì ìš©
 			double scalar = 1.0;
 			if (isMagic)
 			{
-				// EvalInt ¹× Int¿¡ µû¸¥ ½ºÄ®¶ó Áõ°¡
+				// EvalInt ë° Intì— ë”°ë¥¸ ìŠ¤ì¹¼ë¼ ì¦ê°€
 				scalar += (attacker.Skills[SkillName.Magery].Value * 0.005 + attacker.Int * 0.0001);
 				if( attacker.Skills[SkillName.Spellweaving].Value >= 50 )
 					scalar += 0.25;
-				scalar += (AosAttributes.GetValue(attacker, AosAttribute.SpellDamage) * 0.0001); //¸¶¹ı ÇÇÇØ
+				scalar += (AosAttributes.GetValue(attacker, AosAttribute.SpellDamage) * 0.0001); //ë§ˆë²• í”¼í•´
 			}
 			else
 			{
-				// Tactics ¹× Dex¿¡ µû¸¥ ½ºÄ®¶ó Áõ°¡
+				// Tactics ë° Dexì— ë”°ë¥¸ ìŠ¤ì¹¼ë¼ ì¦ê°€
 				int statBonus = attacker.Dex;
 				if( attacker is BaseCreature bc)
 				{
@@ -134,22 +134,22 @@ namespace Server.Misc
 					scalar += (weaponSkill.Value * 0.003);
 					if (weaponSkill.Value >= 100.0) scalar += 0.4; 
 				}
-				scalar += (AosAttributes.GetValue(attacker, AosAttribute.WeaponDamage) * 0.0001); //¹«±â ÇÇÇØ
+				scalar += (AosAttributes.GetValue(attacker, AosAttribute.WeaponDamage) * 0.0001); //ë¬´ê¸° í”¼í•´
 			}
-			// °øÅë ¼Ó¼º: UseBestSkill Àû¿ë (¸ğµç ÇÇÇØ °¡ÁßÄ¡ Áõ°¡)
+			// ê³µí†µ ì†ì„±: UseBestSkill ì ìš© (ëª¨ë“  í”¼í•´ ê°€ì¤‘ì¹˜ ì¦ê°€)
 			factor += AosWeaponAttributes.GetValue(attacker, AosWeaponAttribute.UseBestSkill) * 0.0001;
 
-			// 5. ½½·¹ÀÌ¾î ¹èÀ² ÅëÇÕ °è»ê
+			// 5. ìŠ¬ë ˆì´ì–´ ë°°ìœ¨ í†µí•© ê³„ì‚°
 			scalar *= GetSlayerDamageScalar(attacker, defender);
 
 			damage = (int)(damage * scalar);
 
-			// 6. Ä¡¸íÅ¸ ÆÇÁ¤
+			// 6. ì¹˜ëª…íƒ€ íŒì •
 			damage = ApplyCritical(attacker, defender, damage, currentTarget, isMagic, forceArrow);
 
 			return (Math.Max(1, damage), currentTarget);
 		}
-        // --- [½½·¹ÀÌ¾î °ü·Ã ÃÖÀûÈ­ ·ÎÁ÷] ---
+        // --- [ìŠ¬ë ˆì´ì–´ ê´€ë ¨ ìµœì í™” ë¡œì§] ---
         public static double GetSlayerDamageScalar(Mobile attacker, Mobile defender)
         {
             double scalar = 1.0;
@@ -185,7 +185,7 @@ namespace Server.Misc
 
 			for (int i = 0; i < SlayerTable.Length && count < 2; i++)
 			{
-				if (SlayerCheck(SlayerTable[i].Name, defender)) // bool ¹öÀü È£Ãâ
+				if (SlayerCheck(SlayerTable[i].Name, defender)) // bool ë²„ì „ í˜¸ì¶œ
 				{
 					set_array[count++] = i;
 				}
@@ -194,23 +194,23 @@ namespace Server.Misc
 		}
         public static double MonsterTierSlayerDamage(BaseCreature from)
         {
-            // ÇÊ¿ä ½Ã µî±Şº° °¡ÁßÄ¡ ·ÎÁ÷ È°¼ºÈ­ °¡´É
+            // í•„ìš” ì‹œ ë“±ê¸‰ë³„ ê°€ì¤‘ì¹˜ ë¡œì§ í™œì„±í™” ê°€ëŠ¥
             return 1.0;
         }
 		
-		// --- [¹æ¾î·Â °¨¼â ·ÎÁ÷: ½ºÅÈ º¸³Ê½º Á¦¿Ü ÅëÇÕ ¹öÀü] ---
+		// --- [ë°©ì–´ë ¥ ê°ì‡„ ë¡œì§: ìŠ¤íƒ¯ ë³´ë„ˆìŠ¤ ì œì™¸ í†µí•© ë²„ì „] ---
 		public static int AbsorbDamage(Mobile attacker, Mobile defender, int damage, int target, bool isMagic)
 		{
 			int reducedDamage = 0;
 
 			if (defender is PlayerMobile pm)
 			{
-				// 1. ÇÇ°İ ºÎÀ§(target)ÀÇ ¾ÆÀÌÅÛ ÃßÃâ
+				// 1. í”¼ê²© ë¶€ìœ„(target)ì˜ ì•„ì´í…œ ì¶”ì¶œ
 				Item armorItem = NewDurabilityManager.GetEquipmentByLocation(pm, target);
 
 				if (armorItem is IEquipOption ieo)
 				{
-					// 2. ¹°¸®/¸¶¹ı °øÅë º£ÀÌ½º ¹æ¾î·Â »êÃâ
+					// 2. ë¬¼ë¦¬/ë§ˆë²• ê³µí†µ ë² ì´ìŠ¤ ë°©ì–´ë ¥ ì‚°ì¶œ
 					double baseAR = 0;
 					double armorBase = 0;
 
@@ -227,21 +227,21 @@ namespace Server.Misc
 
 					if (isMagic)
 					{
-						// [¸¶¹ı µ¥¹ÌÁö °¨¼â] ½ºÅÈ Á¦¿Ü, ¾ÆÀÌÅÛ ¼öÄ¡·Î¸¸ °è»ê
-						// ¸¶¹ı ¹æ¾î·Â(MagicDefense) + ±âº» AR
+						// [ë§ˆë²• ë°ë¯¸ì§€ ê°ì‡„] ìŠ¤íƒ¯ ì œì™¸, ì•„ì´í…œ ìˆ˜ì¹˜ë¡œë§Œ ê³„ì‚°
+						// ë§ˆë²• ë°©ì–´ë ¥(MagicDefense) + ê¸°ë³¸ AR
 						reducedDamage = (int)(baseAR + (ieo.ArmorAttributes.MagicDefense * 0000.1)) + defender.MagicDamageAbsorb;
 					}
 					else
 					{
-						// [¹°¸® µ¥¹ÌÁö °¨¼â] ½ºÅÈ Á¦¿Ü, ¾ÆÀÌÅÛ ¼öÄ¡·Î¸¸ °è»ê
-						// ¹«±â ¹æ¾î·Â(WeaponDefense) + ±âº» AR + ArmorBase
+						// [ë¬¼ë¦¬ ë°ë¯¸ì§€ ê°ì‡„] ìŠ¤íƒ¯ ì œì™¸, ì•„ì´í…œ ìˆ˜ì¹˜ë¡œë§Œ ê³„ì‚°
+						// ë¬´ê¸° ë°©ì–´ë ¥(WeaponDefense) + ê¸°ë³¸ AR + ArmorBase
 						reducedDamage = (int)(baseAR + armorBase + (ieo.ArmorAttributes.WeaponDefense * 0000.1)) + defender.MeleeDamageAbsorb;
 					}
 				}
 			}
 			else if (defender is BaseCreature bc)
 			{
-				// ¸ó½ºÅÍ´Â ¼³Á¤µÈ VirtualArmor ¼öÄ¡¸¸Å­ °íÁ¤ °¨¼â
+				// ëª¬ìŠ¤í„°ëŠ” ì„¤ì •ëœ VirtualArmor ìˆ˜ì¹˜ë§Œí¼ ê³ ì • ê°ì‡„
 				reducedDamage = bc.VirtualArmor;
 				if( isMagic)
 				{
@@ -251,40 +251,40 @@ namespace Server.Misc
 					reducedDamage += defender.MeleeDamageAbsorb;
 			}
 
-			// ÃÖÁ¾ µ¥¹ÌÁö´Â 0 ¹Ì¸¸À¸·Î ¶³¾îÁöÁö ¾Ê°Ô Ã³¸®
+			// ìµœì¢… ë°ë¯¸ì§€ëŠ” 0 ë¯¸ë§Œìœ¼ë¡œ ë–¨ì–´ì§€ì§€ ì•Šê²Œ ì²˜ë¦¬
 			return Math.Max(0, damage - reducedDamage);
 		}
 
 		private static int ApplyCritical(Mobile attacker, Mobile defender, int damage, int target, bool isMagic, bool forceArrow)
 		{
-			// 1. [Ä¡¸íÅ¸ È®·ü] À¯Àú/¸ó½ºÅÍ °øÅë: ¿î 1´ç 0.01% (0.0001)
+			// 1. [ì¹˜ëª…íƒ€ í™•ë¥ ] ìœ ì €/ëª¬ìŠ¤í„° ê³µí†µ: ìš´ 1ë‹¹ 0.01% (0.0001)
 			double critChance = (attacker.Luck * 0.0001);
 
-			// [Ãß°¡ º¸Á¤] ¸¶¹ıÀº Ä³½ºÆ® ¸®Ä¿¹ö¸®, ¹°¸®ÀÎ ¹«±â Å©¸®Æ¼ÄÃ ¼Ó¼º ÂüÁ¶
+			// [ì¶”ê°€ ë³´ì •] ë§ˆë²•ì€ ìºìŠ¤íŠ¸ ë¦¬ì»¤ë²„ë¦¬, ë¬¼ë¦¬ì¸ ë¬´ê¸° í¬ë¦¬í‹°ì»¬ ì†ì„± ì°¸ì¡°
 			if (isMagic) 
 				critChance += AosAttributes.GetValue(attacker, AosAttribute.CastRecovery) * 0.0001;
 			else 
 				critChance += AosAttributes.GetValue(attacker, AosAttribute.WeaponCritical) * 0.0001;
 
-			// 2. [Ä¡¸íÅ¸ µ¥¹ÌÁö ¹èÀ²] ±âº» 1.5¹è (150%)
+			// 2. [ì¹˜ëª…íƒ€ ë°ë¯¸ì§€ ë°°ìœ¨] ê¸°ë³¸ 1.5ë°° (150%)
 			double critDamageMult = 1.5;
 
-			// 3. [¸ó½ºÅÍ Àü¿ë º¸Á¤] Æ¼¾î ¹× ±â·Â/¸¶³ª º¸³Ê½º
+			// 3. [ëª¬ìŠ¤í„° ì „ìš© ë³´ì •] í‹°ì–´ ë° ê¸°ë ¥/ë§ˆë‚˜ ë³´ë„ˆìŠ¤
 			if (attacker is BaseCreature bc)
 			{
-				// Æ¼¾î(Grade)º° Ä¡¸íÅ¸ µ¥¹ÌÁö º¸³Ê½º
+				// í‹°ì–´(Grade)ë³„ ì¹˜ëª…íƒ€ ë°ë¯¸ì§€ ë³´ë„ˆìŠ¤
 				double tierBonus = 0.0;
 				switch (bc.Grade)
 				{
-					case 2: case 3: case 4: case 5: tierBonus = 0.20; break; // ·¹¾î
-					case 6: tierBonus = 0.50; break; // ¿¤¸®Æ®
-					case 7: tierBonus = 0.75; break; // Ä¡ÇÁ
-					case 8: tierBonus = 1.00; break; // º¸½º
-					case 9: tierBonus = 1.50; break; // ³×ÀÓµå
+					case 2: case 3: case 4: case 5: tierBonus = 0.20; break; // ë ˆì–´
+					case 6: tierBonus = 0.50; break; // ì—˜ë¦¬íŠ¸
+					case 7: tierBonus = 0.75; break; // ì¹˜í”„
+					case 8: tierBonus = 1.00; break; // ë³´ìŠ¤
+					case 9: tierBonus = 1.50; break; // ë„¤ì„ë“œ
 				}
 				critDamageMult += tierBonus;
 
-				// ¸ó½ºÅÍ ±â·Â/¸¶³ª´ç Ä¡¸í ÇÇÇØ 0.001% (0.00001¹è) Áõ°¡
+				// ëª¬ìŠ¤í„° ê¸°ë ¥/ë§ˆë‚˜ë‹¹ ì¹˜ëª… í”¼í•´ 0.001% (0.00001ë°°) ì¦ê°€
 				if (isMagic) 
 				{
 					critDamageMult += (bc.Mana * 0.00001);
@@ -295,51 +295,51 @@ namespace Server.Misc
 			}
 			critDamageMult += (attacker.Skills[SkillName.Tactics].Value * 0.001);
 
-			// 5. [ÇÇ°İÀÚ º¸Á¤] ¹æ¾î ºÎÀ§º° Å©¸® È®·ü/µ¥¹ÌÁö º¸³Ê½º (PlayerMobile ´ë»óÀÏ ¶§)
+			// 5. [í”¼ê²©ì ë³´ì •] ë°©ì–´ ë¶€ìœ„ë³„ í¬ë¦¬ í™•ë¥ /ë°ë¯¸ì§€ ë³´ë„ˆìŠ¤ (PlayerMobile ëŒ€ìƒì¼ ë•Œ)
 			if (defender is PlayerMobile)
 			{
 				critChance += HitLocationManager.GetCritChanceBonus(target);
 				critDamageMult += HitLocationManager.GetCritDamageBonus(target);
 			}
 
-			// 6. [Ä¡¸íÅ¸ ¼º°ø ÆÇÁ¤]
+			// 6. [ì¹˜ëª…íƒ€ ì„±ê³µ íŒì •]
 			bool isCritSuccess = (critChance > Utility.RandomDouble());
 
-			// [Æ÷½º ¾Ö·Î¿ì Æ¯¼ö Ã³¸®]
+			// [í¬ìŠ¤ ì• ë¡œìš° íŠ¹ìˆ˜ ì²˜ë¦¬]
 			if (forceArrow)
 			{
 				if (!isCritSuccess)
 				{
-					isCritSuccess = true; // °­Á¦ Ä¡¸íÅ¸
+					isCritSuccess = true; // ê°•ì œ ì¹˜ëª…íƒ€
 				}
 				else
 				{
-					critDamageMult += 0.1; // ÁßÃ¸ ½Ã ¹èÀ² 10% Ãß°¡
+					critDamageMult += 0.1; // ì¤‘ì²© ì‹œ ë°°ìœ¨ 10% ì¶”ê°€
 				}
 			}
 
-			// 7. [°á°ú Àû¿ë]
+			// 7. [ê²°ê³¼ ì ìš©]
 			if (isCritSuccess)
 			{
 				damage = (int)(damage * critDamageMult);
 
-				// ½Ã°¢ ¹× Ã»°¢ È¿°ú
+				// ì‹œê° ë° ì²­ê° íš¨ê³¼
 				attacker.PlaySound(0x20C);
 				attacker.FixedParticles(0x3779, 1, 30, 9964, 3, 3, EffectLayer.Waist);
 				if (!isMagic) PlayPhysicalCritEffect(attacker);
 			}
 
-			// BaseWeapon.csÀÇ OnHit ³»ºÎ È¤Àº µ¥¹ÌÁö Ã³¸® ·ÎÁ÷
+			// BaseWeapon.csì˜ OnHit ë‚´ë¶€ í˜¹ì€ ë°ë¯¸ì§€ ì²˜ë¦¬ ë¡œì§
 			if (Server.Spells.Chivalry.CleanseByFireSpell.UnderAura(attacker))
 			{
-				// ÃÖÁ¾ ´ë¹ÌÁöÀÇ 10%¸¦ È­¿° ¼Ó¼ºÀ¸·Î Ãß°¡ (Ãßµ©)
+				// ìµœì¢… ëŒ€ë¯¸ì§€ì˜ 10%ë¥¼ í™”ì—¼ ì†ì„±ìœ¼ë¡œ ì¶”ê°€ (ì¶”ë€)
 
-				// Å¸°Ù¿¡°Ô È­¿° ´ë¹ÌÁö Àû¿ë
+				// íƒ€ê²Ÿì—ê²Œ í™”ì—¼ ëŒ€ë¯¸ì§€ ì ìš©
 				AOS.Damage(defender, attacker, damage, 0, 10, 0, 0, 0);
-				// 1258: È­¿°À» »óÂ¡ÇÏ´Â ÁøÇÑ ÁÖÈ²»ö Hue
+				// 1258: í™”ì—¼ì„ ìƒì§•í•˜ëŠ” ì§„í•œ ì£¼í™©ìƒ‰ Hue
 				defender.FixedParticles(0x37C4, 1, 20, 9962, 1258, 0, EffectLayer.Waist);
 				
-				// Ãß°¡·Î Âª°í °­·ÄÇÑ Å¸°İÀ½ (0x208: ÆÈ¶óµò Àü¿ë ºÒ²É ¼Ò¸®)
+				// ì¶”ê°€ë¡œ ì§§ê³  ê°•ë ¬í•œ íƒ€ê²©ìŒ (0x208: íŒ”ë¼ë”˜ ì „ìš© ë¶ˆê½ƒ ì†Œë¦¬)
 				defender.PlaySound(0x208);
 			}
 			
@@ -347,33 +347,33 @@ namespace Server.Misc
 			{
 				double chivaryChanceBonus = 0.0;
 				double chivaryDamageBonus = 0.0;
-				// 1. °¡Àå ±âº»ÀûÀÎ È®ÀÎ ¹æ¹ı (true/false ¹İÈ¯)
+				// 1. ê°€ì¥ ê¸°ë³¸ì ì¸ í™•ì¸ ë°©ë²• (true/false ë°˜í™˜)
 				if ( Server.Spells.Chivalry.DivineFurySpell.UnderEffect( attacker ) )
 				{
 					chivaryChanceBonus += 0.15;
 					chivaryDamageBonus += 35;
 				}
-				// ½ºÅ³ 1´ç 0.05% È®·ü (100 ±âÁØ 5%, 120 ±âÁØ 6%)
+				// ìŠ¤í‚¬ 1ë‹¹ 0.05% í™•ë¥  (100 ê¸°ì¤€ 5%, 120 ê¸°ì¤€ 6%)
 				if ((attacker.Skills.Chivalry.Value * 0.0005 + chivaryChanceBonus) > Utility.RandomDouble())
 				{
 					chivaryDamageBonus += attacker.Skills.Forensics.Value;
 					int chivaryTotalDamage = (int)(damage * chivaryDamageBonus );
-					// ÃÑ ÇÇÇØ·®(damage)ÀÇ 20%¸¦ Ãß°¡ ÇÇÇØ·Î °è»ê
+					// ì´ í”¼í•´ëŸ‰(damage)ì˜ 20%ë¥¼ ì¶”ê°€ í”¼í•´ë¡œ ê³„ì‚°
 					AOS.Damage(defender, attacker, chivaryTotalDamage, 0, 0, 0, 0, 0, 0, 100);
-					// ½Å¼º °ø°İ ÀÌÆåÆ® ¹× »ç¿îµå
+					// ì‹ ì„± ê³µê²© ì´í™íŠ¸ ë° ì‚¬ìš´ë“œ
 					defender.FixedParticles(0x377A, 1, 32, 9502, 67, 3, EffectLayer.Waist);
 					attacker.PlaySound(0x1F1);
 				}
-				// ½ºÅ³ 1´ç 0.05% È®·ü (100 ±âÁØ 5%, 120 ±âÁØ 6%)
+				// ìŠ¤í‚¬ 1ë‹¹ 0.05% í™•ë¥  (100 ê¸°ì¤€ 5%, 120 ê¸°ì¤€ 6%)
 			}
 			if (attacker.Skills.Necromancy.Value * 0.0005 > Utility.RandomDouble())
 			{
-				// ÃÑ ÇÇÇØ·®(damage)ÀÇ 20%¸¦ Ãß°¡ ÇÇÇØ·Î °è»ê
+				// ì´ í”¼í•´ëŸ‰(damage)ì˜ 20%ë¥¼ ì¶”ê°€ í”¼í•´ë¡œ ê³„ì‚°
 				AOS.Damage(defender, attacker, damage, 0, 0, 0, 0, 0, 20, 0);
 
-				// ³×Å©·Î¸Ç½Ã ½ºÅ¸ÀÏ ÀÌÆåÆ® (¿µÈ¥ÀÌ ºüÁ®³ª°¡´Â µíÇÑ Çª¸¥/¾îµÎ¿î È¿°ú)
-				defender.FixedParticles(0x374B, 1, 15, 9502, 97, 3, EffectLayer.Waist); // ¾îµÎ¿î ºÒ²É È¿°ú
-				attacker.PlaySound(0x1FB); // ¿µÈ¥ÀÇ ¿ïÀ½¼Ò¸®/³Ã±â »ç¿îµå
+				// ë„¤í¬ë¡œë§¨ì‹œ ìŠ¤íƒ€ì¼ ì´í™íŠ¸ (ì˜í˜¼ì´ ë¹ ì ¸ë‚˜ê°€ëŠ” ë“¯í•œ í‘¸ë¥¸/ì–´ë‘ìš´ íš¨ê³¼)
+				defender.FixedParticles(0x374B, 1, 15, 9502, 97, 3, EffectLayer.Waist); // ì–´ë‘ìš´ ë¶ˆê½ƒ íš¨ê³¼
+				attacker.PlaySound(0x1FB); // ì˜í˜¼ì˜ ìš¸ìŒì†Œë¦¬/ëƒ‰ê¸° ì‚¬ìš´ë“œ
 			}
 			
 			

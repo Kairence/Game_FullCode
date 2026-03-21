@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.Spells.First;
 using Server.Spells.Fourth;
 using Server.Spells.Necromancy;

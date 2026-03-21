@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Items;
 using Server.Gumps;
 using Server.Network;
@@ -26,20 +26,20 @@ namespace Server.Items
 		
 		public override string DefaultName
 		{
-			get { return "·Î¶Ç Ã¼Å© ½Ã½ºÅÛ"; }
+			get { return "ë¡œë˜ ì²´í¬ ì‹œìŠ¤í…œ"; }
 		}
 		[Constructable]
 		public LottoCheck() : base( 0xED4 )
 		{
 			Movable = false;
 			Hue = 1123;
-			Name = "·Î¶Ç Ã¼Å© ½Ã½ºÅÛ";
+			Name = "ë¡œë˜ ì²´í¬ ì‹œìŠ¤í…œ";
 		}
 		
 		public override void OnDoubleClick( Mobile from )
 		{
-			from.SendMessage( "´ÙÀ½ ÃßÃ· ½Ã°£ : {0}", m_RespawnTime.ToString());
-			from.SendMessage( "·Î¶Ç ¹øÈ£ :{0}", m_LottoNumber);
+			from.SendMessage( "ë‹¤ìŒ ì¶”ì²¨ ì‹œê°„ : {0}", m_RespawnTime.ToString());
+			from.SendMessage( "ë¡œë˜ ë²ˆí˜¸ :{0}", m_LottoNumber);
 		}
 
 		public LottoCheck( Serial serial ) : base( serial )

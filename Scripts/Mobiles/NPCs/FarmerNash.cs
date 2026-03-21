@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Items;
 using System.Collections;
@@ -26,9 +26,9 @@ namespace Server.Engines.Quests
             }
         }
         /* Help Farmer Nash find his pitchfork by pulling the weeds in his garden until you uncover it. (Pull weeds by double clicking them) When you find it, return it to him for your reward. I hate to trouble you, but sometimes a problem needs a plow and sometimes it needs a sword. I am good with a plow, but terrible with a sword. 
-        I have been plagued with a strange weed for some time. Every day I have to clean them out of my garden and carry them away with my pitch fork. Yesterday I was working there and… well, I must have nodded off because when I woke my pitchfork was gone! 
-        I have heard talk of thieves who seek treasure in the sacred tomb, but I really don’t think they took my pitchfork, in fact I think it just got lost in the weeds! 
-        I would find it myself, but now that we are so close to the edge of the world, many wild creatures are lurking about and some might be hiding in these weeds. I’ve seen the creatures that have been roaming these parts recently and I fear for my life! The problem is, if I don’t get my crop in the ground soon, we won’t make it through the winter. Will you help?*/
+        I have been plagued with a strange weed for some time. Every day I have to clean them out of my garden and carry them away with my pitch fork. Yesterday I was working there and?well, I must have nodded off because when I woke my pitchfork was gone! 
+        I have heard talk of thieves who seek treasure in the sacred tomb, but I really donë­ª think they took my pitchfork, in fact I think it just got lost in the weeds! 
+        I would find it myself, but now that we are so close to the edge of the world, many wild creatures are lurking about and some might be hiding in these weeds. Ië­­e seen the creatures that have been roaming these parts recently and I fear for my life! The problem is, if I donë­ª get my crop in the ground soon, we wonë­ª make it through the winter. Will you help?*/
         public override object Description
         {
             get
@@ -36,7 +36,7 @@ namespace Server.Engines.Quests
                 return 1113500;
             }
         }
-        /* I understand.  I certainly don’t want you to do something you don’t want to do. */
+        /* I understand.  I certainly donë­ª want you to do something you donë­ª want to do. */
         public override object Refuse
         {
             get
@@ -44,7 +44,7 @@ namespace Server.Engines.Quests
                 return 1113501;
             }
         }
-        /* Did you find my pitchfork?  I'm sure it is under those weeds somewhere.  It was a gift from King Draxinusom when he assigned me this job, I can’t bear to lose it! */
+        /* Did you find my pitchfork?  I'm sure it is under those weeds somewhere.  It was a gift from King Draxinusom when he assigned me this job, I canë­ª bear to lose it! */
         public override object Uncomplete
         {
             get

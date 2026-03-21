@@ -1,4 +1,4 @@
-using Server;
+﻿using Server;
 using Server.Engines.CityLoyalty;
 using Server.Gumps;
 using Server.ContextMenus;

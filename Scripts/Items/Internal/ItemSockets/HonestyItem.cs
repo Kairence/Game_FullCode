@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.Services.Virtues;
 
 namespace Server.Items

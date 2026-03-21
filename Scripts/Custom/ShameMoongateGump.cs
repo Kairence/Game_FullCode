@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Gumps;
 using Server.Items;
@@ -23,14 +23,14 @@ namespace Server.Gumps
 			Resizable = false;
 
 			AddBackground( 100, 95, 200, 180, 9200 );
-			AddLabel(120, 102, 0, "½¦ÀÓ ´øÀü °ÔÀÌÆ®");
+			AddLabel(120, 102, 0, "ì‰ì„ ë˜ì „ ê²Œì´íŠ¸");
 
 			AddButton( 120, 152, 2117, 2118, 0x1, GumpButtonType.Reply, 0 ); // Okay
-			AddLabel(140, 152, 0, "½¦ÀÓ ·Îºñ - ¹«·á");
+			AddLabel(140, 152, 0, "ì‰ì„ ë¡œë¹„ - ë¬´ë£Œ");
 			AddButton( 120, 182, 2117, 2118, 0x2, GumpButtonType.Reply, 0 ); // Okay
-			AddLabel(140, 182, 0, "½¦ÀÓ 3Ãş - 2000GP");
+			AddLabel(140, 182, 0, "ì‰ì„ 3ì¸µ - 2000GP");
 			AddButton( 120, 212, 2117, 2118, 0x3, GumpButtonType.Reply, 0 ); // Okay
-			AddLabel(140, 212, 0, "½¦ÀÓ 4Ãş - 5000GP");
+			AddLabel(140, 212, 0, "ì‰ì„ 4ì¸µ - 5000GP");
 		}
 
 		public override void OnResponse( Server.Network.NetState sender, RelayInfo info )
@@ -47,10 +47,10 @@ namespace Server.Gumps
 						Effects.PlaySound( new Point3D( 5507, 162, 5 ), Map.Trammel, 0x1FE );
 					}
 					else
-						m_From.SendMessage(1161, "°ÔÀÌÆ®¿¡¼­ ³Ê¹« ¶³¾îÁ® ÀÖ½À´Ï´Ù!");
+						m_From.SendMessage(1161, "ê²Œì´íŠ¸ì—ì„œ ë„ˆë¬´ ë–¨ì–´ì ¸ ìˆìŠµë‹ˆë‹¤!");
 				}
 				else
-					m_From.SendMessage(1161, "ÇöÀç À§Ä¡ÀÔ´Ï´Ù!");
+					m_From.SendMessage(1161, "í˜„ì¬ ìœ„ì¹˜ì…ë‹ˆë‹¤!");
 			}
 			if ( info.ButtonID == 2)
 			{
@@ -66,13 +66,13 @@ namespace Server.Gumps
 							Effects.PlaySound( new Point3D( 5514, 147, 25 ), Map.Trammel, 0x1FE );
 						}
 						else
-							m_From.SendMessage(1161, "°ÔÀÌÆ®¿¡¼­ ³Ê¹« ¶³¾îÁ® ÀÖ½À´Ï´Ù!");
+							m_From.SendMessage(1161, "ê²Œì´íŠ¸ì—ì„œ ë„ˆë¬´ ë–¨ì–´ì ¸ ìˆìŠµë‹ˆë‹¤!");
 					}
 					else
-						m_From.SendMessage(1161, "ÇöÀç À§Ä¡ÀÔ´Ï´Ù!");
+						m_From.SendMessage(1161, "í˜„ì¬ ìœ„ì¹˜ì…ë‹ˆë‹¤!");
 				}					
 				else
-					m_From.SendMessage(1161, "3ÃşÀ» °¡±â À§ÇØ¼­´Â 2000°ñµå ÀÌ»ó ÇÊ¿äÇÕ´Ï´Ù!");
+					m_From.SendMessage(1161, "3ì¸µì„ ê°€ê¸° ìœ„í•´ì„œëŠ” 2000ê³¨ë“œ ì´ìƒ í•„ìš”í•©ë‹ˆë‹¤!");
 			}
 			if ( info.ButtonID == 3)
 			{
@@ -88,13 +88,13 @@ namespace Server.Gumps
 							Effects.PlaySound( new Point3D( 5875, 19, -5 ), Map.Trammel, 0x1FE );
 						}
 						else
-							m_From.SendMessage(1161, "°ÔÀÌÆ®¿¡¼­ ³Ê¹« ¶³¾îÁ® ÀÖ½À´Ï´Ù!");
+							m_From.SendMessage(1161, "ê²Œì´íŠ¸ì—ì„œ ë„ˆë¬´ ë–¨ì–´ì ¸ ìˆìŠµë‹ˆë‹¤!");
 					}
 					else
-						m_From.SendMessage(1161, "ÇöÀç À§Ä¡ÀÔ´Ï´Ù!");
+						m_From.SendMessage(1161, "í˜„ì¬ ìœ„ì¹˜ì…ë‹ˆë‹¤!");
 				}
 				else
-					m_From.SendMessage(1161, "4ÃşÀ» °¡±â À§ÇØ¼­´Â 5000°ñµå ÀÌ»ó ÇÊ¿äÇÕ´Ï´Ù!");
+					m_From.SendMessage(1161, "4ì¸µì„ ê°€ê¸° ìœ„í•´ì„œëŠ” 5000ê³¨ë“œ ì´ìƒ í•„ìš”í•©ë‹ˆë‹¤!");
 			}
 		}
 	}

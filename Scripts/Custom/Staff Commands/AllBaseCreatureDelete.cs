@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Mobiles;
 using Server.Commands.Generic;
@@ -14,10 +14,10 @@ namespace Server.Commands
 		}
 
 		[Usage( "AllBaseCreatureDelete" )]
-		[Description( "¸ğµç ¸ó½ºÅÍ »èÁ¦ ÄÚµå." )]
+		[Description( "ëª¨ë“  ëª¬ìŠ¤í„° ì‚­ì œ ì½”ë“œ." )]
 		public static void AllBaseCreatureDeleteInfo_OnCommand( CommandEventArgs e )
 		{
-			e.Mobile.SendMessage("¸ó½ºÅÍ »èÁ¦¸¦ ½ÃÀÛÇÕ´Ï´Ù!");
+			e.Mobile.SendMessage("ëª¬ìŠ¤í„° ì‚­ì œë¥¼ ì‹œì‘í•©ë‹ˆë‹¤!");
 			int count = 0;
 			var list = new List<Mobile>();
 			foreach ( Mobile m in World.Mobiles.Values )
@@ -37,7 +37,7 @@ namespace Server.Commands
 				Mobile tar = (Mobile)list[i];
 				tar.Delete();
 			}
-			e.Mobile.SendMessage("ÃÑ {0}¸¶¸®ÀÇ ¸ó½ºÅÍ¸¦ »èÁ¦Çß½À´Ï´Ù.", count);
+			e.Mobile.SendMessage("ì´ {0}ë§ˆë¦¬ì˜ ëª¬ìŠ¤í„°ë¥¼ ì‚­ì œí–ˆìŠµë‹ˆë‹¤.", count);
 		}
 	}
 }

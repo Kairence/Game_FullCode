@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Items;
 
 namespace Server.Engines.Quests
@@ -213,7 +213,7 @@ namespace Server.Engines.Quests
             }
         }
         /* This is some nasty stuff, that's for certain.  I don't even want to think about what sort of blight 
-        caused this venomous reaction from that old tree.  Let's get to work … we'll need to try something really 
+        caused this venomous reaction from that old tree.  Let's get to work ?we'll need to try something really 
         hard but still workable as our base material.  Nothing's harder than stone and diamond.  Let's try them first. */
         public override object Description
         {
@@ -476,7 +476,7 @@ namespace Server.Engines.Quests
         }
         /* Wonderful!  Now we can both get in there!  Let me show you these instructions for making this machete.  
         If you're not skilled in smithing, I'm not sure how much sense it will make though.  Listen, if you're 
-        heading in there anyway … maybe you'd do me one more favor?  I'm ah ... buried in work out here ... so if 
+        heading in there anyway ?maybe you'd do me one more favor?  I'm ah ... buried in work out here ... so if 
         you'd go in and get me a few water samples, I'd be obliged. */
         public override object Description
         {

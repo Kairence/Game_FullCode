@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Server.Items
 {
@@ -27,7 +27,7 @@ namespace Server.Items
             {
                 return 1062915;
             }
-        }// Shamino�s Best Crossbow
+        }// Shamino뭩 Best Crossbow
         public override int InitMinHits
         {
             get

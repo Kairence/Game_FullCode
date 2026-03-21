@@ -1,4 +1,4 @@
-//#define TRACE
+﻿//#define TRACE
 //#define RESTRICTCONSTRUCTABLE
 
 using System;

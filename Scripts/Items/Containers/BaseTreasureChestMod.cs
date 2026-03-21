@@ -1,4 +1,4 @@
-// Treasure Chest Pack - Version 0.99H
+﻿// Treasure Chest Pack - Version 0.99H
 // By Nerun
 
 using Server;

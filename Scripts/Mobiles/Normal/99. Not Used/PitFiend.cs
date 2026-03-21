@@ -1,4 +1,4 @@
-/* Copied from deamon, still have to get detailed information on Pit Fiend */
+﻿/* Copied from deamon, still have to get detailed information on Pit Fiend */
 using System;
 using Server.Factions;
 using Server.Items;

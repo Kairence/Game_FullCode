@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Mobiles;
 using Server.Network;
@@ -18,7 +18,7 @@ namespace Server.Commands
 		}
 
 		[Usage( "Status" )]
-		[Description( "ÀÚµ¿ À½½Ä ¸Ô±â." )]
+		[Description( "ìë™ ìŒì‹ ë¨¹ê¸°." )]
 		public static void UserAutoFoodInfo_OnCommand( CommandEventArgs e )
 		{
 			if( e.Mobile is PlayerMobile )
@@ -32,7 +32,7 @@ namespace Server.Commands
 					int number;
 					bool isNum = Int32.TryParse(index, out number );
 					if( !isNum )
-						e.Mobile.SendMessage("Àß¸øµÈ ¸í·É¾î ÀÔ´Ï´Ù. [Food ¼ıÀÚ ¸¦ ³ÖÀ¸¼¼¿ä.");
+						e.Mobile.SendMessage("ì˜ëª»ëœ ëª…ë ¹ì–´ ì…ë‹ˆë‹¤. [Food ìˆ«ì ë¥¼ ë„£ìœ¼ì„¸ìš”.");
 						
 					if( number == 0 )
 					{
@@ -40,11 +40,11 @@ namespace Server.Commands
 						pm.FoodPercent = 250;
 					}
 					else if( number < 0 || number > 1000 ) 
-						e.Mobile.SendMessage( String.Format("0 ~ 1000 »çÀÌÀÇ °ªÀ» ³Ö¾î¾ß ÇÕ´Ï´Ù.") );
+						e.Mobile.SendMessage( String.Format("0 ~ 1000 ì‚¬ì´ì˜ ê°’ì„ ë„£ì–´ì•¼ í•©ë‹ˆë‹¤.") );
 					else
 					{
 						pm.FoodPercent = number;
-						e.Mobile.SendMessage( String.Format("¹è°íÇÄÀÌ {0}% ÀÏ ¶§ À½½ÄÀ» ¸Ôµµ·Ï ¼³Á¤ÇÕ´Ï´Ù.", number * 0.1) );
+						e.Mobile.SendMessage( String.Format("ë°°ê³ í””ì´ {0}% ì¼ ë•Œ ìŒì‹ì„ ë¨¹ë„ë¡ ì„¤ì •í•©ë‹ˆë‹¤.", number * 0.1) );
 					}
 				}
 			}

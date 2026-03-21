@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Mobiles;
 using Server.Network;
@@ -13,12 +13,12 @@ namespace Server.Commands
 		}
 
 		[Usage( "Effect string" )]
-		[Description( "ÀÌÆåÆ® Ã¼Å©" )]
+		[Description( "ì´í™íŠ¸ ì²´í¬" )]
 		public static void EffectCheckInfo_OnCommand( CommandEventArgs e )
 		{
 			string index = "";
 			if( e.Arguments.Length == 0 )
-				e.Mobile.SendMessage( String.Format("ÀÌÆåÆ® ¹øÈ£¸¦ ³Ö¾î¾ßÇÕ´Ï´Ù.") ); // Thy current bank balance is ~1_AMOUNT~ platinum and ~2_AMOUNT~ gold.
+				e.Mobile.SendMessage( String.Format("ì´í™íŠ¸ ë²ˆí˜¸ë¥¼ ë„£ì–´ì•¼í•©ë‹ˆë‹¤.") ); // Thy current bank balance is ~1_AMOUNT~ platinum and ~2_AMOUNT~ gold.
 			else
 			{
 				index = e.Arguments[0];

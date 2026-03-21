@@ -1,4 +1,4 @@
-#region References
+﻿#region References
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -2916,6 +2916,18 @@ namespace Server.Mobiles
 
             InitializeAbilities();
             Timer.DelayCall(GenerateLoot, true);
+			Timer.DelayCall(TimeSpan.FromSeconds(0.1), () =>
+			{
+				if (this.Deleted || this.Map == null || this.Map == Map.Internal)
+					return;
+
+				// 이미 등급이 설정되었는지 확인 (중복 실행 방지)
+				if (this.Grade == 0) 
+				{
+					// 여기서 Apply 호출
+					Misc.CreatureBalancer.Apply(this);
+				}
+			});			
         }
 
         public BaseCreature(Serial serial)
@@ -5549,7 +5561,21 @@ namespace Server.Mobiles
 		{
 			base.OnAfterSpawn();
 
-			// 모든 초기화가 끝난 직후, 딱 한 번 밸런서 적용
+			if( Grade == 0 )
+			{
+				Timer.DelayCall(TimeSpan.FromSeconds(0.1), () =>
+				{
+					if (this.Deleted) return;
+					if (this.Map != Map.Internal && this.Region.Name != "Ice" && this.Region.Name != "Fire")
+					{
+						Misc.CreatureBalancer.Apply(this);
+					}
+					else
+					{
+						Console.WriteLine($"[Debug] {this.Name} excluded from balancing (Map: {this.Map}, Region: {this.Region.Name})");
+					}
+				});
+			}
 		}
 
 		protected override void OnMapChange(Map oldMap)
@@ -8484,10 +8510,10 @@ namespace Server.Mobiles
 		
         public virtual void OnThink()
         {
-			if (this.Grade <= 0 && !this.Deleted && this.Alive)
-			{
-				Server.Misc.CreatureBalancer.Apply(this);
-			}		
+			//if (this.Grade <= 0 && !this.Deleted && this.Alive)
+			//{
+			//	Server.Misc.CreatureBalancer.Apply(this);
+			//}		
 			//자동 부활
 			if( poisonattacker > 0.0 && !Poisoned )
 				poisonattacker = 0.0;

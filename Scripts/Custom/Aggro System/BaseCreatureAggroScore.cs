@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Mobiles;
 using Server.Targeting;
@@ -14,7 +14,7 @@ namespace Server.Commands
         }
 
         [Usage("AggroScore")]
-        [Description("¸ó½ºÅÍÀÇ ¾î±×·Î Å×ÀÌºí Á¤º¸¸¦ È®ÀÎÇÕ´Ï´Ù.")]
+        [Description("ëª¬ìŠ¤í„°ì˜ ì–´ê·¸ë¡œ í…Œì´ë¸” ì •ë³´ë¥¼ í™•ì¸í•©ë‹ˆë‹¤.")]
         public static void BaseCreatureAggroScoreInfo_OnCommand(CommandEventArgs e)
         {
             e.Mobile.Target = new InternalTarget();
@@ -30,14 +30,14 @@ namespace Server.Commands
             {
                 if (targeted is BaseCreature bc)
                 {
-                    from.SendMessage("--- {0}ÀÇ ¾î±×·Î ¸®½ºÆ® ---", bc.Name);
+                    from.SendMessage("--- {0}ì˜ ì–´ê·¸ë¡œ ë¦¬ìŠ¤íŠ¸ ---", bc.Name);
 
-                    // Aggro ÇÁ·ÎÆÛÆ¼¸¦ ÅëÇØ µñ¼Å³Ê¸®¿¡ Á¢±Ù
+                    // Aggro í”„ë¡œí¼í‹°ë¥¼ í†µí•´ ë”•ì…”ë„ˆë¦¬ì— ì ‘ê·¼
                     var table = bc.Aggro.Table;
 
                     if (table.Count == 0)
                     {
-                        from.SendMessage("¾î±×·Î µ¥ÀÌÅÍ°¡ ¾ø½À´Ï´Ù.");
+                        from.SendMessage("ì–´ê·¸ë¡œ ë°ì´í„°ê°€ ì—†ìŠµë‹ˆë‹¤.");
                         return;
                     }
 
@@ -47,17 +47,17 @@ namespace Server.Commands
                         double score = kvp.Value;
 
                         string name = (targetMob != null) ? targetMob.Name : "Unknown";
-                        from.SendMessage("´ë»ó: {0}, Á¡¼ö: {1:F1}", name, score);
+                        from.SendMessage("ëŒ€ìƒ: {0}, ì ìˆ˜: {1:F1}", name, score);
                     }
 
-                    // Ãß°¡ Á¤º¸: ÇöÀç 1¼øÀ§ Å¸°Ù Ãâ·Â
+                    // ì¶”ê°€ ì •ë³´: í˜„ì¬ 1ìˆœìœ„ íƒ€ê²Ÿ ì¶œë ¥
                     Mobile top = bc.Aggro.GetTopAggro();
                     if (top != null)
-                        from.SendMessage(">>> ÇöÀç 1¼øÀ§: {0}", top.Name);
+                        from.SendMessage(">>> í˜„ì¬ 1ìˆœìœ„: {0}", top.Name);
                 }
                 else
                 {
-                    from.SendMessage("¸ó½ºÅÍ¸¦ ¼±ÅÃÇØ¾ß ÇÕ´Ï´Ù.");
+                    from.SendMessage("ëª¬ìŠ¤í„°ë¥¼ ì„ íƒí•´ì•¼ í•©ë‹ˆë‹¤.");
                 }
             }
         }

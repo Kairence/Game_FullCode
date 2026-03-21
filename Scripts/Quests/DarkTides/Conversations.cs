@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Items;
 
 namespace Server.Engines.Quests.Necro
@@ -69,7 +69,7 @@ namespace Server.Engines.Quests.Necro
                 /* Excellent choice, young apprentice of evil!<BR><BR>
                 * 
                 * I will not waste our time with pleasantries.  There is much work
-                * to be done – especially in light of the recent Paladin ambushes
+                * to be done ?especially in light of the recent Paladin ambushes
                 * that we have suffered.  The necromantic brotherhood is working
                 * towards the summoning of the elder daemon Kronus, who will rise
                 * from the Well of Tears to help us finally crush the Paladin forces
@@ -143,7 +143,7 @@ namespace Server.Engines.Quests.Necro
                 * Kronus, Maabus begins to cooperate, and begins to speak in a more
                 * reasonable tone</I>:<BR><BR>
                 * 
-                * Well, why didn’t you say so?  If you’re going to raise Kronus from
+                * Well, why didnë­ª you say so?  If youë­¨e going to raise Kronus from
                 * the Well of Tears, you must first complete a long series of dark
                 * rituals.  I once owned one of the scrolls needed for the summoning,
                 * but alas it was lost to me when I lost my life to a cowardly Paladin
@@ -195,14 +195,14 @@ namespace Server.Engines.Quests.Necro
                 * but yet you claim to be a Paladin in hopes that I will grant thee passage
                 * into the cave?<BR><BR>
                 * 
-                * Please don’t think ill of me for this, but I’m just a blind, old man looking
+                * Please donë­ª think ill of me for this, but Ië­¢ just a blind, old man looking
                 * to keep the brotherhood of Paladins safe from the clutches of the elder daemon
                 * Kronus.  The Necromancers have been after this particular scroll for quite some
                 * time, so we must take all the security precautions we can.<BR><BR>
                 * 
                 * Before I can let you pass into the Crystal Cave, you must speak to me the secret
                 * word that is kept in the Scroll of Abraxus in the Vault of Secrets at the Paladin
-                * city of Light.  It’s the only way that I can be sure you are who you claim to be,
+                * city of Light.  Itë­© the only way that I can be sure you are who you claim to be,
                 * since Necromancers cannot enter the Vault due to powerful protective magic that
                 * the brotherhood has blessed the vault with.
                 */
@@ -229,8 +229,8 @@ namespace Server.Engines.Quests.Necro
                 * to retrieve the scroll...</I><BR><BR>
                 * 
                 * You failed?  Very unfortunate...  So now you must find your way into
-                * the paladin’s Vault of Secrets, eh?  Well, you won't be able to get in
-                * – there is a powerful magic aura that protects the Vault from all
+                * the paladinë­© Vault of Secrets, eh?  Well, you won't be able to get in
+                * ?there is a powerful magic aura that protects the Vault from all
                 * Necromancers.  We simply cannot enter.  However, that's not to say you
                 * familiar spirit can't.<BR><BR>
                 * 
@@ -341,7 +341,7 @@ namespace Server.Engines.Quests.Necro
                 /* Very well Paladin, you have proven to me your identity.
                 * I grant thee passage.<BR><BR>
                 * 
-                * Be careful, however – I’ve heard that the cave has been
+                * Be careful, however ?Ië­­e heard that the cave has been
                 * infested with a vermin of some sort.  Our High Lord
                 * Melkeer was supposed to send some troops to clear the
                 * vermin out of the cave, but that was last week already.
@@ -350,7 +350,7 @@ namespace Server.Engines.Quests.Necro
                 * If you can find it in your goodness to dispose of at
                 * least 5 of those vermin in there, I shall reward your
                 * efforts.  If however you are too busy, and I would
-                * understand if you were, don’t bother with the vermin.<BR><BR>
+                * understand if you were, donë­ª bother with the vermin.<BR><BR>
                 * 
                 * You may now pass through the energy barrier to enter the
                 * Crystal Cave.   Take care honorable Paladin soul.
@@ -399,7 +399,7 @@ namespace Server.Engines.Quests.Necro
             get
             {
                 /* I thank you for going out of your way to clean out some
-                * of the vermin in that cave – here is your reward: a bag
+                * of the vermin in that cave ?here is your reward: a bag
                 * containing 500 gold coins plus a strange and magical artifact
                 * that should come in handy in your travels.<BR><BR>
                 * 

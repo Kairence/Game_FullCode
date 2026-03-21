@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.Engines.CannedEvil;
 using Server.Items;
 using Server.Spells.Fifth;

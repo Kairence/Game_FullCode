@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 
 namespace Server.Items
 {
@@ -22,7 +22,7 @@ namespace Server.Items
             {
                 return 1075345;
             }
-        }// Andros’ Gratitude
+        }// Andros?Gratitude
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);

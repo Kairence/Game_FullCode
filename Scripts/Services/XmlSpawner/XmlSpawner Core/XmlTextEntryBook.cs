@@ -1,4 +1,4 @@
-#define BOOKTEXTENTRY
+﻿#define BOOKTEXTENTRY
 
 using System;
 using System.IO;

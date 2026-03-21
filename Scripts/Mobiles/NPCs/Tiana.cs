@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.Items;
 using Server.Mobiles;
 
@@ -324,7 +324,7 @@ namespace Server.Engines.Quests
             }
         }
         /* Vermin! They get into everything! I told the boy to leave out some poisoned cheese -- and they shot him. 
-        What else can I do? Unless�these ratmen are skilled with a bow, but I'd lay a wager you're better, eh? Could 
+        What else can I do? Unless꿻hese ratmen are skilled with a bow, but I'd lay a wager you're better, eh? Could 
         you skin a few of the wretches for me? */
         public override object Description
         {

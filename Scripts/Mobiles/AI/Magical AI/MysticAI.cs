@@ -1,4 +1,4 @@
-#region References
+﻿#region References
 using Server.Spells;
 using Server.Spells.Mysticism;
 #endregion

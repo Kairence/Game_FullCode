@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Mobiles;
 using Server.Commands.Generic;
@@ -20,7 +20,7 @@ namespace Server.Commands
 		}
 
 		[Usage( "Status" )]
-		[Description( "°èÁ¤ ±İ°í °ñµå È®ÀÎ." )]
+		[Description( "ê³„ì • ê¸ˆê³  ê³¨ë“œ í™•ì¸." )]
 		public static void ItemSaveInfo_OnCommand( CommandEventArgs e )
 		{
 			var sub = "";
@@ -42,7 +42,7 @@ namespace Server.Commands
 							string name = item.Name;
 							if( item.Name == null )
 								name = String.Format("#{0}", item.LabelNumber);
-							pm.SendMessage("{0}¹ø : {1}", i + 1, name );
+							pm.SendMessage("{0}ë²ˆ : {1}", i + 1, name );
 						}
 					}
 				}
@@ -87,7 +87,7 @@ namespace Server.Commands
 							if( !check )
 							{
 								pm.ItemSave[target_number -1] = null;
-								pm.SendMessage("ÇØ´ç ¾ÆÀÌÅÛÀÌ ¾ø°Å³ª »ç¿ëÇÒ ¼ö ¾ø½À´Ï´Ù!");
+								pm.SendMessage("í•´ë‹¹ ì•„ì´í…œì´ ì—†ê±°ë‚˜ ì‚¬ìš©í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤!");
 							}
 						}
 					}
@@ -96,7 +96,7 @@ namespace Server.Commands
 				/*
 				else if( sub == "save1" )
 				{
-					//Å¸°Ù1 ÁöÁ¤
+					//íƒ€ê²Ÿ1 ì§€ì •
 					target_number = 1;
 				}
 				else if( pm.ItemSave[target_number -1] != null && sub == "load1" )
@@ -111,7 +111,7 @@ namespace Server.Commands
 				}
 				else if( sub == "save2" )
 				{
-					//Å¸°Ù1 ÁöÁ¤
+					//íƒ€ê²Ÿ1 ì§€ì •
 					e.Mobile.Target = new InternalTarget();
 					target_number = 2;
 				}
@@ -123,12 +123,12 @@ namespace Server.Commands
 						if (e.Mobile.InRange(i.GetWorldLocation(), 1))
 							i.OnDoubleClick(e.Mobile);
 						else
-							pm.SendMessage("Á» ´õ °¡±îÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù!");
+							pm.SendMessage("ì¢€ ë” ê°€ê¹Œì´ ìˆì–´ì•¼ í•©ë‹ˆë‹¤!");
 					}
 				}
 				else if( sub == "save3" )
 				{
-					//Å¸°Ù1 ÁöÁ¤
+					//íƒ€ê²Ÿ1 ì§€ì •
 					e.Mobile.Target = new InternalTarget();
 					target_number = 3;
 				}
@@ -140,12 +140,12 @@ namespace Server.Commands
 						if (e.Mobile.InRange(i.GetWorldLocation(), 1))
 							i.OnDoubleClick(e.Mobile);
 						else
-							pm.SendMessage("Á» ´õ °¡±îÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù!");
+							pm.SendMessage("ì¢€ ë” ê°€ê¹Œì´ ìˆì–´ì•¼ í•©ë‹ˆë‹¤!");
 					}
 				}
 				else if( sub == "save4" )
 				{
-					//Å¸°Ù1 ÁöÁ¤
+					//íƒ€ê²Ÿ1 ì§€ì •
 					e.Mobile.Target = new InternalTarget();
 					target_number = 4;
 				}
@@ -157,12 +157,12 @@ namespace Server.Commands
 						if (e.Mobile.InRange(i.GetWorldLocation(), 1))
 							i.OnDoubleClick(e.Mobile);
 						else
-							pm.SendMessage("Á» ´õ °¡±îÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù!");
+							pm.SendMessage("ì¢€ ë” ê°€ê¹Œì´ ìˆì–´ì•¼ í•©ë‹ˆë‹¤!");
 					}
 				}
 				else if( sub == "save5" )
 				{
-					//Å¸°Ù1 ÁöÁ¤
+					//íƒ€ê²Ÿ1 ì§€ì •
 					e.Mobile.Target = new InternalTarget();
 					target_number = 5;
 				}
@@ -174,12 +174,12 @@ namespace Server.Commands
 						if (e.Mobile.InRange(i.GetWorldLocation(), 1))
 							i.OnDoubleClick(e.Mobile);
 						else
-							pm.SendMessage("Á» ´õ °¡±îÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù!");
+							pm.SendMessage("ì¢€ ë” ê°€ê¹Œì´ ìˆì–´ì•¼ í•©ë‹ˆë‹¤!");
 					}
 				}
 				else if( sub == "save6" )
 				{
-					//Å¸°Ù1 ÁöÁ¤
+					//íƒ€ê²Ÿ1 ì§€ì •
 					e.Mobile.Target = new InternalTarget();
 					target_number = 6;
 				}
@@ -191,12 +191,12 @@ namespace Server.Commands
 						if (e.Mobile.InRange(i.GetWorldLocation(), 1))
 							i.OnDoubleClick(e.Mobile);
 						else
-							pm.SendMessage("Á» ´õ °¡±îÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù!");
+							pm.SendMessage("ì¢€ ë” ê°€ê¹Œì´ ìˆì–´ì•¼ í•©ë‹ˆë‹¤!");
 					}
 				}
 				else if( sub == "save7" )
 				{
-					//Å¸°Ù1 ÁöÁ¤
+					//íƒ€ê²Ÿ1 ì§€ì •
 					e.Mobile.Target = new InternalTarget();
 					target_number = 7;
 				}
@@ -208,12 +208,12 @@ namespace Server.Commands
 						if (e.Mobile.InRange(i.GetWorldLocation(), 1))
 							i.OnDoubleClick(e.Mobile);
 						else
-							pm.SendMessage("Á» ´õ °¡±îÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù!");
+							pm.SendMessage("ì¢€ ë” ê°€ê¹Œì´ ìˆì–´ì•¼ í•©ë‹ˆë‹¤!");
 					}
 				}
 				else if( sub == "save8" )
 				{
-					//Å¸°Ù1 ÁöÁ¤
+					//íƒ€ê²Ÿ1 ì§€ì •
 					e.Mobile.Target = new InternalTarget();
 					target_number = 8;
 				}
@@ -225,12 +225,12 @@ namespace Server.Commands
 						if (e.Mobile.InRange(i.GetWorldLocation(), 1))
 							i.OnDoubleClick(e.Mobile);
 						else
-							pm.SendMessage("Á» ´õ °¡±îÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù!");
+							pm.SendMessage("ì¢€ ë” ê°€ê¹Œì´ ìˆì–´ì•¼ í•©ë‹ˆë‹¤!");
 					}
 				}
 				else if( sub == "save9" )
 				{
-					//Å¸°Ù1 ÁöÁ¤
+					//íƒ€ê²Ÿ1 ì§€ì •
 					e.Mobile.Target = new InternalTarget();
 					target_number = 9;
 				}
@@ -242,12 +242,12 @@ namespace Server.Commands
 						if (e.Mobile.InRange(i.GetWorldLocation(), 1))
 							i.OnDoubleClick(e.Mobile);
 						else
-							pm.SendMessage("Á» ´õ °¡±îÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù!");
+							pm.SendMessage("ì¢€ ë” ê°€ê¹Œì´ ìˆì–´ì•¼ í•©ë‹ˆë‹¤!");
 					}
 				}
 				else if( sub == "save10" )
 				{
-					//Å¸°Ù1 ÁöÁ¤
+					//íƒ€ê²Ÿ1 ì§€ì •
 					e.Mobile.Target = new InternalTarget();
 					target_number = 10;
 				}
@@ -259,7 +259,7 @@ namespace Server.Commands
 						if (e.Mobile.InRange(i.GetWorldLocation(), 1))
 							i.OnDoubleClick(e.Mobile);
 						else
-							pm.SendMessage("Á» ´õ °¡±îÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù!");
+							pm.SendMessage("ì¢€ ë” ê°€ê¹Œì´ ìˆì–´ì•¼ í•©ë‹ˆë‹¤!");
 					}
 				}
 				*/
@@ -283,7 +283,7 @@ namespace Server.Commands
 						pm.ItemSave[target_number - 1] = item;
 					}
 					else
-						pm.SendMessage("¾ÆÀÌÅÛÀÌ ¾Æ´Õ´Ï´Ù!");
+						pm.SendMessage("ì•„ì´í…œì´ ì•„ë‹™ë‹ˆë‹¤!");
 				}
 			}			
 		}
@@ -298,7 +298,7 @@ namespace Server.Commands
 		}
 
 		[Usage( "Status" )]
-		[Description( "°èÁ¤ ±İ°í °ñµå È®ÀÎ." )]
+		[Description( "ê³„ì • ê¸ˆê³  ê³¨ë“œ í™•ì¸." )]
 		public static void MonsterSaveInfo_OnCommand( CommandEventArgs e )
 		{
 			var sub = "";
@@ -317,7 +317,7 @@ namespace Server.Commands
 						else
 						{
 							string item = pm.MonsterSave[i];
-							pm.SendMessage("{0}¹ø : {1}", i + 1, item );
+							pm.SendMessage("{0}ë²ˆ : {1}", i + 1, item );
 						}
 					}
 				}
@@ -375,7 +375,7 @@ namespace Server.Commands
 							}
 						}
 						else
-							pm.SendMessage("ÇØ´ç ¸ó½ºÅÍ°¡ ¾ø½À´Ï´Ù!");
+							pm.SendMessage("í•´ë‹¹ ëª¬ìŠ¤í„°ê°€ ì—†ìŠµë‹ˆë‹¤!");
 					}
 				}
 			}
@@ -414,13 +414,13 @@ namespace Server.Commands
 								*/
 							}
 							else
-								pm.SendMessage("¸ó½ºÅÍ°¡ ¾Æ´Õ´Ï´Ù!");
+								pm.SendMessage("ëª¬ìŠ¤í„°ê°€ ì•„ë‹™ë‹ˆë‹¤!");
 						}
 						else
-							pm.SendMessage("¸ó½ºÅÍ°¡ ¾Æ´Õ´Ï´Ù!");
+							pm.SendMessage("ëª¬ìŠ¤í„°ê°€ ì•„ë‹™ë‹ˆë‹¤!");
 					}
 					else
-						pm.SendMessage("¸ó½ºÅÍ°¡ ¾Æ´Õ´Ï´Ù!");
+						pm.SendMessage("ëª¬ìŠ¤í„°ê°€ ì•„ë‹™ë‹ˆë‹¤!");
 				}
 			}			
 		}
@@ -435,7 +435,7 @@ namespace Server.Commands
 		}
 
 		[Usage( "Status" )]
-		[Description( "°èÁ¤ ±İ°í °ñµå È®ÀÎ." )]
+		[Description( "ê³„ì • ê¸ˆê³  ê³¨ë“œ í™•ì¸." )]
 		public static void PetSaveInfo_OnCommand( CommandEventArgs e )
 		{
 			var sub = "";
@@ -454,7 +454,7 @@ namespace Server.Commands
 						else
 						{
 							Mobile item = pm.PetSave[i];
-							pm.SendMessage("{0}¹ø : {1}", i + 1, item );
+							pm.SendMessage("{0}ë²ˆ : {1}", i + 1, item );
 						}
 					}
 				}
@@ -496,7 +496,7 @@ namespace Server.Commands
 							}
 						}
 						else
-							pm.SendMessage("ÇØ´ç ÆêÀÌ ¾ø½À´Ï´Ù!");
+							pm.SendMessage("í•´ë‹¹ í«ì´ ì—†ìŠµë‹ˆë‹¤!");
 					}
 				}
 			}
@@ -534,13 +534,13 @@ namespace Server.Commands
 								*/
 							}
 							else
-								pm.SendMessage("ÆêÀÌ ¾Æ´Õ´Ï´Ù!");
+								pm.SendMessage("í«ì´ ì•„ë‹™ë‹ˆë‹¤!");
 						}
 						else
-							pm.SendMessage("ÆêÀÌ ¾Æ´Õ´Ï´Ù!");
+							pm.SendMessage("í«ì´ ì•„ë‹™ë‹ˆë‹¤!");
 					}
 					else
-						pm.SendMessage("ÆêÀÌ ¾Æ´Õ´Ï´Ù!");
+						pm.SendMessage("í«ì´ ì•„ë‹™ë‹ˆë‹¤!");
 				}
 			}			
 		}
@@ -555,7 +555,7 @@ namespace Server.Commands
 		}
 
 		[Usage( "Status" )]
-		[Description( "°èÁ¤ ±İ°í °ñµå È®ÀÎ." )]
+		[Description( "ê³„ì • ê¸ˆê³  ê³¨ë“œ í™•ì¸." )]
 		public static void PlayerSaveInfo_OnCommand( CommandEventArgs e )
 		{
 			var sub = "";
@@ -574,7 +574,7 @@ namespace Server.Commands
 						else
 						{
 							Mobile item = pm.PlayerSave[i];
-							pm.SendMessage("{0}¹ø : {1}", i + 1, item );
+							pm.SendMessage("{0}ë²ˆ : {1}", i + 1, item );
 						}
 					}
 				}
@@ -610,7 +610,7 @@ namespace Server.Commands
 							}
 						}
 						else
-							pm.SendMessage("ÇØ´ç À¯Àú°¡ ¾ø½À´Ï´Ù!");
+							pm.SendMessage("í•´ë‹¹ ìœ ì €ê°€ ì—†ìŠµë‹ˆë‹¤!");
 					}
 				}
 			}
@@ -646,10 +646,10 @@ namespace Server.Commands
 							*/							
 						}
 						else
-							pm.SendMessage("À¯Àú°¡ ¾Æ´Õ´Ï´Ù!");
+							pm.SendMessage("ìœ ì €ê°€ ì•„ë‹™ë‹ˆë‹¤!");
 					}
 					else
-						pm.SendMessage("À¯Àú°¡ ¾Æ´Õ´Ï´Ù!");
+						pm.SendMessage("ìœ ì €ê°€ ì•„ë‹™ë‹ˆë‹¤!");
 				}
 			}			
 		}

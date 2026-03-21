@@ -1,4 +1,4 @@
-// Created by Peoharen for the Mobile Abilities Package.
+﻿// Created by Peoharen for the Mobile Abilities Package.
 using System;
 
 namespace Server.Mobiles

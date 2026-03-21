@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Server.Items;
 
@@ -63,23 +63,38 @@ namespace Server.Multis
         }
 
         public void AddExteriorStairs(MultiComponentList mcl)
-        {
-            // this won't work correctly without declaring a new mcl so it can then be resized
-            MultiComponentList mclNew = new MultiComponentList(MultiData.GetComponents(ItemID));
+		{
+			MultiComponentList mclNew = new MultiComponentList(MultiData.GetComponents(ItemID));
 
-            mclNew.Resize(mclNew.Width, mclNew.Height + 1);
+			// 1. 가로(Width)와 세로(Height) 모두 1씩 확장합니다.
+			mclNew.Resize(mclNew.Width + 1, mclNew.Height + 1);
 
-            int xCenter = mcl.Center.X;
-            int yCenter = mcl.Center.Y;
-            int y = mcl.Height;
+			int xCenter = mcl.Center.X;
+			int yCenter = mcl.Center.Y;
 
-            for (int x = 1; x < mclNew.Width; ++x)
-            {
-                Item stair = new Static((int)0x751);
-                stair.MoveToWorld(new Point3D(x - xCenter, y - yCenter, 0), Map);
-                m_Components.Add(stair);
-            }
-        }
+			// 2. 남쪽 계단 (0x751) - 유저님의 요청대로 첫 칸(x=1)부터 시작
+			int southY = mcl.Height; 
+			for (int x = 1; x < mcl.Width; ++x)
+			{
+				Item stair = new Static(0x751);
+				stair.MoveToWorld(new Point3D(X + (x - xCenter), Y + (southY - yCenter), Z), Map);
+				m_Components.Add(stair);
+			}
+
+			// 3. 동쪽 계단 (0x752) - 새로 추가!!
+			int eastX = mcl.Width;
+			for (int y = 1; y < mcl.Height; ++y)
+			{
+				Item stair = new Static(0x752);
+				stair.MoveToWorld(new Point3D(X + (eastX - xCenter), Y + (y - yCenter), Z), Map);
+				m_Components.Add(stair);
+			}
+
+			// 4. 남동쪽 모서리 (0x756) - 새로 추가!!
+			Item corner = new Static(0x756);
+			corner.MoveToWorld(new Point3D(X + (eastX - xCenter), Y + (southY - yCenter), Z), Map);
+			m_Components.Add(corner);
+		}
 
 
         public PreviewHouse(Serial serial)

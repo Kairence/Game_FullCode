@@ -1,4 +1,4 @@
-using Server.Commands;
+﻿using Server.Commands;
 using System;
 using System.Collections.Generic;
 

@@ -1,0 +1,20 @@
+﻿using System;
+
+namespace Server.Items
+{
+    public class CarrotSeed : BaseSeed
+    {
+        public override Type CropType => typeof(Carrot);
+
+        [Constructable]
+        public CarrotSeed() : base(0xDCF)
+        {
+            Hue = 0x5E2;
+            Name = "당근 씨앗";
+        }
+
+        public CarrotSeed(Serial serial) : base(serial) { }
+        public override void Serialize(GenericWriter writer) { base.Serialize(writer); writer.Write((int)0); }
+        public override void Deserialize(GenericReader reader) { base.Deserialize(reader); int version = reader.ReadInt(); }
+    }
+}

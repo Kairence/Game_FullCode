@@ -1,4 +1,4 @@
-#define ServUO
+﻿#define ServUO
 using System;
 using System.Text;
 using Server;

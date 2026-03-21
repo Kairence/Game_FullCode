@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Items;
 using Server.Gumps;
 using Server.Network;
@@ -8,7 +8,7 @@ using Server.Accounting;
 namespace Server.Items
 {
 	/*
-		ÃÖÃÊ 100 À¯Àú
+		ìµœì´ˆ 100 ìœ ì €
 	*/
 	
 	public class DonationCheck : Item 
@@ -30,19 +30,19 @@ namespace Server.Items
 
 		public override string DefaultName
 		{
-			get { return "±âºÎ Ã¼Å© ½Ã½ºÅÛ"; }
+			get { return "ê¸°ë¶€ ì²´í¬ ì‹œìŠ¤í…œ"; }
 		}
 		[Constructable]
 		public DonationCheck() : base( 0xED4 )
 		{
 			Movable = false;
 			Hue = 1121;
-			Name = "±âºÎ Ã¼Å© ½Ã½ºÅÛ";
+			Name = "ê¸°ë¶€ ì²´í¬ ì‹œìŠ¤í…œ";
 		}
 		
 		public override void OnDoubleClick( Mobile from )
 		{
-			from.SendMessage( "´ÙÀ½ ±âºÎ ½Ã°£ : {0}", m_RespawnTime.ToString());
+			from.SendMessage( "ë‹¤ìŒ ê¸°ë¶€ ì‹œê°„ : {0}", m_RespawnTime.ToString());
 			try
 			{
 				for( int i = 0; i < 10; i++ )
@@ -55,7 +55,7 @@ namespace Server.Items
 						{
 							if( DonationList[i] == a.Username )
 							{
-								from.SendMessage( "{0}ÀÇ ±âºÎ Æ÷ÀÎÆ® {1}", DonationList[i], a.DonationPoint);
+								from.SendMessage( "{0}ì˜ ê¸°ë¶€ í¬ì¸íŠ¸ {1}", DonationList[i], a.DonationPoint);
 							}
 						}
 					}

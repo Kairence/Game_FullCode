@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -1174,6 +1174,11 @@ namespace Server.Multis
                     return house;
             }
 
+			BaseHouse yardHouse = Server.Misc.ExAddonSystem.FindHouseByYard(loc, map);
+            if (yardHouse != null)
+                return yardHouse;
+            // ====================
+
             return null;
         }
 
@@ -1303,6 +1308,9 @@ namespace Server.Multis
             }
 
             if (tiles.Length == 0 && this is Castle)
+                return true;
+				
+			if (Server.Misc.ExAddonSystem.CheckVirtualYard(this, p))
                 return true;
 
             return false;
@@ -3674,6 +3682,51 @@ namespace Server.Multis
                 return m_Region;
             }
         }
+		
+		// =======================================================================
+        // ★ [ExAddon 영토 확장] 시스템 제어 (DB 수정 없이 안전하게 동적 계산)
+        // ==========================================================
+        
+        [CommandProperty(AccessLevel.GameMaster)]
+        public virtual int MaxYardExtensions
+        {
+            get
+            {
+                // 집의 규모(락다운 수치)에 따라 최대 영토 확장(3x3) 가능 횟수를 통제합니다.
+                // 기획에 맞게 수치를 조절하세요! (예: 성/킵은 6번, 18x18은 4번, 소형집은 1번)
+                if (MaxLockDowns >= 2000) return 6; // 캐슬, 킵, 18x18 급 대형 집
+                if (MaxLockDowns >= 1000) return 3; // 중형 집
+                return 1;                           // 소형 집
+            }
+        }
+
+        public int GetCurrentYardExtensions()
+        {
+            int dirtCount = 0;
+
+            if (LockDowns != null)
+            {
+                // 락다운된 아이템들을 스캔하여 확장 영토 흙바닥(ExAddOnTile 중 0x31F4)의 개수를 셉니다.
+                foreach (Item item in LockDowns.Keys)
+                {
+                    // ExAddOnTile 이라는 이름의 클래스인지 판별 (네임스페이스 주의)
+                    if (item.GetType().Name == "ExAddOnTile" && item.ItemID == 0x31F4)
+                    {
+                        dirtCount++;
+                    }
+                }
+            }
+
+            // 1번 확장할 때마다 흙바닥이 9개(3x3) 생성되므로, 9로 나누면 현재 확장 횟수가 나옵니다!
+            return dirtCount / 9; 
+        }
+
+        public bool CanExpandYard()
+        {
+            return GetCurrentYardExtensions() < MaxYardExtensions;
+        }
+        // =======================================================================		
+		
         public List<Mobile> CoOwners { get; set; }
         public List<Mobile> Friends { get; set; }
         public List<Mobile> Access { get; set; }

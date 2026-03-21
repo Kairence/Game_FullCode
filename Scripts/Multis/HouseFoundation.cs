@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -512,40 +512,73 @@ namespace Server.Multis
             }
         }
 
-        public static void AddStairsTo(ref MultiComponentList mcl)
+		public static void AddStairsTo(ref MultiComponentList mcl)
         {
-            // copy the original..
-            mcl = new MultiComponentList(mcl);
+            // [1] 기존 타일 리스트 백업
+            MultiTileEntry[] backup = mcl.List;
+            int baseW = mcl.Width;
+            int baseH = mcl.Height;
+            int minX = mcl.Min.X;
+            int minY = mcl.Min.Y;
 
-            mcl.Resize(mcl.Width, mcl.Height + 1);
+            // [2] 도화지 확장 (기존 데이터 삭제됨)
+            mcl.Resize(baseW + 1, baseH + 1);
 
-            int xCenter = mcl.Center.X;
-            int yCenter = mcl.Center.Y;
-            int y = mcl.Height - 1;
+            // [3] 백업 데이터 복구
+            for (int i = 0; i < backup.Length; ++i)
+                mcl.Add(backup[i].m_ItemID, backup[i].m_OffsetX, backup[i].m_OffsetY, backup[i].m_OffsetZ);
 
-            for (int x = 0; x < mcl.Width; ++x)
-                mcl.Add(0x63, x - xCenter, y - yCenter, 0);
+            // [4] 남/동쪽 끝단에 계단 추가
+            for (int x = 1; x < baseW; ++x) mcl.Add(0x0751, minX + x, minY + baseH, 0);
+            for (int y = 1; y < baseH; ++y) mcl.Add(0x0752, minX + baseW, minY + y, 0);
+            mcl.Add(0x0756, minX + baseW, minY + baseH, 0);
         }
 
+		// 1. 기초 생성 (초기화 시 벽돌 실종 방지)
         public MultiComponentList GetEmptyFoundation()
-        {
-            // Copy original foundation layout
-            MultiComponentList mcl = new MultiComponentList(MultiData.GetComponents(ItemID));
+		{
+			MultiComponentList originMcl = MultiData.GetComponents(ItemID);
+			int minX = originMcl.Min.X;
+			int minY = originMcl.Min.Y;
+			int baseW = originMcl.Width;  // 8
+			int baseH = originMcl.Height; // 8
 
-            mcl.Resize(mcl.Width, mcl.Height + 1);
+			MultiComponentList mcl = new MultiComponentList(originMcl);
+			mcl.Resize(baseW + 1, baseH + 1); // 9x9 확장
 
-            int xCenter = mcl.Center.X;
-            int yCenter = mcl.Center.Y;
-            int y = mcl.Height - 1;
+			int east, south, post, corner;
+			GetFoundationGraphics(Type, out east, out south, out post, out corner);
 
-            ApplyFoundation(Type, mcl);
+			// [★ 픽스] 절대 좌표(minX)를 사용하여 벽돌 위치를 Index 0과 7에 고정
+			mcl.Add(post, minX, minY, 0); // 0,0
+			mcl.Add(corner, minX + baseW - 1, minY + baseH - 1, 0); // 7,7
 
-            for (int x = 1; x < mcl.Width; ++x)
-                mcl.Add(0x751, x - xCenter, y - yCenter, 0);
+			for (int x = 1; x < baseW; ++x)
+			{
+				mcl.Add(south, minX + x, minY, 0); // 북쪽벽
+				if (x < baseW - 1)
+					mcl.Add(south, minX + x, minY + baseH - 1, 0); // 남쪽벽 (Index 7)
+			}
+			for (int y = 1; y < baseH - 1; ++y)
+			{
+				mcl.Add(east, minX, minY + y, 0); // 서쪽벽
+				if (y < baseH - 1)
+					mcl.Add(east, minX + baseW - 1, minY + y, 0); // 동쪽벽 (Index 7)
+			}
 
-            return mcl;
-        }
+			// 내부 흙 (Index 1~6)
+			for (int x = 1; x < baseW - 1; ++x)
+				for (int y = 1; y < baseH - 1; ++y)
+					mcl.Add(0x0496, minX + x, minY + y, 0);
 
+			// 확장 구역 계단 (Index 8)
+			for (int x = 1; x < baseW; ++x) mcl.Add(0x0751, minX + x, minY + baseH, 0);
+			for (int y = 1; y < baseH; ++y) mcl.Add(0x0752, minX + baseW, minY + y, 0);
+			mcl.Add(0x0756, minX + baseW, minY + baseH, 0);
+
+			return mcl;
+		}
+		
         public override Rectangle2D[] Area
         {
             get
@@ -1188,7 +1221,7 @@ namespace Server.Multis
         {
             0x3EF, 0x70A, 0x722, 0x739,
             0x751, 0x76D, 0x789, 0x7A4,
-            0x9B50, 0x9AEB
+            0x9B50, 0x9AEB, 0x0752
         };
 
         /* Other stair IDs
@@ -1207,7 +1240,7 @@ namespace Server.Multis
             0x7809, 0x7808, 0x780A, 0x780B,
             0x7BB,  0x7BC,  0x9AEB, 0x9AEC,
             0x9AED, 0x9B50, 0x9AEE, 0x9B51,
-            0x9B52, 0x9B53
+            0x9B52, 0x9B53, 0x0756
         };
 
         public static bool IsStairBlock(int id)
@@ -1246,179 +1279,105 @@ namespace Server.Multis
             return false;
         }
 
-        public static bool DeleteStairs(MultiComponentList mcl, int id, int x, int y, int z)
+		public static bool DeleteStairs(MultiComponentList mcl, int id, int x, int y, int z, int originW, int originH)
+		{
+			int ax = x + mcl.Center.X;
+			int ay = y + mcl.Center.Y;
+
+			if (ax < 0 || ay < 0 || ax >= mcl.Width || ay >= mcl.Height) return false;
+
+			if (IsStairBlock(id)) {
+				StaticTile[] tiles = mcl.Tiles[ax][ay];
+				for (int i = 0; i < tiles.Length; ++i)
+					if (tiles[i].Z == (z + 5)) { id = tiles[i].ID; z = tiles[i].Z; if (!IsStairBlock(id)) break; }
+			}
+
+			int dir = 0; if (!IsStair(id, ref dir)) return false;
+			int height = (z >= 7) ? ((z - 7) % 20) / 5 : 0;
+			int xStart = x, yStart = y, xInc = 0, yInc = 0;
+			switch(dir) {
+				case 0: yStart += height; yInc = -1; break;
+				case 1: xStart += height; xInc = -1; break;
+				case 2: yStart -= height; yInc = 1; break;
+				case 3: xStart -= height; xInc = 1; break;
+			}
+
+			int zStart = z - (height * 5);
+			for (int i = 0; i < 4; ++i) {
+				int cx = xStart + (i * xInc);
+				int cy = yStart + (i * yInc);
+				int cax = cx + mcl.Center.X;
+				int cay = cy + mcl.Center.Y;
+
+				if (cax >= 0 && cax < mcl.Width && cay >= 0 && cay < mcl.Height) {
+					// [안전장치] 집터(0~7) 내부의 Z=0 바닥은 루프 삭제 중에도 건드리지 않음
+					bool isBaseFloor = (cax >= 0 && cax < originW && cay >= 0 && cay < originH);
+					
+					for (int j = 0; j <= i; ++j) {
+						int targetZ = zStart + (j * 5);
+						if (!(isBaseFloor && targetZ == 0)) {
+							mcl.RemoveXYZH(cx, cy, targetZ, 5);
+						}
+					}
+				}
+			}
+			return true;
+		}
+
+		public static void Designer_Delete(NetState state, IEntity e, EncodedReader pvSrc)
         {
+            DesignContext context = DesignContext.Find(state.Mobile);
+            if (context == null) return;
+
+            int itemID = pvSrc.ReadInt32(); // 유저가 지우개로 찍은 타일의 ID
+            int x = pvSrc.ReadInt32();
+            int y = pvSrc.ReadInt32();
+            int z = pvSrc.ReadInt32();
+
+            DesignState design = context.Foundation.DesignState;
+            MultiComponentList mcl = design.Components;
+            MultiComponentList originMcl = MultiData.GetComponents(context.Foundation.ItemID);
+            
+            int originW = originMcl.Width;
+            int originH = originMcl.Height;
             int ax = x + mcl.Center.X;
             int ay = y + mcl.Center.Y;
 
-            if (ax < 0 || ay < 0 || ax >= mcl.Width || ay >= (mcl.Height - 1) || z < 7 || ((z - 7) % 5) != 0)
-                return false;
+            // 1. 도화지 경계 체크
+            if (ax < 0 || ay < 0 || ax >= mcl.Width || ay >= mcl.Height) return;
 
-            if (IsStairBlock(id))
+            // [★ 핵심: 흙 타일 ID 직접 방어]
+            // 지우개로 찍은 아이템이 흙(0x0496, 0x31F4)이라면 삭제 로직을 타지 않고 바로 리턴합니다.
+            // 이렇게 하면 서버의 삭제 리스트에 기록되지 않아 최종 저장 시에도 안전합니다.
+            if ((itemID == 0x0496 || itemID == 0x31F4) && (z == 0 || z == 7))
             {
-                StaticTile[] tiles = mcl.Tiles[ax][ay];
-
-                for (int i = 0; i < tiles.Length; ++i)
-                {
-                    StaticTile tile = tiles[i];
-
-                    if (tile.Z == (z + 5))
-                    {
-                        id = tile.ID;
-                        z = tile.Z;
-
-                        if (!IsStairBlock(id))
-                            break;
-                    }
-                }
+                design.SendDetailedInfoTo(state); // 클라이언트에 "그대로임"을 알림
+                return;
             }
 
-            int dir = 0;
-
-            if (!IsStair(id, ref dir))
-                return false;
-
-            int height = ((z - 7) % 20) / 5;
-
-            int xStart, yStart;
-            int xInc, yInc;
-
-            switch( dir )
+            // [석조 테두리 ID 방어]
+            int fE, fS, fP, fC;
+            GetFoundationGraphics(context.Foundation.Type, out fE, out fS, out fP, out fC);
+            if ((itemID == fE || itemID == fS || itemID == fP || itemID == fC) && z == 0)
             {
-                default:
-                case 0: // North
-                    {
-                        xStart = x;
-                        yStart = y + height;
-                        xInc = 0;
-                        yInc = -1;
-                        break;
-                    }
-                case 1: // West
-                    {
-                        xStart = x + height;
-                        yStart = y;
-                        xInc = -1;
-                        yInc = 0;
-                        break;
-                    }
-                case 2: // South
-                    {
-                        xStart = x;
-                        yStart = y - height;
-                        xInc = 0;
-                        yInc = 1;
-                        break;
-                    }
-                case 3: // East
-                    {
-                        xStart = x - height;
-                        yStart = y;
-                        xInc = 1;
-                        yInc = 0;
-                        break;
-                    }
+                design.SendDetailedInfoTo(state);
+                return;
             }
 
-            int zStart = z - (height * 5);
+            // 2. 계단 삭제 시도
+            // 외곽 계단 2개는 이 조건(흙/석조)에 걸리지 않으므로 정상적으로 삭제 로직을 탑니다.
+            bool deleteStairs = DeleteStairs(mcl, itemID, x, y, z, originW, originH);
 
-            for (int i = 0; i < 4; ++i)
+            // 3. 일반 삭제 (계단이 아닌 벽, 가구 등)
+            if (!deleteStairs)
             {
-                x = xStart + (i * xInc);
-                y = yStart + (i * yInc);
-
-                for (int j = 0; j <= i; ++j)
-                    mcl.RemoveXYZH(x, y, zStart + (j * 5), 5);
-
-                ax = x + mcl.Center.X;
-                ay = y + mcl.Center.Y;
-
-                if (ax >= 1 && ax < mcl.Width && ay >= 1 && ay < mcl.Height - 1)
-                {
-                    StaticTile[] tiles = mcl.Tiles[ax][ay];
-
-                    bool hasBaseFloor = false;
-
-                    for (int j = 0; !hasBaseFloor && j < tiles.Length; ++j)
-                        hasBaseFloor = (tiles[j].Z == 7 && tiles[j].ID != 1);
-
-                    if (!hasBaseFloor)
-                        mcl.Add(0x31F4, x, y, 7);
-                }
+                // 지우개로 클릭한 바로 그 타일을 확실히 제거
+                mcl.Remove(itemID, x, y, z);
             }
 
-            return true;
+            design.OnRevised();
+            design.SendDetailedInfoTo(state);
         }
-
-        public static void Designer_Delete(NetState state, IEntity e, EncodedReader pvSrc)
-        {
-            Mobile from = state.Mobile;
-            DesignContext context = DesignContext.Find(from);
-
-            if (context != null)
-            {
-                /* Client chose to delete a component
-                *  - Read data detailing which component to delete
-                *  - Verify component is deletable
-                *  - Remove the component
-                *  - If needed, replace removed component with a dirt tile
-                *  - Update revision
-                */
-                // Read data detailing which component to delete
-                int itemID = pvSrc.ReadInt32();
-                int x = pvSrc.ReadInt32();
-                int y = pvSrc.ReadInt32();
-                int z = pvSrc.ReadInt32();
-
-                // Verify component is deletable
-                DesignState design = context.Foundation.DesignState;
-                MultiComponentList mcl = design.Components;
-
-                int ax = x + mcl.Center.X;
-                int ay = y + mcl.Center.Y;
-
-                if (z == 0 && ax >= 0 && ax < mcl.Width && ay >= 0 && ay < (mcl.Height - 1))
-                {
-                    /* Component is not deletable
-                    *  - Resend design state
-                    *  - Return without further processing
-                    */
-                    design.SendDetailedInfoTo(state);
-                    return;
-                }
-
-                bool deleteStairs = DeleteStairs(mcl, itemID, x, y, z);
-
-                // Remove the component
-                if (!deleteStairs)
-                    mcl.Remove(itemID, x, y, z);
-
-                // If needed, replace removed component with a dirt tile
-                if (ax >= 1 && ax < mcl.Width && ay >= 1 && ay < mcl.Height - 1)
-                {
-                    StaticTile[] tiles = mcl.Tiles[ax][ay];
-
-                    bool hasBaseFloor = false;
-
-                    for (int i = 0; !hasBaseFloor && i < tiles.Length; ++i)
-                        hasBaseFloor = (tiles[i].Z == 7 && tiles[i].ID != 1);
-
-                    if (!hasBaseFloor)
-                    {
-                        // Replace with a dirt tile
-                        mcl.Add(0x31F4, x, y, 7);
-                    }
-                }
-
-                // Update revision
-                design.OnRevised();
-
-                // Resend design state
-                if (deleteStairs)
-                    design.SendDetailedInfoTo(state);                               
-            }
-        }
-
         public static void Designer_Stairs(NetState state, IEntity e, EncodedReader pvSrc)
         {
             Mobile from = state.Mobile;
@@ -1435,29 +1394,28 @@ namespace Server.Multis
                 *  - Update revision
                 */
                 // Read data detailing stair type and location
-                int itemID = pvSrc.ReadInt32();
-                int x = pvSrc.ReadInt32();
-                int y = pvSrc.ReadInt32();
+				int itemID = pvSrc.ReadInt32();
+				int x = pvSrc.ReadInt32();
+				int y = pvSrc.ReadInt32();
 
-                // Validate stair multi ID
-                DesignState design = context.Foundation.DesignState;
+				DesignState design = context.Foundation.DesignState;
+				MultiComponentList mcl = design.Components;
+				MultiComponentList stairs = MultiData.GetComponents(itemID);
 
-                if (!Verification.IsMultiValid(itemID))
-                {
-                    /* Specified multi ID is not a stair
-                    *  - Resend design state
-                    *  - Return without further processing
-                    */
-                    TraceValidity(state, itemID);
-                    design.SendDetailedInfoTo(state);
-                    return;
-                }
+				// [수정] 계단 뭉치가 가장자리(7번 칸)를 한 칸이라도 침범하는지 체크
+				for (int i = 0; i < stairs.List.Length; ++i)
+				{
+					MultiTileEntry entry = stairs.List[i];
+					int checkX = x + entry.m_OffsetX + mcl.Center.X;
+					int checkY = y + entry.m_OffsetY + mcl.Center.Y;
 
-                // Add the stairs
-                MultiComponentList mcl = design.Components;
-
-                // Add the stairs : Load data describing stair components
-                MultiComponentList stairs = MultiData.GetComponents(itemID);
+					if (checkX >= mcl.Width - 1 || checkY >= mcl.Height - 1)
+					{
+						// 가장자리에 걸치면 건축 취소하고 현재 상태 다시 전송
+						design.SendDetailedInfoTo(state);
+						return; 
+					}
+				}
 
                 // Add the stairs : Insert described components
                 int z = GetLevelZ(context.Level, context.Foundation);
@@ -1579,47 +1537,28 @@ namespace Server.Multis
             }
         }
 
+		// 2. 건축 로직 (외곽 계단 Z=0 고정)
         public static void Designer_Build(NetState state, IEntity e, EncodedReader pvSrc)
-        {
-            Mobile from = state.Mobile;
-            DesignContext context = DesignContext.Find(from);
+		{
+			DesignContext context = DesignContext.Find(state.Mobile);
+			if (context == null) return;
+			int id = pvSrc.ReadInt32();
+			int x = pvSrc.ReadInt32();
+			int y = pvSrc.ReadInt32();
 
-            if (context != null)
-            {
-                /* Client chose to add a component
-                *  - Read data detailing component graphic and location
-                *  - Add component
-                *  - Update revision
-                */
-                // Read data detailing component graphic and location
-                int itemID = pvSrc.ReadInt32();
-                int x = pvSrc.ReadInt32();
-                int y = pvSrc.ReadInt32();
+			DesignState design = context.Foundation.DesignState;
+			MultiComponentList mcl = design.Components;
+			int ax = x + mcl.Center.X;
+			int ay = y + mcl.Center.Y;
 
-                // Add component
-                DesignState design = context.Foundation.DesignState;
+			if (ax < 0 || ay < 0 || ax >= mcl.Width || ay >= mcl.Height) return;
 
-                if (from.AccessLevel < AccessLevel.GameMaster && !ValidPiece(itemID))
-                {
-                    TraceValidity(state, itemID);
-                    design.SendDetailedInfoTo(state);
-                    return;
-                }
+			// [픽스] Index 8번 구역(외곽) 건축 시 Z=0 고정
+			int z = (ax == mcl.Width - 1 || ay == mcl.Height - 1) ? 0 : GetLevelZ(context.Level, context.Foundation);
 
-                MultiComponentList mcl = design.Components;
-
-                int z = GetLevelZ(context.Level, context.Foundation);
-
-                if ((y + mcl.Center.Y) == (mcl.Height - 1))
-                    z = 0; // Tiles placed on the far-south of the house are at 0 Z
-
-                mcl.Add(itemID, x, y, z);
-
-                // Update revision
-                design.OnRevised();
-            }
-        }
-
+			mcl.Add(id, x, y, z);
+			design.OnRevised();
+		}
         public static void Designer_Close(NetState state, IEntity e, EncodedReader pvSrc)
         {
             Mobile from = state.Mobile;

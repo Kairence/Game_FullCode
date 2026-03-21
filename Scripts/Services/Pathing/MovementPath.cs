@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.Commands;
 using Server.PathAlgorithms;
 using Server.PathAlgorithms.FastAStar;

@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using Server;
 using Server.Mobiles;
 using Server.Network;
@@ -17,7 +17,7 @@ namespace Server.Commands
 		}
 
 		[Usage( "Status" )]
-		[Description( "∞Ë¡§ ±›∞Ì ∞ÒµÂ »Æ¿Œ." )]
+		[Description( "Í≥ÑÏ†ï Í∏àÍ≥† Í≥®Îìú ÌôïÏù∏." )]
 		public static void UserGoldInfo_OnCommand( CommandEventArgs e )
 		{
 			e.Mobile.Target = new InternalTarget();
@@ -34,7 +34,7 @@ namespace Server.Commands
 			{
 				if ( targeted is PlayerMobile && AccountGold.Enabled && ((Mobile)targeted).Account != null )
 				{
-					from.SendMessage( String.Format("πÈ±› {0:#,0}, ±›»≠ \t{1:#,0}", ((Mobile)targeted).Account.TotalPlat, ((Mobile)targeted).Account.TotalGold) ); // Thy current bank balance is ~1_AMOUNT~ platinum and ~2_AMOUNT~ gold.
+					from.SendMessage( String.Format("Î∞±Í∏à {0:#,0}, Í∏àÌôî \t{1:#,0}", ((Mobile)targeted).Account.TotalPlat, ((Mobile)targeted).Account.TotalGold) ); // Thy current bank balance is ~1_AMOUNT~ platinum and ~2_AMOUNT~ gold.
 				}
 			}			
 		}
@@ -47,11 +47,11 @@ namespace Server.Commands
 		}
 
 		[Usage( "Status" )]
-		[Description( "∞Ë¡§ ±›∞Ì ∞ÒµÂ »Æ¿Œ." )]
+		[Description( "Í≥ÑÏ†ï Í∏àÍ≥† Í≥®Îìú ÌôïÏù∏." )]
 		public static void GoldInfo_OnCommand( CommandEventArgs e )
 		{
 			if ( AccountGold.Enabled && e.Mobile.Account != null )
-				e.Mobile.SendMessage( String.Format("πÈ±› {0:#,0}, ±›»≠ \t{1:#,0}", e.Mobile.Account.TotalPlat, e.Mobile.Account.TotalGold) ); // Thy current bank balance is ~1_AMOUNT~ platinum and ~2_AMOUNT~ gold.
+				e.Mobile.SendMessage( String.Format("Î∞±Í∏à {0:#,0}, Í∏àÌôî \t{1:#,0}", e.Mobile.Account.TotalPlat, e.Mobile.Account.TotalGold) ); // Thy current bank balance is ~1_AMOUNT~ platinum and ~2_AMOUNT~ gold.
 		}	
 	}
 }
