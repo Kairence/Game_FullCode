@@ -221,58 +221,59 @@ namespace Server.Items
             return FillHunger(from, m_FillFactor, this, alleat);
         }
 
-        public static int FillHunger(Mobile from, int fillFactor, Food food, bool alleat = false)
-        {
+		public static int FillHunger(Mobile from, int fillFactor, Food food, bool alleat = false)
+		{
 			int maxHunger = 100000;
-
 			int amount = 1;
 
 			if( alleat )
 				amount = food.Amount;
 			
-            int iHunger = ( maxHunger - from.Hunger ) / ( fillFactor * 100 );
-			if( ( ( maxHunger - from.Hunger ) % ( fillFactor * 100 ) ) > 0 )
+			// [수정] 1 FillFactor당 5,000을 회복하도록 변경 (20 FF = 100,000)
+			int recoveryUnit = fillFactor * 5000; 
+			int iHunger = ( maxHunger - from.Hunger ) / recoveryUnit;
+			
+			if( ( ( maxHunger - from.Hunger ) % recoveryUnit ) > 0 )
 				iHunger++;
 			
 			if( iHunger > amount )
 				iHunger = amount;
 			
-            //if (from.Stam < from.StamMax)
-            //    from.Stam += Utility.Random(6, 3) + fillFactor / 5;
-
-            if (from.Hunger == maxHunger )
-            {
-                from.Hunger = maxHunger;
-                from.SendLocalizedMessage(500867); // You manage to eat the food, but you are stuffed!
+			if (from.Hunger == maxHunger )
+			{
+				from.Hunger = maxHunger;
+				from.SendLocalizedMessage(500867); 
 				amount = 0;
-            }
+			}
 			else if( from.Hunger + iHunger >= maxHunger )
 			{
-                from.Hunger = maxHunger;
-                from.SendLocalizedMessage(500872); // You manage to eat the food, but you are stuffed!
+				from.Hunger = maxHunger;
+				from.SendLocalizedMessage(500872); 
 				amount = 1;
 			}
-            else
-            {
-				int eatfood = from.Hunger + fillFactor * 100 * iHunger;
+			else
+			{
+				// [수정] 회복량 계산 시 5000 단위 적용
+				int eatfood = from.Hunger + recoveryUnit * iHunger;
 				amount = iHunger;
 				from.Hunger = eatfood;
+				
 				if( from.Hunger >= maxHunger )
 					from.Hunger = maxHunger;
-                //from.Hunger = iHunger;
 
-                if (eatfood < 60000)
-                    from.SendLocalizedMessage(500868); // You eat the food, but are still extremely hungry.
-                else if (eatfood < 80000)
-                    from.SendLocalizedMessage(500869); // You eat the food, and begin to feel more satiated.
-                else if (eatfood < 99000)
-                    from.SendLocalizedMessage(500870); // After eating the food, you feel much less hungry.
-                else
-                    from.SendLocalizedMessage(500871); // You feel quite full after consuming the food.
-            }
+				// [참고] maxHunger가 100,000이므로 기존 메시지 임계치(60k, 80k, 99k)는 그대로 유지해도 무방합니다.
+				if (eatfood < 60000)
+					from.SendLocalizedMessage(500868); 
+				else if (eatfood < 80000)
+					from.SendLocalizedMessage(500869); 
+				else if (eatfood < 99000)
+					from.SendLocalizedMessage(500870); 
+				else
+					from.SendLocalizedMessage(500871); 
+			}
 
-            return amount;
-        }
+			return amount;
+		}
 
         public override void Serialize(GenericWriter writer)
         {

@@ -9,7 +9,7 @@ namespace Server.Misc
 {
     public static class VirtualEconomyAI
     {
-        public static bool TryShopFromPlayerVendor(VirtualAgent agent, TownEconomy town, ItemCategory targetCategory, double townPriceM)
+        public static bool TryShopFromPlayerVendor(VirtualAgent agent, TownEconomy town, ItemTag targetCategory, double townPriceM)
         {
             var map = town.Facet;
             if (map == null || map == Map.Internal) return false;

@@ -1,250 +1,272 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using Server;
-using Server.Commands;
-using Server.Gumps;
 using Server.Network;
+using Server.Gumps;
+using Server.Misc;
+using System.Collections.Generic;
+using Server.Mobiles;
 
 namespace Server.Misc
 {
     public class EconomyAdminGump : Gump
     {
-        public static void Initialize()
-        {
-            CommandSystem.Register("EconomyAdmin", AccessLevel.GameMaster, e => e.Mobile.SendGump(new EconomyAdminGump(e.Mobile, null, 0, 0)));
-        }
+        private Mobile m_From;
+        private int m_MapIndex; // 0:Trammel, 1:Felucca ...
+        private int m_TownID;   // 0이면 목록, >0이면 상세
+        private int m_TPage;    // 마을 목록 페이지
+        private int m_IPage;    // 인벤토리 페이지
 
-        private readonly Mobile m_From;
-        private readonly string m_SelectedTown;
-        private int m_ItemPage; 
-        private int m_TownPage; 
-
-        public EconomyAdminGump(Mobile from, string selectedTown, int townPage, int itemPage) : base(50, 50)
+        public EconomyAdminGump(Mobile from, int mapIdx = 0, int townID = 0, int tPage = 0, int iPage = 0) 
+            : base(50, 50)
         {
             m_From = from;
-            m_SelectedTown = selectedTown;
-            m_TownPage = townPage;
-            m_ItemPage = itemPage;
+            m_MapIndex = mapIdx;
+            m_TownID = townID;
+            m_TPage = tPage;
+            m_IPage = iPage;
 
             from.CloseGump(typeof(EconomyAdminGump));
-            from.CloseGump(typeof(EconomyItemEditGump));
 
             AddPage(0);
-            AddBackground(0, 0, 700, 550, 9270);
-            AddHtml(0, 15, 700, 20, "<CENTER><BASEFONT COLOR=#FFFFFF>마을 경제 및 창고 관리 시스템 (GM)</BASEFONT></CENTER>", false, false);
+            AddBackground(0, 0, 800, 600, 9270);
+            AddAlphaRegion(10, 10, 780, 580);
 
-            // [★ 추가] Gump 상단 중앙에 관리자 전용 퀵 버튼 3종 세트 배치
-            AddButton(190, 35, 4005, 4007, 600, GumpButtonType.Reply, 0);
-            AddLabel(225, 37, 1152, "자동 스폰&등록");
-
-            AddButton(350, 35, 4005, 4007, 601, GumpButtonType.Reply, 0);
-            AddLabel(385, 37, 1152, "마을 수동구축");
-
-            AddButton(510, 35, 4005, 4007, 602, GumpButtonType.Reply, 0);
-            AddLabel(545, 37, 1152, "재고 500개 누적");
-
-            DrawTownList();
-            DrawWarehouseItems();
+            if (m_TownID == 0) DrawTownList();
+            else DrawTownInventory();
         }
 
         private void DrawTownList()
         {
-            AddBackground(20, 50, 150, 470, 9300);
-            AddHtml(20, 60, 150, 20, "<CENTER><BASEFONT COLOR=#FFFFFF>마을 목록</BASEFONT></CENTER>", false, false);
-
-            var towns = TownEconomyManager.Towns.Values
-                            .Where(t => t.Warehouse.Count > 0)
-                            .Select(t => t.TownName)
-                            .OrderBy(k => k).ToList();
-
-            int townsPerPage = 15; 
-            int totalTownPages = Math.Max(1, (towns.Count + townsPerPage - 1) / townsPerPage);
-
-            if (m_TownPage >= totalTownPages) m_TownPage = totalTownPages - 1;
-
-            int start = m_TownPage * townsPerPage;
-            int end = Math.Min(start + townsPerPage, towns.Count);
-
-            int y = 90;
-            for (int i = start; i < end; i++)
+            AddHtml(10, 15, 780, 25, "<CENTER><BASEFONT SIZE='6' COLOR='#FFFFFF'>TOWN ECONOMY & VENDOR ADMIN</BASEFONT></CENTER>", false, false);
+			
+			// [추가] 우측 상단: NPC 전역 관리 버튼 (ID: 20)
+            AddButton(620, 15, 4005, 4007, 20, GumpButtonType.Reply, 0); 
+            AddLabel(655, 17, 0x481, "NPC 전역 관리");
+            // --- 1. 상단 대륙 탭 (ID: 1 ~ 6) ---
+            string[] mapNames = { "Trammel", "Felucca", "Ilshenar", "Malas", "Tokuno", "TerMur" };
+            for (int i = 0; i < mapNames.Length; i++)
             {
-                string townName = towns[i];
-                bool isSelected = (m_SelectedTown == townName);
-                
-                AddButton(25, y, isSelected ? 4006 : 4005, 4007, i + 1, GumpButtonType.Reply, 0);
-                AddLabel(60, y, isSelected ? 68 : 1152, townName);
-
-                y += 25;
+                int x = 20 + (i * 130);
+                AddButton(x, 50, m_MapIndex == i ? 4006 : 4005, 4007, i + 1, GumpButtonType.Reply, 0);
+                AddLabel(x + 35, 52, m_MapIndex == i ? 68 : 1152, mapNames[i]);
             }
 
-            if (m_TownPage > 0)
-                AddButton(25, 485, 4014, 4016, 200, GumpButtonType.Reply, 0); 
-            
-            AddLabel(75, 487, 1152, $"{m_TownPage + 1}/{totalTownPages}");
+            // --- 2. 헤더 라인 ---
+            int y = 110;
+            AddImageTiled(20, y + 25, 760, 2, 9277); // 헤더 구분선
+            AddLabel(25, y, 1152, "ID");
+            AddLabel(75, y, 1152, "마을 이름");
+            AddLabel(235, y, 1152, "상인 수");
+            AddLabel(345, y, 1152, "창고 가치 (Platinum/Gold)");
+            AddLabel(695, y, 1152, "세부 관리");
 
-            if (m_TownPage < totalTownPages - 1)
-                AddButton(130, 485, 4005, 4007, 201, GumpButtonType.Reply, 0); 
+            // --- 3. 마을 리스트 출력 루프 ---
+            Map targetMap = Facets[m_MapIndex];
+			int logicID = m_MapIndex;
+            var townList = TownEconomyManager.Towns.Values
+				.Where(t => (t.TownID / 100) == logicID) 
+				.OrderBy(t => t.TownID).ToList();
+
+            int start = m_TPage * 14; // 한 페이지에 14개씩
+            int end = Math.Min(start + 14, townList.Count);
+
+            for (int i = start; i < end; i++)
+            {
+                y += 28;
+                var town = townList[i];
+                
+                // 실시간 상인 수 카운트 (Gump를 그릴 때 최신화)
+                int vCount = World.Mobiles.Values.OfType<BaseVendor>()
+            .Count(v => v.Map == targetMap && TownNumber.GetID(v.Location, v.Map) == town.TownID && !(v is Banker));
+
+                AddLabel(25, y, 0x481, town.TownID.ToString());
+                AddLabel(75, y, 0x481, town.Name);
+                AddLabel(235, y, vCount == 0 ? 33 : 68, $"{vCount} 명");
+                AddLabel(345, y, 0x481, town.TotalWealthString); // Wealth + 재고 가치 합산 문자열
+                
+                // 상세 관리 버튼 (ID: 100 + TownID)
+                AddButton(705, y, 4005, 4007, 100 + town.TownID, GumpButtonType.Reply, 0);
+            }
+
+            // --- 4. 페이징 버튼 ---
+            if (m_TPage > 0) AddButton(350, 510, 4014, 4016, 98, GumpButtonType.Reply, 0);
+            AddLabel(390, 520, 1152, $"{m_TPage + 1} / {(townList.Count - 1) / 14 + 1}");
+            if (end < townList.Count) AddButton(440, 510, 4005, 4007, 99, GumpButtonType.Reply, 0);
+
+            // --- 5. 하단 공통 컨트롤 (3개 버튼) ---
+            int btnY = 550;
+            AddButton(80, btnY, 4005, 4007, 10, GumpButtonType.Reply, 0); AddLabel(115, btnY + 2, 68, "대륙 리스폰 ON");
+            AddButton(320, btnY, 4005, 4007, 11, GumpButtonType.Reply, 0); AddLabel(355, btnY + 2, 33, "대륙 리스폰 OFF");
+            AddButton(560, btnY, 4005, 4007, 14, GumpButtonType.Reply, 0); AddLabel(595, btnY + 2, 1152, "경제 지표 동기화");
         }
 
-        private void DrawWarehouseItems()
+        private void DrawTownInventory()
         {
-            AddBackground(180, 60, 500, 460, 9300); // 버튼 공간을 위해 Y축 약간 조절
+            if (!TownEconomyManager.Towns.TryGetValue(m_TownID, out var town)) return;
 
-            if (string.IsNullOrEmpty(m_SelectedTown) || !TownEconomyManager.Towns.TryGetValue(m_SelectedTown, out var town))
-            {
-                AddHtml(180, 250, 500, 20, "<CENTER>좌측에서 마을을 선택해주세요.</CENTER>", false, false);
-                return;
-            }
+            // 진입 시 지표 동기화 (가격 계산용)
+            town.UpdateBaseWealth();
 
-            AddHtml(190, 70, 300, 20, $"<BASEFONT COLOR=#FDB913>[{town.TownName}] 자산: {town.Wealth:#,0} gp</BASEFONT>", false, false);
-            
-            AddButton(530, 68, 4005, 4007, 500, GumpButtonType.Reply, 0); 
-            AddLabel(565, 70, 1152, "XML 동기화");
+            AddHtml(10, 15, 780, 25, $"<CENTER><BASEFONT COLOR='#68FF68' SIZE='6'>[{town.Name}] WAREHOUSE</BASEFONT></CENTER>", false, false);
+            AddButton(20, 15, 4014, 4016, 999, GumpButtonType.Reply, 0); AddLabel(55, 15, 1152, "목록으로");
 
-            AddLabel(190, 100, 1152, "아이템 종류");
-            AddLabel(380, 100, 1152, "재고");
-            AddLabel(470, 100, 1152, "기준가");
-            AddLabel(540, 100, 1152, "적용가");
+			// [새로 추가할 부분] 시민 관리 창 이동 버튼
+			AddButton(150, 15, 4005, 4007, 1000, GumpButtonType.Reply, 0); 
+			AddLabel(185, 15, 68, "시민(NPC) 관리");
 
-            var items = town.Warehouse.Values.OrderBy(i => i.ItemType.Name).ToList();
-            int itemsPerPage = 13; // 버튼 공간 때문에 리스트 하나 줄임
-            int totalItemPages = Math.Max(1, (items.Count + itemsPerPage - 1) / itemsPerPage);
+            string ecoInfo = $"현금: {town.Wealth:N0}g  |  기준: {town.BaseWealth:N0}g  |  물가: {town.PriceMultiplier:F2}x";
+            AddLabel(35, 50, 0x481, ecoInfo);
 
-            if (m_ItemPage >= totalItemPages) m_ItemPage = totalItemPages - 1;
+            int y = 80;
+            AddLabel(35, y, 53, "아이템 이름 (Type)");
+            AddLabel(300, y, 53, "현재 재고");
+            AddLabel(450, y, 53, "기준 가격");
+            AddLabel(635, y, 53, "수정");
 
-            int start = m_ItemPage * itemsPerPage;
-            int end = Math.Min(start + itemsPerPage, items.Count);
+            var items = town.Warehouse.Values.OrderBy(w => w.ItemType.Name).ToList();
+            int start = m_IPage * 15;
+            int end = Math.Min(start + 15, items.Count);
 
-            int y = 125;
             for (int i = start; i < end; i++)
             {
-                var item = items[i];
-                int currentPrice = town.GetPrice(item.ItemType, town.PriceMultiplier);
-
-                AddLabel(190, y, 0, item.ItemType.Name);
-                AddLabel(380, y, item.Stock < 500 ? 33 : 68, $"{item.Stock:#,0}");
-                AddLabel(470, y, 0, $"{item.BasePrice:#,0}");
-                AddLabel(540, y, 88, $"{currentPrice:#,0}");
-                AddButton(615, y, 4011, 4012, 1000 + i, GumpButtonType.Reply, 0);
-                y += 28;
+                y += 26;
+                var wItem = items[i];
+                AddImageTiled(20, y, 760, 24, 9354);
+                AddLabel(35, y + 2, 1152, wItem.ItemType.Name);
+                AddLabel(300, y + 2, wItem.Stock <= 500 ? 33 : 68, wItem.Stock.ToString("N0"));
+                AddLabel(450, y + 2, 1152, $"{wItem.BasePrice:N0} gp");
+                AddButton(635, y + 2, 4005, 4007, 2000 + i, GumpButtonType.Reply, 0);
             }
 
-            if (m_ItemPage > 0)
-                AddButton(190, 485, 4014, 4016, 100, GumpButtonType.Reply, 0); 
-            if (m_ItemPage < totalItemPages - 1)
-                AddButton(640, 485, 4005, 4007, 101, GumpButtonType.Reply, 0); 
+            if (m_IPage > 0) AddButton(350, 555, 4014, 4016, 997, GumpButtonType.Reply, 0);
+            AddLabel(390, 549, 1152, $"{m_IPage + 1} / {(items.Count - 1) / 15 + 1}");
+            if (end < items.Count) AddButton(440, 555, 4005, 4007, 998, GumpButtonType.Reply, 0);
         }
 
         public override void OnResponse(NetState sender, RelayInfo info)
         {
-            if (info.ButtonID == 0) return;
-            int btn = info.ButtonID;
+            int id = info.ButtonID;
+            if (id == 0) return;
 
-            // [★ 추가] 관리 편의성 명령어 원클릭 연동
-            if (btn == 600)
+            Map targetMap = Facets[m_MapIndex];
+            int logicID = m_MapIndex; // 현재 보고 있는 대륙의 논리 번호
+
+			// [수정] 하단 리스폰/동기화 대상 마을 필터링
+			var targets = TownEconomyManager.Towns.Values
+				.Where(t => (t.TownID / 100) == logicID).ToList();
+
+            // 1. 대륙 탭 이동
+            if (id >= 1 && id <= 6)
             {
-                CommandSystem.Handle(m_From, $"{CommandSystem.Prefix}AutoVendorSpawn");
-                m_From.SendGump(new EconomyAdminGump(m_From, m_SelectedTown, m_TownPage, m_ItemPage));
-                return;
-            }
-            if (btn == 601)
-            {
-                CommandSystem.Handle(m_From, $"{CommandSystem.Prefix}InitTowns");
-                m_From.SendGump(new EconomyAdminGump(m_From, m_SelectedTown, m_TownPage, m_ItemPage));
-                return;
-            }
-            if (btn == 602)
-            {
-                CommandSystem.Handle(m_From, $"{CommandSystem.Prefix}SyncTownStock");
-                m_From.SendGump(new EconomyAdminGump(m_From, m_SelectedTown, m_TownPage, m_ItemPage));
+                m_From.SendGump(new EconomyAdminGump(m_From, id - 1, 0, 0, 0));
                 return;
             }
 
-            if (btn == 100) { m_From.SendGump(new EconomyAdminGump(m_From, m_SelectedTown, m_TownPage, m_ItemPage - 1)); return; }
-            if (btn == 101) { m_From.SendGump(new EconomyAdminGump(m_From, m_SelectedTown, m_TownPage, m_ItemPage + 1)); return; }
-
-            if (btn == 200) { m_From.SendGump(new EconomyAdminGump(m_From, m_SelectedTown, m_TownPage - 1, 0)); return; }
-            if (btn == 201) { m_From.SendGump(new EconomyAdminGump(m_From, m_SelectedTown, m_TownPage + 1, 0)); return; }
-
-            if (btn == 500 && !string.IsNullOrEmpty(m_SelectedTown))
+            if (m_TownID == 0)
             {
-                TownInventoryData.LoadFromXml();
-                if (TownEconomyManager.Towns.TryGetValue(m_SelectedTown, out var town))
+                switch (id)
                 {
-                    var xmlData = TownInventoryData.GetSetupData(m_SelectedTown);
-                    foreach (var entry in xmlData)
+					case 20: // 전체 NPC 관리 창 (신설	)
+                        m_From.SendGump(new EconomyGlobalNpcGump(m_From, m_MapIndex));
+                        return;				
+                    case 10: // 리스폰 ON
+                        ToggleVendorNodes(targetMap, true);
+                        break;
+                    case 11: // 리스폰 OFF
+                        foreach (var t in targets) { t.Warehouse.Clear(); t.Wealth = 0; }
+                        ToggleVendorNodes(targetMap, false);
+                        break;
+                    case 14: // 지표 동기화
+                        foreach (var t in targets)
+                        {
+                            // 실시간 상인 카운트 필터 동기화
+							t.VendorCount = World.Mobiles.Values.OfType<BaseVendor>()
+								.Count(v => v.Map == targetMap && TownNumber.GetID(v.Location, v.Map) == t.TownID);
+							t.UpdateBaseWealth();
+							t.Wealth = t.BaseWealth;
+                        }
+                        break;
+                    case 98: m_TPage--; break;
+                    case 99: m_TPage++; break;
+                    default:
+                        if (id >= 100 && id < 1000)
+                        {
+                            m_From.SendGump(new EconomyAdminGump(m_From, m_MapIndex, id - 100, m_TPage, 0));
+                            return;
+                        }
+                        break;
+                }
+            }
+            else // 인벤토리 뷰 응답
+            {
+                if (id == 999) m_TownID = 0;
+                else if (id == 997) m_IPage--;
+                else if (id == 998) m_IPage++;
+				else if (id == 1000) // [새로 추가할 부분] 시민 관리 Gump 호출
+				{
+					m_From.SendGump(new EconomyCitizenMainGump(m_From, TownEconomyManager.Towns[m_TownID], m_MapIndex, m_TPage));
+					return;
+				}
+				else if (id >= 2000) // 아이템 수정
+                {
+                    var items = TownEconomyManager.Towns[m_TownID].Warehouse.Values.OrderBy(w => w.ItemType.Name).ToList();
+                    int idx = id - 2000;
+                    if (idx >= 0 && idx < items.Count)
                     {
-                        if (town.Warehouse.TryGetValue(entry.ItemType, out var item))
-                            item.BasePrice = entry.BasePrice;
+                        m_From.SendGump(new EconomyItemEditGump(m_From, TownEconomyManager.Towns[m_TownID], items[idx], m_TPage, m_IPage, m_MapIndex));
+                        return;
                     }
-                    m_From.SendMessage(68, "XML 가격 동기화 완료.");
                 }
-                m_From.SendGump(new EconomyAdminGump(m_From, m_SelectedTown, m_TownPage, m_ItemPage));
-                return;
+                // 아이템 수정(2000+) 등은 기존 로직 유지
             }
 
-            if (btn >= 1 && btn < 200)
-            {
-                var towns = TownEconomyManager.Towns.Values
-                                .Where(t => t.Warehouse.Count > 0)
-                                .Select(t => t.TownName)
-                                .OrderBy(k => k).ToList();
-                int idx = btn - 1;
-                if (idx >= 0 && idx < towns.Count)
-                    m_From.SendGump(new EconomyAdminGump(m_From, towns[idx], m_TownPage, 0));
-                return;
-            }
+            m_From.SendGump(new EconomyAdminGump(m_From, m_MapIndex, m_TownID, m_TPage, m_IPage));
+        }
 
-            if (btn >= 1000 && !string.IsNullOrEmpty(m_SelectedTown))
+        private void ToggleVendorNodes(Map map, bool isActive)
+        {
+            var nodes = World.Items.Values.OfType<VendorNode>().Where(n => n.Map == map).ToList();
+            foreach (var node in nodes)
             {
-                int itemIdx = btn - 1000;
-                if (TownEconomyManager.Towns.TryGetValue(m_SelectedTown, out var town))
-                {
-                    var items = town.Warehouse.Values.OrderBy(i => i.ItemType.Name).ToList();
-                    if (itemIdx >= 0 && itemIdx < items.Count)
-                        m_From.SendGump(new EconomyItemEditGump(m_From, town, items[itemIdx], m_TownPage, m_ItemPage));
-                }
+                node.IsActive = isActive;
+                if (!isActive) node.ClearSpawned();
+                else node.Respawn();
             }
         }
-    }
 
+        private static Map[] Facets = { Map.Trammel, Map.Felucca, Map.Ilshenar, Map.Malas, Map.Tokuno, Map.TerMur };
+   }
+
+    // ==========================================
+    // 개별 아이템 수정 Gump (유저님 작성본 연동)
+    // ==========================================
     public class EconomyItemEditGump : Gump
     {
-        private readonly Mobile m_From;
-        private readonly TownEconomy m_Town;
-        private readonly WarehouseItem m_Item;
-        private readonly int m_TownPage;
-        private readonly int m_ItemPage;
+        private Mobile m_From; private TownEconomy m_Town; private WarehouseItem m_Item;
+        private int m_TPage, m_IPage, m_MapIndex;
 
-        public EconomyItemEditGump(Mobile from, TownEconomy town, WarehouseItem item, int townPage, int itemPage) : base(200, 200)
+        public EconomyItemEditGump(Mobile f, TownEconomy t, WarehouseItem i, int tp, int ip, int mapIndex) : base(300, 300)
         {
-            m_From = from; m_Town = town; m_Item = item; m_TownPage = townPage; m_ItemPage = itemPage;
-            AddPage(0);
+            m_From = f; m_Town = t; m_Item = i; m_TPage = tp; m_IPage = ip; m_MapIndex = mapIndex;
             AddBackground(0, 0, 300, 220, 9270);
-            AddHtml(0, 15, 300, 20, $"<CENTER><BASEFONT COLOR=#FDB913>{item.ItemType.Name}</BASEFONT></CENTER>", false, false);
-            AddLabel(30, 60, 0, "현재 재고:");
-            AddBackground(120, 55, 100, 25, 9300);
-            AddTextEntry(125, 58, 90, 20, 0, 1, item.Stock.ToString());
-            AddLabel(30, 100, 0, "기준 가격:");
-            AddBackground(120, 95, 100, 25, 9300);
-            AddTextEntry(125, 98, 90, 20, 0, 2, item.BasePrice.ToString());
-            AddButton(60, 160, 2128, 2129, 1, GumpButtonType.Reply, 0); 
-            AddButton(180, 160, 2119, 2120, 0, GumpButtonType.Reply, 0); 
+            AddHtml(0, 15, 300, 20, $"<CENTER><BASEFONT COLOR=#FDB913>{i.ItemType.Name}</BASEFONT></CENTER>", false, false);
+            AddLabel(30, 60, 1152, "현재 재고:"); AddBackground(120, 55, 100, 25, 9300);
+            AddTextEntry(125, 58, 90, 20, 0, 1, i.Stock.ToString());
+            AddLabel(30, 100, 1152, "기준 가격:"); AddBackground(120, 95, 100, 25, 9300);
+            AddTextEntry(125, 98, 90, 20, 0, 2, i.BasePrice.ToString());
+            AddButton(60, 160, 2128, 2129, 1, GumpButtonType.Reply, 0);
+            AddButton(170, 160, 2119, 2120, 0, GumpButtonType.Reply, 0);
         }
 
         public override void OnResponse(NetState sender, RelayInfo info)
         {
-            if (info.ButtonID == 1) 
+            if (info.ButtonID == 1)
             {
-                if (int.TryParse(info.GetTextEntry(1)?.Text, out int nStock) && int.TryParse(info.GetTextEntry(2)?.Text, out int nPrice))
-                {
-                    m_Item.Stock = Math.Max(0, nStock);
-                    m_Item.BasePrice = Math.Max(1, nPrice);
-                    m_From.SendMessage(68, "수정 완료.");
-                }
+                m_Item.Stock = Math.Max(0, Utility.ToInt32(info.GetTextEntry(1).Text));
+                m_Item.BasePrice = Math.Max(1, Utility.ToInt32(info.GetTextEntry(2).Text));
+                m_From.SendMessage(68, $"{m_Item.ItemType.Name} 수정 완료.");
             }
-            m_From.SendGump(new EconomyAdminGump(m_From, m_Town.TownName, m_TownPage, m_ItemPage));
+            m_From.SendGump(new EconomyAdminGump(m_From, m_MapIndex, m_Town.TownID, m_TPage, m_IPage));
         }
     }
 }

@@ -36,6 +36,7 @@ namespace Server.Mobiles
         public BaseEscortable()
             : base(AIType.AI_Melee, FightMode.Aggressor, 22, 1, 0.2, 1.0)
         {
+			Timer.DelayCall(TimeSpan.Zero, Delete);
             InitBody();
             InitOutfit();
         }

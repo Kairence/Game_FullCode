@@ -10,6 +10,7 @@ using Server.Items;
 using Server.Mobiles;
 using Server.Network;
 using Server.Regions;
+using System.Xml.Linq;
 
 namespace Server.Misc
 {
@@ -17,57 +18,142 @@ namespace Server.Misc
     {
         public static void Initialize()
         {
-            CommandSystem.Register("newspawn", AccessLevel.Administrator, new CommandEventHandler(OnNewSpawn));
+            CommandSystem.Register("ns", AccessLevel.Administrator, new CommandEventHandler(OnNewSpawn));
             CommandSystem.Register("zonemonitor", AccessLevel.Administrator, new CommandEventHandler(OnMonitor));
             CommandSystem.Register("zm", AccessLevel.Administrator, new CommandEventHandler(OnMonitor));
             CommandSystem.Register("fixallnodes", AccessLevel.Administrator, new CommandEventHandler(OnFixAllNodes));
             CommandSystem.Register("wipeworldspawns", AccessLevel.Administrator, new CommandEventHandler(OnWipeWorldSpawns));
-            CommandSystem.Register("wipeoldspawns", AccessLevel.Administrator, new CommandEventHandler(OnWipeOldSpawns));
-			CommandSystem.Register("wipewildcrops", AccessLevel.Administrator, new CommandEventHandler(OnWipeWildCrops));
+            CommandSystem.Register("WipeOldVendorSpawners", AccessLevel.Administrator, new CommandEventHandler(OnWipeOldVendors));
+            CommandSystem.Register("wipewildcrops", AccessLevel.Administrator, new CommandEventHandler(OnWipeWildCrops));
         }
 
-		[Usage("wipewildcrops")]
-		[Description("현재 맵의 모든 야생 작물을 삭제하고 자원 카운트를 0으로 초기화합니다.")]
-		public static void OnWipeWildCrops(CommandEventArgs e)
+		public static void DoImport(Mobile from, int mode)
 		{
-			Mobile from = e.Mobile;
-			Map targetMap = from.Map;
-
-			if (targetMap == null || targetMap == Map.Internal)
-				return;
-
-			int itemDeleted = 0;
-			int poolReset = 0;
-
-			// 1. 맵상의 모든 BaseFarmItem 삭제 (개인 농장은 제외하고 싶다면 조건 추가 가능)
-			List<Item> toDelete = new List<Item>();
-			foreach (Item item in World.Items.Values)
+			if (mode == 0) // 삭제
 			{
-				if (item.Map == targetMap && item is BaseFarmItem)
+				CommandSystem.Handle(from, $"{CommandSystem.Prefix}BaseVendorWipe");
+			}
+			else if (mode == 2) // 로드 (벤더 XML 동기화)
+			{
+				var checkRespawn = CheckRespawnXml();
+				
+				if (checkRespawn.isValid && checkRespawn.doc != null)
 				{
-					// 유저가 심은 개인 농장 작물은 살려두고 싶다면 아래 주석을 해제하세요.
-					// if (((BaseFarmItem)item).Owner != null) continue; 
-					
-					toDelete.Add(item);
+					from.SendMessage(68, "2번 시나리오: NewRespawn.xml 데이터로 VendorNode를 구성합니다.");
+					LoadFromRespawnXml(checkRespawn.doc);
+				}
+				else
+				{
+					from.SendMessage(68, "1번 시나리오: NewRespawn.xml이 없어 NewVendor.xml 기준으로 구성합니다.");
+					LoadFromXml();
 				}
 			}
-
-			itemDeleted = toDelete.Count;
-			foreach (Item i in toDelete) i.Delete();
-
-			// 2. ResourceManager의 모든 Farming Pool 카운트를 0으로 초기화
-			foreach (var kvp in ResourceManager.Pools)
-			{
-				// 현재 맵에 속한 농사(Farming) 풀만 타겟팅
-				if (kvp.Key.MapName == targetMap.Name && kvp.Key.Type == ResourceType.Farming)
-				{
-					kvp.Value.CurrentCapacity = 0;
-					poolReset++;
-				}
-			}
-
-			from.SendMessage(68, $"{targetMap.Name}: 작물 {itemDeleted}개 삭제 및 {poolReset}개 구역 카운트 초기화 완료.");
+			
+			from.SendMessage(68, $"[NewSpawn] Mode {mode} Processed.");
 		}
+
+		private static (bool isValid, XmlDocument? doc) CheckRespawnXml()
+		{
+			string path = Path.Combine(Core.BaseDirectory, "Data", "NewRespawn.xml");
+			if (!File.Exists(path)) return (false, null);
+
+			try
+			{
+				XmlDocument doc = new XmlDocument();
+				doc.Load(path);
+				bool isValid = doc.SelectNodes("//VendorNodes/Vendor")?.Count > 0;
+				return (isValid, doc);
+			}
+			catch
+			{
+				return (false, null);
+			}
+		}
+
+		private static void LoadFromRespawnXml(XmlDocument doc)
+		{
+			// 1. 기존 스포너(VendorNode) 및 떠도는 BaseVendor 청소
+			var oldNodes = World.Items.Values.OfType<VendorNode>().Where(i => !i.Deleted).ToList();
+			foreach (var n in oldNodes) n.Delete();
+
+			var oldVendors = World.Mobiles.Values.OfType<BaseVendor>().Where(m => !m.Deleted).ToList();
+			foreach (var v in oldVendors) v.Delete();
+
+			// 2. NewRespawn.xml 데이터를 읽어 VendorNode 설치
+			XmlNodeList? vendors = doc.SelectNodes("//VendorNodes/Vendor");
+			if (vendors == null) return;
+
+			int nodeCount = 0;
+			foreach (XmlNode v in vendors)
+			{
+				string mapName = v.Attributes?["Map"]?.Value ?? "Trammel";
+				string zoneId = v.Attributes?["ZoneId"]?.Value ?? "Unknown";
+				string spawnList = v.Attributes?["List"]?.Value ?? "";
+				
+				Map map = Map.Parse(mapName);
+				int x = int.Parse(v.Attributes?["X"]?.Value ?? "0");
+				int y = int.Parse(v.Attributes?["Y"]?.Value ?? "0");
+				int z = int.Parse(v.Attributes?["Z"]?.Value ?? "0");
+				Point3D loc = new Point3D(x, y, z);
+
+				// 해당 좌표(loc)에 존재하는 구형 XmlSpawner를 찾아 모두 삭제
+				var oldSpawners = map.GetItemsInRange(loc, 0)
+					.Where(i => i.GetType().Name.Contains("XmlSpawner", StringComparison.OrdinalIgnoreCase))
+					.ToList();
+				foreach (var spawner in oldSpawners) spawner.Delete();
+
+				// ZoneId(문자열)를 TownID(정수)로 변환
+				int townID = TownNumber.GetID(loc, map);
+
+				VendorNode node = new VendorNode
+				{
+					TownID = townID,
+					MaxCount = int.Parse(v.Attributes?["MaxCount"]?.Value ?? "1"),
+					HomeRange = int.Parse(v.Attributes?["Range"]?.Value ?? "5"),
+					SpawnList = spawnList
+				};
+				
+				node.MoveToWorld(loc, map);
+				nodeCount++;
+			}
+			
+			Console.WriteLine($"[Economy] {nodeCount}개의 VendorNode가 로드되었으며 구형 스포너가 삭제되었습니다.");
+		}
+        #region [Commands & Utilities]
+        [Usage("wipewildcrops")]
+        [Description("현재 맵의 모든 야생 작물을 삭제하고 자원 카운트를 0으로 초기화합니다.")]
+        public static void OnWipeWildCrops(CommandEventArgs e)
+        {
+            Mobile from = e.Mobile;
+            Map targetMap = from.Map;
+
+            if (targetMap == null || targetMap == Map.Internal) return;
+
+            int itemDeleted = 0;
+            int poolReset = 0;
+            List<Item> toDelete = new List<Item>();
+
+            foreach (Item item in World.Items.Values)
+            {
+                if (item.Map == targetMap && item is BaseFarmItem)
+                    toDelete.Add(item);
+            }
+
+            itemDeleted = toDelete.Count;
+            foreach (Item i in toDelete) i.Delete();
+
+            foreach (var kvp in ResourceManager.Pools)
+            {
+                if (kvp.Key.MapName == targetMap.Name && kvp.Key.Type == ResourceType.Farming)
+                {
+                    kvp.Value.CurrentCapacity = 0;
+                    poolReset++;
+                }
+            }
+
+            from.SendMessage(68, $"{targetMap.Name}: 작물 {itemDeleted}개 삭제 및 {poolReset}개 구역 카운트 초기화 완료.");
+        }
+
         [Usage("fixallnodes")]
         [Description("모든 노드의 구역 정보를 현재 위치 기반으로 재설정합니다.")]
         public static void OnFixAllNodes(CommandEventArgs e)
@@ -86,53 +172,110 @@ namespace Server.Misc
         }
 
         [Usage("wipeworldspawns")]
-        [Description("전 세계의 모든 XmlSpawner를 삭제합니다. (매우 위험)")]
-        public static void OnWipeWorldSpawns(CommandEventArgs e)
-        {
-            // 이 기능은 DoReset과 유사하지만 맵 제한 없이 전체를 타겟팅할 때 사용합니다.
-            DoReset(e.Mobile);
-        }
+        public static void OnWipeWorldSpawns(CommandEventArgs e) => DoReset(e.Mobile);
 
-        // ★ [복구 완료] wipeoldspawns: 현재 맵의 모든 구형 스포너 청소
-        [Usage("wipeoldspawns")]
-        [Description("현재 맵에 존재하는 모든 XmlSpawner와 기본 Spawner를 삭제합니다.")]
-        public static void OnWipeOldSpawns(CommandEventArgs e)
-        {
-            Mobile from = e.Mobile;
-            Map targetMap = from.Map;
+        [Usage("WipeOldVendorSpawners")]
+		[Description("구형 XmlSpawner 중 일반 상인(BaseVendor)을 소환하는 스포너를 찾아 삭제합니다. (뱅커, 힐러 등 특수 NPC는 보호)")]
+		public static void OnWipeOldVendors(CommandEventArgs e)
+		{
+			Type? xmlType = ScriptCompiler.FindTypeByName("XmlSpawner");
+			if (xmlType == null) 
+			{ 
+				e.Mobile.SendMessage(33, "서버에서 XmlSpawner 시스템을 찾을 수 없습니다."); 
+				return; 
+			}
 
-            if (targetMap == null || targetMap == Map.Internal)
-                return;
+			int removedEntries = 0;
+			List<Item> emptySpawners = [];
+			List<Mobile> mobsToDelete = [];
 
-            int count = 0;
-            List<Item> toDelete = new List<Item>();
-            Type xmlSpawnerType = ScriptCompiler.FindTypeByName("XmlSpawner");
+			// 1. 스포너 내부 항목 정밀 타격 (스폰 리스트에서 상인만 삭제)
+			foreach (Item item in World.Items.Values)
+			{
+				if (item.GetType() == xmlType)
+				{
+					try
+					{
+						var prop = item.GetType().GetProperty("m_SpawnObjects") ?? item.GetType().GetProperty("SpawnObjects");
+						if (prop?.GetValue(item, null) is System.Collections.IList list)
+						{
+							bool modified = false;
 
-            // [수정] Map.Items.Values 대신 World.Items.Values를 순회하며 맵 필터링
-            foreach (Item item in World.Items.Values)
-            {
-                if (item.Map != targetMap)
-                    continue;
+							// 인덱스가 꼬이지 않도록 뒤에서부터 순회
+							for (int i = list.Count - 1; i >= 0; i--)
+							{
+								var so = list[i];
+								string typeName = so?.GetType().GetProperty("TypeName")?.GetValue(so, null) as string ?? "";
+								if (string.IsNullOrEmpty(typeName)) continue;
 
-                // 1. XmlSpawner 체크
-                if (xmlSpawnerType != null && item.GetType() == xmlSpawnerType)
-                {
-                    if (!IsSafeCheck(item)) // 안전 검사 (상인/뱅커 등 제외)
-                        toDelete.Add(item);
-                }
-                // 2. 기본 Spawner 체크
-                else if (item is Spawner)
-                {
-                    toDelete.Add(item);
-                }
-            }
+								Type? t = ScriptCompiler.FindTypeByName(typeName);
 
-            count = toDelete.Count;
-            foreach (Item i in toDelete) 
-                i.Delete();
+								// 타입이 BaseVendor 상속자라면 검사 진행
+								if (t != null && t.IsSubclassOf(typeof(BaseVendor)))
+								{
+									string nameLower = typeName.ToLower();
 
-            from.SendMessage(68, $"{targetMap.Name} 맵에서 총 {count}개의 구형 스포너를 삭제했습니다.");
-        }
+									// [보호] 뱅커, 힐러, 가드 등은 마을 기능 NPC이므로 무조건 살려둠
+									if (nameLower.Contains("banker") || nameLower.Contains("healer") || 
+										nameLower.Contains("guildmaster") || nameLower.Contains("animaltrainer") || 
+										nameLower.Contains("stablemaster") || nameLower.Contains("guard"))
+									{
+										continue;
+									}
+
+									// 일반 상인 항목만 리스트에서 제거
+									list.RemoveAt(i);
+									removedEntries++;
+									modified = true;
+								}
+							}
+
+							// 항목이 지워졌다면 스포너 상태 갱신
+							if (modified)
+							{
+								if (list.Count == 0) 
+								{
+									// 상인만 들어있어서 속이 텅 빈 스포너라면 삭제 리스트에 추가
+									emptySpawners.Add(item);
+								}
+								else 
+								{
+									// 다른 NPC가 남아있다면 스포너를 갱신(Respawn)하여 유지
+									item.GetType().GetMethod("Respawn")?.Invoke(item, null);
+								}
+							}
+						}
+					}
+					catch { }
+				}
+			}
+
+			// 텅 빈 껍데기 스포너들만 일괄 삭제
+			foreach (Item spawner in emptySpawners) spawner.Delete();
+
+			// 2. 이미 월드에 소환되어 돌아다니는 구형 상인들(BaseVendor) 직접 강제 퇴근
+			foreach (Mobile m in World.Mobiles.Values)
+			{
+				// BaseVendor(우리가 만든 새 시스템)는 건드리지 않고, 옛날 BaseVendor만 타격
+				if (m is BaseVendor && m is not BaseVendor)
+				{
+					string nameLower = m.GetType().Name.ToLower();
+					if (nameLower.Contains("banker") || nameLower.Contains("healer") || 
+						nameLower.Contains("guildmaster") || nameLower.Contains("animaltrainer") || 
+						nameLower.Contains("stablemaster") || nameLower.Contains("guard"))
+					{
+						continue;
+					}
+					mobsToDelete.Add(m);
+				}
+			}
+			
+			int deletedMobiles = mobsToDelete.Count;
+			foreach (Mobile m in mobsToDelete) m.Delete();
+
+			e.Mobile.SendMessage(68, $"[청소 완료] XmlSpawner에서 상인 스폰 항목 {removedEntries}개 제거 (빈 껍데기 스포너 {emptySpawners.Count}개 삭제).");
+			e.Mobile.SendMessage(68, $"월드에 남아있던 구형 상인 {deletedMobiles}명 강제 퇴근 완료.");
+		}
 
         public static bool IsManaged(string nodeZoneId)
         {
@@ -161,140 +304,309 @@ namespace Server.Misc
             return null;
         }
 
-        public static void DoExport(Mobile from)
+        public static string GetGoGumpZoneName(Point3D loc, Map map)
         {
-            string dir = Path.Combine(Core.BaseDirectory, "Data");
-            if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-            string path = Path.Combine(dir, "NewRespawn.xml");
-
-            int nodeCount = 0, popCount = 0;
-
-            using (XmlTextWriter xml = new XmlTextWriter(path, System.Text.Encoding.UTF8))
-            {
-                xml.Formatting = Formatting.Indented;
-                xml.WriteStartDocument();
-                xml.WriteStartElement("NewRespawn");
-
-                xml.WriteStartElement("Nodes");
-                foreach (Item item in World.Items.Values)
-                {
-                    if (item is DungeonNode node)
-                    {
-                        xml.WriteStartElement("Node");
-                        xml.WriteAttributeString("Map", node.Map.Name);
-                        xml.WriteAttributeString("X", node.X.ToString());
-                        xml.WriteAttributeString("Y", node.Y.ToString());
-                        xml.WriteAttributeString("Z", node.Z.ToString());
-                        xml.WriteAttributeString("ZoneId", node.ZoneId);
-                        xml.WriteAttributeString("Depth", ((int)node.Depth).ToString());
-                        xml.WriteAttributeString("SpawnRange", node.SpawnRange.ToString());
-                        xml.WriteAttributeString("HomeRange", node.HomeRange.ToString());
-                        xml.WriteEndElement();
-                        nodeCount++;
-                    }
-                }
-                xml.WriteEndElement();
-
-                xml.WriteStartElement("Populations");
-                foreach (var z in DungeonManager.Zones.Values)
-                {
-                    if (z.ManualMaxPopulation >= 0)
-                    {
-                        xml.WriteStartElement("Pop");
-                        xml.WriteAttributeString("ZoneId", z.ZoneId);
-                        xml.WriteAttributeString("MaxPop", z.ManualMaxPopulation.ToString());
-                        xml.WriteEndElement();
-                        popCount++;
-                    }
-                }
-                xml.WriteEndElement();
-
-                xml.WriteEndElement();
-                xml.WriteEndDocument();
-            }
-            from.SendMessage(68, $"[내보내기 완료] 노드 {nodeCount}개 / 설정 {popCount}개가 Data/NewRespawn.xml에 저장되었습니다.");
+            LocationTree tree = (map == Map.Felucca) ? GoGump.Felucca : (map == Map.Trammel ? GoGump.Trammel : (map == Map.Ilshenar ? GoGump.Ilshenar : (map == Map.Malas ? GoGump.Malas : (map == Map.Tokuno ? GoGump.Tokuno : GoGump.TerMur))));
+            if (tree == null || tree.Root == null) return "Unknown";
+            int bestDist = int.MaxValue; string bestPath = "Unknown";
+            FindClosestGoGumpNode(tree.Root, loc, "", ref bestDist, ref bestPath);
+            return bestPath.Replace("Locations ", "").Trim();
         }
 
-        public static void DoImport(Mobile from)
+        private static void FindClosestGoGumpNode(ParentNode node, Point3D target, string currentPath, ref int bestDist, ref string bestPath)
         {
-            string path = Path.Combine(Core.BaseDirectory, "Data", "NewRespawn.xml");
-            if (!File.Exists(path))
+            string path = string.IsNullOrEmpty(currentPath) ? node.Name : currentPath + " " + node.Name;
+            if (node.Children == null) return;
+            foreach (object child in node.Children)
             {
-                from.SendMessage(33, "오류: Data/NewRespawn.xml 파일을 찾을 수 없습니다.");
-                return;
-            }
-
-            List<DungeonNode> existingNodes = World.Items.Values.OfType<DungeonNode>().ToList();
-            foreach (var n in existingNodes) n.Delete();
-
-            int nodeCount = 0, popCount = 0;
-            XmlDocument doc = new XmlDocument();
-            try
-            {
-                doc.Load(path);
-
-                XmlNodeList nodes = doc.SelectNodes("/NewRespawn/Nodes/Node");
-                if (nodes != null)
+                if (child is ParentNode pNode) FindClosestGoGumpNode(pNode, target, path, ref bestDist, ref bestPath);
+                else if (child is ChildNode cNode)
                 {
-                    foreach (XmlNode n in nodes)
-                    {
-                        try
-                        {
-                            Map map = Map.Parse(n.Attributes["Map"].Value);
-                            int x = int.Parse(n.Attributes["X"].Value);
-                            int y = int.Parse(n.Attributes["Y"].Value);
-                            int z = int.Parse(n.Attributes["Z"].Value);
-                            if (map != null && map != Map.Internal)
-                            {
-                                DungeonNode newNode = new DungeonNode
-                                {
-                                    ZoneId = n.Attributes["ZoneId"].Value,
-                                    Depth = (DungeonDepth)int.Parse(n.Attributes["Depth"].Value),
-                                    SpawnRange = int.Parse(n.Attributes["SpawnRange"].Value),
-                                    HomeRange = int.Parse(n.Attributes["HomeRange"].Value)
-                                };
-                                newNode.MoveToWorld(new Point3D(x, y, z), map);
-                                nodeCount++;
-                            }
-                        }
-                        catch { }
-                    }
+                    int dist = (int)Math.Sqrt(Math.Pow(cNode.Location.X - target.X, 2) + Math.Pow(cNode.Location.Y - target.Y, 2));
+                    if (dist < bestDist) { bestDist = dist; bestPath = path + " " + cNode.Name; }
                 }
+            }
+        }
 
-                XmlNodeList pops = doc.SelectNodes("/NewRespawn/Populations/Pop");
-                if (pops != null)
+        private static Point3D GetRegionCenter(Region r) 
+        { 
+            if (r.Area != null && r.Area.Length > 0) 
+            { 
+                var a = r.Area[0]; 
+                return new Point3D(a.Start.X + ((a.End.X - a.Start.X) / 2), a.Start.Y + ((a.End.Y - a.Start.Y) / 2), r.Map.GetAverageZ(a.Start.X, a.Start.Y)); 
+            } 
+            return Point3D.Zero; 
+        }
+
+        [Usage("ns")] public static void OnNewSpawn(CommandEventArgs e) => e.Mobile.SendGump(new NewSpawnGump());
+        [Usage("zonemonitor")] public static void OnMonitor(CommandEventArgs e) => e.Mobile.SendGump(new ZoneMonitorGump(0, 0));
+        #endregion
+
+        #region [Export & Import System]
+        public static void DoExport(Mobile from, int mode) // 0:모두, 1:던전, 2:벤더
+        {
+            int dCount = 0, vCount = 0, popCount = 0;
+
+            // [1] 던전/생태계 노드 추출 (NewRespawn.xml)
+            if (mode == 0 || mode == 1)
+            {
+                string dPath = Path.Combine(Core.BaseDirectory, "Data", "NewRespawn.xml");
+                using (XmlTextWriter xml = new XmlTextWriter(dPath, System.Text.Encoding.UTF8))
                 {
-                    foreach (XmlNode p in pops)
+                    xml.Formatting = Formatting.Indented;
+                    xml.WriteStartDocument();
+                    xml.WriteStartElement("NewRespawn");
+
+                    xml.WriteStartElement("DungeonNodes");
+                    foreach (Item item in World.Items.Values)
                     {
-                        string zid = p.Attributes["ZoneId"].Value;
-                        if (int.TryParse(p.Attributes["MaxPop"].Value, out int pop) && DungeonManager.Zones.TryGetValue(zid, out var zone))
+                        if (item is DungeonNode n)
                         {
-                            zone.SetPopulation(pop);
+                            xml.WriteStartElement("Node");
+                            xml.WriteAttributeString("Map", n.Map.Name);
+                            xml.WriteAttributeString("X", n.X.ToString());
+                            xml.WriteAttributeString("Y", n.Y.ToString());
+                            xml.WriteAttributeString("Z", n.Z.ToString());
+                            xml.WriteAttributeString("ZoneId", n.ZoneId);
+                            xml.WriteAttributeString("Depth", ((int)n.Depth).ToString());
+                            xml.WriteAttributeString("SpawnRange", n.SpawnRange.ToString());
+                            xml.WriteAttributeString("HomeRange", n.HomeRange.ToString());
+                            xml.WriteEndElement();
+                            dCount++;
+                        }
+                    }
+                    xml.WriteEndElement();
+
+                    xml.WriteStartElement("Populations");
+                    foreach (var z in DungeonManager.Zones.Values)
+                    {
+                        if (z.ManualMaxPopulation >= 0)
+                        {
+                            xml.WriteStartElement("Pop");
+                            xml.WriteAttributeString("ZoneId", z.ZoneId);
+                            xml.WriteAttributeString("MaxPop", z.ManualMaxPopulation.ToString());
+                            xml.WriteEndElement();
                             popCount++;
                         }
                     }
+                    xml.WriteEndElement();
+
+                    xml.WriteEndElement();
+                    xml.WriteEndDocument();
                 }
-
-                foreach (var z in DungeonManager.Zones.Values) z.CacheNodes();
-                foreach (var z in EcosystemManager.Zones.Values) z.CacheNodes();
-
-                from.SendMessage(68, $"[가져오기 완료] 노드 {nodeCount}개와 설정 {popCount}개를 성공적으로 이식했습니다.");
             }
-            catch (Exception ex)
+
+            // [2] 벤더 노드 추출 (NewVendor.xml)
+            if (mode == 0 || mode == 2)
             {
-                from.SendMessage(33, $"XML 읽기 오류 발생: {ex.Message}");
+                string dir = Path.Combine(Core.BaseDirectory, "Data", "EconomySystem");
+                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                string vPath = Path.Combine(dir, "NewVendor.xml");
+
+                XmlWriterSettings settings = new() { Indent = true, IndentChars = "\t" };
+                using (XmlWriter writer = XmlWriter.Create(vPath, settings))
+                {
+                    writer.WriteStartDocument();
+                    writer.WriteStartElement("Vendors");
+
+                    foreach (Item item in World.Items.Values)
+                    {
+                        if (item is VendorNode v)
+                        {
+                            writer.WriteStartElement("VendorNode");
+                            writer.WriteAttributeString("Name", v.VendorName ?? "a vendor");
+                            writer.WriteAttributeString("Map", v.Map?.Name ?? "Trammel");
+                            writer.WriteAttributeString("X", v.X.ToString());
+                            writer.WriteAttributeString("Y", v.Y.ToString());
+                            writer.WriteAttributeString("Z", v.Z.ToString());
+                            writer.WriteAttributeString("MaxCount", v.MaxCount.ToString());
+                            writer.WriteAttributeString("Range", v.HomeRange.ToString()); 
+
+                            int townID = v.TownID > 0 ? v.TownID : TownNumber.GetID(v.Location, v.Map);
+                            string zoneName = townID > 0 ? TownNumber.GetName(townID) : "Unknown";
+                            writer.WriteAttributeString("ZoneId", zoneName);
+
+                            writer.WriteStartElement("Inventory");
+                            if (townID > 0 && TownEconomyManager.Towns.TryGetValue(townID, out var town))
+                            {
+                                foreach (var entry in town.InventoryEntries)
+                                {
+                                    writer.WriteStartElement("Item");
+                                    writer.WriteAttributeString("Type", entry.ItemType.Name);
+                                    writer.WriteAttributeString("Amount", entry.InitialStock.ToString());
+                                    writer.WriteAttributeString("Price", entry.BasePrice.ToString());
+                                    writer.WriteEndElement();
+                                }
+                            }
+                            writer.WriteEndElement(); // </Inventory>
+                            
+                            writer.WriteEndElement(); // </VendorNode>
+                            vCount++;
+                        }
+                    }
+
+                    writer.WriteEndElement(); // </Vendors>
+                    writer.WriteEndDocument();
+                }
             }
+
+            from.SendMessage(68, $"[Export 완료] 대상: {(mode == 0 ? "전체" : mode == 1 ? "던전" : "벤더")} (D:{dCount} / V:{vCount} / Pop:{popCount})");
+        }
+
+        public static void LoadFromXml()
+        {
+            string path = Path.Combine(Core.BaseDirectory, "Data", "EconomySystem", "NewVendor.xml");
+            if (!File.Exists(path)) return;
+
+            // 1. 기존 스포너(VendorNode) 삭제
+            var oldNodes = World.Items.Values.OfType<VendorNode>().Where(i => !i.Deleted).ToList();
+            foreach (var n in oldNodes) n.Delete();
+
+            // 만약을 대비해 떠돌고 있는 BaseVendor 잔여물 강제 청소
+            var oldVendors = World.Mobiles.Values.OfType<BaseVendor>().Where(m => !m.Deleted).ToList();
+            foreach (var v in oldVendors) v.Delete();
+
+            // 2. 마을 창고 및 설계도 초기화
+            foreach (var town in TownEconomyManager.Towns.Values)
+            {
+                town.VendorCount = 0;
+                town.InventoryEntries.Clear();
+                town.Warehouse.Clear();
+            }
+
+            try
+            {
+                XmlDocument doc = new();
+                doc.Load(path);
+                
+                // 구버전 <Vendor> 호환 및 신버전 <VendorNode> 동시 지원
+                XmlNodeList? nodes = doc.SelectNodes("//VendorNode") ?? doc.SelectNodes("//Vendor");
+                if (nodes == null) return;
+
+                int nodeCount = 0;
+                foreach (XmlNode n in nodes)
+                {
+                    string mapName = n.Attributes?["Map"]?.Value ?? "Trammel";
+                    string zoneId = n.Attributes?["ZoneId"]?.Value ?? "Unknown";
+                    string vName = n.Attributes?["Name"]?.Value ?? "a vendor";
+                    Map map = Map.Parse(mapName);
+
+                    int x = 0, y = 0, z = 0;
+                    XmlNode? posNode = n.SelectSingleNode("Position");
+                    if (posNode != null)
+                    {
+                        x = int.Parse(posNode.SelectSingleNode("X")?.InnerText ?? "0");
+                        y = int.Parse(posNode.SelectSingleNode("Y")?.InnerText ?? "0");
+                        z = int.Parse(posNode.SelectSingleNode("Z")?.InnerText ?? "0");
+                    }
+                    else
+                    {
+                        x = int.Parse(n.Attributes?["X"]?.Value ?? "0");
+                        y = int.Parse(n.Attributes?["Y"]?.Value ?? "0");
+                        z = int.Parse(n.Attributes?["Z"]?.Value ?? "0");
+                    }
+                    Point3D loc = new(x, y, z);
+
+                    int townID = TownNumber.GetID(loc, map);
+
+                    if (townID > 0)
+                    {
+                        if (!TownEconomyManager.Towns.TryGetValue(townID, out var town))
+                        {
+                            town = new TownEconomy(townID, 1000000) { Center = loc, Facet = map };
+                            TownEconomyManager.Towns[townID] = town;
+                        }
+
+                        // [핵심] 상인을 생성하지 않고 스포너(VendorNode)만 설치
+                        VendorNode vNode = new VendorNode
+                        {
+                            TownID = townID,
+                            VendorName = vName,
+                            MaxCount = int.Parse(n.Attributes?["MaxCount"]?.Value ?? "1"),
+                            HomeRange = int.Parse(n.Attributes?["Range"]?.Value ?? "5")
+                        };
+                        vNode.MoveToWorld(loc, map);
+                        nodeCount++;
+
+                        ParseInventoryToTown(n.SelectSingleNode("Inventory"), townID);
+                    }
+                }
+                Console.WriteLine($"[Economy] {nodeCount}개의 VendorNode 로드 및 창고 데이터 세팅 완료.");
+            }
+            catch (Exception ex) { Console.WriteLine($"[Economy] XML 로드 중 오류 발생: {ex.Message}"); }
+        }
+
+        private static void ParseInventoryToTown(XmlNode? inventoryNode, int townID)
+        {
+            if (inventoryNode == null || !TownEconomyManager.Towns.TryGetValue(townID, out var town)) 
+                return;
+
+            var itemNodes = inventoryNode.SelectNodes("Item");
+            if (itemNodes == null) return;
+
+            foreach (XmlNode iNode in itemNodes)
+            {
+                string typeName = iNode.Attributes?["Type"]?.Value?.Trim() ?? "";
+                string pStr = iNode.Attributes?["Price"]?.Value ?? "10";
+                string aStr = iNode.Attributes?["Amount"]?.Value ?? "100";
+
+                int price = int.Parse(string.IsNullOrEmpty(pStr) ? "10" : pStr);
+                int amount = int.Parse(string.IsNullOrEmpty(aStr) ? "100" : aStr);
+
+                Type? itemType = ScriptCompiler.FindTypeByName(typeName, true) 
+                              ?? ScriptCompiler.FindTypeByFullName($"Server.Items.{typeName}", true);
+
+                if (itemType != null)
+                {
+                    // 설계도 중복 누적
+                    var existingEntry = town.InventoryEntries.FirstOrDefault(e => e.ItemType == itemType);
+                    if (existingEntry != null) existingEntry.InitialStock += amount;
+                    else town.InventoryEntries.Add(new TownInventoryEntry(itemType, amount, price));
+
+                    // 실시간 창고 적재
+                    if (town.Warehouse.TryGetValue(itemType, out var wItem))
+                    {
+                        wItem.Stock += amount;
+                        wItem.BasePrice = price; 
+                    }
+                    else town.Warehouse[itemType] = new WarehouseItem(itemType, amount, price);
+                }
+            }
+        }
+        #endregion
+
+        #region [Reset & Migration System]
+        public static void DoResetDungeonNodes(Mobile from)
+        {
+            int count = 0;
+            var toDelete = World.Items.Values.OfType<DungeonNode>().ToList();
+            foreach (var item in toDelete) { item.Delete(); count++; }
+            
+            foreach (var z in DungeonManager.Zones.Values) z.CacheNodes();
+            from.SendMessage(33, $"[리셋 완료] 총 {count}개의 던전/생태계 노드를 삭제했습니다.");
+        }
+
+        public static void DoResetVendorNodes(Mobile from)
+        {
+            int count = 0;
+            var toDelete = World.Items.Values.OfType<VendorNode>().ToList();
+            foreach (var item in toDelete) { item.Delete(); count++; }
+            
+            from.SendMessage(33, $"[리셋 완료] 총 {count}개의 상인(Vendor) 노드를 삭제했습니다.");
+        }
+
+        public static void DoResetAll(Mobile from)
+        {
+            DoResetDungeonNodes(from);
+            DoResetVendorNodes(from);
+            from.SendMessage(33, "전 세계의 모든 스폰 노드 및 관련 데이터가 초기화되었습니다.");
         }
 
         public static void DoReset(Mobile from)
         {
             int deletedCount = 0, protectedCount = 0;
             Type xmlSpawnerType = ScriptCompiler.FindTypeByName("XmlSpawner");
-            if (xmlSpawnerType == null)
-            {
-                from.SendMessage(33, "서버에서 XmlSpawner 시스템을 찾을 수 없습니다.");
-                return;
-            }
+            if (xmlSpawnerType == null) { from.SendMessage(33, "서버에서 XmlSpawner 시스템을 찾을 수 없습니다."); return; }
 
             List<Item> spawnersToDelete = new List<Item>();
             foreach (Item item in World.Items.Values)
@@ -306,9 +618,8 @@ namespace Server.Misc
                     if (FindBestLogicKey(rawPath) != null) spawnersToDelete.Add(item);
                 }
             }
-
             foreach (Item spawner in spawnersToDelete) { spawner.Delete(); deletedCount++; }
-            from.SendMessage(68, $"[리셋 완료] 사냥터 XmlSpawner {deletedCount}개 삭제됨 (보호된 NPC 스포너: {protectedCount}개)");
+            from.SendMessage(68, $"[리셋 완료] 사냥터 XmlSpawner {deletedCount}개 삭제됨 (보호된 스포너: {protectedCount}개)");
         }
 
         private static bool IsSafeCheck(Item spawner)
@@ -342,9 +653,6 @@ namespace Server.Misc
             return false;
         }
 
-        [Usage("newspawn")] public static void OnNewSpawn(CommandEventArgs e) => e.Mobile.SendGump(new NewSpawnGump());
-        [Usage("zonemonitor")] public static void OnMonitor(CommandEventArgs e) => e.Mobile.SendGump(new ZoneMonitorGump(0, 0));
-
         public static void DoMigration(Mobile from, Map map, int mode)
         {
             int newlyAddedCount = 0;
@@ -372,34 +680,10 @@ namespace Server.Misc
             foreach (var z in EcosystemManager.Zones.Values) z.CacheNodes();
             from.SendMessage(68, $"오토 마이그레이션 완료: {newlyAddedCount}개 자동 생성됨.");
         }
-
-        public static string GetGoGumpZoneName(Point3D loc, Map map)
-        {
-            LocationTree tree = (map == Map.Felucca) ? GoGump.Felucca : (map == Map.Trammel ? GoGump.Trammel : (map == Map.Ilshenar ? GoGump.Ilshenar : (map == Map.Malas ? GoGump.Malas : (map == Map.Tokuno ? GoGump.Tokuno : GoGump.TerMur))));
-            if (tree == null || tree.Root == null) return "Unknown";
-            int bestDist = int.MaxValue; string bestPath = "Unknown";
-            FindClosestGoGumpNode(tree.Root, loc, "", ref bestDist, ref bestPath);
-            return bestPath.Replace("Locations ", "").Trim();
-        }
-
-        private static void FindClosestGoGumpNode(ParentNode node, Point3D target, string currentPath, ref int bestDist, ref string bestPath)
-        {
-            string path = string.IsNullOrEmpty(currentPath) ? node.Name : currentPath + " " + node.Name;
-            if (node.Children == null) return;
-            foreach (object child in node.Children)
-            {
-                if (child is ParentNode pNode) FindClosestGoGumpNode(pNode, target, path, ref bestDist, ref bestPath);
-                else if (child is ChildNode cNode)
-                {
-                    int dist = (int)Math.Sqrt(Math.Pow(cNode.Location.X - target.X, 2) + Math.Pow(cNode.Location.Y - target.Y, 2));
-                    if (dist < bestDist) { bestDist = dist; bestPath = path + " " + cNode.Name; }
-                }
-            }
-        }
-
-        private static Point3D GetRegionCenter(Region r) { if (r.Area != null && r.Area.Length > 0) { var a = r.Area[0]; return new Point3D(a.Start.X + ((a.End.X - a.Start.X) / 2), a.Start.Y + ((a.End.Y - a.Start.Y) / 2), r.Map.GetAverageZ(a.Start.X, a.Start.Y)); } return Point3D.Zero; }
+        #endregion
     }
 
+    #region [Gumps]
     public class NewSpawnGump : Gump
     {
         public NewSpawnGump() : base(100, 100)
@@ -411,106 +695,144 @@ namespace Server.Misc
             int farmingCount = ResourceManager.Pools.Values.Count(p => p.Type == ResourceType.Farming);
 
             AddPage(0); 
-            AddBackground(0, 0, 480, 640, 9270); 
-            AddAlphaRegion(10, 10, 460, 620);
+            AddBackground(0, 0, 560, 640, 9270);
+            AddAlphaRegion(10, 10, 540, 620);
 
-            AddHtml(10, 15, 460, 25, "<CENTER><BASEFONT COLOR='#FFFFFF' SIZE='6'>MASTER SPAWN MANAGER</BASEFONT></CENTER>", false, false);
-            AddHtml(10, 45, 460, 20, $"<CENTER><BASEFONT COLOR='#88FFFF'>Resources: M:{miningCount} / L:{lumberCount} / F:{fishingCount} / A:{farmingCount}</BASEFONT></CENTER>", false, false);
+            AddHtml(10, 15, 540, 25, "<CENTER><BASEFONT COLOR='#FFFFFF' SIZE='6'>MASTER SPAWN MANAGER</BASEFONT></CENTER>", false, false);
+            AddHtml(10, 45, 540, 20, $"<CENTER><BASEFONT COLOR='#88FFFF'>Resources: M:{miningCount} / L:{lumberCount} / F:{fishingCount} / A:{farmingCount}</BASEFONT></CENTER>", false, false);
 
             Map[] maps = { Map.Felucca, Map.Trammel, Map.Ilshenar, Map.Malas, Map.Tokuno, Map.TerMur };
             int y = 75; 
 
             for (int i = 0; i < maps.Length; i++)
             {
-                AddImageTiled(20, y, 440, 38, 9354); 
+                AddImageTiled(20, y, 520, 38, 9354); 
                 AddLabel(35, y + 9, 1152, maps[i].Name);
                 
                 AddButton(150, y + 7, 4005, 4007, (i * 10) + 1, GumpButtonType.Reply, 0); 
                 AddLabel(185, y + 9, 0x481, "DUNGEON");
 
-                AddButton(280, y + 7, 4023, 4025, (i * 10) + 2, GumpButtonType.Reply, 0); 
-                AddLabel(315, y + 9, 0x481, "ECOLOGY");
+                AddButton(290, y + 7, 4023, 4025, (i * 10) + 2, GumpButtonType.Reply, 0); 
+                AddLabel(325, y + 9, 0x481, "ECOLOGY");
+                
                 y += 42;
             }
             
             y += 5;
-            AddImageTiled(20, y, 440, 38, 9354); 
+            AddImageTiled(20, y, 520, 38, 9354); 
             AddButton(35, y + 7, 4011, 4013, 999, GumpButtonType.Reply, 0); 
-            AddLabel(75, y + 9, 0x35, "미매칭/에러 노드 리스트 (CHECK LIST)");
+            AddLabel(75, y + 9, 0x35, "미매칭/에러 노드 리스트 (CHECK LIST - 던전 & 상인)");
             
             y += 45;
-            AddImageTiled(20, y, 440, 40, 9354); 
-            AddButton(30, y + 8, 4005, 4007, 998, GumpButtonType.Reply, 0); 
-            AddLabel(65, y + 10, 0x42, "던전 모니터");
+            AddImageTiled(20, y, 520, 40, 9354); 
+            AddButton(25, y + 8, 4005, 4007, 998, GumpButtonType.Reply, 0); 
+            AddLabel(60, y + 10, 0x42, "던전 모니터");
 
-            AddButton(165, y + 8, 4023, 4025, 997, GumpButtonType.Reply, 0); 
-            AddLabel(200, y + 10, 0x42, "생태계 모니터");
+            AddButton(145, y + 8, 4023, 4025, 997, GumpButtonType.Reply, 0); 
+            AddLabel(180, y + 10, 0x42, "생태계 모니터");
 
-            AddButton(305, y + 8, 4011, 4013, 996, GumpButtonType.Reply, 0); 
-            AddLabel(340, y + 10, 0x58, $"자원/농사 ({totalPools})");
+            AddButton(285, y + 8, 4011, 4013, 996, GumpButtonType.Reply, 0); 
+            AddLabel(320, y + 10, 0x58, $"자원/농사");
+
+            AddButton(410, y + 8, 4005, 4007, 995, GumpButtonType.Reply, 0); 
+            AddLabel(445, y + 10, 68, "경제/상인"); 
             
-            y += 55;
-            AddImageTiled(20, y, 440, 85, 9354);
-            AddHtml(25, y + 8, 430, 20, "<CENTER><BASEFONT COLOR='#FFFF00'>--- 서버 간 데이터 이식 및 초기화 ---</BASEFONT></CENTER>", false, false);
+            y = 480;
+            AddImageTiled(20, y, 520, 140, 9354);
+            AddHtml(25, y + 8, 510, 20, "<CENTER><BASEFONT COLOR='#FFFF00'>--- 서버 데이터 선택적 이식 및 초기화 ---</BASEFONT></CENTER>", false, false);
             
-            AddButton(35, y + 35, 4011, 4013, 801, GumpButtonType.Reply, 0); 
-            AddLabel(70, y + 37, 1152, "내보내기 (Export)");
+            AddLabel(100, y + 35, 1152, "전체(ALL)");
+            AddLabel(250, y + 35, 0x481, "던전(DUNGEON)");
+            AddLabel(420, y + 35, 68, "벤더(VENDOR)");
 
-            AddButton(185, y + 35, 4005, 4007, 802, GumpButtonType.Reply, 0); 
-            AddLabel(220, y + 37, 0x42, "가져오기 (Import)");
+            AddButton(35, y + 55, 4011, 4013, 810, GumpButtonType.Reply, 0); AddLabel(70, y + 57, 1152, "Export");
+            AddButton(210, y + 55, 4011, 4013, 811, GumpButtonType.Reply, 0); AddLabel(245, y + 57, 1152, "Export");
+            AddButton(385, y + 55, 4011, 4013, 812, GumpButtonType.Reply, 0); AddLabel(420, y + 57, 1152, "Export");
 
-            AddButton(335, y + 35, 4020, 4022, 803, GumpButtonType.Reply, 0); 
-            AddLabel(370, y + 37, 0x21, "리셋 (Reset)");
+            AddButton(35, y + 80, 4005, 4007, 820, GumpButtonType.Reply, 0); AddLabel(70, y + 82, 0x42, "Import");
+            AddButton(210, y + 80, 4005, 4007, 821, GumpButtonType.Reply, 0); AddLabel(245, y + 82, 0x42, "Import");
+            AddButton(385, y + 80, 4005, 4007, 822, GumpButtonType.Reply, 0); AddLabel(420, y + 82, 0x42, "Import");
+
+            AddButton(35, y + 105, 4020, 4022, 803, GumpButtonType.Reply, 0); AddLabel(70, y + 107, 0x21, "ALL Reset!");
+            AddButton(210, y + 105, 4020, 4022, 831, GumpButtonType.Reply, 0); AddLabel(245, y + 107, 0x21, "Dungeon Reset");
+            AddButton(385, y + 105, 4020, 4022, 832, GumpButtonType.Reply, 0); AddLabel(420, y + 107, 0x21, "Vendor Reset");
         }
         
         public override void OnResponse(NetState sender, RelayInfo info)
         {
-            if (info.ButtonID == 0) return;
+            int btn = info.ButtonID;
+            if (btn == 0) return;
 
-            if (info.ButtonID == 801) { NewSpawnManager.DoExport(sender.Mobile); sender.Mobile.SendGump(new NewSpawnGump()); return; }
-            if (info.ButtonID == 802) { NewSpawnManager.DoImport(sender.Mobile); sender.Mobile.SendGump(new NewSpawnGump()); return; }
-            if (info.ButtonID == 803) { NewSpawnManager.DoReset(sender.Mobile); sender.Mobile.SendGump(new NewSpawnGump()); return; }
+            if (btn >= 810 && btn <= 812) { NewSpawnManager.DoExport(sender.Mobile, btn - 810); sender.Mobile.SendGump(new NewSpawnGump()); return; }
+            if (btn >= 820 && btn <= 822) { NewSpawnManager.DoImport(sender.Mobile, btn - 820); sender.Mobile.SendGump(new NewSpawnGump()); return; }
+            if (btn == 803) { NewSpawnManager.DoResetAll(sender.Mobile); sender.Mobile.SendGump(new NewSpawnGump()); return; }
+            if (btn == 831) { NewSpawnManager.DoResetDungeonNodes(sender.Mobile); sender.Mobile.SendGump(new NewSpawnGump()); return; }
+            if (btn == 832) { NewSpawnManager.DoResetVendorNodes(sender.Mobile); sender.Mobile.SendGump(new NewSpawnGump()); return; }
 
-            if (info.ButtonID == 999)
+            if (btn == 999)
             {
-                List<DungeonNode> checkList = World.Items.Values.OfType<DungeonNode>()
-                    .Where(n => n.Map == sender.Mobile.Map && !NewSpawnManager.IsManaged(n.ZoneId)).ToList();
+                List<Item> checkList = new List<Item>();
+                checkList.AddRange(World.Items.Values.OfType<DungeonNode>().Where(n => n.Map == sender.Mobile.Map && !NewSpawnManager.IsManaged(n.ZoneId)));
+                checkList.AddRange(World.Items.Values.OfType<VendorNode>().Where(v => v.Map == sender.Mobile.Map && v.TownID == 0));
                 sender.Mobile.SendGump(new NodeCheckGump(checkList, 0));
                 return;
             }
             
-            if (info.ButtonID == 998) { sender.Mobile.SendGump(new ZoneMonitorGump(0, 0)); return; } 
-            if (info.ButtonID == 997) { sender.Mobile.SendGump(new ZoneMonitorGump(1, 0)); return; } 
-            if (info.ButtonID == 996) { sender.Mobile.SendGump(new ZoneMonitorGump(2, 0)); return; } 
+            if (btn == 998) { sender.Mobile.SendGump(new ZoneMonitorGump(0, 0)); return; } 
+            if (btn == 997) { sender.Mobile.SendGump(new ZoneMonitorGump(1, 0)); return; } 
+            if (btn == 996) { sender.Mobile.SendGump(new ZoneMonitorGump(2, 0)); return; } 
 
-            int mapIdx = (info.ButtonID / 10); int mode = (info.ButtonID % 10) - 1;
+            if (btn == 995) 
+            { 
+                sender.Mobile.SendGump(new EconomyAdminGump(sender.Mobile, 0, 0, 0, 0)); 
+                return; 
+            } 
+
+            int mapIdx = (btn / 10);
+            int mode = (btn % 10); 
             Map[] maps = { Map.Felucca, Map.Trammel, Map.Ilshenar, Map.Malas, Map.Tokuno, Map.TerMur };
-            if (mapIdx < maps.Length) NewSpawnManager.DoMigration(sender.Mobile, maps[mapIdx], mode);
+            
+            if (mapIdx < maps.Length)
+            {
+                NewSpawnManager.DoMigration(sender.Mobile, maps[mapIdx], mode - 1);
+                sender.Mobile.SendGump(new NewSpawnGump());
+            }
         }
     }
 
     public class NodeCheckGump : Gump
     {
-        private List<DungeonNode> m_List;
+        private List<Item> m_List;
         private int m_Page;
-        public NodeCheckGump(List<DungeonNode> list, int page) : base(500, 100)
+
+        public NodeCheckGump(List<Item> list, int page) : base(500, 100)
         {
             m_List = list; m_Page = page;
             AddPage(0);
             AddBackground(0, 0, 550, 550, 9270);
-            AddHtml(10, 15, 530, 20, $"<CENTER><BASEFONT COLOR='#FF5555'>로직에 등록되지 않은 노드 (총 {list.Count}개)</BASEFONT></CENTER>", false, false);
+            AddHtml(10, 15, 530, 20, $"<CENTER><BASEFONT COLOR='#FF5555'>미매칭 노드 리스트 (총 {list.Count}개)</BASEFONT></CENTER>", false, false);
+            
             int start = page * 10;
             int end = Math.Min(start + 10, list.Count);
+            
             for (int i = start; i < end; i++)
             {
-                DungeonNode n = list[i];
+                Item n = list[i];
+                string zoneId = "Unknown";
+                string typeName = "Node";
+
+                if (n is DungeonNode dn) { zoneId = dn.ZoneId; typeName = "DUNGEON"; }
+                else if (n is VendorNode vn) { zoneId = TownNumber.GetName(vn.TownID); typeName = "VENDOR"; }
+
                 int y = 50 + ((i - start) * 45);
                 AddImageTiled(15, y, 520, 40, 9354);
-                string desc = $"<BASEFONT COLOR='#FFFFFF'>{n.ZoneId}</BASEFONT>";
+                
+                string desc = $"<BASEFONT COLOR='#FFFFFF'>[{typeName}] {zoneId}</BASEFONT>";
                 AddHtml(20, y + 10, 430, 20, desc, false, false);
                 AddButton(460, y + 8, 4005, 4007, i + 100, GumpButtonType.Reply, 0);
                 AddLabel(495, y + 10, 1152, "GO");
             }
+
             if (page > 0) AddButton(20, 510, 4014, 4016, 1, GumpButtonType.Reply, 0);
             AddLabel(250, 510, 0xFFFFFF, $"{page + 1} / {Math.Max(1, (list.Count - 1) / 10 + 1)}");
             if (end < list.Count) AddButton(500, 510, 4005, 4007, 2, GumpButtonType.Reply, 0);
@@ -534,17 +856,13 @@ namespace Server.Misc
 
     public class ZoneMonitorGump : Gump
     {
-        private int m_Mode; 
-        private int m_SubMode;
-        private int m_Page;
+        private int m_Mode, m_SubMode, m_Page;
 
         public ZoneMonitorGump(int mode, int page) : this(mode, 0, page) { }
 
         public ZoneMonitorGump(int mode, int subMode, int page) : base(30, 50)
         {
-            m_Mode = mode;
-            m_SubMode = subMode;
-            m_Page = page;
+            m_Mode = mode; m_SubMode = subMode; m_Page = page;
             
             AddPage(0);
             AddBackground(0, 0, 950, 500, 9270);
@@ -552,23 +870,13 @@ namespace Server.Misc
             AddAlphaRegion(10, 10, 930, 480);
             
             AddHtml(10, 15, 930, 25, "<CENTER><BASEFONT COLOR='#FFFFFF' SIZE='6'>MASTER MONITOR</BASEFONT></CENTER>", false, false);
-
-            AddButton(20, 15, 4014, 4016, 3, GumpButtonType.Reply, 0);
-            AddLabel(55, 15, 1152, "MAIN");
+            AddButton(20, 15, 4014, 4016, 3, GumpButtonType.Reply, 0); AddLabel(55, 15, 1152, "MAIN");
 
             AddImageTiled(20, 50, 910, 30, 9354);
-            
-            AddButton(30, 55, mode == 0 ? 4006 : 4005, 4007, 10, GumpButtonType.Reply, 0);
-            AddLabel(65, 55, mode == 0 ? 68 : 1152, "던전 모니터링");
-
-            AddButton(200, 55, mode == 1 ? 4006 : 4005, 4007, 11, GumpButtonType.Reply, 0);
-            AddLabel(235, 55, mode == 1 ? 68 : 1152, "생태계 모니터링");
-
-            AddButton(370, 55, mode == 2 ? 4006 : 4005, 4007, 13, GumpButtonType.Reply, 0);
-            AddLabel(405, 55, mode == 2 ? 68 : 1152, "자원 생태계 모니터링");
-
-            AddButton(820, 55, 4011, 4012, 12, GumpButtonType.Reply, 0);
-            AddLabel(855, 55, 0xFFFFFF, "새로고침");
+            AddButton(30, 55, mode == 0 ? 4006 : 4005, 4007, 10, GumpButtonType.Reply, 0); AddLabel(65, 55, mode == 0 ? 68 : 1152, "던전 모니터링");
+            AddButton(200, 55, mode == 1 ? 4006 : 4005, 4007, 11, GumpButtonType.Reply, 0); AddLabel(235, 55, mode == 1 ? 68 : 1152, "생태계 모니터링");
+            AddButton(370, 55, mode == 2 ? 4006 : 4005, 4007, 13, GumpButtonType.Reply, 0); AddLabel(405, 55, mode == 2 ? 68 : 1152, "자원 생태계 모니터링");
+            AddButton(820, 55, 4011, 4012, 12, GumpButtonType.Reply, 0); AddLabel(855, 55, 0xFFFFFF, "새로고침");
 
             int y = 95;
 
@@ -606,38 +914,27 @@ namespace Server.Misc
                 {
                     var z = list[i];
                     AddImageTiled(20, y - 2, 910, 24, 9354);
-                    if (z.Nodes != null && z.Nodes.Count > 0)
-                        AddButton(25, y + 2, 4005, 4007, 300 + (i - start), GumpButtonType.Reply, 0);
-                    else
-                        AddLabel(25, y, 33, "X"); 
+                    if (z.Nodes != null && z.Nodes.Count > 0) AddButton(25, y + 2, 4005, 4007, 300 + (i - start), GumpButtonType.Reply, 0);
+                    else AddLabel(25, y, 33, "X"); 
 
                     AddLabel(60, y, 0xFFFFFF, z.ZoneId.Length > 55 ? z.ZoneId.Substring(0, 55) + "..." : z.ZoneId);
                     
-                    int phaseColor = 0xFFFFFF;
-                    string phaseText = "";
+                    int phaseColor = 0xFFFFFF; string phaseText = "";
                     if (z.MaxPopulation == 0) { phaseColor = 33; phaseText = "잠금됨 (Locked)"; }
                     else if (z.Phase == DungeonPhase.Active) { phaseColor = 68; phaseText = "사냥 중"; }
                     else if (z.Phase == DungeonPhase.BossSpawned) { phaseColor = 33; phaseText = "보스 등장!"; }
                     else if (z.Phase == DungeonPhase.Cooldown) { phaseColor = 1359; phaseText = "휴식기"; }
-                    
                     AddLabel(450, y, phaseColor, phaseText);
                     
                     double diffPercent = z.MaxDifficulty > 0 ? (double)z.CurrentDifficulty / z.MaxDifficulty : 0;
                     int diffColor = diffPercent > 0.5 ? 68 : (diffPercent > 0.2 ? 53 : 33);
                     AddLabel(560, y, diffColor, $"{z.CurrentDifficulty:N0} / {z.MaxDifficulty:N0}");
+                    AddLabel(710, y, 0xFFFFFF, $"{z.GetTotalActiveCount()} /");
                     
-                    int activeCount = z.GetTotalActiveCount();
-                    AddLabel(710, y, 0xFFFFFF, $"{activeCount} /");
-                    
-                    AddImageTiled(750, y - 1, 55, 22, 2624); 
-                    AddAlphaRegion(750, y - 1, 55, 22); 
-                    
-                    string popText = z.ManualMaxPopulation >= 0 ? z.ManualMaxPopulation.ToString() : z.MaxPopulation.ToString();
-                    AddTextEntry(755, y, 45, 20, 53, i - start, popText); 
-                    
+                    AddImageTiled(750, y - 1, 55, 22, 2624); AddAlphaRegion(750, y - 1, 55, 22); 
+                    AddTextEntry(755, y, 45, 20, 53, i - start, z.ManualMaxPopulation >= 0 ? z.ManualMaxPopulation.ToString() : z.MaxPopulation.ToString()); 
                     AddButton(810, y + 2, 4023, 4025, 200 + (i - start), GumpButtonType.Reply, 0);
                     AddLabel(845, y, 68, "SET");
-
                     y += 30;
                 }
             }
@@ -658,10 +955,8 @@ namespace Server.Misc
                 {
                     var z = list[i];
                     AddImageTiled(20, y - 2, 910, 24, 9354);
-                    if (z.Nodes != null && z.Nodes.Count > 0)
-                        AddButton(25, y + 2, 4005, 4007, 300 + (i - start), GumpButtonType.Reply, 0);
-                    else
-                        AddLabel(25, y, 33, "X");
+                    if (z.Nodes != null && z.Nodes.Count > 0) AddButton(25, y + 2, 4005, 4007, 300 + (i - start), GumpButtonType.Reply, 0);
+                    else AddLabel(25, y, 33, "X");
 
                     AddLabel(60, y, 0xFFFFFF, z.ZoneId.Length > 55 ? z.ZoneId.Substring(0, 55) + "..." : z.ZoneId);
                     
@@ -671,14 +966,9 @@ namespace Server.Misc
                     int avgVitality = totalSpecies > 0 ? z.SpeciesInfo.Values.Sum(s => s.Vitality) / totalSpecies : 0;
 
                     AddLabel(450, y, 0xFFFFFF, $"{totalSpecies} 가지 종");
-                    
-                    double popPercent = totalMax > 0 ? (double)totalActive / totalMax : 0;
-                    int popColor = popPercent >= 1.0 ? 33 : 0xFFFFFF; 
+                    int popColor = (totalMax > 0 && ((double)totalActive / totalMax) >= 1.0) ? 33 : 0xFFFFFF; 
                     AddLabel(560, y, popColor, $"{totalActive:N0} / {totalMax:N0} 마리");
-                    
-                    int vitColor = avgVitality > 8000 ? 68 : (avgVitality > 3000 ? 53 : 33);
-                    AddLabel(750, y, vitColor, $"{avgVitality / 100.0:F1}%");
-                    
+                    AddLabel(750, y, avgVitality > 8000 ? 68 : (avgVitality > 3000 ? 53 : 33), $"{avgVitality / 100.0:F1}%");
                     y += 30;
                 }
             }
@@ -694,14 +984,7 @@ namespace Server.Misc
                 var list = ResourceManager.Pools.Values.ToList();
                 if (m_SubMode > 0)
                 {
-                    ResourceType targetType = ResourceType.Mining;
-                    switch (m_SubMode)
-                    {
-                        case 1: targetType = ResourceType.Mining; break;
-                        case 2: targetType = ResourceType.Lumberjacking; break;
-                        case 3: targetType = ResourceType.Fishing; break;
-                        case 4: targetType = ResourceType.Farming; break;
-                    }
+                    ResourceType targetType = m_SubMode == 1 ? ResourceType.Mining : m_SubMode == 2 ? ResourceType.Lumberjacking : m_SubMode == 3 ? ResourceType.Fishing : ResourceType.Farming;
                     list = list.Where(p => p.Type == targetType).ToList();
                 }
 
@@ -721,65 +1004,31 @@ namespace Server.Misc
                     AddLabel(160, y, color, $"{pool.MapName} - {pool.RegionName}");
                     AddLabel(370, y, color, $"{pool.CurrentCapacity}/{pool.MaxCapacity} ({percent:F0}%)");
 
-                    // ★ [핵심 복구] 자원별 표기 복구 완료
                     if (pool.Type == ResourceType.Farming)
                     {
                         int pending = FarmingSystem.GetPendingCount(pool.RegionName); 
-                        
-                        // [수정] 뻔뻔한 "양배추" 하드코딩 삭제, 상황에 맞는 텍스트 출력
-                        string cropInfo = "다양한 작물";
-                        
-                        if (pool.RegionName.StartsWith("PrivateFarm")) 
-                        {
-                            cropInfo = "유저 개인 작물"; // 개인 농장일 경우
-                        }
-                        else
-                        {
-                            string n = pool.RegionName.ToLower();
-                            if (n.Contains("wheat")) cropInfo = "밀";
-                            else if (n.Contains("carrot")) cropInfo = "당근";
-                            else if (n.Contains("corn")) cropInfo = "옥수수";
-                            else if (n.Contains("cotton")) cropInfo = "목화";
-                            else cropInfo = "야생 작물"; // 특정 작물밭이 아닌 일반 밭일 경우
-                        }
+                        string cropInfo = pool.RegionName.StartsWith("PrivateFarm") ? "유저 개인 작물" : "야생 작물";
+                        string n = pool.RegionName.ToLower();
+                        if (n.Contains("wheat")) cropInfo = "밀"; else if (n.Contains("carrot")) cropInfo = "당근"; else if (n.Contains("corn")) cropInfo = "옥수수"; else if (n.Contains("cotton")) cropInfo = "목화";
                         
                         string resStatus = $"자라는 중 [{cropInfo}]";
                         if (pending > 0) resStatus += $" <BASEFONT COLOR='#FF8888'>+ 새끼({pending})</BASEFONT>"; 
-                        
                         AddHtml(480, y, 440, 20, $"<BASEFONT COLOR='#42FF42'>{resStatus}</BASEFONT>", false, false); 
                     }
                     else
                     {
-                        // [완벽 복구] 단순 '광물' 표기가 아닌, 실제 풀에 들어있는 타입 리스트를 추출
-                        string materialName = "알 수 없음";
+                        string materialName = "전체 고갈";
                         if (pool.AvailableResources != null && pool.AvailableResources.Count > 0)
                         {
-                            // 잔여량이 0보다 큰 실제 재료들의 이름(Type.Name)만 쉼표로 연결
                             var activeRes = pool.AvailableResources.Where(k => k.Value > 0).Select(k => k.Key.Name).ToList();
-                            
-                            if (activeRes.Count > 0)
-                            {
-                                materialName = string.Join(", ", activeRes);
-                                // 이름이 너무 길어 UI를 뚫고 나가는 것 방지
-                                if (materialName.Length > 28) materialName = materialName.Substring(0, 25) + "...";
-                            }
-                            else
-                            {
-                                materialName = "전체 고갈";
-                            }
+                            if (activeRes.Count > 0) materialName = string.Join(", ", activeRes);
+                            if (materialName.Length > 28) materialName = materialName.Substring(0, 25) + "...";
                         }
 
-                        TimeSpan cooldownLeft = pool.DepletionCooldown - DateTime.Now;
-                        if (cooldownLeft.TotalSeconds > 0)
-                        {
-                            AddHtml(480, y, 440, 20, $"<BASEFONT COLOR='#FF3333'>고갈됨 ({cooldownLeft.TotalMinutes:F1}분 후)</BASEFONT> <BASEFONT COLOR='#AAAAAA'>[{materialName}]</BASEFONT>", false, false);
-                        }
-                        else
-                        {
-                            AddHtml(480, y, 440, 20, $"<BASEFONT COLOR='#42FF42'>정상 스폰 중</BASEFONT> <BASEFONT COLOR='#AAAAAA'>[{materialName}]</BASEFONT>", false, false);
-                        }
+                        TimeSpan cd = pool.DepletionCooldown - DateTime.Now;
+                        if (cd.TotalSeconds > 0) AddHtml(480, y, 440, 20, $"<BASEFONT COLOR='#FF3333'>고갈됨 ({cd.TotalMinutes:F1}분 후)</BASEFONT> <BASEFONT COLOR='#AAAAAA'>[{materialName}]</BASEFONT>", false, false);
+                        else AddHtml(480, y, 440, 20, $"<BASEFONT COLOR='#42FF42'>정상 스폰 중</BASEFONT> <BASEFONT COLOR='#AAAAAA'>[{materialName}]</BASEFONT>", false, false);
                     }
-
                     y += 30;
                 }
             }
@@ -791,17 +1040,8 @@ namespace Server.Misc
 
         public override void OnResponse(NetState sender, RelayInfo info)
         {
-            if (info.ButtonID == 0 || info.ButtonID == 3) 
-            {
-                sender.Mobile.SendGump(new NewSpawnGump());
-                return;
-            }
-
-            if (info.ButtonID >= 50 && info.ButtonID <= 54)
-            {
-                sender.Mobile.SendGump(new ZoneMonitorGump(m_Mode, info.ButtonID - 50, 0));
-                return;
-            }
+            if (info.ButtonID == 0 || info.ButtonID == 3) { sender.Mobile.SendGump(new NewSpawnGump()); return; }
+            if (info.ButtonID >= 50 && info.ButtonID <= 54) { sender.Mobile.SendGump(new ZoneMonitorGump(m_Mode, info.ButtonID - 50, 0)); return; }
 
             switch (info.ButtonID)
             {
@@ -825,29 +1065,20 @@ namespace Server.Misc
                 if (m_Mode == 0)
                 {
                     var list = DungeonManager.Zones.Values.ToList();
-                    if (actualIndex < list.Count && list[actualIndex].Nodes.Count > 0)
-                        sender.Mobile.MoveToWorld(list[actualIndex].Nodes[0].Location, list[actualIndex].Nodes[0].Map);
+                    if (actualIndex < list.Count && list[actualIndex].Nodes.Count > 0) sender.Mobile.MoveToWorld(list[actualIndex].Nodes[0].Location, list[actualIndex].Nodes[0].Map);
                 }
                 else if (m_Mode == 1) 
                 {
                     var list = EcosystemManager.Zones.Values.ToList();
-                    if (actualIndex < list.Count && list[actualIndex].Nodes.Count > 0)
-                        sender.Mobile.MoveToWorld(list[actualIndex].Nodes[0].Location, list[actualIndex].Nodes[0].Map);
+                    if (actualIndex < list.Count && list[actualIndex].Nodes.Count > 0) sender.Mobile.MoveToWorld(list[actualIndex].Nodes[0].Location, list[actualIndex].Nodes[0].Map);
                 }
                 else if (m_Mode == 2) 
                 {
                     var list = ResourceManager.Pools.Values.ToList();
                     if (m_SubMode > 0)
                     {
-                        ResourceType targetType = ResourceType.Mining;
-                        switch (m_SubMode)
-                        {
-                            case 1: targetType = ResourceType.Mining; break;
-                            case 2: targetType = ResourceType.Lumberjacking; break;
-                            case 3: targetType = ResourceType.Fishing; break;
-                            case 4: targetType = ResourceType.Farming; break;
-                        }
-                        list = list.Where(p => p.Type == targetType).ToList();
+                        ResourceType tType = m_SubMode == 1 ? ResourceType.Mining : m_SubMode == 2 ? ResourceType.Lumberjacking : m_SubMode == 3 ? ResourceType.Fishing : ResourceType.Farming;
+                        list = list.Where(p => p.Type == tType).ToList();
                     }
 
                     if (actualIndex < list.Count)
@@ -861,8 +1092,7 @@ namespace Server.Misc
                             if (parts.Length >= 3)
                             {
                                 int size = parts[0] == "Ocean" ? 256 : parts[0] == "Coastal" ? 192 : 128;
-                                int x = int.Parse(parts[1]) * size + (size / 2);
-                                int y = int.Parse(parts[2]) * size + (size / 2);
+                                int x = int.Parse(parts[1]) * size + (size / 2); int y = int.Parse(parts[2]) * size + (size / 2);
                                 sender.Mobile.MoveToWorld(new Point3D(x, y, map.GetAverageZ(x, y)), map);
                             }
                         }
@@ -872,8 +1102,7 @@ namespace Server.Misc
                             if (r != null && r.Area.Length > 0)
                             {
                                 var a = r.Area[0];
-                                Point3D center = new Point3D(a.Start.X + (a.End.X - a.Start.X) / 2, a.Start.Y + (a.End.Y - a.Start.Y) / 2, map.GetAverageZ(a.Start.X, a.Start.Y));
-                                sender.Mobile.MoveToWorld(center, map);
+                                sender.Mobile.MoveToWorld(new Point3D(a.Start.X + (a.End.X - a.Start.X) / 2, a.Start.Y + (a.End.Y - a.Start.Y) / 2, map.GetAverageZ(a.Start.X, a.Start.Y)), map);
                             }
                         }
                     }
@@ -896,4 +1125,5 @@ namespace Server.Misc
             }
         }
     }
+    #endregion
 }

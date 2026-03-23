@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using Server;
 using Server.Mobiles;
-
+using System.Linq;
 namespace Server.Misc
 {
     public class VendorNode : Item
     {
         private List<Mobile> m_Spawned = new List<Mobile>();
         public List<string> SpawnTypes { get; set; } = new List<string>();
-
         private InternalTimer m_Timer;
-
+		public string VendorName;
+        // [핵심] 기존의 string ZoneId를 완전히 삭제하고 int TownID로 교체
         [CommandProperty(AccessLevel.GameMaster)]
-        public string ZoneId { get; set; }
+        public int TownID { get; set; }
 
         [CommandProperty(AccessLevel.GameMaster)]
         public int MaxCount { get; set; } = 1;
@@ -21,11 +21,13 @@ namespace Server.Misc
         [CommandProperty(AccessLevel.GameMaster)]
         public int HomeRange { get; set; } = 5;
 
-        // [추가] 스폰 주기 (최소 시간)
+		// VendorNode.cs 내부 상단
+		[CommandProperty(AccessLevel.GameMaster)]
+		public bool IsActive { get; set; } = true;
+
         [CommandProperty(AccessLevel.GameMaster)]
         public TimeSpan MinDelay { get; set; } = TimeSpan.FromMinutes(5.0);
 
-        // [추가] 스폰 주기 (최대 시간)
         [CommandProperty(AccessLevel.GameMaster)]
         public TimeSpan MaxDelay { get; set; } = TimeSpan.FromMinutes(10.0);
 
@@ -50,10 +52,22 @@ namespace Server.Misc
             Name = "Vendor Node"; 
             Visible = false; 
             Movable = false; 
-            StartTimer(); // 노드가 만들어질 때 타이머 시작
+            StartTimer(); 
         }
 
-        // [추가] 타이머 시작 로직
+        // [자동화] GM이 노드를 이동시키거나 맵을 바꿀 때 TownID 자동 갱신
+        public override void OnLocationChange(Point3D oldLocation)
+        {
+            base.OnLocationChange(oldLocation);
+            TownID = TownNumber.GetID(this.Location, this.Map);
+        }
+
+        public override void OnMapChange()
+        {
+            base.OnMapChange();
+            TownID = TownNumber.GetID(this.Location, this.Map);
+        }
+
         public void StartTimer()
         {
             if (m_Timer != null) m_Timer.Stop();
@@ -62,79 +76,155 @@ namespace Server.Misc
             m_Timer = new InternalTimer(this, delay);
             m_Timer.Start();
         }
+		// [추가] 마을 구역 이탈 체크 및 강제 복귀 로직
+		public void CheckBoundaries()
+		{
+			if (m_Spawned == null || m_Spawned.Count == 0) return;
 
+			// 현재 살아있는 상인들 중 마을 ID가 바뀐 녀석들을 찾음
+			foreach (var m in m_Spawned.Where(v => v != null && !v.Deleted))
+			{
+				// 상인의 현재 좌표가 인식하는 마을 ID 추출
+				int currentLocTownID = TownNumber.GetID(m.Location, m.Map);
+
+				// 노드의 TownID와 현재 위치의 TownID가 다르면 마을을 벗어난 것임
+				if (currentLocTownID != this.TownID)
+				{
+					// 노드 위치로 즉시 복귀
+					m.MoveToWorld(this.Location, this.Map);
+					
+					if (m is BaseVendor bv)
+					{
+						bv.Say("구역을 벗어나서 상점으로 복귀합니다."); // 안내 문구 (선택 사항)
+					}
+				}
+			
+			}
+		}
         public void DoTimerTick()
         {
+			CheckBoundaries(); // 마을 이탈 체크 추가
             Respawn();
-            StartTimer(); // 한 번 스폰 후 다음 스폰을 위해 타이머 재시작
+            StartTimer(); 
         }
 
         public override void OnDoubleClick(Mobile from)
         {
             if (from.AccessLevel < AccessLevel.GameMaster) return;
-
-            if (SpawnTypes.Count == 0 || string.IsNullOrEmpty(ZoneId))
-            {
-                from.SendMessage(33, "[VendorNode] 설정된 스폰 타입(SpawnList)이나 ZoneId가 없습니다! [props 로 설정하세요.");
-                return;
-            }
-
-            from.SendMessage(89, $"[VendorNode] 강제 스폰을 시도합니다... (목표 수: {MaxCount})");
-            Respawn();
-            StartTimer(); // 강제 스폰 시 타이머 리셋
+            from.SendGump(new VendorNodeGump(this)); // Gump도 나중에 int 기반으로 수정 필요
         }
+		public void ClearSpawned()
+		{
+			if (m_Spawned == null) return;
 
-        public void Respawn()
-        {
-            m_Spawned.RemoveAll(m => m == null || m.Deleted);
+			for (int i = m_Spawned.Count - 1; i >= 0; i--)
+			{
+				Mobile m = m_Spawned[i];
+				if (m != null && !m.Deleted) 
+					m.Delete();
+			}
+			m_Spawned.Clear();
+		}
+		public void Respawn()
+		{
+			// 리스폰 기능이 꺼져있으면 작동하지 않음
+			if (!IsActive) return;
 
-            int spawnedThisTime = 0;
+			m_Spawned.RemoveAll(m => m == null || m.Deleted);
 
-            while (m_Spawned.Count < MaxCount && SpawnTypes.Count > 0)
-            {
-                string type = SpawnTypes[Utility.Random(SpawnTypes.Count)];
-                
-                // 여기서 VendorSpawner에게 상인 제작을 요청합니다.
-                Mobile spawned = VendorSpawner.PerformSpawn(type, ZoneId, Location, Map, HomeRange);
-                
-                if (spawned != null) 
-                {
-                    m_Spawned.Add(spawned);
-                    spawnedThisTime++;
-                }
-                else break;
-            }
-            if (spawnedThisTime > 0)
-                Console.WriteLine($"[VendorNode] {ZoneId}에 {spawnedThisTime}명의 상인이 스폰되었습니다. (현재 총 {m_Spawned.Count}/{MaxCount}명)");
-        }
+			while (m_Spawned.Count < MaxCount)
+			{
+				if (SpawnTypes.Count == 0) break;
 
+				string typeName = SpawnTypes[Utility.Random(SpawnTypes.Count)];
+				Type type = ScriptCompiler.FindTypeByName(typeName);
+
+				if (type != null)
+				{
+					try 
+					{
+						Mobile m = (Mobile)Activator.CreateInstance(type);
+						
+						if (!string.IsNullOrEmpty(this.VendorName)) 
+							m.Name = this.VendorName;
+
+						// --- [수정] 랜덤 좌표 계산 로직 ---
+						Point3D spawnLoc = this.Location;
+						Map map = this.Map;
+
+						// HomeRange가 0보다 크면 주변 랜덤 좌표를 찾음
+						if (HomeRange > 0 && map != null)
+						{
+							for (int i = 0; i < 10; i++) // 적절한 위치를 찾기 위해 최대 10번 시도
+							{
+								int x = X + Utility.RandomMinMax(-HomeRange, HomeRange);
+								int y = Y + Utility.RandomMinMax(-HomeRange, HomeRange);
+								int z = map.GetAverageZ(x, y); // 지면 높이 계산
+
+								if (map.CanSpawnMobile(x, y, z)) // 해당 위치에 소환 가능한지 체크
+								{
+									spawnLoc = new Point3D(x, y, z);
+									break;
+								}
+							}
+						}
+						// ----------------------------------
+
+						// 월드에 랜덤 위치로 배치
+						m.MoveToWorld(spawnLoc, map);
+
+						if (m is BaseCreature bc) 
+						{ 
+							// 상인의 집(Home)은 노드 위치로 고정하여 멀리 도망가지 않게 함
+							bc.Home = this.Location; 
+							bc.RangeHome = this.HomeRange; 
+						}
+
+						m_Spawned.Add(m);
+					} 
+					catch { break; }
+				}
+				else 
+				{
+					Console.WriteLine($"[VendorNode Error] '{typeName}' 타입을 찾을 수 없습니다.");
+					break;
+				}
+			}
+		}
         public override void OnDelete()
         {
             if (m_Timer != null) m_Timer.Stop();
+
+            if (m_Spawned != null)
+            {
+                for (int i = m_Spawned.Count - 1; i >= 0; i--)
+                {
+                    Mobile m = m_Spawned[i];
+                    if (m != null && !m.Deleted) m.Delete();
+                }
+                m_Spawned.Clear();
+            }
             base.OnDelete();
         }
 
         public VendorNode(Serial serial) : base(serial) { }
 
+        // [완전 단순화] 구버전 호환용 코드 전면 철거
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-            writer.Write((int)2); // 버전을 2로 격상
+            writer.Write(0); // Version 0 (초기화)
 
-            writer.Write(ZoneId);
-            writer.Write(MaxCount); // [추가] 이것도 저장해야 로직이 안 꼬입니다.
-            writer.Write(HomeRange); // [추가]
+            writer.Write(TownID); // string 대신 int 저장
+            writer.Write(MaxCount);
+            writer.Write(HomeRange);
+            writer.Write(MinDelay);
+            writer.Write(MaxDelay);
 
-            // 상인 리스트 저장
             writer.Write(SpawnTypes.Count);
             foreach (string s in SpawnTypes) writer.Write(s);
 
-            // [핵심] 현재 소환된 상인 목록 저장 (상속받은 Mobile들을 추적)
             writer.WriteMobileList(m_Spawned, true);
-
-            // 시간 관련
-            writer.Write(MinDelay);
-            writer.Write(MaxDelay);
         }
 
         public override void Deserialize(GenericReader reader)
@@ -142,49 +232,35 @@ namespace Server.Misc
             base.Deserialize(reader);
             int version = reader.ReadInt();
             
-            ZoneId = reader.ReadString();
+            TownID = reader.ReadInt(); // 로딩 즉시 정체성 확인 (렉 0초)
+            MaxCount = reader.ReadInt();
+            HomeRange = reader.ReadInt();
+            MinDelay = reader.ReadTimeSpan();
+            MaxDelay = reader.ReadTimeSpan();
 
-            if (version >= 2)
-            {
-                MaxCount = reader.ReadInt();
-                HomeRange = reader.ReadInt();
-            }
-
-            // [무결성] 리스트를 비우고 읽어야 데이터가 안 꼬입니다.
             SpawnTypes.Clear();
             int count = reader.ReadInt();
             for (int i = 0; i < count; i++) SpawnTypes.Add(reader.ReadString());
 
-            if (version >= 2)
-            {
-                m_Spawned = reader.ReadStrongMobileList();
-            }
+            m_Spawned = reader.ReadStrongMobileList();
 
-            if (version >= 1)
-            {
-                MinDelay = reader.ReadTimeSpan();
-                MaxDelay = reader.ReadTimeSpan();
-            }
+            // 만약 서버 로드 시점에 TownID가 0이라면 1회 강제 갱신
+            if (TownID == 0) TownID = TownNumber.GetID(this.Location, this.Map);
 
-            // 로드 완료 후 타이머 가동
             StartTimer(); 
         }
 
-        // [추가] 타이머 클래스
         private class InternalTimer : Timer
         {
             private VendorNode m_Node;
-
             public InternalTimer(VendorNode node, TimeSpan delay) : base(delay)
             {
                 m_Node = node;
                 Priority = TimerPriority.OneMinute;
             }
-
             protected override void OnTick()
             {
-                if (m_Node != null && !m_Node.Deleted)
-                    m_Node.DoTimerTick();
+                if (m_Node != null && !m_Node.Deleted) m_Node.DoTimerTick();
             }
         }
     }

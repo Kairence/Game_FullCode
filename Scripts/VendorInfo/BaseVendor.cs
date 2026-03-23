@@ -75,7 +75,9 @@ namespace Server.Mobiles
         public virtual double GetMoveDelay { get { return (double)Utility.RandomMinMax(3000, 12000); } }
 
 		public override bool ShowFameTitle { get { return false; } }
-
+		// [추가] 마을 소속 ID
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int TownID { get; set; }
 		public virtual bool IsValidBulkOrder(Item item)
 		{
 			return false;
@@ -113,18 +115,89 @@ namespace Server.Mobiles
 
 			return 100;
 		}
+        // [수정] 상인의 초기 판매 물품을 마을 공용 창고에 적재하는 동기화 함수
+		public void SyncToTownEconomy()
+		{
+			if (TownID <= 0 || !TownEconomyManager.Towns.TryGetValue(TownID, out var town))
+				return;
 
+			var sbInfos = SBInfos;
+			for (int i = 0; sbInfos != null && i < sbInfos.Count; ++i)
+			{
+				var sbInfo = sbInfos[i];
+				if (sbInfo == null || sbInfo.BuyInfo == null) continue;
+
+				foreach (var itemInfo in sbInfo.BuyInfo)
+				{
+					Type itemType = itemInfo.Type;
+					
+					// [핵심 추가] 아이템 타입 자체가 null이면 아래 딕셔너리 로직에서 에러가 납니다.
+					if (itemType == null) 
+						continue;
+
+					int price = itemInfo.Price;
+					int amount = 5000; 
+
+					// 1. 마을 설계도(Blueprint)에 기록
+					var existingEntry = town.InventoryEntries.FirstOrDefault(e => e.ItemType == itemType);
+					if (existingEntry != null)
+						existingEntry.InitialStock += amount;
+					else
+						town.InventoryEntries.Add(new TownInventoryEntry(itemType, amount, price));
+
+					// 2. 실시간 창고(Warehouse) 수량 증가
+					if (town.Warehouse.TryGetValue(itemType, out var wItem))
+					{
+						wItem.Stock += amount;
+						wItem.BasePrice = price; 
+					}
+					else
+					{
+						town.Warehouse[itemType] = new WarehouseItem(itemType, amount, price);
+					}
+				}
+			}
+		}
 		public void UpdateBuyInfo()
 		{
 			int priceScalar = GetPriceScalar();
-
 			var buyinfo = (IBuyItemInfo[])m_ArmorBuyInfo.ToArray(typeof(IBuyItemInfo));
 
-			if (buyinfo != null)
+			if (buyinfo == null) return;
+
+			// 마을 경제 시스템 연동 확인
+			if (TownID > 0 && TownEconomyManager.Towns.TryGetValue(TownID, out var town))
 			{
 				foreach (IBuyItemInfo info in buyinfo)
 				{
 					info.PriceScalar = priceScalar;
+
+					// 1. 아이템 타입 추출
+					Type? itemType = info.GetType().GetProperty("Type")?.GetValue(info) as Type;
+					
+					if (itemType != null && town.Warehouse.TryGetValue(itemType, out var wItem))
+					{
+						// [규칙 1 & 2] 재고 통제 로직
+						// 창고에 500개 미만으로 있으면 무조건 품절(0) 처리
+						// 500개 이상 있을 때만 상인은 '딱 500개'만 매대에 올림
+						if (wItem.Stock < 500)
+						{
+							info.Amount = 0; 
+						}
+						else
+						{
+							info.Amount = 500; // 사재기 방지: 창고에 1만 개가 있어도 상인은 500개만 노출
+						}
+
+						// [규칙 3] 가격 동기화
+						// 마을 경제 엔진(PriceMultiplier)이 반영된 실시간 가격을 가져옴
+						info.Price = town.GetPrice(itemType);
+					}
+					else
+					{
+						// 창고에 등록되지 않은 물품은 취급 불가(품절)
+						info.Amount = 0;
+					}
 				}
 			}
 		}
@@ -599,6 +672,7 @@ namespace Server.Mobiles
 		public override void OnAfterSpawn()
 		{
 			CheckMorph();
+
 		}
 
 		protected override void OnMapChange(Map oldMap)
@@ -608,6 +682,12 @@ namespace Server.Mobiles
 			CheckMorph();
 
 			LoadSBInfo();
+			// [추가] 마을 소속이 없으면 현재 위치를 기반으로 자동 할당
+			if (TownID == 0 && Map != null && Map != Map.Internal)
+			{
+				TownID = TownNumber.GetID(this.Location, this.Map);
+				SyncToTownEconomy();
+			}
 		}
 
 		public virtual int GetRandomNecromancerHue()
@@ -1596,6 +1676,18 @@ namespace Server.Mobiles
 
 			bii.Amount -= amount;
 
+			// ======== [추가] 마을 창고 재고 차감 ========
+			if (TownID > 0 && TownEconomyManager.Towns.TryGetValue(TownID, out var town))
+			{
+				Type? itemType = bii.GetType().GetProperty("Type")?.GetValue(bii) as Type;
+				if (itemType != null && town.Warehouse.TryGetValue(itemType, out var wItem))
+				{
+					wItem.Stock -= amount;
+					if (wItem.Stock < 0) wItem.Stock = 0;
+				}
+			}
+			// ============================================
+
 			IEntity o = bii.GetEntity();
 
 			if (o is Item)
@@ -1636,13 +1728,13 @@ namespace Server.Mobiles
 					}
 				}
 
-                bii.OnBought(buyer, this, item, amount);
-            }
+				bii.OnBought(buyer, this, item, amount);
+			}
 			else if (o is Mobile)
 			{
 				Mobile m = (Mobile)o;
 
-                bii.OnBought(buyer, this, m, amount);
+				bii.OnBought(buyer, this, m, amount);
 
 				m.Direction = (Direction)Utility.Random(8);
 				m.MoveToWorld(buyer.Location, buyer.Map);
@@ -2178,7 +2270,6 @@ namespace Server.Mobiles
 			int GiveGold = 0;
 			int Sold = 0;
 			Container cont;
-			//IEntity o = bii.GetEntity();
 
 			foreach (SellItemResponse resp in list)
 			{
@@ -2195,13 +2286,12 @@ namespace Server.Mobiles
 						Sold++;
 						break;
 					}
-					
 				}
 			}
 
 			if (Sold > MaxSell)
 			{
-                SayTo(seller, "You may only sell {0} items at a time!", MaxSell, 0x3B2, true);
+				SayTo(seller, "You may only sell {0} items at a time!", MaxSell, 0x3B2, true);
 				return false;
 			}
 			else if (Sold == 0)
@@ -2233,6 +2323,21 @@ namespace Server.Mobiles
 						if( !Misc.Util.LastPriceCheck( this, GiveGold, seller ) )
 							return false;
 
+						// ======== [추가] 마을 창고 재고 증가 ========
+						if (TownID > 0 && TownEconomyManager.Towns.TryGetValue(TownID, out var town))
+						{
+							Type itemType = resp.Item.GetType();
+							if (town.Warehouse.TryGetValue(itemType, out var wItem))
+							{
+								wItem.Stock += amount;
+							}
+							else
+							{
+								town.Warehouse[itemType] = new WarehouseItem(itemType, amount, singlePrice);
+							}
+						}
+						// ============================================
+
 						if (ssi.IsResellable(resp.Item))
 						{
 							bool found = false;
@@ -2241,12 +2346,12 @@ namespace Server.Mobiles
 							{
 								if (bii.Restock(resp.Item, amount))
 								{
-                                    bii.OnSold(this, amount);
+									bii.OnSold(this, amount);
 
 									resp.Item.Consume(amount);
 									found = true;
 
-                                    break;
+									break;
 								}
 							}
 
@@ -2288,8 +2393,8 @@ namespace Server.Mobiles
 							}
 						}
 
-                        EventSink.InvokeValidVendorSell(new ValidVendorSellEventArgs(seller, this, resp.Item, singlePrice));
-                        break;
+						EventSink.InvokeValidVendorSell(new ValidVendorSellEventArgs(seller, this, resp.Item, singlePrice));
+						break;
 					}
 				}
 			}
@@ -2320,24 +2425,25 @@ namespace Server.Mobiles
 					}
 				}
 			}
-			//no cliloc for this?
-			//SayTo( seller, true, "Thank you! I bought {0} item{1}. Here is your {2}gp.", Sold, (Sold > 1 ? "s" : ""), GiveGold );
 
 			MyGold -= GiveGold;
 			
 			return true;
 		}
 
+
 		public override void Serialize(GenericWriter writer)
 		{
 			base.Serialize(writer);
 
-			writer.Write(4); // version
+			writer.Write(5); // [수정] version 4 -> 5로 변경
+
+			writer.Write(TownID); // [추가] 마을 ID 저장
 
 			writer.Write(MyGold);
-            writer.Write(BribeMultiplier);
-            writer.Write(NextMultiplierDecay);
-            writer.Write(RecentBribes);
+			writer.Write(BribeMultiplier);
+			writer.Write(NextMultiplierDecay);
+			writer.Write(RecentBribes);
 
 			var sbInfos = SBInfos;
 
@@ -2350,58 +2456,33 @@ namespace Server.Mobiles
 				{
 					GenericBuyInfo gbi = buyInfo[j];
 
-					int maxAmount = gbi.MaxAmount;
-					int doubled = 0;
-                    int bought = gbi.TotalBought;
-                    int sold = gbi.TotalSold;
+					int maxAmount = 500;
+					int doubled = 6;
+					int bought = gbi.TotalBought;
+					int sold = gbi.TotalSold;
 
-					/*
-					switch (maxAmount)
-					{
-						case 40:
-							doubled = 1;
-							break;
-						case 80:
-							doubled = 2;
-							break;
-						case 160:
-							doubled = 3;
-							break;
-						case 320:
-							doubled = 4;
-							break;
-						case 640:
-							doubled = 5;
-							break;
-						case 999:
-							doubled = 6;
-							break;
-					}
-					*/
-					maxAmount = 500;
-					doubled = 6;
 					if (doubled > 0 || bought != 0 || sold != 0)
 					{
 						writer.WriteEncodedInt(1 + ((j * sbInfos.Count) + i));
 						writer.WriteEncodedInt(doubled);
-                        writer.WriteEncodedInt(bought);
-                        writer.WriteEncodedInt(sold);
+						writer.WriteEncodedInt(bought);
+						writer.WriteEncodedInt(sold);
 					}
 				}
 			}
 
 			writer.WriteEncodedInt(0);
 
-            if (NextMultiplierDecay != DateTime.MinValue && NextMultiplierDecay < DateTime.UtcNow)
-            {
-                Timer.DelayCall(TimeSpan.FromSeconds(10), () =>
-                {
-                    if (BribeMultiplier > 0)
-                        BribeMultiplier /= 2;
+			if (NextMultiplierDecay != DateTime.MinValue && NextMultiplierDecay < DateTime.UtcNow)
+			{
+				Timer.DelayCall(TimeSpan.FromSeconds(10), () =>
+				{
+					if (BribeMultiplier > 0)
+						BribeMultiplier /= 2;
 
-                    CheckNextMultiplierDecay();
-                });
-            }
+					CheckNextMultiplierDecay();
+				});
+			}
 		}
 
 		public override void Deserialize(GenericReader reader)
@@ -2416,18 +2497,23 @@ namespace Server.Mobiles
 
 			switch (version)
 			{
+				case 5: // [추가] 버전 5 처리
+				{
+					TownID = reader.ReadInt();
+					goto case 4;
+				}
 				case 4:
 				{
 					MyGold = reader.ReadInt();
 					goto case 3;
 				}
-                case 3:
-                case 2:
-                    BribeMultiplier = reader.ReadInt();
-                    NextMultiplierDecay = reader.ReadDateTime();
-                    CheckNextMultiplierDecay(false); // Reset NextMultiplierDecay if it is out of range of the config
-                    RecentBribes = reader.ReadInt();
-                    goto case 1;
+				case 3:
+				case 2:
+					BribeMultiplier = reader.ReadInt();
+					NextMultiplierDecay = reader.ReadDateTime();
+					CheckNextMultiplierDecay(false); // Reset NextMultiplierDecay if it is out of range of the config
+					RecentBribes = reader.ReadInt();
+					goto case 1;
 				case 1:
 					{
 						int index;
@@ -2435,14 +2521,14 @@ namespace Server.Mobiles
 						while ((index = reader.ReadEncodedInt()) > 0)
 						{
 							int doubled = reader.ReadEncodedInt();
-                            int bought = 0;
-                            int sold = 0;
+							int bought = 0;
+							int sold = 0;
 
-                            if (version >= 3)
-                            {
-                                bought = reader.ReadEncodedInt();
-                                sold = reader.ReadEncodedInt();
-                            }
+							if (version >= 3)
+							{
+								bought = reader.ReadEncodedInt();
+								sold = reader.ReadEncodedInt();
+							}
 
 							if (sbInfos != null)
 							{
@@ -2459,46 +2545,9 @@ namespace Server.Mobiles
 									{
 										GenericBuyInfo gbi = buyInfo[buyInfoIndex];
 
-										int amount = 500;
-
-										/*
-										switch (doubled)
-										{
-                                            case 0:
-                                                break;
-											case 1:
-												amount = 40;
-												break;
-											case 2:
-												amount = 80;
-												break;
-											case 3:
-												amount = 160;
-												break;
-											case 4:
-												amount = 320;
-												break;
-											case 5:
-												amount = 640;
-												break;
-											case 6:
-												amount = 999;
-												break;
-										}
-										*/
-                                        if (version == 2 && gbi.Stackable)
-                                        {
-                                            gbi.Amount = gbi.MaxAmount = BaseVendor.EconomyStockAmount;
-                                        }
-                                        else
-                                        {
-                                            gbi.Amount = gbi.MaxAmount = amount;
-                                        }
-
 										gbi.Amount = gbi.MaxAmount = 500;
-										
-                                        gbi.TotalBought = bought;
-                                        gbi.TotalSold = sold;
+										gbi.TotalBought = bought;
+										gbi.TotalSold = sold;
 									}
 								}
 							}
@@ -2516,13 +2565,15 @@ namespace Server.Mobiles
 			if( MyGold <= 5000 )
 				MyGold = Utility.RandomMinMax( 5000, 50000 );
 				
-			
-            if (version == 1)
-            {
-                BribeMultiplier = Utility.Random(10);
-            }
+			if (version == 1)
+			{
+				BribeMultiplier = Utility.Random(10);
+			}
 
 			Timer.DelayCall(TimeSpan.Zero, CheckMorph);
+
+			// [추가] 서버가 켜질 때 마을 창고와 다시 동기화
+			//Timer.DelayCall(TimeSpan.FromSeconds(1.0), SyncToTownEconomy);
 		}
 
 		public override void AddCustomContextEntries(Mobile from, List<ContextMenuEntry> list)
@@ -2854,7 +2905,7 @@ namespace Server
         void OnSold(BaseVendor vendor, int amount);
 
 		//display price of the item
-		int Price { get; }
+		int Price { get; set; }
 
 		//display name of the item
 		string Name { get; }
