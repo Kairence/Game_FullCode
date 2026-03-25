@@ -454,22 +454,54 @@ namespace Server.Misc
 			return items;
 		}
 
-		// [추가] 야생 작물 스폰 시 작물 선정 (CS0103 해결)
 		// [수정] 야생 작물 스폰 시 작물 선정 (양배추 고정 탈피!)
-        private static Type GetRandomCropForRegion(string regionName)
-        {
-            string n = regionName.ToLower();
-            if (n.Contains("wheat")) return typeof(Wheat);
-            if (n.Contains("carrot")) return typeof(Carrot);
-            if (n.Contains("corn")) return typeof(Corn);
-            if (n.Contains("onion")) return typeof(Onion);
-            if (n.Contains("lettuce")) return typeof(Lettuce);
-            if (n.Contains("cotton")) return typeof(Cotton);
-            
-            // 지역 이름에 특정 작물이 없다면, 다양한 작물 중 하나를 랜덤으로 생성합니다.
-            Type[] defaultCrops = { typeof(Cabbage), typeof(Carrot), typeof(Onion), typeof(Lettuce), typeof(Wheat), typeof(Cotton) };
-            return defaultCrops[Utility.Random(defaultCrops.Length)];
-        }
+		private static Type GetRandomCropForRegion(string regionName)
+		{
+			string n = regionName.ToLower();
+
+			// 1. 이름이 명시된 전용 리전 처리 (확정적 스폰)
+			if (n.Contains("wheat"))   return typeof(Wheat);
+			if (n.Contains("carrot"))  return typeof(Carrot);
+			if (n.Contains("corn"))    return typeof(Corn);
+			if (n.Contains("onion"))   return typeof(Onion);
+			if (n.Contains("lettuce")) return typeof(Lettuce);
+			if (n.Contains("cotton"))  return typeof(Cotton);
+			if (n.Contains("pumpkin")) return typeof(Pumpkin);
+			if (n.Contains("turnip"))  return typeof(Turnip);
+
+			// 2. [Camping 컨셉] 야생 구역 (숲, 정글, 일반 정원)
+			// 이 구역은 '밭' 타일이 없어도 스폰을 허용하도록 CanSpawnAt과 연동되어야 합니다.
+			if (n.Contains("forest") || n.Contains("woods") || n.Contains("jungle") || n.Contains("garden"))
+			{
+				// 야생에서는 시약의 가치를 높이기 위해 시약 40% : 버섯 60% 비율로 설정
+				if (Utility.RandomDouble() < 0.40)
+				{
+					// 야생에서 주로 발견되는 4대 약초형 시약
+					Type[] wildReagents = { 
+						typeof(Ginseng), typeof(Garlic), 
+						typeof(MandrakeRoot), typeof(Nightshade) 
+					};
+					return wildReagents[Utility.Random(wildReagents.Length)];
+				}
+				return typeof(Mushrooms1); 
+			}
+
+			// 3. [기본 농경지] 이름에 특정 작물이 없는 일반 Farm / Field
+			// 농작물(70%)과 농가 근처에서 자라는 흔한 시약(30%)을 혼합 배정합니다.
+			if (Utility.RandomDouble() < 0.30)
+			{
+				// 농장 근처에서 흔히 수집 가능한 시약 (인삼, 마늘)
+				return Utility.RandomBool() ? typeof(Ginseng) : typeof(Garlic);
+			}
+
+			// 4. 최종 기본값 (식량 중심의 랜덤 배정)
+			Type[] defaultCrops = { 
+				typeof(Cabbage), typeof(Carrot), typeof(Onion), 
+				typeof(Lettuce), typeof(Wheat), typeof(Pumpkin) 
+			};
+			
+			return defaultCrops[Utility.Random(defaultCrops.Length)];
+		}
         // ===================================================================================
         // [수정] 1분마다 회복 및 해양 생태계 (단계별 포식자 스폰 및 개체수 조절)
         // ===================================================================================

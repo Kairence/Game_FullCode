@@ -121,7 +121,7 @@ namespace Server.Misc
                 if (agent.House != null) agent.House.Prestige = Math.Max(0, agent.House.Prestige - 15);
                 Console.WriteLine($"[Rank Down] {agent.Name}: {agent.RankLevel}(으)로 강등... (Fame: {fame})");
             }
-        }
+        } 
 
         private static int GetRequiredFame(NobilityRank rank) => rank switch {
             NobilityRank.Knight => 3000, NobilityRank.SubBaronet => 6500, NobilityRank.Baronet => 10000,
@@ -206,27 +206,40 @@ namespace Server.Misc
         // ====================================================================
         private static void PerformSuccession(VirtualCitizen deceased, TownEconomy town)
         {
-            var candidates = town.Citizens.Where(c => c != deceased).ToList();
-            var p1 = candidates.Count > 0 ? candidates[Utility.Random(candidates.Count)] : null;
-            var p2 = candidates.Count > 1 ? candidates[Utility.Random(candidates.Count)] : null;
+            // 1. 유산 및 세금 계산 (사망자 자산의 30%를 마을로 귀속)
+            int totalAsset = deceased.Gold;
+            int tax = (int)(totalAsset * 0.3);
+            int legacy = totalAsset - tax;
+            
+            town.Wealth += tax; // 마을(Town.Wealth) 국부 상승
 
-            int tax = (int)(deceased.Gold * 0.3);
-            int legacy = deceased.Gold - tax;
-            town.Wealth += tax;
-
+            // 2. 신규 시민(상속자) 생성 및 유산 지급
             var child = new VirtualCitizen(deceased.JobClass, NobilityRank.Commoner, 70);
             
-            double townM = town.TownIndex switch { "S" => 2.5, "A" => 1.8, "B" => 1.2, _ => 0.8 };
-            child.Gold = (int)(5000 * townM) + legacy;
+            // 마을 등급(S, A, B)에 따른 기본 정착 지원금 + 부모의 유산
+            double townMultiplier = town.TownIndex switch { "S" => 2.5, "A" => 1.8, "B" => 1.2, _ => 0.8 };
+            child.Gold = (int)(5000 * townMultiplier) + legacy;
+
+            // 3. [물리 법칙 동기화] 수명 설정 (현실 1440분 = 게임 1년)
+            int gameMaxAge = Utility.RandomMinMax(60, 90);
             
-            ApplyGenetics(child, p1, p2);
-            child.Potential = (p1 != null) ? Math.Max(1.0, p1.Potential * Utility.RandomMinMax(80, 120) / 100.0) : 1.0;
-            child.MaxLifespan = TimeSpan.FromHours(Utility.RandomMinMax(168, 336));
-            if (deceased.House != null) child.House = deceased.House;
+            // VirtualCitizen.GameYearMinutes 상수를 사용하여 정확한 분(Minutes) 단위 수명 도출
+            child.MaxLifespan = TimeSpan.FromMinutes(gameMaxAge * VirtualCitizen.GameYearMinutes);
+            
+            // 세대교체이므로 현재 시간(Now)을 생일로 지정하여 0세부터 시작
+            child.BirthTime = DateTime.Now; 
+
+            // 4. 가문(House) 및 명부 승계
+            if (deceased.House != null) 
+            {
+                child.House = deceased.House;
+            }
 
             town.Citizens.Remove(deceased);
             town.Citizens.Add(child);
-            Console.WriteLine($"[{town.TownName}] 세대교체: {deceased.Name} 사망 -> 신규 탄생 (유산 {legacy:#,0}gp)");
+            
+            // 콘솔 모니터링 출력
+            Console.WriteLine($"[{town.TownName}] 세대교체: {deceased.Name} 사망 -> 신규 탄생 (세수 확보 {tax:N0}GP / 상속 {legacy:N0}GP)");
         }
 
         // ====================================================================
@@ -237,9 +250,68 @@ namespace Server.Misc
             if (p1 == null || child.Skills == null) return;
             foreach (SkillName sk in Enum.GetValues(typeof(SkillName)))
             {
-                double v1 = p1.Skills.TryGetValue(sk, out double val1) ? val1 : 0.0;
-                double v2 = (p2 != null && p2.Skills.TryGetValue(sk, out double val2)) ? val2 : 0.0;
+                // [교정 완료] out 키워드 금지 규칙 적용 (TryGetValue -> ContainsKey)
+                double v1 = p1.Skills.ContainsKey(sk) ? p1.Skills[sk] : 0.0;
+                double v2 = (p2 != null && p2.Skills.ContainsKey(sk)) ? p2.Skills[sk] : 0.0;
                 child.Skills[sk] = ((v1 + v2) / 2.0) * Utility.RandomMinMax(30, 50) / 100.0;
+            }
+        }
+
+        // ====================================================================
+        // 🏘️ 8. [신규] 시민 리스폰 및 직업 자동화 (Populate)
+        // ====================================================================
+        public static NpcJobClass GetJobForItem(Type targetItem)
+        {
+            var allJobs = Enum.GetValues<NpcJobClass>();
+            
+            var validJobs = allJobs.Where(job =>
+            {
+                var profile = VirtualJobCore.GetDeepJobProfile(job);
+                return profile.Produces != null && profile.Produces.Contains(targetItem);
+            }).ToList();
+
+            return validJobs.Count > 0 
+                ? validJobs[Random.Shared.Next(validJobs.Count)] 
+                : NpcJobClass.Laborer; 
+        }
+
+        public static void PopulateTownCitizens(TownEconomy town)
+        {
+            if (town == null) return;
+            town.Citizens ??= []; 
+
+            // [기초 설정] 벤더 1명당 가상 시민 10명 스폰 가정
+            int basePop = town.VendorCount * 10; 
+            
+            bool isOutpost = (town.TownID % 100) >= 50 || town.TownIndex == "C";
+
+            // [기획 1] 외곽(전초기지)은 기본 도시 인구의 절반 수준만 스폰
+            int targetPop = isOutpost ? basePop / 2 : basePop;
+
+            if (town.Citizens.Count >= targetPop) return;
+
+            var warehouseItems = town.Warehouse.Keys.ToList();
+            var allJobs = Enum.GetValues<NpcJobClass>();
+
+            for (int i = town.Citizens.Count; i < targetPop; i++)
+            {
+                NpcJobClass selectedJob;
+
+                // [기획 2 & 3] 외곽은 100% 창고 물품 기반 스폰 / 도시는 50% 확률로 창고 물품 기반
+                bool spawnByItem = isOutpost || Random.Shared.NextDouble() < 0.5;
+
+                if (spawnByItem && warehouseItems.Count > 0)
+                {
+                    Type randomItem = warehouseItems[Random.Shared.Next(warehouseItems.Count)];
+                    selectedJob = GetJobForItem(randomItem);
+                }
+                else
+                {
+                    selectedJob = allJobs[Random.Shared.Next(allJobs.Length)];
+                }
+
+                var newCitizen = new VirtualCitizen(selectedJob, NobilityRank.Commoner, 70);
+                town.Citizens.Add(newCitizen);
             }
         }
     }

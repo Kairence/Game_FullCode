@@ -188,7 +188,7 @@ namespace Server.Misc
 				{
 					Console.WriteLine($"[VendorNode Error] '{typeName}' 타입을 찾을 수 없습니다.");
 					break;
-				}
+				} 
 			}
 		}
         public override void OnDelete()

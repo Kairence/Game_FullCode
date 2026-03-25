@@ -118,42 +118,60 @@ namespace Server.Mobiles
         // [수정] 상인의 초기 판매 물품을 마을 공용 창고에 적재하는 동기화 함수
 		public void SyncToTownEconomy()
 		{
-			if (TownID <= 0 || !TownEconomyManager.Towns.TryGetValue(TownID, out var town))
+			// [코딩 규칙 적용] out 키워드 금지
+			if (TownID <= 0 || !TownEconomyManager.Towns.ContainsKey(TownID))
 				return;
 
+			var town = TownEconomyManager.Towns[TownID];
 			var sbInfos = SBInfos;
-			for (int i = 0; sbInfos != null && i < sbInfos.Count; ++i)
-			{
-				var sbInfo = sbInfos[i];
-				if (sbInfo == null || sbInfo.BuyInfo == null) continue;
+			if (sbInfos == null) return;
 
-				foreach (var itemInfo in sbInfo.BuyInfo)
+			for (int i = 0; i < sbInfos.Count; ++i)
+			{
+				var activeSbInfo = sbInfos[i];
+				if (activeSbInfo == null) continue;
+
+				SBInfo pristineSbInfo = null;
+				try
+				{
+					pristineSbInfo = (SBInfo)Activator.CreateInstance(activeSbInfo.GetType());
+				}
+				catch
+				{
+					pristineSbInfo = activeSbInfo; 
+				}
+
+				if (pristineSbInfo?.BuyInfo == null) continue;
+
+				foreach (GenericBuyInfo itemInfo in pristineSbInfo.BuyInfo)
 				{
 					Type itemType = itemInfo.Type;
-					
-					// [핵심 추가] 아이템 타입 자체가 null이면 아래 딕셔너리 로직에서 에러가 납니다.
-					if (itemType == null) 
-						continue;
+					if (itemType == null) continue;
 
-					int price = itemInfo.Price;
+					int pristinePrice = itemInfo.Price; 
 					int amount = 5000; 
 
-					// 1. 마을 설계도(Blueprint)에 기록
 					var existingEntry = town.InventoryEntries.FirstOrDefault(e => e.ItemType == itemType);
 					if (existingEntry != null)
-						existingEntry.InitialStock += amount;
-					else
-						town.InventoryEntries.Add(new TownInventoryEntry(itemType, amount, price));
-
-					// 2. 실시간 창고(Warehouse) 수량 증가
-					if (town.Warehouse.TryGetValue(itemType, out var wItem))
 					{
-						wItem.Stock += amount;
-						wItem.BasePrice = price; 
+						existingEntry.InitialStock += amount;
 					}
 					else
 					{
-						town.Warehouse[itemType] = new WarehouseItem(itemType, amount, price);
+						town.InventoryEntries.Add(new TownInventoryEntry(itemType, amount, pristinePrice));
+					}
+
+					// [코딩 규칙 적용] TryGetValue 대신 ContainsKey 사용
+					if (town.Warehouse.ContainsKey(itemType))
+					{
+						var wItem = town.Warehouse[itemType];
+						wItem.Stock += amount;
+						wItem.BasePrice = pristinePrice; 
+						wItem.TargetStock = wItem.Stock;
+					}
+					else
+					{
+						town.Warehouse[itemType] = new WarehouseItem(itemType, amount, pristinePrice);
 					}
 				}
 			}

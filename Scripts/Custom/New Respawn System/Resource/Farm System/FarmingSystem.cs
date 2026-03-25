@@ -28,10 +28,10 @@ namespace Server.Items
                     if (other.Stage == CropStage.Mature && Utility.RandomDouble() < 0.10)
                     {
                         plant.IsPollinated = true;
-                        // ¼öÁ¤: CrossedType¿¡ ½ÇÁ¦ Å¸ÀÔÀ» ³ÖÁö ¾Ê°í ¿­°ÅÇü Á¤º¸¸¦ È°¿ëÇÏ°Å³ª 
-                        // ¾Æ·¡Ã³·³ ¿ø¿¹ ½Ã½ºÅÛÀÇ Æ¯Á¤ °ªÀ» ÁöÁ¤ÇÕ´Ï´Ù.
+                        // ï¿½ï¿½ï¿½ï¿½: CrossedTypeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½ï¿½Ï°Å³ï¿½ 
+                        // ï¿½Æ·ï¿½Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã½ï¿½ï¿½ï¿½ï¿½ï¿½ Æ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
                         plant.CrossedType = PlantTypeInfo.RandomFirstGeneration(); 
-                        plant.Name += " (±³¹èµÊ)";
+                        plant.Name += " (ï¿½ï¿½ï¿½ï¿½ï¿½)";
                         break;
                     }
                 }
@@ -67,7 +67,7 @@ namespace Server.Items
 			IPooledEnumerable eable = map.GetItemsInRange(loc, 0);
 			foreach (Item item in eable)
 			{
-				if (item is FarmPloughedComponent) // 2¹ø Å¸ÀÏ(°æÀÛÁö) È®ÀÎ
+				if (item is FarmPloughedComponent) // 2ï¿½ï¿½ Å¸ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½) È®ï¿½ï¿½
 				{
 					onPloughedField = true;
 					break;
@@ -77,24 +77,24 @@ namespace Server.Items
 
 			if (!onPloughedField)
 			{
-				from.SendMessage("°æÀÛµÈ ¹ç(ÀÌ¶û Å¸ÀÏ) À§¿¡¸¸ ¾¾¾ÑÀ» ½ÉÀ» ¼ö ÀÖ½À´Ï´Ù.");
+				from.SendMessage("ï¿½ï¿½ï¿½Ûµï¿½ ï¿½ï¿½(ï¿½Ì¶ï¿½ Å¸ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.");
 				return false;
 			}
 			
-			return true; // ¿©±â¿¡ ±âÁ¸ °³¼ö Á¦ÇÑ(CanPlant) ·ÎÁ÷À» ÇÕÄ¡¸é µË´Ï´Ù.
+			return true; // ï¿½ï¿½ï¿½â¿¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(CanPlant) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ë´Ï´ï¿½.
 		}
         public static int GetPendingCount(string regionKey) => m_PendingLivestock.GetValueOrDefault(regionKey, 0);
 
-        // CanPlant´Â ÇÏ³ª¸¸ ³²±é´Ï´Ù. (Áßº¹ »èÁ¦)
+        // CanPlantï¿½ï¿½ ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½. (ï¿½ßºï¿½ ï¿½ï¿½ï¿½ï¿½)
         public static bool CanPlant(Mobile from)
         {
             int currentCount = World.Items.Values.OfType<BaseFarmItem>().Count(b => b.Owner == from);
-            int limit = 5 + (int)(from.Skills[SkillName.Herding].Value / 10); // ±âº» 5°³ + ½ºÅ³´ç Ãß°¡
+            int limit = 5 + (int)(from.Skills[SkillName.Herding].Value / 10); // ï¿½âº» 5ï¿½ï¿½ + ï¿½ï¿½Å³ï¿½ï¿½ ï¿½ß°ï¿½
             return currentCount < limit;
         }
         public static void GiveXP(Mobile from, int amount)
         {
-            // Herding ½ºÅ³ »ó½Â Ã¼Å©
+            // Herding ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ Ã¼Å©
             //from.CheckSkill(SkillName.Herding, 0, 120); 
         }
     }

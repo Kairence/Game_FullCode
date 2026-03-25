@@ -191,7 +191,11 @@ namespace Server.Items
             string typeName = m_ResultType != null ? m_ResultType.Name : "";
             
             // 종류별 그래픽 분기 (BaseSeeding.cs 데이터 반영)
-            if (typeName.Contains("Cabbage"))      ItemID = isHarvestable ? 0xC7C : 0xC61;
+			if (typeName.Contains("Ginseng"))         ItemID = isHarvestable ? 0x18E9 : 0x18E7; // 인삼
+			else if (typeName.Contains("Garlic"))     ItemID = isHarvestable ? 0x18E1 : 0x18E0; // 마늘
+			else if (typeName.Contains("Mandrake"))   ItemID = isHarvestable ? 0x18DF : 0x18DE; // 맨드레이크
+			else if (typeName.Contains("Nightshade")) ItemID = isHarvestable ? 0x18E5 : 0x18E4; // 나이트셰이드
+			else if (typeName.Contains("Cabbage"))      ItemID = isHarvestable ? 0xC7C : 0xC61;
             else if (typeName.Contains("Carrot"))  ItemID = isHarvestable ? 0xC76 : 0xC69;
             else if (typeName.Contains("Corn"))    ItemID = isHarvestable ? 0xC7D : 0xC7E;
             else if (typeName.Contains("Cotton"))  ItemID = isHarvestable ? Utility.RandomList(0xC4F, 0xC50) : Utility.RandomList(0xC53, 0xC54);
@@ -224,6 +228,10 @@ namespace Server.Items
         {
             if (type == null) return "작물";
             string n = type.Name;
+			if (n.Contains("Ginseng")) return "인삼";
+			if (n.Contains("Garlic")) return "마늘";
+			if (n.Contains("Mandrake")) return "맨드레이크";
+			if (n.Contains("Nightshade")) return "나이트셰이드";
             if (n.Contains("Cabbage")) return "양배추";
             if (n.Contains("Carrot")) return "당근";
             if (n.Contains("Corn")) return "옥수수";

@@ -393,6 +393,17 @@ namespace Server
 			Debug = true;
 #endif
 			System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+			try
+			{
+				// 65001(UTF8) 대신 949를 사용하면 윈도우 콘솔과 궁합이 가장 잘 맞습니다.
+				Console.OutputEncoding = System.Text.Encoding.GetEncoding(949);
+				Console.InputEncoding = System.Text.Encoding.GetEncoding(949);
+			}
+			catch
+			{
+				Console.OutputEncoding = System.Text.Encoding.UTF8;
+				Console.InputEncoding = System.Text.Encoding.UTF8;
+			}
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 			AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 

@@ -9,7 +9,9 @@ namespace Server.Misc
 
     public class VirtualCitizen : VirtualAgent 
     {
-        // --- [속성] Mobile 미상속에 따른 필수 데이터 ---
+        // --- [물리 법칙] 현실 1일(1440분) = 게임 1년(360일) ---
+        public const double GameYearMinutes = 1440.0;
+
         public string Name { get; set; } = "Citizen";
         public int Fame { get; set; }          
         public int Karma { get; set; }
@@ -18,149 +20,143 @@ namespace Server.Misc
         // --- 생물학적 데이터 ---
         public Gender Gender { get; set; }
         public double Potential { get; set; }  // 잠재력 (1.0 ~ 3.0)
-        public int Age { get; set; }           // '분(Minute)' 단위 나이
         public DateTime BirthTime { get; set; } 
         public TimeSpan MaxLifespan { get; set; } 
+        
+        // 실시간 게임 나이 계산 (단위: 세)
+        public double Age => (DateTime.Now - BirthTime).TotalMinutes / GameYearMinutes;
 
         // --- 사회/경제 데이터 ---
         public int Satisfaction { get; set; }  
         public NobilityRank RankLevel { get; set; } 
         public int Thirst { get; set; } 
+        public string TargetRegionName { get; set; }
 
-        // --- [중요] 상태 판별 로직 (단위 교정 및 누락 속성 추가) ---
-        // Age는 '분'이고 MaxLifespan은 '시간'이므로 TotalMinutes로 비교해야 정확합니다.
+        // --- 상태 판별 로직 (고정 나이 기준) ---
         public bool IsStarving => Hunger <= 0; 
         public bool IsDehydrated => Thirst <= 0; 
 
-        // 1. 아동기 (수명의 15% 미만) - SocialDynamicsEngine에서 참조
-        public bool IsChild => (double)Age / MaxLifespan.TotalMinutes < 0.15; 
+        public bool IsChild => Age < 18.0; 
+        public bool IsProductive => Age is >= 18.0 and < 60.0;
+        public bool IsElder => Age >= 60.0;
+        public bool IsExpired => Age >= (MaxLifespan.TotalMinutes / GameYearMinutes);
 
-        // 2. 성인기 (15% ~ 70%) - 생산 활동 가능
-        public bool IsProductive => (double)Age / MaxLifespan.TotalMinutes >= 0.15 && 
-                                    (double)Age / MaxLifespan.TotalMinutes < 0.7;
-
-        // 3. 노년기 (70% 이상) - SocialDynamicsEngine에서 참조
-        public bool IsElder => (double)Age / MaxLifespan.TotalMinutes >= 0.7;
-
-        public bool IsExpired => Age >= MaxLifespan.TotalMinutes;
-
-        // --- 소속 데이터 ---
+        // --- 소속 및 추적 데이터 ---
         public FamilyUnit Family { get; set; } 
         public VirtualHouse House { get; set; } 
+        
+        // [신규] 30초 보정 틱 및 생존 연산을 위한 데이터
+        public int LastProcessedHour { get; set; } = -1;
+        public DateTime LastSurvivalTick { get; set; } = DateTime.Now;
 
         // --- 생성자 ---
         public VirtualCitizen(NpcJobClass job, NobilityRank rank, int satisfaction) : base(job, NpcRank.Novice)
         {
             RankLevel = rank;
             Satisfaction = satisfaction;
-            Age = 0; 
-            BirthTime = DateTime.UtcNow; 
             Gender = Utility.RandomBool() ? Gender.Male : Gender.Female;
-            
-            // 수명 설정 (168시간 ~ 336시간)
-            MaxLifespan = TimeSpan.FromHours(Utility.RandomMinMax(168, 336));
 
-            // 잠재력 설정
+            // 1. 수명 설정: 60~90세 (현실 60~90일 생존)
+            int gameMaxAge = Utility.RandomMinMax(60, 90);
+            MaxLifespan = TimeSpan.FromMinutes(gameMaxAge * GameYearMinutes);
+
+            // 2. 시작 나이 설정: 초기 20~25세 성인으로 시작 (BirthTime 역산)
+            int startingAge = Utility.RandomMinMax(20, 25);
+            BirthTime = DateTime.Now - TimeSpan.FromMinutes(startingAge * GameYearMinutes);
+
             double roll = Utility.RandomDouble();
-            if (roll > 0.97) Potential = 3.0;
-            else if (roll > 0.90) Potential = 1.5;
-            else Potential = 1.0;
-
-            // 초기 수치 설정
-            Hunger = 100000; 
-            Thirst = 20;     
-            Fame = 0;
-            Karma = 0;
-
-            Skills = new Dictionary<SkillName, double>();
-            foreach (SkillName sk in Enum.GetValues(typeof(SkillName)))
-                Skills[sk] = 0.0;
+            Potential = roll > 0.97 ? 3.0 : (roll > 0.90 ? 1.5 : 1.0);
+            
+            Hunger = 100;
+            Thirst = 100;
+            Skills = []; // C# 12 collection expression
+            foreach (SkillName sk in Enum.GetValues<SkillName>()) Skills[sk] = 0.0;
         }
 
-        // --- 실시간 라이프 사이클 ---
-        public void OnTick(TownEconomy town)
+		// VirtualCitizen.cs 내 OnTick 메서드 수정
+		public void OnTick(TownEconomy town)
 		{
 			if (town == null || IsExpired) return;
 
-			Age++; // 1틱 = 1분 경과
-			
+			// 1. 생존 수치 감소 (10초 = 1시간 법칙 기반 소급 적용)
 			UpdateSurvivalDecay(town);
 
-			int hours, mins;
-			Clock.GetTime(town.Facet, town.Center.X, town.Center.Y, out hours, out mins);
+			// 2. 인게임 시간 추출 (out 키워드 금지 규칙 적용 및 물리 법칙 동기화)
+			// 자정(0시)부터 현재까지 흐른 총 초(Seconds)를 10으로 나누면 현재 게임 시간이 됩니다.
+			int currentHour = (int)(DateTime.Now.TimeOfDay.TotalSeconds / 10.0) % 24;
 
-			// [핵심 변경] 사라진 옛날 파일들 대신, 새로 통합한 행동 AI를 호출합니다!
-			VirtualCitizenAI.ProcessQuarterlyRoutine(this, town, hours);
+			// 3. [핵심] 30초 보정 및 추격 로직 (6, 12, 18, 0시 정각 체크)
+			if (currentHour % 6 == 0 && currentHour != LastProcessedHour)
+			{
+				LastProcessedHour = currentHour;
+				VirtualCitizenAI.ExecuteDeepRoutine(this, town, currentHour);
+			}
 		}
 
         private void UpdateSurvivalDecay(TownEconomy town)
         {
-            int virtualWeight = (int)(100 / Potential); 
-            int hungerDecay = 10 + (virtualWeight / 5);
+            // 현실 시간에서 흐른 시간을 게임 시간(Hour)으로 환산
+            double elapsedGameHours = (DateTime.Now - LastSurvivalTick).TotalSeconds / 10.0;
+            
+            if (elapsedGameHours >= 1.0) // 최소 게임 시간 1시간 이상 흘렀을 때만 계산
+            {
+                LastSurvivalTick = DateTime.Now;
 
-            int hours, mins;
-            Clock.GetTime(town.Facet, town.Center.X, town.Center.Y, out hours, out mins);
-            if (hours >= 8 && hours <= 17)
-                hungerDecay *= 5;
+                // 잠재력이 높을수록 허기/갈증이 덜 깎임
+                double decayFactor = 5.0 / Potential; 
+                int totalDecay = (int)(elapsedGameHours * decayFactor);
 
-            this.Hunger = Math.Max(0, this.Hunger - hungerDecay);
-
-            if (this.Thirst >= 1)
-                this.Thirst -= 1;
+                this.Hunger = Math.Max(0, this.Hunger - totalDecay);
+                this.Thirst = Math.Max(0, this.Thirst - totalDecay);
+            }
         }
 
         public override void Serialize(GenericWriter writer)
         {
-            base.Serialize(writer); 
-            writer.Write((int)7); // Version
+            base.Serialize(writer);
+            writer.Write(4); // LastProcessedHour 추가에 따른 버전 업
 
             writer.Write(Name);
             writer.Write(Fame);
             writer.Write(Karma);
             writer.Write((int)Gender);
-            writer.Write(Age);
+            writer.Write(Potential);
+            writer.Write(BirthTime); 
+            writer.Write(MaxLifespan);
             writer.Write(Satisfaction);
             writer.Write((int)RankLevel);
-            writer.Write(BirthTime);
-            writer.Write(MaxLifespan);
-            writer.Write(Potential);
             writer.Write(Thirst);
+            writer.Write(LastProcessedHour);
 
             writer.Write(Skills.Count);
-            foreach (var kvp in Skills)
+            foreach (var (skill, val) in Skills) 
             {
-                writer.Write((int)kvp.Key);
-                writer.Write(kvp.Value);
+                writer.Write((int)skill);
+                writer.Write(val);
             }
         }
 
         public VirtualCitizen(GenericReader reader) : base(reader)
         {
             int version = reader.ReadInt();
-
             Name = reader.ReadString();
             Fame = reader.ReadInt();
             Karma = reader.ReadInt();
             Gender = (Gender)reader.ReadInt();
-            Age = reader.ReadInt();
-            Satisfaction = reader.ReadInt();
-            RankLevel = (NobilityRank)reader.ReadInt();
+            Potential = reader.ReadDouble();
             BirthTime = reader.ReadDateTime();
             MaxLifespan = reader.ReadTimeSpan();
-            Potential = reader.ReadDouble();
-            
-            if (version >= 6)
-                Thirst = reader.ReadInt();
-            else
-                Thirst = 20;
+            Satisfaction = reader.ReadInt();
+            RankLevel = (NobilityRank)reader.ReadInt();
+            Thirst = reader.ReadInt();
 
+            if (version >= 4)
+                LastProcessedHour = reader.ReadInt();
+
+            Skills = [];
             int skillCount = reader.ReadInt();
-            Skills = new Dictionary<SkillName, double>();
             for (int i = 0; i < skillCount; i++)
-            {
-                SkillName sk = (SkillName)reader.ReadInt();
-                Skills[sk] = reader.ReadDouble();
-            }
+                Skills[(SkillName)reader.ReadInt()] = reader.ReadDouble();
         }
     }
 }

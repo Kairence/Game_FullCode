@@ -100,9 +100,11 @@ namespace Server.Misc
             AddButton(560, btnY, 4005, 4007, 14, GumpButtonType.Reply, 0); AddLabel(595, btnY + 2, 1152, "경제 지표 동기화");
         }
 
-        private void DrawTownInventory()
+		private void DrawTownInventory()
         {
-            if (!TownEconomyManager.Towns.TryGetValue(m_TownID, out var town)) return;
+            // out 키워드 금지 규칙 적용
+            if (!TownEconomyManager.Towns.ContainsKey(m_TownID)) return;
+            var town = TownEconomyManager.Towns[m_TownID];
 
             // 진입 시 지표 동기화 (가격 계산용)
             town.UpdateBaseWealth();
@@ -110,9 +112,9 @@ namespace Server.Misc
             AddHtml(10, 15, 780, 25, $"<CENTER><BASEFONT COLOR='#68FF68' SIZE='6'>[{town.Name}] WAREHOUSE</BASEFONT></CENTER>", false, false);
             AddButton(20, 15, 4014, 4016, 999, GumpButtonType.Reply, 0); AddLabel(55, 15, 1152, "목록으로");
 
-			// [새로 추가할 부분] 시민 관리 창 이동 버튼
-			AddButton(150, 15, 4005, 4007, 1000, GumpButtonType.Reply, 0); 
-			AddLabel(185, 15, 68, "시민(NPC) 관리");
+            // 시민 관리 창 이동 버튼
+            AddButton(150, 15, 4005, 4007, 1000, GumpButtonType.Reply, 0); 
+            AddLabel(185, 15, 68, "시민(NPC) 관리");
 
             string ecoInfo = $"현금: {town.Wealth:N0}g  |  기준: {town.BaseWealth:N0}g  |  물가: {town.PriceMultiplier:F2}x";
             AddLabel(35, 50, 0x481, ecoInfo);
@@ -120,7 +122,7 @@ namespace Server.Misc
             int y = 80;
             AddLabel(35, y, 53, "아이템 이름 (Type)");
             AddLabel(300, y, 53, "현재 재고");
-            AddLabel(450, y, 53, "기준 가격");
+            AddLabel(450, y, 53, "현재가 (원가)"); // 헤더 텍스트 변경
             AddLabel(635, y, 53, "수정");
 
             var items = town.Warehouse.Values.OrderBy(w => w.ItemType.Name).ToList();
@@ -131,10 +133,17 @@ namespace Server.Misc
             {
                 y += 26;
                 var wItem = items[i];
+                
+                // [추가] 동적 물가가 반영된 실제 계산된 현재 가격
+                int currentPrice = town.GetPrice(wItem.ItemType);
+
                 AddImageTiled(20, y, 760, 24, 9354);
                 AddLabel(35, y + 2, 1152, wItem.ItemType.Name);
                 AddLabel(300, y + 2, wItem.Stock <= 500 ? 33 : 68, wItem.Stock.ToString("N0"));
-                AddLabel(450, y + 2, 1152, $"{wItem.BasePrice:N0} gp");
+                
+                // [수정] 요청하신 8(10) gp 형식으로 출력
+                AddLabel(450, y + 2, 1152, $"{currentPrice:N0} ({wItem.BasePrice:N0}) gp");
+                
                 AddButton(635, y + 2, 4005, 4007, 2000 + i, GumpButtonType.Reply, 0);
             }
 
@@ -169,23 +178,49 @@ namespace Server.Misc
 					case 20: // 전체 NPC 관리 창 (신설	)
                         m_From.SendGump(new EconomyGlobalNpcGump(m_From, m_MapIndex));
                         return;				
-                    case 10: // 리스폰 ON
+					case 10: // 리스폰 ON
+                        // 순수하게 월드에 상인을 스폰시키는 작업만 수행합니다. (스캔 X, 명부 등록 X)
                         ToggleVendorNodes(targetMap, true);
+                        m_From.SendMessage(68, "상인 리스폰이 완료되었습니다. 정보를 보려면 [경제 지표 동기화]를 눌러주세요.");
                         break;
+
                     case 11: // 리스폰 OFF
                         foreach (var t in targets) { t.Warehouse.Clear(); t.Wealth = 0; }
                         ToggleVendorNodes(targetMap, false);
                         break;
-                    case 14: // 지표 동기화
-                        foreach (var t in targets)
-                        {
-                            // 실시간 상인 카운트 필터 동기화
+					case 14: // 지표 동기화 (스캔 + 명부 등록 + 연산)
+						// 1. 월드를 싹 읽어서 명부에 없는 도시/전초기지 객체 생성
+						foreach (var m in World.Mobiles.Values)
+						{
+							if (m is BaseVendor v && v is not Banker && v.Map == targetMap)
+							{
+								int tID = TownNumber.GetID(v.Location, v.Map);
+								if (tID > 0 && !TownEconomyManager.Towns.ContainsKey(tID))
+								{
+									var newTown = new TownEconomy(tID, 0);
+									
+									// TownID 뒷자리가 50 이상이면 자동으로 C등급 배정
+									if ((tID % 100) >= 50) 
+									{
+										newTown.TownIndex = "C"; 
+									}
+									TownEconomyManager.Towns[tID] = newTown;
+								}
+							}
+						}
+
+						// 2. 완성된 명부를 바탕으로 상인 수 세고 돈 계산
+						var syncTargets = TownEconomyManager.Towns.Values.Where(t => (t.TownID / 100) == logicID).ToList();
+						foreach (var t in syncTargets)
+						{
 							t.VendorCount = World.Mobiles.Values.OfType<BaseVendor>()
-								.Count(v => v.Map == targetMap && TownNumber.GetID(v.Location, v.Map) == t.TownID);
+								.Count(v => v.Map == targetMap && TownNumber.GetID(v.Location, v.Map) == t.TownID && v is not Banker);
+							
 							t.UpdateBaseWealth();
-							t.Wealth = t.BaseWealth;
-                        }
-                        break;
+							t.Wealth = t.BaseWealth; // 초기화/동기화 시 자본금 세팅
+						}
+						m_From.SendMessage(68, "도시 및 전초기지를 스캔하여 경제 지표를 동기화했습니다.");
+						break;
                     case 98: m_TPage--; break;
                     case 99: m_TPage++; break;
                     default:

@@ -313,44 +313,49 @@ namespace Server.Misc
                 ReturnToSafety();
             }
         }
-		// ==============================================================================
-        // 🛒 1. 마을 정비 및 거리 기반 비축 (ProcessJob)
+// ==============================================================================
+        // 🛒 1. 마을 정비 및 거리 기반 비축 (ProcessJob) - [교정 완료]
         // ==============================================================================
         protected override void ProcessJob(TownEconomy town)
         {
             // [A] 다음 목적지 거리에 따른 비축 배율 계산
             if (Party != null && Party.TargetNode != null)
             {
+                Point3D p1 = Party.CurrentNode.EntranceLoc;
+                Point3D p2 = Party.TargetNode.EntranceLoc;
 
-				Point3D p1 = Party.CurrentNode.EntranceLoc;
-				Point3D p2 = Party.TargetNode.EntranceLoc;
-
-				// 실제 월드 좌표 간 거리 계산 (Utility.GetDistance 이용)
-				int dist = (int)Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
-			
-                // 3000타일 기준 최대 2.0배 비축
+                int dist = (int)Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
                 this.PrepMultiplier = Math.Min(2.0, 1.2 + (dist / 3000.0));
             }
 
-            // [B] 소모품 대량 구매 (PrepMultiplier 적용)
+            // [B] 소모품 대량 구매 (out 키워드 제거 및 튜플 반환형 적용)
             int foodT = (int)(10 * PrepMultiplier);
             if (FoodRations < foodT) 
-                if (TryBuyItem(town, typeof(BreadLoaf), foodT - FoodRations, out _)) 
+            {
+                // TryBuyItem(...).Success 형태로 튜플 결과 체크
+                if (TryBuyItem(town, typeof(BreadLoaf), foodT - FoodRations).Success) 
                     FoodRations = foodT;
+            }
 
             int potT = (int)(5 * PrepMultiplier);
             if (HealingPotions < potT) 
-                if (TryBuyItem(town, typeof(GreaterHealPotion), potT - HealingPotions, out _)) 
+            {
+                if (TryBuyItem(town, typeof(GreaterHealPotion), potT - HealingPotions).Success) 
                     HealingPotions = potT;
+            }
 
             int bandT = (int)(20 * PrepMultiplier);
             if (Bandages < bandT) 
-                if (TryBuyItem(town, typeof(Bandage), bandT - Bandages, out _)) 
+            {
+                if (TryBuyItem(town, typeof(Bandage), bandT - Bandages).Success) 
                     Bandages = bandT;
+            }
 
             // [C] 필수 장비 및 여관 숙박
             if (!HasBedroll) 
-                if (TryBuyItem(town, typeof(Bedroll), 1, out _)) HasBedroll = true;
+            {
+                if (TryBuyItem(town, typeof(Bedroll), 1).Success) HasBedroll = true;
+            }
 
             if (this.HP < MaxHP * 0.6 || this.Stress > 40)
             {

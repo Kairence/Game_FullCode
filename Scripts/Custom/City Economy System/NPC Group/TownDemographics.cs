@@ -4,259 +4,373 @@ using System.Linq;
 using Server;
 using Server.Items;
 using Server.Mobiles;
-using Server.Multis;
 
 namespace Server.Misc
 {
-    // 마을의 특성을 정의하는 Enum (기존 TownDemographicAI에서 이동)
     public enum TownType { Agricultural, Industrial, Academic, Metropolis }
 
     public class TownDemographics
     {
         public const long PlatinumUnit = 100000000;
 
+ // ====================================================================
+        // ??? 1. 메인 파이프라인 (50/50 직업 구성 및 도시/외곽 차별화)
         // ====================================================================
-        // 🏙️ 1. 메인 파이프라인: 마을 초기화 및 인구 리스폰
-        // ====================================================================
-		public static void InitializeTown(TownEconomy town, int targetPop)
-		{
-			if (town == null) return;
-
-			// 1. 기존 가상 시민 데이터 초기화
-			town.Citizens.Clear();
-
-			// 2. 새로운 인구 할당 (기본적으로 노동자 계층으로 시작)
-			for (int i = 0; i < targetPop; i++)
-			{
-				// 최적화된 산업 비중에 따라 생성하는 것이 좋으나, 우선 테스트를 위해 기초 직업으로 생성합니다.
-				AddCitizen(town, NpcJobClass.Pauper, NpcRank.Novice);
-			}
-            Console.WriteLine($"[{town.TownName}] 인구 배치 완료: 총 {town.Citizens.Count}명");
-		}
-		/*
-        public static void InitializeTown(TownEconomy town)
+        public static void InitializeTown(TownEconomy town, int targetPop)
         {
-            if (town == null || town.Warehouse == null) return;
+            if (town == null) return;
 
-            // [Step 1] 마을 자산(Wealth) 동기화
-            long totalAssetsValue = 0;
-            foreach (var kvp in town.Warehouse)
-            {
-                totalAssetsValue += (long)kvp.Value.Stock * town.GetPrice(kvp.Key, 1.0);
-            }
-            town.Wealth = totalAssetsValue; 
-
-            Console.WriteLine($"[{town.TownName}] 자산 동기화: {totalAssetsValue / PlatinumUnit}P");
-
-            // [Step 2] 인구 상한선(Cap) 계산 (기존 Controller 로직)
-            int targetPopulation = CalculatePopulationCap(town);
-
-            // [Step 3] AI 직업 가중치 파이프라인 실행
-            var jobWeights = OptimizeDemographics(town);
-
-            // [Step 4] 시민 배치
-            if (town.Citizens == null) town.Citizens = new List<VirtualCitizen>();
             town.Citizens.Clear();
 
-            for (int i = 0; i < targetPopulation; i++)
+            // [기획 반영] 잠재 총 인구 계산 (S: +500, A: +200 등)
+            int multiplier = town.TownIndex switch { "S" => 20, "A" => 15, "B" => 10, _ => 5 };
+            int extraPop = town.TownIndex switch { "S" => 500, "A" => 200, "B" => 100, _ => 50 };
+            int totalPotential = (town.VendorCount * multiplier) + extraPop;
+            
+            // 모든 마을은 잠재 인구의 50%를 '경제 핵심군'으로 가짐
+            int coreCount = totalPotential / 2;
+            double townMultiplier = GetTownMultiplier(town.TownIndex);
+            bool isCity = (town.TownID % 100) < 50;
+
+            // 1-A. [경제 핵심군] 창고와 구매/판매가 모두 연동된 직업군 추출
+            var warehouseJobs = Enum.GetValues<NpcJobClass>()
+                .Cast<NpcJobClass>()
+                .Where(j => {
+                    var p = VirtualJobCore.GetDeepJobProfile(j);
+                    // 튜플 방어 코드 및 구매/판매 연동 체크
+                    bool buys = (p.Necessities != null && p.Necessities.Length > 0) || 
+                                (p.JobMaterials != null && p.JobMaterials.Length > 0) || 
+                                (p.Luxuries != null && p.Luxuries.Length > 0);
+                    bool sells = p.Produces != null && p.Produces.Length > 0;
+                    return buys && sells;
+                }).ToList();
+
+            if (warehouseJobs.Count == 0) warehouseJobs = Enum.GetValues<NpcJobClass>().Cast<NpcJobClass>().ToList();
+
+            // 핵심 직업군 생성 (모든 마을 공통 50% 파이)
+            for (int i = 0; i < coreCount; i++)
             {
-                NpcJobClass jobHeader = GetRandomJobFromWeights(jobWeights);
-                NpcRank skillRank = GetRandomRank();
-                
-                AddCitizen(town, jobHeader, skillRank);
+                NpcJobClass job = warehouseJobs[Utility.Random(warehouseJobs.Count)];
+                NobilityRank rank = DetermineNobility(job);
+                AddCitizen(town, GetSpecificJobForRankAndGroup(rank, job), GetRandomRank(), rank, townMultiplier);
             }
 
-            Console.WriteLine($"[{town.TownName}] 인구 배치 완료: 총 {town.Citizens.Count}명");
+            // 1-B. [유동 랜덤군] 도시에만 추가되는 나머지 50% 파이
+            if (isCity)
+            {
+                var allJobs = Enum.GetValues<NpcJobClass>().Cast<NpcJobClass>().ToList();
+                int randomCount = targetPop - coreCount; // 도시인 경우 나머지 절반을 채움
+
+                for (int i = 0; i < randomCount; i++)
+                {
+                    NpcJobClass job = allJobs[Utility.Random(allJobs.Count)];
+                    NobilityRank rank = DetermineNobility(job);
+                    AddCitizen(town, GetSpecificJobForRankAndGroup(rank, job), GetRandomRank(), rank, townMultiplier);
+                }
+            }
+
+            // 2. [핵심 추가] 마을별 특색(Lore)에 맞는 보너스 인구(+a) 투입!
+            ApplyTownSpecialties(town, townMultiplier); 
+
+            Console.WriteLine($"[{town.TownName}] 인구 배치 완료: {town.Citizens.Count}명 (도시여부: {isCity})");
         }
-		*/
-        public static void RespawnFacet(Map facet, Mobile from)
-		{
-			if (facet == null || facet == Map.Internal) return;
 
-			// 1. 현재 선택한 대륙(예: 트라멜)에 속한 마을만 필터링
-			var targetTowns = TownEconomyManager.Towns.Values
-				.Where(t => t.Facet == facet)
-				.ToList();
-
-			if (targetTowns.Count == 0)
-			{
-				from.SendMessage(33, $"{facet.Name} 대륙에 등록된 마을이 없습니다.");
-				return;
-			}
-
-			from.SendMessage(68, $"{facet.Name} 대륙 NPC 생성을 시작합니다...");
-
-			foreach (TownEconomy town in targetTowns)
-			{
-				// 2. 해당 마을의 상인 수를 '실시간'으로 다시 체크 (대륙 격리 확인)
-				// Banker를 제외한 해당 대륙/해당 마을 구역 내의 BaseVendor 카운트
-				town.VendorCount = World.Mobiles.Values.OfType<BaseVendor>()
-					.Count(v => v.Map == facet && TownNumber.GetID(v.Location, v.Map) == town.TownID && !(v is Banker));
-
-				// 3. 상인 수에 비례한 인구 상한선 계산
-				int targetPop = CalculatePopulationCap(town); 
-				
-				// 4. 해당 마을 시민 생성 (기존 인구 삭제 후 재배치)
-				InitializeTown(town, targetPop);
-			}
-
-			from.SendMessage(68, $"{facet.Name} 대륙 리스폰 완료. (활성 마을: {targetTowns.Count}개)");
-		}
 
         // ====================================================================
-        // 📊 2. AI 가중치 파이프라인 (기존 AI + Controller 병합)
+        // ?? 2. 신분 및 직업 결정 엔진 (복리 대응)
+        // ====================================================================
+        private static NpcJobClass GetSpecificJobForRankAndGroup(NobilityRank rank, NpcJobClass groupHeader)
+        {
+            int startRange = (int)groupHeader;
+            int endRange = startRange + 100;
+
+            var validJobs = Enum.GetValues(typeof(NpcJobClass))
+                                .Cast<NpcJobClass>()
+                                .Where(j => (int)j >= startRange && (int)j < endRange)
+                                .Where(j => 
+                                {
+                                    var profile = VirtualJobCore.GetDeepJobProfile(j);
+                                    return rank >= profile.MinRank && rank <= profile.MaxRank;
+                                }).ToList();
+
+            if (validJobs.Count == 0)
+            {
+                validJobs = Enum.GetValues(typeof(NpcJobClass))
+                                .Cast<NpcJobClass>()
+                                .Where(j => (int)j >= startRange && (int)j < endRange).ToList();
+            }
+
+            return validJobs.Count > 0 ? validJobs[Utility.Random(validJobs.Count)] : groupHeader;
+        }
+
+        private static NobilityRank DetermineNobility(NpcJobClass jobGroup)
+        {
+            double roll = Utility.RandomDouble();
+            int groupID = ((int)jobGroup / 100) * 100;
+
+            if (groupID == 500) return roll < 0.25 ? NobilityRank.Baron : NobilityRank.Knight;
+            if ((groupID == 600 || groupID == 1000) && roll < 0.12) return NobilityRank.Knight;
+
+            return roll < 0.03 ? NobilityRank.Knight : NobilityRank.Commoner;
+        }
+
+        // ====================================================================
+        // ?? 3. 복리(Multiplicative) 가중치 최적화
         // ====================================================================
         private static Dictionary<NpcJobClass, double> OptimizeDemographics(TownEconomy town)
         {
-            // 1. 기본 비율 로드
             var ratios = GetBaseRatios(town.Type);
 
-            // 2. 젠트리피케이션 (부유할수록 귀족 증가)
-            ApplyGentrification(town, ratios);
+            double wealthFactor = 1.0 + (Math.Min(10.0, (double)town.Wealth / (PlatinumUnit * 5)) * 0.1); 
+            
+            if (ratios.ContainsKey((NpcJobClass)500)) ratios[(NpcJobClass)500] *= wealthFactor;
+            if (ratios.ContainsKey((NpcJobClass)600)) ratios[(NpcJobClass)600] *= (wealthFactor * 0.9);
 
-            // 3. 자원 결핍 대응 (식량/자재 부족 시 노동자 증가)
-            ApplyResourceUrgency(town, ratios);
+            int totalFood = town.Warehouse.Values.Sum(v => v.Stock);
+            if (totalFood < 500)
+            {
+                if (ratios.ContainsKey((NpcJobClass)100)) ratios[(NpcJobClass)100] *= 2.0;
+            }
 
-            // 4. 최소 유지 비율(Hard Floor) 적용 및 정규화
-            FinalizeJobRatios(ratios);
+            int totalMat = town.Warehouse.Count;
+            if (totalMat < 20)
+            {
+                if (ratios.ContainsKey((NpcJobClass)200)) ratios[(NpcJobClass)200] *= 1.5;
+            }
+
+            double sum = ratios.Values.Sum();
+            if (sum > 0)
+            {
+                var keys = ratios.Keys.ToList();
+                foreach (var key in keys) ratios[key] /= sum;
+            }
 
             return ratios;
         }
 
-        private static Dictionary<NpcJobClass, double> GetBaseRatios(TownType type) => type switch
+        private static Dictionary<NpcJobClass, double> GetBaseRatios(TownType type)
         {
-            TownType.Industrial => new() { { NpcJobClass.Pauper, 0.2 }, { NpcJobClass.Smelter, 0.5 }, { NpcJobClass.Knight, 0.1 }, { NpcJobClass.CaravanMaster, 0.15 }, { NpcJobClass.Thief, 0.05 } },
-            TownType.Academic => new() { { NpcJobClass.Pauper, 0.1 }, { NpcJobClass.Wizard, 0.35 }, { NpcJobClass.Librarian, 0.35 }, { NpcJobClass.Priest, 0.15 }, { NpcJobClass.Mayor, 0.05 } },
-            TownType.Metropolis => new() { { NpcJobClass.Pauper, 0.05 }, { NpcJobClass.Smelter, 0.1 }, { NpcJobClass.Knight, 0.2 }, { NpcJobClass.Mayor, 0.25 }, { NpcJobClass.CaravanMaster, 0.2 }, { NpcJobClass.Bard, 0.2 } },
-            _ => new() { { NpcJobClass.Pauper, 0.6 }, { NpcJobClass.Smelter, 0.15 }, { NpcJobClass.Knight, 0.1 }, { NpcJobClass.Priest, 0.1 }, { NpcJobClass.Thief, 0.05 } }
-        };
-
-        private static void ApplyGentrification(TownEconomy town, Dictionary<NpcJobClass, double> ratios)
-        {
-            double wealthFactor = Math.Min(1.0, (double)town.TotalWealth / (PlatinumUnit * 10)); 
-            if (ratios.ContainsKey(NpcJobClass.Pauper)) ratios[NpcJobClass.Pauper] -= (0.2 * wealthFactor);
-            if (ratios.ContainsKey(NpcJobClass.Mayor)) ratios[NpcJobClass.Mayor] += (0.1 * wealthFactor);
-            if (ratios.ContainsKey(NpcJobClass.Knight)) ratios[NpcJobClass.Knight] += (0.1 * wealthFactor);
-            if (ratios.ContainsKey(NpcJobClass.CaravanMaster)) ratios[NpcJobClass.CaravanMaster] += (0.05 * wealthFactor);
-        }
-
-        private static void ApplyResourceUrgency(TownEconomy town, Dictionary<NpcJobClass, double> ratios)
-        {
-            int totalFood = town.Warehouse.Where(k => typeof(Food).IsAssignableFrom(k.Key) || k.Key.Name.Contains("Raw")).Sum(k => k.Value.Stock);
-            int totalMat = town.Warehouse.Where(k => typeof(BaseIngot).IsAssignableFrom(k.Key) || typeof(BaseLeather).IsAssignableFrom(k.Key) || typeof(BaseLog).IsAssignableFrom(k.Key)).Sum(k => k.Value.Stock);
-
-            if (totalFood < 500 && ratios.ContainsKey(NpcJobClass.Pauper)) ratios[NpcJobClass.Pauper] += 0.4;
-            if (totalMat < 300 && ratios.ContainsKey(NpcJobClass.Smelter)) ratios[NpcJobClass.Smelter] += 0.3;
-        }
-
-        private static void FinalizeJobRatios(Dictionary<NpcJobClass, double> ratios)
-        {
-            var floors = new Dictionary<NpcJobClass, double> {
-                { NpcJobClass.Pauper, 0.05 }, { NpcJobClass.Smelter, 0.15 }, { NpcJobClass.Knight, 0.10 }, { NpcJobClass.Mayor, 0.02 }
-            };
-
-            foreach (var floor in floors)
+            return new Dictionary<NpcJobClass, double>
             {
-                if (!ratios.ContainsKey(floor.Key) || ratios[floor.Key] < floor.Value)
-                    ratios[floor.Key] = floor.Value;
+                { (NpcJobClass)100, 0.30 }, { (NpcJobClass)200, 0.20 }, { (NpcJobClass)300, 0.10 },
+                { (NpcJobClass)400, 0.05 }, { (NpcJobClass)500, 0.02 }, { (NpcJobClass)600, 0.10 },
+                { (NpcJobClass)700, 0.05 }, { (NpcJobClass)800, 0.08 }, { (NpcJobClass)900, 0.05 },
+                { (NpcJobClass)1000, 0.02 }, { (NpcJobClass)1100, 0.03 }
+            };
+        }
+
+        // ====================================================================
+        // ?? 4. 시민 속성 및 자본 생성
+        // ====================================================================
+        public static void RespawnFacet(Map facet, Mobile from)
+        {
+            if (facet == null || facet == Map.Internal) return;
+            var towns = TownEconomyManager.Towns.Values.Where(t => t.Facet == facet).ToList();
+            foreach (var town in towns)
+            {
+                town.VendorCount = World.Mobiles.Values.OfType<BaseVendor>()
+                    .Count(v => v.Map == facet && TownNumber.GetID(v.Location, v.Map) == town.TownID && !(v is Banker));
+                InitializeTown(town, CalculatePopulationCap(town));
+            }
+            from.SendMessage(66, $"{facet.Name} 대륙의 인구 배치를 갱신했습니다.");
+        }
+
+		// ====================================================================
+        // ?? [신규] 18개 마을별 고유 특색(Lore) 부여 엔진
+        // ====================================================================
+        private static void ApplyTownSpecialties(TownEconomy town, double townMultiplier)
+        {
+            string name = town.TownName.ToLower();
+            List<(NpcJobClass Job, int Count)> specialties = new();
+
+            // 1. 브리튼 (수도: 귀족, 근위대, 바드)
+            if (name.Contains("britain")) {
+                specialties.Add((NpcJobClass.TownGuard, 15));
+                specialties.Add((NpcJobClass.Aristocrat, 10));
+                specialties.Add((NpcJobClass.Bard, 5));
+            }
+            // 2. 미녹 (광산: 광부, 제련공, 땜장이)
+            else if (name.Contains("minoc")) {
+                specialties.Add((NpcJobClass.SurfaceMiner, 15));
+                specialties.Add((NpcJobClass.StoneQuarryman, 10));
+                specialties.Add((NpcJobClass.Smelter, 10));
+                specialties.Add((NpcJobClass.PigIronWorker, 5));
+            }
+            // 3. 문글로우 (마법: 마법사, 연금술사, 천문학자)
+            else if (name.Contains("moonglow")) {
+                specialties.Add((NpcJobClass.Wizard, 15));
+                specialties.Add((NpcJobClass.Alchemist, 10));
+                specialties.Add((NpcJobClass.Astronomer_Scholar, 5));
+            }
+            // 4. 버커니어스 덴 (무법지대: 도둑, 밀수꾼, 해적)
+            else if (name.Contains("buccaneer")) {
+                specialties.Add((NpcJobClass.Smuggler, 15));
+                specialties.Add((NpcJobClass.Cutpurse, 10));
+                specialties.Add((NpcJobClass.ShipCaptain, 5));
+            }
+            // 5. 젤롬 (용병: 검투사, 무장병)
+            else if (name.Contains("jhelom")) {
+                specialties.Add((NpcJobClass.Duelist, 15));
+                specialties.Add((NpcJobClass.Swashbuckler, 10));
+                specialties.Add((NpcJobClass.Militia_Warrior, 10));
+            }
+            // 6. 마진시아 (오만함: 대상인, 귀족, 사교계 명사)
+            else if (name.Contains("magincia")) {
+                specialties.Add((NpcJobClass.DeedBroker_Merchant, 10));
+                specialties.Add((NpcJobClass.Aristocrat, 10));
+                specialties.Add((NpcJobClass.Socialite, 5));
+            }
+            // 7. 스카라 브라에 (자연/영성: 레인저, 치료사)
+            else if (name.Contains("skara")) {
+                specialties.Add((NpcJobClass.Trapper, 15));
+                specialties.Add((NpcJobClass.BirdHunter, 10));
+                specialties.Add((NpcJobClass.Healer_Master, 5));
+            }
+            // 8. 트린식 (명예: 팔라딘, 무구 제작자)
+            else if (name.Contains("trinsic")) {
+                specialties.Add((NpcJobClass.Paladin, 15));
+                specialties.Add((NpcJobClass.Crusader, 10));
+                specialties.Add((NpcJobClass.ArmamentMajor, 5));
+            }
+            // 9. 베스퍼 (운하/상업: 심해어부, 해상 상인)
+            else if (name.Contains("vesper")) {
+                specialties.Add((NpcJobClass.DeepSeaFisher, 15));
+                specialties.Add((NpcJobClass.MaritimeTrader, 10));
+                specialties.Add((NpcJobClass.Shipwright_Master, 5));
+            }
+            // 10. 유 (법과 깊은 숲: 벌목꾼, 판사, 법무관)
+            else if (name.Contains("yew")) {
+                specialties.Add((NpcJobClass.Woodcutter, 20));
+                specialties.Add((NpcJobClass.Magistrate, 5));
+                specialties.Add((NpcJobClass.LegalAdvocate, 5));
+            }
+            // 11. 코브 (은둔/연인: 마을 경비대, 버섯 채집가)
+            else if (name.Contains("cove")) {
+                specialties.Add((NpcJobClass.TownGuard, 10));
+                specialties.Add((NpcJobClass.MushroomGatherer, 10));
+            }
+            // 12. 누젤름 (휴양/사막: 무희, 귀족, 캐러밴 마스터)
+            else if (name.Contains("nujel'm") || name.Contains("nujelm")) {
+                specialties.Add((NpcJobClass.Dancer, 15));
+                specialties.Add((NpcJobClass.Aristocrat, 10));
+                specialties.Add((NpcJobClass.CaravanMaster, 5));
+            }
+            // 13. 서펀츠 홀드 (전초기지: 기사, 창병)
+            else if (name.Contains("serpent")) {
+                specialties.Add((NpcJobClass.Knight, 15));
+                specialties.Add((NpcJobClass.Halberdier, 15));
+            }
+            // 14. 윈드 (비밀 마법 도시: 대마법사, 네크로맨서)
+            else if (name.Contains("wind")) {
+                specialties.Add((NpcJobClass.Archmage, 15));
+                specialties.Add((NpcJobClass.Necromancer, 10));
+                specialties.Add((NpcJobClass.Evoker, 5));
+            }
+            // 15. 헤이븐 (초보자: 교관, 학생, 신병)
+            else if (name.Contains("haven")) {
+                specialties.Add((NpcJobClass.Professor_Scholar, 5));
+                specialties.Add((NpcJobClass.Student_Scholar, 15));
+                specialties.Add((NpcJobClass.Recruit, 10));
+            }
+            // 16. 하트우드 (엘프/자연: 나무 가공, 드루이드)
+            else if (name.Contains("heartwood")) {
+                specialties.Add((NpcJobClass.Woodcutter, 10));
+                specialties.Add((NpcJobClass.Sawyer, 10));
+                specialties.Add((NpcJobClass.Druid, 10));
+            }
+            // 17. 델루시아 (농경/목축: 소몰이꾼, 양치기)
+            else if (name.Contains("delucia")) {
+                specialties.Add((NpcJobClass.CattleDrover, 15));
+                specialties.Add((NpcJobClass.Shepherd, 10));
+                specialties.Add((NpcJobClass.StableHand, 5));
+            }
+            // 18. 파푸아 (정글/주술: 마녀, 독술사, 약초꾼)
+            else if (name.Contains("papua")) {
+                specialties.Add((NpcJobClass.Witch, 10));
+                specialties.Add((NpcJobClass.Venomist, 10));
+                specialties.Add((NpcJobClass.Herbalist, 10));
             }
 
-            // 음수 보정 후 1.0 정규화
-            foreach (var key in ratios.Keys.ToList()) if (ratios[key] < 0.01) ratios[key] = 0.01;
-            double total = ratios.Values.Sum();
-            if (total > 0) foreach (var key in ratios.Keys.ToList()) ratios[key] /= total;
-        }
-
-        // ====================================================================
-        // 🧑‍🤝‍🧑 3. 시민 생성 및 보조 연산 (기존 Helper + Controller 병합)
-        // ====================================================================
-        public static void AddCitizen(TownEconomy town, NpcJobClass jobHeader, NpcRank skillRank)
-        {
-            // 헤더(예: 100)를 기반으로 실제 직업(예: 102 Farmer) 추출
-            NpcJobClass specificJob = GetRandomSpecificJob(jobHeader);
-            NobilityRank socialRank = DetermineNobility(specificJob);
-
-            VirtualCitizen newCitizen = new VirtualCitizen(specificJob, socialRank, 100)
+            // 추가된 특수 직업들을 마을에 스폰
+            foreach (var spec in specialties)
             {
-                Rank = skillRank,
-                // Helper 통합: 초기 자본금과 가변 수명 세팅
-                Gold = CalculateStartingGold(specificJob, skillRank, socialRank, GetTownMultiplier(town.TownIndex)),
-                MaxLifespan = GenerateLifespan(socialRank)
-            };
-
-            town.Citizens.Add(newCitizen);
+                for (int i = 0; i < spec.Count; i++)
+                {
+                    NobilityRank rank = DetermineSpecialtyRank(spec.Job);
+                    NpcRank skill = GetRandomRank();
+                    //AddCitizen(town, spec.Job, skill, rank, townMultiplier);
+                }
+            }
+        }
+		
+		// [헬퍼] 특수 스폰 NPC가 터무니없는 신분을 갖지 않도록 보정 (예: 마법사는 최소 기사급, 근위대는 평민 등)
+        private static NobilityRank DetermineSpecialtyRank(NpcJobClass job)
+        {
+            int group = ((int)job / 100) * 100;
+            if (group == 500) return NobilityRank.Baron; // 귀족 계급은 무조건 남작 이상
+            if (group == 300) return NobilityRank.Knight; // 전사/경비대는 기사급 대우
+            if (group == 400 || group == 1000) return Utility.RandomBool() ? NobilityRank.Knight : NobilityRank.Commoner; // 학자/법사는 복불복
+            return NobilityRank.Commoner; // 나머지 생산직/범죄자는 평민
         }
 
-        // 상인 수 비례 인구 계산기
-		public static int CalculatePopulationCap(TownEconomy town)
-		{
-			// 등급별 배율: S(20배), A(15배), B(10배), 기타(5배)
-			int multiplier = town.TownIndex switch { "S" => 20, "A" => 15, "B" => 10, _ => 5 };
-			int basePop = town.TownIndex switch { "S" => 500, "A" => 200, "B" => 100, _ => 50 };
-
-			// 공식: (상인 수 * 배율) + 마을 기본 인구
-			return (town.VendorCount * multiplier) + basePop;
-		}
-
-        private static int CalculateStartingGold(NpcJobClass job, NpcRank skill, NobilityRank rank, double townIndex)
+        public static int CalculatePopulationCap(TownEconomy town)
         {
-            int groupID = ((int)job / 100) * 100;
-            int jobBase = groupID switch { 100 => 100, 200 => 300, 300 => 500, 400 => 800, 500 => 2000, 600 => 1500, 1100 => 400, _ => 100 };
-            int skillMult = skill switch { NpcRank.Novice => 1, NpcRank.Journeyman => 2, NpcRank.Expert => 5, NpcRank.Master => 10, _ => 1 };
+            if (town == null) return 0;
+
+            int multiplier = town.TownIndex switch { "S" => 20, "A" => 15, "B" => 10, _ => 5 };
+            int extraPop = town.TownIndex switch { "S" => 500, "A" => 200, "B" => 100, _ => 50 };
+
+            // 잠재 총 인구 (S등급 기준 상인계산 + 500)
+            int totalPotential = (town.VendorCount * multiplier) + extraPop;
+
+            // [기획 핵심] 도시는 잠재 인구 100% 사용, 외곽은 절반(50%)만 사용
+            bool isCity = (town.TownID % 100) < 50;
             
-            var (bonus, _) = GetNobilityData(rank);
-            return (int)(((jobBase * skillMult) + bonus) * townIndex);
+            return isCity ? totalPotential : (totalPotential / 2);
         }
 
-        private static TimeSpan GenerateLifespan(NobilityRank rank)
+        public static void AddCitizen(TownEconomy town, NpcJobClass job, NpcRank skill, NobilityRank rank, double townM)
         {
-            return TimeSpan.FromDays(7 + (int)rank) + TimeSpan.FromHours(Utility.RandomMinMax(-48, 48));
+            int satisfaction = Utility.RandomMinMax(60, 90);
+            
+            VirtualCitizen citizen = new VirtualCitizen(job, rank, satisfaction) 
+            {
+                RankLevel = rank,
+                Potential = 1.0 + (Utility.RandomDouble() * 1.5),
+                BirthTime = DateTime.Now // 규칙 준수
+            };
+            
+            int adultMinAge = (int)(citizen.MaxLifespan.TotalMinutes * 0.15);
+            int adultMaxAge = (int)(citizen.MaxLifespan.TotalMinutes * 0.80);
+            citizen.BirthTime = DateTime.Now - TimeSpan.FromMinutes(Utility.RandomMinMax(adultMinAge, adultMaxAge));
+            
+            town.Citizens.Add(citizen);
         }
 
-        private static NobilityRank DetermineNobility(NpcJobClass job)
+		private static int CalculateCompoundedGold(NpcJobClass job, NpcRank skill, NobilityRank rank, double townM)
         {
-            double roll = Utility.RandomDouble();
-            int groupID = ((int)job / 100) * 100;
-
-            if (groupID == 500) return roll < 0.20 ? NobilityRank.Baron : NobilityRank.Knight;
-            if (roll < 0.02) return NobilityRank.Knight;
-            return NobilityRank.Commoner;
+            int group = ((int)job / 100) * 100;
+            double baseG = group switch { 100 => 100, 200 => 300, 300 => 500, 400 => 1000, 500 => 5000, _ => 200 };
+            return (int)(baseG * Math.Pow(1.5, (int)skill) * Math.Pow(2.0, (int)rank) * townM);
         }
 
-        // --- 유틸리티 헬퍼 ---
-        private static (int Bonus, double Rate) GetNobilityData(NobilityRank rank) => rank switch
-        {
-            NobilityRank.Knight => (7500, 1.2), NobilityRank.SubBaronet => (20000, 1.4), NobilityRank.Baronet => (45000, 1.6),
-            NobilityRank.SubBaron => (90000, 1.8), NobilityRank.Baron => (200000, 2.0), NobilityRank.Viscount => (450000, 2.2),
-            NobilityRank.Count => (1000000, 2.5), NobilityRank.Marquis => (3000000, 3.0), _ => (0, 1.0)
-        };
-
-        private static double GetTownMultiplier(string index) => index switch { "S" => 2.5, "A" => 1.8, "B" => 1.2, _ => 0.8 };
+        private static TimeSpan GenerateLifespan(NobilityRank rank) => 
+            TimeSpan.FromDays(14 * Math.Pow(1.1, (int)rank)) + TimeSpan.FromHours(Utility.RandomMinMax(-24, 24));
 
         private static NpcRank GetRandomRank()
         {
-            int chance = Utility.Random(100);
-            return chance < 50 ? NpcRank.Novice : chance < 80 ? NpcRank.Journeyman : chance < 95 ? NpcRank.Expert : NpcRank.Master;
+            int roll = Utility.Random(100);
+            return roll < 40 ? NpcRank.Novice : roll < 70 ? NpcRank.Journeyman : roll < 90 ? NpcRank.Expert : NpcRank.Master;
         }
 
         private static NpcJobClass GetRandomJobFromWeights(Dictionary<NpcJobClass, double> weights)
         {
             double roll = Utility.RandomDouble();
             double cumulative = 0.0;
-            foreach (var kvp in weights)
-            {
-                cumulative += kvp.Value;
-                if (roll <= cumulative) return kvp.Key;
-            }
-            return NpcJobClass.Pauper;
+            foreach (var kvp in weights) { cumulative += kvp.Value; if (roll <= cumulative) return kvp.Key; }
+            return (NpcJobClass)100;
         }
 
-        private static NpcJobClass GetRandomSpecificJob(NpcJobClass groupHeader)
-        {
-            int headerVal = (int)groupHeader;
-            var jobsInGroup = Enum.GetValues(typeof(NpcJobClass)).Cast<NpcJobClass>()
-                                  .Where(j => (int)j >= headerVal && (int)j < headerVal + 100).ToList();
-            return jobsInGroup.Count > 0 ? jobsInGroup[Utility.Random(jobsInGroup.Count)] : NpcJobClass.Laborer;
-        }
+        private static double GetTownMultiplier(string index) => index switch { "S" => 2.5, "A" => 1.8, "B" => 1.2, _ => 0.8 };
     }
 }

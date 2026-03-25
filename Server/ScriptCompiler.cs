@@ -13,6 +13,7 @@ using Microsoft.CSharp;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
+using Microsoft.CodeAnalysis.Text;
 
 #endregion
 
@@ -166,7 +167,17 @@ namespace Server
 			try
 			{
 				// 1. 소스 코드 읽기 및 문법 분석
-				var syntaxTrees = files.Select(f => CSharpSyntaxTree.ParseText(File.ReadAllText(f), path: f)).ToArray();
+				//var syntaxTrees = files.Select(f => CSharpSyntaxTree.ParseText(File.ReadAllText(f), path: f)).ToArray();
+
+				var syntaxTrees = files.Select(f => 
+				{
+					// Encoding.UTF8 뒤에 true를 붙이면 BOM(서명)을 알아서 체크해서 읽습니다.
+					using (var reader = new StreamReader(f, System.Text.Encoding.UTF8, true))
+					{
+						var text = reader.ReadToEnd();
+						return CSharpSyntaxTree.ParseText(text, path: f);
+					}
+				}).ToArray();
 
 				// 2. 참조 어셈블리 리스트 생성
 				var references = new List<MetadataReference>();

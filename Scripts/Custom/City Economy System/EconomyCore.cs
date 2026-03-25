@@ -1,454 +1,671 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Server;
 using Server.Items;
 using Server.Mobiles;
 
 namespace Server.Misc
 {
-	public enum NpcJobClass
-	{
-		// --- [100] Peasant: 기초 자원 추출 및 단순 노무 (Raw Materials) ---
-		Pauper = 100, Laborer, StreetSweeper, WaterCarrier, NightSoilMan, RatCatcher, Beggar, ChimneySweep, Lamplighter, LinkBoy, GraveDigger_Basic, Scullion, Messenger_Foot, KennelMaid, GongFarmer, GrainFarmer, VegetableFarmer, GourdFarmer, Orchardist, CitrusGrower, VineyardWorker, BerryPicker, Herbalist, MushroomGatherer, Beekeeper, CoastalFisher, DeepSeaFisher_Basic, Crabber, OysterDiver_Basic, SeaweedCollector, BeachComber, SaltGatherer, Mudlarker, Shepherd, Swineherd, PoultryFarmer, CattleDrover, StableHand, DairyWorker, GooseHerd, DonkeyDriver, HorseGroom_Basic, Woodcutter, BarkCollector, ResinGatherer, SurfaceMiner, SandDigger, CharcoalBurner, PeatCutter, StoneQuarryman, FlintKnapper, Trapper, BirdHunter, BigGameHunter, BoneCollector, FeatherPlucker, ApprenticeLaborer, ApprenticeGroom, ApprenticeScullery,
+    public enum NpcJobClass
+    {
+        // --- [100] Peasant: 기초 자원 추출 및 단순 노무 (Raw Materials) ---
+        Pauper = 100, Laborer, StreetSweeper, WaterCarrier, NightSoilMan, RatCatcher, Beggar, ChimneySweep, Lamplighter, LinkBoy, GraveDigger_Basic, Scullion, Messenger_Foot, KennelMaid, GongFarmer, GrainFarmer, VegetableFarmer, GourdFarmer, Orchardist, CitrusGrower, VineyardWorker, BerryPicker, Herbalist, MushroomGatherer, Beekeeper, CoastalFisher, DeepSeaFisher_Basic, Crabber, OysterDiver_Basic, SeaweedCollector, BeachComber, SaltGatherer, Mudlarker, Shepherd, Swineherd, PoultryFarmer, CattleDrover, StableHand, DairyWorker, GooseHerd, DonkeyDriver, HorseGroom_Basic, Woodcutter, BarkCollector, ResinGatherer, SurfaceMiner, SandDigger, CharcoalBurner, PeatCutter, StoneQuarryman, FlintKnapper, Trapper, BirdHunter, BigGameHunter, BoneCollector, FeatherPlucker, ApprenticeLaborer, ApprenticeGroom, ApprenticeScullery, FlaxCutter,
 
-		// --- [200] Producer: 중간재 및 부품 대량 생산 (Components & Materials) ---
-		Smelter = 200, NailMaker, AxleMaker, GearCutter, SpringMaker, HingeMaker, SextantPartMaker, ClockPartMaker, PigIronWorker, Weaver, Spinner, ThreadMaker, LeatherTanner, ClothUnraveler, Dyer_Producer, Sawyer, ShaftMaker, BarkProcessor, BarrelMaker_Base, BoxMaker_Base, Miller, Butcher_Expert, PoultryProcessor, Vintner_Base, PizzaChef_Producer, OilPresser_Producer, GlassBlower, ReagentRefiner, AshProcessor, BoneGrinder, SilkExtractor, InkProducer, ScrollPresser, MapPresser, FeatherWorker, CandleDipper, GemCutter, JewelryBaseMaker, BeadMaker,
+        // --- [200] Producer: 중간재 및 부품 대량 생산 (Components & Materials) ---
+        Smelter = 200, NailMaker, AxleMaker, GearCutter, SpringMaker, HingeMaker, SextantPartMaker, ClockPartMaker, PigIronWorker, Weaver, Spinner, ThreadMaker, LeatherTanner, ClothUnraveler, Dyer_Producer, Sawyer, ShaftMaker, BarkProcessor, BarrelMaker_Base, BoxMaker_Base, Miller, Butcher_Expert, PoultryProcessor, Vintner_Base, PizzaChef_Producer, OilPresser_Producer, GlassBlower, ReagentRefiner, AshProcessor, BoneGrinder, SilkExtractor, InkProducer, ScrollPresser, MapPresser, FeatherWorker, CandleDipper, GemCutter, JewelryBaseMaker, BeadMaker,
 
-		// --- [300] Warrior: 무구 소모 및 전리품 보급 ---
-		Knight = 300, Vanguard, Paladin, Halberdier, HeavyInfantry, LordGuard, Lancer, ManAtArms, Scout_Warrior, BorderPatrol, ChainGuard, Enforcer, Crusader, MaceBearer, TownGuard, ShieldMaiden, Duelist, Swashbuckler, Assassin_Warrior, Skirmisher, LightCavalry, Archer_Expert, Crossbowman, HeavyArcher, HorseArcher, SkirmishArcher, Slayer, UndeadHunter, DragonTracker, SnakeHunter, BeastSlayer, Marine_Warrior, Sapper, PackLeader_Warrior, AnimalTamer_Warrior, QuarterMaster_Warrior, Recruit, Militia_Warrior, Squire,
+        // --- [300] Warrior: 무구 소모 및 전리품 보급 ---
+        Knight = 300, Vanguard, Paladin, Halberdier, HeavyInfantry, LordGuard, Lancer, ManAtArms, Scout_Warrior, BorderPatrol, ChainGuard, Enforcer, Crusader, MaceBearer, TownGuard, ShieldMaiden, Duelist, Swashbuckler, Assassin_Warrior, Skirmisher, LightCavalry, Archer_Expert, Crossbowman, HeavyArcher, HorseArcher, SkirmishArcher, Slayer, UndeadHunter, DragonTracker, SnakeHunter, BeastSlayer, Marine_Warrior, Sapper, PackLeader_Warrior, AnimalTamer_Warrior, QuarterMaster_Warrior, Recruit, Militia_Warrior, Squire,
 
-		// --- [400] Mage: 시약, 스크롤 및 마법 도구 소모/조제 ---
-		Wizard = 400, Mage_Combat, Evoker, Archmage, BattleSage, Alchemist, PotionMaker, Transmuter, ApprenticeAlchemist, Venomist, Scribe_Mage, Copyist_Mage, MapMaker_Expert, Illuminator_Mage, ArchiveKeeper_Mage, Necromancer, Witch, Exorcist_Mage, BoneOracle, DarkApothecary, Druid, Elementalist, HerbMaster_Mage, ItemIdentifier_Mage, RuneCarver_Mage, StaffMaker_Mage, ScrollBundler,
+        // --- [400] Mage: 시약, 스크롤 및 마법 도구 소모/조제 ---
+        Wizard = 400, Mage_Combat, Evoker, Archmage, BattleSage, Alchemist, PotionMaker, Transmuter, ApprenticeAlchemist, Venomist, Scribe_Mage, Copyist_Mage, MapMaker_Expert, Illuminator_Mage, ArchiveKeeper_Mage, Necromancer, Witch, Exorcist_Mage, BoneOracle, DarkApothecary, Druid, Elementalist, HerbMaster_Mage, ItemIdentifier_Mage, RuneCarver_Mage, StaffMaker_Mage, ScrollBundler,
 
-		// --- [500] Noble: 고가 자산 관리 및 하이엔드 소비 ---
-		Mayor = 500, Chancellor, TaxCollector_Noble, Administrator_Noble, Herald_Noble, Aristocrat, Socialite, Patron_Noble, Courtier, Landlord_Noble, Banker_Noble, Treasurer_Noble, EstateManager_Noble, MoneyLender_Noble, HighSheriff, Magistrate, Inquisitor_Noble, Executioner_Noble, Bishop_Noble, LibraryFounder_Noble, ExpeditionSponsor_Noble, Steward_Noble, LadyInWaiting_Noble, RoyalStableMaster_Noble,
+        // --- [500] Noble: 고가 자산 관리 및 하이엔드 소비 ---
+        Mayor = 500, Chancellor, TaxCollector_Noble, Administrator_Noble, Herald_Noble, Aristocrat, Socialite, Patron_Noble, Courtier, Landlord_Noble, Banker_Noble, Treasurer_Noble, EstateManager_Noble, MoneyLender_Noble, HighSheriff, Magistrate, Inquisitor_Noble, Executioner_Noble, Bishop_Noble, LibraryFounder_Noble, ExpeditionSponsor_Noble, Steward_Noble, LadyInWaiting_Noble, RoyalStableMaster_Noble,
 
-		// --- [600] Merchant: 대량 물류 및 증서 유통 ---
-		CaravanMaster = 600, StableBroker, PackLeader_Merchant, FodderMerchant, MetalWholesaler, TimberMerchant, HardwareTrader_Merchant, ToolWholesaler, ClothWholesaler, LeatherWholesaler, SilkTrader_Merchant, ArmamentMajor, ShieldTrader_Merchant, WeaponBroker_Merchant, ArcheryWholesaler_Mer, ShipBroker_Merchant, MaritimeTrader, PortAgent_Merchant, Wharfinger_Merchant, FruitExporter, GrainWholesaler_Mer, Vintner_Merchant, EmploymentAgent_Mer, DeedBroker_Merchant, Notary_Merchant,
+        // --- [600] Merchant: 대량 물류 및 증서 유통 ---
+        CaravanMaster = 600, StableBroker, PackLeader_Merchant, FodderMerchant, MetalWholesaler, TimberMerchant, HardwareTrader_Merchant, ToolWholesaler, ClothWholesaler, LeatherWholesaler, SilkTrader_Merchant, ArmamentMajor, ShieldTrader_Merchant, WeaponBroker_Merchant, ArcheryWholesaler_Mer, ShipBroker_Merchant, MaritimeTrader, PortAgent_Merchant, Wharfinger_Merchant, FruitExporter, GrainWholesaler_Mer, Vintner_Merchant, EmploymentAgent_Mer, DeedBroker_Merchant, Notary_Merchant,
 
-		// --- [700] Religious: 시약, 붕대, 양초 소모 및 구휼 ---
-		Priest = 700, Bishop_Relig, Healer_Master, Surgeon_Relig, PlagueDoctor_Relig, Veterinary_Relig, Monk_Scribe, Illuminator_Relig, Alchemist_Relig, Gravedigger_Relig, Embalmer_Relig, Mortician_Relig, Templar_Relig, CandleLighter_Relig, Sexton_Relig, Acolyte_Relig,
+        // --- [700] Religious: 시약, 붕대, 양초 소모 및 구휼 ---
+        Priest = 700, Bishop_Relig, Healer_Master, Surgeon_Relig, PlagueDoctor_Relig, Veterinary_Relig, Monk_Scribe, Illuminator_Relig, Alchemist_Relig, Gravedigger_Relig, Embalmer_Relig, Mortician_Relig, Templar_Relig, CandleLighter_Relig, Sexton_Relig, Acolyte_Relig,
 
-		// --- [800] Entertainer: 악기 및 유흥/식음료 최종 소모 ---
-		Bard = 800, Harper, Lutanist, Drummer, Tambourinist, InnKeeper, Barmaid, Cook_Entertainer, Cellarman_Entertainer, Dancer, Acrobat, Juggler, Actor, TourGuide, Equestrian, AnimalShowman, FortuneTeller, StageHand, CostumeHelper,
+        // --- [800] Entertainer: 악기 및 유흥/식음료 최종 소모 ---
+        Bard = 800, Harper, Lutanist, Drummer, Tambourinist, InnKeeper, Barmaid, Cook_Entertainer, Cellarman_Entertainer, Dancer, Acrobat, Juggler, Actor, TourGuide, Equestrian, AnimalShowman, FortuneTeller, StageHand, CostumeHelper,
 
-		// --- [900] Maritime: 선박 증서 및 항해 정밀 도구 활용 ---
-		Navigator = 900, ShipCaptain, Helmsman, Hydrographer, Lookout_Maritime, Shipwright_Master, BoatRepairer, InstrumentCalibrator, RiggingSpecialist, MastCarver, HarborMaster, DockWorker_Heavy, Stevedore_Lead, Wharfinger_Maritime, CraneOperator_Port, DeepSeaFisher, Whaler_Maritime, OysterDiver_Expert, NetMender_Port, Marine_Officer, Marine_Soldier, CoastGuard_Patrol, NavalArtillerist, ShipChandler_Master, LighthouseKeeper, MarineSalvager, ApprenticeSailor,
+        // --- [900] Maritime: 선박 증서 및 항해 정밀 도구 활용 ---
+        Navigator = 900, ShipCaptain, Helmsman, Hydrographer, Lookout_Maritime, Shipwright_Master, BoatRepairer, InstrumentCalibrator, RiggingSpecialist, MastCarver, HarborMaster, DockWorker_Heavy, Stevedore_Lead, Wharfinger_Maritime, CraneOperator_Port, DeepSeaFisher, Whaler_Maritime, OysterDiver_Expert, NetMender_Port, Marine_Officer, Marine_Soldier, CoastGuard_Patrol, NavalArtillerist, ShipChandler_Master, LighthouseKeeper, MarineSalvager, ApprenticeSailor,
 
-		// --- [1000] Scholar: 지식 자산화 및 행정 기록 ---
-		Librarian = 1000, Scribe_Scholar, Copyist_Expert, Illuminator_Scholar, Cartographer_Scholar, Astronomer_Scholar, Archaeologist_Scholar, Naturalist_Expert, Professor_Scholar, Researcher_Scholar, Academician_Scholar, Archivist_Scholar, Lexicographer, Student_Scholar, Notary_Scholar, CensusTaker, HeraldicArtist, TaxAuditor, LegalAdvocate, ChronicleWriter, Technician_Scholar,
+        // --- [1000] Scholar: 지식 자산화 및 행정 기록 ---
+        Librarian = 1000, Scribe_Scholar, Copyist_Expert, Illuminator_Scholar, Cartographer_Scholar, Astronomer_Scholar, Archaeologist_Scholar, Naturalist_Expert, Professor_Scholar, Researcher_Scholar, Academician_Scholar, Archivist_Scholar, Lexicographer, Student_Scholar, Notary_Scholar, CensusTaker, HeraldicArtist, TaxAuditor, LegalAdvocate, ChronicleWriter, Technician_Scholar,
 
-		// --- [1100] Criminal: 자원 약탈 및 지하 경제 유동성 공급 ---
-		Thief = 1100, Burglar, Cutpurse, Smuggler, Fence_Criminal, BlackMarketeer, Assassin, Poisoner_Expert, Extortionist, Forger_Criminal, Gambler_Criminal, Charlatan_Criminal, Bandit_Highwayman, Poacher_Criminal, Slaver_Underworld, Counterfeiter_Deed, IllicitTinker, Lookout_Criminal, UnderworldEnforcer, ShadowBroker, Recruiter_Criminal
-	}
+        // --- [1100] Criminal: 자원 약탈 및 지하 경제 유동성 공급 ---
+        Thief = 1100, Burglar, Cutpurse, Smuggler, Fence_Criminal, BlackMarketeer, Assassin, Poisoner_Expert, Extortionist, Forger_Criminal, Gambler_Criminal, Charlatan_Criminal, Bandit_Highwayman, Poacher_Criminal, Slaver_Underworld, Counterfeiter_Deed, IllicitTinker, Lookout_Criminal, UnderworldEnforcer, ShadowBroker, Recruiter_Criminal
+    }
 
-	public enum NpcRank { Novice, Journeyman, Expert, Master }
+    public enum NpcRank { Novice, Journeyman, Expert, Master }
 
+    public abstract class VirtualAgent
+    {
+        public NpcJobClass JobClass { get; set; }
+        public NpcRank Rank { get; set; }
+        public int Gold { get; set; }
+        public int Hunger { get; set; }
+        public int Stress { get; set; } 
+        public double PrimarySkill { get; set; }
 
-	public abstract class VirtualAgent
-	{
-		public NpcJobClass JobClass { get; set; }
-		public NpcRank Rank { get; set; }
-		public int Gold { get; set; }
-		public int Hunger { get; set; }
-		public int Stress { get; set; } // 새로운 욕구: 스트레스 추가
+        // 장비 사용 횟수(내구도) 관리 딕셔너리
+        protected Dictionary<Type, int> m_EquipmentUses = new Dictionary<Type, int>();
 
-		public VirtualAgent(NpcJobClass job, NpcRank rank) 
-		{ 
-			JobClass = job; 
-			Rank = rank; 
-			Gold = CalculateStartingGold(job, rank);
-			Hunger = Utility.RandomMinMax(0, 30);
-			Stress = Utility.RandomMinMax(0, 20); // 초기 스트레스 설정
-		}
+        public VirtualAgent(NpcJobClass job, NpcRank rank) 
+        { 
+            JobClass = job; 
+            Rank = rank; 
+            Gold = CalculateStartingGold(job, rank);
+            Hunger = Utility.RandomMinMax(0, 30);
+            Stress = Utility.RandomMinMax(0, 20); 
 
-		public VirtualAgent(GenericReader reader) 
-		{ 
-			int version = reader.ReadInt(); 
-			JobClass = (NpcJobClass)reader.ReadInt(); 
-			Rank = (NpcRank)reader.ReadInt(); 
-			Gold = reader.ReadInt(); 
-			Hunger = reader.ReadInt();
+            PrimarySkill = rank switch 
+            {
+                NpcRank.Novice => Utility.RandomMinMax(25, 50),
+                NpcRank.Journeyman => Utility.RandomMinMax(50, 75),
+                NpcRank.Expert => Utility.RandomMinMax(75, 95),
+                NpcRank.Master => Utility.RandomMinMax(95, 100),
+                _ => 25.0
+            };
+        }
 
-			if (version >= 1)
-			{
-				Stress = reader.ReadInt();
-			}
-		}
-
-		public virtual void Serialize(GenericWriter writer) 
-		{ 
-			writer.Write(1); // 버전 1로 업그레이드 (Stress 변수 추가 반영)
-			writer.Write((int)JobClass); 
-			writer.Write((int)Rank); 
-			writer.Write(Gold); 
-			writer.Write(Hunger);
-			writer.Write(Stress);
-		}
-
-		public static int CalculateStartingGold(NpcJobClass job, NpcRank rank)
+        public void CheckSkillGain()
 		{
-			// 직업 번호를 100으로 나눈 후 100을 곱해 메인 그룹 단위로 변환 (예: 412 -> 400)
-			int jobGroup = ((int)job / 100) * 100;
+			if (PrimarySkill >= 200.0) return;
 
-			int baseGold = jobGroup switch 
-			{ 
-				100 => 100,  // Peasant
-				200 => 300,  // Producer
-				300 => 500,  // Warrior
-				400 => 800,  // Mage
-				500 => 2000, // Noble
-				600 => 1500, // Merchant
-				700 => 700,  // Religious
-				800 => 400,  // Entertainer
-				900 => 1000, // Maritime
-				1000 => 600, // Scholar
-				1100 => 200, // Criminal
-				_ => 100 
-			};
+			// 성장 효율 지수 (초보 1.0 -> 마스터 0.0)
+			double ratio = (200.0 - PrimarySkill) / 200.0;
 
-			int rankMultiplier = rank switch 
-			{ 
-				NpcRank.Novice => 1, 
-				NpcRank.Journeyman => 2, 
-				NpcRank.Expert => 5, 
-				NpcRank.Master => 10, 
-				_ => 1 
-			};
+			// 1. 상승 확률: 세제곱(Pow 3)을 적용하여 고스킬 구간 난이도를 기하급수적으로 높임
+			// 스킬 100일 때 확률: 12.5%, 스킬 180일 때 확률: 0.1%
+			double gainChance = Math.Pow(ratio, 3);
 
-			return baseGold * rankMultiplier;
-		}
-
-		public ItemTag ClassifyItem(Item item)
-		{
-			// 생존 필수재: 음식, 음료, 가방 등
-			if (item is Food || item is BaseBeverage || item is Backpack || item is Pouch || item is Candle || item is Torch) 
-				return ItemTag.Essential;
-			
-			// 사치품: 보석, 악기, 꿀, 케이크, 장신구 등 (스트레스 해소용)
-			if (item is BaseJewel || item is BaseInstrument || item is Cake || item is JarHoney) 
-				return ItemTag.Luxury;
-			
-			// 도구 및 장비: 무기, 방어구, 작업 도구, 의류
-			if (item is BaseWeapon || item is BaseArmor || item is BaseTool || item is BaseClothing)
-				return ItemTag.Tool;
-
-			// 원자재 및 소모품: 시약, 주괴, 목재, 스크롤 등
-			if (item is BaseReagent || item is BaseIngot || item is Log || item is BlankScroll)
-				return ItemTag.Material;
-
-			return ItemTag.None;
-		}
-		// ==============================================================================
-		// [시간 단위(Hourly) NPC 스케줄 및 경제 로직]
-		// ==============================================================================
-
-		// 서버의 시간 관리자(타이머)가 게임 내 시간(currentHour: 0~23)을 던져주며 매 시간 호출
-		public virtual void HourlyRoutine(TownEconomy town, int currentHour)
-		{
-			if (town == null) return;
-
-			// 1. 숨만 쉬어도 매 시간 배고픔이 조금씩 증가 (하루 24시간 기준)
-			this.Hunger += Utility.RandomMinMax(1, 3); 
-
-			// ---------------------------------------------------------
-			// [식사 판정] - 배고픔이 20 이상이면 언제든 식사 시도
-			// ---------------------------------------------------------
-			if (this.Hunger >= 20)
+			if (Utility.RandomDouble() < gainChance)
 			{
-				ConsumeEssential(town);
-			}
-
-			// ---------------------------------------------------------
-			// [근무 시간] - 오전 9시 ~ 오후 6시 (09:00 ~ 18:00)
-			// ---------------------------------------------------------
-			if (currentHour >= 9 && currentHour < 18)
-			{
-				// 번아웃(스트레스 90 이상)이 아니면 일함
-				if (this.Stress < 90)
-				{
-					// 매 시간 일하는 건 너무 가혹하므로, 확률적으로 일함(예: 50% 확률로 작업)
-					if (Utility.RandomBool()) 
-					{
-						ProcessJob(town);
-					}
-				}
-				else
-				{
-					// 번아웃 상태면 일 안 하고 배만 더 고파짐
-					this.Hunger += 2; 
-				}
-			}
-
-			// ---------------------------------------------------------
-			// [여가 시간] - 저녁 6시 ~ 밤 11시 (18:00 ~ 23:00)
-			// ---------------------------------------------------------
-			else if (currentHour >= 18 && currentHour <= 23)
-			{
-				// 퇴근 후 스트레스가 40 이상 쌓여있다면 유흥/사치품으로 스트레스 해소
-				if (this.Stress >= 40)
-				{
-					// 매 시간 탕진하는 걸 막기 위해 확률적으로 해소
-					if (Utility.RandomDouble() < 0.3) // 30% 확률
-					{
-						RelieveStress(town);
-					}
-				}
-			}
-
-			// ---------------------------------------------------------
-			// [수면 시간] - 밤 12시 ~ 아침 8시 (00:00 ~ 08:00)
-			// ---------------------------------------------------------
-			else
-			{
-				// 잠을 자면서 스트레스가 자연적으로 조금씩 감소
-				this.Stress -= Utility.RandomMinMax(1, 2);
-				if (this.Stress < 0) this.Stress = 0;
+				// 2. 상승량: 초보일 땐 최대 0.5, 마스터에 가까우면 최소 0.1로 감소
+				double amount = 0.1 + (0.4 * ratio);
+				
+				PrimarySkill = Math.Min(200.0, Math.Round(PrimarySkill + amount, 1));
 			}
 		}
 
-		// --- 공통 거래 로직 (창고와 상호작용) ---
-		protected bool TryBuyItem(TownEconomy town, Type itemType, int amount, out int cost)
-		{
-			cost = 0;
-			if (itemType == null) return false;
+        public VirtualAgent(GenericReader reader) 
+        { 
+            int version = reader.ReadInt(); 
+            JobClass = (NpcJobClass)reader.ReadInt(); 
+            Rank = (NpcRank)reader.ReadInt(); 
+            Gold = reader.ReadInt(); 
+            Hunger = reader.ReadInt();
 
-			int unitPrice = town.GetPrice(itemType);
-			int totalPrice = unitPrice * amount;
+            if (version >= 1) Stress = reader.ReadInt();
 
-			// 내 돈이 충분하고 창고에 재고가 있을 때만 거래 성사
-			if (this.Gold >= totalPrice && town.Warehouse[itemType].Stock >= amount)
-			{
-				this.Gold -= totalPrice;
-				town.Wealth += totalPrice;      // 마을 금고로 돈이 들어감
-				town.SupplyItem(itemType, -amount, -totalPrice);  // 창고 재고 차감 (구매)
-				cost = totalPrice;
-				return true;
-			}
-			return false;
-		}
+            if (version >= 2) PrimarySkill = reader.ReadDouble();
+            else
+            {
+                PrimarySkill = Rank switch 
+                {
+                    NpcRank.Novice => Utility.RandomMinMax(25, 50),
+                    NpcRank.Journeyman => Utility.RandomMinMax(50, 75),
+                    NpcRank.Expert => Utility.RandomMinMax(75, 95),
+                    NpcRank.Master => Utility.RandomMinMax(95, 100),
+                    _ => 25.0
+                };
+            }
+        }
 
-		protected bool TrySellItem(TownEconomy town, Type itemType, int amount, out int earnings)
-		{
-			earnings = 0;
-			if (itemType == null) return false;
+        public virtual void Serialize(GenericWriter writer) 
+        { 
+            writer.Write(2); 
+            writer.Write((int)JobClass); 
+            writer.Write((int)Rank); 
+            writer.Write(Gold); 
+            writer.Write(Hunger);
+            writer.Write(Stress);
+            writer.Write(PrimarySkill); 
+        }
 
-			int unitPrice = town.GetPrice(itemType);
-			int totalPrice = unitPrice * amount;
+        public static int CalculateStartingGold(NpcJobClass job, NpcRank rank)
+        {
+            int jobGroup = ((int)job / 100) * 100;
+            int baseGold = jobGroup switch 
+            { 
+                100 => 100, 200 => 300, 300 => 500, 400 => 800, 500 => 2000, 
+                600 => 1500, 700 => 700, 800 => 400, 900 => 1000, 1000 => 600, 1100 => 200, _ => 100 
+            };
 
-			// (옵션) 마을 금고에 돈이 충분한지 체크할 수 있음
-			this.Gold += totalPrice;
-			town.Wealth -= totalPrice;      // 마을 금고에서 돈이 나감
-			town.SupplyItem(itemType, amount, totalPrice);   // 창고 재고 증가 (납품)
-			earnings = totalPrice;
-			return true;
-		}
+            int rankMultiplier = rank switch 
+            { NpcRank.Novice => 1, NpcRank.Journeyman => 2, NpcRank.Expert => 5, NpcRank.Master => 10, _ => 1 };
 
-		// --- 1. 필수 소비 (배고픔 해결) ---
-		protected virtual void ConsumeEssential(TownEconomy town)
-		{
-			Type foodType = EconomyTagHelper.GetItemTypeByTag(town, ItemTag.Food_Basic, random: false);
-			
-			if (TryBuyItem(town, foodType, 1, out int cost))
-			{
-				this.Hunger = 0; // 배부름
-				this.Stress -= 5; // 뭐라도 먹어서 스트레스 약간 감소
-			}
-			else
-			{
-				this.Stress += 15; // 밥을 못 사먹으면 스트레스 폭증
-			}
-		}
+            return baseGold * rankMultiplier;
+        }
 
-		// --- 2. 스트레스 해소 (사치품 및 유흥) ---
-		protected virtual void RelieveStress(TownEconomy town)
-		{
-			int actionType = Utility.Random(100);
+        public ItemTag ClassifyItem(Item item)
+        {
+            if (item is Food || item is BaseBeverage || item is Backpack || item is Pouch || item is Candle || item is Torch) 
+                return ItemTag.Essential;
+            if (item is BaseJewel || item is BaseInstrument || item is Cake || item is JarHoney) 
+                return ItemTag.Luxury;
+            if (item is BaseWeapon || item is BaseArmor || item is BaseTool || item is BaseClothing)
+                return ItemTag.Tool;
+            if (item is BaseReagent || item is BaseIngot || item is Log || item is BlankScroll)
+                return ItemTag.Material;
 
-			if (actionType < 40) // 40%: 고급 음식 폭식
-			{
-				Type luxuryFood = EconomyTagHelper.GetItemTypeByTag(town, ItemTag.Food_Luxury, random: true);
-				if (TryBuyItem(town, luxuryFood, 2, out _)) // 2개 충동구매
-				{
-					this.Stress -= 40;
-					this.Hunger = 0;
-				}
-			}
-			else if (actionType < 70) // 30%: 귀금속/사치품 플렉스
-			{
-				Type jewelry = EconomyTagHelper.GetItemTypeByTag(town, ItemTag.Jewelry, random: true);
-				if (TryBuyItem(town, jewelry, 1, out _))
-				{
-					this.Stress -= 60; // 크게 돈 써서 스트레스 대폭 하락
-				}
-			}
-			else // 30%: 여가/유흥비 탕진
-			{
-				Type entertainment = EconomyTagHelper.GetItemTypeByTag(town, ItemTag.Entertainment, random: true);
-				if (TryBuyItem(town, entertainment, 1, out _))
-				{
-					this.Stress -= 50;
-				}
-				else // 물건을 못 샀다면 술값/도박으로 서비스 비용만 날림
-				{
-					int serviceFee = Utility.RandomMinMax(20, 100);
-					if (this.Gold >= serviceFee)
-					{
-						this.Gold -= serviceFee;
-						town.Wealth += serviceFee; 
-						this.Stress -= 30; 
-					}
-				}
-			}
+            return ItemTag.None;
+        }
 
-			if (this.Stress < 0) this.Stress = 0; // 최소치 보정
-		}
+        public DateTime LastSurvivalTick { get; set; } = DateTime.Now;
 
-		public static int JobGetGroup(NpcJobClass JobClass) => ((int)JobClass / 100) * 100;
+        public virtual void HourlyRoutine(TownEconomy town, int currentHour)
+        {
+            if (town == null) return;
 
-		// --- 3. 직업 노동 (구매 및 생산) ---
-		protected virtual void ProcessJob(TownEconomy town)
-		{
-			// 직업 번호를 100단위로 묶어 그룹별로 처리
-			int jobGroup = JobGetGroup(JobClass);
-			int cost, earnings;
+            int elapsedHours = (int)(DateTime.Now - LastSurvivalTick).TotalHours;
+            if (elapsedHours > 0)
+            {
+                LastSurvivalTick = DateTime.Now;
+                this.Hunger += elapsedHours * 15; 
+            }
 
-			switch (jobGroup)
-			{
-				case 100: // [Peasant] 노동자: 도구/식량 소비 -> 원자재 생산
-					// 1. 도구(곡괭이, 도끼 등)나 소모품 구매
-					Type tool = Utility.RandomBool() ? typeof(Pickaxe) : typeof(Axe);
-					TryBuyItem(town, tool, 1, out cost);
+            if (this.Hunger >= 50) ConsumeEssential(town);
 
-					// 2. 원자재 납품 (철광석, 나무, 옥수수, 고철 등)
-					Type rawMaterial = Utility.RandomList(typeof(IronOre), typeof(Log), typeof(EarOfCorn), typeof(PigIron));
-					TrySellItem(town, rawMaterial, Utility.RandomMinMax(5, 15), out earnings);
-					
-					this.Stress += Utility.RandomMinMax(10, 20); // 육체 노동 스트레스
-					break;
+            if (currentHour >= 9 && currentHour < 18)
+            {
+                if (this.Stress < 90)
+                {
+                    if (Utility.RandomBool()) ProcessJob(town);
+                }
+                else this.Hunger += 2; 
+            }
+            else if (currentHour >= 18 && currentHour <= 23)
+            {
+                if (this.Stress >= 40 && Utility.RandomDouble() < 0.3) RelieveStress(town);
+            }
+            else this.Stress = Math.Max(0, this.Stress - Utility.RandomMinMax(1, 2));
+        }
 
-				case 200: // [Producer] 가공직: 원자재 소비 -> 중간재/완제품 생산
-					// 1. 원자재 구매 (철광석, 나무, 유황재 등)
-					Type materialToBuy = Utility.RandomList(typeof(IronOre), typeof(Log), typeof(SulfurousAsh));
-					TryBuyItem(town, materialToBuy, Utility.RandomMinMax(10, 20), out cost);
+        // ==============================================================================
+        // [신규] 기축 통화 10 GP 고정 함수
+        // ==============================================================================
+        protected int GetEffectivePrice(TownEconomy town, Type itemType)
+        {
+            Type[] baseResources = [typeof(IronOre), typeof(Log), typeof(Hides), typeof(RawFishSteak), typeof(Fish), typeof(IronIngot), typeof(Board), typeof(Leather)];
+            if (baseResources.Contains(itemType)) return 10;
+            return Math.Max(1, town.GetPrice(itemType));
+        }
 
-					// 2. 가공품 납품 (철괴, 널빤지, 빈 병, 못 등)
-					Type productToSell = Utility.RandomList(typeof(IronIngot), typeof(Board), typeof(Bottle), typeof(Nails));
-					TrySellItem(town, productToSell, Utility.RandomMinMax(5, 10), out earnings);
-					
-					this.Stress += Utility.RandomMinMax(15, 25);
-					break;
+        protected (bool Success, int AmountBought, int TotalCost) TryBuyItem(TownEconomy town, Type itemType, int requestedAmount)
+        {
+            if (itemType == null || !town.Warehouse.ContainsKey(itemType)) return (false, 0, 0);
 
-				case 300: // [Warrior] 전투직: 장비 소비 -> 전리품 생산
-					// 1. 악성 재고 무기 및 방어구 랜덤 구매 (소각)
-					Type weapon = EconomyTagHelper.GetItemTypeByTag(town, ItemTag.Weapon_Sword, random: true);
-					Type armor = EconomyTagHelper.GetItemTypeByTag(town, ItemTag.Armor_Plate, random: true);
-					TryBuyItem(town, weapon, 1, out _);
-					TryBuyItem(town, armor, 1, out _);
+            var warehouseItem = town.Warehouse[itemType];
+            int unitPrice = GetEffectivePrice(town, itemType);
 
-					// 2. 사냥 부산물 납품
-					Type loot = Utility.RandomList(typeof(Bone), typeof(Hides), typeof(DragonBlood));
-					TrySellItem(town, loot, Utility.RandomMinMax(2, 8), out earnings);
-					
-					this.Stress += Utility.RandomMinMax(20, 30); // 전투 스트레스 큼
-					break;
+            int affordableAmount = this.Gold / unitPrice;
+            int actualAmount = Math.Min(requestedAmount, Math.Min(warehouseItem.Stock, affordableAmount));
 
-				case 400: // [Mage] 마법직: 빈 스크롤/시약 소비 -> 마법 물품 생산
-					// 1. 방치된 특정 스크롤이나 시약 대량 구매
-					Type blankOrReagent = EconomyTagHelper.GetItemTypeByTag(town, ItemTag.Magic_Scroll, random: false); 
-					TryBuyItem(town, blankOrReagent, Utility.RandomMinMax(3, 10), out cost);
+            if (actualAmount <= 0) return (false, 0, 0); 
 
-					// 2. 포션이나 리콜 룬 등 고부가가치 아이템 납품
-					Type magicProduct = Utility.RandomList(typeof(RecallRune), typeof(GreaterHealPotion), typeof(NoxCrystal));
-					TrySellItem(town, magicProduct, Utility.RandomMinMax(1, 3), out earnings);
-					
-					this.Stress += Utility.RandomMinMax(10, 20); // 정신적 스트레스
-					break;
+            int totalCost = actualAmount * unitPrice;
+            this.Gold -= totalCost;
+            town.Wealth += totalCost; 
+            town.SupplyItem(itemType, -actualAmount, -totalCost); 
+            
+            return (true, actualAmount, totalCost);
+        }
 
-				case 500: // [Noble] 귀족: 고급 사치품/서류 소비 -> 공식 문서 납품
-					// 1. 고가 악기나 장신구, 행정 서류 소비 (Gold Sink)
-					Type nobleLuxury = EconomyTagHelper.GetItemTypeByTag(town, ItemTag.Luxury, random: true);
-					TryBuyItem(town, nobleLuxury, 1, out cost);
+        protected (bool Success, int Earnings) TrySellItem(TownEconomy town, Type itemType, int amount)
+        {
+            if (itemType == null || amount <= 0) return (false, 0);
 
-					// 2. 고용 계약서나 자산 증서 발급 (권한 행사)
-					Type officialDoc = Utility.RandomBool() ? typeof(ContractOfEmployment) : typeof(TanBook);
-					TrySellItem(town, officialDoc, 1, out earnings);
-					
-					this.Stress += Utility.RandomMinMax(8, 15); // 꿀빠는 직업이라 스트레스 적음
-					break;
+            int unitPrice = GetEffectivePrice(town, itemType);
+            int totalPrice = unitPrice * amount;
 
-				case 600: // [Merchant] 상인: 운송 수단/벌크 소비 -> 상품 증서(Deed) 유통
-					// 1. 팩호스나 무작위 대량 물품 구매
-					TryBuyItem(town, typeof(PackHorse), 1, out cost);
-					Type bulkGoods = EconomyTagHelper.GetItemTypeByTag(town, ItemTag.Material, random: true);
-					TryBuyItem(town, bulkGoods, 20, out _);
+            this.Gold += totalPrice;
+            town.Wealth -= totalPrice; 
+            town.SupplyItem(itemType, amount, totalPrice); 
+            return (true, totalPrice);
+        }
 
-					// 2. 상품 증서(CommodityDeed)로 묶어서 납품
-					TrySellItem(town, typeof(CommodityDeed), Utility.RandomMinMax(5, 10), out earnings);
-					
-					this.Stress += Utility.RandomMinMax(10, 20);
-					break;
+        protected virtual void ConsumeEssential(TownEconomy town)
+        {
+            Type foodType = EconomyTagHelper.GetItemTypeByTag(town, ItemTag.Food_Basic, random: false);
+            int foodPrice = Math.Max(1, town.GetPrice(foodType));
+            int mealsNeeded = Math.Max(1, this.Hunger / 50);
 
-				case 700: // [Religious] 종교/치료: 양초/붕대/시약 소비 -> 시체 부산물 납품
-					// 1. 양초와 붕대 대량 소비
-					TryBuyItem(town, typeof(Candle), Utility.RandomMinMax(5, 10), out _);
-					TryBuyItem(town, typeof(Bandage), Utility.RandomMinMax(5, 10), out _);
+            var buyResult = TryBuyItem(town, foodType, mealsNeeded);
+            
+            if (buyResult.Success)
+            {
+                this.Hunger = Math.Max(0, this.Hunger - (buyResult.AmountBought * 50)); 
+                this.Stress = Math.Max(0, this.Stress - (buyResult.AmountBought * 5)); 
+            }
+            else
+            {
+                int reliefCost = foodPrice * mealsNeeded;
+                if (this.Gold < reliefCost && town.Wealth >= reliefCost && town.Warehouse.ContainsKey(foodType) && town.Warehouse[foodType].Stock >= mealsNeeded)
+                {
+                    town.Wealth -= reliefCost;
+                    town.Warehouse[foodType].Stock -= mealsNeeded;
+                    
+                    this.Hunger = Math.Max(0, this.Hunger - (mealsNeeded * 50));
+                    this.Stress = Math.Max(0, this.Stress - 2); 
+                    CheckSkillGain(); 
+                    return;
+                }
+                this.Stress += 15; 
+            }
+        }
 
-					// 2. 묘지 관리 및 치료의 결과물 납품
-					Type graveLoot = Utility.RandomBool() ? typeof(GraveDust) : typeof(Bone);
-					TrySellItem(town, graveLoot, Utility.RandomMinMax(2, 5), out earnings);
-					
-					this.Stress += Utility.RandomMinMax(15, 20);
-					break;
+        protected virtual void RelieveStress(TownEconomy town)
+        {
+            int actionType = Utility.Random(100);
 
-				case 800: // [Entertainer] 예술/유흥: 악기/의류/식음료 맹렬한 소비 (최종 소각장)
-					// 1. 넘쳐나는 악기류, 천, 염료 등을 구매해서 연주/공연으로 없애버림
-					Type instrument = EconomyTagHelper.GetItemTypeByTag(town, ItemTag.Entertainment, random: true);
-					TryBuyItem(town, instrument, 1, out cost);
-					TryBuyItem(town, typeof(Dyes), 1, out _);
+            if (actionType < 40) 
+            {
+                Type luxuryFood = EconomyTagHelper.GetItemTypeByTag(town, ItemTag.Food_Luxury, random: true);
+                var buyResult = TryBuyItem(town, luxuryFood, 2);
+                if (buyResult.Success) 
+                {
+                    this.Stress = Math.Max(0, this.Stress - (buyResult.AmountBought * 20));
+                    this.Hunger = Math.Max(0, this.Hunger - (buyResult.AmountBought * 10));
+                }
+            }
+            else if (actionType < 70) 
+            {
+                Type jewelry = EconomyTagHelper.GetItemTypeByTag(town, ItemTag.Jewelry, random: true);
+                if (TryBuyItem(town, jewelry, 1).Success) this.Stress = Math.Max(0, this.Stress - 60); 
+            }
+            else 
+            {
+                Type entertainment = EconomyTagHelper.GetItemTypeByTag(town, ItemTag.Entertainment, random: true);
+                if (TryBuyItem(town, entertainment, 1).Success) this.Stress = Math.Max(0, this.Stress - 50);
+                else 
+                {
+                    int serviceFee = Utility.RandomMinMax(20, 100);
+                    if (this.Gold >= serviceFee)
+                    {
+                        this.Gold -= serviceFee;
+                        town.Wealth += serviceFee; 
+                        this.Stress = Math.Max(0, this.Stress - 30); 
+                    }
+                }
+            }
+        }
 
-					// 생산은 거의 없음 (가끔 파이나 쿠키 정도)
-					if (Utility.RandomBool())
-						TrySellItem(town, typeof(ApplePie), 1, out earnings);
-					
-					this.Stress += Utility.RandomMinMax(10, 25);
-					break;
+        public static int JobGetGroup(NpcJobClass JobClass) => ((int)JobClass / 100) * 100;
 
-				case 900: // [Maritime] 해양: 선박/항해 도구 소비 -> 어획물 납품
-					// 1. 낚시 그물, 육분의 등 항해/어업 도구 구매
-					TryBuyItem(town, typeof(SpecialFishingNet), Utility.RandomMinMax(1, 3), out cost);
-					TryBuyItem(town, typeof(Sextant), 1, out _);
+        // ==============================================================================
+        // [신규] 내구도 추출 및 장비 소비 헬퍼
+        // ==============================================================================
+        protected int GetItemDurability(Type type)
+        {
+            try
+            {
+                Item tempItem = (Item)Activator.CreateInstance(type);
+                int maxUses = 50; 
 
-					// 2. 대량의 송어나 진주 납품
-					Type seaLoot = Utility.RandomList(typeof(Trout), typeof(BlackPearl));
-					TrySellItem(town, seaLoot, Utility.RandomMinMax(10, 30), out earnings);
-					
-					this.Stress += Utility.RandomMinMax(15, 25);
-					break;
+                if (tempItem is BaseWeapon weapon) maxUses = weapon.InitMaxHits;
+                else if (tempItem is BaseArmor armor) maxUses = armor.InitMaxHits;
+                else if (tempItem is BaseTool tool) maxUses = tool.UsesRemaining;
+                else if (tempItem is BaseHarvestTool harvestTool) maxUses = harvestTool.UsesRemaining;
+                
+                tempItem.Delete(); 
+                
+                return maxUses > 0 ? maxUses : 50;
+            }
+            catch { return 50; }
+        }
 
-				case 1000: // [Scholar] 학자: 빈 종이/도구 소비 -> 지식 서적 납품
-					// 1. 스크롤, 빈 지도, 펜 소비
-					TryBuyItem(town, typeof(BlankScroll), Utility.RandomMinMax(5, 15), out cost);
-					TryBuyItem(town, typeof(ScribesPen), 1, out _);
+        protected bool CheckAndUseEquipment(TownEconomy town, Type equipType, int lossAmount = 1)
+        {
+            if (equipType == null) return true; // 필요 없는 장비 슬롯 통과
 
-					// 2. 완성된 책 납품
-					Type bookToSell = Utility.RandomList(typeof(RedBook), typeof(BlueBook), typeof(BlankMap));
-					TrySellItem(town, bookToSell, Utility.RandomMinMax(1, 3), out earnings);
-					
-					this.Stress += Utility.RandomMinMax(11, 15);
-					break;
+            if (!m_EquipmentUses.ContainsKey(equipType) || m_EquipmentUses[equipType] <= 0)
+            {
+                if (TryBuyItem(town, equipType, 1).Success)
+                {
+                    m_EquipmentUses[equipType] = GetItemDurability(equipType); 
+                }
+                else return false; 
+            }
+            
+            m_EquipmentUses[equipType] -= lossAmount; 
+            return true;
+        }
 
-				case 1100: // [Criminal] 지하 경제: 범죄 도구 소비 -> 장물 재납품
-					// 1. 단검, 독포션 등 범죄 도구 구매
-					TryBuyItem(town, typeof(Dagger), 1, out cost);
+        // ==============================================================================
+        // [핵심] 직업 매핑 프로필 (하드코딩 제거를 위한 설계도)
+        // ==============================================================================
+        public record JobProfile(Type Equip1, Type Equip2, Type InputMat, params Type[] Outputs);
 
-					// 2. 훔친 사치품이나 위조 증서를 창고에 팔아치움 (장물 세탁)
-					Type stolenGoods = EconomyTagHelper.GetItemTypeByTag(town, ItemTag.Jewelry, random: true);
-					TrySellItem(town, stolenGoods, 1, out earnings);
-					
-					this.Stress += Utility.RandomMinMax(20, 35); // 걸릴까 봐 스트레스 심함
-					break;
-			}
-			this.Stress -= 10;
-		}
-	}
+        protected JobProfile GetJobProfile(NpcJobClass job)
+        {
+            return job switch
+            {
+                // [100번대] 기초 채집
+				NpcJobClass.Herbalist 
+					=> new JobProfile(typeof(Hoe), null, typeof(Ginseng), [typeof(Garlic)]),
+				NpcJobClass.MushroomGatherer 
+					=> new JobProfile(typeof(Hoe), null, typeof(MandrakeRoot), [typeof(Nightshade)]),
+				NpcJobClass.SeaweedCollector or NpcJobClass.BeachComber 
+					=> new JobProfile(typeof(FishingPole), null, typeof(BlackPearl), [typeof(SpidersSilk)]),
+				NpcJobClass.CharcoalBurner 
+					=> new JobProfile(typeof(Axe), null, typeof(SulfurousAsh), [typeof(Log)]),
+                NpcJobClass.SurfaceMiner or NpcJobClass.SandDigger or NpcJobClass.StoneQuarryman or NpcJobClass.FlintKnapper
+                    => new JobProfile(typeof(Pickaxe), null, typeof(IronOre), [typeof(IronIngot)]),
+                NpcJobClass.Woodcutter or NpcJobClass.BarkCollector or NpcJobClass.ResinGatherer
+                    => new JobProfile(typeof(Axe), null, typeof(Log), [typeof(Board)]),
+                NpcJobClass.CoastalFisher or NpcJobClass.DeepSeaFisher_Basic or NpcJobClass.Crabber or NpcJobClass.OysterDiver_Basic or NpcJobClass.SeaweedCollector or NpcJobClass.BeachComber
+                    => new JobProfile(typeof(FishingPole), null, typeof(RawFishSteak), []),
+				NpcJobClass.VegetableFarmer or NpcJobClass.GrainFarmer or NpcJobClass.GourdFarmer
+					=> new JobProfile(typeof(Hoe), null, typeof(WheatSheaf), [typeof(Cabbage), typeof(Carrot)]),
+                NpcJobClass.FlaxCutter or NpcJobClass.GongFarmer
+                    => new JobProfile(typeof(Hoe), null, typeof(WheatSheaf), []),
+                NpcJobClass.Orchardist or NpcJobClass.CitrusGrower or NpcJobClass.VineyardWorker or NpcJobClass.BerryPicker
+                    => new JobProfile(typeof(Hoe), null, typeof(Apple), []),
+                NpcJobClass.Shepherd or NpcJobClass.GooseHerd or NpcJobClass.PoultryFarmer
+                    => new JobProfile(typeof(ShepherdsCrook), null, typeof(Wool), []),
+                NpcJobClass.Swineherd or NpcJobClass.CattleDrover or NpcJobClass.StableHand or NpcJobClass.HorseGroom_Basic
+                    => new JobProfile(typeof(Pitchfork), null, typeof(Hides), [typeof(Leather)]),
+                NpcJobClass.Trapper or NpcJobClass.BirdHunter or NpcJobClass.BigGameHunter or NpcJobClass.FeatherPlucker
+                    => new JobProfile(typeof(SkinningKnife), null, typeof(Feather), []),
+                NpcJobClass.Beekeeper => new JobProfile(typeof(Dagger), null, typeof(JarHoney), []),
+                NpcJobClass.GraveDigger_Basic or NpcJobClass.BoneCollector or NpcJobClass.PeatCutter 
+                    => new JobProfile(typeof(Shovel), null, typeof(Bone), [typeof(GraveDust)]),
+                NpcJobClass.WaterCarrier => new JobProfile(typeof(Pitcher), null, typeof(BegWaterPitcher), []), // 유저님의 스크립트 클래스명 반영
+				NpcJobClass.DairyWorker => new JobProfile(typeof(Pitcher), null, typeof(CheeseWheel), []), // 안전한 기본 유제품(치즈)으로 대체
+
+                // [200번대] 가공/생산
+                NpcJobClass.Smelter or NpcJobClass.PigIronWorker => new JobProfile(typeof(Tongs), null, typeof(IronOre), [typeof(IronIngot)]),
+                NpcJobClass.NailMaker => new JobProfile(typeof(SmithHammer), null, typeof(IronIngot), [typeof(Nails)]),
+                NpcJobClass.AxleMaker or NpcJobClass.GearCutter or NpcJobClass.SextantPartMaker or NpcJobClass.ClockPartMaker 
+                    => new JobProfile(typeof(TinkerTools), null, typeof(IronIngot), [typeof(Gears)]),
+                NpcJobClass.SpringMaker or NpcJobClass.HingeMaker => new JobProfile(typeof(TinkerTools), null, typeof(IronIngot), [typeof(Springs)]),
+                NpcJobClass.Spinner or NpcJobClass.ThreadMaker or NpcJobClass.SilkExtractor 
+                    => new JobProfile(typeof(SewingKit), null, typeof(Wool), [typeof(SpoolOfThread)]),
+                NpcJobClass.Weaver or NpcJobClass.ClothUnraveler => new JobProfile(typeof(SewingKit), null, typeof(SpoolOfThread), [typeof(BoltOfCloth)]),
+                NpcJobClass.LeatherTanner => new JobProfile(typeof(SewingKit), null, typeof(Hides), [typeof(Leather)]),
+                NpcJobClass.Dyer_Producer => new JobProfile(typeof(Dyes), null, typeof(Tub), [typeof(DyeTub)]),
+                NpcJobClass.Sawyer or NpcJobClass.BarkProcessor or NpcJobClass.ShaftMaker => new JobProfile(typeof(Saw), null, typeof(Board), [typeof(Shaft)]),
+                NpcJobClass.BarrelMaker_Base => new JobProfile(typeof(Saw), null, typeof(Board), [typeof(Barrel)]),
+                NpcJobClass.BoxMaker_Base => new JobProfile(typeof(Saw), null, typeof(Board), [typeof(WoodenBox)]),
+                NpcJobClass.Miller or NpcJobClass.PizzaChef_Producer => new JobProfile(typeof(RollingPin), null, typeof(SackFlour), [typeof(CheesePizza)]), // 수정: Pizza -> CheesePizza
+                NpcJobClass.Butcher_Expert or NpcJobClass.PoultryProcessor => new JobProfile(typeof(Cleaver), null, typeof(RawRibs), [typeof(Ribs)]),
+                NpcJobClass.Vintner_Base => new JobProfile(typeof(Bottle), null, typeof(Apple), [typeof(BottleOfWine)]), // 수정: Wine -> BottleOfWine
+                NpcJobClass.OilPresser_Producer => new JobProfile(typeof(MortarPestle), null, typeof(WheatSheaf), [typeof(Bottle)]), 
+                NpcJobClass.GlassBlower => new JobProfile(typeof(Blowpipe), null, typeof(Sand), [typeof(Bottle)]),
+                NpcJobClass.GemCutter or NpcJobClass.JewelryBaseMaker or NpcJobClass.BeadMaker 
+                    => new JobProfile(typeof(TinkerTools), null, typeof(Amber), [typeof(BaseJewel)]),
+                NpcJobClass.ReagentRefiner or NpcJobClass.AshProcessor or NpcJobClass.BoneGrinder 
+                    => new JobProfile(typeof(MortarPestle), null, typeof(SulfurousAsh), [typeof(BlackPearl)]),
+                NpcJobClass.InkProducer => new JobProfile(typeof(MortarPestle), null, typeof(BlackPearl), [typeof(Dyes)]), // 수정: BlackDye -> Dyes
+                NpcJobClass.ScrollPresser or NpcJobClass.MapPresser => new JobProfile(typeof(ScribesPen), null, typeof(Log), [typeof(BlankScroll)]),
+                NpcJobClass.FeatherWorker or NpcJobClass.CandleDipper => new JobProfile(typeof(Scissors), null, typeof(Feather), [typeof(Candle)]),
+
+                // [300번대] 전투직
+                NpcJobClass.Paladin or NpcJobClass.Crusader or NpcJobClass.Knight
+                    => new JobProfile(typeof(Mace), typeof(PlateChest), null, [typeof(Bone), typeof(GraveDust), typeof(DaemonBone)]),
+                NpcJobClass.Archer_Expert or NpcJobClass.Crossbowman or NpcJobClass.SkirmishArcher or NpcJobClass.Scout_Warrior
+                    => new JobProfile(typeof(Bow), typeof(LeatherChest), null, [typeof(Hides), typeof(Feather), typeof(RawRibs)]),
+                NpcJobClass.BeastSlayer or NpcJobClass.DragonTracker or NpcJobClass.Slayer
+                    => new JobProfile(typeof(Halberd), typeof(DragonChest), null, [typeof(DragonBlood), typeof(WhiteScales), typeof(Hides)]), // 수정: DragonScales -> WhiteScales
+                NpcJobClass.Assassin_Warrior or NpcJobClass.Duelist or NpcJobClass.Swashbuckler
+                    => new JobProfile(typeof(Kryss), typeof(StuddedChest), null, [typeof(SpidersSilk), typeof(Bone)]),
+
+                // [400번대] 마법직
+                NpcJobClass.Necromancer or NpcJobClass.BoneOracle or NpcJobClass.Witch
+                    => new JobProfile(typeof(MortarPestle), null, typeof(BatWing), [typeof(NecromancerSpellbook), typeof(GraveDust)]),
+                NpcJobClass.Alchemist or NpcJobClass.PotionMaker or NpcJobClass.DarkApothecary
+                    => new JobProfile(typeof(MortarPestle), null, typeof(Ginseng), [typeof(GreaterHealPotion), typeof(TotalRefreshPotion)]),
+                NpcJobClass.Venomist or NpcJobClass.Poisoner_Expert
+                    => new JobProfile(typeof(MortarPestle), null, typeof(Nightshade), [typeof(DeadlyPoisonPotion), typeof(GreaterCurePotion)]),
+                NpcJobClass.Wizard or NpcJobClass.Archmage or NpcJobClass.Scribe_Mage
+                    => new JobProfile(typeof(ScribesPen), null, typeof(BlankScroll), [typeof(FlamestrikeScroll), typeof(GateTravelScroll)]),
+
+                // [600번대] 상인
+                NpcJobClass.CaravanMaster or NpcJobClass.MaritimeTrader or NpcJobClass.FruitExporter
+                    => new JobProfile(typeof(PackHorse), null, typeof(IronOre), [typeof(CommodityDeed)]),
+
+                // [800번대] 유흥/바드
+                NpcJobClass.Lutanist or NpcJobClass.Bard => new JobProfile(typeof(Lute), null, typeof(Dyes), [typeof(ApplePie), typeof(Gold)]),
+                NpcJobClass.Drummer => new JobProfile(typeof(Drums), null, typeof(Dyes), [typeof(Cake), typeof(Gold)]), // 수정: Drum -> Drums
+                NpcJobClass.Tambourinist => new JobProfile(typeof(Tambourine), null, typeof(Dyes), [typeof(JarHoney), typeof(Gold)]),
+
+                // [900번대] 해양
+                NpcJobClass.ShipCaptain or NpcJobClass.DeepSeaFisher or NpcJobClass.Whaler_Maritime
+                    => new JobProfile(typeof(Sextant), typeof(SpecialFishingNet), typeof(RawFishSteak), [typeof(BlackPearl), typeof(Trout)]),
+
+                // [1100번대] 범죄자
+                NpcJobClass.Burglar or NpcJobClass.Thief or NpcJobClass.Cutpurse
+                    => new JobProfile(typeof(Lockpick), null, null, [typeof(GoldRing), typeof(SilverRing)]),
+				NpcJobClass.Smuggler 
+					=> new JobProfile(typeof(Dagger), null, typeof(Bloodmoss), [typeof(BlackPearl)]),
+                NpcJobClass.BlackMarketeer or NpcJobClass.Assassin
+                    => new JobProfile(typeof(Dagger), null, null, [typeof(BlackPearl), typeof(Bloodmoss)]),
+
+                _ => null 
+            };
+        }
+
+        // ==============================================================================
+        // [완성] ProcessJob: 모든 로직 융합 (프로필 기반 작동 + 안전망)
+        // ==============================================================================
+        protected virtual void ProcessJob(TownEconomy town)
+        {
+            int jobGroup = JobGetGroup(JobClass);
+            JobProfile profile = GetJobProfile(JobClass);
+            bool jobSuccess = false; 
+
+            switch (jobGroup)
+            {
+                case 100: // [100번대] 매핑된 도구로 자원 수확 및 제련 선택
+                    if (profile != null && CheckAndUseEquipment(town, profile.Equip1)) 
+                    {
+                        int harvestAmount = 5 + (int)(this.PrimarySkill / 10.0);
+                        
+                        if (profile.Outputs.Length > 0)
+                        {
+                            int rawProfit = GetEffectivePrice(town, profile.InputMat) * harvestAmount;
+                            int refinedProfit = GetEffectivePrice(town, profile.Outputs[0]) * (harvestAmount * 2);
+
+                            if (refinedProfit > rawProfit) TrySellItem(town, profile.Outputs[0], harvestAmount * 2);
+                            else TrySellItem(town, profile.InputMat, harvestAmount);
+                        }
+                        else
+                        {
+                            TrySellItem(town, profile.InputMat, harvestAmount);
+                        }
+                        jobSuccess = true;
+                    }
+                    break;
+
+                case 200: // [200번대] 매핑된 중간재 매입 후 마진 얹어 완제품 납품
+                    if (profile != null && profile.Outputs.Length > 0 && CheckAndUseEquipment(town, profile.Equip1))
+                    {
+                        int craftMultiplier = 1 + (int)(this.PrimarySkill / 20.0);
+                        int buyAmount = 5 * craftMultiplier; 
+                        
+                        var buyResult = TryBuyItem(town, profile.InputMat, buyAmount);
+                        if (buyResult.Success)
+                        {
+                            int laborValue = (int)(this.PrimarySkill / 2.0) * craftMultiplier;
+                            int guaranteedPrice = (int)(buyResult.TotalCost * 1.5) + laborValue;
+
+                            this.Gold += guaranteedPrice;
+                            town.Wealth -= guaranteedPrice;
+                            town.SupplyItem(profile.Outputs[0], craftMultiplier, guaranteedPrice);
+                            jobSuccess = true;
+                        }
+                    }
+                    break;
+
+                case 300: // [300번대] 전투직 특화 장비 및 전리품
+                    Type weapon = profile?.Equip1 ?? typeof(Broadsword);
+                    Type armor = profile?.Equip2 ?? typeof(PlateChest);
+                    int targetFame = (int)(this.PrimarySkill * 100); 
+                    int durabilityLoss = 1 + (targetFame / 3000); 
+
+                    if (CheckAndUseEquipment(town, weapon, durabilityLoss) && CheckAndUseEquipment(town, armor, durabilityLoss))
+                    {
+                        int totalGoldPool = 10 + Utility.RandomMinMax(targetFame / 30, targetFame / 15);
+                        if (Utility.RandomDouble() < 0.05) totalGoldPool *= 2; 
+
+                        this.Gold += totalGoldPool; 
+                        
+                        Type[] lootTable = (profile != null && profile.Outputs.Length > 0) ? profile.Outputs : [typeof(Bone), typeof(Hides), typeof(Ribs)];
+                        Type loot = lootTable[Utility.Random(lootTable.Length)];
+                        
+                        int lootAmount = 2 + (int)(this.PrimarySkill / 15.0);
+                        TrySellItem(town, loot, Utility.RandomMinMax(lootAmount / 2, lootAmount));
+                        jobSuccess = true;
+                    }
+                    break;
+
+                case 400: // [400번대] 마법직 특화 시약 소비
+                    if (profile != null && CheckAndUseEquipment(town, profile.Equip1)) 
+                    {
+                        int craftAmount = Math.Max(1, (int)(this.PrimarySkill / 20.0)); 
+                        if (TryBuyItem(town, profile.InputMat, craftAmount).Success)
+                        {
+                            Type output = profile.Outputs[Utility.Random(profile.Outputs.Length)];
+                            TrySellItem(town, output, craftAmount * 2); 
+                            jobSuccess = true;
+                        }
+                    }
+                    break;
+
+                case 500: // [500번대] 귀족
+                    int salary = (int)this.Rank * 100 + 100; 
+                    if (town.Wealth > salary)
+                    {
+                        town.Wealth -= salary;
+                        this.Gold += salary;
+                        
+                        Type nobleLuxury = EconomyTagHelper.GetItemTypeByTag(town, ItemTag.Luxury, random: true);
+                        TryBuyItem(town, nobleLuxury, 2); 
+                        Type officialDoc = Utility.RandomBool() ? typeof(ContractOfEmployment) : typeof(TanBook);
+                        TrySellItem(town, officialDoc, 1);
+                        jobSuccess = true;
+                    }
+                    break;
+
+                case 600: // [600번대] 상인
+                    Type packAnimal = profile?.Equip1 ?? typeof(PackHorse);
+                    if (CheckAndUseEquipment(town, packAnimal)) 
+                    {
+                        if (this is VirtualCitizen merchant600)
+                        {
+                            var tradeResult = VirtualTradeAI.ExecuteTradeRoute(merchant600, town, 1000);
+                            if (tradeResult.Success) jobSuccess = true;
+                            else
+                            {
+                                TryBuyItem(town, profile?.InputMat ?? typeof(IronOre), 10);
+                                TrySellItem(town, typeof(CommodityDeed), 5);
+                            }
+                        }
+                    }
+                    break;
+
+                case 700: // [700번대] 종교
+                    if (TryBuyItem(town, typeof(Bandage), Utility.RandomMinMax(2, 5)).Success &&
+                        TryBuyItem(town, typeof(Candle), Utility.RandomMinMax(2, 5)).Success) 
+                    {
+                        int donation = Utility.RandomMinMax(10, 30) + (int)this.PrimarySkill;
+                        if (town.Wealth >= donation) { town.Wealth -= donation; this.Gold += donation; }
+                        Type graveLoot = Utility.RandomBool() ? typeof(GraveDust) : typeof(Bone);
+                        TrySellItem(town, graveLoot, Utility.RandomMinMax(2, 5));
+                        jobSuccess = true;
+                    }
+                    break;
+
+                case 800: // [800번대] 예술/유흥
+                    Type instrument = profile?.Equip1 ?? typeof(Lute);
+                    if (CheckAndUseEquipment(town, instrument)) 
+                    {
+                        if (profile?.InputMat != null) TryBuyItem(town, profile.InputMat, 1); 
+                        this.Gold += Utility.RandomMinMax(15, 40) + (int)(this.PrimarySkill / 2);
+                        
+                        if (profile != null && profile.Outputs.Length > 0 && Utility.RandomBool())
+                        {
+                            Type outFood = profile.Outputs[Utility.Random(profile.Outputs.Length)];
+                            TrySellItem(town, outFood, 1); 
+                        }
+                        jobSuccess = true;
+                    }
+                    break;
+
+                case 900: // [900번대] 해양
+                    if (profile != null && CheckAndUseEquipment(town, profile.Equip1) && CheckAndUseEquipment(town, profile.Equip2)) 
+                    {
+                        if (this is VirtualCitizen maritime900)
+                        {
+                            VirtualTradeAI.ExecuteHarvestAndSell(maritime900, town, 4); 
+                            Type seaLoot = profile.Outputs[Utility.Random(profile.Outputs.Length)];
+                            TrySellItem(town, seaLoot, Utility.RandomMinMax(2, 5));
+                            jobSuccess = true;
+                        }
+                    }
+                    break;
+
+                case 1000: // [1000번대] 학자
+                    Type pen = profile?.Equip1 ?? typeof(ScribesPen);
+                    if (CheckAndUseEquipment(town, pen)) 
+                    {
+                        if (TryBuyItem(town, typeof(BlankScroll), 5).Success) 
+                        {
+                            Type[] bookTable = (profile != null && profile.Outputs.Length > 0) ? profile.Outputs : [typeof(RedBook), typeof(BlueBook), typeof(BlankMap), typeof(Spellbook)];
+                            Type bookToSell = bookTable[Utility.Random(bookTable.Length)];
+                            TrySellItem(town, bookToSell, Utility.RandomMinMax(1, 3)); 
+                            jobSuccess = true;
+                        }
+                    }
+                    break;
+
+                case 1100: // [1100번대] 범죄
+                    Type crimeTool = profile?.Equip1 ?? typeof(Dagger);
+                    if (CheckAndUseEquipment(town, crimeTool)) 
+                    {
+                        int stolenGold = Utility.RandomMinMax(20, 80) + (int)this.PrimarySkill;
+                        if (town.Wealth >= stolenGold)
+                        {
+                            town.Wealth -= stolenGold; 
+                            this.Gold += stolenGold;
+                            
+                            Type[] stealTable = (profile != null && profile.Outputs.Length > 0) ? profile.Outputs : [typeof(GoldRing)];
+                            Type stolenGoods = stealTable[Utility.Random(stealTable.Length)];
+                            TrySellItem(town, stolenGoods, 1);
+                            jobSuccess = true;
+                        }
+                    }
+                    break;
+            }
+
+            // ==============================================================================
+            // [안전 데이터] 작업 실패 또는 매핑이 안 된 직업의 파산 방지 로직
+            // ==============================================================================
+            if (jobSuccess)
+            {
+                this.CheckSkillGain();
+            }
+            else
+            {
+                int oddJobWage = 10 + (int)(this.PrimarySkill / 10.0); 
+                if (town.Wealth >= oddJobWage)
+                {
+                    town.Wealth -= oddJobWage;
+                    this.Gold += oddJobWage;
+                }
+                else this.Gold += 10; 
+                this.Stress += 5; 
+            }
+
+            this.Stress -= 10;
+        }
+    }
 }
