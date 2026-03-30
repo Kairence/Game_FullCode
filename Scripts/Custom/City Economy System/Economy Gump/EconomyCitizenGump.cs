@@ -147,6 +147,10 @@ namespace Server.Misc
             // [신규 연동] EcoStatus 즉시 출력 버튼 추가
             AddButton(350, 133, 4005, 4007, 888, GumpButtonType.Reply, 0);
             AddLabel(385, 134, 88, "EcoStatus 출력");
+			
+			// [수정] 버튼들을 한 줄 아래(y=155)로 이동하여 겹침 방지
+			AddButton(40, 155, 4005, 4007, 777, GumpButtonType.Reply, 0);
+			AddLabel(75, 156, 1152, "가문/영토 현황");
 
             int y = 180;
             AddLabel(25, y, 53, "직업군 (Job Group)");
@@ -184,6 +188,11 @@ namespace Server.Misc
                 EconomyMonitorCommand.PrintTownReport(m_From, m_Town);
                 m_From.SendGump(new EconomyCitizenMainGump(m_From, m_Town, m_MapIndex, m_TPage));
             }
+			else if (id == 777)
+			{
+				// 돌아올 때 필요한 정보(m_MapIndex, m_TPage)를 같이 넘겨주도록 파라미터를 추가할 예정입니다.
+				m_From.SendGump(new TownSocietyGump(m_From, m_Town, 0, 0, null, m_MapIndex, m_TPage));
+			}
             else if (id >= 2000)
             {
                 int groupID = id - 2000;

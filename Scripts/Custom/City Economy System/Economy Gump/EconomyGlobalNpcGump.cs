@@ -19,8 +19,9 @@ namespace Server.Misc
             from.CloseGump(typeof(EconomyGlobalNpcGump));
 
             AddPage(0);
-            AddBackground(0, 0, 400, 320, 9270);
-            AddAlphaRegion(10, 10, 380, 300);
+            // [수정] 배경 창의 높이를 360 -> 480으로 넉넉하게 늘려줍니다.
+            AddBackground(0, 0, 420, 480, 9270); 
+            AddAlphaRegion(10, 10, 400, 460);    
 
             DrawInterface();
         }
@@ -30,33 +31,52 @@ namespace Server.Misc
             Map targetMap = Facets[m_MapIndex];
             var towns = TownEconomyManager.Towns.Values.Where(t => t.Facet == targetMap).ToList();
 
-            AddHtml(10, 20, 380, 25, $"<CENTER><BASEFONT SIZE='6' COLOR='#FDB913'>{targetMap.Name} NPC 마스터 관리</BASEFONT></CENTER>", false, false);
+            AddHtml(10, 20, 400, 25, $"<CENTER><BASEFONT SIZE='6' COLOR='#FDB913'>{targetMap.Name} 대륙 경제 & NPC 마스터</BASEFONT></CENTER>", false, false);
 
-            // 1. 대륙 통계 요약
             int totalCitizens = towns.Sum(t => t.Citizens?.Count ?? 0);
             
-            AddImageTiled(20, 60, 360, 50, 9354);
+            AddImageTiled(20, 60, 380, 50, 9354);
             AddLabel(40, 75, 1152, $"대륙 내 활성 마을: {towns.Count}개 / 총 인구: {totalCitizens:N0}명");
 
-            // 2. 일괄 실행 명령
             int y = 130;
             
-            // [전체 리스폰] 상인 수에 비례하여 모든 마을 NPC 생성
             AddButton(30, y, 4005, 4007, 1, GumpButtonType.Reply, 0);
             AddLabel(65, y + 2, 1152, "대륙 전체 NPC 리스폰 (상인 비례)");
 
             y += 40;
-            // [전체 삭제] 현재 대륙의 모든 가상 NPC 데이터 즉시 삭제
             AddButton(30, y, 4005, 4007, 2, GumpButtonType.Reply, 0);
             AddLabel(65, y + 2, 33, "대륙 전체 NPC 데이터 삭제 (Clear)");
 
             y += 40;
-            // [자산 동기화] 모든 마을의 Wealth를 실시간 재계산 수치로 맞춤
             AddButton(30, y, 4005, 4007, 3, GumpButtonType.Reply, 0);
-            AddLabel(65, y + 2, 1152, "대륙 경제 지표 강제 동기화");
+            AddLabel(65, y + 2, 1152, "대륙 경제 지표 강제 동기화 (Wealth)");
 
-            // 닫기 버튼
-            AddButton(150, 270, 247, 248, 0, GumpButtonType.Reply, 0);
+            // [신규 추천] 강제 시간 진행 (테스트용)
+            y += 40;
+            AddButton(30, y, 4005, 4007, 4, GumpButtonType.Reply, 0);
+            AddLabel(65, y + 2, 65, "[테스트] 가상 경제 1 사이클 강제 진행");
+
+            // [신규 추천] 일괄 상태 회복 (구제용)
+            y += 40;
+            AddButton(30, y, 4005, 4007, 5, GumpButtonType.Reply, 0);
+            AddLabel(65, y + 2, 2100, "[구제] 전체 시민 상태(허기/스트레스) 회복");
+
+            // [모험가] 추가 버튼들
+            y += 40;
+            AddButton(30, y, 4005, 4007, 6, GumpButtonType.Reply, 0);
+            AddLabel(65, y + 2, 1161, "[모험가] 대륙 내 초기 스폰 (마을당 15명)");
+
+            y += 40;
+            AddButton(30, y, 4005, 4007, 7, GumpButtonType.Reply, 0);
+            AddLabel(65, y + 2, 33, "[모험가] 대륙 내 모험가/파티 전체 데이터 삭제");
+
+            // [수정] OKAY 버튼의 Y좌표를 315에서 420으로 시원하게 내려줍니다!
+            AddButton(180, 420, 247, 248, 0, GumpButtonType.Reply, 0);
+			
+			AddButton(600, 20, 0x15E1, 0x15E5, 999, GumpButtonType.Reply, 0); 
+			AddLabel(625, 19, 53, "거시 경제 대시보드 ▶");
+
+
         }
 
         public override void OnResponse(NetState sender, RelayInfo info)
@@ -64,15 +84,34 @@ namespace Server.Misc
             Map targetMap = Facets[m_MapIndex];
             var towns = TownEconomyManager.Towns.Values.Where(t => t.Facet == targetMap).ToList();
 
+            if (info.ButtonID == 0)
+            {
+                m_From.SendGump(new EconomyAdminGump(m_From, m_MapIndex, 0, 0, 0));
+                return;
+            }
+
             switch (info.ButtonID)
             {
-                case 1: // 리스폰 (TownDemographics 연동)
+                case 1: // 리스폰 (가상 시민만 대상)
+                    // 물리적 노드는 건드리지 않고, TownDemographics를 통해 가상 시민 데이터만 재생성합니다.
                     TownDemographics.RespawnFacet(targetMap, m_From);
+                    
+                    // 마을 수와 현재 인구수를 요약해서 메시지로 보냅니다.
+                    int totalNewPop = towns.Sum(t => t.Citizens?.Count ?? 0);
+                    m_From.SendMessage(66, $"{targetMap.Name} 대륙의 가상 시민 {totalNewPop:N0}명이 새롭게 배치되었습니다.");
                     break;
 
-                case 2: // 전체 삭제
-                    foreach (var town in towns) town.Citizens?.Clear();
-                    m_From.SendMessage(33, $"{targetMap.Name}의 가상 NPC 데이터가 모두 삭제되었습니다.");
+                case 2: // 전체 삭제 (가상 시민 데이터만 대상)
+                    // 1. 해당 대륙의 모든 마을을 순회하며 가상 시민과 가문 데이터를 초기화
+                    foreach (var town in towns) 
+                    {
+                        town.Citizens?.Clear();
+                        town.Houses?.Clear(); // 가문 랭킹/족보 데이터도 함께 초기화
+                    }
+
+                    // 2. 물리적 VendorNode는 건드리지 않음 (기존 노드 순회 로직 삭제)
+                    
+                    m_From.SendMessage(33, $"{targetMap.Name} 대륙의 모든 가상 시민 및 가문 데이터가 초기화되었습니다. (상인 노드는 유지)");
                     break;
 
                 case 3: // 지표 동기화
@@ -82,10 +121,46 @@ namespace Server.Misc
                     }
                     m_From.SendMessage(68, $"{targetMap.Name}의 경제 데이터 동기화 완료.");
                     break;
+
+                case 4: // 강제 시간 진행
+                    foreach (var town in towns) 
+                    {
+                        foreach (var citizen in town.Citizens.ToList())
+                        {
+                            citizen.OnTick(town);
+                        }
+                    }
+                    m_From.SendMessage(65, $"{targetMap.Name} 대륙의 모든 시민들이 1사이클 경제 활동을 진행했습니다.");
+                    break;
+
+                case 5: // 일괄 구제
+                    int healCount = 0;
+                    foreach (var town in towns) 
+                    {
+                        foreach (var citizen in town.Citizens) 
+                        {
+                            citizen.Hunger = 100;
+                            citizen.Thirst = 100;
+                            citizen.Stress = 0;
+                            healCount++;
+                        }
+                    }
+				m_From.SendMessage(2100, $"{targetMap.Name} 대륙의 시민 {healCount}명의 상태가 완전히 회복되었습니다.");
+                    break;
+				case 6: // 모험가 스폰
+                    foreach (var town in towns) 
+                        VirtualAdventurerManager.SpawnInitialAdventurers(town, 15);
+                    m_From.SendMessage(66, $"{targetMap.Name} 대륙에 모험가들이 새롭게 배치되었습니다.");
+                    break;
+
+                case 7: // 모험가 데이터 클리어
+                    VirtualAdventurerManager.IdleAdventurers.RemoveAll(a => towns.Any(t => t.Facet == targetMap));
+                    VirtualAdventurerManager.ActiveParties.RemoveAll(p => p.CurrentNode.NodeMap == targetMap);
+                    m_From.SendMessage(33, $"{targetMap.Name} 대륙의 모험가 및 파티 데이터가 삭제되었습니다.");
+                    break;
             }
 
-            if (info.ButtonID > 0)
-                m_From.SendGump(new EconomyGlobalNpcGump(m_From, m_MapIndex));
+            m_From.SendGump(new EconomyGlobalNpcGump(m_From, m_MapIndex));
         }
     }
 }

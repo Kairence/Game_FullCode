@@ -3,6 +3,7 @@ using Server;
 using Server.Items;
 using Server.Mobiles; // [추가] PackHorse, PackLlama를 위해 필수
 using Server.Multis;  // [추가] BoatDeed 관련
+
 namespace Server.Misc
 {
     public static class VirtualJobCore
@@ -20,9 +21,8 @@ namespace Server.Misc
             int BaseQty          // 기본 생산량
         ) GetDeepJobProfile(NpcJobClass job)
         {
-		
-		// [교정] 오타 수정: Shepherd, ClothWholesaler, Healer_Master 등
-                // [교정] 스킬명: Swords, Macing, Inscribe
+            // [교정] 오타 수정: Shepherd, ClothWholesaler, Healer_Master 등
+            // [교정] 스킬명: Swords, Macing, Inscribe
             return job switch
             {
                 // ==============================================================================
@@ -52,8 +52,10 @@ namespace Server.Misc
                     [typeof(Apple)], [typeof(Torch)], [typeof(Shoes)], null, 0),
                 NpcJobClass.GraveDigger_Basic => (SkillName.Camping, NobilityRank.Commoner, NobilityRank.Commoner, 
                     [typeof(BreadLoaf)], [typeof(Shovel), typeof(Torch)], [typeof(BeverageBottle)], [typeof(GraveDust), typeof(Bone)], 5),
+                
+                // [수정] 요리사(Scullion)가 어부의 TroutRawFishSteak를 사서 TroutFishSteak로 굽도록 변경
                 NpcJobClass.Scullion => (SkillName.Cooking, NobilityRank.Commoner, NobilityRank.Commoner, 
-                    [typeof(Muffins)], [typeof(HalfApron), typeof(Skillet)], [typeof(Candle)], null, 0),
+                    [typeof(Muffins)], [typeof(TroutRawFishSteak), typeof(HalfApron), typeof(Skillet)], [typeof(Candle)], [typeof(TroutFishSteak)], 20),
                 
                 NpcJobClass.GrainFarmer => (SkillName.Herding, NobilityRank.Commoner, NobilityRank.Commoner, 
                     [typeof(Apple)], [typeof(Pitchfork)], [typeof(StrawHat)], [typeof(EarOfCorn)], 20),
@@ -90,7 +92,7 @@ namespace Server.Misc
                 NpcJobClass.BeachComber => (SkillName.Camping, NobilityRank.Commoner, NobilityRank.Commoner, 
                     [typeof(Muffins)], [typeof(Spyglass), typeof(Torch)], [typeof(Boots)], [typeof(Bone)], 3),
                 NpcJobClass.SaltGatherer => (SkillName.Mining, NobilityRank.Commoner, NobilityRank.Commoner, 
-                    [typeof(Apple)], [typeof(Shovel)], [typeof(Shoes)], [typeof(Sand)], 10), // 소금 대용
+                    [typeof(Apple)], [typeof(Shovel)], [typeof(Shoes)], [typeof(Sand)], 10), 
                 
                 NpcJobClass.Shepherd => (SkillName.Herding, NobilityRank.Commoner, NobilityRank.Commoner, 
                     [typeof(BreadLoaf)], [typeof(ShepherdsCrook)], [typeof(StrawHat)], [typeof(Wool)], 15),
@@ -132,8 +134,11 @@ namespace Server.Misc
                 // ==============================================================================
                 NpcJobClass.Smelter => (SkillName.Blacksmith, NobilityRank.Commoner, NobilityRank.SubBaronet, 
                     [typeof(FrenchBread)], [typeof(IronOre), typeof(Tongs)], [typeof(SilverRing)], [typeof(IronIngot)], 15),
+                
+                // [수정] 대장장이 계열(PigIronWorker)이 철괴를 소모하여 곡괭이(Pickaxe)와 삽(Shovel)도 함께 생산하도록 변경
                 NpcJobClass.PigIronWorker => (SkillName.Blacksmith, NobilityRank.Commoner, NobilityRank.SubBaronet, 
-                    [typeof(CheesePizza)], [typeof(IronOre), typeof(SmithHammer)], [typeof(BeverageBottle)], [typeof(PigIron)], 12),
+                    [typeof(CheesePizza)], [typeof(IronIngot), typeof(SmithHammer)], [typeof(BeverageBottle)], [typeof(PigIron), typeof(Pickaxe), typeof(Shovel)], 15),
+                
                 NpcJobClass.NailMaker => (SkillName.Tinkering, NobilityRank.Commoner, NobilityRank.SubBaronet, 
                     [typeof(BreadLoaf)], [typeof(IronIngot), typeof(Hammer)], [typeof(Shirt)], [typeof(Nails)], 25),
                 NpcJobClass.AxleMaker => (SkillName.Tinkering, NobilityRank.Commoner, NobilityRank.SubBaronet, 

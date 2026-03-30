@@ -1253,51 +1253,16 @@ namespace Server.Mobiles
 			}
 		}
 
-        public override int GetMaxResistance(ResistanceType type)
-        {
-            if (IsStaff())
-            {
-                return 100;
-            }
-			int magicResist = (int)(Skills[SkillName.MagicResist].Value * 10);
-			if( magicResist >= 2000 )
-				magicResist = 4000;
-			else if( magicResist >= 1000 )
-				magicResist += 500;
-			
-			return 50 + magicResist / 100;
-			/*
-            int max = base.GetMaxResistance(type);
-            int refineBonus = BaseArmor.GetRefinedResist(this, type);
+		public override int GetMaxResistance(ResistanceType type)
+		{
+			if (IsStaff()) return 100; // 100.0%
 
-            if (refineBonus != 0)
-            {
-                max += refineBonus;
-            }
-            else
-            {
-                max += Spells.Mysticism.StoneFormSpell.GetMaxResistBonus(this);
-            }
+			// 스킬 120.0 기준 -> skillValue = 1200
+			int skillValue = (int)(Skills[SkillName.MagicResist].Value * 10); 
 
-            if (Core.ML && Race == Race.Elf && type == ResistanceType.Energy)
-            {
-                max += 5; //Intended to go after the 60 max from curse
-            }
-
-            if (type != ResistanceType.Physical && 60 < max && Spells.Fourth.CurseSpell.UnderEffect(this))
-            {
-                max -= 10;
-                //max = 60;
-            }
-
-            if ((type == ResistanceType.Fire || type == ResistanceType.Poison) && CorpseSkinSpell.IsUnderEffects(this))
-            {
-                max = CorpseSkinSpell.GetResistMalus(this);
-            }
-
-            return max;
-			*/
-        }
+			if (skillValue >= 1000) return 80;
+			else return 70;
+		}
 
 		public void Getgoldpoint(int getgoldpoint, bool harvest = true, bool quest = false)
 		{
@@ -1370,79 +1335,70 @@ namespace Server.Mobiles
 		}
 		
 		//저항력 합산
-        public override void ComputeResistances()
-        {
-            base.ComputeResistances();
+		public override void ComputeResistances()
+		{
+			base.ComputeResistances();
 
-            for (int i = 0; i < Resistances.Length; ++i)
-            {
-                Resistances[i] = 0;
-            }
-		
-            Resistances[0] += BasePhysicalResistance + ItemSetSaveValue[114] / 10000; // + SilverPoint[27];
-            Resistances[1] += BaseFireResistance + ItemSetSaveValue[113] / 10000 + ItemSetSaveValue[114] / 10000; // + SilverPoint[27];
-            Resistances[2] += BaseColdResistance + ItemSetSaveValue[113] / 10000 + ItemSetSaveValue[114] / 10000; // + SilverPoint[27];
-            Resistances[3] += BasePoisonResistance + ItemSetSaveValue[113] / 10000 + ItemSetSaveValue[114] / 10000; // + SilverPoint[27];
-            Resistances[4] += BaseEnergyResistance + ItemSetSaveValue[113] / 10000 + ItemSetSaveValue[114] / 10000; // + SilverPoint[27];
-			Resistances[5] += BaseChaosResistance;
-			Resistances[6] += BaseDirectResistance;
+			// 모든 저항 초기화
+			for (int i = 0; i < Resistances.Length; ++i) Resistances[i] = 0;
+
+			// 1. 커스텀 옵션 가져오기 (엔진 공간에 적용하므로 무조건 / 10000 하여 정수로 변환!)
+			// ※ 이 코드가 PlayerMobile 안에 있다면 ItemOptionCreator.GetAttributeValue 대신 GetEquipOptionInt(21) 등을 쓰셔도 됩니다.
+			const int VS = 10000;
+			int physicalBonus = ItemOptionCreator.GetAttributeValue(this, 21) / VS;
+			int fireBonus     = ItemOptionCreator.GetAttributeValue(this, 22) / VS;
+			int coldBonus     = ItemOptionCreator.GetAttributeValue(this, 23) / VS;
+			int poisonBonus   = ItemOptionCreator.GetAttributeValue(this, 24) / VS;
+			int energyBonus   = ItemOptionCreator.GetAttributeValue(this, 25) / VS;
 			
-            for (int i = 0; ResistanceMods != null && i < ResistanceMods.Count; ++i)
-            {
-                ResistanceMod mod = ResistanceMods[i];
-                int v = (int)mod.Type;
+			int elemRes = ItemOptionCreator.GetAttributeValue(this, 26) / VS; // 원소 저항
+			int allRes  = ItemOptionCreator.GetAttributeValue(this, 27) / VS; // 모든 저항
 
-                if (v >= 0 && v < Resistances.Length)
-                {
-                    Resistances[v] += mod.Offset;
-                }
-            }
+			// 2. 기본 저항 + 커스텀 옵션 합산 (순수 정수들의 합, 예: 10 + 5 + 2 = 17)
+			Resistances[0] += BasePhysicalResistance + physicalBonus + allRes;
+			Resistances[1] += BaseFireResistance     + fireBonus     + elemRes + allRes;
+			Resistances[2] += BaseColdResistance     + coldBonus     + elemRes + allRes;
+			Resistances[3] += BasePoisonResistance   + poisonBonus   + elemRes + allRes;
+			Resistances[4] += BaseEnergyResistance   + energyBonus   + elemRes + allRes;
 
-            for (int i = 0; i < Items.Count; ++i)
-            {
-                Item item = Items[i];
-
-                if (item.CheckPropertyConfliction(this))
-                {
-                    continue;
-                }
-                ISetItem setItem = item as ISetItem;
-
-                Resistances[0] += setItem != null && setItem.SetEquipped ? setItem.SetResistBonus(ResistanceType.Physical) : item.PhysicalResistance;
-                Resistances[1] += setItem != null && setItem.SetEquipped ? setItem.SetResistBonus(ResistanceType.Fire) : item.FireResistance;
-                Resistances[2] += setItem != null && setItem.SetEquipped ? setItem.SetResistBonus(ResistanceType.Cold) : item.ColdResistance;
-                Resistances[3] += setItem != null && setItem.SetEquipped ? setItem.SetResistBonus(ResistanceType.Poison) : item.PoisonResistance;
-                Resistances[4] += setItem != null && setItem.SetEquipped ? setItem.SetResistBonus(ResistanceType.Energy) : item.EnergyResistance;
-            }
-			if (Server.Spells.Chivalry.HolyLightSpell.UnderAura(this))
+			// 3. 장비 자체 기본 저항 합산 (아이템 본래의 저항도 5, 10 같은 정수임)
+			foreach (Item item in Items)
 			{
-				// 0:물리, 1:화염, 2:냉기, 3:독, 4:에너지
-				for (int i = 1; i <= 4; ++i) 
+				if (item.CheckPropertyConfliction(this)) continue;
+
+				if (item is ISetItem setItem && setItem.SetEquipped)
 				{
-					Resistances[i] += 10; // 화염~에너지 저항 10씩 증가
+					Resistances[0] += setItem.SetResistBonus(ResistanceType.Physical);
+					Resistances[1] += setItem.SetResistBonus(ResistanceType.Fire);
+					Resistances[2] += setItem.SetResistBonus(ResistanceType.Cold);
+					Resistances[3] += setItem.SetResistBonus(ResistanceType.Poison);
+					Resistances[4] += setItem.SetResistBonus(ResistanceType.Energy);
+				}
+				else
+				{
+					Resistances[0] += item.PhysicalResistance;
+					Resistances[1] += item.FireResistance;
+					Resistances[2] += item.ColdResistance;
+					Resistances[3] += item.PoisonResistance;
+					Resistances[4] += item.EnergyResistance;
 				}
 			}
-            for (int i = 0; i < Resistances.Length; ++i)
-            {
-                int min = GetMinResistance((ResistanceType)i);
-                int max = GetMaxResistance((ResistanceType)i);
 
-                if (max < min)
-                {
-                    max = min;
-                }
+			// 4. 버프/오라 보너스 (10% 보너스면 100,000이 아니라 그냥 10을 더함!)
+			if (Server.Spells.Chivalry.HolyLightSpell.UnderAura(this))
+			{
+				for (int i = 1; i <= 4; i++) Resistances[i] += 10;
+			}
 
-                if (Resistances[i] > max)
-                {
-                    Resistances[i] = max;
-                }
-                else if (Resistances[i] < min)
-                {
-                    Resistances[i] = min;
-                }
-            }
-			//UpdateResistances();
-        }
+			// 5. 최종 클램핑
+			for (int i = 0; i < Resistances.Length; i++)
+			{
+				int max = GetMaxResistance((ResistanceType)i); // 여기서 70, 75 같은 정수가 나와야 함
+				
+				if (Resistances[i] > max) 
+					Resistances[i] = max;
+			}
+		}
 
 		protected override void OnRaceChange(Race oldRace)
 		{
@@ -2718,7 +2674,8 @@ namespace Server.Mobiles
 			}
 			
 			//세트 아이템 체크
-			Misc.SetItem.SetOption(pm);
+			pm.UpdateEquipOptions();
+			//Misc.SetItem.SetOption(pm);
 			
 			//펫 체크
 			if( pm.Region is Server.Regions.TownRegion )
@@ -2769,60 +2726,12 @@ namespace Server.Mobiles
 				WeaponAbility.ClearCurrentAbility(pm);
 		}
 
-		// 세트 아이템 통합 관리 메서드
-		private void CheckSetItemChange(Item item, bool added)
-		{
-			// 인터페이스 확인 및 세트 번호(PrefixOption[50]) 존재 확인
-			if (item is IEquipOption equip && equip.PrefixOption != null && equip.PrefixOption[50] > 0)
-			{
-				int setID = equip.PrefixOption[50];
-
-				if (added)
-				{
-					this.ItemSetValue[setID]++;
-				}
-				else
-				{
-					if (this.ItemSetValue[setID] > 0)
-						this.ItemSetValue[setID]--;
-				}
-
-				// 세트 옵션 재계산 호출 (reroad: false로 하여 루프 최소화)
-				Misc.SetItem.SetOption(this, false);
-			}
-		}
-
 		public int[] SilverPointScore = { 0, 1, 3, 6, 11, 18, 28, 43, 68, 108, 168, 268, 418, 668, 1068, 1668, 2668, 4168, 6668, 11668, 21668 };
 
 		public int[] SilverPointRealScore = { 0, 1, 2, 3, 5, 7, 10, 15, 25, 40, 60, 100, 150, 250, 400, 600, 1000, 1500, 2500, 5000, 10000 };
 
 		public bool realHidden = false;
 		
-		/*
-		public int[] silverRankScore = { 0, 2, 123, 410, 1640, 6150, 16400, 41000, 102500 };
-		
-		public int SilverPointbyEquipSort()
-		{
-			if( m_SilverPointbyEquipCheck >= 102500 )
-				return 8;
-			else if( m_SilverPointbyEquipCheck >= 41000 )
-				return 7;
-			else if( m_SilverPointbyEquipCheck >= 16400 )
-				return 6;
-			else if( m_SilverPointbyEquipCheck >= 6150 )
-				return 5;
-			else if( m_SilverPointbyEquipCheck >= 1640 )
-				return 4;
-			else if( m_SilverPointbyEquipCheck >= 410 )
-				return 3;
-			else if( m_SilverPointbyEquipCheck >= 123 )
-				return 2;
-			else if( m_SilverPointbyEquipCheck >= 2 )
-				return 1;
-			else
-				return 0;
-		}
-		*/
 		public int[] silverRankScore = { 0, 2, 3075, 8200, 30750, 102500 };
 		
 		public int SilverPointbyEquipSort()
@@ -4059,6 +3968,13 @@ namespace Server.Mobiles
 		{
 			base.OnItemAdded(item);
 
+			// 🌟 [추가] 장비 옵션(세트 포함)을 먼저 싹 다 재계산해서 Max 수치들을 확정!
+			if (item is IEquipOption)
+			{
+				UpdateEquipOptions();
+			}
+
+			// 재계산된 Max 수치를 바탕으로 현재 수치 보정 (UI 갱신 트릭)
 			if (item is BaseArmor || item is BaseWeapon)
 			{
 				Hits = Hits;
@@ -4070,7 +3986,6 @@ namespace Server.Mobiles
 			{
 				CheckLightLevels(false);
 			}
-			CheckSetItemChange(item, true);
 		}
 
         private BaseWeapon m_LastWeapon;
@@ -4090,6 +4005,12 @@ namespace Server.Mobiles
 		{
 			base.OnItemRemoved(item);
 
+			// 🌟 [추가] 장비를 벗었으니 옵션을 빼고 Max 수치 원복
+			if (item is IEquipOption)
+			{
+				UpdateEquipOptions();
+			}
+
 			if (item is BaseArmor || item is BaseWeapon)
 			{
 				Hits = Hits;
@@ -4097,28 +4018,77 @@ namespace Server.Mobiles
 				Mana = Mana;
 			}
 
-            if (item is BaseWeapon)
-            {
-                m_LastWeapon = item as BaseWeapon;
-            }
+			if (item is BaseWeapon)
+			{
+				m_LastWeapon = item as BaseWeapon;
+			}
 
 			if (NetState != null)
 			{
 				CheckLightLevels(false);
 			}
-			CheckSetItemChange(item, false);
 		}
 
 		//스텟 설정
 		#region [Stats]Max
 		[CommandProperty(AccessLevel.GameMaster)]
-		public override int HitsMax { get {	return Math.Min( 1000 + Math.Min(AosAttributes.GetValue(this, AosAttribute.BonusHits) / 100, 4000) + SkillbyStat[4] / 1000 , 9999 ); } }
+		public override int HitsMax 
+		{ 
+			get 
+			{ 
+				if (IsPlayer())
+				{
+					// 실제 수치 1000부터 시작
+					int val = 1000; 
+
+					// 아이템 옵션의 정수부만 합산 (65.25 -> 65)
+					val += ItemOptionCreator.GetAttributeValue(this, 5) / 10000; // 체력 증가
+					val += ItemOptionCreator.GetAttributeValue(this, 8) / 10000; // 모든 자원 증가
+					val += (SkillbyStat[4] / 1000); // 스킬 보너스 (100.0 스킬당 +1)
+
+					return Math.Clamp(val, 1000, 9999); 
+				}
+				return base.HitsMax;
+			} 
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public override int StamMax { get { return Math.Min( 1000 + Math.Min(AosAttributes.GetValue(this, AosAttribute.BonusStam) / 100, 4000) + SkillbyStat[5] / 1000, 9999 ); } }
+		public override int StamMax 
+		{ 
+			get 
+			{ 
+				if (IsPlayer())
+				{
+					int val = 1000; 
+
+					val += ItemOptionCreator.GetAttributeValue(this, 6) / 10000; // 기력 증가
+					val += ItemOptionCreator.GetAttributeValue(this, 8) / 10000; // 모든 자원 증가
+					val += (SkillbyStat[5] / 1000); 
+
+					return Math.Clamp(val, 1000, 9999); 
+				}
+				return base.StamMax;
+			} 
+		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
-		public override int ManaMax { get { return Math.Min( 1000 + Math.Min(AosAttributes.GetValue(this, AosAttribute.BonusMana) / 100, 4000) + SkillbyStat[6] / 1000, 9999 ); } }
+		public override int ManaMax 
+		{ 
+			get 
+			{ 
+				if (IsPlayer())
+				{
+					int val = 1000; 
+
+					val += ItemOptionCreator.GetAttributeValue(this, 7) / 10000; // 마나 증가
+					val += ItemOptionCreator.GetAttributeValue(this, 8) / 10000; // 모든 자원 증가
+					val += (SkillbyStat[6] / 1000); 
+
+					return Math.Clamp(val, 1000, 9999); 
+				}
+				return base.ManaMax;
+			} 
+		}
 		#endregion
 		
 		#region Stat Getters/Setters
@@ -4129,13 +4099,15 @@ namespace Server.Mobiles
 			{
 				if (Core.ML && IsPlayer())
 				{
-					return Math.Min( 1000 + Math.Min(AosAttributes.GetValue( this, AosAttribute.BonusStr) / 100, 4000) + SkillbyStat[0] / 1000, 9999 );
-					//return Math.Min(base.Str, StrMaxCap);
-				}
+					int val = 1000; 
+					val += ItemOptionCreator.GetAttributeValue(this, 0) / 10000; // 힘 증가
+					val += ItemOptionCreator.GetAttributeValue(this, 3) / 10000; // 모든 스탯 증가
+					val += (SkillbyStat[0] / 1000); 
 
+					return Math.Clamp(val, 1000, 9999);
+				}
 				return base.Str;
 			}
-			set { base.Str = value; }
 		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
@@ -4145,13 +4117,15 @@ namespace Server.Mobiles
 			{
 				if (Core.ML && IsPlayer())
 				{
-					return Math.Min( 1000 + Math.Min(AosAttributes.GetValue( this, AosAttribute.BonusDex) / 100, 4000) + SkillbyStat[1] / 1000, 9999 );
-					//return Math.Min(base.Dex, DexMaxCap);
-				}
+					int val = 1000; 
+					val += ItemOptionCreator.GetAttributeValue(this, 1) / 10000; // 민첩 증가
+					val += ItemOptionCreator.GetAttributeValue(this, 3) / 10000; // 모든 스탯 증가
+					val += (SkillbyStat[1] / 1000); 
 
+					return Math.Clamp(val, 1000, 9999);
+				}
 				return base.Dex;
 			}
-			set { base.Dex = value; }
 		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
@@ -4161,15 +4135,16 @@ namespace Server.Mobiles
 			{
 				if (Core.ML && IsPlayer())
 				{
-					return Math.Min( 1000 + Math.Min(AosAttributes.GetValue( this, AosAttribute.BonusInt) / 100, 4000) + SkillbyStat[2] / 1000, 9999 );
-					//return Math.Min(base.Int, IntMaxCap);
-				}
+					int val = 1000; 
+					val += ItemOptionCreator.GetAttributeValue(this, 2) / 10000; // 지능 증가
+					val += ItemOptionCreator.GetAttributeValue(this, 3) / 10000; // 모든 스탯 증가
+					val += (SkillbyStat[2] / 1000); 
 
+					return Math.Clamp(val, 1000, 9999);
+				}
 				return base.Int;
 			}
-			set { base.Int = value; }
 		}
-
 		#endregion
 
         public long NextPassiveDetectHidden { get; set; }
@@ -6568,8 +6543,24 @@ namespace Server.Mobiles
 
 		public List<Mobile> PermaFlags { get { return m_PermaFlags; } }
 
-        public override int Luck { get { return Math.Min( Math.Min(AosAttributes.GetValue(this, AosAttribute.Luck) / 100, 4000) + TenthAnniversarySculpture.GetLuckBonus(this) + SkillbyStat[3] / 1000, 10000 ); } }
+		[CommandProperty(AccessLevel.GameMaster)]
+		public override int Luck
+		{
+			get
+			{
+				// 1. 커스텀 옵션의 정수부만 합산 (예: 65.25 -> 65)
+				int val = ItemOptionCreator.GetAttributeValue(this, 4) / 10000;
 
+				// 2. 외부 보너스 (조각상 등) - 엔진 수치이므로 10,000을 곱하지 않고 그대로 더합니다.
+				val += TenthAnniversarySculpture.GetLuckBonus(this);
+
+				// 3. 스킬 보너스 보정 (스킬 100.0당 +1 등, 다른 스탯과 동일하게 1000으로 나눕니다)
+				val += (SkillbyStat[3] / 1000);
+
+				// 4. 한계치 적용 (엔진이 감당 가능한 수준인 10,000 정도로 캡 적용)
+				return Math.Min(val, 10000);
+			}
+		}
         public int RealLuck
 		{ 
             get
@@ -6696,6 +6687,8 @@ namespace Server.Mobiles
 		}
 
 		private bool m_Coma;
+		[CommandProperty(AccessLevel.GameMaster)]
+        public BioStats Bio { get; set; } = new BioStats();
 
 		[CommandProperty(AccessLevel.GameMaster)]
 		public bool Coma
@@ -7172,6 +7165,154 @@ namespace Server.Mobiles
             }
         }
 
+		//신규 어트리뷰트 방식
+		private int[] _totalEquipOptions = new int[ItemOptionCreator.MaxOptionCount];
+
+        // 장비가 올려주는 스탯/스킬 버프(Mod)를 기억해둘 리스트
+        private List<StatMod> _equipStatMods = [];
+        private List<SkillMod> _equipSkillMods = [];
+
+		public void UpdateEquipOptions()
+		{
+			// 1. 모든 데이터 초기화 (누적 버그 원천 차단)
+			Array.Clear(_totalEquipOptions, 0, _totalEquipOptions.Length);
+			
+			// 🌟 [가장 중요] 세트 보너스 배열을 비워주지 않으면 벗었다 입을 때마다 6000까지 치솟습니다.
+			if (this.ItemSetSaveValue != null)
+				Array.Clear(this.ItemSetSaveValue, 0, this.ItemSetSaveValue.Length);
+
+			ClearEquipMods();
+
+			// 2. 세트 옵션 재계산 (비워진 배열에 새로 담기)
+			Misc.SetItem.SetOption(this, true);
+
+			// 3. 장착 아이템 순회
+			foreach (Item item in Items)
+			{
+				if (item is Items.IEquipOption eqItem && item.Layer != Layer.Backpack && item.Layer != Layer.Mount)
+				{
+					// A. 랭크 고정 옵션 (Prefix 9번이 ID)
+					int fixedID = eqItem.PrefixOption[9];
+					// 🌟 ID 0(힘)이 포함되도록 >= 0 체크
+					if (fixedID >= 0 && fixedID < _totalEquipOptions.Length)
+						_totalEquipOptions[fixedID] += eqItem.SuffixOption[9];
+
+					// B. 랜덤 마법 옵션 (11~30번 슬롯)
+					int magicCount = eqItem.SuffixOption[0];
+					for (int i = 0; i < magicCount; i++)
+					{
+						int optID = eqItem.PrefixOption[11 + i];
+						// 🌟 ID 0(힘)이 포함되도록 >= 0 체크
+						if (optID >= 0 && optID < _totalEquipOptions.Length)
+							_totalEquipOptions[optID] += eqItem.SuffixOption[11 + i];
+					}
+
+					// C. 기본 장비 옵션 (61~70번 슬롯)
+					for (int i = 0; i < 10; i++)
+					{
+						int baseID = eqItem.PrefixOption[61 + i];
+						int baseVal = eqItem.SuffixOption[61 + i];
+
+						if (baseID == 0 && baseVal == 0) continue; // 둘 다 0이면 빈 슬롯
+						
+						if (baseID >= 0 && baseID < _totalEquipOptions.Length)
+							_totalEquipOptions[baseID] += baseVal;
+					}
+
+					// D. 강화 옵션
+					int enhanceLevel = eqItem.SuffixOption[10];
+					if (enhanceLevel > 0)
+					{
+						int attrID = EnhancedChance.GetOptionID(EnhancedChance.GetPartIndex(item), eqItem.PrefixOption[10]);
+						if (attrID >= 0 && attrID < _totalEquipOptions.Length)
+						{
+							int rawValue = EnhancedChance.GetTableValue(EnhancedChance.GetPartIndex(item), eqItem.PrefixOption[10]);
+							double multiplier = EnhancedChance.EnhanceScales[enhanceLevel][1];
+							_totalEquipOptions[attrID] += (int)(rawValue * multiplier);
+						}
+					}
+				}
+			}
+
+			// 4. 세트 보너스 최종 합산
+			for (int i = 0; i < this.ItemSetSaveValue.Length; i++)
+			{
+				if (i < _totalEquipOptions.Length && this.ItemSetSaveValue[i] != 0)
+					_totalEquipOptions[i] += this.ItemSetSaveValue[i];
+			}
+
+			ApplyEquipMods();
+
+			// 5. 엔진 강제 동기화
+			UpdateTotals();
+			this.ComputeResistances();
+			this.Delta(MobileDelta.Stat);
+			this.ProcessDelta(); 
+		}
+        // [신규] 기존에 붙어있던 스탯/스킬 Mod 떼어내기
+        private void ClearEquipMods()
+        {
+            foreach (var mod in _equipStatMods) RemoveStatMod(mod.Name);
+            _equipStatMods.Clear();
+
+            foreach (var mod in _equipSkillMods) RemoveSkillMod(mod);
+            _equipSkillMods.Clear();
+        }
+
+        // [신규] 계산된 총합 배열을 읽어서 캐릭터에게 스탯/스킬 Mod 붙여주기
+        private void ApplyEquipMods()
+        {
+            // --- 1. 기본 스탯 (ID: 0 힘, 1 민첩, 2 지능, 3 모든 스탯) ---
+            //int strBonus = GetEquipOptionRaw(0) + GetEquipOptionRaw(3);
+            //int dexBonus = GetEquipOptionRaw(1) + GetEquipOptionRaw(3);
+            //int intBonus = GetEquipOptionRaw(2) + GetEquipOptionRaw(3);
+
+            //if (strBonus > 0) AddEquipStatMod(StatType.Str, "EqStr", strBonus);
+            //if (dexBonus > 0) AddEquipStatMod(StatType.Dex, "EqDex", dexBonus);
+            //if (intBonus > 0) AddEquipStatMod(StatType.Int, "EqInt", intBonus);
+
+            // --- 2. 스킬 보너스 (ID: 77 ~ 132) ---
+            for (int i = 77; i <= 132; i++)
+            {
+                double skillBonus = (double)GetEquipOptionInt(i);
+                if (skillBonus > 0)
+                {
+                    // 테이블 ID(77~132)를 SkillName Enum으로 변환 (기획하신 순서에 맞게 매핑)
+                    // (※주의: 77이 연금술(0)부터 시작한다면 i - 77 로 매핑합니다)
+                    SkillName skill = (SkillName)(i - 77); 
+                    
+                    var mod = new DefaultSkillMod(skill, true, skillBonus);
+                    AddSkillMod(mod);
+                    _equipSkillMods.Add(mod);
+                }
+            }
+        }
+
+        // 스탯 Mod 도우미 함수 (ValueScale 해제 후 정수형으로 부착)
+        private void AddEquipStatMod(StatType type, string name, int rawValue)
+        {
+            int realValue = rawValue / ItemOptionCreator.ValueScale;
+            if (realValue <= 0) return;
+
+            var mod = new StatMod(type, name, realValue, TimeSpan.Zero);
+            AddStatMod(mod);
+            _equipStatMods.Add(mod);
+        }
+
+		// 1. [Raw] 패킷 전송 및 정밀 연산용 (10,000 단위 그대로 뱉음)
+		public int GetEquipOptionRaw(int optionID)
+		{
+			return _totalEquipOptions[optionID]; 
+		}
+
+		// 2. [Int] 엔진 연산용 (정수부만 뱉음)
+		public int GetEquipOptionInt(int optionID)
+		{
+			// 여기서 이미 나누기를 수행하므로, 외부에서 또 나누면 안 됨!
+			return _totalEquipOptions[optionID] / Misc.ItemOptionCreator.ValueScale;
+		}
+		
+
 		//인스턴스 변수
 		public int arrowCriticalBonus = 0;
 		public int boltCriticalBonus = 0;
@@ -7186,6 +7327,11 @@ namespace Server.Mobiles
 
 			switch (version)
 			{
+				case 63:
+				{
+					Bio = new BioStats(reader);
+					goto case 62;
+				}
 				case 62:
 				{
 					m_seasonSkillBonus = reader.ReadInt();
@@ -7868,8 +8014,9 @@ namespace Server.Mobiles
 
 			base.Serialize(writer);
 
-			writer.Write(62); // version
+			writer.Write(63); // version
 
+			Bio.Serialize(writer);
 
 			writer.Write( (int) m_seasonSkillBonus );
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -102,13 +102,13 @@ namespace Server
             return Damage(m, from, damage, false, phys, fire, cold, pois, nrgy, chaos, direct, false, type);
         }
 
-        public static int Damage(IDamageable damageable, Mobile from, int damage, bool ignoreArmor, int phys, int fire, int cold, int pois, int nrgy, int chaos, int direct, bool keepAlive, DamageType type = DamageType.Melee, int aggro = 100)
+public static int Damage(IDamageable damageable, Mobile from, int damage, bool ignoreArmor, int phys, int fire, int cold, int pois, int nrgy, int chaos, int direct, bool keepAlive, DamageType type = DamageType.Melee, int aggro = 100)
         {
-			//from : 공격자
-			//m : 방어자
+            // from : 공격자
+            // m : 방어자
             Mobile m = damageable as Mobile;
-			Server.Engines.Craft.AutoCraftTimer.EndTimer(from);
-			Server.Engines.Craft.AutoCraftTimer.EndTimer(m);
+            Server.Engines.Craft.AutoCraftTimer.EndTimer(from);
+            Server.Engines.Craft.AutoCraftTimer.EndTimer(m);
 
             if (damageable == null)// || damageable.Deleted || !damageable.Alive )
                 return 0;
@@ -153,135 +153,55 @@ namespace Server
 
             int totalDamage;
 
-			// 1. 기초 분배 (damage는 전체 데미지, phys/fire 등은 각 속성 비중 0~100)
-			int physDamage = (damage * phys) / 100;
-			int fireDamage = (damage * fire) / 100;
-			int coldDamage = (damage * cold) / 100;
-			int poisonDamage = (damage * pois) / 100;
-			int energyDamage = (damage * nrgy) / 100;
-			int chaosDamage = (damage * chaos) / 100;
-			int directDamage = (damage * direct) / 100;
+            // 1. 기초 데미지 분배 (전체 데미지에서 각 속성 비중 0~100에 따라 분배)
+            int physDamage = (damage * phys) / 100;
+            int fireDamage = (damage * fire) / 100;
+            int coldDamage = (damage * cold) / 100;
+            int poisonDamage = (damage * pois) / 100;
+            int energyDamage = (damage * nrgy) / 100;
+            int chaosDamage = (damage * chaos) / 100;
+            int directDamage = (damage * direct) / 100;
 
-			// 2. 속성별 피해 증폭 및 최종 추가 데미지 합산
-			// 공식: 기초데미지 * (1 + 증폭값/10000) + 최종추뎀/100 (Eater 등)
-
-			// --- 물리 (BalancedWeapon 피증 -> EaterDamage 추뎀) ---
-			if (physDamage > 0)
-			{
-				physDamage = (int)(physDamage * (1.0 + (AosAttributes.GetValue(from, AosAttribute.BalancedWeapon) / 10000.0)));
-				physDamage += SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterDamage) / 10000;
-			}
-
-			// --- 화염 (ResonanceFire 피증 -> EaterFire 추뎀) ---
-			if (fireDamage > 0)
-			{
-				fireDamage = (int)(fireDamage * (1.0 + (SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.ResonanceFire) / 10000.0)));
-				fireDamage += SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterFire) / 10000;
-			}
-
-			// --- 냉기 (ResonanceCold 피증 -> EaterCold 추뎀) ---
-			if (coldDamage > 0)
-			{
-				coldDamage = (int)(coldDamage * (1.0 + (SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.ResonanceCold) / 10000.0)));
-				coldDamage += SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterCold) / 10000;
-			}
-
-			// --- 독 (ResonancePoison 피증 -> EaterPoison 추뎀) ---
-			if (poisonDamage > 0)
-			{
-				poisonDamage = (int)(poisonDamage * (1.0 + (SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.ResonancePoison) / 10000.0)));
-				poisonDamage += SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterPoison) / 10000;
-			}
-
-			// --- 에너지 (ResonanceEnergy 피증 -> EaterEnergy 추뎀) ---
-			if (energyDamage > 0)
-			{
-				energyDamage = (int)(energyDamage * (1.0 + (SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.ResonanceEnergy) / 10000.0)));
-				energyDamage += SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterEnergy) / 10000;
-			}
-
-			// --- 카오스 (ChaosDamage 피증 -> ChaosPlus 추뎀) ---
-			if (chaosDamage > 0)
-			{
-				chaosDamage = (int)(chaosDamage * (1.0 + (ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.ChaosDamage) / 10000.0)));
-				chaosDamage += ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.ChaosPlus) / 10000;
-			}
-
-			// --- 다이렉트 (DirectDamage 피증 -> DirectPlus 추뎀) ---
-			if (directDamage > 0)
-			{
-				directDamage = (int)(directDamage * (1.0 + (ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.DirectDamage) / 10000.0)));
-				directDamage += ExtendedWeaponAttributes.GetValue(from, ExtendedWeaponAttribute.DirectPlus) / 10000;
-			}
-			
+            // 2. 커스텀 옵션: 최종 피해 (플랫 데미지) 합산
+            // 증뎀 연산이 끝난 후 더해지며, 엔진 10,000 스케일을 해제(/ 10000)하여 순수 정수로 더합니다.
+            physDamage += ItemOptionCreator.GetAttributeValue(from, 35) / 10000;
+            fireDamage += ItemOptionCreator.GetAttributeValue(from, 36) / 10000;
+            coldDamage += ItemOptionCreator.GetAttributeValue(from, 37) / 10000;
+            poisonDamage += ItemOptionCreator.GetAttributeValue(from, 38) / 10000;
+            energyDamage += ItemOptionCreator.GetAttributeValue(from, 39) / 10000;
+            chaosDamage += ItemOptionCreator.GetAttributeValue(from, 40) / 10000;
+            directDamage += ItemOptionCreator.GetAttributeValue(from, 41) / 10000;
+            
+            // 3. 방어력(저항) 연산 적용
             if (!ignoreArmor)
             {
-				//옵션 계산
-				int physicalResist = damageable.PhysicalResistance;
+                // 엔진 내부의 저항력은 이미 정수(예: 70)로 세팅되어 있습니다.
+                int physicalResist = damageable.PhysicalResistance;
+                int fireResist = damageable.FireResistance;
+                int coldResist = damageable.ColdResistance;
+                int poisonResist = damageable.PoisonResistance;
+                int energyResist = damageable.EnergyResistance;
+                
+                // [주의] 이전 코드에 / 100이 누락되어 데미지가 곱연산으로 뻥튀기되는 버그 수정
+                physDamage = physDamage * (100 - physicalResist) / 100;
+                fireDamage = fireDamage * (100 - fireResist) / 100;
+                coldDamage = coldDamage * (100 - coldResist) / 100;
+                poisonDamage = poisonDamage * (100 - poisonResist) / 100;
+                energyDamage = energyDamage * (100 - energyResist) / 100;
 
-
-				int fireResist = damageable.FireResistance;
-				int coldResist = damageable.ColdResistance;
-				int energyResist = damageable.EnergyResistance;
-				int poisonResist = damageable.PoisonResistance;
-				
-				physDamage =  physDamage * (100 - physicalResist);
-				fireDamage =  fireDamage * (100 - fireResist);
-				coldDamage =  coldDamage * (100 - coldResist);
-				poisonDamage = poisonDamage * (100 - poisonResist);
-				energyDamage = energyDamage * (100 - energyResist);
-				chaosDamage = damage * chaos * (100 - damageable.ChaosResistance );
-				directDamage = damage * direct * (100 - damageable.DirectResistance );
-
-				
-				//totalDamage = physDamage + fireDamage + coldDamage + poisonDamage + energyDamage + chaosDamage + directDamage;
-				//totalDamage /= 10000;
+                // 혼돈/신성 저항이 별도 프로퍼티로 구현되어 있다면 동일하게 / 100 처리
+                chaosDamage = chaosDamage * (100 - damageable.ChaosResistance) / 100;
+                directDamage = directDamage * (100 - damageable.DirectResistance) / 100;
             }
-			/*
-            else if (Core.ML && m is PlayerMobile)
-            {
-                if (quiver != null)
-                    damage += damage * quiver.DamageIncrease / 100;
-
-                totalDamage = Math.Min(damage, Core.TOL && ranged ? 30 : 35);	// Direct Damage cap of 30/35
-            }
-            else
-            {
-				//int physDamage = (damage + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterDamage ) / 100 ) * phys * 100;
-				//int fireDamage = (damage + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterFire ) / 100 ) * fire * 100;
-				//int coldDamage = (damage + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterCold ) / 100 ) * cold * 100;
-				//int poisonDamage = (damage + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterPoison ) / 100 ) * pois * 100;
-				//int energyDamage = (damage + SAAbsorptionAttributes.GetValue(from, SAAbsorptionAttribute.EaterEnergy ) / 100 ) * nrgy * 100;
-				//int chaosDamage = damage * chaos * (100 - damageable.ChaosResistance );
-				//int directDamage = damage * direct * (100 - damageable.DirectResistance );
-
-
-                //if (Core.ML && quiver != null)
-                //    totalDamage += totalDamage * quiver.DamageIncrease / 100;
-            }
-			*/
 
 			totalDamage = physDamage + fireDamage + coldDamage + poisonDamage + energyDamage + chaosDamage + directDamage;
 			totalDamage /= 100;
-			//Console.WriteLine("damage : " + damage + "   totalDamage : " + totalDamage );  
 
             // object being damaged is not a mobile, so we will end here
             if (damageable is Item)
             {
                 return damageable.Damage(totalDamage, from);
             }
-
-            #region Evil Omen, Blood Oath and reflect physical
-            if (EvilOmenSpell.TryEndEffect(m))
-            {
-                totalDamage = (int)(totalDamage * 1.25);
-            }
-
-			if( m.Frozen )
-			{
-				totalDamage *= 150;
-				totalDamage /= 100;
-			}
 
 			if( m.Combatant == null && from is Mobile )
 			{
@@ -321,7 +241,6 @@ namespace Server
                     }
                 }
             }
-            #endregion
 
 			if( bc != null )
 			{
@@ -354,40 +273,7 @@ namespace Server
 				totalDamage *= 2;
 			}
 			totalDamage *= 2;
-			
-			/*
-			#region Pet Training
-            if (from is BaseCreature || m is BaseCreature)
-            {
-				SpecialAbility.CheckCombatTrigger(from, m, ref totalDamage, type);
 
-                if (PetTrainingHelper.Enabled)
-                {
-                    if (from is BaseCreature && m is BaseCreature)
-                    {
-                        var profile = PetTrainingHelper.GetTrainingProfile((BaseCreature)from);
-
-                        if (profile != null)
-                        {
-                            profile.CheckProgress((BaseCreature)m);
-                        }
-
-                        profile = PetTrainingHelper.GetTrainingProfile((BaseCreature)m);
-
-                        if (profile != null && 0.3 > Utility.RandomDouble())
-                        {
-                            profile.CheckProgress((BaseCreature)from);
-                        }
-                    }
-
-                    if (from is BaseCreature && ((BaseCreature)from).Controlled && m.Player)
-                    {
-                        totalDamage /= 2;
-                    }
-                }
-            }
-            #endregion
-			*/
             if (type <= DamageType.Ranged)
             {
                 AttuneWeaponSpell.TryAbsorb(m, ref totalDamage);
@@ -486,15 +372,6 @@ namespace Server
             if (m.Spell != null)
                 ((Spell)m.Spell).CheckCasterDisruption(true, phys, fire, cold, pois, nrgy);
 
-            //BattleLust.IncreaseBattleLust(m, totalDamage);
-
-            //if (ManaPhasingOrb.IsInManaPhase(m))
-            //    ManaPhasingOrb.RemoveFromTable(m);
-
-            //SoulChargeContext.CheckHit(from, m, totalDamage);
-
-            //Spells.Mysticism.SleepSpell.OnDamage(m);
-            //Spells.Mysticism.PurgeMagicSpell.OnMobileDoDamage(from);
             #endregion
 
             BaseCostume.OnDamaged(m);
@@ -548,74 +425,147 @@ namespace Server
 
         public static void DoLeech(int damageGiven, Mobile from, Mobile target)
         {
-			//신규 흡혈 설정
-			int lifeLeech = (int)(AosWeaponAttributes.GetValue(from, AosWeaponAttribute.HitLeechHits));
-			int stamLeech = (int)(AosWeaponAttributes.GetValue(from, AosWeaponAttribute.HitLeechStam));
-			int manaLeech =(int)(AosWeaponAttributes.GetValue(from, AosWeaponAttribute.HitLeechMana));				
-			if (lifeLeech != 0)
-			{
-				from.Hits += Scale2(damageGiven, lifeLeech);
-				Effects.SendPacket(target.Location, target.Map, new Network.ParticleEffect(Network.EffectType.FixedFrom, target.Serial, Serial.Zero, 0x377A, target.Location, target.Location, 1, 15, false, false, 1926, 0, 0, 9502, 1, target.Serial, 16, 0));
-				Effects.SendPacket(target.Location, target.Map, new Network.ParticleEffect(Network.EffectType.FixedFrom, target.Serial, Serial.Zero, 0x3728, target.Location, target.Location, 1, 12, false, false, 1963, 0, 0, 9042, 1, target.Serial, 16, 0));
-			}
-			if (manaLeech != 0)
-			{
-				from.Mana += Scale2(damageGiven, manaLeech);
-			}
-			if (stamLeech != 0)
-			{
-				from.Stam += Scale2(damageGiven, stamLeech);
-			}
-			if (lifeLeech != 0 || stamLeech != 0 || manaLeech != 0)
-			{
-				from.PlaySound(0x44D);
-			}
+            // 1. 데미지 비례 흡수(%) 가져오기 (49~52번)
+            int lifeLeech = (ItemOptionCreator.GetAttributeValue(from, 49) + ItemOptionCreator.GetAttributeValue(from, 52)) / 10000;
+            int stamLeech = (ItemOptionCreator.GetAttributeValue(from, 50) + ItemOptionCreator.GetAttributeValue(from, 52)) / 10000;
+            int manaLeech = (ItemOptionCreator.GetAttributeValue(from, 51) + ItemOptionCreator.GetAttributeValue(from, 52)) / 10000;             
+            
+            // 2. 적중 시 고정 수치 획득 가져오기 (53~56번)
+            int lifeGain = (ItemOptionCreator.GetAttributeValue(from, 53) + ItemOptionCreator.GetAttributeValue(from, 56)) / 10000;
+            int stamGain = (ItemOptionCreator.GetAttributeValue(from, 54) + ItemOptionCreator.GetAttributeValue(from, 56)) / 10000;
+            int manaGain = (ItemOptionCreator.GetAttributeValue(from, 55) + ItemOptionCreator.GetAttributeValue(from, 56)) / 10000;
+
+            bool playedSound = false;
+
+            // 체력 처리 (비례 흡수 + 고정 획득)
+            int toHeal = 0;
+            if (lifeLeech > 0) toHeal += Scale2(damageGiven, lifeLeech);
+            if (lifeGain > 0) toHeal += lifeGain;
+
+            if (toHeal > 0)
+            {
+                from.Hits += toHeal;
+                Effects.SendPacket(target.Location, target.Map, new Network.ParticleEffect(Network.EffectType.FixedFrom, target.Serial, Serial.Zero, 0x377A, target.Location, target.Location, 1, 15, false, false, 1926, 0, 0, 9502, 1, target.Serial, 16, 0));
+                Effects.SendPacket(target.Location, target.Map, new Network.ParticleEffect(Network.EffectType.FixedFrom, target.Serial, Serial.Zero, 0x3728, target.Location, target.Location, 1, 12, false, false, 1963, 0, 0, 9042, 1, target.Serial, 16, 0));
+                playedSound = true;
+            }
+
+            // 마나 처리 (비례 흡수 + 고정 획득)
+            int totalManaLeech = 0;
+            if (manaLeech > 0) totalManaLeech += Scale2(damageGiven, manaLeech);
+            if (manaGain > 0) totalManaLeech += manaGain;
+
+            if (totalManaLeech > 0)
+            {
+                // 상대의 현재 마나를 초과하여 뺏어올 수 없음
+                totalManaLeech = Math.Min(totalManaLeech, target.Mana);
+                
+                if (totalManaLeech > 0)
+                {
+                    target.Mana -= totalManaLeech; // 상대 마나 고갈
+                    from.Mana += totalManaLeech;
+                    playedSound = true;
+                }
+            }
+
+            // 기력 처리 (비례 흡수 + 고정 획득)
+            int totalStamLeech = 0;
+            if (stamLeech > 0) totalStamLeech += Scale2(damageGiven, stamLeech);
+            if (stamGain > 0) totalStamLeech += stamGain;
+
+            if (totalStamLeech > 0)
+            {
+                // 상대의 현재 기력을 초과하여 뺏어올 수 없음
+                totalStamLeech = Math.Min(totalStamLeech, target.Stam);
+                
+                if (totalStamLeech > 0)
+                {
+                    target.Stam -= totalStamLeech; // 상대 기력 고갈
+                    from.Stam += totalStamLeech;
+                    playedSound = true;
+                }
+            }
+
+            if (playedSound)
+            {
+                from.PlaySound(0x44D);
+            }
         }
 
-        #region AOS Status Bar
-        public static int GetStatus( Mobile from, int index )
+		public static int GetStatus(Mobile from, int index)
 		{
-			switch ( index )
+			const int VS = 100;
+
+			switch (index)
 			{
-				case 0: return from.GetMaxResistance( ResistanceType.Physical );
-				case 1: return from.GetMaxResistance( ResistanceType.Fire );
-				case 2: return from.GetMaxResistance( ResistanceType.Cold );
-				case 3: return from.GetMaxResistance( ResistanceType.Poison );
-				case 4: return from.GetMaxResistance( ResistanceType.Energy );
-                case 5: return Math.Min(75, AosAttributes.GetValue(from, AosAttribute.DefendChance) / 100);
-                case 6: return 75;
-                case 7: return Math.Min(75, AosAttributes.GetValue(from, AosAttribute.AttackChance) / 100);
-                case 8: return Math.Min(150, ( AosAttributes.GetValue(from, AosAttribute.WeaponSpeed) + AosWeaponAttributes.GetValue(from, AosWeaponAttribute.MageWeapon) ) / 100);
-                case 9: return Math.Min(175, ( AosAttributes.GetValue(from, AosAttribute.WeaponDamage) + AosWeaponAttributes.GetValue(from, AosWeaponAttribute.UseBestSkill) ) / 100);
-                case 10: return Math.Min(100, AosAttributes.GetValue(from, AosAttribute.LowerRegCost) / 100);
-                case 11: return Math.Min(175, ( AosAttributes.GetValue(from, AosAttribute.SpellDamage) + AosWeaponAttributes.GetValue(from, AosWeaponAttribute.UseBestSkill) ) / 100);
-                case 12: return Math.Min(150, AosAttributes.GetValue(from, AosAttribute.CastRecovery) / 100);
-                case 13: return Math.Min(150, ( AosAttributes.GetValue(from, AosAttribute.CastSpeed) + AosWeaponAttributes.GetValue(from, AosWeaponAttribute.MageWeapon) ) / 100);
-                case 14: return Math.Min(80, AosAttributes.GetValue(from, AosAttribute.LowerManaCost) / 100 ); // + BaseArmor.GetInherentLowerManaCost(from);
-                
-                case 15: return (int)RegenRates.Mobile_HitsRegenRate(from); // HP   REGEN
-                case 16: return (int)RegenRates.Mobile_StamRegenRate(from); // Stam REGEN
-                case 17: return (int)RegenRates.Mobile_ManaRegenRate(from); // MANA REGEN
-                case 18: return Math.Min(100, AosAttributes.GetValue(from, AosAttribute.ReflectPhysical) / 100); // reflect phys
-                case 19: return Math.Min(100, AosAttributes.GetValue(from, AosAttribute.EnhancePotions) / 100); // enhance pots
+				// --- 최대 저항력 (Max Resistances) ---
+				// 상태창의 우측 분모를 담당 (GetMaxResistance 내부에서 정수로 반환됨)
+				case 0: return from.GetMaxResistance(ResistanceType.Physical);
+				case 1: return from.GetMaxResistance(ResistanceType.Fire);
+				case 2: return from.GetMaxResistance(ResistanceType.Cold);
+				case 3: return from.GetMaxResistance(ResistanceType.Poison);
+				case 4: return from.GetMaxResistance(ResistanceType.Energy);
 
-                case 20: return AosAttributes.GetValue(from, AosAttribute.BonusStr) + from.GetStatOffset(StatType.Str); // str inc
-                case 21: return AosAttributes.GetValue(from, AosAttribute.BonusDex) + from.GetStatOffset(StatType.Dex); // dex inc
-                case 22: return AosAttributes.GetValue(from, AosAttribute.BonusInt) + from.GetStatOffset(StatType.Int); // int inc
+				// --- 전투 능력 (UI 표기용: 10,000으로 나눠서 전송) ---
+				case 5: // DCI (방어율: 16번)
+					return Math.Min(30000, ItemOptionCreator.GetAttributeValue(from, 16) / VS);
+				case 6: return 30000; // Max DCI 캡
+				case 7: // HCI (명중률: 15번)
+					return Math.Min(30000, ItemOptionCreator.GetAttributeValue(from, 15) / VS);
+				case 8: // SSI (공격 속도: 12번 + 모든 속도 14번)
+					return Math.Min(30000, (ItemOptionCreator.GetAttributeValue(from, 12) + ItemOptionCreator.GetAttributeValue(from, 14)) / VS);
+				case 9: // DI (무기 피해: 9번 + 모든 피해 11번)
+					return Math.Min(30000, (ItemOptionCreator.GetAttributeValue(from, 9) + ItemOptionCreator.GetAttributeValue(from, 11)) / VS);
+				
+				// (10번 케이스는 보통 LRC(시약 소모 감소) 자리인데, 기획상 안 보이므로 주석 처리하거나 0으로 둠)
+				// 나중에 생산 효율 증가로 바꿀 예정
+				case 10: return 0; 
+				
+				case 11: // SDI (주문 피해: 10번 + 모든 피해 11번)
+					return Math.Min(30000, (ItemOptionCreator.GetAttributeValue(from, 10) + ItemOptionCreator.GetAttributeValue(from, 11)) / VS);
+				
+				// (12번 케이스는 보통 FCR(캐스트 리커버리)인데 기획상 없으면 0으로 둠)
+				// 캐스트 리커버리 = 마법 속도 증가
+				case 12: return Math.Min(30000, (ItemOptionCreator.GetAttributeValue(from, 13) + ItemOptionCreator.GetAttributeValue(from, 14)) / VS);
+				
+				case 13: // FC (시전 속도: 13번 + 모든 속도 14번)
+					return Math.Min(30000, (ItemOptionCreator.GetAttributeValue(from, 13) + ItemOptionCreator.GetAttributeValue(from, 14)) / VS);
+				
+				case 14: // LMC (마나 소모 감소: 64번 + 모든 소모 감소 66번)
+					return Math.Min(30000, (ItemOptionCreator.GetAttributeValue(from, 64) + ItemOptionCreator.GetAttributeValue(from, 66)) / VS);
+				
+				// --- 재생 관련 (엔진에 위임) ---
+				case 15: return (int)RegenRates.Mobile_HitsRegenRate(from); 
+				case 16: return (int)RegenRates.Mobile_StamRegenRate(from); 
+				case 17: return (int)RegenRates.Mobile_ManaRegenRate(from); 
+				
+				case 18: // 물리 반사 (무기 공격 반사: 60번)
+					return Math.Min(30000, ItemOptionCreator.GetAttributeValue(from, 60) / VS); 
+				case 19: // 포션 강화 (치유량 증가%: 58번으로 대체하거나 0)
+					return Math.Min(30000, ItemOptionCreator.GetAttributeValue(from, 58) / VS); 
 
-                case 23: return 0; // hits neg
-                case 24: return 0; // stam neg
-                case 25: return 0; // mana neg
+				// --- 기본 스탯 ---
+				case 20: // 힘 (기본스탯 + 보너스(0번) + 모든스탯(3번))
+					return from.Str; 
+				case 21: // 민첩 (기본스탯 + 보너스(1번) + 모든스탯(3번))
+					return from.Dex; 
+				case 22: // 지능 (기본스탯 + 보너스(2번) + 모든스탯(3번))
+					return from.Int; 
 
-                case 26: return AosAttributes.GetValue(from, AosAttribute.BonusHits); // hits inc
-                case 27: return AosAttributes.GetValue(from, AosAttribute.BonusStam); // stam inc
-                case 28: return AosAttributes.GetValue(from, AosAttribute.BonusMana); // mana inc
+				case 23: return 0; // hits neg
+				case 24: return 0; // stam neg
+				case 25: return 0; // mana neg
+
+				// --- 자원 최대치 ---
+				// from.HitsMax 내부에서 이미 (기본 + 체력 증가(5번) + 모든 자원 증가(8번))이 합산되어 정수로 나옵니다.
+				case 26: return from.HitsMax; 
+				case 27: return from.StamMax; 
+				case 28: return from.ManaMax; 
+				
 				default: return 0;
 			}
-        }
-        #endregion
-    }
-
+		}
+	}
     [Flags]
     public enum AosAttribute
     {
@@ -717,6 +667,7 @@ namespace Server
 		*/
         public static int GetValue(Mobile m, AosAttribute attribute)
         {
+			return 0;
             if (World.Loading || !IsValid(attribute))
             {
                 return 0;
@@ -1561,6 +1512,8 @@ namespace Server
 
         public static int GetValue(Mobile m, AosWeaponAttribute attribute)
         {
+			return 0;
+
             if (World.Loading || !IsValid(attribute))
             {
                 return 0;
@@ -2198,6 +2151,7 @@ namespace Server
 
         public static int GetValue(Mobile m, ExtendedWeaponAttribute attribute)
         {
+			return 0;
             if (!Core.AOS)
                 return 0;
 
@@ -3751,6 +3705,7 @@ namespace Server
 
         public static int GetValue(Mobile m, SAAbsorptionAttribute attribute)
         {
+			return 0;
             if (World.Loading || !IsValid(attribute))
             {
                 return 0;
@@ -4600,6 +4555,7 @@ namespace Server
 
         public int GetValue(int bitmask)
         {
+			return 0;
             if (!Core.AOS)
                 return 0;
 

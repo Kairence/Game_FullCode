@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <AssemblyName>Scripts</AssemblyName>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
@@ -25,7 +25,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google_GenerativeAI" Version="3.6.4" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Server\Server.csproj" />
+    <ProjectReference Include="..\Ultima\Ultima.csproj" />
   </ItemGroup>
 
   </Project>

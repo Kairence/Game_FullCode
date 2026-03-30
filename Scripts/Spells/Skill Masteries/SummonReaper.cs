@@ -98,7 +98,7 @@ namespace Server.Spells.SkillMasteries
             Name = "a reaper";
             Body = 47;
             BaseSoundID = 442;
-
+			/*
             double scale = 1.0 + ((caster.Skills[spell.CastSkill].Value + (double)(spell.GetMasteryLevel() * 40) + (double)(ArcanistSpell.GetFocusLevel(caster) * 20))) / 1000.0;
 
             SetStr((int)(450 * scale), (int)(500 * scale));
@@ -144,6 +144,7 @@ namespace Server.Spells.SkillMasteries
 
             _NextAura = Core.TickCount + 3000;
             SetWeaponAbility(WeaponAbility.WhirlwindAttack);
+			*/
         }
 
         public override Poison PoisonImmune { get { return Poison.Greater; } }

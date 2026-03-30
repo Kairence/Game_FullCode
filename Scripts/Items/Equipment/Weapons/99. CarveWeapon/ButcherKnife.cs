@@ -34,6 +34,19 @@ namespace Server.Items
                 return WeaponAbility.Disarm;
             }
         }
+		// ButcherKnife.cs 또는 SkinningKnife.cs 내부
+		public override void OnDoubleClick(Mobile from)
+		{
+			if (IsChildOf(from.Backpack) || Parent == from)
+			{
+				// 🌟 HarvestSystem의 BeginHarvesting 호출 (광산/낚시와 동일한 UI 타겟팅 시작)
+				Server.Engines.Harvest.Tanning.System.BeginHarvesting(from, this);
+			}
+			else
+			{
+				from.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
+			}
+		}
         public override int AosStrengthReq
         {
             get

@@ -29,6 +29,7 @@ namespace Server.Spells.Spellweaving
         {
             if (this.CheckSequence())
             {
+				/*
                 TimeSpan duration = TimeSpan.FromMinutes(this.Caster.Skills.Spellweaving.Value / 24 + this.FocusLevel * 2);
                 int summons = Math.Min(1 + this.FocusLevel, this.Caster.FollowersMax - this.Caster.Followers);
 
@@ -47,7 +48,7 @@ namespace Server.Spells.Spellweaving
 
                     SpellHelper.Summon(bc, this.Caster, this.Sound, duration, false, false);
                 }
-
+				*/
                 this.FinishSequence();
             }
         }

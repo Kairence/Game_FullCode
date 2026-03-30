@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Server;
 using Server.Mobiles;
 
@@ -14,607 +15,546 @@ namespace Server.Misc
             string customPrefix = "Trammel Lost Lands";
 
             // ========================================================================
-            // [Britain] 브리튼 (9개 세부 구역)
+            // [Britain] 브리튼
             // ========================================================================
             EcoZone britBlackthornCastle = new($"{prefixTowns} Britain Blackthorn Castle", map);
-            britBlackthornCastle.AddSpecies(typeof(Cat), 5);
-            britBlackthornCastle.AddSpecies(typeof(Dog), 2);
+            ApplyTown(britBlackthornCastle);
+            britBlackthornCastle.AddSpecies(typeof(Cat), 8);
             EcosystemManager.Zones[britBlackthornCastle.ZoneId] = britBlackthornCastle;
 
             EcoZone britBlackthornEnt = new($"{prefixTowns} Britain Blackthorn Entrance", map);
+            ApplyTown(britBlackthornEnt);
             britBlackthornEnt.AddSpecies(typeof(Dog), 5);
-            britBlackthornEnt.AddSpecies(typeof(Bird), 10);
             EcosystemManager.Zones[britBlackthornEnt.ZoneId] = britBlackthornEnt;
 
             EcoZone britCastle = new($"{prefixTowns} Britain British Castle", map);
-            britCastle.AddSpecies(typeof(Cat), 5);
+            ApplyTown(britCastle);
             EcosystemManager.Zones[britCastle.ZoneId] = britCastle;
 
             EcoZone britCastleEnt = new($"{prefixTowns} Britain British Entrance", map);
-            britCastleEnt.AddSpecies(typeof(Horse), 8); // Fame 350
-            britCastleEnt.AddSpecies(typeof(Dog), 5);
+            ApplyTown(britCastleEnt);
+            britCastleEnt.AddSpecies(typeof(Horse), 5);
             EcosystemManager.Zones[britCastleEnt.ZoneId] = britCastleEnt;
 
             EcoZone britCemetery = new($"{prefixTowns} Britain Cemetery", map);
-            britCemetery.AddSpecies(typeof(Skeleton), 25); // Fame 1200
-            britCemetery.AddSpecies(typeof(Zombie), 20);   // Fame 800
-            britCemetery.AddSpecies(typeof(Spectre), 5);  // Fame 2500
-            britCemetery.AddSpecies(typeof(Wraith), 3);   // Fame 4500
+            ApplyCemetery(britCemetery);
             EcosystemManager.Zones[britCemetery.ZoneId] = britCemetery;
 
             EcoZone britCenter = new($"{prefixTowns} Britain Center", map);
-            britCenter.AddSpecies(typeof(Dog), 10);
-            britCenter.AddSpecies(typeof(Cat), 10);
-            britCenter.AddSpecies(typeof(Bird), 15);
+            ApplyTown(britCenter);
             EcosystemManager.Zones[britCenter.ZoneId] = britCenter;
 
             EcoZone britFarmlands = new($"{prefixTowns} Britain Farmlands", map);
-            britFarmlands.AddSpecies(typeof(Cow), 30);      // Fame 300
-            britFarmlands.AddSpecies(typeof(Pig), 20);      // Fame 200
-            britFarmlands.AddSpecies(typeof(Sheep), 30);    // Fame 150
-            britFarmlands.AddSpecies(typeof(Chicken), 25);  // Fame 150
-            britFarmlands.AddSpecies(typeof(Bull), 5);      // Fame 3000
+            ApplyFarm(britFarmlands);
+            britFarmlands.AddSpecies(typeof(Cow), 5);
             EcosystemManager.Zones[britFarmlands.ZoneId] = britFarmlands;
 
             EcoZone britPark = new($"{prefixTowns} Britain Park", map);
-            britPark.AddSpecies(typeof(Bird), 25);
-            britPark.AddSpecies(typeof(Rabbit), 20);        // Fame 150
-            britPark.AddSpecies(typeof(Squirrel), 15);      // Fame 150 (기획서 기준)
+            ApplyTown(britPark);
+            britPark.AddSpecies(typeof(Bird), 5);
+            britPark.AddSpecies(typeof(Squirrel), 5); 
             EcosystemManager.Zones[britPark.ZoneId] = britPark;
 
             EcoZone britSuburbs = new($"{prefixTowns} Britain Suburbs", map);
-            britSuburbs.AddSpecies(typeof(GreatHart), 20);  // Fame 400
-            britSuburbs.AddSpecies(typeof(Hind), 30);       // Fame 250
-            britSuburbs.AddSpecies(typeof(TimberWolf), 10); // Fame 500
-            britSuburbs.AddSpecies(typeof(GreyWolf), 8);    // Fame 600
-            britSuburbs.AddSpecies(typeof(Boar), 12);       // Fame 350
+            ApplyForest(britSuburbs, 2);
+            britSuburbs.AddSpecies(typeof(GreatHart), 5);
             EcosystemManager.Zones[britSuburbs.ZoneId] = britSuburbs;
 
-
             // ========================================================================
-            // [Buccaneers Den] 버커니어스 덴 (3개 세부 구역)
+            // [Buccaneers Den] 버커니어스 덴
             // ========================================================================
-            EcoZone bucsBathhouse = new($"{prefixTowns} Buccaneers Den Bathhouse", map);
-            bucsBathhouse.AddSpecies(typeof(Cat), 5);
-            EcosystemManager.Zones[bucsBathhouse.ZoneId] = bucsBathhouse;
+            EcoZone bucsVampireBathhouse = new($"{prefixTowns} Buccaneers Den VampireBathhouse", map);
+            ApplyTown(bucsVampireBathhouse);
+            EcosystemManager.Zones[bucsVampireBathhouse.ZoneId] = bucsVampireBathhouse;
 
             EcoZone bucsDocks = new($"{prefixTowns} Buccaneers Den Docks", map);
-            bucsDocks.AddSpecies(typeof(GiantRat), 15);     // Fame 150
-            bucsDocks.AddSpecies(typeof(Bird), 10);
-            bucsDocks.AddSpecies(typeof(Rat), 20);
+            ApplyTown(bucsDocks);
+            bucsDocks.AddSpecies(typeof(GiantRat), 8);
             EcosystemManager.Zones[bucsDocks.ZoneId] = bucsDocks;
 
             EcoZone bucsTunnels = new($"{prefixTowns} Buccaneers Den Tunnels", map);
-            bucsTunnels.AddSpecies(typeof(Slime), 20);      // Fame 300
-            bucsTunnels.AddSpecies(typeof(GiantRat), 15);
-            bucsTunnels.AddSpecies(typeof(Snake), 15);      // Fame 300
+            ApplySwamp(bucsTunnels);
+            bucsTunnels.AddSpecies(typeof(Slime), 8);
             EcosystemManager.Zones[bucsTunnels.ZoneId] = bucsTunnels;
 
-
             // ========================================================================
-            // [Cove] 코브 (4개 세부 구역)
+            // [Cove] 코브
             // ========================================================================
             EcoZone coveCemetery = new($"{prefixTowns} Cove Cemetery", map);
-            coveCemetery.AddSpecies(typeof(Skeleton), 15);
-            coveCemetery.AddSpecies(typeof(Zombie), 10);
-            coveCemetery.AddSpecies(typeof(Spectre), 3);
+            ApplyCemetery(coveCemetery);
             EcosystemManager.Zones[coveCemetery.ZoneId] = coveCemetery;
 
             EcoZone coveGates = new($"{prefixTowns} Cove Gates", map);
-            coveGates.AddSpecies(typeof(Dog), 5);
-            coveGates.AddSpecies(typeof(Brigand), 8);  // 기획서 Brigand Camp 반영
+            ApplyTown(coveGates);
+            coveGates.AddSpecies(typeof(Brigand), 5); 
             EcosystemManager.Zones[coveGates.ZoneId] = coveGates;
 
             EcoZone coveGuardPost = new($"{prefixTowns} Cove Guard Post", map);
-            coveGuardPost.AddSpecies(typeof(Horse), 5);
+            ApplyTown(coveGuardPost);
             EcosystemManager.Zones[coveGuardPost.ZoneId] = coveGuardPost;
 
             EcoZone coveOrcFort = new($"{prefixTowns} Cove Orc Fort", map);
-            coveOrcFort.AddSpecies(typeof(Orc), 35);
-            coveOrcFort.AddSpecies(typeof(OrcCaptain), 10);
-            coveOrcFort.AddSpecies(typeof(OrcishMage), 5);
-            coveOrcFort.AddSpecies(typeof(OrcBrute), 2);
+            ApplyOrcFort(coveOrcFort);
             EcosystemManager.Zones[coveOrcFort.ZoneId] = coveOrcFort;
 
-
             // ========================================================================
-            // [Heartwood] 하트우드 (1개 구역)
+            // [Heartwood] 하트우드
             // ========================================================================
             EcoZone heartwoodEnt = new($"{prefixTowns} Heartwood Entrance", map);
-            heartwoodEnt.AddSpecies(typeof(Squirrel), 15);
-            heartwoodEnt.AddSpecies(typeof(Bird), 20);
+            ApplyForest(heartwoodEnt, 2);
+            heartwoodEnt.AddSpecies(typeof(Squirrel), 5);
             EcosystemManager.Zones[heartwoodEnt.ZoneId] = heartwoodEnt;
 
-
             // ========================================================================
-            // [Jhelom] 젤롬 (6개 세부 구역)
+            // [Jhelom] 젤롬
             // ========================================================================
             EcoZone jhelomCemetery = new($"{prefixTowns} Jhelom Cemetery", map);
-            jhelomCemetery.AddSpecies(typeof(Skeleton), 15);
-            jhelomCemetery.AddSpecies(typeof(Zombie), 10);
+            ApplyCemetery(jhelomCemetery);
             EcosystemManager.Zones[jhelomCemetery.ZoneId] = jhelomCemetery;
 
             EcoZone jhelomEastDocks = new($"{prefixTowns} Jhelom East Docks", map);
-            jhelomEastDocks.AddSpecies(typeof(GiantRat), 10);
-            jhelomEastDocks.AddSpecies(typeof(Rat), 15);
+            ApplyTown(jhelomEastDocks);
             EcosystemManager.Zones[jhelomEastDocks.ZoneId] = jhelomEastDocks;
 
             EcoZone jhelomFightingPit = new($"{prefixTowns} Jhelom Fighting Pit", map);
-            jhelomFightingPit.AddSpecies(typeof(Bull), 10);
-            jhelomFightingPit.AddSpecies(typeof(GreatHart), 5);
+            ApplyFarm(jhelomFightingPit);
+            jhelomFightingPit.AddSpecies(typeof(Bull), 10); 
             EcosystemManager.Zones[jhelomFightingPit.ZoneId] = jhelomFightingPit;
 
             EcoZone jhelomMainIsland = new($"{prefixTowns} Jhelom Main Island", map);
-            jhelomMainIsland.AddSpecies(typeof(Bull), 20);
-            jhelomMainIsland.AddSpecies(typeof(Cow), 15);
-            jhelomMainIsland.AddSpecies(typeof(Panther), 8);  // Fame 800
-            jhelomMainIsland.AddSpecies(typeof(Cougar), 8);   // Fame 800
+            ApplyFarm(jhelomMainIsland);
+            jhelomMainIsland.AddSpecies(typeof(Panther), 4); 
             EcosystemManager.Zones[jhelomMainIsland.ZoneId] = jhelomMainIsland;
 
             EcoZone jhelomMediumIsland = new($"{prefixTowns} Jhelom Medium Island", map);
-            jhelomMediumIsland.AddSpecies(typeof(Pig), 15);
-            jhelomMediumIsland.AddSpecies(typeof(Sheep), 20);
+            ApplyFarm(jhelomMediumIsland);
             EcosystemManager.Zones[jhelomMediumIsland.ZoneId] = jhelomMediumIsland;
 
             EcoZone jhelomSmallIsland = new($"{prefixTowns} Jhelom Small Island", map);
-            jhelomSmallIsland.AddSpecies(typeof(Rabbit), 30);
-            jhelomSmallIsland.AddSpecies(typeof(Bird), 15);
+            ApplyForest(jhelomSmallIsland, 1);
+            jhelomSmallIsland.AddSpecies(typeof(Rabbit), 8);
             EcosystemManager.Zones[jhelomSmallIsland.ZoneId] = jhelomSmallIsland;
-			
-			// ========================================================================
-            // [Magincia] 마진시아 (4개 세부 구역)
+
+            // ========================================================================
+            // [Magincia] 마진시아
             // ========================================================================
             EcoZone maginciaBank = new($"{prefixTowns} Magincia Bank", map);
-            maginciaBank.AddSpecies(typeof(Dog), 5);
+            ApplyTown(maginciaBank);
             EcosystemManager.Zones[maginciaBank.ZoneId] = maginciaBank;
 
             EcoZone maginciaDocks = new($"{prefixTowns} Magincia Docks", map);
-            maginciaDocks.AddSpecies(typeof(Cat), 10);
-            maginciaDocks.AddSpecies(typeof(Rat), 15);
+            ApplyTown(maginciaDocks);
             EcosystemManager.Zones[maginciaDocks.ZoneId] = maginciaDocks;
 
             EcoZone maginciaPark = new($"{prefixTowns} Magincia Park", map);
-            maginciaPark.AddSpecies(typeof(Bird), 25);
-            maginciaPark.AddSpecies(typeof(Rabbit), 20);
-            maginciaPark.AddSpecies(typeof(Squirrel), 15);
+            ApplyTown(maginciaPark);
+            maginciaPark.AddSpecies(typeof(Bird), 8);
             EcosystemManager.Zones[maginciaPark.ZoneId] = maginciaPark;
 
             EcoZone maginciaParliament = new($"{prefixTowns} Magincia Parliament", map);
-            maginciaParliament.AddSpecies(typeof(Cat), 5);
+            ApplyTown(maginciaParliament);
             EcosystemManager.Zones[maginciaParliament.ZoneId] = maginciaParliament;
 
-
             // ========================================================================
-            // [Minoc] 미녹 (5개 세부 구역)
+            // [Minoc] 미녹
             // ========================================================================
             EcoZone minocBridge = new($"{prefixTowns} Minoc Bridge", map);
-            minocBridge.AddSpecies(typeof(Dog), 5);
+            ApplyTown(minocBridge);
             EcosystemManager.Zones[minocBridge.ZoneId] = minocBridge;
 
             EcoZone minocGypsy = new($"{prefixTowns} Minoc Gypsy Camp", map);
-            minocGypsy.AddSpecies(typeof(Brigand), 12); // 기획서 반영
-            minocGypsy.AddSpecies(typeof(Dog), 5);
+            ApplyTown(minocGypsy);
+            minocGypsy.AddSpecies(typeof(Brigand), 6);
             EcosystemManager.Zones[minocGypsy.ZoneId] = minocGypsy;
 
             EcoZone minocMiningCamp = new($"{prefixTowns} Minoc Mining Camp", map);
-            minocMiningCamp.AddSpecies(typeof(PackHorse), 8);
-            minocMiningCamp.AddSpecies(typeof(Rat), 20);
+            ApplyTown(minocMiningCamp);
             EcosystemManager.Zones[minocMiningCamp.ZoneId] = minocMiningCamp;
 
-            // 미녹 북부 (곰 시너지 핵심 구역 - 코끼리 제외)
             EcoZone minocNorth = new($"{prefixTowns} Minoc North", map);
-            minocNorth.AddSpecies(typeof(GrizzlyBear), 10); // Fame 2000
-            minocNorth.AddSpecies(typeof(BrownBear), 15);  // Fame 1000
-            minocNorth.AddSpecies(typeof(BlackBear), 15);  // Fame 600
-            minocNorth.AddSpecies(typeof(MountainGoat), 20);
-            minocNorth.AddSpecies(typeof(Eagle), 10);
+            ApplyDeepForest(minocNorth, 3); 
+            minocNorth.AddSpecies(typeof(GrizzlyBear), 5);
             EcosystemManager.Zones[minocNorth.ZoneId] = minocNorth;
 
             EcoZone minocSouth = new($"{prefixTowns} Minoc South", map);
-            minocSouth.AddSpecies(typeof(Sheep), 20);
-            minocSouth.AddSpecies(typeof(Goat), 15);
+            ApplyFarm(minocSouth);
             EcosystemManager.Zones[minocSouth.ZoneId] = minocSouth;
 
-
             // ========================================================================
-            // [Moonglow] 문글로우 (5개 세부 구역)
+            // [Moonglow] 문글로우
             // ========================================================================
             EcoZone moonglowCemetery = new($"{prefixTowns} Moonglow Cemetery", map);
-            moonglowCemetery.AddSpecies(typeof(Skeleton), 20);
-            moonglowCemetery.AddSpecies(typeof(Zombie), 15);
-            moonglowCemetery.AddSpecies(typeof(Wraith), 5); // Fame 4500
+            ApplyCemetery(moonglowCemetery);
             EcosystemManager.Zones[moonglowCemetery.ZoneId] = moonglowCemetery;
 
             EcoZone moonglowCenter = new($"{prefixTowns} Moonglow Center", map);
-            moonglowCenter.AddSpecies(typeof(Cat), 10);
-            moonglowCenter.AddSpecies(typeof(Dog), 5);
+            ApplyTown(moonglowCenter);
             EcosystemManager.Zones[moonglowCenter.ZoneId] = moonglowCenter;
 
             EcoZone moonglowDocks = new($"{prefixTowns} Moonglow Docks", map);
-            moonglowDocks.AddSpecies(typeof(GiantRat), 15);
-            moonglowDocks.AddSpecies(typeof(Rat), 20);
+            ApplyTown(moonglowDocks);
             EcosystemManager.Zones[moonglowDocks.ZoneId] = moonglowDocks;
 
             EcoZone moonglowTelescope = new($"{prefixTowns} Moonglow Telescope", map);
-            moonglowTelescope.AddSpecies(typeof(Bird), 15);
-            moonglowTelescope.AddSpecies(typeof(Wisp), 5);
+            ApplyTown(moonglowTelescope);
+            moonglowTelescope.AddSpecies(typeof(Wisp), 4); 
             EcosystemManager.Zones[moonglowTelescope.ZoneId] = moonglowTelescope;
 
-            // 문글로우 동물원 (Elephant 제외, 맹수 위주)
             EcoZone moonglowZoo = new($"{prefixTowns} Moonglow Zoo", map);
-            moonglowZoo.AddSpecies(typeof(Panther), 10);
-            moonglowZoo.AddSpecies(typeof(SnowLeopard), 10);
-            moonglowZoo.AddSpecies(typeof(GrizzlyBear), 5);
-            moonglowZoo.AddSpecies(typeof(SilverSteed), 2);
-            moonglowZoo.AddSpecies(typeof(WhiteWolf), 10);
+            ApplyJungle(moonglowZoo);
+            moonglowZoo.AddSpecies(typeof(SnowLeopard), 5);
+            moonglowZoo.AddSpecies(typeof(SilverSteed), 1);
+            moonglowZoo.AddSpecies(typeof(WhiteWolf), 5);
             EcosystemManager.Zones[moonglowZoo.ZoneId] = moonglowZoo;
 
-
             // ========================================================================
-            // [Nujel'm] 누젤름 (7개 세부 구역)
+            // [Nujel'm] 누젤름
             // ========================================================================
             EcoZone nujelmCemetery = new($"{prefixTowns} Nujel'm Cemetery", map);
-            nujelmCemetery.AddSpecies(typeof(Skeleton), 15);
-            nujelmCemetery.AddSpecies(typeof(Zombie), 10);
+            ApplyCemetery(nujelmCemetery);
             EcosystemManager.Zones[nujelmCemetery.ZoneId] = nujelmCemetery;
 
             EcoZone nujelmChessBoard = new($"{prefixTowns} Nujel'm Chess Board", map);
-            nujelmChessBoard.AddSpecies(typeof(Cat), 5);
+            ApplyTown(nujelmChessBoard);
             EcosystemManager.Zones[nujelmChessBoard.ZoneId] = nujelmChessBoard;
 
             EcoZone nujelmDocks = new($"{prefixTowns} Nujel'm Docks", map);
-            nujelmDocks.AddSpecies(typeof(GiantRat), 15);
+            ApplyTown(nujelmDocks);
             EcosystemManager.Zones[nujelmDocks.ZoneId] = nujelmDocks;
 
             EcoZone nujelmEast = new($"{prefixTowns} Nujel'm East", map);
-            nujelmEast.AddSpecies(typeof(Bird), 15);
+            ApplyTown(nujelmEast);
             EcosystemManager.Zones[nujelmEast.ZoneId] = nujelmEast;
 
             EcoZone nujelmNorth = new($"{prefixTowns} Nujel'm North", map);
-            nujelmNorth.AddSpecies(typeof(Rabbit), 20);
+            ApplyTown(nujelmNorth);
             EcosystemManager.Zones[nujelmNorth.ZoneId] = nujelmNorth;
 
             EcoZone nujelmPalace = new($"{prefixTowns} Nujel'm Palace", map);
-            nujelmPalace.AddSpecies(typeof(Cat), 5);
+            ApplyTown(nujelmPalace);
             EcosystemManager.Zones[nujelmPalace.ZoneId] = nujelmPalace;
 
             EcoZone nujelmWest = new($"{prefixTowns} Nujel'm West", map);
-            nujelmWest.AddSpecies(typeof(Dog), 10);
-            nujelmWest.AddSpecies(typeof(DesertOstard), 10); // 기획서 반영
+            ApplyTown(nujelmWest);
+            nujelmWest.AddSpecies(typeof(DesertScorpion), 5); 
             EcosystemManager.Zones[nujelmWest.ZoneId] = nujelmWest;
-			
-			// ========================================================================
-            // [Haven] 헤이븐 (5개 세부 구역)
+
+            // ========================================================================
+            // [Haven] 헤이븐
             // ========================================================================
             EcoZone oldHaven = new($"{prefixTowns} Haven Old Haven", map);
-            oldHaven.AddSpecies(typeof(Zombie), 30);       // Fame 800
-            oldHaven.AddSpecies(typeof(Skeleton), 25);     // Fame 1200
-            oldHaven.AddSpecies(typeof(BoneKnight), 10);
-            oldHaven.AddSpecies(typeof(Spectre), 5);       // Fame 2500 (기획서 반영)
+            ApplyCemetery(oldHaven);
             EcosystemManager.Zones[oldHaven.ZoneId] = oldHaven;
 
             EcoZone oldHavenNorth = new($"{prefixTowns} Haven Old Haven North", map);
-            oldHavenNorth.AddSpecies(typeof(Zombie), 15);
-            oldHavenNorth.AddSpecies(typeof(Mongbat), 15);
-            oldHavenNorth.AddSpecies(typeof(Rat), 10);
+            ApplyForest(oldHavenNorth, 1);
+            oldHavenNorth.AddSpecies(typeof(Zombie), 3); 
             EcosystemManager.Zones[oldHavenNorth.ZoneId] = oldHavenNorth;
 
             EcoZone newHaven = new($"{prefixTowns} Haven New Haven", map);
-            newHaven.AddSpecies(typeof(Cat), 10);
-            newHaven.AddSpecies(typeof(Dog), 10);
+            ApplyTown(newHaven);
             EcosystemManager.Zones[newHaven.ZoneId] = newHaven;
 
             EcoZone newHavenNorth = new($"{prefixTowns} Haven New Haven North", map);
-            newHavenNorth.AddSpecies(typeof(Bird), 20);
-            newHavenNorth.AddSpecies(typeof(Rabbit), 20);
+            ApplyTown(newHavenNorth);
             EcosystemManager.Zones[newHavenNorth.ZoneId] = newHavenNorth;
 
             EcoZone havenFarmlands = new($"{prefixTowns} Haven Farmlands", map);
-            havenFarmlands.AddSpecies(typeof(Sheep), 20);
-            havenFarmlands.AddSpecies(typeof(Pig), 15);
-            havenFarmlands.AddSpecies(typeof(Cow), 15);
-            havenFarmlands.AddSpecies(typeof(Chicken), 15);
+            ApplyFarm(havenFarmlands);
             EcosystemManager.Zones[havenFarmlands.ZoneId] = havenFarmlands;
 
-
             // ========================================================================
-            // [Serpents Hold] 서펀츠 홀드 (3개 세부 구역)
+            // [Serpents Hold & Skara Brae & Trinsic & Vesper & Wind & Yew]
             // ========================================================================
-            EcoZone serpentsNorth = new($"{prefixTowns} Serpents Hold North", map);
-            serpentsNorth.AddSpecies(typeof(Horse), 10);
-            serpentsNorth.AddSpecies(typeof(Bird), 10);
-            EcosystemManager.Zones[serpentsNorth.ZoneId] = serpentsNorth;
+            EcoZone serpentsNorth = new($"{prefixTowns} Serpents Hold North", map); ApplyTown(serpentsNorth); EcosystemManager.Zones[serpentsNorth.ZoneId] = serpentsNorth;
+            EcoZone serpentsSouth = new($"{prefixTowns} Serpents Hold South", map); ApplyTown(serpentsSouth); EcosystemManager.Zones[serpentsSouth.ZoneId] = serpentsSouth;
+            EcoZone serpentsGuardPost = new($"{prefixTowns} Serpents Hold Guard Post", map); ApplyTown(serpentsGuardPost); EcosystemManager.Zones[serpentsGuardPost.ZoneId] = serpentsGuardPost;
 
-            EcoZone serpentsSouth = new($"{prefixTowns} Serpents Hold South", map);
-            serpentsSouth.AddSpecies(typeof(Dog), 10);
-            serpentsSouth.AddSpecies(typeof(Cat), 5);
-            EcosystemManager.Zones[serpentsSouth.ZoneId] = serpentsSouth;
+            EcoZone skaraEast = new($"{prefixTowns} Skara Brae East", map); ApplyForest(skaraEast, 2); skaraEast.AddSpecies(typeof(Sheep), 8); EcosystemManager.Zones[skaraEast.ZoneId] = skaraEast;
+            EcoZone skaraEastDocks = new($"{prefixTowns} Skara Brae East Docks", map); ApplyTown(skaraEastDocks); EcosystemManager.Zones[skaraEastDocks.ZoneId] = skaraEastDocks;
+            EcoZone skaraNorth = new($"{prefixTowns} Skara Brae North", map); ApplyForest(skaraNorth, 2); skaraNorth.AddSpecies(typeof(Eagle), 4); EcosystemManager.Zones[skaraNorth.ZoneId] = skaraNorth;
+            EcoZone skaraSouth = new($"{prefixTowns} Skara Brae South", map); ApplyFarm(skaraSouth); EcosystemManager.Zones[skaraSouth.ZoneId] = skaraSouth;
+            EcoZone skaraWest = new($"{prefixTowns} Skara Brae West", map); ApplyTown(skaraWest); EcosystemManager.Zones[skaraWest.ZoneId] = skaraWest;
+            EcoZone skaraWestDocks = new($"{prefixTowns} Skara Brae West Docks", map); ApplyTown(skaraWestDocks); EcosystemManager.Zones[skaraWestDocks.ZoneId] = skaraWestDocks;
 
-            EcoZone serpentsGuardPost = new($"{prefixTowns} Serpents Hold Guard Post", map);
-            serpentsGuardPost.AddSpecies(typeof(Horse), 5);
-            EcosystemManager.Zones[serpentsGuardPost.ZoneId] = serpentsGuardPost;
+            EcoZone trinsicCenter = new($"{prefixTowns} Trinsic Center", map); ApplyTown(trinsicCenter); EcosystemManager.Zones[trinsicCenter.ZoneId] = trinsicCenter;
+            EcoZone trinsicEastDocks = new($"{prefixTowns} Trinsic East Docks", map); ApplyTown(trinsicEastDocks); EcosystemManager.Zones[trinsicEastDocks.ZoneId] = trinsicEastDocks;
+            EcoZone trinsicPark = new($"{prefixTowns} Trinsic Island Park", map); ApplyTown(trinsicPark); trinsicPark.AddSpecies(typeof(Bird), 8); EcosystemManager.Zones[trinsicPark.ZoneId] = trinsicPark;
+            EcoZone trinsicNorth = new($"{prefixTowns} Trinsic North", map); ApplyTown(trinsicNorth); trinsicNorth.AddSpecies(typeof(Horse), 5); EcosystemManager.Zones[trinsicNorth.ZoneId] = trinsicNorth;
+            EcoZone trinsicSouth = new($"{prefixTowns} Trinsic South", map); ApplyTown(trinsicSouth); EcosystemManager.Zones[trinsicSouth.ZoneId] = trinsicSouth;
+            EcoZone trinsicSouthGate = new($"{prefixTowns} Trinsic South Gate", map); ApplyTown(trinsicSouthGate); EcosystemManager.Zones[trinsicSouthGate.ZoneId] = trinsicSouthGate;
+            EcoZone trinsicWestGate = new($"{prefixTowns} Trinsic West Gate", map); ApplyTown(trinsicWestGate); EcosystemManager.Zones[trinsicWestGate.ZoneId] = trinsicWestGate;
 
+            EcoZone vesperCemetery = new($"{prefixTowns} Vesper Cemetery", map); ApplyCemetery(vesperCemetery); EcosystemManager.Zones[vesperCemetery.ZoneId] = vesperCemetery;
+            EcoZone vesperCenter = new($"{prefixTowns} Vesper Center", map); ApplyTown(vesperCenter); EcosystemManager.Zones[vesperCenter.ZoneId] = vesperCenter;
+            EcoZone vesperDocks = new($"{prefixTowns} Vesper Docks", map); ApplyTown(vesperDocks); EcosystemManager.Zones[vesperDocks.ZoneId] = vesperDocks;
+            EcoZone vesperEast = new($"{prefixTowns} Vesper East", map); ApplyTown(vesperEast); EcosystemManager.Zones[vesperEast.ZoneId] = vesperEast;
+            EcoZone vesperNorth = new($"{prefixTowns} Vesper North", map); ApplyForest(vesperNorth, 2); EcosystemManager.Zones[vesperNorth.ZoneId] = vesperNorth;
 
-            // ========================================================================
-            // [Skara Brae] 스카라 브라에 (6개 세부 구역)
-            // ========================================================================
-            EcoZone skaraEast = new($"{prefixTowns} Skara Brae East", map);
-            skaraEast.AddSpecies(typeof(Sheep), 25);
-            skaraEast.AddSpecies(typeof(Hind), 20);        // Fame 250
-            skaraEast.AddSpecies(typeof(GreatHart), 15);   // Fame 400
-            skaraEast.AddSpecies(typeof(Boar), 12);        // 기획서 Boar(Fame 350) 반영
-            skaraEast.AddSpecies(typeof(Bird), 20);
-            EcosystemManager.Zones[skaraEast.ZoneId] = skaraEast;
+            EcoZone windCaves = new($"{prefixTowns} Wind Caves", map); ApplySwamp(windCaves); EcosystemManager.Zones[windCaves.ZoneId] = windCaves;
+            EcoZone windEast = new($"{prefixTowns} Wind East", map); ApplyForest(windEast, 2); EcosystemManager.Zones[windEast.ZoneId] = windEast;
+            EcoZone windEntrance = new($"{prefixTowns} Wind Entrance", map); ApplyDeepForest(windEntrance, 3); EcosystemManager.Zones[windEntrance.ZoneId] = windEntrance;
+            EcoZone windPark = new($"{prefixTowns} Wind Park", map); ApplyTown(windPark); EcosystemManager.Zones[windPark.ZoneId] = windPark;
+            EcoZone windSouth = new($"{prefixTowns} Wind South", map); ApplyForest(windSouth, 2); EcosystemManager.Zones[windSouth.ZoneId] = windSouth;
+            EcoZone windWest = new($"{prefixTowns} Wind West", map); ApplyTown(windWest); EcosystemManager.Zones[windWest.ZoneId] = windWest;
 
-            EcoZone skaraEastDocks = new($"{prefixTowns} Skara Brae East Docks", map);
-            skaraEastDocks.AddSpecies(typeof(Cat), 10);
-            EcosystemManager.Zones[skaraEastDocks.ZoneId] = skaraEastDocks;
+            EcoZone yewCemetery = new($"{prefixTowns} Yew Cemetery", map); ApplyCemetery(yewCemetery); EcosystemManager.Zones[yewCemetery.ZoneId] = yewCemetery;
+            EcoZone yewCenter = new($"{prefixTowns} Yew Center", map); ApplyDeepForest(yewCenter, 3); EcosystemManager.Zones[yewCenter.ZoneId] = yewCenter;
+            EcoZone yewCourts = new($"{prefixTowns} Yew Courts and Prisons", map); ApplyTown(yewCourts); EcosystemManager.Zones[yewCourts.ZoneId] = yewCourts;
+            EcoZone yewAbbey = new($"{prefixTowns} Yew Empath Abbey", map); ApplyTown(yewAbbey); EcosystemManager.Zones[yewAbbey.ZoneId] = yewAbbey;
+            EcoZone yewHiddenCave = new($"{prefixTowns} Yew Hidden Cave", map); ApplyDeepForest(yewHiddenCave, 3); EcosystemManager.Zones[yewHiddenCave.ZoneId] = yewHiddenCave;
+            EcoZone yewOrcFort = new($"{prefixTowns} Yew Orc Fort", map); ApplyOrcFort(yewOrcFort); EcosystemManager.Zones[yewOrcFort.ZoneId] = yewOrcFort;
 
-            EcoZone skaraNorth = new($"{prefixTowns} Skara Brae North", map);
-            skaraNorth.AddSpecies(typeof(Bird), 25);
-            skaraNorth.AddSpecies(typeof(Eagle), 5);       // Fame 300 (예상)
-            EcosystemManager.Zones[skaraNorth.ZoneId] = skaraNorth;
+            EcoZone deluciaWatchTower = new($"{prefixTowns} Delucia Watch Tower", map); ApplyTown(deluciaWatchTower); EcosystemManager.Zones[deluciaWatchTower.ZoneId] = deluciaWatchTower;
+            EcoZone deluciaCenter = new($"{prefixTowns} Delucia Center", map); ApplyFarm(deluciaCenter); EcosystemManager.Zones[deluciaCenter.ZoneId] = deluciaCenter;
+            EcoZone deluciaOrcFort = new($"{prefixTowns} Delucia Orc Fort", map); ApplyOrcFort(deluciaOrcFort); EcosystemManager.Zones[deluciaOrcFort.ZoneId] = deluciaOrcFort;
 
-            EcoZone skaraSouth = new($"{prefixTowns} Skara Brae South", map);
-            skaraSouth.AddSpecies(typeof(Rabbit), 25);
-            skaraSouth.AddSpecies(typeof(Ferret), 10);     // Fame 200
-            EcosystemManager.Zones[skaraSouth.ZoneId] = skaraSouth;
+            EcoZone papuaInn = new($"{prefixTowns} Papua The Just Inn", map); ApplyTown(papuaInn); EcosystemManager.Zones[papuaInn.ZoneId] = papuaInn;
+            EcoZone papuaCenter = new($"{prefixTowns} Papua Center", map); ApplySwamp(papuaCenter); EcosystemManager.Zones[papuaCenter.ZoneId] = papuaCenter;
+            EcoZone papuaDocks = new($"{prefixTowns} Papua Docks", map); ApplyTown(papuaDocks); EcosystemManager.Zones[papuaDocks.ZoneId] = papuaDocks;
 
-            EcoZone skaraWest = new($"{prefixTowns} Skara Brae West", map);
-            skaraWest.AddSpecies(typeof(Dog), 10);
-            EcosystemManager.Zones[skaraWest.ZoneId] = skaraWest;
+            EcoZone shrineChaos = new($"{prefixShrines} Chaos", map); ApplyShrine(shrineChaos); EcosystemManager.Zones[shrineChaos.ZoneId] = shrineChaos;
+            EcoZone shrineCompassion = new($"{prefixShrines} Compassion", map); ApplyShrine(shrineCompassion); EcosystemManager.Zones[shrineCompassion.ZoneId] = shrineCompassion;
+            EcoZone shrineHonesty = new($"{prefixShrines} Honesty", map); ApplyShrine(shrineHonesty); EcosystemManager.Zones[shrineHonesty.ZoneId] = shrineHonesty;
+            EcoZone shrineHonor = new($"{prefixShrines} Honor", map); ApplyShrine(shrineHonor); EcosystemManager.Zones[shrineHonor.ZoneId] = shrineHonor;
+            EcoZone shrineHumility = new($"{prefixShrines} Humility", map); ApplyShrine(shrineHumility); EcosystemManager.Zones[shrineHumility.ZoneId] = shrineHumility;
+            EcoZone shrineJustice = new($"{prefixShrines} Justice", map); ApplyShrine(shrineJustice); EcosystemManager.Zones[shrineJustice.ZoneId] = shrineJustice;
+            EcoZone shrineSacrifice = new($"{prefixShrines} Sacrifice", map); ApplyShrine(shrineSacrifice); EcosystemManager.Zones[shrineSacrifice.ZoneId] = shrineSacrifice;
+            EcoZone shrineSpirituality = new($"{prefixShrines} Spirituality", map); ApplyShrine(shrineSpirituality); EcosystemManager.Zones[shrineSpirituality.ZoneId] = shrineSpirituality;
+            EcoZone shrineValor = new($"{prefixShrines} Valor", map); ApplyShrine(shrineValor); EcosystemManager.Zones[shrineValor.ZoneId] = shrineValor;
 
-            EcoZone skaraWestDocks = new($"{prefixTowns} Skara Brae West Docks", map);
-            skaraWestDocks.AddSpecies(typeof(GiantRat), 15);
-            EcosystemManager.Zones[skaraWestDocks.ZoneId] = skaraWestDocks;
+            EcoZone hoppersBog = new($"{customPrefix} Hopper's Bog", map); ApplySwamp(hoppersBog); EcosystemManager.Zones[hoppersBog.ZoneId] = hoppersBog;
+            EcoZone desertOfCompassion = new($"{customPrefix} Desert of Compassion", map); ApplyDesert(desertOfCompassion); EcosystemManager.Zones[desertOfCompassion.ZoneId] = desertOfCompassion;
 
+            // ResourceManager 세이브 로드 완료 후(서버 시작 직후) 야생 벌목 구역 등록
+            EventSink.ServerStarted += OnServerStarted;
+        }
 
-            // ========================================================================
-            // [Trinsic] 트린식 (7개 세부 구역)
-            // ========================================================================
-            EcoZone trinsicCenter = new($"{prefixTowns} Trinsic Center", map);
-            trinsicCenter.AddSpecies(typeof(Dog), 10);
-            trinsicCenter.AddSpecies(typeof(Cat), 10);
-            EcosystemManager.Zones[trinsicCenter.ZoneId] = trinsicCenter;
+        private static void OnServerStarted()
+        {
+            if (ResourceManager.Pools != null)
+            {
+                var lumberPools = ResourceManager.Pools.Values
+                    .Where(p => p.MapName == "Trammel" && p.Type == ResourceType.Lumberjacking)
+                    .ToList();
 
-            EcoZone trinsicEastDocks = new($"{prefixTowns} Trinsic East Docks", map);
-            trinsicEastDocks.AddSpecies(typeof(GiantRat), 15);
-            EcosystemManager.Zones[trinsicEastDocks.ZoneId] = trinsicEastDocks;
+                foreach (var pool in lumberPools)
+                {
+                    string regName = pool.RegionName;
 
-            EcoZone trinsicPark = new($"{prefixTowns} Trinsic Island Park", map);
-            trinsicPark.AddSpecies(typeof(Bird), 30);
-            trinsicPark.AddSpecies(typeof(Rabbit), 20);
-            trinsicPark.AddSpecies(typeof(Dog), 5);
-            EcosystemManager.Zones[trinsicPark.ZoneId] = trinsicPark;
+                    if (string.IsNullOrEmpty(regName) || regName.Contains("Ocean") || regName.Contains("Lost Lands") || regName.Contains("Hopper's Bog") || regName.Contains("Desert of Compassion")) 
+                        continue;
 
-            EcoZone trinsicNorth = new($"{prefixTowns} Trinsic North", map);
-            trinsicNorth.AddSpecies(typeof(Horse), 15);    // Fame 350
-            trinsicNorth.AddSpecies(typeof(PackHorse), 5);
-            EcosystemManager.Zones[trinsicNorth.ZoneId] = trinsicNorth;
+                    if (EcosystemManager.Zones.ContainsKey(regName)) continue;
 
-            EcoZone trinsicSouth = new($"{prefixTowns} Trinsic South", map);
-            trinsicSouth.AddSpecies(typeof(Dog), 10);
-            EcosystemManager.Zones[trinsicSouth.ZoneId] = trinsicSouth;
+                    EcoZone wildZone = new EcoZone(regName, Map.Trammel);
+                    
+                    int sizeCat = pool.SizeCategory > 0 ? pool.SizeCategory : 2;
 
-            EcoZone trinsicSouthGate = new($"{prefixTowns} Trinsic South Gate", map);
-            trinsicSouthGate.AddSpecies(typeof(Horse), 8);
-            EcosystemManager.Zones[trinsicSouthGate.ZoneId] = trinsicSouthGate;
+                    if (regName.Contains("Deep") || regName.Contains("Wild")) 
+                        ApplyDeepForest(wildZone, sizeCat);
+                    else 
+                        ApplyForest(wildZone, sizeCat);
 
-            EcoZone trinsicWestGate = new($"{prefixTowns} Trinsic West Gate", map);
-            trinsicWestGate.AddSpecies(typeof(Horse), 8);
-            EcosystemManager.Zones[trinsicWestGate.ZoneId] = trinsicWestGate;
+                    EcosystemManager.Zones[wildZone.ZoneId] = wildZone;
+                    
+                    wildZone.CacheNodes();
+                }
+            }
+        }
 
+        // ========================================================================
+        // 템플릿(Template) 시스템
+        // ========================================================================
 
-            // ========================================================================
-            // [Vesper] 베스퍼 (5개 세부 구역)
-            // ========================================================================
-            EcoZone vesperCemetery = new($"{prefixTowns} Vesper Cemetery", map);
-            vesperCemetery.AddSpecies(typeof(Skeleton), 20);
-            vesperCemetery.AddSpecies(typeof(Zombie), 15);
-            vesperCemetery.AddSpecies(typeof(Wraith), 5);  // Fame 4500
-            EcosystemManager.Zones[vesperCemetery.ZoneId] = vesperCemetery;
+        // ========================================================================
+        // 템플릿(Template) 시스템: 마을은 매우 한적하게, 농장은 가축 위주로
+        // ========================================================================
 
-            EcoZone vesperCenter = new($"{prefixTowns} Vesper Center", map);
-            vesperCenter.AddSpecies(typeof(Dog), 10);
-            vesperCenter.AddSpecies(typeof(Cat), 5);
-            EcosystemManager.Zones[vesperCenter.ZoneId] = vesperCenter;
+        private static void ApplyTown(EcoZone zone)
+        {
+            // 타운/마을: 총합 15마리 내외의 한적하고 평화로운 분위기 구성
+            zone.AddSpecies(typeof(Cat), 2); 
+            zone.AddSpecies(typeof(Dog), 2);
+            zone.AddSpecies(typeof(Bird), 4); 
+            zone.AddSpecies(typeof(Chicken), 2);
+            zone.AddSpecies(typeof(Pig), 1); 
+            zone.AddSpecies(typeof(Cow), 1);
+            zone.AddSpecies(typeof(Rabbit), 1); 
+            zone.AddSpecies(typeof(Squirrel), 1);
+            zone.AddSpecies(typeof(Rat), 1);
+            // 슬라임, 뱀, 양, 염소 등 부적절한 동물 전면 삭제
+        }
 
-            EcoZone vesperDocks = new($"{prefixTowns} Vesper Docks", map);
-            vesperDocks.AddSpecies(typeof(GiantRat), 15);
-            vesperDocks.AddSpecies(typeof(Rat), 15);
-            EcosystemManager.Zones[vesperDocks.ZoneId] = vesperDocks;
+        private static void ApplyFarm(EcoZone zone)
+        {
+            // 농장/목초지: 양, 젖소, 돼지 등 가축이 주를 이루는 구역 (총합 30마리 내외)
+            zone.AddSpecies(typeof(Cow), 6); 
+            zone.AddSpecies(typeof(Pig), 5);
+            zone.AddSpecies(typeof(Sheep), 6); 
+            zone.AddSpecies(typeof(Goat), 4);
+            zone.AddSpecies(typeof(Chicken), 6); 
+            zone.AddSpecies(typeof(Bull), 2);
+            zone.AddSpecies(typeof(Horse), 3); 
+            zone.AddSpecies(typeof(PackHorse), 1);
+            zone.AddSpecies(typeof(Dog), 2); 
+            zone.AddSpecies(typeof(Cat), 2);
+            zone.AddSpecies(typeof(Bird), 4); 
+            zone.AddSpecies(typeof(Rat), 2);
+            // 몬스터 및 야생 맹수 배제
+        }
+        private static void ApplyForest(EcoZone zone, int sizeCategory)
+        {
+            int t1 = 4 - sizeCategory; 
+            int t2 = sizeCategory;     
+            int t3 = sizeCategory == 3 ? 3 : (sizeCategory == 2 ? 2 : 1); // 0배수를 1로 변경하여 최소 스폰 보장
 
-            EcoZone vesperEast = new($"{prefixTowns} Vesper East", map);
-            vesperEast.AddSpecies(typeof(Cat), 10);
-            EcosystemManager.Zones[vesperEast.ZoneId] = vesperEast;
+            zone.AddSpecies(typeof(Bird), 15 * t1);
+            zone.AddSpecies(typeof(Squirrel), 10 * t1);
+            zone.AddSpecies(typeof(Rabbit), 10 * t1);
+            zone.AddSpecies(typeof(Hind), 10 * t1);
+            zone.AddSpecies(typeof(Ferret), 5 * t1);
 
-            EcoZone vesperNorth = new($"{prefixTowns} Vesper North", map);
-            vesperNorth.AddSpecies(typeof(Bird), 20);
-            vesperNorth.AddSpecies(typeof(Squirrel), 10);
-            EcosystemManager.Zones[vesperNorth.ZoneId] = vesperNorth;
-			
-			// ========================================================================
-            // [Wind] 윈드 (6개 세부 구역)
-            // ========================================================================
-            EcoZone windCaves = new($"{prefixTowns} Wind Caves", map);
-            windCaves.AddSpecies(typeof(Slime), 20);           // Fame 300
-            windCaves.AddSpecies(typeof(GiantRat), 15);
-            windCaves.AddSpecies(typeof(Rat), 10);
-            EcosystemManager.Zones[windCaves.ZoneId] = windCaves;
+            zone.AddSpecies(typeof(GreatHart), 8 * t2);
+            zone.AddSpecies(typeof(TimberWolf), 8 * t2);
+            zone.AddSpecies(typeof(GreyWolf), 5 * t2);
+            zone.AddSpecies(typeof(BlackBear), 5 * t2);
+            zone.AddSpecies(typeof(BrownBear), 4 * t2);
+            zone.AddSpecies(typeof(Eagle), 5 * t2);
+            zone.AddSpecies(typeof(Snake), 8 * t2);
+            zone.AddSpecies(typeof(GiantRat), 5 * t2);
+            zone.AddSpecies(typeof(Slime), 5 * t2);
+            zone.AddSpecies(typeof(Mongbat), 4 * t2);
+            zone.AddSpecies(typeof(Corpser), 2 * t2);
+            zone.AddSpecies(typeof(Lizardman), 2 * t2);
+            zone.AddSpecies(typeof(VampireBat), 5 * t2);
 
-            EcoZone windEast = new($"{prefixTowns} Wind East", map);
-            windEast.AddSpecies(typeof(Bird), 15);
-            windEast.AddSpecies(typeof(Wisp), 5);              // 마법 도시 분위기
-            EcosystemManager.Zones[windEast.ZoneId] = windEast;
+            zone.AddSpecies(typeof(GrizzlyBear), 2 * t3);
+            zone.AddSpecies(typeof(GiantSerpent), 2 * t3);
+            zone.AddSpecies(typeof(GiantSpider), 4 * t3);
+            zone.AddSpecies(typeof(Wisp), 2 * t3);
+            zone.AddSpecies(typeof(Panther), 3 * t3);
+            zone.AddSpecies(typeof(Cougar), 3 * t3);
+        }
 
-            EcoZone windEntrance = new($"{prefixTowns} Wind Entrance", map);
-            windEntrance.AddSpecies(typeof(Snake), 25);        // Fame 300
-            windEntrance.AddSpecies(typeof(GiantSerpent), 8);  // Fame 2500
-            windEntrance.AddSpecies(typeof(ShadowWisp), 10);   // Fame 500
-            EcosystemManager.Zones[windEntrance.ZoneId] = windEntrance;
+        private static void ApplyDeepForest(EcoZone zone, int sizeCategory)
+        {
+            int t1 = 4 - sizeCategory;
+            int t2 = sizeCategory;     
+            int t3 = sizeCategory == 3 ? 4 : (sizeCategory == 2 ? 2 : 1);
 
-            EcoZone windPark = new($"{prefixTowns} Wind Park", map);
-            windPark.AddSpecies(typeof(Rabbit), 15);
-            windPark.AddSpecies(typeof(Squirrel), 10);
-            EcosystemManager.Zones[windPark.ZoneId] = windPark;
+            zone.AddSpecies(typeof(Hind), 8 * t1);
 
-            EcoZone windSouth = new($"{prefixTowns} Wind South", map);
-            windSouth.AddSpecies(typeof(Bird), 15);
-            EcosystemManager.Zones[windSouth.ZoneId] = windSouth;
+            zone.AddSpecies(typeof(GreatHart), 10 * t2);
+            zone.AddSpecies(typeof(TimberWolf), 5 * t2);
+            zone.AddSpecies(typeof(GreyWolf), 8 * t2);
+            zone.AddSpecies(typeof(BlackBear), 5 * t2);
+            zone.AddSpecies(typeof(BrownBear), 8 * t2);
+            zone.AddSpecies(typeof(GiantSpider), 8 * t2);
+            zone.AddSpecies(typeof(Panther), 5 * t2);
+            zone.AddSpecies(typeof(Cougar), 5 * t2);
+            zone.AddSpecies(typeof(Corpser), 5 * t2);
+            zone.AddSpecies(typeof(Harpy), 4 * t2);
+            zone.AddSpecies(typeof(Lizardman), 4 * t2);
 
-            EcoZone windWest = new($"{prefixTowns} Wind West", map);
-            windWest.AddSpecies(typeof(Dog), 5);
-            windWest.AddSpecies(typeof(Cat), 5);
-            EcosystemManager.Zones[windWest.ZoneId] = windWest;
+            zone.AddSpecies(typeof(DireWolf), 4 * t3);
+            zone.AddSpecies(typeof(GrizzlyBear), 6 * t3);
+            zone.AddSpecies(typeof(GiantSerpent), 5 * t3);
+            zone.AddSpecies(typeof(Wisp), 4 * t3);
+            zone.AddSpecies(typeof(ShadowWisp), 2 * t3);
+            zone.AddSpecies(typeof(DarkWisp), 1 * t3); 
+            zone.AddSpecies(typeof(Centaur), 2 * t3);
+            zone.AddSpecies(typeof(Pixie), 2 * t3);
+            zone.AddSpecies(typeof(Unicorn), 1 * t3); 
+            zone.AddSpecies(typeof(Kirin), 1 * t3);  
+            zone.AddSpecies(typeof(Gargoyle), 2 * t3);
+            zone.AddSpecies(typeof(Troll), 2 * t3);
+            zone.AddSpecies(typeof(Ettin), 2 * t3);
+            zone.AddSpecies(typeof(Orc), 5 * t3);
+            zone.AddSpecies(typeof(EarthElemental), 2 * t3);
+        }
 
+        private static void ApplyCemetery(EcoZone zone)
+        {
+            zone.AddSpecies(typeof(Skeleton), 15); zone.AddSpecies(typeof(Zombie), 12);
+            zone.AddSpecies(typeof(Ghoul), 8); zone.AddSpecies(typeof(Shade), 5);
+            zone.AddSpecies(typeof(Spectre), 5); zone.AddSpecies(typeof(Wraith), 4);
+            zone.AddSpecies(typeof(BoneKnight), 2); zone.AddSpecies(typeof(SkeletalKnight), 2);
+            zone.AddSpecies(typeof(SkeletalMage), 2); zone.AddSpecies(typeof(BoneMagi), 2);
+            zone.AddSpecies(typeof(Mummy), 1); zone.AddSpecies(typeof(Slime), 8);
+            zone.AddSpecies(typeof(GiantRat), 8); zone.AddSpecies(typeof(Rat), 5);
+            zone.AddSpecies(typeof(VampireBat), 8); zone.AddSpecies(typeof(Snake), 5);
+            zone.AddSpecies(typeof(GiantSerpent), 2); zone.AddSpecies(typeof(Mongbat), 5);
+            zone.AddSpecies(typeof(HeadlessOne), 2); zone.AddSpecies(typeof(EarthElemental), 1);
+            zone.AddSpecies(typeof(Wisp), 2); zone.AddSpecies(typeof(ShadowWisp), 1);
+        }
 
-            // ========================================================================
-            // [Yew] 유 (6개 세부 구역 - 곰의 성지)
-            // ========================================================================
-            EcoZone yewCemetery = new($"{prefixTowns} Yew Cemetery", map);
-            yewCemetery.AddSpecies(typeof(Skeleton), 25);
-            yewCemetery.AddSpecies(typeof(Zombie), 15);
-            yewCemetery.AddSpecies(typeof(Wraith), 5);         // Fame 4500
-            EcosystemManager.Zones[yewCemetery.ZoneId] = yewCemetery;
+        private static void ApplySwamp(EcoZone zone)
+        {
+            zone.AddSpecies(typeof(Alligator), 10); zone.AddSpecies(typeof(GiantToad), 8);
+            zone.AddSpecies(typeof(BullFrog), 8); zone.AddSpecies(typeof(Slime), 12);
+            zone.AddSpecies(typeof(Snake), 10); zone.AddSpecies(typeof(GiantSerpent), 6);
+            zone.AddSpecies(typeof(SilverSerpent), 1); zone.AddSpecies(typeof(SwampTentacle), 5);
+            zone.AddSpecies(typeof(Bogling), 8); zone.AddSpecies(typeof(Lizardman), 8);
+            zone.AddSpecies(typeof(Rat), 8); zone.AddSpecies(typeof(GiantRat), 8);
+            zone.AddSpecies(typeof(Corpser), 5); zone.AddSpecies(typeof(WaterElemental), 2);
+            zone.AddSpecies(typeof(Mongbat), 5); zone.AddSpecies(typeof(SwampDragon), 1);
+            zone.AddSpecies(typeof(Troll), 2); zone.AddSpecies(typeof(VampireBat), 5);
+            zone.AddSpecies(typeof(Panther), 2); zone.AddSpecies(typeof(Wisp), 1);
+        }
 
-            // 유 중앙 숲 (곰/사슴 시너지 핵심 지점)
-            EcoZone yewCenter = new($"{prefixTowns} Yew Center", map);
-            yewCenter.AddSpecies(typeof(GreatHart), 35);       // Fame 400
-            yewCenter.AddSpecies(typeof(Hind), 45);            // Fame 250
-            yewCenter.AddSpecies(typeof(BrownBear), 15);       // Fame 1000
-            yewCenter.AddSpecies(typeof(GrizzlyBear), 8);      // Fame 2000
-            yewCenter.AddSpecies(typeof(TimberWolf), 15);      // Fame 500
-            yewCenter.AddSpecies(typeof(Boar), 12);            // Fame 350
-            EcosystemManager.Zones[yewCenter.ZoneId] = yewCenter;
+        private static void ApplyDesert(EcoZone zone)
+        {
+            zone.AddSpecies(typeof(Snake), 12); zone.AddSpecies(typeof(Scorpion), 10);
+            zone.AddSpecies(typeof(GiantSerpent), 8); zone.AddSpecies(typeof(DesertOstard), 8);
+            zone.AddSpecies(typeof(SandVortex), 4); zone.AddSpecies(typeof(EarthElemental), 5);
+            zone.AddSpecies(typeof(Mummy), 2); zone.AddSpecies(typeof(Orc), 5);
+            zone.AddSpecies(typeof(OrcCaptain), 1); zone.AddSpecies(typeof(OrcishMage), 1);
+            zone.AddSpecies(typeof(Bird), 5); zone.AddSpecies(typeof(Eagle), 4);
+            zone.AddSpecies(typeof(Rat), 5); zone.AddSpecies(typeof(GiantRat), 4);
+            zone.AddSpecies(typeof(Gargoyle), 2); zone.AddSpecies(typeof(HeadlessOne), 2);
+            zone.AddSpecies(typeof(VampireBat), 5); zone.AddSpecies(typeof(Mongbat), 5);
+            zone.AddSpecies(typeof(Slime), 2);
+        }
 
-            EcoZone yewCourts = new($"{prefixTowns} Yew Courts and Prisons", map);
-            yewCourts.AddSpecies(typeof(Dog), 10);
-            yewCourts.AddSpecies(typeof(Brigand), 5);     // 기획서 반영
-            EcosystemManager.Zones[yewCourts.ZoneId] = yewCourts;
+        private static void ApplyJungle(EcoZone zone)
+        {
+            zone.AddSpecies(typeof(Bird), 10); zone.AddSpecies(typeof(Snake), 12);
+            zone.AddSpecies(typeof(GiantSerpent), 8); zone.AddSpecies(typeof(SilverSerpent), 2);
+            zone.AddSpecies(typeof(Panther), 8); zone.AddSpecies(typeof(Alligator), 8);
+            zone.AddSpecies(typeof(Slime), 8); zone.AddSpecies(typeof(GiantSpider), 6);
+            zone.AddSpecies(typeof(Wisp), 2); zone.AddSpecies(typeof(Mongbat), 5);
+            zone.AddSpecies(typeof(Rat), 5); zone.AddSpecies(typeof(GiantRat), 5);
+            zone.AddSpecies(typeof(Corpser), 4); zone.AddSpecies(typeof(Lizardman), 5);
+            zone.AddSpecies(typeof(Harpy), 2); zone.AddSpecies(typeof(Troll), 2);
+            zone.AddSpecies(typeof(Ettin), 1); zone.AddSpecies(typeof(VampireBat), 5);
+        }
 
-            EcoZone yewAbbey = new($"{prefixTowns} Yew Empath Abbey", map);
-            yewAbbey.AddSpecies(typeof(Bird), 20);
-            yewAbbey.AddSpecies(typeof(Rabbit), 10);
-            EcosystemManager.Zones[yewAbbey.ZoneId] = yewAbbey;
+        private static void ApplyOrcFort(EcoZone zone)
+        {
+            zone.AddSpecies(typeof(Orc), 18); zone.AddSpecies(typeof(OrcCaptain), 5);
+            zone.AddSpecies(typeof(OrcishMage), 4); zone.AddSpecies(typeof(OrcBrute), 1);
+            zone.AddSpecies(typeof(Rat), 8); zone.AddSpecies(typeof(GiantRat), 8);
+            zone.AddSpecies(typeof(Slime), 5); zone.AddSpecies(typeof(VampireBat), 5);
+            zone.AddSpecies(typeof(Mongbat), 4); zone.AddSpecies(typeof(Snake), 5);
+            zone.AddSpecies(typeof(TimberWolf), 2); zone.AddSpecies(typeof(DireWolf), 1);
+            zone.AddSpecies(typeof(Troll), 2); zone.AddSpecies(typeof(Ettin), 2);
+            zone.AddSpecies(typeof(Pig), 2); zone.AddSpecies(typeof(Dog), 2);
+            zone.AddSpecies(typeof(Corpser), 2); zone.AddSpecies(typeof(EarthElemental), 1);
+        }
 
-            EcoZone yewHiddenCave = new($"{prefixTowns} Yew Hidden Cave", map);
-            yewHiddenCave.AddSpecies(typeof(GrizzlyBear), 6);
-            yewHiddenCave.AddSpecies(typeof(BlackBear), 10);
-            yewHiddenCave.AddSpecies(typeof(GiantSpider), 12);
-            EcosystemManager.Zones[yewHiddenCave.ZoneId] = yewHiddenCave;
-
-            EcoZone yewOrcFort = new($"{prefixTowns} Yew Orc Fort", map);
-            yewOrcFort.AddSpecies(typeof(Orc), 35);
-            yewOrcFort.AddSpecies(typeof(OrcCaptain), 10);
-            yewOrcFort.AddSpecies(typeof(OrcishMage), 5);
-            yewOrcFort.AddSpecies(typeof(OrcBrute), 2);
-            EcosystemManager.Zones[yewOrcFort.ZoneId] = yewOrcFort;
-
-
-            // ========================================================================
-            // [Delucia] 델루시아 (3개 세부 구역)
-            // ========================================================================
-            EcoZone deluciaWatchTower = new($"{prefixTowns} Delucia Watch Tower", map);
-            deluciaWatchTower.AddSpecies(typeof(Bird), 10);
-            deluciaWatchTower.AddSpecies(typeof(Eagle), 5);
-            EcosystemManager.Zones[deluciaWatchTower.ZoneId] = deluciaWatchTower;
-
-            EcoZone deluciaCenter = new($"{prefixTowns} Delucia Center", map);
-            deluciaCenter.AddSpecies(typeof(Bull), 25);        // Fame 3000 (시너지 리스폰)
-            deluciaCenter.AddSpecies(typeof(Cow), 35);         // Fame 300
-            deluciaCenter.AddSpecies(typeof(Chicken), 25);
-            deluciaCenter.AddSpecies(typeof(Goat), 20);
-            EcosystemManager.Zones[deluciaCenter.ZoneId] = deluciaCenter;
-
-            EcoZone deluciaOrcFort = new($"{prefixTowns} Delucia Orc Fort", map);
-            deluciaOrcFort.AddSpecies(typeof(Orc), 25);
-            deluciaOrcFort.AddSpecies(typeof(OrcishMage), 8);
-            EcosystemManager.Zones[deluciaOrcFort.ZoneId] = deluciaOrcFort;
-
-
-            // ========================================================================
-            // [Papua] 파푸아 (3개 세부 구역)
-            // ========================================================================
-            EcoZone papuaInn = new($"{prefixTowns} Papua The Just Inn", map);
-            papuaInn.AddSpecies(typeof(Cat), 5);
-            EcosystemManager.Zones[papuaInn.ZoneId] = papuaInn;
-
-            EcoZone papuaCenter = new($"{prefixTowns} Papua Center", map);
-            papuaCenter.AddSpecies(typeof(Alligator), 20);     // 늪지대 포식자
-            papuaCenter.AddSpecies(typeof(Snake), 30);
-            papuaCenter.AddSpecies(typeof(BullFrog), 15);
-            papuaCenter.AddSpecies(typeof(GiantToad), 10);
-            EcosystemManager.Zones[papuaCenter.ZoneId] = papuaCenter;
-
-            EcoZone papuaDocks = new($"{prefixTowns} Papua Docks", map);
-            papuaDocks.AddSpecies(typeof(Alligator), 8);
-            papuaDocks.AddSpecies(typeof(GiantRat), 15);
-            EcosystemManager.Zones[papuaDocks.ZoneId] = papuaDocks;
-
-
-            // ========================================================================
-            // [Shrines] 신전 (9개 전체 복원)
-            // ========================================================================
-            EcoZone shrineChaos = new($"{prefixShrines} Chaos", map);
-            shrineChaos.AddSpecies(typeof(Slime), 20);
-            shrineChaos.AddSpecies(typeof(ShadowWisp), 10);
-            EcosystemManager.Zones[shrineChaos.ZoneId] = shrineChaos;
-
-            EcoZone shrineCompassion = new($"{prefixShrines} Compassion", map);
-            shrineCompassion.AddSpecies(typeof(Pixie), 10);
-            shrineCompassion.AddSpecies(typeof(Wisp), 5);
-            EcosystemManager.Zones[shrineCompassion.ZoneId] = shrineCompassion;
-
-            EcoZone shrineHonesty = new($"{prefixShrines} Honesty", map);
-            shrineHonesty.AddSpecies(typeof(Wisp), 15);
-            EcosystemManager.Zones[shrineHonesty.ZoneId] = shrineHonesty;
-
-            EcoZone shrineHonor = new($"{prefixShrines} Honor", map);
-            shrineHonor.AddSpecies(typeof(Kirin), 3);
-            shrineHonor.AddSpecies(typeof(Unicorn), 3);
-            EcosystemManager.Zones[shrineHonor.ZoneId] = shrineHonor;
-
-            EcoZone shrineHumility = new($"{prefixShrines} Humility", map);
-            shrineHumility.AddSpecies(typeof(Sheep), 20);
-            EcosystemManager.Zones[shrineHumility.ZoneId] = shrineHumility;
-
-            EcoZone shrineJustice = new($"{prefixShrines} Justice", map);
-            shrineJustice.AddSpecies(typeof(GreatHart), 15);
-            shrineJustice.AddSpecies(typeof(Eagle), 10);
-            EcosystemManager.Zones[shrineJustice.ZoneId] = shrineJustice;
-
-            EcoZone shrineSacrifice = new($"{prefixShrines} Sacrifice", map);
-            shrineSacrifice.AddSpecies(typeof(GreatHart), 15);
-            shrineSacrifice.AddSpecies(typeof(Wisp), 10);
-            EcosystemManager.Zones[shrineSacrifice.ZoneId] = shrineSacrifice;
-
-            EcoZone shrineSpirituality = new($"{prefixShrines} Spirituality", map);
-            shrineSpirituality.AddSpecies(typeof(Wisp), 10);
-            shrineSpirituality.AddSpecies(typeof(DarkWisp), 3); // Fame 3500
-            EcosystemManager.Zones[shrineSpirituality.ZoneId] = shrineSpirituality;
-
-            EcoZone shrineValor = new($"{prefixShrines} Valor", map);
-            shrineValor.AddSpecies(typeof(Drake), 5);
-            shrineValor.AddSpecies(typeof(TimberWolf), 10);
-            EcosystemManager.Zones[shrineValor.ZoneId] = shrineValor;
-
-
-            // ========================================================================
-            // [CUSTOM] 야외 생태계 (2개 세부 구역)
-            // ========================================================================
-            EcoZone hoppersBog = new($"{customPrefix} Hopper's Bog", map);
-            hoppersBog.AddSpecies(typeof(Alligator), 25);
-            hoppersBog.AddSpecies(typeof(GiantToad), 20);
-            hoppersBog.AddSpecies(typeof(SilverSerpent), 5);
-            hoppersBog.AddSpecies(typeof(SwampDragon), 5);     // 기획서 반영
-            EcosystemManager.Zones[hoppersBog.ZoneId] = hoppersBog;
-
-            EcoZone desertOfCompassion = new($"{customPrefix} Desert of Compassion", map);
-            desertOfCompassion.AddSpecies(typeof(Scorpion), 30);
-            desertOfCompassion.AddSpecies(typeof(Snake), 25);
-            desertOfCompassion.AddSpecies(typeof(Orc), 20);
-            desertOfCompassion.AddSpecies(typeof(SandVortex), 5); // 기획서 반영
-            EcosystemManager.Zones[desertOfCompassion.ZoneId] = desertOfCompassion;
+        private static void ApplyShrine(EcoZone zone)
+        {
+            zone.AddSpecies(typeof(Bird), 15); zone.AddSpecies(typeof(Rabbit), 10);
+            zone.AddSpecies(typeof(Squirrel), 10); zone.AddSpecies(typeof(Hind), 8);
+            zone.AddSpecies(typeof(GreatHart), 5); zone.AddSpecies(typeof(Horse), 5);
+            zone.AddSpecies(typeof(Eagle), 5); zone.AddSpecies(typeof(Wisp), 8);
+            zone.AddSpecies(typeof(Pixie), 5); zone.AddSpecies(typeof(Centaur), 2);
+            zone.AddSpecies(typeof(Unicorn), 1); zone.AddSpecies(typeof(Kirin), 1);
+            zone.AddSpecies(typeof(Dog), 2); zone.AddSpecies(typeof(Cat), 2);
+            zone.AddSpecies(typeof(Panther), 1); zone.AddSpecies(typeof(DireWolf), 1);
+            zone.AddSpecies(typeof(TimberWolf), 2); zone.AddSpecies(typeof(Slime), 2);
+            zone.AddSpecies(typeof(Rat), 2); zone.AddSpecies(typeof(VampireBat), 2);
         }
     }
 }

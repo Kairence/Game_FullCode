@@ -12,7 +12,7 @@ namespace Server.Misc
         // --- [물리 법칙] 현실 1일(1440분) = 게임 1년(360일) ---
         public const double GameYearMinutes = 1440.0;
 
-        public string Name { get; set; } = "Citizen";
+        //public string Name { get; set; } = "Citizen";
         public int Fame { get; set; }          
         public int Karma { get; set; }
         public Dictionary<SkillName, double> Skills { get; set; }
@@ -49,12 +49,18 @@ namespace Server.Misc
         public int LastProcessedHour { get; set; } = -1;
         public DateTime LastSurvivalTick { get; set; } = DateTime.Now;
 
+		public BioStats Bio { get; set; } = new BioStats();
+
+		public int Generation { get; set; } = 1; // 기본값은 1대
+
         // --- 생성자 ---
-        public VirtualCitizen(NpcJobClass job, NobilityRank rank, int satisfaction) : base(job, NpcRank.Novice)
+        public VirtualCitizen(NpcJobClass job, NobilityRank rank, int satisfaction, int gen = 1) : base(job, NpcRank.Novice)
         {
+			Generation = gen;
             RankLevel = rank;
             Satisfaction = satisfaction;
-            Gender = Utility.RandomBool() ? Gender.Male : Gender.Female;
+            string genderString = Gender == Gender.Female ? "female" : "male";
+            Name = NameList.RandomName(genderString);
 
             // 1. 수명 설정: 60~90세 (현실 60~90일 생존)
             int gameMaxAge = Utility.RandomMinMax(60, 90);
@@ -114,8 +120,9 @@ namespace Server.Misc
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-            writer.Write(4); // LastProcessedHour 추가에 따른 버전 업
+            writer.Write(5); // LastProcessedHour 추가에 따른 버전 업
 
+            writer.Write((int)Generation);
             writer.Write(Name);
             writer.Write(Fame);
             writer.Write(Karma);
@@ -139,6 +146,7 @@ namespace Server.Misc
         public VirtualCitizen(GenericReader reader) : base(reader)
         {
             int version = reader.ReadInt();
+			Generation = reader.ReadInt();
             Name = reader.ReadString();
             Fame = reader.ReadInt();
             Karma = reader.ReadInt();

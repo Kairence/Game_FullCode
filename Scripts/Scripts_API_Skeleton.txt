@@ -1,0 +1,2039 @@
+﻿// [Kairence Engine Auto-Generated Skeleton]
+// AI 컨텍스트 참조용 뼈대 파일입니다. (자동 생성됨)
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\EconomyCore.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Server;
+using Server.Items;
+using Server.Mobiles;
+namespace Server.Misc
+    public enum NpcJobClass
+    public enum NpcRank { Novice, Journeyman, Expert, Master }
+    public abstract class VirtualAgent
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\EconomyTagHelper.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Server;
+using Server.Items;
+namespace Server.Misc
+    public enum ItemTag 
+    public static class EconomyTagHelper
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\EcosystemHarvester.cs
+// ==========================================
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Server;
+using Server.Items;
+using Server.Mobiles;
+namespace Server.Misc
+    public static class EcosystemHarvester
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\PartTimeManager.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Server;
+using Server.Items;
+using Server.Mobiles;
+using Server.Regions;
+namespace Server.Misc
+    public enum JobTier { Beginner, Intermediate, Advanced, Special }
+    public enum JobType { Delivery, Gathering, Hunting }
+    public class PartTimeJob
+    public class PartTimeAccountProfile
+    public static class PartTimeManager
+            using (FileStream stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\RankAndTerritorySystem.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.IO;
+using Server;
+using Server.Accounting;
+using Server.Commands;
+using Server.Items;
+using Server.Mobiles;
+namespace Server.Misc
+    public enum NobilityRank
+    public class RankInfo
+    public class TerritoryProfile
+    public class RankAndTerritorySystem
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\TownEconomy.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Server;
+using Server.Mobiles;
+namespace Server.Misc
+    public class TownInventoryEntry
+    public class WarehouseItem
+    public class TownEconomy
+    public static class TownEconomyManager
+                using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None)) {
+                    using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\TownNumber.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Server;
+using Server.Regions;
+namespace Server.Misc
+    public static class TownNumber
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\VendorNode.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using Server;
+using Server.Mobiles;
+using System.Linq;
+namespace Server.Misc
+    public class VendorNode : Item
+        private class InternalTimer : Timer
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\VendorNodeManager.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml;
+using Server;
+using Server.Commands;
+using Server.Items;
+using Server.Mobiles;
+namespace Server.Misc
+    public static class VendorNodeManager
+            using (StreamWriter writer = new StreamWriter(path))
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\Economy Gump\EconomyAdminGump.cs
+// ==========================================
+using System;
+using System.Linq;
+using Server.Network;
+using Server.Gumps;
+using Server.Misc;
+using System.Collections.Generic;
+using Server.Mobiles;
+namespace Server.Misc
+    public class EconomyAdminGump : Gump
+    public class EconomyItemEditGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\Economy Gump\EconomyCitizenGump.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Server.Network;
+using Server.Gumps;
+using Server.Misc;
+using Server.Commands;
+using Server.Items;
+namespace Server.Misc
+    public class EconomyTestCommand
+    public class EconomyMonitorCommand
+    public class EconomyCitizenMainGump : Gump
+    public class EconomyCitizenListGump : Gump
+    public class EconomyCitizenEditGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\Economy Gump\EconomyGlobalNpcGump.cs
+// ==========================================
+using System;
+using System.Linq;
+using Server.Gumps;
+using Server.Network;
+namespace Server.Misc
+    public class EconomyGlobalNpcGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\Economy Gump\GlobalEconomyReport.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Linq;
+using Server;
+using Server.Regions;
+namespace Server.Misc
+    public static class TownEconomyExporter
+            using (StreamWriter sw = new StreamWriter(path, false, Encoding.UTF8))
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\Economy Gump\TownReportExporter.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Linq;
+using Server;
+namespace Server.Misc
+    public static class GlobalEconomyReport
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\Economy Gump\TownSocietyGump.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Server;
+using Server.Gumps;
+using Server.Network;
+namespace Server.Misc
+    public class TownSocietyGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\Economy Gump\VendorNodeGump.cs
+// ==========================================
+using System;
+using Server;
+using Server.Gumps;
+using Server.Network;
+namespace Server.Misc
+    public class VendorNodeGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\NPC Group\FamilyData.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using Server;
+using Server.Items;      
+using Server.Mobiles;    
+using Server.Engines.Craft; 
+using System.Linq;
+namespace Server.Misc
+    public enum StorageTier { None, Small, Medium, Large, Special }
+    public static class StorageEconomy
+	public enum WorkshopBonusType { SuccessRate, ExceptionalChance, ResourceSave }
+	public enum WorkshopTier { Small, Medium, Large }
+    public static class WorkshopEconomy
+    public enum ClothSlot { Head, Shirt, Pants, Outer, Footwear, Misc }
+    public static class ClothingEconomy //각 부위당 스트레스 체크. 3벌 이하면 각 1점씩 증가(0벌이면 3점. 6부위면 총 스트레스 18점 증가). 한 부위당 4벌 이상이면 스트레스 1점 감소. 최대 한 부위당 2점(5벌)
+	public static class FameEconomy //요구 명성당 해당 점수 이상의 가구가 있어야 함
+    public class AncestorRecord
+    public class FamilyUnit
+    public class VirtualHouse
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\NPC Group\TownDemographics.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Server;
+using Server.Items;
+using Server.Mobiles;
+namespace Server.Misc
+    public enum TownType { Agricultural, Industrial, Academic, Metropolis }
+    public class TownDemographics
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\NPC Group\TownDonationManager.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+namespace Server.Misc
+    public static class TownDonationManager
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\NPC Group\TownEventController.cs
+// ==========================================
+using System;
+using Server;
+namespace Server.Misc
+    public static class TownEventController
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\NPC Group\TownSocialRegistry.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using Server;
+namespace Server.Misc
+    public static class TownSocialRegistry
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\NPC Group\TownSocietyEngine.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Server;
+namespace Server.Misc
+    public static class TownSocietyEngine
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\NPC Group\VirtualAdventurer.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Server;
+using Server.Items;
+using Server.Mobiles;
+using Server.Network;
+namespace Server.Misc
+    public enum AdventurerState 
+    public enum WorldNodeType 
+    public class WorldNode
+    public class AdventurerParty
+    public class VirtualAdventurer : VirtualAgent
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\NPC Group\VirtualCitizen.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using Server;
+using Server.Items;
+namespace Server.Misc
+    public enum Gender { Male, Female }
+    public class VirtualCitizen : VirtualAgent
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\NPC Group\VirtualCitizenAI.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Server;
+using Server.Items;
+namespace Server.Misc
+    public static class VirtualCitizenAI
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\NPC Group\VirtualEconomyAI.cs
+// ==========================================
+using System;
+using System.Collections.Generic; // [★ 추가]
+using System.Linq;
+using Server;
+using Server.Items;
+using Server.Mobiles;
+namespace Server.Misc
+    public static class VirtualEconomyAI
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\NPC Group\VirtualEducation.cs
+// ==========================================
+using System;
+using System.Linq;
+using Server;
+namespace Server.Misc
+    public static class VirtualEducation
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\NPC Group\VirtualJobCore.cs
+// ==========================================
+using System;
+using Server;
+using Server.Items;
+using Server.Mobiles; // [추가] PackHorse, PackLlama를 위해 필수
+using Server.Multis;  // [추가] BoatDeed 관련
+namespace Server.Misc
+    public static class VirtualJobCore
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\NPC Group\VirtualTradeAI.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Server;
+using Server.Items;
+using Server.Mobiles;
+namespace Server.Misc
+    public static class VirtualTradeAI
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\CityTeleporter.cs
+// ==========================================
+using Server;
+using System;
+using Server.Mobiles;
+using Server.Engines.Despise;
+using System.Collections.Generic;
+using System.Linq;
+using Server.Gumps;
+using Server.Network;
+namespace Server.Items
+    public class CityTeleporter : Teleporter
+	public class CitygateConfirmGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\EnhanceChance.cs
+// ==========================================
+using System;
+using Server;
+using Server.Items;
+using Server.Mobiles;
+namespace Server.Misc
+    public static class EnhancedChance
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\GoldDistributor.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using Server.Mobiles;
+using Server.Items;
+using Server.Engines.PartySystem;
+namespace Server.Misc
+    public static class GoldDistributor
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\HiddenTeleporter.cs
+// ==========================================
+using Server;
+using System;
+using Server.Mobiles;
+using Server.Engines.Despise;
+using System.Collections.Generic;
+using System.Linq;
+using Server.Gumps;
+using Server.Network;
+using Server.Regions;
+namespace Server.Items
+    public class HiddenTeleporter : Teleporter
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\ItemCheckMorphItem.cs
+// ==========================================
+using System;
+using Server.Regions;
+using Server.Mobiles;
+namespace Server.Items
+    public class ItemCheckMorphItem : Item
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\LauncherAuth.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using Server;
+using Server.Accounting;
+using Server.Network;
+using Server.Commands; // [추가] 인게임 명령어를 위해 필요
+namespace Server.Custom
+    public class LauncherAuth
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Levels.cs
+// ==========================================
+using System;
+using System.Text;
+using Server;
+using Server.Mobiles;
+using Server.Items;
+namespace Server.Misc
+	public class Levels
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\MonsterDropHandler.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.IO;
+using Server.Mobiles;
+using Server.Items;
+namespace Server.Misc
+    public class DropEntry
+    public class MonsterDropHandler
+                using (StreamReader sr = new StreamReader(ConfigPath))
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\PlayerblePiano.cs
+// ==========================================
+using System;
+using System.Collections;
+using Server;
+using Server.Items;
+using Server.Network;
+using Server.Mobiles;
+using Server.Gumps;
+namespace Server.Items
+    public class PianoAddon : BaseAddon
+    public class PianoAddonDeed : BaseAddonDeed
+namespace Server.Gumps
+    public class PianoGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\ServerOpen.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Text; 
+using Server;
+using Server.Mobiles;
+using Server.Accounting;
+namespace AutoUserConnect
+    public class SummonEntry
+    public class AutoUserConnect : Timer
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\ShameMoongate.cs
+// ==========================================
+using System;
+using Server.Items;
+using Server.Gumps;
+namespace Server.Items
+	public class ShameMoongate : Item
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\ShameMoongateGump.cs
+// ==========================================
+using System;
+using Server;
+using Server.Gumps;
+using Server.Items;
+using Server.Mobiles;
+using Server.Network;
+using Server.Commands;
+using Server.Factions;
+namespace Server.Gumps
+	public class ShameMoongateGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Util.cs
+// ==========================================
+using System;
+using System.Text;
+using Server;
+using Server.Mobiles;
+using Server.Items;
+using Server.Engines.Craft;
+using Server.Accounting;
+using Server.Engines.VeteranRewards;
+using System.Collections.Generic;
+using Server.Gumps;
+using Server.Network;
+namespace Server.Misc
+	public class Util
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Aggro System\AggroCheckCommand.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Server.Mobiles;
+using Server.Targeting;
+using Server.Commands;
+namespace Server.Commands
+    public class AggroCommands
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Aggro System\AggroControl.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using Server;
+using Server.Items;
+namespace Server.Mobiles
+    public class AggroControl
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Aggro System\BaseCreatureAggroScore.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Targeting;
+using System.Collections.Generic;
+namespace Server.Commands
+    public class BaseCreatureAggroScoreInfoCommand
+        private class InternalTarget : Target
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Animal Setting System\AnimalPassiveSkillHandler.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using System.Collections.Generic;
+using System.Linq;
+namespace Server.Misc
+    public class PassiveEffect
+    public partial class AnimalPassiveSkillHandler
+        public enum PassiveID
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Animal Setting System\CreatureBalancer.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Items;
+namespace Server.Misc
+    public static class CreatureBalancer
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Animal Setting System\SummonPoolManager.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using Server.Mobiles;
+namespace Server.Spells
+    public struct SummonInfo
+    public class SummonPoolManager
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Casino\Slot_Machine.cs
+// ==========================================
+using System;
+using Server;
+using Server.Gumps;
+using Server.Network;
+using Server.Items;
+using Server.Commands;
+namespace Server.Misc
+    public class SlotMachineGump : Gump
+        private class SlotOpenTimer : Timer
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Dungeon Check System\DungeonCheck.cs
+// ==========================================
+using System;
+using Server.Items;
+using Server.Gumps;
+using Server.Network;
+using Server.Mobiles;
+namespace Server.Items
+	public class DungeonCheck : Item
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Dungeon Check System\DungeonCheckGump.cs
+// ==========================================
+using System;
+using Server;
+using Server.Items;
+using Server.Network;
+using Server.Mobiles;
+using Server.Targeting;
+namespace Server.Gumps
+    public class DungeonCheckGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\FirstSkillUser\FirstSkillCheck.cs
+// ==========================================
+using System;
+using Server.Items;
+using Server.Gumps;
+using Server.Network;
+using Server.Mobiles;
+namespace Server.Items
+	public class FirstSkillCheck : Item
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\FirstSkillUser\FirstSkillCheckGump.cs
+// ==========================================
+using System;
+using Server;
+using Server.Items;
+using Server.Network;
+using Server.Mobiles;
+using Server.Targeting;
+namespace Server.Gumps
+    public class FirstSkillCheckGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Monster List\Standard.cs
+// ==========================================
+using Server.Items;
+using System;
+using Server.Mobiles;
+namespace Server.Lists
+	public class Monsters
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Combat System\CombatEngine.cs
+// ==========================================
+using System;
+using Server;
+using Server.Items;
+using Server.Mobiles;
+using Server.Network;
+namespace Server.Misc
+    public static class CombatEngine
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Combat System\EditOptionGump.cs
+// ==========================================
+using System;
+using Server;
+using Server.Items;
+using Server.Mobiles;
+using Server.Commands;
+using Server.Targeting;
+using Server.Gumps;
+using Server.Network;
+namespace Server.Misc
+    class EditOptionCommand
+        private class InternalTarget : Target
+    class EditOptionGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Combat System\HitLocationManager.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Items;
+namespace Server.Misc
+	public class HitLocationManager
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Combat System\ItemOptionCreator.cs
+// ==========================================
+using System;
+using System.Text;
+using Server;
+using Server.Mobiles;
+using Server.Items;
+using Server.Engines.Craft;
+using System.Collections.Generic;
+using System.Collections.Frozen;
+using System.Linq;
+namespace Server.Misc
+    public enum CustomOption : int
+    public enum LootGroup : int
+    public readonly record struct OptionData(
+    public class ItemOptionCreator
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Combat System\NewDurabilityManager.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using Server;
+using Server.Items;
+using Server.Network;
+namespace Server.Misc
+    public static class NewDurabilityManager
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Combat System\NewOptionOPL.cs
+// ==========================================
+using System;
+using Server;
+using Server.Items;
+using Server.Mobiles;
+using Server.Engines.XmlSpawner2;
+using System.Collections.Generic;
+namespace Server.Misc
+    public class NewOptionOPL
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Combat System\Setitem.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Items;
+using System.Collections.Generic;
+using System.Linq;
+namespace Server.Misc
+    public static class SetItem
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Combat System\SpecialAbilityManager.cs
+// ==========================================
+using System;
+using System.Collections;
+using Server.Mobiles;
+using Server.Network;
+using Server.Items;
+namespace Server.Misc
+    public class SpecialAbilityManager
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Combat System\TotalAttributes.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using Server;
+namespace Server.Items
+    public class TotalAttributes
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New House Extension System\ExAddonSystem.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using Server;
+using Server.Items;
+using Server.Multis;
+using Server.Mobiles;
+namespace Server.Misc
+    public class ExAddonSystem
+    public class ExAddOnTile : Item
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\NewSpawnManager.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Xml;
+using Server;
+using Server.Commands;
+using Server.Gumps;
+using Server.Items;
+using Server.Mobiles;
+using Server.Network;
+using Server.Regions;
+using System.Xml.Linq;
+namespace Server.Misc
+    public class NewSpawnManager
+                using (XmlTextWriter xml = new XmlTextWriter(dPath, System.Text.Encoding.UTF8))
+                using (XmlWriter writer = XmlWriter.Create(vPath, settings))
+    public class NewSpawnGump : Gump
+    public class NodeCheckGump : Gump
+    public class ZoneMonitorGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Trap System\FlameSpurtTrap.cs
+// ==========================================
+using System;
+namespace Server.Items
+    public class FlameSpurtTrap : BaseTrap
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Trap System\GiantSpikeTrap.cs
+// ==========================================
+using System;
+namespace Server.Items
+    public class GiantSpikeTrap : BaseTrap
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Trap System\IRevealableItem.cs
+// ==========================================
+using System;
+namespace Server.Items
+    public interface IRevealableItem
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Player Commands\AutoFood - 복사본.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Network;
+using Server.Gumps;
+using Server.Commands.Generic;
+using Server.Accounting;
+using Server.Targeting;
+using Server.Items;
+using Server.Multis;
+namespace Server.Commands
+	public class AllMoveInfoCommand
+		private class InternalTarget : Target
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Player Commands\AutoFood.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Network;
+using Server.Gumps;
+using Server.Commands.Generic;
+using Server.Accounting;
+using Server.Targeting;
+using Server.Items;
+namespace Server.Commands
+	public class UserAutoFoodInfoCommand
+		private class InternalTarget : Target
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Player Commands\EffectCommand.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Network;
+namespace Server.Commands
+	public class EffectCheckCommand
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Player Commands\EquipPoint.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Network;
+using Server.Gumps;
+using Server.Commands.Generic;
+using Server.Accounting;
+using Server.Targeting;
+using Server.Items;
+namespace Server.Commands
+	public class EquipPointInfoCommand
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Player Commands\GoldCommand.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Network;
+using Server.Gumps;
+using Server.Commands.Generic;
+using Server.Accounting;
+using Server.Targeting;
+namespace Server.Commands
+	public class UserGoldInfoCommand
+		private class InternalTarget : Target
+	public class GoldInfoCommand
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Player Commands\LoopCommand.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Network;
+using Server.Commands.Generic;
+namespace Server.Commands
+	public class LoopInfoCommand
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Player Commands\ObjectSaveCommand.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Commands.Generic;
+using System.Collections.Generic;
+using Server.Targeting;
+using Server.Items;
+using Server.Spells;
+using Server.Network;
+namespace Server.Commands
+	public class ItemSaveInfoCommand
+		private class InternalTarget : Target
+	public class MonsterSaveInfoCommand
+		private class InternalTarget : Target
+	public class PetSaveInfoCommand
+		private class InternalTarget : Target
+	public class PlayerSaveInfoCommand
+		private class InternalTarget : Target
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Player Commands\SearchImage.cs
+// ==========================================
+using System;
+using Server;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using Server.Commands;
+using Server.Targeting;
+using Server.Misc;
+using Server.Items;
+using Server.Gumps;
+using Server.Multis;
+using Server.Network;
+namespace Server.Custom
+	public class SearchImageCommand
+    public class BrowseImageNamesGump : Gump
+    public class ImageDetailsGump : Gump
+	public class SearchImageGump : Gump
+		private class TileState
+		private class CreateItemTarget : Target
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Player Commands\SeasonCommand.cs
+// ==========================================
+using System;
+using Server;
+using Server.Commands;
+using Server.Gumps;
+namespace Server.Misc
+    public class SeasonCommand
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Player Commands\StatCommand.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Network;
+using Server.Gumps;
+using Server.Commands.Generic;
+using Server.Accounting;
+using Server.Targeting;
+namespace Server.Commands
+	public class UserStatInfoCommand
+		private class InternalTarget : Target
+	public class StatInfoCommand
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Player Commands\YoungCommand.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Network;
+using Server.Misc;
+using Server.Targeting;
+namespace Server.Commands
+    public class YoungInfoCommand
+        private class YoungTarget : Target
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Point System\AllPointGump.cs
+// ==========================================
+using System;
+using Server;
+using Server.Items;
+using Server.Network;
+using Server.Mobiles;
+using Server.Targeting;
+using Server.Multis;
+using Server.Accounting;
+using System.Collections.Generic;
+namespace Server.Gumps
+	public class CityPointGump : Gump
+        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+    public class GoldPointGump : Gump
+		private string[] GrawName = { "채집 경험 증가", "고급 채집 증가", "채집 수량 증가", "채집 변환 증가", "제작 경험 증가", "제작 성공 증가", "고급 제작 증가", "제작 수량 증가" };
+		private int pointCal( int number, int level )
+		private PlayerMobile m_pm;
+		private int m_Harvestpoint = 0; 
+		private int m_Craftpoint = 0; 
+        public GoldPointGump(PlayerMobile pm) : base(50, 50)
+        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+        private void SendGump()
+    public class SilverPointGump : Gump
+		private PlayerMobile m_pm;
+		private string[] Name = { "전투 경험 증가", "어그로 증가", "어그로 감소", "특수기 확률 증가", "무기 데미지 증가", "마법 데미지 증가", "관통 데미지 증가", "충격 데미지 증가", "출혈 데미지 증가", "화염 데미지 증가", "냉기 데미지 증가", "독 데미지 증가", "에너지 데미지 증가", "치유량 증가", "회복량 증가", "무기 치명타 확률 증가", "마법 치명타 확률 증가", "무기 치명타 데미지 증가", "마법 치명타 데미지 증가", "체력 증가", "기력 증가", "마나 증가", "체력 재생 증가", "기력 재생 증가", "마나 재생 증가", "모든 저항 증가", "힘 증가", "민첩 증가", "지능 증가", "운 증가" };
+		private string[] Point_Name = {"희귀 포인트", "영웅 포인트", "서사 포인트", "전설 포인트", "신화 포인트" };
+		private string[] Basic_Dungeon_Name = {"코베투스", "데스파이즈", "디싯", "쉐임", "오크 던전", "롱 던전", "아이스 던전", "파이어 던전", "히스로스 던전", "데스타드 던전" };
+		private int[] Space = { 0, 2, 3, 5, 8, 12, 14, 16, 18, 21, 24 };
+		private int m_point = 0; 
+        public SilverPointGump(PlayerMobile pm) : base(50, 50)
+        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+		private class InternalTarget : Target
+        private void SendGump()
+    public class EquipPointGump : Gump //1포인트 기대값 171.6666666 지피
+		private PlayerMobile m_pm;
+		private string[] NameA = { "로그인 보너스" }; //, "생산 포인트 (10 포인트)", "전투 포인트 (10 포인트)" }; 
+		private string[] Name = { "광물 채집", "목재 채집", "가죽 채집", "생산품 제작", "1만 명성", "2만 명성", "3만 명성" }; 
+		private string[] accProduct = { "케릭터 구매", "집 구매", "스킬 경험치 1% 증가 구매" };
+		private string[] goldProduct = { "즉석 복권 구매(0.25% 100만, 1% 10만, 10% 1만)", "추첨 복권 구매", "시약 8종 1000세트 6천", "시약 8종 10000세트 6만", "집 텔레포트 10만" };
+		private int[] GivePoint = { 100, 900, 8500, 80000 };
+		private int[] CharacterBuyPrice = { 10, 80, 500, 2500, 10000, 25000 }; 
+		private int[] Price = { 15, 150, 17, 165, 1600, 10000 };
+		private int[] goldPrice = { 1000, 1000, 6000, 60000, 100000 };
+        public EquipPointGump(PlayerMobile pm) : base(50, 50)
+		private void RandomCheck_Reward( PlayerMobile pm )
+		private void DonationSave( Account acc, int donation )
+        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+        private void SendGump()
+    public class ArtifactPointGump : Gump
+		private PlayerMobile m_pm;
+		private string[] Name = { "힘 증가", "민첩성 증가", "지능 증가", "행운 증가", "체력 증가", "기력 증가", "마나 증가", "물리 데미지 증가", "마법 데미지 증가", "물리 데미지 감소", "마법 데미지 감소", "추종자 증가"};
+        public ArtifactPointGump(PlayerMobile pm) : base(50, 50)
+        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+        private void SendGump()
+    public class SkillPointGump : Gump
+		private PlayerMobile m_pm;
+		private FirstSkillCheck fsc = null;
+		private int price = 0;
+        public SkillPointGump(PlayerMobile pm) : base(50, 50)
+		private double SkillPercent(PlayerMobile pm, int skill )
+        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+        private void SendGump()
+    public class HarvestGump : Gump
+		private string[] HarvestName =
+        public HarvestGump(PlayerMobile pm) : base(50, 50)
+        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+        private void SendGump()
+        private string CenterGray(string format)
+        private string LeftGreen(string format)
+    public class CraftingGump : Gump
+		private string[] CraftName = 
+        public CraftingGump(PlayerMobile pm) : base(50, 50)
+        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+        private void SendGump()
+        private string CenterGray(string format)
+        private string LeftGreen(string format)
+	public class MonsterFeatGump : Gump
+        private string CenterGray(string format)
+        private string RightGray(string format)
+        private string LeftGray(string format)
+        private string LeftGreen(string format)
+        public MonsterFeatGump(PlayerMobile pm) : base(50, 50)
+        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+        private void SendGump()
+    public class SavingAccountGump : Gump
+		private string[,] Name =
+        public SavingAccountGump(PlayerMobile pm, int list) : base(50, 50)
+		private string PointText( int ranking, string point ) 
+        private string CenterGray(string format)
+        private string RightGray(string format)
+        private string LeftGray(string format)
+        private string LeftGreen(string format)
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Point System\EquipBag.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using Server.ContextMenus;
+using Server.Engines.Craft;
+using Server.Network;
+using System.Linq;
+using Server.Mobiles;
+using Server.Gumps;
+namespace Server.Items
+    public class EquipBag : Bag
+        private class OnEntry : ContextMenuEntry
+        private class AllEntry : ContextMenuEntry
+        private class WeaponEntry : ContextMenuEntry
+        private class ArmorEntry : ContextMenuEntry
+        private class JewelryEntry : ContextMenuEntry
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Season\MonsterListGump.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using Server.Gumps;
+using Server.Network;
+using Server.Commands;
+using Server.Mobiles;
+namespace Server.Misc
+    public class MonsterDropHandlerGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Season\ResourceAchievementGump.cs
+// ==========================================
+using System;
+using Server.Gumps;
+using Server.Network;
+using Server.Mobiles;
+using Server.Accounting;
+namespace Server.Misc
+    public class ResourceAchievementGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Season\SeasonController.cs
+// ==========================================
+using System;
+using Server.Mobiles;
+using Server.Accounting;
+using Server.Network;
+namespace Server.Misc
+    public class SeasonController
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Season\SeasonCount.cs
+// ==========================================
+using System;
+using Server.Accounting;
+namespace Server.Misc
+    public class SeasonCount
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Season\SeasonMainGump.cs
+// ==========================================
+using System;
+using Server;
+using Server.Gumps;
+using Server.Network;
+using Server.Commands;
+using Server.Mobiles;
+using Server.Accounting;
+namespace Server.Misc
+    public class SeasonMainGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Season\SeasonRankingGump.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Server.Gumps;
+using Server.Mobiles;
+using Server.Network;
+using Server.Accounting;
+using System.Text.RegularExpressions;
+namespace Server.Misc
+    public enum RankingType { Skill, Resource, Monster }
+    public class SeasonRankingGump : Gump
+        public class RankEntry
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Season\SkillAchievementGump.cs
+// ==========================================
+using System;
+using Server.Gumps;
+using Server.Network;
+using Server.Mobiles;
+namespace Server.Misc
+    public class SkillAchievementGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Staff Commands\AllBaseCreatureDelete.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Commands.Generic;
+using System.Collections.Generic;
+namespace Server.Commands
+	public class AllBaseCreatureDeleteInfoCommand
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Staff Commands\BaseCreatureDelete.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Commands.Generic;
+using System.Collections.Generic;
+namespace Server.Commands
+	public class BaseCreatureDeleteInfoCommand
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Staff Commands\LeaderRewardTimeCommand.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Network;
+using Server.Commands.Generic;
+using Server.Accounting;
+using Server.Targeting;
+using Server.Items;
+namespace Server.Commands
+	public class LeaderRewardTimeInfoCommand
+	public class LeaderRewardTimeResetInfoCommand
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Staff Commands\MonsterList.cs
+// ==========================================
+using System;
+using Server;
+using Server.Commands;
+using Server.Misc; // MonsterDropHandler와 Gump가 있는 네임스페이스
+namespace Server.Commands
+    public class MonsterDropHandlerCommand
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Staff Commands\OldMagicItemDelete.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Commands.Generic;
+using System.Collections.Generic;
+using Server.Items;
+namespace Server.Commands
+	public class OldMagicItemDeleteInfoCommand
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Staff Commands\XmlSpawnerDelete.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Commands.Generic;
+using System.Collections.Generic;
+namespace Server.Commands
+	public class XmlSpawnerDeleteInfoCommand
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Staff Commands\XmlSpawnerGo.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Commands.Generic;
+using System.Collections.Generic;
+namespace Server.Commands
+	public class XmlSpawnerGoInfoCommand
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Staff Commands\XmlSpawnerReset.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Commands.Generic;
+using System.Collections.Generic;
+using Server.Regions;
+namespace Server.Commands
+	public class XmlSpawnerResetInfoCommand
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Town Ship System\ShipController.cs
+// ==========================================
+using System;
+using Server.Gumps;
+using Server.Items;
+using System.Collections;
+using Server.ContextMenus;
+using System.Collections.Generic; 
+namespace Server.Mobiles
+	public class ShipController : BaseCreature
+		public class ShipEntry : ContextMenuEntry
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\World Omniporter v2.5\ConfirmGump.cs
+// ==========================================
+using System;
+using Server;
+using System.Collections.Generic;
+namespace Server.Gumps
+	public delegate void ConfirmGumpCallback( Mobile from, bool okay );
+	public class ConfirmGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\World Omniporter v2.5\WorldOmniporter.cs
+// ==========================================
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using Server;
+using Server.Gumps;
+using Server.Network;
+using Server.Mobiles;
+using Server.Commands;
+using Server.Commands.Generic;
+using Server.Items;
+using Server.Regions;
+namespace Server.Items
+	public class UseEntry
+	public class WorldOmniporter : Item
+		public enum OptFlags
+	public class WorldOmniporterGump : Gump
+	public class OmniEntry
+	public class WorldOmniGenCommand
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\WorldEvent\Event.cs
+// ==========================================
+using Server.Items;
+using Server.Mobiles;
+using System;
+namespace Server
+	public class Event
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Admin Toolbar\Core\ToolbarCore.cs
+// ==========================================
+using System;
+using CustomsFramework;
+using Server;
+using Server.Commands;
+using Server.Gumps;
+using Services.Toolbar.Gumps;
+namespace Services.Toolbar.Core
+	public class ToolbarCore : BaseCore
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Admin Toolbar\Core\ToolbarInfo.cs
+// ==========================================
+using System.Collections.Generic;
+using CustomsFramework;
+using Server;
+using Server.Commands;
+namespace Services.Toolbar.Core
+	public class ToolbarInfo
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Admin Toolbar\Core\ToolbarModule.cs
+// ==========================================
+using System;
+using CustomsFramework;
+using Server;
+using Services.Toolbar.Core;
+namespace Services.Toolbar
+	public class ToolbarModule : BaseModule
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Admin Toolbar\Gumps\GumpIDs.cs
+// ==========================================
+namespace Services.Toolbar.Gumps
+	public class GumpIDs
+		public enum MiscIDs
+		public enum ButtonIDs
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Admin Toolbar\Gumps\Toolbar.cs
+// ==========================================
+using System;
+using Server;
+using Server.Commands;
+using Server.Gumps;
+using Server.Network;
+using Services.Toolbar.Core;
+namespace Services.Toolbar.Gumps
+	public class ToolbarGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Admin Toolbar\Gumps\ToolbarEdit.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Server;
+using Server.Gumps;
+using Server.Network;
+using Services.Toolbar.Core;
+namespace Services.Toolbar.Gumps
+	public class ToolbarEdit : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Dungeon\DungeonNode.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Server;
+using Server.Gumps;
+using Server.Network;
+using Server.Regions;
+namespace Server.Misc
+    public enum DungeonDepth
+    public class DungeonNode : Item
+    public class DungeonNodeGump : Gump
+    public class NodeTreeGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Dungeon\FeluccaDungeon.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+namespace Server.Misc
+    public static class FeluccaDungeon
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Dungeon\IlshenarDungeon.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+namespace Server.Misc
+    public static class IlshenarDungeon
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Dungeon\MalasDungeon.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+namespace Server.Misc
+    public static class MalasDungeon
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Dungeon\RespawnCore.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Server;
+using Server.Items;
+using Server.Mobiles;
+namespace Server.Misc
+    public enum DungeonPhase { Active, BossSpawned, Cooldown }
+    public class SpeciesState
+    public class EcoZone
+    public class DungeonZone
+    public static class DungeonManager
+            using (FileStream fs = new FileStream(pathE, FileMode.Create)) { BinaryFileWriter w = new BinaryFileWriter(fs, true); w.Write(0); w.Write(EcoZones.Count); foreach (var z in EcoZones.Values) { w.Write(z.ZoneId); w.Write(z.SpeciesInfo.Count); foreach (var sp in z.SpeciesInfo.Values) sp.Serialize(w); } w.Close(); }
+            using (FileStream fs = new FileStream(pathD, FileMode.Create)) { BinaryFileWriter w = new BinaryFileWriter(fs, true); w.Write(0); w.Write(Zones.Count); foreach (var d in Zones.Values) d.Serialize(w); w.Close(); }
+    public static class EcosystemManager { public static Dictionary<string, EcoZone> Zones => DungeonManager.EcoZones; }
+    public static class DungeonEcology { public static void SetupAllEcologies() { FeluccaEcology.Setup(); TrammelEcology.Setup(); IlshenarEcology.Setup(); MalasEcology.Setup(); TokunoEcology.Setup(); TerMurEcology.Setup(); } }
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Dungeon\TermurDungeon.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+namespace Server.Misc
+    public static class TerMurDungeon
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Dungeon\TokunoDungeon.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+namespace Server.Misc
+    public static class TokunoDungeon
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Dungeon\TrammelDungeon.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+namespace Server.Misc
+    public static class TrammelDungeon
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Eco\FeluccaEcology.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+namespace Server.Misc
+    public static class FeluccaEcology
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Eco\IlshenarEcology.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+namespace Server.Misc
+    public static class IlshenarEcology
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Eco\MalasEcology.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+namespace Server.Misc
+    public static class MalasEcology
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Eco\TermurEcology.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+namespace Server.Misc
+    public static class TerMurEcology
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Eco\TokunoEcology.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+namespace Server.Misc
+    public static class TokunoEcology
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Eco\TrammelEcology.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+namespace Server.Misc
+    public static class TrammelEcology
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\OutpostManager.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.IO;
+using Server;
+namespace Server.Misc
+    public enum OutpostType
+    public class OutpostInfo
+    public static class OutpostManager
+            using (FileStream stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\ResourceBase.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.Linq; 
+using Server;
+namespace Server.Misc
+    public class ResourcePool
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\ResourceManager.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Server;
+using Server.Items;
+using Server.Regions;
+using Server.Mobiles; // 해양 몬스터 스폰을 위해 추가
+namespace Server.Misc
+    public readonly record struct ResourceKey(string MapName, string RegionName, ResourceType Type);
+    public static class ResourceManager
+        public enum WaterType
+        private readonly record struct TierTemplate(double Min, double Max, int Weight);
+		private class ResourceTimer : Timer 
+            using (FileStream stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\ResourceTypes.cs
+// ==========================================
+using System;
+namespace Server.Misc
+    public enum ResourceType { Mining, Lumberjacking, Fishing, Tanning, Farming }
+    public enum LocationType
+   //public readonly record struct ResourceKey(string MapName, string RegionName);
+    public class ResourceDef
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Trap System\New Traps\FireColumnTrap.cs
+// ==========================================
+using System;
+namespace Server.Items
+    public class FireColumnTrap : BaseTrap
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Trap System\New Traps\GasTrap.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Server.Network;
+using Server.Mobiles;
+namespace Server.Items
+    public class GasTrap : BaseTrap
+        public enum GasTrapType { NorthWall, WestWall, Floor }
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Trap System\New Traps\MushroomTrap.cs
+// ==========================================
+using System;
+using Server.Regions;
+namespace Server.Items
+    public class MushroomTrap : BaseTrap
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Trap System\New Traps\SawTrap.cs
+// ==========================================
+using System;
+using Server.Network;
+namespace Server.Items
+    public enum SawTrapType
+    public class SawTrap : BaseTrap
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Trap System\New Traps\SpikeTrap.cs
+// ==========================================
+using System;
+using Server.Network;
+namespace Server.Items
+    public enum SpikeTrapType
+    public class SpikeTrap : BaseTrap
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Point System\Gumps\EquipMeltingGump.cs
+// ==========================================
+using System;
+using Server;
+using Server.Items;
+using Server.Network;
+using Server.Mobiles;
+using Server.Targeting;
+using Server.Multis;
+using Server.Accounting;
+using System.Collections.Generic;
+namespace Server.Gumps
+    public class EquipMeltingGump : Gump
+    public class EquipMeltingOptionGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Point System\Gumps\PointQuestGump.cs
+// ==========================================
+using System;
+using Server;
+using Server.Items;
+using Server.Network;
+using Server.Mobiles;
+using Server.Targeting;
+namespace Server.Gumps
+	public class PointQuestGump : Gump
+	public class InscriptionItemedTarget : Target
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\Point System\Gumps\QuestStringList.cs
+// ==========================================
+using System;
+using Server.Mobiles;
+namespace Server
+	public class QuestStringList
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\WorldEvent\Donation System\DonationCheck.cs
+// ==========================================
+using System;
+using Server.Items;
+using Server.Gumps;
+using Server.Network;
+using Server.Mobiles;
+using Server.Accounting;
+namespace Server.Items
+	public class DonationCheck : Item
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\WorldEvent\Donation System\DonationRankingGump.cs
+// ==========================================
+using System;
+using Server;
+using Server.Items;
+using Server.Mobiles;
+using Server.Gumps;
+using Server.Guilds;
+using Server.Network;
+using System.Collections.Generic;
+using System.Linq;
+using Server.Accounting;
+namespace Server.Gumps
+    public class DonationRankingGump : Gump
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\WorldEvent\Donation System\WorldTimerWeekTimerGeneration.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using Server;
+using Server.Items;
+using Server.Mobiles;
+using Server.Network;
+using Server.Engines.Points;
+using Server.Accounting;
+namespace Server.Misc.WorldTimer
+    public static class WorldTimerWeekTimerGeneration
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\WorldEvent\LeaderReward\Generation.cs
+// ==========================================
+using System;
+using Server;
+using Server.Items;
+using Server.Mobiles;
+using Server.Network;
+using Server.Engines.Points;
+namespace Server.Engines.LeaderReward
+    public static class LeaderRewardGeneration
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\WorldEvent\Lotto System\LottoCheck.cs
+// ==========================================
+using System;
+using Server.Items;
+using Server.Gumps;
+using Server.Network;
+using Server.Mobiles;
+using Server.Accounting;
+namespace Server.Items
+	public class LottoCheck : Item
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\WorldEvent\Special Dungeon System\RespawnCheck.cs
+// ==========================================
+using System;
+using Server.Items;
+using Server.Gumps;
+using Server.Network;
+using Server.Mobiles;
+namespace Server.Items
+	public class RespawnCheck : Item
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\WorldEvent\Special Dungeon System\WorldTimerGeneration.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using Server;
+using Server.Items;
+using Server.Mobiles;
+using Server.Network;
+using Server.Engines.Points;
+namespace Server.Misc.WorldTimer
+    public static class WorldTimerGeneration
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\BaseFarmItem.cs
+// ==========================================
+using System;
+using Server.Mobiles;
+using Server.Network;
+using Server.Engines.Plants;
+namespace Server.Items
+    public enum CropStage
+    public class BaseFarmItem : Item
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\FarmingSystem.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Server.Mobiles;
+using Server.Regions;
+using Server.Engines.Plants;
+using Server.Misc;
+namespace Server.Items
+    public static class FarmingSystem
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Crop\1. Carrot.cs
+// ==========================================
+using System;
+namespace Server.Items
+    public class Carrot : Food
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Crop\1. Turnip.cs
+// ==========================================
+using System;
+using Server;
+namespace Server.Items
+    public class BegTurnip : Turnip
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Crop\2. Corn.cs
+// ==========================================
+using System; 
+namespace Server.Items
+	public class Corn : Food
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Crop\2. Onion.cs
+// ==========================================
+using System; 
+namespace Server.Items
+    public class Onion : Food
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Crop\3. Wheat.cs
+// ==========================================
+using System; 
+using System.Collections;
+using Server.Mobiles; 
+using Server.Targeting;
+namespace Server.Items 
+	public class Wheat : Item
+		private class PickMillerTarget : Target
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Crop\4. Cabbage.cs
+// ==========================================
+using System;
+namespace Server.Items
+    public class Cabbage : Food
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Crop\4. Lettuce.cs
+// ==========================================
+using System; 
+namespace Server.Items
+    public class Lettuce : Food
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Crop\5. Cotton.cs
+// ==========================================
+using System;
+using Server.Targeting;
+namespace Server.Items
+    public class Cotton : Item, IDyable
+        private class PickWheelTarget : Target
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Crop\6. Pumpkin.cs
+// ==========================================
+using System; 
+namespace Server.Items
+    public class Pumpkin : Food
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Farm Addon\FarmBuilderGump.cs
+// ==========================================
+using System;
+using Server;
+using Server.Gumps;
+using Server.Network;
+using Server.Targeting;
+using Server.Mobiles;
+namespace Server.Misc
+    public class FarmBuilderGump : Gump
+    public class AssignAnimalTarget : Target
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Farm Addon\PrivateFarmAddon.cs
+// ==========================================
+using System;
+using System.Collections.Generic;
+using Server;
+using Server.Items;
+using Server.Multis;
+using Server.Gumps;
+using Server.Mobiles;
+namespace Server.Misc
+    public class PrivateFarmAddon : BaseAddon
+    public class FarmControlComponent : AddonComponent
+    public class FarmPloughedComponent : AddonComponent
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Farm Addon\PrivateFarmDeed.cs
+// ==========================================
+using System;
+using Server;
+using Server.Items;
+using Server.Multis;
+using Server.Targeting;
+namespace Server.Misc
+    public class PrivateFarmDeed : BaseAddonDeed
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Fruit Tree\AppleAddon.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Multis;
+namespace Server.Items
+	public class AppleAddon : BaseAddon
+	public class AppleDeed : BaseAddonDeed
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Fruit Tree\BananaAddon.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Multis;
+namespace Server.Items
+	public class BananaAddon : BaseAddon
+	public class BananaDeed : BaseAddonDeed
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Fruit Tree\PeachAddon.cs
+// ==========================================
+using System;
+using Server;
+using Server.Mobiles;
+using Server.Multis;
+namespace Server.Items
+	public class PeachAddon : BaseAddon
+	public class PeachDeed : BaseAddonDeed
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Seed\BaseSeed.cs
+// ==========================================
+using System;
+using Server.Mobiles;
+namespace Server.Items
+    public abstract class BaseSeed : Item
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Seed\CabbageSeed.cs
+// ==========================================
+using System;
+namespace Server.Items
+    public class CabbageSeed : BaseSeed
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Seed\CarrotSeed.cs
+// ==========================================
+using System;
+namespace Server.Items
+    public class CarrotSeed : BaseSeed
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Seed\CornSeed.cs
+// ==========================================
+using System;
+namespace Server.Items
+    public class CornSeed : BaseSeed
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Seed\CottonSeed.cs
+// ==========================================
+using System;
+namespace Server.Items
+    public class CottonSeed : BaseSeed
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Seed\LettuceSeed.cs
+// ==========================================
+using System;
+namespace Server.Items
+    public class LettuceSeed : BaseSeed
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Seed\OnionSeed.cs
+// ==========================================
+using System;
+namespace Server.Items
+    public class OnionSeed : BaseSeed
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Seed\PumpkinSeed.cs
+// ==========================================
+using System;
+namespace Server.Items
+    public class PumpkinSeed : BaseSeed
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Seed\TurnipSeed.cs
+// ==========================================
+using System;
+namespace Server.Items
+    public class TurnipSeed : BaseSeed
+
+// ==========================================
+// Path: C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Seed\WheatSeed.cs
+// ==========================================
+using System;
+namespace Server.Items
+    public class WheatSeed : BaseSeed
+

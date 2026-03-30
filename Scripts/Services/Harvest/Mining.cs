@@ -3,6 +3,7 @@ using Server.Items;
 using Server.Mobiles;
 using Server.Targeting;
 using System.Linq;
+using Server.Misc; // ResourceManager 사용을 위해 추가
 
 namespace Server.Engines.Harvest
 {
@@ -10,74 +11,38 @@ namespace Server.Engines.Harvest
     {
         private static Mining m_System;
 
-        public static Mining System
-        {
-            get
-            {
-                if (m_System == null)
-                    m_System = new Mining();
-
-                return m_System;
-            }
-        }
+        public static Mining System => m_System ??= new Mining();
 
         private readonly HarvestDefinition m_OreAndStone;
-
         private readonly HarvestDefinition m_Sand;
 
-        public HarvestDefinition OreAndStone
-        {
-            get
-            {
-                return this.m_OreAndStone;
-            }
-        }
-
-        public HarvestDefinition Sand
-        {
-            get
-            {
-                return this.m_Sand;
-            }
-        }
-		
+        public HarvestDefinition OreAndStone => this.m_OreAndStone;
+        public HarvestDefinition Sand => this.m_Sand;
+        
         private Mining()
         {
-            HarvestResource[] res;
-            HarvestVein[] veins;
-
             #region Mining for ore and stone
             HarvestDefinition oreAndStone = this.m_OreAndStone = new HarvestDefinition();
 
-            // Resource banks are every 8x8 tiles
             oreAndStone.BankWidth = 8;
             oreAndStone.BankHeight = 8;
 
-            // Every bank holds from 10 to 34 ore
             oreAndStone.MinTotal = 200;
             oreAndStone.MaxTotal = 350;
 
-            // A resource bank will respawn its content every 10 to 20 minutes
             oreAndStone.MinRespawn = TimeSpan.FromMinutes(60.0);
             oreAndStone.MaxRespawn = TimeSpan.FromMinutes(180.0);
 
-            // Skill checking is done on the Mining skill
             oreAndStone.Skill = SkillName.Mining;
-
-            // Set the list of harvestable tiles
             oreAndStone.Tiles = m_MountainAndCaveTiles;
-
-            // Players must be within 2 tiles to harvest
             oreAndStone.MaxRange = 1;
-
-            // One ore per harvest action
             oreAndStone.ConsumedPerHarvest = 5;
-            //oreAndStone.ConsumedPerFeluccaHarvest = 2;
 
-            // The digging effect
+            // 🌟 [공통 1] 기본 애니메이션 루프를 3회로 고정
+            // (자원 등급 및 스킬에 따른 동적 증감은 HarvestTimer에서 EffectCounts 길이를 조절하도록 연동해야 완벽합니다.)
             oreAndStone.EffectActions = new int[] { Core.SA ? 3 : 11 };
             oreAndStone.EffectSounds = new int[] { 0x125, 0x126 };
-            oreAndStone.EffectCounts = new int[] { 3, 4, 5, 6, 7 };
+            oreAndStone.EffectCounts = new int[] { 3 }; 
             oreAndStone.EffectDelay = TimeSpan.FromSeconds(0.9);
             oreAndStone.EffectSoundDelay = TimeSpan.FromSeconds(1.6);
 
@@ -89,27 +54,6 @@ namespace Server.Engines.Harvest
             oreAndStone.PackFullMessage = 1010481; // Your backpack is full, so the ore you mined is lost.
             oreAndStone.ToolBrokeMessage = 1044038; // You have worn out your tool!
 
-            res = new HarvestResource[]
-            {
-                new HarvestResource(00.0, 00.0, 100.0, 1007072, typeof(IronOre), typeof(Granite))//
-            };
-
-            veins = new HarvestVein[]
-            {
-                new HarvestVein(100.0, 0.0, res[0], null) // Iron
-            };
-
-            oreAndStone.Resources = res;
-            oreAndStone.Veins = veins;
-
-            if (Core.ML)
-            {
-                oreAndStone.BonusResources = new BonusHarvestResource[]
-                {
-                    new BonusHarvestResource(0, 100.0, null, null) //Nothing
-				};
-            }
-
             oreAndStone.RaceBonus = Core.ML;
             oreAndStone.RandomizeVeins = Core.ML;
 
@@ -119,35 +63,22 @@ namespace Server.Engines.Harvest
             #region Mining for sand
             HarvestDefinition sand = this.m_Sand = new HarvestDefinition();
 
-            // Resource banks are every 8x8 tiles
             sand.BankWidth = 8;
             sand.BankHeight = 8;
-
-            // Every bank holds from 6 to 12 sand
             sand.MinTotal = 6;
             sand.MaxTotal = 13;
 
-            // A resource bank will respawn its content every 10 to 20 minutes
             sand.MinRespawn = TimeSpan.FromMinutes(10.0);
             sand.MaxRespawn = TimeSpan.FromMinutes(20.0);
 
-            // Skill checking is done on the Mining skill
             sand.Skill = SkillName.Mining;
-
-            // Set the list of harvestable tiles
             sand.Tiles = m_SandTiles;
-
-            // Players must be within 2 tiles to harvest
             sand.MaxRange = 1;
-
-            // One sand per harvest action
             sand.ConsumedPerHarvest = 5;
-            //sand.ConsumedPerFeluccaHarvest = 2;
 
-            // The digging effect
             sand.EffectActions = new int[] { Core.SA ? 3 : 11 };
             sand.EffectSounds = new int[] { 0x125, 0x126 };
-            sand.EffectCounts = new int[] { 3, 4, 5, 6, 7 };
+            sand.EffectCounts = new int[] { 3 }; // 기본 3회
             sand.EffectDelay = TimeSpan.FromSeconds(0.9);
             sand.EffectSoundDelay = TimeSpan.FromSeconds(1.6);
 
@@ -159,23 +90,11 @@ namespace Server.Engines.Harvest
             sand.PackFullMessage = 1044632; // Your backpack can't hold the sand, and it is lost!
             sand.ToolBrokeMessage = 1044038; // You have worn out your tool!
 
-            res = new HarvestResource[]
-            {
-                new HarvestResource(100.0, 70.0, 100.0, 1044631, typeof(Sand))
-            };
-
-            veins = new HarvestVein[]
-            {
-                new HarvestVein(100.0, 0.0, res[0], null)
-            };
-
-            sand.Resources = res;
-            sand.Veins = veins;
-
             this.Definitions.Add(sand);
             #endregion
         }
-        public override void SendSuccessTo(Mobile from, Item item, HarvestResource resource)
+
+        public override void SendSuccessTo(Mobile from, Item item, Type resourceType)
         {
             if (item is BaseGranite)
                 from.SendLocalizedMessage(1044606); // You carefully extract some workable stone from the ore vein!
@@ -183,19 +102,9 @@ namespace Server.Engines.Harvest
                 from.SendLocalizedMessage(1112233); // You carefully extract a glistening gem from the vein!
             else if (item != null)
             {
-                foreach (var res in OreAndStone.Resources.Where(r => r.Types != null))
-                {
-                    foreach (var type in res.Types)
-                    {
-                        if (item.GetType() == type)
-                        {
-                            res.SendSuccessTo(from);
-                            return;
-                        }
-                    }
-                }
-
-                base.SendSuccessTo(from, item, resource);
+                // 광물 성공 메시지 전송
+                if (resourceType == typeof(IronOre)) from.SendLocalizedMessage(1044530); // You loosen some rocks and put the ore in your backpack.
+                else from.SendLocalizedMessage(1044530); // 기본 성공 메시지
             }
         }
 
@@ -228,13 +137,10 @@ namespace Server.Engines.Harvest
 
             bool boat = Server.Multis.BaseBoat.FindBoatAt(from, from.Map) != null;
             bool dungeon = IsDungeonRegion(from);
-			
-            if (def == this.m_Sand && !(from is PlayerMobile && from.Skills[SkillName.Mining].Base >= 100.0 ) ) // && ((PlayerMobile)from).SandMining))
-            {
-                this.OnBadHarvestTarget(from, tool, toHarvest);
-                return false;
-            }
-            else if (from.Mounted)
+            
+            // 🌟 [수정 2] Sand 마이닝 제한 해제 (스킬 100이나 책 읽은 여부 체크 삭제)
+            
+            if (from.Mounted)
             {
                 from.SendLocalizedMessage(501864); // You can't mine while riding.
                 return false;
@@ -244,16 +150,16 @@ namespace Server.Engines.Harvest
                 from.SendLocalizedMessage(501865); // You can't mine while polymorphed.
                 return false;
             }
-			else if( boat )
-			{
-                from.SendMessage("배 안에서는 광물을 채취할 수 없습니다"); // You can't mine while polymorphed.
+            else if( boat )
+            {
+                from.SendMessage("배 안에서는 광물을 채취할 수 없습니다"); 
                 return false;
-			}
-			else if( dungeon )
-			{
-                from.SendMessage("던전 안에서는 광물을 채취할 수 없습니다"); // You can't mine while polymorphed.
+            }
+            else if( dungeon )
+            {
+                from.SendMessage("던전 안에서는 광물을 채취할 수 없습니다"); 
                 return false;
-			}
+            }
             return true;
         }
 
@@ -261,170 +167,121 @@ namespace Server.Engines.Harvest
         {
             public double m_MinSkill, m_MaxSkill;
             public bool m_DeepForest;
-            public Type[] m_Types;
+            public Type m_Type;
 
-            public MutateEntry(double minSkill, double maxSkill, bool deepForest, params Type[] types)
+            public MutateEntry(double minSkill, double maxSkill, bool deepForest, Type type)
             {
-                //m_ReqSkill = reqSkill;
                 m_MinSkill = minSkill;
                 m_MaxSkill = maxSkill;
                 m_DeepForest = deepForest;
-                m_Types = types;
+                m_Type = type;
             }
         }
 
-        private static MutateEntry[] m_MutateTable = new MutateEntry[]
-		{
-			new MutateEntry( 0.0, 50.0,  false, typeof( IronOre ) ),
-			new MutateEntry( 20.0, 70.0, false, typeof( CopperOre ) ),
-			new MutateEntry( 40.0, 90.0, false, typeof( BronzeOre ) ),
-			new MutateEntry( 60.0,  110.0, false, typeof( GoldOre ) ),
-			new MutateEntry( 80.0,  130.0, false, typeof( AgapiteOre ) ),
-			new MutateEntry( 100.0,  150.0,  false, typeof( VeriteOre ) ),
-			new MutateEntry( 120.0,  170.0,  false, typeof( ValoriteOre ) )
-		};
-
-        private static MutateEntry[] m_GradeMutateTable = new MutateEntry[]
-		{
-			new MutateEntry( 0.0, 50.0,  false, typeof( Granite ) ),
-			new MutateEntry( 20.0, 70.0, false, typeof( CopperGranite ) ),
-			new MutateEntry( 40.0, 90.0, false, typeof( BronzeGranite ) ),
-			new MutateEntry( 60.0, 110.0, false, typeof( GoldGranite ) ),
-			new MutateEntry( 80.0, 130.0, false, typeof( AgapiteGranite ) ),
-			new MutateEntry( 100.0, 150.0,  false, typeof( VeriteGranite ) ),
-			new MutateEntry( 120.0, 170.0,  false, typeof( ValoriteGranite ) )
-		};
-
-		//private int[] buffpoint = { 100, 300, 500, 1000, 2000, 5000 };
-		
-        public override Type MutateType(Type type, Mobile from, Item tool, HarvestDefinition def, Map map, Point3D loc, HarvestResource resource, out double chance, out double point, out bool failcheck, out Type basic, out Type upgrade )
+        private static readonly MutateEntry[] m_MutateTable = new MutateEntry[]
         {
-			double skillBase = from.Skills[SkillName.Mining].Base;
-			double skillValue = from.Skills[SkillName.Mining].Value;
-		
-			if( def == m_Sand )
-			{
-				point = 250;
-				failcheck = true;
-				chance = 1 + ( skillValue - 150 ) * 0.02;
-				upgrade = typeof( Sand );
-				basic = typeof( Sand );
-			}
-			else
-			{
-				MutateEntry entry;
-				entry = m_MutateTable[0];
-				
-				var table = m_MutateTable;
-					
-				basic = entry.m_Types[0];
-				failcheck = false;
-				
-				int count = 0;
-				for (int i = table.Length -1; i >= 1; --i)
-				{
-					entry = m_MutateTable[i];
-					
-					int maxchance = Misc.Util.upgradechance[i];
-					if( from is PlayerMobile )
-					{
-						PlayerMobile pm = from as PlayerMobile;
-						maxchance = Misc.Util.ExpHarvestBonus( pm, maxchance );
-					}
-					if (skillValue >= entry.m_MinSkill && Utility.RandomMinMax(1, 10000) <= maxchance )
-					{
-						count = i;
-						break;
-					}
-				}
-				if (tool is GargoylesPickaxe)
-					entry = m_GradeMutateTable[count];
-				else
-					entry = m_MutateTable[count];
-				
-				upgrade = entry.m_Types[0];
-				point = entry.m_MaxSkill + entry.m_MinSkill;
-				if( count > 0 && Utility.RandomMinMax(0, count * 2) != 0 )
-					failcheck = true;
-				chance = 1 + ( skillValue - entry.m_MaxSkill ) * 0.02;
-			}
-			//if( type != upgrade )
-			//	type = upgrade;
-			
+            new MutateEntry( 0.0, 50.0,  false, typeof( IronOre ) ),
+            new MutateEntry( 20.0, 70.0, false, typeof( CopperOre ) ),
+            new MutateEntry( 40.0, 90.0, false, typeof( BronzeOre ) ),
+            new MutateEntry( 60.0,  110.0, false, typeof( GoldOre ) ),
+            new MutateEntry( 80.0,  130.0, false, typeof( AgapiteOre ) ),
+            new MutateEntry( 100.0,  150.0,  false, typeof( VeriteOre ) ),
+            new MutateEntry( 120.0,  170.0,  false, typeof( ValoriteOre ) )
+        };
 
-			return type;
+        // 🌟 [핵심] 리뉴얼된 MutateType (튜플 반환, Bank 사용 안함)
+        public override (Type Type, double Chance, double SkillMax, bool Fail) MutateType(Mobile from, Item tool, HarvestDefinition def, Map map, Point3D loc, object toHarvest)
+        {
+            double skillBase = from.Skills[SkillName.Mining].Base;
+            double skillValue = from.Skills[SkillName.Mining].Value;
+        
+            if( def == m_Sand )
+            {
+                double chance = 1 + ( skillValue - 150 ) * 0.02;
+                return (typeof(Sand), chance, 250, true);
+            }
+            else
+            {
+                int count = 0;
+                for (int i = m_MutateTable.Length - 1; i >= 1; --i)
+                {
+                    int maxchance = Misc.Util.upgradechance[i];
+                    if( from is PlayerMobile pm )
+                    {
+                        maxchance = Misc.Util.ExpHarvestBonus( pm, maxchance );
+                    }
+                    if (skillValue >= m_MutateTable[i].m_MinSkill && Utility.RandomMinMax(1, 10000) <= maxchance )
+                    {
+                        count = i;
+                        break;
+                    }
+                }
+
+                MutateEntry entry = m_MutateTable[count];
+                Type upgrade = entry.m_Type;
+                double point = entry.m_MaxSkill + entry.m_MinSkill;
+                bool failcheck = (count > 0 && Utility.RandomMinMax(0, count * 2) != 0);
+                double chance = 1 + (skillValue - entry.m_MaxSkill) * 0.02;
+
+                // 🌟 [공통 1] 에니메이션 루프 수치 계산용 참고 로직 (타이머 연동을 위해 변수화 가능)
+                // int animLoop = 3; 
+                // animLoop += count; // 자원 등급 올라가면 +1씩
+                // if (tool is GargoylesPickaxe) animLoop -= 1; // 고급 자원 툴이면 -1
+                // if (skillBase >= 100.0) animLoop -= 1; // 스킬 100 이상이면 -1
+                // animLoop = Math.Max(1, animLoop); // 1회 이하는 불가능
+
+                return (upgrade, chance, point, failcheck);
+            }
         }
 
         private static readonly int[] m_Offsets = new int[]
         {
-            -1, -1,
-            -1, 0,
-            -1, 1,
-            0, -1,
-            0, 1,
-            1, -1,
-            1, 0,
-            1, 1
+            -1, -1, -1, 0, -1, 1, 0, -1,
+            0, 1, 1, -1, 1, 0, 1, 1
         };
 
-        public override void OnHarvestFinished(Mobile from, Item tool, HarvestDefinition def, HarvestVein vein, HarvestBank bank, HarvestResource resource, object harvested)
+        // 🌟 [핵심] 튜플화 된 리소스 타입(resourceType)을 직접 받아 처리하는 OnHarvestFinished
+        public override void OnHarvestFinished(Mobile from, Item tool, HarvestDefinition def, Type resourceType, object harvested)
         {
-            if (tool is GargoylesPickaxe && def == this.m_OreAndStone && 0.1 > Utility.RandomDouble() && HarvestMap.CheckMapOnHarvest(from, harvested, def) == null)
+            if (def == this.m_OreAndStone)
             {
-                HarvestResource res = vein.PrimaryResource;
-
-                if (res == resource && res.Types.Length >= 3)
+                // 🌟 [수정 3] 가고일 곡괭이로 광을 캘 때 1% 확률로 "동일 색상"의 대리석(Granite) 드랍
+                if (tool is GargoylesPickaxe && Utility.RandomDouble() < 0.01)
                 {
-                    try
+                    Type graniteType = GetGraniteType(resourceType);
+                    if (graniteType != null)
                     {
-                        Map map = from.Map;
-
-                        if (map == null)
-                            return;
-
-                        BaseCreature spawned = Activator.CreateInstance(res.Types[2], new object[] { 25 }) as BaseCreature;
-
-                        if (spawned != null)
+                        Item granite = Construct(graniteType, from, tool);
+                        if (granite != null)
                         {
-                            int offset = Utility.Random(8) * 2;
-
-                            for (int i = 0; i < m_Offsets.Length; i += 2)
-                            {
-                                int x = from.X + m_Offsets[(offset + i) % m_Offsets.Length];
-                                int y = from.Y + m_Offsets[(offset + i + 1) % m_Offsets.Length];
-
-                                if (map.CanSpawnMobile(x, y, from.Z))
-                                {
-                                    spawned.OnBeforeSpawn(new Point3D(x, y, from.Z), map);
-                                    spawned.MoveToWorld(new Point3D(x, y, from.Z), map);
-                                    spawned.Combatant = from;
-                                    return;
-                                }
-                                else
-                                {
-                                    int z = map.GetAverageZ(x, y);
-
-                                    if (Math.Abs(z - from.Z) < 10 && map.CanSpawnMobile(x, y, z))
-                                    {
-                                        spawned.OnBeforeSpawn(new Point3D(x, y, z), map);
-                                        spawned.MoveToWorld(new Point3D(x, y, z), map);
-                                        spawned.Combatant = from;
-                                        return;
-                                    }
-                                }
-                            }
-
-                            spawned.OnBeforeSpawn(from.Location, from.Map);
-                            spawned.MoveToWorld(from.Location, from.Map);
-                            spawned.Combatant = from;
+                            from.SendLocalizedMessage(1044606); // You carefully extract some workable stone from the ore vein!
+                            Give(from, granite, true);
                         }
                     }
-                    catch
-                    {
-                    }
+                }
+                // 🌟 [수정 4] 인테리어 물품(바위 등) 랜덤 드랍 예약 공간 (현재 비워둠)
+                if (Utility.RandomDouble() < 0.05) // 확률 설정 예시 (5%)
+                {
+                    // TODO: 인테리어 물품(바위, 원석 등) 추가
+                    // Item deco = new DecorativeRock();
+                    // Give(from, deco, true);
+                    // from.SendMessage("쓸만한 장식용 돌을 발견했습니다.");
                 }
             }
-		}
+        }
+
+        // 광물(Ore) 타입에 맞는 대리석(Granite) 매칭 함수
+        private Type GetGraniteType(Type oreType)
+        {
+            if (oreType == typeof(IronOre)) return typeof(Granite);
+            if (oreType == typeof(CopperOre)) return typeof(CopperGranite);
+            if (oreType == typeof(BronzeOre)) return typeof(BronzeGranite);
+            if (oreType == typeof(GoldOre)) return typeof(GoldGranite);
+            if (oreType == typeof(AgapiteOre)) return typeof(AgapiteGranite);
+            if (oreType == typeof(VeriteOre)) return typeof(VeriteGranite);
+            if (oreType == typeof(ValoriteOre)) return typeof(ValoriteGranite);
+            return null;
+        }
 
         #region High Seas
         public override bool SpecialHarvest(Mobile from, Item tool, HarvestDefinition def, Map map, Point3D loc)
@@ -432,34 +289,27 @@ namespace Server.Engines.Harvest
             if (!Core.HS)
                 return base.SpecialHarvest(from, tool, def, map, loc);
 
-            HarvestBank bank = def.GetBank(map, loc.X, loc.Y);
-
-            if (bank == null)
-                return false;
-
             bool boat = Server.Multis.BaseBoat.FindBoatAt(from, from.Map) != null;
             bool dungeon = IsDungeonRegion(from);
 
             if (!boat && !dungeon)
                 return false;
 
-            if (boat || !NiterDeposit.HasBeenChecked(bank))
+            // 🌟 Bank를 사용하지 않으므로 ResourceManager에서 Niter 가능 여부 확인
+            var poolKey = new ResourceKey(map.Name, NewSpawnManager.GetGoGumpZoneName(loc, map), ResourceType.Mining);
+            
+            // 기존 NiterDeposit.HasBeenChecked를 우회하거나 풀 상태로 체크
+            if (boat || (ResourceManager.Pools.TryGetValue(poolKey, out var pool) && pool.CurrentCapacity > 0))
             {
-                int luck = from is PlayerMobile ? ((PlayerMobile)from).RealLuck : from.Luck;
+                int luck = from is PlayerMobile pm ? pm.RealLuck : from.Luck;
                 double bonus = (from.Skills[SkillName.Mining].Value / 9999) + ((double)luck / 150000);
 
-                if (boat)
-                    bonus -= (bonus * .33);
-
-                if (dungeon)
-                    NiterDeposit.AddBank(bank);
+                if (boat) bonus -= (bonus * .33);
 
                 if (Utility.RandomDouble() < bonus)
                 {
                     int size = Utility.RandomMinMax(1, 5);
-
-                    if (luck / 2500.0 > Utility.RandomDouble())
-                        size++;
+                    if (luck / 2500.0 > Utility.RandomDouble()) size++;
 
                     NiterDeposit niter = new NiterDeposit(size);
 
@@ -467,7 +317,6 @@ namespace Server.Engines.Harvest
                     {
                         niter.MoveToWorld(new Point3D(loc.X, loc.Y, from.Z + 3), from.Map);
                         from.SendLocalizedMessage(1149918, niter.Size.ToString()); //You have uncovered a ~1_SIZE~ deposit of niter! Mine it to obtain saltpeter.
-                        NiterDeposit.AddBank(bank);
                         return true;
                     }
                     else
@@ -486,18 +335,15 @@ namespace Server.Engines.Harvest
                             }
                         }
                     }
-
                     niter.Delete();
                 }
             }
-
             return false;
         }
 
         private bool IsDungeonRegion(Mobile from)
         {
-            if (from == null)
-                return false;
+            if (from == null) return false;
 
             Map map = from.Map;
             Region reg = from.Region;
@@ -525,7 +371,6 @@ namespace Server.Engines.Harvest
 
             if (Core.ML)
                 from.RevealingAction();
-
         }
 
         public override void OnBadHarvestTarget(Mobile from, Item tool, object toHarvest)
@@ -545,24 +390,23 @@ namespace Server.Engines.Harvest
         }
 
         #region Tile lists
-		
         private static readonly int[] m_MountainAndCaveTiles = new int[]
         {
             220, 221, 222, 223, 224, 225, 226, 227, 228, 229,
-            230, 231, 236, 237, 238, 239, /* 240, 241, 242, 243, */
-            244, 245, 246, 247, 252, 253, 254, 255, 256, 257,
-            258, 259, 260, 261, 262, 263, 268, 269, 270, 271,
-            272, 273, 274, 275, 276, 277, 278, 279, 286, 287,
-            288, 289, 290, 291, 292, 293, 294, 296, 296, 297,
-            321, 322, 323, 324, 467, 468, 469, 470, 471, 472,
-            473, 474, 476, 477, 478, 479, 480, 481, 482, 483,
-            484, 485, 486, 487, 492, 493, 494, 495, 543, 544,
-            545, 546, 547, 548, 549, 550, 551, 552, 553, 554,
-            555, 556, 557, 558, 559, 560, 561, 562, 563, 564,
-            565, 566, 567, 568, 569, 570, 571, 572, 573, 574,
-            575, 576, 577, 578, 579, 581, 582, 583, 584, 585,
-            586, 587, 588, 589, 590, 591, 592, 593, 594, 595,
-            596, 597, 598, 599, 600, 601, 610, 611, 612, 613,
+            230, 231, 236, 237, 238, 239, 244, 245, 246, 247, 
+            252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 
+            262, 263, 268, 269, 270, 271, 272, 273, 274, 275, 
+            276, 277, 278, 279, 286, 287, 288, 289, 290, 291, 
+            292, 293, 294, 296, 296, 297, 321, 322, 323, 324, 
+            467, 468, 469, 470, 471, 472, 473, 474, 476, 477, 
+            478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 
+            492, 493, 494, 495, 543, 544, 545, 546, 547, 548, 
+            549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 
+            559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 
+            569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 
+            579, 581, 582, 583, 584, 585, 586, 587, 588, 589, 
+            590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 
+            600, 601, 610, 611, 612, 613,
             1010, 1741, 1742, 1743, 1744, 1745, 1746, 1747, 1748, 1749,
             1750, 1751, 1752, 1753, 1754, 1755, 1756, 1757, 1771, 1772,
             1773, 1774, 1775, 1776, 1777, 1778, 1779, 1780, 1781, 1782,

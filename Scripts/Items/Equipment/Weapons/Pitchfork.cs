@@ -31,6 +31,20 @@ namespace Server.Items
                 return WeaponAbility.Dismount;
             }
         }
+		// Pitchfork.cs 또는 Hoe.cs 내부
+		public override void OnDoubleClick(Mobile from)
+		{
+			// 가방 안에 있거나, 착용 중일 때만 사용 가능
+			if (IsChildOf(from.Backpack) || Parent == from)
+			{
+				// HarvestSystem(Farming) 호출
+				Server.Engines.Harvest.Farming.System.BeginHarvesting(from, this);
+			}
+			else
+			{
+				from.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
+			}
+		}
         public override int AosStrengthReq
         {
             get

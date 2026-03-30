@@ -58,22 +58,29 @@ namespace Server.Items
             if (m_Owner != null)
                 FarmingSystem.GiveXP(m_Owner, 10);
         }
-
+		public Type ResultType => m_ResultType;
         public override void OnDoubleClick(Mobile from)
-        {
-            if (from != m_Owner && from.AccessLevel == AccessLevel.Player)
-            {
-                from.SendMessage("당신의 작물이 아닙니다.");
-                return;
-            }
+		{
+			if (from != m_Owner && from.AccessLevel == AccessLevel.Player)
+			{
+				from.SendMessage("당신의 작물이 아닙니다.");
+				return;
+			}
 
-            if (m_Stage == CropStage.Harvestable)
-                Harvest(from);
-            else if (m_Stage == CropStage.Decaying)
-                from.SendMessage("이미 부패하여 수확할 수 없습니다.");
-            else
-                CheckStatus(from); 
-        }
+			if (m_Stage == CropStage.Harvestable)
+			{
+				// 🌟 수정됨: 바로 수확하지 않고 쇠스랑이나 괭이를 쓰도록 유도
+				from.SendMessage("작물을 수확하려면 쇠스랑(Pitchfork)이나 괭이(Hoe)를 사용하세요.");
+			}
+			else if (m_Stage == CropStage.Decaying)
+			{
+				from.SendMessage("이미 부패하여 수확할 수 없습니다.");
+			}
+			else
+			{
+				CheckStatus(from); 
+			}
+		}
 
         public void ApplyWater(Mobile from)
         {
@@ -247,42 +254,6 @@ namespace Server.Items
         // =========================================================================
         // ★ [핵심] 수확 및 확률 로직 퓨전
         // =========================================================================
-        public void Harvest(Mobile from)
-        {
-            if (from.Mounted)
-            {
-                from.SendMessage("말을 탄 상태에선 작물을 수확할 수 없습니다!"); 
-                return; 
-            }
-
-            if (!from.InRange(this.GetWorldLocation(), 2)) 
-            {
-                from.SendMessage("더 가까이 붙어야 합니다!");
-                return;
-            }
-
-            from.Direction = from.GetDirectionTo(this);
-            from.Animate(from.Mounted ? 29 : 32, 5, 1, true, false, 0); 
-
-            int amount = CalculateYield(from); 
-            
-            if (amount <= 0)
-            {
-                from.SendMessage(33, "흉년입니다... 작물을 건질 수 없었습니다.");
-                this.Delete();
-                return;
-            }
-
-            Item harvest = Activator.CreateInstance(m_ResultType, amount) as Item; 
-            
-            if (harvest != null)
-            {
-                from.AddToBackpack(harvest);
-                from.SendMessage(68, $"대풍년! 당신은 {GetCropNameKor(m_ResultType)}를 {amount}개 수확합니다!");
-                this.Delete(); 
-            }
-        }
-
         public int CalculateYield(Mobile from)
         {
             // 기본 수확량 (3~5개) + 보너스

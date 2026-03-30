@@ -182,10 +182,27 @@ namespace Server.Items
 			}
 		}
 
-		public virtual bool Eat(Mobile from, bool alleat = false)
+		// 1. OPL (아이템 속성창) 출력 로직 
+        public override void GetProperties(ObjectPropertyList list)
         {
+            base.GetProperties(list);
+
+            // [수정] 수치를 가리고 직관적인 텍스트(Flavor Text)만 출력
+            var (w, m, f, p, a) = Server.Misc.BioFoodRegistry.GetBioBonuses(this);
+            string flavorText = Server.Misc.BioFoodRegistry.GetFlavorText(w, m, f, p, a);
+            
+            // 1042971 = ~1_NOTHING~ (문자열을 100% 그대로 출력하는 범용 Cliloc)
+            // 연한 녹색 폰트(#A5D6A7)를 적용해 일반 속성들과 깔끔하게 구분되도록 합니다.
+            list.Add(1042971, $"<BASEFONT COLOR='#A5D6A7'>{flavorText}</BASEFONT>"); 
+        }
+
+        public virtual bool Eat(Mobile from, bool alleat = false)
+        {
+            // [추가] 먹기 전 배고픔 상태를 기억해 과식 연산에 사용
+            int startingHunger = from.Hunger; 
+            
             // Fill the Mobile with FillFactor
-			int amount = CheckHunger(from, alleat);
+            int amount = CheckHunger(from, alleat);
             if (amount > 0)
             {
                 // Play a random "eat" sound
@@ -205,6 +222,28 @@ namespace Server.Items
 
                 if (m_Poison != null)
                     from.ApplyPoison(m_Poisoner, m_Poison);
+
+                // ============== [신규 추가] BioStats 일괄 및 모두 먹기(alleat) 적용 ==============
+                // GetBioBonuses는 아이템 1개의 수치를 반환하므로 먹은 개수(amount)만큼 곱해줍니다.
+                var (w, m, f, p, a) = Server.Misc.BioFoodRegistry.GetBioBonuses(this);
+                int weightBonus = this.FillFactor * 500;
+
+                int totalW = weightBonus * amount;
+                int totalM = m * amount;
+                int totalF = f * amount;
+                int totalP = p * amount;
+                int totalA = a * amount;
+
+                // 과식 수치 연산 (현재 배고픔 + (1개당 5000 * 먹은 개수))
+                int addedHunger = this.FillFactor * 5000 * amount;
+                int overeat = Math.Max(0, (startingHunger + addedHunger) - 100000); 
+
+                // [수정] VirtualCitizen 체크 삭제. 오직 PlayerMobile(유저)일 때만 반영
+                if (from is Server.Mobiles.PlayerMobile pm && pm.Bio != null)
+                {
+                    pm.Bio.AddStats((totalW, totalM, totalF, totalP, totalA));
+                    if (overeat > 0) pm.Bio.ApplyOvereat(overeat);
+                }
 
                 Consume(amount);
 

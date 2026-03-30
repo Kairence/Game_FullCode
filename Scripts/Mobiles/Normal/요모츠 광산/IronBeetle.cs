@@ -58,7 +58,7 @@ namespace Server.Mobiles
 			this.Fame = 4000;
 			this.Karma = -4000;
 
-            m_MiningTimer = Timer.DelayCall(MiningInterval, MiningInterval, DoMining);
+            //m_MiningTimer = Timer.DelayCall(MiningInterval, MiningInterval, DoMining);
         }
 
         public override void GenerateLoot()
@@ -154,7 +154,6 @@ namespace Server.Mobiles
                 }
             }
         }
-		*/
 		
         public void DoMining()
         {
@@ -190,20 +189,20 @@ namespace Server.Mobiles
             if (vein == null)
                 return;
 
-            HarvestResource primary = vein.PrimaryResource;
-            HarvestResource fallback = def.Resources[0];
+            //HarvestResource primary = vein.PrimaryResource;
+            //HarvestResource fallback = def.Resources[0];
 
-            HarvestResource resource = system.MutateResource(this, null, def, map, loc, vein, primary, fallback);
+            //HarvestResource resource = system.MutateResource(this, null, def, map, loc, vein, primary, fallback);
 
-            double skillBase = Skills[def.Skill].Base;
+            //double skillBase = Skills[def.Skill].Base;
 
-            Type type = null;
+            //Type type = null;
 
-            if (skillBase >= resource.ReqSkill && CheckSkill(def.Skill, resource.MinSkill, resource.MaxSkill))
-            {
+            //if (skillBase >= resource.ReqSkill && CheckSkill(def.Skill, resource.MinSkill, resource.MaxSkill))
+            //{
+				/*
                 type = system.GetResourceType(this, null, def, map, loc, resource);
 
-				/*
                 if (type != null)
 				{
                     type = system.MutateType(type, this, null, def, map, loc, resource, out double chance, out double point);
@@ -211,7 +210,6 @@ namespace Server.Mobiles
 					point = 0;
 					
 				}
-				*/
                 if (type != null)
                 {
                     Item item = system.Construct(type, this, null);
@@ -253,9 +251,12 @@ namespace Server.Mobiles
                         }
                     }
                 }
-            }
-        }
+				*/
 
+            //}
+        
+
+		/*
         public override void GetContextMenuEntries(Mobile from, List<ContextMenuEntry> list)
         {
             base.GetContextMenuEntries(from, list);
@@ -275,6 +276,7 @@ namespace Server.Mobiles
                 list.Add(new BaseHarvestTool.ToggleMiningStoneEntry(pm, MiningType.OreAndStone, 6177));     // Set To Ore and Stone
             }
         }
+		*/
         #endregion        
 
         public IronBeetle(Serial serial)
@@ -295,7 +297,7 @@ namespace Server.Mobiles
 
             int version = reader.ReadInt();
 
-            m_MiningTimer = Timer.DelayCall(MiningInterval, MiningInterval, DoMining);
+            //m_MiningTimer = Timer.DelayCall(MiningInterval, MiningInterval, DoMining);
         }
     }
 }

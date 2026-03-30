@@ -29,20 +29,49 @@ namespace Server.Misc
 
         public static void HungerDecay(Mobile m)
         {
-            if (m != null && m.Hunger >= 1 )
-			{
-				int hungry = 10 + m.TotalWeight / 5;
-				DungeonRegion dungeon = (DungeonRegion)m.Region.GetRegion(typeof(DungeonRegion));
-				if( dungeon != null || m.Warmode )
-					hungry *= 5;
+            if (m != null && m.Hunger >= 1)
+            {
+                int hungry = 10 + m.TotalWeight / 5;
+                Server.Regions.DungeonRegion dungeon = (Server.Regions.DungeonRegion)m.Region.GetRegion(typeof(Server.Regions.DungeonRegion));
+                bool inDanger = dungeon != null || m.Warmode;
 
-				m.Hunger -= hungry;
-				if( m.Hunger < 0 )
-					m.Hunger = 0;
-				
-				if( m is PlayerMobile && m.Hunger <= 2000 )
-					m.SendMessage("당신은 배가 매우 고파 보입니다.");
-			}
+                if (inDanger)
+                    hungry *= 5;
+
+                // [수정] VirtualCitizen 불가능 체크 삭제. PlayerMobile만 체크합니다.
+                Server.Misc.BioStats bio = null;
+                if (m is Server.Mobiles.PlayerMobile pm) 
+                    bio = pm.Bio;
+
+                if (bio != null)
+                {
+                    if (inDanger) bio.ApplyEnvironmentalStress(5000);
+
+                    if (bio.Metabolism != 0)
+                    {
+                        double metabFactor = bio.Metabolism / 1000000.0;
+                        hungry += (int)(hungry * metabFactor);
+                    }
+                }
+
+                m.Hunger -= hungry;
+                if (m.Hunger < 0)
+                    m.Hunger = 0;
+                
+                if (m is Server.Mobiles.PlayerMobile && m.Hunger <= 2000)
+                    m.SendMessage("당신은 배가 매우 고파 보입니다.");
+
+                if (bio != null)
+                {
+                    if (m.Hunger == 0) bio.ApplyStarvation();
+                    else if (m.Hunger < 50000) bio.ApplyDecay(); 
+                }
+            }
+            else if (m != null && m.Hunger == 0)
+            {
+                if (m is Server.Mobiles.PlayerMobile pm && pm.Bio != null)
+                    pm.Bio.ApplyStarvation();
+            }
         }
 
         public static void ThirstDecay(Mobile m)

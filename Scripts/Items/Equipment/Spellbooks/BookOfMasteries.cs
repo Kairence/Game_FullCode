@@ -110,7 +110,7 @@ namespace Server.Items
 
                     if (sk == SkillName.Spellweaving)
                     {
-                        list.Add(1060485, ArcanistSpell.GetMasteryFocusLevel((Mobile)RootParent).ToString()); // strength bonus ~1_val~
+                        //list.Add(1060485, ArcanistSpell.GetMasteryFocusLevel((Mobile)RootParent).ToString()); // strength bonus ~1_val~
                     }
                 }
             }

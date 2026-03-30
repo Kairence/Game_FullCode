@@ -5394,53 +5394,12 @@ namespace Server.Items
 						this.HitPoints += 20;
 					}
 					
-					/*
-					if( from.Skills.ArmsLore.Value >= 150 )
-					{
-						maxValue += 0.1;
-						bonus += 1;
-					}
-					if( from.Skills.ArmsLore.Value >= 200 )
-					{
-						bonus += 2;
-						this.MaxHitPoints += 20;
-						this.HitPoints += 20;
-					}
-					*/
-					//int rank = Util.ItemRankMaker( from.Skills[craftSystem.MainSkill].Value );
-					//int rank = Util.ItemRankMaker( from.Skills.ArmsLore.Value, maxValue, bonus );
-					
-					//int tier = Util.ItemTierMaker( arms, rank, Misc.Util.ResourceNumberToNumber((int)Resource ), from );
 					PlayerMobile pm = from as PlayerMobile;
 
-					//Util.ItemCreate( this, rank, true, pm, tier );
-
-					/*
-					bool artifact = false;
-					
-					if( Resource == CraftResource.Verite || Resource == CraftResource.Bloodwood || Resource == CraftResource.SpinedLeather )
-					{
-						if (tool is Item && ((Item)tool).Parent is Container)
-						{
-							Container cntnr = (Container)((Item)tool).Parent;
-
-							if (!cntnr.TryDropItem(from, this, false))
-							{
-								if(cntnr != from.Backpack)
-									from.AddToBackpack(this);
-								else
-									this.MoveToWorld(from.Location, from.Map);
-							}
-						}
-						artifact = true;
-					}
-					*/
-					//Util.NewItemCreate(this, rank, pm, artifact );
-					//아이템 제작 및 암즈로어 스킬 상승 보너스
 					/*
 						제작술 스킬 1당 옵션 기대치 1로 계산
 						장비학 스킬 1당 옵션 기대치 0.2로 계산
-						고급일 시 옵션 기대치 값 50 증가					
+						고급일 시 옵션 기대치 값 50 증가				
 					*/
 					double bonus = from.Skills[craftSystem.MainSkill].Value + from.Skills.ArmsLore.Value * 0.2;
 					if (Quality == ItemQuality.Exceptional)
@@ -5456,7 +5415,6 @@ namespace Server.Items
 
 			if (craftItem != null && !craftItem.ForceNonExceptional)
 			{
-				
 				CraftResourceInfo resInfo = CraftResources.GetInfo(m_Resource);
 
 				if (resInfo == null)

@@ -125,6 +125,7 @@ namespace Server.Targets
                 Map map;
                 Point3D loc;
 
+				/*
                 if (!system.GetHarvestDetails(from, m_Item, targeted, out tileID, out map, out loc))
                 {
                     from.SendLocalizedMessage(500494); // You can't use a bladed item on that!
@@ -169,6 +170,7 @@ namespace Server.Targets
                         }
                     }
                 }
+				*/
             }
         }
     }

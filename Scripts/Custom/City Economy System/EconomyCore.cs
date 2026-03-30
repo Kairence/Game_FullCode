@@ -47,12 +47,15 @@ namespace Server.Misc
 
     public abstract class VirtualAgent
     {
+		public string Name { get; set; } = "Unknown"; // 추가
+		public Container Backpack { get; set; }      // 추가
         public NpcJobClass JobClass { get; set; }
         public NpcRank Rank { get; set; }
         public int Gold { get; set; }
         public int Hunger { get; set; }
         public int Stress { get; set; } 
         public double PrimarySkill { get; set; }
+		public enum NpcRank { Novice, Journeyman, Expert, Master } // 숙련도 등급 유지
 
         // 장비 사용 횟수(내구도) 관리 딕셔너리
         protected Dictionary<Type, int> m_EquipmentUses = new Dictionary<Type, int>();
@@ -74,6 +77,12 @@ namespace Server.Misc
                 _ => 25.0
             };
         }
+
+		// [추가] 아이템 장착 메서드
+		public void EquipItem(Item item) 
+		{ 
+			if (item is Container c) Backpack = c; 
+		}
 
         public void CheckSkillGain()
 		{
@@ -197,26 +206,6 @@ namespace Server.Misc
             Type[] baseResources = [typeof(IronOre), typeof(Log), typeof(Hides), typeof(RawFishSteak), typeof(Fish), typeof(IronIngot), typeof(Board), typeof(Leather)];
             if (baseResources.Contains(itemType)) return 10;
             return Math.Max(1, town.GetPrice(itemType));
-        }
-
-        protected (bool Success, int AmountBought, int TotalCost) TryBuyItem(TownEconomy town, Type itemType, int requestedAmount)
-        {
-            if (itemType == null || !town.Warehouse.ContainsKey(itemType)) return (false, 0, 0);
-
-            var warehouseItem = town.Warehouse[itemType];
-            int unitPrice = GetEffectivePrice(town, itemType);
-
-            int affordableAmount = this.Gold / unitPrice;
-            int actualAmount = Math.Min(requestedAmount, Math.Min(warehouseItem.Stock, affordableAmount));
-
-            if (actualAmount <= 0) return (false, 0, 0); 
-
-            int totalCost = actualAmount * unitPrice;
-            this.Gold -= totalCost;
-            town.Wealth += totalCost; 
-            town.SupplyItem(itemType, -actualAmount, -totalCost); 
-            
-            return (true, actualAmount, totalCost);
         }
 
         protected (bool Success, int Earnings) TrySellItem(TownEconomy town, Type itemType, int amount)
@@ -348,7 +337,7 @@ namespace Server.Misc
         {
             return job switch
             {
-                // [100번대] 기초 채집
+				// [100번대] 기초 채집: 1티어 자원 명칭 동기화
 				NpcJobClass.Herbalist 
 					=> new JobProfile(typeof(Hoe), null, typeof(Ginseng), [typeof(Garlic)]),
 				NpcJobClass.MushroomGatherer 
@@ -357,56 +346,62 @@ namespace Server.Misc
 					=> new JobProfile(typeof(FishingPole), null, typeof(BlackPearl), [typeof(SpidersSilk)]),
 				NpcJobClass.CharcoalBurner 
 					=> new JobProfile(typeof(Axe), null, typeof(SulfurousAsh), [typeof(Log)]),
-                NpcJobClass.SurfaceMiner or NpcJobClass.SandDigger or NpcJobClass.StoneQuarryman or NpcJobClass.FlintKnapper
-                    => new JobProfile(typeof(Pickaxe), null, typeof(IronOre), [typeof(IronIngot)]),
-                NpcJobClass.Woodcutter or NpcJobClass.BarkCollector or NpcJobClass.ResinGatherer
-                    => new JobProfile(typeof(Axe), null, typeof(Log), [typeof(Board)]),
-                NpcJobClass.CoastalFisher or NpcJobClass.DeepSeaFisher_Basic or NpcJobClass.Crabber or NpcJobClass.OysterDiver_Basic or NpcJobClass.SeaweedCollector or NpcJobClass.BeachComber
-                    => new JobProfile(typeof(FishingPole), null, typeof(RawFishSteak), []),
+				NpcJobClass.SurfaceMiner or NpcJobClass.SandDigger or NpcJobClass.StoneQuarryman or NpcJobClass.FlintKnapper
+					=> new JobProfile(typeof(Pickaxe), null, typeof(IronOre), [typeof(IronIngot)]),
+				NpcJobClass.Woodcutter or NpcJobClass.BarkCollector or NpcJobClass.ResinGatherer
+					=> new JobProfile(typeof(Axe), null, typeof(Log), [typeof(Board)]),
+
+				// [수정] 기초 어부: 1티어 송어 원재료인 RawTroutSteak로 변경
+				NpcJobClass.CoastalFisher or NpcJobClass.DeepSeaFisher_Basic or NpcJobClass.Crabber or NpcJobClass.OysterDiver_Basic
+					=> new JobProfile(typeof(FishingPole), null, typeof(TroutRawFishSteak), []),
+
 				NpcJobClass.VegetableFarmer or NpcJobClass.GrainFarmer or NpcJobClass.GourdFarmer
 					=> new JobProfile(typeof(Hoe), null, typeof(WheatSheaf), [typeof(Cabbage), typeof(Carrot)]),
-                NpcJobClass.FlaxCutter or NpcJobClass.GongFarmer
-                    => new JobProfile(typeof(Hoe), null, typeof(WheatSheaf), []),
-                NpcJobClass.Orchardist or NpcJobClass.CitrusGrower or NpcJobClass.VineyardWorker or NpcJobClass.BerryPicker
-                    => new JobProfile(typeof(Hoe), null, typeof(Apple), []),
-                NpcJobClass.Shepherd or NpcJobClass.GooseHerd or NpcJobClass.PoultryFarmer
-                    => new JobProfile(typeof(ShepherdsCrook), null, typeof(Wool), []),
-                NpcJobClass.Swineherd or NpcJobClass.CattleDrover or NpcJobClass.StableHand or NpcJobClass.HorseGroom_Basic
-                    => new JobProfile(typeof(Pitchfork), null, typeof(Hides), [typeof(Leather)]),
-                NpcJobClass.Trapper or NpcJobClass.BirdHunter or NpcJobClass.BigGameHunter or NpcJobClass.FeatherPlucker
-                    => new JobProfile(typeof(SkinningKnife), null, typeof(Feather), []),
-                NpcJobClass.Beekeeper => new JobProfile(typeof(Dagger), null, typeof(JarHoney), []),
-                NpcJobClass.GraveDigger_Basic or NpcJobClass.BoneCollector or NpcJobClass.PeatCutter 
-                    => new JobProfile(typeof(Shovel), null, typeof(Bone), [typeof(GraveDust)]),
-                NpcJobClass.WaterCarrier => new JobProfile(typeof(Pitcher), null, typeof(BegWaterPitcher), []), // 유저님의 스크립트 클래스명 반영
-				NpcJobClass.DairyWorker => new JobProfile(typeof(Pitcher), null, typeof(CheeseWheel), []), // 안전한 기본 유제품(치즈)으로 대체
+				NpcJobClass.FlaxCutter or NpcJobClass.GongFarmer
+					=> new JobProfile(typeof(Hoe), null, typeof(WheatSheaf), []),
+				NpcJobClass.Orchardist or NpcJobClass.CitrusGrower or NpcJobClass.VineyardWorker or NpcJobClass.BerryPicker
+					=> new JobProfile(typeof(Hoe), null, typeof(Apple), []),
+				NpcJobClass.Shepherd or NpcJobClass.GooseHerd or NpcJobClass.PoultryFarmer
+					=> new JobProfile(typeof(ShepherdsCrook), null, typeof(Wool), []),
 
-                // [200번대] 가공/생산
-                NpcJobClass.Smelter or NpcJobClass.PigIronWorker => new JobProfile(typeof(Tongs), null, typeof(IronOre), [typeof(IronIngot)]),
-                NpcJobClass.NailMaker => new JobProfile(typeof(SmithHammer), null, typeof(IronIngot), [typeof(Nails)]),
-                NpcJobClass.AxleMaker or NpcJobClass.GearCutter or NpcJobClass.SextantPartMaker or NpcJobClass.ClockPartMaker 
-                    => new JobProfile(typeof(TinkerTools), null, typeof(IronIngot), [typeof(Gears)]),
-                NpcJobClass.SpringMaker or NpcJobClass.HingeMaker => new JobProfile(typeof(TinkerTools), null, typeof(IronIngot), [typeof(Springs)]),
-                NpcJobClass.Spinner or NpcJobClass.ThreadMaker or NpcJobClass.SilkExtractor 
-                    => new JobProfile(typeof(SewingKit), null, typeof(Wool), [typeof(SpoolOfThread)]),
-                NpcJobClass.Weaver or NpcJobClass.ClothUnraveler => new JobProfile(typeof(SewingKit), null, typeof(SpoolOfThread), [typeof(BoltOfCloth)]),
-                NpcJobClass.LeatherTanner => new JobProfile(typeof(SewingKit), null, typeof(Hides), [typeof(Leather)]),
-                NpcJobClass.Dyer_Producer => new JobProfile(typeof(Dyes), null, typeof(Tub), [typeof(DyeTub)]),
-                NpcJobClass.Sawyer or NpcJobClass.BarkProcessor or NpcJobClass.ShaftMaker => new JobProfile(typeof(Saw), null, typeof(Board), [typeof(Shaft)]),
-                NpcJobClass.BarrelMaker_Base => new JobProfile(typeof(Saw), null, typeof(Board), [typeof(Barrel)]),
-                NpcJobClass.BoxMaker_Base => new JobProfile(typeof(Saw), null, typeof(Board), [typeof(WoodenBox)]),
-                NpcJobClass.Miller or NpcJobClass.PizzaChef_Producer => new JobProfile(typeof(RollingPin), null, typeof(SackFlour), [typeof(CheesePizza)]), // 수정: Pizza -> CheesePizza
-                NpcJobClass.Butcher_Expert or NpcJobClass.PoultryProcessor => new JobProfile(typeof(Cleaver), null, typeof(RawRibs), [typeof(Ribs)]),
-                NpcJobClass.Vintner_Base => new JobProfile(typeof(Bottle), null, typeof(Apple), [typeof(BottleOfWine)]), // 수정: Wine -> BottleOfWine
-                NpcJobClass.OilPresser_Producer => new JobProfile(typeof(MortarPestle), null, typeof(WheatSheaf), [typeof(Bottle)]), 
-                NpcJobClass.GlassBlower => new JobProfile(typeof(Blowpipe), null, typeof(Sand), [typeof(Bottle)]),
-                NpcJobClass.GemCutter or NpcJobClass.JewelryBaseMaker or NpcJobClass.BeadMaker 
-                    => new JobProfile(typeof(TinkerTools), null, typeof(Amber), [typeof(BaseJewel)]),
-                NpcJobClass.ReagentRefiner or NpcJobClass.AshProcessor or NpcJobClass.BoneGrinder 
-                    => new JobProfile(typeof(MortarPestle), null, typeof(SulfurousAsh), [typeof(BlackPearl)]),
-                NpcJobClass.InkProducer => new JobProfile(typeof(MortarPestle), null, typeof(BlackPearl), [typeof(Dyes)]), // 수정: BlackDye -> Dyes
-                NpcJobClass.ScrollPresser or NpcJobClass.MapPresser => new JobProfile(typeof(ScribesPen), null, typeof(Log), [typeof(BlankScroll)]),
-                NpcJobClass.FeatherWorker or NpcJobClass.CandleDipper => new JobProfile(typeof(Scissors), null, typeof(Feather), [typeof(Candle)]),
+				// 기초 가죽: 1티어 Hides 반영 확인
+				NpcJobClass.Swineherd or NpcJobClass.CattleDrover or NpcJobClass.StableHand or NpcJobClass.HorseGroom_Basic
+					=> new JobProfile(typeof(Pitchfork), null, typeof(Hides), [typeof(Leather)]),
+				
+				NpcJobClass.Trapper or NpcJobClass.BirdHunter or NpcJobClass.BigGameHunter or NpcJobClass.FeatherPlucker
+					=> new JobProfile(typeof(SkinningKnife), null, typeof(Feather), []),
+				NpcJobClass.Beekeeper => new JobProfile(typeof(Dagger), null, typeof(JarHoney), []),
+				NpcJobClass.GraveDigger_Basic or NpcJobClass.BoneCollector or NpcJobClass.PeatCutter 
+					=> new JobProfile(typeof(Shovel), null, typeof(Bone), [typeof(GraveDust)]),
+				NpcJobClass.WaterCarrier => new JobProfile(typeof(Pitcher), null, typeof(BegWaterPitcher), []), 
+				NpcJobClass.DairyWorker => new JobProfile(typeof(Pitcher), null, typeof(CheeseWheel), []), 
+
+				// [200번대] 가공/생산 (기존 유지)
+				NpcJobClass.Smelter or NpcJobClass.PigIronWorker => new JobProfile(typeof(Tongs), null, typeof(IronOre), [typeof(IronIngot)]),
+				NpcJobClass.NailMaker => new JobProfile(typeof(SmithHammer), null, typeof(IronIngot), [typeof(Nails)]),
+				NpcJobClass.AxleMaker or NpcJobClass.GearCutter or NpcJobClass.SextantPartMaker or NpcJobClass.ClockPartMaker 
+					=> new JobProfile(typeof(TinkerTools), null, typeof(IronIngot), [typeof(Gears)]),
+				NpcJobClass.SpringMaker or NpcJobClass.HingeMaker => new JobProfile(typeof(TinkerTools), null, typeof(IronIngot), [typeof(Springs)]),
+				NpcJobClass.Spinner or NpcJobClass.ThreadMaker or NpcJobClass.SilkExtractor 
+					=> new JobProfile(typeof(SewingKit), null, typeof(Wool), [typeof(SpoolOfThread)]),
+				NpcJobClass.Weaver or NpcJobClass.ClothUnraveler => new JobProfile(typeof(SewingKit), null, typeof(SpoolOfThread), [typeof(BoltOfCloth)]),
+				NpcJobClass.LeatherTanner => new JobProfile(typeof(SewingKit), null, typeof(Hides), [typeof(Leather)]),
+				NpcJobClass.Dyer_Producer => new JobProfile(typeof(Dyes), null, typeof(Tub), [typeof(DyeTub)]),
+				NpcJobClass.Sawyer or NpcJobClass.BarkProcessor or NpcJobClass.ShaftMaker => new JobProfile(typeof(Saw), null, typeof(Board), [typeof(Shaft)]),
+				NpcJobClass.BarrelMaker_Base => new JobProfile(typeof(Saw), null, typeof(Board), [typeof(Barrel)]),
+				NpcJobClass.BoxMaker_Base => new JobProfile(typeof(Saw), null, typeof(Board), [typeof(WoodenBox)]),
+				NpcJobClass.Miller or NpcJobClass.PizzaChef_Producer => new JobProfile(typeof(RollingPin), null, typeof(SackFlour), [typeof(CheesePizza)]), 
+				NpcJobClass.Butcher_Expert or NpcJobClass.PoultryProcessor => new JobProfile(typeof(Cleaver), null, typeof(RawRibs), [typeof(Ribs)]),
+				NpcJobClass.Vintner_Base => new JobProfile(typeof(Bottle), null, typeof(Apple), [typeof(BottleOfWine)]), 
+				NpcJobClass.OilPresser_Producer => new JobProfile(typeof(MortarPestle), null, typeof(WheatSheaf), [typeof(Bottle)]), 
+				NpcJobClass.GlassBlower => new JobProfile(typeof(Blowpipe), null, typeof(Sand), [typeof(Bottle)]),
+				NpcJobClass.GemCutter or NpcJobClass.JewelryBaseMaker or NpcJobClass.BeadMaker 
+					=> new JobProfile(typeof(TinkerTools), null, typeof(Amber), [typeof(BaseJewel)]),
+				NpcJobClass.ReagentRefiner or NpcJobClass.AshProcessor or NpcJobClass.BoneGrinder 
+					=> new JobProfile(typeof(MortarPestle), null, typeof(SulfurousAsh), [typeof(BlackPearl)]),
+				NpcJobClass.InkProducer => new JobProfile(typeof(MortarPestle), null, typeof(BlackPearl), [typeof(Dyes)]), 
+				NpcJobClass.ScrollPresser or NpcJobClass.MapPresser => new JobProfile(typeof(ScribesPen), null, typeof(Log), [typeof(BlankScroll)]),
+				NpcJobClass.FeatherWorker or NpcJobClass.CandleDipper => new JobProfile(typeof(Scissors), null, typeof(Feather), [typeof(Candle)]),
 
                 // [300번대] 전투직
                 NpcJobClass.Paladin or NpcJobClass.Crusader or NpcJobClass.Knight
@@ -439,7 +434,7 @@ namespace Server.Misc
 
                 // [900번대] 해양
                 NpcJobClass.ShipCaptain or NpcJobClass.DeepSeaFisher or NpcJobClass.Whaler_Maritime
-                    => new JobProfile(typeof(Sextant), typeof(SpecialFishingNet), typeof(RawFishSteak), [typeof(BlackPearl), typeof(Trout)]),
+					=> new JobProfile(typeof(Sextant), typeof(SpecialFishingNet), typeof(TroutRawFishSteak), [typeof(BlackPearl)]),
 
                 // [1100번대] 범죄자
                 NpcJobClass.Burglar or NpcJobClass.Thief or NpcJobClass.Cutpurse
@@ -453,6 +448,46 @@ namespace Server.Misc
             };
         }
 
+		public (int Tier, bool CanProcess) GetResourceTier(double skill)
+		{
+			int tier = skill switch
+			{
+				< 50.0 => 1,
+				< 70.0 => 2,
+				< 90.0 => 3,
+				< 110.0 => 4,
+				< 130.0 => 5,
+				< 150.0 => 6,
+				_ => 7
+			};
+			return (tier, true);
+		}
+
+		// [수정] 통합 구매 로직 (CS0103, CS0841 오류 해결)
+		protected (bool Success, int AmountBought, int TotalCost) TryBuyItem(TownEconomy town, Type itemType, int requestedAmount)
+		{
+			if (itemType == null || this is not VirtualCitizen citizen) return (false, 0, 0);
+
+			// 1. 단가 산출
+			int unitPrice = GetEffectivePrice(town, itemType);
+
+			// 2. [핵심 수정] VirtualTradeAI로 requestedAmount(요청 수량)를 정확히 넘겨줍니다!
+			var result = VirtualTradeAI.ExecutePurchase(citizen, town, itemType, unitPrice, requestedAmount);
+
+			if (result.Success)
+			{
+				// [수정] 무조건 1이 아니라, 실제로 요청해서 구매 성공한 수량을 반환합니다.
+				return (true, requestedAmount, result.Spent); 
+			}
+
+			return (false, 0, 0);
+		}
+
+		// [추가] 자원 가치 판단 헬퍼 (VirtualTradeAI의 정적 메서드 활용)
+		protected bool IsRareResource(Type type) => VirtualTradeAI.IsRareResource(type);
+		protected int GetResourceTierValue(Type type) => VirtualTradeAI.GetResourceTierValue(type);
+
+
         // ==============================================================================
         // [완성] ProcessJob: 모든 로직 융합 (프로필 기반 작동 + 안전망)
         // ==============================================================================
@@ -462,12 +497,14 @@ namespace Server.Misc
             JobProfile profile = GetJobProfile(JobClass);
             bool jobSuccess = false; 
 
+			double pFactor = (this is VirtualCitizen vc) ? vc.Potential : 1.0;
+
             switch (jobGroup)
             {
-                case 100: // [100번대] 매핑된 도구로 자원 수확 및 제련 선택
+                case 100: // [100번대] 잠재력에 따른 생산량 차등 적용
                     if (profile != null && CheckAndUseEquipment(town, profile.Equip1)) 
                     {
-                        int harvestAmount = 5 + (int)(this.PrimarySkill / 10.0);
+                        int harvestAmount = (int)((5 + (this.PrimarySkill / 10.0)) * pFactor);
                         
                         if (profile.Outputs.Length > 0)
                         {
@@ -477,24 +514,34 @@ namespace Server.Misc
                             if (refinedProfit > rawProfit) TrySellItem(town, profile.Outputs[0], harvestAmount * 2);
                             else TrySellItem(town, profile.InputMat, harvestAmount);
                         }
-                        else
-                        {
-                            TrySellItem(town, profile.InputMat, harvestAmount);
-                        }
+                        else TrySellItem(town, profile.InputMat, harvestAmount);
+                        
                         jobSuccess = true;
                     }
                     break;
 
-                case 200: // [200번대] 매핑된 중간재 매입 후 마진 얹어 완제품 납품
+                case 200: // [200번대] 일반 제작 + 귀족 하청 로직
                     if (profile != null && profile.Outputs.Length > 0 && CheckAndUseEquipment(town, profile.Equip1))
                     {
-                        int craftMultiplier = 1 + (int)(this.PrimarySkill / 20.0);
+                        // 1. 귀족의 희귀 자원 가공 시도 (하청 로직 공간)
+                        if (this is VirtualCitizen producer)
+                        {
+                            var noble = town.Citizens.FirstOrDefault(c => c.RankLevel >= NobilityRank.Baron && c.House?.HouseWarehouse.Any(kvp => IsRareResource(kvp.Key)) == true);
+                            if (noble != null)
+                            {
+                                var (myTier, _) = GetResourceTier(this.PrimarySkill);
+                                // 여기서 티어 비교 및 명품 제작 로직 수행 가능
+                            }
+                        }
+
+                        // 2. 일반 제작 로직 (기존 유지)
+                        int craftMultiplier = (int)((1 + (this.PrimarySkill / 20.0)) * pFactor);
                         int buyAmount = 5 * craftMultiplier; 
                         
                         var buyResult = TryBuyItem(town, profile.InputMat, buyAmount);
                         if (buyResult.Success)
                         {
-                            int laborValue = (int)(this.PrimarySkill / 2.0) * craftMultiplier;
+                            int laborValue = (int)((this.PrimarySkill / 2.0) * craftMultiplier);
                             int guaranteedPrice = (int)(buyResult.TotalCost * 1.5) + laborValue;
 
                             this.Gold += guaranteedPrice;
@@ -505,133 +552,142 @@ namespace Server.Misc
                     }
                     break;
 
-                case 300: // [300번대] 전투직 특화 장비 및 전리품
+                case 300: // [300번대] 전투직 잠재력 보정
                     Type weapon = profile?.Equip1 ?? typeof(Broadsword);
                     Type armor = profile?.Equip2 ?? typeof(PlateChest);
-                    int targetFame = (int)(this.PrimarySkill * 100); 
+                    int targetFame = (int)(this.PrimarySkill * 100 * pFactor); 
                     int durabilityLoss = 1 + (targetFame / 3000); 
 
                     if (CheckAndUseEquipment(town, weapon, durabilityLoss) && CheckAndUseEquipment(town, armor, durabilityLoss))
                     {
-                        int totalGoldPool = 10 + Utility.RandomMinMax(targetFame / 30, targetFame / 15);
-                        if (Utility.RandomDouble() < 0.05) totalGoldPool *= 2; 
-
+                        int totalGoldPool = (int)((10 + Utility.RandomMinMax(targetFame / 30, targetFame / 15)) * pFactor);
                         this.Gold += totalGoldPool; 
                         
                         Type[] lootTable = (profile != null && profile.Outputs.Length > 0) ? profile.Outputs : [typeof(Bone), typeof(Hides), typeof(Ribs)];
                         Type loot = lootTable[Utility.Random(lootTable.Length)];
                         
-                        int lootAmount = 2 + (int)(this.PrimarySkill / 15.0);
+                        int lootAmount = (int)((2 + (this.PrimarySkill / 15.0)) * pFactor);
                         TrySellItem(town, loot, Utility.RandomMinMax(lootAmount / 2, lootAmount));
                         jobSuccess = true;
                     }
                     break;
 
-                case 400: // [400번대] 마법직 특화 시약 소비
+				case 400: // [400번대] 마법직: 잠재력에 비례하여 조제량 상승
                     if (profile != null && CheckAndUseEquipment(town, profile.Equip1)) 
                     {
-                        int craftAmount = Math.Max(1, (int)(this.PrimarySkill / 20.0)); 
+                        // 잠재력이 높을수록 한 번에 더 많은 시약을 가공
+                        int craftAmount = Math.Max(1, (int)((this.PrimarySkill / 20.0) * pFactor)); 
                         if (TryBuyItem(town, profile.InputMat, craftAmount).Success)
                         {
                             Type output = profile.Outputs[Utility.Random(profile.Outputs.Length)];
-                            TrySellItem(town, output, craftAmount * 2); 
+                            // 생산 결과물 또한 pFactor에 비례하여 증폭
+                            TrySellItem(town, output, (int)(craftAmount * 2 * pFactor)); 
                             jobSuccess = true;
                         }
                     }
                     break;
 
-                case 500: // [500번대] 귀족
-                    int salary = (int)this.Rank * 100 + 100; 
-                    if (town.Wealth > salary)
-                    {
-                        town.Wealth -= salary;
-                        this.Gold += salary;
-                        
-                        Type nobleLuxury = EconomyTagHelper.GetItemTypeByTag(town, ItemTag.Luxury, random: true);
-                        TryBuyItem(town, nobleLuxury, 2); 
-                        Type officialDoc = Utility.RandomBool() ? typeof(ContractOfEmployment) : typeof(TanBook);
-                        TrySellItem(town, officialDoc, 1);
-                        jobSuccess = true;
-                    }
-                    break;
+                case 500: // [500번대] 귀족: 잠재력이 높을수록 더 높은 품위 유지비(Salary) 획득
+					// Rank가 Novice(0)면 100, Master(3)면 400이 기본값이 됩니다.
+					int salary = (int)(((int)this.Rank * 100 + 100) * pFactor); 
 
-                case 600: // [600번대] 상인
+					if (town.Wealth > salary)
+					{
+						town.Wealth -= salary;
+						this.Gold += salary;
+						
+						// 사치품 소비 및 문서 발행 로직...
+						Type nobleLuxury = EconomyTagHelper.GetItemTypeByTag(town, ItemTag.Luxury, random: true);
+						TryBuyItem(town, nobleLuxury, (int)(2 * pFactor)); 
+						
+						jobSuccess = true;
+					}
+					break;
+
+                case 600: // [600번대] 상인: 잠재력에 비례하여 운송 용량(Capacity) 확장
                     Type packAnimal = profile?.Equip1 ?? typeof(PackHorse);
                     if (CheckAndUseEquipment(town, packAnimal)) 
                     {
                         if (this is VirtualCitizen merchant600)
                         {
-                            var tradeResult = VirtualTradeAI.ExecuteTradeRoute(merchant600, town, 1000);
+                            // 무역 용량을 pFactor에 비례하여 결정 (최대 3000)
+                            int tradeCapacity = (int)(1000 * pFactor);
+                            var tradeResult = VirtualTradeAI.ExecuteTradeRoute(merchant600, town, tradeCapacity);
+                            
                             if (tradeResult.Success) jobSuccess = true;
                             else
                             {
-                                TryBuyItem(town, profile?.InputMat ?? typeof(IronOre), 10);
-                                TrySellItem(town, typeof(CommodityDeed), 5);
+                                TryBuyItem(town, profile?.InputMat ?? typeof(IronOre), (int)(10 * pFactor));
+                                TrySellItem(town, typeof(CommodityDeed), (int)(5 * pFactor));
                             }
                         }
                     }
                     break;
 
-                case 700: // [700번대] 종교
-                    if (TryBuyItem(town, typeof(Bandage), Utility.RandomMinMax(2, 5)).Success &&
-                        TryBuyItem(town, typeof(Candle), Utility.RandomMinMax(2, 5)).Success) 
+                case 700: // [700번대] 종교: 잠재력이 높을수록 더 큰 구휼금 획득
+                    if (TryBuyItem(town, typeof(Bandage), (int)(2 * pFactor)).Success &&
+                        TryBuyItem(town, typeof(Candle), (int)(2 * pFactor)).Success) 
                     {
-                        int donation = Utility.RandomMinMax(10, 30) + (int)this.PrimarySkill;
+                        int donation = (int)((Utility.RandomMinMax(10, 30) + (int)this.PrimarySkill) * pFactor);
                         if (town.Wealth >= donation) { town.Wealth -= donation; this.Gold += donation; }
                         Type graveLoot = Utility.RandomBool() ? typeof(GraveDust) : typeof(Bone);
-                        TrySellItem(town, graveLoot, Utility.RandomMinMax(2, 5));
+                        TrySellItem(town, graveLoot, (int)(2 * pFactor));
                         jobSuccess = true;
                     }
                     break;
 
-                case 800: // [800번대] 예술/유흥
+                case 800: // [800번대] 예술/유흥: 잠재력에 비례하여 공연 수익 증대
                     Type instrument = profile?.Equip1 ?? typeof(Lute);
                     if (CheckAndUseEquipment(town, instrument)) 
                     {
                         if (profile?.InputMat != null) TryBuyItem(town, profile.InputMat, 1); 
-                        this.Gold += Utility.RandomMinMax(15, 40) + (int)(this.PrimarySkill / 2);
+                        // 공연 수익에 pFactor 적용
+                        this.Gold += (int)((Utility.RandomMinMax(15, 40) + (int)(this.PrimarySkill / 2)) * pFactor);
                         
                         if (profile != null && profile.Outputs.Length > 0 && Utility.RandomBool())
                         {
                             Type outFood = profile.Outputs[Utility.Random(profile.Outputs.Length)];
-                            TrySellItem(town, outFood, 1); 
+                            TrySellItem(town, outFood, (int)(1 * pFactor)); 
                         }
                         jobSuccess = true;
                     }
                     break;
 
-                case 900: // [900번대] 해양
+                case 900: // [900번대] 해양: 잠재력에 비례하여 수확량 및 전리품 증가
                     if (profile != null && CheckAndUseEquipment(town, profile.Equip1) && CheckAndUseEquipment(town, profile.Equip2)) 
                     {
                         if (this is VirtualCitizen maritime900)
                         {
+                            // 하위 메서드에서 이미 pFactor를 사용하도록 기획됨
                             VirtualTradeAI.ExecuteHarvestAndSell(maritime900, town, 4); 
                             Type seaLoot = profile.Outputs[Utility.Random(profile.Outputs.Length)];
-                            TrySellItem(town, seaLoot, Utility.RandomMinMax(2, 5));
+                            TrySellItem(town, seaLoot, (int)((2 + Utility.Random(4)) * pFactor));
                             jobSuccess = true;
                         }
                     }
                     break;
 
-                case 1000: // [1000번대] 학자
+                case 1000: // [1000번대] 학자: 잠재력에 비례하여 집필 속도 및 수량 증가
                     Type pen = profile?.Equip1 ?? typeof(ScribesPen);
                     if (CheckAndUseEquipment(town, pen)) 
                     {
-                        if (TryBuyItem(town, typeof(BlankScroll), 5).Success) 
+                        int paperCount = (int)(5 * pFactor);
+                        if (TryBuyItem(town, typeof(BlankScroll), paperCount).Success) 
                         {
                             Type[] bookTable = (profile != null && profile.Outputs.Length > 0) ? profile.Outputs : [typeof(RedBook), typeof(BlueBook), typeof(BlankMap), typeof(Spellbook)];
                             Type bookToSell = bookTable[Utility.Random(bookTable.Length)];
-                            TrySellItem(town, bookToSell, Utility.RandomMinMax(1, 3)); 
+                            TrySellItem(town, bookToSell, (int)(Utility.RandomMinMax(1, 3) * pFactor)); 
                             jobSuccess = true;
                         }
                     }
                     break;
 
-                case 1100: // [1100번대] 범죄
+                case 1100: // [1100번대] 범죄: 잠재력이 높을수록 지능적으로 더 큰 금액을 탈취
                     Type crimeTool = profile?.Equip1 ?? typeof(Dagger);
                     if (CheckAndUseEquipment(town, crimeTool)) 
                     {
-                        int stolenGold = Utility.RandomMinMax(20, 80) + (int)this.PrimarySkill;
+                        // 탈취 금액에 pFactor 직접 곱연산
+                        int stolenGold = (int)((Utility.RandomMinMax(20, 80) + (int)this.PrimarySkill) * pFactor);
                         if (town.Wealth >= stolenGold)
                         {
                             town.Wealth -= stolenGold; 
@@ -639,12 +695,13 @@ namespace Server.Misc
                             
                             Type[] stealTable = (profile != null && profile.Outputs.Length > 0) ? profile.Outputs : [typeof(GoldRing)];
                             Type stolenGoods = stealTable[Utility.Random(stealTable.Length)];
-                            TrySellItem(town, stolenGoods, 1);
+                            // 장물 수량 또한 잠재력에 비례
+                            TrySellItem(town, stolenGoods, (int)(1 * pFactor));
                             jobSuccess = true;
                         }
                     }
                     break;
-            }
+			}
 
             // ==============================================================================
             // [안전 데이터] 작업 실패 또는 매핑이 안 된 직업의 파산 방지 로직

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic; // [★ 추가]
+using System.Collections.Generic;
 using System.Linq;
 using Server;
 using Server.Items;
@@ -14,11 +14,11 @@ namespace Server.Misc
             var map = town.Facet;
             if (map == null || map == Map.Internal) return false;
 
-            var checkedVendors = new HashSet<PlayerVendor>();
+            // [수정] BaseVendor 대신 모든 모바일의 상위 객체인 Mobile로 선언합니다.
+            var checkedVendors = new HashSet<Mobile>();
 
             for (int radius = 10; radius <= 100; radius += 10)
             {
-                // [★ 수정] using 대신 명시적 Free 호출
                 var eable = map.GetMobilesInRange(town.Center, radius);
                 
                 foreach (var mob in eable)
@@ -42,12 +42,35 @@ namespace Server.Misc
                             vendor.HoldGold += vi.Price;
                             item.Delete();
                             
-                            eable.Free(); // 메모리 해제
-                            return true;  // 성공 시 즉시 종료
+                            eable.Free(); 
+                            return true;  
+                        }
+                    }
+                    else if (mob is RetailVendor rVendor && checkedVendors.Add(rVendor))
+                    {
+                        foreach (var mItem in rVendor.MarketItems.ToList()) 
+                        {
+                            if (mItem.RealItem == null || mItem.RealItem.Deleted) continue;
+                            if (agent.ClassifyItem(mItem.RealItem) != targetCategory) continue;
+
+                            int maxPrice = (int)(mItem.PricePerUnit * townPriceM * 1.5);
+                            if (mItem.PricePerUnit > maxPrice || mItem.PricePerUnit > agent.Gold) continue;
+
+                            Item boughtItem = rVendor.ExtractItemForAI(mItem, 1);
+                            
+                            if (boughtItem != null)
+                            {
+                                agent.Gold -= mItem.PricePerUnit;
+                                rVendor.HoldGold += mItem.PricePerUnit;
+                                boughtItem.Delete(); 
+
+                                eable.Free();
+                                return true;
+                            }
                         }
                     }
                 }
-                eable.Free(); // 루프 다 돌아도 못 찾으면 해제
+                eable.Free(); 
             }
             return false;
         }

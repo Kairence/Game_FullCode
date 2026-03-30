@@ -10,7 +10,7 @@
         "dependencies": {
           "Microsoft.CodeAnalysis.CSharp": "4.8.0",
           "Microsoft.CodeAnalysis.Common": "4.8.0",
-          "Ultima": "2.0.9581.1170"
+          "Ultima": "1.0.0"
         },
         "runtime": {
           "ServUO.dll": {}
@@ -117,11 +117,11 @@
           }
         }
       },
-      "Ultima/2.0.9581.1170": {
+      "Ultima/1.0.0": {
         "runtime": {
           "Ultima.dll": {
-            "assemblyVersion": "2.0.9581.1170",
-            "fileVersion": "2.0.9581.1170"
+            "assemblyVersion": "2.0.9583.29812",
+            "fileVersion": "2.0.9583.29812"
           }
         }
       }
@@ -147,8 +147,8 @@
       "path": "microsoft.codeanalysis.csharp/4.8.0",
       "hashPath": "microsoft.codeanalysis.csharp.4.8.0.nupkg.sha512"
     },
-    "Ultima/2.0.9581.1170": {
-      "type": "reference",
+    "Ultima/1.0.0": {
+      "type": "project",
       "serviceable": false,
       "sha512": ""
     }

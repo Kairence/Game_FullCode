@@ -58,12 +58,12 @@ namespace Server.Items
             Map map;
             Point3D loc;
 
+			/*
             if (!system.GetHarvestDetails(from, this, toProspect, out tileID, out map, out loc))
             {
                 from.SendLocalizedMessage(1049048); // You cannot use your prospector tool on that.
                 return;
             }
-
             HarvestDefinition def = system.GetDefinition(tileID);
 
             if (def == null || def.Veins.Length <= 1)
@@ -114,8 +114,11 @@ namespace Server.Items
                 {
                     from.SendLocalizedMessage(1049062); // You have used up your prospector's tool.
                     Delete();
-                }
+               
+			   }
             }
+			*/
+
         }
 
         public override void Serialize(GenericWriter writer)

@@ -3488,23 +3488,24 @@ m_Stream.Write( (int) renderMode );
 		}
 	}
 
-	// unsure of proper format, client crashes
 	public sealed class MobileName : Packet
 	{
 		public MobileName(Mobile m)
 			: base(0x98)
 		{
-			string name = m.Name;
-
-			if (name == null)
-			{
-				name = "";
-			}
-
+			string name = m.Name ?? "";
 			EnsureCapacity(37);
-
 			m_Stream.Write(m.Serial);
-			m_Stream.WriteAsciiFixed(name, 30);
+
+			// [수정] 클라이언트가 '번호'로 읽을 수 있게 UTF-8 바이트를 직접 추출
+			byte[] buffer = System.Text.Encoding.UTF8.GetBytes(name);
+			int len = Math.Min(buffer.Length, 30);
+
+			m_Stream.Write(buffer, 0, len);
+			
+			// 남은 30바이트 공간을 0(Null)으로 확실히 채워줌 (매우 중요)
+			if (len < 30)
+				m_Stream.Fill(30 - len);
 		}
 	}
 

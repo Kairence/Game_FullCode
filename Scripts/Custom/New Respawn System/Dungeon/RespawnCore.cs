@@ -42,7 +42,58 @@ namespace Server.Misc
         public string ZoneId { get; set; }
         public Map Facet { get; set; }
         public Dictionary<Type, SpeciesState> SpeciesInfo { get; set; } = new Dictionary<Type, SpeciesState>();
-        public List<DungeonNode> Nodes { get; set; } = new List<DungeonNode>();
+        
+		// 🌟 순회 이동을 위한 인덱스 기억 변수
+        private int m_GoIndex = -1;
+
+        public void GoToNextNode(Mobile m)
+        {
+            if (Nodes == null || Nodes.Count == 0)
+            {
+                m.SendMessage(33, "이 구역에는 등록된 노드가 없습니다.");
+                return;
+            }
+            
+            // 인덱스 증가 및 초기화 (순회 로직)
+            m_GoIndex++;
+            if (m_GoIndex >= Nodes.Count) m_GoIndex = 0; 
+            
+            EcoNode target = Nodes[m_GoIndex];
+            if (target != null && !target.Deleted && target.Map != null && target.Map != Map.Internal)
+            {
+                m.MoveToWorld(target.Location, target.Map);
+                m.SendMessage(66, $"[{ZoneId}] {m_GoIndex + 1} / {Nodes.Count} 번째 생태계 노드로 이동했습니다.");
+            }
+        }	
+		public void KeepCurrentNodeOnly(Mobile m)
+        {
+            if (Nodes == null || Nodes.Count <= 1)
+            {
+                m.SendMessage(33, "삭제할 중복 노드가 없습니다.");
+                return;
+            }
+
+            // 마지막으로 이동(Go)했던 인덱스를 대표 노드로 설정. 이동한 적 없으면 0번 유지.
+            int keepIndex = (m_GoIndex >= 0 && m_GoIndex < Nodes.Count) ? m_GoIndex : 0;
+            var nodeToKeep = Nodes[keepIndex];
+            int deletedCount = 0;
+
+            foreach (var node in Nodes.ToList())
+            {
+                if (node != nodeToKeep && node != null && !node.Deleted)
+                {
+                    node.Delete();
+                    deletedCount++;
+                }
+            }
+            
+            m_GoIndex = 0; // 인덱스 초기화
+            CacheNodes();  // 캐시 즉시 갱신
+            m.SendMessage(66, $"[{ZoneId}] 현재 위치한 노드를 대표로 지정하고 {deletedCount}개의 중복 노드를 삭제했습니다.");
+        }
+        // 🌟 [수정됨] 생태계는 이제 EcoNode만 담습니다.
+        public List<EcoNode> Nodes { get; set; } = new List<EcoNode>();
+        
         public EcoZone(string zoneId, Map map) { ZoneId = zoneId; Facet = map; }
         public void AddSpecies(Type type, int maxPop) { if (type != null) SpeciesInfo[type] = new SpeciesState(type, maxPop, 10000); }
 
@@ -53,7 +104,8 @@ namespace Server.Misc
             string myClean = DungeonManager.CleanString(ZoneId);
             foreach (Item item in World.Items.Values)
             {
-                if (item is DungeonNode node && (node.Map == Facet || Facet == null))
+                // 🌟 [수정됨] 월드에 깔린 아이템 중 EcoNode만 찾아냅니다. (던전 노드와 완벽 분리)
+                if (item is EcoNode node && (node.Map == Facet || Facet == null))
                 {
                     string nodeClean = DungeonManager.CleanString(node.ZoneId);
                     if (nodeClean.Contains(myClean) || myClean.Contains(nodeClean)) Nodes.Add(node);
@@ -74,9 +126,38 @@ namespace Server.Misc
                 double spawnChance = (state.ActiveAnimals.Count == 0) ? 0.5 : (0.02 + (0.98 * ((double)state.ActiveAnimals.Count / state.MaxPopulation))) * (state.Vitality / 10000.0);
                 if (Utility.RandomDouble() <= spawnChance)
                 {
-                    DungeonNode node = Nodes[Utility.Random(Nodes.Count)]; Point3D? loc = node.GetValidSpawnLocation();
-                    if (loc.HasValue && state.AnimalType != null) { try { BaseCreature animal = (BaseCreature)Activator.CreateInstance(state.AnimalType); animal.Home = loc.Value; animal.RangeHome = node.HomeRange; animal.MoveToWorld(loc.Value, Facet); state.ActiveAnimals.Add(animal); } catch { } }
+                    // 🌟 [수정됨] EcoNode에서 위치를 가져옵니다. (집 내부 스폰 방지 및 뭉침 방지 로직 작동)
+                    EcoNode node = Nodes[Utility.Random(Nodes.Count)]; Point3D? loc = node.GetValidSpawnLocation();
+                    if (loc.HasValue && state.AnimalType != null) 
+                    { 
+                        try 
+                        { 
+                            BaseCreature animal = (BaseCreature)Activator.CreateInstance(state.AnimalType); 
+                            
+                            // 🌟 [핵심 추가] 이 몬스터의 소환사를 이 에코 노드로 지정합니다. (꼬리표 달기)
+                            
+                            
+                            animal.Home = loc.Value; 
+                            animal.RangeHome = node.HomeRange; 
+                            animal.MoveToWorld(loc.Value, Facet); 
+                            state.ActiveAnimals.Add(animal); 
+                        } 
+                        catch { } 
+                    }
                 }
+            }
+        }
+
+        // 🌟 [추가됨] 생태계 몬스터 안전하게 청소 (서버 크래시 방지용 .ToList() 적용)
+        public void ClearAllSpawns()
+        {
+            foreach (var state in SpeciesInfo.Values)
+            {
+                foreach (var m in state.ActiveAnimals.ToList())
+                {
+                    if (m != null && !m.Deleted) m.Delete();
+                }
+                state.ActiveAnimals.Clear();
             }
         }
     }
@@ -100,6 +181,55 @@ namespace Server.Misc
         public List<DungeonNode> Nodes { get; set; } = new List<DungeonNode>();
         public Dictionary<DungeonDepth, Type[]> SpawnProfiles { get; set; } = new Dictionary<DungeonDepth, Type[]>();
         private DateTime m_NextRespawnTime;
+
+		public void KeepCurrentNodeOnly(Mobile m)
+        {
+            if (Nodes == null || Nodes.Count <= 1)
+            {
+                m.SendMessage(33, "삭제할 중복 노드가 없습니다.");
+                return;
+            }
+
+            // 마지막으로 이동(Go)했던 인덱스를 대표 노드로 설정. 이동한 적 없으면 0번 유지.
+            int keepIndex = (m_GoIndex >= 0 && m_GoIndex < Nodes.Count) ? m_GoIndex : 0;
+            var nodeToKeep = Nodes[keepIndex];
+            int deletedCount = 0;
+
+            foreach (var node in Nodes.ToList())
+            {
+                if (node != nodeToKeep && node != null && !node.Deleted)
+                {
+                    node.Delete();
+                    deletedCount++;
+                }
+            }
+            
+            m_GoIndex = 0; // 인덱스 초기화
+            CacheNodes();  // 캐시 즉시 갱신
+            m.SendMessage(66, $"[{ZoneId}] 현재 위치한 노드를 대표로 지정하고 {deletedCount}개의 중복 노드를 삭제했습니다.");
+        }
+
+		// 🌟 순회 이동을 위한 인덱스 기억 변수
+		private int m_GoIndex = -1;
+
+		public void GoToNextNode(Mobile m)
+		{
+			if (Nodes == null || Nodes.Count == 0)
+			{
+				m.SendMessage(33, "이 던전에는 등록된 노드가 없습니다.");
+				return;
+			}
+			
+			m_GoIndex++;
+			if (m_GoIndex >= Nodes.Count) m_GoIndex = 0; 
+			
+			DungeonNode target = Nodes[m_GoIndex];
+			if (target != null && !target.Deleted && target.Map != null && target.Map != Map.Internal)
+			{
+				m.MoveToWorld(target.Location, target.Map);
+				m.SendMessage(66, $"[{ZoneId}] {m_GoIndex + 1} / {Nodes.Count} 번째 던전 노드로 이동했습니다.");
+			}
+		}
 
         public DungeonZone(string zoneId, Map map, int maxDiff, Type bossType, TimeSpan cooldown)
         {
@@ -152,7 +282,6 @@ namespace Server.Misc
             {
                 int totalArea = 0;
                 foreach (Region r in regions) { if (r.Area != null) foreach (var rect in r.Area) totalArea += (Math.Abs(rect.End.X - rect.Start.X) * Math.Abs(rect.End.Y - rect.Start.Y)); }
-                // [조정] 면적 대비 인구 밀도 추가 하향 (150 -> 600)
                 MaxPopulation = totalArea > 0 ? Math.Min(totalArea / 600, 200) : 30;
             }
 
@@ -185,7 +314,6 @@ namespace Server.Misc
                 Type[] av = SpawnProfiles.ContainsKey(depth) ? SpawnProfiles[depth] : SpawnProfiles.Values.FirstOrDefault(p => p != null && p.Length > 0);
                 if (av == null) continue;
 
-                // [조정] 한 번에 리스폰되는 최대 개수를 5마리로 제한
                 int count = Math.Min(missing, 5);
                 for (int i = 0; i < count; i++)
                 {
@@ -205,7 +333,26 @@ namespace Server.Misc
             if (CurrentDifficulty <= BossThreshold) SpawnBoss();
         }
 
-        public void ClearAllSpawns() { foreach (var list in ActiveMonsters.Values) { foreach (var m in list) m.Delete(); list.Clear(); } foreach (var list in ActiveItems.Values) { foreach (var i in list) i.Delete(); list.Clear(); } }
+        // 🌟 [수정됨] 던전 몬스터 안전하게 청소 (서버 크래시 방지용 .ToList() 적용)
+        public void ClearAllSpawns()
+        {
+            foreach (var list in ActiveMonsters.Values)
+            {
+                foreach (var m in list.ToList())
+                {
+                    if (m != null && !m.Deleted) m.Delete();
+                }
+                list.Clear();
+            }
+            foreach (var list in ActiveItems.Values)
+            {
+                foreach (var i in list.ToList())
+                {
+                    if (i != null && !i.Deleted) i.Delete();
+                }
+                list.Clear();
+            }
+        }
 
         private void SpawnBoss() { if (BossType == null || MaxPopulation == 0) return; Phase = DungeonPhase.BossSpawned; ClearAllSpawns(); var bn = Nodes.FirstOrDefault(n => n.Depth == DungeonDepth.BossRoom) ?? Nodes.FirstOrDefault(); if (bn != null) { try { BaseCreature b = (BaseCreature)Activator.CreateInstance(BossType); b.MoveToWorld(bn.Location, Facet); ActiveMonsters[DungeonDepth.BossRoom].Add(b); } catch { } } }
 

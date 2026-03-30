@@ -21,6 +21,7 @@ namespace Server.Misc
             if (town == null) return;
 
             town.Citizens.Clear();
+			town.Houses.Clear();
 
             // [기획 반영] 잠재 총 인구 계산 (S: +500, A: +200 등)
             int multiplier = town.TownIndex switch { "S" => 20, "A" => 15, "B" => 10, _ => 5 };
@@ -329,29 +330,64 @@ namespace Server.Misc
             return isCity ? totalPotential : (totalPotential / 2);
         }
 
-        public static void AddCitizen(TownEconomy town, NpcJobClass job, NpcRank skill, NobilityRank rank, double townM)
-        {
-            int satisfaction = Utility.RandomMinMax(60, 90);
-            
-            VirtualCitizen citizen = new VirtualCitizen(job, rank, satisfaction) 
-            {
-                RankLevel = rank,
-                Potential = 1.0 + (Utility.RandomDouble() * 1.5),
-                BirthTime = DateTime.Now // 규칙 준수
-            };
-            
-            int adultMinAge = (int)(citizen.MaxLifespan.TotalMinutes * 0.15);
-            int adultMaxAge = (int)(citizen.MaxLifespan.TotalMinutes * 0.80);
-            citizen.BirthTime = DateTime.Now - TimeSpan.FromMinutes(Utility.RandomMinMax(adultMinAge, adultMaxAge));
-            
-            town.Citizens.Add(citizen);
-        }
+		// ====================================================================
+		// ?? 4. 시민 속성 및 자본 생성 (가문명 버그 수정 버전)
+		// ====================================================================
+		public static void AddCitizen(TownEconomy town, NpcJobClass job, NpcRank skill, NobilityRank rank, double townM)
+		{
+			int satisfaction = Utility.RandomMinMax(60, 90);
+			
+			VirtualCitizen citizen = new VirtualCitizen(job, rank, satisfaction) 
+			{
+				RankLevel = rank,
+				Potential = 1.0 + (Utility.RandomDouble() * 1.5),
+				BirthTime = DateTime.Now // 규칙 준수: Now 사용
+			};
+			
+			// [버그 수정] 가문명을 짓기 전에 시민의 성별에 맞는 랜덤 이름을 먼저 부여합니다.
+			citizen.Name = NameList.RandomName(citizen.Gender == Gender.Female ? "female" : "male");
 
+			int adultMinAge = (int)(citizen.MaxLifespan.TotalMinutes * 0.15);
+			int adultMaxAge = (int)(citizen.MaxLifespan.TotalMinutes * 0.80);
+			citizen.BirthTime = DateTime.Now - TimeSpan.FromMinutes(Utility.RandomMinMax(adultMinAge, adultMaxAge));
+			
+			// 이제 citizen.Name이 "Citizen"이 아닌 실제 이름(예: "John")이므로 "John House"로 생성됩니다.
+			string houseName = $"{citizen.Name} House";
+			var newHouse = new VirtualHouse(houseName, rank) 
+			{ 
+				IsActive = true,
+				Prestige = 10,
+				TotalWealth = CalculateCompoundedGold(job, skill, rank, townM)
+			};
+
+			VirtualCitizen father = citizen.Gender == Gender.Male ? citizen : null;
+			VirtualCitizen mother = citizen.Gender == Gender.Female ? citizen : null;
+			
+			var newFamily = new FamilyUnit(father, mother) 
+			{ 
+				IsActive = true 
+			};
+
+			// 상호 참조 연결 및 시스템 등록
+			newHouse.Families.Add(newFamily);
+			citizen.House = newHouse;
+			citizen.Family = newFamily;
+
+			if (!town.Houses.Contains(newHouse)) town.Houses.Add(newHouse);
+			if (!town.Citizens.Contains(citizen)) town.Citizens.Add(citizen);
+		}
 		private static int CalculateCompoundedGold(NpcJobClass job, NpcRank skill, NobilityRank rank, double townM)
         {
             int group = ((int)job / 100) * 100;
-            double baseG = group switch { 100 => 100, 200 => 300, 300 => 500, 400 => 1000, 500 => 5000, _ => 200 };
-            return (int)(baseG * Math.Pow(1.5, (int)skill) * Math.Pow(2.0, (int)rank) * townM);
+            // [수정] 경제 규모 인플레이션 반영 (최소 5천 ~ 최대 15만 베이스)
+            double baseG = group switch { 
+                100 => 5000, 200 => 8000, 300 => 10000, 400 => 15000, 
+                500 => 150000, 600 => 80000, 700 => 10000, 800 => 8000, 
+                900 => 12000, 1000 => 15000, 1100 => 5000, _ => 5000 
+            };
+            
+            // 스킬(1.5배수)과 작위(1.5배수)가 겹치면 최대 수십만 골드로 뻥튀기 됨
+            return (int)(baseG * Math.Pow(1.5, (int)skill) * Math.Pow(1.5, (int)rank) * townM);
         }
 
         private static TimeSpan GenerateLifespan(NobilityRank rank) => 

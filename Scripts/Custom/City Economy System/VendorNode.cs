@@ -213,9 +213,11 @@ namespace Server.Misc
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-            writer.Write(0); // Version 0 (초기화)
+            writer.Write(1); // [수정] Version 0 -> 1
 
-            writer.Write(TownID); // string 대신 int 저장
+            writer.Write(IsActive); // [핵심] 리스폰 방지 스위치 상태 저장
+
+            writer.Write(TownID); 
             writer.Write(MaxCount);
             writer.Write(HomeRange);
             writer.Write(MinDelay);
@@ -232,7 +234,12 @@ namespace Server.Misc
             base.Deserialize(reader);
             int version = reader.ReadInt();
             
-            TownID = reader.ReadInt(); // 로딩 즉시 정체성 확인 (렉 0초)
+            if (version >= 1)
+            {
+                IsActive = reader.ReadBool(); // [핵심] 정지 상태 복구
+            }
+
+            TownID = reader.ReadInt();
             MaxCount = reader.ReadInt();
             HomeRange = reader.ReadInt();
             MinDelay = reader.ReadTimeSpan();
@@ -244,7 +251,6 @@ namespace Server.Misc
 
             m_Spawned = reader.ReadStrongMobileList();
 
-            // 만약 서버 로드 시점에 TownID가 0이라면 1회 강제 갱신
             if (TownID == 0) TownID = TownNumber.GetID(this.Location, this.Map);
 
             StartTimer(); 

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -33,9 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Ultima">
-      <HintPath>..\Ultima.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\Ultima\Ultima.csproj" />
   </ItemGroup>
 
 </Project>

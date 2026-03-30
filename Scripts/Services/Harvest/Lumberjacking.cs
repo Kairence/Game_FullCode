@@ -4,6 +4,7 @@ using Server.Network;
 using System.Linq;
 using Server.Regions;
 using Server.Mobiles;
+using Server.Misc; // ResourceManager 등 연동
 
 namespace Server.Engines.Harvest
 {
@@ -11,64 +12,36 @@ namespace Server.Engines.Harvest
     {
         private static Lumberjacking m_System;
 
-        public static Lumberjacking System
-        {
-            get
-            {
-                if (m_System == null)
-                    m_System = new Lumberjacking();
-
-                return m_System;
-            }
-        }
+        public static Lumberjacking System => m_System ??= new Lumberjacking();
 
         private readonly HarvestDefinition m_Definition;
 
-        public HarvestDefinition Definition
-        {
-            get
-            {
-                return this.m_Definition;
-            }
-        }
+        public HarvestDefinition Definition => this.m_Definition;
 
         private Lumberjacking()
         {
-            HarvestResource[] res;
-            HarvestVein[] veins;
-
             #region Lumberjacking
             HarvestDefinition lumber = new HarvestDefinition();
 
-            // Resource banks are every 4x3 tiles
             lumber.BankWidth = 32;
             lumber.BankHeight = 32;
 
-            // Every bank holds from 20 to 45 logs
             lumber.MinTotal = 240;
             lumber.MaxTotal = 360;
 
-            // A resource bank will respawn its content every 20 to 30 minutes
             lumber.MinRespawn = TimeSpan.FromMinutes(300.0);
             lumber.MaxRespawn = TimeSpan.FromMinutes(600.0);
 
-            // Skill checking is done on the Lumberjacking skill
             lumber.Skill = SkillName.Lumberjacking;
-
-            // Set the list of harvestable tiles
             lumber.Tiles = m_TreeTiles;
-
-            // Players must be within 2 tiles to harvest
             lumber.MaxRange = 1;
 
-            // Ten logs per harvest action
             lumber.ConsumedPerHarvest = 5;
-            lumber.ConsumedPerFeluccaHarvest = 1;
 
-            // The chopping effect
+            // 🌟 [공통 1] 기본 애니메이션 루프를 3회로 고정
             lumber.EffectActions = new int[] { Core.SA ? 7 : 13 };
             lumber.EffectSounds = new int[] { 0x13E };
-            lumber.EffectCounts = (Core.AOS ? new int[] { 3, 4, 5, 6, 7 } : new int[] { 1, 2, 2, 2, 3 });
+            lumber.EffectCounts = new int[] { 3 }; 
             lumber.EffectDelay = TimeSpan.FromSeconds(0.9);
             lumber.EffectSoundDelay = TimeSpan.FromSeconds(1.6);
 
@@ -77,63 +50,6 @@ namespace Server.Engines.Harvest
             lumber.OutOfRangeMessage = 500446; // That is too far away.
             lumber.PackFullMessage = 500497; // You can't place any wood into your backpack!
             lumber.ToolBrokeMessage = 500499; // You broke your axe.
-
-            if (Core.ML)
-            {
-                res = new HarvestResource[]
-                {
-                    new HarvestResource(00.0, 00.0, 50.0, 1072540, typeof(Log))
-					/*
-                    new HarvestResource(65.0, 65.0, 105.0, 1072541, typeof(OakLog)),
-                    new HarvestResource(80.0, 80.0, 120.0, 1072542, typeof(AshLog)),
-                    new HarvestResource(95.0, 95.0, 135.0, 1072543, typeof(YewLog)),
-                    new HarvestResource(100.0, 100.0, 140.0, 1072544, typeof(HeartwoodLog)),
-                    new HarvestResource(100.0, 100.0, 140.0, 1072545, typeof(BloodwoodLog)),
-                    new HarvestResource(100.0, 100.0, 140.0, 1072546, typeof(FrostwoodLog))
-					*/
-                };
-
-                veins = new HarvestVein[]
-                {
-                    new HarvestVein(100.0, 0.0, res[0], null) // Ordinary Logs
-					/*
-                    new HarvestVein(30.0, 0.5, res[1], res[0]), // Oak
-                    new HarvestVein(10.0, 0.5, res[2], res[0]), // Ash
-                    new HarvestVein(05.0, 0.5, res[3], res[0]), // Yew
-                    new HarvestVein(03.0, 0.5, res[4], res[0]), // Heartwood
-                    new HarvestVein(02.0, 0.5, res[5], res[0]), // Bloodwood
-                    new HarvestVein(01.0, 0.5, res[6], res[0]), // Frostwood
-					*/
-                };
-
-                lumber.BonusResources = new BonusHarvestResource[]
-                {
-                    new BonusHarvestResource(0, 100.0, null, null) //Nothing
-					/*
-                    new BonusHarvestResource(100, 10.0, 1072548, typeof(BarkFragment)),
-                    new BonusHarvestResource(100, 03.0, 1072550, typeof(LuminescentFungi)),
-                    new BonusHarvestResource(100, 02.0, 1072547, typeof(SwitchItem)),
-                    new BonusHarvestResource(100, 01.0, 1072549, typeof(ParasiticPlant)),
-                    new BonusHarvestResource(100, 01.0, 1072551, typeof(BrilliantAmber)),
-                    new BonusHarvestResource(100, 01.0, 1113756, typeof(CrystalShards), Map.TerMur),
-					*/
-                };
-            }
-            else
-            {
-                res = new HarvestResource[]
-                {
-                    new HarvestResource(00.0, 00.0, 100.0, 500498, typeof(Log))
-                };
-
-                veins = new HarvestVein[]
-                {
-                    new HarvestVein(100.0, 0.0, res[0], null)
-                };
-            }
-
-            lumber.Resources = res;
-            lumber.Veins = veins;
 
             lumber.RaceBonus = Core.ML;
             lumber.RandomizeVeins = Core.ML;
@@ -147,163 +63,78 @@ namespace Server.Engines.Harvest
         {
             public double m_MinSkill, m_MaxSkill;
             public bool m_DeepForest;
-            public Type[] m_Types;
+            public Type m_Type;
 
-            public MutateEntry(double minSkill, double maxSkill, bool deepForest, params Type[] types)
+            public MutateEntry(double minSkill, double maxSkill, bool deepForest, Type type)
             {
-                //m_ReqSkill = reqSkill;
                 m_MinSkill = minSkill;
                 m_MaxSkill = maxSkill;
                 m_DeepForest = deepForest;
-                m_Types = types;
+                m_Type = type;
             }
         }
 
-        private static MutateEntry[] m_MutateTable = new MutateEntry[]
-		{
-			new MutateEntry( 0.0, 50.0,  false, typeof( Log ) ),
-			new MutateEntry( 20.0, 70.0, false, typeof( OakLog ) ),
-			new MutateEntry( 40.0, 90.0, false, typeof( AshLog ) ),
-			new MutateEntry( 60.0,  110.0, false, typeof( YewLog ) ),
-			new MutateEntry( 80.0,  130.0, false, typeof( HeartwoodLog ) ),
-			new MutateEntry( 100.0,  150.0,  false, typeof( BloodwoodLog ) ),
-			new MutateEntry( 120.0,  170.0,  false, typeof( FrostwoodLog ) )
-		};
-
-            //new MutateEntry( 80.0,  80.0, 2500.0, false, typeof( MudPuppy ), typeof( RedHerring) ),
-			//new MutateEntry( 0.0, 200.0,  -200.0, false, new Type[1]{ null } )
-
-        public override Type MutateType(Type type, Mobile from, Item tool, HarvestDefinition def, Map map, Point3D loc, HarvestResource resource, out double chance, out double point, out bool failcheck, out Type basic, out Type upgrade )
+        private static readonly MutateEntry[] m_MutateTable = new MutateEntry[]
         {
-			double skillBase = from.Skills[SkillName.Lumberjacking].Base;
-			double skillValue = from.Skills[SkillName.Lumberjacking].Value;
-				
-			var table = m_MutateTable;
+            new MutateEntry( 0.0, 50.0,  false, typeof( Log ) ),
+            new MutateEntry( 20.0, 70.0, false, typeof( OakLog ) ),
+            new MutateEntry( 40.0, 90.0, false, typeof( AshLog ) ),
+            new MutateEntry( 60.0,  110.0, false, typeof( YewLog ) ),
+            new MutateEntry( 80.0,  130.0, false, typeof( HeartwoodLog ) ),
+            new MutateEntry( 100.0,  150.0,  false, typeof( BloodwoodLog ) ),
+            new MutateEntry( 120.0,  170.0,  false, typeof( FrostwoodLog ) )
+        };
 
-			MutateEntry entry = m_MutateTable[0];
-
-			bool selectOre = false;
-			failcheck = false;
-			basic = entry.m_Types[0];
-			upgrade = entry.m_Types[0];
-
-			int count = 0;
-			for (int i = table.Length -1; i >= 1; --i)
-			{
-				entry = m_MutateTable[i];
-				int maxchance = Misc.Util.upgradechance[i];
-				if( from is PlayerMobile )
-				{
-					PlayerMobile pm = from as PlayerMobile;
-					maxchance = Misc.Util.ExpHarvestBonus( pm, maxchance );
-				}
-				if (skillValue >= entry.m_MinSkill && Utility.RandomMinMax(1, 10000) <= maxchance )
-				{
-					count = i;
-					break;
-				}
-			}
-
-			entry = m_MutateTable[count];
-			upgrade = entry.m_Types[0];
-			
-			//if( type != upgrade )
-			//	type = upgrade;
-			
-			if( count > 0 && Utility.RandomMinMax(0, count * 2) != 0 )
-				failcheck = true;
-
-			point = entry.m_MaxSkill + entry.m_MinSkill;
-			chance = 1 + ( skillValue - entry.m_MaxSkill ) * 0.02;
-			return type;
-
-			
-			/*
-			if( from is PlayerMobile )
-			{
-				PlayerMobile pm = from as PlayerMobile;
-				for ( int i = 0; i < buffpoint.Length; i++ )
-				{
-					entry = m_MutateTable[i + 1];
-					if( pm.BuffCheck[i] && skillValue >= entry.m_MinSkill )
-					{
-						if( pm.GoldPoint[0] >= buffpoint[i] )
-						{
-							pm.GoldPoint[0] -= buffpoint[i];
-
-							basic = entry.m_Types[0];
-							upgrade = entry.m_Types[0];
-							selectOre = true;
-							failcheck = true;
-							break;
-						}
-						else
-						{
-							pm.BuffCheck[i] = false;
-							pm.SendMessage("당신은 해당 버프를 적용받기에는 포인트가 낮습니다.");
-						}
-					}
-					else if( pm.BuffCheck[i] )
-					{
-						pm.BuffCheck[i] = false;
-						pm.SendMessage("당신은 해당 버프를 적용받기에는 스킬이 낮습니다.");
-					}
-				}
-			}
-
-			if( !selectOre )
-			{
-				int count = 0;
-				for (int i = table.Length -1; i >= 1; --i)
-				{
-					entry = m_MutateTable[i];
-					if (skillValue >= entry.m_MinSkill && Utility.RandomMinMax(0, i * i) == 0 )
-					{
-						count = i;
-						break;
-					}
-				}
-
-				entry = m_MutateTable[count];
-				upgrade = entry.m_Types[0];
-				
-				//if( type != upgrade )
-				//	type = upgrade;
-				
-				if( count > 0 && Utility.RandomMinMax(0, count * 2) != 0 )
-					failcheck = true;
-			}
-			point = entry.m_MaxSkill;
-			chance = 1 + ( skillValue - entry.m_MaxSkill ) * 0.02;
-			return type;
-			*/
-		}
-        public override void SendSuccessTo(Mobile from, Item item, HarvestResource resource)
+        // 🌟 [핵심] 리뉴얼된 MutateType (튜플 반환, Bank 사용 안함)
+        public override (Type Type, double Chance, double SkillMax, bool Fail) MutateType(Mobile from, Item tool, HarvestDefinition def, Map map, Point3D loc, object toHarvest)
         {
-            if (item != null)
+            double skillBase = from.Skills[SkillName.Lumberjacking].Base;
+            double skillValue = from.Skills[SkillName.Lumberjacking].Value;
+                
+            int count = 0;
+            for (int i = m_MutateTable.Length - 1; i >= 1; --i)
             {
-                if (item != null && item.GetType().IsSubclassOf(typeof(BaseWoodBoard)))
+                int maxchance = Misc.Util.upgradechance[i];
+                if( from is PlayerMobile pm )
                 {
-                    from.SendLocalizedMessage(1158776); // The axe magically creates boards from your logs.
-                    return;
+                    maxchance = Misc.Util.ExpHarvestBonus( pm, maxchance );
                 }
-                else
+                if (skillValue >= m_MutateTable[i].m_MinSkill && Utility.RandomMinMax(1, 10000) <= maxchance)
                 {
-                    foreach (var res in m_Definition.Resources.Where(r => r.Types != null))
-                    {
-                        foreach (var type in res.Types)
-                        {
-                            if (item.GetType() == type)
-                            {
-                                res.SendSuccessTo(from);
-                                return;
-                            }
-                        }
-                    }
+                    count = i;
+                    break;
                 }
             }
 
-            base.SendSuccessTo(from, item, resource);
+            MutateEntry entry = m_MutateTable[count];
+            Type upgrade = entry.m_Type;
+            
+            bool failcheck = (count > 0 && Utility.RandomMinMax(0, count * 2) != 0);
+            double point = entry.m_MaxSkill + entry.m_MinSkill;
+            double chance = 1 + (skillValue - entry.m_MaxSkill) * 0.02;
+
+            // 🌟 [공통 1] 에니메이션 루프 수치 계산용 참고 로직 (타이머 연동)
+            // int animLoop = 3; 
+            // animLoop += count; // 자원 등급 올라가면 +1씩
+            // if (skillBase >= 100.0) animLoop -= 1; // 스킬 100 이상이면 -1
+            // animLoop = Math.Max(1, animLoop); // 1회 이하는 불가능
+
+            return (upgrade, chance, point, failcheck);
+        }
+
+        public override void SendSuccessTo(Mobile from, Item item, Type resourceType)
+        {
+            if (item != null)
+            {
+                if (item.GetType().IsSubclassOf(typeof(BaseWoodBoard)))
+                {
+                    from.SendLocalizedMessage(1158776); // The axe magically creates boards from your logs.
+                }
+                else
+                {
+                    from.SendLocalizedMessage(500498); // You put some wood into your backpack.
+                }
+            }
         }
 
         public override bool CheckHarvest(Mobile from, Item tool)
@@ -313,10 +144,10 @@ namespace Server.Engines.Harvest
 
             return true;
         }
+
         private bool IsDungeonRegion(Mobile from)
         {
-            if (from == null)
-                return false;
+            if (from == null) return false;
 
             Map map = from.Map;
             Region reg = from.Region;
@@ -327,19 +158,27 @@ namespace Server.Engines.Harvest
 
             return reg != null && (reg.IsPartOf<Server.Regions.DungeonRegion>() || map == Map.Ilshenar);
         }
+
         public override bool CheckHarvest(Mobile from, Item tool, HarvestDefinition def, object toHarvest)
         {
             if (!base.CheckHarvest(from, tool, def, toHarvest))
                 return false;
 
+            // 🌟 [수정 1] 벌목 도구 제한 (오직 톱과 손도끼만 허용, 일반 Axe 금지)
+            if (!(tool is Hatchet) && !(tool is Saw))
+            {
+                from.SendMessage("벌목은 오직 톱(장비 해제)이나 손도끼(장비 착용)로만 가능합니다.");
+                return false;
+            }
+
             bool boat = Server.Multis.BaseBoat.FindBoatAt(from, from.Map) != null;
             bool dungeon = IsDungeonRegion(from);
 
-			if (tool.Parent != from && from.Backpack != null && !tool.IsChildOf(from.Backpack))
-			{
-				from.SendLocalizedMessage(1080058); // This must be in your backpack to use it.
-				return false;
-			}
+            if (tool.Parent != from && from.Backpack != null && !tool.IsChildOf(from.Backpack))
+            {
+                from.SendLocalizedMessage(1080058); // This must be in your backpack to use it.
+                return false;
+            }
             else if (from.Mounted)
             {
                 from.SendMessage("말을 탄 상태에서는 나무를 벌목할 수 없습니다.");
@@ -350,47 +189,39 @@ namespace Server.Engines.Harvest
                 from.SendMessage("폴리모프 상태에서는 나무를 벌목할 수 없습니다.");
                 return false;
             }
-			else if( boat )
-			{
-                from.SendMessage("배 안에서는 나무를 벌목할 수 없습니다"); // You can't mine while polymorphed.
-                return false;
-			}
-			else if( dungeon )
-			{
-                from.SendMessage("던전 안에서는 나무를 벌목할 수 없습니다"); // You can't mine while polymorphed.
-                return false;
-			}
-
-			return true;
-        }
-
-		/*
-        public override Type GetResourceType(Mobile from, Item tool, HarvestDefinition def, Map map, Point3D loc, HarvestResource resource)
-        {
-            #region Void Pool Items
-            HarvestMap hmap = HarvestMap.CheckMapOnHarvest(from, loc, def);
-
-            if (hmap != null && hmap.Resource >= CraftResource.RegularWood && hmap.Resource <= CraftResource.Frostwood)
+            else if( boat )
             {
-                hmap.UsesRemaining--;
-                hmap.InvalidateProperties();
-
-                CraftResourceInfo info = CraftResources.GetInfo(hmap.Resource);
-
-                if (info != null)
-                    return info.ResourceTypes[0];
+                from.SendMessage("배 안에서는 나무를 벌목할 수 없습니다.");
+                return false;
             }
-            #endregion
+            else if( dungeon )
+            {
+                from.SendMessage("던전 안에서는 나무를 벌목할 수 없습니다.");
+                return false;
+            }
 
-            return base.GetResourceType(from, tool, def, map, loc, resource);
+            return true;
         }
-		*/
+
         public override bool CheckResources(Mobile from, Item tool, HarvestDefinition def, Map map, Point3D loc, bool timed)
         {
             if (HarvestMap.CheckMapOnHarvest(from, loc, def) == null)
                 return base.CheckResources(from, tool, def, map, loc, timed);
 
             return true;
+        }
+
+        // 🌟 [핵심] 리뉴얼된 OnHarvestFinished (튜플 적용, 찌꺼기 제거)
+        public override void OnHarvestFinished(Mobile from, Item tool, HarvestDefinition def, Type resourceType, object harvested)
+        {
+            // 🌟 [수정 2] 공통 인테리어 물품(특이한 나무뿌리 등) 랜덤 드랍 예약 공간
+            if (Utility.RandomDouble() < 0.05) // 확률 설정 예시 (5%)
+            {
+                // TODO: 인테리어 물품(특이한 가지, 원목 등) 추가
+                // Item deco = new DecorativeWood();
+                // Give(from, deco, true);
+                // from.SendMessage("쓸만한 장식용 나뭇가지를 발견했습니다.");
+            }
         }
 
         public override void OnBadHarvestTarget(Mobile from, Item tool, object toHarvest)

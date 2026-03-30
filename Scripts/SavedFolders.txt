@@ -1,0 +1,13 @@
+﻿C:\Kairence_UO\4.0\Scripts\Custom\City Economy System
+C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\Economy Gump
+C:\Kairence_UO\4.0\Scripts\Custom\City Economy System\NPC Group
+C:\Kairence_UO\4.0\Scripts\Custom\New Combat System
+C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System
+C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Dungeon
+C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Eco
+C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource
+C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System
+C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Crop
+C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Farm Addon
+C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Fruit Tree
+C:\Kairence_UO\4.0\Scripts\Custom\New Respawn System\Resource\Farm System\Seed

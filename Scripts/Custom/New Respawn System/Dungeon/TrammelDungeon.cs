@@ -100,7 +100,7 @@ namespace Server.Misc
             // 1층 (보스: Reaper / 몹 평균 점수 약 10~15점)
             // 7,500마리 사냥 목표: 90,000점
             DungeonZone despiseL1 = new($"{prefix} Despise Level 1", map, 90000, typeof(Reaper), TimeSpan.FromHours(4));
-            despiseL1.SetSpawnProfile(DungeonDepth.Entrance, [typeof(Llama), typeof(Crane)]);
+            despiseL1.SetSpawnProfile(DungeonDepth.Entrance, [typeof(Llama), typeof(Horse)]);
             despiseL1.SetSpawnProfile(DungeonDepth.Middle, [typeof(Palomino), typeof(RidableLlama), typeof(Bogling), typeof(ForestOstard)]);
             despiseL1.SetSpawnProfile(DungeonDepth.Deep, [typeof(ForestOstard), typeof(Corpser), typeof(Treefellow)]);
             DungeonManager.Zones[despiseL1.ZoneId] = despiseL1;

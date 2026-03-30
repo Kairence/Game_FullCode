@@ -1,7 +1,7 @@
-﻿#region References
+#region References
 using System;
 using System.IO;
-
+using Server;
 using Microsoft.Win32;
 
 using Ultima;

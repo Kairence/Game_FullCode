@@ -516,10 +516,12 @@ namespace Server.Mobiles
 
     public class EscortDestinationInfo
     {
-        private static Hashtable m_Table;
+        
         private readonly string m_Name;
         private readonly Region m_Region;
         //private Rectangle2D[] m_Bounds;
+		private static Dictionary<string, EscortDestinationInfo> m_Table;
+		private static readonly object m_Lock = new();
         public EscortDestinationInfo(string name, Region region)
         {
             m_Name = name;
@@ -542,20 +544,28 @@ namespace Server.Mobiles
         }
         public static void LoadTable()
         {
-            ICollection list = Map.Felucca.Regions.Values;
-
-            if (list.Count == 0)
-                return;
-
-            m_Table = new Hashtable();
-
-            foreach (Region r in list)
+			lock (m_Lock)
             {
-                if (r.Name == null)
-                    continue;
+                if (m_Table != null)
+                    return;
 
-                if (r is Regions.DungeonRegion || r is Regions.TownRegion)
-                    m_Table[r.Name] = new EscortDestinationInfo(r.Name, r);
+                ICollection list = Map.Felucca.Regions.Values;
+
+                if (list.Count == 0)
+                    return;
+
+                var table = new Dictionary<string, EscortDestinationInfo>();
+
+                foreach (Region r in list)
+                {
+                    if (r.Name == null)
+                        continue;
+
+                    if (r is Regions.DungeonRegion || r is Regions.TownRegion)
+                        table[r.Name] = new EscortDestinationInfo(r.Name, r);
+                }
+
+                m_Table = table;
             }
         }
 

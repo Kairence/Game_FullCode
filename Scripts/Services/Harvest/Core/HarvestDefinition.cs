@@ -418,6 +418,8 @@ namespace Server.Engines.Harvest
 
         public HarvestVein GetVeinAt(Map map, int x, int y)
         {
+			if (Veins == null || Veins.Length == 0) 
+				return null;
             if (this.m_Veins.Length == 1)
                 return this.m_Veins[0];
 

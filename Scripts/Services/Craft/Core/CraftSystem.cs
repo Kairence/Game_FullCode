@@ -346,11 +346,6 @@ namespace Server.Engines.Craft
             CraftItem craftItem = new CraftItem(typeItem, group, name, amount);
             craftItem.AddRes(typeRes, nameRes, amount, message);
             craftItem.AddSkill(skillToMake, minSkill, maxSkill);
-
-			int hunger = 50;
-			if( skillToMake is SkillName.Blacksmith || skillToMake is SkillName.Carpentry || skillToMake is SkillName.Tailoring || skillToMake is SkillName.Fletching )
-				hunger *= 2;
-			craftItem.Hunger = hunger;
 			
             DoGroup(group, craftItem);
             return m_CraftItems.Add(craftItem);

@@ -57,6 +57,41 @@ namespace Server.Misc
         private int m_TownID;
         private long m_Wealth;
 
+		// [신규] 영토 관리를 위한 1차원 배열 (타일 소유주 식별)
+        // 값: 소유한 가문의 이름 (null이거나 빈 문자열이면 빈 땅)
+        public string[] TerritoryMap { get; set; } 
+		public int Population { get; set; }
+		
+		
+		
+        // [신규] 마을의 기본 타일 시세 (매일/매번 변동 가능)
+		[CommandProperty(AccessLevel.GameMaster)]
+        public int CurrentTilePrice
+        {
+            get
+            {
+                var grid = TownNumber.GetGridInfo(this.TownID);
+                var info = TownNumber.GetInfo(this.TownID);
+
+                if (grid.Total <= 0) return 50000;
+
+                // [수정] 영토 타일당 가격 100배 상향
+                long basePrice = info.Grade switch
+                {
+                    "S" => 200000,
+                    "A" => 150000,
+                    "B" => 100000,
+                    "C" => 50000,
+                    _ => 100000
+                };
+
+                double density = (double)Population / grid.Total;
+                double weight = 1.0 + (density * 2.0);
+
+                return (int)(basePrice * weight);
+            }
+        }
+
         public string Name => TownNumber.GetName(this.TownID);
 
         [CommandProperty(AccessLevel.GameMaster)]
@@ -109,8 +144,8 @@ namespace Server.Misc
         public List<TownInventoryEntry> InventoryEntries { get; set; } = [];
         public Dictionary<NpcJobClass, double> JobBirthWeights { get; set; } = [];
 
-        public long Platinum { get => Wealth / 100000000; set => Wealth = value * 100000000; }
-        public long ExtraGold => Wealth % 100000000;
+        public long Platinum { get => Wealth / 100_000_000L; set => Wealth = value * 100_000_000L; }
+		public long ExtraGold => Wealth % 100_000_000L;
         public string TotalWealthString => $"{Platinum}P {ExtraGold:N0}g";
         
 		// 1. [Macro] 마을 전체 경제 변동치 (-0.5 ~ +1.0)
@@ -159,7 +194,7 @@ namespace Server.Misc
             }
 
             // 최소 25% 하한선 보장
-            return (int)(item.BasePrice * Math.Max(0.25, finalFactor) * externalMultiplier);
+			return Math.Max(1, (int)(item.BasePrice * Math.Max(0.25, finalFactor) * externalMultiplier));
         }
         public long WarehouseValue => Warehouse.Values.Sum(i => (long)i.Stock * i.BasePrice);
         public long ActualTotalWealth => Wealth + WarehouseValue;
@@ -169,6 +204,10 @@ namespace Server.Misc
             TownID = townID;
             BaseWealth = baseWealth;
             Wealth = baseWealth;
+			
+			// [수정] TownNumber에 기획된 고정 그리드 규격으로 배열 초기화
+            var grid = TownNumber.GetGridInfo(townID);
+            TerritoryMap = new string[Math.Max(1, grid.Total)];
         }
 
         public void UpdateBaseWealth()
@@ -178,7 +217,7 @@ namespace Server.Misc
             if (TownID >= 900 || TownIndex == "C")
             {
                 // 상인 수당 15,000 gp의 영세한 기본 자본금만 책정 (아이템/면적 거품 제거)
-                this.BaseWealth = this.VendorCount * 15000;
+                this.BaseWealth = this.VendorCount * 15000L;
                 return;
             }
 
@@ -210,9 +249,9 @@ namespace Server.Misc
 
         public void SupplyItem(params object[] args) { }
 
-        public void Serialize(GenericWriter writer)
+		public void Serialize(GenericWriter writer)
 		{
-			writer.Write((int)8); // 버전 8: 가문(House) 및 가족(Family) 데이터 직렬화 추가
+			writer.Write((int)10); // [수정] 버전 10: 가문 부속 건물(HasGarden, HasWorkshop, HasBarracks) 추가
 			writer.Write(TownID);
 			writer.Write(Wealth);
 			writer.Write(BaseWealth);
@@ -235,7 +274,7 @@ namespace Server.Misc
 				citizen.Serialize(writer);
 			}
 
-			// 3. [신규] 가문(VirtualHouse) 저장
+			// 3. [수정] 가문(VirtualHouse) 및 영토/건물 인덱스 저장
 			writer.Write(Houses.Count);
 			foreach (var house in Houses)
 			{
@@ -243,6 +282,18 @@ namespace Server.Misc
 				writer.Write(house.Prestige);
 				writer.Write(house.TotalWealth);
 				writer.Write((int)house.PrimaryRank);
+
+				// [버전 9] 가문이 소유한 영토 타일 인덱스 저장
+				writer.Write(house.OwnedTileIndices.Count);
+				foreach (int tileIndex in house.OwnedTileIndices)
+				{
+					writer.Write(tileIndex);
+				}
+
+				// [신규: 버전 10] 부속 건물 상태 저장
+				writer.Write(house.HasGarden);
+				writer.Write(house.HasWorkshop);
+				writer.Write(house.HasBarracks);
 
 				// 4. 가족(FamilyUnit) 및 관계도(Index) 저장
 				writer.Write(house.Families.Count);
@@ -262,6 +313,13 @@ namespace Server.Misc
 					}
 				}
 			}
+
+			// 5. [버전 9] 마을 전체 영토(TerritoryMap) 소유권 저장
+			writer.Write(TerritoryMap.Length);
+			for (int i = 0; i < TerritoryMap.Length; i++)
+			{
+				writer.Write(TerritoryMap[i] ?? ""); // null 방지용 빈 문자열 저장
+			}
 		}
 
 		public void Deserialize(GenericReader reader)
@@ -272,6 +330,11 @@ namespace Server.Misc
 			Wealth = reader.ReadLong();
 			BaseWealth = reader.ReadLong();
 			VendorCount = reader.ReadInt();
+
+			// [수정] Deserialize 시점에도 기획된 고정 그리드 크기로 배열 안전 초기화 보장
+            var grid = TownNumber.GetGridInfo(TownID);
+            if (TerritoryMap == null || TerritoryMap.Length != grid.Total)
+                TerritoryMap = new string[Math.Max(1, grid.Total)];
 
 			// 1. 창고 복구
 			int count = reader.ReadInt();
@@ -295,7 +358,7 @@ namespace Server.Misc
 				}
 			}
 
-			// 3. [신규] 가문 및 가족 관계도 복원 (버전 8 이상)
+			// 3. [수정] 가문 및 영토/건물 인덱스 복구 (버전 8 이상)
 			if (version >= 8)
 			{
 				int houseCount = reader.ReadInt();
@@ -307,6 +370,31 @@ namespace Server.Misc
 					NobilityRank hRank = (NobilityRank)reader.ReadInt();
 
 					VirtualHouse house = new VirtualHouse(hName, hRank) { Prestige = hPrestige, TotalWealth = hWealth };
+
+					// [버전 9 이상] 소유 영토 인덱스 복구
+
+					if (version >= 9)
+					{
+						int ownedTileCount = reader.ReadInt();
+						for (int t = 0; t < ownedTileCount; t++)
+						{
+							int tileIdx = reader.ReadInt();
+							// [버그 수정] 현재 축소된 TerritoryMap 크기를 벗어나는 유령 인덱스는 폐기합니다.
+							if (tileIdx >= 0 && tileIdx < TerritoryMap.Length)
+							{
+								house.OwnedTileIndices.Add(tileIdx);
+							}
+						}
+					}
+
+					// [신규: 버전 10 이상] 부속 건물 상태 복구
+					if (version >= 10)
+					{
+						house.HasGarden = reader.ReadBool();
+						house.HasWorkshop = reader.ReadBool();
+						house.HasBarracks = reader.ReadBool();
+					}
+
 					Houses.Add(house);
 
 					int familyCount = reader.ReadInt();
@@ -345,6 +433,23 @@ namespace Server.Misc
 					}
 				}
 			}
+
+			// 5. [버전 9 이상] 마을 전체 영토 소유 맵 복구
+			if (version >= 9)
+			{
+				int mapLength = reader.ReadInt();
+				for (int i = 0; i < mapLength; i++)
+				{
+					string ownerName = reader.ReadString();
+					
+					// [수정] 현재 생성된 (축소된) 배열 크기 안에서만 데이터를 넣습니다.
+					// 이렇게 하면 19만 개의 데이터가 들어와도 1,934개만 저장하고 나머지는 버립니다.
+					if (i < TerritoryMap.Length)
+                    {
+                        TerritoryMap[i] = string.IsNullOrEmpty(ownerName) ? null : ownerName;
+                    }
+				}
+			}
 		}
     }
 
@@ -373,7 +478,6 @@ namespace Server.Misc
                     BinaryFileWriter writer = new BinaryFileWriter(fs, true);
                     
                     Console.WriteLine($"[Economy Save] {Towns.Count}개의 도시 데이터를 저장합니다.");
-					Console.WriteLine($"[Economy Save] {Towns.Count}\uAC1C \uB9C8\uC744 \uB370\uC774\uD130 \uC800\uC7A5 \uC644\uB8CC.");
                     writer.Write((int)1); 
                     writer.Write(Towns.Count);
                     foreach (var kvp in Towns) {

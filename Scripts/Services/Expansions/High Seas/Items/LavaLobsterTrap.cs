@@ -13,7 +13,7 @@ namespace Server.Items
         {
         }
 
-        public override int[] UseableTiles { get { return Server.Engines.Harvest.Fishing.LavaTiles; } }
+        //public override int[] UseableTiles { get { return Server.Engines.Harvest.Fishing.LavaTiles; } }
 
         public override void AddNameProperty(ObjectPropertyList list)
         {

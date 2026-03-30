@@ -82,6 +82,7 @@ namespace Server.Misc
     }
 
     // 3. 계정별 영토 및 공훈 프로필 데이터
+   // 3. 계정별 영토 및 공훈 프로필 데이터
     public class TerritoryProfile
     {
         public int ContributionPoints { get; set; } // 누적 공훈(Merit)
@@ -97,23 +98,20 @@ namespace Server.Misc
             UsedTiles = 0;
         }
 
-        // 작위별 기본 제공 영토 칸 수
-        public int GetRankBaseTiles()
+        // 작위별 기본 제공 영토 칸 수 (기획서 반영)
+        public int GetRankBaseTiles() => Rank switch
         {
-            switch (Rank)
-            {
-                case NobilityRank.Commoner: return 0;       
-                case NobilityRank.Knight: return 50;        
-                case NobilityRank.SubBaronet: return 100;   
-                case NobilityRank.Baronet: return 150;      
-                case NobilityRank.SubBaron: return 200;     
-                case NobilityRank.Baron: return 300;        
-                case NobilityRank.Viscount: return 400;     
-                case NobilityRank.Count: return 600;        
-                case NobilityRank.Marquis: return 1000;     
-                default: return 0;
-            }
-        }
+            NobilityRank.Commoner => 10,       // [기획] 평민 10칸
+            NobilityRank.Knight => 50,         // [기획] 기사 50칸
+            NobilityRank.SubBaronet => 100,
+            NobilityRank.Baronet => 150,
+            NobilityRank.SubBaron => 200,
+            NobilityRank.Baron => 300,         // [기획] 남작 300칸
+            NobilityRank.Viscount => 500,
+            NobilityRank.Count => 700,
+            NobilityRank.Marquis => 1000,      // [기획] 후작 1000칸
+            _ => 10
+        };
 
         public int TotalMaxTiles => GetRankBaseTiles() + BonusTiles;
         public int AvailableTiles => Math.Max(0, TotalMaxTiles - UsedTiles);
@@ -137,7 +135,7 @@ namespace Server.Misc
         }
     }
 
-    // 4. 영토 및 작위 코어 매니저
+	// 4. 영토 및 작위 코어 매니저
     public class RankAndTerritorySystem
     {
         public static Dictionary<string, TerritoryProfile> m_Profiles = new Dictionary<string, TerritoryProfile>();
@@ -158,6 +156,23 @@ namespace Server.Misc
             if (!m_Profiles.ContainsKey(accName)) m_Profiles[accName] = new TerritoryProfile();
             return m_Profiles[accName];
         }
+
+        // ====================================================================
+        // [기획 추가] 작위별 가문 창고 기본 용량 반환 헬퍼
+        // ====================================================================
+        public static int GetRankBaseCapacity(NobilityRank rank) => rank switch
+        {
+            NobilityRank.Commoner => 100,      // [기획] 평민 100칸
+            NobilityRank.Knight => 500,        // [기획] 기사 500칸
+            NobilityRank.SubBaronet => 1000,
+            NobilityRank.Baronet => 2000,
+            NobilityRank.SubBaron => 3500,
+            NobilityRank.Baron => 5000,        // [기획] 남작 5000칸
+            NobilityRank.Viscount => 6500,
+            NobilityRank.Count => 8000,
+            NobilityRank.Marquis => 10000,     // [기획] 후작 10000칸
+            _ => 100
+        };
 
 		// RankAndTerritorySystem.cs 내부에 아래 메서드들을 다시 추가하세요.
 		[Usage("MyRank")]

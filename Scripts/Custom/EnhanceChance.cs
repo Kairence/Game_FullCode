@@ -1,6 +1,7 @@
 ﻿using System;
 using Server;
 using Server.Items;
+using Server.Mobiles;
 
 namespace Server.Misc
 {
@@ -113,12 +114,16 @@ namespace Server.Misc
 			// 확률 판정 (유저님이 수정하신 높은 확률식 적용)
 			if (Utility.RandomDouble() <= (0.8 - eq.SuffixOption[10] * 0.08 + eq.SuffixOption[1] * 0.04))
 			{
+				// 1. 강화 레벨만 1 올려주면 끝! (나머진 시스템이 알아서 함)
 				eq.SuffixOption[10]++;
-				ItemOptionCreator.NewEquipOptionList(item, 
-					m_EnhanceTable[partIdx][eq.PrefixOption[10]][0], 
-					(int)(m_EnhanceTable[partIdx][eq.PrefixOption[10]][1] * EnhanceScales[eq.SuffixOption[10]][0]), 0);
 
-				item.InvalidateProperties();
+				// 2. 만약 플레이어가 장비를 입고 있는 상태에서 강화했다면 즉시 스탯 갱신
+				if (item.Parent is PlayerMobile pm)
+				{
+					pm.UpdateEquipOptions();
+				}
+
+				item.InvalidateProperties(); // 툴팁(OPL) 갱신
 				from.FixedParticles(0x373A, 10, 15, 5012, EffectLayer.Waist);
 				return 1; // 성공
 			}
