@@ -3185,11 +3185,6 @@ public static int Damage(IDamageable damageable, Mobile from, int damage, bool i
 
         public void AddTo(Mobile m)
         {
-            if (Discordance.UnderPVPEffects(m))
-            {
-                return;
-            }
-
             Remove();
 
             for (int i = 0; i < 10; ++i)

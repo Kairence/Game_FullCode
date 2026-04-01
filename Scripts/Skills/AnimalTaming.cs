@@ -210,7 +210,6 @@ namespace Server.SkillHandlers
 					if (tamer.Skills[SkillName.AnimalTaming].Value >= 150.0 && req > 1)
 					{
 						m_CurrentSuccessCount = 1;
-						//tamer.SendMessage(0x35, "조련의 거장으로서 동물의 경계를 즉시 무너뜨리고 교감을 시작합니다.");
 					}
 
 					Priority = TimerPriority.TwoFiftyMS;
@@ -249,6 +248,22 @@ namespace Server.SkillHandlers
 					double baseChance = 80.0 + (tamingSkillValue - minSkill);
 					double currentChance = baseChance / Math.Pow(2, m_CurrentSuccessCount);
 					double critChance = m_Tamer.Int * 0.01;
+
+					// =========================================================
+					// [바드 평화 유지 연동] 테이밍 시도 시 치명타 2배 및 평화 상태 해제
+					// =========================================================
+					if (Server.SkillHandlers.Peacemaking.CheckAndConsumeTamingBonus(m_Creature))
+					{
+						// 200 보너스가 적용된 상태라면 치명타 확률 2배 적용
+						// (CheckAndConsumeTamingBonus 함수 내부에서 이미 평화 상태를 해제함)
+						critChance *= 2.0; 
+					}
+					else if (m_Creature.BardPacified)
+					{
+						// 200 보너스가 없는 일반 평화 상태여도, 테이밍을 시도하면 무조건 평화 상태 강제 해제
+						m_Creature.BardEndTime = DateTime.Now;
+					}
+					// =========================================================
 
 					bool isSuccess = false;
 					bool isCritical = false;
@@ -306,17 +321,6 @@ namespace Server.SkillHandlers
 					m_Creature.Loyalty = -Math.Abs(m_Creature.Loyalty);
 					AnimalTaming.ScaleStats(m_Creature);
 
-					/*
-					if (m_Creature.Owners.Count == 0)
-					{
-						if (m_Paralyzed) ScaleSkills(m_Creature, 0.86, true);
-						else ScaleSkills(m_Creature, 0.90, true);
-					}
-					else
-					{
-						ScaleSkills(m_Creature, 0.90, false);
-					}
-					*/
 					// 최종 성공 Cliloc (1080913)
 					m_Creature.PrivateOverheadMessage(MessageType.Regular, 0x3B2, 1080913, m_Tamer.NetState);
 

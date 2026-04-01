@@ -501,22 +501,32 @@ namespace Server.Misc
 
             switch (jobGroup)
             {
-                case 100: // [100번대] 잠재력에 따른 생산량 차등 적용
+                case 100: // [100번대] 기초 채집 (생태계 연동으로 완벽 수정)
                     if (profile != null && CheckAndUseEquipment(town, profile.Equip1)) 
                     {
-                        int harvestAmount = (int)((5 + (this.PrimarySkill / 10.0)) * pFactor);
-                        
-                        if (profile.Outputs.Length > 0)
+                        // 현재 요원을 VirtualCitizen으로 캐스팅 (생태계 엔진 파라미터용)
+                        if (this is VirtualCitizen worker100)
                         {
-                            int rawProfit = GetEffectivePrice(town, profile.InputMat) * harvestAmount;
-                            int refinedProfit = GetEffectivePrice(town, profile.Outputs[0]) * (harvestAmount * 2);
-
-                            if (refinedProfit > rawProfit) TrySellItem(town, profile.Outputs[0], harvestAmount * 2);
-                            else TrySellItem(town, profile.InputMat, harvestAmount);
+                            int basePrice = profile.InputMat != null ? Math.Max(1, GetEffectivePrice(town, profile.InputMat)) : 10;
+                            
+                            // 생태계 수확 시도
+                            var result = VirtualTradeAI.ExecuteHarvestAndSell(worker100, town, basePrice);
+                            
+                            if (result.Success)
+                            {
+                                jobSuccess = true;
+                            }
+                            else
+                            {
+                                // 생태계 자원이 바닥났거나 낚시터를 못 찾아서 허탕친 경우 (빈손 방지 위로금)
+                                int oddWage = (int)(2 * pFactor);
+                                if (town.Wealth >= oddWage) 
+                                { 
+                                    town.Wealth -= oddWage; 
+                                    this.Gold += oddWage; 
+                                }
+                            }
                         }
-                        else TrySellItem(town, profile.InputMat, harvestAmount);
-                        
-                        jobSuccess = true;
                     }
                     break;
 

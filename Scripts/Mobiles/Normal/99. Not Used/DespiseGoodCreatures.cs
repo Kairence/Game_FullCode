@@ -62,9 +62,6 @@ namespace Server.Engines.Despise
         {
             int discordanceEffect = 0;
 
-            if (!CanBeHarmful(m, false) || Server.SkillHandlers.Discordance.GetEffect(m, ref discordanceEffect))
-                return false;
-
             if ((m is DespiseCreature && ((DespiseCreature)m).Alignment != Alignment.Neutral && ((DespiseCreature)m).Alignment != this.Alignment) || m is DespiseBoss)
                 return true;
 

@@ -29,38 +29,80 @@ namespace Server.Misc
 			CommandSystem.Register("EcoWipe", AccessLevel.Administrator, new CommandEventHandler(OnEcoWipe));
 			CommandSystem.Register("UpdateRanges", AccessLevel.Administrator, new CommandEventHandler(OnUpdate));
 			CommandSystem.Register("CleanOcean", AccessLevel.Administrator, new CommandEventHandler(OnClean));
+			CommandSystem.Register("NewEco", AccessLevel.Administrator, new CommandEventHandler(OnGenerateEcoGrid));
         }
 
+		[Usage("GenerateEcoGrid")]
+        [Description("기존 노드를 모두 지우고 CSV 마스터 데이터를 기반으로 전 대륙에 노드를 자동 배치합니다.")]
+        public static void OnGenerateEcoGrid(CommandEventArgs e)
+        {
+            Mobile from = e.Mobile;
+
+            // 1. 기존 모든 에코 노드 삭제 (청소)
+            int oldNodes = 0;
+            List<EcoNode> oldList = World.Items.Values.OfType<EcoNode>().ToList();
+            foreach (EcoNode oldNode in oldList)
+            {
+                oldNode.Delete();
+                oldNodes++;
+            }
+
+            // 2. CSV 데이터베이스 순회하며 신규 배치
+            int newNodes = 0;
+            foreach (var kvp in EcoGridDatabase.Chunks)
+            {
+                var key = kvp.Key;       // Map, ChunkX, ChunkY
+                var data = kvp.Value;    // CenterX, CenterY, RegionCode 등
+
+                // CSV에 저장된 정중앙 좌표에 노드 생성
+                EcoNode node = new EcoNode();
+                node.ZoneId = data.Code.ToString(); // RegionSaver와 일치하는 코드를 ID로 사용
+                
+                // 해당 지역 이름에 맞게 기후(Climate) 및 용도(Area) 자동 설정
+                ApplyDefaultSettings(node, node.ZoneId.ToLower());
+                
+                // 높이(Z)는 맵 엔진에서 평균 고도를 계산하여 배치 (공중 부양 방지)
+                int z = key.Facet.GetAverageZ(data.CenterX, data.CenterY);
+                node.MoveToWorld(new Point3D(data.CenterX, data.CenterY, z), key.Facet);
+                
+                newNodes++;
+            }
+
+            // 3. UI 갱신을 위해 EcosystemManager 캐시 리빌드
+            EcosystemManager.RebuildZones();
+
+            from.SendMessage(68, $"[그리드 생성 완료] 구형 노드 {oldNodes}개 제거.");
+            from.SendMessage(68, $"전 대륙 {newNodes}개 구역에 새로운 128x128 에코 노드가 배치되었습니다.");
+        }
 		[Usage("CleanOcean")]
         public static void OnClean(CommandEventArgs e)
         {
-            // 이름에 Ocean, Sea가 들어가거나 관리하는 종이 아예 없는(0종) 껍데기 구역들을 찾아냅니다.
+            // SpeciesInfo 카운트 대신 노드(Nodes) 카운트로 체크합니다.
             var keysToRemove = EcosystemManager.Zones.Keys
                 .Where(k => k.ToLower().Contains("ocean") || 
                             k.ToLower().Contains("sea") || 
-                            EcosystemManager.Zones[k].SpeciesInfo.Count == 0)
+                            EcosystemManager.Zones[k].Nodes.Count == 0)
                 .ToList();
 
             int count = 0;
             foreach (var k in keysToRemove)
             {
-                // 매니저에서 완전히 도려냅니다. (이후 월드 세이브 시 영구 삭제됨)
                 EcosystemManager.Zones.Remove(k);
                 count++;
             }
 
-            e.Mobile.SendMessage(68, $"[정리 완료] {count}개의 해양 및 빈 껍데기 생태계 구역을 매니저에서 삭제했습니다.");
+            e.Mobile.SendMessage(68, $"[정리 완료] {count}개의 해양 및 빈 껍데기 생태계 구역을 삭제했습니다.");
         }
 		[Usage("UpdateRanges")]
         public static void OnUpdate(CommandEventArgs e)
         {
-			int count = 0;
+            int count = 0;
             foreach (var item in World.Items.Values.OfType<EcoNode>())
             {
                 if (EcosystemManager.Zones.TryGetValue(item.ZoneId, out var zone))
                 {
-                    // 🌟 수정: 모든 동물 종의 MaxPopulation 합산
-                    int totalPop = zone.SpeciesInfo.Values.Sum(s => s.MaxPopulation);
+                    // 이제 개별 노드가 최대 20마리씩 자율 통제하므로 기준값을 고정합니다.
+                    int totalPop = 20; 
                     
                     int range = Math.Max(30, (int)Math.Sqrt(totalPop * 100));
                     item.SpawnRange = range;
@@ -68,7 +110,7 @@ namespace Server.Misc
                     count++;
                 }
             }
-            e.Mobile.SendMessage(68, $"{count}개의 에코 노드 범위가 인구수에 비례하여 갱신되었습니다.");
+            e.Mobile.SendMessage(68, $"{count}개의 에코 노드 범위가 갱신되었습니다.");
         }
 		[Usage("EcoWipe")]
         [Description("트라멜의 모든 야생 몬스터를 강제로 삭제합니다. (펫, 상인, 가드는 보호됨)")]
@@ -116,10 +158,11 @@ namespace Server.Misc
             }
             foreach (var z in EcosystemManager.Zones.Values) 
             {
-                eCount += z.SpeciesInfo.Values.Sum(s => s.ActiveAnimals.Count);
-                z.ClearAllSpawns(); // 방금 추가한 생태계 청소 로직 호출
+                // EcoNode가 자신의 몹을 삭제하도록 명령
+                z.ClearAllSpawns(); 
+                eCount++; // 구역 단위 카운트로 대체
             }
-            e.Mobile.SendMessage(68, $"던전 몬스터 {dCount}마리, 생태계 동물 {eCount}마리를 일괄 삭제했습니다!");
+            e.Mobile.SendMessage(68, $"던전 몬스터 {dCount}마리, 생태계 {eCount}개 구역의 몹을 일괄 삭제했습니다!");
         }
 
 		public static void DoImport(Mobile from, int mode)
@@ -1042,13 +1085,8 @@ namespace Server.Misc
 
 		private static void ApplyDefaultSettings(EcoNode node, string name)
         {
-            int totalPop = 10;
-
-            if (EcosystemManager.Zones.TryGetValue(name, out var zone))
-            {
-                // 🌟 수정: EcoZone 내부의 모든 동물 종(Species)의 MaxPopulation을 합산합니다.
-                totalPop = zone.SpeciesInfo.Values.Sum(s => s.MaxPopulation);
-            }
+            // 노드당 관리 인구수는 자체 한계치(20)로 둡니다.
+            int totalPop = 20;
 
             // 인구수에 비례하여 스폰 반경 계산 (면적 비례)
             int calculatedRange = Math.Max(30, (int)Math.Sqrt(totalPop * 100));
@@ -1316,7 +1354,7 @@ namespace Server.Misc
         }
     }
 
-public class ZoneMonitorGump : Gump
+	public class ZoneMonitorGump : Gump
     {
         private int m_Mode, m_SubMode, m_Page;
 
@@ -1421,7 +1459,7 @@ public class ZoneMonitorGump : Gump
 			}
 			else if (mode == 1) // 생태계 모니터링
 			{
-				// 헤더 출력 (기존과 동일)
+				// 헤더 출력
 				AddHtml(25, y, 150, 20, "<BASEFONT COLOR='#FFFF00'>컨트롤</BASEFONT>", false, false);
 				AddHtml(200, y, 250, 20, "<BASEFONT COLOR='#FFFF00'>생태계 구역명</BASEFONT>", false, false);
 				AddHtml(450, y, 100, 20, "<BASEFONT COLOR='#FFFF00'>상태</BASEFONT>", false, false);
@@ -1429,13 +1467,19 @@ public class ZoneMonitorGump : Gump
 				AddHtml(710, y, 180, 20, "<BASEFONT COLOR='#FFFF00'>평균 활력</BASEFONT>", false, false);
 				y += 25;
 
-				var list = EcosystemManager.Zones.Values.ToList(); // List<EcoZone> 명시적 할당
+				// 🌟 [정렬 로직 추가] 트라멜 우선 -> 맵 ID 순 -> 이름순으로 정렬
+				var list = EcosystemManager.Zones.Values
+					.OrderByDescending(z => z.Facet == Map.Trammel) 
+					.ThenBy(z => z.Facet?.MapID ?? 99)
+					.ThenBy(z => z.ZoneId)
+					.ToList();
+
 				totalListCount = list.Count;
 				int end = Math.Min(start + 10, totalListCount);
 
 				for (int i = start; i < end; i++)
 				{
-					var z = list[i]; // EcoZone 형식으로 직접 접근
+					var z = list[i];
 					AddImageTiled(20, y - 2, 910, 24, 9354);
 
 					if (z.Nodes != null && z.Nodes.Count > 0)
@@ -1459,15 +1503,13 @@ public class ZoneMonitorGump : Gump
 
 					AddLabel(200, y, 0xFFFFFF, z.ZoneId.Length > 30 ? z.ZoneId.Substring(0, 30) + "..." : z.ZoneId);
 
-					int totalActive = 0, totalMax = 0, avgVitality = 0;
-					foreach (var s in z.SpeciesInfo.Values) { totalActive += s.ActiveAnimals.Count; totalMax += s.MaxPopulation; avgVitality += s.Vitality; }
-					if (z.SpeciesInfo.Count > 0) avgVitality /= z.SpeciesInfo.Count;
+					// 상태 표시
+					AddLabel(450, y, 68, "독립 통제");
+					AddLabel(560, y, 0xFFFFFF, $"{z.Nodes.Count} 노드");
+					AddLabel(710, y, 68, "자율 생태계");
 
-					AddLabel(450, y, 0xFFFFFF, $"{z.SpeciesInfo.Count} 종 관리");
-					AddLabel(560, y, totalActive >= totalMax ? 33 : 0xFFFFFF, $"{totalActive} / {totalMax}");
-					AddLabel(710, y, avgVitality > 8000 ? 68 : 33, $"활력 {avgVitality / 100.0:F1}%");
-
-					y += 30;
+					// 🌟 [높이 보정] 간격이 벌어지지 않게 28픽셀만 이동
+					y += 28; 
 				}
 			}
             else if (mode == 2) // 자원 생태계 모드

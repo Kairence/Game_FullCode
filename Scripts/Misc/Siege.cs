@@ -205,24 +205,7 @@ namespace Server
 
 				var tick = Core.TickCount;
 
-				var toReset = new List<XmlSpawner>();
 
-				foreach (var item in World.Items.Values.OfType<XmlSpawner>().Where(sp => sp.Map == Map.Trammel && sp.Running))
-				{
-					toReset.Add(item);
-				}
-
-				foreach (var item in toReset)
-				{
-					item.DoReset = true;
-				}
-
-				Console.WriteLine("Reset {1} trammel spawners in {0} milliseconds!", Core.TickCount - tick, toReset.Count);
-				Utility.PopColor();
-
-				ColUtility.Free(toReset);
-
-                EventSink.ContainerDroppedTo += OnDropped;
             }
 		}
 

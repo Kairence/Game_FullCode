@@ -130,10 +130,6 @@ namespace Server.Items
                     Consume();
                 }
             }
-            else if (obj is Meteorite && !((Meteorite)obj).Polished)
-            {
-                ((Meteorite)obj).TryPolish(from);
-            }
             else if (obj is Firebomb)
             {
                 from.SendLocalizedMessage(1060579); // That is already a firebomb!

@@ -1356,112 +1356,63 @@ namespace Server.Spells
 		
 		public virtual TimeSpan GetCastDelay()
 		{
-            if (m_Scroll is SpellStone) 
-            {
-                return TimeSpan.Zero;
-            }
-
-            if (m_Scroll is BaseWand)
+			if (m_Scroll is SpellStone) 
 			{
-				return Core.ML ? CastDelayBase : TimeSpan.Zero; // TODO: Should FC apply to wands?
+				return TimeSpan.Zero;
 			}
 
-			
-			//신규 캐스팅 속도
-			if( Caster is PlayerMobile && CastSkill == SkillName.Magery )
+			if (m_Scroll is BaseWand)
 			{
-				int bonus = AosAttributes.GetValue(m_Caster, AosAttribute.CastSpeed) + AosWeaponAttributes.GetValue(m_Caster, AosWeaponAttribute.MageWeapon);
-				/*
-				if (bonus > 1000)
-				{
-					bonus = 1000;
-				}
-				*/
+				return Core.ML ? CastDelayBase : TimeSpan.Zero;
+			}
+
+			// 신규 캐스팅 속도 (CustomOption 체계 도입)
+			if (Caster is PlayerMobile && CastSkill == SkillName.Magery)
+			{
+				// 1. 보너스 추출 (1% = 10,000 스케일)
+				int bonus = Server.Misc.ItemOptionCreator.GetAttributeValue(Caster, Server.Misc.CustomOption.SpellSpeed);
+
+				// [바드 불협화음 50 보너스] 적용된 디버프만큼 캐스팅 스피드 보너스를 깎습니다.
+				bonus -= Server.SkillHandlers.Discordance.GetSpeedPenalty(Caster);
+
 				double speed = 3.0;
 				double delayInSeconds = 10.0;
 
-				if( this is MagerySpell )
+				if (this is MagerySpell magerySpell)
 				{
-					speed = MagerySpeed[(int)((MagerySpell)this).Circle];
+					speed = MagerySpeed[(int)magerySpell.Circle];
 					
-					// 1. 기본 공식 (1당 0.01%)
-					double rawDelay = Math.Truncate( ( speed * 1000000 / ( 10000 + bonus ) ) ) * 0.01;
+					// 2. 정확한 스케일 연산 (기본 100% = 1,000,000)
+					double effectiveBonus = 1000000.0 + bonus;
 					
-					// 2. [0.1초 정밀 틱 정규화]
-					// 예: 1.13초 -> 1.2초, 1.27초 -> 1.3초
+					// 극단적인 디버프로 인해 시간이 무한대가 되는 것 방지 (기본 속도의 최소 10% 한계선)
+					if (effectiveBonus < 100000.0) effectiveBonus = 100000.0; 
+
+					// 속도 초 단위에 (기본치 / 보너스치) 비율을 곱함
+					double rawDelay = speed * (1000000.0 / effectiveBonus);
+					
+					// 3. 0.1초 정밀 틱 정규화
 					double tickUnit = 0.1;
 					delayInSeconds = Math.Ceiling(rawDelay / tickUnit) * tickUnit;
 
-					// 최소 시간을 서버 처리 한계인 0.1초로 방어
-					if( delayInSeconds < 0.1 )
+					if (delayInSeconds < 0.1)
 						delayInSeconds = 0.1;
-				}               
-				else if( this is ArcaneCircleSpell )
-					delayInSeconds = 3.0;
-				else
-					return CastDelayBase; 
-					
-				return TimeSpan.FromSeconds(delayInSeconds);				/*
-				double ticks = speed / 0.25;
-				ticks = Math.Floor((ticks) * (100.0 / (100 + bonus)));
-
-				if (ticks < 2)
+				}                
+				else if (this is ArcaneCircleSpell)
 				{
-					ticks = 2;
+					delayInSeconds = 3.0;
 				}
-
-				delayInSeconds = ticks * 0.25;
+				else
+				{
+					return CastDelayBase; 
+				}
+					
 				return TimeSpan.FromSeconds(delayInSeconds);
-				*/
 			}
 			else
+			{
 				return TimeSpan.Zero;
-			
-			// Faster casting cap of 2 (if not using the protection spell) 
-			// Faster casting cap of 0 (if using the protection spell) 
-			// Paladin spells are subject to a faster casting cap of 4 
-			// Paladins with magery of 70.0 or above are subject to a faster casting cap of 2 
-			
-			/*
-			int fcMax = 4;
-
-			if (CastSkill == SkillName.Magery || CastSkill == SkillName.Necromancy || CastSkill == SkillName.Mysticism ||
-                (CastSkill == SkillName.Chivalry && (m_Caster.Skills[SkillName.Magery].Value >= 70.0 || m_Caster.Skills[SkillName.Mysticism].Value >= 70.0)))
-			{
-				fcMax = 2;
 			}
-
-			int fc = AosAttributes.GetValue(m_Caster, AosAttribute.CastSpeed);
-
-			if (fc > fcMax)
-			{
-				fc = fcMax;
-			}
-            if (ProtectionSpell.Registry.ContainsKey(m_Caster) || EodonianPotion.IsUnderEffects(m_Caster, PotionEffect.Urali))
-            {
-                fc = Math.Min(fcMax - 2, fc - 2);
-            }
-
-			TimeSpan baseDelay = CastDelayBase;
-
-			TimeSpan fcDelay = TimeSpan.FromSeconds(-(CastDelayFastScalar * fc * CastDelaySecondsPerTick));
-
-			//int delay = CastDelayBase + circleDelay + fcDelay;
-			TimeSpan delay = baseDelay + fcDelay;
-
-			if (delay < CastDelayMinimum)
-			{
-				delay = CastDelayMinimum;
-			}
-
-            if (DreadHorn.IsUnderInfluence(m_Caster))
-			{
-				delay.Add(delay);
-			}
-			*/
-
-			//return TimeSpan.FromSeconds( (double)delay / CastDelayPerSecond );
-			//return delay;
 		}
 
 		public virtual void FinishSequence()

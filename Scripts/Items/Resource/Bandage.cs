@@ -149,7 +149,7 @@ namespace Server.Items
 
                 // [기획] 회복량 계산
                 double subSkill = isPet ? m_Healer.Skills.AnimalLore.Value : m_Healer.Skills.Anatomy.Value;
-                int heal = Utility.RandomMinMax(50, 100) + (int)(Utility.RandomMinMax(1, 2) * (subSkill / 10.0));
+                int heal = (int)( ( Utility.RandomMinMax(50, 100) * ( 1 + subSkill * 0.1 ) ) );
 
                 // [기획] 중독/200레벨 보정
 				bool skillBonus = false;

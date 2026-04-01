@@ -92,10 +92,11 @@ namespace Server.Misc
             if (item is BaseWeapon bwHp) { hp = bwHp.HitPoints; maxHp = bwHp.MaxHitPoints; }
             else if (item is BaseArmor baHp) { hp = baHp.HitPoints; maxHp = baHp.MaxHitPoints; }
             else if (item is BaseClothing bcHp) { hp = bcHp.HitPoints; maxHp = bcHp.MaxHitPoints; }
+            else if (item is BaseInstrument biHp && biHp.Layer != Layer.Invalid) { hp = biHp.HitPoints; maxHp = biHp.MaxHitPoints; }// [악기 추가] 내구도 출력
 
             if (hp >= 0 && maxHp > 0) list.Add(1060639, "{0}\t{1}", hp, maxHp);
             
-            // [수정 완료] 기본 옵션 루프 (인덱스 61~70) 파라미터 간소화
+            // 기본 옵션 루프 (인덱스 61~70) 파라미터 간소화
             ProcessOptionLoop(list, eqItem, 61, 10);
         }
 
@@ -180,7 +181,7 @@ namespace Server.Misc
 
             list.Add(1063512); // [마법 옵션]
 
-            // [수정 완료] 파라미터 간소화 적용
+            // 파라미터 간소화 적용
             if (eqItem.SuffixOption[1] > 0)
             {
                 ProcessOptionLoop(list, eqItem, 9, 1);
@@ -219,7 +220,7 @@ namespace Server.Misc
             int rawValue = EnhancedChance.GetTableValue(partIdx, tableIdx);
             double multiplier = EnhancedChance.EnhanceScales[step][1];
 
-            // [수정 완료] Misc.Util.PercentCalc 대신 ValueScale 적용 권장 (향후 강화 시스템도 통합할 시)
+            // Misc.Util.PercentCalc 대신 ValueScale 적용 권장 (향후 강화 시스템도 통합할 시)
             // 임시로 기존 계산식 유지하되, 나중에 ValueScale 구조로 맞추시면 됩니다.
             double finalValue = ((double)rawValue * multiplier) * Misc.Util.PercentCalc(attrID);
 
@@ -230,92 +231,92 @@ namespace Server.Misc
         #region 5. 세트 옵션
         #region [OPL 전용] 세트 옵션 텍스트 조립기
 
-		// 1. C#에서 텍스트를 완벽하게 조립하기 위한 옵션 이름 사전
-		private static readonly Dictionary<int, string> _optionNames = new()
-		{
-			{ 0, "힘" }, { 1, "민첩" }, { 2, "지능" }, { 3, "모든 스탯" },
-			{ 4, "운" }, { 5, "체력" }, { 6, "기력" }, { 7, "마나" }, { 8, "모든 자원" },
-			{ 9, "무기 피해" }, { 10, "주문 피해" }, { 11, "모든 피해" },
-			{ 12, "공격 속도" }, { 13, "시전 속도" }, { 14, "모든 속도" },
-			{ 15, "명중 확률" }, { 16, "방어 확률" }, { 17, "시전 실패 감소" },
-			{ 18, "무기 방어력" },
-			{ 21, "물리 저항" }, { 22, "화염 저항" }, { 23, "냉기 저항" }, { 24, "독 저항" }, { 25, "에너지 저항" }, { 27, "모든 저항" },
-			{ 31, "물리 치명타 확률" }, { 32, "마법 치명타 확률" }, { 33, "물리 치명타 피해" }, { 34, "마법 치명타 피해" },
-			{ 36, "최종 불 피해" }, { 37, "최종 냉기 피해" }, { 38, "최종 독 피해" }, { 39, "최종 에너지 피해" }, { 40, "최종 혼돈 피해" }, { 41, "최종 신성 피해" },
-			{ 42, "혼돈 피해" }, { 43, "신성 피해" },
-			{ 45, "체력 회복" }, { 46, "기력 회복" }, { 47, "마나 회복" }, { 48, "모든 재생" },
-			{ 49, "체력 흡수" }, { 51, "마나 흡수" },
-			{ 64, "마나 소모 감소" }, { 65, "기력 소모 감소" },
-			{ 104, "전술" }, { 126, "강령술" },
-			{ 151, "화염 피해" }, { 152, "냉기 피해" }, { 153, "독 피해" }, { 154, "에너지 피해" } 
-		};
+        // 1. C#에서 텍스트를 완벽하게 조립하기 위한 옵션 이름 사전
+        private static readonly Dictionary<int, string> _optionNames = new()
+        {
+            { 0, "힘" }, { 1, "민첩" }, { 2, "지능" }, { 3, "모든 스탯" },
+            { 4, "운" }, { 5, "체력" }, { 6, "기력" }, { 7, "마나" }, { 8, "모든 자원" },
+            { 9, "무기 피해" }, { 10, "주문 피해" }, { 11, "모든 피해" },
+            { 12, "공격 속도" }, { 13, "시전 속도" }, { 14, "모든 속도" },
+            { 15, "명중 확률" }, { 16, "방어 확률" }, { 17, "시전 실패 감소" },
+            { 18, "무기 방어력" },
+            { 21, "물리 저항" }, { 22, "화염 저항" }, { 23, "냉기 저항" }, { 24, "독 저항" }, { 25, "에너지 저항" }, { 27, "모든 저항" },
+            { 31, "물리 치명타 확률" }, { 32, "마법 치명타 확률" }, { 33, "물리 치명타 피해" }, { 34, "마법 치명타 피해" },
+            { 36, "최종 불 피해" }, { 37, "최종 냉기 피해" }, { 38, "최종 독 피해" }, { 39, "최종 에너지 피해" }, { 40, "최종 혼돈 피해" }, { 41, "최종 신성 피해" },
+            { 42, "혼돈 피해" }, { 43, "신성 피해" },
+            { 45, "체력 회복" }, { 46, "기력 회복" }, { 47, "마나 회복" }, { 48, "모든 재생" },
+            { 49, "체력 흡수" }, { 51, "마나 흡수" },
+            { 64, "마나 소모 감소" }, { 65, "기력 소모 감소" },
+            { 104, "전술" }, { 126, "강령술" },
+            { 151, "화염 피해" }, { 152, "냉기 피해" }, { 153, "독 피해" }, { 154, "에너지 피해" } 
+        };
 
-		// 클래스 최상단이나 딕셔너리 아래에 static readonly로 선언하여 메모리 낭비를 없앱니다.
-		private static readonly HashSet<int> _percentOptions = [9, 10, 11, 12, 13, 14, 15, 16, 17, 21, 22, 23, 24, 25, 27, 31, 32, 33, 34, 42, 43, 49, 51, 64, 65, 104, 151, 152, 153, 154];
-		private static readonly HashSet<int> _plusOptions = [36, 37, 38, 39, 40, 41];
+        // 클래스 최상단이나 딕셔너리 아래에 static readonly로 선언하여 메모리 낭비를 없앱니다.
+        private static readonly HashSet<int> _percentOptions = [9, 10, 11, 12, 13, 14, 15, 16, 17, 21, 22, 23, 24, 25, 27, 31, 32, 33, 34, 42, 43, 49, 51, 64, 65, 104, 151, 152, 153, 154];
+        private static readonly HashSet<int> _plusOptions = [36, 37, 38, 39, 40, 41];
 
-		// 수치 뒤에 '%' 기호를 붙여야 하는 옵션 판별
-		private static bool IsPercentOption(int id)
-		{
-			return _percentOptions.Contains(id);
-		}
+        // 수치 뒤에 '%' 기호를 붙여야 하는 옵션 판별
+        private static bool IsPercentOption(int id)
+        {
+            return _percentOptions.Contains(id);
+        }
 
-		// 수치 앞에 '+' 기호를 붙여야 하는 옵션 판별
-		private static bool IsPlusOption(int id)
-		{
-			return _plusOptions.Contains(id);
-		}
+        // 수치 앞에 '+' 기호를 붙여야 하는 옵션 판별
+        private static bool IsPlusOption(int id)
+        {
+            return _plusOptions.Contains(id);
+        }
 
-		// 2. 최종 OPL 조립 함수
-		private static void AppendSetOptions(ObjectPropertyList list, IEquipOption eqItem)
-		{
-			if (eqItem.PrefixOption[50] is not (var setID and > 0)) return;
-			if (eqItem is not Item item || item.RootParent is not Mobile from) return;
+        // 2. 최종 OPL 조립 함수
+        private static void AppendSetOptions(ObjectPropertyList list, IEquipOption eqItem)
+        {
+            if (eqItem.PrefixOption[50] is not (var setID and > 0)) return;
+            if (eqItem is not Item item || item.RootParent is not Mobile from) return;
 
-			int setcount = (from is PlayerMobile pm) ? pm.ItemSetValue[setID] : 0;
-			
-			// 세트 명칭 (1084101 ~)
-			list.Add(1084100 + setID); 
+            int setcount = (from is PlayerMobile pm) ? pm.ItemSetValue[setID] : 0;
+            
+            // 세트 명칭 (1084101 ~)
+            list.Add(1084100 + setID); 
 
-			// 데이터는 SetItem 클래스에서 순수하게 땡겨옴
-			int[][] setSteps = Misc.SetItem.GetSetData(setID);
+            // 데이터는 SetItem 클래스에서 순수하게 땡겨옴
+            int[][] setSteps = Misc.SetItem.GetSetData(setID);
 
-			for (int i = 0; i < setSteps.Length; i++)
-			{
-				int[] currentStep = setSteps[i];
-				if (currentStep is null or { Length: 0 }) continue;
+            for (int i = 0; i < setSteps.Length; i++)
+            {
+                int[] currentStep = setSteps[i];
+                if (currentStep is null or { Length: 0 }) continue;
 
-				int currentStepGoal = i + 2; 
-				List<string> stepTexts = [];
+                int currentStepGoal = i + 2; 
+                List<string> stepTexts = [];
 
-				for (int k = 0; k < currentStep.Length; k += 2)
-				{
-					int optID = currentStep[k];
-					int optVal = currentStep[k + 1];
+                for (int k = 0; k < currentStep.Length; k += 2)
+                {
+                    int optID = currentStep[k];
+                    int optVal = currentStep[k + 1];
 
-					// 사전에서 이름 찾기
-					string optName = _optionNames.GetValueOrDefault(optID, $"알수없음({optID})");
-					
-					// ValueScale(10000) 나누고 소수점 절삭
-					string valStr = ((double)optVal / Misc.ItemOptionCreator.ValueScale).ToString("0.##");
+                    // 사전에서 이름 찾기
+                    string optName = _optionNames.GetValueOrDefault(optID, $"알수없음({optID})");
+                    
+                    // ValueScale(10000) 나누고 소수점 절삭
+                    string valStr = ((double)optVal / Misc.ItemOptionCreator.ValueScale).ToString("0.##");
 
-					if (IsPlusOption(optID)) valStr = "+" + valStr;
-					else if (IsPercentOption(optID)) valStr += "%";
+                    if (IsPlusOption(optID)) valStr = "+" + valStr;
+                    else if (IsPercentOption(optID)) valStr += "%";
 
-					stepTexts.Add($"{optName} {valStr}"); 
-				}
+                    stepTexts.Add($"{optName} {valStr}"); 
+                }
 
-				// 완성된 단어 연결
-				string combinedLine = string.Join(", ", stepTexts);
+                // 완성된 단어 연결
+                string combinedLine = string.Join(", ", stepTexts);
 
-				// 장착 개수에 따라 색상 태그 결정
-				string colorTag = setcount >= currentStepGoal ? "<BASEFONT COLOR=#2DDC1B>" : "<BASEFONT COLOR=#808080>";
+                // 장착 개수에 따라 색상 태그 결정
+                string colorTag = setcount >= currentStepGoal ? "<BASEFONT COLOR=#2DDC1B>" : "<BASEFONT COLOR=#808080>";
 
-				// 클라이언트에 텍스트 쏘기
-				list.Add(1042971, $"{colorTag}{currentStepGoal}세트 : {combinedLine}</BASEFONT>");
-			}
-		}
-		#endregion
+                // 클라이언트에 텍스트 쏘기
+                list.Add(1042971, $"{colorTag}{currentStepGoal}세트 : {combinedLine}</BASEFONT>");
+            }
+        }
+        #endregion
         #endregion
 
         #region 6. 고유 옵션
@@ -336,6 +337,7 @@ namespace Server.Misc
                 CraftResource res = CraftResource.None;
                 if (item is BaseWeapon bw) res = bw.Resource;
                 else if (item is BaseArmor ba) res = ba.Resource;
+                else if (item is BaseInstrument bi) res = bi.Resource; // [악기 추가] 재질 판별 추가
 
                 switch (res)
                 {

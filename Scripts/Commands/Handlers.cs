@@ -441,7 +441,36 @@ namespace Server.Commands
 
         public static void BroadcastMessage(AccessLevel ac, int hue, string message) 
         { 
+            // 기존 전체 메세지 발송 엔진 코어
             World.Broadcast(hue, false, ac, message);
+
+            // [추가] 전체 메시지 발송 시 타운 크라이어 자동 등록 로직
+            if (Server.Services.TownCryer.TownCryerSystem.Enabled && !string.IsNullOrWhiteSpace(message))
+            {
+                // [필터링] 시스템 저장 및 서버 종료/크래시 메세지 차단
+                string lowerMsg = message.ToLower();
+                if (lowerMsg.Contains("world save") || 
+                    lowerMsg.Contains("world is saving") || 
+                    lowerMsg.Contains("server has"))
+                {
+                    return;
+                }
+
+                // 제목 생성 (20자 이상이면 자르고 말줄임표 처리, C# 12 문법 적용)
+                string headline = message.Length > 20 ? $"{message[..20]}..." : message;
+
+                // 타운 크라이어에 7일짜리 기사로 등록 (작성자는 null 처리하여 시스템으로 표기 유도)
+                var entry = new Server.Services.TownCryer.TownCryerModeratorEntry(
+                    null, // 작성자 Mobile (null)
+                    7,    // 유지 기간: 7일
+                    $"[속보] {headline}", 
+                    message, 
+                    "", 
+                    ""
+                );
+
+                Server.Services.TownCryer.TownCryerSystem.AddEntry(entry);
+            }
         }
 
         [Usage("AutoPageNotify")]

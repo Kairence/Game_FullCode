@@ -47,8 +47,8 @@ namespace Server.Misc
         private readonly Mobile _from;
         private readonly IEquipOption _item;
         private readonly int _page;
+        private readonly int _maxSlots; // [수정] 아이템의 실제 배열 크기를 담을 변수
 
-        private const int MaxSlots = 100; // Prefix/Suffix 배열의 최대 크기 (필요시 조절)
         private const int SlotsPerPage = 10; // 한 페이지에 10개씩 출력
 
         public EditOptionGump(Mobile from, IEquipOption item, int page) : base(50, 50)
@@ -56,6 +56,9 @@ namespace Server.Misc
             _from = from;
             _item = item;
             _page = page;
+
+            // [핵심] 100으로 고정하지 않고, 현재 아이템의 실제 배열 길이만큼만 상한선을 잡습니다.
+            _maxSlots = Math.Min(item.PrefixOption.Length, item.SuffixOption.Length);
 
             AddPage(0);
             AddBackground(0, 0, 420, 430, 5054);
@@ -82,7 +85,9 @@ namespace Server.Misc
             for (int i = 0; i < SlotsPerPage; i++)
             {
                 int index = startIndex + i;
-                if (index >= MaxSlots) break;
+                
+                // [수정] 실제 배열 크기(_maxSlots)를 넘어가면 그리기를 중단
+                if (index >= _maxSlots) break;
 
                 // 인덱스 번호 (0, 1, 2 ...)
                 AddLabel(50, y + 2, 2100, index.ToString());
@@ -108,7 +113,8 @@ namespace Server.Misc
                 AddLabel(55, 385, 1152, "Prev");
             }
 
-            if (startIndex + SlotsPerPage < MaxSlots)
+            // [수정] 다음 페이지가 아이템 배열 크기를 넘어가지 않을 때만 Next 버튼 활성화
+            if (startIndex + SlotsPerPage < _maxSlots)
             {
                 AddButton(360, 385, 4005, 4006, 3, GumpButtonType.Reply, 0); // Next
                 AddLabel(320, 385, 1152, "Next");
@@ -125,7 +131,9 @@ namespace Server.Misc
             for (int i = 0; i < SlotsPerPage; i++)
             {
                 int index = startIndex + i;
-                if (index >= MaxSlots) break;
+                
+                // [수정] 실제 배열 크기 초과 시 저장 중단
+                if (index >= _maxSlots) break;
 
                 TextRelay prefixRelay = info.GetTextEntry(1000 + i);
                 TextRelay suffixRelay = info.GetTextEntry(2000 + i);

@@ -505,12 +505,21 @@ namespace Server.Engines.Craft
 
 		public bool IsEquip(Type type)
 		{
+			// 1. 기존 장비 테이블(무기, 방어구 등) 체크
 			for (int i = 0; i < m_EquipTable.Length; ++i)
 			{
 				if (type == m_EquipTable[i] || type.IsSubclassOf(m_EquipTable[i]))
-				{
 					return true;
-				}
+			}
+
+			// 2. 악기일 경우, 유저님이 설정하신 '양손 레이어'인지 심플하게 체크합니다.
+			if (typeof(Server.Items.BaseInstrument).IsAssignableFrom(type))
+			{
+				Item temp = Activator.CreateInstance(type) as Item;
+				bool isGear = temp != null && temp.Layer == Layer.TwoHanded;
+				temp?.Delete(); // 확인 후 깔끔하게 삭제
+				
+				return isGear;
 			}
 
 			return false;
@@ -1409,14 +1418,14 @@ namespace Server.Engines.Craft
 					chance = 0.25 + (valMainSkill - minMainSkill) * 0.0025;
 
 				// 2. 제작 숙련 보너스: 스킬 50.0 이상 시 10% 가산
-				if (valMainSkill >= 500)
+				if (valMainSkill >= 50)
 				{
 					chance += 0.1; 
 				}
 
 				// 3. 연금술 및 요리 마스터 최소 확률 보장 (100.0 이상일 때)
 				// 계산된 확률이 50%(0.5)보다 낮더라도 최소 50%로 고정합니다.
-				if (valMainSkill >= 1000 && (craftSystem.MainSkill == SkillName.Alchemy || craftSystem.MainSkill == SkillName.Cooking))
+				if (valMainSkill >= 100 && (craftSystem.MainSkill == SkillName.Alchemy || craftSystem.MainSkill == SkillName.Cooking))
 				{
 					if (chance < 0.5)
 						chance = 0.5;

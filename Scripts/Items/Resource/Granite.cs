@@ -435,4 +435,78 @@ namespace Server.Items
             int version = reader.ReadInt();
         }
     }
+    public class MithrilGranite : BaseGranite
+    {
+        [Constructable]
+        public MithrilGranite()
+            : this(1)
+        {
+        }
+
+        [Constructable]
+        public MithrilGranite(int amount)
+            : base(CraftResource.Mithril)
+        {
+            if (Stackable)
+                Amount = amount;
+            else
+                Amount = 1;
+        }
+
+        public MithrilGranite(Serial serial)
+            : base(serial)
+        {
+        }
+
+        public override void Serialize(GenericWriter writer)
+        {
+            base.Serialize(writer);
+
+            writer.Write((int)0); // version
+        }
+
+        public override void Deserialize(GenericReader reader)
+        {
+            base.Deserialize(reader);
+
+            int version = reader.ReadInt();
+        }
+    }
+    public class ObsidianGranite : BaseGranite
+    {
+        [Constructable]
+        public ObsidianGranite()
+            : this(1)
+        {
+        }
+
+        [Constructable]
+        public ObsidianGranite(int amount)
+            : base(CraftResource.Obsidian)
+        {
+            if (Stackable)
+                Amount = amount;
+            else
+                Amount = 1;
+        }
+
+        public ObsidianGranite(Serial serial)
+            : base(serial)
+        {
+        }
+
+        public override void Serialize(GenericWriter writer)
+        {
+            base.Serialize(writer);
+
+            writer.Write((int)0); // version
+        }
+
+        public override void Deserialize(GenericReader reader)
+        {
+            base.Deserialize(reader);
+
+            int version = reader.ReadInt();
+        }
+    }	
 }

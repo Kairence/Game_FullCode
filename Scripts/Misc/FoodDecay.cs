@@ -2,6 +2,7 @@
 using Server.Network;
 using Server.Mobiles;
 using Server.Regions;
+using System.Linq;
 
 namespace Server.Misc
 {
@@ -25,11 +26,31 @@ namespace Server.Misc
                 HungerDecay(state.Mobile);
                 ThirstDecay(state.Mobile);
             }
+
+            // [생태계 연동] 트라멜 야생 생물들도 허기 타이머를 겪게 합니다.
+            var wildMobs = Server.World.Mobiles.Values.OfType<BaseCreature>()
+                .Where(c => c.Map == Map.Trammel && !c.Controlled && !c.IsStabled && !c.Summoned).ToList();
+
+            foreach (var mob in wildMobs)
+            {
+                HungerDecay(mob);
+            }
         }
 
         public static void HungerDecay(Mobile m)
         {
-            if (m != null && m.Hunger >= 1)
+			if (m == null) return;
+
+            // [생태계 연동] 야생 생물의 허기 감소 로직
+            if (m is BaseCreature bc && !bc.Controlled && !bc.IsStabled && !bc.Summoned)
+            {
+                // 틱당 100~300 랜덤 감소 (10만 기준 대략 5~15시간 생존)
+                bc.Hunger -= Utility.RandomMinMax(100, 300);
+                if (bc.Hunger < 0) bc.Hunger = 0;
+                return;
+            }
+			
+            if (m.Hunger >= 1)
             {
                 int hungry = 10 + m.TotalWeight / 5;
                 Server.Regions.DungeonRegion dungeon = (Server.Regions.DungeonRegion)m.Region.GetRegion(typeof(Server.Regions.DungeonRegion));

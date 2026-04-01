@@ -7172,7 +7172,7 @@ namespace Server.Mobiles
         private List<StatMod> _equipStatMods = [];
         private List<SkillMod> _equipSkillMods = [];
 
-		public void UpdateEquipOptions()
+public void UpdateEquipOptions()
 		{
 			// 1. 모든 데이터 초기화 (누적 버그 원천 차단)
 			Array.Clear(_totalEquipOptions, 0, _totalEquipOptions.Length);
@@ -7181,7 +7181,8 @@ namespace Server.Mobiles
 			if (this.ItemSetSaveValue != null)
 				Array.Clear(this.ItemSetSaveValue, 0, this.ItemSetSaveValue.Length);
 
-			ClearEquipMods();
+			// 🌟 [수정 포인트] 전체 묻지마 초기화 삭제 (메시지 도배의 원인)
+			// ClearEquipMods();
 
 			// 2. 세트 옵션 재계산 (비워진 배열에 새로 담기)
 			Misc.SetItem.SetOption(this, true);
@@ -7241,6 +7242,7 @@ namespace Server.Mobiles
 					_totalEquipOptions[i] += this.ItemSetSaveValue[i];
 			}
 
+			// 🌟 [수정 포인트] 변경된 값만 찾아서 갱신
 			ApplyEquipMods();
 
 			// 5. 엔진 강제 동기화
@@ -7249,44 +7251,67 @@ namespace Server.Mobiles
 			this.Delta(MobileDelta.Stat);
 			this.ProcessDelta(); 
 		}
-        // [신규] 기존에 붙어있던 스탯/스킬 Mod 떼어내기
-        private void ClearEquipMods()
-        {
-            foreach (var mod in _equipStatMods) RemoveStatMod(mod.Name);
-            _equipStatMods.Clear();
 
-            foreach (var mod in _equipSkillMods) RemoveSkillMod(mod);
-            _equipSkillMods.Clear();
-        }
+		// [신규] 기존에 붙어있던 스탯/스킬 Mod 떼어내기 (현재 루틴에선 사용 안 할 수 있으나 유지)
+		private void ClearEquipMods()
+		{
+			foreach (var mod in _equipStatMods) RemoveStatMod(mod.Name);
+			_equipStatMods.Clear();
 
-        // [신규] 계산된 총합 배열을 읽어서 캐릭터에게 스탯/스킬 Mod 붙여주기
-        private void ApplyEquipMods()
-        {
-            // --- 1. 기본 스탯 (ID: 0 힘, 1 민첩, 2 지능, 3 모든 스탯) ---
-            //int strBonus = GetEquipOptionRaw(0) + GetEquipOptionRaw(3);
-            //int dexBonus = GetEquipOptionRaw(1) + GetEquipOptionRaw(3);
-            //int intBonus = GetEquipOptionRaw(2) + GetEquipOptionRaw(3);
+			foreach (var mod in _equipSkillMods) RemoveSkillMod(mod);
+			_equipSkillMods.Clear();
+		}
 
-            //if (strBonus > 0) AddEquipStatMod(StatType.Str, "EqStr", strBonus);
-            //if (dexBonus > 0) AddEquipStatMod(StatType.Dex, "EqDex", dexBonus);
-            //if (intBonus > 0) AddEquipStatMod(StatType.Int, "EqInt", intBonus);
+		// [수정] 계산된 총합 배열을 읽어서 '기존과 값이 달라진 경우에만' 스탯/스킬 Mod 동기화
+		private void ApplyEquipMods()
+		{
+			// --- 1. 기본 스탯 (ID: 0 힘, 1 민첩, 2 지능, 3 모든 스탯) ---
+			// (주석 처리된 스탯 부분도 나중에 복구하실 때 아래 스킬과 동일하게 
+			// 기존 Mod를 찾아 값을 비교한 뒤 갱신하는 방식으로 작성하시면 됩니다.)
 
-            // --- 2. 스킬 보너스 (ID: 77 ~ 132) ---
-            for (int i = 77; i <= 132; i++)
-            {
-                double skillBonus = (double)GetEquipOptionInt(i);
-                if (skillBonus > 0)
-                {
-                    // 테이블 ID(77~132)를 SkillName Enum으로 변환 (기획하신 순서에 맞게 매핑)
-                    // (※주의: 77이 연금술(0)부터 시작한다면 i - 77 로 매핑합니다)
-                    SkillName skill = (SkillName)(i - 77); 
-                    
-                    var mod = new DefaultSkillMod(skill, true, skillBonus);
-                    AddSkillMod(mod);
-                    _equipSkillMods.Add(mod);
-                }
-            }
-        }
+			// --- 2. 스킬 보너스 (ID: 77 ~ 132) ---
+			for (int i = 77; i <= 132; i++)
+			{
+				double skillBonus = (double)GetEquipOptionInt(i);
+				SkillName skill = (SkillName)(i - 77); 
+				
+				// 현재 캐릭터에게 적용되어 있는 이 스킬의 장비 Mod 찾기
+				var existingMod = _equipSkillMods.FirstOrDefault(m => m.Skill == skill);
+
+				if (skillBonus > 0)
+				{
+					if (existingMod != null)
+					{
+						// 기존에 적용된 값이 있는데 계산된 값이 다르면 갱신 (이때만 메시지 발생)
+						if (existingMod.Value != skillBonus)
+						{
+							RemoveSkillMod(existingMod);
+							_equipSkillMods.Remove(existingMod);
+
+							var newMod = new DefaultSkillMod(skill, true, skillBonus);
+							AddSkillMod(newMod);
+							_equipSkillMods.Add(newMod);
+						}
+					}
+					else
+					{
+						// 기존에 없었으면 새로 추가
+						var newMod = new DefaultSkillMod(skill, true, skillBonus);
+						AddSkillMod(newMod);
+						_equipSkillMods.Add(newMod);
+					}
+				}
+				else
+				{
+					// 장비를 벗어서 보너스가 0이 되었는데 기존 Mod가 남아있다면 제거
+					if (existingMod != null)
+					{
+						RemoveSkillMod(existingMod);
+						_equipSkillMods.Remove(existingMod);
+					}
+				}
+			}
+		}
 
         // 스탯 Mod 도우미 함수 (ValueScale 해제 후 정수형으로 부착)
         private void AddEquipStatMod(StatType type, string name, int rawValue)

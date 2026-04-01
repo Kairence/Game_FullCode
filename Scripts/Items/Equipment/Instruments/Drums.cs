@@ -9,6 +9,7 @@ namespace Server.Items
             : base(0xE9C, 0x38, 0x39)
         {
             this.Weight = 4.0;
+			Layer = Layer.TwoHanded;
         }
 
         public Drums(Serial serial)

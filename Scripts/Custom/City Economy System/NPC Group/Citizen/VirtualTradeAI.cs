@@ -244,58 +244,61 @@ namespace Server.Misc
         // ==============================================================================
 		public static (bool Success, int Earnings) ExecuteHarvestAndSell(VirtualCitizen citizen, TownEconomy town, int basePrice)
 		{
-			// [BioStats 초기화 확인 및 안전한 변수 할당]
 			double focus = citizen.Bio != null ? Math.Max(0, citizen.Bio.Focus / 1000000.0) : 0;
 			double perception = citizen.Bio != null ? Math.Max(0, citizen.Bio.Perception / 1000000.0) : 0;
 			double adaptability = citizen.Bio != null ? Math.Max(0, citizen.Bio.Adaptability / 1000000.0) : 0;
 
-			// 1. [집중(Focus) 반영] 기본 성공 확률 + 집중력에 따른 추가 보정 (최대 +20% 추가)
-			double successChance = 0.2 + (0.8 * (citizen.PrimarySkill / 200.0)) + (0.2 * focus);
+            // 성공 확률 상향 보정
+			double successChance = 0.4 + (0.6 * (citizen.PrimarySkill / 200.0)) + (0.1 * focus);
 			if (Utility.RandomDouble() > successChance) return (false, 0);
 
-			// 2. [적응(Adaptability) 반영] 기본 채집량 + 적응력에 따른 수량 뻥튀기 (최대 +50% 증가)
 			int baseHarvest = (int)(6 * citizen.Potential);
 			int harvestAmount = baseHarvest + (int)(baseHarvest * (0.5 * adaptability));
-
-			if (string.IsNullOrEmpty(citizen.TargetRegionName)) FindWorkPool(citizen, town);
-			if (string.IsNullOrEmpty(citizen.TargetRegionName)) return (false, 0);
-
+            
 			ResourceType type = GetResourceTypeByJob(citizen.JobClass);
-			ResourceKey key = new ResourceKey(town.Facet.Name, citizen.TargetRegionName, type);
+            ResourceKey key = new ResourceKey(town.Facet.Name, citizen.TargetRegionName ?? "", type);
+
+            if (string.IsNullOrEmpty(citizen.TargetRegionName) || !ResourceManager.Pools.ContainsKey(key) || ResourceManager.Pools[key].CurrentCapacity <= 0)
+            {
+                FindWorkPool(citizen, town);
+                key = new ResourceKey(town.Facet.Name, citizen.TargetRegionName ?? "", type);
+            }
+
+			if (string.IsNullOrEmpty(citizen.TargetRegionName)) return (false, 0);
 
 			if (ResourceManager.Pools.TryGetValue(key, out ResourcePool pool) && pool.CurrentCapacity > 0)
 			{
-				var available = pool.AvailableResources.Keys.ToList();
-				Type targetItem = (available.Count > 0) ? available[Utility.Random(available.Count)] : GetDefaultItem(type);
+                // 🌟 [안전장치] 세부 목록이 꼬여서 0개라도 무조건 기본 자원(예: IronOre)을 캐도록 강제 배정
+				var availableKeys = pool.AvailableResources.Where(kvp => kvp.Value > 0).Select(k => k.Key).ToList();
+				Type targetItem = (availableKeys.Count > 0) ? availableKeys[Utility.Random(availableKeys.Count)] : GetDefaultItem(type);
 
 				if (targetItem != null)
 				{
 					var (npcTier, _) = citizen.GetResourceTier(citizen.PrimarySkill);
 					int itemTier = GetResourceTierValue(targetItem);
 
-					// 3. [감각(Perception) 반영] NPC 스킬 티어가 낮아도 감각이 극도로 높으면 강등(Downgrade) 방어
-					// 감각 100%일 때 50% 확률로 상위 티어 자원 획득 유지
 					bool preventDowngrade = (perception > 0) && (Utility.RandomDouble() < (0.5 * perception));
-
-					if (itemTier > npcTier && !preventDowngrade)
-					{
-						targetItem = GetDefaultItem(type); 
-					}
+					if (itemTier > npcTier && !preventDowngrade) targetItem = GetDefaultItem(type); 
 
 					int actualHarvest = Math.Min(harvestAmount, pool.CurrentCapacity);
-					for (int i = 0; i < actualHarvest; i++) pool.ConsumeResource(targetItem);
+                    
+                    // 🌟 1개든 10개든 실제로 캔 개수(consumedAmount)를 정직하게 받아옵니다.
+                    int consumedAmount = pool.ConsumeResource(targetItem, actualHarvest);
 
-					citizen.CheckSkillGain();
+                    if (consumedAmount > 0)
+                    {
+					    citizen.CheckSkillGain();
 
-					if (IsRareResource(targetItem) && citizen.House != null)
-					{
-						if (!citizen.House.HouseWarehouse.ContainsKey(targetItem))
-							citizen.House.HouseWarehouse[targetItem] = 0;
-						citizen.House.HouseWarehouse[targetItem] += actualHarvest;
-						return (true, 0);
-					}
+					    if (IsRareResource(targetItem) && citizen.House != null)
+					    {
+						    if (!citizen.House.HouseWarehouse.ContainsKey(targetItem))
+							    citizen.House.HouseWarehouse[targetItem] = 0;
+						    citizen.House.HouseWarehouse[targetItem] += consumedAmount;
+						    return (true, 0);
+					    }
 
-					return ExecuteSell(citizen, town, targetItem, basePrice, actualHarvest);
+					    return ExecuteSell(citizen, town, targetItem, basePrice, consumedAmount);
+                    }
 				}
 			}
 			return (false, 0);
@@ -305,19 +308,19 @@ namespace Server.Misc
 		public static bool IsRareResource(Type type) => GetResourceTierValue(type) > 1;
 
 		public static int GetResourceTierValue(Type type)
-		{
-			if (type == null) return 1;
-			string name = type.Name.ToLower();
+        {
+            if (type == null) return 1;
 
-			if (name.Contains("valorite") || name.Contains("frostwood") || name.Contains("barbed") || name.Contains("perchfish")) return 7;
-			if (name.Contains("verite") || name.Contains("bloodwood") || name.Contains("horned") || name.Contains("codfish")) return 6;
-			if (name.Contains("agapite") || name.Contains("heartwood") || name.Contains("spined") || name.Contains("catfish")) return 5;
-			if (name.Contains("gold") || name.Contains("yew") || name.Contains("serned") || name.Contains("cruciancarp")) return 4;
-			if (name.Contains("bronze") || name.Contains("ash") || name.Contains("ratned") || name.Contains("shiner")) return 3;
-			if (name.Contains("copper") || name.Contains("oak") || name.Contains("derned") || name.Contains("bass")) return 2;
+            // 1. 타입을 통해 CraftResource Enum 추출
+            CraftResource res = CraftResources.GetFromType(type);
+            
+            // 2. 등록되지 않은 아이템(None)이거나 일반 농작물 등은 기본 1티어로 처리
+            if (res == CraftResource.None) return 1;
 
-			return 1; // Iron, Log, Hides, Trout 등
-		}
+            // 3. GetIndex는 같은 분류 내에서 0부터 시작하므로 +1 처리
+            // 예: Iron/Log(0) -> 1티어, Copper/Oak(1) -> 2티어 (2 이상은 Rare 처리)
+            return CraftResources.GetIndex(res) + 1;
+        }
 
 		// [신규] 상인이 가문 창고의 색자원을 매입하여 귀족에게 납품하는 중개 무역
         public static void ExecuteRareBrokerage(VirtualCitizen merchant, TownEconomy town)
@@ -358,45 +361,61 @@ namespace Server.Misc
         }
 
         // = [에러 해결 1] 누락된 메서드 추가 =
-        private static ResourceType GetResourceTypeByJob(NpcJobClass job)
+        public static ResourceType GetResourceTypeByJob(NpcJobClass job)
         {
-            int id = (int)job;
-            if (id >= 100 && id < 110) return ResourceType.Mining;
-            if (id >= 110 && id < 120) return ResourceType.Lumberjacking;
-            if (id >= 120 && id < 130) return ResourceType.Fishing;
-            return ResourceType.Farming;
+            string name = job.ToString().ToLower();
+
+            if (name.Contains("miner") || name.Contains("digger") || name.Contains("quarryman") || name.Contains("knapper"))
+                return ResourceType.Mining;
+            
+            if (name.Contains("wood") || name.Contains("bark") || name.Contains("resin") || name.Contains("sawyer") || name.Contains("cutter"))
+                return ResourceType.Lumberjacking;
+            
+            if (name.Contains("fish") || name.Contains("crab") || name.Contains("oyster") || name.Contains("whaler") || name.Contains("comber") || name.Contains("maritime"))
+                return ResourceType.Fishing;
+
+            if (name.Contains("tanner") || name.Contains("leather") || name.Contains("skinner") || name.Contains("hunter") || name.Contains("trapper") || name.Contains("plucker"))
+                return ResourceType.Tanning;
+
+            return ResourceType.Farming; // 그 외는 모두 농사로 취급
         }
 
 		// 마을 근처 또는 잠재력에 따른 원정 작업지 예약 로직
         public static void FindWorkPool(VirtualCitizen citizen, TownEconomy town)
         {
             ResourceType type = GetResourceTypeByJob(citizen.JobClass);
-            string townName = TownNumber.GetName(town.TownID);
+            string townName = TownNumber.GetName(town.TownID).ToLower();
 
-            // 해당 대륙의 모든 동일 타입 자원 풀 탐색
             var pools = ResourceManager.Pools.Values
                 .Where(p => p.MapName == town.Facet.Name && p.Type == type);
 
-            ResourcePool bestPool;
+            ResourcePool bestPool = null;
 
-            // [기획 반영] 하이 포텐셜(2.5 이상)은 마을 제약 없이 가장 매장량이 많은 곳으로 원정
             if (citizen.Potential >= 2.5)
             {
                 bestPool = pools.OrderByDescending(p => p.CurrentCapacity).FirstOrDefault();
             }
             else
             {
-                // 일반 시민은 기존처럼 자기 마을 이름이 포함된 지역(안전지대)만 탐색
-                bestPool = pools
-                    .Where(p => p.RegionName.Contains(townName))
-                    .OrderByDescending(p => p.CurrentCapacity)
-                    .FirstOrDefault();
+                if (type == ResourceType.Fishing)
+                {
+                    // 낚시는 마을 이름 무시하고 가장 물고기가 많은 연안/강으로 출근
+                    bestPool = pools.Where(p => !p.RegionName.StartsWith("Ocean"))
+                                    .OrderByDescending(p => p.CurrentCapacity)
+                                    .FirstOrDefault();
+                }
+                else
+                {
+                    // 대소문자 무시(ToLower)로 완벽한 마을 구역 매칭
+                    bestPool = pools
+                        .Where(p => p.RegionName.ToLower().Contains(townName))
+                        .OrderByDescending(p => p.CurrentCapacity)
+                        .FirstOrDefault();
+                }
             }
 
-            if (bestPool != null)
-            {
-                citizen.TargetRegionName = bestPool.RegionName;
-            }
+            if (bestPool != null) citizen.TargetRegionName = bestPool.RegionName;
+            else citizen.TargetRegionName = ""; // 없으면 확실하게 비움
         }
 
         private static Type GetDefaultItem(ResourceType type) => type switch

@@ -131,6 +131,10 @@ namespace Server.Misc
                 }
                 scalar += (attacker.Skills[SkillName.Tactics].Value * 0.002 + statBonus * 0.0001);
                 
+                // [기획 추가] 해부학 50 보너스 : 맨손, 무기 공격력 25% 증가
+                if (attacker.Skills[SkillName.Anatomy].Value >= 50.0)
+                    scalar += 0.25;
+
                 if (attacker.Weapon is BaseWeapon bw)
                 {
                     Skill weaponSkill = attacker.Skills[bw.Skill];
@@ -271,7 +275,7 @@ namespace Server.Misc
             return Math.Max(0, damage - reducedDamage);
         }
 
-        private static int ApplyCritical(Mobile attacker, Mobile defender, int damage, int target, bool isMagic, bool forceArrow)
+		private static int ApplyCritical(Mobile attacker, Mobile defender, int damage, int target, bool isMagic, bool forceArrow)
         {
             // 1. [치명타 확률] 유저/몬스터 공통: 운 1당 0.01% (0.0001)
             double critChance = (attacker.Luck * 0.0001);
@@ -285,11 +289,29 @@ namespace Server.Misc
             // 2. [치명타 데미지 배율] 기본 1.5배 (150%)
             double critDamageMult = 1.5;
 
+            // =========================================================
+            // [바드 선동 50 보너스] 치명타 확률 20% 증가, 치명타 피해 50% 증가
+            // =========================================================
+            var provoBonus = Server.SkillHandlers.Provocation.GetProvokeCritBonus(attacker);
+            if (provoBonus.CritChance > 0)
+            {
+                critChance += (provoBonus.CritChance * 0.0001); // 20 * 0.01 = 0.20 (+20%)
+                critDamageMult += (provoBonus.CritDamage * 0.0001); // 50 * 0.01 = 0.50 (+50%)
+            }
+
             // [신규 보정] 치명타 데미지 배율 추가 (34번: 마법, 33번: 물리)
             if (isMagic)
+            {
                 critDamageMult += Misc.ItemOptionCreator.GetAttributeValue(attacker, 34) * 0.0001;
+            }
             else
+            {
                 critDamageMult += Misc.ItemOptionCreator.GetAttributeValue(attacker, 33) * 0.0001;
+
+                // [기획 추가] 해부학 100 보너스 : 맨손, 무기 치명 피해 10% 증가
+                if (attacker.Skills[SkillName.Anatomy].Value >= 100.0)
+                    critDamageMult += 0.1;
+            }
 
             // 3. [몬스터 전용 보정] 티어 및 기력/마나 보너스
             if (attacker is BaseCreature bc)
@@ -386,7 +408,6 @@ namespace Server.Misc
                     defender.FixedParticles(0x377A, 1, 32, 9502, 67, 3, EffectLayer.Waist);
                     attacker.PlaySound(0x1F1);
                 }
-                // 스킬 1당 0.05% 확률 (100 기준 5%, 120 기준 6%)
             }
             if (attacker.Skills.Necromancy.Value * 0.0005 > Utility.RandomDouble())
             {
@@ -397,7 +418,6 @@ namespace Server.Misc
                 defender.FixedParticles(0x374B, 1, 15, 9502, 97, 3, EffectLayer.Waist); // 어두운 불꽃 효과
                 attacker.PlaySound(0x1FB); // 영혼의 울음소리/냉기 사운드
             }
-            
             
             return damage;
         }

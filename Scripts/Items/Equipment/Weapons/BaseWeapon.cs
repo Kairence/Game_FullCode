@@ -1669,20 +1669,20 @@ namespace Server.Items
 
 		public virtual TimeSpan GetDelay(Mobile m)
 		{
-			double speed = Speed; // 무기 기본 속도 (예: 3.0)
+			double speed = Speed; // 무기 기본 속도 초 단위
 
 			if (speed == 0)
 				return TimeSpan.FromHours(1.0);
 
-			// 1. 보너스 합산 (단위: 1당 0.01% 효율 기준)
-			// 아이템 옵션이 100이면 1% 효율 증가입니다.
-			int bonus = AosAttributes.GetValue(m, AosAttribute.WeaponSpeed) + 
-						AosWeaponAttributes.GetValue(m, AosWeaponAttribute.MageWeapon);
+			// 1. 보너스 추출 (1% = 10,000 스케일)
+			int bonus = Server.Misc.ItemOptionCreator.GetAttributeValue(m, Server.Misc.CustomOption.SwingSpeed);
+
+			// [바드 불협화음 50 보너스] 적용된 디버프만큼 공속 보너스를 깎습니다.
+			bonus -= Server.SkillHandlers.Discordance.GetSpeedPenalty(m);
 
 			// 몬스터 예외 처리
-			if (m is BaseCreature)
+			if (m is BaseCreature bc)
 			{
-				BaseCreature bc = m as BaseCreature;
 				if (bc.AttackSpeed != 0) speed = bc.AttackSpeed;
 			}
 
@@ -1690,23 +1690,24 @@ namespace Server.Items
 			if (this is Fists && m.Skills[SkillName.Wrestling].Value >= 200)
 				speed /= 2;
 
-			// 2. [신규 정밀 공식 적용] - Spell.cs와 동일한 1당 0.01% 공식
-			// (speed * 1,000,000 / (10,000 + bonus)) * 0.01
-			double rawDelay = Math.Truncate((speed * 1000000 / (10000 + bonus))) * 0.01;
+			// 2. 정확한 스케일 연산 (기본 100% = 1,000,000)
+			double effectiveBonus = 1000000.0 + bonus;
+			
+			// 극단적인 디버프 한계치 방어
+			if (effectiveBonus < 100000.0) effectiveBonus = 100000.0;
 
-			// 3. [0.1초 정밀 틱 정규화]
-			// 이제 무기도 0.5초 단위가 아닌 0.1초 단위로 세밀하게 끊깁니다.
+			double rawDelay = speed * (1000000.0 / effectiveBonus);
+
+			// 3. 0.1초 정밀 틱 정규화
 			double tickUnit = 0.1;
 			double delayInSeconds = Math.Ceiling(rawDelay / tickUnit) * tickUnit;
 
-			// 4. 최소 공속 방어 (0.1초)
-			// 서버 처리 한계에 맞춰 0.1초까지 허용하거나, 밸런스상 0.5초로 두셔도 됩니다.
+			// 4. 최소 공속 방어 (서버 한계점)
 			if (delayInSeconds < 0.1)
 				delayInSeconds = 0.1;
 
 			return TimeSpan.FromSeconds(delayInSeconds);
 		}
-
 		public virtual void OnBeforeSwing(Mobile attacker, IDamageable damageable)
 		{
             Mobile defender = damageable as Mobile;

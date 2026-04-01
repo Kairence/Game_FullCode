@@ -126,7 +126,9 @@ namespace Server.Mobiles
         Serned,
         Spined,
         Horned,
-        Barbed
+        Barbed,
+		Polar,    // 추가
+		Abyssal
     }
 
     public enum FurType
@@ -2857,6 +2859,8 @@ namespace Server.Mobiles
 
             CanMove = true;
 
+			Hunger = 75000;
+
             ApproachWait = false;
             ApproachRange = 10;
 
@@ -4535,10 +4539,52 @@ namespace Server.Mobiles
         public virtual FurType FurType { get { return FurType.Green; } }
 
         public virtual MeatType MeatType { get { return MeatType.Ribs; } }
-        public virtual int Meat { get { return 0; } }
+        public virtual int Meat 
+        { 
+            get 
+            { 
+                int baseMeat = 2; // 해당 동물의 기본 고기 양 (기존 값 연동 가능)
+                if (this.Hunger >= 80000) return baseMeat * 2; // 포동포동하면 2배 드랍
+                if (this.Hunger <= 20000) return 0; // 굶주려 아사 직전이면 뼈만 남음 (고기 0)
+                return baseMeat;
+            } 
+        }
 
-        public virtual int Hides { get { return 0; } }
-        public virtual HideType HideType { get { return HideType.Regular; } }
+        // 2. 가죽(Hides) 양 동적 조절
+        public virtual int Hides 
+        { 
+            get 
+            { 
+                int baseHides = 5; // 기본 가죽 량
+                if (this.Hunger >= 80000) return (int)(baseHides * 1.5);
+                if (this.Hunger <= 20000) return baseHides / 2; // 낡은 가죽이라 절반만 건짐
+                return baseHides;
+            } 
+        }
+        // 3. 환경 보너스를 적용한 가죽 종류(HideType) 변경
+		public virtual HideType HideType 
+        { 
+            get 
+            { 
+                if (this.Hunger <= 20000) return HideType.Regular;
+
+                // 하위 클래스가 오버라이드하지 않은 경우의 기본값
+                HideType defaultHide = HideType.Regular; 
+
+                var (polarBonus, obsidianBonus, soulBonus) = Server.Misc.EcosystemManager.GetEnvironmentBonus(this.Location, this.Map);
+
+                if (this.Hunger >= 80000)
+                {
+                    if (obsidianBonus > 1.0 && Utility.RandomDouble() < 0.001 * obsidianBonus)
+                        return HideType.Abyssal; 
+                    
+                    if (polarBonus > 1.0 && Utility.RandomDouble() < 0.005 * polarBonus) 
+                        return HideType.Polar; 
+                }
+
+                return defaultHide;
+            } 
+        }
 
         public virtual int Scales { get { return 0; } }
         public virtual ScaleType ScaleType { get { return ScaleType.Red; } }
@@ -8508,8 +8554,92 @@ namespace Server.Mobiles
 		}
 		*/
 		
+		private long m_NextFoodSearch;
+        public bool IsAngry { get; set; } // 테이밍 코드에서 참조할 수 있는 앵그리 플래그
+
+        // [신규] 생태계 포식 및 자원 채집 논리
+        public virtual void TryEcosystemForaging()
+        {
+            if (Deleted || !Alive || Map == null || Map == Map.Internal) return;
+
+            // 1. 육식(Meat) 동물의 포식 사냥
+            if ((FavoriteFood & FoodType.Meat) != 0)
+            {
+                IPooledEnumerable eable = Map.GetMobilesInRange(Location, 12);
+                foreach (Mobile m in eable)
+                {
+                    if (m != this && m is BaseCreature target && target.Alive && !target.Deleted)
+                    {
+                        // 동족상잔 방지
+                        if (target.GetType() == this.GetType() || (target.FavoriteFood & FoodType.Meat) != 0)
+                            continue;
+
+                        // 단순히 타겟이 고기를 드랍하는 생물인지 검사 (enum 충돌 회피)
+                        if (target.Meat > 0) 
+                        {
+                            this.Combatant = target;
+                            this.Warmode = true;
+                            break;
+                        }
+                    }
+                }
+                eable.Free();
+            }
+			else if ((FavoriteFood & FoodType.Fish) != 0)
+            {
+                string regionName = Region.Find(Location, Map).Name ?? "Ocean";
+                Server.Misc.ResourceKey fishKey = new(Map.Name, regionName, Server.Misc.ResourceType.Fishing);
+                
+                // 해당 구역에 낚시(Fishing) 자원이 남아있다면 파먹음
+                if (Server.Misc.ResourceManager.Pools.ContainsKey(fishKey))
+                {
+                    var pool = Server.Misc.ResourceManager.Pools[fishKey];
+                    if (pool.CurrentCapacity > 0)
+                    {
+                        pool.CurrentCapacity -= Utility.RandomMinMax(1, 3); // 어장 자원 소모
+                        this.Hunger += 15000; // 물고기 섭취로 허기 대폭 회복
+                        if (this.Hunger > 100000) this.Hunger = 100000;
+                        
+                        // 어장 약탈 시각/청각 피드백 (물 튀기는 이펙트)
+                        Effects.SendLocationEffect(Location, Map, 0x352D, 16, 4); 
+                        PlaySound(0x026); // 물장구 소리
+                    }
+                }
+            }
+            // 2. 초식/잡식 동물의 농장 밭/숲 파괴 로직
+            else if ((FavoriteFood & (FoodType.FruitsAndVegies | FoodType.GrainsAndHay)) != 0)
+            {
+                // 주변에 밭(FarmRegion 등)이나 농작물이 있는지 검사하여 파괴하고 허기를 즉시 회복
+                // (이 부분은 FarmRegion 또는 ResourceManager의 Farming Pool과 직접 연동하는 코드로 확장 가능합니다)
+                this.Hunger += 10000; 
+                if (this.Hunger > 100000) this.Hunger = 100000;
+            }
+        }
+		
         public virtual void OnThink()
         {
+			// [기획 연동] 아사(Starving) 및 앵그리 모드 (IsAngry) 처리
+            if (!Controlled && !IsStabled && !Summoned && !(this is BaseVendor))
+            {
+                if (this.Hunger <= 0)
+                {
+                    this.Kill(); // 배가 고파 아사
+                    return;
+                }
+
+                if (this.Hunger <= 20000)
+                {
+                    if (!this.IsAngry)
+                    {
+                        this.IsAngry = true; 
+                        // 배고프면 이름 색상을 바꾸거나 이펙트를 줄 수 있습니다.
+                    }
+                }
+                else
+                {
+                    if (this.IsAngry) this.IsAngry = false;
+                }
+            }
 			//if (this.Grade <= 0 && !this.Deleted && this.Alive)
 			//{
 			//	Server.Misc.CreatureBalancer.Apply(this);
@@ -8701,6 +8831,12 @@ namespace Server.Mobiles
 
                 _NextDetect = Core.TickCount +
                     (int)TimeSpan.FromSeconds(Utility.RandomMinMax(min, max)).TotalMilliseconds;
+            }
+			
+			if (!Controlled && !Summoned && this.Hunger <= 80000 && this.Combatant == null && Core.TickCount >= m_NextFoodSearch)
+            {
+                TryEcosystemForaging();
+                m_NextFoodSearch = Core.TickCount + Utility.RandomMinMax(10000, 20000); // 10~20초마다 탐색
             }
 			
 			//시야 체크

@@ -1,6 +1,5 @@
 ﻿#region References
 using System;
-
 using Server.Items;
 using Server.Misc;
 using Server.Network;
@@ -21,16 +20,19 @@ namespace Server.SkillHandlers
         {
             m.RevealingAction();
 
-			if( m.Hunger < 200 )
-				m.SendMessage("구걸을 하기 위해서는 최소 만복도가 2% 이상이어야 합니다.");
-			
-			else
-			{
-				m.Hunger -= 200;
-				m.SendLocalizedMessage(500397); // To whom do you wish to grovel?
+            // [기획] 만복도 체크 임시 주석 처리
+            /*
+            if (m.Hunger < 200)
+                m.SendMessage("구걸을 하기 위해서는 최소 만복도가 2% 이상이어야 합니다.");
+            else
+            */
+            {
+                // m.Hunger -= 200;
+                m.SendLocalizedMessage(500397); // To whom do you wish to grovel?
 
-				Timer.DelayCall(() => m.Target = new InternalTarget());
-			}
+                Timer.DelayCall(() => m.Target = new InternalTarget());
+            }
+
             return TimeSpan.FromHours(1.0);
         }
 
@@ -135,215 +137,142 @@ namespace Server.SkillHandlers
                         m_Target.PublicOverheadMessage(MessageType.Regular, m_Target.SpeechHue, 500406);
                         // Thou dost not look trustworthy... no gold for thee today!
                     }
-                    else// if (m_From.CheckTargetSkill(SkillName.Begging, m_Target, 0.0, 100.0))
+                    else
                     {
-						if( m_Target is BaseCreature )
-						{
-							BaseCreature bc = m_Target as BaseCreature;
-							if( bc.BeggingTime > DateTime.Now )
-							{
-								m_Target.PublicOverheadMessage(MessageType.Regular, m_Target.SpeechHue, 500406);
-							}
-							else
-							{
-								bc.BeggingTime = DateTime.Now + TimeSpan.FromHours( 4 );
-								int point = 0;
-								if (m_Target.Race != Race.Elf)
-								{
-									point = Utility.RandomMinMax( 1, 10 ) + (int)m_From.Skills.Begging.Value / 10;
-									if( m_From.Skills.Begging.Value >= 100 )
-										point += 3;
-									int toConsume = theirPack.GetAmount(typeof(Gold)) / 10;
-									
-									if( point > toConsume )
-										point = toConsume;
+                        if (m_Target is BaseCreature bc)
+                        {
+                            if (bc.BeggingTime > DateTime.Now)
+                            {
+                                m_Target.PublicOverheadMessage(MessageType.Regular, m_Target.SpeechHue, 500406);
+                            }
+                            else
+                            {
+                                bc.BeggingTime = DateTime.Now + TimeSpan.FromHours(4);
+                                int point = 10;
+                                double begSkill = m_From.Skills.Begging.Value;
 
-									if (point > 0)
-									{
-										int consumed = theirPack.ConsumeUpTo(typeof(Gold), point);
+                                m_Target.Say(1074854); // Here, take this...
 
-										if (consumed > 0)
-										{
-											m_Target.PublicOverheadMessage(MessageType.Regular, m_Target.SpeechHue, 500405);
-											// I feel sorry for thee...
+                                // 1. 기본 음식 획득 (구걸 성공 시 항상 지급)
+                                Item food = null;
+                                string foodName = "";
+                                switch (Utility.Random(8))
+                                {
+                                    case 0: food = new BegCookies(); foodName = "a plate of cookies."; break;
+                                    case 1: food = new BegFishSteak(); foodName = "a fish steak."; break;
+                                    case 2: food = new BegTurnip(); foodName = "a turnip."; break;
+                                    case 3: food = new BegStew(); foodName = "a bowl of stew."; break;
+                                    case 4: food = new BegCheeseWedge(); foodName = "a wedge of cheese."; break;
+                                    case 5: food = new BegDates(); foodName = "a bunch of dates."; break;
+                                    case 6: food = new BegPizza(); foodName = "pizza"; break;
+                                    case 7: food = new BegFrenchBread(); foodName = "french bread."; break;
+                                }
+                                m_From.AddToBackpack(food);
+                                m_From.SendLocalizedMessage(1074853, foodName); // You have been given ~1_name~
 
-											Gold gold = new Gold(consumed);
+                                // 2. 금화 획득 보너스 (스킬 50 이상, 20% 확률)
+                                if (begSkill >= 50.0 && Utility.RandomDouble() < 0.20)
+                                {
+                                    int toConsume = (theirPack != null) ? theirPack.GetAmount(typeof(Gold)) / 10 : 0;
+                                    int goldPoint = Utility.RandomMinMax(1, 10) + (int)(begSkill / 10);
+                                    
+                                    if (begSkill >= 100.0)
+                                        goldPoint += 3;
 
-											point += gold.Amount;
-											
-											m_From.AddToBackpack(gold);
-											m_From.PlaySound(gold.GetDropSound());
+                                    if (goldPoint > toConsume)
+                                        goldPoint = toConsume;
 
-											if (m_From.Karma > -3000)
-											{
-												int toLose = m_From.Karma + 3000;
+                                    if (goldPoint > 0 && theirPack != null)
+                                    {
+                                        int consumed = theirPack.ConsumeUpTo(typeof(Gold), goldPoint);
+                                        if (consumed > 0)
+                                        {
+                                            m_Target.PublicOverheadMessage(MessageType.Regular, m_Target.SpeechHue, 500405);
+                                            // I feel sorry for thee...
+                                            Gold gold = new Gold(consumed);
+                                            m_From.AddToBackpack(gold);
+                                            m_From.PlaySound(gold.GetDropSound());
+                                            point += consumed;
+                                        }
+                                        else
+                                        {
+                                            m_Target.PublicOverheadMessage(MessageType.Regular, m_Target.SpeechHue, 500407);
+                                            // I have not enough money to give thee any!
+                                        }
+                                    }
+                                    else
+                                    {
+                                        m_Target.PublicOverheadMessage(MessageType.Regular, m_Target.SpeechHue, 500407);
+                                        // I have not enough money to give thee any!
+                                    }
+                                }
 
-												if (toLose > 40)
-												{
-													toLose = 40;
-												}
+                                // 3. 아이템 획득 보너스 (스킬 100 이상, 20% 확률)
+                                if (begSkill >= 100.0 && Utility.RandomDouble() < 0.20)
+                                {
+                                    Item item = null;
+                                    string itemName = "";
+                                    switch (Utility.Random(10))
+                                    {
+                                        case 0: item = new BegBedRoll(); itemName = "a bedroll"; break;
+                                        case 1: item = new BegFishingPole(); itemName = "a fishing pole."; break;
+                                        case 2: item = new BegFlowerGarland(); itemName = "a flower garland."; break;
+                                        case 3: item = new BegSake(); itemName = "a bottle of Sake."; break;
+                                        case 4: item = new BegWine(); itemName = "a Bottle of wine."; break;
+                                        case 5: item = new BegWinePitcher(); itemName = "a Pitcher of wine."; break;
+                                        case 6: item = new BegLantern(); itemName = "a lantern."; break;
+                                        case 7: item = new BegLiquorPitcher(); itemName = "a Pitcher of liquor"; break;
+                                        case 8: item = new BegShirt(); itemName = "a shirt."; break;
+                                        case 9: item = new BegWaterPitcher(); itemName = "a Pitcher of water."; break;
+                                    }
+                                    m_From.AddToBackpack(item);
+                                    m_From.SendLocalizedMessage(1074853, itemName); // You have been given ~1_name~
+                                    point += 30;
+                                }
 
-												Titles.AwardKarma(m_From, -toLose, true);
-											}
-											m_From.CheckSkill(SkillName.Begging, point * 10 );
-										}
-										else
-										{
-											m_Target.PublicOverheadMessage(MessageType.Regular, m_Target.SpeechHue, 500407);
-											// I have not enough money to give thee any!
-										}
-									}
-									else
-									{
-										m_Target.PublicOverheadMessage(MessageType.Regular, m_Target.SpeechHue, 500407);
-										// I have not enough money to give thee any!
-									}
-								}
-								else
-								{
-									double chance = Utility.RandomDouble();
-									Item reward = null;
-									string rewardName = "";
-									if (chance >= .99)
-									{
-										int rand = Utility.Random(8);
-										point = 50;
-										if (rand == 0)
-										{
-											reward = new BegBedRoll();
-											rewardName = "a bedroll";
-										}
-										else if (rand == 1)
-										{
-											reward = new BegCookies();
-											rewardName = "a plate of cookies.";
-										}
-										else if (rand == 2)
-										{
-											reward = new BegFishSteak();
-											rewardName = "a fish steak.";
-										}
-										else if (rand == 3)
-										{
-											reward = new BegFishingPole();
-											rewardName = "a fishing pole.";
-										}
-										else if (rand == 4)
-										{
-											reward = new BegFlowerGarland();
-											rewardName = "a flower garland.";
-										}
-										else if (rand == 5)
-										{
-											reward = new BegSake();
-											rewardName = "a bottle of Sake.";
-										}
-										else if (rand == 6)
-										{
-											reward = new BegTurnip();
-											rewardName = "a turnip.";
-										}
-										else if (rand == 7)
-										{
-											reward = new BegWine();
-											rewardName = "a Bottle of wine.";
-										}
-										else if (rand == 8)
-										{
-											reward = new BegWinePitcher();
-											rewardName = "a Pitcher of wine.";
-										}
-									}
-									else if (chance >= .76)
-									{
-										int rand = Utility.Random(6);
-										point = 30;
+                                // 4. 장비 획득 보너스 (스킬 150 이상, 10% 확률)
+                                if (begSkill >= 150.0 && Utility.RandomDouble() < 0.10)
+                                {
+                                    Item equip = Loot.RandomArmorOrShieldOrWeapon();
+                                    string equipName = "some equipment";
 
-										if (rand == 0)
-										{
-											reward = new BegStew();
-											rewardName = "a bowl of stew.";
-										}
-										else if (rand == 1)
-										{
-											reward = new BegCheeseWedge();
-											rewardName = "a wedge of cheese.";
-										}
-										else if (rand == 2)
-										{
-											reward = new BegDates();
-											rewardName = "a bunch of dates.";
-										}
-										else if (rand == 3)
-										{
-											reward = new BegLantern();
-											rewardName = "a lantern.";
-										}
-										else if (rand == 4)
-										{
-											reward = new BegLiquorPitcher();
-											rewardName = "a Pitcher of liquor";
-										}
-										else if (rand == 5)
-										{
-											reward = new BegPizza();
-											rewardName = "pizza";
-										}
-										else if (rand == 6)
-										{
-											reward = new BegShirt();
-											rewardName = "a shirt.";
-										}
-									}
-									else if (chance >= .25)
-									{
-										int rand = Utility.Random(1);
-										point = 20;
+                                    // 5. 유물 획득 확률 보너스 (스킬 200 이상, 장비 획득 성공 시 1% 확률) - 임시 주석 처리
+                                    /*
+                                    if (begSkill >= 200.0 && Utility.RandomDouble() < 0.01)
+                                    {
+                                        // equip = new Artifact();
+                                        // equipName = "an artifact";
+                                    }
+                                    */
 
-										if (rand == 0)
-										{
-											reward = new BegFrenchBread();
-											rewardName = "french bread.";
-										}
-										else
-										{
-											reward = new BegWaterPitcher();
-											rewardName = "a Pitcher of water.";
-										}
-									}
+                                    m_From.AddToBackpack(equip);
+                                    m_From.SendLocalizedMessage(1074853, equipName); // You have been given ~1_name~
+                                    point += 50;
+                                }
 
-									if (reward == null)
-									{
-										reward = new Gold(1);
-										point = 1;
-									}
+                                // 카르마 연산
+                                if (m_From.Karma > -3000)
+                                {
+                                    int toLose = m_From.Karma + 3000;
 
-									m_Target.Say(1074854); // Here, take this...
-									m_From.AddToBackpack(reward);
-									m_From.SendLocalizedMessage(1074853, rewardName); // You have been given ~1_name~
+                                    if (toLose > 40)
+                                    {
+                                        toLose = 40;
+                                    }
 
-									if (m_From.Karma > -3000)
-									{
-										int toLose = m_From.Karma + 3000;
+                                    Titles.AwardKarma(m_From, -toLose, true);
+                                }
 
-										if (toLose > 40)
-										{
-											toLose = 40;
-										}
-
-										Titles.AwardKarma(m_From, -toLose, true);
-									}
-									m_From.CheckSkill(SkillName.Begging, point * 10 );
-								}
-							}								
-						}
+                                m_From.CheckSkill(SkillName.Begging, point * 10);
+                            }
+                        }
                     }
-					/*
+                    /*
                     else
                     {
                         m_Target.SendLocalizedMessage(500404); // They seem unwilling to give you any money.
                     }
-					*/
+                    */
 
                     m_From.NextSkillTime = Core.TickCount + 10000;
                 }
