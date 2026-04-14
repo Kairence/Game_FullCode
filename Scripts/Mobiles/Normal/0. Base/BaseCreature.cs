@@ -2859,7 +2859,7 @@ namespace Server.Mobiles
 
             CanMove = true;
 
-			Hunger = 75000;
+			Hunger = 100000;
 
             ApproachWait = false;
             ApproachRange = 10;
@@ -8618,28 +8618,27 @@ namespace Server.Mobiles
 		
         public virtual void OnThink()
         {
-			// [기획 연동] 아사(Starving) 및 앵그리 모드 (IsAngry) 처리
-            if (!Controlled && !IsStabled && !Summoned && !(this is BaseVendor))
-            {
-                if (this.Hunger <= 0)
-                {
-                    this.Kill(); // 배가 고파 아사
-                    return;
-                }
+			if (!Controlled && !IsStabled && !Summoned && !(this is BaseVendor) && !Blessed)
+			{
+				if (this.Hunger <= 0)
+				{
+					this.Kill(); // 배가 고파 아사
+					return;
+				}
 
-                if (this.Hunger <= 20000)
-                {
-                    if (!this.IsAngry)
-                    {
-                        this.IsAngry = true; 
-                        // 배고프면 이름 색상을 바꾸거나 이펙트를 줄 수 있습니다.
-                    }
-                }
-                else
-                {
-                    if (this.IsAngry) this.IsAngry = false;
-                }
-            }
+				if (this.Hunger <= 20000)
+				{
+					if (!this.IsAngry)
+					{
+						this.IsAngry = true; 
+						// 배고프면 이름 색상을 바꾸거나 이펙트를 줄 수 있습니다.
+					}
+				}
+				else
+				{
+					if (this.IsAngry) this.IsAngry = false;
+				}
+			}
 			//if (this.Grade <= 0 && !this.Deleted && this.Alive)
 			//{
 			//	Server.Misc.CreatureBalancer.Apply(this);

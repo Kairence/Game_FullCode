@@ -994,6 +994,7 @@ namespace Server.Items
 
             InvalidateProperties();
 		}
+		public bool IsExceptional => m_Quality == ItemQuality.Exceptional;
 
 		public int GetDurabilityBonus()
 		{

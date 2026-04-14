@@ -102,7 +102,7 @@ namespace Server
             return Damage(m, from, damage, false, phys, fire, cold, pois, nrgy, chaos, direct, false, type);
         }
 
-public static int Damage(IDamageable damageable, Mobile from, int damage, bool ignoreArmor, int phys, int fire, int cold, int pois, int nrgy, int chaos, int direct, bool keepAlive, DamageType type = DamageType.Melee, int aggro = 100)
+		public static int Damage(IDamageable damageable, Mobile from, int damage, bool ignoreArmor, int phys, int fire, int cold, int pois, int nrgy, int chaos, int direct, bool keepAlive, DamageType type = DamageType.Melee, int aggro = 100)
         {
             // from : 공격자
             // m : 방어자
@@ -385,7 +385,26 @@ public static int Damage(IDamageable damageable, Mobile from, int damage, bool i
 				//	pm.TimerList[64] = 100;
 			}
 
+            // 🌟 [추가] 와우 스타일 결투(Duel) 사망 방지 및 승패 결정 로직
+            if (m is PlayerMobile && from is PlayerMobile)
+            {
+                // DuelContext나 DuelSystem이 결투 중임을 확인하는 메서드 (AreDueling)
+                if (DuelSystem.AreDueling((PlayerMobile)m, (PlayerMobile)from))
+                {
+                    // 이번 데미지로 인해 캐릭터가 죽을 상황이라면
+                    if (totalDamage >= m.Hits)
+                    {
+                        // 1. 데미지를 현재 체력 - 1로 깎아서 체력을 딱 1만 남깁니다.
+                        totalDamage = m.Hits - 1;
 
+                        // 2. 결투 종료 및 승리자 선언 로직 실행
+                        // (from: 공격자/승리자, m: 피격자/패배자)
+                        DuelSystem.OnDuelWin((PlayerMobile)from, (PlayerMobile)m);
+                    }
+                }
+            }
+
+            // 기존 코드: 최종 데미지 반환
             return totalDamage;
         }
 

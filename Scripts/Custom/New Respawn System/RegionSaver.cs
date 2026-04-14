@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Server;
+using Server.Items;
 
 namespace Server.Misc
 {
@@ -970,5 +971,100 @@ namespace Server.Misc
             if (currentTarget == RegionCode.None || checkMajor == RegionCode.None) return false;
             return ((int)currentTarget / 100) * 100 == (int)checkMajor;
         }
+		// ==============================================================================
+        // 🌟 [추가됨] 블랙 보이드(빈 공간)를 제외한 순수 타일 면적을 반환합니다.
+        // ==============================================================================
+        public static int GetRealArea(RegionCode targetCode)
+        {
+            if (targetCode == RegionCode.None) return 0;
+
+            int totalArea = 0;
+            foreach (var bounds in m_Regions)
+            {
+                // 자기 자신이거나, 자신이 속한 세부 구역일 경우 면적 합산
+                if (bounds.Code == targetCode || ((int)bounds.Code / 100) * 100 == (int)targetCode)
+                {
+                    totalArea += (Math.Abs(bounds.EndX - bounds.StartX) * Math.Abs(bounds.EndY - bounds.StartY));
+                }
+            }
+            return totalArea;
+        }
+		// ==============================================================================
+        // 🌟 [추가] 입구(텔레포터)를 제외하고 던전 구역에 노드를 자동 설치합니다.
+        // ==============================================================================
+        public static void GenerateNodes(Mobile from)
+        {
+            // 1. 현재 GM 위치의 리전 코드를 가져와서 대표 구역(Major)으로 변환
+            RegionCode currentCode = GetRegionCode(from.Map, from.X, from.Y, from.Z);
+            if (currentCode == RegionCode.None) return;
+
+            int targetBase = ((int)currentCode / 100) * 100;
+            int installedCount = 0;
+
+            from.SendMessage(66, $"{targetBase} 구역에 노드 자동 생성을 시작합니다...");
+
+            // 2. m_Regions를 순회하며 해당 던전에 속한 모든 사각형 구역을 찾음
+            foreach (var bounds in m_Regions)
+            {
+                if (((int)bounds.Code / 100) * 100 != targetBase) continue;
+
+                // 3. 18타일 간격으로 격자 스캔
+                for (int x = bounds.StartX + 2; x < bounds.EndX - 2; x += 18)
+                {
+                    for (int y = bounds.StartY + 2; y < bounds.EndY - 2; y += 18)
+                    {
+                        int z = from.Map.GetAverageZ(x, y);
+
+                        // 🌟 [검증 1] 이 좌표가 실제 이 던전 소속인지 확인 (다른 던전과 겹침 방지)
+                        if (((int)GetRegionCode(from.Map, x, y, z) / 100) * 100 != targetBase) continue;
+
+                        // 🌟 [검증 2] 땅이 있는지 확인
+                        if (!from.Map.CanSpawnMobile(x, y, z)) continue;
+
+                        // 🌟 [검증 3] 입구(텔레포터/문게이트) 근처 12타일 이내인지 확인
+                        bool isEntrance = false;
+                        IPooledEnumerable eable = from.Map.GetItemsInRange(new Point3D(x, y, z), 12);
+                        foreach (Item item in eable)
+                        {
+                            if (item is Teleporter || item is Moongate) { isEntrance = true; break; }
+                        }
+                        eable.Free();
+
+                        if (isEntrance) continue;
+
+                        // 4. 노드 생성 및 배치
+                        DungeonNode node = new DungeonNode();
+                        node.MoveToWorld(new Point3D(x, y, z), from.Map);
+                        installedCount++;
+                    }
+                }
+            }
+
+            from.SendMessage(66, $"자동 설치 완료: 총 {installedCount}개의 노드가 배치되었습니다.");
+        }
+		public static Point3D GetRegionCenter(RegionCode code, Map map)
+		{
+			if (map == null || code == RegionCode.None)
+				return Point3D.Zero;
+
+			string regionName = code.ToString();
+
+			foreach (Region r in map.Regions.Values)
+			{
+				if (r.Name != null && r.Name.Equals(regionName, StringComparison.OrdinalIgnoreCase))
+				{
+					if (r.Area.Length > 0)
+					{
+						int cx = r.Area[0].Start.X + (r.Area[0].Width / 2);
+						int cy = r.Area[0].Start.Y + (r.Area[0].Height / 2);
+						int cz = map.GetAverageZ(cx, cy);
+						return new Point3D(cx, cy, cz);
+					}
+				}
+			}
+
+			return Point3D.Zero;
+		}
+
     }
 }

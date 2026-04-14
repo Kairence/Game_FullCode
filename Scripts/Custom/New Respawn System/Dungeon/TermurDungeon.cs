@@ -10,6 +10,7 @@ namespace Server.Misc
         {
             Map map = Map.TerMur;
             string prefix = "Ter Mur Dungeons";
+			/*
 
             // ========================================================================
             // [Tomb of Kings] 왕들의 무덤 (언데드 가고일 테마)
@@ -140,6 +141,7 @@ namespace Server.Misc
             dragonTurtleChamp.SetSpawnProfile(DungeonDepth.Entrance, [typeof(DragonTurtleHatchling)]);
             dragonTurtleChamp.SetSpawnProfile(DungeonDepth.Deep, [typeof(DragonTurtle)]);
             DungeonManager.Zones[dragonTurtleChamp.ZoneId] = dragonTurtleChamp;
+			*/
         }
     }
 }

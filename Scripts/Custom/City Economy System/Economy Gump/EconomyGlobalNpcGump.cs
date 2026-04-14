@@ -101,17 +101,26 @@ namespace Server.Misc
                     m_From.SendMessage(66, $"{targetMap.Name} 대륙의 가상 시민 {totalNewPop:N0}명이 새롭게 배치되었습니다.");
                     break;
 
-                case 2: // 전체 삭제 (가상 시민 데이터만 대상)
-                    // 1. 해당 대륙의 모든 마을을 순회하며 가상 시민과 가문 데이터를 초기화
+                case 2: // 전체 삭제 (가상 시민 데이터 및 물리적 하우징 철거)
+                    int demolishedCount = 0;
+
                     foreach (var town in towns) 
                     {
+                        if (town.Houses != null)
+                        {
+                            // 🌟 [핵심 패치] 장부를 날리기 전에 물리적인 집부터 싹 다 철거합니다.
+                            foreach (var house in town.Houses.ToList())
+                            {
+                                TownSocietyEngine.DemolishEstateArea(house, town);
+                                demolishedCount++;
+                            }
+                            town.Houses.Clear(); // 물리적 철거가 끝났으니 장부도 초기화
+                        }
+                        
                         town.Citizens?.Clear();
-                        town.Houses?.Clear(); // 가문 랭킹/족보 데이터도 함께 초기화
                     }
 
-                    // 2. 물리적 VendorNode는 건드리지 않음 (기존 노드 순회 로직 삭제)
-                    
-                    m_From.SendMessage(33, $"{targetMap.Name} 대륙의 모든 가상 시민 및 가문 데이터가 초기화되었습니다. (상인 노드는 유지)");
+                    m_From.SendMessage(33, $"{targetMap.Name} 대륙의 가상 시민 데이터 초기화 및 {demolishedCount}채의 집이 완벽하게 철거되었습니다.");
                     break;
 
                 case 3: // 지표 동기화
@@ -127,7 +136,10 @@ namespace Server.Misc
                     {
                         foreach (var citizen in town.Citizens.ToList())
                         {
-                            citizen.OnTick(town);
+                            // 🌟 [수정 완료] 구형 OnTick 대신 마스터 틱 파이프라인 호출
+                            citizen.OnHourTick(); 
+                            // 강제로 정오(12시)를 기준으로 1사이클 일과를 진행시킵니다.
+                            VirtualCitizenAI.ExecuteDeepRoutine(citizen, town, 12); 
                         }
                     }
                     m_From.SendMessage(65, $"{targetMap.Name} 대륙의 모든 시민들이 1사이클 경제 활동을 진행했습니다.");

@@ -8,6 +8,7 @@ namespace Server.Misc
     {
         public static void Setup()
         {
+			/*
             Map map = Map.Tokuno;
             string prefix = "Tokuno Islands Dungeons";
             string customPrefix = "Tokuno Islands Hidden Dungeons";
@@ -46,6 +47,7 @@ namespace Server.Misc
             //citadelEnt.SetSpawnProfile(DungeonDepth.Entrance, [typeof(BlackOrderWarrior)]);
             //citadelEnt.SetSpawnProfile(DungeonDepth.Deep, [typeof(BlackOrderAssassin), typeof(BlackOrderMage)]);
             //DungeonManager.Zones[citadelEnt.ZoneId] = citadelEnt;
+			*/
         }
     }
 }

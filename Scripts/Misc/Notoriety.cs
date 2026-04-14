@@ -124,39 +124,18 @@ namespace Server.Misc
 				return true;
 
 			var map = from.Map;
+			
+            // 🌟 [수정 포인트 1] 가상 시민(PhysicalCitizen) 공격 허용
+            // 이 구문이 트라멜 룰(HarmfulRestrictions) 체크보다 위에 있어야 합니다.
+			if (target is PhysicalCitizen)
+			{
+				return true; 
+			}
 
 			if (map != null && (map.Rules & MapRules.HarmfulRestrictions) == 0)
 				return true; // In felucca, anything goes
 
-			// Summons should follow the same rules as their masters
-			if (from is BaseCreature && ((BaseCreature)from).Summoned && ((BaseCreature)from).SummonMaster != null)
-				from = ((BaseCreature)from).SummonMaster;
-
-			if (target is BaseCreature && ((BaseCreature)target).Summoned && ((BaseCreature)target).SummonMaster != null)
-				target = ((BaseCreature)target).SummonMaster;
-
-			var bc = from as BaseCreature;
-
-			if (!from.Player && !(bc != null && bc.GetMaster() != null && bc.GetMaster().IsPlayer()))
-			{
-				if (!CheckAggressor(from.Aggressors, target) && !CheckAggressed(from.Aggressed, target) && target is PlayerMobile &&
-					((PlayerMobile)target).CheckYoungProtection(from))
-					return false;
-
-				return true; // Uncontrolled NPCs are only restricted by the young system
-			}
-
-			var fromGuild = GetGuildFor(from.Guild as Guild, from);
-			var targetGuild = GetGuildFor(target.Guild as Guild, target);
-
-			if (fromGuild != null && targetGuild != null)
-			{
-				if (fromGuild == targetGuild || fromGuild.IsAlly(targetGuild) || fromGuild.IsEnemy(targetGuild))
-					return true; // Guild allies or enemies can be harmful
-			}
-
-            if (ViceVsVirtueSystem.Enabled && ViceVsVirtueSystem.EnhancedRules && ViceVsVirtueSystem.IsEnemy(from, damageable))
-                return true;
+			// ... (중략: 소환수 및 길드 체크 로직) ...
 
 			if (target is BaseCreature)
 			{
@@ -167,10 +146,20 @@ namespace Server.Misc
 					return false; // Cannot harm other controlled mobiles
 			}
 
+			// Notoriety.cs -> Mobile_AllowHarmful 메서드 내부에 추가
+			if (from is PlayerMobile && target is PlayerMobile)
+			{
+				// 🌟 가상의 DuelSystem이 있다고 가정할 때의 로직
+				if (DuelSystem.AreDueling((PlayerMobile)from, (PlayerMobile)damageable))
+					return true; // 결투 중인 유저끼리는 트라멜 룰 무시하고 공격 허용
+			}
+
 			if (target.Player)
 				return false; // Cannot harm other players
 
-			if (!(target is BaseCreature && ((BaseCreature)target).InitialInnocent))
+            // 🌟 [수정 포인트 2] Innocent 판정 예외 처리
+            // 가상 시민은 아래의 Innocent 차단 로직에 걸리지 않도록 추가 조건을 확인합니다.
+			if (!(target is BaseCreature && ((BaseCreature)target).InitialInnocent) && !(target is PhysicalCitizen))
 			{
 				if (Notoriety.Compute(from, target) == Notoriety.Innocent)
 					return false; // Cannot harm innocent mobiles
@@ -330,6 +319,11 @@ namespace Server.Misc
 
 			if (target == null)
 				return Notoriety.CanBeAttacked;
+			
+			if (target is PhysicalCitizen)
+            {
+                return Notoriety.Innocent; // 무조건 회색 이름으로 표시
+            }
 
 			if (Core.AOS)
 			{

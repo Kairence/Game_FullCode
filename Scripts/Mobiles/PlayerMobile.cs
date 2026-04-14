@@ -7172,55 +7172,60 @@ namespace Server.Mobiles
         private List<StatMod> _equipStatMods = [];
         private List<SkillMod> _equipSkillMods = [];
 
-public void UpdateEquipOptions()
+		public void UpdateEquipOptions()
 		{
-			// 1. 모든 데이터 초기화 (누적 버그 원천 차단)
 			Array.Clear(_totalEquipOptions, 0, _totalEquipOptions.Length);
 			
-			// 🌟 [가장 중요] 세트 보너스 배열을 비워주지 않으면 벗었다 입을 때마다 6000까지 치솟습니다.
 			if (this.ItemSetSaveValue != null)
 				Array.Clear(this.ItemSetSaveValue, 0, this.ItemSetSaveValue.Length);
 
-			// 🌟 [수정 포인트] 전체 묻지마 초기화 삭제 (메시지 도배의 원인)
-			// ClearEquipMods();
-
-			// 2. 세트 옵션 재계산 (비워진 배열에 새로 담기)
 			Misc.SetItem.SetOption(this, true);
 
-			// 3. 장착 아이템 순회
 			foreach (Item item in Items)
 			{
 				if (item is Items.IEquipOption eqItem && item.Layer != Layer.Backpack && item.Layer != Layer.Mount)
 				{
-					// A. 랭크 고정 옵션 (Prefix 9번이 ID)
+					// A. 랭크 고정 옵션
 					int fixedID = eqItem.PrefixOption[9];
-					// 🌟 ID 0(힘)이 포함되도록 >= 0 체크
 					if (fixedID >= 0 && fixedID < _totalEquipOptions.Length)
 						_totalEquipOptions[fixedID] += eqItem.SuffixOption[9];
 
-					// B. 랜덤 마법 옵션 (11~30번 슬롯)
+					// B. 랜덤 마법 옵션 (11~30번)
 					int magicCount = eqItem.SuffixOption[0];
 					for (int i = 0; i < magicCount; i++)
 					{
 						int optID = eqItem.PrefixOption[11 + i];
-						// 🌟 ID 0(힘)이 포함되도록 >= 0 체크
 						if (optID >= 0 && optID < _totalEquipOptions.Length)
 							_totalEquipOptions[optID] += eqItem.SuffixOption[11 + i];
 					}
 
-					// C. 기본 장비 옵션 (61~70번 슬롯)
+					// [추가] C. 재련 보석(35~38) 및 시너지 옵션(39~40) 합산
+					for (int i = 35; i <= 40; i++)
+					{
+						int refID = eqItem.PrefixOption[i];
+						if (refID >= 0 && refID < _totalEquipOptions.Length)
+							_totalEquipOptions[refID] += eqItem.SuffixOption[i];
+					}
+
+					// [추가] D. 재질(색자원) 고정 옵션 (42~45번) 합산
+					for (int i = 42; i <= 45; i++)
+					{
+						int matID = eqItem.PrefixOption[i];
+						if (matID >= 0 && matID < _totalEquipOptions.Length)
+							_totalEquipOptions[matID] += eqItem.SuffixOption[i];
+					}
+
+					// E. 기본 장비 옵션 (61~70번)
 					for (int i = 0; i < 10; i++)
 					{
 						int baseID = eqItem.PrefixOption[61 + i];
 						int baseVal = eqItem.SuffixOption[61 + i];
-
-						if (baseID == 0 && baseVal == 0) continue; // 둘 다 0이면 빈 슬롯
-						
+						if (baseID == 0 && baseVal == 0) continue;
 						if (baseID >= 0 && baseID < _totalEquipOptions.Length)
 							_totalEquipOptions[baseID] += baseVal;
 					}
 
-					// D. 강화 옵션
+					// F. 강화 옵션
 					int enhanceLevel = eqItem.SuffixOption[10];
 					if (enhanceLevel > 0)
 					{
@@ -7235,17 +7240,14 @@ public void UpdateEquipOptions()
 				}
 			}
 
-			// 4. 세트 보너스 최종 합산
 			for (int i = 0; i < this.ItemSetSaveValue.Length; i++)
 			{
 				if (i < _totalEquipOptions.Length && this.ItemSetSaveValue[i] != 0)
 					_totalEquipOptions[i] += this.ItemSetSaveValue[i];
 			}
 
-			// 🌟 [수정 포인트] 변경된 값만 찾아서 갱신
 			ApplyEquipMods();
 
-			// 5. 엔진 강제 동기화
 			UpdateTotals();
 			this.ComputeResistances();
 			this.Delta(MobileDelta.Stat);

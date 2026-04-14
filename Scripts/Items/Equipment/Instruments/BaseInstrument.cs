@@ -315,6 +315,7 @@ namespace Server.Items
 
             return val;
         }
+		public bool IsExceptional => m_Quality == ItemQuality.Exceptional;
 
         public double GetDifficultyFor(Mobile targ)
         {

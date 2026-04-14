@@ -7,60 +7,45 @@ namespace Server.Items
 {
     public class BBQSmoker : CraftAddon
     {
-        public override BaseAddonDeed Deed { get { return new BBQSmokerDeed(Tools.Count > 0 ? Tools[0].UsesRemaining : 0); } }
-        public override CraftSystem CraftSystem { get { return DefCooking.CraftSystem; } }
+        public override CraftSystem CraftSystem => DefCooking.CraftSystem; 
+        public override BaseAddonDeed Deed => new BBQSmokerDeed(GetSharedUses());
 
         [Constructable]
         public BBQSmoker(bool south, int uses)
         {
             if (south)
             {
+                // 모든 파츠를 AddonToolComponent로 선언하여 통합 인터랙션 제공
                 AddCraftComponent(new AddonToolComponent(CraftSystem, 40344, 40345, 1157071, uses, this), 0, 0, 0);
-                AddComponent(new ToolDropComponent(40349, 1157071), -1, 0, 0);
+                AddCraftComponent(new AddonToolComponent(CraftSystem, 40349, 40349, 1157071, uses, this), -1, 0, 0);
             }
             else
             {
                 AddCraftComponent(new AddonToolComponent(CraftSystem, 40350, 40351, 1157071, uses, this), 0, 0, 0);
-                AddComponent(new ToolDropComponent(40355, 1157071), 0, -1, 0);
+                AddCraftComponent(new AddonToolComponent(CraftSystem, 40355, 40355, 1157071, uses, this), 0, -1, 0);
             }
         }
 
-        public BBQSmoker(Serial serial)
-            : base(serial)
-        {
-        }
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
+        private int GetSharedUses() => Tools.Count > 0 ? Tools[0].UsesRemaining : 0;
 
-            writer.Write((int)0);
-        }
-
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-
-            int version = reader.ReadInt();
-        }
+        public BBQSmoker(Serial serial) : base(serial) { }
+        public override void Serialize(GenericWriter writer) { base.Serialize(writer); writer.Write(0); }
+        public override void Deserialize(GenericReader reader) { base.Deserialize(reader); reader.ReadInt(); }
     }
 
     public class BBQSmokerDeed : CraftAddonDeed
     {
-        public override int LabelNumber { get { return 1157071; } } // BBQ Smoker
-        public override BaseAddon Addon { get { return new BBQSmoker(_South, UsesRemaining); } }
+        public override int LabelNumber => 1157071; // BBQ Smoker
+        public override BaseAddon Addon => new BBQSmoker(_South, UsesRemaining);
 
         private bool _South;
 
         [Constructable]
-        public BBQSmokerDeed() : this(0)
-        {
-        }
+        public BBQSmokerDeed() : this(0) { }
 
         [Constructable]
-        public BBQSmokerDeed(int uses) : base(uses)
-        {
-        }
+        public BBQSmokerDeed(int uses) : base(uses) { }
 
         public override void OnDoubleClick(Mobile from)
         {
@@ -74,23 +59,8 @@ namespace Server.Items
             }
         }
 
-        public BBQSmokerDeed(Serial serial)
-            : base(serial)
-        {
-        }
-
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-
-            writer.Write((int)0);
-        }
-
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-
-            int version = reader.ReadInt();
-        }
+        public BBQSmokerDeed(Serial serial) : base(serial) { }
+        public override void Serialize(GenericWriter writer) { base.Serialize(writer); writer.Write(0); }
+        public override void Deserialize(GenericReader reader) { base.Deserialize(reader); reader.ReadInt(); }
     }
 }

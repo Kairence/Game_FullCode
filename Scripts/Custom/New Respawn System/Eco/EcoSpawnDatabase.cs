@@ -20,11 +20,17 @@ namespace Server.Misc
         // 🌟 3. [초희귀 랜드마크] 전 대륙에서 딱 "지정된 구역 이름"과 100% 일치할 때만 발동!
         private static readonly Dictionary<string, List<EcoSpawnDef>> ExactLandmarks = new();
 
+        // 🌟 [추가] 가장 무난한 폴백 풀 (매번 생성하지 않고 캐싱)
+        private static List<EcoSpawnDef> m_FallbackPool;
+
         public static void Initialize()
         {
             SetupBiomes();
             SetupKeywordLandmarks();
             SetupExactLandmarks(); // 🌟 신규: 유니콘, 기린 등 희귀종 전용
+
+            // 최후의 보루 풀을 메모리에 고정 캐싱
+            Biomes.TryGetValue((EcoAreaType.Forest, EcoClimateType.Temperate), out m_FallbackPool);
         }
 
         // ==============================================================================
@@ -96,12 +102,13 @@ namespace Server.Misc
         // --- 내부 헬퍼 메서드 ---
         private static void AddExact(string exactName, params EcoSpawnDef[] mobs)
         {
-            ExactLandmarks[exactName.ToLower().Replace(" ", "_")] = new List<EcoSpawnDef>(mobs);
+            // 🌟 RegionCode 치환 매칭을 위해 언더바(_)와 공백을 모두 날려버리고 등록
+            ExactLandmarks[exactName.ToLower().Replace("_", "").Replace(" ", "")] = new List<EcoSpawnDef>(mobs);
         }
 
         private static void AddKeyword(string keyword, params EcoSpawnDef[] mobs)
         {
-            KeywordLandmarks[keyword.ToLower()] = new List<EcoSpawnDef>(mobs);
+            KeywordLandmarks[keyword.ToLower().Replace("_", "").Replace(" ", "")] = new List<EcoSpawnDef>(mobs);
         }
 
         private static void AddBiome(EcoAreaType area, EcoClimateType climate, params EcoSpawnDef[] mobs)
@@ -111,43 +118,45 @@ namespace Server.Misc
         }
 
         // ==============================================================================
-        // 🎲 [마스터 엔진] 노드의 정보를 주면, 규칙에 따라 스폰할 몬스터를 1마리 뽑아줍니다.
+        // 🌟 [최적화 마스터 엔진 1] 노드가 태어날 때(생성/로드) 딱 한 번만 불려서 배열 포인터를 캐싱!
         // ==============================================================================
-        public static Type GetRandomSpawn(EcoNode node)
+        public static List<EcoSpawnDef> GetPoolFor(EcoNode node)
         {
-            List<EcoSpawnDef> pool = null;
-            string lowerZone = node.ZoneId?.ToLower().Replace(" ", "_") ?? "";
-
-            // 🌟 1순위: [초희귀/특수 구역] 이름이 100% 정확히 일치하는 곳인가?
-            if (!string.IsNullOrEmpty(lowerZone) && ExactLandmarks.TryGetValue(lowerZone, out pool))
+            if (node.RCode == RegionCode.None)
             {
-                // 그대로 pool 통과
-            }
-            // 🌟 2순위: [키워드 구역] 오크 캠프 등 특정 단어가 들어갔는가?
-            else if (!string.IsNullOrEmpty(lowerZone))
-            {
-                foreach (var kvp in KeywordLandmarks)
-                {
-                    if (lowerZone.Contains(kvp.Key))
-                    {
-                        pool = kvp.Value;
-                        break;
-                    }
-                }
+                if (Biomes.TryGetValue((node.AreaType, node.ClimateType), out var fallbackBiome))
+                    return fallbackBiome;
+                return m_FallbackPool;
             }
 
-            // 🌟 3순위: 특수 구역이 아니면 일반 [바이옴(기후+용도)] 환경 적용
-            if (pool == null)
+            // RegionCode Enum을 소문자로 만들고 언더바 제거 (예: trammelshrinehonor)
+            string lowerZone = node.RCode.ToString().ToLower().Replace("_", "");
+
+            // 🌟 1순위: [초희귀/특수 구역]
+            if (ExactLandmarks.TryGetValue(lowerZone, out var exactPool))
+                return exactPool;
+
+            // 🌟 2순위: [키워드 구역]
+            foreach (var kvp in KeywordLandmarks)
             {
-                Biomes.TryGetValue((node.AreaType, node.ClimateType), out pool);
+                if (lowerZone.Contains(kvp.Key)) return kvp.Value;
             }
 
-            // 안전장치: 매칭 실패 시 가장 무난한 온대 숲 적용
-            if (pool == null || pool.Count == 0)
-            {
-                Biomes.TryGetValue((EcoAreaType.Forest, EcoClimateType.Temperate), out pool);
-                if (pool == null || pool.Count == 0) return typeof(Rabbit); // 최후의 보루
-            }
+            // 🌟 3순위: 일반 [바이옴(기후+용도)] 환경 적용
+            if (Biomes.TryGetValue((node.AreaType, node.ClimateType), out var biomePool))
+                return biomePool;
+
+            // 최후의 보루
+            return m_FallbackPool;
+        }
+
+        // ==============================================================================
+        // 🌟 [최적화 마스터 엔진 2] 매 틱마다 노드가 부르는 고속 룰렛 (문자열 연산 Zero)
+        // ==============================================================================
+        public static Type RollFromPool(List<EcoSpawnDef> pool)
+        {
+            // 안전장치
+            if (pool == null || pool.Count == 0) return typeof(Rabbit);
 
             // =========================================================
             // 🎲 확률(Weight) 기반 룰렛 돌리기 (극악 확률 스폰 구현)

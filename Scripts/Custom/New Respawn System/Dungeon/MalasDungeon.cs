@@ -8,8 +8,8 @@ namespace Server.Misc
     {
         public static void Setup()
         {
-            Map map = Map.Malas;
-            string prefix = "Malas Dungeons";
+            //Map map = Map.Malas;
+            //string prefix = "Malas Dungeons";
 
             // ========================================================================
             // [Doom] 둠 (언데드 및 심연 테마) - 최고 난이도
@@ -45,7 +45,6 @@ namespace Server.Misc
             doomLamp.SetSpawnProfile(DungeonDepth.Entrance, [typeof(Wraith), typeof(Spectre)]);
             doomLamp.SetSpawnProfile(DungeonDepth.Deep, [typeof(PoisonElemental)]);
             DungeonManager.Zones[doomLamp.ZoneId] = doomLamp;
-			*/
             // ========================================================================
             // [Labyrinth] 미궁 (미노타우르스 및 맹독 생물 테마)
             // ========================================================================

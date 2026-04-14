@@ -9,7 +9,6 @@ namespace Server.Misc
 {
     public class NewOptionOPL
     {
-        // 1. 메인 엔트리 포인트
         public static void Append(ObjectPropertyList list, Item item)
         {
             if (item == null || item.Deleted) return;
@@ -17,24 +16,20 @@ namespace Server.Misc
             IEquipOption eqItem = item as IEquipOption;
             if (eqItem == null) return;
 
-            // 1단계: 기본 능력치 및 기초 속성
             AppendBaseStats(list, item, eqItem);
             
-            // 2단계: 마법 옵션 및 제작 옵션
             AppendMagicOptions(list, eqItem);
             AppendMaterialOptions(list, eqItem);
             AppendRefineOptions(list, eqItem);
             AppendEnhanceOptions(list, eqItem);
             AppendSetOptions(list, eqItem);
-            AppendUniqueOptions(list, eqItem);
+            // AppendUniqueOptions(list, eqItem); <-- 완전히 삭제됨
 
-            // 3단계: XML 스포너 부가 속성
             XmlAttach.AddAttachmentProperties(item, list);
         }
 
         private static void AppendBaseStats(ObjectPropertyList list, Item item, IEquipOption eqItem)
         {
-            // 아티팩트 레어리티
             int rarity = 0;
             if (item is BaseWeapon bw) rarity = bw.ArtifactRarity;
             else if (item is BaseArmor ba) rarity = ba.ArtifactRarity;
@@ -43,14 +38,12 @@ namespace Server.Misc
 
             if (rarity > 0) list.Add(1061078, rarity.ToString());
 
-            // 무기 전용 (독)
             if (item is BaseWeapon weapon)
             {
                 if (weapon.Poison != null && weapon.PoisonCharges > 0 && weapon.CanShowPoisonCharges())
                     list.Add(weapon.Poison.LabelNumber, weapon.PoisonCharges.ToString());
             }
 
-            // 레벨 제한
             if (eqItem.PrefixOption[99] > 0)
             {
                 int levelcheck = 40;
@@ -68,7 +61,6 @@ namespace Server.Misc
                     list.Add(1063520, requiredLevel.ToString());
             }
 
-            // 방어력 및 저항력 출력
             int aBase = 0;
             double aRating = 0;
 
@@ -82,21 +74,19 @@ namespace Server.Misc
                 aRating = bcObj.BaseArmorRating; 
             }
 
-            if (aBase > 0) list.Add(1063577, aBase.ToString()); // 방어력
-            if (aRating > 0) list.Add(1063782, aRating.ToString()); // 저항력
+            if (aBase > 0) list.Add(1063577, aBase.ToString()); 
+            if (aRating > 0) list.Add(1063782, aRating.ToString()); 
 
-            // 장비 요구치 및 내구도
             AppendRequirements(list, item, eqItem);
 
             int hp = 0, maxHp = 0;
             if (item is BaseWeapon bwHp) { hp = bwHp.HitPoints; maxHp = bwHp.MaxHitPoints; }
             else if (item is BaseArmor baHp) { hp = baHp.HitPoints; maxHp = baHp.MaxHitPoints; }
             else if (item is BaseClothing bcHp) { hp = bcHp.HitPoints; maxHp = bcHp.MaxHitPoints; }
-            else if (item is BaseInstrument biHp && biHp.Layer != Layer.Invalid) { hp = biHp.HitPoints; maxHp = biHp.MaxHitPoints; }// [악기 추가] 내구도 출력
+            else if (item is BaseInstrument biHp && biHp.Layer != Layer.Invalid) { hp = biHp.HitPoints; maxHp = biHp.MaxHitPoints; }
 
             if (hp >= 0 && maxHp > 0) list.Add(1060639, "{0}\t{1}", hp, maxHp);
             
-            // 기본 옵션 루프 (인덱스 61~70) 파라미터 간소화
             ProcessOptionLoop(list, eqItem, 61, 10);
         }
 
@@ -126,7 +116,6 @@ namespace Server.Misc
             check(iR, 1005009, 1063562, 1063561, "Int");
         }
 
-        // 초경량화된 OPL 처리 루프 (퍼센트 처리 삭제, 단순화)
         private static void ProcessOptionLoop(ObjectPropertyList list, IEquipOption eq, int startIdx, int count)
         {
             for (int i = 0; i < count; i++)
@@ -136,7 +125,6 @@ namespace Server.Misc
                 
                 if (optID == 0 && optVal == 0) continue; 
 
-                // 신규 클리락 산출 함수 사용
                 int cliloc = Misc.ItemOptionCreator.GetCliloc(optID);
                 double realValue = (double)optVal / Misc.ItemOptionCreator.ValueScale;
 
@@ -144,21 +132,47 @@ namespace Server.Misc
             }
         }
 
-        #region 0. 이름 출력 (Ultra-Lightweight)
+        #region 0. 이름 출력 (서버사이드 조립 방식)
         public static void AppendName(ObjectPropertyList list, Item item)
         {
-            if (item is IEquipOption eq && item.Name is null && eq.SuffixOption[1] > 0)
+            // 장비 인터페이스 확인 및 랭크가 1 이상인 경우에만 커스텀 이름 처리
+            if (item is IEquipOption eq && item.Name == null && eq.SuffixOption[1] > 0)
             {
-                int ore = (int)eq.Resource;
-                bool isSpecial = ore is not (0 or (int)CraftResource.Iron or (int)CraftResource.RegularLeather or (int)CraftResource.RegularWood);
+                CraftResource resource = eq.Resource;
+                
+                // 일반 재질(철, 일반가죽, 일반나무)은 0번으로 처리됨
+                bool isSpecial = resource is not (CraftResource.None or CraftResource.Iron or CraftResource.RegularLeather or CraftResource.RegularWood);
+                
+                // 랭크에 따른 베이스 Cliloc (503430: ~1_ITEM~ / 503436: ~1_ORE~ ~2_ITEM~)
                 int cliloc = (isSpecial ? 503436 : 503430) + (int)eq.SuffixOption[1] - 1;
 
-                if (isSpecial) list.Add(cliloc, "#{0}\t#{1}", Misc.Util.UseResourceNumber(ore), item.LabelNumber);
-                else list.Add(cliloc, "#{0}", item.LabelNumber);
+                if (isSpecial) 
+                {
+                    // 🌟 [해결] Unknown 방지를 위해 CraftResources 시스템에서 직접 공식 LabelNumber 추출
+                    int resLabel = 0;
+                    var resInfo = CraftResources.GetInfo(resource);
+                    if (resInfo != null) resLabel = resInfo.Number;
+
+                    // 만약 시스템상 번호가 없으면 유저님의 Util 함수를 마지막 수단으로 사용
+                    if (resLabel <= 0) resLabel = Misc.Util.UseResourceNumber((int)resource);
+
+                    // 서버 메모리 사전에서 한글 문자열 추출
+                    string resName = ClilocData.GetString(resLabel);
+                    string itemName = ClilocData.GetString(item.LabelNumber);
+                    
+                    // 🌟 [핵심] Missing 2 에러를 잡기 위해 {0}\t{1} 포맷으로 2개의 한글 이름을 묶어서 전달
+                    list.Add(cliloc, "{0}\t{1}", resName, itemName);
+                }
+                else 
+                {
+                    // 일반 재질은 아이템 이름 하나만 한글로 가져와서 출력
+                    list.Add(cliloc, ClilocData.GetString(item.LabelNumber));
+                }
             }
             else
             {
-                if (item.Name is not null) list.Add(item.Name);
+                // 커스텀 이름이 있거나 일반 아이템인 경우
+                if (item.Name != null) list.Add(item.Name);
                 else list.Add(item.LabelNumber);
             }
         }
@@ -181,7 +195,6 @@ namespace Server.Misc
 
             list.Add(1063512); // [마법 옵션]
 
-            // 파라미터 간소화 적용
             if (eqItem.SuffixOption[1] > 0)
             {
                 ProcessOptionLoop(list, eqItem, 9, 1);
@@ -194,9 +207,32 @@ namespace Server.Misc
         }
         #endregion
 
-        #region 2. 재료 옵션 (미사용)
-        private static void AppendMaterialOptions(ObjectPropertyList list, IEquipOption eqItem) { return; }
+        #region 2. 재료 옵션 
+        private static void AppendMaterialOptions(ObjectPropertyList list, IEquipOption eqItem) 
+        { 
+            int optID = eqItem.PrefixOption[42];
+            int optVal = eqItem.SuffixOption[42];
+
+            if (optID > 0 && optVal > 0)
+            {
+                list.Add(1081001); // [재료 옵션] 타이틀
+
+                int cliloc = Misc.ItemOptionCreator.GetCliloc(optID);
+                double realValue = (double)optVal / Misc.ItemOptionCreator.ValueScale;
+                list.Add(cliloc, realValue.ToString("0.##"));
+            }
+        }
         #endregion
+
+        private static string FormatValue(int optionID, int value)
+        {
+            double val = (double)value / Misc.ItemOptionCreator.ValueScale;
+            string valStr = val.ToString("0.##");
+            
+            if (IsPlusOption(optionID)) return "+" + valStr;
+            if (IsPercentOption(optionID)) return valStr + "%";
+            return valStr;
+        }
 
         #region 3. 제련 옵션 (미사용)
         private static void AppendRefineOptions(ObjectPropertyList list, IEquipOption eqItem) { return; }
@@ -220,8 +256,6 @@ namespace Server.Misc
             int rawValue = EnhancedChance.GetTableValue(partIdx, tableIdx);
             double multiplier = EnhancedChance.EnhanceScales[step][1];
 
-            // Misc.Util.PercentCalc 대신 ValueScale 적용 권장 (향후 강화 시스템도 통합할 시)
-            // 임시로 기존 계산식 유지하되, 나중에 ValueScale 구조로 맞추시면 됩니다.
             double finalValue = ((double)rawValue * multiplier) * Misc.Util.PercentCalc(attrID);
 
             list.Add(1083003 + tableIdx, finalValue.ToString("0.##"));
@@ -229,9 +263,6 @@ namespace Server.Misc
         #endregion
 
         #region 5. 세트 옵션
-        #region [OPL 전용] 세트 옵션 텍스트 조립기
-
-        // 1. C#에서 텍스트를 완벽하게 조립하기 위한 옵션 이름 사전
         private static readonly Dictionary<int, string> _optionNames = new()
         {
             { 0, "힘" }, { 1, "민첩" }, { 2, "지능" }, { 3, "모든 스탯" },
@@ -251,23 +282,19 @@ namespace Server.Misc
             { 151, "화염 피해" }, { 152, "냉기 피해" }, { 153, "독 피해" }, { 154, "에너지 피해" } 
         };
 
-        // 클래스 최상단이나 딕셔너리 아래에 static readonly로 선언하여 메모리 낭비를 없앱니다.
         private static readonly HashSet<int> _percentOptions = [9, 10, 11, 12, 13, 14, 15, 16, 17, 21, 22, 23, 24, 25, 27, 31, 32, 33, 34, 42, 43, 49, 51, 64, 65, 104, 151, 152, 153, 154];
         private static readonly HashSet<int> _plusOptions = [36, 37, 38, 39, 40, 41];
 
-        // 수치 뒤에 '%' 기호를 붙여야 하는 옵션 판별
         private static bool IsPercentOption(int id)
         {
             return _percentOptions.Contains(id);
         }
 
-        // 수치 앞에 '+' 기호를 붙여야 하는 옵션 판별
         private static bool IsPlusOption(int id)
         {
             return _plusOptions.Contains(id);
         }
 
-        // 2. 최종 OPL 조립 함수
         private static void AppendSetOptions(ObjectPropertyList list, IEquipOption eqItem)
         {
             if (eqItem.PrefixOption[50] is not (var setID and > 0)) return;
@@ -275,10 +302,8 @@ namespace Server.Misc
 
             int setcount = (from is PlayerMobile pm) ? pm.ItemSetValue[setID] : 0;
             
-            // 세트 명칭 (1084101 ~)
             list.Add(1084100 + setID); 
 
-            // 데이터는 SetItem 클래스에서 순수하게 땡겨옴
             int[][] setSteps = Misc.SetItem.GetSetData(setID);
 
             for (int i = 0; i < setSteps.Length; i++)
@@ -294,70 +319,20 @@ namespace Server.Misc
                     int optID = currentStep[k];
                     int optVal = currentStep[k + 1];
 
-                    // 사전에서 이름 찾기
                     string optName = _optionNames.GetValueOrDefault(optID, $"알수없음({optID})");
-                    
-                    // ValueScale(10000) 나누고 소수점 절삭
-                    string valStr = ((double)optVal / Misc.ItemOptionCreator.ValueScale).ToString("0.##");
-
-                    if (IsPlusOption(optID)) valStr = "+" + valStr;
-                    else if (IsPercentOption(optID)) valStr += "%";
+                    string valStr = FormatValue(optID, optVal);
 
                     stepTexts.Add($"{optName} {valStr}"); 
                 }
 
-                // 완성된 단어 연결
                 string combinedLine = string.Join(", ", stepTexts);
-
-                // 장착 개수에 따라 색상 태그 결정
                 string colorTag = setcount >= currentStepGoal ? "<BASEFONT COLOR=#2DDC1B>" : "<BASEFONT COLOR=#808080>";
 
-                // 클라이언트에 텍스트 쏘기
                 list.Add(1042971, $"{colorTag}{currentStepGoal}세트 : {combinedLine}</BASEFONT>");
             }
         }
         #endregion
-        #endregion
-
-        #region 6. 고유 옵션
-        private static void AppendUniqueOptions(ObjectPropertyList list, IEquipOption eqItem)
-        {
-            if (eqItem.SuffixOption[98] != 1) return;
-
-            Item item = eqItem as Item;
-            if (item == null) return;
-
-            list.Add(1063513); // [고유 옵션]
-            if (eqItem.SuffixOption[99] != 0)
-                list.Add(1063699 + eqItem.SuffixOption[99]);
-
-            if (eqItem.PlayerConstructed)
-            {
-                int level = eqItem.PrefixOption[99] + 1;
-                CraftResource res = CraftResource.None;
-                if (item is BaseWeapon bw) res = bw.Resource;
-                else if (item is BaseArmor ba) res = ba.Resource;
-                else if (item is BaseInstrument bi) res = bi.Resource; // [악기 추가] 재질 판별 추가
-
-                switch (res)
-                {
-                    case CraftResource.Iron: list.Add(1063530, "10\t{0}\t{1}", 5 * level, 5 * level); break;
-                    case CraftResource.Copper: list.Add(1063531, "20\t{0}\t{1}", 5 * level, 5 * level); break;
-                    case CraftResource.Bronze: list.Add(1063532, "50\t{0}\t{1}", 0.5 * level, 5 * level); break;
-                    case CraftResource.Gold: list.Add(1063533, "40\t{0}\t{1}", 50 * level, 2 * level); break;
-                    case CraftResource.Agapite: list.Add(1063534, "{0}\t{1}", 2.5 * level, 20 * level); break;
-                    case CraftResource.Verite: list.Add(1063535, "{0}\t{1}", 12.5 * level, 10 * level); break;
-                    case CraftResource.Valorite: list.Add(1063536, (0.5 * level).ToString()); break;
-                    case CraftResource.RegularWood: list.Add(1063563, "10\t{0}\t{1}", 5 * level, 10 * level); break;
-                    case CraftResource.OakWood: list.Add(1063564, "{0}\t40\t{1}", 0.5 * level, 2 * level); break;
-                    case CraftResource.AshWood: list.Add(1063565, "20\t{0}\t{1}", 5 * level, 5 * level); break;
-                    case CraftResource.YewWood: list.Add(1063566, "{0}\t{1}\t{2}", 5 * level, 5 * level, 10 * level); break;
-                    case CraftResource.Heartwood: list.Add(1063567, "{0}\t{1}", 0.5 * level, 12.5 * level); break;
-                    case CraftResource.Bloodwood: list.Add(1063568, "50\t{0}\t{1}", 0.5 * level, 50 * level); break;
-                    case CraftResource.Frostwood: list.Add(1063569, "{0}\t{1}", 2.5 * level, 10 * level); break;
-                }
-            }
-        }
-        #endregion
+        
+        // Region 6 (고유 옵션) 완전히 삭제됨
     }
 }

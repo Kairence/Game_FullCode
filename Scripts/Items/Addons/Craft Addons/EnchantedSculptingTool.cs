@@ -16,7 +16,7 @@ namespace Server.Items
         {
             get
             {
-                EnchantedSculptingToolDeed deed = new EnchantedSculptingToolDeed(Tools.Count > 0 ? Tools[0].UsesRemaining : 0)
+                EnchantedSculptingToolDeed deed = new EnchantedSculptingToolDeed(GetSharedUses())
                 {
                     IsRewardItem = IsRewardItem
                 };
@@ -31,15 +31,18 @@ namespace Server.Items
             switch (type)
             {
                 case DirectionType.South:
+                    // 모든 부위를 AddonToolComponent로 선언하여 통합 인터랙션 제공
                     AddCraftComponent(new AddonToolComponent(CraftSystem, 0xA538, 0xA541, 1157988, 1157987, 1029241, uses, this), 0, 0, 0);
-                    AddComponent(new ToolDropComponent(0xA549, 1029241), 0, 1, 0);
+                    AddCraftComponent(new AddonToolComponent(CraftSystem, 0xA549, 0xA549, 1157988, 1157987, 1029241, uses, this), 0, 1, 0);
                     break;
                 case DirectionType.East:
                     AddCraftComponent(new AddonToolComponent(CraftSystem, 0xA540, 0xA539, 1157988, 1157987, 1029241, uses, this), 0, 0, 0);
-                    AddComponent(new ToolDropComponent(0xA548, 1029241), 1, 0, 0);
+                    AddCraftComponent(new AddonToolComponent(CraftSystem, 0xA548, 0xA548, 1157988, 1157987, 1029241, uses, this), 1, 0, 0);
                     break;
             }
         }
+
+        private int GetSharedUses() => Tools.Count > 0 ? Tools[0].UsesRemaining : 0;
 
         public EnchantedSculptingToolAddon(Serial serial)
             : base(serial)
@@ -50,7 +53,6 @@ namespace Server.Items
         {
             base.Serialize(writer);
             writer.Write((int)0);
-
             writer.Write((bool)IsRewardItem);
         }
 
@@ -58,14 +60,13 @@ namespace Server.Items
         {
             base.Deserialize(reader);
             int version = reader.ReadInt();
-
             IsRewardItem = reader.ReadBool();
         }
     }
 
     public class EnchantedSculptingToolDeed : CraftAddonDeed, IRewardItem, IRewardOption
     {
-        public override int LabelNumber { get { return 1159421; } } // Enchanted Sculpting Tool
+        public override int LabelNumber { get { return 1159421; } }
 
         public override BaseAddon Addon
         {
@@ -81,58 +82,39 @@ namespace Server.Items
         }
 
         private DirectionType _Direction;
-
         private bool m_IsRewardItem;
 
         [CommandProperty(AccessLevel.GameMaster)]
         public bool IsRewardItem
         {
             get { return m_IsRewardItem; }
-            set
-            {
-                m_IsRewardItem = value;
-                InvalidateProperties();
-            }
+            set { m_IsRewardItem = value; InvalidateProperties(); }
         }
 
         [Constructable]
-        public EnchantedSculptingToolDeed()
-            : this(0)
-        {
-        }
+        public EnchantedSculptingToolDeed() : this(0) { }
 
         [Constructable]
-        public EnchantedSculptingToolDeed(int uses)
-            : base(uses)
-        {
-            LootType = LootType.Blessed;
-        }
+        public EnchantedSculptingToolDeed(int uses) : base(uses) { LootType = LootType.Blessed; }
 
-        public EnchantedSculptingToolDeed(Serial serial)
-            : base(serial)
-        {
-        }
+        public EnchantedSculptingToolDeed(Serial serial) : base(serial) { }
 
         public override void GetProperties(ObjectPropertyList list)
         {
             base.GetProperties(list);
-
-            if (m_IsRewardItem)
-                list.Add(1076223); // 7th Year Veteran Reward
+            if (m_IsRewardItem) list.Add(1076223);
         }
 
         public void GetOptions(RewardOptionList list)
         {
-            list.Add((int)DirectionType.South, 1075386); // South
-            list.Add((int)DirectionType.East, 1075387); // East
+            list.Add((int)DirectionType.South, 1075386);
+            list.Add((int)DirectionType.East, 1075387);
         }
 
         public void OnOptionSelected(Mobile from, int choice)
         {
             _Direction = (DirectionType)choice;
-
-            if (!Deleted)
-                base.OnDoubleClick(from);
+            if (!Deleted) base.OnDoubleClick(from);
         }
 
         public override void OnDoubleClick(Mobile from)
@@ -140,11 +122,11 @@ namespace Server.Items
             if (IsChildOf(from.Backpack))
             {
                 from.CloseGump(typeof(AddonOptionGump));
-                from.SendGump(new AddonOptionGump(this, 1154194)); // Choose a Facing:
+                from.SendGump(new AddonOptionGump(this, 1154194));
             }
             else
             {
-                from.SendLocalizedMessage(1062334); // This item must be in your backpack to be used.
+                from.SendLocalizedMessage(1062334);
             }
         }
 
@@ -152,7 +134,6 @@ namespace Server.Items
         {
             base.Serialize(writer);
             writer.Write((int)0);
-
             writer.Write((bool)m_IsRewardItem);
         }
 
@@ -160,7 +141,6 @@ namespace Server.Items
         {
             base.Deserialize(reader);
             int version = reader.ReadInt();
-
             m_IsRewardItem = reader.ReadBool();
         }
     }

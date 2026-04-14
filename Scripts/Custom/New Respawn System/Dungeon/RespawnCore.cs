@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Frozen;
 using System.IO;
 using System.Linq;
 using Server;
@@ -9,83 +10,49 @@ using Server.Mobiles;
 namespace Server.Misc
 {
     public enum DungeonPhase { Active, BossSpawned, Cooldown }
+    public enum DungeonDepth { Entrance = 1, Middle = 2, Deep = 3, BossRoom = 4 }
 
     // ========================================================================
-    // 🌟 [통합/개편됨] EcoZone은 이제 UI(모니터링 Gump)용 그룹핑 껍데기 역할만 합니다.
-    // 실제 몬스터 스폰과 마릿수 관리는 개별 EcoNode가 100% 독립적으로 수행하므로
-    // 무거운 SpeciesState나 Vitality 추적 로직은 완전히 삭제되었습니다.
+    // 🌍 EcoZone: UI(모니터링 Gump)용 그룹핑 및 노드 관리 로직
     // ========================================================================
     public class EcoZone
     {
-        public string ZoneId { get; set; }
+        public RegionCode RCode { get; set; } 
+        public string ZoneId => NewSpawnManager.GetDisplayName(RCode); 
         public Map Facet { get; set; }
-        public List<EcoNode> Nodes { get; set; } = new List<EcoNode>();
+        public List<EcoNode> Nodes { get; set; } = new();
         
         private int m_GoIndex = -1;
 
-        public EcoZone(string zoneId, Map map) { ZoneId = zoneId; Facet = map; }
+        public EcoZone(RegionCode code, Map map)
+        {
+            RCode = code;
+            Facet = map;
+        }
 
         public void GoToNextNode(Mobile m)
         {
-            if (Nodes == null || Nodes.Count == 0)
-            {
-                m.SendMessage(33, "이 구역에는 등록된 노드가 없습니다.");
-                return;
-            }
-            
-            m_GoIndex++;
-            if (m_GoIndex >= Nodes.Count) m_GoIndex = 0; 
-            
-            EcoNode target = Nodes[m_GoIndex];
-            if (target != null && !target.Deleted && target.Map != null && target.Map != Map.Internal)
-            {
-                m.MoveToWorld(target.Location, target.Map);
-                m.SendMessage(66, $"[{ZoneId}] {m_GoIndex + 1} / {Nodes.Count} 번째 생태계 노드로 이동했습니다.");
-            }
-        }	
+            if (Nodes.Count == 0) { m.SendMessage(33, "이 구역에는 등록된 노드가 없습니다."); return; }
+            if (++m_GoIndex >= Nodes.Count) m_GoIndex = 0;
+            if (Nodes[m_GoIndex] != null && !Nodes[m_GoIndex].Deleted && Nodes[m_GoIndex].Map != null)
+                m.MoveToWorld(Nodes[m_GoIndex].Location, Nodes[m_GoIndex].Map);
+        }
 
         public void KeepCurrentNodeOnly(Mobile m)
         {
-            if (Nodes == null || Nodes.Count <= 1)
-            {
-                m.SendMessage(33, "삭제할 중복 노드가 없습니다.");
-                return;
-            }
-
-            int keepIndex = (m_GoIndex >= 0 && m_GoIndex < Nodes.Count) ? m_GoIndex : 0;
-            var nodeToKeep = Nodes[keepIndex];
-            int deletedCount = 0;
-
-            foreach (var node in Nodes.ToList())
-            {
-                if (node != nodeToKeep && node != null && !node.Deleted)
-                {
-                    node.Delete();
-                    deletedCount++;
-                }
-            }
-            
-            m_GoIndex = 0;
-            CacheNodes(); 
-            m.SendMessage(66, $"[{ZoneId}] 현재 위치한 노드를 대표로 지정하고 {deletedCount}개의 중복 노드를 삭제했습니다.");
+            if (Nodes.Count <= 1) return;
+            var nodeToKeep = Nodes[m_GoIndex >= 0 && m_GoIndex < Nodes.Count ? m_GoIndex : 0];
+            foreach (var node in Nodes.ToList()) if (node != nodeToKeep && !node.Deleted) node.Delete();
+            m_GoIndex = 0; CacheNodes(); 
         }
 
         public void CacheNodes()
         {
-            if (Facet == null || Facet == Map.Internal) Facet = DungeonManager.ResolveMapByName(ZoneId);
             Nodes.Clear();
-            string myClean = DungeonManager.CleanString(ZoneId);
             foreach (Item item in World.Items.Values)
-            {
-                if (item is EcoNode node && (node.Map == Facet || Facet == null))
-                {
-                    string nodeClean = DungeonManager.CleanString(node.ZoneId);
-                    if (nodeClean.Contains(myClean) || myClean.Contains(nodeClean)) Nodes.Add(node);
-                }
-            }
+                if (item is EcoNode node && node.Map == Facet && node.RCode == this.RCode) Nodes.Add(node);
         }
 
-        // 🌟 생태계 몬스터 강제 리셋 시 사용 (리플렉션으로 EcoNode 내부의 m_Spawned를 직접 지움)
         public void ClearAllSpawns()
         {
             foreach (var node in Nodes)
@@ -93,7 +60,7 @@ namespace Server.Misc
                 var field = node.GetType().GetField("m_Spawned", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                 if (field != null && field.GetValue(node) is List<Mobile> list)
                 {
-                    foreach(var m in list.ToList()) m?.Delete();
+                    foreach (var m in list.ToList()) m?.Delete();
                     list.Clear();
                 }
             }
@@ -101,336 +68,438 @@ namespace Server.Misc
     }
 
     // ========================================================================
-    // ⚔️ DungeonZone (던전 로직은 기존 시스템의 핵심이므로 완벽히 유지됩니다)
+    // ⚔️ DungeonZone: 열기(Heat) 에스컬레이션 및 중앙 통제 엔진
     // ========================================================================
     public class DungeonZone
     {
-        public string ZoneId { get; set; }
-        public Map Facet { get; set; }
-        public int MaxDifficulty { get; set; }
-        public int CurrentDifficulty { get; set; }
-        public int BossThreshold { get; set; }
+        public RegionCode RCode { get; set; } 
+        public string ZoneId => NewSpawnManager.GetDisplayName(RCode); 
+        
+        private Map m_Facet;
+        public Map Facet 
+        { 
+            get 
+            { 
+                if (m_Facet == null) m_Facet = DungeonManager.ResolveMapByName(RCode.ToString()); 
+                return m_Facet; 
+            }
+            set => m_Facet = value; 
+        }
+
+        public int TargetHeat { get; set; }      
+        public int CurrentHeat { get; set; }    
+        public int MaxDifficulty { get => TargetHeat; set => TargetHeat = value; }
+        public int CurrentDifficulty { get => CurrentHeat; set => CurrentHeat = value; }
+
         public Type BossType { get; set; }
         public TimeSpan CooldownDuration { get; set; }
         public DateTime CooldownEndTime { get; set; }
         public DungeonPhase Phase { get; set; }
         public int MaxPopulation { get; private set; }
         public int ManualMaxPopulation { get; private set; } = -1;
-        public Dictionary<DungeonDepth, int> Quotas { get; private set; } = new Dictionary<DungeonDepth, int>();
-        public Dictionary<DungeonDepth, List<BaseCreature>> ActiveMonsters { get; set; } = new Dictionary<DungeonDepth, List<BaseCreature>>();
-        public Dictionary<DungeonDepth, List<Item>> ActiveItems { get; set; } = new Dictionary<DungeonDepth, List<Item>>();
-        public List<DungeonNode> Nodes { get; set; } = new List<DungeonNode>();
-        public Dictionary<DungeonDepth, Type[]> SpawnProfiles { get; set; } = new Dictionary<DungeonDepth, Type[]>();
-        private DateTime m_NextRespawnTime;
+        
+        public Dictionary<DungeonDepth, int> Quotas { get; private set; } = new();
+        public Dictionary<DungeonDepth, List<BaseCreature>> ActiveMonsters { get; set; } = new();
+        public Dictionary<DungeonDepth, List<Item>> ActiveItems { get; set; } = new();
+        public List<DungeonNode> Nodes { get; set; } = new();
+        public Dictionary<DungeonDepth, Type[]> SpawnProfiles { get; set; } = new();
+        public List<Type> UniqueTypes { get; set; } = new(); 
 
+        private DateTime m_NextRespawnTime;
         private int m_GoIndex = -1;
+
+        public DungeonZone(RegionCode code, Map map, int targetHeat, Type bossType, TimeSpan cooldown)
+        {
+            RCode = code;
+            Facet = map; 
+            TargetHeat = targetHeat; 
+            BossType = bossType; 
+            CooldownDuration = cooldown; 
+            Phase = DungeonPhase.Active;
+            CurrentHeat = bossType != null ? (int)(targetHeat * 0.2) : (int)(targetHeat * 0.5);
+
+            foreach (DungeonDepth d in Enum.GetValues(typeof(DungeonDepth)))
+            { ActiveMonsters[d] = new(); ActiveItems[d] = new(); Quotas[d] = 0; }
+        }
+
+        public void AddUnique(Type t) { if (!UniqueTypes.Contains(t)) UniqueTypes.Add(t); }
+
+        public void SetPopulation(int maxPop) 
+        { 
+            ManualMaxPopulation = maxPop; 
+            CacheNodes(); 
+        }
+
+        public void SetSpawnProfile(DungeonDepth depth, Type[] types) => SpawnProfiles[depth] = types.Where(x => x != null && !x.Name.ToLower().Contains("summon")).ToArray();
+        public void SetSpawnProfile(int tier, Type[] types) => SetSpawnProfile((DungeonDepth)tier, types);
 
         public void KeepCurrentNodeOnly(Mobile m)
         {
-            if (Nodes == null || Nodes.Count <= 1) return;
-            int keepIndex = (m_GoIndex >= 0 && m_GoIndex < Nodes.Count) ? m_GoIndex : 0;
-            var nodeToKeep = Nodes[keepIndex];
-            int deletedCount = 0;
-
-            foreach (var node in Nodes.ToList())
-            {
-                if (node != nodeToKeep && node != null && !node.Deleted) { node.Delete(); deletedCount++; }
-            }
-            
+            if (Nodes.Count <= 1) return;
+            var nodeToKeep = Nodes[m_GoIndex >= 0 ? m_GoIndex : 0];
+            foreach (var node in Nodes.ToList()) if (node != nodeToKeep && !node.Deleted) node.Delete();
             m_GoIndex = 0; CacheNodes(); 
-            m.SendMessage(66, $"[{ZoneId}] 중복 노드 {deletedCount}개 삭제 완료.");
         }
 
         public void GoToNextNode(Mobile m)
         {
-            if (Nodes == null || Nodes.Count == 0) return;
-            m_GoIndex++; if (m_GoIndex >= Nodes.Count) m_GoIndex = 0; 
-            DungeonNode target = Nodes[m_GoIndex];
-            if (target != null && !target.Deleted && target.Map != null && target.Map != Map.Internal)
-                m.MoveToWorld(target.Location, target.Map);
+            if (Nodes.Count == 0) return;
+            if (++m_GoIndex >= Nodes.Count) m_GoIndex = 0;
+            if (Nodes[m_GoIndex] is DungeonNode target && !target.Deleted) m.MoveToWorld(target.Location, target.Map);
         }
-
-        public DungeonZone(string zoneId, Map map, int maxDiff, Type bossType, TimeSpan cooldown)
-        {
-            ZoneId = zoneId; Facet = map; MaxDifficulty = maxDiff; CurrentDifficulty = maxDiff; BossType = bossType; CooldownDuration = cooldown; Phase = DungeonPhase.Active; m_NextRespawnTime = DateTime.MinValue;
-            foreach (DungeonDepth depth in Enum.GetValues(typeof(DungeonDepth))) { ActiveMonsters[depth] = new List<BaseCreature>(); ActiveItems[depth] = new List<Item>(); Quotas[depth] = 0; }
-        }
-
-        public void SetPopulation(int maxPop) => ManualMaxPopulation = maxPop;
-
-        public DungeonZone(GenericReader reader)
-        {
-            int version = reader.ReadInt(); ZoneId = reader.ReadString(); CurrentDifficulty = reader.ReadInt(); Phase = (DungeonPhase)reader.ReadInt(); CooldownEndTime = reader.ReadDateTime();
-            ManualMaxPopulation = (version >= 1) ? reader.ReadInt() : -2;
-            foreach (DungeonDepth depth in Enum.GetValues(typeof(DungeonDepth))) { ActiveMonsters[depth] = new List<BaseCreature>(); ActiveItems[depth] = new List<Item>(); Quotas[depth] = 0; }
-            if (version >= 2) { foreach (DungeonDepth depth in Enum.GetValues(typeof(DungeonDepth))) { reader.ReadInt(); int mCount = reader.ReadInt(); for (int i = 0; i < mCount; i++) { BaseCreature m = reader.ReadMobile() as BaseCreature; if (m != null && !m.Deleted) ActiveMonsters[depth].Add(m); } int iCount = reader.ReadInt(); for (int i = 0; i < iCount; i++) { Item it = reader.ReadItem(); if (it != null && !it.Deleted) ActiveItems[depth].Add(it); } } }
-            m_NextRespawnTime = DateTime.MinValue;
-        }
-
-        public void Serialize(GenericWriter writer)
-        {
-            writer.Write(2); writer.Write(ZoneId); writer.Write(CurrentDifficulty); writer.Write((int)Phase); writer.Write(CooldownEndTime); writer.Write(ManualMaxPopulation);
-            foreach (DungeonDepth depth in Enum.GetValues(typeof(DungeonDepth))) { writer.Write((int)depth); writer.Write(ActiveMonsters[depth].Count); foreach (var m in ActiveMonsters[depth]) writer.Write(m); writer.Write(ActiveItems[depth].Count); foreach (var i in ActiveItems[depth]) writer.Write(i); }
-        }
-
-        public void SetSpawnProfile(DungeonDepth d, Type[] t) => SpawnProfiles[d] = t.Where(x => !x.Name.ToLower().Contains("summon")).ToArray();
 
         public void CacheNodes()
         {
-            if (Facet == null || Facet == Map.Internal) Facet = DungeonManager.ResolveMapByName(ZoneId);
             Nodes.Clear();
-            HashSet<Region> regions = new HashSet<Region>();
-            string myClean = DungeonManager.CleanString(ZoneId);
-
             foreach (Item item in World.Items.Values)
             {
-                if (item is DungeonNode node && (node.Map == Facet || Facet == null))
+                if (item is DungeonNode node && node.RCode == this.RCode)
                 {
-                    string nodeClean = DungeonManager.CleanString(node.ZoneId);
-                    if (nodeClean.Contains(myClean) || myClean.Contains(nodeClean))
-                    {
-                        Nodes.Add(node);
-                        Region reg = Region.Find(node.Location, node.Map);
-                        if (reg != null) regions.Add(reg);
-                    }
+                    if (this.Facet == null) this.Facet = node.Map; 
+                    if (node.Map == this.Facet) Nodes.Add(node);
                 }
             }
 
-            if (ManualMaxPopulation >= 0) MaxPopulation = ManualMaxPopulation;
-            else
-            {
-                int totalArea = 0;
-                foreach (Region r in regions) { if (r.Area != null) foreach (var rect in r.Area) totalArea += (Math.Abs(rect.End.X - rect.Start.X) * Math.Abs(rect.End.Y - rect.Start.Y)); }
-                MaxPopulation = totalArea > 0 ? Math.Min(totalArea / 600, 200) : 30;
-            }
-
-            Quotas[DungeonDepth.Entrance] = (int)(MaxPopulation * 0.10);
-            Quotas[DungeonDepth.Middle] = (int)(MaxPopulation * 0.30);
-            Quotas[DungeonDepth.Deep] = (int)(MaxPopulation * 0.60);
-            Quotas[DungeonDepth.BossRoom] = (MaxPopulation == 0) ? 0 : 1;
+            int totalArea = RegionSaver.GetRealArea(this.RCode);
+            MaxPopulation = ManualMaxPopulation >= 0 ? ManualMaxPopulation : (totalArea > 0 ? Math.Max(Nodes.Count * 10, Math.Min(totalArea / 600, 250)) : Nodes.Count * 15);
+            Quotas[DungeonDepth.Entrance] = (int)(MaxPopulation * 0.25); Quotas[DungeonDepth.Middle] = (int)(MaxPopulation * 0.55); Quotas[DungeonDepth.Deep] = (int)(MaxPopulation * 0.20);
         }
 
         public void CheckRespawn()
         {
+            // 이제 30분마다 호출되므로 짧은 시간 차단 로직(m_NextRespawnTime)은 사실상 항상 패스합니다.
             if (Phase != DungeonPhase.Active || DateTime.Now < m_NextRespawnTime) return;
-            if (Nodes.Count == 0) CacheNodes();
-            if (Nodes.Count == 0) return;
+            if (Nodes.Count == 0) { CacheNodes(); if (Nodes.Count == 0) return; }
+            if (!NewSpawnManager.ActiveMaps.GetValueOrDefault(Facet, true)) return;
 
+            foreach (var list in ActiveMonsters.Values) list.RemoveAll(m => m == null || m.Deleted || !m.Alive);
+            foreach (var list in ActiveItems.Values) list.RemoveAll(i => i == null || i.Deleted || i.Map == null);
+            if (ActiveMonsters.Values.Sum(l => l.Count) + ActiveItems.Values.Sum(l => l.Count) >= MaxPopulation) return;
+
+            double heatRatio = TargetHeat > 0 ? (double)CurrentHeat / TargetHeat : 0;
+            DungeonDepth spawnTier = heatRatio >= 0.85 ? DungeonDepth.Deep : (heatRatio >= 0.45 ? DungeonDepth.Middle : DungeonDepth.Entrance);
             bool spawned = false;
+
             foreach (DungeonDepth depth in Enum.GetValues(typeof(DungeonDepth)))
             {
                 if (depth == DungeonDepth.BossRoom) continue;
-                ActiveMonsters[depth].RemoveAll(m => m == null || m.Deleted || !m.Alive);
-                ActiveItems[depth].RemoveAll(i => i == null || i.Deleted || i.Map == null || i.Map == Map.Internal);
-
-                int missing = Quotas[depth] - (ActiveMonsters[depth].Count + ActiveItems[depth].Count);
+                int missing = Quotas.GetValueOrDefault(depth) - (ActiveMonsters[depth].Count + ActiveItems[depth].Count);
                 if (missing <= 0) continue;
 
-                List<DungeonNode> vNodes = Nodes.Where(n => n.Depth == depth).ToList();
+                var vNodes = Nodes.Where(n => n.Depth == depth).ToList();
                 if (vNodes.Count == 0) vNodes = Nodes.ToList();
-                vNodes = vNodes.OrderBy(x => Utility.RandomDouble()).ToList();
-
-                Type[] av = SpawnProfiles.ContainsKey(depth) ? SpawnProfiles[depth] : SpawnProfiles.Values.FirstOrDefault(p => p != null && p.Length > 0);
+                
+                Type[] av = SpawnProfiles.GetValueOrDefault(spawnTier) ?? SpawnProfiles.Values.FirstOrDefault(p => p != null && p.Length > 0);
                 if (av == null) continue;
 
-                int count = Math.Min(missing, 5);
-                for (int i = 0; i < count; i++)
+                // 🌟 [최적화 패치] 30분치 스폰이므로 Math.Min(missing, 5)를 제거하고 missing만큼 풀로 스폰합니다.
+                for (int i = 0; i < missing; i++)
                 {
-                    DungeonNode n = vNodes[i % vNodes.Count]; Point3D? loc = n.GetValidSpawnLocation();
-                    if (loc.HasValue) { try { object obj = Activator.CreateInstance(av[Utility.Random(av.Length)]); if (obj is BaseCreature m) { m.MoveToWorld(loc.Value, Facet); ActiveMonsters[depth].Add(m); spawned = true; } else if (obj is Item it) { it.MoveToWorld(loc.Value, Facet); ActiveItems[depth].Add(it); spawned = true; } } catch { } }
+                    Point3D? loc = vNodes[Utility.Random(vNodes.Count)].GetValidSpawnLocation();
+                    if (loc.HasValue)
+                    {
+                        try
+                        {
+                            Type selected = av[Utility.Random(av.Length)];
+                            if (UniqueTypes.Contains(selected) && ActiveMonsters.Values.Any(l => l.Any(m => m.GetType() == selected))) continue;
+
+                            object obj = Activator.CreateInstance(selected);
+                            if (obj is BaseCreature bc) 
+                            { 
+                                bool isWaterMob = bc is Kraken || bc is SeaSerpent || bc is DeepSeaSerpent || bc is WaterElemental;
+                                int tileID = Facet.Tiles.GetLandTile(loc.Value.X, loc.Value.Y).ID;
+                                bool isWaterTile = (tileID >= 0x00A8 && tileID <= 0x00AB) || (tileID >= 0x0136 && tileID <= 0x0137);
+
+                                if (isWaterMob && !isWaterTile)
+                                {
+                                    bc.Delete(); 
+                                    continue;
+                                }
+
+                                bc.MoveToWorld(loc.Value, Facet); 
+                                if (heatRatio > 0.5 && Utility.RandomDouble() < (heatRatio - 0.4)) bc.Grade = Utility.RandomDouble() < 0.2 ? 3 : 2; 
+                                ActiveMonsters[depth].Add(bc); 
+                                spawned = true; 
+                            }
+                            else if (obj is Item it) 
+                            { 
+                                it.MoveToWorld(loc.Value, Facet); ActiveItems[depth].Add(it); spawned = true; 
+                            }
+                        }
+                        catch { }
+                    }
                 }
             }
-            if (spawned) m_NextRespawnTime = DateTime.Now + TimeSpan.FromMinutes(1 + (int)(4 * (1.0 - (double)CurrentDifficulty / Math.Max(1, MaxDifficulty))));
+            if (spawned) m_NextRespawnTime = DateTime.Now + TimeSpan.FromSeconds(Utility.RandomMinMax(10, 20));
         }
 
         public void ProcessDeath(BaseCreature bc)
         {
             if (Phase == DungeonPhase.Cooldown) return;
-            if (Phase == DungeonPhase.BossSpawned && bc.GetType() == BossType) { Phase = DungeonPhase.Cooldown; CooldownEndTime = DateTime.Now + CooldownDuration; ClearAllSpawns(); return; }
-            int mult = (bc.Grade == 1) ? 1 : (bc.Grade <= 5 ? 2 : (bc.Grade == 6 ? 3 : 4));
-            CurrentDifficulty = Math.Max(0, CurrentDifficulty - (bc.Fame / 100 * mult));
-            if (CurrentDifficulty <= BossThreshold) SpawnBoss();
+            if (Phase == DungeonPhase.BossSpawned && bc.GetType() == BossType)
+            {
+                Phase = DungeonPhase.Cooldown; CooldownEndTime = DateTime.Now + CooldownDuration; ClearAllSpawns(); return;
+            }
+
+            CurrentHeat += Math.Max(1, (bc.Fame / 500)) * (bc.Grade == 1 ? 1 : bc.Grade == 2 ? 2 : bc.Grade == 3 ? 3 : 4);
+            if (CurrentHeat > TargetHeat) CurrentHeat = TargetHeat;
+            if (CurrentHeat >= TargetHeat && BossType != null && Phase == DungeonPhase.Active)
+            {
+                Phase = DungeonPhase.BossSpawned; ClearAllSpawns(); 
+                var deepNodes = Nodes.Where(n => n.Depth == DungeonDepth.Deep).ToList();
+                if (deepNodes.Count == 0) deepNodes = Nodes.ToList();
+                if (deepNodes.Count > 0) try { BaseCreature b = (BaseCreature)Activator.CreateInstance(BossType); b.MoveToWorld(deepNodes[Utility.Random(deepNodes.Count)].Location, Facet); ActiveMonsters[DungeonDepth.Deep].Add(b); } catch { } 
+            }
         }
 
         public void ClearAllSpawns()
         {
-            foreach (var list in ActiveMonsters.Values) { foreach (var m in list.ToList()) { if (m != null && !m.Deleted) m.Delete(); } list.Clear(); }
-            foreach (var list in ActiveItems.Values) { foreach (var i in list.ToList()) { if (i != null && !i.Deleted) i.Delete(); } list.Clear(); }
+            foreach (var list in ActiveMonsters.Values) { foreach (var m in list.ToList()) m?.Delete(); list.Clear(); }
+            foreach (var list in ActiveItems.Values) { foreach (var i in list.ToList()) i?.Delete(); list.Clear(); }
         }
 
-        private void SpawnBoss() { if (BossType == null || MaxPopulation == 0) return; Phase = DungeonPhase.BossSpawned; ClearAllSpawns(); var bn = Nodes.FirstOrDefault(n => n.Depth == DungeonDepth.BossRoom) ?? Nodes.FirstOrDefault(); if (bn != null) { try { BaseCreature b = (BaseCreature)Activator.CreateInstance(BossType); b.MoveToWorld(bn.Location, Facet); ActiveMonsters[DungeonDepth.BossRoom].Add(b); } catch { } } }
+        public void PerformRecovery() 
+        { 
+            int minHeat = BossType != null ? (int)(TargetHeat * 0.2) : (int)(TargetHeat * 0.5);
+            // 🌟 [최적화 패치] 30분에 한 번 갱신되므로 120으로 나누던 것을 4로 나누어 30배 속도로 보정
+            if (CurrentHeat > minHeat) CurrentHeat = Math.Max(minHeat, CurrentHeat - (TargetHeat / 4)); 
+            if (Phase == DungeonPhase.Cooldown && DateTime.Now >= CooldownEndTime) { CurrentHeat = minHeat; Phase = DungeonPhase.Active; }
+        }
 
-        public void PerformRecovery() { if (Phase == DungeonPhase.Cooldown && DateTime.Now >= CooldownEndTime) { CurrentDifficulty = Math.Min(MaxDifficulty, CurrentDifficulty + (MaxDifficulty / 10)); if (CurrentDifficulty >= MaxDifficulty) Phase = DungeonPhase.Active; } }
+        public void Serialize(GenericWriter writer)
+        {
+            writer.Write(4); 
+            writer.Write((int)RCode); 
+            writer.Write(CurrentHeat); 
+            writer.Write((int)Phase);
+            writer.Write(CooldownEndTime); 
+            writer.Write(ManualMaxPopulation);
+            foreach (DungeonDepth depth in Enum.GetValues(typeof(DungeonDepth)))
+            {
+                writer.Write((int)depth); 
+                writer.Write(ActiveMonsters[depth].Count);
+                foreach (var m in ActiveMonsters[depth]) writer.Write(m);
+                writer.Write(ActiveItems[depth].Count); 
+                foreach (var i in ActiveItems[depth]) writer.Write(i);
+            }
+        }
+
+        public DungeonZone(GenericReader reader)
+        {
+            foreach (DungeonDepth depth in Enum.GetValues(typeof(DungeonDepth))) 
+            { ActiveMonsters[depth] = new(); ActiveItems[depth] = new(); Quotas[depth] = 0; }
+
+            int version = reader.ReadInt(); 
+            
+            if (version >= 3) 
+                RCode = (RegionCode)reader.ReadInt(); 
+            else 
+            { 
+                reader.ReadString(); 
+                RCode = RegionCode.None; 
+            }
+            
+            CurrentHeat = reader.ReadInt(); 
+            Phase = (DungeonPhase)reader.ReadInt(); 
+            CooldownEndTime = reader.ReadDateTime(); 
+            ManualMaxPopulation = (version >= 1) ? reader.ReadInt() : -2;
+            
+            if (version >= 2)
+            {
+                foreach (DungeonDepth depth in Enum.GetValues(typeof(DungeonDepth))) 
+                { 
+                    reader.ReadInt(); 
+                    int mCount = reader.ReadInt(); 
+                    for (int i = 0; i < mCount; i++) 
+                    {
+                        Mobile m = reader.ReadMobile();
+                        if (m is BaseCreature bc && !bc.Deleted) ActiveMonsters[depth].Add(bc);
+                    }
+                    
+                    int iCount = reader.ReadInt(); 
+                    for (int i = 0; i < iCount; i++) 
+                    {
+                        Item it = reader.ReadItem();
+                        if (it != null && !it.Deleted) ActiveItems[depth].Add(it);
+                    }
+                }
+            }
+        }
         public int GetTotalActiveCount() => ActiveMonsters.Values.Sum(l => l.Count) + ActiveItems.Values.Sum(l => l.Count);
     }
 
     // ========================================================================
-    // 🌍 생태계 매니저 초경량화 (Gump 연동용 UI 캐시 역할만 수행)
+    // 🌍 EcosystemManager: 생태계 구역 캐싱 및 환경 보너스 계산
     // ========================================================================
     public static class EcosystemManager 
     { 
-        public static Dictionary<string, EcoZone> Zones { get; private set; } = new Dictionary<string, EcoZone>(); 
+        public static FrozenDictionary<RegionCode, EcoZone> Zones { get; private set; }
+        public static List<EcoZone> ZoneList { get; private set; } = new();
+        private static Dictionary<RegionCode, EcoZone> m_TempZones = new();
 
-        // 월드 로드 직후 모든 EcoNode를 검색하여 Zones 딕셔너리를 자동 그룹핑합니다.
         public static void RebuildZones()
         {
-            Zones.Clear();
-            foreach(Item item in World.Items.Values)
+            m_TempZones.Clear();
+            foreach (Item item in World.Items.Values)
             {
-                if(item is EcoNode node && !string.IsNullOrEmpty(node.ZoneId) && node.ZoneId != "Unknown")
+                if (item is EcoNode node)
                 {
-                    if(!Zones.TryGetValue(node.ZoneId, out var zone))
+                    if (node.RCode == RegionCode.None)
                     {
-                        zone = new EcoZone(node.ZoneId, node.Map);
-                        Zones[node.ZoneId] = zone;
+                        int mapId = node.Map?.MapID ?? 0;
+                        int cx = node.X / 128;
+                        int cy = node.Y / 128;
+                        int pseudoCode = ((mapId + 1) * 1000000) + (cx * 1000) + cy;
+                        node.RCode = (RegionCode)pseudoCode;
                     }
+
+                    if (!m_TempZones.TryGetValue(node.RCode, out var zone)) { zone = new EcoZone(node.RCode, node.Map); m_TempZones[node.RCode] = zone; }
                     zone.Nodes.Add(node);
                 }
             }
+            FreezeData();
         }
-		/// <summary>
-        /// 특정 좌표의 환경 보너스 배율을 튜플로 반환합니다. (극지, 옵시디언, 영목 보너스)
-        /// 기본값은 1.0(1배)이며, 환경에 따라 5.0(500%) 등으로 폭발적으로 증가합니다.
-        /// </summary>
+
+        public static void FreezeData() { Zones = m_TempZones.ToFrozenDictionary(); ZoneList = Zones.Values.OrderByDescending(z => z.Facet == Map.Trammel).ThenBy(z => z.Facet?.MapID ?? 99).ThenBy(z => (int)z.RCode).ToList(); }
+        public static void RemoveZone(RegionCode code) { if (m_TempZones.ContainsKey(code)) m_TempZones.Remove(code); }
+
         public static (double polarBonus, double obsidianBonus, double soulBonus) GetEnvironmentBonus(Point3D loc, Map map)
         {
-            // 1. 가장 가까운 EcoNode 찾기 (울티마 온라인 고유의 거리 계산 방식 적용)
-            var nearestNode = Zones.Values
-                .SelectMany(z => z.Nodes)
-                .Where(n => n.Map == map && Math.Max(Math.Abs(n.Location.X - loc.X), Math.Abs(n.Location.Y - loc.Y)) <= n.SpawnRange)
-                .OrderBy(n => Math.Max(Math.Abs(n.Location.X - loc.X), Math.Abs(n.Location.Y - loc.Y)))
-                .FirstOrDefault();
-
-            if (nearestNode == null) return (1.0, 1.0, 1.0); // 야생이 아니면 기본 배율
-
-            double polar = 1.0;
-            double obsidian = 1.0;
-            double soul = 1.0;
-
-            // 2. 기후(Climate)에 따른 가중치 폭발적 증가
-            if (nearestNode.ClimateType == EcoClimateType.Arctic)
-            {
-                polar += 5.0; // 북극지방에서 극지 가죽(Polar) 500% 확률 증가
-                soul += 1.5;  // 눈 덮인 영목 확률 소폭 증가
-            }
-            else if (nearestNode.ClimateType == EcoClimateType.Volcanic || nearestNode.ZoneId.ToLower().Contains("hythloth"))
-            {
-                obsidian += 5.0; // 화산/히스로스 등지에서 옵시디언(Obsidian) 500% 증가
-                soul -= 0.5;     // 척박한 땅에서 영목은 거의 안 나옴
-            }
-            else if (nearestNode.ClimateType == EcoClimateType.Void) // 일쉐나 영성 등 특수 지대
-            {
-                soul += 5.0; // 에테리얼/영목(Soul Log) 극대화
-            }
-
+            var nearestNode = ZoneList.Where(z => z.Facet == map).SelectMany(z => z.Nodes).Where(n => Math.Max(Math.Abs(n.X - loc.X), Math.Abs(n.Y - loc.Y)) <= n.SpawnRange).OrderBy(n => Math.Max(Math.Abs(n.X - loc.X), Math.Abs(n.Y - loc.Y))).FirstOrDefault();
+            if (nearestNode == null) return (1.0, 1.0, 1.0); 
+            double polar = 1.0, obsidian = 1.0, soul = 1.0;
+            if (nearestNode.ClimateType == EcoClimateType.Arctic) { polar += 5.0; soul += 1.5; } else if (nearestNode.ClimateType == EcoClimateType.Volcanic || nearestNode.RCode.ToString().Contains("Hythloth")) { obsidian += 5.0; soul -= 0.5; } else if (nearestNode.ClimateType == EcoClimateType.Void) { soul += 5.0; }
             return (Math.Max(0.1, polar), Math.Max(0.1, obsidian), Math.Max(0.1, soul));
+        }
+		// ==============================================================================
+        // 🌟 [MasterTick 파이프라인] 틱 51~59에 호출되는 대륙별 야생 생태계 갱신 로직
+        // ==============================================================================
+        public static void ProcessFacetEcosystem(Map facet)
+        {
+            var zones = ZoneList.Where(z => z.Facet == facet).ToList();
+            foreach (var zone in zones)
+            {
+                foreach (var node in zone.Nodes)
+                {
+                    if (node != null && !node.Deleted)
+                    {
+                        // 30분에 한 번씩 대륙 단위로 스폰/정산 로직 실행
+                        node.DoTick();
+                    }
+                }
+            }
         }
     }
 
     // ========================================================================
-    // 🌍 던전 매니저 (EcoZones 종속성 완전 분리)
+    // ⚔️ DungeonManager: 전체 데이터 저장/로드 및 예외 처리
     // ========================================================================
     public static class DungeonManager
     {
-        public static Dictionary<string, DungeonZone> Zones { get; private set; } = new Dictionary<string, DungeonZone>();
+        public static FrozenDictionary<RegionCode, DungeonZone> Zones { get; private set; }
+        public static List<DungeonZone> ZoneList { get; private set; } = new();
+        private static Dictionary<RegionCode, DungeonZone> m_TempZones = new();
+
+        public static void RegisterZone(DungeonZone zone) { if (zone != null && zone.RCode != RegionCode.None) m_TempZones[zone.RCode] = zone; }
+        public static void FreezeData() { Zones = m_TempZones.ToFrozenDictionary(); ZoneList = Zones.Values.OrderBy(z => z.Facet?.MapID ?? 99).ThenBy(z => (int)z.RCode).ToList(); }
 
         public static void Configure() 
         { 
-            // 🌟 낡은 Ecology 파일 호출 삭제, 새로운 통합 데이터베이스 초기화!
             EcoSpawnDatabase.Initialize(); 
-            
-            // 던전 프로필 셋업은 유지
-            // TrammelDungeon.Setup(); 
-
-            EventSink.WorldSave += OnSave; 
-            EventSink.WorldLoad += OnLoad; 
-            EventSink.ServerStarted += OnServerStarted; 
+            TrammelDungeon.Setup(); 
+            FeluccaDungeon.Setup(); 
+            TokunoDungeon.Setup();  
+            IlshenarDungeon.Setup(); 
+            MalasDungeon.Setup();    
+            TerMurDungeon.Setup();   
+            FreezeData();
+            EventSink.WorldSave += OnSave; EventSink.WorldLoad += OnLoad; EventSink.ServerStarted += OnServerStarted; 
         }
 
-        public static void Initialize() 
-        { 
-            foreach (var z in Zones.Values) if (z.BossType != null && z.BossThreshold == 0) z.BossThreshold = 1000; 
+        public static void NukeDungeon(Mobile from)
+        {
+            RegionCode currentCode = RegionSaver.GetRegionCode(from.Map, from.X, from.Y, from.Z);
+            if (currentCode == RegionCode.None) { from.SendMessage(33, "던전 구역 안에서 명령어를 실행해 주세요."); return; }
+
+            int targetBase = ((int)currentCode / 100) * 100;
+            List<Mobile> targets = World.Mobiles.Values.Where(m => m is BaseCreature bc && !bc.Controlled && !bc.Summoned && bc.Map == from.Map && ((int)RegionSaver.GetRegionCode(bc.Map, bc.X, bc.Y, bc.Z) / 100) * 100 == targetBase).ToList();
+            foreach (Mobile m in targets) m.Delete();
+            foreach (var dz in ZoneList) if (((int)dz.RCode / 100) * 100 == targetBase || dz.RCode == currentCode) dz.ClearAllSpawns();
+            from.SendMessage(66, $"{targetBase} 던전의 미아 몬스터 {targets.Count}마리를 모두 소거했습니다.");
         }
+
+        public static void Initialize() { }
 
         private static void OnServerStarted() 
         { 
-            foreach (var d in Zones.Values) d.CacheNodes(); 
-            EcosystemManager.RebuildZones(); // Gump 띄우기 전 EcoZone 그룹핑
-            Timer.DelayCall(TimeSpan.FromSeconds(10.0), TimeSpan.FromMinutes(1.0), OnTick); 
+            foreach (var d in ZoneList) d.CacheNodes(); 
+            EcosystemManager.RebuildZones(); 
+            // 🌟 [수정] 기존 1분짜리 타이머 삭제 (MasterTickEngine으로 이관)
         }
 
-        public static void OnCreatureKilled(BaseCreature bc)
+        // ==============================================================================
+        // 🌟 [MasterTick 파이프라인] 틱 51~59에 ResourceManager를 거쳐 호출됨
+        // ==============================================================================
+        public static void ProcessFacetDungeons(Map facet)
         {
-            if (bc == null || bc.Controlled || bc.Summoned) return;
-            
-            // 🌟 [최적화] 생태계는 EcoNode 자체 타이머가 죽은 몹을 정리하므로
-            // 여기서 더이상 OnCreatureKilled 이벤트를 가로채서 연산할 필요가 없습니다! (서버 성능 대폭 상승)
-            foreach (var dz in Zones.Values) 
+            var zones = ZoneList.Where(z => z.Facet == facet).ToList();
+            foreach (var zone in zones)
             {
-                if (dz.Facet == bc.Map && dz.ActiveMonsters.Values.Any(l => l.Contains(bc))) 
-                { 
-                    dz.ProcessDeath(bc); 
-                    return; 
-                }
+                zone.CheckRespawn();
+                zone.PerformRecovery();
             }
         }
 
-        private static void OnTick() 
-        { 
-            // 🌟 [최적화] 생태계 틱(PerformEcoTick) 제거. 이제 EcoNode가 각자 호흡합니다.
-            foreach (var d in Zones.Values) 
-            { 
-                d.CheckRespawn(); 
-                d.PerformRecovery(); 
-            } 
+        public static void ProcessRemainingDungeons()
+        {
+            var zones = ZoneList.Where(z => z.Facet != Map.Trammel && z.Facet != Map.Felucca).ToList();
+            foreach (var zone in zones)
+            {
+                zone.CheckRespawn();
+                zone.PerformRecovery();
+            }
         }
+
+        public static void OnCreatureKilled(BaseCreature bc) { if (bc == null || bc.Controlled || bc.Summoned) return; RegionCode locCode = RegionSaver.GetRegionCode(bc.Map, bc.X, bc.Y, bc.Z); if (locCode != RegionCode.None && Zones.TryGetValue(locCode, out DungeonZone zone) && zone.Facet == bc.Map && zone.ActiveMonsters.Values.Any(l => l.Contains(bc))) zone.ProcessDeath(bc); }
+        
+        // 🌟 [수정] OnTick 메서드 삭제 (MasterTickEngine으로 대체됨)
 
         public static string CleanString(string input) => new string((input ?? "").Where(char.IsLetterOrDigit).ToArray()).ToLower();
 
-        public static Map ResolveMapByName(string name)
-        {
-            if (name.Contains("Felucca")) return Map.Felucca;
-            if (name.Contains("Trammel")) return Map.Trammel;
-            if (name.Contains("Ilshenar")) return Map.Ilshenar;
-            if (name.Contains("Malas")) return Map.Malas;
-            if (name.Contains("Tokuno")) return Map.Tokuno;
-            if (name.Contains("TerMur")) return Map.TerMur;
-            return Map.Trammel;
-        }
+        public static Map ResolveMapByName(string name) { if (name.Contains("Felucca")) return Map.Felucca; if (name.Contains("Trammel")) return Map.Trammel; if (name.Contains("Ilshenar")) return Map.Ilshenar; if (name.Contains("Malas")) return Map.Malas; if (name.Contains("Tokuno")) return Map.Tokuno; if (name.Contains("TerMur")) return Map.TerMur; return Map.Trammel; }
 
         private static void OnSave(WorldSaveEventArgs e)
         {
-            // 🌟 [최적화] EcoZones.bin 생성 및 저장 로직 완전 삭제! (EcoNode가 알아서 저장함)
-            string pathD = Path.Combine(Core.BaseDirectory, "Saves", "RespawnSystem", "DungeonZones.bin"); 
-            Directory.CreateDirectory(Path.GetDirectoryName(pathD));
+            string path = Path.Combine(Core.BaseDirectory, "Saves", "RespawnSystem", "DungeonZones.bin"); 
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
             
-            using (FileStream fs = new FileStream(pathD, FileMode.Create)) 
+            using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None)) 
             { 
                 BinaryFileWriter w = new BinaryFileWriter(fs, true); 
-                w.Write(0); 
-                w.Write(Zones.Count); 
-                foreach (var d in Zones.Values) d.Serialize(w); 
-                w.Close(); 
+                w.Write(ZoneList.Count); 
+                foreach (var d in ZoneList) d.Serialize(w); 
+                
+                w.Close();
             }
         }
 
         private static void OnLoad()
         {
-            // 🌟 [최적화] EcoZones.bin 로드 로직 완전 삭제!
-            string pathD = Path.Combine(Core.BaseDirectory, "Saves", "RespawnSystem", "DungeonZones.bin");
-            if (File.Exists(pathD)) 
-            { 
-                using (FileStream fs = new FileStream(pathD, FileMode.Open)) 
+            string path = Path.Combine(Core.BaseDirectory, "Saves", "RespawnSystem", "DungeonZones.bin");
+            if (!File.Exists(path)) return;
+            
+            try
+            {
+                using (FileStream fs = new(path, FileMode.Open)) 
                 { 
-                    BinaryFileReader r = new BinaryFileReader(new BinaryReader(fs)); 
-                    r.ReadInt(); 
+                    BinaryFileReader r = new(new BinaryReader(fs)); 
                     int c = r.ReadInt(); 
                     for (int i = 0; i < c; i++) 
                     { 
-                        DungeonZone ld = new DungeonZone(r); 
-                        if (Zones.TryGetValue(ld.ZoneId, out var ex)) 
+                        DungeonZone ld = new(r); 
+                        if (ld.RCode != RegionCode.None && Zones.TryGetValue(ld.RCode, out var ex)) 
                         { 
-                            ex.CurrentDifficulty = ld.CurrentDifficulty; 
+                            ex.CurrentHeat = ld.CurrentHeat; 
                             ex.Phase = ld.Phase; 
                             ex.CooldownEndTime = ld.CooldownEndTime; 
                             ex.ActiveMonsters = ld.ActiveMonsters; 
@@ -438,8 +507,12 @@ namespace Server.Misc
                             if (ld.ManualMaxPopulation != -2) ex.SetPopulation(ld.ManualMaxPopulation); 
                         } 
                     } 
-                    r.Close(); 
-                } 
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\n[DungeonManager] 경고: 던전 세이브 데이터를 불러올 수 없습니다. (사유: {ex.Message})");
+                Console.WriteLine("[DungeonManager] 새로운 데이터 구조로 덮어쓰기되며 열기(Heat)가 초기화됩니다.\n");
             }
         }
     }

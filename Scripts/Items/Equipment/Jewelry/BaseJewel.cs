@@ -1036,6 +1036,7 @@ namespace Server.Items
             if (IsImbued)
                 list.Add(1080418); // (Imbued)
         }
+		public bool IsExceptional => m_Quality == ItemQuality.Exceptional;
 
         public override void AddWeightProperty(ObjectPropertyList list)
         {

@@ -1,0 +1,29 @@
+burnmin currency: 48,731,711
+asura currency: 32,868,188
+kriese1004 currency: 25,216,842
+superblock72 currency: 23,258,873
+Gruntz currency: 8,122,032
+GO currency: 5,565,127
+majahaha currency: 5,493,270
+kairence currency: 1,818,133
+lbksuper currency: 398,212
+relast currency: 170,200
+aaaaaaaaaaaaaaaa currency: 80,930
+Junylove325 currency: 75,081
+zzu_ya currency: 16,010
+kimlast currency: 10,009
+Test currency: 10,000
+testtest currency: 5,000
+kimyu currency: 3,000
+thskan currency: 1,009
+dongnh98 currency: 1,000
+memory4u currency: 0
+IPTest currency: 0
+ajsdlfdlrh currency: 0
+SuperBlock currency: 0
+musyak currency: 0
+20160429 currency: 0
+jang currency: 0
+
+Total Accounts: 26
+Total Shard Gold: 151,844,631

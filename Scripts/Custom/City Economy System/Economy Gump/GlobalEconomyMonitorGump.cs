@@ -300,13 +300,17 @@ namespace Server.Misc
             }
 
             // 3. 소유한 상인(Vendor) 가방
-            foreach (Mobile m in World.Mobiles.Values.OfType<PlayerVendor>())
-            {
-                if (m is PlayerVendor vendor && vendor.Owner == p && vendor.Backpack != null)
-                {
-                    amount += CountItemsByType(vendor.Backpack, baseType);
-                }
-            }
+            if (PlayerVendor.PlayerVendors != null)
+			{
+				// [최적화] World 전체 스캔 제거, 상인 전용 캐시 리스트만 순회
+				foreach (PlayerVendor vendor in PlayerVendor.PlayerVendors)
+				{
+					if (vendor != null && !vendor.Deleted && vendor.Owner == p && vendor.Backpack != null)
+					{
+						amount += CountItemsByType(vendor.Backpack, baseType);
+					}
+				}
+			}
 
             return amount;
         }

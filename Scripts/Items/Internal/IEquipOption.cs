@@ -19,6 +19,7 @@ namespace Server.Items
         ItemPower ItemPower { get; set; }
         bool Identified { get; set; }
         Map Map { get; set; }
-        Point3D Location { get; set; }	
+        Point3D Location { get; set; }
+		bool IsExceptional { get; }
     }
 }

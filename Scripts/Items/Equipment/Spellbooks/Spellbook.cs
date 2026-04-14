@@ -1195,6 +1195,8 @@ namespace Server.Items
             if (IsVvVItem)
                 list.Add(1154937); // VvV Item
         }
+				public bool IsExceptional => m_Quality == BookQuality.Exceptional;
+
         public override void AddNameProperties(ObjectPropertyList list)
         {
             base.AddNameProperties(list);

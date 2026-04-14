@@ -7,60 +7,44 @@ namespace Server.Items
 {
     public class AlchemyStation : CraftAddon
     {
-        public override BaseAddonDeed Deed { get { return new AlchemyStationDeed(Tools.Count > 0 ? Tools[0].UsesRemaining : 0); } }
-        public override CraftSystem CraftSystem { get { return DefAlchemy.CraftSystem; } }
+        public override CraftSystem CraftSystem => DefAlchemy.CraftSystem; 
+        public override BaseAddonDeed Deed => new AlchemyStationDeed(GetSharedUses());
 
         [Constructable]
         public AlchemyStation(bool south, int uses)
         {
             if (south)
             {
+                // 모든 부위를 AddonToolComponent로 선언하여 통합 인터랙션 제공
                 AddCraftComponent(new AddonToolComponent(CraftSystem, 40323, 40324, 1157070, uses, this), 0, 0, 0);
-                AddComponent(new ToolDropComponent(40332, 1157070), 1, 0, 0);
+                AddCraftComponent(new AddonToolComponent(CraftSystem, 40332, 40332, 1157070, uses, this), 1, 0, 0);
             }
             else
             {
                 AddCraftComponent(new AddonToolComponent(CraftSystem, 40334, 40335, 1157070, uses, this), 0, 0, 0);
-                AddComponent(new ToolDropComponent(40343, 1157070), 0, -1, 0);
+                AddCraftComponent(new AddonToolComponent(CraftSystem, 40343, 40343, 1157070, uses, this), 0, -1, 0);
             }
         }
 
-        public AlchemyStation(Serial serial)
-            : base(serial)
-        {
-        }
+        private int GetSharedUses() => Tools.Count > 0 ? Tools[0].UsesRemaining : 0;
 
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-
-            writer.Write((int)0);
-        }
-
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-
-            int version = reader.ReadInt();
-        }
+        public AlchemyStation(Serial serial) : base(serial) { }
+        public override void Serialize(GenericWriter writer) { base.Serialize(writer); writer.Write(0); }
+        public override void Deserialize(GenericReader reader) { base.Deserialize(reader); reader.ReadInt(); }
     }
 
     public class AlchemyStationDeed : CraftAddonDeed
     {
-        public override int LabelNumber { get { return 1157070; } } // Alchemy Station
-        public override BaseAddon Addon { get { return new AlchemyStation(_South, UsesRemaining); } }
+        public override int LabelNumber => 1157070; // Alchemy Station
+        public override BaseAddon Addon => new AlchemyStation(_South, UsesRemaining);
 
         private bool _South;
 
         [Constructable]
-        public AlchemyStationDeed() : this(0)
-        {
-        }
+        public AlchemyStationDeed() : this(0) { }
 
         [Constructable]
-        public AlchemyStationDeed(int uses) : base(uses)
-        {
-        }
+        public AlchemyStationDeed(int uses) : base(uses) { }
 
         public override void OnDoubleClick(Mobile from)
         {
@@ -74,23 +58,8 @@ namespace Server.Items
             }
         }
 
-        public AlchemyStationDeed(Serial serial)
-            : base(serial)
-        {
-        }
-
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-
-            writer.Write((int)0);
-        }
-
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-
-            int version = reader.ReadInt();
-        }
+        public AlchemyStationDeed(Serial serial) : base(serial) { }
+        public override void Serialize(GenericWriter writer) { base.Serialize(writer); writer.Write(0); }
+        public override void Deserialize(GenericReader reader) { base.Deserialize(reader); reader.ReadInt(); }
     }
 }

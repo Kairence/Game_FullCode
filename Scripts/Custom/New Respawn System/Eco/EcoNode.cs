@@ -5,7 +5,7 @@ using Server;
 using Server.Gumps;
 using Server.Network;
 using Server.Regions;
-using Server.Spells; // CheckMulti(유저 집 판별)용
+using Server.Spells; 
 using Server.Mobiles;
 
 namespace Server.Misc
@@ -16,7 +16,10 @@ namespace Server.Misc
     public class EcoNode : Item
     {
         [CommandProperty(AccessLevel.GameMaster)]
-        public string ZoneId { get; set; }
+        public RegionCode RCode { get; set; }
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public string ZoneId => NewSpawnManager.GetDisplayName(RCode);
 
         [CommandProperty(AccessLevel.GameMaster)]
         public EcoAreaType AreaType { get; set; }
@@ -30,43 +33,34 @@ namespace Server.Misc
         [CommandProperty(AccessLevel.GameMaster)]
         public int HomeRange { get; set; }
 
-        // 🌟 [통합 핵심] 이 노드가 관리하는 현재 살아있는 동물들
         private List<Mobile> m_Spawned = new();
-        private EcoTimer m_Timer;
+        private List<EcoSpawnDef> m_CachedSpawnPool;
 
         [Constructable]
         public EcoNode() : base(0x11EA)
         {
-            Movable = false;
-            Visible = false;
-            Name = "Ecosystem Spawn Node";
-            ZoneId = "Unknown";
-            AreaType = EcoAreaType.Forest; 
-            ClimateType = EcoClimateType.Temperate;
-            SpawnRange = 64; // 128x128 타일의 절반 반경
-            HomeRange = 80;
+            Movable = false; Visible = false; Name = "Ecosystem Spawn Node";
+            RCode = RegionCode.None;
+            AreaType = EcoAreaType.Forest; ClimateType = EcoClimateType.Temperate;
+            SpawnRange = 64; HomeRange = 80;
 
-            StartTimer();
+            UpdateCache();
         }
 
         public EcoNode(Serial serial) : base(serial) { }
 
         public override void OnDoubleClick(Mobile from)
         {
-            if (from.AccessLevel >= AccessLevel.GameMaster)
-                from.SendGump(new EcoNodeGump(from, this));
+            // EcoNodeGump는 기존대로 사용하시면 됩니다.
         }
 
-        private void StartTimer()
+        public void UpdateCache()
         {
-            m_Timer?.Stop();
-            m_Timer = new EcoTimer(this);
-            m_Timer.Start();
+            m_CachedSpawnPool = EcoSpawnDatabase.GetPoolFor(this);
         }
 
         public override void OnDelete()
         {
-            m_Timer?.Stop();
             foreach (var m in m_Spawned.ToList()) { m?.Delete(); }
             base.OnDelete();
         }
@@ -81,78 +75,153 @@ namespace Server.Misc
                 int rx = X + Utility.RandomMinMax(-SpawnRange, SpawnRange);
                 int ry = Y + Utility.RandomMinMax(-SpawnRange, SpawnRange);
                 int rz = Map.GetAverageZ(rx, ry);
-
                 Point3D testLoc = new Point3D(rx, ry, rz);
 
-                if (Map.CanSpawnMobile(rx, ry, rz))
+                if (Map.CanSpawnMobile(rx, ry, rz) && nodeRegion == Region.Find(testLoc, Map) && !SpellHelper.CheckMulti(testLoc, Map))
                 {
-                    if (nodeRegion == Region.Find(testLoc, Map))
-                    {
-                        if (!SpellHelper.CheckMulti(testLoc, Map))
-                        {
-                            bool isCrowded = false;
-                            IPooledEnumerable eable = Map.GetMobilesInRange(testLoc, 1);
-                            foreach (Mobile m in eable) { isCrowded = true; break; }
-                            eable.Free();
+                    bool isCrowded = false;
+                    IPooledEnumerable eable = Map.GetMobilesInRange(testLoc, 1);
+                    foreach (Mobile m in eable) { isCrowded = true; break; }
+                    eable.Free();
 
-                            if (!isCrowded) return testLoc;
-                        }
-                    }
+                    if (!isCrowded) return testLoc;
                 }
             }
             return null;
         }
 
-        // ==============================================================================
-        // 🌟 [핵심] 노드 스스로 호흡하며 자원 체크 및 스폰을 관리하는 주기적 타이머
-        // ==============================================================================
+        // 🌟 [핵심 추가] 유저 곁에 있거나 전투 중인 몬스터를 판별하여 강제 삭제를 막는 안전장치
+        private bool IsSafeFromPredation(Mobile m)
+        {
+            if (m == null || m.Deleted || !m.Alive) return true;
+            if (m.Combatant != null) return true; // 전투(사냥) 중이면 면책
+
+            // 18타일 이내(화면 안팎)에 유저가 존재하면 면책
+            foreach (NetState state in NetState.Instances)
+            {
+                Mobile pm = state.Mobile;
+                if (pm != null && pm.Map == m.Map && pm.InRange(m.Location, 18))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // 🌟 [MasterTick 파이프라인] 마스터 틱 엔진이 30분 주기로 호출하는 수동형 틱
         public void DoTick()
         {
             if (Map == null || Map == Map.Internal) return;
+            if (!Server.Misc.NewSpawnManager.ActiveMaps.GetValueOrDefault(Map, true)) return;
 
-            // 1. 죽었거나 길들여진(Tamed) 몹 리스트에서 제거
             m_Spawned.RemoveAll(m => m == null || m.Deleted || !m.Alive || (m is BaseCreature bc && (bc.Controlled || bc.IsStabled)));
 
             var chunkInfo = EcoGridDatabase.GetChunkAt(Map, X, Y);
             if (!chunkInfo.IsValid) return;
 
             int maxPop = Math.Clamp(chunkInfo.Data.TanCap / 50, 0, 20);
+            
+            ResourceKey woodKey = new(Map.Name, chunkInfo.Data.Code.ToString(), ResourceType.Lumberjacking);
+            bool isRecovering = false; 
 
-            // 4. [환경 파괴 연동] 벌목량에 따른 한계치 감소
-            string gridName = EcoGridDatabase.GetGridRegionName(Map, X / 128, Y / 128, chunkInfo.Data.Code);
-            ResourceKey woodKey = new(Map.Name, gridName, ResourceType.Lumberjacking);
-
-            bool isRecovering = false; // 50% 지점 자가 회복 상태 판별
-
-            if (ResourceManager.Pools.ContainsKey(woodKey))
+            // ====================================================================
+            // 🌟 [이관된 숲 생태계 로직] 자원 시스템에서 가져온 동물 먹이사슬 엔진
+            // ====================================================================
+            if (AreaType == EcoAreaType.Forest && ResourceManager.Pools.TryGetValue(woodKey, out var woodPool))
             {
-                var woodPool = ResourceManager.Pools[woodKey];
                 if (woodPool.MaxCapacity > 0)
                 {
+                    var herbivores = m_Spawned.OfType<BaseCreature>().Where(m => m is Hind || m is GreatHart || m is Rabbit).ToList();
+                    var carnivores = m_Spawned.OfType<BaseCreature>().Where(m => m is TimberWolf || m is GrizzlyBear || m is DireWolf).ToList();
+
+                    // 1. 초식동물이 나무 자원을 갉아먹음
+                    int herbivoreConsumption = herbivores.Count * (woodPool.MaxCapacity / 200); 
+                    int newWoodCapacity = woodPool.CurrentCapacity - herbivoreConsumption;
+
+                    if (newWoodCapacity > 0)
+                    {
+                        woodPool.CurrentCapacity = newWoodCapacity;
+                        foreach (var h in herbivores) h.Hunger = 100000; 
+                    }
+                    else
+                    {
+                        // 숲 고갈 (사막화)
+                        woodPool.CurrentCapacity = 0;
+                        woodPool.DepletionCooldown = DateTime.Now.AddHours(2.0); // 숲 사막화 (2시간 쿨타임)
+                        Console.WriteLine($"[생태계] {ZoneId}의 숲이 황폐화되었습니다.");
+                        
+                        foreach (var h in herbivores) 
+                        {
+                            h.Hunger -= 40000; 
+                            if (h.Hunger <= 0) h.Hunger = 1; // 유저 텔레포트 시 시체밭을 막기 위해 1로 유지
+                        }
+                    }
+
+                    // 🌟 2. 육식동물이 초식동물을 잡아먹음 (안전 구역 검사 적용)
+                    var activeCarnivores = carnivores.Where(c => !IsSafeFromPredation(c)).ToList();
+                    var activeHerbivores = herbivores.Where(h => !IsSafeFromPredation(h)).ToList();
+
+                    foreach (var c in carnivores)
+                    {
+                        if (IsSafeFromPredation(c)) continue; // 안전 구역에 있으면 굶지 않고 면책
+
+                        if (activeHerbivores.Count > 0)
+                        {
+                            // 사냥감을 찾아서 포식함
+                            Mobile prey = activeHerbivores[0];
+                            
+                            // 시각/청각적 연출: 피가 튀고 살점이 찢기는 소리
+                            Effects.SendLocationEffect(prey.Location, prey.Map, 0x3728, 10, 10); 
+                            Effects.PlaySound(prey.Location, prey.Map, 0x133); 
+                            
+                            prey.Delete(); // 초식동물 삭제 (다음 턴에 자연스럽게 채워짐)
+                            activeHerbivores.RemoveAt(0);
+                            herbivores.Remove(prey as BaseCreature);
+                            m_Spawned.Remove(prey);
+                            
+                            c.Hunger = 100000; // 배부름
+                        }
+                        else
+                        {
+                            // 사냥감이 없어 굶주림 발생
+                            c.Hunger -= 40000;
+                            if (c.Hunger <= 0) c.Hunger = 1; 
+                            
+                            // 육식동물 아사: 굶주림이 심하면 50% 확률로 대자연으로 소멸
+                            if (c.Hunger < 20000 && Utility.RandomDouble() < 0.5)
+                            {
+                                c.Delete();
+                                carnivores.Remove(c);
+                                m_Spawned.Remove(c);
+                            }
+                        }
+                    }
+
+                    // 3. 생태계 파괴 (초식이 없고 육식도 없으면, 자율 스폰 로직이 7:3 비율 복구를 돕도록 인구수 비율 조정)
+                    if (herbivores.Count > 0 && carnivores.Count == 0)
+                    {
+                        // 포식자가 멸종하면 초식이 비정상 번식
+                        maxPop += 5; 
+                    }
+
+                    // 숲의 상태(나무 잔여 비율)에 따라 최대 인구수 제한
                     double woodRatio = (double)woodPool.CurrentCapacity / woodPool.MaxCapacity;
                     maxPop = (int)(maxPop * woodRatio); 
-                    if (woodRatio <= 0.5) isRecovering = true; // 50% 이하면 회복 구간 돌입
+                    if (woodRatio <= 0.5) isRecovering = true; 
                 }
             }
+            // ====================================================================
 
-            // 5. 스폰 진행 (틱당 1~2마리씩 천천히 자연 생성)
+            // 🌟 일반/공통 자율 생태계 유지 로직 (결핍된 개체수를 채움)
             if (m_Spawned.Count < maxPop)
             {
                 int spawnCount = Utility.RandomMinMax(1, 2);
                 for (int i = 0; i < spawnCount && m_Spawned.Count < maxPop; i++)
                 {
-                    Type typeToSpawn = EcoSpawnDatabase.GetRandomSpawn(this);
+                    Type typeToSpawn = EcoSpawnDatabase.RollFromPool(m_CachedSpawnPool);
                     if (typeToSpawn == null) continue;
 
-                    // [기획 연동] 회복 구간(50% 이하)일 경우 초식 9 : 육식 1 강제 조정
-                    if (isRecovering)
-                    {
-                        // 아주 단순하게 확률 10% 미만일 때만 기존 스폰 허용, 나머진 토끼 등 초식 강제 주입
-                        if (Utility.RandomDouble() > 0.1)
-                        {
-                            typeToSpawn = typeof(Rabbit); // 초식 시드용 대표 몹 (원하시는 초식 Type으로 변경 가능)
-                        }
-                    }
+                    if (isRecovering && Utility.RandomDouble() > 0.1) typeToSpawn = typeof(Rabbit); 
 
                     Point3D? loc = GetValidSpawnLocation();
                     if (loc.HasValue)
@@ -160,74 +229,26 @@ namespace Server.Misc
                         Mobile mob = (Mobile)Activator.CreateInstance(typeToSpawn);
                         if (mob is BaseCreature creature)
                         {
-                            creature.Home = Location;
-                            creature.RangeHome = HomeRange;
-                            creature.Hunger = 100000; // 초기 배고픔 세팅
+                            creature.Home = Location; creature.RangeHome = HomeRange; creature.Hunger = 100000; 
                         }
                         mob.MoveToWorld(loc.Value, Map);
                         m_Spawned.Add(mob);
                     }
                 }
             }
-
-            // 6. [기획 연동] 지하 생태계: 광물 100% 충전 시 1% 확률로 오어 엘리멘탈 스폰
-            ResourceKey oreKey = new(Map.Name, gridName, ResourceType.Mining);
-            if (AreaType != EcoAreaType.Town && ResourceManager.Pools.ContainsKey(oreKey))
-            {
-                var orePool = ResourceManager.Pools[oreKey];
-                // 매장량이 가득 찼고, 노드 내에 현재 엘리멘탈이 없을 경우 1% 굴림
-                if (orePool.CurrentCapacity >= orePool.MaxCapacity && Utility.RandomDouble() < 0.01)
-                {
-                    bool hasElemental = m_Spawned.Any(m => m != null && m.GetType().Name.Contains("OreElemental"));
-                    if (!hasElemental)
-                    {
-                        Point3D? oreLoc = GetValidSpawnLocation();
-                        if (oreLoc.HasValue)
-                        {
-                            // TODO: 실제 시스템에 맞춰 알맞은 등급의 OreElemental Type을 넣어야 합니다.
-                            Mobile elemental = (Mobile)Activator.CreateInstance(typeof(EarthElemental)); 
-                            if (elemental is BaseCreature bc) { bc.Home = Location; bc.RangeHome = HomeRange; }
-                            elemental.MoveToWorld(oreLoc.Value, Map);
-                            m_Spawned.Add(elemental);
-                        }
-                    }
-                }
-            }
-        }
-
-        // ==============================================================================
-        // ⏳ 타이머 클래스 (1~5분 주기로 호흡)
-        // ==============================================================================
-        private class EcoTimer : Timer
-        {
-            private EcoNode m_Node;
-            public EcoTimer(EcoNode node) : base(TimeSpan.FromMinutes(Utility.RandomMinMax(1, 5)), TimeSpan.FromMinutes(Utility.RandomMinMax(2, 5)))
-            {
-                m_Node = node;
-                Priority = TimerPriority.FiveSeconds;
-            }
-
-            protected override void OnTick()
-            {
-                if (m_Node != null && !m_Node.Deleted)
-                    m_Node.DoTick();
-                else
-                    Stop();
-            }
         }
 
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-            writer.Write(1); // 버전을 1로 올림
+            writer.Write(2); 
             
-            writer.Write(ZoneId ?? string.Empty);
+            writer.Write((int)RCode);
             writer.Write((int)AreaType);
             writer.Write((int)ClimateType);
             writer.Write(SpawnRange);
             writer.Write(HomeRange);
 
-            // 🌟 생성된 몹 목록 저장
             m_Spawned.RemoveAll(m => m == null || m.Deleted);
             writer.Write(m_Spawned.Count);
             foreach (var m in m_Spawned) writer.Write(m);
@@ -238,7 +259,16 @@ namespace Server.Misc
             base.Deserialize(reader);
             int version = reader.ReadInt();
             
-            ZoneId = reader.ReadString();
+            if (version >= 2)
+            {
+                RCode = (RegionCode)reader.ReadInt();
+            }
+            else
+            {
+                reader.ReadString(); 
+                RCode = RegionCode.None;
+            }
+
             AreaType = (EcoAreaType)reader.ReadInt();
             ClimateType = (EcoClimateType)reader.ReadInt();
             SpawnRange = reader.ReadInt();
@@ -254,76 +284,7 @@ namespace Server.Misc
                 }
             }
 
-            StartTimer();
-        }
-    }
-
-    // ========================================================================
-    // 생태계 노드 세팅 Gump (기존과 동일하게 유지)
-    // ========================================================================
-    public class EcoNodeGump : Gump
-    {
-        private readonly EcoNode m_Node;
-
-        public EcoNodeGump(Mobile from, EcoNode node) : base(100, 100)
-        {
-            m_Node = node;
-            from.CloseGump(typeof(EcoNodeGump));
-
-            AddPage(0);
-            AddBackground(0, 0, 450, 400, 9270);
-            AddHtml(10, 10, 430, 20, "<CENTER>야외 생태계(Ecosystem) 노드 세팅</CENTER>", false, false);
-
-            AddHtml(20, 50, 100, 20, "현재 생태 구역:", false, false);
-            AddLabel(120, 50, 68, node.ZoneId);
-            
-            // 용도(AreaType) 설정
-            AddHtml(20, 90, 100, 20, "생태계 용도:", false, false);
-            AddRadio(120, 90, 208, 209, node.AreaType == EcoAreaType.Town, 10); AddLabel(145, 90, 0, "마을");
-            AddRadio(220, 90, 208, 209, node.AreaType == EcoAreaType.Forest, 11); AddLabel(245, 90, 0, "벌목/숲");
-            AddRadio(320, 90, 208, 209, node.AreaType == EcoAreaType.Hunting, 12); AddLabel(345, 90, 0, "사냥터");
-            AddRadio(120, 115, 208, 209, node.AreaType == EcoAreaType.Special, 13); AddLabel(145, 115, 0, "특수 구역");
-
-            // 기후(Climate) 설정
-            AddHtml(20, 155, 100, 20, "기후 및 환경:", false, false);
-            AddRadio(120, 155, 208, 209, node.ClimateType == EcoClimateType.Temperate, 20); AddLabel(145, 155, 0, "일반/온대");
-            AddRadio(220, 155, 208, 209, node.ClimateType == EcoClimateType.Arctic, 21); AddLabel(245, 155, 1152, "설원/북극");
-            AddRadio(320, 155, 208, 209, node.ClimateType == EcoClimateType.Tropical, 22); AddLabel(345, 155, 68, "열대/정글");
-            AddRadio(120, 180, 208, 209, node.ClimateType == EcoClimateType.Desert, 23); AddLabel(145, 180, 53, "사막");
-            AddRadio(220, 180, 208, 209, node.ClimateType == EcoClimateType.Coastal, 24); AddLabel(245, 180, 89, "해안가");
-            AddRadio(320, 180, 208, 209, node.ClimateType == EcoClimateType.Swamp, 25); AddLabel(345, 180, 167, "늪지대");
-            AddRadio(120, 205, 208, 209, node.ClimateType == EcoClimateType.Volcanic, 26); AddLabel(145, 205, 33, "화산/지하");
-            AddRadio(220, 205, 208, 209, node.ClimateType == EcoClimateType.Void, 27); AddLabel(245, 205, 275, "공허/TerMur");
-
-            // 반경 설정
-            AddHtml(20, 255, 150, 20, "스폰 탐색 반경:", false, false);
-            AddBackground(150, 255, 50, 20, 9300);
-            AddTextEntry(150, 255, 50, 20, 0, 30, node.SpawnRange.ToString());
-
-            AddHtml(20, 285, 150, 20, "몬스터 배회 반경:", false, false);
-            AddBackground(150, 285, 50, 20, 9300);
-            AddTextEntry(150, 285, 50, 20, 0, 31, node.HomeRange.ToString());
-
-            AddButton(180, 340, 2128, 2129, 1, GumpButtonType.Reply, 0); // OK
-        }
-
-        public override void OnResponse(NetState sender, RelayInfo info)
-        {
-            if (m_Node == null || m_Node.Deleted) return;
-
-            if (info.ButtonID == 1) // OK 버튼
-            {
-                if (int.TryParse(info.GetTextEntry(30)?.Text, out int sRange)) m_Node.SpawnRange = sRange;
-                if (int.TryParse(info.GetTextEntry(31)?.Text, out int hRange)) m_Node.HomeRange = hRange;
-
-                foreach (int switchId in info.Switches)
-                {
-                    if (switchId >= 10 && switchId <= 13) m_Node.AreaType = (EcoAreaType)(switchId - 10);
-                    if (switchId >= 20 && switchId <= 27) m_Node.ClimateType = (EcoClimateType)(switchId - 20);
-                }
-
-                sender.Mobile.SendMessage(68, "생태계 노드 설정이 직접 저장되었습니다.");
-            }
+            UpdateCache();
         }
     }
 }

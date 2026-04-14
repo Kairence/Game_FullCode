@@ -49,16 +49,23 @@ namespace Server.Misc
             };
         }
 
-        private static IEnumerable GetSpawnedEntities(Item node)
-        {
-            var type = node.GetType();
-            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-            var field = type.GetField("m_Spawned", flags) ?? type.GetField("Spawned", flags);
-            if (field != null && field.GetValue(node) is IEnumerable list) return list;
-            var prop = type.GetProperty("Spawned", flags);
-            if (prop != null && prop.GetValue(node) is IEnumerable pList) return pList;
-            return null;
-        }
+        private static System.Reflection.FieldInfo m_SpawnedFieldCache;
+
+		private static IEnumerable GetSpawnedEntities(Item targetNode)
+		{
+			// [최적화] 리플렉션 결과를 최초 1회만 검색하여 캐싱 (수만 번의 중복 연산 제거)
+			if (m_SpawnedFieldCache == null)
+			{
+				m_SpawnedFieldCache = targetNode.GetType().GetField("m_Spawned", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+			}
+
+			if (m_SpawnedFieldCache != null)
+			{
+				return m_SpawnedFieldCache.GetValue(targetNode) as IEnumerable;
+			}
+			
+			return null;
+		}
 
         // 4. 수확 핵심 로직 (TryHarvest)
 // =======================================================================

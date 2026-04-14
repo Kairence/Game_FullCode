@@ -15,6 +15,8 @@ namespace Server.Engines.NewMagincia
 
         public override bool AllowHousing(Mobile from, Point3D p)
         {
+			return base.AllowHousing(from, p);
+			/*
             MaginciaLottoSystem system = MaginciaLottoSystem.Instance;
 
             if (system != null && system.Enabled && from.Backpack != null)
@@ -40,6 +42,7 @@ namespace Server.Engines.NewMagincia
             }
 
             return MaginciaLottoSystem.IsFreeHousingZone(p, this.Map);
+			*/
         }
     }
 }

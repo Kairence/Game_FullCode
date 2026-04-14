@@ -53,8 +53,6 @@ namespace Server.Gumps
         public RunicReforgingGump(Mobile from, Item toReforge, BaseRunicTool tool)
             : base(100, 100)
         {
-            from.CloseGump(typeof(RunicReforgingGump));
-            from.CloseGump(typeof(ImbueGump));
 
             m_Context = ReforgingContext.GetContext(from);
 

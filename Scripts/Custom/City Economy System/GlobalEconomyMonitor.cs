@@ -9,6 +9,7 @@ using Server.Mobiles;
 using Server.Network;
 using System.Collections.Generic;
 using Server.Multis; // [수정1] BaseHouse 사용을 위한 네임스페이스 추가
+using Server.Accounting;
 
 namespace Server.Misc
 {
@@ -65,22 +66,31 @@ namespace Server.Misc
         {
             var accountData = new Dictionary<string, (int charCount, long totalWealth)>();
 
-            // 1. 기본 캐릭터 스캔 (배낭, 은행)
-            foreach (Mobile m in World.Mobiles.Values.Where(m => m != null && m.Player && m.Account != null && m.Account.AccessLevel == AccessLevel.Player))
-            {
-                string accName = m.Account.Username;
-                long charWealth = 0;
+            // 1. [핵심 패치] Account 객체에서 직접 통화(골드+플래티넘) 추출
+			foreach (var account in Accounts.GetAccounts().OfType<Account>())
+			{
+				if (account.AccessLevel > AccessLevel.Player) 
+					continue;
 
-                if (m.Backpack != null) charWealth += (long)m.Backpack.GetAmount(typeof(Gold));
-                if (m.BankBox != null) charWealth += (long)m.BankBox.TotalGold;
+				string accName = account.Username;
 
-                if (!accountData.ContainsKey(accName)) accountData[accName] = (0, 0);
-                
-                var current = accountData[accName];
-                accountData[accName] = (current.charCount + 1, current.totalWealth + charWealth);
-            }
+				// [최종 확정 로직] 
+				// TotalCurrency 자체가 (플래티넘 + 골드 비율)이므로 Threshold만 곱하면 
+				// 1원 단위까지 완벽하게 통합 골드로 환산됩니다.
+				long accountWealth = (long)Math.Round(account.TotalCurrency * Account.CurrencyThreshold);
+
+				// 계정 내 캐릭터 수 카운트
+				int charCount = 0;
+				for (int i = 0; i < account.Length; ++i)
+				{
+					if (account[i] != null) charCount++;
+				}
+
+				accountData[accName] = (charCount, accountWealth);
+			}
 
             // 2. 플레이어 벤더 스캔 (개인 상인이 들고 있는 판매 대금)
+            // (이 돈은 아직 Account.TotalCurrency에 편입되지 않은 상태이므로 따로 더해줍니다)
             foreach (PlayerVendor pv in World.Mobiles.Values.OfType<PlayerVendor>())
             {
                 if (pv.Owner != null && pv.Owner.Account != null && pv.Owner.Account.AccessLevel == AccessLevel.Player)
@@ -94,21 +104,20 @@ namespace Server.Misc
                 }
             }
 
-            // 3. 집(House) 금고 및 락다운 스캔
+            // 3. 집(House) 금고 및 락다운 스캔 (은행에 넣지 않은 '물리적 골드 아이템' 스캔)
             foreach (Item item in World.Items.Values.OfType<Gold>())
             {
-                // [추가] 내부 맵(배낭, 은행 등)에 있는 골드는 이미 1번에서 스캔했으므로 무시! (BankBox 스팸 로그 방지)
                 if (item.Map == null || item.Map == Map.Internal)
                     continue;
 
                 BaseHouse house = null;
 
-                // 바닥에 락다운 되어 있는 골드
+                // 바닥 락다운
                 if (item.RootParent == null && item.IsLockedDown)
                 {
                     house = BaseHouse.FindHouseAt(item);
                 }
-                // 잠긴 상자(Secure)나 락다운된 상자 안에 있는 골드
+                // 잠긴 상자(Secure/LockedDown)
                 else if (item.RootParent is BaseContainer container && (container.IsLockedDown || container.IsSecure))
                 {
                     house = BaseHouse.FindHouseAt(container);

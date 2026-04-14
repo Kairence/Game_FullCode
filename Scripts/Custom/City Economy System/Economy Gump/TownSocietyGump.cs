@@ -12,7 +12,7 @@ namespace Server.Misc
     {
         private Mobile m_From;
         private TownEconomy m_Town;
-        private int m_Tab;  // 0: 랭킹, 1: 족보/재정(상세), 2: 영토맵, 3: 공용 창고
+        private int m_Tab;  // 0: 랭킹, 1: 족보/재정(상세), 2: 부동산 현황(신규), 3: 공용 창고
         private int m_Page;
         private VirtualHouse m_SelectedHouse;
         private int m_ReturnMapIdx;
@@ -41,7 +41,7 @@ namespace Server.Misc
             {
                 case 0: DrawRankingPage(); break;
                 case 1: DrawFamilyTreeAndFinancePage(); break; 
-                case 2: DrawTerritoryMapPage(); break;
+                case 2: DrawRealEstatePage(); break; // [수정] 영토 지도 -> 부동산 현황 탭
                 case 3: DrawWarehousePage(); break;
             }
         }
@@ -52,9 +52,9 @@ namespace Server.Misc
 
             if (m_Tab != 1)
             {
-                // [개선] 족보 탭을 없애고 마을 창고를 메인 탭으로 승격
-                string[] labels = { "가문 랭킹", "영토 지도", "마을 창고" };
-                int[] tabValues = new int[] { 0, 2, 3 };
+                // [수정] 탭 이름 변경 (영토 지도 -> 부동산 현황)
+                string[] labels = { "가문 랭킹", "부동산 현황", "마을 창고" };
+                int[] tabValues = { 0, 2, 3 };
                 int tabBlockWidth = 3 * 150;
                 int startX = (width - tabBlockWidth) / 2;
 
@@ -67,7 +67,6 @@ namespace Server.Misc
             }
             else
             {
-                // [개선] 상세 보기(족보) 모드일 때는 돌아가기 버튼 제공
                 AddButton(20, 50, 4014, 4016, 10, GumpButtonType.Reply, 0); 
                 AddLabel(55, 52, 1152, "◀ 랭킹으로 돌아가기");
             }
@@ -78,11 +77,10 @@ namespace Server.Misc
         {
             var activeHouses = m_Town.Houses.Where(h => h.IsActive).OrderByDescending(h => h.Prestige).ToList();
             int totalHouses = activeHouses.Count;
-            int perPage = 15; // 세로로 길어졌으니 한 페이지에 15개씩
+            int perPage = 15; 
             int maxPage = (int)Math.Ceiling((double)totalHouses / perPage) - 1;
             if (m_Page > maxPage) m_Page = Math.Max(0, maxPage);
 
-            // 가로가 900이므로 널찍하게 간격 배치
             AddLabel(30, 90, 53, "순위");
             AddLabel(100, 90, 53, "가문명");
             AddLabel(300, 90, 53, "최고 작위");
@@ -114,9 +112,6 @@ namespace Server.Misc
             AddLabel(420, 590, 1152, $"Page {m_Page + 1} / {maxPage + 1}");
         }
 
-		// =========================================================
-        // [수정] 족보 트리 세대 계산 오류 수정 및 텍스트 색상 변경
-        // =========================================================
         private void DrawFamilyTreeAndFinancePage()
         {
             if (m_SelectedHouse == null)
@@ -125,7 +120,6 @@ namespace Server.Misc
                 return;
             }
 
-            // 제목 색상 및 내용 유지
             AddHtml(20, 90, 860, 25, $"<CENTER><BASEFONT SIZE='5' COLOR='#00FF00'>◆ {m_SelectedHouse.HouseName} 가문 상세 현황 ◆</BASEFONT></CENTER>", false, false);
 
             string bldGarden = m_SelectedHouse.HasGarden ? "<BASEFONT COLOR='#00FF00'>[텃밭]</BASEFONT>" : "<BASEFONT COLOR='#555555'>[텃밭]</BASEFONT>";
@@ -134,24 +128,21 @@ namespace Server.Misc
             AddHtml(20, 115, 860, 25, $"<CENTER><BASEFONT COLOR='#FFFFFF'>총 자산: {m_SelectedHouse.TotalWealth:N0} gp | 보유 인프라: {bldGarden} {bldWorkshop} {bldBarracks}</BASEFONT></CENTER>", false, false);
 
             // ---------------- [좌측: 가문 족보 트리] ----------------
-            AddLabel(20, 145, 53, "가문 족보 (Family Tree)"); // 53: 금색
+            AddLabel(20, 145, 53, "가문 족보 (Family Tree)"); 
             AddImageTiled(20, 165, 590, 2, 9651);
             
             var allFams = m_SelectedHouse.Families.Where(f => f.IsActive).ToList();
             var rootFams = new List<FamilyUnit>();
             var visited = new HashSet<FamilyUnit>();
 
-            // 1. 최상위(뿌리) 가구 판별 로직 강화
             foreach (var fam in allFams)
             {
-                // 부모 가구가 활성화되어 있다면 뿌리가 아님
                 if (fam.ParentFamily != null && fam.ParentFamily.IsActive) continue;
 
                 bool isChildElsewhere = false;
                 foreach (var other in allFams)
                 {
                     if (other == fam) continue;
-                    // 다른 가구의 자녀 목록에 현재 가구의 가주(Father)나 배우자(Mother)가 포함되어 있는지 확인
                     if ((fam.Father != null && other.Children.Contains(fam.Father)) || 
                         (fam.Mother != null && other.Children.Contains(fam.Mother)))
                     {
@@ -170,7 +161,6 @@ namespace Server.Misc
             StringBuilder treeSb = new StringBuilder();
             foreach (var root in rootFams)
             {
-                // [수정] 무조건 1을 주는 대신, 가주가 가진 실제 세대(Generation) 값을 시작점으로 사용
                 int startGen = root.Father?.Generation ?? 1;
                 BuildNodeHtml(treeSb, root, startGen, "", allFams, visited);
             }
@@ -178,14 +168,14 @@ namespace Server.Misc
             AddHtml(20, 170, 590, 440, treeSb.ToString(), true, true);
 
             // ---------------- [우측: 선조 기록] ----------------
-            AddLabel(630, 145, 53, "선조 기록 (Ancestor Records)"); // 53: 금색
+            AddLabel(630, 145, 53, "선조 기록 (Ancestor Records)"); 
             AddImageTiled(630, 165, 240, 2, 9651);
 
             StringBuilder ancSb = new StringBuilder();
             var ancestors = m_SelectedHouse.AncestorRecords.AsEnumerable().Reverse().ToList();
             
             if (ancestors.Count == 0) 
-                ancSb.Append("<BASEFONT COLOR='#FFFFFF'><BR>기록된 선조가 없습니다.</BASEFONT>"); // 검은색 방지 위해 흰색 지정
+                ancSb.Append("<BASEFONT COLOR='#FFFFFF'><BR>기록된 선조가 없습니다.</BASEFONT>"); 
             else
             {
                 foreach (var anc in ancestors)
@@ -199,7 +189,6 @@ namespace Server.Misc
             AddHtml(630, 170, 240, 440, ancSb.ToString(), true, true);
         }
 
-        // [함께 수정] BuildNodeHtml 메서드에서도 세대 증가 로직 확인
         private void BuildNodeHtml(StringBuilder sb, FamilyUnit fam, int gen, string prefix, List<FamilyUnit> allFams, HashSet<FamilyUnit> visited)
         {
             if (!visited.Add(fam)) return;
@@ -207,7 +196,6 @@ namespace Server.Misc
             string headName = fam.Father?.Name ?? fam.Mother?.Name ?? "알 수 없음";
             string spouseName = fam.Father != null ? (fam.Mother?.Name ?? "없음") : "없음";
 
-            // HTML 태그 내의 색상도 금색(#FFD700)과 흰색(#FFFFFF)으로 지정
             sb.Append($"{prefix}<BASEFONT COLOR='#FFD700'>▣ [{gen}대] {headName}</BASEFONT>");
             if (spouseName != "없음") sb.Append($" <BASEFONT COLOR='#FFFFFF'>/ 배우자: {spouseName}</BASEFONT>");
             sb.Append($" <BASEFONT COLOR='#00FF00'>[{fam.SharedWealth:N0} gp]</BASEFONT><BR>");
@@ -222,68 +210,65 @@ namespace Server.Misc
                 
                 if (indFam != null)
                 {
-                    // 독립 가구가 있다면 세대를 하나 올려서(gen + 1) 재귀 호출
                     BuildNodeHtml(sb, indFam, gen + 1, childPrefix + "└─ ", allFams, visited);
                 }
                 else
                 {
-                    // 미혼/미성년 자녀 표시 (흰색 적용)
                     string statusColor = child.IsExpired ? "#FF5555" : "#FFFFFF";
                     sb.Append($"{childPrefix}└─ <BASEFONT COLOR='{statusColor}'>◈ [{gen+1}대] {child.Name}</BASEFONT> <BR>");
                 }
             }
         }
 
-        private void DrawTerritoryMapPage()
+        // ====================================================================
+        // [신규] 영토 지도를 대체하는 '부동산 매물 및 방문' 탭
+        // ====================================================================
+        private void DrawRealEstatePage()
         {
-            var grid = TownNumber.GetGridInfo(m_Town.TownID);
-            int side = grid.W; 
-            int currentMapSize = m_Town.TerritoryMap?.Length ?? 0;
+            // 간판이 존재하는(집이 지어진) 가문만 목록에 표시, 부동산 가치 높은 순 정렬
+            var houseList = m_Town.Houses.Where(h => h.IsActive && h.EstateSign != null).OrderByDescending(h => h.TotalWealth).ToList();
+            int totalHouses = houseList.Count;
+            int perPage = 15; 
+            int maxPage = (int)Math.Ceiling((double)totalHouses / perPage) - 1;
+            if (m_Page > maxPage) m_Page = Math.Max(0, maxPage);
 
-            if (currentMapSize <= 0 || grid.Total <= 0) return;
+            AddLabel(30, 90, 53, "가문명");
+            AddLabel(180, 90, 53, "건축물 종류");
+            AddLabel(400, 90, 53, "영토 크기");
+            AddLabel(520, 90, 53, "예상 매입가 (프리미엄 포함)");
+            AddLabel(750, 90, 53, "현장 방문 (GM전용)");
 
-            int currentPrice = m_Town.CurrentTilePrice;
-
-            AddImageTiled(20, 85, 860, 30, 9354);
-            AddHtml(30, 90, 840, 20, $"<CENTER><BASEFONT COLOR='#FFFFFF'>가상 영토: <BASEFONT COLOR='#00FF00'>{currentMapSize:N0}</BASEFONT> 칸 | 지가: <BASEFONT COLOR='#FFFF00'>{currentPrice:N0}</BASEFONT> GP</BASEFONT></CENTER>", false, false);
-
-            AddImageTiled(25, 120, 850, 460, 9274); 
-            AddAlphaRegion(25, 120, 850, 460);
-
-            StringBuilder sb = new();
-            sb.Append("<CENTER><BASEFONT SIZE='7' FACE='Courier'>"); 
-
-            string lastColor = string.Empty;
-            for (int i = 0; i < currentMapSize; i++)
+            int y = 120;
+            for (int i = m_Page * perPage; i < (m_Page + 1) * perPage && i < totalHouses; i++)
             {
-                if (i > 0 && i % side == 0) sb.Append("<BR>");
-                string owner = m_Town.TerritoryMap[i];
-                string currentColor = string.IsNullOrEmpty(owner) ? "#555555" : GetHouseColor(owner);
-                string symbol = string.IsNullOrEmpty(owner) ? "□" : "■";
-
-                if (currentColor != lastColor)
-                {
-                    if (!string.IsNullOrEmpty(lastColor)) sb.Append("</BASEFONT>");
-                    sb.Append($"<BASEFONT COLOR='{currentColor}'>");
-                    lastColor = currentColor;
-                }
-                sb.Append(symbol);
+                var house = houseList[i];
+                
+                AddLabel(30, y, 1152, house.HouseName);
+                
+                string houseType = house.MultiID == 0 ? "개척자 텐트" : $"클래식 하우스 (0x{house.MultiID:X4})";
+                AddLabel(180, y, 2213, houseType);
+                
+                AddLabel(400, y, 1359, $"{house.OwnedTileIndices.Count:N0} 칸");
+                
+                int estPrice = GetEstimatedPrice(house);
+                AddLabel(520, y, 65, $"{estPrice:N0} gp");
+                
+                // [방문하기] 버튼 (2000번대 ID 할당)
+                int btnId = 2000 + m_Town.Houses.IndexOf(house);
+                AddButton(760, y + 3, 4005, 4007, btnId, GumpButtonType.Reply, 0);
+                AddLabel(795, y, 1152, "텔레포트");
+                
+                y += 25;
             }
-            if (!string.IsNullOrEmpty(lastColor)) sb.Append("</BASEFONT>");
-            sb.Append("</BASEFONT></CENTER>");
 
-            AddHtml(30, 130, 840, 440, sb.ToString(), true, true);
-            AddLabel(320, 590, 1152, "□ : 국유지 (Empty)  |  ■ : 가문 점유지 (Occupied)");
-        }
-
-        private string GetHouseColor(string houseName)
-        {
-            if (string.IsNullOrEmpty(houseName)) return "#555555";
-            int hash = houseName.GetHashCode();
-            int r = 130 + (Math.Abs(hash % 125));
-            int g = 130 + (Math.Abs((hash / 100) % 125));
-            int b = 130 + (Math.Abs((hash / 10000) % 125));
-            return $"#{r:X2}{g:X2}{b:X2}";
+            if (m_Page > 0) AddButton(30, 590, 4014, 4016, 1, GumpButtonType.Reply, 0);
+            if (m_Page < maxPage) AddButton(800, 590, 4005, 4007, 2, GumpButtonType.Reply, 0);
+            AddLabel(420, 590, 1152, $"Page {m_Page + 1} / {maxPage + 1}");
+            
+            if (totalHouses == 0)
+            {
+                AddHtml(20, 200, 860, 40, "<CENTER><BASEFONT COLOR='#FFFFFF'>현재 이 마을에는 물리적으로 지어진 가문의 집이 없습니다.</BASEFONT></CENTER>", false, false);
+            }
         }
 
         private void DrawWarehousePage()
@@ -334,11 +319,11 @@ namespace Server.Misc
             else if (buttonID == 2) m_Page++;
             
             // 탭 버튼 처리
-            else if (buttonID == 10) m_Tab = 0; // 가문 랭킹 (또는 족보에서 돌아가기)
-            else if (buttonID == 12) m_Tab = 2; // 영토 지도
-            else if (buttonID == 13) m_Tab = 3; // 마을 창고
+            else if (buttonID == 10) { m_Tab = 0; m_Page = 0; } // 가문 랭킹
+            else if (buttonID == 12) { m_Tab = 2; m_Page = 0; } // 부동산 현황
+            else if (buttonID == 13) { m_Tab = 3; m_Page = 0; } // 마을 창고
             
-            // 족보 상세 보기 진입 처리
+            // 족보 상세 보기 진입 처리 (1000번대)
             else if (buttonID >= 1000 && buttonID < 2000)
             {
                 int idx = buttonID - 1000;
@@ -348,8 +333,69 @@ namespace Server.Misc
                     m_Tab = 1; // 1번 탭(족보)으로 강제 전환
                 }
             }
+            // GM 전용 현장 방문(텔레포트) 처리 (2000번대)
+            else if (buttonID >= 2000 && buttonID < 3000)
+            {
+                if (m.AccessLevel < AccessLevel.GameMaster)
+                {
+                    m.SendMessage("GM 권한 이상만 사용할 수 있는 기능입니다.");
+                    return;
+                }
 
+                int idx = buttonID - 2000;
+                if (idx >= 0 && idx < m_Town.Houses.Count)
+                {
+                    var targetHouse = m_Town.Houses[idx];
+                    if (targetHouse.EstateSign != null && !targetHouse.EstateSign.Deleted)
+                    {
+                        Point3D loc = targetHouse.EstateSign.Location;
+                        Map map = targetHouse.EstateSign.Map;
+                        
+                        // 간판 남쪽(Y+1)으로 1칸 떨어진 위치에 스폰시켜 간판과 겹치지 않게 함
+                        Point3D moveLoc = new Point3D(loc.X, loc.Y + 1, loc.Z);
+                        m.MoveToWorld(moveLoc, map);
+                        
+                        m.SendMessage($"{targetHouse.HouseName} 가문의 영토 앞으로 텔레포트했습니다.");
+                        m.SendMessage("간판을 더블클릭하면 해당 영토를 강제 매수하고 철거할 수 있습니다.");
+                        return; // 텔레포트 후에는 Gump를 닫음
+                    }
+                    else
+                    {
+                        m.SendMessage("해당 가문은 아직 물리적인 간판(집)이 존재하지 않습니다.");
+                    }
+                }
+            }
+
+            // Gump 갱신
             m_From.SendGump(new TownSocietyGump(m_From, m_Town, m_Tab, m_Page, m_SelectedHouse, m_ReturnMapIdx, m_ReturnTPage));
         }
+
+        // ==========================================================
+        // 부동산 매매가 계산 (VirtualEstateGump와 동일한 산식 공유)
+        // ==========================================================
+        private int GetEstimatedPrice(VirtualHouse house)
+        {
+            int baseMultiPrice = GetBaseMultiPrice(house.MultiID);
+            int landValue = house.OwnedTileIndices.Count * m_Town.CurrentTilePrice;
+            return (int)((baseMultiPrice + landValue) * 2.0) + (house.Prestige * 10);
+        }
+
+        private int GetBaseMultiPrice(int multiID) => multiID switch
+        {
+            0x0064 or 0x0066 or 0x0068 or 0x006A or 0x006C or 0x006E => 35000,
+            0x00A0 or 0x00A2 => 50250,
+            0x0098 => 73250,
+            0x009A => 81250,
+            0x009C => 76250,
+            0x009E => 113500,
+            0x008C => 129000,
+            0x0074 => 131250,
+            0x0096 => 160250,
+            0x0076 or 0x0078 => 162500,
+            0x007A => 366250,
+            0x007C => 562500,
+            0x007E => 865000,
+            _ => 35000
+        };
     }
 }

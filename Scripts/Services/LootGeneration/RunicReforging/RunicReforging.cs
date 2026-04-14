@@ -2651,7 +2651,7 @@ namespace Server.Items
             }
             Imbuing.SetProperty(item, id, value);
 
-            budget -= Imbuing.GetIntensityForID(item, id, -1, value);
+            //budget -= Imbuing.GetIntensityForID(item, id, -1, value);
 
             return true;
         }
@@ -2662,7 +2662,7 @@ namespace Server.Items
 
             Imbuing.SetProperty(item, id, value);
 
-            budget -= Imbuing.GetIntensityForID(item, id, -1, value);
+            //budget -= Imbuing.GetIntensityForID(item, id, -1, value);
 
             return true;
         }

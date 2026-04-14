@@ -6,60 +6,48 @@ using System.Linq;
 
 namespace Server.Misc
 {
-    public class FoodDecayTimer : Timer
+    public static class FoodDecaySystem 
     {
-        public FoodDecayTimer()
-            : base(TimeSpan.FromMinutes(0), TimeSpan.FromMinutes(1))
-        {
-            this.Priority = TimerPriority.OneMinute;
-        }
+        public static void Initialize() { }
 
-        public static void Initialize()
-        {
-            new FoodDecayTimer().Start();
-        }
-
-        public static void FoodDecay()
+        // 🌟 1. 플레이어 전용 (1분마다 가볍게 호출)
+        public static void DecayPlayers()
         {
             foreach (NetState state in NetState.Instances)
             {
-                HungerDecay(state.Mobile);
-                ThirstDecay(state.Mobile);
+                if (state.Mobile != null)
+                {
+                    HungerDecay(state.Mobile);
+                    ThirstDecay(state.Mobile);
+                }
             }
+        }
 
-            // [생태계 연동] 트라멜 야생 생물들도 허기 타이머를 겪게 합니다.
-            var wildMobs = Server.World.Mobiles.Values.OfType<BaseCreature>()
-                .Where(c => c.Map == Map.Trammel && !c.Controlled && !c.IsStabled && !c.Summoned).ToList();
-
-            foreach (var mob in wildMobs)
-            {
-                HungerDecay(mob);
-            }
+        // 🌟 2. 야생 동물 전용 (삭제됨)
+        public static void DecayWildMobs()
+        {
+            // [핵심 패치]
+            // 야생 동물의 배고픔 시스템은 이제 완전히 비활성화됩니다.
+            // 생태계 동물(사슴, 늑대 등)의 마릿수와 굶어 죽는 로직은 
+            // 개별 AI가 아닌 EcoNode.DoTick()에서 거시적으로 완벽하게 통제합니다.
         }
 
         public static void HungerDecay(Mobile m)
         {
-			if (m == null) return;
+            if (m == null) return;
 
-            // [생태계 연동] 야생 생물의 허기 감소 로직
+            // 플레이어 및 펫(Controlled)의 허기만 처리하도록 보장
             if (m is BaseCreature bc && !bc.Controlled && !bc.IsStabled && !bc.Summoned)
-            {
-                // 틱당 100~300 랜덤 감소 (10만 기준 대략 5~15시간 생존)
-                bc.Hunger -= Utility.RandomMinMax(100, 300);
-                if (bc.Hunger < 0) bc.Hunger = 0;
-                return;
-            }
-			
+                return; // 야생 동물은 패스
+
             if (m.Hunger >= 1)
             {
                 int hungry = 10 + m.TotalWeight / 5;
                 Server.Regions.DungeonRegion dungeon = (Server.Regions.DungeonRegion)m.Region.GetRegion(typeof(Server.Regions.DungeonRegion));
                 bool inDanger = dungeon != null || m.Warmode;
 
-                if (inDanger)
-                    hungry *= 5;
+                if (inDanger) hungry *= 5;
 
-                // [수정] VirtualCitizen 불가능 체크 삭제. PlayerMobile만 체크합니다.
                 Server.Misc.BioStats bio = null;
                 if (m is Server.Mobiles.PlayerMobile pm) 
                     bio = pm.Bio;
@@ -76,8 +64,7 @@ namespace Server.Misc
                 }
 
                 m.Hunger -= hungry;
-                if (m.Hunger < 0)
-                    m.Hunger = 0;
+                if (m.Hunger < 0) m.Hunger = 0;
                 
                 if (m is Server.Mobiles.PlayerMobile && m.Hunger <= 2000)
                     m.SendMessage("당신은 배가 매우 고파 보입니다.");
@@ -99,11 +86,6 @@ namespace Server.Misc
         {
             if (m != null && m.Thirst >= 1)
                 m.Thirst -= 1;
-        }
-
-        protected override void OnTick()
-        {
-            FoodDecay();			
         }
     }
 }

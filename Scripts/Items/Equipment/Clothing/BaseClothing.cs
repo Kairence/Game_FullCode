@@ -1201,6 +1201,7 @@ namespace Server.Items
         {
 			Misc.NewOptionOPL.AppendName(list, this);
         }
+		public bool IsExceptional => m_Quality == ItemQuality.Exceptional;
 
         public override void AddCraftedProperties(ObjectPropertyList list)
         {
