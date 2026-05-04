@@ -212,6 +212,8 @@ namespace Server.Engines.Harvest
                                     4 => new SpinedHides(hides),
                                     5 => new HornedHides(hides),
                                     6 => new BarbedHides(hides),
+									7 => new PolarHides(hides),
+									8 => new AbyssalHides(hides),
                                     _ => new Hides(hides)
                                 };
 
@@ -229,7 +231,6 @@ namespace Server.Engines.Harvest
                             leather = new Hides(hides);
                         }
 
-                        if ((int)tasteID > 0) pm.Getgoldpoint((int)tasteID);
                         from.CheckSkill(SkillName.TasteID, tasteID);
                     }
 

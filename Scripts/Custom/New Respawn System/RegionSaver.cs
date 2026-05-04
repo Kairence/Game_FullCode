@@ -16,9 +16,6 @@ namespace Server.Misc
     {
         None = 0,
 
-        // ==========================================
-        // 🏡 트라멜 (1) - 마을 (1)
-        // ==========================================
         Trammel_Town_Britain = 110100,
         Trammel_Town_Britain_BlackthornCastle = 110101,
         Trammel_Town_Britain_BlackthornEntrance = 110102,
@@ -141,9 +138,6 @@ namespace Server.Misc
 
         Trammel_Town_Heartwood = 111800, 
 
-        // ==========================================
-        // 🦇 트라멜 (2) - 던전 (2)
-        // ==========================================
         Trammel_Dungeon_BlightedGrove = 120100, 
 
         Trammel_Dungeon_Covetous = 120200,
@@ -230,9 +224,6 @@ namespace Server.Misc
         Trammel_Dungeon_SolenHives_AreaDLevel2 = 121809,
         Trammel_Dungeon_SolenHives_AreaE = 121810,
 
-        // ==========================================
-        // 🏛️ 트라멜 (3) - 신전 (3)
-        // ==========================================
         Trammel_Shrine_Chaos = 130100,
         Trammel_Shrine_Compassion = 130200,
         Trammel_Shrine_Honesty = 130300,
@@ -243,9 +234,6 @@ namespace Server.Misc
         Trammel_Shrine_Spirituality = 130800,
         Trammel_Shrine_Valor = 130900,
 
-        // ==========================================
-        // ⚙️ 트라멜 (4) - 특수/내부 (4)
-        // ==========================================
         Trammel_Internal_JailCells = 140100,
         Trammel_Internal_JailCells_Cell1 = 140101,
         Trammel_Internal_JailCells_Cell2 = 140102,
@@ -260,9 +248,6 @@ namespace Server.Misc
 
         Trammel_Internal_GreenAcres = 140200,
         
-        // ==========================================
-        // 💀 [2] 펠루카 (Felucca)
-        // ==========================================
         Felucca_Town_Britain = 210100,
         Felucca_Town_Magincia = 210200,
         Felucca_Town_Minoc = 210300,
@@ -341,9 +326,6 @@ namespace Server.Misc
         Felucca_Faction_Shadowlords = 250300,
         Felucca_Faction_TrueBritannians = 250400,
 
-        // ==========================================
-        // 🔮 [3] 일쉐나 (Ilshenar)
-        // ==========================================
         Ilshenar_City_AncientCitadel = 310100,
         Ilshenar_City_GargoyleCity = 310200,
         Ilshenar_City_Lakeshire = 310300,
@@ -405,9 +387,6 @@ namespace Server.Misc
         Ilshenar_Shrine_Spirituality = 330700,
         Ilshenar_Shrine_Valor = 330800,
 
-        // ==========================================
-        // 🌌 [4] 말라스 (Malas)
-        // ==========================================
         Malas_Town_Luna = 410100,
         Malas_Town_Umbra = 410200,
 
@@ -450,21 +429,13 @@ namespace Server.Misc
         Malas_Site_Mine8 = 432500,
         Malas_Site_Mine9 = 432600,
 
-        // ==========================================
-        // 🏯 [5] 토쿠노 (Tokuno)
-        // ==========================================
         Tokuno_Town_Zento = 510100,
-
         Tokuno_Dungeon_FanDancersDojo = 520100, 
         Tokuno_Dungeon_YomotsuMines = 520200,   
-
         Tokuno_Site_MakotoJima = 530100,
         Tokuno_Site_IsamuJima = 530200,
         Tokuno_Site_HomareJima = 530300,
 
-        // ==========================================
-        // 🦇 [6] 터머 (Ter Mur)
-        // ==========================================
         TerMur_Town_RoyalCity = 610100,
         TerMur_Town_HolyCity = 610200,
         TerMur_Town_Dugan = 610300,
@@ -514,27 +485,15 @@ namespace Server.Misc
         TerMur_Site_VoidIsle = 632200,
         TerMur_Site_WalledCircus = 632300,
         TerMur_Site_WaterfallPoint = 632400,
-    } // <-- RegionCode Enum 종료 지점
+    } 
 
-    // ==============================================================================
-    // 🌟 [추가됨] 클래스 선언 및 RegionBounds 레코드 정의
-    // ==============================================================================
-   // ==============================================================================
-    // 🌟 [추가됨] 클래스 선언 및 RegionBounds 레코드 정의
-    // ==============================================================================
     public static class RegionSaver
     {
-        // 🌟 Z축 방어 및 층별(Level) Bounding Box 최적화 레코드
         public record RegionBounds(Map Facet, int StartX, int StartY, int EndX, int EndY, int MinZ, int MaxZ, RegionCode Code);
 
-        // ==============================================================================
-        // 🌟 [전 대륙 통합 좌표 데이터베이스] - 던전 층(Level)별 독립 영역 압축 완료
-        // ==============================================================================
         private static readonly List<RegionBounds> m_Regions =
         [
-            // ==========================================
-            // 🌲 [1] 트라멜 (Trammel) - 마을
-            // ==========================================
+            // Trammel
             new(Map.Trammel, 1093, 1408, 1740, 1907, -255, 255, RegionCode.Trammel_Town_Britain),
             new(Map.Trammel, 1466, 1375, 1582, 1505, -255, 255, RegionCode.Trammel_Town_Britain_BlackthornCastle),
             new(Map.Trammel, 1472, 1487, 1576, 1520, -255, 255, RegionCode.Trammel_Town_Britain_BlackthornEntrance),
@@ -641,11 +600,6 @@ namespace Server.Misc
             new(Map.Trammel, 5757, 3150, 5781, 3174, -255, 255, RegionCode.Trammel_Town_Papua_TheJustInn),
             new(Map.Trammel, 6466, 73, 7168, 549, -255, 255, RegionCode.Trammel_Town_Heartwood),
 
-            // ==========================================
-            // 🦇 [2] 트라멜 (Trammel) - 층(Level)별 던전 분리
-            // ==========================================
-            new(Map.Trammel, 6440, 820, 6600, 970, -255, 255, RegionCode.Trammel_Dungeon_BlightedGrove),
-
             // Covetous: 층별 독립 분리
             new(Map.Trammel, 5376, 1840, 5511, 1944, -255, 255, RegionCode.Trammel_Dungeon_Covetous_Level1),
             new(Map.Trammel, 5376, 1952, 5633, 2048, -255, 255, RegionCode.Trammel_Dungeon_Covetous_Level2),
@@ -669,7 +623,7 @@ namespace Server.Misc
             new(Map.Trammel, 5248, 768, 5375, 895, -255, 255, RegionCode.Trammel_Dungeon_Destard_Level2),
             new(Map.Trammel, 5120, 896, 5375, 1023, -255, 255, RegionCode.Trammel_Dungeon_Destard_Level3),
 
-            // Hythloth: 층별 독립 분리 (이전 병합 오류 해결)
+            // Hythloth: 층별 독립 분리
             new(Map.Trammel, 5888, 0, 6015, 127, -255, 255, RegionCode.Trammel_Dungeon_Hythloth_Level1),
             new(Map.Trammel, 6016, 0, 6143, 127, -255, 255, RegionCode.Trammel_Dungeon_Hythloth_Level2),
             new(Map.Trammel, 5888, 128, 6015, 255, -255, 255, RegionCode.Trammel_Dungeon_Hythloth_Level3),
@@ -698,7 +652,6 @@ namespace Server.Misc
             new(Map.Trammel, 759, 4, 6399, 1697, -255, 255, RegionCode.Trammel_Dungeon_Sanctuary),
             new(Map.Trammel, 1595, 550, 5935, 2039, -255, 255, RegionCode.Trammel_Dungeon_SolenHives),
 
-            // 신전 및 특수
             new(Map.Trammel, 1456, 840, 1460, 847, -255, 255, RegionCode.Trammel_Shrine_Chaos),
             new(Map.Trammel, 1851, 867, 1865, 881, -255, 255, RegionCode.Trammel_Shrine_Compassion),
             new(Map.Trammel, 4209, 560, 4216, 568, -255, 255, RegionCode.Trammel_Shrine_Honesty),
@@ -711,9 +664,7 @@ namespace Server.Misc
             new(Map.Trammel, 5271, 1159, 5312, 1192, -255, 255, RegionCode.Trammel_Internal_JailCells),
             new(Map.Trammel, 5376, 512, 6143, 1279, -255, 255, RegionCode.Trammel_Internal_GreenAcres),
 
-            // ==========================================
-            // 💀 [2] 펠루카 (Felucca) - 마을 (트라멜과 면적 동일)
-            // ==========================================
+            // Felucca
             new(Map.Felucca, 1093, 1408, 1740, 1907, -255, 255, RegionCode.Felucca_Town_Britain),
             new(Map.Felucca, 3554, 2032, 3812, 2312, -255, 255, RegionCode.Felucca_Town_Magincia),
             new(Map.Felucca, 2406, 39, 2628, 690, -255, 255, RegionCode.Felucca_Town_Minoc),
@@ -729,50 +680,39 @@ namespace Server.Misc
             new(Map.Felucca, 5123, 3930, 5315, 4084, -255, 255, RegionCode.Felucca_Town_Delucia),
             new(Map.Felucca, 5639, 3095, 5851, 3318, -255, 255, RegionCode.Felucca_Town_Papua),
 
-            // ==========================================
-            // 🦇 [2] 펠루카 (Felucca) - 층(Level)별 던전 분리
-            // ==========================================
             new(Map.Felucca, 6440, 820, 6600, 970, -255, 255, RegionCode.Felucca_Dungeon_BlightedGrove),
 
-            // Covetous: 층별 독립 분리
             new(Map.Felucca, 5376, 1840, 5511, 1944, -255, 255, RegionCode.Felucca_Dungeon_Covetous_Level1),
             new(Map.Felucca, 5376, 1952, 5633, 2048, -255, 255, RegionCode.Felucca_Dungeon_Covetous_Level2),
             new(Map.Felucca, 5533, 1822, 5630, 1925, -255, 255, RegionCode.Felucca_Dungeon_Covetous_Level3),
 
-            // Deceit: 층별 독립 분리
             new(Map.Felucca, 5120, 512, 5247, 639, -255, 255, RegionCode.Felucca_Dungeon_Deceit_Level1),
             new(Map.Felucca, 5248, 512, 5375, 639, -255, 255, RegionCode.Felucca_Dungeon_Deceit_Level2),
             new(Map.Felucca, 5120, 640, 5247, 767, -255, 255, RegionCode.Felucca_Dungeon_Deceit_Level3),
             new(Map.Felucca, 5248, 640, 5375, 767, -255, 255, RegionCode.Felucca_Dungeon_Deceit_Level4),
 
-            // Despise: 층별 독립 분리
             new(Map.Felucca, 5376, 512, 5515, 636, -255, 255, RegionCode.Felucca_Dungeon_Despise_Level1),
             new(Map.Felucca, 5376, 650, 5535, 766, -255, 255, RegionCode.Felucca_Dungeon_Despise_Level2),
             new(Map.Felucca, 5376, 770, 5631, 1023, -255, 255, RegionCode.Felucca_Dungeon_Despise_Level3),
 
-            // Destard: 층별 독립 분리
             new(Map.Felucca, 5120, 768, 5247, 895, -255, 255, RegionCode.Felucca_Dungeon_Destard_Level1),
             new(Map.Felucca, 5248, 768, 5375, 895, -255, 255, RegionCode.Felucca_Dungeon_Destard_Level2),
             new(Map.Felucca, 5120, 896, 5375, 1023, -255, 255, RegionCode.Felucca_Dungeon_Destard_Level3),
 
-            // Hythloth: 층별 독립 분리
             new(Map.Felucca, 5888, 0, 6015, 127, -255, 255, RegionCode.Felucca_Dungeon_Hythloth_Level1),
             new(Map.Felucca, 6016, 0, 6143, 127, -255, 255, RegionCode.Felucca_Dungeon_Hythloth_Level2),
             new(Map.Felucca, 5888, 128, 6015, 255, -255, 255, RegionCode.Felucca_Dungeon_Hythloth_Level3),
             new(Map.Felucca, 6016, 128, 6143, 255, -255, 255, RegionCode.Felucca_Dungeon_Hythloth_Level4),
 
-            // Shame: 층별 독립 분리
             new(Map.Felucca, 5376, 0, 5495, 127, -255, 255, RegionCode.Felucca_Dungeon_Shame_Level1),
             new(Map.Felucca, 5496, 0, 5631, 127, -255, 255, RegionCode.Felucca_Dungeon_Shame_Level2),
             new(Map.Felucca, 5376, 128, 5631, 255, -255, 255, RegionCode.Felucca_Dungeon_Shame_Level3),
             new(Map.Felucca, 5632, 0, 5887, 127, -255, 255, RegionCode.Felucca_Dungeon_Shame_Level4),
 
-            // Wrong: 층별 독립 분리
             new(Map.Felucca, 5632, 512, 5887, 620, -255, 255, RegionCode.Felucca_Dungeon_Wrong_Level1),
             new(Map.Felucca, 5632, 621, 5887, 720, -255, 255, RegionCode.Felucca_Dungeon_Wrong_Level2),
             new(Map.Felucca, 5632, 721, 5887, 1023, -255, 255, RegionCode.Felucca_Dungeon_Wrong_Level3),
 
-            // 특수 던전
             new(Map.Felucca, 5381, 1284, 5628, 1509, -255, 255, RegionCode.Felucca_Dungeon_Khaldun),
             new(Map.Felucca, 5120, 1530, 5481, 3167, -255, 255, RegionCode.Felucca_Dungeon_TerathanKeep),
             new(Map.Felucca, 2960, 1281, 6564, 3432, -255, 255, RegionCode.Felucca_Dungeon_Fire),
@@ -798,9 +738,7 @@ namespace Server.Misc
             new(Map.Felucca, 3804, 1260, 3824, 1280, -255, 255, RegionCode.Felucca_Faction_CouncilOfMages),
             new(Map.Felucca, 2680, 3030, 2740, 3100, -255, 255, RegionCode.Felucca_Faction_Minax),
 
-            // ==========================================
-            // 🔮 [3] 일쉐나 (Ilshenar) - 최외곽선 병합 적용
-            // ==========================================
+            // Ilshenar
             new(Map.Ilshenar, 1448, 496, 1632, 640, -255, 255, RegionCode.Ilshenar_City_AncientCitadel),
             new(Map.Ilshenar, 736, 480, 950, 750, -255, 255, RegionCode.Ilshenar_City_GargoyleCity),
             new(Map.Ilshenar, 1144, 1072, 1264, 1200, -255, 255, RegionCode.Ilshenar_City_Lakeshire),
@@ -813,11 +751,9 @@ namespace Server.Misc
             new(Map.Ilshenar, 0, 1152, 584, 1592, -255, 255, RegionCode.Ilshenar_Dungeon_Ankh),
             new(Map.Ilshenar, 0, 800, 192, 1200, -255, 255, RegionCode.Ilshenar_Dungeon_Ankh_KirinPassage),
             new(Map.Ilshenar, 368, 1488, 560, 1592, -255, 255, RegionCode.Ilshenar_Dungeon_Ankh_SerpentinePassage),
-
             new(Map.Ilshenar, 1736, 808, 2200, 1240, -255, 255, RegionCode.Ilshenar_Dungeon_Blood),
             new(Map.Ilshenar, 800, 16, 2080, 880, -255, 255, RegionCode.Ilshenar_Dungeon_Exodus),
             new(Map.Ilshenar, 1724, 8, 2248, 576, -255, 255, RegionCode.Ilshenar_Dungeon_Rock),
-            
             new(Map.Ilshenar, 48, 0, 488, 152, -255, 255, RegionCode.Ilshenar_Dungeon_Sorcerers),
             new(Map.Ilshenar, 1232, 936, 2254, 1280, -255, 255, RegionCode.Ilshenar_Dungeon_Spectre),
             new(Map.Ilshenar, 616, 1256, 1024, 1584, -255, 255, RegionCode.Ilshenar_Dungeon_Wisp),
@@ -835,9 +771,7 @@ namespace Server.Misc
             new(Map.Ilshenar, 1520, 1336, 1536, 1352, -255, 255, RegionCode.Ilshenar_Shrine_Spirituality),
             new(Map.Ilshenar, 512, 200, 544, 232, -255, 255, RegionCode.Ilshenar_Shrine_Valor),
 
-            // ==========================================
-            // 🌌 [4] 말라스 (Malas) - 최외곽선 병합 적용
-            // ==========================================
+            // Malas
             new(Map.Malas, 919, 490, 1036, 652, -255, 255, RegionCode.Malas_Town_Luna),
             new(Map.Malas, 1960, 1265, 2106, 1419, -255, 255, RegionCode.Malas_Town_Umbra),
             new(Map.Malas, 256, 0, 512, 560, -255, 255, RegionCode.Malas_Dungeon_Doom),
@@ -856,9 +790,7 @@ namespace Server.Misc
             new(Map.Malas, 2026, 345, 2144, 396, -255, 255, RegionCode.Malas_Site_Mine2),
             new(Map.Malas, 1176, 509, 1219, 522, -255, 255, RegionCode.Malas_Site_Mine9),
 
-            // ==========================================
-            // 🏯 [5] 토쿠노 (Tokuno) - 최외곽선 병합 적용
-            // ==========================================
+            // Tokuno
             new(Map.Tokuno, 650, 1192, 816, 1400, -255, 255, RegionCode.Tokuno_Town_Zento),
             new(Map.Tokuno, 40, 194, 210, 720, -255, 255, RegionCode.Tokuno_Dungeon_FanDancersDojo),
             new(Map.Tokuno, 0, 0, 129, 129, -255, 255, RegionCode.Tokuno_Dungeon_YomotsuMines),
@@ -866,9 +798,7 @@ namespace Server.Misc
             new(Map.Tokuno, 1167, 996, 1171, 1000, -255, 255, RegionCode.Tokuno_Site_IsamuJima),
             new(Map.Tokuno, 267, 361, 351, 632, -255, 255, RegionCode.Tokuno_Site_HomareJima),
 
-            // ==========================================
-            // 🦇 [6] 터머 (Ter Mur) - 최외곽선 병합 적용
-            // ==========================================
+            // Ter Mur
             new(Map.TerMur, 624, 3296, 927, 3583, -255, 255, RegionCode.TerMur_Town_RoyalCity),
             new(Map.TerMur, 922, 3838, 1071, 4003, -255, 255, RegionCode.TerMur_Town_HolyCity),
             new(Map.TerMur, 1087, 1127, 1096, 1133, -42, 255, RegionCode.TerMur_Town_Dugan),
@@ -895,15 +825,11 @@ namespace Server.Misc
             new(Map.TerMur, 978, 3786, 1018, 3838, -255, 255, RegionCode.TerMur_Site_ShrineOfSingularity)
         ];
 
-        // ==============================================================================
-        // 🌟 [핵심 엔진] 맵과 X, Y, Z 좌표를 넣으면 즉시 RegionCode(Enum)를 반환합니다.
-        // ==============================================================================
         public static RegionCode GetRegionCode(Map map, int x, int y, int z)
         {
             if (map == null || map == Map.Internal) return RegionCode.None;
             if (x <= 5 || y <= 5 || x >= map.Width - 5 || y >= map.Height - 5) return RegionCode.None;
 
-            // 좌표 및 Z축 매칭 판독 (순수 정수 연산으로 속도 저하 0)
             foreach (var bounds in m_Regions)
             {
                 if (bounds.Facet == map && 
@@ -914,13 +840,9 @@ namespace Server.Misc
                     return bounds.Code;
                 }
             }
-
             return RegionCode.None;
         }
 
-        // ==============================================================================
-        // 🌟 [핵심 엔진] 맵과 X, Y, Z 좌표를 넣으면 Major(대표)와 Minor(세부) 구역을 동시에 반환!
-        // ==============================================================================
         public static (RegionCode Major, RegionCode Minor) GetRegionCodes(Map map, int x, int y, int z)
         {
             if (map == null || map == Map.Internal) return (RegionCode.None, RegionCode.None);
@@ -929,7 +851,6 @@ namespace Server.Misc
             RegionCode major = RegionCode.None;
             RegionCode minor = RegionCode.None;
 
-            // 1. 단 한 번의 루프로 겹쳐진 상자를 찾습니다.
             foreach (var bounds in m_Regions)
             {
                 if (bounds.Facet == map && 
@@ -937,7 +858,6 @@ namespace Server.Misc
                     y >= bounds.StartY && y <= bounds.EndY &&
                     z >= bounds.MinZ && z <= bounds.MaxZ)
                 {
-                    // 끝자리가 00으로 떨어지면 Major, 아니면 Minor로 분류
                     if ((int)bounds.Code % 100 == 0)
                     {
                         if (major == RegionCode.None) major = bounds.Code;
@@ -947,14 +867,11 @@ namespace Server.Misc
                         if (minor == RegionCode.None) minor = bounds.Code;
                     }
 
-                    // Major와 Minor를 모두 찾았다면 연산 낭비 없이 즉시 루프 종료!
                     if (major != RegionCode.None && minor != RegionCode.None)
                         break;
                 }
             }
 
-            // 2. 🌟 [6자리 규칙의 마법] 
-            // 세부 구역 번호를 100으로 나눈 뒤 다시 100을 곱하면 자동으로 Major 번호가 유추됩니다.
             if (minor != RegionCode.None && major == RegionCode.None)
             {
                 major = (RegionCode)(((int)minor / 100) * 100);
@@ -964,16 +881,20 @@ namespace Server.Misc
         }
 
         // ==============================================================================
-        // 💡 [편의성 헬퍼] 특정 구역 소속인지 물어볼 때 쓰는 초고속 판별기
+        // 🌟 [추가됨] 세부 구역 코드를 입력받아도 무조건 대표(Major) 코드로 변환 (끝자리 00)
         // ==============================================================================
+        public static RegionCode GetMajorCode(RegionCode code)
+        {
+            if (code == RegionCode.None) return RegionCode.None;
+            return (RegionCode)(((int)code / 100) * 100);
+        }
+
         public static bool IsBelongTo(RegionCode currentTarget, RegionCode checkMajor)
         {
             if (currentTarget == RegionCode.None || checkMajor == RegionCode.None) return false;
             return ((int)currentTarget / 100) * 100 == (int)checkMajor;
         }
-		// ==============================================================================
-        // 🌟 [추가됨] 블랙 보이드(빈 공간)를 제외한 순수 타일 면적을 반환합니다.
-        // ==============================================================================
+
         public static int GetRealArea(RegionCode targetCode)
         {
             if (targetCode == RegionCode.None) return 0;
@@ -981,7 +902,6 @@ namespace Server.Misc
             int totalArea = 0;
             foreach (var bounds in m_Regions)
             {
-                // 자기 자신이거나, 자신이 속한 세부 구역일 경우 면적 합산
                 if (bounds.Code == targetCode || ((int)bounds.Code / 100) * 100 == (int)targetCode)
                 {
                     totalArea += (Math.Abs(bounds.EndX - bounds.StartX) * Math.Abs(bounds.EndY - bounds.StartY));
@@ -989,12 +909,9 @@ namespace Server.Misc
             }
             return totalArea;
         }
-		// ==============================================================================
-        // 🌟 [추가] 입구(텔레포터)를 제외하고 던전 구역에 노드를 자동 설치합니다.
-        // ==============================================================================
+
         public static void GenerateNodes(Mobile from)
         {
-            // 1. 현재 GM 위치의 리전 코드를 가져와서 대표 구역(Major)으로 변환
             RegionCode currentCode = GetRegionCode(from.Map, from.X, from.Y, from.Z);
             if (currentCode == RegionCode.None) return;
 
@@ -1003,25 +920,19 @@ namespace Server.Misc
 
             from.SendMessage(66, $"{targetBase} 구역에 노드 자동 생성을 시작합니다...");
 
-            // 2. m_Regions를 순회하며 해당 던전에 속한 모든 사각형 구역을 찾음
             foreach (var bounds in m_Regions)
             {
                 if (((int)bounds.Code / 100) * 100 != targetBase) continue;
 
-                // 3. 18타일 간격으로 격자 스캔
                 for (int x = bounds.StartX + 2; x < bounds.EndX - 2; x += 18)
                 {
                     for (int y = bounds.StartY + 2; y < bounds.EndY - 2; y += 18)
                     {
                         int z = from.Map.GetAverageZ(x, y);
 
-                        // 🌟 [검증 1] 이 좌표가 실제 이 던전 소속인지 확인 (다른 던전과 겹침 방지)
                         if (((int)GetRegionCode(from.Map, x, y, z) / 100) * 100 != targetBase) continue;
-
-                        // 🌟 [검증 2] 땅이 있는지 확인
                         if (!from.Map.CanSpawnMobile(x, y, z)) continue;
 
-                        // 🌟 [검증 3] 입구(텔레포터/문게이트) 근처 12타일 이내인지 확인
                         bool isEntrance = false;
                         IPooledEnumerable eable = from.Map.GetItemsInRange(new Point3D(x, y, z), 12);
                         foreach (Item item in eable)
@@ -1032,7 +943,6 @@ namespace Server.Misc
 
                         if (isEntrance) continue;
 
-                        // 4. 노드 생성 및 배치
                         DungeonNode node = new DungeonNode();
                         node.MoveToWorld(new Point3D(x, y, z), from.Map);
                         installedCount++;
@@ -1042,6 +952,7 @@ namespace Server.Misc
 
             from.SendMessage(66, $"자동 설치 완료: 총 {installedCount}개의 노드가 배치되었습니다.");
         }
+
 		public static Point3D GetRegionCenter(RegionCode code, Map map)
 		{
 			if (map == null || code == RegionCode.None)
@@ -1062,9 +973,7 @@ namespace Server.Misc
 					}
 				}
 			}
-
 			return Point3D.Zero;
 		}
-
     }
 }

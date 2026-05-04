@@ -8,18 +8,18 @@ using Server.Items;
 using Server.Mobiles;
 using Server.Engines.Quests;
 using Server.Network;
+using Server.Engines.Craft;
 
 namespace Server.Misc
 {
-    // [수정] 기획하신 AI 역할군에 맞춰 100~1100번대로 카테고리 명확화
     public enum JobCategory 
     { 
-        Menial = 100, Gathering = 101,     // 노동자, 농부, 어부 (기초 자원)
-        Crafting = 200,                    // 장인, 제작공 (물품 납품, 인프라)
-        Delivery = 300,                    // 상단, 셰르파 (무역, 호위)
-        EcoHunting = 500,                  // 사냥꾼 (필드 생태계 정화, 해양 몬스터)
-        DungeonHunting = 600,              // 모험가, 기사 (던전 열기도 억제)
-        BlackMarket = 1100                 // 도적, 암살자 (장물, 희귀품)
+        Menial = 100, Gathering = 101,     
+        Crafting = 200,                    
+        Delivery = 300,                    
+        EcoHunting = 500,                  
+        DungeonHunting = 600,              
+        BlackMarket = 1100                 
     }
 
     public enum JobTier { Beginner = 0, Intermediate = 1, Advanced = 2, Special = 3 }
@@ -30,6 +30,7 @@ namespace Server.Misc
         public Guid ID { get; set; } = Guid.NewGuid();
         public JobOrigin Origin { get; set; }
         public string TownName { get; set; }
+        public string TargetHouseName { get; set; } 
         public JobCategory Category { get; set; }
         public JobTier Tier { get; set; }
         public string Title { get; set; }
@@ -47,9 +48,9 @@ namespace Server.Misc
         public int RewardFame { get; set; }
         public Type BonusRewardType { get; set; }
 
-        // [신규] 퀘스트 생성 시간 및 AI 수락 여부 플래그
         public DateTime CreationTime { get; set; } = DateTime.Now;
         public bool IsAIAssigned { get; set; } = false;
+        public VirtualHouse IssuerHouse { get; set; }
 
         public bool IsFullyBooked => CurrentParticipants >= (AmountPerPlayer > 0 ? Math.Max(1, TotalRequired / AmountPerPlayer) : 1);
 
@@ -77,16 +78,20 @@ namespace Server.Misc
             string b = r.ReadString(); if (!string.IsNullOrEmpty(b)) BonusRewardType = ScriptCompiler.FindTypeByFullName(b);
             CreationTime = r.ReadDateTime();
             IsAIAssigned = r.ReadBool();
+            
+            if (v >= 1) TargetHouseName = r.ReadString(); 
         }
 
         public void Serialize(GenericWriter w)
         {
-            w.Write(0); // version
+            w.Write(1); 
             w.Write(ID.ToString()); w.Write((int)Origin); w.Write(TownName); w.Write((int)Category); w.Write((int)Tier);
             w.Write(Title); w.Write(TargetType?.FullName ?? ""); w.Write(RegionName ?? "");
             w.Write((int)RequiredResource); w.Write(RequireExceptional); w.Write(TotalRequired); w.Write(AmountPerPlayer);
             w.Write(CurrentParticipants); w.Write(TimeLimit); w.Write(RewardGold); w.Write(RewardFame);
             w.Write(BonusRewardType?.FullName ?? ""); w.Write(CreationTime); w.Write(IsAIAssigned);
+            
+            w.Write(TargetHouseName ?? "");
         }
     }
 
@@ -95,6 +100,7 @@ namespace Server.Misc
         public Guid RequestID { get; set; }
         public JobOrigin Origin { get; set; }
         public string TownName { get; set; }
+        public string TargetHouseName { get; set; } 
         public JobCategory Category { get; set; }
         public string Title { get; set; }
         public Type TargetType { get; set; }
@@ -112,8 +118,8 @@ namespace Server.Misc
 
         public PartTimeJob(TownJobRequest req)
         {
-            RequestID = req.ID; Origin = req.Origin; TownName = req.TownName; Category = req.Category; 
-            Title = req.Title; TargetType = req.TargetType; RegionName = req.RegionName; 
+            RequestID = req.ID; Origin = req.Origin; TownName = req.TownName; TargetHouseName = req.TargetHouseName;
+            Category = req.Category; Title = req.Title; TargetType = req.TargetType; RegionName = req.RegionName; 
             RequiredResource = req.RequiredResource; RequiredAmount = req.AmountPerPlayer; 
             RequireExceptional = req.RequireExceptional; ExpireTime = DateTime.Now.Add(req.TimeLimit); 
             RewardGold = req.RewardGold; RewardFame = req.RewardFame; BonusRewardType = req.BonusRewardType;
@@ -130,16 +136,19 @@ namespace Server.Misc
             ExpireTime = r.ReadDateTime(); RewardGold = r.ReadInt(); RewardFame = r.ReadInt();
             string b = r.ReadString(); if (!string.IsNullOrEmpty(b)) BonusRewardType = ScriptCompiler.FindTypeByFullName(b);
             if (v >= 2) RegionName = r.ReadString();
+            if (v >= 3) TargetHouseName = r.ReadString(); 
         }
 
         public void Serialize(GenericWriter w)
         {
-            w.Write(2); // version
+            w.Write(3); 
             w.Write(RequestID.ToString()); w.Write((int)Origin); w.Write(TownName); w.Write((int)Category); 
             w.Write(Title); w.Write(TargetType?.FullName ?? ""); w.Write((int)RequiredResource);
             w.Write(RequiredAmount); w.Write(CurrentAmount); w.Write(RequireExceptional); 
             w.Write(ExpireTime); w.Write(RewardGold); w.Write(RewardFame); w.Write(BonusRewardType?.FullName ?? "");
             w.Write(RegionName ?? "");
+            
+            w.Write(TargetHouseName ?? "");
         }
     }
 
@@ -176,14 +185,71 @@ namespace Server.Misc
 
     public static class PartTimeManager
     {
-        public static Dictionary<string, PartTimeAccountProfile> Profiles = [];
-        public static List<TownJobRequest> ActiveRequests = [];
+        public static Dictionary<string, PartTimeAccountProfile> Profiles = new();
+        public static List<TownJobRequest> ActiveRequests = new();
+        
+        public static Dictionary<JobTier, List<Type>> CachedSmithItems = new();
+        public static Dictionary<JobTier, List<Type>> CachedTailorItems = new();
+        public static Dictionary<JobTier, List<Type>> CachedFletcherItems = new();
+        public static Dictionary<JobTier, List<Type>> CachedCarpentryItems = new();
+        public static Dictionary<JobTier, List<Type>> CachedAlchemyItems = new();
+        public static Dictionary<JobTier, List<Type>> CachedTinkerItems = new();
+        public static Dictionary<JobTier, List<Type>> CachedInscriptionItems = new();
+        public static Dictionary<JobTier, List<Type>> CachedCookingItems = new();
+        public static Dictionary<JobTier, List<Type>> CachedImbuingItems = new(); 
+
         private static DateTime m_LastDailyReset;
         private static DateTime m_LastRefresh;
         private static readonly Random m_Random = new();
 
         public static void Configure() { EventSink.WorldSave += OnSave; EventSink.WorldLoad += OnLoad; }
-        public static void Initialize() { Timer.DelayCall(TimeSpan.FromMinutes(1.0), TimeSpan.FromMinutes(1.0), CheckSystem); }
+        
+        public static void Initialize() 
+        { 
+            Timer.DelayCall(TimeSpan.Zero, CacheCraftingRecipes);
+            Timer.DelayCall(TimeSpan.FromMinutes(1.0), TimeSpan.FromMinutes(1.0), CheckSystem); 
+        }
+
+        private static void CacheCraftingRecipes()
+        {
+            LoadCraftSystem(DefBlacksmithy.CraftSystem, CachedSmithItems);
+            LoadCraftSystem(DefTailoring.CraftSystem, CachedTailorItems);
+            LoadCraftSystem(DefBowFletching.CraftSystem, CachedFletcherItems); 
+            LoadCraftSystem(DefCarpentry.CraftSystem, CachedCarpentryItems);
+            LoadCraftSystem(DefAlchemy.CraftSystem, CachedAlchemyItems);
+            LoadCraftSystem(DefTinkering.CraftSystem, CachedTinkerItems);
+            LoadCraftSystem(DefInscription.CraftSystem, CachedInscriptionItems);
+            LoadCraftSystem(DefCooking.CraftSystem, CachedCookingItems);
+            LoadCraftSystem(DefImbuing.CraftSystem, CachedImbuingItems); 
+        }
+
+        private static void LoadCraftSystem(CraftSystem system, Dictionary<JobTier, List<Type>> cache)
+        {
+            cache[JobTier.Beginner] = new List<Type>();
+            cache[JobTier.Intermediate] = new List<Type>();
+            cache[JobTier.Advanced] = new List<Type>();
+            cache[JobTier.Special] = new List<Type>();
+
+            if (system == null) return;
+
+            foreach (CraftItem item in system.CraftItems)
+            {
+                if (item.ItemType == null) continue;
+                
+                double minSkill = 0;
+                if (item.Skills.Count > 0) minSkill = item.Skills.GetAt(0).MinSkill;
+
+                if (minSkill < 50.0) cache[JobTier.Beginner].Add(item.ItemType);
+                else if (minSkill < 100.0) cache[JobTier.Intermediate].Add(item.ItemType);
+                else if (minSkill < 150.0) cache[JobTier.Advanced].Add(item.ItemType);
+                else cache[JobTier.Special].Add(item.ItemType);
+            }
+            
+            if(cache[JobTier.Beginner].Count == 0) cache[JobTier.Beginner].Add(typeof(Dagger)); 
+            if(cache[JobTier.Intermediate].Count == 0) cache[JobTier.Intermediate].AddRange(cache[JobTier.Beginner]);
+            if(cache[JobTier.Advanced].Count == 0) cache[JobTier.Advanced].AddRange(cache[JobTier.Intermediate]);
+            if(cache[JobTier.Special].Count == 0) cache[JobTier.Special].AddRange(cache[JobTier.Advanced]);
+        }
 
         private static void CheckSystem()
         {
@@ -221,6 +287,15 @@ namespace Server.Misc
             if (needsRefresh) PerformRefresh();
         }
 
+        public static double GetMarginRate(JobTier tier) => tier switch
+        {
+            JobTier.Beginner => 0.80,
+            JobTier.Intermediate => 0.75,
+            JobTier.Advanced => 0.70,
+            JobTier.Special => 0.65,
+            _ => 0.80
+        };
+
         private static void ProcessAIResult(TownJobRequest req)
         {
             if (!TownEconomyManager.Towns.TryGetValue(TownNumber.GetID(new Point3D(0,0,0), Map.Felucca), out var dummy)) 
@@ -229,22 +304,32 @@ namespace Server.Misc
             var town = TownEconomyManager.Towns.Values.FirstOrDefault(t => t.TownName == req.TownName);
             if (town == null) return;
 
+            if (!string.IsNullOrEmpty(req.TargetHouseName))
+            {
+                var house = town.Houses.FirstOrDefault(h => h.HouseName == req.TargetHouseName);
+                if (house != null)
+                {
+                    if (house.UnfulfilledNeeds.ContainsKey(req.TargetType))
+                    {
+                        house.UnfulfilledNeeds[req.TargetType] = Math.Max(0, house.UnfulfilledNeeds[req.TargetType] - req.TotalRequired);
+                    }
+                    // 변경점: AI가 대신 처리했을 경우, 유저 납품 정보가 없으므로 가장 기초 자원(CraftResource.None)으로 입고
+                    house.AlterWarehouseItem(req.TargetType, CraftResource.None, false, req.TotalRequired, -1);
+                }
+                return; 
+            }
+
             switch (req.Category)
             {
                 case JobCategory.Menial:
                 case JobCategory.Gathering: 
-                    if (!town.Warehouse.ContainsKey(req.TargetType)) town.Warehouse[req.TargetType] = new WarehouseItem(req.TargetType, 0, 10, 100);
-                    town.Warehouse[req.TargetType].Stock += req.TotalRequired;
-                    break;
-                    
                 case JobCategory.Crafting: 
-                    if (req.TargetType == typeof(WoodenBox)) 
-                        town.MaxInventoryCapacity += 50; 
-                    else
+                    if (!town.Warehouse.ContainsKey(req.TargetType)) 
                     {
-                        if (!town.Warehouse.ContainsKey(req.TargetType)) town.Warehouse[req.TargetType] = new WarehouseItem(req.TargetType, 0, req.RewardGold / 2, 10);
-                        town.Warehouse[req.TargetType].Stock += req.AmountPerPlayer;
+                        int basePrice = req.RewardGold > 0 ? req.RewardGold / Math.Max(1, req.TotalRequired) : 50;
+                        town.Warehouse[req.TargetType] = new WarehouseItem(req.TargetType, 0, basePrice, 10);
                     }
+                    town.Warehouse[req.TargetType].Stock += req.TotalRequired;
                     break;
                     
                 case JobCategory.Delivery: 
@@ -257,8 +342,7 @@ namespace Server.Misc
                     break;
             }
         }
-
-        public static void PerformDailyReset()
+		public static void PerformDailyReset()
         {
             m_LastDailyReset = DateTime.Now;
             foreach (PartTimeAccountProfile p in Profiles.Values)
@@ -280,6 +364,21 @@ namespace Server.Misc
                     town.TownName = TownNumber.GetName(town.TownID);
 
                 ForceGenerateForTown(town);
+            }
+        }
+
+        public static void AddOrUpdateJobRequest(TownJobRequest newReq)
+        {
+            var existing = ActiveRequests.FirstOrDefault(r => r.TownName == newReq.TownName && r.Title == newReq.Title && r.Category == newReq.Category);
+            
+            if (existing != null)
+            {
+                existing.TotalRequired += newReq.AmountPerPlayer;
+                existing.CreationTime = DateTime.Now; 
+            }
+            else
+            {
+                ActiveRequests.Add(newReq);
             }
         }
 
@@ -308,24 +407,22 @@ namespace Server.Misc
                 int remaining = toGenerate - (townJobsCreated + citizenJobsCreated);
                 for (int i = 0; i < remaining; i++)
                 {
-                    ActiveRequests.Add(CreateFallbackRequest(town, cat, info.Grade));
+                    AddOrUpdateJobRequest(CreateFallbackRequest(town, cat, info.Grade));
                 }
             }
         }
 
-        // 🌟 [개선] ClilocData를 이용한 자동 한글화 (노가다 switch문 제거!)
         public static string GetKoreanName(Type type)
         {
             if (type == null) return "알 수 없음";
 
-            // 1. 아이템인 경우: 임시로 생성해서 LabelNumber(Cliloc ID)를 추출 후 한글 사전에서 검색
             if (type.IsSubclassOf(typeof(Item)))
             {
                 try
                 {
                     Item tempItem = (Item)Activator.CreateInstance(type);
                     int cliloc = tempItem.LabelNumber;
-                    tempItem.Delete(); // 메모리 낭비 방지를 위해 즉시 삭제
+                    tempItem.Delete(); 
 
                     if (cliloc > 0)
                     {
@@ -336,12 +433,14 @@ namespace Server.Misc
                 catch { }
             }
             
-            // 2. 몬스터(Mobile)인 경우: LabelNumber가 명확하지 않으므로 최소한의 이름만 수동 매핑
             return type.Name switch
             {
                 "SeaSerpent" => "바다뱀", "DeepSeaSerpent" => "심해 바다뱀", "Kraken" => "크라켄",
                 "Orc" => "오크", "Troll" => "트롤", "Ogre" => "오우거", "Gargoyle" => "가고일", "Lich" => "리치", 
-                "Daemon" => "데몬", "Dragon" => "드래곤", "Drake" => "드레이크",
+                "Daemon" => "데몬", "Dragon" => "드래곤", "Drake" => "드레이크", "Slime" => "슬라임",
+                "Lizardman" => "리자드맨", "Skeleton" => "스켈레톤", "Zombie" => "좀비", "Wraith" => "레이스",
+                "GiantSpider" => "거대 거미", "Harpy" => "하피", "DireWolf" => "다이어 울프", "OgreLord" => "오우거 군주",
+                "BloodElemental" => "피의 정령", "Balron" => "발론",
                 "EarthElemental" => "대지의 정령", "WaterElemental" => "물의 정령", 
                 "FireElemental" => "불의 정령", "AirElemental" => "바람의 정령",
                 _ => type.Name
@@ -358,8 +457,7 @@ namespace Server.Misc
                 { 
                     ItemType = kvp.Key, 
                     Deficit = kvp.Value.TargetStock - kvp.Value.Stock,
-                    DeficitRatio = (double)(kvp.Value.TargetStock - kvp.Value.Stock) / Math.Max(1, kvp.Value.TargetStock),
-                    BasePrice = kvp.Value.BasePrice
+                    DeficitRatio = (double)(kvp.Value.TargetStock - kvp.Value.Stock) / Math.Max(1, kvp.Value.TargetStock)
                 })
                 .OrderByDescending(x => x.DeficitRatio)
                 .ToList();
@@ -373,30 +471,33 @@ namespace Server.Misc
                 if (created >= amountToGenerate) break;
 
                 int requestAmount = Math.Min(item.Deficit, 20 * tMultiplier); 
-                if (requestAmount < 5) continue; 
+                if (requestAmount < 2) continue; 
 
-                int finalReward = (int)(item.BasePrice * requestAmount * 1.5 * town.PriceMultiplier); 
+                int currentUnitPrice = town.GetPrice(item.ItemType);
+                int finalReward = (int)(currentUnitPrice * requestAmount * GetMarginRate(tier)); 
+                
+                if (finalReward < 10) finalReward = 10 * requestAmount;
 
-                ActiveRequests.Add(new TownJobRequest
+                AddOrUpdateJobRequest(new TownJobRequest
                 {
                     ID = Guid.NewGuid(),
                     Origin = origin,
                     TownName = town.TownName,
+                    TargetHouseName = null, 
                     Category = cat,
                     Tier = tier,
-                    Title = $"긴급 조달: {GetKoreanName(item.ItemType)} {requestAmount}개",
+                    Title = $"[공용 물자] {GetKoreanName(item.ItemType)} 납품 {requestAmount}개",
                     TargetType = item.ItemType,
-                    TotalRequired = requestAmount * m_Random.Next(2, 5),
+                    TotalRequired = requestAmount * m_Random.Next(2, 5), 
                     AmountPerPlayer = requestAmount,
                     TimeLimit = TimeSpan.FromHours(2),
                     CreationTime = DateTime.Now,
                     RewardGold = finalReward,
-                    RewardFame = tMultiplier * 100
+                    RewardFame = tMultiplier * 50
                 });
 
                 created++;
             }
-
             return created;
         }
 
@@ -404,66 +505,74 @@ namespace Server.Misc
         {
             if (amountToGenerate <= 0 || town.Houses.Count == 0) return 0;
 
-            Dictionary<Type, int> totalCitizenNeeds = new Dictionary<Type, int>();
-            foreach (var house in town.Houses)
-            {
-                foreach (var need in house.UnfulfilledNeeds)
-                {
-                    if (GetCategoryForType(need.Key) == cat)
-                    {
-                        if (!totalCitizenNeeds.ContainsKey(need.Key)) totalCitizenNeeds[need.Key] = 0;
-                        totalCitizenNeeds[need.Key] += need.Value;
-                    }
-                }
-            }
-
-            var sortedNeeds = totalCitizenNeeds.OrderByDescending(kvp => kvp.Value).ToList();
-            
             int created = 0;
             JobTier tier = GetRandomTier(townGrade);
             int tMultiplier = (int)tier + 1;
 
-            foreach (var need in sortedNeeds)
+            var activeHouses = town.Houses.Where(h => h.IsActive && h.UnfulfilledNeeds.Count > 0).OrderBy(x => Guid.NewGuid()).ToList();
+
+            foreach (var house in activeHouses)
             {
                 if (created >= amountToGenerate) break;
 
+                var validNeeds = house.UnfulfilledNeeds.Where(kvp => kvp.Value > 0 && GetCategoryForType(kvp.Key) == cat).ToList();
+                if (validNeeds.Count == 0) continue;
+
+                var need = validNeeds[m_Random.Next(validNeeds.Count)];
+
                 int requestAmount = Math.Min(need.Value, 10 * tMultiplier);
-                if (requestAmount < 2) continue; 
+                if (requestAmount < 1) continue; 
 
-                int basePrice = town.Warehouse.ContainsKey(need.Key) ? town.Warehouse[need.Key].BasePrice : 50;
-                int finalReward = (int)(basePrice * requestAmount * 2.0 * town.PriceMultiplier); 
+                int currentUnitPrice = town.GetPrice(need.Key);
+                double tipRate = 1.0 + Math.Min(0.1, house.Prestige / 10000.0);
+                int finalReward = (int)(currentUnitPrice * requestAmount * GetMarginRate(tier) * tipRate);
 
-                ActiveRequests.Add(new TownJobRequest
+                AddOrUpdateJobRequest(new TownJobRequest
                 {
                     ID = Guid.NewGuid(),
                     Origin = JobOrigin.CitizenPrivate,
                     TownName = town.TownName,
+                    TargetHouseName = house.HouseName, 
                     Category = cat,
                     Tier = tier,
-                    Title = $"가문 생필품 구함: {GetKoreanName(need.Key)} {requestAmount}개",
+                    Title = $"[{house.HouseName} 의뢰] {GetKoreanName(need.Key)} {requestAmount}개",
                     TargetType = need.Key,
-                    TotalRequired = requestAmount * m_Random.Next(1, 3),
+                    TotalRequired = requestAmount, 
                     AmountPerPlayer = requestAmount,
                     TimeLimit = TimeSpan.FromHours(2),
                     CreationTime = DateTime.Now,
                     RewardGold = finalReward,
-                    RewardFame = tMultiplier * 150 
+                    RewardFame = tMultiplier * 100 
                 });
 
                 created++;
             }
-
             return created;
         }
 
-        private static JobCategory GetCategoryForType(Type type)
+        public static JobCategory GetCategoryForType(Type type)
         {
-            Type[] gatheringTypes = [typeof(IronOre), typeof(Log), typeof(WheatSheaf), typeof(RawFishSteak), typeof(Hides), typeof(Fish), typeof(Wool)];
-            if (gatheringTypes.Contains(type)) return JobCategory.Gathering;
-            
-            if (type == typeof(GoldRing) || type == typeof(DragonBlood)) return JobCategory.BlackMarket;
-            
-            return JobCategory.Crafting; 
+            if (type == null) return JobCategory.Menial;
+
+            if (type == typeof(IronOre) || type.IsSubclassOf(typeof(BaseOre)) ||
+                type == typeof(Log) || type == typeof(Board) ||
+                type == typeof(Hides) || type == typeof(Leather) ||
+                type == typeof(RawFishSteak) || type == typeof(Fish))
+            {
+                return JobCategory.Gathering;
+            }
+
+            if (type.IsSubclassOf(typeof(BaseWeapon)) || 
+                type.IsSubclassOf(typeof(BaseArmor)) ||
+                type.IsSubclassOf(typeof(BasePotion)) ||
+                type.IsSubclassOf(typeof(Food)) ||
+                type == typeof(Bandage) || type == typeof(Candle) ||
+                type.IsSubclassOf(typeof(BaseClothing)))
+            {
+                return JobCategory.Crafting;
+            }
+
+            return JobCategory.Menial;
         }
 
         private static TownJobRequest CreateFallbackRequest(TownEconomy town, JobCategory cat, string townGrade)
@@ -481,44 +590,96 @@ namespace Server.Misc
             {
                 case JobCategory.Menial:
                 case JobCategory.Gathering:
-                    Type[] gathers = [typeof(IronOre), typeof(Log), typeof(WheatSheaf)];
-                    targetType = gathers[m_Random.Next(gathers.Length)]; 
-                    amount = 20 * tMultiplier; 
-                    title = $"{GetKoreanName(targetType)} 조달 {amount}개"; 
-                    baseReward = 500 * tMultiplier; 
-                    break;
                 case JobCategory.Crafting:
-                    targetType = typeof(Broadsword); 
-                    amount = 5 * tMultiplier; 
-                    title = $"마을 수비대 무기 납품 {amount}개"; 
-                    baseReward = 2000 * tMultiplier; 
+                    var availableKeys = town.Warehouse.Keys.ToList();
+                    if (availableKeys.Count > 0)
+                    {
+                        var categoryKeys = availableKeys.Where(k => GetCategoryForType(k) == cat).ToList();
+                        targetType = categoryKeys.Count > 0 ? categoryKeys[m_Random.Next(categoryKeys.Count)] : availableKeys[m_Random.Next(availableKeys.Count)];
+                    }
+                    else
+                    {
+                        targetType = cat == JobCategory.Gathering ? typeof(IronOre) : typeof(Dagger);
+                    }
+
+                    bool isConsumable = targetType.Name.Contains("Potion") || targetType.Name.Contains("Scroll") || targetType.Name.Contains("Food") || targetType.Name.Contains("Bottle");
+                    amount = (isConsumable ? 15 : 5) * tMultiplier; 
+                    
+                    title = $"[공용 비축] {GetKoreanName(targetType)} 추가 조달 {amount}개"; 
+
+                    int itemValue = town.GetPrice(targetType);
+                    baseReward = (int)(itemValue * amount * GetMarginRate(tier));
+                    if (baseReward < 50) baseReward = 50 * amount; 
                     break;
+
                 case JobCategory.Delivery:
-                    targetType = typeof(CommodityDeed); 
-                    amount = 1; 
-                    title = "인근 마을 무역 호위 1회"; 
-                    baseReward = 2500 * tMultiplier; 
+                    targetType = typeof(TownDeliveryLetter);
+                    amount = 1;
+
+                    var otherTowns = TownEconomyManager.Towns.Values
+                        .Where(t => t.TownName != town.TownName && t.Facet == town.Facet)
+                        .OrderBy(x => Guid.NewGuid()).ToList(); 
+
+                    TownEconomy destTown = otherTowns.FirstOrDefault() ?? town;
+                    
+                    int distance = (int)Utility.GetDistanceToSqrt(town.Center, destTown.Center);
+                    baseReward = 5000 + (distance * 10); 
+
+                    string dName = destTown.TownName.ToLower();
+                    if (dName.Contains("sea market") || dName.Contains("magincia") || dName.Contains("ocllo") || dName.Contains("nujel") || dName.Contains("moonglow") || dName.Contains("skara") || dName.Contains("jhelom"))
+                    {
+                        baseReward *= 3; 
+                    }
+
+                    baseReward = (int)(baseReward * GetMarginRate(tier));
+
+                    title = $"[특급 배달] {destTown.TownName}의 역장에게 중요 서신 배송"; 
+                    region = destTown.TownName; 
                     break;
+
                 case JobCategory.EcoHunting:
-                    targetType = typeof(SeaSerpent); 
+                    Type ecoTarget = typeof(DireWolf); 
+                    string regionNameForEco = null;
+
+                    var facetZones = EcosystemManager.ZoneList.Where(z => z.Facet == town.Facet && z.Nodes.Count > 0).ToList();
+                    
+                    if (facetZones.Count > 0)
+                    {
+                        var nearestZone = facetZones.OrderBy(z => Utility.GetDistanceToSqrt(town.Center, z.Nodes[0].Location)).First();
+                        var targetNode = nearestZone.Nodes[m_Random.Next(nearestZone.Nodes.Count)];
+
+                        var spawnPool = EcoSpawnDatabase.GetPoolFor(targetNode);
+                        ecoTarget = EcoSpawnDatabase.RollFromPool(spawnPool);
+                        
+                        regionNameForEco = nearestZone.ZoneId;
+                    }
+
+                    targetType = ecoTarget; 
                     amount = 5 * tMultiplier; 
-                    title = $"해안가 바다뱀 토벌 {amount}마리"; 
-                    baseReward = 3000 * tMultiplier; 
-                    region = "Ocean";
+
+                    if (!string.IsNullOrEmpty(regionNameForEco))
+                        title = $"[{regionNameForEco} 정화] {GetKoreanName(targetType)} 개체수 조절 {amount}마리"; 
+                    else
+                        title = $"[생태 정화] {GetKoreanName(targetType)} 개체수 조절 {amount}마리"; 
+
+                    baseReward = (int)(2500 * tMultiplier * GetMarginRate(tier)); 
                     break;
+
                 case JobCategory.DungeonHunting:
                     var dData = GetDungeonHuntingData(town, tier);
                     targetType = dData.TargetType; 
                     title = dData.Title;
-                    baseReward = dData.BaseReward; 
+                    baseReward = (int)(dData.BaseReward * GetMarginRate(tier)); 
                     amount = dData.Amount; 
                     region = dData.RegionName;
+                    tier = dData.FinalTier; 
                     break;
+
                 case JobCategory.BlackMarket:
                     targetType = typeof(DragonBlood); 
                     amount = 5 * tMultiplier; 
-                    title = $"희귀한 용의 피 밀수 {amount}개"; 
-                    baseReward = 5000 * tMultiplier; 
+                    title = $"[암시장] 희귀한 용의 피 은밀한 조달 {amount}개"; 
+                    baseReward = (int)(5000 * tMultiplier * GetMarginRate(tier)); 
                     region = "Destard";
                     break;
             }
@@ -531,12 +692,12 @@ namespace Server.Misc
                 Tier = tier,
                 Title = title,
                 TargetType = targetType,
-                RegionName = region,
+                RegionName = region, 
                 TotalRequired = amount * m_Random.Next(2, 6),
                 AmountPerPlayer = amount,
                 TimeLimit = TimeSpan.FromHours(2),
                 CreationTime = DateTime.Now,
-                RewardGold = (int)(baseReward * town.PriceMultiplier),
+                RewardGold = baseReward,
                 RewardFame = tMultiplier * 100
             };
         }
@@ -547,66 +708,83 @@ namespace Server.Misc
             return (JobTier)m_Random.Next(maxTier);
         }
 
-        private static (Type TargetType, string Title, int BaseReward, int Amount, string RegionName) GetDungeonHuntingData(TownEconomy town, JobTier tier)
+        private static (Type TargetType, string Title, int BaseReward, int Amount, string RegionName, JobTier FinalTier) GetDungeonHuntingData(TownEconomy town, JobTier requestedTier)
         {
-            int t = (int)tier + 1;
-            Point3D townLoc = TownNumber.GetCenter(town.TownID);
+            Point3D townLoc = town.Center;
+            var validZones = new List<(DungeonZone Zone, double Distance)>();
 
-            DungeonZone targetDungeon = null;
-            double minDist = double.MaxValue;
-
-            foreach (var zone in DungeonManager.Zones.Values)
+            foreach (var kvp in DungeonManager.Zones)
             {
+                DungeonZone zone = kvp.Value;
+                if (zone.Facet != town.Facet) continue; 
+
                 Point3D? entrance = NewSpawnManager.FindLocationByRegionCode(zone.RCode, zone.Facet);
                 if (entrance.HasValue)
                 {
                     double dist = Utility.GetDistanceToSqrt(townLoc, entrance.Value);
-                    if (dist < minDist)
-                    {
-                        minDist = dist;
-                        targetDungeon = zone;
-                    }
+                    validZones.Add((zone, dist));
                 }
             }
 
-            if (targetDungeon != null)
+            if (validZones.Count == 0) return GetDynamicFallbackData(requestedTier);
+
+            var candidates = validZones.Where(z => z.Distance < 2500).ToList();
+            if (candidates.Count == 0) candidates = validZones; 
+            
+            candidates = candidates.OrderBy(x => Guid.NewGuid()).ToList(); 
+            DungeonZone targetZone = candidates[0].Zone;
+
+            double heatRatio = targetZone.TargetHeat > 0 ? (double)targetZone.CurrentHeat / targetZone.TargetHeat : 0.0;
+            int maxTierByHeat = targetZone.TargetHeat >= 1500000 ? 3 : (targetZone.TargetHeat >= 500000 ? 2 : 1);
+            JobTier finalTier = (JobTier)Math.Min((int)requestedTier, maxTierByHeat);
+
+            Type[] targetProfile = null;
+            switch (finalTier)
             {
-                int spawnedCount = 0;
-                List<Mobile> aliveMobs = new List<Mobile>();
-
-                if (targetDungeon.ActiveMonsters != null)
-                {
-                    foreach (var list in targetDungeon.ActiveMonsters.Values)
-                    {
-                        if (list != null)
-                        {
-                            var alive = list.Where(m => m != null && m.Alive).ToList();
-                            spawnedCount += alive.Count;
-                            aliveMobs.AddRange(alive);
-                        }
-                    }
-                }
-
-                if (spawnedCount > 0 && aliveMobs.Count > 0)
-                {
-                    Type selectedMob = aliveMobs[m_Random.Next(aliveMobs.Count)].GetType();
-                    string dungeonName = NewSpawnManager.GetDisplayName(targetDungeon.RCode);
-
-                    double heatPercent = targetDungeon.TargetHeat > 0 
-                        ? Math.Clamp((double)targetDungeon.CurrentHeat / targetDungeon.TargetHeat, 0.0, 1.0) 
-                        : 0.0;
-
-                    int baseReward = 2000 * t; 
-                    int reward = (int)(baseReward * (1.0 + heatPercent));
-                    int requiredAmount = Math.Max(5, Math.Min(30 * t, spawnedCount / 2));
-                    
-                    string title = $"[{dungeonName}] 위협적인 {GetKoreanName(selectedMob)} 토벌 {requiredAmount}마리";
-
-                    return (selectedMob, title, reward, requiredAmount, targetDungeon.RCode.ToString());
-                }
+                case JobTier.Beginner: targetProfile = targetZone.SpawnProfiles.GetValueOrDefault(DungeonDepth.Entrance); break;
+                case JobTier.Intermediate: targetProfile = targetZone.SpawnProfiles.GetValueOrDefault(DungeonDepth.Middle); break;
+                case JobTier.Advanced: targetProfile = targetZone.SpawnProfiles.GetValueOrDefault(DungeonDepth.Deep); break;
+                case JobTier.Special: targetProfile = targetZone.BossType != null ? new Type[] { targetZone.BossType } : targetZone.SpawnProfiles.GetValueOrDefault(DungeonDepth.Deep); break;
             }
 
-            return (typeof(Orc), "부근 오크 무리 소탕 10마리", 2000 * t, 10 * t, null);
+            if (targetProfile == null || targetProfile.Length == 0) return GetDynamicFallbackData(finalTier);
+            
+            Type selectedMob = targetProfile[m_Random.Next(targetProfile.Length)];
+
+            double rewardRatio = 0.5 + (heatRatio * 0.5); 
+            int requiredAmount = finalTier switch { JobTier.Beginner => 15, JobTier.Intermediate => 30, JobTier.Advanced => 45, JobTier.Special => 1, _ => 15 };
+            int baseReward = finalTier switch { JobTier.Beginner => 1500, JobTier.Intermediate => 3000, JobTier.Advanced => 4500, JobTier.Special => 5000, _ => 1500 };
+
+            int finalReward = (int)(baseReward * rewardRatio); 
+
+            string dungeonName = NewSpawnManager.GetDisplayName(targetZone.RCode);
+            if (string.IsNullOrEmpty(dungeonName)) dungeonName = targetZone.RCode.ToString().Replace("_", " ");
+
+            string title = $"[{dungeonName}] 위협적인 {GetKoreanName(selectedMob)} 토벌 {requiredAmount}마리";
+
+            return (selectedMob, title, finalReward, requiredAmount, targetZone.RCode.ToString(), finalTier);
+        }
+
+        private static (Type TargetType, string Title, int BaseReward, int Amount, string RegionName, JobTier FinalTier) GetDynamicFallbackData(JobTier tier)
+        {
+            int t = (int)tier + 1;
+            Type[] mobs = tier switch {
+                JobTier.Beginner => new Type[] { typeof(Orc), typeof(Lizardman), typeof(Skeleton), typeof(Zombie) },
+                JobTier.Intermediate => new Type[] { typeof(Troll), typeof(Ogre), typeof(Gargoyle), typeof(Wraith) },
+                JobTier.Advanced => new Type[] { typeof(Lich), typeof(Daemon), typeof(Drake), typeof(OgreLord) },
+                JobTier.Special => new Type[] { typeof(Dragon), typeof(BloodElemental), typeof(Balron) },
+                _ => new Type[] { typeof(Orc) }
+            };
+
+            Type selectedMob = mobs[m_Random.Next(mobs.Length)];
+            string mobName = GetKoreanName(selectedMob);
+            int amount = tier == JobTier.Special ? 1 : 10 * t;
+            int reward = (tier == JobTier.Special ? 5000 : 1500 * t) + m_Random.Next(100, 500);
+
+            string[] regions = { "부근 숲", "근교 동굴", "인근 폐허", "외곽 지대" };
+            string region = regions[m_Random.Next(regions.Length)];
+
+            return (selectedMob, $"[{region}] {mobName} 무리 소탕 {amount}마리", reward, amount, null, tier);
         }
 
         public static bool CanAcceptJob(Mobile m, TownJobRequest req)
@@ -666,15 +844,18 @@ namespace Server.Misc
             }
         }
 
-        public static void CreateAIRequest(string townName, string title, JobCategory cat, Type targetType, int amount, int totalReward)
+        // 🌟 수정: AI 발주 시 가문 정보를 받아 IssuerHouse와 TargetHouseName을 정상 매핑하도록 보강
+        public static void CreateAIRequest(string townName, string title, JobCategory cat, Type targetType, int amount, int totalReward, VirtualHouse house)
         {
-            if (string.IsNullOrEmpty(townName) || targetType == null) return;
+            if (string.IsNullOrEmpty(townName) || targetType == null || house == null) return;
 
-            TownJobRequest req = new TownJobRequest
+            AddOrUpdateJobRequest(new TownJobRequest
             {
                 ID = Guid.NewGuid(),
                 Origin = JobOrigin.CitizenPrivate, 
                 TownName = townName,
+                TargetHouseName = house.HouseName, // 가문명 기입
+                IssuerHouse = house, // 오브젝트 직접 연결
                 Category = cat,
                 Tier = JobTier.Beginner, 
                 Title = title,
@@ -686,19 +867,17 @@ namespace Server.Misc
                 RewardFame = 50, 
                 CreationTime = DateTime.Now,
                 IsAIAssigned = false
-            };
-
-            ActiveRequests.Add(req);
+            });
         }
     }
+    
     public class PartTimeQuest : BaseQuest
     {
         public PartTimeJob JobData { get; set; }
         public override object Title => JobData?.Title ?? "파트타임 업무";
         public override object Description => JobData == null ? 
             "마을 공공 근로 업무입니다." : 
-            $"마을 공공 근로 업무입니다.\n\n" +
-            $"<basefont color=#FF4500>※ 업무 기한: {JobData.ExpireTime:HH:mm} 까지 (2시간 이내)</basefont>\n" +
+            $"업무 기한: {JobData.ExpireTime:HH:mm} 까지 (2시간 이내)\n" +
             $"기한 내에 완수하지 못하면 업무는 자동으로 파기됩니다.";
         public override TimeSpan RestartDelay => TimeSpan.FromMinutes(30.0);
         public PartTimeQuest() : base() { }
@@ -709,8 +888,11 @@ namespace Server.Misc
 
             if (JobData != null)
             {
-                // 🌟 한글 아이템/몬스터 이름이 퀘스트 우측 목표창에도 완벽하게 출력되도록 Mapper 함수 적용
-                if (JobData.Category == JobCategory.EcoHunting || JobData.Category == JobCategory.DungeonHunting)
+                if (JobData.Category == JobCategory.Delivery)
+                {
+                    AddObjective(new ObtainObjective(typeof(TownDeliveryLetter), "중요 배달 서신", 1));
+                }
+                else if (JobData.Category == JobCategory.EcoHunting || JobData.Category == JobCategory.DungeonHunting)
                 {
                     int timeLimitSeconds = (int)(JobData.ExpireTime - DateTime.Now).TotalSeconds;
                     if (!string.IsNullOrEmpty(JobData.RegionName))
@@ -735,6 +917,15 @@ namespace Server.Misc
                 profile.AvailableCharges--;
                 var req = PartTimeManager.ActiveRequests.FirstOrDefault(r => r.ID == JobData.RequestID);
                 if (req != null) req.CurrentParticipants++; 
+
+                if (JobData.Category == JobCategory.Delivery)
+                {
+                    string destTown = string.IsNullOrEmpty(JobData.RegionName) ? "인근 마을" : JobData.RegionName;
+                    
+                    TownDeliveryLetter letter = new TownDeliveryLetter(destTown, "시장/역장", JobData.ExpireTime);
+                    Owner.AddToBackpack(letter);
+                    Owner.SendMessage(38, "가방에 중요한 배달 서신이 들어왔습니다. 마법적인 공간 이동이 차단됩니다!");
+                }
             }
         }
 
@@ -746,21 +937,96 @@ namespace Server.Misc
                 var req = PartTimeManager.ActiveRequests.FirstOrDefault(r => r.ID == profile.CurrentJob.RequestID);
                 if (req != null) req.CurrentParticipants = Math.Max(0, req.CurrentParticipants - 1);
                 
+                if (profile.CurrentJob.Category == JobCategory.Delivery)
+                {
+                    Item letter = Owner.Backpack?.FindItemByType(typeof(TownDeliveryLetter));
+                    if (letter != null) letter.Delete();
+                }
+
                 profile.CurrentJob = null;
                 Owner.SendMessage(33, "업무를 포기했습니다.");
             }
             base.OnResign(resignChain);
         }
 
+        // 🌟 수정: 아이템의 9단계 재질 및 품질을 스캔하여 귀족 가문 창고에 정확하게 넘겨주는 핵심 로직 (Iron Exploit 방어)
         public override void GiveRewards()
         {
             if (Owner == null || JobData == null) return;
 
-            QuestHelper.DeleteItems(this);
-            QuestHelper.Delay(Owner, typeof(PartTimeQuest), this.RestartDelay);
+            CraftResource turnInRes = CraftResource.None;
+            bool isExc = false;
 
+            // 1. 가방 내 납품 대상 아이템 스캔 (아이템이 삭제되기 전 미리 재질/품질 획득)
+            if (JobData.Category == JobCategory.Crafting || JobData.Category == JobCategory.Gathering)
+            {
+                Item foundItem = Owner.Backpack?.FindItemByType(JobData.TargetType);
+                if (foundItem != null)
+                {
+                    var prop = foundItem.GetType().GetProperty("Resource");
+                    if (prop != null)
+                    {
+                        var resVal = prop.GetValue(foundItem);
+                        if (resVal is CraftResource cr) turnInRes = cr; // 미스릴, 옵시디언 등 9단계 자원 동적 추출 완료
+                    }
+
+                    if (foundItem is IQuality q) isExc = (q.Quality == ItemQuality.Exceptional);
+                    else
+                    {
+                        var qProp = foundItem.GetType().GetProperty("Quality");
+                        if (qProp != null)
+                        {
+                            object val = qProp.GetValue(foundItem);
+                            isExc = (val is int i && i == 2) || val?.ToString() == "Exceptional";
+                        }
+                    }
+                }
+            }
+
+            // 2. 울티마 온라인 기본 퀘스트 아이템 삭제 처리 실행
+            QuestHelper.DeleteItems(this);
+            
             Banker.Deposit(Owner, JobData.RewardGold);
             Owner.SendMessage(63, "업무 완수! 보상금 {0}gp가 입금되었습니다.", JobData.RewardGold.ToString());
+
+            if (Owner.Account is Server.Accounting.Account acc)
+            {
+                Server.Misc.FamilySystem.Contribute(acc.Username, 10, Server.Items.FamilyCompType.Economy, false);
+            }
+
+            if (TownEconomyManager.Towns.TryGetValue(TownNumber.GetID(new Point3D(0,0,0), Map.Felucca), out var dummy))
+            {
+                var town = TownEconomyManager.Towns.Values.FirstOrDefault(t => t.TownName == JobData.TownName);
+                if (town != null)
+                {
+                    if (!string.IsNullOrEmpty(JobData.TargetHouseName))
+                    {
+                        var house = town.Houses.FirstOrDefault(h => h.HouseName == JobData.TargetHouseName);
+                        if (house != null)
+                        {
+                            if (house.UnfulfilledNeeds.ContainsKey(JobData.TargetType))
+                            {
+                                house.UnfulfilledNeeds[JobData.TargetType] = Math.Max(0, house.UnfulfilledNeeds[JobData.TargetType] - JobData.RequiredAmount);
+                            }
+                            
+                            // 🌟 변경점: 추출한 정확한 재질(turnInRes)과 품질(isExc)을 가문 창고로 직배송
+                            house.AlterWarehouseItem(JobData.TargetType, turnInRes, isExc, JobData.RequiredAmount, -1);
+                        }
+                    }
+                    else
+                    {
+                        if (JobData.Category == JobCategory.Gathering || JobData.Category == JobCategory.Crafting || JobData.Category == JobCategory.Menial)
+                        {
+                            if (!town.Warehouse.ContainsKey(JobData.TargetType)) 
+                            {
+                                int basePrice = JobData.RewardGold > 0 ? JobData.RewardGold / Math.Max(1, JobData.RequiredAmount) : 50;
+                                town.Warehouse[JobData.TargetType] = new WarehouseItem(JobData.TargetType, 0, basePrice, 10);
+                            }
+                            town.Warehouse[JobData.TargetType].Stock += JobData.RequiredAmount;
+                        }
+                    }
+                }
+            }
 
             PartTimeAccountProfile p = PartTimeManager.GetProfile(Owner);
             if (p != null)

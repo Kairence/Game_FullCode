@@ -82,7 +82,9 @@ namespace Server.Engines.Harvest
             new MutateEntry( 60.0,  110.0, false, typeof( YewLog ) ),
             new MutateEntry( 80.0,  130.0, false, typeof( HeartwoodLog ) ),
             new MutateEntry( 100.0,  150.0,  false, typeof( BloodwoodLog ) ),
-            new MutateEntry( 120.0,  170.0,  false, typeof( FrostwoodLog ) )
+            new MutateEntry( 120.0,  170.0,  false, typeof( FrostwoodLog ) ),
+            new MutateEntry( 140.0,  190.0,  false, typeof( EbonyLog ) ),
+            new MutateEntry( 160.0,  210.0,  false, typeof( EthrnalLog ) )
         };
 
         // 🌟 [핵심] 리뉴얼된 MutateType (튜플 반환, Bank 사용 안함)

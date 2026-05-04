@@ -998,36 +998,11 @@ namespace Server.Spells
 					caster.SendMessage("전투 도중에는 이동할 수 없습니다!");
 					return false;
 				}
-				/*
-				if( ( caster.Region is DungeonRegion || caster.Region.Name == "Ancient Lair" ))
-				{
-					Point3D location = new Point3D(caster.Location);
-					IPooledEnumerable eable = caster.Map.GetItemsInRange(location, 0);      // Added  Tiles
-
-					bool tilecheck = false;
-					
-					foreach (Item item in eable)
-					{
-						ItemData id = item.ItemData;
-
-						if (IsValidTile(item.ItemID))
-						{
-							eable.Free();
-							tilecheck = true;
-						}						
-					}
-                    eable.Free();
-					if( tilecheck )
-					{
-						isValid = true;
-					}
-					else
-					{
-						caster.SendMessage("던전 안에서는 차원 표식 중앙에서만 이동이 가능합니다!");
-						return false;
-					}
-				}
-				*/
+				if (pm.Backpack != null && pm.Backpack.FindItemByType(typeof(Server.Items.TownDeliveryLetter)) != null)
+                {
+                    caster.SendMessage("중요 배달 서신을 지니고 있어 마법적인 공간 이동이 불가능합니다!");
+                    return false;
+                }
 			}
 
             if (!isValid && caster != null)

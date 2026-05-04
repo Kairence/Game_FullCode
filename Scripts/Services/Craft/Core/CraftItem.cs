@@ -8,6 +8,7 @@ using Server.Factions;
 using Server.Items;
 using Server.Mobiles;
 using Server.Engines.Quests;
+using Server.Misc;
 #endregion
 
 namespace Server.Engines.Craft
@@ -145,6 +146,28 @@ namespace Server.Engines.Craft
 		
         private static readonly Dictionary<Type, int> _itemIds = new Dictionary<Type, int>();
 
+		// [추가] CraftSystem에서 직업 카테고리를 추적하는 헬퍼 함수
+        public static CraftType GetCategoryFromSystem(CraftSystem system)
+        {
+            if (system == null) return CraftType.None;
+            string name = system.GetType().Name;
+
+            if (name.Contains("Blacksmithy")) return CraftType.TotalBlacksmithy;
+            if (name.Contains("Tailoring")) return CraftType.TotalTailoring;
+            if (name.Contains("Tinkering")) return CraftType.TotalTinkering;
+            if (name.Contains("Alchemy")) return CraftType.TotalAlchemy;
+            if (name.Contains("Carpentry")) return CraftType.TotalCarpentry;
+            if (name.Contains("BowFletching")) return CraftType.TotalBowFletching;
+            if (name.Contains("Cooking")) return CraftType.TotalCooking;
+            if (name.Contains("Inscription")) return CraftType.TotalInscription;
+            if (name.Contains("Cartography")) return CraftType.TotalCartography;
+            if (name.Contains("Glassblowing")) return CraftType.TotalGlassblowing;
+            if (name.Contains("Imbuing")) return CraftType.TotalImbuing;
+            if (name.Contains("Masonry")) return CraftType.TotalMasonry;
+
+            return CraftType.None;
+        }
+
         public static int ItemIDOf(Type type)
         {
             int itemId;
@@ -240,92 +263,58 @@ namespace Server.Engines.Craft
         }
 
         public bool ConsumeAttributes(Mobile from, ref object message, bool consume)
-		{
-			bool consumMana = false;
-			bool consumHits = false;
-			bool consumStam = false;
-			bool consumHunger = false;
+        {
+            bool consumMana = false;
+            bool consumHits = false;
+            bool consumHunger = false;
 
-			if (Hits > 0 && from.Hits < Hits)
-			{
-				message = "You lack the required hit points to make that.";
-				return false;
-			}
-			else
-			{
-				consumHits = consume;
-			}
+            int reqMana = Mana;
+            int reqHunger = Hunger;
 
-			if (Mana > 0)
-			{
-                if (from.Backpack != null && m_System is DefInscription)
+            // [총합 Lv.25 보너스] 마나, 허기 소모량 감소 (스태미나는 타이머에서 처리)
+            if (from is PlayerMobile pm)
+            {
+                CraftType cat = GetCategoryFromSystem(m_System ?? DefBlacksmithy.CraftSystem);
+                if (cat != CraftType.None)
                 {
-                    Item item = from.Backpack.FindItemByType(typeof(ChronicleOfTheGargoyleQueen1));
-
-                    if (item != null && item is ChronicleOfTheGargoyleQueen1 && ((ChronicleOfTheGargoyleQueen1)item).Charges > 0)
-                    {
-                        if (consume)
-                            ((ChronicleOfTheGargoyleQueen1)item).Charges--;
-                        return true;
-                    }
+                    int totalLevel = pm.CraftPoint[(int)cat + CraftMastery.LevelOffset];
+                    int discount = Math.Min(4, totalLevel / 25);
+                    reqMana = Math.Max(0, Mana - discount);
+                    reqHunger = Math.Max(0, Hunger - discount);
                 }
+            }
 
-                if (ManaPhasingOrb.IsInManaPhase(from))
-                {
-                    if (consume)
-                        ManaPhasingOrb.RemoveFromTable(from);
-                    return true;
-                }
+            if (Hits > 0 && from.Hits < Hits)
+            {
+                message = "You lack the required hit points to make that.";
+                return false;
+            }
+            else consumHits = consume;
 
-                if (from.Mana < Mana)
+            if (reqMana > 0)
+            {
+                // ... (기존 마나 체크 로직 동일 유지) ...
+                if (from.Mana < reqMana)
                 {
                     message = "You lack the required mana to make that.";
                     return false;
                 }
-				else
-				{
-					consumMana = consume;
-				}
-			}
-			if (Stam > 0 && from.Stam < Stam)
-			{
-				message = "You lack the required stamina to make that.";
-				return false;
-			}
-			else
-			{
-				consumStam = consume;
-			}
-			if (Hunger > 0 && from.Hunger < Hunger)
-			{
-				message = "당신은 물건을 제작하기엔 너무나도 배가 고픕니다.";
-				return false;
-			}
-			else
-			{
-				consumHunger = consume;
-			}
-			if (consumMana)
-			{
-				from.Mana -= Mana;
-			}
+                else consumMana = consume;
+            }
 
-			if (consumHits)
-			{
-				from.Hits -= Hits;
-			}
+            if (reqHunger > 0 && from.Hunger < reqHunger)
+            {
+                message = "당신은 물건을 제작하기엔 너무나도 배가 고픕니다.";
+                return false;
+            }
+            else consumHunger = consume;
 
-			if (consumStam)
-			{
-				from.Stam -= Stam;
-			}
-			if (consumHunger)
-			{
-				from.Hunger -= Hunger;
-			}
+            if (consumMana) from.Mana -= reqMana;
+            if (consumHits) from.Hits -= Hits;
+            if (consumHunger) from.Hunger -= reqHunger;
 
-			return true;
-		}
+            return true;
+        }
 
 		#region Tables
 		private static int[] m_HeatSources =
@@ -1327,26 +1316,44 @@ namespace Server.Engines.Craft
         }
 
 		public double GetExceptionalChance(CraftSystem system, double chance, Mobile from)
-		{
-			if (ForceNonExceptional) return 0.0;
+        {
+            if (ForceNonExceptional) return 0.0;
 
-			// 1. 변수 선언 및 100 미만 즉시 차단 (가장 큰 최적화)
-			double v = from.Skills[system.MainSkill].Value;
-			if (v < 100.0) return 0.0;
+            // 1. 변수 선언 및 100 미만 즉시 차단
+            double v = from.Skills[system.MainSkill].Value;
+            if (v < 100.0) return 0.0;
 
-			if (ForceExceptional)
-			{
-				bool allReq = false;
-				GetSuccessChance(from, null, system, false, ref allReq);
-				if (allReq) return 1.0;
-			}
+            if (ForceExceptional)
+            {
+                bool allReq = false;
+                GetSuccessChance(from, null, system, false, ref allReq);
+                if (allReq) return 1.0;
+            }
 
-			// 2. 등급 보너스 결정 + 스킬 비례 가산 (0.1% * v)
-			double finalChance = (v >= 150.0 ? 0.20 : 0.10) + (v * 0.001);
+            // 2. 등급 보너스 결정 + 스킬 비례 가산
+            double finalChance = (v >= 150.0 ? 0.20 : 0.10) + (v * 0.001);
 
-			// 3. 범위 제한 후 리턴 (0.0 ~ 1.0)
-			return Math.Min(Math.Max(finalChance, 0.0), 1.0);
-		}
+            // 3. [추가] 제작 숙련도 마일스톤 연산
+            if (from is PlayerMobile pm)
+            {
+                CraftType cat = GetCategoryFromSystem(system);
+                CraftType type = CraftMastery.ParseCraftType(this.ItemType, cat);
+
+                // 총합 Lv. 10: 익셉 확률 5% 증가
+                if (cat != CraftType.None && pm.CraftPoint[(int)cat + CraftMastery.LevelOffset] >= 10)
+                    finalChance += 0.05;
+
+                // 개별 Lv. 1~100: 레벨당 0.2% 증가
+                if (type != CraftType.None)
+                {
+                    int indivLevel = pm.CraftPoint[(int)type + CraftMastery.LevelOffset];
+                    finalChance += (indivLevel * 0.002);
+                }
+            }
+
+            // 4. 범위 제한 후 리턴
+            return Math.Min(Math.Max(finalChance, 0.0), 1.0);
+        }
 		
 		public bool CheckSkills(
 			Mobile from, Type typeRes, CraftSystem craftSystem, ref int quality, ref bool allRequiredSkills, int maxAmount)
@@ -1373,30 +1380,27 @@ namespace Server.Engines.Craft
         }
 
         public double GetSuccessChance(Mobile from, Type typeRes, CraftSystem craftSystem, bool gainSkills, ref bool allRequiredSkills, int maxAmount)
-		{
+        {
             if (ForceSuccessChance > -1)
             {
                 return ((double)ForceSuccessChance / 100.0);
             }
 
-			double minMainSkill = 0.0;
-			double maxMainSkill = 0.0;
-			double valMainSkill = 0.0;
+            double minMainSkill = 0.0;
+            double maxMainSkill = 0.0;
+            double valMainSkill = 0.0;
 
-			allRequiredSkills = true;
+            allRequiredSkills = true;
 
             for (int i = 0; i < Skills.Count; i++)
             {
                 CraftSkill craftSkill = Skills.GetAt(i);
-
                 double minSkill = craftSkill.MinSkill - MinSkillOffset;
                 double maxSkill = craftSkill.MaxSkill;
                 double valSkill = from.Skills[craftSkill.SkillToMake].Value;
 
                 if (valSkill < minSkill)
-                {
                     allRequiredSkills = false;
-                }
 
                 if (craftSkill.SkillToMake == craftSystem.MainSkill)
                 {
@@ -1406,61 +1410,64 @@ namespace Server.Engines.Craft
                 }
             }
 
-			double chance;
+            double chance;
 
-			if (allRequiredSkills)
-			{
-				// 1. 기본 확률 설정
-				// 장비: 10% 시작, 0.1%씩 증가 / 비장비: 25% 시작, 0.25%씩 증가
-				if (IsEquip(this.ItemType))
-					chance = 0.1 + (valMainSkill - minMainSkill) * 0.001;
-				else
-					chance = 0.25 + (valMainSkill - minMainSkill) * 0.0025;
+            if (allRequiredSkills)
+            {
+                if (IsEquip(this.ItemType))
+                    chance = 0.1 + (valMainSkill - minMainSkill) * 0.001;
+                else
+                    chance = 0.25 + (valMainSkill - minMainSkill) * 0.0025;
 
-				// 2. 제작 숙련 보너스: 스킬 50.0 이상 시 10% 가산
-				if (valMainSkill >= 50)
-				{
-					chance += 0.1; 
-				}
+                if (valMainSkill >= 50) chance += 0.1; 
 
-				// 3. 연금술 및 요리 마스터 최소 확률 보장 (100.0 이상일 때)
-				// 계산된 확률이 50%(0.5)보다 낮더라도 최소 50%로 고정합니다.
-				if (valMainSkill >= 100 && (craftSystem.MainSkill == SkillName.Alchemy || craftSystem.MainSkill == SkillName.Cooking))
-				{
-					if (chance < 0.5)
-						chance = 0.5;
-				}
+                if (valMainSkill >= 100 && (craftSystem.MainSkill == SkillName.Alchemy || craftSystem.MainSkill == SkillName.Cooking))
+                {
+                    if (chance < 0.5) chance = 0.5;
+                }
 
-				// 4. 하우징 보너스: 집 주인이라면 5% 가산
-				BaseHouse house = BaseHouse.FindHouseAt(from);
-				if (house != null && house.IsOwner(from))
-					chance += 0.05;
+                BaseHouse house = BaseHouse.FindHouseAt(from);
+                if (house != null && house.IsOwner(from))
+                    chance += 0.05;
 
-				// 5. 하한선 보정 (0 미만 방지)
-				if (chance < 0)
-					chance = 0;
-			}
-			else
-			{
-				chance = 0.0;
-			}
+                // [추가] 제작 숙련도 마일스톤 연산
+                if (from is PlayerMobile pm)
+                {
+                    CraftType cat = GetCategoryFromSystem(craftSystem);
+                    CraftType type = CraftMastery.ParseCraftType(this.ItemType, cat);
 
-			// 6. 탈리스만 보너스 (기존 로직 유지)
-			if (allRequiredSkills && from.Talisman is BaseTalisman)
-			{
-				BaseTalisman talisman = (BaseTalisman)from.Talisman;
+                    // 총합 Lv. 10: 기본 성공률 5% 증가
+                    if (cat != CraftType.None && pm.CraftPoint[(int)cat + CraftMastery.LevelOffset] >= 10)
+                        chance += 0.05;
 
-				if (talisman.CheckSkill(craftSystem))
-				{
-					chance += talisman.SuccessBonus / 100.0;
-				}
-			}
+                    // 개별 Lv. 1~100: 레벨당 0.2% 증가
+                    if (type != CraftType.None)
+                    {
+                        int indivLevel = pm.CraftPoint[(int)type + CraftMastery.LevelOffset];
+                        chance += (indivLevel * 0.002);
+                    }
+                }
 
-			// 최종 100% 캡 보정
-			if (chance > 1.0) chance = 1.0;
+                if (chance < 0) chance = 0;
+            }
+            else
+            {
+                chance = 0.0;
+            }
 
-			return chance;
-		}
+            if (allRequiredSkills && from.Talisman is BaseTalisman)
+            {
+                BaseTalisman talisman = (BaseTalisman)from.Talisman;
+                if (talisman.CheckSkill(craftSystem))
+                {
+                    chance += talisman.SuccessBonus / 100.0;
+                }
+            }
+
+            if (chance > 1.0) chance = 1.0;
+
+            return chance;
+        }
 		//private int buffbonus = 0;
 		//private int[] buffpoint = { 100, 250, 500, 1000, 2000 };
         private void MultipleSkillCheck(Mobile from, int amount)
@@ -1476,7 +1483,7 @@ namespace Server.Engines.Craft
             }
         }
 
-        public void Craft(Mobile from, CraftSystem craftSystem, Type typeRes, ITool tool)
+public void Craft(Mobile from, CraftSystem craftSystem, Type typeRes, ITool tool)
 		{
 			int timecheck = 0;
 			if (from.BeginAction(typeof(CraftSystem)))
@@ -1488,109 +1495,125 @@ namespace Server.Engines.Craft
 					double chance = GetSuccessChance(from, typeRes, craftSystem, false, ref allRequiredSkills);
 					if (allRequiredSkills && chance >= 0.0)
 					{
-                        if (Recipe == null || !(from is PlayerMobile) || ((PlayerMobile)from).HasRecipe(Recipe))
-                        {
-                            if (!RequiresBasketWeaving || (from is PlayerMobile && ((PlayerMobile)from).BasketWeaving))
-                            {
-                                if (!RequiresMechanicalLife || (from is PlayerMobile && ((PlayerMobile)from).MechanicalLife))
-                                {
-                                    int badCraft = craftSystem.CanCraft(from, tool, ItemType);
+						if (Recipe == null || !(from is PlayerMobile) || ((PlayerMobile)from).HasRecipe(Recipe))
+						{
+							if (!RequiresBasketWeaving || (from is PlayerMobile && ((PlayerMobile)from).BasketWeaving))
+							{
+								if (!RequiresMechanicalLife || (from is PlayerMobile && ((PlayerMobile)from).MechanicalLife))
+								{
+									int badCraft = craftSystem.CanCraft(from, tool, ItemType);
 
-                                    if (badCraft <= 0)
-                                    {
-                                        if (RequiresResTarget && NeedsResTarget(from, craftSystem))
-                                        {
-                                            from.Target = new ChooseResTarget(from, this, craftSystem, typeRes, tool);
-                                            from.SendMessage("Choose the resource you would like to use.");
-                                            return;
-                                        }
+									if (badCraft <= 0)
+									{
+										if (RequiresResTarget && NeedsResTarget(from, craftSystem))
+										{
+											from.Target = new ChooseResTarget(from, this, craftSystem, typeRes, tool);
+											from.SendMessage("Choose the resource you would like to use.");
+											return;
+										}
 
-                                        int resHue = 0;
-                                        int maxAmount = 0;
-                                        object message = null;
+										// ==========================================
+										// [변경점 1] 틱 수(iRandom) 선계산
+										// ==========================================
+										int iRandom = 2; 
+										SkillName mainSkill = craftSystem.MainSkill;
+										bool isEquipmentItem = this.IsEquip(ItemType);
 
-                                        if (ConsumeRes(from, typeRes, craftSystem, ref resHue, ref maxAmount, ConsumeType.None, ref message))
-                                        {
-                                            message = null;
+										if (isEquipmentItem)
+										{
+											iRandom = 4;
+											if (typeRes != null)
+											{
+												CraftSubResCol resCol = (UseSubRes2 ? craftSystem.CraftSubRes2 : craftSystem.CraftSubRes);
+												for (int i = 0; i < resCol.Count; ++i)
+												{
+													CraftSubRes subRes = resCol.GetAt(i);
+													if (subRes.ItemType == typeRes)
+													{
+														iRandom += i;
+														break;
+													}
+												}
+											}
 
-                                            if (ConsumeAttributes(from, ref message, false))
-                                            {
+											if (from.Skills[mainSkill].Value >= 200.0)
+												iRandom -= 3;
+
+											double armsLore = from.Skills[SkillName.ArmsLore].Value;
+											iRandom -= (int)(armsLore / 50.0);
+										}
+										else
+										{
+											iRandom = 2;
+											if (from.Skills[mainSkill].Value >= 200.0)
+												iRandom -= 1;
+										}
+
+										// [개별 Lv. 25 보너스] 제작 시간(틱) 단축
+										if (from is PlayerMobile pm_delay)
+										{
+											CraftType cat = GetCategoryFromSystem(craftSystem);
+											CraftType type = CraftMastery.ParseCraftType(ItemType, cat);
+											if (type != CraftType.None)
+											{
+												int indivLevel = pm_delay.CraftPoint[(int)type + CraftMastery.LevelOffset];
+												int delayDiscount = Math.Min(4, indivLevel / 25);
+												iRandom -= delayDiscount;
+											}
+										}
+
+										// 최종 보정 (최소 2 유지)
+										if (iRandom < 2) iRandom = 2;
+
+										// ==========================================
+										// [변경점 2] 틱당 기력 계산 및 총 기력 선검사
+										// ==========================================
+										// Def 파일에 Stam이 지정되어 있지 않으면 틱당 기본값 5로 세팅
+										int baseStam = this.Stam > 0 ? this.Stam : 5; 
+										int staminaPerTick = baseStam;
+
+										if (from is PlayerMobile pm_stam)
+										{
+											CraftType cat = GetCategoryFromSystem(craftSystem);
+											if (cat != CraftType.None)
+											{
+												int totalLevel = pm_stam.CraftPoint[(int)cat + CraftMastery.LevelOffset];
+												int discount = Math.Min(4, totalLevel / 25);
+												
+												// 마스터리 할인을 아무리 받아도 최소 1의 기력은 달도록 방어
+												staminaPerTick = Math.Max(1, baseStam - discount); 
+											}
+										}
+
+										// 필요한 총 기력 = 틱당 기력 * 총 틱수
+										int totalStaminaNeeded = staminaPerTick * iRandom;
+
+										// 기력이 부족하면 아예 시작(애니메이션)도 못하게 즉시 취소
+										if (from.Stam < totalStaminaNeeded)
+										{
+											from.EndAction(typeof(CraftSystem));
+											from.SendMessage(0x22, $"기력이 너무 부족하여 작업을 시작할 수 없습니다. (필요 기력: {totalStaminaNeeded})");
+											return;
+										}
+										// ==========================================
+
+										int resHue = 0;
+										int maxAmount = 0;
+										object message = null;
+
+										if (ConsumeRes(from, typeRes, craftSystem, ref resHue, ref maxAmount, ConsumeType.None, ref message))
+										{
+											message = null;
+
+											if (ConsumeAttributes(from, ref message, false))
+											{
 												CraftContext context = craftSystem.GetContext(from);
 
-                                                if (context != null)
-                                                {
-                                                    context.OnMade(this);
-                                                }
-
-												/*
-                                                int iMin = craftSystem.MinCraftEffect;
-                                                int iMax = (craftSystem.MaxCraftEffect - iMin) + 1;
-                                                int iRandom = Utility.Random(iMax);
-                                                iRandom += iMin + 1;
-												*/
-												
-												//iRandom - 1당 애니메이션(0.5초) 증가. iRandom이 1이면 버그 있음(에니메이션 발동 안하고 즉시 만들어짐). 만약 3회 제작을 시키려면 iRandom 4를 넣으면 됨.
-												/*
-													제작 기획
-													장비 제작 : 제작 4회. 재료 등급이 오르면 제작 수 1씩 증가. 제작술이 200이면 제작 수 3 감소. 장비학 50당 제작 수 1씩 감소(200이면 4 감소). 최소 제작 1회는 필요(iRandom = 1)
-													그외 제작 : 제작 2회. 제작술이 200이면 제작 1회
-												*/
-												//예시. 제작 스킬이 200인 경우 1번만에 제작
-												//if( from.Skills[craftSystem.MainSkill].Value >= 200 )
-												//if( ( craftSystem.MainSkill is SkillName.Blacksmith || craftSystem.MainSkill is SkillName.Fletching || craftSystem.MainSkill is SkillName.Carpentry || craftSystem.MainSkill is SkillName.Tinkering || 
-												//craftSystem.MainSkill is SkillName.Tailoring || craftSystem.MainSkill is SkillName.Inscribe ) && from.Skills[craftSystem.MainSkill].Value >= 200 )
-												
-												// 1. 기본 변수 설정
-												int iRandom = 2; 
-												SkillName mainSkill = craftSystem.MainSkill;
-
-												// 2. 이미 구현된 IsEquip 메서드 활용 (m_Type은 CraftItem의 멤버 변수)
-												// 이 메서드는 m_EquipTable을 순회하며 장비 여부를 판별합니다.
-												bool isEquipmentItem = this.IsEquip(ItemType);
-
-												if (isEquipmentItem)
+												if (context != null)
 												{
-													// [장비 제작] 기본 애니메이션 3회 (iRandom 4)
-													iRandom = 4;
-
-													// 3. 자원 등급 가산 (인덱스 기반)
-													if (typeRes != null)
-													{
-														CraftSubResCol resCol = (UseSubRes2 ? craftSystem.CraftSubRes2 : craftSystem.CraftSubRes);
-														
-														for (int i = 0; i < resCol.Count; ++i)
-														{
-															CraftSubRes subRes = resCol.GetAt(i);
-															
-															if (subRes.ItemType == typeRes)
-															{
-																// Dull Copper 등이 삭제되었어도 현재 리스트 순서(i)만큼 정직하게 가산됩니다.
-																iRandom += i;
-																break;
-															}
-														}
-													}
-
-													// 4. 숙련도 보너스 차감
-													if (from.Skills[mainSkill].Value >= 200.0)
-														iRandom -= 3;
-
-													double armsLore = from.Skills[SkillName.ArmsLore].Value;
-													iRandom -= (int)(armsLore / 50.0);
-												}
-												else
-												{
-													// [일반 제작] 기본 애니메이션 1회 (iRandom 2)
-													iRandom = 2;
-
-													if (from.Skills[mainSkill].Value >= 200.0)
-														iRandom -= 1;
+													context.OnMade(this);
 												}
 
-												// 5. 최종 보정 (최소 2 유지 - 애니메이션 버그 방지)
-												if (iRandom < 2)
-													iRandom = 2;
-											
 												timecheck = iRandom * 5;
 												if( from is PlayerMobile )
 												{
@@ -1599,52 +1622,45 @@ namespace Server.Engines.Craft
 													pm.TimerList[71] = timecheck;
 												}
 												
-                                                new InternalTimer(from, craftSystem, this, typeRes, tool, iRandom).Start();
-                                                return;
-                                            }
-                                            else
-                                            {
-                                                from.EndAction(typeof(CraftSystem));
-                                                from.SendGump(new CraftGump(from, craftSystem, tool, message));
-                                            }
-                                        }
-                                        else
-                                        {
-                                            from.EndAction(typeof(CraftSystem));
-                                            from.SendGump(new CraftGump(from, craftSystem, tool, message));
-                                        }
-                                        if (RequiresResTarget && NeedsResTarget(from, craftSystem))
-                                        {
-                                            from.Target = new ChooseResTarget(from, this, craftSystem, typeRes, tool);
-                                            from.SendMessage("Choose the resource you would like to use.");
-                                            return;
-                                        }
-
-
+												// InternalTimer에 틱당 기력(staminaPerTick) 값을 넘겨서 타이머 안에서 차감되게 함
+												new InternalTimer(from, craftSystem, this, typeRes, tool, iRandom, staminaPerTick).Start();
+												return;
+											}
+											else
+											{
+												from.EndAction(typeof(CraftSystem));
+												from.SendGump(new CraftGump(from, craftSystem, tool, message));
+											}
+										}
+										else
+										{
+											from.EndAction(typeof(CraftSystem));
+											from.SendGump(new CraftGump(from, craftSystem, tool, message));
+										}
 									}
-                                    else
-                                    {
-                                        from.EndAction(typeof(CraftSystem));
-                                        from.SendGump(new CraftGump(from, craftSystem, tool, badCraft));
-                                    }
-                                }
-                                else
-                                {
-                                    from.EndAction(typeof(CraftSystem));
-                                    from.SendGump(new CraftGump(from, craftSystem, tool, 1113034)); // You haven't read the Mechanical Life Manual. Talking to Sutek might help!
-                                }
-                            }
-                            else
-                            {
-                                from.EndAction(typeof(CraftSystem));
-                                from.SendGump(new CraftGump(from, craftSystem, tool, 1112253)); // You haven't learned basket weaving. Perhaps studying a book would help!
-                            }
-                        }
-                        else
-                        {
-                            from.EndAction(typeof(CraftSystem));
-                            from.SendGump(new CraftGump(from, craftSystem, tool, 1072847)); // You must learn that recipe from a scroll.
-                        }
+									else
+									{
+										from.EndAction(typeof(CraftSystem));
+										from.SendGump(new CraftGump(from, craftSystem, tool, badCraft));
+									}
+								}
+								else
+								{
+									from.EndAction(typeof(CraftSystem));
+									from.SendGump(new CraftGump(from, craftSystem, tool, 1113034)); // You haven't read the Mechanical Life Manual. Talking to Sutek might help!
+								}
+							}
+							else
+							{
+								from.EndAction(typeof(CraftSystem));
+								from.SendGump(new CraftGump(from, craftSystem, tool, 1112253)); // You haven't learned basket weaving. Perhaps studying a book would help!
+							}
+						}
+						else
+						{
+							from.EndAction(typeof(CraftSystem));
+							from.SendGump(new CraftGump(from, craftSystem, tool, 1072847)); // You must learn that recipe from a scroll.
+						}
 					}
 					else
 					{
@@ -1665,7 +1681,7 @@ namespace Server.Engines.Craft
 				from.SendLocalizedMessage(500119); // You must wait to perform another action
 			}
 			//종료 시점
-            AutoCraftTimer.EndTimer(from);
+			AutoCraftTimer.EndTimer(from);
 		}
 
 		private object RequiredExpansionMessage(Expansion expansion)
@@ -1688,177 +1704,163 @@ namespace Server.Engines.Craft
 		}
 
         public void CompleteCraft(
-			int quality,
-			bool makersMark,
-			Mobile from,
-			CraftSystem craftSystem,
-			Type typeRes,
-			ITool tool,
-			CustomCraft customCraft
-			)
-		{
-			int badCraft = craftSystem.CanCraft(from, tool, ItemType);
+            int quality, bool makersMark, Mobile from, CraftSystem craftSystem,
+            Type typeRes, ITool tool, CustomCraft customCraft)
+        {
+            int badCraft = craftSystem.CanCraft(from, tool, ItemType);
 
             if (badCraft > 0)
-			{
-				if (tool != null && !tool.Deleted && tool.UsesRemaining > 0)
-				{
-					from.SendGump(new CraftGump(from, craftSystem, tool, badCraft));
-				}
-				else
-				{
-					from.SendLocalizedMessage(badCraft);
-				}
+            {
+                if (tool != null && !tool.Deleted && tool.UsesRemaining > 0)
+                    from.SendGump(new CraftGump(from, craftSystem, tool, badCraft));
+                else
+                    from.SendLocalizedMessage(badCraft);
 
                 AutoCraftTimer.EndTimer(from);
+                return;
+            }
 
-				return;
-			}
+            int checkResHue = 0, checkMaxAmount = 0;
+            object checkMessage = null;
 
-			int checkResHue = 0, checkMaxAmount = 0;
-			object checkMessage = null;
-
-			// Not enough resource to craft it
-			if (!ConsumeRes(from, typeRes, craftSystem, ref checkResHue, ref checkMaxAmount, ConsumeType.None, ref checkMessage))
-			{
-				if (tool != null && !tool.Deleted && tool.UsesRemaining > 0)
-				{
-					from.SendGump(new CraftGump(from, craftSystem, tool, checkMessage));
-				}
-				else if (checkMessage is int && (int)checkMessage > 0)
-				{
-					from.SendLocalizedMessage((int)checkMessage);
-				}
-				else if (checkMessage is string)
-				{
-					from.SendMessage((string)checkMessage);
-				}
+            if (!ConsumeRes(from, typeRes, craftSystem, ref checkResHue, ref checkMaxAmount, ConsumeType.None, ref checkMessage))
+            {
+                if (tool != null && !tool.Deleted && tool.UsesRemaining > 0)
+                    from.SendGump(new CraftGump(from, craftSystem, tool, checkMessage));
+                else if (checkMessage is int && (int)checkMessage > 0)
+                    from.SendLocalizedMessage((int)checkMessage);
+                else if (checkMessage is string)
+                    from.SendMessage((string)checkMessage);
 
                 AutoCraftTimer.EndTimer(from);
-
-				return;
-			}
-			else if (!ConsumeAttributes(from, ref checkMessage, false))
-			{
-				if (tool != null && !tool.Deleted && tool.UsesRemaining > 0)
-				{
-					from.SendGump(new CraftGump(from, craftSystem, tool, checkMessage));
-				}
-				else if (checkMessage is int && (int)checkMessage > 0)
-				{
-					from.SendLocalizedMessage((int)checkMessage);
-				}
-				else if (checkMessage is string)
-				{
-					from.SendMessage((string)checkMessage);
-				}
+                return;
+            }
+            else if (!ConsumeAttributes(from, ref checkMessage, false))
+            {
+                if (tool != null && !tool.Deleted && tool.UsesRemaining > 0)
+                    from.SendGump(new CraftGump(from, craftSystem, tool, checkMessage));
+                else if (checkMessage is int && (int)checkMessage > 0)
+                    from.SendLocalizedMessage((int)checkMessage);
+                else if (checkMessage is string)
+                    from.SendMessage((string)checkMessage);
 
                 AutoCraftTimer.EndTimer(from);
+                return;
+            }
 
-				return;
-			}
+            bool toolBroken = false;
+            int ignored = 1;
+            int endquality = 1;
+            bool allRequiredSkills = true;
+            object message = null;
 
-			bool toolBroken = false;
+            // [추가] 숙련도 보너스 변수 사전 세팅
+            bool freeCraft = false;
+            bool doubleCraft = false;
+            bool toolProtect = false;
+            CraftType parsedType = CraftType.None;
 
-			int ignored = 1;
-			int endquality = 1;
+            if (from is PlayerMobile pm_logic)
+            {
+                CraftType cat = GetCategoryFromSystem(craftSystem);
+                parsedType = CraftMastery.ParseCraftType(ItemType, cat);
 
-			bool allRequiredSkills = true;
+                if (cat != CraftType.None)
+                {
+                    int totalLevel = pm_logic.CraftPoint[(int)cat + CraftMastery.LevelOffset];
+                    if (totalLevel >= 100 && Utility.RandomDouble() < 0.05) doubleCraft = true;
+                    if (Utility.RandomDouble() < (totalLevel * 0.003)) toolProtect = true; // 총합 1렙당 0.3%
+                }
 
-			object message = null;
-			if (!ConsumeAttributes(from, ref message, true))
-			{
-				if (tool != null && !tool.Deleted && tool.UsesRemaining > 0)
-				{
-					from.SendGump(new CraftGump(from, craftSystem, tool, message));
-				}
-				else if (message is int && (int)message > 0)
-				{
-					from.SendLocalizedMessage((int)message);
-				}
-				else if (message is string)
-				{
-					from.SendMessage((string)message);
-				}
+                if (parsedType != CraftType.None)
+                {
+                    int indivLevel = pm_logic.CraftPoint[(int)parsedType + CraftMastery.LevelOffset];
+                    if (indivLevel >= 100 && Utility.RandomDouble() < 0.05) freeCraft = true;
+                }
+            }
 
-				AutoCraftTimer.EndTimer(from);
+            if (!ConsumeAttributes(from, ref message, true))
+            {
+                if (tool != null && !tool.Deleted && tool.UsesRemaining > 0)
+                    from.SendGump(new CraftGump(from, craftSystem, tool, message));
+                else if (message is int && (int)message > 0)
+                    from.SendLocalizedMessage((int)message);
+                else if (message is string)
+                    from.SendMessage((string)message);
 
-				return;
-			}
-			else if (CheckSkills(from, typeRes, craftSystem, ref ignored, ref allRequiredSkills, checkMaxAmount))
-			{
-				// Resource
-				int resHue = 0;
-				int maxAmount = 0;
+                AutoCraftTimer.EndTimer(from);
+                return;
+            }
+            else if (CheckSkills(from, typeRes, craftSystem, ref ignored, ref allRequiredSkills, checkMaxAmount))
+            {
+                // Resource
+                int resHue = 0;
+                int maxAmount = 0;
 
-				// Not enough resource to craft it
-				if (!ConsumeRes(from, typeRes, craftSystem, ref resHue, ref maxAmount, ConsumeType.All, ref message))
-				{
-					if (tool != null && !tool.Deleted && tool.UsesRemaining > 0)
-					{
-						from.SendGump(new CraftGump(from, craftSystem, tool, message));
-					}
-					else if (message is int && (int)message > 0)
-					{
-						from.SendLocalizedMessage((int)message);
-					}
-					else if (message is string)
-					{
-						from.SendMessage((string)message);
-					}
+                // [수정] 개별 100렙 무료 제작 적용
+                if (freeCraft)
+                {
+                    maxAmount = 1; // 재료 없이 최소 1개 보장
+                    from.SendMessage(0x35, "장인의 솜씨가 발휘되어 재료를 소모하지 않고 무료로 제작했습니다!");
+                }
+                else if (!ConsumeRes(from, typeRes, craftSystem, ref resHue, ref maxAmount, ConsumeType.All, ref message))
+                {
+                    if (tool != null && !tool.Deleted && tool.UsesRemaining > 0)
+                        from.SendGump(new CraftGump(from, craftSystem, tool, message));
+                    else if (message is int && (int)message > 0)
+                        from.SendLocalizedMessage((int)message);
+                    else if (message is string)
+                        from.SendMessage((string)message);
 
                     AutoCraftTimer.EndTimer(from);
+                    return;
+                }
 
-					return;
-				}
                 if (UseAllRes && maxAmount > 0)
                 {
                     MultipleSkillCheck(from, maxAmount);
                 }
 
-				if (craftSystem is DefBlacksmithy)
-				{
-					AncientSmithyHammer hammer = from.FindItemOnLayer(Layer.OneHanded) as AncientSmithyHammer;
-					if (hammer != null && hammer != tool)
-					{
-						#region Mondain's Legacy
-						if (hammer is HammerOfHephaestus)
-						{
-							if (hammer.UsesRemaining > 0)
-							{
-								hammer.UsesRemaining--;
-							}
+                if (craftSystem is DefBlacksmithy)
+                {
+                    AncientSmithyHammer hammer = from.FindItemOnLayer(Layer.OneHanded) as AncientSmithyHammer;
+                    if (hammer != null && hammer != tool)
+                    {
+                        #region Mondain's Legacy
+                        if (hammer is HammerOfHephaestus)
+                        {
+                            if (!toolProtect && hammer.UsesRemaining > 0)
+                                hammer.UsesRemaining--;
+                            else if (toolProtect)
+                                from.SendMessage(0x44, "능숙한 손길로 제작 도구의 내구도를 보호했습니다.");
 
-							if (hammer.UsesRemaining < 1)
-							{
-								from.PlaceInBackpack(hammer);
-							}
-						}
-						else
-						{
-							hammer.UsesRemaining--;
+                            if (hammer.UsesRemaining < 1)
+                                from.PlaceInBackpack(hammer);
+                        }
+                        else
+                        {
+                            if (!toolProtect) hammer.UsesRemaining--;
+                            else from.SendMessage(0x44, "능숙한 손길로 제작 도구의 내구도를 보호했습니다.");
 
-							if (hammer.UsesRemaining < 1)
-							{
-								hammer.Delete();
-							}
-						}
-						#endregion
-					}
-				}
+                            if (hammer.UsesRemaining < 1)
+                                hammer.Delete();
+                        }
+                        #endregion
+                    }
+                }
 
-				int num = 0;
+                int num = 0;
+                Item item;
 
-				Item item;
-				if (customCraft != null)
-				{
-					item = customCraft.CompleteCraft(out num);
-				}
-				else if (!Core.SA && typeof(MapItem).IsAssignableFrom(ItemType) && from.Map != Map.Trammel && from.Map != Map.Felucca)
-				{
-					item = new IndecipherableMap();
-					from.SendLocalizedMessage(1070800); // The map you create becomes mysteriously indecipherable.
-				}
+                if (customCraft != null)
+                {
+                    item = customCraft.CompleteCraft(out num);
+                }
+                else if (!Core.SA && typeof(MapItem).IsAssignableFrom(ItemType) && from.Map != Map.Trammel && from.Map != Map.Felucca)
+                {
+                    item = new IndecipherableMap();
+                    from.SendLocalizedMessage(1070800);
+                }
                 else if (CreateItem != null)
                 {
                     item = CreateItem(from, this, tool);
@@ -1868,52 +1870,33 @@ namespace Server.Engines.Craft
                     item = Activator.CreateInstance(ItemType) as Item;
                 }
 
-				if (item != null)
-				{
-					#region Mondain's Legacy
-					if (item is Board)
-					{
-						Type resourceType = typeRes;
+                if (item != null)
+                {
+                    #region Mondain's Legacy
+                    if (item is Board)
+                    {
+                        Type resourceType = typeRes;
+                        if (resourceType == null)
+                            resourceType = Resources.GetAt(0).ItemType;
 
-						if (resourceType == null)
-						{
-							resourceType = Resources.GetAt(0).ItemType;
-						}
-
-						CraftResource thisResource = CraftResources.GetFromType(resourceType);
+                        CraftResource thisResource = CraftResources.GetFromType(resourceType);
                         Item oldItem = item;
 
-						switch (thisResource)
-						{
-							case CraftResource.OakWood:
-								item = new OakBoard();
-								break;
-							case CraftResource.AshWood:
-								item = new AshBoard();
-								break;
-							case CraftResource.YewWood:
-								item = new YewBoard();
-								break;
-							case CraftResource.Heartwood:
-								item = new HeartwoodBoard();
-								break;
-							case CraftResource.Bloodwood:
-								item = new BloodwoodBoard();
-								break;
-							case CraftResource.Frostwood:
-								item = new FrostwoodBoard();
-								break;
-							default:
-								item = new Board();
-								break;
-						}
+                        switch (thisResource)
+                        {
+                            case CraftResource.OakWood: item = new OakBoard(); break;
+                            case CraftResource.AshWood: item = new AshBoard(); break;
+                            case CraftResource.YewWood: item = new YewBoard(); break;
+                            case CraftResource.Heartwood: item = new HeartwoodBoard(); break;
+                            case CraftResource.Bloodwood: item = new BloodwoodBoard(); break;
+                            case CraftResource.Frostwood: item = new FrostwoodBoard(); break;
+                            default: item = new Board(); break;
+                        }
 
                         if (item != oldItem)
-                        {
                             oldItem.Delete();
-                        }
-					}
-					#endregion
+                    }
+                    #endregion
 
                     #region High Seas
                     if (Core.HS && item is MapItem)
@@ -1923,43 +1906,28 @@ namespace Server.Engines.Craft
                     CraftContext context = craftSystem.GetContext(from);
                     int originalHue = item.Hue;
 
-					if (item is ICraftable)
-					{
-						endquality = ((ICraftable)item).OnCraft(quality, makersMark, from, craftSystem, typeRes, tool, this, resHue);
-					}
-					else if (item is Food)
-					{
-						((Food)item).PlayerConstructed = true;
-					}
-					else if (item.Hue == 0)
-					{
-						item.Hue = resHue;
-					}
+                    if (item is ICraftable)
+                        endquality = ((ICraftable)item).OnCraft(quality, makersMark, from, craftSystem, typeRes, tool, this, resHue);
+                    else if (item is Food)
+                        ((Food)item).PlayerConstructed = true;
+                    else if (item.Hue == 0)
+                        item.Hue = resHue;
 
                     if (item.Hue == 0 && RetainsColorFromCloth(item) && m_ClothHue != 0)
-                    {
                         item.Hue = m_ClothHue;
-                    }
 
-                    // This takes into account for natural hues, ie plant hues
                     if (item.Hue != originalHue && context.DoNotColor)
-                    {
                         item.Hue = originalHue;
+
+                    if (maxAmount > 0)
+                    {
+                        if (!item.Stackable && item is IUsesRemaining)
+                            ((IUsesRemaining)item).UsesRemaining *= maxAmount;
+                        else
+                            item.Amount = maxAmount;
                     }
 
-					if (maxAmount > 0)
-					{
-						if (!item.Stackable && item is IUsesRemaining)
-						{
-							((IUsesRemaining)item).UsesRemaining *= maxAmount;
-						}
-						else
-						{
-							item.Amount = maxAmount;
-						}
-					}
-
-					#region Plant Pigments
+                    #region Plant Pigments
                     if (m_PlantHue != PlantHue.None)
                     {
                         if (item is IPlantHue)
@@ -1975,32 +1943,27 @@ namespace Server.Engines.Craft
                     if (context.QuestOption == CraftQuestOption.QuestItem)
                     {
                         PlayerMobile px = from as PlayerMobile;
-
                         if (!QuestHelper.CheckItem(px, item))
-                            from.SendLocalizedMessage(1072355, null, 0x23); // That item does not match any of your quest criteria	
+                            from.SendLocalizedMessage(1072355, null, 0x23);
                     }
 
                     context.RequiredPigmentHue = PlantPigmentHue.None;
                     context.RequiredPlantHue = PlantHue.None;
-
                     m_PlantHue = PlantHue.None;
                     m_PlantPigmentHue = PlantPigmentHue.None;
-					#endregion
+                    #endregion
 
-                    MutateAction?.Invoke(from,item,tool);
+                    MutateAction?.Invoke(from, item, tool);
 
                     if (CaddelliteCraft)
-                    {
                         Caddellite.TryInfuse(from, item, craftSystem);
-                    }
 
                     if (tool is Item && ((Item)tool).Parent is Container)
                     {
                         Container cntnr = (Container)((Item)tool).Parent;
-
                         if (!cntnr.TryDropItem(from, item, false))
                         {
-                            if(cntnr != from.Backpack)
+                            if (cntnr != from.Backpack)
                                 from.AddToBackpack(item);
                             else
                                 item.MoveToWorld(from.Location, from.Map);
@@ -2011,227 +1974,222 @@ namespace Server.Engines.Craft
                         from.AddToBackpack(item);
                     }
 
+                    // [추가] 총합 100레벨 더블 크래프트 복사 로직
+                    if (doubleCraft)
+                    {
+                        from.SendMessage(0x35, "장인의 기적으로 동일한 물건이 2개 생성되었습니다!");
+                        try 
+                        {
+                            Item duplicate = Activator.CreateInstance(item.GetType()) as Item;
+                            if (duplicate != null)
+                            {
+                                duplicate.Hue = item.Hue;
+                                if (duplicate is ICraftable) ((ICraftable)duplicate).OnCraft(quality, makersMark, from, craftSystem, typeRes, tool, this, resHue);
+                                if (item.Amount > 1) duplicate.Amount = item.Amount;
+                                
+                                if (tool is Item && ((Item)tool).Parent is Container)
+                                {
+                                    Container cntnr = (Container)((Item)tool).Parent;
+                                    if (!cntnr.TryDropItem(from, duplicate, false))
+                                        from.AddToBackpack(duplicate);
+                                }
+                                else
+                                {
+                                    from.AddToBackpack(duplicate);
+                                }
+                            }
+                        } catch {}
+                    }
+
                     EventSink.InvokeCraftSuccess(new CraftSuccessEventArgs(from, item, tool is Item ? (Item)tool : null));
 
-					if (from.IsStaff())
-					{
-						CommandLogging.WriteLine(
-							from, "Crafting {0} with craft system {1}", CommandLogging.Format(item), craftSystem.GetType().Name);
-					}
-				}
+                    // [추가] 제작 성공 시 경험치(EXP) 상승 연산
+                    if (parsedType != CraftType.None && from is PlayerMobile pm_exp)
+                    {
+                        CraftMastery.AddExp(pm_exp, parsedType, 1);
+                    }
 
-                tool.UsesRemaining--;
+                    if (from.IsStaff())
+                    {
+                        CommandLogging.WriteLine(
+                            from, "Crafting {0} with craft system {1}", CommandLogging.Format(item), craftSystem.GetType().Name);
+                    }
+                }
+
+                // [수정] 일반 공구 내구도 소모 제어
+                if (!toolProtect) tool.UsesRemaining--;
+                else from.SendMessage(0x44, "능숙한 손길로 제작 도구의 내구도를 보호했습니다.");
 
                 #region Mondain's Legacy
                 if (tool is HammerOfHephaestus)
                 {
                     if (tool.UsesRemaining < 1)
-                    {
                         tool.UsesRemaining = 0;
-                    }
                 }
                 #endregion
                 else
                 {
                     if (tool.UsesRemaining < 1 && tool.BreakOnDepletion)
                     {
-						Container pack = from.Backpack;
-						ITool NextTool = null;
-						if( pack != null )
-						{
-							List<Item> tools = pack.FindItemsByType<Item>();
-							for ( int i = tools.Count -1; i >= 0; i--)
-							{
-								Item toolitem = tools[i];
-								if( toolitem is BaseTool )
-								{
-									BaseTool newTool = toolitem as BaseTool;
-									if( tool is BaseTool )
-									{
-										BaseTool oldTool = tool as BaseTool; 
-										if( newTool is IUsesRemaining )
-										{
-											if( newTool.ItemID == oldTool.ItemID && oldTool != newTool )
-											{
-												NextTool = newTool;
-												break;
-											}
-										}
-									}
-								}
-							}
-						}
+                        Container pack = from.Backpack;
+                        ITool NextTool = null;
+                        if( pack != null )
+                        {
+                            List<Item> tools = pack.FindItemsByType<Item>();
+                            for ( int i = tools.Count -1; i >= 0; i--)
+                            {
+                                Item toolitem = tools[i];
+                                if( toolitem is BaseTool )
+                                {
+                                    BaseTool newTool = toolitem as BaseTool;
+                                    if( tool is BaseTool )
+                                    {
+                                        BaseTool oldTool = tool as BaseTool; 
+                                        if( newTool is IUsesRemaining )
+                                        {
+                                            if( newTool.ItemID == oldTool.ItemID && oldTool != newTool )
+                                            {
+                                                NextTool = newTool;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
 
-						tool.Delete();
-						if( NextTool != null )
-							tool = NextTool;
-						else
-						{
-							toolBroken = true;
-							if( from is PlayerMobile )
-							{
-								PlayerMobile pm = from as PlayerMobile;
-								pm.Loop = false;
-							}						
-						}
+                        tool.Delete();
+                        if( NextTool != null )
+                            tool = NextTool;
+                        else
+                        {
+                            toolBroken = true;
+                            if( from is PlayerMobile )
+                            {
+                                PlayerMobile pm_loop = from as PlayerMobile;
+                                pm_loop.Loop = false;
+                            }                       
+                        }
                     }
                 }
 
-				if (num == 0)
-				{
-					num = craftSystem.PlayEndingEffect(from, false, true, toolBroken, endquality, makersMark, this);
-				}
+                if (num == 0)
+                    num = craftSystem.PlayEndingEffect(from, false, true, toolBroken, endquality, makersMark, this);
 
-				bool queryFactionImbue = false;
-				int availableSilver = 0;
-				FactionItemDefinition def = null;
-				Faction faction = null;
+                bool queryFactionImbue = false;
+                int availableSilver = 0;
+                FactionItemDefinition def = null;
+                Faction faction = null;
 
-				if (item is IFactionItem)
-				{
-					def = FactionItemDefinition.Identify(item);
-
-					if (def != null)
-					{
-						faction = Faction.Find(from);
-
-						if (faction != null)
-						{
-							Town town = Town.FromRegion(from.Region);
-
-							if (town != null && town.Owner == faction)
-							{
-								Container pack = from.Backpack;
-
-								if (pack != null)
-								{
-									availableSilver = pack.GetAmount(typeof(Silver));
-
-									if (availableSilver >= def.SilverCost)
-									{
-										queryFactionImbue = Faction.IsNearType(from, def.VendorType, 12);
-									}
-								}
-							}
-						}
-					}
-				}
-
-				// TODO: Scroll imbuing
-
-				if (queryFactionImbue)
-				{
-					from.SendGump(new FactionImbueGump(quality, item, from, craftSystem, tool, num, availableSilver, faction, def));
-				}
-				else if (tool != null && !tool.Deleted && tool.UsesRemaining > 0)
-				{
-					from.SendGump(new CraftGump(from, craftSystem, tool, num));
-				}
-				else if (num > 0)
-				{
-					from.SendLocalizedMessage(num);
-				}
-			}
-			else if (!allRequiredSkills)
-			{
-				if (tool != null && !tool.Deleted && tool.UsesRemaining > 0)
-				{
-					from.SendGump(new CraftGump(from, craftSystem, tool, 1044153));
-				}
-				else
-				{
-					from.SendLocalizedMessage(1044153); // You don't have the required skills to attempt this item.
-				}
-
-                AutoCraftTimer.EndTimer(from);
-			}
-			else
-			{
-				ConsumeType consumeType = (UseAllRes ? ConsumeType.Half : ConsumeType.All);
-				int resHue = 0;
-				int maxAmount = 0;
-
-				//object message = null;
-
-				// Not enough resource to craft it
-				if (!ConsumeRes(from, typeRes, craftSystem, ref resHue, ref maxAmount, consumeType, ref message, true))
-				{
-					if (tool != null && !tool.Deleted && tool.UsesRemaining > 0)
-					{
-						from.SendGump(new CraftGump(from, craftSystem, tool, message));
-					}
-					else if (message is int && (int)message > 0)
-					{
-						from.SendLocalizedMessage((int)message);
-					}
-					else if (message is string)
-					{
-						from.SendMessage((string)message);
-					}
-
-                    AutoCraftTimer.EndTimer(from);
-
-					return;
-				}
-
-				tool.UsesRemaining--;
-
-                if (tool.UsesRemaining < 1 && tool.BreakOnDepletion)
-				{
-					Container pack = from.Backpack;
-					ITool NextTool = null;
-					if( pack != null )
-					{
-						List<Item> tools = pack.FindItemsByType<Item>();
-						for ( int i = tools.Count -1; i >= 0; i--)
-						{
-							Item item = tools[i];
-							if( item is BaseTool )
-							{
-								BaseTool newTool = item as BaseTool;
-								if( tool is BaseTool )
-								{
-									BaseTool oldTool = tool as BaseTool; 
-									if( newTool is IUsesRemaining )
-									{
-										if( newTool.ItemID == oldTool.ItemID && oldTool != newTool )
-										{
-											NextTool = newTool;
-											break;
-										}
-									}
-								}
-							}
-						}
-					}
-
-					tool.Delete();
-					if( NextTool != null )
-						tool = NextTool;
-					else
-						toolBroken = true;
-				}
-
-                if (UseAllRes)
+                if (item is IFactionItem)
                 {
-                    MultipleSkillCheck(from, 1);
+                    def = FactionItemDefinition.Identify(item);
+                    if (def != null)
+                    {
+                        faction = Faction.Find(from);
+                        if (faction != null)
+                        {
+                            Town town = Town.FromRegion(from.Region);
+                            if (town != null && town.Owner == faction)
+                            {
+                                Container pack = from.Backpack;
+                                if (pack != null)
+                                {
+                                    availableSilver = pack.GetAmount(typeof(Silver));
+                                    if (availableSilver >= def.SilverCost)
+                                        queryFactionImbue = Faction.IsNearType(from, def.VendorType, 12);
+                                }
+                            }
+                        }
+                    }
                 }
 
-                // SkillCheck failed.
+                if (queryFactionImbue)
+                    from.SendGump(new FactionImbueGump(quality, item, from, craftSystem, tool, num, availableSilver, faction, def));
+                else if (tool != null && !tool.Deleted && tool.UsesRemaining > 0)
+                    from.SendGump(new CraftGump(from, craftSystem, tool, num));
+                else if (num > 0)
+                    from.SendLocalizedMessage(num);
+            }
+            else if (!allRequiredSkills)
+            {
+                if (tool != null && !tool.Deleted && tool.UsesRemaining > 0)
+                    from.SendGump(new CraftGump(from, craftSystem, tool, 1044153));
+                else
+                    from.SendLocalizedMessage(1044153); 
+
+                AutoCraftTimer.EndTimer(from);
+            }
+            else
+            {
+                ConsumeType consumeType = (UseAllRes ? ConsumeType.Half : ConsumeType.All);
+                int resHue = 0;
+                int maxAmount = 0;
+
+                if (!ConsumeRes(from, typeRes, craftSystem, ref resHue, ref maxAmount, consumeType, ref message, true))
+                {
+                    if (tool != null && !tool.Deleted && tool.UsesRemaining > 0)
+                        from.SendGump(new CraftGump(from, craftSystem, tool, message));
+                    else if (message is int && (int)message > 0)
+                        from.SendLocalizedMessage((int)message);
+                    else if (message is string)
+                        from.SendMessage((string)message);
+
+                    AutoCraftTimer.EndTimer(from);
+                    return;
+                }
+
+                // [수정] 실패 시 도구 내구도 소모 제어
+                if (!toolProtect) tool.UsesRemaining--;
+                else from.SendMessage(0x44, "제작 도구의 내구도를 보호했습니다.");
+
+                if (tool.UsesRemaining < 1 && tool.BreakOnDepletion)
+                {
+                    Container pack = from.Backpack;
+                    ITool NextTool = null;
+                    if( pack != null )
+                    {
+                        List<Item> tools = pack.FindItemsByType<Item>();
+                        for ( int i = tools.Count -1; i >= 0; i--)
+                        {
+                            Item toolItem = tools[i];
+                            if( toolItem is BaseTool )
+                            {
+                                BaseTool newTool = toolItem as BaseTool;
+                                if( tool is BaseTool )
+                                {
+                                    BaseTool oldTool = tool as BaseTool; 
+                                    if( newTool is IUsesRemaining )
+                                    {
+                                        if( newTool.ItemID == oldTool.ItemID && oldTool != newTool )
+                                        {
+                                            NextTool = newTool;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    tool.Delete();
+                    if( NextTool != null ) tool = NextTool;
+                    else toolBroken = true;
+                }
+
+                if (UseAllRes)
+                    MultipleSkillCheck(from, 1);
+
                 int num = craftSystem.PlayEndingEffect(from, true, true, toolBroken, endquality, false, this);
 
-				if (tool != null && !tool.Deleted && tool.UsesRemaining > 0)
-				{
-					from.SendGump(new CraftGump(from, craftSystem, tool, num));
-				}
-				else if (num > 0)
-				{
-					from.SendLocalizedMessage(num);
-				}
+                if (tool != null && !tool.Deleted && tool.UsesRemaining > 0)
+                    from.SendGump(new CraftGump(from, craftSystem, tool, num));
+                else if (num > 0)
+                    from.SendLocalizedMessage(num);
             }
-		}
+        }
 		
-private class InternalTimer : Timer
+		private class InternalTimer : Timer
 		{
 			private readonly Mobile m_From;
 			private int m_iCount;
@@ -2245,8 +2203,10 @@ private class InternalTimer : Timer
 			// 위치 체크를 위한 변수 추가
 			private readonly Point3D m_StartLocation;
 
+			private readonly int m_StaminaPerTick;
+
 			public InternalTimer(
-				Mobile from, CraftSystem craftSystem, CraftItem craftItem, Type typeRes, ITool tool, int iCountMax)
+				Mobile from, CraftSystem craftSystem, CraftItem craftItem, Type typeRes, ITool tool, int iCountMax, int staminaPerTick)
 				: base(TimeSpan.Zero, TimeSpan.FromSeconds(craftSystem.Delay), iCountMax)
 			{
 				m_From = from;
@@ -2260,6 +2220,9 @@ private class InternalTimer : Timer
 
 				// 타이머 시작 위치 저장
 				m_StartLocation = from.Location;
+				
+				// 기력 저장
+				m_StaminaPerTick = staminaPerTick;
 			}
 
 			protected override void OnTick()
@@ -2277,6 +2240,12 @@ private class InternalTimer : Timer
 
 					Stop();
 					return;
+				}
+
+				// [신규] 틱당 기력 실시간 소모
+				if (m_StaminaPerTick > 0)
+				{
+					m_From.Stam -= m_StaminaPerTick;
 				}
 
 				m_iCount++;
@@ -2350,7 +2319,7 @@ private class InternalTimer : Timer
 						makersMark = m_CraftItem.IsMarkable(m_CraftItem.ItemType);
 					}
 
-                    if (makersMark && context.MarkOption == CraftMarkOption.PromptForMark && !m_AutoCraft)
+					if (makersMark && context.MarkOption == CraftMarkOption.PromptForMark && !m_AutoCraft)
 					{
 						m_From.SendGump(new QueryMakersMarkGump(quality, m_From, m_CraftItem, m_CraftSystem, ItemTypeRes, m_Tool));
 					}

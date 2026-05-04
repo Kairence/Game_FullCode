@@ -1,101 +1,125 @@
 ﻿using System;
+using Server;
 using Server.Items;
-using Server.Gumps;
-using Server.Network;
-using Server.Mobiles;
-using Server.Accounting;
 
 namespace Server.Items
 {
-	/*
-		최초 100 유저
-	*/
-	
-	public class DonationCheck : Item 
-	{
-		private DateTime m_RespawnTime = DateTime.Now;
-		
-		public DateTime RespawnTime
-		{
-			get{ return m_RespawnTime;}
-			set{ m_RespawnTime = value; InvalidateProperties();}
-		}
-		
-		private string[] m_DonationList = new string[1000];
-		public string[] DonationList
-		{
-			get{ return m_DonationList;}
-			set{ m_DonationList = value; InvalidateProperties();}
-		}
+    public enum FamilyCompType { Wealth, Resource, Hunting, Economy }
 
-		public override string DefaultName
-		{
-			get { return "기부 체크 시스템"; }
-		}
-		[Constructable]
-		public DonationCheck() : base( 0xED4 )
-		{
-			Movable = false;
-			Hue = 1121;
-			Name = "기부 체크 시스템";
-		}
-		
-		public override void OnDoubleClick( Mobile from )
-		{
-			from.SendMessage( "다음 기부 시간 : {0}", m_RespawnTime.ToString());
-			try
-			{
-				for( int i = 0; i < 10; i++ )
-				{
-					if( DonationList[i] == "" || DonationList[i] == null )
-						break;
-					else
-					{
-						foreach (Account a in Accounts.GetAccounts())
-						{
-							if( DonationList[i] == a.Username )
-							{
-								from.SendMessage( "{0}의 기부 포인트 {1}", DonationList[i], a.DonationPoint);
-							}
-						}
-					}
-				}
-			}
-			catch
-			{
-			}
-		}
+    public class DonationCheck : Item 
+    {
+        private DateTime m_RespawnTime = DateTime.Now;
+        public DateTime RespawnTime { get { return m_RespawnTime; } set { m_RespawnTime = value; InvalidateProperties(); } }
 
-		public DonationCheck( Serial serial ) : base( serial )
-		{
-		}
+        // 100위까지 기록하기 위해 배열 크기 확장
+        private string[][] m_RankingNames = new string[4][];
+        private int[][] m_RankingScores = new int[4][];
+        private bool[][] m_IsNpc = new bool[4][];
 
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
+        public string[][] RankingNames => m_RankingNames;
+        public int[][] RankingScores => m_RankingScores;
+        public bool[][] IsNpc => m_IsNpc;
 
-			writer.Write( (int) 0 ); // version
+        private FamilyCompType m_ActiveTheme;
+        public FamilyCompType ActiveTheme { get { return m_ActiveTheme; } set { m_ActiveTheme = value; InvalidateProperties(); } }
 
-			writer.Write( (DateTime) m_RespawnTime );
-			
-			for( int i = 0; i < 1000; i++ )
-			{
-				writer.Write( (string) m_DonationList[i] );
-			}
-		}
+        [Constructable]
+        public DonationCheck() : base(0xED4)
+        {
+            Movable = false;
+            Hue = 1121;
+            Name = "가문 시스템 데이터 센터";
+            m_ActiveTheme = (FamilyCompType)Utility.Random(4);
+            
+            for (int i = 0; i < 4; i++)
+            {
+                m_RankingNames[i] = new string[100];
+                m_RankingScores[i] = new int[100];
+                m_IsNpc[i] = new bool[100];
+            }
+        }
 
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
+        public DonationCheck(Serial serial) : base(serial) { }
 
-			int version = reader.ReadInt();
+        public override void Serialize(GenericWriter writer)
+        {
+            base.Serialize(writer);
+            
+            writer.Write(2); // Version 2 (배열 100칸으로 확장)
 
-			m_RespawnTime = reader.ReadDateTime();
-			
-			for( int i = 0; i < 1000; i++ )
-			{
-				m_DonationList[i] = reader.ReadString();
-			}
-		}
-	}
+            writer.Write(m_RespawnTime);
+            writer.Write((int)m_ActiveTheme);
+
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 100; j++)
+                {
+                    writer.Write(m_RankingNames[i][j]);
+                    writer.Write(m_RankingScores[i][j]);
+                    writer.Write(m_IsNpc[i][j]);
+                }
+            }
+        }
+
+        public override void Deserialize(GenericReader reader)
+        {
+            base.Deserialize(reader);
+            int version = reader.ReadInt();
+
+            m_RespawnTime = reader.ReadDateTime();
+            m_ActiveTheme = (FamilyCompType)reader.ReadInt();
+
+            for (int i = 0; i < 4; i++)
+            {
+                m_RankingNames[i] = new string[100];
+                m_RankingScores[i] = new int[100];
+                m_IsNpc[i] = new bool[100];
+            }
+
+            if (version >= 2)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    for (int j = 0; j < 100; j++)
+                    {
+                        m_RankingNames[i][j] = reader.ReadString();
+                        m_RankingScores[i][j] = reader.ReadInt();
+                        m_IsNpc[i][j] = reader.ReadBool();
+                    }
+                }
+            }
+            else
+            {
+                // 구버전(10칸) 데이터 로드 시의 하위 호환성 처리
+                int limit = 10;
+                for (int i = 0; i < 4; i++)
+                {
+                    for (int j = 0; j < limit; j++)
+                    {
+                        string tempName = reader.ReadString();
+                        int tempScore = reader.ReadInt();
+                        bool tempNpc = reader.ReadBool();
+                        
+                        m_RankingNames[i][j] = tempName;
+                        m_RankingScores[i][j] = tempScore;
+                        m_IsNpc[i][j] = tempNpc;
+                    }
+                }
+                
+                // version 1에서 사용하던 WeeklyVP는 Event.cs의 중앙 관리로 이관되었으므로 무시 처리
+                if (version == 1)
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        int count = reader.ReadInt();
+                        for (int j = 0; j < count; j++)
+                        {
+                            reader.ReadString();
+                            reader.ReadInt();
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

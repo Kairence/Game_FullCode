@@ -477,11 +477,12 @@ namespace Server.Engines.Quests
                     m_Owner.SendGump(new MondainQuestGump(quest));
             }
 
+			/*
             if (this is ITierQuest)
             {
                 TierQuestInfo.CompleteQuest(Owner, (ITierQuest)this);
             }
-
+			*/
             EventSink.InvokeQuestComplete(new QuestCompleteEventArgs(Owner, GetType()));
 		}
 		

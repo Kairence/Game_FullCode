@@ -106,7 +106,7 @@ namespace Server.Engines.Quests
                         QuestWriter.Chains(writer, kvp.Value);
                     }
 
-                    TierQuestInfo.Save(writer);
+                    //TierQuestInfo.Save(writer);
                 });
         }
 
@@ -140,7 +140,7 @@ namespace Server.Engines.Quests
                             ChainData[pm] = dic;
                     }
 
-                    TierQuestInfo.Load(reader);
+                    //TierQuestInfo.Load(reader);
                 });
         }
     }

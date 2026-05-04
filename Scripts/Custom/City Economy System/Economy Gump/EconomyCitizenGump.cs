@@ -9,34 +9,55 @@ using Server.Items;
 
 namespace Server.Misc
 {
-    // ==========================================
-    // 1. 테스트 명령어 (기존 유지)
-    // ==========================================
-    public class EconomyTestCommand
+public class EconomyTestCommand
     {
         public static void Initialize()
         {
             CommandSystem.Register("EcoTick", AccessLevel.GameMaster, new CommandEventHandler(EcoTick_OnCommand));
         }
 
-        [Usage("EcoTick [시간]")]
+        [Usage("EcoTick [시간] 또는 [EcoTick build]")]
         private static void EcoTick_OnCommand(CommandEventArgs e)
         {
-            int targetHour = e.Length >= 1 ? e.GetInt32(0) : 18; 
-            int count = 0;
+            // 입력값이 없으면 18, 문자열이 들어오면 소문자로 변환
+            string arg = e.Length >= 1 ? e.GetString(0).ToLower() : "18";
 
-            foreach (var town in TownEconomyManager.Towns.Values)
+            // [신규] 타임랩스 촬영용 건축 강제 트리거
+            if (arg == "build")
             {
-                if (town.Citizens != null)
+                int townCount = 0;
+                foreach (var town in TownEconomyManager.Towns.Values)
                 {
-                    foreach (var c in town.Citizens)
+                    // 🌟 자정에 실행되는 상속, 세금 정산 등은 전부 무시하고 
+                    // 오직 '집 지을 돈과 야망이 있는지 검사하고 공사 시작'하는 함수만 단독 실행!
+                    TownSocietyEngine.ProcessPhysicalHousingAndInvestment(town);
+                    townCount++;
+                }
+                e.Mobile.SendMessage(0x42, $"[촬영용] {townCount}개 마을의 부동산 건축 심사를 강제로 실행했습니다! (조건 충족 시 즉시 공사 시작)");
+                return;
+            }
+
+            //  [기존] 강제 시간 틱 루틴
+            if (int.TryParse(arg, out int targetHour))
+            {
+                int count = 0;
+                foreach (var town in TownEconomyManager.Towns.Values)
+                {
+                    if (town.Citizens != null)
                     {
-                        VirtualCitizenAI.ProcessQuarterlyRoutine(c, town, targetHour);
-                        count++;
+                        foreach (var c in town.Citizens)
+                        {
+                            VirtualCitizenAI.ProcessQuarterlyRoutine(c, town, targetHour);
+                            count++;
+                        }
                     }
                 }
+                e.Mobile.SendMessage(68, $"강제 틱({targetHour}시 루틴) 실행 완료! 총 {count}명의 시민이 행동했습니다.");
             }
-            e.Mobile.SendMessage(68, $"강제 틱({targetHour}시 루틴) 실행 완료! 총 {count}명의 시민이 행동했습니다.");
+            else
+            {
+                e.Mobile.SendMessage(0x22, "잘못된 입력입니다. 숫자(시간) 또는 'build'를 입력하세요.");
+            }
         }
     }
 

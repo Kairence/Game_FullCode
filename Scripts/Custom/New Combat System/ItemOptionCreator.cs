@@ -32,7 +32,7 @@ namespace Server.Misc
         public const int AllSpeed = 14;          // 모든 속도%
         public const int HitChance = 15;         // 명중률 증가%
         public const int DefChance = 16;         // 방어율 증가%
-        public const int CastFucus = 17;         // 시전 실패 감소%
+        public const int CastFocus = 17;         // 시전 실패 감소%
 
         // 18 ~ 27: 방어력 및 저항력
         public const int WeaponArmor = 18;       // 무기 방어력
@@ -717,7 +717,7 @@ namespace Server.Misc
             null, 
             
             // [3] 나무류 (Oak ~ Ethrnal : 302 ~ 309)
-            [ CustomOption.Magic, CustomOption.ManaRegen, CustomOption.CastFucus, CustomOption.SpellDamage, CustomOption.LowerManaCost, CustomOption.SpellCriChance, CustomOption.ManaLeech, CustomOption.SpellCriDamage ]
+            [ CustomOption.Magic, CustomOption.ManaRegen, CustomOption.CastFocus, CustomOption.SpellDamage, CustomOption.LowerManaCost, CustomOption.SpellCriChance, CustomOption.ManaLeech, CustomOption.SpellCriDamage ]
         ];
 
         public static int GetMaterialOptionID(int resVal)
@@ -748,6 +748,64 @@ namespace Server.Misc
             
             return normalRecipes[Utility.Random(normalRecipes.Count)];
         }
+
+		// =========================================================================
+			// [신규 아이템 제작 및 옵션 배열(Slot) 구조 가이드] - 총 71칸 (0 ~ 70)
+			// 접두(PrefixOption) : 옵션 ID (CustomOption 상수) 또는 특정 시스템 플래그
+			// 접미(SuffixOption) : 옵션의 수치 (10000 = 1%) 또는 데이터 저장소
+			// =========================================================================
+			/*
+			[ 0 ~ 10 : 시스템 코어 및 베이스 정보 ]
+			접두 0 : 신규 아이템 생성 완료 플래그 (기본값 1000)
+			접미 0 : 부여된 랜덤 매직 옵션의 갯수
+			접두 1 : 아이템 세부 내구도 (10000 => 내구도 1 하락)
+			접미 1 : 아이템 랭크(티어) 레벨 (1 ~ 5)
+			접두 2 : 숙련도
+			접미 2 : 숙련도 최대치
+			접두 3 : 뚫려있는 재련 보석 슬롯 갯수 (1 ~ 4)
+			접미 3 : 장비의 재질 중첩 한도 (Max Stack)
+			접두 4 ~ 8 : (시스템 예비 공간)
+			접두 9 : 랭크 고정 보너스 옵션 ID (무기=피해증가, 방어구=체력 등)
+			접미 9 : 랭크 고정 보너스 옵션 수치
+			접두 10 : 장비의 재질(Resource) 인덱스 번호
+			접미 10 : 강화 레벨
+			
+			[ 11 ~ 30 : 랜덤 매직 옵션 (최대 20개) ]
+			접두 11 ~ 30 : 아이템 랭크에 따라 무작위로 붙는 매직/스킬 옵션 ID
+			접미 11 ~ 30 : 해당 매직 옵션의 수치
+			
+			[ 31 ~ 40 : 보석 선택형 재련 시스템 (Kairence Gem Refinement) ]
+			접두 31 ~ 34 : 해당 슬롯에 요구되는 보석 패턴 ID (99=와일드카드)
+			접미 31 ~ 34 : 실제 장착된 보석의 고유 ID (-1 = 미장착)
+			접두 35 ~ 38 : 장착된 보석에 의해 추출 부여된 개별 재련 옵션 ID
+			접미 35 ~ 38 : 해당 개별 재련 옵션 수치
+			접두 39 ~ 40 : 보석 세트(시너지) 조합 달성 시 활성화되는 보너스 옵션 ID
+			접미 39 ~ 40 : 해당 시너지 보너스 옵션 수치
+			
+			[ 41 ~ 49 : 강화 및 재질(색자원) 고정 옵션 ]
+			접두 41 : 강화 이름 / 특수 ID
+			접미 41 : 강화 데이터 저장값
+			접두 42 ~ 45 : 장비 재질(Copper, Oak 등) 고유의 고정 보너스 옵션 ID
+			접미 42 ~ 45 : 해당 재질 고정 보너스 옵션 수치
+			접두 46 ~ 49 : (예비 공간)
+			
+			[ 50 ~ 60 : 세트 아이템 시스템 ]
+			접두 50 : 세트 아이템 고유 번호 (1번부터 시작)
+			접미 50 : 세트 효과 발동에 필요한 장착 부위 요구 수
+			접두 51 ~ 60 : 세트 착용 시 활성화되는 세트 옵션 ID 리스트
+			접미 51 ~ 60 : 해당 세트 옵션 수치
+			
+			[ 61 ~ 70 : 기본 장비 베이스 옵션 ]
+			접두 61 ~ 70 : 아이템 베이스 자체가 지닌 기본 옵션 ID 리스트
+			접미 61 ~ 70 : 해당 기본 옵션 수치
+			
+			-------------------------------------------------------------------------
+			[ 스킬 옵션 전용 배열 지정 칸 (SkillOption Array 사용 시) 0 ~ 9 ]
+			0 ~ 4 : 랜덤 및 고정 옵션
+			5 ~ 7 : 기본 옵션
+			8 ~ 9 : 세트 옵션
+			=========================================================================
+			*/
 
         public static void ItemOptionSelect(Item item)
         {
@@ -1100,7 +1158,7 @@ namespace Server.Misc
             [(2, 2, 2, 3)] = (CustomOption.ColdResist, CustomOption.MagicResist),        
             [(1, 2, 2, 2)] = (CustomOption.SpellDamage, CustomOption.Snooping),          
             [(2, 2, 2, 6)] = (CustomOption.SpellSpeed, CustomOption.Mysticism),          
-            [(2, 2, 2, 4)] = (CustomOption.CastFucus, CustomOption.Focus),               
+            [(2, 2, 2, 4)] = (CustomOption.CastFocus, CustomOption.Focus),               
 
             [(1, 1, 1, 4)] = (CustomOption.WeaponCriChance, CustomOption.Hiding),        
             [(1, 1, 1, 5)] = (CustomOption.WeaponCriDamage, CustomOption.Ninjitsu),      
@@ -1147,7 +1205,7 @@ namespace Server.Misc
             [(0, 6, 6, 6)] = (CustomOption.Magic, CustomOption.Cartography),             
             [(2, 6, 6, 6)] = (CustomOption.SpellSpeed, CustomOption.Carpentry),          
             [(3, 6, 6, 6)] = (CustomOption.SwingSpeed, CustomOption.Cooking),            
-            [(5, 6, 6, 6)] = (CustomOption.CastFucus, CustomOption.Fishing),             
+            [(5, 6, 6, 6)] = (CustomOption.CastFocus, CustomOption.Fishing),             
             [(6, 6, 6, 7)] = (CustomOption.LowerStamCost, CustomOption.AnimalLore),      
 
             [(7, 7, 7, 8)] = (CustomOption.PhysResist, CustomOption.AllResist),          
@@ -1181,7 +1239,7 @@ namespace Server.Misc
 
             [(1, 1, 2, 2)] = (CustomOption.SpellDamage, CustomOption.ManaRegen),
             [(2, 2, 8, 8)] = (CustomOption.SpellDamage, CustomOption.AllArmor),
-            [(2, 2, 4, 4)] = (CustomOption.SpellDamage, CustomOption.CastFucus),
+            [(2, 2, 4, 4)] = (CustomOption.SpellDamage, CustomOption.CastFocus),
             [(2, 2, 5, 5)] = (CustomOption.SpellDamage, CustomOption.SpellSpeed),
             [(2, 2, 6, 6)] = (CustomOption.SpellDamage, CustomOption.SpellCriChance),
             [(2, 2, 7, 7)] = (CustomOption.SpellDamage, CustomOption.ColdResist),

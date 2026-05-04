@@ -16,6 +16,35 @@ namespace Server.Misc
         }
 
         // ==============================================================================
+        // 🌟 [헬퍼 함수] 아이템의 재질(CraftResource)과 명품(Exceptional) 여부를 안전하게 추출
+        // ==============================================================================
+        public static (CraftResource Res, bool IsExc) GetResourceAndQuality(Item item)
+        {
+            CraftResource turnInRes = CraftResource.None;
+            bool isExc = false;
+            if (item == null) return (turnInRes, isExc);
+
+            var prop = item.GetType().GetProperty("Resource");
+            if (prop != null)
+            {
+                var resVal = prop.GetValue(item);
+                if (resVal is CraftResource cr) turnInRes = cr;
+            }
+
+            if (item is IQuality q) isExc = (q.Quality == ItemQuality.Exceptional);
+            else
+            {
+                var qProp = item.GetType().GetProperty("Quality");
+                if (qProp != null)
+                {
+                    object val = qProp.GetValue(item);
+                    isExc = (val is int i && i == 2) || val?.ToString() == "Exceptional";
+                }
+            }
+            return (turnInRes, isExc);
+        }
+
+        // ==============================================================================
         // 1. [VirtualTradeAI] 시민 물가 연산 및 자원 수급
         // ==============================================================================
         public static (int MaxBuyPrice, int MinSellPrice, double Desire) GetTradeTolerance(VirtualCitizen citizen, int basePrice)
@@ -40,7 +69,27 @@ namespace Server.Misc
             bool isDirectRequest = requestedAmount > 0;
 
             int desiredAmount = isDirectRequest ? requestedAmount : (isMerchant ? (int)(500 * citizen.Potential) : (int)Math.Max(1, citizen.Potential * (2 + (int)citizen.RankLevel)));
-            int spaceLeft = isMerchant ? 5000 : (citizen.House != null ? citizen.House.MaxCapacity - citizen.House.HouseWarehouse.Values.Sum() : 10);
+            
+            // 🌟 수정: 가상 장부 연산 제거, 실제 깔려있는 물리 가구의 총 용량 계산 (LINQ 배제)
+            int spaceLeft = 10; 
+            if (isMerchant) 
+            {
+                spaceLeft = 5000;
+            }
+            else if (citizen.House != null && citizen.House.Interior != null)
+            {
+                int maxCap = 0;
+                int currentItems = 0;
+                for (int i = 0; i < citizen.House.Interior.PlacedFurniture.Count; i++)
+                {
+                    if (citizen.House.Interior.PlacedFurniture[i] is Container c)
+                    {
+                        maxCap += c.DefaultMaxItems;
+                        currentItems += c.TotalItems;
+                    }
+                }
+                spaceLeft = maxCap - currentItems;
+            }
             
             int finalRequestAmount = isDirectRequest ? desiredAmount : Math.Min(desiredAmount, spaceLeft);
             if (finalRequestAmount <= 0) return (false, 0);
@@ -68,10 +117,22 @@ namespace Server.Misc
                         town.Wealth += totalCost;
                         wItem.Stock -= buyAmount;
 
-                        // 🌟 [수정] 3단계 명예 점수 캐싱 반영 (마을 창고 구매 시)
                         if (citizen.House != null && !isMerchant && !isDirectRequest)
                         {
-                            citizen.House.AlterWarehouseItem(itemType, buyAmount, -1);
+                            // 🌟 수정: 가상 장부 대신 실제 Item 인스턴스를 생성하여 물리적으로 수납 시도
+                            Item boughtItem = (Item)Activator.CreateInstance(itemType);
+                            boughtItem.Amount = buyAmount;
+                            
+                            if (boughtItem is BaseContainer)
+							{
+								// 샀는데 그게 가구(Container)라면 3D 그리드를 찾아 바닥에 내려놓음
+								PhysicalStorageEngine.PlaceFurniture(citizen.House, boughtItem);
+							}
+							else if (!PhysicalStorageEngine.TryStoreItem(citizen.House, boughtItem))
+							{
+								// 일반 템인데 수납 공간이 없으면 바닥에 버림
+								boughtItem.MoveToWorld(citizen.Location, citizen.Map);
+							}
                         }
                         return (true, totalCost);
                     }
@@ -83,7 +144,7 @@ namespace Server.Misc
         }
 
         // ==============================================================================
-        // 🌟 [최적화] 2. [VirtualEconomyAI] 수학적 거리 계산으로 스캔 렉(Freezing) 제거
+        // 2. [VirtualEconomyAI] 수학적 거리 계산으로 스캔 렉(Freezing) 제거
         // ==============================================================================
         private static (bool Success, int Spent) SearchPlayerVendors(VirtualCitizen citizen, TownEconomy town, Type targetType, int maxPricePerItem, int requiredAmount, bool isDirectRequest)
         {
@@ -91,9 +152,23 @@ namespace Server.Misc
             if (map == null || map == Map.Internal) return (false, 0);
 
             bool isMerchant = ((int)citizen.JobClass / 100) * 100 == 600;
-            int maxCap = citizen.House?.MaxCapacity ?? 10;
-            int currentWeight = citizen.House?.HouseWarehouse.Values.Sum() ?? 0;
-            int availableSpace = isMerchant ? 1000 : Math.Max(0, maxCap - currentWeight);
+            
+            // 물리 수납공간 연산
+            int availableSpace = 10;
+            if (isMerchant) availableSpace = 1000;
+            else if (citizen.House != null && citizen.House.Interior != null)
+            {
+                int maxCap = 0, currentItems = 0;
+                for (int i = 0; i < citizen.House.Interior.PlacedFurniture.Count; i++)
+                {
+                    if (citizen.House.Interior.PlacedFurniture[i] is Container c)
+                    {
+                        maxCap += c.DefaultMaxItems;
+                        currentItems += c.TotalItems;
+                    }
+                }
+                availableSpace = Math.Max(0, maxCap - currentItems);
+            }
 
             var allVendors = new List<(Mobile Vendor, double Distance, bool IsRetail)>();
 
@@ -150,14 +225,22 @@ namespace Server.Misc
                             citizen.Gold -= totalCost;
                             vendor.HoldGold += totalCost;
 
-                            if (isMerchant) ExecuteSell(citizen, town, targetType, maxPricePerItem, buyAmount);
+                            if (isMerchant) 
+                            {
+                                ExecuteSell(citizen, town, targetType, maxPricePerItem, buyAmount);
+                                boughtItem.Delete(); // 상인은 바로 장부에 팔고 파기
+                            }
                             else if (citizen.House != null && !isDirectRequest)
                             {
-                                // 🌟 [수정] 명예 점수 캐싱 반영
-                                int exactScore = FameEconomy.GetFameScore(boughtItem);
-                                citizen.House.AlterWarehouseItem(targetType, buyAmount, exactScore);
+                                // 🌟 물리적 수납 시스템 적용
+                                if (!PhysicalStorageEngine.TryStoreItem(citizen.House, boughtItem))
+                                    boughtItem.MoveToWorld(citizen.Location, citizen.Map);
                             }
-                            boughtItem.Delete(); 
+                            else 
+                            {
+                                boughtItem.Delete(); // 직접 퀘스트 수급용이면 소모
+                            }
+                            
                             return (true, totalCost);
                         }
                     }
@@ -194,14 +277,25 @@ namespace Server.Misc
                             citizen.Gold -= totalCost;
                             vendor.HoldGold += totalCost;
 
-                            if (isMerchant) ExecuteSell(citizen, town, targetType, maxPricePerItem, item.Amount);
+                            if (isMerchant) 
+                            {
+                                ExecuteSell(citizen, town, targetType, maxPricePerItem, item.Amount);
+                                item.Delete();
+                            }
                             else if (citizen.House != null && !isDirectRequest)
                             {
-                                // 🌟 [수정] 명예 점수 캐싱 반영 (이름 오류 해결)
-                                int exactScore = FameEconomy.GetFameScore(item);
-                                citizen.House.AlterWarehouseItem(targetType, item.Amount, exactScore);
+                                // 🌟 벤더 상자에서 템을 뽑아내어 물리적으로 내 집에 넣음
+                                if (item.Parent is Container parent)
+                                    parent.RemoveItem(item);
+
+                                if (!PhysicalStorageEngine.TryStoreItem(citizen.House, item))
+                                    item.MoveToWorld(citizen.Location, citizen.Map);
                             }
-                            item.Delete();
+                            else 
+                            {
+                                item.Delete();
+                            }
+                            
                             return (true, totalCost);
                         }
                     }
@@ -211,7 +305,7 @@ namespace Server.Misc
         }
 
         // ==============================================================================
-        // 🌟 [VirtualConsumptionAI] 대량 소비 및 비축 시스템
+        // 3. [VirtualConsumptionAI] 대량 소비 및 비축 시스템
         // ==============================================================================
         public static void UpdateHouseWishlist(VirtualHouse house)
         {
@@ -239,16 +333,27 @@ namespace Server.Misc
 
             if (house.MultiID > 0 && house.TotalWealth > 15000)
             {
-                WorkshopTier currentTier = WorkshopEconomy.GetTier(house.HouseWarehouse, profile.Skill);
-                if (currentTier < WorkshopTier.Medium)
+                // 공방 에드온 필요 여부 (나중에 에드온 물리 스캔으로 수정 가능)
+                Type neededAddon = GetDesiredAddonForSkill(profile.Skill);
+                if (neededAddon != null) house.TargetStockProfile[neededAddon] = 1;
+            }
+
+            // 🌟 수정: 실제 배치된 상자의 용량(80%) 체크
+            int maxCapacity = 0;
+            int currentItems = 0;
+            if (house.Interior != null && house.Interior.PlacedFurniture != null)
+            {
+                for (int i = 0; i < house.Interior.PlacedFurniture.Count; i++)
                 {
-                    Type neededAddon = GetDesiredAddonForSkill(profile.Skill);
-                    if (neededAddon != null) house.TargetStockProfile[neededAddon] = 1;
+                    if (house.Interior.PlacedFurniture[i] is Container c)
+                    {
+                        maxCapacity += c.DefaultMaxItems;
+                        currentItems += c.TotalItems;
+                    }
                 }
             }
 
-            int currentItems = house.HouseWarehouse.Values.Sum();
-            if (currentItems > house.MaxCapacity * 0.8)
+            if (maxCapacity > 0 && currentItems > maxCapacity * 0.8)
             {
                 if (house.TotalWealth > 5000) house.TargetStockProfile[typeof(MetalChest)] = 1;
                 else house.TargetStockProfile[typeof(WoodenBox)] = 2;
@@ -261,9 +366,11 @@ namespace Server.Misc
 
             var house = agent.House;
             int totalAmountToBuy = 0;
+            
             foreach (var kvp in house.TargetStockProfile)
             {
-                int currentAmount = house.HouseWarehouse.ContainsKey(kvp.Key) ? house.HouseWarehouse[kvp.Key] : 0;
+                // 🌟 수정: 실제 집에 물리적으로 적재된 템 수량 체크
+                int currentAmount = PhysicalStorageEngine.GetTotalItemCount(house, kvp.Key);
                 if (kvp.Value > currentAmount) totalAmountToBuy += (kvp.Value - currentAmount);
             }
 
@@ -295,87 +402,86 @@ namespace Server.Misc
 
                 Type itemType = kvp.Key;
                 int targetAmount = kvp.Value;
-                int currentAmount = house.HouseWarehouse.ContainsKey(itemType) ? house.HouseWarehouse[itemType] : 0;
+                int currentAmount = PhysicalStorageEngine.GetTotalItemCount(house, itemType);
                 int amountNeeded = targetAmount - currentAmount;
 
                 if (amountNeeded > 0)
-				{
-					int amountToBuy = Math.Min(amountNeeded, totalAmountToBuy - boughtSoFar);
-					int basePrice = Math.Max(1, town.GetPrice(itemType));
-					
-					var result = ExecutePurchase(agent, town, itemType, basePrice, amountToBuy);
-					if (result.Success)
-					{
-						agent.Satisfaction = Math.Min(100, agent.Satisfaction + 5);
-						boughtSoFar += amountToBuy;
-						// 🌟 성공했으니 미수급 장부에서 제거하거나 수량 차감
-						if (house.UnfulfilledNeeds.ContainsKey(itemType)) house.UnfulfilledNeeds.Remove(itemType);
-					}
-					else
-					{
-						// 🌟 [핵심] 구매 실패 시 미수급 장부에 기록! (내일 아침에 게시판에 올림)
-						if (!house.UnfulfilledNeeds.ContainsKey(itemType)) house.UnfulfilledNeeds[itemType] = 0;
-						house.UnfulfilledNeeds[itemType] += amountToBuy;
-					}
-				}
+                {
+                    int amountToBuy = Math.Min(amountNeeded, totalAmountToBuy - boughtSoFar);
+                    int basePrice = Math.Max(1, town.GetPrice(itemType));
+                    
+                    var result = ExecutePurchase(agent, town, itemType, basePrice, amountToBuy);
+                    if (result.Success)
+                    {
+                        agent.Satisfaction = Math.Min(100, agent.Satisfaction + 5);
+                        boughtSoFar += amountToBuy;
+                        if (house.UnfulfilledNeeds.ContainsKey(itemType)) house.UnfulfilledNeeds.Remove(itemType);
+                    }
+                    else
+                    {
+                        if (!house.UnfulfilledNeeds.ContainsKey(itemType)) house.UnfulfilledNeeds[itemType] = 0;
+                        house.UnfulfilledNeeds[itemType] += amountToBuy;
+                    }
+                }
             }
         }
 
-		/// <summary>
-		/// 미수급 장부를 확인하여 마을 게시판(PartTimeManager)에 실제 퀘스트를 등록합니다.
-		/// </summary>
-		public static void GenerateAIJobRequests(VirtualHouse house, TownEconomy town)
-		{
-			if (house == null || house.UnfulfilledNeeds.Count == 0 || town == null) return;
+        public static void GenerateAIJobRequests(VirtualHouse house, TownEconomy town)
+        {
+            if (house == null || house.UnfulfilledNeeds == null || house.UnfulfilledNeeds.Count == 0 || town == null) 
+                return;
 
-			foreach (var kvp in house.UnfulfilledNeeds.ToList())
-			{
-				Type itemType = kvp.Key;
-				int amount = kvp.Value;
+            Type[] keys = new Type[house.UnfulfilledNeeds.Count];
+            house.UnfulfilledNeeds.Keys.CopyTo(keys, 0);
 
-				if (amount <= 0) continue;
+            for (int i = 0; i < keys.Length; i++)
+            {
+                Type itemType = keys[i];
+                int amount = house.UnfulfilledNeeds[itemType];
 
-				// 1. 보상금 계산 (마을 시세의 1.5배)
-				int unitPrice = town.GetPrice(itemType);
-				int totalReward = (int)(unitPrice * amount * 1.5);
-				
-				// 가문 자본이 충분할 때만 발주
-				if (house.TotalWealth < totalReward) continue;
+                if (amount <= 0) continue;
 
-				// 2. 제목 및 카테고리 결정
-				string itemName = itemType.Name; // LabelList 대신 기본 Name 사용
-				string title = $"[개인] {house.HouseName} 가문의 {itemName} 납품 의뢰";
-				JobCategory cat = GetCategoryForItem(itemType);
-				
-				// 3. 중복 의뢰 방지 (이미 게시판에 같은 제목의 글이 있는지 확인)
-				bool alreadyPosted = PartTimeManager.ActiveRequests.Any(r => r.TownName == town.TownName && r.Title == title);
+                int unitPrice = town.GetPrice(itemType);
+                int totalReward = (unitPrice * amount) * 2;
+                
+                if (house.TotalWealth < totalReward) continue;
 
-				if (!alreadyPosted)
-				{
-					// 🌟 [연동] 이제 PartTimeManager에 우리가 만든 함수를 호출합니다!
-					PartTimeManager.CreateAIRequest(town.TownName, title, cat, itemType, amount, totalReward);
-					
-					// 보상금을 가문 자산에서 미리 차감 (예약금)
-					house.TotalWealth -= totalReward;
-					
-					Console.WriteLine($"[AIQuest] {house.HouseName} 가문이 {itemName} {amount}개를 {totalReward}gp에 게시판 발주했습니다.");
-				}
-			}
-			// 발주를 마쳤으므로 장부를 비움
-			house.UnfulfilledNeeds.Clear();
-		}
+                string title = string.Format("[긴급 납품] {0} 가문의 의뢰", house.HouseName);
+                JobCategory cat = GetCategoryForItem(itemType);
+                
+                bool alreadyPosted = false;
+                for (int j = 0; j < PartTimeManager.ActiveRequests.Count; j++)
+                {
+                    TownJobRequest req = PartTimeManager.ActiveRequests[j];
+                    if (req.TownName == town.TownName && req.TargetType == itemType && !req.IsFullyBooked && req.IssuerHouse == house)
+                    {
+                        alreadyPosted = true;
+                        break;
+                    }
+                }
 
-		private static JobCategory GetCategoryForItem(Type t)
-		{
-			// 아이템 타입에 따른 게시판 탭 분류
-			if (t.IsSubclassOf(typeof(BaseArmor)) || t.IsSubclassOf(typeof(BaseWeapon)) || t.Name.Contains("Deed")) 
-				return JobCategory.Crafting;
-			
-			if (t == typeof(IronOre) || t == typeof(Log) || t == typeof(WheatSheaf)) 
-				return JobCategory.Gathering;
+                if (!alreadyPosted)
+                {
+                    PartTimeManager.CreateAIRequest(town.TownName, title, cat, itemType, amount, totalReward, house);
+                    
+                    house.TotalWealth -= totalReward;
+                    Console.WriteLine(string.Format("[AIQuest] {0} 가문이 {1} {2}개 납품 의뢰를 등록했습니다.", house.HouseName, itemType.Name, amount));
+                }
+            }
+            
+            house.UnfulfilledNeeds.Clear();
+        }
 
-			return JobCategory.Menial;
-		}
+        private static JobCategory GetCategoryForItem(Type t)
+        {
+            if (t.IsSubclassOf(typeof(BaseArmor)) || t.IsSubclassOf(typeof(BaseWeapon)) || t.Name.Contains("Deed")) 
+                return JobCategory.Crafting;
+            
+            if (t == typeof(IronOre) || t == typeof(Log) || t == typeof(WheatSheaf)) 
+                return JobCategory.Gathering;
+
+            return JobCategory.Menial;
+        }
 
         private static Type GetDesiredAddonForSkill(SkillName skill)
         {
@@ -394,7 +500,7 @@ namespace Server.Misc
         }
 
         // ==============================================================================
-        // 3. [PVA 엔진 & 자원 납품] 
+        // 4. [PVA 엔진 & 자원 납품] 
         // ==============================================================================
         public static int GetPVAGuaranteedPrice(Type itemType, TownEconomy town)
         {
@@ -461,7 +567,13 @@ namespace Server.Misc
                         citizen.CheckSkillGain();
                         if (IsRareResource(targetItem) && citizen.House != null)
                         {
-                            citizen.House.AlterWarehouseItem(targetItem, consumedAmount, -1);
+                            // 🌟 수정: 희귀 자원을 수집하여 창고에 직접 넣음
+                            Item harvested = (Item)Activator.CreateInstance(targetItem);
+                            harvested.Amount = consumedAmount;
+                            
+                            if (!PhysicalStorageEngine.TryStoreItem(citizen.House, harvested))
+                                harvested.MoveToWorld(citizen.Location, citizen.Map); // 공간이 없으면 바닥에 버림
+                                
                             return (true, 0);
                         }
                         return ExecuteSell(citizen, town, targetItem, basePrice, consumedAmount);
@@ -499,9 +611,6 @@ namespace Server.Misc
             return (false, 0);
         }
 
-        // ==============================================================================
-        // 4. [기타 유틸리티 및 무역]
-        // ==============================================================================
         public static bool IsRareResource(Type type) => GetResourceTierValue(type) > 1;
 
         public static int GetResourceTierValue(Type type)
@@ -514,25 +623,59 @@ namespace Server.Misc
 
         public static void ExecuteRareBrokerage(VirtualCitizen merchant, TownEconomy town)
         {
-            var supplier = town.Citizens.FirstOrDefault(c => c.House != null && c.House.HouseWarehouse.Any(kvp => IsRareResource(kvp.Key)));
-            var noble = town.Citizens.FirstOrDefault(c => c.RankLevel >= NobilityRank.Baron && c.Gold > 10000);
+            // 돈 많은 귀족 찾기
+            var noble = town.Citizens.FirstOrDefault(c => c.RankLevel >= NobilityRank.Baron && c.Gold > 10000 && c.House != null);
+            if (noble == null) return;
 
-            if (supplier == null || noble == null) return;
-
-            var rareItem = supplier.House.HouseWarehouse.First(kvp => IsRareResource(kvp.Key));
-            int marketPrice = town.GetPrice(rareItem.Key) * 5; 
-
-            if (merchant.Gold >= marketPrice && noble.Gold >= (int)(marketPrice * 1.5))
+            // 희귀 자원을 물리 상자에 가지고 있는 평민/공급자 찾기
+            foreach (var supplier in town.Citizens)
             {
-                supplier.House.AlterWarehouseItem(rareItem.Key, -1);
-                supplier.Family.SharedWealth += marketPrice;
-                merchant.Gold -= marketPrice;
+                if (supplier == merchant || supplier.House == null || supplier.House.Interior == null) continue;
 
-                int sellPrice = (int)(marketPrice * 1.5);
-                merchant.Gold += sellPrice;
-                noble.Gold -= sellPrice;
+                Item rareItemToSell = null;
+                for (int i = 0; i < supplier.House.Interior.PlacedFurniture.Count; i++)
+                {
+                    if (supplier.House.Interior.PlacedFurniture[i] is Container c)
+                    {
+                        foreach (var item in c.Items)
+                        {
+                            if (IsRareResource(item.GetType()))
+                            {
+                                rareItemToSell = item;
+                                break;
+                            }
+                        }
+                    }
+                    if (rareItemToSell != null) break;
+                }
 
-                if (noble.House != null) noble.House.AlterWarehouseItem(rareItem.Key, 1);
+                if (rareItemToSell != null)
+                {
+                    int marketPrice = town.GetPrice(rareItemToSell.GetType()) * 5; 
+
+                    if (merchant.Gold >= marketPrice && noble.Gold >= (int)(marketPrice * 1.5))
+                    {
+                        // 🌟 수정: 공급자의 상자에서 물리적으로 아이템 1개를 뽑아냄
+                        Item extracted = PhysicalStorageEngine.RetrieveItem(supplier.House, rareItemToSell.GetType(), 1);
+                        
+                        if (extracted != null)
+                        {
+                            supplier.Family.SharedWealth += marketPrice;
+                            merchant.Gold -= marketPrice;
+
+                            int sellPrice = (int)(marketPrice * 1.5);
+                            merchant.Gold += sellPrice;
+                            noble.Gold -= sellPrice;
+
+                            // 귀족의 물리 상자에 넣음
+                            if (!PhysicalStorageEngine.TryStoreItem(noble.House, extracted))
+                            {
+                                extracted.MoveToWorld(noble.Location, noble.Map);
+                            }
+                            return; // 단건 거래 후 종료
+                        }
+                    }
+                }
             }
         }
 
@@ -572,107 +715,148 @@ namespace Server.Misc
             _ => typeof(WheatSheaf)
         };
 
+        // ==============================================================================
+        // 🌟 5. 대상단 대륙 무역 & [물가 변동 안전장치]
+        // ==============================================================================
         public static (bool Success, int Profit) ExecuteTradeRoute(VirtualCitizen merchant, TownEconomy currentTown, int baseCapacity)
         {
             if (currentTown == null || TownEconomyManager.Towns.Count < 2) return (false, 0);
 
-            var otherTowns = TownEconomyManager.Towns.Values.Where(t => t.TownID != currentTown.TownID).ToList();
-            var targetTown = otherTowns[Utility.Random(otherTowns.Count)];
+            int groupID = ((int)merchant.JobClass / 100) * 100;
+            bool isLandMerchant = groupID == 300 || groupID == 400 || groupID == 900 || groupID == 1100;
+            bool isSeaMerchant = groupID == 800; // 해양 직업군 (어부, 항해사 등)
 
-            var exportCandidates = currentTown.Warehouse.Values.Where(w => w.Stock > w.TargetStock && currentTown.GetPrice(w.ItemType) < w.BasePrice).OrderBy(w => currentTown.GetPrice(w.ItemType)).ToList();
+            if (!isLandMerchant && !isSeaMerchant) return (false, 0);
+
+            var exportCandidates = currentTown.Warehouse.Values
+                .Where(w => w.Stock > w.TargetStock * 1.2 && currentTown.GetPrice(w.ItemType) < w.BasePrice)
+                .OrderBy(w => currentTown.GetPrice(w.ItemType))
+                .ToList();
+
             if (exportCandidates.Count == 0) return (false, 0);
 
-            var exportItem = exportCandidates.First();
-            Type itemType = exportItem.ItemType;
-            int buyPrice = currentTown.GetPrice(itemType);
+            var currentRCode = RegionSaver.GetRegionCodes(currentTown.Facet, currentTown.Center.X, currentTown.Center.Y, currentTown.Center.Z).Major;
             
-            double itemID = merchant.Skills.TryGetValue(SkillName.ItemID, out var sk) ? sk : merchant.PrimarySkill;
-            int maxAnimals = (itemID >= 80.0 && merchant.Potential >= 2.5) ? 5 : ((itemID >= 50.0 && merchant.Potential >= 1.5) ? 3 : 1);
-
-            int animalCost = 1000; 
-            int stableFee = 50;    
-            int theoreticalMaxCapacity = baseCapacity + (maxAnimals * 400); 
-
-            int maxAffordable = merchant.Gold / Math.Max(1, buyPrice);
-            int amountToTrade = Math.Min(theoreticalMaxCapacity, Math.Min(exportItem.Stock, maxAffordable));
-            
-            if (amountToTrade <= 0) return (false, 0);
-
-            int animalsNeeded = 0;
-            if (amountToTrade > baseCapacity)
+            foreach (var exportItem in exportCandidates)
             {
-                animalsNeeded = Math.Min((int)Math.Ceiling((amountToTrade - baseCapacity) / 400.0), maxAnimals);
-                int totalAnimalCost = animalsNeeded * animalCost;
-                
-                if (merchant.Gold < totalAnimalCost + (buyPrice * amountToTrade))
+                Type itemType = exportItem.ItemType;
+                int localPrice = currentTown.GetPrice(itemType);
+                if (localPrice <= 0) continue;
+
+                var targetTowns = TownEconomyManager.Towns.Values
+                    .Where(t => t.TownID != currentTown.TownID && t.Facet == currentTown.Facet)
+                    .Where(t => t.Warehouse.ContainsKey(itemType) && t.GetPrice(itemType) > localPrice * 1.2) 
+                    .OrderByDescending(t => t.GetPrice(itemType))
+                    .ToList();
+
+                foreach (var targetTown in targetTowns)
                 {
-                    amountToTrade = (merchant.Gold - totalAnimalCost) / Math.Max(1, buyPrice);
-                    if (amountToTrade <= 0) return (false, 0);
+                    if (isSeaMerchant && !IsCoastalTown(targetTown.TownName)) continue;
+
+                    var targetRCode = RegionSaver.GetRegionCodes(targetTown.Facet, targetTown.Center.X, targetTown.Center.Y, targetTown.Center.Z).Major;
+                    
+                    var plan = VirtualTravelNetwork.CalculateBestRoute(currentRCode, targetRCode, merchant.Gold, false);
+                    if (!plan.IsPossible) continue;
+
+                    int targetPrice = targetTown.GetPrice(itemType);
+                    
+                    int animalCost = 500;
+                    int capacityPerAnimal = 400;
+                    
+                    double itemID = merchant.Skills.TryGetValue(SkillName.ItemID, out var sk) ? sk : merchant.PrimarySkill;
+                    int maxAnimals = (itemID >= 80.0 && merchant.Potential >= 2.5) ? 5 : ((itemID >= 50.0 && merchant.Potential >= 1.5) ? 3 : 1);
+                    int theoreticalMaxCapacity = baseCapacity + (maxAnimals * capacityPerAnimal);
+
+                    int maxAffordable = (merchant.Gold - plan.TotalCost) / Math.Max(1, localPrice);
+                    int amountToTrade = Math.Min(theoreticalMaxCapacity, Math.Min(exportItem.Stock, maxAffordable));
+                    
+                    if (amountToTrade < 50) continue; 
+
+                    int animalsNeeded = 0;
+                    int totalAnimalCost = 0;
+                    
+                    if (amountToTrade > baseCapacity && isLandMerchant) 
+                    {
+                        animalsNeeded = (int)Math.Ceiling((amountToTrade - baseCapacity) / (double)capacityPerAnimal);
+                        animalsNeeded = Math.Min(animalsNeeded, maxAnimals);
+                        totalAnimalCost = animalsNeeded * animalCost;
+
+                        if (merchant.Gold < plan.TotalCost + totalAnimalCost + (localPrice * amountToTrade))
+                        {
+                            amountToTrade = (merchant.Gold - plan.TotalCost - totalAnimalCost) / Math.Max(1, localPrice);
+                            if (amountToTrade <= 0) continue;
+                        }
+                    }
+
+                    int expectedProfit = ((targetPrice - localPrice) * amountToTrade) - plan.TotalCost - totalAnimalCost;
+
+                    if (expectedProfit > 0)
+                    {
+                        int totalPurchaseCost = localPrice * amountToTrade;
+                        
+                        int totalExpenses = totalPurchaseCost + plan.TotalCost + totalAnimalCost;
+                        merchant.Gold -= totalExpenses;
+                        currentTown.Wealth += totalExpenses;
+
+                        int totalRevenue = targetPrice * amountToTrade;
+                        merchant.Gold += totalRevenue;
+                        targetTown.Wealth -= totalRevenue; 
+
+                        currentTown.Warehouse[itemType].Stock -= amountToTrade;
+                        var targetItem = targetTown.Warehouse[itemType];
+                        
+                        bool wasShortage = targetItem.Stock < (targetItem.TargetStock * 0.5);
+                        
+                        targetItem.Stock += amountToTrade;
+
+                        if (wasShortage && amountToTrade >= 50)
+                        {
+                            targetItem.TargetStock += Math.Max(1, amountToTrade / 10);
+
+                            int currentBase = targetItem.BasePrice;
+                            int priceDelta = targetPrice - currentBase;
+
+                            if (priceDelta > 0)
+                            {
+                                int increase = Math.Max(1, (int)(priceDelta * 0.03));
+                                int maxIncrease = Math.Max(1, (int)(currentBase * 0.10));
+                                
+                                targetItem.BasePrice += Math.Min(increase, maxIncrease);
+                            }
+                        }
+                        else if (targetItem.Stock > targetItem.TargetStock * 2)
+                        {
+                            targetItem.BasePrice = Math.Max(1, (int)(targetItem.BasePrice * 0.98));
+                        }
+
+                        currentTown.Citizens.Remove(merchant);
+                        targetTown.Citizens.Add(merchant);
+                        merchant.TargetRegionName = targetTown.TownName;
+
+                        merchant.Stress = Math.Max(0, merchant.Stress - 20);
+                        merchant.Satisfaction = 100;
+
+                        string transportMethod = isSeaMerchant ? "상선(Ship)" : (animalsNeeded > 0 ? $"짐말 {animalsNeeded}마리" : "수레");
+                        Console.WriteLine($"[Trade] 대상단 '{merchant.Name}'이(가) {transportMethod}를 이끌고 {currentTown.TownName}에서 {targetTown.TownName}로 {itemType.Name} {amountToTrade}개 사재기 무역 성공! (순이익: +{expectedProfit}gp)");
+                        
+                        return (true, expectedProfit);
+                    }
                 }
-                merchant.Gold -= totalAnimalCost;
-                currentTown.Wealth += totalAnimalCost;
             }
+            return (false, 0);
+        }
 
-            int totalCost = buyPrice * amountToTrade;
-            int sellPrice = 0;
-            bool isNewProduct = false;
-
-            if (targetTown.Warehouse.ContainsKey(itemType))
-            {
-                sellPrice = targetTown.GetPrice(itemType);
-                if (sellPrice <= buyPrice) return (false, 0);
-            }
-            else
-            {
-                if (targetTown.TownIndex == "C") return (false, 0);
-                isNewProduct = true;
-                sellPrice = (int)(buyPrice * 1.5);
-            }
-
-            merchant.Gold -= totalCost;
-            currentTown.Wealth += totalCost;
-            currentTown.Warehouse[itemType].Stock -= amountToTrade;
-
-            int totalRevenue = sellPrice * amountToTrade;
-            merchant.Gold += totalRevenue;
-            targetTown.Wealth -= totalRevenue; 
-
-            if (animalsNeeded > 0)
-            {
-                var tamer = currentTown.Citizens.FirstOrDefault(c => c.JobClass == NpcJobClass.StableBroker || c.JobClass == NpcJobClass.StableHand || c.JobClass == NpcJobClass.AnimalTamer_Warrior);
-                if (tamer != null)
-                {
-                    int totalFee = animalsNeeded * stableFee;
-                    merchant.Gold -= totalFee;
-                    tamer.Gold += totalFee; 
-                }
-                else
-                {
-                    int refund = (animalsNeeded * animalCost) / 2;
-                    merchant.Gold += refund;
-                    currentTown.Wealth -= refund; 
-                }
-            }
-
-            if (isNewProduct) targetTown.Warehouse[itemType] = new WarehouseItem(itemType, amountToTrade, sellPrice, amountToTrade);
-            else
-            {
-                targetTown.Warehouse[itemType].Stock += amountToTrade;
-                var targetItem = targetTown.Warehouse[itemType];
-                targetItem.TargetStock += Math.Max(1, amountToTrade / 5);
-                int currentBase = targetItem.BasePrice;
-                targetItem.BasePrice = Math.Max(1, currentBase + (int)((sellPrice - currentBase) * 0.05));
-            }
-
-            merchant.Stress = Math.Max(0, merchant.Stress - 20);
-            return (true, totalRevenue - totalCost);
+        private static bool IsCoastalTown(string townName)
+        {
+            string[] coastalTowns = { "Britain", "Skara Brae", "Vesper", "Trinsic", "Moonglow", "Magincia", "Nujel'm", "Jhelom", "Buccaneer's Den", "Serpent's Hold", "Ocllo", "Haven", "Sea Market" };
+            return coastalTowns.Any(c => townName.Contains(c, StringComparison.OrdinalIgnoreCase));
         }
 
         // ==============================================================================
-        // 5. [RetailMarketEngine] 글로벌 검색
+        // 6. [RetailMarketEngine] 글로벌 검색
         // ==============================================================================
         [Usage("경매 <아이템이름>")]
-        private static void OnMarketSearch(CommandEventArgs e)
+        private static void OnMarketSearch(CommandEventArgs e)	
         {
             string searchWord = e.ArgString.Trim().ToLower();
             if (string.IsNullOrEmpty(searchWord)) { e.Mobile.SendMessage(0x35, "사용법: [경매 <찾을아이템이름>"); return; }

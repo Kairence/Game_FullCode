@@ -20,8 +20,47 @@ namespace Server.Misc
     public enum LootDistributionRule { Equal, Contribution }
     
     public enum AdventurerAiType { Melee, Archer, Mage, Paladin, Necro }
-    
+
     public record CombatProfile(AdventurerRole Role, double HpWeight, double MpWeight, double SpWeight, int[] PreferredOptions, params Layer[] RequiredLayers);
+
+    // 🌟 [유저 기획] 퇴각 루트 정보 구조체 (도착 마을, 섬 여부, 기준 거리)
+    public record RetreatRoute(RegionCode TownCode, bool IsIsland, int BaseDistance);
+
+    public static class DungeonRetreatManager
+    {
+        public static readonly Dictionary<RegionCode, RetreatRoute> Map = new()
+        {
+            // --- Trammel Dungeons ---
+            { RegionCode.Trammel_Dungeon_Covetous, new(RegionCode.Trammel_Town_Minoc, false, 800) },       
+            { RegionCode.Trammel_Dungeon_Deceit, new(RegionCode.Trammel_Town_Moonglow, true, 1200) },      
+            { RegionCode.Trammel_Dungeon_Despise, new(RegionCode.Trammel_Town_Britain, false, 600) },      
+            { RegionCode.Trammel_Dungeon_Destard, new(RegionCode.Trammel_Town_SkaraBrae, false, 900) },    
+            { RegionCode.Trammel_Dungeon_Hythloth, new(RegionCode.Trammel_Town_Magincia, true, 1500) },    
+            { RegionCode.Trammel_Dungeon_Shame, new(RegionCode.Trammel_Town_Yew, false, 1100) },           
+            { RegionCode.Trammel_Dungeon_Wrong, new(RegionCode.Trammel_Town_Minoc, false, 1000) },         
+            { RegionCode.Trammel_Dungeon_Fire, new(RegionCode.Trammel_Town_SerpentsHold, true, 500) },     
+            { RegionCode.Trammel_Dungeon_Ice, new(RegionCode.Trammel_Town_Vesper, false, 1300) },          
+            { RegionCode.Trammel_Dungeon_OrcCave, new(RegionCode.Trammel_Town_Cove, false, 400) },         
+            { RegionCode.Trammel_Dungeon_PaintedCaves, new(RegionCode.Trammel_Town_Trinsic, false, 700) },
+            { RegionCode.Trammel_Dungeon_PalaceOfParoxysmus, new(RegionCode.Trammel_Town_Papua, false, 800) },
+            { RegionCode.Trammel_Dungeon_PrismOfLight, new(RegionCode.Trammel_Town_Nujelm, true, 1000) },
+            { RegionCode.Trammel_Dungeon_Sanctuary, new(RegionCode.Trammel_Town_Yew, false, 600) },
+            { RegionCode.Trammel_Dungeon_SolenHives, new(RegionCode.Trammel_Town_Minoc, false, 700) },
+            
+            // --- Felucca Dungeons ---
+            { RegionCode.Felucca_Dungeon_Covetous, new(RegionCode.Felucca_Town_Minoc, false, 800) },
+            { RegionCode.Felucca_Dungeon_Deceit, new(RegionCode.Felucca_Town_Moonglow, true, 1200) },
+            { RegionCode.Felucca_Dungeon_Despise, new(RegionCode.Felucca_Town_Britain, false, 600) },
+            { RegionCode.Felucca_Dungeon_Destard, new(RegionCode.Felucca_Town_SkaraBrae, false, 900) },
+            { RegionCode.Felucca_Dungeon_Hythloth, new(RegionCode.Felucca_Town_Magincia, true, 1500) },
+            { RegionCode.Felucca_Dungeon_Shame, new(RegionCode.Felucca_Town_Yew, false, 1100) },
+            { RegionCode.Felucca_Dungeon_Wrong, new(RegionCode.Felucca_Town_Minoc, false, 1000) },
+            { RegionCode.Felucca_Dungeon_Fire, new(RegionCode.Felucca_Town_SerpentsHold, true, 500) },
+            { RegionCode.Felucca_Dungeon_Ice, new(RegionCode.Felucca_Town_Vesper, false, 1300) },
+            { RegionCode.Felucca_Dungeon_OrcCave, new(RegionCode.Felucca_Town_Yew, false, 400) },
+            { RegionCode.Felucca_Dungeon_Khaldun, new(RegionCode.Felucca_Town_Minoc, false, 1500) }
+        };
+    }
 
     public static class AdventurerProfileManager
     {
@@ -83,6 +122,26 @@ namespace Server.Misc
             return id;
         }
 
+        public static void PayToCitizenOrTown(TownEconomy town, int amount, params NpcJobClass[] targetJobs)
+        {
+            if (town == null) return;
+            if (targetJobs != null && targetJobs.Length > 0 && town.Citizens != null)
+            {
+                var candidates = town.Citizens.Where(c => targetJobs.Contains(c.JobClass) && !c.IsExpired).ToList();
+                if (candidates.Count > 0)
+                {
+                    var receiver = candidates[Utility.Random(candidates.Count)];
+                    receiver.Gold += amount;
+                    
+                    int tax = (int)(amount * 0.1);
+                    receiver.Gold -= tax;
+                    town.Wealth += tax;
+                    return;
+                }
+            }
+            town.Wealth += amount; 
+        }
+
         public static void ProcessAdventurerSegment(int advTickIdx)
         {
             if (advTickIdx == 1)
@@ -105,7 +164,8 @@ namespace Server.Misc
                     if (towns.Count > 0)
                     {
                         var startTown = towns[Utility.Random(towns.Count)]; 
-                        WorldNode townNode = new WorldNode(startTown.Name, WorldNodeType.Town, startTown.Facet, startTown.Center, startTown.Center, 1);
+                        var rCode = RegionSaver.GetRegionCodes(startTown.Facet, startTown.Center.X, startTown.Center.Y, startTown.Center.Z).Major;
+                        WorldNode townNode = new WorldNode(startTown.Name, rCode, WorldNodeType.Town, startTown.Facet, startTown.Center, startTown.Center, 1);
                         
                         var newParty = AdventurerParty.TryFormBalancedParty(IdleAdventurers, townNode);
                         if (newParty != null) ActiveParties.Add(newParty);
@@ -242,6 +302,7 @@ namespace Server.Misc
     public class WorldNode
     {
         public string Name { get; set; }
+        public RegionCode RCode { get; set; } 
         public WorldNodeType Type { get; set; }
         public Map NodeMap { get; set; }
         public Point3D EntranceLoc { get; set; } 
@@ -249,15 +310,16 @@ namespace Server.Misc
         public int Difficulty { get; set; }      
         public Point3D Location { get => EntranceLoc; set => EntranceLoc = value; }
 
-        public WorldNode(string name, WorldNodeType type, Map map, Point3D ext, Point3D ins, int diff)
+        public WorldNode(string name, RegionCode rCode, WorldNodeType type, Map map, Point3D ext, Point3D ins, int diff)
         {
-            Name = name; Type = type; NodeMap = map; EntranceLoc = ext; TargetLoc = ins; Difficulty = diff;
+            Name = name; RCode = rCode; Type = type; NodeMap = map; EntranceLoc = ext; TargetLoc = ins; Difficulty = diff;
         }
 
         public void Serialize(GenericWriter writer)
         {
-            writer.Write(0); 
+            writer.Write(1); 
             writer.Write(Name);
+            writer.Write((int)RCode);
             writer.Write((int)Type);
             writer.Write(NodeMap);
             writer.Write(EntranceLoc);
@@ -269,6 +331,7 @@ namespace Server.Misc
         {
             int version = reader.ReadInt();
             Name = reader.ReadString();
+            if (version >= 1) RCode = (RegionCode)reader.ReadInt();
             Type = (WorldNodeType)reader.ReadInt();
             NodeMap = reader.ReadMap();
             EntranceLoc = reader.ReadPoint3D();
@@ -282,6 +345,7 @@ namespace Server.Misc
     // ==============================================================================
     public class AdventurerParty
     {
+        public string Name => Members.Count > 0 ? $"{Members[0].Name} 파티" : "무명의 파티";
         public List<VirtualAdventurer> Members { get; set; } = [];
         public AdventurerState State { get; set; }
         public WorldNode CurrentNode { get; set; }
@@ -319,10 +383,10 @@ namespace Server.Misc
         public void Dissolve()
         {
             DematerializeParty(); 
-            foreach(var m in Members)
+            for (int i = 0; i < Members.Count; i++)
             {
-                if (m.PhysicalObject != null)
-                    m.PhysicalObject.Team = 0; 
+                if (Members[i].PhysicalObject != null)
+                    Members[i].PhysicalObject.Team = 0; 
             }
             Members.Clear();
         }
@@ -384,20 +448,35 @@ namespace Server.Misc
 
         private void MaterializeParty()
         {
-            if (Members.Any(m => m.PhysicalObject != null && !m.PhysicalObject.Deleted)) return;
-
-            foreach (var m in Members)
+            bool hasMissingPhysical = false;
+            for (int i = 0; i < Members.Count; i++)
             {
-                var physical = new PhysicalAdventurer(m);
-                physical.MoveToWorld(CurrentLocation, CurrentMap);
-                m.PhysicalObject = physical; 
+                if (Members[i].PhysicalObject == null || Members[i].PhysicalObject.Deleted)
+                {
+                    hasMissingPhysical = true;
+                    break;
+                }
+            }
+
+            if (!hasMissingPhysical) return;
+
+            for (int i = 0; i < Members.Count; i++)
+            {
+                var m = Members[i];
+                if (m.PhysicalObject == null || m.PhysicalObject.Deleted)
+                {
+                    var physical = new PhysicalAdventurer(m);
+                    physical.MoveToWorld(CurrentLocation, CurrentMap);
+                    m.PhysicalObject = physical; 
+                }
             }
         }
 
         private void DematerializeParty()
         {
-            foreach (var m in Members)
+            for (int i = 0; i < Members.Count; i++)
             {
+                var m = Members[i];
                 if (m.PhysicalObject != null)
                 {
                     m.PhysicalObject.Delete(); 
@@ -416,7 +495,12 @@ namespace Server.Misc
                 PartyWealth += AcceptedJobReward / 2;
                 town.Wealth += (int)(AcceptedJobReward * 0.1); 
 
-                Console.WriteLine($"[Quest] {Members[0].Name} 파티가 의뢰를 완수하고 {AcceptedJobReward}gp를 획득했습니다!");
+                Console.WriteLine($"[Quest] {Members[0].Name} 파티가 의뢰를 완수하고 {AcceptedJobReward}gp를 획득했습니다.");
+                int huntScore = this.AcceptedJobReward / 10;
+                if (huntScore > 0)
+                {
+                    Server.Misc.FamilySystem.Contribute(this.Name, huntScore, Server.Items.FamilyCompType.Hunting, true);
+                }
                 AcceptedJobReward = 0; 
             }
 
@@ -427,8 +511,9 @@ namespace Server.Misc
                 var itemsToSell = EmployedSherpa.Backpack.Items.ToArray();
                 int totalEarned = 0;
 
-                foreach (var item in itemsToSell)
+                for (int i = 0; i < itemsToSell.Length; i++)
                 {
+                    var item = itemsToSell[i];
                     int itemValue = town.GetPrice(item.GetType()) / 2;
                     totalEarned += itemValue;
                     
@@ -438,16 +523,17 @@ namespace Server.Misc
                 }
 
                 town.Wealth -= totalEarned;
-                Members[0].Gold += totalEarned; 
+
+                int sherpaCut = (int)(totalEarned * 0.1);
+                EmployedSherpa.Gold += sherpaCut;
+                Members[0].Gold += (totalEarned - sherpaCut); 
+                
+                if (sherpaCut > 0)
+                {
+                    Console.WriteLine($"[Adventurer] 셰르파 {EmployedSherpa.Name}이(가) 던전 길잡이 및 물자 관리 수당으로 {sherpaCut}gp를 받았습니다.");
+                }
             }
 
-            int bonus = 50;
-            if (Members[0].Gold >= bonus)
-            {
-                Members[0].Gold -= bonus;
-                EmployedSherpa.Gold += bonus;
-            }
-            
             if (PartyWealth < 2000)
             {
                 EmployedSherpa.Stress = 0; 
@@ -476,7 +562,7 @@ namespace Server.Misc
                 if (totalGold >= hireCost)
                 {
                     Members[0].Gold -= hireCost; 
-                    laborer.Gold += hireCost;
+                    laborer.Gold += hireCost; 
                     EmployedSherpa = laborer;
                     return true;
                 }
@@ -493,17 +579,42 @@ namespace Server.Misc
                 SettleTownReturn(town); 
 
                 int innFee = Members.Count * 20;
-                if (PartyWealth >= innFee) { PartyWealth -= innFee; town.Wealth += innFee; }
+                if (PartyWealth >= innFee) 
+                { 
+                    PartyWealth -= innFee; 
+                    VirtualAdventurerManager.PayToCitizenOrTown(town, innFee, NpcJobClass.InnKeeper, NpcJobClass.Barmaid); 
+                }
 
                 if (PartyWealth > 2000) TryHireSherpa(town); 
 
-                int targetBandages = 50 + (Members.Count * 10);
-                int targetPotions = 20 + (Members.Count * 5);
+                int mountCost = 500;
+                bool needMounts = false;
+                for (int i = 0; i < Members.Count; i++)
+                {
+                    if (!Members[i].HasMount) { needMounts = true; break; }
+                }
+
+                if (needMounts && PartyWealth > (Members.Count * mountCost))
+                {
+                    for (int i = 0; i < Members.Count; i++) 
+                    {
+                        if (!Members[i].HasMount && PartyWealth >= mountCost) 
+                        {
+                            PartyWealth -= mountCost;
+                            town.Wealth += mountCost;
+                            Members[i].HasMount = true;
+                        }
+                    }
+                    Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 든든하게 전원 승마를 마쳤습니다.");
+                }
+
+                int targetBandages = 100 + (Members.Count * 25);
+                int targetPotions = 40 + (Members.Count * 10);
 
                 if (EmployedSherpa != null)
                 {
-                    targetBandages = 200; 
-                    targetPotions = 100;
+                    targetBandages = 300; 
+                    targetPotions = 150;
 
                     if (PartyWealth > 5000 && PackAnimals < 3)
                     {
@@ -511,7 +622,7 @@ namespace Server.Misc
                         PartyWealth -= animalCost;
                         town.Wealth += animalCost;
                         PackAnimals++;
-                        Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 원정을 위해 짐말을 추가 구매했습니다! (현재: {PackAnimals}마리)");
+                        Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 원정을 위해 짐말을 추가 구매했습니다. (현재: {PackAnimals}마리)");
                     }
 
                     targetBandages += (PackAnimals * 300);
@@ -523,8 +634,8 @@ namespace Server.Misc
                     int needed = targetBandages - Bandages;
                     int buyQty = Math.Min(needed, PartyWealth / 10); 
                     PartyWealth -= (buyQty * 10); 
+                    town.Wealth += (buyQty * 10);
                     Bandages += buyQty; 
-                    town.Wealth += (buyQty * 10); 
                 }
                 
                 if (Potions < targetPotions && PartyWealth > 500) 
@@ -532,11 +643,14 @@ namespace Server.Misc
                     int needed = targetPotions - Potions;
                     int buyQty = Math.Min(needed, PartyWealth / 50); 
                     PartyWealth -= (buyQty * 50); 
+                    town.Wealth += (buyQty * 50);
                     Potions += buyQty; 
-                    town.Wealth += (buyQty * 50); 
                 }
 
-                foreach (var m in Members) m.ProcessSmarterShopping(town);
+                for (int i = 0; i < Members.Count; i++)
+                {
+                    Members[i].ProcessSmarterShopping(town);
+                }
 
                 for (int i = Members.Count - 1; i >= 0; i--)
                 {
@@ -554,11 +668,18 @@ namespace Server.Misc
                 {
                     PartyWealth -= 5000; 
                     town.Wealth += 5000;
-                    foreach (var m in Members) m.EquipmentTier++; 
+                    for (int i = 0; i < Members.Count; i++)
+                    {
+                        Members[i].EquipmentTier++; 
+                    }
                 }
             }
 
-            foreach (var m in Members) { m.HP = m.MaxHP; m.Stress = Math.Max(0, m.Stress - 30); }
+            for (int i = 0; i < Members.Count; i++)
+            {
+                Members[i].HP = Members[i].MaxHP;
+                Members[i].Stress = Math.Max(0, Members[i].Stress - 30);
+            }
 
             if (town != null)
             {
@@ -580,32 +701,96 @@ namespace Server.Misc
                     if (questDz != null && questDz.Nodes.Count > 0)
                     {
                         Point3D dest = questDz.Nodes[0].Location;
-                        TargetNode = new WorldNode(questDz.ZoneId, WorldNodeType.Dungeon, questDz.Facet, dest, dest, questDz.CurrentDifficulty);
-                        
-                        TravelHoursRemaining = 4; 
-                        State = AdventurerState.Traveling;
+                        TargetNode = new WorldNode(questDz.ZoneId, questDz.RCode, WorldNodeType.Dungeon, questDz.Facet, dest, dest, questDz.CurrentDifficulty);
                         this.AcceptedJobReward = acceptedJob.RewardGold; 
                         
-                        Console.WriteLine($"[Quest] {Members[0].Name} 파티가 방치된 '{acceptedJob.Title}' 의뢰를 수락하고 출발합니다!");
+                        Console.WriteLine($"[Quest] {Members[0].Name} 파티가 방치된 '{acceptedJob.Title}' 의뢰를 수락하고 출발 준비를 마쳤습니다.");
                     }
                 }
             }
 
-            if (TargetNode == null)
+            if (TargetNode == null && town != null)
             {
-                var validDungeons = DungeonManager.ZoneList.Where(z => z.Nodes.Count > 0).ToList();
-                if (validDungeons.Count > 0)
+                if (AverageLevel < 10 && Utility.RandomBool())
                 {
-                    var targetDz = validDungeons.OrderBy(z => Math.Abs(z.CurrentDifficulty - (AverageLevel * 200))).FirstOrDefault();
-                    if (targetDz != null)
+                    var sortedTowns = TownEconomyManager.Towns.Values
+                        .Where(t => t.Facet == CurrentMap && t.TownName != town.TownName)
+                        .OrderBy(t => Utility.GetDistanceToSqrt(CurrentLocation, t.Center))
+                        .ToList();
+
+                    if (sortedTowns.Count > 0)
                     {
-                        Point3D dest = targetDz.Nodes[0].Location;
-                        TargetNode = new WorldNode(targetDz.ZoneId, WorldNodeType.Dungeon, targetDz.Facet, dest, dest, targetDz.CurrentDifficulty);
+                        int pool = Math.Min(3, sortedTowns.Count);
+                        var targetTown = sortedTowns[Utility.Random(pool)];
+                        var tCode = RegionSaver.GetRegionCodes(targetTown.Facet, targetTown.Center.X, targetTown.Center.Y, targetTown.Center.Z).Major;
+                        TargetNode = new WorldNode(targetTown.TownName ?? targetTown.Name, tCode, WorldNodeType.Town, targetTown.Facet, targetTown.Center, targetTown.Center, 1);
                         
-                        TravelHoursRemaining = 4; 
+                        Console.WriteLine($"[Adventurer] 초보인 {Members[0].Name} 파티가 호위를 위해 이웃 마을인 {TargetNode.Name}(으)로 향하기로 했습니다.");
+                    }
+                }
+                else
+                {
+                    var validDungeons = DungeonManager.ZoneList.Where(z => z.Nodes.Count > 0).ToList();
+                    if (validDungeons.Count > 0)
+                    {
+                        int targetDiff = (int)(AverageLevel * 200);
+                        var suitableDungeons = validDungeons
+                            .OrderBy(z => Math.Abs(z.CurrentDifficulty - targetDiff))
+                            .Take(3) 
+                            .ToList();
+
+                        if (suitableDungeons.Count > 0)
+                        {
+                            var targetDz = suitableDungeons[Utility.Random(suitableDungeons.Count)];
+                            Point3D dest = targetDz.Nodes[0].Location;
+                            TargetNode = new WorldNode(targetDz.ZoneId, targetDz.RCode, WorldNodeType.Dungeon, targetDz.Facet, dest, dest, targetDz.CurrentDifficulty);
+                            
+                            Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 자율 사냥을 위해 {TargetNode.Name}(으)로 출발 준비를 마쳤습니다.");
+                        }
+                    }
+                }
+            }
+
+            if (TargetNode != null && CurrentNode != null)
+            {
+                bool allMounted = true;
+                for (int i = 0; i < Members.Count; i++)
+                {
+                    if (!Members[i].HasMount) { allMounted = false; break; }
+                }
+
+                var plan = VirtualTravelNetwork.CalculateBestRoute(CurrentNode.RCode, TargetNode.RCode, PartyWealth, allMounted);
+
+                if (plan.IsPossible)
+                {
+                    PartyWealth -= plan.TotalCost;
+                    if (town != null) town.Wealth += plan.TotalCost; 
+                    
+                    TravelHoursRemaining = plan.TotalTicks;
+                    State = AdventurerState.Traveling;
+                    
+                    Console.WriteLine($"[Travel] {Members[0].Name} 파티가 {CurrentNode.Name}에서 {TargetNode.Name}(으)로 이동을 시작합니다. (비용: {plan.TotalCost}gp / 소요: {plan.TotalTicks}틱)");
+                }
+                else
+                {
+                    bool isUnregistered = !VirtualTravelNetwork.IsNodeRegistered(CurrentNode.RCode) || !VirtualTravelNetwork.IsNodeRegistered(TargetNode.RCode);
+
+                    if (isUnregistered)
+                    {
+                        int distance = (int)Utility.GetDistanceToSqrt(CurrentLocation, TargetNode.Location);
+                        int ticks = Math.Max(1, distance / 300); 
+                        if (allMounted) ticks = Math.Max(1, ticks / 2);
+
+                        ticks = Math.Min(10, ticks); 
+
+                        TravelHoursRemaining = ticks;
                         State = AdventurerState.Traveling;
-                        
-                        Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 자율 사냥을 위해 {TargetNode.Name}(으)로 출발합니다.");
+                        Console.WriteLine($"[Travel] {Members[0].Name} 파티가 비정규 지역인 {TargetNode.Name}(으)로 탐험을 떠납니다. ({ticks}틱 소요)");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"[Travel] {Members[0].Name} 파티가 자금 부족으로 발이 묶였습니다.");
+                        TargetNode = null; 
                     }
                 }
             }
@@ -617,12 +802,6 @@ namespace Server.Misc
 
             if (TravelHoursRemaining > 0)
             {
-                double progress = 1.0 / (TravelHoursRemaining + 1);
-                
-                int nextX = CurrentLocation.X + (int)((TargetNode.Location.X - CurrentLocation.X) * progress);
-                int nextY = CurrentLocation.Y + (int)((TargetNode.Location.Y - CurrentLocation.Y) * progress);
-                
-                CurrentLocation = new Point3D(nextX, nextY, CurrentLocation.Z);
                 TravelHoursRemaining--;
             }
             else
@@ -632,9 +811,22 @@ namespace Server.Misc
                 CurrentNode = TargetNode;
                 TargetNode = null;
                 
+                if (CurrentNode.Type == WorldNodeType.Town && State == AdventurerState.Traveling && AverageLevel < 10)
+                {
+                    int patrolReward = Members.Count * 150;
+                    var town = TownEconomyManager.Towns.Values.FirstOrDefault(t => t.TownName == CurrentNode.Name);
+                    if (town != null && town.Wealth >= patrolReward)
+                    {
+                        town.Wealth -= patrolReward;
+                        PartyWealth += patrolReward;
+                        Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 {CurrentNode.Name}에 무사히 도착하여 호위 수당 {patrolReward}gp를 받았습니다.");
+                    }
+                }
+
                 State = CurrentNode.Type == WorldNodeType.Dungeon ? AdventurerState.Exploring : AdventurerState.Resting;
                 
-                Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 {CurrentNode.Name}에 도착했습니다.");
+                if (CurrentNode.Type == WorldNodeType.Dungeon)
+                    Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 던전 {CurrentNode.Name}에 진입했습니다.");
             }
         }
 
@@ -642,13 +834,26 @@ namespace Server.Misc
         {
             double efficiency = 1.0 - (PackAnimals * 0.15); 
             
-            int bandageConsume = (int)Math.Max(1, Members.Count * efficiency * 10);
-            int potionConsume = (int)Math.Max(1, (Members.Count / 2) * efficiency * 10);
+            if (EmployedSherpa != null) efficiency -= 0.20;
+
+            int bandageConsume = (int)Math.Max(1, Members.Count * efficiency * 1.5);
+            int potionConsume = (int)Math.Max(1, (Members.Count / 2) * efficiency * 0.5);
 
             Bandages = Math.Max(0, Bandages - bandageConsume);
             Potions = Math.Max(0, Potions - potionConsume);
 
-            bool needsRetreat = Bandages < 10 || Potions < 5 || Members.Any(m => m.HP < m.MaxHP * 0.3) || Members.Any(m => m.Stress > 90);
+            bool needsRetreat = false;
+            if (Bandages < 10 || Potions < 5) needsRetreat = true;
+            else
+            {
+                for (int i = 0; i < Members.Count; i++)
+                {
+                    if (Members[i].HP < Members[i].MaxHP * 0.3 || Members[i].Stress > 90)
+                    {
+                        needsRetreat = true; break;
+                    }
+                }
+            }
             
             if (needsRetreat)
             {
@@ -656,51 +861,127 @@ namespace Server.Misc
                 return;
             }
 
-            BatchCombatTick();
-        }
-
-        private void RetreatToTown()
-        {
-            TargetNode = GetNearestTown();
-            TravelHoursRemaining = 2; 
-            State = AdventurerState.Traveling;
-            Console.WriteLine($"[Adventurer] 물자 부족으로 인해 {TargetNode.Name}으로 퇴각 중...");
-        }
-
-        // 🌟 [핵심 기획 반영] 유령마을 필터링 및 거리 기반 벤더 탐색 로직
-        private WorldNode GetNearestTown()
-        {
-            // 1. 현재 대륙에 있는 마을들을 모험가 파티와 가까운 거리 순으로 정렬합니다.
-            var sortedTowns = TownEconomyManager.Towns.Values
-                .Where(t => t.Facet == CurrentMap)
-                .OrderBy(t => Utility.GetDistanceToSqrt(CurrentLocation, t.Center))
-                .ToList();
-
-            // 2 & 3. 가까운 마을부터 순서대로 루프를 돌며 상인이 있는지 검사합니다.
-            foreach (var town in sortedTowns)
+            bool isPhysicalActive = false;
+            for (int i = 0; i < Members.Count; i++)
             {
-                // 마을 내 NPC 상인 수 체크
-                bool hasNpcVendor = town.VendorCount > 0;
-                
-                // 마을 근처(반경 150타일 내외)에 유저 상인이 한 명이라도 있는지 체크
-                bool hasPlayerVendor = PlayerVendor.PlayerVendors != null && 
-                                       PlayerVendor.PlayerVendors.Any(v => v.Map == town.Facet && Utility.GetDistanceToSqrt(v.Location, town.Center) < 150);
-
-                // NPC 벤더나 유저 벤더가 단 1명이라도 존재하면 이 마을로 대피 결정! (마진시아 등 유령마을 자연스럽게 배제)
-                if (hasNpcVendor || hasPlayerVendor)
+                if (Members[i].PhysicalObject != null && !Members[i].PhysicalObject.Deleted)
                 {
-                    return new WorldNode(town.TownName ?? town.Name, WorldNodeType.Town, town.Facet, town.Center, town.Center, 1);
+                    isPhysicalActive = true;
+                    break;
                 }
             }
 
-            // 4. 만약 대륙 내의 모든 마을에 상인이 0명이라면 (서버 멸망 수준), 거리가 가장 가까운 아무 마을이나 리턴
-            var fallbackTown = sortedTowns.FirstOrDefault();
-            if (fallbackTown != null)
+            if (isPhysicalActive)
             {
-                return new WorldNode(fallbackTown.TownName ?? fallbackTown.Name, WorldNodeType.Town, fallbackTown.Facet, fallbackTown.Center, fallbackTown.Center, 1);
+                return; 
             }
 
-            // 갈 곳이 없으면 일단 제자리 대기
+            BatchCombatTick();
+        }
+
+        // ====================================================================
+        // 🌟 [유저 기획 완벽 반영] 섬과 내륙을 완벽히 분리한 생존 퇴각 로직
+        // ====================================================================
+        private void RetreatToTown()
+        {
+            RegionCode majorDungeonCode = RegionSaver.GetMajorCode(CurrentNode.RCode);
+            
+            if (!DungeonRetreatManager.Map.TryGetValue(majorDungeonCode, out RetreatRoute route))
+            {
+                TargetNode = GetFallbackNearestTown();
+                if (TargetNode == CurrentNode || TargetNode == null)
+                {
+                    Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 오지에서 조난당했습니다!");
+                    this.State = AdventurerState.Resting;
+                    return;
+                }
+                int fallbackDist = (int)Utility.GetDistanceToSqrt(CurrentLocation, TargetNode.Location);
+                route = new RetreatRoute(TargetNode.RCode, false, fallbackDist);
+            }
+            else
+            {
+                var targetTown = TownEconomyManager.Towns.Values.FirstOrDefault(t => 
+                    RegionSaver.GetRegionCodes(t.Facet, t.Center.X, t.Center.Y, t.Center.Z).Major == route.TownCode);
+
+                if (targetTown != null)
+                {
+                    string safeName = targetTown.TownName ?? targetTown.Name ?? "지정 대피소";
+                    TargetNode = new WorldNode(safeName, route.TownCode, WorldNodeType.Town, targetTown.Facet, targetTown.Center, targetTown.Center, 1);
+                }
+                else
+                {
+                    Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 대피소를 찾지 못해 조난당했습니다.");
+                    this.State = AdventurerState.Resting;
+                    return;
+                }
+            }
+
+            int ferryCost = route.IsIsland ? 500 * Members.Count : 0;
+            bool allMounted = true;
+            for (int i = 0; i < Members.Count; i++)
+            {
+                if (!Members[i].HasMount) { allMounted = false; break; }
+            }
+
+            var townToPay = TownEconomyManager.Towns.Values.FirstOrDefault(t => 
+                RegionSaver.GetRegionCodes(t.Facet, t.Center.X, t.Center.Y, t.Center.Z).Major == route.TownCode);
+
+            if (route.IsIsland)
+            {
+                if (PartyWealth >= ferryCost)
+                {
+                    PartyWealth -= ferryCost;
+                    if (townToPay != null) townToPay.Wealth += ferryCost;
+
+                    this.TravelHoursRemaining = Math.Max(1, route.BaseDistance / 300); 
+                    this.State = AdventurerState.Traveling;
+                    Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 배삯 {ferryCost}gp를 내고 {TargetNode.Name}(으)로 해상 퇴각합니다. ({TravelHoursRemaining}틱 소요)");
+                }
+                else
+                {
+                    Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 {TargetNode.Name}행 배삯({ferryCost}gp)이 없어 던전에 배수진을 칩니다! (사망 위기)");
+                    this.State = AdventurerState.Exploring; 
+                    this.TargetNode = null; 
+                }
+            }
+            else
+            {
+                int baseCost = 50 * Members.Count; 
+                if (PartyWealth >= baseCost)
+                {
+                    PartyWealth -= baseCost;
+                    if (townToPay != null) townToPay.Wealth += baseCost;
+
+                    int ticks = Math.Max(1, route.BaseDistance / 300);
+                    if (allMounted) ticks = Math.Max(1, ticks / 2);
+                    
+                    this.TravelHoursRemaining = ticks;
+                    this.State = AdventurerState.Traveling;
+                    Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 여비를 지불하고 {TargetNode.Name}(으)로 퇴각합니다. ({TravelHoursRemaining}틱 소요)");
+                }
+                else
+                {
+                    int ticks = Math.Max(2, (route.BaseDistance / 300) * 3); 
+                    
+                    this.TravelHoursRemaining = ticks;
+                    this.State = AdventurerState.Traveling;
+                    Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 무일푼으로 {TargetNode.Name}까지 맨몸 행군을 강행합니다! ({TravelHoursRemaining}틱 소요 - 아사 위험)");
+                }
+            }
+        }
+
+        private WorldNode GetFallbackNearestTown()
+        {
+            var town = TownEconomyManager.Towns.Values
+                .Where(t => t.Facet == CurrentMap && t.VendorCount > 0)
+                .OrderBy(t => Utility.GetDistanceToSqrt(CurrentLocation, t.Center))
+                .FirstOrDefault();
+
+            if (town != null)
+            {
+                var tCode = RegionSaver.GetRegionCodes(town.Facet, town.Center.X, town.Center.Y, town.Center.Z).Major;
+                return new WorldNode(town.TownName ?? town.Name ?? "인근 마을", tCode, WorldNodeType.Town, town.Facet, town.Center, town.Center, 1);
+            }
             return CurrentNode;
         }
 
@@ -760,15 +1041,15 @@ namespace Server.Misc
                         m.Stress = 80;      
                         
                         var town = TownEconomyManager.Towns.Values.OrderBy(t => Utility.GetDistanceToSqrt(CurrentLocation, t.Center)).FirstOrDefault();
-                        if (town != null) town.Wealth += 1000; 
+                        if (town != null) VirtualAdventurerManager.PayToCitizenOrTown(town, 1000, NpcJobClass.Healer_Master, NpcJobClass.Priest, NpcJobClass.Surgeon_Relig);
                         
-                        Console.WriteLine($"[Adventurer] {m.Name}이(가) 치명상을 입었으나 동료들이 파티 자금으로 구조했습니다.");
+                        Console.WriteLine($"[Adventurer] {m.Name}이(가) 치명상을 입었으나 파티 자금으로 구조했습니다.");
                     }
                     else
                     {
                         m.SpawnAdventurerChest(CurrentMap, CurrentLocation);
                         Members.RemoveAt(i);
-                        Console.WriteLine($"[Adventurer] {m.Name}이 던전에서 전사했습니다.");
+                        Console.WriteLine($"[Adventurer] {m.Name}이 전사했습니다.");
                     }
                 }
             }
@@ -858,8 +1139,9 @@ namespace Server.Misc
                 }
             }
 
-            foreach (var m in party.Members) 
+            for (int i = 0; i < party.Members.Count; i++) 
             {
+                var m = party.Members[i];
                 m.Party = party;
                 if (m.Gold >= 500) { m.Gold -= 500; party.PartyWealth += 500; }
             }
@@ -961,6 +1243,8 @@ namespace Server.Misc
 
         public bool HasBedroll { get; set; }      
         public bool IsRestingAtInn { get; set; }  
+        
+        public bool HasMount { get; set; } 
 
         public AdventurerParty Party { get; set; } 
         public bool IsFemale { get; set; }
@@ -998,6 +1282,7 @@ namespace Server.Misc
             Bolts = 0;
             HasBedroll = true;   
             IsRestingAtInn = false;
+            HasMount = false;
 
             Affinity = Utility.RandomMinMax(1, 150);
             LawChaosAlignment = (LawChaos)Utility.Random(3);
@@ -1058,12 +1343,14 @@ namespace Server.Misc
                     reader.ReadString();
                 }
             }
+
+            if (version >= 3) HasMount = reader.ReadBool();
         }
 
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-            writer.Write(2); 
+            writer.Write(3); 
 
             writer.Write((int)RankLevel);
             writer.Write(IsFemale);
@@ -1098,6 +1385,8 @@ namespace Server.Misc
                 writer.Write((int)kvp.Key);
                 writer.Write(kvp.Value.FullName);
             }
+
+            writer.Write(HasMount);
         }
 
         public PhysicalAdventurer PhysicalObject { get; set; }
@@ -1120,8 +1409,9 @@ namespace Server.Misc
             if (profile.Role == AdventurerRole.Tank || profile.Role == AdventurerRole.MeleeDPS)
                 requirements.Add((typeof(Bandage), 100, 5)); 
 
-            foreach (var req in requirements)
+            for (int i = 0; i < requirements.Count; i++)
             {
+                var req = requirements[i];
                 int currentCount = this.Backpack.GetAmount(req.Type);
                 if (currentCount < req.Target)
                 {
@@ -1153,23 +1443,29 @@ namespace Server.Misc
             catch { Console.WriteLine($"[Error] {type.Name} 아이템 생성 실패 (모험가 보급)"); }
         }
 
-        private void TrySmartPurchase(TownEconomy town, Type itemType, int qty, int npcPrice)
+        private void TrySmartPurchase(TownEconomy town, Type itemType, int qty, int defaultPrice)
         {
-            var userVendorResult = SearchUserVendorsForConsumables(town.Facet, itemType, qty, npcPrice);
+            int maxAcceptablePrice = (int)(defaultPrice * 1.5); 
             
+            int townNpcPrice = town.GetPrice(itemType);
+            if (townNpcPrice <= 0) townNpcPrice = defaultPrice; 
+
+            if (townNpcPrice <= maxAcceptablePrice)
+            {
+                int totalCost = qty * townNpcPrice;
+                if (this.Gold >= totalCost)
+                {
+                    this.Gold -= totalCost;
+                    town.Wealth += totalCost; 
+                    SafeCreateAndDrop(itemType, qty);
+                    return;
+                }
+            }
+
+            var userVendorResult = SearchUserVendorsForConsumables(town.Facet, itemType, qty, maxAcceptablePrice);
             if (userVendorResult.Found)
             {
                 CompletePurchase(userVendorResult.Vendor, userVendorResult.Item, qty, userVendorResult.TotalPrice);
-            }
-            else
-            {
-                int total = qty * npcPrice;
-                if (this.Gold >= total)
-                {
-                    this.Gold -= total;
-                    town.Wealth += total;
-                    SafeCreateAndDrop(itemType, qty);
-                }
             }
         }
 
@@ -1190,25 +1486,55 @@ namespace Server.Misc
         private void ScanVendorsForUpgrades(TownEconomy town, CombatProfile profile)
         {
             int budget = this.Gold / 2; 
+            bool foundMagicGear = false;
 
-            foreach (var vendor in PlayerVendor.PlayerVendors.Where(v => v.Map == town.Facet))
+            if (PlayerVendor.PlayerVendors != null)
             {
-                if (vendor.Backpack == null) continue;
-
-                foreach (var item in vendor.Backpack.Items)
+                foreach (var vendor in PlayerVendor.PlayerVendors.Where(v => v.Map == town.Facet))
                 {
-                    if (!(item is BaseWeapon || item is BaseArmor || item is BaseJewel)) continue;
+                    if (vendor.Backpack == null) continue;
 
-                    var vi = vendor.GetVendorItem(item);
-                    if (vi == null || vi.Price > budget) continue;
-
-                    double itemValueScore = EvaluateItemScore(item, profile);
-                    
-                    if (itemValueScore > (this.CombatPower * 0.1)) 
+                    foreach (var item in vendor.Backpack.Items)
                     {
-                        CompletePurchase(vendor, item, 1, vi.Price);
-                        Console.WriteLine($"[Adventurer Shopping] {this.Name}이 유저 벤더에서 상위 등급 장비 {item.Name}를 구매!");
-                        return; 
+                        if (!(item is BaseWeapon || item is BaseArmor || item is BaseJewel)) continue;
+
+                        var vi = vendor.GetVendorItem(item);
+                        if (vi == null || vi.Price > budget) continue;
+
+                        double itemValueScore = EvaluateItemScore(item, profile);
+                        
+                        if (itemValueScore > (this.CombatPower * 0.1)) 
+                        {
+                            CompletePurchase(vendor, item, 1, vi.Price);
+                            Console.WriteLine($"[Adventurer] {this.Name} 상위 특수 장비 구매");
+                            foundMagicGear = true;
+                            return; 
+                        }
+                    }
+                }
+            }
+
+            if (!foundMagicGear)
+            {
+                for (int i = 0; i < profile.RequiredLayers.Length; i++)
+                {
+                    Layer requiredLayer = profile.RequiredLayers[i];
+                    if (!VirtualEquipments.ContainsKey(requiredLayer))
+                    {
+                        Type fallbackItem = GetFallbackItemForLayer(requiredLayer, profile.Role);
+                        if (fallbackItem != null) 
+                        {
+                            int npcPrice = town.GetPrice(fallbackItem);
+                            if (npcPrice <= 0) npcPrice = 200; 
+
+                            if (this.Gold >= npcPrice && budget >= npcPrice)
+                            {
+                                this.Gold -= npcPrice;
+                                town.Wealth += npcPrice; 
+                                VirtualEquipments[requiredLayer] = fallbackItem;
+                                break; 
+                            }
+                        }
                     }
                 }
             }
@@ -1217,9 +1543,9 @@ namespace Server.Misc
         private double EvaluateItemScore(Item item, CombatProfile profile)
         {
             double score = 0;
-            foreach (int optID in profile.PreferredOptions)
+            for (int i = 0; i < profile.PreferredOptions.Length; i++)
             {
-                int val = GetOptionValue(item, optID); 
+                int val = GetOptionValue(item, profile.PreferredOptions[i]); 
                 if (val > 0) score += val * 2.0; 
             }
             
@@ -1259,8 +1585,9 @@ namespace Server.Misc
         public void EquipMissingLayers(TownEconomy town)
         {
             var profile = AdventurerProfileManager.GetProfile(this.JobClass);
-            foreach (Layer requiredLayer in profile.RequiredLayers)
+            for (int i = 0; i < profile.RequiredLayers.Length; i++)
             {
+                Layer requiredLayer = profile.RequiredLayers[i];
                 if (VirtualEquipments.ContainsKey(requiredLayer)) continue;
 
                 Type fallbackItem = GetFallbackItemForLayer(requiredLayer, profile.Role);
@@ -1320,7 +1647,7 @@ namespace Server.Misc
             {
                 if (Utility.RandomDouble() < 0.20)
                 {
-                    Console.WriteLine($"[생애주기] 위대한 모험가 {this.Name}({Math.Floor(currentAge)}세)가 노환으로 은퇴하여 시민이 됩니다.");
+                    Console.WriteLine($"[생애주기] 모험가 {this.Name}({Math.Floor(currentAge)}세)가 은퇴하여 시민이 됩니다.");
                     NobilityRank rank = Fame > 10000 ? NobilityRank.Knight : NobilityRank.Commoner; 
                     return (true, rank);
                 }
@@ -1356,7 +1683,7 @@ namespace Server.Misc
             if (this.Gold >= repairCost)
             {
                 this.Gold -= repairCost;
-                town.Wealth += repairCost;
+                town.Wealth += repairCost; 
                 return (true, repairCost);
             }
             return (false, 0);
@@ -1466,6 +1793,12 @@ namespace Server.Misc
             if (Party != null && Party.CurrentMap != null)
                 SpawnAdventurerChest(Party.CurrentMap, Party.CurrentLocation);
             
+            if (this.PhysicalObject != null && !this.PhysicalObject.Deleted)
+            {
+                this.PhysicalObject.Delete();
+                this.PhysicalObject = null;
+            }
+
             if (Party != null) Party.Members.Remove(this);
         }
 

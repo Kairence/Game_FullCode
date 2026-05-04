@@ -62,14 +62,6 @@ namespace Server.Misc
             int shareKarma = totalKarma / killerCount;
             int extraGold = totalGoldPool % killerCount; // 잔돈
 
-            // [B] 드랍 개수 결정 (아이템)
-            int dropCount = 0;
-            if (bc.Boss) dropCount = Utility.RandomMinMax(7, 12);
-            else if (bc.Grade == 7) dropCount = Utility.RandomMinMax(4, 8);
-            else if (bc.Grade == 6) dropCount = Utility.RandomMinMax(2, 5);
-            else if (bc.Grade >= 2) dropCount = Utility.RandomMinMax(1, 3);
-            else dropCount = Utility.RandomMinMax(0, 1);
-
             // [C] 실제 배분 루프
             int i = 0;
             foreach (Mobile m in killers)
@@ -78,9 +70,6 @@ namespace Server.Misc
                 PlayerMobile pm = (PlayerMobile)m;
 
                 // 1. 실버 포인트 지급
-                double silverBonus = 1000 + pm.SilverPoint[2] * 50 + AosAttributes.GetValue(pm, AosAttribute.LowerAmmoCost);
-                int get_silverpoint = (int)(bc.Fame * 0.33 * silverBonus / 1000);
-                pm.Getsilverpoint(get_silverpoint);
 
                 // 2. 명성 및 카르마 지급
                 if (shareFame > 0) Titles.AwardFame(pm, shareFame, true);
@@ -95,22 +84,52 @@ namespace Server.Misc
                     pm.AddToBackpack(new Gold(finalGold));
                     pm.SendMessage(0x48, "재화 {0} gold", finalGold);
                 }
-				GenerateSmartLoot(pm, bc, dropCount);
+
+                // [B] 드랍 개수 결정 (스누핑 패시브 보너스 추가)
+                int dropCount = 0;
+                if (bc.Boss) dropCount = Utility.RandomMinMax(7, 12);
+                else if (bc.Grade == 7) dropCount = Utility.RandomMinMax(4, 8);
+                else if (bc.Grade == 6) dropCount = Utility.RandomMinMax(2, 5);
+                else if (bc.Grade >= 2) dropCount = Utility.RandomMinMax(1, 3);
+                else dropCount = Utility.RandomMinMax(0, 1);
+
+                // --- [커스텀: 스누핑 기본 패시브 (드랍 개수 증가)] ---
+                double snoopSkill = pm.Skills[SkillName.Snooping].Value;
+                if (snoopSkill > 0 && Utility.RandomDouble() < (snoopSkill / 400.0)) // 최대 스킬(200) 시 50% 확률로 추가 드랍 +1
+                {
+                    dropCount++;
+                    pm.SendMessage(65, "스누핑의 관찰력으로 숨겨진 전리품을 추가로 발견했습니다!");
+                }
+                // --------------------------------------------------
+
+                GenerateSmartLoot(pm, bc, dropCount);
 
                 i++;
             }
         }
 
-		private static void GenerateSmartLoot(PlayerMobile pm, BaseCreature bc, int dropCount)
+        private static void GenerateSmartLoot(PlayerMobile pm, BaseCreature bc, int dropCount)
         {
             if (pm == null || bc == null || dropCount <= 0) return;
 
             double expectancy = (bc.Fame / 100.0);
+            double snoopSkill = pm.Skills[SkillName.Snooping].Value;
 
             for (int d = 0; d < dropCount; d++)
             {
                 // 가중치를 계산하여 랜덤 엔트리 하나 추출
                 DropEntry entry = MonsterDropHandler.GetRandomEntry(bc.GetType().Name);
+                
+                // --- [커스텀: 스누핑 100 보너스 (운명 재굴림)] ---
+                // 엔트리를 못 뽑았거나(null), 5% 확률이 터졌을 때 재굴림 발동
+                if (snoopSkill >= 100.0 && (entry == null || Utility.RandomDouble() < 0.05))
+                {
+                    entry = MonsterDropHandler.GetRandomEntry(bc.GetType().Name);
+                    // 재굴림 이펙트나 메시지를 띄워줘도 좋습니다 (너무 자주 뜨면 시끄러우니 주석 처리)
+                    // pm.SendMessage(65, "도둑의 직감으로 전리품을 한 번 더 뒤졌습니다! (재굴림 발동)");
+                }
+                // --------------------------------------------------
+
                 if (entry == null) continue;
 
                 Item droppedItem = null;
@@ -144,20 +163,12 @@ namespace Server.Misc
                             double fameBonus = 1.0 + (bc.Fame / 10000.0);
                             droppedItem.Amount = (int)(baseAmount * fameBonus);
                         }
-                        else
-                        {
-                            // 스택 안되는 일반템은 MinAmount만큼 반복 생성하거나 그냥 1개 지급
-                            // 여기서는 일반적인 재료 기획에 맞춰 1개 지급으로 처리
-                        }
                     }
                 }
 
                 if (droppedItem != null)
                 {
                     pm.AddToBackpack(droppedItem);
-                    // 가독성을 위한 획득 메시지
-                    //string itemName = droppedItem.Name ?? droppedItem.GetType().Name;
-                    //pm.SendMessage(0x48, "[획득] {0} ({1})", itemName, droppedItem.Amount);
                 }
             }
         }

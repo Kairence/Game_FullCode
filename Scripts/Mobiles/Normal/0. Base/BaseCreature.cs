@@ -2624,7 +2624,7 @@ namespace Server.Mobiles
 					{
 						PlayerMobile pm = from as PlayerMobile;
 						maxchance = Misc.Util.ExpHarvestBonus( pm, maxchance );
-						bonus = pm.GoldPoint[4];
+						//bonus = pm.GoldPoint[4];
 
 						if( skinning )
 						{
@@ -2699,12 +2699,6 @@ namespace Server.Mobiles
 							if( hides < 1 )
 								hides = 1;
 							leather = new Hides(hides);  
-						}
-						int getgoldpoint = (int)(tasteID);
-
-						if( getgoldpoint > 0 )
-						{
-							pm.Getgoldpoint(getgoldpoint);
 						}
 						from.CheckSkill(SkillName.TasteID, tasteID );
 					}						

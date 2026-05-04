@@ -366,9 +366,6 @@ namespace Server.Misc
 						//Timer.DelayCall(TimeSpan.FromSeconds(0.5), OnDoubleClick, from);
 					}
 					from.CheckSkill( harvestskill, skillpoint * harvestAmount );
-					pm.Getgoldpoint( (int)skillpoint * harvestAmount);
-					from.Hunger -= harvestAmount * 10;
-					harvestAmount = realAmount;
 				}
 			}
 			return harvestAmount;
@@ -767,6 +764,8 @@ namespace Server.Misc
 		
 		public static void LevelUpEffect(PlayerMobile pm, int getpoint, int exp_Type)
 		{
+			return;
+			/*
 			int savepoint = 0;
 			switch(exp_Type)
 			{
@@ -814,6 +813,7 @@ namespace Server.Misc
 				pm.Delta(MobileDelta.Stat);
 			}
 			pm.SendMessage("{0} 경험치를 {1} 획득합니다!", exp_Type_Name[exp_Type], getpoint );
+			*/
 		}
 		
 		
@@ -1729,23 +1729,7 @@ namespace Server.Misc
 
 		public static void SavingAccountPoint( PlayerMobile pm, int target, int point )
 		{
-			if( target > 0 )
-			{
-				Account acc = pm.Account as Account;
-				acc.Point[target]++;
-				if( Math.Pow( acc.Point[target + 500] + 1, 2 ) <= acc.Point[target] )
-				{
-					acc.Point[target + 500 ] += point;
-					acc.Point[0] += acc.Point[target + 500 ];
-					pm.SendMessage("가문 포인트를 {0}점 획득하였습니다.", point);
-				}
-			}
-			if( pm.HasGump(typeof(HarvestGump)) )
-				pm.SendGump(new HarvestGump(pm));
-			if( pm.HasGump(typeof(CraftingGump)) )
-				pm.SendGump(new CraftingGump(pm));
-			if( pm.HasGump(typeof(MonsterFeatGump)) )
-				pm.SendGump(new MonsterFeatGump(pm));
+			return;
 		}
 		
 		//생산 업그레이드 확률

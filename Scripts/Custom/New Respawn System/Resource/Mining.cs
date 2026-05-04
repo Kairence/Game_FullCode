@@ -186,7 +186,9 @@ namespace Server.Engines.Harvest
             new MutateEntry( 60.0,  110.0, false, typeof( GoldOre ) ),
             new MutateEntry( 80.0,  130.0, false, typeof( AgapiteOre ) ),
             new MutateEntry( 100.0,  150.0,  false, typeof( VeriteOre ) ),
-            new MutateEntry( 120.0,  170.0,  false, typeof( ValoriteOre ) )
+            new MutateEntry( 120.0,  170.0,  false, typeof( ValoriteOre ) ),
+            new MutateEntry( 140.0,  190.0,  false, typeof( MithrilOre ) ),
+            new MutateEntry( 160.0,  210.0,  false, typeof( ObsidianOre ) )
         };
 
         // 🌟 [핵심] 리뉴얼된 MutateType (튜플 반환, Bank 사용 안함)
@@ -280,6 +282,8 @@ namespace Server.Engines.Harvest
             if (oreType == typeof(AgapiteOre)) return typeof(AgapiteGranite);
             if (oreType == typeof(VeriteOre)) return typeof(VeriteGranite);
             if (oreType == typeof(ValoriteOre)) return typeof(ValoriteGranite);
+            if (oreType == typeof(MithrilOre)) return typeof(MithrilGranite);
+            if (oreType == typeof(ObsidianOre)) return typeof(ObsidianGranite);
             return null;
         }
 

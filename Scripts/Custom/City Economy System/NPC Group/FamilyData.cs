@@ -1,61 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
 using Server;
-using Server.Items;      
-using Server.Mobiles;    
-using Server.Engines.Craft; 
+using Server.Items;
+using Server.Mobiles;
+using Server.Engines.Craft;
 using System.Linq;
 
 namespace Server.Misc
 {
+    // ====================================================================
+    // 🌟 [신규] 색자원과 품질을 기억하는 창고 저장용 고속 키(Key)
+    // ====================================================================
+    public record struct StoredItemKey(Type ItemType, CraftResource Resource, bool IsExceptional);
+
     // 창고 등급 정의 (공간 점유 및 AI 구매 가이드용)
     public enum StorageTier { None, Small, Medium, Large, Special }
 
     public static class StorageEconomy
     {
         // 1. [재봉술 영역] 아이템 종류(Variety) 확장 데이터
-        // 파우치나 백팩이 많을수록 더 다양한 종류의 생필품을 보관할 수 있습니다.
         private static readonly Dictionary<Type, int> VarietyBonusMap = new()
         {
-            // 기본 종류 5종
-            { typeof(Pouch), 5 },        // 종류 한도 +5
-            { typeof(Bag), 10 },         // 종류 한도 +10
-            { typeof(Backpack), 20 }     // 종류 한도 +20. 업그레이드 개념임.
+            { typeof(Pouch), 5 },
+            { typeof(Bag), 10 },
+            { typeof(Backpack), 20 }
         };
 
         // 2. [목공술 영역] 아이템 총 수량(Total Count) 확장 데이터
-        // 상자가 클수록 쌓아둘 수 있는 물건의 절대적인 양이 늘어납니다.
         private static readonly Dictionary<Type, int> QuantityBonusMap = new()
         {
-            { typeof(WoodenBox), 50 },       // 총 수량 +50
-            { typeof(SmallCrate), 100 },     // 총 수량 +100
-            { typeof(MediumCrate), 200 },    // 총 수량 +200
-            { typeof(LargeCrate), 300 },     // 총 수량 +300
-            { typeof(WoodenChest), 500 },    // 총 수량 +500
-            { typeof(MetalChest), 1000 }     // 총 수량 +1000 (특급 창고용 고급 상자)
+            { typeof(WoodenBox), 50 },
+            { typeof(SmallCrate), 100 },
+            { typeof(MediumCrate), 200 },
+            { typeof(LargeCrate), 300 },
+            { typeof(WoodenChest), 500 },
+            { typeof(MetalChest), 1000 }
         };
 
-        /// <summary>
-        /// 가문의 현재 보관함 구성에 따른 창고 제한치를 계산합니다.
-        /// </summary>
-        /// <returns>(최대 종류 수, 최대 아이템 수량)</returns>
-        public static (int MaxTypes, int MaxQuantity) GetStorageLimits(Dictionary<Type, int> warehouse)
+        public static (int MaxTypes, int MaxQuantity) GetStorageLimits(Dictionary<StoredItemKey, int> warehouse)
         {
-            int maxTypes = 5;       // 창고 없음: 기본 5종 (생필품 위주)
-            int maxQuantity = 5;    // 창고 없음: 기본 5개 물품
+            int maxTypes = 5;
+            int maxQuantity = 5;
 
             if (warehouse == null) return (maxTypes, maxQuantity);
 
             foreach (var kvp in warehouse)
             {
-                // 재봉술 아이템 체크: 종류 다양성 확보
-                if (VarietyBonusMap.TryGetValue(kvp.Key, out int vBonus))
+                Type type = kvp.Key.ItemType;
+
+                if (VarietyBonusMap.TryGetValue(type, out int vBonus))
                 {
                     maxTypes += (vBonus * kvp.Value);
                 }
 
-                // 목공술 아이템 체크: 수량 한도 확보
-                if (QuantityBonusMap.TryGetValue(kvp.Key, out int qBonus))
+                if (QuantityBonusMap.TryGetValue(type, out int qBonus))
                 {
                     maxQuantity += (qBonus * kvp.Value);
                 }
@@ -64,29 +62,21 @@ namespace Server.Misc
             return (maxTypes, maxQuantity);
         }
 
-        /// <summary>
-        /// 창고 등급별 요구 2차원 공간 (Width, Height)을 반환합니다.
-        /// </summary>
         public static (int Width, int Height) GetRequiredDimensions(StorageTier tier) => tier switch
         {
-            StorageTier.Special => (10, 10), // 특급: 100칸 점유
-            StorageTier.Large   => (4, 4),   // 대형: 16칸 점유
-            StorageTier.Medium  => (2, 2),   // 중형: 4칸 점유
-            StorageTier.Small   => (1, 1),   // 소형: 1칸 점유
+            StorageTier.Special => (10, 10),
+            StorageTier.Large   => (4, 4),
+            StorageTier.Medium  => (2, 2),
+            StorageTier.Small   => (1, 1),
             _ => (0, 0)
         };
     }
-
 
     public enum WorkshopBonusType { SuccessRate, ExceptionalChance, ResourceSave }
     public enum WorkshopTier { Small, Medium, Large }
 
     public static class WorkshopEconomy
     {
-        /// <summary>
-        /// [공방 에드온 마스터 데이터]
-        /// 각 에드온이 어떤 기술에 어떤 보너스를 주는지 정의합니다.
-        /// </summary>
         public static readonly Dictionary<Type, (SkillName Skill, double Bonus, WorkshopBonusType Type)> AddonBonusMap = new()
         {
             // --- 1. 요리 (Cooking) 관련 ---
@@ -104,7 +94,7 @@ namespace Server.Misc
             { typeof(LargeForgeSouthDeed), (SkillName.Blacksmith, 0.08, WorkshopBonusType.SuccessRate) },
             { typeof(AnvilEastDeed), (SkillName.Blacksmith, 0.05, WorkshopBonusType.ExceptionalChance) },
             { typeof(AnvilSouthDeed), (SkillName.Blacksmith, 0.05, WorkshopBonusType.ExceptionalChance) },
-            { typeof(SmithingPressDeed), (SkillName.Blacksmith, 0.10, WorkshopBonusType.ExceptionalChance) }, // [신규] 프레스 품질 보너스
+            { typeof(SmithingPressDeed), (SkillName.Blacksmith, 0.10, WorkshopBonusType.ExceptionalChance) },
             { typeof(StoneAnvilEastDeed), (SkillName.Blacksmith, 0.06, WorkshopBonusType.ExceptionalChance) },
             { typeof(StoneAnvilSouthDeed), (SkillName.Blacksmith, 0.06, WorkshopBonusType.ExceptionalChance) },
 
@@ -114,8 +104,8 @@ namespace Server.Misc
             { typeof(SpinningwheelEastDeed), (SkillName.Tailoring, 0.05, WorkshopBonusType.ResourceSave) },
             { typeof(SpinningwheelSouthDeed), (SkillName.Tailoring, 0.05, WorkshopBonusType.ResourceSave) },
             { typeof(ElvenSpinningwheelEastDeed), (SkillName.Tailoring, 0.06, WorkshopBonusType.ResourceSave) },
-            { typeof(SewingMachineDeed), (SkillName.Tailoring, 0.10, WorkshopBonusType.SuccessRate) }, //
-            { typeof(SewingMachine), (SkillName.Tailoring, 0.10, WorkshopBonusType.SuccessRate) },     //
+            { typeof(SewingMachineDeed), (SkillName.Tailoring, 0.10, WorkshopBonusType.SuccessRate) },
+            { typeof(SewingMachine), (SkillName.Tailoring, 0.10, WorkshopBonusType.SuccessRate) },
 
             // --- 4. 기록술 (Inscription) 관련 ---
             { typeof(WritingDeskDeed), (SkillName.Inscribe, 0.10, WorkshopBonusType.SuccessRate) },
@@ -126,33 +116,29 @@ namespace Server.Misc
 
             // --- 6. 목공 (Carpentry) 관련 ---
             { typeof(WoodworkersBenchDeed), (SkillName.Carpentry, 0.05, WorkshopBonusType.SuccessRate) },
-            { typeof(SpinningLatheDeed), (SkillName.Carpentry, 0.05, WorkshopBonusType.SuccessRate) }, // [신규] 선반
-            { typeof(RitualTableDeed), (SkillName.Carpentry, 0.10, WorkshopBonusType.ExceptionalChance) }, // 석공술 정점
+            { typeof(SpinningLatheDeed), (SkillName.Carpentry, 0.05, WorkshopBonusType.SuccessRate) },
+            { typeof(RitualTableDeed), (SkillName.Carpentry, 0.10, WorkshopBonusType.ExceptionalChance) },
 
             // --- 7. 연금술 및 유리세공 (Alchemy/Glassblowing) 관련 ---
             { typeof(AlchemyStationDeed), (SkillName.Alchemy, 0.10, WorkshopBonusType.SuccessRate) },
-            { typeof(HeatingStand), (SkillName.Alchemy, 0.05, WorkshopBonusType.SuccessRate) }, //
+            { typeof(HeatingStand), (SkillName.Alchemy, 0.05, WorkshopBonusType.SuccessRate) },
 
             // --- 8. 활 제작 (Bowcraft) 관련 ---
             { typeof(FletchingStationDeed), (SkillName.Fletching, 0.10, WorkshopBonusType.SuccessRate) }
         };
 
-        /// <summary>
-        /// 특정 기술에 대한 가문의 최종 공방 보너스를 산출합니다. (티어 배율 적용)
-        /// </summary>
-        public static double GetFinalBonus(Dictionary<Type, int> warehouse, SkillName skill, WorkshopBonusType type)
+        public static double GetFinalBonus(Dictionary<StoredItemKey, int> warehouse, SkillName skill, WorkshopBonusType type)
         {
             if (warehouse == null) return 0.0;
 
-            // 1. 해당 기술과 연관된 에드온들의 기본 보너스 합산 및 개수 파악
             double baseSum = 0.0;
             int addonCount = 0;
 
             foreach (var kvp in warehouse)
             {
-                if (AddonBonusMap.TryGetValue(kvp.Key, out var data) && data.Skill == skill)
+                if (AddonBonusMap.TryGetValue(kvp.Key.ItemType, out var data) && data.Skill == skill)
                 {
-                    addonCount += kvp.Value; // 에드온 보유 수량 합산
+                    addonCount += kvp.Value;
                     if (data.Type == type)
                     {
                         baseSum += (data.Bonus * kvp.Value);
@@ -160,8 +146,6 @@ namespace Server.Misc
                 }
             }
 
-            // 2. 전문가님 기획 티어 배율 적용
-            // 중형(3개 이상): 1.5배, 대형(6개 이상): 2.0배
             double multiplier = addonCount switch
             {
                 >= 6 => 2.0,
@@ -172,13 +156,9 @@ namespace Server.Misc
             return baseSum * multiplier;
         }
 
-        /// <summary>
-        /// 현재 가문의 특정 기술 공방 등급을 반환합니다.
-        /// </summary>
-        public static WorkshopTier GetTier(Dictionary<Type, int> warehouse, SkillName skill)
+        public static WorkshopTier GetTier(Dictionary<StoredItemKey, int> warehouse, SkillName skill)
         {
-            // warehouse가 null일 경우를 대비해 null 허용 연산자(?.) 및 대체값(??) 사용
-            int count = warehouse?.Where(kvp => AddonBonusMap.ContainsKey(kvp.Key) && AddonBonusMap[kvp.Key].Skill == skill)
+            int count = warehouse?.Where(kvp => AddonBonusMap.ContainsKey(kvp.Key.ItemType) && AddonBonusMap[kvp.Key.ItemType].Skill == skill)
                                   .Sum(kvp => kvp.Value) ?? 0;
 
             return count switch
@@ -188,24 +168,19 @@ namespace Server.Misc
                 _    => WorkshopTier.Small
             };
         }
-        /// <summary>
-        /// 공방 등급별 요구 2차원 공간 (Width, Height)을 반환합니다.
-        /// </summary>
+
         public static (int Width, int Height) GetRequiredDimensions(WorkshopTier tier) => tier switch
         {
-            WorkshopTier.Large  => (5, 5),   // 대형: 25칸 점유
-            WorkshopTier.Medium => (3, 3),   // 중형: 9칸 점유 (수정됨)
-            _                   => (2, 2)    // 소형: 4칸 점유
+            WorkshopTier.Large  => (5, 5),
+            WorkshopTier.Medium => (3, 3),
+            _                   => (2, 2)
         };
     }
-        
-    
-    // 6개 필수 의류 부위 정의
+
     public enum ClothSlot { Head, Shirt, Pants, Outer, Footwear, Misc }
 
-    public static class ClothingEconomy //각 부위당 스트레스 체크. 3벌 이하면 각 1점씩 증가(0벌이면 3점. 6부위면 총 스트레스 18점 증가). 한 부위당 4벌 이상이면 스트레스 1점 감소. 최대 한 부위당 2점(5벌)
+    public static class ClothingEconomy
     {
-        // 천 장비 카테고리 맵 (가죽 제외)
         public static readonly Dictionary<Type, ClothSlot> ClothCategoryMap = new()
         {
             // 1. 머리 (Hats)
@@ -246,12 +221,8 @@ namespace Server.Misc
             { typeof(OilCloth), ClothSlot.Misc }
         };
 
-        /// <summary>
-        /// 가문의 의류 다양성에 따른 스트레스 변동 수치를 계산합니다.
-        /// </summary>
         public static int CalculateStressChange(FamilyUnit family)
         {
-            // 집이 없거나 창고가 없는 경우 방어 코드
             if (family.ParentHouse?.HouseWarehouse == null) return 0;
             
             var warehouse = family.ParentHouse.HouseWarehouse;
@@ -259,9 +230,9 @@ namespace Server.Misc
             
             foreach (ClothSlot slot in Enum.GetValues<ClothSlot>()) slotVariety[slot] = 0;
 
-            foreach (var type in warehouse.Keys)
+            foreach (var key in warehouse.Keys)
             {
-                if (ClothCategoryMap.TryGetValue(type, out ClothSlot slot)) 
+                if (ClothCategoryMap.TryGetValue(key.ItemType, out ClothSlot slot)) 
                     slotVariety[slot]++;
             }
 
@@ -274,9 +245,8 @@ namespace Server.Misc
         }
     }
 
-    public static class FameEconomy //요구 명성당 해당 점수 이상의 가구가 있어야 함
+    public static class FameEconomy
     {
-        // 런타임에 9,000명의 NPC가 실제로 조회할 통합 마스터 딕셔너리
         private static readonly Dictionary<Type, double> m_MasterFameData = new();
 
         #region 직업별 인테리어 데이터 정의 (Skill / 20.0)
@@ -284,52 +254,32 @@ namespace Server.Misc
         // 1. 연금술 데이터 정의 (첫 번째 단계)
         private static readonly Dictionary<Type, double> m_AlchemyData = new()
         {
-            { typeof(Bottle), 0.0 },               // 0.0 / 20 = 0 -> 최소 1점 보정
-            { typeof(HairRestylingDeed), 172.5 },  // 172.5 / 20 = 8.6 -> 9점
+            { typeof(Bottle), 0.0 },               
+            { typeof(HairRestylingDeed), 172.5 },  
         };
 
         private static readonly Dictionary<Type, double> m_BlacksmithyData = new()
         {
-            // [비장비 및 장식용 소품]
-            // 공식: (BaseMinSkill / 20.0), 최소 1점 보장
-            
-            // 대형 함포 증서 (Skill 65.0 ~ 70.0) -> 약 3.5점 (반올림 4점)
-            // 가문의 무력을 과시하는 장식용 에드온으로 분류 가능
             { typeof(LightShipCannonDeed), 65.0 }, 
             { typeof(HeavyShipCannonDeed), 70.0 },
-
-            // 드래곤 마갑 증서 (Skill 172.5) -> 8.6점 (반올림 9점)
-            // 가문의 마구간이나 로비에 전시하는 최고급 사치품/장식으로 분류
             { typeof(DragonBardingDeed), 172.5 }
         };
 
         private static readonly Dictionary<Type, double> m_FletchingData = new()
         {
-            // [비장비 및 장식용 소품]
-            // 공식: (BaseMinSkill / 20.0), 최소 1점 보장
-            
-            // 사과나무 밑동 증서 (Skill 72.5) -> 3.6점 (반올림 4점)
             { typeof(AppleTrunkDeed), 72.5 }, 
-
-            // 복숭아나무 밑동 증서 (Skill 72.5) -> 3.6점 (반올림 4점)
             { typeof(PeachTrunkDeed), 72.5 },
-
-            // 벚꽃나무 밑동 증서 (Skill 172.5) -> 8.6점 (반올림 9점)
-            // 활 제작에서 만들 수 있는 최고급 조경/인테리어 아이템입니다.
             { typeof(CherryBlossomTrunkDeed), 172.5 }
         };
 
         private static readonly Dictionary<Type, double> m_CarpentryData = new()
         {
-            // [1점 구간] 기초 가구 및 소품 (Skill 0.0 미만 ~ 17.1 미만)
             { typeof(FootStool), -14.0 }, 
             { typeof(Stool), -14.0 }, 
             { typeof(BambooChair), -4.0 }, 
             { typeof(WoodenChair), -4.0 },
             { typeof(SmallStretchedHideEastDeed), 10.0 }, 
             { typeof(SmallStretchedHideSouthDeed), 10.0 },
-
-            // [1점 후반 ~ 2점 구간] 일반 가구 및 장식 (Skill 17.1 ~ 40.0 미만)
             { typeof(FancyWoodenChairCushion), 17.1 }, 
             { typeof(WoodenChairCushion), 17.1 },
             { typeof(Nightstand), 17.1 },
@@ -341,8 +291,6 @@ namespace Server.Misc
             { typeof(MediumStretchedHideSouthDeed), 30.0 },
             { typeof(WritingTable), 38.1 }, 
             { typeof(YewWoodTable), 38.1 },
-
-            // [2점 후반 ~ 3점 구간] 중급 가구 및 소품 (Skill 40.0 ~ 60.0 미만)
             { typeof(PlainWoodenShelfSouthDeed), 40.0 }, 
             { typeof(PlainWoodenShelfEastDeed), 40.0 },
             { typeof(FancyWoodenShelfSouthDeed), 40.0 }, 
@@ -366,8 +314,6 @@ namespace Server.Misc
             { typeof(LargeTable), 59.2 }, 
             { typeof(RusticBenchSouthDeed), 59.7 }, 
             { typeof(RusticBenchEastDeed), 59.7 },
-
-            // [3점 후반 ~ 4점 구간] 상급 가구 및 예술품 (Skill 60.0 ~ 80.0 미만)
             { typeof(OrnateElvenTableSouthDeed), 60.0 }, 
             { typeof(OrnateElvenTableEastDeed), 60.0 },
             { typeof(BigElvenChair), 60.0 }, 
@@ -394,8 +340,6 @@ namespace Server.Misc
             { typeof(CelloDeed), 75.0 }, 
             { typeof(WallMountedBellSouthDeed), 75.0 }, 
             { typeof(WallMountedBellEastDeed), 75.0 },
-
-            // [4점 후반 ~ 5점] 최고급 품위 유지 아이템 (Skill 80.0 ~ 100.0)
             { typeof(ElvenLoveseatSouthDeed), 80.0 }, 
             { typeof(ElvenLoveseatEastDeed), 80.0 },
             { typeof(MetalTableSouthDeed), 80.0 }, 
@@ -428,126 +372,100 @@ namespace Server.Misc
 
         private static readonly Dictionary<Type, double> m_CartographyData = new()
         {
-            // [벽걸이 지도 및 도표]
-            { typeof(StarChart), 0.0 },               // 0 -> 1점 (최소 점수)
-            { typeof(LocalMap), 10.0 },               // 0.5 -> 1점
-            { typeof(CityMap), 25.0 },                // 1.25 -> 1점
-            { typeof(SeaChart), 35.0 },               // 1.75 -> 2점
-            { typeof(WorldMap), 39.5 },               // 1.97 -> 2점
-            { typeof(EodonianWallMap), 65.0 },        // 3.25 -> 3점
-            { typeof(TatteredWallMapSouth), 90.0 },   // 4.5 -> 5점
-            { typeof(TatteredWallMapEast), 90.0 }     // 4.5 -> 5점
+            { typeof(StarChart), 0.0 },               
+            { typeof(LocalMap), 10.0 },               
+            { typeof(CityMap), 25.0 },                
+            { typeof(SeaChart), 35.0 },               
+            { typeof(WorldMap), 39.5 },               
+            { typeof(EodonianWallMap), 65.0 },        
+            { typeof(TatteredWallMapSouth), 90.0 },   
+            { typeof(TatteredWallMapEast), 90.0 }     
         };
 
         private static readonly Dictionary<Type, double> m_CookingData = new()
         {
-            // [식탁 장식용 품목]
-            { typeof(CoffeeMug), 30.0 },              // 1.5 -> 2점
-            { typeof(BasketOfGreenTeaMug), 30.0 },    // 1.5 -> 2점
-            { typeof(HotCocoaMug), 30.0 },            // 1.5 -> 2점
-            { typeof(ThreeTieredCake), 60.0 }         // 3점 (화려한 장식 효과)
+            { typeof(CoffeeMug), 30.0 },              
+            { typeof(BasketOfGreenTeaMug), 30.0 },    
+            { typeof(HotCocoaMug), 30.0 },            
+            { typeof(ThreeTieredCake), 60.0 }         
         };
 
         private static readonly Dictionary<Type, double> m_GlassblowingData = new()
         {
-            { typeof(SmallFlask), 52.5 }, { typeof(LargeFlask), 60.0 },    // 2.6~3점
-            { typeof(AniRedRibbedFlask), 60.0 }, { typeof(FullVialsWRack), 65.0 }, // 3~3.25점
-            { typeof(SpinningHourglass), 75.0 }, { typeof(GargoyleFloorMirror), 75.0 }, // 3.75점
-            { typeof(GargoyleWallMirror), 70.0 }      // 3.5점
+            { typeof(SmallFlask), 52.5 }, { typeof(LargeFlask), 60.0 },    
+            { typeof(AniRedRibbedFlask), 60.0 }, { typeof(FullVialsWRack), 65.0 }, 
+            { typeof(SpinningHourglass), 75.0 }, { typeof(GargoyleFloorMirror), 75.0 }, 
+            { typeof(GargoyleWallMirror), 70.0 }      
         };
 
         private static readonly Dictionary<Type, double> m_InscriptionData = new()
         {
-            { typeof(Runebook), 45.0 },               // 2.25점
-            { typeof(RecipeBook), 172.5 }             // 8.6점
+            { typeof(Runebook), 45.0 },               
+            { typeof(RecipeBook), 172.5 }             
         };
 
         private static readonly Dictionary<Type, double> m_MasonryData = new()
         {
-            // [석조 장식 및 꽃병]
-            { typeof(Vase), 52.5 },                  // 2.6점
-            { typeof(LargeVase), 52.5 },             // 2.6점
-            { typeof(AnniversaryVaseTall), 60.0 },   // 3.0점
-            { typeof(AnniversaryVaseShort), 60.0 },  // 3.0점
-            { typeof(SmallUrn), 82.0 },              // 4.1점
-
-            // [석조 가구 및 침대]
-            { typeof(StoneChair), 55.0 },            // 2.7점
-            { typeof(MediumStoneTableEastDeed), 65.0 }, // 3.2점
-            { typeof(LargeStoneTableEastDeed), 75.0 },  // 3.7점
-            { typeof(RitualTableDeed), 94.7 },       // 4.7점
-            { typeof(LargeGargoyleBedSouthDeed), 76.0 }, // 3.8점
-            { typeof(GargishCotSouthDeed), 76.0 },   // 3.8점
-
-            // [조각상 및 예술품]
-            { typeof(StatueGargoyleEast), 54.5 },    // 2.7점
-            { typeof(StatueGryphonEast), 54.5 },     // 2.7점
-            { typeof(StatueSouth), 60.0 },           // 3.0점
-            { typeof(StatuePegasusSouth), 70.0 },    // 3.5점
-            { typeof(GargishSculpture), 82.0 },      // 4.1점
-            { typeof(GargoylePainting), 83.0 },      // 4.1점
-
-            // [건축 장식 (Walls & Floors)]
-            { typeof(CraftableHouseItem), 60.0 }     // 3.0점 (벽, 계단, 바닥재 공통)
+            { typeof(Vase), 52.5 },                  
+            { typeof(LargeVase), 52.5 },             
+            { typeof(AnniversaryVaseTall), 60.0 },   
+            { typeof(AnniversaryVaseShort), 60.0 },  
+            { typeof(SmallUrn), 82.0 },              
+            { typeof(StoneChair), 55.0 },            
+            { typeof(MediumStoneTableEastDeed), 65.0 }, 
+            { typeof(LargeStoneTableEastDeed), 75.0 },  
+            { typeof(RitualTableDeed), 94.7 },       
+            { typeof(LargeGargoyleBedSouthDeed), 76.0 }, 
+            { typeof(GargishCotSouthDeed), 76.0 },   
+            { typeof(StatueGargoyleEast), 54.5 },    
+            { typeof(StatueGryphonEast), 54.5 },     
+            { typeof(StatueSouth), 60.0 },           
+            { typeof(StatuePegasusSouth), 70.0 },    
+            { typeof(GargishSculpture), 82.0 },      
+            { typeof(GargoylePainting), 83.0 },      
+            { typeof(CraftableHouseItem), 60.0 }     
         };
 
         private static readonly Dictionary<Type, double> m_TailoringData = new()
         {
-            // [바닥재 및 매트류]
-            // 공식: (BaseMinSkill / 20.0), 1점 미만은 1점 보정
-            
-            // 고자 매트 (Skill 55.0) -> 2.75점 (반올림 시 3점)
             { typeof(GozaMatEastDeed), 55.0 },
             { typeof(GozaMatSouthDeed), 55.0 },
             { typeof(SquareGozaMatEastDeed), 55.0 },
             { typeof(SquareGozaMatSouthDeed), 55.0 },
-
-            // 브로케이드 고자 매트 (Skill 55.0) -> 2.75점
             { typeof(BrocadeGozaMatEastDeed), 55.0 },
             { typeof(BrocadeGozaMatSouthDeed), 55.0 },
             { typeof(BrocadeSquareGozaMatEastDeed), 55.0 },
             { typeof(BrocadeSquareGozaMatSouthDeed), 55.0 },
-
-            // [창문 및 벽면 장식]
-            // 커튼 증서 (Skill 172.5) -> 8.6점 (반올림 시 9점)
-            // 재봉술에서 제작 가능한 최고급 인테리어 아이템입니다.
             { typeof(CurtainsDeed), 172.5 }
         };
 
         private static readonly Dictionary<Type, double> m_TinkerData = new()
         {
-            // [기초 식기 및 잡화] - 1점 보정 구간 (Skill 0.0 ~ 20.0)
-            { typeof(Plate), 0.0 },                  // 1점
-            { typeof(SpoonLeft), 0.0 },              // 1점
-            { typeof(SpoonRight), 0.0 },             // 1점
-            { typeof(ForkLeft), 0.0 },               // 1점
-            { typeof(ForkRight), 0.0 },              // 1점
-            { typeof(KnifeLeft), 0.0 },              // 1점
-            { typeof(KnifeRight), 0.0 },             // 1점
-            { typeof(PewterMug), 10.0 },             // 1점
-            { typeof(Goblet), 10.0 },                // 1점
-            { typeof(Key), 20.0 },                   // 1점
-
-            // [생활 및 장식 소품] (Skill 30.0 ~ 60.0)
-            { typeof(Lantern), 30.0 },               // 1.5점
-            { typeof(Candelabra), 55.0 },            // 2.75점
-            { typeof(Globe), 55.0 },                 // 2.75점
-            { typeof(Scales), 60.0 },                // 3.0점
-            { typeof(Spyglass), 60.0 },              // 3.0점
-            { typeof(HeatingStand), 60.0 },          // 3.0점
-
-            // [고급 조명 및 예술 장식품] (Skill 75.0 ~ 85.0)
-            { typeof(DragonLamp), 75.0 },            // 3.75점
-            { typeof(StainedGlassLamp), 75.0 },      // 3.75점
-            { typeof(TallDoubleLamp), 75.0 },        // 3.75점
-            { typeof(WindChimes), 80.0 },            // 4.0점
-            { typeof(WeatheredBronzeGlobeSculptureDeed), 85.0 }, // 4.25점
-            { typeof(WeatheredBronzeManOnABenchDeed), 85.0 },    // 4.25점
-            { typeof(WeatheredBronzeFairySculptureDeed), 85.0 }, // 4.25점
-            { typeof(WeatheredBronzeArcherDeed), 85.0 },         // 4.25점
-
-            // [최고급 특수 장식]
-            { typeof(MetalLadderDeed), 172.5 }       // 8.6점 (실내 장식용 사다리)
+            { typeof(Plate), 0.0 },                  
+            { typeof(SpoonLeft), 0.0 },              
+            { typeof(SpoonRight), 0.0 },             
+            { typeof(ForkLeft), 0.0 },               
+            { typeof(ForkRight), 0.0 },              
+            { typeof(KnifeLeft), 0.0 },              
+            { typeof(KnifeRight), 0.0 },             
+            { typeof(PewterMug), 10.0 },             
+            { typeof(Goblet), 10.0 },                
+            { typeof(Key), 20.0 },                   
+            { typeof(Lantern), 30.0 },               
+            { typeof(Candelabra), 55.0 },            
+            { typeof(Globe), 55.0 },                 
+            { typeof(Scales), 60.0 },                
+            { typeof(Spyglass), 60.0 },              
+            { typeof(HeatingStand), 60.0 },          
+            { typeof(DragonLamp), 75.0 },            
+            { typeof(StainedGlassLamp), 75.0 },      
+            { typeof(TallDoubleLamp), 75.0 },        
+            { typeof(WindChimes), 80.0 },            
+            { typeof(WeatheredBronzeGlobeSculptureDeed), 85.0 }, 
+            { typeof(WeatheredBronzeManOnABenchDeed), 85.0 },    
+            { typeof(WeatheredBronzeFairySculptureDeed), 85.0 }, 
+            { typeof(WeatheredBronzeArcherDeed), 85.0 },         
+            { typeof(MetalLadderDeed), 172.5 }       
         };
 
         #endregion
@@ -567,28 +485,27 @@ namespace Server.Misc
                     m_MasterFameData[kvp.Key] = kvp.Value;
             }
         }
+
         private static Type GetResourceItemType(Item item)
         {
             if (item == null) return null;
 
-            // 1. 리플렉션으로 'Resource' 속성 추출 (장비/비장비 통합)
             var prop = item.GetType().GetProperty("Resource");
             if (prop == null) return null;
 
-            // 2. CraftResource 값(Enum) 획득
             var resValue = prop.GetValue(item);
             if (resValue is CraftResource res && res != CraftResource.None)
             {
-                // 3. 유저 제공 참조 코드: ResourceTypes[0]을 통해 실제 원자재 타입 반환
                 var info = CraftResources.GetInfo(res);
                 if (info?.ResourceTypes != null && info.ResourceTypes.Length > 0)
                 {
-                    return info.ResourceTypes[0]; // 예: typeof(VeriteIngot)
+                    return info.ResourceTypes[0]; 
                 }
             }
 
             return null;
         }
+
         public static int GetFameScore(Item item)
         {
             if (item == null || !m_MasterFameData.TryGetValue(item.GetType(), out double baseSkill))
@@ -596,15 +513,17 @@ namespace Server.Misc
 
             double score = Math.Max(1.0, baseSkill / 20.0);
 
-            // 1. 재질 티어 보너스 (이미 검증된 통합 로직)
-            Type resourceType = GetResourceItemType(item);
-            if (resourceType != null)
+            var prop = item.GetType().GetProperty("Resource");
+            if (prop != null)
             {
-                int tier = VirtualTradeSystem.GetResourceTierValue(resourceType);
-                score *= GetTierMultiplier(tier);
+                var resValue = prop.GetValue(item);
+                if (resValue is CraftResource res && res != CraftResource.None)
+                {
+                    int tier = CraftResources.GetIndex(res) + 1;
+                    score *= GetTierMultiplier(tier);
+                }
             }
 
-            // 2. 품질 보너스 (통합 체크 함수 호출)
             if (IsExceptional(item))
             {
                 score *= 1.5;
@@ -613,7 +532,6 @@ namespace Server.Misc
             return Math.Clamp((int)Math.Round(score), 1, 10);
         }
 
-        // 🌟 [2번 코드 합체: 기초 점수 추출 (상점 구입 시 사용)]
         public static int GetBaseFameScore(Type type)
         {
             if (type == null || !m_MasterFameData.TryGetValue(type, out double baseSkill))
@@ -623,40 +541,72 @@ namespace Server.Misc
             return Math.Clamp((int)Math.Round(score), 1, 10);
         }
 
-        /// <summary>
-        /// 장비/비장비 구분 없이 해당 아이템이 'Exceptional' 품질인지 체크합니다.
-        /// </summary>
         private static bool IsExceptional(Item item)
         {
             if (item == null) return false;
 
-            // 1. 우선 서버 표준 인터페이스(IQuality)가 있는지 체크
             if (item is IQuality q)
             {
                 return q.Quality == ItemQuality.Exceptional;
             }
 
-            // 2. 인터페이스가 없는 일반 아이템(접시 등)은 리플렉션으로 'Quality' 속성을 체크
-            // 보통 제작 시스템에서 quality는 int(2) 또는 ItemQuality Enum으로 저장됩니다.
             var prop = item.GetType().GetProperty("Quality");
             if (prop != null)
             {
                 object val = prop.GetValue(item);
-                
-                // 정수형(2 = Exceptional)이거나 Enum 문자열이 Exceptional인 경우 true
                 return (val is int i && i == 2) || val?.ToString() == "Exceptional";
             }
 
             return false;
         }
 
-        private static double GetTierMultiplier(int tier)
+        // 🌟 [수정] 9단계 자원 확장에 따른 명예 보정치 9단계 반영
+        public static double GetTierMultiplier(int tier)
         {
-            return tier switch { 2 => 1.2, 3 => 1.5, 4 => 2.0, 5 => 2.5, 6 => 2.8, 7 => 3.0, _ => 1.0 };
+            return tier switch 
+            { 
+                2 => 1.2, 
+                3 => 1.5, 
+                4 => 2.0, 
+                5 => 2.5, 
+                6 => 2.8, 
+                7 => 3.0, 
+                8 => 3.5, 
+                9 => 4.0, 
+                _ => 1.0 
+            };
+        }
+
+        // 🌟 [신규] 재질별 일일 풍화/마모도(Wear) 반환 (역배열 적용)
+        public static int GetDailyWear(StoredItemKey key)
+        {
+            Type t = key.ItemType;
+            CraftResource res = key.Resource;
+            
+            // 무등급 자원 (유리, 도자기 등)은 고정 피로도 부여
+            if (t == typeof(Bottle) || t == typeof(Pitcher) || t == typeof(Glass) || t == typeof(Vase) || 
+                t == typeof(LargeVase) || t == typeof(SmallFlask) || t == typeof(LargeFlask) || 
+                t == typeof(AniRedRibbedFlask) || t == typeof(FullVialsWRack) || t == typeof(SpinningHourglass) || 
+                t == typeof(GargoyleFloorMirror) || t == typeof(GargoyleWallMirror))
+            {
+                return 150; // 제일 예민하고 잘 깨짐
+            }
+                
+            if (t == typeof(GozaMatEastDeed) || t == typeof(CurtainsDeed) || t == typeof(PlainDress) || t == typeof(Shirt))
+            {
+                return 50; // 천 재질
+            }
+
+            // 등급 자원 (금속, 나무, 가죽, 생선) - 9단계 역배열 룰
+            // 티어가 높을수록 관리하기 힘들어 피로도가 높게(10배수) 쌓임
+            int tier = CraftResources.GetIndex(res) + 1; 
+            if (tier <= 0 || tier > 9) tier = 1;
+            
+            int wear = tier * 10; 
+            return wear < 10 ? 10 : wear;
         }
     }
 
-    // 1. [신규] 족보 및 역사에 남을 선조 기록
     public class AncestorRecord
     {
         public string Name { get; set; }
@@ -683,20 +633,12 @@ namespace Server.Misc
         public long SharedWealth { get; set; } 
         public int Prestige { get; set; }
         
-        // [신규] 가계도 추적 및 생존 지표
-        public FamilyUnit ParentFamily { get; set; } // 본가(독립 전 가족) 추적용
-        public int DailyExpenses { get; set; }       // 이 가족이 하루에 소모하는 고정 생활비
-        public bool IsActive { get; set; }           // 가족의 존속 여부 (사망/독립 시 false)
+        public FamilyUnit ParentFamily { get; set; } 
+        public int DailyExpenses { get; set; }       
+        public bool IsActive { get; set; }           
 
         public VirtualHouse ParentHouse { get; set; }
-        // 1. 클래스 속성들이 있는 곳(Grudges 선언부 밑 등)에 아래 코드 추가
-
-        
-
-        // ====================================================================
-        // [기획 추가] 부동산 매매 플래그
-        // ====================================================================
-        public bool IsWillingToSell { get; set; }    // 재정 상태에 따라 땅을 팔 의사가 있는지 여부
+        public bool IsWillingToSell { get; set; }    
 
         public FamilyUnit(VirtualCitizen father, VirtualCitizen mother)
         {
@@ -709,9 +651,6 @@ namespace Server.Misc
         }
     }
 
-    // ====================================================================
-    // NPC 가문을 위한 순수 독자 시스템 (VirtualHouse)
-    // ====================================================================
     public class VirtualHouse 
     {
         public string HouseName { get; set; }
@@ -721,19 +660,17 @@ namespace Server.Misc
         public List<FamilyUnit> Families { get; set; }
         
         public int ZoneID { get; set; }
-        
-        // 🌟 [사회적 갈등 데이터]
-        public Dictionary<string, int> Grudges { get; set; } = new(); // 상대 가문명, 원한 수치
-        public int HousingAmbition { get; set; } // 0~100: 더 좋은 집을 짓고 싶은 욕구
-        // 대표 직업 탐색 (가장 먼저 등록된 가장 기준)
+        public Dictionary<string, int> Grudges { get; set; } = new(); 
+        public int HousingAmbition { get; set; } 
         public NpcJobClass PrimaryJob => Families.FirstOrDefault(f => f.IsActive && f.Father != null)?.Father.JobClass ?? NpcJobClass.Laborer;
         
-        public Dictionary<Type, int> HouseWarehouse { get; set; }
+        // 🌟 [수정] 색자원 딕셔너리로 전면 교체
+        public Dictionary<StoredItemKey, int> HouseWarehouse { get; set; }
         
-        // 🌟 [1번 코드 합체: 명예 점수 캐싱 변수]
+        // 🌟 [신규] 스택 피로도 통 (Damage Pool)
+        public Dictionary<StoredItemKey, int> DamagePools { get; set; } = new();
+
         public int CurrentFameScore { get; set; } = 0;
-        
-        // 🌟 [3단계 기획] 사교 파티 및 연회 관련 변수
         public DateTime LastSocialEventTime { get; set; } = DateTime.MinValue; 
         public bool IsHostingEventTonight { get; set; } = false; 
         public int EventFameBonus { get; set; } = 0; 
@@ -757,8 +694,11 @@ namespace Server.Misc
         public bool HasWorkshop { get; set; }  
         public bool HasBarracks { get; set; }  
         public Dictionary<string, int> PlayerGrudges { get; set; }
-		
-		public Dictionary<Type, int> UnfulfilledNeeds { get; set; } = new();
+        
+        public Dictionary<Type, int> UnfulfilledNeeds { get; set; } = new();
+
+		public VirtualHouseInterior Interior { get; set; }
+		public int SecurityAlertLevel { get; set; }
 
         public VirtualHouse(string name, NobilityRank rank)
         {
@@ -769,7 +709,8 @@ namespace Server.Misc
             
             ZoneID = 0;
 
-            HouseWarehouse = [];
+            HouseWarehouse = new Dictionary<StoredItemKey, int>();
+            DamagePools = new Dictionary<StoredItemKey, int>();
             TargetStockProfile = [];
             AncestorRecords = [];
             RivalHouses = [];
@@ -784,38 +725,114 @@ namespace Server.Misc
             HasWorkshop = false;
             HasBarracks = false;
 
-            // 2. public VirtualHouse(string name, NobilityRank rank) 생성자 내부에 아래 코드 추가
             PlayerGrudges = new Dictionary<string, int>();
             UnfulfilledNeeds = new Dictionary<Type, int>();
 
             UpdateCapacity();
-            
         }
 
-        // 🌟 [1번 코드 합체: 창고 물품 변동 시 명예점수 자동 캐싱]
-        public void AlterWarehouseItem(Type type, int amount, int exactScorePerUnit = -1)
+        // 🌟 [수정] Record 구조체를 활용한 입출고 (티어/품질 동기화)
+        public void AlterWarehouseItem(Type type, CraftResource res, bool isExceptional, int amount, int exactScorePerUnit = -1)
         {
-            if (!HouseWarehouse.ContainsKey(type)) HouseWarehouse[type] = 0;
-            HouseWarehouse[type] += amount;
+            StoredItemKey key = new StoredItemKey(type, res, isExceptional);
 
-            if (HouseWarehouse[type] <= 0) HouseWarehouse.Remove(type);
+            if (!HouseWarehouse.ContainsKey(key)) HouseWarehouse[key] = 0;
+            HouseWarehouse[key] += amount;
+
+            if (HouseWarehouse[key] <= 0) HouseWarehouse.Remove(key);
 
             int score = exactScorePerUnit >= 0 ? exactScorePerUnit : FameEconomy.GetBaseFameScore(type);
-            CurrentFameScore += (score * amount);
             
+            if (exactScorePerUnit < 0)
+            {
+                int tierIndex = CraftResources.GetIndex(res) + 1;
+                score = (int)(score * FameEconomy.GetTierMultiplier(tierIndex));
+                if (isExceptional) score = (int)(score * 1.5);
+            }
+
+            CurrentFameScore += (score * amount);
             if (CurrentFameScore < 0) CurrentFameScore = 0;
         }
 
-        // ====================================================================
-        // 📦 스토리지 자동 계산 (실제 UO 규격 적용)
-        // ====================================================================
+        // 🌟 [신규] 상점이 아닌 집에서 직접 먹고 파괴하는 로직 (소비 절벽 방지용)
+        public bool ConsumeFoodOrDrink(bool isFood)
+        {
+            if (HouseWarehouse == null || HouseWarehouse.Count == 0) return false;
+
+            StoredItemKey targetKey = default;
+            bool found = false;
+
+            foreach (var kvp in HouseWarehouse)
+            {
+                Type t = kvp.Key.ItemType;
+                if (isFood && (t.IsSubclassOf(typeof(Food)) || t == typeof(Food)))
+                {
+                    targetKey = kvp.Key;
+                    found = true;
+                    break;
+                }
+                else if (!isFood && (t == typeof(BeverageBottle) || t == typeof(Pitcher) || t.IsSubclassOf(typeof(BaseBeverage))))
+                {
+                    targetKey = kvp.Key;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found)
+            {
+                AlterWarehouseItem(targetKey.ItemType, targetKey.Resource, targetKey.IsExceptional, -1, -1);
+                return true;
+            }
+            return false;
+        }
+
+        // 🌟 [신규] 매일 저녁 만찬 시 작동하는 다이나믹 마모 시스템 (스택 피로도 O(1) 처리)
+        public void ConsumeFameItems()
+        {
+            if (HouseWarehouse == null || HouseWarehouse.Count == 0) return;
+
+            // 순회 중 컬렉션 수정을 피하기 위해 키 복사
+            List<StoredItemKey> keys = new List<StoredItemKey>(HouseWarehouse.Keys);
+
+            foreach (var key in keys)
+            {
+                if (!HouseWarehouse.ContainsKey(key)) continue;
+
+                int baseFame = FameEconomy.GetBaseFameScore(key.ItemType);
+                if (baseFame > 0)
+                {
+                    int amount = HouseWarehouse[key];
+                    int dailyWear = FameEconomy.GetDailyWear(key);
+                    
+                    // 주사위 굴림 (0.8 ~ 1.2배) 다이나믹 풍화치 적용
+                    double roll = 0.8 + (Utility.RandomDouble() * 0.4);
+                    int addedDamage = (int)((amount * dailyWear) * roll);
+
+                    if (!DamagePools.ContainsKey(key)) DamagePools[key] = 0;
+                    DamagePools[key] += addedDamage;
+
+                    // 임계점 10,000을 넘으면 아이템 파괴 처리
+                    int broken = DamagePools[key] / 10000;
+                    if (broken > 0)
+                    {
+                        broken = Math.Min(broken, amount); // 실제 가진 양보다 더 부서질 수 없음
+                        DamagePools[key] %= 10000; // 남은 피로도 이월
+
+                        AlterWarehouseItem(key.ItemType, key.Resource, key.IsExceptional, -broken, -1);
+                        Console.WriteLine($"[Wear&Tear] {HouseName} 가문의 {key.ItemType.Name}({key.Resource}) {broken}개가 낡거나 깨져서 버려졌습니다.");
+                    }
+                }
+            }
+        }
+
         public void UpdateCapacity()
         {
-            if (MultiID <= 0) // 텐트 (가장 작은 집의 25% 수준)
+            if (MultiID <= 0) 
             {
                 int tentStorage = 145;
                 int tentSecures = 72;
-                MaxCapacity = (tentSecures * 125) + tentStorage; // 9145
+                MaxCapacity = (tentSecures * 125) + tentStorage; 
                 return;
             }
 
@@ -825,37 +842,30 @@ namespace Server.Misc
             UpdateFacilityBonuses();
         }
 
-        // ====================================================================
-        // 🌟 [부동산 수용량 기획] 주택 등급에 따른 방 개수 및 월세
-        // ====================================================================
         public (int MaxFamilies, int MaxChildren, int RentFee) GetHousingProfile() => MultiID switch
         {
-            0 => (1, 0, 0), // 텐트: 자녀 출산 불가, 세입자 불가
-            0x0064 or 0x0066 or 0x0068 or 0x006A or 0x006C or 0x006E => (1, 1, 0), // 7x7 단층
-            0x00A0 or 0x00A2 => (2, 2, 100), // 7x7 2층: 2가구 거주 가능 (월세 100)
-            0x0098 or 0x009A or 0x009C or 0x009E or 0x0074 => (3, 2, 250), // 중형
-            0x008C or 0x0096 or 0x0076 or 0x0078 => (5, 3, 500), // 대형
-            0x007A or 0x007C or 0x007E => (10, 5, 1000), // 성채
+            0 => (1, 0, 0), 
+            0x0064 or 0x0066 or 0x0068 or 0x006A or 0x006C or 0x006E => (1, 1, 0), 
+            0x00A0 or 0x00A2 => (2, 2, 100), 
+            0x0098 or 0x009A or 0x009C or 0x009E or 0x0074 => (3, 2, 250), 
+            0x008C or 0x0096 or 0x0076 or 0x0078 => (5, 3, 500), 
+            0x007A or 0x007C or 0x007E => (10, 5, 1000), 
             _ => (1, 1, 0)
         };
 
         private void UpdateFacilityBonuses()
         {
             HasGarden = MultiID > 0 && OwnedTileIndices.Count >= 10;
-            HasWorkshop = MultiID is >= 0x00A0 and <= 0x00A2 || MultiID == 0x0074; // 작업소 및 길드하우스
-            HasBarracks = MultiID is 0x007A or 0x007C or 0x007E; // 탑, 요새, 성
+            HasWorkshop = MultiID is >= 0x00A0 and <= 0x00A2 || MultiID == 0x0074; 
+            HasBarracks = MultiID is 0x007A or 0x007C or 0x007E; 
         }
 
         private (int Storage, int Secures) GetExactHouseData(int multiID) => multiID switch
         {
-            // Tier 1 (기초 소형)
             0x0064 or 0x0066 or 0x0068 or 0x006A or 0x006C or 0x006E => (580, 290),
-            // Tier 2 (중급)
             0x00A0 or 0x00A2 => (800, 400),
             0x0098 or 0x009A or 0x009C or 0x009E => (1100, 550),
-            // Tier 3 (상급)
             0x008C or 0x0074 or 0x0096 or 0x0076 or 0x0078 => (2119, 1059),
-            // Tier 4 (성채)
             0x007A => (2119, 1059),
             0x007C => (2625, 1312),
             0x007E => (4076, 2038),
@@ -864,7 +874,6 @@ namespace Server.Misc
 
         public void OnTick(TownEconomy town)
         {
-            // 가문 단위의 순수 경제/정치 활동 연산
         }
     }
 }

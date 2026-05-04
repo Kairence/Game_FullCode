@@ -19,12 +19,12 @@ namespace Server.Misc
         Type[] JobMaterials, 
         Type[] Luxuries, 
         Type[] Produces, 
-        Type[] Addons,      // 🌟 [추가] 집에 설치할 공방 에드온 리스트
+        Type[] Addons,      // 집에 설치할 공방 에드온 리스트
         int BaseQty
     );
 
     // ==============================================================================
-    // 1. [VirtualCitizen] 개별 시민 객체 (기존 동일)
+    // 1. [VirtualCitizen] 개별 시민 객체
     // ==============================================================================
     public enum Gender { Male, Female }
 
@@ -66,6 +66,8 @@ namespace Server.Misc
         public DateTime LastSurvivalTick { get; set; } = DateTime.Now;
         public BioStats Bio { get; set; } = new BioStats();
         public int Generation { get; set; } = 1;
+		public Point3D Location { get; set; }
+		public Map Map { get; set; }
 
         public VirtualCitizen(NpcJobClass job, NobilityRank rank, int satisfaction, int gen = 1) : base(job, NpcRank.Novice)
         {
@@ -90,37 +92,102 @@ namespace Server.Misc
             Skills = [];
             foreach (SkillName sk in VirtualJobCore.AllSkills) Skills[sk] = 0.0;
         }
+
         public bool HasCheckedAdventurer { get; set; } = false;
+
         public void OnHourTick()
         {
             if (IsExpired) return;
 
-            // 🌟 [기획 2번] 17세 성인식: 5% 확률로 전투 자질 개화 -> 모험가 전직
+            // 17세 성인식: 5% 확률로 전투 자질 개화 -> 모험가 전직
             if (this.Age >= 17.0 && this.Age < 17.1 && !this.HasCheckedAdventurer)
             {
-                this.HasCheckedAdventurer = true; // this.Bio 삭제
+                this.HasCheckedAdventurer = true; 
                 
                 if (Utility.RandomDouble() < 0.05)
                 {
                     Console.WriteLine($"[생애주기] {this.Name}(17세)가 마을을 떠나 모험가의 길을 걷습니다!");
                     
-                    // 전투 직업 무작위 부여 후 대기열 합류
                     NpcJobClass[] combatJobs = { NpcJobClass.Knight, NpcJobClass.Archer_Expert, NpcJobClass.Wizard, NpcJobClass.Halberdier, NpcJobClass.Healer_Master };
                     var adv = new VirtualAdventurer(combatJobs[Utility.Random(combatJobs.Length)], this.RankLevel) { Gold = this.Gold };
                     VirtualAdventurerManager.IdleAdventurers.Add(adv);
                     
-                    this.IsKilled = true; // 시민 명부에서 삭제
-                    return; // 전직했으므로 아래 생존 스탯 감소는 패스
+                    this.IsKilled = true; 
+                    return; 
                 }
             }
 
-            // 기존 생존 소모 로직
-            double decayFactor = 1.5 / Potential; 
-            int totalDecay = (int)Math.Max(1, Math.Ceiling(decayFactor)); 
+            double decayFactor = 1.5 / Potential;
+            int totalDecay = (int)(10000.0 * decayFactor); 
 
             this.Hunger = Math.Max(0, this.Hunger - totalDecay);
             this.Thirst = Math.Max(0, this.Thirst - totalDecay);
         }
+
+        public void UpdateClothingMentalHealth()
+        {
+            if (this.Family == null || this.IsChild || this.House == null) return;
+
+            int stressModifier = ClothingEconomy.CalculateStressChange(this.Family);
+            this.Stress = Math.Clamp(this.Stress + stressModifier, 0, 100);
+
+            if (stressModifier > 0)
+            {
+                this.Satisfaction = Math.Max(0, this.Satisfaction - 5);
+                RegisterMissingClothesToNeeds();
+            }
+        }
+
+        private void RegisterMissingClothesToNeeds()
+        {
+            if (this.House == null || this.House.HouseWarehouse == null) return;
+
+            var warehouse = this.House.HouseWarehouse;
+            
+            foreach (ClothSlot slot in Enum.GetValues<ClothSlot>())
+            {
+                int currentCount = 0;
+                foreach (var key in warehouse.Keys)
+                {
+                    if (ClothingEconomy.ClothCategoryMap.TryGetValue(key.ItemType, out ClothSlot s) && s == slot)
+                        currentCount += warehouse[key];
+                }
+
+                if (currentCount < 3)
+                {
+                    int deficit = 3 - currentCount;
+                    
+                    if (!WardrobeEconomy.CanStoreMoreClothes(this.House, deficit))
+                    {
+                        Type armoireType = typeof(CherryArmoire); 
+                        if (this.RankLevel >= NobilityRank.Baron) armoireType = typeof(FancyElvenArmoire); 
+                        
+                        if (!this.House.UnfulfilledNeeds.ContainsKey(armoireType))
+                            this.House.UnfulfilledNeeds[armoireType] = 0;
+                        
+                        this.House.UnfulfilledNeeds[armoireType] += 1;
+                        Console.WriteLine($"[Wardrobe] '{this.House.HouseName}' 가문의 옷장이 가득 찼습니다! 새 옷장({armoireType.Name})을 의뢰합니다.");
+                        return; 
+                    }
+
+                    Type targetType = GetRepresentativeItemForSlot(slot);
+                    if (!this.House.UnfulfilledNeeds.ContainsKey(targetType))
+                        this.House.UnfulfilledNeeds[targetType] = 0;
+                    
+                    this.House.UnfulfilledNeeds[targetType] += deficit;
+                }
+            }
+        }
+
+        private Type GetRepresentativeItemForSlot(ClothSlot slot) => slot switch
+        {
+            ClothSlot.Head => typeof(Kasa),
+            ClothSlot.Shirt => typeof(FancyShirt),
+            ClothSlot.Pants => typeof(FancyKilt),
+            ClothSlot.Outer => typeof(Robe),
+            ClothSlot.Footwear => typeof(ElvenBoots),
+            _ => typeof(BodySash)
+        };
 
         public override void Serialize(GenericWriter writer)
         {
@@ -160,12 +227,8 @@ namespace Server.Misc
     // ==============================================================================
     public static class VirtualCitizenAI
     {
-        public static void Initialize()
-        {
-            // 🌟 개별 타이머 완전 삭제
-        }
+        public static void Initialize() { }
 
-        // [Step 1] 틱 0 처리 (일괄 동기화)
         public static void ExecuteFinalBatchProcess(int gameHour)
         {
             var towns = TownEconomyManager.Towns.Values.ToList();
@@ -184,7 +247,6 @@ namespace Server.Misc
             Console.WriteLine($"[MasterTick] 30분 사이클 시민 경제/생존 정산 완료. (게임시간: {gameHour}시)");
         }
 
-        // [Step 2] 틱 1 ~ 40 처리 (시민 분할)
         public static void ProcessCitizenSegment(int tickIdx, int gameHour)
         {
             var towns = TownEconomyManager.Towns.Values.ToList();
@@ -237,16 +299,17 @@ namespace Server.Misc
 
             switch (logicalHour)
             {
-				case 6: 
-					if (agent.Family != null && agent.Family.Father == agent && agent.House != null)
-					{
-						// 아침에 위시리스트 갱신하고
-						VirtualTradeSystem.UpdateHouseWishlist(agent.House);
-						// 어제 못 산 물건들을 게시판 퀘스트로 변환!
-						VirtualTradeSystem.GenerateAIJobRequests(agent.House, town);
-					}
-					ProcessNeeds(agent, town, profile); 
-					break;
+                case 6: 
+                    if (agent.Family != null && agent.Family.Father == agent && agent.House != null)
+                    {
+                        // 🌟 [기획 2번] 아침 6시마다 가문 창고의 수납 한도를 계산하여 부족하면 가구 발주
+                        CheckAndOrderStorageFurniture(agent.House);
+                        
+                        VirtualTradeSystem.UpdateHouseWishlist(agent.House);
+                        VirtualTradeSystem.GenerateAIJobRequests(agent.House, town);
+                    }
+                    ProcessNeeds(agent, town, profile); 
+                    break;
                 case 12: 
                     TryAcceptTownJob(agent, town, groupID); 
                     HandleWork(agent, town, groupID, profile);
@@ -256,14 +319,44 @@ namespace Server.Misc
                 case 18: 
                     TryAcceptTownJob(agent, town, groupID); 
                     HandleWork(agent, town, groupID, profile);
-
-                    // 🌟 퇴근길 짐말을 이끌고 유저 상점과 마을 벤더에서 싹쓸이 쇼핑을 합니다!
                     VirtualTradeSystem.ProcessHoardingShopping(agent, town);
-
                     ProcessLuxury(agent, town, profile);
                     if (agent.Age >= 7.0 && agent.Age <= 16.0) VirtualEducation.ProcessSchool(agent, town); 
                     break;
-                case 24: ProcessNightRest(agent, town, groupID); break;
+                case 24: 
+                    agent.UpdateClothingMentalHealth(); 
+                    ProcessNightRest(agent, town, groupID); 
+                    break;
+            }
+        }
+
+        // 🌟 [신규] 창고 한도 초과 시 목수에게 수납 가구 의뢰
+        private static void CheckAndOrderStorageFurniture(VirtualHouse house)
+        {
+            if (house == null || house.HouseWarehouse == null || house.MultiID == 0) return; // 텐트 제외
+
+            var (maxTypes, maxQuantity) = StorageEconomy.GetStorageLimits(house.HouseWarehouse);
+            
+            int currentTypes = house.HouseWarehouse.Count;
+            int currentQuantity = 0;
+            foreach (var amount in house.HouseWarehouse.Values) currentQuantity += amount;
+
+            // 보관량이 90% 이상 차거나 종류가 한도에 다다랐을 때
+            if (currentQuantity >= maxQuantity * 0.9 || currentTypes >= maxTypes)
+            {
+                Type targetFurniture = typeof(MediumCrate); // 기본: 중형 상자
+                
+                if (house.PrimaryRank >= NobilityRank.Baron) 
+                    targetFurniture = typeof(MetalChest);   // 귀족: 금고
+                else if (house.PrimaryRank >= NobilityRank.Knight) 
+                    targetFurniture = typeof(WoodenChest);  // 기사: 대형 궤짝
+
+                if (!house.UnfulfilledNeeds.ContainsKey(targetFurniture))
+                {
+                    house.UnfulfilledNeeds[targetFurniture] = 0;
+                    house.UnfulfilledNeeds[targetFurniture] += 1;
+                    Console.WriteLine($"[Storage] '{house.HouseName}' 가문의 창고가 포화 상태입니다. {targetFurniture.Name} 제작을 의뢰합니다.");
+                }
             }
         }
 
@@ -293,7 +386,6 @@ namespace Server.Misc
                 
                 agent.Satisfaction = Math.Min(100, agent.Satisfaction + 5);
                 agent.Stress = Math.Max(0, agent.Stress - 2);
-                
                 break; 
             }
         }
@@ -331,7 +423,6 @@ namespace Server.Misc
             return JobTier.Beginner;
         }
 
-        // 🌟 [변경] 튜플 대신 DeepJobProfile 적용
         private static void HandleWork(VirtualCitizen agent, TownEconomy town, int groupID, DeepJobProfile profile)
         {
             if (groupID == 100) // 채집, 광부, 벌목꾼
@@ -373,37 +464,61 @@ namespace Server.Misc
             }
         }
 
-        // 🌟 [변경] 튜플 대신 DeepJobProfile 적용
         private static void ProcessNeeds(VirtualCitizen agent, TownEconomy town, DeepJobProfile profile)
         {
-            if (agent.Thirst < 20000 || agent.IsDehydrated)
+            if (agent.Thirst < 60000 || agent.IsDehydrated)
             {
-                Type[] drinks = [typeof(Pitcher), typeof(BeverageBottle)]; 
-                if (TryPurchaseFromList(agent, town, drinks).Success)
+                bool drank = false;
+                if (agent.House != null) drank = agent.House.ConsumeFoodOrDrink(false);
+
+                if (drank)
                 {
-                    agent.Thirst = Math.Min(100000, agent.Thirst + 40000);
+                    agent.Thirst = Math.Min(100000, agent.Thirst + 20000);
                     agent.Satisfaction = Math.Min(100, agent.Satisfaction + 2);
                 }
-                else 
+                else
                 {
-                    agent.Thirst = Math.Min(100000, agent.Thirst + 15000);
-                    agent.Stress = Math.Min(100, agent.Stress + 5); 
+                    Type[] drinks = new Type[] { typeof(Pitcher), typeof(BeverageBottle) };
+                    var result = TryPurchaseFromList(agent, town, drinks);
+                    if (result.Success)
+                    {
+                        agent.Thirst = Math.Min(100000, agent.Thirst + 20000);
+                        agent.Satisfaction = Math.Min(100, agent.Satisfaction + 2);
+                    }
+                    else agent.Stress = Math.Min(100, agent.Stress + 5); 
                 }
             }
 
-            if (agent.Hunger < 20000 || agent.IsStarving)
+            if (agent.Hunger < 60000 || agent.IsStarving)
             {
-                Type[] extendedFoods = [.. profile.Necessities ?? [], typeof(TroutFishSteak), typeof(TroutRawFishSteak), typeof(FishSteak)];
-                if (TryPurchaseFromList(agent, town, extendedFoods).Success)
+                bool ate = false;
+                if (agent.House != null) ate = agent.House.ConsumeFoodOrDrink(true);
+
+                if (ate)
                 {
-                    agent.Hunger = Math.Min(100000, agent.Hunger + 35000);
+                    agent.Hunger = Math.Min(100000, agent.Hunger + 15000);
                     agent.Satisfaction = Math.Min(100, agent.Satisfaction + 3);
                 }
-                else agent.Stress = Math.Min(100, agent.Stress + 15);
+                else
+                {
+                    List<Type> extendedFoods = new List<Type>();
+                    if (profile.Necessities != null) extendedFoods.AddRange(profile.Necessities);
+                    
+                    extendedFoods.Add(typeof(TroutFishSteak));
+                    extendedFoods.Add(typeof(TroutRawFishSteak));
+                    extendedFoods.Add(typeof(FishSteak));
+
+                    var result = TryPurchaseFromList(agent, town, extendedFoods.ToArray());
+                    if (result.Success)
+                    {
+                        agent.Hunger = Math.Min(100000, agent.Hunger + 15000);
+                        agent.Satisfaction = Math.Min(100, agent.Satisfaction + 3);
+                    }
+                    else agent.Stress = Math.Min(100, agent.Stress + 15);
+                }
             }
         }
 
-        // 🌟 [변경] 튜플 대신 DeepJobProfile 적용
         private static void ProcessLuxury(VirtualCitizen agent, TownEconomy town, DeepJobProfile profile)
         {
             if (agent.Stress > 40 && profile.Luxuries != null && profile.Luxuries.Length > 0)
@@ -420,10 +535,47 @@ namespace Server.Misc
             }
         }
 
-        // 🌟 [변경] 튜플 대신 DeepJobProfile 적용
+        // 🌟 [변경] 공방(Workshop) 에드온 설치 검사 및 제작 보너스(Exceptional 등) 완벽 적용
         private static void ProcessProductionTick(VirtualCitizen agent, TownEconomy town, DeepJobProfile profile)
         {
             if (!agent.IsProductive || agent.Stress >= 90) return;
+
+            // 1. 필수 공방(Workshop) 에드온 유무 검사 및 부족 시 자동 발주
+            if (profile.Addons != null && profile.Addons.Length > 0 && agent.House != null && agent.House.MultiID > 0)
+            {
+                bool hasWorkshopAddon = false;
+                foreach (var addonType in profile.Addons)
+                {
+                    if (agent.House.HouseWarehouse != null && agent.House.HouseWarehouse.Keys.Any(k => k.ItemType == addonType))
+                    {
+                        hasWorkshopAddon = true;
+                        break;
+                    }
+                }
+
+                if (!hasWorkshopAddon)
+                {
+                    Type neededAddon = profile.Addons[Utility.Random(profile.Addons.Length)];
+                    if (!agent.House.UnfulfilledNeeds.ContainsKey(neededAddon))
+                        agent.House.UnfulfilledNeeds[neededAddon] = 0;
+                    
+                    agent.House.UnfulfilledNeeds[neededAddon] += 1;
+                    agent.Stress = Math.Min(100, agent.Stress + 5);
+                    return; // 🛑 모루나 화덕이 없으면 오늘 하루는 공치고 게시판 의뢰만 띄움
+                }
+            }
+
+            // 2. 공방 가구 보너스 수치 불러오기 (성공률, 명품 확률, 자원 절약)
+            double workshopSuccessBonus = 0.0;
+            double workshopExcBonus = 0.0;
+            double workshopSaveBonus = 0.0;
+
+            if (agent.House != null && agent.House.HouseWarehouse != null)
+            {
+                workshopSuccessBonus = WorkshopEconomy.GetFinalBonus(agent.House.HouseWarehouse, profile.Skill, WorkshopBonusType.SuccessRate);
+                workshopExcBonus = WorkshopEconomy.GetFinalBonus(agent.House.HouseWarehouse, profile.Skill, WorkshopBonusType.ExceptionalChance);
+                workshopSaveBonus = WorkshopEconomy.GetFinalBonus(agent.House.HouseWarehouse, profile.Skill, WorkshopBonusType.ResourceSave);
+            }
 
             double focus = agent.Bio != null ? Math.Max(0, agent.Bio.Focus / 1000000.0) : 0;
             double adaptability = agent.Bio != null ? Math.Max(0, agent.Bio.Adaptability / 1000000.0) : 0;
@@ -438,21 +590,32 @@ namespace Server.Misc
                 }
             }
 
-            double successChance = 0.2 + (0.8 * (agent.PrimarySkill / 200.0)) + (0.2 * focus);
-            if (agent.House != null && agent.House.HasWorkshop) successChance = Math.Min(1.0, successChance * 1.2);
+            // 🌟 3. 보너스 합산 및 제작 판정 실행
+            double successChance = 0.2 + (0.8 * (agent.PrimarySkill / 200.0)) + (0.2 * focus) + workshopSuccessBonus;
+            successChance = Math.Min(1.0, successChance);
                 
             if (Utility.RandomDouble() < successChance && profile.Produces != null && profile.Produces.Length > 0)
             {
                 Type targetProduce = profile.Produces[Utility.Random(profile.Produces.Length)];
                 
+                // 명품(Exceptional) 제작 확률 판정
+                bool isExceptional = Utility.RandomDouble() < (0.05 + workshopExcBonus);
+
                 double rankMult = 1.0 + ((int)agent.RankLevel * 0.1); 
                 double ageFactor = agent.IsElder ? 0.5 : 1.0;
-                int workshopBonus = (agent.House != null && agent.House.HasWorkshop) ? 1 : 0;
+                int baseWorkshopBonus = (workshopSuccessBonus > 0) ? 1 : 0;
 
                 double adaptMult = 1.0 + (0.3 * adaptability);
-                int finalQty = (int)Math.Max(1, Math.Ceiling(profile.BaseQty * 0.2 * agent.Potential * rankMult * ageFactor * adaptMult)) + workshopBonus;
+                int finalQty = (int)Math.Max(1, Math.Ceiling(profile.BaseQty * 0.2 * agent.Potential * rankMult * ageFactor * adaptMult)) + baseWorkshopBonus;
                 
+                // 자원 절약(ResourceSave) 보너스가 터지면 생산량 1.5배 뻥튀기
+                if (Utility.RandomDouble() < workshopSaveBonus)
+                {
+                    finalQty = (int)(finalQty * 1.5);
+                }
+
                 int basePrice = Math.Max(1, town.GetPrice(targetProduce));
+                if (isExceptional) basePrice = (int)(basePrice * 1.5); // 명품은 1.5배 비쌈
 
                 if (VirtualTradeSystem.ExecuteSell(agent, town, targetProduce, basePrice, finalQty).Success)
                 {
@@ -514,7 +677,7 @@ namespace Server.Misc
     }
 
     // ==============================================================================
-    // 3. [VirtualEducation] 학교 및 교육 로직
+    // 3. [VirtualEducation] 학교 및 교육 로직 (수정 없음)
     // ==============================================================================
     public static class VirtualEducation
     {
@@ -606,7 +769,7 @@ namespace Server.Misc
     }
 
     // ==============================================================================
-    // 4. [VirtualJobCore] 직업 프로필 매핑 (🌟 DeepJobProfile Record 적용)
+    // 4. [VirtualJobCore] 직업 프로필 매핑 (수정 없음)
     // ==============================================================================
     public static class VirtualJobCore
     {
@@ -738,9 +901,7 @@ namespace Server.Misc
                 _ => new DeepJobProfile(SkillName.Camping, NobilityRank.Commoner, NobilityRank.Marquis, [typeof(BreadLoaf)], null, null, null, null, 0)
             };
 
-            // 🌟 [명예 보정] 
             profile = InjectFameTableware(profile);
-
             return profile;
         }
 
@@ -752,17 +913,11 @@ namespace Server.Misc
             if (!injectedLuxuries.Contains(typeof(Lantern))) injectedLuxuries.Add(typeof(Lantern));
 
             if (profile.MinRank >= NobilityRank.Baron)
-            {
                 injectedLuxuries.AddRange([typeof(Goblet), typeof(Plate), typeof(ForkLeft), typeof(KnifeRight)]);
-            }
             else if (profile.MinRank >= NobilityRank.Knight)
-            {
                 injectedLuxuries.AddRange([typeof(PewterMug), typeof(Plate), typeof(SpoonRight)]);
-            }
             else
-            {
                 injectedLuxuries.AddRange([typeof(WoodenBowl), typeof(SpoonLeft)]); 
-            }
 
             return profile with { Luxuries = injectedLuxuries.ToArray() };
         }

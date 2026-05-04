@@ -6296,6 +6296,7 @@ namespace Server
 
 		public virtual void CheckStatTimers()
 		{
+			return;
 			if (m_Deleted)
 			{
 				return;

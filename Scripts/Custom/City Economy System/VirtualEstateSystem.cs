@@ -129,7 +129,6 @@ namespace Server.Misc
                     string searchKey = HouseName.Replace("의 가택", "").Trim();
                     HouseData = town.Houses.FirstOrDefault(h => h.HouseName == searchKey || h.HouseName == HouseName);
 
-                    // 🌟 [핵심 패치] 가문 데이터 연결 및 고아 가옥(Ghost House) 철거 로직
                     if (HouseData != null)
                     {
                         HouseData.EstateSign = this;
@@ -139,14 +138,12 @@ namespace Server.Misc
                     }
                     else
                     {
-                        // 주인을 찾지 못했다면 이 집은 무효한 데이터이므로 즉시 월드에서 철거!
                         Console.WriteLine($"[HousingSystem] 주인을 잃은 유령 가옥 철거됨: {HouseName}");
                         this.DestroyEstate();
                     }
                 }
                 else
                 {
-                    // 마을 데이터 자체가 날아갔을 경우에도 철거
                     Console.WriteLine($"[HousingSystem] 소속 마을을 찾을 수 없는 가옥 철거됨: {HouseName}");
                     this.DestroyEstate();
                 }
@@ -288,14 +285,11 @@ namespace Server.Misc
             List<Static> tilesToRemove = [];
             bool signMoved = false;
 
-            // 🌟 [수정] 맵에 이미 TownSocietyEngine이 깔아놓은 문이 있는지 먼저 스캔합니다.
-            // (중복 생성을 막고, 유실된 문을 장부에 강제로 귀속시킵니다.)
             IPooledEnumerable<Item> eable = _sign.Map.GetItemsInRange(_sign.Location, 20);
             foreach (Item item in eable)
             {
                 if (item is LockedDoor door && !_sign.AttachedDoors.Contains(door))
                 {
-                    // 이 문이 이 집의 범위 내에 있다면 장부에 추가
                     _sign.AttachedDoors.Add(door);
                 }
             }
@@ -313,8 +307,6 @@ namespace Server.Misc
                     tilesToRemove.Add(tile); signMoved = true; continue;
                 }
 
-                // 🌟 [중요] 여기서 문을 또 생성(new LockedDoor)하지 마세요! 
-                // 이미 TownSocietyEngine에서 생성했으므로, 여기서는 중복된 'Static' 타일만 지워줍니다.
                 if ((id.Flags & TileFlag.Door) != 0)
                 {
                     tilesToRemove.Add(tile); 
@@ -329,6 +321,15 @@ namespace Server.Misc
                 _sign.AttachedTiles.Remove(t); 
                 t.Delete(); 
             }
+
+            // 🌟 [신규 추가] 집 공사가 끝났으므로 3D 인테리어 매트릭스 생성
+            if (_sign.HouseData.Interior == null)
+            {
+                _sign.HouseData.Interior = new VirtualHouseInterior(_sign.HouseData);
+            }
+            
+            _sign.HouseData.Interior.GenerateMatrix(_blueprint);
+            Console.WriteLine($"[HousingSystem] '{_sign.HouseData.HouseName}' 가문의 3D 인테리어 매트릭스 구축 완료!");
         }
     }
 
@@ -366,34 +367,187 @@ namespace Server.Misc
     {
         public static readonly (int ItemID, int X, int Y, int Z)[] TentBlueprint = 
         [ 
-            // =========================================================
-            // 🏕️ 클래식 텐트 프레임 (Z축은 모두 0으로 바닥에 고정!)
-            // =========================================================
-            
-            // 뒷면 (북쪽)
-            (0x01F4, -1, -1, 0), // 북서쪽 모서리
-            (0x01F1,  0, -1, 0), // 북쪽 중앙 벽
-            (0x01F5,  1, -1, 0), // 북동쪽 모서리
-
-            // 중간 (동서 벽과 중앙 기둥)
-            (0x01F0, -1,  0, 0), // 서쪽(좌측) 벽
-            (0x01F3,  0,  0, 0), // 🪵 텐트 중앙 나무 기둥 (Wooden Pole)
-            (0x01F2,  1,  0, 0), // 동쪽(우측) 벽
-
-            // 앞면 입구 (남쪽)
-            (0x01F6, -1,  1, 0), // 남서쪽 입구 펄럭이는 천막
-            (0x01F7,  1,  1, 0), // 남동쪽 입구 펄럭이는 천막
-            
-            // 입구 앞쪽 지지대 (더 남쪽으로 뻗어나간 텐트 끈)
-            (0x01F8, -1,  2, 0), // 남서쪽 끝 지지대
-            (0x01F9,  1,  2, 0), // 남동쪽 끝 지지대
-
-            // =========================================================
-            // 🔥 내부 및 외부 소품 (텐트의 디테일을 살려주는 장식)
-            // =========================================================
-            
-            (0x0A59,  0,  1, 0), // 🛏️ 텐트 입구 쪽에 깔아둔 침낭 (Bedroll)
-            (0x0FAC,  0,  3, 0)  // 🔥 텐트 바로 앞(남쪽)에 피워둔 모닥불 (Fire pit)
+            (0x01F4, -1, -1, 0),
+            (0x01F1,  0, -1, 0),
+            (0x01F5,  1, -1, 0),
+            (0x01F0, -1,  0, 0),
+            (0x01F3,  0,  0, 0),
+            (0x01F2,  1,  0, 0),
+            (0x01F6, -1,  1, 0),
+            (0x01F7,  1,  1, 0),
+            (0x01F8, -1,  2, 0),
+            (0x01F9,  1,  2, 0),
+            (0x0A59,  0,  1, 0),
+            (0x0FAC,  0,  3, 0) 
         ];
+    }
+
+    // ==============================================================================
+    // 🌟 [신규 추가] 3D 인테리어 매트릭스 및 가구 배치 AI 시스템
+    // ==============================================================================
+    public class VirtualHouseInterior
+    {
+        public VirtualHouse House { get; private set; }
+        
+        // Key: Z축(층의 높이), Value: 해당 층의 2D 그리드 상태
+        // 0: 불가/동선(벽, 문, 계단 앞), 1: 빈 바닥, 2: 테이블 표면, 3: 가구 점유, 4: 의자
+        public Dictionary<int, int[,]> FloorGrids { get; private set; }
+        
+        public int MinX { get; private set; }
+        public int MinY { get; private set; }
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+
+        // 집에 물리적으로 배치된 락다운(Lockdown) 가구들 (도둑 타겟)
+        public List<Item> PlacedFurniture { get; set; } = new List<Item>();
+
+        public VirtualHouseInterior(VirtualHouse house)
+        {
+            House = house;
+            FloorGrids = new Dictionary<int, int[,]>();
+        }
+
+        /// <summary>
+        /// 집이 완공될 때 Blueprint를 스캔하여 3D 인테리어 매트릭스를 생성합니다.
+        /// </summary>
+        public void GenerateMatrix((int ItemID, int X, int Y, int Z)[] blueprint)
+        {
+            if (blueprint == null || blueprint.Length == 0) return;
+
+            MinX = blueprint.Min(t => t.X);
+            MinY = blueprint.Min(t => t.Y);
+            int MaxX = blueprint.Max(t => t.X);
+            int MaxY = blueprint.Max(t => t.Y);
+            
+            Width = MaxX - MinX + 1;
+            Height = MaxY - MinY + 1;
+            FloorGrids.Clear();
+
+            // 1단계: 바닥(Surface) 타일이 밀집된 Z값을 찾아 '층(Floor)'으로 규정
+            var zGroups = blueprint
+                .Where(t => 
+                {
+                    ItemData id = TileData.ItemTable[t.ItemID & TileData.MaxItemValue];
+                    return (id.Flags & TileFlag.Surface) != 0 && (id.Flags & TileFlag.Impassable) == 0;
+                })
+                .GroupBy(t => t.Z)
+                .Where(g => g.Count() >= 4) 
+                .Select(g => g.Key)
+                .OrderBy(z => z)
+                .ToList();
+
+            foreach (int zLevel in zGroups)
+            {
+                int[,] grid = new int[Width, Height];
+                FloorGrids[zLevel] = grid;
+            }
+
+            // 2단계: 바닥 깔기 (1) 및 장애물/벽 덮어씌우기 (0)
+            foreach (var tile in blueprint)
+            {
+                int localX = tile.X - MinX;
+                int localY = tile.Y - MinY;
+                ItemData id = TileData.ItemTable[tile.ItemID & TileData.MaxItemValue];
+                
+                var targetZ = zGroups.Where(z => z <= tile.Z).OrderByDescending(z => z).FirstOrDefault();
+                if (!FloorGrids.ContainsKey(targetZ)) continue;
+                
+                var grid = FloorGrids[targetZ];
+
+                if ((id.Flags & TileFlag.Surface) != 0 && (id.Flags & TileFlag.Impassable) == 0)
+                {
+                    grid[localX, localY] = 1;
+                }
+                
+                if ((id.Flags & TileFlag.Wall) != 0 || (id.Flags & TileFlag.Impassable) != 0 || (id.Flags & TileFlag.Door) != 0)
+                {
+                    grid[localX, localY] = 0;
+                }
+            }
+
+            // 3단계: AI의 이동을 보장하기 위한 '동선(Path) 및 문/계단 앞 막힘 방지' 처리
+            ProtectPathways(blueprint, zGroups);
+        }
+
+        private void ProtectPathways((int ItemID, int X, int Y, int Z)[] blueprint, List<int> zGroups)
+        {
+            foreach (var tile in blueprint)
+            {
+                ItemData id = TileData.ItemTable[tile.ItemID & TileData.MaxItemValue];
+                bool isDoorOrStair = (id.Flags & TileFlag.Door) != 0 || tile.ItemID == 0x07A3; // 계단 타일 예시
+
+                if (isDoorOrStair)
+                {
+                    var targetZ = zGroups.Where(z => z <= tile.Z).OrderByDescending(z => z).FirstOrDefault();
+                    if (!FloorGrids.ContainsKey(targetZ)) continue;
+                    
+                    var grid = FloorGrids[targetZ];
+                    int cx = tile.X - MinX;
+                    int cy = tile.Y - MinY;
+
+                    for (int dx = -1; dx <= 1; dx++)
+                    {
+                        for (int dy = -1; dy <= 1; dy++)
+                        {
+                            int nx = cx + dx;
+                            int ny = cy + dy;
+                            if (nx >= 0 && nx < Width && ny >= 0 && ny < Height)
+                            {
+                                grid[nx, ny] = 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 특정 층에서 가구를 놓을 '가장 예쁜(벽에 붙은) 빈 공간'을 찾아 반환합니다.
+        /// 1층(floorIdx=0)은 공방/접객용, 2층 이상은 귀중품 금고용으로 우선 스캔합니다.
+        /// </summary>
+        public (bool Success, Point3D Location) FindBestPlacementSpot(int floorIdx = 0)
+        {
+            if (FloorGrids.Count == 0) return (false, Point3D.Zero);
+
+            // 층 인덱스가 범위를 벗어나면 가장 꼭대기 층 선택
+            var orderedFloors = FloorGrids.Keys.OrderBy(z => z).ToList();
+            if (floorIdx >= orderedFloors.Count) floorIdx = orderedFloors.Count - 1;
+            
+            int targetFloorZ = orderedFloors[floorIdx];
+            var grid = FloorGrids[targetFloorZ];
+            List<Point2D> candidateSpots = new List<Point2D>();
+
+            for (int x = 0; x < Width; x++)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    if (grid[x, y] == 1) // 1: 빈 바닥
+                    {
+                        // 벽(0)과 인접해 있는지 확인 (가구는 벽에 붙어야 예쁨)
+                        bool touchesWall = false;
+                        if (x == 0 || grid[x - 1, y] == 0) touchesWall = true;
+                        if (x == Width - 1 || grid[x + 1, y] == 0) touchesWall = true;
+                        if (y == 0 || grid[x, y - 1] == 0) touchesWall = true;
+                        if (y == Height - 1 || grid[x, y + 1] == 0) touchesWall = true;
+
+                        if (touchesWall) candidateSpots.Add(new Point2D(x, y));
+                    }
+                }
+            }
+
+            if (candidateSpots.Count > 0)
+            {
+                Point2D spot = candidateSpots[Utility.Random(candidateSpots.Count)];
+                grid[spot.X, spot.Y] = 3; // 배치 완료 마킹 (더 이상 겹치지 않게 보호)
+
+                Point3D worldLoc = new Point3D(House.EstateSign.X + MinX + spot.X, House.EstateSign.Y + MinY + spot.Y, targetFloorZ);
+                return (true, worldLoc);
+            }
+
+            // 만약 원하는 층이 꽉 찼다면 바로 아래층도 빈자리를 찾아봄
+            if (floorIdx > 0) return FindBestPlacementSpot(floorIdx - 1);
+            
+            return (false, Point3D.Zero);
+        }
     }
 }

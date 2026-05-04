@@ -12,376 +12,116 @@ using System.Collections.Generic;
 namespace Server.Gumps
 {
 	public class CityPointGump : Gump
-	{
-        //private const int LabelColor = 0x7FFF;
-        //private const int LabelColorDisabled = 0x4210;
-		private readonly PlayerMobile m_pm;
-		
-        public CityPointGump(PlayerMobile pm) : base(50, 50)
-        {
-            AddHtml(50, 7, 345, 20, "경험 시스템", false, false); // City Loyalty
-			
-			m_pm = pm;
-
-			pm.CloseGump(typeof(CityPointGump));
-			//pm.CloseGump(typeof(GoldPointGump));
-			//pm.CloseGump(typeof(SilverPointGump));
-			//pm.CloseGump(typeof(EquipPointGump));
-			//pm.CloseGump(typeof(ArtifactPointGump));
-			//pm.CloseGump(typeof(SkillPointGump));
-			
-            AddPage(0);
-
-			Account acc = pm.Account as Account;
-			
-			
-            AddBackground(0, 0, 280, 220, 5054);
-
-            AddHtml(10, 10, 250, 20, "경험 시스템", false, false); 
-
-            AddButton(10, 190, 4017, 4019, 0, GumpButtonType.Reply, 0);
-            AddHtmlLocalized(45, 190, 150, 20, 3000363, false, false); // Close
-
-            AddPage(1);
-
-            AddButton(10, 40, 4005, 4007, 1, GumpButtonType.Reply, 0);
-            AddHtml(45, 40, 105, 20, "예전 생산 포인트:", false, false); 
-			AddHtml(150, 40, 110, 16, String.Format("{0:#,###}", pm.GoldPoint[49]), false, false);
-
-            AddButton(10, 60, 4005, 4007, 2, GumpButtonType.Reply, 0);
-            AddHtml(45, 60, 105, 20,  "전투 포인트:", false, false);  
-			AddHtml(150, 60, 110, 16, String.Format("{0:#,###}", pm.SilverPoint[0]), false, false);
-
-            AddButton(10, 80, 4005, 4007, 3, GumpButtonType.Reply, 0);
-            AddHtml(45, 80, 105, 20,  "가문 포인트", false, false); 
-			AddHtml(150, 80, 110, 16, String.Format("{0:#,###}", acc.Point[0]), false, false);
-			//AddHtml(150, 40, 110, 16, "), false, false);
-
-			AddButton(10, 100, 4005, 4007, 4, GumpButtonType.Reply, 0);
-			AddHtml(45, 100, 105, 20,  "유물 포인트:", false, false);
-			AddHtml(150, 40, 110, 16, String.Format("{0:#,###}", pm.ArtifactPoint[0]), false, false);
-			
-			AddButton(10, 120, 4005, 4007, 5, GumpButtonType.Reply, 0);
-			AddHtml(45, 120, 105, 20,  "스킬 포인트", false, false);
-			//AddHtml(150, 40, 110, 16, String.Format("{0:#,###}", pm.ArtifactPoint[0]), false, false);
-
-            AddHtml(10, 150, 150, 20, "명성: ", false, false); // Fame: ~1_AMT~
-            AddHtml(10, 170, 150, 20, "카르마: ", false, false); // Karma: ~1_AMT~}
-
-            AddHtml(65, 150, 150, 20, pm.Fame.ToString(), false, false); // Fame: ~1_AMT~
-            AddHtml(65, 170, 150, 20, pm.Karma.ToString(), false, false); // Fame: ~1_AMT~
-		}
-        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
-        {
-            if (!m_pm.CheckAlive())
-                return;
-
-            switch ( info.ButtonID )
-            {
-                case 1:
-                    {
-                        m_pm.SendGump(new GoldPointGump(m_pm));
-                        break;
-                    }
-                case 2:
-                    {
-                        m_pm.SendGump(new SilverPointGump(m_pm));
-                        break;
-                    }
-                case 3:
-                    {
-                        m_pm.SendGump(new EquipPointGump(m_pm));
-                        break;
-                    }
-                case 4:
-                    {
-                        m_pm.SendGump(new ArtifactPointGump(m_pm));
-						break;
-                    }
-                case 5:
-                    {
-                        m_pm.SendGump(new SkillPointGump(m_pm));
-						break;
-                    }
-			}
-        }		
-	}
-
-	#region 채집/생산
-    public class GoldPointGump : Gump
     {
-		private string[] GrawName = { "채집 경험 증가", "고급 채집 증가", "채집 수량 증가", "채집 변환 증가", "제작 경험 증가", "제작 성공 증가", "고급 제작 증가", "제작 수량 증가" };
-		
-		//private int[] MaxLevel = { 40, 75, 25, 50, 50, 70, 100, 100 };
-		//private int[] BuffOption = { 100, 300, 500, 1000, 2000, 5000, 100, 250, 500, 1000, 2000 };
-
-		//private int[] SkillCount = { 3, 36, 19, 10, 38, 56};
-		
-		/*
-		private int pointCal( int number, int level )
-		{
-			int point = 1000000000;
-			if( number == 1 )
-				point = ( level + 1 ) * 50;
-			else if( number == 2 )
-				point = ( level + 1 ) * 250;
-			else if( number == 3 || number == 4 )
-				point = ( level + 1 ) * ( level + 1 ) * 10000;
-			else
-				point = BuffOption[level];
-			return point;
-		}
-		*/
-		readonly int Max_Level = 100;
-
-		private PlayerMobile m_pm;
-		private int m_Harvestpoint = 0; 
-		private int m_Craftpoint = 0; 
-        public GoldPointGump(PlayerMobile pm) : base(50, 50)
+		private readonly PlayerMobile m_pm;
+		public CityPointGump(PlayerMobile pm) : base(50, 50)
         {
-			/*
-			49번 : 기존 생산 경험치
-			0번 : 채집 경험치
-			1번 : 채집 포인트
-			2번 : 채집 경험 증가
-			3번 : 고급 채집 증가
-			4번 : 채집 수량 증가
-			5번 : 채집 변환 증가
-			10번 : 제작 경험치
-			11번 : 제작 포인트
-			12번 : 제작 경험 증가
-			13번 : 제작 성공 증가
-			14번 : 고급 제작 증가
-			15번 : 제작 수량 증가
-			*/
-			pm.CloseGump(typeof(CityPointGump));
-			pm.CloseGump(typeof(GoldPointGump));
-			m_pm = pm;
-
-			int HarvestQuest = 0;
-			for( int i = 0; i < 9; i++ )
-			{
-				if ( pm.QuestCheck[i] )
-				{
-					HarvestQuest += 5;
-					if( i == 8 )
-						HarvestQuest += 5;
-				}
-			}
-			
-			m_Harvestpoint = Misc.Util.Level( pm.GoldPoint[0] ) - pm.GoldPoint[1] + HarvestQuest;
-			m_Craftpoint = Misc.Util.Level( pm.GoldPoint[10] ) - pm.GoldPoint[11];
-			//pm.CloseGump(typeof(SilverPointGump));
-			//pm.CloseGump(typeof(EquipPointGump));
-			//pm.CloseGump(typeof(ArtifactPointGump));
-			//pm.CloseGump(typeof(SkillPointGump));
-
+            m_pm = pm;
+            pm.CloseGump(typeof(CityPointGump));
+            
             AddPage(0);
+            Account acc = pm.Account as Account;
+            
+            AddBackground(0, 0, 340, 360, 5054);
+            AddImageTiled(10, 10, 320, 340, 2624);
 
-            AddBackground(0, 0, 425, 600, 5054);
-	
-            //AddImageTiled(10, 10, 500, 150, 2624);
-            //AddAlphaRegion(10, 10, 500, 150);
+            AddHtml(0, 20, 340, 20, CenterColor("업적 시스템", "FFD700"), false, false);
+            AddImageTiled(30, 45, 280, 2, 96);
 
-            AddHtml(10, 10, 250, 20, "채집 경험치", false, false); // <CENTER>HOUSE 			
-			AddHtml(130, 10, 200, 16, pm.GoldPoint[0] > 0 ? (String.Format("{0:#,###}", pm.GoldPoint[0])) : "0", false, false);
+            int y = 60;
 
-			
-            AddHtml(10, 60, 250, 20, "남은 포인트", false, false); // <CENTER>HOUSE 			
-			AddHtml(130, 60, 200, 16, m_Harvestpoint > 0 ? String.Format("{0:#,###}", m_Harvestpoint ) : "0", false, false);
-			
-            AddHtml(10, 80, 100, 20, "현재 레벨", false, false); // <CENTER>HOUSE 			
-			AddHtml(130, 80, 40, 16, Misc.Util.Level( pm.GoldPoint[0] ) >= Misc.Util.MaxLevel ? Misc.Util.MaxLevel.ToString() : Misc.Util.Level( pm.GoldPoint[0] ).ToString(), false, false);
+            // 1. 채집 숙련도
+            AddButton(30, y, 4005, 4007, 1, GumpButtonType.Reply, 0);
+            AddHtml(65, y, 120, 20, LeftColor("채집 숙련도", "00FA9A"), false, false);
+            AddHtml(180, y, 120, 20, RightColor("자원 채집", "FFFFFF"), false, false);
+            y += 25;
 
-            AddHtml(10, 110, 130, 20, "다음 경험치", false, false); // <CENTER>HOUSE 			
-			AddHtml(130, 110, 250, 16, Misc.Util.Level( pm.GoldPoint[0] ) >= Misc.Util.MaxLevel ? "없음" : String.Format("{0:#,###}", Misc.Util.NextLevel( pm.GoldPoint[0] ) ), false, false);
-			
-            AddHtml(210, 10, 250, 20, "제작 경험치", false, false); // <CENTER>HOUSE 			
-			AddHtml(330, 10, 200, 16, pm.GoldPoint[10] > 0 ? (String.Format("{0:#,###}", pm.GoldPoint[10])) : "0", false, false);
+            // 2. 제작 숙련도
+            AddButton(30, y, 4005, 4007, 6, GumpButtonType.Reply, 0);
+            AddHtml(65, y, 120, 20, LeftColor("제작 숙련도", "00FA9A"), false, false);
+            AddHtml(180, y, 120, 20, RightColor("아이템 제작", "FFFFFF"), false, false);
+            y += 25;
 
-            AddHtml(210, 60, 250, 20, "남은 포인트", false, false); // <CENTER>HOUSE 			
-			AddHtml(330, 60, 200, 16, m_Craftpoint > 0 ? String.Format("{0:#,###}", m_Craftpoint ) : "0", false, false);
-			
-            AddHtml(210, 80, 100, 20, "현재 레벨", false, false); // <CENTER>HOUSE 			
-			AddHtml(330, 80, 40, 16, Misc.Util.Level( pm.GoldPoint[10] ) >= Misc.Util.MaxLevel ? "최대 레벨" : Misc.Util.Level( pm.GoldPoint[10] ).ToString(), false, false);
+            // 3. 전투 숙련도
+            AddButton(30, y, 4005, 4007, 7, GumpButtonType.Reply, 0);
+            AddHtml(65, y, 120, 20, LeftColor("전투 숙련도", "FF4500"), false, false);
+            AddHtml(180, y, 120, 20, RightColor("상세 정보", "FFFFFF"), false, false);
+            y += 25;
 
-            AddHtml(210, 110, 130, 20, "다음 경험치", false, false); // <CENTER>HOUSE 			
-			AddHtml(330, 110, 250, 16, Misc.Util.Level( pm.GoldPoint[10] ) >= Misc.Util.MaxLevel ? "없음" : String.Format("{0:#,###}", Misc.Util.NextLevel( pm.GoldPoint[10] ) ), false, false);
-			
+            // 4. 던전 마스터리
+            AddButton(30, y, 4005, 4007, 2, GumpButtonType.Reply, 0);
+            AddHtml(65, y, 120, 20, LeftColor("던전 마스터리", "FFD700"), false, false);
+            AddHtml(180, y, 120, 20, RightColor("능력치 투자", "FFFFFF"), false, false);
+            y += 25;
 
+            // 5. 가문 시스템
+            AddButton(30, y, 4005, 4007, 3, GumpButtonType.Reply, 0);
+            AddHtml(65, y, 120, 20, LeftColor("가문 시스템", "87CEFA"), false, false); 
+            AddHtml(180, y, 120, 20, RightColor($"{acc.Point[0]:#,0} Pt", "FFFFFF"), false, false); 
+            y += 25;
 
-			
-            AddHtml(50, 140, 225, 20, "옵션", false, false); // House Description
-            AddHtml(260, 140, 225, 20, "옵션", false, false); // House Description
-            //AddHtml(275, 90, 225, 20, "이름(현재 레벨)", false, false); // House Description
-			
-			if( pm.DeathCheck == 0 )
-			{
-				AddHtml(50, 40, 195, 20, "포인트 리셋(1주 1회)", false, false);
-				AddButton( 10, 40, 4005, 4007, 100, GumpButtonType.Reply, 0);
-				AddHtml(260, 40, 195, 20, "포인트 리셋(1주 1회)", false, false);
-				AddButton( 210, 40, 4005, 4007, 200, GumpButtonType.Reply, 0);
-			}
+            // 6. 유물 포인트
+            AddButton(30, y, 4005, 4007, 4, GumpButtonType.Reply, 0);
+            AddHtml(65, y, 120, 20, LeftColor("유물 포인트", "DA70D6"), false, false);
+            AddHtml(180, y, 120, 20, RightColor($"{pm.ArtifactPoint[0]:#,0}", "FFFFFF"), false, false); 
+            y += 25;
+            
+            // 7. 스킬 마스터리
+            AddButton(30, y, 4005, 4007, 5, GumpButtonType.Reply, 0);
+            AddHtml(65, y, 120, 20, LeftColor("스킬 포인트", "F0E68C"), false, false);
+            AddHtml(180, y, 120, 20, RightColor("스킬 강화", "FFFFFF"), false, false);
+            y += 35; 
 
-			int x = 50;
-			int y = 160;
-			int index = 2;
-			for ( int i = 0; i < GrawName.Length; i++)
-			{
-				if( i == 4 )
-				{
-					x = 260;
-					y = 160;
-					index = 8;
-				}
-				int point = 0;
-				//이름
-				string allname = GrawName[i];
+            AddImageTiled(30, y, 280, 2, 96);
+            y += 10;
 
-				allname += "(" + pm.GoldPoint[i + index].ToString() + ")";
-				AddHtml(x, y, 250, 20, allname, false, false);
-				if( i < 4 )
-				{
-					if( m_Harvestpoint > 0 && pm.GoldPoint[i + index] < Max_Level )
-						AddButton(x - 40, y, 4005, 4007, i + index, GumpButtonType.Reply, 0);
-				}
-				else
+            // 하단 상태 정보
+            AddHtml(30, y, 100, 20, LeftColor("명성 (Fame)", "A9A9A9"), false, false);
+            AddHtml(130, y, 100, 20, LeftColor(pm.Fame.ToString("#,0"), "FFFFFF"), false, false);
+            y += 20;
+            AddHtml(30, y, 100, 20, LeftColor("카르마 (Karma)", "A9A9A9"), false, false);
+            AddHtml(130, y, 100, 20, LeftColor(pm.Karma.ToString("#,0"), "FFFFFF"), false, false);
 
-				{
-					if( m_Craftpoint > 0 && pm.GoldPoint[i + index] < Max_Level )
-						AddButton(x - 40, y, 4005, 4007, i + index, GumpButtonType.Reply, 0);
-				}
-				y += 20;
-				//index++;
-			}
-			
-			y += 20;
-			
-			string HarvestQuestList = "채집 퀘스트 달성 없음";
-			for( int i = 8; i < 0; --i )
-			{
-				if ( pm.QuestCheck[i] )
-				{
-					HarvestQuestList = "채집 퀘스트 " + (i + 1).ToString() + "단계 달성";
-					break;
-				}
-			}
-			AddHtml(10, y, 250, 20, HarvestQuestList, false, false);
+            AddButton(135, 320, 4017, 4019, 0, GumpButtonType.Reply, 0);
+        }
 
-			y += 20;
-
-			AddHtml(50, y, 250, 20, "채집 업적 확인 버튼", false, false);
-			AddButton( 10, y, 4005, 4007, 150, GumpButtonType.Reply, 0);
-			
-			AddHtml(260, y, 250, 20, "제작 업적 확인 버튼", false, false);
-			AddButton( 210, y, 4005, 4007, 250, GumpButtonType.Reply, 0);
-			
-			if( pm.GoldPoint[49] > 0 )
-			{
-				y += 30;
-				AddHtml(50, y, 205, 20, "예전 생산 포인트:", false, false); 
-				AddHtml(215, y, 110, 16, String.Format("{0:#,###}", pm.GoldPoint[49]), false, false);
-				
-				y += 20;
-				AddHtml(50, y, 300, 20, "예전 생산 포인트를 채집 포인트로 전환", false, false); 
-				AddButton( 10, y, 4005, 4007, 300, GumpButtonType.Reply, 0);
-
-				y += 20;
-				AddHtml(50, y, 300, 20, "예전 생산 포인트를 제작 포인트로 전환", false, false); 
-				AddButton( 10, y, 4005, 4007, 400, GumpButtonType.Reply, 0);
-			}
-		}
-        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
+        public override void OnResponse(NetState sender, RelayInfo info)
         {
             if (!m_pm.CheckAlive() || info.ButtonID == 0)
                 return;
 
-			if( info.ButtonID == 100 )
-			{
-				m_pm.DeathCheck = 1;
-				for( int i = 1; i <= 5; i++ )
-				{
-					m_pm.GoldPoint[i] = 0;
-				}
-				m_pm.SendGump(new GoldPointGump(m_pm));
-			}
-			else if( info.ButtonID == 150 )
-			{
-				m_pm.CloseGump(typeof(HarvestGump));
-				m_pm.SendGump(new HarvestGump(m_pm));
-				
-			}
-			else if( info.ButtonID == 200 )
-			{
-				m_pm.DeathCheck = 1;
-				for( int i = 11; i <= 15; i++ )
-				{
-					m_pm.GoldPoint[i] = 0;
-				}
-				m_pm.SendGump(new GoldPointGump(m_pm));
-			}
-			else if( info.ButtonID == 250 )
-			{
-				m_pm.CloseGump(typeof(CraftingGump));
-				m_pm.SendGump(new CraftingGump(m_pm));
-				
-			}
-			else if( info.ButtonID == 300 )
-			{
-				m_pm.SendMessage("1부터 " + m_pm.GoldPoint[49].ToString() + "사이의 숫자를 적으세요!");
-				m_pm.BeginPrompt(
-				(from, text) =>
-				{
-					int amount = Utility.ToInt32(text);
-					if( amount <= m_pm.GoldPoint[49] )
-					{
-						from.SendMessage("채집 포인트를 " + amount.ToString() + "만큼 획득합니다!" );
-						m_pm.GoldPoint[0] += amount;
-						m_pm.GoldPoint[49] -= amount;
-					}
-					else
-						from.SendMessage("잘못된 숫자나 문자를 넣으셨네요...");
-				});				
-				m_pm.SendGump(new GoldPointGump(m_pm));
-			}
-			else if( info.ButtonID == 400 )
-			{
-				m_pm.SendMessage("1부터 " + m_pm.GoldPoint[49].ToString() + "사이의 숫자를 적으세요!");
-				m_pm.BeginPrompt(
-				(from, text) =>
-				{
-					int amount = Utility.ToInt32(text);
-					if( amount <= m_pm.GoldPoint[49] )
-					{
-						from.SendMessage("제작 포인트를 " + amount.ToString() + "만큼 획득합니다!" );
-						m_pm.GoldPoint[10] += amount;
-						m_pm.GoldPoint[49] -= amount;
-					}
-					else
-						from.SendMessage("잘못된 숫자나 문자를 넣으셨네요...");
-				});				
-				m_pm.SendGump(new GoldPointGump(m_pm));
-			}
-			else
-			{
-				int index = 1;
-				if( info.ButtonID >= 12 && info.ButtonID <= 15 )
-					index = 11;
-				m_pm.GoldPoint[info.ButtonID]++;
-				m_pm.GoldPoint[index]++;
-				m_pm.Delta(MobileDelta.Stat);
-				m_pm.ProcessDelta();
-				m_pm.SendGump(new GoldPointGump(m_pm));
-			}
-			//Timer.DelayCall(TimeSpan.FromSeconds(0.1), SendGump);
+            switch (info.ButtonID)
+            {
+                case 1: m_pm.SendGump(new HarvestMasteryGump(m_pm, 0)); break;
+                case 2: m_pm.SendGump(new DungeonPointGump(m_pm)); break; 
+                case 3: m_pm.SendGump(new FamilyGump(m_pm, 0)); break; 
+                //case 4: m_pm.SendGump(new ArtifactPointGump(m_pm)); break; // 🌟 4번 유물 포인트 (마지막 구현 대기)
+                case 5: m_pm.SendGump(new SkillPointGump(m_pm)); break;       
+                case 6: m_pm.SendGump(new CraftMasteryGump(m_pm, 0)); break;   
+                case 7: m_pm.SendGump(new CombatMasteryGump(m_pm)); break;     
+            }
         }
-        private void SendGump()
-        {
-            m_pm.SendGump(new GoldPointGump(m_pm));
-        }
-	}
-	#endregion
 
+        // ==========================================================
+        // UI 텍스트 컬러 및 정렬 헬퍼 메서드
+        // ==========================================================
+        private string CenterColor(string text, string color)
+        {
+            return $"<basefont color=#{color}><DIV ALIGN=CENTER>{text}</DIV></basefont>";
+        }
+
+        private string LeftColor(string text, string color)
+        {
+            return $"<basefont color=#{color}><DIV ALIGN=LEFT>{text}</DIV></basefont>";
+        }
+
+        private string RightColor(string text, string color)
+        {
+            return $"<basefont color=#{color}><DIV ALIGN=RIGHT>{text}</DIV></basefont>";
+        }
+    }
+}
+	/*
 	#region 전투
     public class SilverPointGump : Gump
     {
@@ -499,7 +239,7 @@ namespace Server.Gumps
 				AddButton(10 + size, y, 4005, 4007, i + 31, GumpButtonType.Reply, 0);
 				size += 250;
 			}
-			*/
+			
 			//업적 확인
 			y += 30;
 			size = 0;
@@ -601,7 +341,7 @@ namespace Server.Gumps
 				}
 			}
 		}
-		*/
+		
         private void SendGump()
         {
             m_pm.SendGump(new SilverPointGump(m_pm));
@@ -1068,7 +808,7 @@ namespace Server.Gumps
 				if( pm.ArtifactPoint[ i + 1 ] < 100 )
 					AddHtml( 350, y + i * 20, 150, 20, ( ( pm.ArtifactPoint[i + 1] + 1 ) * ( pm.ArtifactPoint[i + 1] + 1 ) * mul ).ToString(), false, false);
 			}
-			*/
+			
 		}
         public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
         {
@@ -1091,182 +831,6 @@ namespace Server.Gumps
         private void SendGump()
         {
             m_pm.SendGump(new ArtifactPointGump(m_pm));
-        }
-	}
-	#endregion
-
-	#region 스킬
-    public class SkillPointGump : Gump
-    {
-
-		private PlayerMobile m_pm;
-		
-		private FirstSkillCheck fsc = null;
-		private int price = 0;
-
-		//private bool pagecheck = false;
-	
-        public SkillPointGump(PlayerMobile pm) : base(50, 50)
-        {
-			pm.CloseGump(typeof(CityPointGump));
-			m_pm = pm;
-
-			pm.CloseGump(typeof(SkillPointGump));
-			
-			foreach ( Item item in World.Items.Values )
-			{
-				if ( item is FirstSkillCheck )
-				{
-					fsc = item as FirstSkillCheck;
-					break;
-				}
-			}			
-			AddPage(0);
-            
-
-            AddBackground(0, 0, 810, 650, 5054);
-			
-            //AddImageTiled(10, 10, 500, 150, 2624);
-            //AddAlphaRegion(10, 10, 500, 150);
-
-            AddHtml(10, 10, 250, 20, "스킬 경험치", false, false); // <CENTER>HOUSE 			
-			//AddHtml(130, 10, 200, 16, String.Format("{0:#,###}", pm.ArtifactPoint[0]), false, false);
-
-            AddHtml(300, 10, 75, 20, "스킬 총합: ", false, false); // <CENTER>HOUSE 
-			AddHtml(380, 10, 100, 16, String.Format("{0:N1}", (double)pm.SkillsTotal * 0.1), false, false);
-
-            AddHtml(50, 40, 100, 20, "이름", false, false); // House Description
-            AddHtml(150, 40, 75, 20, "저장 상태", false, false); // House Description
-            AddHtml(225, 40, 75, 20, "저장 스킬", false, false); // House Description
-            AddHtml(300, 40, 175, 20, "상태", false, false); // Storage
-			AddHtml(475, 40, 75, 20, "내 스킬", false, false);
-            AddHtml(550, 40, 100, 20, "스킬 퍼센트", false, false); // Storage
-            AddHtml(650, 40, 100, 20, "최대 스킬", false, false); // Storage
-            //AddHtml(750, 40, 50, 20, "구매", false, false); // Storage
-
-			//AddButton(100, 10, 4005, 4007, 100, GumpButtonType.Reply, 0);
-
-			int y = 60;
-			int page = pm.SkillGumpPage;
-			int index = 0;
-			//pm.skillpage = false;
-			//AddButton( 130, 10, 4005, 4007, 100, GumpButtonType.Reply, 0);
-			Account acc = pm.Account as Account;
-	
-			for ( int i = 0 + page * 29; i < 29 + page * 29; i++)
-			{
-				if( page == 0 )
-				{
-					AddButton(750, 10, 4005, 4007, 98, GumpButtonType.Reply, 0);
-				}
-				else
-				{
-					AddButton(750, 10, 4014, 4016, 99, GumpButtonType.Reply, 0);
-				}
-				//double AccountSkillSum = 0.0;
-				double AccountSkillBest = 0.0;
-
-				//가문 스킬 체크
-				if( acc.Count > 1 )
-				{
-					for (int j = 0; j < acc.Length; ++j)
-					{
-						Mobile check = acc[j];
-						if (check != null && check != pm )
-						{
-							if( AccountSkillBest < check.Skills[i].Base )
-								AccountSkillBest = check.Skills[i].Base;
-
-							//AccountSkillSum += check.Skills[i].Base * 0.1;
-						}
-					}
-				}
-
-				//스킬 저장 || 로드 버튼
-				if( ( acc.Point[i + 801] == 0 && pm.Skills[i].Base != 0 ) || ( acc.Point[i + 801] != 0 && acc.Point[i + 801] > pm.Skills[i].Base && pm.SkillsTotal + acc.Point[i + 801] <= 15000 ) )
-					AddButton(10, y + index * 20, 4005, 4007, i + 1, GumpButtonType.Reply, 0);
-				
-				//이름
-				AddHtml( 50, y + index * 20, 100, 20, fsc.SkillName[i], false, false);
-
-				//저장 상태 & 저장 스킬
-				string save = "없음";
-				string skill = "없음";
-				if( acc.Point[i + 801] != 0 )
-				{
-					save = "저장 됨";
-					skill = ( acc.Point[i + 801] * 0.1 ).ToString();
-				}
-				AddHtml( 150, y + index * 20, 75, 20, save, false, false);
-				AddHtml( 225, y + index * 20, 75, 20, skill, false, false);
-				
-				//상태
-				string skillnow = ((int)(pm.SkillList[i])).ToString();
-				if( pm.SkillList[i] >= 1000 )
-					skillnow = string.Format("{0:#,###}", pm.SkillList[i]);
-				skillnow += " / " + string.Format("{0:#,###}", Misc.Util.SkillExp_Calc(pm, i));
-				AddHtml( 300, y + index * 20, 175, 20, skillnow, false, false );
-				
-				//내 스킬
-				AddHtml( 475, y + index * 20, 75, 20, pm.Skills[i].Base.ToString(), false, false);
-				
-				//스킬 퍼센트
-				AddHtml( 550, y + index * 20, 100, 20, string.Format("{0:N2}%", SkillPercent(pm, i)), false, false);
-
-				//가문 최고 스킬
-				AddHtml( 650, y + index * 20, 150, 20, AccountSkillBest.ToString(), false, false);
-
-				index++;
-			}			
-
-		}
-
-		
-		private double SkillPercent(PlayerMobile pm, int skill )
-		{
-			double skillcalc = pm.SkillList[skill] * 100 / Misc.Util.SkillExp_Calc(pm, skill);
-			return skillcalc > 100 ? 100 : skillcalc;
-		}
-		
-        public override void OnResponse(Server.Network.NetState sender, RelayInfo info)
-        {
-            if (!m_pm.CheckAlive() || info.ButtonID == 0)
-                return;
-
-			if ( info.ButtonID == 100 )
-			{
-				
-			}
-			else if( info.ButtonID == 99 )
-			{
-				m_pm.SkillGumpPage = 0;
-				m_pm.SendGump(new SkillPointGump(m_pm));
-			}
-			else if( info.ButtonID == 98 )
-			{
-				m_pm.SkillGumpPage = 1;
-				m_pm.SendGump(new SkillPointGump(m_pm));
-			}
-			else
-			{
-				Account acc = m_pm.Account as Account;
-				if( acc.Point[info.ButtonID + 800] == 0 && m_pm.Skills[info.ButtonID - 1].Base != 0 )
-				{
-					acc.Point[info.ButtonID + 800] = (int)( m_pm.Skills[info.ButtonID - 1].Base * 10 );
-					m_pm.Skills[info.ButtonID - 1].Base = 0;
-				}
-				else if( acc.Point[info.ButtonID + 800] != 0 && acc.Point[info.ButtonID + 800] > m_pm.Skills[info.ButtonID - 1].Base )
-				{
-					m_pm.Skills[info.ButtonID - 1].Base = acc.Point[info.ButtonID + 800] * 0.1;
-					acc.Point[info.ButtonID + 800] = 0;
-				}
-				m_pm.SendGump(new SkillPointGump(m_pm));
-			}
-			//Timer.DelayCall(TimeSpan.FromSeconds(0.1), SendGump);
-        }
-        private void SendGump()
-        {
-            m_pm.SendGump(new SkillPointGump(m_pm));
         }
 	}
 	#endregion
@@ -1436,7 +1000,7 @@ namespace Server.Gumps
 				{
 					AddButton(450, 10, 4014, 4016, 99, GumpButtonType.Reply, 0);
 				}
-				*/
+				
 				AddHtml(50, 50 + i * 20, 200, 20, LeftGreen(CraftName[i]), false, false); // <DIV ALIGN=LEFT>Name:</DIV>
 
 				AddHtml(250, 50 + i * 20, 200, 20, LeftGreen("누적 : " + acc.Point[31 + i].ToString()), false, false); // <DIV ALIGN=LEFT>Name:</DIV>
@@ -1447,7 +1011,7 @@ namespace Server.Gumps
 					nextCount = AllCount[pm.CraftPoint[i]];
 				else
 					nextCount = ( pm.CraftPoint[i] - 9 ) * 200;
-				*/
+				
 
 				int nextCount = 200;
 				if( pm.CraftPoint[i] < 10 )
@@ -1486,7 +1050,7 @@ namespace Server.Gumps
 				if( m_pm.CraftGumpPage < m_maxpage )
 					m_pm.CraftGumpPage++;
 			}
-			*/
+			
 			m_pm.CraftPoint[info.ButtonID - 1]++;
 			Misc.Util.CraftReward(m_pm, info.ButtonID - 1);
             m_pm.SendGump(new CraftingGump(m_pm));
@@ -1698,3 +1262,4 @@ namespace Server.Gumps
         }
     }	
 }
+*/

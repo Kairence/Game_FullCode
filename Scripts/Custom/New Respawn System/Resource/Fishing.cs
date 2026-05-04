@@ -98,7 +98,9 @@ namespace Server.Engines.Harvest
             new MutateEntry( 60.0,  110.0, false, typeof( CrucianCarp ) ),
             new MutateEntry( 80.0,  130.0, false, typeof( CatFish ) ),
             new MutateEntry( 100.0,  150.0,  true, typeof( CodFish ) ),
-            new MutateEntry( 120.0,  170.0,  true, typeof( PerchFish ) )            
+            new MutateEntry( 120.0,  170.0,  true, typeof( PerchFish ) ),           
+            new MutateEntry( 140.0,  190.0,  true, typeof( Ferring ) ),
+            new MutateEntry( 160.0,  210.0,  true, typeof( Tuna ) )            
         };
 
         // 🌟 튜플을 반환하는 코어 방식 적용 (Bank 삭제)

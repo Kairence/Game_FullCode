@@ -215,7 +215,7 @@ namespace Server.Mobiles
 				set
 				{
 					m_Count = value;
-					m_Stamp = DateTime.UtcNow;
+					m_Stamp = DateTime.Now;
 				}
 			}
 		}
@@ -1264,6 +1264,7 @@ namespace Server.Mobiles
 			else return 70;
 		}
 
+		/*
 		public void Getgoldpoint(int getgoldpoint, bool harvest = true, bool quest = false)
 		{
 			if( !quest )
@@ -1333,7 +1334,7 @@ namespace Server.Mobiles
 			}
 			Misc.Util.LevelUpEffect(this, getsilverpoint, 2);
 		}
-		
+		*/
 		//저항력 합산
 		public override void ComputeResistances()
 		{
@@ -1522,35 +1523,45 @@ namespace Server.Mobiles
         }
         #endregion
 
-        public override void OnManaChange(int oldValue)
-		{
-			base.OnManaChange(oldValue);
-			if (m_ExecutesLightningStrike > 0)
-			{
-				if (Mana < m_ExecutesLightningStrike)
-				{
-					SpecialMove.ClearCurrentMove(this);
-				}
-			}
-		}
 
 		//스텟 재정리
-		public void SkillbyStatCheck(PlayerMobile pm )
+		public void SkillbyStatCheck(PlayerMobile pm)
 		{
-			for( int i = 0; i < m_StatUp.GetLength(1); i++)
+			// 다차원 배열 길이 호출 비용을 줄이기 위한 루프 외부 캐싱
+			int statCount = m_StatUp.GetLength(1);
+			int skillCount = m_StatUp.GetLength(0);
+
+			for (int i = 0; i < statCount; i++)
 			{
 				pm.SkillbyStat[i] = 0;
-				for( int j = 0; j < m_StatUp.GetLength(0); j++)
+				
+				for (int j = 0; j < skillCount; j++)
 				{
-					if( pm.SkillbyStat[i] < m_StatUp[j, i] * (int)( pm.Skills[j].Value * 10 ) )
-						pm.SkillbyStat[i] = m_StatUp[j, i] * (int)( pm.Skills[j].Value * 10 );
+					double skillValue = pm.Skills[j].Value;
+
+					// 1. 기본 합산 로직 (기본 스텟 계수가 0보다 클 때만)
+					if (m_StatUp[j, i] > 0)
+					{
+						pm.SkillbyStat[i] += m_StatUp[j, i] * (int)(skillValue * 10);
+					}
+
+					// 2. 50 보너스 독립적 긁어오기
+					if (skillValue >= 50.0 && m_StatBonus50[j, i] > 0)
+					{
+						// 최종 val 연산에서 / 1000 처리가 되므로, 
+						// 배열에 적은 숫자 그대로 스텟이 오르도록 1000을 곱해서 내부 수치에 합산
+						pm.SkillbyStat[i] += m_StatBonus50[j, i] * 1000;
+					}
 				}
 			}
-			if( pm.HitsMax < pm.Hits )
+
+			if (pm.HitsMax < pm.Hits)
 				pm.Hits = pm.HitsMax;
-			if( pm.StamMax < Stam )
+				
+			if (pm.StamMax < pm.Stam)
 				pm.Stam = pm.StamMax;
-			if( pm.ManaMax < Mana )
+				
+			if (pm.ManaMax < pm.Mana)
 				pm.Mana = pm.ManaMax;
 		}
 		
@@ -1614,7 +1625,7 @@ namespace Server.Mobiles
                 ReportMurdererGump.CheckMurderer(from);
 				if( ((PlayerMobile)from).SkillsCap == 1000000 )
 					((PlayerMobile)from).SkillsCap = 15000;
-				((PlayerMobile)from).SkillbyStatCheck(((PlayerMobile)from));
+				//((PlayerMobile)from).SkillbyStatCheck(((PlayerMobile)from));
 			}
             else if (Siege.SiegeShard && from.Map == Map.Trammel && from.AccessLevel == AccessLevel.Player)
             {
@@ -1646,243 +1657,129 @@ namespace Server.Mobiles
 		private static readonly int[,] m_StatUp = new int[,]
 		{
 			//	str	dex	int	luc	hit	stm	mana
-			{200,700,700,0,800,800,800},//Alchemy
-			{1200,1100,200,0,1000,1500,0},//Anatomy
-			{0,800,1800,0,1000,400,0},//AnimalLore
-			{600,600,600,0,1000,1000,200},//ItemIdentification
-			{1000,1000,1000,0,900,100,0},//ArmsLore
-			{2000,0,0,0,1750,0,0},//Parrying
-			{800,800,800,0,600,1000,0},//Begging
-			{1750,1500,0,0,500,250,0},//Blacksmithy
-			{550,1750,200,0,500,1000,0},//BowcraftFletching
-			{0,1000,1750,0,1000,1000,250},//Peacemaking
-			{800,800,600,0,1000,800,0},//Camping
-			{1800,1800,400,0,0,0,0},//Carpentry
-			{200,1200,1500,0,500,600,0},//Cartography
-			{800,800,800,0,800,800,0},//Cooking
-			{0,600,2000,0,0,400,750},//DetectingHidden
-			{100,200,0,0,700,1750,1250},//Discordance
-			{0,0,2000,0,0,0,1750},//Evaluating Intelligence
-			{0,1750,0,0,2000,0,0},//Healing
-			{800,800,800,0,800,800,0},//Fishing
-			{800,800,1000,0,800,800,800},//Belief(ForensicEvaluation)
-			{800,800,800,0,800,800,0},//Farming(Herding)
-			{0,1750,0,0,0,2000,0},//Hiding
-			{600,1750,600,0,1750,0,300},//Provocation
-			{0,250,1500,0,0,0,2000},//Inscription
-			{100,1250,400,0,0,2000,0},//Lockpicking
-			{0,0,1900,0,1200,0,1900},//Magery
-			{50,50,1600,0,1200,1200,900},//ResistingSpells
-			{1000,1750,0,0,1500,750,0},//Tactics
-			{0,2000,500,0,0,1250,0},//Snooping
-			{0,1250,1250,0,1250,1250,0},//Musicianship
-			{0,1000,1800,0,400,1800,0},//Poisoning
-			{0,2000,0,0,0,1750,0},//Archery
-			{200,200,1000,0,1800,100,1700},//SpiritSpeak
-			{200,2000,700,0,300,550,0},//Stealing
-			{0,1750,1250,0,0,1000,0},//Tailoring
-			{500,1800,900,0,1200,600,0},//AnimalTaming
-			{1200,1000,600,0,600,600,0},//Tanning(TasteIdentification)
-			{500,1100,1200,0,200,500,500},//Tinkering
-			{0,750,1000,0,0,2000,0},//Reflexes(Tracking)
-			{1000,1000,1000,0,200,1800,0},//Veterinary
-			{1750,250,0,0,1750,1250,0},//Swordsmanship
-			{2000,0,0,0,1750,0,0},//MaceFighting
-			{0,1900,1200,0,0,1900,0},//Fencing
-			{1500,0,0,0,1750,1750,0},//Wrestling
-			{2000,0,0,0,250,1500,0},//Lumberjacking
-			{1500,250,0,0,2000,0,0},//Mining
-			{0,0,1750,0,0,0,2000},//Meditation
-			{300,1800,1700,0,400,600,200},//Stealth
-			{250,250,2000,0,0,1250,0},//RemoveTrap
-			{600,800,1200,0,800,700,900},//Necromancy
-			{0,0,0,0,2000,1750,0},//Focus
-			{700,700,700,0,1500,700,700},//Chivalry
-			{1250,1250,0,0,1250,1250,0},//Smash(Bushido)
-			{0,1900,1200,0,0,1900,0},//Sneak(Ninjitsu)
-			{1000,1000,1000,0,1000,0,1000},//Elementalism(Spellweaving)
-			{1000,1000,1000,0,1000,0,1000},//Mysticism
-			{0,250,1500,0,0,0,2000},//Imbuing
-			{900,1400,500,0,700,1400,100}//Throwing
-			
-			
-			/*
-			{ 200, 700, 700, 0, 800, 800, 800 },  //Alchemy
-			{ 1200, 1100, 200, 0, 1000, 1500, 0 },  //Anatomy
-			{ 0, 800, 1800, 0, 1000, 400, 0 },  //Animal Lore
-			{ 600, 600, 600, 0, 1000, 1000, 200 },  //Item Identification
-			{ 1000, 1000, 1000, 0, 900, 100, 0 },  //Arms Lore
-			{ 2000, 0, 0, 0, 2000, 300, 50 },  //Parrying
-			{ 600, 600, 800, 0, 700, 1000, 50 },  //Begging
-			{ 1000, 400, 200, 0, 900, 1200, 50 },  //Blacksmithy
-			{ 400, 1500, 100, 0, 700, 1000, 50 },  //Bowcraft/Fletching
-			{ 200, 800, 1300, 0, 800, 800, 1100 },  //Peacemaking
-			{ 800, 800, 300, 0, 1000, 800, 50 },  //Camping
-			{ 900, 1000, 500, 0, 1000, 300, 50 },  //Carpentry
-			{ 200, 600, 1800, 0, 500, 600, 50 },  //Cartography
-			{ 740, 740, 740, 0, 740, 740, 50 },  //Cooking
-			{ 250, 600, 1200, 0, 300, 700, 700 },  //Detecting Hidden
-			{ 100, 800, 1000, 0, 700, 1400, 1000 },  //Discordance
-			{ 50, 50, 2000, 0, 300, 300, 1050 },  //Evaluating Intelligence
-			{ 900, 1100, 800, 0, 1100, 700, 400 },  //Healing
-			{ 740, 740, 740, 0, 740, 740, 50 },  //Fishing
-			{ 800, 800, 1000, 0, 800, 800, 800 },  //Belief(Forensic Evaluation)
-			{ 600, 600, 800, 0, 900, 800, 50 },  //Farming(Herding)
-			{ 50, 2000, 50, 0, 600, 950, 100 },  //Hiding
-			{ 1200, 400, 1300, 0, 1200, 200, 700 },  //Provocation
-			{ 50, 500, 1000, 0, 300, 100, 1800 },  //Inscription
-			{ 500, 1100, 900, 0, 600, 600, 50 },  //Lockpicking
-			{ 200, 200, 1900, 0, 600, 200, 1900 },  //Magery
-			{ 50, 50, 1600, 0, 1200, 1200, 900 },  //Resisting Spells
-			{ 500, 500, 1400, 0, 1200, 1200, 200 },  //Tactics
-			{ 50, 1900, 500, 0, 600, 1900, 50 },  //Avoid(Snooping)
-			{ 100, 800, 1800, 0, 700, 600, 1000 },  //Musicianship
-			{ 100, 400, 1800, 0, 300, 1200, 1200 },  //Poisoning
-			{ 900, 1400, 500, 0, 700, 1400, 100 },  //Archery
-			{ 200, 200, 1000, 0, 1800, 100, 1700 },  //Spirit Speak
-			{ 200, 2000, 700, 0, 300, 500, 50 },  //Stealing
-			{ 300, 900, 1700, 0, 300, 500, 50 },  //Tailoring
-			{ 500, 900, 900, 0, 1500, 600, 600 },  //Animal Taming
-			{ 1200, 1000, 600, 0, 400, 500, 50 },  //Tanning(Taste Identification)
-			{ 500, 1100, 1200, 0, 200, 500, 250 },  //Tinkering
-			{ 300, 800, 300, 0, 300, 2000, 50 },  //Tracking
-			{ 1000, 800, 1200, 0, 400, 1000, 600 },  //Veterinary
-			{ 1100, 1100, 800, 0, 900, 900, 200 },  //Swordsmanship
-			{ 2000, 200, 400, 0, 800, 300, 50 },  //Mace Fighting
-			{ 200, 1000, 300, 0, 200, 2000, 50 },  //Fencing
-			{ 900, 700, 600, 0, 1300, 1300, 200 },  //Wrestling
-			{ 2000, 300, 100, 0, 900, 400, 50 },  //Lumberjacking
-			{ 800, 400, 100, 0, 2000, 400, 50 },  //Mining
-			{ 100, 100, 1000, 0, 500, 50, 2000 },  //Meditation
-			{ 300, 1800, 1700, 0, 400, 600, 200 },  //Stealth
-			{ 400, 600, 1800, 0, 500, 1500, 200 },  //Remove Trap
-			{ 600, 800, 1200, 0, 800, 700, 900 },  //Necromancy
-			{ 1400, 1400, 400, 0, 1300, 400, 100 },  //Smash(Focus)
-			{ 700, 700, 700, 0, 1500, 700, 700 },  //Chivalry
-			{ 1600, 1000, 200, 0, 1400, 700, 100 },  //Bushido
-			{ 300, 1900, 700, 0, 600, 1000, 500 },  //Ninjitsu
-			{ 200, 200, 1900, 0, 600, 200, 1900 },  //Spellweaving
-			{ 100, 100, 900, 0, 600, 50, 2000 },  //Mysticism
-			{ 100, 100, 1500, 0, 600, 50, 1400 },  //Imbuing
-			{ 900, 1400, 500, 0, 700, 1400, 100 }  //Throwing
-			{	250,550,550,0,	800,800,800	},	//Alchemy
-			{	1200,1100,500,0,1000,1000,200},	//Anatomy
-			{	200,700,1500,0,	8,	7,	2	},	//Animal Lore
-			{	0,	0,	0,	0,	10,	5,	0	},	//Item Identification
-			{	0,	0,	0,	0,	7,	2,	8	},	//Arms Lore
-			{	8,	2,	0,	0,	10,	0,	0	},	//Parrying
-			{	0,	0,	0,	0,	8,	7,	0	},	//Begging
-			{	5,	0,	0,	0,	13,	2,	0	},	//Blacksmithy
-			{	0,	0,	0,	0,	12,	3,	0	},	//Bowcraft/Fletching
-			{	0,	0,	0,	0,	9,	4,	4	},	//Peacemaking
-			{	0,	0,	0,	0,	1,	5,	0	},	//Camping
-			{	0,	0,	0,	0,	12,	3,	0	},	//Carpentry
-			{	0,	0,	0,	0,	6,	8,	1	},	//Cartography
-			{	0,	0,	0,	0,	10,	5,	1	},	//Cooking
-			{	0,	0,	0,	0,	10,	4,	4	},	//Detecting Hidden
-			{	0,	0,	0,	0,	10,	5,	2	},	//Discordance
-			{	0,	0,	10,	0,	6,	0,	0	},	//Evaluating Intelligence
-			{	0,	0,	0,	0,	14,	6,	0	},	//Healing
-			{	0,	0,	0,	0,	12,	3,	0	},	//Fishing
-			{	2,	2,	6,	0,	10,	0,	0	},	//Forensic Evaluation
-			{	0,	0,	0,	0,	11,	6,	0	},	//Herding
-			{	0,	0,	0,	0,	9,	7,	2	},	//Hiding
-			{	0,	0,	0,	0,	8,	4,	5	},	//Provocation
-			{	0,	0,	0,	0,	6,	1,	8	},	//Inscription
-			{	0,	0,	0,	0,	12,	6,	0	},	//Lockpicking
-			{	2,	0,	8,	0,	6,	0,	0	},	//Magery
-			{	5,	0,	5,	0,	10,	0,	0	},	//Resisting Spells
-			{	4,	6,	0,	0,	10,	0,	0	},	//Tactics
-			{	0,	0,	0,	0,	11,	5,	2	},	//Snooping
-			{	0,	0,	0,	0,	8,	2,	7	},	//Musicianship
-			{	0,	0,	0,	0,	15,	3,	0	},	//Poisoning
-			{	3,	7,	0,	0,	9,	0,	0	},	//Archery
-			{	0,	0,	0,	0,	11,	0,	5	},	//Spirit Speak
-			{	0,	0,	0,	0,	10,	8,	0	},	//Stealing
-			{	0,	2,	0,	0,	7,	8,	0	},	//Tailoring
-			{	0,	0,	0,	0,	13,	3,	1	},	//Animal Taming
-			{	0,	0,	0,	0,	13,	1,	1	},	//Taste Identification
-			{	0,	0,	0,	0,	6,	9,	0	},	//Tinkering
-			{	0,	0,	0,	0,	8,	10,	0	},	//Tracking
-			{	0,	0,	0,	0,	9,	2,	6	},	//Veterinary
-			{	5,	5,	0,	0,	10,	0,	0	},	//Swordsmanship
-			{	6,	4,	0,	0,	10,	0,	0	},	//Mace Fighting
-			{	4,	6,	0,	0,	10,	0,	0	},	//Fencing
-			{	7,	3,	0,	0,	10,	0,	0	},	//Wrestling
-			{	0,	0,	0,	0,	14,	1,	0	},	//Lumberjacking
-			{	0,	0,	0,	0,	14,	1,	0	},	//Mining
-			{	0,	0,	0,	0,	6,	0,	10	},	//Meditation
-			{	0,	5,	0,	0,	8,	5,	0	},	//Stealth
-			{	0,	0,	0,	0,	11,	7,	0	},	//Remove Trap
-			{	5,	0,	5,	0,	6,	0,	0	},	//Necromancy
-			{	0,	5,	5,	0,	10,	0,	0	},	//Focus
-			{	3,	5,	2,	0,	10,	0,	0	},	//Chivalry
-			{	7,	3,	0,	0,	10,	0,	0	},	//Bushido
-			{	1,	6,	3,	0,	8,	0,	0	},	//Ninjitsu
-			{	0,	0,	10,	0,	6,	0,	0	},	//Spellweaving
-			{	0,	0,	10,	0,	6,	0,	0	},	//Mysticism
-			{	0,	0,	0,	0,	6,	0,	9	},	//Imbuing
-			{	0,	0,	0,	0,	11,	7,	0	}	//Throwing
-			{ 	0,	0,	5,	10,	0,	1,	10	}, //alchemy
-			{ 	3,	9,	3,	0,	35,	0,	0	}, //anatomy
-			{ 	0,	0,	10,	20,	5,	10,	5	}, //animal lore
-			{ 	5,	0,	3,	10,	0,	0,	7	}, //item iden
-			{ 	0,	0,	0,	20,	5,	0,	0	}, //arms lore
-			{ 	20,	20,	0,	0,	10,	0,	0	}, //parrying
-			{ 	0,	0,	0,	40,	5,	5,	0	}, //begging
-			{ 	10,	3,	0,	2,	5,	5,	0	}, //blacksmithy
-			{ 	3,	7,	0,	0,	10,	5,	0	}, //bowcraft
-			{ 	0,	0,	20,	30,	0,	0,	0	}, //peachmaking
-			{ 	7,	5,	7,	6,	10,	15,	0	}, //camping
-			{ 	7,	3,	0,	0,	10,	5,	0	}, //carpentry
-			{ 	0,	5,	5,	0,	0,	15,	0	}, //cartography
-			{ 	4,	4,	4,	5,	4,	4,	0	}, //cooking
-			{ 	0,	20,	10,	5,	0,	10,	5	}, //detecting hidden
-			{ 	0,	0,	20,	30,	0,	0,	0	}, //discodance
-			{ 	0,	0,	10,	0,	0,	0,	40	}, //Evaluating
-			{ 	0,	5,	0,	0,	45,	0,	0	}, //Healing
-			{ 	10,	5,	10,	5,	5,	5,	10	}, //fishing
-			{ 	0,	0,	50,	0,	0,	1,	0	}, //forensic evaluation
-			{ 	0,	12,	0,	0,	21,	17,	0	}, //herding
-			{ 	0,	5,	0,	0,	0,	45,	0	}, //hiding
-			{ 	0,	0,	20,	30,	0,	3,	0	}, //privocation
-			{ 	0,	5,	10,	0,	0,	0,	10	}, //inscription
-			{ 	5,	20,	0,	10,	0,	15,	0	}, //lockpicking
-			{ 	0,	0,	15,	10,	0,	0,	25	}, //magery
-			{ 	0,	0,	20,	0,	20,	0,	10	}, //resisting
-			{ 	35,	15,	0,	0,	0,	0,	0	}, //tactics
-			{ 	0,	10,	0,	15,	0,	25,	0	}, //snooping
-			{ 	0,	0,	20,	0,	0,	0,	0	}, //musicianship
-			{ 	0,	10,	0,	15,	0,	0,	0	}, //poisoning
-			{ 	25,	20,	0,	5,	0,	0,	0	}, //archery
-			{ 	0,	0,	0,	0,	0,	0,	25	}, //spirit speak
-			{ 	0,	30,	10,	5,	0,	5,	0	}, //stealing
-			{ 	0,	5,	0,	0,	10,	10,	0	}, //tailoring
-			{ 	0,	0,	5,	10,	30,	5,	0	}, //animal training
-			{ 	0,	0,	5,	5,	5,	10,	0	}, //taste iden
-			{ 	0,	8,	8,	8,	0,	1,	0	}, //tinkering
-			{ 	0,	20,	20,	0,	0,	10,	0	}, //tracking
-			{ 	0,	15,	0,	2,	0,	30,	5	}, //veterinary
-			{ 	30,	10,	5,	1,	3,	1,	0	}, //sword
-			{ 	40,	0,	0,	5,	4,	1,	0	}, //mace
-			{ 	21,	19,	0,	6,	3,	1,	0	}, //fencing
-			{ 	30,	10,	0,	0,	9,	1,	0	}, //wrestling
-			{ 	30,	10,	1,	0,	6,	4,	3	}, //lumberjacking
-			{ 	30,	0,	0,	0,	10,	10,	0	}, //mining
-			{ 	0,	0,	0,	0,	0,	0,	25	}, //meditation
-			{ 	0,	15,	0,	10,	0,	25,	0	}, //stealth
-			{ 	0,	5,	10, 5,	10,	20,	0	}, //remove trap
-			{ 	0,	0,	10,	10,	0,	0,	30	}, //necromancy
-			{ 	0,	0,	0,	0,	20,	20,	10	}, //focus
-			{ 	10,	5,	5,	0,	30,	0,	0	}, //chivalry
-			{ 	25,	0,	0,	0,	20,	5,	0	}, //bushido
-			{ 	0,	15,	15,	0,	0,	10,	10	}, //ninjitsu
-			{ 	0,	0,	10,	0,	0,	0,	40	}, //spellweaving
-			{ 	0,	0,	5,	5,	0,	0,	45	}, //mysticism
-			{ 	0,	0,	0,	17,	0,	0,	8	}, //imbuing
-			{ 	25,	20,	0,	5,	0,	0,	0	} //throwing
-			*/
+			{0,0,200,0,0,100,0},//Alchemy
+			{100,100,0,0,100,0,0},//Anatomy
+			{0,0,200,0,0,0,100},//AnimalLore
+			{0,0,200,0,0,0,0},//ItemIdentification
+			{100,0,100,0,0,0,0},//ArmsLore
+			{100,0,0,0,200,0,0},//Parrying
+			{0,0,0,0,100,200,0},//Begging
+			{200,0,0,0,100,0,0},//Blacksmithy
+			{0,200,0,0,0,0,0},//BowcraftFletching
+			{0,0,200,0,0,0,100},//Peacemaking
+			{0,0,0,0,100,100,0},//Camping
+			{100,100,0,0,0,0,0},//Carpentry
+			{0,0,200,0,0,0,0},//Cartography
+			{0,0,0,0,100,100,0},//Cooking
+			{0,0,200,0,0,0,0},//DetectingHidden
+			{0,0,200,0,0,0,100},//Discordance
+			{0,0,200,0,0,0,100},//EvaluatingIntell
+			{0,100,0,0,200,0,0},//Healing
+			{0,0,0,0,100,200,0},//Fishing
+			{0,0,200,0,0,0,0},//ForensicEvaluation
+			{0,0,0,0,100,100,0},//Herding
+			{0,0,0,0,100,200,0},//Hiding
+			{0,0,200,0,0,0,100},//Provocation
+			{0,0,200,0,0,0,100},//Inscription
+			{0,200,0,0,0,0,0},//Lockpicking
+			{0,0,200,0,0,0,100},//Magery
+			{0,0,0,0,200,100,0},//ResistingSpells
+			{100,100,0,0,100,0,0},//Tactics
+			{0,100,0,0,0,100,0},//Snooping
+			{0,100,100,0,0,0,0},//Musicianship
+			{0,100,200,0,0,0,0},//Poisoning
+			{0,200,0,0,0,100,0},//Archery
+			{0,0,200,0,0,0,100},//SpiritSpeak
+			{0,100,0,0,0,200,0},//Stealing
+			{0,100,100,0,0,0,0},//Tailoring
+			{0,0,100,0,100,100,0},//AnimalTaming
+			{0,0,200,0,0,0,0},//TasteIdentification
+			{0,100,100,0,0,0,0},//Tinkering
+			{0,0,100,0,0,200,0},//Tracking
+			{0,0,100,0,100,0,0},//Veterinary
+			{100,100,0,0,100,0,0},//Swordsmanship
+			{100,100,0,0,100,0,0},//MaceFighting
+			{100,100,0,0,100,0,0},//Fencing
+			{100,100,0,0,100,0,0},//Wrestling
+			{200,0,0,0,100,0,0},//Lumberjacking
+			{200,0,0,0,100,0,0},//Mining
+			{0,0,100,0,0,0,200},//Meditation
+			{0,0,0,0,100,200,0},//Stealth
+			{0,200,0,0,0,0,0},//RemoveTrap
+			{0,0,200,0,0,0,100},//Necromancy
+			{0,0,0,0,0,200,100},//Focus
+			{100,0,100,0,0,0,100},//Chivalry
+			{100,100,0,0,100,0,0},//Bushido
+			{0,100,100,0,0,100,0},//Ninjitsu
+			{0,0,200,0,0,0,100},//Spellweaving
+			{0,0,200,0,0,0,100},//Mysticism
+			{0,0,200,0,0,0,100},//Imbuing
+			{0,200,0,0,0,100,0}//Throwing
 		};
+		
+		private static readonly int[,] m_StatBonus50 = new int[,]
+		{
+			//	str	dex	int	luc	hit	stm	mana
+			{0,0,0,0,0,0,0},//Alchemy
+			{0,0,0,0,0,0,0},//Anatomy
+			{0,0,0,0,0,0,0},//AnimalLore
+			{0,0,0,0,0,0,0},//ItemIdentification
+			{0,0,0,0,0,0,0},//ArmsLore
+			{0,0,0,0,0,0,0},//Parrying
+			{0,0,0,0,0,0,0},//Begging
+			{0,0,0,0,0,0,0},//Blacksmithy
+			{0,0,0,0,0,0,0},//BowcraftFletching
+			{0,0,0,0,0,0,0},//Peacemaking
+			{0,0,0,0,0,0,0},//Camping
+			{0,0,0,0,0,0,0},//Carpentry
+			{0,0,0,0,0,0,0},//Cartography
+			{0,0,0,0,0,0,0},//Cooking
+			{0,0,0,0,0,0,0},//DetectingHidden
+			{0,0,0,0,0,0,0},//Discordance
+			{0,0,0,0,0,0,0},//EvaluatingIntell
+			{0,0,0,0,0,0,0},//Healing
+			{0,0,0,0,0,0,0},//Fishing
+			{0,0,0,0,0,0,0},//ForensicEvaluation
+			{0,0,0,0,0,0,0},//Herding
+			{0,0,0,0,0,0,0},//Hiding
+			{0,0,0,0,0,0,0},//Provocation
+			{0,0,0,0,0,0,0},//Inscription
+			{0,0,0,0,0,0,0},//Lockpicking
+			{0,0,0,0,0,0,0},//Magery
+			{0,0,0,0,0,0,0},//ResistingSpells
+			{0,0,0,0,0,0,0},//Tactics
+			{0,0,0,0,0,0,0},//Snooping
+			{0,0,0,0,0,0,0},//Musicianship
+			{0,0,0,0,0,0,0},//Poisoning
+			{0,0,0,0,0,0,0},//Archery
+			{0,0,0,0,0,0,0},//SpiritSpeak
+			{0,0,0,0,0,0,0},//Stealing
+			{0,0,0,0,0,0,0},//Tailoring
+			{0,0,0,0,0,0,0},//AnimalTaming
+			{0,0,0,0,0,0,0},//TasteIdentification
+			{0,0,0,0,0,0,0},//Tinkering
+			{0,0,0,0,0,0,0},//Tracking
+			{0,0,0,0,0,0,0},//Veterinary
+			{0,0,0,0,0,0,0},//Swordsmanship
+			{0,0,0,0,0,0,0},//MaceFighting
+			{0,0,0,0,0,0,0},//Fencing
+			{0,0,0,0,0,0,0},//Wrestling
+			{0,0,0,0,0,0,0},//Lumberjacking
+			{0,0,0,0,0,0,0},//Mining
+			{0,0,0,0,0,0,0},//Meditation
+			{0,0,0,0,0,0,0},//Stealth
+			{0,0,0,0,0,0,0},//RemoveTrap
+			{0,0,0,0,0,0,0},//Necromancy
+			{0,0,0,0,0,0,0},//Focus
+			{0,0,0,0,0,0,0},//Chivalry
+			{0,0,0,0,0,0,0},//Bushido
+			{0,0,0,0,0,0,0},//Ninjitsu
+			{0,0,0,0,0,0,0},//Spellweaving
+			{0,0,0,0,0,0,0},//Mysticism
+			{0,0,0,0,0,0,0},//Imbuing
+			{0,0,0,0,0,0,0}//Throwing
+		};
+		
 		private bool m_NoDeltaRecursion;
 
 		public void ValidateEquipment()
@@ -2213,9 +2110,9 @@ namespace Server.Mobiles
 			//	return;
 
             #region Scroll of Alacrity
-            if (pm.AcceleratedStart > DateTime.UtcNow)
+            if (pm.AcceleratedStart > DateTime.Now)
 			{
-				pm.AcceleratedStart = DateTime.UtcNow;
+				pm.AcceleratedStart = DateTime.Now;
                 ScrollOfAlacrity.AlacrityEnd(pm);
 			}
 			#endregion
@@ -2244,7 +2141,7 @@ namespace Server.Mobiles
 
 			if (pm != null)
 			{
-				pm.m_SessionStart = DateTime.UtcNow;
+				pm.m_SessionStart = DateTime.Now;
 
 				if (pm.m_Quest != null)
 				{
@@ -2257,8 +2154,8 @@ namespace Server.Mobiles
 
 				pm.BedrollLogout = false;
                 pm.BlanketOfDarknessLogout = false;
-				pm.Tired -= Server.Misc.Util.RestCal( pm.LastOnline, DateTime.UtcNow );
-                pm.LastOnline = DateTime.UtcNow;
+				pm.Tired -= Server.Misc.Util.RestCal( pm.LastOnline, DateTime.Now );
+                pm.LastOnline = DateTime.Now;
 				if( pm.Tired < -108000 )
 					pm.Tired = -108000;
 				
@@ -2307,7 +2204,7 @@ namespace Server.Mobiles
 				/*
 				if( pm.StamMax > pm.Stam )
 				{
-					int timecheck = Util.TimeValue(pm.LastOnline, DateTime.UtcNow);
+					int timecheck = Util.TimeValue(pm.LastOnline, DateTime.Now);
 					pm.TimerList[66] += timecheck;
 				}
 				*/
@@ -2366,7 +2263,6 @@ namespace Server.Mobiles
 			}
 			if( pm.MonthTime.Day != 1 )
 				pm.MonthTime = new DateTime(2020, 8, 1, 0, 0, 0);
-			*/
 			//스킬을 스텟으로 변환
 			for( int i = 0; i < m_StatUp.GetLength(1); i++)
 			{
@@ -2659,6 +2555,7 @@ namespace Server.Mobiles
 			}
 			
 			//스킬 스텟 신규 갱신
+			/*
 			if( !pm.StatReset[11] )
 			{
 				for( int i = 0; i < m_StatUp.GetLength(1); i++)
@@ -2672,7 +2569,7 @@ namespace Server.Mobiles
 				}
 				pm.StatReset[11] = true;
 			}
-			
+			*/
 			//세트 아이템 체크
 			pm.UpdateEquipOptions();
 			//Misc.SetItem.SetOption(pm);
@@ -3025,6 +2922,62 @@ namespace Server.Mobiles
 			Timer.DelayCall( TimeSpan.FromSeconds( 30.0 ), new TimerCallback( BuffCount ) );
 		}
 		
+		// [신규] 체력/기력/마나 회복 정지 쿨타임 변수 (밀리초 단위 틱 저장)
+		private long m_HitsRegenDelay;
+		private long m_StamRegenDelay;
+		private long m_ManaRegenDelay;
+
+		public override void OnHitsChange(int oldValue)
+		{
+			base.OnHitsChange(oldValue);
+
+			if (Race == Race.Gargoyle)
+			{
+				if (Hits <= HitsMax / 2)
+				{
+					BuffInfo.AddBuff(this, new BuffInfo(BuffIcon.Berserk, 1080449, 1115021, String.Format("{0}\t{1}", GetRacialBerserkBuff(false), GetRacialBerserkBuff(true)), false));
+					Delta(MobileDelta.WeaponDamage);
+				}
+				else if (oldValue < Hits && Hits > HitsMax / 2)
+				{
+					BuffInfo.RemoveBuff(this, BuffIcon.Berserk);
+					Delta(MobileDelta.WeaponDamage);
+				}
+			}
+
+			// 체력이 이전보다 깎였다면? (피격, 독, 낙하 데미지 등)
+			if (this.Hits < oldValue)
+			{
+				// 만복도(Hunger)가 20000 이상이면 20초, 아니면 30초 쿨타임 적용
+				long delay = this.Hunger >= 20000 ? 20000 : 30000;
+				m_HitsRegenDelay = Environment.TickCount64 + delay;
+			}
+		}
+
+		public override void OnStamChange(int oldValue)
+		{
+			base.OnStamChange(oldValue);
+
+			// 기력이 이전보다 깎였다면? (달리기, 무기 공격, 채집, 생산 등)
+			if (this.Stam < oldValue)
+			{
+				long delay = this.Hunger >= 20000 ? 20000 : 30000;
+				m_StamRegenDelay = Environment.TickCount64 + delay;
+			}
+		}
+
+		public override void OnManaChange(int oldValue)
+		{
+			base.OnManaChange(oldValue);
+
+			// 마나가 이전보다 깎였다면? (마법 시전, 특수기 사용 등)
+			if (this.Mana < oldValue)
+			{
+				long delay = this.Hunger >= 20000 ? 20000 : 30000;
+				m_ManaRegenDelay = Environment.TickCount64 + delay;
+			}
+		}
+	
 		private void PlayerCount()
 		{
 			// 1. [0.1초 주기] 최소한의 타이머 감소 로직만 수행
@@ -3094,58 +3047,73 @@ namespace Server.Mobiles
 		{
 			if (Deleted || !Alive) return;
 
-			// 1. 던전 주기 및 자연회복 가능 여부 체크
+			// 1. 던전 주기 체크 (던전은 10초에 1번, 필드는 1초에 1번)
 			bool isDungeon = (Region != null && Region.IsPartOf(typeof(Regions.DungeonRegion)));
 			bool canRegenNow = true;
 
 			if (isDungeon)
 			{
-				// 던전은 재생 시간이 1초에서 10초로 느려짐 (10초에 한 번만 canRegenNow가 true)
 				if (m_TimerList[74] > 0) { m_TimerList[74]--; canRegenNow = false; }
 				else m_TimerList[74] = 9;
 			}
 			else m_TimerList[74] = 0;
 
-			// 2. 재생 로직 수행 (던전이라면 10초에 한 번만 실행됨)
+			// 2. 재생 로직 수행
 			if (canRegenNow)
 			{
 				double foc = Skills.Focus.Value;
 				double med = Skills.Meditation.Value;
-				bool isCombat = (m_TimerList[64] != 0 || m_TimerList[65] != 0);
-
-				// [전체 재생 효율 계산] - (기본 1.0 - 추종자 패널티 + 스킬 보너스) / Max 1.0
+				
+				// 전체 재생 효율 계산 (소환수 패널티 및 스킬 보정)
 				double hSRate = Math.Min(1.0, 1.0 - (Followers * 0.2) + (foc / 500.0));
 				double mRate = Math.Min(1.0, 1.0 - (Followers * 0.2) + (med / 250.0));
 
-				// 3. 재생 수치 계산 (고정 포인트 합산)
 				int hPt = 0, sPt = 0, mPt = 0;
+				long currentTick = Environment.TickCount64;
 
-				// [전투 여부 체크]
+				// 비전투 상태일 때만 재생 로직 작동 (Timer 64, 65 체크)
 				if (m_TimerList[64] == 0 && m_TimerList[65] == 0)
 				{
-					// A. 자연 회복 (비전투 & 비던전 시 최대치의 1% 회복)
-					// 최대치가 100일 때 10,000 포인트가 되어야 하므로 * 100
-					if (!isDungeon)
+					// A. 체력 재생 (30초 제한 체크)
+					if (currentTick >= m_HitsRegenDelay)
 					{
-						hPt += HitsMax * 100;
-						sPt += StamMax * 100;
-						mPt += ManaMax * 100;
-					}
-					else if( Meditating )
-						mPt += ManaMax * 100;
-					
-					// B. 재생 옵션 (1당 0.0001 회복 = 1 포인트)
-					hPt += AosAttributes.GetValue(this, AosAttribute.RegenHits);
-					sPt += AosAttributes.GetValue(this, AosAttribute.RegenStam);
-					mPt += AosAttributes.GetValue(this, AosAttribute.RegenMana);
+						// 자연 회복 (최대치의 1% = Max * 100) - 던전 제외
+						if (!isDungeon) hPt += HitsMax * 100;
 
-					// C. 스킬 고정 재생 (집중 1당 0.1 회복 = 1,000 포인트 / 명상 1당 0.2 회복 = 2,000 포인트)
-					hPt += (int)(foc * 1000);
-					sPt += (int)(foc * 1000);
-					mPt += (int)(med * 2000);
+						// 아이템 옵션 (ItemOptionCreator 10,000 스케일 적용)
+						hPt += GetEquipOptionRaw(Misc.CustomOption.HitsRegen) + GetEquipOptionRaw(Misc.CustomOption.AllRegen);
+						
+						// 집중 스킬 보너스
+						hPt += (int)(foc * 1000);
+					}
+
+					// B. 기력 재생 (30초 제한 체크)
+					if (currentTick >= m_StamRegenDelay)
+					{
+						if (!isDungeon) sPt += StamMax * 100;
+
+						sPt += GetEquipOptionRaw(Misc.CustomOption.StamRegen) + GetEquipOptionRaw(Misc.CustomOption.AllRegen);
+						sPt += (int)(foc * 1000);
+					}
+
+					// C. 마나 재생 (30초 제한 체크)
+					if (currentTick >= m_ManaRegenDelay)
+					{
+						// 자연 회복 (필드 1% 혹은 명상 중 던전 1%)
+						if (!isDungeon || Meditating) mPt += ManaMax * 100;
+
+						mPt += GetEquipOptionRaw(Misc.CustomOption.ManaRegen) + GetEquipOptionRaw(Misc.CustomOption.AllRegen);
+						mPt += (int)(med * 2000);
+					}
 				}
 
-				// C. 실제 회복 적용 (계산 합계 * 전체 재생 효율)
+				// D. 액티브 명상 추가 보너스 (전투/제한 상태와 무관하게 명상 성공 시 마나 추가 회복)
+				if (Meditating && currentTick >= m_ManaRegenDelay)
+				{
+					mPt += (int)(med * 3000);
+				}
+
+				// 3. 실제 회복 적용 (포인트 누적 및 정수 변환)
 				int h = RegenCalc((int)(hPt * hSRate), 0);
 				int s = RegenCalc((int)(sPt * hSRate), 1);
 				int m = RegenCalc((int)(mPt * mRate), 2);
@@ -3155,7 +3123,7 @@ namespace Server.Mobiles
 				if (m > 0 && Mana < ManaMax) Mana += m;
 			}
 
-			// 3. 소환수 마나 소모 (던전 패널티와 상관없이 매초 실행)
+			// 4. 소환수 마나 유지비 정산
 			if (m_MySummons != null && m_MySummons.Count > 0)
 			{
 				int drain = 0;
@@ -3165,8 +3133,16 @@ namespace Server.Mobiles
 					if (s == null || s.Deleted || !s.Alive) m_MySummons.RemoveAt(i);
 					else drain++;
 				}
-				if (Mana < drain) { Mana = 0; ClearSummons(); }
-				else Mana -= drain;
+				
+				if (Mana < drain) 
+				{ 
+					Mana = 0; 
+					ClearSummons(); 
+				}
+				else 
+				{
+					Mana -= drain;
+				}
 			}
 		}
 
@@ -3206,241 +3182,6 @@ namespace Server.Mobiles
 				this.DeathMove(); 
 			}
 		}		
-		/*
-		private void PlayerCount()
-		{
-			//0~63 : 마법 스킬트리
-			//64 : 몬스터 전투 시간
-			//65 : 유저 전투 시간
-			//66 : 스테미나 회복 시간
-			//67 : 코마 시간
-			//68 : 배 이동 시간
-			//69 : 방어 물약 시간
-			//70 : 강화 물약 시간
-			//71 : 일 대기 시간
-			//72 : 침대 사용 시간
-			//73 : 리젠 체크
-			//74 : 던전 체크
-
-			for( int i = 0; i < m_TimerList.Length; i++)
-			{
-				if( m_TimerList[i] >= 1 )
-					m_TimerList[i] -= 1;
-			}
-			/*
-			//집, 마을 체크
-			BaseHouse house = BaseHouse.FindHouseAt(this);
-			if( !IsStaff() && ( Poisoned || ( this.Hidden && !( house != null && house.IsOwner(this) ) ) ) )
-			{
-				m_TimerList[64] = 60;
-				//m_TimerList[65] = 300;
-			}
-			
-			if ( m_Coma )
-			{
-				this.Frozen = true;
-				if ( m_TimerList[67] == 1 );
-				{
-					//m_ComaTime = 600;
-					this.Blessed = false;
-					m_Coma = false;
-					this.Frozen = false;
-					//m_TimerList[67] = 0;
-					this.DeathMove();
-				}
-			}
-			else
-			{
-				DungeonRegion dungeon = (DungeonRegion)Region.GetRegion(typeof(DungeonRegion));
-				if( m_TimerList[73] == 0 && !Hidden )
-				{
-					if( dungeon != null )
-					{
-						m_TimerList[64] = 60;
-					}
-					if( m_TimerList[64] == 0 && m_TimerList[65] == 0 )
-					{
-						Hits += HitsMax / 20 + RegenCalc( AosAttributes.GetValue(this, AosAttribute.RegenHits) * 100, 0 );
-						Stam += StamMax / 20 + RegenCalc( AosAttributes.GetValue(this, AosAttribute.RegenStam) * 100, 1 );
-						Mana += ManaMax / 20 + RegenCalc( AosAttributes.GetValue(this, AosAttribute.RegenMana) * 100, 2 );
-					}
-					Hits += RegenCalc( (int)this.Skills.Focus.Value * 50, 0 );
-					Stam += RegenCalc( (int)this.Skills.Focus.Value * 50, 1 );
-					Mana += RegenCalc( (int)this.Skills.Focus.Value * 100, 2 );
-					if( this.Skills.Focus.Value >= 100 )
-					{
-						Hits += RegenCalc( 2500, 0 );
-						Stam += RegenCalc( 2500, 1 );
-					}
-					if( this.Skills.Meditation.Value >= 100 )
-					{
-						Mana += RegenCalc( 5000, 2 );
-					}
-					int minusMana = 0;
-					if( MeleeDamageAbsorb == 1 || MeleeDamageAbsorb == 2 )
-						minusMana = 1;
-					else if( MeleeDamageAbsorb == 3 )
-						minusMana = 2;
-
-					if( MagicDamageAbsorb == 1 )
-						minusMana += 3;
-					
-					var list = new List<Mobile>();
-					foreach ( Mobile m in World.Mobiles.Values )
-					{
-						if ( m is BaseCreature )
-						{
-							BaseCreature bc = m as BaseCreature;
-							if( bc.SummonMaster == this )
-							{
-								list.Add( m );
-							}
-						}
-					}
-					if( list.Count > 0 )
-						minusMana += list.Count;
-					
-					if( Mana < minusMana )
-					{
-						Mana = 0;
-						MeleeDamageAbsorb = 0;
-                        BuffInfo.RemoveBuff(this, BuffIcon.ReactiveArmor);
-						BuffInfo.RemoveBuff(this, BuffIcon.Protection);
-						BuffInfo.RemoveBuff(this, BuffIcon.ArchProtection);						
-						BuffInfo.RemoveBuff(this, BuffIcon.MagicReflection);						
-						SpellHelper.SummonCheckHigh( this );	
-					}
-					else
-						Mana -= minusMana;
-					
-					m_TimerList[73] = 10;
-				}
-			}
-			
-			
-			if( m_TimerList[69] == 1 )
-			{
-				this.SendMessage("방어 물약의 효력이 끝났습니다.");
-				this.PotionDefense = 0;
-			}
-			
-			if( m_TimerList[70] == 1 )
-			{
-				this.SendMessage("강화 물약의 효력이 끝났습니다.");
-				this.PotionPower = 0;
-			}
-			
-			if( m_TimerList[71] == 0 && Loop && LastTarget != null )
-			{
-				if( LastTarget is BaseTool )
-				{
-					BaseTool tool = LastTarget as BaseTool;
-					if( tool != null && !tool.Deleted && tool.UsesRemaining > 0)
-						CraftLoopCheck();
-					else
-						Loop = false;
-				}
-				else
-					LastTarget.OnDoubleClick( this );
-				if( LoopCount > 0 )
-				{
-					LoopCount--;
-					if( LoopCount == 0 )
-						Loop = false;
-				}
-			}
-			
-			//스킬을 스텟으로 변환
-			if( SkillsTotal_Check != SkillsTotal )
-			{
-				/*
-				SkillsTotalbonus = SkillsTotal_Bonus();
-				if( SkillsTotalbonus >= 70 )
-					SkillsTotalbonus = 70;
-				
-				for( int i = 0; i < m_StatUp.GetLength(1); i++)
-				{
-					for( int j = 0; j < m_StatUp.GetLength(0); j++)
-					{
-						if( m_SkillbyStat[i] < m_StatUp[j, i] * (int)( Skills[j].Value * 10) )
-						{
-							m_SkillbyStat[i] = m_StatUp[j, i] * (int)( Skills[j].Value * 10);
-						}
-					}
-				}	
-
-				Delta(MobileDelta.Stat);
-				ProcessDelta();
-				if( Hits > HitsMax )
-					Hits = HitsMax;
-				if( Stam > StamMax )
-					Stam = StamMax;
-				if( Mana > ManaMax )
-					Mana = ManaMax;
-				SkillsTotal_Check = SkillsTotal;
-			}
-			
-			//추종자 체크 코드
-			//Followers = SkillFollows + PetFollows + EquipFollows;
-
-			//가방 최대 수량 체크
-            Container pack = Backpack;
-			pack.MaxItems = 150 + Misc.Util.Level( GoldPoint[10] );
-			//pm.Delta(MobileDelta.Stat);
-			//pm.ProcessDelta();
-
-			//음식 자동 먹기
-			if( AutoFood != null && AutoFood is Food )
-			{
-				Food food = AutoFood as Food;
-				if( food != null )
-				{
-					if( Hunger + food.FillFactor * 100 <= 100000 - FoodPercent * 100 )
-					{
-						bool notmagicalfood = true;
-						if( food is BaseMagicalFood || !food.Stackable || food.Amount <= 1 )
-							notmagicalfood = false;
-						food.TryEat(this, notmagicalfood );
-					}
-				}
-				else
-					AutoFood = null;
-			}
-
-			if ( this.AccessLevel == AccessLevel.Player )
-			{
-				bool isSeasonActive = Misc.SeasonController.IsSeasonActive();
-
-				if ( isSeasonActive )
-				{
-					// 1. 시즌 중인데 일반 캐릭터가 펠루카에 무단 침입한 경우
-					if ( !this.Young && this.Map == Map.Felucca )
-					{
-						this.SendMessage( 0x22, "시즌 기간 중 일반 캐릭터는 펠루카에 입장할 수 없습니다." );
-						this.PlayerMove( false );
-					}
-					// 2. 시즌 중인데 시즌 캐릭터(Young)가 어떤 이유로든 트라멜로 나간 경우 (차단)
-					else if ( this.Young && this.Map == Map.Trammel )
-					{
-						this.SendMessage( 0x22, "시즌 캐릭터는 시즌 종료 전까지 펠루카에 머물러야 합니다." );
-						this.PlayerMove( false );
-					}
-				}
-				else
-				{
-					// 3. 시즌이 종료되었는데 아직 Young 상태인 캐릭터 (26일 정각 처리)
-					if ( this.Young )
-					{
-						this.Young = false;
-						this.PlayerMove( false );
-						this.SendMessage( 0x481, "시즌이 종료되었습니다. 일반 지역으로 이동합니다." );
-					}
-				}
-			}
-			
-			Timer.DelayCall( TimeSpan.FromSeconds( 0.1 ), new TimerCallback( PlayerCount ) );
-		}
-			*/
 
 		public CraftSystem m_CraftSystem = null;
 		//public CraftItem m_CraftItem = null;
@@ -3763,7 +3504,7 @@ namespace Server.Mobiles
 
 			if (pm != null)
 			{
-				pm.m_GameTime += (DateTime.UtcNow - pm.m_SessionStart);
+				pm.m_GameTime += (DateTime.Now - pm.m_SessionStart);
 
 				if (pm.m_Quest != null)
 				{
@@ -3778,7 +3519,7 @@ namespace Server.Mobiles
 				pm.EquipFollows = 0;
 				pm.SkillFollows = 0;
 				pm.m_SpeechLog = null;
-				pm.LastOnline = DateTime.UtcNow;
+				pm.LastOnline = DateTime.Now;
 
 				WeaponAbility a = WeaponAbility.GetCurrentAbility(pm);
 				if( a != null )
@@ -4228,25 +3969,6 @@ namespace Server.Mobiles
 
 			return (newX >= startX && newY >= startY && newX < endX && newY < endY && Map == foundation.Map);
 		}
-
-        public override void OnHitsChange(int oldValue)
-        {
-            if (Race == Race.Gargoyle)
-            {
-                if (Hits <= HitsMax / 2)
-                {
-                    BuffInfo.AddBuff(this, new BuffInfo(BuffIcon.Berserk, 1080449, 1115021, String.Format("{0}\t{1}", GetRacialBerserkBuff(false), GetRacialBerserkBuff(true)), false));
-                    Delta(MobileDelta.WeaponDamage);
-                }
-                else if (oldValue < Hits && Hits > HitsMax / 2)
-                {
-                    BuffInfo.RemoveBuff(this, BuffIcon.Berserk);
-                    Delta(MobileDelta.WeaponDamage);
-                }
-            }
-
-            base.OnHitsChange(oldValue);
-        }
 
         /// <summary>
         /// Returns Racial Berserk value, for spell or melee
@@ -5506,9 +5228,16 @@ namespace Server.Mobiles
 				return 1004044; // You may not trade trapped items.
 			}
 
-			if (StolenItem.IsStolen(item))
+			// 1. 기존 UO 코어 시스템의 단기(2분) 장물 체크 (명확한 경로 지정으로 모호성 에러 원천 차단)
+			if (Server.SkillHandlers.StolenItem.IsStolen(item))
 			{
 				return 1004043; // You may not trade recently stolen items.
+			}
+
+			// 2. [추가] 우리가 만든 가문 경제 시스템의 장물(CityStolenItem) 1:1 교환 절대 불가 처리
+			if (item is Server.Misc.CityStolenItem)
+			{
+				return 1004043; // (동일하게 장물 교환 불가 메시지 출력)
 			}
 
 			if (item is Container)
@@ -5816,7 +5545,7 @@ namespace Server.Mobiles
                 }
 
                 #region Scroll of Alacrity
-                if (AcceleratedStart > DateTime.UtcNow)
+                if (AcceleratedStart > DateTime.Now)
 				{
 					BuffInfo.AddBuff(this, new BuffInfo(BuffIcon.ArcaneEmpowerment, 1078511, 1078512, AcceleratedSkill.ToString()));
 				}
@@ -6092,7 +5821,7 @@ namespace Server.Mobiles
 			}
 			#endregion
 
-			StolenItem.ReturnOnDeath(this, c);
+			SkillHandlers.StolenItem.ReturnOnDeath(this, c);
 
 			if (m_PermaFlags.Count > 0)
 			{
@@ -6109,7 +5838,7 @@ namespace Server.Mobiles
 				}
 			}
 
-            if (killer != null && Murderer && DateTime.UtcNow >= killer.m_NextJustAward)
+            if (killer != null && Murderer && DateTime.Now >= killer.m_NextJustAward)
             {
                 // This scales 700.0 skill points to 1000 valor points
                 int pointsToGain = (int)(SkillsTotal / 7);
@@ -6133,7 +5862,7 @@ namespace Server.Mobiles
                     m.FixedParticles(0x375A, 9, 20, 5027, EffectLayer.Waist);
                     m.PlaySound(0x1F7);
 
-                    killer.m_NextJustAward = DateTime.UtcNow + TimeSpan.FromMinutes(minutesToWait);
+                    killer.m_NextJustAward = DateTime.Now + TimeSpan.FromMinutes(minutesToWait);
                 }
             }
 
@@ -6179,7 +5908,7 @@ namespace Server.Mobiles
 			}
 
 			#region Stygian Abyss
-			if (Region.IsPartOf("Abyss") && SSSeedExpire > DateTime.UtcNow)
+			if (Region.IsPartOf("Abyss") && SSSeedExpire > DateTime.Now)
 			{
 				SendGump(new ResurrectGump(this, ResurrectMessage.SilverSapling));
 			}
@@ -6206,7 +5935,7 @@ namespace Server.Mobiles
 		{
 			get
 			{
-				TimeSpan ts = m_SavagePaintExpiration - DateTime.UtcNow;
+				TimeSpan ts = m_SavagePaintExpiration - DateTime.Now;
 
 				if (ts < TimeSpan.Zero)
 				{
@@ -6215,7 +5944,7 @@ namespace Server.Mobiles
 
 				return ts;
 			}
-			set { m_SavagePaintExpiration = DateTime.UtcNow + value; }
+			set { m_SavagePaintExpiration = DateTime.Now + value; }
 		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
@@ -6344,7 +6073,7 @@ namespace Server.Mobiles
 			m_Collections = new Dictionary<Collection, int>();
 			m_RewardTitles = new List<object>();
 
-			m_PeacedUntil = DateTime.UtcNow;
+			m_PeacedUntil = DateTime.Now;
 			#endregion
 
 			m_VisList = new List<Mobile>();
@@ -6987,14 +6716,14 @@ namespace Server.Mobiles
 			set{ m_GoldPoint = value; InvalidateProperties();}
 		}
 
-		private int[] m_HarvestPoint = new int[1000];
+		private int[] m_HarvestPoint = new int[2400];
 		public int[] HarvestPoint
 		{
 			get{ return m_HarvestPoint;}
 			set{ m_HarvestPoint = value; InvalidateProperties();}
 		}
 
-		private int[] m_CraftPoint = new int[1000];
+		private int[] m_CraftPoint = new int[6000];
 		public int[] CraftPoint
 		{
 			get{ return m_CraftPoint;}
@@ -7007,6 +6736,15 @@ namespace Server.Mobiles
 			get{ return m_StatReset;}
 			set{ m_StatReset = value; InvalidateProperties();}
 		}
+
+		// 1. 개별 몬스터 킬 수 (가변 데이터)
+        private Dictionary<string, int> m_MonsterKills;
+
+        // 2. 슈퍼 슬레이어 포인트 (고정 8종: 0~7)
+        private int[] m_SlayerData;
+
+        // 3. 등급별 처치 수 (고정 6종: 1, 2~5, 6, 7, 8, 9)
+        private int[] m_GradeData;
 
 		private bool[] m_BuffCheck = new bool[100];
 		public bool[] BuffCheck
@@ -7199,7 +6937,7 @@ namespace Server.Mobiles
 							_totalEquipOptions[optID] += eqItem.SuffixOption[11 + i];
 					}
 
-					// [추가] C. 재련 보석(35~38) 및 시너지 옵션(39~40) 합산
+					// C. 재련 보석(35~38) 및 시너지 옵션(39~40) 합산
 					for (int i = 35; i <= 40; i++)
 					{
 						int refID = eqItem.PrefixOption[i];
@@ -7207,7 +6945,7 @@ namespace Server.Mobiles
 							_totalEquipOptions[refID] += eqItem.SuffixOption[i];
 					}
 
-					// [추가] D. 재질(색자원) 고정 옵션 (42~45번) 합산
+					// D. 재질(색자원) 고정 옵션 (42~45번) 합산
 					for (int i = 42; i <= 45; i++)
 					{
 						int matID = eqItem.PrefixOption[i];
@@ -7240,14 +6978,57 @@ namespace Server.Mobiles
 				}
 			}
 
+			// 세트 아이템 보너스 합산
 			for (int i = 0; i < this.ItemSetSaveValue.Length; i++)
 			{
 				if (i < _totalEquipOptions.Length && this.ItemSetSaveValue[i] != 0)
 					_totalEquipOptions[i] += this.ItemSetSaveValue[i];
 			}
 
-			ApplyEquipMods();
+            // =========================================================
+            // [추가된 부분] 전투 숙련도(Grade) 및 던전 포인트 옵션 투입
+            // =========================================================
+            Misc.CombatMastery.ApplyGradePassiveOptions(this, _totalEquipOptions);
+			Misc.DungeonPointSystem.ApplyGoldPointOptions(this, _totalEquipOptions);
 
+            // =========================================================
+            // [신규 추가] 가문 미덕 스킬 트리의 패시브 옵션을 투입!
+            // =========================================================
+            if (this.Account is Server.Accounting.Account acct && acct.Point != null)
+            {
+                // 401번부터 600번까지 가문 스킬 노드 순회
+                for (int i = 401; i <= 600; i++)
+                {
+                    int currentLevel = acct.Point[i];
+
+                    if (currentLevel > 0)
+                    {
+                        Misc.FamilySkillNode nodeData = Misc.FamilySkillManager.Skills[i];
+                        
+                        if (nodeData != null)
+                        {
+                            // 무결성 검증: 할당된 MaxLevel 초과 적용 방지
+                            int applyLevel = Math.Min(currentLevel, nodeData.MaxLevel);
+
+                            for (int j = 0; j < nodeData.OptIDs.Length; j++)
+                            {
+                                int optID = nodeData.OptIDs[j];
+                                
+                                // 배열 범위 초과 에러 방지
+                                if (optID >= 0 && optID < _totalEquipOptions.Length)
+                                {
+                                    // 10000 스케일링이 이미 적용된 OptValuesPerLevel에 레벨을 곱하여 합산
+                                    _totalEquipOptions[optID] += nodeData.OptValuesPerLevel[j] * applyLevel;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 최종 적용 및 동기화
+			ApplyEquipMods();
+			SkillbyStatCheck(this);
 			UpdateTotals();
 			this.ComputeResistances();
 			this.Delta(MobileDelta.Stat);
@@ -7346,6 +7127,22 @@ namespace Server.Mobiles
 		public int twoFencingBonus = 0;
 		public int twoMacingBonus = 0;
 
+
+        public Dictionary<string, int> MonsterKills
+        {
+            get { if (m_MonsterKills == null) m_MonsterKills = new Dictionary<string, int>(); return m_MonsterKills; }
+        }
+
+        public int[] SlayerData
+        {
+            get { if (m_SlayerData == null || m_SlayerData.Length != 8) m_SlayerData = new int[8]; return m_SlayerData; }
+        }
+
+        public int[] GradeData
+        {
+            get { if (m_GradeData == null || m_GradeData.Length != 6) m_GradeData = new int[6]; return m_GradeData; }
+        }
+		
 		public override void Deserialize(GenericReader reader)
 		{
 			base.Deserialize(reader);
@@ -7354,6 +7151,32 @@ namespace Server.Mobiles
 
 			switch (version)
 			{
+				case 65:
+				{
+					// 슬레이어 데이터 로드 (8종 고정)
+					m_SlayerData = new int[8];
+					for (int i = 0; i < 8; i++)
+						m_SlayerData[i] = reader.ReadInt();
+
+					// 등급 데이터 로드 (6종 고정)
+					m_GradeData = new int[6];
+					for (int i = 0; i < 6; i++)
+						m_GradeData[i] = reader.ReadInt();
+
+					// 몬스터 킬 로드 (가변)
+					int count = reader.ReadInt();
+					m_MonsterKills = new Dictionary<string, int>(count);
+					for (int i = 0; i < count; i++)
+						m_MonsterKills[reader.ReadString()] = reader.ReadInt();
+
+					goto case 64;
+				}
+				case 64:
+				{
+					for (int i = 0; i < 6000; i++)
+						m_CraftPoint[i] = reader.ReadInt();
+					goto case 63;
+				}
 				case 63:
 				{
 					Bio = new BioStats(reader);
@@ -7422,7 +7245,8 @@ namespace Server.Mobiles
 					for (int i = 0; i < 1000; i++)
 					{
 						m_HarvestPoint[i] = reader.ReadInt();
-						m_CraftPoint[i] = reader.ReadInt();
+						if( version < 64 )
+							m_CraftPoint[i] = reader.ReadInt();
 					}
 					goto case 54;
 				}
@@ -7914,7 +7738,7 @@ namespace Server.Mobiles
 			
 			if (version < 29)
 			{
-				m_SSNextSeed = m_SSSeedExpire = DateTime.UtcNow;
+				m_SSNextSeed = m_SSSeedExpire = DateTime.Now;
 				m_SSSeedLocation = Point3D.Zero;
 			}
 
@@ -8041,9 +7865,27 @@ namespace Server.Mobiles
 
 			base.Serialize(writer);
 
-			writer.Write(63); // version
+			writer.Write(65); // 버전을 65로 올림
+
+			// --- Version 65: 전투 숙련도 데이터 저장 ---
+			for (int i = 0; i < 8; i++)
+				writer.Write(SlayerData[i]);
+
+			for (int i = 0; i < 6; i++)
+				writer.Write(GradeData[i]);
+
+			writer.Write(MonsterKills.Count);
+			foreach (KeyValuePair<string, int> kvp in MonsterKills)
+			{
+				writer.Write(kvp.Key);
+				writer.Write(kvp.Value);
+			}
 
 			Bio.Serialize(writer);
+
+			// m_CraftPoint는 확장된 6000개를 저장
+			for (int i = 0; i < 6000; i++)
+				writer.Write(m_CraftPoint[i]);
 
 			writer.Write( (int) m_seasonSkillBonus );
 
@@ -8084,7 +7926,7 @@ namespace Server.Mobiles
 			for (int i = 0; i < 1000; i++)
 			{
 				writer.Write( (int) m_HarvestPoint[i] );
-				writer.Write( (int) m_CraftPoint[i] );
+				//writer.Write( (int) m_CraftPoint[i] );
 			}
 			
 			
@@ -8416,7 +8258,7 @@ namespace Server.Mobiles
 			{
 				if (NetState != null)
 				{
-					return m_GameTime + (DateTime.UtcNow - m_SessionStart);
+					return m_GameTime + (DateTime.Now - m_SessionStart);
 				}
 				else
 				{
@@ -8916,7 +8758,7 @@ namespace Server.Mobiles
 		{
 			get
 			{
-				if (m_PeacedUntil > DateTime.UtcNow)
+				if (m_PeacedUntil > DateTime.Now)
 				{
 					return true;
 				}
@@ -9220,34 +9062,41 @@ namespace Server.Mobiles
 		{
 			if (Young)
 			{
-                if (SkillsTotal >= 4500 && (!Core.AOS && Skills[skill].Base >= 80.0))
-                {
-                    Account acc = Account as Account;
+				if (SkillsTotal >= 4500 && (!Core.AOS && Skills[skill].Base >= 80.0))
+				{
+					Account acc = Account as Account;
 
-                    if (acc != null)
-                    {
-                        acc.RemoveYoungStatus(1019036);
-                        // You have successfully obtained a respectable skill level, and have outgrown your status as a young player!
-                    }
-                }
+					if (acc != null)
+					{
+						acc.RemoveYoungStatus(1019036);
+						// You have successfully obtained a respectable skill level, and have outgrown your status as a young player!
+					}
+				}
 			}
 
-            if (skill != SkillName.Alchemy && Skills.CurrentMastery == skill && Skills[skill].Value < MasteryInfo.MinSkillRequirement)
-            {
-                //SendLocalizedMessage(1156236, String.Format("{0}\t{1}", MasteryInfo.MinSkillRequirement.ToString(), Skills[skill].Info.Name)); // You need at least ~1_SKILL_REQUIREMENT~ ~2_SKILL_NAME~ skill to use that mastery.
+			if (skill != SkillName.Alchemy && Skills.CurrentMastery == skill && Skills[skill].Value < MasteryInfo.MinSkillRequirement)
+			{
+				//SendLocalizedMessage(1156236, String.Format("{0}\t{1}", MasteryInfo.MinSkillRequirement.ToString(), Skills[skill].Info.Name)); // You need at least ~1_SKILL_REQUIREMENT~ ~2_SKILL_NAME~ skill to use that mastery.
 
-                SkillName mastery = Skills.CurrentMastery;
-                Skills.CurrentMastery = SkillName.Alchemy;
+				SkillName mastery = Skills.CurrentMastery;
+				Skills.CurrentMastery = SkillName.Alchemy;
 
-                Server.Spells.SkillMasteries.MasteryInfo.OnMasteryChanged(this, mastery);
-            }
+				Server.Spells.SkillMasteries.MasteryInfo.OnMasteryChanged(this, mastery);
+			}
 
-            TransformContext context = TransformationSpellHelper.GetContext(this);
+			TransformContext context = TransformationSpellHelper.GetContext(this);
 
-            if (context != null)
-            {
-                TransformationSpellHelper.CheckCastSkill(this, context);
-            }
+			if (context != null)
+			{
+				TransformationSpellHelper.CheckCastSkill(this, context);
+			}
+
+			// =========================================================
+			// [신규 추가] 스킬 변동 시 실시간 스텟 갱신 및 클라이언트 동기화
+			// =========================================================
+			SkillbyStatCheck(this);
+			UpdateTotals();
+			this.Delta(MobileDelta.Stat);
 		}
 
 		public override void OnAccessLevelChanged(AccessLevel oldLevel)
@@ -9580,9 +9429,9 @@ namespace Server.Mobiles
 				return false;
 			}
 
-			if (DateTime.UtcNow - m_LastYoungMessage > TimeSpan.FromMinutes(1.0))
+			if (DateTime.Now - m_LastYoungMessage > TimeSpan.FromMinutes(1.0))
 			{
-				m_LastYoungMessage = DateTime.UtcNow;
+				m_LastYoungMessage = DateTime.Now;
 				SendLocalizedMessage(1019067);
 				// A monster looks at you menacingly but does not attack.  You would be under attack now if not for your status as a new citizen of Britannia.
 			}
@@ -9935,7 +9784,7 @@ namespace Server.Mobiles
 
 				if (before != m_Values[index].Value)
 				{
-					m_Values[index].LastDecay = DateTime.UtcNow;
+					m_Values[index].LastDecay = DateTime.Now;
 				}
 			}
 
@@ -10047,7 +9896,7 @@ namespace Server.Mobiles
 
 				for (int i = 0; i < t.m_Values.Length; i++)
 				{
-					if ((t.GetLastDecay(i) + LossDelay) < DateTime.UtcNow)
+					if ((t.GetLastDecay(i) + LossDelay) < DateTime.Now)
 					{
 						t.Atrophy(i, LossAmount);
 					}

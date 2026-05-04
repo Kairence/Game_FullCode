@@ -103,144 +103,150 @@ namespace Server
         }
 
 		public static int Damage(IDamageable damageable, Mobile from, int damage, bool ignoreArmor, int phys, int fire, int cold, int pois, int nrgy, int chaos, int direct, bool keepAlive, DamageType type = DamageType.Melee, int aggro = 100)
-        {
-            // from : 공격자
-            // m : 방어자
-            Mobile m = damageable as Mobile;
-            Server.Engines.Craft.AutoCraftTimer.EndTimer(from);
-            Server.Engines.Craft.AutoCraftTimer.EndTimer(m);
+		{
+			Mobile m = damageable as Mobile;
+			Server.Engines.Craft.AutoCraftTimer.EndTimer(from);
+			Server.Engines.Craft.AutoCraftTimer.EndTimer(m);
 
-            if (damageable == null)// || damageable.Deleted || !damageable.Alive )
-                return 0;
+			if (damageable == null)
+				return 0;
 
-            if (m != null && phys == 0 && fire == 100 && cold == 0 && pois == 0 && nrgy == 0)
-                Mobiles.MeerMage.StopEffect(m, true);
+			if (m != null && phys == 0 && fire == 100 && cold == 0 && pois == 0 && nrgy == 0)
+				Mobiles.MeerMage.StopEffect(m, true);
 
-            if (!Core.AOS)
-            {
-                if(m != null)
-                    m.Damage(damage, from);
+			if (!Core.AOS)
+			{
+				if(m != null)
+					m.Damage(damage, from);
 
-                return damage;
-            }
+				return damage;
+			}
 
-            #region Mondain's Legacy
-            if (m != null)
-            {
-                m.Items.ForEach(i =>
-                {
-                    ITalismanProtection prot = i as ITalismanProtection;
+			#region Mondain's Legacy
+			if (m != null)
+			{
+				m.Items.ForEach(i =>
+				{
+					ITalismanProtection prot = i as ITalismanProtection;
 
-                    if (prot != null)
-                        damage = prot.Protection.ScaleDamage(from, damage);
-                });
-            }
-            #endregion
+					if (prot != null)
+						damage = prot.Protection.ScaleDamage(from, damage);
+				});
+			}
+			#endregion
 
-            Fix(ref phys);
-            Fix(ref fire);
-            Fix(ref cold);
-            Fix(ref pois);
-            Fix(ref nrgy);
-            Fix(ref chaos);
-            Fix(ref direct);
+			Fix(ref phys);
+			Fix(ref fire);
+			Fix(ref cold);
+			Fix(ref pois);
+			Fix(ref nrgy);
+			Fix(ref chaos);
+			Fix(ref direct);
 
-            bool ranged = type == DamageType.Ranged;
-            BaseQuiver quiver = null;
+			bool ranged = type == DamageType.Ranged;
+			BaseQuiver quiver = null;
 
-            if (ranged && from.Race != Race.Gargoyle)
-                quiver = from.FindItemOnLayer(Layer.Cloak) as BaseQuiver;
+			if (ranged && from != null && from.Race != Race.Gargoyle)
+				quiver = from.FindItemOnLayer(Layer.Cloak) as BaseQuiver;
 
-            int totalDamage;
+			int totalDamage;
 
-            // 1. 기초 데미지 분배 (전체 데미지에서 각 속성 비중 0~100에 따라 분배)
-            int physDamage = (damage * phys) / 100;
-            int fireDamage = (damage * fire) / 100;
-            int coldDamage = (damage * cold) / 100;
-            int poisonDamage = (damage * pois) / 100;
-            int energyDamage = (damage * nrgy) / 100;
-            int chaosDamage = (damage * chaos) / 100;
-            int directDamage = (damage * direct) / 100;
+			int physDamage = (damage * phys) / 100;
+			int fireDamage = (damage * fire) / 100;
+			int coldDamage = (damage * cold) / 100;
+			int poisonDamage = (damage * pois) / 100;
+			int energyDamage = (damage * nrgy) / 100;
+			int chaosDamage = (damage * chaos) / 100;
+			int directDamage = (damage * direct) / 100;
 
-            // 2. 커스텀 옵션: 최종 피해 (플랫 데미지) 합산
-            // 증뎀 연산이 끝난 후 더해지며, 엔진 10,000 스케일을 해제(/ 10000)하여 순수 정수로 더합니다.
-            physDamage += ItemOptionCreator.GetAttributeValue(from, 35) / 10000;
-            fireDamage += ItemOptionCreator.GetAttributeValue(from, 36) / 10000;
-            coldDamage += ItemOptionCreator.GetAttributeValue(from, 37) / 10000;
-            poisonDamage += ItemOptionCreator.GetAttributeValue(from, 38) / 10000;
-            energyDamage += ItemOptionCreator.GetAttributeValue(from, 39) / 10000;
-            chaosDamage += ItemOptionCreator.GetAttributeValue(from, 40) / 10000;
-            directDamage += ItemOptionCreator.GetAttributeValue(from, 41) / 10000;
-            
-            // 3. 방어력(저항) 연산 적용
-            if (!ignoreArmor)
-            {
-                // 엔진 내부의 저항력은 이미 정수(예: 70)로 세팅되어 있습니다.
-                int physicalResist = damageable.PhysicalResistance;
-                int fireResist = damageable.FireResistance;
-                int coldResist = damageable.ColdResistance;
-                int poisonResist = damageable.PoisonResistance;
-                int energyResist = damageable.EnergyResistance;
-                
-                // [주의] 이전 코드에 / 100이 누락되어 데미지가 곱연산으로 뻥튀기되는 버그 수정
-                physDamage = physDamage * (100 - physicalResist) / 100;
-                fireDamage = fireDamage * (100 - fireResist) / 100;
-                coldDamage = coldDamage * (100 - coldResist) / 100;
-                poisonDamage = poisonDamage * (100 - poisonResist) / 100;
-                energyDamage = energyDamage * (100 - energyResist) / 100;
+			physDamage += ItemOptionCreator.GetAttributeValue(from, 35) / 10000;
+			fireDamage += ItemOptionCreator.GetAttributeValue(from, 36) / 10000;
+			coldDamage += ItemOptionCreator.GetAttributeValue(from, 37) / 10000;
+			poisonDamage += ItemOptionCreator.GetAttributeValue(from, 38) / 10000;
+			energyDamage += ItemOptionCreator.GetAttributeValue(from, 39) / 10000;
+			chaosDamage += ItemOptionCreator.GetAttributeValue(from, 40) / 10000;
+			directDamage += ItemOptionCreator.GetAttributeValue(from, 41) / 10000;
 
-                // 혼돈/신성 저항이 별도 프로퍼티로 구현되어 있다면 동일하게 / 100 처리
-                chaosDamage = chaosDamage * (100 - damageable.ChaosResistance) / 100;
-                directDamage = directDamage * (100 - damageable.DirectResistance) / 100;
-            }
+			// 🌟 변수 중복 선언 방지를 위해 여기서 미리 선언
+			BaseCreature bc = from as BaseCreature;
+			BaseCreature bm = m as BaseCreature;
+
+			if (bc != null && bc.Controlled && bc.ControlMaster is PlayerMobile pm_master)
+			{
+				if (pm_master.GradeData != null)
+				{
+					int eliteLv = CombatMastery.GetLevel(pm_master.GradeData[2]);
+					int chiefLv = CombatMastery.GetLevel(pm_master.GradeData[3]);
+
+					physDamage += (eliteLv / 25) * 50;
+					physDamage += chiefLv * 5;
+				}
+			}
+
+			if (!ignoreArmor)
+			{
+				int physicalResist = damageable.PhysicalResistance;
+				int fireResist = damageable.FireResistance;
+				int coldResist = damageable.ColdResistance;
+				int poisonResist = damageable.PoisonResistance;
+				int energyResist = damageable.EnergyResistance;
+				
+				physDamage = physDamage * (100 - physicalResist) / 100;
+				fireDamage = fireDamage * (100 - fireResist) / 100;
+				coldDamage = coldDamage * (100 - coldResist) / 100;
+				poisonDamage = poisonDamage * (100 - poisonResist) / 100;
+				energyDamage = energyDamage * (100 - energyResist) / 100;
+
+				chaosDamage = chaosDamage * (100 - damageable.ChaosResistance) / 100;
+				directDamage = directDamage * (100 - damageable.DirectResistance) / 100;
+			}
 
 			totalDamage = physDamage + fireDamage + coldDamage + poisonDamage + energyDamage + chaosDamage + directDamage;
 			totalDamage /= 100;
 
-            // object being damaged is not a mobile, so we will end here
-            if (damageable is Item)
-            {
-                return damageable.Damage(totalDamage, from);
-            }
+			if (damageable is Item)
+			{
+				return damageable.Damage(totalDamage, from);
+			}
 
-			if( m.Combatant == null && from is Mobile )
+			if( m != null && m.Combatant == null && from is Mobile )
 			{
 				m.Combatant = from;
 			}
 			
-			BaseCreature bc = from as BaseCreature;
-			BaseCreature bm = m as BaseCreature;			
+			// 🌟 bc, bm은 위에서 이미 선언했으므로 다시 선언하지 않음
 
 			if( from is BloodElemental )
 			{
-				if( !from.InRange(m, 1) )
+				if( m != null && !from.InRange(m, 1) )
 				{
-                    m.FixedParticles(0x376A, 9, 32, 0x13AF, EffectLayer.Waist);
+					m.FixedParticles(0x376A, 9, 32, 0x13AF, EffectLayer.Waist);
 					m.PlaySound(0x1FE);
 					from.MoveToWorld(m.Location, m.Map);
 				}
 			}
-            if (from != null && !from.Deleted && from.Alive && !from.IsDeadBondedPet)
-            {
-                if (!ignoreArmor && from != m)
-                {
-                    int reflectPhys = Math.Min(300, AosAttributes.GetValue(m, AosAttribute.ReflectPhysical));
 
-                    if (reflectPhys != 0)
-                    {
-                        if (from is ExodusMinion && ((ExodusMinion)from).FieldActive || from is ExodusOverseer && ((ExodusOverseer)from).FieldActive)
-                        {
-                            from.FixedParticles(0x376A, 20, 10, 0x2530, EffectLayer.Waist);
-                            from.PlaySound(0x2F4);
-                            m.SendAsciiMessage("Your weapon cannot penetrate the creature's magical barrier");
-                        }
-                        else
-                        {
-                            from.Damage(Scale((damage * phys * (100 - (ignoreArmor ? 0 : m.PhysicalResistance))) / 10000, reflectPhys), m);
-                        }
-                    }
-                }
-            }
+			if (from != null && !from.Deleted && from.Alive && !from.IsDeadBondedPet)
+			{
+				if (!ignoreArmor && from != m && m != null)
+				{
+					int reflectPhys = Math.Min(300, AosAttributes.GetValue(m, AosAttribute.ReflectPhysical));
+
+					if (reflectPhys != 0)
+					{
+						if (from is ExodusMinion && ((ExodusMinion)from).FieldActive || from is ExodusOverseer && ((ExodusOverseer)from).FieldActive)
+						{
+							from.FixedParticles(0x376A, 20, 10, 0x2530, EffectLayer.Waist);
+							from.PlaySound(0x2F4);
+							m.SendAsciiMessage("Your weapon cannot penetrate the creature's magical barrier");
+						}
+						else
+						{
+							from.Damage(Scale((damage * phys * (100 - (ignoreArmor ? 0 : m.PhysicalResistance))) / 10000, reflectPhys), m);
+						}
+					}
+				}
+			}
 
 			if( bc != null )
 			{
@@ -268,145 +274,121 @@ namespace Server
 				totalDamage *= 100 + targetcount * 10;
 				totalDamage /= 100;
 			}
-			if ( m.Spell != null && m.Spell.IsCasting )
+
+			if ( m != null && m.Spell != null && m.Spell.IsCasting )
 			{
 				totalDamage *= 2;
 			}
 			totalDamage *= 2;
 
-            if (type <= DamageType.Ranged)
-            {
-                AttuneWeaponSpell.TryAbsorb(m, ref totalDamage);
-            }
+			if (type <= DamageType.Ranged && m != null)
+			{
+				AttuneWeaponSpell.TryAbsorb(m, ref totalDamage);
+			}
 
-            if (keepAlive && totalDamage > m.Hits)
-            {
-                totalDamage = m.Hits;
-            }
+			if (keepAlive && m != null && totalDamage > m.Hits)
+			{
+				totalDamage = m.Hits;
+			}
 
-            if (from is BaseCreature && type <= DamageType.Ranged)
-            {
-                ((BaseCreature)from).AlterMeleeDamageTo(m, ref totalDamage);
-            }
+			if (bc != null && type <= DamageType.Ranged && m != null)
+			{
+				bc.AlterMeleeDamageTo(m, ref totalDamage);
+			}
 
-            if (m is BaseCreature && type <= DamageType.Ranged)
-            {
-                ((BaseCreature)m).AlterMeleeDamageFrom(from, ref totalDamage);
-            }
+			if (bm != null && type <= DamageType.Ranged)
+			{
+				bm.AlterMeleeDamageFrom(from, ref totalDamage);
+			}
 
-            if (m is BaseCreature)
-            {
-                ((BaseCreature)m).OnBeforeDamage(from, ref totalDamage, type);
-            }
+			if (bm != null)
+			{
+				bm.OnBeforeDamage(from, ref totalDamage, type);
+			}
 
-            if ( from != null )
-            {
-                Server.Spells.Seventh.PolymorphSpell.EndPolymorph( from );
-            }
+			if ( from != null )
+			{
+				Server.Spells.Seventh.PolymorphSpell.EndPolymorph( from );
+			}
 
-            // 2. 피격자(m)의 폴리모프 해제 (피해를 받을 경우)
-            if ( m != null )
-            {
-                Server.Spells.Seventh.PolymorphSpell.EndPolymorph( m );
-            }
+			if ( m != null )
+			{
+				Server.Spells.Seventh.PolymorphSpell.EndPolymorph( m );
+			}
 			
-            if (totalDamage <= 0)
-            {
-                return 0;
-            }
+			if (totalDamage <= 0)
+			{
+				return 0;
+			}
 			if( totalDamage > 60000 )
 				totalDamage = 60000;
 
+			if (bc != null && m != null)
+			{
+				if (!bc.Controlled) 
+					UpdateWildGrowth(bc, 0.1); 
+				else if (bc.ControlMaster is PlayerMobile pm_master_growth && bm != null)
+				{
+					if (Utility.RandomDouble() < pm_master_growth.Skills[SkillName.AnimalLore].Value * 0.0001)
+						bc.Loyalty++;
+				}
 
-			// --- 데미지 계산 및 차감 완료 후, bc와 bm이 이미 정의된 시점 ---
-
-			// 1. 공격자(bc) 로직: 성장 + 상대방에 대한 어그로 적립
-            if (bc != null)
-            {
-                // [성장] 야생 혹은 펫 공격 성장
-                if (!bc.Controlled) 
-                    UpdateWildGrowth(bc, 0.1); 
-                else if (bc is { ControlMaster: not null } && m is BaseCreature)
-                {
-                    if (Utility.RandomDouble() < bc.ControlMaster.Skills[SkillName.AnimalLore].Value * 0.0001)
-                        bc.Loyalty++;
-                }
-
-                // [어그로] 공격자 bc의 입장에서 피격자 m에 대한 위협 수치 기록
 				if( aggro > 0 )
 					bc.Aggro.Update(m, totalDamage, aggro);
-            }
-
-            // 2. 피격자(bm) 로직: 성장 + 나를 때린 놈에 대한 어그로 적립
-            if (bm != null)
-            {
-                // [성장] 야생 혹은 펫 피격 성장
-                if (!bm.Controlled) 
-                    UpdateWildGrowth(bm, 0.05);
-                else if (bm is { ControlMaster: not null } && from is BaseCreature)
-                {
-                    if (Utility.RandomDouble() < bm.ControlMaster.Skills[SkillName.Veterinary].Value * 0.00001)
-                        bm.Loyalty++;
-                }
-
-                // [어그로] 피격자 bm의 입장에서 공격자 from에 대한 위협 수치 기록
-				if( aggro > 0 )
-					bm.Aggro.Update(from, totalDamage, aggro);
-            }
-
-            if (from != null && m != null)
-            {
-                DoLeech(totalDamage, from, m);
-            }
-
-			totalDamage = m.Damage(totalDamage, from, true, false);
-			/*
-            if (Core.SA && type == DamageType.Melee && from is BaseCreature &&
-                (m is PlayerMobile || (m is BaseCreature && !((BaseCreature)m).IsMonster)))
-            {
-                from.RegisterDamage(totalDamage / 4, m);
-            }
-			*/
-
-            #region Stygian Abyss
-            if (m.Spell != null)
-                ((Spell)m.Spell).CheckCasterDisruption(true, phys, fire, cold, pois, nrgy);
-
-            #endregion
-
-            BaseCostume.OnDamaged(m);
-			
-			if( m is PlayerMobile )
-			{
-				PlayerMobile pm = m as PlayerMobile;
-				if( from is PlayerMobile )
-					pm.TimerList[65] = 300;
-				//else if( from is BaseCreature )
-				//	pm.TimerList[64] = 100;
 			}
 
-            // 🌟 [추가] 와우 스타일 결투(Duel) 사망 방지 및 승패 결정 로직
-            if (m is PlayerMobile && from is PlayerMobile)
-            {
-                // DuelContext나 DuelSystem이 결투 중임을 확인하는 메서드 (AreDueling)
-                if (DuelSystem.AreDueling((PlayerMobile)m, (PlayerMobile)from))
-                {
-                    // 이번 데미지로 인해 캐릭터가 죽을 상황이라면
-                    if (totalDamage >= m.Hits)
-                    {
-                        // 1. 데미지를 현재 체력 - 1로 깎아서 체력을 딱 1만 남깁니다.
-                        totalDamage = m.Hits - 1;
+			if (bm != null && from != null)
+			{
+				if (!bm.Controlled) 
+					UpdateWildGrowth(bm, 0.05);
+				else if (bm.ControlMaster is PlayerMobile pm_master_vet && bc != null)
+				{
+					if (Utility.RandomDouble() < pm_master_vet.Skills[SkillName.Veterinary].Value * 0.00001)
+						bm.Loyalty++;
+				}
 
-                        // 2. 결투 종료 및 승리자 선언 로직 실행
-                        // (from: 공격자/승리자, m: 피격자/패배자)
-                        DuelSystem.OnDuelWin((PlayerMobile)from, (PlayerMobile)m);
-                    }
-                }
-            }
+				if( aggro > 0 )
+					bm.Aggro.Update(from, totalDamage, aggro);
+			}
 
-            // 기존 코드: 최종 데미지 반환
-            return totalDamage;
-        }
+			if (from != null && m != null)
+			{
+				DoLeech(totalDamage, from, m);
+			}
+
+			if (m != null)
+			{
+				totalDamage = m.Damage(totalDamage, from, true, false);
+
+				#region Stygian Abyss
+				if (m.Spell != null)
+					((Spell)m.Spell).CheckCasterDisruption(true, phys, fire, cold, pois, nrgy);
+				#endregion
+
+				BaseCostume.OnDamaged(m);
+				
+				if( m is PlayerMobile pm_target )
+				{
+					if( from is PlayerMobile )
+						pm_target.TimerList[65] = 300;
+				}
+
+				// 🌟 결투 로직 (pm 중복 선언 방지를 위해 캐스팅 사용)
+				if (m is PlayerMobile && from is PlayerMobile)
+				{
+					if (DuelSystem.AreDueling((PlayerMobile)m, (PlayerMobile)from))
+					{
+						if (totalDamage >= m.Hits)
+						{
+							totalDamage = m.Hits - 1;
+							DuelSystem.OnDuelWin((PlayerMobile)from, (PlayerMobile)m);
+						}
+					}
+				}
+			}
+
+			return totalDamage;
+		}
 
 		// 1. 공통 로직을 처리할 로컬 함수 정의 (메서드 최상단이나 사용 직전에 선언)
 		private static void UpdateWildGrowth(BaseCreature critter, double chanceFactor)

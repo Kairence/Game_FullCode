@@ -44,11 +44,7 @@ namespace Server.Engines.Quests
 
             BaseQuest quest = null;
 
-            if (quester is ITierQuester)
-            {
-                quest = TierQuestInfo.RandomQuest(from, (ITierQuester)quester);
-            }
-            else if (quests.Length > 0)
+            if (quests.Length > 0)
             {
                 // give it 10 tries to generate quest
                 for (int i = 0; i < 10; i++)
