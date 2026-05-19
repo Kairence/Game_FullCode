@@ -8671,75 +8671,6 @@ namespace Server.Mobiles
 			
 			if ( !m_LevelCheck && !Controlled && !(this is BaseVendor ) )
 			{
-				m_RawName = Name;
-				int LootPlus = 0;
-
-				//보스 설정
-				//데스파이즈
-				if( this is BogThing || this is Cyclops || this is OgreLord || this is Reaper /* || this is RottingCorpse */ || this is GiantTurkey || this is GiantDreadSpider || this is Lilith || this is AncientLich || this is BoneDemon || this is Titan || this is OrcBrute )
-				{
-					if( Tamable )
-						Tamable = false;
-					m_Boss = true;
-				}
-				//변환 불가능 지역
-				if( Region.IsPartOf("Ice") || Region.IsPartOf("Fire") || Region.IsPartOf("Destard")  )
-				{
-					this.Grade = 1;
-				}
-				if( m_Boss )
-				{
-					//Name = "Boss " + Name;
-					LootPlus = 5;
-				}
-				/*
-				//티어별 색상
-				else if( !NoKillAwards )
-				{
-					switch( m_Grade )
-					{
-						case 1:
-							break;
-						case 2:
-							Hue = Misc.Util.RandomColor_Green(false);
-							Name = "Vital " + Name;
-							LootPlus = 1;
-							Fame += 500;
-							break;
-						case 3:
-							Hue = Misc.Util.RandomColor_Blue(false);
-							Name = "Smart " + Name;
-							LootPlus = 1;
-							Fame += 500;
-							break;
-						case 4:
-							Hue = Misc.Util.RandomColor_Red(false);
-							Name = "Power " + Name;
-							LootPlus = 1;
-							Fame += 500;
-							break;
-						case 5:
-							Hue = Misc.Util.RandomColor_Yellow(false);
-							Name = "Swift " + Name;
-							LootPlus = 1;
-							Fame += 500;
-							break;
-						case 6:
-							Hue = Misc.Util.RandomColor_Rare(true);
-							Name = "Elite " + Name;
-							Fame += 1500;
-							LootPlus = 2;
-							break;
-						case 7:
-							Hue = Misc.Util.RandomColor_Legendary(true);
-							Name = "Chief " + Name;
-							Fame += 3000;
-							LootPlus = 3;
-							break;
-					}
-				}
-				*/
-
 				m_LevelCheck = true;
 			}
 
@@ -8890,28 +8821,6 @@ namespace Server.Mobiles
 					}
 				}
 				eable.Free();
-
-				/*
-				if( AggroCheck.Count > 0 )
-				{
-					double BestAggroScore = 0.0;
-					for( int i = 0; i < 10000; i++ )
-					{
-						if( AggroMobile[i] == null )
-							break;
-						for( int j = 0; j < AggroCheck.Count; j++ )
-						{
-							Mobile target = AggroCheck[j] as Mobile;
-							if( !target.Deleted && target.Alive && target == AggroMobile[i] && BestAggroScore < AggroScore[i] )
-							{
-								BestAggroScore = AggroScore[i];
-								Combatant = AggroMobile[i];
-							}
-							
-						}
-					}
-				}
-				*/
 			}
 			if( ControlMaster == null && SummonMaster == null && !(this is BaseVendor ) && !Blessed && Karma < 0 && CreationTime + TimeSpan.FromDays( 2 ) < DateTime.UtcNow )
 			{

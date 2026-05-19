@@ -975,5 +975,21 @@ namespace Server.Misc
 			}
 			return Point3D.Zero;
 		}
+		// 🌟 [추가] 문자열 매칭 없이, 하드코딩된 구역의 정확한 범위를 Rectangle2D로 반환합니다.
+        public static Rectangle2D GetRegionBounds(RegionCode code, Map map)
+        {
+            if (code == RegionCode.None || map == null || map == Map.Internal) 
+                return new Rectangle2D(0, 0, 0, 0);
+
+            foreach (var bounds in m_Regions)
+            {
+                // 코드와 맵이 일치하면 StartX, StartY와 Width, Height를 계산해 반환
+                if (bounds.Code == code && bounds.Facet == map)
+                {
+                    return new Rectangle2D(bounds.StartX, bounds.StartY, bounds.EndX - bounds.StartX, bounds.EndY - bounds.StartY);
+                }
+            }
+            return new Rectangle2D(0, 0, 0, 0);
+        }
     }
 }

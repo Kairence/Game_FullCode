@@ -3,67 +3,91 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Server;
+using Server.Items;
 using Server.Mobiles;
 using Server.Commands;
 
 namespace Server.Misc
 {
-    // =========================================================================
-    // 1. Data Transfer Objects (DTO) & Enums
-    // =========================================================================
+    // ==============================================================================
+    // 🌟 [호환성 패치 완료] 궁극의 경제 키 (EconomyItemKey)
+    // ==============================================================================
+    public record struct EconomyItemKey(Type ItemType, CraftResource Resource = CraftResource.None, int SubID = 0, bool IsExceptional = false)
+    {
+        // 🌟 Gump(UI) 출력용 스마트 네이밍 로직
+        public string Name 
+        { 
+            get 
+            {
+                if (ItemType == null) return "Unknown";
+
+                // 1. 색자원 이름 (예: Valorite, ShadowIron 등)
+                string resName = (Resource != CraftResource.None && Resource != CraftResource.Iron) ? $"{Resource} " : "";
+                
+                // 2. 기본 아이템 이름
+                string baseName = ItemType.Name;
+
+                // 3. 음료수 내용물 표기 (SubID)
+                if (ItemType == typeof(BeverageBottle) || ItemType == typeof(Pitcher) || ItemType == typeof(Jug) || ItemType == typeof(GlassMug))
+                {
+                    baseName += $"({(BeverageType)SubID})";
+                }
+
+                // 4. 명품(Exceptional) 표기
+                string excName = IsExceptional ? " [Exc]" : "";
+
+                // 최종 조합 (예: "Valorite PlateChest [Exc]" 또는 "BeverageBottle(Ale)")
+                return $"{resName}{baseName}{excName}";
+            }
+        }
+        
+        public static implicit operator EconomyItemKey(Type t) => new EconomyItemKey(t, CraftResource.None, 0, false);
+        public static implicit operator Type(EconomyItemKey key) => key.ItemType; 
+    }
+
     public class TownInventoryEntry
     {
-        public Type ItemType { get; set; }
+        public EconomyItemKey ItemKey { get; set; }
+        public Type ItemType => ItemKey.ItemType; // 🌟 구버전 호환용 (BaseVendor 에러 차단)
+        
         public int InitialStock { get; set; }
         public int BasePrice { get; set; }
-        public TownInventoryEntry(Type type, int stock, int price)
+        public TownInventoryEntry(EconomyItemKey key, int stock, int price)
         {
-            ItemType = type; InitialStock = stock; BasePrice = price;
+            ItemKey = key; InitialStock = stock; BasePrice = price;
         }
     }
 
     public class WarehouseItem
     {
-        public Type ItemType { get; set; }
+        public EconomyItemKey ItemKey { get; set; } 
+        public Type ItemType => ItemKey.ItemType; // 🌟 구버전 호환용 (AdminGump 에러 차단)
+        
         public int Stock { get; set; }
         public int BasePrice { get; set; }
-        public int TargetStock { get; set; } // 가격 변동의 기준이 되는 최초 스냅샷 수량
+        public int TargetStock { get; set; } 
+        public int LastStock { get; set; } // 🌟 [추가] 변동 추이 계산을 위한 과거 재고량
 
-        // [추가] 1. 외부 스크립트 호환용 (3개만 보낼 때)
-        // 외부에서 3개만 보낼 경우, 현재 들어오는 수량(stock)을 최초 스냅샷(TargetStock)으로 자동 세팅합니다.
-        public WarehouseItem(Type type, int stock, int price)
+        public WarehouseItem(EconomyItemKey key, int stock, int price)
         {
-            ItemType = type; 
-            Stock = stock; 
-            BasePrice = price; 
-            TargetStock = stock; // 3개만 들어오면 현재 수량을 4번째 기준으로 삼음
+            ItemKey = key; Stock = stock; BasePrice = price; TargetStock = stock; LastStock = stock;
         }
 
-        // 2. 세이브/로드용 원본 생성자 (4개 다 보낼 때)
-        public WarehouseItem(Type type, int stock, int price, int targetStock)
+        public WarehouseItem(EconomyItemKey key, int stock, int price, int targetStock)
         {
-            ItemType = type; 
-            Stock = stock; 
-            BasePrice = price; 
-            TargetStock = targetStock;
+            ItemKey = key; Stock = stock; BasePrice = price; TargetStock = targetStock; LastStock = stock;
         }
     }
 
-    // =========================================================================
-    // 2. TownEconomy: 개별 도시의 자산 및 공용 창고
-    // =========================================================================
     public class TownEconomy
     {
         private List<BaseVendor> m_ActiveVendors = [];
         private int m_TownID;
         private long m_Wealth;
 
-        // [신규] 영토 관리를 위한 1차원 배열 (타일 소유주 식별)
-        // 값: 소유한 가문의 이름 (null이거나 빈 문자열이면 빈 땅)
         public string[] TerritoryMap { get; set; } 
         public int Population { get; set; }
         
-        // [신규] 마을의 기본 타일 시세 (매일/매번 변동 가능)
         [CommandProperty(AccessLevel.GameMaster)]
         public int CurrentTilePrice
         {
@@ -74,14 +98,9 @@ namespace Server.Misc
 
                 if (grid.Total <= 0) return 50000;
 
-                // [수정] 영토 타일당 가격 100배 상향
                 long basePrice = info.Grade switch
                 {
-                    "S" => 200000,
-                    "A" => 150000,
-                    "B" => 100000,
-                    "C" => 50000,
-                    _ => 100000
+                    "S" => 200000, "A" => 150000, "B" => 100000, "C" => 50000, _ => 100000
                 };
 
                 double density = (double)Population / grid.Total;
@@ -103,13 +122,8 @@ namespace Server.Misc
                 int logicID = value / 100;
 
                 Facet = logicID switch {
-                    0 => Map.Trammel,  
-                    1 => Map.Felucca,  
-                    2 => Map.Ilshenar,
-                    3 => Map.Malas,
-                    4 => Map.Tokuno,
-                    5 => Map.TerMur,
-                    _ => Map.Trammel
+                    0 => Map.Trammel, 1 => Map.Felucca, 2 => Map.Ilshenar, 3 => Map.Malas,
+                    4 => Map.Tokuno, 5 => Map.TerMur, _ => Map.Trammel
                 };
                 TownName = TownNumber.GetName(value);
             }
@@ -139,7 +153,9 @@ namespace Server.Misc
 
         public List<VirtualCitizen> Citizens { get; set; } = [];
         public List<VirtualHouse> Houses { get; set; } = [];
-        public Dictionary<Type, WarehouseItem> Warehouse { get; set; } = [];
+        
+        public Dictionary<EconomyItemKey, WarehouseItem> Warehouse { get; set; } = new();
+        
         public List<TownInventoryEntry> InventoryEntries { get; set; } = [];
         public Dictionary<NpcJobClass, double> JobBirthWeights { get; set; } = [];
 
@@ -147,27 +163,19 @@ namespace Server.Misc
         public long ExtraGold => Wealth % 100_000_000L;
         public string TotalWealthString => $"{Platinum}P {ExtraGold:N0}g";
         
-        // 1. [Macro] 마을 전체 경제 변동치 (-0.5 ~ +1.0)
-        // 자본이 반토막(-50%)나면 -0.5, 2배(+100%)면 +1.0
         [CommandProperty(AccessLevel.GameMaster)]
         public double MacroModifier => Math.Clamp((double)Wealth / Math.Max(1, BaseWealth) - 1.0, -0.5, 1.0);
 
-        // 2. [복구] 외부 스크립트 참조용 전체 물가 배율 (1.0 + 변동치)
-        // 자본 상태에 따라 0.5x ~ 2.0x를 반환합니다. (Gump 및 리포트 연동)
         [CommandProperty(AccessLevel.GameMaster)]
         public double PriceMultiplier => 1.0 + MacroModifier;
 
-        // 특수 이벤트 및 치안 변동치
         public double EventPriceModifier { get; set; } = 0.0;
         public double SecurityPriceModifier { get; set; } = 0.0;
 
-        // =========================================================================
-        // --- 최종 가격 산출 (1.0 베이스 합산 방식) ---
-        // =========================================================================
-        public int GetPrice(Type type, double externalMultiplier = 1.0)
+        public int GetPrice(EconomyItemKey key, double externalMultiplier = 1.0)
         {
-            if (!Warehouse.ContainsKey(type)) return 100;
-            var item = Warehouse[type];
+            if (!Warehouse.ContainsKey(key)) return 100;
+            var item = Warehouse[key];
 
             double macroMod = Math.Clamp((double)Wealth / Math.Max(1, BaseWealth) - 1.0, -0.5, 1.0);
             double snapshot = Math.Max(1, item.TargetStock);
@@ -176,22 +184,17 @@ namespace Server.Misc
             double microMod = Math.Clamp((1.0 - ratio) * 0.25, -0.25, 0.25);
             double finalFactor = 1.0 + macroMod + microMod + EventPriceModifier + SecurityPriceModifier;
 
-            if (TownID >= 900 || TownIndex == "C")
-            {
-                finalFactor *= 1.25; 
-            }
+            if (TownID >= 900 || TownIndex == "C") finalFactor *= 1.25; 
 
             return Math.Max(1, (int)(item.BasePrice * Math.Max(0.25, finalFactor) * externalMultiplier));
         }
+        
         public long WarehouseValue => Warehouse.Values.Sum(i => (long)i.Stock * i.BasePrice);
         public long ActualTotalWealth => Wealth + WarehouseValue;
 
         public TownEconomy(int townID, long baseWealth)
         {
-            TownID = townID;
-            BaseWealth = baseWealth;
-            Wealth = baseWealth;
-            
+            TownID = townID; BaseWealth = baseWealth; Wealth = baseWealth;
             var grid = TownNumber.GetGridInfo(townID);
             TerritoryMap = new string[Math.Max(1, grid.Total)];
         }
@@ -213,10 +216,10 @@ namespace Server.Misc
             this.BaseWealth = TownID > 0 ? baseSum * 2 : baseSum;
         }
 
-        public void InitInitialStock(Type itemType, int amount, int basePrice)
+        public void InitInitialStock(EconomyItemKey key, int amount, int basePrice)
         {
-            if (Warehouse.ContainsKey(itemType)) return;
-            Warehouse[itemType] = new WarehouseItem(itemType, amount, basePrice, amount);
+            if (Warehouse.ContainsKey(key)) return;
+            Warehouse[key] = new WarehouseItem(key, amount, basePrice, amount);
         }
 
         public void RegisterVendor(BaseVendor v)
@@ -230,36 +233,33 @@ namespace Server.Misc
 
         public void SupplyItem(params object[] args) { }
 
-        // =========================================================================
-        // 💾 데이터 저장 (Serialize) - 가문의 모든 신규 변수 포함
-        // =========================================================================
         public void Serialize(GenericWriter writer)
         {
-            writer.Write((int)12); // 🌟 [버전 12] 명예 점수, 파티 기록, 미수급 장부 추가
+            // 🌟 [수정] 버전 13 -> 14로 승급 (LastStock 저장용)
+            writer.Write((int)14); 
             
             writer.Write(m_TownID);
             writer.Write(m_Wealth);
             writer.Write(BaseWealth);
             writer.Write(VendorCount);
             
-            // 1. 창고 저장
             writer.Write(Warehouse.Count);
             foreach (var kvp in Warehouse)
             {
-                writer.Write(kvp.Key.FullName);
+                writer.Write(kvp.Key.ItemType.FullName);
+                writer.Write((int)kvp.Key.Resource);
+                writer.Write(kvp.Key.SubID);
+                writer.Write(kvp.Key.IsExceptional);
+                
                 writer.Write(kvp.Value.Stock);
                 writer.Write(kvp.Value.BasePrice);
                 writer.Write(kvp.Value.TargetStock);
+                writer.Write(kvp.Value.LastStock); // 🌟 [추가] 추이 기록 저장
             }
 
-            // 2. 시민 목록 저장
             writer.Write(Citizens.Count);
-            foreach (var citizen in Citizens)
-            {
-                citizen.Serialize(writer);
-            }
+            foreach (var citizen in Citizens) citizen.Serialize(writer);
 
-            // 3. 가문(VirtualHouse) 저장
             writer.Write(Houses.Count);
             foreach (var house in Houses)
             {
@@ -269,26 +269,24 @@ namespace Server.Misc
                 writer.Write((int)house.PrimaryRank);
                 writer.Write(house.MultiID);
 
-                // --- 🌟 [버전 12 추가 데이터] ---
                 writer.Write(house.CurrentFameScore);
                 writer.Write(house.LastSocialEventTime);
                 writer.Write(house.IsHostingEventTonight);
                 writer.Write(house.EventFameBonus);
 
-                // 미수급 장부(UnfulfilledNeeds) 저장
+                // 🌟 [중요 수정] UnfulfilledNeeds 세이브 로직 갱신 (에러 원인 해결)
                 writer.Write(house.UnfulfilledNeeds.Count);
                 foreach (var need in house.UnfulfilledNeeds)
                 {
-                    writer.Write(need.Key.FullName);
+                    writer.Write(need.Key.ItemType.FullName);
+                    writer.Write((int)need.Key.Resource);
+                    writer.Write(need.Key.SubID);
+                    writer.Write(need.Key.IsExceptional);
                     writer.Write(need.Value);
                 }
-                // ------------------------------
 
                 writer.Write(house.OwnedTileIndices.Count);
-                foreach (int tileIndex in house.OwnedTileIndices)
-                {
-                    writer.Write(tileIndex);
-                }
+                foreach (int tileIndex in house.OwnedTileIndices) writer.Write(tileIndex);
 
                 writer.Write(house.HasGarden);
                 writer.Write(house.HasWorkshop);
@@ -296,13 +294,8 @@ namespace Server.Misc
 
                 writer.Write(house.HousingAmbition);
                 writer.Write(house.Grudges.Count);
-                foreach (var kvp in house.Grudges)
-                {
-                    writer.Write(kvp.Key);
-                    writer.Write(kvp.Value);
-                }
+                foreach (var kvp in house.Grudges) { writer.Write(kvp.Key); writer.Write(kvp.Value); }
 
-                // 4. 가족(FamilyUnit) 및 관계도 저장
                 writer.Write(house.Families.Count);
                 foreach (var family in house.Families)
                 {
@@ -312,24 +305,14 @@ namespace Server.Misc
                     writer.Write(family.Prestige);
 
                     writer.Write(family.Children.Count);
-                    foreach (var child in family.Children)
-                    {
-                        writer.Write(Citizens.IndexOf(child));
-                    }
+                    foreach (var child in family.Children) writer.Write(Citizens.IndexOf(child));
                 }
             }
 
-            // 5. 마을 영토 소유권 저장
             writer.Write(TerritoryMap.Length);
-            for (int i = 0; i < TerritoryMap.Length; i++)
-            {
-                writer.Write(TerritoryMap[i] ?? ""); 
-            }
+            for (int i = 0; i < TerritoryMap.Length; i++) writer.Write(TerritoryMap[i] ?? ""); 
         }
 
-        // =========================================================================
-        // 📂 데이터 로드 (Deserialize) - 바늘과 실처럼 순서가 완벽하게 일치해야 함
-        // =========================================================================
         public void Deserialize(GenericReader reader)
         {
             int version = reader.ReadInt();
@@ -343,29 +326,32 @@ namespace Server.Misc
             if (TerritoryMap == null || TerritoryMap.Length != grid.Total)
                 TerritoryMap = new string[Math.Max(1, grid.Total)];
 
-            // 1. 창고 복구
             int count = reader.ReadInt();
             for (int i = 0; i < count; i++)
             {
                 Type type = ScriptCompiler.FindTypeByFullName(reader.ReadString());
+                CraftResource res = version >= 13 ? (CraftResource)reader.ReadInt() : CraftResource.None;
+                int subID = version >= 13 ? reader.ReadInt() : 0;
+                bool isExc = version >= 13 ? reader.ReadBool() : false;
+                
                 int stock = reader.ReadInt();
                 int price = reader.ReadInt();
                 int targetStock = (version >= 7) ? reader.ReadInt() : stock;
+                int lastStock = (version >= 14) ? reader.ReadInt() : stock; // 🌟 [추가] 과거 재고량 로드
 
-                if (type != null) Warehouse[type] = new WarehouseItem(type, stock, price, targetStock);
-            }
-
-            // 2. 시민 복구
-            if (version >= 6)
-            {
-                int citizenCount = reader.ReadInt();
-                for (int i = 0; i < citizenCount; i++)
+                if (type != null) 
                 {
-                    Citizens.Add(new VirtualCitizen(reader)); 
+                    EconomyItemKey key = new EconomyItemKey(type, res, subID, isExc);
+                    Warehouse[key] = new WarehouseItem(key, stock, price, targetStock) { LastStock = lastStock };
                 }
             }
 
-            // 3. 가문 복구 
+            if (version >= 6)
+            {
+                int citizenCount = reader.ReadInt();
+                for (int i = 0; i < citizenCount; i++) Citizens.Add(new VirtualCitizen(reader)); 
+            }
+
             if (version >= 8)
             {
                 int houseCount = reader.ReadInt();
@@ -379,7 +365,6 @@ namespace Server.Misc
                     VirtualHouse house = new VirtualHouse(hName, hRank) { Prestige = hPrestige, TotalWealth = hWealth };
                     house.MultiID = reader.ReadInt();
 
-                    // --- 🌟 [버전 12 데이터 로드] ---
                     if (version >= 12)
                     {
                         house.CurrentFameScore = reader.ReadInt();
@@ -391,11 +376,14 @@ namespace Server.Misc
                         for (int k = 0; k < needsCount; k++)
                         {
                             Type t = ScriptCompiler.FindTypeByFullName(reader.ReadString());
+                            // 🌟 [중요 수정] UnfulfilledNeeds 로드 로직 갱신
+                            CraftResource res = version >= 13 ? (CraftResource)reader.ReadInt() : CraftResource.None;
+                            int subID = version >= 13 ? reader.ReadInt() : 0;
+                            bool isExc = version >= 13 ? reader.ReadBool() : false;
                             int amt = reader.ReadInt();
-                            if (t != null) house.UnfulfilledNeeds[t] = amt;
+                            if (t != null) house.UnfulfilledNeeds[new EconomyItemKey(t, res, subID, isExc)] = amt;
                         }
                     }
-                    // ------------------------------
 
                     if (version >= 9)
                     {
@@ -461,7 +449,6 @@ namespace Server.Misc
                 }
             }
 
-            // 5. 마을 전체 영토 소유 맵 복구
             if (version >= 9)
             {
                 int mapLength = reader.ReadInt();
@@ -474,9 +461,6 @@ namespace Server.Misc
         }
     }
 
-    // =========================================================================
-    // 3. TownEconomyManager: 전체 경제 통제 및 세이브/로드 엔진
-    // =========================================================================
     public static class TownEconomyManager
     {
         public static Dictionary<int, TownEconomy> Towns = [];
@@ -487,13 +471,9 @@ namespace Server.Misc
             EventSink.WorldSave += OnSave;
             EventSink.WorldLoad += OnLoad;
             
-            // 🌟 [명령어 등록] 게임 내에서 [ResetVirtualCitizens 입력 시 리셋 발동
             CommandSystem.Register("ResetVirtualCitizens", AccessLevel.Administrator, new CommandEventHandler(ResetVirtualCitizens_OnCommand));
         }
 
-        // ====================================================================
-        // 🌟 [추가] 가상 사회 초기화 및 인구 재배양 (GM 전용 명령어)
-        // ====================================================================
         [Usage("ResetVirtualCitizens")]
         [Description("기존의 가상 시민과 주택 데이터를 모두 삭제하고 새로운 기획(1/10 인구)에 맞춰 재배양합니다.")]
         private static void ResetVirtualCitizens_OnCommand(CommandEventArgs e)
@@ -520,23 +500,17 @@ namespace Server.Misc
                 
                 if (town.Houses != null)
                 {
-                    // 장부상에서 집을 모두 삭제
                     deletedHouses += town.Houses.Count;
                     town.Houses.Clear();
                 }
 
-                // 🌟 마을 인구수에 기반한 자본금(Wealth) 재산정 호출
                 UpdateTownWealth(town);
             }
 
             Console.WriteLine($"[TownEconomy] {deletedCount}명의 시민과 {deletedHouses}채의 가옥 장부가 삭제되었습니다.");
 
-            // ====================================================================
-            // 🌟 [수정 완료] 옛날 엔진 대신, 새롭게 통합된 인구통계학(Demographics) 엔진 호출!
-            // ====================================================================
             foreach (var town in Towns.Values)
             {
-                // 마을별 1/10 상한선 계산 후, 맞춤형 초기화 진행
                 int newCap = TownDemographics.CalculatePopulationCap(town);
                 TownDemographics.InitializeTown(town, newCap);
             }
@@ -544,29 +518,21 @@ namespace Server.Misc
             Console.WriteLine($"[TownEconomy] 소수 정예(1/10) 맞춤형 인구 배양이 완료되었습니다.");
         }
 
-        // ====================================================================
-        // 🌟 [추가] 마을의 기초 자본금(Wealth) 산정 (10배 경제 배율 적용)
-        // ====================================================================
         public static void UpdateTownWealth(TownEconomy town)
         {
             if (town == null) return;
 
             int vendorCount = town.VendorCount;
-            if (vendorCount == 0) vendorCount = 10; // 최소 보정
+            if (vendorCount == 0) vendorCount = 10; 
 
-            // [기획 반영] 인구는 1/10로 줄었지만, 경제 규모는 유지하기 위해 10배 배율(10.0) 적용
             long humanValue = (long)(vendorCount * 250000 * 10.0);
 
-            // 마을의 초기 자본금 세팅 (돈이 너무 없을 때만 보충)
             if (town.Wealth < humanValue)
             {
                 town.Wealth = humanValue;
             }
         }
 
-        // ====================================================================
-        // 기존 Save / Load 및 유령 구역 정리 로직
-        // ====================================================================
         private static void OnSave(WorldSaveEventArgs e)
         {
             string dir = Path.Combine(Core.BaseDirectory, "Saves", "EconomySystem");

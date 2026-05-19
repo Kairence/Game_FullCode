@@ -115,110 +115,130 @@ namespace Server.Mobiles
 
 			return 100;
 		}
-        // [수정] 상인의 초기 판매 물품을 마을 공용 창고에 적재하는 동기화 함수
-		public void SyncToTownEconomy()
-		{
-			// [코딩 규칙 적용] out 키워드 금지
-			if (TownID <= 0 || !TownEconomyManager.Towns.ContainsKey(TownID))
-				return;
+		// 🌟 [신규 도우미] 껍데기(Type)에서 알맹이(SubID)까지 완벽하게 파내는 전용 함수
+        private EconomyItemKey GetKeyFromBuyInfo(object info, Type fallbackType)
+        {
+            EconomyItemKey key = fallbackType; 
+            if (info != null && info.GetType().Name == "BeverageBuyInfo")
+            {
+                var contentProp = info.GetType().GetProperty("Content");
+                var contentField = info.GetType().GetField("m_Content", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                                 ?? info.GetType().GetField("Content", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                
+                int subID = 0;
+                if (contentProp != null) subID = (int)contentProp.GetValue(info);
+                else if (contentField != null) subID = (int)contentField.GetValue(info);
+                
+                key = new EconomyItemKey(fallbackType, CraftResource.None, subID, false);
+            }
+            return key;
+        }
 
-			var town = TownEconomyManager.Towns[TownID];
-			var sbInfos = SBInfos;
-			if (sbInfos == null) return;
+        // 🌟 [수정 1] 상인의 초기 판매 물품을 마을 공용 창고에 5000개씩 적재하는 동기화 함수
+        public void SyncToTownEconomy()
+        {
+            if (TownID <= 0 || !TownEconomyManager.Towns.ContainsKey(TownID))
+                return;
 
-			for (int i = 0; i < sbInfos.Count; ++i)
-			{
-				var activeSbInfo = sbInfos[i];
-				if (activeSbInfo == null) continue;
+            var town = TownEconomyManager.Towns[TownID];
+            var sbInfos = SBInfos;
+            if (sbInfos == null) return;
 
-				SBInfo pristineSbInfo = null;
-				try
-				{
-					pristineSbInfo = (SBInfo)Activator.CreateInstance(activeSbInfo.GetType());
-				}
-				catch
-				{
-					pristineSbInfo = activeSbInfo; 
-				}
+            for (int i = 0; i < sbInfos.Count; ++i)
+            {
+                var activeSbInfo = sbInfos[i];
+                if (activeSbInfo == null) continue;
 
-				if (pristineSbInfo?.BuyInfo == null) continue;
+                SBInfo pristineSbInfo = null;
+                try
+                {
+                    pristineSbInfo = (SBInfo)Activator.CreateInstance(activeSbInfo.GetType());
+                }
+                catch
+                {
+                    pristineSbInfo = activeSbInfo; 
+                }
 
-				foreach (GenericBuyInfo itemInfo in pristineSbInfo.BuyInfo)
-				{
-					Type itemType = itemInfo.Type;
-					if (itemType == null) continue;
+                if (pristineSbInfo?.BuyInfo == null) continue;
 
-					int pristinePrice = itemInfo.Price; 
-					int amount = 5000; 
+                foreach (GenericBuyInfo itemInfo in pristineSbInfo.BuyInfo)
+                {
+                    Type itemType = itemInfo.Type;
+                    if (itemType == null) continue;
 
-					var existingEntry = town.InventoryEntries.FirstOrDefault(e => e.ItemType == itemType);
-					if (existingEntry != null)
-					{
-						existingEntry.InitialStock += amount;
-					}
-					else
-					{
-						town.InventoryEntries.Add(new TownInventoryEntry(itemType, amount, pristinePrice));
-					}
+                    int pristinePrice = itemInfo.Price; 
+                    int amount = 5000; 
 
-					// [코딩 규칙 적용] TryGetValue 대신 ContainsKey 사용
-					if (town.Warehouse.ContainsKey(itemType))
-					{
-						var wItem = town.Warehouse[itemType];
-						wItem.Stock += amount;
-						wItem.BasePrice = pristinePrice; 
-						wItem.TargetStock = wItem.Stock;
-					}
-					else
-					{
-						town.Warehouse[itemType] = new WarehouseItem(itemType, amount, pristinePrice);
-					}
-				}
-			}
-		}
-		public void UpdateBuyInfo()
-		{
-			int priceScalar = GetPriceScalar();
-			var buyinfo = (IBuyItemInfo[])m_ArmorBuyInfo.ToArray(typeof(IBuyItemInfo));
+                    // 🌟 핵심: 음료수의 알맹이(Wine, Ale 등)를 분리해서 완벽한 키 생성!
+                    EconomyItemKey itemKey = GetKeyFromBuyInfo(itemInfo, itemType);
 
-			if (buyinfo == null) return;
+                    var existingEntry = town.InventoryEntries.FirstOrDefault(e => e.ItemKey == itemKey);
+                    if (existingEntry != null)
+                    {
+                        existingEntry.InitialStock += amount;
+                    }
+                    else
+                    {
+                        town.InventoryEntries.Add(new TownInventoryEntry(itemKey, amount, pristinePrice));
+                    }
 
-			// 마을 경제 시스템 연동 확인
-			if (TownID > 0 && TownEconomyManager.Towns.TryGetValue(TownID, out var town))
-			{
-				foreach (IBuyItemInfo info in buyinfo)
-				{
-					info.PriceScalar = priceScalar;
+                    if (town.Warehouse.ContainsKey(itemKey))
+                    {
+                        var wItem = town.Warehouse[itemKey];
+                        wItem.Stock += amount;
+                        wItem.BasePrice = pristinePrice; 
+                        wItem.TargetStock = wItem.Stock;
+                    }
+                    else
+                    {
+                        town.Warehouse[itemKey] = new WarehouseItem(itemKey, amount, pristinePrice);
+                    }
+                }
+            }
+        }
+		// 🌟 [수정 2] 매대 판매 수량 및 시세 동기화
+        public void UpdateBuyInfo()
+        {
+            int priceScalar = GetPriceScalar();
+            var buyinfo = (IBuyItemInfo[])m_ArmorBuyInfo.ToArray(typeof(IBuyItemInfo));
 
-					// 1. 아이템 타입 추출
-					Type? itemType = info.GetType().GetProperty("Type")?.GetValue(info) as Type;
-					
-					if (itemType != null && town.Warehouse.TryGetValue(itemType, out var wItem))
-					{
-						// [규칙 1 & 2] 재고 통제 로직
-						// 창고에 500개 미만으로 있으면 무조건 품절(0) 처리
-						// 500개 이상 있을 때만 상인은 '딱 500개'만 매대에 올림
-						if (wItem.Stock < 500)
-						{
-							info.Amount = 0; 
-						}
-						else
-						{
-							info.Amount = 500; // 사재기 방지: 창고에 1만 개가 있어도 상인은 500개만 노출
-						}
+            if (buyinfo == null) return;
 
-						// [규칙 3] 가격 동기화
-						// 마을 경제 엔진(PriceMultiplier)이 반영된 실시간 가격을 가져옴
-						info.Price = town.GetPrice(itemType);
-					}
-					else
-					{
-						// 창고에 등록되지 않은 물품은 취급 불가(품절)
-						info.Amount = 0;
-					}
-				}
-			}
-		}
+            // 마을 경제 시스템 연동 확인
+            if (TownID > 0 && TownEconomyManager.Towns.TryGetValue(TownID, out var town))
+            {
+                foreach (IBuyItemInfo info in buyinfo)
+                {
+                    info.PriceScalar = priceScalar;
+
+                    Type itemType = info.GetType().GetProperty("Type")?.GetValue(info) as Type;
+                    
+                    if (itemType != null)
+                    {
+                        // 🌟 여기서도 알맹이 분리
+                        EconomyItemKey itemKey = GetKeyFromBuyInfo(info, itemType);
+
+                        if (town.Warehouse.TryGetValue(itemKey, out var wItem))
+                        {
+                            if (wItem.Stock < 500)
+                            {
+                                info.Amount = 0; 
+                            }
+                            else
+                            {
+                                info.Amount = 500; 
+                            }
+
+                            info.Price = town.GetPrice(itemKey);
+                        }
+                        else
+                        {
+                            info.Amount = 0;
+                        }
+                    }
+                }
+            }
+        }
 		#endregion
 
 		private class BulkOrderInfoEntry : ContextMenuEntry
@@ -1680,106 +1700,113 @@ namespace Server.Mobiles
 			validBuy.Add(buy);
 		}
 
-		private void ProcessValidPurchase(int amount, IBuyItemInfo bii, Mobile buyer, Container cont)
-		{
-			if (amount > bii.Amount)
-			{
-				amount = bii.Amount;
-			}
-			
-			if (amount < 1)
-			{
-				return;
-			}
+		// 🌟 [수정 3] 유저가 상인에게서 아이템을 살 때 창고 재고를 깎는 함수
+        private void ProcessValidPurchase(int amount, IBuyItemInfo bii, Mobile buyer, Container cont)
+        {
+            if (amount > bii.Amount)
+            {
+                amount = bii.Amount;
+            }
+            
+            if (amount < 1)
+            {
+                return;
+            }
 
-			bii.Amount -= amount;
+            bii.Amount -= amount;
 
-			// ======== [추가] 마을 창고 재고 차감 ========
-			if (TownID > 0 && TownEconomyManager.Towns.TryGetValue(TownID, out var town))
-			{
-				Type? itemType = bii.GetType().GetProperty("Type")?.GetValue(bii) as Type;
-				if (itemType != null && town.Warehouse.TryGetValue(itemType, out var wItem))
-				{
-					wItem.Stock -= amount;
-					if (wItem.Stock < 0) wItem.Stock = 0;
-				}
-			}
-			// ============================================
+            // ======== [추가] 마을 창고 재고 차감 ========
+            if (TownID > 0 && TownEconomyManager.Towns.TryGetValue(TownID, out var town))
+            {
+                Type itemType = bii.GetType().GetProperty("Type")?.GetValue(bii) as Type;
+                if (itemType != null)
+                {
+                    // 🌟 [수정 3] 여기서도 알맹이를 캐내어 정확한 창고 재고 차감
+                    EconomyItemKey itemKey = GetKeyFromBuyInfo(bii, itemType);
+                    
+                    if (town.Warehouse.TryGetValue(itemKey, out var wItem))
+                    {
+                        wItem.Stock -= amount;
+                        if (wItem.Stock < 0) wItem.Stock = 0;
+                    }
+                }
+            }
+            // ============================================
 
-			IEntity o = bii.GetEntity();
+            IEntity o = bii.GetEntity();
 
-			if (o is Item)
-			{
-				Item item = (Item)o;
+            if (o is Item)
+            {
+                Item item = (Item)o;
 
-				if (item.Stackable)
-				{
-					item.Amount = amount;
+                if (item.Stackable)
+                {
+                    item.Amount = amount;
 
-					if (cont == null || !cont.TryDropItem(buyer, item, false))
-					{
-						item.MoveToWorld(buyer.Location, buyer.Map);
-					}
-				}
-				else
-				{
-					item.Amount = 1;
+                    if (cont == null || !cont.TryDropItem(buyer, item, false))
+                    {
+                        item.MoveToWorld(buyer.Location, buyer.Map);
+                    }
+                }
+                else
+                {
+                    item.Amount = 1;
 
-					if (cont == null || !cont.TryDropItem(buyer, item, false))
-					{
-						item.MoveToWorld(buyer.Location, buyer.Map);
-					}
+                    if (cont == null || !cont.TryDropItem(buyer, item, false))
+                    {
+                        item.MoveToWorld(buyer.Location, buyer.Map);
+                    }
 
-					for (int i = 1; i < amount; i++)
-					{
-						item = bii.GetEntity() as Item;
+                    for (int i = 1; i < amount; i++)
+                    {
+                        item = bii.GetEntity() as Item;
 
-						if (item != null)
-						{
-							item.Amount = 1;
+                        if (item != null)
+                        {
+                            item.Amount = 1;
 
-							if (cont == null || !cont.TryDropItem(buyer, item, false))
-							{
-								item.MoveToWorld(buyer.Location, buyer.Map);
-							}
-						}
-					}
-				}
+                            if (cont == null || !cont.TryDropItem(buyer, item, false))
+                            {
+                                item.MoveToWorld(buyer.Location, buyer.Map);
+                            }
+                        }
+                    }
+                }
 
-				bii.OnBought(buyer, this, item, amount);
-			}
-			else if (o is Mobile)
-			{
-				Mobile m = (Mobile)o;
+                bii.OnBought(buyer, this, item, amount);
+            }
+            else if (o is Mobile)
+            {
+                Mobile m = (Mobile)o;
 
-				bii.OnBought(buyer, this, m, amount);
+                bii.OnBought(buyer, this, m, amount);
 
-				m.Direction = (Direction)Utility.Random(8);
-				m.MoveToWorld(buyer.Location, buyer.Map);
-				m.PlaySound(m.GetIdleSound());
+                m.Direction = (Direction)Utility.Random(8);
+                m.MoveToWorld(buyer.Location, buyer.Map);
+                m.PlaySound(m.GetIdleSound());
 
-				if (m is BaseCreature)
-				{
-					((BaseCreature)m).SetControlMaster(buyer);
-				}
+                if (m is BaseCreature)
+                {
+                    ((BaseCreature)m).SetControlMaster(buyer);
+                }
 
-				for (int i = 1; i < amount; ++i)
-				{
-					m = bii.GetEntity() as Mobile;
+                for (int i = 1; i < amount; ++i)
+                {
+                    m = bii.GetEntity() as Mobile;
 
-					if (m != null)
-					{
-						m.Direction = (Direction)Utility.Random(8);
-						m.MoveToWorld(buyer.Location, buyer.Map);
+                    if (m != null)
+                    {
+                        m.Direction = (Direction)Utility.Random(8);
+                        m.MoveToWorld(buyer.Location, buyer.Map);
 
-						if (m is BaseCreature)
-						{
-							((BaseCreature)m).SetControlMaster(buyer);
-						}
-					}
-				}
-			}
-		}
+                        if (m is BaseCreature)
+                        {
+                            ((BaseCreature)m).SetControlMaster(buyer);
+                        }
+                    }
+                }
+            }
+        }
 
 		public virtual bool OnBuyItems(Mobile buyer, List<BuyItemResponse> list)
 		{
@@ -2262,192 +2289,191 @@ namespace Server.Mobiles
 			return true;
 		}
 
-		public virtual bool OnSellItems(Mobile seller, List<SellItemResponse> list)
-		{
-			if (!IsActiveBuyer)
-			{
-				return false;
-			}
+		// 🌟 [수정 4] 유저가 상인에게 아이템을 팔 때 창고 재고를 늘려주는 함수
+        public virtual bool OnSellItems(Mobile seller, List<SellItemResponse> list)
+        {
+            if (!IsActiveBuyer) return false;
+            if (!seller.CheckAlive()) return false;
 
-			if (!seller.CheckAlive())
-			{
-				return false;
-			}
+            if (!CheckVendorAccess(seller))
+            {
+                Say(501522); // I shall not treat with scum like thee!
+                return false;
+            }
 
-			if (!CheckVendorAccess(seller))
-			{
-				Say(501522); // I shall not treat with scum like thee!
-				return false;
-			}
+            seller.PlaySound(0x32);
 
-			seller.PlaySound(0x32);
+            var info = GetSellInfo();
+            var buyInfo = GetBuyInfo();
 
-			var info = GetSellInfo();
-			var buyInfo = GetBuyInfo();
+            int GiveGold = 0;
+            int Sold = 0;
+            Container cont;
 
-			int GiveGold = 0;
-			int Sold = 0;
-			Container cont;
+            foreach (SellItemResponse resp in list)
+            {
+                if (resp.Item.RootParent != seller || resp.Amount <= 0 || !resp.Item.IsStandardLoot() || !resp.Item.Movable ||
+                    (resp.Item is Container && (resp.Item).Items.Count != 0))
+                {
+                    continue;
+                }
 
-			foreach (SellItemResponse resp in list)
-			{
-				if (resp.Item.RootParent != seller || resp.Amount <= 0 || !resp.Item.IsStandardLoot() || !resp.Item.Movable ||
-					(resp.Item is Container && (resp.Item).Items.Count != 0))
-				{
-					continue;
-				}
+                foreach (IShopSellInfo ssi in info)
+                {
+                    if (ssi.IsSellable(resp.Item))
+                    {
+                        Sold++;
+                        break;
+                    }
+                }
+            }
 
-				foreach (IShopSellInfo ssi in info)
-				{
-					if (ssi.IsSellable(resp.Item))
-					{
-						Sold++;
-						break;
-					}
-				}
-			}
+            if (Sold > MaxSell)
+            {
+                SayTo(seller, "You may only sell {0} items at a time!", MaxSell, 0x3B2, true);
+                return false;
+            }
+            else if (Sold == 0)
+            {
+                return true;
+            }
 
-			if (Sold > MaxSell)
-			{
-				SayTo(seller, "You may only sell {0} items at a time!", MaxSell, 0x3B2, true);
-				return false;
-			}
-			else if (Sold == 0)
-			{
-				return true;
-			}
+            foreach (SellItemResponse resp in list)
+            {
+                if (resp.Item.RootParent != seller || resp.Amount <= 0 || !resp.Item.IsStandardLoot() || !resp.Item.Movable ||
+                    (resp.Item is Container && (resp.Item).Items.Count != 0))
+                {
+                    continue;
+                }
 
-			foreach (SellItemResponse resp in list)
-			{
-				if (resp.Item.RootParent != seller || resp.Amount <= 0 || !resp.Item.IsStandardLoot() || !resp.Item.Movable ||
-					(resp.Item is Container && (resp.Item).Items.Count != 0))
-				{
-					continue;
-				}
+                foreach (IShopSellInfo ssi in info)
+                {
+                    if (ssi.IsSellable(resp.Item))
+                    {
+                        int amount = resp.Amount;
 
-				foreach (IShopSellInfo ssi in info)
-				{
-					if (ssi.IsSellable(resp.Item))
-					{
-						int amount = resp.Amount;
+                        if (amount > resp.Item.Amount)
+                        {
+                            amount = resp.Item.Amount;
+                        }
+                        var singlePrice = ssi.GetSellPriceFor(resp.Item, this);
+                        GiveGold += singlePrice * amount;
 
-						if (amount > resp.Item.Amount)
-						{
-							amount = resp.Item.Amount;
-						}
-						var singlePrice = ssi.GetSellPriceFor(resp.Item, this);
-						GiveGold += singlePrice * amount;
+                        if( !Misc.Util.LastPriceCheck( this, GiveGold, seller ) )
+                            return false;
 
-						if( !Misc.Util.LastPriceCheck( this, GiveGold, seller ) )
-							return false;
+                        // ======== [추가] 마을 창고 재고 증가 ========
+                        if (TownID > 0 && TownEconomyManager.Towns.TryGetValue(TownID, out var town))
+                        {
+                            Type itemType = resp.Item.GetType();
+                            
+                            // 🌟 [핵심] 유저가 상인에게 팔 때도 색상/음료수 알맹이를 캐내서 창고에 등록!
+                            var (res, subID, isExc) = VirtualTradeSystem.GetResourceAndQuality(resp.Item);
+                            EconomyItemKey itemKey = new EconomyItemKey(itemType, res, subID, isExc);
 
-						// ======== [추가] 마을 창고 재고 증가 ========
-						if (TownID > 0 && TownEconomyManager.Towns.TryGetValue(TownID, out var town))
-						{
-							Type itemType = resp.Item.GetType();
-							if (town.Warehouse.TryGetValue(itemType, out var wItem))
-							{
-								wItem.Stock += amount;
-							}
-							else
-							{
-								town.Warehouse[itemType] = new WarehouseItem(itemType, amount, singlePrice);
-							}
-						}
-						// ============================================
+                            if (town.Warehouse.TryGetValue(itemKey, out var wItem))
+                            {
+                                wItem.Stock += amount;
+                            }
+                            else
+                            {
+                                town.Warehouse[itemKey] = new WarehouseItem(itemKey, amount, singlePrice);
+                            }
+                        }
+                        // ============================================
 
-						if (ssi.IsResellable(resp.Item))
-						{
-							bool found = false;
+                        if (ssi.IsResellable(resp.Item))
+                        {
+                            bool found = false;
 
-							foreach (var bii in buyInfo)
-							{
-								if (bii.Restock(resp.Item, amount))
-								{
-									bii.OnSold(this, amount);
+                            foreach (var bii in buyInfo)
+                            {
+                                if (bii.Restock(resp.Item, amount))
+                                {
+                                    bii.OnSold(this, amount);
 
-									resp.Item.Consume(amount);
-									found = true;
+                                    resp.Item.Consume(amount);
+                                    found = true;
 
-									break;
-								}
-							}
+                                    break;
+                                }
+                            }
 
-							if (!found)
-							{
-								cont = BuyPack;
+                            if (!found)
+                            {
+                                cont = BuyPack;
 
-								if (amount < resp.Item.Amount)
-								{
-									Item item = LiftItemDupe(resp.Item, resp.Item.Amount - amount);
+                                if (amount < resp.Item.Amount)
+                                {
+                                    Item item = LiftItemDupe(resp.Item, resp.Item.Amount - amount);
 
-									if (item != null)
-									{
-										item.SetLastMoved();
-										cont.DropItem(item);
-									}
-									else
-									{
-										resp.Item.SetLastMoved();
-										cont.DropItem(resp.Item);
-									}
-								}
-								else
-								{
-									resp.Item.SetLastMoved();
-									cont.DropItem(resp.Item);
-								}
-							}
-						}
-						else
-						{
-							if (amount < resp.Item.Amount)
-							{
-								resp.Item.Amount -= amount;
-							}
-							else
-							{
-								resp.Item.Delete();
-							}
-						}
+                                    if (item != null)
+                                    {
+                                        item.SetLastMoved();
+                                        cont.DropItem(item);
+                                    }
+                                    else
+                                    {
+                                        resp.Item.SetLastMoved();
+                                        cont.DropItem(resp.Item);
+                                    }
+                                }
+                                else
+                                {
+                                    resp.Item.SetLastMoved();
+                                    cont.DropItem(resp.Item);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (amount < resp.Item.Amount)
+                            {
+                                resp.Item.Amount -= amount;
+                            }
+                            else
+                            {
+                                resp.Item.Delete();
+                            }
+                        }
 
-						EventSink.InvokeValidVendorSell(new ValidVendorSellEventArgs(seller, this, resp.Item, singlePrice));
-						break;
-					}
-				}
-			}
+                        EventSink.InvokeValidVendorSell(new ValidVendorSellEventArgs(seller, this, resp.Item, singlePrice));
+                        break;
+                    }
+                }
+            }
 
-			if (GiveGold > 0)
-			{
-				while (GiveGold > 60000)
-				{
-					seller.AddToBackpack(new Gold(60000));
-					GiveGold -= 60000;
-				}
+            if (GiveGold > 0)
+            {
+                while (GiveGold > 60000)
+                {
+                    seller.AddToBackpack(new Gold(60000));
+                    GiveGold -= 60000;
+                }
 
-				seller.AddToBackpack(new Gold(GiveGold));
+                seller.AddToBackpack(new Gold(GiveGold));
 
-				seller.PlaySound(0x0037); //Gold dropping sound
+                seller.PlaySound(0x0037); //Gold dropping sound
 
-				if (SupportsBulkOrders(seller))
-				{
-					Item bulkOrder = CreateBulkOrder(seller, false);
+                if (SupportsBulkOrders(seller))
+                {
+                    Item bulkOrder = CreateBulkOrder(seller, false);
 
-					if (bulkOrder is LargeBOD)
-					{
-						seller.SendGump(new LargeBODAcceptGump(seller, (LargeBOD)bulkOrder));
-					}
-					else if (bulkOrder is SmallBOD)
-					{
-						seller.SendGump(new SmallBODAcceptGump(seller, (SmallBOD)bulkOrder));
-					}
-				}
-			}
+                    if (bulkOrder is LargeBOD)
+                    {
+                        seller.SendGump(new LargeBODAcceptGump(seller, (LargeBOD)bulkOrder));
+                    }
+                    else if (bulkOrder is SmallBOD)
+                    {
+                        seller.SendGump(new SmallBODAcceptGump(seller, (SmallBOD)bulkOrder));
+                    }
+                }
+            }
 
-			MyGold -= GiveGold;
-			
-			return true;
-		}
+            MyGold -= GiveGold;
+            
+            return true;
+        }
 
 
 		public override void Serialize(GenericWriter writer)

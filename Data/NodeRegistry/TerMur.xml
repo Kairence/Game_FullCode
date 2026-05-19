@@ -1,0 +1,96 @@
+<NodeRegistry>
+  <VendorNode TownID="569" MaxCount="16" Spawns="TropicalBird,Corpser,ForestOstard,WanderingShaman" X="614" Y="1748" Z="48" Range="12" RCode="0" />
+  <VendorNode TownID="569" MaxCount="10" Spawns="Corpser,Panther,ForestOstard,wanderingshaman,wildtiger,wildwhitetiger,wildblacktiger" X="347" Y="1911" Z="0" Range="12" RCode="0" />
+  <VendorNode TownID="584" MaxCount="10" Spawns="Corpser,Panther,ForestOstard,wanderingshaman,wildtiger,wildwhitetiger,wildblacktiger" X="398" Y="1896" Z="0" Range="12" RCode="0" />
+  <VendorNode TownID="569" MaxCount="10" Spawns="Corpser,Panther,ForestOstard,wanderingshaman,wildtiger,wildwhitetiger,wildblacktiger" X="454" Y="1895" Z="0" Range="12" RCode="0" />
+  <VendorNode TownID="569" MaxCount="17" Spawns="ForestOstard,Corpser,TropicalBird,WanderingShaman" X="607" Y="1647" Z="40" Range="12" RCode="0" />
+  <VendorNode TownID="569" MaxCount="10" Spawns="Corpser,Panther,ForestOstard,wanderingshaman,wildtiger,wildwhitetiger,wildblacktiger" X="512" Y="1915" Z="0" Range="12" RCode="0" />
+  <VendorNode TownID="569" MaxCount="6" Spawns="bullfrog,gianttoad,corpser,wanderingshaman,acidelemental" X="341" Y="1418" Z="40" Range="12" RCode="0" />
+  <VendorNode TownID="569" MaxCount="19" Spawns="bullfrog,gianttoad,corpser,wanderingshaman" X="424" Y="1404" Z="40" Range="12" RCode="0" />
+  <VendorNode TownID="569" MaxCount="6" Spawns="bullfrog,gianttoad,corpser,wanderingshaman,acidelemental" X="267" Y="1433" Z="40" Range="12" RCode="0" />
+  <VendorNode TownID="569" MaxCount="6" Spawns="bullfrog,gianttoad,corpser,wanderingshaman,acidelemental" X="319" Y="1502" Z="40" Range="12" RCode="0" />
+  <VendorNode TownID="560" MaxCount="20" Spawns="vampirebat,corpser,forestostard,wanderingshaman" X="606" Y="1574" Z="40" Range="12" RCode="0" />
+  <VendorNode TownID="501" MaxCount="2" Spawns="Laifem" X="805" Y="3398" Z="0" Range="5" RCode="610100" />
+  <DungeonNode Depth="1" X="816" Y="658" Z="22" Range="5" RCode="620200" />
+  <DungeonNode Depth="1" X="1020" Y="223" Z="-12" Range="15" RCode="620200" />
+  <DungeonNode Depth="2" X="581" Y="898" Z="-73" Range="5" RCode="620200" />
+  <DungeonNode Depth="1" X="689" Y="485" Z="-15" Range="5" RCode="620200" />
+  <DungeonNode Depth="2" X="35" Y="99" Z="-5" Range="15" RCode="620100" />
+  <DungeonNode Depth="4" X="698" Y="773" Z="28" Range="5" RCode="620200" />
+  <VendorNode TownID="587" MaxCount="81" Spawns="skeleton,skeletalknight,boneknight,skeletalmage,bonemagi,skeletallich,skeletaldragonrenowned" X="676" Y="831" Z="-109" Range="5" RCode="620200" />
+  <DungeonNode Depth="2" X="764" Y="746" Z="23" Range="5" RCode="620200" />
+  <DungeonNode Depth="1" X="27" Y="211" Z="-8" Range="5" RCode="620100" />
+  <VendorNode TownID="501" MaxCount="2" Spawns="baker" X="806" Y="3491" Z="-20" Range="5" RCode="610100" />
+  <DungeonNode Depth="1" X="775" Y="770" Z="23" Range="5" RCode="620200" />
+  <DungeonNode Depth="1" HasItem="true" X="806" Y="734" Z="22" Range="5" RCode="620200" />
+  <DungeonNode Depth="1" X="949" Y="245" Z="-17" Range="5" RCode="620200" />
+  <VendorNode TownID="501" MaxCount="1" Spawns="Aliabeth" X="816" Y="3438" Z="0" Range="5" RCode="610100" />
+  <DungeonNode Depth="2" X="35" Y="159" Z="0" Range="15" RCode="620100" />
+  <DungeonNode Depth="2" X="735" Y="687" Z="-47" Range="5" RCode="620200" />
+  <DungeonNode Depth="4" X="795" Y="759" Z="23" Range="5" RCode="620200" />
+  <DungeonNode Depth="1" X="795" Y="771" Z="22" Range="5" RCode="620200" />
+  <DungeonNode Depth="1" X="649" Y="703" Z="13" Range="5" RCode="620200" />
+  <DungeonNode Depth="1" X="749" Y="475" Z="-17" Range="25" RCode="620200" />
+  <DungeonNode Depth="1" X="970" Y="291" Z="-12" Range="15" RCode="620200" />
+  <DungeonNode Depth="1" X="485" Y="859" Z="-61" Range="15" RCode="620200" />
+  <DungeonNode Depth="1" HasItem="true" X="778" Y="732" Z="23" Range="5" RCode="620200" />
+  <VendorNode TownID="569" MaxCount="2" Spawns="armorer" X="1012" Y="3881" Z="-42" Range="5" RCode="610200" />
+  <DungeonNode Depth="1" X="145" Y="158" Z="-20" Range="5" RCode="620100" />
+  <DungeonNode Depth="1" X="1016" Y="1022" Z="-43" Range="15" RCode="620300" />
+  <DungeonNode Depth="1" X="1060" Y="1159" Z="-42" Range="25" RCode="620300" />
+  <DungeonNode Depth="1" X="1180" Y="863" Z="0" Range="15" RCode="620300" />
+  <DungeonNode Depth="1" X="1189" Y="989" Z="-27" Range="0" RCode="620300" />
+  <DungeonNode Depth="1" X="1145" Y="999" Z="-40" Range="16" RCode="620300" />
+  <DungeonNode Depth="1" X="1038" Y="1180" Z="-52" Range="12" RCode="620300" />
+  <DungeonNode Depth="1" X="1014" Y="1000" Z="-43" Range="0" RCode="620300" />
+  <DungeonNode Depth="1" X="1104" Y="1128" Z="-52" Range="0" RCode="620300" />
+  <DungeonNode Depth="2" X="1197" Y="1186" Z="-78" Range="15" RCode="620300" />
+  <DungeonNode Depth="1" X="1040" Y="1196" Z="-46" Range="10" RCode="620300" />
+  <DungeonNode Depth="1" X="1111" Y="1173" Z="-29" Range="2" RCode="620300" />
+  <DungeonNode Depth="1" X="1113" Y="1164" Z="-18" Range="1" RCode="620300" />
+  <DungeonNode Depth="1" X="1128" Y="1165" Z="-12" Range="0" RCode="620300" />
+  <VendorNode TownID="0" MaxCount="9" Spawns="graygoblinmage,wolfspider" X="1180" Y="978" Z="-27" Range="15" RCode="620300" />
+  <DungeonNode Depth="1" X="1111" Y="1022" Z="-48" Range="12" RCode="620300" />
+  <DungeonNode Depth="1" X="1096" Y="1072" Z="-70" Range="7" RCode="620300" />
+  <DungeonNode Depth="1" X="1018" Y="1116" Z="-42" Range="20" RCode="620300" />
+  <DungeonNode Depth="1" X="1082" Y="988" Z="-22" Range="12" RCode="620300" />
+  <DungeonNode Depth="1" X="1147" Y="1189" Z="-32" Range="10" RCode="620300" />
+  <DungeonNode Depth="1" X="1025" Y="1018" Z="-42" Range="12" RCode="620300" />
+  <DungeonNode Depth="1" X="1035" Y="1175" Z="-52" Range="15" RCode="620300" />
+  <DungeonNode Depth="1" X="1041" Y="1074" Z="-33" Range="5" RCode="620300" />
+  <DungeonNode Depth="1" X="1099" Y="1189" Z="-36" Range="7" RCode="620300" />
+  <VendorNode TownID="0" MaxCount="5" Spawns="greengoblinscout,greengoblinalchemist" X="1033" Y="1004" Z="-43" Range="15" RCode="620300" />
+  <VendorNode TownID="0" MaxCount="12" Spawns="graygoblinmage" X="1193" Y="1023" Z="-42" Range="20" RCode="620300" />
+  <DungeonNode Depth="1" X="1135" Y="1132" Z="-42" Range="0" RCode="620300" />
+  <DungeonNode Depth="1" X="1219" Y="1075" Z="-52" Range="15" RCode="620300" />
+  <VendorNode TownID="0" MaxCount="20" Spawns="graygoblin,graygoblinmage,graygoblinkeeper" X="1215" Y="984" Z="-27" Range="20" RCode="620300" />
+  <DungeonNode Depth="1" X="1037" Y="1199" Z="-46" Range="15" RCode="620300" />
+  <VendorNode TownID="0" MaxCount="14" Spawns="greengoblinalchemist" X="1040" Y="976" Z="-42" Range="20" RCode="620200" />
+  <DungeonNode Depth="1" X="1126" Y="1007" Z="-41" Range="22" RCode="620300" />
+  <DungeonNode Depth="1" X="1105" Y="1086" Z="-60" Range="7" RCode="620300" />
+  <DungeonNode Depth="1" X="1081" Y="988" Z="-20" Range="12" RCode="620300" />
+  <DungeonNode Depth="1" X="1204" Y="1041" Z="-42" Range="0" RCode="620300" />
+  <DungeonNode Depth="1" X="1076" Y="1117" Z="-65" Range="35" RCode="620300" />
+  <DungeonNode Depth="1" X="1148" Y="1166" Z="-32" Range="10" RCode="620300" />
+  <DungeonNode Depth="1" X="1121" Y="1132" Z="-42" Range="0" RCode="620300" />
+  <DungeonNode Depth="1" X="1163" Y="985" Z="-42" Range="18" RCode="620300" />
+  <DungeonNode Depth="1" X="1015" Y="976" Z="-27" Range="0" RCode="620200" />
+  <VendorNode TownID="0" MaxCount="7" Spawns="graygoblinmage" X="1198" Y="1052" Z="-42" Range="12" RCode="620300" />
+  <DungeonNode Depth="2" X="1218" Y="1075" Z="-52" Range="15" RCode="620300" />
+  <DungeonNode Depth="1" X="1054" Y="1044" Z="-32" Range="15" RCode="620300" />
+  <DungeonNode Depth="1" X="1031" Y="1152" Z="-65" Range="30" RCode="620300" />
+  <DungeonNode Depth="1" X="1217" Y="1075" Z="-52" Range="15" RCode="620300" />
+  <DungeonNode Depth="1" X="1048" Y="1027" Z="-32" Range="15" RCode="620300" />
+  <DungeonNode Depth="1" X="1109" Y="1150" Z="-12" Range="0" RCode="620300" />
+  <DungeonNode Depth="1" X="1053" Y="864" Z="-32" Range="5" RCode="620200" />
+  <DungeonNode Depth="1" X="1044" Y="976" Z="-30" Range="5" RCode="620200" />
+  <DungeonNode Depth="1" X="1013" Y="1035" Z="-43" Range="5" RCode="620300" />
+  <DungeonNode Depth="1" X="1046" Y="1015" Z="-32" Range="5" RCode="620300" />
+  <DungeonNode Depth="1" X="1032" Y="1028" Z="-43" Range="5" RCode="620300" />
+  <DungeonNode Depth="1" X="1028" Y="1003" Z="-43" Range="5" RCode="620300" />
+  <EcoNode X="632" Y="1484" Z="40" Range="13" FarmCap="180" EnvType="Farm" RCode="0" />
+  <EcoNode X="628" Y="1493" Z="40" Range="10" FarmCap="900" EnvType="Farm" RCode="0" />
+  <EcoNode X="639" Y="1493" Z="40" Range="10" FarmCap="500" EnvType="Farm" RCode="0" />
+  <EcoNode X="926" Y="3870" Z="-40" Range="11" FarmCap="1300" EnvType="Farm" RCode="610200" />
+  <EcoNode X="1049" Y="3851" Z="-41" Range="24" FarmCap="5440" EnvType="Farm" RCode="610200" />
+</NodeRegistry>

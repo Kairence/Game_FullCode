@@ -718,10 +718,11 @@ namespace Server.Misc
                 DungeonZone zone = kvp.Value;
                 if (zone.Facet != town.Facet) continue; 
 
-                Point3D? entrance = NewSpawnManager.FindLocationByRegionCode(zone.RCode, zone.Facet);
-                if (entrance.HasValue)
+                // 🌟 수정 1: 물리 노드 스캔 대신, 새로운 구역(AreaBounds)의 중앙 좌표를 직접 호출
+                Point3D entrance = zone.GetCenterLocation();
+                if (entrance != Point3D.Zero)
                 {
-                    double dist = Utility.GetDistanceToSqrt(townLoc, entrance.Value);
+                    double dist = Utility.GetDistanceToSqrt(townLoc, entrance);
                     validZones.Add((zone, dist));
                 }
             }
@@ -739,12 +740,22 @@ namespace Server.Misc
             JobTier finalTier = (JobTier)Math.Min((int)requestedTier, maxTierByHeat);
 
             Type[] targetProfile = null;
+            
+            // 🌟 수정 2: SpawnProfiles의 Key가 int(Tier)로 바뀌었으므로 Enum 대신 숫자 1, 2, 3으로 명확하게 조회하여 에러 소거
             switch (finalTier)
             {
-                case JobTier.Beginner: targetProfile = targetZone.SpawnProfiles.GetValueOrDefault(DungeonDepth.Entrance); break;
-                case JobTier.Intermediate: targetProfile = targetZone.SpawnProfiles.GetValueOrDefault(DungeonDepth.Middle); break;
-                case JobTier.Advanced: targetProfile = targetZone.SpawnProfiles.GetValueOrDefault(DungeonDepth.Deep); break;
-                case JobTier.Special: targetProfile = targetZone.BossType != null ? new Type[] { targetZone.BossType } : targetZone.SpawnProfiles.GetValueOrDefault(DungeonDepth.Deep); break;
+                case JobTier.Beginner: 
+                    if (targetZone.SpawnProfiles.ContainsKey(1)) targetProfile = targetZone.SpawnProfiles[1]; 
+                    break;
+                case JobTier.Intermediate: 
+                    if (targetZone.SpawnProfiles.ContainsKey(2)) targetProfile = targetZone.SpawnProfiles[2]; 
+                    break;
+                case JobTier.Advanced: 
+                    if (targetZone.SpawnProfiles.ContainsKey(3)) targetProfile = targetZone.SpawnProfiles[3]; 
+                    break;
+                case JobTier.Special: 
+                    targetProfile = targetZone.BossType != null ? new Type[] { targetZone.BossType } : (targetZone.SpawnProfiles.ContainsKey(3) ? targetZone.SpawnProfiles[3] : null); 
+                    break;
             }
 
             if (targetProfile == null || targetProfile.Length == 0) return GetDynamicFallbackData(finalTier);

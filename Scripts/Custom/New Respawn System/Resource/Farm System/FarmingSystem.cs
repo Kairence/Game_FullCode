@@ -10,30 +10,44 @@ namespace Server.Items
 {
     public static class FarmingSystem
     {
-        // 지역별로 번식 대기 중인 가축 수를 저장하는 딕셔너리
         private static Dictionary<string, int> m_PendingLivestock = new();
+
+        // 🌟 [추가 1] 대륙 OFF 시 해당 맵의 모든 물리적 작물 아이템을 일괄 제거하는 청소 함수 (NewSpawnManager 연동용)
+        public static int ClearMapCrops(Map map)
+        {
+            if (map == null || map == Map.Internal) return 0;
+            
+            int count = 0;
+            var crops = World.Items.Values.OfType<BaseFarmItem>().Where(i => i.Map == map).ToList();
+            
+            for (int i = 0; i < crops.Count; i++)
+            {
+                crops[i].Delete();
+                count++;
+            }
+            return count;
+        }
 
         public static void HandlePlantBreeding(BaseFarmItem plant, int currentTick)
         {
-            if (plant == null || plant.Stage != CropStage.Mature || plant.IsPollinated)
-                return;
+            if (plant == null || plant.Deleted || plant.Map == null) return;
+            
+            // 🌟 [추가 2] 중앙 킬 스위치 연동: 대륙이 꺼져있으면 식물 성장 및 수분 연산 완전 차단
+            if (!NewSpawnManager.ActiveMaps.GetValueOrDefault(plant.Map, true)) return;
 
-            // 성장 촉진 상태(IsAccelerated)라면 15틱, 아니면 30틱마다 체크
+            if (plant.Stage != CropStage.Mature || plant.IsPollinated) return;
+
             int checkInterval = plant.IsAccelerated ? 15 : 30;
             if (currentTick % checkInterval != 0) return;
 
-            // 주변 2칸 이내의 아이템 탐색
             IPooledEnumerable eable = plant.Map.GetItemsInRange(plant.Location, 2);
             foreach (Item item in eable)
             {
-                // 주인이 같고 다 자란(Mature) 다른 작물이 근처에 있다면 10% 확률로 수분 발생
                 if (item is BaseFarmItem other && other != plant && other.Owner == plant.Owner)
                 {
                     if (other.Stage == CropStage.Mature && Utility.RandomDouble() < 0.10)
                     {
                         plant.IsPollinated = true;
-                        
-                        // 교배 로직: 새로운 1세대 식물 타입을 무작위로 선택하여 할당
                         plant.CrossedType = PlantTypeInfo.RandomFirstGeneration(); 
                         plant.Name += " (교배종)";
                         break;
@@ -46,15 +60,16 @@ namespace Server.Items
         public static void HandleLivestockBreeding(string regionKey, Map map, Region reg)
         {
             if (reg == null || map == null) return;
+            
+            // 🌟 [추가 2] 중앙 킬 스위치 연동: 대륙이 꺼져있으면 가축 번식 연산 차단
+            if (!NewSpawnManager.ActiveMaps.GetValueOrDefault(map, true)) return;
 
-            // 해당 지역 내의 특정 가축(소, 양, 닭, 돼지)을 필터링하여 종류별로 그룹화
             var livestock = reg.GetMobiles().OfType<BaseCreature>()
                 .Where(c => c is Cow || c is Sheep || c is Chicken || c is Pig)
                 .GroupBy(c => c.GetType());
 
             foreach (var group in livestock)
             {
-                // 2마리당 1쌍으로 계산하여 번식 확률 적용
                 int pairs = group.Count() / 2;
                 for (int i = 0; i < pairs; i++)
                 {
@@ -71,9 +86,27 @@ namespace Server.Items
 
         public static bool IsPlantable(Mobile from, Point3D loc, Map map)
         {
+            // 🌟 [추가 3] 자원 모니터링 시스템(ResourceSystem) 귀속: 해당 지역의 지력(FarmCap) 체크
+            var chunkInfo = EcoGridDatabase.GetChunkAt(map, loc.X, loc.Y);
+            if (chunkInfo.IsValid)
+            {
+                // ResourceType.Farming (혹은 유저님이 설정한 농사 Enum)을 통해 해당 그리드의 자원 풀에 접근
+                ResourceKey farmKey = new ResourceKey(map.Name, chunkInfo.Data.Code.ToString(), ResourceType.Farming);
+                if (ResourceManager.Pools.TryGetValue(farmKey, out var pool))
+                {
+                    if (pool.CurrentCapacity <= 0)
+                    {
+                        from.SendMessage("이 지역의 지력이 모두 고갈되어 더 이상 작물을 심을 수 없습니다.");
+                        return false; // 지력 한도 초과 시 식재 차단
+                    }
+                    
+                    // (선택 사항) 작물을 심을 때 지력을 1 소모하게 하려면 여기에 주석 해제
+                    // pool.CurrentCapacity -= 1; 
+                }
+            }
+
             bool onPloughedField = false;
             
-            // 현재 위치에 경작된 밭(FarmPloughedComponent) 타일이 있는지 확인
             IPooledEnumerable eable = map.GetItemsInRange(loc, 0);
             foreach (Item item in eable)
             {
@@ -98,17 +131,13 @@ namespace Server.Items
 
         public static bool CanPlant(Mobile from)
         {
-            // 현재 플레이어가 소유한 작물 수 계산
             int currentCount = World.Items.Values.OfType<BaseFarmItem>().Count(b => b.Owner == from);
-            
-            // 식재 제한: 기본 5개 + Herding(목동) 스킬 10당 1개 추가
             int limit = 5 + (int)(from.Skills[SkillName.Herding].Value / 10); 
             return currentCount < limit;
         }
 
         public static void GiveXP(Mobile from, int amount)
         {
-            // Herding 스킬 숙련도 체크 (필요 시 주석 해제)
             // from.CheckSkill(SkillName.Herding, 0, 120); 
         }
     }

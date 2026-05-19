@@ -185,10 +185,10 @@ namespace Server.Misc
                 house.EstateSign = null; 
             }
 
-            // 철거 시 무주택(텐트/은행 공유) 상태로 강제 전환 및 실면적 0 처리
             house.MultiID = 0;
             house.UpdateCapacity();
-            Console.WriteLine($"[Housing Penalty] '{house.HouseName}' 가문이 길거리에 나앉아 텐트 생활에 돌입합니다. (실면적: 0칸, 모든 공방 가동 중지)");
+            // 🌟 텐트라는 단어를 삭제하고 노숙으로 변경
+            Console.WriteLine($"[Housing Penalty] '{house.HouseName}' 가문이 길거리에 나앉아 노숙 생활에 돌입합니다. (실면적: 0칸, 모든 공방 가동 중지)");
 
             foreach (var c in VirtualHousingRegistry.Chunks)
             {
@@ -221,6 +221,7 @@ namespace Server.Misc
             
             if (currentBuilding >= maxConcurrent) return;
 
+            // 🌟 최소 건축 자금을 35000gp(소형 가옥)로 픽스
             var candidates = town.Houses
                 .Where(h => h.IsActive && h.TotalWealth >= 35000 && (h.EstateSign == null || h.HousingAmbition >= 100))
                 .OrderByDescending(h => 
@@ -264,22 +265,14 @@ namespace Server.Misc
             for (int downgrade = 0; downgrade <= 4; downgrade++)
             {
                 var (multiID, finalTier) = DetermineHouseType(town, house, rank, downgrade); 
-                if (multiID == 0 && finalTier == 0) continue; 
+                if (multiID <= 0 || finalTier <= 0) continue; // 🌟 텐트(MultiID 0) 원천 차단
                 
-                int reqW = 5; 
-                int reqH = 5; 
-                MultiComponentList mcl = null;
+                MultiComponentList mcl = MultiData.GetComponents(multiID);
+                if (mcl == null || mcl.List.Length == 0) continue;
+                
+                int reqW = mcl.Width + 2; 
+                int reqH = mcl.Height + 2;
 
-                if (multiID > 0)
-                {
-                    mcl = MultiData.GetComponents(multiID);
-                    if (mcl == null || mcl.List.Length == 0) continue;
-                    reqW = mcl.Width + 2; 
-                    reqH = mcl.Height + 2;
-                }
-                else if (finalTier > 0) continue; 
-
-                // 1차 시도: 무주택 빈 땅 탐색
                 var (success, chunk, targetSpace) = VirtualHousingRegistry.GetAndLockBestFreeSpace(town.Facet, reqW, reqH, house.HouseName, town.TownID, rank);
 
                 if (success)
@@ -287,7 +280,6 @@ namespace Server.Misc
                     ExecuteConstructionAt(town, house, targetSpace.X, targetSpace.Y, multiID, mcl, chunk);
                     return (true, multiID);
                 }
-                // 2차 시도: 빈 땅이 없으면 타겟 구역의 기존 점유자를 찾아 철거/매입(알박기) 시도
                 else if (chunk != null)
                 {
                     var occupierLot = chunk.OccupiedLots.FirstOrDefault(l => l.Footprint.Contains(new Point2D(targetSpace.X, targetSpace.Y)));
@@ -299,29 +291,24 @@ namespace Server.Misc
                         if (victimHouse != null && victimHouse.EstateSign != null)
                         {
                             int currentGrudge = house.Grudges.ContainsKey(victimHouse.HouseName) ? house.Grudges[victimHouse.HouseName] : 0;
-                            
-                            // 상성 체크: 친한 사이거나 선한 카르마 이웃이면 땅을 뺏지 않음
                             if (currentGrudge < 0) continue; 
 
                             NobilityRank victimRank = victimHouse.PrimaryRank;
                             int victimMultiPrice = VirtualEstateSystem.GetBaseMultiPrice(victimHouse.MultiID);
-                            int buyoutPrice = victimMultiPrice * 3; // 알박기 보상금은 시세의 3배
+                            int buyoutPrice = victimMultiPrice * 3; 
                             int myBuildCost = VirtualEstateSystem.GetBaseMultiPrice(multiID);
 
-                            // [케이스 1] 강제 철거: 권력(Rank)이 압도적이거나 이미 철천지 원수(Grudge > 50)인 경우
                             if ((int)rank >= (int)victimRank + 2 || currentGrudge > 50)
                             {
                                 Console.WriteLine($"[Eviction] 권력 남용! '{house.HouseName}'({rank}) 가문이 '{victimHouse.HouseName}'({victimRank})의 부지를 강제로 철거하고 땅을 빼앗았습니다.");
                                 DemolishEstateArea(victimHouse, town); 
                                 
-                                // 피해자의 씻을 수 없는 막대한 원한 적립
                                 if (!victimHouse.Grudges.ContainsKey(house.HouseName)) victimHouse.Grudges[house.HouseName] = 0;
                                 victimHouse.Grudges[house.HouseName] += 100;
 
                                 ExecuteConstructionAt(town, house, targetSpace.X, targetSpace.Y, multiID, mcl, chunk);
                                 return (true, multiID);
                             }
-                            // [케이스 2] 알박기 매입: 권력으로 밀 수 없으나 자본이 충분한 경우 (보상금 3배)
                             else if (house.TotalWealth >= (buyoutPrice + myBuildCost))
                             {
                                 Console.WriteLine($"[Buyout] 부동산 알박기 매입! '{house.HouseName}' 가문이 '{victimHouse.HouseName}' 가문에게 거액의 보상금 {buyoutPrice}gp를 쥐어주고 땅을 매입했습니다.");
@@ -329,12 +316,9 @@ namespace Server.Misc
                                 victimHouse.TotalWealth += buyoutPrice;
                                 DemolishEstateArea(victimHouse, town); 
 
-                                // 감정선 변화
-                                // 구매자(가해자)는 바가지를 써서 비호감 상승
                                 if (!house.Grudges.ContainsKey(victimHouse.HouseName)) house.Grudges[victimHouse.HouseName] = 0;
                                 house.Grudges[victimHouse.HouseName] += 30; 
                                 
-                                // 판매자(피해자)는 길거리에 나앉았지만 돈벼락을 맞아 호감도 대폭 상승
                                 if (!victimHouse.Grudges.ContainsKey(house.HouseName)) victimHouse.Grudges[house.HouseName] = 0;
                                 victimHouse.Grudges[house.HouseName] -= 50; 
 
@@ -345,7 +329,6 @@ namespace Server.Misc
                     }
                 }
             }
-
             return (false, 0);
         }
 
@@ -354,92 +337,52 @@ namespace Server.Misc
         // ====================================================================
         private static bool ExecuteConstructionAt(TownEconomy town, VirtualHouse house, int startX, int startY, int targetMultiID, MultiComponentList mcl, EcoGridChunk chunk)
         {
-            int buildX = startX + 1;
-            int buildY = startY + 1;
-            int buildZ = 0; 
+            if (targetMultiID <= 0 || mcl == null || mcl.List.Length == 0) return false; // 🌟 텐트 예외 원천 차단
 
-            if (mcl != null)
-            {
-                buildX -= mcl.Min.X;
-                buildY -= mcl.Min.Y;
+            int buildX = startX + 1 - mcl.Min.X;
+            int buildY = startY + 1 - mcl.Min.Y;
 
-                int entranceX = buildX + ((mcl.Max.X + mcl.Min.X) / 2);
-                int entranceY = buildY + mcl.Max.Y; 
+            int entranceX = buildX + ((mcl.Max.X + mcl.Min.X) / 2);
+            int entranceY = buildY + mcl.Max.Y; 
 
-                buildZ = town.Facet.Tiles.GetLandTile(entranceX, entranceY).Z;
-            }
-            else
-            {
-                buildZ = town.Facet.Tiles.GetLandTile(buildX, buildY).Z;
-            }
-
+            int buildZ = town.Facet.Tiles.GetLandTile(entranceX, entranceY).Z;
             Point3D buildLoc = new Point3D(buildX, buildY, buildZ);
+            
             house.ZoneID = chunk.ZoneID;
-
-            Point3D signLoc = (targetMultiID == 0) ? new Point3D(buildLoc.X, buildLoc.Y + 2, buildLoc.Z) : buildLoc;
-            var sign = new VirtualEstateSign($"{house.HouseName}의 가택", house, town);
-            sign.MoveToWorld(signLoc, town.Facet);
-            house.EstateSign = sign;
-
             house.MultiID = targetMultiID; 
             house.UpdateCapacity();
 
-            // 🌟 실내 사용 가능 면적(Footprint) 계산 및 로깅
-            int internalArea = 0;
-            if (targetMultiID > 0 && mcl != null) 
-            {
-                internalArea = Math.Max(0, (mcl.Width - 2) * (mcl.Height - 2)); 
-                Console.WriteLine($"[Housing] '{house.HouseName}' (Tier {GetHouseTier(targetMultiID)}): {town.Facet.Name} {buildLoc} / 실면적: {internalArea}칸 확보 완료.");
-            }
-            else 
-            {
-                Console.WriteLine($"[Housing] '{house.HouseName}': {town.Facet.Name} {buildLoc} / 텐트 가건물 설치됨. (실면적 0칸)");
-            }
+            var sign = new VirtualEstateSign($"{house.HouseName}의 가택", house, town);
+            sign.MoveToWorld(buildLoc, town.Facet);
+            house.EstateSign = sign;
 
-            if (mcl == null || targetMultiID == 0)
-            {
-                var blueprint = CustomBlueprintManager.TentBlueprint;
-                foreach (var tileData in blueprint)
-                {
-                    int rawID = tileData.ItemID;
-                    if ((rawID & 0x3FFF) != 0x0001) 
-                    {
-                        Static newTile = new Static(rawID) { Movable = false };
-                        newTile.MoveToWorld(new Point3D(buildLoc.X + tileData.X, buildLoc.Y + tileData.Y, buildLoc.Z + tileData.Z), town.Facet);
-                        sign.AttachedTiles.Add(newTile);
-                    }
-                }
-                
-                sign.IsConstructionFinished = true;
-                sign.Visible = true;
-                sign.ItemID = 0x0BD2; 
-            }
-            else
-            {
-                var filteredBlueprint = new List<MultiTileEntry>();
-                List<LockedDoor> spawnedDoors = [];
-                
-                foreach (var c in mcl.List)
-                {
-                    int itemID = c.m_ItemID & TileData.MaxItemValue;
-                    if ((TileData.ItemTable[itemID].Flags & TileFlag.Door) != 0)
-                    {
-                        LockedDoor door = new LockedDoor(itemID, 50) { Offset = GetDoorOffset(itemID) };
-                        door.MoveToWorld(new Point3D(buildLoc.X + c.m_OffsetX, buildLoc.Y + c.m_OffsetY, buildLoc.Z + c.m_OffsetZ), town.Facet);
-                        
-                        if (sign != null) sign.AttachedDoors.Add(door);
+            int internalArea = Math.Max(0, (mcl.Width - 2) * (mcl.Height - 2)); 
+            Console.WriteLine($"[Housing] '{house.HouseName}' (Tier {GetHouseTier(targetMultiID)}): {town.Facet.Name} {buildLoc} / 실면적: {internalArea}칸 확보 완료.");
 
-                        spawnedDoors.Add(door);
-                    }
-                    else filteredBlueprint.Add(c);
+            var filteredBlueprint = new List<MultiTileEntry>();
+            List<LockedDoor> spawnedDoors = [];
+            
+            foreach (var c in mcl.List)
+            {
+                int itemID = c.m_ItemID & TileData.MaxItemValue;
+                if ((TileData.ItemTable[itemID].Flags & TileFlag.Door) != 0)
+                {
+                    LockedDoor door = new LockedDoor(itemID, 50) { Offset = GetDoorOffset(itemID) };
+                    door.MoveToWorld(new Point3D(buildLoc.X + c.m_OffsetX, buildLoc.Y + c.m_OffsetY, buildLoc.Z + c.m_OffsetZ), town.Facet);
+                    
+                    if (sign != null) sign.AttachedDoors.Add(door);
+
+                    spawnedDoors.Add(door);
                 }
-                for (int i = 0; i < spawnedDoors.Count; i++)
-                    for (int j = i + 1; j < spawnedDoors.Count; j++)
-                        if (Utility.InRange(spawnedDoors[i].Location, spawnedDoors[j].Location, 1))
-                        { spawnedDoors[i].Link = spawnedDoors[j]; spawnedDoors[j].Link = spawnedDoors[i]; }
-                
-                ConstructionStarter.StartFromMulti(sign, [.. filteredBlueprint]);
+                else filteredBlueprint.Add(c);
             }
+            
+            for (int i = 0; i < spawnedDoors.Count; i++)
+                for (int j = i + 1; j < spawnedDoors.Count; j++)
+                    if (Utility.InRange(spawnedDoors[i].Location, spawnedDoors[j].Location, 1))
+                    { spawnedDoors[i].Link = spawnedDoors[j]; spawnedDoors[j].Link = spawnedDoors[i]; }
+            
+            ConstructionStarter.StartFromMulti(sign, [.. filteredBlueprint]);
 
             return true;
         }
@@ -452,19 +395,18 @@ namespace Server.Misc
             return VirtualEstateSystem.GetBaseMultiPrice(multiID) switch { < 50000 => 1, < 150000 => 2, < 400000 => 3, _ => 4 };
         }
 
-        private static (int MultiID, int Tier) DetermineHouseType(TownEconomy town, VirtualHouse house, NobilityRank rank, int downgradeOffset = 0) 
+		private static (int MultiID, int Tier) DetermineHouseType(TownEconomy town, VirtualHouse house, NobilityRank rank, int downgradeOffset = 0) 
         { 
             int groupID = ((int)house.PrimaryJob / 100) * 100; 
             int targetTier = house.TotalWealth >= 900000 ? 4 : house.TotalWealth >= 180000 ? 3 : house.TotalWealth >= 90000 ? 2 : 1; 
             
-            targetTier = Math.Max(0, targetTier - downgradeOffset);
+            targetTier = Math.Max(1, targetTier - downgradeOffset); // 🌟 최소 티어를 1(소형집)로 고정
 
             int maxTier = rank switch { NobilityRank.Commoner => 2, NobilityRank.Knight or NobilityRank.SubBaronet or NobilityRank.Baronet or NobilityRank.SubBaron => 3, _ => 4 }; 
             int finalTier = Math.Min(targetTier, maxTier); 
             
-            if (house.TotalWealth < 5000) finalTier = 0; 
-            if (finalTier == 0) return (0, 0); 
-            
+            // 🌟 TotalWealth < 5000 일 때 텐트(0티어)를 주던 로직 삭제
+
             int multiID = finalTier switch { 
                 1 => groupID switch { 100 or 800 => SelectRandom(0x006E, 0x006A), 200 or 300 or 900 => SelectRandom(0x006C, 0x0064), 400 or 700 => SelectRandom(0x00A0, 0x00A2), 500 or 1000 => 0x0068, _ => 0x0064 }, 
                 2 => groupID switch { 100 or 800 => 0x009A, 300 or 900 or 1100 => SelectRandom(0x0098, 0x0074), 400 or 700 or 500 or 1000 => SelectRandom(0x009E, 0x009C), 200 => SelectRandom(0x00A0, 0x00A2), _ => 0x0074 }, 

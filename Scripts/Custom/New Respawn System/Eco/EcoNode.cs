@@ -36,6 +36,8 @@ namespace Server.Misc
         private List<Mobile> m_Spawned = new();
         private List<EcoSpawnDef> m_CachedSpawnPool;
 
+        public List<Mobile> Spawned => m_Spawned; // 외부 접근용 프로퍼티
+
         [Constructable]
         public EcoNode() : base(0x11EA)
         {
@@ -51,7 +53,7 @@ namespace Server.Misc
 
         public override void OnDoubleClick(Mobile from)
         {
-            // EcoNodeGump는 기존대로 사용하시면 됩니다.
+            // EcoNodeGump 연동
         }
 
         public void UpdateCache()
@@ -59,10 +61,29 @@ namespace Server.Misc
             m_CachedSpawnPool = EcoSpawnDatabase.GetPoolFor(this);
         }
 
+        // 🌟 [수정 1] 노드 삭제 시 동반 삭제 및 외부 시스템(Kill Switch)에서 호출할 수 있는 청소 함수 추가
         public override void OnDelete()
         {
-            foreach (var m in m_Spawned.ToList()) { m?.Delete(); }
+            ClearAllSpawns();
             base.OnDelete();
+        }
+
+        public int ClearAllSpawns()
+        {
+            int count = 0;
+            if (m_Spawned != null)
+            {
+                for (int i = m_Spawned.Count - 1; i >= 0; i--)
+                {
+                    if (m_Spawned[i] != null && !m_Spawned[i].Deleted)
+                    {
+                        m_Spawned[i].Delete();
+                        count++;
+                    }
+                }
+                m_Spawned.Clear();
+            }
+            return count;
         }
 
         public Point3D? GetValidSpawnLocation()
@@ -90,13 +111,11 @@ namespace Server.Misc
             return null;
         }
 
-        // 🌟 [핵심 추가] 유저 곁에 있거나 전투 중인 몬스터를 판별하여 강제 삭제를 막는 안전장치
         private bool IsSafeFromPredation(Mobile m)
         {
             if (m == null || m.Deleted || !m.Alive) return true;
-            if (m.Combatant != null) return true; // 전투(사냥) 중이면 면책
+            if (m.Combatant != null) return true; 
 
-            // 18타일 이내(화면 안팎)에 유저가 존재하면 면책
             foreach (NetState state in NetState.Instances)
             {
                 Mobile pm = state.Mobile;
@@ -108,11 +127,17 @@ namespace Server.Misc
             return false;
         }
 
-        // 🌟 [MasterTick 파이프라인] 마스터 틱 엔진이 30분 주기로 호출하는 수동형 틱
         public void DoTick()
         {
             if (Map == null || Map == Map.Internal) return;
             if (!Server.Misc.NewSpawnManager.ActiveMaps.GetValueOrDefault(Map, true)) return;
+
+            // 🌟 [수정 2] 마을(Town) 구역이면 동물/몬스터 스폰 연산을 완전히 차단
+            if (this.AreaType == EcoAreaType.Town || ((int)this.RCode / 10000) % 10 == 1)
+            {
+                if (m_Spawned.Count > 0) ClearAllSpawns(); // 기존에 잘못 소환된 동물이 있다면 즉시 청소
+                return;
+            }
 
             m_Spawned.RemoveAll(m => m == null || m.Deleted || !m.Alive || (m is BaseCreature bc && (bc.Controlled || bc.IsStabled)));
 
@@ -125,7 +150,7 @@ namespace Server.Misc
             bool isRecovering = false; 
 
             // ====================================================================
-            // 🌟 [이관된 숲 생태계 로직] 자원 시스템에서 가져온 동물 먹이사슬 엔진
+            // 숲 생태계 로직 (먹이사슬 엔진)
             // ====================================================================
             if (AreaType == EcoAreaType.Forest && ResourceManager.Pools.TryGetValue(woodKey, out var woodPool))
             {
@@ -134,7 +159,6 @@ namespace Server.Misc
                     var herbivores = m_Spawned.OfType<BaseCreature>().Where(m => m is Hind || m is GreatHart || m is Rabbit).ToList();
                     var carnivores = m_Spawned.OfType<BaseCreature>().Where(m => m is TimberWolf || m is GrizzlyBear || m is DireWolf).ToList();
 
-                    // 1. 초식동물이 나무 자원을 갉아먹음
                     int herbivoreConsumption = herbivores.Count * (woodPool.MaxCapacity / 200); 
                     int newWoodCapacity = woodPool.CurrentCapacity - herbivoreConsumption;
 
@@ -145,49 +169,43 @@ namespace Server.Misc
                     }
                     else
                     {
-                        // 숲 고갈 (사막화)
                         woodPool.CurrentCapacity = 0;
-                        woodPool.DepletionCooldown = DateTime.Now.AddHours(2.0); // 숲 사막화 (2시간 쿨타임)
+                        woodPool.DepletionCooldown = DateTime.Now.AddHours(2.0); 
                         Console.WriteLine($"[생태계] {ZoneId}의 숲이 황폐화되었습니다.");
                         
                         foreach (var h in herbivores) 
                         {
                             h.Hunger -= 40000; 
-                            if (h.Hunger <= 0) h.Hunger = 1; // 유저 텔레포트 시 시체밭을 막기 위해 1로 유지
+                            if (h.Hunger <= 0) h.Hunger = 1; 
                         }
                     }
 
-                    // 🌟 2. 육식동물이 초식동물을 잡아먹음 (안전 구역 검사 적용)
                     var activeCarnivores = carnivores.Where(c => !IsSafeFromPredation(c)).ToList();
                     var activeHerbivores = herbivores.Where(h => !IsSafeFromPredation(h)).ToList();
 
                     foreach (var c in carnivores)
                     {
-                        if (IsSafeFromPredation(c)) continue; // 안전 구역에 있으면 굶지 않고 면책
+                        if (IsSafeFromPredation(c)) continue; 
 
                         if (activeHerbivores.Count > 0)
                         {
-                            // 사냥감을 찾아서 포식함
                             Mobile prey = activeHerbivores[0];
                             
-                            // 시각/청각적 연출: 피가 튀고 살점이 찢기는 소리
                             Effects.SendLocationEffect(prey.Location, prey.Map, 0x3728, 10, 10); 
                             Effects.PlaySound(prey.Location, prey.Map, 0x133); 
                             
-                            prey.Delete(); // 초식동물 삭제 (다음 턴에 자연스럽게 채워짐)
+                            prey.Delete(); 
                             activeHerbivores.RemoveAt(0);
                             herbivores.Remove(prey as BaseCreature);
                             m_Spawned.Remove(prey);
                             
-                            c.Hunger = 100000; // 배부름
+                            c.Hunger = 100000; 
                         }
                         else
                         {
-                            // 사냥감이 없어 굶주림 발생
                             c.Hunger -= 40000;
                             if (c.Hunger <= 0) c.Hunger = 1; 
                             
-                            // 육식동물 아사: 굶주림이 심하면 50% 확률로 대자연으로 소멸
                             if (c.Hunger < 20000 && Utility.RandomDouble() < 0.5)
                             {
                                 c.Delete();
@@ -197,22 +215,20 @@ namespace Server.Misc
                         }
                     }
 
-                    // 3. 생태계 파괴 (초식이 없고 육식도 없으면, 자율 스폰 로직이 7:3 비율 복구를 돕도록 인구수 비율 조정)
                     if (herbivores.Count > 0 && carnivores.Count == 0)
                     {
-                        // 포식자가 멸종하면 초식이 비정상 번식
                         maxPop += 5; 
                     }
 
-                    // 숲의 상태(나무 잔여 비율)에 따라 최대 인구수 제한
                     double woodRatio = (double)woodPool.CurrentCapacity / woodPool.MaxCapacity;
                     maxPop = (int)(maxPop * woodRatio); 
                     if (woodRatio <= 0.5) isRecovering = true; 
                 }
             }
-            // ====================================================================
 
-            // 🌟 일반/공통 자율 생태계 유지 로직 (결핍된 개체수를 채움)
+            // ====================================================================
+            // 일반/공통 자율 생태계 유지 로직
+            // ====================================================================
             if (m_Spawned.Count < maxPop)
             {
                 int spawnCount = Utility.RandomMinMax(1, 2);

@@ -19,7 +19,7 @@ namespace Server.Misc
         };
 
         // 🌟 시민(NPC)용: 가문 창고에 있는 옷장들을 합산하여 최대 의류 보관 한도 계산
-        public static int GetMaxClothesStorage(Dictionary<StoredItemKey, int> warehouse)
+        public static int GetMaxClothesStorage(Dictionary<EconomyItemKey, int> warehouse)
         {
             int maxStorage = 50; // 옷장이 없을 때의 기본 보관량 (바닥이나 궤짝 등에 구겨 넣음)
 

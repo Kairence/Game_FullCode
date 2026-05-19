@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Server;
 using Server.Items;
 using Server.Mobiles;
 using Server.Engines.Craft;
-using System.Linq;
 
 namespace Server.Misc
 {
-    // ====================================================================
-    // 🌟 [신규] 색자원과 품질을 기억하는 창고 저장용 고속 키(Key)
-    // ====================================================================
-    public record struct StoredItemKey(Type ItemType, CraftResource Resource, bool IsExceptional);
-
     // 창고 등급 정의 (공간 점유 및 AI 구매 가이드용)
     public enum StorageTier { None, Small, Medium, Large, Special }
 
@@ -37,7 +32,7 @@ namespace Server.Misc
             { typeof(MetalChest), 1000 }
         };
 
-        public static (int MaxTypes, int MaxQuantity) GetStorageLimits(Dictionary<StoredItemKey, int> warehouse)
+        public static (int MaxTypes, int MaxQuantity) GetStorageLimits(Dictionary<EconomyItemKey, int> warehouse)
         {
             int maxTypes = 5;
             int maxQuantity = 5;
@@ -79,7 +74,6 @@ namespace Server.Misc
     {
         public static readonly Dictionary<Type, (SkillName Skill, double Bonus, WorkshopBonusType Type)> AddonBonusMap = new()
         {
-            // --- 1. 요리 (Cooking) 관련 ---
             { typeof(StoneOvenEastDeed), (SkillName.Cooking, 0.10, WorkshopBonusType.SuccessRate) },
             { typeof(StoneOvenSouthDeed), (SkillName.Cooking, 0.10, WorkshopBonusType.SuccessRate) },
             { typeof(FlourMillEastDeed), (SkillName.Cooking, 0.05, WorkshopBonusType.ResourceSave) },
@@ -88,7 +82,6 @@ namespace Server.Misc
             { typeof(ElvenStoveEastDeed), (SkillName.Cooking, 0.07, WorkshopBonusType.SuccessRate) },
             { typeof(ElvenStoveSouthDeed), (SkillName.Cooking, 0.07, WorkshopBonusType.SuccessRate) },
 
-            // --- 2. 대장술 (Blacksmithy) 관련 ---
             { typeof(SmallForgeDeed), (SkillName.Blacksmith, 0.05, WorkshopBonusType.SuccessRate) },
             { typeof(LargeForgeEastDeed), (SkillName.Blacksmith, 0.08, WorkshopBonusType.SuccessRate) },
             { typeof(LargeForgeSouthDeed), (SkillName.Blacksmith, 0.08, WorkshopBonusType.SuccessRate) },
@@ -98,7 +91,6 @@ namespace Server.Misc
             { typeof(StoneAnvilEastDeed), (SkillName.Blacksmith, 0.06, WorkshopBonusType.ExceptionalChance) },
             { typeof(StoneAnvilSouthDeed), (SkillName.Blacksmith, 0.06, WorkshopBonusType.ExceptionalChance) },
 
-            // --- 3. 재봉술 (Tailoring) 관련 ---
             { typeof(LoomEastDeed), (SkillName.Tailoring, 0.07, WorkshopBonusType.SuccessRate) },
             { typeof(LoomSouthDeed), (SkillName.Tailoring, 0.07, WorkshopBonusType.SuccessRate) },
             { typeof(SpinningwheelEastDeed), (SkillName.Tailoring, 0.05, WorkshopBonusType.ResourceSave) },
@@ -107,27 +99,22 @@ namespace Server.Misc
             { typeof(SewingMachineDeed), (SkillName.Tailoring, 0.10, WorkshopBonusType.SuccessRate) },
             { typeof(SewingMachine), (SkillName.Tailoring, 0.10, WorkshopBonusType.SuccessRate) },
 
-            // --- 4. 기록술 (Inscription) 관련 ---
             { typeof(WritingDeskDeed), (SkillName.Inscribe, 0.10, WorkshopBonusType.SuccessRate) },
             { typeof(WritingTable), (SkillName.Inscribe, 0.05, WorkshopBonusType.SuccessRate) },
 
-            // --- 5. 땜질 (Tinkering) 관련 ---
             { typeof(TinkerBenchDeed), (SkillName.Tinkering, 0.05, WorkshopBonusType.SuccessRate) },
 
-            // --- 6. 목공 (Carpentry) 관련 ---
             { typeof(WoodworkersBenchDeed), (SkillName.Carpentry, 0.05, WorkshopBonusType.SuccessRate) },
             { typeof(SpinningLatheDeed), (SkillName.Carpentry, 0.05, WorkshopBonusType.SuccessRate) },
             { typeof(RitualTableDeed), (SkillName.Carpentry, 0.10, WorkshopBonusType.ExceptionalChance) },
 
-            // --- 7. 연금술 및 유리세공 (Alchemy/Glassblowing) 관련 ---
             { typeof(AlchemyStationDeed), (SkillName.Alchemy, 0.10, WorkshopBonusType.SuccessRate) },
             { typeof(HeatingStand), (SkillName.Alchemy, 0.05, WorkshopBonusType.SuccessRate) },
 
-            // --- 8. 활 제작 (Bowcraft) 관련 ---
             { typeof(FletchingStationDeed), (SkillName.Fletching, 0.10, WorkshopBonusType.SuccessRate) }
         };
 
-        public static double GetFinalBonus(Dictionary<StoredItemKey, int> warehouse, SkillName skill, WorkshopBonusType type)
+        public static double GetFinalBonus(Dictionary<EconomyItemKey, int> warehouse, SkillName skill, WorkshopBonusType type)
         {
             if (warehouse == null) return 0.0;
 
@@ -156,7 +143,7 @@ namespace Server.Misc
             return baseSum * multiplier;
         }
 
-        public static WorkshopTier GetTier(Dictionary<StoredItemKey, int> warehouse, SkillName skill)
+        public static WorkshopTier GetTier(Dictionary<EconomyItemKey, int> warehouse, SkillName skill)
         {
             int count = warehouse?.Where(kvp => AddonBonusMap.ContainsKey(kvp.Key.ItemType) && AddonBonusMap[kvp.Key.ItemType].Skill == skill)
                                   .Sum(kvp => kvp.Value) ?? 0;
@@ -183,38 +170,32 @@ namespace Server.Misc
     {
         public static readonly Dictionary<Type, ClothSlot> ClothCategoryMap = new()
         {
-            // 1. 머리 (Hats)
             { typeof(ChefsToque), ClothSlot.Head }, { typeof(ClothNinjaHood), ClothSlot.Head },
             { typeof(Kasa), ClothSlot.Head }, { typeof(AssassinsCowl), ClothSlot.Head },
             { typeof(MagesHood), ClothSlot.Head }, { typeof(KrampusMinionHat), ClothSlot.Head },
             { typeof(CowlOfTheMaceAndShield), ClothSlot.Head }, { typeof(MagesHoodOfScholarlyInsight), ClothSlot.Head },
 
-            // 2. 상의 (Shirts)
             { typeof(Shirt), ClothSlot.Shirt }, { typeof(FancyShirt), ClothSlot.Shirt },
             { typeof(Doublet), ClothSlot.Shirt }, { typeof(Surcoat), ClothSlot.Shirt },
             { typeof(FormalShirt), ClothSlot.Shirt }, { typeof(JinBaori), ClothSlot.Shirt },
             { typeof(ClothNinjaJacket), ClothSlot.Shirt }, { typeof(Kamishimo), ClothSlot.Shirt },
             { typeof(ElvenShirt), ClothSlot.Shirt }, { typeof(ElvenDarkShirt), ClothSlot.Shirt },
 
-            // 3. 하의 (Pants/Kilt - 가죽 바지 제외)
             { typeof(Kilt), ClothSlot.Pants }, { typeof(FancyKilt), ClothSlot.Pants },
             { typeof(CheckeredKilt), ClothSlot.Pants }, { typeof(GuildedKilt), ClothSlot.Pants },
             { typeof(Hakama), ClothSlot.Pants }, { typeof(TattsukeHakama), ClothSlot.Pants },
             { typeof(Skirt), ClothSlot.Pants }, { typeof(FurSarong), ClothSlot.Pants },
 
-            // 4. 겉옷 (Outer/Robe/Dress)
             { typeof(PlainDress), ClothSlot.Outer }, { typeof(FancyDress), ClothSlot.Outer },
             { typeof(GildedDress), ClothSlot.Outer }, { typeof(FloweredDress), ClothSlot.Outer },
             { typeof(EveningGown), ClothSlot.Outer }, { typeof(Cloak), ClothSlot.Outer },
             { typeof(Robe), ClothSlot.Outer }, { typeof(FurCape), ClothSlot.Outer },
             { typeof(MaleElvenRobe), ClothSlot.Outer }, { typeof(FemaleElvenRobe), ClothSlot.Outer },
 
-            // 5. 신발 (Footwear - 가죽 신발 제외)
             { typeof(NinjaTabi), ClothSlot.Footwear }, { typeof(SamuraiTabi), ClothSlot.Footwear },
             { typeof(JesterShoes), ClothSlot.Footwear }, { typeof(ElvenBoots), ClothSlot.Footwear },
             { typeof(FurBoots), ClothSlot.Footwear },
 
-            // 6. 기타 (Misc/Sash/Apron)
             { typeof(BodySash), ClothSlot.Misc }, { typeof(GargishSash), ClothSlot.Misc },
             { typeof(HalfApron), ClothSlot.Misc }, { typeof(FullApron), ClothSlot.Misc },
             { typeof(Obi), ClothSlot.Misc }, { typeof(WoodlandBelt), ClothSlot.Misc },
@@ -251,7 +232,6 @@ namespace Server.Misc
 
         #region 직업별 인테리어 데이터 정의 (Skill / 20.0)
 
-        // 1. 연금술 데이터 정의 (첫 번째 단계)
         private static readonly Dictionary<Type, double> m_AlchemyData = new()
         {
             { typeof(Bottle), 0.0 },               
@@ -560,7 +540,6 @@ namespace Server.Misc
             return false;
         }
 
-        // 🌟 [수정] 9단계 자원 확장에 따른 명예 보정치 9단계 반영
         public static double GetTierMultiplier(int tier)
         {
             return tier switch 
@@ -577,28 +556,24 @@ namespace Server.Misc
             };
         }
 
-        // 🌟 [신규] 재질별 일일 풍화/마모도(Wear) 반환 (역배열 적용)
-        public static int GetDailyWear(StoredItemKey key)
+        public static int GetDailyWear(EconomyItemKey key)
         {
             Type t = key.ItemType;
             CraftResource res = key.Resource;
             
-            // 무등급 자원 (유리, 도자기 등)은 고정 피로도 부여
             if (t == typeof(Bottle) || t == typeof(Pitcher) || t == typeof(Glass) || t == typeof(Vase) || 
                 t == typeof(LargeVase) || t == typeof(SmallFlask) || t == typeof(LargeFlask) || 
                 t == typeof(AniRedRibbedFlask) || t == typeof(FullVialsWRack) || t == typeof(SpinningHourglass) || 
                 t == typeof(GargoyleFloorMirror) || t == typeof(GargoyleWallMirror))
             {
-                return 150; // 제일 예민하고 잘 깨짐
+                return 150;
             }
                 
             if (t == typeof(GozaMatEastDeed) || t == typeof(CurtainsDeed) || t == typeof(PlainDress) || t == typeof(Shirt))
             {
-                return 50; // 천 재질
+                return 50; 
             }
 
-            // 등급 자원 (금속, 나무, 가죽, 생선) - 9단계 역배열 룰
-            // 티어가 높을수록 관리하기 힘들어 피로도가 높게(10배수) 쌓임
             int tier = CraftResources.GetIndex(res) + 1; 
             if (tier <= 0 || tier > 9) tier = 1;
             
@@ -664,11 +639,10 @@ namespace Server.Misc
         public int HousingAmbition { get; set; } 
         public NpcJobClass PrimaryJob => Families.FirstOrDefault(f => f.IsActive && f.Father != null)?.Father.JobClass ?? NpcJobClass.Laborer;
         
-        // 🌟 [수정] 색자원 딕셔너리로 전면 교체
-        public Dictionary<StoredItemKey, int> HouseWarehouse { get; set; }
-        
-        // 🌟 [신규] 스택 피로도 통 (Damage Pool)
-        public Dictionary<StoredItemKey, int> DamagePools { get; set; } = new();
+        public Dictionary<EconomyItemKey, int> HouseWarehouse { get; set; }
+        public Dictionary<EconomyItemKey, int> DamagePools { get; set; }
+        public Dictionary<EconomyItemKey, int> TargetStockProfile { get; set; } 
+        public Dictionary<EconomyItemKey, int> UnfulfilledNeeds { get; set; } 
 
         public int CurrentFameScore { get; set; } = 0;
         public DateTime LastSocialEventTime { get; set; } = DateTime.MinValue; 
@@ -676,7 +650,6 @@ namespace Server.Misc
         public int EventFameBonus { get; set; } = 0; 
 
         public int MaxCapacity { get; set; }
-        public Dictionary<Type, int> TargetStockProfile { get; set; } 
 
         public int Generation { get; set; } 
         public bool IsActive { get; set; }  
@@ -695,8 +668,6 @@ namespace Server.Misc
         public bool HasBarracks { get; set; }  
         public Dictionary<string, int> PlayerGrudges { get; set; }
         
-        public Dictionary<Type, int> UnfulfilledNeeds { get; set; } = new();
-
 		public VirtualHouseInterior Interior { get; set; }
 		public int SecurityAlertLevel { get; set; }
 
@@ -709,9 +680,11 @@ namespace Server.Misc
             
             ZoneID = 0;
 
-            HouseWarehouse = new Dictionary<StoredItemKey, int>();
-            DamagePools = new Dictionary<StoredItemKey, int>();
-            TargetStockProfile = [];
+            HouseWarehouse = new Dictionary<EconomyItemKey, int>();
+            DamagePools = new Dictionary<EconomyItemKey, int>();
+            TargetStockProfile = new Dictionary<EconomyItemKey, int>();
+            UnfulfilledNeeds = new Dictionary<EconomyItemKey, int>();
+
             AncestorRecords = [];
             RivalHouses = [];
             Generation = 1;
@@ -726,74 +699,84 @@ namespace Server.Misc
             HasBarracks = false;
 
             PlayerGrudges = new Dictionary<string, int>();
-            UnfulfilledNeeds = new Dictionary<Type, int>();
 
             UpdateCapacity();
         }
 
-        // 🌟 [수정] Record 구조체를 활용한 입출고 (티어/품질 동기화)
-        public void AlterWarehouseItem(Type type, CraftResource res, bool isExceptional, int amount, int exactScorePerUnit = -1)
+        public void AlterWarehouseItem(EconomyItemKey key, int amount, int exactScorePerUnit = -1)
         {
-            StoredItemKey key = new StoredItemKey(type, res, isExceptional);
-
             if (!HouseWarehouse.ContainsKey(key)) HouseWarehouse[key] = 0;
             HouseWarehouse[key] += amount;
 
             if (HouseWarehouse[key] <= 0) HouseWarehouse.Remove(key);
 
-            int score = exactScorePerUnit >= 0 ? exactScorePerUnit : FameEconomy.GetBaseFameScore(type);
+            int score = exactScorePerUnit >= 0 ? exactScorePerUnit : FameEconomy.GetBaseFameScore(key.ItemType);
             
             if (exactScorePerUnit < 0)
             {
-                int tierIndex = CraftResources.GetIndex(res) + 1;
+                int tierIndex = CraftResources.GetIndex(key.Resource) + 1;
                 score = (int)(score * FameEconomy.GetTierMultiplier(tierIndex));
-                if (isExceptional) score = (int)(score * 1.5);
+                if (key.IsExceptional) score = (int)(score * 1.5);
             }
 
             CurrentFameScore += (score * amount);
             if (CurrentFameScore < 0) CurrentFameScore = 0;
         }
 
-        // 🌟 [신규] 상점이 아닌 집에서 직접 먹고 파괴하는 로직 (소비 절벽 방지용)
-        public bool ConsumeFoodOrDrink(bool isFood)
+        public void AlterWarehouseItem(Type type, CraftResource res, bool isExceptional, int amount, int exactScorePerUnit = -1)
         {
-            if (HouseWarehouse == null || HouseWarehouse.Count == 0) return false;
-
-            StoredItemKey targetKey = default;
-            bool found = false;
-
-            foreach (var kvp in HouseWarehouse)
-            {
-                Type t = kvp.Key.ItemType;
-                if (isFood && (t.IsSubclassOf(typeof(Food)) || t == typeof(Food)))
-                {
-                    targetKey = kvp.Key;
-                    found = true;
-                    break;
-                }
-                else if (!isFood && (t == typeof(BeverageBottle) || t == typeof(Pitcher) || t.IsSubclassOf(typeof(BaseBeverage))))
-                {
-                    targetKey = kvp.Key;
-                    found = true;
-                    break;
-                }
-            }
-
-            if (found)
-            {
-                AlterWarehouseItem(targetKey.ItemType, targetKey.Resource, targetKey.IsExceptional, -1, -1);
-                return true;
-            }
-            return false;
+            AlterWarehouseItem(new EconomyItemKey(type, res, 0, isExceptional), amount, exactScorePerUnit);
         }
 
-        // 🌟 [신규] 매일 저녁 만찬 시 작동하는 다이나믹 마모 시스템 (스택 피로도 O(1) 처리)
+        // 🌟 [수정] Tuple로 ConsumedKey 반환. amount 파라미터 추가로 3배 소비 로직 대응 완료.
+        public (bool Success, EconomyItemKey ConsumedKey) ConsumeFoodOrDrink(bool isFood, int amount = 1)
+        {
+            if (this.Interior == null || this.Interior.PlacedFurniture == null) return (false, default);
+
+            foreach (var furniture in this.Interior.PlacedFurniture)
+            {
+                if (furniture is Container c)
+                {
+                    if (!isFood) // 마실 것 (음료류)
+                    {
+                        var bev = c.Items.OfType<BaseBeverage>().FirstOrDefault(b => b.Quantity > 0);
+                        if (bev != null)
+                        {
+                            bev.Quantity--; // 내용물 1모금 마심
+                            EconomyItemKey key = new EconomyItemKey(bev.GetType(), CraftResource.None, (int)bev.Content, false);
+                            
+                            if (bev.Quantity <= 0) 
+                            {
+                                bev.Delete(); // 5모금 다 마신 빈 주전자는 물리 삭제
+                                AlterWarehouseItem(key, -1, -1); // 가상 창고 장부에서도 1개 차감
+                            }
+                            return (true, key);
+                        }
+                    }
+                    else // 먹을 것 (일반 음식류)
+                    {
+                        var food = c.Items.FirstOrDefault(i => i is Food || i.GetType().IsSubclassOf(typeof(Food)));
+                        if (food != null)
+                        {
+                            EconomyItemKey key = new EconomyItemKey(food.GetType(), CraftResource.None, 0, false);
+                            
+                            if (food.Amount > 1) food.Amount--;
+                            else food.Delete();
+                            
+                            AlterWarehouseItem(key, -1, -1); // 먹었으므로 가상 창고 장부 차감
+                            return (true, key);
+                        }
+                    }
+                }
+            }
+            return (false, default);
+        }
+
         public void ConsumeFameItems()
         {
             if (HouseWarehouse == null || HouseWarehouse.Count == 0) return;
 
-            // 순회 중 컬렉션 수정을 피하기 위해 키 복사
-            List<StoredItemKey> keys = new List<StoredItemKey>(HouseWarehouse.Keys);
+            List<EconomyItemKey> keys = new List<EconomyItemKey>(HouseWarehouse.Keys);
 
             foreach (var key in keys)
             {
@@ -805,21 +788,19 @@ namespace Server.Misc
                     int amount = HouseWarehouse[key];
                     int dailyWear = FameEconomy.GetDailyWear(key);
                     
-                    // 주사위 굴림 (0.8 ~ 1.2배) 다이나믹 풍화치 적용
                     double roll = 0.8 + (Utility.RandomDouble() * 0.4);
                     int addedDamage = (int)((amount * dailyWear) * roll);
 
                     if (!DamagePools.ContainsKey(key)) DamagePools[key] = 0;
                     DamagePools[key] += addedDamage;
 
-                    // 임계점 10,000을 넘으면 아이템 파괴 처리
                     int broken = DamagePools[key] / 10000;
                     if (broken > 0)
                     {
-                        broken = Math.Min(broken, amount); // 실제 가진 양보다 더 부서질 수 없음
-                        DamagePools[key] %= 10000; // 남은 피로도 이월
+                        broken = Math.Min(broken, amount); 
+                        DamagePools[key] %= 10000; 
 
-                        AlterWarehouseItem(key.ItemType, key.Resource, key.IsExceptional, -broken, -1);
+                        AlterWarehouseItem(key, -broken, -1);
                         Console.WriteLine($"[Wear&Tear] {HouseName} 가문의 {key.ItemType.Name}({key.Resource}) {broken}개가 낡거나 깨져서 버려졌습니다.");
                     }
                 }

@@ -62,38 +62,50 @@ namespace Server.Misc
         }
 
         public void DestroyEstate()
-		{
-			if (HouseData != null)
-			{
-				var chunk = VirtualHousingRegistry.Chunks.FirstOrDefault(c => c.Facet == this.Map && c.Bounds.Contains(new Point2D(this.X, this.Y)));
-				if (chunk != null) chunk.OccupiedLots.RemoveAll(lot => lot.HouseName == HouseData.HouseName);
-			}
+        {
+            if (HouseData != null)
+            {
+                var chunk = VirtualHousingRegistry.Chunks.FirstOrDefault(c => c.Facet == this.Map && c.Bounds.Contains(new Point2D(this.X, this.Y)));
+                if (chunk != null) chunk.OccupiedLots.RemoveAll(lot => lot.HouseName == HouseData.HouseName);
 
-			// 🌟 [안전 패치] ToList()를 사용하여 리스트를 복사한 뒤 삭제해야 루프 에러가 없습니다.
-			if (AttachedTiles != null)
-			{
-				var tiles = AttachedTiles.ToList();
-				foreach (var tile in tiles)
-				{
-					if (tile != null && !tile.Deleted)
-						tile.Delete();
-				}
-				AttachedTiles.Clear();
-			}
+                // 🌟 [핵심 패치 추가] 가옥 내부의 물리적 가구(PlacedFurniture)를 서버 세상에서 완전히 파기
+                if (HouseData.Interior != null && HouseData.Interior.PlacedFurniture != null)
+                {
+                    var furnitures = HouseData.Interior.PlacedFurniture.ToList();
+                    foreach (var furniture in furnitures)
+                    {
+                        if (furniture != null && !furniture.Deleted)
+                            furniture.Delete();
+                    }
+                    HouseData.Interior.PlacedFurniture.Clear();
+                }
+            }
 
-			if (AttachedDoors != null)
-			{
-				var doors = AttachedDoors.ToList();
-				foreach (var door in doors)
-				{
-					if (door != null && !door.Deleted)
-						door.Delete();
-				}
-				AttachedDoors.Clear();
-			}
+            // 🌟 [안전 패치] ToList()를 사용하여 리스트를 복사한 뒤 삭제해야 루프 에러가 없습니다.
+            if (AttachedTiles != null)
+            {
+                var tiles = AttachedTiles.ToList();
+                foreach (var tile in tiles)
+                {
+                    if (tile != null && !tile.Deleted)
+                        tile.Delete();
+                }
+                AttachedTiles.Clear();
+            }
 
-			this.Delete();
-		}
+            if (AttachedDoors != null)
+            {
+                var doors = AttachedDoors.ToList();
+                foreach (var door in doors)
+                {
+                    if (door != null && !door.Deleted)
+                        door.Delete();
+                }
+                AttachedDoors.Clear();
+            }
+
+            this.Delete();
+        }
 
         public override void Serialize(GenericWriter writer)
         {
@@ -121,7 +133,7 @@ namespace Server.Misc
                 AttachedDoors = reader.ReadStrongItemList<LockedDoor>();
             }
 
-            Timer.DelayCall(TimeSpan.FromSeconds(10.0), () => 
+            Timer.DelayCall(TimeSpan.Zero, () =>
             {
                 if (TownEconomyManager.Towns.TryGetValue(townID, out var town))
                 {
@@ -134,7 +146,39 @@ namespace Server.Misc
                         HouseData.EstateSign = this;
                         
                         if (!IsConstructionFinished && TownData != null) 
+                        {
                             ConstructionStarter.Resume(this);
+                        }
+                        else if (IsConstructionFinished) 
+                        {
+                            if (HouseData.Interior == null)
+                                HouseData.Interior = new VirtualHouseInterior(HouseData);
+                            
+                            int multiID = HouseData.MultiID;
+                            if (multiID <= 0)
+                            {
+                                Console.WriteLine($"[HousingSystem] '{HouseName}' 가옥의 MultiID가 유효하지 않아 3D 매트릭스 복구를 생략합니다.");
+                                return;
+                            }
+                            
+                            var components = MultiData.GetComponents(multiID).List.Select(t => ((int)t.m_ItemID, (int)t.m_OffsetX, (int)t.m_OffsetY, (int)t.m_OffsetZ)).ToArray();
+                            HouseData.Interior.GenerateMatrix(components);
+
+                            if (HouseData.Interior.PlacedFurniture == null)
+                                HouseData.Interior.PlacedFurniture = new List<Item>();
+                            else
+                                HouseData.Interior.PlacedFurniture.Clear();
+
+                            IPooledEnumerable eable = this.Map.GetItemsInRange(this.Location, 12);
+                            foreach (Item item in eable)
+                            {
+                                if (item is Container && !item.Deleted && !item.Movable)
+                                {
+                                    HouseData.Interior.PlacedFurniture.Add(item);
+                                }
+                            }
+                            eable.Free();
+                        }
                     }
                     else
                     {
@@ -329,7 +373,7 @@ namespace Server.Misc
             }
             
             _sign.HouseData.Interior.GenerateMatrix(_blueprint);
-            Console.WriteLine($"[HousingSystem] '{_sign.HouseData.HouseName}' 가문의 3D 인테리어 매트릭스 구축 완료!");
+			Console.WriteLine($"[HousingSystem] '{_sign.HouseData.HouseName}' 가문의 3D 인테리어 매트릭스 구축 완료! 위치: {_sign.Map} ({_sign.X}, {_sign.Y}, {_sign.Z})");
         }
     }
 
@@ -339,8 +383,10 @@ namespace Server.Misc
         {
             if (sign == null || sign.HouseData == null) return;
             int multiID = sign.HouseData.MultiID;
-            var components = (multiID <= 0) ? CustomBlueprintManager.TentBlueprint : 
-                             MultiData.GetComponents(multiID).List.Select(t => ((int)t.m_ItemID, (int)t.m_OffsetX, (int)t.m_OffsetY, (int)t.m_OffsetZ)).ToArray();
+            
+            if (multiID <= 0) return; // 텐트 및 비정상 ID 차단
+            
+            var components = MultiData.GetComponents(multiID).List.Select(t => ((int)t.m_ItemID, (int)t.m_OffsetX, (int)t.m_OffsetY, (int)t.m_OffsetZ)).ToArray();
             var sorted = components.OrderBy(t => t.Item4).ThenBy(t => t.Item2).ThenBy(t => t.Item3).Select(t => (t.Item1, t.Item2, t.Item3, t.Item4)).ToArray();
             new ConstructionTimer(sign, sorted).Start();
         }
@@ -423,7 +469,6 @@ namespace Server.Misc
             Height = MaxY - MinY + 1;
             FloorGrids.Clear();
 
-            // 1단계: 바닥(Surface) 타일이 밀집된 Z값을 찾아 '층(Floor)'으로 규정
             var zGroups = blueprint
                 .Where(t => 
                 {
@@ -436,13 +481,24 @@ namespace Server.Misc
                 .OrderBy(z => z)
                 .ToList();
 
-            foreach (int zLevel in zGroups)
+            // 🌟 [패치 1] 텐트처럼 도면에 바닥 타일이 없는 경우, 강제로 0층(맨땅)을 1(빈 공간)로 칠해줍니다.
+            if (zGroups.Count == 0)
             {
-                int[,] grid = new int[Width, Height];
-                FloorGrids[zLevel] = grid;
+                zGroups.Add(0);
+                int[,] fallbackGrid = new int[Width, Height];
+                for (int x = 0; x < Width; x++)
+                for (int y = 0; y < Height; y++)
+                    fallbackGrid[x, y] = 1;
+                FloorGrids[0] = fallbackGrid;
+            }
+            else
+            {
+                foreach (int zLevel in zGroups)
+                {
+                    FloorGrids[zLevel] = new int[Width, Height];
+                }
             }
 
-            // 2단계: 바닥 깔기 (1) 및 장애물/벽 덮어씌우기 (0)
             foreach (var tile in blueprint)
             {
                 int localX = tile.X - MinX;
@@ -454,18 +510,22 @@ namespace Server.Misc
                 
                 var grid = FloorGrids[targetZ];
 
-                if ((id.Flags & TileFlag.Surface) != 0 && (id.Flags & TileFlag.Impassable) == 0)
+                // 이미 1로 채워진 fallbackGrid가 아닐 때만 Surface 타일을 1로 마킹
+                if (zGroups.Count > 1 || grid[localX, localY] == 0)
                 {
-                    grid[localX, localY] = 1;
+                    if ((id.Flags & TileFlag.Surface) != 0 && (id.Flags & TileFlag.Impassable) == 0)
+                    {
+                        grid[localX, localY] = 1;
+                    }
                 }
                 
+                // 장애물, 벽, 문은 0으로 막아버림
                 if ((id.Flags & TileFlag.Wall) != 0 || (id.Flags & TileFlag.Impassable) != 0 || (id.Flags & TileFlag.Door) != 0)
                 {
                     grid[localX, localY] = 0;
                 }
             }
 
-            // 3단계: AI의 이동을 보장하기 위한 '동선(Path) 및 문/계단 앞 막힘 방지' 처리
             ProtectPathways(blueprint, zGroups);
         }
 

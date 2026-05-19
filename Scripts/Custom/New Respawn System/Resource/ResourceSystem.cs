@@ -6,6 +6,7 @@ using Server;
 using Server.Items;
 using Server.Regions;
 using Server.Mobiles;
+using Server.Spells; // 🌟 겹침/건물 내부 판별(SpellHelper)을 위해 추가
 
 namespace Server.Misc
 {
@@ -103,35 +104,22 @@ namespace Server.Misc
             string rName = RegionName.ToLower(); 
             string typeName = def.ItemType.Name.ToLower();
 
-            // 1. 구역 이름 기반 환경 플래그 설정
             bool isArctic = rName.Contains("ice") || rName.Contains("snow") || rName.Contains("winter") || rName.Contains("glacier") || rName.Contains("dagger");
             bool isVolcanic = rName.Contains("hythloth") || rName.Contains("fire") || rName.Contains("volcano") || rName.Contains("destard") || rName.Contains("doom") || rName.Contains("inferno");
             bool isSwamp = rName.Contains("swamp") || rName.Contains("bog") || rName.Contains("blight");
             bool isMystic = rName.Contains("spirit") || rName.Contains("wisp") || rName.Contains("blood") || Facet.MapID == 2 || Facet.MapID == 4;
             bool isDeep = rName.Contains("khaldun") || rName.Contains("abyss") || rName.Contains("deceit") || rName.Contains("covetous") || rName.Contains("underworld");
 
-            // 2. 자원 종류별 가중치 필터링
             if (Type == ResourceType.Mining)
             {
-                if (typeName.Contains("obsidian")) 
-                {
-                    if (isVolcanic) return weight * 20; 
-                    return 0; 
-                }
-                if (typeName.Contains("mithril"))
-                {
-                    if (isDeep || isMystic) return weight * 15; 
-                    return weight; 
-                }
+                if (typeName.Contains("obsidian")) return isVolcanic ? weight * 20 : 0; 
+                if (typeName.Contains("mithril")) return isDeep || isMystic ? weight * 15 : weight; 
             }
             else if (Type == ResourceType.Lumberjacking)
             {
                 if (typeName.Contains("frostwood")) return isArctic ? weight * 20 : 0;
                 if (typeName.Contains("ebony")) return isSwamp || isDeep ? weight * 20 : 0; 
-                
-                // 문자열 판별 수정 (spiritwood -> ethrnal)
                 if (typeName.Contains("ethrnal")) return isMystic ? weight * 20 : 0;     
-                
                 if (typeName.Contains("bloodwood")) return rName.Contains("blood") || isVolcanic ? weight * 15 : weight;
                 if (typeName.Contains("heartwood")) return isMystic ? weight * 15 : weight;
                 if (typeName.Contains("yew")) return rName.Contains("yew") ? weight * 15 : weight;
@@ -153,12 +141,9 @@ namespace Server.Misc
             var validDefs = ResourceManager.Defs[Type].Where(d => d.ReqLoc == LocationType.Normal || d.ReqLoc == LocType).ToList();
             if (validDefs.Count == 0) return;
 
-            // 1순위 광물(가장 흔한 것, 예: Iron, Log, Hides 등)은 무조건 포함
             AvailableResources[validDefs[0].ItemType] = 0;
             
-            // 추가로 등장할 자원 종류 수 (최대 2종)
             int extraTypesCount = Utility.RandomMinMax(0, 2); 
-            
             var localDefs = validDefs.Skip(1).Select(d => new Tuple<ResourceDef, int>(d, GetLocalWeight(d))).Where(t => t.Item2 > 0).ToList();
 
             for (int i = 0; i < extraTypesCount && localDefs.Count > 0; i++)
@@ -179,8 +164,7 @@ namespace Server.Misc
 
         public void Regenerate(int tickAmount)
         {
-            if (!NewSpawnManager.ActiveMaps.GetValueOrDefault(Facet, true)) 
-                return;
+            if (!NewSpawnManager.ActiveMaps.GetValueOrDefault(Facet, true)) return;
 
             ActiveMonsters.RemoveAll(m => m == null || m.Deleted || !m.Alive);
 
@@ -248,8 +232,16 @@ namespace Server.Misc
             }
         }
 
+        // 🌟 [핵심 픽스] 마을 차단 & 산꼭대기/겹침 방지 스폰 탐색 로직 적용
         private void SpawnOreElementals(int totalElementals)
         {
+            // 🌟 던전 및 마을 구역에는 광물 정령 절대 스폰 불가
+            if (RegionName.IndexOf("Town", StringComparison.OrdinalIgnoreCase) >= 0 || 
+                RegionName.IndexOf("City", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                RegionName.IndexOf("Dungeon", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                RegionName.IndexOf("Cave", StringComparison.OrdinalIgnoreCase) >= 0)
+                return;
+
             if (AvailableResources.Count == 0 || totalElementals <= 0) return;
 
             int totalOre = AvailableResources.Values.Sum();
@@ -268,30 +260,59 @@ namespace Server.Misc
                     string eleName = oreType.Name.Replace("Ore", "Elemental"); 
                     Type eleType = ScriptCompiler.FindTypeByName(eleName);
                     
-                    if (eleType != null && typeof(IOreElemental).IsAssignableFrom(eleType))
+                    if (eleType != null && typeof(BaseCreature).IsAssignableFrom(eleType))
                     {
                         try
                         {
                             BaseCreature elemental = (BaseCreature)Activator.CreateInstance(eleType);
                             
+                            if (CenterX == 0 && CenterY == 0) 
+                            { 
+                                elemental.Delete(); 
+                                continue; 
+                            }
+                            
                             int range = 6;
-                            int rx = CenterX + Utility.RandomMinMax(-range, range);
-                            int ry = CenterY + Utility.RandomMinMax(-range, range);
-                            int rz = Facet.GetAverageZ(rx, ry);
+                            Point3D? safeLoc = null;
 
-                            if (!Facet.CanSpawnMobile(rx, ry, rz))
+                            // 🌟 2. 겹침 방지: 반경 내에서 이동 가능한 빈 땅(15회 탐색)
+                            for (int attempt = 0; attempt < 15; attempt++)
                             {
-                                rx = CenterX;
-                                ry = CenterY;
-                                rz = Facet.GetAverageZ(CenterX, CenterY);
+                                int rx = CenterX + Utility.RandomMinMax(-range, range);
+                                int ry = CenterY + Utility.RandomMinMax(-range, range);
+                                int rz = Facet.GetAverageZ(rx, ry);
+                                Point3D testLoc = new Point3D(rx, ry, rz);
+
+                                if (Facet.CanSpawnMobile(rx, ry, rz))
+                                {
+                                    // 해당 타일에 다른 모바일이 있는지 검사 (탑 쌓기 방지)
+                                    bool isCrowded = false;
+                                    IPooledEnumerable eable = Facet.GetMobilesInRange(testLoc, 0);
+                                    foreach (Mobile m in eable) { isCrowded = true; break; }
+                                    eable.Free();
+
+                                    if (!isCrowded)
+                                    {
+                                        safeLoc = testLoc;
+                                        break;
+                                    }
+                                }
                             }
 
-                            elemental.MoveToWorld(new Point3D(rx, ry, rz), Facet);
+                            // 15번 시도해도 빈 땅이 없으면 겹치지 않게 중앙에서 약간 퍼트려서 강제 스폰
+                            if (!safeLoc.HasValue)
+                            {
+                                int rx = CenterX + Utility.RandomMinMax(-2, 2);
+                                int ry = CenterY + Utility.RandomMinMax(-2, 2);
+                                safeLoc = new Point3D(rx, ry, Facet.GetAverageZ(rx, ry));
+                            }
+
+                            elemental.MoveToWorld(safeLoc.Value, Facet);
                             ActiveMonsters.Add(elemental); 
                             
-                            elemental.Home = new Point3D(CenterX, CenterY, Facet.GetAverageZ(CenterX, CenterY));
+                            // 집을 자신이 스폰된 위치로 지정하여 0,0 좌표로 도망가는 것 방지
+                            elemental.Home = safeLoc.Value;
                             elemental.RangeHome = 10;
-
                         }
                         catch { }
                     }
@@ -352,18 +373,17 @@ namespace Server.Misc
         public static List<ResourcePool> PoolList { get; private set; } = new(); 
         public static Dictionary<ResourceType, List<ResourceDef>> Defs { get; private set; } = new();
 
-        // 🌟 [핵심 패치 1] 고티어 자원을 위해 Skill 200까지 확률 템플릿(Tiers) 대폭 확장!
         private readonly record struct TierTemplate(double Min, double Max, int Weight);
         private static readonly TierTemplate[] m_Tiers = {
-            new(0.0, 50.0, 500),      // Tier 1: Iron, Log, Hides (흔함)
-            new(20.0, 70.0, 200),     // Tier 2: Copper, Oak, Spined
-            new(40.0, 90.0, 100),     // Tier 3: Bronze, Ash, Horned
-            new(60.0, 110.0, 50),     // Tier 4: Gold, Yew, Barbed
-            new(80.0, 130.0, 25),     // Tier 5: Agapite, Heartwood
-            new(100.0, 150.0, 10),    // Tier 6: Verite, Bloodwood
-            new(120.0, 170.0, 5),     // Tier 7: Valorite, Frostwood
-            new(150.0, 190.0, 2),     // 🌟 Tier 8: Mithril, 극지가죽, 칠흑나무 (희귀)
-            new(170.0, 200.0, 1)      // 🌟 Tier 9: Obsidian, 심연가죽, 영목나무 (초희귀)
+            new(0.0, 50.0, 500),      
+            new(20.0, 70.0, 200),     
+            new(40.0, 90.0, 100),     
+            new(60.0, 110.0, 50),     
+            new(80.0, 130.0, 25),     
+            new(100.0, 150.0, 10),    
+            new(120.0, 170.0, 5),     
+            new(150.0, 190.0, 2),     
+            new(170.0, 200.0, 1)      
         };
 
         private static readonly int[] m_WaterTiles = new int[] { 0x00A8, 0x00AB, 0x0136, 0x0137 };
@@ -426,10 +446,16 @@ namespace Server.Misc
             }
         }
 
+        // 🌟 [심해수 픽스] 심해수들도 마을 근처엔 스폰 차단 & 겹침 방지
         private static void SpawnTieredPredator(ResourcePool pool)
         {
             try
             {
+                // 마을(Town) 지역에는 바다 몬스터 스폰 원천 차단
+                if (pool.RegionName.IndexOf("Town", StringComparison.OrdinalIgnoreCase) >= 0 || 
+                    pool.RegionName.IndexOf("City", StringComparison.OrdinalIgnoreCase) >= 0)
+                    return;
+
                 int size = pool.WType == WaterType.Ocean ? 256 : 192;
                 int serpents = 0, deepSerpents = 0, krakens = 0;
                 List<Mobile> currentMonsters = new List<Mobile>();
@@ -458,13 +484,23 @@ namespace Server.Misc
 
                 if (spawnType != null)
                 {
-                    Point3D spawnLoc = new Point3D(pool.CenterX, pool.CenterY, pool.Facet.GetAverageZ(pool.CenterX, pool.CenterY));
-                    bool isWater = ValidateDeepWater(pool.Facet, pool.CenterX, pool.CenterY);
+                    Point3D? safeSpawnLoc = null;
+                    // 물 위에서도 겹침 방지를 위해 오프셋을 주며 유효한 물 타일 검색
+                    for (int i = 0; i < 15; i++)
+                    {
+                        int rx = pool.CenterX + Utility.RandomMinMax(-8, 8);
+                        int ry = pool.CenterY + Utility.RandomMinMax(-8, 8);
+                        if (ValidateDeepWater(pool.Facet, rx, ry))
+                        {
+                            safeSpawnLoc = new Point3D(rx, ry, pool.Facet.GetAverageZ(rx, ry));
+                            break;
+                        }
+                    }
 
-                    if (isWater)
+                    if (safeSpawnLoc.HasValue)
                     {
                         BaseCreature monster = (BaseCreature)Activator.CreateInstance(spawnType);
-                        monster.MoveToWorld(spawnLoc, pool.Facet);
+                        monster.MoveToWorld(safeSpawnLoc.Value, pool.Facet);
                         pool.ActiveMonsters.Add(monster); 
                         pool.CurrentCapacity = Math.Max(0, pool.CurrentCapacity - (pool.MaxCapacity / 5));
                     }
@@ -473,44 +509,39 @@ namespace Server.Misc
             catch { }
         }
 
-        // 🌟 [핵심 패치 2] 신규 고티어 자원을 배열 끝부분에 추가 매핑
         private static void SetupDefinitions()
         {
-            // 1. 광물 (Mining) - 9티어 구성
             Defs[ResourceType.Mining] = BuildDefs(new[] 
             { 
                 typeof(IronOre), typeof(CopperOre), typeof(BronzeOre), typeof(GoldOre), 
                 typeof(AgapiteOre), typeof(VeriteOre), typeof(ValoriteOre), 
-                typeof(MithrilOre),
-                typeof(ObsidianOre)
+                typeof(MithrilOre), typeof(ObsidianOre)
             }, LocationType.Mine, 4);
 
-            // 2. 벌목 (Lumberjacking) - 9티어 구성 (SpiritwoodLog -> EthrnalLog 수정)
             Defs[ResourceType.Lumberjacking] = BuildDefs(new[] 
             { 
                 typeof(Log), typeof(OakLog), typeof(AshLog), typeof(YewLog), 
                 typeof(HeartwoodLog), typeof(BloodwoodLog), typeof(FrostwoodLog), 
-                typeof(EbonyLog),      
-                typeof(EthrnalLog)     // 여기서 클래스명 수정됨
+                typeof(EbonyLog), typeof(EthrnalLog)
             }, LocationType.Forest, 4);
 
-            // 3. 가죽 채집 (Tanning) - 5티어 구성
             Defs[ResourceType.Tanning] = BuildDefs(new[] 
             { 
-                typeof(Hides),         
-                typeof(SpinedHides),   
-                typeof(HornedHides),   
-                typeof(BarbedHides),   
-                typeof(PolarHides),    
-                typeof(AbyssalHides)   
+                typeof(Hides), typeof(SpinedHides), typeof(HornedHides),   
+                typeof(BarbedHides), typeof(PolarHides), typeof(AbyssalHides)   
             }, LocationType.Normal, 0);
 
-            // 4. 낚시 (유지)
             Defs[ResourceType.Fishing] = BuildDefs(new[] 
             { 
                 typeof(Fish), typeof(Fish), typeof(Fish), typeof(Fish), 
                 typeof(Fish), typeof(BigFish), typeof(BigFish) 
             }, LocationType.DeepSea, 5);
+
+            Defs[ResourceType.Farming] = BuildDefs(new[] 
+            { 
+                typeof(WheatSheaf), typeof(Carrot), typeof(Onion), typeof(Cabbage), 
+                typeof(Lettuce), typeof(Pumpkin), typeof(EarOfCorn) 
+            }, LocationType.Normal, 0);
         }
 
         private static List<ResourceDef> BuildDefs(Type[] types, LocationType specialLoc, int specialStartIndex)
@@ -523,10 +554,10 @@ namespace Server.Misc
             return list;
         }
 
-        public static void RegisterLandPool(Map map, string regionName, RegionCode code, ResourceType type, LocationType loc, int max, int size, bool isPrivate = false)
+        public static void RegisterLandPool(Map map, string regionName, RegionCode code, int cx, int cy, ResourceType type, LocationType loc, int max, int size, bool isPrivate = false)
         {
             ResourceKey key = new(map.Name, regionName, type);
-            if (!Pools.ContainsKey(key)) Pools[key] = new ResourcePool(map.Name, regionName, map, code, 0, 0, WaterType.River, type, loc, max, size, isPrivate);
+            if (!Pools.ContainsKey(key)) Pools[key] = new ResourcePool(map.Name, regionName, map, code, cx, cy, WaterType.River, type, loc, max, size, isPrivate);
         }
 
         public static void RegisterWaterPool(Map map, string regionName, int cx, int cy, WaterType wType, ResourceType type, LocationType loc, int max, int size)
@@ -541,16 +572,48 @@ namespace Server.Misc
             {
                 if (r.Map == null || r.Map == Map.Internal || string.IsNullOrEmpty(r.Name)) continue;
                 
-                RegionCode code = RegionSaver.GetRegionCode(r.Map, r.Area[0].Start.X, r.Area[0].Start.Y, 0);
                 string lowerName = r.Name.ToLower();
-                bool isPrivate = lowerName.Contains("house") || lowerName.Contains("private");
-                if (lowerName.Contains("farm") || lowerName.Contains("dungeon")) continue;
-
-                LocationType locType = lowerName.Contains("cave") ? LocationType.Mine : LocationType.Forest;
-                int baseCap = 1000, sizeCat = 1;
                 
-                if (locType == LocationType.Mine) RegisterLandPool(r.Map, r.Name, code, ResourceType.Mining, locType, baseCap, sizeCat, isPrivate);
-                else RegisterLandPool(r.Map, r.Name, code, ResourceType.Lumberjacking, locType, baseCap, sizeCat, isPrivate);
+                if (r is Server.Regions.HouseRegion || lowerName.Contains("house") || lowerName.Contains("private") || lowerName.Contains("dungeon")) 
+                {
+                    continue; 
+                }
+
+                RegionCode code = RegionSaver.GetRegionCode(r.Map, r.Area[0].Start.X, r.Area[0].Start.Y, 0);
+                int cx = r.Area[0].Start.X + (r.Area[0].Width / 2);
+                int cy = r.Area[0].Start.Y + (r.Area[0].Height / 2);
+
+                int landID = r.Map.Tiles.GetLandTile(cx, cy).ID & 0x3FFF;
+                bool isFarmTile = (landID >= 0x0009 && landID <= 0x0015) || (landID >= 0x0150 && landID <= 0x015C);
+                bool isFarmName = lowerName.Contains("wheatfield") || lowerName.Contains("carrot field") || 
+                                  lowerName.Contains("cabbage field") || lowerName.Contains("onion field") || 
+                                  lowerName.Contains("cotton field") || lowerName.Contains("farm in") || 
+                                  lowerName.Contains("haven farm");
+
+                if (isFarmTile || isFarmName)
+                {
+                    RegisterLandPool(r.Map, r.Name, code, cx, cy, ResourceType.Farming, LocationType.Normal, 1000, 1, false);
+                    continue; 
+                }
+
+                bool isWaterName = lowerName.Contains("lake") || lowerName.Contains("sea") || 
+                                   lowerName.Contains("ocean") || lowerName.Contains("river") || 
+                                   lowerName.Contains("dock") || lowerName.Contains("water") || 
+                                   lowerName.Contains("bay") || lowerName.Contains("coast");
+
+                if (isWaterName)
+                {
+                    RegisterLandPool(r.Map, r.Name, code, cx, cy, ResourceType.Fishing, LocationType.DeepSea, 1000, 1, false);
+                    continue;
+                }
+
+                if (lowerName.Contains("cave") || lowerName.Contains("mine") || lowerName.Contains("mountain"))
+                {
+                    RegisterLandPool(r.Map, r.Name, code, cx, cy, ResourceType.Mining, LocationType.Mine, 1000, 1, false);
+                    continue;
+                }
+
+                RegisterLandPool(r.Map, r.Name, code, cx, cy, ResourceType.Lumberjacking, LocationType.Forest, 1000, 1, false);
             }
         }
 
@@ -562,10 +625,10 @@ namespace Server.Misc
                 if (data.Code == RegionCode.None) continue;
                 string rName = data.Code.ToString();
                 
-                if (data.OreCap > 0) RegisterLandPool(kvp.Key.Facet, rName, data.Code, ResourceType.Mining, LocationType.Mine, data.OreCap, 2);
-                if (data.WoodCap > 0) RegisterLandPool(kvp.Key.Facet, rName, data.Code, ResourceType.Lumberjacking, LocationType.Forest, data.WoodCap, 2);
-                // 🌟 가죽 자원 풀 추가 등록!
-                if (data.TanCap > 0) RegisterLandPool(kvp.Key.Facet, rName, data.Code, ResourceType.Tanning, LocationType.Normal, data.TanCap, 2);
+                if (data.OreCap > 0) RegisterLandPool(kvp.Key.Facet, rName, data.Code, data.CenterX, data.CenterY, ResourceType.Mining, LocationType.Mine, data.OreCap, 2);
+                if (data.WoodCap > 0) RegisterLandPool(kvp.Key.Facet, rName, data.Code, data.CenterX, data.CenterY, ResourceType.Lumberjacking, LocationType.Forest, data.WoodCap, 2);
+                if (data.TanCap > 0) RegisterLandPool(kvp.Key.Facet, rName, data.Code, data.CenterX, data.CenterY, ResourceType.Tanning, LocationType.Normal, data.TanCap, 2);
+                if (data.FarmCap > 0) RegisterLandPool(kvp.Key.Facet, rName, data.Code, data.CenterX, data.CenterY, ResourceType.Farming, LocationType.Normal, data.FarmCap, 2);
             }
         }
 

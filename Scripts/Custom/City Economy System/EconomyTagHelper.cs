@@ -24,7 +24,8 @@ namespace Server.Misc
                 return GetDefaultType(tag);
 
             // 1. 마을 창고에서 해당 태그에 맞는 모든 아이템 타입을 추출
-            List<Type> candidates = town.Warehouse.Keys
+				List<Type> candidates = town.Warehouse.Keys
+                .Select(k => k.ItemType) // 👈 창고 키들 중에서 'Type'만 쏙 뽑아냅니다.
                 .Where(t => GetItemTag(t) == tag)
                 .ToList();
 

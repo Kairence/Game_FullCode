@@ -186,9 +186,10 @@ namespace Server.Misc
 				}
 				else 
 				{
-					Console.WriteLine($"[VendorNode Error] '{typeName}' 타입을 찾을 수 없습니다.");
-					break;
-				} 
+					Console.WriteLine($"[VendorNode Error] '{typeName}' 타입을 찾을 수 없으므로 명단에서 자동 삭제합니다.");
+					SpawnTypes.Remove(typeName); // 서버에 없는 타입이면 노드의 소환 명단에서 아예 지워버림
+					continue; // break 하지 않고 명단에 남은 다른 애들이라도 소환하도록 계속 진행
+				}
 			}
 		}
         public override void OnDelete()
@@ -206,6 +207,17 @@ namespace Server.Misc
             }
             base.OnDelete();
         }
+
+		public int ClearSpawnedVenders()
+		{
+			int count = m_Spawned.Count;
+			for (int i = m_Spawned.Count - 1; i >= 0; i--)
+			{
+				if (!m_Spawned[i].Deleted) m_Spawned[i].Delete();
+			}
+			m_Spawned.Clear();
+			return count;
+		}
 
         public VendorNode(Serial serial) : base(serial) { }
 
@@ -266,6 +278,7 @@ namespace Server.Misc
             }
             protected override void OnTick()
             {
+				if (m_Node == null || m_Node.Deleted || !NewSpawnManager.IsMapActive(m_Node.Map)) return;
                 if (m_Node != null && !m_Node.Deleted) m_Node.DoTimerTick();
             }
         }

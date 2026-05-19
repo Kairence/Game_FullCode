@@ -1,0 +1,29 @@
+<NodeRegistry>
+  <DungeonNode Depth="1" X="181" Y="588" Z="45" Range="40" RCode="520100" />
+  <VendorNode TownID="469" MaxCount="4" Spawns="evilmage" X="773" Y="229" Z="64" Range="30" RCode="0" />
+  <DungeonNode Depth="1" X="159" Y="688" Z="24" Range="40" RCode="520100" />
+  <VendorNode TownID="401" MaxCount="3" Spawns="butcher,cook" X="703" Y="1262" Z="25" Range="10" RCode="510100" />
+  <VendorNode TownID="469" MaxCount="4" Spawns="evilmage,evilmagelord" X="769" Y="152" Z="12" Range="30" RCode="0" />
+  <DungeonNode Depth="1" X="58" Y="104" Z="0" Range="30" RCode="520200" />
+  <VendorNode TownID="469" MaxCount="4" Spawns="evilmage" X="899" Y="271" Z="34" Range="30" RCode="0" />
+  <VendorNode TownID="469" MaxCount="4" Spawns="evilmage,fandancer" X="824" Y="280" Z="33" Range="30" RCode="0" />
+  <VendorNode TownID="469" MaxCount="4" Spawns="evilmage" X="725" Y="246" Z="36" Range="30" RCode="0" />
+  <VendorNode TownID="469" MaxCount="4" Spawns="evilmage" X="789" Y="276" Z="56" Range="40" RCode="0" />
+  <VendorNode TownID="469" MaxCount="4" Spawns="evilmage,evilmagelord" X="873" Y="326" Z="37" Range="40" RCode="0" />
+  <VendorNode TownID="469" MaxCount="8" Spawns="skeletalknight,revenantlion,boneknight,skeletalmage,skeleton" X="180" Y="586" Z="45" Range="30" RCode="520100" />
+  <DungeonNode Depth="1" X="186" Y="534" Z="41" Range="40" RCode="520100" />
+  <VendorNode TownID="401" MaxCount="2" Spawns="weaponsmith" X="749" Y="1303" Z="25" Range="4" RCode="510100" />
+  <VendorNode TownID="469" MaxCount="8" Spawns="skeletalknight,revenantlion,boneknight,skeletalmage,skeleton" X="157" Y="685" Z="25" Range="30" RCode="520100" />
+  <VendorNode TownID="469" MaxCount="8" Spawns="bonemagi,revenantlion,skeletalmage" X="1120" Y="1099" Z="25" Range="30" RCode="0" />
+  <VendorNode TownID="469" MaxCount="8" Spawns="boneknight,skeletalknight,skeletalmage,bonemagi" X="1321" Y="619" Z="38" Range="30" RCode="0" />
+  <VendorNode TownID="469" MaxCount="4" Spawns="evilmage" X="798" Y="377" Z="25" Range="40" RCode="0" />
+  <VendorNode TownID="469" MaxCount="8" Spawns="skeletalknight,revenantlion,boneknight,skeletalmage,skeleton" X="123" Y="647" Z="36" Range="30" RCode="520100" />
+  <DungeonNode Depth="1" X="166" Y="583" Z="49" Range="40" RCode="520100" />
+  <DungeonNode Depth="1" X="124" Y="646" Z="37" Range="40" RCode="520100" />
+  <VendorNode TownID="469" MaxCount="4" Spawns="evilmage,fandancer" X="819" Y="208" Z="38" Range="30" RCode="0" />
+  <VendorNode TownID="469" MaxCount="4" Spawns="evilmage" X="765" Y="189" Z="42" Range="30" RCode="0" />
+  <VendorNode TownID="401" MaxCount="3" Spawns="fisherguildmaster,Shipwright" X="716" Y="1350" Z="25" Range="5" RCode="510100" />
+  <VendorNode TownID="469" MaxCount="8" Spawns="skeletalknight,revenantlion,boneknight,skeletalmage,skeleton" X="212" Y="646" Z="31" Range="30" RCode="0" />
+  <VendorNode TownID="469" MaxCount="6" Spawns="evilmage,evilmagelord,fandancer" X="841" Y="326" Z="32" Range="40" RCode="0" />
+  <DungeonNode Depth="1" X="208" Y="641" Z="36" Range="40" RCode="520100" />
+</NodeRegistry>

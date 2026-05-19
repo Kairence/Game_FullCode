@@ -1,0 +1,192 @@
+<Dungeons>
+  <Zone RCode="120100" IsActive="False" TargetHeat="80000" MaxPop="0" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="120201" IsActive="True" TargetHeat="110000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.GiantTurkey" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5376" Y="1840" W="135" H="104" />
+  </Zone>
+  <Zone RCode="120202" IsActive="True" TargetHeat="600000" MaxPop="100" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.GiantDreadSpider" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5376" Y="1952" W="257" H="96" />
+  </Zone>
+  <Zone RCode="120203" IsActive="True" TargetHeat="2500000" MaxPop="80" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.Lilith" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5533" Y="1822" W="97" H="103" />
+  </Zone>
+  <Zone RCode="120204" IsActive="True" TargetHeat="1000000" MaxPop="25" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5395" Y="1790" W="93" H="45" />
+  </Zone>
+  <Zone RCode="120205" IsActive="True" TargetHeat="1500000" MaxPop="15" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5497" Y="1798" W="58" H="20" />
+  </Zone>
+  <Zone RCode="120301" IsActive="True" TargetHeat="1125000" MaxPop="150" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.SkeletalMount" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5120" Y="512" W="127" H="127" />
+  </Zone>
+  <Zone RCode="120302" IsActive="True" TargetHeat="1875000" MaxPop="150" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.BoneDemon" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5248" Y="512" W="127" H="127" />
+  </Zone>
+  <Zone RCode="120303" IsActive="True" TargetHeat="3150000" MaxPop="150" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.AncientLich" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5120" Y="640" W="127" H="127" />
+  </Zone>
+  <Zone RCode="120304" IsActive="True" TargetHeat="4050000" MaxPop="150" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="600" BossType="Server.Mobiles.SkeletalDragon" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5248" Y="640" W="127" H="127" />
+  </Zone>
+  <Zone RCode="120402" IsActive="True" TargetHeat="90000" MaxPop="70" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.Reaper" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5376" Y="512" W="139" H="124" />
+  </Zone>
+  <Zone RCode="120403" IsActive="True" TargetHeat="500000" MaxPop="80" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.BloodWorm" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5376" Y="650" W="159" H="116" />
+  </Zone>
+  <Zone RCode="120404" IsActive="True" TargetHeat="1500000" MaxPop="100" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.OgreLord" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5376" Y="770" W="255" H="253" />
+  </Zone>
+  <Zone RCode="120501" IsActive="True" TargetHeat="2500000" MaxPop="50" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5120" Y="768" W="127" H="127" />
+  </Zone>
+  <Zone RCode="120502" IsActive="True" TargetHeat="5500000" MaxPop="25" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5248" Y="768" W="127" H="127" />
+  </Zone>
+  <Zone RCode="120503" IsActive="True" TargetHeat="7500000" MaxPop="50" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="720" BossType="Server.Mobiles.AncientWyrm" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5120" Y="896" W="255" H="127" />
+  </Zone>
+  <Zone RCode="120601" IsActive="True" TargetHeat="250000" MaxPop="100" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5888" Y="0" W="127" H="127" />
+  </Zone>
+  <Zone RCode="120602" IsActive="True" TargetHeat="3000000" MaxPop="100" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="6016" Y="0" W="127" H="127" />
+  </Zone>
+  <Zone RCode="120603" IsActive="True" TargetHeat="4500000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5888" Y="128" W="127" H="127" />
+  </Zone>
+  <Zone RCode="120604" IsActive="True" TargetHeat="5500000" MaxPop="5" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="720" BossType="Server.Mobiles.Balron" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="6016" Y="128" W="127" H="127" />
+  </Zone>
+  <Zone RCode="120701" IsActive="True" TargetHeat="700000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.EttinLord" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5376" Y="0" W="119" H="127" />
+  </Zone>
+  <Zone RCode="120702" IsActive="True" TargetHeat="900000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5496" Y="0" W="135" H="127" />
+  </Zone>
+  <Zone RCode="120703" IsActive="True" TargetHeat="2600000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.Beholder" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5376" Y="128" W="255" H="127" />
+  </Zone>
+  <Zone RCode="120704" IsActive="True" TargetHeat="6000000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="600" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5632" Y="0" W="255" H="127" />
+  </Zone>
+  <Zone RCode="120801" IsActive="True" TargetHeat="1125000" MaxPop="80" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5632" Y="512" W="255" H="108" />
+  </Zone>
+  <Zone RCode="120802" IsActive="True" TargetHeat="1875000" MaxPop="60" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.GolemLord" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5658" Y="594" W="60" H="60" />
+  </Zone>
+  <Zone RCode="120803" IsActive="True" TargetHeat="3375000" MaxPop="100" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.JukaLord" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5632" Y="721" W="255" H="302" />
+  </Zone>
+  <Zone RCode="120900" IsActive="True" TargetHeat="150000" MaxPop="0" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" BossType="Server.Mobiles.AcidElemental" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="121000" IsActive="True" TargetHeat="750000" MaxPop="150" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5120" Y="1530" W="361" H="1637" />
+  </Zone>
+  <Zone RCode="121102" IsActive="True" TargetHeat="750000" MaxPop="90" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="121103" IsActive="True" TargetHeat="3500000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="121202" IsActive="True" TargetHeat="750000" MaxPop="100" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="121203" IsActive="True" TargetHeat="225000" MaxPop="30" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="121204" IsActive="True" TargetHeat="3375000" MaxPop="8" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="121301" IsActive="True" TargetHeat="300000" MaxPop="10" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.BogThing" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5097" Y="1912" W="60" H="30" />
+  </Zone>
+  <Zone RCode="121302" IsActive="True" TargetHeat="675000" MaxPop="70" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5261" Y="1254" W="100" H="120" />
+  </Zone>
+  <Zone RCode="121303" IsActive="True" TargetHeat="3000000" MaxPop="10" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.OrcBrute" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5250" Y="1932" W="100" H="100" />
+  </Zone>
+  <Zone RCode="121400" IsActive="False" TargetHeat="375000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="6240" Y="860" W="70" H="60" />
+  </Zone>
+  <Zone RCode="121500" IsActive="False" TargetHeat="2250000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="720" BossType="Server.Mobiles.ChiefParoxysmus" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="5620" Y="311" W="941" H="2731" />
+  </Zone>
+  <Zone RCode="121600" IsActive="False" TargetHeat="600000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="600" BossType="Server.Mobiles.ShimmeringEffusion" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="6400" Y="0" W="221" H="255" />
+  </Zone>
+  <Zone RCode="121700" IsActive="False" TargetHeat="450000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.Succubus" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False">
+    <Bounds X="759" Y="4" W="5640" H="1693" />
+  </Zone>
+  <Zone RCode="121801" IsActive="True" TargetHeat="750000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.RedSolenQueen" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="121802" IsActive="True" TargetHeat="600000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.BlackSolenQueen" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="121804" IsActive="True" TargetHeat="600000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.RedSolenQueen" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="121806" IsActive="True" TargetHeat="225000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220101" IsActive="False" TargetHeat="85000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220200" IsActive="True" TargetHeat="25000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220201" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.Harpy" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220202" IsActive="True" TargetHeat="55000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.Gazer" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220203" IsActive="True" TargetHeat="85000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.ElderGazer" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220204" IsActive="False" TargetHeat="65000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.WaterElemental" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220205" IsActive="False" TargetHeat="75000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.Executioner" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220300" IsActive="True" TargetHeat="25000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220301" IsActive="True" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.SkeletalKnight" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220302" IsActive="True" TargetHeat="65000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.Lich" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220303" IsActive="True" TargetHeat="85000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.LichLord" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220304" IsActive="True" TargetHeat="130000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="600" BossType="Server.Mobiles.SilverSerpent" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220400" IsActive="True" TargetHeat="25000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220401" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.EarthElemental" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220402" IsActive="True" TargetHeat="55000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.OgreLord" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220403" IsActive="True" TargetHeat="85000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.Titan" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220500" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220501" IsActive="True" TargetHeat="75000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.Wyvern" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220502" IsActive="True" TargetHeat="110000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.Dragon" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220503" IsActive="True" TargetHeat="160000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="720" BossType="Server.Mobiles.AncientWyrm" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220600" IsActive="True" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220601" IsActive="True" TargetHeat="65000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.HellHound" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220602" IsActive="True" TargetHeat="85000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.Daemon" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220603" IsActive="True" TargetHeat="110000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="600" BossType="Server.Mobiles.Balron" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220604" IsActive="True" TargetHeat="160000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="720" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220700" IsActive="True" TargetHeat="25000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220701" IsActive="True" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.EarthElemental" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220702" IsActive="True" TargetHeat="65000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.AirElemental" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220703" IsActive="True" TargetHeat="85000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.PoisonElemental" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220704" IsActive="True" TargetHeat="110000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="600" BossType="Server.Mobiles.BloodElemental" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220800" IsActive="True" TargetHeat="25000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220801" IsActive="True" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.Executioner" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220802" IsActive="True" TargetHeat="65000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.JukaMage" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220803" IsActive="True" TargetHeat="85000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.JukaLord" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220900" IsActive="True" TargetHeat="1500000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220901" IsActive="True" TargetHeat="110000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.ShadowKnight" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="220902" IsActive="False" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221000" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221001" IsActive="False" TargetHeat="55000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="300" BossType="Server.Mobiles.TerathanWarrior" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221002" IsActive="True" TargetHeat="85000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.TerathanAvenger" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221003" IsActive="True" TargetHeat="130000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="720" BossType="Server.Mobiles.TerathanMatriarch" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221100" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221101" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221102" IsActive="True" TargetHeat="65000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.FireElemental" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221103" IsActive="True" TargetHeat="110000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.Efreet" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221200" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221201" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221202" IsActive="True" TargetHeat="65000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.SnowElemental" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221203" IsActive="True" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.RatmanMage" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221204" IsActive="True" TargetHeat="110000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.IceFiend" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221300" IsActive="True" TargetHeat="25000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221301" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.OrcCaptain" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221302" IsActive="True" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.OrcBrute" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221303" IsActive="True" TargetHeat="55000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221400" IsActive="True" TargetHeat="85000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.Troglodyte" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221500" IsActive="True" TargetHeat="160000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="720" BossType="Server.Mobiles.ChiefParoxysmus" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221600" IsActive="True" TargetHeat="130000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="600" BossType="Server.Mobiles.ShimmeringEffusion" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221700" IsActive="True" TargetHeat="110000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.Succubus" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221800" IsActive="True" TargetHeat="85000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.BlackSolenQueen" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221801" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221802" IsActive="True" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.BlackSolenWarrior" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221803" IsActive="True" TargetHeat="55000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.BlackSolenQueen" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221804" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221805" IsActive="True" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.BlackSolenWarrior" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221806" IsActive="True" TargetHeat="55000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.BlackSolenQueen" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221807" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221808" IsActive="True" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.BlackSolenWarrior" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221809" IsActive="True" TargetHeat="55000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.BlackSolenQueen" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221810" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221811" IsActive="True" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.BlackSolenWarrior" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221812" IsActive="True" TargetHeat="55000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.BlackSolenQueen" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221813" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221901" IsActive="True" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.Executioner" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221902" IsActive="True" TargetHeat="65000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.Daemon" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221903" IsActive="True" TargetHeat="110000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="600" BossType="Server.Mobiles.OphidianMatriarch" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221904" IsActive="True" TargetHeat="65000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.BloodElemental" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+  <Zone RCode="221905" IsActive="True" TargetHeat="85000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.LichLord" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" />
+</Dungeons>

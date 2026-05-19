@@ -58,7 +58,7 @@ namespace Server.Misc
         public int Stress { get; set; } 
         public double PrimarySkill { get; set; }
 
-        protected Dictionary<Type, int> m_EquipmentUses = new Dictionary<Type, int>();
+        protected Dictionary<EconomyItemKey, int> m_EquipmentUses = new Dictionary<EconomyItemKey, int>();
 
         public VirtualAgent(NpcJobClass job, NpcRank rank) 
         { 
@@ -191,11 +191,11 @@ namespace Server.Misc
             else this.Stress = Math.Max(0, this.Stress - Utility.RandomMinMax(1, 2));
         }
 
-        protected int GetEffectivePrice(TownEconomy town, Type itemType)
+        protected int GetEffectivePrice(TownEconomy town, EconomyItemKey itemKey)
         {
             Type[] baseResources = [typeof(IronOre), typeof(Log), typeof(Hides), typeof(RawFishSteak), typeof(Fish), typeof(IronIngot), typeof(Board), typeof(Leather)];
-            if (baseResources.Contains(itemType)) return 10;
-            return Math.Max(1, town.GetPrice(itemType));
+            if (baseResources.Contains(itemKey.ItemType)) return 10;
+            return Math.Max(1, town.GetPrice(itemKey)); // town.GetPrice도 나중에 Key를 받도록 수정할 예정
         }
 
 		// 🌟 유저님 전용 커스텀 광물 티어 반영 (초반 생략, 후반 미스릴/흑요석 확장)
@@ -216,26 +216,26 @@ namespace Server.Misc
             return (tier, true);
         }
 
-        protected (bool Success, int Earnings) TrySellItem(TownEconomy town, Type itemType, int amount)
+        protected (bool Success, int Earnings) TrySellItem(TownEconomy town, EconomyItemKey itemKey, int amount)
         {
-            if (itemType == null || amount <= 0) return (false, 0);
+            if (itemKey.ItemType == null || amount <= 0) return (false, 0);
 
-            int unitPrice = GetEffectivePrice(town, itemType);
+            int unitPrice = GetEffectivePrice(town, itemKey);
             int totalPrice = unitPrice * amount;
 
             this.Gold += totalPrice;
             town.Wealth -= totalPrice; 
-            town.SupplyItem(itemType, amount, totalPrice); 
+            town.SupplyItem(itemKey, amount, totalPrice); // SupplyItem도 나중에 Key를 받도록 수정 예정
             return (true, totalPrice);
         }
 
         // 🌟 [최적화 완료] 실제로 돈을 지불한 개수만큼 반환
-        protected (bool Success, int AmountBought, int TotalCost) TryBuyItem(TownEconomy town, Type itemType, int requestedAmount)
+        protected (bool Success, int AmountBought, int TotalCost) TryBuyItem(TownEconomy town, EconomyItemKey itemKey, int requestedAmount)
         {
-            if (itemType == null || this is not VirtualCitizen citizen) return (false, 0, 0);
+            if (itemKey.ItemType == null || this is not VirtualCitizen citizen) return (false, 0, 0);
 
-            int unitPrice = GetEffectivePrice(town, itemType);
-            var result = VirtualTradeSystem.ExecutePurchase(citizen, town, itemType, unitPrice, requestedAmount);
+            int unitPrice = GetEffectivePrice(town, itemKey);
+            var result = VirtualTradeSystem.ExecutePurchase(citizen, town, itemKey, unitPrice, requestedAmount);
 
             if (result.Success && result.Spent > 0)
             {
@@ -333,20 +333,20 @@ namespace Server.Misc
             catch { return 50; }
         }
 
-        protected bool CheckAndUseEquipment(TownEconomy town, Type equipType, int lossAmount = 1)
+        protected bool CheckAndUseEquipment(TownEconomy town, EconomyItemKey equipKey, int lossAmount = 1)
         {
-            if (equipType == null) return true;
+            if (equipKey.ItemType == null) return true;
 
-            if (!m_EquipmentUses.ContainsKey(equipType) || m_EquipmentUses[equipType] <= 0)
+            if (!m_EquipmentUses.ContainsKey(equipKey) || m_EquipmentUses[equipKey] <= 0)
             {
-                if (TryBuyItem(town, equipType, 1).Success)
+                if (TryBuyItem(town, equipKey, 1).Success)
                 {
-                    m_EquipmentUses[equipType] = GetItemDurability(equipType); 
+                    m_EquipmentUses[equipKey] = GetItemDurability(equipKey.ItemType); 
                 }
                 else return false; 
             }
             
-            m_EquipmentUses[equipType] -= lossAmount; 
+            m_EquipmentUses[equipKey] -= lossAmount; 
             return true;
         }
 

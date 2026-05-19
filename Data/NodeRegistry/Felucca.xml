@@ -1,0 +1,1646 @@
+<NodeRegistry>
+  <DungeonNode Depth="1" X="6273" Y="480" Z="-50" Range="5" RCode="221500" />
+  <DungeonNode Depth="1" X="5487" Y="902" Z="30" Range="25" RCode="220403" />
+  <DungeonNode Depth="1" X="5852" Y="1468" Z="1" Range="30" RCode="221100" />
+  <DungeonNode Depth="2" X="793" Y="1088" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5458" Y="1303" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="2" X="5580" Y="2885" Z="6" Range="15" RCode="221100" />
+  <DungeonNode Depth="1" X="6046" Y="199" Z="22" Range="1" RCode="220604" />
+  <VendorNode TownID="105" MaxCount="10" Spawns="HireBardArcher,HireBeggar,HireFighter,HireMage,HireRanger,HireRangerArcher,HireSailor,HireThief" X="1399" Y="3743" Z="-21" Range="10" RCode="210900" />
+  <DungeonNode Depth="1" X="6408" Y="411" Z="-40" Range="10" RCode="221500" />
+  <DungeonNode Depth="2" X="4600" Y="1751" Z="-5" Range="175" RCode="221100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="485" Y="1398" Z="0" Range="50" RCode="0" />
+  <VendorNode TownID="117" MaxCount="2" Spawns="blacksmithguildmaster" X="5225" Y="4000" Z="38" Range="5" RCode="211300" />
+  <DungeonNode Depth="1" X="1445" Y="1365" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" HasItem="true" X="2155" Y="1370" Z="0" Range="2" RCode="221700" />
+  <DungeonNode Depth="1" X="5390" Y="145" Z="20" Range="1" RCode="220703" />
+  <DungeonNode Depth="2" X="1143" Y="180" Z="14" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="977" Y="1638" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="2" X="4275" Y="1309" Z="-5" Range="100" RCode="221100" />
+  <VendorNode TownID="115" MaxCount="3" Spawns="alchemist,customhairstylist" X="5213" Y="118" Z="1" Range="5" RCode="211200" />
+  <DungeonNode Depth="1" X="6107" Y="1452" Z="25" Range="15" RCode="221100" />
+  <DungeonNode Depth="1" X="5798" Y="2972" Z="0" Range="15" RCode="221100" />
+  <DungeonNode Depth="2" X="5724" Y="118" Z="0" Range="30" RCode="220704" />
+  <DungeonNode Depth="2" X="5219" Y="552" Z="0" Range="25" RCode="220301" />
+  <DungeonNode Depth="1" X="5491" Y="1370" Z="0" Range="20" RCode="220900" />
+  <VendorNode TownID="102" MaxCount="2" Spawns="healerguildmaster" X="2709" Y="2130" Z="0" Range="5" RCode="0" />
+  <DungeonNode Depth="2" X="840" Y="1063" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="107" MaxCount="8" Spawns="ghoul,headlessone,ogre,orc,orcishmage,skeleton,troll" X="2429" Y="690" Z="0" Range="30" RCode="210300" />
+  <DungeonNode Depth="1" X="5643" Y="1435" Z="0" Range="5" RCode="221100" />
+  <DungeonNode Depth="1" X="6537" Y="876" Z="1" Range="5" RCode="220100" />
+  <DungeonNode Depth="1" X="4162" Y="395" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="114" MaxCount="3" Spawns="alchemist,mageguildmaster" X="2916" Y="671" Z="0" Range="5" RCode="210700" />
+  <DungeonNode Depth="1" X="6532" Y="79" Z="-10" Range="4" RCode="221600" />
+  <DungeonNode Depth="2" X="1869" Y="265" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="6184" Y="57" Z="0" Range="15" RCode="221700" />
+  <DungeonNode Depth="1" X="5824" Y="363" Z="0" Range="1" RCode="221200" />
+  <VendorNode TownID="169" MaxCount="4" Spawns="Mage" X="1685" Y="2985" Z="0" Range="20" RCode="0" />
+  <VendorNode TownID="110" MaxCount="3" Spawns="weaver,tailorguildmaster" X="3667" Y="2586" Z="0" Range="5" RCode="211000" />
+  <DungeonNode Depth="1" X="1828" Y="960" Z="7" Range="20" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1634" Y="2645" Z="5" Range="50" RCode="0" />
+  <DungeonNode Depth="2" X="5724" Y="2949" Z="31" Range="75" RCode="221100" />
+  <DungeonNode Depth="3" X="5791" Y="545" Z="10" Range="5" RCode="220801" />
+  <VendorNode TownID="112" MaxCount="2" Spawns="cobbler" X="579" Y="2227" Z="0" Range="5" RCode="210500" />
+  <VendorNode TownID="0" MaxCount="25" Spawns="gargoyleenforcer,gargoyledestroyer,orc,orcishmage,orcishlord,orcbomber" X="6198" Y="144" Z="-10" Range="25" RCode="221700" />
+  <DungeonNode Depth="1" X="3928" Y="393" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5439" Y="137" Z="20" Range="1" RCode="220703" />
+  <DungeonNode Depth="1" X="5978" Y="185" Z="44" Range="1" RCode="220603" />
+  <VendorNode TownID="106" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3650" Y="2080" Z="21" Range="50" RCode="210200" />
+  <DungeonNode Depth="1" X="5649" Y="101" Z="10" Range="30" RCode="220704" />
+  <DungeonNode Depth="1" X="5392" Y="10" Z="30" Range="1" RCode="220701" />
+  <DungeonNode Depth="1" HasItem="true" X="2203" Y="1379" Z="0" Range="2" RCode="221700" />
+  <DungeonNode Depth="1" HasItem="true" X="5915" Y="1302" Z="2" Range="1" RCode="221100" />
+  <DungeonNode Depth="1" X="5867" Y="218" Z="-4" Range="25" RCode="221200" />
+  <DungeonNode Depth="1" X="5483" Y="1446" Z="0" Range="30" RCode="220900" />
+  <DungeonNode Depth="1" X="5549" Y="1332" Z="0" Range="30" RCode="220900" />
+  <DungeonNode Depth="1" X="6264" Y="128" Z="5" Range="0" RCode="221700" />
+  <DungeonNode Depth="1" X="5425" Y="1992" Z="0" Range="5" RCode="220202" />
+  <DungeonNode Depth="1" X="6521" Y="139" Z="-20" Range="4" RCode="221600" />
+  <DungeonNode Depth="2" X="3008" Y="1895" Z="-5" Range="175" RCode="221100" />
+  <DungeonNode Depth="1" X="2223" Y="1151" Z="0" Range="5" RCode="221700" />
+  <VendorNode TownID="109" MaxCount="2" Spawns="minter" X="3764" Y="1317" Z="0" Range="5" RCode="221100" />
+  <DungeonNode Depth="1" X="2038" Y="1023" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5572" Y="113" Z="5" Range="1" RCode="220702" />
+  <VendorNode TownID="111" MaxCount="2" Spawns="weaponsmith" X="3018" Y="3426" Z="15" Range="5" RCode="211100" />
+  <DungeonNode Depth="2" X="5003" Y="101" Z="-5" Range="100" RCode="221700" />
+  <DungeonNode Depth="2" X="3240" Y="3151" Z="-5" Range="175" RCode="221100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1057" Y="765" Z="1" Range="50" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="4" Spawns="Ophidianarchmage,Ophidianmage,Ophidianknight,Ophidianwarrior" X="5467" Y="3078" Z="-3" Range="25" RCode="221000" />
+  <DungeonNode Depth="2" X="1996" Y="73" Z="8" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="1580" Y="75" Z="-5" Range="100" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1503" Y="2207" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="5683" Y="197" Z="-4" Range="1" RCode="221200" />
+  <VendorNode TownID="105" MaxCount="4" Spawns="waiter,cook,barkeeper" X="1452" Y="3770" Z="0" Range="5" RCode="210900" />
+  <VendorNode TownID="107" MaxCount="3" Spawns="realestatebroker,architect" X="2513" Y="477" Z="15" Range="5" RCode="210300" />
+  <DungeonNode Depth="1" X="5418" Y="1876" Z="0" Range="30" RCode="220201" />
+  <DungeonNode Depth="1" X="5643" Y="1435" Z="0" Range="2" RCode="221100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2513" Y="782" Z="0" Range="50" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="846" Y="1071" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="2" X="5351" Y="2359" Z="0" Range="75" RCode="221000" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1798" Y="1471" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="4090" Y="325" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="4667" Y="109" Z="-5" Range="100" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1152" Y="812" Z="5" Range="50" RCode="221700" />
+  <DungeonNode Depth="2" X="2659" Y="147" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="1980" Y="832" Z="-1" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="1276" Y="431" Z="16" Range="30" RCode="221700" />
+  <VendorNode TownID="101" MaxCount="2" Spawns="weaponsmith" X="1362" Y="1574" Z="30" Range="5" RCode="210100" />
+  <VendorNode TownID="0" MaxCount="6" Spawns="Jukalord,Jukamage,Jukawarrior" X="5724" Y="561" Z="20" Range="30" RCode="220801" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3172" Y="664" Z="8" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="5281" Y="2029" Z="0" Range="8" RCode="221000" />
+  <DungeonNode Depth="1" X="5917" Y="93" Z="0" Range="1" RCode="220601" />
+  <DungeonNode Depth="1" X="6489" Y="895" Z="0" Range="5" RCode="220100" />
+  <VendorNode TownID="113" MaxCount="2" Spawns="furtrader" X="1990" Y="2867" Z="20" Range="5" RCode="210600" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1505" Y="2445" Z="0" Range="50" RCode="0" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2669" Y="922" Z="0" Range="50" RCode="221700" />
+  <VendorNode TownID="113" MaxCount="2" Spawns="blacksmithguildmaster" X="1935" Y="2766" Z="10" Range="5" RCode="210600" />
+  <DungeonNode Depth="1" X="5715" Y="61" Z="5" Range="1" RCode="220704" />
+  <DungeonNode Depth="1" X="5404" Y="43" Z="30" Range="1" RCode="220701" />
+  <DungeonNode Depth="2" X="5940" Y="1356" Z="-2" Range="20" RCode="221100" />
+  <DungeonNode Depth="1" X="5436" Y="1972" Z="0" Range="5" RCode="220202" />
+  <VendorNode TownID="115" MaxCount="3" Spawns="weaver,tailorguildmaster" X="5202" Y="86" Z="5" Range="5" RCode="211200" />
+  <DungeonNode Depth="2" X="6184" Y="28" Z="0" Range="5" RCode="221700" />
+  <VendorNode TownID="118" MaxCount="3" Spawns="alchemist,herbalist" X="5714" Y="3202" Z="12" Range="5" RCode="211400" />
+  <DungeonNode Depth="3" X="6292" Y="462" Z="-50" Range="40" RCode="221500" />
+  <DungeonNode Depth="1" X="5962" Y="217" Z="22" Range="1" RCode="220603" />
+  <DungeonNode Depth="1" X="5161" Y="940" Z="0" Range="50" RCode="220503" />
+  <DungeonNode Depth="1" X="2480" Y="863" Z="0" Range="25" RCode="221700" />
+  <DungeonNode Depth="1" X="5405" Y="576" Z="61" Range="25" RCode="220401" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2085" Y="658" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="5429" Y="1989" Z="0" Range="25" RCode="220202" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="851" Y="1770" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="6510" Y="171" Z="0" Range="8" RCode="221600" />
+  <DungeonNode Depth="2" X="6187" Y="101" Z="0" Range="25" RCode="221700" />
+  <VendorNode TownID="116" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="748" Y="669" Z="0" Range="50" RCode="210800" />
+  <DungeonNode Depth="1" X="3699" Y="1238" Z="0" Range="160" RCode="221700" />
+  <DungeonNode Depth="2" X="960" Y="910" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5525" Y="1296" Z="0" Range="20" RCode="220900" />
+  <VendorNode TownID="110" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3429" Y="2650" Z="43" Range="50" RCode="221100" />
+  <DungeonNode Depth="1" X="5483" Y="711" Z="15" Range="25" RCode="220402" />
+  <DungeonNode Depth="1" HasItem="true" X="5390" Y="587" Z="45" Range="5" RCode="220401" />
+  <DungeonNode Depth="3" X="6535" Y="848" Z="0" Range="10" RCode="220100" />
+  <DungeonNode Depth="1" X="6502" Y="120" Z="-10" Range="0" RCode="221600" />
+  <DungeonNode Depth="1" X="1949" Y="824" Z="-1" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="6526" Y="122" Z="-20" Range="6" RCode="221600" />
+  <DungeonNode Depth="2" X="5170" Y="678" Z="0" Range="25" RCode="220303" />
+  <DungeonNode Depth="1" X="5331" Y="1346" Z="0" Range="8" RCode="221100" />
+  <DungeonNode Depth="1" X="5946" Y="75" Z="22" Range="20" RCode="220601" />
+  <DungeonNode Depth="2" X="1969" Y="1409" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="6260" Y="115" Z="-10" Range="0" RCode="221700" />
+  <DungeonNode Depth="1" X="6404" Y="378" Z="-40" Range="18" RCode="221500" />
+  <DungeonNode Depth="1" X="5723" Y="1390" Z="2" Range="7" RCode="221100" />
+  <DungeonNode Depth="1" X="5153" Y="1961" Z="0" Range="8" RCode="221000" />
+  <DungeonNode Depth="1" X="5398" Y="996" Z="5" Range="25" RCode="220403" />
+  <DungeonNode Depth="1" X="5859" Y="1387" Z="0" Range="20" RCode="221100" />
+  <DungeonNode Depth="2" X="1799" Y="1394" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5415" Y="189" Z="0" Range="1" RCode="220703" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="940" Y="1028" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="3555" Y="1171" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="2" X="1726" Y="1362" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="2392" Y="2031" Z="-5" Range="175" RCode="221800" />
+  <DungeonNode Depth="1" X="5205" Y="778" Z="0" Range="7" RCode="220501" />
+  <DungeonNode Depth="2" X="3811" Y="109" Z="-5" Range="100" RCode="221700" />
+  <DungeonNode Depth="2" X="1832" Y="517" Z="0" Range="60" RCode="221700" />
+  <DungeonNode Depth="1" X="5144" Y="1960" Z="0" Range="8" RCode="221000" />
+  <DungeonNode Depth="1" X="2013" Y="839" Z="-1" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5593" Y="794" Z="60" Range="5" RCode="220403" />
+  <DungeonNode Depth="1" X="4057" Y="300" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="115" MaxCount="3" Spawns="alchemist,mageguildmaster" X="5148" Y="60" Z="25" Range="5" RCode="211200" />
+  <VendorNode TownID="0" MaxCount="53" Spawns="imp,titan,snake,ratman,doppleganger,gargoyle,cow,bull,chicken,bird,pig,dog,goat,cat,rat,orc,orccaptain,orcishmage,ogre,ogrelord" X="6265" Y="48" Z="-10" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="1797" Y="1393" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5332" Y="1365" Z="0" Range="8" RCode="221100" />
+  <DungeonNode Depth="1" X="5320" Y="708" Z="0" Range="25" RCode="220304" />
+  <VendorNode TownID="110" MaxCount="2" Spawns="healerguildmaster" X="3629" Y="2608" Z="0" Range="5" RCode="211000" />
+  <VendorNode TownID="114" MaxCount="4" Spawns="escortablemage,seekerofadventure,noble" X="3038" Y="827" Z="-2" Range="5" RCode="210700" />
+  <DungeonNode Depth="1" X="6059" Y="1438" Z="4" Range="15" RCode="221100" />
+  <DungeonNode Depth="2" X="5717" Y="1333" Z="6" Range="20" RCode="221100" />
+  <VendorNode TownID="114" MaxCount="2" Spawns="tinkerguildmaster" X="2899" Y="790" Z="0" Range="5" RCode="210700" />
+  <DungeonNode Depth="1" X="5402" Y="1430" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="1" X="5501" Y="2361" Z="27" Range="75" RCode="221100" />
+  <DungeonNode Depth="1" X="5615" Y="18" Z="10" Range="30" RCode="220702" />
+  <VendorNode TownID="101" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1231" Y="1462" Z="0" Range="50" RCode="210100" />
+  <DungeonNode Depth="2" X="931" Y="141" Z="-5" Range="130" RCode="221700" />
+  <VendorNode TownID="101" MaxCount="3" Spawns="alchemist,mageguildmaster" X="1590" Y="1654" Z="10" Range="5" RCode="210100" />
+  <VendorNode TownID="169" MaxCount="8" Spawns="ghoul,headlessone,ogre,orc,orcishmage,skeleton,troll" X="2326" Y="656" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="1191" Y="288" Z="11" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1047" Y="1071" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="2" X="971" Y="1308" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="1013" Y="980" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="118" MaxCount="3" Spawns="architect,carpenter" X="5691" Y="3209" Z="10" Range="5" RCode="211400" />
+  <DungeonNode Depth="1" X="5397" Y="995" Z="5" Range="10" RCode="220403" />
+  <DungeonNode Depth="1" X="3676" Y="1323" Z="20" Range="4" RCode="221100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="951" Y="542" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="5643" Y="1403" Z="0" Range="3" RCode="221100" />
+  <DungeonNode Depth="2" X="4624" Y="2199" Z="-5" Range="175" RCode="221100" />
+  <DungeonNode Depth="1" X="5492" Y="1294" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="2" X="1755" Y="1474" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="887" Y="1223" Z="0" Range="50" RCode="221700" />
+  <VendorNode TownID="113" MaxCount="3" Spawns="weaver,tailorguildmaster" X="1981" Y="2838" Z="15" Range="5" RCode="210600" />
+  <DungeonNode Depth="1" X="6530" Y="139" Z="-20" Range="4" RCode="221600" />
+  <DungeonNode Depth="2" X="4008" Y="2767" Z="-5" Range="175" RCode="221100" />
+  <DungeonNode Depth="1" X="6509" Y="87" Z="-4" Range="3" RCode="221600" />
+  <DungeonNode Depth="1" X="5859" Y="1341" Z="-1" Range="20" RCode="221100" />
+  <DungeonNode Depth="1" X="2109" Y="109" Z="3" Range="30" RCode="221700" />
+  <VendorNode TownID="114" MaxCount="3" Spawns="weaver,tailorguildmaster" X="2961" Y="621" Z="0" Range="5" RCode="210700" />
+  <VendorNode TownID="101" MaxCount="4" Spawns="waiter,cook,barkeeper" X="1547" Y="1764" Z="10" Range="5" RCode="210100" />
+  <DungeonNode Depth="1" X="5577" Y="2006" Z="0" Range="20" RCode="220202" />
+  <DungeonNode Depth="1" X="5468" Y="3154" Z="-58" Range="5" RCode="221000" />
+  <DungeonNode Depth="1" X="5972" Y="86" Z="0" Range="1" RCode="220601" />
+  <DungeonNode Depth="1" X="5163" Y="567" Z="0" Range="25" RCode="220301" />
+  <DungeonNode Depth="1" X="5699" Y="1302" Z="1" Range="15" RCode="221100" />
+  <VendorNode TownID="110" MaxCount="2" Spawns="minter" X="3695" Y="2511" Z="0" Range="5" RCode="211000" />
+  <DungeonNode Depth="1" X="5817" Y="2367" Z="42" Range="75" RCode="221100" />
+  <DungeonNode Depth="2" X="4896" Y="1519" Z="-5" Range="175" RCode="221100" />
+  <VendorNode TownID="101" MaxCount="2" Spawns="healerguildmaster" X="1471" Y="1611" Z="20" Range="5" RCode="210100" />
+  <VendorNode TownID="110" MaxCount="2" Spawns="mapmaker" X="3632" Y="2640" Z="0" Range="5" RCode="211000" />
+  <DungeonNode Depth="1" X="6108" Y="66" Z="0" Range="1" RCode="220602" />
+  <DungeonNode Depth="1" X="5261" Y="1764" Z="0" Range="20" RCode="221000" />
+  <DungeonNode Depth="2" X="1055" Y="1442" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="111" MaxCount="3" Spawns="alchemist,mageguildmaster" X="3003" Y="3355" Z="15" Range="5" RCode="211100" />
+  <DungeonNode Depth="2" X="5757" Y="213" Z="-7" Range="20" RCode="221200" />
+  <DungeonNode Depth="1" X="5666" Y="331" Z="0" Range="1" RCode="221200" />
+  <DungeonNode Depth="1" X="5474" Y="176" Z="0" Range="1" RCode="220703" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2998" Y="3590" Z="15" Range="50" RCode="0" />
+  <VendorNode TownID="0" MaxCount="22" Spawns="orcishlord,orcbomber,orcbrute,orcishmage,orccaptain,orc,changeling" X="6173" Y="80" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="101" MaxCount="2" Spawns="bardguildmaster" X="1455" Y="1557" Z="30" Range="5" RCode="210100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1722" Y="2435" Z="10" Range="50" RCode="0" />
+  <DungeonNode Depth="3" X="5576" Y="1859" Z="0" Range="25" RCode="220203" />
+  <DungeonNode Depth="2" X="5440" Y="3292" Z="-4" Range="62" RCode="221100" />
+  <DungeonNode Depth="2" X="1743" Y="589" Z="16" Range="60" RCode="221700" />
+  <DungeonNode Depth="2" X="1122" Y="718" Z="1" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="962" Y="692" Z="0" Range="5" RCode="221700" />
+  <VendorNode TownID="101" MaxCount="2" Spawns="weaponsmith" X="1481" Y="1584" Z="20" Range="5" RCode="210100" />
+  <VendorNode TownID="101" MaxCount="3" Spawns="alchemist,customhairstylist" X="1498" Y="1659" Z="27" Range="5" RCode="210100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3394" Y="628" Z="5" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="6521" Y="880" Z="0" Range="20" RCode="220100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1011" Y="896" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="5678" Y="1340" Z="-2" Range="30" RCode="221100" />
+  <DungeonNode Depth="1" X="6052" Y="1463" Z="0" Range="25" RCode="221100" />
+  <VendorNode TownID="111" MaxCount="4" Spawns="waiter,cook,barkeeper" X="2972" Y="3425" Z="15" Range="5" RCode="211100" />
+  <DungeonNode Depth="1" X="6298" Y="395" Z="60" Range="6" RCode="221500" />
+  <DungeonNode Depth="1" X="5398" Y="148" Z="20" Range="1" RCode="220703" />
+  <VendorNode TownID="105" MaxCount="3" Spawns="weaver,tailorguildmaster" X="1454" Y="4003" Z="0" Range="5" RCode="210900" />
+  <DungeonNode Depth="1" X="5445" Y="12" Z="0" Range="1" RCode="220701" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1172" Y="974" Z="2" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="761" Y="1644" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="2" X="4152" Y="3415" Z="-5" Range="175" RCode="221100" />
+  <DungeonNode Depth="2" X="5177" Y="1700" Z="1" Range="20" RCode="221000" />
+  <DungeonNode Depth="4" X="5394" Y="2530" Z="6" Range="25" RCode="221000" />
+  <DungeonNode Depth="3" X="6351" Y="453" Z="-40" Range="25" RCode="221500" />
+  <VendorNode TownID="111" MaxCount="3" Spawns="alchemist,mageguildmaster" X="3003" Y="3355" Z="15" Range="5" RCode="211100" />
+  <VendorNode TownID="106" MaxCount="3" Spawns="Shipwright,FisherGuildmaster" X="3669" Y="2258" Z="26" Range="5" RCode="210200" />
+  <DungeonNode Depth="1" X="4264" Y="725" Z="1" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" HasItem="true" X="5452" Y="1891" Z="0" Range="2" RCode="220201" />
+  <DungeonNode Depth="1" X="6065" Y="1459" Z="5" Range="15" RCode="221100" />
+  <DungeonNode Depth="1" X="6107" Y="37" Z="22" Range="20" RCode="220602" />
+  <DungeonNode Depth="1" X="5474" Y="20" Z="0" Range="30" RCode="220701" />
+  <DungeonNode Depth="1" X="6536" Y="79" Z="-10" Range="4" RCode="221600" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3206" Y="366" Z="9" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="5756" Y="1332" Z="-2" Range="5" RCode="221100" />
+  <DungeonNode Depth="4" X="6576" Y="92" Z="0" Range="15" RCode="221600" />
+  <DungeonNode Depth="1" X="2028" Y="987" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="108" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="4540" Y="1454" Z="8" Range="50" RCode="210400" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1459" Y="1963" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="5394" Y="11" Z="30" Range="30" RCode="220701" />
+  <VendorNode TownID="106" MaxCount="2" Spawns="TailorGuildmaster" X="3705" Y="2250" Z="20" Range="2" RCode="210200" />
+  <DungeonNode Depth="1" X="5603" Y="93" Z="0" Range="25" RCode="220702" />
+  <DungeonNode Depth="1" X="5545" Y="153" Z="20" Range="1" RCode="220703" />
+  <DungeonNode Depth="2" X="1192" Y="958" Z="5" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="1875" Y="906" Z="7" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="2355" Y="179" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="805" Y="576" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="5504" Y="939" Z="20" Range="25" RCode="220403" />
+  <DungeonNode Depth="2" X="5603" Y="1875" Z="0" Range="25" RCode="220203" />
+  <VendorNode TownID="101" MaxCount="2" Spawns="mapmaker" X="1416" Y="1754" Z="10" Range="5" RCode="210100" />
+  <DungeonNode Depth="1" X="5979" Y="26" Z="22" Range="1" RCode="220601" />
+  <DungeonNode Depth="1" X="5413" Y="2000" Z="0" Range="10" RCode="220202" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1769" Y="1330" Z="0" Range="50" RCode="221700" />
+  <VendorNode TownID="110" MaxCount="3" Spawns="harpy,lizardman,orcishmage,orc,ratman,spectre,troll" X="3459" Y="2655" Z="9" Range="30" RCode="221100" />
+  <DungeonNode Depth="1" X="1340" Y="1268" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5992" Y="146" Z="0" Range="20" RCode="220603" />
+  <DungeonNode Depth="1" X="5937" Y="65" Z="0" Range="1" RCode="220601" />
+  <DungeonNode Depth="1" X="6572" Y="89" Z="0" Range="4" RCode="221600" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3392" Y="424" Z="9" Range="50" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1024" Y="1244" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="2080" Y="400" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="4" X="5141" Y="834" Z="0" Range="50" RCode="220501" />
+  <DungeonNode Depth="1" X="5442" Y="1411" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="1" X="5608" Y="190" Z="0" Range="1" RCode="220703" />
+  <VendorNode TownID="111" MaxCount="2" Spawns="cobbler" X="3008" Y="3389" Z="15" Range="5" RCode="211100" />
+  <DungeonNode Depth="3" X="5209" Y="965" Z="-40" Range="50" RCode="220503" />
+  <DungeonNode Depth="1" X="5691" Y="1347" Z="0" Range="3" RCode="221100" />
+  <DungeonNode Depth="2" X="5729" Y="2767" Z="-1" Range="70" RCode="221100" />
+  <VendorNode TownID="117" MaxCount="2" Spawns="healerguildmaster" X="5191" Y="3989" Z="37" Range="5" RCode="211300" />
+  <DungeonNode Depth="1" X="6349" Y="650" Z="-52" Range="10" RCode="221500" />
+  <VendorNode TownID="111" MaxCount="4" Spawns="waiter,cook,barkeeper" X="3009" Y="3455" Z="15" Range="5" RCode="211100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2495" Y="978" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="5391" Y="905" Z="30" Range="25" RCode="220403" />
+  <DungeonNode Depth="1" X="1990" Y="976" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="6090" Y="1483" Z="0" Range="25" RCode="221100" />
+  <DungeonNode Depth="1" X="5715" Y="1465" Z="-1" Range="7" RCode="221100" />
+  <DungeonNode Depth="1" X="3619" Y="2814" Z="21" Range="50" RCode="221100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1222" Y="2378" Z="5" Range="50" RCode="0" />
+  <VendorNode TownID="180" MaxCount="3" Spawns="Lavasnake,Evilmage" X="5733" Y="1433" Z="22" Range="20" RCode="221100" />
+  <DungeonNode Depth="1" HasItem="true" X="5460" Y="1975" Z="0" Range="7" RCode="220202" />
+  <VendorNode TownID="0" MaxCount="5" Spawns="Jukamage,Jukawarrior" X="5808" Y="588" Z="12" Range="30" RCode="220801" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2946" Y="2168" Z="44" Range="50" RCode="0" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2554" Y="1142" Z="5" Range="50" RCode="221700" />
+  <VendorNode TownID="105" MaxCount="3" Spawns="alchemist,mageguildmaster" X="1425" Y="3981" Z="0" Range="5" RCode="210900" />
+  <DungeonNode Depth="1" X="6579" Y="184" Z="32" Range="2" RCode="221600" />
+  <VendorNode TownID="111" MaxCount="3" Spawns="alchemist,customhairstylist" X="3013" Y="3353" Z="15" Range="5" RCode="211100" />
+  <DungeonNode Depth="3" HasItem="true" X="5314" Y="748" Z="-20" Range="25" RCode="220304" />
+  <DungeonNode Depth="2" X="4896" Y="2119" Z="-5" Range="175" RCode="221100" />
+  <DungeonNode Depth="2" X="6260" Y="879" Z="0" Range="15" RCode="221400" />
+  <DungeonNode Depth="1" X="5505" Y="180" Z="0" Range="30" RCode="220703" />
+  <VendorNode TownID="112" MaxCount="2" Spawns="weaponsmith" X="650" Y="2161" Z="0" Range="5" RCode="210500" />
+  <VendorNode TownID="114" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2748" Y="660" Z="0" Range="50" RCode="210700" />
+  <DungeonNode Depth="3" X="5149" Y="907" Z="0" Range="20" RCode="220503" />
+  <DungeonNode Depth="1" X="5468" Y="106" Z="35" Range="1" RCode="220701" />
+  <DungeonNode Depth="1" HasItem="true" X="5317" Y="980" Z="0" Range="7" RCode="220503" />
+  <DungeonNode Depth="1" X="5437" Y="11" Z="0" Range="1" RCode="220701" />
+  <DungeonNode Depth="1" X="6184" Y="29" Z="0" Range="10" RCode="221700" />
+  <VendorNode TownID="0" MaxCount="42" Spawns="ratman,ettin,titan,ratmanarcher,ratmanmage,goat,pig,cow,bull,rat,gargoyleenforcer,gargoyledestroyer,gargoyle,snake" X="6191" Y="155" Z="0" Range="25" RCode="221700" />
+  <DungeonNode Depth="1" X="5420" Y="1355" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="2" X="6466" Y="543" Z="-50" Range="30" RCode="221500" />
+  <DungeonNode Depth="2" X="1042" Y="1024" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="398" Y="1305" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="5201" Y="3162" Z="53" Range="50" RCode="221000" />
+  <DungeonNode Depth="2" X="5283" Y="583" Z="0" Range="25" RCode="220302" />
+  <DungeonNode Depth="1" X="6284" Y="622" Z="-50" Range="10" RCode="221500" />
+  <VendorNode TownID="111" MaxCount="4" Spawns="waiter,cook,barkeeper" X="3009" Y="3455" Z="15" Range="5" RCode="211100" />
+  <DungeonNode Depth="2" X="5560" Y="1903" Z="0" Range="25" RCode="220203" />
+  <VendorNode TownID="108" MaxCount="2" Spawns="cobbler" X="4417" Y="1064" Z="0" Range="5" RCode="210400" />
+  <DungeonNode Depth="2" X="5134" Y="1625" Z="0" Range="20" RCode="221000" />
+  <VendorNode TownID="101" MaxCount="3" Spawns="rancher,hirepeasant" X="1228" Y="1572" Z="0" Range="10" RCode="210100" />
+  <VendorNode TownID="169" MaxCount="16" Spawns="Savage,Savagerider,Orc,Orcishlord,Orcishmage" X="2184" Y="1376" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="101" MaxCount="2" Spawns="cobbler" X="1602" Y="1712" Z="20" Range="5" RCode="210100" />
+  <DungeonNode Depth="1" X="5833" Y="242" Z="-2" Range="1" RCode="221200" />
+  <DungeonNode Depth="2" X="6518" Y="870" Z="0" Range="40" RCode="220100" />
+  <DungeonNode Depth="1" X="5915" Y="91" Z="0" Range="20" RCode="220601" />
+  <DungeonNode Depth="1" X="5546" Y="113" Z="-5" Range="1" RCode="220702" />
+  <DungeonNode Depth="1" X="5605" Y="202" Z="0" Range="1" RCode="220703" />
+  <DungeonNode Depth="2" X="844" Y="1235" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="1083" Y="783" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="3" X="5342" Y="582" Z="0" Range="25" RCode="220302" />
+  <VendorNode TownID="109" MaxCount="4" Spawns="tailor,weaver,tailorguildmaster" X="3774" Y="1264" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="2" X="948" Y="703" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="2" X="4512" Y="583" Z="-5" Range="175" RCode="221700" />
+  <DungeonNode Depth="2" X="5151" Y="718" Z="0" Range="25" RCode="220303" />
+  <DungeonNode Depth="1" X="5592" Y="3020" Z="36" Range="0" RCode="221100" />
+  <DungeonNode Depth="1" X="5388" Y="2012" Z="0" Range="5" RCode="220202" />
+  <VendorNode TownID="112" MaxCount="2" Spawns="blacksmithguildmaster" X="630" Y="2194" Z="0" Range="5" RCode="210500" />
+  <DungeonNode Depth="2" X="1060" Y="1375" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="6086" Y="45" Z="22" Range="1" RCode="220602" />
+  <DungeonNode Depth="1" X="5650" Y="1434" Z="0" Range="2" RCode="221100" />
+  <VendorNode TownID="114" MaxCount="3" Spawns="healer,healerguildmaster" X="2920" Y="854" Z="0" Range="5" RCode="210700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1020" Y="1360" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="2" X="1922" Y="173" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5286" Y="542" Z="0" Range="25" RCode="220302" />
+  <DungeonNode Depth="1" X="6583" Y="183" Z="30" Range="5" RCode="221600" />
+  <DungeonNode Depth="1" X="6295" Y="872" Z="-13" Range="5" RCode="221400" />
+  <DungeonNode Depth="1" X="3929" Y="235" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="851" Y="495" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5616" Y="184" Z="0" Range="1" RCode="220703" />
+  <DungeonNode Depth="1" X="5579" Y="1859" Z="0" Range="25" RCode="220203" />
+  <DungeonNode Depth="1" X="5422" Y="1355" Z="0" Range="20" RCode="220900" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3292" Y="570" Z="0" Range="50" RCode="221700" />
+  <VendorNode TownID="105" MaxCount="3" Spawns="architect,realestatebroker" X="1435" Y="3820" Z="0" Range="5" RCode="210900" />
+  <DungeonNode Depth="2" X="5297" Y="1565" Z="0" Range="20" RCode="221000" />
+  <DungeonNode Depth="1" X="6474" Y="74" Z="-34" Range="4" RCode="221600" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="895" Y="830" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="2" X="5412" Y="201" Z="0" Range="30" RCode="220703" />
+  <VendorNode TownID="169" MaxCount="4" Spawns="Ophidianarchmage,Ophidianmage,Ophidianknight,Ophidianwarrior" X="5432" Y="3079" Z="-4" Range="25" RCode="221000" />
+  <DungeonNode Depth="1" X="5280" Y="675" Z="8" Range="25" RCode="220304" />
+  <DungeonNode Depth="1" X="5679" Y="1438" Z="0" Range="5" RCode="221100" />
+  <DungeonNode Depth="1" HasItem="true" X="5507" Y="656" Z="20" Range="5" RCode="220402" />
+  <DungeonNode Depth="1" X="5680" Y="306" Z="0" Range="20" RCode="221200" />
+  <DungeonNode Depth="2" X="1787" Y="1280" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="5708" Y="43" Z="0" Range="25" RCode="220704" />
+  <DungeonNode Depth="2" X="5711" Y="97" Z="0" Range="25" RCode="220704" />
+  <DungeonNode Depth="2" X="3440" Y="405" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="6257" Y="101" Z="-10" Range="0" RCode="221700" />
+  <DungeonNode Depth="2" X="1130" Y="830" Z="9" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1334" Y="2311" Z="0" Range="50" RCode="0" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1582" Y="2722" Z="5" Range="50" RCode="0" />
+  <VendorNode TownID="115" MaxCount="2" Spawns="healerguildmaster" X="5263" Y="129" Z="20" Range="5" RCode="211200" />
+  <DungeonNode Depth="1" X="5499" Y="1411" Z="0" Range="30" RCode="220900" />
+  <VendorNode TownID="101" MaxCount="3" Spawns="weaver,tailorguildmaster" X="1547" Y="1659" Z="26" Range="5" RCode="210100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2289" Y="917" Z="0" Range="50" RCode="221700" />
+  <VendorNode TownID="117" MaxCount="2" Spawns="cobbler" X="5219" Y="4011" Z="37" Range="5" RCode="211300" />
+  <VendorNode TownID="110" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3596" Y="2804" Z="51" Range="50" RCode="221100" />
+  <DungeonNode Depth="1" X="5714" Y="1465" Z="0" Range="7" RCode="221100" />
+  <DungeonNode Depth="2" X="1473" Y="229" Z="22" Range="30" RCode="221700" />
+  <DungeonNode Depth="3" X="5792" Y="544" Z="10" Range="30" RCode="220801" />
+  <VendorNode TownID="107" MaxCount="2" Spawns="realestatebroker" X="2513" Y="477" Z="15" Range="5" RCode="210300" />
+  <DungeonNode Depth="2" X="1682" Y="252" Z="6" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="1912" Y="1283" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="1872" Y="1347" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="101" MaxCount="2" Spawns="furtrader" X="1430" Y="1612" Z="20" Range="5" RCode="210100" />
+  <DungeonNode Depth="1" X="5472" Y="1877" Z="0" Range="25" RCode="220201" />
+  <DungeonNode Depth="2" X="5520" Y="2890" Z="33" Range="100" RCode="221100" />
+  <DungeonNode Depth="1" X="1812" Y="1314" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5817" Y="83" Z="0" Range="1" RCode="220704" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1958" Y="1305" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="2" X="1812" Y="1314" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="5501" Y="2361" Z="27" Range="75" RCode="221100" />
+  <DungeonNode Depth="2" X="3992" Y="1447" Z="-5" Range="175" RCode="221100" />
+  <DungeonNode Depth="3" X="6337" Y="395" Z="60" Range="20" RCode="221500" />
+  <DungeonNode Depth="2" X="4400" Y="2527" Z="-5" Range="175" RCode="221100" />
+  <VendorNode TownID="117" MaxCount="3" Spawns="weaver,tailorguildmaster" X="5234" Y="4025" Z="37" Range="5" RCode="211300" />
+  <DungeonNode Depth="2" X="5473" Y="1991" Z="0" Range="25" RCode="220202" />
+  <DungeonNode Depth="2" X="956" Y="452" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="101" MaxCount="3" Spawns="alchemist,mageguildmaster" X="1590" Y="1654" Z="10" Range="5" RCode="210100" />
+  <DungeonNode Depth="2" X="6419" Y="410" Z="-40" Range="30" RCode="221500" />
+  <DungeonNode Depth="1" X="5921" Y="81" Z="0" Range="1" RCode="220601" />
+  <DungeonNode Depth="1" X="1474" Y="1297" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5763" Y="187" Z="0" Range="1" RCode="221200" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1388" Y="784" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="1930" Y="864" Z="-1" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="4192" Y="2975" Z="-5" Range="175" RCode="221100" />
+  <DungeonNode Depth="1" X="5295" Y="623" Z="-5" Range="10" RCode="220302" />
+  <VendorNode TownID="0" MaxCount="5" Spawns="Ophidianknight,Ophidianmage,Ophidianwarrior,Ophidianmatriarch" X="5270" Y="1694" Z="0" Range="20" RCode="221000" />
+  <DungeonNode Depth="2" X="1804" Y="247" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="4446" Y="3706" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="5733" Y="91" Z="0" Range="1" RCode="220704" />
+  <DungeonNode Depth="2" X="971" Y="1308" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1709" Y="1992" Z="0" Range="50" RCode="221800" />
+  <VendorNode TownID="108" MaxCount="3" Spawns="alchemist,customhairstylist" X="4409" Y="1111" Z="0" Range="5" RCode="210400" />
+  <VendorNode TownID="103" MaxCount="2" Spawns="healerguildmaster" X="2245" Y="1230" Z="0" Range="5" RCode="221700" />
+  <VendorNode TownID="114" MaxCount="2" Spawns="minter" X="2881" Y="684" Z="0" Range="5" RCode="210700" />
+  <DungeonNode Depth="2" X="1284" Y="433" Z="6" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2583" Y="993" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="2" X="2034" Y="46" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="6489" Y="897" Z="0" Range="5" RCode="220100" />
+  <DungeonNode Depth="1" X="2493" Y="883" Z="0" Range="25" RCode="221700" />
+  <DungeonNode Depth="1" X="5536" Y="1351" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="1" X="5415" Y="1312" Z="0" Range="20" RCode="220900" />
+  <VendorNode TownID="101" MaxCount="3" Spawns="architect,realestatebroker" X="1430" Y="1597" Z="20" Range="5" RCode="210100" />
+  <VendorNode TownID="117" MaxCount="2" Spawns="healerguildmaster" X="5189" Y="3988" Z="37" Range="5" RCode="211300" />
+  <DungeonNode Depth="2" X="1631" Y="650" Z="16" Range="60" RCode="221700" />
+  <VendorNode TownID="115" MaxCount="3" Spawns="alchemist,mageguildmaster" X="5300" Y="90" Z="15" Range="5" RCode="211200" />
+  <DungeonNode Depth="1" X="5459" Y="1449" Z="0" Range="30" RCode="220900" />
+  <DungeonNode Depth="1" X="5398" Y="1299" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="1" X="2107" Y="358" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="5" Spawns="Orcishlord,Orcishmage" X="634" Y="1504" Z="0" Range="15" RCode="0" />
+  <VendorNode TownID="108" MaxCount="3" Spawns="alchemist,mageguildmaster" X="4454" Y="1084" Z="0" Range="5" RCode="210400" />
+  <VendorNode TownID="169" MaxCount="16" Spawns="Savage,Savagerider,Orc,Orcishlord,Orcishmage" X="2171" Y="1356" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="1097" Y="970" Z="2" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2367" Y="748" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="3546" Y="1194" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="1" X="2113" Y="221" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1724" Y="2781" Z="5" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="5187" Y="1771" Z="0" Range="5" RCode="221000" />
+  <VendorNode TownID="113" MaxCount="3" Spawns="alchemist,mageguildmaster" X="1846" Y="2716" Z="10" Range="5" RCode="210600" />
+  <VendorNode TownID="113" MaxCount="2" Spawns="weaponsmith" X="1895" Y="2653" Z="10" Range="5" RCode="210600" />
+  <DungeonNode Depth="1" X="841" Y="344" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" HasItem="true" X="3602" Y="2815" Z="28" Range="10" RCode="221100" />
+  <DungeonNode Depth="1" X="6087" Y="186" Z="0" Range="1" RCode="220604" />
+  <DungeonNode Depth="1" X="5804" Y="12" Z="0" Range="30" RCode="220704" />
+  <DungeonNode Depth="1" X="6539" Y="892" Z="0" Range="5" RCode="220100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1070" Y="2069" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="5400" Y="45" Z="30" Range="1" RCode="220701" />
+  <DungeonNode Depth="2" X="4232" Y="1655" Z="-5" Range="175" RCode="221100" />
+  <DungeonNode Depth="1" X="5418" Y="1450" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="2" X="1723" Y="252" Z="16" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="837" Y="361" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="4" Spawns="Ophidianarchmage,Ophidianmage,Ophidianknight,Ophidianwarrior" X="5408" Y="3077" Z="16" Range="25" RCode="221000" />
+  <DungeonNode Depth="1" X="815" Y="1603" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="101" MaxCount="2" Spawns="minter" X="1650" Y="1608" Z="20" Range="5" RCode="210100" />
+  <DungeonNode Depth="2" X="4392" Y="823" Z="-5" Range="100" RCode="221700" />
+  <DungeonNode Depth="1" X="6125" Y="221" Z="22" Range="1" RCode="220604" />
+  <DungeonNode Depth="1" X="4027" Y="554" Z="0" Range="75" RCode="221700" />
+  <DungeonNode Depth="1" HasItem="true" X="1017" Y="826" Z="0" Range="5" RCode="221700" />
+  <VendorNode TownID="107" MaxCount="4" Spawns="waiter,cook,barkeeper" X="2475" Y="397" Z="15" Range="5" RCode="210300" />
+  <DungeonNode Depth="1" X="2242" Y="1197" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="2" X="1001" Y="787" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="0" MaxCount="6" Spawns="Orcishmage,Orcbomber,Orc" X="5317" Y="1309" Z="0" Range="8" RCode="221100" />
+  <VendorNode TownID="169" MaxCount="8" Spawns="ghoul,headlessone,ogre,orc,orcishmage,skeleton,troll" X="2462" Y="725" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5434" Y="100" Z="20" Range="1" RCode="220701" />
+  <DungeonNode Depth="2" X="3434" Y="316" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5435" Y="589" Z="47" Range="25" RCode="220401" />
+  <DungeonNode Depth="1" X="2137" Y="271" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="107" MaxCount="2" Spawns="furtrader" X="2522" Y="524" Z="0" Range="5" RCode="210300" />
+  <VendorNode TownID="180" MaxCount="2" Spawns="Evilmagelord" X="5651" Y="1418" Z="0" Range="3" RCode="221100" />
+  <DungeonNode Depth="1" HasItem="true" X="5143" Y="986" Z="0" Range="10" RCode="220503" />
+  <DungeonNode Depth="2" X="2952" Y="1239" Z="-5" Range="175" RCode="221700" />
+  <DungeonNode Depth="1" X="5764" Y="2585" Z="-4" Range="75" RCode="221100" />
+  <DungeonNode Depth="1" X="5356" Y="1304" Z="0" Range="10" RCode="221100" />
+  <DungeonNode Depth="2" X="2372" Y="210" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="108" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="4336" Y="1130" Z="0" Range="50" RCode="210400" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1802" Y="495" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="2" X="2351" Y="148" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="105" MaxCount="4" Spawns="waiter,cook,barkeeper" X="1452" Y="3770" Z="0" Range="5" RCode="210900" />
+  <VendorNode TownID="102" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2786" Y="2282" Z="13" Range="50" RCode="0" />
+  <VendorNode TownID="102" MaxCount="2" Spawns="minter" X="2731" Y="2192" Z="0" Range="5" RCode="0" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2914" Y="547" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="2" X="6418" Y="358" Z="-40" Range="25" RCode="221500" />
+  <VendorNode TownID="105" MaxCount="3" Spawns="weaver,tailorguildmaster" X="1356" Y="3780" Z="0" Range="5" RCode="210900" />
+  <DungeonNode Depth="3" X="5183" Y="727" Z="0" Range="20" RCode="220303" />
+  <DungeonNode Depth="2" X="6349" Y="89" Z="-20" Range="70" RCode="221700" />
+  <VendorNode TownID="110" MaxCount="6" Spawns="harpy,lizardman,orcishmage,orc,ratman,spectre,troll" X="3411" Y="2592" Z="44" Range="40" RCode="221100" />
+  <DungeonNode Depth="1" X="5425" Y="1451" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="1" X="5722" Y="1390" Z="1" Range="7" RCode="221100" />
+  <DungeonNode Depth="1" X="1866" Y="938" Z="-1" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="4682" Y="3662" Z="77" Range="50" RCode="0" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1063" Y="541" Z="16" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="6500" Y="875" Z="0" Range="0" RCode="220100" />
+  <VendorNode TownID="107" MaxCount="2" Spawns="healerguildmaster" X="2577" Y="599" Z="0" Range="5" RCode="210300" />
+  <DungeonNode Depth="1" X="5837" Y="245" Z="-5" Range="1" RCode="221200" />
+  <DungeonNode Depth="2" X="1636" Y="532" Z="22" Range="60" RCode="221700" />
+  <DungeonNode Depth="1" X="6092" Y="1448" Z="5" Range="15" RCode="221100" />
+  <DungeonNode Depth="2" X="1491" Y="238" Z="22" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5411" Y="541" Z="60" Range="25" RCode="220401" />
+  <DungeonNode Depth="1" X="5423" Y="112" Z="0" Range="1" RCode="220701" />
+  <DungeonNode Depth="1" X="1829" Y="874" Z="-1" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="5146" Y="1995" Z="0" Range="8" RCode="221000" />
+  <DungeonNode Depth="2" X="3382" Y="280" Z="9" Range="30" RCode="221700" />
+  <DungeonNode Depth="3" X="5249" Y="228" Z="15" Range="20" RCode="221200" />
+  <VendorNode TownID="108" MaxCount="4" Spawns="Alchemist,Mage,MageGuildmaster" X="4622" Y="1203" Z="0" Range="5" RCode="210400" />
+  <VendorNode TownID="0" MaxCount="5" Spawns="Ophidianknight,Ophidianmage,Ophidianwarrior,Ophidianmatriarch" X="5132" Y="1623" Z="0" Range="20" RCode="221000" />
+  <DungeonNode Depth="1" X="1915" Y="928" Z="-1" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5549" Y="1324" Z="0" Range="30" RCode="220900" />
+  <VendorNode TownID="101" MaxCount="4" Spawns="waiter,cook,barkeeper" X="1546" Y="1764" Z="10" Range="5" RCode="210100" />
+  <DungeonNode Depth="1" X="5302" Y="1355" Z="0" Range="12" RCode="221100" />
+  <DungeonNode Depth="2" X="5271" Y="1693" Z="0" Range="20" RCode="221000" />
+  <DungeonNode Depth="1" X="6540" Y="872" Z="0" Range="5" RCode="220100" />
+  <DungeonNode Depth="1" X="6064" Y="96" Z="22" Range="1" RCode="220602" />
+  <DungeonNode Depth="1" X="6339" Y="559" Z="-50" Range="10" RCode="221500" />
+  <DungeonNode Depth="1" X="5443" Y="36" Z="-10" Range="1" RCode="220701" />
+  <DungeonNode Depth="1" X="5170" Y="2916" Z="-1" Range="5" RCode="221000" />
+  <DungeonNode Depth="2" X="1831" Y="449" Z="0" Range="60" RCode="221700" />
+  <DungeonNode Depth="1" X="4066" Y="569" Z="0" Range="80" RCode="221700" />
+  <VendorNode TownID="105" MaxCount="2" Spawns="weaponsmith" X="1441" Y="3719" Z="0" Range="5" RCode="210900" />
+  <DungeonNode Depth="1" X="5699" Y="61" Z="0" Range="1" RCode="220704" />
+  <DungeonNode Depth="1" X="5536" Y="119" Z="-5" Range="1" RCode="220702" />
+  <VendorNode TownID="169" MaxCount="8" Spawns="ghoul,headlessone,ogre,orc,orcishmage,skeleton,troll" X="2428" Y="722" Z="8" Range="30" RCode="221700" />
+  <VendorNode TownID="117" MaxCount="2" Spawns="blacksmithguildmaster" X="5225" Y="4004" Z="37" Range="5" RCode="211300" />
+  <VendorNode TownID="110" MaxCount="7" Spawns="harpy,lizardman,orcishmage,orc,ratman,spectre,troll" X="3464" Y="2503" Z="49" Range="50" RCode="221100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1563" Y="2277" Z="0" Range="50" RCode="0" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="802" Y="1280" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="5715" Y="58" Z="2" Range="1" RCode="220704" />
+  <DungeonNode Depth="1" X="1797" Y="1393" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="6507" Y="843" Z="0" Range="10" RCode="220100" />
+  <VendorNode TownID="169" MaxCount="8" Spawns="ghoul,headlessone,ogre,orc,orcishmage,skeleton,troll" X="2345" Y="676" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="4016" Y="1031" Z="-5" Range="175" RCode="221700" />
+  <DungeonNode Depth="2" X="3568" Y="3215" Z="-5" Range="100" RCode="221100" />
+  <DungeonNode Depth="1" X="5147" Y="579" Z="-50" Range="25" RCode="220301" />
+  <DungeonNode Depth="1" X="4238" Y="683" Z="2" Range="150" RCode="221700" />
+  <DungeonNode Depth="2" X="6416" Y="447" Z="-40" Range="20" RCode="221500" />
+  <DungeonNode Depth="2" X="6354" Y="455" Z="-40" Range="20" RCode="221500" />
+  <DungeonNode Depth="1" X="6305" Y="603" Z="-50" Range="4" RCode="221500" />
+  <DungeonNode Depth="2" X="3176" Y="2383" Z="-5" Range="175" RCode="221100" />
+  <DungeonNode Depth="1" X="1993" Y="1030" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5327" Y="542" Z="0" Range="25" RCode="220302" />
+  <DungeonNode Depth="1" X="5185" Y="1006" Z="0" Range="50" RCode="220503" />
+  <DungeonNode Depth="2" X="3688" Y="439" Z="-5" Range="175" RCode="221700" />
+  <DungeonNode Depth="2" X="3322" Y="271" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="1180" Y="737" Z="1" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="4363" Y="1981" Z="-5" Range="100" RCode="221100" />
+  <DungeonNode Depth="2" X="5474" Y="2035" Z="0" Range="25" RCode="220202" />
+  <DungeonNode Depth="1" X="5145" Y="553" Z="-40" Range="35" RCode="220301" />
+  <DungeonNode Depth="1" X="5157" Y="997" Z="0" Range="50" RCode="220503" />
+  <DungeonNode Depth="1" X="965" Y="757" Z="0" Range="10" RCode="221700" />
+  <DungeonNode Depth="1" X="5411" Y="1901" Z="0" Range="20" RCode="220201" />
+  <DungeonNode Depth="2" X="5322" Y="626" Z="0" Range="25" RCode="220302" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="919" Y="1718" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="2" X="1203" Y="502" Z="30" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5923" Y="48" Z="22" Range="20" RCode="220601" />
+  <DungeonNode Depth="2" X="6513" Y="871" Z="0" Range="35" RCode="220100" />
+  <DungeonNode Depth="1" X="5475" Y="748" Z="5" Range="25" RCode="220402" />
+  <DungeonNode Depth="1" X="5203" Y="787" Z="5" Range="25" RCode="220501" />
+  <DungeonNode Depth="1" X="5426" Y="791" Z="60" Range="25" RCode="220403" />
+  <DungeonNode Depth="2" X="3520" Y="2263" Z="-5" Range="100" RCode="221100" />
+  <VendorNode TownID="105" MaxCount="4" Spawns="seekerofadventure,noble,fisherman" X="1372" Y="3912" Z="-2" Range="5" RCode="210900" />
+  <VendorNode TownID="164" MaxCount="10" Spawns="Evilmagelord" X="5441" Y="187" Z="0" Range="30" RCode="220703" />
+  <DungeonNode Depth="3" X="5284" Y="926" Z="-40" Range="50" RCode="220503" />
+  <DungeonNode Depth="2" X="3327" Y="344" Z="4" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5693" Y="1415" Z="38" Range="20" RCode="221100" />
+  <DungeonNode Depth="2" X="5457" Y="2651" Z="45" Range="150" RCode="221000" />
+  <DungeonNode Depth="1" X="1325" Y="1071" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="108" MaxCount="2" Spawns="weaponsmith" X="4440" Y="1162" Z="0" Range="5" RCode="210400" />
+  <DungeonNode Depth="1" HasItem="true" X="3170" Y="672" Z="0" Range="10" RCode="221700" />
+  <VendorNode TownID="114" MaxCount="2" Spawns="healerguildmaster" X="2920" Y="856" Z="0" Range="5" RCode="210700" />
+  <DungeonNode Depth="1" X="5734" Y="1433" Z="12" Range="5" RCode="221100" />
+  <DungeonNode Depth="1" X="4613" Y="3272" Z="0" Range="30" RCode="221100" />
+  <DungeonNode Depth="1" X="3545" Y="1178" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="1" X="5426" Y="943" Z="20" Range="25" RCode="220403" />
+  <DungeonNode Depth="2" X="5976" Y="1387" Z="-22" Range="20" RCode="221100" />
+  <DungeonNode Depth="1" X="1979" Y="885" Z="-1" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="4069" Y="345" Z="0" Range="100" RCode="221700" />
+  <VendorNode TownID="0" MaxCount="9" Spawns="Jukalord,Jukamage,Jukawarrior" X="5659" Y="563" Z="20" Range="30" RCode="220801" />
+  <DungeonNode Depth="2" X="4912" Y="2471" Z="-5" Range="175" RCode="221100" />
+  <VendorNode TownID="106" MaxCount="2" Spawns="BlacksmithGuildmaster" X="3705" Y="2246" Z="20" Range="2" RCode="210200" />
+  <DungeonNode Depth="1" X="2067" Y="989" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="2971" Y="1605" Z="-5" Range="100" RCode="221100" />
+  <DungeonNode Depth="1" X="5730" Y="93" Z="0" Range="1" RCode="220704" />
+  <VendorNode TownID="109" MaxCount="2" Spawns="blacksmithguildmaster" X="3554" Y="1202" Z="0" Range="5" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3076" Y="150" Z="1" Range="50" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="725" Y="1483" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="5605" Y="1343" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="3" X="5411" Y="163" Z="0" Range="30" RCode="220703" />
+  <VendorNode TownID="113" MaxCount="2" Spawns="healerguildmaster" X="1911" Y="2805" Z="0" Range="5" RCode="210600" />
+  <DungeonNode Depth="1" X="5195" Y="234" Z="25" Range="5" RCode="221200" />
+  <DungeonNode Depth="1" X="5725" Y="78" Z="0" Range="1" RCode="220704" />
+  <DungeonNode Depth="2" X="1004" Y="1369" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="114" MaxCount="3" Spawns="alchemist,customhairstylist" X="2992" Y="844" Z="0" Range="5" RCode="210700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="559" Y="2081" Z="0" Range="50" RCode="210500" />
+  <VendorNode TownID="111" MaxCount="3" Spawns="weaver,tailorguildmaster" X="2883" Y="3502" Z="10" Range="5" RCode="211100" />
+  <DungeonNode Depth="1" X="5190" Y="655" Z="0" Range="25" RCode="220303" />
+  <DungeonNode Depth="2" X="1986" Y="1463" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" HasItem="true" X="5183" Y="1007" Z="0" Range="10" RCode="220503" />
+  <DungeonNode Depth="1" X="5788" Y="1427" Z="18" Range="5" RCode="221100" />
+  <DungeonNode Depth="2" X="5596" Y="1903" Z="0" Range="25" RCode="220203" />
+  <DungeonNode Depth="2" X="3328" Y="2063" Z="-5" Range="175" RCode="221100" />
+  <DungeonNode Depth="1" X="6041" Y="222" Z="44" Range="1" RCode="220604" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1011" Y="1945" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="6115" Y="1491" Z="-15" Range="15" RCode="221100" />
+  <DungeonNode Depth="1" X="1244" Y="1374" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="112" MaxCount="2" Spawns="mapmaker" X="593" Y="2277" Z="0" Range="5" RCode="210500" />
+  <DungeonNode Depth="1" X="5469" Y="2019" Z="0" Range="25" RCode="220202" />
+  <DungeonNode Depth="1" X="5568" Y="36" Z="0" Range="30" RCode="220702" />
+  <DungeonNode Depth="1" X="5787" Y="1427" Z="17" Range="20" RCode="221100" />
+  <DungeonNode Depth="1" X="4214" Y="655" Z="1" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5605" Y="799" Z="60" Range="10" RCode="220403" />
+  <DungeonNode Depth="2" X="4995" Y="1829" Z="-5" Range="100" RCode="221100" />
+  <DungeonNode Depth="3" X="6566" Y="120" Z="0" Range="15" RCode="221600" />
+  <DungeonNode Depth="2" X="1908" Y="214" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="108" MaxCount="2" Spawns="healerguildmaster" X="4394" Y="1083" Z="0" Range="5" RCode="210400" />
+  <DungeonNode Depth="1" X="1987" Y="822" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5651" Y="1443" Z="0" Range="5" RCode="221100" />
+  <VendorNode TownID="108" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="4592" Y="1424" Z="3" Range="50" RCode="210400" />
+  <DungeonNode Depth="1" X="2256" Y="1181" Z="-2" Range="5" RCode="221700" />
+  <VendorNode TownID="109" MaxCount="2" Spawns="blacksmithguildmaster" X="3546" Y="1185" Z="0" Range="5" RCode="221700" />
+  <VendorNode TownID="0" MaxCount="5" Spawns="Jukamage,Jukawarrior" X="5690" Y="534" Z="0" Range="30" RCode="220801" />
+  <DungeonNode Depth="2" X="5346" Y="1756" Z="-125" Range="20" RCode="221000" />
+  <DungeonNode Depth="1" X="6084" Y="1470" Z="5" Range="15" RCode="221100" />
+  <VendorNode TownID="117" MaxCount="2" Spawns="minter" X="5275" Y="3977" Z="37" Range="5" RCode="211300" />
+  <DungeonNode Depth="2" X="3984" Y="2423" Z="-5" Range="175" RCode="221100" />
+  <DungeonNode Depth="1" X="5181" Y="207" Z="25" Range="15" RCode="221200" />
+  <VendorNode TownID="168" MaxCount="24" Spawns="Ratmanarcher,Ratmanmage" X="5831" Y="358" Z="-1" Range="25" RCode="221200" />
+  <DungeonNode Depth="1" HasItem="true" X="5145" Y="618" Z="-50" Range="7" RCode="220301" />
+  <VendorNode TownID="115" MaxCount="3" Spawns="alchemist,mageguildmaster" X="5149" Y="59" Z="25" Range="5" RCode="211200" />
+  <DungeonNode Depth="1" X="4519" Y="3097" Z="0" Range="30" RCode="221100" />
+  <DungeonNode Depth="1" HasItem="true" X="2548" Y="1173" Z="0" Range="10" RCode="221700" />
+  <DungeonNode Depth="1" X="5417" Y="1975" Z="0" Range="5" RCode="220202" />
+  <DungeonNode Depth="1" X="3815" Y="1217" Z="0" Range="20" RCode="221700" />
+  <DungeonNode Depth="1" X="5137" Y="3017" Z="58" Range="5" RCode="221000" />
+  <DungeonNode Depth="1" X="5732" Y="1297" Z="-1" Range="20" RCode="221100" />
+  <DungeonNode Depth="1" X="5468" Y="100" Z="35" Range="1" RCode="220701" />
+  <DungeonNode Depth="2" X="5200" Y="1568" Z="0" Range="20" RCode="221000" />
+  <DungeonNode Depth="1" X="6518" Y="879" Z="0" Range="5" RCode="220100" />
+  <DungeonNode Depth="1" X="5505" Y="747" Z="5" Range="25" RCode="220402" />
+  <DungeonNode Depth="2" X="4904" Y="1127" Z="-5" Range="175" RCode="221200" />
+  <DungeonNode Depth="1" X="3773" Y="1264" Z="0" Range="4" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1377" Y="1911" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="5692" Y="1415" Z="37" Range="5" RCode="221100" />
+  <DungeonNode Depth="2" X="5956" Y="1310" Z="-2" Range="20" RCode="221100" />
+  <DungeonNode Depth="1" X="6058" Y="153" Z="0" Range="1" RCode="220604" />
+  <VendorNode TownID="110" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3555" Y="2525" Z="13" Range="50" RCode="221100" />
+  <DungeonNode Depth="2" X="1749" Y="474" Z="6" Range="60" RCode="221700" />
+  <DungeonNode Depth="2" X="1965" Y="160" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="5697" Y="2626" Z="-2" Range="30" RCode="221100" />
+  <VendorNode TownID="0" MaxCount="5" Spawns="Jukamage,Jukawarrior" X="5857" Y="562" Z="15" Range="30" RCode="220801" />
+  <VendorNode TownID="105" MaxCount="2" Spawns="farmer" X="1386" Y="3825" Z="0" Range="5" RCode="210900" />
+  <DungeonNode Depth="1" X="5391" Y="660" Z="20" Range="25" RCode="220402" />
+  <DungeonNode Depth="3" X="1394" Y="955" Z="0" Range="60" RCode="221700" />
+  <DungeonNode Depth="1" X="854" Y="1686" Z="0" Range="20" RCode="221700" />
+  <DungeonNode Depth="1" X="5141" Y="968" Z="0" Range="10" RCode="220503" />
+  <DungeonNode Depth="3" X="5132" Y="1624" Z="0" Range="20" RCode="221000" />
+  <DungeonNode Depth="3" X="5342" Y="1553" Z="0" Range="20" RCode="221000" />
+  <DungeonNode Depth="2" X="1038" Y="1149" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="3" X="6511" Y="183" Z="0" Range="10" RCode="221600" />
+  <DungeonNode Depth="1" X="6092" Y="187" Z="0" Range="1" RCode="220604" />
+  <DungeonNode Depth="1" X="5210" Y="1749" Z="0" Range="15" RCode="221000" />
+  <DungeonNode Depth="1" X="5223" Y="963" Z="-40" Range="40" RCode="220503" />
+  <DungeonNode Depth="1" X="5945" Y="175" Z="0" Range="20" RCode="220603" />
+  <VendorNode TownID="189" MaxCount="3" Spawns="Evilmage" X="5169" Y="836" Z="0" Range="50" RCode="220501" />
+  <VendorNode TownID="164" MaxCount="2" Spawns="Evilmagelord" X="5819" Y="50" Z="0" Range="25" RCode="220704" />
+  <VendorNode TownID="114" MaxCount="2" Spawns="farmer" X="3012" Y="780" Z="0" Range="5" RCode="210700" />
+  <DungeonNode Depth="1" X="5475" Y="190" Z="0" Range="1" RCode="220703" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1486" Y="1301" Z="0" Range="50" RCode="221700" />
+  <VendorNode TownID="118" MaxCount="3" Spawns="alchemist,herbalist" X="5714" Y="3202" Z="12" Range="5" RCode="211400" />
+  <DungeonNode Depth="2" X="947" Y="418" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1527" Y="2609" Z="5" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="5129" Y="2937" Z="32" Range="5" RCode="221000" />
+  <DungeonNode Depth="1" X="3920" Y="287" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="103" MaxCount="3" Spawns="cobbler,farmer" X="2216" Y="1192" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="2" X="5617" Y="1861" Z="0" Range="25" RCode="220203" />
+  <VendorNode TownID="110" MaxCount="3" Spawns="harpy,lizardman,orcishmage,orc,ratman,spectre,troll" X="3379" Y="2693" Z="35" Range="30" RCode="221100" />
+  <DungeonNode Depth="3" X="5176" Y="1702" Z="0" Range="20" RCode="221000" />
+  <VendorNode TownID="105" MaxCount="3" Spawns="alchemist,mageguildmaster" X="1425" Y="3981" Z="0" Range="5" RCode="210900" />
+  <VendorNode TownID="114" MaxCount="3" Spawns="architect,realestatebroker" X="2917" Y="798" Z="0" Range="5" RCode="210700" />
+  <DungeonNode Depth="2" X="5343" Y="1551" Z="0" Range="20" RCode="221000" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2416" Y="1172" Z="0" Range="50" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="994" Y="2361" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="2" X="1166" Y="818" Z="5" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5814" Y="237" Z="0" Range="15" RCode="221200" />
+  <DungeonNode Depth="1" X="6094" Y="154" Z="-22" Range="20" RCode="220604" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1426" Y="2615" Z="10" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="6112" Y="1462" Z="5" Range="15" RCode="221100" />
+  <DungeonNode Depth="1" X="5536" Y="1345" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="1" X="5970" Y="80" Z="0" Range="20" RCode="220601" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="4478" Y="3218" Z="0" Range="50" RCode="221100" />
+  <DungeonNode Depth="2" X="5566" Y="3292" Z="4" Range="62" RCode="221100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3092" Y="542" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="5772" Y="188" Z="-3" Range="1" RCode="221200" />
+  <DungeonNode Depth="2" X="6478" Y="174" Z="4" Range="10" RCode="221600" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1387" Y="2023" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="5997" Y="145" Z="0" Range="1" RCode="220603" />
+  <VendorNode TownID="0" MaxCount="5" Spawns="Ophidianknight,Ophidianmage,Ophidianwarrior,Ophidianmatriarch" X="5176" Y="1701" Z="2" Range="20" RCode="221000" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1087" Y="2401" Z="0" Range="50" RCode="0" />
+  <VendorNode TownID="101" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1725" Y="1447" Z="0" Range="50" RCode="210100" />
+  <DungeonNode Depth="2" X="1300" Y="607" Z="15" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="2035" Y="1018" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="6378" Y="130" Z="-20" Range="5" RCode="221700" />
+  <DungeonNode Depth="2" X="1792" Y="79" Z="-5" Range="100" RCode="221700" />
+  <VendorNode TownID="111" MaxCount="2" Spawns="minter" X="2880" Y="3472" Z="15" Range="5" RCode="211100" />
+  <DungeonNode Depth="2" X="2395" Y="1405" Z="-5" Range="130" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1092" Y="1010" Z="0" Range="50" RCode="221700" />
+  <VendorNode TownID="113" MaxCount="2" Spawns="cobbler" X="1852" Y="2831" Z="10" Range="5" RCode="210600" />
+  <VendorNode TownID="108" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="4470" Y="1430" Z="8" Range="50" RCode="210400" />
+  <DungeonNode Depth="2" X="1060" Y="1375" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="6295" Y="619" Z="-50" Range="15" RCode="221500" />
+  <VendorNode TownID="101" MaxCount="4" Spawns="fisherman,rat" X="1438" Y="1761" Z="-2" Range="10" RCode="210100" />
+  <DungeonNode Depth="1" X="5492" Y="56" Z="20" Range="1" RCode="220701" />
+  <DungeonNode Depth="1" X="6534" Y="178" Z="0" Range="4" RCode="221600" />
+  <DungeonNode Depth="2" X="3462" Y="136" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5569" Y="1306" Z="0" Range="10" RCode="220900" />
+  <VendorNode TownID="108" MaxCount="3" Spawns="architect,realestatebroker" X="4416" Y="1085" Z="0" Range="5" RCode="210400" />
+  <DungeonNode Depth="2" X="4888" Y="375" Z="-5" Range="175" RCode="221200" />
+  <VendorNode TownID="108" MaxCount="3" Spawns="weaver,tailorguildmaster" X="4458" Y="1060" Z="0" Range="5" RCode="210400" />
+  <DungeonNode Depth="1" X="5425" Y="1484" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="1" X="5875" Y="44" Z="0" Range="30" RCode="220704" />
+  <DungeonNode Depth="1" HasItem="true" X="5387" Y="1911" Z="0" Range="2" RCode="220201" />
+  <VendorNode TownID="0" MaxCount="5" Spawns="Ophidianknight,Ophidianmage,Ophidianwarrior,Ophidianmatriarch" X="5296" Y="1562" Z="0" Range="20" RCode="221000" />
+  <DungeonNode Depth="2" X="1898" Y="1265" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="6561" Y="78" Z="-10" Range="5" RCode="221600" />
+  <DungeonNode Depth="1" HasItem="true" X="5399" Y="1859" Z="0" Range="5" RCode="220201" />
+  <DungeonNode Depth="1" X="5400" Y="1397" Z="0" Range="20" RCode="220900" />
+  <VendorNode TownID="0" MaxCount="34" Spawns="ratmanarcher,ratmanmage,changeling,doppleganger,dog,chicken,cat,boar,bird,gargoyle,titan,cyclops,orcishmage,orcscout" X="6168" Y="117" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="114" MaxCount="2" Spawns="mapmaker" X="2995" Y="815" Z="0" Range="5" RCode="210700" />
+  <DungeonNode Depth="1" X="6575" Y="186" Z="32" Range="0" RCode="221600" />
+  <DungeonNode Depth="2" X="1652" Y="1400" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5733" Y="93" Z="0" Range="1" RCode="220704" />
+  <VendorNode TownID="112" MaxCount="3" Spawns="architect,realestatebroker" X="627" Y="2163" Z="0" Range="5" RCode="210500" />
+  <DungeonNode Depth="1" X="5696" Y="303" Z="0" Range="1" RCode="221200" />
+  <DungeonNode Depth="1" X="5606" Y="25" Z="10" Range="1" RCode="220702" />
+  <VendorNode TownID="101" MaxCount="2" Spawns="rancher" X="1243" Y="1699" Z="0" Range="4" RCode="210100" />
+  <DungeonNode Depth="2" X="3888" Y="3167" Z="-5" Range="175" RCode="221100" />
+  <VendorNode TownID="108" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="4448" Y="1334" Z="3" Range="50" RCode="210400" />
+  <VendorNode TownID="105" MaxCount="3" Spawns="architect,realestatebroker" X="1435" Y="3820" Z="0" Range="5" RCode="210900" />
+  <DungeonNode Depth="1" X="5751" Y="140" Z="10" Range="1" RCode="221200" />
+  <DungeonNode Depth="1" X="5918" Y="223" Z="44" Range="20" RCode="220603" />
+  <VendorNode TownID="105" MaxCount="2" Spawns="mapmaker" X="1452" Y="3747" Z="0" Range="5" RCode="210900" />
+  <VendorNode TownID="114" MaxCount="3" Spawns="weaver,tailorguildmaster" X="2961" Y="621" Z="0" Range="5" RCode="210700" />
+  <DungeonNode Depth="2" X="5520" Y="2890" Z="33" Range="100" RCode="221100" />
+  <DungeonNode Depth="2" X="1037" Y="1325" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5456" Y="157" Z="0" Range="1" RCode="220703" />
+  <DungeonNode Depth="1" X="1862" Y="1434" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1545" Y="813" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="6328" Y="517" Z="-50" Range="10" RCode="221500" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="890" Y="657" Z="0" Range="50" RCode="221700" />
+  <VendorNode TownID="110" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3449" Y="2737" Z="49" Range="50" RCode="221100" />
+  <VendorNode TownID="115" MaxCount="3" Spawns="alchemist,mageguildmaster" X="5302" Y="89" Z="15" Range="5" RCode="211200" />
+  <DungeonNode Depth="1" X="5723" Y="73" Z="0" Range="1" RCode="220704" />
+  <DungeonNode Depth="1" X="6579" Y="180" Z="30" Range="2" RCode="221600" />
+  <VendorNode TownID="101" MaxCount="2" Spawns="minter" X="1433" Y="1687" Z="0" Range="5" RCode="210100" />
+  <VendorNode TownID="101" MaxCount="4" Spawns="waiter,cook,barkeeper" X="1489" Y="1688" Z="20" Range="10" RCode="210100" />
+  <DungeonNode Depth="1" X="6034" Y="1467" Z="5" Range="15" RCode="221100" />
+  <DungeonNode Depth="1" X="5385" Y="703" Z="15" Range="25" RCode="220402" />
+  <DungeonNode Depth="2" X="2345" Y="112" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="108" MaxCount="2" Spawns="minter" X="4471" Y="1157" Z="0" Range="5" RCode="210400" />
+  <VendorNode TownID="112" MaxCount="2" Spawns="weaponsmith" X="586" Y="2169" Z="0" Range="5" RCode="210500" />
+  <DungeonNode Depth="2" X="3616" Y="1807" Z="-5" Range="175" RCode="221100" />
+  <DungeonNode Depth="1" X="6253" Y="112" Z="-9" Range="0" RCode="221700" />
+  <DungeonNode Depth="1" X="5186" Y="578" Z="0" Range="30" RCode="220301" />
+  <DungeonNode Depth="2" X="5457" Y="1971" Z="0" Range="25" RCode="220202" />
+  <DungeonNode Depth="1" X="5838" Y="355" Z="0" Range="1" RCode="221200" />
+  <VendorNode TownID="116" MaxCount="3" Spawns="architect,realestatebroker" X="564" Y="1011" Z="0" Range="5" RCode="210800" />
+  <DungeonNode Depth="1" X="6099" Y="51" Z="22" Range="20" RCode="220602" />
+  <DungeonNode Depth="2" X="3256" Y="1031" Z="-5" Range="175" RCode="221700" />
+  <DungeonNode Depth="1" X="6263" Y="118" Z="-10" Range="20" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="958" Y="2074" Z="1" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="2080" Y="400" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="5348" Y="2011" Z="0" Range="15" RCode="221000" />
+  <DungeonNode Depth="1" X="5689" Y="1387" Z="1" Range="10" RCode="221100" />
+  <DungeonNode Depth="1" X="5474" Y="139" Z="20" Range="30" RCode="220703" />
+  <DungeonNode Depth="1" X="5351" Y="2359" Z="0" Range="75" RCode="221000" />
+  <DungeonNode Depth="1" X="1726" Y="1362" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="1967" Y="1296" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="0" MaxCount="5" Spawns="Ophidianknight,Ophidianmage,Ophidianwarrior,Ophidianmatriarch" X="5163" Y="1585" Z="-15" Range="20" RCode="221000" />
+  <DungeonNode Depth="1" X="5651" Y="1402" Z="0" Range="3" RCode="221100" />
+  <DungeonNode Depth="1" X="5404" Y="1431" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="1" X="1651" Y="612" Z="22" Range="20" RCode="221700" />
+  <DungeonNode Depth="1" X="5992" Y="147" Z="0" Range="1" RCode="220603" />
+  <DungeonNode Depth="2" X="4048" Y="63" Z="-5" Range="100" RCode="221700" />
+  <DungeonNode Depth="2" X="974" Y="1186" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="6086" Y="178" Z="0" Range="20" RCode="220604" />
+  <DungeonNode Depth="1" HasItem="true" X="5153" Y="842" Z="0" Range="40" RCode="220501" />
+  <DungeonNode Depth="1" X="5468" Y="109" Z="35" Range="30" RCode="220701" />
+  <DungeonNode Depth="1" X="1996" Y="72" Z="8" Range="5" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1699" Y="2560" Z="0" Range="50" RCode="0" />
+  <VendorNode TownID="169" MaxCount="8" Spawns="ghoul,headlessone,ogre,orc,orcishmage,skeleton,troll" X="2375" Y="725" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="2513" Y="862" Z="0" Range="25" RCode="221700" />
+  <DungeonNode Depth="1" HasItem="true" X="5141" Y="915" Z="0" Range="25" RCode="220503" />
+  <DungeonNode Depth="1" X="5654" Y="1380" Z="0" Range="5" RCode="221100" />
+  <DungeonNode Depth="1" X="5477" Y="67" Z="20" Range="30" RCode="220701" />
+  <DungeonNode Depth="1" X="5482" Y="791" Z="60" Range="25" RCode="220403" />
+  <DungeonNode Depth="1" X="5460" Y="526" Z="60" Range="25" RCode="220401" />
+  <DungeonNode Depth="1" X="5845" Y="57" Z="0" Range="30" RCode="220704" />
+  <DungeonNode Depth="1" X="6281" Y="121" Z="0" Range="0" RCode="221700" />
+  <VendorNode TownID="101" MaxCount="2" Spawns="Veterinarian" X="1388" Y="1655" Z="30" Range="5" RCode="210100" />
+  <DungeonNode Depth="2" X="1214" Y="617" Z="13" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="2752" Y="1455" Z="-5" Range="175" RCode="221700" />
+  <DungeonNode Depth="1" X="2115" Y="48" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="1004" Y="1369" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5351" Y="3401" Z="30" Range="50" RCode="221100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="876" Y="1639" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="2" X="1021" Y="1415" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5399" Y="1298" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="1" X="5787" Y="1386" Z="-2" Range="20" RCode="221100" />
+  <DungeonNode Depth="1" X="5403" Y="1332" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="1" X="5420" Y="746" Z="5" Range="25" RCode="220402" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1695" Y="809" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="2146" Y="178" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5724" Y="2949" Z="31" Range="75" RCode="221100" />
+  <DungeonNode Depth="1" X="3740" Y="1197" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="1" X="5521" Y="1397" Z="0" Range="10" RCode="220900" />
+  <DungeonNode Depth="1" X="5452" Y="1366" Z="0" Range="10" RCode="220900" />
+  <DungeonNode Depth="2" X="5593" Y="141" Z="10" Range="30" RCode="220703" />
+  <DungeonNode Depth="2" X="4904" Y="759" Z="-5" Range="175" RCode="221200" />
+  <DungeonNode Depth="1" X="5970" Y="169" Z="0" Range="1" RCode="220603" />
+  <VendorNode TownID="113" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1894" Y="2942" Z="19" Range="50" RCode="210600" />
+  <VendorNode TownID="115" MaxCount="2" Spawns="minter" X="5347" Y="76" Z="25" Range="5" RCode="211200" />
+  <DungeonNode Depth="2" X="3088" Y="2759" Z="-5" Range="175" RCode="221100" />
+  <DungeonNode Depth="1" X="2093" Y="147" Z="3" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="1200" Y="633" Z="6" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="5681" Y="191" Z="-6" Range="20" RCode="221200" />
+  <VendorNode TownID="106" MaxCount="2" Spawns="Minter" X="3785" Y="2242" Z="20" Range="5" RCode="210200" />
+  <VendorNode TownID="114" MaxCount="3" Spawns="alchemist,mageguildmaster" X="2890" Y="652" Z="0" Range="5" RCode="210700" />
+  <DungeonNode Depth="1" X="5756" Y="203" Z="-2" Range="1" RCode="221200" />
+  <DungeonNode Depth="1" X="5809" Y="1332" Z="0" Range="20" RCode="221100" />
+  <DungeonNode Depth="1" X="5247" Y="227" Z="15" Range="10" RCode="221200" />
+  <DungeonNode Depth="2" X="1759" Y="259" Z="21" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5819" Y="591" Z="0" Range="25" RCode="220801" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="834" Y="751" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="5754" Y="211" Z="-6" Range="1" RCode="221200" />
+  <DungeonNode Depth="2" X="5527" Y="210" Z="0" Range="30" RCode="220703" />
+  <DungeonNode Depth="1" X="6041" Y="1486" Z="5" Range="15" RCode="221100" />
+  <DungeonNode Depth="2" X="5457" Y="2651" Z="45" Range="150" RCode="221000" />
+  <DungeonNode Depth="3" X="6431" Y="564" Z="-50" Range="35" RCode="221500" />
+  <VendorNode TownID="108" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="4468" Y="1006" Z="0" Range="50" RCode="210400" />
+  <DungeonNode Depth="1" X="1305" Y="1326" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5684" Y="181" Z="-5" Range="1" RCode="221200" />
+  <DungeonNode Depth="1" X="2069" Y="1028" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5926" Y="230" Z="44" Range="1" RCode="220603" />
+  <DungeonNode Depth="1" X="1802" Y="1506" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="6097" Y="36" Z="22" Range="1" RCode="220602" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1526" Y="960" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="6476" Y="176" Z="-11" Range="5" RCode="221600" />
+  <DungeonNode Depth="1" X="5651" Y="1363" Z="0" Range="3" RCode="221100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1715" Y="2307" Z="5" Range="50" RCode="0" />
+  <VendorNode TownID="114" MaxCount="3" Spawns="architect,realestatebroker" X="2916" Y="800" Z="0" Range="5" RCode="210700" />
+  <DungeonNode Depth="1" X="5430" Y="1485" Z="0" Range="30" RCode="220900" />
+  <DungeonNode Depth="3" X="6585" Y="878" Z="0" Range="10" RCode="220100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2672" Y="814" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="3" X="5160" Y="1586" Z="-15" Range="20" RCode="221000" />
+  <DungeonNode Depth="2" X="1983" Y="1517" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="855" Y="934" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="2" X="5440" Y="2023" Z="0" Range="25" RCode="220202" />
+  <DungeonNode Depth="1" X="6037" Y="1494" Z="0" Range="10" RCode="221100" />
+  <VendorNode TownID="110" MaxCount="3" Spawns="alchemist,mageguildmaster" X="3627" Y="2541" Z="0" Range="5" RCode="211000" />
+  <DungeonNode Depth="2" X="2058" Y="87" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="3" X="5247" Y="956" Z="-40" Range="50" RCode="220503" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1973" Y="751" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="2" X="3168" Y="629" Z="8" Range="30" RCode="221700" />
+  <DungeonNode Depth="3" X="5269" Y="811" Z="7" Range="50" RCode="220502" />
+  <DungeonNode Depth="1" X="4123" Y="378" Z="4" Range="75" RCode="221700" />
+  <VendorNode TownID="108" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="4326" Y="1046" Z="8" Range="50" RCode="210400" />
+  <DungeonNode Depth="1" X="1898" Y="1265" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="102" MaxCount="3" Spawns="architect,realestatebroker" X="2627" Y="2100" Z="10" Range="5" RCode="0" />
+  <DungeonNode Depth="1" X="5836" Y="1364" Z="1" Range="20" RCode="221100" />
+  <VendorNode TownID="107" MaxCount="2" Spawns="provisioner" X="2450" Y="428" Z="15" Range="5" RCode="210300" />
+  <DungeonNode Depth="1" X="1371" Y="891" Z="0" Range="5" RCode="221700" />
+  <VendorNode TownID="101" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1229" Y="1655" Z="0" Range="50" RCode="210100" />
+  <DungeonNode Depth="1" X="5153" Y="1971" Z="0" Range="8" RCode="221000" />
+  <DungeonNode Depth="1" X="6041" Y="230" Z="44" Range="1" RCode="220604" />
+  <DungeonNode Depth="1" X="5983" Y="169" Z="0" Range="1" RCode="220603" />
+  <DungeonNode Depth="1" X="1833" Y="1245" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5650" Y="1419" Z="22" Range="5" RCode="221100" />
+  <DungeonNode Depth="1" X="6288" Y="893" Z="-2" Range="5" RCode="221400" />
+  <DungeonNode Depth="2" X="3123" Y="1485" Z="-5" Range="100" RCode="221100" />
+  <DungeonNode Depth="1" X="6108" Y="1471" Z="0" Range="10" RCode="221100" />
+  <DungeonNode Depth="2" X="6345" Y="588" Z="-50" Range="25" RCode="221500" />
+  <DungeonNode Depth="1" X="5966" Y="70" Z="0" Range="1" RCode="220601" />
+  <VendorNode TownID="105" MaxCount="2" Spawns="weaponsmith" X="1475" Y="3865" Z="0" Range="5" RCode="210900" />
+  <DungeonNode Depth="2" X="1336" Y="79" Z="-5" Range="100" RCode="221700" />
+  <VendorNode TownID="109" MaxCount="4" Spawns="waiter,cook,barkeeper" X="3729" Y="1259" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="3" X="6203" Y="99" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="1" X="5434" Y="89" Z="20" Range="1" RCode="220701" />
+  <DungeonNode Depth="1" X="5250" Y="869" Z="0" Range="50" RCode="220502" />
+  <DungeonNode Depth="1" X="5990" Y="36" Z="22" Range="1" RCode="220601" />
+  <DungeonNode Depth="1" X="4057" Y="300" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="5790" Y="1451" Z="7" Range="15" RCode="221100" />
+  <DungeonNode Depth="1" X="6285" Y="353" Z="60" Range="5" RCode="221500" />
+  <DungeonNode Depth="1" X="6547" Y="91" Z="-10" Range="4" RCode="221600" />
+  <DungeonNode Depth="1" X="6474" Y="74" Z="-34" Range="5" RCode="221600" />
+  <DungeonNode Depth="1" X="5441" Y="680" Z="20" Range="25" RCode="220402" />
+  <VendorNode TownID="114" MaxCount="3" Spawns="weaver,tailorguildmaster" X="2840" Y="883" Z="0" Range="5" RCode="210700" />
+  <VendorNode TownID="110" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3452" Y="2563" Z="32" Range="50" RCode="221100" />
+  <DungeonNode Depth="1" HasItem="true" X="821" Y="675" Z="0" Range="10" RCode="221700" />
+  <DungeonNode Depth="1" X="5983" Y="25" Z="22" Range="1" RCode="220601" />
+  <DungeonNode Depth="1" X="5365" Y="1707" Z="-71" Range="1" RCode="221000" />
+  <DungeonNode Depth="1" X="6081" Y="44" Z="22" Range="1" RCode="220602" />
+  <DungeonNode Depth="2" X="6119" Y="219" Z="22" Range="20" RCode="220604" />
+  <DungeonNode Depth="1" X="5723" Y="1291" Z="0" Range="3" RCode="221100" />
+  <DungeonNode Depth="2" X="1887" Y="591" Z="0" Range="60" RCode="221700" />
+  <DungeonNode Depth="2" X="4864" Y="2831" Z="-5" Range="175" RCode="221100" />
+  <DungeonNode Depth="2" X="5999" Y="1327" Z="10" Range="20" RCode="221100" />
+  <VendorNode TownID="101" MaxCount="4" Spawns="waiter,cook,barkeeper" X="1620" Y="1586" Z="0" Range="5" RCode="210100" />
+  <DungeonNode Depth="1" X="5680" Y="1438" Z="0" Range="20" RCode="221100" />
+  <VendorNode TownID="114" MaxCount="3" Spawns="alchemist,mageguildmaster" X="2918" Y="672" Z="0" Range="5" RCode="210700" />
+  <DungeonNode Depth="1" X="5856" Y="107" Z="10" Range="30" RCode="220704" />
+  <DungeonNode Depth="1" X="5651" Y="1408" Z="0" Range="3" RCode="221100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1857" Y="600" Z="0" Range="50" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2814" Y="492" Z="15" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="2618" Y="761" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="1" X="6091" Y="1491" Z="10" Range="15" RCode="221100" />
+  <DungeonNode Depth="2" X="5967" Y="2370" Z="44" Range="75" RCode="221100" />
+  <DungeonNode Depth="1" X="5604" Y="166" Z="0" Range="1" RCode="220703" />
+  <DungeonNode Depth="1" HasItem="true" X="5546" Y="888" Z="30" Range="8" RCode="220403" />
+  <DungeonNode Depth="2" X="1912" Y="1302" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5593" Y="3020" Z="36" Range="5" RCode="221100" />
+  <DungeonNode Depth="1" X="6509" Y="176" Z="0" Range="4" RCode="221600" />
+  <VendorNode TownID="105" MaxCount="2" Spawns="healerguildmaster" X="1416" Y="3779" Z="0" Range="5" RCode="210900" />
+  <DungeonNode Depth="2" X="1226" Y="449" Z="1" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="3672" Y="1535" Z="-5" Range="100" RCode="221100" />
+  <DungeonNode Depth="1" X="2189" Y="298" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="1883" Y="827" Z="-1" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="4896" Y="3215" Z="-5" Range="175" RCode="221100" />
+  <VendorNode TownID="101" MaxCount="3" Spawns="weaver,tailorguildmaster" X="1467" Y="1686" Z="0" Range="5" RCode="210100" />
+  <DungeonNode Depth="1" X="6500" Y="875" Z="0" Range="0" RCode="220100" />
+  <DungeonNode Depth="1" X="5848" Y="226" Z="0" Range="1" RCode="221200" />
+  <DungeonNode Depth="4" X="5152" Y="869" Z="0" Range="50" RCode="220501" />
+  <DungeonNode Depth="1" X="2077" Y="434" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="0" MaxCount="5" Spawns="Jukamage,Jukawarrior" X="5857" Y="586" Z="15" Range="30" RCode="220801" />
+  <DungeonNode Depth="1" HasItem="true" X="5504" Y="1808" Z="0" Range="12" RCode="221100" />
+  <DungeonNode Depth="1" X="5458" Y="1445" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="1" X="5410" Y="170" Z="0" Range="1" RCode="220703" />
+  <DungeonNode Depth="1" X="5956" Y="145" Z="22" Range="20" RCode="220603" />
+  <DungeonNode Depth="3" X="5334" Y="1613" Z="0" Range="20" RCode="221000" />
+  <DungeonNode Depth="1" X="5603" Y="116" Z="0" Range="30" RCode="220702" />
+  <DungeonNode Depth="1" X="2254" Y="1207" Z="0" Range="5" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="14" Spawns="Orcbomber,Orccaptain,Orcishlord,Orcishmage" X="633" Y="1484" Z="0" Range="20" RCode="0" />
+  <DungeonNode Depth="1" X="5717" Y="58" Z="5" Range="1" RCode="220704" />
+  <DungeonNode Depth="1" X="6107" Y="70" Z="0" Range="1" RCode="220602" />
+  <DungeonNode Depth="2" X="1849" Y="953" Z="7" Range="30" RCode="221700" />
+  <VendorNode TownID="105" MaxCount="2" Spawns="weaponsmith" X="1456" Y="3850" Z="0" Range="5" RCode="210900" />
+  <VendorNode TownID="107" MaxCount="2" Spawns="blacksmithguildmaster" X="2471" Y="564" Z="5" Range="5" RCode="210300" />
+  <DungeonNode Depth="1" X="5570" Y="118" Z="5" Range="1" RCode="220702" />
+  <DungeonNode Depth="2" X="3173" Y="771" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="118" MaxCount="2" Spawns="banker" X="5669" Y="3131" Z="14" Range="5" RCode="211400" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2188" Y="1986" Z="0" Range="50" RCode="221800" />
+  <DungeonNode Depth="1" X="5558" Y="2025" Z="0" Range="20" RCode="220202" />
+  <DungeonNode Depth="3" X="5477" Y="183" Z="0" Range="30" RCode="220703" />
+  <DungeonNode Depth="2" X="1626" Y="266" Z="16" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="764" Y="822" Z="0" Range="50" RCode="210800" />
+  <DungeonNode Depth="1" X="5475" Y="1402" Z="0" Range="30" RCode="220900" />
+  <DungeonNode Depth="3" X="5270" Y="1695" Z="0" Range="20" RCode="221000" />
+  <VendorNode TownID="102" MaxCount="4" Spawns="waiter,cook,barkeeper" X="2680" Y="2238" Z="2" Range="5" RCode="0" />
+  <DungeonNode Depth="2" X="5799" Y="188" Z="-6" Range="25" RCode="221200" />
+  <DungeonNode Depth="1" X="6285" Y="114" Z="0" Range="0" RCode="221700" />
+  <DungeonNode Depth="1" X="5647" Y="1439" Z="22" Range="15" RCode="221100" />
+  <VendorNode TownID="108" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="4384" Y="1218" Z="0" Range="50" RCode="210400" />
+  <DungeonNode Depth="2" X="5560" Y="1843" Z="0" Range="40" RCode="220203" />
+  <DungeonNode Depth="1" X="6087" Y="1443" Z="0" Range="10" RCode="221100" />
+  <DungeonNode Depth="2" X="5838" Y="2651" Z="0" Range="75" RCode="221100" />
+  <VendorNode TownID="101" MaxCount="4" Spawns="waiter,cook,barkeeper" X="1427" Y="1715" Z="20" Range="5" RCode="210100" />
+  <DungeonNode Depth="1" X="2079" Y="1018" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="6476" Y="101" Z="-44" Range="5" RCode="221600" />
+  <VendorNode TownID="103" MaxCount="2" Spawns="banker" X="2227" Y="1199" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="1" X="6244" Y="111" Z="0" Range="0" RCode="221700" />
+  <DungeonNode Depth="1" X="6039" Y="1438" Z="4" Range="15" RCode="221100" />
+  <DungeonNode Depth="1" X="5850" Y="219" Z="-3" Range="20" RCode="221200" />
+  <VendorNode TownID="110" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3718" Y="2736" Z="38" Range="50" RCode="221100" />
+  <DungeonNode Depth="1" X="805" Y="483" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1612" Y="2526" Z="0" Range="50" RCode="0" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="974" Y="374" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="5251" Y="3301" Z="-2" Range="50" RCode="221100" />
+  <VendorNode TownID="105" MaxCount="3" Spawns="weaver,tailorguildmaster" X="1356" Y="3780" Z="0" Range="5" RCode="210900" />
+  <VendorNode TownID="164" MaxCount="10" Spawns="Evilmagelord" X="5577" Y="194" Z="0" Range="30" RCode="220703" />
+  <VendorNode TownID="105" MaxCount="2" Spawns="minter" X="1317" Y="3773" Z="0" Range="5" RCode="210900" />
+  <VendorNode TownID="116" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="689" Y="753" Z="0" Range="50" RCode="210800" />
+  <DungeonNode Depth="1" X="6022" Y="2874" Z="16" Range="50" RCode="221100" />
+  <DungeonNode Depth="1" X="6274" Y="131" Z="0" Range="0" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1727" Y="2702" Z="5" Range="50" RCode="0" />
+  <VendorNode TownID="114" MaxCount="2" Spawns="furtrader" X="2860" Y="999" Z="0" Range="5" RCode="210700" />
+  <DungeonNode Depth="2" X="5557" Y="222" Z="0" Range="25" RCode="220703" />
+  <DungeonNode Depth="2" X="1872" Y="1347" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1628" Y="2334" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="6122" Y="170" Z="0" Range="20" RCode="220604" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="782" Y="1156" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="5219" Y="734" Z="-20" Range="25" RCode="220303" />
+  <VendorNode TownID="118" MaxCount="3" Spawns="architect,carpenter" X="5691" Y="3209" Z="11" Range="5" RCode="211400" />
+  <VendorNode TownID="101" MaxCount="2" Spawns="cobbler" X="1469" Y="1668" Z="0" Range="5" RCode="210100" />
+  <DungeonNode Depth="2" X="1162" Y="704" Z="6" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="5760" Y="99" Z="0" Range="30" RCode="220704" />
+  <DungeonNode Depth="3" X="6228" Y="37" Z="5" Range="15" RCode="221700" />
+  <DungeonNode Depth="3" X="6531" Y="849" Z="0" Range="50" RCode="220100" />
+  <DungeonNode Depth="1" X="5432" Y="158" Z="0" Range="1" RCode="220703" />
+  <DungeonNode Depth="2" X="4352" Y="215" Z="-5" Range="175" RCode="221700" />
+  <DungeonNode Depth="2" X="5528" Y="1808" Z="0" Range="30" RCode="221100" />
+  <DungeonNode Depth="2" X="5318" Y="578" Z="0" Range="25" RCode="220302" />
+  <DungeonNode Depth="1" X="6081" Y="83" Z="21" Range="20" RCode="220602" />
+  <DungeonNode Depth="1" HasItem="true" X="5323" Y="571" Z="0" Range="2" RCode="220302" />
+  <DungeonNode Depth="1" X="5470" Y="860" Z="45" Range="25" RCode="220403" />
+  <DungeonNode Depth="2" HasItem="true" X="6552" Y="155" Z="0" Range="15" RCode="221600" />
+  <VendorNode TownID="112" MaxCount="2" Spawns="farmer" X="611" Y="2156" Z="0" Range="5" RCode="210500" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="623" Y="1328" Z="0" Range="50" RCode="0" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1222" Y="2499" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="5400" Y="1937" Z="0" Range="5" RCode="220201" />
+  <DungeonNode Depth="1" X="5553" Y="146" Z="20" Range="1" RCode="220703" />
+  <DungeonNode Depth="1" X="5656" Y="1412" Z="0" Range="10" RCode="221100" />
+  <DungeonNode Depth="1" X="6345" Y="586" Z="-50" Range="10" RCode="221500" />
+  <VendorNode TownID="116" MaxCount="2" Spawns="healerguildmaster" X="540" Y="966" Z="0" Range="5" RCode="210800" />
+  <DungeonNode Depth="1" X="2048" Y="1066" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="5570" Y="3153" Z="14" Range="80" RCode="221100" />
+  <DungeonNode Depth="1" X="1407" Y="1281" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="108" MaxCount="2" Spawns="weaponsmith" X="4392" Y="1117" Z="0" Range="5" RCode="210400" />
+  <VendorNode TownID="117" MaxCount="2" Spawns="minter" X="5275" Y="3977" Z="37" Range="5" RCode="211300" />
+  <DungeonNode Depth="1" X="6266" Y="123" Z="-1" Range="0" RCode="221700" />
+  <DungeonNode Depth="1" X="5657" Y="1362" Z="0" Range="5" RCode="221100" />
+  <VendorNode TownID="110" MaxCount="2" Spawns="weaponsmith" X="3632" Y="2595" Z="0" Range="5" RCode="211000" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="ratmanarcher,ratmanmage" X="1067" Y="2489" Z="0" Range="20" RCode="0" />
+  <DungeonNode Depth="1" X="6116" Y="86" Z="0" Range="20" RCode="220602" />
+  <DungeonNode Depth="3" X="6568" Y="118" Z="0" Range="25" RCode="221600" />
+  <DungeonNode Depth="3" X="6510" Y="845" Z="0" Range="15" RCode="220100" />
+  <DungeonNode Depth="2" X="1810" Y="647" Z="0" Range="60" RCode="221700" />
+  <DungeonNode Depth="2" X="1866" Y="1798" Z="-5" Range="175" RCode="221800" />
+  <DungeonNode Depth="3" X="5344" Y="1757" Z="-125" Range="20" RCode="221000" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="4612" Y="3424" Z="0" Range="50" RCode="221100" />
+  <DungeonNode Depth="1" X="5948" Y="49" Z="22" Range="20" RCode="220601" />
+  <DungeonNode Depth="1" X="6282" Y="118" Z="0" Range="0" RCode="221700" />
+  <DungeonNode Depth="3" X="5731" Y="1379" Z="0" Range="7" RCode="221100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="210" Y="1447" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="3" X="809" Y="1615" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="3" X="5296" Y="1561" Z="0" Range="20" RCode="221000" />
+  <DungeonNode Depth="2" X="5667" Y="1315" Z="5" Range="20" RCode="221100" />
+  <VendorNode TownID="0" MaxCount="6" Spawns="Orcishmage,Orcishlord" X="5300" Y="1314" Z="0" Range="10" RCode="221100" />
+  <DungeonNode Depth="2" X="5173" Y="2368" Z="21" Range="50" RCode="221000" />
+  <DungeonNode Depth="1" X="6510" Y="907" Z="0" Range="5" RCode="220100" />
+  <DungeonNode Depth="1" X="5251" Y="3301" Z="-2" Range="50" RCode="221100" />
+  <DungeonNode Depth="2" X="1231" Y="192" Z="6" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="6275" Y="879" Z="-2" Range="30" RCode="221400" />
+  <DungeonNode Depth="2" X="3931" Y="1757" Z="-5" Range="100" RCode="221100" />
+  <VendorNode TownID="110" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3662" Y="2802" Z="51" Range="50" RCode="221100" />
+  <DungeonNode Depth="2" X="1802" Y="1506" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="6049" Y="1470" Z="5" Range="15" RCode="221100" />
+  <DungeonNode Depth="1" X="5539" Y="1301" Z="0" Range="30" RCode="220900" />
+  <DungeonNode Depth="1" X="5250" Y="3401" Z="1" Range="50" RCode="221100" />
+  <DungeonNode Depth="1" X="6185" Y="118" Z="-10" Range="100" RCode="221700" />
+  <VendorNode TownID="111" MaxCount="2" Spawns="healerguildmaster" X="2997" Y="3428" Z="15" Range="5" RCode="211100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2338" Y="989" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="3" X="5214" Y="917" Z="-40" Range="50" RCode="220503" />
+  <DungeonNode Depth="1" X="5403" Y="235" Z="10" Range="1" RCode="220703" />
+  <VendorNode TownID="102" MaxCount="3" Spawns="architect,realestatebroker" X="2627" Y="2100" Z="10" Range="5" RCode="0" />
+  <VendorNode TownID="0" MaxCount="30" Spawns="ratmanarcher,ratmanmage" X="6172" Y="165" Z="-10" Range="20" RCode="221700" />
+  <DungeonNode Depth="1" X="5684" Y="117" Z="0" Range="30" RCode="220704" />
+  <VendorNode TownID="110" MaxCount="3" Spawns="weaver,tailorguildmaster" X="3667" Y="2586" Z="0" Range="5" RCode="211000" />
+  <VendorNode TownID="169" MaxCount="4" Spawns="Ophidianarchmage,Ophidianmage,Ophidianknight,Ophidianwarrior" X="5490" Y="3071" Z="15" Range="25" RCode="221100" />
+  <DungeonNode Depth="1" X="5316" Y="1332" Z="0" Range="8" RCode="221100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2643" Y="728" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="5425" Y="58" Z="10" Range="30" RCode="220701" />
+  <DungeonNode Depth="1" X="5709" Y="1364" Z="-1" Range="20" RCode="221100" />
+  <DungeonNode Depth="1" X="6507" Y="151" Z="0" Range="5" RCode="221600" />
+  <DungeonNode Depth="4" X="6196" Y="75" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="1" X="5981" Y="84" Z="0" Range="1" RCode="220601" />
+  <DungeonNode Depth="1" HasItem="true" X="1939" Y="1310" Z="0" Range="10" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="727" Y="1394" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="1023" Y="1430" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="1" X="5571" Y="158" Z="-10" Range="30" RCode="220703" />
+  <DungeonNode Depth="1" X="5435" Y="1346" Z="0" Range="10" RCode="220900" />
+  <VendorNode TownID="114" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2765" Y="754" Z="0" Range="50" RCode="210700" />
+  <DungeonNode Depth="1" X="6475" Y="101" Z="-44" Range="5" RCode="221600" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="771" Y="1013" Z="0" Range="50" RCode="210800" />
+  <VendorNode TownID="0" MaxCount="4" Spawns="Orcishlord,Orcishmage,Orcbomber" X="5354" Y="1332" Z="0" Range="8" RCode="221100" />
+  <VendorNode TownID="108" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="4544" Y="1128" Z="0" Range="50" RCode="210400" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1268" Y="2018" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="4461" Y="3106" Z="0" Range="30" RCode="221100" />
+  <VendorNode TownID="110" MaxCount="4" Spawns="seekerofadventure,noble,fisherman" X="3646" Y="2668" Z="-2" Range="5" RCode="211000" />
+  <DungeonNode Depth="1" X="5595" Y="147" Z="10" Range="1" RCode="220703" />
+  <DungeonNode Depth="1" HasItem="true" X="5461" Y="1818" Z="0" Range="8" RCode="221000" />
+  <DungeonNode Depth="1" HasItem="true" X="5411" Y="1932" Z="0" Range="7" RCode="220201" />
+  <DungeonNode Depth="1" X="5173" Y="2368" Z="21" Range="50" RCode="221000" />
+  <DungeonNode Depth="1" X="1912" Y="1302" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="3" HasItem="true" X="5150" Y="742" Z="0" Range="15" RCode="220303" />
+  <DungeonNode Depth="1" X="6108" Y="36" Z="22" Range="1" RCode="220602" />
+  <DungeonNode Depth="3" X="5192" Y="695" Z="0" Range="20" RCode="220303" />
+  <DungeonNode Depth="1" X="5818" Y="1379" Z="0" Range="20" RCode="221100" />
+  <DungeonNode Depth="1" X="5402" Y="58" Z="-20" Range="1" RCode="220701" />
+  <DungeonNode Depth="1" X="6052" Y="156" Z="0" Range="20" RCode="220604" />
+  <DungeonNode Depth="2" X="1361" Y="522" Z="19" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5300" Y="1608" Z="0" Range="5" RCode="221000" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1017" Y="1726" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" HasItem="true" X="5394" Y="525" Z="65" Range="5" RCode="220401" />
+  <DungeonNode Depth="2" X="1862" Y="1434" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="3400" Y="336" Z="0" Range="10" RCode="221700" />
+  <VendorNode TownID="109" MaxCount="3" Spawns="weaver,tailorguildmaster" X="3774" Y="1265" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="1" X="5721" Y="147" Z="-1" Range="1" RCode="221200" />
+  <DungeonNode Depth="1" X="5387" Y="41" Z="20" Range="30" RCode="220701" />
+  <VendorNode TownID="110" MaxCount="7" Spawns="harpy,lizardman,orcishmage,orc,ratman,spectre,troll" X="3446" Y="2741" Z="49" Range="50" RCode="221100" />
+  <DungeonNode Depth="3" X="5335" Y="1706" Z="-70" Range="20" RCode="221000" />
+  <DungeonNode Depth="2" X="1147" Y="1048" Z="5" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="4112" Y="791" Z="-5" Range="100" RCode="221700" />
+  <VendorNode TownID="102" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2654" Y="2286" Z="9" Range="50" RCode="0" />
+  <VendorNode TownID="114" MaxCount="2" Spawns="weaponsmith" X="2865" Y="852" Z="0" Range="5" RCode="210700" />
+  <DungeonNode Depth="1" X="1180" Y="1354" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5448" Y="33" Z="-10" Range="1" RCode="220701" />
+  <DungeonNode Depth="3" X="5412" Y="200" Z="0" Range="30" RCode="220703" />
+  <VendorNode TownID="108" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="4590" Y="1326" Z="8" Range="50" RCode="210400" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2512" Y="1066" Z="0" Range="50" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1018" Y="629" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="5620" Y="21" Z="10" Range="1" RCode="220702" />
+  <DungeonNode Depth="1" HasItem="true" X="5229" Y="841" Z="1" Range="10" RCode="220501" />
+  <DungeonNode Depth="1" X="6249" Y="352" Z="60" Range="15" RCode="221500" />
+  <DungeonNode Depth="1" X="1731" Y="257" Z="16" Range="4" RCode="221700" />
+  <DungeonNode Depth="1" X="5679" Y="1439" Z="0" Range="5" RCode="221100" />
+  <DungeonNode Depth="1" X="6106" Y="67" Z="0" Range="20" RCode="220602" />
+  <DungeonNode Depth="1" X="5471" Y="973" Z="15" Range="25" RCode="220403" />
+  <DungeonNode Depth="1" X="5490" Y="1367" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="1" X="3619" Y="2814" Z="21" Range="50" RCode="221100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1865" Y="1379" Z="0" Range="50" RCode="221700" />
+  <VendorNode TownID="118" MaxCount="2" Spawns="provisioner" X="5736" Y="3263" Z="15" Range="5" RCode="211400" />
+  <DungeonNode Depth="1" X="5682" Y="314" Z="0" Range="1" RCode="221200" />
+  <DungeonNode Depth="2" X="1055" Y="1442" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="6117" Y="81" Z="0" Range="1" RCode="220602" />
+  <DungeonNode Depth="1" X="6266" Y="349" Z="60" Range="5" RCode="221500" />
+  <DungeonNode Depth="3" X="6315" Y="512" Z="-50" Range="10" RCode="221500" />
+  <VendorNode TownID="112" MaxCount="2" Spawns="minter" X="586" Y="2146" Z="0" Range="5" RCode="210500" />
+  <DungeonNode Depth="1" X="6513" Y="879" Z="0" Range="5" RCode="220100" />
+  <DungeonNode Depth="1" X="6578" Y="183" Z="31" Range="5" RCode="221600" />
+  <DungeonNode Depth="1" X="5308" Y="1372" Z="0" Range="8" RCode="221100" />
+  <DungeonNode Depth="3" X="6033" Y="199" Z="22" Range="20" RCode="220604" />
+  <DungeonNode Depth="1" X="6084" Y="66" Z="0" Range="20" RCode="220602" />
+  <VendorNode TownID="169" MaxCount="13" Spawns="Orc,Orccaptain,Orcishlord,Orcishmage" X="1110" Y="2672" Z="0" Range="20" RCode="0" />
+  <DungeonNode Depth="2" X="2034" Y="108" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="5549" Y="60" Z="0" Range="30" RCode="220702" />
+  <DungeonNode Depth="1" X="5138" Y="2904" Z="49" Range="5" RCode="221000" />
+  <VendorNode TownID="112" MaxCount="3" Spawns="alchemist,mageguildmaster" X="602" Y="2180" Z="0" Range="5" RCode="210500" />
+  <DungeonNode Depth="1" X="5594" Y="139" Z="10" Range="1" RCode="220703" />
+  <VendorNode TownID="108" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="4526" Y="986" Z="10" Range="50" RCode="210400" />
+  <DungeonNode Depth="2" X="1337" Y="293" Z="22" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="5161" Y="1584" Z="-15" Range="20" RCode="221000" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1351" Y="1359" Z="0" Range="50" RCode="221700" />
+  <VendorNode TownID="113" MaxCount="2" Spawns="cobbler" X="1850" Y="2795" Z="-8" Range="5" RCode="210600" />
+  <VendorNode TownID="101" MaxCount="3" Spawns="rancher,hirepeasant" X="1150" Y="1619" Z="0" Range="10" RCode="210100" />
+  <VendorNode TownID="101" MaxCount="3" Spawns="rancher,hirepeasant" X="1149" Y="1547" Z="0" Range="10" RCode="210100" />
+  <DungeonNode Depth="2" X="1944" Y="102" Z="4" Range="30" RCode="221700" />
+  <VendorNode TownID="118" MaxCount="3" Spawns="weaver,tailor" X="5752" Y="3272" Z="15" Range="5" RCode="211400" />
+  <VendorNode TownID="105" MaxCount="2" Spawns="blacksmithguildmaster" X="1395" Y="3705" Z="0" Range="5" RCode="210900" />
+  <VendorNode TownID="114" MaxCount="3" Spawns="alchemist,mageguildmaster" X="2890" Y="651" Z="0" Range="5" RCode="210700" />
+  <VendorNode TownID="101" MaxCount="3" Spawns="weaver,tailorguildmaster" X="1547" Y="1659" Z="26" Range="5" RCode="210100" />
+  <DungeonNode Depth="1" X="5345" Y="1551" Z="0" Range="1" RCode="221000" />
+  <DungeonNode Depth="2" X="1268" Y="774" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="118" MaxCount="3" Spawns="alchemist,mage" X="5731" Y="3192" Z="9" Range="5" RCode="211400" />
+  <DungeonNode Depth="1" X="5490" Y="676" Z="20" Range="25" RCode="220402" />
+  <VendorNode TownID="101" MaxCount="2" Spawns="blacksmithguildmaster" X="1418" Y="1547" Z="30" Range="5" RCode="210100" />
+  <DungeonNode Depth="1" X="5464" Y="600" Z="45" Range="25" RCode="220401" />
+  <DungeonNode Depth="1" X="5717" Y="60" Z="0" Range="1" RCode="220704" />
+  <DungeonNode Depth="1" X="5557" Y="828" Z="45" Range="7" RCode="220403" />
+  <DungeonNode Depth="1" HasItem="true" X="5954" Y="225" Z="22" Range="20" RCode="220603" />
+  <DungeonNode Depth="1" HasItem="true" X="1042" Y="1394" Z="0" Range="10" RCode="221700" />
+  <DungeonNode Depth="1" X="4576" Y="3356" Z="0" Range="30" RCode="221100" />
+  <VendorNode TownID="107" MaxCount="2" Spawns="minter" X="2503" Y="552" Z="0" Range="5" RCode="210300" />
+  <VendorNode TownID="118" MaxCount="2" Spawns="shipwright" X="5805" Y="3270" Z="11" Range="5" RCode="211400" />
+  <DungeonNode Depth="1" X="5351" Y="3401" Z="30" Range="50" RCode="221100" />
+  <VendorNode TownID="110" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3654" Y="2866" Z="61" Range="50" RCode="221100" />
+  <DungeonNode Depth="2" X="6022" Y="2874" Z="16" Range="50" RCode="221100" />
+  <DungeonNode Depth="1" X="2416" Y="887" Z="0" Range="0" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2735" Y="417" Z="15" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="5416" Y="59" Z="-15" Range="1" RCode="220701" />
+  <VendorNode TownID="0" MaxCount="10" Spawns="doppleganger,changeling,ogrelord,cyclops,orcishmage,orccaptain" X="6182" Y="131" Z="-10" Range="25" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="8" Spawns="ghoul,headlessone,ogre,orc,orcishmage,skeleton,troll" X="2319" Y="591" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="114" MaxCount="2" Spawns="weaponsmith" X="2835" Y="805" Z="0" Range="5" RCode="210700" />
+  <DungeonNode Depth="2" X="2328" Y="67" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="1361" Y="275" Z="16" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="3778" Y="1172" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="1" X="5187" Y="603" Z="0" Range="35" RCode="220301" />
+  <DungeonNode Depth="1" X="5917" Y="156" Z="22" Range="20" RCode="220603" />
+  <DungeonNode Depth="1" X="5504" Y="597" Z="45" Range="25" RCode="220401" />
+  <DungeonNode Depth="1" X="5493" Y="51" Z="20" Range="1" RCode="220701" />
+  <DungeonNode Depth="2" X="2438" Y="1100" Z="8" Range="20" RCode="221700" />
+  <DungeonNode Depth="1" HasItem="true" X="5241" Y="945" Z="-40" Range="10" RCode="220503" />
+  <DungeonNode Depth="1" X="6550" Y="90" Z="-10" Range="5" RCode="221600" />
+  <DungeonNode Depth="1" X="6022" Y="2874" Z="16" Range="50" RCode="221100" />
+  <DungeonNode Depth="4" HasItem="true" X="6535" Y="179" Z="0" Range="15" RCode="221600" />
+  <DungeonNode Depth="2" X="5336" Y="1708" Z="-70" Range="20" RCode="221000" />
+  <DungeonNode Depth="1" X="5638" Y="1439" Z="0" Range="40" RCode="221100" />
+  <DungeonNode Depth="1" X="6077" Y="1492" Z="0" Range="10" RCode="221100" />
+  <DungeonNode Depth="2" X="5560" Y="1876" Z="0" Range="25" RCode="220203" />
+  <DungeonNode Depth="2" X="1312" Y="613" Z="10" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="987" Y="725" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1728" Y="691" Z="6" Range="50" RCode="221700" />
+  <DungeonNode Depth="2" X="5729" Y="2767" Z="-1" Range="70" RCode="221100" />
+  <VendorNode TownID="0" MaxCount="5" Spawns="Jukamage,Jukawarrior" X="5828" Y="530" Z="0" Range="30" RCode="220801" />
+  <DungeonNode Depth="2" X="5219" Y="573" Z="0" Range="25" RCode="220301" />
+  <DungeonNode Depth="1" X="6061" Y="1490" Z="5" Range="15" RCode="221100" />
+  <VendorNode TownID="114" MaxCount="2" Spawns="cobbler" X="2986" Y="637" Z="0" Range="5" RCode="210700" />
+  <DungeonNode Depth="1" X="5818" Y="80" Z="0" Range="30" RCode="220704" />
+  <DungeonNode Depth="1" X="6058" Y="193" Z="22" Range="20" RCode="220604" />
+  <VendorNode TownID="116" MaxCount="3" Spawns="architect,realestatebroker" X="565" Y="1011" Z="0" Range="5" RCode="210800" />
+  <DungeonNode Depth="1" X="5433" Y="1485" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="1" X="6113" Y="92" Z="0" Range="1" RCode="220602" />
+  <DungeonNode Depth="3" X="6513" Y="906" Z="0" Range="10" RCode="220100" />
+  <VendorNode TownID="101" MaxCount="4" Spawns="waiter,cook,barkeeper" X="1620" Y="1586" Z="0" Range="5" RCode="210100" />
+  <DungeonNode Depth="2" X="5817" Y="2367" Z="42" Range="75" RCode="221100" />
+  <VendorNode TownID="105" MaxCount="2" Spawns="weaponsmith" X="1354" Y="3754" Z="0" Range="5" RCode="210900" />
+  <VendorNode TownID="110" MaxCount="3" Spawns="alchemist,mageguildmaster" X="3628" Y="2541" Z="0" Range="5" RCode="211000" />
+  <DungeonNode Depth="1" X="5444" Y="1410" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="1" X="1852" Y="841" Z="-1" Range="30" RCode="221700" />
+  <VendorNode TownID="101" MaxCount="2" Spawns="weaponsmith" X="1447" Y="1647" Z="10" Range="5" RCode="210100" />
+  <DungeonNode Depth="3" X="5747" Y="1320" Z="0" Range="20" RCode="221100" />
+  <DungeonNode Depth="2" X="5557" Y="2625" Z="0" Range="40" RCode="221100" />
+  <DungeonNode Depth="1" X="4153" Y="601" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1439" Y="2104" Z="5" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="5201" Y="3162" Z="53" Range="50" RCode="221000" />
+  <DungeonNode Depth="1" X="868" Y="488" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5363" Y="1709" Z="-75" Range="1" RCode="221000" />
+  <DungeonNode Depth="3" X="5454" Y="3136" Z="-60" Range="25" RCode="221000" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="4560" Y="3504" Z="2" Range="50" RCode="0" />
+  <VendorNode TownID="105" MaxCount="2" Spawns="cobbler" X="1442" Y="3802" Z="0" Range="5" RCode="210900" />
+  <DungeonNode Depth="2" X="3360" Y="218" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="964" Y="365" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="1723" Y="683" Z="6" Range="60" RCode="221700" />
+  <VendorNode TownID="111" MaxCount="2" Spawns="blacksmithguildmaster" X="3007" Y="3408" Z="15" Range="5" RCode="211100" />
+  <DungeonNode Depth="2" X="1021" Y="1415" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2418" Y="999" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="2" X="3390" Y="259" Z="4" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="4116" Y="441" Z="5" Range="5" RCode="221700" />
+  <DungeonNode Depth="1" X="6121" Y="166" Z="0" Range="1" RCode="220604" />
+  <VendorNode TownID="113" MaxCount="2" Spawns="minter" X="1813" Y="2825" Z="0" Range="5" RCode="210600" />
+  <DungeonNode Depth="1" X="5701" Y="58" Z="2" Range="1" RCode="220704" />
+  <DungeonNode Depth="2" X="3576" Y="823" Z="-5" Range="175" RCode="221700" />
+  <DungeonNode Depth="1" X="1838" Y="957" Z="-1" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="909" Y="1175" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="107" MaxCount="2" Spawns="cobbler" X="2526" Y="546" Z="0" Range="5" RCode="210300" />
+  <DungeonNode Depth="2" X="5469" Y="211" Z="0" Range="25" RCode="220703" />
+  <DungeonNode Depth="1" X="3731" Y="1320" Z="0" Range="5" RCode="221100" />
+  <VendorNode TownID="108" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="4632" Y="1164" Z="0" Range="50" RCode="210400" />
+  <DungeonNode Depth="1" X="5695" Y="1434" Z="-1" Range="20" RCode="221100" />
+  <DungeonNode Depth="1" X="1361" Y="1392" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1005" Y="2647" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="5758" Y="139" Z="5" Range="1" RCode="221200" />
+  <DungeonNode Depth="1" X="6120" Y="229" Z="22" Range="1" RCode="220604" />
+  <VendorNode TownID="107" MaxCount="2" Spawns="weaponsmith" X="2533" Y="572" Z="0" Range="5" RCode="210300" />
+  <VendorNode TownID="111" MaxCount="3" Spawns="weaver,tailorguildmaster" X="2883" Y="3502" Z="10" Range="5" RCode="211100" />
+  <DungeonNode Depth="1" X="5744" Y="1469" Z="-1" Range="5" RCode="221100" />
+  <DungeonNode Depth="2" X="6091" Y="2379" Z="25" Range="60" RCode="221100" />
+  <DungeonNode Depth="1" X="5399" Y="11" Z="30" Range="1" RCode="220701" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1932" Y="3125" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="2" X="3891" Y="733" Z="-5" Range="100" RCode="221700" />
+  <DungeonNode Depth="1" X="5439" Y="851" Z="45" Range="25" RCode="220403" />
+  <DungeonNode Depth="1" X="5967" Y="2370" Z="44" Range="75" RCode="221100" />
+  <VendorNode TownID="116" MaxCount="2" Spawns="minter" X="652" Y="820" Z="0" Range="5" RCode="210800" />
+  <VendorNode TownID="116" MaxCount="2" Spawns="furtrader" X="517" Y="986" Z="0" Range="5" RCode="210800" />
+  <VendorNode TownID="113" MaxCount="2" Spawns="mapmaker" X="2026" Y="2845" Z="0" Range="5" RCode="210600" />
+  <DungeonNode Depth="1" X="5940" Y="107" Z="22" Range="20" RCode="220601" />
+  <DungeonNode Depth="1" X="5348" Y="1552" Z="0" Range="1" RCode="221000" />
+  <DungeonNode Depth="1" X="5914" Y="195" Z="22" Range="20" RCode="220603" />
+  <VendorNode TownID="101" MaxCount="2" Spawns="blacksmith" X="1349" Y="1778" Z="15" Range="5" RCode="210100" />
+  <DungeonNode Depth="1" X="3921" Y="360" Z="2" Range="75" RCode="221700" />
+  <DungeonNode Depth="1" HasItem="true" X="2349" Y="722" Z="0" Range="10" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2668" Y="1020" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="5443" Y="1918" Z="0" Range="30" RCode="220201" />
+  <VendorNode TownID="102" MaxCount="2" Spawns="furtrader" X="2707" Y="2178" Z="0" Range="5" RCode="0" />
+  <DungeonNode Depth="1" X="2456" Y="861" Z="0" Range="25" RCode="221700" />
+  <DungeonNode Depth="1" X="1947" Y="912" Z="-1" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="3382" Y="375" Z="4" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="5839" Y="159" Z="0" Range="20" RCode="221200" />
+  <VendorNode TownID="109" MaxCount="4" Spawns="waiter,cook,barkeeper" X="3769" Y="1218" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="1" X="6276" Y="105" Z="-10" Range="0" RCode="221700" />
+  <DungeonNode Depth="1" X="5985" Y="36" Z="22" Range="2" RCode="220601" />
+  <DungeonNode Depth="1" X="5669" Y="330" Z="0" Range="20" RCode="221200" />
+  <VendorNode TownID="101" MaxCount="3" Spawns="alchemist,mageguildmaster" X="1485" Y="1550" Z="30" Range="5" RCode="210100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2688" Y="524" Z="11" Range="50" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="464" Y="2059" Z="8" Range="50" RCode="0" />
+  <DungeonNode Depth="2" X="6513" Y="873" Z="0" Range="25" RCode="220100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="999" Y="1839" Z="0" Range="50" RCode="0" />
+  <VendorNode TownID="102" MaxCount="2" Spawns="blacksmithguildmaster" X="2634" Y="2083" Z="10" Range="5" RCode="0" />
+  <DungeonNode Depth="1" X="6049" Y="1447" Z="4" Range="15" RCode="221100" />
+  <DungeonNode Depth="1" X="5147" Y="598" Z="-50" Range="25" RCode="220301" />
+  <DungeonNode Depth="1" X="3963" Y="508" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="117" MaxCount="3" Spawns="weaver,tailorguildmaster" X="5234" Y="4025" Z="37" Range="5" RCode="211300" />
+  <VendorNode TownID="105" MaxCount="2" Spawns="blacksmithguildmaster" X="1419" Y="3859" Z="0" Range="5" RCode="210900" />
+  <DungeonNode Depth="1" X="2138" Y="323" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="5594" Y="182" Z="0" Range="25" RCode="220703" />
+  <DungeonNode Depth="1" X="3786" Y="1106" Z="20" Range="5" RCode="221700" />
+  <DungeonNode Depth="2" HasItem="true" X="5615" Y="1838" Z="0" Range="25" RCode="220203" />
+  <DungeonNode Depth="1" X="5661" Y="16" Z="-10" Range="30" RCode="220704" />
+  <DungeonNode Depth="1" X="6252" Y="125" Z="0" Range="0" RCode="221700" />
+  <DungeonNode Depth="1" X="6319" Y="472" Z="-50" Range="5" RCode="221500" />
+  <DungeonNode Depth="3" X="6384" Y="580" Z="-50" Range="30" RCode="221500" />
+  <DungeonNode Depth="1" X="5465" Y="1449" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="1" X="6189" Y="71" Z="0" Range="25" RCode="221700" />
+  <VendorNode TownID="102" MaxCount="2" Spawns="cobbler" X="2737" Y="2250" Z="0" Range="5" RCode="0" />
+  <DungeonNode Depth="2" X="3267" Y="1717" Z="-5" Range="130" RCode="221100" />
+  <DungeonNode Depth="1" X="5595" Y="82" Z="0" Range="25" RCode="220702" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1867" Y="1244" Z="0" Range="50" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="968" Y="2476" Z="0" Range="50" RCode="0" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1315" Y="2192" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="5145" Y="622" Z="-50" Range="25" RCode="220301" />
+  <DungeonNode Depth="1" X="5995" Y="62" Z="22" Range="20" RCode="220601" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1498" Y="2040" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="2" X="3408" Y="1407" Z="-5" Range="175" RCode="221100" />
+  <VendorNode TownID="111" MaxCount="4" Spawns="waiter,cook,barkeeper" X="2971" Y="3423" Z="15" Range="1" RCode="211100" />
+  <DungeonNode Depth="1" X="6033" Y="205" Z="22" Range="1" RCode="220604" />
+  <DungeonNode Depth="3" X="5307" Y="675" Z="-20" Range="25" RCode="220304" />
+  <DungeonNode Depth="1" X="6353" Y="400" Z="60" Range="10" RCode="221500" />
+  <VendorNode TownID="116" MaxCount="2" Spawns="healerguildmaster" X="643" Y="1083" Z="0" Range="5" RCode="210800" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2122" Y="2108" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="5828" Y="42" Z="0" Range="25" RCode="220704" />
+  <DungeonNode Depth="1" X="3407" Y="2652" Z="48" Range="15" RCode="221100" />
+  <VendorNode TownID="110" MaxCount="3" Spawns="harpy,lizardman,orcishmage,orc,ratman,spectre,troll" X="3485" Y="2595" Z="12" Range="30" RCode="221100" />
+  <DungeonNode Depth="2" X="5785" Y="161" Z="-6" Range="20" RCode="221200" />
+  <VendorNode TownID="118" MaxCount="2" Spawns="healer" X="5737" Y="3222" Z="11" Range="5" RCode="211400" />
+  <DungeonNode Depth="3" X="5200" Y="1565" Z="0" Range="20" RCode="221000" />
+  <DungeonNode Depth="1" HasItem="true" X="1015" Y="706" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="1" X="5711" Y="2494" Z="46" Range="80" RCode="221100" />
+  <DungeonNode Depth="2" X="5549" Y="79" Z="0" Range="30" RCode="220702" />
+  <DungeonNode Depth="1" X="5727" Y="72" Z="0" Range="1" RCode="220704" />
+  <DungeonNode Depth="1" X="5575" Y="16" Z="10" Range="30" RCode="220702" />
+  <DungeonNode Depth="1" X="5676" Y="331" Z="0" Range="1" RCode="221200" />
+  <DungeonNode Depth="2" X="1877" Y="1515" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5393" Y="1369" Z="0" Range="20" RCode="220900" />
+  <VendorNode TownID="110" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3607" Y="2417" Z="45" Range="50" RCode="221100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="993" Y="1130" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="1016" Y="821" Z="0" Range="10" RCode="221700" />
+  <VendorNode TownID="110" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3546" Y="2812" Z="13" Range="50" RCode="221100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="964" Y="2214" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="2" X="1905" Y="883" Z="-1" Range="30" RCode="221700" />
+  <VendorNode TownID="108" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="4510" Y="1262" Z="0" Range="50" RCode="210400" />
+  <VendorNode TownID="118" MaxCount="3" Spawns="alchemist,mage" X="5731" Y="3192" Z="9" Range="5" RCode="211400" />
+  <DungeonNode Depth="2" X="1956" Y="48" Z="4" Range="30" RCode="221700" />
+  <VendorNode TownID="115" MaxCount="3" Spawns="weaver,tailorguildmaster" X="5203" Y="86" Z="5" Range="5" RCode="211200" />
+  <DungeonNode Depth="1" X="5854" Y="227" Z="0" Range="1" RCode="221200" />
+  <VendorNode TownID="118" MaxCount="2" Spawns="armorer" X="5805" Y="3300" Z="11" Range="5" RCode="211400" />
+  <DungeonNode Depth="1" X="5415" Y="1331" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="2" X="2208" Y="1703" Z="-5" Range="175" RCode="221800" />
+  <DungeonNode Depth="2" X="5212" Y="674" Z="-20" Range="25" RCode="220303" />
+  <DungeonNode Depth="1" X="5250" Y="3401" Z="1" Range="50" RCode="221100" />
+  <VendorNode TownID="114" MaxCount="4" Spawns="waiter,cook,barkeeper" X="2895" Y="915" Z="0" Range="10" RCode="210700" />
+  <DungeonNode Depth="2" X="1037" Y="1325" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="2" X="2033" Y="74" Z="1" Range="30" RCode="221700" />
+  <VendorNode TownID="110" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3736" Y="2512" Z="35" Range="50" RCode="211000" />
+  <DungeonNode Depth="1" X="6511" Y="80" Z="0" Range="2" RCode="221600" />
+  <DungeonNode Depth="2" X="3172" Y="700" Z="8" Range="30" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1650" Y="2796" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" HasItem="true" X="1530" Y="999" Z="0" Range="10" RCode="221700" />
+  <VendorNode TownID="156" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1631" Y="640" Z="22" Range="50" RCode="221700" />
+  <DungeonNode Depth="2" X="1000" Y="330" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="117" MaxCount="3" Spawns="alchemist,mageguildmaster" X="5296" Y="3978" Z="37" Range="5" RCode="211300" />
+  <DungeonNode Depth="1" X="5721" Y="12" Z="10" Range="30" RCode="220704" />
+  <VendorNode TownID="113" MaxCount="2" Spawns="minter" X="1897" Y="2684" Z="10" Range="5" RCode="210600" />
+  <DungeonNode Depth="1" X="3545" Y="1178" Z="0" Range="5" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2888" Y="391" Z="0" Range="50" RCode="221700" />
+  <VendorNode TownID="101" MaxCount="3" Spawns="weaver,tailorguildmaster" X="1388" Y="1588" Z="30" Range="5" RCode="210100" />
+  <DungeonNode Depth="2" X="1891" Y="226" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" HasItem="true" X="5386" Y="612" Z="45" Range="25" RCode="220401" />
+  <DungeonNode Depth="2" X="4283" Y="2221" Z="-5" Range="100" RCode="221100" />
+  <DungeonNode Depth="1" X="5292" Y="1316" Z="0" Range="8" RCode="221100" />
+  <VendorNode TownID="114" MaxCount="3" Spawns="weaver,tailorguildmaster" X="2840" Y="885" Z="0" Range="5" RCode="210700" />
+  <DungeonNode Depth="1" HasItem="true" X="5387" Y="697" Z="15" Range="5" RCode="220402" />
+  <VendorNode TownID="109" MaxCount="1" Spawns="mapmaker" X="3700" Y="1214" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="2" X="4032" Y="2039" Z="-5" Range="175" RCode="221100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2074" Y="1972" Z="0" Range="50" RCode="221800" />
+  <DungeonNode Depth="2" X="5412" Y="164" Z="0" Range="30" RCode="220703" />
+  <VendorNode TownID="0" MaxCount="103" Spawns="dog,cat,snake,rat,goat,bull,pig,boar,doppleganger,ogrelord,ogre,titan,cyclops,ratman,ratmanmage,ratmanarcher,ettin,gargoyle,bird,orc,orcishmage,orcbrute,orcishlord,changeling,orccaptain" X="6261" Y="47" Z="-10" Range="50" RCode="221700" />
+  <VendorNode TownID="0" MaxCount="5" Spawns="Ophidianknight,Ophidianmage,Ophidianwarrior,Ophidianmatriarch" X="5201" Y="1566" Z="0" Range="20" RCode="221000" />
+  <DungeonNode Depth="2" X="1059" Y="1166" Z="5" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="2504" Y="921" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="1" X="5294" Y="842" Z="0" Range="50" RCode="220502" />
+  <DungeonNode Depth="1" X="6060" Y="158" Z="0" Range="1" RCode="220604" />
+  <DungeonNode Depth="1" X="1375" Y="1330" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="3" X="6283" Y="463" Z="-50" Range="40" RCode="221500" />
+  <DungeonNode Depth="3" X="5226" Y="826" Z="0" Range="50" RCode="220501" />
+  <DungeonNode Depth="2" X="4536" Y="2847" Z="-5" Range="175" RCode="221100" />
+  <DungeonNode Depth="2" X="5752" Y="44" Z="0" Range="25" RCode="220704" />
+  <VendorNode TownID="117" MaxCount="2" Spawns="cobbler" X="5219" Y="4012" Z="37" Range="5" RCode="211300" />
+  <DungeonNode Depth="3" X="5280" Y="955" Z="-40" Range="50" RCode="220503" />
+  <DungeonNode Depth="1" X="5393" Y="1921" Z="0" Range="5" RCode="220201" />
+  <DungeonNode Depth="1" X="6022" Y="2874" Z="16" Range="50" RCode="221100" />
+  <DungeonNode Depth="2" X="1295" Y="328" Z="22" Range="30" RCode="221700" />
+  <VendorNode TownID="117" MaxCount="3" Spawns="alchemist,mageguildmaster" X="5296" Y="3978" Z="37" Range="5" RCode="211300" />
+  <VendorNode TownID="107" MaxCount="2" Spawns="tinkerguildmaster" X="2461" Y="457" Z="15" Range="5" RCode="210300" />
+  <DungeonNode Depth="1" X="5453" Y="1905" Z="0" Range="25" RCode="220201" />
+  <DungeonNode Depth="2" X="6319" Y="348" Z="60" Range="20" RCode="221500" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="937" Y="743" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="5186" Y="575" Z="0" Range="12" RCode="220301" />
+  <DungeonNode Depth="1" X="6058" Y="92" Z="22" Range="1" RCode="220602" />
+  <DungeonNode Depth="1" HasItem="true" X="5448" Y="2027" Z="0" Range="8" RCode="220202" />
+  <DungeonNode Depth="2" X="1184" Y="217" Z="27" Range="30" RCode="221700" />
+  <VendorNode TownID="115" MaxCount="2" Spawns="cobbler" X="5154" Y="97" Z="5" Range="5" RCode="211200" />
+  <DungeonNode Depth="2" X="5912" Y="1326" Z="0" Range="20" RCode="221100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3232" Y="510" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="3363" Y="289" Z="9" Range="4" RCode="221700" />
+  <DungeonNode Depth="1" X="5994" Y="96" Z="0" Range="20" RCode="220601" />
+  <VendorNode TownID="112" MaxCount="3" Spawns="weaver,tailorguildmaster" X="650" Y="2178" Z="0" Range="5" RCode="210500" />
+  <VendorNode TownID="110" MaxCount="2" Spawns="furtrader" X="3602" Y="2615" Z="0" Range="5" RCode="211000" />
+  <DungeonNode Depth="1" X="5863" Y="2470" Z="46" Range="25" RCode="221100" />
+  <DungeonNode Depth="3" HasItem="true" X="5267" Y="690" Z="0" Range="35" RCode="220304" />
+  <VendorNode TownID="111" MaxCount="4" Spawns="Escortablemage,seekerofadventure,noble" X="2993" Y="3450" Z="16" Range="5" RCode="211100" />
+  <DungeonNode Depth="1" X="5404" Y="93" Z="10" Range="30" RCode="220701" />
+  <VendorNode TownID="118" MaxCount="3" Spawns="weaver,tailor" X="5752" Y="3272" Z="16" Range="5" RCode="211400" />
+  <DungeonNode Depth="1" X="5187" Y="545" Z="0" Range="25" RCode="220301" />
+  <DungeonNode Depth="1" X="1674" Y="593" Z="16" Range="4" RCode="221700" />
+  <DungeonNode Depth="1" X="5405" Y="200" Z="0" Range="1" RCode="220703" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="4692" Y="3494" Z="1" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="6351" Y="626" Z="-50" Range="10" RCode="221500" />
+  <VendorNode TownID="169" MaxCount="5" Spawns="Orcishlord,Orcishmage" X="634" Y="1462" Z="0" Range="15" RCode="0" />
+  <DungeonNode Depth="2" X="1833" Y="1245" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="3" X="5452" Y="1799" Z="0" Range="30" RCode="221000" />
+  <DungeonNode Depth="1" X="5396" Y="1371" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="1" X="3749" Y="1404" Z="0" Range="20" RCode="221100" />
+  <VendorNode TownID="112" MaxCount="2" Spawns="healerguildmaster" X="621" Y="2218" Z="0" Range="5" RCode="210500" />
+  <VendorNode TownID="0" MaxCount="5" Spawns="Ophidianknight,Ophidianmage,Ophidianwarrior,Ophidianmatriarch" X="5335" Y="1707" Z="-70" Range="20" RCode="221000" />
+  <DungeonNode Depth="2" X="849" Y="1262" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="6576" Y="91" Z="0" Range="4" RCode="221600" />
+  <DungeonNode Depth="1" X="6574" Y="181" Z="31" Range="2" RCode="221600" />
+  <VendorNode TownID="110" MaxCount="2" Spawns="cobbler" X="3636" Y="2565" Z="0" Range="5" RCode="211000" />
+  <DungeonNode Depth="1" X="5615" Y="173" Z="0" Range="1" RCode="220703" />
+  <DungeonNode Depth="1" X="5352" Y="934" Z="-5" Range="10" RCode="220503" />
+  <DungeonNode Depth="1" HasItem="true" X="5967" Y="80" Z="0" Range="6" RCode="220601" />
+  <DungeonNode Depth="1" X="5564" Y="821" Z="45" Range="5" RCode="220403" />
+  <DungeonNode Depth="1" X="2033" Y="936" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="6048" Y="1487" Z="5" Range="15" RCode="221100" />
+  <DungeonNode Depth="1" HasItem="true" X="5503" Y="529" Z="60" Range="25" RCode="220401" />
+  <DungeonNode Depth="2" X="2624" Y="1775" Z="-5" Range="175" RCode="221800" />
+  <DungeonNode Depth="1" X="5752" Y="144" Z="9" Range="10" RCode="221200" />
+  <VendorNode TownID="115" MaxCount="3" Spawns="alchemist,customhairstylist" X="5215" Y="117" Z="1" Range="5" RCode="211200" />
+  <DungeonNode Depth="1" X="5771" Y="224" Z="-2" Range="20" RCode="221200" />
+  <DungeonNode Depth="1" X="1729" Y="811" Z="0" Range="5" RCode="221700" />
+  <VendorNode TownID="107" MaxCount="4" Spawns="waiter,cook,barkeeper" X="2475" Y="398" Z="15" Range="5" RCode="210300" />
+  <DungeonNode Depth="1" HasItem="true" X="5503" Y="2002" Z="0" Range="5" RCode="220202" />
+  <DungeonNode Depth="1" X="4658" Y="3376" Z="0" Range="30" RCode="221100" />
+  <DungeonNode Depth="1" X="5929" Y="77" Z="0" Range="1" RCode="220601" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="883" Y="2129" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="6528" Y="82" Z="-10" Range="10" RCode="221600" />
+  <DungeonNode Depth="1" X="5492" Y="1297" Z="0" Range="20" RCode="220900" />
+  <VendorNode TownID="0" MaxCount="5" Spawns="Ophidianknight,Ophidianmage,Ophidianwarrior,Ophidianmatriarch" X="5342" Y="1552" Z="0" Range="20" RCode="221000" />
+  <DungeonNode Depth="1" X="5363" Y="1608" Z="0" Range="5" RCode="221000" />
+  <DungeonNode Depth="1" X="5395" Y="1370" Z="0" Range="20" RCode="220900" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2864" Y="150" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="3773" Y="1308" Z="0" Range="5" RCode="221100" />
+  <VendorNode TownID="169" MaxCount="4" Spawns="Ophidianarchmage,Ophidianmage,Ophidianknight,Ophidianwarrior" X="5446" Y="3074" Z="3" Range="25" RCode="221000" />
+  <DungeonNode Depth="2" X="823" Y="960" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="3792" Y="1105" Z="20" Range="0" RCode="221700" />
+  <DungeonNode Depth="1" X="5730" Y="90" Z="0" Range="1" RCode="220704" />
+  <DungeonNode Depth="1" X="1967" Y="1296" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="3" X="5498" Y="1998" Z="0" Range="30" RCode="220202" />
+  <DungeonNode Depth="1" X="5410" Y="611" Z="45" Range="25" RCode="220401" />
+  <VendorNode TownID="106" MaxCount="3" Spawns="Waiter,TavernKeeper" X="3693" Y="2252" Z="26" Range="5" RCode="210200" />
+  <DungeonNode Depth="1" X="5744" Y="1471" Z="2" Range="15" RCode="221100" />
+  <DungeonNode Depth="2" X="848" Y="917" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5421" Y="117" Z="0" Range="1" RCode="220701" />
+  <DungeonNode Depth="1" X="5698" Y="57" Z="5" Range="1" RCode="220704" />
+  <VendorNode TownID="0" MaxCount="9" Spawns="ratmanarcher,ratmanmage" X="6165" Y="126" Z="0" Range="15" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1602" Y="2426" Z="5" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="5817" Y="78" Z="0" Range="1" RCode="220704" />
+  <DungeonNode Depth="1" X="5308" Y="2005" Z="0" Range="12" RCode="221000" />
+  <VendorNode TownID="111" MaxCount="3" Spawns="alchemist,customhairstylist" X="3013" Y="3354" Z="15" Range="5" RCode="211100" />
+  <VendorNode TownID="105" MaxCount="3" Spawns="weaver,tailorguildmaster" X="1454" Y="4003" Z="0" Range="5" RCode="210900" />
+  <DungeonNode Depth="1" X="5398" Y="995" Z="5" Range="10" RCode="220403" />
+  <DungeonNode Depth="2" X="955" Y="707" Z="0" Range="12" RCode="221700" />
+  <DungeonNode Depth="1" X="5651" Y="1435" Z="0" Range="5" RCode="221100" />
+  <DungeonNode Depth="1" X="3996" Y="228" Z="0" Range="75" RCode="221700" />
+  <DungeonNode Depth="3" X="5307" Y="815" Z="0" Range="50" RCode="220502" />
+  <DungeonNode Depth="1" X="4206" Y="471" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="103" MaxCount="2" Spawns="weaponsmith" X="2216" Y="1167" Z="0" Range="5" RCode="221700" />
+  <VendorNode TownID="105" MaxCount="4" Spawns="noble,seekerofadventure,escortablemage" X="1126" Y="3687" Z="-2" Range="5" RCode="210900" />
+  <DungeonNode Depth="1" X="5394" Y="230" Z="10" Range="30" RCode="220703" />
+  <DungeonNode Depth="1" X="5400" Y="1428" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="1" X="5307" Y="546" Z="0" Range="25" RCode="220302" />
+  <VendorNode TownID="0" MaxCount="5" Spawns="Ophidianknight,Ophidianmage,Ophidianwarrior,Ophidianmatriarch" X="5345" Y="1757" Z="-125" Range="20" RCode="221000" />
+  <DungeonNode Depth="1" X="5593" Y="2017" Z="0" Range="20" RCode="220202" />
+  <DungeonNode Depth="1" X="4013" Y="239" Z="1" Range="30" RCode="221700" />
+  <VendorNode TownID="114" MaxCount="3" Spawns="alchemist,customhairstylist" X="2992" Y="844" Z="0" Range="5" RCode="210700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="805" Y="1570" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="2" X="5711" Y="2494" Z="46" Range="80" RCode="221100" />
+  <DungeonNode Depth="1" X="5546" Y="118" Z="-5" Range="1" RCode="220702" />
+  <DungeonNode Depth="1" X="6064" Y="96" Z="22" Range="20" RCode="220602" />
+  <DungeonNode Depth="3" X="5835" Y="1304" Z="0" Range="30" RCode="221100" />
+  <DungeonNode Depth="3" X="5731" Y="176" Z="-5" Range="35" RCode="221200" />
+  <DungeonNode Depth="2" X="6548" Y="158" Z="0" Range="40" RCode="221600" />
+  <DungeonNode Depth="1" X="6279" Y="879" Z="-1" Range="30" RCode="221400" />
+  <DungeonNode Depth="1" X="839" Y="406" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5977" Y="49" Z="22" Range="20" RCode="220601" />
+  <DungeonNode Depth="1" X="1300" Y="1069" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="1" X="5961" Y="169" Z="0" Range="20" RCode="220603" />
+  <DungeonNode Depth="1" X="5406" Y="177" Z="0" Range="1" RCode="220703" />
+  <DungeonNode Depth="2" X="5299" Y="603" Z="0" Range="25" RCode="220302" />
+  <DungeonNode Depth="1" HasItem="true" X="1871" Y="1076" Z="0" Range="10" RCode="221700" />
+  <DungeonNode Depth="1" X="4018" Y="311" Z="0" Range="4" RCode="221700" />
+  <DungeonNode Depth="1" X="5945" Y="78" Z="22" Range="1" RCode="220601" />
+  <DungeonNode Depth="1" X="5505" Y="1316" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="2" X="805" Y="463" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="109" MaxCount="4" Spawns="waiter,cook,barkeeper" X="3764" Y="1221" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="2" X="5139" Y="661" Z="0" Range="25" RCode="220303" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="916" Y="1159" Z="0" Range="50" RCode="221700" />
+  <VendorNode TownID="0" MaxCount="46" Spawns="ratmanarcher,ratmanmage,rat" X="6349" Y="91" Z="-20" Range="40" RCode="221700" />
+  <VendorNode TownID="101" MaxCount="2" Spawns="weaponsmith" X="1637" Y="1693" Z="37" Range="5" RCode="210100" />
+  <DungeonNode Depth="2" X="3446" Y="213" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="0" MaxCount="5" Spawns="Ophidianknight,Ophidianmage,Ophidianwarrior,Ophidianmatriarch" X="5334" Y="1614" Z="0" Range="20" RCode="221000" />
+  <DungeonNode Depth="1" X="5445" Y="2030" Z="-3" Range="15" RCode="220202" />
+  <DungeonNode Depth="1" X="5717" Y="1465" Z="-2" Range="15" RCode="221100" />
+  <VendorNode TownID="180" MaxCount="17" Spawns="Bonemagi,Skeletalmage,Hellcat,Hellhound,Fireelemental,Lavalizard" X="5852" Y="1468" Z="1" Range="30" RCode="221100" />
+  <VendorNode TownID="107" MaxCount="2" Spawns="bardguildmaster" X="2424" Y="555" Z="0" Range="5" RCode="210300" />
+  <DungeonNode Depth="1" X="5712" Y="145" Z="-34" Range="1" RCode="221200" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1173" Y="2103" Z="2" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="5989" Y="186" Z="44" Range="1" RCode="220603" />
+  <DungeonNode Depth="1" X="5485" Y="1434" Z="0" Range="20" RCode="220900" />
+  <VendorNode TownID="102" MaxCount="4" Spawns="waiter,cook,barkeeper" X="2680" Y="2238" Z="2" Range="5" RCode="0" />
+  <DungeonNode Depth="1" X="5141" Y="1968" Z="0" Range="8" RCode="221000" />
+  <VendorNode TownID="113" MaxCount="4" Spawns="waiter,cook,barkeeper" X="1926" Y="2795" Z="0" Range="10" RCode="210600" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2744" Y="2014" Z="0" Range="50" RCode="221800" />
+  <DungeonNode Depth="1" X="5310" Y="1969" Z="0" Range="12" RCode="221000" />
+  <DungeonNode Depth="1" HasItem="true" X="5911" Y="55" Z="22" Range="25" RCode="220601" />
+  <DungeonNode Depth="2" X="6054" Y="45" Z="0" Range="20" RCode="220602" />
+  <DungeonNode Depth="1" X="5958" Y="65" Z="0" Range="1" RCode="220601" />
+  <VendorNode TownID="108" MaxCount="2" Spawns="farmer" X="4481" Y="1085" Z="0" Range="5" RCode="210400" />
+  <DungeonNode Depth="1" X="6258" Y="126" Z="0" Range="0" RCode="221700" />
+  <DungeonNode Depth="1" X="6553" Y="157" Z="0" Range="8" RCode="221600" />
+  <DungeonNode Depth="1" X="5405" Y="185" Z="0" Range="1" RCode="220703" />
+  <DungeonNode Depth="1" X="1240" Y="1317" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="105" MaxCount="2" Spawns="tinkerguildmaster" X="1404" Y="3802" Z="0" Range="5" RCode="210900" />
+  <VendorNode TownID="112" MaxCount="3" Spawns="alchemist,mageguildmaster" X="659" Y="2141" Z="0" Range="5" RCode="210500" />
+  <VendorNode TownID="101" MaxCount="3" Spawns="rancher,hirepeasant" X="1190" Y="1707" Z="0" Range="8" RCode="210100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="2814" Y="3500" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="5701" Y="60" Z="5" Range="1" RCode="220704" />
+  <DungeonNode Depth="1" X="5986" Y="203" Z="44" Range="25" RCode="220603" />
+  <VendorNode TownID="110" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="3506" Y="2477" Z="28" Range="50" RCode="221100" />
+  <DungeonNode Depth="2" X="2000" Y="141" Z="1" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5989" Y="25" Z="22" Range="1" RCode="220601" />
+  <VendorNode TownID="114" MaxCount="2" Spawns="farmer" X="3017" Y="761" Z="0" Range="5" RCode="210700" />
+  <DungeonNode Depth="2" X="5867" Y="1309" Z="0" Range="20" RCode="221100" />
+  <VendorNode TownID="116" MaxCount="2" Spawns="mapmaker" X="631" Y="1034" Z="0" Range="5" RCode="210800" />
+  <DungeonNode Depth="2" X="3603" Y="125" Z="-5" Range="100" RCode="221700" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1824" Y="3027" Z="0" Range="50" RCode="0" />
+  <DungeonNode Depth="2" X="5335" Y="1615" Z="0" Range="20" RCode="221000" />
+  <DungeonNode Depth="1" X="5954" Y="26" Z="0" Range="20" RCode="220601" />
+  <DungeonNode Depth="2" X="1946" Y="186" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="2023" Y="1052" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="5396" Y="226" Z="10" Range="1" RCode="220703" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1666" Y="1290" Z="0" Range="50" RCode="221700" />
+  <VendorNode TownID="109" MaxCount="4" Spawns="waiter,cook,barkeeper" X="3729" Y="1258" Z="0" Range="5" RCode="221700" />
+  <DungeonNode Depth="1" X="6520" Y="893" Z="0" Range="5" RCode="220100" />
+  <DungeonNode Depth="1" X="850" Y="1544" Z="0" Range="0" RCode="221700" />
+  <DungeonNode Depth="1" X="5212" Y="531" Z="0" Range="25" RCode="220301" />
+  <VendorNode TownID="169" MaxCount="8" Spawns="ghoul,headlessone,ogre,orc,orcishmage,skeleton,troll" X="2379" Y="654" Z="0" Range="30" RCode="221700" />
+  <DungeonNode Depth="1" X="2051" Y="237" Z="10" Range="5" RCode="221700" />
+  <DungeonNode Depth="1" X="5456" Y="143" Z="20" Range="1" RCode="220703" />
+  <DungeonNode Depth="2" X="1894" Y="197" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="101" MaxCount="3" Spawns="weaver,tailorguildmaster" X="1389" Y="1588" Z="30" Range="5" RCode="210100" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1884" Y="735" Z="0" Range="50" RCode="221700" />
+  <DungeonNode Depth="1" X="6124" Y="159" Z="0" Range="1" RCode="220604" />
+  <VendorNode TownID="169" MaxCount="19" Spawns="Cougar,Goat,Horse,Panther,Pig,Sheep,BlackBear,GrizzlyBear,BrownBear,TimberWolf,GreyWolf,WanderingHealer,Bird,Eagle,GreatHart,Hind,Bull,Cow" X="1531" Y="2351" Z="5" Range="50" RCode="0" />
+  <DungeonNode Depth="1" X="5723" Y="77" Z="0" Range="1" RCode="220704" />
+  <VendorNode TownID="169" MaxCount="26" Spawns="Ophidianmage,Ophidianmatriarch,Ophidianknight,Ophidianwarrior" X="5765" Y="2637" Z="39" Range="30" RCode="221100" />
+  <DungeonNode Depth="1" X="5566" Y="901" Z="30" Range="20" RCode="220403" />
+  <DungeonNode Depth="2" X="6585" Y="879" Z="0" Range="10" RCode="220100" />
+  <DungeonNode Depth="1" X="5460" Y="1451" Z="0" Range="20" RCode="220900" />
+  <VendorNode TownID="111" MaxCount="2" Spawns="tinkerguildmaster" X="2940" Y="3500" Z="10" Range="5" RCode="211100" />
+  <VendorNode TownID="118" MaxCount="2" Spawns="tinker" X="5726" Y="3243" Z="16" Range="5" RCode="211400" />
+  <DungeonNode Depth="1" X="6504" Y="181" Z="0" Range="1" RCode="221600" />
+  <DungeonNode Depth="1" HasItem="true" X="5918" Y="235" Z="44" Range="20" RCode="220603" />
+  <DungeonNode Depth="1" X="5412" Y="1330" Z="0" Range="20" RCode="220900" />
+  <DungeonNode Depth="1" X="1877" Y="1515" Z="0" Range="30" RCode="221700" />
+  <VendorNode TownID="101" MaxCount="3" Spawns="sirberran,sirfelean" X="1449" Y="1553" Z="51" Range="15" RCode="210100" />
+  <DungeonNode Depth="1" X="6211" Y="126" Z="0" Range="0" RCode="221700" />
+  <DungeonNode Depth="1" X="5677" Y="2027" Z="3" Range="10" RCode="221100" />
+  <DungeonNode Depth="1" X="5672" Y="1844" Z="2" Range="10" RCode="221100" />
+  <DungeonNode Depth="1" X="5920" Y="1814" Z="1" Range="8" RCode="221100" />
+  <DungeonNode Depth="1" X="5737" Y="1941" Z="3" Range="12" RCode="221100" />
+  <DungeonNode Depth="1" X="5874" Y="1798" Z="0" Range="8" RCode="221100" />
+  <DungeonNode Depth="1" X="5830" Y="1862" Z="3" Range="25" RCode="221100" />
+  <DungeonNode Depth="1" X="5819" Y="1973" Z="3" Range="15" RCode="221100" />
+  <DungeonNode Depth="1" X="5783" Y="2021" Z="-14" Range="9" RCode="221100" />
+  <DungeonNode Depth="1" X="5699" Y="2025" Z="4" Range="15" RCode="221100" />
+  <DungeonNode Depth="1" X="5832" Y="1803" Z="0" Range="8" RCode="221100" />
+  <DungeonNode Depth="1" X="5793" Y="1855" Z="2" Range="12" RCode="221100" />
+  <DungeonNode Depth="1" X="5860" Y="1959" Z="2" Range="20" RCode="221100" />
+  <DungeonNode Depth="1" X="5698" Y="1894" Z="1" Range="15" RCode="221100" />
+  <DungeonNode Depth="1" X="5887" Y="1840" Z="-18" Range="25" RCode="221100" />
+  <DungeonNode Depth="1" X="5914" Y="1991" Z="4" Range="25" RCode="221100" />
+  <DungeonNode Depth="1" X="5657" Y="1989" Z="1" Range="10" RCode="221100" />
+  <DungeonNode Depth="1" X="5813" Y="1945" Z="2" Range="12" RCode="221100" />
+  <DungeonNode Depth="1" X="5788" Y="1796" Z="1" Range="20" RCode="221100" />
+  <DungeonNode Depth="1" X="5836" Y="1994" Z="0" Range="15" RCode="221100" />
+  <DungeonNode Depth="1" X="5665" Y="1869" Z="10" Range="14" RCode="221100" />
+  <DungeonNode Depth="1" X="5718" Y="1819" Z="3" Range="10" RCode="221100" />
+  <DungeonNode Depth="1" X="5919" Y="1833" Z="1" Range="8" RCode="221100" />
+  <DungeonNode Depth="1" X="5721" Y="1993" Z="0" Range="10" RCode="221100" />
+  <DungeonNode Depth="1" X="5708" Y="1800" Z="2" Range="10" RCode="221100" />
+  <DungeonNode Depth="1" X="5860" Y="1979" Z="4" Range="15" RCode="221100" />
+  <DungeonNode Depth="1" X="5831" Y="1910" Z="3" Range="15" RCode="221100" />
+  <DungeonNode Depth="1" X="5725" Y="1915" Z="5" Range="12" RCode="221100" />
+  <DungeonNode Depth="1" X="5790" Y="1985" Z="5" Range="20" RCode="221100" />
+  <DungeonNode Depth="1" X="5835" Y="1936" Z="0" Range="25" RCode="221100" />
+  <DungeonNode Depth="1" X="5775" Y="1897" Z="22" Range="20" RCode="221100" />
+  <DungeonNode Depth="1" X="5885" Y="1920" Z="-17" Range="12" RCode="221100" />
+  <DungeonNode Depth="1" X="5707" Y="1874" Z="0" Range="10" RCode="221100" />
+  <DungeonNode Depth="1" X="5770" Y="1956" Z="1" Range="20" RCode="221100" />
+  <DungeonNode Depth="1" X="5847" Y="2020" Z="10" Range="10" RCode="221100" />
+  <DungeonNode Depth="1" X="5657" Y="1824" Z="1" Range="8" RCode="221100" />
+  <DungeonNode Depth="1" X="5684" Y="1985" Z="3" Range="10" RCode="221100" />
+  <EcoNode X="375" Y="1191" Z="0" Range="20" FarmCap="4800" EnvType="Farm" RCode="210800" />
+  <EcoNode X="391" Y="1200" Z="0" Range="12" FarmCap="1950" EnvType="Farm" RCode="210800" />
+  <EcoNode X="551" Y="1235" Z="0" Range="10" FarmCap="640" EnvType="Farm" RCode="210800" />
+  <EcoNode X="551" Y="1247" Z="0" Range="10" FarmCap="640" EnvType="Farm" RCode="210800" />
+  <EcoNode X="567" Y="1239" Z="0" Range="12" FarmCap="2560" EnvType="Farm" RCode="210800" />
+  <EcoNode X="587" Y="1625" Z="57" Range="13" FarmCap="1200" EnvType="Farm" RCode="0" />
+  <EcoNode X="603" Y="851" Z="0" Range="16" FarmCap="5520" EnvType="Farm" RCode="210800" />
+  <EcoNode X="681" Y="1001" Z="0" Range="10" FarmCap="640" EnvType="Farm" RCode="210800" />
+  <EcoNode X="681" Y="1013" Z="0" Range="10" FarmCap="640" EnvType="Farm" RCode="210800" />
+  <EcoNode X="693" Y="1001" Z="0" Range="10" FarmCap="640" EnvType="Farm" RCode="210800" />
+  <EcoNode X="693" Y="1013" Z="0" Range="10" FarmCap="640" EnvType="Farm" RCode="210800" />
+  <EcoNode X="813" Y="2163" Z="0" Range="22" FarmCap="8640" EnvType="Farm" RCode="210500" />
+  <EcoNode X="823" Y="2254" Z="0" Range="12" FarmCap="1280" EnvType="Farm" RCode="210500" />
+  <EcoNode X="823" Y="2264" Z="0" Range="12" FarmCap="1280" EnvType="Farm" RCode="210500" />
+  <EcoNode X="823" Y="2274" Z="0" Range="12" FarmCap="1260" EnvType="Farm" RCode="210500" />
+  <EcoNode X="823" Y="2284" Z="0" Range="12" FarmCap="1280" EnvType="Farm" RCode="210500" />
+  <EcoNode X="823" Y="2355" Z="0" Range="16" FarmCap="3810" EnvType="Farm" RCode="210500" />
+  <EcoNode X="842" Y="2352" Z="0" Range="13" FarmCap="2720" EnvType="Farm" RCode="210500" />
+  <EcoNode X="881" Y="2415" Z="0" Range="12" FarmCap="1440" EnvType="Farm" RCode="0" />
+  <EcoNode X="893" Y="2415" Z="0" Range="12" FarmCap="1280" EnvType="Farm" RCode="0" />
+  <EcoNode X="906" Y="2415" Z="0" Range="12" FarmCap="1440" EnvType="Farm" RCode="0" />
+  <EcoNode X="1075" Y="2196" Z="0" Range="10" FarmCap="190" EnvType="Farm" RCode="0" />
+  <EcoNode X="1119" Y="1623" Z="0" Range="20" FarmCap="10210" EnvType="Farm" RCode="210100" />
+  <EcoNode X="1135" Y="1791" Z="0" Range="20" FarmCap="10240" EnvType="Farm" RCode="210100" />
+  <EcoNode X="1151" Y="1575" Z="0" Range="20" FarmCap="10240" EnvType="Farm" RCode="210100" />
+  <EcoNode X="1191" Y="1683" Z="0" Range="20" FarmCap="7680" EnvType="Farm" RCode="210100" />
+  <EcoNode X="1199" Y="1823" Z="0" Range="20" FarmCap="10220" EnvType="Farm" RCode="210100" />
+  <EcoNode X="1223" Y="1603" Z="0" Range="20" FarmCap="7680" EnvType="Farm" RCode="210100" />
+  <EcoNode X="1223" Y="1723" Z="0" Range="20" FarmCap="7680" EnvType="Farm" RCode="210100" />
+  <EcoNode X="1231" Y="1887" Z="0" Range="20" FarmCap="10240" EnvType="Farm" RCode="210100" />
+  <EcoNode X="1247" Y="2173" Z="0" Range="10" FarmCap="190" EnvType="Farm" RCode="0" />
+  <EcoNode X="1415" Y="3743" Z="-10" Range="20" FarmCap="320" EnvType="Farm" RCode="210900" />
+  <EcoNode X="3711" Y="2571" Z="20" Range="13" FarmCap="1700" EnvType="Farm" RCode="211000" />
+  <EcoNode X="3712" Y="2622" Z="20" Range="21" FarmCap="5210" EnvType="Farm" RCode="211000" />
+  <EcoNode X="3711" Y="2679" Z="20" Range="21" FarmCap="4420" EnvType="Farm" RCode="211000" />
+  <EcoNode X="3731" Y="2598" Z="40" Range="29" FarmCap="4060" EnvType="Farm" RCode="211000" />
+  <EcoNode X="3737" Y="2660" Z="40" Range="18" FarmCap="3060" EnvType="Farm" RCode="211000" />
+  <EcoNode X="3747" Y="2710" Z="40" Range="21" FarmCap="4280" EnvType="Farm" RCode="211000" />
+  <EcoNode X="3744" Y="2599" Z="40" Range="29" FarmCap="4580" EnvType="Farm" RCode="211000" />
+  <EcoNode X="3750" Y="2660" Z="40" Range="18" FarmCap="3030" EnvType="Farm" RCode="211000" />
+  <EcoNode X="4411" Y="1446" Z="0" Range="10" FarmCap="1000" EnvType="Farm" RCode="210400" />
+  <EcoNode X="4561" Y="1475" Z="0" Range="10" FarmCap="720" EnvType="Farm" RCode="210400" />
+  <EcoNode X="4573" Y="1475" Z="0" Range="10" FarmCap="810" EnvType="Farm" RCode="210400" />
+  <EcoNode X="4627" Y="1295" Z="0" Range="10" FarmCap="640" EnvType="Farm" RCode="210400" />
+  <EcoNode X="4627" Y="1307" Z="0" Range="10" FarmCap="640" EnvType="Farm" RCode="210400" />
+  <EcoNode X="4639" Y="1295" Z="0" Range="10" FarmCap="640" EnvType="Farm" RCode="210400" />
+  <EcoNode X="4639" Y="1307" Z="0" Range="10" FarmCap="640" EnvType="Farm" RCode="210400" />
+  <EcoNode X="5187" Y="3633" Z="0" Range="14" FarmCap="1510" EnvType="Farm" RCode="0" />
+  <EcoNode X="5210" Y="3596" Z="0" Range="14" FarmCap="1290" EnvType="Farm" RCode="0" />
+  <EcoNode X="5259" Y="4006" Z="41" Range="13" FarmCap="1530" EnvType="Farm" RCode="211300" />
+  <EcoNode X="5259" Y="4017" Z="39" Range="13" FarmCap="1360" EnvType="Farm" RCode="211300" />
+  <EcoNode X="5275" Y="4011" Z="39" Range="14" FarmCap="1800" EnvType="Farm" RCode="211300" />
+</NodeRegistry>

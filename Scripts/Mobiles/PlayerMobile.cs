@@ -1527,9 +1527,9 @@ namespace Server.Mobiles
 		//스텟 재정리
 		public void SkillbyStatCheck(PlayerMobile pm)
 		{
-			// 다차원 배열 길이 호출 비용을 줄이기 위한 루프 외부 캐싱
+			// 배열의 크기와 실제 플레이어의 스킬 개수 중 작은 값을 택하여 IndexOutOfRange 에러 완벽 방지
 			int statCount = m_StatUp.GetLength(1);
-			int skillCount = m_StatUp.GetLength(0);
+			int skillCount = Math.Min(m_StatUp.GetLength(0), pm.Skills.Length);
 
 			for (int i = 0; i < statCount; i++)
 			{
@@ -1537,24 +1537,28 @@ namespace Server.Mobiles
 				
 				for (int j = 0; j < skillCount; j++)
 				{
-					double skillValue = pm.Skills[j].Value;
+					// [개선] double 연산 제거. BaseFixedPoint는 100.0 스킬을 정수 1000으로 즉시 반환함 (아이템 보너스 제외)
+					int skillValueFP = pm.Skills[j].BaseFixedPoint; 
+
+					// 스킬이 0이면 계산할 필요 없이 패스 (최적화)
+					if (skillValueFP <= 0) continue; 
 
 					// 1. 기본 합산 로직 (기본 스텟 계수가 0보다 클 때만)
 					if (m_StatUp[j, i] > 0)
 					{
-						pm.SkillbyStat[i] += m_StatUp[j, i] * (int)(skillValue * 10);
+						// skillValueFP가 이미 10배수 정수이므로 곱하기 10을 할 필요 없이 바로 곱함
+						pm.SkillbyStat[i] += m_StatUp[j, i] * skillValueFP;
 					}
 
-					// 2. 50 보너스 독립적 긁어오기
-					if (skillValue >= 50.0 && m_StatBonus50[j, i] > 0)
+					// 2. 50 보너스 독립적 긁어오기 (FixedPoint 기준 50.0은 500)
+					if (skillValueFP >= 500 && m_StatBonus50[j, i] > 0)
 					{
-						// 최종 val 연산에서 / 1000 처리가 되므로, 
-						// 배열에 적은 숫자 그대로 스텟이 오르도록 1000을 곱해서 내부 수치에 합산
 						pm.SkillbyStat[i] += m_StatBonus50[j, i] * 1000;
 					}
 				}
 			}
 
+			// 최대치 보정 로직
 			if (pm.HitsMax < pm.Hits)
 				pm.Hits = pm.HitsMax;
 				
@@ -1654,131 +1658,132 @@ namespace Server.Mobiles
             from.CheckStatTimers();
         }
 		
+		// 기획표에 따른 스킬별 스탯 상승 확률 및 50 달성 보너스 수치
+		// 열 순서: str, dex, int, luc, hit, stm, mana
 		private static readonly int[,] m_StatUp = new int[,]
 		{
-			//	str	dex	int	luc	hit	stm	mana
-			{0,0,200,0,0,100,0},//Alchemy
-			{100,100,0,0,100,0,0},//Anatomy
-			{0,0,200,0,0,0,100},//AnimalLore
-			{0,0,200,0,0,0,0},//ItemIdentification
-			{100,0,100,0,0,0,0},//ArmsLore
-			{100,0,0,0,200,0,0},//Parrying
-			{0,0,0,0,100,200,0},//Begging
-			{200,0,0,0,100,0,0},//Blacksmithy
-			{0,200,0,0,0,0,0},//BowcraftFletching
-			{0,0,200,0,0,0,100},//Peacemaking
-			{0,0,0,0,100,100,0},//Camping
-			{100,100,0,0,0,0,0},//Carpentry
-			{0,0,200,0,0,0,0},//Cartography
-			{0,0,0,0,100,100,0},//Cooking
-			{0,0,200,0,0,0,0},//DetectingHidden
-			{0,0,200,0,0,0,100},//Discordance
-			{0,0,200,0,0,0,100},//EvaluatingIntell
-			{0,100,0,0,200,0,0},//Healing
-			{0,0,0,0,100,200,0},//Fishing
-			{0,0,200,0,0,0,0},//ForensicEvaluation
-			{0,0,0,0,100,100,0},//Herding
-			{0,0,0,0,100,200,0},//Hiding
-			{0,0,200,0,0,0,100},//Provocation
-			{0,0,200,0,0,0,100},//Inscription
-			{0,200,0,0,0,0,0},//Lockpicking
-			{0,0,200,0,0,0,100},//Magery
-			{0,0,0,0,200,100,0},//ResistingSpells
-			{100,100,0,0,100,0,0},//Tactics
-			{0,100,0,0,0,100,0},//Snooping
-			{0,100,100,0,0,0,0},//Musicianship
-			{0,100,200,0,0,0,0},//Poisoning
-			{0,200,0,0,0,100,0},//Archery
-			{0,0,200,0,0,0,100},//SpiritSpeak
-			{0,100,0,0,0,200,0},//Stealing
-			{0,100,100,0,0,0,0},//Tailoring
-			{0,0,100,0,100,100,0},//AnimalTaming
-			{0,0,200,0,0,0,0},//TasteIdentification
-			{0,100,100,0,0,0,0},//Tinkering
-			{0,0,100,0,0,200,0},//Tracking
-			{0,0,100,0,100,0,0},//Veterinary
-			{100,100,0,0,100,0,0},//Swordsmanship
-			{100,100,0,0,100,0,0},//MaceFighting
-			{100,100,0,0,100,0,0},//Fencing
-			{100,100,0,0,100,0,0},//Wrestling
-			{200,0,0,0,100,0,0},//Lumberjacking
-			{200,0,0,0,100,0,0},//Mining
-			{0,0,100,0,0,0,200},//Meditation
-			{0,0,0,0,100,200,0},//Stealth
-			{0,200,0,0,0,0,0},//RemoveTrap
-			{0,0,200,0,0,0,100},//Necromancy
-			{0,0,0,0,0,200,100},//Focus
-			{100,0,100,0,0,0,100},//Chivalry
-			{100,100,0,0,100,0,0},//Bushido
-			{0,100,100,0,0,100,0},//Ninjitsu
-			{0,0,200,0,0,0,100},//Spellweaving
-			{0,0,200,0,0,0,100},//Mysticism
-			{0,0,200,0,0,0,100},//Imbuing
-			{0,200,0,0,0,100,0}//Throwing
+			{0, 0, 200, 0, 100, 100, 100}, // 0: Alchemy
+			{100, 100, 0, 0, 100, 0, 0}, // 1: Anatomy
+			{0, 0, 200, 0, 0, 0, 100}, // 2: AnimalLore
+			{0, 0, 200, 0, 0, 0, 0}, // 3: ItemIdentification
+			{100, 0, 100, 0, 0, 0, 0}, // 4: ArmsLore
+			{100, 0, 0, 0, 200, 0, 0}, // 5: Parrying
+			{0, 0, 0, 300, 0, 100, 0}, // 6: Begging (운 보너스 반영)
+			{200, 100, 0, 0, 0, 200, 0}, // 7: Blacksmithy
+			{100, 150, 0, 0, 0, 150, 0}, // 8: BowcraftFletching
+			{0, 0, 200, 0, 0, 0, 100}, // 9: Peacemaking
+			{200, 200, 200, 0, 0, 0, 0}, // 10: Camping
+			{100, 100, 50, 0, 0, 200, 0}, // 11: Carpentry
+			{0, 0, 200, 0, 0, 0, 0}, // 12: Cartography
+			{100, 100, 100, 0, 100, 100, 0}, // 13: Cooking
+			{0, 0, 200, 200, 0, 0, 0}, // 14: DetectingHidden
+			{0, 0, 200, 0, 0, 0, 100}, // 15: Discordance
+			{0, 0, 300, 0, 0, 0, 100}, // 16: EvaluatingIntell
+			{0, 200, 0, 0, 0, 200, 0}, // 17: Healing
+			{100, 100, 100, 0, 0, 100, 0}, // 18: Fishing
+			{100, 0, 200, 0, 0, 0, 100}, // 19: ForensicEvaluation (Belief - 팔라딘 성향 반영)
+			{100, 100, 100, 0, 100, 100, 0}, // 20: Herding (Farming - 육체 노동 반영)
+			{0, 0, 0, 0, 0, 300, 0}, // 21: Hiding
+			{0, 0, 200, 0, 0, 0, 100}, // 22: Provocation
+			{0, 0, 300, 0, 0, 0, 100}, // 23: Inscription
+			{0, 200, 100, 0, 0, 100, 0}, // 24: Lockpicking
+			{0, 0, 200, 0, 0, 0, 100}, // 25: Magery
+			{0, 0, 0, 0, 200, 100, 0}, // 26: ResistingSpells
+			{100, 100, 0, 0, 100, 0, 0}, // 27: Tactics
+			{0, 200, 0, 0, 0, 100, 0}, // 28: Snooping
+			{0, 100, 100, 0, 0, 0, 0}, // 29: Musicianship
+			{0, 100, 200, 0, 0, 0, 0}, // 30: Poisoning
+			{100, 200, 0, 0, 0, 200, 0}, // 31: Archery
+			{0, 0, 200, 0, 0, 0, 100}, // 32: SpiritSpeak
+			{0, 200, 0, 0, 0, 100, 0}, // 33: Stealing
+			{0, 150, 100, 0, 0, 150, 0}, // 34: Tailoring
+			{0, 0, 100, 0, 100, 100, 0}, // 35: AnimalTaming
+			{150, 150, 0, 0, 0, 200, 0}, // 36: TasteIdentification (Tanning - 물리 육체 스탯 반영)
+			{0, 100, 200, 0, 0, 0, 0}, // 37: Tinkering
+			{0, 200, 100, 0, 0, 100, 0}, // 38: Tracking (Reflexes - 민첩/회피 스탯 반영)
+			{0, 0, 100, 0, 100, 0, 0}, // 39: Veterinary
+			{125, 125, 0, 0, 125, 125, 0}, // 40: Swordsmanship
+			{200, 100, 0, 0, 200, 0, 0}, // 41: MaceFighting
+			{50, 300, 0, 0, 0, 150, 0}, // 42: Fencing
+			{100, 100, 0, 0, 150, 150, 0}, // 43: Wrestling
+			{150, 150, 0, 0, 0, 200, 0}, // 44: Lumberjacking
+			{150, 150, 0, 0, 0, 200, 0}, // 45: Mining
+			{0, 0, 100, 0, 0, 0, 200}, // 46: Meditation
+			{0, 0, 0, 0, 100, 200, 0}, // 47: Stealth
+			{0, 200, 0, 0, 0, 200, 0}, // 48: RemoveTrap
+			{0, 0, 200, 0, 0, 0, 100}, // 49: Necromancy
+			{0, 0, 0, 0, 0, 200, 100}, // 50: Focus
+			{100, 0, 100, 0, 0, 0, 100}, // 51: Chivalry
+			{150, 0, 150, 0, 200, 100, 0}, // 52: Bushido (Smash)
+			{0, 150, 150, 100, 0, 100, 0}, // 53: Ninjitsu (Sneak - 운/민첩 반영)
+			{0, 0, 200, 0, 0, 0, 100}, // 54: Spellweaving (Elementalism)
+			{0, 0, 200, 0, 0, 0, 200}, // 55: Mysticism
+			{0, 0, 200, 0, 0, 0, 100}, // 56: Imbuing
+			{0, 200, 0, 0, 0, 100, 0}  // 57: Throwing
 		};
 		
 		private static readonly int[,] m_StatBonus50 = new int[,]
 		{
-			//	str	dex	int	luc	hit	stm	mana
-			{0,0,0,0,0,0,0},//Alchemy
-			{0,0,0,0,0,0,0},//Anatomy
-			{0,0,0,0,0,0,0},//AnimalLore
-			{0,0,0,0,0,0,0},//ItemIdentification
-			{0,0,0,0,0,0,0},//ArmsLore
-			{0,0,0,0,0,0,0},//Parrying
-			{0,0,0,0,0,0,0},//Begging
-			{0,0,0,0,0,0,0},//Blacksmithy
-			{0,0,0,0,0,0,0},//BowcraftFletching
-			{0,0,0,0,0,0,0},//Peacemaking
-			{0,0,0,0,0,0,0},//Camping
-			{0,0,0,0,0,0,0},//Carpentry
-			{0,0,0,0,0,0,0},//Cartography
-			{0,0,0,0,0,0,0},//Cooking
-			{0,0,0,0,0,0,0},//DetectingHidden
-			{0,0,0,0,0,0,0},//Discordance
-			{0,0,0,0,0,0,0},//EvaluatingIntell
-			{0,0,0,0,0,0,0},//Healing
-			{0,0,0,0,0,0,0},//Fishing
-			{0,0,0,0,0,0,0},//ForensicEvaluation
-			{0,0,0,0,0,0,0},//Herding
-			{0,0,0,0,0,0,0},//Hiding
-			{0,0,0,0,0,0,0},//Provocation
-			{0,0,0,0,0,0,0},//Inscription
-			{0,0,0,0,0,0,0},//Lockpicking
-			{0,0,0,0,0,0,0},//Magery
-			{0,0,0,0,0,0,0},//ResistingSpells
-			{0,0,0,0,0,0,0},//Tactics
-			{0,0,0,0,0,0,0},//Snooping
-			{0,0,0,0,0,0,0},//Musicianship
-			{0,0,0,0,0,0,0},//Poisoning
-			{0,0,0,0,0,0,0},//Archery
-			{0,0,0,0,0,0,0},//SpiritSpeak
-			{0,0,0,0,0,0,0},//Stealing
-			{0,0,0,0,0,0,0},//Tailoring
-			{0,0,0,0,0,0,0},//AnimalTaming
-			{0,0,0,0,0,0,0},//TasteIdentification
-			{0,0,0,0,0,0,0},//Tinkering
-			{0,0,0,0,0,0,0},//Tracking
-			{0,0,0,0,0,0,0},//Veterinary
-			{0,0,0,0,0,0,0},//Swordsmanship
-			{0,0,0,0,0,0,0},//MaceFighting
-			{0,0,0,0,0,0,0},//Fencing
-			{0,0,0,0,0,0,0},//Wrestling
-			{0,0,0,0,0,0,0},//Lumberjacking
-			{0,0,0,0,0,0,0},//Mining
-			{0,0,0,0,0,0,0},//Meditation
-			{0,0,0,0,0,0,0},//Stealth
-			{0,0,0,0,0,0,0},//RemoveTrap
-			{0,0,0,0,0,0,0},//Necromancy
-			{0,0,0,0,0,0,0},//Focus
-			{0,0,0,0,0,0,0},//Chivalry
-			{0,0,0,0,0,0,0},//Bushido
-			{0,0,0,0,0,0,0},//Ninjitsu
-			{0,0,0,0,0,0,0},//Spellweaving
-			{0,0,0,0,0,0,0},//Mysticism
-			{0,0,0,0,0,0,0},//Imbuing
-			{0,0,0,0,0,0,0}//Throwing
+			{0, 0, 200, 0, 100, 100, 100}, // 0: Alchemy
+			{0, 0, 0, 0, 0, 0, 0}, // 1: Anatomy (특수 효과로 대체)
+			{0, 0, 0, 0, 0, 0, 0}, // 2: AnimalLore
+			{0, 0, 0, 0, 0, 0, 0}, // 3: ItemIdentification
+			{0, 0, 0, 0, 0, 0, 0}, // 4: ArmsLore
+			{0, 0, 0, 0, 0, 0, 0}, // 5: Parrying
+			{0, 0, 0, 500, 0, 0, 0}, // 6: Begging
+			{200, 100, 0, 0, 0, 200, 0}, // 7: Blacksmithy
+			{100, 150, 0, 0, 0, 150, 0}, // 8: BowcraftFletching
+			{0, 0, 0, 0, 0, 0, 0}, // 9: Peacemaking
+			{200, 200, 200, 0, 0, 0, 0}, // 10: Camping
+			{100, 100, 50, 0, 0, 250, 0}, // 11: Carpentry
+			{0, 0, 0, 0, 0, 0, 0}, // 12: Cartography
+			{100, 100, 100, 0, 100, 100, 0}, // 13: Cooking
+			{0, 0, 200, 300, 0, 0, 0}, // 14: DetectingHidden
+			{0, 0, 0, 0, 0, 0, 0}, // 15: Discordance
+			{0, 0, 500, 0, 0, 0, 0}, // 16: EvaluatingIntell
+			{0, 250, 0, 0, 0, 250, 0}, // 17: Healing
+			{150, 150, 100, 0, 0, 100, 0}, // 18: Fishing
+			{0, 0, 0, 0, 0, 0, 0}, // 19: ForensicEvaluation
+			{100, 100, 100, 0, 100, 100, 0}, // 20: Herding
+			{0, 0, 0, 0, 0, 500, 0}, // 21: Hiding
+			{0, 0, 0, 0, 0, 0, 0}, // 22: Provocation
+			{0, 0, 400, 0, 0, 0, 100}, // 23: Inscription
+			{0, 200, 200, 0, 0, 100, 0}, // 24: Lockpicking
+			{0, 0, 0, 0, 0, 0, 0}, // 25: Magery
+			{0, 0, 0, 0, 0, 0, 0}, // 26: ResistingSpells
+			{0, 0, 0, 0, 0, 0, 0}, // 27: Tactics
+			{0, 0, 0, 0, 0, 0, 0}, // 28: Snooping
+			{0, 0, 0, 0, 0, 0, 0}, // 29: Musicianship
+			{0, 0, 0, 0, 0, 0, 0}, // 30: Poisoning
+			{100, 200, 0, 0, 0, 200, 0}, // 31: Archery
+			{0, 0, 0, 0, 0, 0, 0}, // 32: SpiritSpeak
+			{0, 0, 0, 0, 0, 0, 0}, // 33: Stealing
+			{0, 150, 100, 0, 0, 150, 0}, // 34: Tailoring
+			{0, 0, 0, 0, 0, 0, 0}, // 35: AnimalTaming
+			{150, 150, 0, 0, 0, 200, 0}, // 36: TasteIdentification
+			{0, 100, 400, 0, 0, 0, 0}, // 37: Tinkering
+			{0, 300, 100, 0, 0, 100, 0}, // 38: Tracking
+			{0, 0, 0, 0, 0, 0, 0}, // 39: Veterinary
+			{125, 125, 0, 0, 125, 125, 0}, // 40: Swordsmanship
+			{200, 100, 0, 0, 200, 0, 0}, // 41: MaceFighting
+			{50, 300, 0, 0, 0, 150, 0}, // 42: Fencing
+			{100, 100, 0, 0, 150, 150, 0}, // 43: Wrestling
+			{150, 150, 0, 0, 0, 200, 0}, // 44: Lumberjacking
+			{150, 150, 0, 0, 0, 200, 0}, // 45: Mining
+			{0, 0, 0, 0, 0, 0, 0}, // 46: Meditation
+			{0, 0, 0, 0, 0, 0, 0}, // 47: Stealth
+			{0, 200, 0, 0, 0, 300, 0}, // 48: RemoveTrap
+			{0, 0, 0, 0, 0, 0, 0}, // 49: Necromancy
+			{0, 0, 0, 0, 0, 0, 0}, // 50: Focus
+			{0, 0, 0, 0, 0, 0, 0}, // 51: Chivalry
+			{150, 0, 150, 0, 200, 100, 0}, // 52: Bushido
+			{0, 150, 150, 200, 0, 100, 0}, // 53: Ninjitsu
+			{0, 0, 0, 0, 0, 0, 0}, // 54: Spellweaving
+			{0, 0, 250, 0, 0, 0, 250}, // 55: Mysticism
+			{0, 0, 0, 0, 0, 0, 0}, // 56: Imbuing
+			{0, 0, 0, 0, 0, 0, 0}  // 57: Throwing
 		};
+		
 		
 		private bool m_NoDeltaRecursion;
 

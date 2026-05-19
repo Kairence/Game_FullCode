@@ -4,81 +4,120 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using Server;
+using Server.Regions;
 
 namespace Server.Misc
 {
-    public static class GlobalEconomyReport
+    public static class TownEconomyExporter
     {
-        private static string SavePath = "Data/Reports/GlobalEconomy/";
-
-        public static void GenerateMasterReport(List<TownEconomy> allTowns)
+        public static void Initialize()
         {
-            if (allTowns == null || allTowns.Count == 0) return;
-
-            if (!Directory.Exists(SavePath))
-                Directory.CreateDirectory(SavePath);
-
-            string fileName = $"Global_Economy_Master_{DateTime.Now:yyyyMMdd_HHmm}.md";
-            StringBuilder sb = new StringBuilder();
-
-            // 1. 대륙 전체 요약 (Macro Statistics)
-            long totalWealth = allTowns.Sum(t => t.Wealth);
-            int totalPop = allTowns.Sum(t => t.Citizens.Count);
-
-            sb.AppendLine("# 🌍 Kairence UO: 전 대륙 통합 경제 지표 보고서");
-            sb.AppendLine($"**분석 시점**: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
-            sb.AppendLine($"**총 통화량**: {totalWealth / 100000000.0:F2} Platinum");
-            sb.AppendLine($"**총 거주 인구**: {totalPop:N0} 명");
-            sb.AppendLine($"**활성화 도시**: {allTowns.Count} 개소");
-            sb.AppendLine("\n---");
-
-            // 2. 마을별 핵심 지표 비교 (EconomyAdminGump 데이터 기반)
-            sb.AppendLine("## 🏛️ 마을별 경제 현황 요약");
-            sb.AppendLine("| 마을 이름 | 등급 | 재정 (Plat) | 인구 | 주요 생산직 | 만족도 |");
-            sb.AppendLine("| :--- | :---: | :---: | :---: | :---: | :---: |");
-
-            foreach (var town in allTowns)
+            // [Command] [ExportEconomy] 명령어로 리포트 수동 생성
+            Server.Commands.CommandSystem.Register("ExportEconomy", AccessLevel.Administrator, e =>
             {
-                double plat = town.Wealth / 100000000.0;
-                string topJob = town.JobBirthWeights.OrderByDescending(x => x.Value).FirstOrDefault().Key.ToString();
-                
-                sb.AppendLine($"| {town.TownName} | {town.TownIndex} | {plat:F2}P | {town.Citizens.Count} | {topJob} | {GetSatisfactionStars(town)} |");
+                ManualExport();
+                e.Mobile.SendMessage(0x48, "경제 시스템 분석 보고서가 생성되었습니다. (Data/EconomySystem/Reports)");
+            });
+        }
+
+        public static void ManualExport()
+        {
+            string rootPath = Path.Combine(Core.BaseDirectory, "Data", "EconomySystem", "Reports");
+            if (!Directory.Exists(rootPath)) Directory.CreateDirectory(rootPath);
+            
+            string ts = DateTime.Now.ToString("yyyyMMdd_HHmm");
+            string fullPath = Path.Combine(rootPath, $"Economy_Report_{ts}.md");
+
+            // 리포트 생성 전 모든 마을의 지표 최신화 및 속성 파악
+            foreach (var town in TownEconomyManager.Towns.Values)
+            {
+                AnalyzeRegionData(town); // 공식 마을 여부 판정
+                town.UpdateBaseWealth(); // 최신 면적/상인수 기반 자본금 갱신
             }
 
-            // 3. 글로벌 자원 모니터링 (Crisis Watch)
-            sb.AppendLine("\n## ⚠️ 대륙 자원 위기 경보 (Crisis Watch)");
-            sb.AppendLine("각 마을별로 재고가 10% 미만으로 떨어진 핵심 자원들입니다.");
-            sb.AppendLine("| 마을 | 부족 자원 | 현재 수량 | 긴급도 |");
-            sb.AppendLine("| :--- | :--- | :---: | :---: |");
+            ExportToMarkdown(fullPath);
+        }
 
-            foreach (var town in allTowns)
+        private static void ExportToMarkdown(string path)
+        {
+            using (StreamWriter sw = new StreamWriter(path, false, Encoding.UTF8))
             {
-                foreach (var res in town.Warehouse)
+                sw.WriteLine("# Kairence UO: 경제 시스템 통합 분석 보고서");
+                sw.WriteLine($"> 생성 일시: {DateTime.Now}");
+                sw.WriteLine($"> 분석 대상: {TownEconomyManager.Towns.Count}개 지역\n");
+
+                // --- 섹션 1: 마을 규모 요약 ---
+                sw.WriteLine("## 마을별 행정 규모 및 자본 현황");
+                sw.WriteLine("| 마을 이름 | 등급 | 상인수 | 면적(Tiles) | 현재 자본금 (Total Wealth) | 물가 배율 |");
+                sw.WriteLine("| :--- | :---: | :---: | :---: | :--- | :---: |");
+
+                // 자본금(Wealth)이 많은 순서대로 정렬
+                var sortedTowns = TownEconomyManager.Towns.Values.OrderByDescending(t => t.Wealth).ToList();
+
+                foreach (var town in sortedTowns)
                 {
-                    if (res.Value.Stock < 50) // 임계치 이하
+                    sw.WriteLine($"| {town.TownName} | {town.TownIndex} | {town.VendorCount}명 | {town.TotalTiles:N0} | **{town.TotalWealthString}** | {town.PriceMultiplier:F2}x |");
+                }
+
+                sw.WriteLine("\n---\n## 마을별 창고 재고 리포트 (Carrier AI 참조용)");
+                
+                foreach (var town in sortedTowns)
+                {
+                    sw.WriteLine($"### {town.TownName} ({town.TownID}) 재고 현황");
+                    sw.WriteLine("| 품목 이름 | 현재 재고 (변동) | 기본가 (Base) | 실시간 매입가 | 상태 |");
+                    sw.WriteLine("| :--- | :---: | :---: | :---: | :--- |");
+
+                    if (town.Warehouse != null && town.Warehouse.Count > 0)
                     {
-                        sb.AppendLine($"| {town.TownName} | {res.Key} | {res.Value} | 🚨 **위험** |");
+                        var items = town.Warehouse.Values.OrderBy(i => i.ItemKey.Name);
+                        foreach (var item in items)
+                        {
+                            // 🌟 [수정] Type이 아닌 완벽한 EconomyItemKey를 전달
+                            int estPrice = town.GetPrice(item.ItemKey, 1.0); 
+                            string status = GetStockStatus(item.Stock);
+
+                            // 🌟 [추가] 어제 재고 대비 변동 추이 계산
+                            int trend = item.Stock - item.LastStock;
+                            string trendStr = trend == 0 ? "-" : (trend > 0 ? $"(+{trend})" : $"({trend})");
+
+                            sw.WriteLine($"| {item.ItemKey.Name} | **{item.Stock:N0}** {trendStr} | {item.BasePrice}g | {estPrice}g | {status} |");
+                        }
+                    }
+                    else
+                    {
+                        sw.WriteLine("| - | 창고 비어있음 | - | - | - |");
+                    }
+                    sw.WriteLine("\n");
+                }
+            }
+        }
+
+        private static string GetStockStatus(int stock)
+        {
+            // 이모지 전면 철거 및 텍스트화
+            if (stock <= 50) return "[부족] Critical";
+            if (stock <= 200) return "[낮음] Low";
+            if (stock >= 1500) return "[과잉] Surplus";
+            return "[정상] Stable";
+        }
+
+        private static void AnalyzeRegionData(TownEconomy town)
+        {
+            bool isTown = false;
+
+            foreach (Region r in Region.Regions)
+            {
+                if (string.Equals(r.Name, town.TownName, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (r is TownRegion || r.GetType().Name.Contains("Town"))
+                    {
+                        isTown = true;
+                        break;
                     }
                 }
             }
-
-            // 4. Platinum 경제 집중도 분석
-            var richest = allTowns.OrderByDescending(t => t.Wealth).FirstOrDefault();
-            sb.AppendLine($"\n> **💡 경제 분석가 주석**: 현재 대륙의 부는 **{richest.TownName}**에 집중되어 있습니다. " +
-                          $"자원 불균형 해소를 위해 {richest.TownName}의 잉여 자본을 타 마을로 유도하는 무역 로직이 권장됩니다.");
-
-            File.WriteAllText(Path.Combine(SavePath, fileName), sb.ToString());
-            Console.WriteLine($"[Global Report] 전 대륙 통합 보고서 생성 완료: {fileName}");
-        }
-
-        private static string GetSatisfactionStars(TownEconomy town)
-        {
-            // 평균 만족도 기반 별점 표시
-            double avg = town.Citizens.Average(c => c.Satisfaction);
-            if (avg > 80) return "⭐⭐⭐⭐⭐";
-            if (avg > 60) return "⭐⭐⭐⭐";
-            if (avg > 40) return "⭐⭐⭐";
-            return "⭐⭐";
+            
+            town.IsOfficialTown = isTown;
         }
     }
 }
