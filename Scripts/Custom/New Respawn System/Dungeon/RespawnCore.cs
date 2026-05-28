@@ -73,6 +73,23 @@ namespace Server.Misc
         }
     }
 
+	// ========================================================================
+    // 특수 스폰 및 기믹 규칙 데이터 클래스
+    // ========================================================================
+    public class SpecialSpawnRule
+    {
+        public Type MonsterType { get; set; }
+        public int MaxCount { get; set; }
+        public double SpawnChance { get; set; }
+    }
+
+    public class BossGimmickRule
+    {
+        public Type BossType { get; set; }
+        public bool RequiresAltar { get; set; }
+        public Dictionary<Type, int> RequiredItems { get; set; } = new Dictionary<Type, int>();
+    }
+
     // ========================================================================
     // ⚔️ DungeonZone: 중앙 통제형 던전 엔진 (30분 사이클 비율제 스폰 및 열기 연산 적용)
     // ========================================================================
@@ -123,6 +140,19 @@ namespace Server.Misc
         public List<Item> ActiveItems { get; set; } = new List<Item>();
         public Dictionary<int, Type[]> SpawnProfiles { get; set; } = new Dictionary<int, Type[]>();
         public List<Type> UniqueTypes { get; set; } = new List<Type>(); 
+		// [기획 1 & 4] 그룹 및 세부 구역 관리
+        public string GroupName { get; set; } = "Uncategorized";
+        public string SubZoneName { get; set; } = "Main";
+
+        // [기획 2] 열기(Heat)에 따른 몬스터 리스폰 목록 관리 (문자열 기반)
+        public Dictionary<int, List<string>> SpawnProfileStrings { get; set; } = new Dictionary<int, List<string>>();
+
+        // [기획 3] 특수 던전 기믹 및 보스 설정
+        public List<SpecialSpawnRule> SpecialSpawns { get; set; } = new List<SpecialSpawnRule>();
+        public BossGimmickRule BossGimmick { get; set; } = new BossGimmickRule();
+
+        // [기획 5] 던전 열기에 따른 도시 치안 영향도 (Key: 도시명, Value: 영향 가중치)
+        public Dictionary<string, double> CitySecurityImpact { get; set; } = new Dictionary<string, double>();
 
         public DungeonZone(RegionCode code, Map map, int targetHeat, Type bossType, TimeSpan cooldown)
         {
@@ -253,128 +283,188 @@ namespace Server.Misc
             MaxPopulation = calcPop;
         }
 
-        // 🌟 [핵심 변경] MasterTickEngine 호출 시 비율제 스폰 및 열기 정산
+        // ========================================================================
+        // 🧬 [교정 완료] CheckRespawn 및 명성(Fame) 기반 스폰 연산
+        // ========================================================================
         public void CheckRespawn()
         {
-            if (!IsActive || Phase != DungeonPhase.Active) return;
-            if (AreaBounds == null || AreaBounds.Count == 0 || AreaBounds[0].Width <= 0) return;
-            if (!NewSpawnManager.IsMapActive(Facet)) return;
+            if (!IsActive || Phase == DungeonPhase.Cooldown || AreaBounds.Count == 0)
+                return;
 
-            CalculateDynamicPopulation();
+            int activeCount = 0;
+            for (int i = ActiveMonsters.Count - 1; i >= 0; i--)
+            {
+                BaseCreature bc = ActiveMonsters[i];
+                if (bc == null || bc.Deleted || !bc.Alive)
+                    ActiveMonsters.RemoveAt(i);
+                else
+                    activeCount++;
+            }
 
-            int currentPop = GetTotalActiveCount();
+            int maxPop = ManualMaxPopulation;
+            if (maxPop == -1)
+            {
+                CalculateDynamicPopulation();
+                maxPop = MaxPopulation;
+            }
 
-            // [정산 1] 스폰 전 방치된 몹의 수만큼 열기 대폭 하락 (생태계 냉각)
-            int decayAmount = currentPop * HeatDecayWeight;
-            CurrentHeat -= decayAmount;
-            if (CurrentHeat < 0) CurrentHeat = 0;
+            if (activeCount >= maxPop)
+                return;
 
-            if (currentPop >= MaxPopulation) return;
-
-            // [정산 2] 빈자리 대비 설정된 비율(ReplenishRate)만큼 한 번에 소환
-            int missingPop = MaxPopulation - currentPop;
+            int missingPop = maxPop - activeCount;
             int toSpawn = (int)(missingPop * ReplenishRate);
             
-            // 안전장치: 여유 공간이 있다면 최소 3마리는 무조건 스폰되도록 보장
             int minSpawn = Math.Min(3, missingPop);
-            if (toSpawn < minSpawn) toSpawn = minSpawn;
+            if (toSpawn < minSpawn) 
+                toSpawn = minSpawn;
 
-            double heatRatio = TargetHeat > 0 ? (double)CurrentHeat / TargetHeat : 0;
+            if (toSpawn <= 0)
+                return;
 
-            for (int i = 0; i < toSpawn; i++)
+            double heatRatio = 0.0;
+            if (TargetHeat > 0)
+                heatRatio = (double)CurrentHeat / TargetHeat;
+            if (heatRatio > 1.0) heatRatio = 1.0;
+
+            List<DungeonNode> validNodes = new List<DungeonNode>();
+            Rectangle2D bounds = AreaBounds[0];
+
+            foreach (Item item in World.Items.Values)
             {
+                if (item is DungeonNode node && node.RCode == this.RCode)
+                {
+                    if (bounds.Contains(node.Location))
+                        validNodes.Add(node);
+                }
+            }
+
+            if (validNodes.Count == 0)
+                return;
+
+            for (int s = 0; s < toSpawn; s++)
+            {
+                DungeonNode targetNode = validNodes[Utility.Random(validNodes.Count)];
+
                 int selectedTier = 1;
-                double rand = Utility.RandomDouble();
+                double roll = Utility.RandomDouble();
 
-                if (heatRatio >= 0.85)
+                if (heatRatio >= 0.8)
                 {
-                    if (rand < 0.50) selectedTier = 3;       
-                    else if (rand < 0.80) selectedTier = 2;  
-                    else selectedTier = 1;                   
+                    selectedTier = (roll < 0.70) ? 3 : 2;
                 }
-                else if (heatRatio >= 0.45)
+                else if (heatRatio >= 0.4)
                 {
-                    if (rand < 0.60) selectedTier = 2;       
-                    else selectedTier = 1;                   
+                    if (roll < 0.60) selectedTier = 2;
+                    else if (roll < 0.85) selectedTier = 1;
+                    else selectedTier = 3;
                 }
-
-                if (!SpawnProfiles.ContainsKey(selectedTier))
+                else
                 {
-                    int fallbackTier = 1;
-                    foreach (int k in SpawnProfiles.Keys) if (k <= selectedTier && k > fallbackTier) fallbackTier = k;
-                    selectedTier = fallbackTier;
+                    selectedTier = (roll < 0.85) ? 1 : 2;
                 }
 
-                if (SpawnProfiles.TryGetValue(selectedTier, out Type[] av) && av.Length > 0)
+                Type spawnType = GetWeightedSpawnTypeByFame(selectedTier, heatRatio);
+
+                if (spawnType == null && selectedTier > 1) spawnType = GetWeightedSpawnTypeByFame(selectedTier - 1, heatRatio);
+                if (spawnType == null) spawnType = GetWeightedSpawnTypeByFame(1, heatRatio);
+
+                if (spawnType == null)
+                    continue;
+
+                try
                 {
-                    Point3D? loc = GetValidSpawnLocation();
-                    if (loc.HasValue)
+                    object obj = Activator.CreateInstance(spawnType);
+                    if (obj is BaseCreature bc)
                     {
-                        try
-                        {
-                            Type selected = av[Utility.Random(av.Length)];
-                            
-                            bool canSpawn = true;
-                            if (UniqueTypes.Contains(selected))
-                            {
-                                for (int j = 0; j < ActiveMonsters.Count; j++)
-                                {
-                                    if (ActiveMonsters[j].GetType() == selected) { canSpawn = false; break; }
-                                }
-                            }
-                            if (!canSpawn) continue;
+                        int rx = targetNode.X + Utility.RandomMinMax(-targetNode.SpawnRange, targetNode.SpawnRange);
+                        int ry = targetNode.Y + Utility.RandomMinMax(-targetNode.SpawnRange, targetNode.SpawnRange);
+                        int rz = targetNode.Map.GetAverageZ(rx, ry);
 
-                            object obj = Activator.CreateInstance(selected);
-                            if (obj is BaseCreature bc) 
-                            { 
-                                bool isWaterMob = bc is Kraken || bc is SeaSerpent || bc is DeepSeaSerpent || bc is WaterElemental;
-                                int tileID = Facet.Tiles.GetLandTile(loc.Value.X, loc.Value.Y).ID;
-                                bool isWaterTile = (tileID >= 0x00A8 && tileID <= 0x00AB) || (tileID >= 0x0136 && tileID <= 0x0137);
+                        bc.Home = targetNode.Location;
+                        bc.RangeHome = targetNode.HomeRange; // 고유 변수명 일치 완료
+                        bc.Grade = 1; 
 
-                                if (isWaterMob && !isWaterTile) { bc.Delete(); continue; }
+                        bc.MoveToWorld(new Point3D(rx, ry, rz), targetNode.Map);
+                        ActiveMonsters.Add(bc);
 
-                                bc.Home = loc.Value;
-                                bc.RangeHome = 30; 
-                                bc.MoveToWorld(loc.Value, Facet); 
-                                
-                                if (heatRatio > 0.5 && Utility.RandomDouble() < (heatRatio - 0.4)) bc.Grade = Utility.RandomDouble() < 0.2 ? 3 : 2; 
-                                ActiveMonsters.Add(bc); 
-
-                                // [정산 3] 강한 몬스터(2, 3티어)가 스폰되면 던전의 위협도(열기) 상승
-                                if (selectedTier == 3) CurrentHeat += 10;
-                                else if (selectedTier == 2) CurrentHeat += 3;
-                            }
-                            else if (obj is Item it) 
-                            { 
-                                it.MoveToWorld(loc.Value, Facet); 
-                                ActiveItems.Add(it); 
-                            }
-                        }
-                        catch { }
+                        if (selectedTier == 3) CurrentHeat += 10;
+                        else if (selectedTier == 2) CurrentHeat += 3;
                     }
                 }
+                catch
+                {
+                }
             }
+        }
 
-            if (EnableRareDrops && heatRatio >= (RareDropHeatThreshold / 100.0) && RareItemTypes.Count > 0)
+        private Type GetWeightedSpawnTypeByFame(int tier, double heatRatio)
+        {
+            if (SpawnProfileStrings == null)
+                return null;
+
+            if (SpawnProfileStrings.TryGetValue(tier, out List<string> list) && list != null && list.Count > 0)
             {
-                if (Utility.RandomDouble() < RareDropChance)
+                int count = list.Count;
+                if (count == 1)
                 {
-                    Point3D? loc = GetValidSpawnLocation();
-                    if (loc.HasValue)
+                    Type singleType = ScriptCompiler.FindTypeByName(list[0].Trim());
+                    if (singleType != null && singleType.IsSubclassOf(typeof(BaseCreature))) return singleType;
+                    return null;
+                }
+
+                List<Type> validTypes = new List<Type>();
+                List<int> fameTable = new List<int>();
+
+                for (int i = 0; i < count; i++)
+                {
+                    Type t = ScriptCompiler.FindTypeByName(list[i].Trim());
+                    if (t != null && t.IsSubclassOf(typeof(BaseCreature)))
                     {
+                        validTypes.Add(t);
+                        int baseFame = 0;
                         try
                         {
-                            Type rareType = RareItemTypes[Utility.Random(RareItemTypes.Count)];
-                            if (Activator.CreateInstance(rareType) is Item rareItem)
+                            if (Activator.CreateInstance(t) is BaseCreature dummy)
                             {
-                                rareItem.MoveToWorld(loc.Value, Facet);
-                                ActiveItems.Add(rareItem);
+                                baseFame = dummy.Fame;
+                                dummy.Delete();
                             }
                         }
                         catch { }
+                        fameTable.Add(Math.Max(100, baseFame));
                     }
                 }
+
+                int validCount = validTypes.Count;
+                if (validCount == 0) return null;
+
+                double[] weights = new double[validCount];
+                double totalWeight = 0.0;
+
+                for (int i = 0; i < validCount; i++)
+                {
+                    double fameFactor = fameTable[i] / 1000.0;
+                    double calculatedWeight = Math.Pow(fameFactor, 1.0 + (heatRatio * 3.0));
+                    
+                    if (heatRatio < 0.3)
+                        calculatedWeight = 1.0 / calculatedWeight;
+
+                    weights[i] = calculatedWeight;
+                    totalWeight += calculatedWeight;
+                }
+
+                double choiceRoll = Utility.RandomDouble() * totalWeight;
+                double cumulative = 0.0;
+
+                for (int i = 0; i < validCount; i++)
+                {
+                    cumulative += weights[i];
+                    if (choiceRoll <= cumulative)
+                        return validTypes[i];
+                }
+                return validTypes[0];
             }
+            return null;
         }
 
         public void ProcessDeath(BaseCreature bc)
@@ -733,10 +823,8 @@ namespace Server.Misc
                 node.SetAttribute("TargetHeat", z.TargetHeat.ToString());
                 node.SetAttribute("MaxPop", z.MaxPopulation.ToString());
                 
-                // 🌟 [수정] 파일 저장 시 새로운 생태계 비율 변수 저장
                 node.SetAttribute("ReplenishRate", z.ReplenishRate.ToString());
                 node.SetAttribute("HeatDecayWeight", z.HeatDecayWeight.ToString());
-                
                 node.SetAttribute("RestMin", z.RestDuration.TotalMinutes.ToString());
                 if (z.BossType != null) node.SetAttribute("BossType", z.BossType.FullName);
 
@@ -744,6 +832,58 @@ namespace Server.Misc
                 node.SetAttribute("RareDropHeatThreshold", z.RareDropHeatThreshold.ToString());
                 node.SetAttribute("RareDropChance", z.RareDropChance.ToString());
                 node.SetAttribute("IsStealable", z.IsStealable.ToString());
+
+                // [신규 기획 데이터 저장]
+                node.SetAttribute("GroupName", z.GroupName);
+                node.SetAttribute("SubZoneName", z.SubZoneName);
+
+                XmlElement profilesNode = doc.CreateElement("SpawnProfiles");
+                foreach (var kvp in z.SpawnProfileStrings)
+                {
+                    XmlElement pNode = doc.CreateElement("Tier");
+                    pNode.SetAttribute("Level", kvp.Key.ToString());
+                    pNode.SetAttribute("Mobs", string.Join(",", kvp.Value));
+                    profilesNode.AppendChild(pNode);
+                }
+                node.AppendChild(profilesNode);
+
+                XmlElement citiesNode = doc.CreateElement("CitySecurity");
+                foreach (var kvp in z.CitySecurityImpact)
+                {
+                    XmlElement cNode = doc.CreateElement("City");
+                    cNode.SetAttribute("Name", kvp.Key);
+                    cNode.SetAttribute("Impact", kvp.Value.ToString());
+                    citiesNode.AppendChild(cNode);
+                }
+                node.AppendChild(citiesNode);
+
+                XmlElement specialsNode = doc.CreateElement("SpecialSpawns");
+                foreach (var sp in z.SpecialSpawns)
+                {
+                    if (sp.MonsterType == null) continue;
+                    XmlElement sNode = doc.CreateElement("Rule");
+                    sNode.SetAttribute("Type", sp.MonsterType.FullName);
+                    sNode.SetAttribute("Max", sp.MaxCount.ToString());
+                    sNode.SetAttribute("Chance", sp.SpawnChance.ToString());
+                    specialsNode.AppendChild(sNode);
+                }
+                node.AppendChild(specialsNode);
+
+                XmlElement gimmickNode = doc.CreateElement("BossGimmick");
+                if (z.BossGimmick.BossType != null)
+                {
+                    gimmickNode.SetAttribute("Type", z.BossGimmick.BossType.FullName);
+                    gimmickNode.SetAttribute("RequiresAltar", z.BossGimmick.RequiresAltar.ToString());
+                    foreach (var req in z.BossGimmick.RequiredItems)
+                    {
+                        if (req.Key == null) continue;
+                        XmlElement reqNode = doc.CreateElement("ReqItem");
+                        reqNode.SetAttribute("Type", req.Key.FullName);
+                        reqNode.SetAttribute("Amount", req.Value.ToString());
+                        gimmickNode.AppendChild(reqNode);
+                    }
+                }
+                node.AppendChild(gimmickNode);
 
                 for (int b = 0; b < z.AreaBounds.Count; b++)
                 {
@@ -783,10 +923,8 @@ namespace Server.Misc
                             if (int.TryParse(node.Attributes["TargetHeat"]?.Value, out int heat)) z.TargetHeat = heat;
                             if (int.TryParse(node.Attributes["MaxPop"]?.Value, out int pop)) z.SetPopulation(pop);
                             
-                            // 🌟 [수정] 파일 로드 시 새로운 생태계 변수 불러오기
                             if (double.TryParse(node.Attributes["ReplenishRate"]?.Value, out double repRate)) z.ReplenishRate = repRate;
                             if (int.TryParse(node.Attributes["HeatDecayWeight"]?.Value, out int hdWeight)) z.HeatDecayWeight = hdWeight;
-                            
                             if (double.TryParse(node.Attributes["RestMin"]?.Value, out double rmin)) z.RestDuration = TimeSpan.FromMinutes(rmin);
                             
                             string bossStr = node.Attributes["BossType"]?.Value;
@@ -796,6 +934,82 @@ namespace Server.Misc
                             if (int.TryParse(node.Attributes["RareDropHeatThreshold"]?.Value, out int rHeat)) z.RareDropHeatThreshold = rHeat;
                             if (double.TryParse(node.Attributes["RareDropChance"]?.Value, out double rChance)) z.RareDropChance = rChance;
                             if (bool.TryParse(node.Attributes["IsStealable"]?.Value, out bool rSteal)) z.IsStealable = rSteal;
+
+                            // [신규 기획 데이터 로드]
+                            if (node.Attributes["GroupName"] != null) z.GroupName = node.Attributes["GroupName"].Value;
+                            if (node.Attributes["SubZoneName"] != null) z.SubZoneName = node.Attributes["SubZoneName"].Value;
+
+                            z.SpawnProfileStrings.Clear();
+                            XmlNode profilesNode = node.SelectSingleNode("SpawnProfiles");
+                            if (profilesNode != null)
+                            {
+                                foreach (XmlNode pNode in profilesNode.ChildNodes)
+                                {
+                                    if (pNode.Name == "Tier" && int.TryParse(pNode.Attributes["Level"]?.Value, out int level))
+                                    {
+                                        string mobs = pNode.Attributes["Mobs"]?.Value ?? "";
+                                        z.SpawnProfileStrings[level] = new List<string>(mobs.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+                                    }
+                                }
+                            }
+
+                            z.CitySecurityImpact.Clear();
+                            XmlNode citiesNode = node.SelectSingleNode("CitySecurity");
+                            if (citiesNode != null)
+                            {
+                                foreach (XmlNode cNode in citiesNode.ChildNodes)
+                                {
+                                    if (cNode.Name == "City")
+                                    {
+                                        string cName = cNode.Attributes["Name"]?.Value;
+                                        if (!string.IsNullOrEmpty(cName) && double.TryParse(cNode.Attributes["Impact"]?.Value, out double impact))
+                                        {
+                                            z.CitySecurityImpact[cName] = impact;
+                                        }
+                                    }
+                                }
+                            }
+
+                            z.SpecialSpawns.Clear();
+                            XmlNode specialsNode = node.SelectSingleNode("SpecialSpawns");
+                            if (specialsNode != null)
+                            {
+                                foreach (XmlNode sNode in specialsNode.ChildNodes)
+                                {
+                                    if (sNode.Name == "Rule")
+                                    {
+                                        Type t = ScriptCompiler.FindTypeByFullName(sNode.Attributes["Type"]?.Value ?? "");
+                                        if (t != null && int.TryParse(sNode.Attributes["Max"]?.Value, out int max) && double.TryParse(sNode.Attributes["Chance"]?.Value, out double chance))
+                                        {
+                                            z.SpecialSpawns.Add(new SpecialSpawnRule { MonsterType = t, MaxCount = max, SpawnChance = chance });
+                                        }
+                                    }
+                                }
+                            }
+
+                            z.BossGimmick = new BossGimmickRule();
+                            XmlNode gimmickNode = node.SelectSingleNode("BossGimmick");
+                            if (gimmickNode != null)
+                            {
+                                Type t = ScriptCompiler.FindTypeByFullName(gimmickNode.Attributes["Type"]?.Value ?? "");
+                                if (t != null)
+                                {
+                                    z.BossGimmick.BossType = t;
+                                    if (bool.TryParse(gimmickNode.Attributes["RequiresAltar"]?.Value, out bool reqAltar)) z.BossGimmick.RequiresAltar = reqAltar;
+                                    
+                                    foreach (XmlNode reqNode in gimmickNode.ChildNodes)
+                                    {
+                                        if (reqNode.Name == "ReqItem")
+                                        {
+                                            Type iType = ScriptCompiler.FindTypeByFullName(reqNode.Attributes["Type"]?.Value ?? "");
+                                            if (iType != null && int.TryParse(reqNode.Attributes["Amount"]?.Value, out int amt))
+                                            {
+                                                z.BossGimmick.RequiredItems[iType] = amt;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
 
                             z.AreaBounds.Clear();
                             foreach (XmlNode child in node.ChildNodes)

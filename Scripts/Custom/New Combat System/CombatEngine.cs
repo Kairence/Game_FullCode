@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Server;
 using Server.Items;
 using Server.Mobiles;
@@ -19,6 +20,46 @@ namespace Server.Misc
             (76, SlayerName.Fey)             
         };
 
+        // 🥷 [Subtlety 전용 래퍼 레지스트리]: Mobile 객체 직접 참조를 피해 메모리 누수를 원천 차단 (int 시리얼 매핑)
+        private static readonly Dictionary<int, DateTime> m_FirstAttackRegistry = new Dictionary<int, DateTime>();
+        private static readonly HashSet<int> m_StamFreeRegistry = new HashSet<int>();
+
+        // 첫 번째 선제 공격 여부 확인 판정 (마지막 타격 후 8초 경과 시 첫 공격으로 리셋)
+        public static bool IsSubtletyFirstAttack(Mobile m)
+        {
+            if (m == null) return false;
+            int serial = m.Serial.Value;
+
+            if (m_FirstAttackRegistry.TryGetValue(serial, out DateTime lastAttack))
+            {
+                return (DateTime.UtcNow - lastAttack).TotalSeconds > 8.0;
+            }
+            return true;
+        }
+
+        // 스윙 액션 완료 시 타격 타임스탬프 갱신 커밋
+        public static void CommitSubtletyAttackTick(Mobile m)
+        {
+            if (m != null)
+            {
+                m_FirstAttackRegistry[m.Serial.Value] = DateTime.UtcNow;
+            }
+        }
+
+        // 무기 핸들러에서 호출하여 기력 소모를 면제해주는 기스위치 반환 메서드
+        public static bool GetAndClearSubtletyStamFree(Mobile m)
+        {
+            if (m == null) return false;
+            int serial = m.Serial.Value;
+
+            if (m_StamFreeRegistry.Contains(serial))
+            {
+                m_StamFreeRegistry.Remove(serial);
+                return true;
+            }
+            return false;
+        }
+
         // --- [마스터리 헬퍼 메서드: 본인 또는 펫의 주인 탐색] ---
         private static PlayerMobile GetMasteryOwner(Mobile m)
         {
@@ -38,9 +79,12 @@ namespace Server.Misc
         private static int GetSlayerLevel(PlayerMobile pm, Mobile target)
         {
             if (pm == null || target == null || pm.SlayerData == null) return 0;
-            int idx = CombatMastery.GetSlayerCategoryIndex(target as BaseCreature);
-            if (idx != -1 && idx < pm.SlayerData.Length)
-                return CombatMastery.GetLevel(pm.SlayerData[idx]);
+            if (target is BaseCreature bc)
+            {
+                int idx = CombatMastery.GetSlayerCategoryIndex(bc);
+                if (idx != -1 && idx < pm.SlayerData.Length)
+                    return CombatMastery.GetLevel(pm.SlayerData[idx]);
+            }
             return 0;
         }
 
@@ -48,6 +92,44 @@ namespace Server.Misc
         {
             if (pm == null || pm.GradeData == null || gradeIndex < 0 || gradeIndex >= pm.GradeData.Length) return 0;
             return CombatMastery.GetLevel(pm.GradeData[gradeIndex]);
+        }
+
+        // --- [교정 완료: 외부 파일 오류 복구를 위해 오리지널 서명명 복구 및 중첩 차단 조립] ---
+        public static bool CheckCommandLeader(Mobile m, out double bushidoSkill)
+        {
+            bushidoSkill = 0.0;
+            if (m == null || m.Map == null || m.Map == Map.Internal) return false;
+
+            double highestBushido = 0.0;
+            IPooledEnumerable eable = m.Map.GetMobilesInRange(m.Location, 10);
+            
+            foreach (Mobile near in eable)
+            {
+                if (near == null || near.Deleted || !near.Alive || near == m) continue;
+
+                // 지휘관 조건 만족자 스캔
+                if (near.Str >= 1500 && near.Int >= 1000 && near.Hits >= 2000 && near.Stam >= 1000)
+                {
+                    double skillValue = near.Skills[SkillName.Bushido].Value;
+                    if (skillValue > highestBushido)
+                    {
+                        if ((m.Party != null && m.Party == near.Party) || 
+                            (m is BaseCreature bc && bc.Controlled && bc.ControlMaster == near))
+                        {
+                            highestBushido = skillValue;
+                        }
+                    }
+                }
+            }
+            eable.Free();
+
+            if (highestBushido > 0.0)
+            {
+                bushidoSkill = highestBushido;
+                return true;
+            }
+
+            return false;
         }
 
         // --- [핵심: 전투 액션 시 내구도 및 데미지 반환] ---
@@ -79,14 +161,12 @@ namespace Server.Misc
 
             return Math.Max(1, damage);
         }
-
-        // --- [데미지 계산 엔진: .NET 8.0 튜플 반환] ---
+		// --- [데미지 계산 엔진: .NET 8.0 튜플 반환] ---
         public static (int damage, int hitLocation) CalculateFinalDamage(Mobile attacker, Mobile defender, int min, int max, int target, bool isMagic, bool forceArrow)
         {
             int currentTarget = target;
             double factor = 0.5;
 
-            // 0. 마스터리 오너 식별
             PlayerMobile pmAttacker = GetMasteryOwner(attacker);
             int bestiaryLv = GetBestiaryLevel(pmAttacker, defender);
             int slayerLv = GetSlayerLevel(pmAttacker, defender);
@@ -108,10 +188,25 @@ namespace Server.Misc
 
             factor = Math.Max(0.01, Math.Min(1.0, factor));
 
-            // [마스터리] 슈퍼 슬레이어 100레벨: 20% 확률로 주사위 최대치 고정
             bool maxRoll = (pmAttacker != null && slayerLv >= 100 && Utility.RandomDouble() < 0.20);
             
-            int damage = maxRoll ? max : min + (int)((max - min) * Math.Pow(Utility.RandomDouble(), 0.5 / factor));
+            // 🌟 [Subtlety 200 스킬 연동]: 코어 레지스트리 기반 선제 타격 판정 동기화
+            bool isSubtletyMaxDamage = false;
+            bool hasSubtletyBuff = (attacker.Dex >= 2000 && attacker.Luck >= 2000 && attacker.Stam >= 1000);
+            double subtletySkillValue = attacker.Skills[SkillName.Ninjitsu].Value; 
+
+            if (hasSubtletyBuff && subtletySkillValue >= 200.0)
+            {
+                double subtletyCritChanceBonus = subtletySkillValue * 5 * 0.0001;
+                double totalCritCheck = (attacker.Luck * 0.0001) + subtletyCritChanceBonus;
+
+                if (totalCritCheck > Utility.RandomDouble() || IsSubtletyFirstAttack(attacker))
+                {
+                    isSubtletyMaxDamage = true;
+                }
+            }
+
+            int damage = (maxRoll || isSubtletyMaxDamage) ? max : min + (int)((max - min) * Math.Pow(Utility.RandomDouble(), 0.5 / factor));
 
             if (isMagic && currentTarget < 0)
             {
@@ -125,16 +220,16 @@ namespace Server.Misc
             if (isMagic)
             {
                 scalar += (attacker.Skills[SkillName.Magery].Value * 0.005 + attacker.Int * 0.0001);
-                if( attacker.Skills[SkillName.Spellweaving].Value >= 50 ) scalar += 0.25;
+                if (attacker.Skills[SkillName.Spellweaving].Value >= 50) scalar += 0.25;
                 scalar += (Misc.ItemOptionCreator.GetAttributeValue(attacker, 10) * 0.0001);
             }
             else
             {
                 int statBonus = attacker.Dex;
-                if( attacker is BaseCreature bc)
+                if (attacker is BaseCreature bc)
                 {
                     statBonus = attacker.Str;
-                    if( bc.Controlled && bc.ControlMaster != null && bc.ControlMaster.Skills[SkillName.Veterinary].Value >= 50)
+                    if (bc.Controlled && bc.ControlMaster != null && bc.ControlMaster.Skills[SkillName.Veterinary].Value >= 50)
                         scalar += 0.25;
                 }
                 scalar += (attacker.Skills[SkillName.Tactics].Value * 0.002 + statBonus * 0.0001);
@@ -152,55 +247,53 @@ namespace Server.Misc
             }
             scalar += Misc.ItemOptionCreator.GetAttributeValue(attacker, 11) * 0.0001;
 
-            // =========================================================
-            // [마스터리 - 배율(Scalar) 데미지 합산]
-            // =========================================================
             if (pmAttacker != null)
             {
-                // 공통 적용 (도감/종족 배율)
-                scalar += bestiaryLv * 0.001; // 도감 1렙당 모든 피해 0.1%
-                scalar += slayerLv * 0.001;   // 슬레이어 1렙당 모든 피해 0.1%
+                scalar += bestiaryLv * 0.001; 
+                scalar += slayerLv * 0.001;  
 
-                // 펫 전용 등급(Grade) 패시브 수동 추가 (유저는 장비로 처리됨)
                 if (attacker is BaseCreature)
                 {
-                    int normalLv = GetGradeLevel(pmAttacker, 0); // 일반
-                    scalar += normalLv * 0.001; // 일반 1렙당 모든 피해 0.1%
+                    int normalLv = GetGradeLevel(pmAttacker, 0); 
+                    scalar += normalLv * 0.001; 
                 }
             }
 
-            scalar *= GetSlayerDamageScalar(attacker, defender);
+            scalar += GetSlayerDamageScalar(attacker, defender) - 1.0; 
+
+            // 🛡️ [Command 기본 효과 - 공격력 증감 연산 주입]
+            double bushidoSkill = attacker.Skills[SkillName.Bushido].Value;
+            if (attacker.Str >= 1500 && attacker.Int >= 1000 && attacker.Hits >= 2000 && attacker.Stam >= 1000 && bushidoSkill > 0.0)
+            {
+                scalar -= (bushidoSkill * 12.5 * 0.0001);
+            }
+
+            if (CheckCommandLeader(attacker, out double leaderBushido))
+            {
+                scalar += (leaderBushido * 25 * 0.0001);
+            }
+
             damage = (int)(damage * scalar);
 
-            // =========================================================
-            // [마스터리 - 최종(Flat) 데미지 합산]
-            // =========================================================
             if (pmAttacker != null)
             {
                 int flatDmg = 0;
-                // 도감 및 슬레이어는 공통 고정 피해 (최종 피해이므로 여기서 합산)
-                flatDmg += bestiaryLv * 1;        // 도감: 매 1렙당 최종피해 1
-                flatDmg += (slayerLv / 10) * 2;   // 슬레이어: 매 10렙당 최종피해 2
+                flatDmg += bestiaryLv * 1;        
+                flatDmg += (slayerLv / 10) * 2;   
 
-                // 펫 전용 등급 고정 피해 보정 (유저는 장비 35~44번 옵션 및 AOS.Damage에서 처리됨)
-                // 펫은 아이템 옵션이 없으므로 여기서 엔진 연산 시 주인의 숙련도 고정뎀 주입
                 if (attacker is BaseCreature)
                 {
-                    int eliteLv = GetGradeLevel(pmAttacker, 2);  // 엘리트
-                    int chiefLv = GetGradeLevel(pmAttacker, 3);  // 치프
+                    int eliteLv = GetGradeLevel(pmAttacker, 2);  
+                    int chiefLv = GetGradeLevel(pmAttacker, 3);  
 
-                    flatDmg += (eliteLv / 25) * 50;  // 엘리트: 25렙당 최종피해 50
-                    flatDmg += chiefLv * 5;          // 치프: 1렙당 최종피해 5
+                    flatDmg += (eliteLv / 25) * 50;  
+                    flatDmg += chiefLv * 5;          
                 }
                 damage += flatDmg;
             }
 
-            // 6. 치명타 판정
             damage = ApplyCritical(attacker, defender, damage, currentTarget, isMagic, forceArrow);
 
-            // =========================================================
-            // [마스터리 - 엘리트 100레벨 보너스 (치명타 이후 최종 2배)]
-            // =========================================================
             if (pmAttacker != null)
             {
                 int eliteLv = GetGradeLevel(pmAttacker, 2);
@@ -211,10 +304,13 @@ namespace Server.Misc
                 }
             }
 
+            // 🌟 스윙 사이클 최종 종료 직전 선제 타격 리셋 타임스탬프 커밋 기록
+            CommitSubtletyAttackTick(attacker);
+
             return (Math.Max(1, damage), currentTarget);
         }
 
-        // --- [방어력 감쇄 로직: 마스터리 저항 무시 및 피해 감소 통합] ---
+        // --- [방어력 감쇄 로직] ---
         public static int AbsorbDamage(Mobile attacker, Mobile defender, int damage, int target, bool isMagic)
         {
             int reducedDamage = 0;
@@ -257,19 +353,14 @@ namespace Server.Misc
                 else reducedDamage += defender.MeleeDamageAbsorb;
             }
 
-            // =========================================================
-            // [마스터리 - 방어자 측 (피해 감소 처리)]
-            // =========================================================
             PlayerMobile pmDefender = GetMasteryOwner(defender);
             double damageReductionMult = 1.0;
 
             if (pmDefender != null)
             {
                 int defSlayerLv = GetSlayerLevel(pmDefender, attacker);
-                // 종족: 25렙마다 받는 피해 5% 감소
                 if (defSlayerLv >= 25) damageReductionMult -= (defSlayerLv / 25) * 0.05;
 
-                // 펫 전용 방어 패시브 (치프: 100레벨 시 모든 방어력 5 증가)
                 if (defender is BaseCreature)
                 {
                     int chiefLv = GetGradeLevel(pmDefender, 3);
@@ -277,18 +368,24 @@ namespace Server.Misc
                 }
             }
 
-            // =========================================================
-            // [마스터리 - 공격자 측 (5% 확률 저항 무시 처리)]
-            // =========================================================
+            // 🛡️ [Command 100 효과]: 피격 피해량 제어 가산식
+            if (defender.Str >= 1500 && defender.Int >= 1000 && defender.Hits >= 2000 && defender.Stam >= 1000 && defender.Skills[SkillName.Bushido].Value >= 100.0)
+            {
+                damageReductionMult += 0.10; 
+            }
+
+            if (CheckCommandLeader(defender, out double defLeaderSkill) && defLeaderSkill >= 100.0)
+            {
+                damageReductionMult -= 0.20; 
+            }
+
             PlayerMobile pmAttacker = GetMasteryOwner(attacker);
             if (pmAttacker != null)
             {
                 bool ignoreResist = false;
-                
                 int attBestiaryLv = GetBestiaryLevel(pmAttacker, defender);
                 if (attBestiaryLv >= 100 && Utility.RandomDouble() < 0.05) ignoreResist = true;
 
-                // 펫 전용 (일반: 100레벨 시 상대 저항 무시 공격)
                 if (attacker is BaseCreature)
                 {
                     int attNormalLv = GetGradeLevel(pmAttacker, 0);
@@ -297,29 +394,52 @@ namespace Server.Misc
 
                 if (ignoreResist)
                 {
-                    reducedDamage = 0; // 방어력을 0으로 무시
-                    attacker.FixedEffect(0x37B9, 10, 5); // 저항 뚫는 시각 효과
+                    reducedDamage = 0; 
+                    attacker.FixedEffect(0x37B9, 10, 5); 
                 }
             }
 
             int finalDamage = Math.Max(0, damage - reducedDamage);
 
-            // 종족 피해 감소 배율 적용 (최종 데미지 깎기)
-            if (damageReductionMult < 1.0)
+            if (damageReductionMult != 1.0)
                 finalDamage = (int)(finalDamage * damageReductionMult);
 
             return finalDamage;
         }
 
-        // --- [치명타 엔진: 치명 확률 및 추가 피해 통합] ---
+        // --- [치명타 엔진] ---
         private static int ApplyCritical(Mobile attacker, Mobile defender, int damage, int target, bool isMagic, bool forceArrow)
         {
+            bool hasSubtletyBuff = (attacker.Dex >= 2000 && attacker.Luck >= 2000 && attacker.Stam >= 1000);
+            double subtletySkillValue = attacker.Skills[SkillName.Ninjitsu].Value;
+
             double critChance = (attacker.Luck * 0.0001);
+
+            if (hasSubtletyBuff)
+            {
+                critChance += (subtletySkillValue * 5 * 0.0001);
+            }
 
             if (isMagic) critChance += Misc.ItemOptionCreator.GetAttributeValue(attacker, 32) * 0.0001;
             else critChance += Misc.ItemOptionCreator.GetAttributeValue(attacker, 31) * 0.0001;
 
             double critDamageMult = 1.5;
+
+            if (hasSubtletyBuff)
+            {
+                Item shield = attacker.FindItemOnLayer(Layer.TwoHanded);
+                Item weapon = attacker.Weapon as Item;
+
+                if (shield == null || !(shield is BaseShield))
+                {
+                    critDamageMult += 0.1;
+
+                    if (weapon != null && weapon.Layer == Layer.OneHanded)
+                    {
+                        critDamageMult += 0.15;
+                    }
+                }
+            }
 
             var provoBonus = Server.SkillHandlers.Provocation.GetProvokeCritBonus(attacker);
             if (provoBonus.CritChance > 0)
@@ -354,25 +474,19 @@ namespace Server.Misc
                 if (isMagic) 
                 {
                     critDamageMult += (bc.Mana * 0.00001);
-                    if( attacker.Skills[SkillName.Spellweaving].Value >= 100 ) critDamageMult += 0.1;
+                    if (attacker.Skills[SkillName.Spellweaving].Value >= 100) critDamageMult += 0.1;
                 }
                 else critDamageMult += (bc.Stam * 0.00001);
             }
             critDamageMult += (attacker.Skills[SkillName.Tactics].Value * 0.001);
 
-            // =========================================================
-            // [마스터리 - 공격자 측 (치명 확률 및 배율 증가)]
-            // =========================================================
             PlayerMobile pmAttacker = GetMasteryOwner(attacker);
             if (pmAttacker != null)
             {
                 int bestiaryLv = GetBestiaryLevel(pmAttacker, defender);
-                
-                // 도감: 25렙당 치명타 확률 5% 증가 / 100렙 치명타 피해 50% 증가
                 if (bestiaryLv >= 25) critChance += (bestiaryLv / 25) * 0.05;
                 if (bestiaryLv >= 100) critDamageMult += 0.50;
 
-                // 펫 전용 (엘리트: 10렙당 치명 확률 1% 증가)
                 if (attacker is BaseCreature)
                 {
                     int eliteLv = GetGradeLevel(pmAttacker, 2);
@@ -386,7 +500,18 @@ namespace Server.Misc
                 critDamageMult += HitLocationManager.GetCritDamageBonus(target);
             }
 
+            // 🛡️ [Command 200 효과]: 10타일 내 아군 모든 치명 확률 5% 가산
+            if (CheckCommandLeader(attacker, out double leaderBushidoSkill) && leaderBushidoSkill >= 200.0)
+            {
+                critChance += 0.05;
+            }
+
+            // 🌟 [Subtlety 100 효과]: 코어 레지스트리를 통한 첫 선제공격 시 100% 치명타 패스권 주입
             bool isCritSuccess = (critChance > Utility.RandomDouble());
+            if (hasSubtletyBuff && subtletySkillValue >= 100.0 && IsSubtletyFirstAttack(attacker))
+            {
+                isCritSuccess = true;
+            }
 
             if (forceArrow)
             {
@@ -398,15 +523,11 @@ namespace Server.Misc
             {
                 damage = (int)(damage * critDamageMult);
 
-                // =========================================================
-                // [마스터리 - 치명 성공 시 추가 고정 피해 합산]
-                // =========================================================
                 if (pmAttacker != null)
                 {
                     int bestiaryLv = GetBestiaryLevel(pmAttacker, defender);
-                    if (bestiaryLv >= 25) damage += 25; // 도감: 치명 추가 피해 25 (고정치)
+                    if (bestiaryLv >= 25) damage += 25; 
 
-                    // 펫 전용 (일반: 25렙당 치명 추가 피해 25 증가)
                     if (attacker is BaseCreature)
                     {
                         int normalLv = GetGradeLevel(pmAttacker, 0);
@@ -417,9 +538,14 @@ namespace Server.Misc
                 attacker.PlaySound(0x20C);
                 attacker.FixedParticles(0x3779, 1, 30, 9964, 3, 3, EffectLayer.Waist);
                 if (!isMagic) PlayPhysicalCritEffect(attacker);
+
+                // 🌟 [Subtlety 150 효과]: 장부에 시리얼을 등록하여 다음 기력 차감 단계 면제 토큰 발행
+                if (hasSubtletyBuff && subtletySkillValue >= 150.0)
+                {
+                    m_StamFreeRegistry.Add(attacker.Serial.Value);
+                }
             }
 
-            // 추가 효과들 (Chivalry, Necromancy 등)
             if (Server.Spells.Chivalry.CleanseByFireSpell.UnderAura(attacker))
             {
                 AOS.Damage(defender, attacker, damage, 0, 10, 0, 0, 0);
@@ -427,11 +553,11 @@ namespace Server.Misc
                 defender.PlaySound(0x208);
             }
             
-            if( !isMagic )
+            if (!isMagic)
             {
                 double chivaryChanceBonus = 0.0;
                 double chivaryDamageBonus = 0.0;
-                if ( Server.Spells.Chivalry.DivineFurySpell.UnderEffect( attacker ) )
+                if (Server.Spells.Chivalry.DivineFurySpell.UnderEffect(attacker))
                 {
                     chivaryChanceBonus += 0.15;
                     chivaryDamageBonus += 35;
@@ -439,7 +565,7 @@ namespace Server.Misc
                 if ((attacker.Skills.Chivalry.Value * 0.0005 + chivaryChanceBonus) > Utility.RandomDouble())
                 {
                     chivaryDamageBonus += attacker.Skills.Forensics.Value;
-                    int chivaryTotalDamage = (int)(damage * chivaryDamageBonus );
+                    int chivaryTotalDamage = (int)(damage * chivaryDamageBonus);
                     AOS.Damage(defender, attacker, chivaryTotalDamage, 0, 0, 0, 0, 0, 0, 100);
                     defender.FixedParticles(0x377A, 1, 32, 9502, 67, 3, EffectLayer.Waist);
                     attacker.PlaySound(0x1F1);
@@ -456,7 +582,6 @@ namespace Server.Misc
             return damage;
         }
 
-        // --- [슬레이어 관련 최적화 로직] ---
         public static double GetSlayerDamageScalar(Mobile attacker, Mobile defender)
         {
             double scalar = 1.0;

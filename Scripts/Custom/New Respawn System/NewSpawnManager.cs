@@ -336,6 +336,9 @@ namespace Server.Misc
         }
     }
 
+    // ========================================================================
+    // 🌍 ZoneMonitorGump: 마스터 모니터 (던전 그룹핑 UI 이름 표기 버그 수정)
+    // ========================================================================
     public class ZoneMonitorGump : Gump
     {
         private int m_Mode, m_SubMode, m_Page, m_MapFilter;
@@ -369,7 +372,6 @@ namespace Server.Misc
                 AddLabel(65 + (i * 90), y + 5, m_MapFilter == i ? 68 : 0x481, mapNames[i]); 
             }
 
-            // 🌟 1. 대륙별 ON/OFF 버튼을 확실하게 표시
             if (m_MapFilter > 0 && currentFilterMap != null)
             {
                 bool isActive = NewSpawnManager.ActiveMaps.GetValueOrDefault(currentFilterMap, true);
@@ -391,27 +393,56 @@ namespace Server.Misc
 
             int start = m_Page * 10, totalListCount = 0;
 
-            // 🌟 2. 텅 비어있던 왼쪽 데이터 복구 완료 (던전 모드)
-            if (mode == 0) // Dungeon
+            // =========================================================
+            // 던전 모드 (트리 구조 및 신규 구역 생성 기능)
+            // =========================================================
+            if (mode == 0) 
             {
                 AddHtml(25, y, 80, 20, "<BASEFONT COLOR='#FFFF00'>이동(GO)</BASEFONT>", false, false); 
-                AddHtml(120, y, 200, 20, "<BASEFONT COLOR='#FFFF00'>던전 구역명</BASEFONT>", false, false); 
+                AddHtml(120, y, 200, 20, "<BASEFONT COLOR='#FFFF00'>던전 구역명 (그룹/세부)</BASEFONT>", false, false); 
                 AddHtml(350, y, 120, 20, "<BASEFONT COLOR='#FFFF00'>진행 상태</BASEFONT>", false, false); 
                 AddHtml(480, y, 100, 20, "<BASEFONT COLOR='#FFFF00'>스폰/최대</BASEFONT>", false, false); 
                 AddHtml(600, y, 180, 20, "<BASEFONT COLOR='#FFFF00'>열기 (Heat)</BASEFONT>", false, false); 
-                AddHtml(820, y, 80, 20, "<BASEFONT COLOR='#FFFF00'>설정</BASEFONT>", false, false); y += 25;
+                AddHtml(820, y, 80, 20, "<BASEFONT COLOR='#FFFF00'>설정</BASEFONT>", false, false); 
+
+                AddButton(865, y, 4011, 4013, 888, GumpButtonType.Reply, 0); 
+                AddLabel(900, y, 0x42, "신규");
+                y += 25;
                 
-                var list = DungeonManager.ZoneList.Where(z => currentFilterMap == null || (z.Facet != null && z.Facet.MapID == currentFilterMap.MapID)).ToList();
-                totalListCount = list.Count; int end = Math.Min(start + 10, totalListCount);
+                // 🌟 화면 표시용 이름으로 미리 그룹핑하여 정렬되도록 수정
+                var list = DungeonManager.ZoneList
+                    .Where(z => currentFilterMap == null || (z.Facet != null && z.Facet.MapID == currentFilterMap.MapID))
+                    .OrderBy(z => (string.IsNullOrEmpty(z.GroupName) || z.GroupName == "Uncategorized" || z.GroupName == "기본 그룹") ? "미분류 던전" : z.GroupName)
+                    .ThenBy(z => (string.IsNullOrEmpty(z.SubZoneName) || z.SubZoneName == "Main" || z.SubZoneName == "메인 구역") ? NewSpawnManager.GetDisplayName(z.RCode) : z.SubZoneName)
+                    .ToList();
+
+                totalListCount = list.Count; 
+                int end = Math.Min(start + 10, totalListCount);
+                string lastGroup = null;
 
                 for (int i = start; i < end; i++)
                 {
-                    var z = list[i]; AddImageTiled(20, y - 2, 910, 24, 9354);
+                    var z = list[i]; 
+                    
+                    // 🌟 1. 그룹명 필터링 (기본값이면 '미분류 던전'으로 표시)
+                    string currentGroup = (string.IsNullOrEmpty(z.GroupName) || z.GroupName == "Uncategorized" || z.GroupName == "기본 그룹") ? "미분류 던전" : z.GroupName;
+
+                    if (currentGroup != lastGroup)
+                    {
+                        AddImageTiled(20, y, 910, 20, 2624);
+                        AddLabel(30, y, 68, $"[그룹명: {currentGroup}]");
+                        y += 20;
+                        lastGroup = currentGroup;
+                    }
+
+                    AddImageTiled(20, y - 2, 910, 24, 9354);
                     bool isMapActive = NewSpawnManager.ActiveMaps.GetValueOrDefault(z.Facet, true);
 
                     if (z.AreaBounds.Count > 0) { AddButton(25, y + 2, 4005, 4007, 300 + (i - start), GumpButtonType.Reply, 0); AddLabel(55, y, 0x481, "GO"); }
                     
-                    AddLabel(120, y, 0xFFFFFF, NewSpawnManager.GetDisplayName(z.RCode));
+                    // 🌟 2. 구역명 필터링 (기본값이면 원래의 지역 코드 이름 표시)
+                    string displayName = (string.IsNullOrEmpty(z.SubZoneName) || z.SubZoneName == "Main" || z.SubZoneName == "메인 구역") ? NewSpawnManager.GetDisplayName(z.RCode) : z.SubZoneName;
+                    AddLabel(120, y, 0xFFFFFF, " └ " + displayName);
                     
                     if (!isMapActive || !z.IsActive) 
                         AddLabel(350, y, 33, "비활성화 (OFF)");
@@ -424,11 +455,13 @@ namespace Server.Misc
                     AddLabel(600, y, heatPct >= 0.8 ? 33 : (heatPct >= 0.4 ? 1258 : 1152), $"{z.CurrentHeat:N0} / {z.TargetHeat:N0} ({heatPct:P0})");
                     
                     AddButton(820, y + 2, 4023, 4025, 200 + (i - start), GumpButtonType.Reply, 0); AddLabel(855, y, 68, "SET");
-                    y += 30;
+                    y += 26; 
                 }
             }
-            // 🌟 텅 비어있던 왼쪽 데이터 복구 완료 (생태계 모드)
-            else if (mode == 1) // Ecology
+            // =========================================================
+            // 생태계 모드 
+            // =========================================================
+            else if (mode == 1) 
             {
                 AddHtml(25, y, 80, 20, "<BASEFONT COLOR='#FFFF00'>이동(GO)</BASEFONT>", false, false); 
                 AddHtml(120, y, 200, 20, "<BASEFONT COLOR='#FFFF00'>생태계 구역명</BASEFONT>", false, false); 
@@ -460,8 +493,10 @@ namespace Server.Misc
                     y += 28; 
                 }
             }
-            // 자원 모드 복구
-            else if (mode == 2) // Resource
+            // =========================================================
+            // 자원 생태계 모드 
+            // =========================================================
+            else if (mode == 2) 
             {
                 AddHtml(25, y, 80, 20, "<BASEFONT COLOR=#FFFF00>이동(GO)</BASEFONT>", false, false); 
                 AddHtml(120, y, 100, 20, "<BASEFONT COLOR=#FFFF00>자원 종류</BASEFONT>", false, false); 
@@ -542,23 +577,35 @@ namespace Server.Misc
         public override void OnResponse(NetState sender, RelayInfo info)
         {
             Mobile from = sender.Mobile;
-            
-            // 🌟 모든 버튼 클릭 전에 기존 창을 깔끔하게 삭제합니다.
             from.CloseGump(typeof(ZoneMonitorGump));
             
             if (info.ButtonID == 0) return;
             if (info.ButtonID == 999) { from.SendGump(new NewSpawnGump()); return; }
             
-            if (info.ButtonID >= 50 && info.ButtonID <= 54) { from.SendGump(new ZoneMonitorGump(m_Mode, info.ButtonID - 50, 0, m_MapFilter)); return; }
-            if (info.ButtonID >= 70 && info.ButtonID <= 76) { from.SendGump(new ZoneMonitorGump(m_Mode, m_SubMode, 0, info.ButtonID - 70)); return; }
-            
-            if (info.ButtonID == 12) 
-            { 
-                EcosystemManager.RebuildZones();
-                from.SendGump(new ZoneMonitorGump(m_Mode, m_SubMode, m_Page, m_MapFilter)); 
-                return; 
+            // 신규 던전 구역 생성
+            if (info.ButtonID == 888)
+            {
+                Map targetMap = m_MapFilter > 0 ? (new Map[] { null, Map.Felucca, Map.Trammel, Map.Ilshenar, Map.Malas, Map.Tokuno, Map.TerMur })[m_MapFilter] : Map.Trammel;
+
+                int newCode = 900000;
+                while (DungeonManager.Zones.ContainsKey((RegionCode)newCode)) newCode++;
+
+                DungeonZone newZone = new DungeonZone((RegionCode)newCode, targetMap, 100000, null, TimeSpan.FromMinutes(60));
+                newZone.GroupName = ""; // 🌟 새 구역 생성시 빈 문자열 세팅
+                newZone.SubZoneName = "";
+                newZone.IsActive = false; 
+
+                DungeonManager.RegisterZone(newZone);
+                DungeonManager.FreezeData();
+
+                from.SendMessage(68, "새로운 던전 구역이 생성되었습니다. 시작점과 끝점, 이름을 설정해 주세요.");
+                from.SendGump(new DungeonSettingGump(newZone, m_Mode, m_MapFilter, m_Page));
+                return;
             }
 
+            if (info.ButtonID >= 50 && info.ButtonID <= 54) { from.SendGump(new ZoneMonitorGump(m_Mode, info.ButtonID - 50, 0, m_MapFilter)); return; }
+            if (info.ButtonID >= 70 && info.ButtonID <= 76) { from.SendGump(new ZoneMonitorGump(m_Mode, m_SubMode, 0, info.ButtonID - 70)); return; }
+            if (info.ButtonID == 12) { EcosystemManager.RebuildZones(); from.SendGump(new ZoneMonitorGump(m_Mode, m_SubMode, m_Page, m_MapFilter)); return; }
             if (info.ButtonID == 10) { from.SendGump(new ZoneMonitorGump(0, 0, 0, m_MapFilter)); return; }
             if (info.ButtonID == 11) { from.SendGump(new ZoneMonitorGump(1, 0, 0, m_MapFilter)); return; }
             if (info.ButtonID == 13) { from.SendGump(new ZoneMonitorGump(2, 0, 0, m_MapFilter)); return; }
@@ -574,8 +621,8 @@ namespace Server.Misc
                 bool nowActive = !wasActive; 
                 NewSpawnManager.ActiveMaps[currentFilterMap] = nowActive;
 
-                if (!nowActive)
-                {
+                if (!nowActive) 
+                { 
                     int dCount = DungeonManager.ClearMapSpawns(currentFilterMap);
                     
                     int eCount = 0;
@@ -591,11 +638,10 @@ namespace Server.Misc
                         foreach (var m in pool.ActiveMonsters) m?.Delete();
                         pool.ActiveMonsters.Clear();
                     }
-
-                    from.SendMessage(33, $"[{currentFilterMap.Name}] 스폰 정지! 몹 청소 완료.");
+                    from.SendMessage(33, $"[{currentFilterMap.Name}] 스폰 정지! 몹 청소 완료."); 
                 }
-                else
-                {
+                else 
+                { 
                     int eNodeCount = 0;
                     foreach (var kvp in EcoGridDatabase.Chunks.Where(c => c.Key.Facet == currentFilterMap))
                     {
@@ -620,10 +666,8 @@ namespace Server.Misc
                         }
                     }
                     EcosystemManager.RebuildZones();
-
-                    from.SendMessage(68, $"[{currentFilterMap.Name}] 시스템 재가동! 생태계({eNodeCount}개) 복구 완료.");
+                    from.SendMessage(68, $"[{currentFilterMap.Name}] 시스템 재가동! 생태계({eNodeCount}개) 복구 완료."); 
                 }
-
                 from.SendGump(new ZoneMonitorGump(m_Mode, m_SubMode, m_Page, m_MapFilter));
                 return;
             }
@@ -640,13 +684,16 @@ namespace Server.Misc
 
                 if (m_Mode == 0) // Dungeon
                 {
-                    var list = DungeonManager.ZoneList.Where(z => currentFilterMap == null || (z.Facet != null && z.Facet.MapID == currentFilterMap.MapID)).ToList();
+                    // 🌟 인덱스 선택 시 정렬 로직이 일치하도록 수정
+                    var list = DungeonManager.ZoneList.Where(z => currentFilterMap == null || (z.Facet != null && z.Facet.MapID == currentFilterMap.MapID))
+                               .OrderBy(z => (string.IsNullOrEmpty(z.GroupName) || z.GroupName == "Uncategorized" || z.GroupName == "기본 그룹") ? "미분류 던전" : z.GroupName)
+                               .ThenBy(z => (string.IsNullOrEmpty(z.SubZoneName) || z.SubZoneName == "Main" || z.SubZoneName == "메인 구역") ? NewSpawnManager.GetDisplayName(z.RCode) : z.SubZoneName).ToList();
+                    
                     if (targetIndex < list.Count)
                     {
                         var z = list[targetIndex];
                         if (info.ButtonID >= 200 && info.ButtonID < 300)
                         {
-                            // 🌟 3. 빠져있던 return 추가 완료. (모니터 창을 띄우지 않고 설정 창만 띄움)
                             from.SendGump(new DungeonSettingGump(z, m_Mode, m_MapFilter, m_Page));
                             return; 
                         }
@@ -761,27 +808,28 @@ namespace Server.Misc
                     }
                 }
             }
-            
             from.SendGump(new ZoneMonitorGump(m_Mode, m_SubMode, m_Page, m_MapFilter));
         }
     }
-    #endregion
-	
-	// ========================================================================
-    // [최종 수정] 던전 상세 설정 Gump (인구 자동 연산 및 생태계 변수 적용)
+
+    // ========================================================================
+    // ⚔️ DungeonSettingGump: 상세 설정 Gump (도시 치안 가중치 설정 페이지 추가)
     // ========================================================================
     public class DungeonSettingGump : Gump
     {
         private DungeonZone m_Zone;
         private int m_RetMode, m_RetFilter, m_RetPage;
+        private int m_PageTab; // 0: 기본설정, 1: 도시치안설정
 
-        public DungeonSettingGump(DungeonZone zone, int mode, int filter, int page) : base(50, 50)
+        public DungeonSettingGump(DungeonZone zone, int mode, int filter, int page) : this(zone, mode, filter, page, 0) { }
+
+        public DungeonSettingGump(DungeonZone zone, int mode, int filter, int page, int pageTab) : base(50, 50)
         {
-            m_Zone = zone; m_RetMode = mode; m_RetFilter = filter; m_RetPage = page;
+            m_Zone = zone; m_RetMode = mode; m_RetFilter = filter; m_RetPage = page; m_PageTab = pageTab;
 
             if (m_Zone.AreaBounds.Count == 0)
             {
-                Rectangle2D defaultRect = GetDefaultRegionBounds(m_Zone.RCode, m_Zone.Facet);
+                Rectangle2D defaultRect = RegionSaver.GetRegionBounds(m_Zone.RCode, m_Zone.Facet);
                 if (defaultRect.Width > 0 && defaultRect.Height > 0) m_Zone.AreaBounds.Add(defaultRect);
             }
 
@@ -792,79 +840,145 @@ namespace Server.Misc
             string titleName = NewSpawnManager.GetDisplayName(m_Zone.RCode);
             AddHtml(10, 15, 580, 25, $"<CENTER><BASEFONT COLOR=#FFCC00 SIZE=5>[{titleName}] 상세 설정</BASEFONT></CENTER>", false, false);
 
-            int y = 55;
+            // 🌟 상단 탭 데코레이션
+            AddImageTiled(20, 45, 560, 25, 2624);
+            AddButton(30, 47, m_PageTab == 0 ? 4006 : 4005, 4007, 901, GumpButtonType.Reply, 0);
+            AddLabel(65, 47, m_PageTab == 0 ? 68 : 1152, "기본 및 생태계 설정");
 
-            // 1. 구역 (AreaBounds) 설정
+            AddButton(250, 47, m_PageTab == 1 ? 4006 : 4005, 4007, 902, GumpButtonType.Reply, 0);
+            AddLabel(285, 47, m_PageTab == 1 ? 68 : 1152, "도시별 치안 영향도 설정");
+
+            if (m_PageTab == 0)
+            {
+                RenderDefaultTab();
+            }
+            else
+            {
+                RenderSecurityTab();
+            }
+        }
+
+        // --- 1페이지: 기본 설정 뷰 ---
+        private void RenderDefaultTab()
+        {
+            int y = 75;
+            // 대분류 / 소분류 편집
             AddImageTiled(20, y, 560, 45, 9354);
-            AddLabel(30, y + 10, 0x481, "구역(Area):"); 
-            
-            int bX = 0, bY = 0, bW = 0, bH = 0;
+            AddLabel(30, y + 10, 1152, "대분류(그룹명)"); AddImageTiled(130, y + 8, 140, 20, 2624); 
+            string displayGroup = (m_Zone.GroupName == "Uncategorized" || m_Zone.GroupName == "기본 그룹") ? "" : m_Zone.GroupName;
+            AddTextEntry(135, y + 8, 130, 20, 1152, 12, displayGroup);
+
+            AddLabel(290, y + 10, 1152, "소분류(구역명)"); AddImageTiled(390, y + 8, 140, 20, 2624); 
+            string displaySub = (m_Zone.SubZoneName == "Main" || m_Zone.SubZoneName == "메인 구역") ? "" : m_Zone.SubZoneName;
+            AddTextEntry(395, y + 8, 130, 20, 1152, 13, displaySub);
+            y += 50;
+
+            // 구역 설정
+            AddImageTiled(20, y, 560, 45, 9354);
+            AddLabel(30, y + 10, 0x481, "물리적 구역:"); 
+            int startX = 0, startY = 0, endX = 0, endY = 0;
             if (m_Zone.AreaBounds.Count > 0)
             {
-                bX = m_Zone.AreaBounds[0].X; bY = m_Zone.AreaBounds[0].Y;
-                bW = m_Zone.AreaBounds[0].Width; bH = m_Zone.AreaBounds[0].Height;
+                startX = m_Zone.AreaBounds[0].X; startY = m_Zone.AreaBounds[0].Y;
+                endX = startX + m_Zone.AreaBounds[0].Width; endY = startY + m_Zone.AreaBounds[0].Height;
             }
-            
-            AddLabel(130, y + 10, 1152, "X"); AddImageTiled(145, y + 8, 45, 20, 2624); AddTextEntry(150, y + 8, 40, 20, 1152, 0, bX.ToString());
-            AddLabel(200, y + 10, 1152, "Y"); AddImageTiled(215, y + 8, 45, 20, 2624); AddTextEntry(220, y + 8, 40, 20, 1152, 1, bY.ToString());
-            AddLabel(270, y + 10, 1152, "W"); AddImageTiled(285, y + 8, 45, 20, 2624); AddTextEntry(290, y + 8, 40, 20, 1152, 2, bW.ToString());
-            AddLabel(340, y + 10, 1152, "H"); AddImageTiled(355, y + 8, 45, 20, 2624); AddTextEntry(360, y + 8, 40, 20, 1152, 3, bH.ToString());
-            AddButton(415, y + 10, 4011, 4013, 10, GumpButtonType.Reply, 0); AddLabel(450, y + 10, 0x42, "내 위치로 세팅");
+            AddLabel(100, y + 10, 1152, "시작 X"); AddImageTiled(140, y + 8, 35, 20, 2624); AddTextEntry(145, y + 8, 30, 20, 1152, 0, startX.ToString());
+            AddLabel(180, y + 10, 1152, "Y"); AddImageTiled(195, y + 8, 35, 20, 2624); AddTextEntry(200, y + 8, 30, 20, 1152, 1, startY.ToString());
+            AddLabel(240, y + 10, 1152, "끝 X"); AddImageTiled(270, y + 8, 35, 20, 2624); AddTextEntry(275, y + 8, 30, 20, 1152, 2, endX.ToString());
+            AddLabel(310, y + 10, 1152, "Y"); AddImageTiled(325, y + 8, 35, 20, 2624); AddTextEntry(330, y + 8, 30, 20, 1152, 3, endY.ToString());
+            AddButton(375, y + 10, 4011, 4013, 10, GumpButtonType.Reply, 0); AddLabel(405, y + 10, 0x42, "시작점 셋");
+            AddButton(475, y + 10, 4011, 4013, 11, GumpButtonType.Reply, 0); AddLabel(505, y + 10, 0x42, "끝점 셋");
+            y += 50;
 
-            y += 55;
-
-            // 2. 던전 활성화 상태
+            // 시스템 ON/OFF
             AddImageTiled(20, y, 560, 40, 9354);
             bool isActive = m_Zone.IsActive;
             AddButton(30, y + 8, isActive ? 2361 : 2360, isActive ? 2361 : 2360, 20, GumpButtonType.Reply, 0);
             AddLabel(55, y + 10, isActive ? 68 : 33, isActive ? "시스템 가동 중 (ONLINE)" : "시스템 정지됨 (OFFLINE)");
             AddButton(415, y + 10, 4017, 4019, 30, GumpButtonType.Reply, 0); AddLabel(450, y + 10, 33, "소환 몹 즉시 삭제");
+            y += 45;
 
-            y += 50;
-
-            // 3. 스폰 설정 (생태계 보충률 및 냉각 가중치로 변경)
+            // 스폰 생태계
             AddImageTiled(20, y, 560, 75, 9354);
             AddHtml(20, y + 5, 560, 20, "<CENTER><BASEFONT COLOR=#42FF42>스폰(Spawn) 생태계 설정</BASEFONT></CENTER>", false, false);
-            
-            AddLabel(30, y + 30, 1152, "최대 인구"); 
-            AddImageTiled(100, y + 28, 45, 20, 2624); 
+            AddLabel(30, y + 30, 1152, "최대 인구"); AddImageTiled(100, y + 28, 45, 20, 2624); 
             string popStr = m_Zone.ManualMaxPopulation == -1 ? "-1" : m_Zone.ManualMaxPopulation.ToString();
-            AddTextEntry(105, y + 28, 40, 20, 1152, 4, popStr);
-            AddLabel(150, y + 30, 0x481, "(-1: 자동 계산)");
-
+            AddTextEntry(105, y + 28, 40, 20, 1152, 4, popStr); AddLabel(150, y + 30, 0x481, "(-1: 자동 계산)");
             AddLabel(280, y + 30, 1152, "보충률(%)"); AddImageTiled(350, y + 28, 35, 20, 2624); AddTextEntry(355, y + 28, 30, 20, 1152, 5, (m_Zone.ReplenishRate * 100).ToString("0"));
             AddLabel(405, y + 30, 1152, "냉각 가중치"); AddImageTiled(485, y + 28, 45, 20, 2624); AddTextEntry(490, y + 28, 40, 20, 1152, 6, m_Zone.HeatDecayWeight.ToString());
+            y += 80;
 
-            y += 85;
-
-            // 4. 열기 및 보스
+            // 열기 및 보스
             AddImageTiled(20, y, 560, 100, 9354);
             AddHtml(20, y + 5, 560, 20, "<CENTER><BASEFONT COLOR=#FF5555>열기(Heat) 및 보스(Boss) 설정</BASEFONT></CENTER>", false, false);
             AddLabel(30, y + 30, 1152, "목표 열기"); AddImageTiled(110, y + 28, 80, 20, 2624); AddTextEntry(115, y + 28, 70, 20, 1152, 7, m_Zone.TargetHeat.ToString());
             AddLabel(210, y + 30, 1152, "휴식(분)"); AddImageTiled(280, y + 28, 45, 20, 2624); AddTextEntry(285, y + 28, 40, 20, 1152, 8, m_Zone.RestDuration.TotalMinutes.ToString());
             AddLabel(30, y + 60, 1152, "보스 클래스"); AddImageTiled(110, y + 58, 230, 20, 2624); AddTextEntry(115, y + 58, 220, 20, 1152, 9, m_Zone.BossType != null ? m_Zone.BossType.Name : "");
             AddLabel(350, y + 60, 0x481, "(미입력 시 보스 없음)");
+            y += 105;
 
-            y += 110;
-
-            // 5. 특수 아이템 드랍
-            AddImageTiled(20, y, 560, 75, 9354);
-            AddHtml(20, y + 5, 560, 20, "<CENTER><BASEFONT COLOR=#55CCFF>유물 / 스틸링 드랍 옵션</BASEFONT></CENTER>", false, false);
+            // 유물 옵션
+            AddImageTiled(20, y, 560, 45, 9354);
             bool rActive = m_Zone.EnableRareDrops;
-            AddButton(30, y + 30, rActive ? 2361 : 2360, rActive ? 2361 : 2360, 40, GumpButtonType.Reply, 0); AddLabel(55, y + 30, 1152, "드랍 활성화");
-            AddLabel(150, y + 30, 1152, "열기(%)"); AddImageTiled(210, y + 28, 40, 20, 2624); AddTextEntry(215, y + 28, 35, 20, 1152, 10, m_Zone.RareDropHeatThreshold.ToString());
-            AddLabel(280, y + 30, 1152, "확률"); AddImageTiled(330, y + 28, 40, 20, 2624); AddTextEntry(335, y + 28, 35, 20, 1152, 11, m_Zone.RareDropChance.ToString());
+            AddButton(30, y + 10, rActive ? 2361 : 2360, rActive ? 2361 : 2360, 40, GumpButtonType.Reply, 0); AddLabel(55, y + 10, 1152, "유물 드랍");
+            AddLabel(130, y + 10, 1152, "열기(%)"); AddImageTiled(180, y + 8, 40, 20, 2624); AddTextEntry(185, y + 8, 35, 20, 1152, 10, m_Zone.RareDropHeatThreshold.ToString());
+            AddLabel(230, y + 10, 1152, "확률"); AddImageTiled(270, y + 8, 40, 20, 2624); AddTextEntry(275, y + 8, 35, 20, 1152, 11, m_Zone.RareDropChance.ToString());
             bool isSteal = m_Zone.IsStealable;
-            AddButton(400, y + 30, isSteal ? 2361 : 2360, isSteal ? 2361 : 2360, 50, GumpButtonType.Reply, 0); AddLabel(425, y + 30, 1152, "Stealable 유물");
+            AddButton(330, y + 10, isSteal ? 2361 : 2360, isSteal ? 2361 : 2360, 50, GumpButtonType.Reply, 0); AddLabel(355, y + 10, 1152, "Stealable 처리");
 
-            // 하단 조작
-            AddButton(210, 495, 4023, 4025, 1, GumpButtonType.Reply, 0); AddLabel(245, 495, 68, "설정 저장 (SAVE)");
-            AddButton(350, 495, 4014, 4016, 100, GumpButtonType.Reply, 0); AddLabel(385, 495, 0x481, "뒤로가기");
+            // 하단 컨트롤
+            AddButton(100, 500, 4023, 4025, 1, GumpButtonType.Reply, 0); AddLabel(135, 500, 68, "설정 저장 (SAVE)");
+            AddButton(400, 500, 4014, 4016, 100, GumpButtonType.Reply, 0); AddLabel(435, 500, 0x481, "뒤로가기");
         }
 
-        private Rectangle2D GetDefaultRegionBounds(RegionCode code, Map map)
+        // --- 🌟 2페이지: 도시 치안 연결 설정 뷰 ---
+        private void RenderSecurityTab()
         {
-            return RegionSaver.GetRegionBounds(code, map);
+            AddHtml(20, 75, 560, 40, "<BASEFONT COLOR=#55CCFF SIZE=4>본 던전의 열기(Heat)가 상승할 때 치안 패널티를 부여할 인접 도시들을 지정합니다. 여러 대도시를 중복 선택하여 연결할 수 있습니다.</BASEFONT>", false, false);
+
+            // 고정 대도시 목록 (TownNumber.cs 데이터와 100% 일치)
+            string[] cities = new string[] { "Britain", "Minoc", "Moonglow", "Trinsic", "Vesper", "Luna", "Zento", "Royal City", "Buccaneer's Den", "Jhelom", "Magincia", "Nujel'm", "Haven", "Serpent's Hold", "Skara Brae", "Wind", "Yew", "Delucia", "Papua", "Cove" };
+
+            int startY = 130;
+            // 2열 종대로 정렬하여 20개 도시를 깔끔하게 배치
+            for (int i = 0; i < cities.Length; i++)
+            {
+                int col = i % 2;
+                int row = i / 2;
+
+                int x = 40 + (col * 280);
+                int currentY = startY + (row * 32);
+
+                // 배경 슬롯 설정
+                AddImageTiled(x, currentY, 260, 28, 9354);
+
+                // 현재 던전 장부에 해당 도시 영향도가 저장되어 있는지 확인
+                double currentImpact = 0.0;
+                if (m_Zone.CitySecurityImpact.TryGetValue(cities[i], out double val))
+                {
+                    currentImpact = val;
+                }
+
+                // 체크여부 (가중치가 0보다 크면 활성화 상태로 간주)
+                bool isConnected = currentImpact > 0.0;
+                AddImage(x + 10, currentY + 6, isConnected ? 211 : 210);
+
+                // 도시 이름 레이블 표시
+                AddLabel(x + 35, currentY + 4, isConnected ? 68 : 1152, cities[i]);
+
+                // 가중치 입력 칸 (TextEntry ID는 50번부터 순차 부여)
+                AddLabel(x + 160, currentY + 4, 0x481, "영향도:");
+                AddImageTiled(x + 210, currentY + 4, 35, 18, 2624);
+                
+                // 가중치를 시각적으로 알기 쉽게 % 단위 정수형태로 변환하여 출력 (예: 0.20 -> 20)
+                int displayPct = (int)(currentImpact * 100);
+                AddTextEntry(x + 213, currentY + 4, 30, 18, 1152, 50 + i, displayPct.ToString());
+                AddLabel(x + 246, currentY + 4, 0x481, "%");
+            }
+
+            // 하단 조작계
+            AddButton(100, 500, 4023, 4025, 2, GumpButtonType.Reply, 0); AddLabel(135, 500, 68, "치안 설정 저장 (SAVE)");
+            AddButton(400, 500, 4014, 4016, 100, GumpButtonType.Reply, 0); AddLabel(435, 500, 0x481, "뒤로가기");
         }
 
         public override void OnResponse(NetState sender, RelayInfo info)
@@ -878,64 +992,103 @@ namespace Server.Misc
                 return;
             }
 
-            if (info.ButtonID == 20) { m_Zone.IsActive = !m_Zone.IsActive; from.SendGump(new DungeonSettingGump(m_Zone, m_RetMode, m_RetFilter, m_RetPage)); return; }
-            if (info.ButtonID == 30) { m_Zone.ClearAllSpawns(); from.SendMessage(68, "소환 몹 삭제 완료."); from.SendGump(new DungeonSettingGump(m_Zone, m_RetMode, m_RetFilter, m_RetPage)); return; }
-            if (info.ButtonID == 40) { m_Zone.EnableRareDrops = !m_Zone.EnableRareDrops; from.SendGump(new DungeonSettingGump(m_Zone, m_RetMode, m_RetFilter, m_RetPage)); return; }
-            if (info.ButtonID == 50) { m_Zone.IsStealable = !m_Zone.IsStealable; from.SendGump(new DungeonSettingGump(m_Zone, m_RetMode, m_RetFilter, m_RetPage)); return; }
-            
-            if (info.ButtonID == 10) 
-            { 
-                m_Zone.AreaBounds.Clear(); 
-                m_Zone.AreaBounds.Add(new Rectangle2D(from.X - 30, from.Y - 30, 60, 60)); 
-                from.SendGump(new DungeonSettingGump(m_Zone, m_RetMode, m_RetFilter, m_RetPage)); 
-                return; 
-            }
+            // 🌟 상단 탭 전환 처리
+            if (info.ButtonID == 901) { from.SendGump(new DungeonSettingGump(m_Zone, m_RetMode, m_RetFilter, m_RetPage, 0)); return; }
+            if (info.ButtonID == 902) { from.SendGump(new DungeonSettingGump(m_Zone, m_RetMode, m_RetFilter, m_RetPage, 1)); return; }
 
-            if (info.ButtonID == 1) // 저장 로직
+            // 기본 버튼 핸들러 (1페이지 활성화 상태일 때만 개별 동작 작동)
+            if (m_PageTab == 0)
+            {
+                if (info.ButtonID == 20) { m_Zone.IsActive = !m_Zone.IsActive; from.SendGump(new DungeonSettingGump(m_Zone, m_RetMode, m_RetFilter, m_RetPage, 0)); return; }
+                if (info.ButtonID == 30) { m_Zone.ClearAllSpawns(); from.SendMessage(68, "소환 몹 삭제 완료."); from.SendGump(new DungeonSettingGump(m_Zone, m_RetMode, m_RetFilter, m_RetPage, 0)); return; }
+                if (info.ButtonID == 40) { m_Zone.EnableRareDrops = !m_Zone.EnableRareDrops; from.SendGump(new DungeonSettingGump(m_Zone, m_RetMode, m_RetFilter, m_RetPage, 0)); return; }
+                if (info.ButtonID == 50) { m_Zone.IsStealable = !m_Zone.IsStealable; from.SendGump(new DungeonSettingGump(m_Zone, m_RetMode, m_RetFilter, m_RetPage, 0)); return; }
+                
+                if (info.ButtonID == 10 || info.ButtonID == 11) 
+                { 
+                    int cx1 = 0, cy1 = 0, cx2 = 0, cy2 = 0;
+                    int.TryParse(info.GetTextEntry(0)?.Text, out cx1);
+                    int.TryParse(info.GetTextEntry(1)?.Text, out cy1);
+                    int.TryParse(info.GetTextEntry(2)?.Text, out cx2);
+                    int.TryParse(info.GetTextEntry(3)?.Text, out cy2);
+
+                    if (info.ButtonID == 10) { cx1 = from.X; cy1 = from.Y; from.SendMessage(68, "시작점이 임시 기록되었습니다."); }
+                    else { cx2 = from.X; cy2 = from.Y; from.SendMessage(68, "끝점이 임시 기록되었습니다."); }
+
+                    m_Zone.AreaBounds.Clear();
+                    int nx = Math.Min(cx1, cx2); int ny = Math.Min(cy1, cy2);
+                    int nw = Math.Abs(cx1 - cx2); int nh = Math.Abs(cy1 - cy2);
+                    if (nw > 0 && nh > 0) m_Zone.AreaBounds.Add(new Rectangle2D(nx, ny, nw, nh));
+
+                    from.SendGump(new DungeonSettingGump(m_Zone, m_RetMode, m_RetFilter, m_RetPage, 0)); 
+                    return; 
+                }
+
+                if (info.ButtonID == 1) // 1페이지 저장
+                {
+                    try
+                    {
+                        m_Zone.GroupName = info.GetTextEntry(12)?.Text?.Trim() ?? "";
+                        m_Zone.SubZoneName = info.GetTextEntry(13)?.Text?.Trim() ?? "";
+
+                        int x1 = int.Parse(info.GetTextEntry(0)?.Text ?? "0");
+                        int y1 = int.Parse(info.GetTextEntry(1)?.Text ?? "0");
+                        int x2 = int.Parse(info.GetTextEntry(2)?.Text ?? "0");
+                        int y2 = int.Parse(info.GetTextEntry(3)?.Text ?? "0");
+                        m_Zone.AreaBounds.Clear();
+                        int trueX = Math.Min(x1, x2); int trueY = Math.Min(y1, y2);
+                        int w = Math.Abs(x1 - x2); int h = Math.Abs(y1 - y2);
+                        if (w > 0 && h > 0) m_Zone.AreaBounds.Add(new Rectangle2D(trueX, trueY, w, h));
+
+                        int popInput = int.Parse(info.GetTextEntry(4)?.Text ?? "-1");
+                        if (popInput == -1) { m_Zone.ManualMaxPopulation = -1; m_Zone.CalculateDynamicPopulation(); }
+                        else { m_Zone.SetPopulation(popInput); }
+
+                        m_Zone.ReplenishRate = Math.Max(0.01, Math.Min(1.0, double.Parse(info.GetTextEntry(5)?.Text ?? "40") / 100.0));
+                        m_Zone.HeatDecayWeight = int.Parse(info.GetTextEntry(6)?.Text ?? "5");
+                        m_Zone.TargetHeat = int.Parse(info.GetTextEntry(7)?.Text ?? "100000");
+                        m_Zone.RestDuration = TimeSpan.FromMinutes(double.Parse(info.GetTextEntry(8)?.Text ?? "360"));
+                        
+                        string bName = info.GetTextEntry(9)?.Text?.Trim() ?? "";
+                        if (string.IsNullOrEmpty(bName)) m_Zone.BossType = null;
+                        else { Type t = ScriptCompiler.FindTypeByName(bName); if (t != null && t.IsSubclassOf(typeof(BaseCreature))) m_Zone.BossType = t; }
+
+                        m_Zone.RareDropHeatThreshold = int.Parse(info.GetTextEntry(10)?.Text ?? "80");
+                        m_Zone.RareDropChance = double.Parse(info.GetTextEntry(11)?.Text ?? "0.05");
+
+                        from.SendMessage(68, "던전 설정 기본 장부가 성공적으로 보존되었습니다.");
+                    }
+                    catch { from.SendMessage(33, "입력값이 올바르지 않습니다."); }
+                    from.SendGump(new ZoneMonitorGump(m_RetMode, 0, m_RetPage, m_RetFilter));
+                }
+            }
+            // 🌟 2페이지 전용 치안 가중치 대량 저장 핸들러
+            else if (m_PageTab == 1 && info.ButtonID == 2)
             {
                 try
                 {
-                    int bx = int.Parse(info.GetTextEntry(0)?.Text ?? "0");
-                    int by = int.Parse(info.GetTextEntry(1)?.Text ?? "0");
-                    int bw = int.Parse(info.GetTextEntry(2)?.Text ?? "0");
-                    int bh = int.Parse(info.GetTextEntry(3)?.Text ?? "0");
-                    m_Zone.AreaBounds.Clear();
-                    if (bw > 0 && bh > 0) m_Zone.AreaBounds.Add(new Rectangle2D(bx, by, bw, bh));
+                    string[] cities = new string[] { "Britain", "Minoc", "Moonglow", "Trinsic", "Vesper", "Luna", "Zento", "Royal City", "Buccaneer's Den", "Jhelom", "Magincia", "Nujel'm", "Haven", "Serpent's Hold", "Skara Brae", "Wind", "Yew", "Delucia", "Papua", "Cove" };
 
-                    int popInput = int.Parse(info.GetTextEntry(4)?.Text ?? "-1");
-                    if (popInput == -1)
+                    m_Zone.CitySecurityImpact.Clear(); // 새로운 설정으로 완전 갱신
+
+                    for (int i = 0; i < cities.Length; i++)
                     {
-                        m_Zone.ManualMaxPopulation = -1;
-                        m_Zone.CalculateDynamicPopulation();
-                    }
-                    else
-                    {
-                        m_Zone.SetPopulation(popInput);
+                        TextRelay entry = info.GetTextEntry(50 + i);
+                        if (entry != null && int.TryParse(entry.Text, out int pctVal) && pctVal > 0)
+                        {
+                            // % 수치를 소수점 원시 데이터 가중치로 역산하여 장부에 저장 (예: 25 -> 0.25)
+                            double finalImpact = Math.Clamp(pctVal / 100.0, 0.01, 1.0);
+                            m_Zone.CitySecurityImpact[cities[i]] = finalImpact;
+                        }
                     }
 
-                    // 보충률(%) 파싱 및 0.01 ~ 1.0 보정
-                    double repRateInput = double.Parse(info.GetTextEntry(5)?.Text ?? "40") / 100.0;
-                    m_Zone.ReplenishRate = Math.Max(0.01, Math.Min(1.0, repRateInput));
-                    
-                    // 냉각 가중치 파싱
-                    m_Zone.HeatDecayWeight = int.Parse(info.GetTextEntry(6)?.Text ?? "5");
-
-                    m_Zone.TargetHeat = int.Parse(info.GetTextEntry(7)?.Text ?? "100000");
-                    m_Zone.RestDuration = TimeSpan.FromMinutes(double.Parse(info.GetTextEntry(8)?.Text ?? "360"));
-                    
-                    string bName = info.GetTextEntry(9)?.Text?.Trim() ?? "";
-                    if (string.IsNullOrEmpty(bName)) m_Zone.BossType = null;
-                    else { Type t = ScriptCompiler.FindTypeByName(bName); if (t != null && t.IsSubclassOf(typeof(BaseCreature))) m_Zone.BossType = t; }
-
-                    m_Zone.RareDropHeatThreshold = int.Parse(info.GetTextEntry(10)?.Text ?? "80");
-                    m_Zone.RareDropChance = double.Parse(info.GetTextEntry(11)?.Text ?? "0.05");
-
-                    from.SendMessage(68, "던전 생태계 설정이 성공적으로 저장되었습니다.");
+                    from.SendMessage(68, "이 던전과 대도시 간의 치안 패널티 연결 장부가 성공적으로 업데이트되었습니다.");
                 }
-                catch { from.SendMessage(33, "입력값이 올바르지 않아 저장에 실패했습니다."); }
+                catch { from.SendMessage(33, "치안 설정 처리 중 예상치 못한 오류가 발생했습니다."); }
                 
                 from.SendGump(new ZoneMonitorGump(m_RetMode, 0, m_RetPage, m_RetFilter));
             }
         }
     }
+	#endregion
 }

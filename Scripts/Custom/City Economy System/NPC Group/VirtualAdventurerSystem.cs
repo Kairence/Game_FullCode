@@ -903,36 +903,103 @@ namespace Server.Misc
             BatchCombatTick();
         }
 
+        // ========================================================================
+        // 🔮 [교정 완료] RetreatToTown: 마법사 상점 도시 스마트 귀환 엔진 적용
+        // ========================================================================
         private void RetreatToTown()
         {
             RegionCode majorDungeonCode = RegionSaver.GetMajorCode(CurrentNode.RCode);
             
-            // 🌟 마법사 탈출 (게이트/리콜) 체크 추가
-            bool hasMage = Members.Any(m => m.JobClass == NpcJobClass.Wizard || m.JobClass == NpcJobClass.Necromancer || m.Role == AdventurerRole.MagicDPS || m.Role == AdventurerRole.Healer);
+            // 마법사 탈출 (게이트/리콜 가동 조건) 체크
+            bool hasMage = false;
+            for (int i = 0; i < Members.Count; i++)
+            {
+                if (Members[i].JobClass == NpcJobClass.Wizard || 
+                    Members[i].JobClass == NpcJobClass.Necromancer || 
+                    Members[i].Role == AdventurerRole.MagicDPS || 
+                    Members[i].Role == AdventurerRole.Healer)
+                {
+                    hasMage = true;
+                    break;
+                }
+            }
 
+            // 🌟 [기획 보정] 마법사가 존재할 경우: 고립된 퇴각로나 섬 지형을 무시하고,
+            // 상점 상권(VendorCount > 0)이 살아있는 현재 대륙(CurrentMap)의 도시 중 가장 가까운 상업 중심지로 차원 이동합니다.
+            if (hasMage)
+            {
+                TownEconomy bestShopTown = null;
+                double minShopDistance = double.MaxValue;
+
+                var allTowns = TownEconomyManager.Towns.Values;
+                foreach (TownEconomy town in allTowns)
+                {
+                    if (town != null && town.Facet == CurrentMap && town.VendorCount > 0)
+                    {
+                        double dist = Utility.GetDistanceToSqrt(CurrentLocation, town.Center);
+                        if (dist < minShopDistance)
+                        {
+                            minShopDistance = dist;
+                            bestShopTown = town;
+                        }
+                    }
+                }
+
+                // 만약 대륙 내에 활성화된 상점 도시가 없다면, 대륙 내 임의의 가장 가까운 마을을 선택
+                if (bestShopTown == null)
+                {
+                    foreach (TownEconomy town in allTowns)
+                    {
+                        if (town != null && town.Facet == CurrentMap)
+                        {
+                            double dist = Utility.GetDistanceToSqrt(CurrentLocation, town.Center);
+                            if (dist < minShopDistance)
+                            {
+                                minShopDistance = dist;
+                                bestShopTown = town;
+                            }
+                        }
+                    }
+                }
+
+                if (bestShopTown != null)
+                {
+                    var tCode = RegionSaver.GetRegionCodes(bestShopTown.Facet, bestShopTown.Center.X, bestShopTown.Center.Y, bestShopTown.Center.Z).Major;
+                    string safeName = bestShopTown.TownName ?? bestShopTown.Name ?? "상점 도시";
+                    TargetNode = new WorldNode(safeName, tCode, WorldNodeType.Town, bestShopTown.Facet, bestShopTown.Center, bestShopTown.Center, 1);
+
+                    this.TravelHoursRemaining = 1;
+                    this.State = AdventurerState.Traveling;
+                    Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 마법사의 게이트 마법을 통해 상점이 완비된 {TargetNode.Name}(으)로 안전하게 공간이동 퇴각했습니다.");
+                    return;
+                }
+            }
+
+            // --------------------------------------------------------------------
+            // 🚶 비마법사 파티전용 일반 도보/선박 퇴각 루트 (기존 안전 코드 보존)
+            // --------------------------------------------------------------------
             if (!DungeonRetreatManager.Map.TryGetValue(majorDungeonCode, out RetreatRoute route))
             {
                 TargetNode = GetFallbackNearestTown();
                 if (TargetNode == CurrentNode || TargetNode == null)
                     TargetNode = new WorldNode("Britain", RegionCode.Trammel_Town_Britain, WorldNodeType.Town, Map.Trammel, new Point3D(1426, 1695, 0), new Point3D(1426, 1695, 0), 1);
                 
-                if (hasMage)
-                {
-                    this.TravelHoursRemaining = 1;
-                    this.State = AdventurerState.Traveling;
-                    Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 길을 잃었으나 마법사의 게이트로 {TargetNode.Name}(으)로 비상 귀환합니다.");
-                    return;
-                }
-
                 Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 탈출로를 찾지 못해 {TargetNode.Name}(으)로 험난한 비상 행군을 시작합니다!");
                 this.TravelHoursRemaining = 5; 
-                this.State = AdventurerState.Traveling; // 🌟 절대 Resting으로 바꾸지 않음
+                this.State = AdventurerState.Traveling; 
                 return;
             }
             else
             {
-                var targetTown = TownEconomyManager.Towns.Values.FirstOrDefault(t => 
-                    RegionSaver.GetRegionCodes(t.Facet, t.Center.X, t.Center.Y, t.Center.Z).Major == route.TownCode);
+                TownEconomy targetTown = null;
+                foreach (TownEconomy t in TownEconomyManager.Towns.Values)
+                {
+                    if (RegionSaver.GetRegionCodes(t.Facet, t.Center.X, t.Center.Y, t.Center.Z).Major == route.TownCode)
+                    {
+                        targetTown = t;
+                        break;
+                    }
+                }
 
                 if (targetTown != null)
                 {
@@ -942,16 +1009,9 @@ namespace Server.Misc
                 else
                 {
                     TargetNode = GetFallbackNearestTown();
-                    if (TargetNode == CurrentNode || TargetNode == null) TargetNode = new WorldNode("Britain", RegionCode.Trammel_Town_Britain, WorldNodeType.Town, Map.Trammel, new Point3D(1426, 1695, 0), new Point3D(1426, 1695, 0), 1);
+                    if (TargetNode == CurrentNode || TargetNode == null) 
+                        TargetNode = new WorldNode("Britain", RegionCode.Trammel_Town_Britain, WorldNodeType.Town, Map.Trammel, new Point3D(1426, 1695, 0), new Point3D(1426, 1695, 0), 1);
                     
-                    if (hasMage)
-                    {
-                        this.TravelHoursRemaining = 1;
-                        this.State = AdventurerState.Traveling;
-                        Console.WriteLine($"[Adventurer] 대피소가 폐쇄되었으나 마법사의 게이트로 {TargetNode.Name}(으)로 귀환합니다.");
-                        return;
-                    }
-
                     Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 지정 대피소가 폐쇄되어 {TargetNode.Name}(으)로 비상 행군합니다.");
                     this.TravelHoursRemaining = 5;
                     this.State = AdventurerState.Traveling;
@@ -959,23 +1019,26 @@ namespace Server.Misc
                 }
             }
 
-            if (hasMage)
-            {
-                this.TravelHoursRemaining = 1;
-                this.State = AdventurerState.Traveling;
-                Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 마법사의 게이트 마법으로 {TargetNode.Name}(으)로 안전하게 귀환합니다.");
-                return;
-            }
-
             int ferryCost = route.IsIsland ? 500 * Members.Count : 0;
             bool allMounted = true;
             for (int i = 0; i < Members.Count; i++)
             {
-                if (!Members[i].HasMount) { allMounted = false; break; }
+                if (!Members[i].HasMount) 
+                { 
+                    allMounted = false; 
+                    break; 
+                }
             }
 
-            var townToPay = TownEconomyManager.Towns.Values.FirstOrDefault(t => 
-                RegionSaver.GetRegionCodes(t.Facet, t.Center.X, t.Center.Y, t.Center.Z).Major == route.TownCode);
+            TownEconomy townToPay = null;
+            foreach (TownEconomy t in TownEconomyManager.Towns.Values)
+            {
+                if (RegionSaver.GetRegionCodes(t.Facet, t.Center.X, t.Center.Y, t.Center.Z).Major == route.TownCode)
+                {
+                    townToPay = t;
+                    break;
+                }
+            }
 
             if (route.IsIsland)
             {

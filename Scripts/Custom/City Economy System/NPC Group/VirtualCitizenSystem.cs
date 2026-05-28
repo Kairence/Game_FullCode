@@ -260,6 +260,7 @@ namespace Server.Misc
 
         public static void ExecuteFinalBatchProcess(int gameHour)
         {
+			ExecuteDungeonSecurityImpact();
             var towns = TownEconomyManager.Towns.Values.ToList();
             foreach (var town in towns)
             {
@@ -310,6 +311,75 @@ namespace Server.Misc
             }
 
             Console.WriteLine($"[MasterTick] 30분 사이클 시민 경제/생존 정산 완료. (게임시간: {gameHour}시)");
+        }
+
+		// ========================================================================
+        // 🏛️ [검증 및 교정 완료] ExecuteDungeonSecurityImpact 
+        // ========================================================================
+       // ========================================================================
+        // 🏛️ [검증 완료] ExecuteDungeonSecurityImpact
+        // ========================================================================
+        public static void ExecuteDungeonSecurityImpact()
+        {
+            if (DungeonManager.Zones == null || DungeonManager.Zones.Count == 0)
+                return;
+
+            if (TownEconomyManager.Towns == null || TownEconomyManager.Towns.Count == 0)
+                return;
+
+            string[] cityNames = new string[] { "Britain", "Minoc", "Moonglow", "Trinsic", "Vesper", "Luna", "Zento", "Royal City", "Buccaneer's Den", "Jhelom", "Magincia", "Nujel'm", "Haven", "Serpent's Hold", "Skara Brae", "Wind", "Yew", "Delucia", "Papua", "Cove" };
+            int[] cityIds = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
+
+            for (int zIdx = 0; zIdx < DungeonManager.ZoneList.Count; zIdx++)
+            {
+                DungeonZone zone = DungeonManager.ZoneList[zIdx];
+                if (zone == null || !zone.IsActive || zone.CurrentHeat <= 0)
+                    continue;
+
+                if (zone.CitySecurityImpact == null || zone.CitySecurityImpact.Count == 0)
+                    continue;
+
+                double heatRatio = 0.0;
+                if (zone.TargetHeat > 0)
+                {
+                    heatRatio = (double)zone.CurrentHeat / zone.TargetHeat;
+                }
+                if (heatRatio > 1.0) heatRatio = 1.0;
+
+                for (int i = 0; i < cityNames.Length; i++)
+                {
+                    string targetCityName = cityNames[i];
+
+                    if (zone.CitySecurityImpact.TryGetValue(targetCityName, out double impactWeight))
+                    {
+                        if (impactWeight <= 0.0)
+                            continue;
+
+                        int targetCityId = cityIds[i];
+                        int fullTownId = 100 + targetCityId; 
+
+                        if (TownEconomyManager.Towns.TryGetValue(fullTownId, out TownEconomy town) && town != null)
+                        {
+                            int basePenalty = 15;
+                            int finalSecurityPenalty = (int)(basePenalty * heatRatio * impactWeight);
+
+                            if (finalSecurityPenalty > 0)
+                            {
+                                int currentSecurity = town.Security; 
+                                int nextSecurity = currentSecurity - finalSecurityPenalty;
+                                
+                                if (nextSecurity < 0) 
+                                    nextSecurity = 0;
+
+                                town.Security = nextSecurity;
+
+                                if (nextSecurity < 30)
+                                    town.CrimeIndex += (int)(finalSecurityPenalty * 0.5);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         public static void ProcessCitizenSegment(int tickIdx, int gameHour)

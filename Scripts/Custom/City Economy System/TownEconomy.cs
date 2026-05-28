@@ -148,6 +148,9 @@ namespace Server.Misc
         [CommandProperty(AccessLevel.GameMaster)] public long TaxFund { get; set; }
         [CommandProperty(AccessLevel.GameMaster)] public int VendorCount { get; set; }
         [CommandProperty(AccessLevel.GameMaster)] public int MaxInventoryCapacity { get; set; } = 2000;
+		[CommandProperty(AccessLevel.GameMaster)] public int Security { get; set; } = 100;
+        [CommandProperty(AccessLevel.GameMaster)] public int CrimeIndex { get; set; } = 0;
+		
 
         public long TotalWealth => Wealth; 
 

@@ -1678,6 +1678,17 @@ namespace Server.Items
 			// 1. 보너스 추출 (1% = 10,000 스케일)
 			int bonus = Server.Misc.ItemOptionCreator.GetAttributeValue(m, Server.Misc.CustomOption.SwingSpeed);
 
+			// --------------------------------------------------------------------
+			// 🏛️ [Command 200 보너스 효과: 10타일 내 아군 모든 무기 공속 10% 증가]
+			// --------------------------------------------------------------------
+			// 대장이 주변에 있고 무사도(Bushido) 스킬이 200 레벨 완숙 상태라면
+			// 10000당 1% 연산 체계에 의거하여 정수 보너스 장부에 10% 분량인 '100,000'을 다이렉트로 가산합니다.
+			if (Server.Misc.CombatEngine.CheckCommandLeader(m, out double leaderBushido) && leaderBushido >= 200.0)
+			{
+				bonus += 100000;
+			}
+			// --------------------------------------------------------------------
+
 			// [바드 불협화음 50 보너스] 적용된 디버프만큼 공속 보너스를 깎습니다.
 			bonus -= Server.SkillHandlers.Discordance.GetSpeedPenalty(m);
 
