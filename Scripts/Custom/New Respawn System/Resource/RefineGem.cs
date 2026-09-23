@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Server.Targeting;
 using Server.Engines.Craft;
@@ -61,8 +61,25 @@ namespace Server.Items
                 list.Add(1050043, CrafterName); // 명장 각인
             }
 
-            // [수정] 옵션 목록 대신 "가능 슬롯" 개수만 표시
-            list.Add(1070722, $"<BASEFONT COLOR=#00FF00>[필터링 가능 슬롯: {MaxBans}개]</BASEFONT>");
+            if (ExcludedIDs.Count > 0)
+            {
+                string banList = "";
+                for (int i = 0; i < ExcludedIDs.Count; i++)
+                {
+                    string optName = Server.Misc.ClilocData.GetString(Misc.ItemOptionCreator.GetCliloc(ExcludedIDs[i])).Replace("~1_val~", "").Replace("~1_VAL~", "").Trim();
+                    banList += optName;
+                    if (i < ExcludedIDs.Count - 1) banList += ", ";
+                }
+                list.Add(1070722, $"<BASEFONT COLOR=#FF0000>[제외 옵션: {banList}]</BASEFONT>");
+            }
+            else if (MaxBans > 0)
+            {
+                list.Add(1070722, $"<BASEFONT COLOR=#777777>[제외 슬롯 {MaxBans}개 - 미설정]</BASEFONT>");
+            }
+            else
+            {
+                list.Add(1070722, $"<BASEFONT COLOR=#777777>[필터링 불가]</BASEFONT>");
+            }
         }
 
         public override void OnDoubleClick(Mobile from)
@@ -104,10 +121,20 @@ namespace Server.Items
             else if (actualResType == typeof(Diamond)) GemIndex = 8;
             else GemIndex = 0;
 
-            // [핵심] 스킬에 따라 필터링 "가능한 슬롯" 개수만 할당 (자동 밴 로직 삭제)
+            // [핵심] 스킬에 따라 필터링 "가능한 슬롯" 개수 할당
             MaxBans = (int)(from.Skills[SkillName.Imbuing].Value / 50.0);
             if (MaxBans > 4) MaxBans = 4;
             
+            // 밴 로직 복구: 유저의 필터 세팅 불러와서 보석에 자동 주입
+            var profile = Server.Misc.RefineFilterSystem.GetProfile(from);
+            if (profile.TryGetValue(GemIndex, out var banned))
+            {
+                for (int i = 0; i < Math.Min(banned.Count, MaxBans); i++)
+                {
+                    ExcludedIDs.Add(banned[i]);
+                }
+            }
+
             UpdateProperties();
             return 1;
         }
@@ -118,8 +145,12 @@ namespace Server.Items
             public InternalTarget(RefineGem gem) : base(2, false, TargetFlags.None) { m_Gem = gem; }
             protected override void OnTarget(Mobile from, object targeted)
             {
-                if (targeted is Item item) ItemOptionCreator.ApplyGemRefinement(from, item, m_Gem);
-                else from.SendMessage("대상이 아이템이 아닙니다.");
+                if (targeted is Item item) 
+                    ItemOptionCreator.ApplyGemRefinement(from, item, m_Gem);
+                else if (targeted is Server.Mobiles.BaseCreature pet)
+                    ItemOptionCreator.ApplyPetGemRefinement(from, pet, m_Gem);
+                else 
+                    from.SendMessage("대상이 장비나 펫이 아닙니다.");
             }
         }
 

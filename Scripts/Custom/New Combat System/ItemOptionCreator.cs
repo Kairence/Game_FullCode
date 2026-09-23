@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using Server;
 using Server.Mobiles;
@@ -575,16 +575,39 @@ namespace Server.Misc
 
         public static int GetAttributeValue(Mobile m, int optionID)
         {
+            int totalVal = 0;
+
             if (m is PlayerMobile pm)
             {
-                return pm.GetEquipOptionRaw(optionID);
+                totalVal += pm.GetEquipOptionRaw(optionID);
             }
             else if (m is BaseCreature bc)
             {
-                return 0; 
+                for (int i = 0; i < 4; i++)
+                {
+                    if (bc.PetEquipOptIDs[i] == optionID)
+                    {
+                        totalVal += bc.PetEquipOptValues[i];
+                    }
+                }
+
+                if (bc.IsPetSynergyActive())
+                {
+                    double mult = GetSynergyMultiplier(bc.PetMaxSockets);
+                    
+                    if (bc.PetSynergy1 == optionID && EquipRandomOption.TryGetValue(optionID, out var data1))
+                    {
+                        totalVal += IsSkillOption(optionID) ? 200000 : (int)(data1.ReforgeWeapon * mult);
+                    }
+                    
+                    if (bc.PetSynergy2 == optionID && EquipRandomOption.TryGetValue(optionID, out var data2))
+                    {
+                        totalVal += IsSkillOption(optionID) ? 200000 : (int)(data2.ReforgeWeapon * mult);
+                    }
+                }
             }
 
-            return 0;
+            return totalVal;
         }
 
         #endregion
@@ -734,7 +757,7 @@ namespace Server.Misc
             return _materialOptions[group][tierIndex];
         }
 
-        private static T GetWeightedRecipe<T>(IEnumerable<T> keys)
+        public static T GetWeightedRecipe<T>(IEnumerable<T> keys)
         {
             var list = keys.ToList();
             var normalRecipes = list.Where(k => !k.ToString().Contains("99")).ToList();
@@ -857,43 +880,29 @@ namespace Server.Misc
             
             #endregion
 
-            #region 2. 연속 확률 굴림(Chain-Roll) 재련 슬롯 계산 및 랜덤 레시피 배정
+            #region 2. 기획 문서 기반 고정 슬롯 배정 (Deterministic Reforge Slots)
 
             int totalSlots = rank;
             if (rank == 0 && isExceptional) totalSlots = 1; 
 
-            int maxReforgeLimit = Math.Min(totalSlots, 4); 
-            int reforgeSlots = 0;
-
-            if (rank == 0)
-            {
-                reforgeSlots = isExceptional ? 1 : 0;
-            }
-            else
-            {
-                double currentChance = rank * 0.05;
-                if (isExceptional) reforgeSlots = 1; 
-
-                for (int i = reforgeSlots; i < maxReforgeLimit; i++)
-                {
-                    if (Utility.RandomDouble() < currentChance)
-                    {
-                        reforgeSlots++;
-                        currentChance -= 0.05;
-                    }
-                    else break;
-                }
-            }
-
-            int magicCount = totalSlots - reforgeSlots;
+            // 기획서: 일반 1, 희귀 2, 영웅 3, 서사 4, 전설 5, 신화 6
+            // 단, 현재 시너지 시스템이 최대 4세트까지이므로 요구 레시피(시너지)는 최대 4칸까지만 부여.
+            int reforgeSlots = rank + 1;
+            if (rank == 0 && !isExceptional) reforgeSlots = 0; // 일반 노멀템은 0칸
+            
+            // 매직 옵션 카운트는 기존 밸런스를 위해 적절히 조정 (재련 슬롯과 별개로 rank 기반 유지)
+            int magicCount = Math.Max(0, rank - (reforgeSlots / 2));
 
             equip.PrefixOption[3] = reforgeSlots;  
             equip.SuffixOption[3] = 0;             
 
+
             equip.PrefixOption[39] = 0; equip.SuffixOption[39] = 0;
             equip.PrefixOption[40] = 0; equip.SuffixOption[40] = 0;
 
-            if (reforgeSlots == 1)
+            int recipeSlots = Math.Min(reforgeSlots, 4);
+
+            if (recipeSlots == 1)
             {
                 int gemID = Utility.RandomMinMax(0, 8);
                 equip.PrefixOption[31] = gemID;
@@ -903,14 +912,14 @@ namespace Server.Misc
                     equip.PrefixOption[39] = optID;
                 }
             }
-            else if (reforgeSlots == 2)
+            else if (recipeSlots == 2)
             {
                 var (gem1, gem2) = GetWeightedRecipe(GemTwoSetBonus.Keys);
                 equip.PrefixOption[31] = gem1;
                 equip.PrefixOption[32] = gem2;
                 if (GemTwoSetBonus.TryGetValue((gem1, gem2), out int optID)) equip.PrefixOption[39] = optID;
             }
-            else if (reforgeSlots == 3)
+            else if (recipeSlots == 3)
             {
                 var (gem1, gem2, gem3) = GetWeightedRecipe(GemThreeSetBonus.Keys);
                 equip.PrefixOption[31] = gem1;
@@ -918,7 +927,7 @@ namespace Server.Misc
                 equip.PrefixOption[33] = gem3;
                 if (GemThreeSetBonus.TryGetValue((gem1, gem2, gem3), out int optID)) equip.PrefixOption[39] = optID;
             }
-            else if (reforgeSlots == 4)
+            else if (recipeSlots == 4)
             {
                 var (gem1, gem2, gem3, gem4) = GetWeightedRecipe(GemFourSetBonus.Keys);
                 equip.PrefixOption[31] = gem1;
@@ -931,6 +940,14 @@ namespace Server.Misc
                     equip.PrefixOption[40] = opts.Item2;
                 }
             }
+
+            // 슬롯 5, 6은 시너지가 없으므로 자유 슬롯(요구사항 없음, 즉 -1 이나 99로 처리할 필요 없이 미배정 유지)
+            // (미배정 시 PrefixOption 기본값이 0일 수 있으므로 -1로 초기화 필요할 수 있음. 근데 여기 배열은 -1로 초기화되는가?)
+            for (int i = recipeSlots; i < reforgeSlots; i++)
+            {
+                equip.PrefixOption[31 + i] = 99; // 99 (와일드카드)로 두어 아무 보석이나 장착 가능하도록 함.
+            }
+
 
             #endregion
 
@@ -1340,14 +1357,28 @@ namespace Server.Misc
 
         public static string GetTierName(int value)
         {
-            return value switch
+            if (value >= 10 || value == 0) // Gem TierValue (0, 40, 50, 60, 80, 100)
             {
-                1 or 40 => "희귀",
-                2 or 50 => "영웅",
-                3 or 60 => "서사",
-                4 or 80 => "전설",
-                _ => "신화"
-            };
+                return value switch
+                {
+                    <= 40 => "희귀",
+                    50 => "영웅",
+                    60 => "서사",
+                    80 => "전설",
+                    _ => "신화"
+                };
+            }
+            else // Pet ControlSlots or Equipment Rank (1, 2, 3, 4, 5)
+            {
+                return value switch
+                {
+                    1 => "희귀",
+                    2 => "영웅",
+                    3 => "서사",
+                    4 => "전설",
+                    _ => "신화"
+                };
+            }
         }
 
         public static readonly FrozenDictionary<int, int[]> GemRefineOptions = new Dictionary<int, int[]>
@@ -1458,6 +1489,74 @@ namespace Server.Misc
             Effects.SendLocationEffect(from.Location, from.Map, 0x373A, 10, 14);
             
             from.SendLocalizedMessage(1042971, $"#{GetCliloc(selectedOptionID)} 장착 완료! (보정: {(int)(categoryMult * tierMult * 100)}%)");
+        }
+
+        public static void ApplyPetGemRefinement(Mobile from, Server.Mobiles.BaseCreature pet, RefineGem gem)
+        {
+            if (pet == null || gem == null || gem.Deleted) return;
+
+            if (pet.ControlMaster != from)
+            {
+                from.SendMessage("당신의 펫에게만 보석을 장착할 수 있습니다.");
+                return;
+            }
+
+            if (GetTierName(pet.ControlSlots) != GetTierName(gem.TierValue))
+            {
+                from.SendMessage($"이 펫에는 {GetTierName(pet.ControlSlots)} 등급의 보석만 장착할 수 있습니다.");
+                return;
+            }
+
+            if (pet.PetMaxSockets <= 0)
+            {
+                from.SendMessage("이 펫은 보석 소켓이 없습니다.");
+                return;
+            }
+
+            int targetSlot = -1;
+            for (int i = 0; i < pet.PetMaxSockets; i++)
+            {
+                if (pet.PetEquipGems[i] == -1)
+                {
+                    targetSlot = i;
+                    break;
+                }
+            }
+
+            if (targetSlot == -1)
+            {
+                from.SendMessage("이 펫의 보석 소켓이 이미 가득 차서 더 이상 장착할 수 없습니다.");
+                return;
+            }
+
+            int[] gemBaseOptions = GemRefineOptions[gem.GemIndex];
+            var finalPool = gemBaseOptions
+                .Where(opt => !gem.ExcludedIDs.Contains(opt)) 
+                .Where(opt => EquipRandomOption[opt].ReforgeWeapon > 0) 
+                .ToList();
+
+            if (finalPool.Count == 0) finalPool = gemBaseOptions.ToList();
+
+            int selectedOptionID = finalPool[Utility.Random(finalPool.Count)];
+            int baseMax = EquipRandomOption[selectedOptionID].ReforgeWeapon; 
+            double categoryMult = 0.50; // 펫은 피스 수가 적으므로 장신구/스펠북 스케일 적용
+            double tierMult = gem.TierValue / 100.0;
+            int refineValue = (int)(baseMax * categoryMult * tierMult);
+            if (refineValue < ValueScale) refineValue = ValueScale;
+
+            pet.PetEquipGems[targetSlot] = gem.GemIndex;
+            pet.PetEquipOptIDs[targetSlot] = selectedOptionID;
+            pet.PetEquipOptValues[targetSlot] = refineValue;
+            
+            if (gem.Amount > 1) gem.Amount--;
+            else gem.Delete();
+
+            from.PlaySound(0x243);
+            Effects.SendLocationEffect(pet.Location, pet.Map, 0x373A, 10, 14);
+
+            string optName = Server.Misc.ClilocData.GetString(GetCliloc(selectedOptionID)).Replace("~1_val~", "").Replace("~1_VAL~", "").Trim();
+            double displayVal = (double)refineValue / ValueScale;
+            from.SendMessage($"{pet.Name}에게 {gem.Name}을(를) 장착했습니다. (보너스: {optName} +{displayVal:0.##})");
         }
 
         public static string GetOptionName(int optionID)

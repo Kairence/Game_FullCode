@@ -1,4 +1,5 @@
-﻿#region References
+#region References
+using System;
 using Server.SkillHandlers;
 #endregion
 
@@ -31,10 +32,9 @@ namespace Server.Items
 				// The item must be in your backpack to use it.
 				from.SendLocalizedMessage(1060640);
 			}
-			else if (from.Skills.Ninjitsu.Value < 50.0)
+			else if (from.Skills.Hiding.Value < 150.0)
 			{
-				// You need at least ~1_SKILL_REQUIREMENT~ ~2_SKILL_NAME~ skill to use that ability.
-				from.SendLocalizedMessage(1063013, "50\tNinjitsu");
+				from.SendLocalizedMessage(1063013, "150\tHiding");
 			}
 			else if (from.NextSkillTime > Core.TickCount)
 			{
@@ -50,15 +50,22 @@ namespace Server.Items
 			{
 				Hiding.CombatOverride = true;
 
-				if (from.UseSkill(SkillName.Hiding))
-				{
-					from.Mana -= 10;
+				// [커스텀: 에그밤 100% 은신 및 5초 이동 불가]
+				from.Hidden = true;
+				if (from is Server.Mobiles.PlayerMobile pm) pm.realHidden = true;
+				from.Warmode = false;
+				Server.Spells.Sixth.InvisibilitySpell.RemoveTimer(from);
+                Server.Items.InvisibilityPotion.RemoveTimer(from);
+				from.LocalOverheadMessage(Server.Network.MessageType.Regular, 0x1F4, 501240); // You have hidden yourself well.
 
-					from.FixedParticles(0x3709, 1, 30, 9904, 1108, 6, EffectLayer.RightFoot);
-					from.PlaySound(0x22F);
+				from.Mana -= 10;
+				from.FixedParticles(0x3709, 1, 30, 9904, 1108, 6, Server.EffectLayer.RightFoot);
+				from.PlaySound(0x22F);
 
-					Consume();
-				}
+				from.Paralyze(TimeSpan.FromSeconds(5.0)); // 5초 이동 불가
+				from.SendMessage("연막에 휩싸여 5초간 이동할 수 없습니다!");
+
+				Consume();
 
 				Hiding.CombatOverride = false;
 			}

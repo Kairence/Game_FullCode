@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Server.Items
 {
@@ -8,9 +8,12 @@ namespace Server.Items
         public Drums()
             : base(0xE9C, 0x38, 0x39)
         {
-            this.Weight = 4.0;
+            this.Weight = 5.0;
 			Layer = Layer.TwoHanded;
         }
+
+        public override int InitMinHits { get { return 100; } }
+        public override int InitMaxHits { get { return 100; } }
 
         public Drums(Serial serial)
             : base(serial)

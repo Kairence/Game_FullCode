@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Server;
 using Server.Items;
@@ -229,8 +229,18 @@ namespace Server.Misc
                 if (attacker is BaseCreature bc)
                 {
                     statBonus = attacker.Str;
-                    if (bc.Controlled && bc.ControlMaster != null && bc.ControlMaster.Skills[SkillName.Veterinary].Value >= 50)
-                        scalar += 0.25;
+                    if (bc.Controlled && bc.ControlMaster != null)
+                    {
+                        if (bc.ControlMaster.Skills[SkillName.Veterinary].Value >= 50)
+                            scalar += 0.25;
+                            
+                        // 기획서: 테이밍 달성 시 펫 공격력 20% 증가
+                        if (bc.ControlMaster.Skills[SkillName.AnimalTaming].Value >= 50)
+                            scalar += 0.20;
+                            
+                        GetPetPackBonuses(bc, defender, out double packAttack, out double packDefense);
+                        scalar += packAttack;
+                    }
                 }
                 scalar += (attacker.Skills[SkillName.Tactics].Value * 0.002 + statBonus * 0.0001);
                 
@@ -313,6 +323,15 @@ namespace Server.Misc
         // --- [방어력 감쇄 로직] ---
         public static int AbsorbDamage(Mobile attacker, Mobile defender, int damage, int target, bool isMagic)
         {
+            if (defender is BaseCreature defPet && defPet.Controlled)
+            {
+                GetPetPackBonuses(defPet, attacker, out double packAttack, out double packDefense);
+                if (packDefense > 0)
+                {
+                    damage = (int)(damage / (1.0 + packDefense));
+                }
+            }
+            
             int reducedDamage = 0;
 
             if (defender is PlayerMobile pm)
@@ -639,6 +658,66 @@ namespace Server.Misc
             IEntity from = new Entity(Serial.Zero, new Point3D(attacker.X, attacker.Y, attacker.Z), attacker.Map);
             IEntity to = new Entity(Serial.Zero, new Point3D(attacker.X, attacker.Y, attacker.Z + 50), attacker.Map);
             Effects.SendMovingParticles(from, to, itemID, 1, 0, false, false, 33, 3, 9501, 1, 0, EffectLayer.Head, 0x100);
+        }
+
+        public static void GetPetPackBonuses(BaseCreature pet, Mobile target, out double attackBonus, out double defenseBonus)
+        {
+            attackBonus = 0.0;
+            defenseBonus = 0.0; // 방어력 보너스 폐기
+            if (pet == null || !pet.Controlled || pet.ControlMaster == null) return;
+            
+            PlayerMobile master = pet.ControlMaster as PlayerMobile;
+            if (master == null) return;
+
+            int usedSlots = master.Followers;
+            int maxSlots = master.FollowersMax;
+            int emptySlots = Math.Max(0, maxSlots - usedSlots);
+            if (usedSlots > 0 && emptySlots > 0)
+            {
+                attackBonus += ((double)emptySlots / usedSlots) * 0.70;
+            }
+
+            if (pet.PackInstinct != PackInstinct.None)
+            {
+                int packSlots = 0;
+                
+                // 테이머의 AllFollowers 리스트를 기반으로 거리 20타일 이내만 스캔 (서버 부하 0%)
+                foreach (Mobile m in master.AllFollowers)
+                {
+                    if (m is BaseCreature tc && tc.Map == master.Map && Utility.InRange(tc.Location, master.Location, 20))
+                    {
+                        if ((tc.PackInstinct & pet.PackInstinct) != 0)
+                        {
+                            packSlots += tc.ControlSlots;
+                        }
+                    }
+                }
+                
+                if (packSlots == 0) packSlots = pet.ControlSlots;
+
+                if ((pet.PackInstinct & (PackInstinct.Canine | PackInstinct.Bull)) != 0)
+                {
+                    if (packSlots >= 5) attackBonus += 1.50;
+                    else if (packSlots >= 4) attackBonus += 1.00;
+                    else if (packSlots >= 3) attackBonus += 0.60;
+                    else if (packSlots >= 2) attackBonus += 0.30;
+                }
+                else if ((pet.PackInstinct & (PackInstinct.Bear | PackInstinct.Ostard)) != 0)
+                {
+                    if (packSlots >= 4) attackBonus += 1.20;
+                    else if (packSlots >= 3) attackBonus += 0.75;
+                    else if (packSlots >= 2) attackBonus += 0.40;
+                }
+                else if ((pet.PackInstinct & (PackInstinct.Daemon | PackInstinct.Arachnid)) != 0)
+                {
+                    if (packSlots >= 3) attackBonus += 0.95;
+                    else if (packSlots >= 2) attackBonus += 0.50;
+                }
+                else if ((pet.PackInstinct & (PackInstinct.Feline | PackInstinct.Equine)) != 0)
+                {
+                    if (packSlots >= 2) attackBonus += 0.75;
+                }
+            }
         }
     }
 }

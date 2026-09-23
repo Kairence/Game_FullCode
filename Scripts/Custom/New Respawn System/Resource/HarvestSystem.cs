@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Server.Items;
 using Server.Targeting;
@@ -155,12 +155,8 @@ namespace Server.Engines.Harvest
                             // 1. [개별 Lv. 100] 수확량 극대화
                             if (hType != Server.Misc.HarvestType.None && Server.Misc.HarvestMastery.IsMaximizedYield(pm, hType))
                             {
-                                amount += (int)Math.Sqrt(pm.GoldPoint[4]);
-                                pm.SendMessage(0x44, "* 마스터의 육감으로 최대 수량을 뽑아냅니다! *");
-                            }
-                            else if (pm.GoldPoint[4] > 0)
-                            {
-                                amount += (int)Math.Sqrt(Utility.RandomMinMax(0, pm.GoldPoint[4]));
+                                amount += 3; // [수정] 기존 GoldPoint[4] 버그 삭제 및 고정 보너스로 변경
+                                pm.SendMessage(0x44, "* 마스터의 육감으로 수량을 추가로 뽑아냅니다! *");
                             }
 
                             // 2. [개별 Lv. 1] 더블 수확 확률 적용

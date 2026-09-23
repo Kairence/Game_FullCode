@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Server;
@@ -357,6 +357,12 @@ namespace Server.Misc
             house.EstateSign = sign;
 
             int internalArea = Math.Max(0, (mcl.Width - 2) * (mcl.Height - 2)); 
+            
+            // 🌟 [UI 반영] 가상시민 모니터링 창에서 점유 공간이 표시되도록 OwnedTileIndices 채워주기
+            if (house.OwnedTileIndices == null) house.OwnedTileIndices = new List<int>();
+            house.OwnedTileIndices.Clear();
+            for (int i = 0; i < internalArea; i++) house.OwnedTileIndices.Add(i);
+
             Console.WriteLine($"[Housing] '{house.HouseName}' (Tier {GetHouseTier(targetMultiID)}): {town.Facet.Name} {buildLoc} / 실면적: {internalArea}칸 확보 완료.");
 
             var filteredBlueprint = new List<MultiTileEntry>();

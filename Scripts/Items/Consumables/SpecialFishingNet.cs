@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server.Mobiles;
 using Server.Multis;
 using Server.Spells;
@@ -148,6 +148,13 @@ namespace Server.Items
             }
             else if (IsChildOf(from.Backpack))
             {
+                // [커스텀] 낚시(Fishing) 150 달성 시 그물류 사용 가능
+                if (from.Skills[SkillName.Fishing].Value < 150.0)
+                {
+                    from.SendMessage("그물을 사용하려면 낚시 스킬이 150 이상 필요합니다.");
+                    return;
+                }
+
                 from.SendLocalizedMessage(1010484); // Where do you wish to use the net?
                 from.BeginTarget(-1, true, TargetFlags.None, new TargetCallback(OnTarget));
             }

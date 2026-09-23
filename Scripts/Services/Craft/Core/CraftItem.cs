@@ -1,4 +1,4 @@
-﻿#region References
+#region References
 using System;
 using System.Collections.Generic;
 using Server.Multis;
@@ -1350,6 +1350,10 @@ namespace Server.Engines.Craft
                     finalChance += (indivLevel * 0.002);
                 }
             }
+
+            // [커스텀: 무기학(Arms Lore) 보너스 - 스킬당 0.1% 추가]
+            double armsLore = from.Skills[SkillName.ArmsLore].Value;
+            finalChance += (armsLore * 0.001);
 
             // 4. 범위 제한 후 리턴
             return Math.Min(Math.Max(finalChance, 0.0), 1.0);

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -292,9 +292,9 @@ namespace Server.Misc
         public NewSpawnGump() : base(100, 100)
         {
             AddPage(0); 
-            // 🌟 배경을 어두운 톤(9200)으로 교체
-            AddBackground(0, 0, 400, 350, 9200); 
-            AddAlphaRegion(10, 10, 380, 330);
+            // 🌟 배경을 약간 더 길게 늘림 (버튼 추가 공간)
+            AddBackground(0, 0, 400, 410, 9200); 
+            AddAlphaRegion(10, 10, 380, 390);
             AddHtml(10, 15, 380, 25, "<CENTER><BASEFONT COLOR=#FFCC00 SIZE=6>SYSTEM MONITORING</BASEFONT></CENTER>", false, false);
 
             int y = 70;
@@ -317,6 +317,12 @@ namespace Server.Misc
             AddImageTiled(40, y, 320, 50, 9354);
             AddButton(50, y + 10, 4020, 4022, 4, GumpButtonType.Reply, 0); 
             AddHtml(90, y + 15, 200, 20, "<BASEFONT COLOR=#FFFFFF SIZE=5>도시/경제 관리</BASEFONT>", false, false);
+
+            // 🌟 [추가됨] 상자 관리 메뉴
+            y += 60;
+            AddImageTiled(40, y, 320, 50, 9354);
+            AddButton(50, y + 10, 4014, 4016, 5, GumpButtonType.Reply, 0); 
+            AddHtml(90, y + 15, 250, 20, "<BASEFONT COLOR=#FFFFFF SIZE=5>모험가 상자(무덤) 관리</BASEFONT>", false, false);
         }
         
         public override void OnResponse(NetState sender, RelayInfo info)
@@ -332,6 +338,10 @@ namespace Server.Misc
             { 
                 GlobalEconomyMonitor.GenerateUserReport(); 
                 from.SendGump(new EconomyAdminGump(from)); 
+            }
+            else if (info.ButtonID == 5) // 🌟 [추가됨] 상자 관리 모니터 호출
+            {
+                from.SendGump(new Server.Misc.ChestMonitorGump());
             }
         }
     }
@@ -398,12 +408,12 @@ namespace Server.Misc
             // =========================================================
             if (mode == 0) 
             {
-                AddHtml(25, y, 80, 20, "<BASEFONT COLOR='#FFFF00'>이동(GO)</BASEFONT>", false, false); 
-                AddHtml(120, y, 200, 20, "<BASEFONT COLOR='#FFFF00'>던전 구역명 (그룹/세부)</BASEFONT>", false, false); 
-                AddHtml(350, y, 120, 20, "<BASEFONT COLOR='#FFFF00'>진행 상태</BASEFONT>", false, false); 
-                AddHtml(480, y, 100, 20, "<BASEFONT COLOR='#FFFF00'>스폰/최대</BASEFONT>", false, false); 
-                AddHtml(600, y, 180, 20, "<BASEFONT COLOR='#FFFF00'>열기 (Heat)</BASEFONT>", false, false); 
-                AddHtml(820, y, 80, 20, "<BASEFONT COLOR='#FFFF00'>설정</BASEFONT>", false, false); 
+                AddHtml(25, y, 80, 20, "<BASEFONT COLOR=#FFFF00>이동(GO)</BASEFONT>", false, false); 
+                AddHtml(120, y, 200, 20, "<BASEFONT COLOR=#FFFF00>던전 구역명 (그룹/세부)</BASEFONT>", false, false); 
+                AddHtml(350, y, 120, 20, "<BASEFONT COLOR=#FFFF00>진행 상태</BASEFONT>", false, false); 
+                AddHtml(480, y, 100, 20, "<BASEFONT COLOR=#FFFF00>스폰/최대</BASEFONT>", false, false); 
+                AddHtml(600, y, 180, 20, "<BASEFONT COLOR=#FFFF00>열기 (Heat)</BASEFONT>", false, false); 
+                AddHtml(820, y, 80, 20, "<BASEFONT COLOR=#FFFF00>설정</BASEFONT>", false, false); 
 
                 AddButton(865, y, 4011, 4013, 888, GumpButtonType.Reply, 0); 
                 AddLabel(900, y, 0x42, "신규");
@@ -463,11 +473,11 @@ namespace Server.Misc
             // =========================================================
             else if (mode == 1) 
             {
-                AddHtml(25, y, 80, 20, "<BASEFONT COLOR='#FFFF00'>이동(GO)</BASEFONT>", false, false); 
-                AddHtml(120, y, 200, 20, "<BASEFONT COLOR='#FFFF00'>생태계 구역명</BASEFONT>", false, false); 
-                AddHtml(350, y, 120, 20, "<BASEFONT COLOR='#FFFF00'>시스템 상태</BASEFONT>", false, false); 
-                AddHtml(500, y, 120, 20, "<BASEFONT COLOR='#FFFF00'>노드 개수</BASEFONT>", false, false); 
-                AddHtml(680, y, 150, 20, "<BASEFONT COLOR='#FFFF00'>관리 옵션</BASEFONT>", false, false); y += 25;
+                AddHtml(25, y, 80, 20, "<BASEFONT COLOR=#FFFF00>이동(GO)</BASEFONT>", false, false); 
+                AddHtml(120, y, 200, 20, "<BASEFONT COLOR=#FFFF00>생태계 구역명</BASEFONT>", false, false); 
+                AddHtml(350, y, 120, 20, "<BASEFONT COLOR=#FFFF00>시스템 상태</BASEFONT>", false, false); 
+                AddHtml(500, y, 120, 20, "<BASEFONT COLOR=#FFFF00>노드 개수</BASEFONT>", false, false); 
+                AddHtml(680, y, 150, 20, "<BASEFONT COLOR=#FFFF00>관리 옵션</BASEFONT>", false, false); y += 25;
                 
                 var list = EcosystemManager.ZoneList.Where(z => currentFilterMap == null || (z.Facet != null && z.Facet.MapID == currentFilterMap.MapID)).ToList();
                 totalListCount = list.Count; int end = Math.Min(start + 10, totalListCount);

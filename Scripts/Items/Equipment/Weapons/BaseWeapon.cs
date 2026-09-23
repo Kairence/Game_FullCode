@@ -1,4 +1,4 @@
-﻿#region References
+#region References
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -2366,7 +2366,8 @@ namespace Server.Items
 				// 1. 특수기 발동 여부 먼저 판단 (여기서 걸러지면 끝)
 				if (attacker is PlayerMobile)
 				{
-					isSpecialProc = (atkSkill.Value >= 50.0 && 0.05 > Utility.RandomDouble());
+					// 전술 50 이상이어야 첫 번째 특수기가 해금되어 고정 확률(5%)로 발동 가능함
+					isSpecialProc = (attacker.Skills[SkillName.Tactics].Value >= 50.0 && 0.05 > Utility.RandomDouble());
 				}
 				else if (attacker is BaseCreature)
 				{
@@ -3538,7 +3539,7 @@ namespace Server.Items
 						if( bc.ControlMaster.Skills[SkillName.AnimalLore].Value >= 100 )
 							skillBonus += 0.05;
 						skillBonus += bc.ControlMaster.Skills[SkillName.AnimalTaming].Value * 0.002;
-						if( bc.ControlMaster.Skills[SkillName.AnimalTaming].Value >= 100 )
+						if( bc.ControlMaster.Skills[SkillName.AnimalTaming].Value >= 50.0 )
 							skillBonus += 0.2;
 						skillBonus += bc.ControlMaster.Skills[SkillName.Veterinary].Value * 0.00125;
 						if( bc.ControlMaster.Skills[SkillName.Veterinary].Value >= 100 )

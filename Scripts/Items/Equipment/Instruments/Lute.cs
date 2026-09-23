@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Server.Items
 {
@@ -11,6 +11,9 @@ namespace Server.Items
             this.Weight = 5.0;
 			Layer = Layer.TwoHanded;
         }
+
+        public override int InitMinHits { get { return 100; } }
+        public override int InitMaxHits { get { return 100; } }
 
         public Lute(Serial serial)
             : base(serial)

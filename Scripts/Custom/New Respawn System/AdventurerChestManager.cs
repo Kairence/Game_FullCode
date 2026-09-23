@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Server;
 using Server.Items;
@@ -21,21 +21,19 @@ namespace Server.Misc
             // 1. 던전 구역인지 확인
             if (!DungeonManager.Zones.TryGetValue(code, out DungeonZone zone)) return;
 
-            // 🌟 [핵심 수정] 물리 노드(Nodes)가 폐기되었으므로, 해당 던전 층의 최대 인구수(MaxPopulation) 비례로 상자 최대치 산정
+            // 🌟 [최적화 적용] 월드 전체 스캔(O(W)) 대신 ChestMonitor의 명부(Registry) 스캔(O(1)) 사용
             int maxAllowed = Math.Max(2, zone.MaxPopulation / 5); 
-            int currentChestCount = 0;
-            BaseTreasureChest nearestChest = null;
+            
+            var activeChests = DungeonChestMonitor.GetValidChests(code);
+            int currentChestCount = activeChests.Count;
+            LockableContainer nearestChest = null;
             double nearestDist = 9999.0;
 
-            // 2. 구역 내 상자 밀집도 스캔 (LINQ 배제 최적화)
-            foreach (Item item in World.Items.Values)
+            foreach (var chest in activeChests)
             {
-                if (item == null || item.Deleted || item.Map != map || !(item is BaseTreasureChest chest)) continue;
-                
-                if (RegionSaver.GetRegionCode(map, item.X, item.Y, item.Z) == code)
+                if (chest.Map == map)
                 {
-                    currentChestCount++;
-                    double dist = Utility.GetDistanceToSqrt(loc, item.Location);
+                    double dist = Utility.GetDistanceToSqrt(loc, chest.Location);
                     if (dist < nearestDist)
                     {
                         nearestDist = dist;
@@ -75,6 +73,9 @@ namespace Server.Misc
                 }
 
                 chest.MoveToWorld(loc, map);
+                
+                // 🌟 명부에 방금 생성한 신규 상자 등록 (모니터링 연동)
+                DungeonChestMonitor.RegisterChest(code, chest);
             }
             // 4. 분기 B: 포화 상태 (기존 상자 잭팟 업그레이드)
             else if (nearestChest != null)

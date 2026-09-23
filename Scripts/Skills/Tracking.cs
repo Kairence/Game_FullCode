@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Server.Gumps;
 using Server.Network;
@@ -15,6 +15,9 @@ namespace Server.SkillHandlers
         public static void Initialize()
         {
             SkillInfo.Table[(int)SkillName.Tracking].Callback = new SkillUseCallback(OnUse);
+            // TODO: [Reflexes 기획 반영 필요]
+            // 물리, 맨손, 덫 피격 1 감소 (100스킬: 50감소, 150스킬: 치명타 피해 1/4 감소, 200스킬: 덫 면역)
+            // 원거리 피해 최소화 확률 증가, 철제 방어구 착용 시 미적용 로직이 CombatEngine/AOS 등에서 누락됨.
         }
 
         public static TimeSpan OnUse(Mobile m)

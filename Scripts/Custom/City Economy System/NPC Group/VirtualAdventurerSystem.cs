@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -33,31 +33,31 @@ namespace Server.Misc
             { RegionCode.Trammel_Dungeon_Covetous, new(RegionCode.Trammel_Town_Minoc, false, 800) },       
             { RegionCode.Trammel_Dungeon_Deceit, new(RegionCode.Trammel_Town_Moonglow, true, 1200) },      
             { RegionCode.Trammel_Dungeon_Despise, new(RegionCode.Trammel_Town_Britain, false, 600) },      
-            { RegionCode.Trammel_Dungeon_Destard, new(RegionCode.Trammel_Town_SkaraBrae, false, 900) },    
-            { RegionCode.Trammel_Dungeon_Hythloth, new(RegionCode.Trammel_Town_Magincia, true, 1500) },    
-            { RegionCode.Trammel_Dungeon_Shame, new(RegionCode.Trammel_Town_Yew, false, 1100) },           
-            { RegionCode.Trammel_Dungeon_Wrong, new(RegionCode.Trammel_Town_Minoc, false, 1000) },         
+            { RegionCode.Trammel_Dungeon_Destard, new(RegionCode.Trammel_Town_Trinsic, false, 900) },    
+            { RegionCode.Trammel_Dungeon_Hythloth, new(RegionCode.Trammel_Town_Haven, true, 1500) },    
+            { RegionCode.Trammel_Dungeon_Shame, new(RegionCode.Trammel_Town_SkaraBrae, false, 1100) },           
+            { RegionCode.Trammel_Dungeon_Wrong, new(RegionCode.Trammel_Town_Yew, false, 1000) },         
             { RegionCode.Trammel_Dungeon_Fire, new(RegionCode.Trammel_Town_SerpentsHold, true, 500) },     
             { RegionCode.Trammel_Dungeon_Ice, new(RegionCode.Trammel_Town_Vesper, false, 1300) },          
             { RegionCode.Trammel_Dungeon_OrcCave, new(RegionCode.Trammel_Town_Cove, false, 400) },         
             { RegionCode.Trammel_Dungeon_PaintedCaves, new(RegionCode.Trammel_Town_Trinsic, false, 700) },
-            { RegionCode.Trammel_Dungeon_PalaceOfParoxysmus, new(RegionCode.Trammel_Town_Papua, false, 800) },
+            { RegionCode.Trammel_Dungeon_PalaceOfParoxysmus, new(RegionCode.Trammel_Town_Jhelom, true, 1200) },
             { RegionCode.Trammel_Dungeon_PrismOfLight, new(RegionCode.Trammel_Town_Nujelm, true, 1000) },
             { RegionCode.Trammel_Dungeon_Sanctuary, new(RegionCode.Trammel_Town_Yew, false, 600) },
-            { RegionCode.Trammel_Dungeon_SolenHives, new(RegionCode.Trammel_Town_Minoc, false, 700) },
+            { RegionCode.Trammel_Dungeon_SolenHives, new(RegionCode.Trammel_Town_Wind, false, 700) },
             
             // --- Felucca Dungeons ---
             { RegionCode.Felucca_Dungeon_Covetous, new(RegionCode.Felucca_Town_Minoc, false, 800) },
             { RegionCode.Felucca_Dungeon_Deceit, new(RegionCode.Felucca_Town_Moonglow, true, 1200) },
             { RegionCode.Felucca_Dungeon_Despise, new(RegionCode.Felucca_Town_Britain, false, 600) },
-            { RegionCode.Felucca_Dungeon_Destard, new(RegionCode.Felucca_Town_SkaraBrae, false, 900) },
-            { RegionCode.Felucca_Dungeon_Hythloth, new(RegionCode.Felucca_Town_Magincia, true, 1500) },
-            { RegionCode.Felucca_Dungeon_Shame, new(RegionCode.Felucca_Town_Yew, false, 1100) },
-            { RegionCode.Felucca_Dungeon_Wrong, new(RegionCode.Felucca_Town_Minoc, false, 1000) },
+            { RegionCode.Felucca_Dungeon_Destard, new(RegionCode.Felucca_Town_Trinsic, false, 900) },
+            { RegionCode.Felucca_Dungeon_Hythloth, new(RegionCode.Felucca_Town_Ocllo, true, 1500) },
+            { RegionCode.Felucca_Dungeon_Shame, new(RegionCode.Felucca_Town_SkaraBrae, false, 1100) },
+            { RegionCode.Felucca_Dungeon_Wrong, new(RegionCode.Felucca_Town_Yew, false, 1000) },
             { RegionCode.Felucca_Dungeon_Fire, new(RegionCode.Felucca_Town_SerpentsHold, true, 500) },
             { RegionCode.Felucca_Dungeon_Ice, new(RegionCode.Felucca_Town_Vesper, false, 1300) },
             { RegionCode.Felucca_Dungeon_OrcCave, new(RegionCode.Felucca_Town_Yew, false, 400) },
-            { RegionCode.Felucca_Dungeon_Khaldun, new(RegionCode.Felucca_Town_Minoc, false, 1500) }
+            { RegionCode.Felucca_Dungeon_Khaldun, new(RegionCode.Felucca_Town_Vesper, false, 1500) }
         };
     }
 
@@ -587,72 +587,76 @@ namespace Server.Misc
             {
                 SettleTownReturn(town); 
 
-                int innFee = Members.Count * 20;
-                if (PartyWealth >= innFee) 
-                { 
-                    PartyWealth -= innFee; 
-                    VirtualAdventurerManager.PayToCitizenOrTown(town, innFee, NpcJobClass.InnKeeper); 
-                }
-
-                if (PartyWealth > 2000) TryHireSherpa(town); 
-
-                int mountCost = 500;
-                bool needMounts = false;
-                for (int i = 0; i < Members.Count; i++)
+                // 🌟 상권이 없는 도시(예: 마진시아)에서는 호위 보상 정산만 하고 장비 수리나 아이템 구매 등 정비를 생략합니다.
+                if (town.VendorCount > 0)
                 {
-                    if (!Members[i].HasMount) { needMounts = true; break; }
-                }
-
-                if (needMounts && PartyWealth > (Members.Count * mountCost))
-                {
-                    for (int i = 0; i < Members.Count; i++) 
-                    {
-                        if (!Members[i].HasMount && PartyWealth >= mountCost) 
-                        {
-                            PartyWealth -= mountCost;
-                            town.Wealth += mountCost;
-                            Members[i].HasMount = true;
-                        }
+                    int innFee = Members.Count * 20;
+                    if (PartyWealth >= innFee) 
+                    { 
+                        PartyWealth -= innFee; 
+                        VirtualAdventurerManager.PayToCitizenOrTown(town, innFee, NpcJobClass.InnKeeper); 
                     }
-                    Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 든든하게 전원 승마를 마쳤습니다.");
-                }
 
-                if (EmployedSherpa != null)
-                {
-                    if (PartyWealth > 5000 && PackAnimals < 3)
-                    {
-                        int animalCost = 1000;
-                        PartyWealth -= animalCost;
-                        town.Wealth += animalCost;
-                        PackAnimals++;
-                        Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 원정을 위해 짐말을 추가 구매했습니다. (현재: {PackAnimals}마리)");
-                    }
-                }
+                    if (PartyWealth > 2000) TryHireSherpa(town); 
 
-                for (int i = 0; i < Members.Count; i++)
-                {
-                    Members[i].ProcessSmarterShopping(town);
-                }
-
-                for (int i = Members.Count - 1; i >= 0; i--)
-                {
-                    var m = Members[i];
-                    var retirement = m.CheckRetirement();
-                    if (retirement.IsRetiring)
-                    {
-                        m.RetireToCitizen(town, retirement.NewRank);
-                        continue;
-                    }
-                    if (Utility.RandomDouble() < 0.4) m.TryRepairEquipment(town);
-                }
-
-                if (PartyWealth > 10000)
-                {
-                    PartyWealth -= 5000; 
-                    town.Wealth += 5000;
+                    int mountCost = 500;
+                    bool needMounts = false;
                     for (int i = 0; i < Members.Count; i++)
                     {
-                        Members[i].EquipmentTier++; 
+                        if (!Members[i].HasMount) { needMounts = true; break; }
+                    }
+
+                    if (needMounts && PartyWealth > (Members.Count * mountCost))
+                    {
+                        for (int i = 0; i < Members.Count; i++) 
+                        {
+                            if (!Members[i].HasMount && PartyWealth >= mountCost) 
+                            {
+                                PartyWealth -= mountCost;
+                                town.Wealth += mountCost;
+                                Members[i].HasMount = true;
+                            }
+                        }
+                        Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 든든하게 전원 승마를 마쳤습니다.");
+                    }
+
+                    if (EmployedSherpa != null)
+                    {
+                        if (PartyWealth > 5000 && PackAnimals < 3)
+                        {
+                            int animalCost = 1000;
+                            PartyWealth -= animalCost;
+                            town.Wealth += animalCost;
+                            PackAnimals++;
+                            Console.WriteLine($"[Adventurer] {Members[0].Name} 파티가 원정을 위해 짐말을 추가 구매했습니다. (현재: {PackAnimals}마리)");
+                        }
+                    }
+
+                    for (int i = 0; i < Members.Count; i++)
+                    {
+                        Members[i].ProcessSmarterShopping(town);
+                    }
+
+                    for (int i = Members.Count - 1; i >= 0; i--)
+                    {
+                        var m = Members[i];
+                        var retirement = m.CheckRetirement();
+                        if (retirement.IsRetiring)
+                        {
+                            m.RetireToCitizen(town, retirement.NewRank);
+                            continue;
+                        }
+                        if (Utility.RandomDouble() < 0.4) m.TryRepairEquipment(town);
+                    }
+
+                    if (PartyWealth > 10000)
+                    {
+                        PartyWealth -= 5000; 
+                        town.Wealth += 5000;
+                        for (int i = 0; i < Members.Count; i++)
+                        {
+                            Members[i].EquipmentTier++; 
+                        }
                     }
                 }
             }
@@ -679,7 +683,7 @@ namespace Server.Misc
                     acceptedJob.CurrentParticipants++;
                     acceptedJob.IsAIAssigned = true; 
                     
-                    var questDz = DungeonManager.ZoneList.FirstOrDefault(z => z.RCode.ToString() == acceptedJob.RegionName);
+                    var questDz = DungeonManager.ZoneList.FirstOrDefault(z => z.RCode.ToString() == acceptedJob.RegionName && z.IsActive);
                     // 🌟 노드가 없어도 XmlSpawner나 맵핑만 되어있으면 퀘스트 수행 가능하도록 수정
                     if (questDz != null)
                     {
@@ -718,8 +722,8 @@ namespace Server.Misc
                 }
                 else
                 {
-                    // 🌟 [핵심 패치] 노드 수(z.Nodes.Count) 상관없이 MaxPopulation이 세팅되고 열려있는(Active) 던전이면 무조건 타겟!
-                    var validDungeons = DungeonManager.ZoneList.Where(z => z.MaxPopulation > 0 && z.Phase == DungeonPhase.Active).ToList();
+                    // 🌟 [핵심 패치] 비활성화(IsActive == false) 던전은 자율 사냥 목적지에서 제외!
+                    var validDungeons = DungeonManager.ZoneList.Where(z => z.IsActive && z.MaxPopulation > 0 && z.Phase == DungeonPhase.Active).ToList();
                     
                     if (validDungeons.Count > 0)
                     {
@@ -925,18 +929,31 @@ namespace Server.Misc
             }
 
             // 🌟 [기획 보정] 마법사가 존재할 경우: 고립된 퇴각로나 섬 지형을 무시하고,
-            // 상점 상권(VendorCount > 0)이 살아있는 현재 대륙(CurrentMap)의 도시 중 가장 가까운 상업 중심지로 차원 이동합니다.
+            // 상점 상권(VendorCount > 0)이 살아있는 대륙 내 가장 가까운 상업 중심지로 차원 이동합니다.
             if (hasMage)
             {
                 TownEconomy bestShopTown = null;
                 double minShopDistance = double.MaxValue;
+
+                // 🌟 [버그 수정] 던전 내부 물리 좌표(CurrentLocation)를 기준으로 계산하면 
+                // 모든 던전이 모여있는 동쪽 끝 물리적 위치 때문에 항상 마진시아/파푸아만 선택되는 오류(Magincia Bug) 발생.
+                // 따라서 던전과 연결된 '논리적 퇴각 마을'의 중심 좌표를 기준점으로 삼아 상점 도시를 검색합니다.
+                Point3D logicalReferencePoint = CurrentLocation;
+                if (DungeonRetreatManager.Map.TryGetValue(majorDungeonCode, out RetreatRoute mRoute))
+                {
+                    var logicalTown = TownEconomyManager.Towns.Values.FirstOrDefault(t => 
+                        RegionSaver.GetRegionCodes(t.Facet, t.Center.X, t.Center.Y, t.Center.Z).Major == mRoute.TownCode);
+                    
+                    if (logicalTown != null) 
+                        logicalReferencePoint = logicalTown.Center;
+                }
 
                 var allTowns = TownEconomyManager.Towns.Values;
                 foreach (TownEconomy town in allTowns)
                 {
                     if (town != null && town.Facet == CurrentMap && town.VendorCount > 0)
                     {
-                        double dist = Utility.GetDistanceToSqrt(CurrentLocation, town.Center);
+                        double dist = Utility.GetDistanceToSqrt(logicalReferencePoint, town.Center);
                         if (dist < minShopDistance)
                         {
                             minShopDistance = dist;
@@ -952,7 +969,7 @@ namespace Server.Misc
                     {
                         if (town != null && town.Facet == CurrentMap)
                         {
-                            double dist = Utility.GetDistanceToSqrt(CurrentLocation, town.Center);
+                            double dist = Utility.GetDistanceToSqrt(logicalReferencePoint, town.Center);
                             if (dist < minShopDistance)
                             {
                                 minShopDistance = dist;

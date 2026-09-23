@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Server.Factions;
@@ -137,7 +137,9 @@ namespace Server.SkillHandlers
                 BaseTrap trap = item as BaseTrap;
                 if (trap != null && !item.Visible)
                 {
-                    double passiveChance = SkillCheck.GetSuccessChance(ss, trap.Difficulty) * 0.2;
+                    double passiveChance = SkillCheck.GetSuccessChance(ss, trap.Difficulty);
+                    if (!isLegendary) passiveChance *= 0.2; // 150 보너스는 엑티브 스킬의 20% 확률
+                    
                     if (isLegendary || Utility.RandomDouble() < 0.20)
                     {
                         if (Utility.RandomDouble() < passiveChance)
@@ -156,7 +158,9 @@ namespace Server.SkillHandlers
             {
                 if (m != src && m.Hidden && CanDetect(src, m))
                 {
-                    double passiveChance = SkillCheck.GetSuccessChance(ss, m.Skills[SkillName.Hiding].Value) * 0.2;
+                    double passiveChance = SkillCheck.GetSuccessChance(ss, m.Skills[SkillName.Hiding].Value);
+                    if (!isLegendary) passiveChance *= 0.2;
+
                     if (isLegendary || Utility.RandomDouble() < 0.20)
                     {
                         if (Utility.RandomDouble() < passiveChance)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Server;
 using Server.Multis;
@@ -45,9 +45,9 @@ namespace Server.Items
 			{
 				from.SendLocalizedMessage( 1042001 ); // That must be in your pack for you to use it.
 			}
-			else if ( from.Skills[SkillName.Carpentry].Base < 90.0 )
+			else if ( from.Skills[SkillName.TasteID].Value < 150.0 )
 			{
-				from.SendLocalizedMessage( 1042594 ); // You do not understand how to use this.
+				from.SendLocalizedMessage( 1042594 ); // You do not understand how to stuff the animal.
 			}
 			else
 			{
@@ -271,10 +271,19 @@ namespace Server.Items
                                         deed.DateCaught = dateCaught;
                                     }
 
-                                    from.AddToBackpack( new TrophyDeed( m_Table[i], hunter, weight ) );
+                                    from.AddToBackpack( deed );
 
                                     if ( targeted is Corpse )
+                                    {
                                         ((Corpse)targeted).VisitedByTaxidermist = true;
+
+                                        // [커스텀] 농사(Herding) 100 달성 시 특수 가축 박제에 이름 새기기
+                                        if (from.Skills[SkillName.Herding].Value >= 100.0)
+                                        {
+                                            from.SendMessage("농사(Herding) 스킬 덕분에 박제에 이름을 새길 수 있습니다. 이름을 입력해주세요.");
+                                            from.Prompt = new TaxidermyNamePrompt(deed);
+                                        }
+                                    }
 
                                     m_Kit.Delete();
                                     return;
@@ -477,7 +486,12 @@ namespace Server.Items
 
 		public Item Deed
 		{
-			get{ return new TrophyDeed( m_WestID, m_NorthID, m_DeedNumber, m_AddonNumber, m_Hunter, m_AnimalWeight, DateCaught ); }
+			get
+			{ 
+				Item deed = new TrophyDeed( m_WestID, m_NorthID, m_DeedNumber, m_AddonNumber, m_Hunter, m_AnimalWeight, DateCaught );
+				if (this.Name != null) deed.Name = this.Name;
+				return deed;
+			}
 		}
 
 		void IChopable.OnChop(Mobile user)
@@ -661,6 +675,8 @@ namespace Server.Items
 					if ( itemID > 0 )
 					{
                         Item trophy = new TrophyAddon(from, itemID, m_WestID, m_NorthID, m_DeedNumber, m_AddonNumber, m_Hunter, m_AnimalWeight, DateCaught);
+                        if (this.Name != null)
+                            trophy.Name = this.Name;
 
                         if (m_DeedNumber == 1113567)
                             trophy.Hue = 1645;
@@ -682,4 +698,27 @@ namespace Server.Items
 			}
 		}
 	}
+
+    // [커스텀] 박제 이름 입력 프롬프트
+    public class TaxidermyNamePrompt : Server.Prompts.Prompt
+    {
+        private TrophyDeed m_Deed;
+        public TaxidermyNamePrompt(TrophyDeed deed)
+        {
+            m_Deed = deed;
+        }
+
+        public override void OnResponse(Mobile from, string text)
+        {
+            if (m_Deed != null && !m_Deed.Deleted)
+            {
+                string name = text.Trim();
+                if (!string.IsNullOrEmpty(name))
+                {
+                    m_Deed.Name = name;
+                    from.SendMessage("박제에 이름이 새겨졌습니다: " + name);
+                }
+            }
+        }
+    }
 }

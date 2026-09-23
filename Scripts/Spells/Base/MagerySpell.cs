@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server.Items;
 
 namespace Server.Spells
@@ -42,6 +42,34 @@ namespace Server.Spells
 				min = -25;
 				max = -25;
 			}
+        }
+
+        public override bool CheckCast()
+        {
+            if (!base.CheckCast())
+                return false;
+
+            // [마법 써클 제한 기획 구현]
+            // 기본 4써클, 마법 스킬 50: 5써클, 100: 6써클, 150: 7써클, 200: 8써클
+            if (Caster is Server.Mobiles.PlayerMobile && !(Scroll is BaseWand))
+            {
+                int circleLevel = (int)Circle + 1; // 1 ~ 8
+                int allowedCircle = 4;
+                double magerySkill = Caster.Skills[SkillName.Magery].Value;
+                
+                if (magerySkill >= 50.0) allowedCircle = 5;
+                if (magerySkill >= 100.0) allowedCircle = 6;
+                if (magerySkill >= 150.0) allowedCircle = 7;
+                if (magerySkill >= 200.0) allowedCircle = 8;
+
+                if (circleLevel > allowedCircle)
+                {
+                    Caster.SendMessage("마법 스킬이 부족하여 이 마법을 시전할 수 없습니다.");
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public override int GetMana()

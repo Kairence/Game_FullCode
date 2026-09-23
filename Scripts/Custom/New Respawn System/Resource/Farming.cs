@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server.Items;
 using Server.Mobiles;
 using System.Linq;
@@ -8,6 +8,9 @@ namespace Server.Engines.Harvest
 {
     public class Farming : HarvestSystem
     {
+        // TODO: [개발 예정] 농사(Herding) 100 달성 - 특수 가축에 이름 새기기 (미구현)
+        // TODO: [개발 예정] 농사(Herding) 150 달성 - 원예 기능 추가 (미구현)
+
         private static Farming m_System;
         public static Farming System => m_System ??= new Farming();
 

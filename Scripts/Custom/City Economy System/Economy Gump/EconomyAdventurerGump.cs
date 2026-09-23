@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Server;
@@ -81,9 +81,9 @@ namespace Server.Misc
             {
                 var p = parties[i];
                 string stateStr = p.State switch {
-                    AdventurerState.Resting => "<BASEFONT COLOR='#68FF68'>휴식/정비</BASEFONT>",
-                    AdventurerState.Traveling => "<BASEFONT COLOR='#FDB913'>이동 중</BASEFONT>",
-                    AdventurerState.Exploring => "<BASEFONT COLOR='#FF5555'>던전 탐험</BASEFONT>",
+                    AdventurerState.Resting => "<BASEFONT COLOR=#68FF68>휴식/정비</BASEFONT>",
+                    AdventurerState.Traveling => "<BASEFONT COLOR=#FDB913>이동 중</BASEFONT>",
+                    AdventurerState.Exploring => "<BASEFONT COLOR=#FF5555>던전 탐험</BASEFONT>",
                     _ => ""
                 };
 

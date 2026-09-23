@@ -130,261 +130,310 @@ namespace Server.SkillHandlers
 
         private const int LabelColor = 0x24E5;
 
-        public AnimalLoreGump(BaseCreature c) : base(250, 50)
+        public AnimalLoreGump(BaseCreature c) : base(100, 50)
         {
-            AddPage(0);
-            AddImage(100, 100, 2080);
-            AddImage(118, 137, 2081);
-            AddImage(118, 207, 2081);
-            AddImage(118, 277, 2081);
-            AddImage(118, 347, 2083);
-            AddHtml(147, 108, 210, 18, String.Format("<center><i>{0}</i></center>", c.Name), false, false);
-            AddButton(240, 77, 2093, 2093, 2, GumpButtonType.Reply, 0);
-            AddImage(140, 138, 2091);
-            AddImage(140, 335, 2091);
+            AddBackground(0, 0, 780, 560, 9200);
+            AddAlphaRegion(10, 10, 760, 540);
 
-            int pages = (Core.AOS ? 6 : 4); // 패시브 페이지 추가를 위해 전체 페이지 +1
-            int page = 0;
+            // Title
+            AddHtml(20, 15, 740, 25, $"<CENTER><BASEFONT COLOR=#FFFFFF SIZE=5>동물 지식 (Animal Lore) : {c.Name}</BASEFONT></CENTER>", false, false);
+            AddImageTiled(20, 45, 740, 2, 2624);
 
-            #region Page 1: Attributes
-            AddPage(++page);
-            AddImage(128, 152, 2086);
-            AddHtmlLocalized(147, 150, 160, 18, 1049593, 200, false, false); // Attributes
-            AddHtmlLocalized(153, 168, 160, 18, 1049578, LabelColor, false, false); // Hits
-            AddHtml(280, 168, 75, 18, FormatAttributes(c.Hits, c.HitsMax), false, false);
-            AddHtmlLocalized(153, 186, 160, 18, 1049579, LabelColor, false, false); // Stamina
-            AddHtml(280, 186, 75, 18, FormatAttributes(c.Stam, c.StamMax), false, false);
-            AddHtmlLocalized(153, 204, 160, 18, 1049580, LabelColor, false, false); // Mana
-            AddHtml(280, 204, 75, 18, FormatAttributes(c.Mana, c.ManaMax), false, false);
-            AddHtmlLocalized(153, 222, 160, 18, 1028335, LabelColor, false, false); // Strength
-            AddHtml(320, 222, 35, 18, FormatStat(c.Str), false, false);
-            AddHtmlLocalized(153, 240, 160, 18, 3000113, LabelColor, false, false); // Dexterity
-            AddHtml(320, 240, 35, 18, FormatStat(c.Dex), false, false);
-            AddHtmlLocalized(153, 258, 160, 18, 3000112, LabelColor, false, false); // Intelligence
-            AddHtml(320, 258, 35, 18, FormatStat(c.Int), false, false);
+            int col1 = 20, col2 = 230, col3 = 460;
+            string lblColor = "#FFCC00";
+            string valColor = "#FFFFFF";
 
-            if (Core.AOS) {
-                int y = 276;
-                if (Core.SE) {
-                    double bd = Items.BaseInstrument.GetBaseDifficulty(c);
-                    if (c.Uncalmable) bd = 0;
-                    AddHtmlLocalized(153, 276, 160, 18, 1070793, LabelColor, false, false); 
-                    AddHtml(320, y, 35, 18, FormatDouble(bd), false, false);
-                    y += 18;
-                }
-                AddImage(128, y + 2, 2086);
-                AddHtmlLocalized(147, y, 160, 18, 1049594, 200, false, false); 
-                y += 18;
-                //AddHtmlLocalized(153, y, 160, 18, (!c.Controlled || c.Loyalty == 0) ? 1061643 : 1049595 + (c.Loyalty / 10), LabelColor, false, false);
-				// [Gump 내 로열티 표시부]
-				int loyaltyLoc;
+            // === [COLUMN 1: Attributes & Resistances] ===
+            AddHtml(col1, 55, 200, 20, $"<BASEFONT COLOR={lblColor}>▶ 피지컬 및 저항</BASEFONT>", false, false);
+            
+            int y = 80;
+            AddHtml(col1, y, 100, 20, $"<BASEFONT COLOR={lblColor}>체력(Hits)</BASEFONT>", false, false);
+            AddHtml(col1+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{c.Hits}/{c.HitsMax}</BASEFONT>", false, false); y+=20;
+            AddHtml(col1, y, 100, 20, $"<BASEFONT COLOR={lblColor}>기력(Stam)</BASEFONT>", false, false);
+            AddHtml(col1+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{c.Stam}/{c.StamMax}</BASEFONT>", false, false); y+=20;
+            AddHtml(col1, y, 100, 20, $"<BASEFONT COLOR={lblColor}>마나(Mana)</BASEFONT>", false, false);
+            AddHtml(col1+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{c.Mana}/{c.ManaMax}</BASEFONT>", false, false); y+=25;
 
-				// 1. 야생 상태 체크: 길들여지지 않았거나, 주인이 없거나, 로열티가 음수인 경우
-				if (!c.Controlled || c.ControlMaster == null || c.Loyalty < 0) 
-				{
-					loyaltyLoc = 503409; // 야생 상태
-				}
-				else 
-				{
-					// 2. 정상 범위 체크 (불안 ~ 완벽)
-					int limit = (int)c.ControlMaster.Skills[SkillName.AnimalLore].Value * 50;
-					
-					// 분모가 0이 되는 것을 방지하며 비율 계산 (스킬 0이면 per는 0.0이 됨)
-					double per = (limit > 0) ? (double)c.Loyalty / limit : 0.0;
+            AddHtml(col1, y, 100, 20, $"<BASEFONT COLOR={lblColor}>힘(STR)</BASEFONT>", false, false);
+            AddHtml(col1+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{c.Str}</BASEFONT>", false, false); y+=20;
+            AddHtml(col1, y, 100, 20, $"<BASEFONT COLOR={lblColor}>민첩(DEX)</BASEFONT>", false, false);
+            AddHtml(col1+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{c.Dex}</BASEFONT>", false, false); y+=20;
+            AddHtml(col1, y, 100, 20, $"<BASEFONT COLOR={lblColor}>지능(INT)</BASEFONT>", false, false);
+            AddHtml(col1+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{c.Int}</BASEFONT>", false, false); y+=25;
 
-					// 기획된 규칙성에 따른 Cliloc 할당
-					loyaltyLoc = per >= 1.0  ? 503417 : // 완벽 상태
-								 per >= 0.8  ? 503416 : // 신뢰 상태
-								 per >= 0.65 ? 503415 : // 친밀 상태
-								 per >= 0.5  ? 503414 : // 우호 상태
-								 per >= 0.35 ? 503413 : // 안정 상태
-								 per >= 0.2  ? 503412 : // 순응 상태
-								 per >= 0.1  ? 503411 : // 경계 상태
-											   503410;   // 불안 상태
-				}
-
-				AddHtmlLocalized(153, y, 160, 18, loyaltyLoc, LabelColor, false, false);				
-				
-            } else {
-                AddImage(128, 278, 2086);
-                AddHtmlLocalized(147, 276, 160, 18, 3001016, 200, false, false);
-                AddHtmlLocalized(153, 294, 160, 18, 1049581, LabelColor, false, false);
-                AddHtml(320, 294, 35, 18, FormatStat(c.VirtualArmor), false, false);
+            if (Core.AOS)
+            {
+                AddHtml(col1, y, 100, 20, $"<BASEFONT COLOR={lblColor}>물리 저항</BASEFONT>", false, false);
+                AddHtml(col1+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{c.PhysicalResistance}%</BASEFONT>", false, false); y+=20;
+                AddHtml(col1, y, 100, 20, $"<BASEFONT COLOR={lblColor}>화염 저항</BASEFONT>", false, false);
+                AddHtml(col1+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{c.FireResistance}%</BASEFONT>", false, false); y+=20;
+                AddHtml(col1, y, 100, 20, $"<BASEFONT COLOR={lblColor}>냉기 저항</BASEFONT>", false, false);
+                AddHtml(col1+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{c.ColdResistance}%</BASEFONT>", false, false); y+=20;
+                AddHtml(col1, y, 100, 20, $"<BASEFONT COLOR={lblColor}>독 저항</BASEFONT>", false, false);
+                AddHtml(col1+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{c.PoisonResistance}%</BASEFONT>", false, false); y+=20;
+                AddHtml(col1, y, 100, 20, $"<BASEFONT COLOR={lblColor}>에너지 저항</BASEFONT>", false, false);
+                AddHtml(col1+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{c.EnergyResistance}%</BASEFONT>", false, false); y+=25;
             }
-            AddButton(340, 358, 5601, 5605, 0, GumpButtonType.Page, page + 1);
-            AddButton(317, 358, 5603, 5607, 0, GumpButtonType.Page, pages);
-            #endregion
 
-            #region Page 2: Resistances
-            if (Core.AOS) {
-                AddPage(++page);
-                AddImage(128, 152, 2086);
-                AddHtmlLocalized(147, 150, 160, 18, 1061645, 200, false, false); // Resistances
-                AddHtmlLocalized(153, 168, 160, 18, 1061646, LabelColor, false, false); // Physical
-                AddHtml(320, 168, 35, 18, FormatElement(c.PhysicalResistance), false, false);
-                AddHtmlLocalized(153, 186, 160, 18, 1061647, LabelColor, false, false); // Fire
-                AddHtml(320, 186, 35, 18, FormatElement(c.FireResistance), false, false);
-                AddHtmlLocalized(153, 204, 160, 18, 1061648, LabelColor, false, false); // Cold
-                AddHtml(320, 204, 35, 18, FormatElement(c.ColdResistance), false, false);
-                AddHtmlLocalized(153, 222, 160, 18, 1061649, LabelColor, false, false); // Poison
-                AddHtml(320, 222, 35, 18, FormatElement(c.PoisonResistance), false, false);
-                AddHtmlLocalized(153, 240, 160, 18, 1061650, LabelColor, false, false); // Energy
-                AddHtml(320, 240, 35, 18, FormatElement(c.EnergyResistance), false, false);
-
-                AddButton(340, 358, 5601, 5605, 0, GumpButtonType.Page, page + 1);
-                AddButton(317, 358, 5603, 5607, 0, GumpButtonType.Page, page - 1);
+            // === [COLUMN 2: Damage & Skills] ===
+            y = 55;
+            AddHtml(col2, y, 200, 20, $"<BASEFONT COLOR={lblColor}>▶ 공격 속성 및 스킬</BASEFONT>", false, false);
+            y = 80;
+            if (Core.AOS)
+            {
+                AddHtml(col2, y, 100, 20, $"<BASEFONT COLOR={lblColor}>기본 피해</BASEFONT>", false, false);
+                AddHtml(col2+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{c.DamageMin}-{c.DamageMax}</BASEFONT>", false, false); y+=20;
+                AddHtml(col2, y, 100, 20, $"<BASEFONT COLOR={lblColor}>물리 피해</BASEFONT>", false, false);
+                AddHtml(col2+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{c.PhysicalDamage}%</BASEFONT>", false, false); y+=20;
+                AddHtml(col2, y, 100, 20, $"<BASEFONT COLOR={lblColor}>화염 피해</BASEFONT>", false, false);
+                AddHtml(col2+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{c.FireDamage}%</BASEFONT>", false, false); y+=20;
+                AddHtml(col2, y, 100, 20, $"<BASEFONT COLOR={lblColor}>냉기 피해</BASEFONT>", false, false);
+                AddHtml(col2+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{c.ColdDamage}%</BASEFONT>", false, false); y+=20;
+                AddHtml(col2, y, 100, 20, $"<BASEFONT COLOR={lblColor}>독 피해</BASEFONT>", false, false);
+                AddHtml(col2+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{c.PoisonDamage}%</BASEFONT>", false, false); y+=20;
+                AddHtml(col2, y, 100, 20, $"<BASEFONT COLOR={lblColor}>에너지 피해</BASEFONT>", false, false);
+                AddHtml(col2+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{c.EnergyDamage}%</BASEFONT>", false, false); y+=25;
             }
-            #endregion
 
-            #region Page 3: Damage
-            if (Core.AOS) {
-                AddPage(++page);
-                AddImage(128, 152, 2086);
-                AddHtmlLocalized(147, 150, 160, 18, 1017319, 200, false, false); // Damage
-                AddHtmlLocalized(153, 168, 160, 18, 1061646, LabelColor, false, false); // Physical
-                AddHtml(320, 168, 35, 18, FormatElement(c.PhysicalDamage), false, false);
-                AddHtmlLocalized(153, 186, 160, 18, 1061647, LabelColor, false, false); // Fire
-                AddHtml(320, 186, 35, 18, FormatElement(c.FireDamage), false, false);
-                AddHtmlLocalized(153, 204, 160, 18, 1061648, LabelColor, false, false); // Cold
-                AddHtml(320, 204, 35, 18, FormatElement(c.ColdDamage), false, false);
-                AddHtmlLocalized(153, 222, 160, 18, 1061649, LabelColor, false, false); // Poison
-                AddHtml(320, 222, 35, 18, FormatElement(c.PoisonDamage), false, false);
-                AddHtmlLocalized(153, 240, 160, 18, 1061650, LabelColor, false, false); // Energy
-                AddHtml(320, 240, 35, 18, FormatElement(c.EnergyDamage), false, false);
-
-                if (Core.ML) {
-                    AddHtmlLocalized(153, 258, 160, 18, 1076750, LabelColor, false, false); // Base Damage
-                    AddHtml(300, 258, 55, 18, FormatDamage(c.DamageMin, c.DamageMax), false, false);
-                }
-
-                AddButton(340, 358, 5601, 5605, 0, GumpButtonType.Page, page + 1);
-                AddButton(317, 358, 5603, 5607, 0, GumpButtonType.Page, page - 1);
-            }
-            #endregion
-
-            #region Page 4: Skills
-            AddPage(++page);
-            AddImage(128, 152, 2086);
-            AddHtmlLocalized(147, 150, 160, 18, 3001030, 200, false, false); // Combat Ratings
-            AddHtmlLocalized(153, 168, 160, 18, 1044103, LabelColor, false, false); // Wrestling
-            AddHtml(320, 168, 35, 18, FormatSkill(c, SkillName.Wrestling), false, false);
-            AddHtmlLocalized(153, 186, 160, 18, 1044087, LabelColor, false, false); // Tactics
-            AddHtml(320, 186, 35, 18, FormatSkill(c, SkillName.Tactics), false, false);
-            AddHtmlLocalized(153, 204, 160, 18, 1044086, LabelColor, false, false); // Magic Resistance
-            AddHtml(320, 204, 35, 18, FormatSkill(c, SkillName.MagicResist), false, false);
-            AddHtmlLocalized(153, 222, 160, 18, 1044061, LabelColor, false, false); // Anatomy
-            AddHtml(320, 222, 35, 18, FormatSkill(c, SkillName.Anatomy), false, false);
-
+            AddHtml(col2, y, 100, 20, $"<BASEFONT COLOR={lblColor}>레슬링</BASEFONT>", false, false);
+            AddHtml(col2+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{FormatSkill(c, SkillName.Wrestling)}</BASEFONT>", false, false); y+=20;
+            AddHtml(col2, y, 100, 20, $"<BASEFONT COLOR={lblColor}>전술(Tact)</BASEFONT>", false, false);
+            AddHtml(col2+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{FormatSkill(c, SkillName.Tactics)}</BASEFONT>", false, false); y+=20;
+            AddHtml(col2, y, 100, 20, $"<BASEFONT COLOR={lblColor}>해부학</BASEFONT>", false, false);
+            AddHtml(col2+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{FormatSkill(c, SkillName.Anatomy)}</BASEFONT>", false, false); y+=20;
+            AddHtml(col2, y, 100, 20, $"<BASEFONT COLOR={lblColor}>마법 저항</BASEFONT>", false, false);
+            AddHtml(col2+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{FormatSkill(c, SkillName.MagicResist)}</BASEFONT>", false, false); y+=20;
+            
             if (c is CuSidhe) {
-                AddHtmlLocalized(153, 240, 160, 18, 1044077, LabelColor, false, false); // Healing
-                AddHtml(320, 240, 35, 18, FormatSkill(c, SkillName.Healing), false, false);
+                AddHtml(col2, y, 100, 20, $"<BASEFONT COLOR={lblColor}>치유</BASEFONT>", false, false);
+                AddHtml(col2+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{FormatSkill(c, SkillName.Healing)}</BASEFONT>", false, false); y+=20;
             } else {
-                AddHtmlLocalized(153, 240, 160, 18, 1044090, LabelColor, false, false); // Poisoning
-                AddHtml(320, 240, 35, 18, FormatSkill(c, SkillName.Poisoning), false, false);
+                AddHtml(col2, y, 100, 20, $"<BASEFONT COLOR={lblColor}>독</BASEFONT>", false, false);
+                AddHtml(col2+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{FormatSkill(c, SkillName.Poisoning)}</BASEFONT>", false, false); y+=20;
+            }
+            AddHtml(col2, y, 100, 20, $"<BASEFONT COLOR={lblColor}>마법</BASEFONT>", false, false);
+            AddHtml(col2+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{FormatSkill(c, SkillName.Magery)}</BASEFONT>", false, false); y+=20;
+            AddHtml(col2, y, 100, 20, $"<BASEFONT COLOR={lblColor}>지능 평가</BASEFONT>", false, false);
+            AddHtml(col2+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{FormatSkill(c, SkillName.EvalInt)}</BASEFONT>", false, false); y+=20;
+            AddHtml(col2, y, 100, 20, $"<BASEFONT COLOR={lblColor}>명상</BASEFONT>", false, false);
+            AddHtml(col2+100, y, 100, 20, $"<BASEFONT COLOR={valColor}>{FormatSkill(c, SkillName.Meditation)}</BASEFONT>", false, false); y+=20;
+
+            // === [COLUMN 3: Traits & Synergies] ===
+            y = 55;
+            AddHtml(col3, y, 280, 20, $"<BASEFONT COLOR={lblColor}>▶ 특성 및 시너지</BASEFONT>", false, false);
+            y = 80;
+
+            string loyaltyStr = (!c.Controlled || c.Loyalty == 0) ? "<BASEFONT COLOR=#777777>야생 / 충성도 없음</BASEFONT>" : $"<BASEFONT COLOR={valColor}>충성도: {c.Loyalty}</BASEFONT>";
+            AddHtml(col3, y, 280, 20, loyaltyStr, false, false); y+=25;
+            
+            // Pack Instinct HTML
+            if (c.PackInstinct != PackInstinct.None && c.Controlled && c.ControlMaster != null)
+            {
+                PlayerMobile master = c.ControlMaster as PlayerMobile;
+                int packSlots = 0;
+                
+                if (master != null)
+                {
+                    foreach (Mobile m in master.AllFollowers)
+                    {
+                        if (m is BaseCreature tc && tc.Map == master.Map && Utility.InRange(tc.Location, master.Location, 20))
+                        {
+                            if ((tc.PackInstinct & c.PackInstinct) != 0)
+                                packSlots += tc.ControlSlots;
+                        }
+                    }
+                }
+                
+                if (packSlots == 0) packSlots = c.ControlSlots;
+
+                string html = $"<BASEFONT COLOR=#00CCFF>▶ 무리 보너스: {packSlots}마리 (20타일)<BR>";
+                string cOn = "<BASEFONT COLOR=#00FF00> - ";
+                string cOff = "<BASEFONT COLOR=#777777> - ";
+
+                if ((c.PackInstinct & (PackInstinct.Canine | PackInstinct.Bull)) != 0)
+                {
+                    html += (packSlots >= 2 ? cOn : cOff) + "2마리: 공격력 30% 증가<BR>" +
+                            (packSlots >= 3 ? cOn : cOff) + "3마리: 공격력 60% 증가<BR>" +
+                            (packSlots >= 4 ? cOn : cOff) + "4마리: 공격력 100% 증가<BR>" +
+                            (packSlots >= 5 ? cOn : cOff) + "5마리: 공격력 150% 증가<BR>";
+                }
+                else if ((c.PackInstinct & (PackInstinct.Bear | PackInstinct.Ostard)) != 0)
+                {
+                    html += (packSlots >= 2 ? cOn : cOff) + "2마리: 공격력 40% 증가<BR>" +
+                            (packSlots >= 3 ? cOn : cOff) + "3마리: 공격력 75% 증가<BR>" +
+                            (packSlots >= 4 ? cOn : cOff) + "4마리: 공격력 120% 증가<BR>";
+                }
+                else if ((c.PackInstinct & (PackInstinct.Daemon | PackInstinct.Arachnid)) != 0)
+                {
+                    html += (packSlots >= 2 ? cOn : cOff) + "2마리: 공격력 50% 증가<BR>" +
+                            (packSlots >= 3 ? cOn : cOff) + "3마리: 공격력 95% 증가<BR>";
+                }
+                else if ((c.PackInstinct & (PackInstinct.Feline | PackInstinct.Equine)) != 0)
+                {
+                    html += (packSlots >= 2 ? cOn : cOff) + "2마리: 공격력 75% 증가<BR>";
+                }
+                
+                int usedSlots = master.Followers;
+                int maxSlots = master.FollowersMax;
+                int emptySlots = Math.Max(0, maxSlots - usedSlots);
+                double emptyBonus = 0;
+                
+                if (usedSlots > 0 && emptySlots > 0)
+                    emptyBonus = ((double)emptySlots / usedSlots) * 70.0;
+
+                html += $"<BR><BASEFONT COLOR=#00CCFF>▶ 여유 보너스: {emptySlots}칸 남음<BR>";
+                if (emptyBonus > 0)
+                    html += $"<BASEFONT COLOR=#00FF00> - 공격력 {(int)emptyBonus}% 증가<BR>";
+                else
+                    html += $"<BASEFONT COLOR=#777777> - 슬롯 꽉참 (적용 안됨)<BR>";
+                html += "</BASEFONT>";
+
+                AddHtml(col3, y, 280, 130, html, false, true);
+                y += 135;
+            }
+            else
+            {
+                y += 135;
             }
 
-            AddImage(128, 260, 2086);
-            AddHtmlLocalized(147, 258, 160, 18, 3001032, 200, false, false); // Lore & Knowledge
-            AddHtmlLocalized(153, 276, 160, 18, 1044085, LabelColor, false, false); // Magery
-            AddHtml(320, 276, 35, 18, FormatSkill(c, SkillName.Magery), false, false);
-            AddHtmlLocalized(153, 294, 160, 18, 1044076, LabelColor, false, false); // Evaluating Intelligence
-            AddHtml(320, 294, 35, 18, FormatSkill(c, SkillName.EvalInt), false, false);
-            AddHtmlLocalized(153, 312, 160, 18, 1044106, LabelColor, false, false); // Meditation
-            AddHtml(320, 312, 35, 18, FormatSkill(c, SkillName.Meditation), false, false);
-
-            AddButton(340, 358, 5601, 5605, 0, GumpButtonType.Page, page + 1);
-            AddButton(317, 358, 5603, 5607, 0, GumpButtonType.Page, page - 1);
-            #endregion
-
-            #region Page 5: Misc
-            AddPage(++page);
-            AddImage(128, 152, 2086);
-            AddHtmlLocalized(147, 150, 160, 18, 1049563, 200, false, false); // Preferred Foods
-            int foodPref = 3000340;
-            if ((c.FavoriteFood & FoodType.FruitsAndVegies) != 0) foodPref = 1049565;
-            else if ((c.FavoriteFood & FoodType.GrainsAndHay) != 0) foodPref = 1049566;
-            else if ((c.FavoriteFood & FoodType.Fish) != 0) foodPref = 1049568;
-            else if ((c.FavoriteFood & FoodType.Meat) != 0) foodPref = 1049564;
-            else if ((c.FavoriteFood & FoodType.Eggs) != 0) foodPref = 1044477;
-            AddHtmlLocalized(153, 168, 160, 18, foodPref, LabelColor, false, false);
-
-            AddImage(128, 188, 2086);
-            AddHtmlLocalized(147, 186, 160, 18, 1049569, 200, false, false); // Pack Instincts
-            int packInstinct = 3000340;
-            if ((c.PackInstinct & PackInstinct.Canine) != 0) packInstinct = 1049570;
-            else if ((c.PackInstinct & PackInstinct.Ostard) != 0) packInstinct = 1049571;
-            else if ((c.PackInstinct & PackInstinct.Feline) != 0) packInstinct = 1049572;
-            else if ((c.PackInstinct & PackInstinct.Arachnid) != 0) packInstinct = 1049573;
-            else if ((c.PackInstinct & PackInstinct.Daemon) != 0) packInstinct = 1049574;
-            else if ((c.PackInstinct & PackInstinct.Bear) != 0) packInstinct = 1049575;
-            else if ((c.PackInstinct & PackInstinct.Equine) != 0) packInstinct = 1049576;
-            else if ((c.PackInstinct & PackInstinct.Bull) != 0) packInstinct = 1049577;
-            AddHtmlLocalized(153, 204, 160, 18, packInstinct, LabelColor, false, false);
-
-            if (!Core.AOS) {
-                AddImage(128, 224, 2086);
-                AddHtmlLocalized(147, 222, 160, 18, 1049594, 200, false, false); 
-                AddHtmlLocalized(153, 240, 160, 18, (!c.Controlled || c.Loyalty == 0) ? 1061643 : 1049595 + (c.Loyalty / 10), LabelColor, false, false);
+            // Passive Skills
+            int passiveCount = 0;
+            if (c.PassiveSkills != null && c.PassiveSkills.Length > 0) passiveCount = c.PassiveSkills[0];
+            
+            AddHtml(col3, y, 280, 20, $"<BASEFONT COLOR={lblColor}>▶ 패시브 스킬: {passiveCount}개</BASEFONT>", false, false);
+            y += 20;
+            if (passiveCount > 0)
+            {
+                string phtml = "";
+                for (int i = 0; i < passiveCount; i++)
+                {
+                    int id = c.PassiveSkills[1 + (i * 2)];
+                    int val = c.PassiveSkills[1 + (i * 2) + 1]; 
+                    string name = AnimalPassiveSkillHandler.GetPassiveName(id);
+                    if (name == "공격력") name = "전체 공격력";
+                    bool isPct = (id <= 1 || (id >= 7 && id <= 9));
+                    string valStr = isPct ? $"+{val}%" : $"+{val}";
+                    phtml += $"<BASEFONT COLOR=#B0C4DE>{name} {valStr}</BASEFONT><BR>";
+                }
+                AddHtml(col3, y, 280, 70, phtml, false, true);
+                y += 75;
+            }
+            else
+            {
+                y += 75;
             }
 
-            AddButton(340, 358, 5601, 5605, 0, GumpButtonType.Page, page + 1);
-            AddButton(317, 358, 5603, 5607, 0, GumpButtonType.Page, page - 1);
-            #endregion
+            // Gem Synergy
+            bool isSynActive = c.IsPetSynergyActive();
+            string synColor = isSynActive ? "#00FF00" : "#777777";
+            AddHtml(col3, y, 280, 20, $"<BASEFONT COLOR={lblColor}>▶ 보석 시너지</BASEFONT>", false, false);
+            y += 20;
 
-			#region Page 6: Passive Skills
-			AddPage(6); 
-			AddImage(128, 152, 2086);
-			AddHtml(147, 150, 160, 18, "패시브 스킬", false, false);
+            if (c.PetMaxSockets > 1)
+            {
+                string synText = "";
+                if (c.PetSynergy1 > 0)
+                    synText += $"<BASEFONT COLOR={synColor}>{GetOptionNameStr(c.PetSynergy1, c.PetMaxSockets)}</BASEFONT><BR>";
+                if (c.PetSynergy2 > 0)
+                    synText += $"<BASEFONT COLOR={synColor}>{GetOptionNameStr(c.PetSynergy2, c.PetMaxSockets)}</BASEFONT><BR>";
+                
+                if (synText == "") synText = "<BASEFONT COLOR=#777777>시너지 없음</BASEFONT><BR>";
+                AddHtml(col3, y, 280, 40, synText, false, false);
+                y += 45;
+            }
+            else
+            {
+                AddHtml(col3, y, 280, 20, "<BASEFONT COLOR=#777777>시너지 없음 (1소켓은 와일드카드)</BASEFONT>", false, false);
+                y += 25;
+            }
+            
+            // Gem Sockets
+            AddHtml(col3, y, 280, 20, $"<BASEFONT COLOR={lblColor}>▶ 보석 소켓 (Max: {c.PetMaxSockets})</BASEFONT>", false, false);
+            y += 20;
+            if (c.Controlled && c.PetMaxSockets > 0)
+            {
+                string ghtml = "";
+                string tierName = Server.Misc.ItemOptionCreator.GetTierName(c.ControlSlots);
 
-			int startY = 175;
-			int count = c.PassiveSkills[0];
+                for (int i = 0; i < c.PetMaxSockets; i++)
+                {
+                    int req = c.PetReqGems[i];
+                    int ins = c.PetEquipGems[i];
+                    
+                    if (ins == -1) 
+                    {
+                        string reqName = GetGemFullName(req);
+                        if (req == 99) 
+                            ghtml += $"<BASEFONT COLOR=#777777>[빈 소켓: {tierName} 보석(아무거나) 필요]</BASEFONT><BR>";
+                        else
+                            ghtml += $"<BASEFONT COLOR=#777777>[빈 소켓: {tierName} {reqName} 필요]</BASEFONT><BR>";
+                    }
+                    else 
+                    {
+                        string insTierName = Server.Misc.ItemOptionCreator.GetTierName(c.ControlSlots);
+                        ghtml += $"<BASEFONT COLOR=#FF0090>[{insTierName} {GetGemFullName(ins)} 장착됨]</BASEFONT><BR>";
+                    }
+                }
+                AddHtml(col3, y, 280, 80, ghtml, false, true);
+            }
+            else
+            {
+                AddHtml(col3, y, 280, 20, "<BASEFONT COLOR=#777777>소켓 없음</BASEFONT>", false, false);
+            }
+        }
 
-			if (count == 0)
-			{
-				AddHtml(153, startY, 160, 18, "없음", false, false);
-			}
-			else
-			{
-				for (int i = 0; i < count; i++)
-				{
-					int id = c.PassiveSkills[1 + (i * 2)];
-					int val = c.PassiveSkills[1 + (i * 2) + 1]; // 수치 데이터
+        private double GetSynergyValue(int optionID, int slots)
+        {
+            double mult = 0;
+            if (slots == 2) mult = 0.25;
+            else if (slots == 3) mult = 0.50;
+            else if (slots == 4) mult = 0.40;
+            
+            if (Server.Misc.ItemOptionCreator.EquipRandomOption.TryGetValue(optionID, out var data))
+            {
+                bool isSkill = (optionID >= 77 && optionID <= 132);
+                if (isSkill) return 20.0;
+                return (data.ReforgeWeapon * mult) / 10000.0;
+            }
+            return 0;
+        }
 
-					string name = AnimalPassiveSkillHandler.GetPassiveName(id);
-					
-					// % 기호 여부 판정 (작성하신 BaseCreature 로직 적용)
-					bool isPct = (id <= 1 || (id >= 7 && id <= 9));
-					string valStr = isPct ? String.Format("+{0}%", val) : String.Format("+{0}", val);
-					string rawContent = String.Format("{0} {1}", name, valStr);
+        private string GetOptionNameStr(int optionID, int slots)
+        {
+            if (optionID <= 0) return "없음";
+            int cliloc = optionID + 1080578; // BaseCliloc
+            string name = Server.Misc.ClilocData.GetString(cliloc);
+            if (name != null)
+            {
+                name = name.Replace("~1_val~", "").Replace("~1_VAL~", "").Replace(":", "").Trim();
+                double val = GetSynergyValue(optionID, slots);
+                
+                if (name.EndsWith("%"))
+                    return name.Replace("%", $"+{val:0.##}%");
+                else if (name.EndsWith("증가"))
+                    return $"{name} +{val:0.##}";
+                else
+                    return $"{name} +{val:0.##}";
+            }
+            return $"알 수 없음 ({optionID})";
+        }
 
-					// [등급 판정 역산] 작성하신 로직 그대로 이식
-					int colorIdx = 0;
-					if (val >= 30 || (id >= 2 && id <= 6 && val >= 10) || (id >= 10 && val >= 30)) colorIdx = 8;      // 신화
-					else if (val >= 25 || (id >= 2 && id <= 6 && val >= 9) || (id >= 10 && val >= 25)) colorIdx = 7; // 전설
-					else if (val >= 20 || (id >= 2 && id <= 6 && val >= 8) || (id >= 10 && val >= 20)) colorIdx = 6; // 서사
-					else if (val >= 15 || (id >= 2 && id <= 6 && val >= 7) || (id >= 10 && val >= 15)) colorIdx = 5; // 영웅
-					else if (val >= 10 || (id >= 2 && id <= 6 && val >= 6) || (id >= 10 && val >= 10)) colorIdx = 4; // 희귀
-
-					// 색상 코드 매칭
-					string colorCode = "#FFFFFF"; // 기본(일반)
-					switch (colorIdx)
-					{
-						case 4: colorCode = "#00A000"; break; // 희귀
-						case 5: colorCode = "#68D5ED"; break; // 영웅
-						case 6: colorCode = "#B36BFF"; break; // 서사
-						case 7: colorCode = "#FFB400"; break; // 전설
-						case 8: colorCode = "#FF0090"; break; // 신화
-					}
-
-					// 출력부: 이름은 왼쪽, 수치는 오른쪽에 정렬 (가독성 최적화)
-					AddHtml(153, startY + (i * 20), 120, 18, String.Format("<BASEFONT COLOR={0}>{1}</BASEFONT>", colorCode, name), false, false);
-					AddHtml(280, startY + (i * 20), 75, 18, String.Format("<div align=right><BASEFONT COLOR={0}>{1}</BASEFONT></div>", colorCode, valStr), false, false);
-				}
-			}
-
-			AddButton(340, 358, 5601, 5605, 0, GumpButtonType.Page, 1);
-			AddButton(317, 358, 5603, 5607, 0, GumpButtonType.Page, 5);
-			#endregion
+        private static string GetGemFullName(int gemIndex)
+        {
+            switch (gemIndex)
+            {
+                case 0: return "별무늬 사파이어";
+                case 1: return "에메랄드";
+                case 2: return "사파이어";
+                case 3: return "루비";
+                case 4: return "황수정";
+                case 5: return "자수정";
+                case 6: return "전기석";
+                case 7: return "호박";
+                case 8: return "다이아몬드";
+                case 99: return "전체(공용)";
+                default: return "알수없음";
+            }
         }
     }
 }

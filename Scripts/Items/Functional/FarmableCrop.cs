@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server.Network;
 
 namespace Server.Items
@@ -46,9 +46,36 @@ namespace Server.Items
 
             this.m_Picked = true;
 
-            this.Unlink();
+            if (this.Spawner != null)
+            {
+                this.Unlink();
+                Timer.DelayCall(TimeSpan.FromMinutes(5.0), new TimerCallback(Delete));
+            }
+            else
+            {
+                // 스포너가 없는 마을 공용(수동 배치) 작물의 경우 스스로 5분 뒤 리스폰
+                Timer.DelayCall(TimeSpan.FromMinutes(5.0), new TimerCallback(Respawn));
+            }
+        }
 
-            Timer.DelayCall(TimeSpan.FromMinutes(5.0), new TimerCallback(Delete));
+        public void Respawn()
+        {
+            if (this.Deleted)
+                return;
+
+            this.m_Picked = false;
+            
+            // 원래 모양으로 복구 (클래스별 기본 ID)
+            if (this is FarmableWheat) this.ItemID = FarmableWheat.GetCropID();
+            else if (this is FarmableCotton) this.ItemID = FarmableCotton.GetCropID();
+            else if (this is FarmableFlax) this.ItemID = FarmableFlax.GetCropID();
+            else if (this is FarmableOnion) this.ItemID = FarmableOnion.GetCropID();
+            else if (this is FarmableCabbage) this.ItemID = FarmableCabbage.GetCropID();
+            else if (this is FarmableCarrot) this.ItemID = FarmableCarrot.GetCropID();
+            else if (this is FarmableLettuce) this.ItemID = FarmableLettuce.GetCropID();
+            else if (this is FarmablePumpkin) this.ItemID = FarmablePumpkin.GetCropID();
+            else if (this is FarmableTurnip) this.ItemID = FarmableTurnip.GetCropID();
+            // 그 외에는 어쩔 수 없이 유지 (혹은 PickedID와 짝을 맞추는 로직이 필요하지만 대부분 위의 종류임)
         }
 
         public void Unlink()

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server.Items;
 using Server.Targeting;
 
@@ -115,24 +115,42 @@ namespace Server.SkillHandlers
                     {
                         if (m_From.CheckTargetSkill(SkillName.Poisoning, m_Target, m_MinSkill, m_MaxSkill))
                         {
+                            // 독 레벨 상승 기획: 스킬 30당 1레벨 확정 + (50% + 1.5% * 남은스킬) 확률로 레벨+1
+                            double poisoningSkill = m_From.Skills[SkillName.Poisoning].Value;
+                            int baseLevel = (int)(poisoningSkill / 30.0);
+                            double remainder = poisoningSkill % 30.0;
+                            double upgradeChance = (50.0 + (remainder * 1.5)) * 0.01;
+                            
+                            int finalLevel = baseLevel;
+                            if (Utility.RandomDouble() < upgradeChance)
+                            {
+                                finalLevel++;
+                            }
+                            
+                            // 기본 포션 레벨 이상 보장 및 최대 5레벨(Lethal) 제한
+                            if (finalLevel < m_Poison.Level) finalLevel = m_Poison.Level;
+                            if (finalLevel > 5) finalLevel = 5;
+
+                            Poison applyPoison = Poison.GetPoison(finalLevel) ?? m_Poison;
+
                             if (m_Target is Food)
                             {
-                                ((Food)m_Target).Poison = m_Poison;
+                                ((Food)m_Target).Poison = applyPoison;
                             }
                             else if (m_Target is BaseWeapon)
                             {
-                                ((BaseWeapon)m_Target).Poison = m_Poison;
-                                ((BaseWeapon)m_Target).PoisonCharges = 18 - (m_Poison.RealLevel * 2);
+                                ((BaseWeapon)m_Target).Poison = applyPoison;
+                                ((BaseWeapon)m_Target).PoisonCharges = 18 - (applyPoison.RealLevel * 2);
                             }
                             else if (m_Target is FukiyaDarts)
                             {
-                                ((FukiyaDarts)m_Target).Poison = m_Poison;
-                                ((FukiyaDarts)m_Target).PoisonCharges = Math.Min(18 - (m_Poison.RealLevel * 2), ((FukiyaDarts)m_Target).UsesRemaining);
+                                ((FukiyaDarts)m_Target).Poison = applyPoison;
+                                ((FukiyaDarts)m_Target).PoisonCharges = Math.Min(18 - (applyPoison.RealLevel * 2), ((FukiyaDarts)m_Target).UsesRemaining);
                             }
                             else if (m_Target is Shuriken)
                             {
-                                ((Shuriken)m_Target).Poison = m_Poison;
-                                ((Shuriken)m_Target).PoisonCharges = Math.Min(18 - (m_Poison.RealLevel * 2), ((Shuriken)m_Target).UsesRemaining);
+                                ((Shuriken)m_Target).Poison = applyPoison;
+                                ((Shuriken)m_Target).PoisonCharges = Math.Min(18 - (applyPoison.RealLevel * 2), ((Shuriken)m_Target).UsesRemaining);
                             }
 
                             m_From.SendLocalizedMessage(1010517); // You apply the poison

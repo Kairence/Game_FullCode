@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Server;
@@ -710,11 +710,18 @@ namespace Server.Misc
 
                     var buyResult = TryPurchaseFromList(agent, town, drinks.ToArray(), 1, false); 
                     if (buyResult.Success) drank = true;
+                    else if (agent.Gold >= 2) 
+                    {
+                        // 🌟 [생존 보정] 마을 상점에 마실 것이 동났을 경우, 2골드를 내고 공용 우물/여관에서 물을 마십니다.
+                        agent.Gold -= 2;
+                        town.Wealth += 2;
+                        drank = true;
+                    }
                 }
 
                 if (drank)
                 {
-                    agent.Thirst = Math.Min(100000, agent.Thirst + 1500);
+                    agent.Thirst = Math.Min(100000, agent.Thirst + 1500); // 🌟 (원복) 자원 순환을 위해 높은 소비율 유지
                     agent.Satisfaction = Math.Min(100, agent.Satisfaction + 1);
                 }
                 else
@@ -762,6 +769,7 @@ namespace Server.Misc
 
                 if (ate)
                 {
+                    // 🌟 (원복) 자원 순환을 위해 높은 소비율 유지
                     int fillAmount = 1500; 
                     if (consumedFood.ItemType == agent.FavoriteFood) fillAmount = 2500;
                     else if (consumedFood.ItemType == agent.DislikedFood) fillAmount = 1000;
@@ -1089,7 +1097,7 @@ namespace Server.Misc
                 NpcJobClass.Beggar => new DeepJobProfile(SkillName.Begging, NobilityRank.Commoner, NobilityRank.Commoner, [typeof(Muffins), typeof(Carrot)], [], [], [], [], 0),
                 NpcJobClass.Laborer => new DeepJobProfile(SkillName.Camping, NobilityRank.Commoner, NobilityRank.Commoner, [typeof(BreadLoaf)], [typeof(Shoes)], [typeof(Candle)], [], [], 0),
                 NpcJobClass.StreetSweeper => new DeepJobProfile(SkillName.Camping, NobilityRank.Commoner, NobilityRank.Commoner, [typeof(Apple)], [typeof(Boots)], [typeof(Muffins)], [typeof(Bone)], [], 2),
-                NpcJobClass.WaterCarrier => new DeepJobProfile(SkillName.Camping, NobilityRank.Commoner, NobilityRank.Commoner, [typeof(Turnip)], [typeof(Pouch)], [typeof(Sandals)], [], [], 20),
+                NpcJobClass.WaterCarrier => new DeepJobProfile(SkillName.Camping, NobilityRank.Commoner, NobilityRank.Commoner, [typeof(Turnip)], [typeof(Pouch)], [typeof(Sandals)], [new EconomyItemKey(typeof(Pitcher), CraftResource.None, (int)BeverageType.Water)], [], 20),
                 NpcJobClass.NightSoilMan => new DeepJobProfile(SkillName.Camping, NobilityRank.Commoner, NobilityRank.Commoner, [typeof(Cabbage)], [typeof(Shovel), typeof(Torch)], [typeof(Candle)], [typeof(FertileDirt)], [], 5),
                 NpcJobClass.GongFarmer => new DeepJobProfile(SkillName.Camping, NobilityRank.Commoner, NobilityRank.Commoner, [typeof(Onion)], [typeof(Shovel), typeof(Boots)], [typeof(Torch)], [typeof(FertileDirt)], [], 5),
                 NpcJobClass.RatCatcher => new DeepJobProfile(SkillName.Camping, NobilityRank.Commoner, NobilityRank.Commoner, [typeof(Apple)], [typeof(Dagger)], [typeof(Bandage)], [typeof(RawRibs)], [], 3),
@@ -1156,7 +1164,7 @@ namespace Server.Misc
                 NpcJobClass.Butcher_Expert => new DeepJobProfile(SkillName.Cooking, NobilityRank.Commoner, NobilityRank.SubBaronet, [typeof(RawRibs)], [typeof(RawLambLeg), typeof(RawRibs), typeof(Cleaver), typeof(ButcherKnife)], [new EconomyItemKey(typeof(BeverageBottle), CraftResource.None, (int)BeverageType.Ale)], [typeof(Bacon), typeof(Ham), typeof(Sausage)], [typeof(BBQSmokerDeed)], 20),
                 NpcJobClass.PoultryProcessor => new DeepJobProfile(SkillName.Cooking, NobilityRank.Commoner, NobilityRank.SubBaronet, [typeof(RawBird)], [typeof(RawBird), typeof(ButcherKnife)], [typeof(HalfApron)], [typeof(RawChickenLeg)], [], 25),
                 NpcJobClass.PizzaChef_Producer => new DeepJobProfile(SkillName.Cooking, NobilityRank.Commoner, NobilityRank.SubBaronet, [typeof(SackFlour)], [typeof(SackFlour), typeof(RollingPin)], [typeof(GoldRing)], [typeof(CheesePizza), typeof(BreadLoaf), typeof(FrenchBread)], [typeof(StoneOvenEastDeed)], 10),
-                NpcJobClass.GlassBlower => new DeepJobProfile(SkillName.Tinkering, NobilityRank.Commoner, NobilityRank.Baronet, [typeof(Cake)], [typeof(Sand), typeof(TinkersTools)], [typeof(SilverNecklace)], [typeof(Bottle), typeof(SolventFlask)], [typeof(TinkerBenchDeed)], 40),
+                NpcJobClass.GlassBlower => new DeepJobProfile(SkillName.Tinkering, NobilityRank.Commoner, NobilityRank.Baronet, [typeof(Cake)], [typeof(Sand), typeof(TinkersTools)], [typeof(SilverNecklace)], [typeof(Bottle), typeof(SolventFlask), typeof(Pitcher)], [typeof(TinkerBenchDeed)], 40),
                 NpcJobClass.AshProcessor => new DeepJobProfile(SkillName.Alchemy, NobilityRank.Commoner, NobilityRank.Baronet, [typeof(Muffins)], [typeof(Log), typeof(Torch)], [typeof(Boots)], [typeof(SulfurousAsh)], [typeof(HeatingStand)], 20),
                 NpcJobClass.BoneGrinder => new DeepJobProfile(SkillName.Alchemy, NobilityRank.Commoner, NobilityRank.Baronet, [typeof(BreadLoaf)], [typeof(Bone), typeof(MortarPestle)], [typeof(Shoes)], [typeof(GraveDust)], [typeof(AlchemyStationDeed)], 15),
                 NpcJobClass.CandleDipper => new DeepJobProfile(SkillName.Tinkering, NobilityRank.Commoner, NobilityRank.Baronet, [typeof(ApplePie)], [typeof(JarHoney), typeof(SpoolOfThread)], [typeof(PlainDress)], [typeof(Candle)], [typeof(TinkerBenchDeed)], 25),
@@ -1197,7 +1205,7 @@ namespace Server.Misc
 
                 NpcJobClass.Bard => new DeepJobProfile(SkillName.Musicianship, NobilityRank.Commoner, NobilityRank.Baronet, [typeof(CheesePizza)], [typeof(Lute), typeof(LapHarp)], [typeof(FancyShirt), typeof(FeatheredHat)], [], [], 0),
                 NpcJobClass.Drummer => new DeepJobProfile(SkillName.Musicianship, NobilityRank.Commoner, NobilityRank.Baronet, [typeof(Cookies)], [typeof(Drums), typeof(Tambourine)], [typeof(JesterSuit), typeof(JesterHat)], [], [], 0),
-                NpcJobClass.InnKeeper => new DeepJobProfile(SkillName.Cooking, NobilityRank.Commoner, NobilityRank.Baronet, [typeof(ApplePie)], [typeof(RawRibs), typeof(SackFlour), typeof(Pitcher)], [typeof(GoldRing)], [new EconomyItemKey(typeof(BeverageBottle), CraftResource.None, (int)BeverageType.Ale), new EconomyItemKey(typeof(BeverageBottle), CraftResource.None, (int)BeverageType.Wine), typeof(FrenchBread), typeof(Cake)], [typeof(StoneOvenEastDeed)], 30),
+                NpcJobClass.InnKeeper => new DeepJobProfile(SkillName.Cooking, NobilityRank.Commoner, NobilityRank.Baronet, [typeof(ApplePie)], [typeof(RawRibs), typeof(SackFlour), typeof(Pitcher)], [typeof(GoldRing)], [new EconomyItemKey(typeof(BeverageBottle), CraftResource.None, (int)BeverageType.Ale), new EconomyItemKey(typeof(BeverageBottle), CraftResource.None, (int)BeverageType.Wine), new EconomyItemKey(typeof(Pitcher), CraftResource.None, (int)BeverageType.Water), typeof(FrenchBread), typeof(Cake)], [typeof(StoneOvenEastDeed)], 30),
 
                 NpcJobClass.Navigator => new DeepJobProfile(SkillName.Cartography, NobilityRank.Knight, NobilityRank.Baron, [typeof(Trout), typeof(Bacon)], [typeof(Sextant), typeof(BlankMap)], [typeof(Spyglass), typeof(TricorneHat)], [typeof(Trout)], [], 10),
                 NpcJobClass.Shipwright_Master => new DeepJobProfile(SkillName.Carpentry, NobilityRank.Knight, NobilityRank.Baron, [typeof(FrenchBread)], [typeof(Log), typeof(Board), typeof(Nails)], [typeof(GoldRing)], [typeof(RowBoatDeed)], [typeof(WoodworkersBenchDeed)], 1),
@@ -1213,6 +1221,7 @@ namespace Server.Misc
             };
 
             profile = InjectFameTableware(profile);
+            
             return profile;
         }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server.Items;
 using Server.Network;
 using Server.Targeting;
@@ -67,7 +67,7 @@ namespace Server.SkillHandlers
                     // 스킬 해제 로직 (기존 기획 반영)
                     double dice = Misc.SkillCheck.GetSuccessChance(srcSkill, (double)targ.TrapPower);
                     if (srcSkill >= 50.0) dice += 0.10;
-                    if (srcSkill >= 150.0 && dice < 1.0) dice = 1.0 - ((1.0 - dice) * 0.5);
+                    if (srcSkill >= 150.0) dice *= 2.0; // 상자 함정 성공율 2배 증가
 
                     if (Utility.RandomDouble() < dice)
                     {
@@ -108,7 +108,7 @@ namespace Server.SkillHandlers
                 {
                     double dice = Misc.SkillCheck.GetSuccessChance(srcSkill, difficulty);
                     if (srcSkill >= 50.0) dice += 0.10;
-                    if (srcSkill >= 150.0 && dice < 1.0) dice = 1.0 - ((1.0 - dice) * 0.5);
+                    if (srcSkill >= 150.0) dice *= 2.0;
 
                     if (Utility.RandomDouble() < dice) { from.SendLocalizedMessage(502377); trap.Delete(); }
                     else

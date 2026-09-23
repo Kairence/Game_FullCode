@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server;
 using Server.Items;
 using Server.Mobiles;
@@ -97,6 +97,13 @@ namespace Server.Misc
         public static void ProcessRobbery(Mobile thief, VirtualHouse house, Item stolenOriginalItem)
         {
             if (thief == null || house == null || stolenOriginalItem == null) return;
+
+            // ==============================================================================
+            // [TODO: 향후 개발 예정 - 도둑 스킬(Stealth/Snooping/Hiding) 체크 및 감옥 시스템]
+            // 1. 도둑의 스텔스, 스누핑, 하이딩 스킬 수치와 가문의 SecurityAlertLevel을 비교하여 발각 확률 계산
+            // 2. 발각될 경우 전투 대신 곧바로 감옥(Jail)으로 강제 이동시키고 벌금/시간 페널티 부여
+            // 3. 발각되지 않고 성공(Success)했을 때만 아래의 장물 획득 로직이 진행되도록 수정할 것
+            // ==============================================================================
 
             // 1. 원본 아이템의 정보를 복사하여 '장물(CityStolenItem)' 껍데기로 생성
             CityStolenItem contraband = new CityStolenItem(stolenOriginalItem, house.HouseName);

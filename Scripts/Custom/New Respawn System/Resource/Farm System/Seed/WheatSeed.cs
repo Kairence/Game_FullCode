@@ -1,16 +1,18 @@
-ï»¿using System;
+using System;
 
 namespace Server.Items
 {
     public class WheatSeed : BaseSeed
     {
         public override Type CropType => typeof(Wheat);
+        public override double MinSkill => 100.0;
+        public override double MaxSkill => 150.0;
 
         [Constructable]
         public WheatSeed() : base(0xDCF)
         {
             Hue = 45;
-            Name = "ë°€ ì”¨ì•—";
+            Name = "¹Ð ¾¾¾Ñ";
         }
 
         public WheatSeed(Serial serial) : base(serial) { }
@@ -18,3 +20,4 @@ namespace Server.Items
         public override void Deserialize(GenericReader reader) { base.Deserialize(reader); int version = reader.ReadInt(); }
     }
 }
+

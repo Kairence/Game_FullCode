@@ -1,4 +1,4 @@
-﻿#region References
+#region References
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -1125,11 +1125,11 @@ namespace Server.Mobiles
         }
 
         #region Elemental Resistance/Damage
-        public override int BasePhysicalResistance { get { return m_PhysicalResistance; } }
-		public override int BaseFireResistance     { get { return m_FireResistance     + (Server.Spells.Chivalry.HolyLightSpell.UnderAura(this) ? 10 : 0); } }
-		public override int BaseColdResistance     { get { return m_ColdResistance     + (Server.Spells.Chivalry.HolyLightSpell.UnderAura(this) ? 10 : 0); } }
-		public override int BasePoisonResistance   { get { return m_PoisonResistance   + (Server.Spells.Chivalry.HolyLightSpell.UnderAura(this) ? 10 : 0); } }
-		public override int BaseEnergyResistance   { get { return m_EnergyResistance   + (Server.Spells.Chivalry.HolyLightSpell.UnderAura(this) ? 10 : 0); } }
+        public override int BasePhysicalResistance { get { return m_PhysicalResistance + (Misc.ItemOptionCreator.GetAttributeValue(this, 21) / 10000) + (Misc.ItemOptionCreator.GetAttributeValue(this, 27) / 10000); } }
+		public override int BaseFireResistance     { get { return m_FireResistance     + (Server.Spells.Chivalry.HolyLightSpell.UnderAura(this) ? 10 : 0) + (Misc.ItemOptionCreator.GetAttributeValue(this, 22) / 10000) + (Misc.ItemOptionCreator.GetAttributeValue(this, 26) / 10000) + (Misc.ItemOptionCreator.GetAttributeValue(this, 27) / 10000); } }
+		public override int BaseColdResistance     { get { return m_ColdResistance     + (Server.Spells.Chivalry.HolyLightSpell.UnderAura(this) ? 10 : 0) + (Misc.ItemOptionCreator.GetAttributeValue(this, 23) / 10000) + (Misc.ItemOptionCreator.GetAttributeValue(this, 26) / 10000) + (Misc.ItemOptionCreator.GetAttributeValue(this, 27) / 10000); } }
+		public override int BasePoisonResistance   { get { return m_PoisonResistance   + (Server.Spells.Chivalry.HolyLightSpell.UnderAura(this) ? 10 : 0) + (Misc.ItemOptionCreator.GetAttributeValue(this, 24) / 10000) + (Misc.ItemOptionCreator.GetAttributeValue(this, 26) / 10000) + (Misc.ItemOptionCreator.GetAttributeValue(this, 27) / 10000); } }
+		public override int BaseEnergyResistance   { get { return m_EnergyResistance   + (Server.Spells.Chivalry.HolyLightSpell.UnderAura(this) ? 10 : 0) + (Misc.ItemOptionCreator.GetAttributeValue(this, 25) / 10000) + (Misc.ItemOptionCreator.GetAttributeValue(this, 26) / 10000) + (Misc.ItemOptionCreator.GetAttributeValue(this, 27) / 10000); } }
         public override int BaseChaosResistance { get { return m_ChaosResistance; } }
         public override int BaseDirectResistance { get { return m_DirectResistance; } }
 
@@ -1960,6 +1960,98 @@ namespace Server.Mobiles
             return (p != null && p.RealLevel >= poison.RealLevel);
         }
 
+		public int[] ActiveSigils { get; set; } = new int[12]; // 0~3 Offense, 4~7 Defense, 8~11 Utility (OptionID, Value, Charges, Tier)
+
+		private int m_PetMaxSockets = -1;
+		public int PetMaxSockets
+		{
+			get
+			{
+				if (m_PetMaxSockets == -1 && this.Tamable)
+				{
+					GeneratePetSockets();
+				}
+				return m_PetMaxSockets;
+			}
+			set { m_PetMaxSockets = value; }
+		}
+
+		public int[] PetReqGems { get; set; } = new int[] { -1, -1, -1, -1 };
+		public int[] PetEquipGems { get; set; } = new int[] { -1, -1, -1, -1 };
+		public int[] PetEquipOptIDs { get; set; } = new int[] { -1, -1, -1, -1 };
+		public int[] PetEquipOptValues { get; set; } = new int[] { 0, 0, 0, 0 };
+		public int PetSynergy1 { get; set; }
+		public int PetSynergy2 { get; set; }
+
+		public void GeneratePetSockets()
+		{
+			int tier = 1;
+			if (this.Grade >= 6) tier = 4;
+			else if (this.Grade == 5) tier = 3;
+			else if (this.Grade >= 2) tier = 2;
+
+			int baseSockets = 0;
+			if (tier == 4) baseSockets = 3;
+			else if (tier == 3) baseSockets = 2;
+			else if (tier == 2) baseSockets = 1;
+
+			int currentSockets = baseSockets;
+			int maxSockets = 4;
+			double upgradeChance = 0.10;
+
+			while (currentSockets < maxSockets)
+			{
+				if (Utility.RandomDouble() < upgradeChance)
+					currentSockets++;
+				else
+					break;
+			}
+
+			m_PetMaxSockets = currentSockets;
+
+			if (m_PetMaxSockets == 1)
+			{
+				PetReqGems[0] = 99; // 1슬롯은 와일드카드(공용)로 설정하거나, 랜덤 보석으로 하되 시너지는 없음
+				PetSynergy1 = 0;
+			}
+			else if (m_PetMaxSockets == 2)
+			{
+				var keys = new System.Collections.Generic.List<(int, int)>(Misc.ItemOptionCreator.GemTwoSetBonus.Keys);
+				var (g1, g2) = Misc.ItemOptionCreator.GetWeightedRecipe(keys);
+				PetReqGems[0] = g1; PetReqGems[1] = g2;
+				PetSynergy1 = Misc.ItemOptionCreator.GemTwoSetBonus[(g1, g2)];
+			}
+			else if (m_PetMaxSockets == 3)
+			{
+				var keys = new System.Collections.Generic.List<(int, int, int)>(Misc.ItemOptionCreator.GemThreeSetBonus.Keys);
+				var (g1, g2, g3) = Misc.ItemOptionCreator.GetWeightedRecipe(keys);
+				PetReqGems[0] = g1; PetReqGems[1] = g2; PetReqGems[2] = g3;
+				PetSynergy1 = Misc.ItemOptionCreator.GemThreeSetBonus[(g1, g2, g3)];
+			}
+			else if (m_PetMaxSockets == 4)
+			{
+				var keys = new System.Collections.Generic.List<(int, int, int, int)>(Misc.ItemOptionCreator.GemFourSetBonus.Keys);
+				var (g1, g2, g3, g4) = Misc.ItemOptionCreator.GetWeightedRecipe(keys);
+				PetReqGems[0] = g1; PetReqGems[1] = g2; PetReqGems[2] = g3; PetReqGems[3] = g4;
+				var opts = Misc.ItemOptionCreator.GemFourSetBonus[(g1, g2, g3, g4)];
+				PetSynergy1 = opts.Item1;
+				PetSynergy2 = opts.Item2;
+			}
+		}
+
+		public bool IsPetSynergyActive()
+		{
+			if (m_PetMaxSockets <= 0) return false;
+			for (int i = 0; i < m_PetMaxSockets; i++)
+			{
+				int req = PetReqGems[i];
+				int ins = PetEquipGems[i];
+				if (ins == -1) return false; // 안 박혀있으면 실패
+				if (req != ins && req != 99) return false; // 틀려도 실패
+			}
+			return true;
+		}
+
 		[CommandProperty(AccessLevel.GameMaster)]
 		public int Loyalty
 		{
@@ -2090,6 +2182,24 @@ namespace Server.Mobiles
         public virtual int DamageMax { get { return m_DamageMax; } set { m_DamageMax = value; } }
 
         [CommandProperty(AccessLevel.GameMaster)]
+        public override int Str
+        {
+            get { return base.Str + (Misc.ItemOptionCreator.GetAttributeValue(this, 0) / 10000) + (Misc.ItemOptionCreator.GetAttributeValue(this, 3) / 10000); }
+        }
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public override int Dex
+        {
+            get { return base.Dex + (Misc.ItemOptionCreator.GetAttributeValue(this, 1) / 10000) + (Misc.ItemOptionCreator.GetAttributeValue(this, 3) / 10000); }
+        }
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public override int Int
+        {
+            get { return base.Int + (Misc.ItemOptionCreator.GetAttributeValue(this, 2) / 10000) + (Misc.ItemOptionCreator.GetAttributeValue(this, 3) / 10000); }
+        }
+
+        [CommandProperty(AccessLevel.GameMaster)]
         public override int HitsMax
         {
             get
@@ -2109,6 +2219,9 @@ namespace Server.Mobiles
                         value = 1000000;
                     }
                 }
+
+                value += (Misc.ItemOptionCreator.GetAttributeValue(this, 5) / 10000); // 체력
+                value += (Misc.ItemOptionCreator.GetAttributeValue(this, 8) / 10000); // 모든 자원
 
                 // Skill Masteries
                 if (Core.TOL)
@@ -2142,10 +2255,13 @@ namespace Server.Mobiles
                         value = 1000000;
                     }
 
+                    value += (Misc.ItemOptionCreator.GetAttributeValue(this, 6) / 10000); // 기력
+                    value += (Misc.ItemOptionCreator.GetAttributeValue(this, 8) / 10000); // 모든 자원
                     return value;
                 }
 
-                return Dex;
+                int baseVal = Dex + (Misc.ItemOptionCreator.GetAttributeValue(this, 6) / 10000) + (Misc.ItemOptionCreator.GetAttributeValue(this, 8) / 10000);
+                return baseVal;
             }
         }
 
@@ -2169,11 +2285,13 @@ namespace Server.Mobiles
                     {
                         value = 1000000;
                     }
-
+                    value += (Misc.ItemOptionCreator.GetAttributeValue(this, 7) / 10000); // 마나
+                    value += (Misc.ItemOptionCreator.GetAttributeValue(this, 8) / 10000); // 모든 자원
                     return value;
                 }
 
-                return Int;
+                int baseVal = Int + (Misc.ItemOptionCreator.GetAttributeValue(this, 7) / 10000) + (Misc.ItemOptionCreator.GetAttributeValue(this, 8) / 10000);
+                return baseVal;
             }
         }
 
@@ -2941,7 +3059,33 @@ namespace Server.Mobiles
         {
             base.Serialize(writer);
 
-            writer.Write(41); // version
+            writer.Write(44); // version
+
+			// version 44
+			for (int j = 0; j < 4; j++)
+			{
+				writer.Write(PetEquipOptIDs[j]);
+				writer.Write(PetEquipOptValues[j]);
+			}
+
+			// version 43
+			for (int j = 0; j < 4; j++)
+			{
+				writer.Write(PetEquipGems[j]);
+			}
+
+			// version 42
+			for (int j = 0; j < ActiveSigils.Length; ++j)
+			{
+				writer.Write(ActiveSigils[j]);
+			}
+			writer.Write(m_PetMaxSockets);
+			for (int j = 0; j < 4; j++)
+			{
+				writer.Write(PetReqGems[j]);
+			}
+			writer.Write(PetSynergy1);
+			writer.Write(PetSynergy2);
 
             int i = 0;
 
@@ -3189,6 +3333,38 @@ namespace Server.Mobiles
 
             switch (version)
             {
+				case 44:
+				{
+					for (int j = 0; j < 4; j++)
+					{
+						PetEquipOptIDs[j] = reader.ReadInt();
+						PetEquipOptValues[j] = reader.ReadInt();
+					}
+					goto case 43;
+				}
+				case 43:
+				{
+					for (int j = 0; j < 4; j++)
+					{
+						PetEquipGems[j] = reader.ReadInt();
+					}
+					goto case 42;
+				}
+				case 42:
+				{
+					for (int j = 0; j < ActiveSigils.Length; ++j)
+					{
+						ActiveSigils[j] = reader.ReadInt();
+					}
+					m_PetMaxSockets = reader.ReadInt();
+					for (int j = 0; j < 4; j++)
+					{
+						PetReqGems[j] = reader.ReadInt();
+					}
+					PetSynergy1 = reader.ReadInt();
+					PetSynergy2 = reader.ReadInt();
+					goto case 41;
+				}
 				case 41:
 				{
 					m_SpecialType1 = reader.ReadInt();
@@ -7895,8 +8071,30 @@ namespace Server.Mobiles
             creature.SetHits(
                 (int)Math.Floor(creature.HitsMax * (1 + ArcaneEmpowermentSpell.GetSpellBonus(caster, false) / 100.0)));
 
+            // [미스티시즘 보너스 적용]
+            double mysticSkill = caster.Skills[SkillName.Mysticism].Value;
+            if (mysticSkill > 0)
+            {
+                // 소환수 능력 0.3% 증가 / 100 스킬 시 40% 추가 증가
+                double buff = (mysticSkill * 0.003); 
+                if (mysticSkill >= 100.0) buff += 0.40;
+                
+                creature.RawStr = (int)(creature.RawStr * (1.0 + buff));
+                creature.RawDex = (int)(creature.RawDex * (1.0 + buff));
+                creature.RawInt = (int)(creature.RawInt * (1.0 + buff));
+                creature.HitsMaxSeed = (int)(creature.HitsMaxSeed * (1.0 + buff));
+                creature.StamMaxSeed = (int)(creature.StamMaxSeed * (1.0 + buff));
+                creature.ManaMaxSeed = (int)(creature.ManaMaxSeed * (1.0 + buff));
+                creature.Hits = creature.HitsMax;
+                creature.Stam = creature.StamMax;
+                creature.Mana = creature.ManaMax;
+                creature.DamageMin = (int)(creature.DamageMin * (1.0 + buff));
+                creature.DamageMax = (int)(creature.DamageMax * (1.0 + buff));
+            }
+
             new UnsummonTimer(caster, creature, duration).Start();
             creature.m_SummonEnd = DateTime.UtcNow + duration;
+
 
             creature.MoveToWorld(p, caster.Map);
 

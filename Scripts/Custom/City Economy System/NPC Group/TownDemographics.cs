@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Server;
@@ -45,6 +45,7 @@ namespace Server.Misc
         private static NpcJobClass AssignJobByTown(string townName)
         {
             string tName = townName.ToLower();
+            int roll;
 
             // 1. 씨 마켓 (Sea Market): 100% 어부/잠수부
             if (tName.Contains("sea market"))
@@ -55,7 +56,7 @@ namespace Server.Misc
             // 2. 파푸아 & 델루시아 (오지): 1차 산업(광/농/벌목)에 100% 종사
             if (tName.Contains("papua") || tName.Contains("delucia"))
             {
-                int roll = Utility.Random(100);
+                roll = Utility.Random(100);
                 if (roll < 30) return (NpcJobClass)Utility.RandomMinMax(113, 122); // 농부/과수원
                 if (roll < 50) return (NpcJobClass)Utility.RandomMinMax(136, 138); // 광부
                 if (roll < 70) return (NpcJobClass)Utility.RandomMinMax(133, 135); // 벌목꾼
@@ -66,7 +67,7 @@ namespace Server.Misc
             // 3. 마진시아 (Magincia): 폐허 컨셉에 맞춰 채집, 청소부
             if (tName.Contains("magincia"))
             {
-                int roll = Utility.Random(100);
+                roll = Utility.Random(100);
                 if (roll < 40) return (NpcJobClass)Utility.RandomMinMax(113, 116); // 채집가
                 if (roll < 70) return (NpcJobClass)Utility.RandomMinMax(124, 126); // 해변/미역 수집가
                 return NpcJobClass.StreetSweeper; 
@@ -75,20 +76,37 @@ namespace Server.Misc
             // 4. 부케니어스 덴 (Buccaneer's Den): 음지 경제 및 도둑들
             if (tName.Contains("buccaneer"))
             {
-                int roll = Utility.Random(100);
+                roll = Utility.Random(100);
                 if (roll < 40) return NpcJobClass.Thief;
                 if (roll < 70) return NpcJobClass.Assassin;
                 if (roll < 85) return NpcJobClass.InnKeeper;
                 return NpcJobClass.Trapper;
             }
 
-            // 5. 일반 대도시 (Britain, Trinsic, Minoc 등): 밸런스 있는 도시형 직업군
-            int baseGroup = Utility.RandomMinMax(1, 10) * 100; 
-            
-            // 도시 내 모험가(전사/마법사) 계층 비율 조절 (평민 중 15% 정도만)
-            if ((baseGroup == 600 || baseGroup == 700 || baseGroup == 800) && Utility.RandomDouble() > 0.15)
+            // 5. 물 특산지 (Water Specialty): 스카라 브래(Skara Brae), 트린식(Trinsic), 미녹(Minoc)
+            if (tName.Contains("skara") || tName.Contains("trinsic") || tName.Contains("minoc"))
             {
-                baseGroup = Utility.RandomMinMax(1, 5) * 100; // 기초 생산/제작직으로 강등
+                // 인구의 25%가 '물장수(WaterCarrier)'에 종사하여 물을 대량 생산함
+                if (Utility.Random(100) < 25) 
+                    return NpcJobClass.WaterCarrier;
+            }
+
+            // 6. 일반 대도시 (Britain, Yew 등): 피라미드형 인구 구조 (하급 생산직 다수 배정)
+            roll = Utility.Random(100);
+            int baseGroup = 100;
+            
+            if (roll < 50) // 50%: 1차 산업 (농부, 광부, 노동자, 해양인)
+            {
+                baseGroup = Utility.RandomBool() ? 100 : (Utility.RandomBool() ? 900 : 100); 
+            }
+            else if (roll < 80) // 30%: 2차 산업 및 서비스 (대장장이, 상인, 여관주인)
+            {
+                baseGroup = Utility.RandomBool() ? 200 : (Utility.RandomBool() ? 600 : 800);
+            }
+            else // 20%: 상위 소비 계층 (전사, 마법사, 귀족, 학자, 성직자)
+            {
+                int[] upperTiers = { 300, 400, 500, 700, 1000 };
+                baseGroup = upperTiers[Utility.Random(upperTiers.Length)];
             }
 
             return SelectValidJobFromGroup(baseGroup, NobilityRank.Commoner);

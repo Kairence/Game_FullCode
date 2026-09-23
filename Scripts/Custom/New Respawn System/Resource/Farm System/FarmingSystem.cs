@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Server.Mobiles;
@@ -11,6 +11,28 @@ namespace Server.Items
     public static class FarmingSystem
     {
         private static Dictionary<string, int> m_PendingLivestock = new();
+
+        public static void Initialize()
+        {
+            // 전역 농사 타이머 시작 (1분 주기로 모든 작물 스캔)
+            Timer.DelayCall(TimeSpan.FromMinutes(1.0), TimeSpan.FromMinutes(1.0), FarmGrowthTick);
+        }
+
+        private static void FarmGrowthTick()
+        {
+            int currentTick = Environment.TickCount;
+            // 월드 내의 모든 BaseFarmItem을 가져옴
+            var crops = World.Items.Values.OfType<BaseFarmItem>().ToList();
+            
+            foreach (var crop in crops)
+            {
+                if (crop != null && !crop.Deleted)
+                {
+                    crop.CheckGrowth();
+                    HandlePlantBreeding(crop, currentTick);
+                }
+            }
+        }
 
         // 🌟 [추가 1] 대륙 OFF 시 해당 맵의 모든 물리적 작물 아이템을 일괄 제거하는 청소 함수 (NewSpawnManager 연동용)
         public static int ClearMapCrops(Map map)
@@ -138,7 +160,7 @@ namespace Server.Items
 
         public static void GiveXP(Mobile from, int amount)
         {
-            // from.CheckSkill(SkillName.Herding, 0, 120); 
+            from.CheckSkill(SkillName.Herding, 0, 120); 
         }
     }
 }

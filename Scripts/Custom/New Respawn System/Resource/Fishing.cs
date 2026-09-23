@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Server.Engines.Quests;
 using Server.Engines.Quests.Collector;
@@ -12,6 +12,10 @@ namespace Server.Engines.Harvest
 {
     public class Fishing : HarvestSystem
     {
+        // TODO: [개발 예정] 낚시(Fishing) 100 달성 - 빅피쉬, 그물, 보물지도, SOS 등 부가 아이템 획득 (현재 BigFish 80으로 구현된 부분 검토 필요)
+        // TODO: [개발 예정] 낚시(Fishing) 150 달성 - 그물류 모두 사용 가능 (미구현)
+        // TODO: [개발 예정] 낚시(Fishing) 200 달성 - 해양 유물 획득 (미구현)
+
         private static Fishing m_System;
 
         public static Fishing System => m_System ??= new Fishing();
@@ -138,10 +142,32 @@ namespace Server.Engines.Harvest
             double point = entry.m_MaxSkill + entry.m_MinSkill;
             double chance = 1 + (skillValue - entry.m_MaxSkill) * 0.02;
 
-            // 🌟 낚시 대회용 Big Fish 드랍 체크 (스킬 80 이상, 심해)
-            if (deepWater && skillValue >= 80.0 && Utility.RandomDouble() < 0.02) // 2% 확률
+            // 🌟 낚시 100 달성 시 부가 아이템 드랍 (심해)
+            if (deepWater && skillValue >= 100.0)
             {
-                upgrade = typeof(BigFish);
+                double rnd = Utility.RandomDouble();
+                
+                // 200 스킬 시 해양 유물(예: WhitePearl 등 희귀 자원이나 아티팩트로 대체) 0.1%
+                if (skillValue >= 200.0 && rnd < 0.001)
+                {
+                    upgrade = typeof(WhitePearl);
+                }
+                else if (rnd < 0.01) // 1%
+                {
+                    upgrade = typeof(MessageInABottle);
+                }
+                else if (rnd < 0.02) // 1%
+                {
+                    upgrade = typeof(TreasureMap);
+                }
+                else if (rnd < 0.03) // 1%
+                {
+                    upgrade = typeof(SpecialFishingNet);
+                }
+                else if (rnd < 0.05) // 2%
+                {
+                    upgrade = typeof(BigFish);
+                }
             }
 
             return (upgrade, chance, point, failcheck);

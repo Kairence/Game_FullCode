@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server.Multis;
 using Server.Network;
 using Server.Mobiles;
@@ -68,16 +68,31 @@ namespace Server.SkillHandlers
                     bonus = 50.0;
             }
 
-            //int range = 18 - (int)(m.Skills[SkillName.Hiding].Value / 10);
-            int skill = Math.Min(100, (int)m.Skills[SkillName.Hiding].Value);
-            int range = Math.Min((int)((100 - skill) / 2) + 8, 18);	//Cap of 18 not OSI-exact, intentional difference
+            double hidingSkill = m.Skills[SkillName.Hiding].Value;
 
-            bool badCombat = (!m_CombatOverride && m.Combatant is Mobile && m.InRange(m.Combatant.Location, range) && ((Mobile)m.Combatant).InLOS(m.Combatant));
-            bool ok = (!badCombat /*&& m.CheckSkill( SkillName.Hiding, 0.0 - bonus, 100.0 - bonus )*/);
+            // [커스텀: 하이딩 시 기력 소모]
+            int stamCost = hidingSkill >= 200.0 ? 0 : 10;
+            if (m.Stam < stamCost)
+            {
+                m.SendMessage("은신을 시도하기 위한 기력이 부족합니다.");
+                return TimeSpan.FromSeconds(1.0);
+            }
+            m.Stam -= stamCost;
+
+            if (hidingSkill >= 100.0)
+                bonus += 5.0; // 은신 확률 5% 증가
+
+            int skill = Math.Min(100, (int)hidingSkill);
+            int range = Math.Min((int)((100 - skill) / 2) + 8, 18);
+
+            // [커스텀: 100 스킬 시 전투 중 은신 가능]
+            bool bypassCombat = hidingSkill >= 100.0;
+            bool badCombat = (!m_CombatOverride && !bypassCombat && m.Combatant is Mobile && m.InRange(m.Combatant.Location, range) && ((Mobile)m.Combatant).InLOS(m.Combatant));
+            bool ok = (!badCombat);
 
             if (ok)
             {
-                if (!m_CombatOverride)
+                if (!m_CombatOverride && !bypassCombat)
                 {
                     IPooledEnumerable eable = m.GetMobilesInRange(range);
 
@@ -120,15 +135,29 @@ namespace Server.SkillHandlers
 					Server.Spells.Sixth.InvisibilitySpell.RemoveTimer(m);
                     Server.Items.InvisibilityPotion.RemoveTimer(m);
                     m.LocalOverheadMessage(MessageType.Regular, 0x1F4, 501240); // You have hidden yourself well.
+
+                    // [커스텀: 하이딩 성공 시 자동 스텔스 부여]
+                    double stealthSkill = m.Skills[SkillName.Stealth].Value;
+                    if (stealthSkill >= 100.0)
+                    {
+                        Stealth.OnUse(m); // 즉시 이동 가능
+                    }
+                    else
+                    {
+                        // 5초 뒤 이동 가능
+                        Timer.DelayCall(TimeSpan.FromSeconds(5.0), delegate
+                        {
+                            if (m.Hidden) Stealth.OnUse(m);
+                        });
+                    }
                 }
                 else
                 {
                     m.RevealingAction();
-
                     m.LocalOverheadMessage(MessageType.Regular, 0x22, 501241); // You can't seem to hide here.
                 }
 
-                return TimeSpan.FromSeconds(10.0);
+                return TimeSpan.FromSeconds(60.0); // 1분 쿨타임
             }
         }
     }

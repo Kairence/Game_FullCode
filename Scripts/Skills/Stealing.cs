@@ -1,4 +1,4 @@
-﻿#region References
+#region References
 using System;
 using System.Collections.Generic;
 
@@ -270,7 +270,7 @@ namespace Server.SkillHandlers
                 {
                     m_Thief.SendLocalizedMessage(1060025, "", 0x66D); // You're not skilled enough to attempt the theft of this item.
                 }
-                else if (toSteal.Parent is Mobile)
+                else if (toSteal.Parent is Mobile && m_Thief.Skills[SkillName.Stealing].Value < 50.0)
                 {
                     m_Thief.SendLocalizedMessage(1005585); // You cannot steal items which are equiped.
                 }
@@ -313,6 +313,9 @@ namespace Server.SkillHandlers
                                 maxAmount = toSteal.Amount;
                             }
 
+                            // [커스텀: NPC 대상 스틸링 확률 스킬당 0.1% 증가 -> 난이도 보정]
+                            double bonus = root is BaseCreature ? m_Thief.Skills[SkillName.Stealing].Value * 0.1 : 0.0;
+                            
                             int amount = Utility.RandomMinMax(1, maxAmount);
 
                             if (amount >= toSteal.Amount)
@@ -320,7 +323,7 @@ namespace Server.SkillHandlers
                                 int pileWeight = (int)Math.Ceiling(toSteal.Weight * toSteal.Amount);
                                 pileWeight *= 10;
 
-                                if (m_Thief.CheckTargetSkill(SkillName.Stealing, toSteal, pileWeight - 22.5, pileWeight + 27.5))
+                                if (m_Thief.CheckTargetSkill(SkillName.Stealing, toSteal, pileWeight - 22.5 - bonus, pileWeight + 27.5 - bonus))
                                 {
                                     stolen = toSteal;
                                 }
@@ -330,7 +333,7 @@ namespace Server.SkillHandlers
                                 int pileWeight = (int)Math.Ceiling(toSteal.Weight * amount);
                                 pileWeight *= 10;
 
-                                if (m_Thief.CheckTargetSkill(SkillName.Stealing, toSteal, pileWeight - 22.5, pileWeight + 27.5))
+                                if (m_Thief.CheckTargetSkill(SkillName.Stealing, toSteal, pileWeight - 22.5 - bonus, pileWeight + 27.5 - bonus))
                                 {
                                     stolen = Mobile.LiftItemDupe(toSteal, toSteal.Amount - amount);
 
@@ -346,7 +349,9 @@ namespace Server.SkillHandlers
                             int iw = (int)Math.Ceiling(w);
                             iw *= 10;
 
-                            if (m_Thief.CheckTargetSkill(SkillName.Stealing, toSteal, iw - 22.5, iw + 27.5))
+                            double bonus = root is BaseCreature ? m_Thief.Skills[SkillName.Stealing].Value * 0.1 : 0.0;
+
+                            if (m_Thief.CheckTargetSkill(SkillName.Stealing, toSteal, iw - 22.5 - bonus, iw + 27.5 - bonus))
                             {
                                 stolen = toSteal;
                             }
@@ -399,7 +404,11 @@ namespace Server.SkillHandlers
 
             protected override void OnTarget(Mobile from, object target)
             {
-                from.RevealingAction();
+                // [커스텀: 150 미만은 무조건 시도 시 은신 해제]
+                if (from.Skills[SkillName.Stealing].Value < 150.0)
+                {
+                    from.RevealingAction();
+                }
 
                 Item stolen = null;
                 object root = null;
@@ -440,6 +449,19 @@ namespace Server.SkillHandlers
 
                 if (stolen != null)
                 {
+                    // [커스텀: 100 보너스 (성공 시 대기 시간 절반 감소)]
+                    if (from.Skills[SkillName.Stealing].Value >= 100.0)
+                    {
+                        from.NextSkillTime = Core.TickCount + (int)TimeSpan.FromSeconds(5.0).TotalMilliseconds; // 기본 10초의 절반
+                    }
+
+                    // [커스텀: 200 보너스 (스틸링 성공 시 은신 해제 안 됨)]
+                    // 150이상 ~ 200미만은 성공하더라도 은신 해제됨
+                    if (from.Skills[SkillName.Stealing].Value >= 150.0 && from.Skills[SkillName.Stealing].Value < 200.0)
+                    {
+                        from.RevealingAction();
+                    }
+
                     if (stolen is AddonComponent component)
                     {
                         if (component.Addon is BaseAddon addon)
@@ -457,6 +479,14 @@ namespace Server.SkillHandlers
                     {
                         // do not return stolen containers or stackable items
                         StolenItem.Add(stolen, m_Thief, root as Mobile);
+                    }
+                }
+                else
+                {
+                    // [커스텀: 실패 시에는 150 이상이더라도 무조건 은신 해제]
+                    if (from.Skills[SkillName.Stealing].Value >= 150.0)
+                    {
+                        from.RevealingAction();
                     }
                 }
 
@@ -526,7 +556,12 @@ namespace Server.SkillHandlers
             else
             {
                 m.Target = new StealingTarget(m);
-                m.RevealingAction();
+
+                // [커스텀: 150 보너스 (타겟팅 중 은신 유지)]
+                if (m.Skills[SkillName.Stealing].Value < 150.0)
+                {
+                    m.RevealingAction();
+                }
 
                 m.SendLocalizedMessage(502698); // Which item do you want to steal?
             }

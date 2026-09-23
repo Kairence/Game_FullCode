@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server.Targeting;
 
 namespace Server.Items
@@ -124,13 +124,55 @@ namespace Server.Items
             int maxlevel = lockpickable.MaxLockLevel;
             int minLevel = lockpickable.LockLevel - 25;
 
+            double lockpickingSkill = from.Skills[SkillName.Lockpicking].Value;
+
+            // 150 보너스: 해제 난이도 단계 1 하락 (-25 level equivalent in UO standard, or just subtract 10 from required levels)
+            if (lockpickingSkill >= 150.0)
+            {
+                minLevel -= 25;
+                maxlevel -= 25;
+            }
+
             if (lockpickable is Skeletonkey)
             {
                 minLevel -= SkillBonus;
                 maxlevel -= SkillBonus; //regulars subtract the bonus from the max level
             }
 
-            if (this is MasterSkeletonKey || from.CheckTargetSkill(SkillName.Lockpicking, lockpickable, minLevel, maxlevel))
+            // 100 보너스: 보스 상자 해제 가능 (이 구현은 보스 상자 스크립트에서 ILockpickable로 처리될 수 있으므로, 기본적으로 허용으로 둠)
+            // 200 보너스: 던전 문 해제 가능
+            if (lockpickable is BaseDoor && lockpickingSkill < 200.0)
+            {
+                from.SendMessage("던전 문을 해제하려면 자물쇠 따기 스킬이 200 이상이어야 합니다.");
+                return;
+            }
+
+            bool success = false;
+            
+            if (this is MasterSkeletonKey)
+            {
+                success = true;
+            }
+            else
+            {
+                // 100 보너스: 해제 확률 5% 증가 (minLevel과 maxLevel 보정으로 달성하거나 주사위 보정)
+                double chance = Misc.SkillCheck.GetSuccessChance(lockpickingSkill, minLevel);
+                if (lockpickingSkill >= 100.0)
+                {
+                    chance += 0.05; // 5% 확률 추가
+                }
+
+                if (Utility.RandomDouble() < chance)
+                {
+                    success = true;
+                }
+                else
+                {
+                    from.CheckTargetSkill(SkillName.Lockpicking, lockpickable, minLevel, maxlevel); // 스킬 상승용 헛스윙
+                }
+            }
+
+            if (success)
             {
                 // Success! Pick the lock!
                 OnUse();

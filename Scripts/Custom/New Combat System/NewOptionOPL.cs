@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server;
 using Server.Items;
 using Server.Mobiles;
@@ -234,8 +234,94 @@ namespace Server.Misc
             return valStr;
         }
 
-        #region 3. 제련 옵션 (미사용)
-        private static void AppendRefineOptions(ObjectPropertyList list, IEquipOption eqItem) { return; }
+        #region 3. 제련 옵션
+        private static void AppendRefineOptions(ObjectPropertyList list, IEquipOption eqItem) 
+        { 
+            int maxSlots = eqItem.PrefixOption[3];
+            if (maxSlots <= 0) return;
+
+            list.Add(1042971, "<BASEFONT COLOR=#00BFFF>[재련 옵션]</BASEFONT>"); 
+
+            string pattern = "";
+            bool isAllMatched = true;
+
+            for (int i = 0; i < maxSlots; i++)
+            {
+                int req = eqItem.PrefixOption[31 + i]; 
+                int ins = eqItem.SuffixOption[31 + i]; 
+
+                string gemName = GetGemFullName(req);
+                
+                if (ins == -1) 
+                {
+                    pattern += $"<BASEFONT COLOR=#777777>[{gemName}]</BASEFONT> ";
+                    isAllMatched = false;
+                }
+                else if (req == ins || req == 99) 
+                {
+                    string insName = GetGemFullName(ins);
+                    pattern += $"<BASEFONT COLOR=#00FF00>[{insName}]</BASEFONT> ";
+                }
+                else 
+                {
+                    string insName = GetGemFullName(ins);
+                    pattern += $"<BASEFONT COLOR=#FF0000>[{insName}]</BASEFONT> ";
+                    isAllMatched = false;
+                }
+            }
+
+            list.Add(1042971, "요구: " + pattern);
+
+            int syn1 = eqItem.PrefixOption[39];
+            int syn2 = eqItem.PrefixOption[40];
+
+            if (syn1 > 0)
+            {
+                string syn1Name = GetOptionNameOrCliloc(syn1);
+                int syn1Val = eqItem.SuffixOption[39];
+                string valStr = syn1Val == 200000 ? "+20.0" : FormatValue(syn1, syn1Val);
+
+                string color = isAllMatched ? "<BASEFONT COLOR=#FFCC00>" : "<BASEFONT COLOR=#777777>";
+                list.Add(1042971, $"{color}시너지: {syn1Name} {valStr}</BASEFONT>");
+            }
+
+            if (syn2 > 0)
+            {
+                string syn2Name = GetOptionNameOrCliloc(syn2);
+                int syn2Val = eqItem.SuffixOption[40];
+                string valStr = syn2Val == 200000 ? "+20.0" : FormatValue(syn2, syn2Val);
+
+                string color = isAllMatched ? "<BASEFONT COLOR=#FFCC00>" : "<BASEFONT COLOR=#777777>";
+                list.Add(1042971, $"{color}시너지: {syn2Name} {valStr}</BASEFONT>");
+            }
+        }
+
+        private static string GetOptionNameOrCliloc(int optID)
+        {
+            if (_optionNames.TryGetValue(optID, out string name)) return name;
+
+            int cliloc = Misc.ItemOptionCreator.GetCliloc(optID);
+            string clilocName = ClilocData.GetString(cliloc);
+            return string.IsNullOrEmpty(clilocName) ? $"알수없음({optID})" : clilocName;
+        }
+
+        private static string GetGemFullName(int gemIndex)
+        {
+            switch (gemIndex)
+            {
+                case 0: return "별사파이어";
+                case 1: return "에메랄드";
+                case 2: return "사파이어";
+                case 3: return "루비";
+                case 4: return "황수정";
+                case 5: return "자수정";
+                case 6: return "전기석";
+                case 7: return "호박";
+                case 8: return "다이아몬드";
+                case 99: return "전체(공용)";
+                default: return "알수없음";
+            }
+        }
         #endregion
 
         #region 4. 강화 옵션

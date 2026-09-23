@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server.Guilds;
 using Server.Engines.Craft;
 
@@ -83,6 +83,18 @@ namespace Server.Items
         public override bool OnEquip(Mobile from)
         {
             return this.Validate(from) && base.OnEquip(from);
+        }
+
+        // [커스텀] 질서 방패(오더 방패) 장착 조건: 기사도(Chivalry) 150 이상
+        public override bool CanEquip(Mobile from)
+        {
+            if (from.Skills[SkillName.Chivalry].Value < 150.0)
+            {
+                from.SendMessage("기사도 스킬이 150 이상이어야 질서 방패를 장착할 수 있습니다.");
+                return false;
+            }
+
+            return base.CanEquip(from);
         }
 
         public override void OnSingleClick(Mobile from)

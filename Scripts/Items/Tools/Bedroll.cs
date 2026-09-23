@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server.Gumps;
 using Server.Mobiles;
 using Server.Network;
@@ -39,6 +39,23 @@ namespace Server.Items
                     this.ItemID = 0xA55;
                 else
                     this.ItemID = 0xA56;
+                
+                // [커스텀] 침낭을 펼칠 때 캠프파이어 주변이면 '편안함' 버프 적용
+                CampfireEntry entry = Campfire.GetEntry(from);
+                if (entry != null && entry.Safe)
+                {
+                    double camping = from.Skills[SkillName.Camping].Value;
+                    int duration = 300;
+                    if (camping >= 200.0) duration = 1500;
+                    else if (camping >= 150.0) duration = 1200;
+                    else if (camping >= 100.0) duration = 900;
+
+                    BuffInfo.AddBuff(from, new BuffInfo(BuffIcon.ActiveMeditation, 1049610, 1075631, TimeSpan.FromSeconds(duration), from));
+                    from.SendMessage($"따뜻한 캠프파이어 곁에서 침낭을 펼쳐 {duration}초 동안 체력, 기력, 마나 회복 속도가 증가하는 '편안함(Comfort)' 버프를 받습니다.");
+                    
+                    if (from is PlayerMobile pm)
+                        pm.ComfortBuffEnd = DateTime.Now + TimeSpan.FromSeconds(duration);
+                }
             }
             else // unrolled
             {
@@ -49,7 +66,9 @@ namespace Server.Items
                     CampfireEntry entry = Campfire.GetEntry(from);
 
                     if (entry != null && entry.Safe)
+                    {
                         from.SendGump(new LogoutGump(entry, this));
+                    }
                 }
             }
         }

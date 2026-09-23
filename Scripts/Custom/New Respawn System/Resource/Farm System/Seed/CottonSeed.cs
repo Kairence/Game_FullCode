@@ -1,16 +1,18 @@
-ï»¿using System;
+using System;
 
 namespace Server.Items
 {
     public class CottonSeed : BaseSeed
     {
         public override Type CropType => typeof(Cotton);
+        public override double MinSkill => 80.0;
+        public override double MaxSkill => 130.0;
 
         [Constructable]
         public CottonSeed() : base(0xDCF)
         {
             Hue = 1153;
-            Name = "ëª©í™” ì”¨ì•—";
+            Name = "¸ñÈ­ ¾¾¾Ñ";
         }
 
         public CottonSeed(Serial serial) : base(serial) { }
@@ -18,3 +20,4 @@ namespace Server.Items
         public override void Deserialize(GenericReader reader) { base.Deserialize(reader); int version = reader.ReadInt(); }
     }
 }
+

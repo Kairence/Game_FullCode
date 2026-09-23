@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Server;
@@ -209,7 +209,7 @@ namespace Server.Misc
         public FarmBeehiveComponent() : base(0x091A) { Name = "양봉통"; m_NextHarvest = DateTime.Now; }
         public override void OnDoubleClick(Mobile from)
         {
-            if (from.Skills[SkillName.Herding].Base < 50.0) { from.SendMessage("양봉을 관리할 스킬이 부족합니다."); return; }
+            if (from.Skills[SkillName.Herding].Base < 160.0) { from.SendMessage("양봉을 관리할 스킬이 부족합니다. (160 필요)"); return; }
             if (DateTime.Now < m_NextHarvest) { from.SendMessage("벌들이 아직 꿀을 모으고 있습니다."); return; }
             from.Animate(32, 5, 1, true, false, 0); from.PlaySound(0x0DF);
             from.AddToBackpack(new JarHoney(Utility.RandomMinMax(1, 3)));
@@ -231,7 +231,7 @@ namespace Server.Misc
         public FarmOrchardComponent() : base(0x0D01) { Name = "과수원 나무"; m_NextHarvest = DateTime.Now + TimeSpan.FromHours(4.0); }
         public override void OnDoubleClick(Mobile from)
         {
-            if (from.Skills[SkillName.Herding].Base < 150.0) { from.SendMessage("과수원을 수확할 스킬이 부족합니다."); return; }
+            if (from.Skills[SkillName.Herding].Base < 70.0) { from.SendMessage("과수원을 수확할 스킬이 부족합니다. (70 필요)"); return; }
             if (DateTime.Now < m_NextHarvest) { from.SendMessage("아직 과일이 덜 익었습니다."); return; }
             from.Animate(32, 5, 1, true, false, 0); from.PlaySound(0x13E); 
             Item fruit = Utility.Random(4) switch { 0 => new Apple(Utility.RandomMinMax(3, 6)), 1 => new Banana(Utility.RandomMinMax(3, 6)), 2 => new Peach(Utility.RandomMinMax(3, 6)), _ => new Pear(Utility.RandomMinMax(3, 6)) };
@@ -266,10 +266,41 @@ namespace Server.Misc
 
             foreach (var animal in farm.Animals)
             {
-                if (animal is Chicken && skill >= 50.0) { from.AddToBackpack(new Eggs(2)); from.AddToBackpack(new Feather(5)); }
-                else if (animal is Cow && skill >= 100.0) { from.AddToBackpack(new Bottle(1)); /* 우유 로직 대체 가능 */ }
-                else if (animal is Sheep && skill >= 150.0) { from.AddToBackpack(new Wool(3)); }
-                else if ((animal is Horse || animal is Llama) && skill >= 200.0)
+                if (animal is Chicken && skill >= 30.0) 
+                { 
+                    from.AddToBackpack(new Eggs(Utility.RandomMinMax(2, 4))); 
+                    from.AddToBackpack(new Feather(Utility.RandomMinMax(5, 10))); 
+                }
+                else if (animal is Cow && skill >= 50.0) 
+                { 
+                    from.AddToBackpack(new Pitcher(BeverageType.Milk)); 
+                    from.AddToBackpack(new RawRibs(Utility.RandomMinMax(2, 5))); 
+                    from.AddToBackpack(new Leather(Utility.RandomMinMax(2, 5))); 
+                }
+                else if (animal is Pig && skill >= 80.0) 
+                { 
+                    from.AddToBackpack(new RawRibs(Utility.RandomMinMax(5, 15))); 
+                }
+                else if (animal is Sheep && skill >= 115.0) 
+                { 
+                    Item wool = new Wool(Utility.RandomMinMax(3, 5));
+                    // 15% 확률로 특수색 양털 드랍 (스킬이 높을수록 확률 증가 가능하지만 기본 15%)
+                    if (Utility.RandomDouble() < (0.10 + (skill / 1000.0))) 
+                    {
+                        wool.Hue = Utility.RandomList(1150, 1151, 1152, 1153, 1154, 1161, 1162, 1266);
+                        from.SendMessage(68, "희귀한 특수색 양털을 얻었습니다!");
+                    }
+                    from.AddToBackpack(wool); 
+                }
+                else if ((animal is PackHorse || animal is PackLlama) && skill >= 140.0)
+                {
+                    if (Utility.RandomDouble() < 0.20) // 20% 확률로 계약서 생성
+                    {
+                        from.AddToBackpack(new PackAnimalContract());
+                        from.SendMessage(68, "짐꾼 동물 육성에 성공하여 양도 계약서를 얻었습니다!");
+                    }
+                }
+                else if ((animal is Horse || animal is Llama) && !(animal is PackHorse) && !(animal is PackLlama) && skill >= 200.0)
                 {
                     if (Utility.RandomDouble() < 0.001) // 0.1% 에테리얼 잭팟
                     {

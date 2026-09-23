@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Server.Mobiles;
 using Server.Targeting;
@@ -151,10 +151,15 @@ namespace Server.Items
                 double subSkill = isPet ? m_Healer.Skills.AnimalLore.Value : m_Healer.Skills.Anatomy.Value;
                 int heal = (int)( ( Utility.RandomMinMax(50, 100) * ( 1 + subSkill * 0.1 ) ) );
 
-                // [기획] 중독/200레벨 보정
+                // [기획] 중독/200레벨 보정 (펫: 수의학 200, 사람: 해부학 200)
 				bool skillBonus = false;
-				if (m_Patient.Poisoned && mainSkill >= 200.0)
-					skillBonus = true;
+				if (m_Patient.Poisoned)
+				{
+					if (isPet && m_Healer.Skills.Veterinary.Value >= 200.0)
+						skillBonus = true;
+					else if (!isPet && m_Healer.Skills.Anatomy.Value >= 200.0)
+						skillBonus = true;
+				}
 
                 // [기획] 펫 2배 회복
                 if (isPet) heal *= 2;

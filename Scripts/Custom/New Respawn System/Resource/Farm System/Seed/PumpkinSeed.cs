@@ -1,16 +1,18 @@
-ï»¿using System;
+using System;
 
 namespace Server.Items
 {
     public class PumpkinSeed : BaseSeed
     {
         public override Type CropType => typeof(Pumpkin);
+        public override double MinSkill => 90.0;
+        public override double MaxSkill => 140.0;
 
         [Constructable]
         public PumpkinSeed() : base(0xDCF)
         {
             Hue = 0x30;
-            Name = "í˜¸ë°• ì”¨ì•—";
+            Name = "È£¹Ú ¾¾¾Ñ";
         }
 
         public PumpkinSeed(Serial serial) : base(serial) { }
@@ -18,3 +20,4 @@ namespace Server.Items
         public override void Deserialize(GenericReader reader) { base.Deserialize(reader); int version = reader.ReadInt(); }
     }
 }
+

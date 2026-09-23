@@ -1,4 +1,4 @@
-﻿#region References
+#region References
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -144,6 +144,10 @@ namespace Server.Mobiles
 			}
 		}
 		#endregion
+
+		// [커스텀] 편안함(Comfort) 버프 만료 시간
+		[CommandProperty(AccessLevel.GameMaster)]
+		public DateTime ComfortBuffEnd { get; set; }
 
 		#region Stygian Abyss
         public override void ToggleFlying()
@@ -1658,128 +1662,128 @@ namespace Server.Mobiles
             from.CheckStatTimers();
         }
 		
-		// 기획표에 따른 스킬별 스탯 상승 확률 및 50 달성 보너스 수치
+		// 기획표에 따른 스킬별 스탯 상승 수치 (위키 데이터 기준, 1.0 = 100)
 		// 열 순서: str, dex, int, luc, hit, stm, mana
 		private static readonly int[,] m_StatUp = new int[,]
 		{
-			{0, 0, 200, 0, 100, 100, 100}, // 0: Alchemy
-			{100, 100, 0, 0, 100, 0, 0}, // 1: Anatomy
-			{0, 0, 200, 0, 0, 0, 100}, // 2: AnimalLore
-			{0, 0, 200, 0, 0, 0, 0}, // 3: ItemIdentification
-			{100, 0, 100, 0, 0, 0, 0}, // 4: ArmsLore
-			{100, 0, 0, 0, 200, 0, 0}, // 5: Parrying
-			{0, 0, 0, 300, 0, 100, 0}, // 6: Begging (운 보너스 반영)
-			{200, 100, 0, 0, 0, 200, 0}, // 7: Blacksmithy
-			{100, 150, 0, 0, 0, 150, 0}, // 8: BowcraftFletching
-			{0, 0, 200, 0, 0, 0, 100}, // 9: Peacemaking
-			{200, 200, 200, 0, 0, 0, 0}, // 10: Camping
-			{100, 100, 50, 0, 0, 200, 0}, // 11: Carpentry
-			{0, 0, 200, 0, 0, 0, 0}, // 12: Cartography
-			{100, 100, 100, 0, 100, 100, 0}, // 13: Cooking
-			{0, 0, 200, 200, 0, 0, 0}, // 14: DetectingHidden
-			{0, 0, 200, 0, 0, 0, 100}, // 15: Discordance
-			{0, 0, 300, 0, 0, 0, 100}, // 16: EvaluatingIntell
-			{0, 200, 0, 0, 0, 200, 0}, // 17: Healing
-			{100, 100, 100, 0, 0, 100, 0}, // 18: Fishing
-			{100, 0, 200, 0, 0, 0, 100}, // 19: ForensicEvaluation (Belief - 팔라딘 성향 반영)
-			{100, 100, 100, 0, 100, 100, 0}, // 20: Herding (Farming - 육체 노동 반영)
-			{0, 0, 0, 0, 0, 300, 0}, // 21: Hiding
-			{0, 0, 200, 0, 0, 0, 100}, // 22: Provocation
-			{0, 0, 300, 0, 0, 0, 100}, // 23: Inscription
-			{0, 200, 100, 0, 0, 100, 0}, // 24: Lockpicking
-			{0, 0, 200, 0, 0, 0, 100}, // 25: Magery
-			{0, 0, 0, 0, 200, 100, 0}, // 26: ResistingSpells
-			{100, 100, 0, 0, 100, 0, 0}, // 27: Tactics
-			{0, 200, 0, 0, 0, 100, 0}, // 28: Snooping
-			{0, 100, 100, 0, 0, 0, 0}, // 29: Musicianship
-			{0, 100, 200, 0, 0, 0, 0}, // 30: Poisoning
-			{100, 200, 0, 0, 0, 200, 0}, // 31: Archery
-			{0, 0, 200, 0, 0, 0, 100}, // 32: SpiritSpeak
-			{0, 200, 0, 0, 0, 100, 0}, // 33: Stealing
-			{0, 150, 100, 0, 0, 150, 0}, // 34: Tailoring
-			{0, 0, 100, 0, 100, 100, 0}, // 35: AnimalTaming
-			{150, 150, 0, 0, 0, 200, 0}, // 36: TasteIdentification (Tanning - 물리 육체 스탯 반영)
-			{0, 100, 200, 0, 0, 0, 0}, // 37: Tinkering
-			{0, 200, 100, 0, 0, 100, 0}, // 38: Tracking (Reflexes - 민첩/회피 스탯 반영)
-			{0, 0, 100, 0, 100, 0, 0}, // 39: Veterinary
-			{125, 125, 0, 0, 125, 125, 0}, // 40: Swordsmanship
-			{200, 100, 0, 0, 200, 0, 0}, // 41: MaceFighting
-			{50, 300, 0, 0, 0, 150, 0}, // 42: Fencing
-			{100, 100, 0, 0, 150, 150, 0}, // 43: Wrestling
-			{150, 150, 0, 0, 0, 200, 0}, // 44: Lumberjacking
-			{150, 150, 0, 0, 0, 200, 0}, // 45: Mining
-			{0, 0, 100, 0, 0, 0, 200}, // 46: Meditation
-			{0, 0, 0, 0, 100, 200, 0}, // 47: Stealth
-			{0, 200, 0, 0, 0, 200, 0}, // 48: RemoveTrap
-			{0, 0, 200, 0, 0, 0, 100}, // 49: Necromancy
-			{0, 0, 0, 0, 0, 200, 100}, // 50: Focus
-			{100, 0, 100, 0, 0, 0, 100}, // 51: Chivalry
-			{150, 0, 150, 0, 200, 100, 0}, // 52: Bushido (Smash)
-			{0, 150, 150, 100, 0, 100, 0}, // 53: Ninjitsu (Sneak - 운/민첩 반영)
-			{0, 0, 200, 0, 0, 0, 100}, // 54: Spellweaving (Elementalism)
-			{0, 0, 200, 0, 0, 0, 200}, // 55: Mysticism
-			{0, 0, 200, 0, 0, 0, 100}, // 56: Imbuing
-			{0, 200, 0, 0, 0, 100, 0}  // 57: Throwing
+			{0, 200, 400, 200, 100, 100, 0}, // 0: Alchemy
+			{200, 300, 200, 100, 300, 400, 0}, // 1: Anatomy
+			{0, 0, 500, 200, 0, 300, 0}, // 2: AnimalLore
+			{0, 0, 500, 500, 0, 0, 0}, // 3: ItemIdentification
+			{0, 0, 500, 250, 0, 0, 0}, // 4: ArmsLore (2.5)
+			{400, 400, 0, 0, 400, 300, 0}, // 5: Parrying
+			{300, 300, 300, 600, 300, 300, 0}, // 6: Begging
+			{300, 200, 100, 100, 100, 200, 0}, // 7: Blacksmithy
+			{100, 300, 100, 100, 100, 300, 0}, // 8: BowcraftFletching
+			{0, 200, 300, 400, 0, 100, 0}, // 9: Peacemaking
+			{300, 300, 300, 300, 400, 400, 0}, // 10: Camping
+			{200, 300, 100, 0, 200, 200, 0}, // 11: Carpentry
+			{0, 300, 400, 500, 100, 200, 0}, // 12: Cartography
+			{300, 300, 200, 200, 200, 300, 0}, // 13: Cooking
+			{0, 0, 200, 800, 0, 200, 300}, // 14: DetectingHidden
+			{100, 200, 0, 400, 0, 0, 300}, // 15: Discordance
+			{0, 0, 1000, 0, 0, 0, 0}, // 16: EvaluatingIntell
+			{200, 200, 200, 200, 400, 300, 0}, // 17: Healing
+			{200, 400, 300, 200, 200, 200, 0}, // 18: Fishing
+			{0, 0, 400, 700, 0, 0, 400}, // 19: ForensicEvaluation
+			{200, 200, 300, 700, 300, 300, 0}, // 20: Herding
+			{0, 1000, 0, 500, 0, 0, 0}, // 21: Hiding
+			{0, 0, 500, 500, 0, 0, 0}, // 22: Provocation
+			{0, 100, 400, 100, 0, 0, 400}, // 23: Inscription
+			{0, 800, 200, 500, 0, 0, 0}, // 24: Lockpicking
+			{0, 0, 500, 500, 0, 0, 500}, // 25: Magery
+			{0, 0, 300, 300, 400, 0, 0}, // 26: ResistingSpells
+			{0, 0, 500, 500, 0, 0, 0}, // 27: Tactics
+			{0, 700, 400, 400, 0, 0, 0}, // 28: Snooping
+			{0, 0, 800, 700, 0, 0, 0}, // 29: Musicianship
+			{0, 0, 300, 900, 100, 100, 100}, // 30: Poisoning
+			{300, 700, 0, 200, 0, 300, 0}, // 31: Archery
+			{0, 0, 200, 900, 0, 0, 400}, // 32: SpiritSpeak
+			{0, 500, 400, 600, 0, 0, 0}, // 33: Stealing
+			{100, 300, 200, 100, 100, 200, 0}, // 34: Tailoring
+			{0, 0, 500, 1000, 0, 0, 0}, // 35: AnimalTaming
+			{300, 300, 100, 200, 300, 300, 0}, // 36: TasteIdentification
+			{100, 200, 300, 300, 0, 100, 0}, // 37: Tinkering
+			{0, 1000, 0, 500, 0, 0, 0}, // 38: Tracking
+			{0, 1000, 0, 500, 0, 0, 0}, // 39: Veterinary
+			{400, 400, 0, 300, 200, 200, 0}, // 40: Swordsmanship
+			{600, 200, 0, 200, 400, 100, 0}, // 41: MaceFighting
+			{200, 600, 0, 400, 100, 200, 0}, // 42: Fencing
+			{300, 300, 0, 500, 200, 200, 0}, // 43: Wrestling
+			{300, 400, 0, 100, 400, 300, 0}, // 44: Lumberjacking
+			{400, 300, 0, 200, 300, 300, 0}, // 45: Mining
+			{0, 0, 300, 200, 0, 0, 1000}, // 46: Meditation
+			{0, 500, 500, 500, 0, 0, 0}, // 47: Stealth
+			{0, 300, 400, 800, 0, 0, 0}, // 48: RemoveTrap
+			{200, 200, 200, 0, 300, 300, 300}, // 49: Necromancy
+			{200, 200, 300, 800, 0, 0, 0}, // 50: Focus
+			{400, 400, 400, 0, 100, 100, 100}, // 51: Chivalry
+			{800, 0, 0, 200, 500, 0, 0}, // 52: Bushido (Smash)
+			{0, 800, 0, 500, 0, 200, 0}, // 53: Ninjitsu (Sneak)
+			{0, 0, 600, 600, 0, 0, 300}, // 54: Spellweaving (Elementalism)
+			{0, 0, 300, 900, 0, 0, 300}, // 55: Mysticism
+			{0, 100, 1000, 400, 0, 0, 0}, // 56: Imbuing
+			{300, 700, 0, 200, 0, 300, 0}  // 57: Throwing
 		};
 		
 		private static readonly int[,] m_StatBonus50 = new int[,]
 		{
-			{0, 0, 200, 0, 100, 100, 100}, // 0: Alchemy
+			{0, 0, 200, 0, 100, 100, 100}, // 0: Alchemy (지능 200, 체력 100, 기력 100, 마나 100)
 			{0, 0, 0, 0, 0, 0, 0}, // 1: Anatomy (특수 효과로 대체)
 			{0, 0, 0, 0, 0, 0, 0}, // 2: AnimalLore
 			{0, 0, 0, 0, 0, 0, 0}, // 3: ItemIdentification
 			{0, 0, 0, 0, 0, 0, 0}, // 4: ArmsLore
 			{0, 0, 0, 0, 0, 0, 0}, // 5: Parrying
-			{0, 0, 0, 500, 0, 0, 0}, // 6: Begging
-			{200, 100, 0, 0, 0, 200, 0}, // 7: Blacksmithy
-			{100, 150, 0, 0, 0, 150, 0}, // 8: BowcraftFletching
+			{0, 0, 0, 500, 0, 0, 0}, // 6: Begging (운 500)
+			{200, 100, 0, 0, 0, 200, 0}, // 7: Blacksmithy (힘 200, 민첩 100, 기력 200)
+			{100, 150, 0, 0, 0, 150, 0}, // 8: BowcraftFletching (힘 100, 민첩 150, 기력 150)
 			{0, 0, 0, 0, 0, 0, 0}, // 9: Peacemaking
-			{200, 200, 200, 0, 0, 0, 0}, // 10: Camping
-			{100, 100, 50, 0, 0, 250, 0}, // 11: Carpentry
+			{200, 200, 200, 0, 0, 0, 0}, // 10: Camping (힘 200, 민첩 200, 지능 200)
+			{100, 100, 50, 0, 0, 250, 0}, // 11: Carpentry (힘 100, 민첩 100, 지능 50, 기력 250)
 			{0, 0, 0, 0, 0, 0, 0}, // 12: Cartography
-			{100, 100, 100, 0, 100, 100, 0}, // 13: Cooking
-			{0, 0, 200, 300, 0, 0, 0}, // 14: DetectingHidden
+			{100, 100, 100, 0, 100, 100, 0}, // 13: Cooking (힘 100, 민첩 100, 지능 100, 체력 100, 기력 100)
+			{0, 0, 200, 300, 0, 0, 0}, // 14: DetectingHidden (지능 200, 행운 300)
 			{0, 0, 0, 0, 0, 0, 0}, // 15: Discordance
-			{0, 0, 500, 0, 0, 0, 0}, // 16: EvaluatingIntell
-			{0, 250, 0, 0, 0, 250, 0}, // 17: Healing
-			{150, 150, 100, 0, 0, 100, 0}, // 18: Fishing
+			{0, 0, 500, 0, 0, 0, 0}, // 16: EvaluatingIntell (지능 500)
+			{0, 250, 0, 0, 0, 250, 0}, // 17: Healing (민첩 250, 기력 250)
+			{150, 150, 100, 0, 0, 100, 0}, // 18: Fishing (힘 150, 민첩 150, 지능 100, 기력 100)
 			{0, 0, 0, 0, 0, 0, 0}, // 19: ForensicEvaluation
-			{100, 100, 100, 0, 100, 100, 0}, // 20: Herding
-			{0, 0, 0, 0, 0, 500, 0}, // 21: Hiding
+			{100, 100, 100, 0, 100, 100, 0}, // 20: Herding (힘 100, 민첩 100, 지능 100, 체력 100, 기력 100)
+			{0, 0, 0, 0, 0, 500, 0}, // 21: Hiding (기력 500)
 			{0, 0, 0, 0, 0, 0, 0}, // 22: Provocation
-			{0, 0, 400, 0, 0, 0, 100}, // 23: Inscription
-			{0, 200, 200, 0, 0, 100, 0}, // 24: Lockpicking
+			{0, 0, 400, 0, 0, 0, 100}, // 23: Inscription (지능 400, 마나 100)
+			{0, 200, 200, 0, 0, 100, 0}, // 24: Lockpicking (민첩 200, 지능 200, 기력 100)
 			{0, 0, 0, 0, 0, 0, 0}, // 25: Magery
 			{0, 0, 0, 0, 0, 0, 0}, // 26: ResistingSpells
 			{0, 0, 0, 0, 0, 0, 0}, // 27: Tactics
 			{0, 0, 0, 0, 0, 0, 0}, // 28: Snooping
 			{0, 0, 0, 0, 0, 0, 0}, // 29: Musicianship
 			{0, 0, 0, 0, 0, 0, 0}, // 30: Poisoning
-			{100, 200, 0, 0, 0, 200, 0}, // 31: Archery
+			{100, 200, 0, 0, 0, 200, 0}, // 31: Archery (힘 100, 민첩 200, 기력 200)
 			{0, 0, 0, 0, 0, 0, 0}, // 32: SpiritSpeak
 			{0, 0, 0, 0, 0, 0, 0}, // 33: Stealing
-			{0, 150, 100, 0, 0, 150, 0}, // 34: Tailoring
+			{0, 150, 100, 0, 0, 150, 0}, // 34: Tailoring (민첩 150, 지능 100, 기력 150)
 			{0, 0, 0, 0, 0, 0, 0}, // 35: AnimalTaming
-			{150, 150, 0, 0, 0, 200, 0}, // 36: TasteIdentification
-			{0, 100, 400, 0, 0, 0, 0}, // 37: Tinkering
-			{0, 300, 100, 0, 0, 100, 0}, // 38: Tracking
+			{150, 150, 0, 0, 0, 200, 0}, // 36: TasteIdentification (힘 150, 민첩 150, 기력 200)
+			{0, 100, 400, 0, 0, 0, 0}, // 37: Tinkering (민첩 100, 지능 400)
+			{0, 300, 100, 0, 0, 100, 0}, // 38: Tracking (민첩 300, 지능 100, 기력 100)
 			{0, 0, 0, 0, 0, 0, 0}, // 39: Veterinary
-			{125, 125, 0, 0, 125, 125, 0}, // 40: Swordsmanship
-			{200, 100, 0, 0, 200, 0, 0}, // 41: MaceFighting
-			{50, 300, 0, 0, 0, 150, 0}, // 42: Fencing
-			{100, 100, 0, 0, 150, 150, 0}, // 43: Wrestling
-			{150, 150, 0, 0, 0, 200, 0}, // 44: Lumberjacking
-			{150, 150, 0, 0, 0, 200, 0}, // 45: Mining
+			{125, 125, 0, 0, 125, 125, 0}, // 40: Swordsmanship (힘 125, 민첩 125, 체력 125, 기력 125)
+			{200, 100, 0, 0, 200, 0, 0}, // 41: MaceFighting (힘 200, 민첩 100, 체력 200)
+			{50, 300, 0, 0, 0, 150, 0}, // 42: Fencing (힘 50, 민첩 300, 기력 150)
+			{100, 100, 0, 0, 150, 150, 0}, // 43: Wrestling (힘 100, 민첩 100, 체력 150, 기력 150)
+			{150, 150, 0, 0, 0, 200, 0}, // 44: Lumberjacking (힘 150, 민첩 150, 기력 200)
+			{150, 150, 0, 0, 0, 200, 0}, // 45: Mining (힘 150, 민첩 150, 기력 200)
 			{0, 0, 0, 0, 0, 0, 0}, // 46: Meditation
-			{0, 0, 0, 0, 0, 0, 0}, // 47: Stealth
-			{0, 200, 0, 0, 0, 300, 0}, // 48: RemoveTrap
+			{0, 0, 0, 0, 0, 500, 0}, // 47: Stealth (기력 500)
+			{0, 200, 0, 0, 0, 300, 0}, // 48: RemoveTrap (민첩 200, 기력 300)
 			{0, 0, 0, 0, 0, 0, 0}, // 49: Necromancy
 			{0, 0, 0, 0, 0, 0, 0}, // 50: Focus
 			{0, 0, 0, 0, 0, 0, 0}, // 51: Chivalry
-			{150, 0, 150, 0, 200, 100, 0}, // 52: Bushido
-			{0, 150, 150, 200, 0, 100, 0}, // 53: Ninjitsu
+			{150, 0, 100, 0, 200, 100, 0}, // 52: Bushido (Command: 힘 150, 지능 100, 체력 200, 기력 100)
+			{0, 200, 0, 200, 0, 100, 0}, // 53: Ninjitsu (Subtlety: 민첩 200, 행운 200, 기력 100)
 			{0, 0, 0, 0, 0, 0, 0}, // 54: Spellweaving
-			{0, 0, 250, 0, 0, 0, 250}, // 55: Mysticism
+			{0, 0, 250, 0, 0, 0, 250}, // 55: Mysticism (지능 250, 마나 250)
 			{0, 0, 0, 0, 0, 0, 0}, // 56: Imbuing
 			{0, 0, 0, 0, 0, 0, 0}  // 57: Throwing
 		};
@@ -3110,6 +3114,14 @@ namespace Server.Mobiles
 						mPt += GetEquipOptionRaw(Misc.CustomOption.ManaRegen) + GetEquipOptionRaw(Misc.CustomOption.AllRegen);
 						mPt += (int)(med * 2000);
 					}
+					
+					// [커스텀] 편안함(Comfort) 버프 - 비전투 상태 시 체/기/마 추가 회복 (던전 페널티 무시 및 고속 회복)
+					if (ComfortBuffEnd > DateTime.Now)
+					{
+						if (currentTick >= m_HitsRegenDelay) hPt += HitsMax * 200; // 최대 체력의 2% 추가 회복
+						if (currentTick >= m_StamRegenDelay) sPt += StamMax * 200;
+						if (currentTick >= m_ManaRegenDelay) mPt += ManaMax * 200;
+					}
 				}
 
 				// D. 액티브 명상 추가 보너스 (전투/제한 상태와 무관하게 명상 성공 시 마나 추가 회복)
@@ -3128,7 +3140,7 @@ namespace Server.Mobiles
 				if (m > 0 && Mana < ManaMax) Mana += m;
 			}
 
-			// 4. 소환수 마나 유지비 정산
+			// 4. 소환수 마나 유지비 정산 (미스티시즘 100 이상 시 유지 마나 제거)
 			if (m_MySummons != null && m_MySummons.Count > 0)
 			{
 				int drain = 0;
@@ -3139,14 +3151,21 @@ namespace Server.Mobiles
 					else drain++;
 				}
 				
-				if (Mana < drain) 
-				{ 
-					Mana = 0; 
-					ClearSummons(); 
-				}
-				else 
+				// 미스티시즘 100 이상일 경우 마나 소모량 0
+				if (Skills[SkillName.Mysticism].Value >= 100.0)
+					drain = 0;
+					
+				if (drain > 0)
 				{
-					Mana -= drain;
+					if (Mana < drain) 
+					{ 
+						Mana = 0; 
+						ClearSummons(); 
+					}
+					else 
+					{
+						Mana -= drain;
+					}
 				}
 			}
 		}
@@ -8658,21 +8677,43 @@ namespace Server.Mobiles
 			*/
 			if (Hidden && DesignContext.Find(this) == null) //Hidden & NOT customizing a house
 			{
-				if (!Mounted && AllowedStealthSteps >= 1)
+				double stealthSkill = Skills[SkillName.Stealth].Value;
+				bool canRun = stealthSkill >= 200.0;
+				bool noStamCost = stealthSkill >= 150.0;
+				int stamCost = noStamCost ? 0 : 5;
+
+				if (!Mounted && AllowedStealthSteps >= 1) // AllowedStealthSteps serves as a flag that they CAN stealth
 				{
 					bool running = (d & Direction.Running) != 0;
 
-					if( Stam < 1 )
-						RevealingAction();
-					else if (running)
+					if (Stam < stamCost)
 					{
 						RevealingAction();
 					}
-					else if (AllowedStealthSteps-- <= 0 && Stam >= 6)
+					else if (running && !canRun)
 					{
-						Stealth.OnUse(this);
+						RevealingAction();
 					}
-					Stam--;
+					else
+					{
+						Stam -= stamCost;
+
+						// 이동마다 은신 풀릴 확률 계산 (기본 50%, 스킬 10당 2% (스킬당 0.2%) 감소)
+						double unhideChance = 0.50 - (stealthSkill * 0.002);
+						if (stealthSkill >= 100.0) unhideChance -= 0.10; // 100 보너스: 풀릴 확률 10% 추가 감소
+
+						if (unhideChance > 0 && Utility.RandomDouble() < unhideChance)
+						{
+							RevealingAction();
+						}
+						
+						// 지속적인 스텔스 스킬 체크 (기존 AllowedStealthSteps 차감 대신 확률로 전환)
+						// 하지만 시스템적인 제한을 위해 스킬업 용도의 CheckSkill은 유지
+						if (AllowedStealthSteps-- <= 0)
+						{
+							Stealth.OnUse(this); // 이게 실패하면 풀림
+						}
+					}
 				}
 				else
 				{

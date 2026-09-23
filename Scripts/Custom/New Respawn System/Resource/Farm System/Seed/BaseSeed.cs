@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server.Mobiles;
 
 namespace Server.Items
@@ -6,6 +6,8 @@ namespace Server.Items
     public abstract class BaseSeed : Item
     {
         public abstract Type CropType { get; } // 수확될 작물 타입
+        public abstract double MinSkill { get; }
+        public abstract double MaxSkill { get; }
 
         public BaseSeed(int itemID) : base(itemID)
         {
@@ -31,6 +33,16 @@ namespace Server.Items
             if (!FarmingSystem.CanPlant(from))
             {
                 from.SendMessage("당신의 Herding 실력으로는 더 이상 작물을 관리할 수 없습니다.");
+                return;
+            }
+
+            if (!FarmingSystem.IsPlantable(from, from.Location, from.Map))
+                return;
+
+            if (!from.CheckSkill(SkillName.Herding, MinSkill, MaxSkill))
+            {
+                from.SendMessage("씨앗을 심는 데 실패하여 씨앗이 망가졌습니다.");
+                this.Consume();
                 return;
             }
 

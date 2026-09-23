@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server.Items;
 using Server.Mobiles;
 using Server.Misc;
@@ -8,6 +8,9 @@ namespace Server.Engines.Harvest
 {
     public class Tanning : HarvestSystem
     {
+        // TODO: [개발 예정] 무두술(TasteID) 100 달성 - 1% 확률로 러그 획득 (미구현)
+        // TODO: [개발 예정] 무두술(TasteID) 150 달성 - 동물 박제 가능 (현재 TaxidermyKit.cs는 목공 90을 요구하므로 변경 필요)
+
         private static Tanning m_System;
         public static Tanning System => m_System ??= new Tanning();
 
@@ -238,6 +241,14 @@ namespace Server.Engines.Harvest
                     {
                         if (!from.AddToBackpack(leather)) corpse.AddCarvedItem(leather, from);
                         else from.SendLocalizedMessage(1073555);
+                    }
+                    
+                    // [커스텀] 무두술(TasteID) 100 이상 시 1% 확률로 곰 러그 획득
+                    if (from.Skills.TasteID.Value >= 100.0 && Utility.RandomDouble() < 0.01)
+                    {
+                        Item rug = Utility.RandomBool() ? (Item)new BrownBearRugSouthDeed() : new PolarBearRugSouthDeed();
+                        if (!from.AddToBackpack(rug)) corpse.AddCarvedItem(rug, from);
+                        from.SendMessage("가죽을 벗기는 과정에서 온전한 러그(Rug)를 추가로 획득했습니다!");
                     }
                 }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server.Items;
 using Server.Mobiles;
 using Server.Targeting;
@@ -48,6 +48,13 @@ namespace Server.Spells.Sixth
                 // 소환수도 아니고 정령도 아니면 종료
                 if (!isSummoned && !isElemental)
                 {
+                    return;
+                }
+                
+                // 미스티시즘 200 이상 마스터를 둔 소환수라면 디스펠 마법 면역
+                if (isSummoned && bc.SummonMaster != null && bc.SummonMaster.Skills[SkillName.Mysticism].Value >= 200.0)
+                {
+                    Caster.SendLocalizedMessage(1049611); // The creature ignores your attempts to dispel it.
                     return;
                 }
                 else if (CheckHSequence(m))

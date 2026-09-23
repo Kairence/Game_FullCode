@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using Server;
 using Server.Mobiles;
@@ -334,7 +334,7 @@ namespace Server.Misc
 						from.SendMessage("당신은 {0} 생성하는데 실패합니다...", HarvestName[skillcheck]);
 						return 0;
 					}
-					harvestAmount = 50 + pm.GoldPoint[5] * 2;
+					harvestAmount = 50; // [수정] 기획자 요청에 따라 고정치 50으로 변경 (버그성 GoldPoint 증폭 삭제)
 					if( harvestitem.Amount < harvestAmount )
 						harvestAmount = harvestitem.Amount;
 

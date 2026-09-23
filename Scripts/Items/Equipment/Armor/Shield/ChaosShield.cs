@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server.Guilds;
 using Server.Engines.Craft;
 
@@ -85,6 +85,18 @@ namespace Server.Items
         public override bool OnEquip(Mobile from)
         {
             return this.Validate(from) && base.OnEquip(from);
+        }
+
+        // [커스텀] 혼돈 방패(카오스 방패) 장착 조건: 강령술(Necromancy) 150 이상
+        public override bool CanEquip(Mobile from)
+        {
+            if (from.Skills[SkillName.Necromancy].Value < 150.0)
+            {
+                from.SendMessage("네크로맨시 스킬이 150 이상이어야 혼돈 방패를 장착할 수 있습니다.");
+                return false;
+            }
+
+            return base.CanEquip(from);
         }
 
         public override void OnSingleClick(Mobile from)

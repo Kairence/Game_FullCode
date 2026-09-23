@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.CompilerServices;
 using Server.Items;
 using Server.Misc;
@@ -106,25 +106,28 @@ namespace Server.SkillHandlers
 
 					cont.DisplayTo(from);
 
-					// --- [커스텀: 스누핑 50 보너스 (선취권)] ---
+					// --- [커스텀: 스누핑 50 보너스 (골드 발견)] ---
 					if (from.Skills[SkillName.Snooping].Value >= 50.0 && root is BaseCreature monster && monster.Alive)
 					{
 						if (!_preLooted.TryGetValue(monster, out _))
 						{
-							_preLooted.Add(monster, new object());
+							_preLooted.Add(monster, new object()); // 1회 시도 기록
 							
-							// 1. GoldDistributor.cs의 실제 드랍 공식을 가져와서 총 골드량 예측
-							int expectedGoldPool = 10 + Utility.RandomMinMax(monster.Fame / 30, Math.Max(1, monster.Fame / 15));
-							if (monster.Grade >= 6) expectedGoldPool = (int)(expectedGoldPool * 1.5);
-							if (monster.Boss) expectedGoldPool *= 2;
-
-							// 2. 실제 드랍될 골드의 10 ~ 50%를 계산
-							int preLootGold = (int)(expectedGoldPool * Utility.RandomMinMax(10, 50) / 100.0);
+							double chance = from.Skills[SkillName.Snooping].Value * 0.001; // 스킬당 0.1% (200스킬 = 20%)
 							
-							if (preLootGold > 0)
+							if (Utility.RandomDouble() < chance)
 							{
-								cont.DropItem(new Gold(preLootGold));
-								from.SendMessage(65, $"대상의 주머니에서 {preLootGold}개의 금화를 미리 발견했습니다! (선취권 발동)");
+								int expectedGoldPool = 10 + Utility.RandomMinMax(monster.Fame / 30, Math.Max(1, Math.Max(1, monster.Fame / 15)));
+								if (monster.Grade >= 6) expectedGoldPool = (int)(expectedGoldPool * 1.5);
+								if (monster.Boss) expectedGoldPool *= 2;
+
+								int preLootGold = (int)(expectedGoldPool * Utility.RandomMinMax(10, 50) / 100.0);
+								
+								if (preLootGold > 0)
+								{
+									cont.DropItem(new Gold(preLootGold));
+									from.SendMessage(65, $"대상의 주머니에서 {preLootGold}개의 숨겨진 금화를 찾아냈습니다!");
+								}
 							}
 						}
 					}
@@ -137,9 +140,38 @@ namespace Server.SkillHandlers
                     {
                         from.SendMessage(65, "가방을 여는 데 실패했지만, 눈보다 빠른 손으로 즉시 재시도하여 열었습니다!");
                         cont.DisplayTo(from);
+
+						// 재시도로 열었을 때도 골드 발견 판정 적용
+						BaseCreature monster = root as BaseCreature;
+						if (monster != null && monster.Alive)
+						{
+							if (!_preLooted.TryGetValue(monster, out _))
+							{
+								_preLooted.Add(monster, new object()); // 1회 시도 기록
+								double chance = from.Skills[SkillName.Snooping].Value * 0.001;
+								if (Utility.RandomDouble() < chance)
+								{
+									int expectedGoldPool = 10 + Utility.RandomMinMax(monster.Fame / 30, Math.Max(1, Math.Max(1, monster.Fame / 15)));
+									if (monster.Grade >= 6) expectedGoldPool = (int)(expectedGoldPool * 1.5);
+									if (monster.Boss) expectedGoldPool *= 2;
+									int preLootGold = (int)(expectedGoldPool * Utility.RandomMinMax(10, 50) / 100.0);
+									if (preLootGold > 0)
+									{
+										cont.DropItem(new Gold(preLootGold));
+										from.SendMessage(65, $"대상의 주머니에서 {preLootGold}개의 숨겨진 금화를 찾아냈습니다!");
+									}
+								}
+							}
+						}
                     }
                     else
                     {
+						// 스누핑 자체가 실패한 경우에도 기회를 소진시킴
+						if (root is BaseCreature monster && monster.Alive && !_preLooted.TryGetValue(monster, out _))
+						{
+							_preLooted.Add(monster, new object());
+						}
+
                         from.SendLocalizedMessage(500210); // You failed to peek into the container.
                         
                         if (from.Skills[SkillName.Hiding].Value / 2 < Utility.Random(100))

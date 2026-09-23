@@ -204,6 +204,50 @@ namespace Server
 			totalDamage = physDamage + fireDamage + coldDamage + poisonDamage + energyDamage + chaosDamage + directDamage;
 			totalDamage /= 100;
 
+			// [커스텀] 추적(Reflexes) 스킬: 데미지 감소 및 최소화 로직
+			if (m != null)
+			{
+				bool hasMetalArmor = false;
+				foreach (Item item in m.Items)
+				{
+					if (item is BaseArmor armor && (armor.MaterialType == ArmorMaterialType.Plate || armor.MaterialType == ArmorMaterialType.Chainmail || armor.MaterialType == ArmorMaterialType.Ringmail))
+					{
+						hasMetalArmor = true;
+						break;
+					}
+				}
+
+				if (!hasMetalArmor)
+				{
+					double tracking = m.Skills[SkillName.Tracking].Value;
+					
+					// 100스킬 보너스: 최종 피격 50 감소 (기본 감소에 더해짐)
+					int flatReduction = (int)(tracking / 10); // 기본 피격 감소 (10당 1로 산정)
+					if (tracking >= 100.0) flatReduction += 50;
+
+					if (type == DamageType.Melee)
+					{
+						totalDamage -= flatReduction;
+					}
+
+					// 원거리(마법 포함) 데미지 최소화 확률
+					if (type == DamageType.Ranged || type == DamageType.Spell)
+					{
+						double minimizeChance = tracking * 0.001; // 스킬당 0.1%
+						if (tracking >= 100.0) minimizeChance += 0.05; // 100스킬 시 5% 추가
+
+						if (Utility.RandomDouble() < minimizeChance)
+						{
+							totalDamage = 1; // 데미지 최소화
+							m.SendMessage("추적(Reflexes) 스킬로 인해 원거리 피해를 최소화했습니다!");
+						}
+					}
+
+					// 150스킬 보너스: 치명타 피해 보정 로직은 치명타 계산부가 별도로 존재할 경우 그곳에 작성. 여기서는 최종 데미지로 보정.
+					// (치명타 계수를 직접 알 수 없으므로, 향후 치명타 데미지 연산부에 추가 권장)
+				}
+			}
+
 			if (damageable is Item)
 			{
 				return damageable.Damage(totalDamage, from);

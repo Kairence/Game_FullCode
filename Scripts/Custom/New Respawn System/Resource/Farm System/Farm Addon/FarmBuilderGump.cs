@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server;
 using Server.Gumps;
 using Server.Network;
@@ -33,9 +33,9 @@ namespace Server.Misc
 
             // [심플 리스트] 이미지 없이 버튼과 텍스트만 배치
             DrawSimpleRow(px, 65, 1, "지우기", 0);
-            DrawSimpleRow(px, 105, 3, "양봉통 (50)", 2);
-            DrawSimpleRow(px, 145, 2, "밭 타일 (100)", 1);
-            DrawSimpleRow(px, 185, 4, "과일 나무 (150)", 3);
+            DrawSimpleRow(px, 105, 3, "양봉통 (160)", 2);
+            DrawSimpleRow(px, 145, 2, "밭 타일 (0)", 1);
+            DrawSimpleRow(px, 185, 4, "과일 나무 (70)", 3);
 
             // 가축 관리
             AddImageTiled(px, 225, 130, 2, 0x2626); // 구분선
@@ -53,9 +53,20 @@ namespace Server.Misc
                 int y = i / size;
                 int current = m_Addon.TileData[i];
 
-                // 현재 선택된 타일 종류를 직관적으로 알 수 있게 Hue를 활용할 수도 있습니다.
-                int btnID = (current == 0) ? 2151 : (current == 1) ? 2103 : (current == 2) ? 2118 : 2117;
-                AddButton(30 + (x * spacing), 45 + (y * spacing), btnID, btnID + 1, 100 + i, GumpButtonType.Reply, 0);
+                int tileX = 30 + (x * spacing);
+                int tileY = 45 + (y * spacing);
+
+                // 바닥 배경 (빈칸)
+                AddBackground(tileX, tileY, 35, 35, 9300);
+
+                // 설치된 요소 그래픽 표시
+                if (current == 1) AddItem(tileX - 5, tileY - 5, 0x32C9); // 밭
+                else if (current == 2) AddItem(tileX - 5, tileY - 15, 0x091A); // 양봉통
+                else if (current == 3) AddItem(tileX - 5, tileY - 20, 0x0CE9); // 묘목/나무 (0x0CE9)
+
+                // 투명 클릭 영역 덮어씌우기 (9200 등 활용 혹은 0x15E1)
+                // 9720/9721 은 아주 얇은 투명/검은색 박스
+                AddButton(tileX, tileY, 9720, 9721, 100 + i, GumpButtonType.Reply, 0);
             }
         }
 
@@ -97,12 +108,12 @@ namespace Server.Misc
                 double skill = from.Skills[SkillName.Herding].Base; // 농사 스킬(Herding)
 
                 // 🌟 [기획 로직] 스킬 제한 체크
-                if (m_SelectedType == 2 && skill < 50.0) // 양봉
-                    from.SendMessage(33, "양봉통을 설치하려면 목동(Herding) 스킬이 50 이상 필요합니다.");
-                else if (m_SelectedType == 1 && skill < 100.0) // 밭
-                    from.SendMessage(33, "밭을 일구려면 목동(Herding) 스킬이 100 이상 필요합니다.");
-                else if (m_SelectedType == 3 && skill < 150.0) // 과수원
-                    from.SendMessage(33, "과수원 나무를 심으려면 목동(Herding) 스킬이 150 이상 필요합니다.");
+                if (m_SelectedType == 2 && skill < 160.0) // 양봉
+                    from.SendMessage(33, "양봉통을 설치하려면 목동(Herding) 스킬이 160 이상 필요합니다.");
+                else if (m_SelectedType == 1 && skill < 0.0) // 밭
+                    from.SendMessage(33, "밭을 일구려면 목동(Herding) 스킬이 필요합니다.");
+                else if (m_SelectedType == 3 && skill < 70.0) // 과수원
+                    from.SendMessage(33, "과수원 나무를 심으려면 목동(Herding) 스킬이 70 이상 필요합니다.");
                 else
                 {
                     // 스킬 조건을 만족하면 타일 데이터 변경 및 에드온 업데이트

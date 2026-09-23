@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Frozen;
 using System.IO;
@@ -109,7 +109,22 @@ namespace Server.Misc
             set => m_Facet = value; 
         }
 
-        public bool IsActive { get; set; }
+        private bool m_IsActive;
+        public bool IsActive 
+        { 
+            get { return m_IsActive; }
+            set 
+            { 
+                if (m_IsActive != value)
+                {
+                    m_IsActive = value;
+                    if (!m_IsActive) 
+                        CurrentHeat = 0; 
+                    else if (CurrentHeat == 0 && TargetHeat > 0)
+                        CurrentHeat = BossType != null ? (int)(TargetHeat * 0.2) : (int)(TargetHeat * 0.5);
+                }
+            }
+        }
         public List<Rectangle2D> AreaBounds { get; set; } = new List<Rectangle2D>();
         
         public int TargetHeat { get; set; }      
@@ -171,7 +186,11 @@ namespace Server.Misc
             MaxPopulation = 20;
 
             if (map == Map.Trammel) IsActive = true;
-            else IsActive = false;
+            else 
+            {
+                m_IsActive = false; // 속성 우회 직접 세팅
+                CurrentHeat = 0;    // 비활성화 구역 강제 열기 0
+            }
         }
 
         public void AddUnique(Type t) { if (!UniqueTypes.Contains(t)) UniqueTypes.Add(t); }
@@ -299,6 +318,13 @@ namespace Server.Misc
                     ActiveMonsters.RemoveAt(i);
                 else
                     activeCount++;
+            }
+
+            // [기획 2 복원] 잔존 몹 1마리당 열기 감소 (Decay) 적용
+            if (activeCount > 0 && TargetHeat > 0)
+            {
+                CurrentHeat -= (activeCount * HeatDecayWeight);
+                if (CurrentHeat < 0) CurrentHeat = 0;
             }
 
             int maxPop = ManualMaxPopulation;
@@ -1103,7 +1129,7 @@ namespace Server.Misc
 
                         if (Zones.TryGetValue(code, out DungeonZone z))
                         {
-                            z.CurrentHeat = curHeat;
+                            z.CurrentHeat = z.IsActive ? curHeat : 0;
                             z.Phase = phase;
                             z.CooldownEndTime = cdEnd;
                             z.LastKillTime = lastKill;
