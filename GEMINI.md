@@ -28,11 +28,17 @@ When generating text for the user to copy-paste into their DokuWiki, always form
 - Provide only the direct facts, stats, and item names that players need to see.
 - Use standard DokuWiki syntax (e.g., `====== H1 ======`, `===== H2 =====`, `==== H3 ====`, `  *` for lists).
 
-## 6. Native Tools Policy (Avoid run_command)
+## 6. Native Tools Policy (Avoid rrun_command)
 When reading or editing files, **DO NOT use terminal commands or Python scripts** via 
-un_command (e.g., cat, grep, python patch.py) unless absolutely necessary.
+run_command (e.g., cat, grep, python patch.py) unless absolutely necessary.
 
-un_command triggers IDE security prompts and wastes tokens.
-Instead, **ALWAYS use native agentic tools**: iew_file, grep_search, ind_by_name, list_dir for reading, and 
+run_command triggers IDE security prompts and wastes tokens.
+Instead, **ALWAYS use native agentic tools**: view_file, grep_search, find_by_name, list_dir for reading, and 
 eplace_file_content / write_to_file for editing. Reserve 
-un_command exclusively for compiling, building, or running the game server.
+run_command exclusively for compiling, building, or running the game server.
+
+## 7. Strict Script Execution Policy
+When the user instructs you to run a specific script (e.g., a .bat or .sh file) or follow a manual procedure, **DO NOT add your own arbitrary commands or interventions** (like git commit --amend, git push --force, or overriding inputs).
+- Execute **exactly** what the user requested.
+- If a script requires input or interaction, do not bypass it with dummy data; either follow the user's explicit instructions for the input, or ask the user how to proceed.
+- Over-correction and unrequested automated commands often lead to fatal synchronization errors or disrupt the user's local workspace.

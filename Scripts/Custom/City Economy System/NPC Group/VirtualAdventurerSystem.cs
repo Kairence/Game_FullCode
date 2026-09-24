@@ -942,7 +942,9 @@ namespace Server.Misc
                 if (DungeonRetreatManager.Map.TryGetValue(majorDungeonCode, out RetreatRoute mRoute))
                 {
                     var logicalTown = TownEconomyManager.Towns.Values.FirstOrDefault(t => 
-                        RegionSaver.GetRegionCodes(t.Facet, t.Center.X, t.Center.Y, t.Center.Z).Major == mRoute.TownCode);
+                        t.Facet == CurrentMap && 
+                        t.Name != null &&
+                        mRoute.TownCode.ToString().Contains(t.Name.Replace(" ", "").Replace("'", "")));
                     
                     if (logicalTown != null) 
                         logicalReferencePoint = logicalTown.Center;

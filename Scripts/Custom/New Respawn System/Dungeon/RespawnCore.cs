@@ -201,12 +201,17 @@ namespace Server.Misc
         public void SetSpawnProfile(int tier, Type[] types)
         {
             List<Type> cleanTypes = new List<Type>();
+            List<string> typeNames = new List<string>();
             for (int i = 0; i < types.Length; i++)
             {
                 if (types[i] != null && !types[i].Name.ToLower().Contains("summon"))
+                {
                     cleanTypes.Add(types[i]);
+                    typeNames.Add(types[i].FullName);
+                }
             }
             SpawnProfiles[tier] = cleanTypes.ToArray();
+            SpawnProfileStrings[tier] = typeNames;
         }
 
         public Point3D GetCenterLocation()
@@ -218,30 +223,71 @@ namespace Server.Misc
             return new Point3D(cx, cy, Facet != null ? Facet.GetAverageZ(cx, cy) : 0);
         }
 
-        private Point3D? GetValidSpawnLocation()
+        private Point3D? GetValidSpawnLocation(BaseCreature bc = null)
         {
             if (AreaBounds == null || AreaBounds.Count == 0 || AreaBounds[0].Width <= 0) return null;
             
             Rectangle2D bounds = AreaBounds[Utility.Random(AreaBounds.Count)];
+            Point3D? fallbackTerrain = null;
             
+            bool canSwim = bc != null && bc.CanSwim;
+            bool cantWalk = bc != null && bc.CantWalk;
+
             for (int i = 0; i < 50; i++) 
             {
                 int x = Utility.RandomMinMax(bounds.X, bounds.X + bounds.Width);
                 int y = Utility.RandomMinMax(bounds.Y, bounds.Y + bounds.Height);
                 
-                int z = Facet.GetAverageZ(x, y); 
-                if (Facet.CanSpawnMobile(x, y, z)) 
-                    return new Point3D(x, y, z);
-
+                // 1. Check statics (for floating rooms like Covetous Chamber)
                 var statics = Facet.Tiles.GetStaticTiles(x, y);
                 foreach (var tile in statics)
                 {
-                    int staticZ = tile.Z + tile.Height; 
-                    if (Facet.CanSpawnMobile(x, y, staticZ))
-                        return new Point3D(x, y, staticZ);
+                    var flags = TileData.ItemTable[tile.ID & 0x3FFF].Flags;
+                    bool isWater = flags.HasFlag(TileFlag.Wet);
+                    bool isSurface = flags.HasFlag(TileFlag.Surface);
+
+                    if (isSurface || (isWater && canSwim))
+                    {
+                        if (cantWalk && !isWater) continue;
+
+                        int staticZ = tile.Z + (isSurface ? tile.Height : 0); 
+                        if (Facet.CanSpawnMobile(x, y, staticZ) || (isWater && canSwim))
+                        {
+                            Region r = Region.Find(new Point3D(x, y, staticZ), Facet);
+                            if (r != null && !r.IsDefault) return new Point3D(x, y, staticZ);
+
+                            if (fallbackTerrain == null)
+                                fallbackTerrain = new Point3D(x, y, staticZ);
+                        }
+                    }
+                }
+
+                // 2. Check terrain (for normal caves like Despise)
+                int z = Facet.GetAverageZ(x, y); 
+                var land = Facet.Tiles.GetLandTile(x, y);
+                var landFlags = TileData.LandTable[land.ID & 0x3FFF].Flags;
+                
+                bool isImpassable = land.Ignored || landFlags.HasFlag(TileFlag.Impassable);
+                bool isWaterTerrain = landFlags.HasFlag(TileFlag.Wet);
+
+                if (isWaterTerrain && canSwim)
+                {
+                    Region r = Region.Find(new Point3D(x, y, z), Facet);
+                    if (r != null && !r.IsDefault)
+                        return new Point3D(x, y, z);
+                }
+                else if (!isImpassable && !cantWalk)
+                {
+                    Region r = Region.Find(new Point3D(x, y, z), Facet);
+                    
+                    if (r != null && !r.IsDefault)
+                        return new Point3D(x, y, z); 
+
+                    if (fallbackTerrain == null)
+                        fallbackTerrain = new Point3D(x, y, z); 
                 }
             }
-            return null; 
+            return fallbackTerrain; 
         }
 
         public void KeepCurrentNodeOnly(Mobile m) { }
@@ -357,20 +403,17 @@ namespace Server.Misc
 
             foreach (Item item in World.Items.Values)
             {
-                if (item is DungeonNode node && node.RCode == this.RCode)
+                if (item is DungeonNode node && node.RCode == this.RCode && node.Map == this.Facet)
                 {
                     if (bounds.Contains(node.Location))
                         validNodes.Add(node);
                 }
             }
 
-            if (validNodes.Count == 0)
-                return;
+            // if (validNodes.Count == 0) return; // Removed early return so we can fallback to AreaBounds
 
             for (int s = 0; s < toSpawn; s++)
             {
-                DungeonNode targetNode = validNodes[Utility.Random(validNodes.Count)];
-
                 int selectedTier = 1;
                 double roll = Utility.RandomDouble();
 
@@ -402,23 +445,71 @@ namespace Server.Misc
                     object obj = Activator.CreateInstance(spawnType);
                     if (obj is BaseCreature bc)
                     {
-                        int rx = targetNode.X + Utility.RandomMinMax(-targetNode.SpawnRange, targetNode.SpawnRange);
-                        int ry = targetNode.Y + Utility.RandomMinMax(-targetNode.SpawnRange, targetNode.SpawnRange);
-                        int rz = targetNode.Map.GetAverageZ(rx, ry);
+                        if (validNodes.Count > 0)
+                        {
+                            DungeonNode targetNode = validNodes[Utility.Random(validNodes.Count)];
+                            int rx = targetNode.X + Utility.RandomMinMax(-targetNode.SpawnRange, targetNode.SpawnRange);
+                            int ry = targetNode.Y + Utility.RandomMinMax(-targetNode.SpawnRange, targetNode.SpawnRange);
+                            
+                            int rz = targetNode.Z; 
+                            bool foundValidZ = false;
 
-                        bc.Home = targetNode.Location;
-                        bc.RangeHome = targetNode.HomeRange; // 고유 변수명 일치 완료
-                        bc.Grade = 1; 
+                            foreach (var tile in targetNode.Map.Tiles.GetStaticTiles(rx, ry))
+                            {
+                                if (TileData.ItemTable[tile.ID & 0x3FFF].Surface)
+                                {
+                                    int staticZ = tile.Z + tile.Height; 
+                                    if (targetNode.Map.CanSpawnMobile(rx, ry, staticZ)) 
+                                    { 
+                                        rz = staticZ; 
+                                        foundValidZ = true;
+                                        break; 
+                                    }
+                                }
+                            }
 
-                        bc.MoveToWorld(new Point3D(rx, ry, rz), targetNode.Map);
-                        ActiveMonsters.Add(bc);
+                            if (!foundValidZ)
+                            {
+                                int terrainZ = targetNode.Map.GetAverageZ(rx, ry);
+                                if (targetNode.Map.CanSpawnMobile(rx, ry, terrainZ))
+                                {
+                                    rz = terrainZ;
+                                }
+                            }
+
+                            bc.Home = targetNode.Location;
+                            bc.RangeHome = targetNode.HomeRange; // 고유 변수명 일치 완료
+                            bc.Grade = 1; 
+
+                            bc.MoveToWorld(new Point3D(rx, ry, rz), targetNode.Map);
+                            ActiveMonsters.Add(bc);
+                        }
+                        else
+                        {
+                            Point3D? spawnLoc = GetValidSpawnLocation(bc);
+                            if (spawnLoc.HasValue)
+                            {
+                                bc.Home = spawnLoc.Value;
+                                bc.RangeHome = 10;
+                                bc.Grade = 1;
+                                
+                                bc.MoveToWorld(spawnLoc.Value, Facet);
+                                ActiveMonsters.Add(bc);
+                            }
+                            else
+                            {
+                                bc.Delete();
+                                continue;
+                            }
+                        }
 
                         if (selectedTier == 3) CurrentHeat += 10;
                         else if (selectedTier == 2) CurrentHeat += 3;
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Console.WriteLine($"[CheckRespawn Exception] RCode: {RCode} - Type: {spawnType?.Name} - Error: {ex.ToString()}");
                 }
             }
         }
@@ -433,8 +524,12 @@ namespace Server.Misc
                 int count = list.Count;
                 if (count == 1)
                 {
-                    Type singleType = ScriptCompiler.FindTypeByName(list[0].Trim());
+                    Type singleType = ScriptCompiler.FindTypeByFullName(list[0].Trim());
                     if (singleType != null && singleType.IsSubclassOf(typeof(BaseCreature))) return singleType;
+                    
+                    singleType = ScriptCompiler.FindTypeByName(list[0].Trim());
+                    if (singleType != null && singleType.IsSubclassOf(typeof(BaseCreature))) return singleType;
+                    
                     return null;
                 }
 
@@ -443,7 +538,9 @@ namespace Server.Misc
 
                 for (int i = 0; i < count; i++)
                 {
-                    Type t = ScriptCompiler.FindTypeByName(list[i].Trim());
+                    Type t = ScriptCompiler.FindTypeByFullName(list[i].Trim());
+                    if (t == null) t = ScriptCompiler.FindTypeByName(list[i].Trim());
+                    
                     if (t != null && t.IsSubclassOf(typeof(BaseCreature)))
                     {
                         validTypes.Add(t);
@@ -517,7 +614,7 @@ namespace Server.Misc
                     try 
                     { 
                         BaseCreature b = (BaseCreature)Activator.CreateInstance(BossType); 
-                        Point3D? spawnLoc = GetValidSpawnLocation();
+                        Point3D? spawnLoc = GetValidSpawnLocation(b);
                         if (spawnLoc.HasValue)
                         {
                             b.Home = spawnLoc.Value;
@@ -965,10 +1062,10 @@ namespace Server.Misc
                             if (node.Attributes["GroupName"] != null) z.GroupName = node.Attributes["GroupName"].Value;
                             if (node.Attributes["SubZoneName"] != null) z.SubZoneName = node.Attributes["SubZoneName"].Value;
 
-                            z.SpawnProfileStrings.Clear();
                             XmlNode profilesNode = node.SelectSingleNode("SpawnProfiles");
-                            if (profilesNode != null)
+                            if (profilesNode != null && profilesNode.HasChildNodes)
                             {
+                                z.SpawnProfileStrings.Clear();
                                 foreach (XmlNode pNode in profilesNode.ChildNodes)
                                 {
                                     if (pNode.Name == "Tier" && int.TryParse(pNode.Attributes["Level"]?.Value, out int level))

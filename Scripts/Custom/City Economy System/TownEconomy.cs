@@ -137,7 +137,7 @@ namespace Server.Misc
 
         [CommandProperty(AccessLevel.GameMaster)] public string TownName { get; set; }
         [CommandProperty(AccessLevel.GameMaster)] public Map Facet { get; set; }
-        [CommandProperty(AccessLevel.GameMaster)] public Point3D Center { get; set; }
+        [CommandProperty(AccessLevel.GameMaster)] public Point3D Center => TownNumber.GetCenter(this.TownID);
         [CommandProperty(AccessLevel.GameMaster)] public string TownIndex { get; set; }
         [CommandProperty(AccessLevel.GameMaster)] public TownType Type { get; set; }
         [CommandProperty(AccessLevel.GameMaster)] public bool IsOfficialTown { get; set; }

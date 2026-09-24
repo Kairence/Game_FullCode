@@ -422,8 +422,8 @@ namespace Server.Misc
                 // 🌟 화면 표시용 이름으로 미리 그룹핑하여 정렬되도록 수정
                 var list = DungeonManager.ZoneList
                     .Where(z => currentFilterMap == null || (z.Facet != null && z.Facet.MapID == currentFilterMap.MapID))
-                    .OrderBy(z => (string.IsNullOrEmpty(z.GroupName) || z.GroupName == "Uncategorized" || z.GroupName == "기본 그룹") ? "미분류 던전" : z.GroupName)
-                    .ThenBy(z => (string.IsNullOrEmpty(z.SubZoneName) || z.SubZoneName == "Main" || z.SubZoneName == "메인 구역") ? NewSpawnManager.GetDisplayName(z.RCode) : z.SubZoneName)
+                    .OrderBy(z => (string.IsNullOrEmpty(z.GroupName) || z.GroupName == "Uncategorized" || z.GroupName == "기본 그룹") ? 1 : 0)
+                    .ThenBy(z => z.RCode)
                     .ToList();
 
                 totalListCount = list.Count; 
@@ -695,9 +695,11 @@ namespace Server.Misc
                 if (m_Mode == 0) // Dungeon
                 {
                     // 🌟 인덱스 선택 시 정렬 로직이 일치하도록 수정
-                    var list = DungeonManager.ZoneList.Where(z => currentFilterMap == null || (z.Facet != null && z.Facet.MapID == currentFilterMap.MapID))
-                               .OrderBy(z => (string.IsNullOrEmpty(z.GroupName) || z.GroupName == "Uncategorized" || z.GroupName == "기본 그룹") ? "미분류 던전" : z.GroupName)
-                               .ThenBy(z => (string.IsNullOrEmpty(z.SubZoneName) || z.SubZoneName == "Main" || z.SubZoneName == "메인 구역") ? NewSpawnManager.GetDisplayName(z.RCode) : z.SubZoneName).ToList();
+                    var list = DungeonManager.ZoneList
+                        .Where(z => currentFilterMap == null || (z.Facet != null && z.Facet.MapID == currentFilterMap.MapID))
+                        .OrderBy(z => (string.IsNullOrEmpty(z.GroupName) || z.GroupName == "Uncategorized" || z.GroupName == "기본 그룹") ? 1 : 0)
+                        .ThenBy(z => z.RCode)
+                        .ToList();
                     
                     if (targetIndex < list.Count)
                     {
