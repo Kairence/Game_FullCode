@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Server;
@@ -198,7 +198,7 @@ namespace Server.Misc
 											if (itemKey.SubID != 0) bev2.Content = (BeverageType)itemKey.SubID;
 											else bev2.Content = BeverageType.Water; // 지정 안됐으면 기본 물
 											
-											// 🌟 [패치] 상인이 사기치지 못하게 내용물(Quantity)을 가득 채워줌!
+											// ?? [패치] 상인이 사기치지 못하게 내용물(Quantity)을 가득 채워줌!
 											bev2.Quantity = bev2.MaxQuantity; 
 										}
                                         if (itemKey.Resource != CraftResource.None)
@@ -256,31 +256,25 @@ namespace Server.Misc
                     availableSpace = Math.Max(0, maxCap - currentItems);
                 }
 
-                var allVendors = new List<(Mobile Vendor, double Distance, bool IsRetail)>();
-
-                if (PlayerVendor.PlayerVendors != null)
-                {
-                    for (int i = 0; i < PlayerVendor.PlayerVendors.Count; i++)
-                    {
-                        var v = PlayerVendor.PlayerVendors[i];
-                        if (v == null || v.Map != town.Facet || v.Deleted || v.Backpack == null) continue;
-                        double dist = Utility.GetDistanceToSqrt(town.Center, v.Location);
-                        if (dist <= 100.0) allVendors.Add((v, dist, false));
-                    }
-                }
+                var allVendors = new List<(Mobile Vendor, double Distance, bool IsRetail, double Weight)>();
 
                 if (RetailVendor.RetailVendors != null)
                 {
                     for (int i = 0; i < RetailVendor.RetailVendors.Count; i++)
                     {
                         var v = RetailVendor.RetailVendors[i];
-                        if (v == null || v.Map != town.Facet || v.Deleted) continue;
+                        if (v == null || v.Map != town.Facet || v.Deleted || v.EmployeeID == Guid.Empty) continue;
+                        
                         double dist = Utility.GetDistanceToSqrt(town.Center, v.Location);
-                        if (dist <= 100.0) allVendors.Add((v, dist, true));
+                        if (dist <= 100.0) 
+                        {
+                            double weight = dist - (v.EmployeeSkillLevel * 0.5);
+                            allVendors.Add((v, dist, true, weight));
+                        }
                     }
                 }
 
-                allVendors.Sort((a, b) => a.Distance.CompareTo(b.Distance));
+                allVendors.Sort((a, b) => a.Weight.CompareTo(b.Weight));
 
                 foreach (var vData in allVendors)
                 {
@@ -388,7 +382,7 @@ namespace Server.Misc
                                 else if (citizen.House != null && !isDirectRequest)
                                 {
                                     if (item.Parent is Container parent) parent.RemoveItem(item);
-                                    // 🌟 무단투기 패치: 여기도 집 앞 대문으로 배송
+                                    // ?? 무단투기 패치: 여기도 집 앞 대문으로 배송
                                     if (!PhysicalStorageEngine.TryStoreItem(citizen.House, item))
 									{
 										if (citizen.House.EstateSign != null)
@@ -834,7 +828,7 @@ namespace Server.Misc
                 string rawTownName = TownNumber.GetName(town.TownID);
                 string townName = string.IsNullOrEmpty(rawTownName) ? "" : rawTownName.ToLower();
 
-                // 🌟 [원인 해결] p.CurrentCapacity > 0 조건을 삭제했습니다!
+                // ?? [원인 해결] p.CurrentCapacity > 0 조건을 삭제했습니다!
                 // 자원이 고갈되었더라도 무조건 구역(RegionName)을 할당해 주어,
                 // AI나 틱 엔진이 빈 값("")을 들고 길찾기를 하다가 뻗어버리는 현상을 원천 차단합니다.
                 var validPools = ResourceManager.Pools.Values.Where(p => 
@@ -1102,3 +1096,5 @@ namespace Server.Misc
         }
     }
 }
+
+

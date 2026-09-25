@@ -1,498 +1,4 @@
 <Dungeons>
-  <Zone RCode="120100" IsActive="False" TargetHeat="80000" MaxPop="0" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Bogling,Server.Mobiles.Corpser" />
-      <Tier Level="2" Mobs="Server.Mobiles.Corpser" />
-      <Tier Level="3" Mobs="Server.Mobiles.Wisp" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="120201" IsActive="True" TargetHeat="110000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.GiantTurkey" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="코베투스" SubZoneName="">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Eagle" />
-      <Tier Level="2" Mobs="Server.Mobiles.Mongbat" />
-      <Tier Level="3" Mobs="Server.Mobiles.Turkey" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5385" Y="1847" W="121" H="85" />
-  </Zone>
-  <Zone RCode="120202" IsActive="True" TargetHeat="600000" MaxPop="100" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.GiantDreadSpider" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="코베투스" SubZoneName="">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.GiantSpider" />
-      <Tier Level="2" Mobs="Server.Mobiles.GiantBlackWidow,Server.Mobiles.TrapdoorSpider" />
-      <Tier Level="3" Mobs="Server.Mobiles.WolfSpider,Server.Mobiles.DreadSpider" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5388" Y="1969" W="218" H="64" />
-  </Zone>
-  <Zone RCode="120203" IsActive="True" TargetHeat="2500000" MaxPop="80" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.Lilith" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="코베투스" SubZoneName="">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.VampireBat" />
-      <Tier Level="2" Mobs="Server.Mobiles.Harpy" />
-      <Tier Level="3" Mobs="Server.Mobiles.StoneHarpy,Server.Mobiles.Succubus" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5533" Y="1822" W="97" H="103" />
-  </Zone>
-  <Zone RCode="120204" IsActive="True" TargetHeat="1000000" MaxPop="25" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="코베투스" SubZoneName="">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Alligator" />
-      <Tier Level="2" Mobs="Server.Mobiles.WaterElemental" />
-      <Tier Level="3" Mobs="Server.Mobiles.SeaSerpent" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5395" Y="1790" W="93" H="45" />
-  </Zone>
-  <Zone RCode="120205" IsActive="True" TargetHeat="1500000" MaxPop="15" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="코베투스" SubZoneName="">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Skeleton,Server.Mobiles.Zombie" />
-      <Tier Level="2" Mobs="Server.Mobiles.Ghoul" />
-      <Tier Level="3" Mobs="Server.Mobiles.BoneKnight,Server.Mobiles.Executioner" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5497" Y="1798" W="58" H="20" />
-  </Zone>
-  <Zone RCode="120301" IsActive="True" TargetHeat="1125000" MaxPop="150" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.SkeletalMount" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.BoneMagi" />
-      <Tier Level="2" Mobs="Server.Mobiles.Mummy,Server.Mobiles.PestilentBandage" />
-      <Tier Level="3" Mobs="Server.Mobiles.RottingCorpse,Server.Mobiles.BoneKnight" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5120" Y="512" W="127" H="127" />
-  </Zone>
-  <Zone RCode="120302" IsActive="True" TargetHeat="1875000" MaxPop="150" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.BoneDemon" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.SkeletalCatStatue,Server.Mobiles.Ghoul" />
-      <Tier Level="2" Mobs="Server.Mobiles.PatchworkSkeleton,Server.Mobiles.Shade" />
-      <Tier Level="3" Mobs="Server.Mobiles.SkeletalKnight,Server.Mobiles.SkeletalMage,Server.Mobiles.Wraith" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5248" Y="512" W="127" H="127" />
-  </Zone>
-  <Zone RCode="120303" IsActive="True" TargetHeat="3150000" MaxPop="150" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.AncientLich" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.SkeletalLich" />
-      <Tier Level="2" Mobs="Server.Mobiles.Lich" />
-      <Tier Level="3" Mobs="Server.Mobiles.Lich" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5120" Y="640" W="127" H="127" />
-  </Zone>
-  <Zone RCode="120304" IsActive="True" TargetHeat="4050000" MaxPop="150" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="600" BossType="Server.Mobiles.SkeletalDragon" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.LichLord" />
-      <Tier Level="2" Mobs="Server.Mobiles.LichLord" />
-      <Tier Level="3" Mobs="Server.Mobiles.LichLord" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5248" Y="640" W="127" H="127" />
-  </Zone>
-  <Zone RCode="120402" IsActive="True" TargetHeat="90000" MaxPop="70" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.Reaper" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="데스파이즈" SubZoneName="">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Llama,Server.Mobiles.Horse" />
-      <Tier Level="2" Mobs="Server.Mobiles.Palomino,Server.Mobiles.RidableLlama" />
-      <Tier Level="3" Mobs="Server.Mobiles.Bogling,Server.Mobiles.ForestOstard,Server.Mobiles.Treefellow,Server.Mobiles.Corpser" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5376" Y="512" W="139" H="124" />
-  </Zone>
-  <Zone RCode="120403" IsActive="True" TargetHeat="500000" MaxPop="80" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.BloodWorm" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="데스파이즈" SubZoneName="">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.HeadlessOne,Server.Mobiles.Lizardman" />
-      <Tier Level="2" Mobs="Server.Mobiles.LizardmanDefender,Server.Mobiles.Ettin" />
-      <Tier Level="3" Mobs="Server.Mobiles.Troll,Server.Mobiles.Cyclops" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5376" Y="650" W="159" H="116" />
-  </Zone>
-  <Zone RCode="120404" IsActive="True" TargetHeat="1500000" MaxPop="100" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.OgreLord" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="데스파이즈" SubZoneName="">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Centaur" />
-      <Tier Level="2" Mobs="Server.Mobiles.Ogre" />
-      <Tier Level="3" Mobs="Server.Mobiles.Ogre,Server.Mobiles.Centaur" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5376" Y="770" W="255" H="253" />
-  </Zone>
-  <Zone RCode="120501" IsActive="True" TargetHeat="2500000" MaxPop="50" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.LavaSnake,Server.Mobiles.GiantSerpent" />
-      <Tier Level="2" Mobs="Server.Mobiles.DragonWolf,Server.Mobiles.Drake" />
-      <Tier Level="3" Mobs="Server.Mobiles.Wyvern,Server.Mobiles.Dragon" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5120" Y="768" W="127" H="127" />
-  </Zone>
-  <Zone RCode="120502" IsActive="True" TargetHeat="5500000" MaxPop="25" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Drake" />
-      <Tier Level="2" Mobs="Server.Mobiles.Dragon,Server.Mobiles.TsukiWolf" />
-      <Tier Level="3" Mobs="Server.Mobiles.ShadowWyrm,Server.Mobiles.RidableDragon" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5248" Y="768" W="127" H="127" />
-  </Zone>
-  <Zone RCode="120503" IsActive="True" TargetHeat="7500000" MaxPop="50" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="720" BossType="Server.Mobiles.AncientWyrm" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Dragon" />
-      <Tier Level="2" Mobs="Server.Mobiles.ShadowWyrm" />
-      <Tier Level="3" Mobs="Server.Mobiles.GreaterDragon" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5120" Y="896" W="255" H="127" />
-  </Zone>
-  <Zone RCode="120601" IsActive="True" TargetHeat="250000" MaxPop="100" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Imp,Server.Mobiles.Gargoyle" />
-      <Tier Level="2" Mobs="Server.Mobiles.HellCat" />
-      <Tier Level="3" Mobs="Server.Mobiles.HellHound,Server.Mobiles.PredatorHellCat" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5888" Y="0" W="127" H="127" />
-  </Zone>
-  <Zone RCode="120602" IsActive="True" TargetHeat="3000000" MaxPop="100" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.StoneGargoyle" />
-      <Tier Level="2" Mobs="Server.Mobiles.Daemon" />
-      <Tier Level="3" Mobs="Server.Mobiles.Daemon" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="6016" Y="0" W="127" H="127" />
-  </Zone>
-  <Zone RCode="120603" IsActive="True" TargetHeat="4500000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Daemon" />
-      <Tier Level="2" Mobs="Server.Mobiles.HellSteed" />
-      <Tier Level="3" Mobs="Server.Mobiles.ArchDaemon" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5888" Y="128" W="127" H="127" />
-  </Zone>
-  <Zone RCode="120604" IsActive="True" TargetHeat="5500000" MaxPop="5" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="720" BossType="Server.Mobiles.Balron" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.ArchDaemon" />
-      <Tier Level="2" Mobs="Server.Mobiles.ArchDaemon" />
-      <Tier Level="3" Mobs="Server.Mobiles.ArchDaemon" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="6016" Y="128" W="127" H="127" />
-  </Zone>
-  <Zone RCode="120701" IsActive="True" TargetHeat="700000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.EttinLord" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Scorpion" />
-      <Tier Level="2" Mobs="Server.Mobiles.ClockworkScorpion" />
-      <Tier Level="3" Mobs="Server.Mobiles.EarthElemental" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5376" Y="0" W="119" H="127" />
-  </Zone>
-  <Zone RCode="120702" IsActive="True" TargetHeat="900000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.AirElemental" />
-      <Tier Level="2" Mobs="Server.Mobiles.WaterElemental" />
-      <Tier Level="3" Mobs="Server.Mobiles.FireElemental" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5496" Y="0" W="135" H="127" />
-  </Zone>
-  <Zone RCode="120703" IsActive="True" TargetHeat="2600000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.Beholder" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Gazer" />
-      <Tier Level="2" Mobs="Server.Mobiles.Gazer" />
-      <Tier Level="3" Mobs="Server.Mobiles.ElderGazer" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5376" Y="128" W="255" H="127" />
-  </Zone>
-  <Zone RCode="120704" IsActive="True" TargetHeat="6000000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="600" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.BloodElemental" />
-      <Tier Level="2" Mobs="Server.Mobiles.PoisonElemental" />
-      <Tier Level="3" Mobs="Server.Mobiles.EnragedColossus" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5632" Y="0" W="255" H="127" />
-  </Zone>
-  <Zone RCode="120801" IsActive="True" TargetHeat="1125000" MaxPop="80" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Brigand" />
-      <Tier Level="2" Mobs="Server.Mobiles.Golem,Server.Mobiles.EvilMage" />
-      <Tier Level="3" Mobs="Server.Mobiles.ShadowDragon,Server.Mobiles.ChaosDragoon" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5782" Y="525" W="90" H="75" />
-  </Zone>
-  <Zone RCode="120802" IsActive="True" TargetHeat="1875000" MaxPop="60" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.GolemLord" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.GolemController" />
-      <Tier Level="2" Mobs="Server.Mobiles.Executioner" />
-      <Tier Level="3" Mobs="Server.Mobiles.Executioner" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5646" Y="521" W="89" H="53" />
-  </Zone>
-  <Zone RCode="120803" IsActive="True" TargetHeat="3375000" MaxPop="15" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.JukaLord" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.JukaWarrior" />
-      <Tier Level="2" Mobs="Server.Mobiles.JukaMage,Server.Mobiles.ChaosDragoonElite" />
-      <Tier Level="3" Mobs="Server.Mobiles.EvilMageLord" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5688" Y="624" W="30" H="30" />
-  </Zone>
-  <Zone RCode="120900" IsActive="True" TargetHeat="150000" MaxPop="0" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" BossType="Server.Mobiles.AcidElemental" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Sewerrat" />
-      <Tier Level="2" Mobs="Server.Mobiles.GiantRat,Server.Mobiles.BullFrog" />
-      <Tier Level="3" Mobs="Server.Mobiles.Alligator,Server.Mobiles.GiantToad" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="121000" IsActive="True" TargetHeat="750000" MaxPop="150" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.GiantSpider" />
-      <Tier Level="2" Mobs="Server.Mobiles.TerathanDrone,Server.Mobiles.TerathanWarrior" />
-      <Tier Level="3" Mobs="Server.Mobiles.TerathanMatriarch,Server.Mobiles.TerathanAvenger" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5132" Y="1544" W="228" H="153" />
-  </Zone>
-  <Zone RCode="121102" IsActive="True" TargetHeat="750000" MaxPop="150" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.GrayGoblin,Server.Mobiles.GreenGoblin" />
-      <Tier Level="2" Mobs="Server.Mobiles.EnslavedGrayGoblin,Server.Mobiles.EnslavedGreenGoblin,Server.Mobiles.LavaLizard,Server.Mobiles.UndeadGargoyle" />
-      <Tier Level="3" Mobs="Server.Mobiles.EnslavedGargoyle,Server.Mobiles.Gargoyle,Server.Mobiles.FireGargoyle,Server.Mobiles.LavaSerpent" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5648" Y="1304" W="230" H="181" />
-  </Zone>
-  <Zone RCode="121103" IsActive="True" TargetHeat="3500000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.FireBeetle,Server.Mobiles.LavaElemental" />
-      <Tier Level="2" Mobs="Server.Mobiles.FireDrake,Server.Mobiles.Efreet,Server.Mobiles.GargoyleEnforcer" />
-      <Tier Level="3" Mobs="Server.Mobiles.GargoyleDestroyer,Server.Mobiles.FireSteed,Server.Mobiles.FireDaemon,Server.Mobiles.RedWyrm" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="121202" IsActive="True" TargetHeat="750000" MaxPop="100" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.FrostOoze,Server.Mobiles.FrostSpider" />
-      <Tier Level="2" Mobs="Server.Mobiles.IceHound,Server.Mobiles.FrostMite" />
-      <Tier Level="3" Mobs="Server.Mobiles.GiantIceWorm,Server.Mobiles.IceElemental,Server.Mobiles.SnowElemental" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="121203" IsActive="True" TargetHeat="225000" MaxPop="30" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Ratman" />
-      <Tier Level="2" Mobs="Server.Mobiles.RatmanArcher" />
-      <Tier Level="3" Mobs="Server.Mobiles.RatmanMage" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="121204" IsActive="True" TargetHeat="3375000" MaxPop="8" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.SnowElemental" />
-      <Tier Level="2" Mobs="Server.Mobiles.ArcticOgreLord,Server.Mobiles.ColdDrake" />
-      <Tier Level="3" Mobs="Server.Mobiles.IceFiend,Server.Mobiles.WhiteWyrm" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="121301" IsActive="True" TargetHeat="300000" MaxPop="10" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.BogThing" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.OrcChopper" />
-      <Tier Level="2" Mobs="Server.Mobiles.OrcBomber,Server.Mobiles.OrcCaptain" />
-      <Tier Level="3" Mobs="Server.Mobiles.OrcishMage" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5097" Y="1912" W="60" H="30" />
-  </Zone>
-  <Zone RCode="121302" IsActive="True" TargetHeat="675000" MaxPop="70" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.OrcishLord" />
-      <Tier Level="2" Mobs="Server.Mobiles.OrcishLord" />
-      <Tier Level="3" Mobs="Server.Mobiles.OrcishLord" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5261" Y="1254" W="100" H="120" />
-  </Zone>
-  <Zone RCode="121303" IsActive="True" TargetHeat="3000000" MaxPop="10" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.OrcBrute" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Titan" />
-      <Tier Level="2" Mobs="Server.Mobiles.Titan" />
-      <Tier Level="3" Mobs="Server.Mobiles.Titan" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5250" Y="1932" W="100" H="100" />
-  </Zone>
-  <Zone RCode="121400" IsActive="False" TargetHeat="375000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Troglodyte" />
-      <Tier Level="2" Mobs="Server.Mobiles.Troglodyte" />
-      <Tier Level="3" Mobs="Server.Mobiles.Troglodyte" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="6240" Y="860" W="70" H="60" />
-  </Zone>
-  <Zone RCode="121500" IsActive="False" TargetHeat="2250000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="720" BossType="Server.Mobiles.ChiefParoxysmus" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.PlagueBeast" />
-      <Tier Level="2" Mobs="Server.Mobiles.PoisonElemental" />
-      <Tier Level="3" Mobs="Server.Mobiles.PoisonElemental" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="5620" Y="311" W="941" H="2731" />
-  </Zone>
-  <Zone RCode="121600" IsActive="False" TargetHeat="600000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="600" BossType="Server.Mobiles.ShimmeringEffusion" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Wisp" />
-      <Tier Level="2" Mobs="Server.Mobiles.CrystalElemental" />
-      <Tier Level="3" Mobs="Server.Mobiles.CrystalElemental" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="6400" Y="0" W="221" H="255" />
-  </Zone>
-  <Zone RCode="121700" IsActive="False" TargetHeat="450000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.Succubus" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Ratman" />
-      <Tier Level="2" Mobs="Server.Mobiles.Gargoyle" />
-      <Tier Level="3" Mobs="Server.Mobiles.Gargoyle" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-    <Bounds X="759" Y="4" W="5640" H="1693" />
-  </Zone>
-  <Zone RCode="121801" IsActive="True" TargetHeat="750000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.RedSolenQueen" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Beetle,Server.Mobiles.FireAnt" />
-      <Tier Level="2" Mobs="Server.Mobiles.BlackSolenWorker,Server.Mobiles.RedSolenWorker" />
-      <Tier Level="3" Mobs="Server.Mobiles.BlackSolenWarrior,Server.Mobiles.RedSolenWarrior,Server.Mobiles.AntLion" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="121802" IsActive="True" TargetHeat="600000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.BlackSolenQueen" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.BlackSolenWorker" />
-      <Tier Level="2" Mobs="Server.Mobiles.BlackSolenWarrior,Server.Mobiles.BlackSolenInfiltratorWarrior" />
-      <Tier Level="3" Mobs="Server.Mobiles.BlackSolenInfiltratorQueen" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="121804" IsActive="True" TargetHeat="600000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.RedSolenQueen" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.RedSolenWorker" />
-      <Tier Level="2" Mobs="Server.Mobiles.RedSolenWarrior,Server.Mobiles.RedSolenInfiltratorWarrior" />
-      <Tier Level="3" Mobs="Server.Mobiles.RedSolenInfiltratorQueen" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="121806" IsActive="True" TargetHeat="225000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.FireAnt" />
-      <Tier Level="2" Mobs="Server.Mobiles.BlackSolenWorker" />
-      <Tier Level="3" Mobs="Server.Mobiles.RedSolenWorker" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="220101" IsActive="False" TargetHeat="85000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Bogling,Server.Mobiles.Corpser" />
-      <Tier Level="3" Mobs="Server.Mobiles.BogThing,Server.Mobiles.Wisp" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
   <Zone RCode="220200" IsActive="True" TargetHeat="25000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
     <SpawnProfiles>
       <Tier Level="1" Mobs="Server.Mobiles.Bird,Server.Mobiles.Eagle,Server.Mobiles.Harpy" />
@@ -523,24 +29,6 @@
     <SpawnProfiles>
       <Tier Level="1" Mobs="Server.Mobiles.Gazer,Server.Mobiles.PoisonElemental" />
       <Tier Level="3" Mobs="Server.Mobiles.ElderGazer,Server.Mobiles.BloodElemental" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="220204" IsActive="False" TargetHeat="65000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.WaterElemental" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.WaterElemental" />
-      <Tier Level="3" Mobs="Server.Mobiles.SeaSerpent,Server.Mobiles.Kraken" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="220205" IsActive="False" TargetHeat="75000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.Executioner" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Skeleton,Server.Mobiles.Zombie" />
-      <Tier Level="3" Mobs="Server.Mobiles.Executioner,Server.Mobiles.BoneKnight" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
@@ -704,85 +192,6 @@
     <SpecialSpawns />
     <BossGimmick />
   </Zone>
-  <Zone RCode="220700" IsActive="True" TargetHeat="25000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.EarthElemental" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="220701" IsActive="True" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.EarthElemental" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Scorpion" />
-      <Tier Level="3" Mobs="Server.Mobiles.EarthElemental" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="220702" IsActive="True" TargetHeat="65000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.AirElemental" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.EarthElemental" />
-      <Tier Level="3" Mobs="Server.Mobiles.AirElemental,Server.Mobiles.WaterElemental" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="220703" IsActive="True" TargetHeat="85000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.PoisonElemental" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.WaterElemental,Server.Mobiles.FireElemental" />
-      <Tier Level="3" Mobs="Server.Mobiles.PoisonElemental" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="220704" IsActive="True" TargetHeat="110000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="600" BossType="Server.Mobiles.BloodElemental" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.PoisonElemental" />
-      <Tier Level="3" Mobs="Server.Mobiles.BloodElemental" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="220800" IsActive="True" TargetHeat="25000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Brigand" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="220801" IsActive="True" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.Executioner" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Brigand" />
-      <Tier Level="3" Mobs="Server.Mobiles.Executioner" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="220802" IsActive="True" TargetHeat="65000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.JukaMage" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Executioner" />
-      <Tier Level="3" Mobs="Server.Mobiles.JukaWarrior,Server.Mobiles.JukaMage" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="220803" IsActive="True" TargetHeat="85000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.JukaLord" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.JukaMage" />
-      <Tier Level="3" Mobs="Server.Mobiles.JukaLord" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
   <Zone RCode="220900" IsActive="True" TargetHeat="1500000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
     <SpawnProfiles>
       <Tier Level="1" Mobs="Server.Mobiles.Cursed" />
@@ -793,320 +202,517 @@
     <SpecialSpawns />
     <BossGimmick />
   </Zone>
-  <Zone RCode="220901" IsActive="True" TargetHeat="110000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.ShadowKnight" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="120100" IsActive="False" TargetHeat="80000" MaxPop="0" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.BoneKnight,Server.Mobiles.SkeletalMage" />
-      <Tier Level="3" Mobs="Server.Mobiles.ShadowKnight,Server.Mobiles.RottingCorpse" />
+      <Tier Level="1" Mobs="Server.Mobiles.Bogling,Server.Mobiles.Corpser" />
+      <Tier Level="2" Mobs="Server.Mobiles.Corpser" />
+      <Tier Level="3" Mobs="Server.Mobiles.Wisp" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
   </Zone>
-  <Zone RCode="220902" IsActive="False" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="120201" IsActive="True" TargetHeat="110000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.GiantTurkey" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="코베투스" SubZoneName="">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Skeleton,Server.Mobiles.Zombie" />
+      <Tier Level="1" Mobs="Server.Mobiles.Eagle" />
+      <Tier Level="2" Mobs="Server.Mobiles.Mongbat" />
+      <Tier Level="3" Mobs="Server.Mobiles.Turkey" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
+    <Bounds X="5385" Y="1847" W="121" H="85" />
   </Zone>
-  <Zone RCode="221000" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="120202" IsActive="True" TargetHeat="600000" MaxPop="100" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.GiantDreadSpider" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="코베투스" SubZoneName="">
     <SpawnProfiles>
       <Tier Level="1" Mobs="Server.Mobiles.GiantSpider" />
+      <Tier Level="2" Mobs="Server.Mobiles.GiantBlackWidow,Server.Mobiles.TrapdoorSpider" />
+      <Tier Level="3" Mobs="Server.Mobiles.WolfSpider,Server.Mobiles.DreadSpider" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
+    <Bounds X="5388" Y="1969" W="218" H="64" />
   </Zone>
-  <Zone RCode="221001" IsActive="False" TargetHeat="55000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="300" BossType="Server.Mobiles.TerathanWarrior" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="120203" IsActive="True" TargetHeat="2500000" MaxPop="80" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.Lilith" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="코베투스" SubZoneName="">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.TerathanDrone" />
-      <Tier Level="3" Mobs="Server.Mobiles.TerathanWarrior" />
+      <Tier Level="1" Mobs="Server.Mobiles.VampireBat" />
+      <Tier Level="2" Mobs="Server.Mobiles.Harpy" />
+      <Tier Level="3" Mobs="Server.Mobiles.StoneHarpy,Server.Mobiles.Succubus" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
+    <Bounds X="5533" Y="1822" W="97" H="103" />
   </Zone>
-  <Zone RCode="221002" IsActive="True" TargetHeat="85000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.TerathanAvenger" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="120204" IsActive="True" TargetHeat="1000000" MaxPop="25" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="코베투스" SubZoneName="">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.TerathanWarrior" />
-      <Tier Level="3" Mobs="Server.Mobiles.TerathanAvenger" />
+      <Tier Level="1" Mobs="Server.Mobiles.Alligator" />
+      <Tier Level="2" Mobs="Server.Mobiles.WaterElemental" />
+      <Tier Level="3" Mobs="Server.Mobiles.SeaSerpent" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
+    <Bounds X="5395" Y="1790" W="93" H="45" />
   </Zone>
-  <Zone RCode="221003" IsActive="True" TargetHeat="130000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="720" BossType="Server.Mobiles.TerathanMatriarch" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="120205" IsActive="True" TargetHeat="1500000" MaxPop="15" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="코베투스" SubZoneName="">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.TerathanAvenger" />
-      <Tier Level="3" Mobs="Server.Mobiles.TerathanMatriarch,Server.Mobiles.PoisonElemental" />
+      <Tier Level="1" Mobs="Server.Mobiles.Skeleton,Server.Mobiles.Zombie" />
+      <Tier Level="2" Mobs="Server.Mobiles.Ghoul" />
+      <Tier Level="3" Mobs="Server.Mobiles.BoneKnight,Server.Mobiles.Executioner" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
+    <Bounds X="5497" Y="1798" W="58" H="20" />
   </Zone>
-  <Zone RCode="221100" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="120301" IsActive="True" TargetHeat="1125000" MaxPop="150" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.SkeletalMount" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="디싯" SubZoneName="">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Slime,Server.Mobiles.HellCat" />
+      <Tier Level="1" Mobs="Server.Mobiles.BoneMagi" />
+      <Tier Level="2" Mobs="Server.Mobiles.Mummy,Server.Mobiles.PestilentBandage" />
+      <Tier Level="3" Mobs="Server.Mobiles.RottingCorpse,Server.Mobiles.BoneKnight" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
+    <Bounds X="5120" Y="512" W="127" H="127" />
   </Zone>
-  <Zone RCode="221101" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="120302" IsActive="True" TargetHeat="1875000" MaxPop="150" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.BoneDemon" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="디싯" SubZoneName="">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Slime" />
+      <Tier Level="1" Mobs="Server.Mobiles.SkeletalCatStatue,Server.Mobiles.Ghoul" />
+      <Tier Level="2" Mobs="Server.Mobiles.PatchworkSkeleton,Server.Mobiles.Shade" />
+      <Tier Level="3" Mobs="Server.Mobiles.SkeletalKnight,Server.Mobiles.SkeletalMage,Server.Mobiles.Wraith" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
+    <Bounds X="5248" Y="512" W="127" H="127" />
   </Zone>
-  <Zone RCode="221102" IsActive="True" TargetHeat="65000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.FireElemental" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="120303" IsActive="True" TargetHeat="3150000" MaxPop="150" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.AncientLich" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="디싯" SubZoneName="">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.FireGargoyle" />
-      <Tier Level="3" Mobs="Server.Mobiles.FireElemental,Server.Mobiles.LavaLizard" />
+      <Tier Level="1" Mobs="Server.Mobiles.SkeletalLich" />
+      <Tier Level="2" Mobs="Server.Mobiles.Lich" />
+      <Tier Level="3" Mobs="Server.Mobiles.Lich" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
+    <Bounds X="5120" Y="640" W="127" H="127" />
   </Zone>
-  <Zone RCode="221103" IsActive="True" TargetHeat="110000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.Efreet" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="120304" IsActive="True" TargetHeat="4050000" MaxPop="150" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="600" BossType="Server.Mobiles.SkeletalDragon" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="디싯" SubZoneName="">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.FireElemental" />
-      <Tier Level="3" Mobs="Server.Mobiles.Efreet" />
+      <Tier Level="1" Mobs="Server.Mobiles.LichLord" />
+      <Tier Level="2" Mobs="Server.Mobiles.LichLord" />
+      <Tier Level="3" Mobs="Server.Mobiles.LichLord" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
+    <Bounds X="5248" Y="640" W="127" H="127" />
   </Zone>
-  <Zone RCode="221200" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="120402" IsActive="True" TargetHeat="90000" MaxPop="70" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.Reaper" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="데스파이즈" SubZoneName="">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.SnowLeopard,Server.Mobiles.PolarBear" />
+      <Tier Level="1" Mobs="Server.Mobiles.Llama,Server.Mobiles.Horse" />
+      <Tier Level="2" Mobs="Server.Mobiles.Palomino,Server.Mobiles.RidableLlama" />
+      <Tier Level="3" Mobs="Server.Mobiles.Bogling,Server.Mobiles.ForestOstard,Server.Mobiles.Treefellow,Server.Mobiles.Corpser" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
+    <Bounds X="5376" Y="512" W="139" H="124" />
   </Zone>
-  <Zone RCode="221201" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="120403" IsActive="True" TargetHeat="500000" MaxPop="80" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.BloodWorm" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="데스파이즈" SubZoneName="">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.FrostSpider" />
+      <Tier Level="1" Mobs="Server.Mobiles.HeadlessOne,Server.Mobiles.Lizardman" />
+      <Tier Level="2" Mobs="Server.Mobiles.LizardmanDefender,Server.Mobiles.Ettin" />
+      <Tier Level="3" Mobs="Server.Mobiles.Troll,Server.Mobiles.Cyclops" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
+    <Bounds X="5376" Y="650" W="159" H="116" />
   </Zone>
-  <Zone RCode="221202" IsActive="True" TargetHeat="65000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.SnowElemental" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="120404" IsActive="True" TargetHeat="1500000" MaxPop="100" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.OgreLord" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="데스파이즈" SubZoneName="">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.FrostTroll,Server.Mobiles.FrostSpider" />
-      <Tier Level="3" Mobs="Server.Mobiles.SnowElemental,Server.Mobiles.IceSnake" />
+      <Tier Level="1" Mobs="Server.Mobiles.Centaur" />
+      <Tier Level="2" Mobs="Server.Mobiles.Ogre" />
+      <Tier Level="3" Mobs="Server.Mobiles.Ogre,Server.Mobiles.Centaur" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="5376" Y="770" W="255" H="253" />
+  </Zone>
+  <Zone RCode="120501" IsActive="True" TargetHeat="2500000" MaxPop="50" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="데스타드" SubZoneName="">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.LavaSnake,Server.Mobiles.GiantSerpent" />
+      <Tier Level="2" Mobs="Server.Mobiles.DragonWolf,Server.Mobiles.Drake" />
+      <Tier Level="3" Mobs="Server.Mobiles.Wyvern,Server.Mobiles.Dragon" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="5120" Y="768" W="127" H="127" />
+  </Zone>
+  <Zone RCode="120502" IsActive="True" TargetHeat="5500000" MaxPop="25" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="데스타드" SubZoneName="">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.Drake" />
+      <Tier Level="2" Mobs="Server.Mobiles.Dragon,Server.Mobiles.TsukiWolf" />
+      <Tier Level="3" Mobs="Server.Mobiles.ShadowWyrm,Server.Mobiles.RidableDragon" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="5248" Y="768" W="127" H="127" />
+  </Zone>
+  <Zone RCode="120503" IsActive="True" TargetHeat="7500000" MaxPop="50" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="720" BossType="Server.Mobiles.AncientWyrm" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="데스타드" SubZoneName="">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.Dragon" />
+      <Tier Level="2" Mobs="Server.Mobiles.ShadowWyrm" />
+      <Tier Level="3" Mobs="Server.Mobiles.GreaterDragon" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="5120" Y="896" W="255" H="127" />
+  </Zone>
+  <Zone RCode="120601" IsActive="True" TargetHeat="250000" MaxPop="100" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="히스로스" SubZoneName="">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.Imp,Server.Mobiles.Gargoyle" />
+      <Tier Level="2" Mobs="Server.Mobiles.HellCat" />
+      <Tier Level="3" Mobs="Server.Mobiles.HellHound,Server.Mobiles.PredatorHellCat" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="5888" Y="0" W="127" H="127" />
+  </Zone>
+  <Zone RCode="120602" IsActive="True" TargetHeat="3000000" MaxPop="100" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="히스로스" SubZoneName="">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.StoneGargoyle" />
+      <Tier Level="2" Mobs="Server.Mobiles.Daemon" />
+      <Tier Level="3" Mobs="Server.Mobiles.Daemon" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="6016" Y="0" W="127" H="127" />
+  </Zone>
+  <Zone RCode="120603" IsActive="True" TargetHeat="4500000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="히스로스" SubZoneName="">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.Daemon" />
+      <Tier Level="2" Mobs="Server.Mobiles.HellSteed" />
+      <Tier Level="3" Mobs="Server.Mobiles.ArchDaemon" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="5888" Y="128" W="127" H="127" />
+  </Zone>
+  <Zone RCode="120604" IsActive="True" TargetHeat="5500000" MaxPop="5" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="720" BossType="Server.Mobiles.Balron" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="히스로스" SubZoneName="">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.ArchDaemon" />
+      <Tier Level="2" Mobs="Server.Mobiles.ArchDaemon" />
+      <Tier Level="3" Mobs="Server.Mobiles.ArchDaemon" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="6016" Y="128" W="127" H="127" />
+  </Zone>
+  <Zone RCode="120701" IsActive="True" TargetHeat="700000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.EttinLord" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="쉐임" SubZoneName="">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.Scorpion" />
+      <Tier Level="2" Mobs="Server.Mobiles.ClockworkScorpion" />
+      <Tier Level="3" Mobs="Server.Mobiles.EarthElemental" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="5376" Y="0" W="119" H="127" />
+  </Zone>
+  <Zone RCode="120702" IsActive="True" TargetHeat="900000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="쉐임" SubZoneName="">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.AirElemental" />
+      <Tier Level="2" Mobs="Server.Mobiles.WaterElemental" />
+      <Tier Level="3" Mobs="Server.Mobiles.FireElemental" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="5496" Y="0" W="135" H="127" />
+  </Zone>
+  <Zone RCode="120703" IsActive="True" TargetHeat="2600000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.Beholder" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="쉐임" SubZoneName="">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.Gazer" />
+      <Tier Level="2" Mobs="Server.Mobiles.Gazer" />
+      <Tier Level="3" Mobs="Server.Mobiles.ElderGazer" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="5376" Y="128" W="255" H="127" />
+  </Zone>
+  <Zone RCode="120704" IsActive="True" TargetHeat="6000000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="600" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="쉐임" SubZoneName="">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.BloodElemental" />
+      <Tier Level="2" Mobs="Server.Mobiles.PoisonElemental" />
+      <Tier Level="3" Mobs="Server.Mobiles.EnragedColossus" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="5632" Y="0" W="255" H="127" />
+  </Zone>
+  <Zone RCode="120801" IsActive="True" TargetHeat="1125000" MaxPop="80" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="롱" SubZoneName="">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.Brigand" />
+      <Tier Level="2" Mobs="Server.Mobiles.Golem,Server.Mobiles.EvilMage" />
+      <Tier Level="3" Mobs="Server.Mobiles.ShadowDragon,Server.Mobiles.ChaosDragoon" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="5782" Y="525" W="90" H="75" />
+  </Zone>
+  <Zone RCode="120802" IsActive="True" TargetHeat="1875000" MaxPop="60" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.GolemLord" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="롱" SubZoneName="">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.GolemController" />
+      <Tier Level="2" Mobs="Server.Mobiles.Executioner" />
+      <Tier Level="3" Mobs="Server.Mobiles.Executioner" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="5646" Y="521" W="89" H="53" />
+  </Zone>
+  <Zone RCode="120803" IsActive="True" TargetHeat="3375000" MaxPop="15" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.JukaLord" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="롱" SubZoneName="">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.JukaWarrior" />
+      <Tier Level="2" Mobs="Server.Mobiles.JukaMage,Server.Mobiles.ChaosDragoonElite" />
+      <Tier Level="3" Mobs="Server.Mobiles.EvilMageLord" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="5688" Y="624" W="30" H="30" />
+  </Zone>
+  <Zone RCode="120900" IsActive="True" TargetHeat="150000" MaxPop="0" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" BossType="Server.Mobiles.AcidElemental" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.Sewerrat" />
+      <Tier Level="2" Mobs="Server.Mobiles.GiantRat,Server.Mobiles.BullFrog" />
+      <Tier Level="3" Mobs="Server.Mobiles.Alligator,Server.Mobiles.GiantToad" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
   </Zone>
-  <Zone RCode="221203" IsActive="True" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.RatmanMage" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="121000" IsActive="True" TargetHeat="750000" MaxPop="150" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="테라탄킵" SubZoneName="">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.GiantSpider" />
+      <Tier Level="2" Mobs="Server.Mobiles.TerathanDrone,Server.Mobiles.TerathanWarrior" />
+      <Tier Level="3" Mobs="Server.Mobiles.TerathanMatriarch,Server.Mobiles.TerathanAvenger" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="5132" Y="1544" W="228" H="153" />
+  </Zone>
+  <Zone RCode="121102" IsActive="True" TargetHeat="750000" MaxPop="150" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="파이어" SubZoneName="[Trammel] Fire Level 1-1">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.GrayGoblin,Server.Mobiles.GreenGoblin" />
+      <Tier Level="2" Mobs="Server.Mobiles.EnslavedGrayGoblin,Server.Mobiles.EnslavedGreenGoblin,Server.Mobiles.LavaLizard,Server.Mobiles.UndeadGargoyle" />
+      <Tier Level="3" Mobs="Server.Mobiles.EnslavedGargoyle,Server.Mobiles.Gargoyle,Server.Mobiles.FireGargoyle,Server.Mobiles.LavaSerpent" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="5765" Y="1286" W="120" H="223" />
+  </Zone>
+  <Zone RCode="121103" IsActive="True" TargetHeat="3500000" MaxPop="75" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="파이어" SubZoneName="">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.FireBeetle,Server.Mobiles.LavaElemental" />
+      <Tier Level="2" Mobs="Server.Mobiles.FireDrake,Server.Mobiles.Efreet,Server.Mobiles.GargoyleEnforcer" />
+      <Tier Level="3" Mobs="Server.Mobiles.GargoyleDestroyer,Server.Mobiles.FireSteed,Server.Mobiles.FireDaemon,Server.Mobiles.RedWyrm" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="5637" Y="1284" W="110" H="113" />
+  </Zone>
+  <Zone RCode="121202" IsActive="True" TargetHeat="750000" MaxPop="100" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="아이스" SubZoneName="">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.FrostOoze,Server.Mobiles.FrostSpider" />
+      <Tier Level="2" Mobs="Server.Mobiles.IceHound,Server.Mobiles.FrostMite" />
+      <Tier Level="3" Mobs="Server.Mobiles.GiantIceWorm,Server.Mobiles.IceElemental,Server.Mobiles.SnowElemental" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="5664" Y="143" W="205" H="93" />
+  </Zone>
+  <Zone RCode="121203" IsActive="True" TargetHeat="225000" MaxPop="30" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="아이스" SubZoneName="">
     <SpawnProfiles>
       <Tier Level="1" Mobs="Server.Mobiles.Ratman" />
-      <Tier Level="3" Mobs="Server.Mobiles.RatmanArcher,Server.Mobiles.RatmanMage" />
+      <Tier Level="2" Mobs="Server.Mobiles.RatmanArcher" />
+      <Tier Level="3" Mobs="Server.Mobiles.RatmanMage" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
+    <Bounds X="5808" Y="342" W="47" H="33" />
   </Zone>
-  <Zone RCode="221204" IsActive="True" TargetHeat="110000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.IceFiend" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="121204" IsActive="True" TargetHeat="3375000" MaxPop="8" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="아이스" SubZoneName="">
     <SpawnProfiles>
       <Tier Level="1" Mobs="Server.Mobiles.SnowElemental" />
-      <Tier Level="3" Mobs="Server.Mobiles.IceFiend" />
+      <Tier Level="2" Mobs="Server.Mobiles.ArcticOgreLord,Server.Mobiles.ColdDrake" />
+      <Tier Level="3" Mobs="Server.Mobiles.IceFiend,Server.Mobiles.WhiteWyrm" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
+    <Bounds X="5656" Y="302" W="33" H="32" />
   </Zone>
-  <Zone RCode="221300" IsActive="True" TargetHeat="25000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="121301" IsActive="True" TargetHeat="300000" MaxPop="10" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.BogThing" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="오크" SubZoneName="">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Orc" />
+      <Tier Level="1" Mobs="Server.Mobiles.OrcChopper" />
+      <Tier Level="2" Mobs="Server.Mobiles.OrcBomber,Server.Mobiles.OrcCaptain" />
+      <Tier Level="3" Mobs="Server.Mobiles.OrcishMage" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
+    <Bounds X="5132" Y="1942" W="26" H="48" />
   </Zone>
-  <Zone RCode="221301" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.OrcCaptain" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="121302" IsActive="True" TargetHeat="675000" MaxPop="70" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="오크" SubZoneName="">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Orc" />
-      <Tier Level="3" Mobs="Server.Mobiles.OrcCaptain,Server.Mobiles.OrcishMage" />
+      <Tier Level="1" Mobs="Server.Mobiles.OrcishLord" />
+      <Tier Level="2" Mobs="Server.Mobiles.OrcishLord" />
+      <Tier Level="3" Mobs="Server.Mobiles.OrcishLord" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
+    <Bounds X="5261" Y="1254" W="100" H="120" />
   </Zone>
-  <Zone RCode="221302" IsActive="True" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.OrcBrute" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="121303" IsActive="True" TargetHeat="3000000" MaxPop="10" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.OrcBrute" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="오크" SubZoneName="">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.OrcCaptain" />
-      <Tier Level="3" Mobs="Server.Mobiles.OrcBrute" />
+      <Tier Level="1" Mobs="Server.Mobiles.Titan" />
+      <Tier Level="2" Mobs="Server.Mobiles.Titan" />
+      <Tier Level="3" Mobs="Server.Mobiles.Titan" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
+    <Bounds X="5250" Y="1932" W="100" H="100" />
   </Zone>
-  <Zone RCode="221303" IsActive="True" TargetHeat="55000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.OrcishMage" />
-      <Tier Level="3" Mobs="Server.Mobiles.OrcBrute" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="221400" IsActive="True" TargetHeat="85000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.Troglodyte" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="121400" IsActive="False" TargetHeat="375000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
     <SpawnProfiles>
       <Tier Level="1" Mobs="Server.Mobiles.Troglodyte" />
+      <Tier Level="2" Mobs="Server.Mobiles.Troglodyte" />
+      <Tier Level="3" Mobs="Server.Mobiles.Troglodyte" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
+    <Bounds X="6240" Y="860" W="70" H="60" />
   </Zone>
-  <Zone RCode="221500" IsActive="True" TargetHeat="160000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="720" BossType="Server.Mobiles.ChiefParoxysmus" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="121500" IsActive="False" TargetHeat="2250000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="720" BossType="Server.Mobiles.ChiefParoxysmus" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.PlagueBeast,Server.Mobiles.BogThing" />
+      <Tier Level="1" Mobs="Server.Mobiles.PlagueBeast" />
+      <Tier Level="2" Mobs="Server.Mobiles.PoisonElemental" />
       <Tier Level="3" Mobs="Server.Mobiles.PoisonElemental" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
+    <Bounds X="5620" Y="311" W="941" H="2731" />
   </Zone>
-  <Zone RCode="221600" IsActive="True" TargetHeat="130000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="600" BossType="Server.Mobiles.ShimmeringEffusion" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="121600" IsActive="False" TargetHeat="600000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="600" BossType="Server.Mobiles.ShimmeringEffusion" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.CrystalElemental,Server.Mobiles.Wisp" />
+      <Tier Level="1" Mobs="Server.Mobiles.Wisp" />
+      <Tier Level="2" Mobs="Server.Mobiles.CrystalElemental" />
+      <Tier Level="3" Mobs="Server.Mobiles.CrystalElemental" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="6400" Y="0" W="221" H="255" />
+  </Zone>
+  <Zone RCode="121700" IsActive="False" TargetHeat="450000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.Succubus" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.Ratman" />
+      <Tier Level="2" Mobs="Server.Mobiles.Gargoyle" />
+      <Tier Level="3" Mobs="Server.Mobiles.Gargoyle" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="759" Y="4" W="5640" H="1693" />
+  </Zone>
+  <Zone RCode="121801" IsActive="False" TargetHeat="750000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.RedSolenQueen" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="개미굴" SubZoneName="">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.Beetle,Server.Mobiles.FireAnt" />
+      <Tier Level="2" Mobs="Server.Mobiles.BlackSolenWorker,Server.Mobiles.RedSolenWorker" />
+      <Tier Level="3" Mobs="Server.Mobiles.BlackSolenWarrior,Server.Mobiles.RedSolenWarrior,Server.Mobiles.AntLion" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
   </Zone>
-  <Zone RCode="221700" IsActive="True" TargetHeat="110000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.Succubus" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.Gargoyle,Server.Mobiles.Ratman" />
-      <Tier Level="3" Mobs="Server.Mobiles.Succubus" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="221800" IsActive="True" TargetHeat="85000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" BossType="Server.Mobiles.BlackSolenQueen" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="121802" IsActive="False" TargetHeat="600000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.BlackSolenQueen" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="개미굴" SubZoneName="">
     <SpawnProfiles>
       <Tier Level="1" Mobs="Server.Mobiles.BlackSolenWorker" />
-      <Tier Level="3" Mobs="Server.Mobiles.BlackSolenWarrior,Server.Mobiles.BlackSolenQueen" />
+      <Tier Level="2" Mobs="Server.Mobiles.BlackSolenWarrior,Server.Mobiles.BlackSolenInfiltratorWarrior" />
+      <Tier Level="3" Mobs="Server.Mobiles.BlackSolenInfiltratorQueen" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
   </Zone>
-  <Zone RCode="221801" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="121804" IsActive="False" TargetHeat="600000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.RedSolenQueen" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="개미굴" SubZoneName="">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.BlackSolenWorker" />
+      <Tier Level="1" Mobs="Server.Mobiles.RedSolenWorker" />
+      <Tier Level="2" Mobs="Server.Mobiles.RedSolenWarrior,Server.Mobiles.RedSolenInfiltratorWarrior" />
+      <Tier Level="3" Mobs="Server.Mobiles.RedSolenInfiltratorQueen" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
   </Zone>
-  <Zone RCode="221802" IsActive="True" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.BlackSolenWarrior" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="121806" IsActive="False" TargetHeat="225000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="개미굴" SubZoneName="">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.BlackSolenWorker" />
-      <Tier Level="3" Mobs="Server.Mobiles.BlackSolenWarrior" />
+      <Tier Level="1" Mobs="Server.Mobiles.FireAnt" />
+      <Tier Level="2" Mobs="Server.Mobiles.BlackSolenWorker" />
+      <Tier Level="3" Mobs="Server.Mobiles.RedSolenWorker" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
   </Zone>
-  <Zone RCode="221803" IsActive="True" TargetHeat="55000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.BlackSolenQueen" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="220101" IsActive="False" TargetHeat="85000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.BlackSolenWarrior" />
-      <Tier Level="3" Mobs="Server.Mobiles.BlackSolenQueen" />
+      <Tier Level="1" Mobs="Server.Mobiles.Bogling,Server.Mobiles.Corpser" />
+      <Tier Level="3" Mobs="Server.Mobiles.BogThing,Server.Mobiles.Wisp" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
   </Zone>
-  <Zone RCode="221804" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="220204" IsActive="False" TargetHeat="65000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.WaterElemental" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.BlackSolenWorker" />
+      <Tier Level="1" Mobs="Server.Mobiles.WaterElemental" />
+      <Tier Level="3" Mobs="Server.Mobiles.SeaSerpent,Server.Mobiles.Kraken" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
   </Zone>
-  <Zone RCode="221805" IsActive="True" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.BlackSolenWarrior" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
+  <Zone RCode="220205" IsActive="False" TargetHeat="75000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.Executioner" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
     <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.BlackSolenWorker" />
-      <Tier Level="3" Mobs="Server.Mobiles.BlackSolenWarrior" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="221806" IsActive="True" TargetHeat="55000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.BlackSolenQueen" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.BlackSolenWarrior" />
-      <Tier Level="3" Mobs="Server.Mobiles.BlackSolenQueen" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="221807" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.BlackSolenWorker" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="221808" IsActive="True" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.BlackSolenWarrior" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.BlackSolenWorker" />
-      <Tier Level="3" Mobs="Server.Mobiles.BlackSolenWarrior" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="221809" IsActive="True" TargetHeat="55000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.BlackSolenQueen" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.BlackSolenWarrior" />
-      <Tier Level="3" Mobs="Server.Mobiles.BlackSolenQueen" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="221810" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.BlackSolenWorker" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="221811" IsActive="True" TargetHeat="45000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="240" BossType="Server.Mobiles.BlackSolenWarrior" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.BlackSolenWorker" />
-      <Tier Level="3" Mobs="Server.Mobiles.BlackSolenWarrior" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="221812" IsActive="True" TargetHeat="55000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" BossType="Server.Mobiles.BlackSolenQueen" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.BlackSolenWarrior" />
-      <Tier Level="3" Mobs="Server.Mobiles.BlackSolenQueen" />
-    </SpawnProfiles>
-    <CitySecurity />
-    <SpecialSpawns />
-    <BossGimmick />
-  </Zone>
-  <Zone RCode="221813" IsActive="True" TargetHeat="35000" MaxPop="20" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="120" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="Uncategorized" SubZoneName="Main">
-    <SpawnProfiles>
-      <Tier Level="1" Mobs="Server.Mobiles.BlackSolenWorker" />
+      <Tier Level="1" Mobs="Server.Mobiles.Skeleton,Server.Mobiles.Zombie" />
+      <Tier Level="3" Mobs="Server.Mobiles.Executioner,Server.Mobiles.BoneKnight" />
     </SpawnProfiles>
     <CitySecurity />
     <SpecialSpawns />
@@ -1159,5 +765,27 @@
     <CitySecurity />
     <SpecialSpawns />
     <BossGimmick />
+  </Zone>
+  <Zone RCode="900000" IsActive="True" TargetHeat="750000" MaxPop="150" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="360" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="파이어" SubZoneName="[Trammel] Fire Level 1-2">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.GrayGoblin,Server.Mobiles.GreenGoblin" />
+      <Tier Level="2" Mobs="Server.Mobiles.EnslavedGrayGoblin,Server.Mobiles.EnslavedGreenGoblin,Server.Mobiles.LavaLizard,Server.Mobiles.UndeadGargoyle" />
+      <Tier Level="3" Mobs="Server.Mobiles.EnslavedGargoyle,Server.Mobiles.Gargoyle,Server.Mobiles.FireGargoyle,Server.Mobiles.LavaSerpent" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="5673" Y="1409" W="78" H="63" />
+  </Zone>
+  <Zone RCode="900001" IsActive="True" TargetHeat="2500000" MaxPop="30" ReplenishRate="0.4" HeatDecayWeight="5" RestMin="480" EnableRareDrops="False" RareDropHeatThreshold="0" RareDropChance="0" IsStealable="False" GroupName="파이어" SubZoneName="[Trammel] Fire Level 2 Ex">
+    <SpawnProfiles>
+      <Tier Level="1" Mobs="Server.Mobiles.FireBeetle,Server.Mobiles.LavaElemental" />
+      <Tier Level="2" Mobs="Server.Mobiles.FireDrake,Server.Mobiles.Efreet,Server.Mobiles.GargoyleEnforcer" />
+      <Tier Level="3" Mobs="Server.Mobiles.GargoyleDestroyer,Server.Mobiles.FireSteed,Server.Mobiles.FireDaemon,Server.Mobiles.RedWyrm" />
+    </SpawnProfiles>
+    <CitySecurity />
+    <SpecialSpawns />
+    <BossGimmick />
+    <Bounds X="5639" Y="1400" W="18" H="49" />
   </Zone>
 </Dungeons>

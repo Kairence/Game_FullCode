@@ -42,3 +42,9 @@ When the user instructs you to run a specific script (e.g., a .bat or .sh file) 
 - Execute **exactly** what the user requested.
 - If a script requires input or interaction, do not bypass it with dummy data; either follow the user's explicit instructions for the input, or ask the user how to proceed.
 - Over-correction and unrequested automated commands often lead to fatal synchronization errors or disrupt the user's local workspace.
+
+## 8. Timer Optimization Policy (MasterTickEngine)
+When creating or refactoring systems that require periodic time checks (e.g., auto processing, decay, scheduled events), **DO NOT create individual `Timer` objects** for each item or entity.
+- Thousands of independent timers will cause severe CPU and memory overhead.
+- Instead, **ALWAYS check if you can hook into `MasterTickEngine.cs` first.**
+- `MasterTickEngine` has a 5-second background loop and a 30-second main tick cycle. You can register a global static list of your entities and process them sequentially via a `GlobalTick()` method inside the `MasterTickEngine` loop.

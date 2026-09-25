@@ -167,7 +167,7 @@ namespace Server
 			chaosDamage += ItemOptionCreator.GetAttributeValue(from, 40) / 10000;
 			directDamage += ItemOptionCreator.GetAttributeValue(from, 41) / 10000;
 
-			// 🌟 변수 중복 선언 방지를 위해 여기서 미리 선언
+			// ?�� 변??중복 ?�언 방�?�??�해 ?�기??미리 ?�언
 			BaseCreature bc = from as BaseCreature;
 			BaseCreature bm = m as BaseCreature;
 
@@ -202,9 +202,8 @@ namespace Server
 			}
 
 			totalDamage = physDamage + fireDamage + coldDamage + poisonDamage + energyDamage + chaosDamage + directDamage;
-			totalDamage /= 100;
 
-			// [커스텀] 추적(Reflexes) 스킬: 데미지 감소 및 최소화 로직
+			// [커스?�] 추적(Reflexes) ?�킬: ?��?지 감소 �?최소??로직
 			if (m != null)
 			{
 				bool hasMetalArmor = false;
@@ -221,8 +220,8 @@ namespace Server
 				{
 					double tracking = m.Skills[SkillName.Tracking].Value;
 					
-					// 100스킬 보너스: 최종 피격 50 감소 (기본 감소에 더해짐)
-					int flatReduction = (int)(tracking / 10); // 기본 피격 감소 (10당 1로 산정)
+					// 100?�킬 보너?? 최종 ?�격 50 감소 (기본 감소???�해�?
+					int flatReduction = (int)(tracking / 10); // 기본 ?�격 감소 (10??1�??�정)
 					if (tracking >= 100.0) flatReduction += 50;
 
 					if (type == DamageType.Melee)
@@ -230,21 +229,21 @@ namespace Server
 						totalDamage -= flatReduction;
 					}
 
-					// 원거리(마법 포함) 데미지 최소화 확률
+					// ?�거�?마법 ?�함) ?��?지 최소???�률
 					if (type == DamageType.Ranged || type == DamageType.Spell)
 					{
-						double minimizeChance = tracking * 0.001; // 스킬당 0.1%
-						if (tracking >= 100.0) minimizeChance += 0.05; // 100스킬 시 5% 추가
+						double minimizeChance = tracking * 0.001; // ?�킬??0.1%
+						if (tracking >= 100.0) minimizeChance += 0.05; // 100?�킬 ??5% 추�?
 
 						if (Utility.RandomDouble() < minimizeChance)
 						{
-							totalDamage = 1; // 데미지 최소화
-							m.SendMessage("추적(Reflexes) 스킬로 인해 원거리 피해를 최소화했습니다!");
+							totalDamage = 1; // ?��?지 최소??
+							m.SendMessage("추적(Reflexes) ?�킬�??�해 ?�거�??�해�?최소?�했?�니??");
 						}
 					}
 
-					// 150스킬 보너스: 치명타 피해 보정 로직은 치명타 계산부가 별도로 존재할 경우 그곳에 작성. 여기서는 최종 데미지로 보정.
-					// (치명타 계수를 직접 알 수 없으므로, 향후 치명타 데미지 연산부에 추가 권장)
+					// 150?�킬 보너?? 치명?� ?�해 보정 로직?� 치명?� 계산부가 별도�?존재??경우 그곳???�성. ?�기?�는 최종 ?��?지�?보정.
+					// (치명?� 계수�?직접 ?????�으므�? ?�후 치명?� ?��?지 ?�산부??추�? 권장)
 				}
 			}
 
@@ -258,7 +257,7 @@ namespace Server
 				m.Combatant = from;
 			}
 			
-			// 🌟 bc, bm은 위에서 이미 선언했으므로 다시 선언하지 않음
+			// ?�� bc, bm?� ?�에???��? ?�언?�으므�??�시 ?�언?��? ?�음
 
 			if( from is BloodElemental )
 			{
@@ -417,7 +416,7 @@ namespace Server
 						pm_target.TimerList[65] = 300;
 				}
 
-				// 🌟 결투 로직 (pm 중복 선언 방지를 위해 캐스팅 사용)
+				// ?�� 결투 로직 (pm 중복 ?�언 방�?�??�해 캐스???�용)
 				if (m is PlayerMobile && from is PlayerMobile)
 				{
 					if (DuelSystem.AreDueling((PlayerMobile)m, (PlayerMobile)from))
@@ -434,7 +433,7 @@ namespace Server
 			return totalDamage;
 		}
 
-		// 1. 공통 로직을 처리할 로컬 함수 정의 (메서드 최상단이나 사용 직전에 선언)
+		// 1. 공통 로직??처리??로컬 ?�수 ?�의 (메서??최상?�이???�용 직전???�언)
 		private static void UpdateWildGrowth(BaseCreature critter, double chanceFactor)
 		{
 			if (critter is not { Controlled: false, SummonMaster: null, Grade: < 8 }) return;
@@ -470,19 +469,19 @@ namespace Server
 
         public static void DoLeech(int damageGiven, Mobile from, Mobile target)
         {
-            // 1. 데미지 비례 흡수(%) 가져오기 (49~52번)
+            // 1. ?��?지 비�? ?�수(%) 가?�오�?(49~52�?
             int lifeLeech = (ItemOptionCreator.GetAttributeValue(from, 49) + ItemOptionCreator.GetAttributeValue(from, 52)) / 10000;
             int stamLeech = (ItemOptionCreator.GetAttributeValue(from, 50) + ItemOptionCreator.GetAttributeValue(from, 52)) / 10000;
             int manaLeech = (ItemOptionCreator.GetAttributeValue(from, 51) + ItemOptionCreator.GetAttributeValue(from, 52)) / 10000;             
             
-            // 2. 적중 시 고정 수치 획득 가져오기 (53~56번)
+            // 2. ?�중 ??고정 ?�치 ?�득 가?�오�?(53~56�?
             int lifeGain = (ItemOptionCreator.GetAttributeValue(from, 53) + ItemOptionCreator.GetAttributeValue(from, 56)) / 10000;
             int stamGain = (ItemOptionCreator.GetAttributeValue(from, 54) + ItemOptionCreator.GetAttributeValue(from, 56)) / 10000;
             int manaGain = (ItemOptionCreator.GetAttributeValue(from, 55) + ItemOptionCreator.GetAttributeValue(from, 56)) / 10000;
 
             bool playedSound = false;
 
-            // 체력 처리 (비례 흡수 + 고정 획득)
+            // 체력 처리 (비�? ?�수 + 고정 ?�득)
             int toHeal = 0;
             if (lifeLeech > 0) toHeal += Scale2(damageGiven, lifeLeech);
             if (lifeGain > 0) toHeal += lifeGain;
@@ -495,37 +494,37 @@ namespace Server
                 playedSound = true;
             }
 
-            // 마나 처리 (비례 흡수 + 고정 획득)
+            // 마나 처리 (비�? ?�수 + 고정 ?�득)
             int totalManaLeech = 0;
             if (manaLeech > 0) totalManaLeech += Scale2(damageGiven, manaLeech);
             if (manaGain > 0) totalManaLeech += manaGain;
 
             if (totalManaLeech > 0)
             {
-                // 상대의 현재 마나를 초과하여 뺏어올 수 없음
+                // ?��????�재 마나�?초과?�여 뺏어?????�음
                 totalManaLeech = Math.Min(totalManaLeech, target.Mana);
                 
                 if (totalManaLeech > 0)
                 {
-                    target.Mana -= totalManaLeech; // 상대 마나 고갈
+                    target.Mana -= totalManaLeech; // ?��? 마나 고갈
                     from.Mana += totalManaLeech;
                     playedSound = true;
                 }
             }
 
-            // 기력 처리 (비례 흡수 + 고정 획득)
+            // 기력 처리 (비�? ?�수 + 고정 ?�득)
             int totalStamLeech = 0;
             if (stamLeech > 0) totalStamLeech += Scale2(damageGiven, stamLeech);
             if (stamGain > 0) totalStamLeech += stamGain;
 
             if (totalStamLeech > 0)
             {
-                // 상대의 현재 기력을 초과하여 뺏어올 수 없음
+                // ?��????�재 기력??초과?�여 뺏어?????�음
                 totalStamLeech = Math.Min(totalStamLeech, target.Stam);
                 
                 if (totalStamLeech > 0)
                 {
-                    target.Stam -= totalStamLeech; // 상대 기력 고갈
+                    target.Stam -= totalStamLeech; // ?��? 기력 고갈
                     from.Stam += totalStamLeech;
                     playedSound = true;
                 }
@@ -543,66 +542,66 @@ namespace Server
 
 			switch (index)
 			{
-				// --- 최대 저항력 (Max Resistances) ---
-				// 상태창의 우측 분모를 담당 (GetMaxResistance 내부에서 정수로 반환됨)
+				// --- 최�? ?�??�� (Max Resistances) ---
+				// ?�태창의 ?�측 분모�??�당 (GetMaxResistance ?��??�서 ?�수�?반환??
 				case 0: return from.GetMaxResistance(ResistanceType.Physical);
 				case 1: return from.GetMaxResistance(ResistanceType.Fire);
 				case 2: return from.GetMaxResistance(ResistanceType.Cold);
 				case 3: return from.GetMaxResistance(ResistanceType.Poison);
 				case 4: return from.GetMaxResistance(ResistanceType.Energy);
 
-				// --- 전투 능력 (UI 표기용: 10,000으로 나눠서 전송) ---
-				case 5: // DCI (방어율: 16번)
+				// --- ?�투 ?�력 (UI ?�기?? 10,000?�로 ?�눠???�송) ---
+				case 5: // DCI (방어?? 16�?
 					return Math.Min(30000, ItemOptionCreator.GetAttributeValue(from, 16) / VS);
-				case 6: return 30000; // Max DCI 캡
-				case 7: // HCI (명중률: 15번)
+				case 6: return 30000; // Max DCI �?
+				case 7: // HCI (명중�? 15�?
 					return Math.Min(30000, ItemOptionCreator.GetAttributeValue(from, 15) / VS);
-				case 8: // SSI (공격 속도: 12번 + 모든 속도 14번)
+				case 8: // SSI (공격 ?�도: 12�?+ 모든 ?�도 14�?
 					return Math.Min(30000, (ItemOptionCreator.GetAttributeValue(from, 12) + ItemOptionCreator.GetAttributeValue(from, 14)) / VS);
-				case 9: // DI (무기 피해: 9번 + 모든 피해 11번)
+				case 9: // DI (무기 ?�해: 9�?+ 모든 ?�해 11�?
 					return Math.Min(30000, (ItemOptionCreator.GetAttributeValue(from, 9) + ItemOptionCreator.GetAttributeValue(from, 11)) / VS);
 				
-				// (10번 케이스는 보통 LRC(시약 소모 감소) 자리인데, 기획상 안 보이므로 주석 처리하거나 0으로 둠)
-				// 나중에 생산 효율 증가로 바꿀 예정
+				// (10�?케?�스??보통 LRC(?�약 ?�모 감소) ?�리?�데, 기획????보이므�?주석 처리?�거??0?�로 ??
+				// ?�중???�산 ?�율 증�?�?바�? ?�정
 				case 10: return 0; 
 				
-				case 11: // SDI (주문 피해: 10번 + 모든 피해 11번)
+				case 11: // SDI (주문 ?�해: 10�?+ 모든 ?�해 11�?
 					return Math.Min(30000, (ItemOptionCreator.GetAttributeValue(from, 10) + ItemOptionCreator.GetAttributeValue(from, 11)) / VS);
 				
-				// (12번 케이스는 보통 FCR(캐스트 리커버리)인데 기획상 없으면 0으로 둠)
-				// 캐스트 리커버리 = 마법 속도 증가
+				// (12�?케?�스??보통 FCR(캐스??리커버리)?�데 기획???�으�?0?�로 ??
+				// 캐스??리커버리 = 마법 ?�도 증�?
 				case 12: return Math.Min(30000, (ItemOptionCreator.GetAttributeValue(from, 13) + ItemOptionCreator.GetAttributeValue(from, 14)) / VS);
 				
-				case 13: // FC (시전 속도: 13번 + 모든 속도 14번)
+				case 13: // FC (?�전 ?�도: 13�?+ 모든 ?�도 14�?
 					return Math.Min(30000, (ItemOptionCreator.GetAttributeValue(from, 13) + ItemOptionCreator.GetAttributeValue(from, 14)) / VS);
 				
-				case 14: // LMC (마나 소모 감소: 64번 + 모든 소모 감소 66번)
+				case 14: // LMC (마나 ?�모 감소: 64�?+ 모든 ?�모 감소 66�?
 					return Math.Min(30000, (ItemOptionCreator.GetAttributeValue(from, 64) + ItemOptionCreator.GetAttributeValue(from, 66)) / VS);
 				
-				// --- 재생 관련 (엔진에 위임) ---
+				// --- ?�생 관??(?�진???�임) ---
 				case 15: return (int)RegenRates.Mobile_HitsRegenRate(from); 
 				case 16: return (int)RegenRates.Mobile_StamRegenRate(from); 
 				case 17: return (int)RegenRates.Mobile_ManaRegenRate(from); 
 				
-				case 18: // 물리 반사 (무기 공격 반사: 60번)
+				case 18: // 물리 반사 (무기 공격 반사: 60�?
 					return Math.Min(30000, ItemOptionCreator.GetAttributeValue(from, 60) / VS); 
-				case 19: // 포션 강화 (치유량 증가%: 58번으로 대체하거나 0)
+				case 19: // ?�션 강화 (치유??증�?%: 58번으�??�체하거나 0)
 					return Math.Min(30000, ItemOptionCreator.GetAttributeValue(from, 58) / VS); 
 
-				// --- 기본 스탯 ---
-				case 20: // 힘 (기본스탯 + 보너스(0번) + 모든스탯(3번))
+				// --- 기본 ?�탯 ---
+				case 20: // ??(기본?�탯 + 보너??0�? + 모든?�탯(3�?)
 					return from.Str; 
-				case 21: // 민첩 (기본스탯 + 보너스(1번) + 모든스탯(3번))
+				case 21: // 민첩 (기본?�탯 + 보너??1�? + 모든?�탯(3�?)
 					return from.Dex; 
-				case 22: // 지능 (기본스탯 + 보너스(2번) + 모든스탯(3번))
+				case 22: // 지??(기본?�탯 + 보너??2�? + 모든?�탯(3�?)
 					return from.Int; 
 
 				case 23: return 0; // hits neg
 				case 24: return 0; // stam neg
 				case 25: return 0; // mana neg
 
-				// --- 자원 최대치 ---
-				// from.HitsMax 내부에서 이미 (기본 + 체력 증가(5번) + 모든 자원 증가(8번))이 합산되어 정수로 나옵니다.
+				// --- ?�원 최�?�?---
+				// from.HitsMax ?��??�서 ?��? (기본 + 체력 증�?(5�? + 모든 ?�원 증�?(8�?)???�산?�어 ?�수�??�옵?�다.
 				case 26: return from.HitsMax; 
 				case 27: return from.StamMax; 
 				case 28: return from.ManaMax; 
@@ -614,37 +613,37 @@ namespace Server
     [Flags]
     public enum AosAttribute
     {
-        RegenHits = 0x00000001, //체력 재생
-        RegenStam = 0x00000002, //기력 재생
-        RegenMana = 0x00000004, //마나 재생
-        DefendChance = 0x00000008, //방어율 증가
-        AttackChance = 0x00000010, //명중률 증가
-        BonusStr = 0x00000020, //힘 증가
-        BonusDex = 0x00000040, //민첩 증가
-        BonusInt = 0x00000080, //지능 증가
-        BonusHits = 0x00000100, //체력 증가
-        BonusStam = 0x00000200, //기력 증가
-        BonusMana = 0x00000400, //마나 증가
-        WeaponDamage = 0x00000800, //피해 증가%
-        WeaponSpeed = 0x00001000, //공격 속도 증가%
-        SpellDamage = 0x00002000, //주문 피해 증가%
-        CastRecovery = 0x00004000, //주문 치명타 확률 증가
-        CastSpeed = 0x00008000, //주문 속도 증가%
-        LowerManaCost = 0x00010000, //제작 경험치 증가%
-        LowerRegCost = 0x00020000, //채집 경험치 증가%
-        ReflectPhysical = 0x00040000, //물리데미지반사
-        EnhancePotions = 0x00080000, //치유량 증가%
-        Luck = 0x00100000, 			 //운 증가
-        SpellChanneling = 0x00200000, //마법 치명타 피해 증가
-        NightSight = 0x00400000,		//금화 획득 증가
-        IncreasedKarmaLoss = 0x00800000, //카르마감소증가
-        Brittle = 0x01000000,			 //물리 치명타 피해 증가
-        LowerAmmoCost = 0x02000000,		 //전투 경험치 증가
-        BalancedWeapon = 0x04000000,	 //물리 피해 증가%
-		WeaponDamageBonus = 0x08000000,	 //무기 데미지증가+
-		SpellDamageBonus = 0x10000000,   //마법 데미지증가+
-		HealBonus = 0x20000000,          //치유량 증가
-		WeaponCritical = 0x40000000, //물리 치명타 확률 증가
+        RegenHits = 0x00000001, //체력 ?�생
+        RegenStam = 0x00000002, //기력 ?�생
+        RegenMana = 0x00000004, //마나 ?�생
+        DefendChance = 0x00000008, //방어??증�?
+        AttackChance = 0x00000010, //명중�?증�?
+        BonusStr = 0x00000020, //??증�?
+        BonusDex = 0x00000040, //민첩 증�?
+        BonusInt = 0x00000080, //지??증�?
+        BonusHits = 0x00000100, //체력 증�?
+        BonusStam = 0x00000200, //기력 증�?
+        BonusMana = 0x00000400, //마나 증�?
+        WeaponDamage = 0x00000800, //?�해 증�?%
+        WeaponSpeed = 0x00001000, //공격 ?�도 증�?%
+        SpellDamage = 0x00002000, //주문 ?�해 증�?%
+        CastRecovery = 0x00004000, //주문 치명?� ?�률 증�?
+        CastSpeed = 0x00008000, //주문 ?�도 증�?%
+        LowerManaCost = 0x00010000, //?�작 경험�?증�?%
+        LowerRegCost = 0x00020000, //채집 경험�?증�?%
+        ReflectPhysical = 0x00040000, //물리?��?지반사
+        EnhancePotions = 0x00080000, //치유??증�?%
+        Luck = 0x00100000, 			 //??증�?
+        SpellChanneling = 0x00200000, //마법 치명?� ?�해 증�?
+        NightSight = 0x00400000,		//금화 ?�득 증�?
+        IncreasedKarmaLoss = 0x00800000, //카르마감?�증가
+        Brittle = 0x01000000,			 //물리 치명?� ?�해 증�?
+        LowerAmmoCost = 0x02000000,		 //?�투 경험�?증�?
+        BalancedWeapon = 0x04000000,	 //물리 ?�해 증�?%
+		WeaponDamageBonus = 0x08000000,	 //무기 ?��?지증�?+
+		SpellDamageBonus = 0x10000000,   //마법 ?��?지증�?+
+		HealBonus = 0x20000000,          //치유??증�?
+		WeaponCritical = 0x40000000, //물리 치명?� ?�률 증�?
     }
 
     public sealed class AosAttributes : BaseAttributes
@@ -762,7 +761,7 @@ namespace Server
             value += SkillMasterySpell.GetAttributeBonus(m, attribute);
             #endregion
 
-			//세트 옵션
+			//?�트 ?�션
 			if( m is PlayerMobile )
 			{
 				PlayerMobile pm = m as PlayerMobile;
@@ -936,7 +935,7 @@ namespace Server
                 //if (DivineFurySpell.UnderEffect(m))
                  //   value += DivineFurySpell.GetWeaponSpeedBonus(m);
 
-				// [추가] Enemy of One 오오라 체크: 공격 속도 +10
+				// [추�?] Enemy of One ?�오??체크: 공격 ?�도 +10
 				if (Server.Spells.Chivalry.EnemyOfOneSpell.UnderAura(m))
 					value += 100000;
             }
@@ -1489,37 +1488,37 @@ namespace Server
     [Flags]
     public enum AosWeaponAttribute : long
     {
-        LowerStatReq = 0x00000001,  		//장비 요구치 감소
-        SelfRepair = 0x00000002,			//자가 수리
-        HitLeechHits = 0x00000004,			//체력 흡수
-        HitLeechStam = 0x00000008,			//기력 흡수
-        HitLeechMana = 0x00000010,			//마나 흡수
-        HitLowerAttack = 0x00000020,		//공격력 감소
-        HitLowerDefend = 0x00000040,		//방어력 감소
-        HitMagicArrow = 0x00000080,			//매직 화살 발동
-        HitHarm = 0x00000100,				//함 발동
-        HitFireball = 0x00000200, 			//파이어볼 발동
-        HitLightning = 0x00000400,			//라이트닝 발동
-        HitDispel = 0x00000800,				//위더 발동
-        HitColdArea = 0x00001000,			//광역 냉기 범위 증가%	
-        HitFireArea = 0x00002000,			//광역 화염 범위 증가%
-        HitPoisonArea = 0x00004000,			//광역 독 범위 증가%
-        HitEnergyArea = 0x00008000,			//광역 에너지 범위 증가%
-        HitPhysicalArea = 0x00010000,		//광역 물리 범위 증가%
+        LowerStatReq = 0x00000001,  		//?�비 ?�구�?감소
+        SelfRepair = 0x00000002,			//?��? ?�리
+        HitLeechHits = 0x00000004,			//체력 ?�수
+        HitLeechStam = 0x00000008,			//기력 ?�수
+        HitLeechMana = 0x00000010,			//마나 ?�수
+        HitLowerAttack = 0x00000020,		//공격??감소
+        HitLowerDefend = 0x00000040,		//방어??감소
+        HitMagicArrow = 0x00000080,			//매직 ?�살 발동
+        HitHarm = 0x00000100,				//??발동
+        HitFireball = 0x00000200, 			//?�이?�볼 발동
+        HitLightning = 0x00000400,			//?�이?�닝 발동
+        HitDispel = 0x00000800,				//?�더 발동
+        HitColdArea = 0x00001000,			//광역 ?�기 범위 증�?%	
+        HitFireArea = 0x00002000,			//광역 ?�염 범위 증�?%
+        HitPoisonArea = 0x00004000,			//광역 ??범위 증�?%
+        HitEnergyArea = 0x00008000,			//광역 ?�너지 범위 증�?%
+        HitPhysicalArea = 0x00010000,		//광역 물리 범위 증�?%
         ResistPhysicalBonus = 0x00020000,
         ResistFireBonus = 0x00040000,
         ResistColdBonus = 0x00080000,
         ResistPoisonBonus = 0x00100000,
         ResistEnergyBonus = 0x00200000,
-        UseBestSkill = 0x00400000,			//모든 피해%
-        MageWeapon = 0x00800000,			//모든 속도%
+        UseBestSkill = 0x00400000,			//모든 ?�해%
+        MageWeapon = 0x00800000,			//모든 ?�도%
         DurabilityBonus = 0x01000000,
-        BloodDrinker = 0x02000000,			//피격 시 물리 치명 확률 감소
-        BattleLust = 0x04000000,			//피격 시 물리 치명 피해 감소
+        BloodDrinker = 0x02000000,			//?�격 ??물리 치명 ?�률 감소
+        BattleLust = 0x04000000,			//?�격 ??물리 치명 ?�해 감소
         HitCurse = 0x08000000,				//
-        HitFatigue = 0x10000000,			//피격 시 마법 치명 확률 감소
-        HitManaDrain = 0x20000000,			//피격 시 마법 치명 피해 감소
-        SplinteringWeapon = 0x40000000,		//펜싱 무기 스킬 +1
+        HitFatigue = 0x10000000,			//?�격 ??마법 치명 ?�률 감소
+        HitManaDrain = 0x20000000,			//?�격 ??마법 치명 ?�해 감소
+        SplinteringWeapon = 0x40000000,		//?�싱 무기 ?�킬 +1
         ReactiveParalyze =  0x80000000,		//
     }
 
@@ -1578,7 +1577,7 @@ namespace Server
                     value += attrs[attribute];
             }
 
-			//세트 옵션
+			//?�트 ?�션
 			if( m is PlayerMobile )
 			{
 				PlayerMobile pm = m as PlayerMobile;
@@ -2143,38 +2142,38 @@ namespace Server
         #endregion
     }
 
-	//특수 데미지, 전사 특수기
+	//?�수 ?��?지, ?�사 ?�수�?
     [Flags]
     public enum ExtendedWeaponAttribute
     {
         BoneBreaker     = 0x00000001, //
-        HitSwarm        = 0x00000002, //독 저항성%
-        HitSparks       = 0x00000004, //함정 회피%
-        Bane            = 0x00000008, //독 저항성
+        HitSwarm        = 0x00000002, //???�??��%
+        HitSparks       = 0x00000004, //?�정 ?�피%
+        Bane            = 0x00000008, //???�??��
         MysticWeapon    = 0x00000010, //
-        AssassinHoned   = 0x00000020, //어그로 감소
-        Focus           = 0x00000040, //붕대 사용 시 독 회복
-        HitExplosion    = 0x00000080, //연소 데미지 증가
-        Freezing		= 0x00000100, //동상 데미지 증가
-		InfectionBonus	= 0x00000200,  //인팩팅 데미지 증가
-		LightningBonus	= 0x00000400,  //라이트닝(4써클, 7써클) 데미지 증가
-		ChaosDamage		= 0x00000800,  //혼돈 데미지% 증가
-		DirectDamage	= 0x00001000,  //신성 데미지% 증가
-		ChaosPlus		= 0x00002000,  //혼돈 데미지 증가
-		DirectPlus		= 0x00004000,  //신성 데미지 증가
-		AggroPoint		= 0x00008000,  //어그로
-		AggroPointBonus	= 0x00010000,  //어그로%
-		SPMAllBonus		= 0x00020000,  //모든 특수기 증가
-		SPMFirstBonus	= 0x00040000,  //특수기 첫번째 증가
-		SPMSecondBonus	= 0x00080000,  //특수기 두번째 증가
-		SPMSwordBonus	= 0x00100000,  //검 특수기 증가
-		SPMMaceBonus	= 0x00200000,  //둔기 특수기 증가
-		SPMFancingBonus	= 0x00400000,  //펜싱 특수기 증가
-		SPMBowBonus		= 0x00800000,  //활&석궁 특수기 증가
-		SPMWrestling	= 0x01000000,  //맨손 특수기 증가
-		BaseWeaponDamage= 0x02000000,  //무기 피해
-		BaseSpellDamage	= 0x04000000,  //마법 피해
-		BaseAllDamage	= 0x08000000   //전체 피해
+        AssassinHoned   = 0x00000020, //?�그�?감소
+        Focus           = 0x00000040, //붕�? ?�용 ?????�복
+        HitExplosion    = 0x00000080, //?�소 ?��?지 증�?
+        Freezing		= 0x00000100, //?�상 ?��?지 증�?
+		InfectionBonus	= 0x00000200,  //?�팩???��?지 증�?
+		LightningBonus	= 0x00000400,  //?�이?�닝(4?�클, 7?�클) ?��?지 증�?
+		ChaosDamage		= 0x00000800,  //?�돈 ?��?지% 증�?
+		DirectDamage	= 0x00001000,  //?�성 ?��?지% 증�?
+		ChaosPlus		= 0x00002000,  //?�돈 ?��?지 증�?
+		DirectPlus		= 0x00004000,  //?�성 ?��?지 증�?
+		AggroPoint		= 0x00008000,  //?�그�?
+		AggroPointBonus	= 0x00010000,  //?�그�?
+		SPMAllBonus		= 0x00020000,  //모든 ?�수�?증�?
+		SPMFirstBonus	= 0x00040000,  //?�수�?첫번�?증�?
+		SPMSecondBonus	= 0x00080000,  //?�수�??�번�?증�?
+		SPMSwordBonus	= 0x00100000,  //검 ?�수�?증�?
+		SPMMaceBonus	= 0x00200000,  //?�기 ?�수�?증�?
+		SPMFancingBonus	= 0x00400000,  //?�싱 ?�수�?증�?
+		SPMBowBonus		= 0x00800000,  //???�궁 ?�수�?증�?
+		SPMWrestling	= 0x01000000,  //맨손 ?�수�?증�?
+		BaseWeaponDamage= 0x02000000,  //무기 ?�해
+		BaseSpellDamage	= 0x04000000,  //마법 ?�해
+		BaseAllDamage	= 0x08000000   //?�체 ?�해
     }
 
     public sealed class ExtendedWeaponAttributes : BaseAttributes
@@ -2219,7 +2218,7 @@ namespace Server
                 }
 				if( i == 0 )
 				{
-					//세트 옵션
+					//?�트 ?�션
 					if( m is PlayerMobile )
 					{
 						PlayerMobile pm = m as PlayerMobile;
@@ -2617,31 +2616,31 @@ namespace Server
         DurabilityBonus = 0x00000008,
         #region Stygian Abyss
         ReactiveParalyze = 0x00000010,
-        SoulCharge = 0x00000020,	//회복량+
-		PierceResist = 0x00000040, //관통 저항력
-		ShockResist = 0x00000080, //충격 저항력
-		BleedResist = 0x00000100, //출혈 저항력
-		WeaponDefense = 0x00000200, //방어력
-		MagicDefense = 0x00000400, //마법 방어력
-		StunDefense = 0x00000800, //스턴 시간 감소
-		ShieldRecovery = 0x00001000, //방패 방어 확률
-		AllDefenseBonus = 0x00002000, //전체 피격 데미지 감소
-		ElementalResist = 0x00004000, //원소 저항력%
-		AllResist = 0x00008000, //모든 저항력%
-		DefenseStam = 0x00010000, //방어시 기력 소모 감소
-		MagicAllBonus = 0x00020000, //모든 마법 스킬 증가 
-		MagicOneCircleBonus = 0x00040000, //1써클 마법 스킬 증가
-		MagicTwoCircleBonus = 0x00080000, //2써클 마법 스킬 증가
-		MagicThreeCircleBonus = 0x00100000, //3써클 마법 스킬 증가
-		MagicFourCircleBonus = 0x00200000, //4써클 마법 스킬 증가
-		MagicFiveCircleBonus = 0x00400000, //5써클 마법 스킬 증가
-		MagicSixCircleBonus = 0x00800000, //6써클 마법 스킬 증가
-		MagicSevenCircleBonus = 0x01000000, //7써클 마법 스킬 증가
-		MagicEightCircleBonus = 0x02000000, //8써클 마법 스킬 증가
-		MagicNecromancyBonus = 0x04000000, //강령술 마법 스킬 증가
-		MagicElementalismBonus = 0x08000000, //원소술 마법 스킬 증가
-		MagicMysticismBonus = 0x10000000, //신비술 마법 스킬 증가
-		MagicChivalryBonus = 0x20000000 //기사도 마법 스킬 증가
+        SoulCharge = 0x00000020,	//?�복??
+		PierceResist = 0x00000040, //관???�??��
+		ShockResist = 0x00000080, //충격 ?�??��
+		BleedResist = 0x00000100, //출혈 ?�??��
+		WeaponDefense = 0x00000200, //방어??
+		MagicDefense = 0x00000400, //마법 방어??
+		StunDefense = 0x00000800, //?�턴 ?�간 감소
+		ShieldRecovery = 0x00001000, //방패 방어 ?�률
+		AllDefenseBonus = 0x00002000, //?�체 ?�격 ?��?지 감소
+		ElementalResist = 0x00004000, //?�소 ?�??��%
+		AllResist = 0x00008000, //모든 ?�??��%
+		DefenseStam = 0x00010000, //방어??기력 ?�모 감소
+		MagicAllBonus = 0x00020000, //모든 마법 ?�킬 증�? 
+		MagicOneCircleBonus = 0x00040000, //1?�클 마법 ?�킬 증�?
+		MagicTwoCircleBonus = 0x00080000, //2?�클 마법 ?�킬 증�?
+		MagicThreeCircleBonus = 0x00100000, //3?�클 마법 ?�킬 증�?
+		MagicFourCircleBonus = 0x00200000, //4?�클 마법 ?�킬 증�?
+		MagicFiveCircleBonus = 0x00400000, //5?�클 마법 ?�킬 증�?
+		MagicSixCircleBonus = 0x00800000, //6?�클 마법 ?�킬 증�?
+		MagicSevenCircleBonus = 0x01000000, //7?�클 마법 ?�킬 증�?
+		MagicEightCircleBonus = 0x02000000, //8?�클 마법 ?�킬 증�?
+		MagicNecromancyBonus = 0x04000000, //강령??마법 ?�킬 증�?
+		MagicElementalismBonus = 0x08000000, //?�소??마법 ?�킬 증�?
+		MagicMysticismBonus = 0x10000000, //?�비??마법 ?�킬 증�?
+		MagicChivalryBonus = 0x20000000 //기사??마법 ?�킬 증�?
         #endregion
     }
 
@@ -2694,7 +2693,7 @@ namespace Server
                 if (attrs != null)
                     value += attrs[attribute];
             }
-			//세트 옵션
+			//?�트 ?�션
 			if( m is PlayerMobile )
 			{
 				PlayerMobile pm = m as PlayerMobile;
@@ -3682,38 +3681,38 @@ namespace Server
     [Flags]
     public enum SAAbsorptionAttribute
     {
-        EaterFire = 0x00000001, //불 피해 증가
-        EaterCold = 0x00000002, //냉기 피해 증가
-        EaterPoison = 0x00000004, //독 피해 증가
-        EaterEnergy = 0x00000008, //에너지 피해 증가
-        EaterKinetic = 0x00000010, //충격 피해 증가
-        EaterDamage = 0x00000020, //물리 피해 증가
-        ResonanceFire = 0x00000040, //불 피해 증가%
-        ResonanceCold = 0x00000080, //냉기 피해 증가%
-        ResonancePoison = 0x00000100, //독 피해 증가%
-        ResonanceEnergy = 0x00000200, //에너지 피해 증가%
-        ResonanceKinetic = 0x00000400, //충격 피해 증가%
+        EaterFire = 0x00000001, //�??�해 증�?
+        EaterCold = 0x00000002, //?�기 ?�해 증�?
+        EaterPoison = 0x00000004, //???�해 증�?
+        EaterEnergy = 0x00000008, //?�너지 ?�해 증�?
+        EaterKinetic = 0x00000010, //충격 ?�해 증�?
+        EaterDamage = 0x00000020, //물리 ?�해 증�?
+        ResonanceFire = 0x00000040, //�??�해 증�?%
+        ResonanceCold = 0x00000080, //?�기 ?�해 증�?%
+        ResonancePoison = 0x00000100, //???�해 증�?%
+        ResonanceEnergy = 0x00000200, //?�너지 ?�해 증�?%
+        ResonanceKinetic = 0x00000400, //충격 ?�해 증�?%
         /*Soul Charge is wrong. 
          * Do not use these types. 
          * Use AosArmorAttribute type only.
          * Fill these in with any new attributes.*/
-        SoulChargeFire = 0x00000800, //연소 저항력%
-        SoulChargeCold = 0x00001000, //동상 저항력%
-        SoulChargePoison = 0x00002000, //부식 저항력%
-        SoulChargeEnergy = 0x00004000, //감전 저항력%
-        SoulChargeKinetic = 0x00008000, //회복량 증가%
-        CastingFocus = 0x00010000, //시전 실패 확률 감소
-		EaterPierce = 0x00020000, //관통 피해 증가
-        ResonancePierce = 0x00040000, //관통 피해 증가%
-		EaterBleed = 0x00080000, //출혈 피해 증가
-        ResonanceBleed = 0x00100000, //출혈 피해 증가%
-		HumanoidDamage = 0x00200000, //영장류 피해 증가%
-		UndeadDamage = 0x00400000, //언데드 피해 증가%
-		ElementalDamage = 0x00800000, //정령 피해 증가%
-		AbyssDamage = 0x01000000, //악마 피해 증가%
-		ArachnidDamage = 0x02000000, //거미류 피해 증가%
-		ReptilianDamage = 0x04000000, //파충류 피해 증가%
-		FeyDamage = 0x08000000 //요정 피해 증가%
+        SoulChargeFire = 0x00000800, //?�소 ?�??��%
+        SoulChargeCold = 0x00001000, //?�상 ?�??��%
+        SoulChargePoison = 0x00002000, //부???�??��%
+        SoulChargeEnergy = 0x00004000, //감전 ?�??��%
+        SoulChargeKinetic = 0x00008000, //?�복??증�?%
+        CastingFocus = 0x00010000, //?�전 ?�패 ?�률 감소
+		EaterPierce = 0x00020000, //관???�해 증�?
+        ResonancePierce = 0x00040000, //관???�해 증�?%
+		EaterBleed = 0x00080000, //출혈 ?�해 증�?
+        ResonanceBleed = 0x00100000, //출혈 ?�해 증�?%
+		HumanoidDamage = 0x00200000, //?�장�??�해 증�?%
+		UndeadDamage = 0x00400000, //?�데???�해 증�?%
+		ElementalDamage = 0x00800000, //?�령 ?�해 증�?%
+		AbyssDamage = 0x01000000, //?�마 ?�해 증�?%
+		ArachnidDamage = 0x02000000, //거�?�??�해 증�?%
+		ReptilianDamage = 0x04000000, //?�충�??�해 증�?%
+		FeyDamage = 0x08000000 //?�정 ?�해 증�?%
     }
 
     public sealed class SAAbsorptionAttributes : BaseAttributes
@@ -3767,7 +3766,7 @@ namespace Server
 
             value += SkillMasterySpell.GetAttributeBonus(m, attribute);
 
-			//세트 옵션
+			//?�트 ?�션
 			if( m is PlayerMobile )
 			{
 				PlayerMobile pm = m as PlayerMobile;
@@ -3820,10 +3819,10 @@ namespace Server
 					
 				if( attribute == SAAbsorptionAttribute.UndeadDamage )
 				{
-					// BaseWeapon.cs의 GetDamageScalar 또는 유사한 보너스 합산 메서드
+					// BaseWeapon.cs??GetDamageScalar ?�는 ?�사??보너???�산 메서??
 					if (Server.Spells.Chivalry.CleanseByFireSpell.UnderAura(m))
 					{
-						value += 200000; // 20% 증가
+						value += 200000; // 20% 증�?
 					}				
 				}
 
@@ -4706,3 +4705,4 @@ namespace Server
         }
     }
 }
+

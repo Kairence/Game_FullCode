@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server;
 
 namespace Server.Misc
@@ -22,6 +22,9 @@ namespace Server.Misc
             // 타이머 자체의 오차(Drift)나 서버 렉으로 인해 30초 경계선이 무너지는 것을 방지합니다.
             Timer.DelayCall(TimeSpan.FromSeconds(5.0), TimeSpan.FromSeconds(5.0), () =>
             {
+                // [Auto Processing] Add Global Tick
+                try { Server.Custom.AutoProcessing.BaseAutoStation.GlobalTick(); } catch { }
+
                 TimeSpan elapsed = DateTime.Now - m_EngineStartTime;
                 
                 // 현재 시계를 기준으로 우리가 도달했어야 할 "목표 절대 틱"을 계산

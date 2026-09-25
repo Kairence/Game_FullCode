@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server;
 using Server.Items;
 using Server.Mobiles;
@@ -239,6 +239,7 @@ namespace Server.Misc
         { 
             int maxSlots = eqItem.PrefixOption[3];
             if (maxSlots <= 0) return;
+            if (maxSlots > 68) maxSlots = 68;
 
             list.Add(1042971, "<BASEFONT COLOR=#00BFFF>[재련 옵션]</BASEFONT>"); 
 

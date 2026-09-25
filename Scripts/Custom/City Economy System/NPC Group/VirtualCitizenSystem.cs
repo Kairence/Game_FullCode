@@ -260,6 +260,7 @@ namespace Server.Misc
 
         public static void ExecuteFinalBatchProcess(int gameHour)
         {
+            Server.Mobiles.RetailVendor.ProcessDailyWages(gameHour);
 			ExecuteDungeonSecurityImpact();
             var towns = TownEconomyManager.Towns.Values.ToList();
             foreach (var town in towns)
@@ -594,9 +595,9 @@ namespace Server.Misc
                 }
 
                 ResourceType targetType = ResourceType.Farming;
-                if (agent.JobClass == NpcJobClass.SurfaceMiner || agent.JobClass == NpcJobClass.StoneQuarryman) targetType = ResourceType.Mining;
-                else if (agent.JobClass == NpcJobClass.Woodcutter) targetType = ResourceType.Lumberjacking;
-                else if (agent.JobClass == NpcJobClass.DeepSeaFisher) targetType = ResourceType.Fishing;
+                if (agent.JobClass == NpcJobClass.SurfaceMiner || agent.JobClass == NpcJobClass.StoneQuarryman || agent.JobClass == NpcJobClass.SandDigger || agent.JobClass == NpcJobClass.FlintKnapper) targetType = ResourceType.Mining;
+                else if (agent.JobClass == NpcJobClass.Woodcutter || agent.JobClass == NpcJobClass.BarkCollector || agent.JobClass == NpcJobClass.ResinGatherer) targetType = ResourceType.Lumberjacking;
+                else if (agent.JobClass == NpcJobClass.DeepSeaFisher || agent.JobClass == NpcJobClass.DeepSeaFisher_Basic || agent.JobClass == NpcJobClass.CoastalFisher || agent.JobClass == NpcJobClass.Crabber || agent.JobClass == NpcJobClass.OysterDiver_Basic || agent.JobClass == NpcJobClass.SeaweedCollector || agent.JobClass == NpcJobClass.BeachComber) targetType = ResourceType.Fishing;
 
                 string townName = TownNumber.GetName(town.TownID).ToLower();
 

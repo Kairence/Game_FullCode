@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Server;
@@ -28,19 +28,19 @@ namespace Server.Mobiles
         {
             if (!IsChildOf(from.Backpack))
             {
-                from.SendLocalizedMessage(1042001); // ê°€ë°©ì— ìˆì–´ì•¼ í•©ë‹ˆë‹¤.
+                from.SendLocalizedMessage(1042001); // °¡¹æ¿¡ ÀÖ¾î¾ß ÇÕ´Ï´Ù.
                 return;
             }
 
             BaseHouse house = BaseHouse.FindHouseAt(from);
             if (house == null)
             {
-                from.SendMessage("ë°´ë”ëŠ” ìì‹ ì˜ ì§‘ ë‚´ë¶€ì—ì„œë§Œ ì„¤ì¹˜í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.");
+                from.SendMessage("¹ê´õ´Â ÀÚ½ÅÀÇ Áı ³»ºÎ¿¡¼­¸¸ ¼³Ä¡ÇÒ ¼ö ÀÖ½À´Ï´Ù.");
                 return;
             }
             if (!house.IsOwner(from))
             {
-                from.SendLocalizedMessage(501565); // ì§‘ ì£¼ì¸ë§Œ ê°€ëŠ¥í•©ë‹ˆë‹¤.
+                from.SendLocalizedMessage(501565); // Áı ÁÖÀÎ¸¸ °¡´ÉÇÕ´Ï´Ù.
                 return;
             }
 
@@ -48,7 +48,7 @@ namespace Server.Mobiles
             v.Owner = from;
             v.MoveToWorld(from.Location, from.Map);
 
-            from.SendMessage(68, "ë¦¬í…Œì¼ ë°´ë”ê°€ ì„±ê³µì ìœ¼ë¡œ ì„¤ì¹˜ë˜ì—ˆìŠµë‹ˆë‹¤.");
+            from.SendMessage(68, "¸®Å×ÀÏ ¹ê´õ°¡ ¼º°øÀûÀ¸·Î ¼³Ä¡µÇ¾ú½À´Ï´Ù.");
             this.Delete(); 
         }
 
@@ -64,7 +64,7 @@ namespace Server.Mobiles
             int version = reader.ReadInt();
         }
     }
-    // 1. ë“±ë¡ëœ ì•„ì´í…œì˜ ì •ë³´ë¥¼ ë‹´ëŠ” ë˜í¼(Wrapper) ë°ì´í„° í´ë˜ìŠ¤
+    // 1. µî·ÏµÈ ¾ÆÀÌÅÛÀÇ Á¤º¸¸¦ ´ã´Â ·¡ÆÛ(Wrapper) µ¥ÀÌÅÍ Å¬·¡½º
     public class MarketItem
     {
         public Item RealItem { get; set; }
@@ -83,7 +83,7 @@ namespace Server.Mobiles
         public MarketItem() { } 
     }
 
-    // 2. ë‚±ê°œ íŒë§¤ ë°´ë” ì½”ì–´ (BaseVendor ìƒì†ìœ¼ë¡œ TownEconomyì™€ ìë™ ì—°ë™)
+    // 2. ³¹°³ ÆÇ¸Å ¹ê´õ ÄÚ¾î (BaseVendor »ó¼ÓÀ¸·Î TownEconomy¿Í ÀÚµ¿ ¿¬µ¿)
 	public class RetailVendor : BaseVendor 
     {
         public static List<RetailVendor> RetailVendors = [];
@@ -93,8 +93,47 @@ namespace Server.Mobiles
 
         [CommandProperty(AccessLevel.GameMaster)]
         public Mobile Owner { get; set; }
-		
-		// [ë³µêµ¬] ë¶€ëª¨ í´ë˜ìŠ¤ì— ì—†ìœ¼ë¯€ë¡œ ì§ì ‘ ë³€ìˆ˜ë¥¼ ì„ ì–¸í•©ë‹ˆë‹¤.
+
+        // AI Employment System Fields
+        [CommandProperty(AccessLevel.GameMaster)]
+        public Guid EmployeeID { get; set; } = Guid.Empty;
+        
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int DailyWage { get; set; } = 600;
+        
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int UnpaidWages { get; set; } = 0;
+        
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int EmployeeSkillLevel { get; set; } = 0;
+
+        public static void ProcessDailyWages(int gameHour)
+        {
+            if (gameHour != 0) return; // Only process at midnight (logical 0 / 24)
+
+            for (int i = RetailVendors.Count - 1; i >= 0; i--)
+            {
+                var vendor = RetailVendors[i];
+                if (vendor == null || vendor.Deleted || vendor.EmployeeID == Guid.Empty) continue;
+
+                if (vendor.HoldGold >= vendor.DailyWage)
+                {
+                    vendor.HoldGold -= vendor.DailyWage;
+                }
+                else
+                {
+                    vendor.EmployeeID = Guid.Empty;
+                    vendor.EmployeeSkillLevel = 0;
+                    if (vendor.Owner != null)
+                    {
+                        vendor.Owner.SendMessage(33, "[¾Ë¸²] ¼Ò¸Å »óÁ¡ À¯Áöºñ(ÀÏ±Ş " + vendor.DailyWage + "G)°¡ ºÎÁ·ÇÏ¿© ¾Ë¹Ù»ıÀÌ Åğ»çÇß½À´Ï´Ù!");
+                    }
+                }
+            }
+        }
+
+
+        // [º¹±¸] ºÎ¸ğ Å¬·¡½º¿¡ ¾øÀ¸¹Ç·Î Á÷Á¢ º¯¼ö¸¦ ¼±¾ğÇÕ´Ï´Ù.
         [CommandProperty(AccessLevel.GameMaster)]
         public int HoldGold { get; set; }
 
@@ -102,53 +141,53 @@ namespace Server.Mobiles
         protected override List<SBInfo> SBInfos => m_SBInfos;
         public override void InitSBInfo() { }
 
-        public RetailVendor() : base("ì¡í™”ìƒ")
+        public RetailVendor() : base("ÀâÈ­»ó")
         {
-            // 1. ì„±ë³„ì„ ëœë¤ìœ¼ë¡œ ê²°ì • (50% í™•ë¥ )
+            // 1. ¼ºº°À» ·£´ıÀ¸·Î °áÁ¤ (50% È®·ü)
             this.Female = Utility.RandomBool();
 
-            // 2. ì„±ë³„ì— ë§ì¶° ì—”ì§„ ë‚´ì¥ ì´ë¦„ ëª©ë¡ì—ì„œ ëœë¤ ì„ íƒ
-            // ë³´í†µ "human male", "human female" ë˜ëŠ” ê°„ë‹¨íˆ "male", "female"ì„ ì‚¬ìš©í•©ë‹ˆë‹¤.
+            // 2. ¼ºº°¿¡ ¸ÂÃç ¿£Áø ³»Àå ÀÌ¸§ ¸ñ·Ï¿¡¼­ ·£´ı ¼±ÅÃ
+            // º¸Åë "human male", "human female" ¶Ç´Â °£´ÜÈ÷ "male", "female"À» »ç¿ëÇÕ´Ï´Ù.
             this.Name = NameList.RandomName(this.Female ? "female" : "male");
 
-            // 3. ê¸°ì¡´ ì„¤ì • ìœ ì§€
+            // 3. ±âÁ¸ ¼³Á¤ À¯Áö
             this.m_MarketItems = [];
             RetailVendors.Add(this); 
-            this.CantWalk = true; // ì œìë¦¬ ê³ ì •
+            this.CantWalk = true; // Á¦ÀÚ¸® °íÁ¤
         }
 
-		// BaseVendorì˜ ê¸°ë³¸ ë©”ë‰´(Buy/Sell)ë¥¼ ì •ë°€í•˜ê²Œ ì œê±°í•˜ê¸° ìœ„í•´ ì˜¤ë²„ë¼ì´ë“œí•©ë‹ˆë‹¤.
+		// BaseVendorÀÇ ±âº» ¸Ş´º(Buy/Sell)¸¦ Á¤¹ĞÇÏ°Ô Á¦°ÅÇÏ±â À§ÇØ ¿À¹ö¶óÀÌµåÇÕ´Ï´Ù.
 		public override void GetContextMenuEntries(Mobile from, List<ContextMenuEntry> list)
         {
-            // base.GetContextMenuEntries(from, list); // ê³¼ê°í•˜ê²Œ ì œê±°í•©ë‹ˆë‹¤.
+            // base.GetContextMenuEntries(from, list); // °ú°¨ÇÏ°Ô Á¦°ÅÇÕ´Ï´Ù.
 
             if (from == null || !from.Alive) 
                 return;
 
-            // 1. í•„ìˆ˜ ê¸°ë³¸ ê¸°ëŠ¥: ìºë¦­í„°ì°½(ì¢…ì´ì¸í˜•) ì—´ê¸°
-            // Server.ContextMenus.PaperdollEntryëŠ” ì—”ì§„ í‘œì¤€ í´ë˜ìŠ¤ì…ë‹ˆë‹¤.
+            // 1. ÇÊ¼ö ±âº» ±â´É: Ä³¸¯ÅÍÃ¢(Á¾ÀÌÀÎÇü) ¿­±â
+            // Server.ContextMenus.PaperdollEntry´Â ¿£Áø Ç¥ÁØ Å¬·¡½ºÀÔ´Ï´Ù.
             list.Add(new PaperdollEntry(this));
 
-            // 2. ê´€ë¦¬ììš© ë©”ë‰´: ìƒì  ê´€ë¦¬ (ì£¼ì¸ í˜¹ì€ GM)
+            // 2. °ü¸®ÀÚ¿ë ¸Ş´º: »óÁ¡ °ü¸® (ÁÖÀÎ È¤Àº GM)
             if (from == this.Owner || from.AccessLevel >= AccessLevel.GameMaster)
             {
                 list.Add(new RetailManagementEntry(from, this));
             }
 
-            // 3. ì†ë‹˜ìš© ë©”ë‰´: ìƒì  êµ¬ê²½ (ì»¤ìŠ¤í…€ êµ¬ì…)
+            // 3. ¼Õ´Ô¿ë ¸Ş´º: »óÁ¡ ±¸°æ (Ä¿½ºÅÒ ±¸ÀÔ)
             list.Add(new RetailBrowseEntry(from, this));
 
-            // 4. (ì„ íƒì‚¬í•­) ëª©ì ì§€ ë¬»ê¸°ê°€ í•„ìš”í•˜ë©´ ì—¬ê¸°ì„œ ì¶”ê°€, í•„ìš” ì—†ìœ¼ë©´ ìƒëµ ê°€ëŠ¥
+            // 4. (¼±ÅÃ»çÇ×) ¸ñÀûÁö ¹¯±â°¡ ÇÊ¿äÇÏ¸é ¿©±â¼­ Ãß°¡, ÇÊ¿ä ¾øÀ¸¸é »ı·« °¡´É
             // list.Add(new AskDestinationEntry(from, this)); 
         }
 
-		// --- ë‚´ë¶€ í´ë˜ìŠ¤ ìˆ˜ì • ---
+		// --- ³»ºÎ Å¬·¡½º ¼öÁ¤ ---
 		private class RetailManagementEntry : ContextMenuEntry
 		{
 			private Mobile m_From;
 			private RetailVendor m_Vendor;
 
-			// 4. [CS1729 í•´ê²°] ìƒì„±ì ì¸ìˆ˜ë¥¼ 1ê°œ(Cliloc ID)ë¡œ ìˆ˜ì •
+			// 4. [CS1729 ÇØ°á] »ı¼ºÀÚ ÀÎ¼ö¸¦ 1°³(Cliloc ID)·Î ¼öÁ¤
 			public RetailManagementEntry(Mobile from, RetailVendor vendor) : base(6103) 
 			{
 				m_From = from;
@@ -166,7 +205,7 @@ namespace Server.Mobiles
 			private Mobile m_From;
 			private RetailVendor m_Vendor;
 
-			// 5. [CS1729 í•´ê²°] ìƒì„±ì ì¸ìˆ˜ë¥¼ 1ê°œ(Cliloc ID)ë¡œ ìˆ˜ì •
+			// 5. [CS1729 ÇØ°á] »ı¼ºÀÚ ÀÎ¼ö¸¦ 1°³(Cliloc ID)·Î ¼öÁ¤
 			public RetailBrowseEntry(Mobile from, RetailVendor vendor) : base(6100) 
 			{
 				m_From = from;
@@ -175,8 +214,8 @@ namespace Server.Mobiles
 
 			public override void OnClick()
 			{
-				m_From.SendMessage(0x44, $"{m_Vendor.Name}ì˜ ë§¤ëŒ€ë¥¼ ì‚´í´ë´…ë‹ˆë‹¤.");
-				// ì¶”í›„ êµ¬í˜„ë  êµ¬ë§¤ ì°½ í˜¸ì¶œë¶€
+				m_From.SendMessage(0x44, $"{m_Vendor.Name}ÀÇ ¸Å´ë¸¦ »ìÆìº¾´Ï´Ù.");
+				// ÃßÈÄ ±¸ÇöµÉ ±¸¸Å Ã¢ È£ÃâºÎ
 			}
 		}
 
@@ -196,20 +235,20 @@ namespace Server.Mobiles
                 from.SendGump(new RetailVendorShoppingGump(from, this));
         }
 
-        // ì•„ì´í…œ ë“±ë¡ ë° ê²€ì¦ í†µí•© ë¡œì§
+        // ¾ÆÀÌÅÛ µî·Ï ¹× °ËÁõ ÅëÇÕ ·ÎÁ÷
 		public (bool Success, string Message) TryListMarketItem(Mobile seller, Item item, int price)
         {
-            if (item == null || item.Deleted) return (false, "ì•„ì´í…œì´ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
-            if (item is Container) return (false, "ê°€ë°©ì€ ë‚±ê°œ íŒë§¤ìš© ë§¤ëŒ€ì— ì˜¬ë¦´ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+            if (item == null || item.Deleted) return (false, "¾ÆÀÌÅÛÀÌ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.");
+            if (item is Container) return (false, "°¡¹æÀº ³¹°³ ÆÇ¸Å¿ë ¸Å´ë¿¡ ¿Ã¸± ¼ö ¾ø½À´Ï´Ù.");
             if (item.Layer != Layer.Invalid && item.Layer != Layer.Backpack)
-                return (false, "ì°©ìš© ì¤‘ì´ê±°ë‚˜ íŠ¹ìˆ˜í•œ ë ˆì´ì–´ì˜ ì•„ì´í…œì€ ë“±ë¡í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
-            if (m_MarketItems.Count >= 10) return (false, "ë§¤ëŒ€ê°€ ê°€ë“ ì°¼ìŠµë‹ˆë‹¤.");
+                return (false, "Âø¿ë ÁßÀÌ°Å³ª Æ¯¼öÇÑ ·¹ÀÌ¾îÀÇ ¾ÆÀÌÅÛÀº µî·ÏÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            if (m_MarketItems.Count >= 10) return (false, "¸Å´ë°¡ °¡µæ Ã¡½À´Ï´Ù.");
 
-            // [í•µì‹¬ íŒ¨ì¹˜ 1] ê°€ë°© ë¬´ê²Œ ì‚¬ì „ ì‹œë®¬ë ˆì´ì…˜ (ì—”ì§„ì˜ ê°•ì œ ë“œë ë°©ì§€)
+            // [ÇÙ½É ÆĞÄ¡ 1] °¡¹æ ¹«°Ô »çÀü ½Ã¹Ä·¹ÀÌ¼Ç (¿£ÁøÀÇ °­Á¦ µå¶ø ¹æÁö)
             Container pack = this.Backpack;
             if (pack != null)
             {
-                // UO ë°±íŒ© ê¸°ë³¸ ì œí•œì€ 400ìŠ¤í†¤ì…ë‹ˆë‹¤.
+                // UO ¹éÆÑ ±âº» Á¦ÇÑÀº 400½ºÅæÀÔ´Ï´Ù.
                 int maxWeight = pack.MaxWeight > 0 ? pack.MaxWeight : 400; 
                 int currentWeight = pack.TotalWeight;
                 int itemTotalWeight = item.TotalWeight;
@@ -218,43 +257,43 @@ namespace Server.Mobiles
                 {
                     int availableWeight = maxWeight - currentWeight;
                     if (availableWeight <= 0)
-                        return (false, "ê°€ë°© ë¬´ê²Œê°€ ê½‰ ì°¨ì„œ ë” ì´ìƒ ë“±ë¡í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+                        return (false, "°¡¹æ ¹«°Ô°¡ ²Ë Â÷¼­ ´õ ÀÌ»ó µî·ÏÇÒ ¼ö ¾ø½À´Ï´Ù.");
 
-                    // ì•„ì´í…œ 1ê°œë‹¹ ë¬´ê²Œ ê³„ì‚° (0ì¸ ê²½ìš° ëŒ€ë¹„)
+                    // ¾ÆÀÌÅÛ 1°³´ç ¹«°Ô °è»ê (0ÀÎ °æ¿ì ´ëºñ)
                     double unitWeight = item.Weight > 0 ? item.Weight : 0.1;
                     int maxAmount = (int)(availableWeight / unitWeight);
                     
-                    // ë“±ë¡ ê±°ë¶€ ë° ì•ˆë‚´ ë©”ì‹œì§€ ì¶œë ¥
-                    return (false, $"ë¬´ê²Œ ì´ˆê³¼! í˜„ì¬ ì—¬ìœ  ë¬´ê²Œë¡œëŠ” ìµœëŒ€ {maxAmount}ê°œê¹Œì§€ë§Œ ë“±ë¡í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.");
+                    // µî·Ï °ÅºÎ ¹× ¾È³» ¸Ş½ÃÁö Ãâ·Â
+                    return (false, $"¹«°Ô ÃÊ°ú! ÇöÀç ¿©À¯ ¹«°Ô·Î´Â ÃÖ´ë {maxAmount}°³±îÁö¸¸ µî·ÏÇÒ ¼ö ÀÖ½À´Ï´Ù.");
                 }
             }
 
-            if (price <= 0) return (true, ""); // ê²€ì¦ ë‹¨ê³„ ì¢…ë£Œ
+            if (price <= 0) return (true, ""); // °ËÁõ ´Ü°è Á¾·á
 
-            // [í•µì‹¬ íŒ¨ì¹˜ 2] ì´ë¦„ ë®ì–´ì“°ê¸° ë¡œì§ ì „ë©´ ì‚­ì œ
-            // item.Nameì„ ì ˆëŒ€ ê±´ë“œë¦¬ì§€ ì•ŠìŠµë‹ˆë‹¤. ìˆœì • ìƒíƒœë¥¼ ìœ ì§€í•´ì•¼ Clilocì´ ì‘ë™í•©ë‹ˆë‹¤.
+            // [ÇÙ½É ÆĞÄ¡ 2] ÀÌ¸§ µ¤¾î¾²±â ·ÎÁ÷ Àü¸é »èÁ¦
+            // item.NameÀ» Àı´ë °Çµå¸®Áö ¾Ê½À´Ï´Ù. ¼øÁ¤ »óÅÂ¸¦ À¯ÁöÇØ¾ß ClilocÀÌ ÀÛµ¿ÇÕ´Ï´Ù.
 
             this.AddToBackpack(item);
             m_MarketItems.Add(new MarketItem(item, price, seller));
             
-            return (true, "ë“±ë¡ ì™„ë£Œ.");
+            return (true, "µî·Ï ¿Ï·á.");
         }
 
-        // ì¼ë°˜ êµ¬ë§¤ ë¡œì§ (ë²„ê·¸ ìˆ˜ì • ì™„ë£Œ)
+        // ÀÏ¹İ ±¸¸Å ·ÎÁ÷ (¹ö±× ¼öÁ¤ ¿Ï·á)
         public (bool Success, string Message, Item BoughtItem) TryBuyMarketItem(Mobile buyer, MarketItem marketItem, int amount)
         {
             if (marketItem?.RealItem == null || marketItem.RealItem.Deleted)
-                return (false, "ì¡´ì¬í•˜ì§€ ì•ŠëŠ” ìƒí’ˆì…ë‹ˆë‹¤.", null);
+                return (false, "Á¸ÀçÇÏÁö ¾Ê´Â »óÇ°ÀÔ´Ï´Ù.", null);
 
             if (marketItem.RealItem.Amount < amount)
-                return (false, "ì¬ê³ ê°€ ë¶€ì¡±í•©ë‹ˆë‹¤.", null);
+                return (false, "Àç°í°¡ ºÎÁ·ÇÕ´Ï´Ù.", null);
 
             int totalCost = marketItem.PricePerUnit * amount;
 
             if (!buyer.Backpack.ConsumeTotal(typeof(Gold), totalCost))
-                return (false, "ê³¨ë“œê°€ ë¶€ì¡±í•©ë‹ˆë‹¤.", null);
+                return (false, "°ñµå°¡ ºÎÁ·ÇÕ´Ï´Ù.", null);
 
-            // ë¶€ëª¨(BaseVendor)ì˜ ê¸ˆê³ ì— ì •í™•íˆ ëˆ„ì 
+            // ºÎ¸ğ(BaseVendor)ÀÇ ±İ°í¿¡ Á¤È®È÷ ´©Àû
             this.HoldGold += totalCost;
 
             Item purchasedItem;
@@ -262,36 +301,36 @@ namespace Server.Mobiles
             {
                 purchasedItem = marketItem.RealItem;
                 m_MarketItems.Remove(marketItem);
-                // ê°€ë°©ì—ì„œ êº¼ë‚¼ í•„ìš” ì—†ì´ ë°”ë¡œ ìœ ì €ì—ê²Œ AddToBackpack í•˜ë©´ ì´ë™ë©ë‹ˆë‹¤.
+                // °¡¹æ¿¡¼­ ²¨³¾ ÇÊ¿ä ¾øÀÌ ¹Ù·Î À¯Àú¿¡°Ô AddToBackpack ÇÏ¸é ÀÌµ¿µË´Ï´Ù.
             }
             else
             {
                 purchasedItem = Mobile.LiftItemDupe(marketItem.RealItem, amount);
-                // [í•µì‹¬ íŒ¨ì¹˜] ìœ ì €ê°€ ë¶€ë¶„ êµ¬ë§¤ ì‹œ ì›ë³¸ ë©ì–´ë¦¬ì—ì„œ ì‚° ë§Œí¼ ê°œìˆ˜ ì°¨ê°!
+                // [ÇÙ½É ÆĞÄ¡] À¯Àú°¡ ºÎºĞ ±¸¸Å ½Ã ¿øº» µ¢¾î¸®¿¡¼­ »ê ¸¸Å­ °³¼ö Â÷°¨!
                 marketItem.RealItem.Amount -= amount;
                 marketItem.RealItem.InvalidateProperties();
             }
 
             buyer.AddToBackpack(purchasedItem);
-            return (true, "êµ¬ë§¤ê°€ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.", purchasedItem);
+            return (true, "±¸¸Å°¡ ¿Ï·áµÇ¾ú½À´Ï´Ù.", purchasedItem);
         }
 
-		// RetailVendor í´ë˜ìŠ¤ ë‚´ë¶€ì— ì¶”ê°€
+		// RetailVendor Å¬·¡½º ³»ºÎ¿¡ Ãß°¡
 		private Item SafeDupe(Item oldItem, int amount)
 		{
 			try
 			{
-				// ì›ë³¸ê³¼ ë™ì¼í•œ íƒ€ì…ì˜ ìƒˆ ê°ì²´ ìƒì„±
+				// ¿øº»°ú µ¿ÀÏÇÑ Å¸ÀÔÀÇ »õ °´Ã¼ »ı¼º
 				Item newItem = (Item)Activator.CreateInstance(oldItem.GetType());
 
-				// ë¬¼ë¦¬ì  ì†ì„± ë³µì‚¬
+				// ¹°¸®Àû ¼Ó¼º º¹»ç
 				newItem.Hue = oldItem.Hue;
 				newItem.ItemID = oldItem.ItemID;
 				newItem.Name = oldItem.Name;
 				newItem.LootType = oldItem.LootType;
 				newItem.Weight = oldItem.Weight;
 				
-				// ê°€ì¥ ì¤‘ìš”í•œ ìˆ˜ëŸ‰ ì„¤ì •: ìš”ì²­ë°›ì€ ë”± 'amount'ë§Œí¼ë§Œ ì„¤ì •
+				// °¡Àå Áß¿äÇÑ ¼ö·® ¼³Á¤: ¿äÃ»¹ŞÀº µü 'amount'¸¸Å­¸¸ ¼³Á¤
 				newItem.Amount = amount;
 
 				return newItem;
@@ -301,14 +340,14 @@ namespace Server.Mobiles
 				return null;
 			}
 		}
-        // AI ì „ìš© ì¶”ì¶œ ë¡œì§ (ì¦ë°œ ë° ë”ë¸” ê²°ì œ ë°©ì§€)
+        // AI Àü¿ë ÃßÃâ ·ÎÁ÷ (Áõ¹ß ¹× ´õºí °áÁ¦ ¹æÁö)
         public Item ExtractItemForAI(MarketItem marketItem, int amount)
 		{
-			// ìˆ˜ëŸ‰ì´ ë¶€ì¡±í•˜ê±°ë‚˜ ì´ë¯¸ ì‚­ì œëœ ì•„ì´í…œì´ë©´ ê±°ë¶€
+			// ¼ö·®ÀÌ ºÎÁ·ÇÏ°Å³ª ÀÌ¹Ì »èÁ¦µÈ ¾ÆÀÌÅÛÀÌ¸é °ÅºÎ
 			if (marketItem?.RealItem == null || marketItem.RealItem.Deleted || marketItem.RealItem.Amount < amount) 
 				return null;
 
-			// 1. ì „ëŸ‰ êµ¬ë§¤ ì‹œ: ì›ë³¸ì„ í†µì§¸ë¡œ ë„˜ê¸°ê³  ë¦¬ìŠ¤íŠ¸ì—ì„œ ì‚­ì œ
+			// 1. Àü·® ±¸¸Å ½Ã: ¿øº»À» ÅëÂ°·Î ³Ñ±â°í ¸®½ºÆ®¿¡¼­ »èÁ¦
 			if (marketItem.RealItem.Amount == amount)
 			{
 				Item extracted = marketItem.RealItem;
@@ -317,16 +356,16 @@ namespace Server.Mobiles
 			}
 			else
 			{
-				// 2. ë¶€ë¶„ êµ¬ë§¤ ì‹œ: ë¬¸ì œì˜ LiftItemDupe ëŒ€ì‹  ì•ˆì „í•˜ê²Œ ì§ì ‘ Dupe(ë³µì œ) í˜¸ì¶œ
+				// 2. ºÎºĞ ±¸¸Å ½Ã: ¹®Á¦ÀÇ LiftItemDupe ´ë½Å ¾ÈÀüÇÏ°Ô Á÷Á¢ Dupe(º¹Á¦) È£Ãâ
 				Item extracted = SafeDupe(marketItem.RealItem, amount);
 				
 				if (extracted != null)
 				{
-					// ì‚¬ë³¸ì´ ì„±ê³µì ìœ¼ë¡œ ë§Œë“¤ì–´ì¡Œì„ ë•Œë§Œ ì›ë³¸ ìˆ˜ëŸ‰ ì°¨ê°
+					// »çº»ÀÌ ¼º°øÀûÀ¸·Î ¸¸µé¾îÁ³À» ¶§¸¸ ¿øº» ¼ö·® Â÷°¨
 					marketItem.RealItem.Amount -= amount;
 					marketItem.RealItem.InvalidateProperties();
 					
-					// ë§Œì•½ ì—”ì§„ ê³„ì‚° ì˜¤ì°¨ë¡œ ìˆ˜ëŸ‰ì´ 0 ì´í•˜ê°€ ë˜ë©´ ë¦¬ìŠ¤íŠ¸ì—ì„œ ê°•ì œ ì‚­ì œ (ìœ ë ¹í™” ë°©ì§€)
+					// ¸¸¾à ¿£Áø °è»ê ¿ÀÂ÷·Î ¼ö·®ÀÌ 0 ÀÌÇÏ°¡ µÇ¸é ¸®½ºÆ®¿¡¼­ °­Á¦ »èÁ¦ (À¯·ÉÈ­ ¹æÁö)
 					if (marketItem.RealItem.Amount <= 0)
 					{
 						m_MarketItems.Remove(marketItem);
@@ -334,7 +373,7 @@ namespace Server.Mobiles
 				}
 				else
 				{
-					// ë§Œì•½ ì—”ì§„ ë¬¸ì œë¡œ ë³µì œì— ì‹¤íŒ¨í•˜ë©´ nullì„ ë°˜í™˜í•˜ì—¬ ê±°ë˜ë¥¼ ë¬´íš¨í™” (ì›ë³¸ ë³´í˜¸)
+					// ¸¸¾à ¿£Áø ¹®Á¦·Î º¹Á¦¿¡ ½ÇÆĞÇÏ¸é nullÀ» ¹İÈ¯ÇÏ¿© °Å·¡¸¦ ¹«È¿È­ (¿øº» º¸È£)
 					return null; 
 				}
 
@@ -348,7 +387,7 @@ namespace Server.Mobiles
             base.Serialize(writer);
             writer.Write(1); // Version 1
 
-            writer.Write(HoldGold); // [ì¤‘ìš”] ìˆ˜ìµê¸ˆ ì €ì¥
+            writer.Write(HoldGold); // [Áß¿ä] ¼öÀÍ±İ ÀúÀå
 
             writer.Write(Owner);
             writer.Write(m_MarketItems.Count);
@@ -367,7 +406,7 @@ namespace Server.Mobiles
             int version = reader.ReadInt();
 
 			if (version >= 1)
-                HoldGold = reader.ReadInt(); // [ì¤‘ìš”] ìˆ˜ìµê¸ˆ ë³µêµ¬
+                HoldGold = reader.ReadInt(); // [Áß¿ä] ¼öÀÍ±İ º¹±¸
 
             Owner = reader.ReadMobile();
             m_MarketItems = [];
@@ -385,7 +424,7 @@ namespace Server.Mobiles
             RetailVendors.Add(this);
         }
     }
-    // 3. íŒë§¤ì(Owner)ìš© ê´€ë¦¬ Gump
+    // 3. ÆÇ¸ÅÀÚ(Owner)¿ë °ü¸® Gump
 	public class RetailVendorManagementGump : Gump
     {
         private RetailVendor m_Vendor;
@@ -396,41 +435,41 @@ namespace Server.Mobiles
 
             AddPage(0);
             
-            // 1. ë©”ì¸ ë°°ê²½: ê°€ì¥ ê¸°ë³¸ì ì´ê³  ì•ˆì •ì ì¸ ì„ì¬ ë°°ê²½ (400x500)
+            // 1. ¸ŞÀÎ ¹è°æ: °¡Àå ±âº»ÀûÀÌ°í ¾ÈÁ¤ÀûÀÎ ¼®Àç ¹è°æ (400x500)
             AddBackground(0, 0, 400, 500, 9270);
             
-            // 2. ìƒë‹¨ íƒ€ì´í‹€ ë° êµ¬ë¶„ì„ 
-            AddLabel(145, 15, 0x480, "ìƒì ê´€ë¦¬ í™”ë©´");
-            AddImageTiled(20, 40, 360, 2, 2624); // ê°€ì¥ ì–‡ê³  ê¹¨ë—í•œ ì‹¤ì„ 
+            // 2. »ó´Ü Å¸ÀÌÆ² ¹× ±¸ºĞ¼±
+            AddLabel(145, 15, 0x480, "»óÁ¡°ü¸® È­¸é");
+            AddImageTiled(20, 40, 360, 2, 2624); // °¡Àå ¾ã°í ±ú²ıÇÑ ½Ç¼±
 
-            // 3. ê²½ì œ ì •ë³´ ì„¹ì…˜
-            AddLabel(35, 55, 0x34, "í˜„ì¬ íŒë§¤ ìˆ˜ìµê¸ˆ"); 
-            AddLabel(35, 75, 0x44, $"{m_Vendor.HoldGold:N0} GP"); // ìˆ˜ìµê¸ˆ ë…¹ìƒ‰ ê°•ì¡°
+            // 3. °æÁ¦ Á¤º¸ ¼½¼Ç
+            AddLabel(35, 55, 0x34, "ÇöÀç ÆÇ¸Å ¼öÀÍ±İ"); 
+            AddLabel(35, 75, 0x44, $"{m_Vendor.HoldGold:N0} GP"); // ¼öÀÍ±İ ³ì»ö °­Á¶
             
-            // ê¸ˆí™” ê±·ê¸° ë²„íŠ¼ (í‘œì¤€ íŒŒë€ìƒ‰ ë²„íŠ¼ 4005ë²ˆ ì‚¬ìš©)
+            // ±İÈ­ °È±â ¹öÆ° (Ç¥ÁØ ÆÄ¶õ»ö ¹öÆ° 4005¹ø »ç¿ë)
             AddButton(260, 65, 4005, 4007, 1, GumpButtonType.Reply, 0); 
-            AddLabel(295, 67, 1152, "ê¸ˆí™” ê±·ê¸°");
+            AddLabel(295, 67, 1152, "±İÈ­ °È±â");
 
             AddImageTiled(20, 105, 360, 2, 2624); 
 
-            // 4. ê´€ë¦¬ ë„êµ¬ ì„¹ì…˜
-            // ìƒˆë¡œìš´ ë¬¼í’ˆ ë“±ë¡
+            // 4. °ü¸® µµ±¸ ¼½¼Ç
+            // »õ·Î¿î ¹°Ç° µî·Ï
             AddButton(35, 120, 4011, 4013, 2, GumpButtonType.Reply, 0); 
-            AddLabel(75, 122, 1152, "ìƒˆë¡œìš´ ë¬¼í’ˆ ë“±ë¡ (íƒ€ê²Ÿ)");
+            AddLabel(75, 122, 1152, "»õ·Î¿î ¹°Ç° µî·Ï (Å¸°Ù)");
 
-            // ë²¤ë” ìœ„ì¹˜ ì´ë™
+            // º¥´õ À§Ä¡ ÀÌµ¿
             AddButton(35, 155, 4005, 4007, 3, GumpButtonType.Reply, 0);
-            AddLabel(75, 157, 1152, "ë²¤ë” ìœ„ì¹˜ ì´ë™");
+            AddLabel(75, 157, 1152, "º¥´õ À§Ä¡ ÀÌµ¿");
 
             AddImageTiled(20, 190, 360, 2, 2624); 
 
-            // 5. ë¬¼í’ˆ ëª©ë¡ í—¤ë” (ê³¨ë“œ ìƒ‰ìƒ 0x480)
-            AddLabel(35, 200, 0x480, "í’ˆëª…");
-            AddLabel(185, 200, 0x480, "ìˆ˜ëŸ‰");
-            AddLabel(250, 200, 0x480, "ê°€ê²©");
-            AddLabel(330, 200, 0x480, "íšŒìˆ˜");
+            // 5. ¹°Ç° ¸ñ·Ï Çì´õ (°ñµå »ö»ó 0x480)
+            AddLabel(35, 200, 0x480, "Ç°¸í");
+            AddLabel(185, 200, 0x480, "¼ö·®");
+            AddLabel(250, 200, 0x480, "°¡°İ");
+            AddLabel(330, 200, 0x480, "È¸¼ö");
 
-            // 6. ë™ì  ë¬¼í’ˆ ë¦¬ìŠ¤íŠ¸ (ì•ˆì „í•œ Yì¢Œí‘œ ê³„ì‚°)
+            // 6. µ¿Àû ¹°Ç° ¸®½ºÆ® (¾ÈÀüÇÑ YÁÂÇ¥ °è»ê)
             int y = 230;
             for (int i = 0; i < m_Vendor.MarketItems.Count; i++)
             {
@@ -439,26 +478,26 @@ namespace Server.Mobiles
 
                 Item item = mi.RealItem;
 
-                // [ìˆ˜ì •] ìˆœì • ì•„ì´í…œ(Cliloc)ê³¼ ì»¤ìŠ¤í…€ ì´ë¦„ ì•„ì´í…œ ë¶„ê¸° ì²˜ë¦¬
+                // [¼öÁ¤] ¼øÁ¤ ¾ÆÀÌÅÛ(Cliloc)°ú Ä¿½ºÅÒ ÀÌ¸§ ¾ÆÀÌÅÛ ºĞ±â Ã³¸®
                 if (item.Name != null)
                 {
-                    // ì´ë¦„ì´ ë³€ê²½ëœ ì•„ì´í…œ (ì˜ˆ: [Exceptional] ì†¡ì–´ìŠ¤í…Œì´í¬)
+                    // ÀÌ¸§ÀÌ º¯°æµÈ ¾ÆÀÌÅÛ (¿¹: [Exceptional] ¼Û¾î½ºÅ×ÀÌÅ©)
                     string name = item.Name;
                     if (name.Length > 16) name = name.Substring(0, 14) + "..";
-                    AddLabel(35, y, 1152, name); // ê¸°ì¡´ 1152 ìƒ‰ìƒ ìœ ì§€
+                    AddLabel(35, y, 1152, name); // ±âÁ¸ 1152 »ö»ó À¯Áö
                 }
                 else
                 {
-                    // ì´ë¦„ì´ ì—†ëŠ” ìˆœì • ì•„ì´í…œ (í´ë¼ì´ì–¸íŠ¸ Cliloc ë Œë”ë§)
-                    // í°íŠ¸ í¬ê¸°/ìƒ‰ìƒ HTML ì¡°ì‘ ì—†ì´ ìˆœìˆ˜í•˜ê²Œ í˜¸ì¶œ. 
-                    // Width 140 ì œí•œìœ¼ë¡œ ê¸´ ì´ë¦„ì´ ì˜† ì¹¸ì„ ì¹¨ë²”í•˜ì§€ ì•Šê²Œ ë°©ì–´.
+                    // ÀÌ¸§ÀÌ ¾ø´Â ¼øÁ¤ ¾ÆÀÌÅÛ (Å¬¶óÀÌ¾ğÆ® Cliloc ·»´õ¸µ)
+                    // ÆùÆ® Å©±â/»ö»ó HTML Á¶ÀÛ ¾øÀÌ ¼ø¼öÇÏ°Ô È£Ãâ. 
+                    // Width 140 Á¦ÇÑÀ¸·Î ±ä ÀÌ¸§ÀÌ ¿· Ä­À» Ä§¹üÇÏÁö ¾Ê°Ô ¹æ¾î.
                     AddHtmlLocalized(35, y, 140, 20, item.LabelNumber, 0x7FFF, false, false);
                 }
 
                 AddLabel(190, y, 1152, item.Amount.ToString());
                 AddLabel(255, y, 1152, mi.PricePerUnit.ToString());
 
-                // íšŒìˆ˜ ë²„íŠ¼ (ë¹¨ê°„ìƒ‰ X ë²„íŠ¼ 4017ë²ˆ ì‚¬ìš©)
+                // È¸¼ö ¹öÆ° (»¡°£»ö X ¹öÆ° 4017¹ø »ç¿ë)
                 AddButton(330, y, 4017, 4019, 100 + i, GumpButtonType.Reply, 0);
                 
                 y += 25;
@@ -475,19 +514,19 @@ namespace Server.Mobiles
                 if (m_Vendor.HoldGold > 0)
                 {
                     from.AddToBackpack(new Gold(m_Vendor.HoldGold));
-                    from.SendMessage(68, $"{m_Vendor.HoldGold:N0} ê³¨ë“œë¥¼ ì •ì‚°í–ˆìŠµë‹ˆë‹¤.");
+                    from.SendMessage(68, $"{m_Vendor.HoldGold:N0} °ñµå¸¦ Á¤»êÇß½À´Ï´Ù.");
                     m_Vendor.HoldGold = 0;
                 }
                 from.SendGump(new RetailVendorManagementGump(from, m_Vendor));
             }
             else if (info.ButtonID == 2) 
             {
-                from.SendMessage(53, "ë§¤ëŒ€ì— ì˜¬ë¦´ ì•„ì´í…œì„ ì„ íƒí•˜ì„¸ìš”.");
+                from.SendMessage(53, "¸Å´ë¿¡ ¿Ã¸± ¾ÆÀÌÅÛÀ» ¼±ÅÃÇÏ¼¼¿ä.");
                 from.Target = new InternalListTarget(m_Vendor);
             }
-			else if (info.ButtonID == 3) // ìœ„ì¹˜ ì´ë™ ë²„íŠ¼
+			else if (info.ButtonID == 3) // À§Ä¡ ÀÌµ¿ ¹öÆ°
 			{
-				from.SendMessage(0x35, "ë°´ë”ë¥¼ ì˜®ê¸¸ ìƒˆë¡œìš´ ìœ„ì¹˜ë¥¼ ì„ íƒí•˜ì„¸ìš”.");
+				from.SendMessage(0x35, "¹ê´õ¸¦ ¿Å±æ »õ·Î¿î À§Ä¡¸¦ ¼±ÅÃÇÏ¼¼¿ä.");
 				from.Target = new InternalMoveTarget(m_Vendor);
 			}
             else if (info.ButtonID >= 700) 
@@ -498,11 +537,11 @@ namespace Server.Mobiles
                     var mi = m_Vendor.MarketItems[index];
                     from.AddToBackpack(mi.RealItem); 
                     m_Vendor.MarketItems.RemoveAt(index);
-                    from.SendMessage(53, "ìƒí’ˆ íŒë§¤ë¥¼ ì¤‘ì§€í•˜ê³  íšŒìˆ˜í–ˆìŠµë‹ˆë‹¤.");
+                    from.SendMessage(53, "»óÇ° ÆÇ¸Å¸¦ ÁßÁöÇÏ°í È¸¼öÇß½À´Ï´Ù.");
                 }
                 from.SendGump(new RetailVendorManagementGump(from, m_Vendor));
             }
-			else if (info.ButtonID >= 100) // [ìˆ˜ì •] ë¬¼í’ˆ íšŒìˆ˜ ë¡œì§
+			else if (info.ButtonID >= 100) // [¼öÁ¤] ¹°Ç° È¸¼ö ·ÎÁ÷
             {
                 int index = info.ButtonID - 100;
                 if (index >= 0 && index < m_Vendor.MarketItems.Count)
@@ -511,19 +550,19 @@ namespace Server.Mobiles
                     
                     if (mi.RealItem != null && !mi.RealItem.Deleted)
                     {
-                        // ë°´ë” ê°€ë°©ì—ì„œ ìœ ì € ê°€ë°©ìœ¼ë¡œ ë¬¼ë¦¬ì  ì´ë™
+                        // ¹ê´õ °¡¹æ¿¡¼­ À¯Àú °¡¹æÀ¸·Î ¹°¸®Àû ÀÌµ¿
                         from.AddToBackpack(mi.RealItem); 
-                        from.SendMessage(68, $"{mi.RealItem.Name ?? mi.RealItem.ItemData.Name}ì„(ë¥¼) ë§¤ëŒ€ì—ì„œ íšŒìˆ˜í–ˆìŠµë‹ˆë‹¤.");
+                        from.SendMessage(68, $"{mi.RealItem.Name ?? mi.RealItem.ItemData.Name}À»(¸¦) ¸Å´ë¿¡¼­ È¸¼öÇß½À´Ï´Ù.");
                         
-                        // ë¦¬ìŠ¤íŠ¸ì—ì„œ ì œê±°
+                        // ¸®½ºÆ®¿¡¼­ Á¦°Å
                         m_Vendor.MarketItems.RemoveAt(index);
                     }
                     else
                     {
-                        m_Vendor.MarketItems.RemoveAt(index); // ì•„ì´í…œì´ ì—†ìœ¼ë©´ ë¦¬ìŠ¤íŠ¸ì—ì„œë§Œ ì‚­ì œ
+                        m_Vendor.MarketItems.RemoveAt(index); // ¾ÆÀÌÅÛÀÌ ¾øÀ¸¸é ¸®½ºÆ®¿¡¼­¸¸ »èÁ¦
                     }
                 }
-                // ì°½ ìƒˆë¡œê³ ì¹¨
+                // Ã¢ »õ·Î°íÄ§
                 from.SendGump(new RetailVendorManagementGump(from, m_Vendor));
             }
         }
@@ -544,20 +583,20 @@ namespace Server.Mobiles
 						m_Vendor.AddItem(pack);
 					}
 
-					// [ìˆ˜ì •] 6ê°œ ì¸ìˆ˜ë¥¼ ë°›ëŠ” CheckHold ì‹œê·¸ë‹ˆì²˜ ëŒ€ì‘
-					// ì¸ìˆ˜: (ìœ ì €, ì•„ì´í…œ, ë©”ì‹œì§€ì—¬ë¶€, ì°¨ê°ì—¬ë¶€, ìˆ˜ëŸ‰, ì¶”ê°€ë¬´ê²Œ)
-					// ë§ˆì§€ë§‰ ì¸ìˆ˜ì— 0ì„ ë„£ì–´ 'ì•„ì´í…œ ë³¸ë˜ ë¬´ê²Œ'ë§Œ ì²´í¬í•˜ë„ë¡ í•©ë‹ˆë‹¤.
+					// [¼öÁ¤] 6°³ ÀÎ¼ö¸¦ ¹Ş´Â CheckHold ½Ã±×´ÏÃ³ ´ëÀÀ
+					// ÀÎ¼ö: (À¯Àú, ¾ÆÀÌÅÛ, ¸Ş½ÃÁö¿©ºÎ, Â÷°¨¿©ºÎ, ¼ö·®, Ãß°¡¹«°Ô)
+					// ¸¶Áö¸· ÀÎ¼ö¿¡ 0À» ³Ö¾î '¾ÆÀÌÅÛ º»·¡ ¹«°Ô'¸¸ Ã¼Å©ÇÏµµ·Ï ÇÕ´Ï´Ù.
 					if (!pack.CheckHold(from, item, false, true, item.Amount, 0))
 					{
-						from.SendMessage(33, "ë°´ë”ì˜ ê°€ë°©ì´ ë„ˆë¬´ ë¬´ê²ê±°ë‚˜ ì•„ì´í…œì´ ë„ˆë¬´ ë§ì•„ ë„£ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+						from.SendMessage(33, "¹ê´õÀÇ °¡¹æÀÌ ³Ê¹« ¹«°Ì°Å³ª ¾ÆÀÌÅÛÀÌ ³Ê¹« ¸¹¾Æ ³ÖÀ» ¼ö ¾ø½À´Ï´Ù.");
 						from.SendGump(new RetailVendorManagementGump(from, m_Vendor));
 						return;
 					}
 
-					// 2. ì¶”ê°€ì ì¸ ì •ë°€ ë¬´ê²Œ ê³„ì‚° (ì†Œìˆ˜ì  ë¬´ê²Œ ë³´ì •)
+					// 2. Ãß°¡ÀûÀÎ Á¤¹Ğ ¹«°Ô °è»ê (¼Ò¼öÁ¡ ¹«°Ô º¸Á¤)
 					int maxWeight = pack.MaxWeight;
 					int currentWeight = pack.TotalWeight;
-					// C# 12ì˜ ê°„ê²°í•œ ìˆ˜í•™ ì—°ì‚° ì‚¬ìš©
+					// C# 12ÀÇ °£°áÇÑ ¼öÇĞ ¿¬»ê »ç¿ë
 					int itemTotalWeight = (int)Math.Ceiling(item.Weight * item.Amount);
 
 					if (currentWeight + itemTotalWeight > maxWeight)
@@ -566,18 +605,18 @@ namespace Server.Mobiles
 						double unitWeight = item.Weight > 0 ? item.Weight : 0.1;
 						int maxAmount = (int)(availableWeight / unitWeight);
 						
-						from.SendMessage(33, $"ê°€ë°© ìš©ëŸ‰ ì´ˆê³¼! í˜„ì¬ ì—¬ìœ  ë¬´ê²Œë¡œëŠ” ìµœëŒ€ {maxAmount}ê°œê¹Œì§€ë§Œ ë“±ë¡ ê°€ëŠ¥í•©ë‹ˆë‹¤.");
+						from.SendMessage(33, $"°¡¹æ ¿ë·® ÃÊ°ú! ÇöÀç ¿©À¯ ¹«°Ô·Î´Â ÃÖ´ë {maxAmount}°³±îÁö¸¸ µî·Ï °¡´ÉÇÕ´Ï´Ù.");
 						from.SendGump(new RetailVendorManagementGump(from, m_Vendor));
 						return;
 					}
 
-					// 3. ê¸°ë³¸ íŒë§¤ ê·œì¹™ ì²´í¬ (0ì› ê²€ì¦)
+					// 3. ±âº» ÆÇ¸Å ±ÔÄ¢ Ã¼Å© (0¿ø °ËÁõ)
 					var (success, message) = m_Vendor.TryListMarketItem(from, item, 0);
 
 					if (success)
 					{
 						from.Prompt = new InternalPricePrompt(m_Vendor, item);
-						from.SendMessage(53, "ì´ ì•„ì´í…œì˜ [ê°œë‹¹ íŒë§¤ ê°€ê²©]ì„ ì…ë ¥í•˜ì„¸ìš”.");
+						from.SendMessage(53, "ÀÌ ¾ÆÀÌÅÛÀÇ [°³´ç ÆÇ¸Å °¡°İ]À» ÀÔ·ÂÇÏ¼¼¿ä.");
 					}
 					else
 					{
@@ -587,7 +626,7 @@ namespace Server.Mobiles
 				}
 				else 
 				{
-					from.SendMessage(33, "ìì‹ ì˜ ê°€ë°©ì— ìˆëŠ” ì•„ì´í…œë§Œ ë“±ë¡í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.");
+					from.SendMessage(33, "ÀÚ½ÅÀÇ °¡¹æ¿¡ ÀÖ´Â ¾ÆÀÌÅÛ¸¸ µî·ÏÇÒ ¼ö ÀÖ½À´Ï´Ù.");
 					from.SendGump(new RetailVendorManagementGump(from, m_Vendor));
 				}
 			}
@@ -602,19 +641,19 @@ namespace Server.Mobiles
 				IPoint3D p = targeted as IPoint3D;
 				if (p == null) return;
 
-				// ì§‘ ë‚´ë¶€ì¸ì§€, ì£¼ì¸ì¸ì§€ ë‹¤ì‹œ í™•ì¸ (ë³´ì•ˆ)
+				// Áı ³»ºÎÀÎÁö, ÁÖÀÎÀÎÁö ´Ù½Ã È®ÀÎ (º¸¾È)
 				Server.Multis.BaseHouse house = Server.Multis.BaseHouse.FindHouseAt(from);
 				if (house == null || !house.IsOwner(from))
 				{
-					from.SendMessage(33, "ìì‹ ì˜ ì§‘ ë‚´ë¶€ë¡œë§Œ ì´ë™ì‹œí‚¬ ìˆ˜ ìˆìŠµë‹ˆë‹¤.");
+					from.SendMessage(33, "ÀÚ½ÅÀÇ Áı ³»ºÎ·Î¸¸ ÀÌµ¿½ÃÅ³ ¼ö ÀÖ½À´Ï´Ù.");
 					return;
 				}
 
-				// ì„ íƒí•œ ì§€ì ìœ¼ë¡œ ì¦‰ì‹œ í…”ë ˆí¬íŠ¸
+				// ¼±ÅÃÇÑ ÁöÁ¡À¸·Î Áï½Ã ÅÚ·¹Æ÷Æ®
 				m_Vendor.MoveToWorld(new Point3D(p), from.Map);
-				from.SendMessage(68, "ë°´ë”ì˜ ìœ„ì¹˜ë¥¼ ì˜®ê²¼ìŠµë‹ˆë‹¤.");
+				from.SendMessage(68, "¹ê´õÀÇ À§Ä¡¸¦ ¿Å°å½À´Ï´Ù.");
 				
-				// ì´ë™ í›„ ê´€ë¦¬ì°½ ë‹¤ì‹œ ì—´ì–´ì£¼ê¸°
+				// ÀÌµ¿ ÈÄ °ü¸®Ã¢ ´Ù½Ã ¿­¾îÁÖ±â
 				from.SendGump(new RetailVendorManagementGump(from, m_Vendor));
 			}
 		}
@@ -633,7 +672,7 @@ namespace Server.Mobiles
                     var result = m_Vendor.TryListMarketItem(from, m_Item, price);
                     from.SendMessage(result.Success ? 68 : 33, result.Message);
                 }
-                else from.SendMessage(33, "ìœ íš¨í•œ ìˆ«ìë¥¼ ì…ë ¥í•˜ì„¸ìš”.");
+                else from.SendMessage(33, "À¯È¿ÇÑ ¼ıÀÚ¸¦ ÀÔ·ÂÇÏ¼¼¿ä.");
                 
                 from.SendGump(new RetailVendorManagementGump(from, m_Vendor));
             }
@@ -641,7 +680,7 @@ namespace Server.Mobiles
     }
 
     // ==============================================================================
-    // 4. êµ¬ë§¤ì(Customer)ìš© ì‡¼í•‘ Gump
+    // 4. ±¸¸ÅÀÚ(Customer)¿ë ¼îÇÎ Gump
     // ==============================================================================
     public class RetailVendorShoppingGump : Gump
     {
@@ -672,7 +711,7 @@ namespace Server.Mobiles
 
                 string itemName = mi.RealItem.Name ?? mi.RealItem.ItemData.Name;
                 
-                // ê¸°ì¡´ 0xFFFFFF ì˜€ë˜ ë¶€ë¶„ì„ ì „ë¶€ 1152(í°ìƒ‰) ë° 53(ë…¸ë€ìƒ‰)ìœ¼ë¡œ ë³€ê²½
+                // ±âÁ¸ 0xFFFFFF ¿´´ø ºÎºĞÀ» ÀüºÎ 1152(Èò»ö) ¹× 53(³ë¶õ»ö)À¸·Î º¯°æ
                 AddLabel(40, y, 1152, itemName.Length > 25 ? itemName.Substring(0, 22) + "..." : itemName);
                 AddLabel(250, y, 53, $"{mi.PricePerUnit:N0} GP");
                 AddLabel(350, y, 1152, mi.RealItem.Amount.ToString());
@@ -701,7 +740,7 @@ namespace Server.Mobiles
     }
 
     // ==============================================================================
-    // 5. ìˆ˜ëŸ‰ í™•ì¸ ì°½
+    // 5. ¼ö·® È®ÀÎ Ã¢
     // ==============================================================================
     public class MarketBuyConfirmGump : Gump
     {
@@ -720,7 +759,7 @@ namespace Server.Mobiles
             
             string itemName = mi.RealItem.Name ?? mi.RealItem.ItemData.Name;
             
-            // ìƒ‰ìƒ 1152(í°ìƒ‰) ì ìš©
+            // »ö»ó 1152(Èò»ö) Àû¿ë
             AddLabel(30, 60, 1152, $"Item: {itemName}");
             AddLabel(30, 85, 1152, $"Price per unit: {mi.PricePerUnit:N0} GP");
             AddLabel(30, 110, 1152, $"Max Stock: {mi.RealItem.Amount}");
@@ -730,10 +769,10 @@ namespace Server.Mobiles
             AddTextEntry(135, 145, 90, 20, 1152, 1, "1");
 
             AddButton(60, 190, 4005, 4007, 2, GumpButtonType.Reply, 0);
-            AddLabel(95, 192, 68, "Purchase"); // 68 = ë…¹ìƒ‰
+            AddLabel(95, 192, 68, "Purchase"); // 68 = ³ì»ö
 
             AddButton(170, 190, 4017, 4019, 0, GumpButtonType.Reply, 0);
-            AddLabel(205, 192, 33, "Cancel"); // 33 = ë¹¨ê°„ìƒ‰
+            AddLabel(205, 192, 33, "Cancel"); // 33 = »¡°£»ö
         }
 
         public override void OnResponse(NetState sender, RelayInfo info)
@@ -752,7 +791,7 @@ namespace Server.Mobiles
                 }
                 else
                 {
-                    from.SendMessage(33, "ìœ íš¨í•œ ìˆ˜ëŸ‰ì„ ì…ë ¥í•˜ì„¸ìš”.");
+                    from.SendMessage(33, "À¯È¿ÇÑ ¼ö·®À» ÀÔ·ÂÇÏ¼¼¿ä.");
                 }
             }
             
@@ -760,3 +799,5 @@ namespace Server.Mobiles
         }
     }
 }
+
+

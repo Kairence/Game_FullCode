@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Server;
@@ -173,10 +173,17 @@ namespace Server.Misc
                         woodPool.DepletionCooldown = DateTime.Now.AddHours(2.0); 
                         Console.WriteLine($"[생태계] {ZoneId}의 숲이 황폐화되었습니다.");
                         
-                        foreach (var h in herbivores) 
+                        foreach (var h in herbivores.ToList()) 
                         {
                             h.Hunger -= 40000; 
                             if (h.Hunger <= 0) h.Hunger = 1; 
+                            
+                            if (h.Hunger < 20000 && Utility.RandomDouble() < 0.5)
+                            {
+                                h.Delete();
+                                herbivores.Remove(h);
+                                m_Spawned.Remove(h);
+                            }
                         }
                     }
 

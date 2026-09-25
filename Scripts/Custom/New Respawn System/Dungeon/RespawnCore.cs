@@ -786,6 +786,7 @@ namespace Server.Misc
         private static Dictionary<RegionCode, DungeonZone> m_TempZones = new();
 
         public static void RegisterZone(DungeonZone zone) { if (zone != null && zone.RCode != RegionCode.None) m_TempZones[zone.RCode] = zone; }
+        public static void UnregisterZone(DungeonZone zone) { if (zone != null && zone.RCode != RegionCode.None) m_TempZones.Remove(zone.RCode); }
         public static void FreezeData() 
         { 
             Zones = m_TempZones.ToFrozenDictionary(); 
@@ -1040,7 +1041,17 @@ namespace Server.Misc
                     if (int.TryParse(node.Attributes["RCode"]?.Value, out int codeVal))
                     {
                         RegionCode code = (RegionCode)codeVal;
-                        if (Zones.TryGetValue(code, out DungeonZone z))
+                        DungeonZone z;
+                        if (!Zones.TryGetValue(code, out z))
+                        {
+                            if (codeVal >= 900000)
+                            {
+                                z = new DungeonZone(code, Map.Trammel, 100000, null, TimeSpan.FromMinutes(60));
+                                RegisterZone(z);
+                            }
+                        }
+
+                        if (z != null)
                         {
                             if (bool.TryParse(node.Attributes["IsActive"]?.Value, out bool active)) z.IsActive = active;
                             if (int.TryParse(node.Attributes["TargetHeat"]?.Value, out int heat)) z.TargetHeat = heat;
@@ -1149,6 +1160,7 @@ namespace Server.Misc
                         }
                     }
                 }
+                FreezeData();
             }
             catch { }
         }

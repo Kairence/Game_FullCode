@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Server.ContextMenus;
 using Server.Gumps;
@@ -248,6 +248,33 @@ namespace Server.Multis
 
                 if (Owner.VendorInventories.Count > 0)
                     list.Add(new ReclaimVendorInventoryEntry(this));
+            }
+
+            if (from.Alive && Owner != null && Owner.IsOwner(from))
+            {
+                list.Add(new PlayerJobBoardEntry(this));
+            }
+        }
+
+        private class PlayerJobBoardEntry : ContextMenuEntry
+        {
+            private readonly HouseSign m_Sign;
+
+            public PlayerJobBoardEntry(HouseSign sign)
+                : base(6121) // "Cancel" or pick a good cliloc. 6212? Let's use 6121 (maybe blank or custom). Actually, in ServUO usually custom text requires a custom cliloc or Gump. We'll use 6211 for now or 0. Wait, ContextMenuEntry requires a Cliloc ID. "Hire PlayerVendor" = 6211. Let's use 6213.
+            {
+                m_Sign = sign;
+            }
+
+            public override void OnClick()
+            {
+                Mobile from = Owner.From;
+
+                if (from.CheckAlive() && m_Sign.Owner != null && m_Sign.Owner.IsOwner(from))
+                {
+                    from.CloseGump(typeof(Server.Misc.PlayerJobBoardGump));
+                    from.SendGump(new Server.Misc.PlayerJobBoardGump(from, m_Sign.Owner));
+                }
             }
         }
 

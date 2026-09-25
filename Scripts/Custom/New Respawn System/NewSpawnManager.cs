@@ -359,11 +359,11 @@ namespace Server.Misc
         {
             m_Mode = mode; m_SubMode = subMode; m_Page = page; m_MapFilter = mapFilter;
             AddPage(0); 
-            AddBackground(0, 0, 950, 550, 9200); 
+            AddBackground(0, 0, 1020, 550, 9200); 
             AddAlphaRegion(10, 10, 930, 530);
             AddHtml(10, 15, 930, 25, "<CENTER><BASEFONT COLOR=#FFCC00 SIZE=6>MASTER MONITOR</BASEFONT></CENTER>", false, false);
             
-            AddImageTiled(20, 50, 910, 30, 9354);
+            AddImageTiled(20, 50, 1020, 30, 9354);
             AddButton(30, 55, mode == 0 ? 4006 : 4005, 4007, 10, GumpButtonType.Reply, 0); AddLabel(65, 55, mode == 0 ? 68 : 0x481, "던전 모니터링");
             AddButton(200, 55, mode == 1 ? 4006 : 4005, 4007, 11, GumpButtonType.Reply, 0); AddLabel(235, 55, mode == 1 ? 68 : 0x481, "생태계 모니터링");
             AddButton(370, 55, mode == 2 ? 4006 : 4005, 4007, 13, GumpButtonType.Reply, 0); AddLabel(405, 55, mode == 2 ? 68 : 0x481, "자원 생태계 모니터링");
@@ -371,7 +371,7 @@ namespace Server.Misc
             AddButton(730, 55, 4014, 4016, 999, GumpButtonType.Reply, 0); AddLabel(765, 55, 0xFFFFFF, "메인메뉴");
             AddButton(840, 55, 4011, 4012, 12, GumpButtonType.Reply, 0); AddLabel(875, 55, 0xFFFFFF, "새로고침");
 
-            int y = 85; AddImageTiled(20, y, 910, 30, 2624);
+            int y = 85; AddImageTiled(20, y, 1020, 30, 2624);
             string[] mapNames = { "전체", "Felucca", "Trammel", "Ilshenar", "Malas", "Tokuno", "TerMur" };
             Map[] mapRefs = { null, Map.Felucca, Map.Trammel, Map.Ilshenar, Map.Malas, Map.Tokuno, Map.TerMur };
             Map currentFilterMap = mapRefs[m_MapFilter];
@@ -396,7 +396,7 @@ namespace Server.Misc
 
             if (mode == 2)
             {
-                AddImageTiled(20, y, 910, 25, 2624); string[] subNames = { "전체 자원", "광산", "벌목", "낚시", "농사" };
+                AddImageTiled(20, y, 1020, 25, 2624); string[] subNames = { "전체 자원", "광산", "벌목", "낚시", "농사" };
                 for (int i = 0; i < subNames.Length; i++) { AddButton(30 + (i * 100), y + 2, m_SubMode == i ? 4006 : 4005, 4007, 50 + i, GumpButtonType.Reply, 0); AddLabel(65 + (i * 100), y + 2, m_SubMode == i ? 68 : 0x481, subNames[i]); }
                 y += 30; 
             }
@@ -423,6 +423,7 @@ namespace Server.Misc
                 var list = DungeonManager.ZoneList
                     .Where(z => currentFilterMap == null || (z.Facet != null && z.Facet.MapID == currentFilterMap.MapID))
                     .OrderBy(z => (string.IsNullOrEmpty(z.GroupName) || z.GroupName == "Uncategorized" || z.GroupName == "기본 그룹") ? 1 : 0)
+                    .ThenBy(z => z.GroupName)
                     .ThenBy(z => z.RCode)
                     .ToList();
 
@@ -439,13 +440,13 @@ namespace Server.Misc
 
                     if (currentGroup != lastGroup)
                     {
-                        AddImageTiled(20, y, 910, 20, 2624);
+                        AddImageTiled(20, y, 1020, 20, 2624);
                         AddLabel(30, y, 68, $"[그룹명: {currentGroup}]");
                         y += 20;
                         lastGroup = currentGroup;
                     }
 
-                    AddImageTiled(20, y - 2, 910, 24, 9354);
+                    AddImageTiled(20, y - 2, 1020, 24, 9354);
                     bool isMapActive = NewSpawnManager.ActiveMaps.GetValueOrDefault(z.Facet, true);
 
                     if (z.AreaBounds.Count > 0) { AddButton(25, y + 2, 4005, 4007, 300 + (i - start), GumpButtonType.Reply, 0); AddLabel(55, y, 0x481, "GO"); }
@@ -465,6 +466,11 @@ namespace Server.Misc
                     AddLabel(600, y, heatPct >= 0.8 ? 33 : (heatPct >= 0.4 ? 1258 : 1152), $"{z.CurrentHeat:N0} / {z.TargetHeat:N0} ({heatPct:P0})");
                     
                     AddButton(820, y + 2, 4023, 4025, 200 + (i - start), GumpButtonType.Reply, 0); AddLabel(855, y, 68, "SET");
+                    AddButton(890, y + 2, 4011, 4013, 400 + (i - start), GumpButtonType.Reply, 0); AddLabel(925, y, 68, "COPY");
+                    if ((int)z.RCode >= 900000)
+                    {
+                        AddButton(965, y + 2, 4017, 4019, 500 + (i - start), GumpButtonType.Reply, 0); AddLabel(1000, y, 33, "DEL");
+                    }
                     y += 26; 
                 }
             }
@@ -484,7 +490,7 @@ namespace Server.Misc
 
                 for (int i = start; i < end; i++)
                 {
-                    var z = list[i]; AddImageTiled(20, y - 2, 910, 24, 9354);
+                    var z = list[i]; AddImageTiled(20, y - 2, 1020, 24, 9354);
                     bool isMapActive = NewSpawnManager.ActiveMaps.GetValueOrDefault(z.Facet, true);
 
                     if (z.Nodes.Count > 0) { AddButton(25, y + 2, 4005, 4007, 300 + (i - start), GumpButtonType.Reply, 0); AddLabel(55, y, 0x481, "GO"); }
@@ -540,7 +546,7 @@ namespace Server.Misc
 
                 for (int i = start; i < end; i++)
                 {
-                    object entry = targetList[i]; AddImageTiled(20, y - 2, 910, 24, 9354); AddButton(25, y + 2, 4005, 4007, 300 + (i - start), GumpButtonType.Reply, 0); AddLabel(55, y, 0x481, "GO");
+                    object entry = targetList[i]; AddImageTiled(20, y - 2, 1020, 24, 9354); AddButton(25, y + 2, 4005, 4007, 300 + (i - start), GumpButtonType.Reply, 0); AddLabel(55, y, 0x481, "GO");
                     
                     if (entry is IGrouping<object, ResourcePool> group)
                     {
@@ -686,6 +692,7 @@ namespace Server.Misc
             if (info.ButtonID >= 200 && info.ButtonID < 300) listIndex = info.ButtonID - 200;
             else if (info.ButtonID >= 300 && info.ButtonID < 400) listIndex = info.ButtonID - 300;
             else if (info.ButtonID >= 400 && info.ButtonID < 500) listIndex = info.ButtonID - 400; 
+            else if (info.ButtonID >= 500 && info.ButtonID < 600) listIndex = info.ButtonID - 500; 
             else if (info.ButtonID >= 600 && info.ButtonID < 700) listIndex = info.ButtonID - 600;
 
             if (listIndex >= 0)
@@ -698,6 +705,7 @@ namespace Server.Misc
                     var list = DungeonManager.ZoneList
                         .Where(z => currentFilterMap == null || (z.Facet != null && z.Facet.MapID == currentFilterMap.MapID))
                         .OrderBy(z => (string.IsNullOrEmpty(z.GroupName) || z.GroupName == "Uncategorized" || z.GroupName == "기본 그룹") ? 1 : 0)
+                        .ThenBy(z => z.GroupName)
                         .ThenBy(z => z.RCode)
                         .ToList();
                     
@@ -708,6 +716,44 @@ namespace Server.Misc
                         {
                             from.SendGump(new DungeonSettingGump(z, m_Mode, m_MapFilter, m_Page));
                             return; 
+                        }
+                        else if (info.ButtonID >= 400 && info.ButtonID < 500)
+                        {
+                            int newCode = 900000;
+                            while (DungeonManager.Zones.ContainsKey((RegionCode)newCode)) newCode++;
+
+                            DungeonZone newZone = new DungeonZone((RegionCode)newCode, z.Facet, z.TargetHeat, z.BossType, z.RestDuration);
+                            newZone.GroupName = z.GroupName; 
+                            newZone.SubZoneName = z.SubZoneName + " (Copy)";
+                            newZone.IsActive = false; 
+                            newZone.SetPopulation(z.ManualMaxPopulation);
+                            newZone.ReplenishRate = z.ReplenishRate;
+                            newZone.HeatDecayWeight = z.HeatDecayWeight;
+                            newZone.EnableRareDrops = z.EnableRareDrops;
+                            newZone.RareDropHeatThreshold = z.RareDropHeatThreshold;
+                            newZone.RareDropChance = z.RareDropChance;
+                            newZone.IsStealable = z.IsStealable;
+                            
+                            foreach(var kvp in z.SpawnProfileStrings) newZone.SpawnProfileStrings[kvp.Key] = kvp.Value.ToList();
+
+                            DungeonManager.RegisterZone(newZone);
+                            DungeonManager.FreezeData();
+
+                            from.SendMessage(68, "구역 설정이 성공적으로 복사되었습니다! 새 구역을 확인해 주세요.");
+                            from.SendGump(new DungeonSettingGump(newZone, m_Mode, m_MapFilter, m_Page));
+                            return;
+                        }
+                        else if (info.ButtonID >= 500 && info.ButtonID < 600)
+                        {
+                            if ((int)z.RCode >= 900000)
+                            {
+                                DungeonManager.UnregisterZone(z);
+                                z.ClearAllSpawns();
+                                DungeonManager.FreezeData();
+                                from.SendMessage(33, "해당 구역이 영구적으로 삭제되었습니다.");
+                                from.SendGump(new ZoneMonitorGump(m_Mode, m_SubMode, m_Page, m_MapFilter));
+                                return;
+                            }
                         }
                         else if (info.ButtonID >= 300 && info.ButtonID < 400)
                         {

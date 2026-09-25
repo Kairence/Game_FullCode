@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,14 +16,15 @@ namespace Server.Misc
     { 
         Menial = 100, Gathering = 101,     
         Crafting = 200,                    
-        Delivery = 300,                    
+        Delivery = 300,  
+        Merchant = 400,
         EcoHunting = 500,                  
         DungeonHunting = 600,              
         BlackMarket = 1100                 
     }
 
     public enum JobTier { Beginner = 0, Intermediate = 1, Advanced = 2, Special = 3 }
-    public enum JobOrigin { TownPublic, CitizenPrivate }
+    public enum JobOrigin { TownPublic, CitizenPrivate, PlayerPrivate }
 
     public class TownJobRequest
     {

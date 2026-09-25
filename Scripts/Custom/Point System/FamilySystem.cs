@@ -155,7 +155,7 @@ namespace Server.Misc
 
         public static void UpgradeFamilySkill(PlayerMobile pm, int skillNodeID)
         {
-            if (pm == null || !(pm.Account is Account acc)) return;
+            if (pm == null || !(pm.Account is Server.Accounting.Account acc)) return;
 
             if (!CanUpgrade(pm, skillNodeID, out string failReason))
             {
@@ -170,12 +170,12 @@ namespace Server.Misc
                 acc.Point[0] -= cost;
                 acc.Point[skillNodeID] += 1;
                 
-                pm.SendMessage(0x42, "{0} 연마 완료! (잔여 가문 명예: {1:#,0} Pt)", FamilySkillManager.Skills[skillNodeID].Name, acc.Point[0]);
+                pm.SendMessage(0x42, "{0} 강화 완료! (잔여 명예: {1:#,0} Pt)", FamilySkillManager.Skills[skillNodeID].Name, acc.Point[0]);
                 pm.UpdateEquipOptions();
             }
             else
             {
-                pm.SendMessage(0x22, "가문 명예 점수가 부족합니다. (필요: {0:#,0} Pt)", cost);
+                pm.SendMessage(0x22, "명예 포인트가 부족합니다. (필요: {0:#,0} Pt)", cost);
             }
         }
 

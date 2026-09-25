@@ -16,6 +16,7 @@ namespace Server.Misc
         private int[] m_TileData; 
         private List<BaseCreature> m_Animals; 
 
+        private Dictionary<string, int> m_RegisteredSeeds;
         private static readonly Point3D ControlLoc = new Point3D(-1, 0, 5);
         private static readonly Point3D TroughLoc = new Point3D(-1, 1, 0); 
 
@@ -28,6 +29,7 @@ namespace Server.Misc
         public int[] TileData { get { return m_TileData; } }
         public List<BaseCreature> Animals { get { return m_Animals; } }
 
+        public Dictionary<string, int> RegisteredSeeds { get { return m_RegisteredSeeds; } }
         [Constructable]
         public PrivateFarmAddon(Mobile owner, int size)
         {
@@ -36,6 +38,7 @@ namespace Server.Misc
             m_TileData = new int[size * size];
             m_Animals = new List<BaseCreature>(); 
 
+            m_RegisteredSeeds = new Dictionary<string, int>();
             AddComponent(new FarmControlComponent(), ControlLoc.X, ControlLoc.Y, ControlLoc.Z); 
             AddComponent(new FarmTroughComponent(), TroughLoc.X, TroughLoc.Y, TroughLoc.Z); 
             
@@ -164,13 +167,15 @@ namespace Server.Misc
         public override void Serialize(GenericWriter writer) 
         { 
             base.Serialize(writer); 
-            writer.Write((int)2); 
+            writer.Write((int)3); // version 3
             writer.Write(m_Owner); 
             writer.Write(m_Size); 
             writer.Write(m_TileData.Length); 
             for (int i = 0; i < m_TileData.Length; i++) writer.Write(m_TileData[i]); 
             writer.Write(m_Animals.Count);
             for (int i = 0; i < m_Animals.Count; i++) writer.Write(m_Animals[i]);
+            writer.Write(m_RegisteredSeeds.Count);
+            foreach (var kvp in m_RegisteredSeeds) { writer.Write(kvp.Key); writer.Write(kvp.Value); }
         }
         
         public override void Deserialize(GenericReader reader) 
@@ -183,6 +188,7 @@ namespace Server.Misc
             m_TileData = new int[len]; 
             for (int i = 0; i < len; i++) m_TileData[i] = reader.ReadInt(); 
             m_Animals = new List<BaseCreature>();
+            m_RegisteredSeeds = new Dictionary<string, int>();
             if (version >= 2)
             {
                 int animalCount = reader.ReadInt();
@@ -190,6 +196,16 @@ namespace Server.Misc
                 {
                     BaseCreature bc = reader.ReadMobile() as BaseCreature;
                     if (bc != null) m_Animals.Add(bc);
+                }
+            }
+            if (version >= 3)
+            {
+                int seedCount = reader.ReadInt();
+                for (int i = 0; i < seedCount; i++)
+                {
+                    string key = reader.ReadString();
+                    int count = reader.ReadInt();
+                    m_RegisteredSeeds[key] = count;
                 }
             }
             Timer.DelayCall(TimeSpan.FromSeconds(1.0), ValidateFarmPool);
