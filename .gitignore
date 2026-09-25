@@ -53,3 +53,6 @@ git_upload.bat
 !/bin/rosyln/*
 # 마크다운 문서 파일 업로드 제외 (보안/기획 유출 방지)
 *.md
+
+# 패치용 exe 예외 처리
+!Patch/Kairence.exe
