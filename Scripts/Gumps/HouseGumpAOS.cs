@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -354,6 +354,8 @@ namespace Server.Gumps
                             AddButtonLabeled(210, 150, GetButtonID(3, 13), 1060694, isOwner); // Change to Public
                         }
 
+                        AddButton(10, 360, 4005, 4007, 10000, GumpButtonType.Reply, 0);
+                        AddHtml(45, 360, 300, 20, "<BASEFONT COLOR=#FFFFFF>상점 알바 고용 관리 (Job Board)</BASEFONT>", false, false);
                         break;
                     }
                 case HouseGumpPageAOS.Storage:
@@ -873,6 +875,12 @@ namespace Server.Gumps
         {
             if (m_House.Deleted)
                 return;
+
+            if (info.ButtonID == 10000 && m_House.IsOwner(sender.Mobile))
+            {
+                sender.Mobile.SendGump(new Server.Misc.PlayerJobBoardGump(sender.Mobile, m_House));
+                return;
+            }
 
             Mobile from = sender.Mobile;
 

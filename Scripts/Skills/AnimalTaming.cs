@@ -319,7 +319,7 @@ namespace Server.SkillHandlers
 					m_BeingTamed.Remove(m_Creature);
 
 					m_Creature.Loyalty = -Math.Abs(m_Creature.Loyalty);
-					AnimalTaming.ScaleStats(m_Creature);
+					//AnimalTaming.ScaleStats(m_Creature);
 
 					// 최종 성공 Cliloc (1080913)
 					m_Creature.PrivateOverheadMessage(MessageType.Regular, 0x3B2, 1080913, m_Tamer.NetState);

@@ -1,4 +1,4 @@
-#region References
+﻿#region References
 using System;
 using System.Collections.Generic;
 using Server.Multis;
@@ -1333,6 +1333,13 @@ namespace Server.Engines.Craft
             // 2. 등급 보너스 결정 + 스킬 비례 가산
             double finalChance = (v >= 150.0 ? 0.20 : 0.10) + (v * 0.001);
 
+            BaseHouse house = BaseHouse.FindHouseAt(from);
+            if (house != null && house.IsOwner(from))
+            {
+                double synergy = Server.Misc.HouseTeamManager.GetCraftingSynergy(house, system.MainSkill);
+                if (synergy > 0) finalChance += (0.10 * synergy);
+            }
+
             // 3. [추가] 제작 숙련도 마일스톤 연산
             if (from is PlayerMobile pm)
             {
@@ -1431,8 +1438,29 @@ namespace Server.Engines.Craft
                 }
 
                 BaseHouse house = BaseHouse.FindHouseAt(from);
-                if (house != null && house.IsOwner(from))
-                    chance += 0.05;
+                if (house != null)
+                {
+                    if (house.IsOwner(from) || house.IsCoOwner(from))
+                    {
+                        chance += 0.05; // 주택 소유자 기본 보너스
+                        double synergy = Server.Misc.HouseTeamManager.GetCraftingSynergy(house, craftSystem.MainSkill);
+                        if (synergy > 0) chance += (0.10 * synergy);
+                    }
+                    else if (house.Public && from.Backpack != null)
+                    {
+                        double synergy = Server.Misc.HouseTeamManager.GetCraftingSynergy(house, craftSystem.MainSkill);
+                        if (synergy > 0)
+                        {
+                            var ticket = from.Backpack.FindItemByType(typeof(Server.Misc.WorkshopTicket)) as Server.Misc.WorkshopTicket;
+                            if (ticket != null && ticket.LinkedHouse == house)
+                            {
+                                chance += 0.05; // 손님도 소유자 버프 5% 제공
+                                chance += (0.10 * synergy);
+                                ticket.ConsumeCharge(from); // 성공/실패 여부와 관계없이 1회 제작 시도 시 차감!
+                            }
+                        }
+                    }
+                }
 
                 // [추가] 제작 숙련도 마일스톤 연산
                 if (from is PlayerMobile pm)
@@ -2450,3 +2478,8 @@ public void Craft(Mobile from, CraftSystem craftSystem, Type typeRes, ITool tool
         #endregion
 	}
 }
+
+
+
+
+

@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -254,6 +254,11 @@ namespace Server.Multis
 
         public virtual void KillVendors()
         {
+            foreach (var vendor in Server.Mobiles.RetailVendor.RetailVendors.Where(v => v.Map == this.Map && this.Region.Contains(v.Location)).ToList())
+            {
+                vendor.FireVendor(this);
+            }
+
             PlayerVendors.OfType<PlayerVendor>().IterateReverse(o => o.Destroy(true));
 
             PlayerBarkeepers.IterateReverse(o => o.Delete());
@@ -794,6 +799,15 @@ namespace Server.Multis
             {
                 if (item.Parent == null && item.Map != Map.Internal)
                     list[item] = Owner;
+            }
+
+            foreach (var mobile in Server.Mobiles.RetailVendor.RetailVendors.Where(v => v.Map == this.Map && this.Region.Contains(v.Location)))
+            {
+                if (mobile.Map != Map.Internal)
+                {
+                    mobile.Say(68, "ì§‘ ê³µì‚¬ ì¤‘ì´ì‹œêµ°ìš”! ì ì‹œ ì‰¬ê³  ì˜¤ê² ìŠµë‹ˆë‹¤~");
+                    list[mobile] = Owner;
+                }
             }
 
             foreach (var mobile in PlayerVendors.OfType<PlayerVendor>())
@@ -2137,7 +2151,7 @@ namespace Server.Multis
                 bool valid = m_House != null && Sextant.Format(m_House.Location, m_House.Map, ref xLong, ref yLat, ref xMins, ref yMins, ref xEast, ref ySouth);
 
                 if (valid)
-                    location = String.Format("{0}¡Æ {1}'{2}, {3}¡Æ {4}'{5}", yLat, yMins, ySouth ? "S" : "N", xLong, xMins, xEast ? "E" : "W");
+                    location = String.Format("{0}ï¿½ï¿½ {1}'{2}, {3}ï¿½ï¿½ {4}'{5}", yLat, yMins, ySouth ? "S" : "N", xLong, xMins, xEast ? "E" : "W");
                 else
                     location = "unknown";
 
@@ -2765,6 +2779,7 @@ namespace Server.Multis
             }
             else
             {
+                Server.Misc.WorkshopTicket.ProcessRefund(this, targ);
                 targ.MoveToWorld(BanLocation, Map);
 
                 from.SendLocalizedMessage(1042840, targ.Name); // ~1_PLAYER NAME~ has been ejected from this house.
@@ -3695,7 +3710,7 @@ namespace Server.Multis
         }
 		
 		// =======================================================================
-        // ¡Ú [ExAddon ¿µÅä È®Àå] ½Ã½ºÅÛ Á¦¾î (DB ¼öÁ¤ ¾øÀÌ ¾ÈÀüÇÏ°Ô µ¿Àû °è»ê)
+        // ï¿½ï¿½ [ExAddon ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½] ï¿½Ã½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (DB ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½)
         // ==========================================================
         
         [CommandProperty(AccessLevel.GameMaster)]
@@ -3703,11 +3718,11 @@ namespace Server.Multis
         {
             get
             {
-                // ÁıÀÇ ±Ô¸ğ(¶ô´Ù¿î ¼öÄ¡)¿¡ µû¶ó ÃÖ´ë ¿µÅä È®Àå(3x3) °¡´É È½¼ö¸¦ ÅëÁ¦ÇÕ´Ï´Ù.
-                // ±âÈ¹¿¡ ¸Â°Ô ¼öÄ¡¸¦ Á¶ÀıÇÏ¼¼¿ä! (¿¹: ¼º/ÅµÀº 6¹ø, 18x18Àº 4¹ø, ¼ÒÇüÁıÀº 1¹ø)
-                if (MaxLockDowns >= 2000) return 6; // Ä³½½, Åµ, 18x18 ±Ş ´ëÇü Áı
-                if (MaxLockDowns >= 1000) return 3; // ÁßÇü Áı
-                return 1;                           // ¼ÒÇü Áı
+                // ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¸ï¿½(ï¿½ï¿½Ù¿ï¿½ ï¿½ï¿½Ä¡)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½(3x3) ï¿½ï¿½ï¿½ï¿½ È½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+                // ï¿½ï¿½È¹ï¿½ï¿½ ï¿½Â°ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½! (ï¿½ï¿½: ï¿½ï¿½/Åµï¿½ï¿½ 6ï¿½ï¿½, 18x18ï¿½ï¿½ 4ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½)
+                if (MaxLockDowns >= 2000) return 6; // Ä³ï¿½ï¿½, Åµ, 18x18 ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+                if (MaxLockDowns >= 1000) return 3; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+                return 1;                           // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
             }
         }
 
@@ -3717,10 +3732,10 @@ namespace Server.Multis
 
             if (LockDowns != null)
             {
-                // ¶ô´Ù¿îµÈ ¾ÆÀÌÅÛµéÀ» ½ºÄµÇÏ¿© È®Àå ¿µÅä Èë¹Ù´Ú(ExAddOnTile Áß 0x31F4)ÀÇ °³¼ö¸¦ ¼Á´Ï´Ù.
+                // ï¿½ï¿½Ù¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ûµï¿½ï¿½ï¿½ ï¿½ï¿½Äµï¿½Ï¿ï¿½ È®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ù´ï¿½(ExAddOnTile ï¿½ï¿½ 0x31F4)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï´ï¿½.
                 foreach (Item item in LockDowns.Keys)
                 {
-                    // ExAddOnTile ÀÌ¶ó´Â ÀÌ¸§ÀÇ Å¬·¡½ºÀÎÁö ÆÇº° (³×ÀÓ½ºÆäÀÌ½º ÁÖÀÇ)
+                    // ExAddOnTile ï¿½Ì¶ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Çºï¿½ (ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½)
                     if (item.GetType().Name == "ExAddOnTile" && item.ItemID == 0x31F4)
                     {
                         dirtCount++;
@@ -3728,7 +3743,7 @@ namespace Server.Multis
                 }
             }
 
-            // 1¹ø È®ÀåÇÒ ¶§¸¶´Ù Èë¹Ù´ÚÀÌ 9°³(3x3) »ı¼ºµÇ¹Ç·Î, 9·Î ³ª´©¸é ÇöÀç È®Àå È½¼ö°¡ ³ª¿É´Ï´Ù!
+            // 1ï¿½ï¿½ È®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ù´ï¿½ï¿½ï¿½ 9ï¿½ï¿½(3x3) ï¿½ï¿½ï¿½ï¿½ï¿½Ç¹Ç·ï¿½, 9ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ È½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½É´Ï´ï¿½!
             return dirtCount / 9; 
         }
 
@@ -4166,7 +4181,7 @@ namespace Server.Multis
                     }
                     else
                     {
-                        m.SendMessage("´ç½ÅÀº ¹ú½á{0}Ã¤ÀÇ ÁıÀ» ¼ÒÀ¯ÇÏ°í ÀÖ½À´Ï´Ù!", BaseHouse.AccountHouseLimit.ToString());
+                        m.SendMessage("ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½{0}Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½!", BaseHouse.AccountHouseLimit.ToString());
                     }
                 }
 
@@ -5080,4 +5095,5 @@ namespace Server.Multis
         }
     }
 }
+
 

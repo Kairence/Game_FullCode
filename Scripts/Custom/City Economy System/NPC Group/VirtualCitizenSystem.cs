@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Server;
@@ -979,12 +979,43 @@ namespace Server.Misc
                 }
             }
 
+            Point3D currentLoc = agent.House?.EstateSign?.Location ?? town.Center;
             foreach (var itemKey in searchList)
             {
-                int basePrice = Math.Max(1, town.GetPrice(itemKey));
-                var result = VirtualTradeSystem.ExecutePurchase(agent, town, itemKey, basePrice, amount, true);
-                
-                if (result.Success) return (true, itemKey, result.Spent); 
+                int townPrice = Math.Max(1, town.GetPrice(itemKey));
+                if (itemKey.ItemType != null)
+                {
+                    var playerShop = Server.Misc.HouseTeamManager.FindPlayerShopWithItemInChunk(town.Facet, currentLoc, itemKey.ItemType) as Server.Mobiles.RetailVendor;
+                    if (playerShop != null)
+                    {
+                        double persuasionBonus = 1.05 + (playerShop.EmployeeSkillLevel * 0.0015);
+                        int maxAcceptablePrice = (int)(townPrice * persuasionBonus);
+                        foreach (var mItem in playerShop.MarketItems)
+                        {
+                            if (mItem.RealItem != null && !mItem.RealItem.Deleted && mItem.RealItem.GetType() == itemKey.ItemType)
+                            {
+                                int playerPrice = mItem.PricePerUnit;
+                                if (playerPrice <= maxAcceptablePrice)
+                                {
+                                    int totalCost = playerPrice * amount;
+                                    if (agent.Gold >= totalCost && mItem.RealItem.Amount >= amount)
+                                    {
+                                        Item boughtItem = playerShop.ExtractItemForAI(mItem, amount);
+                                        if (boughtItem != null)
+                                        {
+                                            agent.Gold -= totalCost;
+                                            playerShop.HoldGold += totalCost;
+                                            boughtItem.Delete();
+                                            return (true, itemKey, totalCost);
+                                        }    
+                                    }    
+                                }    
+                            }    
+                        }    
+                    }    
+                }
+                var result = VirtualTradeSystem.ExecutePurchase(agent, town, itemKey, townPrice, amount, true);
+                if (result.Success) return (true, itemKey, result.Spent);
             }
             return (false, default, 0);
         }
@@ -1258,3 +1289,10 @@ namespace Server.Misc
         }
     }
 }
+
+
+
+
+
+
+

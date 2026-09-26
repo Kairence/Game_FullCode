@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Server;
@@ -260,13 +260,24 @@ namespace Server.Misc
 
                 if (RetailVendor.RetailVendors != null)
                 {
+                    int tcx = town.Center.X / 128;
+                    int tcy = town.Center.Y / 128;
+
                     for (int i = 0; i < RetailVendor.RetailVendors.Count; i++)
                     {
                         var v = RetailVendor.RetailVendors[i];
                         if (v == null || v.Map != town.Facet || v.Deleted || v.EmployeeID == Guid.Empty) continue;
                         
+                        // [최적화 룰] 1차 청크 필터링: 마을 중심(Town) 청크 및 주변 8방향 근교(Suburbs) 청크 스캔
+                        int vcx = v.Location.X / 128;
+                        int vcy = v.Location.Y / 128;
+                        
+                        if (Math.Abs(vcx - tcx) > 1 || Math.Abs(vcy - tcy) > 1) 
+                            continue; // 인접 청크(근교)를 벗어나면 스킵 (O(1) 컷오프)
+
+                        // 2차 필터링: 거리 계산 (근교까지 커버하도록 반경을 128 타일로 확장)
                         double dist = Utility.GetDistanceToSqrt(town.Center, v.Location);
-                        if (dist <= 100.0) 
+                        if (dist <= 128.0) 
                         {
                             double weight = dist - (v.EmployeeSkillLevel * 0.5);
                             allVendors.Add((v, dist, true, weight));
@@ -1096,5 +1107,6 @@ namespace Server.Misc
         }
     }
 }
+
 
 

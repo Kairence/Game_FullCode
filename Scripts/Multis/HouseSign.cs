@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Server.ContextMenus;
 using Server.Gumps;
@@ -252,7 +252,7 @@ namespace Server.Multis
 
             if (from.Alive && Owner != null && Owner.IsOwner(from))
             {
-                list.Add(new PlayerJobBoardEntry(this));
+                //list.Add(new PlayerJobBoardEntry(this));
             }
         }
 
@@ -364,6 +364,44 @@ namespace Server.Multis
 
             if (Name == "a house sign")
                 Name = null;
+        }
+    }
+}
+
+
+namespace Server.Misc
+{
+    public class OwnerWorkshopPricingEntry : ContextMenuEntry
+    {
+        private Mobile m_From;
+        private Server.Multis.BaseHouse m_House;
+
+        public OwnerWorkshopPricingEntry(Mobile from, Server.Multis.BaseHouse house) : base(6214, 3) // 6214 = "Setup" or similar
+        {
+            m_From = from;
+            m_House = house;
+        }
+
+        public override void OnClick()
+        {
+            m_From.SendGump(new OwnerWorkshopPricingGump(m_From, m_House));
+        }
+    }
+
+    public class PublicWorkshopServiceEntry : ContextMenuEntry
+    {
+        private Mobile m_From;
+        private Server.Multis.BaseHouse m_House;
+
+        public PublicWorkshopServiceEntry(Mobile from, Server.Multis.BaseHouse house) : base(6121, 3) // 6121 = "Help" or something
+        {
+            m_From = from;
+            m_House = house;
+        }
+
+        public override void OnClick()
+        {
+            m_From.SendGump(new PublicWorkshopServiceGump(m_From, m_House));
         }
     }
 }

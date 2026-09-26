@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Server.Items
 {
@@ -52,10 +52,21 @@ namespace Server.Items
         {
             get
             {
-                if (m_Resource >= CraftResource.DullCopper && m_Resource <= CraftResource.Valorite)
-                    return 1042684 + (int)(m_Resource - CraftResource.DullCopper);
-
-                return 1042692;
+                switch (m_Resource)
+                {
+                    case CraftResource.DullCopper: return 1042684;
+                    case CraftResource.ShadowIron: return 1042685;
+                    case CraftResource.Copper:     return 1042686;
+                    case CraftResource.Bronze:     return 1042687;
+                    case CraftResource.Gold:       return 1042688;
+                    case CraftResource.Agapite:    return 1042689;
+                    case CraftResource.Verite:     return 1042690;
+                    case CraftResource.Valorite:   return 1042691;
+                    case CraftResource.Iron:       return 1042692;
+                    case CraftResource.Mithril:    return 1126383; // Custom
+                    case CraftResource.Obsidian:   return 1126384; // Custom
+                    default: return 1042692; // iron ingot
+                }
             }
         }
         TextDefinition ICommodity.Description

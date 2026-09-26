@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server.Engines.Craft;
 using Server.Mobiles;
 using Server.Targeting;
@@ -166,10 +166,22 @@ namespace Server.Items
         {
             get
             {
-                if (m_Resource >= CraftResource.DullCopper && m_Resource <= CraftResource.Valorite)
-                    return 1042845 + (int)(m_Resource - CraftResource.DullCopper);
-
-                return 1042853; // iron ore;
+                switch (m_Resource)
+                {
+                    case CraftResource.Copper:   return 1042845;
+                    case CraftResource.Bronze:   return 1042846;
+                    case CraftResource.Gold:     return 1042847;
+                    case CraftResource.Agapite:  return 1042848;
+                    case CraftResource.Verite:   return 1042849;
+                    case CraftResource.Valorite: return 1042850;
+                    case CraftResource.Mithril:  return 1042851;
+                    case CraftResource.Obsidian: return 1042852;
+                    case CraftResource.Iron:     return 1042853;
+                    // 예외 (무딘구리/흑철은 광석 cliloc이 없으므로 기본 철 광석 반환)
+                    case CraftResource.DullCopper: return 1042853; 
+                    case CraftResource.ShadowIron: return 1042853;
+                    default: return 1042853; // iron ore
+                }
             }
         }
         public static bool IsValidTile(int itemID)

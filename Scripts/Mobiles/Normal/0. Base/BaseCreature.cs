@@ -1,4 +1,4 @@
-#region References
+﻿#region References
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7989,7 +7989,7 @@ namespace Server.Mobiles
 			{
 				ControlSlotsMax = ControlSlots;
 			}
-			AnimalTaming.ScaleStats(this);
+			//AnimalTaming.ScaleStats(this);
 			/*
             if (StatLossAfterTame && (!PetTrainingHelper.Enabled || Owners.Count == 0))
             {
