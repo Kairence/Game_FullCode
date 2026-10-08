@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server.Targeting;
 using Server.Mobiles;
 using Server.Items;
@@ -39,7 +39,7 @@ namespace Server.Misc
             {
                 from.SendMessage(33, "올바른 씨앗이 아닙니다.");
             }
-            from.SendGump(new FarmBuilderGump(m_Addon, 0));
+            from.SendGump(new FarmBuilderGump(m_Addon));
         }
     }
 }

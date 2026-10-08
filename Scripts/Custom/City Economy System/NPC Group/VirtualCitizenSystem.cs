@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Server;
@@ -23,6 +23,34 @@ namespace Server.Misc
     // ==============================================================================
     // 1. [VirtualCitizen] 개별 시민 객체
     // ==============================================================================
+    
+    // ==============================================================================
+    // [가상 시민 스케줄 프로필]
+    // ==============================================================================
+    public class CitizenScheduleProfile
+    {
+        public SimulationSystemType[] Hours = new SimulationSystemType[24];
+
+        public CitizenScheduleProfile() 
+        {
+            for(int i = 0; i < 24; i++) Hours[i] = SimulationSystemType.None;
+        }
+
+        public CitizenScheduleProfile(GenericReader reader)
+        {
+            int version = reader.ReadInt();
+            for (int i = 0; i < 24; i++)
+                Hours[i] = (SimulationSystemType)reader.ReadInt();
+        }
+
+        public void Serialize(GenericWriter writer)
+        {
+            writer.Write((int)0);
+            for (int i = 0; i < 24; i++)
+                writer.Write((int)Hours[i]);
+        }
+    }
+
     public enum Gender { Male, Female }
     
     public enum FoodDesireLevel { Low, Normal, High } 
@@ -35,6 +63,7 @@ namespace Server.Misc
         public int Karma { get; set; }
         public Dictionary<SkillName, double> Skills { get; set; }
 
+        public CitizenScheduleProfile Schedule { get; set; } = new CitizenScheduleProfile();
         public Gender Gender { get; set; }
         public double Potential { get; set; }  
         public DateTime BirthTime { get; set; } 
@@ -206,7 +235,8 @@ namespace Server.Misc
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-            writer.Write(8); // 버전 8 
+            writer.Write(9); // 버전 8 
+            Schedule.Serialize(writer);
             writer.Write(IsKilled); 
             writer.Write(TargetRegionName);
             if (Bio != null) { writer.Write(true); Bio.Serialize(writer); } else { writer.Write(false); }
@@ -238,7 +268,8 @@ namespace Server.Misc
             Generation = reader.ReadInt(); Name = reader.ReadString(); Fame = reader.ReadInt(); Karma = reader.ReadInt(); Gender = (Gender)reader.ReadInt(); Potential = reader.ReadDouble(); BirthTime = reader.ReadDateTime(); MaxLifespan = reader.ReadTimeSpan(); Satisfaction = reader.ReadInt(); RankLevel = (NobilityRank)reader.ReadInt(); Thirst = reader.ReadInt(); if (version >= 4) LastProcessedHour = reader.ReadInt();
             Skills = []; int skillCount = reader.ReadInt(); for (int i = 0; i < skillCount; i++) Skills[(SkillName)reader.ReadInt()] = reader.ReadDouble();
 
-            if (version >= 8)
+            if (version >= 9) { Schedule = new CitizenScheduleProfile(reader); } else { Schedule = new CitizenScheduleProfile(); }
+              if (version >= 8)
             {
                 FoodDesire = (FoodDesireLevel)reader.ReadInt();
                 string fStr = reader.ReadString(); if (!string.IsNullOrEmpty(fStr)) FavoriteFood = ScriptCompiler.FindTypeByFullName(fStr);
@@ -397,7 +428,17 @@ namespace Server.Misc
                 var agent = allCitizens[i];
                 if (agent != null && !agent.IsExpired)
                 {
-                    if (agent.House == null) continue; // 집이 없으면 에러 방지를 위해 스킵
+                    if (agent.House == null) continue;
+
+                    // [스케줄 기반 통합 노동 시스템 연동]
+                    if (agent.Schedule != null)
+                    {
+                        SimulationSystemType activeJob = agent.Schedule.Hours[gameHour];
+                        if (activeJob != SimulationSystemType.None)
+                        {
+                            EcoSimulationEngine.ExecuteAIWork(agent, activeJob);
+                        }
+                    }
 
                     int checkHour = (gameHour / 6) * 6;
                     if (agent.LastProcessedHour != checkHour)

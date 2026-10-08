@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server;
 
 namespace Server.Misc
@@ -66,6 +66,7 @@ namespace Server.Misc
                 {
                     // [틱 0] 일괄 동기화 및 보상 정산
                     VirtualCitizenAI.ExecuteFinalBatchProcess(gameHour);
+                    EcoSimulationEngine.ProcessGlobalTick();
                     FoodDecaySystem.DecayWildMobs();
                 }
                 else if (tick >= 1 && tick <= 40)
@@ -87,7 +88,7 @@ namespace Server.Misc
             catch (Exception ex)
             {
                 // 특정 틱에서 에러가 나도 다음 틱 연산이 멈추지 않도록 방어막 전개
-                Console.WriteLine($"[MasterTickEngine] 틱 {tick} 처리 중 오류 발생: {ex.Message}");
+                Console.WriteLine($"[MasterTickEngine] 틱 {tick} 처리 중 오류 발생:\n{ex.ToString()}");
             }
         }
     }

@@ -135,6 +135,8 @@ namespace Server.Misc
 
             Timer.DelayCall(TimeSpan.Zero, () =>
             {
+                if (townID == 0) townID = TownNumber.GetID(this.Location, this.Map);
+                if (townID == 0) townID = TownNumber.GetID(this.Location, this.Map);
                 if (TownEconomyManager.Towns.TryGetValue(townID, out var town))
                 {
                     TownData = town;

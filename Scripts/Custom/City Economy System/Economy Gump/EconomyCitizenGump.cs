@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Server.Network;
@@ -335,7 +335,9 @@ public class EconomyTestCommand
             AddLabel(30, 140, 1152, "스트레스:"); AddBackground(120, 135, 100, 25, 9300);
             AddTextEntry(125, 138, 90, 20, 0, 3, c.Stress.ToString());
 
-            AddButton(60, 200, 2128, 2129, 1, GumpButtonType.Reply, 0); 
+            AddButton(60, 200, 2128, 2129, 1, GumpButtonType.Reply, 0);
+            AddButton(60, 150, 4005, 4007, 2, GumpButtonType.Reply, 0);
+            AddLabel(95, 152, 167, "직원 스케줄(24H) 관리"); 
             AddButton(170, 200, 2119, 2120, 0, GumpButtonType.Reply, 0); 
         }
 
@@ -344,9 +346,14 @@ public class EconomyTestCommand
             if (info.ButtonID == 1)
             {
                 m_Citizen.Gold = Math.Max(0, Utility.ToInt32(info.GetTextEntry(1).Text));
-                m_Citizen.Satisfaction = Math.Clamp(Utility.ToInt32(info.GetTextEntry(2).Text), 0, 100);
-                m_Citizen.Stress = Math.Clamp(Utility.ToInt32(info.GetTextEntry(3).Text), 0, 100);
+                m_Citizen.Satisfaction = Math.Max(0, Math.Min(100, Utility.ToInt32(info.GetTextEntry(2).Text)));
+                m_Citizen.Stress = Math.Max(0, Math.Min(100, Utility.ToInt32(info.GetTextEntry(3).Text)));
                 m_From.SendMessage(68, $"{m_Citizen.Name} 수정 완료.");
+            }
+            else if (info.ButtonID == 2)
+            {
+                m_From.SendGump(new HouseEmployeeScheduleGump(m_From, m_Citizen));
+                return;
             }
             m_From.SendGump(new EconomyCitizenListGump(m_From, m_Town, m_MapIndex, m_TPage, m_FilterGroup, m_CPage));
         }

@@ -1,4 +1,4 @@
-/Ultima.dll
+﻿/Ultima.dll
 /Ultima.pdb
 /Ultima.dll.mdb
 /Ultima/bin
@@ -8,7 +8,6 @@
 /Scripts/bin
 /Scripts/obj
 /Scripts/Output
-
 /Honesty
 /Logs
 /Backups
@@ -20,14 +19,12 @@
 /TheBox
 /.vs
 /Third Backup
-
 /staffHistory.xml
 /reportHistory.xml
 /firewall.cfg
 /drng64.dll
 /drng32.dll
 /libdrng.so
-
 *.pdb
 *.exe
 *.exe.mdb
@@ -39,20 +36,15 @@
 *.csproj.user
 *.DotSettings.user
 *.ini
-
 git_upload.bat
-
-# [추가됨] 런처 인증 토큰 파일 제외 (보안)
+# [異붽??? ?곗쿂 ?몄쬆 ?좏겙 ?뚯씪 ?쒖쇅 (蹂댁븞)
 /Config/LauncherToken.txt
-
-# [추가됨] 런처 인증 키 파일 제외 (보안)
+# [異붽??? ?곗쿂 ?몄쬆 ???뚯씪 ?쒖쇅 (蹂댁븞)
 /Config/API_KEY.txt
-
-
 !/Data/*
 !/bin/rosyln/*
-# ��ũ�ٿ� ���� ���� ���ε� ���� (����/��ȹ ���� ����)
+# 마크다운 문서 파일 업로드 제외 (보안/기획 유출 방지)
 *.md
-
-# ��ġ�� exe ���� ó��
+# 패치용 exe 예외 처리
 !Patch/Kairence.exe
+/Data/Cliloc_Kor.CSV

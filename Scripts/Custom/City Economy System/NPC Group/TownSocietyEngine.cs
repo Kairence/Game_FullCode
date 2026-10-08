@@ -31,7 +31,7 @@ namespace Server.Misc
         }
 
         // ====================================================================
-        // 🌟 사교 파티 및 연회 (명예 펌핑 이벤트)
+        // ?�� ?��? ???�??�회 (�??????�벤??
         // ====================================================================
         private static void PlanSocialEvents(TownEconomy town)
         {
@@ -111,19 +111,19 @@ namespace Server.Misc
                 house.LastSocialEventTime = DateTime.Now;
                 house.EventFameBonus = isBanquet ? 10 : 5;
                 
-                string eventName = isBanquet ? "대연회(Banquet)" : "사교 파티(Party)";
-                Console.WriteLine($"[SocialEvent] '{house.HouseName}' 가문이 {totalSpent}gp를 들여 {eventName}를 성대하게 개최했습니다!");
+                string eventName = isBanquet ? "?�?�회(Banquet)" : "?��? ???Party)";
+                Console.WriteLine($"[SocialEvent] '{house.HouseName}' 가문�?{totalSpent}gp�??��?{eventName}�??��??�게 개최??�니??");
             }
             else
             {
                 house.HousingAmbition = Math.Max(0, house.HousingAmbition - 10);
                 agent.Stress = Math.Min(100, agent.Stress + 20);
-                Console.WriteLine($"[SocialEvent] '{house.HouseName}' 가문이 파티를 열려 했으나, 상단 물품 부족으로 취소되었습니다. (게시판 의뢰용 장부 등록 완료)");
+                Console.WriteLine($"[SocialEvent] '{house.HouseName}' 가문�???��? ?��???�나, ???물품 부족으? 취소???�니?? (�????�뢰???��? ?��? ?�료)");
             }
         }
 
         // ====================================================================
-        // 🌟 사회적 갈등 처리
+        // ?�� ?�회??�??처�?
         // ====================================================================
         private static void ProcessSocialAmbition(TownEconomy town)
         {
@@ -164,7 +164,7 @@ namespace Server.Misc
         }
 
         // ====================================================================
-        // 💣 물리적 구역 철거 및 텐트(무주택) 페널티 전환
+        // ??물리??구역 철�?�????무주?? ???????
         // ====================================================================
         public static void DemolishEstateArea(VirtualHouse house, TownEconomy town)
         {
@@ -175,20 +175,20 @@ namespace Server.Misc
             if (targetSign == null || targetSign.Deleted)
             {
                 targetSign = World.Items.Values.OfType<VirtualEstateSign>()
-                            .FirstOrDefault(s => s.HouseData == house || s.HouseName == $"{house.HouseName}의 가택");
+                            .FirstOrDefault(s => s.HouseData == house || s.HouseName == $"{house.HouseName}�� ����");
             }
 
             if (targetSign != null && !targetSign.Deleted)
             {
-                Console.WriteLine($"[Demolish] '{house.HouseName}' 가문의 실제 건축물을 철거합니다.");
+                Console.WriteLine($"[Demolish] '{house.HouseName}' 가문의 ?�제 건�?물을 철거?�니??");
                 targetSign.DestroyEstate(); 
                 house.EstateSign = null; 
             }
 
             house.MultiID = 0;
             house.UpdateCapacity();
-            // 🌟 텐트라는 단어를 삭제하고 노숙으로 변경
-            Console.WriteLine($"[Housing Penalty] '{house.HouseName}' 가문이 길거리에 나앉아 노숙 생활에 돌입합니다. (실면적: 0칸, 모든 공방 가동 중지)");
+            // ?�� ??�라???�어? ???�고 ?�숙?��? 변�?
+            Console.WriteLine($"[Housing Penalty] '{house.HouseName}' 가문�?길거리에 ?????�숙 ???????�니?? (?�면?? 0�? 모든 공방 가??중�?)");
 
             foreach (var c in VirtualHousingRegistry.Chunks)
             {
@@ -200,7 +200,7 @@ namespace Server.Misc
         }
 
         // ====================================================================
-        // 🏠 하우징, 알박기, 강제 철거 엔진
+        // ?�� ??��?, ?�박�? �??철�??�진
         // ====================================================================
         public static void ProcessPhysicalHousingAndInvestment(TownEconomy town)
         {
@@ -221,7 +221,7 @@ namespace Server.Misc
             
             if (currentBuilding >= maxConcurrent) return;
 
-            // 🌟 최소 건축 자금을 35000gp(소형 가옥)로 픽스
+            // ?�� �??건�? ?�금??35000gp(???가??�??��?
             var candidates = town.Houses
                 .Where(h => h.IsActive && h.TotalWealth >= 35000 && (h.EstateSign == null || h.HousingAmbition >= 100))
                 .OrderByDescending(h => 
@@ -244,7 +244,7 @@ namespace Server.Misc
                     if (house.EstateSign != null)
                     {
                         DemolishEstateArea(house, town);
-                        Console.WriteLine($"[Upgrade] '{house.HouseName}' 가문이 더 큰 집을 짓기 위해 기존 집을 자진 철거했습니다!");
+                        Console.WriteLine($"[Upgrade] '{house.HouseName}' 가문�?????�??짓�????기존 �???�진 철거??�니??");
                     }
 
                     var (success, builtMultiID) = StartNewConstruction(town, house, currentRank);
@@ -265,7 +265,7 @@ namespace Server.Misc
             for (int downgrade = 0; downgrade <= 4; downgrade++)
             {
                 var (multiID, finalTier) = DetermineHouseType(town, house, rank, downgrade); 
-                if (multiID <= 0 || finalTier <= 0) continue; // 🌟 텐트(MultiID 0) 원천 차단
+                if (multiID <= 0 || finalTier <= 0) continue; // ?�� ???MultiID 0) ?�천 차�?
                 
                 MultiComponentList mcl = MultiData.GetComponents(multiID);
                 if (mcl == null || mcl.List.Length == 0) continue;
@@ -300,7 +300,7 @@ namespace Server.Misc
 
                             if ((int)rank >= (int)victimRank + 2 || currentGrudge > 50)
                             {
-                                Console.WriteLine($"[Eviction] 권력 남용! '{house.HouseName}'({rank}) 가문이 '{victimHouse.HouseName}'({victimRank})의 부지를 강제로 철거하고 땅을 빼앗았습니다.");
+                                Console.WriteLine($"[Eviction] �???��? '{house.HouseName}'({rank}) 가문�?'{victimHouse.HouseName}'({victimRank})??부지�?�?�로 철거?�고 ???빼앗??�니??");
                                 DemolishEstateArea(victimHouse, town); 
                                 
                                 if (!victimHouse.Grudges.ContainsKey(house.HouseName)) victimHouse.Grudges[house.HouseName] = 0;
@@ -311,7 +311,7 @@ namespace Server.Misc
                             }
                             else if (house.TotalWealth >= (buyoutPrice + myBuildCost))
                             {
-                                Console.WriteLine($"[Buyout] 부동산 알박기 매입! '{house.HouseName}' 가문이 '{victimHouse.HouseName}' 가문에게 거액의 보상금 {buyoutPrice}gp를 쥐어주고 땅을 매입했습니다.");
+                                Console.WriteLine($"[Buyout] 부????�박�?매입! '{house.HouseName}' 가문�?'{victimHouse.HouseName}' 가문에�?거액??보상�?{buyoutPrice}gp�?�?�주�????매입??�니??");
                                 house.TotalWealth -= buyoutPrice;
                                 victimHouse.TotalWealth += buyoutPrice;
                                 DemolishEstateArea(victimHouse, town); 
@@ -320,7 +320,7 @@ namespace Server.Misc
                                 house.Grudges[victimHouse.HouseName] += 30; 
                                 
                                 if (!victimHouse.Grudges.ContainsKey(house.HouseName)) victimHouse.Grudges[house.HouseName] = 0;
-                                victimHouse.Grudges[house.HouseName] -= 50; 
+                                victimHouse.Grudges[house.HouseName] += 50; 
 
                                 ExecuteConstructionAt(town, house, targetSpace.X, targetSpace.Y, multiID, mcl, chunk);
                                 return (true, multiID);
@@ -333,11 +333,11 @@ namespace Server.Misc
         }
 
         // ====================================================================
-        // 🏠 물리적 건축 실행 및 실면적 계산
+        // ?�� 물리??건�? ?�행 �??�면??�??
         // ====================================================================
         private static bool ExecuteConstructionAt(TownEconomy town, VirtualHouse house, int startX, int startY, int targetMultiID, MultiComponentList mcl, EcoGridChunk chunk)
         {
-            if (targetMultiID <= 0 || mcl == null || mcl.List.Length == 0) return false; // 🌟 텐트 예외 원천 차단
+            if (targetMultiID <= 0 || mcl == null || mcl.List.Length == 0) return false; // ?�� ???????�천 차�?
 
             int buildX = startX + 1 - mcl.Min.X;
             int buildY = startY + 1 - mcl.Min.Y;
@@ -352,18 +352,18 @@ namespace Server.Misc
             house.MultiID = targetMultiID; 
             house.UpdateCapacity();
 
-            var sign = new VirtualEstateSign($"{house.HouseName}의 가택", house, town);
+            var sign = new VirtualEstateSign($"{house.HouseName}�� ����", house, town);
             sign.MoveToWorld(buildLoc, town.Facet);
             house.EstateSign = sign;
 
             int internalArea = Math.Max(0, (mcl.Width - 2) * (mcl.Height - 2)); 
             
-            // 🌟 [UI 반영] 가상시민 모니터링 창에서 점유 공간이 표시되도록 OwnedTileIndices 채워주기
+            // ?�� [UI �?? 가??��?모니?��? 창에?????공�???????�록 OwnedTileIndices �?�주�?
             if (house.OwnedTileIndices == null) house.OwnedTileIndices = new List<int>();
             house.OwnedTileIndices.Clear();
             for (int i = 0; i < internalArea; i++) house.OwnedTileIndices.Add(i);
 
-            Console.WriteLine($"[Housing] '{house.HouseName}' (Tier {GetHouseTier(targetMultiID)}): {town.Facet.Name} {buildLoc} / 실면적: {internalArea}칸 확보 완료.");
+            Console.WriteLine($"[Housing] '{house.HouseName}' (Tier {GetHouseTier(targetMultiID)}): {town.Facet.Name} {buildLoc} / ?�면?? {internalArea}�??��??�료.");
 
             var filteredBlueprint = new List<MultiTileEntry>();
             List<LockedDoor> spawnedDoors = [];
@@ -406,12 +406,12 @@ namespace Server.Misc
             int groupID = ((int)house.PrimaryJob / 100) * 100; 
             int targetTier = house.TotalWealth >= 900000 ? 4 : house.TotalWealth >= 180000 ? 3 : house.TotalWealth >= 90000 ? 2 : 1; 
             
-            targetTier = Math.Max(1, targetTier - downgradeOffset); // 🌟 최소 티어를 1(소형집)로 고정
+            targetTier = Math.Max(1, targetTier - downgradeOffset); // ?�� �???�어? 1(??�집)�?�??
 
             int maxTier = rank switch { NobilityRank.Commoner => 2, NobilityRank.Knight or NobilityRank.SubBaronet or NobilityRank.Baronet or NobilityRank.SubBaron => 3, _ => 4 }; 
             int finalTier = Math.Min(targetTier, maxTier); 
             
-            // 🌟 TotalWealth < 5000 일 때 텐트(0티어)를 주던 로직 삭제
+            // ?�� TotalWealth < 5000 ???????0?��?�?주던 로직 ???
 
             int multiID = finalTier switch { 
                 1 => groupID switch { 100 or 800 => SelectRandom(0x006E, 0x006A), 200 or 300 or 900 => SelectRandom(0x006C, 0x0064), 400 or 700 => SelectRandom(0x00A0, 0x00A2), 500 or 1000 => 0x0068, _ => 0x0064 }, 
@@ -517,7 +517,7 @@ namespace Server.Misc
                         }
                         else
                         {
-                            var newHouse = new VirtualHouse($"{adult.Name}의 피난처", NobilityRank.Commoner);
+                            var newHouse = new VirtualHouse($"{adult.Name}�� �ǳ�ó", NobilityRank.Commoner);
                             newHouse.Families.Add(sf);
                             town.Houses.Add(newHouse);
                         }
@@ -543,16 +543,16 @@ namespace Server.Misc
                 {
                     if (Math.Abs(mAge - femaleAges[f]) > limit) return false;
 
-                    // 🌟 [기획 3번: 로미오와 줄리엣] 원한 기반 상성 체크
+                    // ?�� [기획 3�? 로�??��? 줄리?? ???기�? ???체�?
                     if (m.House != null && f.House != null && m.House != f.House)
                     {
                         int mHatesF = m.House.Grudges.ContainsKey(f.House.HouseName) ? m.House.Grudges[f.House.HouseName] : 0;
                         int fHatesM = f.House.Grudges.ContainsKey(m.House.HouseName) ? f.House.Grudges[m.House.HouseName] : 0;
                         
-                        // 양쪽 가문 중 하나라도 철천지 원수(Grudge > 50)라면 정상적인 혼담 파기
+                        // ?��?가�?�????�도 철천지 ???Grudge > 50)?�면 ??????��??��?
                         if (mHatesF > 50 || fHatesM > 50) 
                         {
-                            // 단, 5% 확률로 눈이 맞아 사랑의 도피(몰래 결혼) 발생!
+                            // ?? 5% ?�률�????�???�랑?????몰래 결�? �??
                             return Utility.RandomDouble() < 0.05; 
                         }
                     }
@@ -582,7 +582,7 @@ namespace Server.Misc
             VirtualHouse targetHouse = mHouse;
             VirtualHouse houseToSell = null;
 
-            // 🌟 [사랑의 도피 판정]
+            // ?�� [?�랑????????
             bool isForbiddenLove = false;
             if (mHouse != null && fHouse != null && mHouse != fHouse)
             {
@@ -594,17 +594,17 @@ namespace Server.Misc
 
             if (isForbiddenLove)
             {
-                // 원수 가문끼리 몰래 결혼함 -> 양쪽 가문에서 파문당하고 길거리에 나앉음 (텐트 생활 시작)
-                Console.WriteLine($"[Scandal] 맙소사! 원수 지간인 '{mHouse.HouseName}' 가문의 {m.Name}과 '{fHouse.HouseName}' 가문의 {f.Name}이(가) 사랑의 도피를 감행했습니다!");
+                // ???가문끼�?몰래 결혼??-> ?��?가문에???�문?�하�?길거리에 ????(?????????
+                Console.WriteLine($"[Scandal] �??? ???지�??'{mHouse.HouseName}' 가문의 {m.Name}�?'{fHouse.HouseName}' 가문의 {f.Name}??가) ?�랑????��? �???�니??");
                 
-                // 가문의 수치: 부모 가문 명예 및 프레스티지 폭락
+                // 가문의 ?�치: 부�?가�?�??�????�티? ???
                 mHouse.Prestige = Math.Max(0, mHouse.Prestige - 50);
                 fHouse.Prestige = Math.Max(0, fHouse.Prestige - 50);
                 m.Fame = Math.Max(0, m.Fame - 1000);
                 f.Fame = Math.Max(0, f.Fame - 1000);
                 
-                // 양가에서 쫓겨나 아무 지원 없이 독립된 피난처(텐트) 생성
-                targetHouse = new VirtualHouse($"{m.Name}과 {f.Name}의 도피처", NobilityRank.Commoner);
+                // ?��????쫓겨???��?지??????�립???�난�???? ???
+                targetHouse = new VirtualHouse($"{m.Name}�� {f.Name}�� ����ó", NobilityRank.Commoner);
                 town.Houses.Add(targetHouse);
                 
                 if (mHouse.Families.Contains(mFam)) mHouse.Families.Remove(mFam);
@@ -612,7 +612,7 @@ namespace Server.Misc
             }
             else
             {
-                // 기존 정상 합병 및 결혼 로직 (사랑의 도피가 아닐 경우)
+                // 기존 ????��? �?결�?로직 (?�랑????��? ???경�?
                 bool mIsOwner = mHouse != null && mHouse.Families.FirstOrDefault() == mFam;
                 bool fIsOwner = fHouse != null && fHouse.Families.FirstOrDefault() == fFam;
 
@@ -639,7 +639,7 @@ namespace Server.Misc
                     DemolishEstateArea(houseToSell, town);
                     town.Houses.Remove(houseToSell);
 
-                    Console.WriteLine($"[Merger] {houseToSell.HouseName}이(가) 매각/철거되고 {targetHouse.HouseName}에 합병되었습니다!");
+                    Console.WriteLine($"[Merger] {houseToSell.HouseName}??가) 매�?/철거?�고 {targetHouse.HouseName}???��????�니??");
                 }
                 else if (fHouse != null && mHouse == null) 
                 {
@@ -656,7 +656,7 @@ namespace Server.Misc
             
             if (targetHouse != null) 
             { 
-                // 정상 결혼에 한해서만 가문에 프레스티지(경사) 보너스 지급
+                // ???결혼????�서�?가문에 ???�티?(경�? 보너??지�?
                 if (!isForbiddenLove) targetHouse.Prestige += 10; 
                 
                 f.House = targetHouse; 
@@ -695,7 +695,7 @@ namespace Server.Misc
                             {
                                 house.Families.Remove(family);
                                 
-                                var newHouse = new VirtualHouse($"{family.Father?.Name ?? "무명"}의 피난처", NobilityRank.Commoner);
+                                var newHouse = new VirtualHouse($"{family.Father?.Name ?? "����"}�� �ǳ�ó", NobilityRank.Commoner);
                                 newHouse.Families.Add(family);
                                 town.Houses.Add(newHouse);
                                 continue; 
@@ -738,7 +738,7 @@ namespace Server.Misc
         public static void PerformInheritance(VirtualCitizen deceased, TownEconomy town) 
         { 
             if (deceased.House != null) 
-                deceased.House.AncestorRecords.Add(new AncestorRecord(deceased.Name, deceased.JobClass, deceased.RankLevel, (int)deceased.Age, deceased.IsStarving ? "아사" : deceased.IsDehydrated ? "탈수" : "노환")); 
+                deceased.House.AncestorRecords.Add(new AncestorRecord(deceased.Name, deceased.JobClass, deceased.RankLevel, (int)deceased.Age, deceased.IsStarving ? "�ƻ�" : deceased.IsDehydrated ? "Ż��" : "��ȯ")); 
             
             int legacy = (int)(deceased.Gold * 0.7); 
             town.Wealth += (int)(deceased.Gold * 0.3); 
@@ -765,7 +765,7 @@ namespace Server.Misc
 
                 if (!hasSurvivors)
                 {
-                    Console.WriteLine($"[Inheritance] '{h.HouseName}' 가문의 마지막 생존자가 사망하여 멸문되었습니다. 가옥을 철거합니다.");
+                    Console.WriteLine($"[Inheritance] '{h.HouseName}' 가문의 마�?�??�존?��? ?��????멸문???�니?? 가?�을 철거?�니??");
                     DemolishEstateArea(h, town);
                     town.Houses.Remove(h);
                 }
@@ -785,7 +785,7 @@ namespace Server.Misc
                     h.Families.Add(sf); 
                     
                     town.Citizens.Add(child); 
-                    Console.WriteLine($"[Inheritance] '{h.HouseName}' 가문의 유산을 새로운 후계자 {child.Name}이(가) 상속받았습니다.");
+                    Console.WriteLine($"[Inheritance] '{h.HouseName}' 가문의 ??�을 ?�로???�계??{child.Name}??가) ??�받??�니??");
                 }
             }
         }
@@ -846,12 +846,12 @@ namespace Server.Misc
                             member.TargetRegionName = bestDest.TownName; 
                         }
 
-                        string reason = house.HousingAmbition >= 100 ? "집터 부족" : "일자리/자금 부족";
-                        Console.WriteLine($"[Migration] '{house.HouseName}' 가문이 {reason}으로 인해 {town.TownName}을(를) 등지고 {bestDest.TownName}(으)로 이주했습니다! (여비: {plan.TotalCost}gp)");
+                        string reason = house.HousingAmbition >= 100 ? "���� ����" : "�ڱ� ����";
+                        Console.WriteLine($"[Migration] '{house.HouseName}' 가문�?{reason}?��? ?��?{town.TownName}??�? ?��?�?{bestDest.TownName}(??�??�주??�니?? (?��?: {plan.TotalCost}gp)");
                     }
                     else
                     {
-                        Console.WriteLine($"[Migration] '{house.HouseName}' 가문이 {town.TownName}을(를) 떠나려 했으나 여비가 부족하여 고립되었습니다.");
+                        Console.WriteLine($"[Migration] '{house.HouseName}' 가문�?{town.TownName}??�? ??????�나 ?��?가 부족하??고립???�니??");
                     }
                 }
             }
