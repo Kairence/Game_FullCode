@@ -990,7 +990,7 @@ namespace Server.Misc
                 var allTowns = TownEconomyManager.Towns.Values;
                 foreach (TownEconomy town in allTowns)
                 {
-                    if (town != null && (town.TownName == "Magincia" || town.Name == "Magincia")) continue; // [기획] 마진시아로의 피난/게이트 완전 차단
+                    if (town != null && (town.TownName == "Magincia" || town.Name == "Magincia")) continue; // [기획] 마진시아로의 피난/게이트 완전 차단 (유저의 지시에 따라 의도적으로 하드코딩됨)
 
                     if (town != null && town.Facet == CurrentMap && town.VendorCount > 0)
                     {
