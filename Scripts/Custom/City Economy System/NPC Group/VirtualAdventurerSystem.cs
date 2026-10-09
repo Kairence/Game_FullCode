@@ -990,6 +990,8 @@ namespace Server.Misc
                 var allTowns = TownEconomyManager.Towns.Values;
                 foreach (TownEconomy town in allTowns)
                 {
+                    if (town != null && (town.TownName == "Magincia" || town.Name == "Magincia")) continue; // [기획] 마진시아로의 피난/게이트 완전 차단
+
                     if (town != null && town.Facet == CurrentMap && town.VendorCount > 0)
                     {
                         double dist = Utility.GetDistanceToSqrt(logicalReferencePoint, town.Center);
@@ -1152,7 +1154,7 @@ namespace Server.Misc
 
             var town = System.Linq.Enumerable.FirstOrDefault(
                 System.Linq.Enumerable.OrderBy(
-                    System.Linq.Enumerable.Where(TownEconomyManager.Towns.Values, t => t.Facet == CurrentMap),
+                    System.Linq.Enumerable.Where(TownEconomyManager.Towns.Values, t => t.Facet == CurrentMap && t.TownName != "Magincia" && t.Name != "Magincia"),
                     t => Utility.GetDistanceToSqrt(referencePoint, t.Center)
                 )
             );
