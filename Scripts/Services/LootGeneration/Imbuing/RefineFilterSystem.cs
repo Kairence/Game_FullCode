@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.IO;
 using Server;
@@ -8,7 +8,7 @@ namespace Server.Misc
 {
     public class RefineFilterSystem
     {
-        // À¯Àúº° -> º¸¼® ÀÎµ¦½ºº° -> [Á¦¿ÜÇÒ ¿É¼Ç ID ¸®½ºÆ® (¿ì¼±¼øÀ§ ¼ø¼­)]
+        // ìœ ì €ë³„ -> ë³´ì„ ì¸ë±ìŠ¤ë³„ -> [ì œì™¸í•  ì˜µì…˜ ID ë¦¬ìŠ¤íŠ¸ (ìš°ì„ ìˆœìœ„ ìˆœì„œ)]
         public static Dictionary<Mobile, Dictionary<int, List<int>>> Profiles = new();
 
         public static void Configure()
@@ -34,33 +34,33 @@ namespace Server.Misc
 
             string file = Path.Combine(path, "Filters.bin");
             
-            // GenericWriter¸¦ ¿­°í(false: µ¤¾î¾²±â ¸ğµå)
+            // GenericWriterë¥¼ ì—´ê³ (false: ë®ì–´ì“°ê¸° ëª¨ë“œ)
             GenericWriter writer = new BinaryFileWriter(file, false);
             try
             {
-                writer.Write(0); // ¹öÀü
+                writer.Write(0); // ë²„ì „
 
                 writer.Write(Profiles.Count);
                 foreach (var kvp in Profiles)
                 {
                     writer.Write(kvp.Key); // Mobile
-                    writer.Write(kvp.Value.Count); // ¼¼ÆÃµÈ º¸¼® °³¼ö
+                    writer.Write(kvp.Value.Count); // ì„¸íŒ…ëœ ë³´ì„ ê°œìˆ˜
                     
                     foreach (var gemKvp in kvp.Value)
                     {
-                        writer.Write(gemKvp.Key); // º¸¼® Index
-                        writer.Write(gemKvp.Value.Count); // Á¦¿ÜµÈ ¿É¼Ç °³¼ö
+                        writer.Write(gemKvp.Key); // ë³´ì„ Index
+                        writer.Write(gemKvp.Value.Count); // ì œì™¸ëœ ì˜µì…˜ ê°œìˆ˜
                         foreach (int opt in gemKvp.Value)
                         {
-                            writer.Write(opt); // ¿É¼Ç ID
+                            writer.Write(opt); // ì˜µì…˜ ID
                         }
                     }
                 }
             }
             finally
             {
-                // [ÇÙ½É] ¹öÆÛ¿¡ ³²¾ÆÀÖ´Â µ¥ÀÌÅÍ¸¦ °­Á¦·Î ÆÄÀÏ¿¡ ¾²°í ½ºÆ®¸²À» ´İ½À´Ï´Ù.
-                // ÀÌ°É »©¸Ô¾î¼­ ÆÄÀÏ ³¡ÀÌ Àß·Á³ª°¡ ¿¡·¯°¡ ¹ß»ıÇÑ °ÍÀÔ´Ï´Ù.
+                // [í•µì‹¬] ë²„í¼ì— ë‚¨ì•„ìˆëŠ” ë°ì´í„°ë¥¼ ê°•ì œë¡œ íŒŒì¼ì— ì“°ê³  ìŠ¤íŠ¸ë¦¼ì„ ë‹«ìŠµë‹ˆë‹¤.
+                // ì´ê±¸ ë¹¼ë¨¹ì–´ì„œ íŒŒì¼ ëì´ ì˜ë ¤ë‚˜ê°€ ì—ëŸ¬ê°€ ë°œìƒí•œ ê²ƒì…ë‹ˆë‹¤.
                 writer.Close(); 
             }
         }
@@ -89,7 +89,7 @@ namespace Server.Misc
                         int gemIndex = reader.ReadInt();
                         int optCount = reader.ReadInt();
                         
-                        List<int> opts = []; // C# 12 ¹®¹ı
+                        List<int> opts = []; // C# 12 ë¬¸ë²•
                         for (int k = 0; k < optCount; k++)
                         {
                             opts.Add(reader.ReadInt());
@@ -97,14 +97,14 @@ namespace Server.Misc
                         profile[gemIndex] = opts;
                     }
 
-                    // Mobile µ¥ÀÌÅÍ°¡ À¯È¿ÇÒ ¶§¸¸ ÀúÀå
+                    // Mobile ë°ì´í„°ê°€ ìœ íš¨í•  ë•Œë§Œ ì €ì¥
                     if (m != null) Profiles[m] = profile;
                 }
             }
             catch (Exception ex)
             {
-                // µ¥ÀÌÅÍ°¡ ¸Á°¡Á³´õ¶óµµ ¼­¹ö°¡ ºÎÆÃ Áß¿¡ ´Ù¿îµÇ´Â °ÍÀ» ¸·½À´Ï´Ù.
-                Console.WriteLine($"[RefineFilterSystem] ÇÁ·ÎÇÊ ·Îµå ½ÇÆĞ. ±âÁ¸ ÆÄÀÏÀÌ ¼Õ»óµÇ¾ú½À´Ï´Ù: {ex.Message}");
+                // ë°ì´í„°ê°€ ë§ê°€ì¡Œë”ë¼ë„ ì„œë²„ê°€ ë¶€íŒ… ì¤‘ì— ë‹¤ìš´ë˜ëŠ” ê²ƒì„ ë§‰ìŠµë‹ˆë‹¤.
+                Console.WriteLine($"[RefineFilterSystem] í”„ë¡œí•„ ë¡œë“œ ì‹¤íŒ¨. ê¸°ì¡´ íŒŒì¼ì´ ì†ìƒë˜ì—ˆìŠµë‹ˆë‹¤: {ex.Message}");
             }
         }
     }

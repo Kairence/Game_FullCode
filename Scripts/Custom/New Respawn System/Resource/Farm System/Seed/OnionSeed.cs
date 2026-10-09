@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 
 namespace Server.Items
 {
@@ -12,7 +12,7 @@ namespace Server.Items
         public OnionSeed() : base(0xDCF)
         {
             Hue = 0x1BF;
-            Name = "¾çÆÄ ¾¾¾Ñ";
+            Name = "ì–‘íŒŒ ì”¨ì•—";
         }
 
         public OnionSeed(Serial serial) : base(serial) { }

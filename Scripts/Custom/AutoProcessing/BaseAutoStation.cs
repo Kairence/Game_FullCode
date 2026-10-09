@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server;
 using Server.Items;
 using Server.Targeting;
@@ -43,13 +43,13 @@ namespace Server.Custom.AutoProcessing
         public override void GetProperties(ObjectPropertyList list)
         {
             base.GetProperties(list);
-            list.Add(1060658, "¿øÀç·á\t{0} / {1}", m_InputCount, MaxCapacity); 
-            list.Add(1060659, "¿Ï¼ºÇ°\t{0}", m_OutputCount);
+            list.Add(1060658, "ì›ì¬ë£Œ\t{0} / {1}", m_InputCount, MaxCapacity); 
+            list.Add(1060659, "ì™„ì„±í’ˆ\t{0}", m_OutputCount);
             
             if (ActiveStations.Contains(this))
-                list.Add(1060660, "»óÅÂ\t°¡µ¿ Áß...");
+                list.Add(1060660, "ìƒíƒœ\tê°€ë™ ì¤‘...");
             else
-                list.Add(1060661, "»óÅÂ\t´ë±â Áß");
+                list.Add(1060661, "ìƒíƒœ\tëŒ€ê¸° ì¤‘");
         }
 
         public override bool OnDragDrop(Mobile from, Item dropped)
@@ -58,7 +58,7 @@ namespace Server.Custom.AutoProcessing
             {
                 if (m_InputCount >= MaxCapacity)
                 {
-                    from.SendMessage("´õ ÀÌ»ó ¿øÀç·á¸¦ ³ÖÀ» ¼ö ¾ø½À´Ï´Ù.");
+                    from.SendMessage("ë” ì´ìƒ ì›ì¬ë£Œë¥¼ ë„£ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
                     return false;
                 }
 
@@ -68,14 +68,14 @@ namespace Server.Custom.AutoProcessing
                 m_InputCount += toAdd;
                 dropped.Consume(toAdd);
 
-                from.SendMessage("{0}°³ÀÇ ¿øÀç·á¸¦ ³Ö¾ú½À´Ï´Ù.", toAdd);
+                from.SendMessage("{0}ê°œì˜ ì›ì¬ë£Œë¥¼ ë„£ì—ˆìŠµë‹ˆë‹¤.", toAdd);
                 
                 CheckStartTimer();
                 InvalidateProperties();
                 return true;
             }
             
-            from.SendMessage("ÀÌ ±â°è¿¡´Â ³ÖÀ» ¼ö ¾ø´Â ¹°°ÇÀÔ´Ï´Ù.");
+            from.SendMessage("ì´ ê¸°ê³„ì—ëŠ” ë„£ì„ ìˆ˜ ì—†ëŠ” ë¬¼ê±´ì…ë‹ˆë‹¤.");
             return false;
         }
 
@@ -94,24 +94,24 @@ namespace Server.Custom.AutoProcessing
                 
                 if (from.AddToBackpack(output))
                 {
-                    from.SendMessage("{0}°³ÀÇ ¿Ï¼ºÇ°À» È¸¼öÇß½À´Ï´Ù.", m_OutputCount);
+                    from.SendMessage("{0}ê°œì˜ ì™„ì„±í’ˆì„ íšŒìˆ˜í–ˆìŠµë‹ˆë‹¤.", m_OutputCount);
                     m_OutputCount = 0;
                     InvalidateProperties();
                 }
                 else
                 {
                     output.Delete();
-                    from.SendMessage("°¡¹æÀÌ °¡µæ Â÷ ¿Ï¼ºÇ°À» È¸¼öÇÒ ¼ö ¾ø½À´Ï´Ù.");
+                    from.SendMessage("ê°€ë°©ì´ ê°€ë“ ì°¨ ì™„ì„±í’ˆì„ íšŒìˆ˜í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
                 }
             }
             else if (m_InputCount == 0)
             {
-                from.SendMessage("ÅõÀÔÇÒ ¿øÀç·á¸¦ ¼±ÅÃÇÏ¼¼¿ä.");
+                from.SendMessage("íˆ¬ì…í•  ì›ì¬ë£Œë¥¼ ì„ íƒí•˜ì„¸ìš”.");
                 from.Target = new StationTarget(this);
             }
             else
             {
-                from.SendMessage("±â°è°¡ °¡µ¿ ÁßÀÔ´Ï´Ù. Àá½Ã¸¸ ±â´Ù·ÁÁÖ¼¼¿ä.");
+                from.SendMessage("ê¸°ê³„ê°€ ê°€ë™ ì¤‘ì…ë‹ˆë‹¤. ì ì‹œë§Œ ê¸°ë‹¤ë ¤ì£¼ì„¸ìš”.");
             }
         }
 
@@ -130,7 +130,7 @@ namespace Server.Custom.AutoProcessing
                 }
                 else
                 {
-                    from.SendMessage("°¡¹æ ¾ÈÀÇ ¿øÀç·á¸¸ ³ÖÀ» ¼ö ÀÖ½À´Ï´Ù.");
+                    from.SendMessage("ê°€ë°© ì•ˆì˜ ì›ì¬ë£Œë§Œ ë„£ì„ ìˆ˜ ìˆìŠµë‹ˆë‹¤.");
                 }
             }
         }

@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using Server.Mobiles;
 namespace Server.Items
 {
@@ -7,7 +7,7 @@ namespace Server.Items
         [Constructable]
         public PackAnimalContract() : base(0x14F0)
         {
-            Name = "Áü¸»/Áü¶ó¸¶ ¾çµµ °è¾à¼­";
+            Name = "ì§ë§/ì§ë¼ë§ˆ ì–‘ë„ ê³„ì•½ì„œ";
             Hue = 0x288;
             Weight = 1.0;
         }
@@ -19,7 +19,7 @@ namespace Server.Items
             pet.ControlMaster = from;
             pet.ControlOrder = OrderType.Follow;
             pet.MoveToWorld(from.Location, from.Map);
-            from.SendMessage(68, "°è¾à¼­¸¦ »ç¿ëÇÏ¿© Áü²Û µ¿¹°À» ¼ÒÈ¯Çß½À´Ï´Ù.");
+            from.SendMessage(68, "ê³„ì•½ì„œë¥¼ ì‚¬ìš©í•˜ì—¬ ì§ê¾¼ ë™ë¬¼ì„ ì†Œí™˜í–ˆìŠµë‹ˆë‹¤.");
             this.Delete();
         }
         public PackAnimalContract(Serial serial) : base(serial) { }

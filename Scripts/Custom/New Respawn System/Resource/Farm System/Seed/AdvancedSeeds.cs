@@ -1,11 +1,11 @@
-using System;
+ï»¿using System;
 namespace Server.Items
 {
     public class MushroomSeed : BaseSeed {
         public override Type CropType => typeof(Mushroom);
         public override double MinSkill => 115.0;
         public override double MaxSkill => 160.0;
-        [Constructable] public MushroomSeed() : base(0xDCF) { Hue = 0x22; Name = "¹ö¼¸ Æ÷ÀÚ"; }
+        [Constructable] public MushroomSeed() : base(0xDCF) { Hue = 0x22; Name = "ë²„ì„¯ í¬ì"; }
         public MushroomSeed(Serial serial) : base(serial) { }
         public override void Serialize(GenericWriter writer) { base.Serialize(writer); writer.Write((int)0); }
         public override void Deserialize(GenericReader reader) { base.Deserialize(reader); int version = reader.ReadInt(); }
@@ -14,7 +14,7 @@ namespace Server.Items
         public override Type CropType => typeof(Garlic);
         public override double MinSkill => 130.0;
         public override double MaxSkill => 175.0;
-        [Constructable] public GarlicSeed() : base(0xDCF) { Hue = 0x3E3; Name = "¸¶´Ã ¾¾¾Ñ"; }
+        [Constructable] public GarlicSeed() : base(0xDCF) { Hue = 0x3E3; Name = "ë§ˆëŠ˜ ì”¨ì•—"; }
         public GarlicSeed(Serial serial) : base(serial) { }
         public override void Serialize(GenericWriter writer) { base.Serialize(writer); writer.Write((int)0); }
         public override void Deserialize(GenericReader reader) { base.Deserialize(reader); int version = reader.ReadInt(); }
@@ -23,7 +23,7 @@ namespace Server.Items
         public override Type CropType => typeof(Ginseng);
         public override double MinSkill => 145.0;
         public override double MaxSkill => 185.0;
-        [Constructable] public GinsengSeed() : base(0xDCF) { Hue = 0x165; Name = "ÀÎ»ï ¾¾¾Ñ"; }
+        [Constructable] public GinsengSeed() : base(0xDCF) { Hue = 0x165; Name = "ì¸ì‚¼ ì”¨ì•—"; }
         public GinsengSeed(Serial serial) : base(serial) { }
         public override void Serialize(GenericWriter writer) { base.Serialize(writer); writer.Write((int)0); }
         public override void Deserialize(GenericReader reader) { base.Deserialize(reader); int version = reader.ReadInt(); }
@@ -32,7 +32,7 @@ namespace Server.Items
         public override Type CropType => typeof(Cacao);
         public override double MinSkill => 160.0;
         public override double MaxSkill => 200.0;
-        [Constructable] public CacaoSeed() : base(0xDCF) { Hue = 0x21E; Name = "Ä«Ä«¿À ¾¾¾Ñ"; }
+        [Constructable] public CacaoSeed() : base(0xDCF) { Hue = 0x21E; Name = "ì¹´ì¹´ì˜¤ ì”¨ì•—"; }
         public CacaoSeed(Serial serial) : base(serial) { }
         public override void Serialize(GenericWriter writer) { base.Serialize(writer); writer.Write((int)0); }
         public override void Deserialize(GenericReader reader) { base.Deserialize(reader); int version = reader.ReadInt(); }
@@ -41,7 +41,7 @@ namespace Server.Items
         public override Type CropType => typeof(Vanilla);
         public override double MinSkill => 170.0;
         public override double MaxSkill => 205.0;
-        [Constructable] public VanillaSeed() : base(0xDCF) { Hue = 0x481; Name = "¹Ù´Ò¶ó ¾¾¾Ñ"; }
+        [Constructable] public VanillaSeed() : base(0xDCF) { Hue = 0x481; Name = "ë°”ë‹ë¼ ì”¨ì•—"; }
         public VanillaSeed(Serial serial) : base(serial) { }
         public override void Serialize(GenericWriter writer) { base.Serialize(writer); writer.Write((int)0); }
         public override void Deserialize(GenericReader reader) { base.Deserialize(reader); int version = reader.ReadInt(); }
@@ -50,7 +50,7 @@ namespace Server.Items
         public override Type CropType => typeof(MandrakeRoot);
         public override double MinSkill => 180.0;
         public override double MaxSkill => 210.0;
-        [Constructable] public MandrakeSeed() : base(0xDCF) { Hue = 0x47F; Name = "¸Çµå·¹ÀÌÅ© ¾¾¾Ñ"; }
+        [Constructable] public MandrakeSeed() : base(0xDCF) { Hue = 0x47F; Name = "ë§¨ë“œë ˆì´í¬ ì”¨ì•—"; }
         public MandrakeSeed(Serial serial) : base(serial) { }
         public override void Serialize(GenericWriter writer) { base.Serialize(writer); writer.Write((int)0); }
         public override void Deserialize(GenericReader reader) { base.Deserialize(reader); int version = reader.ReadInt(); }
@@ -59,7 +59,7 @@ namespace Server.Items
         public override Type CropType => typeof(Nightshade);
         public override double MinSkill => 180.0;
         public override double MaxSkill => 210.0;
-        [Constructable] public NightshadeSeed() : base(0xDCF) { Hue = 0x496; Name = "³ªÀÌÆ®¼ÎÀÌµå ¾¾¾Ñ"; }
+        [Constructable] public NightshadeSeed() : base(0xDCF) { Hue = 0x496; Name = "ë‚˜ì´íŠ¸ì…°ì´ë“œ ì”¨ì•—"; }
         public NightshadeSeed(Serial serial) : base(serial) { }
         public override void Serialize(GenericWriter writer) { base.Serialize(writer); writer.Write((int)0); }
         public override void Deserialize(GenericReader reader) { base.Deserialize(reader); int version = reader.ReadInt(); }

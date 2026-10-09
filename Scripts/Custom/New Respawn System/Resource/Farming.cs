@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Server.Items;
 using Server.Mobiles;
 using System.Linq;
@@ -61,9 +61,9 @@ namespace Server.Engines.Harvest
             // 2. 작물 상태 검사
             if (toHarvest is BaseFarmItem crop)
             {
-                if (crop.Owner != from && from.AccessLevel == AccessLevel.Player)
+                if (crop.Owner != null && crop.Owner != from && from.AccessLevel == AccessLevel.Player)
                 {
-                    from.SendMessage("당신의 작물이 아닙니다.");
+                    from.SendMessage("당신의 작물이 아닙니다. (자연 발생 작물 또는 본인 작물만 수확 가능)");
                     return false;
                 }
                 if (crop.Stage == CropStage.Decaying)

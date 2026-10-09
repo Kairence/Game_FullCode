@@ -21,7 +21,8 @@ namespace Server.Items
         private DateTime m_NextStageTime;
         private CropStage m_Stage;
         private int m_YieldBonus; 
-        private bool m_IsWatered; 
+        private bool m_IsWatered;
+        private int m_PoisonBonus; 
         private Type m_ResultType; 
         private PlantType m_CrossedType;
         private bool m_IsPollinated;
@@ -95,7 +96,7 @@ namespace Server.Items
             TimeSpan remaining = m_NextStageTime - DateTime.Now;
             if (remaining > TimeSpan.Zero)
             {
-                m_NextStageTime = DateTime.Now + TimeSpan.FromTicks(remaining.Ticks / 4);
+                m_NextStageTime = DateTime.Now + TimeSpan.FromHours(7.5);
                 m_IsWatered = true;
                 
                 from.SendMessage(68, "작물의 성장 속도가 비약적으로 빨라졌습니다!");
@@ -268,39 +269,71 @@ namespace Server.Items
 
             double total = (baseAmount + careBonus + skillBonus);
             
-            // BaseSeeding.cs의 확률형(대풍년/흉년) 시스템 적용
             int roll = Utility.Random(1000);
+            bool hasScarecrow = false;
+            foreach (Item item in this.GetItemsInRange(10)) {
+                if (item != null && item.GetType().Name == "FarmScarecrowComponent") { hasScarecrow = true; break; }
+            }
+            if (!hasScarecrow && roll < 300) { total = total * Utility.RandomMinMax(0, 25) * 0.01; }
+            else if (roll > 940) { total = total * Utility.RandomMinMax(150, 200) * 0.01; }
             
-            if (roll < 300) 
-            {
-                // 30% 확률로 흉년 (0% ~ 25%만 건짐)
-                total = total * Utility.RandomMinMax(0, 25) * 0.01;
-            }
-            else if (roll > 940) 
-            {
-                // 6% 확률로 대풍년 (150% ~ 200% 로 뻥튀기)
-                total = total * Utility.RandomMinMax(150, 200) * 0.01;
-            }
-
-            return (int)total; // 흉년으로 0이 되면 위 Harvest()에서 처리됨
+            total += m_PoisonBonus;
+            return (int)total;
         }
 
         public void CheckStatus(Mobile from)
         {
-            TimeSpan ts = m_NextStageTime - DateTime.Now;
-            from.SendMessage($"다음 성장까지 약 {ts.Hours}시간 {ts.Minutes}분 남았습니다.");
+            from.SendMessage("물(Pitcher)이나 포션을 주려면 대상을 지정하세요.");
+            from.Target = new FarmItemTarget(this);
+        }
+
+        public void ApplyPotion(Mobile from, Server.Items.BasePotion potion)
+        {
+            int tier = 3;
+            string n = potion.GetType().Name;
+            if (n.StartsWith("Mini")) tier = 1;
+            else if (n.StartsWith("Lesser")) tier = 2;
+            else if (n.StartsWith("Greater")) tier = 4;
+            else if (n.StartsWith("Deadly") || n.StartsWith("Total")) tier = 5;
+
+            if (potion is Server.Items.BaseHealPotion || potion is Server.Items.BaseRefreshPotion) {
+                if (m_Stage != CropStage.Mature) { from.SendMessage("활력 포션은 성장기(Mature)에만 사용할 수 있습니다."); return; }
+                m_NextStageTime -= TimeSpan.FromHours(0.5 * tier);
+                from.SendMessage($"활력 포션을 주어 성장 시간이 {0.5 * tier}시간 단축되었습니다!");
+                potion.Consume();
+            }
+            else if (potion is Server.Items.BasePoisonPotion) {
+                if (m_Stage >= CropStage.Harvestable) { from.SendMessage("수확 가능 상태에선 쓸 수 없습니다."); return; }
+                m_PoisonBonus += tier;
+                from.SendMessage($"독 포션을 주어 수확량이 {tier}개 증가하게 됩니다!");
+                potion.Consume();
+            }
+        }
+
+        private class FarmItemTarget : Server.Targeting.Target
+        {
+            private BaseFarmItem m_Item;
+            public FarmItemTarget(BaseFarmItem item) : base(2, false, Server.Targeting.TargetFlags.None) { m_Item = item; }
+            protected override void OnTarget(Mobile from, object targeted)
+            {
+                if (m_Item == null || m_Item.Deleted) return;
+                if (targeted is Server.Items.BasePotion p) { m_Item.ApplyPotion(from, p); }
+                else if (targeted is Server.Items.BaseBeverage b && b.Content == Server.Items.BeverageType.Water && !b.IsEmpty) { m_Item.ApplyWater(from); b.Quantity--; }
+                else { from.SendMessage("물통이나 활력/독 포션을 선택해야 합니다."); }
+            }
         }
 
         public BaseFarmItem(Serial serial) : base(serial) { }
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
-            writer.Write((int)1);
+            writer.Write((int)2);
             writer.Write(m_Owner);
             writer.WriteDeltaTime(m_NextStageTime);
             writer.Write((int)m_Stage);
             writer.Write(m_YieldBonus);
             writer.Write(m_IsWatered);
+            writer.Write(m_PoisonBonus);
             writer.Write(m_ResultType != null ? m_ResultType.FullName : "");
         }
         public override void Deserialize(GenericReader reader)
@@ -313,6 +346,7 @@ namespace Server.Items
             m_Stage = (CropStage)reader.ReadInt();
             m_YieldBonus = reader.ReadInt();
             m_IsWatered = reader.ReadBool();
+            if (version >= 2) m_PoisonBonus = reader.ReadInt();
             
             string typeName = reader.ReadString();
             if (!string.IsNullOrEmpty(typeName)) 

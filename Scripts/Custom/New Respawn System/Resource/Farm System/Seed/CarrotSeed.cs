@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 
 namespace Server.Items
 {
@@ -12,7 +12,7 @@ namespace Server.Items
         public CarrotSeed() : base(0xDCF)
         {
             Hue = 0x5E2;
-            Name = "´ç±Ù ¾¾¾Ñ";
+            Name = "ë‹¹ê·¼ ì”¨ì•—";
         }
 
         public CarrotSeed(Serial serial) : base(serial) { }

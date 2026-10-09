@@ -1,10 +1,10 @@
-using System;
+ï»¿using System;
 
 namespace Server.Items
 {
     public class TurnipSeed : BaseSeed
     {
-        // Turnip Å¬·¡½º°¡ Á¸ÀçÇÑ´Ù°í °¡Á¤ÇÕ´Ï´Ù.
+        // Turnip í´ëž˜ìŠ¤ê°€ ì¡´ìž¬í•œë‹¤ê³  ê°€ì •í•©ë‹ˆë‹¤.
         public override Type CropType => typeof(Turnip);
         public override double MinSkill => 15.0;
         public override double MaxSkill => 65.0;
@@ -13,7 +13,7 @@ namespace Server.Items
         public TurnipSeed() : base(0xDCF)
         {
             Hue = 0x1F6;
-            Name = "¼ø¹« ¾¾¾Ñ";
+            Name = "ìˆœë¬´ ì”¨ì•—";
         }
 
         public TurnipSeed(Serial serial) : base(serial) { }

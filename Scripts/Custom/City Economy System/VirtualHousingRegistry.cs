@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -21,8 +21,8 @@ namespace Server.Misc
         public Point3D Location { get; set; }
         public Rectangle2D Bounds { get; set; } 
         public int ZoneID { get; set; } 
-        public List<Rectangle2D> MasterLots { get; set; } = []; // ?�� 최�? 면적 거�? ?��???
-        public List<OccupiedLot> OccupiedLots { get; set; } = []; // ?�� ?�제 ?�주??집들
+        public List<Rectangle2D> MasterLots { get; set; } = []; // ?�� 최�? 면적 거�? ?��???
+        public List<OccupiedLot> OccupiedLots { get; set; } = []; // ?�� ?�제 ?�주??집들
 
         public EcoGridChunk(Map map, int cx, int cy, int zoneId)
         {
@@ -43,7 +43,7 @@ namespace Server.Misc
     {
         public static List<EcoGridChunk> Chunks { get; private set; } = [];
         
-        // 7?�리 ZoneID(?? 1101002)�??�로 ?�여 거�????��?(Master Lots)�?보�??�는 ?�
+        // 7?�리 ZoneID(?? 1101002)�??�로 ?�여 거�????��?(Master Lots)�?보�??�는 ?�
         private static Dictionary<int, List<Rectangle2D>> m_MasterLotPool = new();
 
         public static void Configure()
@@ -74,7 +74,7 @@ namespace Server.Misc
         {
             string path = Path.Combine(Core.BaseDirectory, "Data", "Housing_Master_Data.csv");
             
-            // ?�일???�다�?최신 ?�일 ?�름 ?�턴?�로 ?��????�도
+            // ?�일???�다�?최신 ?�일 ?�름 ?�턴?�로 ?��????�도
             if (!File.Exists(path))
             {
                 var dir = new DirectoryInfo(Path.Combine(Core.BaseDirectory, "Data"));
@@ -87,7 +87,7 @@ namespace Server.Misc
 
             if (!File.Exists(path))
             {
-                Console.WriteLine("[HousingSystem] ERROR: Housing_Master_Data.csv ?�일???�습?�다!");
+                Console.WriteLine("[HousingSystem] ERROR: Housing_Master_Data.csv 파일이 없습니다!");
                 return;
             }
 
@@ -125,13 +125,13 @@ namespace Server.Misc
                     chunk.MasterLots.Add(lot);
                     loadedLots++;
                 }
-                Console.WriteLine($"[HousingSystem] 마스???��? 로드 ?�료! (가??공터 묶음 {loadedLots}�??�보)");
+                Console.WriteLine($"[HousingSystem] 마스터 장부 로드 완료! (가용 공터 묶음 {loadedLots}개 확보)");
             }
-            catch (Exception ex) { Console.WriteLine($"[HousingSystem] 로딩 ?�패: {ex.Message}"); }
+            catch (Exception ex) { Console.WriteLine($"[HousingSystem] 로딩 실패: {ex.Message}"); }
         }
 
         // ==============================================================================
-        // ?�� [기존 가???�기??로직 복구] - FreeSpaces ?�존???�벽 ?�거
+        // ?�� [기존 가???�기??로직 복구] - FreeSpaces ?�존???�벽 ?�거
         // ==============================================================================
         private static void SyncExistingPlayerHouses()
         {
@@ -145,7 +145,7 @@ namespace Server.Misc
             }
 
             if (protectedCount > 0)
-                Console.WriteLine($"[HousingSystem] ?�버 ???�레?�어 가??{totalFound}�?�?{protectedCount}�??�유 보호 처리 ?�료.");
+                Console.WriteLine($"[HousingSystem] 서버 내 플레이어 가옥 {totalFound}채 중 {protectedCount}채 점유 보호 처리 완료.");
         }
 
         private static bool RegisterPlayerHouse(BaseHouse house)
@@ -174,7 +174,7 @@ namespace Server.Misc
                 {
                     if (!chunk.OccupiedLots.Any(lot => lot.HouseName == houseID && lot.Footprint.X == houseRect.X && lot.Footprint.Y == houseRect.Y))
                     {
-                        // OccupiedLots???�록�??�면 ??(RecalculateFreeSpaces ??��)
+                        // OccupiedLots???�록�??�면 ??(RecalculateFreeSpaces ??��)
                         chunk.OccupiedLots.Add(new OccupiedLot { HouseName = houseID, Footprint = houseRect, IsSafeZone = true });
                         registered = true;
                     }
@@ -226,7 +226,7 @@ namespace Server.Misc
                 }
             }
             if (restoredCount > 0)
-                Console.WriteLine($"[HousingSystem] ?�버 ?�시???�기?? AI 가??{restoredCount}�??�유 보호 복구 ?�료.");
+                Console.WriteLine($"[HousingSystem] 서버 재시작 동기화: AI 가옥 {restoredCount}채 점유 보호 복구 완료.");
         }
 
         public static (bool Success, EcoGridChunk Chunk, Rectangle2D Space) GetAndLockBestFreeSpace(Map facet, int reqW, int reqH, string houseId, int townID, NobilityRank rank)
@@ -262,20 +262,20 @@ namespace Server.Misc
 
                 if (matchingLots.Count == 0) continue;
 
-                // ?�� [?�정 1] 15% ?�률(?�박�? ?�거, ?�기???�렬�??�연?�럽�?�??�을 찾아 ?�라가?�록 ?�도
+                // ?�� [?�정 1] 15% ?�률(?�박�? ?�거, ?�기???�렬�??�연?�럽�?�??�을 찾아 ?�라가?�록 ?�도
                 var sortedLots = (rank <= NobilityRank.Commoner) 
-                    ? matchingLots.OrderBy(l => l.Width * l.Height).ToList() // ?��?: ?��? 빈�?가부??채우�? �?차면 ?�??부지�?진출
-                    : matchingLots.OrderByDescending(l => l.Width * l.Height).ToList(); // 귀�? ?�??부지 ?�점
+                    ? matchingLots.OrderBy(l => l.Width * l.Height).ToList() // ?��?: ?��? 빈�?가부??채우�? �?차면 ?�??부지�?진출
+                    : matchingLots.OrderByDescending(l => l.Width * l.Height).ToList(); // 귀�? ?�??부지 ?�점
 
                 foreach (var masterLot in sortedLots)
                 {
                     bool isSmallLot = masterLot.Width < 14 || masterLot.Height < 14;
 
-                    // 귀족�? ?�무 좁�? 빈�?가(14미만)?�는 ?��? 지지 ?�음
+                    // 귀족�? ?�무 좁�? 빈�?가(14미만)?�는 ?��? 지지 ?�음
                     if (rank >= NobilityRank.Knight && isSmallLot) continue; 
                     if (masterLot.Width < reqW || masterLot.Height < reqH) continue; 
 
-                    // ?�� ?�트리스??빈자�?찾기
+                    // ?�� ?�트리스??빈자�?찾기
                     for (int x = masterLot.X; x <= masterLot.X + masterLot.Width - reqW; x += 1)
                     {
                         for (int y = masterLot.Y; y <= masterLot.Y + masterLot.Height - reqH; y += 1)
@@ -286,7 +286,7 @@ namespace Server.Misc
                             int cy = (y / 128) * 128;
                             var chunk = Chunks.FirstOrDefault(c => c.Facet == facet && c.Bounds.X == cx && c.Bounds.Y == cy);
                             
-                            // ?�� [?�정 2] �?�� 경계??버그 ?�결: �?��가 ?�으�??�킵?��? 말고 �??�리???�로 ?�성
+                            // ?�� [?�정 2] �?�� 경계??버그 ?�결: �?��가 ?�으�??�킵?��? 말고 �??�리???�로 ?�성
                             if (chunk == null)
                             {
                                 chunk = new EcoGridChunk(facet, cx, cy, (baseRegion * 10) + zType); 
@@ -301,7 +301,7 @@ namespace Server.Misc
                                     isConflict = true; lastConflictChunk = chunk; lastConflictCandidate = candidate; break;
                                 }
 
-                                // ?�� [?�정 3] ?�뒤 ?�유 공간 5�?-> 2칸으�?축소 (부지 ??�� 극복)
+                                // ?�� [?�정 3] ?�뒤 ?�유 공간 5�?-> 2칸으�?축소 (부지 ??�� 극복)
                                 if (candidate.X < lot.Footprint.X + lot.Footprint.Width && candidate.X + candidate.Width > lot.Footprint.X)
                                 {
                                     if (lot.Footprint.Y < candidate.Y)
@@ -319,7 +319,7 @@ namespace Server.Misc
 
                             if (!isConflict)
                             {
-                                // ?�리�?찾았?��?�??�구 ?�유(Lock) 처리
+                                // ?�리�?찾았?��?�??�구 ?�유(Lock) 처리
                                 chunk.OccupiedLots.Add(new OccupiedLot { HouseName = houseId, Footprint = candidate, IsSafeZone = true });
                                 return (true, chunk, candidate);
                             }

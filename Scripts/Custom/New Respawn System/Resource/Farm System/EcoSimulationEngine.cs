@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Server;
 using Server.Items;
@@ -50,40 +50,67 @@ namespace Server.Misc
 
         public static void ProcessGlobalTick()
         {
-            // Called by MasterTickEngine
             foreach (var sim in new List<BaseAddon>(ActiveSimulations))
             {
-                if (sim == null || sim.Deleted)
-                {
-                    ActiveSimulations.Remove(sim);
-                    continue;
-                }
+                if (sim == null || sim.Deleted) { ActiveSimulations.Remove(sim); continue; }
 
                 if (sim is PrivateFarmAddon farm)
                 {
-                    bool needsLabor = false;
+                    FarmWaterBarrelComponent water = null;
+                    FarmPestControlKegComponent keg = null;
+                    bool hasScarecrow = false;
+                    List<FarmGrowingCropComponent> crops = new List<FarmGrowingCropComponent>();
+
                     foreach (AddonComponent c in farm.Components)
                     {
-                        if (c is FarmWaterBarrelComponent w)
+                        if (c is FarmWaterBarrelComponent w) water = w;
+                        else if (c is FarmPestControlKegComponent k) keg = k;
+                        else if (c.GetType().Name == "FarmScarecrowComponent") hasScarecrow = true;
+                        else if (c is FarmGrowingCropComponent crop) crops.Add(crop);
+                    }
+
+                    foreach (var crop in crops)
+                    {
+                        if (crop.GrowthStage >= 2) continue; // 이미 다 자람
+                        if (DateTime.Now >= crop.NextGrowthTime)
                         {
-                            w.Charges--;
-                            if (w.Charges <= 0) needsLabor = true;
+                            if (crop.GrowthStage == 0) // 새싹 -> 성장기
+                            {
+                                crop.GrowthStage = 1;
+                                crop.NextGrowthTime = DateTime.Now + TimeSpan.FromHours(10.0);
+                                crop.Name = "성장 중인 작물";
+                                crop.ItemID = 0x0C56;
+
+                                if (water != null && water.Charges > 0) {
+                                    water.Charges--;
+                                    crop.NextGrowthTime = DateTime.Now + TimeSpan.FromHours(7.5);
+                                }
+                            }
+                            else if (crop.GrowthStage == 1) // 성장기 -> 수확 가능
+                            {
+                                crop.GrowthStage = 2;
+                                crop.Name = "다 자란 작물 (수확 가능)";
+                                crop.ItemID = crop.SeedType != null && crop.SeedType.Contains("Carrot") ? 0x0C76 : (crop.SeedType != null && crop.SeedType.Contains("Cotton") ? 0x0C53 : 0x0C5A);
+                                
+                                if (keg != null && keg.Charges > 0) {
+                                    keg.Charges--;
+                                    if (keg.PotionType == 2) // 독
+                                    {
+                                        crop.PoisonBonus = keg.PotionTier; // 수확 시 보너스
+                                    }
+                                }
+                            }
                         }
-                        else if (c is FarmPestControlKegComponent p)
+                        else if (crop.GrowthStage == 1 && keg != null && keg.Charges > 0 && keg.PotionType == 1) // 활력 포션 남은 시간 단축
                         {
-                            p.Charges--;
-                            if (p.Charges <= 0) needsLabor = true;
+                            keg.Charges--;
+                            crop.NextGrowthTime -= TimeSpan.FromHours(0.5 * keg.PotionTier);
                         }
                     }
-                    
-                    // Virtual Citizen will handle labor if needed
                 }
             }
         }
 
-        // ==============================================================================
-        // [AI Virtual Citizen AI Worker logic]
-        // ==============================================================================
         public static void ExecuteAIWork(Server.Misc.VirtualCitizen agent, SimulationSystemType jobType)
         {
             if (agent == null || agent.House == null) return;

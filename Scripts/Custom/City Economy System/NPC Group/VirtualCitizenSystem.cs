@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Server;
@@ -289,8 +289,14 @@ namespace Server.Misc
     {
         public static void Initialize() { }
 
+        public static System.Collections.Generic.List<VirtualCitizen> m_CachedCitizens = new System.Collections.Generic.List<VirtualCitizen>();
+
         public static void ExecuteFinalBatchProcess(int gameHour)
         {
+            m_CachedCitizens.Clear();
+            foreach (var t in TownEconomyManager.Towns.Values) {
+                if (t.Citizens != null) m_CachedCitizens.AddRange(t.Citizens);
+            }
             Server.Mobiles.RetailVendor.ProcessDailyWages(gameHour);
 			ExecuteDungeonSecurityImpact();
             var towns = TownEconomyManager.Towns.Values.ToList();
@@ -417,7 +423,7 @@ namespace Server.Misc
         public static void ProcessCitizenSegment(int tickIdx, int gameHour)
         {
             var towns = TownEconomyManager.Towns.Values.ToList();
-            var allCitizens = towns.SelectMany(t => t.Citizens).ToList();
+            var allCitizens = m_CachedCitizens;
             if (allCitizens.Count == 0) return;
 
             int startIdx = (allCitizens.Count * (tickIdx - 1)) / 40;
@@ -1330,6 +1336,8 @@ namespace Server.Misc
         }
     }
 }
+
+
 
 
 

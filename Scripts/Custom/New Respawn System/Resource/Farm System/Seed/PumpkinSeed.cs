@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 
 namespace Server.Items
 {
@@ -12,7 +12,7 @@ namespace Server.Items
         public PumpkinSeed() : base(0xDCF)
         {
             Hue = 0x30;
-            Name = "È£¹Ú ¾¾¾Ñ";
+            Name = "í˜¸ë°• ì”¨ì•—";
         }
 
         public PumpkinSeed(Serial serial) : base(serial) { }

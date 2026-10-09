@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,7 +10,7 @@ using Server.Network;
 namespace Server.Misc
 {
     // ==============================================================================
-    // [ê¸°ì? Enum ë° êµ¬ì¡°ì²?- ëª¨í—˜ê°€ ?„??
+    // [ê¸°ï¿½? Enum ë° êµ¬ì¡°ï¿½?- ëª¨í—˜ê°€ ?ï¿½??
     // ==============================================================================
     public enum LawChaos { Lawful, Neutral, Chaotic }
     public enum GoodEvil { Good, Neutral, Evil }
@@ -95,7 +95,7 @@ namespace Server.Misc
     }
 
     // ==============================================================================
-    // [ê°€? ëª¨í—˜ê°€ ë§¤ë‹ˆ?€]
+    // [ê°€?ï¿½ ëª¨í—˜ê°€ ë§¤ë‹ˆ?ï¿½]
     // ==============================================================================
     public static class VirtualAdventurerManager
     {
@@ -153,7 +153,7 @@ namespace Server.Misc
                     if (ActiveParties[i].Members.Count == 0)
                     {
                         ActiveParties.RemoveAt(i);
-                        Console.WriteLine("[Adventurer] ?Œ?°ê? ?„ë©¸í•˜???´ì‚°ë˜?ˆ?µë‹ˆ??");
+                        Console.WriteLine("[Adventurer] íŒŒí‹°ê°€ ì „ë©¸í•˜ì—¬ í•´ì‚°ë˜ì—ˆìŠµë‹ˆë‹¤.");
                     }
                 }
 
@@ -217,7 +217,7 @@ namespace Server.Misc
                     {
                         town.Wealth -= spawnCost; 
                         SpawnInitialAdventurers(town, spawnAmount); 
-                        Console.WriteLine($"[Adventurer] {town.Name} ë§ˆ?„??{spawnCost}gpë¡œ ?©ë? {spawnAmount}ëª…?„ ê³ ?©í–ˆ?µë‹ˆ?? (ë§ˆ?„ TO: {advInTown + spawnAmount}/{townAdvCap})");
+                        Console.WriteLine($"[Adventurer] {town.Name} ë§ˆì„ì´ {spawnCost}gpë¡œ ìš©ë³‘ {spawnAmount}ëª…ì„ ê³ ìš©í–ˆìŠµë‹ˆë‹¤. (ë§ˆì„ TO: {advInTown + spawnAmount}/{townAdvCap})");
                     }
                 }
             }
@@ -262,7 +262,7 @@ namespace Server.Misc
                 catch
                 {
                     Console.WriteLine("======================================================");
-                    Console.WriteLine(" [ì£¼ì˜] ëª¨í—˜ê°€ ?¸ì´ë? ?Œ???? ê°ì§€! ê¼¬ì??°ì´í„°ë? ?Œê¸°í•˜ê³  ì´ˆê¸°í™”?©ë‹ˆ??");
+                    Console.WriteLine(" [ì£¼ì˜] ëª¨í—˜ê°€ ì„¸ì´ë¸Œ íŒŒì¼ ì†ìƒ ê°ì§€! ê¼¬ì¸ ë°ì´í„°ë¥¼ íŒŒê¸°í•˜ê³  ì´ˆê¸°í™”í•©ë‹ˆë‹¤.");
                     Console.WriteLine("======================================================");
                     IdleAdventurers.Clear();
                     ActiveParties.Clear();
@@ -277,7 +277,7 @@ namespace Server.Misc
                 }
             }
 
-            Console.WriteLine("[Adventurer] ê°€? ëª¨í—˜ê°€ ?œ?¤í…œ ?°ì´í„?ë¡œ?œ ?„ë£Œ.");
+            Console.WriteLine("[Adventurer] ê°€ìƒ ëª¨í—˜ê°€ ì•„ì´í…œ ì„¸ì´ë¸Œ ë¡œë“œ ì™„ë£Œ.");
         }
 
         public static void SpawnInitialAdventurers(TownEconomy town, int amount)
@@ -296,7 +296,7 @@ namespace Server.Misc
     }
 
     // ==============================================================================
-    // [?”?œ ?¸ë“œ (?´ë™ ê±°ì )]
+    // [?ï¿½?ï¿½ ?ï¿½ë“œ (?ï¿½ë™ ê±°ì )]
     // ==============================================================================
     public class WorldNode
     {
@@ -340,11 +340,11 @@ namespace Server.Misc
     }
 
     // ==============================================================================
-    // [ê°€? ëª¨í—˜ê°€ ?Œ???œ?¤í…œ]
+    // [ê°€?ï¿½ ëª¨í—˜ê°€ ?ï¿½???ï¿½?ï¿½í…œ]
     // ==============================================================================
     public class AdventurerParty
     {
-        public string Name => Members.Count > 0 ? $"{Members[0].Name}ÀÇ ÆÄÆ¼" : "¹«¸í ÆÄÆ¼";
+        public string Name => Members.Count > 0 ? $"{Members[0].Name}ï¿½ï¿½ ï¿½ï¿½Æ¼" : "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼";
         public List<VirtualAdventurer> Members { get; set; } = [];
         public AdventurerState State { get; set; }
         public WorldNode CurrentNode { get; set; }
@@ -354,7 +354,7 @@ namespace Server.Misc
         
         public int PartyWealth { get; set; }
         
-        // ?˜?„ ?¸í™˜?±ì„ ?„??ë³€?˜ë§Œ ?¨ê²¨?ê³  ?œ?¤í…œ ?°ì‚°ì—?œ?” ?¬ìš©í•˜ì§€ ?Š?Œ (?´ì? êµ¬ë§¤ ë²„ê·????
+        // ?ï¿½?ï¿½ ?ï¿½í™˜?ï¿½ì„ ?ï¿½??ë³€?ï¿½ë§Œ ?ï¿½ê²¨?ï¿½ê³  ?ï¿½?ï¿½í…œ ?ï¿½ì‚°ì—?ï¿½?ï¿½ ?ï¿½ìš©í•˜ì§€ ?ï¿½?ï¿½ (?ï¿½ï¿½? êµ¬ë§¤ ë²„ï¿½??ï¿½??
         public int Bandages { get; set; }
         public int Potions { get; set; }      
         
@@ -496,7 +496,7 @@ namespace Server.Misc
                 PartyWealth += AcceptedJobReward / 2;
                 town.Wealth += (int)(AcceptedJobReward * 0.1); 
 
-                Console.WriteLine($"[Quest] {Members[0].Name} ?Œ?°ê? ?˜ë¢°ë? ?„?˜?˜ê³  {AcceptedJobReward}gpë¥????ˆ?µë‹ˆ??");
+                Console.WriteLine($"[Quest] {Members[0].Name} íŒŒí‹°ê°€ ì˜ë¢°ë¥¼ ë‹¬ì„±í•˜ê³  {AcceptedJobReward}gpë¥¼ ë³´ìƒìœ¼ë¡œ ë°›ì•˜ìŠµë‹ˆë‹¤.");
                 int huntScore = this.AcceptedJobReward / 10;
                 if (huntScore > 0)
                 {
@@ -531,7 +531,7 @@ namespace Server.Misc
                 
                 if (sherpaCut > 0)
                 {
-                    Console.WriteLine($"[Adventurer] ?°ë¥´?Œ {EmployedSherpa.Name}??ê°€) ?˜?„ ê¸¸ì¡ì?ë° ë¬¼ì ê´€ë¦??˜?¹ìœ¼ë? {sherpaCut}gpë¥?ë°›?˜?µë‹ˆ??");
+                    Console.WriteLine($"[Adventurer] ì…°ë¥´íŒŒ {EmployedSherpa.Name}ì´(ê°€) íŒŒí‹° ê¸¸ì¡ì´ ë° ë¬¼ì ê´€ë¦¬ ìˆ˜ë‹¹ìœ¼ë¡œ {sherpaCut}gpë¥¼ ë°›ì•˜ìŠµë‹ˆë‹¤.");
                 }
             }
 
@@ -573,10 +573,10 @@ namespace Server.Misc
 
         private void ProcessResting()
         {
-            // ?ŒŸ [?µì‹?ë°©ì–´ë?] ë§ˆ?„???„?Œ ê³??˜?„ ????œ ?´ì‹ ??œ? ë¹ ì¡Œ?¤ë©´ ì¦‰?œ ë¹„? ?ˆì¶œ!
+            // ?ï¿½ï¿½ [?ï¿½ï¿½?ë°©ì–´ï¿½?] ë§ˆ?ï¿½???ï¿½?ï¿½ ï¿½??ï¿½?ï¿½ ???ï¿½?ï¿½ ?ï¿½ì‹ ?ï¿½?ï¿½?ï¿½ ë¹ ì¡Œ?ï¿½ë©´ ì¦‰?ï¿½ ë¹„?ï¿½ ?ï¿½ì¶œ!
             if (CurrentNode != null && CurrentNode.Type != WorldNodeType.Town)
             {
-                Console.WriteLine($"[Adventurer] {Members[0].Name} ?Œ?°ê? {CurrentNode.Name}??œ ì¡°ë‚œ ??œë¥??¸ì??˜ê³  ë¹„? ê·€?˜?„ ?œ?„?©ë‹ˆ??");
+                Console.WriteLine($"[Adventurer] {Members[0].Name} íŒŒí‹°ê°€ {CurrentNode.Name}ì—ì„œ ì¡°ë‚œ ìƒíƒœë¥¼ ì„ ì–¸í•˜ê³  ë¹„ìƒ ê·€í™˜ì„ ì‹œì‘í•©ë‹ˆë‹¤.");
                 RetreatToTown();
                 return;
             }
@@ -587,7 +587,7 @@ namespace Server.Misc
             {
                 SettleTownReturn(town); 
 
-                // ?ŒŸ ?ê¶Œ???†?” ?„?œ(?ˆ: ë§ˆì§„?œ?„)??œ?” ?¸ìœ„ ë³´ìƒ ?•?°ë? ?˜ê³  ?¥ë? ?˜ë¦¬ë‚˜ ?„?´í…œ êµ¬ë§¤ ???•ë¹„ë¥???µí•©ë‹ˆ??
+                // ?ï¿½ï¿½ ?ï¿½ê¶Œ???ï¿½?ï¿½ ?ï¿½?ï¿½(?ï¿½: ë§ˆì§„?ï¿½?ï¿½)?ï¿½?ï¿½?ï¿½ ?ï¿½ìœ„ ë³´ìƒ ?ï¿½?ï¿½ï¿½? ?ï¿½ê³  ?ï¿½ï¿½? ?ï¿½ë¦¬ë‚˜ ?ï¿½?ï¿½í…œ êµ¬ë§¤ ???ï¿½ë¹„ï¿½??ï¿½?ï¿½í•©ë‹ˆ??
                 if (town.VendorCount > 0)
                 {
                     int innFee = Members.Count * 20;
@@ -619,7 +619,7 @@ namespace Server.Misc
                                 Members[i].HasMount = true;
                             }
                         }
-                        Console.WriteLine($"[Adventurer] {Members[0].Name} ?Œ?°ê? ? ? ?˜ê²Œ ?„? ?¹ë?ë¥?ë§ˆì³¤ìŠµë‹ˆ??");
+                        Console.WriteLine($"[Adventurer] {Members[0].Name} íŒŒí‹°ê°€ ë¬´ì‚¬íˆ íŒŒí‹° ì •ë¹„ë¥¼ ë§ˆì³¤ìŠµë‹ˆë‹¤.");
                     }
 
                     if (EmployedSherpa != null)
@@ -630,7 +630,7 @@ namespace Server.Misc
                             PartyWealth -= animalCost;
                             town.Wealth += animalCost;
                             PackAnimals++;
-                            Console.WriteLine($"[Adventurer] {Members[0].Name} ?Œ?°ê? ??•?„ ?„??ì§ë§?„ ì¶”ê°€ êµ¬ë§¤?ˆ?µë‹ˆ?? (?„?? {PackAnimals}ë§ˆë¦?");
+                            Console.WriteLine($"[Adventurer] {Members[0].Name} íŒŒí‹°ê°€ ì§ë§ì„ ì¶”ê°€ êµ¬ë§¤í–ˆìŠµë‹ˆë‹¤. (í˜„ì¬ {PackAnimals}ë§ˆë¦¬)");
                         }
                     }
 
@@ -693,7 +693,7 @@ namespace Server.Misc
                             Point3D dest = ecoZone.Nodes[0].Location;
                             TargetNode = new WorldNode(ecoZone.ZoneId, ecoZone.RCode, WorldNodeType.Dungeon, ecoZone.Facet, dest, dest, 100);
                             this.AcceptedJobReward = acceptedJob.RewardGold; 
-                            Console.WriteLine(String.Format("[Quest] {0} ?Œ?°ê? ?ë§ˆ????œê³„ ?¬ëƒ?'{1}' ?˜ë¢°ë? ?˜?½í•˜ê³  ì²­?¬ë? ?¥í•©ë‹ˆ??", Members[0].Name, acceptedJob.Title));
+                            Console.WriteLine(String.Format("[Quest] {0} íŒŒí‹°ê°€ ì•…ë§ˆí† ë²Œ ì²­ë¶€ '{1}' ì˜ë¢°ë¥¼ ìˆ˜ë½í•˜ê³  ì¶œì •ì„ ì¤€ë¹„í•©ë‹ˆë‹¤.", Members[0].Name, acceptedJob.Title));
                         }
                     }
                     else
@@ -708,7 +708,7 @@ namespace Server.Misc
                             {
                                 TargetNode = new WorldNode(questDz.ZoneId, questDz.RCode, WorldNodeType.Dungeon, questDz.Facet, dest, dest, questDz.CurrentDifficulty);
                                 this.AcceptedJobReward = acceptedJob.RewardGold; 
-                                Console.WriteLine($"[Quest] {Members[0].Name} ?Œ?°ê? ë°©ì??œ '{acceptedJob.Title}' ?˜ë¢°ë? ?˜?½í•˜ê³  ì¶œë°œ ì¤€ë¹„ë¥?ë§ˆì³¤ìŠµë‹ˆ??");
+                                Console.WriteLine($"[Quest] {Members[0].Name} íŒŒí‹°ê°€ ë°©ì–´ì „ '{acceptedJob.Title}' ì˜ë¢°ë¥¼ ìˆ˜ë½í•˜ê³  ì¶œë°œ ì¤€ë¹„ë¥¼ ë§ˆì³¤ìŠµë‹ˆë‹¤.");
                             }
                         }
                     }
@@ -731,18 +731,18 @@ namespace Server.Misc
                         var tCode = RegionSaver.GetRegionCodes(targetTown.Facet, targetTown.Center.X, targetTown.Center.Y, targetTown.Center.Z).Major;
                         TargetNode = new WorldNode(targetTown.TownName ?? targetTown.Name, tCode, WorldNodeType.Town, targetTown.Facet, targetTown.Center, targetTown.Center, 1);
                         
-                        Console.WriteLine($"[Adventurer] ì´ˆë³´ì?{Members[0].Name} ?Œ?°ê? ?¸ìœ„ë¥??„???´ì›ƒ ë§ˆ?„??{TargetNode.Name}(??ë¡œ ?¥í•˜ê¸°ë? ?ˆ?µë‹ˆ??");
+                        Console.WriteLine($"[Adventurer] ì´ˆë³´ì {Members[0].Name} íŒŒí‹°ê°€ í˜¸ìœ„ì™€ ìˆœì°°ì„ ìœ„í•´ ì´ì›ƒ ë§ˆì„ {TargetNode.Name}(ìœ¼)ë¡œ í–¥í•˜ê¸°ë¡œ í–ˆìŠµë‹ˆë‹¤.");
                     }
                 }
                 else
                 {
-                    // ?ŒŸ [?µì‹??¨ì?] ë¹„?œ?±í™”(IsActive == false) ?˜?„?€ ????¬ëƒ?ëª©ì ì§€??œ ?œ??
+                    // ?ï¿½ï¿½ [?ï¿½ï¿½??ï¿½ï¿½?] ë¹„?ï¿½?ï¿½í™”(IsActive == false) ?ï¿½?ï¿½?ï¿½ ?ï¿½???ï¿½ï¿½?ëª©ì ì§€?ï¿½?ï¿½ ?ï¿½??
                     var validDungeons = DungeonManager.ZoneList.Where(z => z.IsActive && z.MaxPopulation > 0 && z.Phase == DungeonPhase.Active).ToList();
                     
                     if (validDungeons.Count > 0)
                     {
-                        // ?”?[ë²„ê·??˜?•] CurrentDifficulty(?„???´ê¸°)?” ë¹„?´ìˆ?¼ë©´ ?„ë¶€ 0?´ë?êµ¬ë? ë¶ˆê°€.
-                        // MaxDifficulty(ìµœ?€ ?´ê¸° = ?¤ê? ?œ?´ë„)ë¥?ê¸°ì??¼ë? ë§¤ì¹­?´ì•?ì´ˆë³´ì¡´(Despise/Covetous L1)?¼ë? ?¬ë?ë¥´ê? ë°°ì •??
+                        // ?ï¿½?[ë²„ï¿½??ï¿½?ï¿½] CurrentDifficulty(?ï¿½???ï¿½ê¸°)?ï¿½ ë¹„?ï¿½ìˆ?ï¿½ë©´ ?ï¿½ë¶€ 0?ï¿½ï¿½?êµ¬ï¿½? ë¶ˆê°€.
+                        // MaxDifficulty(ìµœ?ï¿½ ?ï¿½ê¸° = ?ï¿½ï¿½? ?ï¿½?ï¿½ë„)ï¿½?ê¸°ï¿½??ï¿½ï¿½? ë§¤ì¹­?ï¿½ï¿½?ì´ˆë³´ì¡´(Despise/Covetous L1)?ï¿½ï¿½? ?ï¿½ï¿½?ë¥´ï¿½? ë°°ì •??
                         int targetDiff = (int)(AverageLevel * 100000);
                         var suitableDungeons = validDungeons
                             .OrderBy(z => Math.Abs(z.MaxDifficulty - targetDiff))
@@ -752,14 +752,14 @@ namespace Server.Misc
                         if (suitableDungeons.Count > 0)
                         {
                             var targetDz = suitableDungeons[Utility.Random(suitableDungeons.Count)];
-                            // ?ˆ ?˜?„ ?œ?¤í…œ?˜ êµ¬ì—­ ì¤‘?™ ì¢Œ?œ API ?¸ì?
+                            // ?ï¿½ ?ï¿½?ï¿½ ?ï¿½?ï¿½í…œ?ï¿½ êµ¬ì—­ ì¤‘?ï¿½ ì¢Œ?ï¿½ API ?ï¿½ï¿½?
                             Point3D dest = targetDz.GetCenterLocation();
                             if (dest == Point3D.Zero) dest = RegionSaver.GetRegionCenter(targetDz.RCode, targetDz.Facet);
                             
                             if (dest != Point3D.Zero)
                             {
                                 TargetNode = new WorldNode(targetDz.ZoneId, targetDz.RCode, WorldNodeType.Dungeon, targetDz.Facet, dest, dest, targetDz.CurrentDifficulty);
-                                Console.WriteLine($"[Adventurer] {Members[0].Name} ?Œ?°ê? ????¬ëƒ¥ì„ ?„??{TargetNode.Name}(??ë¡œ ì¶œë°œ ì¤€ë¹„ë¥?ë§ˆì³¤ìŠµë‹ˆ??");
+                                Console.WriteLine($"[Adventurer] {Members[0].Name} íŒŒí‹°ê°€ ëª¬ìŠ¤í„° ì‚¬ëƒ¥ì„ ìœ„í•´ {TargetNode.Name}(ìœ¼)ë¡œ ì¶œë°œ ì¤€ë¹„ë¥¼ ë§ˆì³¤ìŠµë‹ˆë‹¤.");
                             }
                         }
                     }
@@ -784,7 +784,7 @@ namespace Server.Misc
                     TravelHoursRemaining = plan.TotalTicks;
                     State = AdventurerState.Traveling;
                     
-                    Console.WriteLine($"[Travel] {Members[0].Name} ?Œ?°ê? {CurrentNode.Name}??œ {TargetNode.Name}(??ë¡œ ?´ë™?„ ?œ?‘?©ë‹ˆ?? (ë¹„?? {plan.TotalCost}gp / ?Œ?”: {plan.TotalTicks}??");
+                    Console.WriteLine($"[Travel] {Members[0].Name} íŒŒí‹°ê°€ {CurrentNode.Name}ì—ì„œ {TargetNode.Name}(ìœ¼)ë¡œ ì´ë™ì„ ì‹œì‘í•©ë‹ˆë‹¤. (ë¹„ìš©: {plan.TotalCost}gp / ì†Œìš”ì‹œê°„: {plan.TotalTicks}í‹±)");
                 }
                 else
                 {
@@ -800,11 +800,11 @@ namespace Server.Misc
 
                         TravelHoursRemaining = ticks;
                         State = AdventurerState.Traveling;
-                        Console.WriteLine($"[Travel] {Members[0].Name} ?Œ?°ê? ë¹„?•ê·œ ì§€?­??{TargetNode.Name}(??ë¡œ ??˜?„ ? ?©ë‹ˆ?? ({ticks}???Œ?”)");
+                        Console.WriteLine($"[Travel] {Members[0].Name} íŒŒí‹°ê°€ ë¹„ì •ê·œ ì§€ì  {TargetNode.Name}(ìœ¼)ë¡œ í–‰êµ°ì„ ì‹œì‘í•©ë‹ˆë‹¤. ({ticks}í‹± ì†Œìš”)");
                     }
                     else
                     {
-                        Console.WriteLine($"[Travel] {Members[0].Name} ?Œ?°ê? ?ê¸ˆ ë¶€ì¡±ìœ¼ë? ë°œ??ë¬¶ì˜€?µë‹ˆ??");
+                        Console.WriteLine($"[Travel] {Members[0].Name} íŒŒí‹°ê°€ ì—¬ë¹„ ë¶€ì¡±ìœ¼ë¡œ ë°œì´ ë¬¶ì˜€ìŠµë‹ˆë‹¤.");
                         TargetNode = null; 
                     }
                 }
@@ -834,18 +834,18 @@ namespace Server.Misc
                     {
                         town.Wealth -= patrolReward;
                         PartyWealth += patrolReward;
-                        Console.WriteLine($"[Adventurer] {Members[0].Name} ?Œ?°ê? {CurrentNode.Name}? ë¬´ì‚¬íˆ ?„ì°©í•˜???¸ìœ„ ?˜??{patrolReward}gpë¥?ë°›?˜?µë‹ˆ??");
+                        Console.WriteLine($"[Adventurer] {Members[0].Name} íŒŒí‹°ê°€ {CurrentNode.Name}ì— ë¬´ì‚¬íˆ ë„ì°©í•˜ì—¬ í˜¸ìœ„ ìˆ˜ë‹¹ {patrolReward}gpë¥¼ ë°›ì•˜ìŠµë‹ˆë‹¤.");
                     }
                 }
 
                 State = CurrentNode.Type == WorldNodeType.Dungeon ? AdventurerState.Exploring : AdventurerState.Resting;
                 
                 if (CurrentNode.Type == WorldNodeType.Dungeon)
-                    Console.WriteLine($"[Adventurer] {Members[0].Name} ?Œ?°ê? ?˜?„ {CurrentNode.Name}? ì§„?…?ˆ?µë‹ˆ??");
+                    Console.WriteLine($"[Adventurer] {Members[0].Name} íŒŒí‹°ê°€ í˜„ì¬ {CurrentNode.Name}ì— ì§„ì…í–ˆìŠµë‹ˆë‹¤.");
             }
         }
 
-        // ?ŒŸ [?µì‹??˜?•] ê°€ì§œ ë³€?˜(Party.Bandages) ?€?  ?Œ?°ì› ê°€ë°???˜ 'ì§„ì§œ ?¤ë¬¼ ?„?´í…œ'?„ ?Œëª?
+        // ?ï¿½ï¿½ [?ï¿½ï¿½??ï¿½?ï¿½] ê°€ì§œ ë³€?ï¿½(Party.Bandages) ?ï¿½?ï¿½ ?ï¿½?ï¿½ì› ê°€ï¿½??ï¿½?ï¿½ 'ì§„ì§œ ?ï¿½ë¬¼ ?ï¿½?ï¿½í…œ'?ï¿½ ?ï¿½ï¿½?
         private void ConsumePartyPhysicalItems(Type type, int amount)
         {
             int remaining = amount;
@@ -880,7 +880,7 @@ namespace Server.Misc
                 if (TargetNode == null)
                     TargetNode = new WorldNode("Britain", RegionCode.Trammel_Town_Britain, WorldNodeType.Town, Map.Trammel, new Point3D(1426, 1695, 0), new Point3D(1426, 1695, 0), 1);
                 
-                Console.WriteLine($"[Adventurer] {Members[0].Name} ?Œ?°ê? ?„ì¹˜ ?•ë³´ë? ??¤í•˜??{TargetNode.Name}(??ë¡œ ê¸´ê? ?ˆì¶œ?©ë‹ˆ??");
+                Console.WriteLine($"[Adventurer] {Members[0].Name} íŒŒí‹°ê°€ ìœ„ì¹˜ ì •ë³´ë¥¼ ìƒì‹¤í•˜ì—¬ {TargetNode.Name}(ìœ¼)ë¡œ ê¸´ê¸‰ íƒˆì¶œí•©ë‹ˆë‹¤.");
                 this.TravelHoursRemaining = 5; 
                 this.State = AdventurerState.Traveling; 
                 return;
@@ -892,7 +892,7 @@ namespace Server.Misc
             int bandageConsume = (int)Math.Max(1, Members.Count * efficiency * 1.5);
             int potionConsume = (int)Math.Max(1, (Members.Count / 2) * efficiency * 0.5);
 
-            // ?ŒŸ [?µì‹??˜?•] ?Œ?°ì›?¤ì˜ ê°€ë°©ì—?œ ì§„ì§œ ?„?´í…œ ?Œëª?
+            // ?ï¿½ï¿½ [?ï¿½ï¿½??ï¿½?ï¿½] ?ï¿½?ï¿½ì›?ï¿½ì˜ ê°€ë°©ì—?ï¿½ ì§„ì§œ ?ï¿½?ï¿½í…œ ?ï¿½ï¿½?
             ConsumePartyPhysicalItems(typeof(Bandage), bandageConsume);
             ConsumePartyPhysicalItems(typeof(GreaterHealPotion), potionConsume);
 
@@ -906,7 +906,7 @@ namespace Server.Misc
             {
                 for (int i = 0; i < Members.Count; i++)
                 {
-                    // ?ŒŸ ë°°ê??”, ëª©ë?ë¦„??15000 ?´í•˜ë¡œ ?¨ì–´ì?ë©??ì¡??„?‘?¼ë? ê°„ì£¼í•˜ê³  ì¦‰ê° ?´ê?
+                    // ?ï¿½ï¿½ ë°°ï¿½??ï¿½, ëª©ï¿½?ë¦„??15000 ?ï¿½í•˜ë¡œ ?ï¿½ì–´ï¿½?ï¿½??ï¿½ï¿½??ï¿½?ï¿½?ï¿½ï¿½? ê°„ì£¼í•˜ê³  ì¦‰ê° ?ï¿½ï¿½?
                     if (Members[i].HP < Members[i].MaxHP * 0.3 || Members[i].Stress > 90 || Members[i].Hunger < 15000 || Members[i].Thirst < 15000)
                     {
                         needsRetreat = true; break;
@@ -936,7 +936,7 @@ namespace Server.Misc
         }
 
         // ========================================================================
-        // ?”® [êµ?• ?„ë£Œ] RetreatToTown: ë§ˆë²•???? ?„?œ ?¤ë???ê·€?˜ ?”ì§„ ???
+        // ?ï¿½ï¿½ [êµ?ï¿½ ?ï¿½ë£Œ] RetreatToTown: ë§ˆë²•???ï¿½?ï¿½ ?ï¿½?ï¿½ ?ï¿½ï¿½???ê·€?ï¿½ ?ï¿½ì§„ ?ï¿½??
         // ========================================================================
         private void RetreatToTown()
         {
@@ -951,7 +951,7 @@ namespace Server.Misc
 
             RegionCode majorDungeonCode = RegionSaver.GetMajorCode(CurrentNode.RCode);
             
-            // ë§ˆë²•???ˆì¶œ (ê²Œ?´íŠ?ë¦¬ì? ê°€?™ ì¡°ê±´) ì²´í?
+            // ë§ˆë²•???ï¿½ì¶œ (ê²Œ?ï¿½ï¿½?ë¦¬ï¿½? ê°€?ï¿½ ì¡°ê±´) ì²´ï¿½?
             bool hasMage = false;
             for (int i = 0; i < Members.Count; i++)
             {
@@ -965,16 +965,16 @@ namespace Server.Misc
                 }
             }
 
-            // ?ŒŸ [ê¸°íš ë³´ì •] ë§ˆë²•?¬ê? ì¡´ì¬í•  ê²½ìš? ê³ ë¦½ëœ ?´ê?ë¡œ?˜ ??ì§€?•?„ ë¬´ì‹œ?˜ê³ ,
-            // ?? ?ê¶Œ(VendorCount > 0)???´ì•„?ˆ?” ?€ë¥™ ??ê°€??ê°€ê¹Œ????… ì¤‘?¬ì?ë¡œ ì°¨ì› ?´ë™?©ë‹ˆ??
+            // ?ï¿½ï¿½ [ê¸°íš ë³´ì •] ë§ˆë²•?ï¿½ï¿½? ì¡´ì¬í•  ê²½ï¿½? ê³ ë¦½ëœ ?ï¿½ï¿½?ë¡œ?ï¿½ ??ì§€?ï¿½?ï¿½ ë¬´ì‹œ?ï¿½ê³ ,
+            // ?ï¿½?ï¿½ ?ï¿½ê¶Œ(VendorCount > 0)???ï¿½ì•„?ï¿½?ï¿½ ?ï¿½ë¥™ ??ê°€??ê°€ê¹Œ???ï¿½?ï¿½ ì¤‘?ï¿½ï¿½?ë¡œ ì°¨ì› ?ï¿½ë™?ï¿½ë‹ˆ??
             if (hasMage)
             {
                 TownEconomy bestShopTown = null;
                 double minShopDistance = double.MaxValue;
 
-                // ?ŒŸ [ë²„ê·??˜?•] ?˜?„ ?´ë? ë¬¼ë¦¬ ì¢Œ?œ(CurrentLocation)ë¥?ê¸°ì??¼ë? ê³„?°í•˜ë©?
-                // ëª¨ë“  ?˜?„??ëª¨ì—¬ìˆ?” ?™ìª?? ë¬¼ë¦¬? ?„ì¹˜ ?Œë¬¸ì— ?­? ë§ˆì§„?œ?„/?Œ?¸ì•„ë§Œ ? ??˜?” ?¤ë?(Magincia Bug) ë°œ?.
-                // ?°ë¼ì„œ ?˜?„ê³??°ê²°?œ '?¼ë¦¬? ?´ê? ë§ˆ?„'?˜ ì¤‘??ì¢Œ?œë¥?ê¸°ì???¼ë? ?¼ì•„ ?? ?„?œë¥?ê²€?‰?©ë‹ˆ??
+                // ?ï¿½ï¿½ [ë²„ï¿½??ï¿½?ï¿½] ?ï¿½?ï¿½ ?ï¿½ï¿½? ë¬¼ë¦¬ ì¢Œ?ï¿½(CurrentLocation)ï¿½?ê¸°ï¿½??ï¿½ï¿½? ê³„?ï¿½í•˜ï¿½?
+                // ëª¨ë“  ?ï¿½?ï¿½??ëª¨ì—¬ìˆ?ï¿½ ?ï¿½ï¿½??ï¿½ ë¬¼ë¦¬?ï¿½ ?ï¿½ì¹˜ ?ï¿½ë¬¸ì— ?ï¿½?ï¿½ ë§ˆì§„?ï¿½?ï¿½/?ï¿½?ï¿½ì•„ë§Œ ?ï¿½?ï¿½?ï¿½?ï¿½ ?ï¿½ï¿½?(Magincia Bug) ë°œ?ï¿½.
+                // ?ï¿½ë¼ì„œ ?ï¿½?ï¿½ï¿½??ï¿½ê²°?ï¿½ '?ï¿½ë¦¬?ï¿½ ?ï¿½ï¿½? ë§ˆ?ï¿½'?ï¿½ ì¤‘??ì¢Œ?ï¿½ï¿½?ê¸°ï¿½??ï¿½?ï¿½ï¿½? ?ï¿½ì•„ ?ï¿½?ï¿½ ?ï¿½?ï¿½ï¿½?ê²€?ï¿½?ï¿½ë‹ˆ??
                 Point3D logicalReferencePoint = CurrentLocation;
                 if (DungeonRetreatManager.Map.TryGetValue(majorDungeonCode, out RetreatRoute mRoute))
                 {
@@ -1001,7 +1001,7 @@ namespace Server.Misc
                     }
                 }
 
-                // ë§Œ???€ë¥™ ?´ì— ?œ?±í™”?œ ?? ?„?œê°€ ?†?¤ë©´, ?€ë¥™ ???„?˜?˜ ê°€??ê°€ê¹Œ??ë§ˆ?„?„ ? ?
+                // ë§Œ???ï¿½ë¥™ ?ï¿½ì— ?ï¿½?ï¿½í™”?ï¿½ ?ï¿½?ï¿½ ?ï¿½?ï¿½ê°€ ?ï¿½?ï¿½ë©´, ?ï¿½ë¥™ ???ï¿½?ï¿½?ï¿½ ê°€??ê°€ê¹Œ??ë§ˆ?ï¿½?ï¿½ ?ï¿½?ï¿½
                 if (bestShopTown == null)
                 {
                     foreach (TownEconomy town in allTowns)
@@ -1021,18 +1021,18 @@ namespace Server.Misc
                 if (bestShopTown != null)
                 {
                     var tCode = RegionSaver.GetRegionCodes(bestShopTown.Facet, bestShopTown.Center.X, bestShopTown.Center.Y, bestShopTown.Center.Z).Major;
-                    string safeName = bestShopTown.TownName ?? bestShopTown.Name ?? "?? ?„?œ";
+                    string safeName = bestShopTown.TownName ?? bestShopTown.Name ?? "?ï¿½?ï¿½ ?ï¿½?ï¿½";
                     TargetNode = new WorldNode(safeName, tCode, WorldNodeType.Town, bestShopTown.Facet, bestShopTown.Center, bestShopTown.Center, 1);
 
                     this.TravelHoursRemaining = 1;
                     this.State = AdventurerState.Traveling;
-                    Console.WriteLine($"[Adventurer] {Members[0].Name} ?Œ?°ê? ë§ˆë²•?¬ì˜ ê²Œ?´íŠ?ë§ˆë²•?„ ?µí•??????„ë¹„?œ {TargetNode.Name}(??ë¡œ ?ˆ?„?˜ê²Œ ê³µê??´ë™ ?´ê??ˆ?µë‹ˆ??");
+                    Console.WriteLine($"[Adventurer] {Members[0].Name} íŒŒí‹°ê°€ ë§ˆë²•ì‚¬ì˜ ê²Œì´íŠ¸ ë§ˆë²•ì„ í†µí•´ ì—¬ë¹„ ì—†ì´ {TargetNode.Name}(ìœ¼)ë¡œ ì‹ ì†í•˜ê²Œ ê³µê°„ ì´ë™ì— ì„±ê³µí–ˆìŠµë‹ˆë‹¤.");
                     return;
                 }
             }
 
             // --------------------------------------------------------------------
-            // ?š?ë¹„ë§ˆë²•???Œ?°ì „???¼ë? ?„ë³?? ë°• ?´ê? ë£¨íŠ?(ê¸°ì¡´ ?ˆ?„ ì½”?œ ë³´ì¡´)
+            // ?ï¿½?ë¹„ë§ˆë²•???ï¿½?ï¿½ì „???ï¿½ï¿½? ?ï¿½ï¿½??ï¿½ë°• ?ï¿½ï¿½? ë£¨ï¿½?(ê¸°ì¡´ ?ï¿½?ï¿½ ì½”?ï¿½ ë³´ì¡´)
             // --------------------------------------------------------------------
             if (!DungeonRetreatManager.Map.TryGetValue(majorDungeonCode, out RetreatRoute route))
             {
@@ -1040,7 +1040,7 @@ namespace Server.Misc
                 if (TargetNode == CurrentNode || TargetNode == null)
                     TargetNode = new WorldNode("Britain", RegionCode.Trammel_Town_Britain, WorldNodeType.Town, Map.Trammel, new Point3D(1426, 1695, 0), new Point3D(1426, 1695, 0), 1);
                 
-                Console.WriteLine($"[Adventurer] {Members[0].Name} ?Œ?°ê? ?ˆì¶œë¡œë¥?ì°¾ì? ëª»í•?{TargetNode.Name}(??ë¡œ ?˜?œ?œ ë¹„? ?‰êµ°ì„ ?œ?‘?©ë‹ˆ??");
+                Console.WriteLine($"[Adventurer] {Members[0].Name} íŒŒí‹°ê°€ íƒˆì¶œë¡œë¥¼ ì°¾ì§€ ëª»í•´ {TargetNode.Name}(ìœ¼)ë¡œ ëª©ìˆ¨ ê±´ ë¹„ìƒ í–‰êµ°ì„ ì‹œì‘í•©ë‹ˆë‹¤.");
                 this.TravelHoursRemaining = 5; 
                 this.State = AdventurerState.Traveling; 
                 return;
@@ -1054,7 +1054,7 @@ namespace Server.Misc
 
                 if (targetTown != null)
                 {
-                    string safeName = targetTown.TownName ?? targetTown.Name ?? "ì§€?• ?€?¼ì†Œ";
+                    string safeName = targetTown.TownName ?? targetTown.Name ?? "ì§€?ï¿½ ?ï¿½?ï¿½ì†Œ";
                     TargetNode = new WorldNode(safeName, route.TownCode, WorldNodeType.Town, targetTown.Facet, targetTown.Center, targetTown.Center, 1);
                 }
                 else
@@ -1063,7 +1063,7 @@ namespace Server.Misc
                     if (TargetNode == CurrentNode || TargetNode == null) 
                         TargetNode = new WorldNode("Britain", RegionCode.Trammel_Town_Britain, WorldNodeType.Town, Map.Trammel, new Point3D(1426, 1695, 0), new Point3D(1426, 1695, 0), 1);
                     
-                    Console.WriteLine($"[Adventurer] {Members[0].Name} ?Œ?°ê? ì§€?• ?€?¼ì†Œê°€ ??„?˜??{TargetNode.Name}(??ë¡œ ë¹„? ?‰êµ°í•©ë‹ˆ??");
+                    Console.WriteLine($"[Adventurer] {Members[0].Name} íŒŒí‹°ê°€ ì§€ì—­ ì•ˆë‚´ì†Œê°€ ì—†ì–´ {TargetNode.Name}(ìœ¼)ë¡œ ë¹„ìƒ í–‰êµ°í•©ë‹ˆë‹¤.");
                     this.TravelHoursRemaining = 5;
                     this.State = AdventurerState.Traveling;
                     return;
@@ -1100,11 +1100,11 @@ namespace Server.Misc
 
                     this.TravelHoursRemaining = Math.Max(1, route.BaseDistance / 300); 
                     this.State = AdventurerState.Traveling;
-                    Console.WriteLine($"[Adventurer] {Members[0].Name} ?Œ?°ê? ë°°ì‚¯ {ferryCost}gpë¥??´ê? {TargetNode.Name}(??ë¡œ ?´ìƒ ?´ê??©ë‹ˆ??");
+                    Console.WriteLine($"[Adventurer] {Members[0].Name} íŒŒí‹°ê°€ ë°°ì‚¯ {ferryCost}gpë¥¼ ë‚´ê³  {TargetNode.Name}(ìœ¼)ë¡œ í•´ìƒ ì´ë™í•©ë‹ˆë‹¤.");
                 }
                 else
                 {
-                    Console.WriteLine($"[Adventurer] {Members[0].Name} ?Œ?°ê? ë°°ì‚¯({ferryCost}gp)???†ê³  ë§ˆë²•?¬ë„ ?†???¬ì— ê³ ë¦½ë˜?ˆ?µë‹ˆ?? (?„ë©??„ê¸?");
+                    Console.WriteLine($"[Adventurer] {Members[0].Name} íŒŒí‹°ê°€ ë°°ì‚¯({ferryCost}gp)ì´ ì—†ê³  ë§ˆë²•ì‚¬ë„ ì—†ì–´ ì„¬ì— ê³ ë¦½ë˜ì—ˆìŠµë‹ˆë‹¤. (ì¡°ë‚œì„ ì–¸)");
                     this.State = AdventurerState.Exploring; 
                     this.TargetNode = null; 
                 }
@@ -1122,14 +1122,14 @@ namespace Server.Misc
                     
                     this.TravelHoursRemaining = ticks;
                     this.State = AdventurerState.Traveling;
-                    Console.WriteLine($"[Adventurer] {Members[0].Name} ?Œ?°ê? ?¬ë?ë¥?ì§€ë¶ˆ?˜ê³  {TargetNode.Name}(??ë¡œ ?´ê??©ë‹ˆ??");
+                    Console.WriteLine($"[Adventurer] {Members[0].Name} íŒŒí‹°ê°€ ì—¬ë¹„ë¥¼ ì§€ë¶ˆí•˜ê³  {TargetNode.Name}(ìœ¼)ë¡œ ì´ë™í•©ë‹ˆë‹¤.");
                 }
                 else
                 {
                     int ticks = Math.Max(2, (route.BaseDistance / 300) * 3); 
                     this.TravelHoursRemaining = ticks;
                     this.State = AdventurerState.Traveling;
-                    Console.WriteLine($"[Adventurer] {Members[0].Name} ?Œ?°ê? ë¬´ì¼í‘¼ìœ¼ë? {TargetNode.Name}ê¹Œì§€ ë§¨ëª¸ ?‰êµ°ì„ ê°•?‰?©ë‹ˆ?? (?„???„?˜)");
+                    Console.WriteLine($"[Adventurer] {Members[0].Name} íŒŒí‹°ê°€ ë¬´ì¼í‘¼ìœ¼ë¡œ {TargetNode.Name}ê¹Œì§€ ë§¨ëª¸ í–‰êµ°ì„ ê°•í–‰í•©ë‹ˆë‹¤. (ì‚¬ê¸° í•˜ë½)");
                 }
             }
         }
@@ -1160,7 +1160,7 @@ namespace Server.Misc
             if (town != null)
             {
                 var tCode = RegionSaver.GetRegionCodes(town.Facet, town.Center.X, town.Center.Y, town.Center.Z).Major;
-                return new WorldNode(town.TownName ?? town.Name ?? "ÀÎ±Ù ¸¶À»", tCode, WorldNodeType.Town, town.Facet, town.Center, town.Center, 1);
+                return new WorldNode(town.TownName ?? town.Name ?? "ï¿½Î±ï¿½ ï¿½ï¿½ï¿½ï¿½", tCode, WorldNodeType.Town, town.Facet, town.Center, town.Center, 1);
             }
             return CurrentNode;
         }
@@ -1203,7 +1203,7 @@ namespace Server.Misc
             int extraSupply = Math.Max(1, monsters.Count / 3);
             ConsumePartyPhysicalItems(typeof(Bandage), extraSupply);
 
-            // ?ŒŸ ê¶?˜?¤ì€ ?¤ì œ ?”??ë³¼íŠ¸ë? ?Œëª?(?œ??ê²½ì œ ?°ë™)
+            // ?ï¿½ï¿½ ê¶?ï¿½?ï¿½ì€ ?ï¿½ì œ ?ï¿½??ë³¼íŠ¸ï¿½? ?ï¿½ï¿½?(?ï¿½??ê²½ì œ ?ï¿½ë™)
             foreach (var m in Members)
             {
                 if (m.Role == AdventurerRole.RangedDPS && m.Backpack != null)
@@ -1237,13 +1237,13 @@ namespace Server.Misc
                         var town = TownEconomyManager.Towns.Values.OrderBy(t => Utility.GetDistanceToSqrt(CurrentLocation, t.Center)).FirstOrDefault();
                         if (town != null) VirtualAdventurerManager.PayToCitizenOrTown(town, 1000, NpcJobClass.Healer_Master, NpcJobClass.Priest);
                         
-                        Console.WriteLine($"[Adventurer] {m.Name}??ê°€) ì¹˜ëª…??„ ?…?ˆ?¼ë‚˜ ?Œ???ê¸ˆ?¼ë? êµ¬ì¡°?ˆ?µë‹ˆ??");
+                        Console.WriteLine($"[Adventurer] {m.Name}ì´(ê°€) ì¹˜ëª…ìƒì„ ì…ì—ˆìœ¼ë‚˜ ë‹¤í–‰íˆ ê¸°ê¸ˆìœ¼ë¡œ êµ¬ì¡°ë˜ì—ˆìŠµë‹ˆë‹¤.");
                     }
                     else
                     {
                         m.SpawnAdventurerChest(CurrentMap, CurrentLocation);
                         Members.RemoveAt(i);
-                        Console.WriteLine($"[Adventurer] {m.Name}???„?¬í–ˆ?µë‹ˆ??");
+                        Console.WriteLine($"[Adventurer] {m.Name}ì´(ê°€) ì „ì‚¬í–ˆìŠµë‹ˆë‹¤.");
                     }
                 }
             }
@@ -1405,7 +1405,7 @@ namespace Server.Misc
     }
 
     // ==============================================================================
-    // [ê°€? ëª¨í—˜ê°€ ?´ë˜??ë³¸ì²´]
+    // [ê°€?ï¿½ ëª¨í—˜ê°€ ?ï¿½ë˜??ë³¸ì²´]
     // ==============================================================================
     public class VirtualAdventurer : VirtualAgent
     {
@@ -1481,7 +1481,7 @@ namespace Server.Misc
             IsRestingAtInn = false;
             HasMount = false;
 
-            // ?ŒŸ ?œë¯??œ?¤í…œê³??™?¼í•œ 10ë§Œ ?¤ì??¼ì˜ ë§Œë³µë„ë¡œ ?¸íŒ…
+            // ?ï¿½ï¿½ ?ï¿½ï¿½??ï¿½?ï¿½í…œï¿½??ï¿½?ï¿½í•œ 10ë§Œ ?ï¿½ï¿½??ï¿½ì˜ ë§Œë³µë„ë¡œ ?ï¿½íŒ…
             Hunger = 100000;
             Thirst = 100000;
 
@@ -1601,7 +1601,7 @@ namespace Server.Misc
 
             var profile = AdventurerProfileManager.GetProfile(this.JobClass);
             
-            // ?ŒŸ ë¹µì€ 30ê°œ???¤íƒ, ?˜ì§€ë§Œ ê²¹ì?ì§€ì§€ ?Š?” ?Œë£Œ(Pitcher)?” ê°€ë°??œ?„ë¥??„??5ê°œë¡œ ?˜??ì¡°ì •
+            // ?ï¿½ï¿½ ë¹µì€ 30ê°œ???ï¿½íƒ, ?ï¿½ì§€ë§Œ ê²¹ï¿½?ì§€ì§€ ?ï¿½?ï¿½ ?ï¿½ë£Œ(Pitcher)?ï¿½ ê°€ï¿½??ï¿½?ï¿½ï¿½??ï¿½??5ê°œë¡œ ?ï¿½??ì¡°ì •
             var requirements = new List<(Type Type, int Target, int DefaultPrice)> {
                 (typeof(BreadLoaf), 30, 10), 
                 (typeof(Pitcher), 5, 15)
@@ -1647,7 +1647,7 @@ namespace Server.Misc
             {
                 Item item = (Item)Activator.CreateInstance(type);
                 
-                // ?ŒŸ [?¨ì?] ?Œë£Œ?˜ë©??¼ë‹?ë¬¼ì„ ê½‰ ì±„?´ë‹?
+                // ?ï¿½ï¿½ [?ï¿½ï¿½?] ?ï¿½ë£Œ?ï¿½ï¿½??ï¿½ï¿½?ë¬¼ì„ ê½‰ ì±„?ï¿½ï¿½?
                 if (item is BaseBeverage firstBev)
                 {
                     firstBev.Content = BeverageType.Water;
@@ -1666,7 +1666,7 @@ namespace Server.Misc
                     {
                         Item extraItem = (Item)Activator.CreateInstance(type);
                         
-                        // ?ŒŸ [?¨ì?] ìª¼ê?ì§„ ?˜ë¨¸ì? ë³‘?¤ì—?„ ë¬¼ì„ ê½‰ê½‰ ì±„?´ë‹?
+                        // ?ï¿½ï¿½ [?ï¿½ï¿½?] ìª¼ï¿½?ì§„ ?ï¿½ë¨¸ï¿½? ë³‘?ï¿½ì—?ï¿½ ë¬¼ì„ ê½‰ê½‰ ì±„?ï¿½ï¿½?
                         if (extraItem is BaseBeverage extraBev)
                         {
                             extraBev.Content = BeverageType.Water;
@@ -1677,7 +1677,7 @@ namespace Server.Misc
                     }
                 }
             } 
-            catch { Console.WriteLine($"[Error] {type.Name} ?„?´í…œ ????¤íŒ?(ëª¨í—˜ê°€ ë³´ê?)"); }
+            catch { Console.WriteLine($"[Error] {type.Name} ì•„ì´í…œ ìƒì„± ì‹¤íŒ¨ (ëª¨í—˜ê°€ ë³´ê¸‰)"); }
         }
 
         private void TrySmartPurchase(TownEconomy town, Type itemType, int qty, int defaultPrice)
@@ -1764,7 +1764,7 @@ namespace Server.Misc
                                 this.EquipmentTier = Math.Max(this.EquipmentTier, GetRarityLevel(item));
                                 budget -= price;
 
-                                Console.WriteLine($"[Spec-Up] ëª¨í—˜ê°€ {this.Name}??ê°€) ????œ {item.GetType().Name} êµ¬ë§¤! (ì§€ì¶œ: {price}gp)");
+                                Console.WriteLine($"[Spec-Up] ëª¨í—˜ê°€ {this.Name}ì´(ê°€) ìƒì ì—ì„œ {item.GetType().Name} êµ¬ë§¤! (ì§€ì¶œ: {price}gp)");
                                 foundMagicGear = true;
                                 
                                 if (budget < 1000) return; 
@@ -1929,7 +1929,7 @@ namespace Server.Misc
             {
                 if (Utility.RandomDouble() < 0.20)
                 {
-                    Console.WriteLine($"[?? ì£¼ê¸°] ëª¨í—˜ê°€ {this.Name}({Math.Floor(currentAge)}??ê°€ ?€?´í•˜???œë¯¼ì??©ë‹ˆ??");
+                    Console.WriteLine($"[ìƒì• ì£¼ê¸°] ëª¨í—˜ê°€ {this.Name}({Math.Floor(currentAge)}ì„¸)ê°€ ì€í‡´í•˜ì—¬ ì‹œë¯¼ì´ ë©ë‹ˆë‹¤.");
                     NobilityRank rank = Fame > 10000 ? NobilityRank.Knight : NobilityRank.Commoner; 
                     return (true, rank);
                 }
@@ -2001,7 +2001,7 @@ namespace Server.Misc
             return (false, 0); 
         }
 
-        // ?ŒŸ [?µì‹??˜?• 1] ????„(30ë¶„? 1ë²ˆ ?°ì‚?? ë§ì¶?ë§Œë³µë„ ê°?Œ ?¤ì??¼ì„ ?€?­ ?Œ?‘ (?Œë¹„ ?­ë°œ ? ?„)
+        // ?ï¿½ï¿½ [?ï¿½ï¿½??ï¿½?ï¿½ 1] ???ï¿½?ï¿½(30ë¶„?ï¿½ 1ë²ˆ ?ï¿½ï¿½??ï¿½ ë§ï¿½?ë§Œë³µë„ ê°?ï¿½ ?ï¿½ï¿½??ï¿½ì„ ?ï¿½?ï¿½ ?ï¿½?ï¿½ (?ï¿½ë¹„ ?ï¿½ë°œ ?ï¿½?ï¿½)
         public void UpdateSurvivalTick()
         {
             int metabolism = (Party != null && Party.State == AdventurerState.Exploring) ? 10000 : 2000;
@@ -2051,28 +2051,28 @@ namespace Server.Misc
             if (this.HP <= 0 && Party == null) Die(); 
         }
 
-        // ?ŒŸ [ì¶”ê°€] ê°€ë°??ˆ?˜ ?„?´í…œ?„ ?¤ì œë¡œ ì°¾ì•„ ?Œëª¨ì‹œ?¤ëŠ” ë¡œì§
+        // ?ï¿½ï¿½ [ì¶”ê°€] ê°€ï¿½??ï¿½?ï¿½ ?ï¿½?ï¿½í…œ?ï¿½ ?ï¿½ì œë¡œ ì°¾ì•„ ?ï¿½ëª¨ì‹œ?ï¿½ëŠ” ë¡œì§
         private bool ConsumeItemFromBackpack(Type itemType)
         {
             if (this.Backpack == null) return false;
             
-            // 1. ë§ˆ??ê²ƒ(?Œë£Œë¥˜)??ê²½ìš??¤íƒ(Amount)???„?ˆ???´ìš©ë¬¼(Quantity)?„ ?Œëª?
+            // 1. ë§ˆ??ê²ƒ(?ï¿½ë£Œë¥˜)??ê²½ï¿½??ï¿½íƒ(Amount)???ï¿½?ï¿½???ï¿½ìš©ë¬¼(Quantity)?ï¿½ ?ï¿½ï¿½?
             if (typeof(BaseBeverage).IsAssignableFrom(itemType))
             {
-                // ?´ìš©ë¬¼??1 ?´ìƒ ?¨ì•„?ˆ?” ?Œë£Œë§Œ ê°€ë°©ì—?œ ì°¾ìŒ
+                // ?ï¿½ìš©ë¬¼??1 ?ï¿½ìƒ ?ï¿½ì•„?ï¿½?ï¿½ ?ï¿½ë£Œë§Œ ê°€ë°©ì—?ï¿½ ì°¾ìŒ
                 var bev = this.Backpack.Items.OfType<BaseBeverage>().FirstOrDefault(b => b.GetType() == itemType && b.Quantity > 0);
                 if (bev != null)
                 {
-                    bev.Quantity--; // ?´ìš©ë¬¼ ?œ ëª¨ê?(1?”) ë§ˆ??
+                    bev.Quantity--; // ?ï¿½ìš©ë¬¼ ?ï¿½ ëª¨ï¿½?(1?ï¿½) ë§ˆ??
                     
-                    // ??ë§ˆ?”?œ ë¹ˆ ë³‘/ì£¼ì „?ê°€ ?˜ë©?ê°€ë°?ì¹??­ë¹„ë¥?ë§‰ê¸??„???Œê´?
+                    // ??ë§ˆ?ï¿½?ï¿½ ë¹ˆ ë³‘/ì£¼ì „?ï¿½ê°€ ?ï¿½ï¿½?ê°€ï¿½?ï¿½??ï¿½ë¹„ï¿½?ë§‰ï¿½??ï¿½???ï¿½ï¿½?
                     if (bev.Quantity <= 0) bev.Delete(); 
                     return true;
                 }
                 return false;
             }
 
-            // 2. ?¼ë? ?„?´í…œ (ë¹? ë¶•?€, ?¬ì…˜ ??
+            // 2. ?ï¿½ï¿½? ?ï¿½?ï¿½í…œ (ï¿½? ë¶•?ï¿½, ?ï¿½ì…˜ ??
             Item item = this.Backpack.FindItemByType(itemType);
             if (item != null)
             {
@@ -2138,11 +2138,11 @@ namespace Server.Misc
         {
             if (map == null || map == Map.Internal) return;
 
-            // ?ŒŸ [?¸ë“œ ?ˆì§€?¤íŠ¸ë¦¬ V2 ?°ë™] 
-            // ê¸°ì¡´?˜ ?¨ìˆœ ?? ???ë° ?­?œ ì½”?œë¥?ëª¨ë‘ ? ë¦¬ê?, 
-            // ?˜?„ ?¸ë“œ ê¸°ë??˜ '?? ë°€ì§‘?„ ì²´í?ë° ?¨ì •/?±ê? ?…ê·¸ë ˆ?´ë“œ' ë¡œì§?¼ë? ?œ?´ê??„ ?˜ê¹?ˆ??
+            // ?ï¿½ï¿½ [?ï¿½ë“œ ?ï¿½ì§€?ï¿½íŠ¸ë¦¬ V2 ?ï¿½ë™] 
+            // ê¸°ì¡´?ï¿½ ?ï¿½ìˆœ ?ï¿½?ï¿½ ?ï¿½??ë° ?ï¿½?ï¿½ ì½”?ï¿½ï¿½?ëª¨ë‘ ?ï¿½ë¦¬ï¿½?, 
+            // ?ï¿½?ï¿½ ?ï¿½ë“œ ê¸°ï¿½??ï¿½ '?ï¿½?ï¿½ ë°€ì§‘?ï¿½ ì²´ï¿½?ë° ?ï¿½ì •/?ï¿½ï¿½? ?ï¿½ê·¸ë ˆ?ï¿½ë“œ' ë¡œì§?ï¿½ï¿½? ?ï¿½?ï¿½ï¿½??ï¿½ ?ï¿½ê¹?ï¿½??
             
-            int carryGold = this.Gold / 2; // ëª¨í—˜ê°€ê°€ ?¤ê? ?ˆ?˜ ê³¨ë“œ?˜ ?ˆë°˜?„ ? ?ˆ?¼ë? ?¤ì •
+            int carryGold = this.Gold / 2; // ëª¨í—˜ê°€ê°€ ?ï¿½ï¿½? ?ï¿½?ï¿½ ê³¨ë“œ?ï¿½ ?ï¿½ë°˜?ï¿½ ?ï¿½?ï¿½?ï¿½ï¿½? ?ï¿½ì •
 
             Server.Misc.AdventurerChestManager.ProcessAdventurerDeath(this.PhysicalObject, loc, map, carryGold);
         }

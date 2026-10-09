@@ -1,10 +1,10 @@
-using System;
+ï»¿using System;
 
 namespace Server.Items
 {
     public class CabbageSeed : BaseSeed
     {
-        // ÀÌ ¾¾¾ÑÀÌ ÀÚ¶ó¸é »ý¼ºµÉ ¾ÆÀÌÅÛ Å¸ÀÔ ÁöÁ¤
+        // ì´ ì”¨ì•—ì´ ìžë¼ë©´ ìƒì„±ë  ì•„ì´í…œ íƒ€ìž… ì§€ì •
         public override Type CropType => typeof(Cabbage);
         public override double MinSkill => 60.0;
         public override double MaxSkill => 110.0; 
@@ -13,7 +13,7 @@ namespace Server.Items
         public CabbageSeed() : base(0xDCF)
         {
             Hue = 0x232; 
-            Name = "¾ç¹èÃß ¾¾¾Ñ"; 
+            Name = "ì–‘ë°°ì¶” ì”¨ì•—"; 
         }
 
         public CabbageSeed(Serial serial) : base(serial) { }

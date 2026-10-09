@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Server;
 using Server.Items;
@@ -272,23 +272,71 @@ public class PrivateFarmAddon : BaseAddon
     public class FarmPestControlKegComponent : AddonComponent
     {
         private int m_Charges;
+        private int m_PotionType; // 0=None, 1=Vitality, 2=Poison
+        private int m_PotionTier;
+
         [CommandProperty(AccessLevel.GameMaster)]
         public int Charges { get { return m_Charges; } set { m_Charges = value; } }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int PotionType { get { return m_PotionType; } set { m_PotionType = value; } }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int PotionTier { get { return m_PotionTier; } set { m_PotionTier = value; } }
 
         public FarmPestControlKegComponent() : base(0x1940)
         {
-            Name = "방역통 (Pest Control Keg)";
-            m_Charges = 50;
+            Name = "물약통 (빈 통)";
+            m_Charges = 0;
         }
 
         public override void OnDoubleClick(Mobile from)
         {
-            from.SendMessage("반경 5x5 이내의 작물에 해충 방역을 제공합니다. 남은 용량: " + m_Charges + " / 50");
+            string pType = m_PotionType == 1 ? "활력 포션" : m_PotionType == 2 ? "독 포션" : "없음";
+            from.SendMessage($"현재 들어있는 물약: {pType} ({m_PotionTier}등급) / 남은 용량: {m_Charges}");
+            from.SendMessage("포션을 부어넣으려면 대상을 지정하세요.");
+            from.Target = new KegTarget(this);
+        }
+
+        private class KegTarget : Server.Targeting.Target
+        {
+            private FarmPestControlKegComponent m_Keg;
+            public KegTarget(FarmPestControlKegComponent keg) : base(2, false, Server.Targeting.TargetFlags.None) { m_Keg = keg; }
+            protected override void OnTarget(Mobile from, object targeted)
+            {
+                if (m_Keg == null || m_Keg.Deleted) return;
+                if (targeted is Server.Items.BasePotion p)
+                {
+                    int tier = 3;
+                    string n = p.GetType().Name;
+                    if (n.StartsWith("Mini")) tier = 1;
+                    else if (n.StartsWith("Lesser")) tier = 2;
+                    else if (n.StartsWith("Greater")) tier = 4;
+                    else if (n.StartsWith("Deadly") || n.StartsWith("Total")) tier = 5;
+
+                    int type = 0;
+                    if (p is Server.Items.BaseHealPotion || p is Server.Items.BaseRefreshPotion) type = 1;
+                    else if (p is Server.Items.BasePoisonPotion) type = 2;
+
+                    if (type == 0) { from.SendMessage("활력(Heal/Refresh) 또는 독(Poison) 포션만 넣을 수 있습니다."); return; }
+
+                    if (m_Keg.Charges > 0 && (m_Keg.PotionType != type || m_Keg.PotionTier != tier)) {
+                        from.SendMessage("이미 다른 종류나 등급의 포션이 들어있습니다. 다 쓴 후에 넣으세요.");
+                        return;
+                    }
+
+                    m_Keg.PotionType = type;
+                    m_Keg.PotionTier = tier;
+                    m_Keg.Charges += 10; // 포션 1개당 10회 분량 충전
+                    m_Keg.Name = type == 1 ? $"활력통 ({tier}등급)" : $"방역통 ({tier}등급)";
+                    from.SendMessage($"물약통에 포션을 부었습니다. (현재 {m_Keg.Charges}회 남음)");
+                    p.Consume();
+                }
+                else { from.SendMessage("활력/독 포션을 선택해야 합니다."); }
+            }
         }
 
         public FarmPestControlKegComponent(Serial serial) : base(serial) { }
-        public override void Serialize(GenericWriter writer) { base.Serialize(writer); writer.Write((int)0); writer.Write(m_Charges); }
-        public override void Deserialize(GenericReader reader) { base.Deserialize(reader); reader.ReadInt(); m_Charges = reader.ReadInt(); }
+        public override void Serialize(GenericWriter writer) { base.Serialize(writer); writer.Write((int)1); writer.Write(m_Charges); writer.Write(m_PotionType); writer.Write(m_PotionTier); }
+        public override void Deserialize(GenericReader reader) { base.Deserialize(reader); int version = reader.ReadInt(); m_Charges = reader.ReadInt(); if (version >= 1) { m_PotionType = reader.ReadInt(); m_PotionTier = reader.ReadInt(); } }
     }
 
     public class FarmSurveyorPeg : AddonComponent {

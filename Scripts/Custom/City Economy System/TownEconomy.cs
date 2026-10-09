@@ -606,12 +606,26 @@ namespace Server.Misc
                 Console.WriteLine($"[Economy] 파일 없음: 월드 스캔으로 {Towns.Count}개 도시를 자동 복구했습니다.");
             }
 
+            // [추가] 공식 마을(0~49) 강제 초기화 보장
+            for (int m = 0; m <= 5; m++)
+            {
+                for (int b = 1; b < 50; b++)
+                {
+                    int tID = b + (m * 100);
+                    var grid = TownNumber.GetGridInfo(tID);
+                    if (grid.Total > 0 && !Towns.ContainsKey(tID))
+                    {
+                        Towns[tID] = new TownEconomy(tID, 0);
+                    }
+                }
+            }
+
             var cleanupList = Towns.Values.Where(t => 
             {
                 int activeVendors = World.Mobiles.Values.OfType<BaseVendor>()
                     .Count(v => v is not Banker && TownNumber.GetID(v.Location, v.Map) == t.TownID);
                 int inventoryCount = t.Warehouse.Count;
-                return activeVendors == 0 || inventoryCount == 0;
+                return activeVendors == 0 && inventoryCount == 0 && t.Wealth == 0;
             })
             .Select(t => t.TownID)
             .ToList();
@@ -641,4 +655,6 @@ namespace Server.Misc
         }
     }
 }
+
+
 

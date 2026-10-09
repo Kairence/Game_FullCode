@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 
 namespace Server.Items
 {
@@ -12,7 +12,7 @@ namespace Server.Items
         public WheatSeed() : base(0xDCF)
         {
             Hue = 45;
-            Name = "¹Ð ¾¾¾Ñ";
+            Name = "ë°€ ì”¨ì•—";
         }
 
         public WheatSeed(Serial serial) : base(serial) { }
