@@ -1,4 +1,4 @@
-﻿#region References
+#region References
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -282,6 +282,7 @@ namespace Server.Mobiles
         private double m_dMinTameSkill;
         private double m_CurrentTameSkill;
         private bool m_bTamable;
+        private double m_BodySize = 1.0;
 
         private bool m_bSummoned;
         private DateTime m_SummonEnd;
@@ -3059,7 +3060,10 @@ namespace Server.Mobiles
         {
             base.Serialize(writer);
 
-            writer.Write(44); // version
+            writer.Write(45); // version
+
+			// version 45
+			writer.Write((double)m_BodySize);
 
 			// version 44
 			for (int j = 0; j < 4; j++)
@@ -3333,6 +3337,11 @@ namespace Server.Mobiles
 
             switch (version)
             {
+				case 45:
+				{
+					m_BodySize = reader.ReadDouble();
+					goto case 44;
+				}
 				case 44:
 				{
 					for (int j = 0; j < 4; j++)
@@ -4642,6 +4651,49 @@ namespace Server.Mobiles
 
         [CommandProperty(AccessLevel.GameMaster)]
         public double CurrentTameSkill { get { return m_CurrentTameSkill; } set { m_CurrentTameSkill = value; } }
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public double BodySize
+        {
+            get => m_BodySize;
+            set
+            {
+                double clamped = Math.Clamp(value, 0.5, 2.0);
+                if (m_BodySize != clamped)
+                {
+                    m_BodySize = clamped;
+                    SendBodySizePacket();
+                }
+            }
+        }
+
+        public void SendBodySizePacket()
+        {
+            if (Map == null || Map == Map.Internal)
+                return;
+
+            var packet = new Server.Network.MobileBodySizePacket(this, m_BodySize);
+            packet.Acquire();
+
+            IPooledEnumerable eable = this.GetClientsInRange(18);
+            foreach (Server.Network.NetState state in eable)
+            {
+                state.Send(packet);
+            }
+            eable.Free();
+
+            Server.Network.Packet.Release(packet);
+        }
+
+        public override void SendPropertiesTo(Mobile from)
+        {
+            base.SendPropertiesTo(from);
+
+            if (m_BodySize != 1.0 && from != null && from.NetState != null)
+            {
+                from.Send(new Server.Network.MobileBodySizePacket(this, m_BodySize));
+            }
+        }
 
         [CommandProperty(AccessLevel.GameMaster)]
         public bool Tamable { get { return m_bTamable && !m_Paragon; } set { m_bTamable = value; } }
