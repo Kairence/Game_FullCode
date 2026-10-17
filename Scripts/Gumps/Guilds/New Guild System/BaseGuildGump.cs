@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server.Gumps;
 using Server.Misc;
 using Server.Mobiles;
@@ -68,7 +68,7 @@ namespace Server.Guilds
             {
                 char c = s[i];
 
-                if ((c < 'a' || c > 'z') && (c < '0' || c > '9'))
+                if ((c < 'a' || c > 'z') && (c < '0' || c > '9') && c != ' ' && c < 0x80)
                 {
                     bool except = false;
 
@@ -103,15 +103,22 @@ namespace Server.Guilds
             this.AddPage(0);
 
             this.AddBackground(0, 0, 600, 440, 0x24AE);
-            this.AddBackground(66, 40, 150, 26, 0x2486);
-            this.AddButton(71, 45, 0x845, 0x846, 1, GumpButtonType.Reply, 0);
-            this.AddHtmlLocalized(96, 43, 110, 26, 1063014, 0x0, false, false); // My Guild
-            this.AddBackground(236, 40, 150, 26, 0x2486);
-            this.AddButton(241, 45, 0x845, 0x846, 2, GumpButtonType.Reply, 0);
-            this.AddHtmlLocalized(266, 43, 110, 26, 1062974, 0x0, false, false); // Guild Roster
-            this.AddBackground(401, 40, 150, 26, 0x2486);
-            this.AddButton(406, 45, 0x845, 0x846, 3, GumpButtonType.Reply, 0);
-            this.AddHtmlLocalized(431, 43, 110, 26, 1062978, 0x0, false, false); // Diplomacy
+            this.AddBackground(25, 40, 130, 26, 0x2486);
+            this.AddButton(30, 45, 0x845, 0x846, 1, GumpButtonType.Reply, 0);
+            this.AddHtml(55, 43, 95, 26, "<basefont color=#FFD700><b>길드 정보</b></basefont>", false, false);
+
+            this.AddBackground(165, 40, 130, 26, 0x2486);
+            this.AddButton(170, 45, 0x845, 0x846, 2, GumpButtonType.Reply, 0);
+            this.AddHtml(195, 43, 95, 26, "<basefont color=#FFFFFF><b>길드 명단</b></basefont>", false, false);
+
+            this.AddBackground(305, 40, 130, 26, 0x2486);
+            this.AddButton(310, 45, 0x845, 0x846, 3, GumpButtonType.Reply, 0);
+            this.AddHtml(335, 43, 95, 26, "<basefont color=#FFFFFF><b>외교 관계</b></basefont>", false, false);
+
+            this.AddBackground(445, 40, 130, 26, 0x2486);
+            this.AddButton(450, 45, 0x845, 0x846, 15, GumpButtonType.Reply, 0);
+            this.AddHtml(475, 43, 95, 26, "<basefont color=#33FF99><b>길드 창고</b></basefont>", false, false);
+
             this.AddPage(1);
         }
 
@@ -137,6 +144,11 @@ namespace Server.Guilds
                 case 3:
                     {
                         pm.SendGump(new GuildDiplomacyGump(pm, this.guild));
+                        break;
+                    }
+                case 15:
+                    {
+                        pm.SendGump(new GuildVaultGump(pm, this.guild));
                         break;
                     }
             }

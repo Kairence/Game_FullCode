@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server.Targeting;
 
 namespace Server.Engines.PartySystem
@@ -26,7 +26,7 @@ namespace Server.Engines.PartySystem
                 else if (m.Party is Mobile)
                     return;
                 else if (p != null && (p.Members.Count + p.Candidates.Count) >= Party.Capacity)
-                    from.SendLocalizedMessage(1008095); // You may only have 10 in your party (this includes candidates).
+                    from.SendMessage("파티 정원은 최대 20명입니다.");
                 else if (!m.Player && m.Body.IsHuman)
                     m.SayTo(from, 1005443); // Nay, I would rather stay here and watch a nail rust.
                 else if (!m.Player)

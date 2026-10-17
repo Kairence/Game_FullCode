@@ -1,4 +1,4 @@
-﻿#region References
+#region References
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -1731,10 +1731,11 @@ namespace Server.Items
 			if( a != null && a == PrimaryAbility )
 				first = true;
 
-            if (a != null ) //&& (!a.OnBeforeSwing(attacker, defender, WeaponAbilityLevel(attacker, first))))
-            {
-                WeaponAbility.ClearCurrentAbility(attacker);
-            }
+            // [액티브 시스템] 타격 성공(OnHit) 시 특수기가 발동되어야 하므로 OnBeforeSwing에서 미리 지우지 않음
+            // if (a != null)
+            // {
+            //     WeaponAbility.ClearCurrentAbility(attacker);
+            // }
 
 			SpecialMove move = SpecialMove.GetCurrentMove(attacker);
 
@@ -2362,16 +2363,14 @@ namespace Server.Items
 					}
 				}			
 
-				//특수기 발동 체크
-				// 1. 특수기 발동 여부 먼저 판단 (여기서 걸러지면 끝)
-				if (attacker is PlayerMobile)
+				// [액티브 시스템] 플레이어의 현재 활성화된 특수기 확인
+				WeaponAbility currentAbility = WeaponAbility.GetCurrentAbility(attacker);
+				if (currentAbility != null)
 				{
-					// 전술 50 이상이어야 첫 번째 특수기가 해금되어 고정 확률(5%)로 발동 가능함
-					isSpecialProc = (attacker.Skills[SkillName.Tactics].Value >= 50.0 && 0.05 > Utility.RandomDouble());
+					isSpecialProc = true;
 				}
-				else if (attacker is BaseCreature)
+				else if (attacker is BaseCreature bc)
 				{
-					BaseCreature bc = (BaseCreature)attacker;
 					// 몬스터는 설정된 두 확률의 합만큼 발동 확률을 가짐
 					isSpecialProc = ((bc.SpecialChance1 + bc.SpecialChance2) > Utility.RandomDouble());
 				}
@@ -2507,14 +2506,26 @@ namespace Server.Items
 
 			if( isSpecialProc )
 			{
-				// 무기 타입 판별 (앞서 만든 GetSpecialWeaponType 함수 사용)
-				int typeID = GetWeaponCategoryID(this, attacker);
-
-				// 전술 단계에 따른 누적 특수기 연쇄 시전!
-				// 예: 전술 150이면 50점 기술, 100점 기술, 150점 기술이 차례대로 터짐
-				if (typeID >= 0)
+				WeaponAbility activeAbility = WeaponAbility.GetCurrentAbility(attacker);
+				if (activeAbility != null)
 				{
-					SpecialAbilityManager.ExecuteChainAbilities(typeID, attacker, defender, damage);
+					// [액티브 시스템] 장전된 고유 특수기 OnHit 발동!
+					activeAbility.OnHit(attacker, defender, damage);
+					WeaponAbility.ClearCurrentAbility(attacker);
+
+					// 자체 데미지(AOS.Damage)를 직접 처리하는 특수기(파괴일격, 급소가격 등)는 평타 데미지 중복 생략
+					// 자체 데미지가 없는 상태이상 특수기(마비일격, 무장해제 등)는 아래의 기본 무기 타격 데미지 정상 적용
+					if (activeAbility.DealsOwnDamage)
+						return;
+				}
+				else
+				{
+					// 몬스터 또는 기존 특수기 체인 연동
+					int typeID = GetWeaponCategoryID(this, attacker);
+					if (typeID >= 0)
+					{
+						SpecialAbilityManager.ExecuteChainAbilities(typeID, attacker, defender, damage);
+					}
 				}
 			}
             if (defender == null)

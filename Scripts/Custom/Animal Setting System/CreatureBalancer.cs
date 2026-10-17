@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server;
 using Server.Mobiles;
 using Server.Items;
@@ -197,6 +197,24 @@ namespace Server.Misc
             else if (bc.Grade == 8 && !bc.Name.StartsWith("Boss ")) bc.Name = "Boss " + bc.Name;
 
             if (bc.Grade >= 2) { bc.Delta(MobileDelta.Name); bc.Delta(MobileDelta.Hue); bc.InvalidateProperties(); }
+        }
+
+        public static double MonsterTierCrowdControlRecovery(BaseCreature from)
+        {
+            if (from == null) return 1.0;
+
+            switch (MonsterGrade(from.Grade))
+            {
+                case 5: // Boss 포함
+                    return 0.1;
+                case 4: // Chief
+                    return 0.25;
+                case 3: // Elite
+                    return 0.34;
+                case 2: // Rare
+                    return 0.55;
+            }
+            return 1.0;
         }
 
         private static bool IsSlayer(BaseCreature bc, SlayerName name)

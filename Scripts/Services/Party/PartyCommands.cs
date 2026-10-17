@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Server.Engines.PartySystem
 {
@@ -16,7 +16,7 @@ namespace Server.Engines.PartySystem
             if (p != null && p.Leader != from)
                 from.SendLocalizedMessage(1005453); // You may only add members to the party if you are the leader.
             else if (p != null && (p.Members.Count + p.Candidates.Count) >= Party.Capacity)
-                from.SendLocalizedMessage(1008095); // You may only have 10 in your party (this includes candidates).
+                from.SendMessage("파티 정원은 최대 20명입니다.");
             else
                 from.Target = new AddPartyTarget(from);
         }

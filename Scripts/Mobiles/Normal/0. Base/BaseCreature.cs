@@ -237,6 +237,60 @@ namespace Server.Mobiles
         [CommandProperty(AccessLevel.GameMaster)]
         public bool CanMove { get; set; }
 
+        #region Resource Locks & Wounds (검은피 / 버프 잠금 GM Props)
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int WoundHits
+        {
+            get => Server.Misc.MobileResourceSystem.GetWoundHits(this);
+            set => Server.Misc.MobileResourceSystem.SetWoundHits(this, value);
+        }
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BuffHitsLock
+        {
+            get => Server.Misc.MobileResourceSystem.GetBuffHitsLock(this);
+            set => Server.Misc.MobileResourceSystem.SetBuffHitsLock(this, value);
+        }
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int WoundMana
+        {
+            get => Server.Misc.MobileResourceSystem.GetWoundMana(this);
+            set => Server.Misc.MobileResourceSystem.SetWoundMana(this, value);
+        }
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BuffManaLock
+        {
+            get => Server.Misc.MobileResourceSystem.GetBuffManaLock(this);
+            set => Server.Misc.MobileResourceSystem.SetBuffManaLock(this, value);
+        }
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int WoundStam
+        {
+            get => Server.Misc.MobileResourceSystem.GetWoundStam(this);
+            set => Server.Misc.MobileResourceSystem.SetWoundStam(this, value);
+        }
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int BuffStamLock
+        {
+            get => Server.Misc.MobileResourceSystem.GetBuffStamLock(this);
+            set => Server.Misc.MobileResourceSystem.SetBuffStamLock(this, value);
+        }
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int EffectiveHitsMax => Server.Misc.MobileResourceSystem.GetEffectiveHitsMax(this);
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int EffectiveManaMax => Server.Misc.MobileResourceSystem.GetEffectiveManaMax(this);
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int EffectiveStamMax => Server.Misc.MobileResourceSystem.GetEffectiveStamMax(this);
+
+        #endregion
+
         public virtual bool CanCallGuards
         {
             get { return !Deleted && Alive && !AlwaysMurderer && Kills < 5 && (Player || Body.IsHuman); }
@@ -728,9 +782,9 @@ namespace Server.Mobiles
         public virtual TimeSpan BondingDelay { get { return TimeSpan.FromDays(7.0); } }
         public virtual TimeSpan BondingAbandonDelay { get { return TimeSpan.FromDays(1.0); } }
 
-        public override bool CanRegenHits { get { return !m_IsDeadPet && !Summoned && base.CanRegenHits; } }
-        public override bool CanRegenStam { get { return !IsParagon && !m_IsDeadPet && base.CanRegenStam; } }
-        public override bool CanRegenMana { get { return !m_IsDeadPet && base.CanRegenMana; } }
+        public override bool CanRegenHits { get { return !m_IsDeadPet && !Summoned && base.CanRegenHits && Hits < EffectiveHitsMax; } }
+        public override bool CanRegenStam { get { return !IsParagon && !m_IsDeadPet && base.CanRegenStam && Stam < EffectiveStamMax; } }
+        public override bool CanRegenMana { get { return !m_IsDeadPet && base.CanRegenMana && Mana < EffectiveManaMax; } }
 
         public override bool IsDeadBondedPet { get { return m_IsDeadPet; } }
 
@@ -7815,9 +7869,26 @@ namespace Server.Mobiles
 			}
 		}		
 		
+		public override void OnHitsChange(int oldValue)
+		{
+			base.OnHitsChange(oldValue);
+
+			int effMax = EffectiveHitsMax;
+			if (Hits > effMax)
+			{
+				Hits = effMax;
+			}
+		}
+
 		public override void OnManaChange(int oldValue)
 		{
 			base.OnManaChange(oldValue);
+
+			int effMax = EffectiveManaMax;
+			if (Mana > effMax)
+			{
+				Mana = effMax;
+			}
 
 			// 몬스터이고, 맵에 존재할 때만 작동
 			if (this is BaseCreature && this.Map != null)
@@ -7853,6 +7924,12 @@ namespace Server.Mobiles
 		public override void OnStamChange(int oldValue)
 		{
 			base.OnStamChange(oldValue);
+
+			int effMax = EffectiveStamMax;
+			if (Stam > effMax)
+			{
+				Stam = effMax;
+			}
 
 			if (this is BaseCreature && this.Map != null)
 			{

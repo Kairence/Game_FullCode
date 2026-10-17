@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,7 +11,8 @@ using Server.Mobiles;
 namespace Server.Items
 {
     /// <summary>
-    /// A quick attack to all enemies in range of your weapon that causes damage over time. Requires Bushido or Ninjitsu skill.
+    /// 둔기 200 극의: 뇌진탕 일격 (Concussion Blow Ultimate)
+    /// 상대의 3타일 내 모든 적에게 150% 추가 공격 + 체력/기력/마나 5% 하락 (보스는 200% 추가 공격)
     /// </summary>
     public class FrenziedWhirlwind : WeaponAbility
     {
@@ -19,129 +20,75 @@ namespace Server.Items
         {
         }
 
-        public override SkillName GetSecondarySkill(Mobile from)
-        {
-            return from.Skills[SkillName.Ninjitsu].Base > from.Skills[SkillName.Bushido].Base ? SkillName.Ninjitsu : SkillName.Bushido;
-        }
-
-        public override int BaseMana { get { return 30; } }
-
-        private static Dictionary<Mobile, Timer> m_Registry = new Dictionary<Mobile, Timer>();
-        public static Dictionary<Mobile, Timer> Registry { get { return m_Registry; } }
+        public override bool IsAreaAbility => true;
 
         public override void OnHit(Mobile attacker, Mobile defender, int damage)
         {
-            if (!Validate(attacker))	//Mana check after check that there are targets
+            if (attacker == null)
                 return;
 
-            ClearCurrentAbility(attacker);
-
+            Point3D center = defender != null ? defender.Location : attacker.Location;
             Map map = attacker.Map;
-
             if (map == null)
                 return;
 
-            BaseWeapon weapon = attacker.Weapon as BaseWeapon;
-
-            if (weapon == null)
-                return;
-
-            var targets = SpellHelper.AcquireIndirectTargets(attacker, attacker.Location, attacker.Map, 2).OfType<Mobile>().ToList();
-
-            if (targets.Count > 0)
+            // 1. 3타일 내 적대 대상 수집
+            List<Mobile> targets = new List<Mobile>();
+            IPooledEnumerable eable = map.GetMobilesInRange(center, 3);
+            foreach (Mobile m in eable)
             {
-                if (!CheckMana(attacker, true))
-                    return;
-
-                attacker.FixedEffect(0x3728, 10, 15);
-                attacker.PlaySound(0x2A1);
-
-                if (m_Registry.ContainsKey(attacker))
+                if (m != attacker && m.Alive && attacker.CanBeHarmful(m, false) && attacker.InLOS(m))
                 {
-                    RemoveFromRegistry(attacker);
+                    targets.Add(m);
                 }
+            }
+            eable.Free();
 
-                m_Registry[attacker] = new InternalTimer(attacker, targets);
-
-                foreach (var pm in targets.OfType<PlayerMobile>())
-                {
-                    BuffInfo.AddBuff(pm, new BuffInfo(BuffIcon.SplinteringEffect, 1153804, 1028852, TimeSpan.FromSeconds(2.0), pm));
-                }
-
-                if (defender is PlayerMobile && attacker is PlayerMobile)
-                {
-                    defender.SendSpeedControl(SpeedControlType.WalkSpeed);
-                    BuffInfo.AddBuff(defender, new BuffInfo(BuffIcon.SplinteringEffect, 1153804, 1152144, TimeSpan.FromSeconds(2.0), defender));
-                    Timer.DelayCall(TimeSpan.FromSeconds(2), mob => mob.SendSpeedControl(SpeedControlType.Disable), defender);
-                }
-
-                if (attacker is BaseCreature)
-                    PetTrainingHelper.OnWeaponAbilityUsed((BaseCreature)attacker, SkillName.Ninjitsu);
+            if (targets.Count == 0 && defender != null && defender.Alive)
+            {
+                targets.Add(defender);
             }
 
-            ColUtility.Free(targets);
+            attacker.FixedEffect(0x3728, 10, 15);
+            attacker.PlaySound(0x2A1);
+
+            // 2. 타겟별 피해 및 스탯 감소 적용
+            foreach (Mobile m in targets)
+            {
+                bool isBoss = (m is BaseCreature bc && (bc.Grade >= 8));
+                int finalDamage = damage;
+
+                if (isBoss)
+                {
+                    // [보스/네임드] 200% 추가 공격 (총 300%)
+                    finalDamage = (int)(damage * 3.0);
+                }
+                else
+                {
+                    // [일반 대상] 150% 추가 공격 (총 250%)
+                    finalDamage = (int)(damage * 2.5);
+
+                    // 현재 체력, 기력, 마나 5% 하락
+                    int hpLoss = (int)(m.Hits * 0.05);
+                    finalDamage += Math.Max(1, hpLoss);
+
+                    m.Stam = Math.Max(0, m.Stam - (int)(m.Stam * 0.05));
+                    m.Mana = Math.Max(0, m.Mana - (int)(m.Mana * 0.05));
+                }
+
+                m.PlaySound(0x1E1);
+                m.FixedParticles(0x3049, 1, 0, 9946, EffectLayer.Head);
+                m.SendLocalizedMessage(1060091); // You feel disoriented!
+
+                AOS.Damage(m, attacker, finalDamage, 100, 0, 0, 0, 0, 0, 0);
+            }
+
+            attacker.SendMessage(0x35, $"[뇌진탕 일격] 3타일 내 적 {targets.Count}명에게 극의를 적중시켰습니다!");
         }
 
-        public static void RemoveFromRegistry(Mobile from)
+        public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double bonus)
         {
-            if (m_Registry.ContainsKey(from))
-            {
-                m_Registry[from].Stop();
-                m_Registry.Remove(from);
-            }
-        }
-
-        private class InternalTimer : Timer
-        {
-            private Mobile m_Attacker;
-            private IEnumerable<Mobile> m_List;
-            private long m_Start;
-
-            public InternalTimer(Mobile attacker, IEnumerable<Mobile> list)
-                : base(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500))
-            {
-                m_Attacker = attacker;
-                m_List = list;
-
-                m_Start = Core.TickCount;
-
-                Priority = TimerPriority.TwentyFiveMS;
-                DoHit();
-
-                Start();
-            }
-
-            protected override void OnTick()
-            {
-                if (m_Attacker.Alive)
-                    DoHit();
-
-                if (!m_Attacker.Alive || m_Start + 2000 < Core.TickCount)
-                {
-                    Server.Items.FrenziedWhirlwind.RemoveFromRegistry(m_Attacker);
-                }
-            }
-
-            private void DoHit()
-            {
-                foreach (Mobile m in m_List)
-                {
-                    if (m_Attacker.InRange(m.Location, 2) && m.Alive && m.Map == m_Attacker.Map)
-                    {
-                        m_Attacker.FixedEffect(0x3728, 10, 15);
-                        m_Attacker.PlaySound(0x2A1);
-
-                        int skill = m_Attacker is BaseCreature ? (int)m_Attacker.Skills[SkillName.Ninjitsu].Value :
-                                                              (int)Math.Max(m_Attacker.Skills[SkillName.Bushido].Value, m_Attacker.Skills[SkillName.Ninjitsu].Value);
-
-                        int amount = Utility.RandomMinMax((int)(skill / 50) * 5, (int)(skill / 50) * 20) + 2;
-                        AOS.Damage(m, m_Attacker, amount, 100, 0, 0, 0, 0);
-
-                        //m_Attacker.SendLocalizedMessage(1060161); // The whirling attack strikes a target!
-                        //m_Defender.SendLocalizedMessage(1060162); // You are struck by the whirling attack and take damage!
-                    }
-                }
-            }
+            OnHit(attacker, defender, damage);
         }
     }
 }

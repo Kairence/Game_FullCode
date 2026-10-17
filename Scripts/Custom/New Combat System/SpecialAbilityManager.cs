@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using Server.Mobiles;
 using Server.Network;
@@ -90,6 +90,28 @@ namespace Server.Misc
             if (typeID <= 8) return 19;      // 궁술 -> 힘의 화살
             if (typeID == 9) return 20;      // 맨손 -> 완전 방어
             return -1;
+        }
+
+        /// <summary>
+        /// [액티브 시스템] 무기 그룹 + 단계로 서버에서 실제 적용할 특수기를 반환
+        /// step 0~3: 전술 50/100/150/200, step 4: 무기술 200 극의
+        /// </summary>
+        public static WeaponAbility GetActiveAbility(int typeID, int step)
+        {
+            if (typeID < 0 || typeID > 9)
+                return null;
+
+            if (step >= 0 && step <= 3)
+                return AbilityPool[_AbilityMap[typeID, step]];
+
+            if (step == 4)
+            {
+                int ultimateIdx = GetUltimateIndex(typeID);
+                if (ultimateIdx >= 0 && ultimateIdx < AbilityPool.Length)
+                    return AbilityPool[ultimateIdx];
+            }
+
+            return null;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Server.Mobiles;
 using Server.Spells;
@@ -11,17 +11,19 @@ namespace Server.Items
         {
         }
 
+        public override bool IsAreaAbility => true;
+
         public override int BaseMana => 25;
 
         // 핵심: 300% 추가 공격 = 기본(100%) + 추가(300%) = 총 400% 위력
         public override void OnHit(Mobile attacker, Mobile defender, int damage, int level, double tactics)
         {
-            if (!this.Validate(attacker) || defender == null)
+            if (!this.Validate(attacker) || attacker == null)
                 return;
 
-            // 스테미너 체크 및 소모
+            // 스테미너 체크 및 소모 (플레이어는 ExecuteActive에서 이미 단계별 차감 완료)
             bool bonus = attacker.Skills.Tactics.Value >= 100.0;
-            if (!this.CalculateStam(attacker, Misc.Util.SPMStam[12, 0], Misc.Util.SPMStam[12, 1], level, bonus))
+            if (attacker is BaseCreature && !this.CalculateStam(attacker, Misc.Util.SPMStam[12, 0], Misc.Util.SPMStam[12, 1], level, bonus))
                 return;
 
             // 1. 사거리(Tile) 결정
@@ -40,7 +42,7 @@ namespace Server.Items
             foreach (Mobile m in eable)
             {
                 // 자기 자신 제외, 살아있는 적, 공격 가능 대상, 시야(LOS) 확인
-                if (m != attacker && m.Alive && m.CanBeHarmful(attacker, false) && attacker.InLOS(m) &&
+                if (m != attacker && m.Alive && attacker.CanBeHarmful(m, false) && attacker.InLOS(m) &&
                     SpellHelper.ValidIndirectTarget(attacker, m))
                 {
                     targets.Add(m);
@@ -66,6 +68,12 @@ namespace Server.Items
                 
                 ColUtility.Free(targets);
             }
+        }
+
+        public override void OnHit(Mobile attacker, Mobile defender, int damage)
+        {
+            double tactics = attacker != null ? attacker.Skills[SkillName.Tactics].Value : 0.0;
+            OnHit(attacker, defender, damage, 0, tactics);
         }
     }
 }

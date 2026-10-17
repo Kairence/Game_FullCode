@@ -1,4 +1,4 @@
-﻿#region References
+#region References
 using System;
 using System.Collections.Generic;
 using Server.Multis;
@@ -929,8 +929,11 @@ namespace Server.Engines.Craft
 
             if (ourPack.TotalItems >= ourPack.MaxItems || ourPack.TotalWeight >= ourPack.MaxWeight)
             {
-                message = 1048147; // Your backpack can't hold anything else.
-                return false;
+                if (!Server.Custom.HouseCraftSystem.IsAutoStoreEnabled(from) || Server.Custom.HouseCraftSystem.GetStoreContainer(from) == null)
+                {
+                    message = 1048147; // Your backpack can't hold anything else.
+                    return false;
+                }
             }
 
             if (ConsumeResCallback != null)
@@ -1141,6 +1144,39 @@ namespace Server.Engines.Craft
                 else
                 {
                     index = ourPack.ConsumeTotalGrouped(types, amounts, true, ResourceValidator, OnResourceConsumed, CheckHueGrouping);
+
+                    if (index != -1 && Server.Custom.HouseCraftSystem.IsHouseResourceEnabled(from))
+                    {
+                        bool canSupply = true;
+                        int[] fromPackAmounts = new int[types.Length];
+                        for (int i = 0; i < types.Length; ++i)
+                        {
+                            int inPack = ourPack.GetBestGroupAmount(types[i], true, CheckHueGrouping);
+                            fromPackAmounts[i] = Math.Min(inPack, amounts[i]);
+                            int missing = amounts[i] - fromPackAmounts[i];
+                            if (missing > 0 && Server.Custom.HouseCraftSystem.GetAvailableAmountInHouse(from, types[i]) < missing)
+                            {
+                                canSupply = false;
+                                break;
+                            }
+                        }
+
+                        if (canSupply)
+                        {
+                            ourPack.ConsumeTotalGrouped(types, fromPackAmounts, true, ResourceValidator, OnResourceConsumed, CheckHueGrouping);
+
+                            for (int i = 0; i < types.Length; ++i)
+                            {
+                                int missing = amounts[i] - fromPackAmounts[i];
+                                if (missing > 0)
+                                {
+                                    Server.Custom.HouseCraftSystem.ConsumeFromHouse(from, types[i], missing);
+                                }
+                            }
+
+                            index = -1;
+                        }
+                    }
                 }
 
 				resHue = m_ResHue;
@@ -1210,8 +1246,15 @@ namespace Server.Engines.Craft
 				{
 					for (int i = 0; i < types.Length; i++)
 					{
-						if (ourPack.GetBestGroupAmount(types[i], true, CheckHueGrouping) < amounts[i])
+						int inPack = ourPack.GetBestGroupAmount(types[i], true, CheckHueGrouping);
+						if (inPack < amounts[i])
 						{
+							if (Server.Custom.HouseCraftSystem.IsHouseResourceEnabled(from) &&
+								(inPack + Server.Custom.HouseCraftSystem.GetAvailableAmountInHouse(from, types[i])) >= amounts[i])
+							{
+								continue;
+							}
+
 							index = i;
 							break;
 						}
@@ -1990,7 +2033,10 @@ public void Craft(Mobile from, CraftSystem craftSystem, Type typeRes, ITool tool
                     if (CaddelliteCraft)
                         Caddellite.TryInfuse(from, item, craftSystem);
 
-                    if (tool is Item && ((Item)tool).Parent is Container)
+                    if (Server.Custom.HouseCraftSystem.TryAutoStore(from, item))
+                    {
+                    }
+                    else if (tool is Item && ((Item)tool).Parent is Container)
                     {
                         Container cntnr = (Container)((Item)tool).Parent;
                         if (!cntnr.TryDropItem(from, item, false))
@@ -2019,7 +2065,10 @@ public void Craft(Mobile from, CraftSystem craftSystem, Type typeRes, ITool tool
                                 if (duplicate is ICraftable) ((ICraftable)duplicate).OnCraft(quality, makersMark, from, craftSystem, typeRes, tool, this, resHue);
                                 if (item.Amount > 1) duplicate.Amount = item.Amount;
                                 
-                                if (tool is Item && ((Item)tool).Parent is Container)
+                                if (Server.Custom.HouseCraftSystem.TryAutoStore(from, duplicate))
+                                {
+                                }
+                                else if (tool is Item && ((Item)tool).Parent is Container)
                                 {
                                     Container cntnr = (Container)((Item)tool).Parent;
                                     if (!cntnr.TryDropItem(from, duplicate, false))

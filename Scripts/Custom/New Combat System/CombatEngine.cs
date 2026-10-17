@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Server;
 using Server.Items;
@@ -159,6 +159,10 @@ namespace Server.Misc
 
             NewDurabilityManager.OnVictimWear(defender, damage);
 
+            // 🩸 [피격 상흔(검은피) 누적]: 기본 피격 피해의 10% (최소 1)가 최대 체력 외상으로 잠김
+            int woundDamage = Math.Max(1, (int)(damage * 0.10));
+            Server.Misc.MobileResourceSystem.AddWoundHits(defender, woundDamage);
+
             return Math.Max(1, damage);
         }
 		// --- [데미지 계산 엔진: .NET 8.0 튜플 반환] ---
@@ -183,7 +187,8 @@ namespace Server.Misc
             }
             else
             {
-                factor += (Misc.ItemOptionCreator.GetAttributeValue(attacker, 15) - Misc.ItemOptionCreator.GetAttributeValue(defender, 16)) * 0.0001;
+                // [스케일 교정] HCI(15), DCI(16): ValueScale(10,000 = 1% = 0.01). 100,000(10%) -> +0.10 factor
+                factor += (Misc.ItemOptionCreator.GetAttributeValue(attacker, 15) - Misc.ItemOptionCreator.GetAttributeValue(defender, 16)) * 0.000001;
             }
 
             factor = Math.Max(0.01, Math.Min(1.0, factor));
@@ -221,7 +226,8 @@ namespace Server.Misc
             {
                 scalar += (attacker.Skills[SkillName.Magery].Value * 0.005 + attacker.Int * 0.0001);
                 if (attacker.Skills[SkillName.Spellweaving].Value >= 50) scalar += 0.25;
-                scalar += (Misc.ItemOptionCreator.GetAttributeValue(attacker, 10) * 0.0001);
+                // [스케일 교정] SDI(10): ValueScale(10,000 = 1% = 0.01). 100,000(10%) -> +0.10배 증뎀
+                scalar += (Misc.ItemOptionCreator.GetAttributeValue(attacker, 10) * 0.000001);
             }
             else
             {
@@ -253,9 +259,11 @@ namespace Server.Misc
                     if (weaponSkill.Value >= 100.0) scalar += 0.4; 
                 }
                 
-                scalar += (Misc.ItemOptionCreator.GetAttributeValue(attacker, 9) * 0.0001);
+                // [스케일 교정] DI(9): ValueScale(10,000 = 1% = 0.01). 100,000(10%) -> +0.10배 증뎀
+                scalar += (Misc.ItemOptionCreator.GetAttributeValue(attacker, 9) * 0.000001);
             }
-            scalar += Misc.ItemOptionCreator.GetAttributeValue(attacker, 11) * 0.0001;
+            // [스케일 교정] AllDamage(11): ValueScale(10,000 = 1% = 0.01). 100,000(10%) -> +0.10배 증뎀
+            scalar += Misc.ItemOptionCreator.GetAttributeValue(attacker, 11) * 0.000001;
 
             if (pmAttacker != null)
             {
@@ -439,8 +447,9 @@ namespace Server.Misc
                 critChance += (subtletySkillValue * 5 * 0.0001);
             }
 
-            if (isMagic) critChance += Misc.ItemOptionCreator.GetAttributeValue(attacker, 32) * 0.0001;
-            else critChance += Misc.ItemOptionCreator.GetAttributeValue(attacker, 31) * 0.0001;
+            // [스케일 교정] 크리티컬 확률(31, 32): ValueScale(10,000 = 1% = 0.01). 10,000(1%) -> +0.01(1% 확률)
+            if (isMagic) critChance += Misc.ItemOptionCreator.GetAttributeValue(attacker, 32) * 0.000001;
+            else critChance += Misc.ItemOptionCreator.GetAttributeValue(attacker, 31) * 0.000001;
 
             double critDamageMult = 1.5;
 
@@ -467,13 +476,14 @@ namespace Server.Misc
                 critDamageMult += (provoBonus.CritDamage * 0.0001); 
             }
 
+            // [스케일 교정] 크리티컬 피해(33, 34): ValueScale(10,000 = 1% = 0.01). 100,000(10%) -> +0.10배
             if (isMagic)
             {
-                critDamageMult += Misc.ItemOptionCreator.GetAttributeValue(attacker, 34) * 0.0001;
+                critDamageMult += Misc.ItemOptionCreator.GetAttributeValue(attacker, 34) * 0.000001;
             }
             else
             {
-                critDamageMult += Misc.ItemOptionCreator.GetAttributeValue(attacker, 33) * 0.0001;
+                critDamageMult += Misc.ItemOptionCreator.GetAttributeValue(attacker, 33) * 0.000001;
                 if (attacker.Skills[SkillName.Anatomy].Value >= 100.0) critDamageMult += 0.1;
             }
 
@@ -610,7 +620,8 @@ namespace Server.Misc
 
             foreach (var slayer in SlayerTable)
             {
-                double amount = Math.Min(Misc.ItemOptionCreator.GetAttributeValue(attacker, slayer.OptionID), 50.0);
+                // [스케일 교정] 슬레이어 옵션: ValueScale(10,000 = 1%). Raw / ValueScale 후 50% 캡 적용
+                double amount = Math.Min((double)Misc.ItemOptionCreator.GetAttributeValue(attacker, slayer.OptionID) / Misc.ItemOptionCreator.ValueScale, 50.0);
                 if (amount > 0 && SlayerCheck(slayer.Name, defender))
                 {
                     scalar += amount * 0.01 * tierBonus;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Server.Commands;
 using Server.Factions;
@@ -9,7 +9,7 @@ namespace Server.Engines.PartySystem
 {
     public class Party : IParty
     {
-        public const int Capacity = 10;
+        public const int Capacity = 20;
         private readonly Mobile m_Leader;
         private readonly List<PartyMemberInfo> m_Members;
         private readonly List<Mobile> m_Candidates;

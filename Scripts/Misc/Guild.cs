@@ -1,4 +1,4 @@
-﻿#region References
+#region References
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +14,15 @@ using Server.Targeting;
 
 namespace Server.Guilds
 {
+	public enum GuildTendency
+	{
+		Combat,      // 전투 (기사, 용병, 사냥)
+		Exploration, // 탐험 (트레저 헌터, 도굴꾼, 탐험가, 지도제작)
+		Gathering,   // 채집 (광부, 벌목꾼, 어부, 채집가)
+		Crafting,    // 제작 (대장장이, 목수, 재봉사, 땜장이, 연금술사)
+		Commerce,    // 상업 (상인, 무역상, 금융업자)
+		Social       // 친목 (시민, 귀족, 음유시인, 사교)
+	}
 
 	#region Ranks
 	[Flags]
@@ -1096,9 +1105,25 @@ namespace Server.Guilds
 
 		private AllianceInfo m_AllianceInfo;
 		private Guild m_AllianceLeader;
+
+		private string m_HomeTown;
+		private GuildTendency m_Tendency;
+		private int m_GuildKarma;
+		private int m_GuildFame;
+		private int m_NpcGold;
+		private int m_NpcWood;
+		private int m_NpcIron;
+		private int m_PlayerGold;
+		private int m_PlayerWood;
+		private int m_PlayerIron;
 		#endregion
 
 		public Guild(Mobile leader, string name, string abbreviation)
+			: this(leader, name, abbreviation, "Britain", GuildTendency.Combat)
+		{
+		}
+
+		public Guild(Mobile leader, string name, string abbreviation, string homeTown, GuildTendency tendency)
 		{
 			#region Ctor mumbo-jumbo
 			m_Leader = leader;
@@ -1117,6 +1142,9 @@ namespace Server.Guilds
 
 			m_Name = name;
 			m_Abbreviation = abbreviation;
+			m_HomeTown = string.IsNullOrEmpty(homeTown) ? "Britain" : homeTown;
+			m_Tendency = tendency;
+			m_Type = GuildType.Regular;
 
 			m_TypeLastChange = DateTime.MinValue;
 
@@ -1361,7 +1389,18 @@ namespace Server.Guilds
 				Alliance.CheckLeader();
 			}
 
-			writer.Write(5); //version
+			writer.Write(6); //version
+
+			writer.Write(m_HomeTown);
+			writer.Write((int)m_Tendency);
+			writer.Write(m_GuildKarma);
+			writer.Write(m_GuildFame);
+			writer.Write(m_NpcGold);
+			writer.Write(m_NpcWood);
+			writer.Write(m_NpcIron);
+			writer.Write(m_PlayerGold);
+			writer.Write(m_PlayerWood);
+			writer.Write(m_PlayerIron);
 
 			#region War Serialization
 			writer.Write(m_PendingWars.Count);
@@ -1430,6 +1469,21 @@ namespace Server.Guilds
 
 			switch (version)
 			{
+				case 6:
+					{
+						m_HomeTown = reader.ReadString();
+						m_Tendency = (GuildTendency)reader.ReadInt();
+						m_GuildKarma = reader.ReadInt();
+						m_GuildFame = reader.ReadInt();
+						m_NpcGold = reader.ReadInt();
+						m_NpcWood = reader.ReadInt();
+						m_NpcIron = reader.ReadInt();
+						m_PlayerGold = reader.ReadInt();
+						m_PlayerWood = reader.ReadInt();
+						m_PlayerIron = reader.ReadInt();
+
+						goto case 5;
+					}
 				case 5:
 					{
 						int count = reader.ReadInt();
@@ -1999,6 +2053,36 @@ namespace Server.Guilds
 		public IEnumerable<Mobile> OnlineMembers { get { return m_Members.Where(o => o.NetState != null && o.NetState.Running); } }
 
 		public int OnlineMembersCount { get { return m_Members.Count(o => o.NetState != null && o.NetState.Running); } }
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public string HomeTown { get { return m_HomeTown; } set { m_HomeTown = value; } }
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public GuildTendency Tendency { get { return m_Tendency; } set { m_Tendency = value; } }
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int GuildKarma { get { return m_GuildKarma; } set { m_GuildKarma = value; } }
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int GuildFame { get { return m_GuildFame; } set { m_GuildFame = value; } }
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int NpcGold { get { return m_NpcGold; } set { m_NpcGold = Math.Max(0, value); } }
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int NpcWood { get { return m_NpcWood; } set { m_NpcWood = Math.Max(0, value); } }
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int NpcIron { get { return m_NpcIron; } set { m_NpcIron = Math.Max(0, value); } }
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int PlayerGold { get { return m_PlayerGold; } set { m_PlayerGold = Math.Max(0, value); } }
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int PlayerWood { get { return m_PlayerWood; } set { m_PlayerWood = Math.Max(0, value); } }
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int PlayerIron { get { return m_PlayerIron; } set { m_PlayerIron = Math.Max(0, value); } }
 		#endregion
 	}
 }

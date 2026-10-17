@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic; // Dictionary 사용을 위해 추가
 using Server;
 using Server.Mobiles;
@@ -23,7 +23,7 @@ namespace Server.Items
             double addDuration = 10.0;
 
             if (defender is BaseCreature bc)
-                addDuration *= Misc.Util.MonsterTierCrowdControlRecovery(bc);
+                addDuration *= Misc.CreatureBalancer.MonsterTierCrowdControlRecovery(bc);
 
             DateTime now = DateTime.UtcNow;
             double finalSeconds = addDuration;

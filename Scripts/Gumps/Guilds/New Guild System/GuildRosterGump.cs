@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Server.Factions;
 using Server.Gumps;
@@ -232,6 +232,10 @@ namespace Server.Guilds
             else if (targ.Guild != null)
             {
                 pm.SendLocalizedMessage(1063051, targ.Name); // ~1_val~ is already a member of a guild.
+            }
+            else if (pm.Account == null || targ.Account == null || pm.Account != targ.Account)
+            {
+                pm.SendMessage("타 유저는 가입할 수 없습니다. (동맹만 가능하며, 가문 내 캐릭터 또는 NPC만 가입할 수 있습니다.)");
             }
             else if (targ.HasGump(typeof(BaseGuildGump)) || targ.HasGump(typeof(CreateGuildGump)))	//TODO: Check message if CreateGuildGump Open
             {

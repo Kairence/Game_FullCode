@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server.Factions;
 using Server.Gumps;
 using Server.Mobiles;
@@ -33,26 +33,39 @@ namespace Server.Guilds
 
             this.AddImageTiled(65, 80, 160, 26, 0xA40);
             this.AddImageTiled(67, 82, 156, 22, 0xBBC);
-            this.AddHtmlLocalized(70, 83, 150, 20, 1062954, 0x0, false, false); // <i>Guild Name</i>
-            this.AddHtml(233, 84, 320, 26, this.guild.Name, false, false);
+            this.AddHtml(70, 83, 150, 20, "<basefont color=#333333><b>길드 명칭</b></basefont>", false, false);
+            this.AddHtml(233, 84, 320, 26, string.Format("<basefont color=#FFD700><b>{0} [{1}]</b></basefont>", this.guild.Name, this.guild.Abbreviation), false, false);
 
             this.AddImageTiled(65, 114, 160, 26, 0xA40);
             this.AddImageTiled(67, 116, 156, 22, 0xBBC);
-            this.AddHtmlLocalized(70, 117, 150, 20, 1063025, 0x0, false, false); // <i>Alliance</i>
+            this.AddHtml(70, 117, 150, 20, "<basefont color=#333333><b>본거지 도시 / 성향</b></basefont>", false, false);
 
-            if (this.guild.Alliance != null && this.guild.Alliance.IsMember(this.guild))
+            string tendStr = this.guild.Tendency switch
             {
-                this.AddHtml(233, 118, 320, 26, this.guild.Alliance.Name, false, false);
-                this.AddButton(40, 120, 0x4B9, 0x4BA, 6, GumpButtonType.Reply, 0);	//Alliance Roster
-            }
+                GuildTendency.Combat => "<basefont color=#FF5555>전투형 (기사·용병)</basefont>",
+                GuildTendency.Exploration => "<basefont color=#00CCFF>탐험형 (보물·유적)</basefont>",
+                GuildTendency.Gathering => "<basefont color=#D2B48C>채집형 (광업·벌목)</basefont>",
+                GuildTendency.Crafting => "<basefont color=#66FF66>제작형 (장인·대장)</basefont>",
+                GuildTendency.Commerce => "<basefont color=#FFD700>상업형 (무역·금융)</basefont>",
+                GuildTendency.Social => "<basefont color=#FF99CC>친목형 (가문·시인)</basefont>",
+                _ => "<basefont color=#FFFFFF>일반</basefont>"
+            };
+            string townStr = string.IsNullOrEmpty(this.guild.HomeTown) ? "Britain" : this.guild.HomeTown;
+            this.AddHtml(233, 118, 320, 26, string.Format("<basefont color=#FFFFFF>{0}</basefont> | {1}", townStr, tendStr), false, false);
 
             this.AddImageTiled(65, 148, 160, 26, 0xA40);
             this.AddImageTiled(67, 150, 156, 22, 0xBBC);
-            this.AddHtmlLocalized(70, 151, 150, 20, 1063084, 0x0, false, false); // <i>Guild Faction</i>
-		
-            Faction f = Faction.Find(this.guild.Leader);
-            if (f != null)
-                this.AddHtml(233, 152, 320, 26, f.ToString(), false, false);
+            this.AddHtml(70, 151, 150, 20, "<basefont color=#333333><b>동맹 (Alliance)</b></basefont>", false, false);
+
+            if (this.guild.Alliance != null && this.guild.Alliance.IsMember(this.guild))
+            {
+                this.AddHtml(233, 152, 320, 26, string.Format("<basefont color=#33FF99>{0}</basefont>", this.guild.Alliance.Name), false, false);
+                this.AddButton(40, 153, 0x4B9, 0x4BA, 6, GumpButtonType.Reply, 0); // Alliance Roster
+            }
+            else
+            {
+                this.AddHtml(233, 152, 320, 26, "<basefont color=#888888>체결된 동맹 없음</basefont>", false, false);
+            }
 
             this.AddImageTiled(65, 196, 480, 4, 0x238D);
 

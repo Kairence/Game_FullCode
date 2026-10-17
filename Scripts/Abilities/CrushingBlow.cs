@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server;
 using Server.Mobiles;
 
@@ -27,11 +27,11 @@ namespace Server.Items
             // 몬스터 등급에 따른 점감 적용
             if (defender is BaseCreature bc)
             {
-                duration *= Misc.Util.MonsterTierCrowdControlRecovery(bc);
+                duration *= Misc.CreatureBalancer.MonsterTierCrowdControlRecovery(bc);
             }
 
-            // 3. 스턴(마비) 적용
-            defender.Paralyze(TimeSpan.FromSeconds(duration));
+            // 3. 스턴(완전 정지/Freeze) 적용
+            defender.Freeze(TimeSpan.FromSeconds(duration));
 
             // 4. 무기 피해의 200% 가함
             int finalDamage = damage * 2;

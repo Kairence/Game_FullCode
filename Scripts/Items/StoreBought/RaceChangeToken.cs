@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Server;
 using Server.Mobiles;
@@ -184,11 +184,6 @@ namespace Server.Items
                     y += 25;
                 }
 
-                if (User.Race != Race.Gargoyle)
-                {
-                    AddButton(8, y, 0xFB7, 0xFB9, 4, GumpButtonType.Reply, 0);
-                    AddHtmlLocalized(100, y, 150, 20, 1111900, 0x7FFF, false, false); // Make me a gargoyle!
-                }
             }
         }
 
@@ -204,7 +199,8 @@ namespace Server.Items
                     Mode = GumpMode.Select;
                     Refresh();
                     break;
-                default:
+                case 2:
+                case 3:
                     if (User.NetState != null && HeritageQuester.Check(User) && RaceChangeToken.AddPending(User, Race.Races[id - 2], Token))
                     {
                         User.NetState.Send(new HeritagePacket(User.Female, (short)(id - 1)));

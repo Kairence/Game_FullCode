@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server.Mobiles;
 using Server.Network;
 
@@ -218,26 +218,92 @@ namespace Server
         #region Convenience Methods
         public static void AddBuff(Mobile m, BuffInfo b)
         {
+            if (m == null || b == null)
+                return;
+
             PlayerMobile pm = m as PlayerMobile;
 
             if (pm != null)
                 pm.AddBuff(b);
+
+            if (m.Map != null)
+            {
+                Packet p = null;
+                IPooledEnumerable eable = m.Map.GetClientsInRange(m.Location, 18);
+
+                foreach (NetState ns in eable)
+                {
+                    if (ns.Mobile != m && ns.BuffIcon)
+                    {
+                        if (p == null)
+                            p = Packet.Acquire(new AddBuffPacket(m, b));
+                        ns.Send(p);
+                    }
+                }
+
+                eable.Free();
+                Packet.Release(p);
+            }
         }
 
         public static void RemoveBuff(Mobile m, BuffInfo b)
         {
+            if (m == null || b == null)
+                return;
+
             PlayerMobile pm = m as PlayerMobile;
 
             if (pm != null)
                 pm.RemoveBuff(b);
+
+            if (m.Map != null)
+            {
+                Packet p = null;
+                IPooledEnumerable eable = m.Map.GetClientsInRange(m.Location, 18);
+
+                foreach (NetState ns in eable)
+                {
+                    if (ns.Mobile != m && ns.BuffIcon)
+                    {
+                        if (p == null)
+                            p = Packet.Acquire(new RemoveBuffPacket(m, b));
+                        ns.Send(p);
+                    }
+                }
+
+                eable.Free();
+                Packet.Release(p);
+            }
         }
 
         public static void RemoveBuff(Mobile m, BuffIcon b)
         {
+            if (m == null)
+                return;
+
             PlayerMobile pm = m as PlayerMobile;
 
             if (pm != null)
                 pm.RemoveBuff(b);
+
+            if (m.Map != null)
+            {
+                Packet p = null;
+                IPooledEnumerable eable = m.Map.GetClientsInRange(m.Location, 18);
+
+                foreach (NetState ns in eable)
+                {
+                    if (ns.Mobile != m && ns.BuffIcon)
+                    {
+                        if (p == null)
+                            p = Packet.Acquire(new RemoveBuffPacket(m, b));
+                        ns.Send(p);
+                    }
+                }
+
+                eable.Free();
+                Packet.Release(p);
+            }
         }
         #endregion
     }

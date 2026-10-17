@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using Server.Mobiles;
 
@@ -9,6 +9,8 @@ namespace Server.Items
         private static readonly Hashtable m_Table = new Hashtable();
 
         public DefenseMastery() { }
+
+        public override bool IsAreaAbility => true;
 
         // 외부에서 참조할 수 있도록 static 메서드 제공
         public static bool IsPerfectDefense(Mobile m)

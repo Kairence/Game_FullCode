@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using Server;
 using Server.Mobiles;
@@ -406,21 +406,10 @@ namespace Server.Misc
 			return 1;
 		}
 
-		//몬스터 군중제어 회복 시간
-		public static double MonsterTierCrowdControlRecovery(BaseCreature from )
+		//몬스터 군중제어 회복 시간 (CreatureBalancer 위임)
+		public static double MonsterTierCrowdControlRecovery(BaseCreature from)
 		{
-			switch( MonsterTierCalc(from) )
-			{
-				case 5:
-					return 0.1;
-				case 4:
-					return 0.25;
-				case 3:
-					return 0.34;
-				case 2:
-					return 0.55;
-			}
-			return 1.0;
+			return CreatureBalancer.MonsterTierCrowdControlRecovery(from);
 		}
 		
 

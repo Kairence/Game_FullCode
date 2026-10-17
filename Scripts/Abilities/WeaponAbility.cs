@@ -1,20 +1,21 @@
-﻿using System;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using Server.Network;
 using Server.Spells;
 using Server.Mobiles;
+using Server.Misc;
 
 namespace Server.Items
 {
     public abstract class WeaponAbility
     {
-        public virtual int BaseMana
-        {
-            get
-            {
-                return 0;
-            }
-        }
+        public virtual int BaseMana => m_Specs.TryGetValue(this, out var s) ? s.BaseMana : 0;
+        public virtual int BaseStam => m_Specs.TryGetValue(this, out var s) ? s.BaseStam : 0;
+        public virtual TimeSpan Cooldown => m_Specs.TryGetValue(this, out var s) ? s.Cooldown : TimeSpan.FromSeconds(5.0);
+        public virtual int[] AllowedCategories => m_Specs.TryGetValue(this, out var s) ? s.AllowedCategories : null;
+        public virtual bool IsUltimate => m_Specs.TryGetValue(this, out var s) ? s.IsUltimate : false;
+
 
         public virtual int AccuracyBonus
         {
@@ -49,6 +50,9 @@ namespace Server.Items
 				return true;
 			}
 		}
+
+		// 광역 즉발 특수기 여부 (true면 타겟 없이 즉발 광역 시전)
+		public virtual bool IsAreaAbility => false;
 
 		public virtual void BeforeAttack(Mobile attacker, Mobile defender, int damage)
 		{
@@ -568,6 +572,134 @@ namespace Server.Items
         public static readonly WeaponAbility Disrobe = m_Abilities[32];
         public static readonly WeaponAbility ColdWind = m_Abilities[33];
 
+        #region [전사 특수기 중앙 스펙 및 쿨타임 관리]
+        public class AbilitySpec
+        {
+            public int BaseStam { get; set; }
+            public int BaseMana { get; set; }
+            public TimeSpan Cooldown { get; set; }
+            public int[] AllowedCategories { get; set; }
+            public bool IsUltimate { get; set; }
+
+            public AbilitySpec(int stam, int mana, double cdSecs, int[] cats, bool ultimate = false)
+            {
+                BaseStam = stam;
+                BaseMana = mana;
+                Cooldown = TimeSpan.FromSeconds(cdSecs);
+                AllowedCategories = cats;
+                IsUltimate = ultimate;
+            }
+        }
+
+        private static readonly Dictionary<WeaponAbility, AbilitySpec> m_Specs = new Dictionary<WeaponAbility, AbilitySpec>();
+        private static readonly Dictionary<(Mobile, WeaponAbility), DateTime> m_Cooldowns = new Dictionary<(Mobile, WeaponAbility), DateTime>();
+
+        private static void RegisterSpec(WeaponAbility ability, int stam, int mana, double cdSecs, int[] cats, bool ultimate = false)
+        {
+            if (ability != null)
+            {
+                m_Specs[ability] = new AbilitySpec(stam, mana, cdSecs, cats, ultimate);
+            }
+        }
+
+        static WeaponAbility()
+        {
+            // [공식 기획서 기준 전사 특수기 스펙 및 사용 가능 무기군 등록]
+            // 무기군: 0:한손검, 1:양손검, 2:도끼, 3:한손둔기, 4:양손둔기, 5:한손펜싱, 6:양손펜싱, 7:활, 8:석궁, 9:맨손
+            RegisterSpec(ArmorIgnore, stam: 60, mana: 0, cdSecs: 6.0, cats: new[] { 0, 1, 5, 6 });
+            RegisterSpec(BleedAttack, stam: 40, mana: 0, cdSecs: 5.0, cats: new[] { 0, 2, 6, 7 });
+            RegisterSpec(ConcussionBlow, stam: 50, mana: 0, cdSecs: 5.0, cats: new[] { 3, 4, 9 }); // 충격파 (5초 스턴 + 무기 100%)
+            RegisterSpec(CrushingBlow, stam: 60, mana: 0, cdSecs: 6.0, cats: new[] { 1, 2, 4, 8 }); // 파괴 일격 (기력 삭감)
+            RegisterSpec(Disarm, stam: 60, mana: 0, cdSecs: 10.0, cats: new[] { 0, 3, 9 }); // 무장 해제 (30초간 공격력 50% 감소)
+            RegisterSpec(Dismount, stam: 60, mana: 0, cdSecs: 10.0, cats: new[] { 2, 4 }); // 낙마 (탑승/비행 시 30초간 피해 50% 증가)
+            RegisterSpec(DoubleStrike, stam: 100, mana: 0, cdSecs: 12.0, cats: new[] { 5, 6, 7 }); // 연속 공격
+            RegisterSpec(InfectiousStrike, stam: 60, mana: 0, cdSecs: 6.0, cats: new[] { 5, 7 }); // 독 바르기
+            RegisterSpec(MortalStrike, stam: 120, mana: 0, cdSecs: 12.0, cats: new[] { 8 }); // 급소 가격 (400% 추가 공격)
+            RegisterSpec(MovingShot, stam: 60, mana: 0, cdSecs: 8.0, cats: new[] { 7, 8 });
+            RegisterSpec(ParalyzingBlow, stam: 80, mana: 0, cdSecs: 10.0, cats: new[] { 1, 3, 6, 8, 9 }); // 마비 일격
+            RegisterSpec(ShadowStrike, stam: 80, mana: 0, cdSecs: 10.0, cats: new[] { 5 }); // 그림자 일격 (어그로 0, 200% 추가)
+            RegisterSpec(WhirlwindAttack, stam: 100, mana: 0, cdSecs: 12.0, cats: new[] { 1, 2, 4 }); // 소용돌이 일격 (광역 300% 추가)
+            RegisterSpec(RidingSwipe, stam: 80, mana: 0, cdSecs: 10.0, cats: new[] { 1, 4, 6 });
+            RegisterSpec(Block, stam: 50, mana: 0, cdSecs: 10.0, cats: new[] { 0, 3, 5 });
+            RegisterSpec(Feint, stam: 50, mana: 0, cdSecs: 8.0, cats: new[] { 0, 5 });
+            RegisterSpec(DualWield, stam: 60, mana: 0, cdSecs: 8.0, cats: new[] { 0, 5 });
+            RegisterSpec(DoubleShot, stam: 80, mana: 0, cdSecs: 10.0, cats: new[] { 7, 8 });
+            RegisterSpec(ArmorPierce, stam: 50, mana: 0, cdSecs: 5.0, cats: new[] { 8 }); // 방어구 관통 (석궁 60% 방어무시)
+            RegisterSpec(Bladeweave, stam: 100, mana: 0, cdSecs: 12.0, cats: new[] { 0 }); // 칼날 매듭 (한손검 300% 추가)
+            RegisterSpec(LightningArrow, stam: 100, mana: 0, cdSecs: 10.0, cats: new[] { 7 }); // 전격 화살 (활 5타일 광역 300% 추가)
+            RegisterSpec(PsychicAttack, stam: 60, mana: 0, cdSecs: 8.0, cats: new[] { 3, 9 }); // 정신 공격 (마법 피해 50% 증가)
+            RegisterSpec(SerpentArrow, stam: 60, mana: 0, cdSecs: 8.0, cats: new[] { 7 });
+            RegisterSpec(ForceOfNature, stam: 80, mana: 0, cdSecs: 10.0, cats: new[] { 3, 4 });
+            RegisterSpec(InfusedThrow, stam: 60, mana: 0, cdSecs: 8.0, cats: new[] { 7, 8 });
+            RegisterSpec(MysticArc, stam: 80, mana: 0, cdSecs: 10.0, cats: new[] { 7, 8 });
+
+            // [무기술 200 레전더리 특수기 5종]
+            RegisterSpec(NerveStrike, stam: 0, mana: 100, cdSecs: 30.0, cats: new[] { 0, 1, 2 }, ultimate: true); // 신경 공격 (검/도끼)
+            RegisterSpec(FrenziedWhirlwind, stam: 0, mana: 100, cdSecs: 30.0, cats: new[] { 3, 4 }, ultimate: true); // 뇌진탕 일격 (둔기)
+            RegisterSpec(TalonStrike, stam: 0, mana: 100, cdSecs: 30.0, cats: new[] { 5, 6 }, ultimate: true); // 갈퀴 발톱 (펜싱)
+            RegisterSpec(ForceArrow, stam: 0, mana: 100, cdSecs: 30.0, cats: new[] { 7, 8 }, ultimate: true); // 힘의 화살 (궁술)
+            RegisterSpec(DefenseMastery, stam: 0, mana: 100, cdSecs: 30.0, cats: new[] { 9 }, ultimate: true); // 완전 방어 (맨손)
+        }
+
+
+        public static TimeSpan GetCooldownRemaining(Mobile m, WeaponAbility a)
+        {
+            if (m != null && a != null && m_Cooldowns.TryGetValue((m, a), out DateTime until))
+            {
+                DateTime now = DateTime.UtcNow;
+                if (until > now)
+                    return until - now;
+            }
+            return TimeSpan.Zero;
+        }
+
+        public static void SetCooldown(Mobile m, WeaponAbility a, TimeSpan cd)
+        {
+            if (m != null && a != null)
+            {
+                m_Cooldowns[(m, a)] = DateTime.UtcNow + cd;
+            }
+        }
+
+        public virtual bool CanUseWith(BaseWeapon weapon, Mobile attacker)
+        {
+            if (AllowedCategories == null || AllowedCategories.Length == 0)
+                return true;
+
+            int cat = BaseWeapon.GetWeaponCategoryID(weapon, attacker);
+            for (int i = 0; i < AllowedCategories.Length; i++)
+            {
+                if (AllowedCategories[i] == cat)
+                    return true;
+            }
+            return false;
+        }
+
+        public virtual void GetActualCost(Mobile attacker, out int stamCost, out int manaCost)
+        {
+            stamCost = BaseStam;
+            manaCost = BaseMana;
+
+            if (attacker is PlayerMobile pm)
+            {
+                // 서버 공식 커스텀 옵션 (ItemOptionCreator): LowerStamCost(65), LowerManaCost(64), LowerAllCost(66)
+                int rawStam = ItemOptionCreator.GetAttributeValue(pm, CustomOption.LowerStamCost);
+                int rawMana = ItemOptionCreator.GetAttributeValue(pm, CustomOption.LowerManaCost);
+                int rawAll  = ItemOptionCreator.GetAttributeValue(pm, CustomOption.LowerAllCost);
+
+                // 1%당 10,000 (ValueScale = 10000). 최대 할인율 50% 캡
+                double stamDiscount = Math.Min(0.50, Math.Max(0.0, (rawStam + rawAll) / 1000000.0));
+                double manaDiscount = Math.Min(0.50, Math.Max(0.0, (rawMana + rawAll) / 1000000.0));
+
+                if (stamCost > 0)
+                    stamCost = (int)Math.Max(0, Math.Round(stamCost * (1.0 - stamDiscount)));
+
+                if (manaCost > 0)
+                    manaCost = (int)Math.Max(0, Math.Round(manaCost * (1.0 - manaDiscount)));
+            }
+        }
+        #endregion
+
         public static bool IsWeaponAbility(Mobile m, WeaponAbility a)
         {
             if (a == null)
@@ -576,9 +708,22 @@ namespace Server.Items
             if (!m.Player)
                 return true;
 
-            BaseWeapon weapon = m.Weapon as BaseWeapon;
+            BaseWeapon weapon = m.Weapon as BaseWeapon ?? BaseWeapon.Fists;
+            return a.CanUseWith(weapon, m);
+        }
 
-            return (weapon != null && (weapon.PrimaryAbility == a || weapon.SecondaryAbility == a));
+        public virtual bool DealsOwnDamage
+        {
+            get
+            {
+                return (this == ArmorIgnore || this == ArmorPierce || this == Bladeweave ||
+                        this == BleedAttack || this == ConcussionBlow || this == CrushingBlow ||
+                        this == DoubleStrike || this == DoubleShot || this == ForceOfNature ||
+                        this == FrenziedWhirlwind || this == InfectiousStrike || this == LightningArrow ||
+                        this == MortalStrike || this == MovingShot || this == MysticArc ||
+                        this == NerveStrike || this == PsychicAttack || this == ShadowStrike ||
+                        this == TalonStrike || this == WhirlwindAttack || this == ForceArrow);
+            }
         }
 
         public virtual bool ValidatesDuringHit
@@ -605,16 +750,6 @@ namespace Server.Items
                 return null;
             }
 
-            if (a != null && a.ValidatesDuringHit && !a.Validate(m))
-            {
-                ClearCurrentAbility(m);
-                return null;
-            }
-			if( a != null && !a.CheckMana(m, false) )
-            {
-                ClearCurrentAbility(m);
-                return null;
-            }
             return a;
         }
 
@@ -628,28 +763,19 @@ namespace Server.Items
 
             if (!IsWeaponAbility(m, a))
             {
-                ClearCurrentAbility(m);
-                return false;
-            }
-
-            if (a != null && !a.Validate(m))
-            {
+                m.SendMessage(0x22, "현재 무기로는 사용할 수 없는 특수기입니다.");
                 ClearCurrentAbility(m);
                 return false;
             }
 
             if (a == null)
             {
-                m_Table.Remove(m);
-            }
-            else
-            {
-                SpecialMove.ClearCurrentMove(m);
-
-                m_Table[m] = a;
+                ClearCurrentAbility(m);
+                return true;
             }
 
-            return true;
+            // 액티브 즉발 시전 실행!
+            return a.ExecuteActive(m);
         }
 
         public static void ClearCurrentAbility(Mobile m)
@@ -659,6 +785,177 @@ namespace Server.Items
             if (Core.AOS && m.NetState != null)
                 m.Send(ClearWeaponAbility.Instance);
         }
+
+        #region 액티브 즉시 시전 엔진 (LoL 평캔 + 자동 타겟팅 시스템)
+        public virtual bool ExecuteActive(Mobile attacker)
+        {
+            if (attacker == null || !attacker.Alive || attacker.Frozen || attacker.Paralyzed)
+                return false;
+
+            BaseWeapon weapon = attacker.Weapon as BaseWeapon ?? BaseWeapon.Fists;
+            if (weapon == null)
+                return false;
+
+            // 1. 무기 적합성 검증
+            if (!CanUseWith(weapon, attacker))
+            {
+                attacker.SendMessage(0x22, "현재 무기로는 사용할 수 없는 특수기입니다.");
+                ClearCurrentAbility(attacker);
+                return false;
+            }
+
+            // 2. 레전더리 특수기 스킬 요구치 검증 (무기술 200.0)
+            if (IsUltimate)
+            {
+                SkillName reqSkill = weapon.Skill;
+                if (weapon is Fists || weapon == null) reqSkill = SkillName.Wrestling;
+                if (attacker.Skills[reqSkill].Value < 200.0)
+                {
+                    attacker.SendMessage(0x22, $"{reqSkill} 스킬이 200.0 이상이어야 사용할 수 있습니다.");
+                    ClearCurrentAbility(attacker);
+                    return false;
+                }
+            }
+
+            // 3. 개별 쿨타임 검증
+            TimeSpan remaining = GetCooldownRemaining(attacker, this);
+            if (remaining > TimeSpan.Zero)
+            {
+                attacker.SendMessage(0x22, $"[{this}] 재사용 대기 중입니다. ({remaining.TotalSeconds:F1}초 남음)");
+                ClearCurrentAbility(attacker);
+                return false;
+            }
+
+            // 4. 자원 소모량 계산 (서버 옵션 LowerStamCost / LowerManaCost / LowerAllCost 정밀 적용)
+            int stamCost = 0, manaCost = 0;
+            GetActualCost(attacker, out stamCost, out manaCost);
+
+            if (attacker.Stam < stamCost)
+            {
+                attacker.SendMessage(0x22, $"기력이 부족합니다. (필요 기력: {stamCost})");
+                ClearCurrentAbility(attacker);
+                return false;
+            }
+
+            if (attacker.Mana < manaCost)
+            {
+                attacker.SendMessage(0x22, $"마나가 부족합니다. (필요 마나: {manaCost})");
+                ClearCurrentAbility(attacker);
+                return false;
+            }
+
+            // 5. 타겟 결정 (범위기 vs 단일기)
+            Mobile target = null;
+            int maxRange = Math.Max(weapon.MaxRange, 1);
+
+            if (IsAreaAbility)
+            {
+                // 범위 즉발 공격: 주변 적 유무 체크
+                target = null;
+            }
+            else
+            {
+                // 1순위: 현재 교전 중인 대상 (Combatant)
+                Mobile c = attacker.Combatant as Mobile;
+                if (c != null && c.Alive && !c.Deleted && c.Map == attacker.Map && attacker.InRange(c.Location, maxRange) && attacker.InLOS(c) && attacker.CanBeHarmful(c, false))
+                {
+                    target = c;
+                }
+
+                // 2순위: 1순위 대상이 없거나 사거리 밖이면, 사거리 내 가장 가까운 적대 대상 자동 탐색
+                if (target == null)
+                {
+                    double bestDist = double.MaxValue;
+                    IPooledEnumerable eable = attacker.GetMobilesInRange(maxRange);
+                    foreach (Mobile m in eable)
+                    {
+                        if (m == attacker || !m.Alive || m.Deleted || m.Map != attacker.Map)
+                            continue;
+
+                        if (!attacker.CanSee(m) || !attacker.InLOS(m))
+                            continue;
+
+                        // 피아식별: 자신에게 적대 가능한 대상만
+                        if (!attacker.CanBeHarmful(m, false))
+                            continue;
+
+                        // 본인의 소환수나 제어 중인 펫은 제외
+                        if (m is BaseCreature bc && (bc.Controlled || bc.Summoned) && (bc.ControlMaster == attacker || bc.SummonMaster == attacker))
+                            continue;
+
+                        double dist = attacker.GetDistanceToSqrt(m);
+                        if (dist < bestDist)
+                        {
+                            bestDist = dist;
+                            target = m;
+                        }
+                    }
+                    eable.Free();
+                }
+
+                if (target == null)
+                {
+                    attacker.SendMessage(0x3B2, "공격할 대상이 사거리 내에 없습니다.");
+                    ClearCurrentAbility(attacker);
+                    return false;
+                }
+
+                // 타겟 방향으로 캐릭터 회전 및 교전 상대 지정
+                attacker.Direction = attacker.GetDirectionTo(target);
+                attacker.Combatant = target;
+            }
+
+            // 6. 자원 차감 및 개별 쿨타임 등록
+            if (attacker is PlayerMobile)
+            {
+                if (stamCost > 0)
+                    attacker.Stam -= stamCost;
+                if (manaCost > 0)
+                    attacker.Mana -= manaCost;
+
+                SetCooldown(attacker, this, Cooldown);
+            }
+
+            // 7. 특수기 장전 등록
+            SpecialMove.ClearCurrentMove(attacker);
+            m_Table[attacker] = this;
+
+            // 8. 은신 해제 및 공격 애니메이션
+            attacker.RevealingAction();
+
+            // 9. 강제 타격 파이프라인 호출
+            if (IsAreaAbility)
+            {
+                weapon.PlaySwingAnimation(attacker);
+
+                // 광역 즉발기: 주변 모든 적 타격
+                int baseDamage = (int)weapon.ScaleDamageAOS(attacker, (weapon.MinDamage + weapon.MaxDamage) / 2, false);
+                OnHit(attacker, null, Math.Max(baseDamage, 1));
+                attacker.SendMessage(0x35, $"[{this}] 광역 특수기를 발동했습니다!");
+                ClearCurrentAbility(attacker);
+            }
+            else
+            {
+                attacker.DoHarmful(target);
+
+                if (attacker.NetState != null)
+                {
+                    attacker.Send(new Swing(0, attacker, target));
+                }
+
+                // 단일 타겟: BaseWeapon.OnHit 강제 호출
+                weapon.OnHit(attacker, target, 1.0);
+                attacker.SendMessage(0x35, $"[{this}] 특수기를 적중시켰습니다!");
+            }
+
+            // 10. [평캔] 다음 평타는 무기 딜레이 1회 이후로 밀어줌
+            long nextSwing = Core.TickCount + (long)weapon.GetDelay(attacker).TotalMilliseconds;
+            if (attacker.NextCombatTime < nextSwing)
+                attacker.NextCombatTime = nextSwing;
+
+            return true;
+        }
+        #endregion
 
         public static void Initialize()
         {
@@ -672,11 +969,29 @@ namespace Server.Items
         private static void EventSink_SetAbility(SetAbilityEventArgs e)
         {
             int index = e.Index;
+            Mobile m = e.Mobile;
+
+            if (m == null)
+                return;
 
             if (index == 0)
-                ClearCurrentAbility(e.Mobile);
-            else if (index >= 1 && index < m_Abilities.Length)
-                SetCurrentAbility(e.Mobile, m_Abilities[index]);
+            {
+                ClearCurrentAbility(m);
+                return;
+            }
+
+            WeaponAbility ability = null;
+
+            // 표준 UO 특수기 인덱스 (1 ~ 33) 매핑
+            if (index >= 1 && index < m_Abilities.Length)
+            {
+                ability = m_Abilities[index];
+            }
+
+            if (ability != null)
+                SetCurrentAbility(m, ability);
+            else
+                ClearCurrentAbility(m);
         }
 
         private static readonly Hashtable m_PlayersTable = new Hashtable();

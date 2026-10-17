@@ -538,6 +538,11 @@ namespace Server
 
 		public static int GetStatus(Mobile from, int index)
 		{
+			// [스케일 규격 안내]
+			// 시스템 Raw 옵션 단위: ValueScale = 10,000 (1% = 10,000 / 3.75% = 37,500 / 10% = 100,000)
+			// 네트워크 전송 규격: short 정수형 패킷이므로 소수점 둘째 자리(x.xx%)를 보존하기 위해 Raw / 100을 전송.
+			// 예: 3.75% -> 375 전송, 10% -> 1000 전송.
+			// 클라이언트(ClassicUO StatusGump)에서 이를 받아 / 100.0으로 나누어 "3.75", "10", "3.75 / 100" 형태로 출력함.
 			const int VS = 100;
 
 			switch (index)
@@ -552,8 +557,8 @@ namespace Server
 
 				// --- ?�투 ?�력 (UI ?�기?? 10,000?�로 ?�눠???�송) ---
 				case 5: // DCI (방어?? 16�?
-					return Math.Min(30000, ItemOptionCreator.GetAttributeValue(from, 16) / VS);
-				case 6: return 30000; // Max DCI �?
+					return Math.Min(10000, ItemOptionCreator.GetAttributeValue(from, 16) / VS);
+				case 6: return 10000; // Max DCI (100.00%)
 				case 7: // HCI (명중�? 15�?
 					return Math.Min(30000, ItemOptionCreator.GetAttributeValue(from, 15) / VS);
 				case 8: // SSI (공격 ?�도: 12�?+ 모든 ?�도 14�?

@@ -1,4 +1,4 @@
-﻿#region References
+#region References
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -148,6 +148,63 @@ namespace Server.Mobiles
 		// [커스텀] 편안함(Comfort) 버프 만료 시간
 		[CommandProperty(AccessLevel.GameMaster)]
 		public DateTime ComfortBuffEnd { get; set; }
+
+		#region Resource Locks & Wounds (검은피 / 버프 잠금 GM Props)
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int WoundHits
+		{
+			get => Server.Misc.MobileResourceSystem.GetWoundHits(this);
+			set => Server.Misc.MobileResourceSystem.SetWoundHits(this, value);
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int BuffHitsLock
+		{
+			get => Server.Misc.MobileResourceSystem.GetBuffHitsLock(this);
+			set => Server.Misc.MobileResourceSystem.SetBuffHitsLock(this, value);
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int WoundMana
+		{
+			get => Server.Misc.MobileResourceSystem.GetWoundMana(this);
+			set => Server.Misc.MobileResourceSystem.SetWoundMana(this, value);
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int BuffManaLock
+		{
+			get => Server.Misc.MobileResourceSystem.GetBuffManaLock(this);
+			set => Server.Misc.MobileResourceSystem.SetBuffManaLock(this, value);
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int WoundStam
+		{
+			get => Server.Misc.MobileResourceSystem.GetWoundStam(this);
+			set => Server.Misc.MobileResourceSystem.SetWoundStam(this, value);
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int BuffStamLock
+		{
+			get => Server.Misc.MobileResourceSystem.GetBuffStamLock(this);
+			set => Server.Misc.MobileResourceSystem.SetBuffStamLock(this, value);
+		}
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int EffectiveHitsMax => Server.Misc.MobileResourceSystem.GetEffectiveHitsMax(this);
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int EffectiveManaMax => Server.Misc.MobileResourceSystem.GetEffectiveManaMax(this);
+
+		[CommandProperty(AccessLevel.GameMaster)]
+		public int EffectiveStamMax => Server.Misc.MobileResourceSystem.GetEffectiveStamMax(this);
+
+		public override bool CanRegenHits => base.CanRegenHits && Hits < EffectiveHitsMax;
+		public override bool CanRegenStam => base.CanRegenStam && Stam < EffectiveStamMax;
+		public override bool CanRegenMana => base.CanRegenMana && Mana < EffectiveManaMax;
+		#endregion
 
 		#region Stygian Abyss
         public override void ToggleFlying()
@@ -2940,6 +2997,12 @@ namespace Server.Mobiles
 		{
 			base.OnHitsChange(oldValue);
 
+			int effMax = EffectiveHitsMax;
+			if (Hits > effMax)
+			{
+				Hits = effMax;
+			}
+
 			if (Race == Race.Gargoyle)
 			{
 				if (Hits <= HitsMax / 2)
@@ -2967,6 +3030,12 @@ namespace Server.Mobiles
 		{
 			base.OnStamChange(oldValue);
 
+			int effMax = EffectiveStamMax;
+			if (Stam > effMax)
+			{
+				Stam = effMax;
+			}
+
 			// 기력이 이전보다 깎였다면? (달리기, 무기 공격, 채집, 생산 등)
 			if (this.Stam < oldValue)
 			{
@@ -2978,6 +3047,19 @@ namespace Server.Mobiles
 		public override void OnManaChange(int oldValue)
 		{
 			base.OnManaChange(oldValue);
+
+			int effMax = EffectiveManaMax;
+			if (Mana > effMax)
+			{
+				Mana = effMax;
+			}
+
+			if (Meditating && Mana >= effMax)
+			{
+				Meditating = false;
+				SendLocalizedMessage(501846); // You are at peace.
+				MediCheck = true;
+			}
 
 			// 마나가 이전보다 깎였다면? (마법 시전, 특수기 사용 등)
 			if (this.Mana < oldValue)
@@ -3135,9 +3217,18 @@ namespace Server.Mobiles
 				int s = RegenCalc((int)(sPt * hSRate), 1);
 				int m = RegenCalc((int)(mPt * mRate), 2);
 
-				if (h > 0 && Hits < HitsMax) Hits += h;
-				if (s > 0 && Stam < StamMax) Stam += s;
-				if (m > 0 && Mana < ManaMax) Mana += m;
+				int effHitsMax = Server.Misc.MobileResourceSystem.GetEffectiveHitsMax(this);
+				int effStamMax = Server.Misc.MobileResourceSystem.GetEffectiveStamMax(this);
+				int effManaMax = Server.Misc.MobileResourceSystem.GetEffectiveManaMax(this);
+
+				if (Hits > effHitsMax) Hits = effHitsMax;
+				else if (h > 0 && Hits < effHitsMax) Hits = Math.Min(effHitsMax, Hits + h);
+
+				if (Stam > effStamMax) Stam = effStamMax;
+				else if (s > 0 && Stam < effStamMax) Stam = Math.Min(effStamMax, Stam + s);
+
+				if (Mana > effManaMax) Mana = effManaMax;
+				else if (m > 0 && Mana < effManaMax) Mana = Math.Min(effManaMax, Mana + m);
 			}
 
 			// 4. 소환수 마나 유지비 정산 (미스티시즘 100 이상 시 유지 마나 제거)
