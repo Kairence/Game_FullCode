@@ -1,4 +1,4 @@
-﻿/Ultima.dll
+/Ultima.dll
 /Ultima.pdb
 /Ultima.dll.mdb
 /Ultima/bin
@@ -47,4 +47,5 @@ git_upload.bat
 *.md
 # 패치용 exe 예외 처리
 !Patch/Kairence.exe
+!Patch/Kairence_Launcher.exe
 /Data/Cliloc_Kor.CSV

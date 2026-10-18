@@ -1,0 +1,50 @@
+{
+  "version": "1.2.2.0",
+  "files": [
+    {
+      "name": "Kairence_Launcher.exe",
+      "size": 5611520,
+      "hash": "205b96f7e718a056a7f56f6e770c3326"
+    },
+    {
+      "name": "Kairence.exe",
+      "size": 330240,
+      "hash": "fdd96260663ed9ed6b2a6195f5e3e656"
+    },
+    {
+      "name": "Kairence.dll",
+      "size": 2186752,
+      "hash": "f4690332b5858df60afdcc007c132362"
+    },
+    {
+      "name": "ClassicUO.Renderer.dll",
+      "size": 215040,
+      "hash": "9871f35f113ea33269f639d84e33fdaa"
+    },
+    {
+      "name": "ClassicUO.Bootstrap.dll",
+      "size": 32768,
+      "hash": "4ef850826e1322ea50ecee32d60c09e9"
+    },
+    {
+      "name": "ClassicUO.Assets.dll",
+      "size": 111616,
+      "hash": "dfdc133317ee9f99853afac34bc8f255"
+    },
+    {
+      "name": "ClassicUO.IO.dll",
+      "size": 31232,
+      "hash": "f17bc331521c73aa583f8561525e532b"
+    },
+    {
+      "name": "ClassicUO.Utility.dll",
+      "size": 100864,
+      "hash": "7594e7b8ae51bb61eada1d0fe1cb2e3b"
+    },
+    {
+      "name": "Cliloc.kor",
+      "size": 3809174,
+      "hash": "c59a807a56ec058f35a22db2ccb7efeb"
+    }
+  ]
+}
