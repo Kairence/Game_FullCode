@@ -1,10 +1,10 @@
 {
-  "version": "1.2.2.0",
+  "version": "1.2.3.0",
   "files": [
     {
       "name": "Kairence_Launcher.exe",
-      "size": 5611520,
-      "hash": "205b96f7e718a056a7f56f6e770c3326"
+      "size": 5612032,
+      "hash": "029bb72f7b98b5b42bffeb607c713781"
     },
     {
       "name": "Kairence.exe",
