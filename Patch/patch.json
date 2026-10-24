@@ -1,50 +1,50 @@
-{
-  "version": "1.2.3.0",
-  "files": [
-    {
-      "name": "Kairence_Launcher.exe",
-      "size": 5612032,
-      "hash": "029bb72f7b98b5b42bffeb607c713781"
-    },
-    {
-      "name": "Kairence.exe",
-      "size": 330240,
-      "hash": "fdd96260663ed9ed6b2a6195f5e3e656"
-    },
-    {
-      "name": "Kairence.dll",
-      "size": 2186752,
-      "hash": "f4690332b5858df60afdcc007c132362"
-    },
-    {
-      "name": "ClassicUO.Renderer.dll",
-      "size": 215040,
-      "hash": "9871f35f113ea33269f639d84e33fdaa"
-    },
-    {
-      "name": "ClassicUO.Bootstrap.dll",
-      "size": 32768,
-      "hash": "4ef850826e1322ea50ecee32d60c09e9"
-    },
-    {
-      "name": "ClassicUO.Assets.dll",
-      "size": 111616,
-      "hash": "dfdc133317ee9f99853afac34bc8f255"
-    },
-    {
-      "name": "ClassicUO.IO.dll",
-      "size": 31232,
-      "hash": "f17bc331521c73aa583f8561525e532b"
-    },
-    {
-      "name": "ClassicUO.Utility.dll",
-      "size": 100864,
-      "hash": "7594e7b8ae51bb61eada1d0fe1cb2e3b"
-    },
-    {
-      "name": "Cliloc.kor",
-      "size": 3809174,
-      "hash": "c59a807a56ec058f35a22db2ccb7efeb"
-    }
-  ]
+﻿{
+    "version":  "1.2.4.0",
+    "files":  [
+                  {
+                      "name":  "Kairence_Launcher.exe",
+                      "size":  5612032,
+                      "hash":  "029bb72f7b98b5b42bffeb607c713781"
+                  },
+                  {
+                      "name":  "Kairence.exe",
+                      "size":  330240,
+                      "hash":  "dc6bca462976f81dc7fdf71a47750d28"
+                  },
+                  {
+                      "name":  "Kairence.dll",
+                      "size":  2186752,
+                      "hash":  "bbdf51e0a2cb114caf9df8c80f4bf245"
+                  },
+                  {
+                      "name":  "ClassicUO.Renderer.dll",
+                      "size":  215040,
+                      "hash":  "4cc9f3cc4bfb7d2710a3b979f411efe4"
+                  },
+                  {
+                      "name":  "ClassicUO.Bootstrap.dll",
+                      "size":  32768,
+                      "hash":  "ea31e21947c7303c7d227044fea4dcf4"
+                  },
+                  {
+                      "name":  "ClassicUO.Assets.dll",
+                      "size":  111616,
+                      "hash":  "7532f8e12979c8f900861022effac759"
+                  },
+                  {
+                      "name":  "ClassicUO.IO.dll",
+                      "size":  31232,
+                      "hash":  "2545843973a65fce866b012bc6681196"
+                  },
+                  {
+                      "name":  "ClassicUO.Utility.dll",
+                      "size":  100864,
+                      "hash":  "a2f82635fd8bc0b10f61c4e4bb62f16b"
+                  },
+                  {
+                      "name":  "Cliloc.kor",
+                      "size":  3809174,
+                      "hash":  "c59a807a56ec058f35a22db2ccb7efeb"
+                  }
+              ]
 }
